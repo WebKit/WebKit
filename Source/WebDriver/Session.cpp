@@ -349,9 +349,15 @@ void Session::handleUnexpectedAlertOpen(Function<void(CommandResult&&)>&& comple
     auto parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, uncheckedTopLevelBrowsingContext());
     m_host->sendCommandToBackend("typeOfCurrentJavaScriptDialog"_s, WTF::move(parameters), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) mutable {
-        // Fall back to the "default" handler if the browser can't tell the dialog type.
         auto type = UserPromptType::Default;
-        if (!response.isError && response.responseObject)
+        if (response.isError) {
+            // The dialog was closed after isShowingJavaScriptDialog returned true, so there's nothing to handle.
+            if (CommandResult::fail(WTF::move(response.responseObject)).errorCode() == CommandResult::ErrorCode::NoSuchAlert) {
+                completionHandler(CommandResult::success());
+                return;
+            }
+            // Otherwise the browser can't tell the dialog type, so fall back to the "default" handler.
+        } else if (response.responseObject)
             type = userPromptTypeFromDialogType(response.responseObject->getString("type"_s));
 
         auto configuration = promptHandlerForType(capabilities().unhandledPromptBehavior, type);
@@ -369,10 +375,9 @@ void Session::handleUnexpectedAlertOpen(Function<void(CommandResult&&)>&& comple
                 dismissAlert(WTF::move(completionHandler));
             break;
         case PromptHandlerType::Ignore:
-            if (configuration.notify)
-                reportUnexpectedAlertOpen(WTF::move(completionHandler));
-            else
-                completionHandler(CommandResult::success());
+            // An "ignore" handler always notifies.
+            ASSERT(configuration.notify);
+            reportUnexpectedAlertOpen(WTF::move(completionHandler));
             break;
         }
     });
