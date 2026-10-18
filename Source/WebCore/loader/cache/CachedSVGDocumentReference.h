@@ -40,7 +40,7 @@ struct ResourceLoaderOptions;
 class CachedSVGDocumentReference final : public CachedSVGDocumentClient, public RefCounted<CachedSVGDocumentReference> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedSVGDocumentReference, Loader);
 public:
-    static Ref<CachedSVGDocumentReference> create(const Style::URL&);
+    static Ref<CachedSVGDocumentReference> LEGACY_NODELETE create(const Style::URL&);
 
     virtual ~CachedSVGDocumentReference();
 

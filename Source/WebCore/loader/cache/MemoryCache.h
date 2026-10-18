@@ -189,8 +189,8 @@ private:
     void dumpStats();
     void dumpLRULists(bool includeLive) const;
 
-    unsigned liveCapacity() const;
-    unsigned deadCapacity() const;
+    unsigned LEGACY_NODELETE liveCapacity() const;
+    unsigned LEGACY_NODELETE deadCapacity() const;
     bool LEGACY_NODELETE needsPruning() const;
 
     CachedResource* resourceForRequestImpl(const ResourceRequest&, CachedResourceMap&);

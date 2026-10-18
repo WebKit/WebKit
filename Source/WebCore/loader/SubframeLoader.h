@@ -73,7 +73,7 @@ private:
 
     bool LEGACY_NODELETE shouldConvertInvalidURLsToBlank() const;
 
-    bool canCreateSubFrame() const;
+    bool LEGACY_NODELETE canCreateSubFrame() const;
 
     bool m_containsPlugins { false };
     WeakRef<LocalFrame> m_frame;

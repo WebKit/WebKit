@@ -37,7 +37,7 @@ class MaskBorderData : public RefCounted<MaskBorderData> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MaskBorderData, MaskBorderData);
 public:
     static Ref<MaskBorderData> create() { return adoptRef(*new MaskBorderData); }
-    Ref<MaskBorderData> copy() const;
+    Ref<MaskBorderData> LEGACY_NODELETE copy() const;
 
     bool operator==(const MaskBorderData&) const;
 

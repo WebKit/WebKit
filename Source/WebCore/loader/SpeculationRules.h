@@ -100,7 +100,7 @@ public:
         String noVarySearchHint;
     };
 
-    static Ref<SpeculationRules> create();
+    static Ref<SpeculationRules> LEGACY_NODELETE create();
 
     // https://wicg.github.io/nav-speculation/speculation-rules.html#parse-speculation-rules
     WEBCORE_EXPORT bool parseSpeculationRules(Node& sourceNode, const StringView&, const URL& rulesetBaseURL, const URL& documentBaseURL);

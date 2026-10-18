@@ -59,7 +59,7 @@ struct LinkLoadParameters {
 
 class LinkLoader : public CachedResourceClient, public RefCounted<LinkLoader> {
 public:
-    static Ref<LinkLoader> create(LinkLoaderClient&);
+    static Ref<LinkLoader> LEGACY_NODELETE create(LinkLoaderClient&);
     virtual ~LinkLoader();
 
     void loadLink(const LinkLoadParameters&, Document&);

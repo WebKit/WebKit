@@ -36,7 +36,7 @@ namespace WebCore {
 class COEPInheritenceViolationReportBody : public ReportBody {
     WTF_MAKE_TZONE_ALLOCATED(COEPInheritenceViolationReportBody);
 public:
-    WEBCORE_EXPORT static Ref<COEPInheritenceViolationReportBody> create(COEPDisposition, const URL& blockedURL, const String& type);
+    WEBCORE_EXPORT static Ref<COEPInheritenceViolationReportBody> LEGACY_NODELETE create(COEPDisposition, const URL& blockedURL, const String& type);
 
     String disposition() const;
     const String& type() const LIFETIME_BOUND final { return m_type; }

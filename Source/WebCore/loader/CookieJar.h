@@ -51,7 +51,7 @@ enum class ShouldPartitionCookie : bool;
 
 class WEBCORE_EXPORT CookieJar : public RefCountedAndCanMakeWeakPtr<CookieJar> {
 public:
-    static Ref<CookieJar> create(Ref<StorageSessionProvider>&&);
+    static Ref<CookieJar> LEGACY_NODELETE create(Ref<StorageSessionProvider>&&);
     
     static CookieRequestHeaderFieldProxy cookieRequestHeaderFieldProxy(const Document&, const URL&);
 

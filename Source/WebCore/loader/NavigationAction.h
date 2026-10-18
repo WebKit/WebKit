@@ -130,7 +130,7 @@ public:
 
     // The NavigationHistoryBehavior which m_navigationAPIType was resolved from, so that a process taking
     // over this navigation can resolve the navigation API type the same way.
-    WEBCORE_EXPORT NavigationHistoryBehavior navigationHistoryBehavior() const;
+    WEBCORE_EXPORT NavigationHistoryBehavior LEGACY_NODELETE navigationHistoryBehavior() const;
 
     using DispatchNavigateEventFunction = std::function<NavigateEventDispatchResult()>;
 

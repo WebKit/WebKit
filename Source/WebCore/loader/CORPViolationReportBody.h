@@ -36,7 +36,7 @@ namespace WebCore {
 class CORPViolationReportBody : public ReportBody {
     WTF_MAKE_TZONE_ALLOCATED(CORPViolationReportBody);
 public:
-    WEBCORE_EXPORT static Ref<CORPViolationReportBody> create(COEPDisposition, const URL& blockedURL, FetchOptions::Destination);
+    WEBCORE_EXPORT static Ref<CORPViolationReportBody> LEGACY_NODELETE create(COEPDisposition, const URL& blockedURL, FetchOptions::Destination);
 
     String disposition() const;
     const String& type() const final;

@@ -167,7 +167,7 @@ public:
     bool updateRequestAfterRedirection(CachedResource::Type, ResourceRequest&, const ResourceLoaderOptions&, FetchMetadataSite, const URL& preRedirectURL, const URL& lastRedirectURL);
     bool allowedByContentSecurityPolicy(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ContentSecurityPolicy::RedirectResponseReceived, const URL& preRedirectURL = URL(), bool shouldReportViolationAsConsoleMessage = true) const;
 
-    static const ResourceLoaderOptions& defaultCachedResourceOptions();
+    static const ResourceLoaderOptions& LEGACY_NODELETE defaultCachedResourceOptions();
 
     void documentDidFinishLoadEvent();
 

@@ -517,7 +517,7 @@ public:
     bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
     void setIsRequestFromClientOrUserInput(bool isRequestFromClientOrUserInput) { m_isRequestFromClientOrUserInput = isRequestFromClientOrUserInput; }
 
-    bool hasCrossOriginRedirect() const;
+    bool LEGACY_NODELETE hasCrossOriginRedirect() const;
     void setHasCrossOriginRedirect(bool hasCrossOriginRedirect) { m_hasCrossOriginRedirect = hasCrossOriginRedirect; }
 
     bool loadStartedDuringSwipeAnimation() const { return m_loadStartedDuringSwipeAnimation; }

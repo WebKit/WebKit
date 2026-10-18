@@ -46,7 +46,7 @@ class CrossOriginPreflightChecker final : public RefCounted<CrossOriginPreflight
 public:
     static void doPreflight(DocumentThreadableLoader&, ResourceRequest&&);
 
-    static Ref<CrossOriginPreflightChecker> create(DocumentThreadableLoader&, ResourceRequest&&);
+    static Ref<CrossOriginPreflightChecker> LEGACY_NODELETE create(DocumentThreadableLoader&, ResourceRequest&&);
     ~CrossOriginPreflightChecker();
 
     // CachedResourceClient.

@@ -43,7 +43,7 @@ class LocalFrame;
 class IconLoader final : public RefCounted<IconLoader>, private CachedRawResourceClient {
     WTF_MAKE_NONCOPYABLE(IconLoader); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(IconLoader, Loader);
 public:
-    static Ref<IconLoader> create(DocumentLoader&, const URL&);
+    static Ref<IconLoader> LEGACY_NODELETE create(DocumentLoader&, const URL&);
     virtual ~IconLoader();
 
     // CachedResourceClient.

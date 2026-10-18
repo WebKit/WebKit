@@ -205,7 +205,7 @@ private:
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
     struct EmptyIDBConnectionToServerDeletegate final : public IDBClient::IDBConnectionToServerDelegate, public RefCounted<EmptyIDBConnectionToServerDeletegate> {
-        static Ref<EmptyIDBConnectionToServerDeletegate> create() { return adoptRef(*new EmptyIDBConnectionToServerDeletegate); }
+        static Ref<EmptyIDBConnectionToServerDeletegate> LEGACY_NODELETE create() { return adoptRef(*new EmptyIDBConnectionToServerDeletegate); }
 
         void LEGACY_NODELETE ref() const final { RefCounted::ref(); }
         void deref() const final { RefCounted::deref(); }
@@ -423,7 +423,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyEditorClient);
 
 class EmptyFrameNetworkingContext final : public FrameNetworkingContext {
 public:
-    static Ref<EmptyFrameNetworkingContext> create() { return adoptRef(*new EmptyFrameNetworkingContext); }
+    static Ref<EmptyFrameNetworkingContext> LEGACY_NODELETE create() { return adoptRef(*new EmptyFrameNetworkingContext); }
 
 private:
     EmptyFrameNetworkingContext();
@@ -458,7 +458,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyInspectorBackendClient);
 class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient, public RefCounted<EmptyPaymentCoordinatorClient> {
     WTF_MAKE_TZONE_ALLOCATED(EmptyPaymentCoordinatorClient);
 public:
-    static Ref<EmptyPaymentCoordinatorClient> create()
+    static Ref<EmptyPaymentCoordinatorClient> LEGACY_NODELETE create()
     {
         return adoptRef(*new EmptyPaymentCoordinatorClient);
     }
@@ -494,7 +494,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyPaymentCoordinatorClient);
 class EmptyCredentialRequestCoordinatorClient final : public CredentialRequestCoordinatorClient {
     WTF_MAKE_TZONE_ALLOCATED(EmptyCredentialRequestCoordinatorClient);
 public:
-    static Ref<EmptyCredentialRequestCoordinatorClient> create()
+    static Ref<EmptyCredentialRequestCoordinatorClient> LEGACY_NODELETE create()
     {
         return adoptRef(*new EmptyCredentialRequestCoordinatorClient);
     }
@@ -1225,7 +1225,7 @@ class EmptyStorageSessionProvider final : public StorageSessionProvider {
 
 class EmptyBroadcastChannelRegistry final : public BroadcastChannelRegistry {
 public:
-    static Ref<EmptyBroadcastChannelRegistry> create()
+    static Ref<EmptyBroadcastChannelRegistry> LEGACY_NODELETE create()
     {
         return adoptRef(*new EmptyBroadcastChannelRegistry);
     }
@@ -1277,7 +1277,7 @@ Ref<SocketProvider> emptySocketProvider()
 
 class EmptyHistoryItemClient final : public HistoryItemClient {
 public:
-    static Ref<EmptyHistoryItemClient> create() { return adoptRef(*new EmptyHistoryItemClient); }
+    static Ref<EmptyHistoryItemClient> LEGACY_NODELETE create() { return adoptRef(*new EmptyHistoryItemClient); }
 private:
     void LEGACY_NODELETE historyItemChanged(const HistoryItem&) { }
     void LEGACY_NODELETE clearChildren(const HistoryItem&) const { }

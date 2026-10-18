@@ -47,7 +47,7 @@ class ApplicationManifestLoader final : public RefCounted<ApplicationManifestLoa
 public:
     typedef Function<void (CachedResourceHandle<CachedApplicationManifest>)> CompletionHandlerType;
 
-    static Ref<ApplicationManifestLoader> create(DocumentLoader&, const URL&, bool);
+    static Ref<ApplicationManifestLoader> LEGACY_NODELETE create(DocumentLoader&, const URL&, bool);
     virtual ~ApplicationManifestLoader();
 
     // CachedResourceClient.
