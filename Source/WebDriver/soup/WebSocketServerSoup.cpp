@@ -142,8 +142,11 @@ static void handleWebSocketConnection(SoupServer*, SoupServerMessage*, const cha
         webSocketServer->addStaticConnection({ connection });
     else {
         auto sessionId = webSocketServer->getSessionID(String::fromLatin1(path));
-        auto connectionForKey = WebSocketMessageHandler::Connection(connection);
-        webSocketServer->addConnection({ connection }, sessionId);
+        if (!webSocketServer->addConnection({ connection }, sessionId)) {
+            RELEASE_LOG(WebDriverBiDi, "Session %s is no longer accepting WebSocket connections or already has an active connection. Closing connection.", sessionId.utf8());
+            soup_websocket_connection_close(connection, SOUP_WEBSOCKET_CLOSE_POLICY_VIOLATION, nullptr);
+            return;
+        }
     }
 
     g_signal_connect(connection, "closed", G_CALLBACK(+[](SoupWebsocketConnection* connection, gpointer userData) {
@@ -213,18 +216,33 @@ void WebSocketServer::disconnect()
         g_signal_handlers_disconnect_by_data(connection.get(), this);
     }
 
+    for (const auto& connection : m_staticConnections) {
+        if (!connection)
+            continue;
+        g_signal_handlers_disconnect_by_data(connection.get(), this);
+    }
+
     soup_server_disconnect(m_soupServer.get());
+    m_connectionToSession.clear();
+    m_staticConnections.clear();
+    if (m_listener)
+        m_listener->resources.clear();
     m_soupServer = nullptr;
 }
 
 void WebSocketServer::disconnectSession(const String& sessionId)
 {
+    removeResourceForSession(sessionId);
     auto connection = this->connection(sessionId);
-    if (!connection || !connection->get())
+    if (!connection)
         return;
 
-    soup_websocket_connection_close(connection->get(), SOUP_WEBSOCKET_CLOSE_NORMAL, nullptr);
+    removeConnection(*connection);
+    if (!connection->get())
+        return;
+
     g_signal_handlers_disconnect_by_data(connection->get(), this);
+    soup_websocket_connection_close(connection->get(), SOUP_WEBSOCKET_CLOSE_NORMAL, nullptr);
 }
 
 } // namespace WebDriver

@@ -136,8 +136,9 @@ public:
     void addStaticConnection(WebSocketMessageHandler::Connection&&);
     bool isStaticConnection(const WebSocketMessageHandler::Connection&);
     void removeStaticConnection(const WebSocketMessageHandler::Connection&);
+    bool associateConnectionWithSession(const WebSocketMessageHandler::Connection&, const String& sessionId);
 
-    void addConnection(WebSocketMessageHandler::Connection&&, const String& sessionId);
+    bool addConnection(WebSocketMessageHandler::Connection&&, const String& sessionId);
     String sessionID(const WebSocketMessageHandler::Connection&) const;
     std::optional<WebSocketMessageHandler::Connection> connection(const String& sessionId);
     void removeConnection(const WebSocketMessageHandler::Connection&);

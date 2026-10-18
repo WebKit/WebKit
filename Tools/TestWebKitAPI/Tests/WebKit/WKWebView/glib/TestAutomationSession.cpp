@@ -21,6 +21,7 @@
 
 #include "TestMain.h"
 #include <gio/gio.h>
+#include <wtf/JSONValues.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/SocketConnection.h>
@@ -183,7 +184,7 @@ public:
         g_assert_true(m_target.isPaired);
     }
 
-    bool createTopLevelBrowsingContext(WebKitWebView* webView)
+    bool createTopLevelBrowsingContext(WebKitWebView* webView, const char* expectedUserAgent = nullptr)
     {
         setupIfNeeded();
         m_webViewForAutomation = webView;
@@ -199,9 +200,20 @@ public:
 
         if (contains(m_message.span(), u8"The remote session failed to create a new browsing context"_span))
             return false;
-        if (contains(m_message.span(), u8"handle"_span))
-            return true;
-        return false;
+
+        auto message = JSON::Value::parseJSON(String::fromUTF8(m_message.span()));
+        if (!message)
+            return false;
+        auto response = message->asObject();
+        if (!response)
+            return false;
+        auto result = response->getObject("result"_s);
+        if (!result || result->getString("handle"_s).isNull())
+            return false;
+
+        if (expectedUserAgent)
+            ASSERT_CMP_CSTRING(result->getString("userAgent"_s).utf8(), ==, expectedUserAgent);
+        return true;
     }
 
     bool createNewWindow(WebKitWebView* webView)
@@ -343,13 +355,16 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
 #endif
 
     // And will work with a proper web view.
-    webView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    static constexpr auto automationUserAgent = "WebKitAutomationSession/1.0";
+    GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new());
+    webkit_settings_set_user_agent(settings.get(), automationUserAgent);
+    webView = test->createWebView("is-controlled-by-automation", TRUE, "settings", settings.get(), nullptr);
     g_assert_true(webkit_web_view_is_controlled_by_automation(webView.get()));
     g_assert_cmpuint(webkit_web_view_get_automation_presentation_type(webView.get()), ==, WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW);
 #if ENABLE(2022_GLIB_API)
     g_assert_true(webkit_web_view_get_network_session(webView.get()) == networkSession);
 #endif
-    g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
+    g_assert_true(test->createTopLevelBrowsingContext(webView.get(), automationUserAgent));
 
     auto newWebViewInWindow = test->createWebView(
         "is-controlled-by-automation", TRUE,
