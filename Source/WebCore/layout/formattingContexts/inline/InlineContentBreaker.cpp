@@ -158,7 +158,7 @@ static inline InlineContentBreaker::PartialRun firstCharacterBreakRespectingLine
     return { breakPosition, breakWidth };
 }
 
-static bool shouldRevertToEarlierWrapOpportunity(const InlineContentBreaker::LineStatus& lineStatus, const InlineContentBreaker::ContinuousContent::RunList& runs, size_t overflowingRunIndex)
+static bool LEGACY_NODELETE shouldRevertToEarlierWrapOpportunity(const InlineContentBreaker::LineStatus& lineStatus, const InlineContentBreaker::ContinuousContent::RunList& runs, size_t overflowingRunIndex)
 {
     // https://drafts.csswg.org/css-text-4/#wrap-inside
     // 'wrap-inside: avoid' suppresses the soft wrap opportunities inside the box, including those introduced by

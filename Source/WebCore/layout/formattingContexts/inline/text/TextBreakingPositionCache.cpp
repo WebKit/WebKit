@@ -51,7 +51,7 @@ TextBreakingPositionCache::TextBreakingPositionCache()
 {
 }
 
-static size_t widthsBytes(const TextBreakingPositionCache::Entry& entry)
+static size_t LEGACY_NODELETE widthsBytes(const TextBreakingPositionCache::Entry& entry)
 {
     size_t bytes = 0;
     for (auto& cascadeWidths : entry.widthsByFontCascade)

@@ -494,7 +494,7 @@ void InlineDisplayLineBuilder::addLegacyLineClampTrailingLinkBoxIfApplicable(con
     clampedLine.setHasContentAfterEllipsisBox();
 }
 
-static InlineDisplay::Line::Ellipsis trailingBlockEllipsis(const BlockOverflowEllipsis& blockEllipsis, const InlineDisplay::Line& displayLine, const InlineDisplay::Box& rootInlineBox)
+static InlineDisplay::Line::Ellipsis LEGACY_NODELETE trailingBlockEllipsis(const BlockOverflowEllipsis& blockEllipsis, const InlineDisplay::Line& displayLine, const InlineDisplay::Box& rootInlineBox)
 {
     ASSERT(rootInlineBox.isRootInlineBox());
     // Being an isolate at the paragraph embedding level that follows the content, it always ends up at the visual end of the line in the paragraph direction.

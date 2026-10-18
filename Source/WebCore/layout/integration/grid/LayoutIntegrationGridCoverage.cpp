@@ -241,7 +241,7 @@ static bool gridItemHasValidHeight(const Style::PreferredSize& height)
     );
 }
 
-static bool isUnsupportedGridTrackSize(const Style::GridTrackSize& trackSize)
+static bool LEGACY_NODELETE isUnsupportedGridTrackSize(const Style::GridTrackSize& trackSize)
 {
     return trackSize.isFitContent();
 }

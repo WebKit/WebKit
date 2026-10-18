@@ -105,7 +105,7 @@ public:
     void shrinkToFit();
     void releaseCaches();
 
-    void clearFormattingContextRoot();
+    void LEGACY_NODELETE clearFormattingContextRoot();
 
 private:
     friend class InlineContentBuilder;

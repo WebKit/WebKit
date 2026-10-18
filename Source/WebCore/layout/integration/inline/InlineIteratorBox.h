@@ -56,7 +56,7 @@ public:
     Box(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
     bool isText() const;
-    bool isSVGText() const;
+    bool LEGACY_NODELETE isSVGText() const;
     bool isInlineBox() const;
     bool isRubyBase() const;
     bool isRootInlineBox() const;
@@ -101,10 +101,10 @@ public:
     WritingMode writingMode() const { return style()->writingMode(); }
 
     // Text-relative left/right
-    LeafBoxIterator nextLineRightwardOnLine() const;
-    LeafBoxIterator nextLineLeftwardOnLine() const;
-    LeafBoxIterator nextLineRightwardOnLineIgnoringLineBreak() const;
-    LeafBoxIterator nextLineLeftwardOnLineIgnoringLineBreak() const;
+    LeafBoxIterator LEGACY_NODELETE nextLineRightwardOnLine() const;
+    LeafBoxIterator LEGACY_NODELETE nextLineLeftwardOnLine() const;
+    LeafBoxIterator LEGACY_NODELETE nextLineRightwardOnLineIgnoringLineBreak() const;
+    LeafBoxIterator LEGACY_NODELETE nextLineLeftwardOnLineIgnoringLineBreak() const;
 
     // Coordinate-relative left/right
     inline LeafBoxIterator nextLogicalRightwardOnLine() const;
@@ -171,20 +171,20 @@ public:
 
     explicit operator bool() const { return !atEnd(); }
 
-    bool operator==(const BoxIterator&) const;
+    bool LEGACY_NODELETE operator==(const BoxIterator&) const;
     bool operator==(EndIterator) const { return atEnd(); }
 
     const Box& operator*() const LIFETIME_BOUND { return m_box; }
     const Box* operator->() const LIFETIME_BOUND { return &m_box; }
 
-    BoxIterator& traverseLineRightwardOnLine();
-    BoxIterator& traverseLineRightwardOnLineSkippingChildren();
-    BoxIterator& traverseLineLeftwardOnLine();
+    BoxIterator& LEGACY_NODELETE traverseLineRightwardOnLine();
+    BoxIterator& LEGACY_NODELETE traverseLineRightwardOnLineSkippingChildren();
+    BoxIterator& LEGACY_NODELETE traverseLineLeftwardOnLine();
 
     BoxIterator& operator++() { return traverseLineRightwardOnLine(); }
     BoxIterator& operator--() { return traverseLineLeftwardOnLine(); }
 
-    bool atEnd() const;
+    bool LEGACY_NODELETE atEnd() const;
 
 protected:
     Box m_box;
@@ -196,10 +196,10 @@ public:
     LeafBoxIterator(const Box&);
 
     // Text-relative left/right
-    LeafBoxIterator& traverseLineRightwardOnLine();
-    LeafBoxIterator& traverseLineLeftwardOnLine();
-    LeafBoxIterator& traverseLineRightwardOnLineIgnoringLineBreak();
-    LeafBoxIterator& traverseLineLeftwardOnLineIgnoringLineBreak();
+    LeafBoxIterator& LEGACY_NODELETE traverseLineRightwardOnLine();
+    LeafBoxIterator& LEGACY_NODELETE traverseLineLeftwardOnLine();
+    LeafBoxIterator& LEGACY_NODELETE traverseLineRightwardOnLineIgnoringLineBreak();
+    LeafBoxIterator& LEGACY_NODELETE traverseLineLeftwardOnLineIgnoringLineBreak();
 
     // Coordinate-relative left/right
     inline LeafBoxIterator& traverseLogicalRightwardOnLine();
@@ -227,7 +227,7 @@ private:
 
 LeafBoxIterator boxFor(const RenderLineBreak&);
 LeafBoxIterator boxFor(const RenderBox&);
-LeafBoxIterator boxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
+LeafBoxIterator LEGACY_NODELETE boxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
 // -----------------------------------------------
 

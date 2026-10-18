@@ -1354,7 +1354,7 @@ bool LineBuilder::shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit float
     }
 }
 
-static bool haveEnoughSpaceForFloatWithClear(const LayoutRect& floatBoxMarginBox, bool isLeftPositioned, const InlineRect& lineLogicalRect, InlineLayoutUnit contentLogicalWidth)
+static bool LEGACY_NODELETE haveEnoughSpaceForFloatWithClear(const LayoutRect& floatBoxMarginBox, bool isLeftPositioned, const InlineRect& lineLogicalRect, InlineLayoutUnit contentLogicalWidth)
 {
     auto adjustedLineLogicalLeft = lineLogicalRect.left();
     auto adjustedLineLogicalRight = lineLogicalRect.right();

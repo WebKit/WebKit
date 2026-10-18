@@ -81,7 +81,7 @@ static inline InlineRect annotationMarginBoxVisualRect(const Box& annotationBox,
     return InlineRect { visualTopLeft, marginBoxLogicalRect.size().transposedSize() };
 }
 
-static InlineLayoutUnit baseLogicalWidthFromRubyBaseEnd(const Box& rubyBaseLayoutBox, const Line::RunList& lineRuns, const InlineContentBreaker::ContinuousContent::RunList& candidateRuns)
+static InlineLayoutUnit LEGACY_NODELETE baseLogicalWidthFromRubyBaseEnd(const Box& rubyBaseLayoutBox, const Line::RunList& lineRuns, const InlineContentBreaker::ContinuousContent::RunList& candidateRuns)
 {
     ASSERT(rubyBaseLayoutBox.isRubyBase());
     // Candidate content is supposed to hold the base content and in case of soft wrap opportunities, line may have some base content too.

@@ -173,8 +173,8 @@ private:
     void computeFlexItemRects(const FlexLines&, FlexLayoutItems&, const PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, const LinesCrossSizeList& flexLinesCrossSizeList, const SizeList& flexItemsCrossSizeList, LayoutUnit crossContentExtent, LayoutUnit crossExtent, LayoutUnit mainBorderBoxExtent);
 
     LayoutUnit placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace);
-    LayoutUnit mainAxisFlippedOffsetForRow(const FlexLayoutItem&, LayoutUnit flowRelativeOffset) const;
-    void setFlexItemCountsForFirstAndLastLine(const FlexLines&);
+    LayoutUnit LEGACY_NODELETE mainAxisFlippedOffsetForRow(const FlexLayoutItem&, LayoutUnit flowRelativeOffset) const;
+    void LEGACY_NODELETE setFlexItemCountsForFirstAndLastLine(const FlexLines&);
 
     FlexBaseAndHypotheticalMainSizeList computeFlexBaseAndHypotheticalMainSizes(FlexLayoutItems&);
     LayoutUnit flexBaseSizeForFlexItem(const FlexLayoutItem&);
@@ -195,8 +195,8 @@ private:
     LayoutUnit applyStretchAlignmentToFlexItem(const FlexLayoutItem&, LayoutUnit lineCrossAxisExtent, LayoutUnit crossContentExtent);
     LayoutUnit applyStretchMinMaxCrossSize(const FlexLayoutItem&, LayoutUnit lineCrossAxisExtent, LogicalBoxAxis, LayoutUnit crossContentExtent);
 
-    const FlexFormattingUtils& flexFormattingUtils() const;
-    FlexLayoutState& layoutState() const;
+    const FlexFormattingUtils& LEGACY_NODELETE flexFormattingUtils() const;
+    FlexLayoutState& LEGACY_NODELETE layoutState() const;
     const LayoutIntegration::FlexIntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
     LayoutIntegration::FlexIntegrationUtils& integrationUtils() LIFETIME_BOUND { return m_integrationUtils; }
 

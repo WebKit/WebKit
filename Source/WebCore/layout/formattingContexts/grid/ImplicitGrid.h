@@ -62,7 +62,7 @@ private:
     std::optional<size_t> findColumnPositionForDefiniteRowItem(WTF::Range<size_t> rowRange, size_t columnSpan, GridAutoFlowOptions) const;
     void growColumnsForDefiniteRowItem(size_t columnSpan, WTF::Range<size_t> rowRange);
     bool LEGACY_NODELETE isCellRangeEmpty(WTF::Range<size_t> columnRange, WTF::Range<size_t> rowRange) const;
-    GridAreaLines markAreaAsOccupied(WTF::Range<size_t> columnRange, WTF::Range<size_t> rowRange);
+    GridAreaLines LEGACY_NODELETE markAreaAsOccupied(WTF::Range<size_t> columnRange, WTF::Range<size_t> rowRange);
 
     // Helper functions for auto-positioned items
     void growColumnsToFit(size_t requiredCount);
