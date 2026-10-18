@@ -9643,6 +9643,13 @@ void WebPageProxy::didExplicitOpenForFrame(IPC::Connection& connection, FrameIde
         process->didCommitMeaningfulProvisionalLoad();
 
     pageLoadState->commitChanges();
+
+#if ENABLE(WEBDRIVER_BIDI)
+    // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#document-open-steps runs the URL and history
+    // update steps for a fully active document, which WebCore has already given its new URL.
+    if (RefPtr automationSession = activeAutomationSession())
+        automationSession->historyUpdatedForFrame(*frame);
+#endif
 }
 
 void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, ResourceRequest&& request, const UserData& userData)
@@ -10970,18 +10977,24 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
         protectedPageLoadState->didSameDocumentNavigation(transaction, url);
 
     protectedPageLoadState->clearPendingAPIRequest(transaction);
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr automationSession = activeAutomationSession();
+    URL previousURL = automationSession ? frame->url() : URL { };
+#endif
     frame->didSameDocumentNavigation(WTF::move(url));
 
     protectedPageLoadState->commitChanges();
+    bool shouldCompleteAutomationNavigationCommands = true;
 #if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
-        automationSession->fragmentNavigatedForFrame(*frame, navigationID);
+    if (automationSession)
+        shouldCompleteAutomationNavigationCommands = automationSession->sameDocumentNavigationOccurredForFrame(*frame, navigationType, navigationID, previousURL);
 #endif
 
     // Emit browsingContext.fragmentNavigated before completing a pending navigation command (see didFinishLoadForFrame).
     // The navigation reported here is that of the document the fragment changed in, whose load a command awaiting
-    // it has not seen end, so only waits that are not bound to a navigation are completed.
-    if (m_controlledByAutomation) {
+    // it has not seen end, so only waits that are not bound to a navigation are completed. A same-document load
+    // that is reported by the anchor navigation following it leaves the commands to that one.
+    if (m_controlledByAutomation && shouldCompleteAutomationNavigationCommands) {
         if (RefPtr automationSession = m_configuration->processPool().automationSession())
             automationSession->navigationOccurredForFrame(*frame, nullptr, WebAutomationSession::NavigationNotification::SameDocumentNavigation);
     }
@@ -11028,16 +11041,21 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJS(IPC::Connection& conne
         protectedPageLoadState->didSameDocumentNavigation(transaction, url);
 
     protectedPageLoadState->clearPendingAPIRequest(transaction);
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr automationSession = activeAutomationSession();
+    URL previousURL = automationSession ? frame->url() : URL { };
+#endif
     frame->didSameDocumentNavigation(WTF::move(url));
 
     protectedPageLoadState->commitChanges();
+    bool shouldCompleteAutomationNavigationCommands = true;
 #if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
-        automationSession->fragmentNavigatedForFrame(*frame, navigation ? std::optional(navigation->navigationID()) : std::nullopt);
+    if (automationSession)
+        shouldCompleteAutomationNavigationCommands = automationSession->sameDocumentNavigationOccurredForFrame(*frame, navigationType, navigation ? std::optional(navigation->navigationID()) : std::nullopt, previousURL);
 #endif
 
     // Emit browsingContext.fragmentNavigated before completing a pending navigation command (see didFinishLoadForFrame).
-    if (m_controlledByAutomation) {
+    if (m_controlledByAutomation && shouldCompleteAutomationNavigationCommands) {
         if (RefPtr automationSession = m_configuration->processPool().automationSession())
             automationSession->navigationOccurredForFrame(*frame, nullptr, WebAutomationSession::NavigationNotification::SameDocumentNavigation);
     }

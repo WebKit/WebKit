@@ -37,6 +37,7 @@
 #include "ImageOptions.h"
 #include "InspectorPassthroughChannel.h"
 #include "PageLoadState.h"
+#include "SameDocumentNavigationType.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
@@ -1197,6 +1198,12 @@ static String navigationIDToProtocolString(std::optional<WebCore::NavigationIden
         return nullString();
     return uuid->toString();
 }
+
+// Protocol timestamps are integral milliseconds since the epoch (js-uint in the spec).
+static double bidiTimestampNow()
+{
+    return std::trunc(WallTime::now().secondsSinceEpoch().milliseconds());
+}
 #endif
 
 void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID, WallTime timestamp)
@@ -1275,7 +1282,7 @@ void WebAutomationSession::didCreatePage(WebPageProxy& page)
 void WebAutomationSession::navigationStartedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationStarted, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().navigationStarted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
+        m_bidiProcessor->browsingContextDomainNotifier().navigationStarted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), bidiTimestampNow(), frame.url().string());
     });
 }
 
@@ -1283,7 +1290,7 @@ void WebAutomationSession::navigationCommittedForFrame(const WebFrameProxy& fram
 {
     auto frameHandle = effectiveHandleForWebFrameProxy(frame);
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationCommitted, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().navigationCommitted(frameHandle, navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
+        m_bidiProcessor->browsingContextDomainNotifier().navigationCommitted(frameHandle, navigationIDToProtocolString(navigationID), bidiTimestampNow(), frame.url().string());
     });
 
     if (RefPtr page = frame.page()) {
@@ -1295,23 +1302,65 @@ void WebAutomationSession::navigationCommittedForFrame(const WebFrameProxy& fram
 void WebAutomationSession::navigationFailedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationFailed, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().navigationFailed(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
+        m_bidiProcessor->browsingContextDomainNotifier().navigationFailed(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), bidiTimestampNow(), frame.url().string());
     });
 }
 
 void WebAutomationSession::navigationAbortedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationAborted, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().navigationAborted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
+        m_bidiProcessor->browsingContextDomainNotifier().navigationAborted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), bidiTimestampNow(), frame.url().string());
     });
 }
 
 void WebAutomationSession::fragmentNavigatedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::FragmentNavigated, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().fragmentNavigated(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
+        m_bidiProcessor->browsingContextDomainNotifier().fragmentNavigated(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), bidiTimestampNow(), frame.url().string());
     });
     // NOTE: fragment navigations don't create a new document, and therefore do not trigger preload scripts.
+}
+
+void WebAutomationSession::historyUpdatedForFrame(const WebFrameProxy& frame)
+{
+    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::HistoryUpdated, { }, [&] {
+        m_bidiProcessor->browsingContextDomainNotifier().historyUpdated(effectiveHandleForWebFrameProxy(frame), bidiTimestampNow(), frame.url().string());
+    });
+}
+
+bool WebAutomationSession::sameDocumentNavigationOccurredForFrame(const WebFrameProxy& frame, SameDocumentNavigationType navigationType, std::optional<WebCore::NavigationIdentifier> navigationID, const URL& previousURL)
+{
+    switch (navigationType) {
+    case SameDocumentNavigationType::AnchorNavigation:
+        fragmentNavigatedForFrame(frame, navigationID);
+        return true;
+    case SameDocumentNavigationType::SessionStatePush:
+    case SameDocumentNavigationType::SessionStateReplace:
+        // https://html.spec.whatwg.org/multipage/browsing-the-web.html#url-and-history-update-steps
+        historyUpdatedForFrame(frame);
+        return true;
+    case SameDocumentNavigationType::SessionStatePop: {
+        // FrameLoader::loadInSameDocument() pops the state for every same-document load, and then,
+        // when the URL changed by its fragment alone, also dispatches an anchor navigation. Only that
+        // anchor navigation becomes browsingContext.fragmentNavigated, so a pop that mirrors its
+        // hashChange condition is ignored, and the anchor navigation completes pending navigation commands
+        // after its event. Any other same-document traversal is a history update,
+        // which is what the web platform tests expect for history.back() across pushState entries.
+        // FIXME: A navigation to the fragment the document is already at (location = "#foo" at #foo) has
+        // no hashChange in WebCore, so only this pop arrives, with an unchanged URL, and it is reported as a
+        // history update where the spec has a fragment navigation. Telling the two apart needs WebCore to
+        // report whether the pop came from a new navigation.
+        const URL& url = frame.url();
+        bool isFragmentNavigation = equalIgnoringFragmentIdentifier(url, previousURL) && !equalRespectingNullity(url.fragmentIdentifier(), previousURL.fragmentIdentifier());
+        if (isFragmentNavigation)
+            return false;
+        historyUpdatedForFrame(frame);
+        return true;
+    }
+    }
+
+    ASSERT_NOT_REACHED();
+    return true;
 }
 
 void WebAutomationSession::emitContextCreatedEvent(const WebPageProxy& page)
