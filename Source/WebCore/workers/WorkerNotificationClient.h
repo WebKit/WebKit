@@ -38,7 +38,7 @@ class WorkerGlobalScope;
 
 class WorkerNotificationClient : public NotificationClient, public ThreadSafeRefCounted<WorkerNotificationClient> {
 public:
-    static Ref<WorkerNotificationClient> create(WorkerGlobalScope&);
+    static Ref<WorkerNotificationClient> LEGACY_NODELETE create(WorkerGlobalScope&);
 
     // NotificationClient.
     bool show(ScriptExecutionContext&, NotificationData&&, RefPtr<NotificationResources>&&, CompletionHandler<void()>&&) final;

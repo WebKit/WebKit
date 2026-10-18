@@ -157,7 +157,7 @@ void WorkerConsoleClient::timeStamp(JSC::JSGlobalObject*, Ref<ScriptArguments>&&
         InspectorInstrumentation::consoleTimeStamp(*worker, WTF::move(arguments));
 }
 
-static JSC::JSObject* objectArgumentAt(ScriptArguments& arguments, unsigned index)
+static JSC::JSObject* LEGACY_NODELETE objectArgumentAt(ScriptArguments& arguments, unsigned index)
 {
     return arguments.argumentCount() > index ? arguments.argumentAt(index).getObject() : nullptr;
 }

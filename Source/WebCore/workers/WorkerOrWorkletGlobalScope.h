@@ -54,7 +54,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(ScriptExecutionContext);
 
     bool isClosing() const { return m_isClosing; }
-    RefPtr<WorkerOrWorkletThread> workerOrWorkletThread() const;
+    RefPtr<WorkerOrWorkletThread> LEGACY_NODELETE workerOrWorkletThread() const;
 
     WorkerOrWorkletScriptController* script() const { return m_script.get(); }
     void clearScript();

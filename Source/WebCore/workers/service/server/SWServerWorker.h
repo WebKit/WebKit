@@ -133,14 +133,14 @@ public:
     const Site& topSite() const LIFETIME_BOUND { return m_topSite; }
     WEBCORE_EXPORT std::optional<ScriptExecutionContextIdentifier> LEGACY_NODELETE serviceWorkerPageIdentifier() const;
 
-    bool shouldPersistToDisk() const;
+    bool LEGACY_NODELETE shouldPersistToDisk() const;
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
     String userAgent() const;
 
     bool hasRouterRules() const { return !m_routes.isEmpty(); }
     WEBCORE_EXPORT std::optional<RouterSource> getRouterSource(const FetchOptions&, const ResourceRequest&) const;
-    WEBCORE_EXPORT RouterSource defaultRouterSource() const;
+    WEBCORE_EXPORT RouterSource LEGACY_NODELETE defaultRouterSource() const;
 
     WEBCORE_EXPORT SWServerRegistration* LEGACY_NODELETE registration() const;
 
@@ -157,7 +157,7 @@ public:
 
     bool shouldContinue() const { return !!m_functionalEventCounter || m_isInspected; }
 
-    WEBCORE_EXPORT bool isClientActiveServiceWorker(ScriptExecutionContextIdentifier) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isClientActiveServiceWorker(ScriptExecutionContextIdentifier) const;
 
     Vector<URL> importedScriptURLs() const;
     const MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>& scriptResourceMap() const LIFETIME_BOUND { return m_scriptResourceMap; }

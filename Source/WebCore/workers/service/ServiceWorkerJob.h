@@ -50,7 +50,7 @@ struct ServiceWorkerRegistrationData;
 class ServiceWorkerJob final : public RefCounted<ServiceWorkerJob>, public WorkerScriptLoaderClient {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ServiceWorkerJob, WEBCORE_EXPORT);
 public:
-    static Ref<ServiceWorkerJob> create(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);
+    static Ref<ServiceWorkerJob> LEGACY_NODELETE create(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);
     WEBCORE_EXPORT ~ServiceWorkerJob();
 
     void ref() const final { RefCounted::ref(); }

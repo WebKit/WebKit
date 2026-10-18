@@ -40,7 +40,7 @@ class ServiceWorkerDebuggable final : public Inspector::RemoteInspectionTarget {
     WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerDebuggable);
     WTF_MAKE_NONCOPYABLE(ServiceWorkerDebuggable);
 public:
-    static Ref<ServiceWorkerDebuggable> create(ServiceWorkerThreadProxy&, const ServiceWorkerContextData&);
+    static Ref<ServiceWorkerDebuggable> LEGACY_NODELETE create(ServiceWorkerThreadProxy&, const ServiceWorkerContextData&);
 
     Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::ServiceWorker; }
 

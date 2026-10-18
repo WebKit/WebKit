@@ -46,7 +46,7 @@ struct WorkerInitializationData;
 class SharedWorkerScriptLoader final : public RefCounted<SharedWorkerScriptLoader>, private WorkerScriptLoaderClient {
     WTF_MAKE_TZONE_ALLOCATED(SharedWorkerScriptLoader);
 public:
-    static Ref<SharedWorkerScriptLoader> create(URL&&, SharedWorker&, WorkerOptions&&);
+    static Ref<SharedWorkerScriptLoader> LEGACY_NODELETE create(URL&&, SharedWorker&, WorkerOptions&&);
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

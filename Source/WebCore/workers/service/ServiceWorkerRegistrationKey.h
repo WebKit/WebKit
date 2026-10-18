@@ -39,7 +39,7 @@ public:
     ServiceWorkerRegistrationKey() = default;
     WEBCORE_EXPORT ServiceWorkerRegistrationKey(SecurityOriginData&& topOrigin, URL&& scope);
 
-    WEBCORE_EXPORT static ServiceWorkerRegistrationKey emptyKey();
+    WEBCORE_EXPORT static ServiceWorkerRegistrationKey LEGACY_NODELETE emptyKey();
 
     friend bool operator==(const ServiceWorkerRegistrationKey&, const ServiceWorkerRegistrationKey&) = default;
     bool isEmpty() const { return *this == emptyKey(); }

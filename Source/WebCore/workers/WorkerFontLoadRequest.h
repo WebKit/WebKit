@@ -45,7 +45,7 @@ struct FontCustomPlatformData;
 class WorkerFontLoadRequest final : public FontLoadRequest, public ThreadableLoaderClient, public RefCounted<WorkerFontLoadRequest> {
     WTF_MAKE_TZONE_ALLOCATED(WorkerFontLoadRequest);
 public:
-    static Ref<WorkerFontLoadRequest> create(URL&&, LoadedFromOpaqueSource);
+    static Ref<WorkerFontLoadRequest> LEGACY_NODELETE create(URL&&, LoadedFromOpaqueSource);
 
     void load(WorkerGlobalScope&);
 
