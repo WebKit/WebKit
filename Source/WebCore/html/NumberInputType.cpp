@@ -79,7 +79,7 @@ struct RealNumberRenderSize {
     }
 };
 
-static RealNumberRenderSize calculateRenderSize(const Decimal& value)
+static RealNumberRenderSize LEGACY_NODELETE calculateRenderSize(const Decimal& value)
 {
     ASSERT(value.isFinite());
     const unsigned sizeOfDigits = String::number(value.value().coefficient()).length();

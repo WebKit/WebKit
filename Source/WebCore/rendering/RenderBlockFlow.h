@@ -128,7 +128,7 @@ public:
         
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
 
-    bool establishesLineClampContainer() const;
+    bool LEGACY_NODELETE establishesLineClampContainer() const;
 
 protected:
     void willBeDestroyed() override;

@@ -102,7 +102,7 @@ public:
     ReadableStream& LEGACY_NODELETE incomingBidirectionalStreams();
     void createUnidirectionalStream(ScriptExecutionContext&, WebTransportSendStreamOptions&&, Ref<DeferredPromise>&&);
     ReadableStream& LEGACY_NODELETE incomingUnidirectionalStreams();
-    Ref<WebTransportSendGroup> createSendGroup();
+    Ref<WebTransportSendGroup> LEGACY_NODELETE createSendGroup();
     static bool LEGACY_NODELETE supportsReliableOnly();
 
     const Ref<WebTransportSession>& session() const { return m_session; };

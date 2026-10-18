@@ -213,7 +213,7 @@ public:
     // FIXME: Copying a FontCascadeDescription is really inefficient. Migrate all callers to
     // setFontDescriptionXXX() variants below, then remove these functions.
     inline void setFontDescription(FontCascadeDescription&&);
-    void setFontSize(FontCascadeDescription&, float size);
+    void LEGACY_NODELETE setFontSize(FontCascadeDescription&, float size);
 
     void setFontDescriptionKeywordSizeFromIdentifier(CSSValueID);
     void setFontDescriptionIsAbsoluteSize(bool);

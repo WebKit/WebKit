@@ -69,7 +69,7 @@ public:
     // Whether the item's height is definite by the phase the flex algorithm is in (9.8: the used sizes become
     // definite as the steps that produce them run). Absent when the algorithm is not running -- only
     // RenderFlexibleBox knows which of its own layout passes is then in play.
-    std::optional<bool> isFlexItemHeightDefiniteInLayoutPhase(const RenderBox& flexItem) const;
+    std::optional<bool> LEGACY_NODELETE isFlexItemHeightDefiniteInLayoutPhase(const RenderBox& flexItem) const;
 
     // CSS Flexbox 9.8: whether the item's post-flexing size is definite, which is what makes a percentage
     // resolved against it meaningful.

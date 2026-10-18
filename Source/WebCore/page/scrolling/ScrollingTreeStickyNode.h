@@ -61,7 +61,7 @@ protected:
     virtual bool hasViewportClippingLayer() const { return false; }
     const ViewportConstraints& constraints() const LIFETIME_BOUND final { return m_constraints; }
 
-    bool isCurrentlySticking(const FloatRect& constrainingRect) const;
+    bool LEGACY_NODELETE isCurrentlySticking(const FloatRect& constrainingRect) const;
 
     StickyPositionViewportConstraints m_constraints;
 };

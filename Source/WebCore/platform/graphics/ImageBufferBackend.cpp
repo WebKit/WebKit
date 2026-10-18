@@ -196,7 +196,7 @@ RefPtr<SharedBuffer> ImageBufferBackend::sinkIntoPDFDocument()
     return nullptr;
 }
 
-static AffineTransform baseTransformForBackingStore(const IntSize& backendSize, float resolutionScale)
+static AffineTransform LEGACY_NODELETE baseTransformForBackingStore(const IntSize& backendSize, float resolutionScale)
 {
     AffineTransform baseTransform;
 #if USE(CG)

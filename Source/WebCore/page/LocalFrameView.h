@@ -333,7 +333,7 @@ public:
     TransformationMatrix absoluteToChildFrameOwnerLocalTransform(const Frame&) const final;
 
     FloatRect mapAbsoluteToChildFrameViewRect(const FloatRect&, const Frame& child) const;
-    static FloatRect mapAbsoluteToChildFrameViewRect(const FloatRect& rectInAbsolute, const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform, FloatPoint childFrameOwnerContentBoxLocation);
+    static FloatRect LEGACY_NODELETE mapAbsoluteToChildFrameViewRect(const FloatRect& rectInAbsolute, const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform, FloatPoint childFrameOwnerContentBoxLocation);
 
     static LayoutRect visibleDocumentRect(const FloatRect& visibleContentRect, float headerHeight, float footerHeight, const FloatSize& totalContentsSize, float pageScaleFactor);
 

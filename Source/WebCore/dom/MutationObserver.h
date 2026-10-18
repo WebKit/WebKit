@@ -57,7 +57,7 @@ template<typename> class ExceptionOr;
 class MutationObserver final : public RefCounted<MutationObserver> {
     WTF_MAKE_TZONE_ALLOCATED(MutationObserver);
 public:
-    static Ref<MutationObserver> create(Ref<MutationCallback>&&);
+    static Ref<MutationObserver> LEGACY_NODELETE create(Ref<MutationCallback>&&);
 
     ~MutationObserver();
 

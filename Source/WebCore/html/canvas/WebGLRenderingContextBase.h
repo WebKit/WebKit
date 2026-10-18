@@ -1070,7 +1070,7 @@ protected:
     void synthesizeLostContextGLError(GCGLenum, ASCIILiteral functionName, ASCIILiteral description);
 
     // Clamp the width and height to GL_MAX_VIEWPORT_DIMS.
-    IntSize clampedCanvasSize();
+    IntSize LEGACY_NODELETE clampedCanvasSize();
 
     void setFramebuffer(const AbstractLocker&, GCGLenum, WebGLFramebuffer*);
 

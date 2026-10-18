@@ -70,7 +70,7 @@ namespace GridLayoutFunctions {
 LayoutUnit computeMarginLogicalSizeForGridItem(const RenderGrid&, Style::GridTrackSizingDirection, const RenderBox&);
 LayoutUnit marginLogicalSizeForGridItem(const RenderGrid&, Style::GridTrackSizingDirection, const RenderBox&);
 void setOverridingContentSizeForGridItem(const RenderGrid&, RenderBox& gridItem, LayoutUnit, Style::GridTrackSizingDirection);
-void clearOverridingContentSizeForGridItem(const RenderGrid&, RenderBox& gridItem, Style::GridTrackSizingDirection);
+void LEGACY_NODELETE clearOverridingContentSizeForGridItem(const RenderGrid&, RenderBox& gridItem, Style::GridTrackSizingDirection);
 bool LEGACY_NODELETE isOrthogonalGridItem(const RenderGrid&, const RenderBox&);
 bool isGridItemInlineSizeDependentOnBlockConstraints(const RenderBox& gridItem, const RenderGrid& parentGrid, ItemPosition gridItemAlignSelf);
 bool LEGACY_NODELETE isOrthogonalParent(const RenderGrid&, const RenderElement& parent);

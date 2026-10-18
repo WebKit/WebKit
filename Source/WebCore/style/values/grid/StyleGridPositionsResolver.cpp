@@ -120,7 +120,7 @@ static inline GridPositionSide LEGACY_NODELETE transposedSide(GridPositionSide s
     }
 }
 
-static std::optional<int> clampedImplicitLineForArea(const Style::ComputedStyle& style, const CustomIdent& name, int min, int max, GridTrackSizingDirection direction, bool isStartSide)
+static std::optional<int> LEGACY_NODELETE clampedImplicitLineForArea(const Style::ComputedStyle& style, const CustomIdent& name, int min, int max, GridTrackSizingDirection direction, bool isStartSide)
 {
     auto& areas = style.gridTemplateAreas().map.map;
     auto gridAreaIt = areas.find(name.value);

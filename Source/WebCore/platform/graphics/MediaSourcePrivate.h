@@ -161,7 +161,7 @@ public:
     // Compares the argument against m_buffered under m_lock without copying
     // m_buffered into the caller. Useful for short-circuit checks on the main
     // thread which would otherwise pay a full PlatformTimeRanges copy via buffered().
-    bool isBufferedEqual(const PlatformTimeRanges&) const;
+    bool LEGACY_NODELETE isBufferedEqual(const PlatformTimeRanges&) const;
     bool isBuffered(const PlatformTimeRanges&) const;
     PlatformTimeRanges seekable() const;
 

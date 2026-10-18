@@ -86,7 +86,7 @@ public:
 
     bool updating() const { return m_updating; }
     ExceptionOr<Ref<TimeRanges>> buffered();
-    double timestampOffset() const;
+    double LEGACY_NODELETE timestampOffset() const;
     ExceptionOr<void> setTimestampOffset(double);
 
     VideoTrackList& videoTracks();
@@ -218,7 +218,7 @@ private:
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID);
     WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
     WEBCORE_EXPORT Ref<GenericPromise> setMaximumSourceBufferSize(uint64_t);
-    WEBCORE_EXPORT size_t evictableSize() const;
+    WEBCORE_EXPORT size_t LEGACY_NODELETE evictableSize() const;
 
     void updateBuffered();
 

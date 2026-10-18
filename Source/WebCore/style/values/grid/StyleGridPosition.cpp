@@ -115,10 +115,10 @@ void GridPosition::setMaxPositionForTesting(unsigned maxPosition)
 template<> struct ToCSS<GridPosition> { auto operator()(const GridPosition&, const Style::ComputedStyle&) -> CSS::GridLine; };
 template<> struct ToStyle<CSS::GridLine> { auto operator()(const CSS::GridLine&, const BuilderState&) -> GridPosition; };
 
-template<> struct ToCSS<GridPosition::Explicit> { auto operator()(const GridPosition::Explicit&, const Style::ComputedStyle&) -> CSS::GridLine::Explicit; };
+template<> struct ToCSS<GridPosition::Explicit> { CSS::GridLine::Explicit LEGACY_NODELETE operator()(const GridPosition::Explicit&, const Style::ComputedStyle&); };
 template<> struct ToStyle<CSS::GridLine::Explicit> { auto operator()(const CSS::GridLine::Explicit&, const BuilderState&) -> GridPosition::Explicit; };
 
-template<> struct ToCSS<GridPosition::Span> { auto operator()(const GridPosition::Span&, const Style::ComputedStyle&) -> CSS::GridLine::Span; };
+template<> struct ToCSS<GridPosition::Span> { CSS::GridLine::Span LEGACY_NODELETE operator()(const GridPosition::Span&, const Style::ComputedStyle&); };
 template<> struct ToStyle<CSS::GridLine::Span> { auto operator()(const CSS::GridLine::Span&, const BuilderState&) -> GridPosition::Span; };
 
 auto ToCSS<GridPosition>::operator()(const GridPosition& value, const Style::ComputedStyle& style) -> CSS::GridLine

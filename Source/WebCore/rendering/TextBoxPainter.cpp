@@ -1049,7 +1049,7 @@ struct DecoratingBoxFragmentInlineSizes {
 
     float LEGACY_NODELETE total() const { return preceding + current + following; }
 };
-static DecoratingBoxFragmentInlineSizes decoratingBoxFragmentInlineSizes(const InlineIterator::InlineBox& decoratingInlineBox)
+static DecoratingBoxFragmentInlineSizes LEGACY_NODELETE decoratingBoxFragmentInlineSizes(const InlineIterator::InlineBox& decoratingInlineBox)
 {
     auto inlineSizes = DecoratingBoxFragmentInlineSizes { .current = decoratingInlineBox.logicalWidth() };
     for (auto fragment = decoratingInlineBox.nextInlineBoxLineLeftward(); fragment; fragment.traverseInlineBoxLineLeftward())

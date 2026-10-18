@@ -76,17 +76,17 @@ template<> struct Blending<LineWidth> {
 // MARK: - Evaluation
 
 template<> struct Evaluation<LineWidth, float> {
-    WEBCORE_EXPORT auto operator()(const LineWidth&, ZoomFactor, float deviceScaleFactor) -> float;
+    WEBCORE_EXPORT float LEGACY_NODELETE operator()(const LineWidth&, ZoomFactor, float deviceScaleFactor);
 };
 template<> struct Evaluation<LineWidth, LayoutUnit> {
-    WEBCORE_EXPORT auto operator()(const LineWidth&, ZoomFactor, float deviceScaleFactor) -> LayoutUnit;
+    WEBCORE_EXPORT LayoutUnit LEGACY_NODELETE operator()(const LineWidth&, ZoomFactor, float deviceScaleFactor);
 };
 
 template<> struct Evaluation<LineWidthBox, FloatBoxExtent> {
-    auto operator()(const LineWidthBox&, ZoomFactor, float deviceScaleFactor) -> FloatBoxExtent;
+    FloatBoxExtent LEGACY_NODELETE operator()(const LineWidthBox&, ZoomFactor, float deviceScaleFactor);
 };
 template<> struct Evaluation<LineWidthBox, LayoutBoxExtent> {
-    auto operator()(const LineWidthBox&, ZoomFactor, float deviceScaleFactor) -> LayoutBoxExtent;
+    LayoutBoxExtent LEGACY_NODELETE operator()(const LineWidthBox&, ZoomFactor, float deviceScaleFactor);
 };
 
 } // namespace Style

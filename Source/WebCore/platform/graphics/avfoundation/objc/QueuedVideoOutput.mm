@@ -204,7 +204,7 @@ void QueuedVideoOutput::invalidate()
 }
 
 template <typename MaybeConstMap, typename MaybeConstIter = decltype(MaybeConstMap().begin())>
-MaybeConstIter findImageForTime(MaybeConstMap& map, const MediaTime& time)
+MaybeConstIter LEGACY_NODELETE findImageForTime(MaybeConstMap& map, const MediaTime& time)
 {
     // Outputs of AVPlayerItemVideoOutput have a display time, but not a duration; they are valid
     // until the arrival of a later frame. Find this frame efficiently using set::upper_bound to find

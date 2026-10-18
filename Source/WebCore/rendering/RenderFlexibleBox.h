@@ -93,7 +93,7 @@ private:
     friend class LayoutIntegration::FlexLayout;
     friend class LayoutIntegration::FlexItemIntrinsicWidthComputationScope;
 
-    void clearFlexItemOverridingSizes();
+    void LEGACY_NODELETE clearFlexItemOverridingSizes();
 
     // The flex items' border box rects as they were before the flex algorithm ran, so layoutBlock can repaint the
     // ones it moved. Both walk the in-flow children directly (the flex item list is built inside FlexLayout::layout).

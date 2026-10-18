@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static inline bool cueSortsBefore(const Ref<TextTrackCue>& a, const Ref<TextTrackCue>& b)
+static inline bool LEGACY_NODELETE cueSortsBefore(const Ref<TextTrackCue>& a, const Ref<TextTrackCue>& b)
 {
     if (a->startMediaTime() < b->startMediaTime())
         return true;

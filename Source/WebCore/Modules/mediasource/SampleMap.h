@@ -56,14 +56,14 @@ public:
 
     size_t size() const { return m_samples.size(); }
 
-    WEBCORE_EXPORT iterator findSampleWithPresentationTime(const MediaTime&) LIFETIME_BOUND;
+    WEBCORE_EXPORT iterator LEGACY_NODELETE findSampleWithPresentationTime(const MediaTime&) LIFETIME_BOUND;
     WEBCORE_EXPORT iterator findSampleContainingPresentationTime(const MediaTime&) LIFETIME_BOUND;
     WEBCORE_EXPORT iterator findSampleContainingOrAfterPresentationTime(const MediaTime&) LIFETIME_BOUND;
-    WEBCORE_EXPORT iterator findSampleStartingOnOrAfterPresentationTime(const MediaTime&) LIFETIME_BOUND;
-    WEBCORE_EXPORT iterator findSampleStartingAfterPresentationTime(const MediaTime&) LIFETIME_BOUND;
+    WEBCORE_EXPORT iterator LEGACY_NODELETE findSampleStartingOnOrAfterPresentationTime(const MediaTime&) LIFETIME_BOUND;
+    WEBCORE_EXPORT iterator LEGACY_NODELETE findSampleStartingAfterPresentationTime(const MediaTime&) LIFETIME_BOUND;
     WEBCORE_EXPORT reverse_iterator reverseFindSampleContainingPresentationTime(const MediaTime&) LIFETIME_BOUND;
-    WEBCORE_EXPORT reverse_iterator reverseFindSampleBeforePresentationTime(const MediaTime&) LIFETIME_BOUND;
-    WEBCORE_EXPORT iterator_range findSamplesBetweenPresentationTimes(const MediaTime&, const MediaTime&) LIFETIME_BOUND;
+    WEBCORE_EXPORT reverse_iterator LEGACY_NODELETE reverseFindSampleBeforePresentationTime(const MediaTime&) LIFETIME_BOUND;
+    WEBCORE_EXPORT iterator_range LEGACY_NODELETE findSamplesBetweenPresentationTimes(const MediaTime&, const MediaTime&) LIFETIME_BOUND;
     WEBCORE_EXPORT iterator_range findSamplesBetweenPresentationTimesFromEnd(const MediaTime&, const MediaTime&) LIFETIME_BOUND;
 
 private:
@@ -93,9 +93,9 @@ public:
     const_reverse_iterator rend() const LIFETIME_BOUND { return m_samples.rend(); }
     size_t size() const LIFETIME_BOUND { return m_samples.size(); }
 
-    WEBCORE_EXPORT iterator findSampleWithDecodeKey(const KeyType&) LIFETIME_BOUND;
-    WEBCORE_EXPORT iterator findSampleAfterDecodeKey(const KeyType&) LIFETIME_BOUND;
-    WEBCORE_EXPORT reverse_iterator reverseFindSampleWithDecodeKey(const KeyType&) LIFETIME_BOUND;
+    WEBCORE_EXPORT iterator LEGACY_NODELETE findSampleWithDecodeKey(const KeyType&) LIFETIME_BOUND;
+    WEBCORE_EXPORT iterator LEGACY_NODELETE findSampleAfterDecodeKey(const KeyType&) LIFETIME_BOUND;
+    WEBCORE_EXPORT reverse_iterator LEGACY_NODELETE reverseFindSampleWithDecodeKey(const KeyType&) LIFETIME_BOUND;
     WEBCORE_EXPORT reverse_iterator findSyncSamplePriorToPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime()) LIFETIME_BOUND;
     WEBCORE_EXPORT reverse_iterator findSyncSamplePriorToDecodeIterator(reverse_iterator) LIFETIME_BOUND;
     WEBCORE_EXPORT iterator findSyncSampleAfterPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime()) LIFETIME_BOUND;

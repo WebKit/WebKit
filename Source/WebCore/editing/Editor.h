@@ -527,7 +527,7 @@ public:
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, Affinity, bool stillSelecting) const;
     WEBCORE_EXPORT unsigned countMatchesForText(const String&, const std::optional<SimpleRange>&, FindOptions, unsigned limit, bool markMatches, Vector<SimpleRange>*);
     WEBCORE_EXPORT unsigned markAllMatchesForText(const String&, FindOptions, unsigned limit);
-    WEBCORE_EXPORT void textMatchMarkersWereCleared();
+    WEBCORE_EXPORT void LEGACY_NODELETE textMatchMarkersWereCleared();
     bool markedTextMatchesAreHighlighted() const;
     WEBCORE_EXPORT void setMarkedTextMatchesAreHighlighted(bool);
 
@@ -585,7 +585,7 @@ public:
     WEBCORE_EXPORT void toggleSmartLists();
 #endif
 
-    WEBCORE_EXPORT bool isAlternativeTextUIActive() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isAlternativeTextUIActive() const;
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT bool isSmartListsEnabled();

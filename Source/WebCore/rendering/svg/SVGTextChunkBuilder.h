@@ -50,8 +50,8 @@ public:
 
     const Vector<SVGTextChunk>& textChunks() const LIFETIME_BOUND { return m_textChunks; }
     unsigned LEGACY_NODELETE totalCharacters() const;
-    float totalLength() const;
-    float totalAnchorShift() const;
+    float LEGACY_NODELETE totalLength() const;
+    float LEGACY_NODELETE totalAnchorShift() const;
 
     void buildTextChunks(std::span<const SVGTextChunkBox>, std::span<const unsigned> chunkStarts);
     void layoutTextChunks(std::span<const SVGTextChunkBox>, std::span<const unsigned> chunkStarts);

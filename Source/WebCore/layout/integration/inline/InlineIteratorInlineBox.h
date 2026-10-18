@@ -39,7 +39,7 @@ public:
 
     const RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(Box::renderer()); }
 
-    RectEdges<bool> closedEdges() const;
+    RectEdges<bool> LEGACY_NODELETE closedEdges() const;
 
     InlineBoxIterator LEGACY_NODELETE nextInlineBoxLineRightward() const;
     InlineBoxIterator LEGACY_NODELETE nextInlineBoxLineLeftward() const;

@@ -51,10 +51,10 @@ std::optional<FloatPoint> LEGACY_NODELETE findLineIntersection(const FloatPoint&
 // Find where the segment crosses the infinite line through lineA and lineB. Returns std::nullopt if they are parallel or the crossing lies beyond the segment's ends.
 std::optional<FloatPoint> LEGACY_NODELETE findSegmentLineIntersection(const FloatPoint& segmentStart, const FloatPoint& segmentEnd, const FloatPoint& lineA, const FloatPoint& lineB);
 
-WEBCORE_EXPORT IntRect unionRect(const Vector<IntRect>&);
-WEBCORE_EXPORT IntRect unionRectIgnoringZeroRects(const Vector<IntRect>&);
-WEBCORE_EXPORT FloatRect unionRect(const Vector<FloatRect>&);
-WEBCORE_EXPORT FloatRect unionRectIgnoringZeroRects(const Vector<FloatRect>&);
+WEBCORE_EXPORT IntRect LEGACY_NODELETE unionRect(const Vector<IntRect>&);
+WEBCORE_EXPORT IntRect LEGACY_NODELETE unionRectIgnoringZeroRects(const Vector<IntRect>&);
+WEBCORE_EXPORT FloatRect LEGACY_NODELETE unionRect(const Vector<FloatRect>&);
+WEBCORE_EXPORT FloatRect LEGACY_NODELETE unionRectIgnoringZeroRects(const Vector<FloatRect>&);
 
 // Map point from srcRect to an equivalent point in destRect.
 FloatPoint LEGACY_NODELETE mapPoint(FloatPoint, const FloatRect& srcRect, const FloatRect& destRect);
@@ -129,7 +129,7 @@ struct RotatedRect {
     float angleInRadians;
 };
 
-WEBCORE_EXPORT RotatedRect rotatedBoundingRectWithMinimumAngleOfRotation(const FloatQuad&, std::optional<float> minRotationInRadians = std::nullopt);
+WEBCORE_EXPORT RotatedRect LEGACY_NODELETE rotatedBoundingRectWithMinimumAngleOfRotation(const FloatQuad&, std::optional<float> minRotationInRadians = std::nullopt);
 
 static inline float min3(float a, float b, float c)
 {

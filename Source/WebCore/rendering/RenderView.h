@@ -139,7 +139,7 @@ public:
     // function and should not be mistaken for a general page number API.
     unsigned LEGACY_NODELETE pageNumberForBlockProgressionOffset(int offset) const;
 
-    unsigned pageCount() const;
+    unsigned LEGACY_NODELETE pageCount() const;
 
     // FIXME: These functions are deprecated. No code should be added that uses these.
     int bestTruncatedAt() const { return m_legacyPrinting.m_bestTruncatedAt; }

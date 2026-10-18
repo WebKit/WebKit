@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-inline void extendRect(FloatRect& rect, FloatPoint a, FloatPoint b, FloatPoint c)
+inline void LEGACY_NODELETE extendRect(FloatRect& rect, FloatPoint a, FloatPoint b, FloatPoint c)
 {
     auto minX = min3(a.x(), b.x(), c.x());
     auto maxX = max3(a.x(), b.x(), c.x());
@@ -44,7 +44,7 @@ inline void extendRect(FloatRect& rect, FloatPoint a, FloatPoint b, FloatPoint c
     rect.extend({ minX, minY }, { maxX, maxY });
 }
 
-inline void extendRect(FloatRect& rect, FloatPoint a, FloatPoint b, FloatPoint c, FloatPoint d)
+inline void LEGACY_NODELETE extendRect(FloatRect& rect, FloatPoint a, FloatPoint b, FloatPoint c, FloatPoint d)
 {
     auto minX = min4(a.x(), b.x(), c.x(), d.x());
     auto maxX = max4(a.x(), b.x(), c.x(), d.x());

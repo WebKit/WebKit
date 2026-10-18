@@ -78,7 +78,7 @@ private:
     void layoutExcludedChildren(RelayoutChildren) final;
 
     void placeExcludedMarker(RenderListOutsideMarker&);
-    RenderListOutsideMarker* excludedMarker() const;
+    RenderListOutsideMarker* LEGACY_NODELETE excludedMarker() const;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 

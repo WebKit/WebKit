@@ -64,7 +64,7 @@ public:
     bool isBlockLevelBox() const;
     bool isAtomicInlineBox() const;
 
-    FloatRect visualRect() const;
+    FloatRect LEGACY_NODELETE visualRect() const;
     FloatRect visualRectIgnoringBlockDirection() const;
     // Visual in inline direction, logical for writing mode.
     inline FloatRect logicalRectIgnoringInlineDirection() const;
@@ -114,7 +114,7 @@ public:
 
     InlineBoxIterator parentInlineBox() const;
 
-    LineBoxIterator lineBox() const;
+    LineBoxIterator LEGACY_NODELETE lineBox() const;
     size_t lineIndex() const;
 
     const InlineDisplay::Box& displayBox() const { return displayBoxes()[m_boxIndex]; }

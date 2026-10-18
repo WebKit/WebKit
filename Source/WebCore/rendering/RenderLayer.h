@@ -594,7 +594,7 @@ public:
     void clearClipRectsIncludingDescendants(ClipRectsType typeToClear = AllClipRectTypes);
     void clearClipRects(ClipRectsType typeToClear = AllClipRectTypes);
 
-    void addBlockSelectionGapsBounds(const LayoutRect&);
+    void LEGACY_NODELETE addBlockSelectionGapsBounds(const LayoutRect&);
     void LEGACY_NODELETE clearBlockSelectionGapsBounds();
     void repaintBlockSelectionGaps();
 
@@ -824,7 +824,7 @@ public:
     // Can pass offsetFromRoot if known.
     LayoutRect calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutSize& offsetFromRoot, OptionSet<CalculateLayerBoundsFlag> = defaultCalculateLayerBoundsFlags()) const;
     
-    LayoutRect repaintRectIncludingNonCompositingDescendants() const;
+    LayoutRect LEGACY_NODELETE repaintRectIncludingNonCompositingDescendants() const;
 
     void LEGACY_NODELETE setRepaintStatus(RepaintStatus);
     RepaintStatus repaintStatus() const { return m_repaintStatus; }
@@ -1300,7 +1300,7 @@ private:
 
     RenderLayer* transparentPaintingAncestor(const LayerPaintingInfo&);
     void beginTransparencyLayers(GraphicsContext&, const LayerPaintingInfo&, const LayoutRect& dirtyRect);
-    bool blendModeAppliesToSVGRootContentsOnly() const;
+    bool LEGACY_NODELETE blendModeAppliesToSVGRootContentsOnly() const;
 
     HitLayer hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, bool appliedTransform,

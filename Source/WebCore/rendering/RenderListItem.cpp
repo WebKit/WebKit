@@ -72,7 +72,7 @@ enum class MarkerSearchBoxType : uint8_t {
     NestedListInQuirksMode,
     TableRubyOrReplaced,
 };
-static MarkerSearchBoxType markerSearchBoxType(const RenderObject& box)
+static MarkerSearchBoxType LEGACY_NODELETE markerSearchBoxType(const RenderObject& box)
 {
     if (box.isFloating() || box.isOutOfFlowPositioned())
         return MarkerSearchBoxType::Opaque;

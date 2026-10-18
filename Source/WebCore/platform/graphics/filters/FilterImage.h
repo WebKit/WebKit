@@ -57,7 +57,7 @@ public:
 
     // The return values are in filter coordinates.
     FloatRect primitiveSubregion() const { return m_primitiveSubregion; }
-    FloatRect maxEffectRect(const Filter&) const;
+    FloatRect LEGACY_NODELETE maxEffectRect(const Filter&) const;
     FloatRect imageRect() const { return m_imageRect; }
 
     // The return values are in user-space coordinates.

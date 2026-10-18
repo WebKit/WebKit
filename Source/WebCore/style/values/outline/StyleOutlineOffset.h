@@ -68,10 +68,10 @@ template<> struct Blending<OutlineOffset> {
 // MARK: - Evaluation
 
 template<> struct Evaluation<UsedOutlineOffset, float> {
-    WEBCORE_EXPORT auto operator()(const UsedOutlineOffset&, ZoomFactor, float deviceScaleFactor) -> float;
+    WEBCORE_EXPORT float LEGACY_NODELETE operator()(const UsedOutlineOffset&, ZoomFactor, float deviceScaleFactor);
 };
 template<> struct Evaluation<UsedOutlineOffset, LayoutUnit> {
-    auto operator()(const UsedOutlineOffset&, ZoomFactor, float deviceScaleFactor) -> LayoutUnit;
+    LayoutUnit LEGACY_NODELETE operator()(const UsedOutlineOffset&, ZoomFactor, float deviceScaleFactor);
 };
 
 } // namespace WebCore::Style

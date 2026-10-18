@@ -288,7 +288,7 @@ private:
     void advanceNextState();
     bool LEGACY_NODELETE isValidTransition() const;
 
-    bool isDirectionInStackingAxis() const;
+    bool LEGACY_NODELETE isDirectionInStackingAxis() const;
 
     // Data.
     bool wasSetup() const { return !!m_strategy; }

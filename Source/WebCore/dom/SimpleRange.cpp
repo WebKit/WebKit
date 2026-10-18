@@ -150,7 +150,7 @@ void IntersectingNodeIterator::enforceEndInvariant()
     }
 }
 
-template<TreeType treeType> Node* commonInclusiveAncestor(const SimpleRange& range)
+template<TreeType treeType> Node* LEGACY_NODELETE commonInclusiveAncestor(const SimpleRange& range)
 {
     return commonInclusiveAncestor<treeType>(range.start.container, range.end.container);
 }

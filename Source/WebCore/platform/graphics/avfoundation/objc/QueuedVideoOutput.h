@@ -56,7 +56,7 @@ public:
 
     bool LEGACY_NODELETE valid();
     void invalidate();
-    bool hasImageForTime(const MediaTime&) const;
+    bool LEGACY_NODELETE hasImageForTime(const MediaTime&) const;
 
     struct VideoFrameEntry {
         RetainPtr<CVPixelBufferRef> pixelBuffer;

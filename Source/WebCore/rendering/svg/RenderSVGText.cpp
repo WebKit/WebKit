@@ -124,7 +124,7 @@ static inline void collectLayoutAttributes(RenderObject* text, Vector<SVGTextLay
     }
 }
 
-static inline std::tuple<SVGTextLayoutAttributes*, SVGTextLayoutAttributes*> findPreviousAndNextAttributes(RenderElement& root, RenderSVGInlineText& locateElement)
+static inline std::tuple<SVGTextLayoutAttributes*, SVGTextLayoutAttributes*> LEGACY_NODELETE findPreviousAndNextAttributes(RenderElement& root, RenderSVGInlineText& locateElement)
 {
     SVGTextLayoutAttributes* previous = nullptr;
     bool foundLocateElement = false;

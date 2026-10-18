@@ -89,7 +89,7 @@ public:
         unsigned audio;
         unsigned video;
     };
-    static BitRates computeBitRates(const MediaRecorderPrivateOptions&, const MediaStreamPrivate* = nullptr);
+    static BitRates LEGACY_NODELETE computeBitRates(const MediaRecorderPrivateOptions&, const MediaStreamPrivate* = nullptr);
 
 protected:
     void setAudioSource(RefPtr<RealtimeMediaSource>&&);

@@ -1143,7 +1143,7 @@ public:
     }
 
 private:
-    void updateBoundingBox(FloatPoint point)
+    void LEGACY_NODELETE updateBoundingBox(FloatPoint point)
     {
         if (!m_boundingBox) {
             m_boundingBox = FloatRect(point, FloatSize());

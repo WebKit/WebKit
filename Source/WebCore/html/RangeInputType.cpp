@@ -81,7 +81,7 @@ static const int rangeDefaultStepBase = 0;
 static const int rangeStepScaleFactor = 1;
 static const StepRange::StepDescription rangeStepDescription { rangeDefaultStep, rangeDefaultStepBase, rangeStepScaleFactor };
 
-static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimum)
+static Decimal LEGACY_NODELETE ensureMaximum(const Decimal& proposedValue, const Decimal& minimum)
 {
     return proposedValue >= minimum ? proposedValue : minimum;
 }

@@ -48,7 +48,7 @@ public:
     std::optional<bool> defaultEnabled() const final;
     std::optional<MediaTime> LEGACY_NODELETE codecDelay() const;
     void LEGACY_NODELETE setDiscardPadding(const MediaTime&);
-    std::optional<MediaTime> discardPadding() const;
+    std::optional<MediaTime> LEGACY_NODELETE discardPadding() const;
 
 private:
     AudioTrackPrivateWebM(webm::TrackEntry&&);

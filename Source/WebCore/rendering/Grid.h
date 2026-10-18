@@ -55,10 +55,10 @@ public:
     // this method will return false for a grid container with only out of flow children.
     bool hasGridItems() const { return !m_gridItemArea.isEmpty(); }
 
-    GridArea gridItemArea(const RenderBox& item) const;
+    GridArea LEGACY_NODELETE gridItemArea(const RenderBox& item) const;
     void setGridItemArea(const RenderBox& item, GridArea);
 
-    GridSpan gridItemSpan(const RenderBox&, Style::GridTrackSizingDirection) const;
+    GridSpan LEGACY_NODELETE gridItemSpan(const RenderBox&, Style::GridTrackSizingDirection) const;
 
     const GridCell& LEGACY_NODELETE cell(unsigned row, unsigned column) const LIFETIME_BOUND;
 
@@ -70,7 +70,7 @@ public:
 
     void LEGACY_NODELETE setClampingForSubgrid(unsigned maxRows, unsigned maxColumns);
 
-    void clampAreaToSubgridIfNeeded(GridArea&);
+    void LEGACY_NODELETE clampAreaToSubgridIfNeeded(GridArea&);
 
     void setAutoRepeatEmptyColumns(std::unique_ptr<OrderedTrackIndexSet>);
     void setAutoRepeatEmptyRows(std::unique_ptr<OrderedTrackIndexSet>);
@@ -125,7 +125,7 @@ public:
 
     RenderBox* LEGACY_NODELETE nextGridItem();
     bool LEGACY_NODELETE isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const;
-    std::optional<GridArea> nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan);
+    std::optional<GridArea> LEGACY_NODELETE nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan);
 
     Style::GridTrackSizingDirection direction() const
     {

@@ -61,7 +61,7 @@ inline bool operator==(const UniqueRef<KeywordColor>& a, const UniqueRef<Keyword
 }
 
 Color toStyleColor(const CSS::KeywordColor&, ColorResolutionState&);
-WebCore::Color resolveColor(const KeywordColor&, const ResolvedColors&);
+WebCore::Color LEGACY_NODELETE resolveColor(const KeywordColor&, const ResolvedColors&);
 
 constexpr bool containsCurrentColor(const KeywordColor&)
 {

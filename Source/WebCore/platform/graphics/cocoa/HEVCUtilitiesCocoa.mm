@@ -219,7 +219,7 @@ static RetainPtr<CMFormatDescriptionRef> createHEVCFormatDescriptionFromParamete
     return adoptCF(rawDescription);
 }
 
-static bool hevcAnnexBVpsIsFollowedBySpsAndPps(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices, size_t vpsIndex)
+static bool LEGACY_NODELETE hevcAnnexBVpsIsFollowedBySpsAndPps(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices, size_t vpsIndex)
 {
     if (vpsIndex + 2 >= naluIndices.size())
         return false;

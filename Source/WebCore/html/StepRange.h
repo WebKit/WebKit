@@ -69,18 +69,18 @@ public:
     StepRange(const StepRange&);
     StepRange(const Decimal& stepBase, RangeLimitations, const Decimal& minimum, const Decimal& maximum, const Decimal& step, const StepDescription&, IsReversible = IsReversible::No);
     Decimal LEGACY_NODELETE acceptableError() const;
-    Decimal alignValueForStep(const Decimal& currentValue, const Decimal& newValue) const;
-    Decimal clampValue(const Decimal& value) const;
+    Decimal LEGACY_NODELETE alignValueForStep(const Decimal& currentValue, const Decimal& newValue) const;
+    Decimal LEGACY_NODELETE clampValue(const Decimal& value) const;
     bool hasStep() const { return m_hasStep; }
     bool hasRangeLimitations() const { return m_hasRangeLimitations; }
     Decimal maximum() const { return m_maximum; }
     Decimal minimum() const { return m_minimum; }
-    Decimal stepSnappedMaximum() const;
+    Decimal LEGACY_NODELETE stepSnappedMaximum() const;
     static Decimal parseStep(AnyStepHandling, const StepDescription&, StringView);
     Decimal step() const { return m_step; }
     Decimal stepBase() const { return m_stepBase; }
     int stepScaleFactor() const { return m_stepDescription.stepScaleFactor; }
-    bool stepMismatch(const Decimal&) const;
+    bool LEGACY_NODELETE stepMismatch(const Decimal&) const;
     bool isReversible() const { return m_isReversible; }
 
     // Clamp the middle value according to the step
@@ -106,7 +106,7 @@ public:
 
 private:
     StepRange& operator =(const StepRange&);
-    Decimal roundByStep(const Decimal& value, const Decimal& base) const;
+    Decimal LEGACY_NODELETE roundByStep(const Decimal& value, const Decimal& base) const;
 
     const Decimal m_maximum; // maximum must be >= minimum.
     const Decimal m_minimum;

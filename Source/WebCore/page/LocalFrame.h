@@ -375,7 +375,7 @@ public:
     const FrameConsoleClient& console() const { return m_consoleClient.get(); }
 
     // The debugger to attach to this frame's global objects.
-    JSC::Debugger* debugger() const LIFETIME_BOUND;
+    JSC::Debugger* LEGACY_NODELETE debugger() const LIFETIME_BOUND;
 
 protected:
     void frameWasDisconnectedFromOwner() const final;

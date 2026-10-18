@@ -74,11 +74,11 @@ public:
 
 // SamplePresentationTimeIsInsideRangeComparator matches (range.first, range.second]
 struct SamplePresentationTimeIsInsideRangeComparator {
-    bool operator()(std::pair<MediaTime, MediaTime> range, const std::pair<MediaTime, RefPtr<MediaSample>>& value)
+    bool LEGACY_NODELETE operator()(std::pair<MediaTime, MediaTime> range, const std::pair<MediaTime, RefPtr<MediaSample>>& value)
     {
         return range.second < value.first;
     }
-    bool operator()(const std::pair<MediaTime, RefPtr<MediaSample>>& value, std::pair<MediaTime, MediaTime> range)
+    bool LEGACY_NODELETE operator()(const std::pair<MediaTime, RefPtr<MediaSample>>& value, std::pair<MediaTime, MediaTime> range)
     {
         return value.first <= range.first;
     }
@@ -86,11 +86,11 @@ struct SamplePresentationTimeIsInsideRangeComparator {
 
 // SamplePresentationTimeIsWithinRangeComparator matches [range.first, range.second)
 struct SamplePresentationTimeIsWithinRangeComparator {
-    bool operator()(std::pair<MediaTime, MediaTime> range, const std::pair<MediaTime, RefPtr<MediaSample>>& value)
+    bool LEGACY_NODELETE operator()(std::pair<MediaTime, MediaTime> range, const std::pair<MediaTime, RefPtr<MediaSample>>& value)
     {
         return range.second <= value.first;
     }
-    bool operator()(const std::pair<MediaTime, RefPtr<MediaSample>>& value, std::pair<MediaTime, MediaTime> range)
+    bool LEGACY_NODELETE operator()(const std::pair<MediaTime, RefPtr<MediaSample>>& value, std::pair<MediaTime, MediaTime> range)
     {
         return value.first < range.first;
     }

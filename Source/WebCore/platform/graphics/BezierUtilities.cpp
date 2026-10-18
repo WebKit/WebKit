@@ -206,7 +206,7 @@ static bool LEGACY_NODELETE boxesTouchOrOverlap(const FloatRect& first, const Fl
         && first.maxY() >= second.y() && first.y() <= second.maxY();
 }
 
-static FloatRect controlPointBounds(const BezierSegment& curve)
+static FloatRect LEGACY_NODELETE controlPointBounds(const BezierSegment& curve)
 {
     FloatRect bounds { curve.start, FloatSize { } };
     bounds.extend(curve.controlPoint1);
@@ -220,14 +220,14 @@ static FloatRect controlPointBounds(const BezierSegment& curve)
 constexpr float crossingTolerance = 1.0f / 256;
 constexpr unsigned maximumCrossingDepth = 40;
 
-static FloatRect monotonicBounds(const BezierSegment& curve)
+static FloatRect LEGACY_NODELETE monotonicBounds(const BezierSegment& curve)
 {
     FloatRect bounds { curve.start, FloatSize { } };
     bounds.extend(curve.end);
     return bounds;
 }
 
-static FloatRect monotonicBounds(const Vector<BezierSegment>& curves)
+static FloatRect LEGACY_NODELETE monotonicBounds(const Vector<BezierSegment>& curves)
 {
     FloatRect bounds { curves.first().start, FloatSize { } };
     bounds.extend(curves.last().end);

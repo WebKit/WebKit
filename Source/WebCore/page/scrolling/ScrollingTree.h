@@ -207,8 +207,8 @@ public:
     WEBCORE_EXPORT bool LEGACY_NODELETE willWheelEventStartSwipeGesture(const PlatformWheelEvent&);
 
     ScrollingTreeFrameScrollingNode* rootNode() const { return m_rootNode.get(); }
-    std::optional<ScrollingNodeID> latchedNodeID() const;
-    WEBCORE_EXPORT void clearLatchedNode();
+    std::optional<ScrollingNodeID> LEGACY_NODELETE latchedNodeID() const;
+    WEBCORE_EXPORT void LEGACY_NODELETE clearLatchedNode();
 
     WEBCORE_EXPORT bool hasFixedOrSticky() const;
     void fixedOrStickyNodeAdded(ScrollingTreeNode&);

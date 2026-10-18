@@ -133,7 +133,7 @@ static void invalidateLineLayout(RenderObject& renderer, IsRemoval isRemoval)
         container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
 }
 
-static void getInlineRun(RenderObject* start, RenderObject* boundary, RenderObject*& inlineRunStart, RenderObject*& inlineRunEnd)
+static void LEGACY_NODELETE getInlineRun(RenderObject* start, RenderObject* boundary, RenderObject*& inlineRunStart, RenderObject*& inlineRunEnd)
 {
     // Beginning at |start| we find the largest contiguous run of inlines that
     // we can. We denote the run with start and end points, |inlineRunStart|

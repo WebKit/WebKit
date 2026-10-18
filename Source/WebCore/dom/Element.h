@@ -206,7 +206,7 @@ public:
     Vector<String> getAttributeNames() const;
 
     // Typed getters and setters for language bindings.
-    WEBCORE_EXPORT int integralAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT int LEGACY_NODELETE integralAttribute(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT unsigned unsignedIntegralAttribute(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setBooleanAttribute(const QualifiedName& attributeName, bool);
     WEBCORE_EXPORT void setIntegralAttribute(const QualifiedName& attributeName, int value);
@@ -542,7 +542,7 @@ public:
     const Style::ComputedStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) override;
     const Style::ComputedStyle* computedStyleForEditability();
 
-    bool needsStyleInvalidation() const;
+    bool LEGACY_NODELETE needsStyleInvalidation() const;
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
     bool styleAffectedByEmpty() const { return hasStyleFlag(NodeStyleFlag::StyleAffectedByEmpty); }

@@ -133,8 +133,8 @@ public:
     InlineIterator::InlineBoxIterator firstInlineBoxFor(const RenderBoxModelObject&) const;
     InlineIterator::InlineBoxIterator firstRootInlineBox() const;
     InlineIterator::BoxIterator lastBox() const;
-    InlineIterator::LineBoxIterator firstLineBox() const;
-    InlineIterator::LineBoxIterator lastLineBox() const;
+    InlineIterator::LineBoxIterator LEGACY_NODELETE firstLineBox() const;
+    InlineIterator::LineBoxIterator LEGACY_NODELETE lastLineBox() const;
 
     const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(*m_rootLayoutBox->rendererForIntegration()); }
     RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(*m_rootLayoutBox->rendererForIntegration()); }

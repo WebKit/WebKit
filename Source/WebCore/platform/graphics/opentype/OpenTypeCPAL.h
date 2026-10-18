@@ -36,7 +36,7 @@ namespace WebCore {
 // https://learn.microsoft.com/en-us/typography/opentype/spec/cpal
 class OpenTypeCPAL {
 public:
-    static std::optional<OpenTypeCPAL> parse(std::span<const uint8_t> table LIFETIME_BOUND);
+    static std::optional<OpenTypeCPAL> LEGACY_NODELETE parse(std::span<const uint8_t> table LIFETIME_BOUND);
 
     size_t numberOfPalettes() const { return m_numberOfPalettes; }
 

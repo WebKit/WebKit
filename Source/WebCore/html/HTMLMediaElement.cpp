@@ -2249,7 +2249,7 @@ static bool compareCueInterval(const CueInterval& one, const CueInterval& two)
     return protect(one.data())->isOrderedBefore(protect(two.data()));
 }
 
-static bool compareCueIntervalEndTime(const CueInterval& one, const CueInterval& two)
+static bool LEGACY_NODELETE compareCueIntervalEndTime(const CueInterval& one, const CueInterval& two)
 {
     return one.data()->endMediaTime() > two.data()->endMediaTime();
 }

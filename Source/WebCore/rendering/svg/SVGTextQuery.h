@@ -51,7 +51,7 @@ private:
     bool executeQuery(Data*, ProcessTextFragmentCallback) const;
 
     void collectTextBoxesInInlineBox(InlineIterator::InlineBoxIterator);
-    bool mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
+    bool LEGACY_NODELETE mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
     void LEGACY_NODELETE modifyStartEndPositionsRespectingLigatures(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
 
 private:

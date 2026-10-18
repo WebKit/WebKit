@@ -130,7 +130,7 @@ static Position nextLineCandidatePosition(Node* node, const VisiblePosition& vis
     return Position();
 }
 
-static bool isTextOrLineBreakBox(InlineIterator::LeafBoxIterator box)
+static bool LEGACY_NODELETE isTextOrLineBreakBox(InlineIterator::LeafBoxIterator box)
 {
     return box && (box->isText() || box->renderer().isBR());
 }

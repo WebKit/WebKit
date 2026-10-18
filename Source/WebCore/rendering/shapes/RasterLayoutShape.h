@@ -47,7 +47,7 @@ public:
     {
     }
 
-    void initializeBounds();
+    void LEGACY_NODELETE initializeBounds();
     const IntRect& bounds() const LIFETIME_BOUND { return m_bounds; }
     bool isEmpty() const { return m_bounds.isEmpty(); }
 

@@ -81,12 +81,12 @@ public:
     bool isFirstAfterPageBreak() const;
 
     bool hasBlockContent() const;
-    LeafBoxIterator blockLevelBox() const;
+    LeafBoxIterator LEGACY_NODELETE blockLevelBox() const;
     inline bool hasContentfulInFlowBox() const;
 
     // Text-relative left/right
-    LeafBoxIterator lineLeftmostLeafBox() const;
-    LeafBoxIterator lineRightmostLeafBox() const;
+    LeafBoxIterator LEGACY_NODELETE lineLeftmostLeafBox() const;
+    LeafBoxIterator LEGACY_NODELETE lineRightmostLeafBox() const;
     // Coordinate-relative left/right
     inline LeafBoxIterator logicalLeftmostLeafBox() const;
     inline LeafBoxIterator logicalRightmostLeafBox() const;

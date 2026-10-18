@@ -246,7 +246,7 @@ RefPtr<Model> HTMLModelElement::model() const
     return m_model;
 }
 
-static bool isSupportedModelType(const AtomString& type)
+static bool LEGACY_NODELETE isSupportedModelType(const AtomString& type)
 {
     return type.isEmpty() || MIMETypeRegistry::isSupportedModelMIMEType(type);
 }
