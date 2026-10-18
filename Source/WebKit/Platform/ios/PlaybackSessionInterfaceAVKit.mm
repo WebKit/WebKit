@@ -59,7 +59,7 @@ static Ref<WebCore::NowPlayingMetadataObserver> nowPlayingMetadataObserver(Playb
 }
 
 PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(WebCore::PlaybackSessionModel& model)
-    : PlaybackSessionInterfaceIOS { model }
+    : PlaybackSessionInterfaceCocoa { model }
     , m_contentSource { adoptNS([[WKAVContentSource alloc] initWithModel:model]) }
     , m_nowPlayingMetadataObserver { nowPlayingMetadataObserver(*this) }
 {

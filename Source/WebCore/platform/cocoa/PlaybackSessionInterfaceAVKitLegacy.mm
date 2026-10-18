@@ -55,7 +55,7 @@ Ref<PlaybackSessionInterfaceAVKitLegacy> PlaybackSessionInterfaceAVKitLegacy::cr
 }
 
 PlaybackSessionInterfaceAVKitLegacy::PlaybackSessionInterfaceAVKitLegacy(PlaybackSessionModel& model)
-    : PlaybackSessionInterfaceIOS(model)
+    : PlaybackSessionInterfaceCocoa(model)
     , m_playerController(createWebAVPlayerController())
 {
     ASSERT(isUIThread());
@@ -87,7 +87,7 @@ void PlaybackSessionInterfaceAVKitLegacy::invalidate()
     [m_playerController setPlaybackSessionInterface:nullptr];
     [m_playerController setExternalPlaybackActive:false];
     [m_playerController setDelegate:nullptr];
-    PlaybackSessionInterfaceIOS::invalidate();
+    PlaybackSessionInterfaceCocoa::invalidate();
 }
 
 void PlaybackSessionInterfaceAVKitLegacy::durationChanged(double duration)
@@ -172,7 +172,7 @@ static AVMediaType toAVMediaType(MediaSelectionOption::MediaType type)
 static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
 {
     NSInteger index = 0;
-    return createNSArray(options, [&] (auto& option) -> RetainPtr<WebAVMediaSelectionOption> {
+    return createNSArray(options, [&](auto& option) -> RetainPtr<WebAVMediaSelectionOption> {
 #if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
         if (option.legibleType != MediaSelectionOption::LegibleType::Regular) {
             ++index;

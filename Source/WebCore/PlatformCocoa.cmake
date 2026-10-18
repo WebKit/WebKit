@@ -1228,6 +1228,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/ParentalControlsURLFilterParameters.h
     platform/cocoa/PlatformTextAlternatives.h
     platform/cocoa/PlatformViewController.h
+    platform/cocoa/PlaybackSessionInterfaceAVKitLegacy.h
+    platform/cocoa/PlaybackSessionInterfaceCocoa.h
     platform/cocoa/PlaybackSessionModel.h
     platform/cocoa/PlaybackSessionModel.serialization.in
     platform/cocoa/PlaybackSessionModelMediaElement.h
@@ -1242,6 +1244,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/VideoPresentationLayerProvider.h
     platform/cocoa/VideoPresentationModel.h
     platform/cocoa/VideoPresentationModelVideoElement.h
+    platform/cocoa/WebAVPlayerController.h
     platform/cocoa/WebAVPlayerLayer.h
     platform/cocoa/WebAVPlayerLayerView.h
     platform/cocoa/WebCoreNSURLExtras.h
@@ -1363,8 +1366,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ios/LocalizedDeviceModel.h
     platform/ios/MotionManagerClient.h
     platform/ios/PlatformEventFactoryIOS.h
-    platform/ios/PlaybackSessionInterfaceAVKitLegacy.h
-    platform/ios/PlaybackSessionInterfaceIOS.h
     platform/ios/PlaybackSessionInterfaceTVOS.h
     platform/ios/QuickLook.h
     platform/ios/TileControllerMemoryHandlerIOS.h
@@ -1372,7 +1373,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ios/VideoPresentationInterfaceAVKitLegacy.h
     platform/ios/VideoPresentationInterfaceIOS.h
     platform/ios/VideoPresentationInterfaceTVOS.h
-    platform/ios/WebAVPlayerController.h
     platform/ios/WebBackgroundTaskController.h
     platform/ios/WebCoreMotionManager.h
     platform/ios/WebEvent.h

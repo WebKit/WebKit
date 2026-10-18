@@ -101,12 +101,12 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPresentationInterfaceAVKit);
 
-Ref<VideoPresentationInterfaceAVKit> VideoPresentationInterfaceAVKit::create(WebCore::PlaybackSessionInterfaceIOS& playbackSessionInterface)
+Ref<VideoPresentationInterfaceAVKit> VideoPresentationInterfaceAVKit::create(WebCore::PlaybackSessionInterfaceCocoa& playbackSessionInterface)
 {
     return adoptRef(*new VideoPresentationInterfaceAVKit(playbackSessionInterface));
 }
 
-VideoPresentationInterfaceAVKit::VideoPresentationInterfaceAVKit(WebCore::PlaybackSessionInterfaceIOS& playbackSessionInterface)
+VideoPresentationInterfaceAVKit::VideoPresentationInterfaceAVKit(WebCore::PlaybackSessionInterfaceCocoa& playbackSessionInterface)
     : VideoPresentationInterfaceIOS { playbackSessionInterface }
     , m_experienceControllerDelegate { adoptNS([[WKExperienceControllerDelegate alloc] initWithParent:*this]) }
 {

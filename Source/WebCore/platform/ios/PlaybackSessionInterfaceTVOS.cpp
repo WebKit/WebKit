@@ -40,7 +40,7 @@ Ref<PlaybackSessionInterfaceTVOS> PlaybackSessionInterfaceTVOS::create(PlaybackS
 }
 
 PlaybackSessionInterfaceTVOS::PlaybackSessionInterfaceTVOS(PlaybackSessionModel& model)
-    : PlaybackSessionInterfaceIOS { model }
+    : PlaybackSessionInterfaceCocoa { model }
 {
     ASSERT(isUIThread());
 }

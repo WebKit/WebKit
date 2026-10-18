@@ -30,7 +30,7 @@
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
 #import "Logging.h"
-#import "PlaybackSessionInterfaceIOS.h"
+#import "PlaybackSessionInterfaceCocoa.h"
 #import "PlaybackSessionModel.h"
 #import "TimeRanges.h"
 #import <AVFoundation/AVTime.h>
@@ -238,7 +238,7 @@ Class webAVPlayerControllerClassSingleton()
 
 @implementation WebAVPlayerController {
     WeakPtr<WebCore::PlaybackSessionModel> _delegate;
-    WeakPtr<WebCore::PlaybackSessionInterfaceIOS> _playbackSessionInterface;
+    WeakPtr<WebCore::PlaybackSessionInterfaceCocoa> _playbackSessionInterface;
     double _defaultPlaybackRate;
     double _rate;
     BOOL _liveStreamEventModePossible;
@@ -463,12 +463,12 @@ Class webAVPlayerControllerClassSingleton()
     _delegate = WeakPtr { delegate };
 }
 
-- (WebCore::PlaybackSessionInterfaceIOS*)playbackSessionInterface
+- (WebCore::PlaybackSessionInterfaceCocoa*)playbackSessionInterface
 {
     return _playbackSessionInterface.get();
 }
 
-- (void)setPlaybackSessionInterface:(WebCore::PlaybackSessionInterfaceIOS*)playbackSessionInterface
+- (void)setPlaybackSessionInterface:(WebCore::PlaybackSessionInterfaceCocoa*)playbackSessionInterface
 {
     _playbackSessionInterface = WeakPtr { playbackSessionInterface };
 }

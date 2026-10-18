@@ -35,7 +35,7 @@ OBJC_CLASS WKSLinearMediaPlayer;
 OBJC_CLASS WKSPlayableViewControllerHost;
 
 namespace WebCore {
-class PlaybackSessionInterfaceIOS;
+class PlaybackSessionInterfaceCocoa;
 }
 
 namespace WebKit {
@@ -44,7 +44,7 @@ class VideoPresentationInterfaceLMK final : public WebCore::VideoPresentationInt
     WTF_MAKE_TZONE_ALLOCATED(VideoPresentationInterfaceLMK);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceLMK);
 public:
-    static Ref<VideoPresentationInterfaceLMK> create(WebCore::PlaybackSessionInterfaceIOS&);
+    static Ref<VideoPresentationInterfaceLMK> create(WebCore::PlaybackSessionInterfaceCocoa&);
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const { return "VideoPresentationInterfaceLMK"_s; };
 #endif
@@ -53,7 +53,7 @@ public:
     void captionsLayerBoundsChanged(const WebCore::FloatRect&);
 
 private:
-    VideoPresentationInterfaceLMK(WebCore::PlaybackSessionInterfaceIOS&);
+    VideoPresentationInterfaceLMK(WebCore::PlaybackSessionInterfaceCocoa&);
 
     bool pictureInPictureWasStartedWhenEnteringBackground() const final { return false; }
     bool mayAutomaticallyShowVideoPictureInPicture() const final { return false; }

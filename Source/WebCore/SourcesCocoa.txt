@@ -324,6 +324,8 @@ platform/cocoa/PasteboardCustomDataCocoa.mm @nonARC
 platform/cocoa/PhotosFormatSoftLink.mm @nonARC
 platform/cocoa/PlatformPasteboardCocoa.mm @nonARC
 platform/cocoa/PlatformSpeechSynthesizerCocoa.mm @nonARC @no-unify-when(bundle<=8)
+platform/cocoa/PlaybackSessionInterfaceAVKitLegacy.mm @nonARC @no-unify
+platform/cocoa/PlaybackSessionInterfaceCocoa.mm @nonARC @no-unify
 platform/cocoa/PlaybackSessionModelMediaElement.mm @nonARC
 platform/cocoa/PowerSourceNotifier.mm @nonARC
 platform/cocoa/PublicSuffixStoreCocoa.mm @nonARC
@@ -343,6 +345,7 @@ platform/cocoa/UserAgentCocoa.mm @nonARC
 platform/cocoa/VideoPresentationModelVideoElement.mm @nonARC
 platform/cocoa/VideoPresentationLayerProvider.mm @nonARC
 platform/cocoa/VideoToolboxSoftLink.cpp
+platform/cocoa/WebAVPlayerController.mm @nonARC
 platform/cocoa/WebCoreAdditions.mm @nonARC @no-unify // #includes opaque WebKitAdditions sources.
 platform/cocoa/WebCoreNSErrorExtras.mm @nonARC
 platform/cocoa/WebCoreNSURLExtras.mm @nonARC
@@ -589,8 +592,6 @@ platform/ios/PasteboardIOS.mm @nonARC
 platform/ios/PlatformEventFactoryIOS.mm @nonARC @no-unify
 platform/ios/PlatformPasteboardIOS.mm @nonARC
 platform/ios/PlatformScreenIOS.mm @nonARC
-platform/ios/PlaybackSessionInterfaceAVKitLegacy.mm @nonARC @no-unify
-platform/ios/PlaybackSessionInterfaceIOS.mm @nonARC @no-unify
 platform/ios/PlaybackSessionInterfaceTVOS.cpp
 platform/ios/PreviewConverterIOS.mm @nonARC
 platform/ios/QuickLook.mm @nonARC
@@ -607,7 +608,6 @@ platform/ios/ValidationBubbleIOS.mm @nonARC
 platform/ios/VideoPresentationInterfaceAVKitLegacy.mm @nonARC @no-unify
 platform/ios/VideoPresentationInterfaceIOS.mm @nonARC @no-unify
 platform/ios/VideoPresentationInterfaceTVOS.mm @nonARC
-platform/ios/WebAVPlayerController.mm @nonARC
 platform/ios/WebBackgroundTaskController.mm @nonARC
 platform/ios/WebCoreMotionManager.mm @nonARC
 platform/ios/WebEvent.mm @nonARC @no-unify

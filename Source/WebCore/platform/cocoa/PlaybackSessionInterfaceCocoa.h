@@ -54,16 +54,17 @@ class PlaybackSessionModel;
 class VideoPresentationInterfaceIOS;
 class WebPlaybackSessionChangeObserver;
 
-class WEBCORE_EXPORT PlaybackSessionInterfaceIOS
+// Besides iOS-family platforms, macOS uses this for WebKitLegacy video fullscreen.
+class WEBCORE_EXPORT PlaybackSessionInterfaceCocoa
     : public PlaybackSessionModelClient
-    , public RefCounted<PlaybackSessionInterfaceIOS>
-    , public CanMakeCheckedPtr<PlaybackSessionInterfaceIOS> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlaybackSessionInterfaceIOS, WEBCORE_EXPORT);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceIOS);
+    , public RefCounted<PlaybackSessionInterfaceCocoa>
+    , public CanMakeCheckedPtr<PlaybackSessionInterfaceCocoa> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlaybackSessionInterfaceCocoa, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceCocoa);
 public:
     void initialize();
     virtual void invalidate();
-    virtual ~PlaybackSessionInterfaceIOS();
+    virtual ~PlaybackSessionInterfaceCocoa();
 
     virtual WebAVPlayerController *playerController() const = 0;
     virtual WKSLinearMediaPlayer *linearMediaPlayer() const = 0;
@@ -92,7 +93,7 @@ public:
     virtual void startObservingNowPlayingMetadata();
     virtual void stopObservingNowPlayingMetadata();
 
-    virtual void swapFullscreenModesWith(PlaybackSessionInterfaceIOS&) { }
+    virtual void swapFullscreenModesWith(PlaybackSessionInterfaceCocoa&) { }
 
 #if !RELEASE_LOG_DISABLED
     uint64_t logIdentifier() const;
@@ -106,7 +107,7 @@ protected:
     void updateSpatialTrackingLabel();
 #endif
 
-    PlaybackSessionInterfaceIOS(PlaybackSessionModel&);
+    PlaybackSessionInterfaceCocoa(PlaybackSessionModel&);
     WeakPtr<PlaybackSessionModel> m_playbackSessionModel;
 
     // CheckedPtr interface

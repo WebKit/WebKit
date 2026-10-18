@@ -27,12 +27,12 @@
 
 #if HAVE(AVEXPERIENCECONTROLLER)
 
-#include <WebCore/PlaybackSessionInterfaceIOS.h>
+#include <WebCore/PlaybackSessionInterfaceCocoa.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
-class PlaybackSessionInterfaceAVKit final : public WebCore::PlaybackSessionInterfaceIOS {
+class PlaybackSessionInterfaceAVKit final : public WebCore::PlaybackSessionInterfaceCocoa {
     WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceAVKit);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceAVKit);
 public:
@@ -41,7 +41,7 @@ public:
 
     void nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata&);
 
-    // PlaybackSessionInterfaceIOS overrides
+    // PlaybackSessionInterfaceCocoa overrides
     WebAVPlayerController *playerController() const final { return nullptr; }
     WKSLinearMediaPlayer *linearMediaPlayer() const final { return nullptr; }
     WKAVContentSource *contentSource() const { return m_contentSource.get(); }
