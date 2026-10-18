@@ -88,6 +88,28 @@ const DOMJIT::Signature* NativeExecutable::signatureFor(CodeSpecializationKind k
     return generatedJITCodeFor(kind)->signature();
 }
 
+Ref<JSC::JITCode> NativeExecutable::swapGeneratedJITCodeForDebugger(CodeSpecializationKind kind, Ref<JSC::JITCode>&& jitCode)
+{
+    if (kind == CodeSpecializationKind::CodeForCall)
+        return swapGeneratedJITCodeForCallForDebugger(WTF::move(jitCode));
+    ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
+    return swapGeneratedJITCodeForConstructForDebugger(WTF::move(jitCode));
+}
+
+Ref<JSC::JITCode> NativeExecutable::swapGeneratedJITCodeForCallForDebugger(Ref<JSC::JITCode>&& jitCode)
+{
+    Ref old = m_jitCodeForCall.releaseNonNull();
+    m_jitCodeForCall = WTF::move(jitCode);
+    return old;
+}
+
+Ref<JSC::JITCode> NativeExecutable::swapGeneratedJITCodeForConstructForDebugger(Ref<JSC::JITCode>&& jitCode)
+{
+    Ref old = m_jitCodeForConstruct.releaseNonNull();
+    m_jitCodeForConstruct = WTF::move(jitCode);
+    return old;
+}
+
 Intrinsic NativeExecutable::intrinsic() const
 {
     return generatedJITCodeFor(CodeSpecializationKind::CodeForCall)->intrinsic();
