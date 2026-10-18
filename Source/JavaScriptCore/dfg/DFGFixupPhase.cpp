@@ -3871,6 +3871,7 @@ private:
         case FilterSetPrivateBrandStatus:
         case InvalidationPoint:
         case GetWebAssemblyInstanceExports:
+        case GetTypedArrayBuffer:
         case NewBoundFunction:
         case MakeAtomString:
         case CallCustomAccessorGetter:

@@ -53,6 +53,8 @@ bool IntrinsicGetterAccessCase::doesCalls() const
     case TypedArrayLengthIntrinsic:
     case DataViewByteLengthIntrinsic:
         return isResizableOrGrowableSharedTypedArrayIncludingDataView(structure()->classInfoForCells());
+    case TypedArrayBufferIntrinsic:
+        return true;
     default:
         return false;
     }

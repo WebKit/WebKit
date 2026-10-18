@@ -286,6 +286,7 @@ namespace JSC { namespace DFG {
     macro(GetVectorLength, NodeResultInt32) \
     macro(GetTypedArrayByteOffset, NodeResultInt32) \
     macro(GetTypedArrayByteOffsetAsInt52, NodeResultInt52) \
+    macro(GetTypedArrayBuffer, NodeResultJS | NodeMustGenerate) \
     macro(GetWebAssemblyInstanceExports, NodeResultJS) \
     macro(GetScope, NodeResultJS) \
     macro(GetEvalScope, NodeResultJS) \
