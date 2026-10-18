@@ -79,7 +79,7 @@ public:
 
     const String& LEGACY_NODELETE sessionId() const;
     double LEGACY_NODELETE expiration() const;
-    Ref<MediaKeyStatusMap> keyStatuses() const;
+    Ref<MediaKeyStatusMap> LEGACY_NODELETE keyStatuses() const;
 
     void generateRequest(const AtomString&, const BufferSource&, Ref<DeferredPromise>&&);
     void load(const String&, Ref<DeferredPromise>&&);

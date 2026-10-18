@@ -42,7 +42,7 @@ class UniqueIDBDatabaseTransaction;
 
 class ServerOpenDBRequest : public RefCounted<ServerOpenDBRequest> {
 public:
-    static Ref<ServerOpenDBRequest> create(IDBConnectionToClient&, const IDBOpenRequestData&);
+    static Ref<ServerOpenDBRequest> LEGACY_NODELETE create(IDBConnectionToClient&, const IDBOpenRequestData&);
 
     IDBConnectionToClient& connection() { return m_connection; }
     const IDBOpenRequestData& requestData() const LIFETIME_BOUND { return m_requestData; }

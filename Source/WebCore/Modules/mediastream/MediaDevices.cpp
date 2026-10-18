@@ -104,7 +104,7 @@ Document* MediaDevices::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-static bool shouldEnableEnumerateDeviceQuirk(const Document& document)
+static bool LEGACY_NODELETE shouldEnableEnumerateDeviceQuirk(const Document& document)
 {
     return document.settings().exposeCaptureDevicesAfterCaptureEnabled() && document.quirks().shouldEnableEnumerateDeviceQuirk();
 }

@@ -73,7 +73,7 @@ bool LibWebRTCRtpTransformableFrame::isKeyFrame() const
     return videoFrame && videoFrame->IsKeyFrame();
 }
 
-static std::optional<uint32_t> timestampFromRtpTimestampInfo(const webrtc::RtpTimestampInfo& timestampInfo)
+static std::optional<uint32_t> LEGACY_NODELETE timestampFromRtpTimestampInfo(const webrtc::RtpTimestampInfo& timestampInfo)
 {
     if (auto* timestamp = std::get_if<webrtc::RtpTimestampWithOffset>(&timestampInfo))
         return timestamp->value;

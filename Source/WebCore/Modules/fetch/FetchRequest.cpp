@@ -288,7 +288,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     return { };
 }
 
-static bool shouldCheckDuplex(ScriptExecutionContext* context)
+static bool LEGACY_NODELETE shouldCheckDuplex(ScriptExecutionContext* context)
 {
     return context && context->settingsValues().fetchUploadStreamsEnabled;
 }

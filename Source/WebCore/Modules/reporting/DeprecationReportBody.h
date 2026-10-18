@@ -38,7 +38,7 @@ class FormData;
 class DeprecationReportBody final : public ReportBody {
     WTF_MAKE_TZONE_ALLOCATED(DeprecationReportBody);
 public:
-    WEBCORE_EXPORT static Ref<DeprecationReportBody> create(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
+    WEBCORE_EXPORT static Ref<DeprecationReportBody> LEGACY_NODELETE create(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
 
     const String& type() const final;
     const String& id() const LIFETIME_BOUND { return m_id; };

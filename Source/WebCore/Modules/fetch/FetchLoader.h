@@ -47,7 +47,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FetchLoader);
 class WEBCORE_EXPORT FetchLoader final : public RefCounted<FetchLoader>, public ThreadableLoaderClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FetchLoader, FetchLoader);
 public:
-    static Ref<FetchLoader> create(FetchLoaderClient&, FetchBodyConsumer*);
+    static Ref<FetchLoader> LEGACY_NODELETE create(FetchLoaderClient&, FetchBodyConsumer*);
     ~FetchLoader();
 
     RefPtr<FragmentedSharedBuffer> startStreaming();

@@ -38,7 +38,7 @@ class SpeechSynthesisEvent : public Event {
 public:
     using Init = SpeechSynthesisEventInit;
 
-    static Ref<SpeechSynthesisEvent> create(const AtomString& type, Init&&);
+    static Ref<SpeechSynthesisEvent> LEGACY_NODELETE create(const AtomString& type, Init&&);
 
     const SpeechSynthesisUtterance& utterance() const { return m_utterance; }
     unsigned long charIndex() const { return m_charIndex; }

@@ -566,7 +566,7 @@ private:
 
 class MediaControlsContextMenuEventListener final : public EventListener {
 public:
-    static Ref<MediaControlsContextMenuEventListener> create(Ref<MediaControlsContextMenuProvider>&& contextMenuProvider)
+    static Ref<MediaControlsContextMenuEventListener> LEGACY_NODELETE create(Ref<MediaControlsContextMenuProvider>&& contextMenuProvider)
     {
         return adoptRef(*new MediaControlsContextMenuEventListener(WTF::move(contextMenuProvider)));
     }

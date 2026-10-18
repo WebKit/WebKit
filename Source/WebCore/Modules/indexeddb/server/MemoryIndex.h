@@ -61,7 +61,7 @@ class MemoryIndex : public RefCounted<MemoryIndex>, public CanMakeThreadSafeChec
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MemoryIndex);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MemoryIndex);
 public:
-    static Ref<MemoryIndex> create(const IDBIndexInfo&, MemoryObjectStore&);
+    static Ref<MemoryIndex> LEGACY_NODELETE create(const IDBIndexInfo&, MemoryObjectStore&);
 
     ~MemoryIndex();
 

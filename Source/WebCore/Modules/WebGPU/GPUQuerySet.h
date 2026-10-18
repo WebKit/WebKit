@@ -56,7 +56,7 @@ public:
     GPUQueryType LEGACY_NODELETE type() const;
     GPUSize32Out LEGACY_NODELETE count() const;
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

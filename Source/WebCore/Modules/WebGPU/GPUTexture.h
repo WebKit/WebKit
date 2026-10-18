@@ -68,7 +68,7 @@ public:
     GPUTextureFormat format() const { return m_format; }
     bool isCanvasBacking() const { return m_isCanvasBacking; }
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
 
     GPUIntegerCoordinateOut LEGACY_NODELETE width() const;
     GPUIntegerCoordinateOut LEGACY_NODELETE height() const;
@@ -92,7 +92,7 @@ public:
 
     virtual ~GPUTexture();
 
-    bool hasActiveInspectorCanvasCallTracer() const;
+    bool LEGACY_NODELETE hasActiveInspectorCanvasCallTracer() const;
 
 private:
     GPUTexture(Ref<::WebGPU::Texture>&&, const GPUTextureDescriptor&, GPUDevice&, bool isCanvasBacking);

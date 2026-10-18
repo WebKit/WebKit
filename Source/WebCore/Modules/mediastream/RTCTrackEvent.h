@@ -47,7 +47,7 @@ typedef Vector<Ref<MediaStream>> MediaStreamArray;
 class RTCTrackEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(RTCTrackEvent);
 public:
-    static Ref<RTCTrackEvent> create(const AtomString& type, CanBubble, IsCancelable, Ref<RTCRtpReceiver>&&, Ref<MediaStreamTrack>&&, MediaStreamArray&&, Ref<RTCRtpTransceiver>&&);
+    static Ref<RTCTrackEvent> LEGACY_NODELETE create(const AtomString& type, CanBubble, IsCancelable, Ref<RTCRtpReceiver>&&, Ref<MediaStreamTrack>&&, MediaStreamArray&&, Ref<RTCRtpTransceiver>&&);
 
     struct Init : EventInit {
         Ref<RTCRtpReceiver> receiver;
@@ -55,7 +55,7 @@ public:
         MediaStreamArray streams;
         Ref<RTCRtpTransceiver> transceiver;
     };
-    static Ref<RTCTrackEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<RTCTrackEvent> LEGACY_NODELETE create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
     RTCRtpReceiver& receiver() const { return m_receiver; }
     MediaStreamTrack& track() const  { return m_track; }

@@ -135,7 +135,7 @@ static bool isValidEncoderConfig(const WebCodecsAudioEncoderConfig& config)
     return true;
 }
 
-static ExceptionOr<AudioEncoder::Config> createAudioEncoderConfig(const WebCodecsAudioEncoderConfig& config)
+static ExceptionOr<AudioEncoder::Config> LEGACY_NODELETE createAudioEncoderConfig(const WebCodecsAudioEncoderConfig& config)
 {
     std::optional<AudioEncoder::OpusConfig> opusConfig;
     if (config.opus) {

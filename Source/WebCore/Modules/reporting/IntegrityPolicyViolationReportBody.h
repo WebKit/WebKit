@@ -37,7 +37,7 @@ class FormData;
 class IntegrityPolicyViolationReportBody final : public ReportBody {
     WTF_MAKE_TZONE_ALLOCATED(IntegrityPolicyViolationReportBody);
 public:
-    static Ref<IntegrityPolicyViolationReportBody> create(const String& documentURL, const String& blockedURL, String&& destination, bool reportOnly);
+    static Ref<IntegrityPolicyViolationReportBody> LEGACY_NODELETE create(const String& documentURL, const String& blockedURL, String&& destination, bool reportOnly);
 
     const String& type() const LIFETIME_BOUND final;
 

@@ -39,8 +39,8 @@ public:
         Ref<SpeechRecognitionResultList> results;
     };
 
-    static Ref<SpeechRecognitionEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    static Ref<SpeechRecognitionEvent> create(const AtomString&, uint32_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
+    static Ref<SpeechRecognitionEvent> LEGACY_NODELETE create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<SpeechRecognitionEvent> LEGACY_NODELETE create(const AtomString&, uint32_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
 
     virtual ~SpeechRecognitionEvent();
 

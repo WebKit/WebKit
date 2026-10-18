@@ -46,7 +46,7 @@ template<typename> class ExceptionOr;
 
 class WebTransportDatagramDuplexStream : public RefCounted<WebTransportDatagramDuplexStream> {
 public:
-    static Ref<WebTransportDatagramDuplexStream> create(Ref<ReadableStream>&&);
+    static Ref<WebTransportDatagramDuplexStream> LEGACY_NODELETE create(Ref<ReadableStream>&&);
     ~WebTransportDatagramDuplexStream();
 
     ReadableStream& readable() { return m_readable; }
@@ -61,7 +61,7 @@ public:
     void setIncomingMaxBufferedDatagrams(uint32_t);
     void setOutgoingMaxBufferedDatagrams(uint32_t);
 
-    void attachTo(WebTransport&);
+    void LEGACY_NODELETE attachTo(WebTransport&);
 
 private:
     WebTransportDatagramDuplexStream(Ref<ReadableStream>&&);

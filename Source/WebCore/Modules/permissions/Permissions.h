@@ -55,7 +55,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 class Permissions : public RefCountedAndCanMakeWeakPtr<Permissions> {
     WTF_MAKE_TZONE_ALLOCATED(Permissions);
 public:
-    static Ref<Permissions> create(NavigatorBase&);
+    static Ref<Permissions> LEGACY_NODELETE create(NavigatorBase&);
     ~Permissions();
 
     NavigatorBase* LEGACY_NODELETE navigator();

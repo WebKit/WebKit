@@ -57,7 +57,7 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     unsigned length() const { return m_list.size(); }
 
-    RefPtr<SourceBuffer> item(unsigned index) const;
+    RefPtr<SourceBuffer> LEGACY_NODELETE item(unsigned index) const;
 
     void add(Ref<SourceBuffer>&&);
     void remove(SourceBuffer&);

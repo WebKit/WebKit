@@ -59,7 +59,7 @@ public:
 
     class Iterator : public RefCounted<FileSystemDirectoryHandle::Iterator> {
     public:
-        static Ref<Iterator> create(FileSystemDirectoryHandle&);
+        static Ref<Iterator> LEGACY_NODELETE create(FileSystemDirectoryHandle&);
         using Result = std::optional<KeyValuePair<String, Ref<FileSystemHandle>>>;
         void next(CompletionHandler<void(ExceptionOr<Result>&&)>&&);
     private:
@@ -75,7 +75,7 @@ public:
         bool m_isInitialized { false };
         bool m_isWaitingForResult { false };
     };
-    Ref<Iterator> createIterator(ScriptExecutionContext*);
+    Ref<Iterator> LEGACY_NODELETE createIterator(ScriptExecutionContext*);
 
 private:
     FileSystemDirectoryHandle(ScriptExecutionContext&, String&&, FileSystemHandleGlobalIdentifier, Markable<FileSystemHandleIdentifier>, RefPtr<FileSystemStorageConnection>&&);

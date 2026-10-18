@@ -40,7 +40,7 @@ class WorkerThread;
 
 class WorkerFileSystemStorageConnection final : public FileSystemStorageConnection, public CanMakeWeakPtr<WorkerFileSystemStorageConnection, WeakPtrFactoryInitialization::Eager>  {
 public:
-    static Ref<WorkerFileSystemStorageConnection> create(WorkerGlobalScope&, Ref<FileSystemStorageConnection>&&);
+    static Ref<WorkerFileSystemStorageConnection> LEGACY_NODELETE create(WorkerGlobalScope&, Ref<FileSystemStorageConnection>&&);
     ~WorkerFileSystemStorageConnection();
 
     FileSystemStorageConnection* mainThreadConnection() const { return m_mainThreadConnection.get(); }

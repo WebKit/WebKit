@@ -76,7 +76,7 @@ public:
 
     void read(JSDOMGlobalObject&, JSC::ArrayBufferView&, uint64_t, Ref<ReadableStreamReadIntoRequest>&&);
 
-    bool isReachableFromOpaqueRoots() const;
+    bool LEGACY_NODELETE isReachableFromOpaqueRoots() const;
     template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
 private:

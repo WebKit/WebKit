@@ -34,8 +34,8 @@ struct OfflineAudioCompletionEventInit;
 class OfflineAudioCompletionEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(OfflineAudioCompletionEvent);
 public:
-    static Ref<OfflineAudioCompletionEvent> create(Ref<AudioBuffer>&& renderedBuffer);
-    static Ref<OfflineAudioCompletionEvent> create(const AtomString& eventType, OfflineAudioCompletionEventInit&&);
+    static Ref<OfflineAudioCompletionEvent> LEGACY_NODELETE create(Ref<AudioBuffer>&& renderedBuffer);
+    static Ref<OfflineAudioCompletionEvent> LEGACY_NODELETE create(const AtomString& eventType, OfflineAudioCompletionEventInit&&);
     
     virtual ~OfflineAudioCompletionEvent();
 

@@ -45,7 +45,7 @@ public:
     explicit RTCRtpTransform(Internal&&);
     ~RTCRtpTransform();
 
-    bool isAttached() const;
+    bool LEGACY_NODELETE isAttached() const;
     void attachToReceiver(RTCRtpReceiver&, RTCRtpTransform*);
     void attachToSender(RTCRtpSender&, RTCRtpTransform*);
     void detachFromReceiver(RTCRtpReceiver&);
@@ -54,7 +54,7 @@ public:
     RefPtr<RTCRtpTransformBackend> takeBackend() { return WTF::move(m_backend); }
     Internal internalTransform() { return m_transform; }
 
-    friend bool operator==(const RTCRtpTransform&, const RTCRtpTransform&);
+    friend bool LEGACY_NODELETE operator==(const RTCRtpTransform&, const RTCRtpTransform&);
 
 private:
     void clearBackend();
@@ -64,7 +64,7 @@ private:
     const Internal m_transform;
 };
 
-bool operator==(const RTCRtpTransform&, const RTCRtpTransform&);
+bool LEGACY_NODELETE operator==(const RTCRtpTransform&, const RTCRtpTransform&);
 
 } // namespace WebCore
 

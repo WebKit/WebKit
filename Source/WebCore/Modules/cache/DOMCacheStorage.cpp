@@ -96,7 +96,7 @@ static inline void startSequentialMatch(Vector<Ref<DOMCache>>&& caches, DOMCache
     doSequentialMatch(0, WTF::move(caches), WTF::move(info), WTF::move(options), WTF::move(completionHandler));
 }
 
-static inline Ref<DOMCache> copyCache(const Ref<DOMCache>& cache)
+static inline Ref<DOMCache> LEGACY_NODELETE copyCache(const Ref<DOMCache>& cache)
 {
     return cache.copyRef();
 }

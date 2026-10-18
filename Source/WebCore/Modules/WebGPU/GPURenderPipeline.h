@@ -63,7 +63,7 @@ public:
     ::WebGPU::RenderPipeline& backing() { return m_backing; }
     const ::WebGPU::RenderPipeline& backing() const { return m_backing; }
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
     const String& vertexShaderSource() const { return m_vertexShaderModuleDescriptor.code; }
     const String& fragmentShaderSource() const { return m_fragmentShaderModuleDescriptor ? m_fragmentShaderModuleDescriptor->code : nullString(); }
     bool sharesVertexFragmentShader() const { return m_sharesVertexFragmentShader; }

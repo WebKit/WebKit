@@ -69,7 +69,7 @@ public:
     ::WebGPU::Buffer& backing() { return m_backing; }
     const ::WebGPU::Buffer& backing() const { return m_backing; }
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
 
     GPUSize64 size() const { return static_cast<GPUSize64>(m_bufferSize); }
     GPUBufferUsageFlags usage() const { return m_usage; }

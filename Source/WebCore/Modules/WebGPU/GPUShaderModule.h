@@ -58,7 +58,7 @@ public:
     const ::WebGPU::ShaderModule& backing() const { return m_backing; }
     const WebGPUShaderModuleDescriptor& descriptor() const { return m_descriptor; }
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

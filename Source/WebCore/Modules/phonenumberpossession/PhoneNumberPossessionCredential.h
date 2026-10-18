@@ -44,7 +44,7 @@ using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCrede
 
 class PhoneNumberPossessionCredential final : public BasicCredential {
 public:
-    static Ref<PhoneNumberPossessionCredential> create(PhoneNumberPossessionResponse&&);
+    static Ref<PhoneNumberPossessionCredential> LEGACY_NODELETE create(PhoneNumberPossessionResponse&&);
     virtual ~PhoneNumberPossessionCredential();
 
     static void discoverFromExternalSource(const Document&, PhoneNumberPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);

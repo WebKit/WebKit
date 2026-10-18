@@ -188,7 +188,7 @@ ExceptionOr<void> MediaMetadata::setArtwork(ScriptExecutionContext& context, Vec
 // A score of 0 is for images smaller than the minimum size
 // A score of 1 indicates an image of ideal size with an aspect ratio of 1 (square)
 // The closer to the ideal size, the higher the score.
-static float imageDimensionsScore(IntSize size)
+static float LEGACY_NODELETE imageDimensionsScore(IntSize size)
 {
     constexpr double minimumSize = MediaSessionArtworkSizing::minimumSize.maxDimension();
     constexpr double idealSize = MediaSessionArtworkSizing::idealSize.maxDimension();

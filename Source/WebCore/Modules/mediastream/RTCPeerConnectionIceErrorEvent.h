@@ -46,7 +46,7 @@ public:
         String errorText;
     };
 
-    static Ref<RTCPeerConnectionIceErrorEvent> create(const AtomString& type, Init&&);
+    static Ref<RTCPeerConnectionIceErrorEvent> LEGACY_NODELETE create(const AtomString& type, Init&&);
     static Ref<RTCPeerConnectionIceErrorEvent> create(CanBubble, IsCancelable, String&& address, std::optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText);
 
     const String& address() const LIFETIME_BOUND { return m_address; }

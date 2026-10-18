@@ -49,7 +49,7 @@ using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCrede
 
 class DigitalCredential final : public BasicCredential {
 public:
-    static Ref<DigitalCredential> create(JSC::Strong<JSC::JSObject>&&, DigitalCredentialPresentationProtocol);
+    static Ref<DigitalCredential> LEGACY_NODELETE create(JSC::Strong<JSC::JSObject>&&, DigitalCredentialPresentationProtocol);
 
     virtual ~DigitalCredential();
 

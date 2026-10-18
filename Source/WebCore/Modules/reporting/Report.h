@@ -37,7 +37,7 @@ class FormData;
 class Report : public RefCounted<Report> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Report, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<Report> create(const String& type, const String& url, RefPtr<ReportBody>&&);
+    WEBCORE_EXPORT static Ref<Report> LEGACY_NODELETE create(const String& type, const String& url, RefPtr<ReportBody>&&);
 
     WEBCORE_EXPORT ~Report();
 

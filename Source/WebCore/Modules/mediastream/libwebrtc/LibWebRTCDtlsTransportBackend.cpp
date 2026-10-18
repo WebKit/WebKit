@@ -57,7 +57,7 @@ static inline RTCDtlsTransportState LEGACY_NODELETE toRTCDtlsTransportState(webr
 
 class LibWebRTCDtlsTransportBackendObserver final : public ThreadSafeRefCounted<LibWebRTCDtlsTransportBackendObserver>, public webrtc::DtlsTransportObserverInterface {
 public:
-    static Ref<LibWebRTCDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, Ref<webrtc::DtlsTransportInterface>&& backend) { return adoptRef(*new LibWebRTCDtlsTransportBackendObserver(client, WTF::move(backend))); }
+    static Ref<LibWebRTCDtlsTransportBackendObserver> LEGACY_NODELETE create(RTCDtlsTransportBackendClient& client, Ref<webrtc::DtlsTransportInterface>&& backend) { return adoptRef(*new LibWebRTCDtlsTransportBackendObserver(client, WTF::move(backend))); }
 
     void start();
     void stop();

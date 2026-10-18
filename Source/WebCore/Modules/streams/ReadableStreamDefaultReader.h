@@ -76,7 +76,7 @@ public:
     bool LEGACY_NODELETE isReachableFromOpaqueRoots() const;
     template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
-    ReadableStream* stream();
+    ReadableStream* LEGACY_NODELETE stream();
 
 private:
     ReadableStreamDefaultReader(Ref<ReadableStream>&&, RefPtr<InternalReadableStreamDefaultReader>&&, Ref<DOMPromise>&&, Ref<DeferredPromise>&&);

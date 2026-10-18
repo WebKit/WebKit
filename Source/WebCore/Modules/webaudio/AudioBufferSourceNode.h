@@ -67,13 +67,13 @@ public:
 
     // This function doesn't grab the lock before accessing m_isLooping and is thus only safe to call on the main thread.
     bool loopForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_isLooping; }
-    void setLoopForBindings(bool);
+    void LEGACY_NODELETE setLoopForBindings(bool);
 
     // Loop times in seconds.
     double loopStartForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_loopStart; } // This function doesn't grab the lock and is thus only safe to call on the main thread.
     double loopEndForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_loopEnd; } // This function doesn't grab the lock and is thus only safe to call on the main thread.
-    void setLoopStartForBindings(double);
-    void setLoopEndForBindings(double);
+    void LEGACY_NODELETE setLoopStartForBindings(double);
+    void LEGACY_NODELETE setLoopEndForBindings(double);
 
     AudioParam& detune() { return m_detune.get(); }
     AudioParam& playbackRate() { return m_playbackRate.get(); }

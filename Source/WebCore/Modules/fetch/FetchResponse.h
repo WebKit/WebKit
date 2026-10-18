@@ -154,7 +154,7 @@ private:
     class Loader final : public RefCounted<Loader>, public FetchLoaderClient {
         WTF_MAKE_TZONE_ALLOCATED(Loader);
     public:
-        static Ref<Loader> create(FetchResponse&, NotificationCallback&&, RefPtr<ReadableStreamToSharedBufferSink>&&);
+        static Ref<Loader> LEGACY_NODELETE create(FetchResponse&, NotificationCallback&&, RefPtr<ReadableStreamToSharedBufferSink>&&);
         ~Loader();
 
         // FetchLoaderClient.

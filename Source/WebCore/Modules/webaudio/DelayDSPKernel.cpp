@@ -51,7 +51,7 @@ template<typename T> static inline size_t LEGACY_NODELETE positiveSubtract(T a, 
     return a <= b ? 0 : static_cast<size_t>(a - b);
 }
 
-static void copyToCircularBuffer(std::span<float> buffer, size_t writeIndex, std::span<const float> source)
+static void LEGACY_NODELETE copyToCircularBuffer(std::span<float> buffer, size_t writeIndex, std::span<const float> source)
 {
     // The algorithm below depends on this being true because we don't expect to have to fill the entire buffer more than once.
     RELEASE_ASSERT(buffer.size() >= source.size());

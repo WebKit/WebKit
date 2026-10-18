@@ -199,7 +199,7 @@ private:
 
     void setActive(bool);
 
-    bool validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
+    bool LEGACY_NODELETE validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
 
     uint64_t maximumBufferSize() const;
 

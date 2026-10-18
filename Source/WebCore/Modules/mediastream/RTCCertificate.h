@@ -39,7 +39,7 @@ public:
         String value;
     };
 
-    static Ref<RTCCertificate> create(Ref<SecurityOrigin>&&, double expires, Vector<DtlsFingerprint>&&, String&& pemCertificate, String&& pemPrivateKey);
+    static Ref<RTCCertificate> LEGACY_NODELETE create(Ref<SecurityOrigin>&&, double expires, Vector<DtlsFingerprint>&&, String&& pemCertificate, String&& pemPrivateKey);
 
     double expires() const { return m_expires; }
     const Vector<DtlsFingerprint>& getFingerprints() const LIFETIME_BOUND { return m_fingerprints; }

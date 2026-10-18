@@ -58,7 +58,7 @@ typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, DefaultHash<IDBKeyData>, IDBKe
 
 class MemoryObjectStore : public RefCountedAndCanMakeWeakPtr<MemoryObjectStore> {
 public:
-    static Ref<MemoryObjectStore> create(const IDBObjectStoreInfo&);
+    static Ref<MemoryObjectStore> LEGACY_NODELETE create(const IDBObjectStoreInfo&);
 
     ~MemoryObjectStore();
 

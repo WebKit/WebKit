@@ -34,7 +34,7 @@ namespace WebCore {
 
 class WebLock : public RefCounted<WebLock> {
 public:
-    static Ref<WebLock> create(WebLockIdentifier, const String& name, WebLockMode);
+    static Ref<WebLock> LEGACY_NODELETE create(WebLockIdentifier, const String& name, WebLockMode);
 
     static constexpr unsigned maxNameLength = { 1024 };
 

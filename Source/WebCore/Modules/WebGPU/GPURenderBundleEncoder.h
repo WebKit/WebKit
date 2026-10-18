@@ -89,7 +89,7 @@ public:
     ::WebGPU::RenderBundleEncoder& backing() { return m_backing; }
     const ::WebGPU::RenderBundleEncoder& backing() const { return m_backing; }
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

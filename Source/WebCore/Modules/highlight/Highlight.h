@@ -82,7 +82,7 @@ public:
     void setPriority(int);
 
     void repaint();
-    void setAllRangesNeedPositionUpdate();
+    void LEGACY_NODELETE setAllRangesNeedPositionUpdate();
     const Vector<Ref<HighlightRange>>& highlightRanges() const LIFETIME_BOUND { return m_highlightRanges; }
 
 private:

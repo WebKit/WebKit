@@ -40,7 +40,7 @@ public:
         std::optional<double> timecode;
     };
     
-    static Ref<BlobEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<BlobEvent> LEGACY_NODELETE create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
 
     Blob& data() const { return m_blob.get(); }
     double timecode() const { return m_timecode; }

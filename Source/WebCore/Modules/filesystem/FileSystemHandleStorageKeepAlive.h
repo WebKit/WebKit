@@ -37,7 +37,7 @@ class FileSystemStorageConnection;
 
 class FileSystemHandleStorageKeepAlive : public ThreadSafeRefCounted<FileSystemHandleStorageKeepAlive> {
 public:
-    WEBCORE_EXPORT static Ref<FileSystemHandleStorageKeepAlive> create(ClientOrigin&&, Vector<FileSystemHandleGlobalIdentifier>&&, Ref<FileSystemStorageConnection>&&);
+    WEBCORE_EXPORT static Ref<FileSystemHandleStorageKeepAlive> LEGACY_NODELETE create(ClientOrigin&&, Vector<FileSystemHandleGlobalIdentifier>&&, Ref<FileSystemStorageConnection>&&);
     WEBCORE_EXPORT ~FileSystemHandleStorageKeepAlive();
 
 private:

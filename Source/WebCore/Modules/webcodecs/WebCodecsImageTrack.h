@@ -35,8 +35,8 @@ namespace WebCore {
 class WebCodecsImageTrack final : public RefCounted<WebCodecsImageTrack> {
     WTF_MAKE_TZONE_ALLOCATED(WebCodecsImageTrack);
 public:
-    static Ref<WebCodecsImageTrack> create();
-    static Ref<WebCodecsImageTrack> create(float repetitionCount, size_t frameCount, bool animated, bool selected);
+    static Ref<WebCodecsImageTrack> LEGACY_NODELETE create();
+    static Ref<WebCodecsImageTrack> LEGACY_NODELETE create(float repetitionCount, size_t frameCount, bool animated, bool selected);
 
     float repetitionCount() const { return m_repetitionCount; }
     size_t frameCount() const { return m_frameCount; }

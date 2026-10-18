@@ -67,7 +67,7 @@ public:
     size_t length() const { return hasDetachedChannelBuffer() ? 0 : m_originalLength; }
     double duration() const { return length() / static_cast<double>(sampleRate()); }
 
-    void markBuffersAsNonDetachable();
+    void LEGACY_NODELETE markBuffersAsNonDetachable();
 
     // Channel data access
     unsigned numberOfChannels() const { return m_channels.size(); }
@@ -77,7 +77,7 @@ public:
 
     // Native channel data access.
     RefPtr<Float32Array> channelData(unsigned channelIndex);
-    std::span<float> rawChannelData(unsigned channelIndex) LIFETIME_BOUND;
+    std::span<float> LEGACY_NODELETE rawChannelData(unsigned channelIndex) LIFETIME_BOUND;
     void zero();
 
     // Because an AudioBuffer has a JavaScript wrapper, which will be garbage collected, it may take a while for this object to be deleted.
@@ -85,16 +85,16 @@ public:
     // Careful! Only call this when the page unloads, after the AudioContext is no longer processing.
     void releaseMemory();
 
-    size_t memoryCost() const;
+    size_t LEGACY_NODELETE memoryCost() const;
 
     template<typename Visitor> void visitChannelWrappersInGCThread(Visitor&);
 
-    bool copyTo(AudioBuffer&) const;
+    bool LEGACY_NODELETE copyTo(AudioBuffer&) const;
 
     enum class ShouldCopyChannelData : bool { No, Yes };
     Ref<AudioBuffer> clone(ShouldCopyChannelData = ShouldCopyChannelData::Yes) const;
     
-    bool topologyMatches(const AudioBuffer&) const;
+    bool LEGACY_NODELETE topologyMatches(const AudioBuffer&) const;
 
     void increaseNoiseInjectionMultiplier(float amount = 0.001) { m_noiseInjectionMultiplier += amount; }
     float noiseInjectionMultiplier() const { return m_noiseInjectionMultiplier; }
@@ -105,7 +105,7 @@ private:
 
     void invalidate();
 
-    bool hasDetachedChannelBuffer() const;
+    bool LEGACY_NODELETE hasDetachedChannelBuffer() const;
 
     void applyNoiseIfNeeded();
 

@@ -103,7 +103,7 @@ public:
     bool isDone() const { return m_readyState == ReadyState::Done; }
 
     std::optional<IDBObjectStoreIdentifier> sourceObjectStoreIdentifier() const;
-    std::optional<IDBIndexIdentifier> sourceIndexIdentifier() const;
+    std::optional<IDBIndexIdentifier> LEGACY_NODELETE sourceIndexIdentifier() const;
     IndexedDB::ObjectStoreRecordType LEGACY_NODELETE requestedObjectStoreRecordType() const;
     IndexedDB::IndexRecordType LEGACY_NODELETE requestedIndexRecordType() const;
 

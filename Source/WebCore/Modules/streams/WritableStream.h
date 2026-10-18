@@ -49,7 +49,7 @@ class WritableStream : public RefCountedAndCanMakeWeakPtr<WritableStream> {
 public:
     static ExceptionOr<Ref<WritableStream>> create(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, JSC::Strong<JSC::JSObject>&&);
     static ExceptionOr<Ref<WritableStream>> create(JSDOMGlobalObject&, Ref<WritableStreamSink>&&);
-    static Ref<WritableStream> create(Ref<InternalWritableStream>&&);
+    static Ref<WritableStream> LEGACY_NODELETE create(Ref<InternalWritableStream>&&);
 
     virtual ~WritableStream();
 

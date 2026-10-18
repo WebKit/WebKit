@@ -55,7 +55,7 @@ public:
     using ArtworkImageLoaderCallback = Function<void(Image*)>;
     // The callback will only be called upon success or explicit failure to retrieve the image. If the operation is interrupted following the
     // destruction of the ArtworkImageLoader, the callback won't be called.
-    WEBCORE_EXPORT static Ref<ArtworkImageLoader> create(Document&, const String& src, ArtworkImageLoaderCallback&&);
+    WEBCORE_EXPORT static Ref<ArtworkImageLoader> LEGACY_NODELETE create(Document&, const String& src, ArtworkImageLoaderCallback&&);
     WEBCORE_EXPORT ~ArtworkImageLoader();
 
     WEBCORE_EXPORT void requestImageResource();

@@ -53,7 +53,7 @@ class IDBConnectionProxy;
 class IDBFactory : public ThreadSafeRefCounted<IDBFactory> {
     WTF_MAKE_TZONE_ALLOCATED(IDBFactory);
 public:
-    static Ref<IDBFactory> create(IDBClient::IDBConnectionProxy&);
+    static Ref<IDBFactory> LEGACY_NODELETE create(IDBClient::IDBConnectionProxy&);
     ~IDBFactory();
 
     struct DatabaseInfo {

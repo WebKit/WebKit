@@ -35,7 +35,7 @@ namespace WebCore {
 class RTCTransformEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(RTCTransformEvent);
 public:
-    static Ref<RTCTransformEvent> create(const AtomString& type, Ref<RTCRtpScriptTransformer>&&, IsTrusted = IsTrusted::No);
+    static Ref<RTCTransformEvent> LEGACY_NODELETE create(const AtomString& type, Ref<RTCRtpScriptTransformer>&&, IsTrusted = IsTrusted::No);
 
     RTCRtpScriptTransformer& transformer() { return m_transformer; }
 

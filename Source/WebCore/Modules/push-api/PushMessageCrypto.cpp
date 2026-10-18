@@ -179,7 +179,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
     return plainText;
 }
 
-static size_t computeAESGCMPaddingLength(std::span<const uint8_t> span)
+static size_t LEGACY_NODELETE computeAESGCMPaddingLength(std::span<const uint8_t> span)
 {
     /*
      * Compute padding length as defined in draft-ietf-httpbis-encryption-encoding-03:

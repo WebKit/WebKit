@@ -38,8 +38,8 @@ public:
         String message;
     };
 
-    static Ref<SpeechRecognitionErrorEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    static Ref<SpeechRecognitionErrorEvent> create(const AtomString&, SpeechRecognitionErrorCode, const String&);
+    static Ref<SpeechRecognitionErrorEvent> LEGACY_NODELETE create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<SpeechRecognitionErrorEvent> LEGACY_NODELETE create(const AtomString&, SpeechRecognitionErrorCode, const String&);
 
     SpeechRecognitionErrorCode error() const { return m_error; }
     const String& message() const LIFETIME_BOUND { return m_message; }

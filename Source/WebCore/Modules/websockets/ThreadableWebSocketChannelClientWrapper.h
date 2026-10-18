@@ -47,7 +47,7 @@ class WebSocketChannelClient;
 
 class ThreadableWebSocketChannelClientWrapper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ThreadableWebSocketChannelClientWrapper> {
 public:
-    static Ref<ThreadableWebSocketChannelClientWrapper> create(ScriptExecutionContext&, WebSocketChannelClient&);
+    static Ref<ThreadableWebSocketChannelClientWrapper> LEGACY_NODELETE create(ScriptExecutionContext&, WebSocketChannelClient&);
 
     WorkerThreadableWebSocketChannel::Peer* LEGACY_NODELETE peer() const;
     void didCreateWebSocketChannel(Ref<WorkerThreadableWebSocketChannel::Peer>&&);
@@ -62,7 +62,7 @@ public:
     String extensions() const;
     void setExtensions(const String&);
 
-    void clearClient();
+    void LEGACY_NODELETE clearClient();
 
     void didConnect();
     void didReceiveMessage(String&& message);

@@ -46,7 +46,7 @@ class AudioNodeInput final : public AudioSummingJunction, public ThreadSafeRefCo
     WTF_MAKE_TZONE_ALLOCATED(AudioNodeInput);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioNodeInput);
 public:
-    static Ref<AudioNodeInput> create(AudioNode*);
+    static Ref<AudioNodeInput> LEGACY_NODELETE create(AudioNode*);
 
     // AudioSummingJunction
     bool canUpdateState() override { return !node()->isMarkedForDeletion(); }

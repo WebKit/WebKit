@@ -45,8 +45,8 @@ template<typename> class ExceptionOr;
 class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor> {
     WTF_MAKE_TZONE_ALLOCATED(IDBCursor);
 public:
-    static Ref<IDBCursor> create(IDBObjectStore&, const IDBCursorInfo&);
-    static Ref<IDBCursor> create(IDBIndex&, const IDBCursorInfo&);
+    static Ref<IDBCursor> LEGACY_NODELETE create(IDBObjectStore&, const IDBCursorInfo&);
+    static Ref<IDBCursor> LEGACY_NODELETE create(IDBIndex&, const IDBCursorInfo&);
     
     virtual ~IDBCursor();
 

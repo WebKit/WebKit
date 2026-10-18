@@ -47,7 +47,7 @@ public:
     ExceptionOr<void> respond(JSDOMGlobalObject&, size_t);
     ExceptionOr<void> respondWithNewView(JSDOMGlobalObject&, JSC::ArrayBufferView&);
 
-    void clearController();
+    void LEGACY_NODELETE clearController();
     void clearView();
 
     template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);

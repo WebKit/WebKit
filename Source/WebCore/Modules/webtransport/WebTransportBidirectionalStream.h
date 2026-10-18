@@ -35,7 +35,7 @@ class WebTransportSendStream;
 
 class WebTransportBidirectionalStream : public RefCounted<WebTransportBidirectionalStream> {
 public:
-    static Ref<WebTransportBidirectionalStream> create(Ref<WebTransportReceiveStream>&&, Ref<WebTransportSendStream>&&);
+    static Ref<WebTransportBidirectionalStream> LEGACY_NODELETE create(Ref<WebTransportReceiveStream>&&, Ref<WebTransportSendStream>&&);
     ~WebTransportBidirectionalStream();
 
     WebTransportReceiveStream& readable() { return m_readable.get(); }

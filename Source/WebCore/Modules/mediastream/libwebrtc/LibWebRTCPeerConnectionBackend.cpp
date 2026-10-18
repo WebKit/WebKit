@@ -301,7 +301,7 @@ std::unique_ptr<RTCDataChannelHandler> LibWebRTCPeerConnectionBackend::createDat
     return m_endpoint->createDataChannel(label, options);
 }
 
-static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<Ref<RTCRtpTransceiver>>& transceivers, LibWebRTCRtpSenderBackend& senderBackend)
+static inline RefPtr<RTCRtpSender> LEGACY_NODELETE findExistingSender(const Vector<Ref<RTCRtpTransceiver>>& transceivers, LibWebRTCRtpSenderBackend& senderBackend)
 {
     ASSERT(senderBackend.rtcSender());
     for (auto& transceiver : transceivers) {

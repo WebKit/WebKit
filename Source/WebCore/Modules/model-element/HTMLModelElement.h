@@ -178,7 +178,7 @@ public:
     void exitImmersivePresentation(CompletionHandler<void()>&&);
 #endif
 
-    WEBCORE_EXPORT bool supportsDragging() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE supportsDragging() const;
     bool isDraggableIgnoringAttributes() const final;
 
     WEBCORE_EXPORT bool LEGACY_NODELETE isInteractive() const;
@@ -256,7 +256,7 @@ private:
     void modelDidChange();
     void createModelPlayer();
     void deleteModelPlayer();
-    void deletePendingModelPlayer();
+    void LEGACY_NODELETE deletePendingModelPlayer();
     void unloadModelPlayer(bool onSuspend);
     void reloadModelPlayer();
     void updatePlayerVisibility();
@@ -285,7 +285,7 @@ private:
     // Rendering overrides.
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
-    bool rendersFallbackContent() const;
+    bool LEGACY_NODELETE rendersFallbackContent() const;
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
     void didAttachRenderers() final;
     void willDetachRenderers() final;
@@ -344,7 +344,7 @@ private:
     void updateSpatialPortalController();
 #endif
 
-    ModelPlayer* effectiveModelPlayer() const;
+    ModelPlayer* LEGACY_NODELETE effectiveModelPlayer() const;
 
     void reportExtraMemoryCost();
 

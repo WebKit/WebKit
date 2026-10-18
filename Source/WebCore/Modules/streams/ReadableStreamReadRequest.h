@@ -49,14 +49,14 @@ public:
 
 class ReadableStreamReadRequest : public ReadableStreamReadRequestBase {
 public:
-    static Ref<ReadableStreamReadRequest> create(Ref<DeferredPromise>&&);
+    static Ref<ReadableStreamReadRequest> LEGACY_NODELETE create(Ref<DeferredPromise>&&);
 
     virtual void runCloseSteps() = 0;
 };
 
 class ReadableStreamReadIntoRequest : public ReadableStreamReadRequestBase {
 public:
-    static Ref<ReadableStreamReadIntoRequest> create(Ref<DeferredPromise>&&);
+    static Ref<ReadableStreamReadIntoRequest> LEGACY_NODELETE create(Ref<DeferredPromise>&&);
 
     virtual void runCloseSteps(JSC::JSValue) = 0;
 };

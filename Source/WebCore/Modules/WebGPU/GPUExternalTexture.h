@@ -51,7 +51,7 @@ public:
     void destroy();
     void undestroy();
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

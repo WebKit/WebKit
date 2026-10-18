@@ -43,7 +43,7 @@ class PasteboardCustomData;
 class Clipboard final : public RefCounted<Clipboard>, public EventTarget {
     WTF_MAKE_TZONE_ALLOCATED(Clipboard);
 public:
-    static Ref<Clipboard> create(Navigator&);
+    static Ref<Clipboard> LEGACY_NODELETE create(Navigator&);
     ~Clipboard();
 
     enum EventTargetInterfaceType eventTargetInterface() const final;

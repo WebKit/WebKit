@@ -51,7 +51,7 @@ public:
     const ::WebGPU::TextureView& backing() const { return m_backing; }
     bool isCanvasBacking() const { return m_isCanvasBacking; }
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

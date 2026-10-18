@@ -373,7 +373,7 @@ static Ref<DOMPromise> pull2Steps(JSDOMGlobalObject& globalObject, StreamTeeStat
 
 class TeeDefaultReadRequest : public ReadableStreamReadRequest {
 public:
-    static Ref<TeeDefaultReadRequest> create(Ref<StreamTeeState>&& state) { return adoptRef(*new TeeDefaultReadRequest(WTF::move(state))); }
+    static Ref<TeeDefaultReadRequest> LEGACY_NODELETE create(Ref<StreamTeeState>&& state) { return adoptRef(*new TeeDefaultReadRequest(WTF::move(state))); }
 
 private:
     explicit TeeDefaultReadRequest(Ref<StreamTeeState>&& state)
@@ -489,7 +489,7 @@ private:
 
 class TeeBYOBReadRequest : public ReadableStreamReadIntoRequest {
 public:
-    static Ref<TeeBYOBReadRequest> create(Ref<StreamTeeState>&& state, bool forBranch2) { return adoptRef(*new TeeBYOBReadRequest(WTF::move(state), forBranch2)); }
+    static Ref<TeeBYOBReadRequest> LEGACY_NODELETE create(Ref<StreamTeeState>&& state, bool forBranch2) { return adoptRef(*new TeeBYOBReadRequest(WTF::move(state), forBranch2)); }
 
 private:
     explicit TeeBYOBReadRequest(Ref<StreamTeeState>&& state, bool forBranch2)

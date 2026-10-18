@@ -56,7 +56,7 @@ template<typename> class ExceptionOr;
 
 class PublicKeyCredential final : public BasicCredential {
 public:
-    static Ref<PublicKeyCredential> create(Ref<AuthenticatorResponse>&&);
+    static Ref<PublicKeyCredential> LEGACY_NODELETE create(Ref<AuthenticatorResponse>&&);
 
     ArrayBuffer& LEGACY_NODELETE rawId() const;
     AuthenticatorResponse& response() const { return m_response; }

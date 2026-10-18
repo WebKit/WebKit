@@ -34,7 +34,7 @@ namespace IDBServer {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IndexValueEntry);
 
-static Variant<std::optional<IDBKeyData>, IDBKeyDataSet> constructEmptyKeys(bool isUnique)
+static Variant<std::optional<IDBKeyData>, IDBKeyDataSet> LEGACY_NODELETE constructEmptyKeys(bool isUnique)
 {
     if (isUnique)
         return std::nullopt;

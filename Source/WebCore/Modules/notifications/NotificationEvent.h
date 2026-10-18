@@ -46,7 +46,7 @@ public:
 
     using Init = NotificationEventInit;
 
-    static Ref<NotificationEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<NotificationEvent> LEGACY_NODELETE create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     static Ref<NotificationEvent> create(const AtomString&, Ref<Notification>&&, const String& action, IsTrusted = IsTrusted::No);
 
     Notification& notification() { return m_notification; }

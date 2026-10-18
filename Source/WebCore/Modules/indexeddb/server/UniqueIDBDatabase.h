@@ -110,7 +110,7 @@ public:
 
     void didFinishHandlingVersionChange(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& transactionIdentifier);
     void connectionClosedFromClient(UniqueIDBDatabaseConnection&);
-    WEBCORE_EXPORT bool isVersionChangeTransactionActive(const UniqueIDBDatabaseConnection&) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isVersionChangeTransactionActive(const UniqueIDBDatabaseConnection&) const;
     void didFireVersionChangeEvent(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
     WEBCORE_EXPORT void openDBRequestCancelled(const IDBResourceIdentifier& requestIdentifier);
 
@@ -129,7 +129,7 @@ public:
     WEBCORE_EXPORT bool hasDataInMemory() const;
     WEBCORE_EXPORT void handleLowMemoryWarning();
 
-    WEBCORE_EXPORT bool isVersionChangeTransactionFinishingOrFinished(const IDBResourceIdentifier& transactionIdentifier) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isVersionChangeTransactionFinishingOrFinished(const IDBResourceIdentifier& transactionIdentifier) const;
 
 private:
     void handleDatabaseOperations();

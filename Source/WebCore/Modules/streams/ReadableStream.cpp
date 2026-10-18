@@ -176,7 +176,7 @@ Ref<ReadableStream> ReadableStream::create(Ref<InternalReadableStream>&& interna
 
 class AsyncIteratorSource : public ReadableStreamSource, public RefCountedAndCanMakeWeakPtr<AsyncIteratorSource> {
 public:
-    static Ref<AsyncIteratorSource> create(Ref<DOMAsyncIterator>&& iterator) { return adoptRef(*new AsyncIteratorSource(WTF::move(iterator))); }
+    static Ref<AsyncIteratorSource> LEGACY_NODELETE create(Ref<DOMAsyncIterator>&& iterator) { return adoptRef(*new AsyncIteratorSource(WTF::move(iterator))); }
 
     void LEGACY_NODELETE ref() const { return RefCounted::ref(); }
     void deref() const { return RefCounted::deref(); }
@@ -718,7 +718,7 @@ ReadableStream::Iterator::~Iterator() = default;
 
 class ReadableStreamIteratorReadRequest : public ReadableStreamReadRequest {
 public:
-    static Ref<ReadableStreamIteratorReadRequest> create(ReadableStreamDefaultReader& reader, Ref<DeferredPromise>&& promise) { return adoptRef(*new ReadableStreamIteratorReadRequest(reader,  WTF::move(promise))); }
+    static Ref<ReadableStreamIteratorReadRequest> LEGACY_NODELETE create(ReadableStreamDefaultReader& reader, Ref<DeferredPromise>&& promise) { return adoptRef(*new ReadableStreamIteratorReadRequest(reader,  WTF::move(promise))); }
 
     ~ReadableStreamIteratorReadRequest() = default;
 

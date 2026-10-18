@@ -35,7 +35,7 @@ namespace WebCore {
 
 class AuthenticatorAttestationResponse : public AuthenticatorResponse {
 public:
-    static Ref<AuthenticatorAttestationResponse> create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment, Vector<AuthenticatorTransport>&&);
+    static Ref<AuthenticatorAttestationResponse> LEGACY_NODELETE create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment, Vector<AuthenticatorTransport>&&);
     WEBCORE_EXPORT static Ref<AuthenticatorAttestationResponse> create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, AuthenticatorAttachment, Vector<AuthenticatorTransport>&&);
     WEBCORE_EXPORT static Ref<AuthenticatorAttestationResponse> create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, std::optional<AuthenticationExtensionsClientOutputs>&&, AuthenticatorAttachment, Vector<AuthenticatorTransport>&&);
 

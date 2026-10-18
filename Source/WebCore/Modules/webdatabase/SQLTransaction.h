@@ -58,7 +58,7 @@ public:
 
 class SQLTransaction : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SQLTransaction>, public SQLTransactionStateMachine<SQLTransaction> {
 public:
-    static Ref<SQLTransaction> create(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
+    static Ref<SQLTransaction> LEGACY_NODELETE create(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
     ~SQLTransaction();
 
     ExceptionOr<void> executeSql(const String& sqlStatement, std::optional<Vector<SQLValue>>&& arguments, RefPtr<SQLStatementCallback>&&, RefPtr<SQLStatementErrorCallback>&&);

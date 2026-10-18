@@ -49,7 +49,7 @@ struct DetachedTransformStream {
 class TransformStream : public RefCounted<TransformStream> {
 public:
     static ExceptionOr<Ref<TransformStream>> create(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, JSC::Strong<JSC::JSObject>&&, JSC::Strong<JSC::JSObject>&&);
-    static Ref<TransformStream> create(Ref<ReadableStream>&&, Ref<WritableStream>&&);
+    static Ref<TransformStream> LEGACY_NODELETE create(Ref<ReadableStream>&&, Ref<WritableStream>&&);
 
     ~TransformStream();
 

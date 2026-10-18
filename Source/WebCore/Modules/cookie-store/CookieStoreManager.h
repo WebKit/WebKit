@@ -38,7 +38,7 @@ struct CookieStoreGetOptions;
 
 class CookieStoreManager : public RefCounted<CookieStoreManager> {
 public:
-    static Ref<CookieStoreManager> create(ServiceWorkerRegistration&);
+    static Ref<CookieStoreManager> LEGACY_NODELETE create(ServiceWorkerRegistration&);
     ~CookieStoreManager();
 
     void subscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&&);

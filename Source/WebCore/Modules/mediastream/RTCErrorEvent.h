@@ -39,8 +39,8 @@ public:
         Ref<RTCError> error;
     };
 
-    static Ref<RTCErrorEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
-    static Ref<RTCErrorEvent> create(const AtomString& type, Ref<RTCError>&&);
+    static Ref<RTCErrorEvent> LEGACY_NODELETE create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<RTCErrorEvent> LEGACY_NODELETE create(const AtomString& type, Ref<RTCError>&&);
 
     RTCError& error() const { return m_error.get(); }
 

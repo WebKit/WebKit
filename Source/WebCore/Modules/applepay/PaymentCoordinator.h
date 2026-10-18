@@ -61,7 +61,7 @@ struct ExceptionDetails;
 class PaymentCoordinator final : public RefCountedAndCanMakeWeakPtr<PaymentCoordinator> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(PaymentCoordinator, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<PaymentCoordinator> create(Ref<PaymentCoordinatorClient>&&);
+    WEBCORE_EXPORT static Ref<PaymentCoordinator> LEGACY_NODELETE create(Ref<PaymentCoordinatorClient>&&);
     WEBCORE_EXPORT ~PaymentCoordinator();
 
     PaymentCoordinatorClient& client() { return m_client.get(); }

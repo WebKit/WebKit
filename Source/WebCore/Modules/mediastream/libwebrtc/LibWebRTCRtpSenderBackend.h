@@ -49,7 +49,7 @@ class LibWebRTCRtpSenderBackend final : public RTCRtpSenderBackend, public RefCo
 public:
     using Source = Variant<std::nullptr_t, Ref<RealtimeOutgoingAudioSource>, Ref<RealtimeOutgoingVideoSource>>;
     static Ref<LibWebRTCRtpSenderBackend> create(LibWebRTCPeerConnectionBackend&, RefPtr<webrtc::RtpSenderInterface>&&, Source&&);
-    static Ref<LibWebRTCRtpSenderBackend> create(LibWebRTCPeerConnectionBackend&, RefPtr<webrtc::RtpSenderInterface>&&);
+    static Ref<LibWebRTCRtpSenderBackend> LEGACY_NODELETE create(LibWebRTCPeerConnectionBackend&, RefPtr<webrtc::RtpSenderInterface>&&);
     ~LibWebRTCRtpSenderBackend();
 
     // RTCRtpSenderBackend.

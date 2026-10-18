@@ -39,8 +39,8 @@ public:
         Ref<DOMException> error;
     };
 
-    static Ref<MediaRecorderErrorEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    static Ref<MediaRecorderErrorEvent> create(const AtomString&, Exception&&);
+    static Ref<MediaRecorderErrorEvent> LEGACY_NODELETE create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<MediaRecorderErrorEvent> LEGACY_NODELETE create(const AtomString&, Exception&&);
 
     DOMException& error() const { return m_error; }
 

@@ -53,7 +53,7 @@ static inline RTCSctpTransportState LEGACY_NODELETE toRTCSctpTransportState(webr
 
 class LibWebRTCSctpTransportBackendObserver final : public ThreadSafeRefCounted<LibWebRTCSctpTransportBackendObserver>, public webrtc::SctpTransportObserverInterface {
 public:
-    static Ref<LibWebRTCSctpTransportBackendObserver> create(RTCSctpTransportBackendClient& client, Ref<webrtc::SctpTransportInterface>&& backend) { return adoptRef(*new LibWebRTCSctpTransportBackendObserver(client, WTF::move(backend))); }
+    static Ref<LibWebRTCSctpTransportBackendObserver> LEGACY_NODELETE create(RTCSctpTransportBackendClient& client, Ref<webrtc::SctpTransportInterface>&& backend) { return adoptRef(*new LibWebRTCSctpTransportBackendObserver(client, WTF::move(backend))); }
 
     void start();
     void stop();

@@ -55,7 +55,7 @@ public:
     };
 
     static ExceptionOr<Ref<WebCodecsAudioData>> create(ScriptExecutionContext&, Init&&);
-    static Ref<WebCodecsAudioData> create(ScriptExecutionContext&, Ref<PlatformRawAudioData>&&);
+    static Ref<WebCodecsAudioData> LEGACY_NODELETE create(ScriptExecutionContext&, Ref<PlatformRawAudioData>&&);
     static Ref<WebCodecsAudioData> create(ScriptExecutionContext& context, WebCodecsAudioInternalData&& data) { return adoptRef(*new WebCodecsAudioData(context, WTF::move(data))); }
 
     // ContextDestructionObserver.

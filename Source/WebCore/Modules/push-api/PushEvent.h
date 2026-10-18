@@ -38,7 +38,7 @@ class PushEvent final : public ExtendableEvent {
     WTF_MAKE_TZONE_ALLOCATED(PushEvent);
 public:
     static Ref<PushEvent> create(const AtomString&, PushEventInit&&, IsTrusted = IsTrusted::No);
-    static Ref<PushEvent> create(const AtomString&, ExtendableEventInit&&, std::optional<Vector<uint8_t>>&&, IsTrusted);
+    static Ref<PushEvent> LEGACY_NODELETE create(const AtomString&, ExtendableEventInit&&, std::optional<Vector<uint8_t>>&&, IsTrusted);
     ~PushEvent();
 
     PushMessageData* data() { return m_data.get(); }

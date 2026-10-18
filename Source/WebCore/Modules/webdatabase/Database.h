@@ -71,7 +71,7 @@ public:
     void scheduleTransactionStep(SQLTransaction&);
     void inProgressTransactionCompleted();
 
-    bool hasPendingTransaction();
+    bool LEGACY_NODELETE hasPendingTransaction();
 
     bool hasPendingCreationEvent() const { return m_hasPendingCreationEvent; }
     void setHasPendingCreationEvent(bool value) { m_hasPendingCreationEvent = value; }

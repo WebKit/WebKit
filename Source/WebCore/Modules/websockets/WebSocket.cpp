@@ -147,7 +147,7 @@ static uint64_t LEGACY_NODELETE saturateAdd(uint64_t a, uint64_t b)
 
 // Every channel implementation stages a binary payload into a Vector or a SharedBuffer before it
 // reaches the network, so a payload longer than one of those can hold can never be framed at all.
-static bool isFramablePayloadSize(size_t payloadSize)
+static bool LEGACY_NODELETE isFramablePayloadSize(size_t payloadSize)
 {
     return WTF::isValidCapacityForVector<uint8_t>(payloadSize);
 }

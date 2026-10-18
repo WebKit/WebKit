@@ -110,14 +110,14 @@ public:
 
     InternalReadableStream* internalReadableStream() { return m_internalReadableStream.get(); }
 
-    void setDefaultReader(ReadableStreamDefaultReader*);
+    void LEGACY_NODELETE setDefaultReader(ReadableStreamDefaultReader*);
     ReadableStreamDefaultReader* LEGACY_NODELETE defaultReader();
 
     bool hasByteStreamController() { return !!m_controller; }
     ReadableByteStreamController* controller() { return m_controller.get(); }
     const ReadableByteStreamController* controller() const { return m_controller.get(); }
 
-    void setByobReader(ReadableStreamBYOBReader*);
+    void LEGACY_NODELETE setByobReader(ReadableStreamBYOBReader*);
     ReadableStreamBYOBReader* LEGACY_NODELETE byobReader();
     void fulfillReadIntoRequest(JSDOMGlobalObject&, RefPtr<JSC::ArrayBufferView>&&, bool done);
 
@@ -141,7 +141,7 @@ public:
     bool isReachableFromOpaqueRoots() const { return m_isSourceReachableFromOpaqueRoot && m_state == State::Readable; }
     enum class VisitTeedChildren : bool { No, Yes };
     void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&, VisitTeedChildren = VisitTeedChildren::No);
-    void setTeedBranches(ReadableStream&, ReadableStream&);
+    void LEGACY_NODELETE setTeedBranches(ReadableStream&, ReadableStream&);
     void LEGACY_NODELETE setSourceTeedStream(ReadableStream&);
 
     class DependencyToVisit : public AbstractRefCounted {
@@ -170,7 +170,7 @@ public:
 
     class Iterator : public RefCountedAndCanMakeWeakPtr<Iterator> {
     public:
-        static Ref<Iterator> create(Ref<ReadableStreamDefaultReader>&&, bool preventCancel);
+        static Ref<Iterator> LEGACY_NODELETE create(Ref<ReadableStreamDefaultReader>&&, bool preventCancel);
         ~Iterator();
 
         Ref<DOMPromise> next(JSDOMGlobalObject&);
@@ -195,7 +195,7 @@ private:
     ExceptionOr<void> setupReadableByteStreamControllerFromUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue, UnderlyingSource&&, double);
 
     bool LEGACY_NODELETE isPulling() const;
-    void teedBranchIsDestroyed(ReadableStream&);
+    void LEGACY_NODELETE teedBranchIsDestroyed(ReadableStream&);
 
     const bool m_isSourceReachableFromOpaqueRoot { false };
     bool m_disturbed { false };

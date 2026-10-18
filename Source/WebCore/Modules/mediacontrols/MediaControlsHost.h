@@ -109,8 +109,8 @@ public:
     bool LEGACY_NODELETE inWindowFullscreen() const;
     bool supportsRewind() const;
     bool needsChromeMediaControlsPseudoElement() const;
-    bool isMediaControlsMacInlineSizeSpecsEnabled() const;
-    bool spatialVideoRenderingEnabled() const;
+    bool LEGACY_NODELETE isMediaControlsMacInlineSizeSpecsEnabled() const;
+    bool LEGACY_NODELETE spatialVideoRenderingEnabled() const;
     String spatialVideoProjectionKind() const;
     std::optional<int32_t> spatialVideoHorizontalFieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);

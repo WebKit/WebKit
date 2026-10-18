@@ -84,7 +84,7 @@ public:
 
     // Distance parameters
     DistanceModelType LEGACY_NODELETE distanceModelForBindings() const;
-    void setDistanceModelForBindings(DistanceModelType);
+    void LEGACY_NODELETE setDistanceModelForBindings(DistanceModelType);
 
     double refDistanceForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_distanceEffect.refDistance(); }
     ExceptionOr<void> setRefDistanceForBindings(double);
@@ -97,10 +97,10 @@ public:
 
     // Sound cones - angles in degrees
     double coneInnerAngleForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_coneEffect.innerAngle(); }
-    void setConeInnerAngleForBindings(double);
+    void LEGACY_NODELETE setConeInnerAngleForBindings(double);
 
     double coneOuterAngleForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_coneEffect.outerAngle(); }
-    void setConeOuterAngleForBindings(double);
+    void LEGACY_NODELETE setConeOuterAngleForBindings(double);
 
     double coneOuterGainForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_coneEffect.outerGain(); }
     ExceptionOr<void> setConeOuterGainForBindings(double);
@@ -118,7 +118,7 @@ private:
         double azimuth { 0. };
         double elevation { 0. };
     };
-    static AzimuthElevation calculateAzimuthElevation(const FloatPoint3D& position, const FloatPoint3D& listenerPosition, const FloatPoint3D& listenerForward, const FloatPoint3D& listenerUp);
+    static AzimuthElevation LEGACY_NODELETE calculateAzimuthElevation(const FloatPoint3D& position, const FloatPoint3D& listenerPosition, const FloatPoint3D& listenerForward, const FloatPoint3D& listenerUp);
     static float calculateDistanceConeGain(const FloatPoint3D& position, const FloatPoint3D& orientation, const FloatPoint3D& listenerPosition, const DistanceEffect&, const ConeEffect&);
 
     // Returns the combined distance and cone gain attenuation.

@@ -46,7 +46,7 @@ struct AddressRange {
     IPAddressSpace space;
 };
 
-static bool matchesPrefix(std::span<const uint8_t> bytes, const AddressRange& range)
+static bool LEGACY_NODELETE matchesPrefix(std::span<const uint8_t> bytes, const AddressRange& range)
 {
     ASSERT(range.prefixLength <= bytes.size() * 8);
     size_t wholeBytes = range.prefixLength / 8;
@@ -61,7 +61,7 @@ static bool matchesPrefix(std::span<const uint8_t> bytes, const AddressRange& ra
     return (bytes[wholeBytes] & mask) == (range.address[wholeBytes] & mask);
 }
 
-static IPAddressSpace classifyAddress(std::span<const uint8_t> bytes, std::span<const AddressRange> ranges)
+static IPAddressSpace LEGACY_NODELETE classifyAddress(std::span<const uint8_t> bytes, std::span<const AddressRange> ranges)
 {
     for (auto& range : ranges) {
         if (matchesPrefix(bytes, range))
@@ -70,7 +70,7 @@ static IPAddressSpace classifyAddress(std::span<const uint8_t> bytes, std::span<
     return IPAddressSpace::Public;
 }
 
-static IPAddressSpace classifyIPv4Address(std::span<const uint8_t, 4> bytes)
+static IPAddressSpace LEGACY_NODELETE classifyIPv4Address(std::span<const uint8_t, 4> bytes)
 {
     static constexpr AddressRange ranges[] = {
         { { 0, 0, 0, 0 }, 32, IPAddressSpace::Loopback },
@@ -96,7 +96,7 @@ static IPAddressSpace classifyIPv4Address(std::span<const uint8_t, 4> bytes)
 // RFC 6052 embeds an IPv4 address in the bits immediately following the prefix, skipping the octet at
 // bits 64-71 that the IPv6 addressing architecture reserves. Only the two prefixes with fixed values
 // can be recognised here; an operator's network-specific prefix is not knowable.
-static std::optional<std::array<uint8_t, 4>> nat64EmbeddedIPv4Address(std::span<const uint8_t, 16> bytes)
+static std::optional<std::array<uint8_t, 4>> LEGACY_NODELETE nat64EmbeddedIPv4Address(std::span<const uint8_t, 16> bytes)
 {
     // 64:ff9b::/96, the Well-Known Prefix (RFC 6052).
     static constexpr std::array<uint8_t, 12> wellKnownPrefix { 0x00, 0x64, 0xFF, 0x9B };
@@ -111,7 +111,7 @@ static std::optional<std::array<uint8_t, 4>> nat64EmbeddedIPv4Address(std::span<
     return std::nullopt;
 }
 
-static IPAddressSpace classifyIPv6Address(std::span<const uint8_t, 16> bytes)
+static IPAddressSpace LEGACY_NODELETE classifyIPv6Address(std::span<const uint8_t, 16> bytes)
 {
     static constexpr AddressRange ipv4MappedRange { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF }, 96, IPAddressSpace::Public };
     if (matchesPrefix(bytes, ipv4MappedRange))

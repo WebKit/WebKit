@@ -44,7 +44,7 @@ template<typename> class ExceptionOr;
 class IDBKeyRange final : public ScriptWrappable, public RefCounted<IDBKeyRange> {
     WTF_MAKE_TZONE_ALLOCATED(IDBKeyRange);
 public:
-    static Ref<IDBKeyRange> create(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen);
+    static Ref<IDBKeyRange> LEGACY_NODELETE create(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen);
     static Ref<IDBKeyRange> create(RefPtr<IDBKey>&&);
     ~IDBKeyRange();
 

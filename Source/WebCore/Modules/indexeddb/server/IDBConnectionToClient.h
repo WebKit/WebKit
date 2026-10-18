@@ -46,7 +46,7 @@ class UniqueIDBDatabaseConnection;
 
 class IDBConnectionToClient : public RefCounted<IDBConnectionToClient> {
 public:
-    WEBCORE_EXPORT static Ref<IDBConnectionToClient> create(IDBConnectionToClientDelegate&);
+    WEBCORE_EXPORT static Ref<IDBConnectionToClient> LEGACY_NODELETE create(IDBConnectionToClientDelegate&);
 
     WEBCORE_EXPORT IDBConnectionIdentifier identifier() const;
 

@@ -45,7 +45,7 @@ public:
     static Ref<DevicePosture> create(Navigator&);
     ~DevicePosture();
 
-    Navigator* navigator();
+    Navigator* LEGACY_NODELETE navigator();
 
     using Type = DevicePostureType;
     Type type() const;

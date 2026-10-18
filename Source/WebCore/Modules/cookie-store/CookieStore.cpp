@@ -73,7 +73,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CookieStore);
 
 class CookieStore::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main> {
 public:
-    static Ref<MainThreadBridge> create(CookieStore& cookieStore)
+    static Ref<MainThreadBridge> LEGACY_NODELETE create(CookieStore& cookieStore)
     {
         return adoptRef(*new MainThreadBridge(cookieStore));
     }
@@ -81,7 +81,7 @@ public:
     void get(CookieStoreGetOptions&&, URL&&, Function<void(CookieStore&, ExceptionOr<Vector<Cookie>>&&)>&&);
     void set(Cookie&&, URL&&, Function<void(CookieStore&, std::optional<Exception>&&)>&&);
 
-    void detach() { m_cookieStore = nullptr; }
+    void LEGACY_NODELETE detach() { m_cookieStore = nullptr; }
 
 private:
     explicit MainThreadBridge(CookieStore&);

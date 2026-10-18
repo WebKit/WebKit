@@ -55,7 +55,7 @@ enum class LocalNetworkAccessPermissionRequestOutcome : uint8_t {
     UseRecordedDecision,
     Prompt,
 };
-WEBCORE_EXPORT LocalNetworkAccessPermissionRequestOutcome localNetworkAccessPermissionRequestOutcome(IPAddressSpace connectionAddressSpace, bool hasRecordedDecision);
+WEBCORE_EXPORT LocalNetworkAccessPermissionRequestOutcome LEGACY_NODELETE localNetworkAccessPermissionRequestOutcome(IPAddressSpace connectionAddressSpace, bool hasRecordedDecision);
 
 enum class LocalNetworkAccessRequirement : bool { None, Permission };
 

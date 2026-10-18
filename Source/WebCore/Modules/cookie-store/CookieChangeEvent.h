@@ -37,7 +37,7 @@ class CookieChangeEvent final : public Event {
 public:
     using Init = CookieChangeEventInit;
 
-    static Ref<CookieChangeEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<CookieChangeEvent> LEGACY_NODELETE create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
     ~CookieChangeEvent();
 
     const Vector<CookieListItem>& changed() const LIFETIME_BOUND { return m_changed; }

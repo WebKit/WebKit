@@ -89,7 +89,7 @@ public:
 
     IDBDatabaseInfo& info() LIFETIME_BOUND { return m_info; }
     IDBDatabaseConnectionIdentifier databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
-    std::optional<ScriptExecutionContextIdentifier> scriptExecutionContextIdentifier() const;
+    std::optional<ScriptExecutionContextIdentifier> LEGACY_NODELETE scriptExecutionContextIdentifier() const;
 
     Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&, IDBOpenDBRequest&);
     void didStartTransaction(IDBTransaction&);

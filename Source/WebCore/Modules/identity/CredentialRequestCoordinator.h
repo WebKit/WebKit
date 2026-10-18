@@ -58,7 +58,7 @@ class CredentialRequestCoordinator final : public RefCountedAndCanMakeWeakPtr<Cr
     WTF_MAKE_NONCOPYABLE(CredentialRequestCoordinator);
 
 public:
-    static Ref<CredentialRequestCoordinator> create(Ref<CredentialRequestCoordinatorClient>&&, Page&);
+    static Ref<CredentialRequestCoordinator> LEGACY_NODELETE create(Ref<CredentialRequestCoordinatorClient>&&, Page&);
     WEBCORE_EXPORT void prepareCredentialRequests(const Document&, CredentialPromise&&, Vector<UnvalidatedDigitalCredentialRequest>&&, RefPtr<AbortSignal>);
     WEBCORE_EXPORT void abortTheCredentialRequest(ExceptionOr<JSC::JSValue>&&);
     ~CredentialRequestCoordinator();

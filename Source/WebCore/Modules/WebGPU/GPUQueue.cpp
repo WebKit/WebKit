@@ -408,7 +408,7 @@ static void getImageBytesFromImageBuffer(const RefPtr<ImageBuffer>& imageBuffer,
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-static void clampDimension(WebGPU::Extent3D& extent3D, size_t dimension, uint32_t minValue)
+static void LEGACY_NODELETE clampDimension(WebGPU::Extent3D& extent3D, size_t dimension, uint32_t minValue)
 {
     switch (dimension) {
     case 0:
@@ -738,7 +738,7 @@ static void imageBytesForSource(WebGPUIntegration& gpu, WebGPU::Queue& backing, 
 // Whether the backing queue can wrap an accelerated ImageBuffer of this pixel format in a texture.
 // Kept in sync with GPUImpl::copyExternalImageToTexture, which does the wrapping: a format it
 // cannot express has to be rejected here, while there is still a CPU path to fall back to.
-static bool isSupportedGPUSourcePixelFormat(PixelFormat pixelFormat)
+static bool LEGACY_NODELETE isSupportedGPUSourcePixelFormat(PixelFormat pixelFormat)
 {
     switch (pixelFormat) {
     case PixelFormat::RGBX8:
@@ -782,7 +782,7 @@ struct GPUResidentSource {
     // it is a CVPixelBuffer the GPU process already holds.
     std::optional<WebGPUVideoSourceIdentifier> videoSource { };
 
-    bool isGPUResident() const { return imageBuffer || videoSource; }
+    bool LEGACY_NODELETE isGPUResident() const { return imageBuffer || videoSource; }
 };
 
 #if HAVE(IOSURFACE) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)

@@ -50,7 +50,7 @@ public:
     const ::WebGPU::CommandBuffer& backing() const { return m_backing; }
     void setBacking(::WebGPU::CommandEncoder&, ::WebGPU::CommandBuffer&);
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

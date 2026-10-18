@@ -49,12 +49,12 @@ public:
 
     void start();
     void requestTermination(DatabaseTaskSynchronizer* cleanupSync);
-    bool terminationRequested(DatabaseTaskSynchronizer* = nullptr) const;
+    bool LEGACY_NODELETE terminationRequested(DatabaseTaskSynchronizer* = nullptr) const;
 
     void scheduleTask(std::unique_ptr<DatabaseTask>&&);
     void scheduleImmediateTask(std::unique_ptr<DatabaseTask>&&); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.
     void unscheduleDatabaseTasks(Database&);
-    bool hasPendingDatabaseActivity() const;
+    bool LEGACY_NODELETE hasPendingDatabaseActivity() const;
 
     void recordDatabaseOpen(Database&);
     void recordDatabaseClosed(Database&);

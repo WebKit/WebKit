@@ -82,7 +82,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceBuffer);
 
 class SourceBufferClientImpl final : public SourceBufferPrivateClient {
 public:
-    static Ref<SourceBufferClientImpl> create(SourceBuffer& parent) { return adoptRef(*new SourceBufferClientImpl(parent)); }
+    static Ref<SourceBufferClientImpl> LEGACY_NODELETE create(SourceBuffer& parent) { return adoptRef(*new SourceBufferClientImpl(parent)); }
     Ref<MediaPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment) final
     {
         MediaPromise::AutoRejectProducer producer(PlatformMediaError::BufferRemoved);

@@ -33,8 +33,8 @@ namespace WebCore {
 class IDBCursorWithValue final : public IDBCursor {
     WTF_MAKE_TZONE_ALLOCATED(IDBCursorWithValue);
 public:
-    static Ref<IDBCursorWithValue> create(IDBObjectStore&, const IDBCursorInfo&);
-    static Ref<IDBCursorWithValue> create(IDBIndex&, const IDBCursorInfo&);
+    static Ref<IDBCursorWithValue> LEGACY_NODELETE create(IDBObjectStore&, const IDBCursorInfo&);
+    static Ref<IDBCursorWithValue> LEGACY_NODELETE create(IDBIndex&, const IDBCursorInfo&);
 
     virtual ~IDBCursorWithValue();
 

@@ -63,7 +63,7 @@ class IDBConnectionToServer final : public ThreadSafeRefCounted<IDBConnectionToS
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBConnectionToServer, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBConnectionToServer);
 public:
-    WEBCORE_EXPORT static Ref<IDBConnectionToServer> create(IDBConnectionToServerDelegate&, PAL::SessionID);
+    WEBCORE_EXPORT static Ref<IDBConnectionToServer> LEGACY_NODELETE create(IDBConnectionToServerDelegate&, PAL::SessionID);
     WEBCORE_EXPORT ~IDBConnectionToServer();
 
     WEBCORE_EXPORT IDBConnectionIdentifier identifier() const;

@@ -70,7 +70,7 @@ static RefPtr<GeolocationPosition> createGeolocationPosition(std::optional<Geolo
     return GeolocationPosition::create(GeolocationCoordinates::create(WTF::move(position.value())), timestamp);
 }
 
-static Ref<GeolocationPositionError> createGeolocationPositionError(GeolocationError& error)
+static Ref<GeolocationPositionError> LEGACY_NODELETE createGeolocationPositionError(GeolocationError& error)
 {
     auto code = GeolocationPositionError::POSITION_UNAVAILABLE;
     switch (error.code()) {

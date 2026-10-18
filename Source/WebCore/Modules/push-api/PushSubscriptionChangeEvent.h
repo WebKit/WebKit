@@ -34,7 +34,7 @@ class PushSubscriptionChangeEvent final : public ExtendableEvent {
     WTF_MAKE_TZONE_ALLOCATED(PushSubscriptionChangeEvent);
 public:
     static Ref<PushSubscriptionChangeEvent> create(const AtomString&, PushSubscriptionChangeEventInit&&, IsTrusted = IsTrusted::No);
-    static Ref<PushSubscriptionChangeEvent> create(const AtomString&, ExtendableEventInit&&, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted);
+    static Ref<PushSubscriptionChangeEvent> LEGACY_NODELETE create(const AtomString&, ExtendableEventInit&&, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted);
     ~PushSubscriptionChangeEvent();
 
     PushSubscription* newSubscription() { return m_newSubscription.get(); }

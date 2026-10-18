@@ -72,7 +72,7 @@ public:
 private:
     friend struct IPC::ArgumentCoder<IDBRequestData>;
     WEBCORE_EXPORT IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, IDBResourceIdentifier requestIdentifier, IDBResourceIdentifier transactionIdentifier, std::optional<IDBResourceIdentifier>&& cursorIdentifier, std::optional<IDBObjectStoreIdentifier>, std::optional<IDBIndexIdentifier>, IndexedDB::IndexRecordType, uint64_t requestedVersion, IndexedDB::RequestType);
-    static void isolatedCopy(const IDBRequestData& source, IDBRequestData& destination);
+    static void LEGACY_NODELETE isolatedCopy(const IDBRequestData& source, IDBRequestData& destination);
 
     IDBConnectionIdentifier m_serverConnectionIdentifier;
     IDBResourceIdentifier m_requestIdentifier;

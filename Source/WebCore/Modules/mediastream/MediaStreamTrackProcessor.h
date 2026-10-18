@@ -109,7 +109,7 @@ private:
     class TrackObserver;
     class TrackObserverWrapper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TrackObserverWrapper> {
     public:
-        static Ref<TrackObserverWrapper> create(ScriptExecutionContext&, MediaStreamTrackProcessor&, MediaStreamTrackHandle&);
+        static Ref<TrackObserverWrapper> LEGACY_NODELETE create(ScriptExecutionContext&, MediaStreamTrackProcessor&, MediaStreamTrackHandle&);
         ~TrackObserverWrapper()
         {
             ASSERT(m_isStopped);

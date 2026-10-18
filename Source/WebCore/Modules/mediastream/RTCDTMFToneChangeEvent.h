@@ -37,13 +37,13 @@ class RTCDTMFToneChangeEvent final : public Event {
 public:
     virtual ~RTCDTMFToneChangeEvent();
 
-    static Ref<RTCDTMFToneChangeEvent> create(const String& tone);
+    static Ref<RTCDTMFToneChangeEvent> LEGACY_NODELETE create(const String& tone);
 
     struct Init : EventInit {
         String tone;
     };
 
-    static Ref<RTCDTMFToneChangeEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<RTCDTMFToneChangeEvent> LEGACY_NODELETE create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
     const String& LEGACY_NODELETE tone() const;
 

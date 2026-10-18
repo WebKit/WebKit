@@ -148,7 +148,7 @@ public:
     void setScreenshareActive(bool isActive, DOMPromiseDeferred<void>&& promise) { updateCaptureState(isActive, WTF::move(promise), MediaProducerMediaCaptureKind::Display); }
 #endif
 
-    WEBCORE_EXPORT bool hasActionHandler(const MediaSessionAction) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE hasActionHandler(const MediaSessionAction) const;
 
     RefPtr<CaptionUserPreferences> captionPreferences();
     void captionPreferencesChanged();

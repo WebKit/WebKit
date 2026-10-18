@@ -276,7 +276,7 @@ class PushDatabase::Storage : public ThreadSafeRefCounted<Storage, WTF::Destruct
 public:
     static Ref<Storage> create(UniqueRef<SQLiteDatabase>&& database) { return adoptRef(*new Storage(WTF::move(database))); }
 
-    SQLiteDatabase& database() { return m_db; }
+    SQLiteDatabase& LEGACY_NODELETE database() { return m_db; }
 
     SQLiteStatementAutoResetScope cachedStatement(ASCIILiteral query);
     template<typename... Args> SQLiteStatementAutoResetScope bindStatement(ASCIILiteral query, Args&&...);
@@ -392,7 +392,7 @@ static std::span<const uint8_t> LEGACY_NODELETE uuidToSpan(const std::optional<W
     return uuid->span();
 }
 
-static SQLValue expirationTimeToValue(std::optional<EpochTimeStamp> timestamp)
+static SQLValue LEGACY_NODELETE expirationTimeToValue(std::optional<EpochTimeStamp> timestamp)
 {
     if (!timestamp)
         return nullptr;

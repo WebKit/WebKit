@@ -955,7 +955,7 @@ Ref<GPUAdapterInfo> GPUDevice::adapterInfo() const
 }
 
 
-static OptionSet<::WebGPU::ColorWrite> convertToAPI(uint32_t writeMask)
+static OptionSet<::WebGPU::ColorWrite> LEGACY_NODELETE convertToAPI(uint32_t writeMask)
 {
     auto result = OptionSet<::WebGPU::ColorWrite>::fromRaw(writeMask & webGPUColorWriteMaskAll);
     if (writeMask & ~webGPUColorWriteMaskAll)

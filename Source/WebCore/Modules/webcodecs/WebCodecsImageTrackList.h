@@ -39,7 +39,7 @@ namespace WebCore {
 class WebCodecsImageTrackList final : public RefCounted<WebCodecsImageTrackList> {
     WTF_MAKE_TZONE_ALLOCATED(WebCodecsImageTrackList);
 public:
-    static Ref<WebCodecsImageTrackList> create();
+    static Ref<WebCodecsImageTrackList> LEGACY_NODELETE create();
 
     void setTrackList(Vector<Ref<WebCodecsImageTrack>>&&);
     void clearTrackList(const Exception&);
@@ -50,9 +50,9 @@ public:
 
     size_t length() const { return m_list.size(); };
     int selectedIndex() const { return m_selectedIndex; }
-    RefPtr<WebCodecsImageTrack> selectedTrack() const;
+    RefPtr<WebCodecsImageTrack> LEGACY_NODELETE selectedTrack() const;
 
-    RefPtr<WebCodecsImageTrack> item(unsigned index) const;
+    RefPtr<WebCodecsImageTrack> LEGACY_NODELETE item(unsigned index) const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
 
 private:

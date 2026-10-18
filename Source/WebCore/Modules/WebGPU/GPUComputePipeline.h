@@ -61,7 +61,7 @@ public:
     ::WebGPU::ComputePipeline& backing() { return m_backing; }
     const ::WebGPU::ComputePipeline& backing() const { return m_backing; }
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
     const String& shaderSource() const { return m_shaderModuleDescriptor.code; }
     void updateShader(const String&, CompletionHandler<void(bool)>&&);
 

@@ -47,8 +47,8 @@ public:
     void setMuted(ScriptExecutionContext&, bool);
     bool muted(ScriptExecutionContext&) const { return m_muted; }
 
-    Ref<WritableStream> writable();
-    Ref<MediaStreamTrack> track();
+    Ref<WritableStream> LEGACY_NODELETE writable();
+    Ref<MediaStreamTrack> LEGACY_NODELETE track();
 
 private:
     class Sink;

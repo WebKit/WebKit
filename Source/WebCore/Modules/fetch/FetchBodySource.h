@@ -44,7 +44,7 @@ class ReadableByteStreamController;
 
 class FetchBodySource final : public RefCountedAndCanMakeWeakPtr<FetchBodySource> {
 public:
-    static Ref<FetchBodySource> create(FetchBodyOwner&);
+    static Ref<FetchBodySource> LEGACY_NODELETE create(FetchBodyOwner&);
 
     ~FetchBodySource();
 

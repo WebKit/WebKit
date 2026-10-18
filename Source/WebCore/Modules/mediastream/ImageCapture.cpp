@@ -192,7 +192,7 @@ static void createImageBitmapOrException(VideoFrame& videoFrame, CompletionHandl
 
 class ImageCaptureVideoFrameObserver : public RealtimeMediaSource::VideoFrameObserver, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageCaptureVideoFrameObserver, WTF::DestructionThread::MainRunLoop> {
 public:
-    static Ref<ImageCaptureVideoFrameObserver> create(Ref<RealtimeMediaSource>&& source) { return adoptRef(*new ImageCaptureVideoFrameObserver(WTF::move(source))); }
+    static Ref<ImageCaptureVideoFrameObserver> LEGACY_NODELETE create(Ref<RealtimeMediaSource>&& source) { return adoptRef(*new ImageCaptureVideoFrameObserver(WTF::move(source))); }
     ~ImageCaptureVideoFrameObserver()
     {
         ASSERT(m_callbacks.isEmpty());

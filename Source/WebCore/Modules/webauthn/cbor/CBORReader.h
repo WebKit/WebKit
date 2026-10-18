@@ -116,12 +116,12 @@ private:
     std::optional<CBORValue> decodeValueToNegative(uint64_t value);
     std::optional<CBORValue> decodeValueToUnsigned(uint64_t value);
     std::optional<CBORValue> readSimpleValue(uint8_t additionalInfo, uint64_t value);
-    bool readVariadicLengthInteger(uint8_t additionalInfo, uint64_t* value);
+    bool LEGACY_NODELETE readVariadicLengthInteger(uint8_t additionalInfo, uint64_t* value);
     std::optional<CBORValue> readBytes(uint64_t numBytes);
     std::optional<CBORValue> readString(uint64_t numBytes);
     std::optional<CBORValue> readCBORArray(uint64_t length, int maxNestingLevel);
     std::optional<CBORValue> readCBORMap(uint64_t length, int maxNestingLevel);
-    bool canConsume(uint64_t bytes);
+    bool LEGACY_NODELETE canConsume(uint64_t bytes);
     void LEGACY_NODELETE checkExtraneousData();
     bool LEGACY_NODELETE checkDuplicateKey(const CBORValue& newKey, const CBORValue::MapValue&);
     bool LEGACY_NODELETE hasValidUTF8Format(const String&);

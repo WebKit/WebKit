@@ -85,7 +85,7 @@ RTCPriorityType LEGACY_NODELETE toRTCPriorityType(webrtc::Priority);
 webrtc::Priority LEGACY_NODELETE fromRTCPriorityType(RTCPriorityType);
 
 enum class MediaStreamTrackHintValue : uint8_t;
-webrtc::VideoTrackInterface::ContentHint toWebRTCContentHint(MediaStreamTrackHintValue);
+webrtc::VideoTrackInterface::ContentHint LEGACY_NODELETE toWebRTCContentHint(MediaStreamTrackHintValue);
 
 inline String fromStdString(const std::string& value)
 {

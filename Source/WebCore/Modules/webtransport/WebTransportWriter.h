@@ -42,7 +42,7 @@ public:
     static ExceptionOr<Ref<WebTransportWriter>> create(JSDOMGlobalObject&, WritableStream&);
 
     void atomicWrite(JSC::JSValue chunk, Ref<DeferredPromise>&&);
-    void commit();
+    void LEGACY_NODELETE commit();
 
 private:
     explicit WebTransportWriter(Ref<InternalWritableStreamWriter>&&);

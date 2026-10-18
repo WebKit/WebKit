@@ -37,7 +37,7 @@ namespace WebCore {
 
 class WEBCORE_EXPORT DummyModelPlayer final : public ModelPlayer {
 public:
-    static Ref<DummyModelPlayer> create(ModelPlayerClient&);
+    static Ref<DummyModelPlayer> LEGACY_NODELETE create(ModelPlayerClient&);
     virtual ~DummyModelPlayer();
 
 private:

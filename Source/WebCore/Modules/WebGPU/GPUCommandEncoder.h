@@ -113,7 +113,7 @@ public:
     const ::WebGPU::CommandEncoder& backing() const { return m_backing; }
     void setBacking(::WebGPU::CommandEncoder&);
 
-    GPUDevice* device() const;
+    GPUDevice* LEGACY_NODELETE device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

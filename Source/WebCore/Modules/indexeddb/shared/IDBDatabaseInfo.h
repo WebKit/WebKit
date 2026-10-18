@@ -54,9 +54,9 @@ public:
     IDBObjectStoreInfo createNewObjectStore(const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement);
     void addExistingObjectStore(const IDBObjectStoreInfo&);
     IDBObjectStoreInfo* LEGACY_NODELETE infoForExistingObjectStore(IDBObjectStoreIdentifier);
-    IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName);
-    const IDBObjectStoreInfo* infoForExistingObjectStore(IDBObjectStoreIdentifier) const;
-    const IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName) const;
+    IDBObjectStoreInfo* LEGACY_NODELETE infoForExistingObjectStore(const String& objectStoreName);
+    const IDBObjectStoreInfo* LEGACY_NODELETE infoForExistingObjectStore(IDBObjectStoreIdentifier) const;
+    const IDBObjectStoreInfo* LEGACY_NODELETE infoForExistingObjectStore(const String& objectStoreName) const;
 
     void renameObjectStore(IDBObjectStoreIdentifier, const String& newName);
 
@@ -76,7 +76,7 @@ public:
 private:
     friend struct IPC::ArgumentCoder<IDBDatabaseInfo>;
     IDBObjectStoreInfo* LEGACY_NODELETE getInfoForExistingObjectStore(const String& objectStoreName);
-    IDBObjectStoreInfo* getInfoForExistingObjectStore(IDBObjectStoreIdentifier);
+    IDBObjectStoreInfo* LEGACY_NODELETE getInfoForExistingObjectStore(IDBObjectStoreIdentifier);
 
     String m_name;
     uint64_t m_version { 0 };

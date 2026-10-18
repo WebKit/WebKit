@@ -120,7 +120,7 @@ public:
 
     IDBConnectionIdentifier serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
 
-    bool isValid() const;
+    bool LEGACY_NODELETE isValid() const;
 
     void LEGACY_NODELETE ref();
     WEBCORE_EXPORT void deref();

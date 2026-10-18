@@ -41,7 +41,7 @@ public:
         Ref<PictureInPictureWindow> pictureInPictureWindow;
     };
 
-    static Ref<PictureInPictureEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<PictureInPictureEvent> LEGACY_NODELETE create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
 
     PictureInPictureWindow& pictureInPictureWindow() const { return m_pictureInPictureWindow.get(); }
 
