@@ -49,6 +49,7 @@ namespace WebCore {
     macro(AnimationEffect) \
     macro(AnimationPlaybackEvent) \
     macro(AnimationTimeline) \
+    macro(ApplePayReferenceSession) \
     macro(ApplePaySession) \
     macro(ApplePaySetup) \
     macro(ApplePaySetupFeature) \

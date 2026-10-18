@@ -199,6 +199,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayRecurringPaymentDateUnit.
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayRecurringPaymentDateUnit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayRecurringPaymentRequest.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayRecurringPaymentRequest.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayReferenceRequest.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayReferenceRequest.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayReferenceSession.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayReferenceSession.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayRequest.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayRequestBase.cpp

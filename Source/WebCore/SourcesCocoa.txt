@@ -61,6 +61,8 @@ JSApplePayPaymentTiming.cpp
 JSApplePayPaymentTokenContext.cpp
 JSApplePayRecurringPaymentDateUnit.cpp
 JSApplePayRecurringPaymentRequest.cpp
+JSApplePayReferenceRequest.cpp
+JSApplePayReferenceSession.cpp
 JSApplePayRequest.cpp
 JSApplePayRequestBase.cpp
 JSApplePaySession.cpp
@@ -95,6 +97,7 @@ Modules/applepay/ApplePayMerchantCapability.cpp
 Modules/applepay/ApplePayPaymentAuthorizationResult.cpp
 Modules/applepay/ApplePayPaymentAuthorizedEvent.cpp
 Modules/applepay/ApplePayPaymentMethodSelectedEvent.cpp
+Modules/applepay/ApplePayReferenceSession.cpp
 Modules/applepay/ApplePayRequestBase.cpp
 Modules/applepay/ApplePaySession.cpp
 Modules/applepay/ApplePaySessionPaymentRequest.cpp
