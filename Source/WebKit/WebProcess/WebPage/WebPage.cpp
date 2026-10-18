@@ -5864,8 +5864,11 @@ void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> fl
 
     protect(corePage())->finalizeRenderingUpdate(flags);
 #if ENABLE(GPU_PROCESS)
-    if (m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy->finalizeRenderingUpdate();
+    if (m_remoteRenderingBackendProxy) {
+        RefPtr drawingArea = m_drawingArea;
+        bool usesBackpressure = !drawingArea || drawingArea->usesRenderingUpdateBackpressure();
+        m_remoteRenderingBackendProxy->finalizeRenderingUpdate(usesBackpressure ? UsesRenderingUpdateBackpressure::Yes : UsesRenderingUpdateBackpressure::No);
+    }
 #endif
     flushDeferredDidReceiveMouseEvent();
 

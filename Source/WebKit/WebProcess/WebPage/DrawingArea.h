@@ -140,6 +140,9 @@ public:
     virtual void triggerRenderingUpdate() = 0;
     virtual bool scheduleRenderingUpdate() { return false; }
     virtual void renderingUpdateFramesPerSecondChanged() { }
+    // Whether rendering updates may be deferred until the GPU process has caught up with earlier ones
+    // (see WebPage::shouldTriggerRenderingUpdate()), which requires acknowledging each rendering update.
+    virtual bool usesRenderingUpdateBackpressure() const { return true; }
 
     virtual void willStartRenderingUpdateDisplay();
     virtual void didCompleteRenderingUpdateDisplay();
