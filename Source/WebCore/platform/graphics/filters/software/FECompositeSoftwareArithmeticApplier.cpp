@@ -52,7 +52,7 @@ uint8_t FECompositeSoftwareArithmeticApplier::clampByte(int c)
 }
 
 template <int b1, int b4>
-inline void FECompositeSoftwareArithmeticApplier::computePixels(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void LEGACY_NODELETE FECompositeSoftwareArithmeticApplier::computePixels(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     float scaledK1;
     float scaledK4;
@@ -77,7 +77,7 @@ inline void FECompositeSoftwareArithmeticApplier::computePixels(std::span<unsign
 // computePixelsUnclamped is a faster version of computePixels for the common case where clamping
 // is not necessary. This enables aggresive compiler optimizations such as auto-vectorization.
 template <int b1, int b4>
-inline void FECompositeSoftwareArithmeticApplier::computePixelsUnclamped(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void LEGACY_NODELETE FECompositeSoftwareArithmeticApplier::computePixelsUnclamped(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     float scaledK1;
     float scaledK4;

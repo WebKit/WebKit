@@ -276,7 +276,7 @@ public:
             destroyAudioBufferList(m_bufferList);
     }
 
-    explicit LEGACY_NODELETE operator bool() const { return !!m_bufferList; }
+    explicit operator bool LEGACY_NODELETE () const { return !!m_bufferList; }
     AudioBufferList* LEGACY_NODELETE operator->() const { return m_bufferList; }
     operator AudioBufferList* LEGACY_NODELETE () const { return m_bufferList; }
     AudioBufferList& LEGACY_NODELETE operator*() const { ASSERT(m_bufferList); return *m_bufferList; }

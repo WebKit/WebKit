@@ -382,7 +382,7 @@ ALWAYS_INLINE void URLParser::advance(CodePointIterator<CharacterType>& iterator
 }
 
 template<typename CharacterType>
-bool URLParser::takesTwoAdvancesUntilEnd(CodePointIterator<CharacterType> iterator)
+bool LEGACY_NODELETE URLParser::takesTwoAdvancesUntilEnd(CodePointIterator<CharacterType> iterator)
 {
     if (iterator.atEnd())
         return false;
@@ -1096,7 +1096,7 @@ void URLParser::failure()
 }
 
 template<typename CharacterType>
-bool URLParser::checkLocalhostCodePoint(CodePointIterator<CharacterType>& iterator, char32_t codePoint)
+bool LEGACY_NODELETE URLParser::checkLocalhostCodePoint(CodePointIterator<CharacterType>& iterator, char32_t codePoint)
 {
     if (iterator.atEnd() || toASCIILower(*iterator) != codePoint)
         return false;
@@ -1105,7 +1105,7 @@ bool URLParser::checkLocalhostCodePoint(CodePointIterator<CharacterType>& iterat
 }
 
 template<typename CharacterType>
-bool URLParser::isAtLocalhost(CodePointIterator<CharacterType> iterator)
+bool LEGACY_NODELETE URLParser::isAtLocalhost(CodePointIterator<CharacterType> iterator)
 {
     if (!checkLocalhostCodePoint(iterator, 'l'))
         return false;
@@ -2287,7 +2287,7 @@ enum class URLParser::IPv4PieceParsingError {
 };
 
 template<typename CharacterType>
-std::expected<uint32_t, URLParser::IPv4PieceParsingError> URLParser::parseIPv4Piece(CodePointIterator<CharacterType>& iterator, bool& didSeeSyntaxViolation)
+std::expected<uint32_t, URLParser::IPv4PieceParsingError> LEGACY_NODELETE URLParser::parseIPv4Piece(CodePointIterator<CharacterType>& iterator, bool& didSeeSyntaxViolation)
 {
     enum class State : uint8_t {
         UnknownBase,
@@ -2435,7 +2435,7 @@ std::expected<URLParser::IPv4Address, URLParser::IPv4ParsingError> URLParser::pa
 }
 
 template<typename CharacterType>
-std::optional<uint32_t> URLParser::parseIPv4PieceInsideIPv6(CodePointIterator<CharacterType>& iterator)
+std::optional<uint32_t> LEGACY_NODELETE URLParser::parseIPv4PieceInsideIPv6(CodePointIterator<CharacterType>& iterator)
 {
     if (iterator.atEnd())
         return std::nullopt;
@@ -2464,7 +2464,7 @@ std::optional<uint32_t> URLParser::parseIPv4PieceInsideIPv6(CodePointIterator<Ch
 }
 
 template<typename CharacterType>
-std::optional<URLParser::IPv4Address> URLParser::parseIPv4AddressInsideIPv6(CodePointIterator<CharacterType> iterator)
+std::optional<URLParser::IPv4Address> LEGACY_NODELETE URLParser::parseIPv4AddressInsideIPv6(CodePointIterator<CharacterType> iterator)
 {
     IPv4Address address = 0;
     for (size_t i = 0; i < 4; ++i) {

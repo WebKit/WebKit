@@ -79,7 +79,7 @@ void HitTestLocation::move(const LayoutSize& offset)
 }
 
 template<typename RectType>
-bool HitTestLocation::intersectsRect(const RectType& rect) const
+bool LEGACY_NODELETE HitTestLocation::intersectsRect(const RectType& rect) const
 {
     // FIXME: When the hit test is not rect based we should use rect.contains(m_point).
     // That does change some corner case tests though.

@@ -611,7 +611,7 @@ public:
         m_stackTrace = 0;
     }
 
-    explicit LEGACY_NODELETE operator bool() const
+    explicit operator bool LEGACY_NODELETE () const
     {
         ASSERT(!m_attachment == !m_stackTrace);
         return !!m_attachment;

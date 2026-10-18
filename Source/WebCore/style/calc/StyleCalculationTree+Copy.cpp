@@ -40,7 +40,7 @@ static auto copy(const Vector<CalcMix::Item>&) -> Vector<CalcMix::Item>;
 static auto copy(const ChildOrNone&) -> ChildOrNone;
 static auto copy(const Children&) -> Children;
 template<Leaf Op>
-Child copy(const Op&);
+Child LEGACY_NODELETE copy(const Op&);
 template<typename Op>
 static auto copy(const IndirectNode<Op>&) -> Child;
 

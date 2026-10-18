@@ -122,7 +122,7 @@ public:
     WEBCORE_EXPORT LineBoxIterator& LEGACY_NODELETE traverseNext();
     LineBoxIterator& LEGACY_NODELETE traversePrevious();
 
-    WEBCORE_EXPORT explicit LEGACY_NODELETE operator bool() const;
+    WEBCORE_EXPORT explicit operator bool LEGACY_NODELETE () const;
 
     bool LEGACY_NODELETE operator==(const LineBoxIterator&) const;
     bool operator==(EndLineBoxIterator) const { return atEnd(); }

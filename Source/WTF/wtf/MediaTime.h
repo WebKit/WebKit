@@ -76,7 +76,7 @@ public:
     MediaTime LEGACY_NODELETE operator-() const;
     MediaTime operator*(int32_t) const;
     bool LEGACY_NODELETE operator!() const;
-    explicit LEGACY_NODELETE operator bool() const;
+    explicit operator bool LEGACY_NODELETE () const;
 
     WTF_EXPORT_PRIVATE friend std::partial_ordering LEGACY_NODELETE operator<=>(const MediaTime&, const MediaTime&);
     friend bool operator==(const MediaTime& a, const MediaTime& b) { return is_eq(a <=> b); }

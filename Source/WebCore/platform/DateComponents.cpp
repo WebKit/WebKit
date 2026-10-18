@@ -126,7 +126,7 @@ template<typename CharacterType> static std::optional<int> LEGACY_NODELETE parse
 }
 
 // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#months
-template<typename CharacterType> bool DateComponents::parseYear(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> bool LEGACY_NODELETE DateComponents::parseYear(StringParsingBuffer<CharacterType>& buffer)
 {
     unsigned digitsLength = countDigits(buffer);
     // Needs at least 4 digits according to the standard.
@@ -365,7 +365,7 @@ template<typename CharacterType> bool DateComponents::parseTimeZone(StringParsin
 }
 
 // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#months
-template<typename CharacterType> bool DateComponents::parseMonth(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> bool LEGACY_NODELETE DateComponents::parseMonth(StringParsingBuffer<CharacterType>& buffer)
 {
     if (!parseYear(buffer))
         return false;
@@ -387,7 +387,7 @@ template<typename CharacterType> bool DateComponents::parseMonth(StringParsingBu
 }
 
 // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#dates
-template<typename CharacterType> bool DateComponents::parseDate(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> bool LEGACY_NODELETE DateComponents::parseDate(StringParsingBuffer<CharacterType>& buffer)
 {
     if (!parseMonth(buffer))
         return false;
@@ -408,7 +408,7 @@ template<typename CharacterType> bool DateComponents::parseDate(StringParsingBuf
 }
 
 // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#weeks
-template<typename CharacterType> bool DateComponents::parseWeek(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> bool LEGACY_NODELETE DateComponents::parseWeek(StringParsingBuffer<CharacterType>& buffer)
 {
     if (!parseYear(buffer))
         return false;
@@ -431,7 +431,7 @@ template<typename CharacterType> bool DateComponents::parseWeek(StringParsingBuf
 }
 
 // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#times
-template<typename CharacterType> bool DateComponents::parseTime(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> bool LEGACY_NODELETE DateComponents::parseTime(StringParsingBuffer<CharacterType>& buffer)
 {
     auto hour = parseIntWithinLimits(buffer, 2, 0, 23);
     if (!hour)
@@ -497,7 +497,7 @@ template<typename CharacterType> static bool LEGACY_NODELETE isDateTimeLocalSepa
 }
 
 // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#local-dates-and-times
-template<typename CharacterType> bool DateComponents::parseDateTimeLocal(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> bool LEGACY_NODELETE DateComponents::parseDateTimeLocal(StringParsingBuffer<CharacterType>& buffer)
 {
     if (!parseDate(buffer))
         return false;

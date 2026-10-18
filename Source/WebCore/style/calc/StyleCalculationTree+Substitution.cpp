@@ -57,7 +57,7 @@ template<typename F> std::optional<Child> mapLeaves(const std::optional<Child>& 
     return { };
 }
 
-template<typename F> Random::Fixed mapLeaves(const Random::Fixed& root, NOESCAPE const F&)
+template<typename F> Random::Fixed LEGACY_NODELETE mapLeaves(const Random::Fixed& root, NOESCAPE const F&)
 {
     return root;
 }

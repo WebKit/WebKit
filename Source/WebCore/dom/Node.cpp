@@ -3092,7 +3092,7 @@ template<TreeType treeType> AncestorAndChildren LEGACY_NODELETE commonInclusiveA
     return { x, distinctAncestorA, distinctAncestorB };
 }
 
-template<TreeType treeType> Node* commonInclusiveAncestor(const Node& a, const Node& b)
+template<TreeType treeType> Node* LEGACY_NODELETE commonInclusiveAncestor(const Node& a, const Node& b)
 {
     return const_cast<Node*>(commonInclusiveAncestorAndChildren<treeType>(a, b).commonAncestor);
 }
@@ -3134,7 +3134,7 @@ template<TreeType treeType> bool LEGACY_NODELETE isSiblingSubsequent(const Node&
     return false;
 }
 
-template<TreeType treeType> std::partial_ordering treeOrder(const Node& a, const Node& b)
+template<TreeType treeType> std::partial_ordering LEGACY_NODELETE treeOrder(const Node& a, const Node& b)
 {
     if (&a == &b)
         return std::partial_ordering::equivalent;
