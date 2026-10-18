@@ -60,7 +60,11 @@ static RenderSVGInlineText* LEGACY_NODELETE svgInlineText(const Layout::InlineTe
 
 static const SVGTextContentElement* LEGACY_NODELETE textContentElement(const Layout::ElementBox& elementBox)
 {
-    return SVGTextContentElement::elementFromRenderer(elementBox.rendererForIntegration());
+    // Anonymous inline boxes, like the ones for display: contents, have no element.
+    CheckedPtr renderer = elementBox.rendererForIntegration();
+    if (!renderer || renderer->isAnonymous())
+        return nullptr;
+    return SVGTextContentElement::elementFromRenderer(renderer.get());
 }
 
 static const RenderSVGTextPath* LEGACY_NODELETE svgTextPath(const Layout::ElementBox& elementBox)
@@ -381,7 +385,7 @@ void SVGTextLayoutAlgorithm::collectTextBoxes()
 
             CheckedRef elementBox = downcast<Layout::ElementBox>(layoutBox);
             auto contentTextPathIndex = textPathIndex;
-            if (svgTextPath(elementBox)) {
+            if (svgTextPath(elementBox) && textContentElement(elementBox)) {
                 // FIXME: Bidi reordering may split a text path into several inline boxes, each restarting at the start offset.
                 m_textPaths.append({ elementBox, textPathElementIndex(elementBox) });
                 contentTextPathIndex = m_textPaths.size() - 1;
