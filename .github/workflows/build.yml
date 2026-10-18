@@ -220,13 +220,18 @@ jobs:
           cd $GITHUB_WORKSPACE/.generated-cache
           perl $GITHUB_WORKSPACE/Source/WebCore/dom/make_event_factory.pl \
             --input $GITHUB_WORKSPACE/Source/WebCore/dom/EventInterfaces.in \
-            || echo "FAIL EventInterfaces.h"
+            || { echo "::error::Generation failed: EventInterfaces.h"; exit 1; }
           perl $GITHUB_WORKSPACE/Source/WebCore/dom/make_event_factory.pl \
             --input $GITHUB_WORKSPACE/Source/WebCore/dom/EventTargetFactory.in \
-            || echo "FAIL EventTargetInterfaces.h"
+            || { echo "::error::Generation failed: EventTargetInterfaces.h"; exit 1; }
           echo "=== Event factory headers ==="
           for f in EventInterfaces.h EventHeaders.h EventTargetInterfaces.h EventTargetHeaders.h; do
-            if [ -s "$f" ]; then echo "  OK  $f ($(wc -l < "$f") lines)"; else echo "  MISSING $f"; fi
+            if [ -s "$f" ]; then
+              echo "  OK  $f ($(wc -l < "$f") lines)"
+            else
+              echo "::error::Required generated Event factory output is missing or empty: $f"
+              exit 1
+            fi
           done
 
       - name: Generate Event names
@@ -239,8 +244,13 @@ jobs:
           cd $GITHUB_WORKSPACE/.generated-cache
           python3 $GITHUB_WORKSPACE/Source/WebCore/dom/make-event-names.py \
             --event-names $GITHUB_WORKSPACE/Source/WebCore/dom/EventNames.json \
-            || echo "FAIL EventNames.h"
-          if [ -s EventNames.h ]; then echo "  OK  EventNames.h ($(wc -l < EventNames.h) lines)"; else echo "  MISSING EventNames.h"; fi
+            || { echo "::error::Generation failed: EventNames.h"; exit 1; }
+          if [ -s EventNames.h ]; then
+            echo "  OK  EventNames.h ($(wc -l < EventNames.h) lines)"
+          else
+            echo "::error::Required generated EventNames.h is missing or empty"
+            exit 1
+          fi
 
       - name: Generate JSC Bytecodes
         if: steps.cache-jsc-generated.outputs.cache-hit != 'true'
@@ -326,19 +336,19 @@ jobs:
           OUT=$GITHUB_WORKSPACE/.generated-jsc-cache
           mkdir -p "$OUT" "$OUT/yarr"
           # Keyword / lexer tables (from parser/Keywords.table).
-          perl "$JSC/create_hash_table" "$JSC/parser/Keywords.table" > "$OUT/Lexer.lut.h" || echo "FAIL Lexer.lut.h"
-          python3 "$JSC/KeywordLookupGenerator.py" "$JSC/parser/Keywords.table" > "$OUT/KeywordLookup.h" || echo "FAIL KeywordLookup.h"
+          perl "$JSC/create_hash_table" "$JSC/parser/Keywords.table" > "$OUT/Lexer.lut.h" || { echo "::error::Generation failed: Lexer.lut.h"; exit 1; }
+          python3 "$JSC/KeywordLookupGenerator.py" "$JSC/parser/Keywords.table" > "$OUT/KeywordLookup.h" || { echo "::error::Generation failed: KeywordLookup.h"; exit 1; }
           # Yarr regex table + lexer/yarr Unicode property tables + canonicalization source.
-          python3 "$JSC/yarr/create_regex_tables" > "$OUT/RegExpJitTables.h" || echo "FAIL RegExpJitTables.h"
-          python3 "$JSC/parser/generateLexerUnicodePropertyTables.py" "$JSC/ucd/UnicodeData.txt" "$OUT/LexerUnicodePropertyTables.h" || echo "FAIL LexerUnicodePropertyTables.h"
-          python3 "$JSC/yarr/generateYarrUnicodePropertyTables.py" "$JSC/ucd" "$OUT/UnicodePatternTables.h" || echo "FAIL UnicodePatternTables.h"
-          python3 "$JSC/yarr/generateYarrCanonicalizeUnicode" "$JSC/ucd/CaseFolding.txt" "$OUT/yarr/YarrCanonicalizeUnicode.cpp" || echo "FAIL YarrCanonicalizeUnicode.cpp"
+          python3 "$JSC/yarr/create_regex_tables" > "$OUT/RegExpJitTables.h" || { echo "::error::Generation failed: RegExpJitTables.h"; exit 1; }
+          python3 "$JSC/parser/generateLexerUnicodePropertyTables.py" "$JSC/ucd/UnicodeData.txt" "$OUT/LexerUnicodePropertyTables.h" || { echo "::error::Generation failed: LexerUnicodePropertyTables.h"; exit 1; }
+          python3 "$JSC/yarr/generateYarrUnicodePropertyTables.py" "$JSC/ucd" "$OUT/UnicodePatternTables.h" || { echo "::error::Generation failed: UnicodePatternTables.h"; exit 1; }
+          python3 "$JSC/yarr/generateYarrCanonicalizeUnicode" "$JSC/ucd/CaseFolding.txt" "$OUT/yarr/YarrCanonicalizeUnicode.cpp" || { echo "::error::Generation failed: YarrCanonicalizeUnicode.cpp"; exit 1; }
           # WasmOps.h: opcode-enum header that BytecodeDumper.h (and other bytecode
           # headers) include unconditionally even though WebAssembly is disabled. It
           # is self-contained (generated from wasm.json), so generate it and let the
           # copy step place it on the JSC include path. (cd into wasm/ so the script's
           # sibling import of generateWasm resolves.)
-          ( cd "$JSC/wasm" && python3 generateWasmOpsHeader.py wasm.json "$OUT/WasmOps.h" ) || echo "FAIL WasmOps.h"
+          ( cd "$JSC/wasm" && python3 generateWasmOpsHeader.py wasm.json "$OUT/WasmOps.h" ) || { echo "::error::Generation failed: WasmOps.h"; exit 1; }
           # Per-class perfect-hash lookup tables: one <Class>.lut.h per source
           # that defines a static hash table (create_hash_table emits nothing useful
           # for most TUs, which we drop). Generate tables for both runtime and wasm
@@ -360,7 +370,12 @@ jobs:
           echo "=== JSC derived sources ==="
           echo "runtime .lut.h generated: $n"
           for f in Lexer.lut.h KeywordLookup.h RegExpJitTables.h LexerUnicodePropertyTables.h UnicodePatternTables.h yarr/YarrCanonicalizeUnicode.cpp; do
-            if [ -s "$OUT/$f" ]; then echo "  OK  $f ($(wc -l < "$OUT/$f") lines)"; else echo "  MISSING $f"; fi
+            if [ -s "$OUT/$f" ]; then
+              echo "  OK  $f ($(wc -l < "$OUT/$f") lines)"
+            else
+              echo "::error::Required generated JavaScriptCore output is missing or empty: $OUT/$f"
+              exit 1
+            fi
           done
 
       - name: Create WebCore forwarding headers
@@ -691,8 +706,12 @@ jobs:
           $GXX $FLAGS -I$GEN -c $JSC/llint/LLIntOffsetsExtractor.cpp -o $GEN/LLIntOffsetsExtractor.o
           echo "=== LLInt 6/6: LLIntAssembly.h ==="
           ruby $JSC/offlineasm/asm.rb -I$GEN/ $JSC/llint/LowLevelInterpreter.asm $GEN/LLIntOffsetsExtractor.o $JSC/llint/LLIntAssembly.h normal --binary-format=ELF
-          if [ -s $JSC/llint/LLIntAssembly.h ]; then echo "LLIntAssembly.h GENERATED ($(wc -l < $JSC/llint/LLIntAssembly.h) lines)"; else echo "LLIntAssembly.h MISSING — LowLevelInterpreter.cpp will fail, build continues"; fi
-          exit 0
+          if [ -s "$JSC/llint/LLIntAssembly.h" ]; then
+            echo "LLIntAssembly.h GENERATED ($(wc -l < "$JSC/llint/LLIntAssembly.h") lines)"
+          else
+            echo "::error::LLIntAssembly.h is missing or empty; LowLevelInterpreter cannot be built correctly"
+            exit 1
+          fi
 
       - name: Build WKC library
         id: build-wkc
