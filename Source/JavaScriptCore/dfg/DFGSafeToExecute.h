@@ -457,6 +457,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
 
     case GetTypedArrayByteOffset:
     case GetTypedArrayByteOffsetAsInt52:
+    case GetTypedArrayBuffer:
         return !(state.forNode(node->child1()).m_type & ~(SpecTypedArrayView));
 
     case TypedArraySet: {

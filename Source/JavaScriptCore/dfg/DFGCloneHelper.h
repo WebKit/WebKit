@@ -255,6 +255,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, NOESCAPE const Cust
     CLONE_STATUS(GetRegExpObjectLastIndex, Common) \
     CLONE_STATUS(GetScope, Common) \
     CLONE_STATUS(GetEvalScope, Common) \
+    CLONE_STATUS(GetTypedArrayBuffer, Common) \
     CLONE_STATUS(GetUndetachedTypeArrayLength, Common) \
     CLONE_STATUS(GlobalIsNaN, Common) \
     CLONE_STATUS(HasOwnProperty, Common) \

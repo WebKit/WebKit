@@ -1339,6 +1339,9 @@ private:
         case GetPrototypeOf:
             compileGetPrototypeOf();
             break;
+        case GetTypedArrayBuffer:
+            compileGetTypedArrayBuffer();
+            break;
         case GetWebAssemblyInstanceExports:
             compileGetWebAssemblyInstanceExports();
             break;
@@ -6162,6 +6165,42 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(Int64, monoProto, polyProto, slowResult));
+    }
+
+    void compileGetTypedArrayBuffer()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue base = lowCell(m_node->child1());
+
+        LBasicBlock hasBufferCase = m_out.newBlock();
+        LBasicBlock hasWrapperCase = m_out.newBlock();
+        LBasicBlock isLiveCase = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue mode = m_out.load8ZeroExt32(base, m_heaps.JSArrayBufferView_mode);
+        m_out.branch(m_out.testNonZero32(mode, m_out.constInt32(isWastefulTypedArrayMode)), usually(hasBufferCase), rarely(slowCase));
+
+        LBasicBlock lastNext = m_out.appendTo(hasBufferCase, hasWrapperCase);
+        LValue butterfly = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
+        LValue buffer = m_out.loadPtr(butterfly, m_heaps.Butterfly_arrayBuffer);
+        LValue weakImpl = m_out.loadPtr(buffer, m_heaps.ArrayBuffer_wrapper);
+        m_out.branch(m_out.notNull(weakImpl), usually(hasWrapperCase), rarely(slowCase));
+
+        m_out.appendTo(hasWrapperCase, isLiveCase);
+        LValue weakHandleOwner = m_out.loadPtr(weakImpl, m_heaps.WeakImpl_weakHandleOwner);
+        m_out.branch(m_out.testIsZeroPtr(weakHandleOwner, m_out.constIntPtr(WeakImpl::StateMask)), usually(isLiveCase), rarely(slowCase));
+
+        m_out.appendTo(isLiveCase, slowCase);
+        ValueFromBlock fastResult = m_out.anchor(m_out.loadPtr(weakImpl, m_heaps.WeakImpl_jsValue));
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationGetTypedArrayBuffer, weakPointer(globalObject), base));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
     }
 
     void compileGetWebAssemblyInstanceExports()

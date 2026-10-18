@@ -1714,6 +1714,15 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
         return;
     }
 
+    case GetTypedArrayBuffer:
+        read(MiscFields);
+        read(JSObject_butterfly);
+        read(HeapObjectCount);
+        write(MiscFields);
+        write(JSObject_butterfly);
+        write(HeapObjectCount);
+        return;
+
     case GetWebAssemblyInstanceExports:
         def(PureValue(node));
         return;
