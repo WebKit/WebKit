@@ -1,0 +1,22 @@
+Test sending X25519 crypto keys via postMessage to a worker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS All checks passed in worker for public key
+PASS publicKey.type is 'public'
+PASS publicKey.extractable is true
+PASS publicKey.algorithm.name is 'X25519'
+PASS publicKey.usages is [ ]
+PASS exportedKey.x is publicKeyJSON.x
+PASS All checks passed in worker for private key
+PASS privateKey.type is 'private'
+PASS privateKey.extractable is true
+PASS privateKey.algorithm.name is 'X25519'
+PASS privateKey.usages is ['deriveBits']
+PASS exportedKey.x is privateKeyJSON.x
+PASS exportedKey.d is privateKeyJSON.d
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
