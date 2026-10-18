@@ -1,5 +1,6 @@
 Tests for Debugger.getFunctionDetails command.
 
+3
 
 == Running test suite: Debugger.getFunctionDetails
 -- Running test case: Debugger.getFunctionDetails.Regular
@@ -37,4 +38,11 @@ PASS: Should have source code line.
 PASS: Should have source code column.
 PASS: Should have name.
 PASS: Should not have displayName.
+
+-- Running test case: Debugger.getFunctionDetails.ScopeLocation
+PASS: Scope and function details should identify the same script.
+PASS: Scope and function details should use the same zero-based line.
+PASS: Scope and function details should use the same zero-based column.
+PASS: The actual paused scope should contain the initialized page value.
+PASS: Resuming should finish the page operation.
 
