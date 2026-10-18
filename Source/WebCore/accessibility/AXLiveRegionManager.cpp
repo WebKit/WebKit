@@ -167,7 +167,7 @@ static OptionSet<LiveRegionRelevant> stringToLiveRegionRelevant(const String& st
 static constexpr Seconds emptyRegionSettleDelay { 100_ms };
 
 // Whether two snapshots hold the same text laid out the same way.
-static bool hasSameObjectTexts(const LiveRegionSnapshot& oldSnapshot, const LiveRegionSnapshot& newSnapshot)
+static bool LEGACY_NODELETE hasSameObjectTexts(const LiveRegionSnapshot& oldSnapshot, const LiveRegionSnapshot& newSnapshot)
 {
     if (oldSnapshot.objects.size() != newSnapshot.objects.size())
         return false;

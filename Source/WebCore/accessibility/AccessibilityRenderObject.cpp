@@ -411,7 +411,7 @@ Element* AccessibilityRenderObject::anchorElement() const
 }
 
 // Null is distinct from empty: empty asks for the content to be ignored.
-static const String& generatedContentAltText(const RenderText* renderText)
+static const String& LEGACY_NODELETE generatedContentAltText(const RenderText* renderText)
 {
     if (auto* renderTextFragment = dynamicDowncast<RenderTextFragment>(renderText))
         return renderTextFragment->altText();
@@ -731,7 +731,7 @@ static Path computePathForRenderBox(const RenderBox& renderBox)
 // different block-direction positions. For horizontal text, rects on different
 // lines have different Y positions. For vertical text, different columns have
 // different X positions.
-static bool rectsSpanMultipleLines(const Vector<LayoutRect>& rects, bool isHorizontal)
+static bool LEGACY_NODELETE rectsSpanMultipleLines(const Vector<LayoutRect>& rects, bool isHorizontal)
 {
     for (size_t i = 1; i < rects.size(); ++i) {
         if (isHorizontal) {
@@ -1460,7 +1460,7 @@ CharacterRange AccessibilityRenderObject::selectedTextRange() const
 // content cannot be a valid text position nor be selected (with a mouse or otherwise), so emitting
 // text runs for it would make the isolated tree's text-marker strings diverge from what can actually
 // be represented on the main-thread.
-static bool shouldExcludeTextRunsForPseudoElement(std::optional<PseudoElementType> pseudoElementType)
+static bool LEGACY_NODELETE shouldExcludeTextRunsForPseudoElement(std::optional<PseudoElementType> pseudoElementType)
 {
     if (!pseudoElementType) {
         // No pseudo type, so this function is not applicable.

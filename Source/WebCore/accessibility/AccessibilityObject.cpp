@@ -2953,7 +2953,7 @@ static CheckedPtr<RenderObject> nearestRendererFromNode(Node& node)
     return renderer;
 }
 
-static int zIndexFromRenderer(RenderObject* renderer)
+static int LEGACY_NODELETE zIndexFromRenderer(RenderObject* renderer)
 {
     for (auto* layer = renderer->enclosingLayer(); layer; layer = layer->parent()) {
         if (int zIndex = layer->zIndex())
@@ -4090,7 +4090,7 @@ HashMap<String, AXEditingStyleValueVariant> AccessibilityObject::resolvedEditing
 // Note that the return value represents the ideal new scroll offset.
 // This may be out of range - the calling function should clip this
 // to the available range.
-static int computeBestScrollOffset(int currentScrollOffset, int subfocusMin, int subfocusMax, int objectMin, int objectMax, int viewportMin, int viewportMax)
+static int LEGACY_NODELETE computeBestScrollOffset(int currentScrollOffset, int subfocusMin, int subfocusMax, int objectMin, int objectMax, int viewportMin, int viewportMax)
 {
     int viewportSize = viewportMax - viewportMin;
 

@@ -84,7 +84,7 @@ public:
 
 #if PLATFORM(MAC)
     void initializePrimaryScreenRect();
-    FloatRect primaryScreenRect();
+    FloatRect LEGACY_NODELETE primaryScreenRect();
 #endif
 
 private:

@@ -32,8 +32,8 @@ class RenderProgress;
 
 class AccessibilityProgressIndicator final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityProgressIndicator> create(AXID, RenderObject&, AXObjectCache&);
-    static Ref<AccessibilityProgressIndicator> create(AXID, Element&, AXObjectCache&);
+    static Ref<AccessibilityProgressIndicator> LEGACY_NODELETE create(AXID, RenderObject&, AXObjectCache&);
+    static Ref<AccessibilityProgressIndicator> LEGACY_NODELETE create(AXID, Element&, AXObjectCache&);
 
     bool isIndeterminate() const final;
     bool isAccessibilityProgressIndicatorInstance() const final { return true; }

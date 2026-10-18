@@ -176,7 +176,7 @@ bool tableSectionIndicatesAccessibleTable(HTMLTableSectionElement& sectionElemen
     return false;
 }
 
-static const Style::ComputedStyle* styleFrom(Element& element)
+static const Style::ComputedStyle* LEGACY_NODELETE styleFrom(Element& element)
 {
     if (auto* renderStyle = element.renderStyle())
         return renderStyle;

@@ -37,7 +37,7 @@ class HTMLInputElement;
 
 class AccessibilitySlider final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilitySlider> create(AXID, RenderObject&, AXObjectCache&);
+    static Ref<AccessibilitySlider> LEGACY_NODELETE create(AXID, RenderObject&, AXObjectCache&);
     virtual ~AccessibilitySlider() = default;
 
     bool isAccessibilitySliderInstance() const final { return true; }

@@ -48,7 +48,7 @@ class Node;
 
 class AccessibilityNodeObject : public AccessibilityObject {
 public:
-    static Ref<AccessibilityNodeObject> create(AXID, Node*, AXObjectCache&);
+    static Ref<AccessibilityNodeObject> LEGACY_NODELETE create(AXID, Node*, AXObjectCache&);
     virtual ~AccessibilityNodeObject();
 
     void init() override;

@@ -246,7 +246,7 @@ std::atomic<bool> AXObjectCache::gAccessibilityDOMIdentifiersEnabled = false;
 std::atomic<bool> AXObjectCache::gShouldRepostNotificationsForTests = false;
 #endif
 
-static AXObjectCache::SyncModeToOtherProcessesCallback& syncModeToOtherProcessesCallback()
+static AXObjectCache::SyncModeToOtherProcessesCallback& LEGACY_NODELETE syncModeToOtherProcessesCallback()
 {
     static NeverDestroyed<AXObjectCache::SyncModeToOtherProcessesCallback> callback;
     return callback.get();
@@ -2335,7 +2335,7 @@ void AXObjectCache::enqueueNotificationToPost(Ref<AccessibilityObject>&& object,
         m_notificationPostTimer.startOneShot(0_s);
 }
 
-static std::optional<Seconds>& announcementTranslationTimeoutOverrideForTesting()
+static std::optional<Seconds>& LEGACY_NODELETE announcementTranslationTimeoutOverrideForTesting()
 {
     static NeverDestroyed<std::optional<Seconds>> override;
     return override;
@@ -3595,10 +3595,10 @@ public:
     void add(Node&);
     void addSubtree(Node&, unsigned& nodesLeftToVisit);
 
-    unsigned textFieldCount() const { return m_textFieldCount; }
-    bool hasButton() const { return m_hasButton; }
+    unsigned LEGACY_NODELETE textFieldCount() const { return m_textFieldCount; }
+    bool LEGACY_NODELETE hasButton() const { return m_hasButton; }
     // Enough that every ancestor qualifies whatever else it holds, so counting can stop.
-    bool hasEnough() const { return m_textFieldCount >= minimumTextFieldsForFormLikeContainer && m_hasButton; }
+    bool LEGACY_NODELETE hasEnough() const { return m_textFieldCount >= minimumTextFieldsForFormLikeContainer && m_hasButton; }
 
 private:
     unsigned m_textFieldCount { 0 };

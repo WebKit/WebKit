@@ -35,8 +35,8 @@ namespace WebCore {
 
 class AccessibilitySVGObject : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilitySVGObject> create(AXID, RenderObject&, AXObjectCache&, bool isSVGRoot = false);
-    static Ref<AccessibilitySVGObject> create(AXID, Element&, AXObjectCache&, bool isSVGRoot = false);
+    static Ref<AccessibilitySVGObject> LEGACY_NODELETE create(AXID, RenderObject&, AXObjectCache&, bool isSVGRoot = false);
+    static Ref<AccessibilitySVGObject> LEGACY_NODELETE create(AXID, Element&, AXObjectCache&, bool isSVGRoot = false);
     virtual ~AccessibilitySVGObject();
 
     AccessibilityObject* parentObject() const override;

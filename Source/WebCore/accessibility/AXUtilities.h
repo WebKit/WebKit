@@ -55,7 +55,7 @@ bool hasPresentationRole(Element&);
 bool hasTableRole(Element&);
 bool isRowGroup(Element&);
 bool isRowGroup(Node*);
-RefPtr<ContainerNode> composedParentIgnoringDocumentFragments(const Node&);
+RefPtr<ContainerNode> LEGACY_NODELETE composedParentIgnoringDocumentFragments(const Node&);
 RefPtr<ContainerNode> composedParentIgnoringDocumentFragments(const Node*);
 
 // Returns NodeName and not ElementName because it's impossible to forward declare ElementName.
@@ -71,7 +71,7 @@ bool hasAccNameAttribute(Element&);
 // aria-describedby, aria-description), not the HTML title attribute.
 bool hasARIAAccNameAttribute(Element&);
 
-bool isNodeFocused(Node&);
+bool LEGACY_NODELETE isNodeFocused(Node&);
 
 enum class DocumentNeeds : uint8_t {
     Layout = 1 << 0,

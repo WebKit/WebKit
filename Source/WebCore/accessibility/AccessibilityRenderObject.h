@@ -55,8 +55,8 @@ class VisibleSelection;
 
 class AccessibilityRenderObject : public AccessibilityNodeObject {
 public:
-    static Ref<AccessibilityRenderObject> create(AXID, RenderObject&, AXObjectCache&);
-    static Ref<AccessibilityRenderObject> create(AXID, Node&, AXObjectCache&);
+    static Ref<AccessibilityRenderObject> LEGACY_NODELETE create(AXID, RenderObject&, AXObjectCache&);
+    static Ref<AccessibilityRenderObject> LEGACY_NODELETE create(AXID, Node&, AXObjectCache&);
     virtual ~AccessibilityRenderObject();
 
     // Returns true if the renderer changed.
@@ -199,7 +199,7 @@ private:
     RefPtr<AccessibilityObject> elementAccessibilityHitTest(const IntPoint&) const override;
 
     bool renderObjectIsObservable(RenderObject&) const;
-    RenderObject* renderParentObject() const;
+    RenderObject* LEGACY_NODELETE renderParentObject() const;
     RenderObject* markerRenderer() const;
 
     bool isSVGImage() const;

@@ -147,7 +147,7 @@ public:
     bool isContainedBySecureField() const;
     bool isNativeTextControl() const final { return nativeTextControl(); }
     // The <textarea> or text <input> whose value this object exposes, or null.
-    HTMLTextFormControlElement* nativeTextControl() const;
+    HTMLTextFormControlElement* LEGACY_NODELETE nativeTextControl() const;
     virtual bool isSearchField() const { return false; }
     bool isAttachment() const override { return false; }
 #if ENABLE(ATTACHMENT_ELEMENT)
