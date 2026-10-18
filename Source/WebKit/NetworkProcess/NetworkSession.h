@@ -44,6 +44,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/SWServerDelegate.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
@@ -225,7 +226,9 @@ public:
     // declined process swap resumes the load in the original process. There is no untrusted caller to
     // validate here (and the declined loader never had a destination recorded), so this bypasses the
     // ownership check used by the ScheduleResourceLoad IPC path above.
+    // Returns null, and aborts the load, if the original process cancelled it while it was parked.
     RefPtr<NetworkResourceLoader> takeParkedLoaderForOriginalProcess(NetworkResourceLoadIdentifier);
+    std::optional<NetworkResourceLoadIdentifier> markParkedLoaderCancelledByOriginalProcess(const NetworkConnectionToWebProcess&, WebCore::ResourceLoaderIdentifier);
 
     // Returns false if the per-identifier pending-claim queue is full (caller should MESSAGE_CHECK kill).
     bool queuePendingLoaderClaim(NetworkResourceLoadIdentifier, WeakPtr<NetworkConnectionToWebProcess>, NetworkResourceLoadParameters&&);
@@ -414,6 +417,10 @@ protected:
         std::optional<WebCore::ProcessIdentifier> destinationWebProcess() const { return m_destinationWebProcess; }
         void setDestinationWebProcess(WebCore::ProcessIdentifier destination) { m_destinationWebProcess = destination; }
 
+        bool isLoadOf(const NetworkConnectionToWebProcess&, WebCore::ResourceLoaderIdentifier) const;
+        bool wasCancelledByOriginalProcess() const { return m_wasCancelledByOriginalProcess; }
+        void setWasCancelledByOriginalProcess() { m_wasCancelledByOriginalProcess = true; }
+
         struct PendingClaim;
         // Cap the number of pending claims to prevent the WebContent process from
         // allocating many claims in the NetworkProcess. This limit on claims covers
@@ -433,6 +440,7 @@ protected:
         RefPtr<NetworkResourceLoader> m_loader;
         std::optional<WebCore::ProcessIdentifier> m_destinationWebProcess;
         Vector<std::unique_ptr<PendingClaim>> m_pendingClaims;
+        bool m_wasCancelledByOriginalProcess { false };
     };
     HashMap<NetworkResourceLoadIdentifier, Ref<CachedNetworkResourceLoader>> m_loadersAwaitingWebProcessTransfer;
 

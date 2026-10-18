@@ -725,9 +725,14 @@ void NetworkConnectionToWebProcess::removeLoadIdentifier(WebCore::ResourceLoader
 
     RefPtr<NetworkResourceLoader> loader = m_networkResourceLoaders.get(identifier);
 
-    // It's possible we have no loader for this identifier if the NetworkProcess crashed and this was a respawned NetworkProcess.
-    if (!loader)
+    // There is no loader here if the load finished, if it is parked, or if this is a respawned NetworkProcess.
+    if (!loader) {
+        // A parked loader may still continue in another process, so it is only dropped if it would resume in this one.
+        CheckedPtr session = networkSession();
+        if (auto parkedIdentifier = session ? session->markParkedLoaderCancelledByOriginalProcess(*this, identifier) : std::nullopt)
+            CONNECTION_RELEASE_LOG(Loading, "removeLoadIdentifier: Identifier %" PRIu64 " was cancelled while parked (parked loader %" PRIu64 ")", identifier.toUInt64(), parkedIdentifier->toUInt64());
         return;
+    }
 
     // Abort the load now, as the WebProcess won't be able to respond to messages any more which might lead
     // to leaked loader resources (connections, threads, etc).
