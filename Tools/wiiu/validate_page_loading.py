@@ -60,6 +60,9 @@ load_uri = re.search(r"void WKCWebView::loadURI\(const char\* uri, const char\* 
 if not load_uri or "!m_private->m_mainFrame" not in load_uri.group(1):
     errors.append("WKCWebView.cpp: loadURI must guard a missing main frame")
 resource = require(RESOURCE, "ResourceHandleWKC.cpp", [
+    '#include "WKCCACertBundle.h"',
+    "#elif defined(WKC_REQUIRE_EMBEDDED_CA_BUNDLE)",
+    'setCACertData(WTF::move(caBundle))',
     "bool ResourceHandle::start()",
     "void ResourceHandle::cancel()",
     "void ResourceHandle::platformLoadResourceSynchronously(",
@@ -102,6 +105,9 @@ frame_loader = require(FRAME_LOADER, "FrameLoaderClientWKC.cpp", [
 
 cmake = require(CMAKE, "CMakeLists.txt", [
     "WKC_ENABLE_FULL_WEBCORE",
+    "WKC_REQUIRE_EMBEDDED_CA_BUNDLE=1",
+    'target_include_directories(WebKitWKC PRIVATE',
+    "/tmp/ssl-headers",
     "ResourceHandleWKC.cpp",
     "list(FIND WEBCORE_PLATFORM_SOURCES",
     "message(FATAL_ERROR",
