@@ -148,5 +148,6 @@ if errors:
     sys.exit(1)
 
 print("WKC page-loading correctness checks passed.")
-print("Checked navigation API parity, URL validation, in-process resource lifecycle,")
-print("async/sync transfer callbacks, redirects, cookies, TLS verification, and CMake inclusion.")
+print("Checked navigation API parity, embedded CA fallback, TLS verification,")
+print("response metadata, async response/body callbacks, redirects, cookies,")
+print("and the WebCore-to-DocumentWriter rendering handoff.")
