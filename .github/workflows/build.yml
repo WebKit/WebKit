@@ -898,6 +898,7 @@ jobs:
             "${CMAKE_LAUNCHER_FLAGS[@]}" \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DWKC_ENABLE_FULL_WEBCORE=ON \
+            -DWKC_ENABLE_WEBASSEMBLY=ON \
           > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
 
