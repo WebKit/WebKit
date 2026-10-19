@@ -37,9 +37,6 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
     ASSERT(!m_allocator);
     ASSERT(!m_structure);
 
-    // FIXME: Teach create_this's fast path how to allocate poly
-    // proto objects: https://bugs.webkit.org/show_bug.cgi?id=177517
-
     bool isPolyProto = false;
     FunctionExecutable* executable = nullptr;
     if (constructor) {
@@ -53,7 +50,8 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
 
         if (Structure* structure = executable->cachedPolyProtoStructure()) {
             RELEASE_ASSERT(structure->typeInfo().type() == FinalObjectType);
-            m_allocator = Allocator();
+            prototype->didBecomePrototype(vm);
+            m_allocator = subspaceFor<JSFinalObject>(vm)->allocatorFor(JSFinalObject::allocationSize(structure->inlineCapacity()), AllocatorForMode::EnsureAllocator);
             m_structure.set(vm, owner, structure);
             static_cast<Derived*>(this)->setPrototype(vm, owner, prototype);
             return;
@@ -113,7 +111,7 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
 
     if (isPolyProto) {
         ASSERT(structure->hasPolyProto());
-        m_allocator = Allocator();
+        m_allocator = allocator;
         executable->setCachedPolyProtoStructure(vm, structure);
     } else {
         if (executable) {

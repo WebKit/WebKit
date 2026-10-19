@@ -10525,6 +10525,7 @@ IGNORE_CLANG_WARNINGS_END
 
         LBasicBlock isFunctionBlock = m_out.newBlock();
         LBasicBlock hasRareData = m_out.newBlock();
+        LBasicBlock polyProtoCase = m_out.newBlock();
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
@@ -10534,12 +10535,19 @@ IGNORE_CLANG_WARNINGS_END
         LValue rareDataTags = m_out.loadPtr(callee, m_heaps.JSFunction_executableOrRareData);
         m_out.branch(m_out.testIsZeroPtr(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag)), rarely(slowPath), usually(hasRareData));
 
-        m_out.appendTo(hasRareData, slowPath);
+        m_out.appendTo(hasRareData, polyProtoCase);
         LValue rareData = m_out.sub(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag));
         LValue allocator = m_out.loadPtr(rareData, m_heaps.FunctionRareData_allocator);
         LValue structure = m_out.loadPtr(rareData, m_heaps.FunctionRareData_structure);
         LValue butterfly = m_out.constIntPtr(0);
-        ValueFromBlock fastResult = m_out.anchor(allocateObject(allocator, structure, butterfly, slowPath));
+        LValue fastObject = allocateObject(allocator, structure, butterfly, slowPath);
+        ValueFromBlock fastResult = m_out.anchor(fastObject);
+        m_out.branch(m_out.isZero64(m_out.load64(structure, m_heaps.Structure_prototype)), rarely(polyProtoCase), usually(continuation));
+
+        m_out.appendTo(polyProtoCase, slowPath);
+        LValue prototype = m_out.loadPtr(rareData, m_heaps.FunctionRareData_prototype);
+        m_out.store64(prototype, m_out.address(m_heaps.properties.atAnyNumber(), fastObject, offsetRelativeToBase(knownPolyProtoOffset)));
+        ValueFromBlock polyProtoResult = m_out.anchor(fastObject);
         m_out.jump(continuation);
 
         m_out.appendTo(slowPath, continuation);
@@ -10548,7 +10556,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        LValue result = m_out.phi(Int64, fastResult, slowResult);
+        LValue result = m_out.phi(Int64, fastResult, polyProtoResult, slowResult);
 
         mutatorFence();
         setJSValue(result);

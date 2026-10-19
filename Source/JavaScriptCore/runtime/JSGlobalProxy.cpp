@@ -54,6 +54,8 @@ void JSGlobalProxy::setTarget(VM& vm, JSGlobalObject* globalObject)
     DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
     Structure* newStructure = Structure::changeGlobalProxyTargetTransition(vm, oldStructure, globalObject, deferred);
     setStructure(vm, newStructure);
+    if (mayBePrototype())
+        globalObject->didBecomePrototype(vm);
 }
 
 bool JSGlobalProxy::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)

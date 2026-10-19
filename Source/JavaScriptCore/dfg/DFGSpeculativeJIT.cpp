@@ -16076,7 +16076,6 @@ void SpeculativeJIT::compileCreateThis(Node* node)
     // Rare data is only used to access the allocator & structure
     // We can avoid using an additional GPR this way
     GPRReg rareDataGPR = structureGPR;
-    GPRReg inlineCapacityGPR = rareDataGPR;
 
     JumpList slowPath;
 
@@ -16089,8 +16088,13 @@ void SpeculativeJIT::compileCreateThis(Node* node)
     auto butterfly = TrustedImmPtr(nullptr);
     emitAllocateJSObject(resultGPR, JITAllocator::variable(), allocatorGPR, structureGPR, butterfly, scratchGPR, slowPath, SlowAllocationResult::UndefinedBehavior);
 
-    load8(Address(structureGPR, Structure::inlineCapacityOffset()), inlineCapacityGPR);
-    emitInitializeInlineStorage(resultGPR, inlineCapacityGPR);
+    load8(Address(structureGPR, Structure::inlineCapacityOffset()), scratchGPR);
+    emitInitializeInlineStorage(resultGPR, scratchGPR);
+    Jump hasMonoProto = branchTest64(NonZero, Address(structureGPR, Structure::prototypeOffset()));
+    loadPtr(Address(calleeGPR, JSFunction::offsetOfExecutableOrRareData()), scratchGPR);
+    loadPtr(Address(scratchGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfPrototype() - JSFunction::rareDataTag), scratchGPR);
+    store64(scratchGPR, Address(resultGPR, offsetRelativeToBase(knownPolyProtoOffset)));
+    hasMonoProto.link(this);
     mutatorFence(vm());
 
     addSlowPathGenerator(slowPathCall(slowPath, this, operationCreateThis, resultGPR, LinkableConstant::globalObject(*this, node), calleeGPR, node->inlineCapacity()));

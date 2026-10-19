@@ -1631,6 +1631,12 @@ void JIT::emit_op_create_this(const JSInstruction* currentInstruction)
     emitAllocateJSObject(resultReg, JITAllocator::variable(), allocatorReg, structureReg, butterfly, scratchReg, slowCases, SlowAllocationResult::UndefinedBehavior);
     load8(Address(structureReg, Structure::inlineCapacityOffset()), scratchReg);
     emitInitializeInlineStorage(resultReg, scratchReg);
+    Jump hasMonoProto = branchTest64(NonZero, Address(structureReg, Structure::prototypeOffset()));
+    emitGetVirtualRegister(callee, scratchReg);
+    loadPtr(Address(scratchReg, JSFunction::offsetOfExecutableOrRareData()), scratchReg);
+    loadPtr(Address(scratchReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfPrototype() - JSFunction::rareDataTag), scratchReg);
+    store64(scratchReg, Address(resultReg, offsetRelativeToBase(knownPolyProtoOffset)));
+    hasMonoProto.link(this);
     mutatorFence(*m_vm);
     addSlowCase(slowCases);
     emitPutVirtualRegister(bytecode.m_dst, resultReg);

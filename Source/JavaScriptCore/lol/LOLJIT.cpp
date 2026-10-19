@@ -1832,6 +1832,11 @@ void LOLJIT::emit_op_create_this(const JSInstruction* currentInstruction)
     emitAllocateJSObject(resultReg, JITAllocator::variable(), allocatorReg, structureReg, butterfly, s_scratch, slowCases, SlowAllocationResult::UndefinedBehavior);
     load8(Address(structureReg, Structure::inlineCapacityOffset()), s_scratch);
     emitInitializeInlineStorage(resultReg, s_scratch);
+    Jump hasMonoProto = branchTest64(NonZero, Address(structureReg, Structure::prototypeOffset()));
+    loadPtr(Address(calleeReg, JSFunction::offsetOfExecutableOrRareData()), s_scratch);
+    loadPtr(Address(s_scratch, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfPrototype() - JSFunction::rareDataTag), s_scratch);
+    store64(s_scratch, Address(resultReg, offsetRelativeToBase(knownPolyProtoOffset)));
+    hasMonoProto.link(this);
     mutatorFence(*m_vm);
     addSlowCase(slowCases);
     move(resultReg, dstGPR);
