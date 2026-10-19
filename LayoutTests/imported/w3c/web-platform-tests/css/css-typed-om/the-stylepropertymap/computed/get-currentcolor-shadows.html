@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Computed StylePropertyMap.get with currentcolor in box-shadow, text-shadow and drop-shadow()</title>
+<link rel="help" href="https://drafts.css-houdini.org/css-typed-om-1/#computed-stylepropertymapreadonly-objects">
+<link rel="help" href="https://drafts.csswg.org/css-color-4/#resolving-other-colors">
+<link rel="help" href="https://drafts.csswg.org/css-backgrounds/#box-shadow">
+<link rel="help" href="https://drafts.csswg.org/css-text-decor-3/#text-shadow-property">
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-1/#funcdef-filter-drop-shadow">
+<meta name="assert" content="The computed value of a shadow whose color uses currentcolor, or is omitted, keeps currentcolor instead of using the value of the color property.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../../resources/testhelper.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+function testKeepsCurrentColor(property, value) {
+  test(t => {
+    const [element, styleMap] = createElementWithComputedStyleMap(t, `${property}: ${value}`);
+    assert_not_equals(element.style.getPropertyValue(property), '', `'${value}' is a valid value of '${property}'`);
+    element.style.color = 'rgb(0, 128, 0)';
+    const computedWithGreen = styleMap.getAll(property).map(String).join(', ');
+    element.style.color = 'rgb(0, 0, 255)';
+    const computedWithBlue = styleMap.getAll(property).map(String).join(', ');
+    assert_regexp_match(computedWithGreen, /currentcolor/i, 'The computed value keeps currentcolor');
+    assert_equals(computedWithBlue, computedWithGreen, 'The computed value does not depend on the color property');
+  }, `Computed '${property}: ${value}' keeps currentcolor`);
+}
+
+for (const property of ['box-shadow', 'text-shadow']) {
+  testKeepsCurrentColor(property, 'currentcolor 1px 1px');
+  testKeepsCurrentColor(property, '1px 1px');
+  testKeepsCurrentColor(property, 'red 1px 1px, color-mix(in srgb, currentcolor, red) 1px 1px');
+}
+
+for (const property of ['filter', 'backdrop-filter']) {
+  testKeepsCurrentColor(property, 'drop-shadow(currentcolor 1px 1px)');
+  testKeepsCurrentColor(property, 'drop-shadow(1px 1px)');
+  testKeepsCurrentColor(property, 'blur(1px) drop-shadow(rgb(from currentcolor r g b) 1px 1px)');
+}
+
+</script>
