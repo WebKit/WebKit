@@ -520,11 +520,17 @@ void
 WKCWebFrame::loadURI(const char* uri, const char* referrer)
 {
     WebCore::LocalFrame* coreFrame = m_private->core();
-    if (!coreFrame) {
+    if (!coreFrame || !uri || !uri[0])
         return;
-    }
 
-    WebCore::ResourceRequest request(WTF::URL(WTF::URL(), WTF::String::fromUTF8(uri)));
+    // Parse once and reject malformed URLs before handing them to FrameLoader.
+    // Keep non-network schemes such as about:blank and file: available for the
+    // embedder's local/error pages.
+    WTF::URL targetURL(WTF::URL(), WTF::String::fromUTF8(uri));
+    if (!targetURL.isValid())
+        return;
+
+    WebCore::ResourceRequest request(targetURL);
     if (referrer) {
         WTF::String refStr = WTF::String::fromUTF8(referrer);
         WTF::URL refUrl = WTF::URL(WTF::URL(), refStr);
