@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "StyleBuilderChecking.h"
 #include "StyleBuilderState.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -55,13 +56,15 @@ namespace Style {
 
 AtomString URL::fragment() const
 {
+    // Percent-decode the fragment so that url(#%66%6f%6f) finds id="foo", as SVGURIReference does for
+    // the other SVG references.
     if (resolved.hasFragmentIdentifier())
-        return resolved.fragmentIdentifier().toAtomString();
+        return AtomString(PAL::decodeURLEscapeSequences(resolved.fragmentIdentifier()));
 
     // A bare "#id" same-document reference is stored unresolved (an invalid URL), so WTF::URL can't
     // report its fragment; read it directly from the string.
     auto string = resolved.string();
-    return string.startsWith('#') ? StringView(string).substring(1).toAtomString() : nullAtom();
+    return string.startsWith('#') ? AtomString(PAL::decodeURLEscapeSequences(StringView(string).substring(1))) : nullAtom();
 }
 
 auto toStyleWithScriptExecutionContext(const CSS::URL& url, const ScriptExecutionContext& context) -> URL
