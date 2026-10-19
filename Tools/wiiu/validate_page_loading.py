@@ -6,6 +6,7 @@ They deliberately fail on semantically dangerous regressions that can still comp
 """
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 # Resolve the checkout root from the workflow working directory first, then the
@@ -150,7 +151,25 @@ for pattern, description in (
 # Verify the CI path actually configures and builds the full engine, not only the
 # bootstrap target. A successful bootstrap archive is not evidence of page loading.
 workflow_path = ROOT / '.github/workflows/build.yml'
-workflow = workflow_path.read_text(encoding='utf-8') if workflow_path.exists() else ''
+if workflow_path.is_file():
+    workflow = workflow_path.read_text(encoding='utf-8')
+else:
+    # actions/checkout sparse-cone mode may omit dot-directories even when the
+    # workflow path is listed. Read the checked-out commit's tracked workflow
+    # from Git's object database rather than treating an absent working-tree
+    # copy as an empty workflow and producing false failures.
+    try:
+        workflow = subprocess.run(
+            ['git', 'show', 'HEAD:.github/workflows/build.yml'],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+        ).stdout
+    except (OSError, subprocess.CalledProcessError) as error:
+        errors.append(f'build.yml: cannot inspect tracked workflow for page-engine contracts: {error}')
+        workflow = ''
 if '-DWKC_ENABLE_FULL_WEBCORE=ON' not in workflow:
     errors.append('build.yml: CI does not configure the full WebCore page engine')
 if 'python3 Tools/wiiu/validate_page_loading.py' not in workflow:
