@@ -2673,7 +2673,11 @@ void RenderLayerCompositor::computeExtent(const LayerOverlapMap& overlapMap, con
         auto constrainingRect = box.constrainingRectForStickyPosition();
         box.computeStickyPositionConstraints(constraints, constrainingRect);
         auto stickyBounds = LayoutRect(constraints.computeStickyExtent());
-        stickyBounds.move(extent.bounds.x() - LayoutUnit(constraints.stickyBoxRect().x()), extent.bounds.y() - LayoutUnit(constraints.stickyBoxRect().y()));
+        // extent.bounds includes the current sticky offset, but the sticky extent is relative to the box without that offset,
+        // so remove the offset when positioning the sticky extent.
+        auto stickyOffset = LayoutSize(constraints.computeStickyOffset(constrainingRect));
+        stickyBounds.move(extent.bounds.x() - stickyOffset.width() - LayoutUnit(constraints.stickyBoxRect().x()),
+            extent.bounds.y() - stickyOffset.height() - LayoutUnit(constraints.stickyBoxRect().y()));
         scrollInflated.intersect(stickyBounds);
         extent.bounds = scrollInflated;
     } else if (renderer.isFixedPositioned() && renderer.container() == &m_renderView) {
@@ -4261,6 +4265,68 @@ bool RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons(const
         return true;
 
     return false;
+}
+
+// Whether a composited descendant of a sticky layer keeps its geometry relative to that layer, and any
+// scrolling tree state it owns, when only the sticky offset changes. If so, it needs no update for the move.
+static bool compositedDescendantFollowsStickyOffset(const RenderLayer& descendant)
+{
+    // Positioned against the viewport or a scrolling ancestor rather than the sticky element, with
+    // scrolling tree constraints computed against the old offset.
+    if (descendant.renderer().isFixedPositioned() || descendant.renderer().isStickilyPositioned())
+        return false;
+
+    // A composited scroller owns an overflow scrolling node, and layers inside it may own proxy or positioning
+    // nodes for it, so be conservative and don't skip.
+    if (descendant.hasCompositedScrollableOverflow())
+        return false;
+
+    if (auto* backing = descendant.backing()) {
+        // Hosts an iframe or plugin whose scrolling tree node data was computed against the old sticky offset.
+        if (backing->scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting) || backing->scrollingNodeIDForRole(ScrollCoordinationRole::PluginHosting))
+            return false;
+    }
+    return true;
+}
+
+static bool allCompositedDescendantsFollowStickyOffset(const RenderLayer& stickyLayer)
+{
+    // Walk the whole layer subtree: a fixed grandchild under a composited child is just as stale.
+    // hasCompositingDescendant() is computed in paint order rather than along this tree, so it cannot prune the walk.
+    Vector<CheckedPtr<const RenderLayer>, 16> stack;
+    for (CheckedPtr child = stickyLayer.firstChild(); child; child = child->nextSibling())
+        stack.append(child);
+    while (!stack.isEmpty()) {
+        CheckedPtr current = stack.takeLast();
+        if (current->isComposited() && !compositedDescendantFollowsStickyOffset(*current))
+            return false;
+        for (CheckedPtr child = current->firstChild(); child; child = child->nextSibling())
+            stack.append(child);
+    }
+    return true;
+}
+
+bool RenderLayerCompositor::canSkipRequirementsTraversalForStickyOffsetChange(const RenderLayer& layer) const
+{
+    if (!layer.renderer().isStickilyPositioned() || !layer.isComposited())
+        return false;
+
+    // This layer's own ancestor clip: a clip from above stays put while this layer moves, and its clipping
+    // layers are recomputed by the configuration update that skipping would drop.
+    if (layer.backing()->hasAncestorClippingLayers())
+        return false;
+
+    // Skipping also drops the backing and hierarchy update of the enclosing stacking context, so only
+    // this layer's own geometry is refreshed. That is enough for composited descendants that simply move
+    // with it, but not for ones positioned or constrained against something that does not (the viewport
+    // for a fixed descendant, the scrolling ancestor for a nested sticky one), or that own scrolling tree
+    // nodes: those would be left stale.
+    if (layer.hasCompositingDescendant() && !allCompositedDescendantsFollowStickyOffset(layer))
+        return false;
+
+    // computeExtent() covers all sticky positions, so a sticky offset change cannot affect overlap.
+    const RenderLayer* enclosingAcceleratedOverflowLayer = nullptr;
+    return isAsyncScrollableStickyLayer(layer, &enclosingAcceleratedOverflowLayer) && !enclosingAcceleratedOverflowLayer;
 }
 
 bool RenderLayerCompositor::isAsyncScrollableStickyLayer(const RenderLayer& layer, const RenderLayer** enclosingAcceleratedOverflowLayer) const
