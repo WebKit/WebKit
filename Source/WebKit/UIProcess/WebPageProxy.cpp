@@ -620,6 +620,7 @@ private:
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StorageRequests);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(PendingBackForwardIframeRestore);
 
 #if ENABLE(GPU_PROCESS)
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PendingSnapshotDrawing);
@@ -2964,6 +2965,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
     // Cross-site SuspendedPageProxy entries follow the unsuspend() path; skip them here.
     auto shouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified;
     std::optional<WebCore::ProcessIdentifier> takenBackForwardCacheMainFrameProcessIdentifier;
+    std::unique_ptr<PendingBackForwardIframeRestore> pendingIframeRestore;
     Ref preferences = this->preferences();
     if (preferences->siteIsolationEnabled() && preferences->multiProcessBackForwardCacheEnabled()) {
         RefPtr entry = item->backForwardCacheEntry();
@@ -2993,21 +2995,26 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
                         page->reload(ReloadOption::ExpiredOnly);
                     });
 
-                for (Ref iframeProcess : iframeProcesses) {
+                iframeProcesses.removeAllMatching([&](auto& iframeProcess) {
                     // Children cached in the same process as the restored main frame are local
                     // WebFrameProxys and they're reattached directly via
                     // pendingBackForwardCachedChildren/adoptChildFrames once the main frame commits.
                     if (iframeProcess.ptr() == process.ptr())
-                        continue;
+                        return true;
 
                     if (!protect(browsingContextGroup())->remotePageInProcess(*this, iframeProcess)) {
                         RELEASE_LOG_ERROR(ProcessSwapping, "WebPageProxy::goToBackForwardItem: no RemotePageProxy for pid %i, signaling failure", iframeProcess->processID());
                         aggregator->failed();
-                        continue;
+                        return true;
                     }
-                    RELEASE_LOG(ProcessSwapping, "WebPageProxy::goToBackForwardItem: dispatching RestoreWithFrameItem to pid %i", iframeProcess->processID());
-                    iframeProcess->sendWithAsyncReply(Messages::WebPage::RestoreWithFrameItem(mainFrameItemID, std::nullopt), aggregator->chain(), webPageIDInProcess(iframeProcess));
-                }
+                    return false;
+                });
+
+                for (Ref iframeProcess : iframeProcesses)
+                    iframeProcess->send(Messages::WebPage::PrepareToRestoreWithFrameItem(mainFrameItemID), webPageIDInProcess(iframeProcess));
+
+                if (!iframeProcesses.isEmpty())
+                    pendingIframeRestore = makeUnique<PendingBackForwardIframeRestore>(process->coreProcessIdentifier(), mainFrameItemID, WTF::move(iframeProcesses), WTF::move(aggregator));
             }
         }
     }
@@ -3015,6 +3022,8 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
     Ref navigation = m_navigationState->createBackForwardNavigation(process->coreProcessIdentifier(), frameItem, backForwardList().currentItem(), frameLoadType);
     if (takenBackForwardCacheMainFrameProcessIdentifier)
         navigation->setBackForwardCacheMainFrameProcessIdentifier(*takenBackForwardCacheMainFrameProcessIdentifier);
+    if (pendingIframeRestore)
+        internals().pendingBackForwardIframeRestores.set(navigation->navigationID(), WTF::move(pendingIframeRestore));
     Ref pageLoadState = internals().pageLoadState;
     auto transaction = pageLoadState->transaction();
     pageLoadState->setPendingAPIRequest(transaction, { navigation->navigationID(), URL { item->url() } });
@@ -9054,6 +9063,10 @@ void WebPageProxy::didDestroyNavigationShared(Ref<WebProcessProxy>&& process, We
     RefPtr protectedPageClient { pageClient() };
 
     m_navigationState->didDestroyNavigation(process->coreProcessIdentifier(), navigationID);
+
+    auto it = internals().pendingBackForwardIframeRestores.find(navigationID);
+    if (it != internals().pendingBackForwardIframeRestores.end() && it->value->mainFrameProcessIdentifier == process->coreProcessIdentifier())
+        restoreOrCancelPendingBackForwardIframes(*internals().pendingBackForwardIframeRestores.take(it), RestoredFromBackForwardCache::No);
 }
 
 void WebPageProxy::didStartProvisionalLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData, WallTime timestamp)
@@ -9602,6 +9615,8 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
             if (restoredFromBackForwardCache == RestoredFromBackForwardCache::Yes)
                 frame->adoptChildFrames(WTF::move(pendingChildren));
         }
+        if (auto pendingRestore = internals().pendingBackForwardIframeRestores.take(navigation->navigationID()))
+            restoreOrCancelPendingBackForwardIframes(*pendingRestore, restoredFromBackForwardCache);
     }
 
     m_hasCommittedAnyProvisionalLoads = true;
@@ -15218,6 +15233,10 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
         // If it does *during* process swapping, and the client triggers a reload, that causes bizarre WebKit re-entry.
         // FIXME: This might have to change
         m_navigationState->clearAllNavigations();
+
+        auto pendingIframeRestores = std::exchange(internals().pendingBackForwardIframeRestores, { });
+        for (auto& pendingRestore : pendingIframeRestores.values())
+            restoreOrCancelPendingBackForwardIframes(*pendingRestore, RestoredFromBackForwardCache::No);
 
         if (m_controlledByAutomation) {
             if (RefPtr automationSession = configuration().processPool().automationSession())
@@ -21307,6 +21326,26 @@ void WebPageProxy::didCacheBackForwardItem(BackForwardItemIdentifier itemID, Com
     for (Ref process : iframeProcesses) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCacheBackForwardItem: dispatching SuspendWithFrameItem to pid %i", process->processID());
         process->sendWithAsyncReply(Messages::WebPage::SuspendWithFrameItem(mainFrameItemID), aggregator->chain(), webPageIDInProcess(process));
+    }
+}
+
+void WebPageProxy::restoreOrCancelPendingBackForwardIframes(const PendingBackForwardIframeRestore& pendingRestore, RestoredFromBackForwardCache restoredFromBackForwardCache)
+{
+    for (Ref iframeProcess : pendingRestore.iframeProcesses) {
+        if (restoredFromBackForwardCache == RestoredFromBackForwardCache::No) {
+            iframeProcess->send(Messages::WebPage::CancelRestoreWithFrameItem(pendingRestore.mainFrameItemID), webPageIDInProcess(iframeProcess));
+            continue;
+        }
+
+        if (!protect(browsingContextGroup())->remotePageInProcess(*this, iframeProcess)) {
+            WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "restoreOrCancelPendingBackForwardIframes: no RemotePageProxy for pid %i, signaling failure", iframeProcess->processID());
+            RunLoop::mainSingleton().dispatch([aggregator = pendingRestore.aggregator] {
+                aggregator->failed();
+            });
+            continue;
+        }
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "restoreOrCancelPendingBackForwardIframes: dispatching RestoreWithFrameItem to pid %i", iframeProcess->processID());
+        iframeProcess->sendWithAsyncReply(Messages::WebPage::RestoreWithFrameItem(pendingRestore.mainFrameItemID, std::nullopt), protect(pendingRestore.aggregator)->chain(), webPageIDInProcess(iframeProcess));
     }
 }
 

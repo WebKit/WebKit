@@ -2460,6 +2460,8 @@ void WebPage::close(CompletionHandler<void()>&& completionHandler)
     m_drawingArea = nullptr;
     m_webPageTesting = nullptr;
     m_textExtractionFilterPage = nullptr;
+    m_cachedPageForRestorationID = std::nullopt;
+    m_cachedPageForRestoration = nullptr;
     m_page = nullptr;
 
     bool isRunningModal = m_isRunningModal;
@@ -9430,7 +9432,12 @@ void WebPage::suspendWithFrameItem(BackForwardFrameItemIdentifier identifier, Co
 
 void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, std::optional<std::pair<URL, SecurityOriginData>>&& mainFrameURLAndOrigin, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!BackForwardCache::singleton().isInBackForwardCache(identifier))
+    bool wasPrepared = m_cachedPageForRestorationID == identifier;
+    std::unique_ptr<CachedPage> cachedPage;
+    if (wasPrepared) {
+        m_cachedPageForRestorationID = std::nullopt;
+        cachedPage = std::exchange(m_cachedPageForRestoration, nullptr);
+    } else if (!BackForwardCache::singleton().isInBackForwardCache(identifier))
         return completionHandler(true);
 
     RefPtr page = corePage();
@@ -9439,7 +9446,8 @@ void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, st
         return completionHandler(false);
     }
 
-    auto cachedPage = BackForwardCache::singleton().take(identifier, page);
+    if (!wasPrepared)
+        cachedPage = BackForwardCache::singleton().take(identifier, page);
     if (!cachedPage) {
         WEBPAGE_RELEASE_LOG_ERROR(ProcessSwapping, "restoreWithFrameItem: take failed, cache entry missing or expired");
         m_isSuspended = false;
@@ -9457,6 +9465,25 @@ void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, st
 
     cachedPage->restore(*page);
     completionHandler(true);
+}
+
+void WebPage::prepareToRestoreWithFrameItem(BackForwardFrameItemIdentifier identifier)
+{
+    RefPtr page = corePage();
+    if (!page)
+        return;
+
+    m_cachedPageForRestorationID = identifier;
+    m_cachedPageForRestoration = BackForwardCache::singleton().take(identifier, page);
+}
+
+void WebPage::cancelRestoreWithFrameItem(BackForwardFrameItemIdentifier identifier)
+{
+    if (m_cachedPageForRestorationID != identifier)
+        return;
+
+    m_cachedPageForRestorationID = std::nullopt;
+    m_cachedPageForRestoration = nullptr;
 }
 
 void WebPage::detachResidualSubframesForBackForwardCacheRestore(WebCore::Page& page)

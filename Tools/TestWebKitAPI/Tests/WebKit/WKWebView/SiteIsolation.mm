@@ -7702,6 +7702,63 @@ TEST(SiteIsolation, BFCacheRestoredIframeIsVisibleAndFiresPageShow)
     EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.visibilityState"], "visible");
 }
 
+TEST(SiteIsolation, BFCacheRestoredIframeWaitsForMainFrameCommit)
+{
+    auto recordMessages = "<script>"
+        "  window.__messages = [];"
+        "  window.addEventListener('message', (event) => window.__messages.push(event.data));"
+        "</script>"_s;
+    auto iframeHTML = "<script>"
+        "  window.addEventListener('pageshow', (event) => {"
+        "    if (event.persisted)"
+        "      top.postMessage('restored', '*');"
+        "  });"
+        "</script>"_s;
+
+    HTTPServer server({
+        { "/a"_s, { makeString(recordMessages, "<iframe src='https://frame.com/frame'></iframe>"_s) } },
+        { "/b"_s, { recordMessages } },
+        { "/frame"_s, { iframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto *configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration, @"MultiProcessBackForwardCacheEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    // Same-site, so the main frame stays in its process and a.com/a goes into its back/forward cache.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/b"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block BlockPtr<void(WKNavigationActionPolicy)> heldDecision;
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if (action.navigationType == WKNavigationTypeBackForward && action.targetFrame.isMainFrame) {
+            heldDecision = makeBlockPtr(completionHandler);
+            return;
+        }
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    [webView goBack];
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor(^{
+        return !!heldDecision;
+    }));
+
+    // While the main frame's policy decision is pending, the restored iframe must not run script.
+    TestWebKitAPI::Util::runFor(0.5_s);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"window.__messages.length"] intValue]);
+
+    heldDecision(WKNavigationActionPolicyAllow);
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.__messages.length"] intValue] == 1;
+    }));
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"window.__messages[0]"], "restored");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"location.pathname"], "/a");
+}
+
 TEST(SiteIsolation, BFCacheSameSitePageChangesTopDocumentURL)
 {
     HTTPServer server({

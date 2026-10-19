@@ -679,6 +679,7 @@ struct NavigationActionData;
 struct NetworkResourceLoadIdentifierType;
 struct PDFContextMenu;
 struct PDFPluginIdentifierType;
+struct PendingBackForwardIframeRestore;
 struct PlatformPopupMenuData;
 struct PolicyDecision;
 struct PolicyDecisionConsoleMessage;
@@ -3843,6 +3844,7 @@ private:
     void didCacheBackForwardItem(WebCore::BackForwardItemIdentifier, CompletionHandler<void(bool)>&&);
     void didEvictBackForwardItem(WebCore::BackForwardItemIdentifier);
     void didTakeBackForwardItemForRestoration(WebCore::BackForwardItemIdentifier);
+    void restoreOrCancelPendingBackForwardIframes(const PendingBackForwardIframeRestore&, WebCore::RestoredFromBackForwardCache);
 
     Vector<Ref<WebProcessProxy>> activeRemoteFrameProcesses() const;
     void discardBackForwardCacheEntry(WebCore::BackForwardItemIdentifier);

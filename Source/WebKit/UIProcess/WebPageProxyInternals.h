@@ -65,6 +65,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/ViewportSegments.h>
 #include <pal/HysteresisActivity.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/UUID.h>
 
 #if ENABLE(APPLE_PAY)
@@ -133,6 +134,15 @@ struct PrivateClickMeasurementAndMetadata {
     WebCore::PrivateClickMeasurement pcm;
     String sourceDescription;
     String purchaser;
+};
+
+struct PendingBackForwardIframeRestore {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(PendingBackForwardIframeRestore);
+
+    WebCore::ProcessIdentifier mainFrameProcessIdentifier;
+    WebCore::BackForwardFrameItemIdentifier mainFrameItemID;
+    Vector<Ref<WebProcessProxy>> iframeProcesses;
+    Ref<MainRunLoopSuccessCallbackAggregator> aggregator;
 };
 
 #if ENABLE(SPEECH_SYNTHESIS)
@@ -315,6 +325,7 @@ public:
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> sleepDisablers;
 
     HashMap<WebCore::BackForwardItemIdentifier, Vector<Ref<WebFrameProxy>>> pendingBackForwardCachedChildren;
+    HashMap<WebCore::NavigationIdentifier, std::unique_ptr<PendingBackForwardIframeRestore>> pendingBackForwardIframeRestores;
 
     // Each cross-origin remote frame's origin within its immediate parent frame, keyed by frame ID.
     // Used to compute each frame's cumulative offset in main-frame coordinates (see
