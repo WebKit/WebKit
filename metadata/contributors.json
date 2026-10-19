@@ -8209,6 +8209,15 @@
    },
    {
       "emails" : [
+         "tantek@mozilla.com",
+         "tantek@tantek.com",
+         "tantek@cs.stanford.edu"
+      ],
+      "github" : "tantek",
+      "name" : "Tantek \u00c7elik"
+   },
+   {
+      "emails" : [
          "tdanderson@chromium.org"
       ],
       "name" : "Terry Anderson",
