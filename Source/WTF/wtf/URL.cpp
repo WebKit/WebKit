@@ -261,6 +261,17 @@ StringView URL::fragmentIdentifier() const LIFETIME_BOUND
     return StringView(m_string).substring(m_queryEnd + 1);
 }
 
+String URL::decodeFragmentIdentifier(StringView fragmentIdentifier)
+{
+    // Unlike https://url.spec.whatwg.org/#string-percent-decode, an unpaired surrogate is kept when there is nothing to decode.
+    if (!fragmentIdentifier.contains('%'))
+        return fragmentIdentifier.toString();
+
+    auto utf8 = fragmentIdentifier.utf8(ConversionMode::Lenient);
+    auto percentDecoded = URLParser::percentDecode(byteCast<Latin1Character>(utf8.span()));
+    return String::fromUTF8ReplacingInvalidSequences(percentDecoded.span());
+}
+
 // https://wicg.github.io/scroll-to-text-fragment/#the-fragment-directive
 String URL::consumeFragmentDirective()
 {

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<title>mask-image: url() to a remote SVG document finds a mask element whose id is written percent-encoded (ASCII)</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-masking-1/#mask-layer-image">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#processingURL-target">
+<link rel="help" href="https://url.spec.whatwg.org/#fragment-percent-encode-set">
+<link rel="match" href="reference/mask-image-ref.html">
+<meta name="assert" content="url(support/mask.svg#%6dask) in mask-image resolves to the mask with id mask in the remote document. A mask that is not found is a transparent black layer, which would hide #front and show the red centre of #back.">
+<style>
+#back {
+  position: absolute;
+  box-sizing: border-box;
+  width: 200px;
+  height: 200px;
+  border: 60px solid green;
+  background: red;
+}
+#front {
+  position: absolute;
+  box-sizing: border-box;
+  width: 200px;
+  height: 200px;
+  border: 40px solid red;
+  background: green;
+  mask-image: url(support/mask.svg#%6dask);
+}
+</style>
+<p>The test passes if there is a green square and no red below.</p>
+<div id="back"></div><div id="front"></div>

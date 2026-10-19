@@ -223,6 +223,9 @@ public:
     WTF_EXPORT_PRIVATE String consumeFragmentDirective();
     WTF_EXPORT_PRIVATE void removeQueryAndFragmentIdentifier();
 
+    // Steps 6 and 7 of https://html.spec.whatwg.org/#select-the-indicated-part.
+    WTF_EXPORT_PRIVATE static String decodeFragmentIdentifier(StringView);
+
     WTF_EXPORT_PRIVATE static bool hostIsIPAddress(StringView);
     NODELETE WTF_EXPORT_PRIVATE static bool isIPv6Address(StringView);
 

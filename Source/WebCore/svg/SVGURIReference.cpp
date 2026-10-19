@@ -31,7 +31,6 @@
 #include "SVGUseElement.h"
 #include "StyleSVGMarkerResource.h"
 #include "XLinkNames.h"
-#include <pal/text/TextEncoding.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
@@ -77,11 +76,11 @@ AtomString SVGURIReference::fragmentIdentifierFromIRIString(const String& url, c
         return emptyAtom();
 
     if (!start)
-        return AtomString(PAL::decodeURLEscapeSequences(StringView(url).substring(1)));
+        return AtomString(URL::decodeFragmentIdentifier(StringView(url).substring(1)));
 
     URL urlWithFragment = document.encodingParseURL(url);
     if (equalIgnoringFragmentIdentifier(urlWithFragment, document.url()))
-        return AtomString(PAL::decodeURLEscapeSequences(urlWithFragment.fragmentIdentifier()));
+        return AtomString(URL::decodeFragmentIdentifier(urlWithFragment.fragmentIdentifier()));
 
     return emptyAtom();
 }
@@ -113,7 +112,7 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
 
     // Exclude the '#' character when determining the fragmentIdentifier.
     // Percent-decode the fragment so that url(#%66%6f%6f) resolves to id="foo".
-    auto id = AtomString(PAL::decodeURLEscapeSequences(StringView(iri).substring(startOfFragmentIdentifier + 1)));
+    auto id = AtomString(URL::decodeFragmentIdentifier(StringView(iri).substring(startOfFragmentIdentifier + 1)));
     if (id.isEmpty())
         return { };
 

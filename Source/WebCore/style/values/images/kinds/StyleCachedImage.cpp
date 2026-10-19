@@ -164,7 +164,7 @@ LegacyRenderSVGResourceContainer* CachedImage::uncheckedRenderSVGResource(const 
     if (!rootElement)
         return nullptr;
 
-    return uncheckedRenderSVGResource(protect(rootElement->treeScopeForSVGReferences()), m_url.resolved.fragmentIdentifier().toAtomString());
+    return uncheckedRenderSVGResource(protect(rootElement->treeScopeForSVGReferences()), m_url.fragment());
 }
 
 LegacyRenderSVGResourceContainer* CachedImage::legacyRenderSVGResource(const RenderElement* renderer) const
@@ -197,7 +197,7 @@ RenderSVGResourceContainer* CachedImage::renderSVGResource(const RenderElement* 
     if (!rootElement)
         return nullptr;
 
-    auto referencedMaskElement = ReferencedSVGResources::referencedMaskElement(protect(rootElement->treeScopeForSVGReferences()), m_url.resolved.fragmentIdentifier().toAtomString());
+    auto referencedMaskElement = ReferencedSVGResources::referencedMaskElement(protect(rootElement->treeScopeForSVGReferences()), m_url.fragment());
     if (!referencedMaskElement)
         return nullptr;
 

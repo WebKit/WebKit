@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<title>CSS Reference: two green squares</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<style>
+#container {
+  position: relative;
+  height: 200px;
+}
+.ref {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+  background: green;
+}
+.right {
+  left: 220px;
+}
+</style>
+<p>The test passes if there are two green squares and no red below.</p>
+<div id="container">
+  <div class="ref"></div>
+  <div class="ref right"></div>
+</div>
