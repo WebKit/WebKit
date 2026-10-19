@@ -8963,6 +8963,20 @@ void WebPageProxy::continueAccessibilitySearchFromChildFrame(IPC::Connection& co
     // Send the continuation request to the parent frame's process.
     sendWithAsyncReplyToProcessContainingFrame(parentFrame->frameID(), Messages::WebPage::ContinueAccessibilitySearchInParentFrame(childFrameID, criteria), WTF::move(callback));
 }
+
+void WebPageProxy::relayAccessibilitySelectedTextChangeToMainFrame(IPC::Connection& connection, WebCore::FrameIdentifier frameID, WebCore::AXRemoteFrameSelectedTextChange&& change)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame || !m_mainFrame)
+        return;
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    // Only the process hosting a cross-site frame may relay its selection changes, so a compromised
+    // process can't make the main frame's process post notifications for frames it doesn't own.
+    MESSAGE_CHECK(process, &frame->process() == process.ptr() && frame != m_mainFrame);
+
+    sendToProcessContainingFrame(m_mainFrame->frameID(), Messages::WebPage::PostAccessibilitySelectedTextChangeFromRemoteFrame(WTF::move(change)));
+}
 #endif
 
 void WebPageProxy::updateReferrerPolicy(IPC::Connection& connection, WebCore::FrameIdentifier frameID, WebCore::ReferrerPolicy referrerPolicy)

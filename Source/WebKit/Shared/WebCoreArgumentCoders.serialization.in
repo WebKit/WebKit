@@ -7404,6 +7404,86 @@ header: <WebCore/AccessibilityRemoteToken.h>
 #endif
 }
 
+#if PLATFORM(MAC)
+header: <WebCore/AXTextStateChangeIntent.h>
+enum class WebCore::AXTextStateChangeType : uint8_t {
+    Unknown,
+    Edit,
+    SelectionMove,
+    SelectionExtend,
+    SelectionBoundary
+};
+
+header: <WebCore/AXTextStateChangeIntent.h>
+enum class WebCore::AXTextSelectionDirection : uint8_t {
+    Unknown,
+    Beginning,
+    End,
+    Previous,
+    Next,
+    Discontiguous
+};
+
+header: <WebCore/AXTextStateChangeIntent.h>
+enum class WebCore::AXTextSelectionGranularity : uint8_t {
+    Unknown,
+    Character,
+    Word,
+    Line,
+    Sentence,
+    Paragraph,
+    Page,
+    Document,
+    All
+};
+
+header: <WebCore/TextAffinity.h>
+enum class WebCore::Affinity : bool
+
+header: <WebCore/AXTextMarker.h>
+enum class WebCore::TextMarkerOrigin : uint16_t {
+    Unknown,
+    PreviousLineStart,
+    NextLineEnd,
+    NextWordStart,
+    NextWordEnd,
+    PreviousWordStart,
+    PreviousWordEnd,
+    PreviousSentenceStart,
+    NextSentenceEnd,
+    PreviousParagraphStart,
+    NextParagraphEnd,
+    Position,
+    StartTextMarkerForBounds,
+    EndTextMarkerForBounds
+};
+
+header: <WebCore/AXObjectTypes.h>
+[CustomHeader] struct WebCore::AXRemoteFrameTextMarker {
+    unsigned treeID;
+    unsigned objectID;
+    unsigned offset;
+    uint8_t anchorType;
+    unsigned characterStart;
+    unsigned characterOffset;
+    bool isRedacted;
+    WebCore::Affinity affinity;
+    WebCore::TextMarkerOrigin origin;
+};
+
+header: <WebCore/AXObjectTypes.h>
+[CustomHeader] struct WebCore::AXRemoteFrameSelectedTextChange {
+    WebCore::AXTextStateChangeType type;
+    WebCore::AXTextSelectionDirection direction;
+    WebCore::AXTextSelectionGranularity granularity;
+    bool focusChange;
+    bool isSynchronizing;
+    std::optional<WebCore::AXRemoteFrameTextMarker> selectionStart;
+    std::optional<WebCore::AXRemoteFrameTextMarker> selectionEnd;
+    std::optional<WebCore::AccessibilityRemoteToken> textChangeElement;
+};
+#endif
+
 header: <WebCore/AXCoreObject.h>
 enum class WebCore::AccessibilitySearchDirection : uint8_t {
     Next,
