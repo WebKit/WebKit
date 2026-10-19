@@ -415,7 +415,7 @@ builders:
     configuration: release
     architectures: [arm64]
     triggers: [api-tests-ios-sim-ews, ios-26-sim-wk2-tests-ews, ios-26-sim-wpt-wk2-tests-ews]
-    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
+    workernames: {$map: {$eval: "range(0, 7)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
   - name: iOS-26-Simulator-WK2-Tests-EWS
     shortname: ios-wk2
     icon: testOnly
@@ -454,7 +454,7 @@ builders:
     workernames:
       $flatten:
         - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
-        - {$map: {$eval: "range(0, 9)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+        - {$map: {$eval: "range(0, 7)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
   - name: macOS-Tahoe-Debug-WK2-Tests-EWS
     shortname: mac-cmake-debug-wk2
     icon: testOnly
@@ -539,7 +539,7 @@ builders:
     platform: watchos-26
     configuration: release
     architectures: [arm64_32, arm64]
-    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: watchOS-26-Simulator-Build-EWS
     shortname: watch-sim
     icon: buildOnly
