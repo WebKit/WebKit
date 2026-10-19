@@ -101,9 +101,11 @@ void configureCertificateAuthorityBundle(const URL& url)
         return;
 
     auto& sslHandle = CurlContext::singleton().sslHandle();
-    if (!std::holds_alternative<std::monostate>(sslHandle.getCACertInfo()))
-        return;
 
+    // An explicitly supplied bundle is authoritative. On Wii U, however, a
+    // non-empty CA setting may be a desktop/Linux default path that does not
+    // exist on the console. Prefer the generated embedded bundle over such a
+    // stale platform default, while keeping peer and hostname verification on.
     const char* path = std::getenv("CURL_CA_BUNDLE");
     if (!path || !*path)
         path = std::getenv("SSL_CERT_FILE");
@@ -113,15 +115,20 @@ void configureCertificateAuthorityBundle(const URL& url)
     }
 
 #if WKC_HAS_EMBEDDED_CA_BUNDLE
-    // Embed the build host's maintained CA bundle because a Wii U install does
-    // not necessarily have a conventional system certificate store. Keep the
-    // bytes in CurlSSLHandle: libcurl's CAINFO_BLOB uses CURL_BLOB_NOCOPY.
+    // Keep the bytes alive in CurlSSLHandle: libcurl's CAINFO_BLOB uses
+    // CURL_BLOB_NOCOPY. Set this even if platformInitialize() installed a
+    // default CA path; that path may not be present in the Wii U filesystem.
     CertificateInfo::Certificate caBundle;
     caBundle.append(std::span<const uint8_t> {
         reinterpret_cast<const uint8_t*>(WKCCACertificates::bundle),
         WKCCACertificates::bundleSize
     });
     sslHandle.setCACertData(WTF::move(caBundle));
+#else
+    // Preserve a caller-provided platform CA configuration if the build did
+    // not generate an embedded bundle.
+    if (!std::holds_alternative<std::monostate>(sslHandle.getCACertInfo()))
+        return;
 #endif
 }
 
