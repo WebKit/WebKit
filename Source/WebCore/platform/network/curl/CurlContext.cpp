@@ -31,7 +31,9 @@
 #include "CertificateInfo.h"
 #include "CurlRequestScheduler.h"
 #include "CurlSSLHandle.h"
+#if !PLATFORM(WKC)
 #include "CurlSSLVerifier.h"
+#endif
 #include "CurlStreamScheduler.h"
 #include "HTTPHeaderMap.h"
 #include <NetworkLoadMetrics.h>
@@ -343,7 +345,12 @@ void CurlHandle::enableSSL()
     if (const auto& ecCurves = sslHandle.ecCurves(); !ecCurves.isNull())
         setSslECCurves(ecCurves.data());
 
+#if !PLATFORM(WKC)
+    // Wii U's libcurl is built with mbedTLS, which does not support
+    // CURLOPT_SSL_CTX_FUNCTION. Peer and hostname verification remain enabled
+    // through libcurl's portable TLS options above.
     setSslCtxCallbackFunction(willSetupSslCtxCallback, this);
+#endif
 
 #if OS(WINDOWS)
     curl_easy_setopt(m_handle, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
@@ -361,6 +368,7 @@ void CurlHandle::disableServerTrustEvaluation()
     setSslVerifyHost(CurlHandle::VerifyHost::LooseNameCheck);
 }
 
+#if !PLATFORM(WKC)
 CURLcode CurlHandle::willSetupSslCtx(void* sslCtx)
 {
     if (!sslCtx)
@@ -376,6 +384,7 @@ CURLcode CurlHandle::willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData
 {
     return static_cast<CurlHandle*>(userData)->willSetupSslCtx(sslCtx);
 }
+#endif
 
 CURLcode CurlHandle::perform()
 {
@@ -782,6 +791,7 @@ std::optional<long> CurlHandle::getSSLVerifyResult() const
     return verifyResult;
 }
 
+#if !PLATFORM(WKC)
 std::optional<SSL*> CurlHandle::sslConnection() const
 {
     curl_tlssessioninfo* info = nullptr;
@@ -795,6 +805,7 @@ std::optional<SSL*> CurlHandle::sslConnection() const
 
     return static_cast<SSL*>(info->internals);
 }
+#endif
 
 std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTime startTime)
 {
@@ -886,6 +897,7 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
         return;
 
     auto additionalMetrics = AdditionalNetworkLoadMetricsForWebInspector::create();
+#if !PLATFORM(WKC)
     if (!m_tlsConnectionInfo) {
         if (auto ssl = sslConnection()) {
             m_tlsConnectionInfo = makeUnique<TLSConnectionInfo>();
@@ -893,6 +905,7 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
             m_tlsConnectionInfo->cipher = OpenSSL::tlsCipherName(*ssl);
         }
     }
+#endif
 
     additionalMetrics->requestBodyBytesSent = requestBodySize;
     additionalMetrics->responseHeaderBytesReceived = responseHeaderSize;
@@ -910,6 +923,12 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
 
 std::optional<CertificateInfo> CurlHandle::certificateInfo() const
 {
+#if PLATFORM(WKC)
+    // libcurl's mbedTLS backend verifies HTTPS natively. It does not expose an
+    // OpenSSL SSL* / SSL_CTX, so the optional detailed peer-chain UI metadata
+    // is unavailable on WKC.
+    return std::nullopt;
+#else
     if (m_certificateInfo)
         return *m_certificateInfo;
 
@@ -929,6 +948,7 @@ std::optional<CertificateInfo> CurlHandle::certificateInfo() const
     }
 
     return std::nullopt;
+#endif
 }
 
 #ifndef NDEBUG
