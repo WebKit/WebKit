@@ -472,6 +472,13 @@ file(GLOB_RECURSE WKC_WEBKIT_SOURCES
     ${WKC_DIR}/accessor/*.cpp
 )
 
+# WKCWebView.cpp is the canonical address-bar implementation: it validates the
+# final URL with WebCore's URL parser and routes ordinary text to Google Search.
+# Exclude the provisional helper, which defines the same WKCWebView method with
+# different search behavior; keeping both in the static archive risks ambiguous
+# symbol resolution in the final Wave Browser link.
+list(REMOVE_ITEM WKC_WEBKIT_SOURCES "${WKC_DIR}/webkit/WKCBrowserNavigation.cpp")
+
 if (WKC_ENABLE_WEB_INSPECTOR)
     # InspectorBackendClientWKC is the boundary between WebCore's DevTools
     # Protocol implementation and the public ChromeClientIf message callbacks.
