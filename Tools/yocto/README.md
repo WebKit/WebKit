@@ -276,12 +276,10 @@ scp WebKitBuild/release.zip root@192.168.X.Y:
 
 ### Starting Weston (Wayland environment)
 
-Weston is configured to automatically start when any program tries to use
-the socket. You can, for example, execute `weston-simple-egl` and then
-weston should be automatically launched.
-
-So when you execute the MiniBrowser it should automatically launch weston if
-is still not launched.
+Weston is started automatically at boot. If it is not running, for example
+because it was stopped, it is also started on demand the first time a program
+tries to use its socket, so executing `weston-simple-egl` or the MiniBrowser
+will launch it.
 
 If for some reason it doesn't auto-launch then you can try to do that manually:
 
@@ -332,3 +330,8 @@ root@raspberrypi4:~/WebKit# Tools/Scripts/run-webkit-tests --debug-rwt-logging -
 root@raspberrypi4:~/WebKit# export NUMBER_OF_PROCESSORS=1
 root@raspberrypi4:~/WebKit# Tools/Scripts/run-webkit-tests --debug-rwt-logging --no-build --wpe --release fast/css
 ```
+
+### Checking the logs of a previous boot
+
+The systemd journal is kept across reboots, so after a crash or an OOM kill you
+can check the logs of the previous boot with `journalctl -b -1`.

@@ -672,10 +672,18 @@ index 0000000000..871ec35633
 +    ${libdir}/libsysprof-6*.so.* \
 +"
 diff --git a/sources/meta-webkit/recipes-browser/images/webkit-dev-ci-tools.bb b/sources/meta-webkit/recipes-browser/images/webkit-dev-ci-tools.bb
-index 4133ad7..2234c9b 100644
+index 4133ad7..01924a8 100644
 --- a/sources/meta-webkit/recipes-browser/images/webkit-dev-ci-tools.bb
 +++ b/sources/meta-webkit/recipes-browser/images/webkit-dev-ci-tools.bb
-@@ -83,7 +83,6 @@ IMAGE_INSTALL:append = " \
+@@ -33,6 +33,7 @@ IMAGE_FEATURES += " \
+                     tools-debug \
+                     tools-profile \
+                     tools-sdk \
++                    weston \
+                     "
+ REQUIRED_DISTRO_FEATURES = "opengl wayland"
+ 
+@@ -83,7 +84,6 @@ IMAGE_INSTALL:append = " \
      pv \
      rsync \
      screen \
@@ -711,10 +719,20 @@ index 0000000..18b1f3c
 +            d.setVar('SYSTEMD_AUTO_ENABLE:%s' % pn, 'disable')
 +}
 diff --git a/sources/meta-webkit/conf/distro/webkitdevci.conf b/sources/meta-webkit/conf/distro/webkitdevci.conf
-index 1f952c2..d299d1f 100644
+index 1f952c2..a2eb7c6 100644
 --- a/sources/meta-webkit/conf/distro/webkitdevci.conf
 +++ b/sources/meta-webkit/conf/distro/webkitdevci.conf
-@@ -47,6 +47,17 @@ PACKAGECONFIG:append:pn-weston-init = " no-idle-timeout"
+@@ -23,7 +23,8 @@ WEBKIT_CROSS_VERSION := "${@d.getVar('BB_ORIGENV').getVar('WEBKIT_CROSS_VERSION'
+ DISTRO_NAME:append = " [target ${WEBKIT_CROSS_TARGET}]"
+ DISTRO_VERSION:append = "_${WEBKIT_CROSS_VERSION}"
+ 
+-DISTROOVERRIDES:append = " poky:linuxstdbase"
++# No "poky" override on purpose: with it meta-poky adds a "Poky is for testing only" warning to /etc/motd.
++DISTROOVERRIDES:append = ":linuxstdbase"
+ 
+ # Distro features
+ DISTRO_FEATURES:append = " opengl egl pam systemd usrmerge polkit"
+@@ -47,6 +48,22 @@ PACKAGECONFIG:append:pn-weston-init = " no-idle-timeout"
  PACKAGECONFIG:append:pn-php = " apache2"
  # Disable mysql support as we don't need to build mysql/mariadb
  PACKAGECONFIG:remove:pn-php = "mysql"
@@ -732,6 +750,32 @@ index 1f952c2..d299d1f 100644
 +
 +# Optional support for clang if meta-clang is enabled
 +CLANGSDK ?= "1"
++
++# Keep /var/log and /tmp on the rootfs instead of on a tmpfs, so the journal survives a reboot
++# (e.g. to debug a crash or an OOM kill) and big files in /tmp don't take RAM from the browsers.
++VOLATILE_LOG_DIR = "no"
++VOLATILE_TMP_DIR = "no"
+diff --git a/sources/meta-webkit/recipes-core/systemd/systemd-conf_%.bbappend b/sources/meta-webkit/recipes-core/systemd/systemd-conf_%.bbappend
+new file mode 100644
+index 0000000..b1f8667
+--- /dev/null
++++ b/sources/meta-webkit/recipes-core/systemd/systemd-conf_%.bbappend
+@@ -0,0 +1,6 @@
++FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
++SRC_URI:append:webkitdevci = " file://10-journal-size.conf"
++
++do_install:append:webkitdevci() {
++	install -D -m0644 ${WORKDIR}/10-journal-size.conf ${D}${systemd_unitdir}/journald.conf.d/10-journal-size.conf
++}
+diff --git a/sources/meta-webkit/recipes-core/systemd/files/webkitdevci/10-journal-size.conf b/sources/meta-webkit/recipes-core/systemd/files/webkitdevci/10-journal-size.conf
+new file mode 100644
+index 0000000..b098123
+--- /dev/null
++++ b/sources/meta-webkit/recipes-core/systemd/files/webkitdevci/10-journal-size.conf
+@@ -0,0 +1,3 @@
++[Journal]
++Storage=persistent
++SystemMaxUse=1G
 diff --git a/sources/meta-webkit/conf/layer.conf b/sources/meta-webkit/conf/layer.conf
 index 124c13d..1a38638 100644
 --- a/sources/meta-webkit/conf/layer.conf
