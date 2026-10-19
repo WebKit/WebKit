@@ -367,9 +367,8 @@ void FileReaderLoader::convertToText()
     // Per the File API "read as text" algorithm, the encoding is determined in order: the explicit
     // encoding argument if it is a supported encoding; otherwise the charset parameter of the Blob's
     // type, if any; otherwise UTF-8.
-    // We intentionally deviate from the spec in one respect, for consistency with how WebKit decodes
-    // web content: a BOM in the data always overrides the selected encoding (handled by
-    // TextResourceDecoder), whereas the spec gives precedence to the explicitly supplied encoding.
+    // The data is decoded with that encoding as the fallback, so a BOM in the data overrides it
+    // (handled by TextResourceDecoder).
     // FIXME: consider supporting incremental decoding to improve the perf.
     if (!m_decoder) {
         auto encoding = m_encoding;

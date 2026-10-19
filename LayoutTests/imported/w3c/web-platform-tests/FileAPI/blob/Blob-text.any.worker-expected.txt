@@ -6,5 +6,9 @@ PASS Blob.text() non-unicode
 PASS Blob.text() different charset param in type option
 PASS Blob.text() different charset param with non-ascii input
 PASS Blob.text() invalid utf-8 input
+PASS Blob.text() strips a UTF-8 byte order mark
+PASS Blob.text() strips only one UTF-8 byte order mark
+PASS Blob.text() does not sniff a UTF-16LE byte order mark
+PASS Blob.text() does not sniff a UTF-16BE byte order mark
 PASS Blob.text() concurrent reads
 
