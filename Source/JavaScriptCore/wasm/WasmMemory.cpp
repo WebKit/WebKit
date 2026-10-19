@@ -68,9 +68,7 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH void webAssemblyCouldntGetFastMemory() { CRA
 // tighter than what PageCount can represent.
 static bool isDeclarablePageCount(PageCount pageCount, AddressType addressType)
 {
-    // FIXME: Every Wasm::Memory still has 64 KiB pages; take the memory's own exponent once it
-    // carries one.
-    return pageCount && pageCount.isValid() && pageCount.pageCount() <= maxDeclarablePages(addressType, MemoryInformation::defaultLog2PageSize);
+    return pageCount && pageCount.isValid() && pageCount.pageCount() <= maxDeclarablePages(addressType, pageCount.log2PageSize());
 }
 
 template<typename Func>
@@ -159,7 +157,7 @@ Ref<Memory> Memory::create(Ref<SharedArrayBufferContents>&& shared, AddressType 
 
 Ref<Memory> Memory::createZeroSized(MemorySharingMode sharingMode, AddressType addressType, uint8_t log2PageSize, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback)
 {
-    return adoptRef(*new Memory(PageCount(0), PageCount(0), sharingMode, addressType, log2PageSize, WTF::move(growSuccessCallback)));
+    return adoptRef(*new Memory(PageCount(0, log2PageSize), PageCount(0, log2PageSize), sharingMode, addressType, log2PageSize, WTF::move(growSuccessCallback)));
 }
 
 RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, MemorySharingMode sharingMode, AddressType addressType, uint8_t log2PageSize, std::optional<MemoryMode> desiredMemoryMode, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback)
@@ -254,6 +252,16 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         return Memory::create(adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, initialBytes, initial, maximum, MemorySharingMode::Default, MemoryMode::BoundsChecking)), addressType, log2PageSize, WTF::move(growSuccessCallback));
     }
     case MemorySharingMode::Shared: {
+        // FIXME: A shared memory's reservation and its growth both work in OS pages, via
+        // SharedArrayBufferContents, so a size that is not an OS-page multiple cannot be protected
+        // or grown. Nothing in the proposal forbids a shared small-page memory; teaching that path
+        // the memory's own page size is the remaining work. Refuse rather than fail inside the
+        // allocator. https://bugs.webkit.org/show_bug.cgi?id=TODO
+        if (!isDefaultPageSize(log2PageSize)) {
+            BufferMemoryManager::singleton().freePhysicalBytes(initialBytes);
+            return nullptr; // Client will throw OOMError.
+        }
+
         char* slowMemory = nullptr;
         tryAllocate(vm,
             [&] () -> BufferMemoryResult::Kind {
@@ -310,7 +318,7 @@ std::expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount de
             if (m_shared)
                 locker.emplace(m_shared->memoryHandle()->lock());
 
-            oldPageCount = PageCount::fromBytes(size());
+            oldPageCount = PageCount::fromBytes(size(), log2PageSize());
             newPageCount = oldPageCount + delta;
             if (!isDeclarablePageCount(newPageCount, addressType()))
                 return makeUnexpected(GrowFailReason::InvalidGrowSize);
@@ -322,7 +330,7 @@ std::expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount de
                 return oldPageCount;
 
             dataLogLnIf(verbose, "Memory::grow(", delta, ") to ", newPageCount, " from ", *this);
-            RELEASE_ASSERT(newPageCount > PageCount::fromBytes(size()));
+            RELEASE_ASSERT(newPageCount > PageCount::fromBytes(size(), log2PageSize()));
 
             if (maximum() && newPageCount > maximum())
                 return makeUnexpected(GrowFailReason::WouldExceedMaximum);
@@ -360,7 +368,7 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         return growShared(vm, delta);
 
     ASSERT(!m_shared);
-    const PageCount oldPageCount = PageCount::fromBytes(size());
+    const PageCount oldPageCount = PageCount::fromBytes(size(), log2PageSize());
     const PageCount newPageCount = oldPageCount + delta;
     if (!isDeclarablePageCount(newPageCount, addressType()))
         return makeUnexpected(GrowFailReason::InvalidGrowSize);
@@ -386,7 +394,7 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         return success();
 
     dataLogLnIf(verbose, "Memory::grow(", delta, ") to ", newPageCount, " from ", *this);
-    RELEASE_ASSERT(newPageCount > PageCount::fromBytes(size()));
+    RELEASE_ASSERT(newPageCount > PageCount::fromBytes(size(), log2PageSize()));
 
     if (maximum() && newPageCount > maximum())
         return makeUnexpected(GrowFailReason::WouldExceedMaximum);

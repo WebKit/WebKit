@@ -503,6 +503,11 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             if (!memory)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import"_s, "is not an instance of WebAssembly.Memory"_s)));
 
+            // The page size has to match before anything else: the size and maximum below are page
+            // counts, and comparing counts in different units is meaningless.
+            if (memory->memory().log2PageSize() != moduleInformation.memory(import.kindIndex).log2PageSize())
+                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import"_s, "provided a 'pagesize' that is different from the module's declared 'pagesize' import memory attribute"_s)));
+
             PageCount declaredInitial = moduleInformation.memory(import.kindIndex).initial();
             size_t importedSize = memory->memory().size();
             if (importedSize < declaredInitial.bytes())
@@ -522,9 +527,6 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
             if (memory->memory().addressType() != moduleInformation.memory(import.kindIndex).addressType())
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import"_s, "provided an 'address' that is different from the module's declared 'address' import memory attribute"_s)));
-
-            if (memory->memory().log2PageSize() != moduleInformation.memory(import.kindIndex).log2PageSize())
-                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import"_s, "provided a 'pagesize' that is different from the module's declared 'pagesize' import memory attribute"_s)));
 
             // ii. Append v to memories.
             // iii. Append v.[[Memory]] to imports.

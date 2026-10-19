@@ -76,6 +76,7 @@ function checkGrowStaysBounded(log2PageSize) {
     traps(load, after);
 }
 
-checkGrowStaysBounded(0);
+// FIXME: A shared memory cannot yet have a page size other than the default, because its
+// reservation and growth work in OS pages. Add 0 here once that lands.
 checkGrowStaysBounded(16);
 checkGrowStaysBounded(undefined);

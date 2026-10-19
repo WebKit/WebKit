@@ -26,14 +26,20 @@ function section(id, bytes) {
     return [id, ...varuint(bytes.length), ...bytes];
 }
 
-// Shared memories need a maximum, so these limits are hasMax|shared|hasPageSize.
-const sharedSmallPageMemory = new Uint8Array([
+// Shared memories need a maximum, so these limits are hasMax|shared|hasPageSize. The page size is
+// stated explicitly even though it is the default one, so the record being read back is the one
+// that carries an exponent.
+// FIXME: Use 0 here, and drop the explicitLog2PageSize plumbing in the agent below, once a shared
+// memory may have a page size other than the default; its reservation and growth go through
+// SharedArrayBufferContents, which works in OS pages.
+const explicitLog2PageSize = 16;
+const sharedMemory = new Uint8Array([
     ...header,
-    ...section(0x05, [0x01, 0x0b, 0x00, 0x01, 0x00]),
+    ...section(0x05, [0x01, 0x0b, 0x00, 0x01, explicitLog2PageSize]),
     ...section(0x07, [0x01, 0x03, 0x6d, 0x65, 0x6d, 0x02, 0x00]),
 ]);
 
-const memory = new WebAssembly.Instance(new WebAssembly.Module(sharedSmallPageMemory)).exports.mem;
+const memory = new WebAssembly.Instance(new WebAssembly.Module(sharedMemory)).exports.mem;
 assert.instanceof(memory.buffer, SharedArrayBuffer);
 
 // The receiving agent probes the page size of what it got the only way the API
@@ -80,6 +86,5 @@ let report;
 while ((report = $.agent.getReport()) === null)
     $.agent.sleep(10);
 
-// Had the page size been defaulted rather than serialized, these would be
-// exactly reversed: the memory would arrive claiming 64 KiB pages.
-assert.eq(report, "0:links,16:LinkError");
+// The memory must arrive claiming the page size it was sent with, and no other.
+assert.eq(report, "0:LinkError,16:links");

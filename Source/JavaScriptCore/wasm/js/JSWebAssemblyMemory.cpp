@@ -221,7 +221,7 @@ PageCount JSWebAssemblyMemory::grow(VM& vm, JSGlobalObject* globalObject, uint64
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto grown = memory().grow(vm, PageCount(delta)); // calls growSuccessCallback() after growing
+    auto grown = memory().grow(vm, PageCount(delta, memory().log2PageSize())); // calls growSuccessCallback() after growing
     if (!grown) {
         switch (grown.error()) {
         case GrowFailReason::InvalidDelta:
@@ -251,7 +251,7 @@ JSObject* JSWebAssemblyMemory::type(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    PageCount minimum = PageCount::fromBytes(m_memory->size());
+    PageCount minimum = PageCount::fromBytes(m_memory->size(), m_memory->log2PageSize());
     PageCount maximum = m_memory->maximum();
     auto addressType = m_memory->addressType();
 

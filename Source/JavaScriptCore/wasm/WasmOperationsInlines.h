@@ -651,7 +651,8 @@ inline int32_t tableSize(JSWebAssemblyInstance* instance, unsigned tableIndex)
 
 inline uint64_t growMemory(JSWebAssemblyInstance* instance, uint64_t delta, uint8_t memoryIndex)
 {
-    auto grown = instance->memory(memoryIndex)->memory().grow(instance->vm(), PageCount(delta));
+    auto& memory = instance->memory(memoryIndex)->memory();
+    auto grown = memory.grow(instance->vm(), PageCount(delta, memory.log2PageSize()));
     if (!grown) {
         switch (grown.error()) {
         case GrowFailReason::InvalidDelta:

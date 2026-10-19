@@ -431,11 +431,11 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
         const uint64_t maxDeclarablePageCount = maxDeclarablePages(AddressType { isMemory64 }, log2PageSize);
         WASM_PARSER_FAIL_IF(initial > maxDeclarablePageCount, "Memory's initial page count of "_s, initial, " is invalid"_s);
 
-        initialPageCount = PageCount(initial);
+        initialPageCount = PageCount(initial, log2PageSize);
 
         if (maximum) {
             WASM_PARSER_FAIL_IF(*maximum > maxDeclarablePageCount, "Memory's maximum page count of "_s, *maximum, " is invalid"_s);
-            maximumPageCount = PageCount(*maximum);
+            maximumPageCount = PageCount(*maximum, log2PageSize);
         }
     }
     ASSERT(initialPageCount);

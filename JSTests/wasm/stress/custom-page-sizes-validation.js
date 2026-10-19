@@ -103,25 +103,28 @@ if (customPageSizesEnabled) {
     failsToValidate({ flags: hasPageSize | hasMax, initial: 0, maximum: 65537, log2PageSize: 16 },
         "maximum page count");
 
-    // i64 limits are declarative: a memory may declare far more pages than this
-    // process could ever map, and must still validate.
-    const maxMemory64Pages = 0x1000000000000; // 2**64 / 65536
-    for (const log2PageSize of [0, 16]) {
-        validates({ flags: hasPageSize | isMemory64, initial: maxMemory64Pages, log2PageSize });
-        // FIXME: With a one-byte page size the proposal allows up to 2**64 - 1 pages. A PageCount
-        // cannot yet represent a count that large, so maxDeclarablePages clamps both page sizes to
-        // the same bound. Raise this once PageCount carries its own page size.
-        failsToValidate({ flags: hasPageSize | isMemory64, initial: maxMemory64Pages + 1, log2PageSize },
-            "initial page count");
-    }
+    // i64 limits are declarative: a memory may declare far more pages than this process could ever
+    // map, and must still validate. The bound is the memory's whole address space counted in its
+    // own pages, so a smaller page size raises it.
+    const maxMemory64Pages = 0x1000000000000n; // 2**64 / 65536
+    validates({ flags: hasPageSize | isMemory64, initial: maxMemory64Pages, log2PageSize: 16 });
+    failsToValidate({ flags: hasPageSize | isMemory64, initial: maxMemory64Pages + 1n, log2PageSize: 16 },
+        "initial page count");
 
-    // Declaring more than can be allocated is valid, and fails at instantiation
-    // with an out-of-memory error rather than at validation. This allocates
-    // nothing: the failure happens before any memory is reserved.
+    // With one-byte pages a page count is a byte count, so the bound is the address space itself,
+    // less the one value reserved to mean "no maximum".
+    const maxSmallPagesMemory64 = (1n << 64n) - 2n;
+    validates({ flags: hasPageSize | isMemory64, initial: maxSmallPagesMemory64, log2PageSize: 0 });
+    failsToValidate({ flags: hasPageSize | isMemory64, initial: maxSmallPagesMemory64 + 1n, log2PageSize: 0 },
+        "initial page count");
+
+    // Declaring more than can be allocated is valid, and fails at instantiation with an
+    // out-of-memory error rather than at validation. This allocates nothing: the failure happens
+    // before any memory is reserved.
     {
         const module = new WebAssembly.Module(memoryModule({
-            flags: hasPageSize,
-            initial: maxSmallPagesMemory32,
+            flags: hasPageSize | isMemory64,
+            initial: maxSmallPagesMemory64,
             log2PageSize: 0,
         }));
         assert.throws(() => new WebAssembly.Instance(module), Error, "Out of memory");
