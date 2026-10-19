@@ -249,14 +249,30 @@ void NonCompositedFrameRenderer::updateRendering()
 
 #if ENABLE(DAMAGE_TRACKING)
         if (auto& renderTargetDamage = m_surface->renderTargetDamage()) {
+            // Only the damaged rects are repainted, so the clear has to be limited to them,
+            // otherwise a non-opaque clear color wipes the rest of the target.
+            SkPaint clearPaint;
+            auto clearColor = m_surface->skiaClearColor({ });
+            if (clearColor) {
+                clearPaint.setColor(*clearColor);
+                clearPaint.setBlendMode(SkBlendMode::kSrc);
+            }
+
             for (const auto& rect : *renderTargetDamage) {
                 auto scaledRect = rect;
                 scaledRect.scale(1 / webPage->deviceScaleFactor());
+                if (clearColor)
+                    canvas->drawRect(SkRect::MakeXYWH(scaledRect.x(), scaledRect.y(), scaledRect.width(), scaledRect.height()), clearPaint);
                 drawRect(scaledRect);
             }
-        } else
+        } else {
+            if (auto clearColor = m_surface->skiaClearColor({ }))
+                m_surface->clear({ });
             drawRect(webPage->bounds());
+        }
 #else
+        if (auto clearColor = m_surface->skiaClearColor({ }))
+            m_surface->clear({ });
         drawRect(webPage->bounds());
 #endif
 
