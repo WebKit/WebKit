@@ -113,6 +113,46 @@ struct WKWebExtensionAPIActionTests {
     }
 
     @Test
+    func setPopupRejectsPathsOutsideTheExtension() async throws {
+        let backgroundScript = """
+            await browser.test.assertRejects(browser.action.setPopup({ popup: 'https://example.com/popup.html' }), /The 'popup' value is invalid, because it must be a resource within the extension/i)
+            await browser.test.assertRejects(browser.action.setPopup({ popup: 'webkit-extension://other-extension/popup.html' }), /The 'popup' value is invalid, because it must be a resource within the extension/i)
+            await browser.test.assertRejects(browser.action.setPopup({ popup: 'javascript:alert(1)' }), /The 'popup' value is invalid, because it must be a resource within the extension/i)
+
+            browser.test.assertEq(await browser.action.getPopup({ }), 'popup.html', 'Popup should be unchanged after a rejection')
+
+            await browser.action.setPopup({ popup: 'alt-popup.html' })
+            browser.test.assertEq(await browser.action.getPopup({ }), 'alt-popup.html', 'Relative popup path should be accepted')
+
+            await browser.action.setPopup({ popup: '/popup.html' })
+            browser.test.assertEq(await browser.action.getPopup({ }), '/popup.html', 'Absolute popup path should be accepted')
+
+            await browser.action.setPopup({ popup: browser.runtime.getURL('alt-popup.html') })
+            browser.test.assertEq(await browser.action.getPopup({ }), browser.runtime.getURL('alt-popup.html'), 'Full extension URL should be accepted')
+
+            await browser.action.setPopup({ popup: 'missing.html' })
+            browser.test.assertEq(await browser.action.getPopup({ }), 'missing.html', 'A path to a missing file should be accepted')
+
+            await browser.action.setPopup({ popup: '' })
+            browser.test.assertEq(await browser.action.getPopup({ }), '', 'Empty popup path should be accepted')
+
+            await browser.action.setPopup({ popup: null })
+            browser.test.assertEq(await browser.action.getPopup({ }), 'popup.html', 'Null popup path should restore the default')
+
+            browser.test.notifyPass()
+            """
+
+        let resources: [String: Any] = [
+            "background.js": backgroundScript,
+            "popup.html": "<b>Hello World!</b>",
+            "alt-popup.html": "<b>Alternate</b>",
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        try await manager.run()
+    }
+
+    @Test
     func clickedEvent() async throws {
         let backgroundScript = """
             browser.action.setPopup({ popup: '' })
@@ -177,6 +217,47 @@ struct WKWebExtensionAPIActionTests {
         let popupURL = try #require(popupWebView.url)
         #expect(popupURL.scheme == "webkit-extension")
         #expect(popupURL.path == "/popup.html")
+
+        action.closePopup()
+    }
+
+    @Test
+    func popupRecoversAfterPopupLoadFailure() async throws {
+        let backgroundScript = """
+            await browser.action.setPopup({ popup: 'invalid.html' })
+
+            browser.test.sendMessage('Invalid Popup Set')
+
+            // Gives the failed provisional load time to finish before the popup path is restored.
+            setTimeout(async () => {
+                await browser.action.setPopup({ popup: 'popup.html' })
+
+                browser.test.sendMessage('Popup Restored')
+            }, 1000)
+            """
+
+        let resources: [String: Any] = [
+            "background.js": backgroundScript,
+            "popup.html": "<b>Hello World!</b>",
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        let context = try #require(manager.context)
+
+        try await manager.waitForTestMessage("Invalid Popup Set")
+
+        // The load of invalid.html fails, which closes the popup before it was ever presented.
+        context.performAction(for: manager.defaultTab)
+
+        try await manager.waitForTestMessage("Popup Restored")
+
+        // Without the fix, the failed popup web view is reused, nothing is loaded and the popup is never presented.
+        let action = try await manager.nextPresentedAction {
+            context.performAction(for: manager.defaultTab)
+        }
+
+        let popupWebView = try #require(action.popupWebView)
+        #expect(popupWebView.url?.path == "/popup.html")
 
         action.closePopup()
     }

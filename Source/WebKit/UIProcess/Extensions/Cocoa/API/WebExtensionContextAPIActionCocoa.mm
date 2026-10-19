@@ -167,6 +167,11 @@ void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentif
         return;
     }
 
+    if (!popupPath.isEmpty() && !isURLForThisExtension(URL { baseURL(), popupPath })) {
+        completionHandler(toWebExtensionError(apiName, @"popup", @"it must be a resource within the extension"));
+        return;
+    }
+
     Ref { action.value() }->setPopupPath(popupPath);
 
     completionHandler({ });
