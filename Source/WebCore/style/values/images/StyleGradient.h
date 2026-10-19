@@ -94,9 +94,9 @@ using GradientDeprecatedColorStopPosition = NumberOrPercentageResolvedToNumber<>
 using GradientDeprecatedColorStop = GradientColorStop<GradientDeprecatedColorStopColor, GradientDeprecatedColorStopPosition>;
 using GradientDeprecatedColorStopList = GradientColorStopList<GradientDeprecatedColorStop>;
 
-template<> struct ToCSS<GradientAngularColorStop> { auto operator()(const GradientAngularColorStop&, const Style::ComputedStyle&) -> CSS::GradientAngularColorStop; };
-template<> struct ToCSS<GradientLinearColorStop> { auto operator()(const GradientLinearColorStop&, const Style::ComputedStyle&) -> CSS::GradientLinearColorStop; };
-template<> struct ToCSS<GradientDeprecatedColorStop> { auto operator()(const GradientDeprecatedColorStop&, const Style::ComputedStyle&) -> CSS::GradientDeprecatedColorStop; };
+template<> struct ToCSS<GradientAngularColorStop> { auto operator()(const GradientAngularColorStop&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::GradientAngularColorStop; };
+template<> struct ToCSS<GradientLinearColorStop> { auto operator()(const GradientLinearColorStop&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::GradientLinearColorStop; };
+template<> struct ToCSS<GradientDeprecatedColorStop> { auto operator()(const GradientDeprecatedColorStop&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::GradientDeprecatedColorStop; };
 
 template<> struct ToStyle<CSS::GradientAngularColorStop> { auto operator()(const CSS::GradientAngularColorStop&, const BuilderState&) -> GradientAngularColorStop; };
 template<> struct ToStyle<CSS::GradientLinearColorStop> { auto operator()(const CSS::GradientLinearColorStop&, const BuilderState&) -> GradientLinearColorStop; };

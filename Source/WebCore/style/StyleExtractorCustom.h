@@ -1302,6 +1302,8 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyID::Color> {
 template<> struct PropertyExtractorAdaptor<CSSPropertyID::CaretColor> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
     {
+        if (state.valueType == ExtractorState::PropertyValueType::Computed)
+            return functor(state.style->caretColor());
         return functor(state.style->caretColor().colorOrCurrentColor());
     }
 };
@@ -1311,14 +1313,14 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyID::CaretColor> {
 template<CSSPropertyID propertyID> Ref<CSSValue> extractCSSValue(ExtractorState& state)
 {
     return PropertyExtractorAdaptor<propertyID> { }.computedValue(state, [&](auto&& value) {
-        return createCSSValue(state.pool, state.style, value);
+        return createCSSValue(state.pool, state.style, value, state.valueType);
     });
 }
 
 template<CSSPropertyID propertyID> void extractSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     PropertyExtractorAdaptor<propertyID> { }.computedValue(state, [&](auto&& value) {
-        serializationForCSS(builder, context, state.style, value);
+        serializationForCSS(builder, context, state.style, value, state.valueType);
     });
 }
 

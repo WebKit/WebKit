@@ -1,0 +1,6 @@
+
+PASS Computed '-webkit-box-shadow: currentcolor 1px 1px' keeps currentcolor
+PASS Computed '-webkit-box-shadow: 1px 1px' keeps currentcolor
+PASS Computed '-webkit-backdrop-filter: drop-shadow(currentcolor 1px 1px)' keeps currentcolor
+PASS Computed '-webkit-backdrop-filter: drop-shadow(1px 1px)' keeps currentcolor
+

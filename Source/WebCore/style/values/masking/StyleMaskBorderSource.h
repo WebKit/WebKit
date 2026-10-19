@@ -74,11 +74,11 @@ private:
 
 // MARK: - Conversion
 
-template<> struct ToCSS<MaskBorderSource> { auto operator()(const MaskBorderSource&, const Style::ComputedStyle&) -> CSS::MaskBorderSource; };
+template<> struct ToCSS<MaskBorderSource> { auto operator()(const MaskBorderSource&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::MaskBorderSource; };
 template<> struct ToStyle<CSS::MaskBorderSource> { auto operator()(const CSS::MaskBorderSource&, const BuilderState&) -> MaskBorderSource; };
 
 template<> struct CSSValueConversion<MaskBorderSource> { auto operator()(BuilderState&, const CSSValue&) -> MaskBorderSource; };
-template<> struct CSSValueCreation<MaskBorderSource> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const MaskBorderSource&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<MaskBorderSource> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const MaskBorderSource&, PropertyValueType = PropertyValueType::Resolved) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 

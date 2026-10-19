@@ -79,18 +79,18 @@ bool FilterImage::equalInputImages(const FilterImage& other) const
     return arePointingToEqualData(m_image, other.m_image);
 }
 
-Ref<CSSValue> FilterImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> FilterImage::computedStyleValue(const Style::ComputedStyle& style, PropertyValueType valueType) const
 {
     RefPtr image = m_image;
     return CSSFilterImageValue::create(
-        image ? image->computedStyleValue(style) : upcast<CSSValue>(CSSKeywordValue::create(CSSValueID::None)),
-        toCSS(m_filter, style)
+        image ? image->computedStyleValue(style, valueType) : upcast<CSSValue>(CSSKeywordValue::create(CSSValueID::None)),
+        toCSS(m_filter, style, valueType)
     );
 }
 
 Ref<DeprecatedCSSOMValue> FilterImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
-    return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
+    return computedStyleValue(style, PropertyValueType::Resolved)->createDeprecatedCSSOMWrapper(owner);
 }
 
 bool FilterImage::isPending() const

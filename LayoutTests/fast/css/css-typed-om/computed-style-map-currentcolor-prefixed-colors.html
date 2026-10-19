@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script>
+
+function testKeepsCurrentColor(property, value)
+{
+    test(t => {
+        const element = document.createElement('div');
+        element.style.setProperty(property, value);
+        document.body.append(element);
+        t.add_cleanup(() => element.remove());
+        assert_not_equals(element.style.getPropertyValue(property), '', `'${value}' is a valid value of '${property}'`);
+
+        element.style.color = 'rgb(0, 128, 0)';
+        const computedWithGreen = element.computedStyleMap().getAll(property).map(String).join(', ');
+        element.style.color = 'rgb(0, 0, 255)';
+        const computedWithBlue = element.computedStyleMap().getAll(property).map(String).join(', ');
+        assert_regexp_match(computedWithGreen, /currentcolor/i, 'The computed value keeps currentcolor');
+        assert_equals(computedWithBlue, computedWithGreen, 'The computed value does not depend on the color property');
+    }, `Computed '${property}: ${value}' keeps currentcolor`);
+}
+
+for (const property of ['-webkit-text-fill-color', '-webkit-text-stroke-color']) {
+    testKeepsCurrentColor(property, 'currentcolor');
+    testKeepsCurrentColor(property, 'color-mix(in srgb, currentcolor, red)');
+}
+
+testKeepsCurrentColor('-webkit-text-stroke', '1px currentcolor');
+
+</script>
+</body>
+</html>

@@ -68,11 +68,11 @@ bool ImageSet::equals(const ImageSet& other) const
     return m_images == other.m_images && MultiImage::equals(other);
 }
 
-Ref<CSSValue> ImageSet::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> ImageSet::computedStyleValue(const Style::ComputedStyle& style, PropertyValueType valueType) const
 {
     auto builder = WTF::map<CSSValueListBuilderInlineCapacity>(m_images, [&](auto& image) -> Ref<CSSValue> {
         return CSSImageSetOptionValue::create(
-            protect(image.image)->computedStyleValue(style),
+            protect(image.image)->computedStyleValue(style, valueType),
             toCSS(image.scaleFactor, style),
             toCSS(image.mimeType, style)
         );
@@ -82,7 +82,7 @@ Ref<CSSValue> ImageSet::computedStyleValue(const Style::ComputedStyle& style) co
 
 Ref<DeprecatedCSSOMValue> ImageSet::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
-    return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
+    return computedStyleValue(style, PropertyValueType::Resolved)->createDeprecatedCSSOMWrapper(owner);
 }
 
 ImageWithScale ImageSet::selectBestFitImage(const Document& document)

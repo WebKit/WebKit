@@ -122,11 +122,11 @@ template<typename T> bool Filter::hasFilterOfType() const
 
 // MARK: - Conversion
 
-template<> struct ToCSS<FilterValueList> { auto operator()(const FilterValueList&, const Style::ComputedStyle&) -> CSS::FilterValueList; };
+template<> struct ToCSS<FilterValueList> { auto operator()(const FilterValueList&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::FilterValueList; };
 template<> struct ToStyle<CSS::FilterValueList> { auto operator()(const CSS::FilterValueList&, const BuilderState&) -> FilterValueList; };
 
 template<> struct CSSValueConversion<Filter> { auto operator()(BuilderState&, const CSSValue&) -> Filter; };
-template<> struct CSSValueCreation<Filter> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const Filter&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<Filter> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const Filter&, PropertyValueType = PropertyValueType::Resolved) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 

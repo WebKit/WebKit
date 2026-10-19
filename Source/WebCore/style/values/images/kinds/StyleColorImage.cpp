@@ -56,14 +56,14 @@ bool ColorImage::equals(const ColorImage& other) const
     return m_color == other.m_color;
 }
 
-Ref<CSSValue> ColorImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> ColorImage::computedStyleValue(const Style::ComputedStyle& style, PropertyValueType valueType) const
 {
-    return CSSColorImageValue::create(toCSS(m_color, style));
+    return CSSColorImageValue::create(toCSS(m_color, style, valueType));
 }
 
 Ref<DeprecatedCSSOMValue> ColorImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
-    return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
+    return computedStyleValue(style, PropertyValueType::Resolved)->createDeprecatedCSSOMWrapper(owner);
 }
 
 bool ColorImage::isPending() const

@@ -1,0 +1,14 @@
+
+PASS Computed 'box-shadow: currentcolor 1px 1px' keeps currentcolor
+PASS Computed 'box-shadow: 1px 1px' keeps currentcolor
+PASS Computed 'box-shadow: red 1px 1px, color-mix(in srgb, currentcolor, red) 1px 1px' keeps currentcolor
+PASS Computed 'text-shadow: currentcolor 1px 1px' keeps currentcolor
+PASS Computed 'text-shadow: 1px 1px' keeps currentcolor
+PASS Computed 'text-shadow: red 1px 1px, color-mix(in srgb, currentcolor, red) 1px 1px' keeps currentcolor
+PASS Computed 'filter: drop-shadow(currentcolor 1px 1px)' keeps currentcolor
+PASS Computed 'filter: drop-shadow(1px 1px)' keeps currentcolor
+PASS Computed 'filter: blur(1px) drop-shadow(rgb(from currentcolor r g b) 1px 1px)' keeps currentcolor
+PASS Computed 'backdrop-filter: drop-shadow(currentcolor 1px 1px)' keeps currentcolor
+PASS Computed 'backdrop-filter: drop-shadow(1px 1px)' keeps currentcolor
+PASS Computed 'backdrop-filter: blur(1px) drop-shadow(rgb(from currentcolor r g b) 1px 1px)' keeps currentcolor
+
