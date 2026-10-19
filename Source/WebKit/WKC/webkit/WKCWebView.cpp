@@ -1783,7 +1783,12 @@ void WKCWebView::reloadBypassCache()
 
 void WKCWebView::loadURI(const char* uri, const char* referer)
 {
-    if (!uri || !uri[0] || !m_private) return;
+    // A view can exist briefly before its main frame is attached, and teardown
+    // may call into the public API after that frame has been released. Treat
+    // both states as a rejected navigation instead of dereferencing a null frame.
+    if (!uri || !uri[0] || !m_private || !m_private->m_mainFrame)
+        return;
+
     m_private->m_mainFrame->loadURI(uri, referer);
 }
 
