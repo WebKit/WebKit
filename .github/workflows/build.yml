@@ -47,6 +47,7 @@ jobs:
             .github/workflows
 
       - name: Validate page-loading behavior contracts
+        id: validate-page-loading
         run: python3 Tools/wiiu/validate_page_loading.py
 
       - name: Cache apt packages
@@ -57,6 +58,7 @@ jobs:
           key: apt-${{ runner.os }}-cmake-ninja-icu-gperf-ruby-perl
 
       - name: Install CMake + build tools
+        id: install-build-tools
         run: |
           apt-get update -q
           apt-get install -y ca-certificates cmake ninja-build python3 libicu-dev libssl-dev libcurl4-openssl-dev libsqlite3-dev libpsl-dev libxml2-dev gperf ruby perl ccache
@@ -873,7 +875,10 @@ jobs:
       # bootstrap-only archive as a substitute if the full engine fails.
       - name: Build full WebKit page engine (Wii U PPC)
         id: full-engine-probe
-        if: ${{ !cancelled() }}
+        # This engine build is intentionally independent of the bootstrap target,
+        # but must not run after the page-loading contract gate or toolchain setup
+        # failed. Otherwise diagnostics attempt a cross-build with missing tools.
+        if: ${{ !cancelled() && steps.validate-page-loading.outcome == 'success' && steps.install-build-tools.outcome == 'success' }}
         shell: bash
         run: |
           echo "engine_ready=false" >> "$GITHUB_OUTPUT"
