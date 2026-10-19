@@ -31,8 +31,3 @@
 .navigation-bar .item.checkbox label {
     padding-inline-start: 3px;
 }
-
-.navigation-bar .item.checkbox input[type=checkbox] {
-    position: relative;
-    top: 1px;
-}
