@@ -6599,7 +6599,6 @@ TEST(SiteIsolation, PrefetchWithDocumentIsolationPolicyServesNavigation)
 TEST(SiteIsolation, NavigationJoiningPrefetchWithDifferentDocumentIsolationPolicy)
 {
     auto speculationRules = "<script type='speculationrules'>{\"prefetch\":[{\"source\":\"list\",\"urls\":[\"/destination\"]}]}</script>"_s;
-    std::optional<Connection> prefetchConnection;
     size_t destinationRequests = 0;
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (1) {
@@ -6610,11 +6609,9 @@ TEST(SiteIsolation, NavigationJoiningPrefetchWithDifferentDocumentIsolationPolic
                 continue;
             }
             if (path == "/destination"_s) {
-                // Hold the prefetch, so the navigation finds it still loading.
-                if (!destinationRequests++) {
-                    prefetchConnection = connection;
+                // Never answer the prefetch, so the navigation finds it still loading.
+                if (!destinationRequests++)
                     continue;
-                }
                 co_await connection.awaitableSend(HTTPResponse("destination"_s).serialize());
                 continue;
             }
@@ -6628,13 +6625,13 @@ TEST(SiteIsolation, NavigationJoiningPrefetchWithDifferentDocumentIsolationPolic
     [navigationDelegate waitForDidFinishNavigation];
     pid_t isolatedProcess = [webView _webProcessIdentifier];
     EXPECT_TRUE(Util::waitFor([&] {
-        return !!prefetchConnection;
+        return destinationRequests == 1;
     }));
 
+    // The navigation makes its own request rather than waiting for the prefetch.
     [webView evaluateJavaScript:@"location.href = '/destination'" completionHandler:nil];
-    Util::runFor(0.2_s);
-    prefetchConnection->send(HTTPResponse("destination"_s).serialize());
     [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ(destinationRequests, 2u);
     EXPECT_WK_STREQ([webView URL].absoluteString, "https://example.com/destination");
     EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"typeof SharedArrayBuffer"], "undefined");
     EXPECT_NE([webView _webProcessIdentifier], isolatedProcess);
