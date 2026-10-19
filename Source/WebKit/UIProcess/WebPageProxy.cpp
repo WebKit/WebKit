@@ -16186,7 +16186,7 @@ bool WebPageProxy::canShowLocalNetworkAccessPrompt(const WebCore::ClientOrigin& 
     return protocolHostAndPortAreEqual(pageLoadState().activeURL(), origin.topOrigin.toURL());
 }
 
-void WebPageProxy::requestLocalNetworkAccessPermission(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::requestLocalNetworkAccessPermission(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
 {
     Ref requestingOrigin = API::SecurityOrigin::create(origin.clientOrigin.securityOrigin());
     Ref topOrigin = API::SecurityOrigin::create(origin.topOrigin.securityOrigin());

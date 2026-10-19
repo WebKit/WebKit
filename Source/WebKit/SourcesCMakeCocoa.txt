@@ -79,6 +79,7 @@ UIProcess/Cocoa/AboutSchemeHandlerCocoa.mm @nonARC
 UIProcess/Cocoa/AuxiliaryProcessProxyCocoa.mm @nonARC
 UIProcess/Cocoa/CSPExtensionUtilities.mm @nonARC
 UIProcess/Cocoa/PreferenceObserver.mm @nonARC
+UIProcess/Cocoa/WKLocalNetworkAccessAlert.mm @nonARC
 UIProcess/Cocoa/WKShareSheet.mm @nonARC
 UIProcess/Cocoa/WKStorageAccessAlert.mm @nonARC
 UIProcess/Cocoa/WebInspectorPreferenceObserver.mm @nonARC

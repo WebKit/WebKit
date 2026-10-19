@@ -1703,6 +1703,8 @@
 		7A41E9FB21F81DAD00B88CDB /* ShouldGrandfatherStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */; };
 		7A78FF32224191960096483E /* WKStorageAccessAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A78FF2E224191750096483E /* WKStorageAccessAlert.h */; };
 		7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A78FF2F224191760096483E /* WKStorageAccessAlert.mm */; };
+		DCF51419EA5FC3AD6F43F54D /* WKLocalNetworkAccessAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = D9C33E2ED64AA9F0332802EE /* WKLocalNetworkAccessAlert.h */; };
+		54E2423FADB806EDB96E921D /* WKLocalNetworkAccessAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00D921E730B665407CD01436 /* WKLocalNetworkAccessAlert.mm */; };
 		7A7E8DE92748392500DCC97A /* AuxiliaryProcessMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */; };
 		7A7E8DEA2748392500DCC97A /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		7A7E8DEC2748392500DCC97A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
@@ -7095,6 +7097,8 @@
 		7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShouldGrandfatherStatistics.h; path = Classifier/ShouldGrandfatherStatistics.h; sourceTree = "<group>"; };
 		7A78FF2E224191750096483E /* WKStorageAccessAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKStorageAccessAlert.h; sourceTree = "<group>"; };
 		7A78FF2F224191760096483E /* WKStorageAccessAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKStorageAccessAlert.mm; sourceTree = "<group>"; };
+		D9C33E2ED64AA9F0332802EE /* WKLocalNetworkAccessAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKLocalNetworkAccessAlert.h; sourceTree = "<group>"; };
+		00D921E730B665407CD01436 /* WKLocalNetworkAccessAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKLocalNetworkAccessAlert.mm; sourceTree = "<group>"; };
 		7A7E8DF82748392500DCC97A /* com.apple.WebKit.WebContent.CaptivePortal.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.WebContent.CaptivePortal.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.CaptivePortal.xcconfig; sourceTree = "<group>"; };
 		7A821F491E2F65DD00604577 /* LegacyCustomProtocolManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LegacyCustomProtocolManagerProxy.cpp; path = CustomProtocols/LegacyCustomProtocolManagerProxy.cpp; sourceTree = "<group>"; };
@@ -11113,6 +11117,8 @@
 				1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */,
 				7A78FF2E224191750096483E /* WKStorageAccessAlert.h */,
 				7A78FF2F224191760096483E /* WKStorageAccessAlert.mm */,
+				D9C33E2ED64AA9F0332802EE /* WKLocalNetworkAccessAlert.h */,
+				00D921E730B665407CD01436 /* WKLocalNetworkAccessAlert.mm */,
 				4481E6152F57C0A000C226A3 /* WKTextEffectManager.h */,
 				4481E6172F57C0C300C226A3 /* WKTextEffectManager.mm */,
 				CE21215D240EE571006ED443 /* WKTextPlaceholder.h */,
@@ -19900,6 +19906,7 @@
 				073A63CD2DC33DA00057A3F5 /* WKStageMode.h in Headers */,
 				B61F9E812F742CFE005CE453 /* WKStageModeOrbitSimulator.h in Headers */,
 				7A78FF32224191960096483E /* WKStorageAccessAlert.h in Headers */,
+				DCF51419EA5FC3AD6F43F54D /* WKLocalNetworkAccessAlert.h in Headers */,
 				BC407606124FF0270068F20A /* WKString.h in Headers */,
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,
@@ -22823,6 +22830,7 @@
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
 				B61F9E802F742CFE005CE453 /* WKStageModeOrbitSimulator.swift in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,
+				54E2423FADB806EDB96E921D /* WKLocalNetworkAccessAlert.mm in Sources */,
 				9788BFD92EF4A6940038405A /* WKSurroundingsEffect.swift in Sources */,
 				97311DE42F0DB61F00B23BE9 /* WKSurroundingsEffectView.swift in Sources */,
 				07152D072F2F037D00B56C0E /* WKTextSelectionController.swift in Sources */,
