@@ -14,6 +14,27 @@ import sys
 # using a fixed parent index is brittle if the script is symlinked or relocated.
 def find_repository_root():
     import os
+
+    # Prefer Git's own checkout root. In container jobs with sparse-checkout,
+    # GITHUB_WORKSPACE and the script's resolved path can differ from the actual
+    # checkout root (and a partially materialized .github directory can mislead
+    # file-based discovery).
+    for start in (Path.cwd(), Path(__file__).resolve().parent):
+        try:
+            result = subprocess.run(
+                ["git", "rev-parse", "--show-toplevel"],
+                cwd=start,
+                check=True,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+            )
+            root = Path(result.stdout.strip()).resolve()
+            if (root / "Source/WebCore").is_dir():
+                return root
+        except (OSError, subprocess.CalledProcessError):
+            pass
+
     candidates = []
     workspace = os.environ.get("GITHUB_WORKSPACE")
     if workspace:
@@ -21,7 +42,7 @@ def find_repository_root():
     candidates.append(Path.cwd().resolve())
     candidates.extend(Path(__file__).resolve().parents)
     for candidate in candidates:
-        if (candidate / ".github/workflows/build.yml").is_file() and (candidate / "Source/WebCore").is_dir():
+        if (candidate / "Source/WebCore").is_dir():
             return candidate
     return Path(__file__).resolve().parents[2]
 
@@ -151,23 +172,22 @@ for pattern, description in (
 # Verify the CI path actually configures and builds the full engine, not only the
 # bootstrap target. A successful bootstrap archive is not evidence of page loading.
 workflow_path = ROOT / '.github/workflows/build.yml'
-if workflow_path.is_file():
-    workflow = workflow_path.read_text(encoding='utf-8')
-else:
-    # actions/checkout sparse-cone mode may omit dot-directories even when the
-    # workflow path is listed. Read the checked-out commit's tracked workflow
-    # from Git's object database rather than treating an absent working-tree
-    # copy as an empty workflow and producing false failures.
-    try:
-        workflow = subprocess.run(
-            ['git', 'show', 'HEAD:.github/workflows/build.yml'],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-            encoding='utf-8',
-        ).stdout
-    except (OSError, subprocess.CalledProcessError) as error:
+try:
+    # Validate the committed workflow, not a possibly partial working-tree copy
+    # produced by sparse checkout. This keeps the contract check tied to the
+    # exact workflow revision that triggered the build.
+    workflow = subprocess.run(
+        ['git', 'show', 'HEAD:.github/workflows/build.yml'],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding='utf-8',
+    ).stdout
+except (OSError, subprocess.CalledProcessError) as error:
+    if workflow_path.is_file():
+        workflow = workflow_path.read_text(encoding='utf-8')
+    else:
         errors.append(f'build.yml: cannot inspect tracked workflow for page-engine contracts: {error}')
         workflow = ''
 if '-DWKC_ENABLE_FULL_WEBCORE=ON' not in workflow:
