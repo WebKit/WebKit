@@ -624,7 +624,12 @@ bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
 
 bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
 {
-    if (isSupportedImageMIMEType(mimeType) || isSupportedNonImageMIMEType(mimeType) || isSupportedMediaMIMEType(mimeType))
+    return canShowNonMediaMIMEType(mimeType) || isSupportedMediaMIMEType(mimeType);
+}
+
+bool MIMETypeRegistry::canShowNonMediaMIMEType(const String& mimeType)
+{
+    if (isSupportedImageMIMEType(mimeType) || isSupportedNonImageMIMEType(mimeType))
         return true;
 
     if (isSupportedJavaScriptMIMEType(mimeType) || isSupportedJSONMIMEType(mimeType))
