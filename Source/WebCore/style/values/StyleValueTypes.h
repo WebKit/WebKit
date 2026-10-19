@@ -46,6 +46,8 @@ struct Context;
 class BuilderState;
 class ComputedStyle;
 
+enum class PropertyValueType : bool { Resolved, Computed };
+
 // MARK: - ValueRepresentation
 
 // All leaf types that want to conform to ValueRepresentation must implement
@@ -110,6 +112,14 @@ struct ToCSSInvoker {
     template<typename StyleType, typename... Rest> decltype(auto) operator()(const StyleType& styleType, const Style::ComputedStyle& style, Rest&&... rest) const
     {
         return ToCSS<StyleType>{}(styleType, style, std::forward<Rest>(rest)...);
+    }
+
+    template<typename StyleType> decltype(auto) operator()(const StyleType& styleType, const Style::ComputedStyle& style, PropertyValueType valueType) const
+    {
+        if constexpr (!NonConverting<StyleType> && std::is_invocable_v<ToCSS<StyleType>, const StyleType&, const Style::ComputedStyle&, PropertyValueType>)
+            return ToCSS<StyleType> { }(styleType, style, valueType);
+        else
+            return ToCSS<StyleType> { }(styleType, style);
     }
 };
 inline constexpr ToCSSInvoker toCSS{};
@@ -401,6 +411,14 @@ struct CSSValueCreationInvoker {
     {
         return CSSValueCreation<StyleType>{}(pool, style, value, std::forward<Rest>(rest)...);
     }
+
+    template<typename StyleType> Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value, PropertyValueType valueType) const
+    {
+        if constexpr (!NonConverting<StyleType> && std::is_invocable_v<CSSValueCreation<StyleType>, CSSValuePool&, const Style::ComputedStyle&, const StyleType&, PropertyValueType>)
+            return CSSValueCreation<StyleType> { }(pool, style, value, valueType);
+        else
+            return CSSValueCreation<StyleType> { }(pool, style, value);
+    }
 };
 inline constexpr CSSValueCreationInvoker createCSSValue{};
 
@@ -597,6 +615,14 @@ struct SerializeInvoker {
     template<typename StyleType, typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest) const
     {
         Serialize<StyleType>{}(builder, context, style, value, std::forward<Rest>(rest)...);
+    }
+
+    template<typename StyleType> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, PropertyValueType valueType) const
+    {
+        if constexpr (!NonConverting<StyleType> && std::is_invocable_v<Serialize<StyleType>, StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const StyleType&, PropertyValueType>)
+            Serialize<StyleType> { }(builder, context, style, value, valueType);
+        else
+            Serialize<StyleType> { }(builder, context, style, value);
     }
 
     template<typename StyleType, typename... Rest> [[nodiscard]] WTF::String operator()(const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest) const

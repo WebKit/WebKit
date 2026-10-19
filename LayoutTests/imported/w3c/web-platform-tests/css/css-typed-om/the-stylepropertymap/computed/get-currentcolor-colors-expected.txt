@@ -1,0 +1,114 @@
+
+PASS Computed 'background-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'background-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'background-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-top-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'border-top-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'border-top-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-right-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'border-right-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'border-right-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-bottom-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'border-bottom-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'border-bottom-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-left-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'border-left-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'border-left-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-block-start-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'border-block-start-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'border-block-start-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-block-end-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'border-block-end-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'border-block-end-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-inline-start-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'border-inline-start-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'border-inline-start-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-inline-end-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'border-inline-end-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'border-inline-end-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'outline-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'outline-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'outline-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'column-rule-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'column-rule-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'column-rule-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'text-decoration-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'text-decoration-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'text-decoration-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'text-emphasis-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'text-emphasis-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'text-emphasis-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'flood-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'flood-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'flood-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'lighting-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'lighting-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'lighting-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'stop-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'stop-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'stop-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'accent-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'accent-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'accent-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'caret-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'caret-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'caret-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'fill: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'fill: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'fill: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'stroke: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'stroke: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'stroke: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'stroke-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'stroke-color: rgb(from currentcolor r g b / 50%)' keeps currentcolor
+PASS Computed 'stroke-color: light-dark(currentcolor, red)' keeps currentcolor
+PASS Computed 'fill: currentcolor' keeps currentcolor
+PASS Computed 'stroke: currentcolor' keeps currentcolor
+PASS Computed 'stroke-color: currentcolor' keeps currentcolor
+PASS Computed 'fill: url(#missing) currentcolor' keeps currentcolor
+PASS Computed 'stroke: url(#missing) currentcolor' keeps currentcolor
+PASS Computed 'scrollbar-color: currentcolor red' keeps currentcolor
+PASS Computed 'scrollbar-color: red currentcolor' keeps currentcolor
+PASS Computed 'background-color: CurrentColor' keeps currentcolor
+PASS Computed 'background-color: color-mix(in oklch, red, currentcolor 30%)' keeps currentcolor
+PASS Computed 'background-color: hsl(from currentcolor h s l)' keeps currentcolor
+PASS Computed 'background-color: hwb(from currentcolor h w b)' keeps currentcolor
+PASS Computed 'background-color: lab(from currentcolor l a b)' keeps currentcolor
+PASS Computed 'background-color: lch(from currentcolor l c h)' keeps currentcolor
+PASS Computed 'background-color: oklab(from currentcolor l a b)' keeps currentcolor
+PASS Computed 'background-color: oklch(from currentcolor l c h)' keeps currentcolor
+PASS Computed 'background-color: color(from currentcolor srgb r g b)' keeps currentcolor
+PASS Computed 'background-color: color(from currentcolor srgb-linear r g b)' keeps currentcolor
+PASS Computed 'background-color: color(from currentcolor display-p3 r g b)' keeps currentcolor
+PASS Computed 'background-color: color(from currentcolor a98-rgb r g b)' keeps currentcolor
+PASS Computed 'background-color: color(from currentcolor prophoto-rgb r g b)' keeps currentcolor
+PASS Computed 'background-color: color(from currentcolor rec2020 r g b)' keeps currentcolor
+PASS Computed 'background-color: color(from currentcolor xyz-d50 x y z)' keeps currentcolor
+PASS Computed 'background-color: color(from currentcolor xyz-d65 x y z)' keeps currentcolor
+PASS Computed 'background-color: alpha(from currentcolor / 50%)' keeps currentcolor
+PASS Computed 'background-color: contrast-color(currentcolor)' keeps currentcolor
+PASS Computed 'background-color: rgb(from color-mix(in srgb, currentcolor, red) r g b)' keeps currentcolor
+PASS Computed 'background-color: color-mix(in srgb, rgb(from currentcolor r g b), red)' keeps currentcolor
+PASS Computed 'background-color: color-mix(in srgb, light-dark(currentcolor, red), blue)' keeps currentcolor
+PASS Computed 'border: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-top: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-right: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-bottom: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-left: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-block: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-block-start: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-block-end: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-inline: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-inline-start: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-inline-end: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'outline: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'column-rule: 1px solid currentcolor' keeps currentcolor
+PASS Computed 'border-color: currentcolor' keeps currentcolor
+PASS Computed 'border-color: red currentcolor' keeps currentcolor
+PASS Computed 'border-block-color: red currentcolor' keeps currentcolor
+PASS Computed 'border-inline-color: red currentcolor' keeps currentcolor
+PASS Computed 'text-decoration: underline color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed 'text-emphasis: filled currentcolor' keeps currentcolor
+PASS Computed 'background: currentcolor' keeps currentcolor
+PASS Computed color-mix() without currentcolor is an absolute color
+

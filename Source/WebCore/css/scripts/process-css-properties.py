@@ -5142,11 +5142,11 @@ class GenerateStyleExtractorGenerated:
 
     @staticmethod
     def wrap_in_converter(property, value):
-        return f"createCSSValue(extractorState.pool, extractorState.style, {value})"
+        return f"createCSSValue(extractorState.pool, extractorState.style, {value}, extractorState.valueType)"
 
     @staticmethod
     def wrap_in_serializer(property, value):
-        return f"serializationForCSS(builder, context, extractorState.style, {value})"
+        return f"serializationForCSS(builder, context, extractorState.style, {value}, extractorState.valueType)"
 
     # Color property getters.
 
