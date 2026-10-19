@@ -312,12 +312,14 @@ RefPtr<const RemoteAnimationTimeline> RemoteScrollingCoordinatorProxyMac::timeli
     return m_eventDispatcher->timeline(timelineID);
 }
 
-RefPtr<const RemoteAnimationStack> RemoteScrollingCoordinatorProxyMac::animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
+String RemoteScrollingCoordinatorProxyMac::animationStackJSONForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
 {
+    String json = emptyString();
     m_eventDispatcher->lockForAnimationChanges();
-    RefPtr animationStack = m_eventDispatcher->animationStackForNodeWithIDForTesting(layerID);
+    if (RefPtr animationStack = m_eventDispatcher->animationStackForNodeWithIDForTesting(layerID))
+        json = animationStack->toJSONForTesting()->toJSONString();
     m_eventDispatcher->unlockForAnimationChanges();
-    return animationStack;
+    return json;
 }
 
 HashSet<Ref<RemoteProgressBasedTimeline>> RemoteScrollingCoordinatorProxyMac::timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID scrollingNodeID) const

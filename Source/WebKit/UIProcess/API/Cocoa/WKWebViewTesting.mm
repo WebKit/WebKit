@@ -1489,10 +1489,10 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (NSString *)_animationStackForLayerWithID:(unsigned long long)layerID processID:(uint64_t)processID
 {
-    auto animationStack = [&] -> RefPtr<const WebKit::RemoteAnimationStack> {
+    auto animationStackJSON = [&] -> String {
         if (!ObjectIdentifier<WebCore::PlatformLayerIdentifierType>::isValidIdentifier(layerID)
             || !ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID))
-            return nullptr;
+            return emptyString();
 
         WebCore::PlatformLayerIdentifier platformLayerID {
             ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID),
@@ -1500,15 +1500,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         };
         if (RefPtr drawingAreaProxy = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea())) {
             if (RefPtr nodeStack = drawingAreaProxy->animationStackForNodeWithIDForTesting(platformLayerID))
-                return nodeStack;
+                return nodeStack->toJSONForTesting()->toJSONString();
         }
         if (CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy())
-            return scrollingCoordinator->animationStackForNodeWithIDForTesting(platformLayerID);
-        return nullptr;
+            return scrollingCoordinator->animationStackJSONForNodeWithIDForTesting(platformLayerID);
+        return emptyString();
     }();
-    if (animationStack)
-        return animationStack->toJSONForTesting()->toJSONString().createNSString().autorelease();
-    return @"";
+    return animationStackJSON.createNSString().autorelease();
 }
 
 - (NSString *)_progressBasedTimelinesForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID
