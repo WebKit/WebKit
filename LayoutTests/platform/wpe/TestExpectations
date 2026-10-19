@@ -765,6 +765,7 @@ Bug(WPE) css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-
 Bug(WPE) css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Timeout ]
 Bug(WPE) css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Timeout ]
 Bug(WPE) css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Timeout ]
+Bug(WPE) css3/viewport-percentage-lengths/viewport-percentage-lengths-resize-shared-shadow-trees.html [ Timeout ]
 
 Bug(WPE) css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure ]
 Bug(WPE) css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]

@@ -192,8 +192,11 @@ void MatchedDeclarationsCache::add(const Style::ComputedStyle& style, const Styl
         newBucket.reserveCapacity(maxEntriesPerHash);
         return newBucket;
     });
-    if (addResult.iterator->value.size() < maxEntriesPerHash)
+    if (addResult.iterator->value.size() < maxEntriesPerHash) {
         addResult.iterator->value.append(Entry { &matchResult, Style::ComputedStyle::clonePtr(style), Style::ComputedStyle::clonePtr(parentStyle) });
+        if (style.usesViewportUnits())
+            m_mayHaveViewportUnitEntries = true;
+    }
 
     // Protect against unlimited growth.
 #if PLATFORM(WPE)
@@ -213,6 +216,7 @@ void MatchedDeclarationsCache::remove(unsigned hash)
 void MatchedDeclarationsCache::invalidate()
 {
     m_entries.clear();
+    m_mayHaveViewportUnitEntries = false;
 }
 
 template<typename Callback>
@@ -226,11 +230,15 @@ void MatchedDeclarationsCache::removeAllMatching(NOESCAPE const Callback& matche
 
 void MatchedDeclarationsCache::clearEntriesAffectedByViewportUnits()
 {
+    if (!m_mayHaveViewportUnitEntries)
+        return;
+
     Ref protectedThis { *this };
 
     removeAllMatching([&] (const Entry& entry) -> bool {
         return entry.renderStyle->usesViewportUnits();
     });
+    m_mayHaveViewportUnitEntries = false;
 }
 
 void MatchedDeclarationsCache::sweep()
