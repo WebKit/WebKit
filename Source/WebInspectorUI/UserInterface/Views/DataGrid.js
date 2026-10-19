@@ -1169,10 +1169,9 @@ WI.DataGrid = class DataGrid extends WI.View
         this._revealedRows ||= this._rows.filter((row) => row.revealed && !row.hidden);
 
         if (focusedDataGridNode) {
-            let focusedIndex = this._revealedRows.indexOf(focusedDataGridNode);
-            let firstVisibleRowIndex = this._cachedScrollTop / rowHeight;
-            if (focusedIndex < firstVisibleRowIndex || focusedIndex > firstVisibleRowIndex + visibleRowCount)
-                this._scrollContainerElement.scrollTop = this._cachedScrollTop = (focusedIndex * rowHeight) - (this._cachedScrollableOffsetHeight / 2) + (rowHeight / 2);
+            let focusedRowTop = this._revealedRows.indexOf(focusedDataGridNode) * rowHeight;
+            if (focusedRowTop < this._cachedScrollTop || focusedRowTop + rowHeight > this._cachedScrollTop + this._cachedScrollableOffsetHeight)
+                this._scrollContainerElement.scrollTop = this._cachedScrollTop = focusedRowTop - (this._cachedScrollableOffsetHeight / 2) + (rowHeight / 2);
         }
 
         let topHiddenRowCount = Math.max(0, Math.floor((this._cachedScrollTop - overflowPadding) / rowHeight));
