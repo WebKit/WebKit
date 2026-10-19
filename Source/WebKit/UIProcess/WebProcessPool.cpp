@@ -880,17 +880,17 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
         return nullptr;
     }
 
-    WTFEmitSignpost(this, ProcessPrewarming, "Using prewarmed process with pid %d", prewarmedProcess->processID());
-
-    bool didRemove = m_prewarmedProcesses.remove(*prewarmedProcess);
-    ASSERT_UNUSED(didRemove, didRemove);
-
 #if PLATFORM(GTK) || PLATFORM(WPE)
     // In platforms using Bubblewrap for sandboxing, prewarmed process is launched using the WebProcessPool primary WebsiteDataStore,
     // so we don't use it in case of using a different WebsiteDataStore.
     if (m_sandboxEnabled)
         return nullptr;
 #endif
+
+    WTFEmitSignpost(this, ProcessPrewarming, "Using prewarmed process with pid %d", prewarmedProcess->processID());
+
+    bool didRemove = m_prewarmedProcesses.remove(*prewarmedProcess);
+    ASSERT_UNUSED(didRemove, didRemove);
 
     ASSERT(prewarmedProcess->isPrewarmed());
     prewarmedProcess->setWebsiteDataStore(websiteDataStore);

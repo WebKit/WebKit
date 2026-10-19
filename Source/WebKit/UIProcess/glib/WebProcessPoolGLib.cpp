@@ -287,20 +287,32 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
 
 void WebProcessPool::setSandboxEnabled(bool enabled)
 {
+    setSandboxEnabledInternal(enabled, false);
+}
+
+void WebProcessPool::setSandboxEnabledForTesting(bool enabled)
+{
+    setSandboxEnabledInternal(enabled, true);
+}
+
+void WebProcessPool::setSandboxEnabledInternal(bool enabled, bool ignoreEnvironmentForTesting)
+{
     if (m_sandboxEnabled == enabled)
         return;
 
     if (!enabled) {
 #if !ENABLE(2022_GLIB_API)
-        if (const auto forceSandbox = CStringView::unsafeFromUTF8(getenv("WEBKIT_FORCE_SANDBOX"))) {
-            if (forceSandbox == "1"_s)
-                return;
-        }
-#endif
+            if (!ignoreEnvironmentForTesting) {
+                if (const auto forceSandbox = CStringView::unsafeFromUTF8(getenv("WEBKIT_FORCE_SANDBOX"))) {
+                    if (forceSandbox == "1"_s)
+                        return;
+                }
+            }
+    #endif
         m_sandboxEnabled = false;
 #if USE(ATSPI)
-        m_sandboxedAccessibilityBusAddress = String();
-#endif
+            m_sandboxedAccessibilityBusAddress = String();
+    #endif
         return;
     }
 
@@ -311,9 +323,11 @@ void WebProcessPool::setSandboxEnabled(bool enabled)
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
-    if (const auto disableSandbox = CStringView::unsafeFromUTF8(getenv("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS"))) {
-        if (disableSandbox != "0"_s)
-            return;
+    if (!ignoreEnvironmentForTesting) {
+        if (const auto disableSandbox = CStringView::unsafeFromUTF8(getenv("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS"))) {
+            if (disableSandbox != "0"_s)
+                return;
+        }
     }
 
     m_sandboxEnabled = true;

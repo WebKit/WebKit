@@ -469,6 +469,9 @@
     },
     "TestMultiprocess": {
         "subtests": {
+            "/webkit/WebKitWebContext/sandbox-rejected-prewarmed-process": {
+                "expected": {"all": {"slow": true}}
+            },
             "/webkit/WebKitWebContext/process-per-web-view": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "FAIL"], "bug": "webkit.org/b/319955"}}
             }
