@@ -9,13 +9,12 @@ on:
   pull_request:
   workflow_dispatch:
 
-# Every push used to start a full Wii U cross-build. Keep only the newest
-# run for a ref so rapid WKC-only commits do not waste runner time.
+# Keep the newest main revision moving through CI. Cancel stale in-progress
+# builds when a new fix lands; otherwise an obsolete/hung cross-build can block
+# validation of the page-loading changes queued behind it.
 concurrency:
   group: webkit-wiiu-build-${{ github.ref }}
-  # Full WebKit cross-builds are long-running; let the active revision finish.
-  # The pending run is replaced by newer commits, and consumers request the exact SHA.
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
