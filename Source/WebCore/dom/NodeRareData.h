@@ -263,6 +263,7 @@ public:
         CustomStateSet = 1 << 27,
         UserInfo = 1 << 28,
         InvokedPopover = 1 << 29,
+        CanvasTransform = 1 << 30,
     };
 #endif
 

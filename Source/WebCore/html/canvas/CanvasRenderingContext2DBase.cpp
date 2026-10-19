@@ -2131,25 +2131,40 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementIm
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, const FloatRect& srcRect, const FloatRect& dstRect, std::optional<CanvasDrawElementImageOptions> options)
 {
-    return WTF::switchOn(source,
-        [&](Ref<Element>& element) -> ExceptionOr<void> {
-            if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase())) {
-                if (auto snapshot = canvasElement->canvasDrawableSnapshot(element))
-                    return drawSnapshot(*snapshot, srcRect, dstRect, options);
-            }
-            return Exception { ExceptionCode::InvalidStateError, "CanvasRenderingContext2DBase failed to get a snapshot for a drawableElement."_s };
+    RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase());
+    if (!canvasElement)
+        return Exception { ExceptionCode::InvalidStateError, "drawElementImage: The element is not a drawable child of the canvas."_s };
+
+    auto snapshot = WTF::switchOn(source,
+        [&](Ref<Element>& element) -> std::optional<CanvasElementSnapshot> {
+            return canvasElement->canvasDrawableSnapshot(element);
         },
-        [&](Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
-            return drawSnapshot(elementImage->snapshot(), srcRect, dstRect, options);
+        [&](Ref<CanvasElementImage>& elementImage) -> std::optional<CanvasElementSnapshot> {
+            return elementImage->snapshot();
         }
     );
+
+    if (!snapshot)
+        return Exception { ExceptionCode::InvalidStateError, "drawElementImage: The element did not record a snapshot."_s };
+
+    auto result = drawElementSnapshot(*snapshot, srcRect, dstRect);
+    if (result.hasException())
+        return result.releaseException();
+
+    if (!options || !options->preserveElementGeometry) {
+        TransformationMatrix canvasTransform;
+        canvasTransform.translate(dstRect.x(), dstRect.y());
+        result = canvasElement->updateElementGeometry(source, canvasTransform);
+    }
+
+    return result;
 }
 
-ExceptionOr<void> CanvasRenderingContext2DBase::drawSnapshot(const CanvasElementSnapshot& snapshot, const FloatRect& srcRect, const FloatRect& dstRect, std::optional<CanvasDrawElementImageOptions>)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawElementSnapshot(const CanvasElementSnapshot& snapshot, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     auto* c = effectiveDrawingContext();
     if (!c)
-        return Exception { ExceptionCode::InvalidStateError, "CanvasRenderingContext2DBase failed to create a drawing context."_s };
+        return Exception { ExceptionCode::InvalidStateError, "drawElementImage failed to create a drawing context."_s };
 
     if (!std::isfinite(dstRect.x()) || !std::isfinite(dstRect.y()) || !std::isfinite(dstRect.width()) || !std::isfinite(dstRect.height())
         || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))

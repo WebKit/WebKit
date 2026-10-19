@@ -690,6 +690,9 @@ bool RenderBox::computeHasTransformRelatedProperty(const Style::ComputedStyle& s
     if (styleToUse.hasTransformRelatedProperty())
         return true;
 
+    if (hasCanvasTransform())
+        return true;
+
     if (!settings().css3DTransformBackfaceVisibilityInteroperabilityEnabled())
         return false;
 
