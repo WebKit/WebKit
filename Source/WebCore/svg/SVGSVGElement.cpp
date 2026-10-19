@@ -767,7 +767,7 @@ FloatSize SVGSVGElement::computeCurrentViewportSizeExcludingZoom() const
             viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().usedZoom();
         else if (auto* svgViewportContainer = dynamicDowncast<LegacyRenderSVGViewportContainer>(renderer()))
             viewportSize = svgViewportContainer->viewport().size();
-        else if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer()))
+        else if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer()))
             viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().usedZoom();
         else if (auto* svgViewportContainer = dynamicDowncast<RenderSVGViewportContainer>(renderer()))
             viewportSize = svgViewportContainer->viewport().size();

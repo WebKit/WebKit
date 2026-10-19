@@ -119,5 +119,4 @@ style/computed/StyleComputedStyleBase.cpp
 style/values/grid/StyleGridPositionsResolver.cpp
 style/values/images/kinds/StyleCanvasImage.cpp
 style/values/primitives/StyleLengthResolution.cpp
-[ macOS ] svg/SVGSVGElement.cpp
 workers/WorkerGlobalScope.cpp

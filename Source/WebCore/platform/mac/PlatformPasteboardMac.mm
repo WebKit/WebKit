@@ -355,7 +355,7 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data, PasteboardDa
             return;
 
         if (std::holds_alternative<Ref<SharedBuffer>>(stringOrBuffer)) {
-            if (auto platformData = std::get<Ref<SharedBuffer>>(stringOrBuffer)->createNSData())
+            if (auto platformData = protect(std::get<Ref<SharedBuffer>>(stringOrBuffer))->createNSData())
                 [m_pasteboard setData:platformData.get() forType:platformType.createNSString().get()];
         } else if (std::holds_alternative<String>(stringOrBuffer)) {
             auto string = std::get<String>(stringOrBuffer);
@@ -600,7 +600,7 @@ static RetainPtr<NSPasteboardItem> createPasteboardItem(const PasteboardCustomDa
             return;
 
         if (std::holds_alternative<Ref<SharedBuffer>>(stringOrBuffer)) {
-            if (auto platformData = std::get<Ref<SharedBuffer>>(stringOrBuffer)->createNSData())
+            if (auto platformData = protect(std::get<Ref<SharedBuffer>>(stringOrBuffer))->createNSData())
                 [item setData:platformData.get() forType:platformType.get()];
         } else if (std::holds_alternative<String>(stringOrBuffer)) {
             auto string = std::get<String>(stringOrBuffer);

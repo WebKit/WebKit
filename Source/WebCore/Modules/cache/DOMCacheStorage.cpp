@@ -108,11 +108,12 @@ void DOMCacheStorage::doSequentialMatch(DOMCache::RequestInfo&& info, CacheQuery
             promise->reject(result.releaseException());
             return;
         }
-        if (!result.returnValue()) {
+        RefPtr returnValue = result.releaseReturnValue();
+        if (!returnValue) {
             promise->resolve();
             return;
         }
-        promise->resolve<IDLInterface<FetchResponse>>(*result.returnValue());
+        promise->resolve<IDLInterface<FetchResponse>>(*returnValue);
     });
 }
 

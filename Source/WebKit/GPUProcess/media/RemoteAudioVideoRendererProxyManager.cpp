@@ -676,7 +676,7 @@ void RemoteAudioVideoRendererProxyManager::currentBitmapImage(RemoteAudioVideoRe
             completionHandler(std::nullopt);
             return;
         }
-        completionHandler((*result)->createHandle());
+        completionHandler(protect(*result)->createHandle());
     });
 }
 

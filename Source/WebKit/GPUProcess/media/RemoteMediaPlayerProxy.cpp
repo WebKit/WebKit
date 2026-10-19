@@ -1003,7 +1003,7 @@ void RemoteMediaPlayerProxy::bitmapImageForCurrentTime(CompletionHandler<void(st
             completionHandler({ });
             return;
         }
-        completionHandler((*result)->createHandle());
+        completionHandler(protect(*result)->createHandle());
     });
 }
 

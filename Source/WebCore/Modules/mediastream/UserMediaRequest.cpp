@@ -178,7 +178,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             if (protectedThis->isContextStopped()) {
                 if (!!privateStreamOrError) {
                     RELEASE_LOG(MediaStream, "UserMediaRequest::allow, context is stopped");
-                    privateStreamOrError.value()->forEachTrack([](auto& track) {
+                    protect(privateStreamOrError.value())->forEachTrack([](auto& track) {
                         track.endTrack();
                     });
                 }
