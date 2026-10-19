@@ -153,9 +153,8 @@ bool WPEQtUnderlayBlitter::initialize()
 
 bool WPEQtUnderlayBlitter::importEGLImage(EGLImage image)
 {
-    if (!image || !initialize())
-        return false;
-
+    ASSERT(isInitialized());
+    ASSERT(image);
     if (image == m_importedImage)
         return true;
 

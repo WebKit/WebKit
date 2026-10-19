@@ -185,6 +185,16 @@ gboolean wpe_view_qtquick_initialize_rendering(WPEViewQtQuick* view, WPEQtView* 
     return TRUE;
 }
 
+static void wpeViewQtQuickDropPendingBuffer(WPEViewQtQuick* view)
+{
+    GRefPtr<WPEBuffer> buffer = WTF::move(view->priv->pendingBuffer);
+    QMetaObject::invokeMethod(QCoreApplication::instance(),
+        [view = GRefPtr<WPEViewQtQuick>(view), buffer = WTF::move(buffer)] {
+            wpe_view_buffer_rendered(WPE_VIEW(view.get()), buffer.get());
+            wpe_view_buffer_released(WPE_VIEW(view.get()), buffer.get());
+        }, Qt::QueuedConnection);
+}
+
 WPEBuffer* wpe_view_qtquick_acquire_frame(WPEViewQtQuick* view, EGLImage* outImage, gboolean* didPromote, GError** error)
 {
     auto* priv = view->priv;
@@ -197,17 +207,19 @@ WPEBuffer* wpe_view_qtquick_acquire_frame(WPEViewQtQuick* view, EGLImage* outIma
     if (!frameBuffer)
         return nullptr;
 
+    if (frameBuffer == priv->pendingBuffer) {
+        auto* qtDisplay = WPE_DISPLAY_QTQUICK(wpe_view_get_display(WPE_VIEW(view)));
+        if (!wpe_display_qtquick_wait_rendering_fence(qtDisplay, frameBuffer.get(), error)) {
+            wpeViewQtQuickDropPendingBuffer(view);
+            return nullptr;
+        }
+    }
+
     GUniqueOutPtr<GError> bufferError;
     auto eglImage = static_cast<EGLImage>(wpe_buffer_import_to_egl_image(frameBuffer.get(), &bufferError.outPtr()));
     if (!eglImage) {
-        if (frameBuffer == priv->pendingBuffer) {
-            GRefPtr<WPEBuffer> failedBuffer = WTF::move(priv->pendingBuffer);
-            QMetaObject::invokeMethod(QCoreApplication::instance(),
-                [view = GRefPtr<WPEViewQtQuick>(view), buffer = WTF::move(failedBuffer)] {
-                wpe_view_buffer_rendered(WPE_VIEW(view.get()), buffer.get());
-                wpe_view_buffer_released(WPE_VIEW(view.get()), buffer.get());
-            }, Qt::QueuedConnection);
-        }
+        if (frameBuffer == priv->pendingBuffer)
+            wpeViewQtQuickDropPendingBuffer(view);
         if (error && bufferError)
             g_propagate_error(error, bufferError.release());
         else if (error)

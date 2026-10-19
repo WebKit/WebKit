@@ -37,33 +37,6 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
-static WTF::UnixFileDescriptor wpeQtUnderlayCreateReleaseFence(QOpenGLFunctions* gl)
-{
-    auto display = eglGetCurrentDisplay();
-    if (display == EGL_NO_DISPLAY || !epoxy_has_egl_extension(display, "EGL_ANDROID_native_fence_sync"))
-        return { };
-
-    auto usesEGL15 = epoxy_egl_version(display) >= 15;
-    if (!usesEGL15 && !epoxy_has_egl_extension(display, "EGL_KHR_fence_sync"))
-        return { };
-
-    auto sync = usesEGL15
-        ? eglCreateSync(display, EGL_SYNC_NATIVE_FENCE_ANDROID, nullptr)
-        : eglCreateSyncKHR(display, EGL_SYNC_NATIVE_FENCE_ANDROID, nullptr);
-    if (sync == EGL_NO_SYNC_KHR)
-        return { };
-
-    gl->glFlush();
-
-    auto fd = eglDupNativeFenceFDANDROID(display, sync);
-    usesEGL15 ? eglDestroySync(display, sync) : eglDestroySyncKHR(display, sync);
-
-    if (fd == -1)
-        return { };
-
-    return WTF::UnixFileDescriptor { fd, WTF::UnixFileDescriptor::Adopt };
-}
-
 WPEQtUnderlayRenderNode::~WPEQtUnderlayRenderNode()
 {
     QObject::disconnect(m_frameSwappedConnection);
@@ -112,8 +85,11 @@ void WPEQtUnderlayRenderNode::advanceFrame()
     GUniqueOutPtr<GError> error;
     // WPE returns the committed buffer while it's acknowledgment is pending.
     GRefPtr<WPEBuffer> buffer = adoptGRef(wpe_view_qtquick_acquire_frame(m_wpeView.get(), &image, &didPromote, &error.outPtr()));
-    if (!buffer)
+    if (!buffer) {
+        if (error)
+            g_warning("Failed to update WPEQtView node in scene graph: %s", error->message);
         return;
+    }
 
     if (!m_blitter.importEGLImage(image)) {
         if (didPromote)
@@ -148,7 +124,10 @@ void WPEQtUnderlayRenderNode::render(const RenderState* state)
     if (!m_blitter.draw(itemToClip, float(inheritedOpacity()), scissorRect, stencilValue))
         return;
 
-    m_releaseFence = wpeQtUnderlayCreateReleaseFence(gl);
+    auto* qtDisplay = WPE_DISPLAY_QTQUICK(wpe_view_get_display(WPE_VIEW(m_wpeView.get())));
+    m_releaseFence = WTF::UnixFileDescriptor {
+        wpe_display_qtquick_create_release_fence(qtDisplay, gl), WTF::UnixFileDescriptor::Adopt
+    };
     if (!m_releaseFence)
         gl->glFinish();
     m_frameReadyForAck = m_frameNeedsAck;
