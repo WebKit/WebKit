@@ -5119,10 +5119,14 @@ RemotePlaybackEnabled:
 
 RemoteSnapshottingEnabled:
   type: bool
-  status: testable
+  status: stable
   category: media
   humanReadableName: "Remote Snapshotting"
-  defaultValue: false
+  defaultValue:
+    default: false
+    WebKit:
+      "PLATFORM(COCOA)": true
+      default: false
   sharedPreferenceForWebProcess: true
 
 RemoveBackgroundEnabled:
