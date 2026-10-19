@@ -1188,7 +1188,7 @@ Vector<Ref<WebKit::WebBackForwardListItem>> createItemsFromState(const WebKit::B
     return items;
 }
 
-WebKit::WebBackForwardListItem* itemAtIndexInBackForwardListItemVector(const Vector<Ref<WebKit::WebBackForwardListItem>>& items, size_t index)
+WebKit::WebBackForwardListItem* WTF_NONNULL itemAtIndexInBackForwardListItemVector(const Vector<Ref<WebKit::WebBackForwardListItem>>& items, size_t index)
 {
     return items[index].ptr();
 }
@@ -1198,7 +1198,7 @@ size_t frameStateChildCount(const WebKit::FrameState& frameState)
     return frameState.children.size();
 }
 
-WebKit::FrameState* frameStateChildAtIndex(const WebKit::FrameState& frameState, size_t index)
+WebKit::FrameState* WTF_NONNULL frameStateChildAtIndex(const WebKit::FrameState& frameState, size_t index)
 {
     return frameState.children[index].ptr();
 }
