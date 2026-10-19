@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+body { margin: 0; }
+svg { display: block; width: 200px; height: 40px; font-family: Times; }
+.big { transform: scale(9); }
+</style>
+<script>
+// The minimum font size applies to the on-screen font size, after the scaling factor. Text measured
+// with a stale scaling factor of 1 is clamped to 20 user units instead of 3, so it renders far too large.
+if (window.internals)
+    internals.settings.setMinimumFontSize(20);
+</script>
+</head>
+<body>
+<svg id="s0"><g style="transform: scale(1)"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg id="s1"><g ><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg id="s2"><g style="scale: 1"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg id="s3"><g opacity="0.99"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg id="s4"><g opacity="0.99" style="transform: scale(2)"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg id="s5"><g opacity="0.99" style="transform: scale(9)"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg id="s6"><g style="transform: scale(2)"><g opacity="0.99"><text x="1" y="4" font-size="3">Scaled</text></g></g></svg>
+<svg id="s7"><g opacity="0.99" style="transform: scale(2)"><g ><text x="1" y="4" font-size="3">Scaled</text></g></g></svg>
+<svg id="s8"><g style="transform: scale3d(2, 2, 1)"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg id="s9"><defs><g id="u1"><text x="1" y="4" font-size="3">Scaled</text></g></defs><use href="#u1" style="transform: scale(1)"/></svg>
+<svg id="s10"><svg style="transform: scale(1)"><text x="1" y="4" font-size="3">Scaled</text></svg></svg>
+<svg id="s11"><g transform="scale(1)"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function q(id, selector) { return document.getElementById(id).querySelector(selector); }
+
+requestAnimationFrame(() => requestAnimationFrame(() => {
+    q('s0', 'g').style.transform = 'scale(9)';
+    q('s1', 'g').classList.add('big');
+    q('s2', 'g').style.scale = '9';
+    q('s3', 'g').style.transform = 'scale(9)';
+    q('s4', 'g').style.transform = 'scale(9)';
+    q('s5', 'g').style.transform = 'none';
+    q('s6', 'g').style.transform = 'scale(9)';
+    q('s7', 'g').style.transform = 'scale(9)';
+    q('s8', 'g').style.transform = 'scale3d(9, 9, 1)';
+    q('s9', 'use').style.transform = 'scale(9)';
+    q('s10', 'svg').style.transform = 'scale(9)';
+    q('s11', 'g').setAttribute('transform', 'scale(9)');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }));
+}));
+</script>
+</body>
+</html>

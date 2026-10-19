@@ -182,6 +182,9 @@ void RenderLayerModelObject::styleWillChange(Style::Difference diff, const Style
 
 void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
+    // Read before updateFromStyle() and RenderLayer::styleChanged() refresh the transform.
+    auto previousSVGTransform = oldStyle ? svgTransformBeforeStyleChange(*oldStyle) : std::nullopt;
+
     updateFromStyle();
     RenderElement::styleDidChange(diff, oldStyle);
 
@@ -243,6 +246,9 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style:
         if (s_hadLayer && layer()->isSelfPaintingLayer() != s_layerWasSelfPainting)
             setChildNeedsLayout();
     }
+
+    if (previousSVGTransform)
+        markSVGTextForRelayoutIfScaleChanged(*previousSVGTransform, svgTransformAfterStyleChange());
 
     bool newStyleIsViewportConstrained = style().hasViewportConstrainedPosition();
     bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
@@ -841,14 +847,6 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
         return { identity, identity };
     };
 
-    // A re-layout is only necessary when the effective x/y scale changes: the next RenderSVGText
-    // layout then sees a different screen font scaling factor, text metrics, etc.
-    auto scaleChangedBetween = [](const AffineTransform& previousTransform, const AffineTransform& currentTransform) {
-        return previousTransform != currentTransform
-            && (!WTF::areEssentiallyEqual(previousTransform.xScale(), currentTransform.xScale())
-                || !WTF::areEssentiallyEqual(previousTransform.yScale(), currentTransform.yScale()));
-    };
-
     auto [previousTransform, currentTransform] = refreshTransform();
 
     // A scale change re-measures the text at the new on-screen font size (SVG sizes glyphs by the
@@ -856,25 +854,9 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
     // otherwise the transformed container's text descendants - and let layout recompute its metrics,
     // refresh its cached transform and repaint. setNeedsLayout() also defers the flush's position
     // update, which would otherwise run with the new transform but pre-relayout metrics.
-    if (scaleChangedBetween(previousTransform, currentTransform)) {
-        auto markTextForRelayout = [](RenderSVGText& text) {
-            text.setNeedsTextMetricsUpdate();
-            text.setNeedsLayout();
-        };
-        if (auto* text = dynamicDowncast<RenderSVGText>(this)) {
-            markTextForRelayout(*text);
-            repaintClientsOfReferencedSVGResources();
-            return;
-        }
-        bool markedAny = false;
-        for (auto& text : descendantsOfType<RenderSVGText>(*this)) {
-            markTextForRelayout(text);
-            markedAny = true;
-        }
-        if (markedAny) {
-            repaintClientsOfReferencedSVGResources();
-            return;
-        }
+    if (markSVGTextForRelayoutIfScaleChanged(previousTransform, currentTransform)) {
+        repaintClientsOfReferencedSVGResources();
+        return;
     }
 
     // An ancestor container's own bounding boxes (its object, stroke and repaint bounding boxes) and
@@ -905,6 +887,63 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
     // Renderers inside <clipPath>/<mask>/<pattern>/etc. don't paint directly - a transform
     // change is only visible by repainting the resource's clients.
     repaintClientsOfReferencedSVGResources();
+}
+
+bool RenderLayerModelObject::markSVGTextForRelayoutIfScaleChanged(const AffineTransform& previousTransform, const AffineTransform& currentTransform)
+{
+    // A re-layout is only necessary when the effective x/y scale changes: the next RenderSVGText
+    // layout then sees a different screen font scaling factor, text metrics, etc.
+    if (previousTransform == currentTransform
+        || (WTF::areEssentiallyEqual(previousTransform.xScale(), currentTransform.xScale())
+            && WTF::areEssentiallyEqual(previousTransform.yScale(), currentTransform.yScale())))
+        return false;
+
+    auto markTextForRelayout = [](RenderSVGText& text) {
+        text.setNeedsTextMetricsUpdate();
+        text.setNeedsLayout();
+    };
+
+    if (auto* text = dynamicDowncast<RenderSVGText>(*this)) {
+        markTextForRelayout(*text);
+        return true;
+    }
+
+    bool markedAny = false;
+    for (auto& text : descendantsOfType<RenderSVGText>(*this)) {
+        markTextForRelayout(text);
+        markedAny = true;
+    }
+    return markedAny;
+}
+
+std::optional<AffineTransform> RenderLayerModelObject::svgTransformBeforeStyleChange(const Style::ComputedStyle& oldStyle) const
+{
+    if (!document().settings().layerBasedSVGEngineEnabled() || (!isRenderSVGContainer() && !isRenderSVGRoot()))
+        return std::nullopt;
+
+    if (oldStyle.transform() == style().transform() && oldStyle.translate() == style().translate()
+        && oldStyle.scale() == style().scale() && oldStyle.rotate() == style().rotate())
+        return std::nullopt;
+
+    if (auto* transform = layerTransform())
+        return transform->toAffineTransform();
+
+    if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(*this))
+        return svgModel->localTransform();
+
+    return AffineTransform();
+}
+
+AffineTransform RenderLayerModelObject::svgTransformAfterStyleChange() const
+{
+    if (auto* transform = layerTransform())
+        return transform->toAffineTransform();
+
+    if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(*this))
+        return svgModel->computeLocalTransform();
+
+    ASSERT(isRenderSVGRoot());
+    return AffineTransform();
 }
 
 void RenderLayerModelObject::invalidateCachedSVGBoundingBoxesOfAncestors() const

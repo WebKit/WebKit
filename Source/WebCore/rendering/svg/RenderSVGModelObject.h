@@ -68,6 +68,7 @@ public:
     // Updated via updateLocalTransform(), analogous to updateLayerTransform() for layered elements.
     AffineTransform localTransform() const override { return m_localTransform.value_or(AffineTransform()); }
     void updateLocalTransform();
+    AffineTransform computeLocalTransform() const;
 
     LayoutRect currentSVGLayoutRect() const { return m_layoutRect; }
     void setCurrentSVGLayoutRect(const LayoutRect& layoutRect) { m_layoutRect = layoutRect; }

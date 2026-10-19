@@ -107,14 +107,17 @@ void RenderSVGModelObject::updateFromStyle()
         m_localTransform = std::nullopt;
 }
 
-void RenderSVGModelObject::updateLocalTransform()
+AffineTransform RenderSVGModelObject::computeLocalTransform() const
 {
     TransformationMatrix transform;
     CheckedRef style = this->style();
-    auto referenceBoxRect = transformReferenceBoxRect(style);
-    applyTransform(transform, style, referenceBoxRect, Style::TransformResolver::allTransformOperations);
+    applyTransform(transform, style, transformReferenceBoxRect(style), Style::TransformResolver::allTransformOperations);
+    return transform.toAffineTransform();
+}
 
-    auto localTransform = transform.toAffineTransform();
+void RenderSVGModelObject::updateLocalTransform()
+{
+    auto localTransform = computeLocalTransform();
     auto oldTransform = std::exchange(m_localTransform, localTransform);
     invalidateNonScalingStrokeCachesInSubtreeForSVG(oldTransform, localTransform);
 }

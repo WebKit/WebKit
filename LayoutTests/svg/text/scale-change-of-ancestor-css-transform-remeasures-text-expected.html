@@ -1,0 +1,30 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+body { margin: 0; }
+svg { display: block; width: 200px; height: 40px; font-family: Times; }
+.big { transform: scale(9); }
+</style>
+<script>
+// The minimum font size applies to the on-screen font size, after the scaling factor. Text measured
+// with a stale scaling factor of 1 is clamped to 20 user units instead of 3, so it renders far too large.
+if (window.internals)
+    internals.settings.setMinimumFontSize(20);
+</script>
+</head>
+<body>
+<svg><g style="transform: scale(9)"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg><g class="big"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg><g style="scale: 9"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg><g opacity="0.99" style="transform: scale(9)"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg><g opacity="0.99" style="transform: scale(9)"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg><g opacity="0.99"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg><g style="transform: scale(9)"><g opacity="0.99"><text x="1" y="4" font-size="3">Scaled</text></g></g></svg>
+<svg><g opacity="0.99" style="transform: scale(9)"><g ><text x="1" y="4" font-size="3">Scaled</text></g></g></svg>
+<svg><g style="transform: scale3d(9, 9, 1)"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+<svg><defs><g id="v1"><text x="1" y="4" font-size="3">Scaled</text></g></defs><use href="#v1" style="transform: scale(9)"/></svg>
+<svg><svg style="transform: scale(9)"><text x="1" y="4" font-size="3">Scaled</text></svg></svg>
+<svg><g transform="scale(9)"><text x="1" y="4" font-size="3">Scaled</text></g></svg>
+</body>
+</html>

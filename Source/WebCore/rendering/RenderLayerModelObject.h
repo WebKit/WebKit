@@ -187,6 +187,10 @@ private:
     bool createLayerIfAllowed();
     void removeOnlyThisLayerWithRepaint();
 
+    std::optional<AffineTransform> svgTransformBeforeStyleChange(const Style::ComputedStyle& oldStyle) const;
+    AffineTransform svgTransformAfterStyleChange() const;
+    bool markSVGTextForRelayoutIfScaleChanged(const AffineTransform& previousTransform, const AffineTransform& currentTransform);
+
     RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::SVGMarkerResource&) const;
 
     RenderSVGResourcePaintServer* svgPaintServerResourceFromStyle(const Style::SVGPaint&, const Style::ComputedStyle&, SVGPaintType) const;
