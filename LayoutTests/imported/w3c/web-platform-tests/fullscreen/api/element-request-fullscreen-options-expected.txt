@@ -1,3 +1,4 @@
 
 PASS requestFullscreen() with invalid navigationUI values
+PASS requestFullscreen() with non-dictionary argument
 

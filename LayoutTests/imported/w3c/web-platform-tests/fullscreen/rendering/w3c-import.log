@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-green-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-iframe-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-iframe.html
@@ -22,6 +21,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-object-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-object-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-object.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/exit-fullscreen-scroll-to-unscrollable-area-overflow-hidden-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/exit-fullscreen-scroll-to-unscrollable-area-overflow-hidden-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/exit-fullscreen-scroll-to-unscrollable-area-overflow-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/exit-fullscreen-scroll-to-unscrollable-area-overflow-x-hidden-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/exit-fullscreen-scroll-to-unscrollable-area-overflow-x-hidden-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/exit-fullscreen-scroll-to-unscrollable-area-overflow-x-hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-css-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-css-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-pseudo-class-support.html
@@ -31,4 +36,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-fills-page-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-fills-page-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-fills-page.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-ua-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/ua-style-iframe.html

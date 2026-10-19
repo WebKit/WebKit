@@ -83,4 +83,5 @@ PASS <video> member must not be supported: mozSupportsFullscreen
 PASS Document member must not be supported: mozSupportsFullscreen
 PASS <video> member must not be supported: msSupportsFullscreen
 PASS Document member must not be supported: msSupportsFullscreen
+PASS Window member must not be supported: fullScreen
 

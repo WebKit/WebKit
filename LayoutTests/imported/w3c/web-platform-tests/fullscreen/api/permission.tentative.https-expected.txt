@@ -1,0 +1,5 @@
+
+FAIL Querying "fullscreen" permission checks "allowWithoutGesture" option promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Set and query "fullscreen" permission with "allowWithoutGesture" true promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "fullscreen"."
+PASS Querying "fullscreen" permission with "allowWithoutGesture" false is unsupported
+

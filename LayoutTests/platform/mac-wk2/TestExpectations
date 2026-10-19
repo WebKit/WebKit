@@ -2249,6 +2249,8 @@ webkit.org/b/308326 [ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/er
 
 webkit.org/b/308586 imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-pseudo-class.html [ Pass Failure ]
 
+webkit.org/b/326318 imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-keyboard-lock-escape.window.html [ Pass Failure ]
+
 webkit.org/b/308594 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass Failure ]
 
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay.html [ Skip ]
