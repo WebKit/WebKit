@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<input id="candidate" autofocus>
+<script>
+promise_test(async () => {
+    await new Promise(requestAnimationFrame);
+    assert_equals(document.activeElement, candidate);
+}, "Initial autofocus works when no element has focus");
+</script>
