@@ -59,10 +59,10 @@ BorderImage::BorderImage(BorderImageSource&& source, BorderImageSlice&& slice, B
 
 // MARK: - Conversion
 
-auto ToCSS<BorderImage>::operator()(const BorderImage& value, const Style::ComputedStyle& style) -> CSS::BorderImage
+auto ToCSS<BorderImage>::operator()(const BorderImage& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::BorderImage
 {
     return {
-        .borderImageSource = toCSS(value.borderImageSource, style),
+        .borderImageSource = toCSS(value.borderImageSource, style, valueType),
         .borderImageSlice = toCSS(value.borderImageSlice, style),
         .borderImageWidth = toCSS(value.borderImageWidth, style),
         .borderImageOutset = toCSS(value.borderImageOutset, style),
@@ -88,23 +88,23 @@ auto ToStyle<CSS::BorderImage>::operator()(const CSS::BorderImage& value, const 
     return result;
 }
 
-auto CSSValueCreation<BorderImage>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const BorderImage& value) -> Ref<CSSValue>
+auto CSSValueCreation<BorderImage>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const BorderImage& value, PropertyValueType valueType) -> Ref<CSSValue>
 {
-    return CSS::createCSSValue(pool, toCSS(value, style));
+    return CSS::createCSSValue(pool, toCSS(value, style, valueType));
 }
 
 // MARK: - Serialization
 
-void Serialize<BorderImage>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const BorderImage& value)
+void Serialize<BorderImage>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const BorderImage& value, PropertyValueType valueType)
 {
     if (value.borderImageSource.isNone()) {
-        serializationForCSS(builder, context, style, value.borderImageSource);
+        serializationForCSS(builder, context, style, value.borderImageSource, valueType);
         return;
     }
 
     // FIXME: Omit values that have their initial value.
 
-    serializationForCSS(builder, context, style, value.borderImageSource);
+    serializationForCSS(builder, context, style, value.borderImageSource, valueType);
     builder.append(' ');
     serializationForCSS(builder, context, style, value.borderImageSlice);
     builder.append(" / "_s);

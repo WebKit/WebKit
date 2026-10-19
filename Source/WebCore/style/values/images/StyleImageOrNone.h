@@ -76,7 +76,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct ToCSS<ImageOrNone> { auto operator()(const ImageOrNone&, const Style::ComputedStyle&) -> CSS::ImageOrNone; };
+template<> struct ToCSS<ImageOrNone> { auto operator()(const ImageOrNone&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::ImageOrNone; };
 template<> struct ToStyle<CSS::ImageOrNone> { auto operator()(const CSS::ImageOrNone&, const BuilderState&) -> ImageOrNone; };
 
 template<> struct CSSValueConversion<ImageOrNone> { auto operator()(BuilderState&, const CSSValue&) -> ImageOrNone; };

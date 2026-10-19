@@ -1,0 +1,14 @@
+
+PASS Computed 'content: linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-image: linear-gradient(currentcolor, red) 1' keeps currentcolor
+PASS Computed 'mask-border: linear-gradient(currentcolor, red) 1' keeps currentcolor
+PASS Computed 'content: radial-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-image: radial-gradient(currentcolor, red) 1' keeps currentcolor
+PASS Computed 'mask-border: radial-gradient(currentcolor, red) 1' keeps currentcolor
+PASS Computed 'content: conic-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-image: conic-gradient(currentcolor, red) 1' keeps currentcolor
+PASS Computed 'mask-border: conic-gradient(currentcolor, red) 1' keeps currentcolor
+PASS Computed 'content: image-set(linear-gradient(currentcolor, red) 1x)' keeps currentcolor
+PASS Computed 'border-image: image-set(linear-gradient(currentcolor, red) 1x) 1' keeps currentcolor
+PASS Computed 'mask-border: image-set(linear-gradient(currentcolor, red) 1x) 1' keeps currentcolor
+

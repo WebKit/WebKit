@@ -42,7 +42,7 @@ namespace Style {
 template<> struct ToCSS<WebkitBoxReflection::Direction> { CSS::WebkitBoxReflection::Direction LEGACY_NODELETE operator()(const WebkitBoxReflection::Direction&, const Style::ComputedStyle&); };
 template<> struct ToStyle<CSS::WebkitBoxReflection::Direction> { auto operator()(const CSS::WebkitBoxReflection::Direction&, const BuilderState&) -> WebkitBoxReflection::Direction; };
 
-template<> struct ToCSS<WebkitBoxReflection> { auto operator()(const WebkitBoxReflection&, const Style::ComputedStyle&) -> CSS::WebkitBoxReflection; };
+template<> struct ToCSS<WebkitBoxReflection> { auto operator()(const WebkitBoxReflection&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::WebkitBoxReflection; };
 template<> struct ToStyle<CSS::WebkitBoxReflection> { auto operator()(const CSS::WebkitBoxReflection&, const BuilderState&) -> WebkitBoxReflection; };
 
 auto ToCSS<WebkitBoxReflection::Direction>::operator()(const WebkitBoxReflection::Direction& value, const Style::ComputedStyle&) -> CSS::WebkitBoxReflection::Direction
@@ -66,12 +66,12 @@ auto ToStyle<CSS::WebkitBoxReflection::Direction>::operator()(const CSS::WebkitB
     );
 }
 
-auto ToCSS<WebkitBoxReflection>::operator()(const WebkitBoxReflection& value, const Style::ComputedStyle& style) -> CSS::WebkitBoxReflection
+auto ToCSS<WebkitBoxReflection>::operator()(const WebkitBoxReflection& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::WebkitBoxReflection
 {
     return {
         .direction = toCSS(value.direction, style),
         .offset = toCSS(value.offset, style),
-        .mask = toCSS(value.mask, style),
+        .mask = toCSS(value.mask, style, valueType),
     };
 }
 
@@ -114,20 +114,20 @@ auto CSSValueConversion<WebkitBoxReflect>::operator()(BuilderState& state, const
     }
 }
 
-Ref<CSSValue> CSSValueCreation<WebkitBoxReflect>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const WebkitBoxReflect& value)
+Ref<CSSValue> CSSValueCreation<WebkitBoxReflect>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const WebkitBoxReflect& value, PropertyValueType valueType)
 {
-    return CSSWebkitBoxReflectValue::create(toCSS(value, style));
+    return CSSWebkitBoxReflectValue::create(toCSS(value, style, valueType));
 }
 
 // MARK: - Serialization
 
-void Serialize<WebkitBoxReflection>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const WebkitBoxReflection& value)
+void Serialize<WebkitBoxReflection>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const WebkitBoxReflection& value, PropertyValueType valueType)
 {
     auto serializeMask = [&](auto& mask) {
         if (mask.source().isNone())
             serializationForCSS(builder, context, style, CSS::Keyword::None { });
         else
-            serializationForCSS(builder, context, style, mask);
+            serializationForCSS(builder, context, style, mask, valueType);
     };
 
     serializationForCSS(builder, context, style, value.direction);

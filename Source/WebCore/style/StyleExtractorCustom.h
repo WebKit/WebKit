@@ -1302,6 +1302,8 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyID::Color> {
 template<> struct PropertyExtractorAdaptor<CSSPropertyID::CaretColor> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
     {
+        if (state.valueType == ExtractorState::PropertyValueType::Computed)
+            return functor(state.style->caretColor());
         return functor(state.style->caretColor().colorOrCurrentColor());
     }
 };
@@ -1311,14 +1313,14 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyID::CaretColor> {
 template<CSSPropertyID propertyID> Ref<CSSValue> extractCSSValue(ExtractorState& state)
 {
     return PropertyExtractorAdaptor<propertyID> { }.computedValue(state, [&](auto&& value) {
-        return createCSSValue(state.pool, state.style, value);
+        return createCSSValue(state.pool, state.style, value, state.valueType);
     });
 }
 
 template<CSSPropertyID propertyID> void extractSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     PropertyExtractorAdaptor<propertyID> { }.computedValue(state, [&](auto&& value) {
-        serializationForCSS(builder, context, state.style, value);
+        serializationForCSS(builder, context, state.style, value, state.valueType);
     });
 }
 
@@ -2962,7 +2964,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractBorderImageShorthand(ExtractorSt
         return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     if (borderImage.borderImageWidth.overridesBorderWidths())
         return nullptr;
-    return createCSSValue(state.pool, state.style, borderImage);
+    return createCSSValue(state.pool, state.style, borderImage, state.valueType);
 }
 
 inline void ExtractorCustom::extractBorderImageShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
@@ -2974,7 +2976,7 @@ inline void ExtractorCustom::extractBorderImageShorthandSerialization(ExtractorS
     }
     if (borderImage.borderImageWidth.overridesBorderWidths())
         return;
-    serializationForCSS(builder, context, state.style, borderImage);
+    serializationForCSS(builder, context, state.style, borderImage, state.valueType);
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractBorderInlineShorthand(ExtractorState& state)
@@ -3791,7 +3793,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractWebkitBorderImageShorthand(Extra
     bool overridesBorderWidths = borderImage.borderImageWidth.values.anyOf([](const auto& side) { return side.isFixed(); });
     if (overridesBorderWidths != borderImage.borderImageWidth.overridesBorderWidths())
         return nullptr;
-    return createCSSValue(state.pool, state.style, borderImage);
+    return createCSSValue(state.pool, state.style, borderImage, state.valueType);
 }
 
 inline void ExtractorCustom::extractWebkitBorderImageShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
@@ -3805,7 +3807,7 @@ inline void ExtractorCustom::extractWebkitBorderImageShorthandSerialization(Extr
     bool overridesBorderWidths = borderImage.borderImageWidth.values.anyOf([](const auto& side) { return side.isFixed(); });
     if (overridesBorderWidths != borderImage.borderImageWidth.overridesBorderWidths())
         return;
-    serializationForCSS(builder, context, state.style, borderImage);
+    serializationForCSS(builder, context, state.style, borderImage, state.valueType);
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractWebkitBorderRadiusShorthand(ExtractorState& state)

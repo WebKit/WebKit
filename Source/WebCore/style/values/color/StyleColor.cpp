@@ -35,8 +35,11 @@
 
 #include "AnimationUtilities.h"
 #include "CSSColorInlines.h"
+#include "CSSColorMix.h"
 #include "CSSColorValue.h"
 #include "CSSKeywordColor.h"
+#include "CSSKeywordValue.h"
+#include "CSSRelativeAlphaColor.h"
 #include "CSSValuePool.h"
 #include "ColorBlending.h"
 #include "DeprecatedCSSOMValue.h"
@@ -348,6 +351,59 @@ bool containsCurrentColor(const Color& value)
     return value.containsCurrentColor();
 }
 
+// MARK: - Computed value conversion
+
+static CSS::Color toCSSPreservingCurrentColor(const Color& value, const Style::ComputedStyle& style)
+{
+    if (!value.containsCurrentColor())
+        return CSS::Color { CSS::ResolvedColor { ColorResolver { style }.colorResolvingCurrentColor(value) } };
+
+    return value.switchOn(
+        [&](const CurrentColor&) {
+            return CSS::Color { CSS::KeywordColor { CSSValueID::Currentcolor } };
+        },
+        [&](const ColorMix& colorMix) {
+            return CSS::Color { CSS::ColorMix {
+                .colorInterpolationMethod = colorMix.colorInterpolationMethod,
+                .components = CommaSeparatedVector<CSS::ColorMix::Component>::map(colorMix.components, [&](auto& component) {
+                    return CSS::ColorMix::Component {
+                        .color = toCSSPreservingCurrentColor(component.color, style),
+                        .percentage = toCSS(component.percentage, style),
+                    };
+                }),
+            } };
+        },
+        [&](const ContrastColor& contrastColor) {
+            return CSS::Color { CSS::ContrastColor {
+                .color = toCSSPreservingCurrentColor(contrastColor.color, style),
+            } };
+        },
+        [&](const RelativeAlphaColor& relativeAlphaColor) {
+            return CSS::Color { CSS::RelativeAlphaColor {
+                .origin = toCSSPreservingCurrentColor(relativeAlphaColor.origin, style),
+                .alpha = relativeAlphaColor.alpha,
+            } };
+        },
+        [&]<typename Descriptor>(const RelativeColor<Descriptor>& relativeColor) -> CSS::Color {
+            return CSS::Color { CSS::RelativeColor<Descriptor> {
+                .origin = toCSSPreservingCurrentColor(relativeColor.origin, style),
+                .components = relativeColor.components,
+            } };
+        },
+        [&](const ColorLayers& colorLayers) {
+            return CSS::Color { CSS::ColorLayers {
+                .blendMode = colorLayers.blendMode,
+                .colors = CommaSeparatedVector<CSS::Color>::map(colorLayers.colors, [&](auto& color) {
+                    return toCSSPreservingCurrentColor(color, style);
+                }),
+            } };
+        },
+        [&](const auto&) {
+            return CSS::Color { CSS::ResolvedColor { ColorResolver { style }.colorResolvingCurrentColor(value) } };
+        }
+    );
+}
+
 // MARK: - Serialization
 
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext& context, const Color& value)
@@ -360,9 +416,13 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
     WTF::switchOn(value, [&](const auto& kind) { WebCore::Style::serializationForCSSTokenization(builder, context, kind); });
 }
 
-void Serialize<Color>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle& style, const Color& value)
+void Serialize<Color>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const Color& value, PropertyValueType valueType)
 {
-    // NOTE: The specialization of Style::Serialize is used for computed value serialization, so the resolved "used" value is used.
+    if (valueType == PropertyValueType::Computed && value.containsCurrentColor()) {
+        CSS::serializationForCSS(builder, context, toCSSPreservingCurrentColor(value, style));
+        return;
+    }
+
     ColorResolver colorResolver { style };
     builder.append(WebCore::serializationForCSS(colorResolver.colorResolvingCurrentColor(value)));
 }
@@ -385,8 +445,11 @@ Color toStyleColor(const CSS::Color& value, ColorResolutionState& state)
     return WTF::switchOn(value, [&](const auto& color) { return toStyleColor(color, state); });
 }
 
-auto ToCSS<Color>::operator()(const Color& value, const Style::ComputedStyle& style) -> CSS::Color
+auto ToCSS<Color>::operator()(const Color& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::Color
 {
+    if (valueType == PropertyValueType::Computed)
+        return toCSSPreservingCurrentColor(value, style);
+
     ColorResolver colorResolver { style };
     return CSS::Color { CSS::ResolvedColor { colorResolver.colorResolvingCurrentColor(value) } };
 }
@@ -429,8 +492,14 @@ auto CSSValueConversion<Color>::operator()(BuilderState& builderState, const CSS
     return this->operator()(builderState, value, ForVisitedLink::No);
 }
 
-Ref<CSSValue> CSSValueCreation<Color>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const Color& value)
+Ref<CSSValue> CSSValueCreation<Color>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const Color& value, PropertyValueType valueType)
 {
+    if (valueType == PropertyValueType::Computed && value.containsCurrentColor()) {
+        if (value.isCurrentColor())
+            return CSSKeywordValue::create(CSSValueID::Currentcolor);
+        return CSSColorValue::create(toCSSPreservingCurrentColor(value, style));
+    }
+
     ColorResolver colorResolver { style };
     return pool.createColorValue(colorResolver.colorResolvingCurrentColor(value));
 }

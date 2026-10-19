@@ -36,14 +36,14 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<MaskBorderSource>::operator()(const MaskBorderSource& value, const Style::ComputedStyle& style) -> CSS::MaskBorderSource
+auto ToCSS<MaskBorderSource>::operator()(const MaskBorderSource& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::MaskBorderSource
 {
     return WTF::switchOn(value,
         [&](const CSS::Keyword::None& keyword) -> CSS::MaskBorderSource {
             return keyword;
         },
         [&](const ImageWrapper& imageWrapper) -> CSS::MaskBorderSource {
-            return CSS::ImageWrapper { protect(imageWrapper.value)->computedStyleValue(style) };
+            return CSS::ImageWrapper { protect(imageWrapper.value)->computedStyleValue(style, valueType) };
         }
     );
 }
@@ -85,9 +85,9 @@ auto CSSValueConversion<MaskBorderSource>::operator()(BuilderState& state, const
     return ImageWrapper { image.releaseNonNull() };
 }
 
-auto CSSValueCreation<MaskBorderSource>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const MaskBorderSource& value) -> Ref<CSSValue>
+auto CSSValueCreation<MaskBorderSource>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const MaskBorderSource& value, PropertyValueType valueType) -> Ref<CSSValue>
 {
-    return CSSMaskBorderSourceValue::create(toCSS(value, style));
+    return CSSMaskBorderSourceValue::create(toCSS(value, style, valueType));
 }
 
 // MARK: - Blending
