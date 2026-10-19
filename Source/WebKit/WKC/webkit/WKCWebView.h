@@ -152,6 +152,9 @@ WKC_API void WKCWebKitUnregisterFonts();
 WKC_API bool WKCWebKitSetFontScale(int id, float scale);
 
 WKC_API void WKCWebKitWakeUp(void* data);
+// Drain WebCore's main RunLoop once from the embedder's UI/frame loop. Required
+// for asynchronous network responses and other worker-to-main-thread callbacks.
+WKC_API void WKCWebKitProcessEvents();
 WKC_API unsigned int WKCWebKitGetTickCount();
 
 WKC_API void WKCWebKitSetHWOffscreenDeviceParams(const HWOffscreenDeviceParams* params, void* opaque);
