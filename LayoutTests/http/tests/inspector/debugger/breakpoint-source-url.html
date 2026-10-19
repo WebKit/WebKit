@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+async function loadOrderScript(kind)
+{
+    let script = document.createElement("script");
+    let url = kind === "UnnamedExternal" ? "resources/breakpoint-source-url-plain.js" : "resources/breakpoint-source-url-named.js";
+    if (kind === "NamedBlob") {
+        let response = await fetch(url);
+        url = URL.createObjectURL(new Blob([await response.text()], {type: "text/javascript"}));
+    }
+    script.src = url;
+    script.onload = () => {
+        if (kind === "NamedBlob")
+            URL.revokeObjectURL(url);
+        TestPage.dispatchEventToFrontend("OrderScriptLoaded");
+    };
+    script.onerror = () => TestPage.dispatchEventToFrontend("OrderScriptLoaded", {error: "Could not load the order script."});
+    document.head.appendChild(script);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.Breakpoint.SourceURL");
+
+    function evaluate(expression) {
+        return new Promise((resolve, reject) => {
+            WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (remoteObject, wasThrown) => {
+                if (wasThrown) {
+                    reject(new Error(remoteObject.description));
+                    return;
+                }
+                if (!remoteObject) {
+                    reject(new Error("The checkout evaluation did not produce a result."));
+                    return;
+                }
+                resolve(remoteObject.value);
+            });
+        });
+    }
+
+    async function expectNoPause(quantity) {
+        let pauseCount = 0;
+        function paused() {
+            ++pauseCount;
+            WI.debuggerManager.resume();
+        }
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, paused);
+        await InspectorTest.evaluateInPage(`placeOrder(${quantity})`);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, paused);
+        InspectorTest.expectEqual(pauseCount, 0, "The order should complete without a debugger pause.");
+        InspectorTest.expectEqual(await evaluate("document.querySelector('output').textContent"), String(quantity * 10), "The page should display the completed order total.");
+    }
+
+    for (let kind of ["NamedExternal", "NamedBlob", "UnnamedExternal"]) {
+        suite.addTestCase({
+            name: `Debugger.Breakpoint.SourceURL.${kind}`,
+            async test() {
+                let [script, {data}] = await Promise.all([
+                    new Promise(function(resolve) {
+                        function scriptAdded(event) {
+                            let script = event.data.script;
+
+                            switch (kind) {
+                            case "NamedExternal":
+                                if (!script.url?.endsWith("breakpoint-source-url-named.js"))
+                                    return;
+                                break;
+                            case "NamedBlob":
+                                if (!script.url?.startsWith("blob:") || script.sourceURL !== "checkout-bundle.js")
+                                    return;
+                                break;
+                            case "UnnamedExternal":
+                                if (!script.url?.endsWith("breakpoint-source-url-plain.js"))
+                                    return;
+                                break;
+                            }
+
+                            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptAdded);
+                            resolve(script);
+                        }
+                        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptAdded);
+                    }),
+                    InspectorTest.awaitEvent("OrderScriptLoaded"),
+                    InspectorTest.evaluateInPage(`loadOrderScript(${JSON.stringify(kind)})`),
+                ]);
+                InspectorTest.assert(!data?.error, "The page should load its real checkout script.");
+
+                let breakpoint = new WI.JavaScriptBreakpoint(script.createSourceCodeLocation(1, 0), {condition: "quantity > 1"});
+                let resolved = breakpoint.awaitEvent(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange);
+                WI.debuggerManager.addBreakpoint(breakpoint);
+                await resolved;
+                InspectorTest.expectTrue(breakpoint.resolved, "The actual checkout breakpoint should resolve through the debugger.");
+
+                await expectNoPause(1);
+                let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+                let order = InspectorTest.evaluateInPage("placeOrder(3)");
+                await paused;
+                InspectorTest.expectEqual(WI.debuggerManager.activeCallFrame.sourceCodeLocation.sourceCode, script, "The order should pause in the script loaded by this page.");
+                InspectorTest.expectEqual(await evaluate("quantity"), 3, "The real paused checkout should expose the matching order quantity.");
+                await WI.debuggerManager.resume();
+                await order;
+                InspectorTest.expectEqual(await evaluate("document.querySelector('output').textContent"), "30", "Resuming should finish the order and update the page.");
+
+                WI.debuggerManager.removeBreakpoint(breakpoint);
+                await expectNoPause(4);
+            },
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests conditional checkout breakpoints in actual named network and Blob scripts, with an unnamed network control.</p>
+<output>0</output>
+</body>
+</html>
