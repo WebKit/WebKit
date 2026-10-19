@@ -65,14 +65,14 @@ struct MaskBorder {
 
 enum class MaskBorderSliceOverride : bool { None, AlwaysFill };
 
-template<> struct ToCSS<MaskBorder> { auto operator()(const MaskBorder&, const Style::ComputedStyle&) -> CSS::MaskBorder; };
+template<> struct ToCSS<MaskBorder> { auto operator()(const MaskBorder&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::MaskBorder; };
 template<> struct ToStyle<CSS::MaskBorder> { auto operator()(const CSS::MaskBorder&, const BuilderState&, MaskBorderSliceOverride = MaskBorderSliceOverride::None) -> MaskBorder; };
 
-template<> struct CSSValueCreation<MaskBorder> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const MaskBorder&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<MaskBorder> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const MaskBorder&, PropertyValueType = PropertyValueType::Resolved) -> Ref<CSSValue>; };
 
 // MARK: - Serialization
 
-template<> struct Serialize<MaskBorder> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const MaskBorder&); };
+template<> struct Serialize<MaskBorder> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const MaskBorder&, PropertyValueType = PropertyValueType::Resolved); };
 
 // MARK: - Logging
 
