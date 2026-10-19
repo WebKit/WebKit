@@ -1273,7 +1273,7 @@ struct MultiCharEntry {
 };
 
 typedef std::tuple<char16_t, char16_t, uint8_t> MultiCharKey;
-static inline MultiCharKey ExtractMultiCharKey(const MultiCharEntry* entry)
+static inline MultiCharKey LEGACY_NODELETE ExtractMultiCharKey(const MultiCharEntry* entry)
 {
     return MultiCharKey(entry->firstCharacter, entry->secondCharacter, entry->form);
 }

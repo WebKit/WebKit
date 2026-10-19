@@ -31,7 +31,7 @@ class Navigator;
 
 class DOMMimeType : public RefCounted<DOMMimeType> {
 public:
-    static Ref<DOMMimeType> create(Navigator&, const MimeClassInfo&, DOMPlugin&);
+    static Ref<DOMMimeType> LEGACY_NODELETE create(Navigator&, const MimeClassInfo&, DOMPlugin&);
     ~DOMMimeType();
 
     AtomString LEGACY_NODELETE type() const;

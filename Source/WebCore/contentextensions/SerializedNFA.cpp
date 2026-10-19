@@ -103,7 +103,7 @@ SerializedNFA::SerializedNFA(FileSystem::MappedFileData&& file, Metadata&& metad
 }
 
 template<typename T>
-std::span<const T> SerializedNFA::spanAtOffsetInFile(size_t offset, size_t length) const
+std::span<const T> LEGACY_NODELETE SerializedNFA::spanAtOffsetInFile(size_t offset, size_t length) const
 {
     return spanReinterpretCast<const T>(m_file.span().subspan(offset).first(length * sizeof(T)));
 }

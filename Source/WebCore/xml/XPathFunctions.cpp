@@ -545,7 +545,7 @@ Value FunSubstringAfter::evaluate() const
 // Computes the 1-based start and end (exclusive) string indices for
 // substring. This is all the positions [1, maxLen (inclusive)] where
 // start <= position < start + len
-static std::pair<unsigned, unsigned> computeSubstringStartEnd(double start, double len, double maxLen)
+static std::pair<unsigned, unsigned> LEGACY_NODELETE computeSubstringStartEnd(double start, double len, double maxLen)
 {
     ASSERT(std::isfinite(maxLen));
     const double end = start + len;

@@ -36,7 +36,7 @@ class CachedXSLStyleSheet;
 class XSLImportRule : public RefCounted<XSLImportRule>, private CachedStyleSheetClient {
     WTF_MAKE_TZONE_ALLOCATED(XSLImportRule);
 public:
-    static Ref<XSLImportRule> create(XSLStyleSheet& parentSheet, const String& href);
+    static Ref<XSLImportRule> LEGACY_NODELETE create(XSLStyleSheet& parentSheet, const String& href);
     virtual ~XSLImportRule();
     
     const String& href() const LIFETIME_BOUND { return m_strHref; }

@@ -34,7 +34,7 @@ class Navigator;
 class DOMMimeTypeArray final : public ScriptWrappable, public RefCounted<DOMMimeTypeArray> {
     WTF_MAKE_TZONE_ALLOCATED(DOMMimeTypeArray);
 public:
-    static Ref<DOMMimeTypeArray> create(Navigator&, Vector<Ref<DOMMimeType>>&& = { });
+    static Ref<DOMMimeTypeArray> LEGACY_NODELETE create(Navigator&, Vector<Ref<DOMMimeType>>&& = { });
     ~DOMMimeTypeArray();
 
     unsigned LEGACY_NODELETE length() const;

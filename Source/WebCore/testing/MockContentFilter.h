@@ -37,7 +37,7 @@ class MockContentFilter final : public PlatformContentFilter {
 
 public:
     static void ensureInstalled();
-    static Ref<MockContentFilter> create(const PlatformContentFilter::FilterParameters&);
+    static Ref<MockContentFilter> LEGACY_NODELETE create(const PlatformContentFilter::FilterParameters&);
 
     bool isEnabled() const final { return enabled(); }
     void willSendRequest(ResourceRequest&, const ResourceResponse&) override;

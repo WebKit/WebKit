@@ -49,7 +49,7 @@ public:
     using WriteRawData = Function<void(std::span<const uint8_t>)>;
     enum class Continue : bool { No, Yes };
     using ProcessError = Function<Continue(ExceptionCode)>;
-    static Ref<NetworkSendQueue> create(ScriptExecutionContext&, WriteString&&, WriteRawData&&, ProcessError&&);
+    static Ref<NetworkSendQueue> LEGACY_NODELETE create(ScriptExecutionContext&, WriteString&&, WriteRawData&&, ProcessError&&);
     ~NetworkSendQueue();
 
     // ContextDestructionObserver.

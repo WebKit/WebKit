@@ -59,7 +59,7 @@ struct VariantDeserializerHelper {
 template<typename... Types>
 struct VariantDeserializerHelper<0, Types...> {
     using VariantType = typename WTF::VariantAlternativeT<0, Variant<Types...>>;
-    static Variant<Types...> deserialize(std::span<const uint8_t> span, size_t i)
+    static Variant<Types...> LEGACY_NODELETE deserialize(std::span<const uint8_t> span, size_t i)
     {
         ASSERT_UNUSED(i, !i);
         return VariantType::deserialize(span);

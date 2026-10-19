@@ -68,7 +68,7 @@ public:
     };
 
     // If client is given, do the loading asynchronously. Otherwise, load synchronously.
-    WEBCORE_EXPORT static Ref<FileReaderLoader> create(ReadType, FileReaderLoaderClient*);
+    WEBCORE_EXPORT static Ref<FileReaderLoader> LEGACY_NODELETE create(ReadType, FileReaderLoaderClient*);
     WEBCORE_EXPORT ~FileReaderLoader();
 
     WEBCORE_EXPORT void start(ScriptExecutionContext*, Blob&);

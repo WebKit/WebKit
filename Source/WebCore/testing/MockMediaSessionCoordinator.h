@@ -40,7 +40,7 @@ class StringCallback;
 class MockMediaSessionCoordinator : public MediaSessionCoordinatorPrivate, public CanMakeWeakPtr<MockMediaSessionCoordinator> {
     WTF_MAKE_TZONE_ALLOCATED(MockMediaSessionCoordinator);
 public:
-    static Ref<MockMediaSessionCoordinator> create(ScriptExecutionContext&, RefPtr<StringCallback>&&);
+    static Ref<MockMediaSessionCoordinator> LEGACY_NODELETE create(ScriptExecutionContext&, RefPtr<StringCallback>&&);
 
     void setCommandsShouldFail(bool shouldFail) { m_failCommands = shouldFail; }
 

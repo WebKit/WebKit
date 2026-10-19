@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyMockCDM);
 class MockCDMSession : public LegacyCDMSession, public RefCounted<MockCDMSession> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(MockCDMSession);
 public:
-    static Ref<MockCDMSession> create(LegacyCDMSessionClient& client)
+    static Ref<MockCDMSession> LEGACY_NODELETE create(LegacyCDMSessionClient& client)
     {
         return adoptRef(*new MockCDMSession(client));
     }

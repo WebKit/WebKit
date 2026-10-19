@@ -706,7 +706,7 @@ static inline FragmentRelation LEGACY_NODELETE fragmentRelationForSelectorRelati
     return FragmentRelation::Descendant;
 }
 
-static inline FunctionType mostRestrictiveFunctionType(FunctionType a, FunctionType b)
+static inline FunctionType LEGACY_NODELETE mostRestrictiveFunctionType(FunctionType a, FunctionType b)
 {
     return std::max(a, b);
 }
@@ -1768,7 +1768,7 @@ static const unsigned minimumRequiredRegisterCountForAttributeFilter = 6;
 //     Element + elementCounter + previousSibling + checkingContext + lastRelation + nextSiblingElement.
 static const unsigned minimumRequiredRegisterCountForNthChildFilter = 6;
 
-static unsigned minimumRegisterRequirements(const SelectorFragment& selectorFragment)
+static unsigned LEGACY_NODELETE minimumRegisterRequirements(const SelectorFragment& selectorFragment)
 {
     unsigned minimum = minimumRequiredRegisterCount;
     const auto& attributes = selectorFragment.attributes;
@@ -1805,7 +1805,7 @@ static unsigned minimumRegisterRequirements(const SelectorFragment& selectorFrag
 
 bool hasAnyCombinators(const Vector<SelectorFragmentList>& selectorList);
 template <size_t inlineCapacity>
-bool hasAnyCombinators(const Vector<SelectorFragment, inlineCapacity>& selectorFragmentList);
+bool LEGACY_NODELETE hasAnyCombinators(const Vector<SelectorFragment, inlineCapacity>& selectorFragmentList);
 
 bool LEGACY_NODELETE hasAnyCombinators(const Vector<SelectorFragmentList>& selectorList)
 {
@@ -1843,9 +1843,9 @@ bool LEGACY_NODELETE hasAnyCombinators(const Vector<SelectorFragment, inlineCapa
 // The CSS JIT has only been validated with a strict minimum of 6 allocated registers.
 const unsigned minimumRegisterRequirement = 6;
 
-void computeBacktrackingMemoryRequirements(SelectorFragmentList& selectorFragments, bool backtrackingRegisterReserved = false);
+void LEGACY_NODELETE computeBacktrackingMemoryRequirements(SelectorFragmentList& selectorFragments, bool backtrackingRegisterReserved = false);
 
-static void computeBacktrackingMemoryRequirements(SelectorList& selectorList, unsigned& totalRegisterRequirements, unsigned& totalStackRequirements, bool backtrackingRegisterReservedForFragment = false)
+static void LEGACY_NODELETE computeBacktrackingMemoryRequirements(SelectorList& selectorList, unsigned& totalRegisterRequirements, unsigned& totalStackRequirements, bool backtrackingRegisterReservedForFragment = false)
 {
     unsigned selectorListRegisterRequirements = 0;
     unsigned selectorListStackRequirements = 0;

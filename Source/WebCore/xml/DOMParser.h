@@ -32,7 +32,7 @@ template<typename> class ExceptionOr;
 
 class DOMParser : public RefCounted<DOMParser> {
 public:
-    static Ref<DOMParser> create(Document& contextDocument);
+    static Ref<DOMParser> LEGACY_NODELETE create(Document& contextDocument);
     ~DOMParser();
 
     ExceptionOr<Ref<Document>> parseFromString(Variant<Ref<TrustedHTML>, String>&&, const AtomString& contentType);

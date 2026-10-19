@@ -33,7 +33,7 @@ class Navigator;
 class DOMPlugin final : public RefCountedAndCanMakeWeakPtr<DOMPlugin>, public ScriptWrappable {
     WTF_MAKE_TZONE_ALLOCATED(DOMPlugin);
 public:
-    static Ref<DOMPlugin> create(Navigator&, const PluginInfo&);
+    static Ref<DOMPlugin> LEGACY_NODELETE create(Navigator&, const PluginInfo&);
     ~DOMPlugin();
 
     const PluginInfo& info() const LIFETIME_BOUND { return m_info; }

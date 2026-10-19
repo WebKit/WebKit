@@ -188,7 +188,7 @@ bool isAccessibilityIsolatedTreeModeEnabled()
     return AXObjectCache::isIsolatedTreeEnabled();
 }
 
-static Function<void()>& accessibilityTestTeardownCallback()
+static Function<void()>& LEGACY_NODELETE accessibilityTestTeardownCallback()
 {
     static NeverDestroyed<Function<void()>> callback;
     return callback.get();

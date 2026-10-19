@@ -163,7 +163,7 @@ public:
         m_floatingTerm = Term(Term::EndOfLineAssertionTerm);
     }
 
-    void assertionBOI()
+    void LEGACY_NODELETE assertionBOI()
     {
         if (hasError())
             return;

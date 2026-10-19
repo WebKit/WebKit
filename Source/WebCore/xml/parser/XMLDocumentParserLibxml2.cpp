@@ -407,7 +407,7 @@ public:
     {
     }
 
-    int readOutBytes(std::span<char> outputBuffer)
+    int LEGACY_NODELETE readOutBytes(std::span<char> outputBuffer)
     {
         size_t bytesLeft = m_buffer.size() - m_currentOffset;
         size_t lengthToCopy = std::min(outputBuffer.size(), bytesLeft);
@@ -548,7 +548,7 @@ static void* openFunc(const char* uri)
     return new OffsetBuffer(Vector(data->span()));
 }
 
-static int readFunc(void* context, char* buffer, int len)
+static int LEGACY_NODELETE readFunc(void* context, char* buffer, int len)
 {
     // Do 0-byte reads in case of a null descriptor
     if (context == &globalDescriptor)

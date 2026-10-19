@@ -31,7 +31,7 @@ namespace WebCore {
 
 class MockPageOverlay : public RefCounted<MockPageOverlay> {
 public:
-    static Ref<MockPageOverlay> create(PageOverlay*);
+    static Ref<MockPageOverlay> LEGACY_NODELETE create(PageOverlay*);
 
     void setFrame(double x, double y, double width, double height);
 

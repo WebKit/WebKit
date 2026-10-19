@@ -211,7 +211,7 @@ void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& program
 }
 
 template<bool caseSensitive>
-inline void DFABytecodeInterpreter::interpretJumpTable(std::span<const Latin1Character> url, uint32_t& urlIndex, uint32_t& programCounter)
+inline void LEGACY_NODELETE DFABytecodeInterpreter::interpretJumpTable(std::span<const Latin1Character> url, uint32_t& urlIndex, uint32_t& programCounter)
 {
     DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, programCounter);
 

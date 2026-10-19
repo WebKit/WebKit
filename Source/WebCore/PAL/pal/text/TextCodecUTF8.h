@@ -48,7 +48,7 @@ private:
 
     bool handlePartialSequence(std::span<Latin1Character>& destination, std::span<const uint8_t>& source, bool flush);
     void handlePartialSequence(std::span<char16_t>& destination, std::span<const uint8_t>& source, bool flush, bool stopOnError, bool& sawError);
-    void consumePartialSequenceByte();
+    void LEGACY_NODELETE consumePartialSequenceByte();
 
     int m_partialSequenceSize { 0 };
     std::array<uint8_t, U8_MAX_LENGTH> m_partialSequence;

@@ -35,7 +35,7 @@ class Navigator;
 class DOMPluginArray final : public ScriptWrappable, public RefCounted<DOMPluginArray> {
     WTF_MAKE_TZONE_ALLOCATED(DOMPluginArray);
 public:
-    static Ref<DOMPluginArray> create(Navigator&, Vector<Ref<DOMPlugin>>&& = { }, Vector<Ref<DOMPlugin>>&& = { });
+    static Ref<DOMPluginArray> LEGACY_NODELETE create(Navigator&, Vector<Ref<DOMPlugin>>&& = { }, Vector<Ref<DOMPlugin>>&& = { });
     ~DOMPluginArray();
 
     unsigned LEGACY_NODELETE length() const;

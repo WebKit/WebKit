@@ -33,7 +33,7 @@ namespace WebCore {
 
 class MockApplePaySetupFeature final : public ApplePaySetupFeature {
 public:
-    static Ref<MockApplePaySetupFeature> create(ApplePaySetupFeatureState, ApplePaySetupFeatureType, bool supportsInstallments);
+    static Ref<MockApplePaySetupFeature> LEGACY_NODELETE create(ApplePaySetupFeatureState, ApplePaySetupFeatureType, bool supportsInstallments);
     
     ApplePaySetupFeatureState state() const final { return m_state; }
     ApplePaySetupFeatureType type() const final { return m_type; }

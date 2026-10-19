@@ -35,8 +35,8 @@ class Storage;
 class StorageEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(StorageEvent);
 public:
-    static Ref<StorageEvent> create(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
-    static Ref<StorageEvent> createForBindings();
+    static Ref<StorageEvent> LEGACY_NODELETE create(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
+    static Ref<StorageEvent> LEGACY_NODELETE createForBindings();
 
     struct Init : EventInit {
         String key;
@@ -46,7 +46,7 @@ public:
         RefPtr<Storage> storageArea;
     };
 
-    static Ref<StorageEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<StorageEvent> LEGACY_NODELETE create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     virtual ~StorageEvent();
 
     const String& key() const LIFETIME_BOUND { return m_key; }

@@ -327,7 +327,7 @@ public:
     ExceptionOr<bool> isTimerThrottled(int timeoutId);
     ExceptionOr<bool> isTimerAligned(int timeoutId);
     String requestAnimationFrameThrottlingReasons() const;
-    double requestAnimationFrameInterval() const;
+    double LEGACY_NODELETE requestAnimationFrameInterval() const;
     bool scriptedAnimationsAreSuspended() const;
     bool LEGACY_NODELETE areTimersThrottled() const;
     double domTimerAlignmentInterval() const;
@@ -466,7 +466,7 @@ public:
 
     ExceptionOr<String> autofillFieldName(Element&);
 
-    void allowAutofillForCurrentWorld(JSC::JSGlobalObject&);
+    void LEGACY_NODELETE allowAutofillForCurrentWorld(JSC::JSGlobalObject&);
 
     ExceptionOr<void> invalidateControlTints();
 
@@ -561,7 +561,7 @@ public:
     ExceptionOr<RefPtr<Range>> rangeOfString(const String&, RefPtr<Range>&&, const Vector<String>& findOptions);
     ExceptionOr<unsigned> countMatchesForText(const String&, const Vector<String>& findOptions, const String& markMatches);
     ExceptionOr<unsigned> countFindMatches(const String&, const Vector<String>& findOptions);
-    void setCachedFindMatchBufferLimitForTesting(unsigned maximumRunCount);
+    void LEGACY_NODELETE setCachedFindMatchBufferLimitForTesting(unsigned maximumRunCount);
 #if ENABLE(VIDEO)
     ExceptionOr<Vector<double>> findCueMatches(const String&, const Vector<String>& findOptions);
     void clearFindCaptionTracks();
@@ -630,7 +630,7 @@ public:
     ExceptionOr<String> synchronousScrollingReasons() const;
     ExceptionOr<Ref<DOMRectList>> nonFastScrollableRects() const;
 
-    double minimumShrinkToFitWidthWhenPreferringHorizontalScrolling() const;
+    double LEGACY_NODELETE minimumShrinkToFitWidthWhenPreferringHorizontalScrolling() const;
 
     ExceptionOr<void> setElementUsesDisplayListDrawing(Element&, bool usesDisplayListDrawing);
     ExceptionOr<void> setElementTracksDisplayListReplay(Element&, bool isTrackingReplay);
@@ -643,7 +643,7 @@ public:
     ExceptionOr<String> displayListForElement(Element&, unsigned short flags);
     ExceptionOr<String> replayDisplayListForElement(Element&, unsigned short flags);
 
-    void setForceUseGlyphDisplayListForTesting(bool enabled);
+    void LEGACY_NODELETE setForceUseGlyphDisplayListForTesting(bool enabled);
     ExceptionOr<String> cachedGlyphDisplayListsForTextNode(Node&, unsigned short flags);
     void clearGlyphDisplayListCacheForTesting();
 
@@ -762,7 +762,7 @@ public:
     void registerDefaultPortForProtocol(unsigned short port, const String& protocol);
 
     Ref<MallocStatistics> mallocStatistics() const;
-    Ref<TypeConversions> typeConversions() const;
+    Ref<TypeConversions> LEGACY_NODELETE typeConversions() const;
     Ref<MemoryInfo> memoryInfo() const;
 
     Vector<String> getReferencedFilePaths() const;
@@ -777,7 +777,7 @@ public:
     ExceptionOr<unsigned> styleRecalcCount();
     unsigned lastStyleUpdateSize() const;
     unsigned styleInvalidationTraversalCount() const;
-    void resetStyleInvalidationTraversalCount();
+    void LEGACY_NODELETE resetStyleInvalidationTraversalCount();
 
     ExceptionOr<void> startTrackingLayoutUpdates();
     ExceptionOr<unsigned> layoutUpdateCount();
@@ -789,7 +789,7 @@ public:
         unsigned laidOutLineCount { 0 };
         unsigned reusedLineCount { 0 };
     };
-    void setInlineLayoutInfoCollectionEnabled(bool);
+    void LEGACY_NODELETE setInlineLayoutInfoCollectionEnabled(bool);
     ExceptionOr<InlineLayoutInfo> lastInlineLayoutInfo(Element&);
 
     ExceptionOr<void> startTrackingRenderLayerPositionUpdates();
@@ -829,13 +829,13 @@ public:
     String toolTipFromElement(Element&) const;
 
     void forceAXObjectCacheUpdate() const;
-    void setAccessibilityAnnouncementTranslationTimeout(double seconds);
-    void setAccessibilityFormErrorSettleDelay(double seconds);
+    void LEGACY_NODELETE setAccessibilityAnnouncementTranslationTimeout(double seconds);
+    void LEGACY_NODELETE setAccessibilityFormErrorSettleDelay(double seconds);
     bool isWatchingForAccessibilityFormErrors() const;
     unsigned liveRegionSnapshotBuildCount() const;
     void resetLiveRegionSnapshotBuildCount() const;
-    void setShouldMockParentSearchResultsForTesting(bool);
-    void setShouldMockChildFrameSearchResultsForTesting(bool);
+    void LEGACY_NODELETE setShouldMockParentSearchResultsForTesting(bool);
+    void LEGACY_NODELETE setShouldMockChildFrameSearchResultsForTesting(bool);
     void forceReload(bool endToEnd);
     void reloadExpiredOnly();
 
@@ -900,7 +900,7 @@ public:
     void LEGACY_NODELETE simulateAudioInterruption(HTMLMediaElement&);
     ExceptionOr<bool> mediaElementHasCharacteristic(HTMLMediaElement&, const String&);
     void enterViewerMode(HTMLVideoElement&);
-    void setVideoInExternalPlayback(HTMLVideoElement&, bool);
+    void LEGACY_NODELETE setVideoInExternalPlayback(HTMLVideoElement&, bool);
     ExceptionOr<bool> mediaPlayerRenderingCanBeAccelerated(HTMLMediaElement&);
 
     bool LEGACY_NODELETE elementShouldBufferData(HTMLMediaElement&);
@@ -919,7 +919,7 @@ public:
 
     double effectiveDynamicRangeLimitValue(const HTMLMediaElement&);
 #if ENABLE(FULLSCREEN_API)
-    bool isChildOfElementFullscreen(const HTMLMediaElement&) const;
+    bool LEGACY_NODELETE isChildOfElementFullscreen(const HTMLMediaElement&) const;
 #endif
 #endif
     ExceptionOr<double> getContextEffectiveDynamicRangeLimitValue(const HTMLCanvasElement&);
@@ -929,7 +929,7 @@ public:
     ExceptionOr<void> setIsPlayingToBluetoothOverride(std::optional<bool>);
 
     bool isSelectPopupVisible(HTMLSelectElement&);
-    RefPtr<DOMPointReadOnly> lastSelectPopupLocation(const HTMLSelectElement&);
+    RefPtr<DOMPointReadOnly> LEGACY_NODELETE lastSelectPopupLocation(const HTMLSelectElement&);
 
     ExceptionOr<String> captionsStyleSheetOverride();
     ExceptionOr<void> setCaptionsStyleSheetOverride(const String&);
@@ -939,7 +939,7 @@ public:
     String captionDisplayMode() const;
 #if ENABLE(VIDEO)
     RefPtr<TextTrackCueGeneric> createGenericCue(double startTime, double endTime, String text);
-    ExceptionOr<String> textTrackBCP47Language(TextTrack&);
+    ExceptionOr<String> LEGACY_NODELETE textTrackBCP47Language(TextTrack&);
     Ref<TimeRanges> createTimeRanges(Float32Array& startTimes, Float32Array& endTimes);
     double closestTimeToTimeRanges(double time, TimeRanges&);
 
@@ -1046,7 +1046,7 @@ public:
 
     ExceptionOr<String> scrollSnapOffsets(Element&);
     ExceptionOr<bool> isScrollSnapInProgress(Element&);
-    void setPlatformMomentumScrollingPredictionEnabled(bool);
+    void LEGACY_NODELETE setPlatformMomentumScrollingPredictionEnabled(bool);
 
     ExceptionOr<String> pathStringWithShrinkWrappedRects(const Vector<double>& rectComponents, double radius);
 
@@ -1091,7 +1091,7 @@ public:
 
     bool LEGACY_NODELETE hasHistoryActionActivation();
 
-    bool consumeHistoryActionUserActivation();
+    bool LEGACY_NODELETE consumeHistoryActionUserActivation();
 
     enum class UserInterfaceLayoutDirection : uint8_t { LTR, RTL };
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection);
@@ -1372,7 +1372,7 @@ public:
     };
     MediaSessionState mediaSessionState(HTMLMediaElement&);
 
-    size_t mediaElementCount() const;
+    size_t LEGACY_NODELETE mediaElementCount() const;
 
     void setMediaElementVolumeLocked(HTMLMediaElement&, bool);
     String mediaElementViewportVisibility(HTMLMediaElement&);

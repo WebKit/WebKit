@@ -45,8 +45,8 @@ PAL_EXPORT std::unique_ptr<TextCodec> newTextCodec(const TextEncoding&);
 ASCIILiteral atomCanonicalTextEncodingName(ASCIILiteral alias);
 ASCIILiteral atomCanonicalTextEncodingName(StringView);
 bool LEGACY_NODELETE noExtendedTextEncodingNameUsed();
-bool isJapaneseEncoding(ASCIILiteral canonicalEncodingName);
-bool shouldShowBackslashAsCurrencySymbolIn(ASCIILiteral canonicalEncodingName);
+bool LEGACY_NODELETE isJapaneseEncoding(ASCIILiteral canonicalEncodingName);
+bool LEGACY_NODELETE shouldShowBackslashAsCurrencySymbolIn(ASCIILiteral canonicalEncodingName);
 
 PAL_EXPORT String defaultTextEncodingNameForSystemLanguage();
 
