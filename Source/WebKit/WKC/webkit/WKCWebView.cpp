@@ -141,47 +141,113 @@
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
-// ResourceHandleManager (and ResourceHandleManagerWKC.h) was removed from
-// WebCore during the 2026 modernization. The WKC SSL / cookie / HTTP-cache
-// management entry points in this file were built on it. Until they are
-// re-wired onto the modern curl (CurlContext / NetworkStorageSession) stack,
-// this no-op compatibility shim keeps them compiling: sharedInstance() is
-// always null, so every guarded call is skipped and returns its safe fallback.
-// TODO(WKC): reimplement these on the modern curl networking API.
+// Legacy WKC entry points are retained as an adapter over the modern CURL
+// networking context. Do not report successful initialization while returning
+// a null manager: WKC cookie/SSL callers rely on this singleton being usable.
+#include "CurlContext.h"
+#include <curl/curl.h>
 namespace WebCore {
 class ResourceHandleManager {
 public:
-    static ResourceHandleManager* sharedInstance() { return nullptr; }
-    static bool isExistSharedInstance() { return false; }
-    static bool createSharedInstance() { return true; }
+    static ResourceHandleManager* sharedInstance() { return &singleton(); }
+    static bool isExistSharedInstance() { return true; }
+    static bool createSharedInstance() { (void)CurlContext::singleton(); return true; }
     static void deleteSharedInstance() { }
     static void forceTerminateInstance() { }
 
-    void clearCookies() { }
-    int  CookieSerializeNum() { return 0; }
-    int  CookieSerialize(char*, int) { return 0; }
-    void CookieDeserialize(const char*, bool) { }
+    void clearCookies()
+    {
+        withCookieHandle([](CURL* handle) { curl_easy_setopt(handle, CURLOPT_COOKIELIST, "ALL"); });
+    }
+    int CookieSerializeNum()
+    {
+        auto* list = cookieList();
+        int count = 0;
+        for (auto* item = list; item; item = item->next) ++count;
+        curl_slist_free_all(list);
+        return count;
+    }
+    int CookieSerialize(char* buffer, int capacity)
+    {
+        if (!buffer || capacity <= 0) return 0;
+        buffer[0] = '\\0';
+        auto* list = cookieList();
+        int written = 0;
+        for (auto* item = list; item; item = item->next) {
+            int length = static_cast<int>(::strlen(item->data)) + 1;
+            if (written + length > capacity) break;
+            ::memcpy(buffer + written, item->data, length - 1);
+            buffer[written + length - 1] = '\\n';
+            written += length;
+        }
+        curl_slist_free_all(list);
+        return written;
+    }
+    void CookieDeserialize(const char* data, bool)
+    {
+        if (!data) return;
+        withCookieHandle([&](CURL* handle) {
+            const char* line = data;
+            while (*line) {
+                const char* newline = ::strchr(line, '\\n');
+                size_t length = newline ? static_cast<size_t>(newline - line) : ::strlen(line);
+                if (length) {
+                    std::string command(line, length);
+                    curl_easy_setopt(handle, CURLOPT_COOKIELIST, command.c_str());
+                }
+                if (!newline) break;
+                line = newline + 1;
+            }
+        });
+    }
     void clearHTTPCache() { }
     void permitRequest(void*, bool) { }
     void setAllowServerHost(const char*) { }
 
+    // Custom WKC certificate-management APIs have no equivalent public
+    // registration API in CurlContext. Fail explicitly rather than pretending
+    // that certificates were installed or accepted.
     void* SSLRegisterRootCA(const char*, int) { return nullptr; }
     void* SSLRegisterRootCAByDER(const char*, int) { return nullptr; }
-    int   SSLUnregisterRootCA(void*) { return -1; }
-    void  SSLRootCADeleteAll() { }
+    int SSLUnregisterRootCA(void*) { return -1; }
+    void SSLRootCADeleteAll() { }
     void* SSLRegisterCRL(const char*, int) { return nullptr; }
-    int   SSLUnregisterCRL(void*) { return -1; }
-    void  SSLCRLDeleteAll() { }
+    int SSLUnregisterCRL(void*) { return -1; }
+    void SSLCRLDeleteAll() { }
     void* SSLRegisterClientCert(const unsigned char*, int, const unsigned char*, int) { return nullptr; }
     void* SSLRegisterClientCertByDER(const unsigned char*, int, const unsigned char*, int) { return nullptr; }
-    int   SSLUnregisterClientCert(void*) { return -1; }
-    void  SSLClientCertDeleteAll() { }
-    bool  SSLRegisterBlackCert(const char*, const char*) { return false; }
-    void  SSLBlackCertDeleteAll() { }
-    bool  SSLRegisterEVSSLOID(const char*, const char*, const char*, const char*) { return false; }
-    void  SSLEVSSLOIDDeleteAll() { }
-    const char** getServerCertChain(const char*, int&) { return nullptr; }
-    void  freeServerCertChain(const char**, int) { }
+    int SSLUnregisterClientCert(void*) { return -1; }
+    void SSLClientCertDeleteAll() { }
+    bool SSLRegisterBlackCert(const char*, const char*) { return false; }
+    void SSLBlackCertDeleteAll() { }
+    bool SSLRegisterEVSSLOID(const char*, const char*, const char*, const char*) { return false; }
+    void SSLEVSSLOIDDeleteAll() { }
+    const char** getServerCertChain(const char*, int& count) { count = 0; return nullptr; }
+    void freeServerCertChain(const char**, int) { }
+
+private:
+    static ResourceHandleManager& singleton()
+    {
+        static ResourceHandleManager manager;
+        return manager;
+    }
+    template<typename Function> static void withCookieHandle(Function&& function)
+    {
+        CURL* handle = curl_easy_init();
+        if (!handle) return;
+        curl_easy_setopt(handle, CURLOPT_SHARE, CurlContext::singleton().shareHandle().handle());
+        curl_easy_setopt(handle, CURLOPT_COOKIEFILE, "");
+        function(handle);
+        curl_easy_cleanup(handle);
+    }
+    static curl_slist* cookieList()
+    {
+        curl_slist* list = nullptr;
+        withCookieHandle([&](CURL* handle) {
+            curl_easy_getinfo(handle, CURLINFO_COOKIELIST, &list);
+        });
+        return list;
+    }
 };
 }
 #include "Settings.h"
