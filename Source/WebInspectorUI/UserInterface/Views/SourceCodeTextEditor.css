@@ -27,6 +27,14 @@
     color: var(--text-color-active);
     overflow: initial;
     z-index: 3; /* overlap line content */
+    display: flex;
+    justify-content: end;
+    container-type: inline-size;
+}
+
+.source-code.text-editor .CodeMirror-linewidget:has(.line-indicator-widget.inline) {
+    position: absolute;
+    top: 0;
 }
 
 .source-code.text-editor > .CodeMirror .warning {
@@ -42,29 +50,27 @@
 }
 
 .source-code.text-editor > .CodeMirror .line-indicator-widget {
-    float: right;
-    padding: 0 5px 1px 5px;
-    border-bottom-left-radius: 5px;
+    padding: 0 5px 0px 5px;
     cursor: default;
+    min-height: 13px;
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+
 }
 
 .source-code.text-editor > .CodeMirror .line-indicator-widget.inline {
-    position: relative;
-    top: -13px;
-    height: 13px;
     padding: 0 5px 0 8px;
-    border-bottom-left-radius: 0;
     clip-path: polygon(0% 50%, 8px 100%, 100% 100%, 100% 0, 8px 0);
 }
 
 .source-code.text-editor > .CodeMirror .line-indicator-widget > .icon {
+    flex: none;
     height: 9px;
     width: 9px;
-    padding-right: 12px;
 
     background-size: 9px 9px;
     background-repeat: no-repeat;
-    background-position-y: 1px;
 }
 
 .source-code.text-editor > .CodeMirror .line-indicator-widget > .text {
@@ -72,11 +78,10 @@
 }
 
 .source-code.text-editor > .CodeMirror .line-indicator-widget.inline > .text {
-    display: inline-block;
-    max-width: 300px;
-    vertical-align: baseline;
+    max-width: min(300px, 30cqi); /* Keep part of the overlapped line content always visible */
     text-overflow: ellipsis;
     white-space: nowrap;
+    overflow: hidden;
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget > .icon.icon-warning {
