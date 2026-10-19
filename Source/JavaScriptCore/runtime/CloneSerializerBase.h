@@ -582,11 +582,12 @@ protected:
             write(WasmMemoryTag);
             write(static_cast<Derived*>(this)->agentClusterID());
             write(index);
-            // The address type is not recoverable from the shared contents, and a memory declared with a
-            // maximum of zero has no contents at all. Embedders that persist serialized values
-            // reject shared memory in allowsSharedMemorySerialization(), so this record only ever
-            // travels between live agents and needs no version guard.
+            // Neither the address type nor the page size is recoverable from the shared contents, and
+            // a memory declared with a maximum of zero has no contents at all. Embedders that persist
+            // serialized values reject shared memory in allowsSharedMemorySerialization(), so this
+            // record only ever travels between live agents and needs no version guard.
             write(memory->memory().addressType().is64Bit());
+            write(memory->memory().log2PageSize());
             return true;
         }
 #endif

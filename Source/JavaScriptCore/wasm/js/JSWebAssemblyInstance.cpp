@@ -406,7 +406,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
             // We create a memory when it's a memory definition.
             auto* jsMemory = JSWebAssemblyMemory::create(vm, globalObject->webAssemblyMemoryStructure());
 
-            RefPtr<Memory> memory = Memory::tryCreate(vm, mem.initial(), mem.maximum(), mem.isShared() ? MemorySharingMode::Shared : MemorySharingMode::Default, mem.addressType(), std::nullopt,
+            RefPtr<Memory> memory = Memory::tryCreate(vm, mem.initial(), mem.maximum(), mem.isShared() ? MemorySharingMode::Shared : MemorySharingMode::Default, mem.addressType(), mem.log2PageSize(), std::nullopt,
                 [&vm, jsMemory](Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) {
                     jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount);
                 }

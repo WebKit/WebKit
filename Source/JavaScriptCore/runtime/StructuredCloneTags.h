@@ -98,7 +98,7 @@ namespace Wasm { class Module; }
  *    | RTCCertificateTag
  *    | ImageBitmapTag <imageBitmapSerializationFlags:uint8_t> <logicalWidth:int32_t> <logicalHeight:int32_t> <resolutionScale:double> ColorSpace <byteLength:uint32_t>(<imageByteData:uint8_t>)
  *    | OffscreenCanvasTransferTag <value:uint32_t>
- *    | WasmMemoryTag <value:uint32_t>
+ *    | WasmMemoryTag <agentClusterID:String> <value:uint32_t> <isMemory64:bool> <log2PageSize:uint8_t>
  *    | RTCDataChannelTransferTag <identifier:uint32_t>
  *    | DOMExceptionTag <message:String> <name:String>
  *    | QuotaExceededErrorTag <message:String> <name:String> <quota:double> <requested:double>

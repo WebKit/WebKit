@@ -724,6 +724,13 @@ protected:
             }
             Wasm::AddressType addressType { isMemory64 };
 
+            uint8_t log2PageSize;
+            if (!read(log2PageSize)) [[unlikely]] {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+
             auto& vm = m_lexicalGlobalObject->vm();
             JSWebAssemblyMemory* result = JSWebAssemblyMemory::create(vm, m_globalObject->webAssemblyMemoryStructure());
             RefPtr<Wasm::Memory> memory;
@@ -734,10 +741,10 @@ protected:
                     fail();
                     return JSValue();
                 }
-                memory = Wasm::Memory::create(contents.releaseNonNull(), addressType, WTF::move(handler));
+                memory = Wasm::Memory::create(contents.releaseNonNull(), addressType, log2PageSize, WTF::move(handler));
             } else {
                 // zero size & max-size.
-                memory = Wasm::Memory::createZeroSized(MemorySharingMode::Shared, addressType, WTF::move(handler));
+                memory = Wasm::Memory::createZeroSized(MemorySharingMode::Shared, addressType, log2PageSize, WTF::move(handler));
             }
 
             result->adopt(memory.releaseNonNull());
