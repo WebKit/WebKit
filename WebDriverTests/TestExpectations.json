@@ -3213,16 +3213,16 @@
                 "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/287929"}}
             },
             "test_subscribe": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288338"}}
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/288338"}}
             },
             "test_timestamp": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288338"}}
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/288338"}}
             },
             "test_navigation_id": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288338"}}
             },
             "test_url_with_base_tag": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288338"}}
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/288338"}}
             },
             "test_document_location[-#foo]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288338"}}
@@ -3234,13 +3234,16 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288338"}}
             },
             "test_browsing_context_navigate[-#foo]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288338"}}
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/288338"}}
             },
             "test_browsing_context_navigate[#foo-#bar]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288338"}}
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/288338"}}
             },
             "test_browsing_context_navigate[#foo-#foo]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288338"}}
+            },
+            "test_iframe": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/288339"}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288339"}}
@@ -3307,6 +3310,9 @@
             },
             "test_top_level_context[window]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/283784"}}
+            },
+            "test_child_context": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/283784"}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/283784"}}
@@ -3412,35 +3418,44 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/locate_nodes/start_nodes.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/about_blank.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
-    },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/data_url.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
-    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/error.py": {
         "subtests": {
-            "test_close_context[tab]": {
+            "test_with_csp_meta_tag": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288330"}}
             },
-            "test_close_context[window]": {
+            "test_with_content_blocking_header_in_top_context[Content-Security-Policy, default-src 'self']": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288330"}}
+            },
+            "test_with_x_frame_options_header[SAMEORIGIN]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
+            },
+            "test_with_x_frame_options_header[DENY]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
+            },
+            "test_with_new_navigation": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
+            },
+            "test_beforeunload_rejected": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
             }
-        },
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/frame.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
-    },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/hash.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
-    },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/image.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
+        "subtests": {
+            "test_origin[cross_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/233391"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/navigate.py": {
         "subtests": {
             "test_payload": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_interactive_simultaneous_navigation": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_same_document_navigation_in_before_unload": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
             "test_interrupted_navigation[none-Interrupted immediately]": {
@@ -3490,8 +3505,7 @@
             "test_slow_script_blocks_domContentLoaded[none-False]": {
                 "expected": { "all": { "status": ["PASS"]}}
             }
-        },
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigation_committed/navigation_committed.py": {
         "subtests": {
