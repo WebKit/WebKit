@@ -52,10 +52,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 #endif
 
     if (m_processPool->sandboxEnabled()) {
-        // Prewarmed processes don't have a WebsiteDataStore yet, so use the primary WebsiteDataStore from the WebProcessPool.
-        // The process won't be used if current WebsiteDataStore is different than the WebProcessPool primary one.
-        RefPtr dataStore = isPrewarmed() ? &WebsiteDataStore::defaultDataStore() : websiteDataStore();
-
+        RefPtr dataStore = websiteDataStore();
         ASSERT(dataStore);
         launchOptions.extraInitializationData.set("mediaKeysDirectory"_s, dataStore->resolvedDirectories().mediaKeysStorageDirectory);
 

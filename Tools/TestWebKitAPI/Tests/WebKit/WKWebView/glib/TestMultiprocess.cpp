@@ -251,20 +251,49 @@ static void setUpSandboxedWebViewTest(WebViewTest* fixture, gconstpointer)
     webkitWebContextSetSandboxEnabledForTesting(fixture->m_webContext.get(), true);
 }
 
-static void testSandboxRejectedPrewarmedProcess(WebViewTest* test, gconstpointer)
+static void testSandboxedPrewarmedProcess(WebViewTest* test, gconstpointer)
 {
-    webkitWebContextPrewarmProcessForTesting(test->m_webContext.get());
-    g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(test->m_webContext.get()), ==, 1);
+    auto* context = test->m_webContext.get();
+
+#if ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitNetworkSession> ephemeralSession = adoptGRef(webkit_network_session_new_ephemeral());
+#endif
+    auto ephemeralView = test->createWebView(
+#if ENABLE(2022_GLIB_API)
+        "network-session", ephemeralSession.get(),
+#else
+        "is-ephemeral", TRUE,
+#endif
+        nullptr);
+
+    // A prewarmed process is not used by a page with another WebsiteDataStore.
+    webkitWebContextPrewarmProcessForTesting(context, test->webView());
+    g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(context), ==, 1);
+    test->loadHtml("<html></html>", "https://ephemeral.example/", ephemeralView.get());
+    test->waitUntilLoadFinished(ephemeralView.get());
+    g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(context), ==, 1);
+
+    // Prewarming for another WebsiteDataStore replaces the prewarmed process.
+    webkitWebContextPrewarmProcessForTesting(context, ephemeralView.get());
+    g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(context), ==, 1);
+    auto webView = test->createWebView();
+    test->loadHtml("<html></html>", "https://site.example/", webView.get());
+    test->waitUntilLoadFinished(webView.get());
+    g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(context), ==, 1);
+
+    // A prewarmed process doesn't keep an ephemeral WebsiteDataStore alive after its last page.
+    ephemeralView = nullptr;
+    g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(context), ==, 0);
+
     Vector<GRefPtr<WebKitWebView>> views;
     for (unsigned i = 0; i < 3; ++i) {
+        webkitWebContextPrewarmProcessForTesting(context, test->webView());
+        g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(context), ==, 1);
         views.append(test->createWebView());
         GUniquePtr<char> uri(g_strdup_printf("https://site-%u.example/", i));
         test->loadHtml("<html></html>", uri.get(), views.last().get());
         test->waitUntilLoadFinished(views.last().get());
-        // Count all live prewarmed processes, including any lost from the pool's prewarmed set.
-        g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(test->m_webContext.get()), ==, 1);
-        webkitWebContextPrewarmProcessForTesting(test->m_webContext.get());
-        g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(test->m_webContext.get()), ==, 1);
+        g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(context), ==, 0);
     }
 }
 
@@ -273,7 +302,7 @@ void beforeAll()
     Test::shouldInitializeWebProcessExtensions = true;
 
     MultiprocessTest::add("WebKitWebContext", "process-per-web-view", testProcessPerWebView);
-    g_test_add("/webkit/WebKitWebContext/sandbox-rejected-prewarmed-process", WebViewTest, nullptr, setUpSandboxedWebViewTest, testSandboxRejectedPrewarmedProcess, WebViewTest::tearDown);
+    g_test_add("/webkit/WebKitWebContext/sandboxed-prewarmed-process", WebViewTest, nullptr, setUpSandboxedWebViewTest, testSandboxedPrewarmedProcess, WebViewTest::tearDown);
     UIClientMultiprocessTest::add("WebKitWebView", "multiprocess-create-ready-close", testMultiprocessWebViewCreateReadyClose);
 }
 

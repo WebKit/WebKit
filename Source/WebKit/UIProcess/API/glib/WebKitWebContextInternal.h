@@ -30,7 +30,8 @@
 // Private API required by the unit tests.
 
 typedef struct _WebKitWebContext WebKitWebContext;
+typedef struct _WebKitWebView WebKitWebView;
 
 WK_EXPORT void webkitWebContextSetSandboxEnabledForTesting(WebKitWebContext*, bool);
-WK_EXPORT void webkitWebContextPrewarmProcessForTesting(WebKitWebContext*);
+WK_EXPORT void webkitWebContextPrewarmProcessForTesting(WebKitWebContext*, WebKitWebView*);
 WK_EXPORT unsigned webkitWebContextGetPrewarmedProcessCountForTesting(WebKitWebContext*);
