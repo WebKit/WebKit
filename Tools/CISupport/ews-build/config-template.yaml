@@ -54,6 +54,13 @@ templates:
       device: Mac16,11
       xcode: Xcode 26.2-17C52
       fleet: air-cloud
+  mac-tahoe-aws:
+    worker:
+      platform: '*'
+      os: macOS Tahoe 26.6-25G72
+      device: Mac16,11
+      xcode: Xcode 26.5-17F42
+      fleet: aws
   playstation:
     worker:
       platform: playstation
@@ -327,6 +334,7 @@ workers:
       - {name: ews2009, template: tahoe-m4pro}
       - {name: ews2010, template: tahoe-m4pro}
       - {template: mac-sequoia-aircloud, prefix: ews, first: 2011, count: 5}
+      - {template: mac-tahoe-aws, prefix: ews, first: 3000, count: 30}
     each(w):
       $if: "'template' in w"
       then:
@@ -398,7 +406,7 @@ builders:
     platform: ios-26
     configuration: release
     architectures: [arm64]
-    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: iOS-26-Simulator-Build-EWS
     shortname: ios-sim
     icon: buildOnly
@@ -407,10 +415,7 @@ builders:
     configuration: release
     architectures: [arm64]
     triggers: [api-tests-ios-sim-ews, ios-26-sim-wk2-tests-ews, ios-26-sim-wpt-wk2-tests-ews]
-    workernames:
-      $flatten:
-        - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
-        - {$map: {$eval: "range(0, 1)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: iOS-26-Simulator-WK2-Tests-EWS
     shortname: ios-wk2
     icon: testOnly
@@ -428,7 +433,7 @@ builders:
     configuration: release
     triggered_by: [ios-26-sim-build-ews]
     additionalArguments: [--child-processes=4, imported/w3c/web-platform-tests]
-    workernames: {$map: {$eval: "range(0, 13)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+    workernames: {$map: {$eval: "range(0, 16)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
   - name: macOS-Tahoe-Debug-Build-EWS
     shortname: mac-AS-debug
     icon: buildOnly
@@ -438,7 +443,7 @@ builders:
     architectures: [arm64]
     additionalArguments: [--cmake]
     triggers: [macos-tahoe-debug-api-tests-ews, macos-tahoe-debug-wk2-tests-ews]
-    workernames: {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
   - name: macOS-Tahoe-Debug-API-Tests-EWS
     shortname: api-mac-debug
     icon: testOnly
@@ -446,7 +451,10 @@ builders:
     platform: mac-tahoe
     configuration: debug
     triggered_by: [macos-tahoe-debug-build-ews]
-    workernames: {$map: {$eval: "range(0, 7)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4pro'\").name"}}
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+        - {$map: {$eval: "range(0, 9)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
   - name: macOS-Tahoe-Debug-WK2-Tests-EWS
     shortname: mac-AS-debug-wk2
     icon: testOnly
@@ -455,7 +463,7 @@ builders:
     configuration: debug
     triggered_by: [macos-tahoe-debug-build-ews]
     additionalArguments: ['-2', '-1']
-    workernames: {$map: {$eval: "range(0, 11)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4pro'\").name"}}
+    workernames: {$map: {$eval: "range(0, 16)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4pro'\").name"}}
   - name: macOS-Sequoia-Release-Build-EWS
     shortname: mac
     icon: buildOnly
@@ -466,7 +474,7 @@ builders:
     deployment_target: '15.4'
     rebuild_without_change_on_builder: true
     triggers: [api-tests-mac-ews, macos-sequoia-release-wk2-tests-ews, macos-sequoia-release-wk2-intel-tests-ews, macos-release-wk2-stress-tests-ews, macos-sequoia-release-site-isolation-tests-ews, jsc-tests-x86-64-ews]
-    workernames: {$map: {$eval: "range(0, 9)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+    workernames: {$map: {$eval: "range(0, 6)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
   - name: macOS-Sequoia-Release-WK2-Tests-EWS
     shortname: mac-wk2
     icon: testOnly
@@ -511,7 +519,7 @@ builders:
     architectures: [arm64]
     workernames:
       $flatten:
-        - {$map: {$eval: "range(0, 9)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4pro'\").name"}}
+        - {$map: {$eval: "range(0, 10)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4pro'\").name"}}
         - {$map: {$eval: "range(0, 1)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1ultra'\").name"}}
   - name: Apple-iOS-26-Safer-CPP-Checks-EWS
     shortname: ios-safer-cpp
@@ -522,7 +530,7 @@ builders:
     architectures: [arm64]
     workernames:
       $flatten:
-        - {$map: {$eval: "range(0, 9)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4pro'\").name"}}
+        - {$map: {$eval: "range(0, 10)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4pro'\").name"}}
         - {$map: {$eval: "range(0, 1)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4'\").name"}}
   - name: watchOS-26-Build-EWS
     shortname: watch
@@ -531,7 +539,7 @@ builders:
     platform: watchos-26
     configuration: release
     architectures: [arm64_32, arm64]
-    workernames: {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
   - name: watchOS-26-Simulator-Build-EWS
     shortname: watch-sim
     icon: buildOnly
@@ -539,7 +547,7 @@ builders:
     platform: watchos-simulator-26
     configuration: release
     architectures: [arm64]
-    workernames: {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: tvOS-26-Build-EWS
     shortname: tv
     icon: buildOnly
@@ -547,7 +555,7 @@ builders:
     platform: tvos-26
     configuration: release
     architectures: [arm64]
-    workernames: {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: tvOS-26-Simulator-Build-EWS
     shortname: tv-sim
     icon: buildOnly
@@ -555,7 +563,7 @@ builders:
     platform: tvos-simulator-26
     configuration: release
     architectures: [arm64]
-    workernames: {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: visionOS-26-Build-EWS
     shortname: vision
     icon: buildOnly
@@ -563,7 +571,7 @@ builders:
     platform: visionos-26
     configuration: release
     architectures: [arm64]
-    workernames: {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: visionOS-26-Simulator-Build-EWS
     shortname: vision-sim
     icon: buildOnly
@@ -572,7 +580,7 @@ builders:
     configuration: release
     architectures: [arm64]
     triggers: [visionos-26-sim-wk2-tests-ews]
-    workernames: {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
   - name: visionOS-26-Simulator-WK2-Tests-EWS
     shortname: vision-wk2
     icon: testOnly
@@ -668,7 +676,7 @@ builders:
     additionalArguments: [--child-processes=3]
     workernames:
       $flatten:
-        - {$map: {$eval: "range(0, 7)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+        - {$map: {$eval: "range(0, 9)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
         - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2'\").name"}}
   - name: API-Tests-macOS-EWS
     shortname: api-mac
