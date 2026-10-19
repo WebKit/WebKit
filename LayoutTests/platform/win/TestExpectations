@@ -398,6 +398,7 @@ fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Skip ]
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
 
 # OffscreenCanvas isn't supported yet
+fast/canvas/canvas-font-attributes-state.html [ Skip ]
 fast/canvas/offscreen-backing-store-attached.html [ Skip ]
 fast/canvas/offscreen-border.html [ Skip ]
 fast/canvas/offscreen-clipped.html [ Skip ]

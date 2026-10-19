@@ -3148,6 +3148,10 @@
 		7C029C6E2493C8F800268204 /* ColorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C029C6D2493C8F800268204 /* ColorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C1843FE1C8B7283002EB973 /* Autofill.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1843FC1C8B7283002EB973 /* Autofill.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C193BBB1F5E0EED0088F3E6 /* CanvasDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BB61F5E0EB90088F3E6 /* CanvasDirection.h */; };
+		D061774C89C5509EFA5B2A22 /* CanvasFontKerning.h in Headers */ = {isa = PBXBuildFile; fileRef = DDB90DADDA2249B19D82B153 /* CanvasFontKerning.h */; };
+		630E2023AFD064AB5B787F34 /* CanvasFontStretch.h in Headers */ = {isa = PBXBuildFile; fileRef = B9ABF56D392F1BED6651117A /* CanvasFontStretch.h */; };
+		4F5366A83B06429949C77464 /* CanvasFontVariantCaps.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E54DA0A35B9138E53D1E891 /* CanvasFontVariantCaps.h */; };
+		6D03CF98E7995B0B551DCCB5 /* CanvasTextRendering.h in Headers */ = {isa = PBXBuildFile; fileRef = 1122BD67258C35412D4C6D79 /* CanvasTextRendering.h */; };
 		7C193BBC1F5E0EED0088F3E6 /* CanvasFillRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BA11F5E0EAB0088F3E6 /* CanvasFillRule.h */; };
 		7C193BBD1F5E0EED0088F3E6 /* CanvasLineCap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BBA1F5E0EBB0088F3E6 /* CanvasLineCap.h */; };
 		7C193BBE1F5E0EED0088F3E6 /* CanvasLineJoin.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193B9F1F5E0EAA0088F3E6 /* CanvasLineJoin.h */; };
@@ -3156,6 +3160,10 @@
 		7C193BC11F5E0EED0088F3E6 /* ImageSmoothingQuality.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BAF1F5E0EB40088F3E6 /* ImageSmoothingQuality.h */; };
 		7C193BC21F5E0EED0088F3E6 /* Path2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BAB1F5E0EB10088F3E6 /* Path2D.h */; };
 		7C193BF01F5E10990088F3E6 /* JSCanvasDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BDD1F5E0FB60088F3E6 /* JSCanvasDirection.h */; };
+		C913A80AA45A183C6965F5DE /* JSCanvasFontKerning.h in Headers */ = {isa = PBXBuildFile; fileRef = 6CA8AA0B42118459F1E695B6 /* JSCanvasFontKerning.h */; };
+		46039D3F3004F4A53D730987 /* JSCanvasFontStretch.h in Headers */ = {isa = PBXBuildFile; fileRef = 68ED11AF0848EEEE06B6881D /* JSCanvasFontStretch.h */; };
+		203A894D2EE413607E2F1B53 /* JSCanvasFontVariantCaps.h in Headers */ = {isa = PBXBuildFile; fileRef = 7727A501BAA5B054D787CC70 /* JSCanvasFontVariantCaps.h */; };
+		44E87E8A0D46F97D1A38E42F /* JSCanvasTextRendering.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD6AC97D1C042D849F9824D /* JSCanvasTextRendering.h */; };
 		7C193BF21F5E10990088F3E6 /* JSCanvasFillRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BDB1F5E0FB40088F3E6 /* JSCanvasFillRule.h */; };
 		7C193BF41F5E10990088F3E6 /* JSCanvasLineCap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BC71F5E0FA70088F3E6 /* JSCanvasLineCap.h */; };
 		7C193BF61F5E10990088F3E6 /* JSCanvasLineJoin.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BDC1F5E0FB50088F3E6 /* JSCanvasLineJoin.h */; };
@@ -14984,6 +14992,10 @@
 		7C193BAA1F5E0EB10088F3E6 /* CanvasCompositing.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasCompositing.idl; sourceTree = "<group>"; };
 		7C193BAB1F5E0EB10088F3E6 /* Path2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Path2D.h; sourceTree = "<group>"; };
 		7C193BAC1F5E0EB20088F3E6 /* CanvasDirection.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasDirection.idl; sourceTree = "<group>"; };
+		D44DF4F13E1A97EC93311640 /* CanvasFontKerning.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasFontKerning.idl; sourceTree = "<group>"; };
+		04C8EDC90D4337701A557C9F /* CanvasFontStretch.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasFontStretch.idl; sourceTree = "<group>"; };
+		7D941BB150AFE9A88DB9E2A4 /* CanvasFontVariantCaps.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasFontVariantCaps.idl; sourceTree = "<group>"; };
+		D9B38DDDE3AFC8883410E7B5 /* CanvasTextRendering.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasTextRendering.idl; sourceTree = "<group>"; };
 		7C193BAD1F5E0EB30088F3E6 /* CanvasShadowStyles.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasShadowStyles.idl; sourceTree = "<group>"; };
 		7C193BAE1F5E0EB40088F3E6 /* CanvasTextAlign.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasTextAlign.idl; sourceTree = "<group>"; };
 		7C193BAF1F5E0EB40088F3E6 /* ImageSmoothingQuality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageSmoothingQuality.h; sourceTree = "<group>"; };
@@ -14994,6 +15006,10 @@
 		7C193BB41F5E0EB70088F3E6 /* Path2D.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Path2D.idl; sourceTree = "<group>"; };
 		7C193BB51F5E0EB80088F3E6 /* CanvasTransform.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasTransform.idl; sourceTree = "<group>"; };
 		7C193BB61F5E0EB90088F3E6 /* CanvasDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasDirection.h; sourceTree = "<group>"; };
+		DDB90DADDA2249B19D82B153 /* CanvasFontKerning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasFontKerning.h; sourceTree = "<group>"; };
+		B9ABF56D392F1BED6651117A /* CanvasFontStretch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasFontStretch.h; sourceTree = "<group>"; };
+		9E54DA0A35B9138E53D1E891 /* CanvasFontVariantCaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasFontVariantCaps.h; sourceTree = "<group>"; };
+		1122BD67258C35412D4C6D79 /* CanvasTextRendering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasTextRendering.h; sourceTree = "<group>"; };
 		7C193BB71F5E0EB90088F3E6 /* CanvasTextBaseline.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasTextBaseline.idl; sourceTree = "<group>"; };
 		7C193BB81F5E0EBA0088F3E6 /* CanvasUserInterface.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasUserInterface.idl; sourceTree = "<group>"; };
 		7C193BB91F5E0EBB0088F3E6 /* CanvasText.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasText.idl; sourceTree = "<group>"; };
@@ -15001,12 +15017,20 @@
 		7C193BC71F5E0FA70088F3E6 /* JSCanvasLineCap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCanvasLineCap.h; sourceTree = "<group>"; };
 		7C193BC81F5E0FA80088F3E6 /* JSCanvasFillRule.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasFillRule.cpp; sourceTree = "<group>"; };
 		7C193BCF1F5E0FAD0088F3E6 /* JSCanvasDirection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasDirection.cpp; sourceTree = "<group>"; };
+		43EF60F91569704EB1617E44 /* JSCanvasFontKerning.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasFontKerning.cpp; sourceTree = "<group>"; };
+		FD9636BFE8A3DBC0A5A2197C /* JSCanvasFontStretch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasFontStretch.cpp; sourceTree = "<group>"; };
+		D2807A1A1B2288B263347E98 /* JSCanvasFontVariantCaps.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasFontVariantCaps.cpp; sourceTree = "<group>"; };
+		71C02B5C2F46B8DE1F74AEBA /* JSCanvasTextRendering.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasTextRendering.cpp; sourceTree = "<group>"; };
 		7C193BD21F5E0FAE0088F3E6 /* JSCanvasTextAlign.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasTextAlign.cpp; sourceTree = "<group>"; };
 		7C193BD31F5E0FAF0088F3E6 /* JSCanvasTextBaseline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasTextBaseline.cpp; sourceTree = "<group>"; };
 		7C193BD41F5E0FB00088F3E6 /* JSCanvasTextBaseline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCanvasTextBaseline.h; sourceTree = "<group>"; };
 		7C193BDB1F5E0FB40088F3E6 /* JSCanvasFillRule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCanvasFillRule.h; sourceTree = "<group>"; };
 		7C193BDC1F5E0FB50088F3E6 /* JSCanvasLineJoin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCanvasLineJoin.h; sourceTree = "<group>"; };
 		7C193BDD1F5E0FB60088F3E6 /* JSCanvasDirection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCanvasDirection.h; sourceTree = "<group>"; };
+		6CA8AA0B42118459F1E695B6 /* JSCanvasFontKerning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCanvasFontKerning.h; sourceTree = "<group>"; };
+		68ED11AF0848EEEE06B6881D /* JSCanvasFontStretch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCanvasFontStretch.h; sourceTree = "<group>"; };
+		7727A501BAA5B054D787CC70 /* JSCanvasFontVariantCaps.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCanvasFontVariantCaps.h; sourceTree = "<group>"; };
+		1BD6AC97D1C042D849F9824D /* JSCanvasTextRendering.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCanvasTextRendering.h; sourceTree = "<group>"; };
 		7C193BE11F5E0FB80088F3E6 /* JSCanvasTextAlign.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCanvasTextAlign.h; sourceTree = "<group>"; };
 		7C193BE71F5E0FBC0088F3E6 /* JSCanvasLineJoin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasLineJoin.cpp; sourceTree = "<group>"; };
 		7C193BEA1F5E0FBE0088F3E6 /* JSCanvasLineCap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasLineCap.cpp; sourceTree = "<group>"; };
@@ -28240,6 +28264,12 @@
 				72D537722BE9EB6B004577FD /* CanvasFilterContextSwitcher.cpp */,
 				72D537732BE9EB6B004577FD /* CanvasFilterContextSwitcher.h */,
 				7C193BB31F5E0EB70088F3E6 /* CanvasFilters.idl */,
+				DDB90DADDA2249B19D82B153 /* CanvasFontKerning.h */,
+				D44DF4F13E1A97EC93311640 /* CanvasFontKerning.idl */,
+				B9ABF56D392F1BED6651117A /* CanvasFontStretch.h */,
+				04C8EDC90D4337701A557C9F /* CanvasFontStretch.idl */,
+				9E54DA0A35B9138E53D1E891 /* CanvasFontVariantCaps.h */,
+				7D941BB150AFE9A88DB9E2A4 /* CanvasFontVariantCaps.idl */,
 				49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */,
 				49484FB4102CF23C00187DD3 /* CanvasGradient.h */,
 				49484FB5102CF23C00187DD3 /* CanvasGradient.idl */,
@@ -28288,6 +28318,8 @@
 				7C193BA41F5E0EAD0088F3E6 /* CanvasTextBaseline.h */,
 				7C193BB71F5E0EB90088F3E6 /* CanvasTextBaseline.idl */,
 				7C193BA91F5E0EB00088F3E6 /* CanvasTextDrawingStyles.idl */,
+				1122BD67258C35412D4C6D79 /* CanvasTextRendering.h */,
+				D9B38DDDE3AFC8883410E7B5 /* CanvasTextRendering.idl */,
 				7C193BB51F5E0EB80088F3E6 /* CanvasTransform.idl */,
 				7C193BB81F5E0EBA0088F3E6 /* CanvasUserInterface.idl */,
 				724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */,
@@ -34877,6 +34909,12 @@
 				7C193BDD1F5E0FB60088F3E6 /* JSCanvasDirection.h */,
 				7C193BC81F5E0FA80088F3E6 /* JSCanvasFillRule.cpp */,
 				7C193BDB1F5E0FB40088F3E6 /* JSCanvasFillRule.h */,
+				43EF60F91569704EB1617E44 /* JSCanvasFontKerning.cpp */,
+				6CA8AA0B42118459F1E695B6 /* JSCanvasFontKerning.h */,
+				FD9636BFE8A3DBC0A5A2197C /* JSCanvasFontStretch.cpp */,
+				68ED11AF0848EEEE06B6881D /* JSCanvasFontStretch.h */,
+				D2807A1A1B2288B263347E98 /* JSCanvasFontVariantCaps.cpp */,
+				7727A501BAA5B054D787CC70 /* JSCanvasFontVariantCaps.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
 				65DF323409D1DE65000BE325 /* JSCanvasGradient.h */,
 				7C193BEA1F5E0FBE0088F3E6 /* JSCanvasLineCap.cpp */,
@@ -34891,6 +34929,8 @@
 				7C193BE11F5E0FB80088F3E6 /* JSCanvasTextAlign.h */,
 				7C193BD31F5E0FAF0088F3E6 /* JSCanvasTextBaseline.cpp */,
 				7C193BD41F5E0FB00088F3E6 /* JSCanvasTextBaseline.h */,
+				71C02B5C2F46B8DE1F74AEBA /* JSCanvasTextRendering.cpp */,
+				1BD6AC97D1C042D849F9824D /* JSCanvasTextRendering.h */,
 				BE61039B18A9D61200DD50D7 /* JSDataCue.cpp */,
 				BE61039C18A9D61200DD50D7 /* JSDataCue.h */,
 				2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */,
@@ -44600,6 +44640,9 @@
 				2AE6B3D33C13DE3929FC2021 /* CanvasDrawImageSizing.h in Headers */,
 				721292A3301BA12F009DA7C9 /* CanvasElementImage.h in Headers */,
 				7C193BBC1F5E0EED0088F3E6 /* CanvasFillRule.h in Headers */,
+				D061774C89C5509EFA5B2A22 /* CanvasFontKerning.h in Headers */,
+				630E2023AFD064AB5B787F34 /* CanvasFontStretch.h in Headers */,
+				4F5366A83B06429949C77464 /* CanvasFontVariantCaps.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
 				1863F79048F6FFFA90166A4C /* CanvasImageSource+OriginClean.h in Headers */,
 				81FEA682A043C294E1C01339 /* CanvasImageSource+Usability.h in Headers */,
@@ -44617,6 +44660,7 @@
 				49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */,
 				7C193BBF1F5E0EED0088F3E6 /* CanvasTextAlign.h in Headers */,
 				7C193BC01F5E0EED0088F3E6 /* CanvasTextBaseline.h in Headers */,
+				6D03CF98E7995B0B551DCCB5 /* CanvasTextRendering.h in Headers */,
 				CD14C2452ECBABD100F9C56D /* CaptionDisplaySettingsClient.h in Headers */,
 				CD3570F12EC5B3390054E843 /* CaptionDisplaySettingsOptions.h in Headers */,
 				E3A86FC32695EB480059264D /* CaptionPreferencesDelegate.h in Headers */,
@@ -46510,6 +46554,9 @@
 				07277E4D17D018CC0015534E /* JSCanvasCaptureMediaStreamTrack.h in Headers */,
 				7C193BF01F5E10990088F3E6 /* JSCanvasDirection.h in Headers */,
 				7C193BF21F5E10990088F3E6 /* JSCanvasFillRule.h in Headers */,
+				C913A80AA45A183C6965F5DE /* JSCanvasFontKerning.h in Headers */,
+				46039D3F3004F4A53D730987 /* JSCanvasFontStretch.h in Headers */,
+				203A894D2EE413607E2F1B53 /* JSCanvasFontVariantCaps.h in Headers */,
 				65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */,
 				7C193BF41F5E10990088F3E6 /* JSCanvasLineCap.h in Headers */,
 				7C193BF61F5E10990088F3E6 /* JSCanvasLineJoin.h in Headers */,
@@ -46517,6 +46564,7 @@
 				49EED1451051969400099FAB /* JSCanvasRenderingContext2D.h in Headers */,
 				7C193BF81F5E10990088F3E6 /* JSCanvasTextAlign.h in Headers */,
 				7C193BFA1F5E10990088F3E6 /* JSCanvasTextBaseline.h in Headers */,
+				44E87E8A0D46F97D1A38E42F /* JSCanvasTextRendering.h in Headers */,
 				44D286EE2CAEB9BA00E02E84 /* JSCaretPosition.h in Headers */,
 				447B137E2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.h in Headers */,
 				93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */,
