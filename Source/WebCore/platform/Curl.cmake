@@ -28,6 +28,14 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/ResourceResponseCurl.cpp
 )
 
+# WKC has no platform CurlSSLHandle implementation upstream. Provide one so
+# CurlSSLHandle::platformInitialize() is defined for the Wii U WebCore build.
+if (PORT STREQUAL "WKC")
+    list(APPEND WebCore_SOURCES
+        platform/network/wkc/CurlSSLHandleWKC.cpp
+    )
+endif()
+
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/curl/AuthenticationChallenge.h
     platform/network/curl/CertificateInfo.h
