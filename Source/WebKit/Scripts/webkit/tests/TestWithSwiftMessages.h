@@ -47,7 +47,7 @@ namespace WebKit {
 
 class TestWithSwiftMessageForwarder: public RefCounted<TestWithSwiftMessageForwarder>, public IPC::MessageReceiver {
 public:
-    static Ref<TestWithSwiftMessageForwarder> createFromWeak(WebKit::TestWithSwiftWeakRef* _Nonnull handler)
+    static Ref<TestWithSwiftMessageForwarder> createFromWeak(WebKit::TestWithSwiftWeakRef* WTF_NONNULL handler)
     {
         return adoptRef(*new TestWithSwiftMessageForwarder(handler));
     }
@@ -57,7 +57,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 private:
-    TestWithSwiftMessageForwarder(WebKit::TestWithSwiftWeakRef* _Nonnull);
+    TestWithSwiftMessageForwarder(WebKit::TestWithSwiftWeakRef* WTF_NONNULL);
     std::unique_ptr<WebKit::TestWithSwift> getMessageTarget();
     std::unique_ptr<WebKit::TestWithSwiftWeakRef> m_handler;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);

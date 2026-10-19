@@ -59,13 +59,13 @@ void TestWithStreamSwiftEnabledByMessageForwarder::didReceiveStreamMessage(IPC::
     decoder.markInvalid();
 }
 
-static std::unique_ptr<TestWithStreamSwiftEnabledByWeakRef> makeTestWithStreamSwiftEnabledByWeakRefUniquePtr(TestWithStreamSwiftEnabledByWeakRef* _Nonnull handler)
+static std::unique_ptr<TestWithStreamSwiftEnabledByWeakRef> makeTestWithStreamSwiftEnabledByWeakRefUniquePtr(TestWithStreamSwiftEnabledByWeakRef* WTF_NONNULL handler)
 {
     auto newRef = _impl::_impl_TestWithStreamSwiftEnabledByWeakRef::makeRetained(handler);
     return WTF::makeUniqueWithoutFastMallocCheck<TestWithStreamSwiftEnabledByWeakRef>(newRef);
 }
 
-TestWithStreamSwiftEnabledByMessageForwarder::TestWithStreamSwiftEnabledByMessageForwarder(TestWithStreamSwiftEnabledByWeakRef* _Nonnull target)
+TestWithStreamSwiftEnabledByMessageForwarder::TestWithStreamSwiftEnabledByMessageForwarder(TestWithStreamSwiftEnabledByWeakRef* WTF_NONNULL target)
     : m_handler(makeTestWithStreamSwiftEnabledByWeakRefUniquePtr(target))
 {
 }

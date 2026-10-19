@@ -12,12 +12,7 @@
 #     get rebuilt per-target. See _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS in
 #     WebKitMacros.cmake, which is the single home for shared -Xcc -D flags.
 #
-# Included from WebKitCommon.cmake after Options${PORT}.cmake, which is the
-# earliest point where SWIFT_REQUIRED is known for every port.
-
-if (NOT SWIFT_REQUIRED)
-    return ()
-endif ()
+# Included from WebKitCommon.cmake after Options${PORT}.cmake.
 
 # Helpers
 

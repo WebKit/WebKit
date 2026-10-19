@@ -2306,7 +2306,7 @@ set(NetworkProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 # WebBackForwardList.swift and friends need the full C++ WebKit_Internal module
 # (WebPageProxy, SessionState, WebBackForwardListSwiftUtilities, ...) so use the
 # source-tree map directly. The earlier ObjC-only stripped map is insufficient
-# once ENABLE_BACK_FORWARD_LIST_SWIFT pulls in C++ interop.
+# for C++ interop.
 set(WebKit_SWIFT_INTEROP_MODULE_PATH "${WEBKIT_DIR}/Modules/Internal")
 
 # The full WebKit_Internal C++ module pulls in WebPageProxy.h and friends, which

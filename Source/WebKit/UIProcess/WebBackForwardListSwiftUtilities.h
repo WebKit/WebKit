@@ -41,8 +41,6 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
-
 // Workaround for rdar://162358154
 using SpanConstChar = std::span<const char>;
 
@@ -93,4 +91,3 @@ WebKit::FrameState* frameStateChildAtIndex(const WebKit::FrameState&, size_t ind
 // WebCore::Page is not visible to Swift.
 unsigned maxFrameStateDepthForMessageCheck();
 
-#endif // ENABLE(BACK_FORWARD_LIST_SWIFT)

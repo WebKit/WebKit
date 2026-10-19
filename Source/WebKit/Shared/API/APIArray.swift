@@ -21,8 +21,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_BACK_FORWARD_LIST_SWIFT
-
 import WebKit_Internal
 
 extension API.Array {
@@ -38,4 +36,3 @@ extension API.Array {
     }
 }
 
-#endif // ENABLE_BACK_FORWARD_LIST_SWIFT
