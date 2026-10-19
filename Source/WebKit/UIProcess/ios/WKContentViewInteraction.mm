@@ -5537,6 +5537,10 @@ static inline WebCore::TextGranularity toWKTextGranularity(UITextGranularity gra
 static inline WebCore::SelectionDirection toWKSelectionDirection(UITextDirection direction)
 {
     switch (direction) {
+    case UITextStorageDirectionForward:
+        return WebCore::SelectionDirection::Forward;
+    case UITextStorageDirectionBackward:
+        return WebCore::SelectionDirection::Backward;
     case UITextLayoutDirectionDown:
     case UITextLayoutDirectionRight:
         return WebCore::SelectionDirection::Right;
@@ -5544,7 +5548,7 @@ static inline WebCore::SelectionDirection toWKSelectionDirection(UITextDirection
     case UITextLayoutDirectionLeft:
         return WebCore::SelectionDirection::Left;
     default:
-        // UITextDirection is not an enum, but we only want to accept values from UITextLayoutDirection.
+        // UITextDirection is not an enum, but we only want to accept values from UITextStorageDirection and UITextLayoutDirection.
         ASSERT_NOT_REACHED();
         return WebCore::SelectionDirection::Right;
     }
