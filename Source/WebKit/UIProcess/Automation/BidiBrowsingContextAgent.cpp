@@ -702,12 +702,30 @@ void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, st
     });
 }
 
-void BidiBrowsingContextAgent::traverseHistory(const BrowsingContext& browsingContext, int delta, CommandCallback<void>&& callback)
+void BidiBrowsingContextAgent::traverseHistory(const BrowsingContext& browsingContext, double delta, CommandCallback<void>&& callback)
 {
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-traverseHistory
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    session->traverseHistoryInBrowsingContext(browsingContext, delta, WTF::move(callback));
+    // The delta is a js-int: an integer within the safe integer range.
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!JSC::isSafeInteger(delta), InvalidParameter, "delta must be an integer"_s);
+
+    // The "get a navigable" algorithm uses `no such frame` for both top-level and child contexts.
+    // https://w3c.github.io/webdriver-bidi/#get-a-navigable
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
+
+    auto handles = session->extractBrowsingContextHandles(browsingContext);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
+    auto [pageHandle, frameHandle] = handles.value();
+
+    // Only a top-level traversable has a session history to traverse.
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!frameHandle.isEmpty(), InvalidParameter, "The browsing context is not a top-level browsing context"_s);
+
+    // No session history is anywhere near this long, so a delta beyond int cannot name an entry.
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(std::abs(delta) > std::numeric_limits<int>::max(), NoSuchHistoryEntry);
+
+    session->traverseHistoryInBrowsingContext(pageHandle, static_cast<int>(delta), WTF::move(callback));
 }
 
 static std::optional<int> parseNonNegativeInteger(const JSON::Object& object, const String& key)
