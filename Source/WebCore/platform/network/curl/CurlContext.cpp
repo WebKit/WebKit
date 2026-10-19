@@ -340,10 +340,16 @@ void CurlHandle::enableSSL()
         setSslVerifyHost(CurlHandle::VerifyHost::StrictNameCheck);
     }
 
+#if !PLATFORM(WKC)
+    // The Wii U port's libcurl is built with mbedTLS. In libcurl 8.7.1,
+    // CURLOPT_SSL_CIPHER_LIST and CURLOPT_SSL_EC_CURVES are not supported by
+    // the mbedTLS backend; keep its compiled-in cipher-suite and curve defaults
+    // instead of passing OpenSSL-format lists whose setopt errors are ignored.
     setSslCipherList(sslHandle.cipherList().data());
 
     if (const auto& ecCurves = sslHandle.ecCurves(); !ecCurves.isNull())
         setSslECCurves(ecCurves.data());
+#endif
 
 #if !PLATFORM(WKC)
     // Wii U's libcurl is built with mbedTLS, which does not support
