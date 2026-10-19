@@ -19,9 +19,10 @@
 
 #pragma once
 
-#include <WebCore/MediaPlayer.h>
+#include <WebCore/MediaPlayerEnums.h>
 #include <span>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
