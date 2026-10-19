@@ -160,9 +160,11 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
 {
     auto result = HTMLElement::insertionSteps(insertionType, parentOfInsertedTree);
 
+    RefPtr<HTMLSelectElement> newOwnerSelect;
     if (document().settings().htmlEnhancedSelectParsingEnabled() && !m_ownerSelect) {
         if (RefPtr select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::No)) {
             m_ownerSelect = select.get();
+            newOwnerSelect = select;
             select->setRecalcListItems();
             // If this non-selected option is the first non-disabled option in a
             // single-select that has no explicitly selected option, select it by
@@ -181,8 +183,11 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
             select->invalidateButtonText();
         if (m_shadowTreeNeedsUpdate)
             protect(document())->addElementWithPendingUserAgentShadowTreeUpdate(*this);
-        if (m_ownerSelect)
+        if (newOwnerSelect) {
+            if (!newOwnerSelect->multiple())
+                newOwnerSelect->queueSelectedContentUpdate(*this);
             result = NeedsPostConnectionSteps::Yes;
+        }
     }
 
     return result;
@@ -197,13 +202,18 @@ void HTMLOptionElement::postConnectionSteps()
     if (select->multiple()) {
         // The select clones its options once it finishes parsing them.
         if (select->isFinishedParsingChildren())
-            select->queueSelectedContentUpdate();
+            select->queueSelectedContentUpdate(*this);
         return;
     }
 
-    bool isSelected = select->isFinishedParsingChildren() ? selected() : selectedWithoutUpdate();
-    if (isSelected)
-        select->updateSelectedContent(this);
+    if (!select->isFinishedParsingChildren()) {
+        if (selectedWithoutUpdate())
+            select->updateSelectedContent(this);
+        return;
+    }
+
+    if (select->hasPendingSelectedContentUpdate())
+        select->updateSelectedContent();
 }
 
 void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -224,8 +234,7 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
     if (RefPtr select = std::exchange(m_ownerSelect, nullptr).get()) {
         select->setRecalcListItems();
         select->invalidateButtonText();
-        if (m_isSelected || select->multiple())
-            select->queueSelectedContentUpdate();
+        select->queueSelectedContentUpdate(*this);
         invalidateShadowTree();
     }
 }
@@ -244,7 +253,7 @@ void HTMLOptionElement::movingSteps(MovingType movingType, ContainerNode& oldPar
             newSelect->setRecalcListItems();
             newSelect->invalidateButtonText();
             if (newSelect->multiple() && oldParent.isInclusiveDescendantOf(*newSelect))
-                newSelect->queueSelectedContentUpdate();
+                newSelect->queueSelectedContentUpdate(*this);
         }
         return;
     }
@@ -254,15 +263,13 @@ void HTMLOptionElement::movingSteps(MovingType movingType, ContainerNode& oldPar
     if (oldSelect) {
         oldSelect->setRecalcListItems();
         oldSelect->invalidateButtonText();
-        if (m_isSelected || oldSelect->multiple())
-            oldSelect->queueSelectedContentUpdate();
+        oldSelect->queueSelectedContentUpdate(*this);
     }
 
     if (newSelect) {
         newSelect->setRecalcListItems();
         newSelect->invalidateButtonText();
-        if (m_isSelected || newSelect->multiple())
-            newSelect->queueSelectedContentUpdate();
+        newSelect->queueSelectedContentUpdate(*this);
     }
 
     invalidateShadowTree();
@@ -546,8 +553,10 @@ void HTMLOptionElement::setSelectedForBindings(bool selected)
     // The spec says dirtiness becomes true unconditionally. However, for web
     // compatibility, don't set dirtiness if the option is owned by a select
     // element and selectedness did not actually change.
-    if (ownerSelectElement() && wasSelected == m_isSelected)
+    if (RefPtr select = ownerSelectElement(); select && wasSelected == m_isSelected) {
+        select->updateSelectedContentIfEnabled();
         return;
+    }
 
     m_isDirty = true;
 }

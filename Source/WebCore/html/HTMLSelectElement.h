@@ -205,11 +205,13 @@ public:
 
     bool isDevolvableWidget() const override { return true; }
 
-    void updateSelectedContent(HTMLOptionElement* = nullptr) const;
-    void updateSelectedContent(HTMLSelectedContentElement&) const;
-    void queueSelectedContentUpdate();
+    void updateSelectedContent(HTMLOptionElement* = nullptr);
+    void updateSelectedContent(HTMLSelectedContentElement&);
+    void updateSelectedContentIfEnabled(HTMLOptionElement* = nullptr);
+    void queueSelectedContentUpdate(const HTMLOptionElement&);
     RefPtr<HTMLOptionElement> selectedOptionForSelectedContent() const;
     void resetSelectedness(HTMLOptionElement* oldSelectedOption);
+    bool hasPendingSelectedContentUpdate() const { return !m_multiple && m_hasQueuedSelectedContentUpdate; }
     bool LEGACY_NODELETE updatesSelectedContent() const;
 
     void LEGACY_NODELETE registerSelectedContentElement();
@@ -312,10 +314,9 @@ private:
     void updateSelectedState(int listIndex, bool multi, bool shift);
     void menuListDefaultEventHandler(Event&);
     void baseAppearanceListBoxDefaultEventHandler(Event&);
-    void updateSelectedContentIfEnabled(HTMLOptionElement* = nullptr) const;
     Vector<Ref<HTMLSelectedContentElement>> selectedContentElements() const;
-    void cloneOptionsIntoSelectedContent() const;
-    void cloneOptionsIntoSelectedContent(HTMLSelectedContentElement&) const;
+    void cloneOptionsIntoSelectedContent();
+    void cloneOptionsIntoSelectedContent(HTMLSelectedContentElement&);
     RefPtr<HTMLOptionElement> firstSelectedOption() const;
     String selectedOptionsText(ForAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const;
     void setSizeAndMultiple(unsigned size, bool multiple);
@@ -375,6 +376,7 @@ private:
     mutable bool m_shouldRecalcListItems;
     unsigned m_selectedContentDescendantCount { 0 };
     bool m_hasQueuedSelectedContentUpdate { false };
+    bool m_selectedContentShowsOption { false };
 
     std::optional<int> m_lastActiveIndex;
 

@@ -1,4 +1,6 @@
 
 PASS selectedcontent stays up to date after an ancestor of the select is removed.
 PASS selectedcontent stays up to date after an ancestor of the select is moved.
+PASS selectedcontent moved into a select that becomes multiple before the microtask runs is not updated.
+
 

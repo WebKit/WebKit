@@ -2750,7 +2750,7 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
     return { };
 }
 
-void HTMLSelectElement::updateSelectedContentIfEnabled(HTMLOptionElement* selectedOption) const
+void HTMLSelectElement::updateSelectedContentIfEnabled(HTMLOptionElement* selectedOption)
 {
     ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
@@ -2759,13 +2759,16 @@ void HTMLSelectElement::updateSelectedContentIfEnabled(HTMLOptionElement* select
         updateSelectedContent(selectedOption);
 }
 
-void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption) const
+void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
 {
     ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     ASSERT(document().settings().htmlEnhancedSelectParsingEnabled());
     ASSERT(document().settings().htmlEnhancedSelectEnabled());
     ASSERT(!document().settings().mutationEventsEnabled());
 
+    // For multiple this only updates the clones' selectedness, so a queued re-clone has to stay queued.
+    if (!m_multiple)
+        m_hasQueuedSelectedContentUpdate = false;
     if (!m_selectedContentDescendantCount || !updatesSelectedContent())
         return;
 
@@ -2778,32 +2781,26 @@ void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
     RefPtr selectedOptionRef = selectedOption;
     if (!selectedOptionRef)
         selectedOptionRef = firstSelectedOption();
+    m_selectedContentShowsOption = !!selectedOptionRef;
 
-    for (Ref selectedContent : selectedContentElements()) {
-        if (!selectedOptionRef)
-            selectedContent->removeChildren();
-        else
-            selectedOptionRef->cloneIntoSelectedContent(selectedContent);
-    }
+    for (Ref selectedContent : selectedContentElements())
+        selectedContent->updateFromOption(selectedOptionRef.get());
 }
 
 // https://html.spec.whatwg.org/#update-a-selectedcontent
-void HTMLSelectElement::updateSelectedContent(HTMLSelectedContentElement& selectedContent) const
+void HTMLSelectElement::updateSelectedContent(HTMLSelectedContentElement& selectedContent)
 {
     ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
-
-    if (selectedContent.isDisabled())
-        return;
+    ASSERT(!selectedContent.isDisabled());
 
     if (m_multiple && updatesSelectedContent()) {
         cloneOptionsIntoSelectedContent(selectedContent);
         return;
     }
 
-    if (RefPtr selectedOption = firstSelectedOption())
-        selectedOption->cloneIntoSelectedContent(selectedContent);
-    else
-        selectedContent.removeChildren();
+    RefPtr selectedOption = firstSelectedOption();
+    m_selectedContentShowsOption = !!selectedOption;
+    selectedContent.updateFromOption(selectedOption.get());
 }
 
 bool HTMLSelectElement::updatesSelectedContent() const
@@ -2822,7 +2819,7 @@ Vector<Ref<HTMLSelectedContentElement>> HTMLSelectElement::selectedContentElemen
     return result;
 }
 
-void HTMLSelectElement::cloneOptionsIntoSelectedContent() const
+void HTMLSelectElement::cloneOptionsIntoSelectedContent()
 {
     ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
@@ -2833,7 +2830,7 @@ void HTMLSelectElement::cloneOptionsIntoSelectedContent() const
         cloneOptionsIntoSelectedContent(selectedContent);
 }
 
-void HTMLSelectElement::cloneOptionsIntoSelectedContent(HTMLSelectedContentElement& selectedContent) const
+void HTMLSelectElement::cloneOptionsIntoSelectedContent(HTMLSelectedContentElement& selectedContent)
 {
     ASSERT(document().settings().htmlEnhancedSelectMultipleSelectedContentEnabled());
 
@@ -2843,10 +2840,7 @@ void HTMLSelectElement::cloneOptionsIntoSelectedContent(HTMLSelectedContentEleme
             options.append(option.releaseNonNull());
     }
 
-    NodeVector clones;
-    for (auto& option : options)
-        clones.append(option->cloneForSelectedContent());
-    selectedContent.replaceChildrenWithoutValidityCheck(WTF::move(clones));
+    selectedContent.updateFromOptions(options);
 }
 
 RefPtr<HTMLOptionElement> HTMLSelectElement::selectedOptionForSelectedContent() const
@@ -2864,18 +2858,21 @@ void HTMLSelectElement::resetSelectedness(HTMLOptionElement* oldSelectedOption)
         updateSelectedContentIfEnabled(selectedOption.get());
 }
 
-void HTMLSelectElement::queueSelectedContentUpdate()
+// https://html.spec.whatwg.org/#queue-an-update-of-a-select's-descendant-selectedcontent-elements
+void HTMLSelectElement::queueSelectedContentUpdate(const HTMLOptionElement& option)
 {
     if (m_hasQueuedSelectedContentUpdate || !m_selectedContentDescendantCount || !updatesSelectedContent())
+        return;
+
+    if (!m_multiple && !option.selectedWithoutUpdate() && (m_selectedContentShowsOption || m_size > 1))
         return;
 
     m_hasQueuedSelectedContentUpdate = true;
     Ref document = this->document();
     protect(document->eventLoop())->queueMicrotask(document->vm(), [weakThis = WeakPtr<HTMLSelectElement, WeakPtrImplWithEventTargetData> { *this }] {
         RefPtr select = weakThis;
-        if (!select)
+        if (!select || !std::exchange(select->m_hasQueuedSelectedContentUpdate, false))
             return;
-        select->m_hasQueuedSelectedContentUpdate = false;
         if (select->m_multiple)
             select->cloneOptionsIntoSelectedContent();
         else
@@ -2900,7 +2897,8 @@ void HTMLSelectElement::registerSelectedContentElement()
 void HTMLSelectElement::unregisterSelectedContentElement()
 {
     ASSERT(m_selectedContentDescendantCount > 0);
-    --m_selectedContentDescendantCount;
+    if (!--m_selectedContentDescendantCount)
+        m_selectedContentShowsOption = false;
 }
 
 // PopupMenuClient methods
