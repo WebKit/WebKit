@@ -1886,6 +1886,61 @@ struct TextExtractionTests {
         #expect(result.textContent.contains(irrelevantText) != filterOptions.contains(.classifier))
         #expect(result.filteredOutAnyText == filterOptions.contains(.classifier))
     }
+
+    @Test(arguments: [_WKTextExtractionFilterOptions(), .textRecognition])
+    func textRecognitionFiltersOutInvisibleText(filterOptions: _WKTextExtractionFilterOptions) async throws {
+        let visibleText = """
+            The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog again and \
+            again while the dog slept peacefully in the warm sun.
+            """
+        let invisibleText = """
+            Because the people who are crazy enough to think they can change the world are the ones who do, and \
+            they push the human race forward while the rest of us watch from the sidelines.
+            """
+
+        try await webView.load(
+            html: """
+                <body style="background: white">
+                    <p style="color: black">\(visibleText)</p>
+                    <p style="color: white">\(invisibleText)</p>
+                </body>
+                """
+        )
+
+        let configuration = _WKTextExtractionConfiguration()
+        configuration.filterOptions = filterOptions
+        let result = try #require(await webView._extractDebugText(with: configuration))
+
+        #expect(result.textContent.contains(visibleText))
+        #expect(result.textContent.contains(invisibleText) != filterOptions.contains(.textRecognition))
+        #expect(result.filteredOutAnyText == filterOptions.contains(.textRecognition))
+    }
+
+    @Test
+    func textRecognitionKeepsVisibleText() async throws {
+        let paragraphs = [
+            "The quick brown fox jumped over the lazy dog while the sun warmed the meadow.",
+            "Pack my box with five dozen liquor jugs, said the quiet clerk to the visitor.",
+            "Short line.",
+        ]
+
+        try await webView.load(
+            html: """
+                <body style="background: white; color: black">
+                    \(paragraphs.map { "<p>\($0)</p>" }.joined())
+                </body>
+                """
+        )
+
+        let configuration = _WKTextExtractionConfiguration()
+        configuration.filterOptions = .textRecognition
+        let result = try #require(await webView._extractDebugText(with: configuration))
+
+        for paragraph in paragraphs {
+            #expect(result.textContent.contains(paragraph))
+        }
+        #expect(!result.filteredOutAnyText)
+    }
     #endif // ENABLE_TEXT_EXTRACTION_FILTER
 
     @Test
