@@ -2245,11 +2245,11 @@ RenderBlockFlow::LinePaginationAdjustment RenderBlockFlow::computeLineAdjustment
     auto computeLeafBoxTopAndBottom = [&] {
         auto lineTop = LayoutUnit::max();
         auto lineBottom = LayoutUnit::min();
-        for (auto box = lineBox->lineLeftmostLeafBox(); box; box.traverseLineRightwardOnLine()) {
-            if (box->logicalTop() < lineTop)
-                lineTop = box->logicalTop();
-            if (box->logicalBottom() > lineBottom)
-                lineBottom = box->logicalBottom();
+        for (auto& box : lineBox->leafBoxes()) {
+            if (box.logicalTop() < lineTop)
+                lineTop = box.logicalTop();
+            if (box.logicalBottom() > lineBottom)
+                lineBottom = box.logicalBottom();
         }
         return std::pair { lineTop, lineBottom };
     };
@@ -3718,17 +3718,17 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
         GapRects result;
 
-        auto firstSelectedBox = [&]() -> InlineIterator::LeafBoxIterator {
-            for (auto box = lineBox->lineLeftmostLeafBox(); box; box.traverseLineRightwardOnLine()) {
-                if (box->selectionState() != RenderObject::HighlightState::None)
+        auto firstSelectedBox = [&] -> InlineIterator::LeafBoxIterator {
+            for (auto& box : lineBox->leafBoxes()) {
+                if (box.selectionState() != RenderObject::HighlightState::None)
                     return box;
             }
             return { };
         }();
 
-        auto lastSelectedBox = [&]() -> InlineIterator::LeafBoxIterator {
-            for (auto box = lineBox->lineRightmostLeafBox(); box; box.traverseLineLeftwardOnLine()) {
-                if (box->selectionState() != RenderObject::HighlightState::None)
+        auto lastSelectedBox = [&] -> InlineIterator::LeafBoxIterator {
+            for (auto& box : lineBox->leafBoxes() | std::views::reverse) {
+                if (box.selectionState() != RenderObject::HighlightState::None)
                     return box;
             }
             return { };
@@ -3888,9 +3888,9 @@ int RenderBlockFlow::lineCount() const
 
 bool RenderBlockFlow::containsNonZeroBidiLevel() const
 {
-    for (auto lineBox = InlineIterator::firstLineBoxFor(*this); lineBox; lineBox.traverseNext()) {
-        for (auto box = lineBox->lineLeftmostLeafBox(); box; box = box.traverseLineRightwardOnLine()) {
-            if (box->bidiLevel())
+    for (auto& lineBox : InlineIterator::lineBoxesFor(*this)) {
+        for (auto& box : lineBox.leafBoxes()) {
+            if (box.bidiLevel())
                 return true;
         }
     }
@@ -3905,11 +3905,11 @@ static Position positionForRun(const RenderBlockFlow& flow, InlineIterator::BoxI
     if (!box->renderer().nonPseudoNode())
         return makeDeprecatedLegacyPosition(flow.nonPseudoElement(), start ? flow.caretMinOffset() : flow.caretMaxOffset());
 
-    auto* textBox = dynamicDowncast<InlineIterator::TextBoxIterator>(box);
-    if (!textBox)
+    if (!box->isText())
         return makeDeprecatedLegacyPosition(box->renderer().nonPseudoNode(), start ? box->renderer().caretMinOffset() : box->renderer().caretMaxOffset());
 
-    return makeDeprecatedLegacyPosition((*textBox)->renderer().nonPseudoNode(), start ? (*textBox)->start() : (*textBox)->end());
+    auto textBox = InlineIterator::TextBoxIterator { box };
+    return makeDeprecatedLegacyPosition(textBox->renderer().nonPseudoNode(), start ? textBox->start() : textBox->end());
 }
 
 RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& point)
@@ -3964,13 +3964,13 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
     // experience has shown that hit tests on an exploded text node can fail when within the
     // overflow fragment.
     auto previousRootInlineBoxBottom = std::optional<float> { };
-    for (auto box = InlineIterator::firstRootInlineBoxFor(blockFlow); box; box.traverseInlineBoxLineRightward()) {
+    for (auto& box : InlineIterator::rootInlineBoxesFor(blockFlow)) {
         if (previousRootInlineBoxBottom) {
             if (localPoint.y() < *previousRootInlineBoxBottom)
                 return nullptr;
 
-            if (localPoint.y() > *previousRootInlineBoxBottom && localPoint.y() < box->logicalTop()) {
-                if (auto closestBox = closestBoxForHorizontalPosition(*box->lineBox(), localPoint.x())) {
+            if (localPoint.y() > *previousRootInlineBoxBottom && localPoint.y() < box.logicalTop()) {
+                if (auto closestBox = closestBoxForHorizontalPosition(box.lineBox(), localPoint.x())) {
                     if (auto* textRenderer = dynamicDowncast<RenderText>(closestBox->renderer())) {
                         // FIXME: Remove suppression once rdar://189998365 is fixed.
                         SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderText*>(textRenderer);
@@ -3978,7 +3978,7 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
                 }
             }
         }
-        previousRootInlineBoxBottom = box->logicalBottom();
+        previousRootInlineBoxBottom = box.logicalBottom();
     }
     return nullptr;
 }
@@ -4052,7 +4052,7 @@ PositionWithAffinity RenderBlockFlow::positionForPointWithInlineChildren(const L
         }
 
         // pass the box a top position that is inside it
-        auto point = LayoutPoint { pointInLogicalContents.x(), contentStartInBlockDirection(*closestBox->lineBox()) };
+        auto point = LayoutPoint { pointInLogicalContents.x(), contentStartInBlockDirection(closestBox->lineBox()) };
         if (!isHorizontalWritingMode())
             point = point.transposedPoint();
         if (closestBox->renderer().isBlockLevelReplacedOrAtomicInline()) {

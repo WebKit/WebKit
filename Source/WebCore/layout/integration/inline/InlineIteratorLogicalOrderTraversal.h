@@ -68,9 +68,9 @@ Vector<LeafBoxIterator> leafBoxesInLogicalOrder(const LineBoxIterator& lineBox, 
     unsigned char minLevel = 128;
     unsigned char maxLevel = 0;
 
-    for (auto box = lineBox->lineLeftmostLeafBox(); box; box = box.traverseLineRightwardOnLine()) {
-        minLevel = std::min(minLevel, box->bidiLevel());
-        maxLevel = std::max(maxLevel, box->bidiLevel());
+    for (auto& box : lineBox->leafBoxes()) {
+        minLevel = std::min(minLevel, box.bidiLevel());
+        maxLevel = std::max(maxLevel, box.bidiLevel());
         boxes.append(box);
     }
 

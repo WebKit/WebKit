@@ -98,18 +98,18 @@ void SVGTextQuery::collectTextBoxesInInlineBox(InlineIterator::InlineBoxIterator
         return;
 
     auto descendants = parent->descendants();
-    for (auto box = descendants.begin(), end = descendants.end(); box != end;) {
-        if (auto* flowBox = dynamicDowncast<InlineIterator::InlineBox>(*box)) {
+    for (auto box = descendants.begin(); box;) {
+        if (box->isInlineBox()) {
             // Skip generated content.
-            if (!flowBox->renderer().element())
+            if (!downcast<InlineIterator::InlineBox>(*box).renderer().element())
                 box.traverseLineRightwardOnLineSkippingChildren();
             else
                 box.traverseLineRightwardOnLine();
             continue;
         }
 
-        if (auto* inlineTextBox = dynamicDowncast<InlineIterator::SVGTextBoxIterator>(box))
-            m_textBoxes.append(*inlineTextBox);
+        if (box->isSVGText())
+            m_textBoxes.append(*box);
 
         box.traverseLineRightwardOnLine();
     }

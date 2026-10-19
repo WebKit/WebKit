@@ -38,8 +38,6 @@ namespace InlineIterator {
 
 class LineBoxIterator;
 
-struct EndLineBoxIterator { };
-
 class LineBox {
 public:
     LineBox(const LayoutIntegration::InlineContent&, size_t lineIndex);
@@ -91,13 +89,19 @@ public:
     inline LeafBoxIterator logicalLeftmostLeafBox() const;
     inline LeafBoxIterator logicalRightmostLeafBox() const;
 
+    // Leaf boxes from line-left to line-right.
+    LeafBoxRange leafBoxes() const;
+
     LineBoxIterator LEGACY_NODELETE next() const;
     LineBoxIterator LEGACY_NODELETE previous() const;
 
     size_t lineIndex() const { return m_lineIndex; }
 
+    bool operator==(const LineBox& other) const { return m_inlineContent == other.m_inlineContent && m_lineIndex == other.m_lineIndex; }
+
 private:
     friend class LineBoxIterator;
+    friend class LineBoxRange;
 
     LineBox() = default;
 
@@ -108,37 +112,107 @@ private:
     const InlineDisplay::Line& line() const LIFETIME_BOUND { return lines()[m_lineIndex]; }
     InlineDisplay::Line::Ellipsis lineEllipsis() const;
 
-    WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
+    SingleThreadWeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_lineIndex { 0 };
 };
 
+// Bidirectional and works with std::ranges. Like box iterators, it is also a nullable line box reference: it can be
+// positioned at any line, tests false at the end, and is at the end once the inline content is destroyed.
+// Decrementing past the first line also moves it to the end. Dereferencing returns the line box handle by value.
 class LineBoxIterator {
 public:
+    using value_type = LineBox;
+    using difference_type = std::ptrdiff_t;
+    using iterator_concept = std::bidirectional_iterator_tag;
+    using iterator_category = std::input_iterator_tag;
+
     LineBoxIterator() = default;
-    LineBoxIterator(const LineBox&);
+    LineBoxIterator(const LineBox& lineBox)
+        : m_lineBox(lineBox)
+    {
+    }
 
-    LineBoxIterator& operator++() { return traverseNext(); }
-    LineBoxIterator& operator--() { return traversePrevious(); }
-    WEBCORE_EXPORT LineBoxIterator& LEGACY_NODELETE traverseNext();
-    LineBoxIterator& LEGACY_NODELETE traversePrevious();
+    const LineBox operator*() const { ASSERT(!m_lineBox.atEnd()); return m_lineBox; }
+    const LineBox* operator->() const LIFETIME_BOUND { ASSERT(!m_lineBox.atEnd()); return &m_lineBox; }
 
-    WEBCORE_EXPORT explicit operator bool LEGACY_NODELETE () const;
+    explicit operator bool() const { return !atEnd(); }
+    bool atEnd() const { return m_lineBox.atEnd(); }
 
-    bool LEGACY_NODELETE operator==(const LineBoxIterator&) const;
-    bool operator==(EndLineBoxIterator) const { return atEnd(); }
+    LineBoxIterator& operator++()
+    {
+        ASSERT(!m_lineBox.atEnd());
+        ++m_lineBox.m_lineIndex;
+        return *this;
+    }
 
-    const LineBox& operator*() const LIFETIME_BOUND { return m_lineBox; }
-    const LineBox* operator->() const LIFETIME_BOUND { return &m_lineBox; }
+    LineBoxIterator& operator--()
+    {
+        if (!m_lineBox.m_inlineContent)
+            return *this;
+        if (!m_lineBox.m_lineIndex) {
+            m_lineBox.setAtEnd();
+            return *this;
+        }
+        --m_lineBox.m_lineIndex;
+        return *this;
+    }
 
-    bool LEGACY_NODELETE atEnd() const;
+    LineBoxIterator& traverseNext() { return ++*this; }
+    LineBoxIterator& traversePrevious() { return --*this; }
+
+    LineBoxIterator operator++(int)
+    {
+        auto copy = *this;
+        ++*this;
+        return copy;
+    }
+
+    LineBoxIterator operator--(int)
+    {
+        auto copy = *this;
+        --*this;
+        return copy;
+    }
+
+    bool operator==(const LineBoxIterator& other) const
+    {
+        if (m_lineBox.atEnd() || other.m_lineBox.atEnd())
+            return m_lineBox.atEnd() == other.m_lineBox.atEnd();
+        return m_lineBox == other.m_lineBox;
+    }
 
 private:
+    friend class LineBoxRange;
+
     LineBox m_lineBox;
+};
+
+class LineBoxRange : public std::ranges::view_interface<LineBoxRange> {
+public:
+    using Iterator = LineBoxIterator;
+
+    LineBoxRange() = default;
+    LineBoxRange(const LineBoxIterator& first)
+    {
+        if (!first)
+            return;
+        m_begin = first;
+        m_end = LineBox { *first->m_inlineContent, first->lines().size() };
+    }
+
+    Iterator begin() const { return m_begin; }
+    Iterator end() const { return m_end; }
+
+private:
+    Iterator m_begin;
+    Iterator m_end;
 };
 
 WEBCORE_EXPORT LineBoxIterator firstLineBoxFor(const RenderBlockFlow&);
 LineBoxIterator lastLineBoxFor(const RenderBlockFlow&);
-LineBoxIterator LEGACY_NODELETE lineBoxFor(const LayoutIntegration::InlineContent&, size_t lineIndex);
+
+inline LineBoxRange lineBoxesFor(const RenderBlockFlow&);
+LineBox LEGACY_NODELETE lineBoxFor(const LayoutIntegration::InlineContent&, size_t lineIndex);
 
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontalPosition, bool editableOnly = false);
 
@@ -146,6 +220,11 @@ inline float previousLineBoxContentBottomOrBorderAndPadding(const LineBox&);
 inline float contentStartInBlockDirection(const LineBox&);
 
 // -----------------------------------------------
+
+inline LineBoxRange lineBoxesFor(const RenderBlockFlow& flow)
+{
+    return { firstLineBoxFor(flow) };
+}
 
 inline LineBox::LineBox(const LayoutIntegration::InlineContent& inlineContent, size_t lineIndex)
     : m_inlineContent(&inlineContent)
@@ -329,3 +408,5 @@ inline InlineDisplay::Line::Ellipsis LineBox::lineEllipsis() const
 }
 }
 
+template<>
+inline constexpr bool std::ranges::enable_borrowed_range<WebCore::InlineIterator::LineBoxRange> = true;

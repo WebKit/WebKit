@@ -612,8 +612,8 @@ LayoutRect TextBoxPainter::selectionRectForRange(unsigned startOffset, unsigned 
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
     auto lineBox = makeIterator()->lineBox();
-    auto selectionBottom = LineSelection::logicalBottom(*lineBox);
-    auto selectionTop = LineSelection::logicalTopAdjustedForPrecedingBlock(*lineBox);
+    auto selectionBottom = LineSelection::logicalBottom(lineBox);
+    auto selectionTop = LineSelection::logicalTopAdjustedForPrecedingBlock(lineBox);
     // Use same y positioning and height as for selection, so that when the selection and this subrange are on
     // the same word there are no pieces sticking out.
     auto deltaY = LayoutUnit { writingMode().isLineInverted() ? selectionBottom - m_logicalRect.maxY() : m_logicalRect.y() - selectionTop };
@@ -1498,7 +1498,7 @@ float TextBoxPainter::textPosition()
     // from the containing block edge in its measurement. textPosition() should be consistent so the text are rendered in the same width.
     if (!m_logicalRect.x())
         return 0;
-    return m_logicalRect.x() - makeIterator()->lineBox()->contentLogicalLeft();
+    return m_logicalRect.x() - makeIterator()->lineBox().contentLogicalLeft();
 }
 
 void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& underline, const CornerRadii& radii, bool hasLiveConversion)

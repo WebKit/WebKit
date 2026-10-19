@@ -37,6 +37,8 @@
 namespace WebCore {
 namespace InlineIterator {
 
+static_assert(std::ranges::bidirectional_range<TextBoxRange> && std::ranges::common_range<TextBoxRange> && std::ranges::view<TextBoxRange> && std::ranges::borrowed_range<TextBoxRange>);
+
 TextRun TextBox::textRun(TextRunMode mode) const
 {
     CheckedRef style = displayBox().style();
@@ -69,7 +71,7 @@ TextRun TextBox::textRun(TextRunMode mode) const
 
 TextBoxIterator TextBox::nextTextBox() const
 {
-    return TextBoxIterator(*this).traverseNextTextBox();
+    return std::ranges::next(TextBoxIterator { *this });
 }
 
 const FontCascade& TextBox::fontCascade() const
@@ -78,17 +80,6 @@ const FontCascade& TextBox::fontCascade() const
         return renderer->textCombineFont();
 
     return style()->fontCascade();
-}
-
-TextBoxIterator::TextBoxIterator(const Box& box)
-    : LeafBoxIterator(box)
-{
-}
-
-TextBoxIterator& TextBoxIterator::traverseNextTextBox()
-{
-    m_box.traverseNextTextBox();
-    return *this;
 }
 
 TextBoxIterator lineLeftmostTextBoxFor(const RenderText& text)
@@ -100,18 +91,18 @@ TextBoxIterator lineLeftmostTextBoxFor(const RenderText& text)
     return { };
 }
 
-TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent& content, const InlineDisplay::Box& box)
+TextBox textBoxFor(const LayoutIntegration::InlineContent& content, const InlineDisplay::Box& box)
 {
     return textBoxFor(content, content.indexForBox(box));
 }
 
-TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
+TextBox textBoxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
 {
     ASSERT(content.displayContent().boxes[boxIndex].isTextOrSoftLineBreak());
-    return { Box { content, boxIndex } };
+    return { content, boxIndex };
 }
 
-BoxRange<TextBoxIterator> textBoxesFor(const RenderText& text)
+TextBoxRange textBoxesFor(const RenderText& text)
 {
     return { lineLeftmostTextBoxFor(text) };
 }
