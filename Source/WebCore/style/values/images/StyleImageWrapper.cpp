@@ -43,9 +43,9 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<ImageWrapper>::operator()(const ImageWrapper& value, const Style::ComputedStyle& style) -> CSS::ImageWrapper
+auto ToCSS<ImageWrapper>::operator()(const ImageWrapper& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::ImageWrapper
 {
-    return { protect(value.value)->computedStyleValue(style) };
+    return { protect(value.value)->computedStyleValue(style, valueType) };
 }
 
 auto ToStyle<CSS::ImageWrapper>::operator()(const CSS::ImageWrapper& value, const BuilderState& state) -> ImageWrapper
@@ -55,9 +55,9 @@ auto ToStyle<CSS::ImageWrapper>::operator()(const CSS::ImageWrapper& value, cons
     return ImageWrapper { InvalidImage::create() };
 }
 
-Ref<CSSValue> CSSValueCreation<ImageWrapper>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const ImageWrapper& value)
+Ref<CSSValue> CSSValueCreation<ImageWrapper>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const ImageWrapper& value, PropertyValueType valueType)
 {
-    return protect(value.value)->computedStyleValue(style);
+    return protect(value.value)->computedStyleValue(style, valueType);
 }
 
 Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<ImageWrapper>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const ImageWrapper& value)
@@ -67,9 +67,9 @@ Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<ImageWrapper>::operator()
 
 // MARK: - Serialization
 
-void Serialize<ImageWrapper>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const ImageWrapper& value)
+void Serialize<ImageWrapper>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const ImageWrapper& value, PropertyValueType valueType)
 {
-    builder.append(protect(value.value)->computedStyleValue(style)->cssText(context));
+    builder.append(protect(value.value)->computedStyleValue(style, valueType)->cssText(context));
 }
 
 // MARK: - Blending

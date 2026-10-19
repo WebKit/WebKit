@@ -56,27 +56,27 @@ template<CSSValueID Name, typename T> static constexpr bool LEGACY_NODELETE isRe
 
 // MARK: - Conversion: Style -> CSS
 
-template<typename CSSStop, typename StyleStop> static auto toCSSColorStop(const StyleStop& stop, const Style::ComputedStyle& style) -> CSSStop
+template<typename CSSStop, typename StyleStop> static auto toCSSColorStop(const StyleStop& stop, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSSStop
 {
     return CSSStop {
-        toCSS(stop.color, style),
+        toCSS(stop.color, style, valueType),
         toCSS(stop.position, style)
     };
 }
 
-auto ToCSS<GradientAngularColorStop>::operator()(const GradientAngularColorStop& stop, const Style::ComputedStyle& style) -> CSS::GradientAngularColorStop
+auto ToCSS<GradientAngularColorStop>::operator()(const GradientAngularColorStop& stop, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::GradientAngularColorStop
 {
-    return toCSSColorStop<CSS::GradientAngularColorStop>(stop, style);
+    return toCSSColorStop<CSS::GradientAngularColorStop>(stop, style, valueType);
 }
 
-auto ToCSS<GradientLinearColorStop>::operator()(const GradientLinearColorStop& stop, const Style::ComputedStyle& style) -> CSS::GradientLinearColorStop
+auto ToCSS<GradientLinearColorStop>::operator()(const GradientLinearColorStop& stop, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::GradientLinearColorStop
 {
-    return toCSSColorStop<CSS::GradientLinearColorStop>(stop, style);
+    return toCSSColorStop<CSS::GradientLinearColorStop>(stop, style, valueType);
 }
 
-auto ToCSS<GradientDeprecatedColorStop>::operator()(const GradientDeprecatedColorStop& stop, const Style::ComputedStyle& style) -> CSS::GradientDeprecatedColorStop
+auto ToCSS<GradientDeprecatedColorStop>::operator()(const GradientDeprecatedColorStop& stop, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::GradientDeprecatedColorStop
 {
-    return toCSSColorStop<CSS::GradientDeprecatedColorStop>(stop, style);
+    return toCSSColorStop<CSS::GradientDeprecatedColorStop>(stop, style, valueType);
 }
 
 // MARK: - Conversion: CSS -> Style

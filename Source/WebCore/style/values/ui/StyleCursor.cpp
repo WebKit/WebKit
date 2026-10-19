@@ -153,18 +153,18 @@ auto CSSValueConversion<Cursor>::operator()(BuilderState& state, const CSSValue&
     return { WTF::move(images), toStyleFromCSSValue<CursorType>(state, protect(list->item(list->size() - 1))) };
 }
 
-Ref<CSSValue> CSSValueCreation<CursorImageAndHotSpot>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const CursorImageAndHotSpot& value)
+Ref<CSSValue> CSSValueCreation<CursorImageAndHotSpot>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const CursorImageAndHotSpot& value, PropertyValueType valueType)
 {
     Ref image = value.image;
-    return image->computedStyleValue(style);
+    return image->computedStyleValue(style, valueType);
 }
 
 // MARK: - Serialization
 
-void Serialize<CursorImageAndHotSpot>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const CursorImageAndHotSpot& value)
+void Serialize<CursorImageAndHotSpot>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const CursorImageAndHotSpot& value, PropertyValueType valueType)
 {
     Ref image = value.image;
-    Ref computedValue = image->computedStyleValue(style);
+    Ref computedValue = image->computedStyleValue(style, valueType);
     builder.append(computedValue->cssText(context));
 }
 

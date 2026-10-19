@@ -133,14 +133,14 @@ bool GradientImage::equals(const GradientImage& other) const
     return m_gradient == other.m_gradient;
 }
 
-Ref<CSSValue> GradientImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> GradientImage::computedStyleValue(const Style::ComputedStyle& style, PropertyValueType valueType) const
 {
-    return CSSGradientValue::create(toCSS(m_gradient, style));
+    return CSSGradientValue::create(toCSS(m_gradient, style, valueType));
 }
 
 Ref<DeprecatedCSSOMValue> GradientImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
-    return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
+    return computedStyleValue(style, PropertyValueType::Resolved)->createDeprecatedCSSOMWrapper(owner);
 }
 
 bool GradientImage::isPending() const
