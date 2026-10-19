@@ -12,6 +12,8 @@ ROOT = Path(__file__).resolve().parents[2]
 VIEW_CPP = ROOT / "Source/WebKit/WKC/webkit/WKCWebView.cpp"
 VIEW_H = ROOT / "Source/WebKit/WKC/webkit/WKCWebView.h"
 RESOURCE = ROOT / "Source/WebCore/platform/WKC/ResourceHandleWKC.cpp"
+RESPONSE_CONVERSION = ROOT / "Source/WebCore/platform/network/curl/ResourceResponseCurl.cpp"
+FRAME_LOADER = ROOT / "Source/WebKit/WKC/WebCoreSupport/FrameLoaderClientWKC.cpp"
 CMAKE = ROOT / "Source/WebKit/WKC/CMakeLists.txt"
 
 errors = []
@@ -53,9 +55,35 @@ resource = require(RESOURCE, "ResourceHandleWKC.cpp", [
     "CURLOPT_POSTFIELDSIZE_LARGE",
     "retaining normal TLS peer and hostname verification",
     "configureCertificateAuthorityBundle(",
+    "WKCCACertificates::bundle",
+    "sslHandle.setCACertData(WTF::move(caBundle))",
+    "handle->didReceiveResponse(WTF::move(response)",
+    "protectedRequest->completeDidReceiveResponse()",
+    "client->didReceiveData(handle.get(), buffer.get(), static_cast<int>(length))",
+    "handle->client()->didFinishLoading(handle.get(), metrics)",
+    "handle->client()->didFail(handle.get(), error)",
     "applyCookiesToRequest(",
     "removeActiveTransfer(",
 ])
+
+# A network response must be translated into normal WebCore metadata and the
+# asynchronous response-completion handshake must release the paused cURL body.
+response = require(RESPONSE_CONVERSION, "ResourceResponseCurl.cpp", [
+    "ResourceResponse::ResourceResponse(CurlResponse& response)",
+    "setURL(URL { response.url })",
+    "setHTTPStatusCode(response.statusCode ? response.statusCode : response.httpConnectCode)",
+    "setMimeType(extractMIMETypeFromMediaType(",
+    "setTextEncodingName(extractCharsetFromMediaType(",
+    "setSource(ResourceResponse::Source::Network)",
+])
+frame_loader = require(FRAME_LOADER, "FrameLoaderClientWKC.cpp", [
+    "FrameLoaderClientWKC::committedLoad(",
+    "writer.setEncoding(loader->response().textEncodingName()",
+    "loader->commitData(data)",
+    "FrameLoaderClientWKC::finishedLoading(",
+    "m_appClient->finishedLoading(&ldr.wkc())",
+])
+
 cmake = require(CMAKE, "CMakeLists.txt", [
     "WKC_ENABLE_FULL_WEBCORE",
     "ResourceHandleWKC.cpp",
