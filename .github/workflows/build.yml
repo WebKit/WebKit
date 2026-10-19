@@ -867,12 +867,14 @@ jobs:
             find build-webrtc -name '*.obj' -exec touch {} + 2>/dev/null || true
           fi
 
-      # The engine's required job is real webpage loading: full WebCore DOM,
-      # HTML, CSS, loader, layout/rendering, SVG, and JavaScriptCore. Web Audio
-      # and WebRTC are not required for page loading, so keep them off here to
-      # avoid making the full page engine depend on unrelated media stacks.
-      # This is a required build, not a diagnostic probe: do not publish a
-      # bootstrap-only archive as a substitute if the full engine fails.
+      # The engine's required job is the complete in-process WebKit page path:
+      # networking/TLS, response delivery, DOM, HTML, CSS, resource loading,
+      # layout/rendering, SVG, JavaScriptCore, and the supported WKC feature
+      # backends. Do not force supported features off in CI just to get a smaller
+      # green build; CMake's full-WebCore profile supplies their defaults.
+      # WebAssembly and WebGL remain opt-in only because their Wii U PPC/runtime
+      # backends are not complete yet. This job must fail rather than publish a
+      # bootstrap-only archive when the full engine does not build.
       - name: Build full WebKit page engine (Wii U PPC)
         id: full-engine-probe
         # This engine build is intentionally independent of the bootstrap target,
@@ -896,12 +898,6 @@ jobs:
             "${CMAKE_LAUNCHER_FLAGS[@]}" \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DWKC_ENABLE_FULL_WEBCORE=ON \
-            -DWKC_ENABLE_WEB_AUDIO=OFF \
-            -DWKC_ENABLE_INDEXED_DATABASE=OFF \
-            -DWKC_ENABLE_GAMEPAD=OFF \
-            -DWKC_ENABLE_WEBASSEMBLY=OFF \
-            -DWKC_ENABLE_WEBRTC_API=OFF \
-            -DWKC_ENABLE_WEB_INSPECTOR=OFF \
           > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
 
