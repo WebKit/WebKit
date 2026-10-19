@@ -349,6 +349,9 @@ public:
     RefPtr<WebPageProxy> webPageProxyForHandle(const String&);
     std::optional<WebCore::FrameIdentifier> webFrameIDForHandle(const String&, bool& frameNotFound);
     String effectiveHandleForWebFrameProxy(const WebFrameProxy&);
+#if ENABLE(WEBDRIVER_BIDI)
+    HashSet<String> bidiSubscriptionScopeForFrame(const WebFrameProxy&) const;
+#endif
     String handleForWebFrameID(std::optional<WebCore::FrameIdentifier>);
     String handleForWebPageProxy(const WebPageProxy&);
 
