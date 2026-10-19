@@ -2302,6 +2302,63 @@ TEST(WebArchive, ArchiveWithConfigurationLinkIcon)
     Util::run(&saved);
 }
 
+TEST(WebArchive, ArchiveWithConfigurationSavesOriginalURLs)
+{
+    RetainPtr<NSURL> directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ArchiveWithConfigurationSavesOriginalURLsTest"] isDirectory:YES];
+    [[NSFileManager defaultManager] removeItemAtURL:directoryURL.get() error:nil];
+
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
+    NSDictionary<NSString *, NSArray *> *responses = @{
+        @"webarchivetest://host/main.html": @[ @"text/html", [@"<img src='image.png'><iframe src='frame/iframe.html'></iframe><script>window.onload = () => window.webkit.messageHandlers.testHandler.postMessage('done');</script>" dataUsingEncoding:NSUTF8StringEncoding] ],
+        @"webarchivetest://host/image.png": @[ @"image/png", imageData ],
+        @"webarchivetest://host/frame/iframe.html": @[ @"text/html", [@"<img src='icon.png'>" dataUsingEncoding:NSUTF8StringEncoding] ],
+        @"webarchivetest://host/frame/icon.png": @[ @"image/png", imageData ],
+    };
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSArray *response = responses[task.request.URL.absoluteString];
+        RetainPtr urlResponse = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:response[0] expectedContentLength:[response[1] length] textEncodingName:nil]);
+        [task didReceiveResponse:urlResponse.get()];
+        [task didReceiveData:response[1]];
+        [task didFinish];
+    }];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    __block RetainPtr<NSError> saveError;
+    RetainPtr<_WKArchiveConfiguration> archiveConfiguration = adoptNS([[_WKArchiveConfiguration alloc] init]);
+    archiveConfiguration.get().directory = directoryURL.get();
+    archiveConfiguration.get().suggestedFileName = @"host";
+    archiveConfiguration.get().originalURLsFileName = @"originalURLs.json";
+    [webView _archiveWithConfiguration:archiveConfiguration.get() completionHandler:^(NSError *error) {
+        saveError = error;
+        saved = true;
+    }];
+    Util::run(&saved);
+    EXPECT_NULL(saveError.get());
+
+    NSData *originalURLsData = [NSData dataWithContentsOfURL:[directoryURL URLByAppendingPathComponent:@"originalURLs.json"]];
+    ASSERT_NOT_NULL(originalURLsData);
+    NSDictionary<NSString *, NSString *> *originalURLs = [NSJSONSerialization JSONObjectWithData:originalURLsData options:0 error:nil];
+    EXPECT_EQ(originalURLs.count, 4u);
+    EXPECT_WK_STREQ(originalURLs[@"host.html"], "webarchivetest://host/main.html");
+    EXPECT_WK_STREQ(originalURLs[@"host_files/image.png"], "webarchivetest://host/image.png");
+    EXPECT_WK_STREQ(originalURLs[@"host_files/icon.png"], "webarchivetest://host/frame/icon.png");
+    for (NSString *path in originalURLs) {
+        if ([path hasPrefix:@"host_files/frame_"])
+            EXPECT_WK_STREQ(originalURLs[path], "webarchivetest://host/frame/iframe.html");
+    }
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

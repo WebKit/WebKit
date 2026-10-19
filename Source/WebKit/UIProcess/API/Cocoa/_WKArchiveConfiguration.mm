@@ -38,6 +38,8 @@
     _suggestedFileName = nil;
     SUPPRESS_UNRETAINED_ARG [_exclusionRules release];
     _exclusionRules = nil;
+    SUPPRESS_UNRETAINED_ARG [_originalURLsFileName release];
+    _originalURLsFileName = nil;
 
     [super dealloc];
 }
