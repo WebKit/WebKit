@@ -49,6 +49,7 @@ editing/glib/WebContentReaderGLib.cpp
 loader/soup/ResourceLoaderSoup.cpp
 
 page/glib/DragControllerGLib.cpp
+page/glib/QuirkTableGLib.cpp
 
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp

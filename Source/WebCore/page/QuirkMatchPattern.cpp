@@ -96,6 +96,15 @@ QuirkMatchPattern::QuirkMatchPattern(String&& string, UserContentURLPattern&& pa
 {
 }
 
+QuirkMatchPattern::QuirkMatchPattern(String&& string)
+    : m_string(WTF::move(string))
+{
+    if (auto parsed = parse(m_string)) {
+        m_pattern = WTF::move(parsed->m_pattern);
+        m_matchesAnyPublicSuffix = parsed->m_matchesAnyPublicSuffix;
+    }
+}
+
 std::optional<QuirkMatchPattern> QuirkMatchPattern::parse(StringView string)
 {
     static constexpr auto anyPublicSuffixAndPathStart = ".*/"_s;
@@ -134,6 +143,9 @@ static bool matchesPathAndQuery(const UserContentURLPattern& pattern, const URL&
 
 bool QuirkMatchPattern::matches(const URLMatchContext& context) const
 {
+    if (!isValid())
+        return false;
+
     auto& url = context.url();
     if (!m_pattern.matchesScheme(url))
         return false;

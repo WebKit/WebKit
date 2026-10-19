@@ -2629,6 +2629,7 @@ GENERATE_QUIRK_BEHAVIORS = \
     QuirkBehaviorDeclarations.h \
     QuirkBehaviorDefinitions.h \
     QuirkBehaviorID.h \
+    QuirkBehaviorID.serialization.in \
     QuirksAccessors.cpp \
     QuirksAccessors.h \
 #

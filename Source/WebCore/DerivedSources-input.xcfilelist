@@ -1224,6 +1224,7 @@ $(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorDeclarations.cpp.erb
 $(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorDeclarations.h.erb
 $(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorDefinitions.h.erb
 $(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorID.h.erb
+$(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorID.serialization.in.erb
 $(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirksAccessors.cpp.erb
 $(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirksAccessors.h.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb

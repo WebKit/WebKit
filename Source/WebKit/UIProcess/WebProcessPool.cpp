@@ -109,6 +109,7 @@
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/RuntimeQuirkTable.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Site.h>
 #include <algorithm>
@@ -1104,6 +1105,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.presentingApplicationPID = m_configuration->presentingApplicationPID();
 
     parameters.timeZoneOverride = m_configuration->timeZoneOverride();
+    parameters.quirkTable = quirkTable();
 
     parameters.memoryFootprintPollIntervalForTesting = m_configuration->memoryFootprintPollIntervalForTesting();
 

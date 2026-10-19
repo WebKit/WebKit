@@ -52,6 +52,8 @@ struct RuntimeQuirk {
     friend bool operator==(const RuntimeQuirk&, const RuntimeQuirk&) = default;
 };
 
+// QuirkTable.h holds the compile-time table generated from QuirkTable.json; RuntimeQuirkTable is the
+// same data parsed from that JSON at runtime, and is what quirkTable() and setQuirkTable() hold.
 struct RuntimeQuirkTable {
     Vector<RuntimeQuirk> quirks;
 };
@@ -98,5 +100,11 @@ struct QuirkTableParseResult {
 };
 
 WEBCORE_EXPORT QuirkTableParseResult parseQuirkTable(StringView json);
+
+WEBCORE_EXPORT String loadQuirkTableJSON();
+
+WEBCORE_EXPORT const RuntimeQuirkTable& quirkTable();
+
+WEBCORE_EXPORT void setQuirkTable(RuntimeQuirkTable&&);
 
 } // namespace WebCore
