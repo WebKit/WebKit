@@ -186,11 +186,11 @@ template<typename... F> decltype(auto) ContentCounter::switchOn(NOESCAPE F&&... 
 
 // MARK: - Conversion
 
-template<> struct ToCSS<Content> { auto operator()(const Content&, const Style::ComputedStyle&) -> CSS::Content; };
+template<> struct ToCSS<Content> { auto operator()(const Content&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::Content; };
 template<> struct ToStyle<CSS::Content> { auto operator()(const CSS::Content&, const BuilderState&) -> Content; };
 
 template<> struct CSSValueConversion<Content> { auto operator()(BuilderState&, const CSSValue&) -> Content; };
-template<> struct CSSValueCreation<Content> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const Content&); };
+template<> struct CSSValueCreation<Content> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const Content&, PropertyValueType = PropertyValueType::Resolved); };
 
 } // namespace Style
 } // namespace WebCore

@@ -45,10 +45,10 @@ WTF::String Content::altText() const
 
 // MARK: - Conversion
 
-template<> struct ToCSS<Content::Data> { auto operator()(const Content::Data&, const Style::ComputedStyle&) -> CSS::Content::Data; };
+template<> struct ToCSS<Content::Data> { auto operator()(const Content::Data&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::Content::Data; };
 template<> struct ToStyle<CSS::Content::Data> { auto operator()(const CSS::Content::Data&, const BuilderState&) -> Content::Data; };
 
-auto ToCSS<Content::Data>::operator()(const Content::Data& value, const Style::ComputedStyle& style) -> CSS::Content::Data
+auto ToCSS<Content::Data>::operator()(const Content::Data& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::Content::Data
 {
     auto computeVisibleContentList = [&] -> CSS::Content::VisibleContentList {
         return CSS::Content::VisibleContentList::map(value.visible, [&](const auto& item) -> CSS::Content::VisibleContentListItem {
@@ -57,7 +57,7 @@ auto ToCSS<Content::Data>::operator()(const Content::Data& value, const Style::C
                     return CSS::Content::Text { toCSS(text.text, style) };
                 },
                 [&](const Content::Image& image) -> CSS::Content::VisibleContentListItem {
-                    return CSS::Content::Image { toCSS(image.image, style) };
+                    return CSS::Content::Image { toCSS(image.image, style, valueType) };
                 },
                 [&](const Content::Counter& counter) -> CSS::Content::VisibleContentListItem {
                     if (counter.separator.value.isEmpty()) {
@@ -182,9 +182,9 @@ auto ToStyle<CSS::Content::Data>::operator()(const CSS::Content::Data& value, co
     };
 }
 
-auto ToCSS<Content>::operator()(const Content& value, const Style::ComputedStyle& style) -> CSS::Content
+auto ToCSS<Content>::operator()(const Content& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::Content
 {
-    return WTF::switchOn(value, [&](const auto& alternative) -> CSS::Content { return toCSS(alternative, style); });
+    return WTF::switchOn(value, [&](const auto& alternative) -> CSS::Content { return toCSS(alternative, style, valueType); });
 }
 
 auto ToStyle<CSS::Content>::operator()(const CSS::Content& value, const BuilderState& state) -> Content
@@ -215,9 +215,9 @@ auto CSSValueConversion<Content>::operator()(BuilderState& state, const CSSValue
     return toStyle(contentValue->content(), state);
 }
 
-Ref<CSSValue> CSSValueCreation<Content>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const Content& value)
+Ref<CSSValue> CSSValueCreation<Content>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const Content& value, PropertyValueType valueType)
 {
-    return CSSContentValue::create(toCSS(value, style));
+    return CSSContentValue::create(toCSS(value, style, valueType));
 }
 
 } // namespace Style

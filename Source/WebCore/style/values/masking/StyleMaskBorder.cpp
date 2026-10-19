@@ -58,10 +58,10 @@ MaskBorder::MaskBorder(MaskBorderSource&& source, MaskBorderSlice&& slice, MaskB
 
 // MARK: - Conversion
 
-auto ToCSS<MaskBorder>::operator()(const MaskBorder& value, const Style::ComputedStyle& style) -> CSS::MaskBorder
+auto ToCSS<MaskBorder>::operator()(const MaskBorder& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::MaskBorder
 {
     return {
-        .maskBorderSource = toCSS(value.maskBorderSource, style),
+        .maskBorderSource = toCSS(value.maskBorderSource, style, valueType),
         .maskBorderSlice = toCSS(value.maskBorderSlice, style),
         .maskBorderWidth = toCSS(value.maskBorderWidth, style),
         .maskBorderOutset = toCSS(value.maskBorderOutset, style),
@@ -90,23 +90,23 @@ auto ToStyle<CSS::MaskBorder>::operator()(const CSS::MaskBorder& value, const Bu
     return result;
 }
 
-auto CSSValueCreation<MaskBorder>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const MaskBorder& value) -> Ref<CSSValue>
+auto CSSValueCreation<MaskBorder>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const MaskBorder& value, PropertyValueType valueType) -> Ref<CSSValue>
 {
-    return CSS::createCSSValue(pool, toCSS(value, style));
+    return CSS::createCSSValue(pool, toCSS(value, style, valueType));
 }
 
 // MARK: - Serialization
 
-void Serialize<MaskBorder>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const MaskBorder& value)
+void Serialize<MaskBorder>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const MaskBorder& value, PropertyValueType valueType)
 {
     if (value.maskBorderSource.isNone()) {
-        serializationForCSS(builder, context, style, value.maskBorderSource);
+        serializationForCSS(builder, context, style, value.maskBorderSource, valueType);
         return;
     }
 
     // FIXME: Omit values that have their initial value.
 
-    serializationForCSS(builder, context, style, value.maskBorderSource);
+    serializationForCSS(builder, context, style, value.maskBorderSource, valueType);
     builder.append(' ');
     serializationForCSS(builder, context, style, value.maskBorderSlice);
     builder.append(" / "_s);
