@@ -12,8 +12,8 @@ assembler/LinkBuffer.cpp
 b3/B3CheckSpecial.cpp
 b3/B3PatchpointSpecial.cpp
 b3/B3Procedure.cpp
-[ macOS ] b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp
-[ macOS ] b3/air/AirGenerate.cpp
+b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp
+b3/air/AirGenerate.cpp
 bytecode/AccessCase.cpp
 bytecode/BytecodeDumper.cpp
 bytecode/CallLinkInfo.cpp
@@ -93,7 +93,7 @@ parser/Parser.h
 parser/SourceProvider.h
 parser/UnlinkedSourceCode.cpp
 parser/UnlinkedSourceCode.h
-[ macOS ] profiler/ProfilerDatabase.cpp
+profiler/ProfilerDatabase.cpp
 profiler/ProfilerEvent.cpp
 runtime/ArrayBufferView.cpp
 runtime/AtomicsObject.cpp
@@ -126,7 +126,6 @@ runtime/RegExpObject.cpp
 runtime/SamplingProfiler.cpp
 runtime/ScriptExecutable.h
 runtime/Structure.cpp
-[ iOS ] runtime/StructureInlines.h
 runtime/SymbolTable.cpp
 runtime/TypeProfiler.cpp
 runtime/TypeProfilerLog.cpp
@@ -165,5 +164,5 @@ wasm/js/JSWebAssemblyMemory.h
 wasm/js/WebAssemblyFunction.cpp
 wasm/js/WebAssemblyFunction.h
 wasm/js/WebAssemblyInstanceConstructor.cpp
-[ macOS ] wasm/js/WebAssemblyModuleConstructor.cpp
+wasm/js/WebAssemblyModuleConstructor.cpp
 wasm/js/WebAssemblyModuleRecord.cpp
