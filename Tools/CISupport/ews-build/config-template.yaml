@@ -435,7 +435,7 @@ builders:
     additionalArguments: [--child-processes=4, imported/w3c/web-platform-tests]
     workernames: {$map: {$eval: "range(0, 16)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
   - name: macOS-Tahoe-Debug-Build-EWS
-    shortname: mac-AS-debug
+    shortname: mac-cmake-debug
     icon: buildOnly
     factory: macOSBuildOnlyFactory
     platform: mac-tahoe
@@ -445,7 +445,7 @@ builders:
     triggers: [macos-tahoe-debug-api-tests-ews, macos-tahoe-debug-wk2-tests-ews]
     workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
   - name: macOS-Tahoe-Debug-API-Tests-EWS
-    shortname: api-mac-debug
+    shortname: api-mac-cmake-debug
     icon: testOnly
     factory: APITestsFactory
     platform: mac-tahoe
@@ -456,7 +456,7 @@ builders:
         - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
         - {$map: {$eval: "range(0, 9)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
   - name: macOS-Tahoe-Debug-WK2-Tests-EWS
-    shortname: mac-AS-debug-wk2
+    shortname: mac-cmake-debug-wk2
     icon: testOnly
     factory: macOSWK2Factory
     platform: mac-tahoe

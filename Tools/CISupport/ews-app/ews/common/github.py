@@ -217,11 +217,11 @@ class GitHubEWS(GitHub):
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
     STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
-                          ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', 'win-tests'],
+                          ['bindings', 'ios-sim', 'mac-cmake-debug', 'wpe-wk2', 'win-tests'],
                           ['webkitperl', 'ios-wk2', 'api-mac', 'api-wpe', ''],
-                          ['webkitpy', 'ios-wk2-wpt', 'api-mac-debug', 'jsc-wpe', ''],
+                          ['webkitpy', 'ios-wk2-wpt', 'api-mac-cmake-debug', 'jsc-wpe', ''],
                           ['jsc-x86-64', 'api-ios', 'mac-wk2', 'gtk3-gcc', ''],
-                          ['jsc-debug-arm64', 'ios-safer-cpp', 'mac-AS-debug-wk2', 'gtk', ''],
+                          ['jsc-debug-arm64', 'ios-safer-cpp', 'mac-cmake-debug-wk2', 'gtk', ''],
                           ['services', 'vision', 'mac-wk2-stress', 'gtk-wk2', ''],
                           ['merge', 'vision-sim', 'mac-intel-wk2', 'api-gtk', ''],
                           ['unsafe-merge', 'vision-wk2', 'mac-safer-cpp', 'playstation', ''],
