@@ -44,6 +44,7 @@ jobs:
             Source/bmalloc
             Source/ThirdParty/libwebrtc
             Tools/wiiu
+            .github/workflows/build.yml
 
       - name: Validate page-loading behavior contracts
         run: python3 Tools/wiiu/validate_page_loading.py
