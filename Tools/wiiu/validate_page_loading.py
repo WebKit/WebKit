@@ -8,7 +8,23 @@ from pathlib import Path
 import re
 import sys
 
-ROOT = Path(__file__).resolve().parents[2]
+# Resolve the checkout root from the workflow working directory first, then the
+# script location. GitHub Actions can invoke this file from a sparse checkout;
+# using a fixed parent index is brittle if the script is symlinked or relocated.
+def find_repository_root():
+    import os
+    candidates = []
+    workspace = os.environ.get("GITHUB_WORKSPACE")
+    if workspace:
+        candidates.append(Path(workspace).resolve())
+    candidates.append(Path.cwd().resolve())
+    candidates.extend(Path(__file__).resolve().parents)
+    for candidate in candidates:
+        if (candidate / ".github/workflows/build.yml").is_file() and (candidate / "Source/WebCore").is_dir():
+            return candidate
+    return Path(__file__).resolve().parents[2]
+
+ROOT = find_repository_root()
 VIEW_CPP = ROOT / "Source/WebKit/WKC/webkit/WKCWebView.cpp"
 VIEW_H = ROOT / "Source/WebKit/WKC/webkit/WKCWebView.h"
 RESOURCE = ROOT / "Source/WebCore/platform/WKC/ResourceHandleWKC.cpp"
