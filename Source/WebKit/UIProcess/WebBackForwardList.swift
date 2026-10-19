@@ -29,11 +29,6 @@ import WebCore_Private
 import WebKit_Internal
 import wtf
 
-// A note on swift-format-ignore: NeverForceUnwrap:
-// This file currently aims to closely adhere to the C++ original which uses
-// RefPtr.get() and friends frequently; this is functionally similar to force
-// unwrapping so that's been retained.
-
 // rdar://164119356 may allow us to automate some of these conformances
 // using SWIFT_CONFORMS_TO_PROTOCOL
 extension WebKit.RefFrameState: CxxRef {
@@ -92,16 +87,16 @@ func === (_ lhs: WebKit.WebBackForwardListItem, _ rhs: WebKit.WebBackForwardList
     unsafe unsafeBitCast(lhs, to: UnsafeRawPointer.self) == unsafeBitCast(rhs, to: UnsafeRawPointer.self)
 }
 
+private typealias Item = WebKit.WebBackForwardListItem
+
 final class WebBackForwardList {
     private static let defaultCapacity = 100
 
-    var page: WebKit.WeakPtrWebPageProxy
-    // Optional just because of an initialization order issue.
-    // Always occupied after initialization finished.
-    var messageForwarder: RefWebBackForwardListMessageForwarder?
+    private var page: WebKit.WeakPtrWebPageProxy
+    private lazy var messageForwarder = WebKit.WebBackForwardListMessageForwarder.create(target: self)
 
-    var entries: [WebKit.WebBackForwardListItem] = []
-    var currentIndex: Int?
+    /// `nil` when the list is empty.
+    private var entries: Entries?
 
     // Set while dispatching an IPC message coming from a provisional (process-swapped) process, where the
     // message may legitimately reference an unexpected file: URL. See setHandlingProvisionalMessage(_:).
@@ -110,6 +105,186 @@ final class WebBackForwardList {
     private enum Direction {
         case backward
         case forward
+
+        var step: Int {
+            switch self {
+            case .backward: -1
+            case .forward: 1
+            }
+        }
+    }
+
+    /// The list split around its current item.
+    ///
+    /// There's no index and `current` isn't optional, so "has a current item" and "the current index
+    /// is in bounds" are always true.
+    private struct Entries: RandomAccessCollection {
+        var back: [Item] = []
+        var current: Item
+        var forward: [Item] = []
+
+        init(current: Item) {
+            self.current = current
+        }
+
+        /// Splits `items` around `currentIndex`, or returns `nil` if `currentIndex` isn't an index of `items`.
+        init?(_ items: [Item], currentIndex: Int?) {
+            guard let currentIndex, items.indices.contains(currentIndex) else {
+                return nil
+            }
+            back = Array(items[..<currentIndex])
+            current = items[currentIndex]
+            forward = Array(items[(currentIndex + 1)...])
+        }
+
+        var currentIndex: Int { back.count }
+
+        // RandomAccessCollection, so the skipping code can index the whole list without copying it.
+        var startIndex: Int { 0 }
+        var endIndex: Int { back.count + 1 + forward.count }
+
+        subscript(index: Int) -> Item {
+            if index < back.count {
+                return back[index]
+            }
+            if index == back.count {
+                return current
+            }
+            return forward[index - back.count - 1]
+        }
+
+        enum Position: Equatable {
+            case back(Int)
+            case current
+            case forward(Int)
+        }
+
+        func position(of item: Item) -> Position? {
+            if item === current {
+                return .current
+            }
+            if let index = back.firstIndex(where: { $0 === item }) {
+                return .back(index)
+            }
+            if let index = forward.firstIndex(where: { $0 === item }) {
+                return .forward(index)
+            }
+            return nil
+        }
+
+        /// Makes the item at `position` current.
+        ///
+        /// If `keepingCurrent` is false, the old current item is dropped.
+        mutating func move(to position: Position, keepingCurrent: Bool) {
+            let oldCurrent = keepingCurrent ? [current] : []
+            switch position {
+            case .current:
+                return
+            case .back(let index):
+                forward = Array(back[(index + 1)...]) + oldCurrent + forward
+                current = back[index]
+                back.removeSubrange(index...)
+            case .forward(let index):
+                back += oldCurrent + forward[..<index]
+                current = forward[index]
+                forward.removeSubrange(...index)
+            }
+        }
+
+        /// The nearest item to the current one in `direction`, skipping items that were added by JavaScript
+        /// without a user gesture.
+        func itemSkippingItemsWithoutUserGesture(_ direction: Direction) -> Item? {
+            indexSkippingItemsWithoutUserGesture(direction, from: currentIndex).map { self[$0] }
+        }
+
+        /// Up to `limit` items from the current one in `direction`, nearest first, skipping items that were
+        /// added by JavaScript without a user gesture.
+        func itemsSkippingItemsWithoutUserGesture(_ direction: Direction, limit: Int) -> [Item] {
+            var items: [Item] = []
+            var index = currentIndex
+            while items.count < limit, let nextIndex = indexSkippingItemsWithoutUserGesture(direction, from: index) {
+                items.append(self[nextIndex])
+                index = nextIndex
+            }
+            return items
+        }
+
+        /// The index of the item one step from `startingIndex` in `direction`, skipping items that were
+        /// added by JavaScript without a user gesture.
+        private func indexSkippingItemsWithoutUserGesture(_ direction: Direction, from startingIndex: Int) -> Int? {
+            assert(indices.contains(startingIndex))
+            var index = startingIndex + direction.step
+            guard indices.contains(index) else {
+                return nil
+            }
+
+            #if WTF_PLATFORM_COCOA
+            if !WTF.linkedOnOrAfterSDKWithBehavior(WTF.SDKAlignedBehavior.UIBackForwardSkipsHistoryItemsWithoutUserGesture) {
+                return index
+            }
+            #endif
+
+            // For example:
+            // A -> A#a (no userInteraction) -> B -> B#a (no user interaction) -> B#b (no user interaction)
+            // If we're on B and navigate back, we don't want to skip anything and load A#a.
+            // However, if we're on A and navigate forward, we do want to skip items and end up on B#b.
+            // The forward logic comes later.
+            if direction == .backward && !self[startingIndex].wasCreatedByJSWithoutUserInteraction() {
+                return index
+            }
+
+            // If every item from this point back to the start of the list was created by JS without user interaction,
+            // we ignore them all.
+            if direction == .backward && self[...index].allSatisfy({ $0.wasCreatedByJSWithoutUserInteraction() }) {
+                return nil
+            }
+
+            // For example:
+            // Yahoo -> Yahoo#a (no userInteraction) -> Google -> Google#a (no user interaction) -> Google#b (no user interaction)
+            // If we are on Google#b and navigate backwards, we want to skip over Google#a and Google, to end up on Yahoo#a.
+            // If we are on Yahoo#a and navigate forwards, we want to skip over Google and Google#a, to end up on Google#b.
+            while self[index].wasCreatedByJSWithoutUserInteraction() {
+                index += direction.step
+                guard indices.contains(index) else {
+                    // If there are no more back items that ever had a user gesture, then we should not enable going back.
+                    // This happens when e.g. a new window is created by JavaScript then client redirects occur that create
+                    // a sequence of history items, each without user interaction.
+                    loadingReleaseLog(
+                        "UI Navigation is disabling going back because no more WebBackForwardListItem items in the back list had user interaction"
+                    )
+                    return nil
+                }
+
+                loadingReleaseLog(
+                    "UI Navigation is skipping a WebBackForwardListItem because it was added by JavaScript without user interaction"
+                )
+            }
+
+            // We are now on the next item that has user interaction.
+            assert(!self[index].wasCreatedByJSWithoutUserInteraction())
+
+            switch direction {
+            case .backward:
+                // If going backwards, skip over next item with user iteraction since this is the one the user
+                // thinks they're on. But if the user-gesture item is at the start of history, there is nothing
+                // to skip to — the item itself must be the destination.
+                guard index > 0 else {
+                    return index
+                }
+
+                loadingReleaseLog(
+                    "UI Navigation is skipping a WebBackForwardListItem that has user interaction because we started on an item that didn't have interaction"
+                )
+                return index - 1
+            case .forward:
+                // If going forward and there are items that we created by JS without user interaction, move forward to the last
+                // one in the series.
+                while indices.contains(index + 1) && self[index + 1].wasCreatedByJSWithoutUserInteraction() {
+                    index += 1
+                }
+                return index
+            }
+        }
     }
 
     private static let shouldSkipItemsWithoutUserGestureForWebKitAPI: Bool = {
@@ -124,21 +299,28 @@ final class WebBackForwardList {
     @used
     init(page: WebKit.WeakPtrWebPageProxy) {
         self.page = page
-        self.messageForwarder = WebKit.WebBackForwardListMessageForwarder.create(target: self)
         backForwardLog("(Back/Forward) Created WebBackForwardList \(ObjectIdentifier(self))")
     }
 
     deinit {
         backForwardLog("(Back/Forward) Destroying WebBackForwardList \(ObjectIdentifier(self))")
         // A WebBackForwardList should never be destroyed unless it's associated page has been closed or is invalid.
-        assert(page.get().map { !$0.hasRunningProcess() } ?? (currentIndex == nil))
+        assert(page.get().map { !$0.hasRunningProcess() } ?? (entries == nil))
     }
 
     @used
     func getMessageReceiver() -> RefWebBackForwardListMessageForwarder {
-        // Guaranteed to be Some after construction
-        // swift-format-ignore: NeverForceUnwrap
-        self.messageForwarder!
+        messageForwarder
+    }
+
+    /// The entries, if the page is alive.
+    private var liveEntries: Entries? {
+        page.get() != nil ? entries : nil
+    }
+
+    /// Every item in order, for code that doesn't care about the current position.
+    private var allItems: [Item] {
+        entries.map { Array($0) } ?? []
     }
 
     @used
@@ -146,7 +328,7 @@ final class WebBackForwardList {
         WebKit.RefPtrWebBackForwardListItem(entryForID(identifier))
     }
 
-    private func entryForID(_ identifier: WebCore.BackForwardItemIdentifier) -> WebKit.WebBackForwardListItem? {
+    private func entryForID(_ identifier: WebCore.BackForwardItemIdentifier) -> Item? {
         // FIXME: consider restructuring this a bit. It's a bit odd that it basically refers
         // to a map within WebBackForwardListItem. Maybe WebBackForwardList should
         // own that map. This is a pre-existing quirk of the C++ implementation, not a
@@ -165,141 +347,83 @@ final class WebBackForwardList {
 
     @used
     func pageClosed() {
-        backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) had its page closed with current size \(entries.count)")
+        backForwardLog(
+            "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) had its page closed with current size \(entries?.count ?? 0)"
+        )
 
         // We should have always started out with an m_page and we should never close the page twice
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        let pageAvailable = Bool(fromCxx: page)
-        #else
-        let pageAvailable = page.__convertToBool()
-        #endif
-        assert(pageAvailable)
-        if pageAvailable {
-            for item in entries {
-                didRemoveItem(item: item)
+        if let page = page.get() {
+            for item in allItems {
+                didRemoveItem(item, from: page)
             }
+        } else {
+            assertionFailure("WebBackForwardList should have a page, and should not be closed twice")
         }
 
         page.clear()
-        entries.removeAll()
-        currentIndex = nil
+        entries = nil
     }
 
-    private func assertValidIndex() {
-        assert(currentIndex.map { $0 < entries.count } ?? true)
-    }
-
-    func addItem(newItem: WebKit.WebBackForwardListItem) {
-        assertValidIndex()
-
+    private func addItem(_ newItem: Item) {
         guard let page = page.get() else {
             return
         }
 
-        var removedItems: [WebKit.WebBackForwardListItem] = []
-
-        if let initialCurrentIndex = currentIndex {
+        var removedItems: [Item] = []
+        let newEntries: Entries
+        if var entries = self.entries {
             page.recordAutomaticNavigationSnapshot()
 
-            // Toss everything in the forward list.
-            let targetSize = initialCurrentIndex + 1
-            removedItems.reserveCapacity(entries.count - targetSize)
+            // Toss everything in the forward list (last first, matching the C++).
+            removedItems = entries.forward.reversed()
+            entries.forward.removeAll()
 
-            while entries.count > targetSize {
-                // swift-format-ignore: NeverForceUnwrap
-                didRemoveItem(item: entries.last!)
-                removedItems.append(entries.removeLast())
+            // Toss the first item if the list is getting too big, as long as we're not using it.
+            if entries.count >= Self.defaultCapacity, !entries.back.isEmpty {
+                removedItems.append(entries.back.removeFirst())
+            }
+            for item in removedItems {
+                didRemoveItem(item, from: page)
             }
 
-            // Toss the first item if the list is getting too big, as long as we're not using it
-            // (or even if we are, if we only want 1 entry).
-            // swift-format-ignore: NeverForceUnwrap
-            if entries.count >= WebBackForwardList.defaultCapacity && currentIndex! > 0 {
-                // swift-format-ignore: NeverForceUnwrap
-                didRemoveItem(item: entries.first!)
-                removedItems.append(entries.removeFirst())
+            // The client can read the list from inside shouldKeepCurrentBackForwardListItemInList,
+            // so store the trimmed list first.
+            self.entries = entries
 
-                if entries.isEmpty {
-                    currentIndex = nil
-                } else {
-                    // swift-format-ignore: NeverForceUnwrap
-                    currentIndex = currentIndex! - 1
-                }
+            if page.shouldKeepCurrentBackForwardListItemInList(entries.current) {
+                entries.back.append(entries.current)
+            } else {
+                removedItems.append(entries.current)
             }
+            entries.current = newItem
+            newEntries = entries
         } else {
-            // If we have no current item index we should also not have any entries.
-            // (This in future could be proven by using a Swift enum.)
-            assert(entries.isEmpty)
-
-            // But just in case it does happen in practice we'll get back in to a consistent state now before adding the new item.
-            for item in entries {
-                didRemoveItem(item: item)
-            }
-            removedItems.append(contentsOf: entries)
-            entries.removeAll()
+            newEntries = Entries(current: newItem)
         }
-
-        var shouldKeepCurrentItem = true
-
-        if let initialCurrentIndex = currentIndex {
-            shouldKeepCurrentItem = page.shouldKeepCurrentBackForwardListItemInList(entries[initialCurrentIndex])
-            if shouldKeepCurrentItem {
-                currentIndex = initialCurrentIndex + 1
-            }
-        } else {
-            assert(entries.isEmpty)
-            currentIndex = 0
-        }
-
-        // swift-format-ignore: NeverForceUnwrap
-        let unwrappedCurrentIndex = currentIndex!
-        if !shouldKeepCurrentItem {
-            // m_current should never be pointing past the end of the entries Vector.
-            // If it is, something has gone wrong and we should not try to swap in the new item.
-            assert(unwrappedCurrentIndex < entries.count)
-            removedItems.append(entries[unwrappedCurrentIndex])
-            entries[unwrappedCurrentIndex] = newItem
-        } else {
-            // m_current should never be pointing more than 1 past the end of the entries Vector.
-            // If it is, something has gone wrong and we should not try to insert the new item.
-            assert(unwrappedCurrentIndex <= entries.count)
-            if unwrappedCurrentIndex <= entries.count {
-                entries.insert(newItem, at: unwrappedCurrentIndex)
-            }
-        }
+        self.entries = newEntries
 
         backForwardLog(
-            "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) added an item. Current size \(entries.count), current index \(String(describing: currentIndex)), threw away \(removedItems.count) items"
+            "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) added an item. Current size \(newEntries.count), current index \(newEntries.currentIndex), threw away \(removedItems.count) items"
         )
         page.didChangeBackForwardList(newItem, consuming: WebKit.BackForwardListItemVector(array: removedItems))
     }
 
     @used
     func goToItem(item: WebKit.WebBackForwardListItem) {
-        assertValidIndex()
-
-        guard !entries.isEmpty else {
+        guard let page = page.get(), var entries = self.entries else {
             return
         }
-        guard let page = page.get() else {
-            return
-        }
-        guard let priorCurrentIndex = currentIndex else {
-            return
-        }
-
-        let targetIndex = entries.firstIndex(where: { $0 === item })
 
         // If the target item wasn't even in the list, there's nothing else to do.
-        guard var targetIndex else {
+        guard let position = entries.position(of: item) else {
             backForwardLog(
                 "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) could not go to item \(item.identifier().toString()) \(item.url) because it was not found"
             )
             return
         }
 
-        if targetIndex < priorCurrentIndex {
-            let delta = entries.count - targetIndex - 1
+        if case .back(let index) = position {
+            let delta = entries.count - index - 1
             let deltaValue = if delta > 10 { "over10" } else { delta.description }
             page.logDiagnosticMessage(
                 WebCore.DiagnosticLoggingKeys.backNavigationDeltaKey(),
@@ -310,27 +434,22 @@ final class WebBackForwardList {
 
         // If we're going to an item different from the current item, ask the client if the current
         // item should remain in the list.
-        let currentItem = entries[priorCurrentIndex]
-        var shouldKeepCurrentItem = true
-        if !(currentItem === item) {
+        let shouldKeepCurrentItem: Bool
+        if position == .current {
+            shouldKeepCurrentItem = true
+        } else {
             page.recordAutomaticNavigationSnapshot()
-            shouldKeepCurrentItem = page.shouldKeepCurrentBackForwardListItemInList(currentItem)
+            shouldKeepCurrentItem = page.shouldKeepCurrentBackForwardListItemInList(entries.current)
         }
 
-        // If the client said to remove the current item, remove it and then update the target index.
-        var removedItems: [WebKit.WebBackForwardListItem] = []
-        if !shouldKeepCurrentItem {
-            removedItems.append(entries.remove(at: priorCurrentIndex))
-            // swift-format-ignore: NeverForceUnwrap
-            targetIndex = entries.firstIndex(where: { $0 === item })!
-        }
-
-        currentIndex = targetIndex
+        let removedItems = shouldKeepCurrentItem ? [] : [entries.current]
+        entries.move(to: position, keepingCurrent: shouldKeepCurrentItem)
+        self.entries = entries
 
         backForwardLog(
-            "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) going to item \(item.identifier().toString()), is now at index \(targetIndex)"
+            "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) going to item \(item.identifier().toString()), is now at index \(entries.currentIndex)"
         )
-        page.didChangeBackForwardList(Optional.none, consuming: WebKit.BackForwardListItemVector(array: removedItems))
+        page.didChangeBackForwardList(nil, consuming: WebKit.BackForwardListItemVector(array: removedItems))
     }
 
     @used
@@ -338,24 +457,8 @@ final class WebBackForwardList {
         WebKit.RefPtrWebBackForwardListItem(currentEntry())
     }
 
-    private func currentEntry() -> WebKit.WebBackForwardListItem? {
-        assertValidIndex()
-
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        guard Bool(fromCxx: page) else {
-            return nil
-        }
-        #else
-        guard page.__convertToBool() else {
-            return nil
-        }
-        #endif
-
-        guard let currentIndex else {
-            return nil
-        }
-
-        return entries[currentIndex]
+    private func currentEntry() -> Item? {
+        liveEntries?.current
     }
 
     @used
@@ -363,31 +466,15 @@ final class WebBackForwardList {
         WebKit.RefPtrWebBackForwardListItem(backEntry())
     }
 
-    private func backEntry() -> WebKit.WebBackForwardListItem? {
-        assertValidIndex()
-
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        guard Bool(fromCxx: page) else {
-            return nil
-        }
-        #else
-        guard page.__convertToBool() else {
-            return nil
-        }
-        #endif
-
-        guard let currentIndex else {
+    private func backEntry() -> Item? {
+        guard let entries = liveEntries else {
             return nil
         }
 
-        guard !WebBackForwardList.shouldSkipItemsWithoutUserGestureForWebKitAPI else {
-            return itemStartingAtIndexSkippingItemsAddedByJSWithoutUserGesture(direction: .backward, startingIndex: currentIndex).item
+        if Self.shouldSkipItemsWithoutUserGestureForWebKitAPI {
+            return entries.itemSkippingItemsWithoutUserGesture(.backward)
         }
-
-        guard currentIndex > 0 else {
-            return nil
-        }
-        return entries[currentIndex - 1]
+        return entries.back.last
     }
 
     @used
@@ -395,32 +482,15 @@ final class WebBackForwardList {
         WebKit.RefPtrWebBackForwardListItem(forwardEntry())
     }
 
-    private func forwardEntry() -> WebKit.WebBackForwardListItem? {
-        assertValidIndex()
-
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        guard Bool(fromCxx: page) else {
-            return nil
-        }
-        #else
-        guard page.__convertToBool() else {
-            return nil
-        }
-        #endif
-
-        guard let currentIndex else {
+    private func forwardEntry() -> Item? {
+        guard let entries = liveEntries else {
             return nil
         }
 
-        guard !WebBackForwardList.shouldSkipItemsWithoutUserGestureForWebKitAPI else {
-            return itemStartingAtIndexSkippingItemsAddedByJSWithoutUserGesture(direction: .forward, startingIndex: currentIndex).item
+        if Self.shouldSkipItemsWithoutUserGestureForWebKitAPI {
+            return entries.itemSkippingItemsWithoutUserGesture(.forward)
         }
-
-        guard currentIndex < entries.count - 1 else {
-            return nil
-        }
-
-        return entries[currentIndex + 1]
+        return entries.forward.first
     }
 
     @used
@@ -428,313 +498,132 @@ final class WebBackForwardList {
         WebKit.RefPtrWebBackForwardListItem(entryAtDeltaFromCurrentIndex(delta: delta, allowSkipping: allowSkipping))
     }
 
-    private func entryAtDeltaFromCurrentIndex(delta: Int, allowSkipping: Bool) -> WebKit.WebBackForwardListItem? {
-        assertValidIndex()
-
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        guard Bool(fromCxx: page) else {
-            return nil
-        }
-        #else
-        guard page.__convertToBool() else {
-            return nil
-        }
-        #endif
-
-        guard let currentIndex else {
+    private func entryAtDeltaFromCurrentIndex(delta: Int, allowSkipping: Bool) -> Item? {
+        guard let entries = liveEntries else {
             return nil
         }
 
-        let (targetIndex, overflow) = currentIndex.addingReportingOverflow(delta)
-        if overflow || targetIndex < 0 {
+        let (targetIndex, overflow) = entries.currentIndex.addingReportingOverflow(delta)
+        guard !overflow, targetIndex >= 0 else {
             return nil
         }
 
         // API requests to get the current item will always get the current item without any skipping logic.
         guard delta != 0 else {
-            return itemAtIndexWithoutSkipping(index: currentIndex).item
+            return entries.current
         }
 
-        guard allowSkipping && WebBackForwardList.shouldSkipItemsWithoutUserGestureForWebKitAPI else {
-            return itemAtIndexWithoutSkipping(index: currentIndex + delta).item
+        guard allowSkipping && Self.shouldSkipItemsWithoutUserGestureForWebKitAPI else {
+            return entries.indices.contains(targetIndex) ? entries[targetIndex] : nil
         }
 
-        let direction: Direction = delta < 0 ? .backward : .forward
-        var stepsLeft = abs(delta)
-        var nextIndex = currentIndex
-        while stepsLeft > 0 {
-            let result = itemStartingAtIndexSkippingItemsAddedByJSWithoutUserGesture(direction: direction, startingIndex: nextIndex)
-            stepsLeft -= 1
-            if result.item == nil || stepsLeft == 0 {
-                return result.item
-            }
-            nextIndex = result.index
-        }
-
-        return nil
-    }
-
-    func itemAtIndexWithoutSkipping(index: Int) -> (item: WebKit.WebBackForwardListItem?, index: Int) {
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        guard Bool(fromCxx: page) else {
-            return (nil, index)
-        }
-        #else
-        guard page.__convertToBool() else {
-            return (nil, index)
-        }
-        #endif
-
-        if index < 0 || index >= entries.count {
-            return (nil, index)
-        }
-
-        return (entries[index], index)
+        let steps = abs(delta)
+        let items = entries.itemsSkippingItemsWithoutUserGesture(delta < 0 ? .backward : .forward, limit: steps)
+        return items.count == steps ? items.last : nil
     }
 
     private func rawBackListEntryCount() -> Int {
-        assertValidIndex()
-
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        guard Bool(fromCxx: page) else {
-            return 0
-        }
-        #else
-        guard page.__convertToBool() else {
-            return 0
-        }
-        #endif
-
-        guard let currentIndex else {
-            return 0
-        }
-
-        return currentIndex
+        liveEntries?.back.count ?? 0
     }
 
     private func rawForwardListEntryCount() -> Int {
-        assertValidIndex()
-
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        guard Bool(fromCxx: page) else {
-            return 0
-        }
-        #else
-        guard page.__convertToBool() else {
-            return 0
-        }
-        #endif
-
-        guard let currentIndex = currentIndex else {
-            return 0
-        }
-
-        return entries.count - (currentIndex + 1)
+        liveEntries?.forward.count ?? 0
     }
 
     @used
     func backListCountForAPI() -> Int {
-        backListWithLimitInternal(limit: UInt(rawBackListEntryCount()), makeAPIArray: false).count
+        backListItems(limit: .max).count
     }
 
     @used
     func forwardListCountForAPI() -> Int {
-        forwardListWithLimitInternal(limit: UInt(rawForwardListEntryCount()), makeAPIArray: false).count
+        forwardListItems(limit: .max).count
     }
 
     private func rawCounts() -> WebKit.WebBackForwardListCounts {
         WebKit.WebBackForwardListCounts(backCount: UInt32(rawBackListEntryCount()), forwardCount: UInt32(rawForwardListEntryCount()))
     }
 
-    private static func makeListPairResult(
-        items: [WebKit.WebBackForwardListItem],
-        makeAPIArray: Bool
-    ) -> (count: Int, array: API.RefAPIArray?) {
-        let count = items.count
-        guard makeAPIArray else {
-            return (count: count, array: nil)
-        }
-        let array = count > 0 ? API.Array.create(list: items.map { WebKit.toAPIObject($0) }) : API.Array.create()
-        return (count: count, array: array)
+    private static func makeAPIArray(_ items: [Item]) -> API.RefAPIArray {
+        API.Array.create(list: items.map { WebKit.toAPIObject($0) })
     }
 
     @used
     func backListAsAPIArrayWithLimit(limit: UInt) -> API.RefAPIArray {
-        // swift-format-ignore: NeverForceUnwrap
-        backListWithLimitInternal(limit: limit, makeAPIArray: true).array!
+        Self.makeAPIArray(backListItems(limit: Int(limit)))
     }
 
     @used
     func forwardListAsAPIArrayWithLimit(limit: UInt) -> API.RefAPIArray {
-        // swift-format-ignore: NeverForceUnwrap
-        forwardListWithLimitInternal(limit: limit, makeAPIArray: true).array!
+        Self.makeAPIArray(forwardListItems(limit: Int(limit)))
     }
 
-    private func backListWithLimitInternal(limit: UInt, makeAPIArray: Bool) -> (count: Int, array: API.RefAPIArray?) {
-        assertValidIndex()
-
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        guard Bool(fromCxx: page) else {
-            return WebBackForwardList.makeListPairResult(items: [], makeAPIArray: makeAPIArray)
-        }
-        #else
-        guard page.__convertToBool() else {
-            return WebBackForwardList.makeListPairResult(items: [], makeAPIArray: makeAPIArray)
-        }
-        #endif
-
-        guard let unwrappedCurrentIndex = currentIndex else {
-            return WebBackForwardList.makeListPairResult(items: [], makeAPIArray: makeAPIArray)
+    private func backListItems(limit: Int) -> [Item] {
+        guard let entries = liveEntries else {
+            return []
         }
 
-        let backListSize = rawBackListEntryCount()
-        var size = min(backListSize, Int(limit))
-        guard size > 0 else {
-            return WebBackForwardList.makeListPairResult(items: [], makeAPIArray: makeAPIArray)
+        if Self.shouldSkipItemsWithoutUserGestureForWebKitAPI {
+            return entries.itemsSkippingItemsWithoutUserGesture(.backward, limit: limit).reversed()
         }
-        assert(backListSize >= size)
-
-        guard !WebBackForwardList.shouldSkipItemsWithoutUserGestureForWebKitAPI else {
-            var items: [WebKit.WebBackForwardListItem] = []
-            var nextStartingIndex = unwrappedCurrentIndex
-            while size > 0 {
-                let result = itemStartingAtIndexSkippingItemsAddedByJSWithoutUserGesture(
-                    direction: .backward,
-                    startingIndex: nextStartingIndex
-                )
-                if let item = result.item {
-                    items.append(item)
-                }
-                size -= 1
-                if result.item == nil || size == 0 || result.index == 0 {
-                    break
-                }
-                nextStartingIndex = result.index
-            }
-            items.reverse()
-            return WebBackForwardList.makeListPairResult(items: items, makeAPIArray: makeAPIArray)
-        }
-
-        let startIndex = backListSize - size
-        let backItems = Array(entries[startIndex..<startIndex + size])
-        return WebBackForwardList.makeListPairResult(items: backItems, makeAPIArray: makeAPIArray)
+        return Array(entries.back.suffix(limit))
     }
 
-    private func forwardListWithLimitInternal(limit: UInt, makeAPIArray: Bool) -> (count: Int, array: API.RefAPIArray?) {
-        assertValidIndex()
-
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        guard Bool(fromCxx: page) else {
-            return WebBackForwardList.makeListPairResult(items: [], makeAPIArray: makeAPIArray)
-        }
-        #else
-        guard page.__convertToBool() else {
-            return WebBackForwardList.makeListPairResult(items: [], makeAPIArray: makeAPIArray)
-        }
-        #endif
-
-        guard let unwrappedCurrentIndex = currentIndex else {
-            return WebBackForwardList.makeListPairResult(items: [], makeAPIArray: makeAPIArray)
+    private func forwardListItems(limit: Int) -> [Item] {
+        guard let entries = liveEntries else {
+            return []
         }
 
-        var size = min(rawForwardListEntryCount(), Int(limit))
-        guard size > 0 else {
-            return WebBackForwardList.makeListPairResult(items: [], makeAPIArray: makeAPIArray)
+        if Self.shouldSkipItemsWithoutUserGestureForWebKitAPI {
+            return entries.itemsSkippingItemsWithoutUserGesture(.forward, limit: limit)
         }
-
-        guard !WebBackForwardList.shouldSkipItemsWithoutUserGestureForWebKitAPI else {
-            var items: [WebKit.WebBackForwardListItem] = []
-            var nextStartingIndex = unwrappedCurrentIndex
-            while size > 0 {
-                let result = itemStartingAtIndexSkippingItemsAddedByJSWithoutUserGesture(
-                    direction: .forward,
-                    startingIndex: nextStartingIndex
-                )
-                if let item = result.item {
-                    items.append(item)
-                }
-                size -= 1
-                if result.item == nil || size == 0 || result.index == 0 {
-                    break
-                }
-                nextStartingIndex = result.index
-            }
-            return WebBackForwardList.makeListPairResult(items: items, makeAPIArray: makeAPIArray)
-        }
-
-        let startIndex = unwrappedCurrentIndex + 1
-        let forwardItems = Array(entries[startIndex..<startIndex + size])
-        return WebBackForwardList.makeListPairResult(items: forwardItems, makeAPIArray: makeAPIArray)
+        return Array(entries.forward.prefix(limit))
     }
 
+    @used
     func removeAllItems() {
-        assertValidIndex()
+        backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) removeAllItems (has \(entries?.count ?? 0) of them)")
 
-        backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) removeAllItems (has \(entries.count) of them)")
-
-        for item in entries {
-            didRemoveItem(item: item)
+        guard let page = page.get() else {
+            return
         }
-        currentIndex = nil
 
-        let entriesCopy = entries
-        entries.removeAll()
-        // swift-format-ignore: NeverForceUnwrap
-        page.get()!.didChangeBackForwardList(Optional.none, consuming: WebKit.BackForwardListItemVector(array: entriesCopy))
+        let removedItems = allItems
+        for item in removedItems {
+            didRemoveItem(item, from: page)
+        }
+        entries = nil
+
+        // Clients are notified even if the list was already empty.
+        page.didChangeBackForwardList(nil, consuming: WebKit.BackForwardListItemVector(array: removedItems))
     }
 
     @used
     func clear() {
-        assertValidIndex()
+        backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) clear (has \(entries?.count ?? 0) of them)")
 
-        backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) clear (has \(entries.count) of them)")
-
-        let size = entries.count
-        guard let page = page.get() else {
-            return
-        }
-        guard size > 1 else {
+        guard let page = page.get(), let entries, entries.count > 1 else {
             return
         }
 
-        guard let unwrappedCurrentItem = currentEntry() else {
-            // We should only ever have no current item if we also have no current item index.
-            assert(currentIndex == nil)
-
-            // But just in case it does happen in practice we should get back into a consistent state now.
-            removeAllItems()
-            return
+        // In list order: back items, then forward items.
+        let removedItems = entries.back + entries.forward
+        for item in removedItems {
+            didRemoveItem(item, from: page)
         }
 
-        for item in entries where !(item === unwrappedCurrentItem) {
-            didRemoveItem(item: item)
-        }
-
-        var removedItems: [WebKit.WebBackForwardListItem] = []
-        removedItems.reserveCapacity(size - 1)
-
-        if let unwrappedCurrentIndex = currentIndex {
-            for (i, entry) in entries.enumerated() where i != unwrappedCurrentIndex {
-                removedItems.append(entry)
-            }
-        }
-
-        currentIndex = 0
-        entries.removeAll()
-        entries.append(unwrappedCurrentItem)
+        self.entries = Entries(current: entries.current)
         page.didChangeBackForwardList(nil, consuming: WebKit.BackForwardListItemVector(array: removedItems))
     }
 
     @used
     func backForwardListState(filter: WebBackForwardListItemFilter) -> WebKit.BackForwardListState {
-        assertValidIndex()
-
         var backForwardListState = WebKit.BackForwardListState()
-        if let currentIndex {
+        if let currentIndex = entries?.currentIndex {
             setOptionalUInt32Value(&backForwardListState.currentIndex, UInt32(currentIndex))
         }
 
-        for (i, entry) in entries.enumerated() {
+        for (i, entry) in allItems.enumerated() {
             if filter.pointee.__convertToBool() && !filter.pointee(entry) {
                 if let stateCurrentIndex = Optional(fromCxx: backForwardListState.currentIndex) {
                     if i <= stateCurrentIndex && stateCurrentIndex != 0 {
@@ -763,37 +652,32 @@ final class WebBackForwardList {
         }
 
         // FIXME: Enable restoring resourceDirectoryURL.
-        entries.removeAll()
         let restoredItems = createItemsFromState(backForwardListState, page.identifier())
-        let count = restoredItems.size()
-        entries.reserveCapacity(count)
-        for i in 0..<count {
-            // swift-format-ignore: NeverForceUnwrap
-            entries.append(itemAtIndexInBackForwardListItemVector(restoredItems, i)!)
-        }
+        let items = (0..<restoredItems.size()).map { itemAtIndexInBackForwardListItemVector(restoredItems, $0) }
+        entries = Entries(items, currentIndex: Optional(fromCxx: backForwardListState.currentIndex).map { Int($0) })
 
-        currentIndex = Optional(fromCxx: backForwardListState.currentIndex).map({ val in Int(val) })
-        backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) restored from state (has \(entries.count) entries)")
+        backForwardLog(
+            "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) restored from state (has \(entries?.count ?? 0) entries)"
+        )
     }
 
     @used
     func setItemsAsRestoredFromSession() {
-        for entry in entries {
+        for entry in allItems {
             entry.setWasRestoredFromSession()
         }
     }
 
     @used
     func setItemsAsRestoredFromSessionIf(functor: WebBackForwardListItemFilter) {
-        for entry in entries where functor.pointee(entry) {
+        for entry in allItems where functor.pointee(entry) {
             entry.setWasRestoredFromSession()
         }
     }
 
-    func didRemoveItem(item: WebKit.WebBackForwardListItem) {
+    private func didRemoveItem(_ item: Item, from page: WebKit.WebPageProxy) {
         item.wasRemovedFromBackForwardList()
-        // swift-format-ignore: NeverForceUnwrap
-        page.get()!.backForwardRemovedItem(item.mainFrameItem().identifier())
+        page.backForwardRemovedItem(item.mainFrameItem().identifier())
 
         // rdar://168139870 to clean up use of BUILDING_GTK__ here.
         #if WTF_PLATFORM_COCOA || BUILDING_GTK__
@@ -801,149 +685,14 @@ final class WebBackForwardList {
         #endif
     }
 
-    private func itemStartingAtIndexSkippingItemsAddedByJSWithoutUserGesture(
-        direction: Direction,
-        startingIndex: Int
-    ) -> (item: WebKit.WebBackForwardListItem?, index: Int) {
-        if direction == .backward && startingIndex == 0 {
-            return (nil, 0)
-        }
-        let delta =
-            switch direction {
-            case .backward: -1
-            case .forward: 1
-            }
-        var itemIndex = startingIndex + delta
-        if itemIndex >= entries.count {
-            return (nil, 0)
-        }
-
-        let startingItemResult = itemAtIndexWithoutSkipping(index: startingIndex)
-        guard let startingItem = startingItemResult.item else {
-            preconditionFailure("Starting item should always exist")
-        }
-
-        let maybeItem = itemAtIndexWithoutSkipping(index: itemIndex)
-
-        #if WTF_PLATFORM_COCOA
-        if !WTF.linkedOnOrAfterSDKWithBehavior(WTF.SDKAlignedBehavior.UIBackForwardSkipsHistoryItemsWithoutUserGesture) {
-            return maybeItem
-        }
-        #endif
-
-        guard maybeItem.item != nil else {
-            return (nil, 0)
-        }
-
-        // For example:
-        // A -> A#a (no userInteraction) -> B -> B#a (no user interaction) -> B#b (no user interaction)
-        // If we're on B and navigate back, we don't want to skip anything and load A#a.
-        // However, if we're on A and navigate forward, we do want to skip items and end up on B#b.
-        // The forward logic comes later.
-        if direction == .backward && !startingItem.wasCreatedByJSWithoutUserInteraction() {
-            return maybeItem
-        }
-
-        // If every item from this point back to the start of the list was created by JS without user interaction,
-        // we ignore them all.
-        if direction == .backward && startingItem.wasCreatedByJSWithoutUserInteraction() {
-            var innerItem = maybeItem
-            while let innerItemUnwrapped = innerItem.item, innerItemUnwrapped.wasCreatedByJSWithoutUserInteraction() {
-                guard innerItem.index > 0 else {
-                    return (nil, 0)
-                }
-                innerItem = itemAtIndexWithoutSkipping(index: innerItem.index - 1)
-                assert(innerItem.item != nil)
-            }
-        }
-
-        let (definiteItem, index) = maybeItem
-        guard let definiteItem else {
-            preconditionFailure("Should have an item by now")
-        }
-        var item = (item: definiteItem, index: index)
-
-        // For example:
-        // Yahoo -> Yahoo#a (no userInteraction) -> Google -> Google#a (no user interaction) -> Google#b (no user interaction)
-        // If we are on Google#b and navigate backwards, we want to skip over Google#a and Google, to end up on Yahoo#a.
-        // If we are on Yahoo#a and navigate forwards, we want to skip over Google and Google#a, to end up on Google#b.
-        let originalItem = item
-        while item.item.wasCreatedByJSWithoutUserInteraction() {
-            itemIndex += delta
-            let (thisItem, thisItemIndex) = itemAtIndexWithoutSkipping(index: itemIndex)
-            guard let thisItem else {
-                // If there are no more back items that ever had a user gesture, then we should not enable going back.
-                // This happens when e.g. a new window is created by JavaScript then client redirects occur that create
-                // a sequence of history items, each without user interaction.
-                loadingReleaseLog(
-                    "UI Navigation is disabling going back because no more WebBackForwardListItem items in the back list had user interaction"
-                )
-                return (nil, 0)
-            }
-            item = (thisItem, thisItemIndex)
-
-            loadingReleaseLog(
-                "UI Navigation is skipping a WebBackForwardListItem because it was added by JavaScript without user interaction"
-            )
-        }
-
-        // We are now on the next item that has user interaction.
-        assert(!item.item.wasCreatedByJSWithoutUserInteraction())
-
-        if direction == Direction.backward {
-            // If going backwards, skip over next item with user iteraction since this is the one the user
-            // thinks they're on. But if the user-gesture item is at the start of history, there is nothing
-            // to skip to — the item itself must be the destination.
-            if itemIndex == 0 {
-                return item
-            }
-            itemIndex -= 1
-            let (thisItem, thisItemIndex) = itemAtIndexWithoutSkipping(index: itemIndex)
-            guard let thisItem else {
-                return originalItem
-            }
-            item = (thisItem, thisItemIndex)
-
-            loadingReleaseLog(
-                "UI Navigation is skipping a WebBackForwardListItem that has user interaction because we started on an item that didn't have interaction"
-            )
-        } else {
-            // If going forward and there are items that we created by JS without user interaction, move forward to the last
-            // one in the series.
-            var nextItem = itemAtIndexWithoutSkipping(index: itemIndex + 1)
-            while case (let unwrappedNextItem?, let index) = nextItem, unwrappedNextItem.wasCreatedByJSWithoutUserInteraction() {
-                item = (unwrappedNextItem, index)
-                itemIndex += 1
-                nextItem = itemAtIndexWithoutSkipping(index: itemIndex + 1)
-            }
-        }
-        return item
-    }
-
     @used
     func goBackItemSkippingItemsWithoutUserGesture() -> WebKit.RefPtrWebBackForwardListItem {
-        guard let currentIndex else {
-            return WebKit.RefPtrWebBackForwardListItem()
-        }
-        if currentIndex == 0 {
-            return WebKit.RefPtrWebBackForwardListItem()
-        }
-        return WebKit.RefPtrWebBackForwardListItem(
-            itemStartingAtIndexSkippingItemsAddedByJSWithoutUserGesture(direction: Direction.backward, startingIndex: currentIndex).item
-        )
+        WebKit.RefPtrWebBackForwardListItem(entries?.itemSkippingItemsWithoutUserGesture(.backward))
     }
 
     @used
     func goForwardItemSkippingItemsWithoutUserGesture() -> WebKit.RefPtrWebBackForwardListItem {
-        guard let currentIndex else {
-            return WebKit.RefPtrWebBackForwardListItem()
-        }
-        if currentIndex >= entries.count {
-            return WebKit.RefPtrWebBackForwardListItem()
-        }
-        return WebKit.RefPtrWebBackForwardListItem(
-            itemStartingAtIndexSkippingItemsAddedByJSWithoutUserGesture(direction: Direction.forward, startingIndex: currentIndex).item
-        )
+        WebKit.RefPtrWebBackForwardListItem(entries?.itemSkippingItemsWithoutUserGesture(.forward))
     }
 
     @used
@@ -987,10 +736,11 @@ final class WebBackForwardList {
 
     @used
     func loggingString() -> Swift.String {
+        let currentIndex = entries?.currentIndex
         var result =
-            "\nWebBackForwardList \(ObjectIdentifier(self)) - \(entries.count) entries, has current index \(currentIndex != nil ? "YES" : "NO") (\(currentIndex ?? 0))\n"
+            "\nWebBackForwardList \(ObjectIdentifier(self)) - \(entries?.count ?? 0) entries, has current index \(currentIndex != nil ? "YES" : "NO") (\(currentIndex ?? 0))\n"
 
-        for (i, entry) in entries.enumerated() {
+        for (i, entry) in allItems.enumerated() {
             let prefix = (currentIndex == i) ? " * " : " - "
             result += prefix + String(entry.loggingString().description)
         }
@@ -1069,8 +819,7 @@ final class WebBackForwardList {
 
         let childCount = frameStateChildCount(frameState.ptr())
         for i in 0..<childCount {
-            // swift-format-ignore: NeverForceUnwrap
-            let child = frameStateChildAtIndex(frameState.ptr(), i)!
+            let child = frameStateChildAtIndex(frameState.ptr(), i)
             try messageCheckItemURLs(frameState: WebKit.RefFrameState(child), process: process, depth: depth + 1)
         }
     }
@@ -1168,7 +917,7 @@ final class WebBackForwardList {
         if loadedWebArchive == WebKit.LoadedWebArchive.Yes {
             item.setDataStoreForWebArchive(process.ptr().websiteDataStore())
         }
-        addItem(newItem: item)
+        addItem(item)
     }
 
     // IPCs from here on
@@ -1277,7 +1026,7 @@ final class WebBackForwardList {
 
     @used
     func updateFrameIdentifier(oldFrameID: WebCore.FrameIdentifier, newFrameID: WebCore.FrameIdentifier) {
-        for entry in entries {
+        for entry in allItems {
             entry.updateFrameID(oldFrameID, newFrameID)
         }
     }
@@ -1334,12 +1083,13 @@ final class WebBackForwardList {
         if let item = entryForID(itemID) {
             // Mirror of the C++ backForwardGoToItemShared guard (webkit.org/b/318728): ignore an index
             // move opposite to the in-flight traversal direction so a stale split leg can't clobber it.
-            if let webPageProxy = page.get(), let priorCurrentIndex = currentIndex,
-                let targetIndex = entries.firstIndex(where: { $0 === item })
-            {
+            if let webPageProxy = page.get(), let position = entries?.position(of: item) {
                 let direction = webPageProxy.inFlightTraversalDirection()
-                if (direction < 0 && targetIndex > priorCurrentIndex) || (direction > 0 && targetIndex < priorCurrentIndex) {
+                switch position {
+                case .back where direction > 0, .forward where direction < 0:
                     return
+                default:
+                    break
                 }
             }
             goToItem(item: item)
@@ -1368,7 +1118,7 @@ final class WebBackForwardList {
             return WebKit.VectorRefFrameState(array: [])
         }
         var frameStates: [WebKit.FrameState] = []
-        for item in entries {
+        for item in allItems {
             if let frameItem = item.mainFrameItem().childItemForFrameID(frameID) {
                 frameStates.append(frameItem.copyFrameStateWithChildren().ptr())
             }
