@@ -13,7 +13,7 @@ on:
 # builds when a new fix lands; otherwise an obsolete/hung cross-build can block
 # validation of the page-loading changes queued behind it.
 concurrency:
-  group: webkit-wiiu-build-${{ github.ref }}-${{ github.sha }}
+  group: webkit-wiiu-build-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
