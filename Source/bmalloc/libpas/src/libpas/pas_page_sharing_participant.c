@@ -30,12 +30,17 @@
 #include "pas_page_sharing_participant.h"
 
 #include "pas_bitfit_directory.h"
+#include "pas_bitfit_page_config_kind.h"
 #include "pas_epoch.h"
 #include "pas_heap_lock.h"
 #include "pas_large_sharing_pool.h"
 #include "pas_page_sharing_pool.h"
+#include "pas_segregated_page_config_kind.h"
 #include "pas_segregated_size_directory.h"
-#include "pas_segregated_size_directory.h"
+
+uint64_t pas_segregated_participant_epoch_offsets[PAS_NUM_SEGREGATED_PAGE_CONFIG_VARIANTS];
+uint64_t pas_bitfit_participant_epoch_offsets[PAS_NUM_BITFIT_PAGE_CONFIG_VARIANTS];
+uint64_t pas_page_sharing_participant_large_sharing_pool_epoch_offset;
 
 pas_page_sharing_participant
 pas_page_sharing_participant_create(void* ptr,
@@ -91,6 +96,19 @@ void pas_page_sharing_participant_payload_with_use_epoch_construct(
     *payload = PAS_PAGE_SHARING_PARTICIPANT_PAYLOAD_WITH_USE_EPOCH_INITIALIZER;
 }
 
+static uint64_t apply_epoch_offset(uint64_t epoch, uint64_t offset)
+{
+    uint64_t result;
+
+    /* Zero means that there is no free memory, so it must not be offset. */
+    if (epoch == PAS_EPOCH_INVALID)
+        return PAS_EPOCH_INVALID;
+
+    if (__builtin_add_overflow(epoch, offset, &result))
+        return PAS_EPOCH_MAX;
+    return result;
+}
+
 uint64_t pas_page_sharing_participant_get_use_epoch(pas_page_sharing_participant participant)
 {
     void* ptr = pas_page_sharing_participant_get_ptr(participant);
@@ -98,12 +116,26 @@ uint64_t pas_page_sharing_participant_get_use_epoch(pas_page_sharing_participant
     case pas_page_sharing_participant_null:
         PAS_ASSERT(!"Null participant has no use epoch.");
         return 0;
-    case pas_page_sharing_participant_segregated_size_directory:
-        return pas_segregated_directory_get_use_epoch(ptr);
-    case pas_page_sharing_participant_bitfit_directory:
-        return pas_bitfit_directory_get_use_epoch(ptr);
+    case pas_page_sharing_participant_segregated_size_directory: {
+        pas_segregated_directory* directory = ptr;
+        const pas_segregated_page_config* config =
+            pas_segregated_page_config_kind_get_config(directory->page_config_kind);
+        return apply_epoch_offset(
+            pas_segregated_directory_get_use_epoch(directory),
+            pas_segregated_participant_epoch_offsets[config->variant]);
+    }
+    case pas_page_sharing_participant_bitfit_directory: {
+        pas_bitfit_directory* directory = ptr;
+        const pas_bitfit_page_config* config =
+            pas_bitfit_page_config_kind_get_config(directory->config_kind);
+        return apply_epoch_offset(
+            pas_bitfit_directory_get_use_epoch(directory),
+            pas_bitfit_participant_epoch_offsets[config->variant]);
+    }
     case pas_page_sharing_participant_large_sharing_pool:
-        return pas_large_sharing_participant_payload.use_epoch;
+        return apply_epoch_offset(
+            pas_large_sharing_participant_payload.use_epoch,
+            pas_page_sharing_participant_large_sharing_pool_epoch_offset);
     }
     PAS_ASSERT(!"Bad participant kind");
     return 0;

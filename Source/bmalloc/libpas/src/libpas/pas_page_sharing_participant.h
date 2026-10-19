@@ -27,9 +27,12 @@
 #define PAS_PAGE_SHARING_PARTICIPANT_H
 
 #include "pas_config.h"
+
+#include "pas_bitfit_page_config_variant.h"
 #include "pas_lock.h"
 #include "pas_page_sharing_participant_kind.h"
 #include "pas_page_sharing_pool_take_result.h"
+#include "pas_segregated_page_config_variant.h"
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -116,6 +119,15 @@ PAS_API void pas_page_sharing_participant_payload_construct(
 PAS_API void pas_page_sharing_participant_payload_with_use_epoch_construct(
     pas_page_sharing_participant_payload_with_use_epoch* payload);
 
+/* How much longer participant's pages should be allowed to stay committed after becoming free,
+   relative to the baseline pas_scavenger_max_epoch_delta; measured in epoch units.
+   These values must be set before any participants are registered with the sharing pool. */
+PAS_API extern uint64_t pas_segregated_participant_epoch_offsets[PAS_NUM_SEGREGATED_PAGE_CONFIG_VARIANTS];
+PAS_API extern uint64_t pas_bitfit_participant_epoch_offsets[PAS_NUM_BITFIT_PAGE_CONFIG_VARIANTS];
+PAS_API extern uint64_t pas_page_sharing_participant_large_sharing_pool_epoch_offset;
+
+/* Returns the epoch at which the participant's oldest free memory expires, or PAS_EPOCH_INVALID if
+ * it has none. This is the use epoch plus the participant's offset. */
 PAS_API uint64_t pas_page_sharing_participant_get_use_epoch(pas_page_sharing_participant participant);
 
 PAS_API void pas_page_sharing_participant_set_parent_pool(

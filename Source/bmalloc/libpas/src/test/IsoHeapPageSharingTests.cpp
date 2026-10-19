@@ -37,12 +37,14 @@
 #include <mutex>
 #include "pas_all_heaps.h"
 #include "pas_baseline_allocator_table.h"
+#include "pas_epoch.h"
 #include "pas_heap.h"
 #include "pas_heap_for_config.h"
 #include "pas_large_free_heap_helpers.h"
 #include "pas_large_sharing_pool.h"
 #include "pas_large_utility_free_heap.h"
 #include "pas_page_malloc.h"
+#include "pas_page_sharing_participant.h"
 #include "pas_scavenger.h"
 #include "pas_segregated_size_directory.h"
 #include "pas_thread_local_cache.h"
@@ -4245,6 +4247,127 @@ void testNewEligibleHasOlderEpoch()
     assertOnlyDecommitted({ SmallHeapTwo });
 }
 
+// Big enough that adding it to any counter epoch the tests produce puts the participant far past
+// whatever max_epoch the tests scavenge with.
+constexpr uint64_t participantEpochOffset = 1ull << 40;
+
+// 1. Free older participant
+// 2. Free newer participant
+// 3. Scavenge
+// Sans epoch offsets, both the older and newer participants would be
+// decommitted. But with an offset placed on the older participant,
+// only the newer participant is decommitted.
+void testSegregatedVariantEpochOffsetsDelayDecommit()
+{
+    pas_epoch_is_counter = true;
+    setupThingy();
+
+    pas_segregated_participant_epoch_offsets[pas_small_segregated_page_config_variant] = 0;
+    pas_segregated_participant_epoch_offsets[pas_medium_segregated_page_config_variant] = participantEpochOffset;
+
+    pas_heap_ref smallHeapRef = ISO_HEAP_REF_INITIALIZER(32);
+    pas_heap_ref mediumHeapRef = ISO_HEAP_REF_INITIALIZER(4096);
+    pas_heap* smallHeap = iso_heap_ref_get_heap(&smallHeapRef);
+    pas_heap* mediumHeap = iso_heap_ref_get_heap(&mediumHeapRef);
+
+    vector<void*> smallObjects;
+    vector<void*> mediumObjects;
+    for (unsigned i = 10000; i--;)
+        smallObjects.push_back(checkThingy(iso_try_allocate(&smallHeapRef)));
+    for (unsigned i = 300; i--;)
+        mediumObjects.push_back(checkThingy(iso_try_allocate(&mediumHeapRef)));
+
+    auto variantOf = [&] (void* object) {
+        return pas_segregated_page_config_kind_get_config(
+            pas_segregated_size_directory_for_object(
+                reinterpret_cast<uintptr_t>(object), &iso_heap_config)->base.page_config_kind)->variant;
+    };
+    CHECK_EQUAL(variantOf(smallObjects[0]), pas_small_segregated_page_config_variant);
+    CHECK_EQUAL(variantOf(mediumObjects[0]), pas_medium_segregated_page_config_variant);
+
+    auto freeAll = [&] (vector<void*>& objects) {
+        for (void* object : objects)
+            iso_deallocate(object);
+        objects.clear();
+        pas_thread_local_cache_flush_deallocation_log(pas_thread_local_cache_get(&iso_heap_config),
+                                                      pas_lock_is_not_held);
+        cleanThingy();
+    };
+
+    // The medium heap goes first, so it has the older raw epoch.
+    freeAll(mediumObjects);
+    freeAll(smallObjects);
+
+    auto decommitted = [&] (pas_heap* heap) {
+        HeapLocker heapLocker;
+        return pas_heap_compute_summary(heap, pas_lock_is_held).decommitted;
+    };
+
+    CHECK_EQUAL(decommitted(smallHeap), 0);
+    CHECK_EQUAL(decommitted(mediumHeap), 0);
+
+    pas_physical_page_sharing_pool_scavenge(pas_get_epoch());
+
+    CHECK_GREATER(decommitted(smallHeap), 0);
+    CHECK_EQUAL(decommitted(mediumHeap), 0);
+
+    pas_physical_page_sharing_pool_scavenge(pas_get_epoch() + participantEpochOffset);
+
+    CHECK_GREATER(decommitted(mediumHeap), 0);
+}
+
+void testLargeSharingPoolEpochOffsetDelaysDecommit()
+{
+    pas_epoch_is_counter = true;
+    setupThingy();
+
+    pas_segregated_participant_epoch_offsets[pas_small_segregated_page_config_variant] = 0;
+    pas_page_sharing_participant_large_sharing_pool_epoch_offset = participantEpochOffset;
+
+    pas_heap_ref smallHeapRef = ISO_HEAP_REF_INITIALIZER(32);
+    pas_heap_ref largeHeapRef = ISO_HEAP_REF_INITIALIZER(1000000);
+    pas_heap* smallHeap = iso_heap_ref_get_heap(&smallHeapRef);
+    pas_heap* largeHeap = iso_heap_ref_get_heap(&largeHeapRef);
+
+    vector<void*> smallObjects;
+    vector<void*> largeObjects;
+    for (unsigned i = 10000; i--;)
+        smallObjects.push_back(checkThingy(iso_try_allocate(&smallHeapRef)));
+    for (unsigned i = 5; i--;)
+        largeObjects.push_back(checkThingy(iso_try_allocate(&largeHeapRef)));
+
+    // The large heap goes first, so it has the older raw epoch.
+    for (void* object : largeObjects)
+        iso_deallocate(object);
+    largeObjects.clear();
+    pas_thread_local_cache_flush_deallocation_log(pas_thread_local_cache_get(&iso_heap_config),
+                                                  pas_lock_is_not_held);
+    cleanThingy();
+    for (void* object : smallObjects)
+        iso_deallocate(object);
+    smallObjects.clear();
+    pas_thread_local_cache_flush_deallocation_log(pas_thread_local_cache_get(&iso_heap_config),
+                                                  pas_lock_is_not_held);
+    cleanThingy();
+
+    auto decommitted = [&] (pas_heap* heap) {
+        HeapLocker heapLocker;
+        return pas_heap_compute_summary(heap, pas_lock_is_held).decommitted;
+    };
+
+    CHECK_EQUAL(decommitted(smallHeap), 0);
+    CHECK_EQUAL(decommitted(largeHeap), 0);
+
+    pas_physical_page_sharing_pool_scavenge(pas_get_epoch());
+
+    CHECK_GREATER(decommitted(smallHeap), 0);
+    CHECK_EQUAL(decommitted(largeHeap), 0);
+
+    pas_physical_page_sharing_pool_scavenge(pas_get_epoch() + participantEpochOffset);
+
+    CHECK_GREATER(decommitted(largeHeap), 0);
+}
+
 pas_heap* scavengerCompletionHeap;
 bool scavengerCompletionExpectDone;
 bool scavengerCompletionIsDone;
@@ -4518,6 +4641,8 @@ void addAllTests()
         }
     
         ADD_TEST(testNewEligibleHasOlderEpoch());
+        ADD_TEST(testSegregatedVariantEpochOffsetsDelayDecommit());
+        ADD_TEST(testLargeSharingPoolEpochOffsetDelaysDecommit());
     
         ADD_TEST(testScavengerEventuallyReturnsMemory(128, 1));
         ADD_TEST(testScavengerEventuallyReturnsMemory(128, 10000));
