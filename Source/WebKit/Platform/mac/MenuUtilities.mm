@@ -40,6 +40,10 @@
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 #import <pal/spi/mac/TelephonyUtilitiesSPI.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TelephonyUtilities)
+SOFT_LINK_CLASS(TelephonyUtilities, TUCall)
 #endif
 
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
@@ -95,7 +99,7 @@ using namespace WebCore;
 
 RetainPtr<NSString> menuItemTitleForTelephoneNumberGroup()
 {
-    return [TUCall supplementalDialTelephonyCallString];
+    return [getTUCallClassSingleton() supplementalDialTelephonyCallString];
 }
 
 static RetainPtr<PlatformDDAction> actionForMenuItem(NSMenuItem *item)
