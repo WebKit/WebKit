@@ -60,9 +60,9 @@ WI.Setting = class Setting extends WI.Object
         return value;
     }
 
-    static reset()
+    static reset(options = {})
     {
-        let prefix = WI.Setting._localStorageKeyPrefix;
+        let prefix = WI.Setting._localStorageKeyPrefix + (options.keyPrefix || "");
 
         let keysToRemove = [];
         for (let i = 0; i < window.localStorage.length; ++i) {
@@ -148,6 +148,20 @@ WI.Setting.isFirstLaunch = !!window.InspectorTest || (window.localStorage && Obj
 WI.Setting.Event = {
     Changed: "setting-changed"
 };
+
+// COMPATIBILITY (macOS X.X, iOS X.X): Per-resource content view settings were removed in favor of per-mimeType settings. See <https://webkit.org/b/308310>
+WI.Setting._removeObsoleteResourceCurrentViewSettings = (function() {
+    if (window.InspectorTest || !window.localStorage)
+        return;
+
+    let didCleanupSetting = new WI.Setting("did-remove-obsolete-resource-current-view-settings", false);
+    if (didCleanupSetting.value)
+        return;
+
+    WI.Setting.reset({keyPrefix: "resource-current-view-"});
+
+    didCleanupSetting.value = true;
+})();
 
 WI.EngineeringSetting = class EngineeringSetting extends WI.Setting
 {
