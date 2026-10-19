@@ -185,8 +185,7 @@ static String truncateByWordCount(StringView text, uint64_t wordLimit, const Vec
                 }
                 protectedRanges.append({ rangeStart, rangeEnd });
             }
-            Borrow borrowedRanges = protectedRanges;
-            std::sort(borrowedRanges->begin(), borrowedRanges->end());
+            std::ranges::sort(borrow(protectedRanges));
             return protectedRanges;
         }();
 
