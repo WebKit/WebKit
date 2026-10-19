@@ -49,9 +49,8 @@ custom_suffix = get_custom_suffix()
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
 
-# Where a worker described by os/device/xcode runs: on EC2, or in Air-Cloud.
+# Where a worker runs, if it is managed: on EC2, or in Air-Cloud.
 WORKER_FLEETS = ('aws', 'air-cloud')
-WORKER_MACHINE_KEYS = ('os', 'device', 'xcode')
 
 
 def render_config(template=None, output=None):
@@ -220,8 +219,8 @@ def checkValidWorker(worker):
     if not worker.get('platform'):
         raise Exception('Worker {} does not have platform defined.'.format(worker['name']))
 
-    if any(key in worker for key in WORKER_MACHINE_KEYS) and worker.get('fleet') not in WORKER_FLEETS:
-        raise Exception('Worker {} has {}, so its fleet must be one of {}.'.format(worker['name'], '/'.join(WORKER_MACHINE_KEYS), ', '.join(WORKER_FLEETS)))
+    if 'fleet' in worker and worker['fleet'] not in WORKER_FLEETS:
+        raise Exception('Worker {} has fleet "{}", which must be one of {}.'.format(worker['name'], worker['fleet'], ', '.join(WORKER_FLEETS)))
 
 
 def checkValidBuilder(config, builder):
