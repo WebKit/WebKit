@@ -109,8 +109,14 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
         configuration.parentTab = tab->delegate();
     }
 
-    if (parameters.url)
+    if (parameters.url) {
+        if (!canOpenURLInNewTabOrWindow(parameters.url.value())) {
+            completionHandler(toWebExtensionError(apiName, @"url", unsupportedURLForNewTabOrWindowMessage(parameters.url.value())));
+            return;
+        }
+
         configuration.url = parameters.url.value().createNSURL().get();
+    }
 
     [delegate webExtensionController:extensionController->wrapper() openNewTabUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
