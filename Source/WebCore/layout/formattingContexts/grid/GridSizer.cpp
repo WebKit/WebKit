@@ -59,7 +59,7 @@ static Vector<std::optional<LayoutUnit>> definiteRowSizesForFirstIterationColumn
                         ASSERT_WITH_MESSAGE(gridContainerInnerBlockSize, "The formatting context should have transformed this track size to auto");
                         return Style::evaluate<LayoutUnit>(percentageValue, *gridContainerInnerBlockSize);
                     },
-                    [&](const Style::GridTrackBreadth::Calc calculatedValue) -> std::optional<LayoutUnit> {
+                    [&](const Style::GridTrackBreadth::Calc& calculatedValue) -> std::optional<LayoutUnit> {
                         ASSERT_WITH_MESSAGE(gridContainerInnerBlockSize, "The formatting context should have transformed this track size to auto");
                         return Style::evaluate<LayoutUnit>(calculatedValue, *gridContainerInnerBlockSize, trackSizingFunctions.zoom);
                     },

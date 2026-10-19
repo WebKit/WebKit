@@ -766,7 +766,7 @@ static UnsizedTracks initializeTrackSizes(const TrackSizingFunctionsList& trackS
             // A fixed sizing function
             // Resolve to an absolute length and use that size as the track’s initial growth limit.
             if (auto breadth = maxTrackSizingFunction.tryBreadth(); breadth && breadth->isLength()) {
-                auto trackBreadthLength = breadth->length();
+                auto& trackBreadthLength = breadth->length();
                 if (auto fixedValue = trackBreadthLength.tryFixed())
                     return Style::evaluate<LayoutUnit>(*fixedValue, trackSizingFunctions.zoom);
                 if (trackBreadthLength.isPercentOrCalculated())

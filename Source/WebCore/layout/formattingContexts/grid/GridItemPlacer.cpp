@@ -62,11 +62,11 @@ static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logi
 
         // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
         if (unplacedGridItem.hasDefiniteColumnPosition() && unplacedGridItem.hasDefiniteRowPosition())
-            unplacedGridItems.nonAutoPositionedItems.append(unplacedGridItem);
+            unplacedGridItems.nonAutoPositionedItems.append(WTF::move(unplacedGridItem));
         else if (unplacedGridItem.hasDefiniteRowPosition())
-            unplacedGridItems.definiteRowPositionedItems.append(unplacedGridItem);
+            unplacedGridItems.definiteRowPositionedItems.append(WTF::move(unplacedGridItem));
         else
-            unplacedGridItems.autoPositionedItems.append(unplacedGridItem);
+            unplacedGridItems.autoPositionedItems.append(WTF::move(unplacedGridItem));
     }
     return unplacedGridItems;
 }
