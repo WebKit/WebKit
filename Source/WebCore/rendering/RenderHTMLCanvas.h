@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "RenderBlock.h"
-#include "RenderReplaced.h"
+#include <WebCore/RenderBlock.h>
+#include <WebCore/RenderReplaced.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakRef.h>
 
@@ -55,10 +55,12 @@ public:
 
     bool hasDrawableContent() const;
 
-    DisplayList::RecorderImpl* canvasDrawableRecorder(RenderElement&, GraphicsContext&, const IntRect& elementRelativeBounds) const;
+    DisplayList::RecorderImpl* canvasDrawableRecorder(RenderElement&, GraphicsContext&, const FloatSize& snapshotSize) const;
     std::optional<CanvasElementSnapshot> canvasDrawableSnapshot(RenderElement&) const;
 
     void requestPaintEventIfNeeded(const RenderElement& repaintedRenderer) const;
+
+    std::optional<TransformationMatrix> localToCanvasTransform(const Element&) const;
 
 private:
     void element() const = delete;

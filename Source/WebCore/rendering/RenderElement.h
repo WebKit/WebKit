@@ -142,9 +142,11 @@ public:
     ALWAYS_INLINE static RenderElement& fromLayoutBox(Layout::ElementBox& box) { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<RenderElement&>(box); }
     ALWAYS_INLINE static const RenderElement& fromLayoutBox(const Layout::ElementBox& box) { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<const RenderElement&>(box); }
 
-    // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
     inline bool isCanvasDrawable() const; // Defined in RenderElementStyleInlines.h.
     inline bool isInsideDrawableCanvas() const; // Defined in RenderElementStyleInlines.h.
+    inline bool isCanvasDrawableIntoCanvas(const RenderHTMLCanvas&) const; // Defined in RenderElementStyleInlines.h.
+
+    // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
     inline bool canContainFixedPositionObjects(const Style::ComputedStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
     inline bool canContainAbsolutelyPositionedObjects(const Style::ComputedStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
     bool canEstablishContainingBlockWithTransform() const;

@@ -1,4 +1,4 @@
 
 
-FAIL Canvas paint events on display:none canvas fire in reverse shadow-including tree order promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+FAIL Canvas paint events on display:none canvas fire in reverse shadow-including tree order assert_array_equals: Paint events including display:none canvas should fire in reverse shadow-including tree order expected property 0 to be "after" but got "before" (expected array ["after", "displaynone", "before"] got ["before", "displaynone", "after"])
 

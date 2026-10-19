@@ -26,6 +26,9 @@
 #pragma once
 
 #include <WebCore/DisplayList.h>
+#include <WebCore/Element.h>
+#include <WebCore/FloatSize.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -38,7 +41,7 @@ struct CanvasElementSnapshot {
 
 class CanvasElementImage : public RefCounted<CanvasElementImage> {
 public:
-    NODELETE static Ref<CanvasElementImage> create(CanvasElementSnapshot&&);
+    NODELETE static Ref<CanvasElementImage> create(CanvasElementSnapshot&&, Ref<Element>&&);
 
     double width() const { return size().width(); }
     double height() const { return size().height(); }
@@ -47,11 +50,13 @@ public:
     const CanvasElementSnapshot& snapshot() const { return m_snapshot; }
     const DisplayList::DisplayList& displayList() const { return m_snapshot.displayList; }
     FloatSize size() const { return m_snapshot.size; }
+    Element& element() const { return m_element; }
 
 private:
-    CanvasElementImage(CanvasElementSnapshot&&);
+    CanvasElementImage(CanvasElementSnapshot&&, Ref<Element>&&);
 
     CanvasElementSnapshot m_snapshot;
+    Ref<Element> m_element;
 };
 
 using CanvasElementImageSource = Variant<Ref<Element>, Ref<CanvasElementImage>>;

@@ -39,6 +39,7 @@
 #include "DOMMatrix.h"
 #include "DocumentQuirks.h"
 #include "DocumentView.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
@@ -277,24 +278,105 @@ std::optional<CanvasElementSnapshot> HTMLCanvasElement::canvasDrawableSnapshot(E
 ExceptionOr<Ref<CanvasElementImage>> HTMLCanvasElement::captureElementImage(Element& element) const
 {
     if (auto snapshot = canvasDrawableSnapshot(element))
-        return CanvasElementImage::create(WTF::move(*snapshot));
+        return CanvasElementImage::create(WTF::move(*snapshot), Ref { element });
 
     return Exception { ExceptionCode::InvalidStateError };
 }
 
-ExceptionOr<void> HTMLCanvasElement::updateElementGeometry(const CanvasElementImageSource&, std::optional<UpdateElementGeometryOptions>)
+ExceptionOr<Ref<Element>> HTMLCanvasElement::canvasDrawableElement(const CanvasElementImageSource& source) const
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    Ref element = WTF::switchOn(source,
+        [](const Ref<Element>& element) -> Ref<Element> {
+            return element;
+        },
+        [](const Ref<CanvasElementImage>& elementImage) -> Ref<Element> {
+            return elementImage->element();
+        }
+    );
+
+    if (!element->isCanvasDrawable() || ancestorsOfType<HTMLCanvasElement>(element).first() != this)
+        return Exception { ExceptionCode::InvalidStateError, "The element is not a drawable child of the canvas."_s };
+
+    return WTF::move(element);
 }
 
-ExceptionOr<void> HTMLCanvasElement::clearElementGeometry(const CanvasElementImageSource&)
+ExceptionOr<void> HTMLCanvasElement::updateElementGeometry(const CanvasElementImageSource& source, const std::optional<TransformationMatrix>& canvasTransform)
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    auto element = canvasDrawableElement(source);
+    if (element.hasException())
+        return element.releaseException();
+
+    Ref protectedElement = element.releaseReturnValue();
+
+    if (!canvasTransform || !is<RenderHTMLCanvas>(renderer())) {
+        protectedElement->setCanvasTransform(canvasTransform);
+        return { };
+    }
+
+    Ref document = protectedElement->document();
+    document->updateLayout();
+
+    auto effectiveCanvasTransform = [&] -> TransformationMatrix {
+        CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer());
+        if (!canvasRenderer)
+            return *canvasTransform;
+
+        if (auto localToCanvasTransform = canvasRenderer->localToCanvasTransform(protectedElement)) {
+            if (auto inverse = localToCanvasTransform->inverse())
+                return inverse->multiply(*canvasTransform);
+        }
+
+        return *canvasTransform;
+    }();
+
+    protectedElement->setCanvasTransform(effectiveCanvasTransform);
+    return { };
 }
 
-ExceptionOr<Ref<DOMMatrix>> HTMLCanvasElement::getElementTransform(const Element&)
+ExceptionOr<void> HTMLCanvasElement::updateElementGeometry(const CanvasElementImageSource& source, const UpdateElementGeometryOptions& options)
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    auto canvasTransform = options.canvasTransform;
+    if (!canvasTransform)
+        return updateElementGeometry(source, std::nullopt);
+
+    auto matrix = DOMMatrixReadOnly::fromMatrix(WTF::move(*canvasTransform));
+    if (matrix.hasException())
+        return matrix.releaseException();
+
+    return updateElementGeometry(source, matrix.returnValue()->transformationMatrix());
+}
+
+ExceptionOr<void> HTMLCanvasElement::clearElementGeometry(const CanvasElementImageSource& source)
+{
+    return updateElementGeometry(source, std::nullopt);
+}
+
+ExceptionOr<Ref<DOMMatrix>> HTMLCanvasElement::getElementTransform(const Element& element)
+{
+    Ref protectedElement = element;
+
+    if (!protectedElement->isDescendantOf(*this) || !protectedElement->isCanvasDrawable())
+        return Exception { ExceptionCode::InvalidStateError };
+
+    if (auto canvasTransform = protectedElement->canvasTransform())
+        return DOMMatrix::create(WTF::move(*canvasTransform), canvasTransform->isAffine() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No);
+
+    return DOMMatrix::create(TransformationMatrix::identity, DOMMatrixReadOnly::Is2D::Yes);
+}
+
+FloatSize HTMLCanvasElement::paintScaleFactor() const
+{
+    CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer());
+    if (!canvasRenderer)
+        return { 1, 1 };
+
+    FloatSize paintSize = canvasRenderer->replacedContentPaintRect().size();
+    paintSize.scale(1 / canvasRenderer->style().usedZoom());
+    FloatSize bufferSize = size();
+    if (paintSize.isEmpty() || bufferSize.isEmpty())
+        return { 1, 1 };
+
+    return bufferSize / paintSize;
 }
 
 void HTMLCanvasElement::setSizeForControllingContext(IntSize newSize)

@@ -662,7 +662,7 @@ public:
     // rest of the rendering tree will move to a similar model.
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 
-    bool isAnonymous() const { return m_typeFlags.contains(TypeFlag::IsAnonymous); }
+    NODELETE bool isAnonymous() const { return m_typeFlags.contains(TypeFlag::IsAnonymous); }
 
     bool isFloating() const { return m_stateBitfields.hasFlag(StateFlag::Floating); }
 
@@ -689,6 +689,9 @@ public:
     bool isRenderFragmentedFlow() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsFragmentedFlow); }
     bool hasOutlineAutoAncestor() const { return hasRareData() && rareData().hasOutlineAutoAncestor; }
     bool paintContainmentApplies() const { return m_stateBitfields.hasFlag(StateFlag::PaintContainmentApplies); }
+    NODELETE std::optional<TransformationMatrix> canvasTransform() const;
+    std::optional<TransformationMatrix> inverseCanvasTransform() const;
+    NODELETE WEBCORE_EXPORT bool hasCanvasTransform() const;
     bool hasSVGTransform() const { return m_stateBitfields.hasFlag(StateFlag::HasSVGTransform); }
 
     bool isExcludedFromNormalLayout() const { return m_stateBitfields.hasFlag(StateFlag::IsExcludedFromNormalLayout); }
@@ -745,7 +748,7 @@ public:
     // Returns true if this renderer is rooted.
     NODELETE bool isRooted() const;
 
-    inline Node* node() const; // Defined in RenderObjectNode.h
+    NODELETE inline Node* node() const; // Defined in RenderObjectNode.h
 
     inline Node* nonPseudoNode() const; // Defined in RenderObjectNode.h
 

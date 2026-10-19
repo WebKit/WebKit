@@ -44,7 +44,7 @@ inline Node* RenderObject::nonPseudoNode() const
     return node();
 }
 
-inline Node* RenderObject::node() const
+NODELETE inline Node* RenderObject::node() const
 {
     if (isAnonymous())
         return nullptr;

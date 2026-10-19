@@ -1859,6 +1859,11 @@ void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, cons
     if (m_anchorScrollAdjustment)
         transform.translate(m_anchorScrollAdjustment->width(), m_anchorScrollAdjustment->height());
 
+    // The canvas transform positions a canvas drawable element within its canvas,
+    // so it is applied outside of the element's own CSS transforms.
+    if (auto canvasTransform = renderer().canvasTransform())
+        transform.multiply(*canvasTransform);
+
     auto referenceBoxRect = snapRectToDevicePixelsIfNeeded(renderer().transformReferenceBoxRect(style), renderer());
     renderer().applyTransform(transform, style, referenceBoxRect, options);
 
@@ -2820,7 +2825,7 @@ bool RenderLayer::cannotBlitToWindow() const
 
 RenderLayer* RenderLayer::transparentPaintingAncestor(const LayerPaintingInfo& info)
 {
-    if (this == info.rootLayer || isComposited() || paintsIntoProvidedBacking())
+    if (this == info.rootLayer || isComposited() || paintsIntoProvidedBacking() || renderer().isCanvasDrawable())
         return nullptr;
     for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
         if (ancestor->isStackingContext()) {
@@ -2829,7 +2834,7 @@ RenderLayer* RenderLayer::transparentPaintingAncestor(const LayerPaintingInfo& i
             if (ancestor->isTransparent())
                 return ancestor;
         }
-        if (ancestor == info.rootLayer)
+        if (ancestor == info.rootLayer || ancestor->renderer().isCanvasDrawable())
             return nullptr;
     }
     return nullptr;
@@ -3532,8 +3537,23 @@ static inline DisplayList::RecorderImpl* canvasDrawableRecorder(const RenderLaye
     if (!canvasRenderer)
         return nullptr;
 
-    auto elementRelativeBounds = enclosingIntRect(LayoutRect { LayoutPoint { layer.offsetFromAncestor(rootLayer) }, layer.renderer().absoluteBoundingBoxRect().size() });
-    return canvasRenderer->canvasDrawableRecorder(layer.renderer(), context, elementRelativeBounds);
+    auto boundingRect = layer.renderer().absoluteBoundingBoxRect();
+    auto inverseCanvasTransform = layer.renderer().inverseCanvasTransform();
+
+    if (inverseCanvasTransform)
+        inverseCanvasTransform->mapRect(boundingRect);
+
+    auto snapshotSize = boundingRect.size();
+    auto recorder = canvasRenderer->canvasDrawableRecorder(layer.renderer(), context, snapshotSize);
+    if (!recorder)
+        return nullptr;
+
+    if (inverseCanvasTransform)
+        recorder->concatCTM(inverseCanvasTransform->toAffineTransform());
+
+    auto offset = FloatPoint { layer.offsetFromAncestor(rootLayer) };
+    recorder->translate(-offset.x(), -offset.y());
+    return recorder;
 }
 
 void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
@@ -3570,7 +3590,9 @@ void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& 
     }
 
     if (RefPtr recorder = canvasDrawableRecorder(*this, context, paintingInfo.rootLayer)) {
-        paintLayerWithEffects(*recorder, paintingInfo, paintFlags);
+        auto localPaintingInfo = paintingInfo;
+        localPaintingInfo.paintDirtyRect = LayoutRect::infiniteRect();
+        paintLayerWithEffects(*recorder, localPaintingInfo, paintFlags);
         return;
     }
 
@@ -3611,7 +3633,7 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
 
         // If we have a transparency layer enclosing us and we are the root of a transform, then we need to establish the transparency
         // layer from the parent now, assuming there is a parent
-        if (paintFlags & PaintLayerFlag::HaveTransparency) {
+        if ((paintFlags & PaintLayerFlag::HaveTransparency) && !renderer().isCanvasDrawable()) {
             if (this != paintingInfo.rootLayer && parent())
                 parent()->beginTransparencyLayers(context, paintingInfo, paintingInfo.paintDirtyRect);
             else

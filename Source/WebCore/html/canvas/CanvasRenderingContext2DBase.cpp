@@ -1879,8 +1879,12 @@ static inline FloatSize size(CanvasElementImageSource& source)
 {
     return WTF::switchOn(source,
         [&](Ref<Element>& element) -> FloatSize {
-            if (CheckedPtr renderer = element->renderer())
-                return renderer->absoluteBoundingBoxRect().size();
+            if (CheckedPtr renderer = element->renderer()) {
+                auto boundingRect = renderer->absoluteBoundingBoxRect();
+                if (auto inverseCanvasTransform = renderer->inverseCanvasTransform())
+                    boundingRect = inverseCanvasTransform->mapRect(boundingRect);
+                return boundingRect.size();
+            }
             return FloatSize();
         },
         [&](Ref<CanvasElementImage>& elementImage) {
@@ -2474,11 +2478,17 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, float dx, float dy, std::optional<CanvasDrawElementImageOptions> options)
 {
-    FloatSize sourceSize = size(source);
+    RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase());
+    if (!canvasElement)
+        return Exception { ExceptionCode::InvalidStateError, "drawElementImage: Canvas is disconnected."_s };
+
+    auto sourceSize = size(source);
+    auto paintSize = sourceSize * canvasElement->paintScaleFactor();
+
     return drawElementImage(
         WTF::move(source),
         FloatRect { 0.0f, 0.0f, sourceSize.width(), sourceSize.height() },
-        FloatRect { dx, dy, sourceSize.width(), sourceSize.height() },
+        FloatRect { dx, dy, paintSize.width(), paintSize.height() },
         options);
 }
 
@@ -2511,61 +2521,102 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementIm
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, const FloatRect& srcRect, const FloatRect& dstRect, std::optional<CanvasDrawElementImageOptions> options)
 {
-    return WTF::switchOn(source,
-        [&](Ref<Element>& element) -> ExceptionOr<void> {
-            if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase())) {
-                if (auto snapshot = canvasElement->canvasDrawableSnapshot(element))
-                    return drawSnapshot(*snapshot, srcRect, dstRect, options);
-            }
-            return Exception { ExceptionCode::InvalidStateError, "CanvasRenderingContext2DBase failed to get a snapshot for a drawableElement."_s };
+    RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase());
+    if (!canvasElement)
+        return Exception { ExceptionCode::InvalidStateError, "drawElementImage: Canvas is disconnected."_s };
+
+    Ref element = WTF::switchOn(source,
+        [](const Ref<Element>& element) -> Ref<Element> {
+            return element;
         },
-        [&](Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
-            return drawSnapshot(elementImage->snapshot(), srcRect, dstRect, options);
+        [](const Ref<CanvasElementImage>& elementImage) -> Ref<Element> {
+            return elementImage->element();
         }
     );
-}
 
-ExceptionOr<void> CanvasRenderingContext2DBase::drawSnapshot(const CanvasElementSnapshot& snapshot, const FloatRect& srcRect, const FloatRect& dstRect, std::optional<CanvasDrawElementImageOptions>)
-{
-    auto* c = effectiveDrawingContext();
-    if (!c)
-        return Exception { ExceptionCode::InvalidStateError, "CanvasRenderingContext2DBase failed to create a drawing context."_s };
+    if (!element->isDescendantOf(*canvasElement) || !element->isCanvasDrawable())
+        return Exception { ExceptionCode::InvalidStateError, "drawElementImage: The element is not a drawable child of the canvas."_s };
 
-    if (!std::isfinite(dstRect.x()) || !std::isfinite(dstRect.y()) || !std::isfinite(dstRect.width()) || !std::isfinite(dstRect.height())
-        || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
+    auto snapshot = WTF::switchOn(source,
+        [&](Ref<Element>& element) -> std::optional<CanvasElementSnapshot> {
+            return canvasElement->canvasDrawableSnapshot(element);
+        },
+        [&](Ref<CanvasElementImage>& elementImage) -> std::optional<CanvasElementSnapshot> {
+            return elementImage->snapshot();
+        }
+    );
+
+    if (!snapshot)
+        return Exception { ExceptionCode::InvalidStateError, "drawElementImage: The element did not record a snapshot."_s };
+
+    auto isValidRect = [](const FloatRect& rect) {
+        return std::isfinite(rect.x())
+            && std::isfinite(rect.y())
+            && std::isfinite(rect.width())
+            && std::isfinite(rect.height())
+            && rect.width()
+            && rect.height();
+    };
+
+    if (!isValidRect(srcRect))
         return { };
 
-    if (!srcRect.width() || !srcRect.height())
+    if (!isValidRect(dstRect))
         return { };
 
-    if (!dstRect.width() || !dstRect.height())
-        return { };
-
-    auto snapshotRect = FloatRect { { }, snapshot.size };
-    auto normalizedSrcRect = normalizeRect(intersection(srcRect, snapshotRect));
     auto normalizedDstRect = normalizeRect(dstRect);
-
-    if (normalizedSrcRect.isEmpty())
-        return { };
-
     if (normalizedDstRect.isEmpty())
         return { };
 
-    auto scale = normalizedDstRect.size() / normalizedSrcRect.size();
+    auto snapshotRect = FloatRect { { }, snapshot->size };
+    auto normalizedSrcRect = intersection(normalizeRect(srcRect), snapshotRect);
+    if (normalizedSrcRect.isEmpty())
+        return { };
 
-    if (rectContainsCanvas(normalizedDstRect))
+    auto canvasLocalTransform = drawElementSnapshot(*snapshot, normalizedSrcRect, normalizedDstRect);
+    if (canvasLocalTransform.hasException())
+        return canvasLocalTransform.releaseException();
+
+    if (options && options->preserveElementGeometry)
+        return { };
+
+    auto paintScaleFactor = canvasElement->paintScaleFactor();
+
+    auto canvasTransform = [&] {
+        auto canvasTransform = state().transform;
+        canvasTransform.multiply(AffineTransform::makeScale(1 / paintScaleFactor));
+        canvasTransform.multiply(canvasLocalTransform.releaseReturnValue());
+        return canvasTransform;
+    }();
+
+    return canvasElement->updateElementGeometry(source, canvasTransform);
+}
+
+ExceptionOr<AffineTransform> CanvasRenderingContext2DBase::drawElementSnapshot(const CanvasElementSnapshot& snapshot, const FloatRect& srcRect, const FloatRect& dstRect)
+{
+    auto* c = effectiveDrawingContext();
+    if (!c)
+        return Exception { ExceptionCode::InvalidStateError, "drawElementImage failed to create a drawing context."_s };
+
+    auto scale = dstRect.size() / srcRect.size();
+
+    if (rectContainsCanvas(dstRect))
         willUpdateEntireContents();
     else
-        willUpdateContents(normalizedDstRect);
+        willUpdateContents(dstRect);
+
+    AffineTransform canvasLocalTransform;
+    canvasLocalTransform.translate(dstRect.location());
+    canvasLocalTransform.scale(scale);
+    canvasLocalTransform.translate(-srcRect.location());
 
     c->save();
-    c->clip(normalizedDstRect);
-    c->translate(dstRect.location() - toFloatSize(normalizedSrcRect.location()) * scale);
-    c->scale(scale);
+    c->clip(dstRect);
+    c->concatCTM(canvasLocalTransform);
     c->drawDisplayList(snapshot.displayList);
     c->restore();
 
-    return { };
+    return canvasLocalTransform;
 }
 
 void CanvasRenderingContext2DBase::clearCanvas()

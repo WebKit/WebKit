@@ -33,6 +33,7 @@
 #include "LocalFrameViewInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderGrid.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
@@ -832,6 +833,11 @@ static LayoutPoint staticDistance(const RenderBoxModelObject& container, const R
             staticPosition.setX(renderBox->logicalWidth() - staticPosition.x());
         return staticPosition;
     };
+
+    // A canvas drawable element is positioned by its canvas transform, so its layout position is
+    // at the origin of its containing block.
+    if (outOfFlowBox.isCanvasDrawable())
+        return { };
 
     auto staticPosition = LayoutPoint { };
     auto* child = &outOfFlowBox;

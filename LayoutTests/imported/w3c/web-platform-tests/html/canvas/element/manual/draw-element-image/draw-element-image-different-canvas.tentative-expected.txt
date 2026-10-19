@@ -1,8 +1,7 @@
 
 
-
-Harness Error (FAIL), message = Test named 'Prevent drawing ElementImage into a different canvas on main thread' specified 1 'cleanup' function, and 1 failed.
-
-FAIL Prevent drawing ElementImage into a different canvas on main thread promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-NOTRUN Prevent drawing ElementImage into a different canvas in a worker thread
+FAIL Prevent drawing ElementImage into a different canvas on main thread assert_throws_dom: Getting default size for an ElementImage from a different canvas must throw InvalidStateError function "() => {
+      canvas2.getElementImageDefaultSize(elementImage1);
+    }" threw object "TypeError: canvas2.getElementImageDefaultSize is not a function. (In 'canvas2.getElementImageDefaultSize(elementImage1)', 'canvas2.getElementImageDefaultSize' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL Prevent drawing ElementImage into a different canvas in a worker thread promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
 

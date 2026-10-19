@@ -551,6 +551,10 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
         if (m_element != m_document->documentElement() && style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayerOrBackdrop(style, m_element.get()))
             style.setPosition(PositionType::Absolute);
 
+        // A canvas drawable elements are always position: absolute; unless the position is set to fixed.
+        if (m_element && m_element->isCanvasDrawable() && style.position() != PositionType::Fixed)
+            style.setPosition(PositionType::Absolute);
+
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
         if (style.hasOutOfFlowPosition() || style.floating() != Float::None || (m_element && m_document->documentElement() == m_element.get()))
             style.setDisplayMaintainingOriginalDisplay(style.display().blockified());

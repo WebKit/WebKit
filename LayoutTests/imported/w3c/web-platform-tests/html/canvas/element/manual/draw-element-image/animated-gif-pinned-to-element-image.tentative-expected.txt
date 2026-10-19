@@ -1,4 +1,6 @@
 
 
-PASS Canvas.drawElementImage: animated gif advances and repaints the canvas
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Canvas.drawElementImage: animated gif advances and repaints the canvas Test timed out
 

@@ -27,6 +27,7 @@
 
 #include <WebCore/ElementInlines.h>
 #include <WebCore/RenderElementInlines.h>
+#include <WebCore/RenderHTMLCanvas.h>
 #include <WebCore/StyleComputedStyle+GettersInlines.h>
 #include <WebCore/StyleContainmentCheckerInlines.h>
 
@@ -65,6 +66,11 @@ inline bool RenderElement::isInsideDrawableCanvas() const
     return element && element->isInsideDrawableCanvas();
 }
 
+inline bool RenderElement::isCanvasDrawableIntoCanvas(const RenderHTMLCanvas& canvasRenderer) const
+{
+    return isCanvasDrawable() && this->drawableCanvas() == &canvasRenderer;
+}
+
 inline bool RenderElement::mayContainOutOfFlowPositionedObjects(const Style::ComputedStyle* styleToUse) const
 {
     auto shouldApplyLayoutOrPaintContainment = [this](const auto& style) {
@@ -87,6 +93,7 @@ inline bool RenderElement::mayContainOutOfFlowPositionedObjects(const Style::Com
         || (appleVisualEffectNeedsBackdrop(style.appleVisualEffect()) && !isDocumentElementRenderer())
 #endif
         || isRenderOrLegacyRenderSVGForeignObject()
+        || (isRenderHTMLCanvas() && downcast<RenderHTMLCanvas>(*this).hasDrawableContent())
         || shouldApplyLayoutOrPaintContainment(style)
         || isViewTransitionContainingBlock();
 }
