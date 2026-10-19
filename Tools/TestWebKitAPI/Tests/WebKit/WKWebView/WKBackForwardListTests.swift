@@ -27,6 +27,7 @@ private import TestWebKitAPILibrary
 private import TestWebKitAPILibrary.Helpers.cocoa.TestNavigationDelegate
 import Testing
 import WebKit
+private import WebKit_Private.WKBackForwardListPrivate
 private import WebKit_Private.WKWebViewPrivate
 
 @MainActor
@@ -99,5 +100,18 @@ final class WKBackForwardListTests {
 
         #expect(weakItem1 == nil)
         #expect(weakItem2 == nil)
+    }
+
+    @Test
+    func removeAllItemsAfterCloseDoesNothing() throws {
+        let webView = try #require(self.webView)
+        let list = webView.backForwardList
+        webView._close()
+
+        // Closing the page empties the list and disconnects it from the page, so this has nothing to do.
+        list._removeAllItems()
+
+        #expect(list.currentItem == nil)
+        #expect(list.backList.isEmpty)
     }
 }

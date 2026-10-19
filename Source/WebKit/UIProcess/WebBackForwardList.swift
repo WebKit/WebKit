@@ -269,7 +269,7 @@ final class WebBackForwardList {
         }
 
         backForwardLog(
-            "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) added an item. Current size \(entries.count), current index \(String(describing: currentIndex)), threw away \(removedItems.count) items"
+            "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) added an item. Current size \(entries.count), current index \(unwrappedCurrentIndex), threw away \(removedItems.count) items"
         )
         page.didChangeBackForwardList(newItem, consuming: WebKit.BackForwardListItemVector(array: removedItems))
     }
@@ -672,6 +672,10 @@ final class WebBackForwardList {
 
         backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) removeAllItems (has \(entries.count) of them)")
 
+        guard let page = page.get() else {
+            return
+        }
+
         for item in entries {
             didRemoveItem(item: item)
         }
@@ -679,8 +683,7 @@ final class WebBackForwardList {
 
         let entriesCopy = entries
         entries.removeAll()
-        // swift-format-ignore: NeverForceUnwrap
-        page.get()!.didChangeBackForwardList(Optional.none, consuming: WebKit.BackForwardListItemVector(array: entriesCopy))
+        page.didChangeBackForwardList(Optional.none, consuming: WebKit.BackForwardListItemVector(array: entriesCopy))
     }
 
     @used
@@ -772,7 +775,14 @@ final class WebBackForwardList {
             entries.append(itemAtIndexInBackForwardListItemVector(restoredItems, i)!)
         }
 
-        currentIndex = Optional(fromCxx: backForwardListState.currentIndex).map({ val in Int(val) })
+        let restoredIndex = Optional(fromCxx: backForwardListState.currentIndex).map({ val in Int(val) })
+        if let restoredIndex, restoredIndex < entries.count {
+            currentIndex = restoredIndex
+        } else {
+            // A missing or out-of-range current index would leave the list inconsistent, so restore an empty list instead.
+            entries.removeAll()
+            currentIndex = nil
+        }
         backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) restored from state (has \(entries.count) entries)")
     }
 
