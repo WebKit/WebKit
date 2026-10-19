@@ -432,6 +432,53 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     return platformDataUniquePtr;
 }
 
+#if !OS(ANDROID) && !PLATFORM(WIN)
+static bool findFontFileForFace(const char* fontConfigObjectName, const AtomString& fontFaceName, CString& filePath, int& ttcIndex)
+{
+    std::unique_ptr<FcPattern, decltype(&FcPatternDestroy)> pattern(FcPatternCreate(), FcPatternDestroy);
+    if (!FcPatternAddString(pattern.get(), fontConfigObjectName, reinterpret_cast<const FcChar8*>(fontFaceName.string().utf8().data())))
+        return false;
+
+    std::unique_ptr<FcObjectSet, decltype(&FcObjectSetDestroy)> objectSet(FcObjectSetBuild(FC_FILE, FC_INDEX, nullptr), FcObjectSetDestroy);
+    std::unique_ptr<FcFontSet, decltype(&FcFontSetDestroy)> fontSet(FcFontList(nullptr, pattern.get(), objectSet.get()), FcFontSetDestroy);
+    if (!fontSet || !fontSet->nfont)
+        return false;
+
+    FcPattern* matched = fontSet->fonts[0];
+    FcChar8* file = nullptr;
+    if (FcPatternGetString(matched, FC_FILE, 0, &file) != FcResultMatch || !file)
+        return false;
+
+    int index = 0;
+    FcPatternGetInteger(matched, FC_INDEX, 0, &index);
+
+    filePath = CString(reinterpret_cast<const char*>(file));
+    ttcIndex = index;
+    return true;
+}
+
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformDataForFace(const FontDescription& fontDescription, const AtomString& fontFaceName, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
+{
+    // @font-face src: local(<name>) must match a locally installed font by its full font name or PostScript name.
+    CString filePath;
+    int ttcIndex = 0;
+    if (!findFontFileForFace(FC_POSTSCRIPT_NAME, fontFaceName, filePath, ttcIndex)
+        && !findFontFileForFace(FC_FULLNAME, fontFaceName, filePath, ttcIndex))
+        return nullptr;
+
+    auto typeface = fontManager().makeFromFile(filePath.data(), ttcIndex);
+    if (!typeface)
+        return nullptr;
+
+    auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
+    auto features = computeFeatures(fontDescription, fontCreationContext);
+    auto [syntheticBold, syntheticOblique] = computeSynthesisProperties(*typeface, fontDescription, options);
+    FontPlatformData platformData(WTF::move(typeface), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), WTF::move(features), fontCreationContext.metricsOverrides());
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.usedSize());
+    return makeUnique<FontPlatformData>(platformData);
+}
+#endif // !OS(ANDROID) && !PLATFORM(WIN)
+
 ASCIILiteral FontCache::platformAlternateFamilyName(const String&)
 {
     return { };
