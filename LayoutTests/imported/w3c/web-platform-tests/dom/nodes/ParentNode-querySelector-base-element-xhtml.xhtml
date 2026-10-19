@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>querySelector(All) must match the base local name case-sensitively in XHTML documents</title>
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-parentnode-queryselector"/>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+"use strict";
+const container = document.getElementById("container");
+
+test(t => {
+  const htmlBase = document.createElement("base");
+  container.append(htmlBase);
+  t.add_cleanup(() => htmlBase.remove());
+  assert_equals(document.querySelector("base"), htmlBase);
+  assert_array_equals(document.querySelectorAll("base"), [htmlBase]);
+  assert_equals(document.querySelector("BASE"), null);
+  assert_array_equals(document.querySelectorAll("BASE"), []);
+}, "HTML base element");
+
+test(t => {
+  const svgBase = document.createElementNS("http://www.w3.org/2000/svg", "base");
+  container.append(svgBase);
+  t.add_cleanup(() => svgBase.remove());
+  assert_equals(document.querySelector("base"), svgBase);
+  assert_array_equals(document.querySelectorAll("base"), [svgBase]);
+  assert_equals(document.querySelector("BASE"), null);
+  assert_array_equals(document.querySelectorAll("BASE"), []);
+}, "SVG base element without an HTML base element");
+</script>
+</body>
+</html>

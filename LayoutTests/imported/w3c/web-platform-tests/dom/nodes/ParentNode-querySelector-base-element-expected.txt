@@ -1,0 +1,6 @@
+
+PASS Parser-created SVG base element without an HTML base element
+PASS SVG base element preceding an HTML base element
+PASS Dynamically inserted and removed non-HTML base elements
+PASS Uppercase SVG BASE element in an HTML document
+

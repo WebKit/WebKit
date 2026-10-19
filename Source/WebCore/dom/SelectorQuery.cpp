@@ -309,7 +309,7 @@ static ALWAYS_INLINE bool LEGACY_NODELETE localNameMatches(const Element& elemen
 template<typename OutputType>
 static inline void elementsForLocalName(const ContainerNode& rootNode, const AtomString& localName, const AtomString& lowercaseLocalName, OutputType& output)
 {
-    if (auto* rootDocument = dynamicDowncast<Document>(rootNode); rootDocument && lowercaseLocalName == HTMLNames::baseTag->localName()) {
+    if (auto* rootDocument = dynamicDowncast<Document>(rootNode); rootDocument && localName == HTMLNames::baseTag->localName() && !rootDocument->hasConnectedNonHTMLBaseElements()) {
         RefPtr firstBaseElement = rootDocument->firstBaseElement();
         if (!firstBaseElement)
             return;
