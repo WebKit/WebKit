@@ -125,6 +125,8 @@ for pattern in (
 # out-of-process default instead of the in-process Wii U backend.
 if "set(_WKC_RESOURCE_HANDLE_SOURCE" not in cmake:
     errors.append("CMakeLists.txt: full-WebCore in-process network source guard missing")
+if 'list(REMOVE_ITEM WEBCORE_CORE_SOURCES' not in cmake or 'platform/network/ResourceHandle.cpp' not in cmake:
+    errors.append("CMakeLists.txt: upstream ResourceHandle.cpp is not explicitly excluded from the full-engine source list")
 if "if (WKC_ENABLE_FULL_WEBCORE)" not in cmake:
     errors.append("CMakeLists.txt: full-WebCore guard is not conditional on the full engine")
 
