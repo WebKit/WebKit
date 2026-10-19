@@ -1070,37 +1070,19 @@ void WebAutomationSession::goForwardInBrowsingContext(const Inspector::Protocol:
 
 void WebAutomationSession::traverseHistoryInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, int delta, CommandCallback<void>&& callback)
 {
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-traverseHistory
     auto page = webPageProxyForHandle(handle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
-
-    RefPtr mainFrame = page->mainFrame();
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!mainFrame, InvalidParameter);
 
     if (!delta) {
         callback({ });
         return;
     }
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
-    WebBackForwardListWrapper& backForwardList = page->backForwardListWrapper();
-    unsigned backCount = backForwardList.backListCountForAPI();
-    unsigned forwardCount = backForwardList.forwardListCountForAPI();
-#else
-    Ref backForwardList = page->backForwardListWrapper();
-    unsigned backCount = backForwardList->backListCountForAPI();
-    unsigned forwardCount = backForwardList->forwardListCountForAPI();
-#endif
-    int currentIndex = static_cast<int>(backCount);
-    int targetIndex = currentIndex + delta;
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(targetIndex < 0, InvalidParameter);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(targetIndex >= static_cast<int>(backCount + forwardCount + 1), InvalidParameter);
-
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
-    RefPtr targetItem = backForwardList.itemAtDeltaFromCurrentIndex(targetIndex);
-#else
-    RefPtr targetItem = backForwardList->itemAtDeltaFromCurrentIndex(targetIndex);
-#endif
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!targetItem, InternalError);
+    // The spec traverses the session history by the delta as it is; entries that script added without a user gesture
+    // are not skipped, as history.go() does not skip them, so there is no entry only when the delta is out of range.
+    RefPtr targetItem = page->backForwardListWrapper().itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!targetItem, NoSuchHistoryEntry);
 
     RefPtr currentItem = page->backForwardListWrapper().currentItem();
     RefPtr navigation = page->goToBackForwardItem(*targetItem);
