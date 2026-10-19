@@ -3094,6 +3094,8 @@ void webkitWebViewMouseTargetChanged(WebKitWebView* webView, const WebHitTestRes
 #if PLATFORM(GTK)
     webkitWebViewBaseSetTooltipArea(WEBKIT_WEB_VIEW_BASE(webView), hitTestResult.elementBoundingBox);
     webkitWebViewBaseSetMouseIsOverScrollbar(WEBKIT_WEB_VIEW_BASE(webView), hitTestResult.isScrollbar);
+#elif PLATFORM(WPE)
+    webView->priv->view->setToolTip(hitTestResult.tooltipText, hitTestResult.elementBoundingBox);
 #endif
 
     WebKitWebViewPrivate* priv = webView->priv;

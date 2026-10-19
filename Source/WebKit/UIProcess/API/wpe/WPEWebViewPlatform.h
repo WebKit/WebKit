@@ -77,6 +77,7 @@ private:
     void synthesizeCompositionKeyPress(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<WebKit::EditingRange>&&) override;
     void callAfterNextPresentationUpdate(CompletionHandler<void()>&&) override;
     void setCursor(const WebCore::Cursor&) override;
+    void setToolTip(const String&, const WebCore::IntRect&) override;
 
     void updateDisplayID();
     bool activityStateChanged(WebCore::ActivityState, bool);
@@ -99,6 +100,8 @@ private:
     RefPtr<WebKit::AcceleratedBackingStore> m_backingStore;
     uint32_t m_displayID { 0 };
     unsigned long m_bufferRenderedID { 0 };
+    String m_toolTip;
+    WebCore::IntRect m_toolTipArea;
     Vector<CompletionHandler<void()>> m_nextPresentationUpdateCallbacks;
     HashMap<uint32_t, GRefPtr<WPEEvent>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_touchEvents;
 #if ENABLE(FULLSCREEN_API)

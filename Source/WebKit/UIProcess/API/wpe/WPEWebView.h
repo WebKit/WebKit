@@ -107,6 +107,7 @@ public:
 #endif
 
     virtual void setCursor(const WebCore::Cursor&) { };
+    virtual void setToolTip(const String&, const WebCore::IntRect&) { };
     virtual void synthesizeCompositionKeyPress(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<WebKit::EditingRange>&&) = 0;
     virtual void callAfterNextPresentationUpdate(CompletionHandler<void()>&&) = 0;
 

@@ -1078,6 +1078,57 @@ static void testWebViewMouseEnterAndLeaveWithoutMotion(UIClientTest* test, gcons
 #endif
 #endif // PLATFORM(GTK)
 
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+static struct {
+    GUniquePtr<char> text;
+    std::optional<WPERectangle> area;
+} s_viewTooltip;
+
+static void assertViewTooltip(const char* text, const WPERectangle& area)
+{
+    g_assert_cmpstr(s_viewTooltip.text.get(), ==, text);
+    g_assert_true(s_viewTooltip.area.has_value());
+    g_assert_cmpint(s_viewTooltip.area->x, ==, area.x);
+    g_assert_cmpint(s_viewTooltip.area->y, ==, area.y);
+    g_assert_cmpint(s_viewTooltip.area->width, ==, area.width);
+    g_assert_cmpint(s_viewTooltip.area->height, ==, area.height);
+}
+
+static void testWebViewTooltip(UIClientTest* test, gconstpointer)
+{
+    auto* viewClass = WPE_VIEW_GET_CLASS(webkit_web_view_get_wpe_view(test->webView()));
+    auto* originalSetTooltip = viewClass->set_tooltip;
+    viewClass->set_tooltip = [](WPEView*, const char* text, const WPERectangle* area) {
+        s_viewTooltip.text.reset(g_strdup(text));
+        s_viewTooltip.area = area ? std::optional<WPERectangle>(*area) : std::nullopt;
+    };
+
+    test->showInWindow();
+    test->loadHtml(
+        "<html><body>"
+        " <a style='position:absolute; left:0; top:0; width:50px; height:20px' href='http://example.com/a' title='Shared title'></a>"
+        " <a style='position:absolute; left:50px; top:0; width:50px; height:20px' href='http://example.com/b' title='Shared title'></a>"
+        " <a style='position:absolute; left:0; top:50px; width:50px; height:20px' href='http://example.com/c' title='Other title'></a>"
+        "</body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->moveMouseAndWaitUntilMouseTargetChanged(10, 10);
+    assertViewTooltip("Shared title", { 0, 0, 50, 20 });
+
+    test->moveMouseAndWaitUntilMouseTargetChanged(60, 10);
+    assertViewTooltip("Shared title", { 50, 0, 50, 20 });
+
+    test->moveMouseAndWaitUntilMouseTargetChanged(10, 60);
+    assertViewTooltip("Other title", { 0, 50, 50, 20 });
+
+    test->moveMouseAndWaitUntilMouseTargetChanged(200, 200);
+    g_assert_null(s_viewTooltip.text.get());
+    g_assert_false(s_viewTooltip.area.has_value());
+
+    viewClass->set_tooltip = originalSetTooltip;
+}
+#endif
+
 static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstpointer)
 {
     // Some versions of geoclue give a runtime warning because it tries
@@ -1861,6 +1912,10 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "mouse-leave-with-position-inside", testWebViewMouseLeaveWithPositionInside);
     UIClientTest::add("WebKitWebView", "mouse-enter-and-leave-without-motion", testWebViewMouseEnterAndLeaveWithoutMotion);
 #endif
+#endif
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    if (!Test::s_useWPELegacyAPI)
+        UIClientTest::add("WebKitWebView", "tooltip", testWebViewTooltip);
 #endif
     UIClientTest::add("WebKitWebView", "geolocation-permission-requests", testWebViewGeolocationPermissionRequests);
 #if ENABLE(ENCRYPTED_MEDIA)
