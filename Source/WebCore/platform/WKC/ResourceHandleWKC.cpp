@@ -14,10 +14,18 @@
 #if USE(CURL)
 
 #include "AuthenticationChallenge.h"
+#include "CertificateInfo.h"
 #include "CurlContext.h"
+#include "CurlSSLHandle.h"
 #include "CurlRequest.h"
 #include "CurlRequestClient.h"
 #include "CurlResponse.h"
+#if __has_include("WKCCACertBundle.h")
+#include "WKCCACertBundle.h"
+#define WKC_HAS_EMBEDDED_CA_BUNDLE 1
+#else
+#define WKC_HAS_EMBEDDED_CA_BUNDLE 0
+#endif
 #include "HTTPParsers.h"
 #include "NetworkLoadMetrics.h"
 #include "NetworkingContext.h"
@@ -97,8 +105,22 @@ void configureCertificateAuthorityBundle(const URL& url)
     const char* path = std::getenv("CURL_CA_BUNDLE");
     if (!path || !*path)
         path = std::getenv("SSL_CERT_FILE");
-    if (path && *path)
+    if (path && *path) {
         sslHandle.setCACertPath(String::fromUTF8(path));
+        return;
+    }
+
+#if WKC_HAS_EMBEDDED_CA_BUNDLE
+    // Embed the build host's maintained CA bundle because a Wii U install does
+    // not necessarily have a conventional system certificate store. Keep the
+    // bytes in CurlSSLHandle: libcurl's CAINFO_BLOB uses CURL_BLOB_NOCOPY.
+    CertificateInfo::Certificate caBundle;
+    caBundle.append(std::span<const uint8_t> {
+        reinterpret_cast<const uint8_t*>(WKCCACertificates::bundle),
+        WKCCACertificates::bundleSize
+    });
+    sslHandle.setCACertData(WTF::move(caBundle));
+#endif
 }
 
 // ResourceHandle's in-process WKC bridge must explicitly bridge WebCore's
@@ -264,11 +286,15 @@ public:
 
     void curlDidReceiveData(CurlRequest&, Ref<SharedBuffer>&& buffer) final
     {
-        if (!m_handle || !m_handle->client())
+        // Keep the handle alive across the renderer callback, which may reenter
+        // WebCore and cancel this resource while it consumes the response body.
+        RefPtr<ResourceHandle> handle = m_handle;
+        auto* client = handle ? handle->client() : nullptr;
+        if (!client)
             return;
 
         auto length = std::min<size_t>(buffer->size(), INT_MAX);
-        m_handle->client()->didReceiveData(m_handle.get(), buffer.get(), static_cast<int>(length));
+        client->didReceiveData(handle.get(), buffer.get(), static_cast<int>(length));
     }
 
     void curlDidComplete(CurlRequest&, NetworkLoadMetrics&& metrics) final
