@@ -46,6 +46,7 @@ class PaymentSession : public virtual PaymentSessionBase {
 public:
     WEBCORE_EXPORT static bool isSecureForSession(const URL&, const std::optional<const CertificateInfo>&);
     static ExceptionOr<void> canCreateSession(Document&);
+    static bool shouldDiscloseApplePayCapability(Document&);
 
     virtual unsigned version() const = 0;
     virtual void validateMerchant(URL&&) = 0;

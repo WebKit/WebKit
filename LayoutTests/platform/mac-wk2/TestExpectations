@@ -87,6 +87,9 @@ fast/scrolling/unfocusing-page-while-keyboard-scrolling.html [ Pass ]
 
 http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html [ Pass ]
 
+http/tests/ssl/applepay/ApplePayReferenceSession-back-forward-cache.https.html [ Skip ]
+http/tests/ssl/applepay/ApplePayReferenceSession-prepare-ephemeral.https.html [ Skip ]
+http/tests/ssl/applepay/ApplePayReferenceSession-prepare.https.html [ Skip ]
 http/tests/ssl/applepay/ApplePayReferenceSession.https.html [ Skip ]
 http/tests/ssl/applepay [ Pass ]
 
