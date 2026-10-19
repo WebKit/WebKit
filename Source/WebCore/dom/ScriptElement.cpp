@@ -683,6 +683,7 @@ String ScriptElement::scriptContent() const
 
 void ScriptElement::setTrustedScriptText(const String& text)
 {
+    m_setFromDOMString = true;
     m_trustedScriptText = text;
 }
 
