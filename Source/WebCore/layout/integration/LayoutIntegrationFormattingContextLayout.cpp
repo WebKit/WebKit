@@ -92,6 +92,13 @@ void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optio
     layoutRendererAndUpdateBoxGeometry(box, renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, containingBlockInlineSize, layoutState);
 }
 
+static void updateGridItemBoxGeometry(const Layout::ElementBox& box, LayoutUnit gridAreaInlineSize, Layout::LayoutState& layoutState)
+{
+    ASSERT(box.isGridItem());
+    auto updater = BoxGeometryUpdater { layoutState, rootLayoutBox(box) };
+    updater.updateBoxGeometryAfterIntegrationLayout(box, gridAreaInlineSize);
+}
+
 void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, Layout::LayoutState& layoutState)
 {
     ASSERT(box.isGridItem());
@@ -101,7 +108,8 @@ void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::opt
     // descendants resolve percentage/calc sizes against it during layout, and resolve the item's own geometry
     // against it below rather than against the grid container's content box.
     renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize);
-    layoutRendererAndUpdateBoxGeometry(box, renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, gridAreaInlineSize, layoutState);
+    layoutRendererWithOverridingBorderBoxSize(renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight);
+    updateGridItemBoxGeometry(box, gridAreaInlineSize, layoutState);
     renderer->clearGridAreaContentSize();
 }
 
