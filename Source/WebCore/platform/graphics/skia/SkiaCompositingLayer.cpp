@@ -438,7 +438,6 @@ std::optional<SkiaCompositingLayer::AnimationsState> SkiaCompositingLayer::syncA
 
         damageWholeLayer();
         groupPropertyChanged();
-        // FIXME: add collectFrameDamageDespiteBeingInvisible?
     };
 
     // Null once the animation stops, so that falling back to the layer's own filter is a change too.
