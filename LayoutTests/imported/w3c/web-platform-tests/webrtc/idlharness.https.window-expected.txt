@@ -283,7 +283,7 @@ PASS RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').r
 PASS RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "getContributingSources()" with the proper type
 PASS RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "getSynchronizationSources()" with the proper type
 PASS RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "getStats()" with the proper type
-FAIL RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "jitterBufferTarget" with the proper type assert_equals: expected "number" but got "object"
+PASS RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "jitterBufferTarget" with the proper type
 PASS RTCRtpTransceiver interface: existence and properties of interface object
 PASS RTCRtpTransceiver interface object length
 PASS RTCRtpTransceiver interface object name
