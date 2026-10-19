@@ -216,7 +216,9 @@ private:
 // CurlHandle -------------------------------------------------
 
 class CertificateInfo;
+#if !PLATFORM(WKC)
 class CurlSSLVerifier;
+#endif
 class HTTPHeaderMap;
 class NetworkLoadMetrics;
 
@@ -332,7 +334,9 @@ private:
     static CURLcode willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData);
     CURLcode willSetupSslCtx(void* sslCtx);
 
+#if !PLATFORM(WKC)
     std::optional<SSL*> sslConnection() const;
+#endif
 
     CURL* m_handle { nullptr };
     char m_errorBuffer[CURL_ERROR_SIZE] { };
@@ -341,7 +345,9 @@ private:
     CurlSList m_localhostAlias;
     CurlSList m_requestHeaders;
 
+#if !PLATFORM(WKC)
     std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
+#endif
     std::unique_ptr<TLSConnectionInfo> m_tlsConnectionInfo;
     mutable std::unique_ptr<CertificateInfo> m_certificateInfo;
 };
