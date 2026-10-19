@@ -188,7 +188,7 @@ void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationCon
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const Color&);
 
 template<> struct Serialize<Color> {
-    void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const Color&);
+    void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const Color&, PropertyValueType = PropertyValueType::Resolved);
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
@@ -198,7 +198,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 Color toStyleColor(const CSS::Color&, ColorResolutionState&);
 
 template<> struct ToCSS<Color> {
-    auto operator()(const Color&, const Style::ComputedStyle&) -> CSS::Color;
+    auto operator()(const Color&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::Color;
 };
 template<> struct ToStyle<CSS::Color> {
     auto operator()(const CSS::Color&, const BuilderState&, ForVisitedLink) -> Color;
@@ -211,7 +211,7 @@ template<> struct CSSValueConversion<Color> {
 };
 
 template<> struct CSSValueCreation<Color> {
-    auto operator()(CSSValuePool&, const Style::ComputedStyle&, const Color&) -> Ref<CSSValue>;
+    auto operator()(CSSValuePool&, const Style::ComputedStyle&, const Color&, PropertyValueType = PropertyValueType::Resolved) -> Ref<CSSValue>;
 };
 
 template<> struct DeprecatedCSSOMValueCreation<Color> {

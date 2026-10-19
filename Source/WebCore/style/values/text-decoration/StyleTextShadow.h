@@ -60,16 +60,16 @@ using TextShadows = Shadows<TextShadow>;
 
 // MARK: - Conversions
 
-template<> struct ToCSS<TextShadow> { auto operator()(const TextShadow&, const Style::ComputedStyle&) -> CSS::TextShadow; };
+template<> struct ToCSS<TextShadow> { auto operator()(const TextShadow&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::TextShadow; };
 template<> struct ToStyle<CSS::TextShadow> { auto operator()(const CSS::TextShadow&, const BuilderState&) -> TextShadow; };
 
 // `TextShadowList` is special-cased to return a `CSSTextShadowPropertyValue`.
-template<> struct CSSValueCreation<TextShadowList> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const TextShadowList&); };
+template<> struct CSSValueCreation<TextShadowList> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const TextShadowList&, PropertyValueType = PropertyValueType::Resolved); };
 template<> struct CSSValueConversion<TextShadows> { auto operator()(BuilderState&, const CSSValue&) -> TextShadows; };
 
 // MARK: - Serialization
 
-template<> struct Serialize<TextShadowList> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const TextShadowList&); };
+template<> struct Serialize<TextShadowList> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const TextShadowList&, PropertyValueType = PropertyValueType::Resolved); };
 
 // MARK: - Blending
 
