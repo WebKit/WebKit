@@ -694,6 +694,7 @@ void RenderElement::didAttachChild(RenderObject& child, RenderObject*)
 
 RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
+    document().incRenderTreeVersion();
     child->setParent(this);
 
     if (m_firstChild == beforeChild)
@@ -720,6 +721,7 @@ RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> chil
 
 RenderPtr<RenderObject> RenderElement::detachRendererInternal(RenderObject& renderer)
 {
+    document().incRenderTreeVersion();
     CheckedPtr parent = renderer.parent();
     ASSERT(parent);
     CheckedPtr nextSibling = renderer.nextSibling();

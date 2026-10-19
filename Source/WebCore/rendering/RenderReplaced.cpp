@@ -220,7 +220,8 @@ Color RenderReplaced::calculateHighlightColor() const
     if (auto appHighlightRegistry = document().appHighlightRegistryIfExists()) {
         if (appHighlightRegistry->highlightsVisibility() == HighlightVisibility::Visible) {
             for (auto& highlight : appHighlightRegistry->map()) {
-                for (auto& highlightRange : highlight.value->highlightRanges()) {
+                Ref highlightValue = highlight.value;
+                for (auto& highlightRange : highlightValue->highlightRangesFor(*this)) {
                     if (!renderHighlight.setRenderRange(highlightRange))
                         continue;
 
@@ -237,7 +238,8 @@ Color RenderReplaced::calculateHighlightColor() const
 #endif
     if (auto highlightRegistry = document().highlightRegistryIfExists()) {
         for (auto& highlight : highlightRegistry->map()) {
-            for (auto& highlightRange : highlight.value->highlightRanges()) {
+            Ref highlightValue = highlight.value;
+            for (auto& highlightRange : highlightValue->highlightRangesFor(*this)) {
                 if (!renderHighlight.setRenderRange(highlightRange))
                     continue;
 
@@ -254,7 +256,8 @@ Color RenderReplaced::calculateHighlightColor() const
     if (document().settings().scrollToTextFragmentEnabled()) {
         if (auto highlightRegistry = document().fragmentHighlightRegistryIfExists()) {
             for (auto& highlight : highlightRegistry->map()) {
-                for (auto& highlightRange : highlight.value->highlightRanges()) {
+                Ref highlightValue = highlight.value;
+                for (auto& highlightRange : highlightValue->highlightRangesFor(*this)) {
                     if (!renderHighlight.setRenderRange(highlightRange))
                         continue;
 
