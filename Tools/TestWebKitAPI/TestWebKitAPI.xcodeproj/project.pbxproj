@@ -792,6 +792,7 @@
 				WebCore/CBORWriterTest.cpp,
 				WebCore/cocoa/AttributedStringFontCache.mm,
 				WebCore/cocoa/AudioStreamDescriptionCocoa.mm,
+				WebCore/cocoa/AudioUnderrunDeclickerTests.cpp,
 				WebCore/cocoa/AudioVideoRendererAVFObjCTests.mm,
 				WebCore/cocoa/AVFoundationSoftLinkTest.mm,
 				WebCore/cocoa/BifurcatedGraphicsContextTestsCG.cpp,
