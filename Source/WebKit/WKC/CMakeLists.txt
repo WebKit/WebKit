@@ -568,8 +568,7 @@ if (WKC_ENABLE_FULL_WEBCORE)
     endif ()
 endif ()
 
-# Full WebCore requires the shared platform-side audio and media-stream
-# implementations in a# Optional audio and media-stream platform files must follow their feature
+# Optional audio and media-stream platform files must follow their feature
 # switches. The page-loading baseline intentionally builds without Web Audio or
 # WebRTC; compiling the legacy WKC audio/RTC adapters anyway drags removed APIs
 # and the unported libwebrtc tree into an otherwise unrelated browser build.
@@ -595,7 +594,6 @@ if (WKC_ENABLE_FULL_WEBCORE)
     list(LENGTH WEBCORE_PLATFORM_SOURCES _WKC_PLATFORM_SOURCE_COUNT)
     message(STATUS "WKC full WebCore probe: ${_WKC_PLATFORM_SOURCE_COUNT} WKC/common platform sources selected")
 endif ()
-selected WKC providers compile and the final executable links.
 if (WKC_ENABLE_WEBRTC_API)
     add_definitions(-DUSE_LIBWEBRTC=1)
 
