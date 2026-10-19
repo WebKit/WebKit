@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import copy
+import json
 import os
 import shutil
 import subprocess
@@ -28,7 +29,7 @@ import time
 from datetime import datetime, timezone
 from unittest.mock import patch
 
-from webkitcorepy import LoggerCapture, OutputCapture, run, testing, mocks as wkmocks
+from webkitcorepy import LoggerCapture, NestedFuzzyDict, OutputCapture, run, testing, mocks as wkmocks
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import Commit, Contributor, local, mocks, remote
 from webkitscmpy.test.cache_oracle import CacheOracle
@@ -221,6 +222,37 @@ class TestGit(CacheOracle, testing.PathTestCase):
                 with self.assertRaises(Exception):
                     cached.find(dropped)
 
+    def test_find_after_git_log_fails_once_it_started(self):
+        with mocks.local.Git(self.path) as mock_git, MockTime, LoggerCapture():
+            git = local.Git.executable()
+            repository = local.Git(self.path)
+            self.assertEqual('2@main', str(repository.find(mock_git.commits['main'][1].hash)))
+
+            for message in ('First new commit', 'Second new commit'):
+                mock_git.staged['file.txt'] = message
+                run([git, 'commit', '-m', message], cwd=self.path, capture_output=True)
+            run([git, 'update-ref', 'refs/remotes/origin/main', mock_git.head.hash], cwd=self.path, capture_output=True)
+            time.sleep(60)
+
+            real_poll = subprocess.Popen.poll
+            results = iter([None, 128])
+
+            def poll(process):
+                result = real_poll(process)
+                # Only the `git log` that walks a branch for the cache, not the one that reads a single commit
+                if '--no-replace-objects' in process._args and 'log' in process._args:
+                    return next(results, None)
+                return result
+
+            # Looking up a new commit on main walks main again, and that walk fails after it started
+            with patch.object(subprocess.Popen, 'poll', poll):
+                repository.find(mock_git.head.hash)
+            self.assertEqual([], list(results), 'the walk of main was not polled twice')
+
+            for number, commit in enumerate(mock_git.commits['main'], 1):
+                self.assertEqual(f'{number}@main', self.assert_matches_uncached(repository, lambda r: r.find(commit.hash))[1])
+                self.assertEqual(f'{number}@main', self.assert_matches_uncached(local.Git(self.path), lambda r: r.find(commit.hash))[1])
+
     def _move_off_default_branch(self, mock_git, dropped='bae5d1e9', new_branch='eng/rewritten'):
         """Reset main to before `dropped`, which survives only on `new_branch` (3.1@new_branch)."""
         default_branch = mock_git.default_branch
@@ -268,6 +300,37 @@ class TestGit(CacheOracle, testing.PathTestCase):
             self.assertEqual('3@main', str(repository.commit(hash='1abe25b4')))
             self.assert_matches_uncached(repository, lambda r: r.commit(hash='1abe25b4'))
             self.assert_matches_uncached(repository, lambda r: r.find('2@main'))
+
+    def _populated_cache_file(self, mock_git):
+        """Populate main and eng/foo on one instance, return the path of the cache file it wrote and its content."""
+        git = local.Git.executable()
+        run([git, 'checkout', '-b', 'eng/foo'], cwd=self.path, capture_output=True)
+        mock_git.staged['file.txt'] = 'dev'
+        run([git, 'commit', '-m', 'Dev branch commit'], cwd=self.path, capture_output=True)
+        repository = local.Git(self.path)
+        repository.find('5.1@eng/foo')
+        path = os.path.join(repository.common_directory, 'identifiers.json')
+        with open(path) as file:
+            return path, json.load(file)
+
+    def test_cache_file_truncated(self):
+        with mocks.local.Git(self.path) as mock_git, MockTime, LoggerCapture():
+            path, _ = self._populated_cache_file(mock_git)
+            with open(path) as file:
+                text = file.read()
+            with open(path, 'w') as file:
+                file.write(text[:len(text) // 2])
+
+            repository = local.Git(self.path)
+            for something in ('3@main', mock_git.commits['main'][2].hash):
+                self.assert_matches_uncached(repository, lambda r: r.find(something))
+            self.assert_matches_uncached(repository, lambda r: r.commit(hash=mock_git.commits['eng/foo'][-1].hash))
+
+    def test_cache_file_labels_hashes_on_construction(self):
+        with mocks.local.Git(self.path) as mock_git, MockTime, LoggerCapture():
+            self._populated_cache_file(mock_git)
+            repository = local.Git(self.path)
+            self.assertEqual('3@main', repository.cache.to_identifier(hash=mock_git.commits['main'][2].hash, populate=False))
 
     def _check_stacked_branch(self, base, top):
         """`top` is stacked on `base`, whose name `top` is a suffix of (or `base` ends in `main`)."""
@@ -592,6 +655,65 @@ CommitDate: {time_c}
 
                 self.assertEqual(repo.cache.to_identifier(hash='badc0dd1f'), None)
                 self.assertEqual(repo.cache.to_hash(identifier='6@main'), None)
+
+    def test_cache_local_default_branch_behind_remote(self):
+        with mocks.local.Git(self.path) as mock, MockTime, LoggerCapture():
+            # Local main is one commit behind origin/main, which is what a `git fetch` without updating main leaves
+            mock.commits['main'].pop()
+            mock.head = mock.commits['main'][-1]
+
+            # Looking up a commit on another branch walks origin/main
+            repo = local.Git(self.path)
+            self.assertEqual('2.2@branch-a', str(repo.commit(identifier='2.2@branch-a')))
+            self.assertEqual('5@main', str(repo.commit(hash='d8bce26fa65c')))
+
+            # Looking up an identifier on main walks local main, which hasn't lost anything on origin/main, so no
+            # identifier needs to be forgotten and computed again
+            time.sleep(60)
+            with patch.object(NestedFuzzyDict, '__setitem__', autospec=True, side_effect=NestedFuzzyDict.__setitem__) as assigned:
+                self.assertEqual('4@main', str(repo.commit(identifier='4@main')))
+            self.assertEqual(0, assigned.call_count)
+            self.assertEqual('5@main', str(repo.commit(hash='d8bce26fa65c')))
+
+            self.assertEqual('5@main', str(local.Git(self.path).commit(hash='d8bce26fa65c')))
+
+    def test_cache_local_default_branch_ahead_of_remote(self):
+        with mocks.local.Git(self.path) as mock, MockTime, LoggerCapture():
+            # A commit on main which hasn't been pushed yet
+            unpushed = '5d697791f2e1fb3991e441fbd79f412fcff93c75'
+            mock.commits['main'].append(Commit(
+                hash=unpushed, branch='main', identifier='6@main',
+                author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                timestamp=int(time.time()), message='[Testing] Existing commit\n',
+            ))
+            mock.head = mock.commits['main'][-1]
+            self.assertEqual('6@main', str(local.Git(self.path).commit(hash=unpushed)))
+
+            # Loading the cache computes every cached identifier
+            with patch.object(NestedFuzzyDict, '__setitem__', autospec=True, side_effect=NestedFuzzyDict.__setitem__) as assigned:
+                self.assertEqual('6@main', str(local.Git(self.path).commit(hash=unpushed)))
+            loading = assigned.call_count
+
+            # Looking up a commit on another branch walks origin/main first. origin/main's tip is already cached, so
+            # only the branch's own 2 commits need identifiers
+            with patch.object(NestedFuzzyDict, '__setitem__', autospec=True, side_effect=NestedFuzzyDict.__setitem__) as assigned:
+                self.assertEqual('2.2@branch-a', str(local.Git(self.path).commit(identifier='2.2@branch-a')))
+            self.assertEqual(loading + 2, assigned.call_count)
+
+    def test_cache_file_revisions_shorter_than_hashes(self):
+        with mocks.local.Git(self.path), MockTime, LoggerCapture():
+            repo = local.Git(self.path)
+            self.assertEqual('5@main', str(repo.commit(hash='d8bce26fa65c')))
+            path = os.path.join(repo.common_directory, 'identifiers.json')
+            with open(path) as file:
+                content = json.load(file)
+            content['revisions']['main'] = content['revisions']['main'][:2]
+            with open(path, 'w') as file:
+                json.dump(content, file)
+
+            # A damaged cache file should be ignored, not stop a repository from being constructed
+            for something in ('d8bce26fa65c', 'bae5d1e9', '4@main'):
+                self.assert_matches_uncached(local.Git(self.path), lambda r: r.find(something))
 
     def test_revision_cache(self):
         with mocks.local.Git(self.path, git_svn=True), OutputCapture():
