@@ -299,6 +299,7 @@ cairo_public void wkc_cairo_resetVariables(void);
 
 // ─── Forward declarations ─────────────────────────────────────────────────────
 namespace WebCore {
+extern void wkcRunLoopCycle();
 extern void InitializeLoggingChannelsIfNecessary();
 extern void EventLoop_setCycleProc(bool(*)(void*), void*);
 }
@@ -2623,6 +2624,11 @@ static bool WKCWebKitRequestWakeUp(unsigned int ms, void* data)
 // ─── Public global API ────────────────────────────────────────────────────────
 
 WKC_API void WKCWebKitWakeUp(void* opaque) { wkcTimerWakeUpPeer(opaque); }
+
+// The WKC embedder owns the frame loop; pump WebCore's RunLoop from that loop
+// so CurlRequest's worker-thread completions reach the main-thread frame loader.
+WKC_API void WKCWebKitProcessEvents() { WebCore::wkcRunLoopCycle(); }
+
 unsigned int WKCWebKitGetTickCount()       { return wkcGetTickCountPeer(); }
 bool         WKCWebKitIsMemoryCrashing()  { return wkcMemoryIsCrashingPeer(); }
 
