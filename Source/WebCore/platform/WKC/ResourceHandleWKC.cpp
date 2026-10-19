@@ -23,6 +23,8 @@
 #if __has_include("WKCCACertBundle.h")
 #include "WKCCACertBundle.h"
 #define WKC_HAS_EMBEDDED_CA_BUNDLE 1
+#elif defined(WKC_REQUIRE_EMBEDDED_CA_BUNDLE)
+#error "Full WebCore WKC builds require the generated WKCCACertBundle.h"
 #else
 #define WKC_HAS_EMBEDDED_CA_BUNDLE 0
 #endif
