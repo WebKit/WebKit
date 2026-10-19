@@ -652,6 +652,13 @@ add_library(WebKitWKC STATIC
     ${WEBCORE_BUILTINS_SOURCES}
 )
 
+# The full in-process browser must not quietly compile without its embedded
+# trust store: that would make HTTPS depend on a conventional filesystem CA
+# bundle which Wii U installations do not necessarily have.
+if (WKC_ENABLE_FULL_WEBCORE)
+    target_compile_definitions(WebKitWKC PRIVATE WKC_REQUIRE_EMBEDDED_CA_BUNDLE=1)
+endif ()
+
 if (WKC_ENABLE_WEBRTC_API)
     add_library(WKCNetworkCompat STATIC "${WKC_DIR}/webkit/WKCIfAddrs.cpp")
     target_include_directories(WKCNetworkCompat PRIVATE
