@@ -251,8 +251,8 @@
             "async": true,
             "parameters": [
                 { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to reload." },
-                { "name": "ignoreCache", "type": "boolean", "optional": true },
-                { "name": "wait", "$ref": "BidiBrowsingContext.ReadinessState", "optional": true }
+                { "name": "ignoreCache", "type": "boolean", "optional": true, "description": "Whether to bypass the cache (default is false)." },
+                { "name": "wait", "type": "string", "optional": true, "description": "The readiness state at which the command will return (default is 'none'). Should be a BidiBrowsingContext.ReadinessState value." }
             ],
             "returns": [
                 { "name": "url", "type": "string", "description": "The URL the browsing context navigated to." },

@@ -194,6 +194,9 @@ public:
     // browsingContext.navigate: loads `url` in the page, or in `frameHandle`'s frame when it is not empty, and resolves with the
     // requested URL and the navigation id. Unlike the classic command, a navigation that fails or whose context closes is an error.
     void navigateBrowsingContextForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& url, Inspector::Protocol::Automation::PageLoadStrategy, Seconds pageLoadTimeout, Inspector::CommandCallbackOf<String, String>&&);
+    // browsingContext.reload: reloads the page, or `frameHandle`'s frame when it is not empty, with the same completion as navigate.
+    enum class IgnoreCache : bool { No, Yes };
+    void reloadBrowsingContextForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, IgnoreCache, Inspector::Protocol::Automation::PageLoadStrategy, Seconds pageLoadTimeout, Inspector::CommandCallbackOf<String, String>&&);
     void navigationStartedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationCommittedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationFailedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
@@ -466,7 +469,7 @@ private:
 #if ENABLE(WEBDRIVER_BIDI)
     const UniqueRef<WebDriverBidiProcessor> m_bidiProcessor;
 
-    // The browsingContext.navigate in flight for a frame: the id to report, filled in from the API::Navigation for a
+    // The browsingContext.navigate or reload in flight for a frame: the id to report, filled in from the API::Navigation for a
     // main frame or from WebCore's first navigationStarted/fragmentNavigated report for a child frame, and whether
     // WebCore reported the navigation failed before the classic wait completed it.
     struct BidiPendingNavigation {
@@ -474,6 +477,11 @@ private:
         bool failed { false };
     };
     HashMap<WebCore::FrameIdentifier, BidiPendingNavigation> m_bidiPendingNavigationPerFrame;
+
+    // Shared by navigate and reload once the load has been started: records the pending navigation for the frame and
+    // completes `callback` with `requestedURL` and the navigation id when the classic wait for the frame finishes.
+    void awaitNavigationForBidi(WebPageProxy&, WebFrameProxy&, BidiPendingNavigation&&, std::optional<WebCore::NavigationIdentifier> awaitedNavigationID, const String& requestedURL, Inspector::Protocol::Automation::PageLoadStrategy, Seconds pageLoadTimeout, Inspector::CommandCallbackOf<String, String>&&);
+    RefPtr<WebFrameProxy> frameForBidiHandles(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&);
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_webPageHandleMap;
