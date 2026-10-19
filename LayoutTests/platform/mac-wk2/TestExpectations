@@ -2615,7 +2615,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate ] inspector/dom/shadow-and-non-shadow-children.html [ Pass Failure ]
 [ GoldenGate ] css3/filters/backdrop/backdrop-inset-opacity.html [ ImageOnlyFailure ]
 [ GoldenGate ] fast/attachment/mac/attachment-element-gpu-process.html [ ImageOnlyFailure ]
-[ GoldenGate ] fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html [ ImageOnlyFailure ]
 [ GoldenGate ] fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure ]
 [ GoldenGate ] imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-003.html [ ImageOnlyFailure ]
 [ GoldenGate ] imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-bidi-003.html [ ImageOnlyFailure ]

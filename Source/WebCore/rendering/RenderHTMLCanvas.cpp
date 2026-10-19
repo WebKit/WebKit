@@ -27,6 +27,7 @@
 #include "RenderHTMLCanvas.h"
 
 #include "CanvasRenderingContext.h"
+#include "ContainerNodeInlines.h"
 #include "DisplayListRecorderImpl.h"
 #include "Document.h"
 #include "GraphicsContext.h"
@@ -158,15 +159,14 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     canvasEl->setIsSnapshotting(false);
 }
 
-DisplayList::RecorderImpl* RenderHTMLCanvas::canvasDrawableRecorder(RenderElement& element, GraphicsContext& context, const IntRect& elementRelativeBounds) const
+DisplayList::RecorderImpl* RenderHTMLCanvas::canvasDrawableRecorder(RenderElement& element, GraphicsContext& context, const FloatSize& snapshotSize) const
 {
     if (!element.isCanvasDrawable())
         return nullptr;
 
     // FIXME: Clearing the recorder should happen only when a repaint or a layout happens.
     auto initialState = context.state().clone(GraphicsContextState::Purpose::Initial);
-    Ref snapshotRecorder = DisplayList::RecorderImpl::create(initialState, elementRelativeBounds, AffineTransform { }, context.colorSpace());
-    snapshotRecorder->translate(-elementRelativeBounds.x(), -elementRelativeBounds.y());
+    Ref snapshotRecorder = DisplayList::RecorderImpl::create(initialState, { { }, snapshotSize }, AffineTransform { }, context.colorSpace());
 
     m_canvasDrawableRecorderMap.set(element, WTF::move(snapshotRecorder));
     return m_canvasDrawableRecorderMap.get(element);
@@ -201,6 +201,33 @@ void RenderHTMLCanvas::requestPaintEventIfNeeded(const RenderElement& repaintedR
             protect(canvasElement())->drawableElementDidChange(*drawableElement);
         return;
     }
+}
+
+std::optional<TransformationMatrix> RenderHTMLCanvas::localToCanvasTransform(const Element& element) const
+{
+    CheckedPtr renderer = dynamicDowncast<RenderBox>(element.renderer());
+    if (!renderer)
+        return std::nullopt;
+
+    CheckedPtr container = renderer->container();
+    if (!(container.get() == this || container->isDescendantOf(this)))
+        return std::nullopt;
+
+    auto contentBoxOffset = toFloatSize(FloatPoint { contentBoxLocation() });
+    auto mapToCanvas = [&](const FloatPoint& point) {
+        return container->localToContainerPoint(point, this) - contentBoxOffset;
+    };
+
+    FloatPoint origin { renderer->location() };
+    auto mappedOrigin = mapToCanvas(origin);
+    auto mappedX = mapToCanvas(origin + FloatSize { 1, 0 }) - mappedOrigin;
+    auto mappedY = mapToCanvas(origin + FloatSize { 0, 1 }) - mappedOrigin;
+
+    return TransformationMatrix {
+        mappedX.width(), mappedX.height(),
+        mappedY.width(), mappedY.height(),
+        mappedOrigin.x(), mappedOrigin.y()
+    };
 }
 
 bool RenderHTMLCanvas::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
