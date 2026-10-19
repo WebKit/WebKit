@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<span>Slotted light text</span>
+<script>
+const shadowRoot = document.body.attachShadow({ mode: "closed" });
+shadowRoot.innerHTML = `
+    <div aria-live="polite">
+        <div role="alert"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg><span>Success!</span></div>
+        <a href="https://example.com/privacy">Privacy</a>
+        <p>Shadow text before <slot></slot></p>
+    </div>`;
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const debugText = await UIHelper.requestDebugText({
+        normalize: true,
+        includeURLs: true,
+        shortenURLs: true,
+        nodeIdentifierInclusion: "interactive",
+        includeAccessibilityAttributes: true,
+    });
+
+    const output = document.createElement("pre");
+    output.textContent = debugText;
+    document.documentElement.append(output);
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

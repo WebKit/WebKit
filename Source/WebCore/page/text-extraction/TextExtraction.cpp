@@ -90,6 +90,7 @@
 #include "SVGSVGElement.h"
 #include "SVGTitleElement.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "SimpleRange.h"
 #include "StaticRange.h"
 #include "StringEntropyHelpers.h"
@@ -349,15 +350,29 @@ struct TraversalContext {
     }
 };
 
+static RefPtr<ShadowRoot> authorShadowRoot(Node& node)
+{
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
+        return nullptr;
+
+    RefPtr shadowRoot = element->shadowRoot();
+    if (!shadowRoot || shadowRoot->mode() == ShadowRootMode::UserAgent)
+        return nullptr;
+
+    return shadowRoot;
+}
+
 static inline TextAndSelectedRangeMap collectText(Node& node, IncludeTextInAutoFilledControls includeTextInAutoFilledControls)
 {
-    auto nodeRange = makeRangeSelectingNodeContents(node);
+    RefPtr shadowRoot = authorShadowRoot(node);
+    auto nodeRange = makeRangeSelectingNodeContents(shadowRoot ? *shadowRoot : node);
     auto selection = node.document().selection().selection();
     TextNodesAndText textBeforeRangedSelection;
     TextNodesAndText textInRangedSelection;
     TextNodesAndText textAfterRangedSelection;
     bool populatedRangesAroundSelection = [&] {
-        if (!selection.isRange())
+        if (shadowRoot || !selection.isRange())
             return false;
 
         auto selectionStart = makeBoundaryPoint(selection.start());
