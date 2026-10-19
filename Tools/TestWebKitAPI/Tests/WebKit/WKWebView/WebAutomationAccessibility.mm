@@ -47,7 +47,7 @@ namespace TestWebKitAPI {
 
 static constexpr auto sessionIdentifier = "AccessibilityTest";
 
-static constexpr auto mainFrameHTML = "<body><button id='main' aria-label='Main button'>main</button><button id='toggle' aria-pressed='true'>toggle</button><input type='checkbox' id='checkbox' checked><div id='ariaCheckbox' role='checkbox' aria-checked='mixed' aria-label='ARIA checkbox'></div><iframe id='iframe' src='https://webkit.org/iframe'></iframe></body>"_s;
+static constexpr auto mainFrameHTML = "<body><button id='main' aria-label='Main button'>main</button><button id='toggle' aria-pressed='true'>toggle</button><input type='checkbox' id='checkbox' checked><div id='ariaCheckbox' role='checkbox' aria-checked='mixed' aria-label='ARIA checkbox'></div><div id='hidden' hidden>hidden</div><div id='ariaHidden' aria-hidden='true'>aria hidden</div><div id='presentation' role='presentation'>presentation</div><iframe id='iframe' src='https://webkit.org/iframe'></iframe></body>"_s;
 static constexpr auto iframeHTML = "<body><button id='inner' aria-label='Inner button'>inner</button></body>"_s;
 
 struct AccessibilityNodeHandle {
@@ -159,9 +159,13 @@ public:
         return nodeHandle;
     }
 
+    // A nil frame handle omits the parameter, which selects the main frame.
     RetainPtr<NSDictionary> propertiesForElement(NSString *frameHandle, NSString *nodeHandle)
     {
-        return sendCommand(@"Automation.getAccessibilityPropertiesForElement", @{ @"browsingContextHandle": m_browsingContextHandle.get(), @"frameHandle": frameHandle, @"nodeHandle": nodeHandle });
+        RetainPtr<NSMutableDictionary> parameters = adoptNS([@{ @"browsingContextHandle": m_browsingContextHandle.get(), @"nodeHandle": nodeHandle } mutableCopy]);
+        if (frameHandle)
+            [parameters setObject:frameHandle forKey:@"frameHandle"];
+        return sendCommand(@"Automation.getAccessibilityPropertiesForElement", parameters.get());
     }
 
     RetainPtr<NSDictionary> propertiesForAccessibilityNode(NSString *accessibilityNodeID)
@@ -174,6 +178,11 @@ public:
         [m_webView objectByEvaluatingJavaScript:@"document.getElementById('iframe').remove(); true"];
         while ([m_webView mainFrame].childFrames.count)
             Util::spinRunLoop();
+    }
+
+    void setAttribute(NSString *elementID, NSString *name, NSString *value)
+    {
+        [m_webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"document.getElementById('%@').setAttribute('%@', '%@'); true", elementID, name, value]];
     }
 
     uint64_t mainFrameID() const { return m_mainFrameID; }
@@ -207,7 +216,7 @@ static NSString *errorMessage(const RetainPtr<NSDictionary>& reply)
 
 static void expectError(const RetainPtr<NSDictionary>& reply, NSString *expectedError)
 {
-    EXPECT_TRUE([errorMessage(reply) containsString:expectedError]) << "expected " << expectedError.UTF8String << ", got " << [reply description].UTF8String;
+    EXPECT_TRUE([errorMessage(reply) hasPrefix:expectedError]) << "expected " << expectedError.UTF8String << ", got " << [reply description].UTF8String;
 }
 
 struct AccessibilityTreeWalk {
@@ -217,9 +226,8 @@ struct AccessibilityTreeWalk {
 };
 
 // Walks the accessibility tree from the given handles through every parent and child handle the commands return.
-// Every handle must resolve to itself and name one of the page's frames. If checkParents is true, every child
-// must also name its parent.
-static AccessibilityTreeWalk walkAccessibilityTree(WebAutomationAccessibility& test, NSArray<NSString *> *startHandles, bool checkParents)
+// Every handle must resolve to itself and name one of the page's frames, and every child must name its parent.
+static AccessibilityTreeWalk walkAccessibilityTree(WebAutomationAccessibility& test, NSArray<NSString *> *startHandles)
 {
     AccessibilityTreeWalk walk { adoptNS([NSMutableSet new]) };
     RetainPtr<NSMutableArray> pending = adoptNS([startHandles mutableCopy]);
@@ -247,10 +255,8 @@ static AccessibilityTreeWalk walkAccessibilityTree(WebAutomationAccessibility& t
         if (NSString *parent = nodeProperties[@"parent"])
             [pending addObject:parent];
         for (NSString *child in nodeProperties[@"children"]) {
-            if (checkParents) {
-                RetainPtr childReply = test.propertiesForAccessibilityNode(child);
-                EXPECT_WK_STREQ(properties(childReply)[@"parent"], handle.get()) << [childReply description].UTF8String;
-            }
+            RetainPtr childReply = test.propertiesForAccessibilityNode(child);
+            EXPECT_WK_STREQ(properties(childReply)[@"parent"], handle.get()) << [childReply description].UTF8String;
             [pending addObject:child];
         }
     }
@@ -281,6 +287,11 @@ static void runRoundTripTest(bool siteIsolationEnabled)
     ASSERT_TRUE(mainHandle) << [mainReply description].UTF8String;
     EXPECT_EQ(mainHandle->frameID, test.mainFrameID());
 
+    // The node an element resolves to is part of the tree: it appears in its parent's children.
+    ASSERT_TRUE([mainProperties[@"parent"] length]) << [mainReply description].UTF8String;
+    RetainPtr mainParentReply = test.propertiesForAccessibilityNode(mainProperties[@"parent"]);
+    EXPECT_TRUE([properties(mainParentReply)[@"children"] containsObject:mainProperties[@"accessibilityNodeId"]]) << [mainParentReply description].UTF8String;
+
     RetainPtr innerReply = test.propertiesForElement(childFrameHandle.get(), test.nodeHandleForElement(childFrameHandle.get(), @"inner").get());
     NSDictionary *innerProperties = properties(innerReply);
     EXPECT_WK_STREQ(innerProperties[@"role"], "button");
@@ -301,16 +312,14 @@ static void runRoundTripTest(bool siteIsolationEnabled)
 
     // In one process, the walk crosses the frame boundary in both directions: down from the main frame's button
     // into the iframe's document, and up from the iframe's button into the main frame. With site isolation, the
-    // iframe's document is in another process, so walk each frame's tree from its own button. The main frame's
-    // placeholder for the other process's frame names the iframe's scroll view as its parent, but is listed as a
-    // child of the scroll view's parent, so only check parents when both frames share a process.
+    // iframe's document is in another process, so walk each frame's tree from its own button.
     RetainPtr<NSArray> walkStarts;
     if (siteIsolationEnabled)
         walkStarts = @[ @[ mainProperties[@"accessibilityNodeId"], innerProperties[@"accessibilityNodeId"] ] ];
     else
         walkStarts = @[ @[ mainProperties[@"accessibilityNodeId"] ], @[ innerProperties[@"accessibilityNodeId"] ] ];
     for (NSArray<NSString *> *startHandles in walkStarts.get()) {
-        auto walk = walkAccessibilityTree(test, startHandles, !siteIsolationEnabled);
+        auto walk = walkAccessibilityTree(test, startHandles);
         EXPECT_TRUE(walk.reachedMainFrame) << [startHandles description].UTF8String;
         EXPECT_TRUE(walk.reachedChildFrame) << [startHandles description].UTF8String;
         EXPECT_TRUE([walk.labels containsObject:@"Main button"]) << [startHandles description].UTF8String;
@@ -325,7 +334,7 @@ static void runRoundTripTest(bool siteIsolationEnabled)
         RetainPtr reply = test.propertiesForAccessibilityNode(encodedHandle.get());
         EXPECT_FALSE([properties(reply)[@"label"] isEqualToString:labelInOtherFrame]) << [reply description].UTF8String;
         if (!siteIsolationEnabled)
-            expectError(reply, @"NodeNotFound");
+            expectError(reply, @"AccessibilityNodeNotFound");
         else if (!reply.get()[@"error"])
             EXPECT_WK_STREQ(properties(reply)[@"accessibilityNodeId"], encodedHandle.get());
     };
@@ -334,11 +343,11 @@ static void runRoundTripTest(bool siteIsolationEnabled)
 
     // A handle that names the wrong process for its frame is stale.
     AccessibilityNodeHandle mainNodeInOtherProcess { mainHandle->processID + 1000, mainHandle->frameID, mainHandle->axID };
-    expectError(test.propertiesForAccessibilityNode(encodeAccessibilityNodeHandle(mainNodeInOtherProcess)), @"NodeNotFound");
+    expectError(test.propertiesForAccessibilityNode(encodeAccessibilityNodeHandle(mainNodeInOtherProcess)), @"AccessibilityNodeNotFound");
 
     // A handle for a frame that is gone refers to a node that is gone.
     test.removeIframe();
-    expectError(test.propertiesForAccessibilityNode(innerProperties[@"accessibilityNodeId"]), @"NodeNotFound");
+    expectError(test.propertiesForAccessibilityNode(innerProperties[@"accessibilityNodeId"]), @"AccessibilityNodeNotFound");
     RetainPtr reply = test.propertiesForAccessibilityNode(mainProperties[@"accessibilityNodeId"]);
     EXPECT_WK_STREQ(properties(reply)[@"label"], "Main button") << [reply description].UTF8String;
 }
@@ -380,10 +389,42 @@ TEST(WebAutomationAccessibility, CheckedAndPressedStates)
     EXPECT_NULL(properties(button)[@"pressed"]) << [button description].UTF8String;
 }
 
+TEST(WebAutomationAccessibility, ElementWithoutFrameHandle)
+{
+    WebAutomationAccessibility test(false);
+    RetainPtr nodeHandle = test.nodeHandleForElement(@"", @"main");
+
+    // Omitting the frame handle selects the main frame, the same as passing an empty one.
+    RetainPtr withoutFrameHandle = test.propertiesForElement(nil, nodeHandle.get());
+    EXPECT_WK_STREQ(properties(withoutFrameHandle)[@"label"], "Main button");
+    auto handle = decodeAccessibilityNodeHandle(properties(withoutFrameHandle)[@"accessibilityNodeId"]);
+    ASSERT_TRUE(handle) << [withoutFrameHandle description].UTF8String;
+    EXPECT_EQ(handle->frameID, test.mainFrameID());
+
+    RetainPtr withEmptyFrameHandle = test.propertiesForElement(@"", nodeHandle.get());
+    EXPECT_TRUE([properties(withoutFrameHandle) isEqualToDictionary:properties(withEmptyFrameHandle)]) << [withEmptyFrameHandle description].UTF8String;
+}
+
+TEST(WebAutomationAccessibility, IgnoredAndHiddenElements)
+{
+    WebAutomationAccessibility test(false);
+
+    // Elements with no accessibility node, or whose accessibility node is ignored, aren't part of the tree.
+    for (NSString *elementID in @[ @"hidden", @"ariaHidden", @"presentation" ])
+        expectError(test.propertiesForElement(@"", test.nodeHandleForElement(@"", elementID).get()), @"AccessibilityNodeNotFound");
+
+    // A handle stops resolving once its node becomes ignored.
+    RetainPtr reply = test.propertiesForElement(@"", test.nodeHandleForElement(@"", @"main").get());
+    RetainPtr<NSString> handle = properties(reply)[@"accessibilityNodeId"];
+    ASSERT_TRUE([handle length]) << [reply description].UTF8String;
+    test.setAttribute(@"main", @"aria-hidden", @"true");
+    expectError(test.propertiesForAccessibilityNode(handle.get()), @"AccessibilityNodeNotFound");
+}
+
 TEST(WebAutomationAccessibility, MalformedAccessibilityNodeHandle)
 {
     WebAutomationAccessibility test(true);
-    for (NSString *handle in @[ @"", @"garbage", @"axnode-", @"axnode-1", @"axnode-1.2", @"axnode-1.2.", @"axnode-.2.3", @"axnode-a.b.c", @"axnode-1.2.3.4", @"axnode-0.0.0", @"axnode-1.0.1", @"axnode-1.1.0", @"axnode--1.2.3", @"axnode-18446744073709551616.1.1", @"node-1.2.3" ])
+    for (NSString *handle in @[ @"", @"garbage", @"axnode-", @"axnode-1", @"axnode-1.2", @"axnode-1.2.", @"axnode-.2.3", @"axnode-a.b.c", @"axnode-1.2.3.4", @"axnode-0.0.0", @"axnode-1.0.1", @"axnode-1.1.0", @"axnode--1.2.3", @"axnode-18446744073709551616.1.1", @"axnode- 1.2.3", @"axnode-1 .2.3", @"axnode-1. 2.3", @"axnode-1.2 .3", @"axnode-1.2. 3", @"axnode-1.2.3 ", @"axnode-\t1.2.3", @"node-1.2.3" ])
         expectError(test.propertiesForAccessibilityNode(handle), @"InvalidNodeIdentifier");
 }
 

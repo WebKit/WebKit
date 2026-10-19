@@ -35,7 +35,6 @@ header: "ComputedAccessibilityProperties.h"
 
 header: "ComputedAccessibilityProperties.h"
 struct WebKit::ComputedAccessibilityProperties {
-    WebCore::ProcessIdentifier processID;
     WebKit::AccessibilityNodeReference accessibilityNode;
     String role;
     String label;

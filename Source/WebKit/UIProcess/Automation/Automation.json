@@ -86,6 +86,7 @@
                 "WindowNotFound",
                 "FrameNotFound",
                 "NodeNotFound",
+                "AccessibilityNodeNotFound",
                 "StaleNode",
                 "InvalidNodeIdentifier",
                 "InvalidElementState",
@@ -752,7 +753,7 @@
         },
         {
             "name": "getAccessibilityPropertiesForElement",
-            "description": "Get computed accessibility properties for the accessibility node backing a DOM element. Use this when starting from an element reference; the returned <code>accessibilityNodeId</code>, <code>parent</code>, and <code>children</code> values can be passed to <code>getAccessibilityPropertiesForAccessibilityNode</code> to walk the accessibility tree, which may contain nodes that have no corresponding DOM element.",
+            "description": "Get computed accessibility properties for the accessibility node backing a DOM element. Use this when starting from an element reference; the returned <code>accessibilityNodeId</code>, <code>parent</code>, and <code>children</code> values can be passed to <code>getAccessibilityPropertiesForAccessibilityNode</code> to walk the accessibility tree, which may contain nodes that have no corresponding DOM element. If the element has no accessibility node, or its accessibility node is ignored (for example, because the element is hidden, has <code>aria-hidden=\"true\"</code>, or has a presentational role), the command fails with <code>AccessibilityNodeNotFound</code>. Returned handles always refer to unignored accessibility nodes.",
             "parameters": [
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
                 { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame that contains the element. The main frame is used if this parameter is empty string or excluded." },
@@ -765,7 +766,7 @@
         },
         {
             "name": "getAccessibilityPropertiesForAccessibilityNode",
-            "description": "Get computed accessibility properties for an accessibility node from WebKit's accessibility tree. Use this to inspect nodes reached via the <code>accessibilityNodeId</code>, <code>parent</code>, or <code>children</code> values returned by either accessibility properties command. Accessibility node handles identify the frame that contains the node, so no frame handle is needed.",
+            "description": "Get computed accessibility properties for an accessibility node from WebKit's accessibility tree. Use this to inspect nodes reached via the <code>accessibilityNodeId</code>, <code>parent</code>, or <code>children</code> values returned by either accessibility properties command. Accessibility node handles identify the frame that contains the node, so no frame handle is needed. If the handle no longer refers to an unignored accessibility node (for example, because its frame was removed or the node became hidden), the command fails with <code>AccessibilityNodeNotFound</code>. A malformed handle fails with <code>InvalidNodeIdentifier</code>.",
             "parameters": [
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
                 { "name": "accessibilityNodeId", "type": "string", "description": "The accessibility node to get the accessibility properties for. This is an <code>accessibilityNodeId</code>, <code>parent</code>, or <code>children</code> value previously returned by an accessibility properties command." }

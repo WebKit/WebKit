@@ -497,29 +497,34 @@ WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectF
     if (CheckedPtr axObjectCache = protect(coreElement->document())->axObjectCache()) {
         // Force a layout and cache update. If we don't, and this request has come in before the render tree was built,
         // the accessibility object for this element will not be created (because it doesn't yet have its renderer).
-        axObjectCache->performDeferredCacheUpdate(ForceLayout::Yes);
+        // Update every frame in this process, since getComputedAccessibilityProperties() steps into other frames' trees.
+        if (RefPtr localFrame = frame->coreLocalFrame())
+            performDeferredAccessibilityCacheUpdates(*localFrame);
 
         if (auto* axObject = axObjectCache->exportedGetOrCreate(coreElement.get()))
             return axObject;
+
+        // The element isn't rendered in a way that creates an accessibility object (for example, display: none).
+        errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::AccessibilityNodeNotFound);
+        return nullptr;
     }
 
     errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
     return nullptr;
 }
 
-Inspector::CommandResult<WebCore::AccessibilityObject*> WebAutomationSessionProxy::getAccessibilityObjectForAXID(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::AXID axID)
+std::expected<Ref<WebCore::AccessibilityObject>, String> WebAutomationSessionProxy::getAccessibilityObjectForAXID(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::AXID axID)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
     if (!page)
         return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
 
-    // The frame comes from the accessibility node handle. If that frame is gone, so is the node, which matches
-    // how elementForNodeHandle() reports NodeNotFound once a frame's node references are gone.
+    // The frame comes from the accessibility node handle. If that frame is gone, so is the node.
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     RefPtr localFrame = frame && frame->page() == page.get() ? frame->coreLocalFrame() : nullptr;
     RefPtr document = localFrame ? localFrame->document() : nullptr;
     if (!document || !localFrame->view())
-        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound));
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::AccessibilityNodeNotFound));
 
     WebCore::AXObjectCache::enableAccessibility();
 
@@ -531,10 +536,11 @@ Inspector::CommandResult<WebCore::AccessibilityObject*> WebAutomationSessionProx
         RefPtr axObject = axObjectCache->objectForID(axID);
         // Depending on configuration, frames in the same process may share one AXObjectCache. Only return
         // objects that belong to the requested frame so that a handle never resolves to a node in another frame.
-        if (!axObject || axObject->document() != document.get())
-            return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound));
+        // A node that has become ignored since its handle was returned is no longer part of the tree.
+        if (!axObject || axObject->document() != document.get() || axObject->isIgnored())
+            return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::AccessibilityNodeNotFound));
 
-        return axObject.get();
+        return axObject.releaseNonNull();
     }
 
     return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError));
@@ -1158,7 +1164,6 @@ static std::optional<ComputedAccessibilityProperties> getComputedAccessibilityPr
     }
 
     return ComputedAccessibilityProperties {
-        WebCore::Process::identifier(),
         *accessibilityNode,
         axObject.computedRoleString(),
         axObject.computedLabel(),
@@ -1171,12 +1176,6 @@ static std::optional<ComputedAccessibilityProperties> getComputedAccessibilityPr
 
 void WebAutomationSessionProxy::getAccessibilityPropertiesForElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<ComputedAccessibilityProperties>)>&& completionHandler)
 {
-    // getComputedAccessibilityProperties() steps into the accessibility trees of other frames in this process.
-    if (RefPtr page = WebProcess::singleton().webPage(pageID)) {
-        if (RefPtr mainFrame = page->mainFrame())
-            performDeferredAccessibilityCacheUpdates(*mainFrame);
-    }
-
     String errorType;
     RefPtr axObject = getAccessibilityObjectForNode(pageID, frameID, nodeHandle, errorType);
 
@@ -1185,19 +1184,26 @@ void WebAutomationSessionProxy::getAccessibilityPropertiesForElement(WebCore::Pa
         return;
     }
 
+    // Parent and children only include unignored nodes, so an ignored node isn't part of the tree these
+    // commands expose. Report it the same way as an element that has no accessibility node.
+    if (axObject->isIgnored()) {
+        completionHandler(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::AccessibilityNodeNotFound), std::nullopt);
+        return;
+    }
+
     completionHandler(std::nullopt, getComputedAccessibilityProperties(*axObject));
 }
 
 void WebAutomationSessionProxy::getAccessibilityPropertiesForAccessibilityNode(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::AXID axID, CompletionHandler<void(std::optional<String>, std::optional<ComputedAccessibilityProperties>)>&& completionHandler)
 {
-    auto axObjectForNode = getAccessibilityObjectForAXID(pageID, frameID, axID);
-    if (!axObjectForNode) {
-        completionHandler(axObjectForNode.error(), std::nullopt);
+    auto axObjectOrError = getAccessibilityObjectForAXID(pageID, frameID, axID);
+    if (!axObjectOrError) {
+        completionHandler(axObjectOrError.error(), std::nullopt);
         return;
     }
 
-    RefPtr axObject = axObjectForNode.value();
-    completionHandler(std::nullopt, getComputedAccessibilityProperties(*axObject));
+    Ref axObject = WTF::move(*axObjectOrError);
+    completionHandler(std::nullopt, getComputedAccessibilityProperties(axObject.get()));
 }
 
 void WebAutomationSessionProxy::selectOptionElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>)>&& completionHandler)

@@ -95,7 +95,7 @@ private:
     std::expected<Ref<WebCore::Element>, String> elementForNodeHandle(WebFrame&, const String&);
     static String errorTypeFromJavaScriptExceptionName(const String& exceptionName);
     WebCore::AccessibilityObject* getAccessibilityObjectForNode(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, String& error);
-    Inspector::CommandResult<WebCore::AccessibilityObject*> getAccessibilityObjectForAXID(WebCore::PageIdentifier, WebCore::FrameIdentifier, WebCore::AXID);
+    std::expected<Ref<WebCore::AccessibilityObject>, String> getAccessibilityObjectForAXID(WebCore::PageIdentifier, WebCore::FrameIdentifier, WebCore::AXID);
 
     void ensureObserverForFrame(WebFrame&);
 

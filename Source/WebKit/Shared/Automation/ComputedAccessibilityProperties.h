@@ -27,7 +27,6 @@
 
 #include <WebCore/AXID.h>
 #include <WebCore/FrameIdentifier.h>
-#include <WebCore/ProcessIdentifier.h>
 #include <optional>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -51,9 +50,6 @@ struct AccessibilityNodeReference {
 // Computed accessibility properties sent from the WebProcess to the UIProcess for WebDriver.
 // When this is updated, ComputedAccessibilityProperties.serialization.in must be updated as well.
 struct ComputedAccessibilityProperties {
-    // The process that computed these properties. Frames keep their FrameIdentifier across
-    // process swaps, so the process is part of every accessibility node handle.
-    WebCore::ProcessIdentifier processID;
     AccessibilityNodeReference accessibilityNode;
     String role;
     String label;
