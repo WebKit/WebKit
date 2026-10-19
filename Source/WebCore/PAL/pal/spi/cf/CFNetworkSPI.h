@@ -132,9 +132,6 @@ extern "C" {
 DISPATCH_RETURNS_RETAINED dispatch_data_t nw_proxy_config_copy_agent_data(nw_proxy_config_t);
 void nw_proxy_config_get_identifier(nw_proxy_config_t, uuid_t out_identifier);
 OS_OBJECT_RETURNS_RETAINED nw_proxy_config_t nw_proxy_config_create_with_agent_data(const uint8_t* bytes, size_t length, const uuid_t identifier);
-bool nw_proxy_config_stack_requires_http_protocols(nw_proxy_config_t);
-void nw_context_add_proxy(nw_context_t, nw_proxy_config_t);
-void nw_context_clear_proxies(nw_context_t);
 void nw_context_set_tracker_lookup_callback(nw_context_t, nw_context_tracker_lookup_callback_t);
 #ifdef __cplusplus
 }

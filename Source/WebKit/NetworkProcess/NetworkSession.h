@@ -100,7 +100,6 @@ class WebSWOriginStore;
 class WebSWServerConnection;
 struct BackgroundFetchState;
 struct NetworkSessionCreationParameters;
-struct SessionSet;
 
 enum class WebsiteDataType : uint32_t;
 
@@ -244,8 +243,8 @@ public:
     void clearPrefetchCache() { m_prefetchCache->clear(); }
 
     virtual RefPtr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker);
-    virtual void removeWebSocketTask(SessionSet&, WebSocketTask&) { }
-    virtual void addWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) { }
+    virtual void removeWebSocketTask(WebSocketTask&) { }
+    virtual void addWebSocketTask(WebSocketTask&) { }
 
     WebCore::BlobRegistryImpl& blobRegistry() LIFETIME_BOUND { return m_blobRegistry; }
     NetworkBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }

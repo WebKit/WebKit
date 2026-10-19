@@ -308,6 +308,263 @@ TEST(WebKit, SOCKS5API)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
 
+// Answers the SOCKS5 greeting and CONNECT request, after which the connection is a tunnel to the
+// destination that the client asked for, whatever it is. Returns false if the client closes it first.
+static Awaitable<bool> acceptSOCKS5Connection(Connection connection)
+{
+    constexpr uint8_t socks5Version = 0x5; // https://tools.ietf.org/html/rfc1928#section-3
+    constexpr uint8_t noAuthenticationRequired = 0x00; // https://tools.ietf.org/html/rfc1928#section-3
+    constexpr uint8_t connect = 0x01; // https://tools.ietf.org/html/rfc1928#section-4
+    constexpr uint8_t requestSucceeded = 0x00; // https://tools.ietf.org/html/rfc1928#section-6
+
+    constexpr uint8_t expectedAuthenticationMethodCount = 1;
+    auto clientGreeting = co_await connection.awaitableReceiveBytes();
+    if (clientGreeting.isEmpty())
+        co_return false;
+    EXPECT_EQ(clientGreeting, (Vector<uint8_t> { socks5Version, expectedAuthenticationMethodCount, noAuthenticationRequired }));
+    co_await connection.awaitableSend(Vector<uint8_t> { socks5Version, noAuthenticationRequired });
+
+    // The reply has the layout of the request, with the status where the command was.
+    auto reply = co_await connection.awaitableReceiveBytes();
+    if (reply.isEmpty())
+        co_return false;
+    EXPECT_EQ(reply[1], connect);
+    reply[1] = requestSucceeded;
+    co_await connection.awaitableSend(WTF::move(reply));
+    co_return true;
+}
+
+// Once the client closes the connection, awaitableReceiveHTTPRequest() retries the read forever
+// instead of returning, so this reads the request itself, and returns false at the close.
+static Awaitable<bool> receiveHTTPRequestUnlessClosed(Connection connection)
+{
+    Vector<char> request;
+    while (!contains(request.span(), "\r\n\r\n"_span)) {
+        auto bytes = co_await connection.awaitableReceiveBytes();
+        if (bytes.isEmpty())
+            co_return false;
+        request.appendVector(WTF::move(bytes));
+    }
+    co_return true;
+}
+
+// Acts as a SOCKS5 proxy that answers every request it tunnels with a page that alerts `message`.
+// Like a real proxy, it keeps the tunnel open between requests, so the client pools the connection
+// through it and can reuse it.
+static ConnectionTask respondThroughSOCKS5Tunnel(Connection connection, ASCIILiteral message)
+{
+    if (!co_await acceptSOCKS5Connection(connection))
+        co_return;
+
+    auto body = makeString("<script>alert('"_s, message, "')</script>"_s);
+    while (co_await receiveHTTPRequestUnlessClosed(connection))
+        co_await connection.awaitableSend(HTTPResponse(body).serialize());
+}
+
+static HTTPServer socks5ProxyServer(ASCIILiteral message)
+{
+    return HTTPServer(HTTPServer::UseCoroutines::Yes, [message](Connection connection) {
+        return respondThroughSOCKS5Tunnel(connection, message);
+    });
+}
+
+static RetainPtr<nw_proxy_config_t> socks5ProxyConfiguration(const HTTPServer& proxy)
+{
+    RetainPtr endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(proxy.port()).c_str()));
+    return adoptNS(nw_proxy_config_create_socksv5(endpoint.get()));
+}
+
+static RetainPtr<WKWebView> webViewWithDataStore(WKWebsiteDataStore *dataStore)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore];
+    return adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+}
+
+struct LoadResult {
+    RetainPtr<NSString> alert;
+    RetainPtr<NSError> error;
+};
+
+// Loads the URL and waits for that navigation to end, rather than for any navigation, because an
+// earlier one can still finish after its page has alerted. Only pages from the test proxies alert.
+static LoadResult loadAndWaitForNavigation(WKWebView *webView, NSString *url)
+{
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    __block LoadResult result;
+    __block RetainPtr<WKNavigation> navigation;
+    __block bool done = false;
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)(void)) {
+        result.alert = message;
+        completionHandler();
+    };
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *finishedNavigation) {
+        if (finishedNavigation == navigation.get())
+            done = true;
+    };
+    auto failed = ^(WKWebView *, WKNavigation *failedNavigation, NSError *error) {
+        if (failedNavigation != navigation.get())
+            return;
+        result.error = error;
+        done = true;
+    };
+    navigationDelegate.get().didFailProvisionalNavigation = failed;
+    navigationDelegate.get().didFailNavigation = failed;
+
+    navigation = [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+    Util::run(&done);
+    return result;
+}
+
+// Waits for a reply from the network process, which comes after it has handled everything the
+// data store sent it earlier, such as a proxy change.
+static void waitForNetworkProcessToHandleEarlierMessages(WKWebsiteDataStore *dataStore)
+{
+    __block bool done = false;
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeCookies] completionHandler:^(NSArray<WKWebsiteDataRecord *> *) {
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(WebKit, SOCKS5ProxyChangeAppliesToConnectedHost)
+{
+    auto proxyA = socks5ProxyServer("proxy A"_s);
+    auto proxyB = socks5ProxyServer("proxy B"_s);
+
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    dataStore.get().proxyConfigurations = @[ socks5ProxyConfiguration(proxyA).get() ];
+    RetainPtr webView = webViewWithDataStore(dataStore.get());
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/first"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "proxy A");
+
+    // The connection to example.com through proxy A is still open, and the next load must not reuse it.
+    dataStore.get().proxyConfigurations = @[ socks5ProxyConfiguration(proxyB).get() ];
+    waitForNetworkProcessToHandleEarlierMessages(dataStore.get());
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/second"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "proxy B");
+}
+
+TEST(WebKit, SOCKS5ProxyRemovalAppliesToConnectedHost)
+{
+    auto proxy = socks5ProxyServer("proxied"_s);
+
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    dataStore.get().proxyConfigurations = @[ socks5ProxyConfiguration(proxy).get() ];
+    RetainPtr webView = webViewWithDataStore(dataStore.get());
+
+    // Only the proxy can reach this host, because .invalid never resolves (RFC 6761).
+    EXPECT_WK_STREQ(loadAndWaitForNavigation(webView.get(), @"http://doesnotexist.invalid/first").alert.get(), "proxied");
+
+    // Without the proxy, the load has to fail, rather than go through the connection that is still open.
+    dataStore.get().proxyConfigurations = nil;
+    waitForNetworkProcessToHandleEarlierMessages(dataStore.get());
+    auto result = loadAndWaitForNavigation(webView.get(), @"http://doesnotexist.invalid/second");
+    EXPECT_NULL(result.alert.get());
+    EXPECT_EQ([result.error code], NSURLErrorCannotFindHost);
+}
+
+TEST(WebKit, ProxyRemovalAfterNetworkProcessCrash)
+{
+    auto proxy = socks5ProxyServer("proxied"_s);
+
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    dataStore.get().proxyConfigurations = @[ socks5ProxyConfiguration(proxy).get() ];
+    RetainPtr webView = webViewWithDataStore(dataStore.get());
+
+    EXPECT_WK_STREQ(loadAndWaitForNavigation(webView.get(), @"http://doesnotexist.invalid/first").alert.get(), "proxied");
+
+    dataStore.get().proxyConfigurations = nil;
+    pid_t originalNetworkProcessIdentifier = [dataStore _networkProcessIdentifier];
+    EXPECT_NE(originalNetworkProcessIdentifier, 0);
+    kill(originalNetworkProcessIdentifier, 9);
+    while ([dataStore _networkProcessIdentifier])
+        Util::spinRunLoop();
+
+    // The relaunched network process must not bring the removed proxy back.
+    auto result = loadAndWaitForNavigation(webView.get(), @"http://doesnotexist.invalid/second");
+    EXPECT_NULL(result.alert.get());
+    EXPECT_EQ([result.error code], NSURLErrorCannotFindHost);
+}
+
+TEST(WebKit, SOCKS5ProxyChangeLetsLoadInFlightFinish)
+{
+    std::optional<Connection> connectionAwaitingResponse;
+    HTTPServer proxyA(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        if (co_await acceptSOCKS5Connection(connection) && co_await receiveHTTPRequestUnlessClosed(connection))
+            connectionAwaitingResponse = connection;
+    });
+    auto proxyB = socks5ProxyServer("proxy B"_s);
+
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    dataStore.get().proxyConfigurations = @[ socks5ProxyConfiguration(proxyA).get() ];
+    RetainPtr webView = webViewWithDataStore(dataStore.get());
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/first"]]];
+    while (!connectionAwaitingResponse)
+        Util::spinRunLoop();
+
+    dataStore.get().proxyConfigurations = @[ socks5ProxyConfiguration(proxyB).get() ];
+    waitForNetworkProcessToHandleEarlierMessages(dataStore.get());
+    pid_t networkProcessIdentifier = [dataStore _networkProcessIdentifier];
+
+    // The load that was in flight during the change finishes through proxy A. The response closes
+    // the connection, so that this test is about that load, and not about reusing the connection.
+    connectionAwaitingResponse->send(HTTPResponse({ { "Connection"_s, "close"_s } }, "<script>alert('proxy A')</script>"_s).serialize());
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "proxy A");
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/second"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "proxy B");
+    EXPECT_EQ([dataStore _networkProcessIdentifier], networkProcessIdentifier);
+}
+
+TEST(WebKit, WebSocketOpenAcrossSOCKS5ProxyChange)
+{
+    std::optional<Connection> webSocketConnection;
+    HTTPServer proxy(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        if (!co_await acceptSOCKS5Connection(connection))
+            co_return;
+        co_await AwaitableFromCompletionHandler<void> { [connection](auto completionHandler) mutable {
+            connection.webSocketHandshake(WTF::move(completionHandler));
+        } };
+        webSocketConnection = connection;
+    });
+
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    dataStore.get().proxyConfigurations = @[ socks5ProxyConfiguration(proxy).get() ];
+    RetainPtr webView = webViewWithDataStore(dataStore.get());
+
+    // The close event comes before the web process tells the network process that the web socket
+    // is gone, so alert after that.
+    [webView loadHTMLString:@"<script>"
+        "var webSocket = new WebSocket('ws://example.com/');"
+        "webSocket.onopen = () => alert('open');"
+        "webSocket.onclose = () => setTimeout(() => alert('closed'));"
+        "</script>" baseURL:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "open");
+    while (!webSocketConnection)
+        Util::spinRunLoop();
+
+    dataStore.get().proxyConfigurations = nil;
+    waitForNetworkProcessToHandleEarlierMessages(dataStore.get());
+    pid_t networkProcessIdentifier = [dataStore _networkProcessIdentifier];
+
+    // The web socket is still on the session that the change replaced. Closing it from the server's end
+    // finishes its task before the web process lets go of it, so the replaced session can become invalid
+    // while its wrapper still has the web socket.
+    constexpr uint8_t finalCloseFrame = 0x88; // https://www.rfc-editor.org/rfc/rfc6455#section-5.2
+    webSocketConnection->send(Vector<uint8_t> { finalCloseFrame, 0 });
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "closed");
+
+    waitForNetworkProcessToHandleEarlierMessages(dataStore.get());
+    EXPECT_EQ([dataStore _networkProcessIdentifier], networkProcessIdentifier);
+}
+
 static HTTPServer proxyAuthenticationServer()
 {
     return HTTPServer(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsProxyWithAuthentication);
