@@ -55,7 +55,7 @@ Adapter::~Adapter() = default;
 
 Vector<WebGPU::FeatureName> Adapter::features() const
 {
-    return featuresFromAPI(m_capabilities.features.span());
+    return m_capabilities.features;
 }
 
 
@@ -89,7 +89,7 @@ WebGPU::AdapterInfo Adapter::info()
         // A Metal device is never a fallback (software) adapter.
         .isFallbackAdapter = false,
     };
-    if (hasFeature(WGPUFeatureName_Subgroups)) {
+    if (hasFeature(WebGPU::FeatureName::Subgroups)) {
         // Metal exposes a single SIMD-group (subgroup) width per device, so
         // min and max are equal. It's a fixed 32 on Apple Silicon; on other
         // GPUs it's derived from a compute pipeline's threadExecutionWidth.
@@ -118,7 +118,7 @@ void Adapter::getInfo(WGPUAdapterInfo& info)
     info.subgroupMaxSize = apiInfo.subgroupMaxSize;
 }
 
-bool Adapter::hasFeature(WGPUFeatureName feature)
+bool Adapter::hasFeature(WebGPU::FeatureName feature)
 {
     return m_capabilities.features.contains(feature);
 }
@@ -155,10 +155,7 @@ void Adapter::requestDeviceOrError(const WebGPU::DeviceDescriptor& descriptor, C
     } else
         limits = defaultLimits();
 
-    // The capabilities keep the C API features.
-    auto features = WTF::map(descriptor.requiredFeatures, [](auto feature) {
-        return toAPI(feature);
-    });
+    Vector<WebGPU::FeatureName> features { descriptor.requiredFeatures };
     if (includesUnsupportedFeatures(features, m_capabilities.features)) {
         callback(makeUnexpected("Device does not support requested features"_s));
         return;
@@ -219,7 +216,8 @@ void wgpuAdapterGetInfo(WGPUAdapter adapter, WGPUAdapterInfo* info)
 
 WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 {
-    return protect(WebGPU::Metal::fromAPI(adapter))->hasFeature(feature);
+    auto apiFeature = WebGPU::Metal::fromAPI(feature);
+    return apiFeature && protect(WebGPU::Metal::fromAPI(adapter))->hasFeature(*apiFeature);
 }
 
 // The C API reports a device that could not be created with WGPURequestDeviceStatus_Error and no device.

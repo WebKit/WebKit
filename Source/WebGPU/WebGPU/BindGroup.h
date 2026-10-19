@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "BindGroupLayout.h"
 #import "BindableResource.h"
 #import "ShaderStage.h"
 #import <WebGPU/WebGPUCpp.h>
@@ -60,7 +61,7 @@ public:
     using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
     using SamplersContainer = HashMap<Ref<Sampler>, ShaderStageArray<std::optional<uint32_t>>>;
     struct BufferAndType {
-        WGPUBufferBindingType type;
+        BindGroupLayout::BufferBindingType type;
         uint64_t bindingSize;
         uint64_t bufferSize;
         uint32_t bindingIndex;
@@ -93,7 +94,7 @@ public:
     Device& device() const { return m_device; }
     static bool LEGACY_NODELETE allowedUsage(const OptionSet<BindGroupEntryUsage>&);
     static NSString* usageName(const OptionSet<BindGroupEntryUsage>&);
-    static uint64_t LEGACY_NODELETE makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect);
+    static uint64_t LEGACY_NODELETE makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WebGPU::TextureAspect);
 
     const BindGroupLayout* bindGroupLayout() const { return m_bindGroupLayout.get(); }
 

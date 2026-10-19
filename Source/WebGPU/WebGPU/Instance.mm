@@ -145,12 +145,12 @@ void Instance::processEvents()
     }
 }
 
-static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WGPUPowerPreference powerPreference)
+static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, std::optional<WebGPU::PowerPreference> powerPreference)
 {
-    switch (powerPreference) {
-    case WGPUPowerPreference_Undefined:
+    if (!powerPreference)
         return devices;
-    case WGPUPowerPreference_LowPower:
+    switch (*powerPreference) {
+    case WebGPU::PowerPreference::LowPower:
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         return [devices sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult (id<MTLDevice> obj1, id<MTLDevice> obj2)
         {
@@ -165,7 +165,7 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WG
 #else
         return devices;
 #endif
-    case WGPUPowerPreference_HighPerformance:
+    case WebGPU::PowerPreference::HighPerformance:
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         return [devices sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult (id<MTLDevice> obj1, id<MTLDevice> obj2)
         {
@@ -180,9 +180,6 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WG
 #else
         return devices;
 #endif
-    case WGPUPowerPreference_Force32:
-        ASSERT_NOT_REACHED();
-        return nil;
     }
 }
 
@@ -192,7 +189,7 @@ void Instance::requestAdapter(const WebGPU::RequestAdapterOptions& options, Comp
 
     // FIXME: Deal with options.compatibleSurface.
 
-    auto sortedDevices = WebGPU::Metal::sortedDevices(devices, options.powerPreference ? toAPI(*options.powerPreference) : WGPUPowerPreference_Undefined);
+    auto sortedDevices = WebGPU::Metal::sortedDevices(devices, options.powerPreference);
 
     // There is no fallback adapter.
     if (options.forceFallbackAdapter || !sortedDevices || !sortedDevices.count || !sortedDevices[0]) {

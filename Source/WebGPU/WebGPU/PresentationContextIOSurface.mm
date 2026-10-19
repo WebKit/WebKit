@@ -133,16 +133,16 @@ RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint
     bool fp16 = mtlTexture.pixelFormat == MTLPixelFormatRGBA16Float;
     CFStringRef colorSpaceName = kCGColorSpaceSRGB;
     switch (m_colorSpace) {
-    case WGPUColorSpace::SRGB:
+    case WebGPU::PredefinedColorSpace::SRGB:
         colorSpaceName = kCGColorSpaceSRGB;
         break;
-    case WGPUColorSpace::SRGBLinear:
+    case WebGPU::PredefinedColorSpace::SRGBLinear:
         colorSpaceName = kCGColorSpaceLinearSRGB;
         break;
-    case WGPUColorSpace::DisplayP3:
+    case WebGPU::PredefinedColorSpace::DisplayP3:
         colorSpaceName = kCGColorSpaceDisplayP3;
         break;
-    case WGPUColorSpace::DisplayP3Linear:
+    case WebGPU::PredefinedColorSpace::DisplayP3Linear:
         colorSpaceName = kCGColorSpaceLinearDisplayP3;
         break;
     }
@@ -154,7 +154,7 @@ RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint
     auto bytesPerRow = bytesPerPixel * width;
     auto bitsPerComponent = bytesPerPixel * 2;
     auto bitsPerPixel = bitsPerComponent * 4;
-    bool isOpaque = m_alphaMode == WGPUCompositeAlphaMode_Opaque;
+    bool isOpaque = m_alphaMode == WebGPU::CanvasAlphaMode::Opaque;
     CGBitmapInfo bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGImageByteOrder32Big);
     if (fp16)
         bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
@@ -258,23 +258,22 @@ void PresentationContextIOSurface::configure(const WebGPU::CanvasConfiguration& 
 
     bool reportValidationErrors = configuration.reportValidationErrors;
     m_device = device.copyRef();
-    auto allowedFormat = ^(WGPUTextureFormat format) {
-        return format == WGPUTextureFormat_BGRA8Unorm || format == WGPUTextureFormat_RGBA8Unorm || format == WGPUTextureFormat_RGBA16Float;
+    auto allowedFormat = ^(WebGPU::TextureFormat format) {
+        return format == WebGPU::TextureFormat::Bgra8unorm || format == WebGPU::TextureFormat::Rgba8unorm || format == WebGPU::TextureFormat::Rgba16float;
     };
 
-    auto allowedViewFormat = ^(WGPUTextureFormat format) {
+    auto allowedViewFormat = ^(WebGPU::TextureFormat format) {
         return allowedFormat(Texture::removeSRGBSuffix(format));
     };
 
-    // The format helpers and the stored state take the C API values.
-    auto format = toAPI(configuration.format);
+    auto format = configuration.format;
     auto& limits = device->limits();
     auto width = std::min<uint32_t>(limits.maxTextureDimension2D, configuration.width);
     auto height = std::min<uint32_t>(limits.maxTextureDimension2D, configuration.height);
-    auto effectiveFormat = allowedFormat(format) ? format : WGPUTextureFormat_BGRA8Unorm;
+    auto effectiveFormat = allowedFormat(format) ? format : WebGPU::TextureFormat::Bgra8unorm;
     // Without view formats in the configuration, the validation takes the format of the textures as
     // their only view format.
-    std::array effectiveViewFormats { *fromAPI(effectiveFormat) };
+    std::array effectiveViewFormats { effectiveFormat };
     WebGPU::TextureDescriptor apiTextureDescriptor {
         .label = { },
         .usage = configuration.usage,
@@ -289,9 +288,9 @@ void PresentationContextIOSurface::configure(const WebGPU::CanvasConfiguration& 
         .sampleCount = 1,
         .viewFormats = configuration.viewFormats.empty() ? std::span<const WebGPU::TextureFormat> { effectiveViewFormats } : configuration.viewFormats,
     };
-    m_colorSpace = toAPI(configuration.colorSpace);
-    m_toneMappingMode = toAPI(configuration.toneMappingMode);
-    m_alphaMode = toAPI(configuration.compositingAlphaMode);
+    m_colorSpace = configuration.colorSpace;
+    m_toneMappingMode = configuration.toneMappingMode;
+    m_alphaMode = configuration.compositingAlphaMode;
 
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
     textureDescriptor.usage = Texture::usage(apiTextureDescriptor.usage, effectiveFormat);
@@ -327,7 +326,7 @@ void PresentationContextIOSurface::configure(const WebGPU::CanvasConfiguration& 
     }
 
     for (auto viewFormat : configuration.viewFormats) {
-        if (!allowedViewFormat(toAPI(viewFormat))) {
+        if (!allowedViewFormat(viewFormat)) {
             generateAValidationError(device, @"Requested texture view format BGRA8UnormStorage is not enabled", reportValidationErrors);
             return;
         }
@@ -341,13 +340,13 @@ void PresentationContextIOSurface::configure(const WebGPU::CanvasConfiguration& 
     // The textures allow views only in the formats that the configuration lists.
     Vector<WebGPU::TextureFormat> textureViewFormats { configuration.viewFormats };
 
-    if (format == WGPUTextureFormat_BGRA8Unorm && configuration.usage.contains(WebGPU::TextureUsage::StorageBinding) && !device->hasFeature(WGPUFeatureName_BGRA8UnormStorage)) {
+    if (format == WebGPU::TextureFormat::Bgra8unorm && configuration.usage.contains(WebGPU::TextureUsage::StorageBinding) && !device->hasFeature(WebGPU::FeatureName::Bgra8unormStorage)) {
         generateAValidationError(device, @"Requested storage format but BGRA8UnormStorage is not enabled", reportValidationErrors);
         return;
     }
 
     textureDescriptor.usage |= (MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead);
-    bool needsLuminanceClampFunction = textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float && m_toneMappingMode == WGPUToneMappingMode_Standard;
+    bool needsLuminanceClampFunction = textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float && m_toneMappingMode == WebGPU::CanvasToneMappingMode::Standard;
     auto existingUsage = textureDescriptor.usage;
     Ref deviceQueue = device->getQueue();
     id<MTLCommandBuffer> resizeCommandBuffer = nil;

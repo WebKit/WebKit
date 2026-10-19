@@ -134,7 +134,7 @@ public:
 
     bool setCommandEncoder(const BindGroupEntryUsageData::Resource&);
     void addResourceToActiveResources(const BindGroupEntryUsageData::Resource&, OptionSet<BindGroupEntryUsage>);
-    static double quantizedDepthValue(double, WGPUTextureFormat);
+    static double quantizedDepthValue(double, WebGPU::TextureFormat);
     NSString* errorValidatingPipeline(const RenderPipeline&) const;
 
     static std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer*, Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, MTLPrimitiveType, Device&, uint32_t rasterSampleCount, RenderPassEncoder&, bool& splitEncoder);
@@ -165,10 +165,10 @@ private:
     void runVertexBufferValidation(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
     void addResourceToActiveResources(const TextureView&, OptionSet<BindGroupEntryUsage>);
     void addResourceToActiveResources(const TextureOrTextureView&, OptionSet<BindGroupEntryUsage>);
-    void addResourceToActiveResources(const TextureView&, OptionSet<BindGroupEntryUsage>, WGPUTextureAspect);
-    void addResourceToActiveResources(const TextureOrTextureView&, OptionSet<BindGroupEntryUsage>, WGPUTextureAspect);
+    void addResourceToActiveResources(const TextureView&, OptionSet<BindGroupEntryUsage>, WebGPU::TextureAspect);
+    void addResourceToActiveResources(const TextureOrTextureView&, OptionSet<BindGroupEntryUsage>, WebGPU::TextureAspect);
     void addResourceToActiveResources(const Texture&, OptionSet<BindGroupEntryUsage>);
-    void addTextureToActiveResources(const void*, id<MTLResource>, OptionSet<BindGroupEntryUsage>, uint32_t baseMipLevel, uint32_t mipLevelCount, uint32_t baseArrayLayer, uint32_t arrayLayerCount, WGPUTextureAspect);
+    void addTextureToActiveResources(const void*, id<MTLResource>, OptionSet<BindGroupEntryUsage>, uint32_t baseMipLevel, uint32_t mipLevelCount, uint32_t baseArrayLayer, uint32_t arrayLayerCount, WebGPU::TextureAspect);
     void addResourceToActiveResources(const void*, OptionSet<BindGroupEntryUsage>);
 
     NSString* errorValidatingAndBindingBuffers();

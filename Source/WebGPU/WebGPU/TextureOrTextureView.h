@@ -104,12 +104,12 @@ private:
     RefPtr<TextureView> m_view;
 };
 
-bool isAllowableTextureView(const auto& texture, WGPULoadOp loadOp, WGPUStoreOp storeOp)
+bool isAllowableTextureView(const auto& texture, std::optional<WebGPU::LoadOp> loadOp, std::optional<WebGPU::StoreOp> storeOp)
 {
     // A view can narrow the usages it allows, but it cannot make a memoryless texture behave like a
     // regular one, so the transient rule follows the texture the view is a view of.
     if (texture.apiParentTexture().usage().contains(WebGPU::TextureUsage::Transient)) {
-        if (loadOp != WGPULoadOp_Clear || storeOp != WGPUStoreOp_Discard)
+        if (loadOp != WebGPU::LoadOp::Clear || storeOp != WebGPU::StoreOp::Discard)
             return false;
     }
 
@@ -118,7 +118,7 @@ bool isAllowableTextureView(const auto& texture, WGPULoadOp loadOp, WGPUStoreOp 
 
 // A depth stencil attachment has a load and store op per aspect, and only the aspects present in
 // its format may specify them, so the transient rule has to be applied per present aspect.
-bool isAllowableDepthStencilTextureView(const auto& texture, bool hasDepthComponent, WGPULoadOp depthLoadOp, WGPUStoreOp depthStoreOp, bool hasStencilComponent, WGPULoadOp stencilLoadOp, WGPUStoreOp stencilStoreOp)
+bool isAllowableDepthStencilTextureView(const auto& texture, bool hasDepthComponent, std::optional<WebGPU::LoadOp> depthLoadOp, std::optional<WebGPU::StoreOp> depthStoreOp, bool hasStencilComponent, std::optional<WebGPU::LoadOp> stencilLoadOp, std::optional<WebGPU::StoreOp> stencilStoreOp)
 {
     if (hasDepthComponent && !isAllowableTextureView(texture, depthLoadOp, depthStoreOp))
         return false;
@@ -131,7 +131,7 @@ bool hasRenderableTextureViewProperties(const auto& texture)
     return texture.usage().contains(WebGPU::TextureUsage::RenderAttachment) && (texture.is2DTexture() || texture.is2DArrayTexture() || texture.is3DTexture()) && texture.mipLevelCount() == 1 && texture.arrayLayerCount() <= 1;
 }
 
-bool isRenderableTextureView(const auto& texture, WGPULoadOp loadOp, WGPUStoreOp storeOp)
+bool isRenderableTextureView(const auto& texture, WebGPU::LoadOp loadOp, WebGPU::StoreOp storeOp)
 {
     return isAllowableTextureView(texture, loadOp, storeOp) && hasRenderableTextureViewProperties(texture);
 }
@@ -139,7 +139,7 @@ bool isRenderableTextureView(const auto& texture, WGPULoadOp loadOp, WGPUStoreOp
 // The renderable properties of a depth stencil attachment only describe something while the view
 // still has memory behind it, but the per-aspect transient rule applies to a destroyed view just the
 // same. Kept as one entry point taking the view once so Swift does not have to pass it repeatedly.
-bool isRenderableDepthStencilTextureView(const auto& texture, const Device& device, bool isDestroyed, bool hasDepthComponent, WGPULoadOp depthLoadOp, WGPUStoreOp depthStoreOp, bool hasStencilComponent, WGPULoadOp stencilLoadOp, WGPUStoreOp stencilStoreOp)
+bool isRenderableDepthStencilTextureView(const auto& texture, const Device& device, bool isDestroyed, bool hasDepthComponent, std::optional<WebGPU::LoadOp> depthLoadOp, std::optional<WebGPU::StoreOp> depthStoreOp, bool hasStencilComponent, std::optional<WebGPU::LoadOp> stencilLoadOp, std::optional<WebGPU::StoreOp> stencilStoreOp)
 {
     if (!isDestroyed && (!Texture::isDepthStencilRenderableFormat(texture.format(), device) || !hasRenderableTextureViewProperties(texture)))
         return false;
@@ -157,29 +157,28 @@ inline TextureOrTextureView textureOrTextureView(const WebGPU::RenderPassAttachm
     }), view);
 }
 
-// A WebGPU::RenderPassColorAttachment with its views resolved and its operations as the C API
-// values that the render pass creation compares. Swift cannot get the alternatives of the variant
-// members of the C++ API struct, so the C++ and the Swift render pass creation both read this.
+// A WebGPU::RenderPassColorAttachment with its views resolved. Swift cannot get the alternatives
+// of the variant members of the C++ API struct, so the C++ and the Swift render pass creation both
+// read this.
 struct ResolvedRenderPassColorAttachment {
     TextureOrTextureView view;
     std::optional<TextureOrTextureView> resolveTarget;
     std::optional<uint32_t> depthSlice;
     WebGPU::Color clearValue;
-    WGPULoadOp loadOp { WGPULoadOp_Undefined };
-    WGPUStoreOp storeOp { WGPUStoreOp_Undefined };
+    WebGPU::LoadOp loadOp { WebGPU::LoadOp::Load };
+    WebGPU::StoreOp storeOp { WebGPU::StoreOp::Store };
 };
 
-// A WebGPU::RenderPassDepthStencilAttachment, as ResolvedRenderPassColorAttachment. The operations
-// are WGPULoadOp_Undefined and WGPUStoreOp_Undefined when they are not given.
+// A WebGPU::RenderPassDepthStencilAttachment, as ResolvedRenderPassColorAttachment.
 struct ResolvedRenderPassDepthStencilAttachment {
     TextureOrTextureView view;
     float depthClearValue { 0 };
-    WGPULoadOp depthLoadOp { WGPULoadOp_Undefined };
-    WGPUStoreOp depthStoreOp { WGPUStoreOp_Undefined };
+    std::optional<WebGPU::LoadOp> depthLoadOp;
+    std::optional<WebGPU::StoreOp> depthStoreOp;
     bool depthReadOnly { false };
     uint32_t stencilClearValue { 0 };
-    WGPULoadOp stencilLoadOp { WGPULoadOp_Undefined };
-    WGPUStoreOp stencilStoreOp { WGPUStoreOp_Undefined };
+    std::optional<WebGPU::LoadOp> stencilLoadOp;
+    std::optional<WebGPU::StoreOp> stencilStoreOp;
     bool stencilReadOnly { false };
 };
 
@@ -194,8 +193,8 @@ inline std::optional<ResolvedRenderPassColorAttachment> resolvedColorAttachment(
         .resolveTarget = attachment->resolveTarget ? std::optional { textureOrTextureView(*attachment->resolveTarget) } : std::nullopt,
         .depthSlice = attachment->depthSlice,
         .clearValue = attachment->clearValue,
-        .loadOp = toAPI(attachment->loadOp),
-        .storeOp = toAPI(attachment->storeOp),
+        .loadOp = attachment->loadOp,
+        .storeOp = attachment->storeOp,
     };
 }
 
@@ -207,12 +206,12 @@ inline std::optional<ResolvedRenderPassDepthStencilAttachment> resolvedDepthSten
     return ResolvedRenderPassDepthStencilAttachment {
         .view = textureOrTextureView(attachment->view),
         .depthClearValue = attachment->depthClearValue,
-        .depthLoadOp = toAPI(attachment->depthLoadOp),
-        .depthStoreOp = toAPI(attachment->depthStoreOp),
+        .depthLoadOp = attachment->depthLoadOp,
+        .depthStoreOp = attachment->depthStoreOp,
         .depthReadOnly = attachment->depthReadOnly,
         .stencilClearValue = attachment->stencilClearValue,
-        .stencilLoadOp = toAPI(attachment->stencilLoadOp),
-        .stencilStoreOp = toAPI(attachment->stencilStoreOp),
+        .stencilLoadOp = attachment->stencilLoadOp,
+        .stencilStoreOp = attachment->stencilStoreOp,
         .stencilReadOnly = attachment->stencilReadOnly,
     };
 }

@@ -53,29 +53,52 @@ public:
     template <typename T>
     using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
     using ArgumentBufferIndices = ShaderStageArray<std::optional<uint32_t>>;
+    // The buffer binding types of the API, followed by those of the bindings that the implementation
+    // adds: the parameters of external textures and the array lengths of runtime-sized buffers.
+    enum class BufferBindingType : uint8_t {
+        Uniform,
+        Storage,
+        ReadOnlyStorage,
+        Float3x2,
+        Float4x3,
+        Float3x3,
+        UInt2,
+        ArrayLength,
+    };
+    static constexpr BufferBindingType bufferBindingType(WebGPU::BufferBindingType type)
+    {
+        switch (type) {
+        case WebGPU::BufferBindingType::Uniform:
+            return BufferBindingType::Uniform;
+        case WebGPU::BufferBindingType::Storage:
+            return BufferBindingType::Storage;
+        case WebGPU::BufferBindingType::ReadOnlyStorage:
+            return BufferBindingType::ReadOnlyStorage;
+        }
+    }
     struct BufferBindingLayout {
-        WGPUBufferBindingType type { WGPUBufferBindingType_Undefined };
+        BufferBindingType type { BufferBindingType::Uniform };
         bool hasDynamicOffset { false };
         uint64_t minBindingSize { 0 };
         uint64_t bufferSizeForBinding { 0 };
     };
     struct SamplerBindingLayout {
-        WGPUSamplerBindingType type { WGPUSamplerBindingType_Undefined };
+        WebGPU::SamplerBindingType type { WebGPU::SamplerBindingType::Filtering };
     };
     struct TextureBindingLayout {
-        WGPUTextureSampleType sampleType { WGPUTextureSampleType_Undefined };
-        WGPUTextureViewDimension viewDimension { WGPUTextureViewDimension_Undefined };
+        WebGPU::TextureSampleType sampleType { WebGPU::TextureSampleType::Float };
+        WebGPU::TextureViewDimension viewDimension { WebGPU::TextureViewDimension::_2d };
         bool multisampled { false };
     };
     struct StorageTextureBindingLayout {
-        WGPUStorageTextureAccess access { WGPUStorageTextureAccess_Undefined };
-        WGPUTextureFormat format { WGPUTextureFormat_Undefined };
-        WGPUTextureViewDimension viewDimension { WGPUTextureViewDimension_Undefined };
+        WebGPU::StorageTextureAccess access { WebGPU::StorageTextureAccess::WriteOnly };
+        WebGPU::TextureFormat format;
+        WebGPU::TextureViewDimension viewDimension { WebGPU::TextureViewDimension::_2d };
     };
     struct ExternalTextureBindingLayout { };
     struct Entry {
         uint32_t binding;
-        WGPUShaderStage visibility;
+        OptionSet<WebGPU::ShaderStage> visibility;
         using BindingLayout = Variant<BufferBindingLayout, SamplerBindingLayout, TextureBindingLayout, StorageTextureBindingLayout, ExternalTextureBindingLayout>;
         BindingLayout bindingLayout;
         ArgumentBufferIndices argumentBufferIndices;
@@ -175,11 +198,11 @@ private:
 
 // An entry of a bind group layout to create. The entries of the layouts that pipelines generate
 // from their shaders have their own Metal binding per stage, and they include entries for the
-// array lengths of runtime-sized buffers, with the binding type WGPUBufferBindingType_ArrayLength.
+// array lengths of runtime-sized buffers, with the binding type BufferBindingType::ArrayLength.
 struct ResolvedBindGroupLayoutEntry {
     uint32_t binding { 0 };
-    std::array<uint32_t, WGPUShaderStage_Compute / 2 + 1> metalBinding { };
-    WGPUShaderStage visibility { WGPUShaderStage_None };
+    std::array<uint32_t, static_cast<size_t>(ShaderStage::Compute) + 1> metalBinding { };
+    OptionSet<WebGPU::ShaderStage> visibility;
     BindGroupLayout::Entry::BindingLayout bindingLayout;
 };
 

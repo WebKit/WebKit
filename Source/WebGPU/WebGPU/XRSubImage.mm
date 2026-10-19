@@ -36,17 +36,10 @@
 
 namespace WebGPU::Metal {
 
-// A texture for an XR layer texture. The texture allows views in viewFormat. An unknown format
-// makes an invalid texture.
-static Ref<Texture> createXRTexture(id<MTLTexture> texture, ASCIILiteral label, WGPUTextureFormat format, WGPUTextureFormat viewFormat, Device& device)
+// A texture for an XR layer texture. The texture allows views in viewFormat.
+static Ref<Texture> createXRTexture(id<MTLTexture> texture, ASCIILiteral label, WebGPU::TextureFormat format, WebGPU::TextureFormat viewFormat, Device& device)
 {
-    auto apiFormat = fromAPI(format);
-    if (!apiFormat)
-        return Texture::createInvalid(device);
-
-    Vector<WebGPU::TextureFormat> viewFormats;
-    if (auto apiViewFormat = fromAPI(viewFormat))
-        viewFormats.append(*apiViewFormat);
+    Vector<WebGPU::TextureFormat> viewFormats { viewFormat };
 
     WebGPU::TextureDescriptor descriptor {
         .label = label,
@@ -57,10 +50,10 @@ static Ref<Texture> createXRTexture(id<MTLTexture> texture, ASCIILiteral label, 
             .height = static_cast<uint32_t>(texture.height),
             .depthOrArrayLayers = static_cast<uint32_t>(texture.arrayLength),
         },
-        .format = *apiFormat,
+        .format = format,
         .mipLevelCount = 1,
         .sampleCount = static_cast<uint32_t>(texture.sampleCount),
-        .viewFormats = singleElementSpan(*apiFormat),
+        .viewFormats = singleElementSpan(format),
     };
     return Texture::create(texture, descriptor, WTF::move(viewFormats), device);
 }
@@ -105,17 +98,19 @@ void XRSubImage::update(const XRProjectionLayer& projectionLayer)
     size_t currentTextureIndex = projectionLayer.reusableTextureIndex();
     const std::pair<id<MTLSharedEvent>, uint64_t>& sharedEvent = projectionLayer.completionEvent();
 
-    WGPUTextureFormat targetColorFormat = projectionLayer.colorFormat();
-    std::optional<WGPUTextureFormat> targetDepthStencilFormat = projectionLayer.optionalDepthStencilFormat();
+    WebGPU::TextureFormat targetColorFormat = projectionLayer.colorFormat();
+    std::optional<WebGPU::TextureFormat> targetDepthStencilFormat = projectionLayer.optionalDepthStencilFormat();
 
     m_currentTextureIndex = currentTextureIndex;
     RefPtr texture = this->currentColorTexture();
     if (!texture || texture->texture() != colorTexture) {
         auto colorFormat = Texture::textureFormat(colorTexture.pixelFormat);
-        if (colorFormat != targetColorFormat)
-            colorTexture = [colorTexture newTextureViewWithPixelFormat:Texture::pixelFormat(colorFormat)];
+        if (!colorFormat)
+            return;
+        if (*colorFormat != targetColorFormat)
+            colorTexture = [colorTexture newTextureViewWithPixelFormat:Texture::pixelFormat(*colorFormat)];
 
-        Ref newTexture = createXRTexture(colorTexture, "color texture"_s, targetColorFormat, colorFormat, *device);
+        Ref newTexture = createXRTexture(colorTexture, "color texture"_s, targetColorFormat, *colorFormat, *device);
         newTexture->updateCompletionEvent(sharedEvent);
         newTexture->setRasterizationRateMaps(projectionLayer.rasterizationRateMaps());
         m_colorTextures.set(currentTextureIndex, WTF::move(newTexture));
@@ -124,12 +119,14 @@ void XRSubImage::update(const XRProjectionLayer& projectionLayer)
 
     if (texture = this->depthTexture(); !texture || texture->texture() != depthTexture) {
         auto depthFormat = Texture::textureFormat(depthTexture.pixelFormat);
-        if (targetDepthStencilFormat && *targetDepthStencilFormat != depthFormat) {
-            depthFormat = *targetDepthStencilFormat;
-            depthTexture = [depthTexture newTextureViewWithPixelFormat:Texture::pixelFormat(depthFormat)];
+        if (targetDepthStencilFormat && targetDepthStencilFormat != depthFormat) {
+            depthFormat = targetDepthStencilFormat;
+            depthTexture = [depthTexture newTextureViewWithPixelFormat:Texture::pixelFormat(*depthFormat)];
         }
+        if (!depthFormat)
+            return;
 
-        m_depthTextures.set(currentTextureIndex, createXRTexture(depthTexture, "depth texture"_s, depthFormat, depthFormat, *device));
+        m_depthTextures.set(currentTextureIndex, createXRTexture(depthTexture, "depth texture"_s, *depthFormat, *depthFormat, *device));
     }
 }
 

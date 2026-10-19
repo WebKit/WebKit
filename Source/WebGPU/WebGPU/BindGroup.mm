@@ -575,7 +575,7 @@ static id<MTLTexture> gbTextureFromRGB(id<MTLTexture> texture, bool alphaFirst, 
     return [texture newTextureViewWithPixelFormat:texture.pixelFormat textureType:texture.textureType levels:NSMakeRange(0, texture.mipmapLevelCount) slices:NSMakeRange(0, texture.arrayLength) swizzle:swizzle];
 }
 
-Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixelBufferRef pixelBuffer, WGPUColorSpace colorSpace, PremultiplyAlpha premultiplyAlpha) const
+Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, PremultiplyAlpha premultiplyAlpha) const
 {
 #if HAVE(COREVIDEO_METAL_SUPPORT)
     // colorMatrixBetweenPrimaries() is row-major, and Metal indexes a float3x3 by column.
@@ -729,16 +729,19 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 #endif
 }
 
-static bool LEGACY_NODELETE hasProperUsageFlags(WGPUBufferBindingType bufferType, OptionSet<WebGPU::BufferUsage> usage)
+static bool LEGACY_NODELETE hasProperUsageFlags(BindGroupLayout::BufferBindingType bufferType, OptionSet<WebGPU::BufferUsage> usage)
 {
     switch (bufferType) {
-    case WGPUBufferBindingType_Uniform:
+    case BindGroupLayout::BufferBindingType::Uniform:
         return usage.contains(WebGPU::BufferUsage::Uniform);
-    case WGPUBufferBindingType_Storage:
-    case WGPUBufferBindingType_ReadOnlyStorage:
+    case BindGroupLayout::BufferBindingType::Storage:
+    case BindGroupLayout::BufferBindingType::ReadOnlyStorage:
         return usage.contains(WebGPU::BufferUsage::Storage);
-    case WGPUBufferBindingType_Undefined:
-    case WGPUBufferBindingType_Force32:
+    case BindGroupLayout::BufferBindingType::Float3x2:
+    case BindGroupLayout::BufferBindingType::Float4x3:
+    case BindGroupLayout::BufferBindingType::Float3x3:
+    case BindGroupLayout::BufferBindingType::UInt2:
+    case BindGroupLayout::BufferBindingType::ArrayLength:
         ASSERT_NOT_REACHED();
         return false;
     }
@@ -769,9 +772,9 @@ static bool is32bppFloatFormat(id<MTLTexture> t)
     return t.pixelFormat == MTLPixelFormatR32Float || t.pixelFormat == MTLPixelFormatRG32Float || t.pixelFormat == MTLPixelFormatRGBA32Float;
 }
 
-static bool LEGACY_NODELETE valid32bppFloatSampleType(WGPUTextureSampleType sampleType)
+static bool LEGACY_NODELETE valid32bppFloatSampleType(WebGPU::TextureSampleType sampleType)
 {
-    return sampleType == WGPUTextureSampleType_Float || sampleType == WGPUTextureSampleType_UnfilterableFloat;
+    return sampleType == WebGPU::TextureSampleType::Float || sampleType == WebGPU::TextureSampleType::UnfilterableFloat;
 }
 
 enum FormatType {
@@ -783,177 +786,172 @@ enum FormatType {
     FormatType_UnsignedInt = 1 << 4
 };
 
-static std::underlying_type<FormatType>::type formatType(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
+static std::underlying_type<FormatType>::type formatType(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
 {
     switch (format) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
         return FormatType_Float | FormatType_UnfilterableFloat;
-    case WGPUTextureFormat_R8Uint:
+    case WebGPU::TextureFormat::R8uint:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_R8Sint:
+    case WebGPU::TextureFormat::R8sint:
         return FormatType_SignedInt;
-    case WGPUTextureFormat_R16Uint:
+    case WebGPU::TextureFormat::R16uint:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_R16Sint:
+    case WebGPU::TextureFormat::R16sint:
         return FormatType_SignedInt;
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
         return FormatType_Float | FormatType_UnfilterableFloat;
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
         return FormatType_Float | FormatType_UnfilterableFloat;
-    case WGPUTextureFormat_RG8Uint:
+    case WebGPU::TextureFormat::Rg8uint:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_RG8Sint:
+    case WebGPU::TextureFormat::Rg8sint:
         return FormatType_SignedInt;
-    case WGPUTextureFormat_R32Float:
-        return FormatType_UnfilterableFloat | (device.hasFeature(WGPUFeatureName_Float32Filterable) ? FormatType_Float : 0);
-    case WGPUTextureFormat_R32Uint:
+    case WebGPU::TextureFormat::R32float:
+        return FormatType_UnfilterableFloat | (device.hasFeature(WebGPU::FeatureName::Float32Filterable) ? FormatType_Float : 0);
+    case WebGPU::TextureFormat::R32uint:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_R32Sint:
+    case WebGPU::TextureFormat::R32sint:
         return FormatType_SignedInt;
-    case WGPUTextureFormat_RG16Uint:
+    case WebGPU::TextureFormat::Rg16uint:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_RG16Sint:
+    case WebGPU::TextureFormat::Rg16sint:
         return FormatType_SignedInt;
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
         return FormatType_Float | FormatType_UnfilterableFloat;
-    case WGPUTextureFormat_RGBA8Uint:
+    case WebGPU::TextureFormat::Rgba8uint:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_RGBA8Sint:
+    case WebGPU::TextureFormat::Rgba8sint:
         return FormatType_SignedInt;
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
         return FormatType_Float | FormatType_UnfilterableFloat;
-    case WGPUTextureFormat_RGB10A2Uint:
+    case WebGPU::TextureFormat::Rgb10a2uint:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
         return FormatType_Float | FormatType_UnfilterableFloat;
-    case WGPUTextureFormat_RG32Float:
-        return FormatType_UnfilterableFloat | (device.hasFeature(WGPUFeatureName_Float32Filterable) ? FormatType_Float : 0);
-    case WGPUTextureFormat_RG32Uint:
+    case WebGPU::TextureFormat::Rg32float:
+        return FormatType_UnfilterableFloat | (device.hasFeature(WebGPU::FeatureName::Float32Filterable) ? FormatType_Float : 0);
+    case WebGPU::TextureFormat::Rg32uint:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_RG32Sint:
+    case WebGPU::TextureFormat::Rg32sint:
         return FormatType_SignedInt;
-    case WGPUTextureFormat_RGBA16Uint:
+    case WebGPU::TextureFormat::Rgba16uint:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_RGBA16Sint:
+    case WebGPU::TextureFormat::Rgba16sint:
         return FormatType_SignedInt;
-    case WGPUTextureFormat_RGBA16Float:
+    case WebGPU::TextureFormat::Rgba16float:
         return FormatType_Float | FormatType_UnfilterableFloat;
-    case WGPUTextureFormat_RGBA32Float:
-        return FormatType_UnfilterableFloat | (device.hasFeature(WGPUFeatureName_Float32Filterable) ? FormatType_Float : 0);
-    case WGPUTextureFormat_RGBA32Uint:
+    case WebGPU::TextureFormat::Rgba32float:
+        return FormatType_UnfilterableFloat | (device.hasFeature(WebGPU::FeatureName::Float32Filterable) ? FormatType_Float : 0);
+    case WebGPU::TextureFormat::Rgba32uint:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return FormatType_SignedInt;
-    case WGPUTextureFormat_Stencil8:
+    case WebGPU::TextureFormat::Stencil8:
         return FormatType_UnsignedInt;
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
         return FormatType_Depth | FormatType_UnfilterableFloat;
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32FloatStencil8: {
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32floatStencil8: {
         switch (aspect) {
-        case WGPUTextureAspect_All:
+        case WebGPU::TextureAspect::All:
             return FormatType_Depth | FormatType_UnfilterableFloat | FormatType_UnsignedInt;
-        case WGPUTextureAspect_StencilOnly:
+        case WebGPU::TextureAspect::StencilOnly:
             return FormatType_UnsignedInt;
-        case WGPUTextureAspect_DepthOnly:
+        case WebGPU::TextureAspect::DepthOnly:
             return FormatType_Depth | FormatType_UnfilterableFloat;
-        case WGPUTextureAspect_Force32:
-            RELEASE_ASSERT_NOT_REACHED();
         }
     }
-    case WGPUTextureFormat_Depth32Float:
+    case WebGPU::TextureFormat::Depth32float:
         return FormatType_Depth | FormatType_UnfilterableFloat;
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return FormatType_Float | FormatType_UnfilterableFloat;
-    case WGPUTextureFormat_Undefined:
-    case WGPUTextureFormat_Force32:
-        return FormatType_Undefined;
     }
 }
 
-static bool formatIsFloat(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
+static bool formatIsFloat(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
 {
     return formatType(format, aspect, device) & FormatType_Float;
 }
-static bool formatIsUnfilterableFloat(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
+static bool formatIsUnfilterableFloat(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
 {
     return formatType(format, aspect, device) & FormatType_UnfilterableFloat;
 }
-static bool formatIsDepth(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
+static bool formatIsDepth(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
 {
     return formatType(format, aspect, device) & FormatType_Depth;
 }
-static bool formatIsSignedInt(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
+static bool formatIsSignedInt(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
 {
     return formatType(format, aspect, device) & FormatType_SignedInt;
 }
-static bool formatIsUnsignedInt(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
+static bool formatIsUnsignedInt(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
 {
     return formatType(format, aspect, device) & FormatType_UnsignedInt;
 }
@@ -966,38 +964,32 @@ static bool validateTextureSampleType(const BindGroupLayout::TextureBindingLayou
     auto format = apiTextureView->format();
     auto aspect = apiTextureView->aspect();
     switch (textureEntry->sampleType) {
-    case WGPUTextureSampleType_Float:
+    case WebGPU::TextureSampleType::Float:
         return formatIsFloat(format, aspect, device);
-    case WGPUTextureSampleType_UnfilterableFloat:
+    case WebGPU::TextureSampleType::UnfilterableFloat:
         return formatIsUnfilterableFloat(format, aspect, device);
-    case WGPUTextureSampleType_Depth:
+    case WebGPU::TextureSampleType::Depth:
         return formatIsDepth(format, aspect, device);
-    case WGPUTextureSampleType_Sint:
+    case WebGPU::TextureSampleType::Sint:
         return formatIsSignedInt(format, aspect, device);
-    case WGPUTextureSampleType_Uint:
+    case WebGPU::TextureSampleType::Uint:
         return formatIsUnsignedInt(format, aspect, device);
-    case WGPUTextureSampleType_Force32:
-    case WGPUTextureSampleType_Undefined:
-        return false;
     }
 }
 
 static const NSString* sampleType(const BindGroupLayout::TextureBindingLayout* textureEntry)
 {
     switch (textureEntry->sampleType) {
-    case WGPUTextureSampleType_Float:
+    case WebGPU::TextureSampleType::Float:
         return @"float";
-    case WGPUTextureSampleType_UnfilterableFloat:
+    case WebGPU::TextureSampleType::UnfilterableFloat:
         return @"unfilterable-float";
-    case WGPUTextureSampleType_Depth:
+    case WebGPU::TextureSampleType::Depth:
         return @"depth";
-    case WGPUTextureSampleType_Sint:
+    case WebGPU::TextureSampleType::Sint:
         return @"sint";
-    case WGPUTextureSampleType_Uint:
+    case WebGPU::TextureSampleType::Uint:
         return @"uint";
-    case WGPUTextureSampleType_Force32:
-    case WGPUTextureSampleType_Undefined:
-        return @"unknown";
     }
 }
 
@@ -1029,24 +1021,21 @@ static bool validateTextureViewDimension(const auto* textureEntry, const auto& a
     if (!textureEntry)
         return true;
 
-    WGPUTextureViewDimension viewDimension = textureEntry->viewDimension;
+    WebGPU::TextureViewDimension viewDimension = textureEntry->viewDimension;
     auto textureType = apiTextureView->texture().textureType;
     switch (viewDimension) {
-    case WGPUTextureViewDimension_1D:
+    case WebGPU::TextureViewDimension::_1d:
         return textureType == MTLTextureType1D;
-    case WGPUTextureViewDimension_2D:
+    case WebGPU::TextureViewDimension::_2d:
         return textureType == MTLTextureType2D || textureType == MTLTextureType2DMultisample;
-    case WGPUTextureViewDimension_2DArray:
+    case WebGPU::TextureViewDimension::_2dArray:
         return textureType == MTLTextureType2DArray || textureType == MTLTextureType2DMultisampleArray;
-    case WGPUTextureViewDimension_Cube:
+    case WebGPU::TextureViewDimension::Cube:
         return textureType == MTLTextureTypeCube;
-    case WGPUTextureViewDimension_CubeArray:
+    case WebGPU::TextureViewDimension::CubeArray:
         return textureType == MTLTextureTypeCubeArray;
-    case WGPUTextureViewDimension_3D:
+    case WebGPU::TextureViewDimension::_3d:
         return textureType == MTLTextureType3D;
-    case WGPUTextureViewDimension_Undefined:
-    case WGPUTextureViewDimension_Force32:
-        return false;
     }
 }
 
@@ -1055,19 +1044,15 @@ static bool LEGACY_NODELETE validateStorageTextureViewFormat(const BindGroupLayo
     return !storageTexture || storageTexture->format == apiTextureView->format();
 }
 
-static bool LEGACY_NODELETE validateSamplerType(WGPUSamplerBindingType type, const Sampler& sampler)
+static bool LEGACY_NODELETE validateSamplerType(WebGPU::SamplerBindingType type, const Sampler& sampler)
 {
     switch (type) {
-    case WGPUSamplerBindingType_Filtering:
+    case WebGPU::SamplerBindingType::Filtering:
         return !sampler.isComparison();
-    case WGPUSamplerBindingType_NonFiltering:
+    case WebGPU::SamplerBindingType::NonFiltering:
         return !sampler.isComparison() && !sampler.isFiltering();
-    case WGPUSamplerBindingType_Comparison:
+    case WebGPU::SamplerBindingType::Comparison:
         return sampler.isComparison();
-    case WGPUSamplerBindingType_Undefined:
-    case WGPUSamplerBindingType_Force32:
-        ASSERT_NOT_REACHED();
-        return false;
     }
 }
 
@@ -1079,38 +1064,34 @@ static BindGroupEntryUsage LEGACY_NODELETE usageForTexture(const BindGroupLayout
 static BindGroupEntryUsage LEGACY_NODELETE usageForStorageTexture(const BindGroupLayout::StorageTextureBindingLayout& textureLayout)
 {
     switch (textureLayout.access) {
-    case WGPUStorageTextureAccess_Undefined:
-        return BindGroupEntryUsage::Undefined;
-    case WGPUStorageTextureAccess_ReadOnly:
+    case WebGPU::StorageTextureAccess::ReadOnly:
         return BindGroupEntryUsage::StorageTextureRead;
-    case WGPUStorageTextureAccess_ReadWrite:
+    case WebGPU::StorageTextureAccess::ReadWrite:
         return BindGroupEntryUsage::StorageTextureReadWrite;
-    case WGPUStorageTextureAccess_WriteOnly:
+    case WebGPU::StorageTextureAccess::WriteOnly:
         return BindGroupEntryUsage::StorageTextureWriteOnly;
-    case WGPUStorageTextureAccess_Force32:
-        RELEASE_ASSERT_NOT_REACHED();
     }
 
     RELEASE_ASSERT_NOT_REACHED();
     return BindGroupEntryUsage::Undefined;
 }
 
-static BindGroupEntryUsage LEGACY_NODELETE usageForBuffer(WGPUBufferBindingType bufferBindingType)
+static BindGroupEntryUsage LEGACY_NODELETE usageForBuffer(BindGroupLayout::BufferBindingType bufferBindingType)
 {
     switch (bufferBindingType) {
-    case WGPUBufferBindingType_Undefined:
-        return BindGroupEntryUsage::Undefined;
-    case WGPUBufferBindingType_Uniform:
+    case BindGroupLayout::BufferBindingType::Uniform:
         return BindGroupEntryUsage::Constant;
-    case WGPUBufferBindingType_Storage:
+    case BindGroupLayout::BufferBindingType::Storage:
         return BindGroupEntryUsage::Storage;
-    case WGPUBufferBindingType_ReadOnlyStorage:
+    case BindGroupLayout::BufferBindingType::ReadOnlyStorage:
         return BindGroupEntryUsage::StorageRead;
-    case WGPUBufferBindingType_Force32:
-        RELEASE_ASSERT_NOT_REACHED();
+    case BindGroupLayout::BufferBindingType::Float3x2:
+    case BindGroupLayout::BufferBindingType::Float4x3:
+    case BindGroupLayout::BufferBindingType::Float3x3:
+    case BindGroupLayout::BufferBindingType::UInt2:
+    case BindGroupLayout::BufferBindingType::ArrayLength:
+        return BindGroupEntryUsage::Undefined;
     }
-
-    return BindGroupEntryUsage::Undefined;
 }
 
 template <typename T>
@@ -1119,12 +1100,12 @@ static BindGroupEntryUsageData makeBindGroupEntryUsageData(BindGroupEntryUsage u
     return BindGroupEntryUsageData { .usage = usage, .binding = bindingIndex, .resource = resource.ptr(), .entryOffset = entryOffset, .entrySize = entrySize };
 }
 
-static bool LEGACY_NODELETE allowedExternalTextureFormat(WGPUTextureFormat format)
+static bool LEGACY_NODELETE allowedExternalTextureFormat(WebGPU::TextureFormat format)
 {
     switch (format) {
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_RGBA16Float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Rgba16float:
         return true;
     default:
         return false;
@@ -1175,7 +1156,7 @@ static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Metal::D
             return BindGroup::createInvalid(object);
         }
 
-        if (textureEntry && is32bppFloatFormat(texture) && (!valid32bppFloatSampleType(textureEntry->sampleType) || (textureEntry->sampleType == WGPUTextureSampleType_Float && !object.hasFeature(WGPUFeatureName_Float32Filterable)))) {
+        if (textureEntry && is32bppFloatFormat(texture) && (!valid32bppFloatSampleType(textureEntry->sampleType) || (textureEntry->sampleType == WebGPU::TextureSampleType::Float && !object.hasFeature(WebGPU::FeatureName::Float32Filterable)))) {
             VALIDATION_ERROR(@"Can not create bind group with filterable 32bpp floating point texture as float32-filterable feature is not enabled");
             return BindGroup::createInvalid(object);
         }
@@ -1421,8 +1402,8 @@ RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescrip
                 }
 
                 auto& deviceLimits = limits();
-                const bool isUniformBuffer = layoutBinding->type == WGPUBufferBindingType_Uniform;
-                const bool isStorageBuffer = layoutBinding->type == WGPUBufferBindingType_Storage || layoutBinding->type == WGPUBufferBindingType_ReadOnlyStorage;
+                const bool isUniformBuffer = layoutBinding->type == BindGroupLayout::BufferBindingType::Uniform;
+                const bool isStorageBuffer = layoutBinding->type == BindGroupLayout::BufferBindingType::Storage || layoutBinding->type == BindGroupLayout::BufferBindingType::ReadOnlyStorage;
                 if (!apiBuffer->isDestroyed()) {
                     if (bufferBinding->offset >= buffer.length) {
                         VALIDATION_ERROR([NSString stringWithFormat:@"Unexpected entry.offset(%llu) >= buffer length(%lu)", bufferBinding->offset, (unsigned long)buffer.length]);
@@ -1519,7 +1500,7 @@ RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescrip
                 }
                 Ref externalTexture = metal(externalTextureResource->get());
                 auto textureData = createExternalTextureFromPixelBuffer(protect(externalTexture->pixelBuffer()), externalTexture->colorSpace(), PremultiplyAlpha::Yes);
-                id<MTLTexture> texture0 = textureData.texture0 ?: placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
+                id<MTLTexture> texture0 = textureData.texture0 ?: placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
                 auto metalStage = metalRenderStage(stage);
                 if (stage != ShaderStage::Undefined) {
                     externalTextureIndices[stage].argumentBufferIndex = index;
@@ -1529,7 +1510,7 @@ RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescrip
                     stageResources[metalStage][resourceUsage - 1].append(texture0);
                     stageResourceUsages[metalStage][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
                 }
-                id<MTLTexture> texture1 = textureData.texture1 ?: placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
+                id<MTLTexture> texture1 = textureData.texture1 ?: placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
                 if (texture1) {
                     stageResources[metalStage][resourceUsage - 1].append(texture1);
                     stageResourceUsages[metalStage][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
@@ -1600,7 +1581,7 @@ RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescrip
     std::ranges::sort(dynamicBuffers, { }, &BindGroup::BufferAndType::bindingIndex);
 
     if (m_bindGroupId == std::numeric_limits<decltype(m_bindGroupId)>::max()) {
-        loseTheDevice(WGPUDeviceLostReason_Undefined);
+        loseTheDevice(WebGPU::DeviceLostReason::Unknown);
         return BindGroup::createInvalid(*this);
     }
 
@@ -1707,10 +1688,11 @@ NSString* BindGroup::usageName(const OptionSet<BindGroupEntryUsage>& allowedUsag
     return result;
 }
 
-uint64_t BindGroup::makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect aspect)
+uint64_t BindGroup::makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WebGPU::TextureAspect aspect)
 {
-    RELEASE_ASSERT(aspect);
-    return (static_cast<uint64_t>(aspect) - 1) | (static_cast<uint64_t>(baseMipLevel) << 1) | (static_cast<uint64_t>(baseArrayLayer) << 32);
+    RELEASE_ASSERT(aspect != WebGPU::TextureAspect::All);
+    uint64_t aspectBit = aspect == WebGPU::TextureAspect::DepthOnly ? 1 : 0;
+    return aspectBit | (static_cast<uint64_t>(baseMipLevel) << 1) | (static_cast<uint64_t>(baseArrayLayer) << 32);
 }
 
 [[nodiscard]] static bool setArgumentBuffer(id<MTLArgumentEncoder> encoder, id<MTLBuffer> buffer)
@@ -1757,8 +1739,8 @@ bool BindGroup::updateExternalTextures(WebGPU::ExternalTexture& apiExternalTextu
 
     Ref device = m_device;
     auto textureData = device->createExternalTextureFromPixelBuffer(protect(externalTexture.pixelBuffer()), externalTexture.colorSpace(), Device::PremultiplyAlpha::Yes);
-    id<MTLTexture> texture0 = textureData.texture0 ?: device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
-    id<MTLTexture> texture1 = textureData.texture1 ?: device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
+    id<MTLTexture> texture0 = textureData.texture0 ?: device->placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
+    id<MTLTexture> texture1 = textureData.texture1 ?: device->placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
     externalTexture.updateExternalTextures(texture0, texture1);
     if (!texture0 || !texture1)
         return false;

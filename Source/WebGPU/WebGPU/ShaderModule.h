@@ -90,7 +90,7 @@ public:
     const String& LEGACY_NODELETE defaultFragmentEntryPoint() const;
     const String& LEGACY_NODELETE defaultComputeEntryPoint() const;
 
-    using VertexStageIn = HashMap<uint32_t, WGPUVertexFormat, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using VertexStageIn = HashMap<uint32_t, WebGPU::VertexFormat, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using FragmentOutputs = HashMap<uint32_t, MTLDataType, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     struct VertexOutputFragmentInput {
         MTLDataType dataType { MTLDataTypeNone };

@@ -150,11 +150,63 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, Variant<WGS
     return ShaderModule::create(WTF::move(checkResult), WTF::move(hints), WTF::move(result.entryPoints), library, device);
 }
 
-static const HashSet<String> buildFeatureSet(const Vector<WGPUFeatureName>& features)
+static String featureName(WebGPU::FeatureName feature)
+{
+    switch (feature) {
+    case WebGPU::FeatureName::DepthClipControl:
+        return "depth-clip-control"_s;
+    case WebGPU::FeatureName::Depth32floatStencil8:
+        return "depth32float-stencil8"_s;
+    case WebGPU::FeatureName::TimestampQuery:
+        return "timestamp-query"_s;
+    case WebGPU::FeatureName::TextureCompressionBc:
+        return "texture-compression-bc"_s;
+    case WebGPU::FeatureName::TextureCompressionBcSliced3d:
+        return "texture-compression-bc-sliced-3d"_s;
+    case WebGPU::FeatureName::TextureCompressionEtc2:
+        return "texture-compression-etc2"_s;
+    case WebGPU::FeatureName::TextureCompressionAstc:
+        return "texture-compression-astc"_s;
+    case WebGPU::FeatureName::TextureCompressionAstcSliced3d:
+        return "texture-compression-astc-sliced-3d"_s;
+    case WebGPU::FeatureName::IndirectFirstInstance:
+        return "indirect-first-instance"_s;
+    case WebGPU::FeatureName::ShaderF16:
+        return "shader-f16"_s;
+    case WebGPU::FeatureName::Rg11b10ufloatRenderable:
+        return "rg11b10ufloat-renderable"_s;
+    case WebGPU::FeatureName::Bgra8unormStorage:
+        return "bgra8unorm-storage"_s;
+    case WebGPU::FeatureName::Float32Filterable:
+        return "float32-filterable"_s;
+    case WebGPU::FeatureName::Float32Blendable:
+        return "float32-blendable"_s;
+    case WebGPU::FeatureName::ClipDistances:
+        return "clip-distances"_s;
+    case WebGPU::FeatureName::PrimitiveIndex:
+        return "primitive-index"_s;
+    case WebGPU::FeatureName::DualSourceBlending:
+        return "dual-source-blending"_s;
+    case WebGPU::FeatureName::Float16Renderable:
+        return "float16-renderable"_s;
+    case WebGPU::FeatureName::Float32Renderable:
+        return "float32-renderable"_s;
+    case WebGPU::FeatureName::CoreFeaturesAndLimits:
+        return "core-features-and-limits"_s;
+    case WebGPU::FeatureName::TextureFormatsTier1:
+        return "texture-formats-tier1"_s;
+    case WebGPU::FeatureName::TextureFormatsTier2:
+        return "texture-formats-tier2"_s;
+    case WebGPU::FeatureName::Subgroups:
+        return "subgroups"_s;
+    }
+}
+
+static const HashSet<String> buildFeatureSet(const Vector<WebGPU::FeatureName>& features)
 {
     HashSet<String> result;
     for (auto feature : features)
-        result.add(wgpuAdapterFeatureName(feature));
+        result.add(featureName(feature));
 
     return result;
 }
@@ -275,58 +327,58 @@ static MTLDataType LEGACY_NODELETE metalDataTypeFromPrimitive(const WGSL::Types:
     }
 }
 
-static WGPUVertexFormat LEGACY_NODELETE vertexFormatTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize)
+static WebGPU::VertexFormat LEGACY_NODELETE vertexFormatTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize)
 {
     switch (vectorSize) {
     case 1:
         switch (primitiveType->kind) {
         case WGSL::Types::Primitive::I32:
-            return WGPUVertexFormat_Sint32;
+            return WebGPU::VertexFormat::Sint32;
         case WGSL::Types::Primitive::U32:
-            return WGPUVertexFormat_Uint32;
+            return WebGPU::VertexFormat::Uint32;
         case WGSL::Types::Primitive::F16:
-            return WGPUVertexFormat_Float32;
+            return WebGPU::VertexFormat::Float32;
         case WGSL::Types::Primitive::F32:
-            return WGPUVertexFormat_Float32;
+            return WebGPU::VertexFormat::Float32;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
     case 2:
         switch (primitiveType->kind) {
         case WGSL::Types::Primitive::I32:
-            return WGPUVertexFormat_Sint32x2;
+            return WebGPU::VertexFormat::Sint32x2;
         case WGSL::Types::Primitive::U32:
-            return WGPUVertexFormat_Uint32x2;
+            return WebGPU::VertexFormat::Uint32x2;
         case WGSL::Types::Primitive::F16:
-            return WGPUVertexFormat_Float16x2;
+            return WebGPU::VertexFormat::Float16x2;
         case WGSL::Types::Primitive::F32:
-            return WGPUVertexFormat_Float32x2;
+            return WebGPU::VertexFormat::Float32x2;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
     case 3:
         switch (primitiveType->kind) {
         case WGSL::Types::Primitive::I32:
-            return WGPUVertexFormat_Sint32x3;
+            return WebGPU::VertexFormat::Sint32x3;
         case WGSL::Types::Primitive::U32:
-            return WGPUVertexFormat_Uint32x3;
+            return WebGPU::VertexFormat::Uint32x3;
         case WGSL::Types::Primitive::F16:
-            return WGPUVertexFormat_Float16x4;
+            return WebGPU::VertexFormat::Float16x4;
         case WGSL::Types::Primitive::F32:
-            return WGPUVertexFormat_Float32x3;
+            return WebGPU::VertexFormat::Float32x3;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
     case 4:
         switch (primitiveType->kind) {
         case WGSL::Types::Primitive::I32:
-            return WGPUVertexFormat_Sint32x4;
+            return WebGPU::VertexFormat::Sint32x4;
         case WGSL::Types::Primitive::U32:
-            return WGPUVertexFormat_Uint32x4;
+            return WebGPU::VertexFormat::Uint32x4;
         case WGSL::Types::Primitive::F16:
-            return WGPUVertexFormat_Float16x4;
+            return WebGPU::VertexFormat::Float16x4;
         case WGSL::Types::Primitive::F32:
-            return WGPUVertexFormat_Float32x4;
+            return WebGPU::VertexFormat::Float32x4;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -349,19 +401,15 @@ static MTLDataType metalDataTypeForStructMember(const WGSL::Type* type)
     return metalDataTypeFromPrimitive(primitiveType, vectorSize);
 }
 
-static WGPUVertexFormat vertexFormatTypeForStructMember(const WGSL::Type* type)
+static WebGPU::VertexFormat vertexFormatTypeForStructMember(const WGSL::Type* type)
 {
-    if (!type) {
+    if (!type)
         RELEASE_ASSERT_NOT_REACHED();
-        return WGPUVertexFormat_Undefined;
-    }
 
     auto* vectorType = std::get_if<WGSL::Types::Vector>(type);
     auto* primitiveType = std::get_if<WGSL::Types::Primitive>(vectorType ? vectorType->element : type);
-    if (!primitiveType) {
+    if (!primitiveType)
         RELEASE_ASSERT_NOT_REACHED();
-        return WGPUVertexFormat_Undefined;
-    }
 
     auto vectorSize = vectorType ? vectorType->size : 1;
     return vertexFormatTypeFromPrimitive(primitiveType, vectorSize);
@@ -791,177 +839,165 @@ void ShaderModule::setLabel(String&& label)
         m_library.label = label.createNSString().get();
 }
 
-static auto LEGACY_NODELETE wgslBindingType(WGPUBufferBindingType bindingType)
+static auto LEGACY_NODELETE wgslBindingType(BindGroupLayout::BufferBindingType bindingType)
 {
     switch (bindingType) {
-    case WGPUBufferBindingType_Uniform:
+    case BindGroupLayout::BufferBindingType::Uniform:
         return WGSL::BufferBindingType::Uniform;
-    case WGPUBufferBindingType_Storage:
+    case BindGroupLayout::BufferBindingType::Storage:
         return WGSL::BufferBindingType::Storage;
-    case WGPUBufferBindingType_ReadOnlyStorage:
+    case BindGroupLayout::BufferBindingType::ReadOnlyStorage:
         return WGSL::BufferBindingType::ReadOnlyStorage;
-    case WGPUBufferBindingType_Undefined:
-    case WGPUBufferBindingType_Force32:
+    case BindGroupLayout::BufferBindingType::Float3x2:
+    case BindGroupLayout::BufferBindingType::Float4x3:
+    case BindGroupLayout::BufferBindingType::Float3x3:
+    case BindGroupLayout::BufferBindingType::UInt2:
+    case BindGroupLayout::BufferBindingType::ArrayLength:
         ASSERT_NOT_REACHED("Unexpected buffer bindingType");
         return WGSL::BufferBindingType::Uniform;
     }
 }
 
-static auto LEGACY_NODELETE wgslSamplerType(WGPUSamplerBindingType bindingType)
+static auto LEGACY_NODELETE wgslSamplerType(WebGPU::SamplerBindingType bindingType)
 {
     switch (bindingType) {
-    case WGPUSamplerBindingType_Filtering:
+    case WebGPU::SamplerBindingType::Filtering:
         return WGSL::SamplerBindingType::Filtering;
-    case WGPUSamplerBindingType_Comparison:
+    case WebGPU::SamplerBindingType::Comparison:
         return WGSL::SamplerBindingType::Comparison;
-    case WGPUSamplerBindingType_NonFiltering:
+    case WebGPU::SamplerBindingType::NonFiltering:
         return WGSL::SamplerBindingType::NonFiltering;
-    case WGPUSamplerBindingType_Force32:
-    case WGPUSamplerBindingType_Undefined:
-        ASSERT_NOT_REACHED("Unexpected sampler bindingType");
-        return WGSL::SamplerBindingType::Filtering;
     }
 }
 
-static auto LEGACY_NODELETE wgslSampleType(WGPUTextureSampleType sampleType)
+static auto LEGACY_NODELETE wgslSampleType(WebGPU::TextureSampleType sampleType)
 {
     switch (sampleType) {
-    case WGPUTextureSampleType_Sint:
+    case WebGPU::TextureSampleType::Sint:
         return WGSL::TextureSampleType::SignedInt;
-    case WGPUTextureSampleType_Uint:
+    case WebGPU::TextureSampleType::Uint:
         return WGSL::TextureSampleType::UnsignedInt;
-    case WGPUTextureSampleType_Depth:
+    case WebGPU::TextureSampleType::Depth:
         return WGSL::TextureSampleType::Depth;
-    case WGPUTextureSampleType_Float:
+    case WebGPU::TextureSampleType::Float:
         return WGSL::TextureSampleType::Float;
-    case WGPUTextureSampleType_UnfilterableFloat:
+    case WebGPU::TextureSampleType::UnfilterableFloat:
         return WGSL::TextureSampleType::UnfilterableFloat;
-    case WGPUTextureSampleType_Force32:
-    case WGPUTextureSampleType_Undefined:
-        ASSERT_NOT_REACHED("Unexpected sampleType");
-        return WGSL::TextureSampleType::Float;
     }
 }
 
-static auto LEGACY_NODELETE wgslViewDimension(WGPUTextureViewDimension viewDimension)
+static auto LEGACY_NODELETE wgslViewDimension(WebGPU::TextureViewDimension viewDimension)
 {
     switch (viewDimension) {
-    case WGPUTextureViewDimension_Cube:
+    case WebGPU::TextureViewDimension::Cube:
         return WGSL::TextureViewDimension::Cube;
-    case WGPUTextureViewDimension_1D:
+    case WebGPU::TextureViewDimension::_1d:
         return WGSL::TextureViewDimension::OneDimensional;
-    case WGPUTextureViewDimension_2D:
+    case WebGPU::TextureViewDimension::_2d:
         return WGSL::TextureViewDimension::TwoDimensional;
-    case WGPUTextureViewDimension_3D:
+    case WebGPU::TextureViewDimension::_3d:
         return WGSL::TextureViewDimension::ThreeDimensional;
-    case WGPUTextureViewDimension_CubeArray:
+    case WebGPU::TextureViewDimension::CubeArray:
         return WGSL::TextureViewDimension::CubeArray;
-    case WGPUTextureViewDimension_2DArray:
+    case WebGPU::TextureViewDimension::_2dArray:
         return WGSL::TextureViewDimension::TwoDimensionalArray;
-    case WGPUTextureViewDimension_Force32:
-    case WGPUTextureViewDimension_Undefined:
-        ASSERT_NOT_REACHED("Unexpected viewDimension");
-        return WGSL::TextureViewDimension::TwoDimensional;
     }
 }
 
-static WGSL::StorageTextureAccess LEGACY_NODELETE wgslAccess(WGPUStorageTextureAccess access)
+static WGSL::StorageTextureAccess LEGACY_NODELETE wgslAccess(WebGPU::StorageTextureAccess access)
 {
     switch (access) {
-    case WGPUStorageTextureAccess_WriteOnly:
+    case WebGPU::StorageTextureAccess::WriteOnly:
         return WGSL::StorageTextureAccess::WriteOnly;
-    case WGPUStorageTextureAccess_ReadOnly:
+    case WebGPU::StorageTextureAccess::ReadOnly:
         return WGSL::StorageTextureAccess::ReadOnly;
-    case WGPUStorageTextureAccess_ReadWrite:
+    case WebGPU::StorageTextureAccess::ReadWrite:
         return WGSL::StorageTextureAccess::ReadWrite;
-    case WGPUStorageTextureAccess_Undefined:
-    case WGPUStorageTextureAccess_Force32:
-        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
-static WGSL::TexelFormat LEGACY_NODELETE wgslFormat(WGPUTextureFormat format)
+static WGSL::TexelFormat LEGACY_NODELETE wgslFormat(WebGPU::TextureFormat format)
 {
     switch (format) {
-    case WGPUTextureFormat_BGRA8Unorm:
+    case WebGPU::TextureFormat::Bgra8unorm:
         return WGSL::TexelFormat::BGRA8unorm;
-    case WGPUTextureFormat_R16Float:
+    case WebGPU::TextureFormat::R16float:
         return WGSL::TexelFormat::R16float;
-    case WGPUTextureFormat_R16Sint:
+    case WebGPU::TextureFormat::R16sint:
         return WGSL::TexelFormat::R16sint;
-    case WGPUTextureFormat_R16Snorm:
+    case WebGPU::TextureFormat::R16snorm:
         return WGSL::TexelFormat::R16snorm;
-    case WGPUTextureFormat_R16Uint:
+    case WebGPU::TextureFormat::R16uint:
         return WGSL::TexelFormat::R16uint;
-    case WGPUTextureFormat_R16Unorm:
+    case WebGPU::TextureFormat::R16unorm:
         return WGSL::TexelFormat::R16unorm;
-    case WGPUTextureFormat_R32Float:
+    case WebGPU::TextureFormat::R32float:
         return WGSL::TexelFormat::R32float;
-    case WGPUTextureFormat_R32Sint:
+    case WebGPU::TextureFormat::R32sint:
         return WGSL::TexelFormat::R32sint;
-    case WGPUTextureFormat_R32Uint:
+    case WebGPU::TextureFormat::R32uint:
         return WGSL::TexelFormat::R32uint;
-    case WGPUTextureFormat_R8Sint:
+    case WebGPU::TextureFormat::R8sint:
         return WGSL::TexelFormat::R8sint;
-    case WGPUTextureFormat_R8Snorm:
+    case WebGPU::TextureFormat::R8snorm:
         return WGSL::TexelFormat::R8snorm;
-    case WGPUTextureFormat_R8Uint:
+    case WebGPU::TextureFormat::R8uint:
         return WGSL::TexelFormat::R8uint;
-    case WGPUTextureFormat_R8Unorm:
+    case WebGPU::TextureFormat::R8unorm:
         return WGSL::TexelFormat::R8unorm;
-    case WGPUTextureFormat_RG11B10Ufloat:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
         return WGSL::TexelFormat::RG11B10ufloat;
-    case WGPUTextureFormat_RG16Float:
+    case WebGPU::TextureFormat::Rg16float:
         return WGSL::TexelFormat::RG16float;
-    case WGPUTextureFormat_RG16Sint:
+    case WebGPU::TextureFormat::Rg16sint:
         return WGSL::TexelFormat::RG16sint;
-    case WGPUTextureFormat_RG16Snorm:
+    case WebGPU::TextureFormat::Rg16snorm:
         return WGSL::TexelFormat::RG16snorm;
-    case WGPUTextureFormat_RG16Uint:
+    case WebGPU::TextureFormat::Rg16uint:
         return WGSL::TexelFormat::RG16uint;
-    case WGPUTextureFormat_RG16Unorm:
+    case WebGPU::TextureFormat::Rg16unorm:
         return WGSL::TexelFormat::RG16unorm;
-    case WGPUTextureFormat_RG32Float:
+    case WebGPU::TextureFormat::Rg32float:
         return WGSL::TexelFormat::RG32float;
-    case WGPUTextureFormat_RG32Sint:
+    case WebGPU::TextureFormat::Rg32sint:
         return WGSL::TexelFormat::RG32sint;
-    case WGPUTextureFormat_RG32Uint:
+    case WebGPU::TextureFormat::Rg32uint:
         return WGSL::TexelFormat::RG32uint;
-    case WGPUTextureFormat_RG8Sint:
+    case WebGPU::TextureFormat::Rg8sint:
         return WGSL::TexelFormat::RG8sint;
-    case WGPUTextureFormat_RG8Snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
         return WGSL::TexelFormat::RG8snorm;
-    case WGPUTextureFormat_RG8Uint:
+    case WebGPU::TextureFormat::Rg8uint:
         return WGSL::TexelFormat::RG8uint;
-    case WGPUTextureFormat_RG8Unorm:
+    case WebGPU::TextureFormat::Rg8unorm:
         return WGSL::TexelFormat::RG8unorm;
-    case WGPUTextureFormat_RGB10A2Uint:
+    case WebGPU::TextureFormat::Rgb10a2uint:
         return WGSL::TexelFormat::RGB10A2uint;
-    case WGPUTextureFormat_RGB10A2Unorm:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
         return WGSL::TexelFormat::RGB10A2unorm;
-    case WGPUTextureFormat_RGBA16Float:
+    case WebGPU::TextureFormat::Rgba16float:
         return WGSL::TexelFormat::RGBA16float;
-    case WGPUTextureFormat_RGBA16Sint:
+    case WebGPU::TextureFormat::Rgba16sint:
         return WGSL::TexelFormat::RGBA16sint;
-    case WGPUTextureFormat_RGBA16Snorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
         return WGSL::TexelFormat::RGBA16snorm;
-    case WGPUTextureFormat_RGBA16Uint:
+    case WebGPU::TextureFormat::Rgba16uint:
         return WGSL::TexelFormat::RGBA16uint;
-    case WGPUTextureFormat_RGBA16Unorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
         return WGSL::TexelFormat::RGBA16unorm;
-    case WGPUTextureFormat_RGBA32Float:
+    case WebGPU::TextureFormat::Rgba32float:
         return WGSL::TexelFormat::RGBA32float;
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return WGSL::TexelFormat::RGBA32sint;
-    case WGPUTextureFormat_RGBA32Uint:
+    case WebGPU::TextureFormat::Rgba32uint:
         return WGSL::TexelFormat::RGBA32uint;
-    case WGPUTextureFormat_RGBA8Sint:
+    case WebGPU::TextureFormat::Rgba8sint:
         return WGSL::TexelFormat::RGBA8sint;
-    case WGPUTextureFormat_RGBA8Snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
         return WGSL::TexelFormat::RGBA8snorm;
-    case WGPUTextureFormat_RGBA8Uint:
+    case WebGPU::TextureFormat::Rgba8uint:
         return WGSL::TexelFormat::RGBA8uint;
-    case WGPUTextureFormat_RGBA8Unorm:
+    case WebGPU::TextureFormat::Rgba8unorm:
         return WGSL::TexelFormat::RGBA8unorm;
     default:
         ASSERT_NOT_REACHED();
@@ -1011,7 +1047,7 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
         for (auto& entry : bindGroupLayout->entries()) {
             WGSL::BindGroupLayoutEntry wgslEntry;
             wgslEntry.binding = entry.value.binding;
-            wgslEntry.visibility = wgslEntry.visibility.fromRaw(entry.value.visibility);
+            wgslEntry.visibility = wgslEntry.visibility.fromRaw(entry.value.visibility.toRaw());
             wgslEntry.bindingMember = convertBindingLayout(entry.value.bindingLayout);
             wgslEntry.vertexArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::Metal::ShaderStage::Vertex];
             wgslEntry.vertexArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::Metal::ShaderStage::Vertex];
@@ -1136,56 +1172,6 @@ void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, WGPUStringView labe
 
 String wgpuAdapterFeatureName(WGPUFeatureName feature)
 {
-    switch (feature) {
-    case WGPUFeatureName_Undefined:
-        return emptyString();
-    case WGPUFeatureName_DepthClipControl:
-        return "depth-clip-control"_s;
-    case WGPUFeatureName_Depth32FloatStencil8:
-        return "depth32float-stencil8"_s;
-    case WGPUFeatureName_TimestampQuery:
-        return "timestamp-query"_s;
-    case WGPUFeatureName_TextureCompressionBC:
-        return "texture-compression-bc"_s;
-    case WGPUFeatureName_TextureCompressionBCSliced3D:
-        return "texture-compression-bc-sliced-3d"_s;
-    case WGPUFeatureName_TextureCompressionETC2:
-        return "texture-compression-etc2"_s;
-    case WGPUFeatureName_TextureCompressionASTC:
-        return "texture-compression-astc"_s;
-    case WGPUFeatureName_TextureCompressionASTCSliced3D:
-        return "texture-compression-astc-sliced-3d"_s;
-    case WGPUFeatureName_IndirectFirstInstance:
-        return "indirect-first-instance"_s;
-    case WGPUFeatureName_ShaderF16:
-        return "shader-f16"_s;
-    case WGPUFeatureName_RG11B10UfloatRenderable:
-        return "rg11b10ufloat-renderable"_s;
-    case WGPUFeatureName_BGRA8UnormStorage:
-        return "bgra8unorm-storage"_s;
-    case WGPUFeatureName_Float32Filterable:
-        return "float32-filterable"_s;
-    case WGPUFeatureName_Float32Blendable:
-        return "float32-blendable"_s;
-    case WGPUFeatureName_ClipDistances:
-        return "clip-distances"_s;
-    case WGPUFeatureName_PrimitiveIndex:
-        return "primitive-index"_s;
-    case WGPUFeatureName_DualSourceBlending:
-        return "dual-source-blending"_s;
-    case WGPUFeatureName_Float16Renderable:
-        return "float16-renderable"_s;
-    case WGPUFeatureName_Float32Renderable:
-        return "float32-renderable"_s;
-    case WGPUFeatureName_CoreFeaturesAndLimits:
-        return "core-features-and-limits"_s;
-    case WGPUFeatureName_TextureFormatsTier1:
-        return "texture-formats-tier1"_s;
-    case WGPUFeatureName_TextureFormatsTier2:
-        return "texture-formats-tier2"_s;
-    case WGPUFeatureName_Subgroups:
-        return "subgroups"_s;
-    case WGPUFeatureName_Force32:
-        return emptyString();
-    }
+    auto apiFeature = WebGPU::Metal::fromAPI(feature);
+    return apiFeature ? WebGPU::Metal::featureName(*apiFeature) : emptyString();
 }

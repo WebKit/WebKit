@@ -89,7 +89,7 @@ using EntryMapContainer = HashMap<const void*, EntryUsage>;
 struct BindGroupId {
     uint32_t bindGroup { 0 };
 };
-static bool addTextureToActiveResources(const void* resourceAddress, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, TextureEntryMapContainer& usagesForResource, BindGroupId bindGroup, uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect aspect)
+static bool addTextureToActiveResources(const void* resourceAddress, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, TextureEntryMapContainer& usagesForResource, BindGroupId bindGroup, uint32_t baseMipLevel, uint32_t baseArrayLayer, WebGPU::TextureAspect aspect)
 {
     UNUSED_PARAM(mtlResource);
 
@@ -136,18 +136,18 @@ static bool addResourceToActiveResources(const void* resourceAddress, OptionSet<
 
 static bool addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage, BindGroupId bindGroup, auto& usagesForResource)
 {
-    WGPUTextureAspect textureAspect = texture.aspect();
-    if (textureAspect != WGPUTextureAspect_All)
+    WebGPU::TextureAspect textureAspect = texture.aspect();
+    if (textureAspect != WebGPU::TextureAspect::All)
         return addTextureToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
 
-    return addTextureToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_DepthOnly) && addTextureToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_StencilOnly);
+    return addTextureToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WebGPU::TextureAspect::DepthOnly) && addTextureToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WebGPU::TextureAspect::StencilOnly);
 }
 
 static bool addResourceToActiveResources(const Texture& texture, OptionSet<BindGroupEntryUsage> resourceUsage, BindGroupId bindGroup, auto& usagesForResource)
 {
     constexpr uint32_t baseMipLevel = 0;
     constexpr uint32_t baseArrayLayer = 0;
-    return addTextureToActiveResources(&texture, texture.texture(), resourceUsage, usagesForResource, bindGroup, baseMipLevel, baseArrayLayer, WGPUTextureAspect_DepthOnly) && addTextureToActiveResources(&texture, texture.texture(), resourceUsage, usagesForResource, bindGroup, baseMipLevel, baseArrayLayer, WGPUTextureAspect_StencilOnly);
+    return addTextureToActiveResources(&texture, texture.texture(), resourceUsage, usagesForResource, bindGroup, baseMipLevel, baseArrayLayer, WebGPU::TextureAspect::DepthOnly) && addTextureToActiveResources(&texture, texture.texture(), resourceUsage, usagesForResource, bindGroup, baseMipLevel, baseArrayLayer, WebGPU::TextureAspect::StencilOnly);
 }
 
 static bool addResourceToActiveResources(const BindGroupEntryUsageData::Resource& resource, OptionSet<BindGroupEntryUsage> resourceUsage, BindGroupId bindGroup, EntryMapContainer& usagesForResource, TextureEntryMapContainer& textureUsagesForResource, CommandEncoder& parentEncoder)

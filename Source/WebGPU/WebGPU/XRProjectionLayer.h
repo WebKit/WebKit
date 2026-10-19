@@ -64,8 +64,8 @@ public:
     id<MTLTexture> LEGACY_NODELETE depthTexture() const;
     const std::pair<id<MTLSharedEvent>, uint64_t>& LEGACY_NODELETE completionEvent() const;
     size_t LEGACY_NODELETE reusableTextureIndex() const;
-    WGPUTextureFormat colorFormat() const { return m_colorFormat; }
-    std::optional<WGPUTextureFormat> optionalDepthStencilFormat() const { return m_optionalDepthStencilFormat; }
+    WebGPU::TextureFormat colorFormat() const { return m_colorFormat; }
+    std::optional<WebGPU::TextureFormat> optionalDepthStencilFormat() const { return m_optionalDepthStencilFormat; }
     OptionSet<WebGPU::TextureUsage> flags() const { return m_flags; }
     double scale() const { return m_scale; }
 
@@ -80,8 +80,8 @@ private:
     id<MTLTexture> m_depthTexture { nil };
     std::pair<id<MTLSharedEvent>, uint64_t> m_sharedEvent;
     size_t m_reusableTextureIndex { 0 };
-    WGPUTextureFormat m_colorFormat { WGPUTextureFormat_Undefined };
-    std::optional<WGPUTextureFormat> m_optionalDepthStencilFormat;
+    WebGPU::TextureFormat m_colorFormat { WebGPU::TextureFormat::Bgra8unorm };
+    std::optional<WebGPU::TextureFormat> m_optionalDepthStencilFormat;
     OptionSet<WebGPU::TextureUsage> m_flags;
     id<MTLRasterizationRateMap> m_rasterizationMapLeft { nil };
     id<MTLRasterizationRateMap> m_rasterizationMapRight { nil };

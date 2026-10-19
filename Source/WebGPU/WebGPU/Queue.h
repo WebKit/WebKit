@@ -57,7 +57,7 @@ class TextureView;
 // names, so both importExternalTexture() and copyExternalImageToTexture() have to convert them.
 // Row-major and applied to linear-light values; std::nullopt when the frame's primaries already are
 // the destination's, which has to stay a no-op rather than a transfer function round trip.
-std::optional<std::array<float, 9>> primariesConversionMatrixForPixelBuffer(CVPixelBufferRef, WGPUColorSpace destination);
+std::optional<std::array<float, 9>> primariesConversionMatrixForPixelBuffer(CVPixelBufferRef, WebGPU::PredefinedColorSpace destination);
 
 // https://gpuweb.github.io/gpuweb/#gpuqueue
 // A device owns its default queue, not the other way around.
@@ -75,7 +75,8 @@ public:
 
     ~Queue();
 
-    void onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback);
+    // The callback is called with false when the device is lost.
+    void onSubmittedWorkDone(CompletionHandler<void(bool)>&& callback);
     void submit(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands);
     void writeBuffer(Buffer&, uint64_t bufferOffset, std::span<uint8_t> data);
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
@@ -105,7 +106,7 @@ public:
     id<MTLCommandEncoder> _Nullable encoderForBuffer(id<MTLCommandBuffer>) const;
     void clearTextureViewIfNeeded(TextureView&);
     void clearTextureViewIfNeeded(Texture&);
-    static bool LEGACY_NODELETE writeWillCompletelyClear(WGPUTextureDimension, uint32_t widthForMetal, uint32_t logicalSizeWidth, uint32_t heightForMetal, uint32_t logicalSizeHeight, uint32_t depthForMetal, uint32_t logicalSizeDepthOrArrayLayers);
+    static bool LEGACY_NODELETE writeWillCompletelyClear(WebGPU::TextureDimension, uint32_t widthForMetal, uint32_t logicalSizeWidth, uint32_t heightForMetal, uint32_t logicalSizeHeight, uint32_t depthForMetal, uint32_t logicalSizeDepthOrArrayLayers);
     void endEncoding(id<MTLCommandEncoder>, id<MTLCommandBuffer>) const;
 
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
@@ -159,7 +160,7 @@ private:
     uint64_t m_scheduledCommandBufferCount { 0 };
     using OnSubmittedWorkScheduledCallbacks = Vector<WTF::Function<void()>>;
     HashMap<uint64_t, OnSubmittedWorkScheduledCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkScheduledCallbacks;
-    using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(WGPUQueueWorkDoneStatus)>>;
+    using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(bool)>>;
     HashMap<uint64_t, OnSubmittedWorkDoneCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkDoneCallbacks;
     NSMutableDictionary<NSNumber*, NSMutableSet<id<MTLCounterSampleBuffer>>*> * _Nullable m_retainedCounterSampleBuffers;
     NSMutableOrderedSet<id<MTLCommandBuffer>> * _Nullable m_createdNotCommittedBuffers { nil };

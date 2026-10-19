@@ -59,7 +59,7 @@ struct ResolvedTextureViewDescriptor {
 class TextureView final : public WebGPU::TextureView, public WGPUTextureViewImpl, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(TextureView);
 public:
-    static Ref<TextureView> create(id<MTLTexture> texture, const ResolvedTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Texture& parentTexture, Device& device)
+    static Ref<TextureView> create(id<MTLTexture> texture, const ResolvedTextureViewDescriptor& descriptor, const std::optional<WebGPU::Extent3D>& renderExtent, Texture& parentTexture, Device& device)
     {
         return adoptRef(*new TextureView(texture, descriptor, renderExtent, parentTexture, device));
     }
@@ -76,7 +76,7 @@ public:
 
     id<MTLTexture> LEGACY_NODELETE texture() const;
     id<MTLTexture> LEGACY_NODELETE parentTexture() const;
-    const std::optional<WGPUExtent3D>& renderExtent() const LIFETIME_BOUND { return m_renderExtent; }
+    const std::optional<WebGPU::Extent3D>& renderExtent() const LIFETIME_BOUND { return m_renderExtent; }
 
     Device& device() const { return m_device; }
     bool previouslyCleared() const;
@@ -86,15 +86,19 @@ public:
     uint32_t depthOrArrayLayers() const;
     OptionSet<WebGPU::TextureUsage> LEGACY_NODELETE usage() const;
     uint32_t LEGACY_NODELETE sampleCount() const;
-    WGPUTextureFormat LEGACY_NODELETE parentFormat() const;
-    WGPUTextureFormat LEGACY_NODELETE format() const;
+    WebGPU::TextureFormat LEGACY_NODELETE parentFormat() const;
+    // Invalid views may have no format or dimension. format() and dimension() then report arbitrary
+    // ones, which only the validation that rejects the view sees.
+    WebGPU::TextureFormat LEGACY_NODELETE format() const;
+    const std::optional<WebGPU::TextureFormat>& optionalFormat() const { return m_format; }
     uint32_t LEGACY_NODELETE parentMipLevelCount() const;
     uint32_t LEGACY_NODELETE mipLevelCount() const;
     uint32_t LEGACY_NODELETE baseMipLevel() const;
-    WGPUTextureAspect LEGACY_NODELETE aspect() const;
+    WebGPU::TextureAspect LEGACY_NODELETE aspect() const;
     uint32_t LEGACY_NODELETE arrayLayerCount() const;
     uint32_t LEGACY_NODELETE baseArrayLayer() const;
-    WGPUTextureViewDimension LEGACY_NODELETE dimension() const;
+    WebGPU::TextureViewDimension LEGACY_NODELETE dimension() const;
+    const std::optional<WebGPU::TextureViewDimension>& optionalDimension() const { return m_dimension; }
     bool LEGACY_NODELETE isDestroyed() const;
     void destroy();
     void setCommandEncoder(CommandEncoder&) const;
@@ -108,7 +112,7 @@ public:
     id<MTLRasterizationRateMap> LEGACY_NODELETE rasterizationMapForSlice(uint32_t slice) const;
 
 private:
-    TextureView(id<MTLTexture>, const ResolvedTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Texture&, Device&);
+    TextureView(id<MTLTexture>, const ResolvedTextureViewDescriptor&, const std::optional<WebGPU::Extent3D>&, Texture&, Device&);
     TextureView(Texture&, Device&);
 
     id<MTLTexture> m_texture { nil };
@@ -122,7 +126,7 @@ private:
     const uint32_t m_arrayLayerCount { 0 };
     const WebGPU::TextureAspect m_aspect { WebGPU::TextureAspect::All };
     const OptionSet<WebGPU::TextureUsage> m_usage;
-    const std::optional<WGPUExtent3D> m_renderExtent;
+    const std::optional<WebGPU::Extent3D> m_renderExtent;
 
     const Ref<Device> m_device;
     const Ref<Texture> m_parentTexture;

@@ -307,7 +307,7 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
             instance->scheduleWork([protectedThis = WTF::move(protectedThis), device = device]() {
                 if (![protectedThis->m_device isEqual:device])
                     return;
-                protectedThis->loseTheDevice(WGPUDeviceLostReason_Undefined);
+                protectedThis->loseTheDevice(WebGPU::DeviceLostReason::Unknown);
             });
         }
     });
@@ -411,14 +411,14 @@ void Device::makeInvalid()
     protect(m_defaultQueue)->makeInvalid();
 }
 
-void Device::loseTheDevice(WGPUDeviceLostReason reason)
+void Device::loseTheDevice(WebGPU::DeviceLostReason reason)
 {
     m_device = nil;
 
     m_adapter->makeInvalid();
 
     if (m_deviceLostCallback)
-        m_deviceLostCallback(fromAPI(reason).value_or(WebGPU::DeviceLostReason::Unknown), "Device lost."_s);
+        m_deviceLostCallback(reason, "Device lost."_s);
 
     protect(m_defaultQueue)->makeInvalid();
     m_isLost = true;
@@ -457,7 +457,7 @@ void Device::destroy()
             texture->destroy();
     }
 
-    loseTheDevice(WGPUDeviceLostReason_Destroyed);
+    loseTheDevice(WebGPU::DeviceLostReason::Destroyed);
 }
 
 void Device::addTexture(const Texture& texture)
@@ -467,20 +467,20 @@ void Device::addTexture(const Texture& texture)
 
 Vector<WebGPU::FeatureName> Device::features() const
 {
-    return featuresFromAPI(m_capabilities.features.span());
+    return m_capabilities.features;
 }
 
-id<MTLTexture> Device::placeholderTexture(WGPUTextureFormat format) const
+id<MTLTexture> Device::placeholderTexture(WebGPU::TextureFormat format) const
 {
     return Texture::isDepthOrStencilFormat(format) ? m_placeholderDepthStencilTexture : m_placeholderTexture;
 }
 
-bool Device::hasFeature(WGPUFeatureName feature) const
+bool Device::hasFeature(WebGPU::FeatureName feature) const
 {
     return m_capabilities.features.contains(feature);
 }
 
-auto Device::currentErrorScope(WGPUErrorFilter type) -> ErrorScope*
+auto Device::currentErrorScope(WebGPU::ErrorFilter type) -> ErrorScope*
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-current-error-scope
 
@@ -502,7 +502,7 @@ void Device::generateAValidationError(String&& message)
         return;
 
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-a-validation-error
-    auto* scope = currentErrorScope(WGPUErrorFilter_Validation);
+    auto* scope = currentErrorScope(WebGPU::ErrorFilter::Validation);
     if (scope) {
         if (!scope->error)
             scope->error = WebGPU::Error { WebGPU::ErrorType::Validation, WTF::move(message) };
@@ -520,7 +520,7 @@ void Device::generateAnOutOfMemoryError(String&& message)
 
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-an-out-of-memory-error
 
-    auto* scope = currentErrorScope(WGPUErrorFilter_OutOfMemory);
+    auto* scope = currentErrorScope(WebGPU::ErrorFilter::OutOfMemory);
 
     if (scope) {
         if (!scope->error)
@@ -539,7 +539,7 @@ void Device::generateAnInternalError(String&& message)
 
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-an-internal-error
 
-    auto* scope = currentErrorScope(WGPUErrorFilter_Internal);
+    auto* scope = currentErrorScope(WebGPU::ErrorFilter::Internal);
 
     if (scope) {
         if (!scope->error)
@@ -579,13 +579,13 @@ void Device::captureFrameIfNeeded() const
     GPUFrameCapture::captureSingleFrameIfNeeded(m_device);
 }
 
-std::optional<WGPUErrorType> Device::validatePopErrorScope() const
+std::optional<bool> Device::validatePopErrorScope() const
 {
     if (m_isLost)
-        return WGPUErrorType_NoError;
+        return true;
 
     if (m_errorScopeStack.isEmpty())
-        return WGPUErrorType_Unknown;
+        return false;
 
     return std::nullopt;
 }
@@ -604,9 +604,9 @@ void Device::popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Er
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-poperrorscope
 
-    if (auto errorType = validatePopErrorScope()) {
+    if (auto success = validatePopErrorScope()) {
         // A lost device completes as a scope without errors.
-        callback(*errorType == WGPUErrorType_NoError, std::nullopt);
+        callback(*success, std::nullopt);
         return;
     }
 
@@ -625,7 +625,7 @@ void Device::pushErrorScope(WebGPU::ErrorFilter filter)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-pusherrorscope
 
-    ErrorScope scope { std::nullopt, toAPI(filter) };
+    ErrorScope scope { std::nullopt, filter };
 
     m_errorScopeStack.append(WTF::move(scope));
 }
@@ -637,9 +637,9 @@ void Device::resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostR
 
     m_deviceLostCallback = WTF::move(callback);
     if (m_isLost)
-        loseTheDevice(WGPUDeviceLostReason_Destroyed);
+        loseTheDevice(WebGPU::DeviceLostReason::Destroyed);
     else if (!m_adapter->isValid())
-        loseTheDevice(WGPUDeviceLostReason_Undefined);
+        loseTheDevice(WebGPU::DeviceLostReason::Unknown);
 }
 
 void Device::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&& callback)
@@ -1514,7 +1514,8 @@ WGPUQueue wgpuDeviceGetQueue(WGPUDevice device)
 
 WGPUBool wgpuDeviceHasFeature(WGPUDevice device, WGPUFeatureName feature)
 {
-    return protect(WebGPU::Metal::fromAPI(device))->hasFeature(feature);
+    auto apiFeature = WebGPU::Metal::fromAPI(feature);
+    return apiFeature && protect(WebGPU::Metal::fromAPI(device))->hasFeature(*apiFeature);
 }
 
 // The C API reports a scope that could not be popped as WGPUErrorType_Unknown.

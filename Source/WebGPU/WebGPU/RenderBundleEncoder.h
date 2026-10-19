@@ -217,8 +217,8 @@ private:
 
     ThreadSafeWeakPtr<RenderPassEncoder> m_renderPassEncoder;
     id<MTLIndirectRenderCommand> m_currentCommand { nil };
-    const Vector<WGPUTextureFormat> m_colorFormats;
-    const WGPUTextureFormat m_depthStencilFormat { WGPUTextureFormat_Undefined };
+    const Vector<std::optional<WebGPU::TextureFormat>> m_colorFormats;
+    const std::optional<WebGPU::TextureFormat> m_depthStencilFormat;
     const uint32_t m_sampleCount { 0 };
     const bool m_depthReadOnly { false };
     const bool m_stencilReadOnly { false };

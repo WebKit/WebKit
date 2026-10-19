@@ -42,1576 +42,1512 @@ namespace WebGPU::Metal {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Texture);
 
-bool Texture::isCompressedFormat(WGPUTextureFormat format)
+bool Texture::isCompressedFormat(WebGPU::TextureFormat format)
 {
     return Texture::compressedFormatType(format).has_value();
 }
 
-std::optional<Texture::CompressFormat> Texture::compressedFormatType(WGPUTextureFormat format)
+std::optional<Texture::CompressFormat> Texture::compressedFormatType(WebGPU::TextureFormat format)
 {
     // https://gpuweb.github.io/gpuweb/#packed-formats
     switch (format) {
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
         return Texture::CompressFormat::BC;
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
         return Texture::CompressFormat::ETC;
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return Texture::CompressFormat::ASTC;
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
-        return std::nullopt;
-    case WGPUTextureFormat_Undefined:
-        return std::nullopt;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return std::nullopt;
     }
 }
 
-static std::optional<WGPUTextureFormat> LEGACY_NODELETE depthSpecificFormat(WGPUTextureFormat textureFormat)
+static std::optional<WebGPU::TextureFormat> LEGACY_NODELETE depthSpecificFormat(WebGPU::TextureFormat textureFormat)
 {
     // https://gpuweb.github.io/gpuweb/#aspect-specific-format
 
     switch (textureFormat) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_Stencil8:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Stencil8:
         return std::nullopt;
-    case WGPUTextureFormat_Depth16Unorm:
-        return WGPUTextureFormat_Depth16Unorm;
-    case WGPUTextureFormat_Depth24Plus:
-        return WGPUTextureFormat_Depth24Plus;
-    case WGPUTextureFormat_Depth24PlusStencil8:
-        return WGPUTextureFormat_Depth24Plus;
-    case WGPUTextureFormat_Depth32Float:
-        return WGPUTextureFormat_Depth32Float;
-    case WGPUTextureFormat_Depth32FloatStencil8:
-        return WGPUTextureFormat_Depth32Float;
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return std::nullopt;
-    case WGPUTextureFormat_Undefined:
-        return std::nullopt;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::Depth16unorm:
+        return WebGPU::TextureFormat::Depth16unorm;
+    case WebGPU::TextureFormat::Depth24plus:
+        return WebGPU::TextureFormat::Depth24plus;
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+        return WebGPU::TextureFormat::Depth24plus;
+    case WebGPU::TextureFormat::Depth32float:
+        return WebGPU::TextureFormat::Depth32float;
+    case WebGPU::TextureFormat::Depth32floatStencil8:
+        return WebGPU::TextureFormat::Depth32float;
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return std::nullopt;
     }
 }
 
-static std::optional<WGPUTextureFormat> LEGACY_NODELETE stencilSpecificFormat(WGPUTextureFormat textureFormat)
+static std::optional<WebGPU::TextureFormat> LEGACY_NODELETE stencilSpecificFormat(WebGPU::TextureFormat textureFormat)
 {
     // https://gpuweb.github.io/gpuweb/#aspect-specific-format
 
     switch (textureFormat) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return std::nullopt;
-    case WGPUTextureFormat_Stencil8:
-        return WGPUTextureFormat_Stencil8;
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
+    case WebGPU::TextureFormat::Stencil8:
+        return WebGPU::TextureFormat::Stencil8;
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
         return std::nullopt;
-    case WGPUTextureFormat_Depth24PlusStencil8:
-        return WGPUTextureFormat_Stencil8;
-    case WGPUTextureFormat_Depth32Float:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+        return WebGPU::TextureFormat::Stencil8;
+    case WebGPU::TextureFormat::Depth32float:
         return std::nullopt;
-    case WGPUTextureFormat_Depth32FloatStencil8:
-        return WGPUTextureFormat_Stencil8;
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return std::nullopt;
-    case WGPUTextureFormat_Undefined:
-        return std::nullopt;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::Depth32floatStencil8:
+        return WebGPU::TextureFormat::Stencil8;
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return std::nullopt;
     }
 }
 
-bool Texture::containsDepthAspect(WGPUTextureFormat textureFormat)
+bool Texture::containsDepthAspect(WebGPU::TextureFormat textureFormat)
 {
     return depthSpecificFormat(textureFormat).has_value();
 }
 
-bool Texture::containsStencilAspect(WGPUTextureFormat textureFormat)
+bool Texture::containsStencilAspect(WebGPU::TextureFormat textureFormat)
 {
     return stencilSpecificFormat(textureFormat).has_value();
 }
 
-bool Texture::isDepthOrStencilFormat(WGPUTextureFormat format)
+bool Texture::isDepthOrStencilFormat(WebGPU::TextureFormat format)
 {
     // https://gpuweb.github.io/gpuweb/#depth-formats
     return containsDepthAspect(format) || containsStencilAspect(format);
 }
 
-uint32_t Texture::texelBlockWidth(WGPUTextureFormat format)
+uint32_t Texture::texelBlockWidth(WebGPU::TextureFormat format)
 {
     // https://gpuweb.github.io/gpuweb/#texel-block-width
     switch (format) {
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
         return 4;
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
         return 4;
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
         return 4;
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
         return 5;
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
         return 6;
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
         return 8;
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
         return 10;
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return 12;
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return 1;
-    case WGPUTextureFormat_Undefined:
-        return 0;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
-        return 0;
     }
 }
 
-uint32_t Texture::texelBlockHeight(WGPUTextureFormat format)
+uint32_t Texture::texelBlockHeight(WebGPU::TextureFormat format)
 {
     // https://gpuweb.github.io/gpuweb/#texel-block-height
     switch (format) {
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
         return 4;
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
         return 4;
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
         return 4;
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
         return 5;
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
         return 6;
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
         return 5;
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
         return 6;
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
         return 8;
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
         return 5;
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
         return 6;
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
         return 8;
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
         return 10;
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return 12;
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return 1;
-    case WGPUTextureFormat_Undefined:
-        return 0;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
-        return 0;
     }
 }
 
-bool Texture::isColorRenderableFormat(WGPUTextureFormat format, const Device& device)
+bool Texture::isColorRenderableFormat(WebGPU::TextureFormat format, const Device& device)
 {
     // https://gpuweb.github.io/gpuweb/#renderable-format
     switch (format) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return true;
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
-    case WGPUTextureFormat_RG11B10Ufloat:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1) || device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1);
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1) || device.hasFeature(WebGPU::FeatureName::Rg11b10ufloatRenderable);
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return false;
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RGBA8Snorm:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return false;
-    case WGPUTextureFormat_Undefined:
-        return false;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1);
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return false;
     }
 }
 
-bool Texture::isDepthStencilRenderableFormat(WGPUTextureFormat format, const Device&)
+bool Texture::isDepthStencilRenderableFormat(WebGPU::TextureFormat format, const Device&)
 {
     // https://gpuweb.github.io/gpuweb/#renderable-format
     switch (format) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
         return false;
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return true;
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return false;
-    case WGPUTextureFormat_Undefined:
-        return false;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return false;
     }
 }
 
-bool Texture::isRenderableFormat(WGPUTextureFormat format, const Device& device)
+bool Texture::isRenderableFormat(WebGPU::TextureFormat format, const Device& device)
 {
     // https://gpuweb.github.io/gpuweb/#renderable-format
     switch (format) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return true;
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RGBA8Snorm:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
-    case WGPUTextureFormat_RG11B10Ufloat:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1) || device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return false;
-    case WGPUTextureFormat_Undefined:
-        return false;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1);
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1) || device.hasFeature(WebGPU::FeatureName::Rg11b10ufloatRenderable);
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return false;
     }
 }
 
-uint32_t Texture::renderTargetPixelByteCost(WGPUTextureFormat format)
+uint32_t Texture::renderTargetPixelByteCost(WebGPU::TextureFormat format)
 {
     // https://gpuweb.github.io/gpuweb/#renderable-format
     switch (format) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
         return 1;
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
         return 2;
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
         return 4;
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
         return 8;
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
         return 4;
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
         return 8;
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return 16;
-    case WGPUTextureFormat_RG11B10Ufloat:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
         return 8;
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return 0;
-    case WGPUTextureFormat_Undefined:
-        return 0;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return 0;
     }
 }
 
-uint32_t Texture::renderTargetPixelByteAlignment(WGPUTextureFormat format)
+uint32_t Texture::renderTargetPixelByteAlignment(WebGPU::TextureFormat format)
 {
     // https://gpuweb.github.io/gpuweb/#renderable-format
     switch (format) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
         return 1;
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
         return 2;
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return 4;
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return 0;
-    case WGPUTextureFormat_Undefined:
-        return 0;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return 0;
     }
 }
 
-bool Texture::supportsMultisampling(WGPUTextureFormat format, const Device& device)
+bool Texture::supportsMultisampling(WebGPU::TextureFormat format, const Device& device)
 {
     switch (format) {
     // https://gpuweb.github.io/gpuweb/#texture-format-caps
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
     // https://gpuweb.github.io/gpuweb/#depth-formats
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return true;
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RGBA8Snorm:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
-    case WGPUTextureFormat_RG11B10Ufloat:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1) || device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return false;
-    case WGPUTextureFormat_Undefined:
-        return false;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1);
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1);
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1) || device.hasFeature(WebGPU::FeatureName::Rg11b10ufloatRenderable);
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return false;
     }
 }
 
-bool Texture::supportsResolve(WGPUTextureFormat format, const Device& device)
+bool Texture::supportsResolve(WebGPU::TextureFormat format, const Device& device)
 {
     switch (format) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RGBA16Float:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rgba16float:
         return true;
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
         return false;
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RGBA8Snorm:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
-    case WGPUTextureFormat_RG11B10Ufloat:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1) || device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1);
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1) || device.hasFeature(WebGPU::FeatureName::Rg11b10ufloatRenderable);
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return false;
-    case WGPUTextureFormat_Undefined:
-        return false;
-    case WGPUTextureFormat_Force32:
-        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
-bool Texture::supportsBlending(WGPUTextureFormat format, const Device& device)
+bool Texture::supportsBlending(WebGPU::TextureFormat format, const Device& device)
 {
     switch (format) {
     // https://gpuweb.github.io/gpuweb/#texture-format-caps
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGB10A2Unorm:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
         return true;
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
-    case WGPUTextureFormat_RG11B10Ufloat:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1) || device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RGBA32Float:
-        return device.hasFeature(WGPUFeatureName_Float32Blendable);
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RGBA8Snorm:
-        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return false;
-    case WGPUTextureFormat_Undefined:
-        return false;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1);
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1) || device.hasFeature(WebGPU::FeatureName::Rg11b10ufloatRenderable);
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rgba32float:
+        return device.hasFeature(WebGPU::FeatureName::Float32Blendable);
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
+        return device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1);
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return false;
     }
 }
@@ -1638,271 +1574,261 @@ static uint32_t maximumMiplevelCount(WebGPU::TextureDimension dimension, const W
     return WTF::fastLog2(m);
 }
 
-bool Texture::hasStorageBindingCapability(WGPUTextureFormat format, const Device& device, std::optional<WGPUStorageTextureAccess> access)
+bool Texture::hasStorageBindingCapability(WebGPU::TextureFormat format, const Device& device, std::optional<WebGPU::StorageTextureAccess> access)
 {
     // https://gpuweb.github.io/gpuweb/#plain-color-formats
     switch (format) {
     // These formats always support read-only and write-only storage access;
     // texture-formats-tier2 additionally grants read-write storage access.
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-        return (!access || *access != WGPUStorageTextureAccess_ReadWrite) || device.hasFeature(WGPUFeatureName_TextureFormatsTier2);
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-        return !access || *access != WGPUStorageTextureAccess_ReadWrite;
-    case WGPUTextureFormat_BGRA8Unorm:
-        return (!access || *access == WGPUStorageTextureAccess_WriteOnly) && device.hasFeature(WGPUFeatureName_BGRA8UnormStorage);
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+        return (!access || *access != WebGPU::StorageTextureAccess::ReadWrite) || device.hasFeature(WebGPU::FeatureName::TextureFormatsTier2);
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+        return !access || *access != WebGPU::StorageTextureAccess::ReadWrite;
+    case WebGPU::TextureFormat::Bgra8unorm:
+        return (!access || *access == WebGPU::StorageTextureAccess::WriteOnly) && device.hasFeature(WebGPU::FeatureName::Bgra8unormStorage);
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
         return true;
     // These formats support storage access only with texture-formats-tier1;
     // texture-formats-tier2 additionally grants read-write storage access.
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-        return ((!access || *access != WGPUStorageTextureAccess_ReadWrite) || device.hasFeature(WGPUFeatureName_TextureFormatsTier2)) && device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RG16Float:
-        return (!access || *access != WGPUStorageTextureAccess_ReadWrite) && device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return false;
-    case WGPUTextureFormat_Undefined:
-        return false;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+        return ((!access || *access != WebGPU::StorageTextureAccess::ReadWrite) || device.hasFeature(WebGPU::FeatureName::TextureFormatsTier2)) && device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1);
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rg16float:
+        return (!access || *access != WebGPU::StorageTextureAccess::ReadWrite) && device.hasFeature(WebGPU::FeatureName::TextureFormatsTier1);
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return false;
     }
 }
 
-WGPUTextureFormat Texture::removeSRGBSuffix(WGPUTextureFormat format)
+WebGPU::TextureFormat Texture::removeSRGBSuffix(WebGPU::TextureFormat format)
 {
     switch (format) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
         return format;
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-        return WGPUTextureFormat_RGBA8Unorm;
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+        return WebGPU::TextureFormat::Rgba8unorm;
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
         return format;
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-        return WGPUTextureFormat_BGRA8Unorm;
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+        return WebGPU::TextureFormat::Bgra8unorm;
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return format;
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-        return WGPUTextureFormat_BC1RGBAUnorm;
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-        return WGPUTextureFormat_BC2RGBAUnorm;
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-        return WGPUTextureFormat_BC3RGBAUnorm;
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+        return WebGPU::TextureFormat::Bc1RgbaUnorm;
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+        return WebGPU::TextureFormat::Bc2RgbaUnorm;
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+        return WebGPU::TextureFormat::Bc3RgbaUnorm;
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
         return format;
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-        return WGPUTextureFormat_BC7RGBAUnorm;
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-        return WGPUTextureFormat_ETC2RGB8Unorm;
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-        return WGPUTextureFormat_ETC2RGB8A1Unorm;
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-        return WGPUTextureFormat_ETC2RGBA8Unorm;
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+        return WebGPU::TextureFormat::Bc7RgbaUnorm;
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+        return WebGPU::TextureFormat::Etc2Rgb8unorm;
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+        return WebGPU::TextureFormat::Etc2Rgb8a1unorm;
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+        return WebGPU::TextureFormat::Etc2Rgba8unorm;
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
         return format;
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-        return WGPUTextureFormat_ASTC4x4Unorm;
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-        return WGPUTextureFormat_ASTC5x4Unorm;
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-        return WGPUTextureFormat_ASTC5x5Unorm;
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-        return WGPUTextureFormat_ASTC6x5Unorm;
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-        return WGPUTextureFormat_ASTC6x6Unorm;
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-        return WGPUTextureFormat_ASTC8x5Unorm;
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-        return WGPUTextureFormat_ASTC8x6Unorm;
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-        return WGPUTextureFormat_ASTC8x8Unorm;
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-        return WGPUTextureFormat_ASTC10x5Unorm;
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-        return WGPUTextureFormat_ASTC10x6Unorm;
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-        return WGPUTextureFormat_ASTC10x8Unorm;
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-        return WGPUTextureFormat_ASTC10x10Unorm;
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-        return WGPUTextureFormat_ASTC12x10Unorm;
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return WGPUTextureFormat_ASTC12x12Unorm;
-    case WGPUTextureFormat_Undefined:
-        return WGPUTextureFormat_Undefined;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
-        return WGPUTextureFormat_Undefined;
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+        return WebGPU::TextureFormat::Astc4x4Unorm;
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+        return WebGPU::TextureFormat::Astc5x4Unorm;
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+        return WebGPU::TextureFormat::Astc5x5Unorm;
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+        return WebGPU::TextureFormat::Astc6x5Unorm;
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+        return WebGPU::TextureFormat::Astc6x6Unorm;
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+        return WebGPU::TextureFormat::Astc8x5Unorm;
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+        return WebGPU::TextureFormat::Astc8x6Unorm;
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+        return WebGPU::TextureFormat::Astc8x8Unorm;
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+        return WebGPU::TextureFormat::Astc10x5Unorm;
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+        return WebGPU::TextureFormat::Astc10x6Unorm;
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+        return WebGPU::TextureFormat::Astc10x8Unorm;
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+        return WebGPU::TextureFormat::Astc10x10Unorm;
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+        return WebGPU::TextureFormat::Astc12x10Unorm;
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
+        return WebGPU::TextureFormat::Astc12x12Unorm;
     }
 }
 
-static bool LEGACY_NODELETE textureViewFormatCompatible(WGPUTextureFormat format1, WGPUTextureFormat format2)
+static bool LEGACY_NODELETE textureViewFormatCompatible(WebGPU::TextureFormat format1, WebGPU::TextureFormat format2)
 {
     // https://gpuweb.github.io/gpuweb/#texture-view-format-compatible
 
@@ -1932,8 +1858,7 @@ NSString *Device::errorValidatingTextureCreation(const WebGPU::TextureDescriptor
     if (descriptor.sampleCount != 1 && descriptor.sampleCount != 4)
         return @"createTexture: descriptor.sampleCount is neither 1 nor 4";
 
-    // The format helpers take the C API format.
-    auto format = toAPI(descriptor.format);
+    auto format = descriptor.format;
 
     switch (descriptor.dimension) {
     case WebGPU::TextureDimension::_1d:
@@ -1978,11 +1903,11 @@ NSString *Device::errorValidatingTextureCreation(const WebGPU::TextureDescriptor
         if (auto compressedFormatType = Texture::compressedFormatType(format)) {
             switch (*compressedFormatType) {
             case Texture::CompressFormat::BC:
-                if (!hasFeature(WGPUFeatureName_TextureCompressionBCSliced3D))
+                if (!hasFeature(WebGPU::FeatureName::TextureCompressionBcSliced3d))
                     return @"createTexture: descriptor.format is a compressed format but BC sliced 3D extension is not enabled";
                 break;
             case Texture::CompressFormat::ASTC:
-                if (!hasFeature(WGPUFeatureName_TextureCompressionASTCSliced3D))
+                if (!hasFeature(WebGPU::FeatureName::TextureCompressionAstcSliced3d))
                     return @"createTexture: descriptor.format is a compressed format but ASTC sliced 3D extension is not enabled";
                 break;
             case Texture::CompressFormat::ETC:
@@ -2025,7 +1950,7 @@ NSString *Device::errorValidatingTextureCreation(const WebGPU::TextureDescriptor
             return @"createTexture: descriptor.usage & WGPUTextureUsage_RenderAttachment && !isRenderableFormat(descriptor.format, *this)";
 
         if (descriptor.dimension == WebGPU::TextureDimension::_1d)
-            return @"createTexture: descriptor.usage & WGPUTextureUsage_RenderAttachment && descriptor.dimension == WGPUTextureDimension_1D";
+            return @"createTexture: descriptor.usage & WGPUTextureUsage_RenderAttachment && descriptor.dimension == WebGPU::TextureDimension::_1d";
     }
 
     if (descriptor.usage.contains(WebGPU::TextureUsage::StorageBinding)) {
@@ -2034,7 +1959,7 @@ NSString *Device::errorValidatingTextureCreation(const WebGPU::TextureDescriptor
     }
 
     for (auto viewFormat : descriptor.viewFormats) {
-        if (!textureViewFormatCompatible(format, toAPI(viewFormat)))
+        if (!textureViewFormatCompatible(format, viewFormat))
             return @"createTexture: !textureViewFormatCompatible(descriptor.format, viewFormat)";
     }
 
@@ -2056,7 +1981,7 @@ NSString *Device::errorValidatingTextureCreation(const WebGPU::TextureDescriptor
     return nil;
 }
 
-MTLTextureUsage Texture::usage(OptionSet<WebGPU::TextureUsage> usage, WGPUTextureFormat format)
+MTLTextureUsage Texture::usage(OptionSet<WebGPU::TextureUsage> usage, WebGPU::TextureFormat format)
 {
     MTLTextureUsage result = MTLTextureUsageUnknown;
     if (usage.contains(WebGPU::TextureUsage::TextureBinding))
@@ -2070,435 +1995,430 @@ MTLTextureUsage Texture::usage(OptionSet<WebGPU::TextureUsage> usage, WGPUTextur
     return result;
 }
 
-MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
+MTLPixelFormat Texture::pixelFormat(WebGPU::TextureFormat textureFormat)
 {
     switch (textureFormat) {
-    case WGPUTextureFormat_R8Unorm:
+    case WebGPU::TextureFormat::R8unorm:
         return MTLPixelFormatR8Unorm;
-    case WGPUTextureFormat_R8Snorm:
+    case WebGPU::TextureFormat::R8snorm:
         return MTLPixelFormatR8Snorm;
-    case WGPUTextureFormat_R8Uint:
+    case WebGPU::TextureFormat::R8uint:
         return MTLPixelFormatR8Uint;
-    case WGPUTextureFormat_R8Sint:
+    case WebGPU::TextureFormat::R8sint:
         return MTLPixelFormatR8Sint;
-    case WGPUTextureFormat_R16Unorm:
+    case WebGPU::TextureFormat::R16unorm:
         return MTLPixelFormatR16Unorm;
-    case WGPUTextureFormat_R16Snorm:
+    case WebGPU::TextureFormat::R16snorm:
         return MTLPixelFormatR16Snorm;
-    case WGPUTextureFormat_R16Uint:
+    case WebGPU::TextureFormat::R16uint:
         return MTLPixelFormatR16Uint;
-    case WGPUTextureFormat_R16Sint:
+    case WebGPU::TextureFormat::R16sint:
         return MTLPixelFormatR16Sint;
-    case WGPUTextureFormat_R16Float:
+    case WebGPU::TextureFormat::R16float:
         return MTLPixelFormatR16Float;
-    case WGPUTextureFormat_RG8Unorm:
+    case WebGPU::TextureFormat::Rg8unorm:
         return MTLPixelFormatRG8Unorm;
-    case WGPUTextureFormat_RG8Snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
         return MTLPixelFormatRG8Snorm;
-    case WGPUTextureFormat_RG8Uint:
+    case WebGPU::TextureFormat::Rg8uint:
         return MTLPixelFormatRG8Uint;
-    case WGPUTextureFormat_RG8Sint:
+    case WebGPU::TextureFormat::Rg8sint:
         return MTLPixelFormatRG8Sint;
-    case WGPUTextureFormat_R32Float:
+    case WebGPU::TextureFormat::R32float:
         return MTLPixelFormatR32Float;
-    case WGPUTextureFormat_R32Uint:
+    case WebGPU::TextureFormat::R32uint:
         return MTLPixelFormatR32Uint;
-    case WGPUTextureFormat_R32Sint:
+    case WebGPU::TextureFormat::R32sint:
         return MTLPixelFormatR32Sint;
-    case WGPUTextureFormat_RG16Unorm:
+    case WebGPU::TextureFormat::Rg16unorm:
         return MTLPixelFormatRG16Unorm;
-    case WGPUTextureFormat_RG16Snorm:
+    case WebGPU::TextureFormat::Rg16snorm:
         return MTLPixelFormatRG16Snorm;
-    case WGPUTextureFormat_RG16Uint:
+    case WebGPU::TextureFormat::Rg16uint:
         return MTLPixelFormatRG16Uint;
-    case WGPUTextureFormat_RG16Sint:
+    case WebGPU::TextureFormat::Rg16sint:
         return MTLPixelFormatRG16Sint;
-    case WGPUTextureFormat_RG16Float:
+    case WebGPU::TextureFormat::Rg16float:
         return MTLPixelFormatRG16Float;
-    case WGPUTextureFormat_RGBA8Unorm:
+    case WebGPU::TextureFormat::Rgba8unorm:
         return MTLPixelFormatRGBA8Unorm;
-    case WGPUTextureFormat_RGBA8UnormSrgb:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
         return MTLPixelFormatRGBA8Unorm_sRGB;
-    case WGPUTextureFormat_RGBA8Snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
         return MTLPixelFormatRGBA8Snorm;
-    case WGPUTextureFormat_RGBA8Uint:
+    case WebGPU::TextureFormat::Rgba8uint:
         return MTLPixelFormatRGBA8Uint;
-    case WGPUTextureFormat_RGBA8Sint:
+    case WebGPU::TextureFormat::Rgba8sint:
         return MTLPixelFormatRGBA8Sint;
-    case WGPUTextureFormat_BGRA8Unorm:
+    case WebGPU::TextureFormat::Bgra8unorm:
         return MTLPixelFormatBGRA8Unorm;
-    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
         return MTLPixelFormatBGRA8Unorm_sRGB;
-    case WGPUTextureFormat_RGB10A2Unorm:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
         return MTLPixelFormatRGB10A2Unorm;
-    case WGPUTextureFormat_RG11B10Ufloat:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
         return MTLPixelFormatRG11B10Float;
-    case WGPUTextureFormat_RGB9E5Ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
         return MTLPixelFormatRGB9E5Float;
-    case WGPUTextureFormat_RGB10A2Uint:
+    case WebGPU::TextureFormat::Rgb10a2uint:
         return MTLPixelFormatRGB10A2Uint;
-    case WGPUTextureFormat_RG32Float:
+    case WebGPU::TextureFormat::Rg32float:
         return MTLPixelFormatRG32Float;
-    case WGPUTextureFormat_RG32Uint:
+    case WebGPU::TextureFormat::Rg32uint:
         return MTLPixelFormatRG32Uint;
-    case WGPUTextureFormat_RG32Sint:
+    case WebGPU::TextureFormat::Rg32sint:
         return MTLPixelFormatRG32Sint;
-    case WGPUTextureFormat_RGBA16Unorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
         return MTLPixelFormatRGBA16Unorm;
-    case WGPUTextureFormat_RGBA16Snorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
         return MTLPixelFormatRGBA16Snorm;
-    case WGPUTextureFormat_RGBA16Uint:
+    case WebGPU::TextureFormat::Rgba16uint:
         return MTLPixelFormatRGBA16Uint;
-    case WGPUTextureFormat_RGBA16Sint:
+    case WebGPU::TextureFormat::Rgba16sint:
         return MTLPixelFormatRGBA16Sint;
-    case WGPUTextureFormat_RGBA16Float:
+    case WebGPU::TextureFormat::Rgba16float:
         return MTLPixelFormatRGBA16Float;
-    case WGPUTextureFormat_RGBA32Float:
+    case WebGPU::TextureFormat::Rgba32float:
         return MTLPixelFormatRGBA32Float;
-    case WGPUTextureFormat_RGBA32Uint:
+    case WebGPU::TextureFormat::Rgba32uint:
         return MTLPixelFormatRGBA32Uint;
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return MTLPixelFormatRGBA32Sint;
-    case WGPUTextureFormat_Stencil8:
+    case WebGPU::TextureFormat::Stencil8:
         return MTLPixelFormatStencil8;
-    case WGPUTextureFormat_Depth16Unorm:
+    case WebGPU::TextureFormat::Depth16unorm:
         return MTLPixelFormatDepth16Unorm;
-    case WGPUTextureFormat_Depth24Plus:
+    case WebGPU::TextureFormat::Depth24plus:
         return MTLPixelFormatDepth32Float;
-    case WGPUTextureFormat_Depth24PlusStencil8:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
         return MTLPixelFormatDepth32Float_Stencil8;
-    case WGPUTextureFormat_Depth32Float:
+    case WebGPU::TextureFormat::Depth32float:
         return MTLPixelFormatDepth32Float;
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return MTLPixelFormatDepth32Float_Stencil8;
-    case WGPUTextureFormat_ETC2RGB8Unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
         return MTLPixelFormatETC2_RGB8;
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
         return MTLPixelFormatETC2_RGB8_sRGB;
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
         return MTLPixelFormatETC2_RGB8A1;
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
         return MTLPixelFormatETC2_RGB8A1_sRGB;
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
         return MTLPixelFormatEAC_RGBA8;
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
         return MTLPixelFormatEAC_RGBA8_sRGB;
-    case WGPUTextureFormat_EACR11Unorm:
+    case WebGPU::TextureFormat::EacR11unorm:
         return MTLPixelFormatEAC_R11Unorm;
-    case WGPUTextureFormat_EACR11Snorm:
+    case WebGPU::TextureFormat::EacR11snorm:
         return MTLPixelFormatEAC_R11Snorm;
-    case WGPUTextureFormat_EACRG11Unorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
         return MTLPixelFormatEAC_RG11Unorm;
-    case WGPUTextureFormat_EACRG11Snorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
         return MTLPixelFormatEAC_RG11Snorm;
-    case WGPUTextureFormat_ASTC4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
         return MTLPixelFormatASTC_4x4_LDR;
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
         return MTLPixelFormatASTC_4x4_sRGB;
-    case WGPUTextureFormat_ASTC5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
         return MTLPixelFormatASTC_5x4_LDR;
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
         return MTLPixelFormatASTC_5x4_sRGB;
-    case WGPUTextureFormat_ASTC5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
         return MTLPixelFormatASTC_5x5_LDR;
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
         return MTLPixelFormatASTC_5x5_sRGB;
-    case WGPUTextureFormat_ASTC6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
         return MTLPixelFormatASTC_6x5_LDR;
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
         return MTLPixelFormatASTC_6x5_sRGB;
-    case WGPUTextureFormat_ASTC6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
         return MTLPixelFormatASTC_6x6_LDR;
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
         return MTLPixelFormatASTC_6x6_sRGB;
-    case WGPUTextureFormat_ASTC8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
         return MTLPixelFormatASTC_8x5_LDR;
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
         return MTLPixelFormatASTC_8x5_sRGB;
-    case WGPUTextureFormat_ASTC8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
         return MTLPixelFormatASTC_8x6_LDR;
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
         return MTLPixelFormatASTC_8x6_sRGB;
-    case WGPUTextureFormat_ASTC8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
         return MTLPixelFormatASTC_8x8_LDR;
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
         return MTLPixelFormatASTC_8x8_sRGB;
-    case WGPUTextureFormat_ASTC10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
         return MTLPixelFormatASTC_10x5_LDR;
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
         return MTLPixelFormatASTC_10x5_sRGB;
-    case WGPUTextureFormat_ASTC10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
         return MTLPixelFormatASTC_10x6_LDR;
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
         return MTLPixelFormatASTC_10x6_sRGB;
-    case WGPUTextureFormat_ASTC10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
         return MTLPixelFormatASTC_10x8_LDR;
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
         return MTLPixelFormatASTC_10x8_sRGB;
-    case WGPUTextureFormat_ASTC10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
         return MTLPixelFormatASTC_10x10_LDR;
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
         return MTLPixelFormatASTC_10x10_sRGB;
-    case WGPUTextureFormat_ASTC12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
         return MTLPixelFormatASTC_12x10_LDR;
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
         return MTLPixelFormatASTC_12x10_sRGB;
-    case WGPUTextureFormat_ASTC12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
         return MTLPixelFormatASTC_12x12_LDR;
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return MTLPixelFormatASTC_12x12_sRGB;
 #if !PLATFORM(WATCHOS)
-    case WGPUTextureFormat_BC1RGBAUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
         return MTLPixelFormatBC1_RGBA;
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
         return MTLPixelFormatBC1_RGBA_sRGB;
-    case WGPUTextureFormat_BC2RGBAUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
         return MTLPixelFormatBC2_RGBA;
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
         return MTLPixelFormatBC2_RGBA_sRGB;
-    case WGPUTextureFormat_BC3RGBAUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
         return MTLPixelFormatBC3_RGBA;
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
         return MTLPixelFormatBC3_RGBA_sRGB;
-    case WGPUTextureFormat_BC4RUnorm:
+    case WebGPU::TextureFormat::Bc4RUnorm:
         return MTLPixelFormatBC4_RUnorm;
-    case WGPUTextureFormat_BC4RSnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
         return MTLPixelFormatBC4_RSnorm;
-    case WGPUTextureFormat_BC5RGUnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
         return MTLPixelFormatBC5_RGUnorm;
-    case WGPUTextureFormat_BC5RGSnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
         return MTLPixelFormatBC5_RGSnorm;
-    case WGPUTextureFormat_BC6HRGBUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
         return MTLPixelFormatBC6H_RGBUfloat;
-    case WGPUTextureFormat_BC6HRGBFloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
         return MTLPixelFormatBC6H_RGBFloat;
-    case WGPUTextureFormat_BC7RGBAUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
         return MTLPixelFormatBC7_RGBAUnorm;
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
         return MTLPixelFormatBC7_RGBAUnorm_sRGB;
 #else
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
         return MTLPixelFormatInvalid;
 #endif
-    case WGPUTextureFormat_Undefined:
-        return MTLPixelFormatInvalid;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
-        return MTLPixelFormatInvalid;
     }
 }
 
-WGPUTextureFormat Texture::textureFormat(MTLPixelFormat pixelFormat)
+std::optional<WebGPU::TextureFormat> Texture::textureFormat(MTLPixelFormat pixelFormat)
 {
     switch (pixelFormat) {
     case MTLPixelFormatR8Unorm:
-        return WGPUTextureFormat_R8Unorm;
+        return WebGPU::TextureFormat::R8unorm;
     case MTLPixelFormatR8Snorm:
-        return WGPUTextureFormat_R8Snorm;
+        return WebGPU::TextureFormat::R8snorm;
     case MTLPixelFormatR8Uint:
-        return WGPUTextureFormat_R8Uint;
+        return WebGPU::TextureFormat::R8uint;
     case MTLPixelFormatR8Sint:
-        return WGPUTextureFormat_R8Sint;
+        return WebGPU::TextureFormat::R8sint;
     case MTLPixelFormatR16Uint:
-        return WGPUTextureFormat_R16Uint;
+        return WebGPU::TextureFormat::R16uint;
     case MTLPixelFormatR16Sint:
-        return WGPUTextureFormat_R16Sint;
+        return WebGPU::TextureFormat::R16sint;
     case MTLPixelFormatR16Float:
-        return WGPUTextureFormat_R16Float;
+        return WebGPU::TextureFormat::R16float;
     case MTLPixelFormatRG8Unorm:
-        return WGPUTextureFormat_RG8Unorm;
+        return WebGPU::TextureFormat::Rg8unorm;
     case MTLPixelFormatRG8Snorm:
-        return WGPUTextureFormat_RG8Snorm;
+        return WebGPU::TextureFormat::Rg8snorm;
     case MTLPixelFormatRG8Uint:
-        return WGPUTextureFormat_RG8Uint;
+        return WebGPU::TextureFormat::Rg8uint;
     case MTLPixelFormatRG8Sint:
-        return WGPUTextureFormat_RG8Sint;
+        return WebGPU::TextureFormat::Rg8sint;
     case MTLPixelFormatR32Float:
-        return WGPUTextureFormat_R32Float;
+        return WebGPU::TextureFormat::R32float;
     case MTLPixelFormatR32Uint:
-        return WGPUTextureFormat_R32Uint;
+        return WebGPU::TextureFormat::R32uint;
     case MTLPixelFormatR32Sint:
-        return WGPUTextureFormat_R32Sint;
+        return WebGPU::TextureFormat::R32sint;
     case MTLPixelFormatRG16Uint:
-        return WGPUTextureFormat_RG16Uint;
+        return WebGPU::TextureFormat::Rg16uint;
     case MTLPixelFormatRG16Sint:
-        return WGPUTextureFormat_RG16Sint;
+        return WebGPU::TextureFormat::Rg16sint;
     case MTLPixelFormatRG16Float:
-        return WGPUTextureFormat_RG16Float;
+        return WebGPU::TextureFormat::Rg16float;
     case MTLPixelFormatRGBA8Unorm:
-        return WGPUTextureFormat_RGBA8Unorm;
+        return WebGPU::TextureFormat::Rgba8unorm;
     case MTLPixelFormatRGBA8Unorm_sRGB:
-        return WGPUTextureFormat_RGBA8UnormSrgb;
+        return WebGPU::TextureFormat::Rgba8unormSRGB;
     case MTLPixelFormatRGBA8Snorm:
-        return WGPUTextureFormat_RGBA8Snorm;
+        return WebGPU::TextureFormat::Rgba8snorm;
     case MTLPixelFormatRGBA8Uint:
-        return WGPUTextureFormat_RGBA8Uint;
+        return WebGPU::TextureFormat::Rgba8uint;
     case MTLPixelFormatRGBA8Sint:
-        return WGPUTextureFormat_RGBA8Sint;
+        return WebGPU::TextureFormat::Rgba8sint;
     case MTLPixelFormatBGRA8Unorm:
-        return WGPUTextureFormat_BGRA8Unorm;
+        return WebGPU::TextureFormat::Bgra8unorm;
     case MTLPixelFormatBGRA8Unorm_sRGB:
-        return WGPUTextureFormat_BGRA8UnormSrgb;
+        return WebGPU::TextureFormat::Bgra8unormSRGB;
     case MTLPixelFormatRGB10A2Unorm:
-        return WGPUTextureFormat_RGB10A2Unorm;
+        return WebGPU::TextureFormat::Rgb10a2unorm;
     case MTLPixelFormatRG11B10Float:
-        return WGPUTextureFormat_RG11B10Ufloat;
+        return WebGPU::TextureFormat::Rg11b10ufloat;
     case MTLPixelFormatRGB9E5Float:
-        return WGPUTextureFormat_RGB9E5Ufloat;
+        return WebGPU::TextureFormat::Rgb9e5ufloat;
     case MTLPixelFormatRGB10A2Uint:
-        return WGPUTextureFormat_RGB10A2Uint;
+        return WebGPU::TextureFormat::Rgb10a2uint;
     case MTLPixelFormatRG32Float:
-        return WGPUTextureFormat_RG32Float;
+        return WebGPU::TextureFormat::Rg32float;
     case MTLPixelFormatRG32Uint:
-        return WGPUTextureFormat_RG32Uint;
+        return WebGPU::TextureFormat::Rg32uint;
     case MTLPixelFormatRG32Sint:
-        return WGPUTextureFormat_RG32Sint;
+        return WebGPU::TextureFormat::Rg32sint;
     case MTLPixelFormatRGBA16Uint:
-        return WGPUTextureFormat_RGBA16Uint;
+        return WebGPU::TextureFormat::Rgba16uint;
     case MTLPixelFormatRGBA16Sint:
-        return WGPUTextureFormat_RGBA16Sint;
+        return WebGPU::TextureFormat::Rgba16sint;
     case MTLPixelFormatRGBA16Float:
-        return WGPUTextureFormat_RGBA16Float;
+        return WebGPU::TextureFormat::Rgba16float;
     case MTLPixelFormatRGBA32Float:
-        return WGPUTextureFormat_RGBA32Float;
+        return WebGPU::TextureFormat::Rgba32float;
     case MTLPixelFormatRGBA32Uint:
-        return WGPUTextureFormat_RGBA32Uint;
+        return WebGPU::TextureFormat::Rgba32uint;
     case MTLPixelFormatRGBA32Sint:
-        return WGPUTextureFormat_RGBA32Sint;
+        return WebGPU::TextureFormat::Rgba32sint;
     case MTLPixelFormatStencil8:
-        return WGPUTextureFormat_Stencil8;
+        return WebGPU::TextureFormat::Stencil8;
     case MTLPixelFormatDepth16Unorm:
-        return WGPUTextureFormat_Depth16Unorm;
+        return WebGPU::TextureFormat::Depth16unorm;
     case MTLPixelFormatDepth32Float:
-        return WGPUTextureFormat_Depth24Plus;
+        return WebGPU::TextureFormat::Depth24plus;
     case MTLPixelFormatDepth32Float_Stencil8:
-        return WGPUTextureFormat_Depth24PlusStencil8;
+        return WebGPU::TextureFormat::Depth24plusStencil8;
     case MTLPixelFormatETC2_RGB8:
-        return WGPUTextureFormat_ETC2RGB8Unorm;
+        return WebGPU::TextureFormat::Etc2Rgb8unorm;
     case MTLPixelFormatETC2_RGB8_sRGB:
-        return WGPUTextureFormat_ETC2RGB8UnormSrgb;
+        return WebGPU::TextureFormat::Etc2Rgb8unormSRGB;
     case MTLPixelFormatETC2_RGB8A1:
-        return WGPUTextureFormat_ETC2RGB8A1Unorm;
+        return WebGPU::TextureFormat::Etc2Rgb8a1unorm;
     case MTLPixelFormatETC2_RGB8A1_sRGB:
-        return WGPUTextureFormat_ETC2RGB8A1UnormSrgb;
+        return WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB;
     case MTLPixelFormatEAC_RGBA8:
-        return WGPUTextureFormat_ETC2RGBA8Unorm;
+        return WebGPU::TextureFormat::Etc2Rgba8unorm;
     case MTLPixelFormatEAC_RGBA8_sRGB:
-        return WGPUTextureFormat_ETC2RGBA8UnormSrgb;
+        return WebGPU::TextureFormat::Etc2Rgba8unormSRGB;
     case MTLPixelFormatEAC_R11Unorm:
-        return WGPUTextureFormat_EACR11Unorm;
+        return WebGPU::TextureFormat::EacR11unorm;
     case MTLPixelFormatEAC_R11Snorm:
-        return WGPUTextureFormat_EACR11Snorm;
+        return WebGPU::TextureFormat::EacR11snorm;
     case MTLPixelFormatEAC_RG11Unorm:
-        return WGPUTextureFormat_EACRG11Unorm;
+        return WebGPU::TextureFormat::EacRg11unorm;
     case MTLPixelFormatEAC_RG11Snorm:
-        return WGPUTextureFormat_EACRG11Snorm;
+        return WebGPU::TextureFormat::EacRg11snorm;
     case MTLPixelFormatASTC_4x4_LDR:
-        return WGPUTextureFormat_ASTC4x4Unorm;
+        return WebGPU::TextureFormat::Astc4x4Unorm;
     case MTLPixelFormatASTC_4x4_sRGB:
-        return WGPUTextureFormat_ASTC4x4UnormSrgb;
+        return WebGPU::TextureFormat::Astc4x4UnormSRGB;
     case MTLPixelFormatASTC_5x4_LDR:
-        return WGPUTextureFormat_ASTC5x4Unorm;
+        return WebGPU::TextureFormat::Astc5x4Unorm;
     case MTLPixelFormatASTC_5x4_sRGB:
-        return WGPUTextureFormat_ASTC5x4UnormSrgb;
+        return WebGPU::TextureFormat::Astc5x4UnormSRGB;
     case MTLPixelFormatASTC_5x5_LDR:
-        return WGPUTextureFormat_ASTC5x5Unorm;
+        return WebGPU::TextureFormat::Astc5x5Unorm;
     case MTLPixelFormatASTC_5x5_sRGB:
-        return WGPUTextureFormat_ASTC5x5UnormSrgb;
+        return WebGPU::TextureFormat::Astc5x5UnormSRGB;
     case MTLPixelFormatASTC_6x5_LDR:
-        return WGPUTextureFormat_ASTC6x5Unorm;
+        return WebGPU::TextureFormat::Astc6x5Unorm;
     case MTLPixelFormatASTC_6x5_sRGB:
-        return WGPUTextureFormat_ASTC6x5UnormSrgb;
+        return WebGPU::TextureFormat::Astc6x5UnormSRGB;
     case MTLPixelFormatASTC_6x6_LDR:
-        return WGPUTextureFormat_ASTC6x6Unorm;
+        return WebGPU::TextureFormat::Astc6x6Unorm;
     case MTLPixelFormatASTC_6x6_sRGB:
-        return WGPUTextureFormat_ASTC6x6UnormSrgb;
+        return WebGPU::TextureFormat::Astc6x6UnormSRGB;
     case MTLPixelFormatASTC_8x5_LDR:
-        return WGPUTextureFormat_ASTC8x5Unorm;
+        return WebGPU::TextureFormat::Astc8x5Unorm;
     case MTLPixelFormatASTC_8x5_sRGB:
-        return WGPUTextureFormat_ASTC8x5UnormSrgb;
+        return WebGPU::TextureFormat::Astc8x5UnormSRGB;
     case MTLPixelFormatASTC_8x6_LDR:
-        return WGPUTextureFormat_ASTC8x6Unorm;
+        return WebGPU::TextureFormat::Astc8x6Unorm;
     case MTLPixelFormatASTC_8x6_sRGB:
-        return WGPUTextureFormat_ASTC8x6UnormSrgb;
+        return WebGPU::TextureFormat::Astc8x6UnormSRGB;
     case MTLPixelFormatASTC_8x8_LDR:
-        return WGPUTextureFormat_ASTC8x8Unorm;
+        return WebGPU::TextureFormat::Astc8x8Unorm;
     case MTLPixelFormatASTC_8x8_sRGB:
-        return WGPUTextureFormat_ASTC8x8UnormSrgb;
+        return WebGPU::TextureFormat::Astc8x8UnormSRGB;
     case MTLPixelFormatASTC_10x5_LDR:
-        return WGPUTextureFormat_ASTC10x5Unorm;
+        return WebGPU::TextureFormat::Astc10x5Unorm;
     case MTLPixelFormatASTC_10x5_sRGB:
-        return WGPUTextureFormat_ASTC10x5UnormSrgb;
+        return WebGPU::TextureFormat::Astc10x5UnormSRGB;
     case MTLPixelFormatASTC_10x6_LDR:
-        return WGPUTextureFormat_ASTC10x6Unorm;
+        return WebGPU::TextureFormat::Astc10x6Unorm;
     case MTLPixelFormatASTC_10x6_sRGB:
-        return WGPUTextureFormat_ASTC10x6UnormSrgb;
+        return WebGPU::TextureFormat::Astc10x6UnormSRGB;
     case MTLPixelFormatASTC_10x8_LDR:
-        return WGPUTextureFormat_ASTC10x8Unorm;
+        return WebGPU::TextureFormat::Astc10x8Unorm;
     case MTLPixelFormatASTC_10x8_sRGB:
-        return WGPUTextureFormat_ASTC10x8UnormSrgb;
+        return WebGPU::TextureFormat::Astc10x8UnormSRGB;
     case MTLPixelFormatASTC_10x10_LDR:
-        return WGPUTextureFormat_ASTC10x10Unorm;
+        return WebGPU::TextureFormat::Astc10x10Unorm;
     case MTLPixelFormatASTC_10x10_sRGB:
-        return WGPUTextureFormat_ASTC10x10UnormSrgb;
+        return WebGPU::TextureFormat::Astc10x10UnormSRGB;
     case MTLPixelFormatASTC_12x10_LDR:
-        return WGPUTextureFormat_ASTC12x10Unorm;
+        return WebGPU::TextureFormat::Astc12x10Unorm;
     case MTLPixelFormatASTC_12x10_sRGB:
-        return WGPUTextureFormat_ASTC12x10UnormSrgb;
+        return WebGPU::TextureFormat::Astc12x10UnormSRGB;
     case MTLPixelFormatASTC_12x12_LDR:
-        return WGPUTextureFormat_ASTC12x12Unorm;
+        return WebGPU::TextureFormat::Astc12x12Unorm;
     case MTLPixelFormatASTC_12x12_sRGB:
-        return WGPUTextureFormat_ASTC12x12UnormSrgb;
+        return WebGPU::TextureFormat::Astc12x12UnormSRGB;
 #if !PLATFORM(WATCHOS)
     case MTLPixelFormatBC1_RGBA:
-        return WGPUTextureFormat_BC1RGBAUnorm;
+        return WebGPU::TextureFormat::Bc1RgbaUnorm;
     case MTLPixelFormatBC1_RGBA_sRGB:
-        return WGPUTextureFormat_BC1RGBAUnormSrgb;
+        return WebGPU::TextureFormat::Bc1RgbaUnormSRGB;
     case MTLPixelFormatBC2_RGBA:
-        return WGPUTextureFormat_BC2RGBAUnorm;
+        return WebGPU::TextureFormat::Bc2RgbaUnorm;
     case MTLPixelFormatBC2_RGBA_sRGB:
-        return WGPUTextureFormat_BC2RGBAUnormSrgb;
+        return WebGPU::TextureFormat::Bc2RgbaUnormSRGB;
     case MTLPixelFormatBC3_RGBA:
-        return WGPUTextureFormat_BC3RGBAUnorm;
+        return WebGPU::TextureFormat::Bc3RgbaUnorm;
     case MTLPixelFormatBC3_RGBA_sRGB:
-        return WGPUTextureFormat_BC3RGBAUnormSrgb;
+        return WebGPU::TextureFormat::Bc3RgbaUnormSRGB;
     case MTLPixelFormatBC4_RUnorm:
-        return WGPUTextureFormat_BC4RUnorm;
+        return WebGPU::TextureFormat::Bc4RUnorm;
     case MTLPixelFormatBC4_RSnorm:
-        return WGPUTextureFormat_BC4RSnorm;
+        return WebGPU::TextureFormat::Bc4RSnorm;
     case MTLPixelFormatBC5_RGUnorm:
-        return WGPUTextureFormat_BC5RGUnorm;
+        return WebGPU::TextureFormat::Bc5RgUnorm;
     case MTLPixelFormatBC5_RGSnorm:
-        return WGPUTextureFormat_BC5RGSnorm;
+        return WebGPU::TextureFormat::Bc5RgSnorm;
     case MTLPixelFormatBC6H_RGBUfloat:
-        return WGPUTextureFormat_BC6HRGBUfloat;
+        return WebGPU::TextureFormat::Bc6hRgbUfloat;
     case MTLPixelFormatBC6H_RGBFloat:
-        return WGPUTextureFormat_BC6HRGBFloat;
+        return WebGPU::TextureFormat::Bc6hRgbFloat;
     case MTLPixelFormatBC7_RGBAUnorm:
-        return WGPUTextureFormat_BC7RGBAUnorm;
+        return WebGPU::TextureFormat::Bc7RgbaUnorm;
     case MTLPixelFormatBC7_RGBAUnorm_sRGB:
-        return WGPUTextureFormat_BC7RGBAUnormSrgb;
+        return WebGPU::TextureFormat::Bc7RgbaUnormSRGB;
 #endif
     case MTLPixelFormatInvalid:
     default:
-        return WGPUTextureFormat_Undefined;
+        return std::nullopt;
     }
 }
 
-NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth, uint32_t sampleCount)
+NSUInteger Texture::bytesPerRow(WebGPU::TextureFormat format, uint32_t textureWidth, uint32_t sampleCount)
 {
     NSUInteger blockWidth = Texture::texelBlockWidth(format);
     if (!blockWidth) {
@@ -2514,402 +2434,380 @@ NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth,
     return product.hasOverflowed() ? NSUIntegerMax : product.value();
 }
 
-Checked<uint32_t> Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
+Checked<uint32_t> Texture::texelBlockSize(WebGPU::TextureFormat format) // Bytes
 {
     // For depth-stencil textures, the input value to this function
     // needs to be the output of aspectSpecificFormat().
     ASSERT(!containsDepthAspect(format) || !containsStencilAspect(format));
     switch (format) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
         return 1;
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
         return 2;
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
         return 4;
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
         return 8;
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return 16;
-    case WGPUTextureFormat_Stencil8:
+    case WebGPU::TextureFormat::Stencil8:
         return 1;
-    case WGPUTextureFormat_Depth16Unorm:
+    case WebGPU::TextureFormat::Depth16unorm:
         return 2;
-    case WGPUTextureFormat_Depth24Plus:
+    case WebGPU::TextureFormat::Depth24plus:
         ASSERT(pixelFormat(format) == MTLPixelFormatDepth32Float);
         return 4;
-    case WGPUTextureFormat_Depth24PlusStencil8:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
         ASSERT_NOT_REACHED();
         return 0;
-    case WGPUTextureFormat_Depth32Float:
+    case WebGPU::TextureFormat::Depth32float:
         return 4;
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         ASSERT_NOT_REACHED();
         return 0;
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
         return 8;
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
         return 16;
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
         return 16;
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
         return 8;
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
         return 16;
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
         return 16;
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
         return 16;
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
         return 8;
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
         return 8;
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
         return 16;
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return 16;
-    case WGPUTextureFormat_Undefined:
-        return 0;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
-        return 0;
     }
 }
 
-WGPUTextureFormat Texture::aspectSpecificFormat(WGPUTextureFormat format, WGPUTextureAspect aspect)
+std::optional<WebGPU::TextureFormat> Texture::aspectSpecificFormat(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect)
 {
     // https://gpuweb.github.io/gpuweb/#aspect-specific-format
 
     switch (aspect) {
-    case WGPUTextureAspect_All:
+    case WebGPU::TextureAspect::All:
         return format;
-    case WGPUTextureAspect_StencilOnly: {
-        auto result = stencilSpecificFormat(format);
-        return result ? *result : WGPUTextureFormat_Undefined;
-    }
-    case WGPUTextureAspect_DepthOnly: {
-        auto result = depthSpecificFormat(format);
-        return result ? *result : WGPUTextureFormat_Undefined;
-    }
-    case WGPUTextureAspect_Force32:
-        ASSERT_NOT_REACHED();
-        return WGPUTextureFormat_Undefined;
+    case WebGPU::TextureAspect::StencilOnly:
+        return stencilSpecificFormat(format);
+    case WebGPU::TextureAspect::DepthOnly:
+        return depthSpecificFormat(format);
     }
 }
 
-std::optional<MTLPixelFormat> Texture::depthOnlyAspectMetalFormat(WGPUTextureFormat textureFormat)
+std::optional<MTLPixelFormat> Texture::depthOnlyAspectMetalFormat(WebGPU::TextureFormat textureFormat)
 {
     switch (textureFormat) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_Stencil8:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
+    case WebGPU::TextureFormat::Stencil8:
         return std::nullopt;
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         // This is a bit surprising, but it should be correct.
         // When using the view as a render target, we'll bind it to MTLRenderPassDescriptor.depthAttachment, which will ignore the stencil bits.
         // When attaching the view as a shader resource view, only the depth aspect is visible anyway.
         // When copying to/from the texture, we can use MTLBlitOption.MTLBlitOptionDepthFromDepthStencil to ignore the stencil bits.
         return pixelFormat(textureFormat);
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return std::nullopt;
-    case WGPUTextureFormat_Undefined:
-        return std::nullopt;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return std::nullopt;
     }
 }
 
-std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureFormat textureFormat)
+std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WebGPU::TextureFormat textureFormat)
 {
     switch (textureFormat) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return std::nullopt;
-    case WGPUTextureFormat_Stencil8:
+    case WebGPU::TextureFormat::Stencil8:
         return pixelFormat(textureFormat);
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
         return std::nullopt;
-    case WGPUTextureFormat_Depth24PlusStencil8:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
         ASSERT(pixelFormat(textureFormat) == MTLPixelFormatDepth32Float_Stencil8);
         return MTLPixelFormatX32_Stencil8;
-    case WGPUTextureFormat_Depth32Float:
+    case WebGPU::TextureFormat::Depth32float:
         return std::nullopt;
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return MTLPixelFormatX32_Stencil8;
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return std::nullopt;
-    case WGPUTextureFormat_Undefined:
-        return std::nullopt;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return std::nullopt;
     }
 }
@@ -2949,8 +2847,7 @@ RefPtr<WebGPU::Texture> Device::createTexture(const WebGPU::TextureDescriptor& d
 
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor new];
 
-    // The format helpers take the C API format.
-    auto format = toAPI(descriptor.format);
+    auto format = descriptor.format;
     textureDescriptor.usage = Texture::usage(descriptor.usage, format);
 
     switch (descriptor.dimension) {
@@ -3042,14 +2939,6 @@ Texture::Texture(Device& device)
 
 Texture::~Texture() = default;
 
-static std::optional<WebGPU::TextureFormat> resolveAPITextureFormat(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect)
-{
-    auto resolvedFormat = Texture::resolveTextureFormat(toAPI(format), toAPI(aspect));
-    if (!resolvedFormat)
-        return std::nullopt;
-    return fromAPI(*resolvedFormat);
-}
-
 std::optional<ResolvedTextureViewDescriptor> Texture::resolveTextureViewDescriptorDefaults(const WebGPU::TextureViewDescriptor& descriptor) const
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-resolving-gputextureviewdescriptor-defaults
@@ -3060,7 +2949,7 @@ std::optional<ResolvedTextureViewDescriptor> Texture::resolveTextureViewDescript
 
     auto format = descriptor.format;
     if (!format)
-        format = resolveAPITextureFormat(*m_format, descriptor.aspect).value_or(*m_format);
+        format = Texture::resolveTextureFormat(*m_format, descriptor.aspect).value_or(*m_format);
 
     auto mipLevelCount = descriptor.mipLevelCount;
     if (!mipLevelCount) {
@@ -3138,16 +3027,15 @@ std::optional<ResolvedTextureViewDescriptor> Texture::resolveTextureViewDescript
     };
 }
 
-std::optional<WGPUTextureFormat> Texture::resolveTextureFormat(WGPUTextureFormat format, WGPUTextureAspect aspect)
+std::optional<WebGPU::TextureFormat> Texture::resolveTextureFormat(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect)
 {
     switch (aspect) {
-    case WGPUTextureAspect_All:
+    case WebGPU::TextureAspect::All:
         return format;
-    case WGPUTextureAspect_DepthOnly:
+    case WebGPU::TextureAspect::DepthOnly:
         return depthSpecificFormat(format);
-    case WGPUTextureAspect_StencilOnly:
+    case WebGPU::TextureAspect::StencilOnly:
         return stencilSpecificFormat(format);
-    case WGPUTextureAspect_Force32:
     default:
         return { };
     }
@@ -3168,14 +3056,14 @@ uint32_t Texture::arrayLayerCount() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-WGPUTextureDimension Texture::dimension() const
+WebGPU::TextureDimension Texture::dimension() const
 {
-    return toAPI(m_dimension);
+    return m_dimension;
 }
 
-WGPUTextureFormat Texture::format() const
+WebGPU::TextureFormat Texture::format() const
 {
-    return m_format ? toAPI(*m_format) : WGPUTextureFormat_Undefined;
+    return m_format.value_or(WebGPU::TextureFormat::Rgba8unorm);
 }
 
 NSString* Texture::errorValidatingTextureViewCreation(const ResolvedTextureViewDescriptor& descriptor) const
@@ -3187,7 +3075,7 @@ NSString* Texture::errorValidatingTextureViewCreation(const ResolvedTextureViewD
         if (descriptor.format != m_format && !m_viewFormats.contains(descriptor.format))
             return ERROR_STRING(@"aspect == all and (format != parentTexture's format and !viewFormats.contains(parentTexture's format))");
     } else {
-        if (descriptor.format != resolveAPITextureFormat(*m_format, descriptor.aspect))
+        if (descriptor.format != Texture::resolveTextureFormat(*m_format, descriptor.aspect))
             return ERROR_STRING(@"aspect == All and (format != resolveTextureFormat(format, aspect))");
     }
 
@@ -3201,10 +3089,9 @@ NSString* Texture::errorValidatingTextureViewCreation(const ResolvedTextureViewD
     if (m_usage.contains(WebGPU::TextureUsage::Transient) && descriptor.usage != m_usage)
         return ERROR_STRING([NSString stringWithFormat:@"view usage(%llu) must be either zero or exactly the transient texture's usage(%llu)", toAPI(descriptor.usage), toAPI(m_usage)]);
 
-    // The format helpers take the C API format.
-    auto format = toAPI(descriptor.format);
+    auto format = descriptor.format;
 
-    if (descriptor.usage.contains(WebGPU::TextureUsage::StorageBinding) && !hasStorageBindingCapability(format, m_device, WGPUStorageTextureAccess_WriteOnly))
+    if (descriptor.usage.contains(WebGPU::TextureUsage::StorageBinding) && !hasStorageBindingCapability(format, m_device, WebGPU::StorageTextureAccess::WriteOnly))
         return ERROR_STRING(@"view usage contains storage binding and the view's format does not support it");
 
     if (descriptor.usage.contains(WebGPU::TextureUsage::RenderAttachment) && !isDepthOrStencilFormat(format) && !isColorRenderableFormat(format, m_device))
@@ -3280,11 +3167,11 @@ NSString* Texture::errorValidatingTextureViewCreation(const ResolvedTextureViewD
     return nil;
 }
 
-static WGPUExtent3D computeRenderExtent(const WGPUExtent3D& baseSize, uint32_t mipLevel)
+static WebGPU::Extent3D computeRenderExtent(const WebGPU::Extent3D& baseSize, uint32_t mipLevel)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-compute-render-extent
 
-    WGPUExtent3D extent { };
+    WebGPU::Extent3D extent { };
 
     extent.width = std::max(static_cast<uint32_t>(1), baseSize.width >> mipLevel);
 
@@ -3341,7 +3228,7 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
         return TextureView::createInvalid(*this, device.get());
     }
 
-    auto pixelFormat = Texture::pixelFormat(toAPI(descriptor->format));
+    auto pixelFormat = Texture::pixelFormat(descriptor->format);
     if (pixelFormat == MTLPixelFormatInvalid) {
         device->generateAValidationError("GPUTexture.createView: invalid texture format"_s);
         return TextureView::createInvalid(*this, device.get());
@@ -3399,7 +3286,7 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
     if (!texture.label.length)
         texture.label = m_texture.label;
 
-    std::optional<WGPUExtent3D> renderExtent;
+    std::optional<WebGPU::Extent3D> renderExtent;
     if (m_usage.contains(WebGPU::TextureUsage::RenderAttachment))
         renderExtent = computeRenderExtent({ m_width, m_height, m_depthOrArrayLayers }, descriptor->baseMipLevel);
 
@@ -3469,215 +3356,211 @@ void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
         commandEncoder.makeSubmitInvalid();
 }
 
-ASCIILiteral Texture::formatToString(WGPUTextureFormat format)
+ASCIILiteral Texture::formatToString(WebGPU::TextureFormat format)
 {
     switch (format) {
-    case WGPUTextureFormat_Undefined:
-        return "undefined"_s;
-    case WGPUTextureFormat_R8Unorm:
+    case WebGPU::TextureFormat::R8unorm:
         return "r8unorm"_s;
-    case WGPUTextureFormat_R8Snorm:
+    case WebGPU::TextureFormat::R8snorm:
         return "r8snorm"_s;
-    case WGPUTextureFormat_R8Uint:
+    case WebGPU::TextureFormat::R8uint:
         return "r8uint"_s;
-    case WGPUTextureFormat_R8Sint:
+    case WebGPU::TextureFormat::R8sint:
         return "r8sint"_s;
-    case WGPUTextureFormat_R16Uint:
+    case WebGPU::TextureFormat::R16uint:
         return "r16uint"_s;
-    case WGPUTextureFormat_R16Sint:
+    case WebGPU::TextureFormat::R16sint:
         return "r16sint"_s;
-    case WGPUTextureFormat_R16Float:
+    case WebGPU::TextureFormat::R16float:
         return "r16float"_s;
-    case WGPUTextureFormat_RG8Unorm:
+    case WebGPU::TextureFormat::Rg8unorm:
         return "rg8unorm"_s;
-    case WGPUTextureFormat_RG8Snorm:
+    case WebGPU::TextureFormat::Rg8snorm:
         return "rg8snorm"_s;
-    case WGPUTextureFormat_RG8Uint:
+    case WebGPU::TextureFormat::Rg8uint:
         return "rg8uint"_s;
-    case WGPUTextureFormat_RG8Sint:
+    case WebGPU::TextureFormat::Rg8sint:
         return "rg8sint"_s;
-    case WGPUTextureFormat_R32Float:
+    case WebGPU::TextureFormat::R32float:
         return "r32float"_s;
-    case WGPUTextureFormat_R32Uint:
+    case WebGPU::TextureFormat::R32uint:
         return "r32uint"_s;
-    case WGPUTextureFormat_R32Sint:
+    case WebGPU::TextureFormat::R32sint:
         return "r32sint"_s;
-    case WGPUTextureFormat_RG16Uint:
+    case WebGPU::TextureFormat::Rg16uint:
         return "rg16uint"_s;
-    case WGPUTextureFormat_RG16Sint:
+    case WebGPU::TextureFormat::Rg16sint:
         return "rg16sint"_s;
-    case WGPUTextureFormat_RG16Float:
+    case WebGPU::TextureFormat::Rg16float:
         return "rg16float"_s;
-    case WGPUTextureFormat_RGBA8Unorm:
+    case WebGPU::TextureFormat::Rgba8unorm:
         return "rgba8unorm"_s;
-    case WGPUTextureFormat_RGBA8UnormSrgb:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
         return "rgba8unorm-srgb"_s;
-    case WGPUTextureFormat_RGBA8Snorm:
+    case WebGPU::TextureFormat::Rgba8snorm:
         return "rgba8snorm"_s;
-    case WGPUTextureFormat_RGBA8Uint:
+    case WebGPU::TextureFormat::Rgba8uint:
         return "rgba8uint"_s;
-    case WGPUTextureFormat_RGBA8Sint:
+    case WebGPU::TextureFormat::Rgba8sint:
         return "rgba8sint"_s;
-    case WGPUTextureFormat_BGRA8Unorm:
+    case WebGPU::TextureFormat::Bgra8unorm:
         return "bgra8unorm"_s;
-    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
         return "bgra8unorm-srgb"_s;
-    case WGPUTextureFormat_RGB10A2Uint:
+    case WebGPU::TextureFormat::Rgb10a2uint:
         return "rgb10a2uint"_s;
-    case WGPUTextureFormat_RGB10A2Unorm:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
         return "rgb10a2unorm"_s;
-    case WGPUTextureFormat_RG11B10Ufloat:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
         return "rg11b10ufloat"_s;
-    case WGPUTextureFormat_RGB9E5Ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
         return "rgb9e5ufloat"_s;
-    case WGPUTextureFormat_RG32Float:
+    case WebGPU::TextureFormat::Rg32float:
         return "rg32float"_s;
-    case WGPUTextureFormat_RG32Uint:
+    case WebGPU::TextureFormat::Rg32uint:
         return "rg32uint"_s;
-    case WGPUTextureFormat_RG32Sint:
+    case WebGPU::TextureFormat::Rg32sint:
         return "rg32sint"_s;
-    case WGPUTextureFormat_RGBA16Uint:
+    case WebGPU::TextureFormat::Rgba16uint:
         return "rgba16uint"_s;
-    case WGPUTextureFormat_RGBA16Sint:
+    case WebGPU::TextureFormat::Rgba16sint:
         return "rgba16sint"_s;
-    case WGPUTextureFormat_RGBA16Float:
+    case WebGPU::TextureFormat::Rgba16float:
         return "rgba16float"_s;
-    case WGPUTextureFormat_RGBA32Float:
+    case WebGPU::TextureFormat::Rgba32float:
         return "rgba32float"_s;
-    case WGPUTextureFormat_RGBA32Uint:
+    case WebGPU::TextureFormat::Rgba32uint:
         return "rgba32uint"_s;
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return "rgba32sint"_s;
-    case WGPUTextureFormat_Stencil8:
+    case WebGPU::TextureFormat::Stencil8:
         return "stencil8"_s;
-    case WGPUTextureFormat_Depth16Unorm:
+    case WebGPU::TextureFormat::Depth16unorm:
         return "depth16unorm"_s;
-    case WGPUTextureFormat_Depth24Plus:
+    case WebGPU::TextureFormat::Depth24plus:
         return "depth24plus"_s;
-    case WGPUTextureFormat_Depth24PlusStencil8:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
         return "depth24plus-stencil8"_s;
-    case WGPUTextureFormat_Depth32Float:
+    case WebGPU::TextureFormat::Depth32float:
         return "depth32float"_s;
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return "depth32float-stencil8"_s;
-    case WGPUTextureFormat_BC1RGBAUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
         return "bc1-rgba-unorm"_s;
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
         return "bc1-rgba-unorm-srgb"_s;
-    case WGPUTextureFormat_BC2RGBAUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
         return "bc2-rgba-unorm"_s;
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
         return "bc2-rgba-unorm-srgb"_s;
-    case WGPUTextureFormat_BC3RGBAUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
         return "bc3-rgba-unorm"_s;
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
         return "bc3-rgba-unorm-srgb"_s;
-    case WGPUTextureFormat_BC4RUnorm:
+    case WebGPU::TextureFormat::Bc4RUnorm:
         return "bc4-r-unorm"_s;
-    case WGPUTextureFormat_BC4RSnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
         return "bc4-r-snorm"_s;
-    case WGPUTextureFormat_BC5RGUnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
         return "bc5-rg-unorm"_s;
-    case WGPUTextureFormat_BC5RGSnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
         return "bc5-rg-snorm"_s;
-    case WGPUTextureFormat_BC6HRGBUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
         return "bc6h-rgb-ufloat"_s;
-    case WGPUTextureFormat_BC6HRGBFloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
         return "bc6h-rgb-float"_s;
-    case WGPUTextureFormat_BC7RGBAUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
         return "bc7-rgba-unorm"_s;
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
         return "bc7-rgba-unorm-srgb"_s;
-    case WGPUTextureFormat_ETC2RGB8Unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
         return "etc2-rgb8unorm"_s;
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
         return "etc2-rgb8unorm-srgb"_s;
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
         return "etc2-rgb8a1unorm"_s;
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
         return "etc2-rgb8a1unorm-srgb"_s;
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
         return "etc2-rgba8unorm"_s;
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
         return "etc2-rgba8unorm-srgb"_s;
-    case WGPUTextureFormat_EACR11Unorm:
+    case WebGPU::TextureFormat::EacR11unorm:
         return "eac-r11unorm"_s;
-    case WGPUTextureFormat_EACR11Snorm:
+    case WebGPU::TextureFormat::EacR11snorm:
         return "eac-r11snorm"_s;
-    case WGPUTextureFormat_EACRG11Unorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
         return "eac-rg11unorm"_s;
-    case WGPUTextureFormat_EACRG11Snorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
         return "eac-rg11snorm"_s;
-    case WGPUTextureFormat_ASTC4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
         return "astc-4x4-unorm"_s;
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
         return "astc-4x4-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
         return "astc-5x4-unorm"_s;
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
         return "astc-5x4-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
         return "astc-5x5-unorm"_s;
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
         return "astc-5x5-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
         return "astc-6x5-unorm"_s;
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
         return "astc-6x5-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
         return "astc-6x6-unorm"_s;
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
         return "astc-6x6-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
         return "astc-8x5-unorm"_s;
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
         return "astc-8x5-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
         return "astc-8x6-unorm"_s;
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
         return "astc-8x6-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
         return "astc-8x8-unorm"_s;
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
         return "astc-8x8-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
         return "astc-10x5-unorm"_s;
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
         return "astc-10x5-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
         return "astc-10x6-unorm"_s;
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
         return "astc-10x6-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
         return "astc-10x8-unorm"_s;
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
         return "astc-10x8-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
         return "astc-10x10-unorm"_s;
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
         return "astc-10x10-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
         return "astc-12x10-unorm"_s;
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
         return "astc-12x10-unorm-srgb"_s;
-    case WGPUTextureFormat_ASTC12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
         return "astc-12x12-unorm"_s;
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return "astc-12x12-unorm-srgb"_s;
-    case WGPUTextureFormat_R16Unorm:
+    case WebGPU::TextureFormat::R16unorm:
         return "r16unorm"_s;
-    case WGPUTextureFormat_R16Snorm:
+    case WebGPU::TextureFormat::R16snorm:
         return "r16snorm"_s;
-    case WGPUTextureFormat_RG16Unorm:
+    case WebGPU::TextureFormat::Rg16unorm:
         return "rg16unorm"_s;
-    case WGPUTextureFormat_RG16Snorm:
+    case WebGPU::TextureFormat::Rg16snorm:
         return "rg16snorm"_s;
-    case WGPUTextureFormat_RGBA16Unorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
         return "rgba16unorm"_s;
-    case WGPUTextureFormat_RGBA16Snorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
         return "rgba16snorm"_s;
-    case WGPUTextureFormat_Force32:
-        return "invalid format"_s;
     }
 }
 
@@ -3733,7 +3616,7 @@ void Texture::setLabel(String&& label)
     m_texture.label = label.createNSString().get();
 }
 
-WGPUExtent3D Texture::logicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
+WebGPU::Extent3D Texture::logicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-logical-miplevel-specific-texture-extent
 
@@ -3757,18 +3640,18 @@ WGPUExtent3D Texture::logicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-WGPUExtent3D Texture::physicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
+WebGPU::Extent3D Texture::physicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-physical-miplevel-specific-texture-extent
     return physicalTextureExtent(dimension(), format(), logicalMiplevelSpecificTextureExtent(mipLevel));
 }
 
-WGPUExtent3D Texture::physicalTextureExtent(WGPUTextureDimension dimension, WGPUTextureFormat format, WGPUExtent3D logicalExtent)
+WebGPU::Extent3D Texture::physicalTextureExtent(WebGPU::TextureDimension dimension, WebGPU::TextureFormat format, WebGPU::Extent3D logicalExtent)
 {
     auto blockWidth = texelBlockWidth(format);
     auto blockHeight = texelBlockHeight(format);
     if (!blockWidth || !blockHeight) {
-        return WGPUExtent3D {
+        return WebGPU::Extent3D {
             .width = 1,
             .height = 1,
             .depthOrArrayLayers = 1
@@ -3776,28 +3659,25 @@ WGPUExtent3D Texture::physicalTextureExtent(WGPUTextureDimension dimension, WGPU
     }
 
     switch (dimension) {
-    case WGPUTextureDimension_1D:
+    case WebGPU::TextureDimension::_1d:
         return {
             .width = roundUpToMultipleOfNonPowerOfTwo(blockWidth, logicalExtent.width),
             .height = 1,
             .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
-    case WGPUTextureDimension_2D:
+    case WebGPU::TextureDimension::_2d:
         return {
             .width = roundUpToMultipleOfNonPowerOfTwo(blockWidth, logicalExtent.width),
             .height = roundUpToMultipleOfNonPowerOfTwo(blockHeight, logicalExtent.height),
             .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
-    case WGPUTextureDimension_3D:
+    case WebGPU::TextureDimension::_3d:
         return {
             .width = roundUpToMultipleOfNonPowerOfTwo(blockWidth, logicalExtent.width),
             .height = roundUpToMultipleOfNonPowerOfTwo(blockHeight, logicalExtent.height),
             .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
-    case WGPUTextureDimension_Force32:
-        ASSERT_NOT_REACHED();
-        return WGPUExtent3D { };
     }
 }
 
-static WGPUExtent3D imageCopyTextureSubresourceSize(const WebGPU::TexelCopyTextureInfo& imageCopyTexture)
+static WebGPU::Extent3D imageCopyTextureSubresourceSize(const WebGPU::TexelCopyTextureInfo& imageCopyTexture)
 {
     // https://gpuweb.github.io/gpuweb/#imagecopytexture-subresource-size
 
@@ -3835,144 +3715,139 @@ NSString* Texture::errorValidatingImageCopyTexture(const WebGPU::TexelCopyTextur
     return nil;
 }
 
-bool Texture::refersToSingleAspect(WGPUTextureFormat format, WGPUTextureAspect aspect)
+bool Texture::refersToSingleAspect(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect)
 {
     switch (aspect) {
-    case WGPUTextureAspect_All:
+    case WebGPU::TextureAspect::All:
         if (Texture::containsDepthAspect(format) && Texture::containsStencilAspect(format))
             return false;
         break;
-    case WGPUTextureAspect_StencilOnly:
+    case WebGPU::TextureAspect::StencilOnly:
         if (!Texture::containsStencilAspect(format))
             return false;
         break;
-    case WGPUTextureAspect_DepthOnly:
+    case WebGPU::TextureAspect::DepthOnly:
         if (!Texture::containsDepthAspect(format))
             return false;
         break;
-    case WGPUTextureAspect_Force32:
-        ASSERT_NOT_REACHED();
-        return false;
     }
 
     return true;
 }
 
-bool Texture::isValidDepthStencilCopySource(WGPUTextureFormat format, WGPUTextureAspect aspect)
+bool Texture::isValidDepthStencilCopySource(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect)
 {
     // https://gpuweb.github.io/gpuweb/#depth-formats
     ASSERT(Texture::isDepthOrStencilFormat(format));
 
     switch (format) {
-    case WGPUTextureFormat_Undefined:
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
         ASSERT_NOT_REACHED();
         return false;
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
         return true;
-    case WGPUTextureFormat_Depth24Plus:
+    case WebGPU::TextureFormat::Depth24plus:
         return false;
-    case WGPUTextureFormat_Depth24PlusStencil8:
-        return aspect == WGPUTextureAspect_StencilOnly;
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+        return aspect == WebGPU::TextureAspect::StencilOnly;
+    case WebGPU::TextureFormat::Depth32float:
+    case WebGPU::TextureFormat::Depth32floatStencil8:
         return true;
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-    case WGPUTextureFormat_Force32:
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         ASSERT_NOT_REACHED();
         return false;
     }
@@ -3983,123 +3858,119 @@ bool Texture::isValid() const
     return isDestroyed() || m_texture;
 }
 
-bool Texture::isValidDepthStencilCopyDestination(WGPUTextureFormat format, WGPUTextureAspect aspect)
+bool Texture::isValidDepthStencilCopyDestination(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect)
 {
     // https://gpuweb.github.io/gpuweb/#depth-formats
     ASSERT(Texture::isDepthOrStencilFormat(format));
 
     switch (format) {
-    case WGPUTextureFormat_Undefined:
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Unorm:
-    case WGPUTextureFormat_R16Snorm:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Unorm:
-    case WGPUTextureFormat_RG16Snorm:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Unorm:
-    case WGPUTextureFormat_RGBA16Snorm:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+    case WebGPU::TextureFormat::R8uint:
+    case WebGPU::TextureFormat::R8sint:
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::R16uint:
+    case WebGPU::TextureFormat::R16sint:
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+    case WebGPU::TextureFormat::Rg8uint:
+    case WebGPU::TextureFormat::Rg8sint:
+    case WebGPU::TextureFormat::R32float:
+    case WebGPU::TextureFormat::R32uint:
+    case WebGPU::TextureFormat::R32sint:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rg16uint:
+    case WebGPU::TextureFormat::Rg16sint:
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+    case WebGPU::TextureFormat::Rgba8uint:
+    case WebGPU::TextureFormat::Rgba8sint:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+    case WebGPU::TextureFormat::Rgb10a2uint:
+    case WebGPU::TextureFormat::Rg32float:
+    case WebGPU::TextureFormat::Rg32uint:
+    case WebGPU::TextureFormat::Rg32sint:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+    case WebGPU::TextureFormat::Rgba16uint:
+    case WebGPU::TextureFormat::Rgba16sint:
+    case WebGPU::TextureFormat::Rgba16float:
+    case WebGPU::TextureFormat::Rgba32float:
+    case WebGPU::TextureFormat::Rgba32uint:
+    case WebGPU::TextureFormat::Rgba32sint:
         return false;
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
+    case WebGPU::TextureFormat::Stencil8:
+    case WebGPU::TextureFormat::Depth16unorm:
         return true;
-    case WGPUTextureFormat_Depth24Plus:
+    case WebGPU::TextureFormat::Depth24plus:
         return false;
-    case WGPUTextureFormat_Depth24PlusStencil8:
-        return aspect == WGPUTextureAspect_StencilOnly;
-    case WGPUTextureFormat_Depth32Float:
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+        return aspect == WebGPU::TextureAspect::StencilOnly;
+    case WebGPU::TextureFormat::Depth32float:
         return false;
-    case WGPUTextureFormat_Depth32FloatStencil8:
-        return aspect == WGPUTextureAspect_StencilOnly;
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return false;
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::TextureFormat::Depth32floatStencil8:
+        return aspect == WebGPU::TextureAspect::StencilOnly;
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
         return false;
     }
 }
@@ -4137,7 +4008,7 @@ NSString* Texture::errorValidatingTextureCopyRange(const WebGPU::TexelCopyTextur
     return nil;
 }
 
-NSString* Texture::errorValidatingLinearTextureData(const WebGPU::TexelCopyBufferLayout& layout, uint64_t byteSize, WGPUTextureFormat format, const WebGPU::Extent3D& copyExtent)
+NSString* Texture::errorValidatingLinearTextureData(const WebGPU::TexelCopyBufferLayout& layout, uint64_t byteSize, WebGPU::TextureFormat format, const WebGPU::Extent3D& copyExtent)
 {
 #define ERROR_STRING(...) ([NSString stringWithFormat:@"GPUTexture.validateLinearTextureData: %@", __VA_ARGS__])
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-linear-texture-data
@@ -4328,12 +4199,13 @@ uint32_t wgpuTextureGetDepthOrArrayLayers(WGPUTexture texture)
 
 WGPUTextureDimension wgpuTextureGetDimension(WGPUTexture texture)
 {
-    return protect(WebGPU::Metal::fromAPI(texture))->dimension();
+    return WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(texture))->dimension());
 }
 
 WGPUTextureFormat wgpuTextureGetFormat(WGPUTexture texture)
 {
-    return protect(WebGPU::Metal::fromAPI(texture))->format();
+    auto format = protect(WebGPU::Metal::fromAPI(texture))->optionalFormat();
+    return format ? WebGPU::Metal::toAPI(*format) : WGPUTextureFormat_Undefined;
 }
 
 uint32_t wgpuTextureGetHeight(WGPUTexture texture)

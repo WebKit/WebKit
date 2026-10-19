@@ -424,7 +424,7 @@ void Buffer::mapAsync(OptionSet<WebGPU::MapMode> mode, uint64_t apiOffset, std::
 
     m_mapMode = mode;
 
-    device->getQueue()->onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)> { [protectedThis = protect(*this), offset = offsetAndSize->first, rangeSize = offsetAndSize->second, callback = WTF::move(callback)](WGPUQueueWorkDoneStatus status) mutable {
+    device->getQueue()->onSubmittedWorkDone(CompletionHandler<void(bool)> { [protectedThis = protect(*this), offset = offsetAndSize->first, rangeSize = offsetAndSize->second, callback = WTF::move(callback)](bool success) mutable {
         if (protectedThis->m_state == State::MappingPending) {
             protectedThis->setState(State::Mapped);
 
@@ -433,8 +433,7 @@ void Buffer::mapAsync(OptionSet<WebGPU::MapMode> mode, uint64_t apiOffset, std::
             protectedThis->m_mappedRanges = MappedRanges();
         }
 
-        ASSERT(status != WGPUQueueWorkDoneStatus_Force32);
-        callback(status == WGPUQueueWorkDoneStatus_Success);
+        callback(success);
     } });
 }
 

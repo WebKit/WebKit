@@ -62,7 +62,7 @@ if (!materializeRenderCommandEncoder() || !m_parentEncoder->isValid() || !protec
 if (id<MTLRenderPipelineState> pso = makePso) \
     [commandEncoder setRenderPipelineState:pso]; \
 else { \
-    protect(device)->loseTheDevice(WGPUDeviceLostReason_Undefined); \
+    protect(device)->loseTheDevice(WebGPU::DeviceLostReason::Unknown); \
     return __VA_ARGS__; \
 }
 
@@ -167,10 +167,10 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         if (!textureToClear)
             continue;
         TextureAndClearColor *textureWithClearColor = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
-        if (attachment.storeOp != WGPUStoreOp_Discard) {
+        if (attachment.storeOp != WebGPU::StoreOp::Discard) {
             auto& c = attachment.clearValue;
             textureWithClearColor.clearColor = MTLClearColorMake(c.r, c.g, c.b, c.a);
-        } else if (attachment.loadOp == WGPULoadOp_Load) {
+        } else if (attachment.loadOp == WebGPU::LoadOp::Load) {
             textureWithClearColor.clearColor = MTLClearColorMake(0, 0, 0, 0);
             [m_attachmentsToClear setObject:textureWithClearColor forKey:@(i)];
         }
@@ -189,18 +189,18 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
             m_rasterSampleCount = textureView.sampleCount();
         }
 
-        m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : quantizedDepthValue(attachment->depthClearValue, textureView.format());
+        m_depthClearValue = attachment->depthStoreOp == WebGPU::StoreOp::Discard ? 0 : quantizedDepthValue(attachment->depthClearValue, textureView.format());
         if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
-            m_clearDepthAttachment = depthTexture && attachment->depthStoreOp == WGPUStoreOp_Discard && attachment->depthLoadOp == WGPULoadOp_Load;
+            m_clearDepthAttachment = depthTexture && attachment->depthStoreOp == WebGPU::StoreOp::Discard && attachment->depthLoadOp == WebGPU::LoadOp::Load;
             m_depthStencilAttachmentToClear = depthTexture;
-            addResourceToActiveResources(textureView, attachment->depthReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WGPUTextureAspect_DepthOnly);
+            addResourceToActiveResources(textureView, attachment->depthReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WebGPU::TextureAspect::DepthOnly);
         }
 
-        m_stencilClearValue = attachment->stencilStoreOp == WGPUStoreOp_Discard ? 0 : attachment->stencilClearValue;
+        m_stencilClearValue = attachment->stencilStoreOp == WebGPU::StoreOp::Discard ? 0 : attachment->stencilClearValue;
         if (Texture::stencilOnlyAspectMetalFormat(textureView.format())) {
-            m_clearStencilAttachment = depthTexture && attachment->stencilStoreOp == WGPUStoreOp_Discard && attachment->stencilLoadOp == WGPULoadOp_Load;
+            m_clearStencilAttachment = depthTexture && attachment->stencilStoreOp == WebGPU::StoreOp::Discard && attachment->stencilLoadOp == WebGPU::LoadOp::Load;
             m_depthStencilAttachmentToClear = depthTexture;
-            addResourceToActiveResources(textureView, attachment->stencilReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WGPUTextureAspect_StencilOnly);
+            addResourceToActiveResources(textureView, attachment->stencilReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WebGPU::TextureAspect::StencilOnly);
         }
     }
 
@@ -208,12 +208,12 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     RELEASE_ASSERT(m_maxDynamicOffsetAtIndex.size() >= m_device->limits().maxBindGroups);
 }
 
-double RenderPassEncoder::quantizedDepthValue(double depthClearValue, WGPUTextureFormat pixelFormat)
+double RenderPassEncoder::quantizedDepthValue(double depthClearValue, WebGPU::TextureFormat pixelFormat)
 {
     if (depthClearValue < 0 || depthClearValue > 1)
         return depthClearValue;
     switch (pixelFormat) {
-    case WGPUTextureFormat_Depth16Unorm:
+    case WebGPU::TextureFormat::Depth16unorm:
         return std::nextafterf(depthClearValue + 0.5 / USHRT_MAX, 1.f);
     default:
         return depthClearValue;
@@ -311,7 +311,7 @@ static void setViewportMinMaxDepthIntoBuffer(auto& fragmentDynamicOffsets, float
     fragmentDynamicOffsets[1] = std::bit_cast<destType>(maxDepth);
 }
 
-void RenderPassEncoder::addTextureToActiveResources(const void* resourceAddress, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, uint32_t baseMipLevel, uint32_t mipLevelCount, uint32_t baseArrayLayer, uint32_t arrayLayerCount, WGPUTextureAspect aspect)
+void RenderPassEncoder::addTextureToActiveResources(const void* resourceAddress, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, uint32_t baseMipLevel, uint32_t mipLevelCount, uint32_t baseArrayLayer, uint32_t arrayLayerCount, WebGPU::TextureAspect aspect)
 {
     if (!mtlResource)
         return;
@@ -362,40 +362,40 @@ void RenderPassEncoder::addResourceToActiveResources(const void* resourceAddress
     m_usagesForBuffer.set(resourceAddress, resourceUsage);
 }
 
-void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage, WGPUTextureAspect textureAspect)
+void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage, WebGPU::TextureAspect textureAspect)
 {
     addTextureToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.mipLevelCount(), texture.baseArrayLayer(), texture.arrayLayerCount(), textureAspect);
 }
 
-void RenderPassEncoder::addResourceToActiveResources(const TextureOrTextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage, WGPUTextureAspect textureAspect)
+void RenderPassEncoder::addResourceToActiveResources(const TextureOrTextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage, WebGPU::TextureAspect textureAspect)
 {
     addTextureToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.mipLevelCount(), texture.baseArrayLayer(), texture.arrayLayerCount(), textureAspect);
 }
 
 void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage)
 {
-    WGPUTextureAspect textureAspect = texture.aspect();
-    if (textureAspect != WGPUTextureAspect_All) {
+    WebGPU::TextureAspect textureAspect = texture.aspect();
+    if (textureAspect != WebGPU::TextureAspect::All) {
         addResourceToActiveResources(texture, resourceUsage, textureAspect);
         return;
     }
 
-    addResourceToActiveResources(texture, resourceUsage, WGPUTextureAspect_DepthOnly);
-    addResourceToActiveResources(texture, resourceUsage, WGPUTextureAspect_StencilOnly);
+    addResourceToActiveResources(texture, resourceUsage, WebGPU::TextureAspect::DepthOnly);
+    addResourceToActiveResources(texture, resourceUsage, WebGPU::TextureAspect::StencilOnly);
 }
 
 void RenderPassEncoder::addResourceToActiveResources(const TextureOrTextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage)
 {
-    addResourceToActiveResources(texture, resourceUsage, WGPUTextureAspect_DepthOnly);
-    addResourceToActiveResources(texture, resourceUsage, WGPUTextureAspect_StencilOnly);
+    addResourceToActiveResources(texture, resourceUsage, WebGPU::TextureAspect::DepthOnly);
+    addResourceToActiveResources(texture, resourceUsage, WebGPU::TextureAspect::StencilOnly);
 }
 
 void RenderPassEncoder::addResourceToActiveResources(const Texture& texture, OptionSet<BindGroupEntryUsage> resourceUsage)
 {
     constexpr uint32_t baseMipLevel = 0;
     constexpr uint32_t baseArrayLayer = 0;
-    addTextureToActiveResources(&texture, texture.texture(), resourceUsage, baseMipLevel, texture.mipLevelCount(), baseArrayLayer, texture.arrayLayerCount(), WGPUTextureAspect_DepthOnly);
-    addTextureToActiveResources(&texture, texture.texture(), resourceUsage, baseMipLevel, texture.mipLevelCount(), baseArrayLayer, texture.arrayLayerCount(), WGPUTextureAspect_StencilOnly);
+    addTextureToActiveResources(&texture, texture.texture(), resourceUsage, baseMipLevel, texture.mipLevelCount(), baseArrayLayer, texture.arrayLayerCount(), WebGPU::TextureAspect::DepthOnly);
+    addTextureToActiveResources(&texture, texture.texture(), resourceUsage, baseMipLevel, texture.mipLevelCount(), baseArrayLayer, texture.arrayLayerCount(), WebGPU::TextureAspect::StencilOnly);
 }
 
 void RenderPassEncoder::addResourceToActiveResources(const BindGroupEntryUsageData::Resource& resource, OptionSet<BindGroupEntryUsage> resourceUsage)
@@ -440,7 +440,7 @@ bool RenderPassEncoder::runIndexBufferValidation(uint32_t firstInstance, uint32_
         auto bufferSize = bufferAndOffset.size;
         auto stride = bufferData.stride;
         auto lastStride = bufferData.lastStride;
-        if (bufferData.stepMode == WGPUVertexStepMode_Instance) {
+        if (bufferData.stepMode == WebGPU::VertexStepMode::Instance) {
             auto product = checkedProduct<NSUInteger>(strideCount - 1, stride);
             if (product.hasOverflowed())
                 return false;
@@ -474,14 +474,14 @@ void RenderPassEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32_t
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
         Checked<uint64_t, WTF::RecordOverflow> strideCount = 0;
         switch (bufferData.stepMode) {
-        case WGPUVertexStepMode_Vertex:
+        case WebGPU::VertexStepMode::Vertex:
             strideCount = checkedSum<uint32_t>(firstVertex, vertexCount);
             if (strideCount.hasOverflowed()) {
                 makeInvalid(@"StrideCount invalid");
                 return;
             }
             break;
-        case WGPUVertexStepMode_Instance:
+        case WebGPU::VertexStepMode::Instance:
             strideCount = checkedSum<uint32_t>(firstInstance, instanceCount);
             if (strideCount.hasOverflowed()) {
                 makeInvalid(@"StrideCount invalid");
@@ -550,7 +550,7 @@ NSString* RenderPassEncoder::errorValidatingStripIndexFormat() const
         return nil;
 
     auto topology = pipeline->primitiveTopology();
-    if (topology != WGPUPrimitiveTopology_LineStrip && topology != WGPUPrimitiveTopology_TriangleStrip)
+    if (topology != WebGPU::PrimitiveTopology::LineStrip && topology != WebGPU::PrimitiveTopology::TriangleStrip)
         return nil;
 
     if (m_indexType != pipeline->stripIndexFormat())
@@ -728,7 +728,7 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
 
     auto checkedVertexCount = checkedProduct<uint32_t>(vertexCount, instanceCount);
     if (checkedVertexCount.hasOverflowed() || checkedVertexCount.value() > m_device->maxVerticesPerDrawCall()) {
-        protect(m_device)->loseTheDevice(WGPUDeviceLostReason_Undefined);
+        protect(m_device)->loseTheDevice(WebGPU::DeviceLostReason::Unknown);
         return;
     }
 
@@ -768,7 +768,7 @@ std::pair<uint32_t, uint32_t> RenderPassEncoder::computeMininumVertexInstanceCou
         if (bufferSize < stride && bufferSize >= lastStride && elementCount == 1)
             needsValidationLayerWorkaround = true;
 
-        if (bufferData.stepMode == WGPUVertexStepMode_Vertex)
+        if (bufferData.stepMode == WebGPU::VertexStepMode::Vertex)
             minVertexCount = std::min<uint32_t>(minVertexCount, elementCount);
         else
             minInstanceCount = std::min<uint32_t>(minInstanceCount, elementCount);
@@ -913,7 +913,7 @@ void RenderPassEncoder::trackIndirectDeviceLostCheck(id<MTLBuffer> scratch, uint
                     auto* contents = static_cast<uint8_t*>(buffer.contents) + entry.offset;
                     auto& args = *static_cast<WebKitMTLDrawPrimitivesIndirectArguments*>(static_cast<void*>(contents));
                     if (args.lostOrOOBRead) {
-                        protectedDevice->loseTheDevice(WGPUDeviceLostReason_Undefined);
+                        protectedDevice->loseTheDevice(WebGPU::DeviceLostReason::Unknown);
                         break;
                     }
                 }
@@ -1143,7 +1143,7 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
     // error the page can catch, and must not be escalated to losing the device.
     auto checkedVertexCount = checkedProduct<uint32_t>(indexCount, instanceCount);
     if (checkedVertexCount.hasOverflowed() || checkedVertexCount.value() > m_device->maxVerticesPerDrawCall()) {
-        protect(m_device)->loseTheDevice(WGPUDeviceLostReason_Undefined);
+        protect(m_device)->loseTheDevice(WebGPU::DeviceLostReason::Unknown);
         return;
     }
 

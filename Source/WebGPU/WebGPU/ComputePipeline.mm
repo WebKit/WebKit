@@ -130,7 +130,7 @@ void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& desc
         return callback(returnInvalidComputePipeline(*this, isAsync));
 
     if (m_pipelineId == Device::maxPipelines) {
-        loseTheDevice(WGPUDeviceLostReason_Undefined);
+        loseTheDevice(WebGPU::DeviceLostReason::Unknown);
         return callback(returnInvalidComputePipeline(*this, isAsync, @"too many compute pipelines"));
     }
 

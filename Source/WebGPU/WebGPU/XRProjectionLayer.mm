@@ -78,11 +78,10 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CompositorServices, cp_rasterization_rate
 
 namespace WebGPU::Metal {
 
-// The layer keeps the C API formats, which the XR sub-image textures are created with.
 XRProjectionLayer::XRProjectionLayer(const WebGPU::XRProjectionLayerDescriptor& descriptor, Device& device)
     : m_sharedEvent(std::make_pair(nil, 0))
-    , m_colorFormat(toAPI(descriptor.colorFormat))
-    , m_optionalDepthStencilFormat(descriptor.depthStencilFormat ? std::optional { toAPI(*descriptor.depthStencilFormat) } : std::nullopt)
+    , m_colorFormat(descriptor.colorFormat)
+    , m_optionalDepthStencilFormat(descriptor.depthStencilFormat)
     , m_flags(descriptor.textureUsage)
     , m_scale(descriptor.scaleFactor)
     , m_device(device)

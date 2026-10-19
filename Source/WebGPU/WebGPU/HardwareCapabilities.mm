@@ -112,56 +112,56 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
     };
 }
 
-static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const HardwareCapabilities::BaseCapabilities& baseCapabilities)
+static Vector<WebGPU::FeatureName> baseFeatures(id<MTLDevice> device, const HardwareCapabilities::BaseCapabilities& baseCapabilities)
 {
-    Vector<WGPUFeatureName> features;
+    Vector<WebGPU::FeatureName> features;
 
-    features.append(WGPUFeatureName_CoreFeaturesAndLimits);
-    features.append(WGPUFeatureName_Float16Renderable);
-    features.append(WGPUFeatureName_Float32Renderable);
-    features.append(WGPUFeatureName_Float32Blendable);
+    features.append(WebGPU::FeatureName::CoreFeaturesAndLimits);
+    features.append(WebGPU::FeatureName::Float16Renderable);
+    features.append(WebGPU::FeatureName::Float32Renderable);
+    features.append(WebGPU::FeatureName::Float32Blendable);
 
-    features.append(WGPUFeatureName_ClipDistances);
-    features.append(WGPUFeatureName_DepthClipControl);
-    features.append(WGPUFeatureName_Depth32FloatStencil8);
+    features.append(WebGPU::FeatureName::ClipDistances);
+    features.append(WebGPU::FeatureName::DepthClipControl);
+    features.append(WebGPU::FeatureName::Depth32floatStencil8);
 
     UNUSED_PARAM(baseCapabilities);
 
 #if !PLATFORM(WATCHOS)
     if (device.supportsBCTextureCompression) {
-        features.append(WGPUFeatureName_TextureCompressionBC);
-        features.append(WGPUFeatureName_TextureCompressionBCSliced3D);
+        features.append(WebGPU::FeatureName::TextureCompressionBc);
+        features.append(WebGPU::FeatureName::TextureCompressionBcSliced3d);
     }
 #else
     UNUSED_PARAM(device);
 #endif
 
-    // WGPUFeatureName_TextureCompressionETC2 and WGPUFeatureName_TextureCompressionASTC are to be filled in by the caller.
+    // WebGPU::FeatureName::TextureCompressionEtc2 and WebGPU::FeatureName::TextureCompressionAstc are to be filled in by the caller.
 
-    features.append(WGPUFeatureName_IndirectFirstInstance);
-    features.append(WGPUFeatureName_RG11B10UfloatRenderable);
-    features.append(WGPUFeatureName_ShaderF16);
-    features.append(WGPUFeatureName_BGRA8UnormStorage);
+    features.append(WebGPU::FeatureName::IndirectFirstInstance);
+    features.append(WebGPU::FeatureName::Rg11b10ufloatRenderable);
+    features.append(WebGPU::FeatureName::ShaderF16);
+    features.append(WebGPU::FeatureName::Bgra8unormStorage);
 #if CPU(ARM64)
-    features.append(WGPUFeatureName_TextureFormatsTier1);
-    features.append(WGPUFeatureName_TextureFormatsTier2);
+    features.append(WebGPU::FeatureName::TextureFormatsTier1);
+    features.append(WebGPU::FeatureName::TextureFormatsTier2);
 #endif
     if (device.supportsShaderBarycentricCoordinates)
-        features.append(WGPUFeatureName_PrimitiveIndex);
+        features.append(WebGPU::FeatureName::PrimitiveIndex);
 
     // Subgroup (SIMD-group) built-in functions are guaranteed across GPU vendors by the
     // Metal 3 feature set, which provides the full reduction, prefix-scan, shuffle, ballot,
     // and quad operation set that the WGSL 'subgroups' extension requires.
     if ([device supportsFamily:MTLGPUFamilyMetal3])
-        features.append(WGPUFeatureName_Subgroups);
+        features.append(WebGPU::FeatureName::Subgroups);
 
 #if !PLATFORM(WATCHOS)
     if (device.supports32BitFloatFiltering)
-        features.append(WGPUFeatureName_Float32Filterable);
+        features.append(WebGPU::FeatureName::Float32Filterable);
 #endif
 
     if (baseCapabilities.timestampCounterSet)
-        features.append(WGPUFeatureName_TimestampQuery);
+        features.append(WebGPU::FeatureName::TimestampQuery);
 
     return features;
 }
@@ -268,9 +268,9 @@ static HardwareCapabilities apple4(id<MTLDevice> device)
 
     auto features = WebGPU::Metal::baseFeatures(device, baseCapabilities);
 
-    features.append(WGPUFeatureName_TextureCompressionETC2);
-    features.append(WGPUFeatureName_TextureCompressionASTC);
-    features.append(WGPUFeatureName_TextureCompressionASTCSliced3D);
+    features.append(WebGPU::FeatureName::TextureCompressionEtc2);
+    features.append(WebGPU::FeatureName::TextureCompressionAstc);
+    features.append(WebGPU::FeatureName::TextureCompressionAstcSliced3d);
 
     std::ranges::sort(features);
 
@@ -290,9 +290,9 @@ static HardwareCapabilities apple5(id<MTLDevice> device)
 
     auto features = WebGPU::Metal::baseFeatures(device, baseCapabilities);
 
-    features.append(WGPUFeatureName_TextureCompressionETC2);
-    features.append(WGPUFeatureName_TextureCompressionASTC);
-    features.append(WGPUFeatureName_TextureCompressionASTCSliced3D);
+    features.append(WebGPU::FeatureName::TextureCompressionEtc2);
+    features.append(WebGPU::FeatureName::TextureCompressionAstc);
+    features.append(WebGPU::FeatureName::TextureCompressionAstcSliced3d);
 
     std::ranges::sort(features);
 
@@ -314,9 +314,9 @@ static HardwareCapabilities apple6(id<MTLDevice> device)
 
     auto features = WebGPU::Metal::baseFeatures(device, baseCapabilities);
 
-    features.append(WGPUFeatureName_TextureCompressionETC2);
-    features.append(WGPUFeatureName_TextureCompressionASTC);
-    features.append(WGPUFeatureName_TextureCompressionASTCSliced3D);
+    features.append(WebGPU::FeatureName::TextureCompressionEtc2);
+    features.append(WebGPU::FeatureName::TextureCompressionAstc);
+    features.append(WebGPU::FeatureName::TextureCompressionAstcSliced3d);
 
     std::ranges::sort(features);
 
@@ -375,9 +375,9 @@ static HardwareCapabilities apple7(id<MTLDevice> device)
 
     auto features = WebGPU::Metal::baseFeatures(device, baseCapabilities);
 
-    features.append(WGPUFeatureName_TextureCompressionETC2);
-    features.append(WGPUFeatureName_TextureCompressionASTC);
-    features.append(WGPUFeatureName_TextureCompressionASTCSliced3D);
+    features.append(WebGPU::FeatureName::TextureCompressionEtc2);
+    features.append(WebGPU::FeatureName::TextureCompressionAstc);
+    features.append(WebGPU::FeatureName::TextureCompressionAstcSliced3d);
 
     std::ranges::sort(features);
 
@@ -542,12 +542,12 @@ static Limits mergeLimits(const Limits& previous, const Limits& next)
     };
 };
 
-static Vector<WGPUFeatureName> mergeFeatures(const Vector<WGPUFeatureName>& previous, const Vector<WGPUFeatureName>& next)
+static Vector<WebGPU::FeatureName> mergeFeatures(const Vector<WebGPU::FeatureName>& previous, const Vector<WebGPU::FeatureName>& next)
 {
     ASSERT(std::ranges::is_sorted(previous));
     ASSERT(std::ranges::is_sorted(next));
 
-    Vector<WGPUFeatureName> result(previous.size() + next.size());
+    Vector<WebGPU::FeatureName> result(previous.size() + next.size());
     auto end = mergeDeduplicatedSorted(previous.begin(), previous.end(), next.begin(), next.end(), result.begin());
     result.shrink(end - result.begin());
     return result;
@@ -707,7 +707,7 @@ bool anyLimitIsBetterThan(const Limits& target, const Limits& reference)
     return false;
 }
 
-bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference)
+bool includesUnsupportedFeatures(const Vector<WebGPU::FeatureName>& target, const Vector<WebGPU::FeatureName>& reference)
 {
     ASSERT(std::ranges::is_sorted(reference));
     for (auto feature : target) {

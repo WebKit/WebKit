@@ -68,7 +68,7 @@ public:
     WebGPU::AdapterInfo info() final;
     // The C API adapter info, which has members that WebGPU::AdapterInfo does not have.
     void getInfo(WGPUAdapterInfo&);
-    bool hasFeature(WGPUFeatureName);
+    bool hasFeature(WebGPU::FeatureName);
     void requestDevice(const WebGPU::DeviceDescriptor&, CompletionHandler<void(RefPtr<WebGPU::Device>&&)>&&) final;
     // requestDevice() with the reason a device could not be created, for the C API.
     void requestDeviceOrError(const WebGPU::DeviceDescriptor&, CompletionHandler<void(std::expected<Ref<Device>, String>&&)>&&);

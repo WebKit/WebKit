@@ -88,9 +88,9 @@ private:
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
     std::optional<const MachSendRight> m_webProcessID;
 #endif
-    WGPUColorSpace m_colorSpace { WGPUColorSpace::SRGB };
-    WGPUToneMappingMode m_toneMappingMode { WGPUToneMappingMode_Standard };
-    WGPUCompositeAlphaMode m_alphaMode { WGPUCompositeAlphaMode_Premultiplied };
+    WebGPU::PredefinedColorSpace m_colorSpace { WebGPU::PredefinedColorSpace::SRGB };
+    WebGPU::CanvasToneMappingMode m_toneMappingMode { WebGPU::CanvasToneMappingMode::Standard };
+    WebGPU::CanvasAlphaMode m_alphaMode { WebGPU::CanvasAlphaMode::Premultiplied };
 };
 
 } // namespace WebGPU::Metal

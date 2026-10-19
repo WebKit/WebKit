@@ -56,11 +56,11 @@ public:
         uint32_t offset { 0 };
     } SWIFT_SELF_CONTAINED;
 
-    static Ref<QuerySet> create(id<MTLBuffer> visibilityBuffer, uint32_t count, WGPUQueryType type, Device& device)
+    static Ref<QuerySet> create(id<MTLBuffer> visibilityBuffer, uint32_t count, WebGPU::QueryType type, Device& device)
     {
         return adoptRef(*new QuerySet(visibilityBuffer, count, type, device));
     }
-    static Ref<QuerySet> create(CounterSampleBuffer&& counterSampleBuffer, uint32_t count, WGPUQueryType type, Device& device)
+    static Ref<QuerySet> create(CounterSampleBuffer&& counterSampleBuffer, uint32_t count, WebGPU::QueryType type, Device& device)
     {
         return adoptRef(*new QuerySet(WTF::move(counterSampleBuffer), count, type, device));
     }
@@ -80,7 +80,8 @@ public:
 
     Device& device() const { return m_device; }
     uint32_t count() const { return m_count; }
-    WGPUQueryType type() const { return m_type; }
+    // std::nullopt only for invalid query sets.
+    std::optional<WebGPU::QueryType> type() const { return m_type; }
     id<MTLBuffer> visibilityBuffer() const { return m_visibilityBuffer; }
     CounterSampleBuffer LEGACY_NODELETE counterSampleBufferWithOffset() const;
 
@@ -91,15 +92,15 @@ public:
     static void createContainersIfNeeded();
 
 private:
-    QuerySet(id<MTLBuffer>, uint32_t, WGPUQueryType, Device&);
-    QuerySet(CounterSampleBuffer&&, uint32_t, WGPUQueryType, Device&);
+    QuerySet(id<MTLBuffer>, uint32_t, WebGPU::QueryType, Device&);
+    QuerySet(CounterSampleBuffer&&, uint32_t, WebGPU::QueryType, Device&);
     QuerySet(Device&);
 
     const Ref<Device> m_device;
     id<MTLBuffer> m_visibilityBuffer { nil };
     CounterSampleBuffer m_timestampBufferWithOffset;
     uint32_t m_count { 0 };
-    const WGPUQueryType m_type { WGPUQueryType_Force32 };
+    const std::optional<WebGPU::QueryType> m_type;
 
     // rdar://91371495 is about how we can't just naively transform PassDescriptor.timestampWrites into MTLComputePassDescriptor.sampleBufferAttachments.
     // Instead, we can resolve all the information to a dummy counter sample buffer, and then internally remember that the data

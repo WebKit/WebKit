@@ -102,7 +102,7 @@ private:
     mutable DynamicOffsetBufferMap m_vertexOffsets;
     mutable DynamicOffsetBufferMap m_fragmentOffsets;
     mutable DynamicOffsetBufferMap m_computeOffsets;
-    bool offsetVectorForBindGroup(uint32_t bindGroupIndex, DynamicOffsetBufferMap& stageOffsets, const Vector<uint32_t>& dynamicOffsets, WGPUShaderStage, std::span<uint32_t> destination);
+    bool offsetVectorForBindGroup(uint32_t bindGroupIndex, DynamicOffsetBufferMap& stageOffsets, const Vector<uint32_t>& dynamicOffsets, OptionSet<WebGPU::ShaderStage>, std::span<uint32_t> destination);
 
 
     const Ref<Device> m_device;
