@@ -296,6 +296,8 @@ https://www.theguardian.com/
     (none)
 https://www.thesaurus.com/
     (none)
+https://www.thetimes.com/
+    (none)
 https://www.tiktok.com/
     NeedsTikTokCaptchaSliderTouchActionQuirk
     NeedsTikTokCommentsOverflowingContentQuirk

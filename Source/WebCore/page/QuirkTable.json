@@ -1112,6 +1112,11 @@
             ]
         },
         {
+            "bugs": ["rdar://190263358"],
+            "matches": ["*://*.thetimes.com/*"],
+            "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
+        },
+        {
             "bugs": ["rdar://126629168"],
             "matches": ["*://dev.ti.com/*"],
             "behaviors": [

@@ -329,6 +329,8 @@ https://www.theguardian.com/
 https://www.thesaurus.com/
     NeedsAnchorToBeMouseFocusableQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+https://www.thetimes.com/
+    (none)
 https://www.tiktok.com/
     NeedsChromeCompatibilityUserAgentQuirk
     NeedsTikTokCaptchaSliderTouchActionQuirk
