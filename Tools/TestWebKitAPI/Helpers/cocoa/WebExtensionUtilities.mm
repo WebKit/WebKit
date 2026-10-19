@@ -681,6 +681,11 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     configuration.webExtensionController = _extensionController;
     if (isHTTPFamilyURL)
         configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : _extensionController.configuration.defaultWebsiteDataStore;
+    else if (usingPrivateBrowsing) {
+        // A private extension page can't share a process with the background page's persistent data store.
+        configuration._relatedWebView = nil;
+        configuration.websiteDataStore = WKWebsiteDataStore.nonPersistentDataStore;
+    }
     configuration.userContentController = userContentController(usingPrivateBrowsing);
 
     auto *preferences = configuration.preferences;

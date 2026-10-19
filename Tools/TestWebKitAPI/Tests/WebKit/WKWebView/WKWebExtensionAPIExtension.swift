@@ -533,6 +533,37 @@ struct WKWebExtensionAPIExtensionTests {
     }
 
     @Test
+    func inIncognitoContextInExtensionPages() async throws {
+        let backgroundScript = """
+            browser.test.assertFalse(browser.extension.inIncognitoContext, 'Should not be in incognito in background script')
+
+            await browser.windows.create({ incognito: false, url: browser.runtime.getURL('page.html') })
+            await browser.windows.create({ incognito: true, url: browser.runtime.getURL('page.html') })
+            """
+
+        let pageScript = """
+            if (browser.extension.inIncognitoContext)
+              browser.test.sendMessage('Extension Page is Incognito')
+            else
+              browser.test.sendMessage('Extension Page is Not Incognito')
+            """
+
+        let manager = try loadWebExtension(
+            manifest: extensionManifest,
+            resources: [
+                "background.js": backgroundScript,
+                "page.html": "<script src=\"page.js\"></script>",
+                "page.js": pageScript,
+            ]
+        )
+        let context = try #require(manager.context)
+        context.hasAccessToPrivateData = true
+
+        try await manager.waitForTestMessage("Extension Page is Not Incognito")
+        try await manager.waitForTestMessage("Extension Page is Incognito")
+    }
+
+    @Test
     func inIncognitoContextWithoutPrivateAccess() async throws {
         var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {
