@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script>
+
+function testKeepsCurrentColor(property, value)
+{
+    test(t => {
+        const element = document.createElement('div');
+        element.style.setProperty(property, value);
+        document.body.append(element);
+        t.add_cleanup(() => element.remove());
+        assert_not_equals(element.style.getPropertyValue(property), '', `'${value}' is a valid value of '${property}'`);
+
+        element.style.color = 'rgb(0, 128, 0)';
+        const computedWithGreen = element.computedStyleMap().getAll(property).map(String).join(', ');
+        element.style.color = 'rgb(0, 0, 255)';
+        const computedWithBlue = element.computedStyleMap().getAll(property).map(String).join(', ');
+        assert_regexp_match(computedWithGreen, /currentcolor/i, 'The computed value keeps currentcolor');
+        assert_equals(computedWithBlue, computedWithGreen, 'The computed value does not depend on the color property');
+    }, `Computed '${property}: ${value}' keeps currentcolor`);
+}
+
+for (const image of [
+    '-webkit-linear-gradient(currentcolor, red)',
+    '-webkit-repeating-linear-gradient(currentcolor, red 10%)',
+    '-webkit-radial-gradient(currentcolor, red)',
+    '-webkit-repeating-radial-gradient(currentcolor, red 10%)',
+    '-webkit-gradient(linear, left top, left bottom, from(color-mix(in srgb, currentcolor, red)), to(red))',
+    '-webkit-cross-fade(linear-gradient(currentcolor, red), linear-gradient(red, blue), 50%)',
+    '-webkit-image-set(linear-gradient(currentcolor, red) 1x)',
+    '-webkit-filter(linear-gradient(currentcolor, red), blur(1px))',
+])
+    testKeepsCurrentColor('background-image', image);
+
+testKeepsCurrentColor('-webkit-mask-image', 'linear-gradient(currentcolor, red)');
+
+</script>
+</body>
+</html>
