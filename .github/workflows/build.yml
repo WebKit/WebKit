@@ -667,14 +667,20 @@ jobs:
           PY
 
       - name: Configure (CMake)
+        shell: bash
         run: |
+          CMAKE_LAUNCHER_FLAGS=()
+          if command -v ccache >/dev/null 2>&1; then
+            CMAKE_LAUNCHER_FLAGS+=("-DCMAKE_C_COMPILER_LAUNCHER=ccache" "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache")
+          else
+            echo "::warning::ccache is unavailable in this runner container; configuring a direct compiler build."
+          fi
           cmake -S $GITHUB_WORKSPACE/Source/WebKit/WKC -B build \
             --fresh \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/Source/WebKit/WKC/cmake/WiiUToolchain.cmake \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            "${CMAKE_LAUNCHER_FLAGS[@]}" \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DWKC_ENABLE_FULL_WEBCORE=OFF \
             -DWKC_ENABLE_WEB_AUDIO=ON \
@@ -872,12 +878,17 @@ jobs:
         run: |
           echo "engine_ready=false" >> "$GITHUB_OUTPUT"
           set +e
+          CMAKE_LAUNCHER_FLAGS=()
+          if command -v ccache >/dev/null 2>&1; then
+            CMAKE_LAUNCHER_FLAGS+=("-DCMAKE_C_COMPILER_LAUNCHER=ccache" "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache")
+          else
+            echo "::warning::ccache is unavailable in this runner container; configuring the full page engine with direct compiler invocations."
+          fi
           cmake -S "$GITHUB_WORKSPACE/Source/WebKit/WKC" -B build-full --fresh \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/Source/WebKit/WKC/cmake/WiiUToolchain.cmake" \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            "${CMAKE_LAUNCHER_FLAGS[@]}" \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DWKC_ENABLE_FULL_WEBCORE=ON \
             -DWKC_ENABLE_WEB_AUDIO=OFF \
