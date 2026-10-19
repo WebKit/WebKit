@@ -1188,6 +1188,9 @@ public:
 
         case MemoryMode::Signaling: {
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_info.memory(memoryIndex).isMemory64());
+            // maximum().bytes() below counts default-sized pages, and memoryModeForAccess keeps
+            // every other page size out of this mode.
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isDefaultPageSize(m_info.memory(memoryIndex).log2PageSize()));
             // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
             // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
             // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above

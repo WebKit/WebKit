@@ -189,7 +189,7 @@ static inline void SYSV_ABI buildEntryBufferForCatch(Probe::Context& context)
     context.gpr(GPRInfo::wasmContextInstancePointer) = std::bit_cast<uintptr_t>(instance);
     if (instance->moduleInformation().memoryCount()) {
         context.gpr(GPRInfo::wasmBaseMemoryPointer) = std::bit_cast<uintptr_t>(instance->memory(0)->basePointer());
-        context.gpr(GPRInfo::wasmBoundsCheckingSizeRegister) = instance->memory(0)->memory().mappedCapacity();
+        context.gpr(GPRInfo::wasmBoundsCheckingSizeRegister) = boundsCheckingSizeFor(instance->memory(0)->memory());
     }
 }
 

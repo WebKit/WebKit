@@ -47,6 +47,23 @@ struct PinnedSizeRegisterInfo {
     unsigned sizeOffset;
 };
 
+constexpr uint8_t defaultLog2PageSize = 16;
+static_assert(1ull << defaultLog2PageSize == PageCount::pageSize);
+
+inline bool isDefaultPageSize(uint8_t log2PageSize)
+{
+    return log2PageSize == defaultLog2PageSize;
+}
+
+// A memory's byte size is an OS-page multiple only when its pages are at least that large, so for
+// every other page size the mapped capacity overshoots the memory and cannot bound it.
+inline size_t boundsCheckingSizeFor(const Memory& memory)
+{
+    if (isDefaultPageSize(memory.log2PageSize()))
+        return memory.mappedCapacity();
+    return memory.size();
+}
+
 class MemoryInformation {
 public:
     MemoryInformation()
@@ -56,8 +73,7 @@ public:
 
     MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport, bool isMemory64, uint8_t log2PageSize);
 
-    static constexpr uint8_t defaultLog2PageSize = 16;
-    static_assert(1ull << defaultLog2PageSize == PageCount::pageSize);
+    static constexpr uint8_t defaultLog2PageSize = JSC::Wasm::defaultLog2PageSize;
 
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }

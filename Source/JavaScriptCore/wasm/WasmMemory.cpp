@@ -191,7 +191,10 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         return nullptr;
 
     char* fastMemory = nullptr;
-    if (Options::useWasmFastMemory() && desiredMemoryMode.value_or(MemoryMode::Signaling) == MemoryMode::Signaling && !addressType.is64Bit()) {
+    // Keep this in agreement with ModuleInformation::memoryModeForAccess, which decides the mode
+    // codegen assumes: a memory created in a mode the generated check did not expect is checked
+    // against the wrong value.
+    if (Options::useWasmFastMemory() && desiredMemoryMode.value_or(MemoryMode::Signaling) == MemoryMode::Signaling && !addressType.is64Bit() && isDefaultPageSize(log2PageSize)) {
 #if CPU(ADDRESS32)
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("32-bit platforms don't support fast memory.");
 #endif

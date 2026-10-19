@@ -131,7 +131,10 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     // multi-memories must always use explicit bounds checks.
     MemoryMode memoryModeForAccess(unsigned memoryIndex, MemoryMode memory0Mode) const
     {
-        if (memoryIndex || memory(memoryIndex).isMemory64())
+        // Guard pages bound a memory only when its size is where the mapping ends. A memory whose
+        // page size is smaller than an OS page's can end partway into a mapped page, so it has to be
+        // checked against its own size instead.
+        if (memoryIndex || memory(memoryIndex).isMemory64() || !isDefaultPageSize(memory(memoryIndex).log2PageSize()))
             return MemoryMode::BoundsChecking;
         return memory0Mode;
     }

@@ -142,6 +142,22 @@ namespace {
 
 std::atomic<int> compileCounter;
 
+#if ENABLE(WEBASSEMBLY)
+// Whether this instance's memory base and bounds-checking size can be baked into the generated
+// code rather than reloaded. A signaling memory never moves, and a shared one reserves its
+// declared maximum up front. Neither holds for a memory checked against its own size, which
+// growing changes.
+static bool wasmMemoryStateIsConstant(JSWebAssemblyInstance* instance)
+{
+    if (!Wasm::isDefaultPageSize(instance->memory(0)->memory().log2PageSize()))
+        return false;
+    auto mode = instance->memory0Mode();
+    if (mode == MemoryMode::Signaling)
+        return true;
+    return mode == MemoryMode::BoundsChecking && instance->memory(0)->sharingMode() == MemorySharingMode::Shared;
+}
+#endif
+
 #if ASSERT_ENABLED
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITH_ATTRIBUTES(ftlUnreachable, NO_RETURN_DUE_TO_CRASH, void, (CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex));
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION_WITH_ATTRIBUTES(ftlUnreachable, NO_RETURN_DUE_TO_CRASH, void, (CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex))
@@ -15319,10 +15335,9 @@ IGNORE_CLANG_WARNINGS_END
         arguments.append(ConstrainedValue(frozenPointer(m_graph.freeze(instance)), ValueRep::reg(GPRInfo::wasmContextInstancePointer)));
         if (instance->module().moduleInformation().memoryCount()) {
             auto mode = instance->memory0Mode();
-            if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance->memory(0)->sharingMode() == MemorySharingMode::Shared)) {
-                // Capacity and basePointer will not be changed.
+            if (wasmMemoryStateIsConstant(instance)) {
                 if (mode == MemoryMode::BoundsChecking) {
-                    arguments.append(ConstrainedValue(m_out.constInt64(instance->memory(0)->mappedCapacity()), ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister)));
+                    arguments.append(ConstrainedValue(m_out.constInt64(Wasm::boundsCheckingSizeFor(instance->memory(0)->memory())), ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister)));
                     wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints = true;
                 }
                 arguments.append(ConstrainedValue(m_out.constIntPtr(instance->memory(0)->basePointer()), ValueRep::reg(GPRInfo::wasmBaseMemoryPointer)));
@@ -15403,7 +15418,7 @@ IGNORE_CLANG_WARNINGS_END
                 ASSERT(!RegisterSet::macroClobberedGPRs().contains(scratchGPR, IgnoreVectors));
                 if (instance->module().moduleInformation().memoryCount()) {
                     auto mode = instance->memory0Mode();
-                    if (!(mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance->memory(0)->sharingMode() == MemorySharingMode::Shared))) {
+                    if (!wasmMemoryStateIsConstant(instance)) {
                         // We always clobber GPRInfo::wasmBoundsCheckingSizeRegister regardless of mode. It is OK since patchpoint already said it is clobbered.
                         if (isARM64E())
                             jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
