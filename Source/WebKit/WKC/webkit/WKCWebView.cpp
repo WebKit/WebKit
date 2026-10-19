@@ -1924,8 +1924,8 @@ bool WKCWebView::loadURLOrSearch(const char* input, const char* referer)
         return false;
 
     if (!parsedTarget.protocolIsInHTTPFamily()
-        && !parsedTarget.protocolIs("about")
-        && !parsedTarget.protocolIs("file"))
+        && !parsedTarget.protocolIs("about"_s)
+        && !parsedTarget.protocolIs("file"_s))
         return false;
 
     auto normalizedTarget = parsedTarget.string().utf8();
