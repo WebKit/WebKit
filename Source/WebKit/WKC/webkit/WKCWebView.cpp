@@ -1939,7 +1939,11 @@ bool WKCWebView::loadURLOrSearch(const char* input, const char* referer)
 void WKCWebView::loadString(const char* content, const unsigned short* mimetype,
                              const unsigned short* encoding, const char* base_uri)
 {
-    if (!content || !content[0] || !m_private) return;
+    // The public API can be called during view construction or teardown, just
+    // like loadURI(). Reject the call if the frame is not attached instead of
+    // dereferencing a null m_mainFrame.
+    if (!content || !content[0] || !m_private || !m_private->m_mainFrame)
+        return;
     m_private->m_mainFrame->loadString(content, mimetype, encoding, base_uri);
 }
 
