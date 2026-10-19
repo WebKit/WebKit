@@ -369,6 +369,8 @@ private:
     std::optional<SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
 
     void updateDocumentSecurityOrigin(WebFrameProxy*);
+    bool isKnownNotSecureContext() const;
+    bool canBeSecureContext(WebFrameProxy* creator) const;
     WebCore::SecurityOriginData committedDocumentSecurityOriginData() const;
 
     RefPtr<WebFrameProxy> deepLastChild();

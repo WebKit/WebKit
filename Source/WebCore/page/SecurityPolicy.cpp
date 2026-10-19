@@ -175,6 +175,19 @@ bool SecurityPolicy::shouldInheritSecurityOriginFromOwner(const URL& url)
     return url.isEmpty() || url.isAboutBlank() || url.isAboutSrcDoc() || equalIgnoringASCIICase(url.string(), aboutBlankURL().string());
 }
 
+// https://html.spec.whatwg.org/multipage/webappapis.html#secure-context
+IsSecureContext SecurityPolicy::secureContextForDocument(const URL& url, const SecurityOrigin& origin, IsSandboxedOrigin isSandboxedOrigin, std::optional<IsSecureContext> parentIsSecureContext)
+{
+    if (url.protocolIsData())
+        return parentIsSecureContext.value_or(IsSecureContext::No);
+
+    if (parentIsSecureContext == IsSecureContext::No)
+        return IsSecureContext::No;
+
+    bool isPotentiallyTrustworthy = isSandboxedOrigin == IsSandboxedOrigin::Yes ? isURLPotentiallyTrustworthy(url) : origin.isPotentiallyTrustworthy();
+    return isPotentiallyTrustworthy ? IsSecureContext::Yes : IsSecureContext::No;
+}
+
 bool SecurityPolicy::isBaseURLSchemeAllowed(const URL& url)
 {
     // See <https://github.com/whatwg/html/issues/2249>.

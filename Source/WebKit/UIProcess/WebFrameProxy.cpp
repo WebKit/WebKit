@@ -400,6 +400,8 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
 
     RefPtr creator = parentFrame() ? parentFrame() : opener();
     updateDocumentSecurityOrigin(creator.get());
+    if (!canBeSecureContext(creator.get()))
+        m_documentSecurityPolicy->isSecureContext = IsSecureContext::No;
 
     // Record the origin reported by the WCP, to validate against later, only if we can
     // prove it's a load where a privileged process does not specify a precise origin.
@@ -1363,6 +1365,24 @@ void WebFrameProxy::updateDocumentSecurityOrigin(WebFrameProxy* creator)
     }
 
     m_documentSecurityOrigin = SecurityOrigin::create(url());
+}
+
+bool WebFrameProxy::isKnownNotSecureContext() const
+{
+    return m_documentSecurityPolicy && m_documentSecurityPolicy->isSecureContext == IsSecureContext::No;
+}
+
+// The web process reports whether its document is a secure context, which this has to agree with.
+bool WebFrameProxy::canBeSecureContext(WebFrameProxy* creator) const
+{
+    if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(url()))
+        return !creator || !creator->isKnownNotSecureContext();
+
+    std::optional<IsSecureContext> parentIsSecureContext;
+    if (RefPtr parent = parentFrame())
+        parentIsSecureContext = parent->isKnownNotSecureContext() ? IsSecureContext::No : IsSecureContext::Yes;
+
+    return SecurityPolicy::secureContextForDocument(url(), securityOrigin(), m_effectiveSandboxFlags.contains(SandboxFlag::Origin) ? IsSandboxedOrigin::Yes : IsSandboxedOrigin::No, parentIsSecureContext) == IsSecureContext::Yes;
 }
 
 WebCore::CertificateInfo WebFrameProxy::provisionalCertificateInfoFromNetworkProcess(const URL& url) const

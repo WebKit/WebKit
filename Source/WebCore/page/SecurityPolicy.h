@@ -29,6 +29,7 @@
 #pragma once
 
 #include <WebCore/FetchOptions.h>
+#include <WebCore/IsSecureContext.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -36,6 +37,8 @@ namespace WebCore {
 class OriginAccessPatterns;
 class SecurityOrigin;
 class UserContentURLPattern;
+
+enum class IsSandboxedOrigin : bool { No, Yes };
 
 class SecurityPolicy {
 public:
@@ -55,6 +58,8 @@ public:
     static String generateOriginHeader(ReferrerPolicy, const URL&, const SecurityOrigin&, const OriginAccessPatterns&);
 
     WEBCORE_EXPORT static bool shouldInheritSecurityOriginFromOwner(const URL&);
+
+    WEBCORE_EXPORT static IsSecureContext secureContextForDocument(const URL&, const SecurityOrigin&, IsSandboxedOrigin, std::optional<IsSecureContext> parentIsSecureContext);
 
     static bool isBaseURLSchemeAllowed(const URL&);
 
