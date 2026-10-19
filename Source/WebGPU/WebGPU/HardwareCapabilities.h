@@ -46,6 +46,7 @@ struct HardwareCapabilities {
         id<MTLCounterSet> statisticCounterSet { nil };
         uint32_t memoryBarrierLimit { 0 };
         bool supportsNonPrivateDepthStencilTextures { false };
+        bool supportsMemorylessTextures { false };
         bool canPresentRGB10A2PixelFormats { false };
         bool supportsResidencySets { false };
     } baseCapabilities;

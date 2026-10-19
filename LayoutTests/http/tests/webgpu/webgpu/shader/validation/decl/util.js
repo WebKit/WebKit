@@ -12,6 +12,31 @@
 /** The list of all shader stages */
 export const kShaderStages = ['vertex', 'fragment', 'compute'];
 
+export function requiredLanguageFeatureHeader(addressSpace) {
+  const feature = kAddressSpaceInfo[addressSpace].wgslLanguageFeature;
+  return feature === undefined ? '' : `requires ${feature};\n`;
+}
+
+
+
+
+
+
+
+export function skipIfImmediateDataNotSupported(t) {
+  t.skipIfLanguageFeatureNotSupported('immediate_address_space');
+}
+
+export function skipIfAddressSpaceNotSupported(
+t,
+addressSpace)
+{
+  const feature = kAddressSpaceInfo[addressSpace].wgslLanguageFeature;
+  if (feature !== undefined) {
+    t.skipIfLanguageFeatureNotSupported(feature);
+  }
+}
+
 /**
  * declareEntrypoint emits the WGSL to declare an entry point with the name, stage and body.
  * The generated function will have an appropriate return type and return statement, so that `body`
@@ -107,15 +132,16 @@ additionalBody)
     p.explicitSpace ? p.addressSpace : '',
     p.explicitAccess ? p.accessMode : ''
   );
+  const header = requiredLanguageFeatureHeader(p.addressSpace);
 
   additionalBody = additionalBody ?? '';
 
   switch (info.scope) {
     case 'module':
-      return decl + '\n' + declareEntryPoint({ stage: p.stage, body: additionalBody });
+      return header + decl + '\n' + declareEntryPoint({ stage: p.stage, body: additionalBody });
 
     case 'function':
-      return declareEntryPoint({ stage: p.stage, body: decl + '\n' + additionalBody });
+      return header + declareEntryPoint({ stage: p.stage, body: decl + '\n' + additionalBody });
   }
 }
 

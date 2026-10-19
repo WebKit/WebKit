@@ -142,6 +142,7 @@ const kConcreteCases = {
   gbra: { wgsl: 'let r : vec4<T> = v.gbra;', ok: (width) => width > 3 },
 
   // swizzle chains
+  xy_x: { wgsl: 'let r : T = v.xy.x;', ok: true },
   xy_yx: { wgsl: 'let r : vec2<T> = v.xy.yx;', ok: true },
   xyx_xxy: { wgsl: 'let r : vec3<T> = v.xyx.xxy;', ok: true },
   xyz_zyx: { wgsl: 'let r : vec3<T> = v.xyz.zyx;', ok: (width) => width > 2 },
@@ -346,6 +347,7 @@ const kAbstractCases = {
   gbra: { wgsl: 'const r = V.gbra;', result_width: 4, ok: (width) => width > 3 },
 
   // swizzle chains
+  xy_x: { wgsl: 'const r = V.xy.x;', result_width: 1, ok: true },
   xy_yx: { wgsl: 'const r = V.xy.yx;', result_width: 2, ok: true },
   xyx_xxy: { wgsl: 'const r = V.xyx.xxy;', result_width: 3, ok: true },
   xyz_zyx: { wgsl: 'const r = V.xyz.zyx;', result_width: 3, ok: (width) => width > 2 },
@@ -478,4 +480,36 @@ fn main() {
   );
   const pass = convertible && (typeof c.ok === 'function' ? c.ok(t.params.vector_width) : c.ok);
   t.expectCompileResult(pass, code);
+});
+
+const kChainedSwizzleCases = {
+  // Single-element swizzle of a swizzle
+  xy_x: 'xy.x',
+  // Single-element swizzle of a swizzle with duplicate components
+  xx_x: 'xx.x',
+  // Multi-element swizzle of a swizzle
+  xyy_xy: 'xyy.xy'
+};
+
+g.test('chained_swizzle').
+desc('Validate that chained swizzles on memory views succeed during pipeline creation.').
+params((u) =>
+u.
+combine('address_space', ['function', 'private']).
+combine('case', keysOf(kChainedSwizzleCases))
+).
+fn((t) => {
+  const chain = kChainedSwizzleCases[t.params.case];
+  const code =
+  t.params.address_space === 'private' ? 'var<private> v = vec4f(1.0, 2.0, 3.0, 4.0);' : '';
+  const statements =
+  t.params.address_space === 'function' ?
+  ['var v = vec4f(1.0, 2.0, 3.0, 4.0);', `let a = v.${chain};`, '_ = a;'] :
+  [`let a = v.${chain};`, '_ = a;'];
+
+  t.expectPipelineResult({
+    expectedResult: true,
+    code,
+    statements
+  });
 });

@@ -538,10 +538,7 @@ fn(async (t) => {
   t.skipIfDeviceDoesNotHaveFeature('subgroups');
   const numInputs = t.params.size[0] * t.params.size[1];
 
-
-
-
-  const { subgroupMinSize } = t.device.adapterInfo;
+  const subgroupMinSize = t.device.adapterInfo.subgroupMinSize;
   const innerTexels = (t.params.size[0] - 1) * (t.params.size[1] - 1);
   t.skipIf(innerTexels < subgroupMinSize, 'Too few texels to be reliable');
 

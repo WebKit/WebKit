@@ -1421,7 +1421,16 @@ void RenderPassEncoder::executeBundles(std::span<const Ref<WebGPU::RenderBundle>
     auto bundles = WTF::map(apiBundles, [](auto& bundle) {
         return Ref { metal(bundle.get()) };
     });
-    m_queryBufferIndicesToClear.remove(m_visibilityResultBufferOffset);
+    // Metal only writes the visibility result of an active occlusion query when a draw call runs
+    // inside it, so a bundle that issues one makes the explicit zero fill in endPass unnecessary.
+    // Bundles that issue no draw call have to keep it: without the fill the query would resolve to
+    // whatever an earlier pass wrote to that slot rather than to zero.
+    for (auto& bundle : bundles) {
+        if (bundle->drawCount() || bundle->renderBundlesResources().count) {
+            m_queryBufferIndicesToClear.remove(m_visibilityResultBufferOffset);
+            break;
+        }
+    }
     id<MTLRenderCommandEncoder> commandEncoder = renderCommandEncoder();
     setCachedRenderPassState(commandEncoder);
     float minDepth = m_viewport ? m_viewport->znear : 0.f;

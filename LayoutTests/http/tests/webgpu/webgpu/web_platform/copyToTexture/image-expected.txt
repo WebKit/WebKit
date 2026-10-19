@@ -75,8 +75,10 @@ FAIL :from_fully_transparent_image:dstPremultiplied=false assert_unreached:
       act. texel bytes (little-endian) ==      0x:                       00 00 00 00
                            act. colors == R,G,B,A:   0.00000,0.00000,0.00000,0.00000
                            exp. colors == R,G,B,A: 1.00000,0.400000,0.600000,0.00000
+
             act. normal-ULPs-from-zero == R,G,B,A:                           0,0,0,0
             exp. normal-ULPs-from-zero == R,G,B,A:                     255,102,153,0
+
              tolerance ± 1 normal-ULPs
        diff (act - exp) in normal-ULPs ==                           -255,-102,-153,0
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33

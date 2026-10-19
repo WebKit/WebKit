@@ -1,0 +1,28 @@
+
+PASS :requires_extension:op="atomicStoreMin";enable=true
+PASS :requires_extension:op="atomicStoreMin";enable=false
+PASS :requires_extension:op="atomicStoreMax";enable=true
+PASS :requires_extension:op="atomicStoreMax";enable=false
+PASS :stage:op="atomicStoreMin";stage="fragment"
+PASS :stage:op="atomicStoreMin";stage="vertex"
+PASS :stage:op="atomicStoreMin";stage="compute"
+PASS :stage:op="atomicStoreMax";stage="fragment"
+PASS :stage:op="atomicStoreMax";stage="vertex"
+PASS :stage:op="atomicStoreMax";stage="compute"
+PASS :atomic_ptr_parameterization:op="atomicStoreMin"
+PASS :atomic_ptr_parameterization:op="atomicStoreMax"
+PASS :value_parameter:op="atomicStoreMin"
+PASS :value_parameter:op="atomicStoreMax"
+PASS :return_type:op="atomicStoreMin"
+PASS :return_type:op="atomicStoreMax"
+PASS :atomic_ptr_type:op="atomicStoreMin"
+PASS :atomic_ptr_type:op="atomicStoreMax"
+PASS :non_atomic:op="atomicStoreMin";addrspace="storage";atomic=true
+PASS :non_atomic:op="atomicStoreMin";addrspace="storage";atomic=false
+PASS :non_atomic:op="atomicStoreMin";addrspace="workgroup";atomic=true
+PASS :non_atomic:op="atomicStoreMin";addrspace="workgroup";atomic=false
+PASS :non_atomic:op="atomicStoreMax";addrspace="storage";atomic=true
+PASS :non_atomic:op="atomicStoreMax";addrspace="storage";atomic=false
+PASS :non_atomic:op="atomicStoreMax";addrspace="workgroup";atomic=true
+PASS :non_atomic:op="atomicStoreMax";addrspace="workgroup";atomic=false
+

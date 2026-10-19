@@ -2914,10 +2914,10 @@ std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureF
     }
 }
 
-static MTLStorageMode LEGACY_NODELETE storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures, OptionSet<WebGPU::TextureUsage> usage)
+static MTLStorageMode LEGACY_NODELETE storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures, bool supportsMemorylessTextures, OptionSet<WebGPU::TextureUsage> usage)
 {
     if (usage.contains(WebGPU::TextureUsage::Transient))
-        return MTLStorageModeMemoryless;
+        return supportsMemorylessTextures ? MTLStorageModeMemoryless : MTLStorageModePrivate;
 
     // FIXME: only perform this check if the texture is a depth/stencil texture.
     if (!supportsNonPrivateDepthStencilTextures)
@@ -3000,7 +3000,7 @@ RefPtr<WebGPU::Texture> Device::createTexture(const WebGPU::TextureDescriptor& d
 
     textureDescriptor.sampleCount = descriptor.sampleCount;
 
-    textureDescriptor.storageMode = storageMode(hasUnifiedMemory(), baseCapabilities().supportsNonPrivateDepthStencilTextures, descriptor.usage);
+    textureDescriptor.storageMode = storageMode(hasUnifiedMemory(), baseCapabilities().supportsNonPrivateDepthStencilTextures, baseCapabilities().supportsMemorylessTextures, descriptor.usage);
 
     // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
     // FIXME(PERFORMANCE): Consider implementing hazard tracking ourself.

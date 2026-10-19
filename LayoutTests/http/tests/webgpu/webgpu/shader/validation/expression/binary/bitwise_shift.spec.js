@@ -303,6 +303,7 @@ params((u) =>
 u.
 combine('op', ['<<', '>>']).
 combine('type', ['i32', 'u32']).
+combine('lhs', ['const', 'var']).
 combine('vectorize', [undefined, 2, 3, 4]).
 beginSubcases().
 combine('stage', ['shader', 'pipeline']).
@@ -320,7 +321,7 @@ fn((t) => {
   const wgsl = `
 override o = 0u;
 fn foo() -> ${vecType} {
-  var v : ${vecType} = ${vectorize('0', vec_size)};
+  ${t.params.lhs} v : ${vecType} = ${vectorize('0', vec_size)};
   return v ${t.params.op} ${vectorize(rhs, vec_size)};
 }`;
 
