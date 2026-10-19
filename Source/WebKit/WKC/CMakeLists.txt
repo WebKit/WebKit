@@ -533,6 +533,15 @@ if (WKC_ENABLE_FULL_WEBCORE)
 
     file(GLOB _WKC_GENERATED_WEBCORE_SOURCES "${WEBCORE_DIR}/WebCore/*.cpp")
     list(APPEND WEBCORE_CORE_SOURCES ${_WKC_GENERATED_WEBCORE_SOURCES})
+
+    # ResourceHandle.cpp's platform implementation is replaced by the WKC
+    # in-process bridge in platform/WKC/ResourceHandleWKC.cpp. Do not keep the
+    # upstream TU in the full Sources.txt list: undefining USE_CURL on its
+    # compile command is not reliable because config.h can define it again,
+    # and compiling both implementations risks duplicate ResourceHandle symbols.
+    list(REMOVE_ITEM WEBCORE_CORE_SOURCES
+        "${WEBCORE_DIR}/platform/network/ResourceHandle.cpp"
+    )
     list(REMOVE_ITEM WEBCORE_CORE_SOURCES ${WEBCORE_PLATFORM_SOURCES})
     list(REMOVE_DUPLICATES WEBCORE_CORE_SOURCES)
     list(LENGTH WEBCORE_CORE_SOURCES _WKC_WEBCORE_SOURCE_COUNT)
