@@ -7022,9 +7022,9 @@ void WebViewImpl::rightMouseUp(NSEvent *event)
     nativeMouseEventHandler(event, WebEventInputSource::UserDriven);
 }
 
-void WebViewImpl::mouseMovedInternal(NSEvent *event)
+void WebViewImpl::mouseMovedInternal(NSEvent *event, WebEventInputSource inputSource)
 {
-    nativeMouseEventHandlerInternal(event, WebEventInputSource::UserDriven);
+    nativeMouseEventHandlerInternal(event, inputSource);
 }
 
 void WebViewImpl::mouseDownInternal(NSEvent *event, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)
@@ -7042,7 +7042,7 @@ void WebViewImpl::mouseDraggedInternal(NSEvent *event, WebEventInputSource input
     nativeMouseEventHandlerInternal(event, inputSource, canInitiateDrag);
 }
 
-void WebViewImpl::mouseMoved(NSEvent *event)
+void WebViewImpl::mouseMoved(NSEvent *event, WebEventInputSource inputSource)
 {
     if (m_ignoresNonWheelEvents || m_ignoresMouseMoveEvents)
         return;
@@ -7059,7 +7059,7 @@ void WebViewImpl::mouseMoved(NSEvent *event)
     if (view == [view window].firstResponder && !NSPointInRect(locationInView, [view visibleRect]))
         return;
 
-    mouseMovedInternal(event);
+    mouseMovedInternal(event, inputSource);
 }
 
 static _WKRectEdge LEGACY_NODELETE toWKRectEdge(WebCore::RectEdges<bool> edges)

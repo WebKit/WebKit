@@ -798,6 +798,11 @@ Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData> pos
             info.image = page.shareableBitmapSnapshotForNode(*element);
     }
 
+#if HAVE(APPKIT_GESTURES_SUPPORT) && ENABLE(TWO_PHASE_CLICKS)
+    if (hitTestNode)
+        info.isHoverActivatedByClick = page.isHoverActivatedByClick(*hitTestNode, request.point);
+#endif
+
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
     auto hitTestedImageOverlayHost = ([&]() -> RefPtr<WebCore::HTMLElement> {
         if (!hitTestNode || !info.isImageOverlayText)
