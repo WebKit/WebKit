@@ -34,25 +34,15 @@
     <script>
       setupTestCase({disableConsoleLog: true});
 
-      var framesBeforeAnimation = 0;
-
-      // Wait for the animation to be started instead of for a fixed amount of time, and then look at
-      // the frames that were produced while it was running.
-      document.getAnimations()[0].ready.then(() => {
-          processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
-              () => { framesBeforeAnimation = allFramesDamages().length; },
-              () => { },
-              () => {
-                  const damages = allFramesDamages().slice(framesBeforeAnimation);
-                  if (!assertGt(damages.length, 0, "the running animation produced no frame at all"))
-                      return;
-                  for (const damage of damages) {
-                      if (!assertGt(damage.rects.length, 0, "a running filter animation must damage every frame")
-                          || !assertContains([37, 37, 90, 90], damage.bounds))
-                          return;
-                  }
-              },
-          ], 0);
+      // Two frames can sample the same colour, so only the frames with damage are checked.
+      waitForDamagedAnimationFrames(3, damages => {
+          for (const damage of damages) {
+              if (damage.rects.length && !assertContains([37, 37, 90, 90], damage.bounds)) {
+                  failTest(`FAIL: ${failure}`);
+                  return;
+              }
+          }
+          passTest();
       });
     </script>
   </body>

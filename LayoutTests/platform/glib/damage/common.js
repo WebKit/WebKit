@@ -99,6 +99,27 @@ function processAnimationFrameSequence(options, callbackSequence, callbackIndex)
     });
 }
 
+// Calls the callback with the damage of every frame produced since the animation started, once at least
+// minimumDamagedFrames of them have damage. Frames can be far apart while the compositor compiles
+// shaders, so this waits for frames rather than for an amount of time.
+function waitForDamagedAnimationFrames(minimumDamagedFrames, callback) {
+    document.getAnimations()[0].ready.then(() => {
+        // Skip two frames, so the initial painting is not counted as damage from the animation.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            const framesBeforeAnimation = allFramesDamages().length;
+            const checkFrames = () => {
+                const damages = allFramesDamages().slice(framesBeforeAnimation);
+                if (damages.filter(damage => damage.rects.length).length < minimumDamagedFrames) {
+                    requestAnimationFrame(checkFrames);
+                    return;
+                }
+                callback(damages);
+            };
+            requestAnimationFrame(checkFrames);
+        }));
+    });
+}
+
 function allFramesDamages() {
     const damageDetails = window.internals.getFrameDamageHistory();
     return _simplifyDamages(damageDetails);

@@ -32,15 +32,16 @@
     <script>
       setupTestCase({disableConsoleLog: true});
 
-      setTimeout(() => {
-          var damage = latestFrameDamage();
-          if (!assertEq(damage.rects.length, 1, "wrong number of damage rects")
-              || !assertContains([22, 22, 120, 120], damage.rects[0])) {
-              failTest(failure);
-              return;
+      waitForDamagedAnimationFrames(3, damages => {
+          for (const damage of damages) {
+              if (!assertEq(damage.rects.length, 1, "wrong number of damage rects")
+                  || !assertContains([22, 22, 120, 120], damage.rects[0])) {
+                  failTest(failure);
+                  return;
+              }
           }
           passTest();
-      }, 2000);
+      });
     </script>
   </body>
 </html>
