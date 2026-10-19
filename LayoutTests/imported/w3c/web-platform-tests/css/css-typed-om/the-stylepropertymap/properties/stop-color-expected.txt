@@ -4,7 +4,7 @@ PASS Can set 'stop-color' to CSS-wide keywords: inherit
 PASS Can set 'stop-color' to CSS-wide keywords: unset
 PASS Can set 'stop-color' to CSS-wide keywords: revert
 PASS Can set 'stop-color' to var() references:  var(--A)
-FAIL Can set 'stop-color' to the 'currentcolor' keyword: currentcolor assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+PASS Can set 'stop-color' to the 'currentcolor' keyword: currentcolor
 PASS Setting 'stop-color' to a length: 0px throws TypeError
 PASS Setting 'stop-color' to a length: -3.14em throws TypeError
 PASS Setting 'stop-color' to a length: 3.14cm throws TypeError
