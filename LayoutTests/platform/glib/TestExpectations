@@ -3726,6 +3726,9 @@ fast/speechsynthesis/lockdown-mode [ Skip ]
 # ManagedMediaSource is not supported
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-mediasourcehandle.html [ Skip ]
 
+# Animation callbacks are outside GLib rendering frame records.
+inspector/timeline/timeline-event-RenderingFrame.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////
