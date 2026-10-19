@@ -102,6 +102,8 @@ String AutomationCommandError::toProtocolString()
 // §8. Sessions
 // https://www.w3.org/TR/webdriver/#dfn-session-page-load-timeout
 static const Seconds defaultPageLoadTimeout = 300_s;
+// How long Close Window waits for the client to close the page before completing anyway.
+static constexpr Seconds closeBrowsingContextTimeout = 5_s;
 // https://www.w3.org/TR/webdriver/#dfn-page-loading-strategy
 static const Inspector::Protocol::Automation::PageLoadStrategy defaultPageLoadStrategy = Inspector::Protocol::Automation::PageLoadStrategy::Normal;
 
@@ -287,6 +289,11 @@ void WebAutomationSession::sendInspectorMessageToClient(const String& browsingCo
 
 void WebAutomationSession::terminate()
 {
+    for (auto& identifier : copyToVector(m_pendingCloseBrowsingContextCallbacksPerPage.keys())) {
+        for (auto& callback : m_pendingCloseBrowsingContextCallbacksPerPage.take(identifier))
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+    }
+
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     for (auto& identifier : copyToVector(m_pendingKeyboardEventsFlushedCallbacksPerPage.keys())) {
         auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(identifier);
@@ -591,10 +598,28 @@ void WebAutomationSession::closeBrowsingContext(const Inspector::Protocol::Autom
     auto page = webPageProxyForHandle(handle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
+    if (page->isClosed()) {
+        callback({ });
+        return;
+    }
+
+    // The client closes the page, and on some ports that happens later than the next run loop iteration
+    // (the GTK port destroys the view's window, which disposes of it asynchronously). The reply to the
+    // WebDriver Close Window command lists the remaining windows, so the command completes from
+    // willClosePage(), once the page has really gone.
+    auto pageID = page->identifier();
+    m_pendingCloseBrowsingContextCallbacksPerPage.add(pageID, Vector<Inspector::CommandCallback<void>> { }).iterator->value.append(WTF::move(callback));
+
     page->closePage();
 
-    RunLoop::mainSingleton().dispatch([callback = WTF::move(callback)] {
-        callback({ });
+    // Closing is a request to the client, which may hide the view instead or do nothing at all. A command that is
+    // still pending after a bounded wait completes as it did before, rather than hanging the session.
+    RunLoop::mainSingleton().dispatchAfter(closeBrowsingContextTimeout, [weakThis = WeakPtr { *this }, pageID] {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        for (auto& callback : protectedThis->m_pendingCloseBrowsingContextCallbacksPerPage.take(pageID))
+            callback({ });
     });
 }
 
@@ -1449,6 +1474,10 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
     contextDestroyedForPage(page);
     m_bidiProcessor->inputAgent().willClosePage(handle);
 #endif
+
+    // After the context is reported destroyed, so that browsingContext.close replies after its contextDestroyed event.
+    for (auto& callback : m_pendingCloseBrowsingContextCallbacksPerPage.take(page.identifier()))
+        callback({ });
 
     // Cancel pending interactions on this page. By providing an error, this will cause subsequent
     // actions to be aborted and the SimulatedInputDispatcher::run() call will unwind and fail.
