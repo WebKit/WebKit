@@ -172,14 +172,14 @@ public:
     int CookieSerialize(char* buffer, int capacity)
     {
         if (!buffer || capacity <= 0) return 0;
-        buffer[0] = '\\0';
+        buffer[0] = '\0';
         auto* list = cookieList();
         int written = 0;
         for (auto* item = list; item; item = item->next) {
             int length = static_cast<int>(::strlen(item->data)) + 1;
             if (written + length > capacity) break;
             ::memcpy(buffer + written, item->data, length - 1);
-            buffer[written + length - 1] = '\\n';
+            buffer[written + length - 1] = '\n';
             written += length;
         }
         curl_slist_free_all(list);
@@ -191,7 +191,7 @@ public:
         withCookieHandle([&](CURL* handle) {
             const char* line = data;
             while (*line) {
-                const char* newline = ::strchr(line, '\\n');
+                const char* newline = ::strchr(line, '\n');
                 size_t length = newline ? static_cast<size_t>(newline - line) : ::strlen(line);
                 if (length) {
                     std::string command(line, length);
