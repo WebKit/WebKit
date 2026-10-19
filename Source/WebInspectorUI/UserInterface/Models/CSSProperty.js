@@ -129,12 +129,17 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         return 0;
     }
 
-    static indexOfCompletionForMostUsedPropertyName(completions)
+    static indexOfCompletionForMostUsedPropertyName(completions, completionPrefix)
     {
         let highestRankCompletions = completions;
         if (highestRankCompletions.every((completion) => completion instanceof WI.QueryResult)) {
             let highestRankValue = -1;
-            for (let completion of completions) {
+            for (let i = 0; i < completions.length; i++) {
+                let completion = completions[i];
+                // Exact match overrides popularity by usage.
+                if (completionPrefix === completion.value)
+                    return i;
+
                 if (completion.rank > highestRankValue) {
                     highestRankValue = completion.rank;
                     highestRankCompletions = [];
@@ -144,6 +149,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
                     highestRankCompletions.push(completion);
             }
         }
+
         let mostUsedHighestRankCompletion = highestRankCompletions.min((a, b) => WI.CSSProperty.sortByPropertyNameUsageCount(WI.CSSCompletions.getCompletionText(a), WI.CSSCompletions.getCompletionText(b)));
         return completions.indexOf(mostUsedHighestRankCompletion);
     }

@@ -33,6 +33,9 @@ Sorted by usage:
 Initially selected completion when ranked by `count % 2`: "Fake Property 101 Seen"
 Initially selected completion when ranked by `count % 3`: "Fake Property 200 Seen"
 
+-- Running test case: CSSProperty.ExactMatchCompletion
+PASS: Exact match outweighs most used property name
+
 -- Running test case: CSSProperty.prototype.get valid
 PASS: "background-repeat" is a valid property.
 PASS: "background-repeat-x" is an invalid property.
