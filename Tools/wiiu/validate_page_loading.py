@@ -34,6 +34,13 @@ view = require(VIEW_CPP, "WKCWebView.cpp", [
 header = require(VIEW_H, "WKCWebView.h", [
     "bool loadURLOrSearch(const char* input, const char* referrer = 0);",
 ])
+
+# The public URI entry point is used by both startup navigation and callers that
+# bypass address-bar normalization. It must tolerate view/frame construction and
+# teardown windows without dereferencing a missing main frame.
+load_uri = re.search(r"void WKCWebView::loadURI\(const char\* uri, const char\* referer\)\s*\{([^}]*)\}", view)
+if not load_uri or "!m_private->m_mainFrame" not in load_uri.group(1):
+    errors.append("WKCWebView.cpp: loadURI must guard a missing main frame")
 resource = require(RESOURCE, "ResourceHandleWKC.cpp", [
     "bool ResourceHandle::start()",
     "void ResourceHandle::cancel()",
