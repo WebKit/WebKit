@@ -530,7 +530,7 @@ WKCWebFrame::loadURI(const char* uri, const char* referrer)
     if (!targetURL.isValid())
         return;
 
-    WebCore::ResourceRequest request(targetURL);
+    WebCore::ResourceRequest request(WTFMove(targetURL));
     if (referrer) {
         WTF::String refStr = WTF::String::fromUTF8(referrer);
         WTF::URL refUrl = WTF::URL(WTF::URL(), refStr);
