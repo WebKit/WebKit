@@ -102,22 +102,13 @@ void configureCertificateAuthorityBundle(const URL& url)
 
     auto& sslHandle = CurlContext::singleton().sslHandle();
 
-    // An explicitly supplied bundle is authoritative. On Wii U, however, a
-    // non-empty CA setting may be a desktop/Linux default path that does not
-    // exist on the console. Prefer the generated embedded bundle over such a
-    // stale platform default, while keeping peer and hostname verification on.
-    const char* path = std::getenv("CURL_CA_BUNDLE");
-    if (!path || !*path)
-        path = std::getenv("SSL_CERT_FILE");
-    if (path && *path) {
-        sslHandle.setCACertPath(String::fromUTF8(path));
-        return;
-    }
-
 #if WKC_HAS_EMBEDDED_CA_BUNDLE
-    // Keep the bytes alive in CurlSSLHandle: libcurl's CAINFO_BLOB uses
-    // CURL_BLOB_NOCOPY. Set this even if platformInitialize() installed a
-    // default CA path; that path may not be present in the Wii U filesystem.
+    // The Wii U build has no guaranteed system CA directory. Always prefer the
+    // generated trust store over inherited desktop paths such as /etc/ssl/certs
+    // from the host used to build the archive. CurlSSLHandle retains the bytes
+    // because libcurl's CAINFO_BLOB uses CURL_BLOB_NOCOPY. Peer and hostname
+    // verification remain enabled; this changes only where trust anchors come
+    // from.
     CertificateInfo::Certificate caBundle;
     caBundle.append(std::span<const uint8_t> {
         reinterpret_cast<const uint8_t*>(WKCCACertificates::bundle),
@@ -125,8 +116,15 @@ void configureCertificateAuthorityBundle(const URL& url)
     });
     sslHandle.setCACertData(WTF::move(caBundle));
 #else
-    // Preserve a caller-provided platform CA configuration if the build did
-    // not generate an embedded bundle.
+    // In non-full builds without an embedded bundle, honor an explicitly
+    // configured path or retain CurlContext's existing platform configuration.
+    const char* path = std::getenv("CURL_CA_BUNDLE");
+    if (!path || !*path)
+        path = std::getenv("SSL_CERT_FILE");
+    if (path && *path) {
+        sslHandle.setCACertPath(String::fromUTF8(path));
+        return;
+    }
     if (!std::holds_alternative<std::monostate>(sslHandle.getCACertInfo()))
         return;
 #endif
