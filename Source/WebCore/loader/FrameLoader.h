@@ -508,7 +508,7 @@ private:
     void updateRequestAndAddExtraFields(Frame&, ResourceRequest&, IsMainResource, FrameLoadType, ShouldUpdateAppInitiatedValue, IsServiceWorkerNavigationLoad, WillOpenInNewWindow, Document*);
 
     NavigateEventDispatchResult dispatchNavigateEvent(FrameLoadType, const FrameLoadRequest&, bool isSameDocument, FormState* = nullptr, Event* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr);
-    NavigateEventDispatchResult dispatchNavigateEventForNavigationFromAnotherProcess(const DocumentLoader&, FrameLoadType, NavigationHistoryBehavior, IsSameDocumentNavigation);
+    NavigateEventDispatchResult dispatchNavigateEventForFragmentNavigationFromAnotherProcess(const DocumentLoader&, FrameLoadType, NavigationHistoryBehavior);
     bool shouldDispatchNavigateEventForHistoryTraversal(const HistoryItem&, const HistoryItem* fromItem);
 
     WeakRef<LocalFrame> m_frame;

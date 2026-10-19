@@ -6867,54 +6867,6 @@ TEST(SiteIsolation, RevalidatedNavigationStaysInDocumentIsolationPolicyProcess)
     EXPECT_EQ([webView _webProcessIdentifier], isolatedProcess);
 }
 
-TEST(SiteIsolation, CancelledNavigateEventFromAnotherProcessLetsParentFinishLoading)
-{
-    std::optional<Connection> slowConnection;
-    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
-        while (1) {
-            auto request = co_await connection.awaitableReceiveHTTPRequest();
-            auto path = HTTPServer::parsePath(request);
-            if (path == "/main"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<script>let loadedFrames = 0; onmessage = () => { if (++loadedFrames == 2) alert('frames loaded'); }</script><iframe src='/plain'></iframe><iframe src='/isolated'></iframe><img src='/slow'>"_s).serialize());
-                continue;
-            }
-            if (path == "/plain"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<script>navigation.onnavigate = event => { event.preventDefault(); setTimeout(() => alert('prevented')); }; parent.postMessage('loaded', '*');</script>"_s).serialize());
-                continue;
-            }
-            if (path == "/isolated"_s) {
-                co_await connection.awaitableSend(documentIsolationPolicyResponse("<script>parent.postMessage('loaded', '*')</script>"_s).serialize());
-                continue;
-            }
-            if (path == "/slow"_s) {
-                slowConnection = connection;
-                continue;
-            }
-            co_await connection.awaitableSend(HTTPResponse("target"_s).serialize());
-        }
-    }, HTTPServer::Protocol::HttpsProxy);
-
-    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
-    __block bool finishedLoading = false;
-    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
-        finishedLoading = true;
-    };
-
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "frames loaded");
-    EXPECT_FALSE(finishedLoading);
-
-    // The navigate event fires in the main frame's process, where the parent is still loading.
-    [webView evaluateJavaScript:@"parent.frames[0].location = '/target'" inFrame:[webView secondChildFrame] inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "prevented");
-
-    EXPECT_TRUE(Util::waitFor([&] {
-        return !!slowConnection;
-    }));
-    slowConnection->send(HTTPResponse("not an image"_s).serialize());
-    Util::run(&finishedLoading);
-}
-
 TEST(SiteIsolation, SharedProcessExcludesSiteWithDocumentIsolationPolicyProcess)
 {
     HTTPServer server({
