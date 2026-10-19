@@ -1,0 +1,7 @@
+
+PASS Computed '-webkit-text-fill-color: currentcolor' keeps currentcolor
+PASS Computed '-webkit-text-fill-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed '-webkit-text-stroke-color: currentcolor' keeps currentcolor
+PASS Computed '-webkit-text-stroke-color: color-mix(in srgb, currentcolor, red)' keeps currentcolor
+PASS Computed '-webkit-text-stroke: 1px currentcolor' keeps currentcolor
+
