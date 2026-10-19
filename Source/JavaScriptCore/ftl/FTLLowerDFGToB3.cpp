@@ -22879,7 +22879,7 @@ IGNORE_CLANG_WARNINGS_END
         bool rightAtom = !rightConst.isNull() && rightConst.impl()->isAtom();
 
         auto isShortConstant = [](const String& string) {
-            return !string.isNull() && string.is8Bit() && string.length() <= maxInlineConstantStringCompareLength;
+            return !string.isNull() && string.length() <= maxInlineConstantStringCompareLength;
         };
         if (isShortConstant(rightConst) && leftConst.isNull())
             return stringEqualsShortConstant(leftJSString, leftJSStringEdge, rightJSString, rightConst);
@@ -23090,18 +23090,22 @@ IGNORE_CLANG_WARNINGS_END
     // `id === "while" || id === "break"` on a sliced identifier stays free of calls.
     LValue stringEqualsShortConstant(LValue jsString, Edge edge, LValue constantJSString, const String& constant)
     {
-        ASSERT(constant.is8Bit());
         unsigned length = constant.length();
         ASSERT(length <= maxInlineConstantStringCompareLength);
+        // A constant outside Latin-1 can only equal 16-bit data, so the 16-bit path is not rare for it.
+        bool fitsIn8Bit = constant.containsOnlyLatin1();
+        auto to16BitCase = fitsIn8Bit ? rarely : unsure;
+        auto to8BitCase = fitsIn8Bit ? usually : unsure;
 
         LBasicBlock nonRopeCase = m_out.newBlock();
         LBasicBlock nonRopeLengthMatched = m_out.newBlock();
-        LBasicBlock nonRope8BitCase = m_out.newBlock();
         LBasicBlock ropeCase = m_out.newBlock();
         LBasicBlock ropeLengthMatched = m_out.newBlock();
         LBasicBlock substringCase = m_out.newBlock();
         LBasicBlock substring8BitCase = m_out.newBlock();
-        LBasicBlock compareCase = m_out.newBlock();
+        LBasicBlock substring16BitCase = m_out.newBlock();
+        LBasicBlock compare8BitCase = m_out.newBlock();
+        LBasicBlock compare16BitCase = m_out.newBlock();
         LBasicBlock falseCase = m_out.newBlock();
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
@@ -23115,12 +23119,11 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock lastNext = m_out.appendTo(nonRopeCase, nonRopeLengthMatched);
         m_out.branch(m_out.notEqual(m_out.load32(value, m_heaps.StringImpl_length), m_out.constInt32(length)), unsure(falseCase), unsure(nonRopeLengthMatched));
 
-        m_out.appendTo(nonRopeLengthMatched, nonRope8BitCase);
-        m_out.branch(m_out.testIsZero32(m_out.load32(value, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit())), rarely(slowCase), usually(nonRope8BitCase));
-
-        m_out.appendTo(nonRope8BitCase, ropeCase);
-        ValueFromBlock nonRopeData = m_out.anchor(m_out.loadPtr(value, m_heaps.StringImpl_data));
-        m_out.jump(compareCase);
+        m_out.appendTo(nonRopeLengthMatched, ropeCase);
+        LValue nonRopeData = m_out.loadPtr(value, m_heaps.StringImpl_data);
+        ValueFromBlock nonRopeData8Bit = m_out.anchor(nonRopeData);
+        ValueFromBlock nonRopeData16Bit = m_out.anchor(nonRopeData);
+        m_out.branch(m_out.testIsZero32(m_out.load32(value, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit())), to16BitCase(compare16BitCase), to8BitCase(compare8BitCase));
 
         m_out.appendTo(ropeCase, ropeLengthMatched);
         m_out.branch(m_out.notEqual(m_out.load32NonNegative(jsString, m_heaps.JSRopeString_length), m_out.constInt32(length)), unsure(falseCase), unsure(ropeLengthMatched));
@@ -23135,24 +23138,26 @@ IGNORE_CLANG_WARNINGS_END
             m_out.lShr(packedLengthAndBaseLower, m_out.constInt32(32)),
             m_out.shl(m_out.bitAnd(packedBaseUpperAndOffset, m_out.constInt64(0xffff)), m_out.constInt32(32)));
         LValue baseImpl = m_out.loadPtr(substringBase, m_heaps.JSString_value);
-        // The rope's cached is8Bit bit can go stale: atomizing the base may swap in an equal 16-bit StringImpl.
-        m_out.branch(m_out.testIsZero32(m_out.load32(baseImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit())), rarely(slowCase), usually(substring8BitCase));
-
-        m_out.appendTo(substring8BitCase, compareCase);
         LValue substringOffset = m_out.lShr(packedBaseUpperAndOffset, m_out.constInt32(16));
-        ValueFromBlock substringData = m_out.anchor(m_out.add(m_out.loadPtr(baseImpl, m_heaps.StringImpl_data), substringOffset));
-        m_out.jump(compareCase);
+        LValue baseData = m_out.loadPtr(baseImpl, m_heaps.StringImpl_data);
+        // The rope's cached is8Bit bit can go stale: atomizing the base may swap in an equal 16-bit StringImpl.
+        m_out.branch(m_out.testIsZero32(m_out.load32(baseImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit())), to16BitCase(substring16BitCase), to8BitCase(substring8BitCase));
 
-        m_out.appendTo(compareCase, falseCase);
-        LValue data = m_out.phi(pointerType(), nonRopeData, substringData);
-        LValue result;
-        if (!length)
-            result = m_out.booleanTrue;
-        else {
-            auto characters = constant.span8();
-            auto loadChunk = [&](unsigned offset, unsigned size) -> LValue {
-                TypedPointer pointer(m_heaps.characters8.atAnyIndex(), m_out.add(data, m_out.constIntPtr(offset)));
-                switch (size) {
+        m_out.appendTo(substring8BitCase, substring16BitCase);
+        ValueFromBlock substringData8Bit = m_out.anchor(m_out.add(baseData, substringOffset));
+        m_out.jump(compare8BitCase);
+
+        m_out.appendTo(substring16BitCase, compare8BitCase);
+        ValueFromBlock substringData16Bit = m_out.anchor(m_out.add(baseData, m_out.shl(substringOffset, m_out.constInt32(1))));
+        m_out.jump(compare16BitCase);
+
+        auto emitCompare = [&](IndexedAbstractHeap& heap, LValue data, std::span<const uint8_t> expected) -> LValue {
+            unsigned size = expected.size();
+            if (!size)
+                return m_out.booleanTrue;
+            auto loadChunk = [&](unsigned offset, unsigned chunkSize) -> LValue {
+                TypedPointer pointer(heap.atAnyIndex(), m_out.add(data, m_out.constIntPtr(offset)));
+                switch (chunkSize) {
                 case 1:
                     return m_out.load8ZeroExt32(pointer);
                 case 2:
@@ -23165,31 +23170,50 @@ IGNORE_CLANG_WARNINGS_END
                 RELEASE_ASSERT_NOT_REACHED();
                 return nullptr;
             };
-            auto expectedChunk = [&](unsigned offset, unsigned size) -> LValue {
-                uint64_t expected = 0;
-                memcpySpan(asMutableByteSpan(expected).first(size), characters.subspan(offset, size));
-                if (size == 8)
-                    return m_out.constInt64(static_cast<int64_t>(expected));
-                return m_out.constInt32(static_cast<int32_t>(expected));
+            auto expectedChunk = [&](unsigned offset, unsigned chunkSize) -> LValue {
+                uint64_t bits = 0;
+                memcpySpan(asMutableByteSpan(bits).first(chunkSize), expected.subspan(offset, chunkSize));
+                if (chunkSize == 8)
+                    return m_out.constInt64(static_cast<int64_t>(bits));
+                return m_out.constInt32(static_cast<int32_t>(bits));
+            };
+            auto difference = [&](unsigned offset, unsigned chunkSize) -> LValue {
+                return m_out.bitXor(loadChunk(offset, chunkSize), expectedChunk(offset, chunkSize));
             };
 
-            static_assert(maxInlineConstantStringCompareLength <= 16);
-            unsigned chunkSize = length >= 8 ? 8 : length >= 4 ? 4 : length >= 2 ? 2 : 1;
-            if (length == chunkSize)
-                result = m_out.equal(loadChunk(0, chunkSize), expectedChunk(0, chunkSize));
-            else {
-                // The tail chunk overlaps the head chunk when the remainder is not a power of two.
-                unsigned tailSize = roundUpToPowerOfTwo(length - chunkSize);
-                unsigned tailOffset = length - tailSize;
-                LValue head = m_out.bitXor(loadChunk(0, chunkSize), expectedChunk(0, chunkSize));
-                LValue tail = m_out.bitXor(loadChunk(tailOffset, tailSize), expectedChunk(tailOffset, tailSize));
-                if (chunkSize == 8 && tailSize < 8)
-                    tail = m_out.zeroExt(tail, Int64);
-                LValue difference = m_out.bitOr(head, tail);
-                result = chunkSize == 8 ? m_out.isZero64(difference) : m_out.isZero32(difference);
+            if (size > 8) {
+                // The last chunk overlaps the previous one when the size is not a multiple of 8.
+                LValue differences = difference(0, 8);
+                for (unsigned offset = 8; offset + 8 < size; offset += 8)
+                    differences = m_out.bitOr(differences, difference(offset, 8));
+                differences = m_out.bitOr(differences, difference(size - 8, 8));
+                return m_out.isZero64(differences);
             }
+
+            unsigned chunkSize = size >= 8 ? 8 : size >= 4 ? 4 : size >= 2 ? 2 : 1;
+            if (size == chunkSize)
+                return m_out.equal(loadChunk(0, chunkSize), expectedChunk(0, chunkSize));
+            // The tail chunk overlaps the head chunk when the remainder is not a power of two.
+            unsigned tailSize = roundUpToPowerOfTwo(size - chunkSize);
+            return m_out.isZero32(m_out.bitOr(difference(0, chunkSize), difference(size - tailSize, tailSize)));
+        };
+
+        std::array<Latin1Character, maxInlineConstantStringCompareLength> characters8 { };
+        std::array<char16_t, maxInlineConstantStringCompareLength> characters16 { };
+        for (unsigned i = 0; i < length; ++i) {
+            characters16[i] = constant[i];
+            characters8[i] = static_cast<Latin1Character>(characters16[i]);
         }
-        ValueFromBlock compareResult = m_out.anchor(result);
+
+        m_out.appendTo(compare8BitCase, compare16BitCase);
+        LValue data8Bit = m_out.phi(pointerType(), nonRopeData8Bit, substringData8Bit);
+        LValue compare8Bit = fitsIn8Bit ? emitCompare(m_heaps.characters8, data8Bit, asByteSpan(std::span { characters8 }.first(length))) : m_out.booleanFalse;
+        ValueFromBlock compare8BitResult = m_out.anchor(compare8Bit);
+        m_out.jump(continuation);
+
+        m_out.appendTo(compare16BitCase, falseCase);
+        LValue data16Bit = m_out.phi(pointerType(), nonRopeData16Bit, substringData16Bit);
+        ValueFromBlock compare16BitResult = m_out.anchor(emitCompare(m_heaps.characters16, data16Bit, asByteSpan(std::span { characters16 }.first(length))));
         m_out.jump(continuation);
 
         m_out.appendTo(falseCase, slowCase);
@@ -23201,7 +23225,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        return m_out.phi(Int32, compareResult, falseResult, slowResult);
+        return m_out.phi(Int32, compare8BitResult, compare16BitResult, falseResult, slowResult);
     }
 
     enum ScratchFPRUsage {
