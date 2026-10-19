@@ -52,6 +52,8 @@ VIEW_H = ROOT / "Source/WebKit/WKC/webkit/WKCWebView.h"
 RESOURCE = ROOT / "Source/WebCore/platform/WKC/ResourceHandleWKC.cpp"
 RESPONSE_CONVERSION = ROOT / "Source/WebCore/platform/network/curl/ResourceResponseCurl.cpp"
 FRAME_LOADER = ROOT / "Source/WebKit/WKC/WebCoreSupport/FrameLoaderClientWKC.cpp"
+EVENT_LOOP = ROOT / "Source/WebCore/platform/WKC/EventLoopWKC.cpp"
+VIEW_HEADER = ROOT / "Source/WebKit/WKC/webkit/WKCWebView.h"
 CMAKE = ROOT / "Source/WebKit/WKC/CMakeLists.txt"
 
 errors = []
@@ -124,6 +126,18 @@ frame_loader = require(FRAME_LOADER, "FrameLoaderClientWKC.cpp", [
     "FrameLoaderClientWKC::finishedLoading(",
     "m_appClient->finishedLoading(&ldr.wkc())",
 ])
+
+# Worker-thread cURL completions are dispatched through WTF::RunLoop. The WKC
+# embedder owns the frame loop, so the engine must expose an explicit pump API.
+event_loop = require(EVENT_LOOP, "EventLoopWKC.cpp", [
+    "void wkcRunLoopCycle()",
+    "WTF::RunLoop::cycle()",
+])
+view_header = require(VIEW_HEADER, "WKCWebView.h", [
+    "WKCWebKitProcessEvents()",
+])
+if "WKCWebKitProcessEvents() { WebCore::wkcRunLoopCycle(); }" not in view:
+    errors.append("WKCWebView.cpp: public event pump does not drain WebCore's main RunLoop")
 
 cmake = require(CMAKE, "CMakeLists.txt", [
     "WKC_ENABLE_FULL_WEBCORE",
