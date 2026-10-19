@@ -146,6 +146,8 @@
 // a null manager: WKC cookie/SSL callers rely on this singleton being usable.
 #include "CurlContext.h"
 #include <curl/curl.h>
+#include <cstring>
+#include <string>
 namespace WebCore {
 class ResourceHandleManager {
 public:
