@@ -1,0 +1,10 @@
+
+PASS Moving a button into and out of a select
+PASS Reordering a select's button after its options and back
+PASS Moving a select's button to another select
+PASS Moving a selectedcontent into another select's button
+PASS Moving an option into and out of a select
+PASS Moving an option between selects
+PASS Moving an optgroup out of and back into a select
+PASS Moving an hr out of and back into a select
+

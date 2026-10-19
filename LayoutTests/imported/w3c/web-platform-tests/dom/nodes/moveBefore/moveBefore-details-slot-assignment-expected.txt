@@ -1,0 +1,8 @@
+
+PASS Moving content into a closed details hides it until it's opened
+PASS Moving content out of a closed details shows it
+PASS Moving a summary into a closed details makes it that details' summary
+PASS Moving a summary before the existing summary of a closed details replaces it
+PASS Moving the summary out of a details promotes the next summary
+PASS Reordering a details' summary after another summary and back
+

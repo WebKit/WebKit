@@ -1,0 +1,10 @@
+
+PASS Moving a slot within its shadow root without changing its assigned nodes doesn't fire 'slotchange'
+PASS Moving a slot after another slot with the same name reassigns its slottables and fires 'slotchange' on both
+PASS Moving an element containing a slot to another shadow root assigns the new shadow host's slottables
+PASS Moving a subtree containing a shadow host keeps the slot assignments inside that shadow tree
+PASS Moving a Text node into and out of a shadow host fires 'slotchange'
+PASS Reordering slottables within a shadow host updates the order of the assigned nodes
+PASS A slot renamed while in another shadow root is found by its new name after moving back
+FAIL Manual slot assignments are kept when moving the slot or the slottable assert_array_equals: lengths differ, expected array ["slot", "slot"] length 2, got ["slot"] length 1
+

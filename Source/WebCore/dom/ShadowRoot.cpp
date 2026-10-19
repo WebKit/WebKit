@@ -355,6 +355,13 @@ void ShadowRoot::removeSlotElementByName(const AtomString& name, HTMLSlotElement
     return m_slotAssignment->removeSlotElementByName(name, slot, &oldParentOfRemovedTree, *this);
 }
 
+void ShadowRoot::slotElementDidMoveWithinShadowTree(HTMLSlotElement& slot)
+{
+    ASSERT(&slot.rootNode() == this);
+    ASSERT(m_slotAssignment);
+    m_slotAssignment->slotElementDidMoveWithinShadowTree(slot, *this);
+}
+
 void ShadowRoot::slotManualAssignmentDidChange(HTMLSlotElement& slot, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current)
 {
     ASSERT(m_slotAssignment);

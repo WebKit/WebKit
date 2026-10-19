@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<title>moveBefore() runs the assign slottables algorithm</title>
+<link rel="help" href="https://dom.spec.whatwg.org/#move">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+function createHost(t, slotAssignment = "named") {
+  const host = document.body.appendChild(document.createElement("div"));
+  t.add_cleanup(() => host.remove());
+  const shadowRoot = host.attachShadow({ mode: "open", slotAssignment });
+  return { host, shadowRoot };
+}
+
+function recordSlotChanges(slots) {
+  const fired = [];
+  for (const slot of slots)
+    slot.addEventListener("slotchange", () => fired.push(slot.id));
+  return fired;
+}
+
+// Let any pending "signal a slot change" settle.
+const settle = () => new Promise(resolve => step_timeout(resolve, 0));
+
+promise_test(async t => {
+  const { host, shadowRoot } = createHost(t);
+  shadowRoot.innerHTML = `<slot id=slot></slot><div id=container></div>`;
+  const slot = shadowRoot.getElementById("slot");
+  const p = host.appendChild(document.createElement("p"));
+  await settle();
+
+  const fired = recordSlotChanges([slot]);
+  shadowRoot.getElementById("container").moveBefore(slot, null);
+  await settle();
+
+  // The move unassigns the slot's nodes while the slot is outside of the shadow tree, and then assigns them again.
+  assert_array_equals(slot.assignedNodes(), [p]);
+  assert_array_equals(fired, ["slot"]);
+}, "Moving a slot within its shadow root fires 'slotchange' even if its assigned nodes end up the same");
+
+promise_test(async t => {
+  const { host, shadowRoot } = createHost(t);
+  shadowRoot.innerHTML = `<slot id=first></slot><slot id=second></slot>`;
+  const first = shadowRoot.getElementById("first");
+  const second = shadowRoot.getElementById("second");
+  const p = host.appendChild(document.createElement("p"));
+  await settle();
+  assert_array_equals(first.assignedNodes(), [p]);
+
+  const fired = recordSlotChanges([first, second]);
+  shadowRoot.moveBefore(first, null);
+  await settle();
+
+  assert_array_equals(first.assignedNodes(), []);
+  assert_array_equals(second.assignedNodes(), [p]);
+  assert_array_equals(fired.sort(), ["first", "second"]);
+}, "Moving a slot after another slot with the same name reassigns its slottables and fires 'slotchange' on both");
+
+promise_test(async t => {
+  const { host: oldHost, shadowRoot: oldShadowRoot } = createHost(t);
+  const { host: newHost, shadowRoot: newShadowRoot } = createHost(t);
+  oldShadowRoot.innerHTML = `<div id=container><slot id=slot></slot></div>`;
+  const container = oldShadowRoot.getElementById("container");
+  const slot = oldShadowRoot.getElementById("slot");
+  const oldSlottable = oldHost.appendChild(document.createElement("p"));
+  const newSlottable = newHost.appendChild(document.createElement("p"));
+  await settle();
+  assert_array_equals(slot.assignedNodes(), [oldSlottable]);
+
+  const fired = recordSlotChanges([slot]);
+  newShadowRoot.moveBefore(container, null);
+  await settle();
+
+  assert_array_equals(slot.assignedNodes(), [newSlottable]);
+  assert_equals(oldSlottable.assignedSlot, null);
+  assert_array_equals(fired, ["slot"]);
+}, "Moving an element containing a slot to another shadow root assigns the new shadow host's slottables");
+
+promise_test(async t => {
+  const wrapper = document.body.appendChild(document.createElement("div"));
+  const destination = document.body.appendChild(document.createElement("div"));
+  t.add_cleanup(() => { wrapper.remove(); destination.remove(); });
+  const host = wrapper.appendChild(document.createElement("div"));
+  const shadowRoot = host.attachShadow({ mode: "open" });
+  shadowRoot.innerHTML = `<slot id=slot></slot>`;
+  const slot = shadowRoot.getElementById("slot");
+  const p = host.appendChild(document.createElement("p"));
+  await settle();
+
+  const fired = recordSlotChanges([slot]);
+  destination.moveBefore(wrapper, null);
+  await settle();
+
+  assert_array_equals(slot.assignedNodes(), [p]);
+  assert_array_equals(fired, []);
+}, "Moving a subtree containing a shadow host keeps the slot assignments inside that shadow tree");
+
+promise_test(async t => {
+  const { host, shadowRoot } = createHost(t);
+  shadowRoot.innerHTML = `<slot id=slot></slot>`;
+  const slot = shadowRoot.getElementById("slot");
+  const text = document.body.appendChild(document.createTextNode("text"));
+  t.add_cleanup(() => text.remove());
+  await settle();
+
+  const fired = recordSlotChanges([slot]);
+  host.moveBefore(text, null);
+  await settle();
+  assert_array_equals(slot.assignedNodes(), [text]);
+  assert_array_equals(fired, ["slot"]);
+
+  document.body.moveBefore(text, null);
+  await settle();
+  assert_array_equals(slot.assignedNodes(), []);
+  assert_array_equals(fired, ["slot", "slot"]);
+}, "Moving a Text node into and out of a shadow host fires 'slotchange'");
+
+promise_test(async t => {
+  const { host, shadowRoot } = createHost(t);
+  shadowRoot.innerHTML = `<slot id=slot></slot>`;
+  const slot = shadowRoot.getElementById("slot");
+  const p1 = host.appendChild(document.createElement("p"));
+  const p2 = host.appendChild(document.createElement("p"));
+  await settle();
+
+  const fired = recordSlotChanges([slot]);
+  host.moveBefore(p2, p1);
+  await settle();
+
+  assert_array_equals(slot.assignedNodes(), [p2, p1]);
+  assert_array_equals(fired, ["slot"]);
+}, "Reordering slottables within a shadow host updates the order of the assigned nodes");
+
+promise_test(async t => {
+  const { host, shadowRoot } = createHost(t);
+  const { shadowRoot: otherShadowRoot } = createHost(t);
+  shadowRoot.innerHTML = `<slot id=x name=x></slot><slot id=y name=y></slot>`;
+  otherShadowRoot.innerHTML = `<slot name=x></slot>`;
+  const slotX = shadowRoot.getElementById("x");
+  const slotY = shadowRoot.getElementById("y");
+  const p = host.appendChild(document.createElement("p"));
+  p.slot = "x";
+  await settle();
+  assert_array_equals(slotX.assignedNodes(), [p]);
+
+  const fired = recordSlotChanges([slotX, slotY]);
+  otherShadowRoot.moveBefore(slotX, null);
+  await settle();
+  assert_array_equals(slotX.assignedNodes(), []);
+  assert_equals(p.assignedSlot, null);
+  assert_array_equals(fired, ["x"]);
+
+  slotX.name = "y";
+  shadowRoot.moveBefore(slotX, null);
+  assert_array_equals(slotX.assignedNodes(), []);
+
+  p.slot = "y";
+  assert_array_equals(slotY.assignedNodes(), [p]);
+  assert_array_equals(slotX.assignedNodes(), []);
+
+  shadowRoot.moveBefore(slotX, slotY);
+  assert_array_equals(slotX.assignedNodes(), [p]);
+  assert_array_equals(slotY.assignedNodes(), []);
+}, "A slot renamed while in another shadow root is found by its new name after moving back");
+
+promise_test(async t => {
+  const { host, shadowRoot } = createHost(t, "manual");
+  shadowRoot.innerHTML = `<slot id=slot></slot><div id=container></div>`;
+  const slot = shadowRoot.getElementById("slot");
+  const p = host.appendChild(document.createElement("p"));
+  t.add_cleanup(() => p.remove());
+  slot.assign(p);
+  await settle();
+  assert_array_equals(slot.assignedNodes(), [p]);
+
+  shadowRoot.getElementById("container").moveBefore(slot, null);
+  assert_array_equals(slot.assignedNodes(), [p]);
+
+  const fired = recordSlotChanges([slot]);
+  document.body.moveBefore(p, null);
+  await settle();
+  assert_array_equals(slot.assignedNodes(), []);
+  assert_array_equals(fired, ["slot"]);
+
+  host.moveBefore(p, null);
+  await settle();
+  assert_array_equals(slot.assignedNodes(), [p]);
+  assert_array_equals(fired, ["slot", "slot"]);
+}, "Manual slot assignments are kept when moving the slot or the slottable");
+</script>

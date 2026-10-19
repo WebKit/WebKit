@@ -210,6 +210,29 @@ void NamedSlotAssignment::removeSlotElementByName(const AtomString& name, HTMLSl
     }
 }
 
+void NamedSlotAssignment::slotElementDidMoveWithinShadowTree(HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
+{
+    ASSERT(m_slotElementsForConsistencyCheck.contains(slotElement));
+
+    auto* slot = m_slots.get(slotNameFromAttributeValue(slotElement.attributeWithoutSynchronization(nameAttr)));
+    RELEASE_ASSERT(slot && slot->hasSlotElements());
+
+    // The move algorithm assigns slottables while the slot is outside of the shadow tree, which unassigns its nodes,
+    // so it signals a slot change if the slot has any, even if it ends up with the same nodes.
+    if (shadowRoot.shouldFireSlotchangeEvent() && slot->element == &slotElement && hasAssignedNodes(shadowRoot, *slot))
+        slotElement.enqueueSlotChangeEvent();
+
+    // The slot keeps its name and shadow root, so only its position relative to other slots of the same name can change.
+    if (!slot->hasDuplicatedSlotElements())
+        return;
+
+    // FIXME: We should be able to do a targeted reconstruction.
+    ASSERT(shadowRoot.host());
+    protect(shadowRoot.host())->invalidateStyleAndRenderersForSubtree();
+
+    resolveSlotsAfterSlotMutation(shadowRoot, SlotMutationType::Insertion);
+}
+
 void NamedSlotAssignment::resolveSlotsAfterSlotMutation(ShadowRoot& shadowRoot, SlotMutationType mutationType, ContainerNode* subtreeToSkip)
 {
     if (m_slotResolutionVersion == m_slotMutationVersion)
@@ -528,6 +551,13 @@ void ManualSlotAssignment::removeSlotElementByName(const AtomString&, HTMLSlotEl
             break;
         }
     }
+}
+
+void ManualSlotAssignment::slotElementDidMoveWithinShadowTree(HTMLSlotElement& slot, ShadowRoot& shadowRoot)
+{
+    // See NamedSlotAssignment::slotElementDidMoveWithinShadowTree().
+    if (shadowRoot.shouldFireSlotchangeEvent() && assignedNodesForSlot(slot, shadowRoot))
+        slot.enqueueSlotChangeEvent();
 }
 
 void ManualSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement& slot, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current, ShadowRoot& shadowRoot)

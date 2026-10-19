@@ -899,6 +899,9 @@ static std::optional<DidRepaintAndMarkContainingBlock> repaintAndMarkContainingB
 template<RenderTreeUpdater::TeardownScope scope>
 void RenderTreeUpdater::tearDownRenderersInternal(Element& root, TeardownType teardownType, RenderTreeBuilder& builder)
 {
+    if constexpr (scope == TeardownScope::IncludingRoot)
+        root.setHasRenderersFromBeforeMove(false);
+
     Vector<Element*, 30> teardownStack;
 
     auto push = [&](Element& element) {
@@ -987,15 +990,25 @@ void RenderTreeUpdater::tearDownRenderersInternal(Element& root, TeardownType te
     auto descendants = composedTreeDescendants(root);
     auto didRepaintRoot = repaintAndMarkContainingBlockDirtyBeforeTearDown(root, descendants);
     auto needsDescendantRepaintAndLayout = !didRepaintRoot || *didRepaintRoot == DidRepaintAndMarkContainingBlock::Yes ? NeedsRepaintAndLayout::No : NeedsRepaintAndLayout::Yes;
-    for (auto it = descendants.begin(), end = descendants.end(); it != end; ++it) {
+    for (auto it = descendants.begin(), end = descendants.end(); it != end;) {
         pop(it.depth(), needsDescendantRepaintAndLayout);
+
+        // The renderers of a node that was moved here may still be at its old position, outside of root's renderers.
+        // Tear them down as their own root so that their old position gets updated.
+        if (RefPtr element = dynamicDowncast<Element>(*it); element && element->hasRenderersFromBeforeMove()) [[unlikely]] {
+            tearDownRenderers(*element, teardownType == TeardownType::FullAfterShadowRootInsertion ? TeardownType::Full : teardownType, builder);
+            it.traverseNextSkippingChildren();
+            continue;
+        }
 
         if (RefPtr text = dynamicDowncast<Text>(*it)) {
             tearDownTextRenderer(*text, &root, builder, needsDescendantRepaintAndLayout);
+            it.traverseNext();
             continue;
         }
 
         SUPPRESS_UNCOUNTED_ARG push(downcast<Element>(*it));
+        it.traverseNext();
     }
 
     pop(0, needsDescendantRepaintAndLayout);
@@ -1016,6 +1029,13 @@ void RenderTreeUpdater::tearDownDescendantRenderers(Element& root, TeardownType 
 
 void RenderTreeUpdater::tearDownTextRenderer(Text& text, const ContainerNode* root, RenderTreeBuilder& builder, NeedsRepaintAndLayout needsRepaintAndLayout)
 {
+    if (text.hasRenderersFromBeforeMove()) [[unlikely]] {
+        // The renderer may still be at the text's position from before it was moved, outside of root's renderers.
+        root = nullptr;
+        needsRepaintAndLayout = NeedsRepaintAndLayout::Yes;
+        text.setHasRenderersFromBeforeMove(false);
+    }
+
     auto* renderer = text.renderer();
     if (!renderer)
         return;

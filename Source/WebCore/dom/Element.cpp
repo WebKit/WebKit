@@ -3400,7 +3400,17 @@ void Element::movingSteps(MovingType movingType, ContainerNode& oldParent)
 
     updateEffectiveLangState();
 
-    if (!movingType.isSubtreeRoot || !hasFocusWithin())
+    if (!movingType.isSubtreeRoot)
+        return;
+
+    if (RefPtr shadowRoot = oldParent.shadowRoot())
+        shadowRoot->hostChildElementDidChange(*this);
+    if (RefPtr newParent = parentNode(); newParent != &oldParent) {
+        if (RefPtr shadowRoot = newParent->shadowRoot())
+            shadowRoot->hostChildElementDidChange(*this);
+    }
+
+    if (!hasFocusWithin())
         return;
 
     if (RefPtr oldParentElement = dynamicDowncast<Element>(oldParent))
@@ -3813,8 +3823,7 @@ void Element::childrenChanged(const ChildChange& change)
         case ChildChange::Type::ElementRemoved:
         case ChildChange::Type::ElementMovedFrom:
         case ChildChange::Type::ElementMovedInto:
-            // For elements, we notify shadowRoot in Element::insertionSteps and Element::removingSteps.
-            // FIXME(321178): Need to notify shadowRoot when elements are moved.
+            // For elements, we notify shadowRoot in Element::insertionSteps, Element::removingSteps and Element::movingSteps.
             break;
         case ChildChange::Type::AllChildrenRemoved:
         case ChildChange::Type::AllChildrenReplaced:

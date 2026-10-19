@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<title>moveBefore() updates which children a details element shows</title>
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-parentnode-movebefore">
+<link rel="help" href="https://html.spec.whatwg.org/#the-details-element">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="container"></div>
+<script>
+function setUp(t, html) {
+  container.innerHTML = html;
+  t.add_cleanup(() => container.replaceChildren());
+  document.body.offsetTop;
+  return id => document.getElementById(id);
+}
+
+test(t => {
+  const get = setUp(t, `<details open><summary>First</summary><span id=moved>moved</span></details>
+    <details id=closed><summary>Second</summary>content</details>`);
+  assert_true(get("moved").checkVisibility());
+  get("closed").moveBefore(get("moved"), null);
+  assert_false(get("moved").checkVisibility(), "hidden in the closed details");
+  get("closed").open = true;
+  assert_true(get("moved").checkVisibility(), "shown once the details is opened");
+}, "Moving content into a closed details hides it until it's opened");
+
+test(t => {
+  const get = setUp(t, `<details id=closed><summary>Summary</summary><span id=moved>moved</span></details>
+    <div id=destination></div>`);
+  assert_false(get("moved").checkVisibility());
+  get("destination").moveBefore(get("moved"), null);
+  assert_true(get("moved").checkVisibility());
+}, "Moving content out of a closed details shows it");
+
+test(t => {
+  const get = setUp(t, `<details open><summary id=moved>Moved summary</summary>content</details>
+    <details id=closed>closed content</details>`);
+  get("closed").moveBefore(get("moved"), get("closed").firstChild);
+  assert_true(get("moved").checkVisibility(), "shown as the closed details' summary");
+}, "Moving a summary into a closed details makes it that details' summary");
+
+test(t => {
+  const get = setUp(t, `<details id=closed><summary id=existing>Existing</summary>content</details>
+    <div><summary id=moved>Moved summary</summary></div>`);
+  get("closed").moveBefore(get("moved"), get("existing"));
+  assert_true(get("moved").checkVisibility(), "the moved summary is now the first summary");
+  assert_false(get("existing").checkVisibility(), "the previous summary is now hidden content");
+}, "Moving a summary before the existing summary of a closed details replaces it");
+
+test(t => {
+  const get = setUp(t, `<details id=closed><summary id=moved>Moved summary</summary><summary id=second>Second summary</summary>content</details>
+    <div id=destination></div>`);
+  assert_false(get("second").checkVisibility());
+  get("destination").moveBefore(get("moved"), null);
+  assert_true(get("second").checkVisibility(), "the next summary becomes the details' summary");
+}, "Moving the summary out of a details promotes the next summary");
+
+test(t => {
+  const get = setUp(t, `<details id=closed><summary id=moved>First summary</summary><summary id=second>Second summary</summary>content</details>`);
+  assert_true(get("moved").checkVisibility());
+  assert_false(get("second").checkVisibility());
+  get("closed").moveBefore(get("moved"), null);
+  assert_false(get("moved").checkVisibility(), "no longer the first summary");
+  assert_true(get("second").checkVisibility(), "the second summary is now the first");
+  get("closed").moveBefore(get("moved"), get("second"));
+  assert_true(get("moved").checkVisibility(), "the first summary again");
+  assert_false(get("second").checkVisibility(), "the second summary is hidden content again");
+}, "Reordering a details' summary after another summary and back");
+</script>
