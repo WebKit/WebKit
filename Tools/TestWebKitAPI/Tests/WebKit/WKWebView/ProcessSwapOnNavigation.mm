@@ -35,6 +35,7 @@
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/UserMediaCaptureUIDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import <WebKit/WKBackForwardListItemPrivate.h>
 #import <WebKit/WKContentRuleListStore.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
@@ -556,6 +557,15 @@ static RetainPtr<_WKProcessPoolConfiguration> psonProcessPoolConfiguration()
     processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
     processPoolConfiguration.get().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol = YES;
     return processPoolConfiguration;
+}
+
+static void waitForAllWebProcessesToHandlePendingMessages(WKProcessPool *processPool)
+{
+    __block bool receivedReply = false;
+    [processPool _countWebPagesInAllProcessesForTesting:^(unsigned) {
+        receivedReply = true;
+    }];
+    TestWebKitAPI::Util::run(&receivedReply);
 }
 
 enum class SchemeHandlerShouldBeAsync : bool { No, Yes };
@@ -9694,6 +9704,262 @@ TEST(ProcessSwap, MemoryPressureDuringProcessSwap)
     auto before = MonotonicTime::now();
     while ((MonotonicTime::now() - before) < 1_s)
         TestWebKitAPI::Util::spinRunLoop(10);
+}
+
+TEST(ProcessSwap, ProcessWithActivePageDoesNotExitOnMemoryPressure)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView _webProcessIdentifier];
+    waitForAllWebProcessesToHandlePendingMessages(processPool.get());
+
+    EXPECT_NULL(TestWebKitAPI::webProcessTerminationReasonAfterMemoryPressureEvent(processPool.get(), webkitPID, 1_s).get());
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+}
+
+TEST(ProcessSwap, CachedProcessExitsAsIdleOnMemoryPressure)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    RetainPtr delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+
+    pid_t webkitPID = 0;
+    @autoreleasepool {
+        RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        [webView setNavigationDelegate:delegate.get()];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+        webkitPID = [webView _webProcessIdentifier];
+    }
+    EXPECT_NE(0, webkitPID);
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [processPool _processCacheSize] == 1;
+    }));
+    waitForAllWebProcessesToHandlePendingMessages(processPool.get());
+
+    EXPECT_WK_STREQ(@"IdleExit", TestWebKitAPI::webProcessTerminationReasonAfterMemoryPressureEvent(processPool.get(), webkitPID).get());
+    EXPECT_EQ(0U, [processPool _processCacheSize]);
+}
+
+TEST(ProcessSwap, PrewarmedProcessExitsAsIdleOnMemoryPressure)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().usesWebProcessCache = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    pid_t prewarmedPID = 0;
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        for (NSNumber *pid in [processPool _prewarmedProcessIdentifiersForTesting]) {
+            if (pid.intValue)
+                prewarmedPID = pid.intValue;
+        }
+        return !!prewarmedPID;
+    }));
+    EXPECT_NE([webView _webProcessIdentifier], prewarmedPID);
+    waitForAllWebProcessesToHandlePendingMessages(processPool.get());
+
+    EXPECT_WK_STREQ(@"IdleExit", TestWebKitAPI::webProcessTerminationReasonAfterMemoryPressureEvent(processPool.get(), prewarmedPID).get());
+    EXPECT_FALSE([[processPool _prewarmedProcessIdentifiersForTesting] containsObject:@(prewarmedPID)]);
+}
+
+TEST(ProcessSwap, BackForwardCacheProcessExitsAsIdleOnMemoryPressure)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
+    if (!isUsingBackForwardCache(webView.get())) {
+        NSLog(@"ProcessSwap.BackForwardCacheProcessExitsAsIdleOnMemoryPressure: Test is skipped as back-forward cache is disabled");
+        return;
+    }
+
+    RetainPtr delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto suspendedPID = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_NE(suspendedPID, [webView _webProcessIdentifier]);
+    EXPECT_EQ(2U, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+    waitForAllWebProcessesToHandlePendingMessages(processPool.get());
+
+    EXPECT_WK_STREQ(@"IdleExit", TestWebKitAPI::webProcessTerminationReasonAfterMemoryPressureEvent(processPool.get(), suspendedPID).get());
+    EXPECT_EQ(1U, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+}
+
+TEST(ProcessSwap, BackToBackMemoryPressureEventsEachExitIdleProcesses)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    RetainPtr delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+
+    RetainPtr<WKWebView> secondWebView;
+    pid_t secondPID = 0;
+    @autoreleasepool {
+        secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        [secondWebView setNavigationDelegate:delegate.get()];
+        [secondWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]]];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+        secondPID = [secondWebView _webProcessIdentifier];
+    }
+
+    pid_t firstPID = 0;
+    @autoreleasepool {
+        RetainPtr firstWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        [firstWebView setNavigationDelegate:delegate.get()];
+        [firstWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+        firstPID = [firstWebView _webProcessIdentifier];
+    }
+    EXPECT_NE(0, firstPID);
+    EXPECT_NE(firstPID, secondPID);
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [processPool _processCacheSize] == 1;
+    }));
+    waitForAllWebProcessesToHandlePendingMessages(processPool.get());
+
+    auto firstEventTime = MonotonicTime::now();
+    EXPECT_WK_STREQ(@"IdleExit", TestWebKitAPI::webProcessTerminationReasonAfterMemoryPressureEvent(processPool.get(), firstPID).get());
+    EXPECT_EQ(secondPID, [secondWebView _webProcessIdentifier]);
+
+    @autoreleasepool {
+        secondWebView = nil;
+    }
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [processPool _processCacheSize] == 1;
+    }));
+    waitForAllWebProcessesToHandlePendingMessages(processPool.get());
+
+    // Send the second event within two seconds of the first one.
+    EXPECT_LT(MonotonicTime::now() - firstEventTime, 2_s);
+    EXPECT_WK_STREQ(@"IdleExit", TestWebKitAPI::webProcessTerminationReasonAfterMemoryPressureEvent(processPool.get(), secondPID).get());
+    EXPECT_EQ(0U, [processPool _processCacheSize]);
+}
+
+TEST(ProcessSwap, CachedProcessReusedDuringMemoryPressureReleasesMemory)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    __block unsigned scriptRequestCount = 0;
+    RetainPtr handler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        if (![task.request.URL.path isEqualToString:@"/script.js"])
+            return respond(task, "<script src='script.js'></script>");
+
+        ++scriptRequestCount;
+        constexpr auto script = "var loaded = true;"_s;
+        RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/javascript" expectedContentLength:script.length() textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:toNSData(script.span8()).get()];
+        [task didFinish];
+    };
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    [webViewConfiguration _setDelaysWebProcessLaunchUntilFirstLoad:YES];
+    RetainPtr delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    RetainPtr request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+
+    pid_t cachedPID = 0;
+    @autoreleasepool {
+        RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        [webView setNavigationDelegate:delegate.get()];
+        [webView loadRequest:request.get()];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+        cachedPID = [webView _webProcessIdentifier];
+    }
+    EXPECT_NE(0, cachedPID);
+    EXPECT_EQ(1U, scriptRequestCount);
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [processPool _processCacheSize] == 1;
+    }));
+    waitForAllWebProcessesToHandlePendingMessages(processPool.get());
+
+    __block bool cachedProcessTerminated = false;
+    [processPool _setWebProcessTerminationHandlerForTesting:^(pid_t terminatedProcessIdentifier, NSString *) {
+        if (terminatedProcessIdentifier == cachedPID)
+            cachedProcessTerminated = true;
+    }];
+
+    // Take the cached process for a new page before it handles the event, so the UI process keeps it.
+    [processPool _sendMemoryPressureEventToWebProcessesForTesting:NO];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:request.get()];
+    EXPECT_EQ(cachedPID, [webView _webProcessIdentifier]);
+    EXPECT_EQ(0U, [processPool _processCacheSize]);
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    waitForAllWebProcessesToHandlePendingMessages(processPool.get());
+
+    EXPECT_FALSE(cachedProcessTerminated);
+    EXPECT_EQ(cachedPID, [webView _webProcessIdentifier]);
+    EXPECT_EQ(2U, scriptRequestCount);
+
+    [processPool _setWebProcessTerminationHandlerForTesting:nil];
 }
 
 #if PLATFORM(IOS) || PLATFORM(VISION)

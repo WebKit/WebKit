@@ -464,6 +464,22 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return NO;
 }
 
+- (void)_setWebProcessTerminationHandlerForTesting:(void (^)(pid_t processIdentifier, NSString *reason))handler
+{
+    if (!handler) {
+        protect(*_processPool)->setWebProcessTerminationHandlerForTesting(nullptr);
+        return;
+    }
+    protect(*_processPool)->setWebProcessTerminationHandlerForTesting([handler = makeBlockPtr(handler)](ProcessID processIdentifier, WebKit::ProcessTerminationReason reason) {
+        handler(processIdentifier, WebKit::processTerminationReasonToString(reason).createNSString().get());
+    });
+}
+
+- (void)_sendMemoryPressureEventToWebProcessesForTesting:(BOOL)critical
+{
+    protect(*_processPool)->sendMemoryPressureEventToWebProcessesForTesting(critical);
+}
+
 - (void)_makeNextWebProcessLaunchFailForTesting
 {
     _processPool->setShouldMakeNextWebProcessLaunchFailForTesting(true);

@@ -67,6 +67,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
     CacheMediaMIMETypes(Vector<String> types)
     CacheMediaSourceTypeSupported(String type, bool isSupported)
     SetTaskNamePort(MachSendRight taskNamePort)
+    ProcessIsReadyToExit()
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(UIPROCESS_PERIODIC_MEMORY_MONITOR)

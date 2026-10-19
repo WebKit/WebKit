@@ -277,6 +277,11 @@ public:
     HashSet<ProcessID> crossOriginIsolatedProcessIdentifiers();
     void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<String>&&)>&&);
     void countWebPagesInAllProcessesForTesting(CompletionHandler<void(unsigned)>&&);
+#if PLATFORM(COCOA)
+    void sendMemoryPressureEventToWebProcessesForTesting(bool isCritical);
+#endif
+    void setWebProcessTerminationHandlerForTesting(Function<void(ProcessID, ProcessTerminationReason)>&& handler) { m_webProcessTerminationHandlerForTesting = WTF::move(handler); }
+    const Function<void(ProcessID, ProcessTerminationReason)>& webProcessTerminationHandlerForTesting() const LIFETIME_BOUND { return m_webProcessTerminationHandlerForTesting; }
 
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
 
@@ -832,6 +837,7 @@ private:
 
     bool m_alwaysUsesComplexTextCodePath { false };
     bool m_disableFontSubpixelAntialiasingForTesting { false };
+    Function<void(ProcessID, ProcessTerminationReason)> m_webProcessTerminationHandlerForTesting;
 
     Vector<String> m_fontAllowList;
 

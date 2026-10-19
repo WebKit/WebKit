@@ -1983,4 +1983,26 @@ static NSMenuItem *itemMatchingFilter(NSMenu *menu, MenuItemFilter filter)
 
 @end
 
+namespace TestWebKitAPI {
+
+RetainPtr<NSString> webProcessTerminationReasonAfterMemoryPressureEvent(WKProcessPool *processPool, pid_t processIdentifier, Seconds timeout)
+{
+    __block bool terminationReported = false;
+    __block RetainPtr<NSString> terminationReason;
+    [processPool _setWebProcessTerminationHandlerForTesting:^(pid_t terminatedProcessIdentifier, NSString *reason) {
+        if (terminatedProcessIdentifier != processIdentifier)
+            return;
+        terminationReason = reason;
+        terminationReported = true;
+    }];
+
+    [processPool _sendMemoryPressureEventToWebProcessesForTesting:NO];
+    Util::runFor(&terminationReported, timeout);
+
+    [processPool _setWebProcessTerminationHandlerForTesting:nil];
+    return terminationReason;
+}
+
+} // namespace TestWebKitAPI
+
 #endif // __cplusplus

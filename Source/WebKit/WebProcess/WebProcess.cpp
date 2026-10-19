@@ -538,16 +538,17 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
                 GarbageCollectionController::singleton().dumpHeap();
 
 #if PLATFORM(COCOA)
-            // If this is a process we keep around for performance, kill it on memory pressure instead of trying to free up its memory.
+            // Ask the UI process to terminate a process kept around for performance, then free its memory in case the UI process keeps it.
             if (m_allowExitOnMemoryPressure && isProcessBeingCachedForPerformance()) {
                 if (m_processType == ProcessType::CachedWebContent)
-                    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Cached WebProcess is exiting due to memory pressure");
+                    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Cached WebProcess is ready to exit due to memory pressure");
                 else if (m_processType == ProcessType::PrewarmedWebContent)
-                    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Prewarmed WebProcess is exiting due to memory pressure");
+                    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Prewarmed WebProcess is ready to exit due to memory pressure");
+                else if (m_pageMap.isEmpty())
+                    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Worker-only WebProcess is ready to exit due to memory pressure");
                 else
-                    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Suspended WebProcess is exiting due to memory pressure");
-                stopRunLoop();
-                return;
+                    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Suspended WebProcess is ready to exit due to memory pressure");
+                protect(parentProcessConnection())->send(Messages::WebProcessProxy::ProcessIsReadyToExit(), 0);
             }
 #endif
 

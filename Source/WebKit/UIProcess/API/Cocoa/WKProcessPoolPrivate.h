@@ -160,6 +160,8 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 - (BOOL)_hasAudibleMediaActivity WK_API_AVAILABLE(macos(13.0), ios(16.0));
 - (BOOL)_requestWebProcessTermination:(pid_t)pid WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (BOOL)_isWebProcessSuspended:(pid_t)pid;
+- (void)_setWebProcessTerminationHandlerForTesting:(void (^)(pid_t processIdentifier, NSString *reason))handler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_sendMemoryPressureEventToWebProcessesForTesting:(BOOL)critical WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 // Test only. Returns web processes running web pages (does not include web processes running service workers)
 - (size_t)_webPageContentProcessCount WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
