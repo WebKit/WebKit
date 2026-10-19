@@ -47,6 +47,18 @@
 namespace WebCore {
 namespace IDBClient {
 
+template<typename T, typename... Parameters, typename... Arguments>
+static void performCallbackOnOriginThread(Locker<Lock>& locker, Ref<T>&& object, void (T::*method)(Parameters...), Arguments&&... arguments) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+{
+    if (canCurrentThreadAccessThreadLocalData(object->originThread())) {
+        locker.unlockEarly();
+        (object.get().*method)(std::forward<Arguments>(arguments)...);
+        return;
+    }
+
+    object->performCallbackOnOriginThread(WTF::move(object), method, std::forward<Arguments>(arguments)...);
+}
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBConnectionProxy);
 
 IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection, PAL::SessionID sessionID)
@@ -123,12 +135,8 @@ void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
 {
     ASSERT(isMainThread());
 
-    RefPtr<IDBOpenDBRequest> request;
-    {
-        Locker locker { m_openDBRequestMapLock };
-        request = m_openDBRequestMap.take(resultData.requestIdentifier());
-    }
-
+    Locker locker { m_openDBRequestMapLock };
+    RefPtr request = m_openDBRequestMap.take(resultData.requestIdentifier());
     if (!request)
         return;
 
@@ -137,7 +145,7 @@ void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
         case IDBResultType::OpenDatabaseUpgradeNeeded: {
             abortOpenAndUpgradeNeeded(resultData.databaseConnectionIdentifier(), resultData.transactionInfo().identifier());
             auto result = IDBResultData::error(resultData.requestIdentifier(), IDBError { ExceptionCode::UnknownError, "Version change transaction on cached page is aborted to unblock other connections"_s });
-            request->performCallbackOnOriginThread(*request, &IDBOpenDBRequest::requestCompleted, result);
+            performCallbackOnOriginThread(locker, request.releaseNonNull(), &IDBOpenDBRequest::requestCompleted, result);
             return;
         }
         default:
@@ -145,7 +153,7 @@ void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
         }
     }
 
-    request->performCallbackOnOriginThread(*request, &IDBOpenDBRequest::requestCompleted, resultData);
+    performCallbackOnOriginThread(locker, request.releaseNonNull(), &IDBOpenDBRequest::requestCompleted, resultData);
 }
 
 void IDBConnectionProxy::createObjectStore(TransactionOperation& operation, const IDBObjectStoreInfo& info)
@@ -271,14 +279,16 @@ void IDBConnectionProxy::saveOperation(TransactionOperation& operation)
 
 void IDBConnectionProxy::completeOperation(const IDBResultData& resultData)
 {
-    RefPtr<TransactionOperation> operation;
-    {
-        Locker locker { m_transactionOperationLock };
-        operation = m_activeOperations.take(resultData.requestIdentifier());
-    }
-
+    Locker locker { m_transactionOperationLock };
+    RefPtr operation = m_activeOperations.take(resultData.requestIdentifier());
     if (!operation)
         return;
+
+    if (canCurrentThreadAccessThreadLocalData(operation->originThread())) {
+        locker.unlockEarly();
+        operation->transitionToCompleteOnThisThread(resultData);
+        return;
+    }
 
     operation->transitionToComplete(resultData, WTF::move(operation));
 }
@@ -348,16 +358,12 @@ void IDBConnectionProxy::notifyOpenDBRequestBlocked(const IDBResourceIdentifier&
 {
     ASSERT(isMainThread());
 
-    RefPtr<IDBOpenDBRequest> request;
-    {
-        Locker locker { m_openDBRequestMapLock };
-        request = m_openDBRequestMap.get(requestIdentifier);
-    }
-
+    Locker locker { m_openDBRequestMapLock };
+    RefPtr request = m_openDBRequestMap.get(requestIdentifier);
     if (!request)
         return;
 
-    request->performCallbackOnOriginThread(*request, &IDBOpenDBRequest::requestBlocked, oldVersion, newVersion);
+    performCallbackOnOriginThread(locker, request.releaseNonNull(), &IDBOpenDBRequest::requestBlocked, oldVersion, newVersion);
 }
 
 void IDBConnectionProxy::openDBRequestCancelled(const IDBOpenRequestData& requestData)
@@ -378,16 +384,12 @@ void IDBConnectionProxy::establishTransaction(IDBTransaction& transaction)
 
 void IDBConnectionProxy::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
-    RefPtr<IDBTransaction> transaction;
-    {
-        Locker locker { m_transactionMapLock };
-        transaction = m_pendingTransactions.take(transactionIdentifier);
-    }
-
+    Locker locker { m_transactionMapLock };
+    RefPtr transaction = m_pendingTransactions.take(transactionIdentifier);
     if (!transaction)
         return;
 
-    transaction->performCallbackOnOriginThread(*transaction, &IDBTransaction::didStart, error);
+    performCallbackOnOriginThread(locker, transaction.releaseNonNull(), &IDBTransaction::didStart, error);
 }
 
 void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction, uint64_t handledRequestResultsCount)
@@ -403,16 +405,12 @@ void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction, uint64_t
 
 void IDBConnectionProxy::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
-    RefPtr<IDBTransaction> transaction;
-    {
-        Locker locker { m_transactionMapLock };
-        transaction = m_committingTransactions.take(transactionIdentifier);
-    }
-
+    Locker locker { m_transactionMapLock };
+    RefPtr transaction = m_committingTransactions.take(transactionIdentifier);
     if (!transaction)
         return;
 
-    transaction->performCallbackOnOriginThread(*transaction, &IDBTransaction::didCommit, error);
+    performCallbackOnOriginThread(locker, transaction.releaseNonNull(), &IDBTransaction::didCommit, error);
 }
 
 void IDBConnectionProxy::abortTransaction(IDBTransaction& transaction)
@@ -428,16 +426,12 @@ void IDBConnectionProxy::abortTransaction(IDBTransaction& transaction)
 
 void IDBConnectionProxy::didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
-    RefPtr<IDBTransaction> transaction;
-    {
-        Locker locker { m_transactionMapLock };
-        transaction = m_abortingTransactions.take(transactionIdentifier);
-    }
-
+    Locker locker { m_transactionMapLock };
+    RefPtr transaction = m_abortingTransactions.take(transactionIdentifier);
     if (!transaction)
         return;
 
-    transaction->performCallbackOnOriginThread(*transaction, &IDBTransaction::didAbort, error);
+    performCallbackOnOriginThread(locker, transaction.releaseNonNull(), &IDBTransaction::didAbort, error);
 }
 
 bool IDBConnectionProxy::hasRecordOfTransaction(const IDBTransaction& transaction) const
@@ -495,17 +489,13 @@ void IDBConnectionProxy::connectionToServerLost(const IDBError& error)
     }
 
     for (auto& requestIdentifier : openDBRequestIdentifiers) {
-        RefPtr<IDBOpenDBRequest> request;
-        {
-            Locker locker { m_openDBRequestMapLock };
-            request = m_openDBRequestMap.get(requestIdentifier);
-        }
-
+        Locker locker { m_openDBRequestMapLock };
+        RefPtr request = m_openDBRequestMap.get(requestIdentifier);
         if (!request)
             continue;
 
         auto result = IDBResultData::error(requestIdentifier, error);
-        request->performCallbackOnOriginThread(*request, &IDBOpenDBRequest::requestCompleted, result);
+        performCallbackOnOriginThread(locker, request.releaseNonNull(), &IDBOpenDBRequest::requestCompleted, result);
     }
 
     Vector<IDBResourceIdentifier> infoCallbackIdentifiers;
@@ -560,15 +550,12 @@ void IDBConnectionProxy::getAllDatabaseNamesAndVersions(ScriptExecutionContext& 
 
 void IDBConnectionProxy::didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, std::optional<Vector<IDBDatabaseNameAndVersion>>&& databases)
 {
-    RefPtr<IDBDatabaseNameAndVersionRequest> request;
-    {
-        Locker locker { m_databaseInfoMapLock };
-        request = m_databaseInfoCallbacks.take(requestIdentifier);
-        if (!request)
-            return;
-    }
+    Locker locker { m_databaseInfoMapLock };
+    RefPtr request = m_databaseInfoCallbacks.take(requestIdentifier);
+    if (!request)
+        return;
 
-    request->performCallbackOnOriginThread(*request, &IDBDatabaseNameAndVersionRequest::complete, WTF::move(databases));
+    performCallbackOnOriginThread(locker, request.releaseNonNull(), &IDBDatabaseNameAndVersionRequest::complete, WTF::move(databases));
 }
 
 void IDBConnectionProxy::registerDatabaseConnection(IDBDatabase& database, ScriptExecutionContextIdentifier identifier)
