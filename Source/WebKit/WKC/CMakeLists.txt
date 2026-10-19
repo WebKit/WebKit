@@ -435,10 +435,8 @@ file(GLOB_RECURSE WEBCORE_PLATFORM_SOURCES
     ${WEBCORE_DIR}/platform/network/curl/*.cpp
     ${WEBCORE_DIR}/platform/network/wkc/*.cpp
     ${WEBCORE_DIR}/platform/graphics/WKC/*.cpp
-    ${WEBCORE_DIR}/platform/audio/WKC/*.cpp
     ${WEBCORE_DIR}/platform/sql/WKC/*.cpp
     ${WEBCORE_DIR}/platform/text/WKC/*.cpp
-    ${WEBCORE_DIR}/platform/mediastream/WKC/*.cpp
 )
 
 # A full in-process page engine must compile the WKC ResourceHandle bridge.
@@ -570,22 +568,33 @@ set_source_files_properties("${WEBCORE_DIR}/platform/network/ResourceHandle.cpp"
 
 
 # Full WebCore requires the shared platform-side audio and media-stream
-# implementations in addition to Sources.txt. Select the portable top-level
-# implementations only; OS/port subdirectories remain excluded unless WKC-owned.
-if (WKC_ENABLE_FULL_WEBCORE)
+# implementations in a# Optional audio and media-stream platform files must follow their feature
+# switches. The page-loading baseline intentionally builds without Web Audio or
+# WebRTC; compiling the legacy WKC audio/RTC adapters anyway drags removed APIs
+# and the unported libwebrtc tree into an otherwise unrelated browser build.
+# Re-enable these source groups only alongside their corresponding backend.
+if (WKC_ENABLE_FULL_WEBCORE AND WKC_ENABLE_WEB_AUDIO)
+    file(GLOB_RECURSE WEBCORE_AUDIO_WKC_SOURCES "${WEBCORE_DIR}/platform/audio/WKC/*.cpp")
     file(GLOB WEBCORE_AUDIO_COMMON_SOURCES "${WEBCORE_DIR}/platform/audio/*.cpp")
+    list(APPEND WEBCORE_PLATFORM_SOURCES
+        ${WEBCORE_AUDIO_WKC_SOURCES}
+        ${WEBCORE_AUDIO_COMMON_SOURCES}
+    )
+endif ()
+if (WKC_ENABLE_FULL_WEBCORE AND WKC_ENABLE_WEBRTC_API)
+    file(GLOB_RECURSE WEBCORE_MEDIASTREAM_WKC_SOURCES "${WEBCORE_DIR}/platform/mediastream/WKC/*.cpp")
     file(GLOB WEBCORE_MEDIASTREAM_COMMON_SOURCES "${WEBCORE_DIR}/platform/mediastream/*.cpp")
     list(APPEND WEBCORE_PLATFORM_SOURCES
-        ${WEBCORE_AUDIO_COMMON_SOURCES}
+        ${WEBCORE_MEDIASTREAM_WKC_SOURCES}
         ${WEBCORE_MEDIASTREAM_COMMON_SOURCES}
     )
+endif ()
+if (WKC_ENABLE_FULL_WEBCORE)
     list(REMOVE_DUPLICATES WEBCORE_PLATFORM_SOURCES)
     list(LENGTH WEBCORE_PLATFORM_SOURCES _WKC_PLATFORM_SOURCE_COUNT)
     message(STATUS "WKC full WebCore probe: ${_WKC_PLATFORM_SOURCE_COUNT} WKC/common platform sources selected")
 endif ()
-
-# Experimental full-WebRTC integration for the full-WebCore probe. Keep it
-# opt-in until the selected WKC providers compile and the final executable links.
+selected WKC providers compile and the final executable links.
 if (WKC_ENABLE_WEBRTC_API)
     add_definitions(-DUSE_LIBWEBRTC=1)
 
