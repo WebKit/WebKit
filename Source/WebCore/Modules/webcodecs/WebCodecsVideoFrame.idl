@@ -61,6 +61,7 @@ typedef (HTMLImageElement
     readonly attribute unsigned long codedHeight;
     readonly attribute DOMRectReadOnly? codedRect;
     readonly attribute DOMRectReadOnly? visibleRect;
+    [EnabledBySetting=WebCodecsVideoFrameRotationEnabled] readonly attribute double rotation;
     readonly attribute unsigned long displayWidth;
     readonly attribute unsigned long displayHeight;
     readonly attribute unsigned long long? duration;
@@ -82,6 +83,8 @@ typedef (HTMLImageElement
 
     DOMRectInit visibleRect;
 
+    [EnabledBySetting=WebCodecsVideoFrameRotationEnabled] double rotation = 0;
+
     [EnforceRange] unsigned long displayWidth;
     [EnforceRange] unsigned long displayHeight;
 };
@@ -98,6 +101,8 @@ typedef (HTMLImageElement
     sequence<PlaneLayout> layout;
 
     DOMRectInit visibleRect;
+
+    [EnabledBySetting=WebCodecsVideoFrameRotationEnabled] double rotation = 0;
 
     [EnforceRange] unsigned long displayWidth;
     [EnforceRange] unsigned long displayHeight;

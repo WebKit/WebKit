@@ -7196,6 +7196,15 @@ WebCodecsVideoEnabled:
   richJavaScript: true
   mediaPlaybackRelated: true
 
+WebCodecsVideoFrameRotationEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "WebCodecs VideoFrame rotation"
+  humanReadableDescription: "Enable the rotation attribute and init members of WebCodecs VideoFrame"
+  condition: ENABLE(WEB_CODECS)
+  defaultValue: false
+
 WebContentRestrictionsAskToEnabled:
   type: bool
   status: unstable
