@@ -885,7 +885,7 @@ jobs:
             -DWKC_ENABLE_WEBASSEMBLY=OFF \
             -DWKC_ENABLE_WEBRTC_API=OFF \
             -DWKC_ENABLE_WEB_INSPECTOR=OFF \
- > build-full-configure.log 2>&1
+          > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
 
           # Preserve the source-list omission report even if the engine compile fails.
