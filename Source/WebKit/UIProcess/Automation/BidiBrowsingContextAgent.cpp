@@ -678,28 +678,29 @@ void BidiBrowsingContextAgent::navigate(const BrowsingContext& browsingContext, 
     session->navigateBrowsingContextForBidi(pageHandle, frameHandle, urlRecord.string(), pageLoadStrategy, defaultPageLoadTimeout, WTF::move(callback));
 }
 
-void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, std::optional<bool>&& optionalIgnoreCache, std::optional<ReadinessState>&& optionalReadinessState, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
+void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, std::optional<bool>&& optionalIgnoreCache, const String& optionalWait, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
 {
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-reload
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    // FIXME: implement `ignoreCache` option.
+    // https://w3c.github.io/webdriver-bidi/#get-a-navigable: no navigable has an empty id, so it is "no such frame".
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
 
-    auto pageLoadStrategy = pageLoadStrategyFromReadinessState(optionalReadinessState.value_or(defaultReadinessState));
-    session->reloadBrowsingContext(browsingContext, pageLoadStrategy, defaultPageLoadTimeout.milliseconds(), [session = WTF::move(session), browsingContext, callback = WTF::move(callback)](CommandResult<void>&& result) {
-        if (!result) {
-            callback(makeUnexpected(result.error()));
-            return;
-        }
+    auto handles = session->extractBrowsingContextHandles(browsingContext);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
+    auto [pageHandle, frameHandle] = handles.value();
 
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+    // `wait` is modeled as an optional string so we can reject invalid provided values (e.g. "" per WPT).
+    std::optional<ReadinessState> waitCondition;
+    if (!optionalWait.isNull()) {
+        waitCondition = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<ReadinessState>(optionalWait);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!waitCondition, InvalidParameter);
+    }
 
-        RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, WindowNotFound);
-
-        // FIXME: keep track of navigation IDs that we hand out.
-        callback({ { webPageProxy->currentURL(), "placeholder_navigation"_s } });
-    });
+    auto pageLoadStrategy = pageLoadStrategyFromReadinessState(waitCondition.value_or(defaultReadinessState));
+    auto ignoreCache = optionalIgnoreCache.value_or(false) ? WebAutomationSession::IgnoreCache::Yes : WebAutomationSession::IgnoreCache::No;
+    session->reloadBrowsingContextForBidi(pageHandle, frameHandle, ignoreCache, pageLoadStrategy, defaultPageLoadTimeout, WTF::move(callback));
 }
 
 void BidiBrowsingContextAgent::traverseHistory(const BrowsingContext& browsingContext, double delta, CommandCallback<void>&& callback)
