@@ -5221,7 +5221,8 @@ void WebPage::requestFrameScreenPosition(FrameIdentifier frameID)
 
 void WebPage::scheduleAccessibilityFrameGeometryUpdate()
 {
-    send(Messages::WebPageProxy::ScheduleAccessibilityFrameGeometryUpdate());
+    if (AXObjectCache::accessibilityEnabled())
+        send(Messages::WebPageProxy::ScheduleAccessibilityFrameGeometryUpdate());
 }
 #endif
 
