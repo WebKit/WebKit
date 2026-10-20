@@ -746,6 +746,16 @@ public:
 
 #ifdef __OBJC__
     WKWebExtensionContext *wrapper() const { return (WKWebExtensionContext *)API::ObjectImpl<API::Object::Type::WebExtensionContext>::wrapper(); }
+#elif ENABLE(2022_GLIB_API)
+    void setWrapper(WebKitWebExtensionContext *extension)
+    {
+        m_wrapper = GWeakPtr(extension);
+    }
+
+    WebKitWebExtensionContext *wrapper() const
+    {
+        return m_wrapper.get();
+    }
 #endif
 
 private:
@@ -753,6 +763,10 @@ private:
     friend class WebExtensionMessagePort;
 
     explicit WebExtensionContext();
+
+#if ENABLE(2022_GLIB_API)
+    GWeakPtr<WebKitWebExtensionContext> m_wrapper;
+#endif
 
     int LEGACY_NODELETE toAPIError(WebExtensionContext::Error);
 
