@@ -141,7 +141,22 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
     SUPPRESS_MEMORY_UNSAFE_CAST auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), MapCoordinatesMode::UseTransforms, &isFixed);
     bool boxIsHorizontal = !run->isSVGText() ? run->isHorizontal() : !writingMode().isVertical();
 
-    rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(WTF::protect(element())), run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, false, false, boxIsHorizontal, isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
+    rects.append(SelectionGeometry(absoluteQuad, {
+        .behavior = HTMLElement::selectionRenderingBehavior(WTF::protect(element())),
+        .direction = run->direction(),
+        .minX = extentsRect.x(),
+        .maxX = extentsRect.maxX(),
+        .maxY = extentsRect.maxY(),
+        .lineNumber = 0,
+        .isLineBreak = run->isLineBreak(),
+        .isFirstOnLine = isFirstOnLine,
+        .isLastOnLine = isLastOnLine,
+        .containsStart = false,
+        .containsEnd = false,
+        .isHorizontal = boxIsHorizontal,
+        .isInFixedPosition = isFixed,
+        .pageNumber = static_cast<int>(view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x()))
+    }));
 }
 
 } // namespace WebCore
