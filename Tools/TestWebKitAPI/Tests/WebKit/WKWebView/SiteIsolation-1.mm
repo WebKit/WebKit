@@ -1275,6 +1275,87 @@ TEST(SiteIsolation, OverlayScrollbarStyleChangeUpdatesCrossOriginIframe)
     EXPECT_WK_STREQ("light", [webView stringByEvaluatingJavaScript:styleScript]);
 }
 
+static void checkScrollerStyleChangeUpdatesNestedIframes(bool siteIsolationEnabled)
+{
+    static constexpr auto scrollerHTML = "<div id='scroller' style='width: 200px; height: 200px; overflow: scroll'><div id='content' style='height: 1000px'></div></div>"_s;
+    static constexpr auto nestedIframeHTML = "<iframe style='width: 200px; height: 200px; border: none;' src='/nested'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { makeString("<body style='margin: 0; display: flex'>"_s, scrollerHTML, nestedIframeHTML, "<iframe style='width: 400px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s) } },
+        { "/iframe"_s, { makeString("<body style='margin: 0; display: flex'>"_s, scrollerHTML, nestedIframeHTML, "</body>"_s) } },
+        { "/nested"_s, { makeString("<body style='margin: 0'>"_s, scrollerHTML, "</body>"_s) } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    {
+        siteIsolationScrollerStyle = NSScrollerStyleLegacy;
+        ClassMethodSwizzler swizzler(NSScroller.class, @selector(preferredScrollerStyle), reinterpret_cast<IMP>(siteIsolationPreferredScrollerStyle));
+
+        RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+        RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+        [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+        auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600), siteIsolationEnabled);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        // Under Site Isolation the main frame and the cross-site iframe are local roots. The two /nested iframes never are.
+        RetainPtr<WKFrameInfo> sameSiteIframe;
+        RetainPtr<WKFrameInfo> crossSiteIframe;
+        RetainPtr<WKFrameInfo> iframeInCrossSiteIframe;
+        ASSERT_TRUE(Util::waitFor([&] -> bool {
+            RetainPtr<NSArray<_WKFrameTreeNode *>> childFrames = [webView mainFrame].childFrames;
+            if ([childFrames count] != 2 || ![childFrames.get()[1] childFrames].count)
+                return false;
+            sameSiteIframe = [childFrames.get()[0] info];
+            crossSiteIframe = [childFrames.get()[1] info];
+            iframeInCrossSiteIframe = [childFrames.get()[1] childFrames].firstObject.info;
+            return [[webView stringByEvaluatingJavaScript:@"location.href" inFrame:iframeInCrossSiteIframe.get()] isEqualToString:@"https://webkit.org/nested"];
+        }));
+        EXPECT_WK_STREQ("https://example.com/nested", [webView stringByEvaluatingJavaScript:@"location.href" inFrame:sameSiteIframe.get()]);
+        EXPECT_WK_STREQ("https://webkit.org/iframe", [webView stringByEvaluatingJavaScript:@"location.href" inFrame:crossSiteIframe.get()]);
+
+        std::array<std::pair<const char*, RetainPtr<WKFrameInfo>>, 4> frames { {
+            { "main frame", nil },
+            { "same-site iframe", sameSiteIframe },
+            { "cross-site iframe", crossSiteIframe },
+            { "iframe in cross-site iframe", iframeInCrossSiteIframe },
+        } };
+
+        auto contentWidth = [&](WKFrameInfo *frame) {
+            return [webView stringByEvaluatingJavaScript:@"document.getElementById('content').offsetWidth" inFrame:frame].intValue;
+        };
+        for (auto& [name, frame] : frames) {
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView stringByEvaluatingJavaScript:@"internals.scrollbarsControllerTypeForNode(document.getElementById('scroller'))" inFrame:frame.get()] isEqualToString:@"RemoteScrollbarsController"];
+            })) << name;
+            EXPECT_LT(contentWidth(frame.get()), 200) << name;
+        }
+
+        siteIsolationScrollerStyle = NSScrollerStyleOverlay;
+        [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+
+        Util::waitFor([&] {
+            return std::ranges::all_of(frames, [&](auto& entry) {
+                return contentWidth(entry.second.get()) == 200;
+            });
+        });
+        for (auto& [name, frame] : frames)
+            EXPECT_EQ(contentWidth(frame.get()), 200) << name;
+    }
+
+    [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+}
+
+TEST(SiteIsolation, ScrollerStyleChangeUpdatesNestedIframes)
+{
+    checkScrollerStyleChangeUpdatesNestedIframes(true);
+}
+
+TEST(SiteIsolation, ScrollerStyleChangeUpdatesNestedIframesWithoutSiteIsolation)
+{
+    checkScrollerStyleChangeUpdatesNestedIframes(false);
+}
+
 #endif // PLATFORM(MAC)
 
 // Replies to a text checking request must go to the web process that made it. Only that process has the
