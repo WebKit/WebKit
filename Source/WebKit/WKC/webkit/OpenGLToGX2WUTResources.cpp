@@ -276,6 +276,7 @@ bool setAttribute(void* context, uint8_t attribute, const VertexAttribute& value
     auto& resources = *static_cast<WUTBufferResources*>(context);
     WUTBufferResources::AttributeDescriptor descriptor;
     descriptor.format = format;
+    descriptor.buffer = value.buffer;
     descriptor.componentMask = value.components == 1 ? GX2_CHANNEL_MASK_R
         : value.components == 2 ? GX2_CHANNEL_MASK_RG
         : value.components == 3 ? GX2_CHANNEL_MASK_RGB : GX2_CHANNEL_MASK_RGBA;
@@ -297,6 +298,10 @@ bool buildWUTAttributeStreams(const WUTBufferResources& resources, std::vector<G
             const auto& attribute = entry.second;
             if (!attribute.enabled)
                 continue;
+            if (!attribute.buffer || resources.buffers.find(attribute.buffer) == resources.buffers.end()) {
+                output.clear();
+                return false;
+            }
             GX2AttribStream stream {};
             stream.location = location;
             stream.buffer = location;
