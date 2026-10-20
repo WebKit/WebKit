@@ -1425,8 +1425,6 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
 
     GST_DEBUG_OBJECT(videoSinkPad, "Received new caps: %" GST_PTR_FORMAT, caps.get());
 
-    m_videoInfo = VideoFrameGStreamer::infoFromCaps(caps);
-
     if (!hasFirstVideoSampleReachedSink()) {
         // We want to wait for the sink to receive the first buffer before emitting dimensions, since only by then we
         // are guaranteed that any potential tag event with a rotation has been handled.
@@ -4192,6 +4190,12 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
             // We're omitting a !previousBuffer assert here because on some embedded platforms the buffer can't be deep copied by flushCurrentBuffer().
             isDuplicateSample = buffer == previousBuffer ? IsDuplicateSample::Yes : IsDuplicateSample::No;
         }
+        // The current sample's frames are made with m_videoInfo, so it follows the samples rather than the sink's
+        // caps: new caps reach the sink before the first buffer they describe, and until that buffer arrives (or
+        // for good, if none does) the previous sample stays current.
+        auto* caps = gst_sample_get_caps(sample.get());
+        if (caps && (!m_videoInfo || !m_sample || caps != gst_sample_get_caps(m_sample.get())))
+            m_videoInfo = VideoFrameGStreamer::infoFromCaps(GRefPtr(caps));
         m_sample = WTF::move(sample);
     }
 
@@ -4383,12 +4387,14 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     // to deadlocks if triggerRepaint is called while the video frame converter is blocked on its
     // state change.
     GRefPtr<GstSample> sample;
+    std::optional<VideoFrameGStreamer::Info> videoInfo;
     {
         Locker sampleLocker { m_sampleMutex };
         if (!GST_IS_SAMPLE(m_sample.get()))
             return;
 
         sample = m_sample;
+        videoInfo = m_videoInfo;
     }
 
     if (!GST_IS_BUFFER(gst_sample_get_buffer(sample.get()))) {
@@ -4401,7 +4407,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (!presentationSize)
         return;
 
-    Ref frame = VideoFrameGStreamer::create(WTF::move(sample), { IntSize(*presentationSize), { *m_videoInfo } });
+    Ref frame = VideoFrameGStreamer::create(WTF::move(sample), { IntSize(*presentationSize), WTF::move(videoInfo) });
     context.drawVideoFrame(frame, rect, ShouldDiscardAlpha::No, { m_videoSourceOrientation });
 }
 
