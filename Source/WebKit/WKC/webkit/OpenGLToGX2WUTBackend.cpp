@@ -63,10 +63,111 @@ bool applyCullState(WUTBackendContext& state)
     return true;
 }
 
+bool translateBlendFactor(BlendFactor factor, GX2BlendMode& output)
+{
+    switch (factor) {
+    case BlendFactor::Zero: output = GX2_BLEND_MODE_ZERO; return true;
+    case BlendFactor::One: output = GX2_BLEND_MODE_ONE; return true;
+    case BlendFactor::SourceColor: output = GX2_BLEND_MODE_SRC_COLOR; return true;
+    case BlendFactor::OneMinusSourceColor: output = GX2_BLEND_MODE_INV_SRC_COLOR; return true;
+    case BlendFactor::DestinationColor: output = GX2_BLEND_MODE_DST_COLOR; return true;
+    case BlendFactor::OneMinusDestinationColor: output = GX2_BLEND_MODE_INV_DST_COLOR; return true;
+    case BlendFactor::SourceAlpha: output = GX2_BLEND_MODE_SRC_ALPHA; return true;
+    case BlendFactor::OneMinusSourceAlpha: output = GX2_BLEND_MODE_INV_SRC_ALPHA; return true;
+    case BlendFactor::DestinationAlpha: output = GX2_BLEND_MODE_DST_ALPHA; return true;
+    case BlendFactor::OneMinusDestinationAlpha: output = GX2_BLEND_MODE_INV_DST_ALPHA; return true;
+    case BlendFactor::ConstantColor: output = GX2_BLEND_MODE_BLEND_FACTOR; return true;
+    case BlendFactor::OneMinusConstantColor: output = GX2_BLEND_MODE_INV_BLEND_FACTOR; return true;
+    case BlendFactor::ConstantAlpha: output = GX2_BLEND_MODE_CONSTANT_ALPHA; return true;
+    case BlendFactor::OneMinusConstantAlpha: output = GX2_BLEND_MODE_INV_CONSTANT_ALPHA; return true;
+    case BlendFactor::SourceAlphaSaturate: output = GX2_BLEND_MODE_SRC_ALPHA_SAT; return true;
+    }
+    return false;
+}
+
+bool translateBlendEquation(BlendEquation equation, GX2BlendCombineMode& output)
+{
+    switch (equation) {
+    case BlendEquation::Add: output = GX2_BLEND_COMBINE_MODE_ADD; return true;
+    case BlendEquation::Subtract: output = GX2_BLEND_COMBINE_MODE_SUB; return true;
+    case BlendEquation::ReverseSubtract: output = GX2_BLEND_COMBINE_MODE_REV_SUB; return true;
+    case BlendEquation::Minimum: output = GX2_BLEND_COMBINE_MODE_MIN; return true;
+    case BlendEquation::Maximum: output = GX2_BLEND_COMBINE_MODE_MAX; return true;
+    }
+    return false;
+}
+
+bool applyBlendState(WUTBackendContext& state)
+{
+    GX2BlendMode srcRGB, dstRGB, srcAlpha, dstAlpha;
+    GX2BlendCombineMode equationRGB, equationAlpha;
+    if (!translateBlendFactor(state.sourceRGB, srcRGB)
+        || !translateBlendFactor(state.destinationRGB, dstRGB)
+        || !translateBlendFactor(state.sourceAlpha, srcAlpha)
+        || !translateBlendFactor(state.destinationAlpha, dstAlpha)
+        || !translateBlendEquation(state.blendEquationRGB, equationRGB)
+        || !translateBlendEquation(state.blendEquationAlpha, equationAlpha))
+        return false;
+
+    GX2SetBlendControl(GX2_RENDER_TARGET_0, srcRGB, dstRGB, equationRGB,
+        TRUE, srcAlpha, dstAlpha, equationAlpha);
+    GX2SetColorControl(GX2_LOGIC_OP_COPY, state.blendEnabled ? 1 : 0, FALSE, TRUE);
+    return true;
+}
+
+GX2ChannelMask translateColorMask(const ColorMask& mask)
+{
+    uint32_t bits = 0;
+    if (mask.red) bits |= GX2_CHANNEL_MASK_R;
+    if (mask.green) bits |= GX2_CHANNEL_MASK_G;
+    if (mask.blue) bits |= GX2_CHANNEL_MASK_B;
+    if (mask.alpha) bits |= GX2_CHANNEL_MASK_A;
+    return static_cast<GX2ChannelMask>(bits);
+}
+
+bool setColorMask(void* context, const ColorMask& mask)
+{
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.colorMask = mask;
+    const auto nativeMask = translateColorMask(mask);
+    GX2SetTargetChannelMasks(nativeMask, GX2_CHANNEL_MASK_RGBA, GX2_CHANNEL_MASK_RGBA,
+        GX2_CHANNEL_MASK_RGBA, GX2_CHANNEL_MASK_RGBA, GX2_CHANNEL_MASK_RGBA,
+        GX2_CHANNEL_MASK_RGBA, GX2_CHANNEL_MASK_RGBA);
+    return true;
+}
+
+bool setBlendFunction(void* context, BlendFactor sourceRGB, BlendFactor destinationRGB,
+    BlendFactor sourceAlpha, BlendFactor destinationAlpha)
+{
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.sourceRGB = sourceRGB;
+    state.destinationRGB = destinationRGB;
+    state.sourceAlpha = sourceAlpha;
+    state.destinationAlpha = destinationAlpha;
+    return applyBlendState(state);
+}
+
+bool setBlendEquation(void* context, BlendEquation rgb, BlendEquation alpha)
+{
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.blendEquationRGB = rgb;
+    state.blendEquationAlpha = alpha;
+    return applyBlendState(state);
+}
+
+bool setBlendColor(void*, const Color& color)
+{
+    GX2SetBlendConstantColor(color.red, color.green, color.blue, color.alpha);
+    return true;
+}
+
 bool setCapability(void* context, Capability capability, bool enabled)
 {
     auto& state = *static_cast<WUTBackendContext*>(context);
     switch (capability) {
+    case Capability::Blend:
+        state.blendEnabled = enabled;
+        return applyBlendState(state);
     case Capability::DepthTest:
         state.depthTestEnabled = enabled;
         return applyDepthState(state);
@@ -74,8 +175,7 @@ bool setCapability(void* context, Capability capability, bool enabled)
         state.cullEnabled = enabled;
         return applyCullState(state);
     default:
-        // Blend/stencil/scissor/polygon-offset state requires additional
-        // independent GX2 state mapping; do not silently claim it worked.
+        // Do not report capabilities as implemented until their state is mapped.
         return false;
     }
 }
@@ -225,6 +325,10 @@ Backend makeWUTBackend(WUTBackendContext& context)
     backend.setScissor = setScissor;
     backend.setCapability = setCapability;
     backend.setDepthRange = setDepthRange;
+    backend.setBlendFunction = setBlendFunction;
+    backend.setBlendEquation = setBlendEquation;
+    backend.setBlendColor = setBlendColor;
+    backend.setColorMask = setColorMask;
     backend.draw = draw;
     backend.drawIndexed = drawIndexed;
     backend.setDepthFunction = setDepthFunction;
