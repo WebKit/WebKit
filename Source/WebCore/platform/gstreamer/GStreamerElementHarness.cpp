@@ -442,6 +442,13 @@ bool GStreamerElementHarness::srcQuery(GstPad* pad, GstObject* parent, GstQuery*
             gst_query_set_caps_result(query, caps.get());
         break;
     }
+    case GST_QUERY_LATENCY:
+        if (!m_isLive.loadRelaxed()) {
+            result = gst_pad_query_default(pad, parent, query);
+            break;
+        }
+        gst_query_set_latency(query, TRUE, 0, GST_CLOCK_TIME_NONE);
+        break;
     default:
         result = gst_pad_query_default(pad, parent, query);
     }

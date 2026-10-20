@@ -287,6 +287,10 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         m_outputCallback(VideoDecoder::DecodedFrame { WTF::move(videoFrame), timestamp, duration });
     }, std::nullopt, WTF::move(allowedSinkCaps)));
 
+    // A page hands chunks over as they arrive. Told so, a decoder outputs each picture as soon as the stream's
+    // reordering allows, rather than once its decoded picture buffer is full.
+    m_harness->setIsLive(true);
+
     const auto& stream = m_harness->outputStreams().first();
     const auto& pad = stream->targetPad();
     gst_pad_set_query_function(pad.get(), reinterpret_cast<GstPadQueryFunction>(+[](GstPad* pad, GstObject* parent, GstQuery* query) -> gboolean {
