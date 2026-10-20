@@ -61,6 +61,9 @@ enum class BlendFactor : uint8_t {
 };
 
 enum class BlendEquation : uint8_t { Add, Subtract, ReverseSubtract, Minimum, Maximum };
+enum class Face : uint8_t { Front, Back, FrontAndBack };
+enum class Winding : uint8_t { Clockwise, CounterClockwise };
+enum class StencilOperation : uint8_t { Keep, Zero, Replace, Increment, Decrement, Invert, IncrementWrap, DecrementWrap };
 enum class CompareFunction : uint8_t {
     Never, Less, Equal, LessEqual, Greater, NotEqual, GreaterEqual, Always
 };
@@ -115,6 +118,16 @@ struct Backend {
         BlendFactor sourceAlpha, BlendFactor destinationAlpha) { nullptr };
     bool (*setBlendEquation)(void*, BlendEquation rgb, BlendEquation alpha) { nullptr };
     bool (*setDepthFunction)(void*, CompareFunction) { nullptr };
+    bool (*setDepthWrite)(void*, bool) { nullptr };
+    bool (*setDepthRange)(void*, float nearDepth, float farDepth) { nullptr };
+    bool (*setCullFace)(void*, Face) { nullptr };
+    bool (*setFrontFace)(void*, Winding) { nullptr };
+    bool (*setPolygonOffset)(void*, float factor, float units) { nullptr };
+    bool (*setStencilFunction)(void*, Face, CompareFunction, int32_t reference, uint32_t mask) { nullptr };
+    bool (*setStencilOperation)(void*, Face, StencilOperation stencilFail,
+        StencilOperation depthFail, StencilOperation depthPass) { nullptr };
+    bool (*setStencilWriteMask)(void*, Face, uint32_t mask) { nullptr };
+    bool (*setBlendColor)(void*, const Color&) { nullptr };
     bool (*setColorMask)(void*, const ColorMask&) { nullptr };
     bool (*setClearColor)(void*, const Color&) { nullptr };
     bool (*clear)(void*, uint8_t bufferMask) { nullptr };
@@ -136,6 +149,16 @@ public:
         BlendFactor sourceAlpha, BlendFactor destinationAlpha);
     Result setBlendEquation(BlendEquation rgb, BlendEquation alpha);
     Result setDepthFunction(CompareFunction);
+    Result setDepthWrite(bool);
+    Result setDepthRange(float nearDepth, float farDepth);
+    Result setCullFace(Face);
+    Result setFrontFace(Winding);
+    Result setPolygonOffset(float factor, float units);
+    Result setStencilFunction(Face, CompareFunction, int32_t reference, uint32_t mask);
+    Result setStencilOperation(Face, StencilOperation stencilFail,
+        StencilOperation depthFail, StencilOperation depthPass);
+    Result setStencilWriteMask(Face, uint32_t mask);
+    Result setBlendColor(const Color&);
     Result setColorMask(const ColorMask&);
     Result setClearColor(const Color&);
     Result clear(uint8_t bufferMask);
