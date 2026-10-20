@@ -31,7 +31,7 @@
 #include "JsonWebKey.h"
 #include <wtf/text/Base64.h>
 
-#if OS(DARWIN) && !PLATFORM(GTK)
+#if PLATFORM(COCOA)
 #include <pal/crypto/CryptoTypes.h>
 #include <pal/crypto/PlatformECKey.h>
 #endif
