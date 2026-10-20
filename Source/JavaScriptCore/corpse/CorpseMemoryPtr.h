@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(LIB_JSC_TOOLS)
 
 #include <JavaScriptCore/CorpseMemory.h>
 #include <mach/mach.h>
@@ -145,4 +145,4 @@ Memory::Ptr<T> Memory::ptr(Address address)
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(LIB_JSC_TOOLS)

@@ -1017,6 +1017,12 @@
 #define ENABLE_LLINT_EMBEDDED_OPCODE_ID 1
 #endif
 
+#if !defined(ENABLE_LIB_JSC_TOOLS)
+#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#define ENABLE_LIB_JSC_TOOLS 1
+#endif
+#endif
+
 /* Asserts, invariants for macro definitions */
 
 #if ENABLE(COCOA_WEBM_PLAYER) && !ENABLE(MEDIA_SOURCE)
