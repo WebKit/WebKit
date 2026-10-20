@@ -60,7 +60,8 @@ RefPtr<AudioWorkletGlobalScope> AudioWorkletGlobalScope::tryCreate(AudioWorkletT
         return nullptr;
     auto scope = adoptRef(*new AudioWorkletGlobalScope(thread, vm.releaseNonNull(), parameters));
     scope->addToContextsMap();
-    scope->applyContentSecurityPolicyResponseHeaders(parameters.contentSecurityPolicyResponseHeaders);
+    auto contentSecurityPolicyResponseHeaders = parameters.contentSecurityPolicyResponseHeaders.isolatedCopy();
+    scope->applyContentSecurityPolicyResponseHeaders(contentSecurityPolicyResponseHeaders);
     return scope;
 }
 
@@ -68,6 +69,7 @@ AudioWorkletGlobalScope::AudioWorkletGlobalScope(AudioWorkletThread& thread, Ref
     : WorkletGlobalScope(thread, WTF::move(vm), parameters)
     , m_currentFrame(parameters.currentFrame)
     , m_sampleRate(parameters.sampleRate)
+    , m_port(MessagePort::entangle(*this, TransferredMessagePort { parameters.globalScopePort }))
 {
     ASSERT(!isMainThread());
 }

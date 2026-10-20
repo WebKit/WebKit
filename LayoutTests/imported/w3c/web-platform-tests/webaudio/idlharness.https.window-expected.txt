@@ -1104,10 +1104,10 @@ PASS AudioWorklet interface object name
 PASS AudioWorklet interface: existence and properties of interface prototype object
 PASS AudioWorklet interface: existence and properties of interface prototype object's "constructor" property
 PASS AudioWorklet interface: existence and properties of interface prototype object's @@unscopables property
-FAIL AudioWorklet interface: attribute port assert_true: The prototype object must have a property "port" expected true got false
+PASS AudioWorklet interface: attribute port
 PASS AudioWorklet must be primary interface of context.audioWorklet
 PASS Stringification of context.audioWorklet
-FAIL AudioWorklet interface: context.audioWorklet must inherit property "port" with the proper type assert_inherits: property "port" not found in prototype chain
+PASS AudioWorklet interface: context.audioWorklet must inherit property "port" with the proper type
 PASS AudioWorkletGlobalScope interface: existence and properties of interface object
 PASS AudioParamMap interface: existence and properties of interface object
 PASS AudioParamMap interface object length
