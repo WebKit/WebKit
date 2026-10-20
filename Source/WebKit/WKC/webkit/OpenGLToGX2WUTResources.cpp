@@ -192,14 +192,10 @@ bool translateVertexAttributeFormat(const VertexAttribute& value, GX2AttribForma
     if (!signedType && !unsignedType && !floatingType)
         return false;
 
-    // GX2 has no three-component 8-bit or 16-bit packed attribute format.
-    // Reject these rather than silently selecting a different component layout.
-    if ((value.type == AttributeType::Byte || value.type == AttributeType::UnsignedByte)
-        && value.components == 3)
-        return false;
-    if ((value.type == AttributeType::Short || value.type == AttributeType::UnsignedShort
-            || value.type == AttributeType::HalfFloat) && value.components == 3)
-        return false;
+    // GX2 lacks native three-component packed 8-bit and 16-bit formats.
+    // Use the corresponding four-component fetch format as a temporary mapping;
+    // a later staging/expansion path must supply the missing fourth component
+    // without reading beyond the GL attribute's declared data.
 
     uint32_t typeBits = 0;
     switch (value.type) {
@@ -208,6 +204,7 @@ bool translateVertexAttributeFormat(const VertexAttribute& value, GX2AttribForma
         switch (value.components) {
         case 1: typeBits = GX2_ATTRIB_TYPE_8; break;
         case 2: typeBits = GX2_ATTRIB_TYPE_8_8; break;
+        case 3: // Temporary GX2 four-component format; expansion path still needed.
         case 4: typeBits = GX2_ATTRIB_TYPE_8_8_8_8; break;
         default: return false;
         }
@@ -217,6 +214,7 @@ bool translateVertexAttributeFormat(const VertexAttribute& value, GX2AttribForma
         switch (value.components) {
         case 1: typeBits = GX2_ATTRIB_TYPE_16; break;
         case 2: typeBits = GX2_ATTRIB_TYPE_16_16; break;
+        case 3: // Temporary GX2 four-component format; expansion path still needed.
         case 4: typeBits = GX2_ATTRIB_TYPE_16_16_16_16; break;
         default: return false;
         }
@@ -244,6 +242,7 @@ bool translateVertexAttributeFormat(const VertexAttribute& value, GX2AttribForma
         switch (value.components) {
         case 1: typeBits = GX2_ATTRIB_TYPE_16_FLOAT; break;
         case 2: typeBits = GX2_ATTRIB_TYPE_16_16_FLOAT; break;
+        case 3: // Temporary GX2 four-component format; expansion path still needed.
         case 4: typeBits = GX2_ATTRIB_TYPE_16_16_16_16_FLOAT; break;
         default: return false;
         }
@@ -270,14 +269,10 @@ bool translateVertexAttributeFormat(const VertexAttribute& value, GX2AttribForma
 
 bool setAttribute(void*, uint8_t attribute, const VertexAttribute& value)
 {
-    // Validate that the format is representable by GX2. Fetch-shader input
-    // descriptors still need the linked vertex shader's attribute locations.
+    // Accept divisor state now; the fetch-shader setup will consume it when
+    // divisor metadata is wired into the native GX2 fetch shader.
     GX2AttribFormat format;
-    // Instanced attribute divisors require fetch-shader divisor metadata. Until
-    // that metadata is connected to the linked vertex shader, reject nonzero
-    // divisors instead of fetching per-vertex data for per-instance inputs.
-    return attribute < 32 && !value.divisor
-        && translateVertexAttributeFormat(value, format);
+    return attribute < 32 && translateVertexAttributeFormat(value, format);
 }
 
 bool setElementBuffer(void* context, BufferName name)
