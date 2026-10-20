@@ -470,7 +470,7 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
         protectedThis->m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:protectedThis]);
         [protectedThis->m_qlPreviewController setDelegate:protectedThis->m_qlPreviewControllerDelegate.get()];
 
-        protectedThis->m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithSystemPreviewController:protectedThis MIMEType:@"model/vnd.usdz+zip" originatingPageURL:url]);
+        protectedThis->m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithSystemPreviewController:protectedThis MIMEType:@"model/vnd.usdz+zip" originatingPageURL:URL { webPageProxy->currentURL() }]);
         [protectedThis->m_qlPreviewController setDataSource:protectedThis->m_qlPreviewControllerDataSource.get()];
 
         [presentingViewController presentViewController:protectedThis->m_qlPreviewController.get() animated:YES completion:nullptr];
