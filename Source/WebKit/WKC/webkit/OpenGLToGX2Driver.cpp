@@ -158,6 +158,145 @@ Result Driver::setDepthFunction(CompareFunction function)
         ? Result::Ok : Result::Unsupported;
 }
 
+Result Driver::setDepthWrite(bool enabled)
+{
+    if (!m_backend.setDepthWrite)
+        return Result::MissingBackend;
+    return m_backend.setDepthWrite(m_backend.context, enabled) ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setDepthRange(float nearDepth, float farDepth)
+{
+    if (!(nearDepth >= 0.0f && nearDepth <= 1.0f)
+        || !(farDepth >= 0.0f && farDepth <= 1.0f))
+        return Result::InvalidArgument;
+    if (!m_backend.setDepthRange)
+        return Result::MissingBackend;
+    return m_backend.setDepthRange(m_backend.context, nearDepth, farDepth)
+        ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setCullFace(Face face)
+{
+    switch (face) {
+    case Face::Front:
+    case Face::Back:
+    case Face::FrontAndBack:
+        break;
+    default:
+        return Result::InvalidArgument;
+    }
+    if (!m_backend.setCullFace)
+        return Result::MissingBackend;
+    return m_backend.setCullFace(m_backend.context, face) ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setFrontFace(Winding winding)
+{
+    switch (winding) {
+    case Winding::Clockwise:
+    case Winding::CounterClockwise:
+        break;
+    default:
+        return Result::InvalidArgument;
+    }
+    if (!m_backend.setFrontFace)
+        return Result::MissingBackend;
+    return m_backend.setFrontFace(m_backend.context, winding) ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setPolygonOffset(float factor, float units)
+{
+    if (!(factor <= 3.402823466e+38F && factor >= -3.402823466e+38F)
+        || !(units <= 3.402823466e+38F && units >= -3.402823466e+38F))
+        return Result::InvalidArgument;
+    if (!m_backend.setPolygonOffset)
+        return Result::MissingBackend;
+    return m_backend.setPolygonOffset(m_backend.context, factor, units)
+        ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setStencilFunction(Face face, CompareFunction function,
+    int32_t reference, uint32_t mask)
+{
+    if (!validCompareFunction(function))
+        return Result::InvalidArgument;
+    switch (face) {
+    case Face::Front:
+    case Face::Back:
+    case Face::FrontAndBack:
+        break;
+    default:
+        return Result::InvalidArgument;
+    }
+    if (!m_backend.setStencilFunction)
+        return Result::MissingBackend;
+    return m_backend.setStencilFunction(m_backend.context, face, function, reference, mask)
+        ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setStencilOperation(Face face, StencilOperation stencilFail,
+    StencilOperation depthFail, StencilOperation depthPass)
+{
+    switch (face) {
+    case Face::Front:
+    case Face::Back:
+    case Face::FrontAndBack:
+        break;
+    default:
+        return Result::InvalidArgument;
+    }
+    const auto validOperation = [](StencilOperation operation) {
+        switch (operation) {
+        case StencilOperation::Keep:
+        case StencilOperation::Zero:
+        case StencilOperation::Replace:
+        case StencilOperation::Increment:
+        case StencilOperation::Decrement:
+        case StencilOperation::Invert:
+        case StencilOperation::IncrementWrap:
+        case StencilOperation::DecrementWrap:
+            return true;
+        }
+        return false;
+    };
+    if (!validOperation(stencilFail) || !validOperation(depthFail) || !validOperation(depthPass))
+        return Result::InvalidArgument;
+    if (!m_backend.setStencilOperation)
+        return Result::MissingBackend;
+    return m_backend.setStencilOperation(m_backend.context, face, stencilFail, depthFail, depthPass)
+        ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setStencilWriteMask(Face face, uint32_t mask)
+{
+    switch (face) {
+    case Face::Front:
+    case Face::Back:
+    case Face::FrontAndBack:
+        break;
+    default:
+        return Result::InvalidArgument;
+    }
+    if (!m_backend.setStencilWriteMask)
+        return Result::MissingBackend;
+    return m_backend.setStencilWriteMask(m_backend.context, face, mask)
+        ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setBlendColor(const Color& color)
+{
+    if (!(color.red >= 0.0f && color.red <= 1.0f)
+        || !(color.green >= 0.0f && color.green <= 1.0f)
+        || !(color.blue >= 0.0f && color.blue <= 1.0f)
+        || !(color.alpha >= 0.0f && color.alpha <= 1.0f))
+        return Result::InvalidArgument;
+    if (!m_backend.setBlendColor)
+        return Result::MissingBackend;
+    return m_backend.setBlendColor(m_backend.context, color)
+        ? Result::Ok : Result::Unsupported;
+}
+
 Result Driver::setColorMask(const ColorMask& mask)
 {
     if (!m_backend.setColorMask)
