@@ -540,7 +540,6 @@ class BrowsingContextGroup;
 class BrowsingWarning;
 class CallbackID;
 class ContextMenuContextData;
-class DebuggerPauseCoordinator;
 class DownloadProxy;
 class DrawingAreaProxy;
 class FrameState;
@@ -916,7 +915,6 @@ public:
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
     void frameDidPauseForDebugger(IPC::Connection&, WebCore::FrameIdentifier);
     void frameDidContinueForDebugger(IPC::Connection&, WebCore::FrameIdentifier);
-    void lastInspectorFrontendDidDisconnect();
 
     void getAllFrames(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&&);
     void getAllFrameTreesForSiteIsolationTesting(CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&&);
@@ -4375,7 +4373,6 @@ private:
 #endif
 
     const UniqueRef<WebPageInspectorController> m_inspectorController;
-    std::unique_ptr<DebuggerPauseCoordinator> m_debuggerPauseCoordinator;
 #if ENABLE(REMOTE_INSPECTOR)
     RefPtr<WebPageDebuggable> m_inspectorDebuggable;
 #endif
