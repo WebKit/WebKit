@@ -267,12 +267,24 @@ bool translateVertexAttributeFormat(const VertexAttribute& value, GX2AttribForma
     return true;
 }
 
-bool setAttribute(void*, uint8_t attribute, const VertexAttribute& value)
+bool setAttribute(void* context, uint8_t attribute, const VertexAttribute& value)
 {
-    // Accept divisor state now; the fetch-shader setup will consume it when
-    // divisor metadata is wired into the native GX2 fetch shader.
     GX2AttribFormat format;
-    return attribute < 32 && translateVertexAttributeFormat(value, format);
+    if (attribute >= 32 || !translateVertexAttributeFormat(value, format))
+        return false;
+
+    auto& resources = *static_cast<WUTBufferResources*>(context);
+    WUTBufferResources::AttributeDescriptor descriptor;
+    descriptor.format = format;
+    descriptor.componentMask = value.components == 1 ? GX2_CHANNEL_MASK_R
+        : value.components == 2 ? GX2_CHANNEL_MASK_RG
+        : value.components == 3 ? GX2_CHANNEL_MASK_RGB : GX2_CHANNEL_MASK_RGBA;
+    descriptor.divisor = value.divisor;
+    descriptor.indexType = value.divisor
+        ? GX2_ATTRIB_INDEX_PER_INSTANCE : GX2_ATTRIB_INDEX_PER_VERTEX;
+    descriptor.enabled = value.enabled;
+    resources.attributes[attribute] = descriptor;
+    return true;
 }
 
 bool setElementBuffer(void* context, BufferName name)
