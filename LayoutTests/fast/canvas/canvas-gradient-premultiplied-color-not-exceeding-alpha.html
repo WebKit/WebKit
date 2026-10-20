@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<script src="../../resources/js-test.js"></script>
+<body>
+<script>
+description("Test that a color-to-transparent gradient produces valid premultiplied pixels, where no color component exceeds alpha.");
+
+const width = 256;
+const height = 256;
+var renderingMode;
+var context;
+
+function countInvalidPixels(createGradient) {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    context = canvas.getContext("2d", { renderingModeForTesting: renderingMode });
+    const gradient = createGradient(context);
+    gradient.addColorStop(0, "#ff0000");
+    gradient.addColorStop(1, "#ff000000");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, width, height);
+    shouldBeEqualToString("context.getEffectiveRenderingModeForTesting()", renderingMode);
+    const alpha = context.getImageData(0, 0, width, height).data;
+
+    // getImageData() unpremultiplies and clamps, which hides colors greater than alpha.
+    // Drawing over opaque black leaves the premultiplied color unchanged.
+    const opaqueCanvas = document.createElement("canvas");
+    opaqueCanvas.width = width;
+    opaqueCanvas.height = height;
+    const opaqueContext = opaqueCanvas.getContext("2d", { renderingModeForTesting: "Unaccelerated" });
+    opaqueContext.fillStyle = "black";
+    opaqueContext.fillRect(0, 0, width, height);
+    opaqueContext.drawImage(canvas, 0, 0);
+    const premultiplied = opaqueContext.getImageData(0, 0, width, height).data;
+
+    let count = 0;
+    let first = null;
+    for (let i = 0; i < premultiplied.length; i += 4) {
+        const a = alpha[i + 3];
+        if (premultiplied[i] > a || premultiplied[i + 1] > a || premultiplied[i + 2] > a) {
+            if (!first)
+                first = `premultiplied (${premultiplied[i]}, ${premultiplied[i + 1]}, ${premultiplied[i + 2]}, ${a}) at x=${(i / 4) % width}, y=${Math.floor(i / 4 / width)}`;
+            ++count;
+        }
+    }
+    if (first)
+        debug(`first invalid pixel ${first}`);
+    return count;
+}
+
+var invalidPixelCount;
+for (renderingMode of ["Unaccelerated", "Accelerated"]) {
+    debug(`${renderingMode} radial gradient:`);
+    invalidPixelCount = countInvalidPixels(context => context.createRadialGradient(128, 128, 0, 128, 128, 120));
+    shouldBe("invalidPixelCount", "0");
+
+    debug(`${renderingMode} linear gradient:`);
+    invalidPixelCount = countInvalidPixels(context => context.createLinearGradient(0, 0, width, 0));
+    shouldBe("invalidPixelCount", "0");
+}
+</script>
+</body>
+</html>

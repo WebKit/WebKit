@@ -10400,3 +10400,6 @@ webkit.org/b/326713 [ Debug ] imported/w3c/web-platform-tests/shadow-dom/cross-s
 webkit.org/b/326714 [ Debug ] imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative.html [ Pass Timeout ]
 
 webkit.org/b/326715 [ Debug ] compositing/contents-format/deep-color-backing-store.html [ Pass Crash ]
+
+# Accelerated radial gradients produce premultiplied pixels with color greater than alpha.
+webkit.org/b/327400 fast/canvas/canvas-gradient-premultiplied-color-not-exceeding-alpha.html [ Failure ]

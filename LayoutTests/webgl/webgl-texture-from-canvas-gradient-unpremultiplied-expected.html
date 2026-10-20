@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+    canvas {
+        background-color: black;
+    }
+</style>
+<body>
+    <p>Ensure a color-to-transparent canvas gradient uploaded to a WebGL texture and drawn to an unpremultiplied WebGL canvas has no black pixels.</p>
+    <canvas id="canvas" width="256" height="256"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const gradient = ctx.createRadialGradient(128, 128, 0, 128, 128, 120);
+        gradient.addColorStop(0, "#ff0000");
+        gradient.addColorStop(1, "#ff000000");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    </script>
+</body>

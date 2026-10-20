@@ -70,6 +70,20 @@ int32_t LEGACY_NODELETE clampMin(int32_t value)
     return value < MinInt32Value ? MinInt32Value : value;
 }
 
+// Premultiplied sources may hold color components greater than alpha, so clamp the
+// unpremultiplied component to the representable range.
+uint8_t LEGACY_NODELETE unpremultiply(uint8_t component, float scaleFactor)
+{
+    float value = static_cast<float>(component) * scaleFactor;
+    return static_cast<uint8_t>(value > MaxUInt8Value ? MaxUInt8Value : value);
+}
+
+float LEGACY_NODELETE unpremultiply(float component, float scaleFactor)
+{
+    float value = component * scaleFactor;
+    return value > 1.0f ? 1.0f : value;
+}
+
 } // anonymous namespace
 
 // Following Float to Half-Float converion code is from the implementation of ftp://www.fox-toolkit.org/pub/fasthalffloatconversion.pdf,
@@ -539,7 +553,7 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
-        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceR = unpremultiply(source[0], scaleFactor);
         destination[0] = sourceR;
         skip(source, 4);
         skip(destination, 1);
@@ -573,7 +587,7 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
-        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceR = unpremultiply(source[0], scaleFactor);
         destination[0] = sourceR;
         destination[1] = source[3];
         skip(source, 4);
@@ -612,9 +626,9 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
-        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        uint8_t sourceR = unpremultiply(source[0], scaleFactor);
+        uint8_t sourceG = unpremultiply(source[1], scaleFactor);
+        uint8_t sourceB = unpremultiply(source[2], scaleFactor);
         destination[0] = sourceR;
         destination[1] = sourceG;
         destination[2] = sourceB;
@@ -645,9 +659,9 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
-        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        uint8_t sourceR = unpremultiply(source[0], scaleFactor);
+        uint8_t sourceG = unpremultiply(source[1], scaleFactor);
+        uint8_t sourceB = unpremultiply(source[2], scaleFactor);
         destination[0] = sourceR;
         destination[1] = sourceG;
         destination[2] = sourceB;
@@ -693,9 +707,9 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
-        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        uint8_t sourceR = unpremultiply(source[0], scaleFactor);
+        uint8_t sourceG = unpremultiply(source[1], scaleFactor);
+        uint8_t sourceB = unpremultiply(source[2], scaleFactor);
         destination[0] = (((sourceR & 0xF0) << 8)
                         | ((sourceG & 0xF0) << 4)
                         | (sourceB & 0xF0)
@@ -741,9 +755,9 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
-        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        uint8_t sourceR = unpremultiply(source[0], scaleFactor);
+        uint8_t sourceG = unpremultiply(source[1], scaleFactor);
+        uint8_t sourceB = unpremultiply(source[2], scaleFactor);
         destination[0] = (((sourceR & 0xF8) << 8)
                         | ((sourceG & 0xF8) << 3)
                         | ((sourceB & 0xF8) >> 2)
@@ -787,9 +801,9 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
-        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        uint8_t sourceR = unpremultiply(source[0], scaleFactor);
+        uint8_t sourceG = unpremultiply(source[1], scaleFactor);
+        uint8_t sourceB = unpremultiply(source[2], scaleFactor);
         destination[0] = (((sourceR & 0xF8) << 8)
                         | ((sourceG & 0xFC) << 3)
                         | ((sourceB & 0xF8) >> 3));
@@ -825,9 +839,9 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
-        destination[0] = source[0] * scaleFactor;
-        destination[1] = source[1] * scaleFactor;
-        destination[2] = source[2] * scaleFactor;
+        destination[0] = unpremultiply(source[0], scaleFactor);
+        destination[1] = unpremultiply(source[1], scaleFactor);
+        destination[2] = unpremultiply(source[2], scaleFactor);
         skip(source, 4);
         skip(destination, 3);
     }
@@ -850,9 +864,9 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
-        destination[0] = source[0] * scaleFactor;
-        destination[1] = source[1] * scaleFactor;
-        destination[2] = source[2] * scaleFactor;
+        destination[0] = unpremultiply(source[0], scaleFactor);
+        destination[1] = unpremultiply(source[1], scaleFactor);
+        destination[2] = unpremultiply(source[2], scaleFactor);
         destination[3] = source[3];
         skip(source, 4);
         skip(destination, 4);
@@ -891,7 +905,7 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
-        destination[0] = source[0] * scaleFactor;
+        destination[0] = unpremultiply(source[0], scaleFactor);
         skip(source, 4);
         skip(destination, 1);
     }
@@ -922,7 +936,7 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
-        destination[0] = source[0] * scaleFactor;
+        destination[0] = unpremultiply(source[0], scaleFactor);
         destination[1] = source[3];
         skip(source, 4);
         skip(destination, 2);
@@ -958,9 +972,9 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
-        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
-        destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
-        destination[2] = convertFloatToHalfFloat(source[2] * scaleFactor);
+        destination[0] = convertFloatToHalfFloat(unpremultiply(source[0], scaleFactor));
+        destination[1] = convertFloatToHalfFloat(unpremultiply(source[1], scaleFactor));
+        destination[2] = convertFloatToHalfFloat(unpremultiply(source[2], scaleFactor));
         destination[3] = convertFloatToHalfFloat(source[3]);
         skip(source, 4);
         skip(destination, 4);
@@ -994,9 +1008,9 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
-        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
-        destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
-        destination[2] = convertFloatToHalfFloat(source[2] * scaleFactor);
+        destination[0] = convertFloatToHalfFloat(unpremultiply(source[0], scaleFactor));
+        destination[1] = convertFloatToHalfFloat(unpremultiply(source[1], scaleFactor));
+        destination[2] = convertFloatToHalfFloat(unpremultiply(source[2], scaleFactor));
         skip(source, 4);
         skip(destination, 3);
     }
@@ -1027,7 +1041,7 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
-        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
+        destination[0] = convertFloatToHalfFloat(unpremultiply(source[0], scaleFactor));
         destination[1] = convertFloatToHalfFloat(source[3]);
         skip(source, 4);
         skip(destination, 2);
@@ -1057,7 +1071,7 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
-        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
+        destination[0] = convertFloatToHalfFloat(unpremultiply(source[0], scaleFactor));
         skip(source, 4);
         skip(destination, 1);
     }
@@ -1174,10 +1188,10 @@ template<> ALWAYS_INLINE
 void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
-        float scaleFactor = source[3] ? 1023.0f / source[3] : 1023.0f;
-        uint32_t r = truncateFloatToUint32(source[0] * scaleFactor);
-        uint32_t g = truncateFloatToUint32(source[1] * scaleFactor);
-        uint32_t b = truncateFloatToUint32(source[2] * scaleFactor);
+        float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
+        uint32_t r = truncateFloatToUint32(unpremultiply(source[0], scaleFactor) * 1023.0f);
+        uint32_t g = truncateFloatToUint32(unpremultiply(source[1], scaleFactor) * 1023.0f);
+        uint32_t b = truncateFloatToUint32(unpremultiply(source[2], scaleFactor) * 1023.0f);
         uint32_t a = truncateFloatToUint32(source[3] * 3.0f);
         destination[0] = (a << 30) | (b << 20) | (g << 10) | r;
         skip(source, 4);
@@ -1214,8 +1228,8 @@ void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL:
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? MaxUInt8Value / static_cast<float>(source[3]) : 1.0f;
-        destination[0] = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-        destination[1] = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        destination[0] = unpremultiply(source[0], scaleFactor);
+        destination[1] = unpremultiply(source[1], scaleFactor);
         skip(source, 4);
         skip(destination, 2);
     }
@@ -1250,8 +1264,8 @@ void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextG
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
-        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
-        destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
+        destination[0] = convertFloatToHalfFloat(unpremultiply(source[0], scaleFactor));
+        destination[1] = convertFloatToHalfFloat(unpremultiply(source[1], scaleFactor));
         skip(source, 4);
         skip(destination, 2);
     }
@@ -1286,8 +1300,8 @@ void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextG
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
-        destination[0] = source[0] * scaleFactor;
-        destination[1] = source[1] * scaleFactor;
+        destination[0] = unpremultiply(source[0], scaleFactor);
+        destination[1] = unpremultiply(source[1], scaleFactor);
         skip(source, 4);
         skip(destination, 2);
     }
