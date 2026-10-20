@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseClient.h>
@@ -1392,16 +1392,16 @@ private:
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
 
 int main(int argc, char** argv)
 {
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
     return Mya::Shell().run(argc, argv);
 #else
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
     printf("Not supported platform for mya\n");
     return 1;
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
 }
