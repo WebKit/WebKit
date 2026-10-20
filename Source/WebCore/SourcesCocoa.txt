@@ -176,7 +176,6 @@ crypto/cocoa/CryptoKeyRSACocoa.cpp
 crypto/cocoa/CryptoUtilitiesCocoa.cpp
 crypto/cocoa/SerializedCryptoKeyWrapCocoa.mm @nonARC
 crypto/CommonCryptoUtilities.cpp
-dom/DataTransferMac.mm @nonARC
 dom/ios/MouseEventIOS.cpp
 dom/ios/PointerEventIOS.cpp
 dom/ios/TouchEvents.cpp

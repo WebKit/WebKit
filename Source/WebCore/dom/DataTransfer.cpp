@@ -31,6 +31,7 @@
 #include "CommonAtomStrings.h"
 #include "DataTransferItem.h"
 #include "DataTransferItemList.h"
+#include "DefaultSizing.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFragment.h"
 #include "DocumentPage.h"
@@ -46,6 +47,7 @@
 #include "Image.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "NativeImage.h"
 #include "NodeDocument.h"
 #include "Page.h"
 #include "PagePasteboardContext.h"
@@ -597,8 +599,11 @@ void DataTransfer::setDragImage(Ref<Element>&& element, int x, int y)
         return;
 
     CachedResourceHandle<CachedImage> image;
-    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element); imageElement && !imageElement->isConnected())
+    float density = 1;
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element); imageElement && !imageElement->isConnected()) {
         image = imageElement->cachedImage();
+        density = imageElement->currentPixelDensity();
+    }
 
     m_dragLocation = IntPoint(x, y);
 
@@ -606,6 +611,7 @@ void DataTransfer::setDragImage(Ref<Element>&& element, int x, int y)
     if (RefPtr dragImageLoader = m_dragImageLoader; dragImageLoader && m_dragImage)
         dragImageLoader->stopLoading(m_dragImage);
     m_dragImage = image;
+    m_dragImageDensity = density;
     if (m_dragImage) {
         if (!m_dragImageLoader)
             m_dragImageLoader = DragImageLoader::create(*this, document);
@@ -640,28 +646,37 @@ RefPtr<Element> DataTransfer::dragImageElement() const
     return m_dragImageElement;
 }
 
-#if !PLATFORM(MAC)
-
 DragImageRef DataTransfer::createDragImage(const Document* document, IntPoint& location) const
 {
-    location = m_dragLocation;
-
     if (m_dragImage) {
-        HostWindow* hostWindow = document && document->view() ? protect(document->view())->hostWindow() : nullptr;
-        auto deviceScaleFactor = document ? document->deviceScaleFactor() : 1.f;
-        return createDragImageFromImage(protect(protect(m_dragImage)->image()).get(), ImageOrientation::Orientation::None, hostWindow, deviceScaleFactor);
+        // FIXME; Sizing images for DataTransfer is not fully specified. See https://github.com/whatwg/html/issues/13099.
+
+        Ref image = *protect(m_dragImage)->image();
+        RefPtr nativeImage = image->currentNativeImage(DefaultSizing { std::nullopt, m_dragImageDensity }.resolve(image->naturalDimensions()));
+        if (!nativeImage)
+            return nullptr;
+
+        DragImageRef result = createDragImageFromImage(*nativeImage, document && document->view() ? protect(document->view())->hostWindow() : nullptr, document ? document->deviceScaleFactor() : 1.0f);
+        location = platformAdjustDragImageHotSpot(m_dragLocation, dragImageSize(result));
+        return result;
     }
 
     if (m_dragImageElement) {
-        if (RefPtr frame = m_dragImageElement->document().frame())
-            return createDragImageForNode(*frame, dragImageElement().releaseNonNull());
+        RefPtr frame = m_dragImageElement->document().frame();
+        if (!frame)
+            return nullptr;
+
+        IntRect imageRect;
+        IntRect elementRect;
+        DragImageRef result = createDragImageForImage(*frame, dragImageElement().releaseNonNull(), imageRect, elementRect);
+        location = platformAdjustDragImageHotSpot(m_dragLocation + (elementRect.location() - imageRect.location()), imageRect.size());
+        return result;
     }
 
     // We do not have enough information to create a drag image, use the default icon.
+    location = m_dragLocation;
     return nullptr;
 }
-
-#endif
 
 Ref<DragImageLoader> DragImageLoader::create(DataTransfer& dataTransfer, const Document& document)
 {

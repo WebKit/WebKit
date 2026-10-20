@@ -53,9 +53,9 @@ namespace WebCore {
 
 class Element;
 class GraphicsClient;
-class Image;
 class IntRect;
 class LocalFrame;
+class NativeImage;
 class Node;
 
 #if PLATFORM(IOS_FAMILY)
@@ -79,6 +79,9 @@ inline constexpr float ColorSwatchWidth = 24;
 #endif
 
 IntSize dragImageSize(DragImageRef);
+IntPoint dragOffsetForLinkDragImage(DragImageRef);
+FloatPoint anchorPointForLinkDragImage(DragImageRef);
+IntPoint platformAdjustDragImageHotSpot(const IntPoint& hotSpot, const IntSize& dragImageSize);
 
 // These functions should be memory neutral, eg. if they return a newly allocated image,
 // they should release the input image. As a corollary these methods don't guarantee
@@ -88,7 +91,7 @@ DragImageRef scaleDragImage(DragImageRef, FloatSize scale);
 DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef, float deviceScaleFactor);
 DragImageRef dissolveDragImageToFraction(DragImageRef, float delta);
 
-DragImageRef createDragImageFromImage(Image*, ImageOrientation, GraphicsClient* = nullptr, float deviceScaleFactor = 1);
+DragImageRef createDragImageFromImage(NativeImage&, GraphicsClient* = nullptr, float deviceScaleFactor = 1);
 DragImageRef createDragImageIconForCachedImageFilename(const String&);
 
 struct DragImageData {
@@ -104,9 +107,6 @@ DragImageRef createDragImageForImage(LocalFrame&, Node&, IntRect& imageRect, Int
 
 DragImageData createDragImageForLink(Element&, URL&, const String& label, float deviceScaleFactor);
 void deleteDragImage(DragImageRef);
-
-IntPoint dragOffsetForLinkDragImage(DragImageRef);
-FloatPoint anchorPointForLinkDragImage(DragImageRef);
 
 class DragImage final {
 public:

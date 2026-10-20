@@ -569,8 +569,6 @@ list(APPEND WebCore_SOURCES
     accessibility/mac/AccessibilityObjectMac.mm
     accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 
-    dom/DataTransferMac.mm
-
     editing/mac/EditorMac.mm
     editing/mac/TextUndoInsertionMarkupMac.mm
 

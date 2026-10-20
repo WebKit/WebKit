@@ -26,11 +26,11 @@
 #include "config.h"
 #include "DragImage.h"
 
-#include "BitmapImage.h"
 #include "FrameSnapshotting.h"
 #include "ImageBuffer.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
+#include "NativeImage.h"
 #include "NotImplemented.h"
 #include "Position.h"
 #include "RenderElement.h"
@@ -96,19 +96,13 @@ static DragImageRef createDragImageFromSnapshot(RefPtr<ImageBuffer> snapshot, No
     if (!snapshot)
         return nullptr;
 
-    ImageOrientation orientation;
-    if (node) {
-        CheckedPtr elementRenderer = dynamicDowncast<RenderElement>(node->renderer());
-        if (!elementRenderer)
-            return nullptr;
+    if (node && !is<RenderElement>(node->renderer()))
+        return nullptr;
 
-        orientation = elementRenderer->imageOrientation();
-    }
-
-    auto image = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(snapshot)));
+    RefPtr image = ImageBuffer::sinkIntoNativeImage(WTF::move(snapshot));
     if (!image)
         return nullptr;
-    return createDragImageFromImage(image.get(), orientation);
+    return createDragImageFromImage(*image);
 }
 
 DragImageRef createDragImageForNode(LocalFrame& frame, Node& node)
@@ -222,6 +216,7 @@ DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef image, flo
 #endif
 
 #if !PLATFORM(MAC)
+
 const int linkDragBorderInset = 2;
 
 IntPoint dragOffsetForLinkDragImage(DragImageRef dragImage)
@@ -235,6 +230,12 @@ FloatPoint anchorPointForLinkDragImage(DragImageRef dragImage)
     IntSize size = dragImageSize(dragImage);
     return { 0.5, static_cast<float>((size.height() - linkDragBorderInset) / size.height()) };
 }
+
+IntPoint platformAdjustDragImageHotSpot(const IntPoint& hotSpot, const IntSize&)
+{
+    return hotSpot;
+}
+
 #endif
 
 DragImage::DragImage()
@@ -303,7 +304,7 @@ DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path
     return nullptr;
 }
 
-DragImageRef createDragImageFromImage(Image*, ImageOrientation, GraphicsClient*, float)
+DragImageRef createDragImageFromImage(NativeImage&, GraphicsClient*, float)
 {
     notImplemented();
     return nullptr;

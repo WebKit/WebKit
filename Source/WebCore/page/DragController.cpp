@@ -31,7 +31,6 @@
 #include "SVGElementTypeHelpers.h"
 
 #if ENABLE(DRAG_SUPPORT)
-#include "BitmapImage.h"
 #include "BoundaryPointInlines.h"
 #include "CachedImage.h"
 #include "ColorSerialization.h"
@@ -1339,18 +1338,17 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
     return false;
 }
 
-static DragImageRef createDragImageForElementImage(Element& element, Image& image, LocalFrame& frame)
+static DragImageRef createDragImageForElementImage(Element& element, LocalFrame& frame)
 {
-    CheckedPtr renderer = element.renderer();
-    auto* hostWindow = frame.view() ? protect(frame.view())->hostWindow() : nullptr;
-    float deviceScaleFactor = protect(element.document())->deviceScaleFactor();
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer());
+    if (!renderImage)
+        return nullptr;
 
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer.get())) {
-        if (RefPtr nativeImage = renderImage->createNativeImageAsPainted(deviceScaleFactor, DragController::maxDragImageSize()))
-            return createDragImageFromImage(BitmapImage::create(nativeImage.releaseNonNull()).ptr(), ImageOrientation::Orientation::None, hostWindow, 1);
-    }
+    RefPtr nativeImage = renderImage->createNativeImageAsPainted(protect(element.document())->deviceScaleFactor(), DragController::maxDragImageSize());
+    if (!nativeImage)
+        return nullptr;
 
-    return createDragImageFromImage(&image, renderer->imageOrientation(), hostWindow, deviceScaleFactor);
+    return createDragImageFromImage(*nativeImage, frame.view() ? protect(frame.view())->hostWindow() : nullptr, 1);
 }
 
 void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, const IntRect& layoutRect, LocalFrame& frame, IntPoint& dragImageOffset, const DragState& state, PromisedAttachmentInfo&& attachmentInfo)
@@ -1365,7 +1363,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
 
     RefPtr image = getImage(element);
     if (image && !layoutRect.isEmpty() && shouldUseCachedImageForDragImage(*image)
-        && (dragImage = DragImage { createDragImageForElementImage(element, *image, frame) })) {
+        && (dragImage = DragImage { createDragImageForElementImage(element, frame) })) {
         dragImage = DragImage { fitDragImageToMaxSize(dragImage.get(), layoutRect.size(), maxDragImageSize()) };
         IntSize fittedSize = dragImageSize(dragImage.get());
 

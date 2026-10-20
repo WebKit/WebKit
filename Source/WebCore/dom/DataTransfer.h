@@ -149,6 +149,7 @@ private:
     String m_dropEffect;
     String m_effectAllowed;
     CachedResourceHandle<CachedImage> m_dragImage;
+    float m_dragImageDensity { 1 };
     RefPtr<Element> m_dragImageElement;
     RefPtr<DragImageLoader> m_dragImageLoader;
     IntPoint m_dragLocation;

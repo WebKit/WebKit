@@ -75,12 +75,9 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize)
 
 static float maximumAllowedDragImageArea = 600 * 1024;
 
-DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation, GraphicsClient* client, float scale)
+DragImageRef createDragImageFromImage(NativeImage& image, GraphicsClient* client, float scale)
 {
-    if (!image)
-        return nil;
-
-    auto imageSize = image->size();
+    auto imageSize = FloatSize(image.size());
     if (imageSize.isEmpty())
         return nil;
 
@@ -97,7 +94,7 @@ DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation
 
     buffer->context().translate(0, imageSize.height());
     buffer->context().scale({ adjustedImageScale, -adjustedImageScale });
-    buffer->context().drawImage(*image, ConcreteObjectSize::fixed(image->size()), FloatPoint { }, { orientation });
+    buffer->context().drawNativeImage(image, FloatRect { { }, image.size() }, FloatRect { { }, image.size() });
 
     RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
     if (!nativeImage)
@@ -243,7 +240,7 @@ RetainPtr<CGImageRef> scaleDragImage(RetainPtr<CGImageRef>, FloatSize)
     return nullptr;
 }
 
-RetainPtr<CGImageRef> createDragImageFromImage(Image*, ImageOrientation, GraphicsClient*, float)
+RetainPtr<CGImageRef> createDragImageFromImage(NativeImage&, GraphicsClient*, float)
 {
     return nullptr;
 }
