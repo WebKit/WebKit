@@ -221,7 +221,6 @@ void DefaultAudioDestinationNode::restartRendering()
 
 void DefaultAudioDestinationNode::close(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(isInitialized());
     uninitialize();
     protect(context())->postTask(WTF::move(completionHandler));
 }
