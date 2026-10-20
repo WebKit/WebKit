@@ -63,7 +63,7 @@ WPEQtView::~WPEQtView()
     if (d->m_webView) {
         g_signal_handlers_disconnect_by_data(d->m_webView.get(), this);
         auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
-        wpe_view_qtquick_invalidate_rendering(WPE_VIEW_QTQUICK(wpeView));
+        wpe_view_qtquick_detach_view(WPE_VIEW_QTQUICK(wpeView));
     }
 }
 

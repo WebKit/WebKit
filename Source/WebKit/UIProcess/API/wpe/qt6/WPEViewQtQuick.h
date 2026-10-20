@@ -51,6 +51,7 @@ void             wpe_view_qtquick_rollback_frame           (WPEViewQtQuick *view
 void             wpe_view_qtquick_did_update_scene         (WPEViewQtQuick *view);
 
 void             wpe_view_qtquick_invalidate_rendering     (WPEViewQtQuick    *view);
+void             wpe_view_qtquick_detach_view              (WPEViewQtQuick    *view);
 
 void             wpe_view_dispatch_mouse_press_event       (WPEViewQtQuick    *view, QMouseEvent *);
 void             wpe_view_dispatch_mouse_move_event        (WPEViewQtQuick    *view, QMouseEvent *);
