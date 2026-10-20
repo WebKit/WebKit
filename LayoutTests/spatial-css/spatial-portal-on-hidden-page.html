@@ -1,9 +1,10 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
 <html>
 <meta charset="utf-8">
 <title>&lt;model> animation survives an unload inside a spatial portal</title>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
 <script src="resources/spatial-portal-utils.js"></script>
 <script src="../model-element/resources/model-utils.js"></script>
 <script src="../model-element/resources/model-element-test-utils.js"></script>
@@ -39,16 +40,18 @@ promise_test(async t => {
     model.currentTime = model.duration - 1.0;
     model.playbackRate = 4;
     await sleepForSeconds(0.5);
-    assert_true(model.currentTime >= 1.0, "a seek and playback rate set while unloaded take effect and loop");
+    assert_greater_than_equal(model.currentTime, 1.0, "a seek and playback rate set while unloaded take effect and loop");
 
     testRunner.setPageVisibility("visible");
+    const timeWhenShown = model.currentTime;
     await sleepForSeconds(0.5);
 
     assert_false(document.hidden, "Page should be visible");
     assert_equals(model.ready, initialModelReadyPromise, "ready was not reset by the unload");
     await waitForModelState(model, "Loaded");
     assert_false(model.paused, "the child model is still playing after re-showing the page");
-    assert_true(model.currentTime >= 3.0, "its animation resumed rather than restarting");
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_greater_than_equal(model.currentTime, 3.0, `its animation resumed rather than restarting (currentTime was ${timeWhenShown} when shown)`);
 }, "A <model> in a spatial portal keeps its animation running while the page is hidden");
 
 promise_test(async t => {
@@ -77,6 +80,73 @@ promise_test(async t => {
     assert_false(fast.paused, "the faster child resumed playing");
     assert_greater_than(fast.currentTime, slow.currentTime, "they resume from their own clocks, not a shared one");
 }, "Siblings in a spatial portal resume independently after an unload");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "stopwatch-60s.usdz");
+    await model.ready;
+    assert_true(model.paused, "the child model starts paused");
+
+    t.add_cleanup(() => testRunner.setPageVisibility("visible"));
+
+    testRunner.setPageVisibility("hidden");
+    await sleepForSeconds(0.5);
+    assert_true(document.hidden, "Page should be hidden");
+
+    testRunner.setPageVisibility("visible");
+    await sleepForSeconds(0.5);
+    assert_false(document.hidden, "Page should be visible");
+
+    await waitForModelState(model, "Loaded");
+    await model.play();
+    assert_false(model.paused, "play() starts the child model after re-showing the page");
+    await waitFor(() => model.currentTime > 0, "the child model's currentTime to advance");
+}, "play() controls a <model> in a spatial portal after the page was hidden and shown again");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "stopwatch-60s.usdz");
+    await model.ready;
+    await model.play();
+
+    t.add_cleanup(() => testRunner.setPageVisibility("visible"));
+
+    testRunner.setPageVisibility("hidden");
+    await sleepForSeconds(0.5);
+    assert_true(document.hidden, "Page should be hidden");
+
+    testRunner.setPageVisibility("visible");
+    await model.pause();
+
+    await waitForModelState(model, "Loaded");
+    assert_true(model.paused, "a pause() issued while the child model reloads is not lost");
+
+    const pausedTime = model.currentTime;
+    await sleepForSeconds(0.2);
+    assert_equals(model.currentTime, pausedTime, "the child model stays paused once reloaded");
+}, "pause() issued while a <model> in a spatial portal reloads after the page is shown again is applied");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "stopwatch-60s.usdz");
+    await model.ready;
+    await model.play();
+
+    t.add_cleanup(() => testRunner.setPageVisibility("visible"));
+
+    testRunner.setPageVisibility("hidden");
+    await sleepForSeconds(0.5);
+    assert_true(document.hidden, "Page should be hidden");
+
+    model.currentTime = model.duration - 0.1;
+    await sleepForSeconds(0.5);
+
+    testRunner.setPageVisibility("visible");
+    await waitForModelState(model, "Loaded");
+    await UIHelper.ensureStablePresentationUpdate();
+
+    assert_approx_equals(model.currentTime, model.duration, 0.1, "the child model is still at the end of its animation");
+}, "A non-looping <model> in a spatial portal that finished while the page is hidden stays at its end once shown again");
 
 </script>
 </body>

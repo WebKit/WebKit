@@ -87,7 +87,11 @@ private:
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(HostedModel);
         WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(HostedModel);
 
+        enum class PauseState : uint8_t { None, Playing, Paused };
+
         ~HostedModel();
+
+        bool isPlaying() const { return pauseState == PauseState::Playing; }
 
         RetainPtr<WKBridgeModelLoader> loader;
         RetainPtr<NSData> retainedData;
@@ -99,7 +103,12 @@ private:
         bool didFinishLoading { false };
         bool pendingClientFinishLoadingNotification { false };
 
-        std::unique_ptr<WebCore::ModelPlayerTransformState> cachedTransformState;
+        bool autoplay { false };
+        PauseState pauseState { PauseState::None };
+        double playbackRate { 1.0 };
+        bool isLooping { false };
+
+        std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore;
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
         RefPtr<WebCore::Model> cachedModelSource;
 #endif
@@ -109,6 +118,7 @@ private:
     HostedModel* hostedModel(WebCore::NodeIdentifier);
     const HostedModel* hostedModel(WebCore::NodeIdentifier) const;
     bool ensureModelBacking(WebCore::LayoutSize);
+    void loadHostedModel(WebCore::NodeIdentifier, WebCore::Model&, WebCore::LayoutSize);
     void setLoaderCallbacks(WebCore::NodeIdentifier, WKBridgeModelLoader *);
     void removeHostedModelResources(WebCore::NodeIdentifier, HostedModel&);
     bool hasAnyLoadedChild() const;
@@ -159,14 +169,14 @@ private:
     bool paused(WebCore::NodeIdentifier) const final;
     Seconds currentTime(WebCore::NodeIdentifier) const final;
     void setCurrentTime(WebCore::NodeIdentifier, Seconds, CompletionHandler<void()>&&) final;
-    void play(WebCore::NodeIdentifier, bool);
+    void play(WebCore::NodeIdentifier, HostedModel&, bool);
+    void updateMeshPlayState();
     bool simulate(float elapsedTime);
     double duration(WebCore::NodeIdentifier) const final;
 
     void ensureOnMainThreadWithProtectedThis(Function<void(Ref<WebModelPlayer>)>&& task);
     void startUpdateLoopIfNeeded();
     void update();
-    void updateClockTimeOnAnimationState();
     bool render();
     void scheduleDisplayUpdate();
     void notifyClientDidFinishLoading();
@@ -201,19 +211,10 @@ private:
     bool m_hasRenderedFrame { false };
     WebCore::StageModeOperation m_stageMode { WebCore::StageModeOperation::None };
     WebCore::IntSize m_currentPixelSize;
-    enum class PauseState {
-        None,
-        Playing,
-        Paused
-    };
-    PauseState m_pauseState { PauseState::None };
     std::optional<WebCore::LayoutPoint> m_initialPoint;
     std::optional<Ref<WebCore::SharedBuffer>> m_environmentMap;
     const RetainPtr<WKStageModeOrbitSimulator> m_orbitSimulator;
     MonotonicTime m_lastUpdateTime;
-    std::optional<WebCore::ModelPlayerAnimationState> m_cachedAnimationState;
-    float m_playbackRate { 1.0f };
-    bool m_isLooping { false };
 #if ENABLE(SPATIAL_PORTAL)
     bool m_isSpatialPortal { false };
 #endif

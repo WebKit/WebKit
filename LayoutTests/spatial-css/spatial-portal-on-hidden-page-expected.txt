@@ -1,4 +1,7 @@
 
 PASS A <model> in a spatial portal keeps its animation running while the page is hidden
 PASS Siblings in a spatial portal resume independently after an unload
+PASS play() controls a <model> in a spatial portal after the page was hidden and shown again
+PASS pause() issued while a <model> in a spatial portal reloads after the page is shown again is applied
+PASS A non-looping <model> in a spatial portal that finished while the page is hidden stays at its end once shown again
 

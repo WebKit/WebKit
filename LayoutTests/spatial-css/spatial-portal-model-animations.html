@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
 <html>
 <meta charset="utf-8">
 <title>&lt;model> animation playback inside a spatial portal</title>
@@ -25,6 +25,28 @@ promise_test(async t => {
     assert_approx_equals(model.duration, 60, 0.1, "the child model reports its animation duration");
     assert_false(model.paused, "a child model with autoplay starts playing");
 }, "<model autoplay> nested in a spatial portal plays its animation");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "stopwatch-60s.usdz");
+    model.autoplay = true;
+
+    await model.ready;
+    await waitFor(() => model.currentTime > 0, "the autoplaying child model's currentTime to advance");
+}, "<model autoplay> nested in a spatial portal advances its animation without any other interaction");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const autoplaying = appendModel(portal, "stopwatch-60s.usdz");
+    const idle = appendModel(portal, "stopwatch-60s.usdz");
+    autoplaying.autoplay = true;
+
+    await Promise.all([autoplaying.ready, idle.ready]);
+    await waitFor(() => autoplaying.currentTime > 0, "the autoplaying child model's currentTime to advance");
+
+    assert_true(idle.paused, "the sibling without autoplay does not start playing");
+    assert_equals(idle.currentTime, 0, "the sibling without autoplay does not advance");
+}, "<model autoplay> next to an idle sibling in a spatial portal advances its animation on its own");
 
 promise_test(async t => {
     const portal = createPortal(t);

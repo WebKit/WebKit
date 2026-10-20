@@ -1,5 +1,7 @@
 
 PASS <model autoplay> nested in a spatial portal plays its animation
+PASS <model autoplay> nested in a spatial portal advances its animation without any other interaction
+PASS <model autoplay> next to an idle sibling in a spatial portal advances its animation on its own
 PASS play() and pause() control a <model> nested in a spatial portal
 PASS <model autoplay loop> nested in a spatial portal loops its animation
 PASS <model autoplay> nested in a spatial portal stops after reaching its duration
