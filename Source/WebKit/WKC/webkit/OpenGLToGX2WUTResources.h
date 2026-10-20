@@ -28,6 +28,7 @@ struct WUTBufferResources {
     struct AttributeDescriptor {
         GX2AttribFormat format { GX2_ATTRIB_TYPE_32_FLOAT };
         uint32_t componentMask { GX2_CHANNEL_MASK_RGBA };
+        BufferName buffer { 0 };
         uint32_t divisor { 0 };
         GX2AttribIndexType indexType { GX2_ATTRIB_INDEX_PER_VERTEX };
         bool enabled { false };
