@@ -129,6 +129,10 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
         } else {
             m_context = WTF::move(context);
             m_textureMapper = TextureMapper::create();
+#if USE(WPE_RENDERER)
+            if (m_surface->isLegacyWPERenderer() && !nativeSurfaceHandle)
+                m_flipY = !m_flipY;
+#endif
         }
     });
 }

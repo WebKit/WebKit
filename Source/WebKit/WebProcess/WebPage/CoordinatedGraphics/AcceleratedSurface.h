@@ -155,6 +155,10 @@ public:
     void visibilityDidChange(bool);
     void backgroundColorDidChange();
 
+#if USE(WPE_RENDERER)
+    bool isLegacyWPERenderer() const { return m_swapChain.type() == SwapChain::Type::WPEBackend; }
+#endif
+
 private:
     AcceleratedSurface(WebPage&, Function<void()>&& frameCompleteHandler, RenderingPurpose, bool useSkia);
 

@@ -168,6 +168,10 @@ void AcceleratedSurface::RenderTarget::createSkiaSurfaceForFramebuffer(unsigned 
     framebufferInfo.fFormat = GL_RGBA8;
     auto backendRenderTarget = GrBackendRenderTargets::MakeGL(m_size.width(), m_size.height(), 0, stencilBits, framebufferInfo);
     auto origin = m_surface->shouldPaintMirrored() ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
+#if USE(WPE_RENDERER)
+    if (m_surface->isLegacyWPERenderer() && !m_surface->window())
+        origin = kTopLeft_GrSurfaceOrigin;
+#endif
     auto properties = FontRenderOptions::singleton().createSurfaceProps();
     m_skiaSurface = SkSurfaces::WrapBackendRenderTarget(display.skiaGrContext(), backendRenderTarget, origin, kRGBA_8888_SkColorType, SkColorSpace::MakeSRGB(), &properties);
 }
