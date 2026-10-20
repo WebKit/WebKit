@@ -2704,6 +2704,10 @@ void RenderLayerBacking::ensureOverflowControlsHostLayerAncestorClippingStack(co
 
 static const RenderBox* boxNeedingShapeMaskForClip(const CompositedClipData& clipData)
 {
+    // Rectangular clip entries are an intersection of ancestor clips, and their clippingLayer is the layer being clipped, not the clipper.
+    if (!clipData.clipRect.hasNonZeroRadii())
+        return nullptr;
+
     CheckedPtr clippingLayer = clipData.clippingLayer.get();
     if (!clippingLayer)
         return nullptr;

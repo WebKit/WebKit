@@ -4840,6 +4840,7 @@ imported/w3c/web-platform-tests/largest-contentful-paint/repeated-image.html [ P
 # Consistent image failures, in every run. These are all reftests, so they cannot be
 # rebaselined; corner-shape is not applied through the composited path on Windows.
 compositing/corner-shape-ancestor-clip.html [ ImageOnlyFailure ]
+compositing/corner-shape-ancestor-clip-nested-rect-clip.html [ ImageOnlyFailure ]
 compositing/corner-shape-mask-layer-offset.html [ ImageOnlyFailure ]
 http/tests/canvas/canvas-tainted-image-capture-video-frame.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-overflow-composite.html [ ImageOnlyFailure ]
