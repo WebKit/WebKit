@@ -381,6 +381,8 @@ Shared/WebsiteData/WebsiteData.cpp
 Shared/XR/XRDeviceProxy.cpp
 
 UIProcess/AboutSchemeHandler.cpp
+UIProcess/AgentClusterKeyingReservation.cpp
+UIProcess/AgentClusterRequest.cpp
 UIProcess/AuxiliaryProcessProxy.cpp @cost:4
 UIProcess/BackgroundProcessResponsivenessTimer.cpp
 UIProcess/BrowsingContextGroup.cpp
