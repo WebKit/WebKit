@@ -21,21 +21,32 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-class ContextStack(object):
+from __future__ import annotations
 
-    def __init__(self, cls):
-        self.previous = None
-        self.patches = []
+from contextlib import AbstractContextManager
+from types import TracebackType
+from typing import Any, ClassVar, TypeVar
+
+ContextStackType = TypeVar('ContextStackType', bound='ContextStack')
+
+
+class ContextStack(object):
+    # The active instance of each subclass, which each subclass declares for itself.
+    top: ClassVar[ContextStack | None]
+
+    def __init__(self, cls: type[ContextStack]) -> None:
+        self.previous: ContextStack | None = None
+        self.patches: list[AbstractContextManager[Any]] = []
         self.cls = cls
 
-    def __enter__(self):
+    def __enter__(self: ContextStackType) -> ContextStackType:
         self.previous = self.top
         self.cls.top = self
         for patch in self.patches:
             patch.__enter__()
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
         for patch in reversed(self.patches):
             patch.__exit__(exc_type, exc_value, traceback)
         self.cls.top = self.previous

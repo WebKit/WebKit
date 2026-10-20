@@ -20,11 +20,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import math
 import subprocess
 import sys
 import time
 import threading
+from typing import Any
 
 from webkitcorepy import Timeout
 
@@ -33,7 +36,7 @@ CompletedProcess = subprocess.CompletedProcess
 
 
 # Allows native integration with the Timeout context
-def run(*popenargs, **kwargs):
+def run(*popenargs: Any, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
     timeout = kwargs.pop('timeout', None)
     capture_output = kwargs.pop('capture_output', False)
 
@@ -54,27 +57,28 @@ def run(*popenargs, **kwargs):
 
 class Thread(threading.Thread):
     @classmethod
-    def terminated(cls):
-        return getattr(threading.current_thread(), '_terminated', False)
+    def terminated(cls) -> bool:
+        terminated: bool = getattr(threading.current_thread(), '_terminated', False)
+        return terminated
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(Thread, self).__init__(*args, **kwargs)
         self._terminated = False
 
-    def poll(self):
+    def poll(self) -> int | None:
         return None if self.is_alive() else {True: 1, False: 0}.get(self._terminated, -1)
 
-    def terminate(self):
+    def terminate(self) -> None:
         self._terminated = True
 
-    def kill(self):
+    def kill(self) -> None:
         self._terminated = True
 
-    def __enter__(self):
+    def __enter__(self) -> Thread:
         self.start()
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         with Timeout.DisableAlarm():
             current_time = time.time()
             Timeout.check(current_time=current_time)

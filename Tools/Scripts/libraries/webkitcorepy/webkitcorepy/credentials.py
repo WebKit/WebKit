@@ -20,21 +20,47 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import getpass
 import sys
+from typing import Callable, Literal, NoReturn, Union, overload
 
 from subprocess import CalledProcessError
 from webkitcorepy import Environment, OutputCapture, Terminal, string_utils
 
-_cache = dict()
+_cache: dict[str, tuple[str, str]] = dict()
+
+Prompt = Union[str, Callable[[], str], None]
+Validater = Union[Callable[[str, str], bool], None]
 
 
-def handle_keyring_error(error):
+def handle_keyring_error(error: Exception) -> NoReturn:
     sys.stderr.write('Could not access credentials from keychain. Please run `security unlock-keychain` before re-running this command.\n')
     sys.exit(1)
 
 
-def credentials(url, required=True, name=None, prompt=None, key_name='password', validater=None, validate_existing_credentials=False, retry=3, save_in_keyring=None):
+# Required credentials are always returned, since credentials() exits if the user can't provide them.
+@overload
+def credentials(
+    url: str, required: Literal[True] = ..., name: str | None = ..., prompt: Prompt = ..., key_name: str = ...,
+    validater: Validater = ..., validate_existing_credentials: bool = ..., retry: int = ..., save_in_keyring: bool | None = ...,
+) -> tuple[str, str]:
+    ...
+
+
+@overload
+def credentials(
+    url: str, required: bool = ..., name: str | None = ..., prompt: Prompt = ..., key_name: str = ...,
+    validater: Validater = ..., validate_existing_credentials: bool = ..., retry: int = ..., save_in_keyring: bool | None = ...,
+) -> tuple[str | None, str | None]:
+    ...
+
+
+def credentials(
+    url: str, required: bool = True, name: str | None = None, prompt: Prompt = None, key_name: str = 'password',
+    validater: Validater = None, validate_existing_credentials: bool = False, retry: int = 3, save_in_keyring: bool | None = None,
+) -> tuple[str | None, str | None]:
     global _cache
 
     ignore_entry = False
@@ -42,7 +68,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
     if _cache.get(name):
         if not validate_existing_credentials:
             return _cache[name]
-        elif validater and validater(*_cache.get(name)):
+        elif validater and validater(*_cache[name]):
             return _cache[name]
 
         # If we've failed the validation check, invalidate cache and ignore the current keychain entry
@@ -105,7 +131,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
                 key_prompted = True
 
         should_validate = validater and (username_prompted or key_prompted or validate_existing_credentials)
-        if username and key and (not should_validate or validater(username, key)):
+        if username and key and (not should_validate or (validater is not None and validater(username, key))):
             _cache[name] = (username, key)
             break
 
@@ -127,6 +153,8 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
             default='Yes',
         ) == 'Yes'):
             sys.stderr.write('Storing credentials...\n')
+            # Credentials are only prompted for when they're required, so they've been provided.
+            assert username and key
             try:
                 keyring.set_password(url, 'username', username)
                 keyring.set_password(url, username, key)
@@ -138,7 +166,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
     return username, key
 
 
-def delete_credentials(url, name=None):
+def delete_credentials(url: str, name: str | None = None) -> None:
     global _cache
 
     name = name or url.split('/')[2].replace('.', '_')

@@ -109,7 +109,7 @@ def ordinal(number: int | str) -> str:
     )
 
 
-def pluralize(number: int, string: str, plural: str | None = None) -> str:
+def pluralize(number: float, string: str, plural: str | None = None) -> str:
     if number == 1:
         return '1 {}'.format(string)
     if plural:

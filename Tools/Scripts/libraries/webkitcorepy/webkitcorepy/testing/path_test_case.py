@@ -20,11 +20,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
+from __future__ import annotations
 
 import os
 import shutil
 import tempfile
+from typing import Any
 
 from unittest import TestCase
 
@@ -32,17 +33,18 @@ from unittest import TestCase
 class PathTestCase(TestCase):
     basepath = ''
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(PathTestCase, self).__init__(*args, **kwargs)
-        self.container = None
-        self.path = None
+        self.container: str | None = None
+        self.path: str | None = None
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.container = tempfile.mkdtemp()
         self.path = os.path.join(self.container, self.basepath)
         os.makedirs(self.path)
 
-    def tearDown(self):
-        shutil.rmtree(self.container, ignore_errors=True)
+    def tearDown(self) -> None:
+        if self.container:
+            shutil.rmtree(self.container, ignore_errors=True)
         self.container = None
         self.path = None

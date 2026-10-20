@@ -20,17 +20,20 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 from threading import Timer as _Timer
+from typing import Any, Callable
 
 
 class Timer(_Timer):
-    def __init__(self, interval, callback):
+    def __init__(self, interval: float, callback: Callable[[], object]) -> None:
         super(Timer, self).__init__(interval, callback)
         self.daemon = True
 
-    def __enter__(self):
+    def __enter__(self) -> Timer:
         self.start()
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         self.cancel()

@@ -20,26 +20,29 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import contextlib
 import io
 import logging
 import sys
+from typing import IO, TYPE_CHECKING, Any, Iterable, NoReturn
 
 from webkitcorepy import log, mocks
 from webkitcorepy.string_utils import StringIO
 
 
 class LoggerCapture(object):
-    def __init__(self, logger=None, level=logging.WARNING):
+    def __init__(self, logger: logging.Logger | None = None, level: int = logging.WARNING) -> None:
         self.logger = logger or logging.getLogger()
         self.level = level
 
-        self._original_log_level_stack = []
-        self._original_handlers_stack = []
-        self._handler_stack = []
+        self._original_log_level_stack: list[int] = []
+        self._original_handlers_stack: list[list[logging.Handler]] = []
+        self._handler_stack: list[logging.Handler] = []
         self.log = StringIO()
 
-    def __enter__(self):
+    def __enter__(self) -> LoggerCapture:
         self._original_log_level_stack.append(self.logger.level)
 
         self._original_handlers_stack.append([handler for handler in self.logger.handlers])
@@ -55,7 +58,7 @@ class LoggerCapture(object):
 
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         if self._handler_stack:
             to_remove = self._handler_stack.pop()
             to_remove.flush()
@@ -73,22 +76,27 @@ class OutputCapture(mocks.ContextStack):
     top = None
 
     class ReplaceSysStream(object):
-        def __init__(self, name, stream):
+        def __init__(self, name: str, stream: IO[str] | io.IOBase) -> None:
             self.name = name
             if self.name not in {'stdout', 'stderr'}:
                 raise ValueError("'{}' is not a valid system stream name".format(self.name))
             self.stream = stream
-            self.originals = []
+            self.originals: list[IO[str] | io.IOBase] = []
 
-        def __enter__(self):
+        def __enter__(self) -> OutputCapture.ReplaceSysStream:
             self.originals.append(getattr(sys, self.name))
             setattr(sys, self.name, self.stream)
             return self
 
-        def __exit__(self, *args, **kwargs):
+        def __exit__(self, *args: Any, **kwargs: Any) -> None:
             setattr(sys, self.name, self.originals.pop())
 
-    def __init__(self, loggers=None, level=logging.WARNING):
+    if TYPE_CHECKING:
+        # Each captured logger is available as an attribute named after that logger.
+        def __getattr__(self, name: str) -> LoggerCapture:
+            ...
+
+    def __init__(self, loggers: Iterable[logging.Logger] | None = None, level: int = logging.WARNING) -> None:
         super(OutputCapture, self).__init__(cls=OutputCapture)
 
         self.stdout = StringIO()
@@ -112,72 +120,76 @@ class OutputDuplicate(mocks.ContextStack):
     top = None
 
     class Stream(io.IOBase):
-        def __init__(self, *targets):
+        def __init__(self, *targets: IO[str]) -> None:
             if not targets:
                 raise ValueError('No target streams provided')
             self.targets = targets
 
-        def flush(self):
-            [target.flush() for target in self.targets]
+        def flush(self) -> None:
+            for target in self.targets:
+                target.flush()
 
-        def writelines(self, lines):
-            [target.writelines(lines) for target in self.targets]
+        # io.IOBase is typed as a binary stream, but this stream duplicates text.
+        def writelines(self, lines: Iterable[str]) -> None:  # type: ignore[override]
+            for target in self.targets:
+                target.writelines(lines)
 
-        def write(self, b):
-            [target.write(b) for target in self.targets]
+        def write(self, b: str) -> int:
+            for target in self.targets:
+                target.write(b)
             return len(b)
 
         @property
-        def closed(self):
+        def closed(self) -> bool:
             return all([target.closed for target in self.targets])
 
-        def close(self):
+        def close(self) -> None:
             pass
 
-        def fileno(self):
+        def fileno(self) -> int | None:  # type: ignore[override]
             # Use the first valid file number
             for target in self.targets:
                 if target.fileno():
                     return target.fileno()
             return None
 
-        def isatty(self):
+        def isatty(self) -> bool:
             return any([target.isatty() for target in self.targets])
 
-        def readable(self):
+        def readable(self) -> bool:
             return False
 
-        def readline(self, size=-1):
+        def readline(self, size: int | None = -1) -> NoReturn:
             raise NotImplementedError()
 
-        def readlines(self, hint=-1):
+        def readlines(self, hint: int = -1) -> NoReturn:
             raise NotImplementedError()
 
-        def seek(self, offset, whence=io.SEEK_SET):
+        def seek(self, offset: int, whence: int = io.SEEK_SET) -> NoReturn:
             raise NotImplementedError()
 
-        def seekable(self):
+        def seekable(self) -> bool:
             return False
 
-        def tell(self):
+        def tell(self) -> NoReturn:
             raise NotImplementedError()
 
-        def truncate(self, size=None):
+        def truncate(self, size: int | None = None) -> NoReturn:
             raise NotImplementedError()
 
-        def writable(self):
+        def writable(self) -> bool:
             return True
 
-    def __init__(self, loggers=None):
+    def __init__(self, loggers: list[logging.Logger] | None = None) -> None:
         super(OutputDuplicate, self).__init__(cls=OutputDuplicate)
 
         self.output = StringIO()
         self.loggers = loggers or [logging.getLogger()]
 
-        self._handler_stack = []
-        self._streams_stack = []
+        self._handler_stack: list[logging.Handler] = []
+        self._streams_stack: list[tuple[OutputCapture.ReplaceSysStream, OutputCapture.ReplaceSysStream]] = []
 
-    def __enter__(self):
+    def __enter__(self) -> OutputDuplicate:
         self._streams_stack.append((
             OutputCapture.ReplaceSysStream('stdout', self.Stream(sys.stdout, self.output)).__enter__(),
             OutputCapture.ReplaceSysStream('stderr', self.Stream(sys.stderr, self.output)).__enter__(),
@@ -186,16 +198,18 @@ class OutputDuplicate(mocks.ContextStack):
         context_handler = logging.StreamHandler(self.output)
         self._handler_stack.append(context_handler)
         context_handler.setLevel(min([logger.level for logger in self.loggers]))
-        [logger.addHandler(context_handler) for logger in self.loggers]
+        for logger in self.loggers:
+            logger.addHandler(context_handler)
 
         return super(OutputDuplicate, self).__enter__()
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         super(OutputDuplicate, self).__exit__(*args, **kwargs)
 
         context_handler = self._handler_stack.pop()
         context_handler.flush()
-        [logger.removeHandler(context_handler) for logger in self.loggers]
+        for logger in self.loggers:
+            logger.removeHandler(context_handler)
 
         stdout_stream, stderr_stream = self._streams_stack.pop()
         stdout_stream.__exit__(*args, **kwargs)

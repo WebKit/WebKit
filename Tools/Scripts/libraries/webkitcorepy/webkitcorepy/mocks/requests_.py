@@ -20,7 +20,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
+from typing import Any, Callable, ClassVar, Iterator, TypeVar, Union
 from unittest import mock
 
 from webkitcorepy import string_utils
@@ -29,12 +32,12 @@ from webkitcorepy.mocks import ContextStack
 
 class Response(object):
     @staticmethod
-    def fromText(data, url=None, headers=None):
+    def fromText(data: str, url: str | None = None, headers: dict[str, Any] | None = None) -> Response:
         assert isinstance(data, str)
         return Response(text=data, url=url, headers=headers)
 
     @staticmethod
-    def fromJson(data, url=None, headers=None, status_code=None):
+    def fromJson(data: list[Any] | dict[str, Any], url: str | None = None, headers: dict[str, Any] | None = None, status_code: int | None = None) -> Response:
         assert isinstance(data, list) or isinstance(data, dict)
 
         headers = headers or {}
@@ -44,10 +47,10 @@ class Response(object):
         return Response(text=json.dumps(data), url=url, headers=headers, status_code=status_code)
 
     @staticmethod
-    def create404(url=None, headers=None):
+    def create404(url: str | None = None, headers: dict[str, Any] | None = None) -> Response:
         return Response(status_code=404, url=url, headers=headers)
 
-    def __init__(self, status_code=None, text=None, content=None, url=None, headers=None):
+    def __init__(self, status_code: int | None = None, text: str | None = None, content: bytes | None = None, url: str | None = None, headers: dict[str, Any] | None = None) -> None:
         if status_code is not None:
             self.status_code = status_code
         elif text is not None:
@@ -71,37 +74,44 @@ class Response(object):
             self.headers['Content-Length'] = len(self.content) if self.content else 0
 
     @property
-    def text(self):
+    def text(self) -> str:
         return string_utils.decode(self.content)
 
-    def json(self):
+    def json(self) -> Any:
         return json.loads(self.text)
 
-    def iter_content(self, chunk_size=4096):
+    def iter_content(self, chunk_size: int = 4096) -> Iterator[str]:
         for i in range(0, len(self.text), chunk_size):
             yield self.text[i:i + chunk_size]
 
-    def iter_lines(self):
+    def iter_lines(self) -> Iterator[bytes]:
         for line in self.text.splitlines() if self.text else []:
             yield string_utils.encode(line)
 
-    def __enter__(self):
+    def __enter__(self) -> Response:
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         pass
 
 
-class Requests(ContextStack):
-    top = None
+# Responses to a request, given its method, URL and keyword arguments.
+Responder = Union[Response, Callable[..., Response]]
 
-    def __init__(self, *hosts, **kwargs):
+
+RequestsType = TypeVar('RequestsType', bound='Requests')
+
+
+class Requests(ContextStack):
+    top: ClassVar[Requests | None] = None
+
+    def __init__(self, *hosts: str, **kwargs: Responder) -> None:
         super(Requests, self).__init__(cls=Requests)
         self.hosts = hosts
-        self._temp_patches = None
+        self._temp_patches: list[Any] | None = None
         self._responses = kwargs
 
-    def request(self, method, url, **kwargs):
+    def request(self, method: str, url: str, **kwargs: Any) -> Response:
         stripped_url = url.split('://')[-1]
         candidate = self._responses.get('/'.join(stripped_url.split('/')[1:]))
         if isinstance(candidate, Response):
@@ -110,14 +120,14 @@ class Requests(ContextStack):
             return candidate(method, url, **kwargs)
         return Response.create404(url)
 
-    def __enter__(self):
+    def __enter__(self: RequestsType) -> RequestsType:
         # Allow requests to be managed via autoinstall
         import requests
 
         this = self
 
         class Session(requests.Session):
-            def request(self, method, url, **kwargs):
+            def request(self, method: str, url: str, **kwargs: Any) -> Any:
                 for host in this.hosts:
                     for candidate in ['https://{}'.format(host), 'http://{}'.format(host)]:
                         if url == candidate:
@@ -140,8 +150,8 @@ class Requests(ContextStack):
             patch.__enter__()
         return super(Requests, self).__enter__()
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         super(Requests, self).__exit__(*args, **kwargs)
-        for patch in reversed(self._temp_patches):
+        for patch in reversed(self._temp_patches or []):
             patch.__exit__(*args, **kwargs)
         self._temp_patches = None

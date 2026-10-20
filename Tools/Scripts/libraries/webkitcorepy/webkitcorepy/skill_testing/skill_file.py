@@ -20,8 +20,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import re
+from typing import Any
 
 from webkitcorepy import AutoInstall
 
@@ -30,7 +33,7 @@ class SkillFile(object):
     FRONTMATTER_DELIMITER = '---'
 
     @classmethod
-    def discover(cls, claude_dir):
+    def discover(cls, claude_dir: str) -> list[SkillFile]:
         results = []
         for dirpath, dirnames, filenames in os.walk(claude_dir, followlinks=True):
             dirnames[:] = [d for d in dirnames if d != '__pycache__']
@@ -38,12 +41,12 @@ class SkillFile(object):
                 results.append(cls(os.path.join(dirpath, 'SKILL.md')))
         return sorted(results, key=lambda s: s.path)
 
-    def __init__(self, path):
+    def __init__(self, path: str) -> None:
         self.path = os.path.abspath(path)
         self.skill_dir = os.path.dirname(self.path)
 
-        frontmatter = None
-        body = None
+        frontmatter: dict[str, Any] | None = None
+        body: str | None = None
 
         with open(self.path, 'r') as f:
             content = f.read()
@@ -52,7 +55,7 @@ class SkillFile(object):
         if not lines or lines[0].strip() != self.FRONTMATTER_DELIMITER:
             body = content
         else:
-            end = None
+            end: int | None = None
             for i in range(1, len(lines)):
                 if lines[i].strip() == self.FRONTMATTER_DELIMITER:
                     end = i
@@ -75,6 +78,12 @@ class SkillFile(object):
         self.frontmatter = frontmatter
         self.body = body
 
+        self.name: str | None
+        self.description: str | None
+        self.user_invocable: bool | None
+        self.model: str | None
+        self.effort: str | None
+        self.allowed_tools: list[str]
         if frontmatter:
             self.name = frontmatter.get('name')
             self.description = frontmatter.get('description')
@@ -97,6 +106,8 @@ class SkillFile(object):
             self.effort = None
             self.allowed_tools = []
 
+        self.sections: list[str]
+        self.references: list[str]
         if body:
             self.sections = re.findall(r'^#{1,6}\s+(.+)$', body, re.MULTILINE)
             link_refs = re.findall(r'\[.*?\]\(([^)]+)\)', body)
@@ -105,5 +116,5 @@ class SkillFile(object):
             self.sections = []
             self.references = []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return 'SkillFile({!r})'.format(self.path)

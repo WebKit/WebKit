@@ -23,9 +23,9 @@
 import io
 import json
 import os
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, MutableMapping
 from enum import Enum, auto
-from typing import Callable, Dict, IO, List, Optional, Tuple, Union
+from typing import Callable, Dict, IO, List, Optional, Tuple, Union, cast
 
 
 class Config(dict[str, 'Config.Values']):
@@ -41,7 +41,7 @@ class Config(dict[str, 'Config.Values']):
         import jsone
         from jsone.render import parse as jsone_parse
 
-        def dynamic_pop(jsone_context: Mapping[str, Union['Config.Values', Callable[..., 'Config.Values']]], collection: Union[List['Config.Values'], Mapping[str, 'Config.Values']], *args: Union[int, str]) -> 'Config.Values':
+        def dynamic_pop(jsone_context: Mapping[str, Union['Config.Values', Callable[..., 'Config.Values']]], collection: Union[List['Config.Values'], MutableMapping[str, 'Config.Values']], *args: Union[int, str]) -> 'Config.Values':
             """Pop an item from a mapping or list which matches some criteria, usable as a jsone built-in.
 
             For mappings, requires a key argument.
@@ -67,39 +67,45 @@ class Config(dict[str, 'Config.Values']):
             if isinstance(collection, Mapping):
                 if not args:
                     raise TypeError('pop() on a mapping requires a key argument')
-                return collection.pop(args[0])
+                key = args[0]
+                if not isinstance(key, str):
+                    raise KeyError(key)
+                return collection.pop(key)
             raise TypeError('pop() requires a list or mapping')
 
         # Treat pop as a jsone built-in so we can apply a filter against it
-        dynamic_pop._jsone_builtin = True
+        setattr(dynamic_pop, '_jsone_builtin', True)
 
         context = dict(context or {})
         context.setdefault('pop', dynamic_pop)
 
         if not isinstance(value, Mapping):
-            return jsone.render(value, context=context)
+            rendered: Config.Values = jsone.render(value, context=context)
+            return rendered
 
         if cls.CONTEXT_SYMBOL in value:
             result = Config()
             context = dict(**context)
-            context.update(cls.render(value[cls.CONTEXT_SYMBOL], context=context))
+            # The context document is always a mapping.
+            context.update(cast(Mapping[str, 'Config.Values'], cls.render(value[cls.CONTEXT_SYMBOL], context=context)))
             for key, content in value.items():
                 if key == cls.CONTEXT_SYMBOL:
                     continue
-                result[key] = cls.render(content, context=context)
-                if isinstance(result[key], list):
-                    context[key] = [x for x in result[key]]
-                elif isinstance(result[key], Mapping):
-                    result[key] = dict(**result[key])
-                    context[key] = dict(**result[key])
+                rendered = cls.render(content, context=context)
+                result[key] = rendered
+                if isinstance(rendered, list):
+                    context[key] = [x for x in rendered]
+                elif isinstance(rendered, Mapping):
+                    result[key] = dict(**rendered)
+                    context[key] = dict(**rendered)
                 else:
-                    context[key] = result[key]
+                    context[key] = rendered
             return result
 
-        result = jsone.render(value, context=context)
-        if isinstance(result, Mapping):
-            return Config(**result)
-        return result
+        rendered = jsone.render(value, context=context)
+        if isinstance(rendered, Mapping):
+            return Config(rendered)
+        return rendered
 
     @classmethod
     def loads(cls, string: str, mode: Optional['Config.Mode'] = None) -> 'Config':
@@ -134,6 +140,8 @@ class Config(dict[str, 'Config.Values']):
                     data.update(doc)
                 result = cls.render(data)
             mode = cls.Mode.YAML
+        if not isinstance(result, Config):
+            raise TypeError('Configuration is not a dictionary')
         result.mode = mode
         return result
 

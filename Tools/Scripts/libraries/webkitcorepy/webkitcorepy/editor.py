@@ -20,8 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import shutil
+from typing import Iterator
 
 from webkitcorepy.subprocess_utils import run
 from webkitcorepy.decorators import hybridmethod
@@ -29,7 +32,7 @@ from webkitcorepy.decorators import hybridmethod
 
 class Editor(object):
     @classmethod
-    def sublime(cls):
+    def sublime(cls) -> Editor:
         path = shutil.which('subl') or '/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'
         return cls(
             name='Sublime',
@@ -39,7 +42,7 @@ class Editor(object):
         )
 
     @classmethod
-    def bbedit(cls):
+    def bbedit(cls) -> Editor:
         path = shutil.which('bbedit') or '/Applications/BBEdit.app/Contents/Helpers/bbedit_tool'
         return cls(
             name='BBEdit',
@@ -49,7 +52,7 @@ class Editor(object):
         )
 
     @classmethod
-    def textmate(cls):
+    def textmate(cls) -> Editor:
         return cls(
             name='TextMate',
             path=shutil.which('mate') or '/Applications/TextMate.app/Contents/Resources/mate',
@@ -57,7 +60,7 @@ class Editor(object):
         )
 
     @classmethod
-    def xcode(cls):
+    def xcode(cls) -> Editor:
         return cls(
             name='Xcode',
             path=shutil.which('xed') or '/Applications/Xcode.app/Contents/Developer/usr/bin/xed',
@@ -65,7 +68,7 @@ class Editor(object):
         )
 
     @classmethod
-    def textedit(cls):
+    def textedit(cls) -> Editor:
         return cls(
             name='TextEdit',
             path='/System/Applications/TextEdit.app/Contents/MacOS/TextEdit',
@@ -74,7 +77,7 @@ class Editor(object):
         )
 
     @classmethod
-    def vscode(cls):
+    def vscode(cls) -> Editor:
         path = shutil.which('code') or '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code'
         return cls(
             name='VSCode',
@@ -84,7 +87,7 @@ class Editor(object):
         )
 
     @classmethod
-    def vi(cls):
+    def vi(cls) -> Editor:
         path = shutil.which('vi')
         return cls(
             name='vi',
@@ -93,7 +96,7 @@ class Editor(object):
         )
 
     @classmethod
-    def default(cls):
+    def default(cls) -> Editor:
         path = shutil.which('open')
         return cls(
             name='open',
@@ -103,21 +106,21 @@ class Editor(object):
         )
 
     @classmethod
-    def preferred(cls):
+    def preferred(cls) -> Editor:
         for program in cls.programs():
             if program:
                 return program
         return cls.default()
 
     @classmethod
-    def by_name(cls, name):
+    def by_name(cls, name: str) -> Editor | None:
         for program in cls.programs():
             if program.name.lower().startswith(name.lower()):
                 return program
         return None
 
     @classmethod
-    def programs(cls, exists=True):
+    def programs(cls, exists: bool = True) -> Iterator[Editor]:
         for program in [
             Editor.sublime(),
             Editor.textmate(),
@@ -131,23 +134,23 @@ class Editor(object):
             if not exists or program:
                 yield program
 
-    def __init__(self, name, path, command=None, wait=None):
+    def __init__(self, name: str, path: str | None, command: list[str | None] | None = None, wait: list[str] | None = None) -> None:
         self.name = name
         self.path = path
-        self.command = command or [self.path]
-        self.wait = self.command + (wait or [])
+        self.command: list[str | None] = command or [self.path]
+        self.wait: list[str | None] = self.command + list(wait or [])
 
     @hybridmethod
-    def open(context, file, block=False):
+    def open(context: Editor | type[Editor], file: str, block: bool = False) -> bool:
         if isinstance(context, type):
             context = context.preferred()
 
-        if not os.path.isfile(context.path):
+        if not context.path or not os.path.isfile(context.path):
             return False
         return not run((context.wait if block else context.command) + [file], capture_output=True).returncode
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.name
 
-    def __bool__(self):
-        return bool(self.path) and os.path.isfile(self.path)
+    def __bool__(self) -> bool:
+        return bool(self.path and os.path.isfile(self.path))

@@ -20,9 +20,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import datetime
 import functools
 import time
+from types import TracebackType
+from typing import Any, Callable
 from unittest import mock
 
 
@@ -31,22 +35,22 @@ from unittest import mock
 # actually owns mocking logic
 class _MetaTime(type):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(_MetaTime, self).__init__(*args, **kwargs)
-        self.patches = []
-        self.stack = []
+        self.patches: list[list[mock._patch[Any]]] = []
+        self.stack: list[float] = []
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         self.stack.append(time.time())
 
-        def sleep_func(t):
+        def sleep_func(t: float) -> None:
             self.stack[-1] += t
 
         # datetime.datetime.now is considered a Python builtin, so it can't be mocked.
         # We need to "mock" the whole class to replace a single function.
         class FakeDateTime(datetime.datetime):
             @classmethod
-            def now(cls, tz=None):
+            def now(cls, tz: datetime.tzinfo | None = None) -> FakeDateTime:
                 return cls.fromtimestamp(self.stack[-1], tz=tz)
 
         self.patches.append([
@@ -59,7 +63,7 @@ class _MetaTime(type):
         for patch in self.patches[-1]:
             patch.__enter__()
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
         for patch in self.patches[-1]:
             patch.__exit__(exc_type, exc_value, traceback)
         self.stack = self.stack[:-1]
@@ -82,12 +86,12 @@ class Time(metaclass=_MetaTime):
         ...
     """
 
-    def __init__(self, obj):
+    def __init__(self, obj: Callable[..., Any]) -> None:
         self._callable = obj
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: Any) -> Callable[..., None]:
         return functools.partial(self.__call__, instance)
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args: Any, **kwargs: Any) -> None:
         with Time:
             self._callable(*args, **kwargs)

@@ -20,17 +20,20 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from unittest.mock import patch
+from __future__ import annotations
+
+from typing import Any
+from unittest.mock import _patch, patch
 
 
 class Terminal(object):
     index = 0
 
     @classmethod
-    def input(cls, *args):
+    def input(cls, *args: str) -> _patch[Any]:
         cls.index = 0
 
-        def function(output):
+        def function(output: str) -> str:
             print(output)
             cls.index += 1
             return args[cls.index - 1]

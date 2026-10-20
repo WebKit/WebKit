@@ -20,12 +20,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import contextlib
 import io
 import logging
 import shutil
 import sys
 import webbrowser
+from typing import IO, Any, Callable, Iterator, Sequence
 
 if not sys.platform.startswith('win'):
     import readline
@@ -34,13 +37,13 @@ from webkitcorepy import Timer, run
 
 
 class Terminal(object):
-    _atty_overrides = {}
+    _atty_overrides: dict[int | str, bool] = {}
     colors = True
     URL_PREFIXES = ('file://', 'http://', 'https://', 'radar://', 'rdar://')
     RING_INTERVAL = 30
 
     @classmethod
-    def input(cls, *args, **kwargs):
+    def input(cls, *args: Any, **kwargs: Any) -> str:
         alert_after = kwargs.pop('alert_after', None)
 
         try:
@@ -54,13 +57,13 @@ class Terminal(object):
             sys.exit(1)
 
     @classmethod
-    def ring(cls, file=sys.stdout):
+    def ring(cls, file: IO[str] | None = sys.stdout) -> None:
         if file:
             file.write('\a')
             file.flush()
 
     @classmethod
-    def size(cls):
+    def size(cls) -> list[int] | tuple[None, None]:
         cmd = run(['stty', 'size'], capture_output=True, encoding='utf-8')
         if cmd.returncode:
             return None, None
@@ -70,10 +73,13 @@ class Terminal(object):
             return None, None
 
     @classmethod
-    def choose(cls, prompt, options=None, default=None, strict=False, numbered=False, alert_after=RING_INTERVAL):
+    def choose(
+        cls, prompt: str, options: Sequence[str] | None = None, default: str | None = None,
+        strict: bool = False, numbered: bool = False, alert_after: float | None = RING_INTERVAL,
+    ) -> str:
         options = options or ('Yes', 'No')
 
-        response = None
+        response: str | None = None
         while response is None:
             if numbered:
                 numbered_options = [
@@ -107,7 +113,7 @@ class Terminal(object):
         return response
 
     @classmethod
-    def assert_writeable_stream(cls, target):
+    def assert_writeable_stream(cls, target: Any) -> None:
         file_like_object = (
             hasattr(target, 'read') and callable(target.read)
             or hasattr(target, 'write') and callable(target.write)
@@ -127,21 +133,23 @@ class Terminal(object):
             raise ValueError('{} is an IO object, but is not writable'.format(target))
 
     @classmethod
-    def supports_color(cls, file):
+    def supports_color(cls, file: Any) -> bool:
         if not cls.colors:
             return False
         return cls.isatty(file)
 
     @classmethod
-    def isatty(cls, file):
+    def isatty(cls, file: Any) -> bool:
+        result: bool
         try:
-            return cls._atty_overrides.get(file.fileno(), file.isatty())
+            result = cls._atty_overrides.get(file.fileno(), file.isatty())
         except (io.UnsupportedOperation, AttributeError):
-            return cls._atty_overrides.get(str(file), file.isatty())
+            result = cls._atty_overrides.get(str(file), file.isatty())
+        return result
 
     @classmethod
     @contextlib.contextmanager
-    def override_atty(cls, target, isatty=True):
+    def override_atty(cls, target: Any, isatty: bool = True) -> Iterator[None]:
         file_like_object = (
             hasattr(target, 'read') and callable(target.read)
             or hasattr(target, 'write') and callable(target.write)
@@ -149,6 +157,7 @@ class Terminal(object):
         if not file_like_object:
             raise ValueError('{} is not an IO object'.format(target))
 
+        key: int | str
         try:
             key = target.fileno()
         except (io.UnsupportedOperation, AttributeError):
@@ -167,7 +176,7 @@ class Terminal(object):
 
     @classmethod
     @contextlib.contextmanager
-    def disable_keyboard_interrupt_stacktracktrace(cls, logging_level=logging.INFO):
+    def disable_keyboard_interrupt_stacktracktrace(cls, logging_level: int = logging.INFO) -> Iterator[None]:
         try:
             yield
         except KeyboardInterrupt:
@@ -177,7 +186,7 @@ class Terminal(object):
             sys.exit(1)
 
     @classmethod
-    def open_url(cls, url, prompt=None, alert_after=RING_INTERVAL):
+    def open_url(cls, url: str, prompt: str | None = None, alert_after: float | None = RING_INTERVAL) -> bool:
         if all(not url.startswith(prefix) for prefix in cls.URL_PREFIXES):
             sys.stderr.write("'{}' is not a valid URL\n")
             return False
@@ -211,7 +220,7 @@ class Terminal(object):
             return True if process.returncode == 0 else False
 
     class Text(object):
-        value = lambda value: '\033[{}m'.format(value)
+        value: Callable[[int], str] = lambda value: '\033[{}m'.format(value)
 
         reset = value(0)
 
@@ -225,12 +234,12 @@ class Terminal(object):
         blackBackground, redBackground, greenBackground, yellowBackground, blueBackground, magentaBackground, cyanBackground, whiteBackground = backgroundColors
 
     class Style(object):
-        top = {}
-        _disabled = set()
-        _is_styled = set()
+        top: dict[int, Terminal.Style] = {}
+        _disabled: set[int] = set()
+        _is_styled: set[int] = set()
 
         @classmethod
-        def enabled(cls, file):
+        def enabled(cls, file: Any) -> bool:
             Terminal.assert_writeable_stream(file)
 
             try:
@@ -241,7 +250,7 @@ class Terminal(object):
             return file.fileno() not in cls._disabled
 
         @classmethod
-        def disable(cls, file):
+        def disable(cls, file: Any) -> None:
             Terminal.assert_writeable_stream(file)
             if not cls.enabled(file):
                 return
@@ -249,23 +258,25 @@ class Terminal(object):
             Terminal.Style().set(file)
 
         @classmethod
-        def enable(cls, file):
+        def enable(cls, file: Any) -> None:
             Terminal.assert_writeable_stream(file)
             if cls.enabled(file):
                 return
 
             cls._disabled.discard(file.fileno())
-            if cls.top.get(file.fileno()):
-                cls.top.get(file.fileno()).set(file)
+            top = cls.top.get(file.fileno())
+            if top:
+                top.set(file)
 
         @classmethod
-        def is_styled(cls, file):
+        def is_styled(cls, file: Any) -> bool:
             try:
-                return file.fileno() in cls._is_styled
+                is_styled: bool = file.fileno() in cls._is_styled
+                return is_styled
             except (io.UnsupportedOperation, AttributeError):
                 return False
 
-        def __init__(self, style=None, color=None, backgroundColor=None):
+        def __init__(self, style: str | None = None, color: str | None = None, backgroundColor: str | None = None) -> None:
             if style and style not in Terminal.Text.styles:
                 raise ValueError('{} is not a recognized terminal text style'.format(style))
             self.style = style
@@ -278,7 +289,7 @@ class Terminal(object):
                 raise ValueError('{} is not a recognized terminal background color'.format(backgroundColor))
             self.backgroundColor = backgroundColor
 
-        def __repr__(self):
+        def __repr__(self) -> str:
             result = Terminal.Text.reset
             if self.style:
                 result += self.style
@@ -288,7 +299,7 @@ class Terminal(object):
                 result += self.backgroundColor
             return result
 
-        def set(self, file):
+        def set(self, file: Any) -> None:
             Terminal.assert_writeable_stream(file)
             will_style = True
             if not self.style and not self.color and not self.backgroundColor:
@@ -309,7 +320,7 @@ class Terminal(object):
                 pass
 
         @contextlib.contextmanager
-        def apply(self, target):
+        def apply(self, target: Any) -> Iterator[None]:
             Terminal.assert_writeable_stream(target)
             try:
                 previous = self.top.get(target.fileno())

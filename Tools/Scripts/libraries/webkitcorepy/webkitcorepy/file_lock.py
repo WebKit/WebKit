@@ -21,11 +21,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import errno
 import os
 import re
 import sys
 import time
+from typing import Any
 
 from webkitcorepy import string_utils
 from webkitcorepy.timeout import Timeout
@@ -44,7 +47,7 @@ class FileLock(object):
     USE_FCNTL_FLOCK = not USE_WINDOWS and not USE_EXLOCK and hasattr(fcntl, 'flock')
 
     @classmethod
-    def is_process_running(cls, pid):
+    def is_process_running(cls, pid: int) -> bool:
         if cls.USE_WINDOWS:
             raise RuntimeError('Funciton does not support Windows')
         try:
@@ -55,16 +58,16 @@ class FileLock(object):
                 return False
             raise
 
-    def __init__(self, path, timeout=20):
+    def __init__(self, path: str, timeout: float = 20) -> None:
         self.path = path
         self.timeout = timeout
-        self._descriptor = None
+        self._descriptor: int | None = None
 
     @property
-    def acquired(self):
+    def acquired(self) -> bool:
         return bool(self._descriptor)
 
-    def acquire(self):
+    def acquire(self) -> bool:
         if self._descriptor:
             raise RuntimeError('Cannot re-enter acquired FileLock')
 
@@ -88,7 +91,7 @@ class FileLock(object):
         start_time = time.time()
         while True:
             try:
-                if self.USE_WINDOWS:
+                if sys.platform.startswith('win'):
                     self._descriptor = os.open(self.path, os.O_TRUNC | os.O_CREAT)
                     msvcrt.locking(self._descriptor, msvcrt.LK_NBLCK, 32)
                 elif self.USE_EXLOCK:
@@ -114,11 +117,11 @@ class FileLock(object):
                     raise
                 time.sleep(0.01)
 
-    def release(self):
+    def release(self) -> None:
         if not self._descriptor:
             raise RuntimeError('Cannot release unclaimed lock')
         try:
-            if self.USE_WINDOWS:
+            if sys.platform.startswith('win'):
                 msvcrt.locking(self._descriptor, msvcrt.LK_UNLCK, 32)
             elif self.USE_FCNTL_FLOCK:
                 fcntl.flock(self._descriptor, fcntl.LOCK_UN)
@@ -128,11 +131,11 @@ class FileLock(object):
             os.close(self._descriptor)
             self._descriptor = None
 
-    def __enter__(self):
+    def __enter__(self) -> FileLock:
         self.acquire()
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         if not self._descriptor:
             return
         self.release()

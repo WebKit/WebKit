@@ -20,30 +20,34 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
+from typing import Iterator
 
 
 class Environment(object):
-    _instance = None
+    _instance: Environment | None = None
 
     @classmethod
-    def instance(cls, path=None):
+    def instance(cls, path: str | None = None) -> Environment:
         if not cls._instance:
             cls._instance = cls(path=path)
         if path and path != cls._instance.path:
             cls._instance.path = path
         return cls._instance
 
-    def __init__(self, path=None, divider='___'):
-        self._mapping = dict()
+    def __init__(self, path: str | None = None, divider: str = '___') -> None:
+        self._mapping: dict[str, str] = dict()
         self.path = path
         self._divider = divider
-        self._paths = set()
+        self._paths: set[str] = set()
 
-    def load(self, *prefixes):
+    def load(self, *prefixes: str) -> Environment:
         if not self.path:
             return self
         for file in os.listdir(self.path):
+            prefix: str | None
             prefix, key = file.split(self._divider, 1) if self._divider in file else (None, file)
             if prefix and prefix not in prefixes:
                 continue
@@ -53,14 +57,16 @@ class Environment(object):
                     self._mapping[key] = fl.read().rstrip('\n')
         return self
 
-    def get(self, key, value=None):
+    def get(self, key: str, value: str | None = None) -> str | None:
         if key in os.environ:
             return os.environ.get(key, value)
         return self._mapping.get(key, value)
 
-    def secure(self, *extra_paths):
+    def secure(self, *extra_paths: str) -> None:
         '''Delete unused environment files in self.path along with the provided extra paths'''
 
+        if self.path is None:
+            raise TypeError('Cannot secure an environment without a path')
         for file in os.listdir(self.path):
             path = os.path.join(self.path, file)
             if path not in self._paths:
@@ -71,28 +77,28 @@ class Environment(object):
             if os.path.exists(path):
                 raise OSError("Failed to delete '{}' when securing credentials".format(path))
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> str:
         result = self.get(key)
         if not result:
             raise KeyError(key)
         return result
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: str) -> None:
         os.environ[key] = value
 
-    def keys(self):
+    def keys(self) -> Iterator[str]:
         for key in self._mapping.keys():
             yield key
         for key in os.environ.keys():
             yield key
 
-    def values(self):
+    def values(self) -> Iterator[str]:
         for value in self._mapping.values():
             yield value
         for value in os.environ.values():
             yield value
 
-    def items(self):
+    def items(self) -> Iterator[tuple[str, str]]:
         for key, value in self._mapping.items():
             yield key, value
         for key, value in os.environ.items():

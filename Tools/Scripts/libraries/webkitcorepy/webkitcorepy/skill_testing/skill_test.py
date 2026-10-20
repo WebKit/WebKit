@@ -20,19 +20,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import logging
 import os
 import subprocess
+from typing import TYPE_CHECKING
 
 from webkitcorepy import AutoInstall
+
+if TYPE_CHECKING:
+    from webkitcorepy.skill_testing.skill_file import SkillFile
 
 log = logging.getLogger('skill_testing')
 
 
 class SkillTest(object):
     @classmethod
-    def discover(cls, skill):
+    def discover(cls, skill: SkillFile) -> list[SkillTest]:
         tests_dir = os.path.join(skill.skill_dir, 'tests')
         if not os.path.isdir(tests_dir):
             return []
@@ -42,7 +48,7 @@ class SkillTest(object):
                 results.append(cls(os.path.join(tests_dir, filename)))
         return results
 
-    def __init__(self, path):
+    def __init__(self, path: str) -> None:
         self.path = os.path.abspath(path)
 
         AutoInstall.install('pyyaml')
@@ -51,26 +57,26 @@ class SkillTest(object):
         with open(self.path, 'r') as f:
             data = yaml.safe_load(f)
 
-        self.name = data.get('name')
+        self.name: str | None = data.get('name')
 
         test_section = data.get('test', {})
-        self.test_prompt = test_section.get('prompt')
-        self.test_args = test_section.get('args', [])
+        self.test_prompt: str = test_section.get('prompt')
+        self.test_args: list[str] = test_section.get('args', [])
 
         validation_section = data.get('validation', {})
-        self.validation_prompt = validation_section.get('prompt')
-        self.validation_args = validation_section.get('args', [])
-        self.validation_command = validation_section.get('command')
-        self.validation_expectation = validation_section.get('expectation')
+        self.validation_prompt: str | None = validation_section.get('prompt')
+        self.validation_args: list[str] = validation_section.get('args', [])
+        self.validation_command: list[str] | None = validation_section.get('command')
+        self.validation_expectation: str | None = validation_section.get('expectation')
 
-        self.files = data.get('files', [])
+        self.files: list[str] = data.get('files', [])
 
-    def _invoke_claude(self, prompt, args, cwd):
+    def _invoke_claude(self, prompt: str, args: list[str], cwd: str) -> subprocess.CompletedProcess[str]:
         cmd = ['claude'] + args + ['-p', prompt]
         log.debug('\nRunning: %s', ' '.join(cmd))
         return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
 
-    def _cleanup_files(self, cwd):
+    def _cleanup_files(self, cwd: str) -> None:
         for filename in self.files:
             filepath = os.path.join(cwd, filename)
             try:
@@ -82,7 +88,8 @@ class SkillTest(object):
             except OSError:
                 pass
 
-    def _validate_with_command(self, cwd):
+    def _validate_with_command(self, cwd: str) -> tuple[bool, str]:
+        assert self.validation_command is not None
         log.debug('\nRunning: %s', ' '.join(self.validation_command))
         result = subprocess.run(self.validation_command, cwd=cwd, capture_output=True, text=True)
         if result.returncode != 0:
@@ -94,7 +101,7 @@ class SkillTest(object):
                 return False, 'Expected \'{}\' in output, got: {}'.format(self.validation_expectation, stdout)
         return True, 'Command succeeded'
 
-    def _validate_with_claude(self, cwd, dump_path):
+    def _validate_with_claude(self, cwd: str, dump_path: str) -> tuple[bool, str]:
         assess_prompt = (
             "You are assessing the output of a skill. "
             "Look at '{}'. "
@@ -124,7 +131,7 @@ class SkillTest(object):
             return True, reason
         return False, reason
 
-    def run(self, cwd):
+    def run(self, cwd: str) -> tuple[bool, str]:
         dump_path = os.path.join(cwd, '.llm_test_dump.txt')
         try:
             test_result = self._invoke_claude(self.test_prompt, self.test_args, cwd)
@@ -142,5 +149,5 @@ class SkillTest(object):
                 pass
             self._cleanup_files(cwd)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return 'SkillTest({!r})'.format(self.path)

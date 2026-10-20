@@ -20,17 +20,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import argparse
 import logging
+from typing import TYPE_CHECKING, Any, Callable, Sequence
 
 from webkitcorepy import log
 
+if TYPE_CHECKING:
+    from webkitcorepy.log_config import LogConfig
+
 
 class NoAction(argparse.Action):
-    def __init__(self, option_strings, dest, **kwargs):
+    def __init__(self, option_strings: Sequence[str], dest: str, **kwargs: Any) -> None:
         super(NoAction, self).__init__(option_strings, dest, nargs=0, **kwargs)
 
-    def __call__(self, parser, namespace, values, option_string=None):
+    def __call__(self, parser: argparse.ArgumentParser, namespace: argparse.Namespace, values: Any, option_string: str | None = None) -> None:
+        # NoAction is only used for optional arguments, which always have an option string.
+        assert option_string is not None
         setattr(namespace, self.dest, not any((
             option_string.startswith('--no-'),
             option_string.startswith('--un'),
@@ -38,27 +46,31 @@ class NoAction(argparse.Action):
         )))
 
 
-def CountAction(value=1):
+def CountAction(value: int = 1) -> type[argparse.Action]:
     class Action(argparse.Action):
-        def __init__(self, option_strings, dest, **kwargs):
+        def __init__(self, option_strings: Sequence[str], dest: str, **kwargs: Any) -> None:
             super(Action, self).__init__(option_strings, dest, nargs=0, **kwargs)
 
-        def __call__(self, parser, namespace, values, option_string):
+        def __call__(self, parser: argparse.ArgumentParser, namespace: argparse.Namespace, values: Any, option_string: str | None = None) -> None:
             setattr(namespace, self.dest, getattr(namespace, self.dest) + value)
 
     return Action
 
 
-def CallbackAction(action, callback=lambda namespace: None):
-    class Action(action):
-        def __call__(self, parser, namespace, values, option_strings):
+def CallbackAction(action: type[argparse.Action], callback: Callable[[argparse.Namespace], None] = lambda namespace: None) -> type[argparse.Action]:
+    # mypy can't check a base class that's only known at runtime.
+    class Action(action):  # type: ignore[misc,valid-type]
+        def __call__(self, parser: argparse.ArgumentParser, namespace: argparse.Namespace, values: Any, option_strings: str | None = None) -> None:
             super(Action, self).__call__(parser, namespace, values, option_strings)
             callback(namespace)
 
     return Action
 
 
-def LoggingGroup(parser, loggers=None, log_config=None, default=logging.WARNING, help='{} amount of logging'):
+def LoggingGroup(
+    parser: argparse.ArgumentParser, loggers: Sequence[logging.Logger] | None = None, log_config: LogConfig | None = None,
+    default: int = logging.WARNING, help: str = '{} amount of logging',
+) -> argparse._ArgumentGroup:
     if not isinstance(parser, argparse.ArgumentParser):
         raise ValueError('Provided parser is not a {}'.format(type(argparse.ArgumentParser)))
 
@@ -67,7 +79,7 @@ def LoggingGroup(parser, loggers=None, log_config=None, default=logging.WARNING,
     for logger in loggers:
         logger.setLevel(default)
 
-    def verbose_callback(namespace):
+    def verbose_callback(namespace: argparse.Namespace) -> None:
         verbosity = getattr(namespace, 'verbose')
         log_level = default - verbosity * 10
 

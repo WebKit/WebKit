@@ -20,17 +20,22 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
+import argparse
+import logging
 import os
 import sys
 import unittest
+from typing import Iterable, Iterator, Sequence
 
-from webkitcorepy import AutoInstall, string_utils
+from webkitcorepy import AutoInstall
 from webkitcorepy.testing.test_runner import TestRunner
 
 
 class PythonTestRunner(TestRunner):
     @classmethod
-    def recurse(cls, suite):
+    def recurse(cls, suite: Iterable[unittest.TestSuite | unittest.TestCase]) -> Iterator[unittest.TestCase]:
         for element in suite:
             if isinstance(element, unittest.TestSuite):
                 for test in cls.recurse(element):
@@ -38,10 +43,13 @@ class PythonTestRunner(TestRunner):
             else:
                 yield element
 
-    def __init__(self, description, loggers=None, modules=None, patterns=None):
+    def __init__(
+        self, description: str, loggers: Sequence[logging.Logger] | None = None,
+        modules: dict[str, list[str]] | None = None, patterns: list[str] | None = None,
+    ) -> None:
         super(PythonTestRunner, self).__init__(description, loggers=loggers)
 
-        self._tests = {}
+        self._tests: dict[str, unittest.TestCase] = {}
         if not modules:
             sys.stderr.write('No modules to test specified\n')
             return
@@ -62,7 +70,7 @@ class PythonTestRunner(TestRunner):
                     for test in self.recurse(unittest.defaultTestLoader.discover(path, pattern=pattern, top_level_dir=root)):
                         self._tests[test.id()] = test
 
-    def tests(self, args=None):
+    def tests(self, args: argparse.Namespace | None = None) -> Iterator[str]:
         filters = [] if not args or not args.tests else args.tests
         matched_filters = {pattern.pattern: 0 for pattern in filters}
         example = None
@@ -91,21 +99,22 @@ class PythonTestRunner(TestRunner):
         if must_exit:
             sys.exit(-1)
 
-    def run_test(self, test):
+    def run_test(self, test: str) -> unittest.TestResult:
         result = unittest.TestResult()
         try:
             to_run = self._tests[test]
             to_run.run(result=result)
         except KeyError:
-            result.errors.append((test, "No test named '{}'\n".format(test)))
+            # Tests that can't be found are reported by name.
+            result.errors.append((test, "No test named '{}'\n".format(test)))  # type: ignore[arg-type]
         return result
 
-    def id(self, test):
-        if isinstance(test, string_utils.basestring):
+    def id(self, test: str | unittest.TestCase) -> str:
+        if isinstance(test, str):
             return test
         return test.id()
 
-    def run(self, args):
+    def run(self, args: argparse.Namespace) -> int:
         if AutoInstall.enabled():
             AutoInstall.install_everything()
         return super(PythonTestRunner, self).run(args)

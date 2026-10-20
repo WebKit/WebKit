@@ -20,6 +20,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 from unittest.mock import patch
 
@@ -29,7 +31,7 @@ from webkitcorepy.mocks import ContextStack
 class Environment(ContextStack):
     top = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: str) -> None:
         super(Environment, self).__init__(cls=Environment)
         self.environ = kwargs
 

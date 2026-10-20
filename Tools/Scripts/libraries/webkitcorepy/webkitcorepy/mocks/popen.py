@@ -20,15 +20,22 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import io
 import subprocess
 import signal
 import sys
 import time
+from types import TracebackType
+from typing import TYPE_CHECKING, Any, Iterable, Sequence
 
 from webkitcorepy import log, string_utils, TimeoutExpired
 from webkitcorepy.mocks import Subprocess
+
+if TYPE_CHECKING:
+    from webkitcorepy.mocks.subprocess import ProcessCompletion
 
 # This file is mocked version of the subprocess.Popen object. This object differs slightly between Python 2 and 3.
 # This object is not a complete mock of subprocess.Popen, but it does enable thorough testing of code which uses Popen,
@@ -43,8 +50,14 @@ class PopenBase(object):
     SIGTERM = getattr(signal, 'SIGTERM', 1)
     SIGKILL = getattr(signal, 'SIGKILL', 2)
 
-    def __init__(self, args, bufsize=None, cwd=None, env=None, stdin=None, stdout=None, stderr=None):
-        self._completion = None
+    # Set by subclasses.
+    text_mode: Any
+
+    def __init__(
+        self, args: Sequence[str], bufsize: int | None = None, cwd: str | None = None, env: dict[str, str] | None = None,
+        stdin: Any = None, stdout: Any = None, stderr: Any = None,
+    ) -> None:
+        self._completion: ProcessCompletion | None = None
         self._communication_started = False
         if bufsize is None:
             bufsize = -1
@@ -55,11 +68,14 @@ class PopenBase(object):
         self._cwd = cwd
         self._env = env or dict()
 
-        self.returncode = None
+        self.returncode: int | None = None
 
-        self.stdin = string_utils.BytesIO() if stdin is None or stdin == subprocess.PIPE else stdin
-        self.stdout = string_utils.BytesIO() if stdout == subprocess.PIPE else (None if stdout == subprocess.DEVNULL else stdout)
-        self._stdout_type = bytes if stdout == subprocess.PIPE else str
+        # Like subprocess.Popen's, these streams' types depend on the arguments that created them.
+        self.stdin: Any = string_utils.BytesIO() if stdin is None or stdin == subprocess.PIPE else stdin
+        self.stdout: Any = string_utils.BytesIO() if stdout == subprocess.PIPE else (None if stdout == subprocess.DEVNULL else stdout)
+        self.stderr: Any
+        self._stdout_type: type[str] | type[bytes] = bytes if stdout == subprocess.PIPE else str
+        self._stderr_type: type[str] | type[bytes]
         self._stdout_devnull = (stdout == subprocess.DEVNULL)
         if stderr == subprocess.STDOUT:
             self.stderr = self.stdout
@@ -86,39 +102,41 @@ class PopenBase(object):
         self._start_time = time.time()
 
     @property
-    def universal_newlines(self):
+    def universal_newlines(self) -> Any:
         return self.text_mode
 
     @universal_newlines.setter
-    def universal_newlines(self, universal_newlines):
+    def universal_newlines(self, universal_newlines: Any) -> None:
         self.text_mode = bool(universal_newlines)
 
-    def poll(self):
+    def poll(self) -> int | None:
         if not self._completion:
             self.stdin.seek(0)
             self._completion = Subprocess.completion_for(*self._args, cwd=self._cwd, env=self._env, input=self.stdin.read())
 
+            stream: Any
             if not self._stdout_devnull:
-                (self.stdout or sys.stdout).write(
-                    string_utils.decode(self._completion.stdout, target_type=self._stdout_type))
-                (self.stdout or sys.stdout).flush()
+                stream = self.stdout or sys.stdout
+                stream.write(string_utils.decode(self._completion.stdout, target_type=self._stdout_type))
+                stream.flush()
 
             if not self._stderr_devnull:
-                (self.stderr or sys.stderr).write(
-                    string_utils.decode(self._completion.stderr, target_type=self._stderr_type))
-                (self.stderr or sys.stderr).flush()
+                stream = self.stderr or sys.stderr
+                stream.write(string_utils.decode(self._completion.stderr, target_type=self._stderr_type))
+                stream.flush()
 
             if self.stdout:
                 self.stdout.seek(0)
             if self.stderr:
                 self.stderr.seek(0)
 
-        if self.returncode is not None and time.time() >= self._start_time + self._completion.elapsed:
+        elapsed = self._completion.elapsed
+        if self.returncode is not None and elapsed is not None and time.time() >= self._start_time + elapsed:
             self.returncode = self._completion.returncode
 
         return self.returncode
 
-    def send_signal(self, sig):
+    def send_signal(self, sig: int) -> None:
         if self.returncode is not None:
             return
 
@@ -127,23 +145,23 @@ class PopenBase(object):
         log.critical('Mock process {} send signal {}'.format(self.pid, sig))
         self.returncode = -1
 
-    def terminate(self):
+    def terminate(self) -> None:
         self.send_signal(self.SIGTERM)
 
-    def kill(self):
+    def kill(self) -> None:
         self.send_signal(self.SIGKILL)
 
 
 class Popen(PopenBase):
-    def __init__(self, args, bufsize=None, executable=None,
-                 stdin=None, stdout=None, stderr=None,
-                 preexec_fn=None, close_fds=True,
-                 shell=False, cwd=None, env=None, universal_newlines=None,
-                 startupinfo=None, creationflags=0,
-                 restore_signals=True, start_new_session=False,
-                 pass_fds=(), encoding=None, errors=None, text=None):
+    def __init__(self, args: Iterable[str | bytes | os.PathLike[str]], bufsize: int | None = None, executable: Any = None,
+                 stdin: Any = None, stdout: Any = None, stderr: Any = None,
+                 preexec_fn: Any = None, close_fds: bool = True,
+                 shell: bool = False, cwd: str | None = None, env: dict[str, str] | None = None, universal_newlines: bool | None = None,
+                 startupinfo: Any = None, creationflags: int = 0,
+                 restore_signals: bool = True, start_new_session: bool = False,
+                 pass_fds: Sequence[int] = (), encoding: str | None = None, errors: str | None = None, text: bool | None = None) -> None:
 
-        str_args = []
+        str_args: list[str] = []
         for arg in args:
             if not isinstance(arg, (str, bytes, os.PathLike)):
                 raise TypeError(
@@ -151,14 +169,12 @@ class Popen(PopenBase):
                     str, bytes, type(arg),
                 )
             str_args.append(str(arg))
-        args = str_args
-
-        super(Popen, self).__init__(args, bufsize=bufsize, cwd=cwd, env=env, stdin=stdin, stdout=stdout, stderr=stderr)
+        super(Popen, self).__init__(str_args, bufsize=bufsize, cwd=cwd, env=env, stdin=stdin, stdout=stdout, stderr=stderr)
 
         if pass_fds and not close_fds:
             log.warn("pass_fds overriding close_fds.")
 
-        self.args = args
+        self.args = str_args
         self.encoding = encoding
         self.errors = errors
 
@@ -176,21 +192,22 @@ class Popen(PopenBase):
             self.stderr = io.TextIOWrapper(self.stderr, encoding=encoding, errors=errors)
             self._stderr_type = str
 
-    def communicate(self, input=None, timeout=None):
+    def communicate(self, input: str | bytes | None = None, timeout: float | None = None) -> tuple[Any, Any]:
         if self._communication_started and input:
             raise ValueError('Cannot send input after starting communication')
 
         self._communication_started = True
         if input and isinstance(self.stdin, io.TextIOWrapper):
-            self.stdin.write(input)
+            self.stdin.write(string_utils.decode(input))
         elif input:
             self.stdin.write(string_utils.encode(input))
         self.wait(timeout=timeout)
         return self.stdout.read() if self.stdout else None, self.stderr.read() if self.stderr else None
 
-    def wait(self, timeout=None):
+    def wait(self, timeout: float | None = None) -> None:
         if self.poll() is not None:
             return
+        assert self._completion is not None
 
         if timeout and (self._completion.elapsed is None or timeout < self._completion.elapsed):
             raise TimeoutExpired(self._args, timeout)
@@ -207,10 +224,10 @@ class Popen(PopenBase):
         if self.stderr:
             self.stderr.seek(0)
 
-    def __enter__(self):
+    def __enter__(self) -> Popen:
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
         if self.stdout:
             self.stdout.close()
         if self.stderr:

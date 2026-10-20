@@ -20,23 +20,29 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import os
 import re
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from webkitcorepy.skill_testing.skill_file import SkillFile
 
 
 class ValidationResult(object):
-    def __init__(self, passed, rule, message, severity='error'):
+    def __init__(self, passed: bool, rule: str, message: str, severity: str = 'error') -> None:
         self.passed = passed
         self.rule = rule
         self.message = message
         self.severity = severity
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         status = 'PASS' if self.passed else self.severity.upper()
         return '{}: [{}] {}'.format(status, self.rule, self.message)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self.passed
 
 
@@ -55,14 +61,14 @@ class SkillValidator(object):
     )
 
     @staticmethod
-    def validate_frontmatter_presence(skill):
+    def validate_frontmatter_presence(skill: SkillFile) -> list[ValidationResult]:
         if skill.frontmatter is not None:
             return [ValidationResult(True, 'frontmatter.presence', 'Frontmatter present')]
         return [ValidationResult(False, 'frontmatter.presence', 'No YAML frontmatter found')]
 
     @staticmethod
-    def validate_required_fields(skill):
-        results = []
+    def validate_required_fields(skill: SkillFile) -> list[ValidationResult]:
+        results: list[ValidationResult] = []
         fm = skill.frontmatter
         if fm is None:
             results.append(ValidationResult(False, 'frontmatter.required.name', 'No frontmatter, cannot check required fields'))
@@ -77,8 +83,8 @@ class SkillValidator(object):
         return results
 
     @classmethod
-    def validate_field_values(cls, skill):
-        results = []
+    def validate_field_values(cls, skill: SkillFile) -> list[ValidationResult]:
+        results: list[ValidationResult] = []
         fm = skill.frontmatter
         if fm is None:
             return results
@@ -116,8 +122,8 @@ class SkillValidator(object):
         return results
 
     @classmethod
-    def validate_unknown_keys(cls, skill):
-        results = []
+    def validate_unknown_keys(cls, skill: SkillFile) -> list[ValidationResult]:
+        results: list[ValidationResult] = []
         fm = skill.frontmatter
         if fm is None:
             return results
@@ -135,8 +141,8 @@ class SkillValidator(object):
         return results
 
     @classmethod
-    def validate_allowed_tools_format(cls, skill):
-        results = []
+    def validate_allowed_tools_format(cls, skill: SkillFile) -> list[ValidationResult]:
+        results: list[ValidationResult] = []
         tools = skill.allowed_tools
         if not tools:
             return results
@@ -152,7 +158,7 @@ class SkillValidator(object):
         return results
 
     @staticmethod
-    def validate_name_matches_directory(skill):
+    def validate_name_matches_directory(skill: SkillFile) -> list[ValidationResult]:
         fm = skill.frontmatter
         if fm is None or not fm.get('name'):
             return []
@@ -167,8 +173,8 @@ class SkillValidator(object):
         )]
 
     @staticmethod
-    def validate_references_exist(skill):
-        results = []
+    def validate_references_exist(skill: SkillFile) -> list[ValidationResult]:
+        results: list[ValidationResult] = []
         refs = skill.references
         if not refs:
             return results
@@ -186,8 +192,8 @@ class SkillValidator(object):
         return results
 
     @classmethod
-    def validate_all(cls, skill):
-        results = []
+    def validate_all(cls, skill: SkillFile) -> list[ValidationResult]:
+        results: list[ValidationResult] = []
         results.extend(cls.validate_frontmatter_presence(skill))
         results.extend(cls.validate_required_fields(skill))
         results.extend(cls.validate_field_values(skill))
@@ -200,7 +206,7 @@ class SkillValidator(object):
 
 class DirectoryValidator(object):
     @staticmethod
-    def validate_settings_json(claude_dir):
+    def validate_settings_json(claude_dir: str) -> list[ValidationResult]:
         path = os.path.join(claude_dir, 'settings.json')
         if not os.path.exists(path):
             return [ValidationResult(True, 'settings.json', 'settings.json not present (optional)')]
@@ -212,7 +218,7 @@ class DirectoryValidator(object):
         return [ValidationResult(True, 'settings.json', 'settings.json is valid JSON')]
 
     @staticmethod
-    def validate_marketplace_json(claude_dir):
+    def validate_marketplace_json(claude_dir: str) -> list[ValidationResult]:
         plugins_dir = os.path.join(claude_dir, 'plugins')
         if not os.path.isdir(plugins_dir):
             return []

@@ -20,31 +20,35 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import importlib
+from types import ModuleType
+from typing import Any, ClassVar, Collection, cast
 
 from webkitcorepy import mocks
 from webkitcorepy.call_by_need import CallByNeed
 
-mock = CallByNeed(lambda: importlib.import_module('unittest.mock'))
+mock: CallByNeed[ModuleType] = CallByNeed(lambda: importlib.import_module('unittest.mock'))
 
 
 class PartialProxy(mocks.ContextStack):
-    top = None
+    top: ClassVar[PartialProxy | None] = None
 
-    def __init__(self, hosts, http, https):
+    def __init__(self, hosts: Collection[str], http: str, https: str) -> None:
         super(PartialProxy, self).__init__(cls=PartialProxy)
         self.hosts = hosts
         self.http = http
         self.https = https
 
-        self._temp_patches = None
+        self._temp_patches: list[Any] | None = None
 
-    def __enter__(self):
+    def __enter__(self) -> PartialProxy:
         # Allow requests to be managed via autoinstall
         import requests
 
-        class Session(requests.Session):
-            def request(self, method, url, **kwargs):
+        class Session(requests.Session):  # type: ignore[misc]
+            def request(self, method: str, url: str, **kwargs: Any) -> Any:
                 split = url.split('/')
                 protocol = split[0]
                 host = split[2] if len(split) >= 3 else None
@@ -58,7 +62,7 @@ class PartialProxy(mocks.ContextStack):
                                 https=current.https,
                             )
                             break
-                        current = current.previous
+                        current = cast('PartialProxy | None', current.previous)
 
                 return super(Session, self).request(method, url, **kwargs)
 
@@ -76,8 +80,8 @@ class PartialProxy(mocks.ContextStack):
             patch.__enter__()
         return super(PartialProxy, self).__enter__()
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         super(PartialProxy, self).__exit__(*args, **kwargs)
-        for patch in reversed(self._temp_patches):
+        for patch in reversed(self._temp_patches or []):
             patch.__exit__(*args, **kwargs)
         self._temp_patches = None

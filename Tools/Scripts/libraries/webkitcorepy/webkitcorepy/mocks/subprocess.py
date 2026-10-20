@@ -20,8 +20,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
 from functools import cmp_to_key
+from typing import Any, Callable, ClassVar, Sequence, cast
 from unittest.mock import patch
 
 from webkitcorepy import string_utils, unicode
@@ -29,7 +32,7 @@ from webkitcorepy.mocks import ContextStack
 
 
 class ProcessCompletion(object):
-    def __init__(self, returncode=None, stdout=None, stderr=None, elapsed=0):
+    def __init__(self, returncode: int | None = None, stdout: str | bytes | None = None, stderr: str | bytes | None = None, elapsed: float | None = 0) -> None:
         self.returncode = 1 if returncode is None else returncode
         self.stdout = string_utils.encode(stdout) if stdout else b''
         self.stderr = string_utils.encode(stderr) if stderr else b''
@@ -62,10 +65,11 @@ class Subprocess(ContextStack):
             result = run(['command-b'])
             assert result.returncode == -1
     """
-    top = None
+    top: ClassVar[Subprocess | None] = None
 
     class CommandRoute(object):
-        def __init__(self, *args, **kwargs):
+        # Arguments may be strings, compiled regular expressions or None.
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
             completion = kwargs.pop('completion', ProcessCompletion())
             cwd = kwargs.pop('cwd', None)
             input = kwargs.pop('input', None)
@@ -74,6 +78,7 @@ class Subprocess(ContextStack):
             if kwargs.keys():
                 raise TypeError('__init__() got an unexpected keyword argument {}'.format(next(iter(kwargs))))
 
+            self.args: Sequence[Any]
             if isinstance(args, str) or isinstance(args, unicode):
                 self.args = [args]
             elif not args:
@@ -81,12 +86,12 @@ class Subprocess(ContextStack):
             else:
                 self.args = args
 
-            self.generator = generator or (lambda *args, **kwargs: completion)
+            self.generator: Callable[..., ProcessCompletion] = generator or (lambda *args, **kwargs: completion)
             self.cwd = cwd
             self.input = string_utils.encode(input) if input else None
             self.env = env
 
-        def matches(self, *args, **kwargs):
+        def matches(self, *args: str, **kwargs: Any) -> bool:
             cwd = kwargs.pop('cwd', None)
             input = kwargs.pop('input', None)
             env = kwargs.pop('env', None)
@@ -118,7 +123,7 @@ class Subprocess(ContextStack):
                 return False
             return True
 
-        def __call__(self, *args, **kwargs):
+        def __call__(self, *args: str, **kwargs: Any) -> ProcessCompletion:
             cwd = kwargs.pop('cwd', None)
             input = kwargs.pop('input', None)
             env = kwargs.pop('env', dict())
@@ -127,7 +132,7 @@ class Subprocess(ContextStack):
             return self.generator(*args, cwd=cwd, input=input, env=env)
 
         @classmethod
-        def compare(cls, a, b):
+        def compare(cls, a: Subprocess.CommandRoute, b: Subprocess.CommandRoute) -> int:
             for candidate in [
                 len(b.args) - len(a.args),
                 0 if type(a.cwd) == type(b.cwd) else -1 if a.cwd else 1,
@@ -140,7 +145,7 @@ class Subprocess(ContextStack):
     Route = CommandRoute
 
     @classmethod
-    def completion_generator_for(cls, program):
+    def completion_generator_for(cls, program: str) -> list[Subprocess.CommandRoute]:
         current = cls.top
         candidates = []
         while current:
@@ -149,7 +154,7 @@ class Subprocess(ContextStack):
                     candidates.append(completion)
                 if current.ordered:
                     break
-            current = current.previous
+            current = cast('Subprocess | None', current.previous)
 
         if candidates:
             return candidates
@@ -157,7 +162,7 @@ class Subprocess(ContextStack):
         raise FileNotFoundError("No such file or directory: '{path}': '{path}'".format(path=program))
 
     @classmethod
-    def completion_for(cls, *args, **kwargs):
+    def completion_for(cls, *args: str, **kwargs: Any) -> ProcessCompletion:
         candidates = [
             candidate for candidate in cls.completion_generator_for(args[0]) if candidate.matches(*args, **kwargs)
         ]
@@ -170,15 +175,15 @@ class Subprocess(ContextStack):
             if current.ordered and completion is current.completions[0]:
                 current.completions.pop(0)
                 break
-            current = current.previous
+            current = cast('Subprocess | None', current.previous)
         return completion(*args, **kwargs)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         if all([isinstance(arg, self.CommandRoute) for arg in args]):
-            self.ordered = kwargs.pop('ordered', False)
+            self.ordered: bool = kwargs.pop('ordered', False)
             if kwargs.keys():
                 raise TypeError('__init__() got an unexpected keyword argument {}'.format(next(iter(kwargs))))
-            self.completions = list(args) if self.ordered else sorted(args, key=cmp_to_key(self.CommandRoute.compare))
+            self.completions: list[Subprocess.CommandRoute] = list(args) if self.ordered else sorted(args, key=cmp_to_key(self.CommandRoute.compare))
         elif any([isinstance(arg, self.CommandRoute) for arg in args]):
             raise TypeError('mocks.Subprocess arguments must be of a consistent type')
         else:

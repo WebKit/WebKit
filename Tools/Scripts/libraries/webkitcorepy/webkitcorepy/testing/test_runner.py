@@ -20,6 +20,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import argparse
 import logging
 import math
@@ -27,6 +29,7 @@ import re
 import sys
 import time
 import unittest
+from typing import Any, Iterable, Sequence
 
 from webkitcorepy import arguments, log, string_utils, Terminal
 
@@ -35,7 +38,7 @@ class TestRunner(object):
     INDENT = 4
 
     @classmethod
-    def combine(cls, *results):
+    def combine(cls, *results: unittest.TestResult) -> unittest.TestResult:
         combined = unittest.TestResult()
         for result in results:
             for attribute in [
@@ -48,7 +51,7 @@ class TestRunner(object):
                 )
         return combined
 
-    def __init__(self, description, loggers=None):
+    def __init__(self, description: str, loggers: Sequence[logging.Logger] | None = None) -> None:
         self.parser = argparse.ArgumentParser(description=description)
         self.parser.add_argument(
             '-l', '--list',
@@ -69,16 +72,17 @@ class TestRunner(object):
             loggers=loggers or [logging.getLogger(), log],
         )
 
-    def tests(self, args):
+    def tests(self, args: argparse.Namespace | None = None) -> Iterable[str]:
         raise NotImplementedError('Subclass must implement')
 
-    def run_test(self, test):
+    def run_test(self, test: str) -> unittest.TestResult:
         raise NotImplementedError('Subclass must implement')
 
-    def id(self, test):
-        return test
+    # Results identify tests by TestCase, or by name when a test couldn't be found.
+    def id(self, test: str | unittest.TestCase) -> str:
+        return test if isinstance(test, str) else str(test)
 
-    def run(self, args):
+    def run(self, args: argparse.Namespace) -> int:
         tm = time.time
         start_time = tm()
 
@@ -114,8 +118,8 @@ class TestRunner(object):
                     sys.stdout.write('unexpectedly passed\n')
                     if args.log_level <= logging.ERROR:
                         sys.stderr.write('\n')
-                        for test in incremental.unexpectedSuccesses:
-                            sys.stderr.write(f'UNEXPECTED SUCCESS: {test.id()}\n')
+                        for unexpected in incremental.unexpectedSuccesses:
+                            sys.stderr.write(f'UNEXPECTED SUCCESS: {unexpected.id()}\n')
                     result = True
                 if result:
                     continue
@@ -158,8 +162,8 @@ class TestRunner(object):
             if results.unexpectedSuccesses:
                 print(f'    {len(results.unexpectedSuccesses)} unexpected success(es)')
                 if args.log_level < logging.WARNING:
-                    for test in results.unexpectedSuccesses:
-                        print(f'        {self.id(test)}')
+                    for unexpected in results.unexpectedSuccesses:
+                        print(f'        {self.id(unexpected)}')
             return 1
         elif not results.testsRun:
             print('No tests run')
@@ -169,16 +173,16 @@ class TestRunner(object):
             print(f'    {len(results.expectedFailures)} expected failure(s)')
         return 0
 
-    def main(self, *args, **kwargs):
-        args = self.parser.parse_args(args)
-        args.log_level = getattr(args, 'log_level', log.level)
+    def main(self, *args: str, **kwargs: Any) -> int:
+        parsed = self.parser.parse_args(args)
+        parsed.log_level = getattr(parsed, 'log_level', log.level)
 
-        if args.log_level < logging.INFO:
+        if parsed.log_level < logging.INFO:
             log.debug('Found {} tests...'.format(len(list(self.tests()))))
-            log.debug('{} tests match filters'.format(len(list(self.tests(args)))))
+            log.debug('{} tests match filters'.format(len(list(self.tests(parsed)))))
 
-        if args.list:
-            tests = self.tests(args)
+        if parsed.list:
+            tests = self.tests(parsed)
             if not tests:
                 sys.stderr.write('No tests found\n')
                 return 1
@@ -186,4 +190,4 @@ class TestRunner(object):
                 print(test)
             return 0
 
-        return self.run(args)
+        return self.run(parsed)
