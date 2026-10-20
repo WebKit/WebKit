@@ -40,6 +40,7 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/DocumentView.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameInlines.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>

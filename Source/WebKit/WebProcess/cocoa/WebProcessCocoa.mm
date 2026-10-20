@@ -73,6 +73,7 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CPUMonitor.h>
 #import <WebCore/DisplayRefreshMonitorManager.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCacheCoreText.h>
