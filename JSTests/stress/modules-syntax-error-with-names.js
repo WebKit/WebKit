@@ -228,28 +228,24 @@ export { a as Cocoa };
 export class Cocoa { }
 `, `SyntaxError: Cannot export a duplicate class name: 'Cocoa'.:5`);
 
-// FIXME: These tests also should be passed. But now, var and lexical declared names can be co-exist on Script / Module top level scope.
-// This will be fixed when this issue is fixed for Script environment.
-// http://www.ecma-international.org/ecma-262/6.0/#sec-scripts-static-semantics-early-errors
-// http://www.ecma-international.org/ecma-262/6.0/#sec-module-semantics-static-semantics-early-errors
 checkModuleSyntaxError(String.raw`
 import A from "Cocoa"
 var A = 20;
 `, `SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'A'.:3`);
 
-// checkModuleSyntaxError(String.raw`
-// var A = 20;
-// import A from "Cocoa"
-// `, ``);
+checkModuleSyntaxError(String.raw`
+var A = 20;
+import A from "Cocoa"
+`, `SyntaxError: Cannot declare an imported binding name twice: 'A'.:3`);
 
 checkModuleSyntaxError(String.raw`
 import A from "Cocoa"
 var A = 20;
 `, `SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'A'.:3`);
 
-// checkModuleSyntaxError(String.raw`
-// var A = 20;
-// import A from "Cocoa"
-// `, ``);
+checkModuleSyntaxError(String.raw`
+var A = 20;
+import A from "Cocoa"
+`, `SyntaxError: Cannot declare an imported binding name twice: 'A'.:3`);
 
 
