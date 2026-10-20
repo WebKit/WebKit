@@ -600,6 +600,7 @@ media/media-source/media-source-mp4ttsimple.html [ Pass ]
 media/media-source/media-source-inband-cea608-track.html [ Pass ]
 
 media/media-source/media-source-video-seek-pause.html [ Failure Pass ]
+media/media-source/media-source-seek-across-gap-stall-reset.html [ Pass Timeout ]
 
 # GStreamer seeks to the wrong frame
 
@@ -1768,7 +1769,7 @@ webkit.org/b/296928 http/wpt/mediarecorder/mute-tracks.html [ Timeout Failure Pa
 webkit.org/b/213699 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
 webkit.org/b/306457 [ Release ] http/wpt/mediarecorder/MediaRecorder-audio-bitrate-webm.html [ Failure Pass ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Crash Timeout Failure ]
-webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-first-frame.html [ Failure ]
+webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-first-frame.html [ Pass Failure ]
 
 # Timeout due to webkit.org/b/312138
 webkit.org/b/307032 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Timeout Failure ]
@@ -4347,6 +4348,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/paint-holding-in-iframe
 imported/w3c/web-platform-tests/css/css-view-transitions/content-with-clip-root.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/mismatched-snapshot-containing-block-size-skips.html [ Failure Pass ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/css/css-view-transitions/start-skip-start.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/input-touch-while-render-blocked.html [ Skip ]
