@@ -26,6 +26,14 @@ https://as.com/
     (none)
 https://www.att.com/
     (none)
+https://www.baidu.com/
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+https://baidu.com/
+    (none)
+https://tieba.baidu.com/
+    (none)
+https://www.notbaidu.com/
+    (none)
 https://www.bbc.co.uk/
     ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk
 https://www.bbc.com/

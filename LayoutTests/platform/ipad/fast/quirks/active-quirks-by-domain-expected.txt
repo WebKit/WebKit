@@ -31,6 +31,14 @@ https://as.com/
     (none)
 https://www.att.com/
     ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk
+https://www.baidu.com/
+    (none)
+https://baidu.com/
+    (none)
+https://tieba.baidu.com/
+    (none)
+https://www.notbaidu.com/
+    (none)
 https://www.bbc.co.uk/
     ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk
 https://www.bbc.com/

@@ -469,6 +469,36 @@ TEST_F(QuirksTest, ScriptQuirkWithAScriptURLMatchAppliesOnlyToMatchingScripts)
     EXPECT_TRUE(scriptsForScriptURL(quirks, "https://ceac.state.gov/js/Other.js"_s).isEmpty());
 }
 
+TEST_F(QuirksTest, BaiduChatInputScriptGetsAChromeTokenInTheUserAgent)
+{
+    constexpr auto chatInputScriptURL = "https://pss.bdstatic.com/r/www/cache/static/molecules/app/chat-input/result_842a591.js"_s;
+
+    auto quirks = resolveQuirksForTopURL("https://www.baidu.com/s?wd=test"_s);
+    auto scripts = scriptsForScriptURL(quirks, chatInputScriptURL);
+#if PLATFORM(MAC)
+    ASSERT_EQ(scripts.size(), 1u);
+    // The Chrome token is only returned to callers whose stack includes the chat-input script, so that other
+    // scripts on the page keep seeing the real user agent.
+    EXPECT_TRUE(scripts[0].contains("Navigator.prototype"_s));
+    EXPECT_TRUE(scripts[0].contains("new Error().stack"_s));
+    EXPECT_TRUE(scripts[0].contains(" Chrome/152.0.0.0"_s));
+    EXPECT_FALSE(scripts[0].contains("Android"_s));
+
+    EXPECT_TRUE(scriptsForScriptURL(quirks, "https://pss.bdstatic.com/r/www/cache/static/protocol/https/bundles/result.js"_s).isEmpty());
+    EXPECT_TRUE(scriptsForScriptURL(quirks, "https://pss.bdstatic.com/r/www/cache/static/molecules/app/other/result.js"_s).isEmpty());
+    EXPECT_TRUE(scriptsForScriptURL(quirks, "https://pss.bdstatic.com/other/molecules/app/chat-input/result.js"_s).isEmpty());
+    EXPECT_TRUE(scriptsForScriptURL(quirks, "https://cdn.example.com/r/www/cache/static/molecules/app/chat-input/result.js"_s).isEmpty());
+#else
+    // The bug is a hold-Space shortcut on macOS, so other platforms do not spoof the user agent.
+    EXPECT_TRUE(scripts.isEmpty());
+#endif
+
+    // Only www.baidu.com is covered. The apex, other Baidu subdomains, the script host itself and look-alike
+    // domains do not load the chat-input script with the Chrome token.
+    for (auto topURL : { "https://baidu.com/"_s, "https://tieba.baidu.com/"_s, "https://pss.bdstatic.com/"_s, "https://www.notbaidu.com/"_s, "https://www.example.com/"_s })
+        EXPECT_TRUE(scriptsForScriptURL(resolveQuirksForTopURL(topURL), chatInputScriptURL).isEmpty()) << topURL.characters();
+}
+
 TEST_F(QuirksTest, DocumentsWithoutAScriptQuirkGetNoParameters)
 {
     auto quirks = resolveQuirksForTopURL("https://www.example.com/"_s);

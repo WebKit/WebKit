@@ -80,6 +80,18 @@
             "behaviors": [{ "id": "ShouldRenderModelElementFallbackContentQuirk" }]
         },
         {
+            "bugs": ["rdar://189631150"],
+            "matches": ["*://www.baidu.com/*"],
+            "available": "mac",
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "(function() { let userAgent = Object.getOwnPropertyDescriptor(Navigator.prototype, 'userAgent').get.call(navigator); Object.defineProperty(navigator, 'userAgent', { get: () => { return new Error().stack?.includes('/molecules/app/chat-input/') ? userAgent + ' Chrome/152.0.0.0' : userAgent; }, configurable: true }); })();",
+                    "secondaryURL": ["*://pss.bdstatic.com/r/www/cache/static/molecules/app/chat-input/*"]
+                }
+            ]
+        },
+        {
             "bugs": ["rdar://104938789"],
             "matches": ["*://*.bankofamerica.com/*"],
             "behaviors": [
