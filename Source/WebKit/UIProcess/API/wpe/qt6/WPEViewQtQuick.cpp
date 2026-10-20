@@ -271,8 +271,12 @@ void wpe_view_qtquick_invalidate_rendering(WPEViewQtQuick* view)
         wpe_view_buffer_rendered(WPE_VIEW(view), pendingBuffer.get());
         wpe_view_buffer_released(WPE_VIEW(view), pendingBuffer.get());
     }
+}
 
-    priv->wpeQtView = nullptr;
+void wpe_view_qtquick_detach_view(WPEViewQtQuick* view)
+{
+    wpe_view_qtquick_invalidate_rendering(view);
+    view->priv->wpeQtView = nullptr;
 }
 
 void wpe_view_qtquick_set_frame_release_fence(WPEViewQtQuick* view, int fd)
