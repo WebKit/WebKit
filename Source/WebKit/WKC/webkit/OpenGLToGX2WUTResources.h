@@ -8,6 +8,7 @@
 #pragma once
 
 #include "OpenGLToGX2Buffers.h"
+#include "OpenGLToGX2VertexArrays.h"
 
 #if defined(__WUT__)
 #include <gx2r/buffer.h>
@@ -22,6 +23,7 @@ struct WUTBufferResources {
 };
 
 BufferBackend makeWUTBufferBackend(WUTBufferResources&);
+VertexArrayBackend makeWUTVertexArrayBackend(WUTBufferResources&);
 
 } // namespace GLGX2
 } // namespace WKC
