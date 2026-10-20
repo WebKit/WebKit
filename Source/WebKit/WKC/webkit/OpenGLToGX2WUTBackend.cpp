@@ -161,6 +161,110 @@ bool setBlendColor(void*, const Color& color)
     return true;
 }
 
+bool translateStencilOperation(StencilOperation operation, GX2StencilFunction& output)
+{
+    switch (operation) {
+    case StencilOperation::Keep: output = GX2_STENCIL_FUNCTION_KEEP; return true;
+    case StencilOperation::Zero: output = GX2_STENCIL_FUNCTION_ZERO; return true;
+    case StencilOperation::Replace: output = GX2_STENCIL_FUNCTION_REPLACE; return true;
+    case StencilOperation::Increment: output = GX2_STENCIL_FUNCTION_INCR_CLAMP; return true;
+    case StencilOperation::Decrement: output = GX2_STENCIL_FUNCTION_DECR_CLAMP; return true;
+    case StencilOperation::Invert: output = GX2_STENCIL_FUNCTION_INV; return true;
+    case StencilOperation::IncrementWrap: output = GX2_STENCIL_FUNCTION_INCR_WRAP; return true;
+    case StencilOperation::DecrementWrap: output = GX2_STENCIL_FUNCTION_DECR_WRAP; return true;
+    }
+    return false;
+}
+
+bool translateCompareFunction(CompareFunction function, GX2CompareFunction& output)
+{
+    switch (function) {
+    case CompareFunction::Never: output = GX2_COMPARE_FUNC_NEVER; return true;
+    case CompareFunction::Less: output = GX2_COMPARE_FUNC_LESS; return true;
+    case CompareFunction::Equal: output = GX2_COMPARE_FUNC_EQUAL; return true;
+    case CompareFunction::LessEqual: output = GX2_COMPARE_FUNC_LEQUAL; return true;
+    case CompareFunction::Greater: output = GX2_COMPARE_FUNC_GREATER; return true;
+    case CompareFunction::NotEqual: output = GX2_COMPARE_FUNC_NOT_EQUAL; return true;
+    case CompareFunction::GreaterEqual: output = GX2_COMPARE_FUNC_GEQUAL; return true;
+    case CompareFunction::Always: output = GX2_COMPARE_FUNC_ALWAYS; return true;
+    }
+    return false;
+}
+
+bool applyStencilState(WUTBackendContext& state)
+{
+    GX2CompareFunction frontCompare, backCompare;
+    GX2StencilFunction frontFail, frontZFail, frontZPass, backFail, backZFail, backZPass;
+    if (!translateCompareFunction(state.frontStencilFunction, frontCompare)
+        || !translateCompareFunction(state.backStencilFunction, backCompare)
+        || !translateStencilOperation(state.frontStencilFail, frontFail)
+        || !translateStencilOperation(state.frontDepthFail, frontZFail)
+        || !translateStencilOperation(state.frontDepthPass, frontZPass)
+        || !translateStencilOperation(state.backStencilFail, backFail)
+        || !translateStencilOperation(state.backDepthFail, backZFail)
+        || !translateStencilOperation(state.backDepthPass, backZPass))
+        return false;
+
+    GX2SetDepthStencilControl(state.depthTestEnabled ? TRUE : FALSE,
+        state.depthWriteEnabled ? TRUE : FALSE,
+        GX2_COMPARE_FUNC_LESS,
+        state.stencilEnabled ? TRUE : FALSE, TRUE,
+        frontCompare, frontZPass, frontZFail, frontFail,
+        backCompare, backZPass, backZFail, backFail);
+    GX2SetStencilMask(
+        static_cast<uint8_t>(state.frontStencilCompareMask & 0xff),
+        static_cast<uint8_t>(state.frontStencilWriteMask & 0xff),
+        static_cast<uint8_t>(state.frontStencilReference & 0xff),
+        static_cast<uint8_t>(state.backStencilCompareMask & 0xff),
+        static_cast<uint8_t>(state.backStencilWriteMask & 0xff),
+        static_cast<uint8_t>(state.backStencilReference & 0xff));
+    return true;
+}
+
+bool setStencilFunction(void* context, Face face, CompareFunction function,
+    int32_t reference, uint32_t mask)
+{
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    if (face == Face::Front || face == Face::FrontAndBack) {
+        state.frontStencilFunction = function;
+        state.frontStencilReference = reference;
+        state.frontStencilCompareMask = mask;
+    }
+    if (face == Face::Back || face == Face::FrontAndBack) {
+        state.backStencilFunction = function;
+        state.backStencilReference = reference;
+        state.backStencilCompareMask = mask;
+    }
+    return applyStencilState(state);
+}
+
+bool setStencilOperation(void* context, Face face, StencilOperation stencilFail,
+    StencilOperation depthFail, StencilOperation depthPass)
+{
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    if (face == Face::Front || face == Face::FrontAndBack) {
+        state.frontStencilFail = stencilFail;
+        state.frontDepthFail = depthFail;
+        state.frontDepthPass = depthPass;
+    }
+    if (face == Face::Back || face == Face::FrontAndBack) {
+        state.backStencilFail = stencilFail;
+        state.backDepthFail = depthFail;
+        state.backDepthPass = depthPass;
+    }
+    return applyStencilState(state);
+}
+
+bool setStencilWriteMask(void* context, Face face, uint32_t mask)
+{
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    if (face == Face::Front || face == Face::FrontAndBack)
+        state.frontStencilWriteMask = mask;
+    if (face == Face::Back || face == Face::FrontAndBack)
+        state.backStencilWriteMask = mask;
+    return applyStencilState(state);
+}
+
 bool setCapability(void* context, Capability capability, bool enabled)
 {
     auto& state = *static_cast<WUTBackendContext*>(context);
@@ -174,6 +278,9 @@ bool setCapability(void* context, Capability capability, bool enabled)
     case Capability::CullFace:
         state.cullEnabled = enabled;
         return applyCullState(state);
+    case Capability::StencilTest:
+        state.stencilEnabled = enabled;
+        return applyStencilState(state);
     default:
         // Do not report capabilities as implemented until their state is mapped.
         return false;
@@ -329,6 +436,9 @@ Backend makeWUTBackend(WUTBackendContext& context)
     backend.setBlendEquation = setBlendEquation;
     backend.setBlendColor = setBlendColor;
     backend.setColorMask = setColorMask;
+    backend.setStencilFunction = setStencilFunction;
+    backend.setStencilOperation = setStencilOperation;
+    backend.setStencilWriteMask = setStencilWriteMask;
     backend.draw = draw;
     backend.drawIndexed = drawIndexed;
     backend.setDepthFunction = setDepthFunction;
