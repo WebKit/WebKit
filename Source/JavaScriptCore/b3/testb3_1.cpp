@@ -1557,6 +1557,7 @@ void run(const TestConfig* config)
         RUN(testVectorShrZipToExtend());
         RUN(testVectorShrZipToExtendI32());
         RUN(testVectorShrZipToExtendI64());
+        RUN(testVectorShrZipWithMismatchedLane());
         RUN_UNARY(testVectorXorOrAllOnesConstantToVectorAndXor, v128Operands());
         RUN_UNARY(testVectorXorAndAllOnesConstantToVectorOrXor, v128Operands());
         RUN_BINARY(testVectorOrConstants, v128Operands(), v128Operands());

@@ -3726,18 +3726,15 @@ private:
             //   shr i32x4 by 16 + zip i16x8  -> i16->i32 sign extension
             //   shr i64x2 by 32 + zip i32x4  -> i32->i64 sign extension
             SIMDValue* shr = m_value->as<SIMDValue>();
-            if (shr->signMode() == SIMDSignMode::Signed) {
-                SIMDLane lane = shr->simdLane();
-                bool matches = (lane == SIMDLane::i16x8 && m_value->child(1)->isInt32(8))
-                    || (lane == SIMDLane::i32x4 && m_value->child(1)->isInt32(16))
-                    || (lane == SIMDLane::i64x2 && m_value->child(1)->isInt32(32));
-                if (matches) {
-                    Value* child0 = m_value->child(0);
-                    if ((child0->opcode() == VectorZipLower || child0->opcode() == VectorZipHigher) && child0->child(0) == child0->child(1)) {
-                        Opcode extendOp = child0->opcode() == VectorZipLower ? VectorExtendLow : VectorExtendHigh;
-                        replaceWithNew<SIMDValue>(m_value->origin(), extendOp, B3::V128, lane, SIMDSignMode::Signed, child0->child(0));
-                        break;
-                    }
+            Value* zip = m_value->child(0);
+            if (shr->signMode() == SIMDSignMode::Signed
+                && (zip->opcode() == VectorZipLower || zip->opcode() == VectorZipHigher)
+                && zip->child(0) == zip->child(1)) {
+                SIMDLane zipLane = zip->as<SIMDValue>()->simdLane();
+                if (wideningLaneFor(zipLane) == shr->simdLane() && m_value->child(1)->isInt32(elementByteSize(zipLane) * 8)) {
+                    Opcode extendOp = zip->opcode() == VectorZipLower ? VectorExtendLow : VectorExtendHigh;
+                    replaceWithNew<SIMDValue>(m_value->origin(), extendOp, B3::V128, shr->simdLane(), SIMDSignMode::Signed, zip->child(0));
+                    break;
                 }
             }
             break;

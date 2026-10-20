@@ -1573,6 +1573,7 @@ void testVectorDotProductSplatOne();
 void testVectorShrZipToExtend();
 void testVectorShrZipToExtendI32();
 void testVectorShrZipToExtendI64();
+void testVectorShrZipWithMismatchedLane();
 
 // SIMD VectorUnzip/Zip/Transpose/Reverse B3 opcodes
 void testVectorUnzipEven();

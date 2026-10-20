@@ -6099,10 +6099,10 @@ void testVectorSwizzleBinaryOnlyOneSideSide1Scattered()
     runBinarySwizzleAndCheck(pattern, a, b);
 }
 
-// Test VectorShr(VectorZip{Lower,Higher}(x, x), 8) → VectorExtend{Low,High}(x, i16x8, Signed)
+// Test VectorShr(VectorZip{Lower,Higher}(x, x), 8) -> VectorExtend{Low,High}(x, i16x8, Signed)
 void testVectorShrZipToExtend()
 {
-    // Test ExtendLow: VectorShr(VectorZipLower(x, x), 8) → VectorExtendLow(x, i16x8, Signed)
+    // Test ExtendLow: VectorShr(VectorZipLower(x, x), 8) -> VectorExtendLow(x, i16x8, Signed)
     {
         alignas(16) v128_t vectors[2];
         Procedure proc;
@@ -6125,14 +6125,14 @@ void testVectorShrZipToExtend()
         auto code = compileProc(proc);
 
         // Input i8x16: {-5, 127, -128, 0, 1, -1, 42, -42, 99, 100, 101, 102, 103, 104, 105, 106}
-        vectors[0].u8x16[0] = static_cast<uint8_t>(-5);   // 0xFB → sign-extend to 0xFFFB = -5
-        vectors[0].u8x16[1] = 127;                          // 0x7F → 0x007F = 127
-        vectors[0].u8x16[2] = static_cast<uint8_t>(-128); // 0x80 → 0xFF80 = -128
-        vectors[0].u8x16[3] = 0;                            // 0x00 → 0x0000 = 0
-        vectors[0].u8x16[4] = 1;                            // 0x01 → 0x0001 = 1
-        vectors[0].u8x16[5] = static_cast<uint8_t>(-1);   // 0xFF → 0xFFFF = -1
-        vectors[0].u8x16[6] = 42;                           // 0x2A → 0x002A = 42
-        vectors[0].u8x16[7] = static_cast<uint8_t>(-42);  // 0xD6 → 0xFFD6 = -42
+        vectors[0].u8x16[0] = static_cast<uint8_t>(-5);   // 0xFB -> sign-extend to 0xFFFB = -5
+        vectors[0].u8x16[1] = 127;                          // 0x7F -> 0x007F = 127
+        vectors[0].u8x16[2] = static_cast<uint8_t>(-128); // 0x80 -> 0xFF80 = -128
+        vectors[0].u8x16[3] = 0;                            // 0x00 -> 0x0000 = 0
+        vectors[0].u8x16[4] = 1;                            // 0x01 -> 0x0001 = 1
+        vectors[0].u8x16[5] = static_cast<uint8_t>(-1);   // 0xFF -> 0xFFFF = -1
+        vectors[0].u8x16[6] = 42;                           // 0x2A -> 0x002A = 42
+        vectors[0].u8x16[7] = static_cast<uint8_t>(-42);  // 0xD6 -> 0xFFD6 = -42
         // Upper 8 bytes (not used by ExtendLow, but fill them)
         for (unsigned i = 8; i < 16; ++i)
             vectors[0].u8x16[i] = 99 + (i - 8);
@@ -6150,7 +6150,7 @@ void testVectorShrZipToExtend()
         CHECK(vectors[1].u16x8[7] == static_cast<uint16_t>(-42));
     }
 
-    // Test ExtendHigh: VectorShr(VectorZipHigher(x, x), 8) → VectorExtendHigh(x, i16x8, Signed)
+    // Test ExtendHigh: VectorShr(VectorZipHigher(x, x), 8) -> VectorExtendHigh(x, i16x8, Signed)
     {
         alignas(16) v128_t vectors[2];
         Procedure proc;
@@ -6175,14 +6175,14 @@ void testVectorShrZipToExtend()
         // Input: lower 8 bytes don't matter for ExtendHigh, upper 8 bytes are tested
         for (unsigned i = 0; i < 8; ++i)
             vectors[0].u8x16[i] = 0;
-        vectors[0].u8x16[8] = static_cast<uint8_t>(-10);   // 0xF6 → -10
-        vectors[0].u8x16[9] = 50;                            // 0x32 → 50
-        vectors[0].u8x16[10] = static_cast<uint8_t>(-128); // 0x80 → -128
-        vectors[0].u8x16[11] = 127;                          // 0x7F → 127
-        vectors[0].u8x16[12] = 0;                            // 0x00 → 0
-        vectors[0].u8x16[13] = static_cast<uint8_t>(-1);   // 0xFF → -1
-        vectors[0].u8x16[14] = 1;                            // 0x01 → 1
-        vectors[0].u8x16[15] = static_cast<uint8_t>(-100); // 0x9C → -100
+        vectors[0].u8x16[8] = static_cast<uint8_t>(-10);   // 0xF6 -> -10
+        vectors[0].u8x16[9] = 50;                            // 0x32 -> 50
+        vectors[0].u8x16[10] = static_cast<uint8_t>(-128); // 0x80 -> -128
+        vectors[0].u8x16[11] = 127;                          // 0x7F -> 127
+        vectors[0].u8x16[12] = 0;                            // 0x00 -> 0
+        vectors[0].u8x16[13] = static_cast<uint8_t>(-1);   // 0xFF -> -1
+        vectors[0].u8x16[14] = 1;                            // 0x01 -> 1
+        vectors[0].u8x16[15] = static_cast<uint8_t>(-100); // 0x9C -> -100
 
         invoke<void>(*code, vectors);
 
@@ -6355,6 +6355,74 @@ void testVectorShrZipToExtendI64()
         // Result: sign-extended upper 2 i32 values to i64x2
         CHECK(vectors[1].u64x2[0] == static_cast<uint64_t>(static_cast<int64_t>(-2147483648LL)));
         CHECK(vectors[1].u64x2[1] == static_cast<uint64_t>(static_cast<int64_t>(-1)));
+    }
+}
+
+// VectorShr(VectorZip{Lower,Higher}(x, x), shift) is a sign extension only when the zip lane is
+// exactly half the width of the shift lane.
+void testVectorShrZipWithMismatchedLane()
+{
+    auto runOne = [](B3::Opcode zipOp, SIMDLane zipLane, SIMDLane shrLane, int32_t shiftAmount) {
+        alignas(16) v128_t vectors[2];
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<void*>(proc, root);
+        Value* address = arguments[0];
+        Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+        Value* zipped = root->appendNew<SIMDValue>(proc, Origin(), zipOp, B3::V128, zipLane, SIMDSignMode::None, input, input);
+        Value* shifted = root->appendNew<SIMDValue>(proc, Origin(), VectorShr, B3::V128, shrLane, SIMDSignMode::Signed, zipped, root->appendNew<Const32Value>(proc, Origin(), shiftAmount));
+        root->appendNew<MemoryValue>(proc, Store, Origin(), shifted, address, static_cast<int32_t>(sizeof(v128_t)));
+        root->appendNew<Value>(proc, Return, Origin());
+
+        auto code = compileProc(proc);
+
+        for (unsigned i = 0; i < 16; ++i)
+            vectors[0].u8x16[i] = static_cast<uint8_t>(i * 0x37 + 0x91);
+        v128_t source = vectors[0];
+
+        unsigned zipBytes = elementByteSize(zipLane);
+        unsigned halfCount = 16 / zipBytes / 2;
+        unsigned base = zipOp == VectorZipLower ? 0 : halfCount;
+        v128_t zippedExpected;
+        for (unsigned i = 0; i < halfCount; ++i) {
+            for (unsigned j = 0; j < 2; ++j)
+                memcpySpan(std::span { zippedExpected.u8x16 }.subspan((2 * i + j) * zipBytes, zipBytes), std::span { source.u8x16 }.subspan((base + i) * zipBytes, zipBytes));
+        }
+
+        invoke<void>(*code, vectors);
+
+        unsigned shrBytes = elementByteSize(shrLane);
+        for (unsigned lane = 0; lane < 16 / shrBytes; ++lane) {
+            int64_t element = 0;
+            for (unsigned byte = shrBytes; byte--;)
+                element = (element << 8) | zippedExpected.u8x16[lane * shrBytes + byte];
+            unsigned unusedBits = 64 - shrBytes * 8;
+            int64_t expected = (static_cast<int64_t>(static_cast<uint64_t>(element) << unusedBits) >> unusedBits) >> shiftAmount;
+            uint64_t actual = 0;
+            for (unsigned byte = shrBytes; byte--;)
+                actual = (actual << 8) | vectors[1].u8x16[lane * shrBytes + byte];
+            uint64_t mask = shrBytes == 8 ? std::numeric_limits<uint64_t>::max() : (1ULL << (shrBytes * 8)) - 1;
+            CHECK_EQ(actual, static_cast<uint64_t>(expected) & mask);
+        }
+    };
+
+    struct ShrCase {
+        SIMDLane shrLane;
+        int32_t shiftAmount;
+        SIMDLane matchingZipLane;
+    };
+    constexpr ShrCase shrCases[] = {
+        { SIMDLane::i16x8, 8, SIMDLane::i8x16 },
+        { SIMDLane::i32x4, 16, SIMDLane::i16x8 },
+        { SIMDLane::i64x2, 32, SIMDLane::i32x4 },
+    };
+    for (auto shrCase : shrCases) {
+        for (SIMDLane zipLane : { SIMDLane::i8x16, SIMDLane::i16x8, SIMDLane::i32x4 }) {
+            if (zipLane == shrCase.matchingZipLane)
+                continue;
+            for (B3::Opcode zipOp : { VectorZipLower, VectorZipHigher })
+                runOne(zipOp, zipLane, shrCase.shrLane, shrCase.shiftAmount);
+        }
     }
 }
 
