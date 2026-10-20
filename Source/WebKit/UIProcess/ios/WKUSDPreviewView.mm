@@ -94,35 +94,23 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
     _suggestedFilename = adoptNS([filename copy]);
     _data = adoptNS([data copy]);
 
+    RefPtr page = _webView.get()->_page;
+    RetainPtr presentingViewController = page->uiClient().presentingViewController();
+
+    // In a peek the web view has no presenting view controller, so the confirmation alert cannot be
+    // presented. That would leave the view empty and the completion handler uncalled. Show the
+    // thumbnail directly instead.
+    if (!presentingViewController) {
+        RELEASE_LOG(Process, "WKUSDPreviewView %p: no presenting view controller, skipping confirmation alert", self);
+        [self _showThumbnailView];
+        completionHandler();
+        return;
+    }
+
     RetainPtr alert = WebKit::createUIAlertController(protect(WEB_UI_NSSTRING(@"View 3D Object?", "View 3D Object?")), protect(WEB_UI_NSSTRING(@"You can see a preview of this object before viewing in 3D.", "You can see a preview of this object before viewing in 3D.")));
 
     RetainPtr allowAction = [UIAlertAction actionWithTitle:protect(WEB_UI_NSSTRING_KEY(@"View 3D Object", @"View 3D Object (QuickLook Preview)", "Allow displaying QuickLook Preview of 3D object")).get() style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKUSDPreviewView>(self), completionHandler = makeBlockPtr(completionHandler)](UIAlertAction *) mutable {
-        RetainPtr strongSelf = weakSelf.get();
-        if (!strongSelf) {
-            completionHandler();
-            return;
-        }
-
-        RetainPtr contentType = getUTIForUSDMIMEType(strongSelf->_mimeType.get());
-
-        strongSelf->_item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:strongSelf.get() contentType:contentType.get() previewTitle:strongSelf->_suggestedFilename.get()]);
-        [strongSelf->_item setUseLoadingTimeout:NO];
-
-        strongSelf->_thumbnailView = adoptNS([allocASVThumbnailViewInstance() init]);
-        [strongSelf->_thumbnailView setDelegate:strongSelf.get()];
-        [strongSelf setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-
-        [strongSelf setAutoresizesSubviews:YES];
-        [strongSelf setClipsToBounds:YES];
-        [strongSelf addSubview:strongSelf->_thumbnailView.get()];
-        [strongSelf _layoutThumbnailView];
-
-        auto screenBounds = strongSelf.get().window.windowScene.screen.bounds;
-        CGFloat maxDimension = CGFloatMin(screenBounds.size.width, screenBounds.size.height);
-        [strongSelf->_thumbnailView setMaxThumbnailSize:CGSizeMake(maxDimension, maxDimension)];
-
-        [strongSelf->_thumbnailView setThumbnailItem:strongSelf->_item.get()];
-
+        [weakSelf.get() _showThumbnailView];
         completionHandler();
     }];
 
@@ -133,9 +121,32 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
     [alert addAction:doNotAllowAction.get()];
     [alert addAction:allowAction.get()];
 
-    RefPtr page = _webView.get()->_page;
-    RetainPtr presentingViewController = page->uiClient().presentingViewController();
     [presentingViewController.get() presentViewController:alert.get() animated:YES completion:nil];
+}
+
+- (void)_showThumbnailView
+{
+    RetainPtr contentType = getUTIForUSDMIMEType(_mimeType.get());
+
+    _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:contentType.get() previewTitle:_suggestedFilename.get()]);
+    [_item setUseLoadingTimeout:NO];
+
+    _thumbnailView = adoptNS([allocASVThumbnailViewInstance() init]);
+    [_thumbnailView setDelegate:self];
+    [self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+
+    [self setAutoresizesSubviews:YES];
+    [self setClipsToBounds:YES];
+    [self addSubview:_thumbnailView.get()];
+    [self _layoutThumbnailView];
+
+    // The view may not be in a window yet (e.g. in a peek), so fall back to its own bounds.
+    UIScreen *screen = self.window.windowScene.screen;
+    CGRect screenBounds = screen ? screen.bounds : self.bounds;
+    CGFloat maxDimension = CGFloatMin(screenBounds.size.width, screenBounds.size.height);
+    [_thumbnailView setMaxThumbnailSize:CGSizeMake(maxDimension, maxDimension)];
+
+    [_thumbnailView setThumbnailItem:_item.get()];
 }
 
 - (void)_layoutThumbnailView
