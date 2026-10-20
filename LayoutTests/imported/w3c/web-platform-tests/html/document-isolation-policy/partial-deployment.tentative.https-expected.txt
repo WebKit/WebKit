@@ -1,0 +1,10 @@
+
+PASS A document without a policy and its same-origin frame with one can post messages to each other
+PASS A document without a policy and its same-origin frame with one only have the cross-origin members of each other's Window and Location objects
+PASS A document without a policy and its same-origin frame with one can navigate each other
+PASS A document without a policy and its same-origin frame with one share localStorage
+PASS A document with a policy and its same-origin frame without one can post messages to each other
+PASS A document with a policy and its same-origin frame without one only have the cross-origin members of each other's Window and Location objects
+PASS A document with a policy and its same-origin frame without one can navigate each other
+PASS A document with a policy and its same-origin frame without one share localStorage
+
