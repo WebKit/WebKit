@@ -53,6 +53,11 @@ struct SVGBaselineShift {
     {
     }
 
+    SVGBaselineShift(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : m_value { LengthPercentage { literal } }
+    {
+    }
+
     bool isBaseline() const { return WTF::holdsAlternative<CSS::Keyword::Baseline>(m_value); }
     bool isSub() const { return WTF::holdsAlternative<CSS::Keyword::Sub>(m_value); }
     bool isSuper() const { return WTF::holdsAlternative<CSS::Keyword::Super>(m_value); }
