@@ -54,6 +54,7 @@ public:
 
     void didCreatePage(WebPageProxy&);
     void willClosePage(const WebPageProxy&);
+    String userContextIDForPage(const WebPageProxy&) const;
 
     bool isValidUserContext(const String& userContextID) const;
 

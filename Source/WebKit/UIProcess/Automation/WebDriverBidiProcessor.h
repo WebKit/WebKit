@@ -57,6 +57,7 @@ public:
     void sendBidiMessage(const String&);
 
     BidiBrowserAgent& browserAgent() const LIFETIME_BOUND { return m_browserAgent; }
+    BidiBrowsingContextAgent& browsingContextAgent() const LIFETIME_BOUND { return m_browsingContextAgent; }
     BidiDigitalCredentialsAgent& digitalCredentialsAgent() const LIFETIME_BOUND { return m_digitalCredentialsAgent; }
     BidiInputAgent& inputAgent() const LIFETIME_BOUND { return m_inputAgent; }
     BidiScriptAgent& scriptAgent() const LIFETIME_BOUND { return m_scriptAgent; }
