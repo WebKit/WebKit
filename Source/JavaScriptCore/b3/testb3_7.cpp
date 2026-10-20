@@ -3946,7 +3946,77 @@ void testVectorXorRotateRight64()
     }
 }
 
-// Test dot(v, splat(1)) → extadd_pairwise strength reduction.
+// VectorOr of two shifts of VectorXor(a, b) whose amounts sum to 64 only before or only after masking to
+// the lane width, or that pair a left shift with a signed right shift. Only some of these are rotates.
+void testVectorXorRotateRight64ShiftKindAndAmount()
+{
+    struct Shift {
+        B3::Opcode opcode;
+        SIMDSignMode signMode;
+        int32_t amount;
+    };
+
+    auto apply = [](Shift shift, uint64_t value) -> uint64_t {
+        unsigned amount = shift.amount & 63;
+        if (shift.opcode == VectorShl)
+            return value << amount;
+        if (shift.signMode == SIMDSignMode::Signed)
+            return static_cast<uint64_t>(static_cast<int64_t>(value) >> amount);
+        return value >> amount;
+    };
+
+    struct TestCase {
+        Shift left;
+        Shift right;
+    };
+    const TestCase testCases[] = {
+        { { VectorShl, SIMDSignMode::Unsigned, 8 }, { VectorShr, SIMDSignMode::Signed, 56 } },
+        { { VectorShr, SIMDSignMode::Signed, 56 }, { VectorShl, SIMDSignMode::Unsigned, 8 } },
+        { { VectorShl, SIMDSignMode::Unsigned, 200 }, { VectorShl, SIMDSignMode::Unsigned, 8 } },
+        { { VectorShl, SIMDSignMode::Unsigned, 72 }, { VectorShr, SIMDSignMode::Unsigned, 56 } },
+        { { VectorShl, SIMDSignMode::Unsigned, 8 }, { VectorShr, SIMDSignMode::Unsigned, 120 } },
+    };
+
+    for (const auto& testCase : testCases) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<void*>(proc, root);
+        Value* address = arguments[0];
+
+        Value* a = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+        Value* b = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address, static_cast<int32_t>(sizeof(v128_t)));
+        Value* xorResult = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, a, b);
+
+        auto emitShift = [&](Shift shift) {
+            Value* amount = root->appendNew<Const32Value>(proc, Origin(), shift.amount);
+            return root->appendNew<SIMDValue>(proc, Origin(), shift.opcode, B3::V128, SIMDLane::i64x2, shift.signMode, xorResult, amount);
+        };
+        Value* left = emitShift(testCase.left);
+        Value* right = emitShift(testCase.right);
+        Value* orResult = root->appendNew<SIMDValue>(proc, Origin(), VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, left, right);
+
+        root->appendNew<MemoryValue>(proc, Store, Origin(), orResult, address, static_cast<int32_t>(2 * sizeof(v128_t)));
+        root->clearSuccessors();
+        root->appendNew<Value>(proc, Return, Origin());
+
+        auto code = compileProc(proc);
+
+        alignas(16) v128_t vectors[3];
+        vectors[0].u64x2[0] = 0x0123456789ABCDEFULL;
+        vectors[0].u64x2[1] = 0x7EDCBA9876543210ULL;
+        vectors[1].u64x2[0] = 0x8000000000000001ULL;
+        vectors[1].u64x2[1] = 0x8000000000000001ULL;
+
+        invoke<void>(*code, vectors);
+
+        for (unsigned lane = 0; lane < 2; ++lane) {
+            uint64_t x = vectors[0].u64x2[lane] ^ vectors[1].u64x2[lane];
+            CHECK_EQ(vectors[2].u64x2[lane], apply(testCase.left, x) | apply(testCase.right, x));
+        }
+    }
+}
+
+// Test dot(v, splat(1)) -> extadd_pairwise strength reduction.
 // i32x4.dot_i16x8_s(v, {1,1,...}) = i32x4.extadd_pairwise_i16x8_s(v)
 void testVectorDotProductSplatOne()
 {

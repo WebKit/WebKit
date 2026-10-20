@@ -1568,6 +1568,7 @@ void testFCCmpNegatedAndDouble(double, double, double, double);
 
 // SIMD XOR+rotate pattern matching
 void testVectorXorRotateRight64();
+void testVectorXorRotateRight64ShiftKindAndAmount();
 void testVectorXor3();
 void testVectorDotProductSplatOne();
 void testVectorShrZipToExtend();

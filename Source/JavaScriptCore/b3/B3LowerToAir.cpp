@@ -5547,33 +5547,27 @@ private:
             return;
         case B3::VectorOr: {
 #if CPU(ARM64)
-            // Try to match XAR (XOR-and-rotate-right) pattern for i64x2.
-            // Pattern: VectorOr(VectorShl(x, constK), VectorShr(x, constK))
-            // or VectorOr(VectorAdd(x, x), VectorShr(x, constK)) after strength reduction.
-            // When x = VectorXor(a, b), emit XAR(a, b, rotateRight).
+            // Match XAR (XOR-and-rotate-right) for i64x2: VectorOr of a left shift and an unsigned
+            // right shift of the same x = VectorXor(a, b), with constant amounts summing to 64,
+            // becomes XAR(a, b, rotateRight). Strength reduction turns a left shift by 1 into
+            // VectorAdd(x, x), so that counts as a left shift too.
             if (isARM64_SHA3()) {
                 Value* left = m_value->child(0);
                 Value* right = m_value->child(1);
 
                 auto tryMatchXAR = [&]() -> bool {
-                    // Each child of VectorOr should be either:
-                    // - VectorShl:i64x2(x, constK) — a left shift by constant
-                    // - VectorShr:i64x2(x, constK) — a right shift by constant
-                    // - VectorAdd:i64x2(x, x) — equivalent to shl-by-1 (from strength reduction)
-                    // We need one left-shift and one right-shift on the same value x,
-                    // with shift amounts summing to 64.
-
                     struct ShiftInfo {
                         Value* shiftedValue { nullptr };
                         int8_t amount { 0 }; // positive = left shift, negative = right shift
                     };
 
                     auto extractShift = [&](Value* v) -> std::optional<ShiftInfo> {
+                        // Vector shifts use the shift amount modulo the lane width.
                         if (v->opcode() == B3::VectorShl && v->as<SIMDValue>()->simdLane() == SIMDLane::i64x2 && v->child(1)->hasInt32())
-                            return ShiftInfo { v->child(0), static_cast<int8_t>(v->child(1)->asInt32()) };
+                            return ShiftInfo { v->child(0), static_cast<int8_t>(v->child(1)->asInt32() & 63) };
 
-                        if (v->opcode() == B3::VectorShr && v->as<SIMDValue>()->simdLane() == SIMDLane::i64x2 && v->child(1)->hasInt32())
-                            return ShiftInfo { v->child(0), static_cast<int8_t>(-v->child(1)->asInt32()) };
+                        if (v->opcode() == B3::VectorShr && v->as<SIMDValue>()->simdLane() == SIMDLane::i64x2 && v->as<SIMDValue>()->signMode() == SIMDSignMode::Unsigned && v->child(1)->hasInt32())
+                            return ShiftInfo { v->child(0), static_cast<int8_t>(-(v->child(1)->asInt32() & 63)) };
 
                         // We lowered left-shift by 1 to VectorAdd(x, x)
                         if (v->opcode() == B3::VectorAdd && v->as<SIMDValue>()->simdLane() == SIMDLane::i64x2
@@ -5645,8 +5639,8 @@ private:
         }
         case B3::VectorXor: {
 #if CPU(ARM64)
-            // VectorXor(VectorXor(a, b), c) → EOR3(a, b, c)
-            // VectorXor(a, VectorXor(b, c)) → EOR3(b, c, a)
+            // VectorXor(VectorXor(a, b), c) -> EOR3(a, b, c)
+            // VectorXor(a, VectorXor(b, c)) -> EOR3(b, c, a)
             if (isARM64_SHA3()) {
                 for (unsigned childIdx = 0; childIdx < 2; ++childIdx) {
                     Value* inner = m_value->child(childIdx);

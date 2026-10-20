@@ -1567,6 +1567,7 @@ void run(const TestConfig* config)
         RUN(testVectorFmulByElementFloat());
         RUN(testVectorFmulByElementDouble());
         RUN(testVectorXorRotateRight64());
+        RUN(testVectorXorRotateRight64ShiftKindAndAmount());
         RUN(testVectorXor3());
         RUN(testVectorShlImmediate());
         RUN(testVectorShrImmediate());
