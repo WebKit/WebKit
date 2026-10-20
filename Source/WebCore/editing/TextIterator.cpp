@@ -1368,11 +1368,19 @@ TextIteratorPosition TextIterator::position() const
     return { *m_positionNode, m_positionOffsetBaseNode, static_cast<unsigned>(m_positionStartOffset), static_cast<unsigned>(m_positionEndOffset) };
 }
 
+static unsigned nodeIndexResolutionCount;
+
+unsigned TextIterator::nodeIndexResolutionCountForTesting()
+{
+    return nodeIndexResolutionCount;
+}
+
 SimpleRange TextIterator::range() const
 {
     ASSERT(!atEnd());
     // Use the current run information, if we have it.
     if (m_positionOffsetBaseNode) {
+        ++nodeIndexResolutionCount;
         unsigned index = m_positionOffsetBaseNode->computeNodeIndex();
         m_positionStartOffset += index;
         m_positionEndOffset += index;
