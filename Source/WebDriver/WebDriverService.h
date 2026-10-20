@@ -32,6 +32,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
@@ -166,25 +167,28 @@ private:
     void flushRequestQueueWithResult(CommandResult&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    bool acceptHandshake(HTTPRequestHandler::Request&&) override;
+    WebSocketHandshakeResult acceptHandshake(WebSocketHandshakeRequest&&) override;
+    bool isHostAllowed(const String&) const;
     void handleMessage(WebSocketMessageHandler::Message&&, Function<void (WebSocketMessageHandler::Message&&)>&& replyHandler) override;
     void clientDisconnected(const WebSocketMessageHandler::Connection&) override;
 
     void onBrowserTerminated(const String& sessionId);
 
-    typedef void (WebDriverService::*BidiCommandHandler)(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
-    struct BidiCommand {
+    typedef void (WebDriverService::*StaticBidiCommandHandler)(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
+    struct StaticBidiCommand {
         String method;
-        BidiCommandHandler handler;
+        StaticBidiCommandHandler handler;
     };
-    static const BidiCommand s_bidiCommands[];
-    static bool findBidiCommand(const RefPtr<JSON::Object>&, BidiCommandHandler*, RefPtr<JSON::Object>& parsedParams);
+    static const StaticBidiCommand s_staticBidiCommands[];
+    static const StaticBidiCommand* findStaticBidiCommand(const String& method);
 #endif // ENABLE(WEBDRIVER_BIDI)
 
     HTTPServer m_server;
 #if ENABLE(WEBDRIVER_BIDI)
     const Ref<WebSocketServer> m_bidiServer;
     const Ref<SessionHost::BrowserTerminatedObserver> m_browserTerminatedObserver;
+    HashSet<String> m_allowedOrigins;
+    HashSet<String> m_allowedOriginHosts;
 #endif
     RefPtr<Session> m_session;
 

@@ -61,26 +61,8 @@ static bool soupServerListen(SoupServer* server, const String& host, unsigned po
     return soup_server_listen(server, address.get(), options, error);
 }
 
-static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer userData)
+static void sendHandshakeErrorResponse(SoupServerMessage* message, HTTPRequestHandler::Response&& errorResponse)
 {
-    if (!soup_websocket_server_check_handshake(message, nullptr, nullptr, nullptr, nullptr)) {
-        soup_server_message_set_status(message, 500, "Invalid request");
-        return;
-    }
-    GRefPtr<SoupServerMessage> protectedMessage = message;
-    auto* requestBody = soup_server_message_get_request_body(message);
-    HTTPRequestHandler::Request handshakeMessage = {
-        String::fromUTF8(soup_server_message_get_method(message)),
-        String::fromUTF8(path),
-        requestBody->data,
-        static_cast<size_t>(requestBody->length)
-    };
-
-    auto* webSocketServer = static_cast<WebSocketServer*>(userData);
-    if (webSocketServer->messageHandler().acceptHandshake(WTF::move(handshakeMessage))) // Follow with handshake procedure
-        return;
-
-    HTTPRequestHandler::Response errorResponse = { 503, "Service Unavailable"_s, "text/plain"_s };
     RELEASE_LOG(WebDriverBiDi, "Error during handshake, sending error response: %s", errorResponse.data);
     soup_server_message_set_status(message, errorResponse.statusCode, nullptr);
     auto* responseHeaders = soup_server_message_get_response_headers(message);
@@ -88,6 +70,42 @@ static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, con
     soup_message_headers_append(responseHeaders, "Cache-Control", "no-cache");
     auto* responseBody = soup_server_message_get_response_body(message);
     soup_message_body_append(responseBody, SOUP_MEMORY_COPY, errorResponse.data.data(), errorResponse.data.length());
+}
+
+static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer userData)
+{
+    if (!soup_websocket_server_check_handshake(message, nullptr, nullptr, nullptr, nullptr)) {
+        sendHandshakeErrorResponse(message, { 400, "Bad Request"_s, "text/plain"_s });
+        return;
+    }
+    GRefPtr<SoupServerMessage> protectedMessage = message;
+    auto* requestHeaders = soup_server_message_get_request_headers(message);
+    auto* hostHeader = soup_message_headers_get_one(requestHeaders, "Host");
+    auto* requestURI = soup_server_message_get_uri(message);
+    GUniquePtr<char> effectiveRequestURI(requestURI ? g_uri_to_string(requestURI) : nullptr);
+    std::optional<String> origin;
+    if (auto* originHeader = soup_message_headers_get_one(requestHeaders, "Origin"))
+        origin = String::fromLatin1(originHeader);
+    WebSocketHandshakeRequest handshakeRequest = {
+        String::fromUTF8(path),
+        hostHeader ? String::fromLatin1(hostHeader) : nullString(),
+        WTF::move(origin),
+        effectiveRequestURI ? String::fromUTF8(effectiveRequestURI.get()) : nullString(),
+    };
+
+    auto* webSocketServer = static_cast<WebSocketServer*>(userData);
+    auto handshakeResult = webSocketServer->messageHandler().acceptHandshake(WTF::move(handshakeRequest));
+    switch (handshakeResult) {
+    case WebSocketHandshakeResult::Accepted:
+        // Follow with handshake procedure.
+        return;
+    case WebSocketHandshakeResult::Forbidden:
+        sendHandshakeErrorResponse(message, { 403, "Forbidden"_s, "text/plain"_s });
+        return;
+    case WebSocketHandshakeResult::InvalidResource:
+        sendHandshakeErrorResponse(message, { 503, "Service Unavailable"_s, "text/plain"_s });
+        return;
+    }
 }
 
 static void handleWebSocketMessage(SoupWebsocketConnection* connection, SoupWebsocketDataType messageType, GBytes* message, gpointer userData)
