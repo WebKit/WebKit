@@ -131,6 +131,7 @@ private:
     void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
     void reloadFrame(WebCore::FrameIdentifier, OptionSet<WebCore::ReloadOption>);
+    void rectForBidiScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, bool documentOrigin, std::optional<WebCore::FloatRect>&& clip, std::optional<double>&& maxWidth, std::optional<double>&& maxHeight, CompletionHandler<void(std::optional<String>, WebCore::IntRect&&, WebCore::IntSize&&)>&&);
 #endif
 
     String m_sessionIdentifier;
