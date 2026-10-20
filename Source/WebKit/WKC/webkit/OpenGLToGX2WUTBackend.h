@@ -36,6 +36,21 @@ struct WUTBackendContext {
     BlendEquation blendEquationRGB { BlendEquation::Add };
     BlendEquation blendEquationAlpha { BlendEquation::Add };
     ColorMask colorMask;
+    bool stencilEnabled { false };
+    CompareFunction frontStencilFunction { CompareFunction::Always };
+    CompareFunction backStencilFunction { CompareFunction::Always };
+    int32_t frontStencilReference { 0 };
+    int32_t backStencilReference { 0 };
+    uint32_t frontStencilCompareMask { 0xff };
+    uint32_t backStencilCompareMask { 0xff };
+    uint32_t frontStencilWriteMask { 0xff };
+    uint32_t backStencilWriteMask { 0xff };
+    StencilOperation frontStencilFail { StencilOperation::Keep };
+    StencilOperation frontDepthFail { StencilOperation::Keep };
+    StencilOperation frontDepthPass { StencilOperation::Keep };
+    StencilOperation backStencilFail { StencilOperation::Keep };
+    StencilOperation backDepthFail { StencilOperation::Keep };
+    StencilOperation backDepthPass { StencilOperation::Keep };
 };
 
 Backend makeWUTBackend(WUTBackendContext&);
