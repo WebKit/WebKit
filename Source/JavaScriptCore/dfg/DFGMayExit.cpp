@@ -438,6 +438,8 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         case Array::Float16Array:
         case Array::Float32Array:
         case Array::Float64Array:
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
             break;
         default:
             return Exits;

@@ -5434,6 +5434,66 @@ private:
             return;
         }
 
+        if (isBigInt(type)) {
+            LValue base = lowCell(baseEdge);
+            LValue index = lowInt32(indexEdge);
+            LValue operandBits[maxNumExtraAtomicsArgs] { };
+            LValue operandCells[maxNumExtraAtomicsArgs] { };
+            for (unsigned i = 0; i < numExtraArgs; ++i) {
+                operandCells[i] = lowHeapBigInt(argEdges[i]);
+                operandBits[i] = toBigInt64(operandCells[i]);
+            }
+            LValue storage = lowStorage(storageEdge);
+            TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
+            Width width = widthForBytes(elementSize(type));
+
+            LValue atomicValue = nullptr;
+            switch (m_node->op()) {
+            case AtomicsAdd:
+                atomicValue = m_out.atomicXchgAdd(operandBits[0], pointer, width);
+                break;
+            case AtomicsAnd:
+                atomicValue = m_out.atomicXchgAnd(operandBits[0], pointer, width);
+                break;
+            case AtomicsCompareExchange:
+                atomicValue = m_out.atomicStrongCAS(operandBits[0], operandBits[1], pointer, width);
+                break;
+            case AtomicsExchange:
+                atomicValue = m_out.atomicXchg(operandBits[0], pointer, width);
+                break;
+            case AtomicsLoad:
+                atomicValue = m_out.atomicXchgAdd(m_out.int64Zero, pointer, width);
+                break;
+            case AtomicsOr:
+                atomicValue = m_out.atomicXchgOr(operandBits[0], pointer, width);
+                break;
+            case AtomicsStore:
+                atomicValue = m_out.atomicXchg(operandBits[0], pointer, width);
+                break;
+            case AtomicsSub:
+                atomicValue = m_out.atomicXchgSub(operandBits[0], pointer, width);
+                break;
+            case AtomicsXor:
+                atomicValue = m_out.atomicXchgXor(operandBits[0], pointer, width);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            m_heaps.decorateFencedAccess(&m_heaps.TypedArrayProperties, atomicValue);
+
+            if (m_node->op() == AtomicsStore) {
+                ensureStillAliveHere(base);
+                setJSValue(operandCells[0]);
+                return;
+            }
+
+            LValue result = allocateHeapBigInt64(atomicValue, isSigned(type));
+            ensureStillAliveHere(base);
+            setJSValue(result);
+            return;
+        }
+
         LValue index = lowInt32(indexEdge);
         LValue args[2];
         for (unsigned i = numExtraArgs; i--;)
@@ -6643,8 +6703,6 @@ IGNORE_CLANG_WARNINGS_END
             return m_out.phi(Int64, namedResult, overflowResult);
         }
 
-        case Array::BigInt64Array:
-        case Array::BigUint64Array:
         case Array::Generic: {
             if (m_graph.m_slowGetByVal.contains(m_node)) {
                 if (m_graph.varArgChild(m_node, 0).useKind() == ObjectUse) {
@@ -6894,6 +6952,44 @@ IGNORE_CLANG_WARNINGS_END
                 ensureStillAliveHere(base);
                 return result;
             }
+        }
+
+        case Array::BigInt64Array:
+        case Array::BigUint64Array: {
+            LValue base = lowCell(m_graph.varArgChild(m_node, 0));
+            LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
+            LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
+            TypedArrayType type = arrayMode.typedArrayType();
+            TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
+
+            auto loadAndBox = [&] -> LValue {
+                return allocateHeapBigInt64(m_out.load64(pointer), isSigned(type));
+            };
+
+            if (arrayMode.isOutOfBounds()) {
+                LBasicBlock fastCase = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
+
+                ValueFromBlock slowResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined())));
+                LValue length = typedArrayLength(base, arrayMode.mayBeResizableOrGrowableSharedTypedArray(), std::optional { type }, m_graph.varArgChild(m_node, 0));
+#if USE(LARGE_TYPED_ARRAYS)
+                m_out.branch(m_out.aboveOrEqual(m_out.signExt32To64(index), length), rarely(continuation), usually(fastCase));
+#else
+                m_out.branch(m_out.aboveOrEqual(index, length), rarely(continuation), usually(fastCase));
+#endif
+
+                LBasicBlock lastNext = m_out.appendTo(fastCase, continuation);
+                ValueFromBlock fastResult = m_out.anchor(loadAndBox());
+                ensureStillAliveHere(base);
+                m_out.jump(continuation);
+
+                m_out.appendTo(continuation, lastNext);
+                return m_out.phi(Int64, fastResult, slowResult);
+            }
+
+            LValue result = loadAndBox();
+            ensureStillAliveHere(base);
+            return result;
         }
 
         case Array::AnyTypedArray:
@@ -7336,8 +7432,6 @@ IGNORE_CLANG_WARNINGS_END
 
         ArrayMode arrayMode = m_node->arrayMode().modeForPut();
         switch (arrayMode.type()) {
-        case Array::BigInt64Array:
-        case Array::BigUint64Array:
         case Array::Generic: {
             if (m_graph.m_slowPutByVal.contains(m_node) || (child1.useKind() != CellUse && child1.useKind() != KnownCellUse)) {
                 if (child1.useKind() == CellUse || child1.useKind() == KnownCellUse) {
@@ -7738,6 +7832,44 @@ IGNORE_CLANG_WARNINGS_END
             }
         }
 
+        case Array::BigInt64Array:
+        case Array::BigUint64Array: {
+            TypedArrayType type = arrayMode.typedArrayType();
+            TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
+            LValue value = toBigInt64(lowHeapBigInt(child3));
+
+            if (arrayMode.isInBounds() || m_node->op() == PutByValDirectResolved)
+                m_out.store64(value, pointer);
+            else {
+                LValue isOutOfBoundsCondition;
+                if (child5.useKind() == Int52RepUse) {
+                    RELEASE_ASSERT(sizeof(size_t) == sizeof(uint64_t));
+                    isOutOfBoundsCondition = m_out.aboveOrEqual(m_out.signExt32To64(index), lowStrictInt52(child5));
+                } else {
+                    DFG_ASSERT(m_graph, m_node, child5.useKind() == KnownInt32Use, child5.useKind());
+                    isOutOfBoundsCondition = m_out.aboveOrEqual(index, lowInt32(child5));
+                }
+                if (m_node->op() == PutByValDirect) {
+                    speculate(Uncountable, noValue(), nullptr, isOutOfBoundsCondition);
+                    m_out.store64(value, pointer);
+                } else {
+                    LBasicBlock isInBounds = m_out.newBlock();
+                    LBasicBlock continuation = m_out.newBlock();
+
+                    m_out.branch(isOutOfBoundsCondition, rarely(continuation), usually(isInBounds));
+
+                    LBasicBlock lastNext = m_out.appendTo(isInBounds, continuation);
+                    m_out.store64(value, pointer);
+                    m_out.jump(continuation);
+
+                    m_out.appendTo(continuation, lastNext);
+                }
+            }
+
+            ensureStillAliveHere(base);
+            return;
+        }
+
         case Array::AnyTypedArray:
         case Array::String:
         case Array::DirectArguments:
@@ -7748,8 +7880,6 @@ IGNORE_CLANG_WARNINGS_END
         case Array::SelectUsingPredictions:
         case Array::Undecided:
         case Array::Unprofiled:
-        case Array::BigInt64Array:
-        case Array::BigUint64Array:
             DFG_CRASH(m_graph, m_node, "Bad array type"_s);
             break;
         }
