@@ -148,11 +148,13 @@ AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, const String& name
         addOutput(options.outputChannelCount ? options.outputChannelCount->at(i): 1);
 
     initialize();
+    context.audioWorklet().addNode(*this);
 }
 
 AudioWorkletNode::~AudioWorkletNode()
 {
     ASSERT(isMainThread());
+    protect(context().audioWorklet())->removeNode(*this);
     {
         Locker locker { m_processLock };
         if (m_processor) {
@@ -191,6 +193,13 @@ void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescript
 
     for (auto& parameterName : m_parameters->map().keys())
         m_paramValuesMap.add(parameterName, makeUnique<AudioFloatArray>(AudioUtilities::renderQuantumSize));
+}
+
+RefPtr<AudioWorkletProcessor> AudioWorkletNode::releaseProcessorForThreadShutdown()
+{
+    ASSERT(isMainThread());
+    Locker locker { m_processLock };
+    return std::exchange(m_processor, nullptr);
 }
 
 void AudioWorkletNode::setProcessor(RefPtr<AudioWorkletProcessor>&& processor)
