@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+test(() => {
+    assert_equals(document.activeElement, document.body, "body when nothing is focused");
+    document.body.remove();
+    assert_equals(document.activeElement, null, "null when HTML document has no body");
+}, "document.activeElement is null for an HTML document without a body");
+
+test(() => {
+    let doc = document.implementation.createDocument("http://www.w3.org/2000/svg", "svg");
+    assert_equals(doc.activeElement, doc.documentElement, "document element for SVG document");
+}, "document.activeElement is the document element for a non-HTML document");
+</script>
+</body>
+</html>

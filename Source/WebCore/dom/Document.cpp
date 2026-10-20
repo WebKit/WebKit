@@ -10573,8 +10573,8 @@ Element* Document::activeElement()
 {
     if (Element* element = treeScope().focusedElementInScope())
         return element;
-    if (Element* body = bodyOrFrameset())
-        return body;
+    if (isHTMLDocument() || isXHTMLDocument())
+        return bodyOrFrameset();
     return documentElement();
 }
 

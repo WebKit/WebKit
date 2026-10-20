@@ -1,0 +1,4 @@
+
+PASS document.activeElement is null for an HTML document without a body
+PASS document.activeElement is the document element for a non-HTML document
+
