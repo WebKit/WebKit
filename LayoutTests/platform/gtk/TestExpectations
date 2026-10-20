@@ -364,7 +364,7 @@ webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 
 webkit.org/b/152642 http/tests/misc/detached-frame-console.html [ Failure ]
 
-webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure Crash ]
+webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 # Tests crashing due to failing assertions
 
@@ -691,7 +691,7 @@ webkit.org/b/157179 fast/events/drag-image-with-border-image.html [ Failure ]
 webkit.org/b/157179 fast/events/drag-parent-node.html [ Failure ]
 webkit.org/b/157179 fast/events/dropzone-002.html [ Failure ]
 webkit.org/b/157179 fast/events/dropzone-005.html [ Failure ]
-webkit.org/b/157179 fast/events/input-events-drag-and-drop.html [ Crash Failure ]
+webkit.org/b/157179 fast/events/input-events-drag-and-drop.html [ Failure ]
 webkit.org/b/157179 fast/events/input-events-insert-by-drop.html [ Failure ]
 webkit.org/b/157179 fast/events/ondrop-text-html.html [ Failure ]
 webkit.org/b/157179 fast/events/standalone-image-drag-to-editable.html [ Failure Timeout ]
@@ -880,7 +880,7 @@ webkit.org/b/201260 http/wpt/service-workers/server-trust-evaluation.https.html 
 
 webkit.org/b/99036 pointer-lock/locked-element-iframe-removed-from-dom.html [ Failure ]
 # webkit.org/b/99036 pointer-lock/pointerlockchange-pointerlockerror-events.html [ Failure ]
-webkit.org/b/304279 pointer-lock/pointerlockchange-pointerlockerror-events.html [ Failure Crash ]
+webkit.org/b/304279 pointer-lock/pointerlockchange-pointerlockerror-events.html [ Failure ]
 
 webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-perspective.html [ ImageOnlyFailure ]
 

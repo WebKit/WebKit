@@ -1852,7 +1852,7 @@ webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
 webkit.org/b/306457 [ Release ] http/wpt/mediarecorder/MediaRecorder-audio-bitrate-webm.html [ Failure Pass ]
-webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Crash Timeout Failure ]
+webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-first-frame.html [ Failure Pass ]
 
 webkit.org/b/323054 http/wpt/mediarecorder/MediaRecorder-single-frame-timeslice.html [ Skip ]
@@ -3019,7 +3019,7 @@ webkit.org/b/308371 imported/w3c/web-platform-tests/webrtc/simulcast/basic.https
 
 # RTP sender de-activation is not working as expected due to internal queues in rtpbin. The valve we
 # use in our RTPPacketizer is not sufficient, we would need it to be further downstream.
-imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Failure Crash ]
+imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Failure ]
 
 # For simulcast outbound streams webrtcbin currently returns the stats for the merged stream.
 # Instead it should create one outbound-rtp stat structure per configured rid.
@@ -3120,7 +3120,7 @@ webkit.org/b/211692 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.
 webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.html [ Failure ]
 webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.worker.html [ Failure ]
 
-webkit.org/b/214029 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure Crash ]
+webkit.org/b/214029 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
 
 webkit.org/b/214125 imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional.html [ Failure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ ImageOnlyFailure ]
@@ -3460,7 +3460,7 @@ http/tests/media/audio-session-category-cross-site-pause-resume.html [ Skip ]
 media/unsupported-rtsp.html [ WontFix Skip ]
 
 # This test is specific to QuickTime media engine.
-media/video-does-not-loop.html [ WontFix Timeout Crash ]
+media/video-does-not-loop.html [ WontFix Timeout ]
 
 # No support for MPEG-4 caption support
 webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure ]
@@ -5092,12 +5092,6 @@ webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/backface-
 webkit.org/b/227061 imported/w3c/web-platform-tests/css/css-ui/outline-negative-offset-composited-scroll.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-for-repeat-key-ending-after-scroll-container-end-is-reached.html [ Failure ] # Different outputs
-
-# Assertion failure since 317783@main -- see webkit.org/b/320000. Crashes on assert-enabled builds; image-fails without assertions.
-webkit.org/b/320212 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/intrinsic-auto-repeat/row-auto-repeat-auto-014.html [ Crash ImageOnlyFailure ]
-webkit.org/b/320212 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/intrinsic-auto-repeat/row-auto-repeat-auto-019.html [ Crash ImageOnlyFailure ]
-webkit.org/b/320212 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/row-auto-repeat-015.html [ Crash ImageOnlyFailure ]
-webkit.org/b/320212 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/row-auto-repeat-021.html [ Crash ImageOnlyFailure ]
 
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html [ ImageOnlyFailure ]
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html [ ImageOnlyFailure ]
