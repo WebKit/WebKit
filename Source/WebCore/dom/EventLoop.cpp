@@ -466,7 +466,7 @@ void EventLoopTaskGroup::markAsReadyToStop()
 
     for (Ref timer : m_timers)
         timer->stop();
-    if (RefPtr eventLoop = m_eventLoop.get())
+    if (auto* eventLoop = m_eventLoop.get())
         eventLoop->invalidateNextTimerFireTimeCache();
 
     if (wasSuspended && !isStoppedPermanently()) {

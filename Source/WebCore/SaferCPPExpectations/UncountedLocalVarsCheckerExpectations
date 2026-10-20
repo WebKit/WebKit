@@ -3,7 +3,6 @@ rendering/RenderCounter.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerCompositor.cpp
 style/ElementRuleCollector.cpp
-style/StyleBuilderCustom.h
 style/StyleDocumentScope.cpp
 style/StyleInvalidationFunctions.h
 style/UserAgentStyle.cpp

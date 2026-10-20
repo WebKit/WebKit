@@ -806,7 +806,7 @@ ExceptionOr<void> Node::normalize()
 Ref<Node> Node::cloneNode(CloneSubtree subtree) const
 {
     ASSERT(!isShadowRoot());
-    RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*this, protect(treeScope()));
+    RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*this, treeScope());
     return cloneNodeInternal(protect(document()), subtree == CloneSubtree::Yes ? CloningOperation::Everything : CloningOperation::SelfOnly, registry.get());
 }
 
@@ -1516,7 +1516,7 @@ void Node::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemo
     updateShadowIncludingRoot();
 
     if (removalType.disconnectedFromDocument) {
-        if (CheckedPtr cache = protect(oldParentOfRemovedTree.document())->existingAXObjectCache())
+        if (CheckedPtr cache = oldParentOfRemovedTree.document().existingAXObjectCache())
             cache->remove(*this);
     }
 }
@@ -2308,7 +2308,7 @@ void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDoc
     if (usesNullCustomElementRegistry() && !newDocument.usesNullCustomElementRegistry()) [[unlikely]]
         clearUsesNullCustomElementRegistry();
 
-    if (RefPtr newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]
+    if (auto* newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]
         adoptCustomElementRegistryIntoScopedRegistryDocument();
 
     if (!hasTypeFlag(TypeFlag::HasDidMoveToNewDocument) && !hasEventTargetFlag(EventTargetFlag::HasLangAttr) && !hasEventTargetFlag(EventTargetFlag::HasXMLLangAttr)
@@ -2329,7 +2329,7 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
     if (usesNullCustomElementRegistry() && !newDocument.usesNullCustomElementRegistry()) [[unlikely]]
         clearUsesNullCustomElementRegistry();
 
-    if (RefPtr newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]
+    if (auto* newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]
         adoptCustomElementRegistryIntoScopedRegistryDocument();
 
     if (hasRareData()) {

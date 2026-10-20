@@ -938,7 +938,7 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&
         auto shouldSkip = [&] {
             if (descendant->nonPseudoNode())
                 return false;
-            CheckedPtr renderElement = dynamicDowncast<RenderElement>(*descendant);
+            auto* renderElement = dynamicDowncast<RenderElement>(*descendant);
             return !renderElement || !renderElement->isFirstLetter();
         };
         if (shouldSkip())
@@ -1650,8 +1650,8 @@ TextStream& operator<<(TextStream& ts, const Position& position)
 
 Node* commonInclusiveAncestor(const Position& a, const Position& b)
 {
-    RefPtr nodeA = a.containerNode();
-    RefPtr nodeB = b.containerNode();
+    auto* nodeA = a.containerNode();
+    auto* nodeB = b.containerNode();
     if (!nodeA || !nodeB)
         return nullptr;
     return commonInclusiveAncestor<ComposedTree>(*nodeA, *nodeB);
@@ -1708,7 +1708,7 @@ template<TreeType treeType> std::partial_ordering treeOrder(const Position& a, c
     RefPtr bContainer = b.containerNode();
 
     if (!aContainer || !bContainer) {
-        if (!commonInclusiveAncestor<treeType>(*protect(a.anchorNode()), *protect(b.anchorNode())))
+        if (!commonInclusiveAncestor<treeType>(*a.anchorNode(), *b.anchorNode()))
             return std::partial_ordering::unordered;
         if (!aContainer && !bContainer && a.anchorType() == b.anchorType())
             return std::partial_ordering::equivalent;

@@ -135,7 +135,7 @@ Node::NeedsPostConnectionSteps ShadowRoot::insertionSteps(InsertionType insertio
 {
     DocumentFragment::insertionSteps(insertionType, parentOfInsertedTree);
     if (!m_hasScopedCustomElementRegistry && usesNullCustomElementRegistry() && !parentOfInsertedTree.usesNullCustomElementRegistry()) {
-        if (RefPtr registry = CustomElementRegistry::registryForElement(protect(*host()))) {
+        if (RefPtr registry = CustomElementRegistry::registryForElement(*host())) {
             clearUsesNullCustomElementRegistry();
             setCustomElementRegistry(WTF::move(registry));
         }
@@ -492,7 +492,7 @@ void ShadowRoot::setReferenceTarget(const AtomString& referenceTarget)
 
     m_referenceTarget = referenceTarget;
 
-    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->handleReferenceTargetChanged();
 }
 

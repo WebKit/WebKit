@@ -310,7 +310,7 @@ template<typename OutputType>
 static inline void elementsForLocalName(const ContainerNode& rootNode, const AtomString& localName, const AtomString& lowercaseLocalName, OutputType& output)
 {
     if (auto* rootDocument = dynamicDowncast<Document>(rootNode); rootDocument && lowercaseLocalName == HTMLNames::baseTag->localName()) {
-        RefPtr firstBaseElement = rootDocument->firstBaseElement();
+        auto* firstBaseElement = rootDocument->firstBaseElement();
         if (!firstBaseElement)
             return;
         if constexpr (std::is_same_v<OutputType, Element*>) {

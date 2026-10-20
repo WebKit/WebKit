@@ -87,7 +87,7 @@ DocumentFullscreen::DocumentFullscreen(Document& document)
 
 Element* DocumentFullscreen::fullscreenElement() const
 {
-    for (Ref element : document().topLayerElements() | std::views::reverse) {
+    for (auto& element : document().topLayerElements() | std::views::reverse) {
         if (element->hasFullscreenFlag())
             return element.unsafePtr();
     }
@@ -138,7 +138,7 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
 {
     auto identifier = LOGIDENTIFIER;
 
-    if (protect(document())->quirks().shouldEnterNativeFullscreenWhenCallingElementRequestFullscreenQuirk()) {
+    if (document().quirks().shouldEnterNativeFullscreenWhenCallingElementRequestFullscreenQuirk()) {
         // Translate the request to enter fullscreen into requesting native fullscreen
         // for the last inner video element with a non-zero area.
         auto maybeVideoList = element->querySelectorAll("video"_s);

@@ -492,7 +492,7 @@ static void markSourceAsPrevalentDomainTaintedIfNeeded(Document& document, const
     if (!script || !script->response().isFromPrevalentDomain())
         return;
 
-    if (RegistrableDomain { script->response().url() }.matches(protect(document.topOrigin())->data()))
+    if (RegistrableDomain { script->response().url() }.matches(document.topOrigin().data()))
         return;
 
     JSC::markSourceAsPrevalentDomainTainted(document.vm(), sourceCode.provider());

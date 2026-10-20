@@ -219,7 +219,7 @@ void RadioButtonGroups::addButton(HTMLInputElement& element)
         group = makeUnique<RadioButtonGroup>();
     group->add(element);
 
-    if (CheckedPtr cache = protect(element.document())->existingAXObjectCache())
+    if (CheckedPtr cache = element.document().existingAXObjectCache())
         cache->onRadioGroupMembershipChanged(element);
 }
 
@@ -296,7 +296,7 @@ void RadioButtonGroups::removeButton(HTMLInputElement& element)
     if (it->value->isEmpty())
         m_nameToGroupMap.remove(it);
 
-    if (CheckedPtr cache = protect(element.document())->existingAXObjectCache())
+    if (CheckedPtr cache = element.document().existingAXObjectCache())
         cache->onRadioGroupMembershipChanged(element);
 }
 

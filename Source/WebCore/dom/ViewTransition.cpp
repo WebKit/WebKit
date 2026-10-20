@@ -480,7 +480,7 @@ LayoutRect ViewTransition::captureOverflowRect(RenderLayerModelObject& renderer)
 
     CheckedPtr layer = renderer.layer();
     auto bounds = layer->calculateLayerBounds(layer, LayoutSize(), { RenderLayer::IncludeFilterOutsets, RenderLayer::ExcludeHiddenDescendants, RenderLayer::IncludeCompositedDescendants, RenderLayer::PreserveAncestorFlags, RenderLayer::ExcludeViewTransitionCapturedDescendants });
-    return LayoutRect(encloseRectToDevicePixels(bounds, protect(renderer.document())->deviceScaleFactor()));
+    return LayoutRect(encloseRectToDevicePixels(bounds, renderer.document().deviceScaleFactor()));
 }
 
 // The computed local-to-absolute transform, and layer bounds don't include the position
@@ -1007,7 +1007,7 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
             output.subpixelOffset = { };
         } else {
             transform.translate(transformState.accumulatedOffset().width(), transformState.accumulatedOffset().height());
-            output.subpixelOffset = snapTransformationTranslationToDevicePixels(transform, protect(renderer.document())->deviceScaleFactor());
+            output.subpixelOffset = snapTransformationTranslationToDevicePixels(transform, renderer.document().deviceScaleFactor());
         }
 
         output.layerToLayoutOffset = layerToLayoutOffset(renderer);

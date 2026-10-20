@@ -94,7 +94,7 @@ Range::~Range()
 
 Node* Range::commonAncestorContainer() const
 {
-    return commonInclusiveAncestor(protect(startContainer()), protect(endContainer()));
+    return commonInclusiveAncestor(startContainer(), endContainer());
 }
 
 void Range::updateAssociatedSelection()

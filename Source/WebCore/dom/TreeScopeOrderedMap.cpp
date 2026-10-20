@@ -115,23 +115,23 @@ inline RefPtr<Element> TreeScopeOrderedMap::get(const AtomString& key, const Tre
     MapEntry& entry = it->value;
     ASSERT(entry.count);
     if (entry.element) {
-        Ref element = *entry.element;
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&element->treeScope() == &scope);
-        ASSERT_WITH_SECURITY_IMPLICATION(entry.registeredElements.contains(element.ptr()));
-        return element;
+        auto& element = *entry.element;
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&element.treeScope() == &scope);
+        ASSERT_WITH_SECURITY_IMPLICATION(entry.registeredElements.contains(&element));
+        return &element;
     }
 
     // We know there's at least one node that matches; iterate to find the first one.
-    Ref rootNode = scope.rootNode();
-    for (Ref<Element> element : descendantsOfType<Element>(rootNode.get())) {
-        if (!element->isInTreeScope())
+    auto& rootNode = scope.rootNode();
+    for (auto& element : descendantsOfType<Element>(rootNode)) {
+        if (!element.isInTreeScope())
             continue;
         if (!keyMatches(key, element))
             continue;
-        entry.element = element.ptr();
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&element->treeScope() == &scope);
+        entry.element = &element;
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&element.treeScope() == &scope);
         ASSERT_WITH_SECURITY_IMPLICATION(entry.registeredElements.contains(entry.element.get()));
-        return element;
+        return &element;
     }
 
 #if ASSERT_ENABLED

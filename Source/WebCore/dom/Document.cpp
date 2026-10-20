@@ -578,7 +578,7 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
     const bool isLocalActiveOrigin = activeSecurityOrigin.isLocal();
     for (Ref ancestor : inclusiveAncestorFrames(*targetFrame)) {
         // FIXME: Should be an ASSERT? Frames should alway have documents.
-        if (RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor); localAncestor && !localAncestor->document())
+        if (auto* localAncestor = dynamicDowncast<LocalFrame>(ancestor); localAncestor && !localAncestor->document())
             return true;
 
         // Same-origin documents can be in different processes, such as when only one of them has a Document-Isolation-Policy.
@@ -3738,7 +3738,7 @@ void Document::destroyRenderTree()
 
     m_textAutoSizing = nullptr;
 
-    if (RefPtr view = this->view())
+    if (auto* view = this->view())
         view->didDestroyRenderTree();
 }
 
@@ -4283,7 +4283,7 @@ bool Document::isFullyActive() const
     // RemoteFrame ancestor lives in another process, but if it became parentless without
     // being the main frame, its iframe was removed there and the chain was severed.
     for (Ref ancestor : ancestorFrames(*frame)) {
-        if (RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor.get())) {
+        if (auto* localAncestor = dynamicDowncast<LocalFrame>(ancestor)) {
             if (!localAncestor->document() || localAncestor->document()->frame() != localAncestor)
                 return false;
         }
@@ -4815,7 +4815,7 @@ Seconds Document::domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) cons
     if (m_isTimerThrottlingEnabled)
         alignmentInterval = std::max(alignmentInterval, DOMTimer::hiddenPageAlignmentInterval());
 
-    if (RefPtr page = this->page())
+    if (auto* page = this->page())
         alignmentInterval = std::max(alignmentInterval, page->domTimerAlignmentInterval());
 
     if (!protect(topOrigin())->isSameOriginDomain(protect(securityOrigin())) && !hasHadUserInteraction())
@@ -5596,7 +5596,7 @@ void Document::processViewport(const String& features, ViewportArguments::Type o
 
 ViewportArguments Document::viewportArguments() const
 {
-    RefPtr page = this->page();
+    auto* page = this->page();
     if (!page)
         return m_viewportArguments;
     return page->overrideViewportArguments() ? *page->overrideViewportArguments() : m_viewportArguments;
@@ -6140,8 +6140,8 @@ void Document::addPendingScrollEventTarget(ContainerNode& originalTarget, Scroll
 
     Ref target = [&] -> Ref<ContainerNode> {
         if (RefPtr element = dynamicDowncast<HTMLElement>(originalTarget); element && element->isTextControlInnerTextElement()) {
-            if (RefPtr shadowHost = element->shadowHost())
-                return shadowHost.releaseNonNull();
+            if (auto* shadowHost = element->shadowHost())
+                return *shadowHost;
         }
         return originalTarget;
     }();
@@ -6663,7 +6663,7 @@ void Document::flushAutofocusCandidates()
         m_autofocusCandidates.removeFirst();
 
         bool hasAncestorWithCSSTarget = [&] {
-            for (CheckedPtr document = &element->document(); document && document != this; document = document->parentDocument()) {
+            for (auto* document = &element->document(); document && document != this; document = document->parentDocument()) {
                 if (document->cssTarget())
                     return true;
             }
@@ -7020,9 +7020,9 @@ Element* Document::focusNavigationStartingNode(FocusDirection direction) const
     // Current behaivor is to move the sequential navigation node to / after (based on the focus direction)
     // the previous sibling of the removed node.
     if (m_focusNavigationStartingNodeIsRemoved) {
-        RefPtr nextNode = NodeTraversal::next(*node);
+        auto* nextNode = NodeTraversal::next(*node);
         if (!nextNode)
-            nextNode = WTF::move(node);
+            nextNode = node.get();
         if (direction == FocusDirection::Forward)
             return ElementTraversal::previous(*nextNode);
         if (auto* nextElement = dynamicDowncast<Element>(*nextNode))
@@ -7128,7 +7128,7 @@ void Document::moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
 void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 {
     for (auto& range : m_ranges)
-        Ref { range.get() }->nodeChildrenChanged(container);
+        range->nodeChildrenChanged(container);
 }
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
@@ -7232,7 +7232,7 @@ void Document::adjustFocusNavigationNodeOnNodeRemoval(Node& node, NodeRemoval no
 
 void Document::textInserted(Node& text, unsigned offset, unsigned length)
 {
-    for (Ref range : m_ranges)
+    for (auto& range : m_ranges)
         range->textInserted(text, offset, length);
 
     if (!m_markers)
@@ -7249,7 +7249,7 @@ void Document::textInserted(Node& text, unsigned offset, unsigned length)
 
 void Document::textRemoved(Node& text, unsigned offset, unsigned length)
 {
-    for (Ref range : m_ranges)
+    for (auto& range : m_ranges)
         range->textRemoved(text, offset, length);
 
     if (!m_markers)
@@ -7354,9 +7354,9 @@ void Document::dispatchWindowLoadEvent()
 
     // A subframe that finished loading without ever being laid out was hidden (e.g. parent had
     // display:none); note that so the first layout can fire resize for the 0x0 to actual size change.
-    if (RefPtr frameView = view()) {
+    if (auto* frameView = view()) {
         if (!frameView->layoutContext().didFirstLayout()) {
-            if (RefPtr owner = ownerElement(); owner && !owner->renderer())
+            if (auto* owner = ownerElement(); owner && !owner->renderer())
                 frameView->setLoadedWhileHidden();
         }
     }
@@ -8775,7 +8775,7 @@ void Document::initSecurityContext()
         // but we're also sandboxed, the only thing we inherit is the ability
         // to load local resources. This lets about:blank iframes in file://
         // URL documents load images and other resources from the file system.
-        if (protect(ownerDocument->securityOrigin())->canLoadLocalResources())
+        if (ownerDocument->securityOrigin().canLoadLocalResources())
             securityOrigin().grantLoadLocalResources();
         return;
     }
@@ -9166,7 +9166,7 @@ void Document::resumeScheduledTasks(ReasonForSuspension reason)
 
 void Document::suspendScriptedAnimationControllerCallbacks()
 {
-    if (RefPtr scriptedAnimationController = m_scriptedAnimationController)
+    if (auto* scriptedAnimationController = m_scriptedAnimationController.get())
         scriptedAnimationController->suspend();
 }
 
@@ -9280,7 +9280,7 @@ void Document::reveal()
     // A navigation away from this document that will replace it is in progress, so this
     // document is being discarded before it was ever revealed. Do not reveal it (and do
     // not mark it revealed, so it can still reveal if the navigation is aborted).
-    if (RefPtr frame = this->frame(); frame && frame->loader().provisionalDocumentLoader())
+    if (auto* frame = this->frame(); frame && frame->loader().provisionalDocumentLoader())
         return;
 
     m_hasBeenRevealed = true;
@@ -9921,7 +9921,7 @@ void Document::updateLastHandledUserGestureTimestamp(MonotonicTime time)
 
 bool Document::mainFrameDocumentHasHadUserInteraction() const
 {
-    RefPtr page = this->page();
+    auto* page = this->page();
     return page && page->topDocumentHasHadUserInteraction();
 }
 
@@ -10006,7 +10006,7 @@ bool Document::allowsContentJavaScript() const
     if (!m_frame || m_frame->document() != this) {
         // If this Document is frameless or in the wrong frame, its context document
         // must allow for it to run content JavaScript.
-        RefPtr contextDocument = m_contextDocument;
+        auto* contextDocument = m_contextDocument.get();
         return !contextDocument || contextDocument->allowsContentJavaScript();
     }
 
@@ -10227,7 +10227,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     m_hoveredElement = newHoveredElement;
 
     auto isInForeignTopLayer = [](Element* candidate) {
-        for (RefPtr element = candidate; element; element = element->parentElementInComposedTree()) {
+        for (auto* element = candidate; element; element = element->parentElementInComposedTree()) {
             if (element->isInTopLayer())
                 return !element->isInActiveChain();
         }
@@ -11746,7 +11746,7 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
 
     // Find the showing hint popover (if any) that contains the pointer target.
     RefPtr<HTMLElement> clickedHintPopover;
-    if (RefPtr targetElement = dynamicDowncast<Element>(target))
+    if (auto* targetElement = dynamicDowncast<Element>(target))
         clickedHintPopover = nearestOpenHintAncestor(*targetElement);
     else if (RefPtr parent = target.parentElementInComposedTree())
         clickedHintPopover = nearestOpenHintAncestor(*parent);
@@ -12005,7 +12005,7 @@ const Style::ComputedStyle& Document::initialStyle() const
     if (!m_cachedInitialStyle) {
         float zoom = 1;
         float zoomForFontDescription = 1;
-        if (RefPtr frame = this->frame()) {
+        if (auto* frame = this->frame()) {
             zoom = !printing() ? frame->pageZoomFactor() : 1;
             zoomForFontDescription = zoom * frame->textZoomFactor();
         }
@@ -12406,7 +12406,7 @@ GraphicsClient* Document::graphicsClient()
 
 std::optional<PAL::SessionID> Document::sessionID() const
 {
-    if (RefPtr page = this->page())
+    if (auto* page = this->page())
         return page->sessionID();
 
     return std::nullopt;
@@ -12414,7 +12414,7 @@ std::optional<PAL::SessionID> Document::sessionID() const
 
 const NetworkLoadPolicy& Document::networkLoadPolicy() const
 {
-    if (RefPtr page = this->page())
+    if (auto* page = this->page())
         return page->networkLoadPolicy();
 
     return NetworkLoadPolicy::unrestricted();
@@ -12577,7 +12577,7 @@ ViewTransition* Document::activeViewTransition() const
 
 bool Document::activeViewTransitionCapturedDocumentElement() const
 {
-    if (RefPtr activeViewTransition = m_activeViewTransition)
+    if (auto* activeViewTransition = m_activeViewTransition.get())
         return activeViewTransition->documentElementIsCaptured();
     return false;
 }

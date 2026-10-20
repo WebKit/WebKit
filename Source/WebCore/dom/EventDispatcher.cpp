@@ -131,7 +131,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     if (!event.isTrusted())
         return false;
 
-    RefPtr localMainFrame = protect(node.document())->localMainFrame();
+    RefPtr localMainFrame = node.document().localMainFrame();
     if (!localMainFrame)
         return false;
 

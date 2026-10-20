@@ -96,7 +96,7 @@ OptionSet<ThrottlingReason> ScriptedAnimationController::throttlingReasons() con
 
 bool ScriptedAnimationController::isThrottledRelativeToPage() const
 {
-    if (RefPtr page = this->page())
+    if (auto* page = this->page())
         return preferredScriptedAnimationInterval() > page->preferredRenderingUpdateInterval();
     return false;
 }
@@ -180,7 +180,7 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedR
             continue;
 
         DOMWrapperWorld* world = nullptr;
-        if (RefPtr jsCallback = dynamicDowncast<JSRequestAnimationFrameCallback>(callback.get())) {
+        if (auto* jsCallback = dynamicDowncast<JSRequestAnimationFrameCallback>(callback)) {
             if (auto* globalObject = jsCallback->callbackData()->globalObject())
                 world = &globalObject->world();
         }

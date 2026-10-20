@@ -701,7 +701,7 @@ RejectedPromiseTracker* ScriptExecutionContext::ensureRejectedPromiseTrackerSlow
 
     ASSERT(!m_rejectedPromiseTracker);
     if (auto* globalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(*this)) {
-        CheckedPtr scriptController = globalScope->script();
+        auto* scriptController = globalScope->script();
         // Do not re-create the promise tracker if we are in a worker / worklet whose execution is terminating.
         if (!scriptController || scriptController->isTerminatingExecution())
             return nullptr;
@@ -768,7 +768,7 @@ bool ScriptExecutionContext::allowsMediaDevices() const
     auto* document = dynamicDowncast<Document>(*this);
     if (!document)
         return false;
-    RefPtr page = document->page();
+    auto* page = document->page();
     return page && !page->settings().mediaCaptureRequiresSecureConnection();
 #else
     return false;

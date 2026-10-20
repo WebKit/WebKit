@@ -78,7 +78,7 @@ DOMWindowTrustedTypes* DOMWindowTrustedTypes::from(LocalDOMWindow& window)
 TrustedTypePolicyFactory* DOMWindowTrustedTypes::trustedTypes() const
 {
     if (!m_trustedTypes)
-        m_trustedTypes = TrustedTypePolicyFactory::create(*protect(window()->document()));
+        m_trustedTypes = TrustedTypePolicyFactory::create(*window()->document());
     return m_trustedTypes.get();
 }
 
@@ -117,7 +117,7 @@ void WorkerGlobalScopeTrustedTypes::prepareForDestruction()
 TrustedTypePolicyFactory* WorkerGlobalScopeTrustedTypes::trustedTypes() const
 {
     if (!m_trustedTypes && m_scope)
-        m_trustedTypes = TrustedTypePolicyFactory::create(Ref { *m_scope });
+        m_trustedTypes = TrustedTypePolicyFactory::create(*m_scope);
     return m_trustedTypes.get();
 }
 

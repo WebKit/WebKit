@@ -91,7 +91,7 @@ ExceptionOr<void> Attr::setValue(const AtomString& value)
     assertIsOwnerThread();
     if (RefPtr element = m_element.get()) {
         auto verifiedValue = value;
-        Ref contextDocument = protect(document())->contextDocument();
+        Ref contextDocument = document().contextDocument();
         if (contextDocument->requiresTrustedTypes()) {
             auto type = trustedTypeForAttribute(element->nodeName(), qualifiedName().localName(),
                 element->namespaceURI(), qualifiedName().namespaceURI());

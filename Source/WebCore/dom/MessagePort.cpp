@@ -389,7 +389,7 @@ void MessagePort::drainOneLocalMessage()
         return;
 
     ASSERT(context->isContextThread());
-    if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context)) {
+    if (auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context)) {
         if (workerGlobalScope->isClosing())
             return;
     }

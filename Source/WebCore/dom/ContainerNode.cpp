@@ -1512,7 +1512,7 @@ static void runMovingStepsForShadowIncludingInclusiveDescendants(Node& root, Nod
 
 static bool renderTreeUpdateCanReachMovedNode(const Node& node)
 {
-    for (RefPtr ancestor = node.parentElementInComposedTree(); ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+    for (auto* ancestor = node.parentElementInComposedTree(); ancestor; ancestor = ancestor->parentElementInComposedTree()) {
         if (ancestor->renderer())
             return true;
         if (!ancestor->hasDisplayContents())

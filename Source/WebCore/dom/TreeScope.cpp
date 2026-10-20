@@ -155,7 +155,7 @@ void TreeScope::setParentTreeScope(TreeScope& newParentScope)
     ASSERT(!m_rootNode->isDocumentNode());
 
     m_parentTreeScope = &newParentScope;
-    setDocumentScope(protect(newParentScope.documentScope()));
+    setDocumentScope(newParentScope.documentScope());
 }
 
 void TreeScope::setCustomElementRegistry(RefPtr<CustomElementRegistry>&& registry)

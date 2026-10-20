@@ -166,7 +166,7 @@ bool CustomElementRegistry::containsConstructor(const JSC::JSObject* constructor
 
 JSC::JSValue CustomElementRegistry::get(const AtomString& name)
 {
-    if (RefPtr elementInterface = m_nameMap.get(name))
+    if (auto* elementInterface = m_nameMap.get(name))
         return elementInterface->constructor();
     return JSC::jsUndefined();
 }

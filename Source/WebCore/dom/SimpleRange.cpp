@@ -306,7 +306,7 @@ bool contains(TreeType type, const SimpleRange& range, const Node& node)
 
 template<TreeType treeType> bool contains(const Node& outer, const Node& inner)
 {
-    for (RefPtr inclusiveAncestor = &inner; inclusiveAncestor; inclusiveAncestor = parent<treeType>(*inclusiveAncestor)) {
+    for (auto* inclusiveAncestor = &inner; inclusiveAncestor; inclusiveAncestor = parent<treeType>(*inclusiveAncestor)) {
         if (inclusiveAncestor == &outer)
             return true;
     }

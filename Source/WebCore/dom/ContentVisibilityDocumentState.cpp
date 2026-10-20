@@ -238,7 +238,7 @@ void ContentVisibilityDocumentState::updateContentRelevancyForScrollIfNeeded(con
     if (RefPtr scrollAnchorRoot = findSkippedContentRoot(scrollAnchor)) {
         updateViewportProximity(*scrollAnchorRoot, ViewportProximity::Near);
         // Proximity was forced Near out-of-band, so re-sync the observer to re-evaluate after the scroll.
-        if (RefPtr observer = m_observer)
+        if (auto* observer = m_observer.get())
             observer->resetPreviousThresholdIndexForTarget(*scrollAnchorRoot);
         // Since we may not have determined initial visibility yet, force scheduling the content relevancy update.
         protect(scrollAnchorRoot->document())->scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);

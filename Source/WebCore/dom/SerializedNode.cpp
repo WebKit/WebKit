@@ -65,7 +65,7 @@ static void addShadowRootIfNecessary(Element& element, std::optional<SerializedN
         return;
 
     element.addShadowRoot(WebCore::ShadowRoot::create(
-        Ref { element.document() }.get(),
+        element.document(),
         serializedRoot->openMode ? ShadowRootMode::Open : ShadowRootMode::Closed,
         serializedRoot->slotAssignmentMode,
         serializedRoot->delegatesFocus,

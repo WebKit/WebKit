@@ -578,7 +578,7 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
 #elif PLATFORM(MAC)
     isParentProcessAFullWebBrowser = WTF::MacApplication::isSafari();
 #endif
-    if (Quirks::StorageAccessResult::ShouldCancelEvent == protect(document())->quirks().triggerOptionalStorageAccessQuirk(*this, platformEvent, eventType, detail, relatedTarget, isParentProcessAFullWebBrowser, isSyntheticClick))
+    if (Quirks::StorageAccessResult::ShouldCancelEvent == document().quirks().triggerOptionalStorageAccessQuirk(*this, platformEvent, eventType, detail, relatedTarget, isParentProcessAFullWebBrowser, isSyntheticClick))
         return { Element::EventIsDispatched::No, eventIsDefaultPrevented };
 
     bool shouldNotDispatchMouseEvent = isAnyClick(mouseEvent) || mouseEvent->type() == eventNames().contextmenuEvent;
@@ -971,7 +971,7 @@ bool Element::isFocusable() const
     // the SVG spec. Walk from this element's own renderer upwards so that both
     // a hidden container and its descendants are rejected.
     // https://w3c.github.io/svgwg/svg2-draft/render.html#Rendered-vs-NonRendered
-    for (CheckedPtr ancestor = renderer(); ancestor; ancestor = ancestor->parent()) {
+    for (auto* ancestor = renderer(); ancestor; ancestor = ancestor->parent()) {
         if (ancestor->isRenderSVGHiddenContainer() || ancestor->isLegacyRenderSVGHiddenContainer())
             return false;
     }
@@ -1257,7 +1257,7 @@ static HTMLSelectElement* LEGACY_NODELETE owningSelectElement(const Element& ele
 
 static bool isListBoxItem(const Element& element)
 {
-    RefPtr selectElement = owningSelectElement(element);
+    auto* selectElement = owningSelectElement(element);
     return selectElement && is<RenderListBox>(selectElement->renderer());
 }
 
@@ -1775,7 +1775,7 @@ double Element::currentCSSZoom()
     document->updateStyleIfNeeded();
 
     float initialZoom = 1.0f;
-    if (RefPtr frame = document->frame()) {
+    if (auto* frame = document->frame()) {
         if (!document->printing())
             initialZoom = frame->pageZoomFactor();
     }
@@ -1846,7 +1846,7 @@ void Element::setScrollLeft(int newLeft)
     if (CheckedPtr renderer = renderBox()) {
         int clampedLeft = clampTo<int>(newLeft * renderer->style().usedZoom());
         renderer->setScrollLeft(clampedLeft, options);
-        if (CheckedPtr layer = renderer->layer()) {
+        if (auto* layer = renderer->layer()) {
             if (auto* scrollableArea = layer->scrollableArea())
                 scrollableArea->setScrollShouldClearLatchedState(true);
         }
@@ -1876,7 +1876,7 @@ void Element::setScrollTop(int newTop)
     if (CheckedPtr renderer = renderBox()) {
         int clampedTop = clampTo<int>(newTop * renderer->style().usedZoom());
         renderer->setScrollTop(clampedTop, options);
-        if (CheckedPtr layer = renderer->layer()) {
+        if (auto* layer = renderer->layer()) {
             if (auto* scrollableArea = layer->scrollableArea())
                 scrollableArea->setScrollShouldClearLatchedState(true);
         }
@@ -1925,7 +1925,7 @@ int Element::scrollHeight()
 
 inline RefPtr<const SVGElement> elementWithSVGLayoutBox(const Element& element)
 {
-    RefPtr svg = dynamicDowncast<SVGElement>(element);
+    auto* svg = dynamicDowncast<SVGElement>(element);
     if (!svg || !svg->hasAssociatedSVGLayoutBox())
         return nullptr;
 
@@ -1950,7 +1950,7 @@ inline bool LEGACY_NODELETE isInNonRenderedSVGSubtree(const Element& element)
     if (!element.isSVGElement())
         return false;
 
-    CheckedPtr renderer = element.renderer();
+    auto* renderer = element.renderer();
     if (!renderer)
         return false;
 
@@ -2665,7 +2665,7 @@ void Element::setElementAttribute(const QualifiedName& attributeName, Element* e
 
     explicitlySetAttrElementsMap().set(attributeName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> { element });
     
-    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->updateRelations(*this, attributeName);
 }
 
@@ -2749,7 +2749,7 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
     auto newElements = copyToVectorOf<WeakPtr<Element, WeakPtrImplWithEventTargetData>>(*elements);
     explicitlySetAttrElementsMap().set(attributeName, WTF::move(newElements));
 
-    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->updateRelations(*this, attributeName);
 }
 
@@ -3622,7 +3622,7 @@ ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, S
 
 RefPtr<ShadowRoot> Element::shadowRootForBindings(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    RefPtr shadow = shadowRoot();
+    auto* shadow = shadowRoot();
     if (!shadow)
         return nullptr;
     if (shadow->mode() == ShadowRootMode::Open)
@@ -4231,7 +4231,7 @@ bool Element::hasAttributeNS(const AtomString& namespaceURI, const AtomString& l
 
 static RefPtr<ShadowRoot> shadowRootWithDelegatesFocus(const Element& element)
 {
-    if (RefPtr root = element.shadowRoot()) {
+    if (auto* root = element.shadowRoot()) {
         if (root->delegatesFocus())
             return root;
     }
@@ -4575,7 +4575,7 @@ ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, Optio
         return { };
     }
 
-    auto fragment = createFragmentForInnerOuterHTML(*this, markup, policy, protect(CustomElementRegistry::registryForNodeOrTreeScope(container, protect(container->treeScope()))), container->usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window);
+    auto fragment = createFragmentForInnerOuterHTML(*this, markup, policy, protect(CustomElementRegistry::registryForNodeOrTreeScope(container, container->treeScope())), container->usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window);
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -4814,7 +4814,7 @@ void Element::removeFromTopLayer()
     invalidateStyle();
     if (RefPtr documentElement = document().documentElement())
         documentElement->invalidateStyle();
-    if (RefPtr modalElement = protect(document())->activeModalDialog())
+    if (RefPtr modalElement = document().activeModalDialog())
         modalElement->invalidateStyle();
 
     if (CheckedPtr renderer = this->renderer())
@@ -4854,7 +4854,7 @@ const Style::ComputedStyle* Element::renderOrDisplayContentsStyle() const
 const Style::ComputedStyle* Element::renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (pseudoElementIdentifier) {
-        if (CheckedPtr style = renderOrDisplayContentsStyle()) {
+        if (auto* style = renderOrDisplayContentsStyle()) {
             if (auto* cachedPseudoStyle = style->pseudoElementStyle(*pseudoElementIdentifier))
                 return cachedPseudoStyle;
         }
@@ -4950,7 +4950,7 @@ const Style::ComputedStyle* Element::resolveComputedStyle(ResolveComputedStyleMo
             auto changes = Style::determineChanges(*existing, *style);
             if (changes - Style::Change::NonInherited) {
                 for (Ref child : composedTreeChildren(*element)) {
-                    if (RefPtr childElement = dynamicDowncast<Element>(WTF::move(child)))
+                    if (auto* childElement = dynamicDowncast<Element>(child))
                         childElement->setStateFlag(StateFlag::IsComputedStyleInvalidFlag);
                 }
             }
@@ -5751,7 +5751,7 @@ bool Element::isWritingSuggestionsEnabled() const
     if (equalLettersIgnoringASCIICase(autocompleteValue, "off"_s))
         return false;
 
-    if (protect(document())->quirks().shouldDisableWritingSuggestionsByDefault())
+    if (document().quirks().shouldDisableWritingSuggestionsByDefault())
         return false;
 
     // Otherwise, return `true`.
@@ -6019,8 +6019,8 @@ RefPtr<Attr> Element::attrIfExists(const QualifiedName& name)
 Ref<Attr> Element::ensureAttr(const QualifiedName& name)
 {
     auto& attrNodeList = ensureAttrNodeListForElement(*this);
-    if (RefPtr attrNode = findAttrNodeInList(attrNodeList, name))
-        return attrNode.releaseNonNull();
+    if (auto* attrNode = findAttrNodeInList(attrNodeList, name))
+        return *attrNode;
 
     Ref attrNode = Attr::create(*this, name);
     attrNode->setTreeScopeRecursively(protect(treeScope()));
@@ -6712,8 +6712,8 @@ bool Element::isInVisibilityAdjustmentSubtree() const
         return false;
 
     auto lineageIsInAdjustmentSubtree = [this] {
-        for (Ref element : lineageOfType<Element>(*this)) {
-            if (element->visibilityAdjustment().contains(VisibilityAdjustment::Subtree))
+        for (auto& element : lineageOfType<Element>(*this)) {
+            if (element.visibilityAdjustment().contains(VisibilityAdjustment::Subtree))
                 return true;
         }
         return false;
@@ -6776,8 +6776,8 @@ RefPtr<HTMLElement> Element::topmostPopoverAncestor(TopLayerElementType topLayer
 
         // https://html.spec.whatwg.org/#nearest-inclusive-open-popover
         auto nearestInclusiveOpenPopover = [&](Element& candidate) -> HTMLElement* {
-            for (Ref element : composedTreeLineage(candidate)) {
-                if (auto* htmlElement = dynamicDowncast<HTMLElement>(element.get())) {
+            for (auto& element : composedTreeLineage(candidate)) {
+                if (auto* htmlElement = dynamicDowncast<HTMLElement>(element)) {
                     if ((htmlElement->popoverState() == PopoverState::Auto || (considerHints && htmlElement->popoverState() == PopoverState::Hint))
                         && htmlElement->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
                         return htmlElement;

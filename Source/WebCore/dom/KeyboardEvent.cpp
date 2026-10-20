@@ -242,7 +242,7 @@ int KeyboardEvent::charCode() const
     bool backwardCompatibilityMode = false;
     RefPtr view = this->view();
     RefPtr window = dynamicDowncast<LocalDOMWindow>(view ? view->window() : nullptr);
-    if (RefPtr frame = window ? window->frame() : nullptr)
+    if (auto* frame = window ? window->frame() : nullptr)
         backwardCompatibilityMode = frame->eventHandler().needsKeyboardEventDisambiguationQuirks();
 
     if (!m_underlyingPlatformEvent || (type() != eventNames().keypressEvent && !backwardCompatibilityMode))

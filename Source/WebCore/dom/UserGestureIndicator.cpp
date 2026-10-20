@@ -185,7 +185,7 @@ RefPtr<JSC::MicrotaskDispatcher> UserGestureToken::createMicrotaskDispatcher(JSC
         return nullptr;
     if (!context->settingsValues().userGesturePromisePropagationEnabled)
         return nullptr;
-    return UserGestureInitiatedMicrotaskDispatcher::create(protect(context->eventLoop()), Ref { *this });
+    return UserGestureInitiatedMicrotaskDispatcher::create(context->eventLoop(), Ref { *this });
 }
 
 UserGestureIndicator::UserGestureIndicator(const UserGestureTokenData& data, Document* document)

@@ -58,15 +58,15 @@ FragmentDirectiveGenerator::FragmentDirectiveGenerator(const SimpleRange& textFr
 
 static bool positionsHaveSameBlockAncestor(const VisiblePosition& a, const VisiblePosition& b)
 {
-    RefPtr aNode = a.deepEquivalent().containerNode();
-    RefPtr bNode = b.deepEquivalent().containerNode();
+    auto* aNode = a.deepEquivalent().containerNode();
+    auto* bNode = b.deepEquivalent().containerNode();
     return aNode && bNode && &nearestBlockAncestor(*aNode) == &nearestBlockAncestor(*bNode);
 }
 
 static VisiblePosition beforeStartOfCurrentBlock(const VisiblePosition& visiblePosition)
 {
     auto position = visiblePosition.deepEquivalent();
-    Ref blockContainer = nearestBlockAncestor(*protect(position.containerNode()).get());
+    Ref blockContainer = nearestBlockAncestor(*position.containerNode());
     VisiblePosition firstPositionInBlock = firstPositionInNode(blockContainer);
     if (firstPositionInBlock == visiblePosition)
         return visiblePosition.previous();
@@ -76,7 +76,7 @@ static VisiblePosition beforeStartOfCurrentBlock(const VisiblePosition& visibleP
 static VisiblePosition afterEndOfCurrentBlock(const VisiblePosition& visiblePosition)
 {
     auto position = visiblePosition.deepEquivalent();
-    Ref blockContainer = nearestBlockAncestor(*protect(position.containerNode()).get());
+    Ref blockContainer = nearestBlockAncestor(*position.containerNode());
     VisiblePosition lastPositionInBlock = lastPositionInNode(blockContainer);
     if (lastPositionInBlock == visiblePosition)
         return visiblePosition.next();
