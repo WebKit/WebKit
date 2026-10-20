@@ -72,8 +72,8 @@ public:
 
     bool supportsAlpha() const { return m_flags & SupportsAlpha; }
 
-    virtual void beginPainting();
-    virtual void completePainting();
+    virtual bool beginPainting() = 0;
+    virtual void completePainting() = 0;
     void waitUntilPaintingComplete();
 
 #if USE(SKIA)
@@ -86,10 +86,6 @@ public:
 protected:
     explicit CoordinatedTileBuffer(Flags);
 
-#if USE(SKIA)
-    sk_sp<SkSurface> m_surface;
-#endif
-
     static Lock s_layersMemoryUsageLock;
     static double s_currentLayersMemoryUsage;
     static double s_maxLayersMemoryUsage;
@@ -97,15 +93,19 @@ protected:
     static void didAllocateMemory(size_t);
     static void didReleaseMemory(size_t);
 
+    void didBeginPainting();
+    void didCompletePainting();
+
     enum class PaintingState {
-        InProgress,
+        Pending,
+        Painting,
         Complete
     };
 
     struct {
         Lock lock;
         Condition condition;
-        PaintingState state { PaintingState::Complete };
+        PaintingState state WTF_GUARDED_BY_LOCK(lock) { PaintingState::Pending };
     } m_painting;
 
 private:
@@ -133,23 +133,18 @@ private:
     IntSize size() const final { return m_size; }
     PixelFormat pixelFormat() const final { return PixelFormat::BGRA8; }
 
+    bool beginPainting() final;
+    void completePainting() final;
+
 #if USE(SKIA)
     SkCanvas* canvas() final;
 #endif
 
     Vector<unsigned char> m_data;
     IntSize m_size;
-
-    enum class PaintingState {
-        InProgress,
-        Complete
-    };
-
-    struct {
-        Lock lock;
-        Condition condition;
-        PaintingState state { PaintingState::Complete };
-    } m_painting;
+#if USE(SKIA)
+    sk_sp<SkSurface> m_surface;
+#endif
 };
 
 #if USE(SKIA)
@@ -179,11 +174,14 @@ private:
     IntSize size() const final;
     PixelFormat pixelFormat() const final { return PixelFormat::RGBA8; }
 
-    SkCanvas* canvas() final;
+    bool beginPainting() final;
     void completePainting() final;
+
+    SkCanvas* canvas() final;
 
 #if USE(TEXTURE_MAPPER)
     IntSize m_size;
+    sk_sp<SkSurface> m_surface;
     RefPtr<BitmapTexture> m_texture;
     std::unique_ptr<GLFence> m_fence;
 #else

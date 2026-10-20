@@ -97,30 +97,26 @@ void CoordinatedTileBuffer::didReleaseMemory(size_t size)
     s_currentLayersMemoryUsage -= size;
 }
 
-void CoordinatedTileBuffer::beginPainting()
+void CoordinatedTileBuffer::didBeginPainting()
 {
     Locker locker { m_painting.lock };
-    ASSERT(m_painting.state == PaintingState::Complete);
-    m_painting.state = PaintingState::InProgress;
+    ASSERT(m_painting.state == PaintingState::Pending);
+    m_painting.state = PaintingState::Painting;
 }
 
-void CoordinatedTileBuffer::completePainting()
+void CoordinatedTileBuffer::didCompletePainting()
 {
     Locker locker { m_painting.lock };
-    ASSERT(m_painting.state == PaintingState::InProgress);
+    ASSERT(m_painting.state == PaintingState::Pending || m_painting.state == PaintingState::Painting);
     m_painting.state = PaintingState::Complete;
-    m_painting.condition.notifyOne();
-
-#if USE(SKIA)
-    // Surface is no longer needed, destroy it (in the same thread that created it).
-    m_surface = nullptr;
-#endif
+    m_painting.condition.notifyAll();
 }
 
 void CoordinatedTileBuffer::waitUntilPaintingComplete()
 {
     Locker locker { m_painting.lock };
     m_painting.condition.wait(m_painting.lock, [this] {
+        assertIsHeld(m_painting.lock);
         return m_painting.state == PaintingState::Complete;
     });
 }
@@ -160,29 +156,61 @@ bool CoordinatedUnacceleratedTileBuffer::tryAllocateData()
 }
 
 #if USE(CAIRO)
+bool CoordinatedUnacceleratedTileBuffer::beginPainting()
+{
+    if (tryAllocateData()) {
+        didBeginPainting();
+        return true;
+    }
+
+    didCompletePainting();
+    return false;
+}
+
 RefPtr<cairo_surface_t> CoordinatedUnacceleratedTileBuffer::createSurface()
 {
-    if (!tryAllocateData())
-        return nullptr;
-
+    ASSERT(!m_data.isEmpty());
     m_data.fill(0);
     return adoptRef(cairo_image_surface_create_for_data(m_data.mutableSpan().data(), CAIRO_FORMAT_ARGB32, m_size.width(), m_size.height(), m_size.width() * 4));
+}
+
+void CoordinatedUnacceleratedTileBuffer::completePainting()
+{
+    didCompletePainting();
 }
 #endif
 
 #if USE(SKIA)
-SkCanvas* CoordinatedUnacceleratedTileBuffer::canvas()
+bool CoordinatedUnacceleratedTileBuffer::beginPainting()
 {
-    if (!m_surface) {
-        if (!tryAllocateData())
-            return nullptr;
-
+    if (tryAllocateData()) {
         auto alphaType = supportsAlpha() ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
         auto imageInfo = SkImageInfo::Make(m_size.width(), m_size.height(), kBGRA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB());
         auto properties = FontRenderOptions::singleton().createSurfaceProps();
         m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.mutableSpan().data(), imageInfo.minRowBytes64(), &properties);
     }
+
+    if (m_surface) {
+        didBeginPainting();
+        return true;
+    }
+
+    didReleaseMemory(m_data.size());
+    m_data.clear();
+    didCompletePainting();
+    return false;
+}
+
+SkCanvas* CoordinatedUnacceleratedTileBuffer::canvas()
+{
+    ASSERT(m_surface);
     return m_surface->getCanvas();
+}
+
+void CoordinatedUnacceleratedTileBuffer::completePainting()
+{
+    m_surface = nullptr;
+    didCompletePainting();
 }
 
 #if USE(TEXTURE_MAPPER)
@@ -229,24 +257,39 @@ IntSize CoordinatedAcceleratedTileBuffer::size() const
 #endif
 }
 
+bool CoordinatedAcceleratedTileBuffer::beginPainting()
+{
+#if USE(TEXTURE_MAPPER)
+    if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent()) {
+        didCompletePainting();
+        return false;
+    }
+
+    OptionSet<BitmapTexture::Flags> textureFlags;
+    if (supportsAlpha())
+        textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
+    m_texture = BitmapTexturePool::singleton().acquireTexture(m_size, textureFlags);
+    m_surface = m_texture->createSkiaSurface(PlatformDisplay::sharedDisplay().skiaGrContext());
+    if (!m_surface) {
+        m_texture = nullptr;
+        didCompletePainting();
+        return false;
+    }
+#else
+    m_recorder.emplace(m_characterization);
+#endif
+
+    didBeginPainting();
+    return true;
+}
+
 SkCanvas* CoordinatedAcceleratedTileBuffer::canvas()
 {
 #if USE(TEXTURE_MAPPER)
-    if (!m_surface) {
-        if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
-            return nullptr;
-
-        OptionSet<BitmapTexture::Flags> textureFlags;
-        if (supportsAlpha())
-            textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
-
-        m_texture = BitmapTexturePool::singleton().acquireTexture(m_size, textureFlags);
-        m_surface = m_texture->createSkiaSurface(PlatformDisplay::sharedDisplay().skiaGrContext());
-    }
+    ASSERT(m_surface);
     return m_surface->getCanvas();
 #else
-    if (!m_recorder)
-        m_recorder.emplace(m_characterization);
+    ASSERT(m_recorder);
     return m_recorder->getCanvas();
 #endif
 }
@@ -254,22 +297,21 @@ SkCanvas* CoordinatedAcceleratedTileBuffer::canvas()
 void CoordinatedAcceleratedTileBuffer::completePainting()
 {
 #if USE(TEXTURE_MAPPER)
-    if (m_surface) {
-        auto* recordingContext = m_surface->recordingContext();
-        auto* grContext = recordingContext ? recordingContext->asDirectContext() : nullptr;
-        if (!grContext) {
-            CoordinatedTileBuffer::completePainting();
-            return;
-        }
-
+    ASSERT(m_surface);
+    auto* recordingContext = m_surface->recordingContext();
+    auto* grContext = recordingContext ? recordingContext->asDirectContext() : nullptr;
+    if (grContext)
         m_fence = SkiaUtilities::flushAndSubmitSurfaceWithFence(grContext, m_surface.get());
-    }
+
+    // Surface is no longer needed, destroy it (in the same thread that created it).
+    m_surface = nullptr;
 #else
-    if (m_recorder)
-        m_displayList = m_recorder->detach();
+    ASSERT(m_recorder);
+    m_displayList = m_recorder->detach();
+    m_recorder.reset();
 #endif
 
-    CoordinatedTileBuffer::completePainting();
+    didCompletePainting();
 }
 
 #if USE(TEXTURE_MAPPER)

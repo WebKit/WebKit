@@ -43,7 +43,8 @@ PaintingEngineBasic::~PaintingEngineBasic() = default;
 
 void PaintingEngineBasic::paint(GraphicsLayer& layer, CoordinatedTileBuffer& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
 {
-    buffer.beginPainting();
+    if (!buffer.beginPainting())
+        return;
 
     bool supportsAlpha = buffer.supportsAlpha();
     PaintingContext::paint(buffer,
