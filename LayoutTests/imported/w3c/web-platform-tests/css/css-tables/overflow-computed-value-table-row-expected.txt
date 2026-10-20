@@ -1,0 +1,12 @@
+
+PASS Computed value of overflow:scroll is preserved on a table row (trScroll)
+PASS Computed value of overflow:hidden is preserved on a table row (trHidden)
+PASS Computed value of overflow:auto is preserved on a table row (trAuto)
+PASS Computed value of overflow:clip is preserved on a table row (trClip)
+PASS Computed value of overflow:scroll is preserved on a table row (divRow)
+PASS overflow:scroll on a table row does not create a scroll container (used value is visible)
+scroll
+hidden
+auto
+clip
+display:table-row
