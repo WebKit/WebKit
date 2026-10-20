@@ -903,8 +903,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
         // be recomputed for the new URL. https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
         if (m_compressionDictionary) {
             m_compressionDictionary->match = std::nullopt;
-            if (m_session && request.url().protocolIsInHTTPFamily() && shouldTreatAsPotentiallyTrustworthy(request.url())
-                && !shouldBlockCookies(request, wasBlockingCookies)) {
+            if (m_session && request.url().protocolIs("https"_s) && !shouldBlockCookies(request, wasBlockingCookies)) {
                 if (RefPtr cache = m_session->cache()) {
                     if (auto match = cache->bestCompressionDictionaryMatch(request, m_compressionDictionary->destination))
                         m_compressionDictionary->match = CompressionDictionaryParameters::Match { match->key, match->hash, match->id };

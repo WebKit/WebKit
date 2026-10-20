@@ -26,7 +26,8 @@
 #include <wtf/glib/GLibExtras.h>
 
 static WebKitTestServer* kServer;
-// Shares a host with kServer, so it is a different origin in the same cache partition.
+static WebKitTestServer* kHttpsServer;
+// Shares a host with kHttpsServer, so it is a different origin in the same cache partition.
 static WebKitTestServer* kOtherOriginServer;
 
 // Large enough that the bytes a dictionary adds to the disk cache of its origin are unmistakable.
@@ -559,7 +560,7 @@ static void loadCompressionDictionaryPage(WebsiteDataTest* test, WebKitTestServe
 // so the size is at least twice its length once the dictionary has been stored.
 static guint64 registerCompressionDictionary(WebsiteDataTest* test, const char* token)
 {
-    loadCompressionDictionaryPage(test, kServer, token);
+    loadCompressionDictionaryPage(test, kHttpsServer, token);
 
     guint64 size = waitUntilDiskCacheSizeIsAtLeast(test, 2 * kCompressionDictionaryLength);
     g_assert_cmpuint(size, >=, 2 * kCompressionDictionaryLength);
@@ -581,12 +582,13 @@ static void testWebsiteDataCompressionDictionary(WebsiteDataTest* test, gconstpo
     test->clear(cacheTypes, 0);
     g_assert_null(test->fetch(cacheTypes));
 
+    WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
     enableCompressionDictionary(test);
 
     guint64 sizeWithDictionary = registerCompressionDictionary(test, "1");
 
     // Clear-Site-Data: "cookies" clears the dictionaries of the origin, but not its cached resources.
-    test->loadURI(kServer->getURIForPath("/compression-dictionary/clear-cookies"));
+    test->loadURI(kHttpsServer->getURIForPath("/compression-dictionary/clear-cookies"));
     test->waitUntilLoadFinished();
     guint64 sizeWithoutDictionary = waitUntilDiskCacheSizeIsAtMost(test, sizeWithDictionary - kCompressionDictionaryLength);
     g_assert_cmpuint(sizeWithoutDictionary, >, 0);
@@ -609,9 +611,10 @@ static void testWebsiteDataCompressionDictionaryForeignMatch(WebsiteDataTest* te
     test->clear(cacheTypes, 0);
     g_assert_null(test->fetch(cacheTypes));
 
+    WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
     enableCompressionDictionary(test);
 
-    test->loadURI(kServer->getURIForPath("/compression-dictionary/page?resource=foreign-dictionary"));
+    test->loadURI(kHttpsServer->getURIForPath("/compression-dictionary/page?resource=foreign-dictionary"));
     test->waitUntilTitleChangedTo("Registered");
 
     // A match pattern naming another origin is not registered, so the dictionary body is only
@@ -631,18 +634,19 @@ static void testWebsiteDataCompressionDictionaryOtherOrigin(WebsiteDataTest* tes
     test->clear(cacheTypes, 0);
     g_assert_null(test->fetch(cacheTypes));
 
+    WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
     enableCompressionDictionary(test);
 
     // Both servers report as the same host, so one record accounts for the four dictionary-sized
     // bodies: a dictionary record and a regular cache entry for each origin.
-    loadCompressionDictionaryPage(test, kServer, "1");
+    loadCompressionDictionaryPage(test, kHttpsServer, "1");
     loadCompressionDictionaryPage(test, kOtherOriginServer, "1");
     guint64 sizeWithBoth = waitUntilDiskCacheSizeIsAtLeast(test, 4 * kCompressionDictionaryLength);
     g_assert_cmpuint(sizeWithBoth, >=, 4 * kCompressionDictionaryLength);
 
     // Clear-Site-Data: "cookies" clears the dictionaries of the origin that sent it, and leaves
     // the dictionaries of every other origin sharing the partition alone.
-    test->loadURI(kServer->getURIForPath("/compression-dictionary/clear-cookies"));
+    test->loadURI(kHttpsServer->getURIForPath("/compression-dictionary/clear-cookies"));
     test->waitUntilLoadFinished();
     guint64 sizeAfter = waitUntilDiskCacheSizeIsAtMost(test, sizeWithBoth - kCompressionDictionaryLength);
     g_assert_cmpuint(sizeWithBoth - sizeAfter, >=, kCompressionDictionaryLength);
@@ -1171,7 +1175,10 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
-    kOtherOriginServer = new WebKitTestServer();
+    kHttpsServer = new WebKitTestServer(WebKitTestServer::ServerHTTPS);
+    kHttpsServer->run(serverCallback);
+
+    kOtherOriginServer = new WebKitTestServer(WebKitTestServer::ServerHTTPS);
     kOtherOriginServer->run(serverCallback);
 
     prepopulateHstsData();
@@ -1199,5 +1206,6 @@ void beforeAll()
 void afterAll()
 {
     delete kServer;
+    delete kHttpsServer;
     delete kOtherOriginServer;
 }
