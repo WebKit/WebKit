@@ -1,0 +1,20 @@
+
+PASS location.replace() of an iframe in the shared process to the shared process
+PASS location.replace() of an iframe in a process of its own to a process of its own
+PASS location.replace() of an iframe in the shared process to a process of its own
+PASS location.replace() of an iframe in the shared process to this site
+PASS location.replace() of an iframe in a process of its own to the shared process
+PASS navigation.navigate() with history: "replace" of an iframe in the shared process to a process of its own
+PASS navigation.navigate() with history: "replace" of an iframe in the shared process to this site
+PASS navigation.navigate() with history: "replace" of an iframe in a process of its own to the shared process
+PASS Setting location.href of an iframe in the shared process to the shared process
+PASS location.replace() of a popup in the shared process to the shared process
+PASS location.replace() of a popup in a process of its own to a process of its own
+PASS location.replace() of a popup in the shared process to a process of its own
+PASS location.replace() of a popup in the shared process to this site
+PASS location.replace() of a popup in a process of its own to the shared process
+PASS navigation.navigate() with history: "replace" of a popup in the shared process to a process of its own
+PASS navigation.navigate() with history: "replace" of a popup in the shared process to this site
+PASS navigation.navigate() with history: "replace" of a popup in a process of its own to the shared process
+PASS Setting location.href of a popup in the shared process to the shared process
+

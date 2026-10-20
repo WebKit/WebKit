@@ -96,6 +96,21 @@ static NavigationType LEGACY_NODELETE navigationType(FrameLoadType frameLoadType
     return NavigationType::Other;
 }
 
+static std::optional<NavigationNavigationType> LEGACY_NODELETE toNavigationAPIType(NavigationHistoryBehavior historyHandling)
+{
+    switch (historyHandling) {
+    case NavigationHistoryBehavior::Push:
+        return NavigationNavigationType::Push;
+    case NavigationHistoryBehavior::Replace:
+        return NavigationNavigationType::Replace;
+    case NavigationHistoryBehavior::Reload:
+        return NavigationNavigationType::Reload;
+    case NavigationHistoryBehavior::Auto:
+        break;
+    }
+    return { };
+}
+
 NavigationAction::NavigationAction(const NavigationRequester& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, bool isRequestFromClientOrUserInput, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomString& downloadAttribute, Element* sourceElement)
     : m_requester { requester }
     , m_originalRequest { originalRequest }
@@ -135,6 +150,7 @@ NavigationAction::NavigationAction(FrameLoadRequest& request, NavigationType typ
     , m_keyStateEventData { keyStateDataForFirstEventWithKeyState(event) }
     , m_mouseEventData { mouseEventDataForFirstMouseEvent(event) }
     , m_type { type }
+    , m_navigationAPIType { toNavigationAPIType(request.navigationHistoryBehavior()) }
 {
 }
 

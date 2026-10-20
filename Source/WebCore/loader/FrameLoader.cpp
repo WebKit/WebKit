@@ -1712,7 +1712,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     NavigationAction action { protect(frameLoadRequest.requester()), request, frameLoadRequest.initiatedByMainFrame(), frameLoadRequest.isRequestFromClientOrUserInput(), newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy(), frameLoadRequest.downloadAttribute(), protect(frameLoadRequest.sourceElement()) };
     action.setLockHistory(frameLoadRequest.lockHistory());
-    action.setLockBackForwardList(frameLoadRequest.lockBackForwardList());
+    action.setLockBackForwardList(newLoadType == FrameLoadType::NavigationAPIReplace ? LockBackForwardList::Yes : frameLoadRequest.lockBackForwardList());
     action.setShouldReplaceDocumentIfJavaScriptURL(frameLoadRequest.shouldReplaceDocumentIfJavaScriptURL());
     action.setIsInitialFrameSrcLoad(frameLoadRequest.isInitialFrameSrcLoad());
     action.setIsFromNavigationAPI(frameLoadRequest.isFromNavigationAPI());

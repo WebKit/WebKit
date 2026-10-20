@@ -6496,6 +6496,8 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             loadParameters.frameIdentifier = frame->frameID();
             loadParameters.isRequestFromClientOrUserInput = navigationAction->data().isRequestFromClientOrUserInput;
             loadParameters.hasCrossOriginRedirect = navigation->hasCrossOriginRedirect();
+            loadParameters.lockHistory = navigation->lockHistory();
+            loadParameters.lockBackForwardList = navigation->lockBackForwardList();
             loadParameters.navigationHistoryBehavior = navigation->navigationHistoryBehavior();
             loadParameters.hadUserGesture = navigationAction->data().userGestureTokenIdentifier.has_value();
             loadParameters.navigationID = navigation->navigationID();

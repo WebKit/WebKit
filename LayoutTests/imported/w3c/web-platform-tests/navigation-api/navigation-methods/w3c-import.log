@@ -32,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-relative-url-utf8.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-relative-url.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-replace-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-replace-cross-site.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-replace-same-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-same-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-state-repeated-await.html
