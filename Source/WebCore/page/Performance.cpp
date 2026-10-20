@@ -198,7 +198,7 @@ MonotonicTime Performance::monotonicTimeFromOriginRelative(Seconds offset) const
 
 DOMHighResTimeStamp Performance::relativeTimeFromTimeOriginInReducedResolution(MonotonicTime timestamp) const
 {
-    return relativeTimeFromTimeOriginInReducedResolutionSeconds(timestamp).milliseconds();
+    return ReducedResolutionSeconds::fromSeconds(relativeTimeFromTimeOriginInReducedResolutionSeconds(timestamp)).milliseconds();
 }
 
 MonotonicTime Performance::monotonicTimeFromRelativeTime(DOMHighResTimeStamp relativeTime) const
