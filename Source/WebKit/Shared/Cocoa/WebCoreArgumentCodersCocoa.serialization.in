@@ -64,6 +64,7 @@ header: <WebCore/ResourceRequest.h>
     bool m_didFilterLinkDecoration;
     bool m_isPrivateTokenUsageByThirdPartyAllowed;
     bool m_wasSchemeOptimisticallyUpgraded;
+    WebCore::ThirdPartyCookieBlockingDecision m_latchedThirdPartyCookieBlockingDecision;
 };
 
 header: <WebCore/AttributedString.h>

@@ -326,6 +326,14 @@ WebCore::ThirdPartyCookieBlockingDecision NetworkTaskCocoa::requestThirdPartyCoo
             thirdPartyCookieBlockingDecision = networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID(), webPageProxyID(), shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request), isInitiatedByDedicatedWorker(), navigationLosesFrameSpecificStorageAccess());
     }
 
+    auto latchedDecision = request.latchedThirdPartyCookieBlockingDecision();
+    if (latchedDecision == WebCore::ThirdPartyCookieBlockingDecision::All)
+        return WebCore::ThirdPartyCookieBlockingDecision::All;
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    if (latchedDecision == WebCore::ThirdPartyCookieBlockingDecision::AllExceptPartitioned && thirdPartyCookieBlockingDecision == WebCore::ThirdPartyCookieBlockingDecision::None)
+        return WebCore::ThirdPartyCookieBlockingDecision::AllExceptPartitioned;
+#endif
+
     return thirdPartyCookieBlockingDecision;
 }
 
@@ -382,6 +390,14 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
 #endif
     } else if (storedCredentialsPolicy() != WebCore::StoredCredentialsPolicy::EphemeralStateless && needsFirstPartyCookieBlockingLatchModeQuirk(request.firstPartyForCookies(), request.url(), redirectResponse.url()))
         unblockCookies();
+
+    if (m_hasBeenSetToUseStatelessCookieStorage)
+        request.setLatchedThirdPartyCookieBlockingDecision(WebCore::ThirdPartyCookieBlockingDecision::All);
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    else if (m_hasBeenSetToAllowOnlyPartitionedCookies)
+        request.setLatchedThirdPartyCookieBlockingDecision(WebCore::ThirdPartyCookieBlockingDecision::AllExceptPartitioned);
+#endif
+
 #if !RELEASE_LOG_DISABLED
     if (protect(m_networkSession)->shouldLogCookieInformation())
         RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%lu: %s cookies for redirect URL %s", this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->toUInt64() : 0, (unsigned long)[task() taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8());

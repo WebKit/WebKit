@@ -754,7 +754,10 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     RefPtr document = frame->document();
     ASSERT(document);
-    
+
+    if (!didReceiveRedirectResponse && !isContinuingLoadAfterProvisionalLoadStarted())
+        newRequest.setLatchedThirdPartyCookieBlockingDecision(ThirdPartyCookieBlockingDecision::None);
+
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
     if (frame->isMainFrame())

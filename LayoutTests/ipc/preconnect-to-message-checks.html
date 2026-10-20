@@ -58,6 +58,7 @@ async function main() {
     e.bool(true); e.bool(true); e.bool(true);            // allowCookies, isTopSite, isAppInitiated
     e.bool(false); e.bool(false); e.bool(false);         // privacyProxyFailClosed, useAdvancedPrivacyProtections, didFilterLinkDecoration
     e.bool(false); e.bool(false); e.bool(false);         // isPrivateTokenUsageByThirdPartyAllowed, wasSchemeOptimisticallyUpgraded, targetAddressSpace
+    e.u8(0);                                             // latchedThirdPartyCookieBlockingDecision
     e.str("");                                           // cachePartition
     e.bool(false);                                       // hiddenFromInspector
     // FormDataReference requestBody { RefPtr<FormData>, Vector<SandboxExtensionHandle> }

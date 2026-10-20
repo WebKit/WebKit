@@ -48,6 +48,7 @@ struct ResourceRequestPlatformData {
     bool m_didFilterLinkDecoration { false };
     bool m_isPrivateTokenUsageByThirdPartyAllowed { false };
     bool m_wasSchemeOptimisticallyUpgraded { false };
+    ThirdPartyCookieBlockingDecision m_latchedThirdPartyCookieBlockingDecision { ThirdPartyCookieBlockingDecision::None };
 };
 
 using ResourceRequestData = Variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;
