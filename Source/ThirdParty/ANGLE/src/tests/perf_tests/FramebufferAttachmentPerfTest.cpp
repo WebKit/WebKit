@@ -158,9 +158,9 @@ void FramebufferAttachmentStateUpdateBenchmark::initializeBenchmark()
     FramebufferAttachmentBenchmark::initializeBenchmark();
 
     // Attach
-    for (size_t fboIndex = 0; fboIndex < mAdditionalFbo.size(); fboIndex++)
+    for (GLFramebuffer &fbo : mAdditionalFbo)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, mAdditionalFbo[fboIndex]);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
         for (size_t textureIndex = 0; textureIndex < mTextures.size(); textureIndex++)
         {
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + textureIndex,
@@ -173,9 +173,9 @@ void FramebufferAttachmentStateUpdateBenchmark::initializeBenchmark()
 void FramebufferAttachmentStateUpdateBenchmark::destroyBenchmark()
 {
     // Detach
-    for (size_t fboIndex = 0; fboIndex < mAdditionalFbo.size(); fboIndex++)
+    for (GLFramebuffer &fbo : mAdditionalFbo)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, mAdditionalFbo[fboIndex]);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
         for (size_t index = 0; index < mTextures.size(); index++)
         {
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, 0,

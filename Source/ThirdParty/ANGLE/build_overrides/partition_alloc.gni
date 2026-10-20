@@ -53,3 +53,9 @@ enable_dangling_raw_ptr_checks_default = _supported
 raw_ptr_zero_on_construct_default = true
 raw_ptr_zero_on_move_default = true
 raw_ptr_zero_on_destruct_default = false
+
+# On Android, unshimmed shared libraries (such as libclspv_core_shared.so)
+# allocate memory with Bionic's malloc that may be freed inside shimmed ANGLE
+# libraries via inline helpers (e.g. clspvFreeOutputBuildObjs). Forwarding
+# unrecognized pointers to __real_free avoids PartitionAlloc crashes.
+partition_alloc_enable_system_free_fallback_default = is_android

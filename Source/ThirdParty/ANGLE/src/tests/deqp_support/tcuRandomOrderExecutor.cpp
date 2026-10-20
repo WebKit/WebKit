@@ -93,10 +93,12 @@ void RandomOrderExecutor::pruneStack(size_t newStackSize)
 
 static TestNode *findNodeByName(vector<TestNode *> &nodes, const std::string &name)
 {
-    for (vector<TestNode *>::const_iterator node = nodes.begin(); node != nodes.end(); ++node)
+    for (TestNode *node : nodes)
     {
-        if (name == (*node)->getName())
-            return *node;
+        if (name == node->getName())
+        {
+            return node;
+        }
     }
 
     return nullptr;

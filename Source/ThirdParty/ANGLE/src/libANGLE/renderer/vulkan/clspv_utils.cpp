@@ -440,12 +440,8 @@ std::string ClspvGetCompilerOptions(const CLDeviceVk *device)
     std::string options{""};
     std::vector<std::string> featureMacros;
 
-    cl_uint addressBits;
-    if (IsError(device->getInfoUInt(cl::DeviceInfo::AddressBits, &addressBits)))
-    {
-        // This shouldn't fail here
-        ASSERT(false);
-    }
+    cl_uint addressBits = device->getCaps().addressBits;
+
     options += addressBits == 64 ? " -arch=spir64" : " -arch=spir";
     if (rendererVk->getFeatures().supportsBufferDeviceAddress.enabled)
     {
@@ -456,13 +452,8 @@ std::string ClspvGetCompilerOptions(const CLDeviceVk *device)
     // select SPIR-V version target
     options += " --spv-version=" + GetSpvVersionAsClspvString(device->getSpirvVersion());
 
-    cl_uint nonUniformNDRangeSupport;
-    if (IsError(device->getInfoUInt(cl::DeviceInfo::NonUniformWorkGroupSupport,
-                                    &nonUniformNDRangeSupport)))
-    {
-        // This shouldn't fail here
-        ASSERT(false);
-    }
+    cl_uint nonUniformNDRangeSupport = device->getCaps().nonUniformWorkGroupSupport;
+
     // This "cl-arm-non-uniform-work-group-size" flag is needed to generate region reflection
     // instructions since clspv builtin pass is conditionally dependant on it:
     /*

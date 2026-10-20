@@ -57,7 +57,7 @@ struct ValidationContext
 };
 
 // Object validation
-bool ValidateSurface(const ValidationContext *val, const Display *display, SurfaceID surfaceID);
+bool ValidateSurface(const ValidationContext *val, const Display *display, const Surface *surface);
 bool ValidateConfig(const ValidationContext *val, const Display *display, const Config *config);
 bool ValidateContext(const ValidationContext *val, const Display *display, gl::ContextID contextID);
 bool ValidateImage(const ValidationContext *val, const Display *display, ImageID imageID);
@@ -71,7 +71,8 @@ ScopedDisplayRef GetDisplayIfValid(Display *display);
 ScopedThreadSafeDisplayRef GetThreadSafeDisplayIfValid(ThreadSafeDisplay *display);
 ScopedConstDisplayLockAndRef GetDisplayAndLockIfValid(const Display *display);
 ScopedDisplayLockAndRef GetDisplayAndLockIfValid(Display *display);
-const Surface *GetSurfaceIfValid(const Display *display, SurfaceID surfaceID);
+ScopedSurfaceRef GetSurfaceRefIfValid(const Display *display, SurfaceID surfaceID);
+ScopedSurfaceLockAndRef GetSurfaceIfValid(const Display *display, SurfaceID surfaceID);
 const Image *GetImageIfValid(const Display *display, ImageID imageID);
 const Stream *GetStreamIfValid(const Display *display, const Stream *stream);
 const gl::Context *GetContextIfValid(const Display *display, gl::ContextID contextID);

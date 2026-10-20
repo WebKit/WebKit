@@ -649,15 +649,15 @@ static gl::TextureCaps GenerateTextureFormatCaps(const FunctionsGL *functions,
             functions->getInternalformativ(GL_RENDERBUFFER, queryInternalFormat, GL_SAMPLES,
                                            static_cast<GLsizei>(samples.size()), &samples[0]);
 
-            for (size_t sampleIndex = 0; sampleIndex < samples.size(); sampleIndex++)
+            for (int sample : samples)
             {
-                if (features.limitMaxMSAASamplesTo4.enabled && samples[sampleIndex] > 4)
+                if (features.limitMaxMSAASamplesTo4.enabled && sample > 4)
                 {
                     continue;
                 }
 
                 // Supporting MSAA=1 is not required on OpenGL for non-conformant drivers.
-                if (features.disableMSAASampleCount1.enabled && samples[sampleIndex] == 1)
+                if (features.disableMSAASampleCount1.enabled && sample == 1)
                 {
                     continue;
                 }
@@ -671,25 +671,25 @@ static gl::TextureCaps GenerateTextureFormatCaps(const FunctionsGL *functions,
                 {
                     ASSERT(functions->getError() == GL_NO_ERROR);
                     functions->getInternalformatSampleivNV(GL_RENDERBUFFER, queryInternalFormat,
-                                                           samples[sampleIndex], GL_CONFORMANT_NV,
-                                                           1, &conformant);
+                                                           sample, GL_CONFORMANT_NV, 1,
+                                                           &conformant);
                     // getInternalFormatSampleivNV does not work for all formats on NVIDIA Shield TV
                     // drivers. Assume that formats with large sample counts are non-conformant in
                     // case the query generates an error.
                     if (functions->getError() != GL_NO_ERROR)
                     {
-                        conformant = (samples[sampleIndex] <= 8) ? GL_TRUE : GL_FALSE;
+                        conformant = (sample <= 8) ? GL_TRUE : GL_FALSE;
                     }
                 }
                 if (conformant == GL_TRUE)
                 {
-                    if (gl::isPow2(samples[sampleIndex]))
+                    if (gl::isPow2(sample))
                     {
-                        textureCaps.sampleCounts.insert(samples[sampleIndex]);
+                        textureCaps.sampleCounts.insert(sample);
                     }
                     else
                     {
-                        WARN() << "Skipping unexpected sample count " << samples[sampleIndex]
+                        WARN() << "Skipping unexpected sample count " << sample
                                << " for internal format " << gl::FmtHex(queryInternalFormat) << ".";
                     }
                 }

@@ -189,10 +189,9 @@ RenderPassEncoderHandle CreateRenderPass(const DawnProcTable *wgpu,
 
     angle::FixedVector<WGPURenderPassColorAttachment, gl::IMPLEMENTATION_MAX_DRAW_BUFFERS>
         colorAttachments;
-    for (size_t i = 0; i < packedDesc.colorAttachments.size(); i++)
+    for (const webgpu::PackedRenderPassColorAttachment &packedColorAttachment :
+         packedDesc.colorAttachments)
     {
-        const webgpu::PackedRenderPassColorAttachment &packedColorAttachment =
-            packedDesc.colorAttachments[i];
         WGPURenderPassColorAttachment colorAttachment = WGPU_RENDER_PASS_COLOR_ATTACHMENT_INIT;
 
         colorAttachment.view          = packedColorAttachment.view.get();

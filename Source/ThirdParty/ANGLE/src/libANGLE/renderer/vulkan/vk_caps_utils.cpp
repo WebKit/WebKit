@@ -1526,9 +1526,9 @@ void Renderer::ensureCapsInitialized() const
 bool CanSupportGLES32(const gl::Extensions &nativeExtensions)
 {
     std::vector<bool> requiredExtensions = GetRequiredGLES32ExtensionList(nativeExtensions);
-    for (uint32_t index = 0; index < requiredExtensions.size(); index++)
+    for (bool requiredExtension : requiredExtensions)
     {
-        if (!requiredExtensions[index])
+        if (!requiredExtension)
         {
             return false;
         }

@@ -14,7 +14,7 @@ void InitReplay(void)
     // maxBuffer = 0
     // maxContext = 3
     // maxFenceNV = 0
-    // maxFramebuffer = 3
+    // maxFramebuffer = 5
     // maxImage = 0
     // maxMemoryObject = 0
     // maxProgramPipeline = 0
@@ -25,11 +25,11 @@ void InitReplay(void)
     // maxShaderProgram = 5
     // maxSurface = 1
     // maxSync = 0
-    // maxTexture = 4
+    // maxTexture = 6
     // maxTransformFeedback = 0
     // maxVertexArray = 0
     // maxegl_Sync = 0
-    InitializeReplay5("CapturedTest_ActiveTextures_ES3_Vulkan.angledata", 72, 276, 1, 3, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 5, 1, 0, 4, 0, 0, 0);
+    InitializeReplay5("CapturedTest_ActiveTextures_ES3_Vulkan.angledata", 72, 276, 1, 3, 0, 3, 0, 5, 0, 0, 0, 0, 0, 0, 0, 5, 1, 0, 6, 0, 0, 0);
     InitializeBinaryDataLoader();
 }
 

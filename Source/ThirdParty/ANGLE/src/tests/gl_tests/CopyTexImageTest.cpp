@@ -2110,10 +2110,10 @@ TEST_P(CopyTexImagePreRotationTest, NonZeroNonSquare)
         {0, 19, 38, 46, 4, 3, 11, GLColor::blue},
     }};
 
-    for (size_t i = 0; i < kCopies.size(); ++i)
+    for (const Copy &copy : kCopies)
     {
-        glCopyTexSubImage2D(GL_TEXTURE_2D, kCopies[i].mip, kCopies[i].texX, kCopies[i].texY,
-                            kCopies[i].x, kCopies[i].y, kCopies[i].width, kCopies[i].height);
+        glCopyTexSubImage2D(GL_TEXTURE_2D, copy.mip, copy.texX, copy.texY, copy.x, copy.y,
+                            copy.width, copy.height);
     }
 
     // Verify results
@@ -2123,12 +2123,11 @@ TEST_P(CopyTexImagePreRotationTest, NonZeroNonSquare)
     for (int mip = 0; mip < 2; ++mip)
     {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, mip);
-        for (size_t i = 0; i < kCopies.size(); ++i)
+        for (const Copy &copy : kCopies)
         {
-            if (kCopies[i].mip == mip)
+            if (copy.mip == mip)
             {
-                EXPECT_PIXEL_RECT_EQ(kCopies[i].texX, kCopies[i].texY, kCopies[i].width,
-                                     kCopies[i].height, kCopies[i].expect);
+                EXPECT_PIXEL_RECT_EQ(copy.texX, copy.texY, copy.width, copy.height, copy.expect);
             }
         }
     }

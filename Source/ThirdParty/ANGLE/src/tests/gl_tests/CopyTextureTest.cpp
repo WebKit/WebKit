@@ -95,9 +95,8 @@ class CopyTextureTest : public ANGLETest<>
         EXPECT_GL_NO_ERROR();
 
         std::set<GLubyte> uniqueValues[4];
-        for (size_t i = 0; i < destData.size(); i++)
+        for (const GLColor &color : destData)
         {
-            GLColor color = destData[i];
             uniqueValues[0].insert(color.R);
             uniqueValues[1].insert(color.G);
             uniqueValues[2].insert(color.B);

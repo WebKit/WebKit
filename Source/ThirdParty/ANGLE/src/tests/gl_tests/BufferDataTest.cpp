@@ -607,17 +607,8 @@ void main()
     const uint32_t width         = 4;
     const uint32_t height        = 4;
     const size_t numElements     = width * height * numComponents;
-    std::vector<uint8_t> srcData(numElements);
-    std::vector<uint8_t> dstData(numElements);
-
-    for (uint8_t i = 0; i < srcData.size(); i++)
-    {
-        srcData[i] = 128;
-    }
-    for (uint8_t i = 0; i < dstData.size(); i++)
-    {
-        dstData[i] = 0;
-    }
+    std::vector<uint8_t> srcData(numElements, 128);
+    std::vector<uint8_t> dstData(numElements, 0);
 
     GLBuffer srcBuffer;
     GLBuffer dstBuffer;
@@ -682,17 +673,8 @@ void main()
     const uint32_t width         = 4;
     const uint32_t height        = 4;
     const size_t numElements     = width * height * numComponents;
-    std::vector<uint8_t> srcData(numElements);
-    std::vector<uint8_t> dstData(numElements);
-
-    for (uint8_t i = 0; i < srcData.size(); i++)
-    {
-        srcData[i] = 128;
-    }
-    for (uint8_t i = 0; i < dstData.size(); i++)
-    {
-        dstData[i] = 0;
-    }
+    std::vector<uint8_t> srcData(numElements, 128);
+    std::vector<uint8_t> dstData(numElements, 0);
 
     GLBuffer srcBuffer;
     GLBuffer dstBuffer;

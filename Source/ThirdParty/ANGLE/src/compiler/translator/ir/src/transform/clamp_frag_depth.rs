@@ -17,13 +17,14 @@ pub fn run(ir: &mut IR) {
         //     clamped = Clamp depth min max
         //               Store frag_depth clamped
         let mut clamp_block = Block::new();
-        let depth = clamp_block.add_typed_instruction(instruction::load(&mut ir.meta, frag_depth));
-        let clamped = clamp_block.add_typed_instruction(instruction::built_in(
+        let mut builder = instruction::Builder::<&mut Block>::new(&mut clamp_block);
+        let depth = builder.load(&mut ir.meta, frag_depth);
+        let clamped = builder.built_in(
             &mut ir.meta,
             BuiltInOpCode::Clamp,
             vec![depth, TYPED_CONSTANT_ID_FLOAT_ZERO, TYPED_CONSTANT_ID_FLOAT_ONE],
-        ));
-        clamp_block.add_void_instruction(OpCode::Store(frag_depth, clamped));
+        );
+        builder.store(&mut ir.meta, frag_depth, clamped);
 
         ir.append_to_main(clamp_block);
     }

@@ -1566,7 +1566,7 @@ GLWindowBase *ANGLERenderTest::getGLWindow()
 
 void ANGLERenderTest::skipTestIfMissingExtensionPrerequisites()
 {
-    for (std::string extension : mExtensionPrerequisites)
+    for (const std::string &extension : mExtensionPrerequisites)
     {
         if (!CheckExtensionExists(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)),
                                   extension))

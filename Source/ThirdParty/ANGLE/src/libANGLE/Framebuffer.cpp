@@ -1059,10 +1059,9 @@ bool Framebuffer::detachResourceById(Context *context, GLenum resourceType, GLui
 {
     bool found = false;
 
-    for (size_t colorIndex = 0; colorIndex < mState.mColorAttachments.size(); ++colorIndex)
+    for (FramebufferAttachment &colorAttachment : mState.mColorAttachments)
     {
-        if (detachMatchingAttachment(context, &mState.mColorAttachments[colorIndex], resourceType,
-                                     resourceId))
+        if (detachMatchingAttachment(context, &colorAttachment, resourceType, resourceId))
         {
             found = true;
         }

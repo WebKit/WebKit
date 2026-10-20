@@ -193,11 +193,11 @@ void ResourcesHLSL::reserveUniformBlockRegisters(unsigned int registerCount)
 
 const ShaderVariable *ResourcesHLSL::findUniformByName(const ImmutableString &name) const
 {
-    for (size_t uniformIndex = 0; uniformIndex < mUniforms.size(); ++uniformIndex)
+    for (const ShaderVariable &uniform : mUniforms)
     {
-        if (name == mUniforms[uniformIndex].name)
+        if (name == uniform.name)
         {
-            return &mUniforms[uniformIndex];
+            return &uniform;
         }
     }
 

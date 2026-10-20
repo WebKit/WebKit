@@ -31,8 +31,8 @@ class EGLBufferAgeTest : public ANGLETest<>
                                  EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
                                  static_cast<EGLAttrib>(mOSWindow->getNativeDisplayPlatformType()),
                                  EGL_NONE};
-        mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
-                                                      reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+        mDisplay              = eglGetPlatformDisplay(
+            GetEglPlatform(), reinterpret_cast<void *>(mOSWindow->getNativeDisplay()), dispattrs);
         EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
         mMajorVersion       = GetParam().majorVersion;
@@ -41,15 +41,15 @@ class EGLBufferAgeTest : public ANGLETest<>
 
     void testTearDown() override
     {
-        mOSWindow->destroy();
-        OSWindow::Delete(&mOSWindow);
-
         if (mDisplay != EGL_NO_DISPLAY)
         {
             eglTerminate(mDisplay);
             eglReleaseThread();
             mDisplay = EGL_NO_DISPLAY;
         }
+
+        mOSWindow->destroy();
+        OSWindow::Delete(&mOSWindow);
         ASSERT_EGL_SUCCESS() << "Error during test TearDown";
     }
 
