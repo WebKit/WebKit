@@ -41,6 +41,8 @@ enum class NativePrimitive : uint8_t {
     TriangleFan,
 };
 
+enum class IndexType : uint8_t { UnsignedByte, UnsignedShort, UnsignedInt };
+
 enum class Capability : uint8_t {
     Blend,
     CullFace,
@@ -117,6 +119,8 @@ struct Backend {
     bool (*setClearColor)(void*, const Color&) { nullptr };
     bool (*clear)(void*, uint8_t bufferMask) { nullptr };
     bool (*draw)(void*, NativePrimitive, uint32_t first, uint32_t count, uint32_t instances) { nullptr };
+    bool (*drawIndexed)(void*, NativePrimitive, IndexType, uint32_t count,
+        uint64_t byteOffset, uint32_t instances) { nullptr };
     void (*reportUnsupported)(void*, const char* operation) { nullptr };
 };
 
@@ -137,6 +141,9 @@ public:
     Result clear(uint8_t bufferMask);
     Result drawArrays(Primitive, int32_t first, int32_t count);
     Result drawArraysInstanced(Primitive, int32_t first, int32_t count, int32_t instances);
+    Result drawElements(Primitive, int32_t count, IndexType, uint64_t byteOffset);
+    Result drawElementsInstanced(Primitive, int32_t count, IndexType, uint64_t byteOffset,
+        int32_t instances);
 
     // Use for GL operations for which no semantically equivalent GX2 path has
     // been implemented. This must not be treated as successful emulation.
