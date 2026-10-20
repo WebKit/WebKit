@@ -590,7 +590,6 @@ set(bmalloc_PRIVATE_HEADERS
     libpas/src/libpas/pas_bitfit_view_inlines.h
     libpas/src/libpas/pas_compact_atomic_biasing_directory_ptr.h
     libpas/src/libpas/pas_compact_atomic_bitfit_biasing_directory_ptr.h
-    libpas/src/libpas/pas_compact_atomic_bitfit_global_size_class_ptr.h
     libpas/src/libpas/pas_compact_atomic_segregated_exclusive_view_ptr.h
     libpas/src/libpas/pas_compact_atomic_segregated_heap_page_sharing_pools_ptr.h
     libpas/src/libpas/pas_compact_atomic_unsigned_ptr.h

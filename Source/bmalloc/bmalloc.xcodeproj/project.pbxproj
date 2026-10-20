@@ -45,11 +45,9 @@
 		143CB81D19022BC900B16A45 /* Mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 143CB81B19022BC900B16A45 /* Mutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
 		1448C30118F3754C00502839 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1448C2FE18F3754300502839 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F4D2D6A12EFE7B0200A0BB8E /* copy-profiling-data.py in Headers */ = {isa = PBXBuildFile; fileRef = F4D2D6A02EFE7B0100A0BB8E /* copy-profiling-data.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		14895D911A3A319C0006235D /* Environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14895D8F1A3A319C0006235D /* Environment.cpp */; };
 		14895D921A3A319C0006235D /* Environment.h in Headers */ = {isa = PBXBuildFile; fileRef = 14895D901A3A319C0006235D /* Environment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148EFAE81D6B953B008E721E /* ScopeExit.h in Headers */ = {isa = PBXBuildFile; fileRef = 148EFAE61D6B953B008E721E /* ScopeExit.h */; };
-		1C2D4B9492754104B4052BDD /* SpinBackoff.h in Headers */ = {isa = PBXBuildFile; fileRef = 05075FEE15D7410B97D990F4 /* SpinBackoff.h */; };
 		14C8992B1CC485E70027A057 /* Map.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C8992A1CC485E70027A057 /* Map.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C919C818FCC59F0028DB43 /* BPlatform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CC394C18EA8858004AFE34 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F271BE18EA3963008C152F /* libbmalloc.a */; };
@@ -61,6 +59,7 @@
 		14DD78CE18F48D7500950799 /* valgrind.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F64F18B7280C0076FA99 /* valgrind.h */; };
 		14DD78CF18F48D7500950702 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479E21217A1A255006D4E9D /* Vector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78D018F48D7500950702 /* VMAllocate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479E21417A1A63E006D4E9D /* VMAllocate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C2D4B9492754104B4052BDD /* SpinBackoff.h in Headers */ = {isa = PBXBuildFile; fileRef = 05075FEE15D7410B97D990F4 /* SpinBackoff.h */; };
 		2B6EB7A029EE102E00F10400 /* pas_report_crash_pgm_report.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B6EB79F29EE102E00F10400 /* pas_report_crash_pgm_report.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2BDF4F4C29E8B8BA0056BF50 /* pas_report_crash.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BDF4F4A29E8B8BA0056BF50 /* pas_report_crash.c */; };
 		2BDF4F4D29E8B8BA0056BF50 /* pas_report_crash.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BDF4F4B29E8B8BA0056BF50 /* pas_report_crash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -71,16 +70,19 @@
 		3C8B4B436E304BE39DAB4864 /* pas_process.h in Headers */ = {isa = PBXBuildFile; fileRef = F31DBD0796DD4C2D906A6636 /* pas_process.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4426E2801C838EE0008EB042 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4426E27E1C838EE0008EB042 /* Logging.cpp */; };
 		4426E2811C838EE0008EB042 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E27F1C838EE0008EB042 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		467853C5B3B0403E9A923FEB /* bmalloc_prefault_supply.h in Headers */ = {isa = PBXBuildFile; fileRef = 87ED133FE5104AEF94FCA029 /* bmalloc_prefault_supply.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C3986CA2E0D89A600C450A4 /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 5CDA07D92E0D894900E6D3DD /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
 		65072AE72B6195B90065065C /* TZoneHeapManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65072AE52B6195B90065065C /* TZoneHeapManager.cpp */; };
 		652E16972C4869D000C377D7 /* TZoneLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652E16962C4869D000C377D7 /* TZoneLog.cpp */; };
 		652E16982C4869D000C377D7 /* TZoneLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 652E16952C4869D000C377D7 /* TZoneLog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65FE739D2B79E09800C5CDAF /* TZoneHeapManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 65072AE62B6195B90065065C /* TZoneHeapManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6A0999D52D5A5CB467AD7BE8 /* pas_memory_flavor.h in Headers */ = {isa = PBXBuildFile; fileRef = A41D477F2B77FBC3C1F0C9F0 /* pas_memory_flavor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7234F6B62D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6B42D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7234F6B72D01112E000B645D /* pas_mte_bootstrap_free_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6B22D01112E000B645D /* pas_mte_bootstrap_free_heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7234F6B82D01112E000B645D /* pas_mte_bootstrap_free_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 7234F6B32D01112E000B645D /* pas_mte_bootstrap_free_heap.c */; };
 		7234F6B92D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.c in Sources */ = {isa = PBXBuildFile; fileRef = 7234F6B52D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.c */; };
 		7234F6C42D011152000B645D /* pas_page_config_size_category.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6C22D011152000B645D /* pas_page_config_size_category.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7D78FA9592EC48859E8B9155 /* bmalloc_prefault_supply.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BEA9595554C41DC91A6C33B /* bmalloc_prefault_supply.c */; };
 		9BD23B2D38074FF37E33F56F /* pas_large_map_variant.h in Headers */ = {isa = PBXBuildFile; fileRef = F045C7C0BD60E90C54518962 /* pas_large_map_variant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AA00000011000000000000AA /* bmalloc_heap_flex.c in Sources */ = {isa = PBXBuildFile; fileRef = AA00000012000000000000AA /* bmalloc_heap_flex.c */; };
 		AA00000013000000000000AA /* bmalloc_heap_flex_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AA00000014000000000000AA /* bmalloc_heap_flex_internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -91,8 +93,6 @@
 		AD14AD2A202529C700890E3B /* ProcessCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD14AD28202529B000890E3B /* ProcessCheck.mm */; };
 		AF7B6AD7B2954EA99121E719 /* pas_process.c in Sources */ = {isa = PBXBuildFile; fileRef = 2843EB80047B4B46A4A00AE8 /* pas_process.c */; };
 		BB00000003000000000000BB /* bmalloc_heap_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = BB00000004000000000000BB /* bmalloc_heap_utils.c */; };
-		7D78FA9592EC48859E8B9155 /* bmalloc_prefault_supply.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BEA9595554C41DC91A6C33B /* bmalloc_prefault_supply.c */; };
-		467853C5B3B0403E9A923FEB /* bmalloc_prefault_supply.h in Headers */ = {isa = PBXBuildFile; fileRef = 87ED133FE5104AEF94FCA029 /* bmalloc_prefault_supply.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BB00000007000000000000BB /* bmalloc_heap_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = BB00000008000000000000BB /* bmalloc_heap_utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5E4C2B62E0E12F1001E806C /* VMAllocate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5E4C2B52E0E12F1001E806C /* VMAllocate.cpp */; };
 		DD4BEC2629CBA49700398E35 /* pas_large_heap_physical_page_sharing_cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC40A832451498B00876DA0 /* pas_large_heap_physical_page_sharing_cache.c */; };
@@ -169,7 +169,6 @@
 		DD4BEC7029CBA49700398E35 /* pas_baseline_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC409A22451496100876DA0 /* pas_baseline_allocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC7129CBA49700398E35 /* pas_designated_intrinsic_heap_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8E832B2492EAF30046D7F8 /* pas_designated_intrinsic_heap_inlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC7229CBA49700398E35 /* iso_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC409212451494200876DA0 /* iso_heap.c */; };
-		6A0999D52D5A5CB467AD7BE8 /* pas_memory_flavor.h in Headers */ = {isa = PBXBuildFile; fileRef = A41D477F2B77FBC3C1F0C9F0 /* pas_memory_flavor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC7429CBA49700398E35 /* pas_segregated_view_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC40A852451498C00876DA0 /* pas_segregated_view_kind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC7529CBA49700398E35 /* pas_has_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC40A722451498A00876DA0 /* pas_has_object.h */; };
 		DD4BEC7629CBA49700398E35 /* pas_compact_cartesian_tree_node_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC409912451496000876DA0 /* pas_compact_cartesian_tree_node_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -209,7 +208,6 @@
 		DD4BEC9A29CBA49700398E35 /* pas_large_sharing_pool.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC40A4B2451498800876DA0 /* pas_large_sharing_pool.c */; };
 		DD4BEC9B29CBA49700398E35 /* pas_local_view_cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C92DE26E57F75006AF012 /* pas_local_view_cache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC9C29CBA49700398E35 /* pas_ptr_min_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87004725AF8A18000E1ABF /* pas_ptr_min_heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD4BEC9D29CBA49700398E35 /* pas_compact_atomic_bitfit_global_size_class_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5FE7D225B6210C001859FC /* pas_compact_atomic_bitfit_global_size_class_ptr.h */; };
 		DD4BEC9E29CBA49700398E35 /* pas_page_base_config_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87004D25AF8A19000E1ABF /* pas_page_base_config_utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC9F29CBA49700398E35 /* pas_fast_path_allocation_result.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87001625AF89C7000E1ABF /* pas_fast_path_allocation_result.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BECA029CBA49700398E35 /* pas_heap_ref_prefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC40A8E2451498C00876DA0 /* pas_heap_ref_prefix.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -600,6 +598,7 @@
 		F39CF9A82E70CA3600EB3567 /* pas_mar_registry.h in Headers */ = {isa = PBXBuildFile; fileRef = F39CF9A42E70CA3600EB3567 /* pas_mar_registry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F39CF9AD2E70E41400EB3567 /* pas_mar_crash_reporter_report.h in Headers */ = {isa = PBXBuildFile; fileRef = F39CF9AC2E70E40900EB3567 /* pas_mar_crash_reporter_report.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F39CF9AE2E70E41B00EB3567 /* pas_mar_report_crash.h in Headers */ = {isa = PBXBuildFile; fileRef = F39CF9AA2E70E40900EB3567 /* pas_mar_report_crash.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F4D2D6A12EFE7B0200A0BB8E /* copy-profiling-data.py in Headers */ = {isa = PBXBuildFile; fileRef = F4D2D6A02EFE7B0100A0BB8E /* copy-profiling-data.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE0383202ABC0E9F00A576A2 /* TZoneHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = FE03831E2ABC0E9F00A576A2 /* TZoneHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE0383212ABC0E9F00A576A2 /* TZoneHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE03831F2ABC0E9F00A576A2 /* TZoneHeap.cpp */; };
 		FE0383232ABC988C00A576A2 /* TZoneHeapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0383222ABC988C00A576A2 /* TZoneHeapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -679,6 +678,7 @@
 		0100000B37BABA0A0A993999 /* pas_mte_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_mte_config.h; path = libpas/src/libpas/pas_mte_config.h; sourceTree = "<group>"; };
 		0100000B37BABA0A0A999999 /* pas_mte.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_mte.h; path = libpas/src/libpas/pas_mte.h; sourceTree = "<group>"; };
 		0100000B47BABA0A0A993999 /* pas_runtime_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_runtime_config.h; path = libpas/src/libpas/pas_runtime_config.h; sourceTree = "<group>"; };
+		05075FEE15D7410B97D990F4 /* SpinBackoff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpinBackoff.h; path = bmalloc/SpinBackoff.h; sourceTree = "<group>"; };
 		0F18F83C25C3467700721C2A /* pas_segregated_exclusive_view_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_segregated_exclusive_view_inlines.h; path = libpas/src/libpas/pas_segregated_exclusive_view_inlines.h; sourceTree = "<group>"; };
 		0F18F83D25C3467700721C2A /* minalign32_heap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minalign32_heap.c; path = libpas/src/libpas/minalign32_heap.c; sourceTree = "<group>"; };
 		0F18F83E25C3467700721C2A /* pagesize64k_heap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pagesize64k_heap.c; path = libpas/src/libpas/pagesize64k_heap.c; sourceTree = "<group>"; };
@@ -713,7 +713,6 @@
 		0F5FE7CA25B6210C001859FC /* pas_compact_atomic_bitfit_size_class_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_atomic_bitfit_size_class_ptr.h; path = libpas/src/libpas/pas_compact_atomic_bitfit_size_class_ptr.h; sourceTree = "<group>"; };
 		0F5FE7CB25B6210C001859FC /* pas_compact_atomic_bitfit_biasing_directory_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_atomic_bitfit_biasing_directory_ptr.h; path = libpas/src/libpas/pas_compact_atomic_bitfit_biasing_directory_ptr.h; sourceTree = "<group>"; };
 		0F5FE7D125B6210C001859FC /* pas_segregated_page_and_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_segregated_page_and_config.h; path = libpas/src/libpas/pas_segregated_page_and_config.h; sourceTree = "<group>"; };
-		0F5FE7D225B6210C001859FC /* pas_compact_atomic_bitfit_global_size_class_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_atomic_bitfit_global_size_class_ptr.h; path = libpas/src/libpas/pas_compact_atomic_bitfit_global_size_class_ptr.h; sourceTree = "<group>"; };
 		0F5FE7D325B6210C001859FC /* pas_compact_atomic_bitfit_heap_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_atomic_bitfit_heap_ptr.h; path = libpas/src/libpas/pas_compact_atomic_bitfit_heap_ptr.h; sourceTree = "<group>"; };
 		0F5FE7D425B6210C001859FC /* pas_compact_bitfit_directory_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_bitfit_directory_ptr.h; path = libpas/src/libpas/pas_compact_bitfit_directory_ptr.h; sourceTree = "<group>"; };
 		0F5FE7D525B6210C001859FC /* pas_compact_atomic_bitfit_view_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_atomic_bitfit_view_ptr.h; path = libpas/src/libpas/pas_compact_atomic_bitfit_view_ptr.h; sourceTree = "<group>"; };
@@ -1154,7 +1153,6 @@
 		143CB81A19022BC900B16A45 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mutex.cpp; path = bmalloc/Mutex.cpp; sourceTree = "<group>"; };
 		143CB81B19022BC900B16A45 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mutex.h; path = bmalloc/Mutex.h; sourceTree = "<group>"; };
 		1448C2FE18F3754300502839 /* bmalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bmalloc.h; path = bmalloc/bmalloc.h; sourceTree = "<group>"; };
-		F4D2D6A02EFE7B0100A0BB8E /* copy-profiling-data.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "copy-profiling-data.py"; sourceTree = "<group>"; };
 		1448C2FF18F3754300502839 /* mbmalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = mbmalloc.cpp; path = bmalloc/mbmalloc.cpp; sourceTree = "<group>"; };
 		145F6874179DF84100D65598 /* Sizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sizes.h; path = bmalloc/Sizes.h; sourceTree = "<group>"; };
 		1479E21217A1A255006D4E9D /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = Vector.h; path = bmalloc/Vector.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1162,7 +1160,6 @@
 		14895D8F1A3A319C0006235D /* Environment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Environment.cpp; path = bmalloc/Environment.cpp; sourceTree = "<group>"; };
 		14895D901A3A319C0006235D /* Environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Environment.h; path = bmalloc/Environment.h; sourceTree = "<group>"; };
 		148EFAE61D6B953B008E721E /* ScopeExit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScopeExit.h; path = bmalloc/ScopeExit.h; sourceTree = "<group>"; };
-		05075FEE15D7410B97D990F4 /* SpinBackoff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpinBackoff.h; path = bmalloc/SpinBackoff.h; sourceTree = "<group>"; };
 		14B650C518F39F4800751968 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		14B650C618F39F4800751968 /* bmalloc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = bmalloc.xcconfig; sourceTree = "<group>"; };
 		14B650C718F39F4800751968 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -1180,7 +1177,6 @@
 		2C09D8BB2797C6E9005AA15C /* pas_committed_pages_vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_committed_pages_vector.h; path = libpas/src/libpas/pas_committed_pages_vector.h; sourceTree = "<group>"; };
 		2C09D8BC2797C6E9005AA15C /* pas_committed_pages_vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_committed_pages_vector.c; path = libpas/src/libpas/pas_committed_pages_vector.c; sourceTree = "<group>"; };
 		2C09D8BD2797C6EA005AA15C /* pas_large_virtual_range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_large_virtual_range.h; path = libpas/src/libpas/pas_large_virtual_range.h; sourceTree = "<group>"; };
-		A41D477F2B77FBC3C1F0C9F0 /* pas_memory_flavor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_memory_flavor.h; path = libpas/src/libpas/pas_memory_flavor.h; sourceTree = "<group>"; };
 		2C09D8BF2797C6EA005AA15C /* pas_thread_local_cache_layout_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_thread_local_cache_layout_entry.h; path = libpas/src/libpas/pas_thread_local_cache_layout_entry.h; sourceTree = "<group>"; };
 		2C09D8C02797C6EA005AA15C /* pas_compact_thread_local_cache_layout_node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_thread_local_cache_layout_node.h; path = libpas/src/libpas/pas_compact_thread_local_cache_layout_node.h; sourceTree = "<group>"; };
 		2C11E8922728DE27002162D0 /* bmalloc_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bmalloc_type.h; path = libpas/src/libpas/bmalloc_type.h; sourceTree = "<group>"; };
@@ -1215,11 +1211,14 @@
 		65072AE62B6195B90065065C /* TZoneHeapManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeapManager.h; path = bmalloc/TZoneHeapManager.h; sourceTree = "<group>"; };
 		652E16952C4869D000C377D7 /* TZoneLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneLog.h; path = bmalloc/TZoneLog.h; sourceTree = "<group>"; };
 		652E16962C4869D000C377D7 /* TZoneLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneLog.cpp; path = bmalloc/TZoneLog.cpp; sourceTree = "<group>"; };
+		6BEA9595554C41DC91A6C33B /* bmalloc_prefault_supply.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bmalloc_prefault_supply.c; path = libpas/src/libpas/bmalloc_prefault_supply.c; sourceTree = "<group>"; };
 		7234F6B22D01112E000B645D /* pas_mte_bootstrap_free_heap.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = pas_mte_bootstrap_free_heap.h; path = libpas/src/libpas/pas_mte_bootstrap_free_heap.h; sourceTree = "<group>"; };
 		7234F6B32D01112E000B645D /* pas_mte_bootstrap_free_heap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_mte_bootstrap_free_heap.c; path = libpas/src/libpas/pas_mte_bootstrap_free_heap.c; sourceTree = "<group>"; };
 		7234F6B42D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = pas_mte_bootstrap_heap_page_provider.h; path = libpas/src/libpas/pas_mte_bootstrap_heap_page_provider.h; sourceTree = "<group>"; };
 		7234F6B52D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_mte_bootstrap_heap_page_provider.c; path = libpas/src/libpas/pas_mte_bootstrap_heap_page_provider.c; sourceTree = "<group>"; };
 		7234F6C22D011152000B645D /* pas_page_config_size_category.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_page_config_size_category.h; path = libpas/src/libpas/pas_page_config_size_category.h; sourceTree = "<group>"; };
+		87ED133FE5104AEF94FCA029 /* bmalloc_prefault_supply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bmalloc_prefault_supply.h; path = libpas/src/libpas/bmalloc_prefault_supply.h; sourceTree = "<group>"; };
+		A41D477F2B77FBC3C1F0C9F0 /* pas_memory_flavor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_memory_flavor.h; path = libpas/src/libpas/pas_memory_flavor.h; sourceTree = "<group>"; };
 		AA00000012000000000000AA /* bmalloc_heap_flex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bmalloc_heap_flex.c; path = libpas/src/libpas/bmalloc_heap_flex.c; sourceTree = "<group>"; };
 		AA00000014000000000000AA /* bmalloc_heap_flex_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bmalloc_heap_flex_internal.h; path = libpas/src/libpas/bmalloc_heap_flex_internal.h; sourceTree = "<group>"; };
 		AA00000016000000000000AA /* bmalloc_heap_iso.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bmalloc_heap_iso.c; path = libpas/src/libpas/bmalloc_heap_iso.c; sourceTree = "<group>"; };
@@ -1228,8 +1227,6 @@
 		AD14AD27202529A600890E3B /* ProcessCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessCheck.h; path = bmalloc/ProcessCheck.h; sourceTree = "<group>"; };
 		AD14AD28202529B000890E3B /* ProcessCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessCheck.mm; path = bmalloc/ProcessCheck.mm; sourceTree = "<group>"; };
 		BB00000004000000000000BB /* bmalloc_heap_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bmalloc_heap_utils.c; path = libpas/src/libpas/bmalloc_heap_utils.c; sourceTree = "<group>"; };
-		6BEA9595554C41DC91A6C33B /* bmalloc_prefault_supply.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bmalloc_prefault_supply.c; path = libpas/src/libpas/bmalloc_prefault_supply.c; sourceTree = "<group>"; };
-		87ED133FE5104AEF94FCA029 /* bmalloc_prefault_supply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bmalloc_prefault_supply.h; path = libpas/src/libpas/bmalloc_prefault_supply.h; sourceTree = "<group>"; };
 		BB00000008000000000000BB /* bmalloc_heap_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bmalloc_heap_utils.h; path = libpas/src/libpas/bmalloc_heap_utils.h; sourceTree = "<group>"; };
 		C5E4C2B52E0E12F1001E806C /* VMAllocate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VMAllocate.cpp; path = bmalloc/VMAllocate.cpp; sourceTree = "<group>"; };
 		DE8B13B221CC5D9F00A63FCD /* BVMTags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BVMTags.h; path = bmalloc/BVMTags.h; sourceTree = "<group>"; };
@@ -1257,6 +1254,7 @@
 		F39CF9AA2E70E40900EB3567 /* pas_mar_report_crash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_mar_report_crash.h; path = libpas/src/libpas/pas_mar_report_crash.h; sourceTree = "<group>"; };
 		F39CF9AB2E70E40900EB3567 /* pas_mar_report_crash.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_mar_report_crash.c; path = libpas/src/libpas/pas_mar_report_crash.c; sourceTree = "<group>"; };
 		F39CF9AC2E70E40900EB3567 /* pas_mar_crash_reporter_report.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_mar_crash_reporter_report.h; path = libpas/src/libpas/pas_mar_crash_reporter_report.h; sourceTree = "<group>"; };
+		F4D2D6A02EFE7B0100A0BB8E /* copy-profiling-data.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "copy-profiling-data.py"; sourceTree = "<group>"; };
 		FE03831E2ABC0E9F00A576A2 /* TZoneHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeap.h; path = bmalloc/TZoneHeap.h; sourceTree = "<group>"; };
 		FE03831F2ABC0E9F00A576A2 /* TZoneHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneHeap.cpp; path = bmalloc/TZoneHeap.cpp; sourceTree = "<group>"; };
 		FE0383222ABC988C00A576A2 /* TZoneHeapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeapInlines.h; path = bmalloc/TZoneHeapInlines.h; sourceTree = "<group>"; };
@@ -1430,7 +1428,6 @@
 				0F7549812486973C002A4C7D /* pas_compact_atomic_allocator_index_ptr.h */,
 				0F87FFA825AF897A000E1ABF /* pas_compact_atomic_biasing_directory_ptr.h */,
 				0F5FE7CB25B6210C001859FC /* pas_compact_atomic_bitfit_biasing_directory_ptr.h */,
-				0F5FE7D225B6210C001859FC /* pas_compact_atomic_bitfit_global_size_class_ptr.h */,
 				0F5FE7D325B6210C001859FC /* pas_compact_atomic_bitfit_heap_ptr.h */,
 				0F5FE7CA25B6210C001859FC /* pas_compact_atomic_bitfit_size_class_ptr.h */,
 				0F5FE7D525B6210C001859FC /* pas_compact_atomic_bitfit_view_ptr.h */,
@@ -1873,14 +1870,6 @@
 			);
 			sourceTree = "<group>";
 		};
-		F4D2D6A22EFE7B0300A0BB8E /* Scripts */ = {
-			isa = PBXGroup;
-			children = (
-				F4D2D6A02EFE7B0100A0BB8E /* copy-profiling-data.py */,
-			);
-			path = Scripts;
-			sourceTree = "<group>";
-		};
 		145F6840179DC45F00D65598 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1960,6 +1949,14 @@
 			children = (
 			);
 			name = mar;
+			sourceTree = "<group>";
+		};
+		F4D2D6A22EFE7B0300A0BB8E /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				F4D2D6A02EFE7B0100A0BB8E /* copy-profiling-data.py */,
+			);
+			path = Scripts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2081,7 +2078,6 @@
 				DD4BECA229CBA49700398E35 /* pas_compact_atomic_allocator_index_ptr.h in Headers */,
 				DD4BEC8929CBA49700398E35 /* pas_compact_atomic_biasing_directory_ptr.h in Headers */,
 				DD4BEC9729CBA49700398E35 /* pas_compact_atomic_bitfit_biasing_directory_ptr.h in Headers */,
-				DD4BEC9D29CBA49700398E35 /* pas_compact_atomic_bitfit_global_size_class_ptr.h in Headers */,
 				DD4BED3929CBA49700398E35 /* pas_compact_atomic_bitfit_heap_ptr.h in Headers */,
 				DD4BECAB29CBA49700398E35 /* pas_compact_atomic_bitfit_size_class_ptr.h in Headers */,
 				DD4BEDF729CBA49700398E35 /* pas_compact_atomic_bitfit_view_ptr.h in Headers */,
