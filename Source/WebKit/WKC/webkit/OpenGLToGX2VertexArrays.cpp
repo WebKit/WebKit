@@ -95,6 +95,27 @@ VertexArrayResult VertexArrays::bind(VertexArrayName name)
         return VertexArrayResult::InvalidName;
     State* state = &it->second;
 
+    // GX2 keeps vertex-buffer slots globally bound, unlike GL's per-VAO
+    // attribute-enable state. Explicitly disable attributes that were enabled
+    // by the previously bound VAO but are absent/disabled in the destination,
+    // or the next fetch shader can observe stale descriptors.
+    if (m_backend.setAttribute) {
+        const State* previous = currentState();
+        for (uint16_t index = 0; index < 32; ++index) {
+            auto nextAttribute = state->attributes.find(static_cast<uint8_t>(index));
+            const bool nextEnabled = nextAttribute != state->attributes.end()
+                && nextAttribute->second.enabled;
+            if (nextEnabled)
+                continue;
+            // Avoid relying on the prior VAO's presence for correctness: a
+            // disabled descriptor is harmless and clears backend enable state.
+            VertexAttribute disabled;
+            disabled.enabled = false;
+            if (!m_backend.setAttribute(m_backend.context, static_cast<uint8_t>(index), disabled))
+                return VertexArrayResult::BackendFailure;
+        }
+    }
+
     // A VAO captures its element buffer and attribute descriptors. Reapply
     // those bindings when switching VAOs; otherwise the GX2 backend keeps
     // drawing with whichever buffers the previously bound VAO installed.
