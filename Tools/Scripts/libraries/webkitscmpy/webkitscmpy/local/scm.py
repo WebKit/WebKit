@@ -20,26 +20,33 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import os
 import re
 import shutil
+from typing import TYPE_CHECKING, Any, Iterator
 
 from webkitbugspy import Tracker, bugzilla, github, radar
 from webkitcorepy import decorators, string_utils
-from webkitscmpy import ScmBase, Contributor, CommitClassifier
+from webkitscmpy import ScmBase, Commit, Contributor, CommitClassifier
+
+if TYPE_CHECKING:
+    from webkitscmpy.local import Git, Svn
+    from webkitscmpy.remote.scm import Scm as RemoteScm
 
 
 class Scm(ScmBase):
     @classmethod
-    def executable(cls, program):
+    def executable(cls, program: str) -> str:
         path = shutil.which(program)
         if path is None:
             raise OSError("Cannot find '{}' program".format(program))
         return os.path.realpath(path)
 
     @classmethod
-    def from_path(cls, path, contributors=None, **kwargs):
+    def from_path(cls, path: str, contributors: Contributor.Mapping | None = None, **kwargs: Any) -> Git | Svn:
         from webkitscmpy import local
 
         if local.Git.is_checkout(path):
@@ -48,10 +55,13 @@ class Scm(ScmBase):
             return local.Svn(path, contributors=contributors, **kwargs)
         raise OSError("'{}' is not a known SCM type".format(path))
 
-    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
+    def __init__(
+        self, path: str, dev_branches: re.Pattern[str] | None = None, prod_branches: re.Pattern[str] | None = None,
+        contributors: Contributor.Mapping | None = None, id: str | None = None, classifier: CommitClassifier | None = None,
+    ) -> None:
         if not isinstance(path, string_utils.basestring):
             raise ValueError("Expected 'path' to be a string type, not '{}'".format(type(path)))
-        self.path = path
+        self.path: str = path
 
         if not contributors and self.metadata:
             for candidate in [
@@ -79,7 +89,7 @@ class Scm(ScmBase):
             id=id,
         )
 
-        trackers = []
+        trackers: list[Tracker] = []
         if self.metadata:
             path = os.path.join(self.metadata, 'trackers.json')
             if os.path.isfile(path):
@@ -100,7 +110,7 @@ class Scm(ScmBase):
 
     @property
     @decorators.Memoize()
-    def metadata(self):
+    def metadata(self) -> str | None:
         if not self.root_path:
             return None
         for name in ('metadata', '.repo-metadata'):
@@ -110,25 +120,25 @@ class Scm(ScmBase):
         return None
 
     @property
-    def root_path(self):
+    def root_path(self) -> str | None:
         raise NotImplementedError()
 
     @property
-    def common_directory(self):
+    def common_directory(self) -> str | None:
         raise NotImplementedError()
 
     @property
-    def branch(self):
+    def branch(self) -> str | None:
         raise NotImplementedError()
 
-    def remote(self, name=None):
+    def remote(self, name: str | None = None) -> RemoteScm | None:
         raise NotImplementedError()
 
-    def checkout(self, argument):
+    def checkout(self, argument: str) -> Commit | None:
         raise NotImplementedError()
 
-    def pull(self):
+    def pull(self) -> int:
         raise NotImplementedError()
 
-    def diff(self, head='HEAD', base=None, include_log=False):
+    def diff(self, head: str = 'HEAD', base: str | None = None, include_log: bool = False) -> Iterator[str]:
         raise NotImplementedError()

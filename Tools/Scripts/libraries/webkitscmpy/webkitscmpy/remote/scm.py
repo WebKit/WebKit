@@ -20,10 +20,16 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING, Callable, Iterable, Iterator
 
 from webkitscmpy.scm_base import ScmBase
 from webkitcorepy import string_utils
+
+if TYPE_CHECKING:
+    from webkitscmpy import Commit, CommitClassifier, Contributor, PullRequest
 
 
 class Scm(ScmBase):
@@ -32,46 +38,64 @@ class Scm(ScmBase):
     class PRGenerator(object):
         SUPPORTS_DRAFTS = False
 
-        def __init__(self, repository):
+        def __init__(self, repository: Scm) -> None:
             self.repository = repository
 
-        def get(self, number):
+        def get(self, number: int) -> PullRequest | None:
             raise NotImplementedError()
 
-        def find(self, opened=True, head=None, base=None):
+        def find(self, opened: bool | None = True, head: str | None = None, base: str | None = None) -> Iterator[PullRequest]:
             raise NotImplementedError()
 
-        def create(self, head, title, body=None, commits=None, base=None, draft=None):
+        def create(
+            self, head: str, title: str, body: str | None = None, commits: list[Commit] | None = None,
+            base: str | None = None, draft: bool | None = None,
+        ) -> PullRequest | None:
             raise NotImplementedError()
 
-        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None, draft=None):
+        def update(
+            self, pull_request: PullRequest, head: str | None = None, title: str | None = None, body: str | None = None,
+            commits: list[Commit] | None = None, base: str | None = None, opened: bool | None = None, draft: bool | None = None,
+        ) -> PullRequest | None:
             raise NotImplementedError()
 
-        def reviewers(self, pull_request):
+        def reviewers(self, pull_request: PullRequest) -> PullRequest:
             raise NotImplementedError()
 
-        def comment(self, pull_request, content):
+        def comment(self, pull_request: PullRequest, content: str) -> PullRequest | None:
             raise NotImplementedError()
 
-        def comments(self, pull_request):
+        def comments(self, pull_request: PullRequest) -> Iterator[PullRequest.Comment]:
             raise NotImplementedError()
 
-        def review(self, pull_request, comment=None, approve=None, diff_comments=None):
+        # Diff comments are keyed by file, and then by line (or None, for comments on the whole file).
+        def review(
+            self, pull_request: PullRequest, comment: str | None = None, approve: bool | None = None,
+            diff_comments: dict[str, dict[int | None, list[str]]] | None = None,
+        ) -> PullRequest | None:
             raise NotImplementedError()
 
-        def statuses(self, pull_request):
+        def statuses(self, pull_request: PullRequest) -> Iterator[PullRequest.Status]:
             raise NotImplementedError()
 
-        def diff(self, pull_request, comments=False, diff_comments=None):
+        def diff(
+            self, pull_request: PullRequest, comments: bool = False,
+            diff_comments: dict[str, dict[int | None, list[str]]] | None = None,
+        ) -> Iterator[str]:
             raise NotImplementedError()
-
 
     @classmethod
-    def from_url(cls, url, contributors=None, classifier=None):
+    def is_webserver(cls, url: str) -> bool:
+        raise NotImplementedError()
+
+    @classmethod
+    def from_url(cls, url: str, contributors: Contributor.Mapping | None = None, classifier: CommitClassifier | None = None) -> Scm:
         from webkitscmpy import remote
 
         if 'bitbucket' in url or 'stash' in url:
             match = re.match(r'(?P<protocol>https?)://(?P<host>[^/]+)/(projects/)?(?P<project>[^/]+)/(repos/)?(?P<repo>[^/]+)', url)
+            if not match:
+                raise OSError("'{}' is not a known SCM server".format(url))
             url = '{}://{}/projects/{}/repos/{}'.format(
                 match.group('protocol'),
                 match.group('host'),
@@ -79,14 +103,15 @@ class Scm(ScmBase):
                 match.group('repo'),
             )
 
-        for candidate in [remote.Svn, remote.GitHub, remote.BitBucket]:
+        candidates: list[type[Scm]] = [remote.Svn, remote.GitHub, remote.BitBucket]
+        for candidate in candidates:
             if candidate.is_webserver(url):
                 return candidate(url, contributors=contributors, classifier=classifier)
 
         raise OSError("'{}' is not a known SCM server".format(url))
 
     @classmethod
-    def insert_diff_comments(cls, generator, comments=None):
+    def insert_diff_comments(cls, generator: Callable[[], Iterable[str]], comments: dict[str, dict[int | None, list[str]]] | None = None) -> Iterator[str]:
         file = None
         count = 0
         comments = comments or dict()
@@ -95,16 +120,19 @@ class Scm(ScmBase):
                 file = line.split('/', 1)[-1]
                 count = -1
             yield line
-            comments_on = comments.get(file, {}).get(None if count < 0 else count, [])
+            comments_on = comments.get(file or '', {}).get(None if count < 0 else count, [])
             if comments_on:
                 yield '>>>>'
                 for comment in comments_on:
-                    for line in comment.splitlines():
-                        yield line
+                    for comment_line in comment.splitlines():
+                        yield comment_line
                 yield '<<<<'
             count += 1
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
+    def __init__(
+        self, url: str, dev_branches: re.Pattern[str] | None = None, prod_branches: re.Pattern[str] | None = None,
+        contributors: Contributor.Mapping | None = None, id: str | None = None, classifier: CommitClassifier | None = None,
+    ) -> None:
         super(Scm, self).__init__(
             dev_branches=dev_branches,
             prod_branches=prod_branches,
@@ -116,7 +144,7 @@ class Scm(ScmBase):
         if not isinstance(url, string_utils.basestring):
             raise ValueError("Expected 'url' to be a string type, not '{}'".format(type(url)))
         self.url = url
-        self.pull_requests = None
+        self.pull_requests: Scm.PRGenerator | None = None
 
-    def checkout_url(self, ssh=False, http=False):
+    def checkout_url(self, ssh: bool = False, http: bool = False) -> str:
         raise NotImplementedError()

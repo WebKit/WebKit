@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import bisect
 import calendar
 import json
@@ -30,6 +32,7 @@ import shutil
 import subprocess
 import sys
 import time
+from typing import TYPE_CHECKING, Any, Iterator, List
 
 from datetime import datetime, timedelta
 
@@ -37,17 +40,22 @@ from webkitcorepy import log, run, decorators
 from webkitscmpy.local.scm import Scm
 from webkitscmpy import remote, Commit, Contributor, Version
 
+if TYPE_CHECKING:
+    from webkitscmpy import CommitClassifier
+
 
 class Svn(Scm):
     class Cache(object):
         LOG_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*)')
         VERSION = Version(1)
 
-        def __init__(self, repo, guranteed_for=10):
+        def __init__(self, repo: Svn, guranteed_for: int = 10) -> None:
             self.repo = repo
-            self._last_populated = {}
+            self._last_populated: dict[str, float] = {}
             self._guranteed_for = guranteed_for
 
+            # Maps 'version' to the cache version, and each branch to its revisions.
+            self._data: dict[str, Any]
             if os.path.exists(self.path):
                 try:
                     with open(self.path, 'r') as file:
@@ -58,13 +66,13 @@ class Svn(Scm):
                 self._data = dict(version=str(self.VERSION))
 
         @property
-        def path(self):
+        def path(self) -> str:
             return os.path.join(self.repo.common_directory, 'webkitscmpy-cache.json')
 
-        def populate(self, branch=None):
+        def populate(self, branch: str | None = None) -> list[int] | None:
             branch = branch or self.repo.default_branch
             if self._last_populated.get(branch, 0) + self._guranteed_for > time.time():
-                return
+                return None
 
             is_default_branch = branch == self.repo.default_branch
             if branch not in self._data:
@@ -96,6 +104,7 @@ class Svn(Scm):
                 )
                 if log.poll():
                     raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
+                assert log.stdout is not None
 
                 default_count = 0
                 line = log.stdout.readline()
@@ -136,12 +145,13 @@ class Svn(Scm):
             except (IOError, OSError):
                 self.repo.log("Failed to write SVN cache to '{}'".format(self.path))
 
-            return self._data[branch]
+            revisions: list[int] = self._data[branch]
+            return revisions
 
-        def to_hash(self, **kwargs):
+        def to_hash(self, **kwargs: Any) -> str | None:
             return None
 
-        def to_revision(self, hash=None, identifier=None, populate=True, branch=None):
+        def to_revision(self, hash: str | None = None, identifier: int | str | None = None, populate: bool = True, branch: str | None = None) -> int | None:
             if hash:
                 return None
             parts = Commit._parse_identifier(identifier, do_assert=False)
@@ -161,14 +171,16 @@ class Svn(Scm):
                 index = int(bp_identifier.split('@')[0]) + b_count
                 if index <= 0:
                     return None
-                return self._data[self.repo.default_branch][index]
+                revision: int = self._data[self.repo.default_branch][index]
+                return revision
             if b_count >= len(self._data[branch]) and populate:
                 self.populate(branch=branch)
             if b_count >= len(self._data[branch]):
                 return None
-            return self._data[branch][b_count]
+            revision = self._data[branch][b_count]
+            return revision
 
-        def to_identifier(self, hash=None, revision=None, populate=True, branch=None):
+        def to_identifier(self, hash: str | None = None, revision: int | str | None = None, populate: bool = True, branch: str | None = None) -> str | None:
             if hash:
                 return None
 
@@ -195,7 +207,7 @@ class Svn(Scm):
                 return None
 
             if branch == self.repo.default_branch:
-                return '{}@trunk'.format(index, self.repo.default_branch)
+                return '{}@{}'.format(index, self.repo.default_branch)
 
             branch_point = bisect.bisect_left(self._data[self.repo.default_branch], self._data[branch][0])
             return '{}.{}@{}'.format(branch_point, index, branch)
@@ -203,24 +215,28 @@ class Svn(Scm):
 
     @classmethod
     @decorators.Memoize()
-    def executable(cls):
+    def executable(cls) -> str:
         return Scm.executable('svn')
 
     @classmethod
-    def is_checkout(cls, path):
+    def is_checkout(cls, path: str) -> bool:
         return run([cls.executable(), 'info'], cwd=path, capture_output=True).returncode == 0
 
-    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None, cached=True, classifier=None,):
+    def __init__(
+        self, path: str, dev_branches: re.Pattern[str] | None = None, prod_branches: re.Pattern[str] | None = None,
+        contributors: Contributor.Mapping | None = None, id: str | None = None, cached: bool = True, classifier: CommitClassifier | None = None,
+    ) -> None:
         self._root_path = path
-        self._root_path = self.info(cached=False).get('Working Copy Root Path')
-        if not self.root_path:
+        root_path = self.info(cached=False).get('Working Copy Root Path')
+        if not root_path:
             raise OSError('Provided path {} is not a svn repository'.format(path))
+        self._root_path = root_path
 
         super(Svn, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id, classifier=classifier,)
         self.cache = self.Cache(self) if cached else None
 
     @decorators.Memoize(cached=False)
-    def info(self, branch=None, revision=None, tag=None):
+    def info(self, branch: str | None = None, revision: int | None = None, tag: str | None = None) -> dict[str, str]:
         if tag and branch:
             raise ValueError('Cannot specify both branch and tag')
         if tag and revision:
@@ -237,50 +253,51 @@ class Svn(Scm):
         if info_result.returncode:
             return {}
 
-        result = {}
+        result: dict[str, str] = {}
         for line in info_result.stdout.splitlines():
             split = line.split(': ')
             result[split[0]] = ': '.join(split[1:])
         return result
 
     @property
-    def is_svn(self):
+    def is_svn(self) -> bool:
         return True
 
     @property
-    def root_path(self):
+    def root_path(self) -> str:
         return self._root_path
 
     @property
-    def common_directory(self):
+    def common_directory(self) -> str:
         return os.path.join(self.root_path, '.svn')
 
     @property
-    def default_branch(self):
+    def default_branch(self) -> str:
         return 'trunk'
 
     @property
-    def branch(self):
+    def branch(self) -> str:
         local_path = self.path[len(self.root_path):]
         relative_url = self.info()['Relative URL']
         if local_path and relative_url.endswith(local_path):
             return relative_url[2:-len(local_path)]
         return relative_url[2:]
 
-    def list(self, category):
+    # Annotations in this class use typing.List, because Svn.list shadows the builtin.
+    def list(self, category: str) -> List[str]:
         list_result = run([self.executable(), 'list', '^/{}'.format(category)], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if list_result.returncode:
             return []
         return [element.rstrip('/') for element in list_result.stdout.splitlines()]
 
     @property
-    def branches(self):
+    def branches(self) -> List[str]:
         return ['trunk'] + self.list('branches')
 
-    def tags(self):
+    def tags(self) -> List[str]:
         return self.list('tags')
 
-    def _commit_count(self, revision=None, branch=None):
+    def _commit_count(self, revision: int | None = None, branch: str | None = None) -> int:
         branch = branch or self.default_branch
         if not self.cache:
             raise self.Exception('No available cache, cannot count commits')
@@ -295,14 +312,14 @@ class Svn(Scm):
             return len(self.cache._data[branch])
         return self._commit_count(revision=self.cache._data[branch][0], branch=self.default_branch)
 
-    def url(self, name=None):
+    def url(self, name: str | None = None) -> str:
         return self.info(cached=True)['Repository Root']
 
     @decorators.Memoize()
-    def remote(self, name=None):
+    def remote(self, name: str | None = None) -> remote.Svn:
         return remote.Svn(self.url(name=name), contributors=self.contributors)
 
-    def _branch_for(self, revision):
+    def _branch_for(self, revision: int) -> str:
         if not self.cache:
             raise self.Exception('No available cache, cannot determine branch')
         candidates = [branch for branch, revisions in self.cache._data.items() if branch != 'version' and revision in revisions]
@@ -337,7 +354,7 @@ class Svn(Scm):
                 while line.startswith(('A ', 'D ', 'M ')) and not line[2:].startswith(partial):
                     partial = partial[:-1]
 
-        if len(partial) <= 3:
+        if partial is None or len(partial) <= 3:
             raise self.Exception('Malformed set  of edited files')
         partial = partial.split(' ')[0]
         candidate = partial.split('/')[2 if partial.startswith('/branches') else 1]
@@ -347,7 +364,7 @@ class Svn(Scm):
             return partial[1:].rstrip('/')
         return candidate
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
+    def commit(self, hash: str | None = None, revision: int | str | None = None, identifier: int | str | None = None, branch: str | None = None, tag: str | None = None, include_log: bool = True, include_identifier: bool = True) -> Commit:
         if hash:
             raise ValueError('SVN does not support Git hashes')
 
@@ -393,7 +410,8 @@ class Svn(Scm):
 
                 branch = self.default_branch
 
-            revision = self.cache._data[branch][identifier]
+            revisions: list[int] = self.cache._data[branch]
+            revision = revisions[identifier]
             info = self.info(cached=True, branch=branch, revision=revision)
             branch = self._branch_for(revision)
             if not self.cache._data.get(branch, []) or identifier >= len(self.cache._data.get(branch, [])):
@@ -426,10 +444,11 @@ class Svn(Scm):
                 branch = self._branch_for(revision)
 
         # Extract the commit time from the commit info
-        date = info['Last Changed Date'].split(' (')[0] if info.get('Last Changed Date') else None
-        if date:
-            tz_diff = date.split(' ')[-1]
-            date = datetime.strptime(date[:-len(tz_diff)], '%Y-%m-%d %H:%M:%S ')
+        last_changed = info['Last Changed Date'].split(' (')[0] if info.get('Last Changed Date') else None
+        date: datetime | None = None
+        if last_changed:
+            tz_diff = last_changed.split(' ')[-1]
+            date = datetime.strptime(last_changed[:-len(tz_diff)], '%Y-%m-%d %H:%M:%S ')
             date += timedelta(
                 hours=int(tz_diff[1:3]),
                 minutes=int(tz_diff[3:5]),
@@ -471,7 +490,7 @@ class Svn(Scm):
             if include_log:
                 self.log('Failed to connect to remote, cannot compute commit message')
             email = info.get('Last Changed Author')
-            author = self.contributors.create(email, email) if '@' in email else self.contributors.create(email)
+            author = self.contributors.create(email, email) if email and '@' in email else self.contributors.create(email)
             message = None
 
         return Commit(
@@ -485,7 +504,8 @@ class Svn(Scm):
             message=message,
         )
 
-    def _args_from_content(self, content, include_log=True):
+    # Returns keyword arguments for Commit().
+    def _args_from_content(self, content: str, include_log: bool = True) -> dict[str, Any]:
         leading = content.splitlines()[0]
         match = Contributor.SVN_AUTHOR_RE.match(leading) or Contributor.SVN_AUTHOR_Q_RE.match(leading)
         if not match:
@@ -505,20 +525,20 @@ class Svn(Scm):
             message='\n'.join(content.splitlines()[2:]).rstrip() if include_log else None,
         )
 
-
-    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
-        begin, end = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
-        previous = end
-        if end.branch == self.default_branch or '/' in end.branch:
-            branch_arg = '^/{}'.format(end.branch)
+    def commits(self, begin: dict[str, Any] | None = None, end: dict[str, Any] | None = None, include_log: bool = True, include_identifier: bool = True) -> Iterator[Commit]:
+        begin_commit, end_commit = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
+        previous = end_commit
+        assert end_commit.branch is not None
+        if end_commit.branch == self.default_branch or '/' in end_commit.branch:
+            branch_arg = '^/{}'.format(end_commit.branch)
         else:
-            branch_arg = '^/branches/{}'.format(end.branch)
+            branch_arg = '^/branches/{}'.format(end_commit.branch)
 
         try:
             log = None
             log = subprocess.Popen(
                 [self.executable(), 'log', '-r', '{}:{}'.format(
-                    end.revision, begin.revision,
+                    end_commit.revision, begin_commit.revision,
                 ), branch_arg] + ([] if include_log else ['-q']),
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
@@ -526,7 +546,8 @@ class Svn(Scm):
                 encoding='utf-8',
             )
             if log.poll():
-                raise self.Exception('Failed to find commits between {} and {} on {}'.format(begin, end, branch_arg))
+                raise self.Exception('Failed to find commits between {} and {} on {}'.format(begin_commit, end_commit, branch_arg))
+            assert log.stdout is not None
 
             content = ''
             line = log.stdout.readline()
@@ -547,14 +568,15 @@ class Svn(Scm):
                 args = self._args_from_content(content, include_log=include_log)
                 if args['revision'] != previous.revision:
                     yield previous
-                    identifier -= 1
+                    if identifier is not None:
+                        identifier -= 1
                 if not identifier:
                     identifier = branch_point
                     branch_point = None
 
                 previous = Commit(
                     repository_id=self.id,
-                    branch=end.branch if branch_point else self.default_branch,
+                    branch=end_commit.branch if branch_point else self.default_branch,
                     identifier=identifier,
                     branch_point=branch_point,
                     **args
@@ -570,7 +592,7 @@ class Svn(Scm):
             if log and log.poll() is None:
                 log.kill()
 
-    def checkout(self, argument):
+    def checkout(self, argument: str) -> Commit | None:
         commit = self.find(argument)
         if not commit:
             return None
@@ -581,10 +603,10 @@ class Svn(Scm):
 
         return None if run(command, cwd=self.root_path).returncode else commit
 
-    def pull(self):
+    def pull(self) -> int:
         return run([self.executable(), 'up'], cwd=self.root_path).returncode
 
-    def clean(self):
+    def clean(self) -> int:
         result = run([
             self.executable(), 'revert', '-R', self.root_path,
         ], cwd=self.root_path).returncode

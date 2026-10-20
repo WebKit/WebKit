@@ -20,18 +20,25 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import bisect
 import calendar
 import json
 import os
 import re
 import tempfile
+from typing import TYPE_CHECKING, Any, Iterator, List
 
 from datetime import datetime
 
 from webkitcorepy import decorators, string_utils, CallByNeed
 from webkitscmpy.remote.scm import Scm
 from webkitscmpy import Commit, Version
+
+if TYPE_CHECKING:
+    import fasteners
+    from webkitscmpy import CommitClassifier, Contributor
 
 requests = CallByNeed(lambda: __import__('requests'))
 xmltodict = CallByNeed(lambda: __import__('xmltodict'))
@@ -43,10 +50,13 @@ class Svn(Scm):
     CACHE_VERSION = Version(1)
 
     @classmethod
-    def is_webserver(cls, url):
+    def is_webserver(cls, url: str) -> bool:
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, cache_path=None, classifier=None):
+    def __init__(
+        self, url: str, dev_branches: re.Pattern[str] | None = None, prod_branches: re.Pattern[str] | None = None,
+        contributors: Contributor.Mapping | None = None, id: str | None = None, cache_path: str | None = None, classifier: CommitClassifier | None = None,
+    ) -> None:
         if url[-1] != '/':
             url += '/'
         if not self.is_webserver(url):
@@ -61,13 +71,17 @@ class Svn(Scm):
         )
 
         if not cache_path:
-            from webkitscmpy.mocks import remote
-            host = 'svn.{}'.format(self.URL_RE.match(self.url).group('host'))
-            if host in remote.Svn.remotes:
+            from webkitscmpy.mocks.remote.svn import Svn as MockSvn
+            match = self.URL_RE.match(self.url)
+            assert match is not None
+            host = 'svn.{}'.format(match.group('host'))
+            if host in MockSvn.remotes:
                 host = 'mock-{}'.format(host)
             cache_path = os.path.join(tempfile.gettempdir(), host, 'webkitscmpy-cache.json')
         self._cache_path = cache_path
 
+        # Maps 'version' to the cache version, and each branch to its revisions.
+        self._metadata_cache: dict[str, Any]
         if os.path.exists(self._cache_path):
             try:
                 with self._cache_lock(), open(self._cache_path) as file:
@@ -78,16 +92,16 @@ class Svn(Scm):
             self._metadata_cache = dict(version=str(self.CACHE_VERSION))
 
     @property
-    def is_svn(self):
+    def is_svn(self) -> bool:
         return True
 
-    def checkout_url(self, ssh=False, http=False):
+    def checkout_url(self, ssh: bool = False, http: bool = False) -> str:
         if ssh:
             raise ValueError('Subversion does not support an ssh checkout')
         return '{}{}'.format(self.url, self.default_branch)
 
     @decorators.Memoize(timeout=60)
-    def _latest(self):
+    def _latest(self) -> int | None:
         response = requests.request(
             method='OPTIONS',
             url=self.url,
@@ -104,8 +118,9 @@ class Svn(Scm):
             return None
         return int(response.headers.get('SVN-Youngest-Rev'))
 
+    # Values come from the server's XML response, except for 'Revision', which is an int.
     @decorators.Memoize(cached=False)
-    def info(self, branch=None, revision=None, tag=None):
+    def info(self, branch: str | None = None, revision: int | None = None, tag: str | None = None) -> dict[str, Any] | None:
         if tag and branch:
             raise ValueError('Cannot specify both branch and tag')
         if tag and revision:
@@ -165,10 +180,11 @@ class Svn(Scm):
         }
 
     @property
-    def default_branch(self):
+    def default_branch(self) -> str:
         return 'trunk'
 
-    def list(self, category):
+    # Annotations in this class use typing.List, because Svn.list shadows the builtin.
+    def list(self, category: str) -> List[str]:
         revision = self._latest()
         if not revision:
             return []
@@ -191,7 +207,7 @@ class Svn(Scm):
         responses = xmltodict.parse(response.text)
         responses = responses.get('D:multistatus', responses).get('D:response', [])
 
-        results = []
+        results: list[str] = []
         for response in responses:
             candidate = response['D:href'].split('!svn/rvr/{}/{}/'.format(revision, category))[-1].rstrip('/')
             if not candidate:
@@ -201,17 +217,17 @@ class Svn(Scm):
         return results
 
     @property
-    def branches(self):
+    def branches(self) -> List[str]:
         return [self.default_branch] + self.list('branches')
 
-    def tags(self):
+    def tags(self) -> List[str]:
         return self.list('tags')
 
-    def _cache_lock(self):
+    def _cache_lock(self) -> fasteners.InterProcessLock:
         import fasteners
         return fasteners.InterProcessLock(os.path.join(os.path.dirname(self._cache_path), 'cache.lock'))
 
-    def _cache_revisions(self, branch=None):
+    def _cache_revisions(self, branch: str | None = None) -> List[int]:
         branch = branch or self.default_branch
         is_default_branch = branch == self.default_branch
         if branch not in self._metadata_cache:
@@ -285,9 +301,10 @@ class Svn(Scm):
         except (IOError, OSError):
             self.log("Failed to write SVN cache to '{}'".format(self._cache_path))
 
-        return self._metadata_cache[branch]
+        revisions: list[int] = self._metadata_cache[branch]
+        return revisions
 
-    def _branch_for(self, revision):
+    def _branch_for(self, revision: int) -> str:
         response = requests.request(
             method='REPORT',
             url='{}!svn/rvr/{}'.format(self.url, revision),
@@ -310,7 +327,7 @@ class Svn(Scm):
         if response.status_code != 200:
             raise self.Exception("Failed to retrieve branch for '{}'".format(revision))
 
-        partial = None
+        partial: str | None = None
         items = xmltodict.parse(response.text)['S:log-report']['S:log-item']
         for group in (items.get('S:modified-path', []), items.get('S:added-path', []), items.get('S:deleted-path', [])):
             for item in group if isinstance(group, list) else [group]:
@@ -319,6 +336,7 @@ class Svn(Scm):
                 while not item['#text'].startswith(partial):
                     partial = partial[:-1]
 
+        assert partial is not None
         candidate = partial.split('/')[2 if partial.startswith('/branches') else 1]
 
         # Tags are a unique case for SVN, because they're treated as branches in native SVN
@@ -326,7 +344,7 @@ class Svn(Scm):
             return partial[1:].rstrip('/')
         return candidate
 
-    def _commit_count(self, revision=None, branch=None):
+    def _commit_count(self, revision: int | None = None, branch: str | None = None) -> int:
         branch = branch or self.default_branch
 
         if revision:
@@ -337,7 +355,7 @@ class Svn(Scm):
             return len(self._metadata_cache[branch])
         return self._commit_count(revision=self._metadata_cache[branch][0], branch=self.default_branch)
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
+    def commit(self, hash: str | None = None, revision: int | str | None = None, identifier: int | str | None = None, branch: str | None = None, tag: str | None = None, include_log: bool = True, include_identifier: bool = True) -> Commit:
         if hash:
             raise ValueError('SVN does not support Git hashes')
 
@@ -378,7 +396,8 @@ class Svn(Scm):
 
                 branch = self.default_branch
 
-            revision = self._metadata_cache[branch][identifier]
+            revisions: list[int] = self._metadata_cache[branch]
+            revision = revisions[identifier]
             info = self.info(cached=True, branch=branch, revision=revision)
             branch = self._branch_for(revision)
             if not self._metadata_cache.get(branch, []) or identifier >= len(self._metadata_cache.get(branch, [])):
@@ -408,6 +427,7 @@ class Svn(Scm):
             if branch != self.default_branch:
                 branch = self._branch_for(revision)
 
+        assert info is not None
         date = datetime.strptime(info['Last Changed Date'], '%Y-%m-%d %H:%M:%S') if info.get('Last Changed Date') else None
 
         if include_identifier and not identifier:
@@ -461,7 +481,8 @@ class Svn(Scm):
             message=message,
         )
 
-    def _args_from_content(self, content, include_log=True):
+    # Returns keyword arguments for Commit().
+    def _args_from_content(self, content: bytes, include_log: bool = True) -> dict[str, Any]:
         xml = xmltodict.parse(content)
         date = datetime.strptime(string_utils.decode(xml['S:log-item']['S:date']).split('.')[0], '%Y-%m-%dT%H:%M:%S')
         name = string_utils.decode(xml['S:log-item']['D:creator-displayname'])
@@ -473,17 +494,18 @@ class Svn(Scm):
             message=string_utils.decode(xml['S:log-item']['D:comment']) if include_log else None,
         )
 
-    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
-        begin, end = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
-        previous = end
+    def commits(self, begin: dict[str, Any] | None = None, end: dict[str, Any] | None = None, include_log: bool = True, include_identifier: bool = True) -> Iterator[Commit]:
+        begin_commit, end_commit = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
+        previous = end_commit
+        assert end_commit.branch is not None
 
         content = b''
         with requests.request(
                 method='REPORT',
                 url='{}!svn/rvr/{}/{}'.format(
                     self.url,
-                    end.revision,
-                    end.branch if end.branch == self.default_branch or '/' in end.branch else 'branches/{}'.format(end.branch),
+                    end_commit.revision,
+                    end_commit.branch if end_commit.branch == self.default_branch or '/' in end_commit.branch else 'branches/{}'.format(end_commit.branch),
                 ), stream=True,
                 headers={
                     'Content-Type': 'text/xml',
@@ -493,10 +515,10 @@ class Svn(Scm):
                         '<S:start-revision>{end}</S:start-revision>\n'
                         '<S:end-revision>{begin}</S:end-revision>\n'
                         '<S:path></S:path>\n'
-                        '</S:log-report>\n'.format(end=end.revision, begin=begin.revision),
+                        '</S:log-report>\n'.format(end=end_commit.revision, begin=begin_commit.revision),
         ) as response:
             if response.status_code != 200:
-                raise self.Exception("Failed to construct branch history for '{}'".format(branch))
+                raise self.Exception("Failed to construct branch history for '{}'".format(end_commit.branch))
             for line in response.iter_lines():
                 if line == b'<S:log-item>':
                     content = line + b'\n'
@@ -509,7 +531,7 @@ class Svn(Scm):
 
                 branch_point = previous.branch_point if include_identifier else None
                 identifier = previous.identifier if include_identifier else None
-                if args['revision'] != previous.revision:
+                if args['revision'] != previous.revision and identifier is not None:
                     identifier -= 1
                 if not identifier:
                     identifier = branch_point
@@ -517,7 +539,7 @@ class Svn(Scm):
 
                 previous = Commit(
                     repository_id=self.id,
-                    branch=end.branch if branch_point else self.default_branch,
+                    branch=end_commit.branch if branch_point else self.default_branch,
                     identifier=identifier,
                     branch_point=branch_point,
                     **args

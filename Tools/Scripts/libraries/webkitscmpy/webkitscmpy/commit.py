@@ -86,6 +86,16 @@ class Commit(object):
 
         return hash.lower()
 
+    @overload
+    @classmethod
+    def _parse_revision(cls, revision: int | str, do_assert: Literal[True]) -> int:
+        ...
+
+    @overload
+    @classmethod
+    def _parse_revision(cls, revision: object, do_assert: bool = ...) -> int | None:
+        ...
+
     @classmethod
     def _parse_revision(cls, revision: object, do_assert: bool = False) -> int | None:
         if revision is None:
@@ -113,6 +123,16 @@ class Commit(object):
             return None
 
         return revision
+
+    @overload
+    @classmethod
+    def _parse_identifier(cls, identifier: int | str | tuple[int | None, int], do_assert: Literal[True]) -> tuple[int | None, int, str | None]:
+        ...
+
+    @overload
+    @classmethod
+    def _parse_identifier(cls, identifier: object, do_assert: bool = ...) -> tuple[int | None, int, str | None] | None:
+        ...
 
     @classmethod
     def _parse_identifier(cls, identifier: object, do_assert: bool = False) -> tuple[int | None, int, str | None] | None:

@@ -136,8 +136,8 @@ class Contributor(object):
 
             return result
 
-        def create(self, name: str | None = None, *emails: str, **kwargs: Any) -> Contributor | None:
-            addresses = list(emails)
+        def create(self, name: str | None = None, *emails: str | None, **kwargs: Any) -> Contributor | None:
+            addresses = [email for email in emails if email]
             if not name and not addresses:
                 return None
 

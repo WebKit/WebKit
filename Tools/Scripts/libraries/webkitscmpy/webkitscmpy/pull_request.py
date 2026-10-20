@@ -133,7 +133,7 @@ class PullRequest(object):
         return message
 
     @classmethod
-    def create_body(cls, body: str | None, commits: list[Commit], linkify: bool = True) -> str:
+    def create_body(cls, body: str | None, commits: list[Commit] | None, linkify: bool = True) -> str:
         body = body or ''
         if not commits:
             return body
@@ -181,7 +181,7 @@ class PullRequest(object):
         head: str | None = None, base: str | None = None,
         opened: bool | None = None, merged: bool | None = None,
         generator: RemoteScm.PRGenerator | None = None, metadata: dict[str, Any] | None = None,
-        url: str | None = None, draft: bool | None = None, hash: list[str] | str | None = None,
+        url: str | None = None, draft: bool | None = None, hash: str | None = None,
     ) -> None:
         self.number = number
         self.title = title

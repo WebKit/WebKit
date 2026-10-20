@@ -20,11 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import calendar
 import os
 import re
 import sys
 import time
+from typing import IO, TYPE_CHECKING, Any, Iterable, Iterator
 
 from collections import defaultdict
 from datetime import datetime
@@ -34,6 +37,11 @@ from webkitcorepy import decorators, string_utils, CallByNeed
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
 from xml.dom import minidom
+
+if TYPE_CHECKING:
+    from webkitscmpy import CommitClassifier
+    # Inside GitHub.PRGenerator, 'PullRequest' names the method that constructs pull-requests.
+    from webkitscmpy.pull_request import PullRequest as PullRequestType
 
 requests = CallByNeed(lambda: __import__('requests'))
 HTTPBasicAuth = CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBasicAuth']).HTTPBasicAuth)
@@ -49,8 +57,10 @@ class GitHub(Scm):
 
     class PRGenerator(Scm.PRGenerator):
         SUPPORTS_DRAFTS = True
+        repository: GitHub
 
-        def PullRequest(self, data):
+        # 'data' is a pull-request's JSON, from either the REST or the GraphQL API.
+        def PullRequest(self, data: Any) -> PullRequestType | None:
             if not data:
                 return None
             issue_ref = data.get('_links', {}).get('issue', {}).get('href')
@@ -82,10 +92,10 @@ class GitHub(Scm):
                 draft=data.get('draft', data.get('isDraft', False)),
             )
 
-        def get(self, number):
+        def get(self, number: int) -> PullRequestType | None:
             return self.PullRequest(self.repository.request('pulls/{}'.format(int(number))))
 
-        def find(self, opened=True, head=None, base=None):
+        def find(self, opened: bool | None = True, head: str | None = None, base: str | None = None) -> Iterator[PullRequestType]:
             assert opened in (True, False, None)
 
             search = 'repo:{}/{} is:pr'.format(self.repository.owner, self.repository.name)
@@ -132,10 +142,15 @@ class GitHub(Scm):
                 nodeData = node.get('node')
                 if not nodeData:
                     continue
-                yield self.PullRequest(nodeData)
+                pull_request = self.PullRequest(nodeData)
+                assert pull_request is not None
+                yield pull_request
             return
 
-        def create(self, head, title, body=None, commits=None, base=None, draft=None, head_repo=None):
+        def create(
+            self, head: str, title: str, body: str | None = None, commits: list[Commit] | None = None,
+            base: str | None = None, draft: bool | None = None, head_repo: str | None = None,
+        ) -> PullRequestType | None:
             draft = False if draft is None else draft
             for key, value in dict(head=head, title=title).items():
                 if not value:
@@ -173,13 +188,17 @@ class GitHub(Scm):
                 sys.stderr.write(Tracker.api_error_hint(response))
                 return None
             result = self.PullRequest(response.json())
+            assert result is not None and result._metadata is not None
 
             issue = result._metadata.get('issue')
             if not issue or not issue.tracker or not issue.assign(issue.tracker.me()):
                 sys.stderr.write("Failed to assign '{}' to '{}'\n".format(result, user))
             return result
 
-        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None, draft=None):
+        def update(
+            self, pull_request: PullRequestType, head: str | None = None, title: str | None = None, body: str | None = None,
+            commits: list[Commit] | None = None, base: str | None = None, opened: bool | None = None, draft: bool | None = None,
+        ) -> PullRequestType | None:
             if not isinstance(pull_request, PullRequest):
                 raise ValueError("Expected 'pull_request' to be of type '{}' not '{}'".format(PullRequest, type(pull_request)))
             if head is not None and head != pull_request.head:
@@ -246,7 +265,7 @@ class GitHub(Scm):
 
             return pull_request
 
-        def _contributor(self, username):
+        def _contributor(self, username: str) -> Contributor:
             result = self.repository.contributors.get(username, None)
             if result:
                 return result
@@ -256,17 +275,18 @@ class GitHub(Scm):
                 result = self.repository.contributors.create(found.name, found.email)
             else:
                 result = self.repository.contributors.create(username)
+            assert result is not None
             result.github = username
             self.repository.contributors[username] = result
             return result
 
-        def reviewers(self, pull_request):
+        def reviewers(self, pull_request: PullRequestType) -> PullRequestType:
             response = self.repository.request('pulls/{}/requested_reviewers'.format(pull_request.number))
             pull_request._reviewers = [self._contributor(user['login']) for user in response.get('users', [])]
             pull_request._approvers = []
             pull_request._blockers = []
 
-            state_for = {}
+            state_for: dict[Contributor, str | None] = {}
             for review in self.repository.request('pulls/{}/reviews'.format(pull_request.number)):
                 state_for[self._contributor(review['user']['login'])] = review.get('state')
 
@@ -281,27 +301,35 @@ class GitHub(Scm):
             pull_request._reviewers = sorted(pull_request._reviewers)
             return pull_request
 
-        def comment(self, pull_request, content):
+        def comment(self, pull_request: PullRequestType, content: str) -> None:
+            assert pull_request._metadata is not None
             issue = pull_request._metadata.get('issue')
             if not issue:
                 old = pull_request
-                pull_request = self.get(old.number)
+                refreshed = self.get(old.number)
+                assert refreshed is not None
+                pull_request = refreshed
                 pull_request._reviewers = old._reviewers
                 pull_request._approvers = old._approvers
                 pull_request._blockers = old._blockers
+                assert pull_request._metadata is not None
                 issue = pull_request._metadata.get('issue')
             if not issue:
                 raise self.repository.Exception('Failed to find issue underlying pull-request')
             issue.add_comment(content)
 
-        def comments(self, pull_request):
+        def comments(self, pull_request: PullRequestType) -> Iterator[PullRequestType.Comment]:
+            assert pull_request._metadata is not None
             issue = pull_request._metadata.get('issue')
             if not issue:
                 old = pull_request
-                pull_request = self.get(old.number)
+                refreshed = self.get(old.number)
+                assert refreshed is not None
+                pull_request = refreshed
                 pull_request._reviewers = old._reviewers
                 pull_request._approvers = old._approvers
                 pull_request._blockers = old._blockers
+                assert pull_request._metadata is not None
                 issue = pull_request._metadata.get('issue')
             if not issue:
                 raise self.repository.Exception('Failed to find issue underlying pull-request')
@@ -315,14 +343,14 @@ class GitHub(Scm):
         HUNK_HEADER_RE = re.compile(r'^@@ -\d+(?:,\d+)? \+(?P<new_start>\d+)(?:,\d+)? @@')
 
         @classmethod
-        def _line_to_position_map(cls, diff_text_lines):
+        def _line_to_position_map(cls, diff_text_lines: list[str] | None) -> dict[str, dict[int, int]]:
             # Build a map of (file, new-file line number) -> position within the diff
             # we fetched, matching how insert_diff_comments counts line positions.
             # GitHub's reported comment position is computed against a diff that can
             # differ from what 'application/vnd.github.diff' returns (e.g. base SHA
             # vs merge base), so we translate using the line number GitHub reports
             # for the comment instead of trusting its position.
-            result = defaultdict(dict)
+            result: defaultdict[str, dict[int, int]] = defaultdict(dict)
             file = None
             count = 0
             new_line = None
@@ -342,7 +370,8 @@ class GitHub(Scm):
                 count += 1
             return result
 
-        def _diff_comments(self, pull_request, ids=False, diff_text_lines=None):
+        # Values are lists of comment IDs if 'ids' is set, and lists of comment bodies if not.
+        def _diff_comments(self, pull_request: PullRequestType, ids: bool = False, diff_text_lines: list[str] | None = None) -> dict[str, dict[int | None, list[Any]]]:
             if diff_text_lines is None:
                 response = self.repository.request('pulls/{}'.format(pull_request.number), headers=dict(Accept=self.repository.DIFF_HEADER))
                 if response.status_code // 100 == 2:
@@ -351,7 +380,7 @@ class GitHub(Scm):
                     diff_text_lines = []
             line_to_position = self._line_to_position_map(diff_text_lines)
 
-            comment_lines = defaultdict(lambda: defaultdict(list))
+            comment_lines: dict[str, dict[int | None, list[Any]]] = defaultdict(lambda: defaultdict(list))
             for comment in self.repository.request('pulls/{}/comments'.format(pull_request.number)):
                 id = comment.get('id', None)
                 path = comment.get('path', None)
@@ -388,7 +417,7 @@ class GitHub(Scm):
 
             return comment_lines
 
-        def _make_comment(self, pull_request, kwargs):
+        def _make_comment(self, pull_request: PullRequestType, kwargs: dict[str, Any]) -> bool:
             url = '{api_url}/repos/{owner}/{name}/pulls/{number}/comments'.format(
                 api_url=self.repository.api_url,
                 owner=self.repository.owner,
@@ -407,16 +436,20 @@ class GitHub(Scm):
                 return False
             return True
 
-        def review(self, pull_request, comment=None, approve=None, diff_comments=None):
+        def review(
+            self, pull_request: PullRequestType, comment: str | None = None, approve: bool | None = None,
+            diff_comments: dict[str, dict[int | None, list[str]]] | None = None,
+        ) -> PullRequestType | None:
             if not comment and approve is None and not diff_comments:
                 raise self.repository.Exception('No review comment or approval provided')
 
             is_successful = True
-            body = dict(
-                event={
-                    True: 'APPROVE',
-                    False: 'REQUEST_CHANGES',
-                }.get(approve, 'COMMENT')
+            events: dict[bool | None, str] = {
+                True: 'APPROVE',
+                False: 'REQUEST_CHANGES',
+            }
+            body: dict[str, Any] = dict(
+                event=events.get(approve, 'COMMENT')
             )
             if comment:
                 body['body'] = comment
@@ -474,14 +507,18 @@ class GitHub(Scm):
                 sys.stderr.write(Tracker.api_error_hint(response))
                 return None
 
-            me = self._contributor(self.repository.credentials(required=True)[0])
+            username, _ = self.repository.credentials(required=True)
+            assert username is not None
+            me = self._contributor(username)
             if approve and pull_request._approvers:
                 if me in (pull_request._blockers or []):
+                    assert pull_request._blockers is not None
                     pull_request._blockers.remove(me)
                 if me not in pull_request._approvers:
                     pull_request._approvers.append(me)
             if approve is False and pull_request._blockers:
                 if me in (pull_request._approvers or []):
+                    assert pull_request._approvers is not None
                     pull_request._approvers.remove(me)
                 if me not in pull_request._blockers:
                     pull_request._blockers.append(me)
@@ -494,8 +531,9 @@ class GitHub(Scm):
 
             if is_successful:
                 return pull_request
+            return None
 
-        def statuses(self, pull_request):
+        def statuses(self, pull_request: PullRequestType) -> Iterator[PullRequestType.Status]:
             statuses = self.repository.request(
                 'commits/{ref}/statuses'.format(
                     ref=pull_request.hash,
@@ -509,18 +547,22 @@ class GitHub(Scm):
                     description=status.get('description'),
                 )
 
-        def diff(self, pull_request, comments=False):
+        # 'diff_comments' is accepted for compatibility with Scm.PRGenerator.diff(), but is unused.
+        def diff(
+            self, pull_request: PullRequestType, comments: bool = False,
+            diff_comments: dict[str, dict[int | None, list[str]]] | None = None,
+        ) -> Iterator[str]:
             response = self.repository.request('pulls/{}'.format(pull_request.number), headers=dict(Accept=self.repository.DIFF_HEADER))
             if response.status_code // 100 != 2:
                 sys.stderr.write('Failed to retrieve diff of {} with status code {}\n'.format(pull_request, response.status_code))
                 return
             diff_text_lines = response.text.splitlines()
 
-            def generator(lines=diff_text_lines):
+            def generator(lines: list[str] = diff_text_lines) -> Iterator[str]:
                 for line in lines:
                     yield line
 
-            comment_lines = defaultdict(lambda: defaultdict(list))
+            comment_lines: dict[str, dict[int | None, list[str]]] = defaultdict(lambda: defaultdict(list))
             if comments:
                 comment_lines = self._diff_comments(pull_request, diff_text_lines=diff_text_lines)
 
@@ -529,10 +571,14 @@ class GitHub(Scm):
 
 
     @classmethod
-    def is_webserver(cls, url):
+    def is_webserver(cls, url: str) -> bool:
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, proxies=None, classifier=None):
+    def __init__(
+        self, url: str, dev_branches: re.Pattern[str] | None = None, prod_branches: re.Pattern[str] | None = None,
+        contributors: Contributor.Mapping | None = None, id: str | None = None, proxies: dict[str, str] | None = None,
+        classifier: CommitClassifier | None = None,
+    ) -> None:
         match = self.URL_RE.match(url)
         if not match:
             raise self.Exception("'{}' is not a valid GitHub project".format(url))
@@ -547,7 +593,7 @@ class GitHub(Scm):
             owner=self.owner,
             name=self.name,
         ))
-        self._cached_credentials = None
+        self._cached_credentials: tuple[str, str] | None = None
 
         super(GitHub, self).__init__(
             url,
@@ -564,21 +610,26 @@ class GitHub(Scm):
                 users.create(contributor.name, contributor.github, contributor.emails)
         self.tracker = Tracker(url, users=users, session=self.session)
 
-    def credentials(self, required=True, validate=False, save_in_keyring=None):
+    def credentials(self, required: bool = True, validate: bool = False, save_in_keyring: bool | None = None) -> tuple[str | None, str | None]:
         return self.tracker.credentials(required=required, validate=validate, save_in_keyring=save_in_keyring)
 
     @property
-    def is_git(self):
+    def is_git(self) -> bool:
         return True
 
-    def checkout_url(self, ssh=False, http=False):
+    def checkout_url(self, ssh: bool = False, http: bool = False) -> str:
         if ssh and http:
             raise ValueError('Cannot specify request both a ssh and http URL')
         if http:
             return 'https://{}/{}/{}.git'.format(self.domain, self.owner, self.name)
         return 'git@{}:{}/{}.git'.format(self.domain, self.owner, self.name)
 
-    def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True, json=None, method='GET', endpoint_url=None, files=None, data=None, stream=False):
+    # Returns the decoded JSON (paginated lists are concatenated), the response itself if it isn't JSON, or None on failure.
+    def request(
+        self, path: str | None = None, params: dict[str, Any] | None = None, headers: dict[str, str] | None = None,
+        authenticated: bool | None = None, paginate: bool = True, json: dict[str, Any] | None = None, method: str = 'GET',
+        endpoint_url: str | None = None, files: Any = None, data: Any = None, stream: bool = False,
+    ) -> Any:
         headers = {key: value for key, value in headers.items()} if headers else dict()
         headers['Accept'] = headers.get('Accept', self.ACCEPT_HEADER)
 
@@ -633,7 +684,7 @@ class GitHub(Scm):
             result += response.json()
         return result
 
-    def graphql(self, query):
+    def graphql(self, query: str) -> Any:
         url = '{}/graphql'.format(self.api_url)
         response = self.session.post(
             url, json=dict(query=query),
@@ -648,7 +699,7 @@ class GitHub(Scm):
             return None
         return response.json()
 
-    def _count_for_ref(self, ref=None):
+    def _count_for_ref(self, ref: str | None = None) -> tuple[int, str]:
         ref = ref or self.default_branch
 
         # We need the number of parents a commit has to construct identifiers, which is not something GitHub's
@@ -666,7 +717,11 @@ class GitHub(Scm):
             if match:
                 hash = match.group('hash')
             elif 'aria-label="Commits on ' in line:
-                count = int(minidom.parseString(previous).documentElement.childNodes[0].data.replace(',', ''))
+                # The count is the text of the element on the previous line, like '<strong>1,234</strong>'.
+                assert previous is not None
+                element = minidom.parseString(previous).documentElement
+                assert element is not None and isinstance(element.childNodes[0], minidom.Text)
+                count = int(element.childNodes[0].data.replace(',', ''))
                 break
             previous = line
 
@@ -675,49 +730,58 @@ class GitHub(Scm):
 
         return count, hash
 
-    def _difference(self, reference, head):
+    def _difference(self, reference: str, head: str) -> int:
         response = self.request('compare/{}...{}'.format(reference, head), headers=dict(Accept='application/vnd.github.VERSION.sha'))
         if not response or not response.get('status') in ['diverged', 'ahead', 'behind']:
             raise self.Exception('Failed to request the difference between {} and {}'.format(reference, head))
         return int(response['behind_by' if response.get('status') == 'behind' else 'ahead_by'])
 
-    def _branches_for(self, hash):
+    def _branches_for(self, hash: str) -> list[str]:
         # We need to find the branch that a commit is on. GitHub's UI provides this information, but the only way to
         # retrieve this information via the API would be to check all branches for the commit, so we scrape the UI.
         response = self.session.get('{}/branch_commits/{}'.format(self.url, hash))
         if response.status_code != 200:
             return []
 
-        result = []
+        result: list[str] = []
         for line in response.text.splitlines():
             if 'class="branch"' not in line:
                 continue
-            result.append(minidom.parseString(line).documentElement.childNodes[0].childNodes[0].data)
+            # Each branch is the text of a link, like '<li class="branch"><a href="...">main</a></li>'.
+            element = minidom.parseString(line).documentElement
+            assert element is not None and isinstance(element.childNodes[0], minidom.Element)
+            text = element.childNodes[0].childNodes[0]
+            assert isinstance(text, minidom.Text)
+            result.append(text.data)
 
         return result
 
     @property
     @decorators.Memoize()
-    def default_branch(self):
+    def default_branch(self) -> str:
         response = self.request()
         if not response:
             raise self.Exception("Failed to query {} for {}'s default branch".format(self.url, self.name))
-        return response.get('default_branch', 'master')
+        result: str = response.get('default_branch', 'master')
+        return result
 
     @property
-    def branches(self):
+    def branches(self) -> list[str]:
         response = self.request('branches')
         if not response:
             return [self.default_branch]
         return sorted([details.get('name') for details in response if details.get('name')])
 
-    def tags(self):
+    def tags(self) -> list[str]:
         response = self.request('tags')
         if not response:
             return []
         return sorted([details.get('name') for details in response if details.get('name')])
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
+    def commit(
+        self, hash: str | None = None, revision: int | str | None = None, identifier: int | str | None = None,
+        branch: str | None = None, tag: str | None = None, include_log: bool = True, include_identifier: bool = True,
+    ) -> Commit:
         if revision:
             raise self.Exception('Cannot map revisions to commits on GitHub')
 
@@ -853,11 +917,11 @@ class GitHub(Scm):
             ), message=commit_data['commit']['message'] if include_log else None,
         )
 
-    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
-        begin, end = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
+    def commits(self, begin: dict[str, Any] | None = None, end: dict[str, Any] | None = None, include_log: bool = True, include_identifier: bool = True) -> Iterator[Commit]:
+        begin_commit, end_commit = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
 
-        previous = end
-        cached = [previous]
+        previous: Commit | None = end_commit
+        cached = [end_commit]
         while previous:
             response = self.request('commits', paginate=False, params=dict(sha=previous.hash))
             if not response:
@@ -886,7 +950,7 @@ class GitHub(Scm):
                     repository_id=self.id,
                     hash=commit_data['sha'],
                     revision=revision,
-                    branch=end.branch if identifier and branch_point else self.default_branch,
+                    branch=end_commit.branch if identifier and branch_point else self.default_branch,
                     identifier=identifier if include_identifier else None,
                     branch_point=branch_point if include_identifier else None,
                     timestamp=timestamp,
@@ -905,16 +969,17 @@ class GitHub(Scm):
                         c.order += 1
                     cached.append(previous)
 
-                if previous.hash == begin.hash or previous.timestamp < begin.timestamp:
+                # Commits from GitHub always have timestamps.
+                assert previous.timestamp is not None and begin_commit.timestamp is not None
+                if previous.hash == begin_commit.hash or previous.timestamp < begin_commit.timestamp:
                     previous = None
                     break
 
         for c in cached:
-            c.order += begin.order
+            c.order += begin_commit.order
             yield c
 
-
-    def find(self, argument, include_log=True, include_identifier=True):
+    def find(self, argument: str, include_log: bool = True, include_identifier: bool = True) -> Commit:
         if not isinstance(argument, string_utils.basestring):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
@@ -940,7 +1005,8 @@ class GitHub(Scm):
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
         return self.commit(hash=commit_data['sha'], include_log=include_log, include_identifier=include_identifier)
 
-    def diff(self, head='HEAD', base=None, include_log=False):
+    def diff(self, head: str = 'HEAD', base: str | None = None, include_log: bool = False) -> Iterator[str]:
+        commits: list[Commit | None]
         if base:
             commits = list(self.commits(dict(argument=base), end=dict(argument=head), include_identifier=False))
         else:
@@ -953,17 +1019,19 @@ class GitHub(Scm):
 
         patch_count = 1
         for commit in commits:
+            assert commit is not None
             response = self.request('commits/{}'.format(commit.hash), headers=dict(Accept=self.DIFF_HEADER))
             if response.status_code // 100 != 2:
                 sys.stderr.write('Failed to retrieve diff of {} with status code {}\n'.format(commit, response.status_code))
                 return
 
             if include_log:
+                assert commit.author is not None and commit.timestamp is not None and commit.message is not None
                 yield 'From {}'.format(commit.hash)
                 yield 'From: {} <{}>'.format(commit.author.name, commit.author.email)
                 yield 'Date: {}'.format(datetime.fromtimestamp(commit.timestamp).strftime('%a %b %d %H:%M:%S %Y'))
                 if len(commits) <= 1:
-                    subject = 'Subject: [PATCH]'
+                    subject: str | None = 'Subject: [PATCH]'
                 else:
                     subject = 'Subject: [PATCH {}/{}]'.format(patch_count, len(commits))
                 for line in commit.message.splitlines():
@@ -984,7 +1052,7 @@ class GitHub(Scm):
 
             patch_count += 1
 
-    def files_changed(self, argument=None):
+    def files_changed(self, argument: str | None = None) -> list[str]:
         if not argument:
             raise ValueError('No argument provided')
         if not Commit.HASH_RE.match(argument):
@@ -999,7 +1067,7 @@ class GitHub(Scm):
             if file.get('filename')
         ]
 
-    def create_release(self, name, tag_name, target_commitish='main', body='', draft=False, prerelease=False):
+    def create_release(self, name: str, tag_name: str, target_commitish: str = 'main', body: str = '', draft: bool = False, prerelease: bool = False) -> Any:
         data = {
             'name': name,
             'tag_name': tag_name,
@@ -1010,12 +1078,15 @@ class GitHub(Scm):
         }
         return self.request('releases', json=data, paginate=False, authenticated=True, method='POST')
 
-    def upload_release_asset(self, release_tag_name, source_filename, mime_type, asset_name=None, asset_label=None, file_like_object=None):
+    def upload_release_asset(
+        self, release_tag_name: str, source_filename: str, mime_type: str, asset_name: str | None = None,
+        asset_label: str | None = None, file_like_object: IO[bytes] | None = None,
+    ) -> Any:
         source_filename = os.path.abspath(os.path.realpath(os.path.expanduser(source_filename)))
         source_basename = os.path.basename(source_filename)
         asset_name = asset_name if asset_name else source_basename
         asset_label = asset_label if asset_label else source_basename
-        headers = dict()
+        headers: dict[str, str] = dict()
         headers['Content-Type'] = mime_type
         params = dict(name=asset_name, label=asset_label)
         release_info = self.request('releases/tags/{tag}'.format(tag=release_tag_name), authenticated=True)
@@ -1035,7 +1106,7 @@ class GitHub(Scm):
             if not file_like_object:
                 file_object.close()
 
-    def download_release_assets(self, destination_directory, release_tag_name=None):
+    def download_release_assets(self, destination_directory: str, release_tag_name: str | None = None) -> None:
         assert os.path.isdir(destination_directory), '`{destination_directory}` must be a directory'.format(destination_directory=destination_directory)
         path = 'releases/tags/{release_tag_name}'.format(release_tag_name=release_tag_name) if release_tag_name else 'releases/latest'
         release_info = self.request(path, authenticated=True, paginate=False)
@@ -1057,10 +1128,10 @@ class GitHub(Scm):
                     for chunk in response.iter_content(chunk_size=10240):
                         file_object.write(chunk)
 
-    def get_releases(self):
+    def get_releases(self) -> Any:
         return self.request('releases', authenticated=True, paginate=True)
 
-    def delete_release_assets(self, release_assets):
+    def delete_release_assets(self, release_assets: Iterable[dict[str, Any]]) -> None:
         for asset_info in release_assets:
             response = self.request(
                 'releases/assets/{id}'.format(id=asset_info['id']),

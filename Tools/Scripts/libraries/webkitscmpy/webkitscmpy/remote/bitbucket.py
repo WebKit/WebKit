@@ -20,14 +20,22 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
 import sys
+from typing import TYPE_CHECKING, Any, Callable, Iterator
 
 from collections import defaultdict
 from datetime import datetime
 from webkitcorepy import decorators, string_utils, CallByNeed, Environment
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
+
+if TYPE_CHECKING:
+    from webkitscmpy import CommitClassifier
+    # PRGenerator.PullRequest() shadows the PullRequest class in annotations inside PRGenerator.
+    from webkitscmpy.pull_request import PullRequest as PullRequestType
 
 requests = CallByNeed(lambda: __import__('requests'))
 
@@ -41,7 +49,9 @@ class BitBucket(Scm):
         BODY_CHAR_LIMIT = 32766
         MAX_DEPTH = 8
 
-        def PullRequest(self, data):
+        repository: BitBucket
+
+        def PullRequest(self, data: dict[str, Any] | None) -> PullRequestType | None:
             if not data:
                 return None
             author = self.repository.contributors.create(
@@ -75,6 +85,8 @@ class BitBucket(Scm):
                     rdata['user'].get('emailAddress', None),
                     bitbucket=rdata['user'].get('name', None),
                 )
+                # create() only returns None when given neither a name nor an email.
+                assert reviewer is not None
                 result._reviewers.append(reviewer)
                 if rdata.get('approved', False) and (not needs_status or reviewer.status == Contributor.REVIEWER):
                     result._approvers.append(reviewer)
@@ -84,13 +96,13 @@ class BitBucket(Scm):
             result._reviewers = sorted(result._reviewers)
             return result
 
-        def get(self, number):
+        def get(self, number: int) -> PullRequestType | None:
             return self.PullRequest(self.repository.request('pull-requests/{}'.format(int(number))))
 
-        def find(self, opened=True, head=None, base=None):
+        def find(self, opened: bool | None = True, head: str | None = None, base: str | None = None) -> Iterator[PullRequestType]:
             assert opened in (True, False, None)
 
-            params = dict(
+            params: dict[str, Any] = dict(
                 limit=100,
                 withProperties='false',
                 withAttributes='false',
@@ -107,7 +119,10 @@ class BitBucket(Scm):
             for datum in data or []:
                 if base and not datum['toRef']['id'].endswith(base):
                     continue
-                yield self.PullRequest(datum)
+                # Pull-request listings never contain empty entries.
+                pull_request = self.PullRequest(datum)
+                assert pull_request is not None
+                yield pull_request
 
             # Stash is bad at filter for open and closed PRs at the same time
             if opened is None:
@@ -116,9 +131,11 @@ class BitBucket(Scm):
                 for datum in data or []:
                     if base and not datum['toRef']['id'].endswith(base):
                         continue
-                    yield self.PullRequest(datum)
+                    pull_request = self.PullRequest(datum)
+                    assert pull_request is not None
+                    yield pull_request
 
-        def create(self, head, title, body=None, commits=None, base=None, draft=None):
+        def create(self, head: str, title: str, body: str | None = None, commits: list[Commit] | None = None, base: str | None = None, draft: bool | None = None) -> PullRequestType | None:
             if draft:
                 sys.stderr.write('Bitbucket does not support the concept of a "draft" pull request\n')
 
@@ -131,7 +148,7 @@ class BitBucket(Scm):
             description = PullRequest.create_body(body, commits, linkify=False)
             if description and len(description) > self.BODY_CHAR_LIMIT:
                 raise ValueError('Body length too long. Limit is: {}'.format(self.BODY_CHAR_LIMIT))
-            fromRef = dict(
+            fromRef: dict[str, Any] = dict(
                 id='refs/heads/{}'.format(head),
                 repository=dict(
                     slug=self.repository.name,
@@ -139,7 +156,7 @@ class BitBucket(Scm):
                 ),
             )
             if commits:
-                fromRef['latestCommit'] = commits[0].hash,
+                fromRef['latestCommit'] = commits[0].hash
             response = requests.post(
                 'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests'.format(
                     domain=self.repository.domain,
@@ -162,7 +179,7 @@ class BitBucket(Scm):
                 return None
             return self.PullRequest(response.json())
 
-        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None, draft=None):
+        def update(self, pull_request: PullRequestType, head: str | None = None, title: str | None = None, body: str | None = None, commits: list[Commit] | None = None, base: str | None = None, opened: bool | None = None, draft: bool | None = None) -> PullRequestType | None:
             if not isinstance(pull_request, PullRequest):
                 raise ValueError("Expected 'pull_request' to be of type '{}' not '{}'".format(PullRequest, type(pull_request)))
 
@@ -194,7 +211,7 @@ class BitBucket(Scm):
             if not any((head, title, body, commits, base)):
                 raise ValueError('No arguments to update pull-request provided')
 
-            to_change = dict()
+            to_change: dict[str, Any] = dict()
             if title:
                 to_change['title'] = title
             if body or commits:
@@ -251,18 +268,18 @@ class BitBucket(Scm):
 
             return pull_request
 
-        def reviewers(self, pull_request):
+        def reviewers(self, pull_request: PullRequestType) -> PullRequestType:
             got = self.get(pull_request.number)
             pull_request._reviewers = got._reviewers if got else []
             pull_request._approvers = got._approvers if got else []
             return pull_request
 
-        def comment(self, pull_request, content, parent=None, on_file=None):
+        def comment(self, pull_request: PullRequestType, content: str, parent: int | None = None, on_file: dict[str, int | str | None] | None = None) -> PullRequestType | None:
             if parent and on_file:
                 sys.stderr.write('Cannot reply to a comment on a specific file\n')
                 return None
 
-            data = dict(text=content)
+            data: dict[str, Any] = dict(text=content)
             if parent:
                 data['parent'] = dict(id=parent)
             elif on_file:
@@ -290,10 +307,10 @@ class BitBucket(Scm):
             return pull_request
 
         @classmethod
-        def _children_for_comment(cls, comment, depth=0):
+        def _children_for_comment(cls, comment: Any, depth: int = 0) -> list[dict[str, Any]]:
             if depth > cls.MAX_DEPTH - 1:
                 depth = cls.MAX_DEPTH - 1
-            result = []
+            result: list[dict[str, Any]] = []
             for comment in comment.get('comments') or []:
                 user = comment.get('author', {})
                 comment_id = comment.get('id')
@@ -312,7 +329,7 @@ class BitBucket(Scm):
 
             return result
 
-        def comments(self, pull_request):
+        def comments(self, pull_request: PullRequestType) -> Iterator[PullRequestType.Comment]:
             for action in reversed(self.repository.request('pull-requests/{}/activities'.format(pull_request.number)) or []):
                 if action.get('commentAnchor'):
                     continue
@@ -339,13 +356,17 @@ class BitBucket(Scm):
                         content=comment.get('text'),
                     )
 
+        # Maps (file, line) to a line's position in the diff, and (file, position in the diff) to its lines and type.
         @classmethod
-        def _position_converters(cls, json_diff):
-            absolute_to_relative = dict(
+        def _position_converters(cls, json_diff: dict[str, Any]) -> tuple[
+            dict[str, defaultdict[str | None, defaultdict[int, int | None]]],
+            dict[str | None, dict[int | None, dict[str, int | str]]],
+        ]:
+            absolute_to_relative: dict[str, defaultdict[str | None, defaultdict[int, int | None]]] = dict(
                 source=defaultdict(lambda: defaultdict(lambda: None)),
                 destination=defaultdict(lambda: defaultdict(lambda: None))
             )
-            relative_to_absolute = defaultdict(lambda: defaultdict(dict))
+            relative_to_absolute: dict[str | None, dict[int | None, dict[str, int | str]]] = defaultdict(lambda: defaultdict(dict))
 
             for diff in json_diff.get('diffs', []):
                 destination = (diff.get('destination') or {}).get('toString')
@@ -378,12 +399,14 @@ class BitBucket(Scm):
 
             return absolute_to_relative, relative_to_absolute
 
-        def _diff_comments(self, pull_request, json_diff, ids=False):
+        # Comments are keyed by file, and then by position in the diff. Each list holds comment ids if `ids` is set,
+        # and formatted comments otherwise.
+        def _diff_comments(self, pull_request: PullRequestType, json_diff: dict[str, Any] | None, ids: bool = False) -> dict[str, dict[int | None, list[Any]]] | None:
             if not json_diff:
                 return None
 
             relative_pos_mapping, _ = self._position_converters(json_diff)
-            comment_lines = defaultdict(lambda: defaultdict(list))
+            comment_lines: dict[str, dict[int | None, list[Any]]] = defaultdict(lambda: defaultdict(list))
             for action in self.repository.request('pull-requests/{}/activities'.format(pull_request.number)) or []:
                 comment = action.get('comment', {})
                 user = comment.get('author', {})
@@ -427,7 +450,7 @@ class BitBucket(Scm):
 
             return comment_lines
 
-        def review(self, pull_request, comment=None, approve=None, diff_comments=None):
+        def review(self, pull_request: PullRequestType, comment: str | None = None, approve: bool | None = None, diff_comments: dict[str, dict[int | None, list[str]]] | None = None) -> PullRequestType | None:
             if not comment and approve is None and not diff_comments:
                 raise self.repository.Exception('No review comment or approval provided')
 
@@ -439,6 +462,7 @@ class BitBucket(Scm):
                 diff_json = self.repository.request('pull-requests/{}/diff?contextLines={}'.format(pull_request.number, self.repository.DIFF_CONTEXT))
                 if diff_json:
                     existing_comments = self._diff_comments(pull_request, diff_json, ids=True)
+                    assert existing_comments is not None
                     _, absolute_pos_mapping = self._position_converters(diff_json)
 
                     for file, line_comments in diff_comments.items():
@@ -507,7 +531,7 @@ class BitBucket(Scm):
 
             return None if failed else pull_request
 
-        def statuses(self, pull_request):
+        def statuses(self, pull_request: PullRequestType) -> Iterator[PullRequestType.Status]:
             response = requests.get(
                 'https://{domain}/rest/build-status/1.0/commits/{ref}'.format(
                     domain=self.repository.domain,
@@ -515,7 +539,7 @@ class BitBucket(Scm):
                 ),
             )
             if response.status_code // 100 != 2:
-                sys.stderr.write('Failed to fetch build-status for {}\n'.format(pull_request.hash[:Commit.HASH_LABEL_SIZE]))
+                sys.stderr.write('Failed to fetch build-status for {}\n'.format((pull_request.hash or '?')[:Commit.HASH_LABEL_SIZE]))
                 return
             for status in response.json().get('values') or []:
                 yield PullRequest.Status(
@@ -529,17 +553,17 @@ class BitBucket(Scm):
                     description=status.get('description'),
                 )
 
-        def diff(self, pull_request, comments=False, diff_comments=None):
+        def diff(self, pull_request: PullRequestType, comments: bool = False, diff_comments: dict[str, dict[int | None, list[str]]] | None = None) -> Iterator[str]:
             response = self.repository.request('pull-requests/{}/diff?contextLines={}'.format(pull_request.number, self.repository.DIFF_CONTEXT))
             if not response:
                 sys.stderr.write('Failed to retrieve diff of {} with status code\n'.format(pull_request))
                 return
 
-            def generator(repository=self.repository, json_diff=response):
+            def generator(repository: BitBucket = self.repository, json_diff: dict[str, Any] = response) -> Iterator[str]:
                 for line in self.repository.json_to_diff(response).splitlines():
                     yield line
 
-            comment_lines = defaultdict(lambda: defaultdict(list))
+            comment_lines: dict[str, dict[int | None, list[str]]] | None = defaultdict(lambda: defaultdict(list))
             if comments:
                 comment_lines = self._diff_comments(pull_request, response)
 
@@ -548,11 +572,11 @@ class BitBucket(Scm):
 
 
     @classmethod
-    def is_webserver(cls, url):
+    def is_webserver(cls, url: str) -> bool:
         return True if cls.URL_RE.match(url) else False
 
     @classmethod
-    def json_to_diff(cls, data):
+    def json_to_diff(cls, data: dict[str, Any]) -> str:
         output = ''
         for diff in data.get('diffs', []):
             source = (diff.get('source') or {}).get('toString')
@@ -574,7 +598,10 @@ class BitBucket(Scm):
                         output += '{}{}\n'.format(leader, line['line'])
         return output
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
+    def __init__(
+        self, url: str, dev_branches: re.Pattern[str] | None = None, prod_branches: re.Pattern[str] | None = None,
+        contributors: Contributor.Mapping | None = None, id: str | None = None, classifier: CommitClassifier | None = None,
+    ) -> None:
         match = self.URL_RE.match(url)
         if not match:
             raise self.Exception("'{}' is not a valid BitBucket project".format(url))
@@ -593,32 +620,34 @@ class BitBucket(Scm):
         self.pull_requests = self.PRGenerator(self)
 
     @decorators.Memoize()
-    def whoami(self):
+    def whoami(self) -> str | None:
         url = 'https://{domain}/plugins/servlet/applinks/whoami'.format(domain=self.domain)
         response = requests.get(url)
         if response.status_code != 200:
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
             return None
-        return response.text.rstrip()
+        user: str = response.text.rstrip()
+        return user
 
-    def credentials(self, required=True, validate=False, save_in_keyring=None):
+    def credentials(self, required: bool = True, validate: bool = False, save_in_keyring: bool | None = None) -> tuple[str | None, str | None]:
         name = self.domain.replace('.', '_')
         username = Environment.instance().get('{}_USERNAME'.format(name.upper()))
         password = Environment.instance().get('{}_PASSWORD'.format(name.upper()))
         return username, password
 
     @property
-    def is_git(self):
+    def is_git(self) -> bool:
         return True
 
-    def checkout_url(self, ssh=False, http=False):
+    def checkout_url(self, ssh: bool = False, http: bool = False) -> str:
         if ssh and http:
             raise ValueError('Cannot specify request both a ssh and http URL')
         if http:
             return 'https://{}/scm/{}/{}.git'.format(self.domain, self.project, self.name)
         return 'git@{}/{}/{}.git'.format(self.domain, self.project, self.name)
 
-    def request(self, path=None, params=None, headers=None, api=None, ignore_errors=False):
+    # Returns None on failure, the response's "values" (across all pages) if it has any, and the response otherwise.
+    def request(self, path: str | None = None, params: dict[str, Any] | None = None, headers: dict[str, str] | None = None, api: str | None = None, ignore_errors: bool = False) -> Any:
         headers = {key: value for key, value in headers.items()} if headers else dict()
 
         params = {key: value for key, value in params.items()} if params else dict()
@@ -653,7 +682,7 @@ class BitBucket(Scm):
         return result
 
     @decorators.Memoize()
-    def _distance(self, ref, magnitude=None, condition=None):
+    def _distance(self, ref: str, magnitude: int | None = None, condition: Callable[[list[str]], object] | None = None) -> int:
         bound = [0, magnitude if magnitude else 65536]
         condition = condition or (lambda val: val)
 
@@ -675,7 +704,7 @@ class BitBucket(Scm):
                     return bound[1] + 1 if current == bound[0] else bound[0] + 1
                 bound = [bound[0], current]
 
-    def _branches_for(self, hash, ignore_errors=False):
+    def _branches_for(self, hash: str, ignore_errors: bool = False) -> list[str]:
         response = self.request('branches/info/{}'.format(hash), api='branch-utils/latest', ignore_errors=ignore_errors)
         if not response:
             return []
@@ -683,26 +712,27 @@ class BitBucket(Scm):
 
     @property
     @decorators.Memoize()
-    def default_branch(self):
+    def default_branch(self) -> str:
         response = self.request('branches/default')
         if not response:
             raise self.Exception("Failed to query {} for {}'s default branch".format(self.domain, self.name))
-        return response.get('displayId')
+        branch: str = response.get('displayId')
+        return branch
 
     @property
-    def branches(self):
+    def branches(self) -> list[str]:
         response = self.request('branches')
         if not response:
             return [self.default_branch]
         return sorted([details.get('displayId') for details in response if details.get('displayId')])
 
-    def tags(self):
+    def tags(self) -> list[str]:
         response = self.request('tags')
         if not response:
             return []
         return sorted([details.get('displayId') for details in response if details.get('displayId')])
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
+    def commit(self, hash: str | None = None, revision: int | str | None = None, identifier: int | str | None = None, branch: str | None = None, tag: str | None = None, include_log: bool = True, include_identifier: bool = True) -> Commit:
         if revision:
             raise self.Exception('Cannot map revisions to commits on BitBucket')
 
@@ -830,11 +860,11 @@ class BitBucket(Scm):
             message=commit_data['message'] if include_log else None,
         )
 
-    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
-        begin, end = self._commit_range(begin=begin, end=end, include_identifier=include_identifier, include_log=include_log)
+    def commits(self, begin: dict[str, Any] | None = None, end: dict[str, Any] | None = None, include_log: bool = True, include_identifier: bool = True) -> Iterator[Commit]:
+        begin_commit, end_commit = self._commit_range(begin=begin, end=end, include_identifier=include_identifier, include_log=include_log)
 
-        previous = end
-        cached = [previous]
+        previous: Commit | None = end_commit
+        cached = [end_commit]
         while previous:
             response = self.request('commits/{}~1'.format(previous.hash))
             if not response:
@@ -856,7 +886,7 @@ class BitBucket(Scm):
                 repository_id=self.id,
                 hash=response['id'],
                 revision=revision,
-                branch=end.branch if identifier and branch_point else self.default_branch,
+                branch=end_commit.branch if identifier and branch_point else self.default_branch,
                 identifier=identifier if include_identifier else None,
                 branch_point=branch_point if include_identifier else None,
                 timestamp=int(response['committerTimestamp'] / 1000),
@@ -875,15 +905,15 @@ class BitBucket(Scm):
                     c.order += 1
                 cached.append(previous)
 
-            if previous.hash == begin.hash or previous.timestamp < begin.timestamp:
+            if previous.hash == begin_commit.hash or (previous.timestamp or 0) < (begin_commit.timestamp or 0):
                 previous = None
                 break
 
         for c in cached:
-            c.order += begin.order
+            c.order += begin_commit.order
             yield c
 
-    def find(self, argument, include_log=True, include_identifier=True):
+    def find(self, argument: str, include_log: bool = True, include_identifier: bool = True) -> Commit:
         if not isinstance(argument, string_utils.basestring):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
@@ -909,7 +939,8 @@ class BitBucket(Scm):
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
         return self.commit(hash=commit_data['id'], include_log=include_log, include_identifier=include_identifier)
 
-    def diff(self, head='HEAD', base=None, include_log=False):
+    def diff(self, head: str = 'HEAD', base: str | None = None, include_log: bool = False) -> Iterator[str]:
+        commits: list[Commit | None]
         if base:
             commits = list(self.commits(dict(argument=base), end=dict(argument=head), include_identifier=False))
         else:
@@ -922,17 +953,21 @@ class BitBucket(Scm):
 
         patch_count = 1
         for commit in commits:
+            # Only the trailing placeholder is None, and it was just removed.
+            assert commit is not None
             response = self.request('commits/{}/diff?contextLines={}'.format(commit.hash, self.DIFF_CONTEXT))
             if not response:
                 sys.stderr.write('Failed to retrieve diff of {} with status code\n'.format(commit))
                 return
 
             if include_log and commit.message:
+                # Commits from BitBucket always have an author and a timestamp.
+                assert commit.author is not None and commit.timestamp is not None
                 yield 'From {}'.format(commit.hash)
                 yield 'From: {} <{}>'.format(commit.author.name, commit.author.email)
                 yield 'Date: {}'.format(datetime.fromtimestamp(commit.timestamp).strftime('%a %b %d %H:%M:%S %Y'))
                 if len(commits) <= 1:
-                    subject = 'Subject: [PATCH]'
+                    subject: str | None = 'Subject: [PATCH]'
                 else:
                     subject = 'Subject: [PATCH {}/{}]'.format(patch_count, len(commits))
                 for line in commit.message.splitlines():
@@ -953,7 +988,7 @@ class BitBucket(Scm):
 
             patch_count += 1
 
-    def files_changed(self, argument=None):
+    def files_changed(self, argument: str | None = None) -> list[str]:
         if not argument:
             raise ValueError('No argument provided')
         if not Commit.HASH_RE.match(argument):
