@@ -108,7 +108,7 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
     , m_crossOriginEmbedderPolicyValue(crossOriginEmbedderPolicyValue)
     , m_queue(WorkQueue::create("WebSWContextManagerConnection queue"_s, WorkQueue::QOS::UserInitiated))
 {
-    WebPage::updatePreferencesGenerated(store);
+    WebProcess::singleton().updateRemoteWorkerPreferences(store);
     m_preferencesStore = store;
 
     WebProcess::singleton().disableTermination();
@@ -138,7 +138,7 @@ void WebSWContextManagerConnection::updatePreferencesStore(WebPreferencesStore&&
         return;
     }
 
-    WebPage::updatePreferencesGenerated(store);
+    WebProcess::singleton().updateRemoteWorkerPreferences(store);
     m_preferencesStore = WTF::move(store);
 }
 
@@ -196,12 +196,10 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
 
         auto lastNavigationWasAppInitiated = contextData.lastNavigationWasAppInitiated;
         Ref page = Page::create(WTF::move(pageConfiguration));
-        if (m_preferencesStore) {
-            WebPage::updateSettingsGenerated(*m_preferencesStore, page->settings());
-            page->settings().setStorageBlockingPolicy(static_cast<StorageBlockingPolicy>(m_preferencesStore->getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey())));
-        }
-        if (WebProcess::singleton().isLockdownModeEnabled())
-            WebPage::adjustSettingsForLockdownMode(page->settings(), m_preferencesStore ? &m_preferencesStore.value() : nullptr);
+        if (m_preferencesStore)
+            WebPage::updateSettings(*m_preferencesStore, page->settings());
+        else if (WebProcess::singleton().isLockdownModeEnabled())
+            WebPage::adjustSettingsForLockdownMode(page->settings(), nullptr);
 
         page->setupForRemoteWorker(contextData.scriptURL, contextData.registration.key.topOrigin(), contextData.referrerPolicy, advancedPrivacyProtections, contextData.globalPrivacyControlEnabled);
 

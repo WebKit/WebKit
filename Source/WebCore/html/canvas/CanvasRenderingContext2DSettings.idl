@@ -31,11 +31,6 @@ enum CanvasColorType {
 #endif
 };
 
-enum RenderingMode {
-    "Unaccelerated",
-    "Accelerated",
-};
-
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasrenderingcontext2dsettings
 [
     JSGenerateToJSObject,

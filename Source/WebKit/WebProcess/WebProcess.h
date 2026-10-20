@@ -477,7 +477,19 @@ public:
 
     void LEGACY_NODELETE setChildProcessDebuggabilityEnabled(bool);
 
+    void updateProcessPreferences(const WebPreferencesStore&);
+    void updateRemoteWorkerPreferences(const WebPreferencesStore&);
+
+#if PLATFORM(COCOA)
+    // Blocks IOKit in the sandbox. The process cannot use IOKit after this, so call this only when the
+    // rendering and the media use the GPU process.
+    void blockIOKit();
+#endif
+
 #if ENABLE(GPU_PROCESS)
+    // Sets the GPU process use for canvas, media and WebGL from the preferences. The pages call this when
+    // they are created, so changing the preferences later does not change the use for the existing pages.
+    void setUseGPUProcessFromPreferences(const WebPreferencesStore&);
     void LEGACY_NODELETE setUseGPUProcessForCanvasRendering(bool);
     void LEGACY_NODELETE setUseGPUProcessForDOMRendering(bool);
     void setUseGPUProcessForMedia(bool);

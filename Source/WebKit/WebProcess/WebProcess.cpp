@@ -66,6 +66,7 @@
 #include "WebIDBConnectionToServer.h"
 #include "WebLoaderStrategy.h"
 #include "WebMediaKeyStorageManager.h"
+#include "WebMediaStrategy.h"
 #include "WebMemorySampler.h"
 #include "WebMessagePortChannelProvider.h"
 #include "WebNotificationManager.h"
@@ -78,6 +79,8 @@
 #include "WebPaymentCoordinator.h"
 #include "WebPermissionController.h"
 #include "WebPlatformStrategies.h"
+#include "WebPreferencesKeys.h"
+#include "WebPreferencesStore.h"
 #include "WebProcessCreationParameters.h"
 #if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
 #include <WebCore/PlaceholderRenderingContextSource.h>
@@ -114,6 +117,7 @@
 #include <WebCore/CommonVM.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/DNS.h>
+#include <WebCore/DatabaseManager.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -219,6 +223,10 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 #include "RemoteMediaPlayerManager.h"
+#endif
+
+#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
+#include "RemoteImageDecoderAVFManager.h"
 #endif
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
@@ -2545,7 +2553,79 @@ void WebProcess::setChildProcessDebuggabilityEnabled(bool childProcessDebuggabil
     m_childProcessDebuggabilityEnabled = childProcessDebuggabilityEnabled;
 }
 
+void WebProcess::updateProcessPreferences(const WebPreferencesStore& store)
+{
+    WebPage::updatePreferencesGenerated(store);
+
+    DatabaseManager::singleton().setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
+
+    setChildProcessDebuggabilityEnabled(store.getBoolValueForKey(WebPreferencesKey::childProcessDebuggabilityEnabledKey()));
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (auto threshold = store.getUInt32ValueForKey(WebPreferencesKey::iFrameResourceMonitorNetworkUsageThresholdForTestingKey()))
+        WebCore::ResourceMonitorChecker::singleton().setNetworkUsageThreshold(threshold, store.getDoubleValueForKey(WebPreferencesKey::iFrameResourceMonitorNetworkUsageThresholdRandomnessForTestingKey()));
+#endif
+
+#if ENABLE(VP9) && PLATFORM(COCOA)
+    VP9TestingOverrides::singleton().setSWVPDecodersAlwaysEnabled(store.getBoolValueForKey(WebPreferencesKey::sWVPDecodersAlwaysEnabledKey()));
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    platformStrategies()->mediaStrategy()->setWirelessPlaybackMediaPlayerEnabled(store.getBoolValueForKey(WebPreferencesKey::wirelessPlaybackMediaPlayerEnabledKey()));
+#endif
+
+    updateSharedPreferencesForWebProcess(WebKit::sharedPreferencesForWebProcess(store, isLockdownModeEnabled()));
+}
+
+void WebProcess::updateRemoteWorkerPreferences(const WebPreferencesStore& store)
+{
+    updateProcessPreferences(store);
+
+    // The pages set these from their preferences when they are created.
+    if (!m_pageMap.isEmpty())
+        return;
+
 #if ENABLE(GPU_PROCESS)
+    setUseGPUProcessFromPreferences(store);
+#endif
+
+#if PLATFORM(COCOA)
+    // Like WebPage, except that the drawing area type does not matter because the workers do not draw the DOM.
+    bool shouldBlockIOKit = store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForDOMRenderingEnabledKey())
+#if ENABLE(WEBGL)
+        && store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForWebGLEnabledKey())
+#endif
+        && store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForCanvasRenderingEnabledKey())
+        && store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForMediaEnabledKey());
+    if (shouldBlockIOKit) {
+#if ENABLE(GPU_PROCESS)
+        // The workers do not draw the DOM, but without IOKit this process cannot map the image buffers
+        // either, which is what the GPU process DOM rendering means for the image buffers.
+        setUseGPUProcessForDOMRendering(true);
+#endif
+        blockIOKit();
+    }
+#endif
+}
+
+#if ENABLE(GPU_PROCESS)
+void WebProcess::setUseGPUProcessFromPreferences(const WebPreferencesStore& store)
+{
+    bool useGPUProcessForMedia = store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForMediaEnabledKey());
+    downcast<WebMediaStrategy>(platformStrategies()->mediaStrategy())->setUseGPUProcess(useGPUProcessForMedia);
+#if ENABLE(VIDEO)
+    protect(remoteMediaPlayerManager())->setUseGPUProcess(useGPUProcessForMedia);
+#endif
+#if HAVE(AVASSETREADER)
+    protect(remoteImageDecoderAVFManager())->setUseGPUProcess(useGPUProcessForMedia);
+#endif
+    setUseGPUProcessForCanvasRendering(store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForCanvasRenderingEnabledKey()));
+    setUseGPUProcessForMedia(useGPUProcessForMedia);
+#if ENABLE(WEBGL)
+    setUseGPUProcessForWebGL(store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForWebGLEnabledKey()));
+#endif
+}
+
 void WebProcess::setUseGPUProcessForCanvasRendering(bool useGPUProcessForCanvasRendering)
 {
     m_useGPUProcessForCanvasRendering = useGPUProcessForCanvasRendering;

@@ -1,0 +1,10 @@
+Tests that accelerated 2D canvases work in the main thread: a 2D canvas forced to the accelerated rendering mode is accelerated and reads back what is drawn.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS state.renderingMode is "Accelerated"
+PASS state.drawing is "works"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

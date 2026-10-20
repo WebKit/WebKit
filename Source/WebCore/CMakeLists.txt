@@ -1397,6 +1397,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/PaintRenderingContext2D.idl
     html/canvas/Path2D.idl
     html/canvas/PredefinedColorSpace.idl
+    html/canvas/RenderingMode.idl
     html/canvas/UpdateElementGeometryOptions.idl
 
     html/closewatcher/CloseWatcher.idl

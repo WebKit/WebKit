@@ -77,6 +77,7 @@ public:
     void logReportedConsoleMessage(ScriptExecutionContext&, const String&);
 
     String effectiveRenderingModeOfNewlyCreatedAcceleratedCanvasBuffer(ScriptExecutionContext&);
+    bool isIOKitAvailable();
 
 private:
     ServiceWorkerInternals(ServiceWorkerGlobalScope&, ServiceWorkerIdentifier);

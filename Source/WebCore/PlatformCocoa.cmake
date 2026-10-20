@@ -1534,7 +1534,7 @@ set(WebCore_USER_AGENT_SCRIPTS
     ${WEBCORE_DIR}/Modules/modern-media-controls/media/CNNCaptionQuirk.js
 )
 
-list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)
+list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore ${IOKIT_LIBRARY})
 list(APPEND WebCoreTestSupport_PRIVATE_HEADERS
     testing/cocoa/CocoaColorSerialization.h
     testing/cocoa/WebArchiveDumpSupport.h

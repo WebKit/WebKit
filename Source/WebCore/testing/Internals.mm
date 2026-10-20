@@ -46,6 +46,10 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
 
+#if PLATFORM(MAC) || PLATFORM(IOS)
+#import <IOKit/IOKitLib.h>
+#endif
+
 #if PLATFORM(MAC)
 #import "NSScrollerImpDetails.h"
 #import "ScrollbarThemeMac.h"
@@ -254,6 +258,29 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
     pid_t pid = getpid();
 
     return !sandboxCheck(pid, "iokit-open", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_IOKIT_CONNECTION | SANDBOX_CHECK_NO_REPORT), ioKitClass.utf8());
+}
+
+bool Internals::isIOKitAvailable()
+{
+#if PLATFORM(MAC) || PLATFORM(IOS)
+    // Opens the IOSurface service, like the process does when it creates IOSurfaces. This fails when the
+    // sandbox blocks IOKit.
+    RetainPtr matching = adoptCF(IOServiceMatching("IOSurfaceRoot"));
+    // FIXME: This is a safer cpp false positive. IOServiceGetMatchingService() will consume
+    // a reference for `matching` but the analyser currently has no way to know.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT io_service_t service = IOServiceGetMatchingService(kIOMainPortDefault, matching.leakRef());
+    if (!service)
+        return false;
+    io_connect_t connection = IO_OBJECT_NULL;
+    kern_return_t result = IOServiceOpen(service, mach_task_self(), 0, &connection);
+    IOObjectRelease(service);
+    if (result != KERN_SUCCESS)
+        return false;
+    IOServiceClose(connection);
+    return true;
+#else
+    return false;
+#endif
 }
 
 #if ENABLE(DATA_DETECTION)

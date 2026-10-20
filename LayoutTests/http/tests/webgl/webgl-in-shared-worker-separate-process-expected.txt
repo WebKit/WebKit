@@ -1,0 +1,10 @@
+Tests that WebGL works in a shared worker that runs in a process that does not have a page: WebGL 1 and WebGL 2 contexts clear and read back.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS state.webgl is "works"
+PASS state.webgl2 is "works"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

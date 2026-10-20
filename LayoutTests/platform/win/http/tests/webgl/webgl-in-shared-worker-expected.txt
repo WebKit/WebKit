@@ -1,0 +1,11 @@
+Tests that WebGL works in a shared worker that may run in the process of the page: WebGL 1 and WebGL 2 contexts clear and read back.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+FAIL state.webgl should be works. Was fails.
+FAIL state.webgl2 should be works. Was fails.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

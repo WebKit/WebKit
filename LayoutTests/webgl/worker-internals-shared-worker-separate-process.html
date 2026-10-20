@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test.js"></script>
+<script src="resources/worker-internals-worker.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that a shared worker that runs in a process that does not have a page has the internals object with the WebGL functions when its script starts.");
+if (window.testRunner)
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+runSharedWorkerTest();
+</script>
+</body>
+</html>

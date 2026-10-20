@@ -39,15 +39,13 @@ promise_test(async (test) => {
     // The worker must be in a different process than this page; otherwise the
     // regression (page-less worker canvas) is not actually being exercised.
     assert_not_equals(result.pid, internals.processIdentifier, "service worker runs in a separate process");
-    // With UseGPUProcessForCanvasRenderingEnabled on, a page-less worker's accelerated-canvas request *should* be
-    // remoted to the GPU process (retaining acceleration).
-    // However this feature is not currently respected by workers, so the page-less worker canvas must fall back
-    // to an unaccelerated CPU buffer, never a local IOSurface.
-    assert_equals(result.renderingMode, "unaccelerated", "page-less worker canvas falls back to a CPU buffer");
+    // With UseGPUProcessForCanvasRenderingEnabled on, a page-less worker's accelerated-canvas request is
+    // remoted to the GPU process (retaining acceleration), never a local IOSurface.
+    assert_equals(result.renderingMode, "remote", "page-less worker canvas is remoted to the GPU process");
     // Sanity: the readback produced correct pixels.
     assert_array_equals(result.topLeft, [0, 255, 0, 255], "top-left pixel is the drawn green tile");
     assert_array_equals(result.bottomRight, [255, 0, 0, 255], "bottom-right pixel is the red fill");
-}, "Page-less service worker OffscreenCanvas falls back to a CPU buffer when not remoted");
+}, "Page-less service worker OffscreenCanvas is remoted to the GPU process");
 </script>
 </body>
 </html>
