@@ -193,9 +193,10 @@ bool translateCompareFunction(CompareFunction function, GX2CompareFunction& outp
 
 bool applyStencilState(WUTBackendContext& state)
 {
-    GX2CompareFunction frontCompare, backCompare;
+    GX2CompareFunction depthCompare, frontCompare, backCompare;
     GX2StencilFunction frontFail, frontZFail, frontZPass, backFail, backZFail, backZPass;
-    if (!translateCompareFunction(state.frontStencilFunction, frontCompare)
+    if (!translateCompareFunction(state.depthFunction, depthCompare)
+        || !translateCompareFunction(state.frontStencilFunction, frontCompare)
         || !translateCompareFunction(state.backStencilFunction, backCompare)
         || !translateStencilOperation(state.frontStencilFail, frontFail)
         || !translateStencilOperation(state.frontDepthFail, frontZFail)
@@ -207,7 +208,7 @@ bool applyStencilState(WUTBackendContext& state)
 
     GX2SetDepthStencilControl(state.depthTestEnabled ? TRUE : FALSE,
         state.depthWriteEnabled ? TRUE : FALSE,
-        GX2_COMPARE_FUNC_LESS,
+        depthCompare,
         state.stencilEnabled ? TRUE : FALSE, TRUE,
         frontCompare, frontZPass, frontZFail, frontFail,
         backCompare, backZPass, backZFail, backFail);
