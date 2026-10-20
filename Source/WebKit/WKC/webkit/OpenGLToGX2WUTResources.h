@@ -41,6 +41,14 @@ struct WUTBufferResources {
     std::unordered_map<uint8_t, AttributeDescriptor> attributes;
 };
 
+// Explicit bridge from a GL attribute index to the name of the input in
+// the already-linked GX2 vertex shader. GX2AttribVar::location is authoritative;
+// GL indices must never be assumed to equal GX2 shader locations.
+struct WUTLinkedAttribute {
+    uint8_t attributeIndex { 0 };
+    const char* shaderInputName { nullptr };
+};
+
 BufferBackend makeWUTBufferBackend(WUTBufferResources&);
 VertexArrayBackend makeWUTVertexArrayBackend(WUTBufferResources&);
 
@@ -56,6 +64,18 @@ bool buildWUTAttributeStreams(const WUTBufferResources&, std::vector<GX2AttribSt
 // Initialize and bind a native fetch shader using caller-owned, GX2-aligned
 // program memory. bufferSize must be at least GX2CalcFetchShaderSizeEx(...).
 bool initializeWUTFetchShader(const WUTBufferResources&, GX2FetchShader&,
+    void* programBuffer, uint32_t bufferSize,
+    GX2FetchShaderType type = GX2_FETCH_SHADER_TESSELLATION_NONE,
+    GX2TessellationMode tessellationMode = GX2_TESSELLATION_MODE_DISCRETE);
+
+bool buildWUTAttributeStreams(const WUTBufferResources&, const GX2VertexShader&,
+    const WUTLinkedAttribute* bindings, size_t bindingCount, std::vector<GX2AttribStream>& output);
+
+// Build the fetch program against the same linked vertex shader, then bind the
+// vertex shader and fetch shader as a coordinated pair. Shader and program
+// storage remain caller-owned and must outlive their use by GX2.
+bool initializeWUTFetchShader(const WUTBufferResources&, const GX2VertexShader&,
+    const WUTLinkedAttribute* bindings, size_t bindingCount, GX2FetchShader&,
     void* programBuffer, uint32_t bufferSize,
     GX2FetchShaderType type = GX2_FETCH_SHADER_TESSELLATION_NONE,
     GX2TessellationMode tessellationMode = GX2_TESSELLATION_MODE_DISCRETE);
