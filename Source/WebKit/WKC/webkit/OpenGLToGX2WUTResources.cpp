@@ -2,6 +2,7 @@
 
 #if defined(__WUT__)
 #include <gx2r/resource.h>
+#include <gx2/draw.h>
 
 #include <cstring>
 #include <limits>
@@ -100,6 +101,46 @@ bool bindBuffer(void* context, BufferTarget target, BufferName name)
     if (name && resources.buffers.find(name) == resources.buffers.end())
         return false;
     resources.bindings[static_cast<uint8_t>(target)] = name;
+    return true;
+}
+
+// Expose the actual GX2R allocation address to the indexed draw path. GX2's
+// indexed API takes the index stream pointer separately from its byte offset;
+// passing nullptr here would draw from no index data even when an element
+// buffer object had been bound in the GL-facing state.
+bool drawIndexed(void* context, const IndexedDraw& draw, BufferName elementBuffer)
+{
+    if (!elementBuffer || draw.baseVertex != 0)
+        return false;
+
+    auto& resources = *static_cast<WUTBufferResources*>(context);
+    auto it = resources.buffers.find(elementBuffer);
+    if (it == resources.buffers.end() || !it->second || !it->second->buffer)
+        return false;
+    if (draw.indexBytes == 1)
+        return false; // GX2 has no U8 index type; widen in a staging buffer first.
+
+    GX2PrimitiveMode mode;
+    switch (draw.primitive) {
+    case Primitive::Points: mode = GX2_PRIMITIVE_MODE_POINTS; break;
+    case Primitive::Lines: mode = GX2_PRIMITIVE_MODE_LINES; break;
+    case Primitive::LineStrip: mode = GX2_PRIMITIVE_MODE_LINE_STRIP; break;
+    case Primitive::Triangles: mode = GX2_PRIMITIVE_MODE_TRIANGLES; break;
+    case Primitive::TriangleStrip: mode = GX2_PRIMITIVE_MODE_TRIANGLE_STRIP; break;
+    case Primitive::TriangleFan: mode = GX2_PRIMITIVE_MODE_TRIANGLE_FAN; break;
+    default: return false;
+    }
+
+    GX2IndexType type;
+    if (draw.indexBytes == 2)
+        type = GX2_INDEX_TYPE_U16_LE;
+    else if (draw.indexBytes == 4)
+        type = GX2_INDEX_TYPE_U32_LE;
+    else
+        return false;
+
+    GX2DrawIndexedEx(mode, draw.count, type, it->second->buffer,
+        static_cast<uint32_t>(draw.indexOffset), draw.instances);
     return true;
 }
 
