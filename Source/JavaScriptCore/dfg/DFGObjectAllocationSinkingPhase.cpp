@@ -818,8 +818,39 @@ public:
     }
 
 private:
+    bool hasAllocationToSink()
+    {
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                switch (node->op()) {
+                case NewObject:
+                case NewFunction:
+                case NewGeneratorFunction:
+                case NewAsyncGeneratorFunction:
+                case NewAsyncFunction:
+                case NewInternalFieldObject:
+                case NewRegExp:
+                case NewPromise:
+                case CreateActivation:
+                    return true;
+                case NewButterflyWithSize:
+                case NewArrayWithButterfly:
+                    if (Options::useArrayAllocationSinking())
+                        return true;
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
     bool performSinking()
     {
+        if (!hasAllocationToSink())
+            return false;
+
         m_graph.computeRefCounts();
         m_graph.initializeNodeOwners();
         m_graph.ensureSSADominators();
