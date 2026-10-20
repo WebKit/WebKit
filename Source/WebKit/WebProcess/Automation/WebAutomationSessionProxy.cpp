@@ -49,6 +49,7 @@
 #include <JavaScriptCore/SourceTaintedness.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObject.h>
+#include <WebCore/CanvasBase.h>
 #include <WebCore/ContainerNodeInlines.h>
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieJar.h>
@@ -61,6 +62,7 @@
 #include <WebCore/FileList.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameTree.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLDataListElement.h>
 #include <WebCore/HTMLFrameElement.h>
 #include <WebCore/HTMLIFrameElement.h>
@@ -69,15 +71,19 @@
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HitTestSource.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/ImageUtilities.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/RenderElement.h>
 #include <WebCore/ScriptController.h>
+#include <WebCore/Settings.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
+#include <wtf/text/Base64.h>
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include <WebCore/AutomationInstrumentation.h>
@@ -1394,6 +1400,139 @@ void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::Page
     // Accessing jsWindowProxy() will create the proxy if it doesn't exist, which triggers
     // the scriptRealmCreated instrumentation in WindowProxy::createJSWindowProxy().
     protect(coreFrame->windowProxy())->jsWindowProxy(mainThreadNormalWorldSingleton());
+}
+
+// https://w3c.github.io/webdriver-bidi/#normalize-rect
+static WebCore::FloatRect normalizeRectForBidiScreenshot(WebCore::FloatRect rect)
+{
+    if (rect.width() < 0) {
+        rect.setX(rect.x() + rect.width());
+        rect.setWidth(-rect.width());
+    }
+    if (rect.height() < 0) {
+        rect.setY(rect.y() + rect.height());
+        rect.setHeight(-rect.height());
+    }
+    return rect;
+}
+
+// https://w3c.github.io/webdriver-bidi/#render-document-to-a-canvas
+static WebCore::IntSize paintSizeForBidiScreenshot(const WebCore::FloatRect& rect, float deviceScaleFactor, std::optional<double> maxWidth, std::optional<double> maxHeight)
+{
+    double framebufferWidth = rect.width() * deviceScaleFactor;
+    double framebufferHeight = rect.height() * deviceScaleFactor;
+
+    double scale = 1;
+    if (maxWidth && *maxWidth / framebufferWidth < scale)
+        scale = *maxWidth / framebufferWidth;
+    if (maxHeight && *maxHeight / framebufferHeight < scale)
+        scale = *maxHeight / framebufferHeight;
+
+    if (scale < 1) {
+        // "Round a number" prefers the value closer to +Infinity on a tie, which std::round
+        // matches for the positive values here.
+        return {
+            std::max(1, clampTo<int>(std::round(framebufferWidth * scale))),
+            std::max(1, clampTo<int>(std::round(framebufferHeight * scale)))
+        };
+    }
+
+    // A canvas takes its width and height as unsigned longs, which truncate.
+    return { clampTo<int>(std::floor(framebufferWidth)), clampTo<int>(std::floor(framebufferHeight)) };
+}
+
+void WebAutomationSessionProxy::captureBidiScreenshot(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, bool documentOrigin, std::optional<WebCore::FloatRect>&& clip, std::optional<double>&& maxWidth, std::optional<double>&& maxHeight, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+{
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-captureScreenshot
+    auto errorType = [](Inspector::Protocol::Automation::ErrorMessage error) {
+        return Inspector::Protocol::AutomationHelpers::getEnumConstantValue(error);
+    };
+
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
+
+    RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+    RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr frameView = coreFrame ? coreFrame->view() : nullptr;
+    RefPtr document = coreFrame ? coreFrame->document() : nullptr;
+    if (!frameView || !document)
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+
+    frameView->updateLayoutAndStyleIfNeededRecursive();
+
+    // Rectangles below are in the document's CSS pixels, measured from the origin of the document.
+    // The frame view lays out and paints in zoomed units.
+    float zoomFactor = coreFrame->pageZoomFactor() * coreFrame->frameScaleFactor();
+
+    // https://w3c.github.io/webdriver-bidi/#get-the-origin-rectangle
+    WebCore::FloatRect originRect;
+    if (documentOrigin) {
+        RefPtr documentElement = document->documentElement();
+        if (!documentElement)
+            return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError));
+        // FIXME: a document that overflows to the left or top (for example right-to-left content)
+        // has a negative scroll origin, and that part is outside this rectangle. https://webkit.org/b/330898
+        originRect = { 0, 0, static_cast<float>(documentElement->scrollWidth()), static_cast<float>(documentElement->scrollHeight()) };
+    } else {
+        // Include the scrollbars, so the viewport is the same size as window.innerWidth and innerHeight.
+        // Painting in document coordinates does not draw scrollbars, so their strip is background.
+        originRect = frameView->visibleContentRectIncludingScrollbars();
+        originRect.scale(1 / zoomFactor);
+    }
+
+    WebCore::FloatRect clipRect = originRect;
+    if (clip) {
+        clipRect = *clip;
+        clipRect.moveBy(originRect.location());
+    }
+
+    // https://w3c.github.io/webdriver-bidi/#rectangle-intersection
+    auto rect = normalizeRectForBidiScreenshot(originRect);
+    rect.intersect(normalizeRectForBidiScreenshot(clipRect));
+    if (rect.isEmpty())
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError));
+
+    // https://w3c.github.io/webdriver-bidi/#determine-the-device-pixel-ratio
+    // This is window.devicePixelRatio, which includes page zoom: the capture's device pixels are measured in it.
+    float devicePixelRatio = page->corePage()->deviceScaleFactor() * zoomFactor;
+
+    auto paintSize = paintSizeForBidiScreenshot(rect, devicePixelRatio, maxWidth, maxHeight);
+    if (paintSize.isEmpty())
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError));
+
+    // Refuse bitmaps larger than the platform's largest canvas, so a very long document captured with
+    // the "document" origin fails the command with "unsupported operation" instead of exhausting the
+    // WebContent process's memory.
+    if (paintSize.unclampedArea() > WebCore::CanvasBase::maxCanvasArea())
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::NotImplemented));
+
+    RefPtr buffer = WebCore::ImageBuffer::create(paintSize, WebCore::RenderingMode::Unaccelerated, WebCore::RenderingPurpose::Snapshot, 1, WebCore::ColorSpace::SRGB(), WebCore::PixelFormat::BGRA8);
+    if (!buffer)
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError));
+
+    auto& context = buffer->context();
+    auto documentBackgroundColor = frameView->documentBackgroundColor();
+    auto backgroundColor = coreFrame->settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid() ? documentBackgroundColor : frameView->baseBackgroundColor();
+    context.fillRect(WebCore::IntRect(WebCore::IntPoint(), paintSize), backgroundColor);
+
+    auto paintRect = rect;
+    paintRect.scale(zoomFactor);
+    context.scale(WebCore::FloatSize(paintSize.width() / paintRect.width(), paintSize.height() / paintRect.height()));
+    context.translate(-paintRect.location());
+    // FIXME: This paints only frames in this process, so under Site Isolation a cross-site iframe comes out
+    // as background. https://webkit.org/b/330897
+    frameView->paintContentsForSnapshot(context, WebCore::enclosingIntRect(paintRect), nullptr, WebCore::LocalFrameView::IncludeSelection, WebCore::LocalFrameView::DocumentCoordinates);
+
+    auto data = WebCore::encodeData(WTF::move(buffer), "image/png"_s);
+    if (data.isEmpty())
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError));
+
+    auto encodedData = WTF::base64EncodeToStringReturnNullIfOverflow(std::as_bytes(data.span()));
+    if (encodedData.isNull())
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError));
+
+    completionHandler(WTF::move(encodedData), { });
 }
 #endif
 

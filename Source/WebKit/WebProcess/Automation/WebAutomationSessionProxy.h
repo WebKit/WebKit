@@ -126,6 +126,7 @@ private:
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
+    void captureBidiScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, bool documentOrigin, std::optional<WebCore::FloatRect>&& clip, std::optional<double>&& maxWidth, std::optional<double>&& maxHeight, CompletionHandler<void(String&&, String&&)>&&);
 #endif
 
     String m_sessionIdentifier;
