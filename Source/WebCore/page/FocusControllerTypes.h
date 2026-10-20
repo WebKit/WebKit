@@ -35,7 +35,6 @@ class TextStream;
 namespace WebCore {
 
 enum class BroadcastFocusedFrame : bool { No, Yes };
-enum class BroadcastFocusedElement : bool { No, Yes };
 enum class ContinuedSearchInRemoteFrame : bool { No, Yes };
 enum class FoundElementInRemoteFrame : bool { No, Yes };
 enum class RelinquishedFocusToChrome : bool { No, Yes };

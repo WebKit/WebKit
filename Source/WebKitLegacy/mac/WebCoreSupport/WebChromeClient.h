@@ -35,7 +35,6 @@
 namespace WebCore {
 class Frame;
 class HTMLImageElement;
-enum class BroadcastFocusedElement : bool;
 enum class ContentChange : uint8_t;
 enum class PointerLockRequestResult : uint8_t;
 struct FocusOptions;
@@ -67,7 +66,7 @@ private:
     bool canTakeFocus(WebCore::FocusDirection) const final;
     void takeFocus(WebCore::FocusDirection) override;
 
-    void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions, WebCore::BroadcastFocusedElement) override;
+    void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions) override;
     void focusedFrameChanged(WebCore::Frame*) final;
 
     RefPtr<WebCore::Page> createWindow(WebCore::LocalFrame&, const String& openedMainFrameName, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;

@@ -29,7 +29,6 @@
 #import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-enum class BroadcastFocusedElement : bool;
 class Frame;
 struct FocusOptions;
 }
@@ -105,7 +104,7 @@ private:
     void relayAriaNotifyNotification(WebCore::AriaNotifyData&&) const final { }
     void relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&&) const final { }
     void webAppOrientationsUpdated() final;
-    void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions, WebCore::BroadcastFocusedElement) final;
+    void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions) final;
     void showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&) final;
     RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) final;
 

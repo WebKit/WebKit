@@ -215,9 +215,9 @@ void Chrome::takeFocus(FocusDirection direction)
     m_client->takeFocus(direction);
 }
 
-void Chrome::focusedElementChanged(Element* element, LocalFrame* frame, FocusOptions options, BroadcastFocusedElement broadcast)
+void Chrome::focusedElementChanged(Element* element, LocalFrame* frame, FocusOptions options)
 {
-    m_client->focusedElementChanged(element, frame, options, broadcast);
+    m_client->focusedElementChanged(element, frame, options);
 }
 
 void Chrome::focusedFrameChanged(Frame* frame)

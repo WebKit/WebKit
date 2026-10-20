@@ -54,7 +54,6 @@ class EditorClient;
 class HTMLImageElement;
 class PageConfiguration;
 class SocketProvider;
-enum class BroadcastFocusedElement : bool;
 enum class ContentChange : uint8_t;
 struct FocusOptions;
 
@@ -74,7 +73,7 @@ class EmptyChromeClient : public ChromeClient {
     bool canTakeFocus(FocusDirection) const final { return false; }
     void takeFocus(FocusDirection) final { }
 
-    void focusedElementChanged(Element*, LocalFrame*, FocusOptions, BroadcastFocusedElement) final { }
+    void focusedElementChanged(Element*, LocalFrame*, FocusOptions) final { }
     void focusedFrameChanged(Frame*) final { }
 
     RefPtr<Page> createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&) final;

@@ -3140,6 +3140,9 @@ void AXObjectCache::onRemoteFrameGainedFocus(RemoteFrame& remoteFrame)
     if (!page)
         return;
 
+    if (m_deferredRemoteFrameFocus && m_deferredRemoteFrameFocus->remoteFrame == &remoteFrame)
+        return;
+
     RefPtr localFrame = page->focusController().focusedOrMainFrame();
     RefPtr oldFocusedElement = localFrame ? localFrame->document()->focusedElement() : nullptr;
 

@@ -375,7 +375,7 @@ void WebChromeClientIOS::webAppOrientationsUpdated()
     [[webView _UIDelegateForwarder] webViewSupportedOrientationsUpdated:webView];
 }
 
-void WebChromeClientIOS::focusedElementChanged(Element* element, LocalFrame*, FocusOptions, BroadcastFocusedElement)
+void WebChromeClientIOS::focusedElementChanged(Element* element, LocalFrame*, FocusOptions)
 {
     if (!is<HTMLInputElement>(element))
         return;

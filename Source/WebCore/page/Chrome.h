@@ -53,7 +53,6 @@ struct FaceDetectorOptions;
 class TextDetector;
 }
 
-enum class BroadcastFocusedElement : bool;
 enum class PlatformEventModifier : uint8_t;
 enum class TextDirection : bool;
 
@@ -178,7 +177,7 @@ public:
     bool canTakeFocus(FocusDirection) const;
     void takeFocus(FocusDirection);
 
-    void focusedElementChanged(Element*, LocalFrame*, FocusOptions, BroadcastFocusedElement);
+    void focusedElementChanged(Element*, LocalFrame*, FocusOptions);
     void focusedFrameChanged(Frame*);
 
     WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&);

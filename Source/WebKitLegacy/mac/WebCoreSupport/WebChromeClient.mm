@@ -254,7 +254,7 @@ void WebChromeClient::takeFocus(WebCore::FocusDirection direction)
 #endif
 }
 
-void WebChromeClient::focusedElementChanged(WebCore::Element* element, WebCore::LocalFrame*, WebCore::FocusOptions, WebCore::BroadcastFocusedElement)
+void WebChromeClient::focusedElementChanged(WebCore::Element* element, WebCore::LocalFrame*, WebCore::FocusOptions)
 {
     if (!is<WebCore::HTMLInputElement>(element))
         return;

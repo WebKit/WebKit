@@ -36,7 +36,6 @@ namespace WebCore {
 class HTMLImageElement;
 class HTMLVideoElement;
 class RegistrableDomain;
-enum class BroadcastFocusedElement : bool;
 enum class ContentChange : uint8_t;
 enum class DevicePostureType : uint8_t;
 enum class DidFilterLinkDecoration : bool;
@@ -88,7 +87,7 @@ private:
     bool canTakeFocus(WebCore::FocusDirection) const final;
     void takeFocus(WebCore::FocusDirection) final;
 
-    void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions, WebCore::BroadcastFocusedElement) final;
+    void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions) final;
     void focusedFrameChanged(WebCore::Frame*) final;
 
     // The Frame pointer provides the ChromeClient with context about which
