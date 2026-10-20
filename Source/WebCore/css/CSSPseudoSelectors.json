@@ -484,6 +484,9 @@
             "status": "non-standard",
             "user-agent-part": true
         },
+        "-internal-select-button-slot": {
+            "user-agent-part": true
+        },
         "-webkit-slider-container": {
             "status": "non-standard",
             "user-agent-part": true

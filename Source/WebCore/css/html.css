@@ -1115,6 +1115,10 @@ select:not(:-internal-uses-menulist):enabled {
     color: CanvasText;
 }
 
+select::-internal-select-button-slot {
+    text-overflow: inherit;
+}
+
 select:-internal-uses-menulist > button:first-child {
     all: unset;
     display: contents;

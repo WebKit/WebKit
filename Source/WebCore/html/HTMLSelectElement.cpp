@@ -88,6 +88,7 @@
 #include "StyleDisplay.h"
 #include "Text.h"
 #include "UnicodeBidi.h"
+#include "UserAgentParts.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -218,7 +219,7 @@ void HTMLSelectElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     ScriptDisallowedScope::EventAllowedScope buttonSlotScope { buttonSlot };
     buttonSlot->setAttributeWithoutSynchronization(inertAttr, emptyAtom());
     buttonSlot->setAttributeWithoutSynchronization(nameAttr, buttonSlotName());
-    buttonSlot->setAttributeWithoutSynchronization(styleAttr, "text-overflow:inherit"_s);
+    buttonSlot->setUserAgentPart(UserAgentParts::internalSelectButtonSlot());
     root.appendChild(buttonSlot);
     m_buttonSlot = WTF::move(buttonSlot);
 

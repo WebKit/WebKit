@@ -1,0 +1,4 @@
+
+
+PASS No securitypolicyviolation is fired when creating a select element
+
