@@ -1,0 +1,59 @@
+<!doctype html>
+<title>SVG &lt;use> dispatches 'load' and 'error' after an earlier load completes</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<svg></svg>
+<script>
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.querySelector('svg');
+
+  function newUseElement() {
+    return svg.appendChild(document.createElementNS(svgNS, 'use'));
+  }
+
+  const cookieBase = Date.now();
+  let counter = 0;
+  function uniqueUrl(fragment) {
+    return `/images/colors.svg?${cookieBase}-${counter++}#${fragment}`;
+  }
+  function nonExistingUrl() {
+    return `/images/this-file-should-not-exist.svg?${cookieBase}-${counter++}#green`;
+  }
+
+  function waitForEvent(element, type) {
+    return new Promise((resolve, reject) => {
+      element.addEventListener('load', e => {
+        type === 'load' ? resolve(e) : reject(new Error('unexpected load'));
+      }, { once: true });
+      element.addEventListener('error', e => {
+        type === 'error' ? resolve(e) : reject(new Error('unexpected error'));
+      }, { once: true });
+    });
+  }
+
+  promise_test(async t => {
+    const use = newUseElement();
+    t.add_cleanup(() => use.remove());
+
+    const firstLoad = waitForEvent(use, 'load');
+    use.setAttribute('href', uniqueUrl('green'));
+    await firstLoad;
+
+    const secondLoad = waitForEvent(use, 'load');
+    use.setAttribute('href', uniqueUrl('red'));
+    await secondLoad;
+  }, "'load' fires for each new external href, not only the first");
+
+  promise_test(async t => {
+    const use = newUseElement();
+    t.add_cleanup(() => use.remove());
+
+    const firstError = waitForEvent(use, 'error');
+    use.setAttribute('href', nonExistingUrl());
+    await firstError;
+
+    const recoveryLoad = waitForEvent(use, 'load');
+    use.setAttribute('href', uniqueUrl('green'));
+    await recoveryLoad;
+  }, "'load' fires after a prior external load failed and href was changed to a valid URL");
+</script>
