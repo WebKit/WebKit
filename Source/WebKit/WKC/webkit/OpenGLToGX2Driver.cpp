@@ -249,6 +249,55 @@ Result Driver::drawArraysInstanced(Primitive primitive, int32_t first, int32_t c
     return Result::Ok;
 }
 
+Result Driver::drawElements(Primitive primitive, int32_t count, IndexType type, uint64_t byteOffset)
+{
+    return drawElementsInstanced(primitive, count, type, byteOffset, 1);
+}
+
+Result Driver::drawElementsInstanced(Primitive primitive, int32_t count, IndexType type,
+    uint64_t byteOffset, int32_t instances)
+{
+    if (!validPrimitive(primitive) || count < 0 || instances < 0)
+        return Result::InvalidArgument;
+
+    uint32_t indexSize = 0;
+    switch (type) {
+    case IndexType::UnsignedByte:
+        indexSize = 1;
+        break;
+    case IndexType::UnsignedShort:
+        indexSize = 2;
+        break;
+    case IndexType::UnsignedInt:
+        indexSize = 4;
+        break;
+    default:
+        return Result::InvalidArgument;
+    }
+
+    if (byteOffset % indexSize)
+        return Result::InvalidArgument;
+
+    // Validate the end of the index range before forwarding it to a platform
+    // backend. This prevents overflow when a backend computes the byte range.
+    const uint64_t byteCount = static_cast<uint64_t>(count) * indexSize;
+    if (byteOffset > UINT64_MAX - byteCount)
+        return Result::InvalidArgument;
+
+    if (!count || !instances)
+        return Result::Ok;
+
+    if (!m_backend.drawIndexed)
+        return Result::MissingBackend;
+
+    if (!m_backend.drawIndexed(m_backend.context, translatePrimitive(primitive),
+            type, static_cast<uint32_t>(count), byteOffset,
+            static_cast<uint32_t>(instances)))
+        return Result::Unsupported;
+
+    return Result::Ok;
+}
+
 Result Driver::unsupported(const char* operation)
 {
     if (m_backend.reportUnsupported)
