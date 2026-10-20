@@ -1076,6 +1076,7 @@ enum class WebCore::PlatformMediaError : uint8_t {
     InvalidState,
     CDMInstanceKeyNeeded,
     Shutdown,
+    ProtectedContent,
 };
 #endif
 

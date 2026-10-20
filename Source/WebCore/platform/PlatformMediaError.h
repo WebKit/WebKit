@@ -49,6 +49,8 @@ enum class PlatformMediaError : uint8_t {
     InvalidState,
     CDMInstanceKeyNeeded,
     Shutdown,
+    // Protected content can't be decoded here; it isn't an error.
+    ProtectedContent,
 };
 
 using MediaPromise = NativePromise<void, PlatformMediaError>;
