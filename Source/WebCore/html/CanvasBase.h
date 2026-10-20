@@ -120,6 +120,8 @@ public:
     bool shouldAccelerate() const;
 
     NODELETE WEBCORE_EXPORT static void setMaxCanvasAreaForTesting(std::optional<size_t>);
+    // The largest canvas area, in device pixels, that the platform allows.
+    NODELETE WEBCORE_EXPORT static size_t maxCanvasArea();
     [[nodiscard]] bool validateArea() const;
 
     virtual void queueTaskKeepingObjectAlive(TaskSource, Function<void(CanvasBase&)>&&) = 0;

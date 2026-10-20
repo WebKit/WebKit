@@ -50,6 +50,7 @@
 #include <JavaScriptCore/SourceTaintedness.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObject.h>
+#include <WebCore/CanvasBase.h>
 #include <WebCore/ContainerNodeInlines.h>
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieJar.h>
@@ -83,6 +84,7 @@
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/RenderElement.h>
+#include <WebCore/RenderView.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/WindowProxy.h>
@@ -1754,6 +1756,123 @@ void WebAutomationSessionProxy::reloadFrame(WebCore::FrameIdentifier frameID, Op
 
     bool isRequestFromClientOrUserInput = true;
     protect(coreFrame->loader())->reload(reloadOptions, isRequestFromClientOrUserInput);
+}
+
+// https://w3c.github.io/webdriver-bidi/#render-document-to-a-canvas
+static WebCore::IntSize paintSizeForBidiScreenshot(const WebCore::FloatRect& rect, float devicePixelRatio, std::optional<double> maxWidth, std::optional<double> maxHeight)
+{
+    double framebufferWidth = rect.width() * devicePixelRatio;
+    double framebufferHeight = rect.height() * devicePixelRatio;
+
+    double scale = 1;
+    if (maxWidth && *maxWidth / framebufferWidth < scale)
+        scale = *maxWidth / framebufferWidth;
+    if (maxHeight && *maxHeight / framebufferHeight < scale)
+        scale = *maxHeight / framebufferHeight;
+
+    if (scale < 1) {
+        // "Round a number" prefers the value closer to +Infinity on a tie, which std::round
+        // matches for the positive values here.
+        return {
+            std::max(1, clampTo<int>(std::round(framebufferWidth * scale))),
+            std::max(1, clampTo<int>(std::round(framebufferHeight * scale)))
+        };
+    }
+
+    // A canvas takes its width and height as unsigned longs, which truncate.
+    return { clampTo<int>(std::floor(framebufferWidth)), clampTo<int>(std::floor(framebufferHeight)) };
+}
+
+// WebPageProxy::takeSnapshot() takes a rect in whole pixels. Rounding each edge, rather than taking the enclosing rect, keeps
+// a rect that is a hair off whole pixels after float math from growing by a pixel. A fractional clip can still come out up to
+// a pixel off at the edges, because the bitmap keeps the size computed from the exact rect. The bitmap isn't empty here, so
+// the rect must not be either.
+static WebCore::IntRect snappedRectForBidiScreenshot(const WebCore::FloatRect& rect)
+{
+    int x = clampTo<int>(std::round(rect.x()));
+    int y = clampTo<int>(std::round(rect.y()));
+    int maxX = std::max(clampTo<int>(std::round(rect.maxX())), x + 1);
+    int maxY = std::max(clampTo<int>(std::round(rect.maxY())), y + 1);
+    return { x, y, maxX - x, maxY - y };
+}
+
+void WebAutomationSessionProxy::rectForBidiScreenshot(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, bool documentOrigin, std::optional<WebCore::FloatRect>&& clip, std::optional<double>&& maxWidth, std::optional<double>&& maxHeight, CompletionHandler<void(std::optional<String>, WebCore::IntRect&&, WebCore::IntSize&&)>&& completionHandler)
+{
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-captureScreenshot
+    auto errorType = [](Inspector::Protocol::Automation::ErrorMessage error) {
+        return Inspector::Protocol::AutomationHelpers::getEnumConstantValue(error);
+    };
+
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return completionHandler(errorType(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound), { }, { });
+
+    RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+    RefPtr coreFrame = frame && frame->page() == page ? frame->coreLocalFrame() : nullptr;
+    RefPtr frameView = coreFrame ? coreFrame->view() : nullptr;
+    RefPtr document = coreFrame ? coreFrame->document() : nullptr;
+    if (!frameView || !document)
+        return completionHandler(errorType(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound), { }, { });
+
+    // FIXME: The spec captures immediately after the next run of the animation frame callbacks, so that what they change
+    // is in the capture. This captures right away, as classic screenshots do.
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-captureScreenshot
+
+    // This lays out the parent documents in this process too, which give a child navigable its viewport size.
+    // A parent in another process sends that size asynchronously.
+    document->updateLayout();
+
+    // The rectangles below are in the frame view's document coordinates: CSS pixels times the frame's zoom, which is
+    // the page zoom and, for an iframe, its owner's CSS zoom.
+    float zoomFactor = coreFrame->effectiveZoomFactor();
+
+    // https://w3c.github.io/webdriver-bidi/#get-the-origin-rectangle
+    WebCore::FloatRect originRect;
+    if (documentOrigin) {
+        CheckedPtr renderView = document->renderView();
+        if (!document->documentElement() || !renderView)
+            return completionHandler(errorType(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError), { }, { });
+        // The document element's scroll size. That's the size of the document that the render view lays out, which
+        // is already in document coordinates; Element::scrollWidth() leaves an iframe owner's CSS zoom out of it.
+        // FIXME: a document that overflows to the left or top (for example right-to-left content)
+        // has a negative scroll origin, and that part is outside this rectangle. https://webkit.org/b/330898
+        originRect = { { }, renderView->unscaledDocumentRect().size() };
+    } else {
+        // The visual viewport, which excludes scrollbars. Whether it should include them is
+        // https://github.com/w3c/webdriver-bidi/issues/592.
+        originRect = frameView->visualViewportRect();
+    }
+
+    // https://w3c.github.io/webdriver-bidi/#rectangle-intersection
+    auto rect = originRect;
+    if (clip) {
+        // The clip is normalized, in CSS pixels, and relative to the origin rectangle.
+        auto clipRect = *clip;
+        clipRect.scale(zoomFactor);
+        clipRect.moveBy(originRect.location());
+        rect.intersect(clipRect);
+    }
+    if (rect.isEmpty())
+        return completionHandler(errorType(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError), { }, { });
+
+    // https://w3c.github.io/webdriver-bidi/#determine-the-device-pixel-ratio
+    // This is window.devicePixelRatio without the frame's zoom, which the rect already has.
+    float devicePixelRatio = page->corePage()->deviceScaleFactor() * coreFrame->frameScaleFactor();
+
+    auto paintSize = paintSizeForBidiScreenshot(rect, devicePixelRatio, maxWidth, maxHeight);
+    if (paintSize.isEmpty())
+        return completionHandler(errorType(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError), { }, { });
+
+    // Refuse bitmaps larger than the platform's largest canvas, so a very long document captured with
+    // the "document" origin fails the command with "unsupported operation" instead of exhausting the
+    // memory of the process that paints it.
+    if (paintSize.unclampedArea() > WebCore::CanvasBase::maxCanvasArea())
+        return completionHandler(errorType(Inspector::Protocol::Automation::ErrorMessage::NotImplemented), { }, { });
+
+    // WebPageProxy::takeSnapshot() takes the rect in the frame view's contents coordinates, which also have the
+    // frame's scale: the document is transformed by it.
+    rect.scale(coreFrame->frameScaleFactor());
+    completionHandler(std::nullopt, snappedRectForBidiScreenshot(rect), WTF::move(paintSize));
 }
 #endif
 
