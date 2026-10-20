@@ -275,7 +275,9 @@ bool setCapability(void* context, Capability capability, bool enabled)
         return applyBlendState(state);
     case Capability::DepthTest:
         state.depthTestEnabled = enabled;
-        return applyDepthState(state);
+        // Depth and stencil share GX2's depth-stencil control register. Updating
+        // only the depth register can overwrite/disable the active stencil state.
+        return applyStencilState(state);
     case Capability::CullFace:
         state.cullEnabled = enabled;
         return applyCullState(state);
