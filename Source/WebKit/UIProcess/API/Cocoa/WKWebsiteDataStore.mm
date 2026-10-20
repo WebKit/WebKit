@@ -57,6 +57,7 @@
 #import "_WKWebPushActionInternal.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 #import "_WKWebsiteDataStoreDelegate.h"
+#import <Network/Network.h>
 #import <WebCore/Credential.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/ResourceResponse.h>
@@ -79,10 +80,6 @@
 #import <wtf/persistence/PersistentDecoder.h>
 #import <wtf/persistence/PersistentEncoder.h>
 #import <wtf/text/CString.h>
-
-#if HAVE(NW_PROXY_CONFIG)
-#import <Network/Network.h>
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
@@ -562,7 +559,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     [self _fetchAllIdentifiers:completionHandler];
 }
 
-#if HAVE(NW_PROXY_CONFIG)
 - (void)setProxyConfigurations:(NSArray<nw_proxy_config_t> *)proxyConfigurations
 {
     _proxyConfigurations = adoptNS([proxyConfigurations copy]);
@@ -589,8 +585,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 {
     return _proxyConfigurations.get();
 }
-
-#endif // HAVE(NW_PROXY_CONFIG)
 
 #pragma mark WKObject protocol implementation
 

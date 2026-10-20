@@ -166,7 +166,6 @@ public:
     void removeDataTask(DataTaskIdentifier);
     void removeBlobDataTask(DataTaskIdentifier);
 
-#if HAVE(NW_PROXY_CONFIG)
     const Vector<RetainPtr<nw_proxy_config_t>>& proxyConfigs() const LIFETIME_BOUND { return m_nwProxyConfigs; }
 
     void clearProxyConfigData() final;
@@ -174,7 +173,7 @@ public:
 
     void applyProxyConfigurationToSessionConfiguration(NSURLSessionConfiguration *);
     void replacedSessionDidBecomeInvalid(NSURLSession *);
-#endif
+
     bool isLegacyTLSAllowed() const { return m_isLegacyTLSAllowed; }
 
 private:
@@ -208,10 +207,8 @@ private:
     size_t countNonDefaultSessionSets() const final;
 
     void forEachSessionWrapper(NOESCAPE const Function<void(UniqueRef<SessionWrapper>&)>&);
-#if HAVE(NW_PROXY_CONFIG)
     void replaceSessionsWithUpdatedProxyConfigurations();
     void removeFinishedReplacedSessionWrappers();
-#endif
 
     bool isNetworkSessionCocoa() const final { return true; }
 
@@ -229,11 +226,9 @@ private:
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
     const RetainPtr<CFDictionaryRef> m_proxyConfiguration;
-#if HAVE(NW_PROXY_CONFIG)
     Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>> m_proxyConfigData;
     Vector<RetainPtr<nw_proxy_config_t>> m_nwProxyConfigs;
     Vector<UniqueRef<SessionWrapper>> m_replacedSessionWrappers;
-#endif
     const RetainPtr<DMFWebsitePolicyMonitor> m_deviceManagementPolicyMonitor;
     bool m_deviceManagementRestrictionsEnabled { false };
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };

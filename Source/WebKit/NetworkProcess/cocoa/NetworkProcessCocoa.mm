@@ -296,7 +296,6 @@ void NetworkProcess::setBackupExclusionPeriodForTesting(PAL::SessionID sessionID
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-#if HAVE(NW_PROXY_CONFIG)
 void NetworkProcess::clearProxyConfigData(PAL::SessionID sessionID)
 {
     CheckedPtr session = networkSession(sessionID);
@@ -314,6 +313,5 @@ void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pa
 
     session->setProxyConfigData(WTF::move(proxyConfigurations));
 }
-#endif // HAVE(NW_PROXY_CONFIG)
 
 } // namespace WebKit

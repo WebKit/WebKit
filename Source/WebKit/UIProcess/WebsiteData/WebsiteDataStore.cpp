@@ -2459,7 +2459,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     networkSessionParameters.isDeclarativeWebPushEnabled = m_configuration->isDeclarativeWebPushEnabled();
 #endif
-#if HAVE(NW_PROXY_CONFIG)
+#if PLATFORM(COCOA)
     networkSessionParameters.proxyConfigData = m_proxyConfigData;
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -2986,7 +2986,7 @@ bool WebsiteDataStore::hasActivePages()
     });
 }
 
-#if HAVE(NW_PROXY_CONFIG)
+#if PLATFORM(COCOA)
 void WebsiteDataStore::clearProxyConfigData()
 {
     m_proxyConfigData = std::nullopt;
@@ -2999,7 +2999,7 @@ void WebsiteDataStore::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, std:
     protect(networkProcess())->send(Messages::NetworkProcess::SetProxyConfigData(m_sessionID, data), 0);
     m_proxyConfigData = WTF::move(data);
 }
-#endif // HAVE(NW_PROXY_CONFIG)
+#endif // PLATFORM(COCOA)
 
 void WebsiteDataStore::setCompletionHandlerForRemovalFromNetworkProcess(CompletionHandler<void(String&&)>&& completionHandler)
 {

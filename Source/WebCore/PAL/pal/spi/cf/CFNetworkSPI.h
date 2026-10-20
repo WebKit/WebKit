@@ -123,7 +123,6 @@ struct nw_path_evaluator;
 typedef struct nw_path_evaluator *nw_path_evaluator_t;
 #endif // OS_OBJECT_USE_OBJC
 
-#if HAVE(NW_PROXY_CONFIG) || HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 typedef void (^nw_context_tracker_lookup_callback_t)(nw_endpoint_t endpoint, const char **tracker_name, const char **tracker_owner, bool *can_block);
 
 #ifdef __cplusplus
@@ -136,7 +135,6 @@ void nw_context_set_tracker_lookup_callback(nw_context_t, nw_context_tracker_loo
 #ifdef __cplusplus
 }
 #endif
-#endif // HAVE(NW_PROXY_CONFIG) || HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 
 #ifdef __cplusplus
 extern "C" {

@@ -1186,12 +1186,6 @@
 #define HAVE_BCS_LIVE_CAMERA_ONLY_ACTION_SPI 1
 #endif
 
-#if PLATFORM(COCOA)
-#if __has_include(<Network/proxy_config.h>)
-#define HAVE_NW_PROXY_CONFIG 1
-#endif
-#endif
-
 #if (PLATFORM(COCOA) && !PLATFORM(WATCHOS))
 #define HAVE_CFNETWORK_HOSTOVERRIDE 1
 #endif

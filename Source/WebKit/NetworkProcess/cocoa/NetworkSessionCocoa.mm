@@ -47,6 +47,7 @@
 #import "WebPrivacyHelpers.h"
 #import "WebSocketTask.h"
 #import <Foundation/NSURLSession.h>
+#import <Network/NSURLSession+Network.h>
 #import <WebCore/AdvancedPrivacyProtections.h>
 #import <WebCore/Credential.h>
 #import <WebCore/FormDataStreamCocoa.h>
@@ -102,10 +103,6 @@ SOFT_LINK_CONSTANT_MAY_FAIL(SymptomPresentationLite, kSymptomAnalyticsServiceEnd
 
 #else
 void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
-#endif
-
-#if HAVE(NW_PROXY_CONFIG) && __has_include(<Network/NSURLSession+Network.h>)
-#include <Network/NSURLSession+Network.h>
 #endif
 
 #import "DeviceManagementSoftLink.h"
@@ -315,7 +312,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error
 {
-#if HAVE(NW_PROXY_CONFIG)
     // Other sessions lose their wrappers before they become invalid, but a session that a proxy
     // change replaced keeps its wrapper until it finishes its tasks. The wrapper owns the session
     // and this delegate, and can let go of both here.
@@ -324,10 +320,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         RetainPtr protectedSession = session;
         if (CheckedPtr networkSession = _session)
             networkSession->replacedSessionDidBecomeInvalid(protectedSession.get());
-        return;
     }
-#endif
-    ASSERT(!_sessionWrapper);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
@@ -599,9 +592,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // Proxy authentication is handled by CFNetwork internally. We can get here if the user cancels
     // CFNetwork authentication dialog, and we shouldn't ask the client to display another one in that case.
     if (challenge.protectionSpace.isProxy
-#if HAVE(NW_PROXY_CONFIG)
         && sessionCocoa->proxyConfigs().isEmpty()
-#endif
         && !sessionCocoa->preventsSystemHTTPProxyAuthentication())
         return completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
 
@@ -1122,9 +1113,7 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
     if (!configuration._sourceApplicationSecondaryIdentifier && isFullBrowser)
         configuration._sourceApplicationSecondaryIdentifier = @"com.apple.WebKit.InAppBrowser";
 
-#if HAVE(NW_PROXY_CONFIG)
     networkSession.applyProxyConfigurationToSessionConfiguration(configuration);
-#endif
 
     delegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:networkSession wrapper:*this withCredentials:storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use]);
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
@@ -1252,11 +1241,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         configuration.get().TLSMinimumSupportedProtocolVersion = tls_protocol_version_TLSv12;
 #endif
 
-#if HAVE(NW_PROXY_CONFIG)
     // Before the sessions exist, so that they get created with the proxies, rather than replaced.
     if (parameters.proxyConfigData)
         setProxyConfigData(*parameters.proxyConfigData);
-#endif
 
     initializeNSURLSessionsInSet(m_defaultSessionSet.get(), configuration.get());
 
@@ -1517,13 +1504,11 @@ void NetworkSessionCocoa::invalidateAndCancel()
     for (auto& sessionSet : m_perPageSessionSets.values())
         invalidateAndCancelSessionSet(sessionSet.get());
 
-#if HAVE(NW_PROXY_CONFIG)
     for (auto& sessionWrapper : m_replacedSessionWrappers) {
         [sessionWrapper->session invalidateAndCancel];
         [sessionWrapper->delegate sessionInvalidated];
     }
     m_replacedSessionWrappers.clear();
-#endif
 }
 
 HashSet<WebCore::SecurityOriginData> NetworkSessionCocoa::originsWithCredentials()
@@ -1741,10 +1726,8 @@ void NetworkSessionCocoa::removeWebSocketTask(WebSocketTask& task)
         RELEASE_LOG(NetworkSession, "NetworkSessionCocoa::removeWebSocketTask, web socket count is %u", webSocketDataTaskMap.size());
     }
 
-#if HAVE(NW_PROXY_CONFIG)
     // The wrapper of a session that a proxy change replaced may have been waiting for this task.
     removeFinishedReplacedSessionWrappers();
-#endif
 }
 
 void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pageID, WebPageNetworkParameters&& parameters)
@@ -2005,7 +1988,6 @@ void NetworkSessionCocoa::forEachSessionWrapper(NOESCAPE const Function<void(Uni
     }
 }
 
-#if HAVE(NW_PROXY_CONFIG)
 void NetworkSessionCocoa::clearProxyConfigData()
 {
     setProxyConfigData({ });
@@ -2092,7 +2074,6 @@ void NetworkSessionCocoa::applyProxyConfigurationToSessionConfiguration(NSURLSes
     } else
         configuration.proxyConfigurations = @[ ];
 }
-#endif // HAVE(NW_PROXY_CONFIG)
 
 #if USE(APPLE_INTERNAL_SDK)
 

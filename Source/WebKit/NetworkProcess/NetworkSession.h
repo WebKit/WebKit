@@ -326,7 +326,7 @@ public:
     void setEmulatedConditions(std::optional<uint64_t> bandwidthBytesPerSecond, Seconds latency);
 #endif
 
-#if HAVE(NW_PROXY_CONFIG)
+#if PLATFORM(COCOA)
     virtual void clearProxyConfigData() { }
     virtual void setProxyConfigData(const Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>&) { };
 #endif
