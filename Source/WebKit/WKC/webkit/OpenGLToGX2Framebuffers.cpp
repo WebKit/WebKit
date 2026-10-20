@@ -113,10 +113,9 @@ FramebufferResult Framebuffers::destroyRenderbuffer(RenderbufferName name)
     // than leave native framebuffer state pointing at a released GX2 resource.
     for (const auto& framebuffer : m_framebuffers) {
         for (const auto& attachment : framebuffer.second.attachments) {
-            if (!attachment.second)
-                continue;
-            // Attachment source tracking is intentionally added in the next
-            // stage; until then, attached renderbuffers cannot be distinguished.
+            const auto& binding = attachment.second;
+            if (binding.attached && !binding.texture && binding.objectName == name)
+                return FramebufferResult::InvalidArgument;
         }
     }
 
@@ -157,7 +156,7 @@ FramebufferResult Framebuffers::attachTexture(FramebufferName framebufferName,
             nativeTexture, mipLevel, layer))
         return FramebufferResult::Unsupported;
     try {
-        it->second.attachments[attachment] = true;
+        it->second.attachments[attachment] = AttachmentBinding { true, true, textureName };
     } catch (const std::bad_alloc&) {
         return FramebufferResult::OutOfMemory;
     }
@@ -181,7 +180,7 @@ FramebufferResult Framebuffers::attachRenderbuffer(FramebufferName framebufferNa
             attachment, renderbuffer->second.native))
         return FramebufferResult::Unsupported;
     try {
-        framebuffer->second.attachments[attachment] = true;
+        framebuffer->second.attachments[attachment] = AttachmentBinding { true, false, renderbufferName };
     } catch (const std::bad_alloc&) {
         return FramebufferResult::OutOfMemory;
     }
