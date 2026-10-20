@@ -291,6 +291,80 @@ bool buildWUTAttributeStreams(const WUTBufferResources& resources, std::vector<G
     return true;
 }
 
+bool buildWUTAttributeStreams(const WUTBufferResources& resources,
+    const GX2VertexShader& vertexShader, const WUTLinkedAttribute* bindings,
+    size_t bindingCount, std::vector<GX2AttribStream>& output)
+{
+    output.clear();
+    if ((bindingCount && !bindings) || (vertexShader.attribVarCount && !vertexShader.attribVars))
+        return false;
+
+    try {
+        output.reserve(resources.attributes.size());
+        for (const auto& entry : resources.attributes) {
+            const uint8_t glIndex = entry.first;
+            const auto& attribute = entry.second;
+            if (!attribute.enabled)
+                continue;
+
+            // The GL attribute index is not necessarily the linked GX2 input
+            // location. Require an explicit name mapping to prevent mismatched
+            // fetch streams after the shader linker assigns locations.
+            const char* inputName = nullptr;
+            for (size_t i = 0; i < bindingCount; ++i) {
+                if (bindings[i].attributeIndex != glIndex)
+                    continue;
+                if (!bindings[i].shaderInputName || inputName)
+                    return false;
+                inputName = bindings[i].shaderInputName;
+            }
+            if (!inputName)
+                return false;
+
+            const GX2AttribVar* linkedInput = nullptr;
+            for (uint32_t i = 0; i < vertexShader.attribVarCount; ++i) {
+                const GX2AttribVar& candidate = vertexShader.attribVars[i];
+                if (!candidate.name || std::strcmp(candidate.name, inputName))
+                    continue;
+                if (linkedInput)
+                    return false;
+                linkedInput = &candidate;
+            }
+            if (!linkedInput)
+                return false;
+
+            if (!attribute.buffer || resources.buffers.find(attribute.buffer) == resources.buffers.end()) {
+                output.clear();
+                return false;
+            }
+            GX2AttribStream stream {};
+            stream.location = linkedInput->location;
+            stream.buffer = glIndex;
+            stream.offset = 0; // bindVertexBuffer applies the GL byte offset.
+            stream.format = attribute.format;
+            stream.type = attribute.indexType;
+            stream.aluDivisor = attribute.divisor;
+            stream.mask = attribute.componentMask;
+            stream.endianSwap = GX2_ENDIAN_SWAP_DEFAULT;
+            output.push_back(stream);
+        }
+    } catch (...) {
+        output.clear();
+        return false;
+    }
+
+    // Two GL inputs must not accidentally alias one GX2 location.
+    for (size_t i = 0; i < output.size(); ++i) {
+        for (size_t j = i + 1; j < output.size(); ++j) {
+            if (output[i].location == output[j].location) {
+                output.clear();
+                return false;
+            }
+        }
+    }
+    return !output.empty();
+}
+
 bool initializeWUTFetchShader(const WUTBufferResources& resources, GX2FetchShader& shader,
     void* programBuffer, uint32_t bufferSize, GX2FetchShaderType type,
     GX2TessellationMode tessellationMode)
@@ -312,6 +386,33 @@ bool initializeWUTFetchShader(const WUTBufferResources& resources, GX2FetchShade
 
     GX2InitFetchShaderEx(&shader, static_cast<uint8_t*>(programBuffer),
         static_cast<uint32_t>(streams.size()), streams.data(), type, tessellationMode);
+    GX2SetFetchShader(&shader);
+    return true;
+}
+
+bool initializeWUTFetchShader(const WUTBufferResources& resources,
+    const GX2VertexShader& vertexShader, const WUTLinkedAttribute* bindings,
+    size_t bindingCount, GX2FetchShader& shader, void* programBuffer,
+    uint32_t bufferSize, GX2FetchShaderType type, GX2TessellationMode tessellationMode)
+{
+    if (!programBuffer || !vertexShader.program || !vertexShader.size
+        || (reinterpret_cast<uintptr_t>(programBuffer) & (GX2_SHADER_PROGRAM_ALIGNMENT - 1)))
+        return false;
+
+    std::vector<GX2AttribStream> streams;
+    if (!buildWUTAttributeStreams(resources, vertexShader, bindings, bindingCount, streams))
+        return false;
+
+    const uint32_t requiredSize = GX2CalcFetchShaderSizeEx(
+        static_cast<uint32_t>(streams.size()), type, tessellationMode);
+    if (!requiredSize || bufferSize < requiredSize)
+        return false;
+
+    GX2InitFetchShaderEx(&shader, static_cast<uint8_t*>(programBuffer),
+        static_cast<uint32_t>(streams.size()), streams.data(), type, tessellationMode);
+    // Keep vertex shader linkage and fetch program synchronized: GX2 locations
+    // in the streams above came from this exact vertex shader's attribVars.
+    GX2SetVertexShader(&vertexShader);
     GX2SetFetchShader(&shader);
     return true;
 }
