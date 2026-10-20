@@ -28,6 +28,7 @@
 #if LIBPAS_ENABLED
 
 #include "pas_darwin_spi.h"
+#include "pas_get_allocation_size.h"
 #include "pas_malloc_stack_logging.h"
 #include <stdlib.h>
 
@@ -54,19 +55,61 @@ bool pas_compute_msl_is_enabled(void)
 PAS_API malloc_logger_t* malloc_logger = NULL;
 #endif
 
-PAS_NEVER_INLINE pas_allocation_result pas_msl_malloc_logging_slow(size_t size, pas_allocation_result result)
+/* The zone argument of a malloc_logger callout is a malloc_zone_t that only supports size(). It
+   lets the hook query the size of the underlying block (as opposed to the requested size, which
+   the hook already receives). The wrapper carries the context needed to do that lookup safely
+   from inside the callout: the heap config the pointer belongs to, and whether the callout runs
+   with the heap lock held.
+
+   Every other zone entry is NULL: the zone is never registered with libmalloc and must not be
+   used for anything but size(). It lives on the stack of the callout, so hooks must not retain
+   it past the call. */
+typedef struct {
+    malloc_zone_t zone; /* Must be first, size() casts back to the wrapper. */
+    const pas_heap_config* config;
+    pas_lock_hold_mode heap_lock_hold_mode;
+} pas_msl_zone;
+
+static size_t pas_msl_zone_size(malloc_zone_t* zone, const void* ptr)
+{
+    pas_msl_zone* pas_zone = (pas_msl_zone*)zone;
+    if (pas_zone->heap_lock_hold_mode == pas_lock_is_held)
+        pas_heap_lock_assert_held(); /* Prevents race conditions due to missing locks. */
+    /* else: Trying to retake an already-held lock will reliably fail. */
+
+    return pas_get_allocation_size_with_heap_lock_hold_mode(
+        (void*)(uintptr_t)ptr, *pas_zone->config, pas_zone->heap_lock_hold_mode);
+}
+
+static pas_msl_zone init_zone(const pas_heap_config* config, pas_lock_hold_mode heap_lock_hold_mode)
+{
+    return (pas_msl_zone)
+    {
+        .zone = { .size = pas_msl_zone_size },
+        .config = config,
+        .heap_lock_hold_mode = heap_lock_hold_mode,
+    };
+}
+
+PAS_NEVER_INLINE pas_allocation_result pas_msl_malloc_logging_slow(size_t size, pas_allocation_result result, const pas_heap_config* config, pas_lock_hold_mode heap_lock_hold_mode)
 {
     PAS_TESTING_ASSERT(malloc_logger);
-    if (result.did_succeed && pas_msl_is_enabled())
-        malloc_logger(pas_stack_logging_type_alloc, (uintptr_t)0, (uintptr_t)size, 0, (uintptr_t)result.begin, 0);
+    if (result.did_succeed && pas_msl_is_enabled()) {
+        pas_msl_zone zone = init_zone(config, heap_lock_hold_mode);
+        uint32_t type = (pas_stack_logging_flag_zone | pas_stack_logging_type_alloc);
+        malloc_logger(type, (uintptr_t)&zone, (uintptr_t)size, 0, (uintptr_t)result.begin, 0);
+    }
     return result;
 }
 
-PAS_NEVER_INLINE void pas_msl_free_logging_slow(void* ptr)
+PAS_NEVER_INLINE void pas_msl_free_logging_slow(void* ptr, const pas_heap_config* config, pas_lock_hold_mode heap_lock_hold_mode)
 {
     PAS_TESTING_ASSERT(malloc_logger);
-    if (ptr && pas_msl_is_enabled())
-        malloc_logger(pas_stack_logging_type_dealloc, (uintptr_t)0, (uintptr_t)ptr, 0, 0, 0);
+    if (ptr && pas_msl_is_enabled()) {
+        pas_msl_zone zone = init_zone(config, heap_lock_hold_mode);
+        uint32_t type = (pas_stack_logging_flag_zone | pas_stack_logging_type_dealloc);
+        malloc_logger(type, (uintptr_t)&zone, (uintptr_t)ptr, 0, 0, 0);
+    }
 }
 
 #endif
