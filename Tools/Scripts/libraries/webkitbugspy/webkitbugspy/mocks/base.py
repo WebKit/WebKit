@@ -19,31 +19,42 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+from __future__ import annotations
+
 import copy
+from typing import Any, Iterable
 
 from webkitbugspy import User
 
 
 class Base(object):
     @classmethod
-    def transform_user(cls, user):
+    def transform_user(cls, user: User) -> User:
         return User(
             name=user.name,
             username=user.username,
             emails=user.emails,
         )
 
-    def __init__(self, users=None, issues=None, projects=None):
+    def __init__(self, users: User.Mapping | Iterable[User] | None = None, issues: Iterable[dict[str, Any]] | None = None, projects: dict[str, dict[str, Any]] | None = None) -> None:
         self.users = User.Mapping()
         for user in users or []:
             self.users.add(type(self).transform_user(user))
 
         self.projects = projects or dict()
-        self.issues = {}
+        # Issues are described by the same untyped, JSON-like dictionaries as the test data.
+        self.issues: dict[int, Any] = {}
         for issue in issues or []:
             self.add(issue)
 
-    def add(self, bug_data):
+    def _fixture_user(self, key: str | int | None) -> User:
+        # Mocks only refer to users which are part of their test data.
+        user = self.users[key]
+        if not user:
+            raise KeyError(key)
+        return user
+
+    def add(self, bug_data: dict[str, Any]) -> int:
         if not isinstance(bug_data, dict):
             raise ValueError('Expected bug data to be dictionary')
 
