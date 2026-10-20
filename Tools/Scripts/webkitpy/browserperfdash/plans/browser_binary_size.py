@@ -85,9 +85,24 @@ def get_browser_relevant_objects_glib(browser_driver):
     return browser_relevant_objects
 
 
+def get_browser_relevant_objects_servo(browser_driver):
+    browser_path = os.path.realpath(browser_driver.process_name)
+    if not os.path.isfile(browser_path):
+        raise ValueError(f"The browser path does not exist: {browser_path}")
+    browser_dir = os.path.dirname(browser_path)
+    browser_relevant_objects = [browser_path]
+    libraries, interpreter = SharedObjectResolver('ldd', os.environ.copy()).get_libs_and_interpreter(browser_path)
+    for library in sorted(libraries):
+        if library.startswith(browser_dir) or os.path.realpath(library).startswith(browser_dir):
+            browser_relevant_objects.append(library)
+    return browser_relevant_objects
+
+
 def run(browser_driver, results_file):
     if browser_driver.platform == "linux" and (browser_driver.browser_name.startswith('minibrowser-wpe') or browser_driver.browser_name == 'minibrowser-gtk'):
         browser_relevant_objects = get_browser_relevant_objects_glib(browser_driver)
+    elif browser_driver.platform == "linux" and browser_driver.browser_name == 'servo':
+        browser_relevant_objects = get_browser_relevant_objects_servo(browser_driver)
     else:
         raise NotImplementedError(f'Getting the browser size data for browser "{browser_driver.browser_name}" and platform "{browser_driver.platform}" is not implemented')
 
