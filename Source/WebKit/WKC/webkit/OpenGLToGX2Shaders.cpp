@@ -263,6 +263,20 @@ ShaderResult ShaderPrograms::use(ProgramName name)
         return ShaderResult::MissingBackend;
     if (!m_backend.useProgram(m_backend.context, native))
         return ShaderResult::BackendFailure;
+
+    // Uniform values set while this program was not current must be uploaded
+    // when it becomes active, matching GL's per-program uniform storage.
+    if (name) {
+        const ProgramObject& program = m_programs.find(name)->second;
+        if (!program.values.empty() && !m_backend.setUniform)
+            return ShaderResult::MissingBackend;
+        for (const auto& entry : program.values) {
+            const UniformValue& value = entry.second;
+            if (!m_backend.setUniform(m_backend.context, native, entry.first, value.type,
+                    value.count, value.bytes.empty() ? nullptr : value.bytes.data(), value.bytes.size()))
+                return ShaderResult::BackendFailure;
+        }
+    }
     m_current = name;
     return ShaderResult::Ok;
 }
