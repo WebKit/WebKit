@@ -287,6 +287,34 @@ bool setAttribute(void* context, uint8_t attribute, const VertexAttribute& value
     return true;
 }
 
+bool buildWUTAttributeStreams(const WUTBufferResources& resources, std::vector<GX2AttribStream>& output)
+{
+    output.clear();
+    try {
+        output.reserve(resources.attributes.size());
+        for (const auto& entry : resources.attributes) {
+            const uint8_t location = entry.first;
+            const auto& attribute = entry.second;
+            if (!attribute.enabled)
+                continue;
+            GX2AttribStream stream {};
+            stream.location = location;
+            stream.buffer = location;
+            stream.offset = 0; // bindVertexBuffer already applies the GL byte offset.
+            stream.format = attribute.format;
+            stream.type = attribute.indexType;
+            stream.aluDivisor = attribute.divisor;
+            stream.mask = attribute.componentMask;
+            stream.endianSwap = GX2_ENDIAN_SWAP_DEFAULT;
+            output.push_back(stream);
+        }
+    } catch (...) {
+        output.clear();
+        return false;
+    }
+    return true;
+}
+
 bool setElementBuffer(void* context, BufferName name)
 {
     if (!name)
