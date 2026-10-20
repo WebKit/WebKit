@@ -2232,14 +2232,6 @@
         }
     },
 
-    "imported/w3c/webdriver/tests/classic/get_active_element/get.py": {
-        "subtests": {
-            "test_no_such_element": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327139"}}
-            }
-        }
-    },
-
     "imported/w3c/webdriver/tests/classic/navigate_to/navigate.py": {
         "subtests": {
             "test_seen_nodes[https coop]": {
