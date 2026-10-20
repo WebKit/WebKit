@@ -348,14 +348,14 @@ bool setDepthFunction(void* context, CompareFunction function)
 {
     auto& state = *static_cast<WUTBackendContext*>(context);
     state.depthFunction = function;
-    return applyDepthState(state);
+    return applyStencilState(state);
 }
 
 bool setDepthWrite(void* context, bool enabled)
 {
     auto& state = *static_cast<WUTBackendContext*>(context);
     state.depthWriteEnabled = enabled;
-    return applyDepthState(state);
+    return applyStencilState(state);
 }
 
 bool setCullFace(void* context, Face face)
@@ -424,6 +424,11 @@ bool clear(void* context, uint8_t mask)
 }
 
 } // namespace
+
+BufferBackend makeWUTBufferBackend(WUTBackendContext& context)
+{
+    return makeWUTBufferBackend(context.bufferResources);
+}
 
 Backend makeWUTBackend(WUTBackendContext& context)
 {
