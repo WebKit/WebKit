@@ -664,7 +664,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 ALWAYS_INLINE void* memcpyAtomic(void* dst, const void* src, size_t n)
 {
-    // This produces a much nicer error message for unaligned accesses.
+    // Note: The `opaque` here matters because the compiler can backwards propagate the alignment from the
+    // cast when n is constant. e.g. if `n == 4`, we cast `dst` to `uint32_t*`, so Clang can assume it's
+    // already 4 byte aligned and remove the check.
+    ASSERT(isPowerOfTwo(n) && WTF::isAligned(WTF::opaque(dst), n));
     switch (n) {
     case 1:
         WTF::atomicStore(std::bit_cast<uint8_t*>(dst), *std::bit_cast<const uint8_t*>(src), std::memory_order_relaxed);
@@ -701,7 +704,7 @@ ALWAYS_INLINE void* memcpyTearing(void* dst, const void* src, size_t n)
 
 static ALWAYS_INLINE void* memcpyAtomicIfPossible(void* dst, const void* src, size_t n)
 {
-    if (isPowerOfTwo(n) && n <= sizeof(CPURegister))
+    if (isPowerOfTwo(n) && n <= sizeof(CPURegister) && WTF::isAligned(dst, n))
         return memcpyAtomic(dst, src, n);
     return memcpyTearing(dst, src, n);
 }
