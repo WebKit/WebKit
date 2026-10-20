@@ -20143,18 +20143,18 @@ void WebPageProxy::requestMediaKeySystemPermissionByDefaultAction(const WebCore:
 
 #if ENABLE(MEDIA_STREAM)
 
-WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRecognition(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
+WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRecognition(WebProcessProxy& process, WebCore::PageIdentifier pageIDInProcess, WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
     auto captureDevice = SpeechRecognitionCaptureSource::findCaptureDevice();
     if (!captureDevice)
         return CaptureSourceOrError { { "No device is available for capture"_s, WebCore::MediaAccessDenialReason::PermissionDenied } };
 
-    Ref speechRecognitionRemoteRealtimeMediaSourceManager = protect(legacyMainFrameProcess())->ensureSpeechRecognitionRemoteRealtimeMediaSourceManager();
+    Ref speechRecognitionRemoteRealtimeMediaSourceManager = process.ensureSpeechRecognitionRemoteRealtimeMediaSourceManager();
     if (protect(preferences())->captureAudioInGPUProcessEnabled())
-        return CaptureSourceOrError { SpeechRecognitionRemoteRealtimeMediaSource::create(speechRecognitionRemoteRealtimeMediaSourceManager, *captureDevice, m_webPageID, clientIdentifier) };
+        return CaptureSourceOrError { SpeechRecognitionRemoteRealtimeMediaSource::create(speechRecognitionRemoteRealtimeMediaSourceManager, *captureDevice, pageIDInProcess, clientIdentifier) };
 
 #if PLATFORM(IOS_FAMILY) || USE(GSTREAMER)
-    return CaptureSourceOrError { SpeechRecognitionRemoteRealtimeMediaSource::create(speechRecognitionRemoteRealtimeMediaSourceManager, *captureDevice, m_webPageID, clientIdentifier) };
+    return CaptureSourceOrError { SpeechRecognitionRemoteRealtimeMediaSource::create(speechRecognitionRemoteRealtimeMediaSourceManager, *captureDevice, pageIDInProcess, clientIdentifier) };
 #else
     return SpeechRecognitionCaptureSource::createRealtimeMediaSource(*captureDevice, m_webPageID);
 #endif

@@ -144,7 +144,8 @@ void SpeechRecognitionServer::handleRequest(Ref<WebCore::SpeechRecognitionReques
         return;
     }
 
-    WebProcessProxy::muteCaptureInPagesExcept(m_identifier);
+    if (RefPtr process = m_process)
+        WebProcessProxy::muteCaptureInPagesExcept(*process, m_identifier);
     bool mockDeviceCapturesEnabled = m_checkIfMockSpeechRecognitionEnabled();
     protect(m_recognizer)->start(sourceOrError.source(), mockDeviceCapturesEnabled);
 #else

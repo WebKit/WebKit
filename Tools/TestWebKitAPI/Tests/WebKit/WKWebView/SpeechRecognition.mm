@@ -27,12 +27,16 @@
 
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool shouldGrantPermissionRequest = true;
@@ -329,6 +333,42 @@ TEST(WebKit2, SpeechRecognitionWebProcessCrash)
     }
 
     TestWebKitAPI::Util::runFor(0.5_s);
+}
+
+TEST(SiteIsolation, SpeechRecognitionInCrossSiteIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/subframe' allow='microphone'></iframe>"_s } },
+        { "/subframe"_s, { "<body></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    auto preferences = [configuration preferences];
+    preferences._mockCaptureDevicesEnabled = YES;
+    preferences._speechRecognitionEnabled = YES;
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr delegate = adoptNS([[SpeechRecognitionUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    shouldGrantPermissionRequest = true;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    NSString *result = [webView objectByCallingAsyncFunction:@"window.recognition = new webkitSpeechRecognition();"
+        "window.audioStarted = new Promise(resolve => recognition.onaudiostart = () => resolve('audiostart'));"
+        "return await new Promise(resolve => {"
+        "    recognition.onstart = () => resolve('start');"
+        "    recognition.onerror = (event) => resolve('error: ' + event.error + ' - ' + event.message);"
+        "    recognition.start();"
+        "});" withArguments:@{ } inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld];
+    EXPECT_WK_STREQ(@"start", result);
+
+    // Starting recognition mutes capture in other pages, but not in the page that starts it.
+    EXPECT_FALSE([webView _mediaMutedState] & _WKMediaCaptureDevicesMuted);
+
+    result = [webView objectByCallingAsyncFunction:@"return await window.audioStarted;" withArguments:@{ } inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld];
+    EXPECT_WK_STREQ(@"audiostart", result);
 }
 
 } // namespace TestWebKitAPI

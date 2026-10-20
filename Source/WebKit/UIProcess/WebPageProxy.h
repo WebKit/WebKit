@@ -2739,7 +2739,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManagerProxy* LEGACY_NODELETE userMediaPermissionRequestManagerIfExists();
-    WebCore::CaptureSourceOrError createRealtimeMediaSourceForSpeechRecognition(WebCore::SpeechRecognitionConnectionClientIdentifier);
+    WebCore::CaptureSourceOrError createRealtimeMediaSourceForSpeechRecognition(WebProcessProxy&, WebCore::PageIdentifier, WebCore::SpeechRecognitionConnectionClientIdentifier);
     void clearUserMediaPermissionRequestHistory(WebCore::PermissionName);
     bool shouldListenToVoiceActivity() const { return m_shouldListenToVoiceActivity; }
     void voiceActivityDetected();

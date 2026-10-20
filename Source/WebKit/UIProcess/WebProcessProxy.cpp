@@ -3180,7 +3180,7 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
 {
     RefPtr<WebPageProxy> targetPage;
     for (Ref page : pages()) {
-        if (page->webPageIDInMainFrameProcess() == identifier) {
+        if (page->hasWebPageInProcess(*this, identifier)) {
             targetPage = WTF::move(page);
             break;
         }
@@ -3207,9 +3207,10 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
 
     m_speechRecognitionServerMap.ensure(identifier, [&]() {
 #if ENABLE(MEDIA_STREAM)
-        auto createRealtimeMediaSource = [weakPage = WeakPtr { targetPage }](WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier) {
+        auto createRealtimeMediaSource = [weakPage = WeakPtr { targetPage }, weakThis = WeakPtr { *this }, identifier](WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier) {
             RefPtr page = weakPage;
-            return page ? page->createRealtimeMediaSourceForSpeechRecognition(clientIdentifier) : CaptureSourceOrError { { "Page is invalid"_s, WebCore::MediaAccessDenialReason::InvalidAccess } };
+            RefPtr protectedThis = weakThis;
+            return page && protectedThis ? page->createRealtimeMediaSourceForSpeechRecognition(*protectedThis, identifier, clientIdentifier) : CaptureSourceOrError { { "Page is invalid"_s, WebCore::MediaAccessDenialReason::InvalidAccess } };
         };
         Ref speechRecognitionServer = SpeechRecognitionServer::create(*this, identifier, WTF::move(permissionChecker), WTF::move(checkIfMockCaptureDevicesEnabled), WTF::move(createRealtimeMediaSource));
 #else
@@ -3248,6 +3249,19 @@ void WebProcessProxy::muteCaptureInPagesExcept(WebCore::PageIdentifier pageID)
     }
 #else
     UNUSED_PARAM(pageID);
+#endif
+}
+
+void WebProcessProxy::muteCaptureInPagesExcept(const WebProcessProxy& process, WebCore::PageIdentifier pageIDInProcess)
+{
+#if PLATFORM(COCOA)
+    for (Ref page : globalPages()) {
+        if (!page->hasWebPageInProcess(process, pageIDInProcess))
+            page->setMediaStreamCaptureMuted(true);
+    }
+#else
+    UNUSED_PARAM(process);
+    UNUSED_PARAM(pageIDInProcess);
 #endif
 }
 

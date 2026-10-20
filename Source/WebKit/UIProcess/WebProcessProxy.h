@@ -581,6 +581,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     static void muteCaptureInPagesExcept(WebCore::PageIdentifier);
+    static void muteCaptureInPagesExcept(const WebProcessProxy&, WebCore::PageIdentifier);
     SpeechRecognitionRemoteRealtimeMediaSourceManager& ensureSpeechRecognitionRemoteRealtimeMediaSourceManager() LIFETIME_BOUND;
     SpeechRecognitionRemoteRealtimeMediaSourceManager* speechRecognitionRemoteRealtimeMediaSourceManager() const LIFETIME_BOUND { return m_speechRecognitionRemoteRealtimeMediaSourceManager.get(); }
 #endif
