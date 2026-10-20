@@ -555,7 +555,7 @@ static Inspector::Protocol::Automation::BrowsingContextPresentation LEGACY_NODEL
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void WebAutomationSession::createBrowsingContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&& presentationHint, CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&& callback)
+void WebAutomationSession::createBrowsingContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&& presentationHint, CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation, String>&& callback)
 {
     ASSERT(m_client);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!m_client, InternalError, "The remote session could not request a new browsing context."_s);
@@ -582,7 +582,7 @@ void WebAutomationSession::createBrowsingContext(std::optional<Inspector::Protoc
         Ref process = protectedPage->legacyMainFrameProcess();
         process->send(Messages::WebAutomationSessionProxy::EnsureRealmForInitialEmptyDocument(protectedPage->webPageIDInMainFrameProcess()), 0);
 #endif
-        callback({ { protectedThis->handleForWebPageProxy(*protectedPage), toProtocol(protectedThis->m_client->currentPresentationOfPage(protectedThis.get(), *protectedPage)) } });
+        callback({ { protectedThis->handleForWebPageProxy(*protectedPage), toProtocol(protectedThis->m_client->currentPresentationOfPage(protectedThis.get(), *protectedPage)), protectedPage->userAgent() } });
     });
 }
 

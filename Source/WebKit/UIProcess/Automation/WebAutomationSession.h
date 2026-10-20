@@ -251,7 +251,7 @@ public:
     // Platform: Generic
     void getBrowsingContexts(Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&&) override;
     void getBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::BrowsingContext>>&&) override;
-    void createBrowsingContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&&, Inspector::CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&&) override;
+    void createBrowsingContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&&, Inspector::CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation, String>&&) override;
     void closeBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<void>&&) override;
     Inspector::CommandResult<void> deleteSession() override;
     void resolveBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, Inspector::CommandCallback<void>&&) override;

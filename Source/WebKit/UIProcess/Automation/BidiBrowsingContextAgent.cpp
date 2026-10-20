@@ -320,13 +320,13 @@ void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::
     // FIXME: implement `background` option.
     // FIXME: implement `userContext` option (use validated context to create in specific user context).
 
-    session->createBrowsingContext(browsingContextPresentationFromCreateType(createType), [callback = WTF::move(callback)](CommandResultOf<BrowsingContext, Inspector::Protocol::Automation::BrowsingContextPresentation>&& result) {
+    session->createBrowsingContext(browsingContextPresentationFromCreateType(createType), [callback = WTF::move(callback)](CommandResultOf<BrowsingContext, Inspector::Protocol::Automation::BrowsingContextPresentation, String>&& result) {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;
         }
 
-        auto [resultContext, resultPresentation] = WTF::move(result.value());
+        auto resultContext = WTF::move(std::get<0>(result.value()));
         callback(WTF::move(resultContext));
     });
 }

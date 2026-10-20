@@ -101,6 +101,19 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
     launchBrowser(WTF::move(completionHandler));
 }
 
+void SessionHost::cancelSessionCreation()
+{
+    Ref protectedThis { *this };
+    if (m_cancellable)
+        g_cancellable_cancel(m_cancellable.get());
+
+    if (!m_socketConnection)
+        return;
+
+    m_socketConnection->close();
+    disconnect(DisconnectReason::SessionCreationCancelled);
+}
+
 bool SessionHost::isConnected() const
 {
     // Session is connected when launching or when socket connection hasn't been closed.
@@ -200,16 +213,22 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
 
 void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& data)
 {
-    if (!m_browser && !m_isRemoteBrowser)
+    if (!m_browser && !m_isRemoteBrowser) {
+        RELEASE_LOG_ERROR(SessionHost, "Browser terminated before connecting to RemoteInspector at %s", data->inspectorAddress);
+        data->completionHandler("Browser terminated before the inspector connection was established"_s);
         return;
+    }
 
     if (!data->connectionAttemptCount)
         RELEASE_LOG_INFO(SessionHost, "Connecting to RemoteInspector at %s", data->inspectorAddress);
 
     RunLoop::mainSingleton().dispatchAfter(100_ms, [connectToBrowserData = WTF::move(data)]() mutable {
-        auto* data = connectToBrowserData.release();
-        if (g_cancellable_is_cancelled(data->cancellable.get()))
+        if (g_cancellable_is_cancelled(connectToBrowserData->cancellable.get())) {
+            connectToBrowserData->completionHandler("Session creation cancelled"_s);
             return;
+        }
+
+        auto* data = connectToBrowserData.release();
 
         GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
         g_socket_client_connect_to_host_async(socketClient.get(), data->inspectorAddress.legacyCStringPointer(), 0, data->cancellable.get(),
@@ -217,10 +236,12 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
                 auto data = std::unique_ptr<ConnectToBrowserAsyncData>(static_cast<ConnectToBrowserAsyncData*>(userData));
                 GUniqueOutPtr<GError> error;
                 GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, &error.outPtr()));
-                if (!connection) {
-                    if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                        return;
+                if (g_cancellable_is_cancelled(data->cancellable.get())) {
+                    data->completionHandler("Session creation cancelled"_s);
+                    return;
+                }
 
+                if (!connection) {
                     if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_REFUSED)) {
                         data->connectionAttemptCount++;
                         if (!(data->connectionAttemptCount % 10))
@@ -256,6 +277,11 @@ void SessionHost::disconnect(DisconnectReason reason)
         break;
     case DisconnectReason::AutomationTargetLost:
         RELEASE_LOG_INFO(SessionHost, "Disconnection reason: AutomationTargetLost");
+        if (m_browser && !m_isRemoteBrowser)
+            g_subprocess_force_exit(std::exchange(m_browser, nullptr).get());
+        break;
+    case DisconnectReason::SessionCreationCancelled:
+        RELEASE_LOG_INFO(SessionHost, "Disconnection reason: SessionCreationCancelled");
         if (m_browser && !m_isRemoteBrowser)
             g_subprocess_force_exit(std::exchange(m_browser, nullptr).get());
         break;
@@ -363,7 +389,7 @@ bool SessionHost::buildSessionCapabilities(GVariantBuilder* builder) const
     return true;
 }
 
-void SessionHost::startAutomationSession(Function<void (bool, std::optional<String>)>&& completionHandler)
+void SessionHost::startAutomationSession(StartAutomationSessionCompletionHandler&& completionHandler)
 {
     ASSERT(m_socketConnection);
     ASSERT(!m_startSessionCompletionHandler);
@@ -378,8 +404,7 @@ void SessionHost::didStartAutomationSession(GVariant* parameters)
     if (matchCapabilities(parameters))
         return;
 
-    auto completionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
-    completionHandler(false, std::nullopt);
+    completeStartAutomationSession(false, std::nullopt);
 }
 
 void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetList)
@@ -411,8 +436,7 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
     m_connectionID = connectionID;
     m_socketConnection->sendMessage("Setup"_s, g_variant_new("(tt)", m_connectionID, m_target.id));
 
-    auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
-    startSessionCompletionHandler(true, std::nullopt);
+    completeStartAutomationSession(true, std::nullopt);
 }
 
 void SessionHost::sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message)

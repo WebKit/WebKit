@@ -73,8 +73,9 @@ const String& Session::shadowRootIdentifier()
     return shadowRootID;
 }
 
-Session::Session(Ref<SessionHost>&& host)
+Session::Session(Ref<SessionHost>&& host, HasHTTPFlag hasHTTPFlag)
     : m_host(WTF::move(host))
+    , m_hasHTTPFlag(hasHTTPFlag == HasHTTPFlag::Yes)
     , m_scriptTimeout(defaultScriptTimeout)
     , m_pageLoadTimeout(defaultPageLoadTimeout)
     , m_implicitWaitTimeout(defaultImplicitWaitTimeout)
@@ -85,8 +86,8 @@ Session::Session(Ref<SessionHost>&& host)
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-Session::Session(Ref<SessionHost>&& host, WeakPtr<WebSocketServer>&& bidiServer)
-    : Session(WTF::move(host))
+Session::Session(Ref<SessionHost>&& host, WeakPtr<WebSocketServer>&& bidiServer, HasHTTPFlag hasHTTPFlag)
+    : Session(WTF::move(host), hasHTTPFlag)
 {
     m_bidiServer = WTF::move(bidiServer);
     m_host->setBidiHandler(this);
@@ -263,6 +264,17 @@ void Session::createTopLevelBrowsingContext(Function<void(CommandResult&&)>&& co
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, "Could not retrieve handle for the new browsing context"_s));
             return;
         }
+
+#if ENABLE(WEBDRIVER_BIDI)
+        if (hasBiDiEnabled()) {
+            auto userAgent = response.responseObject->getString("userAgent"_s);
+            if (userAgent.isEmpty()) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, "Could not retrieve user agent for the new browsing context"_s));
+                return;
+            }
+            m_host->setUserAgent(WTF::move(userAgent));
+        }
+#endif
 
         switchToTopLevelBrowsingContext(handle);
         completionHandler(CommandResult::success());

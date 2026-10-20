@@ -41,6 +41,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
@@ -133,7 +134,9 @@ CommandResult<void> BidiBrowserAgent::close()
     RefPtr session = m_session.get();
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    session->terminate();
+    RunLoop::mainSingleton().dispatch([session = WTF::move(session)] {
+        session->terminate();
+    });
 
     return { };
 }
