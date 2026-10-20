@@ -291,6 +291,7 @@ bool StreamServerConnection::dispatchStreamMessage(Decoder& message, StreamMessa
     m_isDispatchingMessage = true;
 #endif
     IPC::messageLog().add(message.messageName());
+    m_dispatchedMessageCount.exchangeAdd(1, std::memory_order_relaxed);
     receiver.didReceiveStreamMessage(*this, message);
 #if ASSERT_ENABLED
     m_isDispatchingMessage = false;
