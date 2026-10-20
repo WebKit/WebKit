@@ -159,6 +159,7 @@ private:
     bool m_willExecuteInOrder : 1 { false };
     bool m_childrenChangedByAPI : 1 { false };
     bool m_hasRelevantLoadEventsListener : 1 { false };
+    bool m_setFromDOMString : 1 { false };
     ScriptType m_scriptType : bitWidthOfScriptType { ScriptType::Classic };
     AtomString m_characterEncoding;
     RefPtr<LoadableScript> m_loadableScript;
