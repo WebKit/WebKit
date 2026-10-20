@@ -55,7 +55,6 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 - (instancetype)initWithIdentifier:(nullable NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens;
 - (instancetype)initWithIdentifier:(nullable NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens isSubframe:(BOOL)isSubframe isCrossSiteSubframe:(BOOL)isCrossSiteSubframe WK_API_AVAILABLE(macos(14.0), ios(17.0));
 - (instancetype)initWithIdentifier:(nullable NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens isSubframe:(BOOL)isSubframe isCrossSiteSubframe:(BOOL)isCrossSiteSubframe viewportProximityInfo:(nullable _WKTextManipulationViewportProximityInfo *)viewportProximityInfo WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
-- (instancetype)initWithIdentifier:(nullable NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens isSubframe:(BOOL)isSubframe isCrossSiteSubframe:(BOOL)isCrossSiteSubframe viewportProximityInfo:(nullable _WKTextManipulationViewportProximityInfo *)viewportProximityInfo webViewBoundingRect:(CGRect)webViewBoundingRect WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nonatomic, readonly, nullable, copy) NSString *identifier;
 @property (nonatomic, readonly, copy) NSArray<_WKTextManipulationToken *> *tokens;
