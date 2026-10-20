@@ -15,6 +15,7 @@
 #include <gx2/shaders.h>
 #include <gx2r/buffer.h>
 #include <unordered_map>
+#include <vector>
 
 namespace WKC {
 namespace GLGX2 {
@@ -40,6 +41,11 @@ VertexArrayBackend makeWUTVertexArrayBackend(WUTBufferResources&);
 // Translate a GL-facing vertex attribute format to the closest native GX2
 // fetch format. Returns false for combinations GX2 cannot represent directly.
 bool translateVertexAttributeFormat(const VertexAttribute&, GX2AttribFormat&);
+
+// Materialize enabled GL attribute state into GX2 fetch-shader descriptors.
+// The caller supplies linked shader locations/compatibility before initializing
+// and binding the actual GX2FetchShader.
+bool buildWUTAttributeStreams(const WUTBufferResources&, std::vector<GX2AttribStream>&);
 
 } // namespace GLGX2
 } // namespace WKC
