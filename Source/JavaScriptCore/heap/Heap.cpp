@@ -650,6 +650,11 @@ bool Heap::unprotect(JSValue k)
     return m_protectedValues.remove(k.asCell());
 }
 
+void Heap::addGCAwareJITStubRoutine(GCAwareJITStubRoutine* routine)
+{
+    m_jitStubRoutines->add(routine);
+}
+
 void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
 {
     ASSERT(cell->heap() == this);
@@ -1717,10 +1722,12 @@ void Heap::runCollectionEpilogue()
         cache->clear();
     vm().jsonCache().clearJSStrings();
 
+    // Drop the old buffers of strings no stack refers to. No GCOwnedDataScope can be reading them, and a
+    // compiler thread that read one has since stopped at a safepoint, so it no longer holds it.
     m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope.removeAllMatching([&](const auto& iter) {
-        return !m_discoveredAccessedStringsFromGCOwnedDataScope.contains(iter.first);
+        return !m_stringsFoundOnStack.contains(iter.first);
     });
-    m_discoveredAccessedStringsFromGCOwnedDataScope.clear();
+    m_stringsFoundOnStack.clear();
 
     immutableButterflyToStringCache.clear();
     

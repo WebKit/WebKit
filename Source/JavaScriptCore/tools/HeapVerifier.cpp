@@ -92,7 +92,7 @@ void HeapVerifier::gatherLiveCells(HeapVerifier::Phase phase)
     CellList& list = *cellListForGathering(phase);
 
     list.reset();
-    heap->m_objectSpace.forEachLiveCell([&list] (HeapCell* cell, HeapCell::Kind kind) {
+    heap->objectSpace().forEachLiveCell([&list](HeapCell* cell, HeapCell::Kind kind) {
         list.add({ cell, kind, CellProfile::Live });
         return IterationStatus::Continue;
     });
@@ -446,10 +446,10 @@ void HeapVerifier::checkIfRecorded(uintptr_t candidateCell)
         if (!vm.isInService())
             return IterationStatus::Continue;
 
-        if (!vm.heap.m_verifier)
+        auto* verifier = vm.heap.verifier();
+        if (!verifier)
             return IterationStatus::Continue;
-        
-        auto* verifier = vm.heap.m_verifier.get();
+
         dataLog("Search for cell ", RawPointer(candidateHeapCell), " in VM ", RawPointer(&vm), ":\n");
         verifier->checkIfRecorded(candidateHeapCell);
         return IterationStatus::Continue;

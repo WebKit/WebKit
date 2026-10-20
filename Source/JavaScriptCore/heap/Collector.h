@@ -121,7 +121,6 @@ public:
 
 private:
     class CollectorThread;
-    friend class CollectorThread;
     friend class Heap;
     friend class MarkStackMergingConstraint;
     friend class SlotVisitor;

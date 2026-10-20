@@ -167,7 +167,7 @@ inline void ConservativeRoots::genericAddPointer(char* pointer, HeapVersion mark
             // Since we're looking for strings we only need to check if we know we're not looking at an allocation with an IndexingHeader.
             // FIXME: If we wanted to make this more performant we could have a JSString HeapCell::Kind or embed the JSType in the MarkedBlock::Handle.
             if (auto* string = dynamicDowncast<const JSString>(std::bit_cast<const JSCell*>(pointer)))
-                m_heap.m_discoveredAccessedStringsFromGCOwnedDataScope.add(string);
+                m_heap.noteStringFoundOnStack(string);
             return true;
         }
         return false;

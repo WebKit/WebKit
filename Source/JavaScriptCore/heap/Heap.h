@@ -324,8 +324,6 @@ class HeapUtil;
 class Heap {
     WTF_MAKE_NONCOPYABLE(Heap);
 public:
-    friend class JIT;
-    friend class DFG::SpeculativeJIT;
     static JSC::Heap* heap(const JSValue); // 0 for immediate values
     static JSC::Heap* heap(const HeapCell*);
 
@@ -499,7 +497,9 @@ public:
 
     JS_EXPORT_PRIVATE void didAllocate(size_t);
 
-    const JITStubRoutineSet& jitStubRoutines() { return *m_jitStubRoutines; }
+    void addGCAwareJITStubRoutine(GCAwareJITStubRoutine*);
+
+    void noteStringFoundOnStack(const JSString* string) { m_stringsFoundOnStack.add(string); }
     
     void addReference(JSCell*, ArrayBuffer*);
     
@@ -634,27 +634,15 @@ public:
 
 private:
     friend class AllocatingScope;
-    friend class CodeBlock;
     friend class CollectingScope;
     friend class Collector;
-    friend class ConservativeRoots;
     friend class DeferGC;
     friend class DeferGCForAWhile;
-    friend class GCAwareJITStubRoutine;
-    friend class GCLogging;
-    friend class GCThread;
-    friend class HeapUtil;
-    friend class HeapVerifier;
-    friend class JITStubRoutine;
-    friend class LLIntOffsetsExtractor;
     friend class MarkStackMergingConstraint;
     friend class MarkedSpace;
-    friend class BlockDirectory;
-    friend class MarkedBlock;
     friend class RunningScope;
     friend class SlotVisitor;
     friend class SweepingScope;
-    friend class IncrementalSweeper;
     friend class VM;
     friend class WeakBlock;
     friend class WeakSet;
@@ -896,7 +884,7 @@ private:
     // Since this list is walked once to deref all the strings
     // We don't need fast access.
     SegmentedVector<std::pair<const JSString*, String>, 256, 10, SegmentedVectorGrowthPolicy::Doubling> m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope;
-   UncheckedKeyHashSet<const JSString*> m_discoveredAccessedStringsFromGCOwnedDataScope;
+    UncheckedKeyHashSet<const JSString*> m_stringsFoundOnStack;
     
     RefPtr<GCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;
