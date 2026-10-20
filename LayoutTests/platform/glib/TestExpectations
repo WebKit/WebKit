@@ -1933,9 +1933,10 @@ imported/w3c/web-platform-tests/video-rvfc [ Pass ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
 
-# Expected to pass when we enable playbin3 by default.
-webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout ]
+webkit.org/b/233836 http/tests/media/media-blocked-by-willsendrequest.html [ Pass Timeout ]
+
 webkit.org/b/131546 media/track/track-in-band-mode.html [ Failure ]
+webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Pass Timeout ]
 
 # Even with playbin3 enabled there is still a failure here, h264parse is unable
 # to calculate the framerate of test.mp4 and the calculated bitrate tag is too
@@ -2052,6 +2053,10 @@ webkit.org/b/312138 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-v
 webkit.org/b/312138 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/text-decoration_underline.html [ ImageOnlyFailure ]
 
 webkit.org/b/322706 media/media-source/worker/media-source-worker-logger-observer-crash.html [ Timeout ]
+
+# Tweaking download buffering in a running uridecodebin3 is not supported.
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1419
+http/tests/media/video-play-stall-seek.html [ Skip ] # Timeout
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -2886,8 +2891,6 @@ webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Cr
 
 webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ Failure ]
 
-http/tests/media/video-play-stall-seek.html [ Skip ] # Timeout
-
 # Times out waiting for DTLS transport setup. Some bug related with data-channel, pending investigation.
 webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Skip ]
 
@@ -3464,9 +3467,7 @@ media/video-does-not-loop.html [ WontFix Timeout ]
 
 # No support for MPEG-4 caption support
 webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure ]
-media/track/track-in-band-chapters.html [ Timeout Failure ]
-media/track/track-in-band-layout.html [ Skip ]
-media/track/track-paint-on-captions.html [ Skip ]
+media/track/track-in-band-chapters.html [ Skip ]
 
 # Modern-media-controls support expected to pass, excepted for Apple-specific tests.
 media/modern-media-controls [ Pass ]
