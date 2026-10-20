@@ -1,0 +1,87 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true shouldHandleRunOpenPanel=false ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("blur", () => debug("BLUR"));
+addEventListener("focus", () => debug("FOCUS"));
+
+async function waitForContextMenuToBePresentedAboveInputView()
+{
+    while (true) {
+        await UIHelper.delayFor(50);
+
+        let contextMenuRect = await UIHelper.contextMenuRect();
+        let inputViewBounds = await UIHelper.inputViewBounds();
+        if (!contextMenuRect || !inputViewBounds)
+            continue;
+
+        if (contextMenuRect.top + contextMenuRect.height < inputViewBounds.top)
+            return;
+    }
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that when programmatically clicking a hidden file input while focusing a contenteditable element with a software keyboard attached, the file upload context menu is presented above the software keyboard, and that the keyboard stays up while the menu is shown and after it is dismissed. To manually test, click the 'Show file picker' button without a hardware keyboard attached, and verify that the context menu is visible and that the keyboard stays up.");
+
+    let fileInput = document.querySelector("input[type=file]");
+    let editor = document.getElementById("editor");
+    let chooseFileButton = document.querySelector("button");
+    chooseFileButton.addEventListener("click", async () => {
+        fileInput.click();
+        let text = editor.firstChild;
+        getSelection().setBaseAndExtent(text, text.length, text, text.length);
+        editor.focus();
+    });
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await UIHelper.activateElementAndWaitForInputSession(chooseFileButton);
+    await waitForContextMenuToBePresentedAboveInputView();
+    testPassed("Context menu was presented above the keyboard");
+
+    await UIHelper.ensurePresentationUpdate();
+    isShowingKeyboard = await UIHelper.isShowingKeyboard();
+    shouldBeTrue("isShowingKeyboard");
+
+    // Tap an empty part of the page rather than using UIHelper.dismissMenu(), which also resigns first responder.
+    await UIHelper.activateAt(innerWidth / 2, innerHeight / 3);
+    await UIHelper.waitForContextMenuToHide();
+    await UIHelper.ensurePresentationUpdate();
+    isShowingKeyboard = await UIHelper.isShowingKeyboard();
+    shouldBeTrue("isShowingKeyboard");
+
+    editor.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+<style>
+#editor {
+    font-size: 16px;
+    border: 1px solid black;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+button {
+    border: 1px solid black;
+    position: fixed;
+    bottom: 100px;
+    left: 1em;
+    width: 180px;
+    height: 44px;
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+<div id="editor" contenteditable>Hello</div><input type="file" />
+<button>Show file picker</button>
+</body>
+</html>
