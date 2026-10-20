@@ -399,7 +399,10 @@ bool setFrontFace(void* context, Winding winding)
 {
     auto& state = *static_cast<WUTBackendContext*>(context);
     state.frontFace = winding;
-    return applyCullState(state);
+    // GX2's polygon-control register also stores the front-face convention;
+    // reapply it so changing glFrontFace does not leave polygon-offset state
+    // configured against the previous winding.
+    return applyCullState(state) && applyPolygonOffsetState(state);
 }
 
 bool setClearColor(void* context, const Color& color)
