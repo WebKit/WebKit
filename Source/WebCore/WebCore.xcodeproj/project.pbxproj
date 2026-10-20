@@ -1122,6 +1122,7 @@
 		2E4346510F546A8200B0F1BA /* WorkerObjectProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E43463F0F546A8200B0F1BA /* WorkerObjectProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E4346530F546A8200B0F1BA /* WorkerRunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346410F546A8200B0F1BA /* WorkerRunLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E4346550F546A8200B0F1BA /* WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346430F546A8200B0F1BA /* WorkerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AAF09F0B2D2CEFA09FE51B86 /* CanBeCrossOriginIsolated.h in Headers */ = {isa = PBXBuildFile; fileRef = F6FCB2C581DF5396C5AAF806 /* CanBeCrossOriginIsolated.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E75841E12779ADA0062628B /* FileReaderLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E75841B12779ADA0062628B /* FileReaderLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E75841F12779ADA0062628B /* FileReaderLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E75841C12779ADA0062628B /* FileReaderLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E888CAA25F6A4110057914A /* FloatLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E888CA825F6A4110057914A /* FloatLine.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10456,6 +10457,7 @@
 		2E4346410F546A8200B0F1BA /* WorkerRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerRunLoop.h; sourceTree = "<group>"; };
 		2E4346420F546A8200B0F1BA /* WorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerThread.cpp; sourceTree = "<group>"; };
 		2E4346430F546A8200B0F1BA /* WorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerThread.h; sourceTree = "<group>"; };
+		F6FCB2C581DF5396C5AAF806 /* CanBeCrossOriginIsolated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanBeCrossOriginIsolated.h; sourceTree = "<group>"; };
 		2E75841A12779ADA0062628B /* FileReaderLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileReaderLoader.cpp; sourceTree = "<group>"; };
 		2E75841B12779ADA0062628B /* FileReaderLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileReaderLoader.h; sourceTree = "<group>"; };
 		2E75841C12779ADA0062628B /* FileReaderLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileReaderLoaderClient.h; sourceTree = "<group>"; };
@@ -27032,6 +27034,7 @@
 				41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */,
 				41E1B1CB0FF5986900576B3B /* AbstractWorker.h */,
 				41E1B1CC0FF5986900576B3B /* AbstractWorker.idl */,
+				F6FCB2C581DF5396C5AAF806 /* CanBeCrossOriginIsolated.h */,
 				4162A44D101145AE00DFF3ED /* DedicatedWorkerGlobalScope.cpp */,
 				4162A44E101145AE00DFF3ED /* DedicatedWorkerGlobalScope.h */,
 				4162A44F101145AE00DFF3ED /* DedicatedWorkerGlobalScope.idl */,
@@ -44636,6 +44639,7 @@
 				41D129D51F3D0F6900D15E47 /* CacheStorageProvider.h in Headers */,
 				E43AF8E71AC5B7EC00CA717E /* CacheValidation.h in Headers */,
 				7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */,
+				AAF09F0B2D2CEFA09FE51B86 /* CanBeCrossOriginIsolated.h in Headers */,
 				EFCC6C8F20FE914400A2321B /* CanvasActivityRecord.h in Headers */,
 				313171561FB079E5008D91FC /* CanvasBase.h in Headers */,
 				415CDAF51E6B8F8B004F11EE /* CanvasCaptureMediaStreamTrack.h in Headers */,

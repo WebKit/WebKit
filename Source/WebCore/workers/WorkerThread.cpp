@@ -86,7 +86,9 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         agentClusterID.isolatedCopy(),
         networkLoadPolicy.isolatedCopy(),
         isSecureContext,
-        hasUnpartitionedStorageAccess
+        hasUnpartitionedStorageAccess,
+        canBeCrossOriginIsolated,
+        documentIsolationPolicy
     };
 }
 

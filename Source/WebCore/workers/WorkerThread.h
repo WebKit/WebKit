@@ -26,8 +26,10 @@
 #pragma once
 
 #include <JavaScriptCore/RuntimeFlags.h>
+#include <WebCore/CanBeCrossOriginIsolated.h>
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/DocumentIsolationPolicy.h>
 #include <WebCore/FetchRequestCredentials.h>
 #include <WebCore/IsSecureContext.h>
 #include <WebCore/NetworkLoadPolicy.h>
@@ -96,6 +98,8 @@ public:
     NetworkLoadPolicy networkLoadPolicy;
     IsSecureContext isSecureContext;
     bool hasUnpartitionedStorageAccess { false };
+    CanBeCrossOriginIsolated canBeCrossOriginIsolated { CanBeCrossOriginIsolated::No };
+    DocumentIsolationPolicy documentIsolationPolicy { DocumentIsolationPolicy::None };
 
     WorkerParameters isolatedCopy() const;
 };

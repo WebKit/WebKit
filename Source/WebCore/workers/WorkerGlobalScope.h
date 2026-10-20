@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <WebCore/CacheStorageConnection.h>
+#include <WebCore/CanBeCrossOriginIsolated.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/ImageBitmap.h>
 #include <WebCore/NetworkLoadPolicy.h>
@@ -260,6 +261,7 @@ private:
     FetchOptions::Credentials m_credentials;
     String m_agentClusterID;
     const NetworkLoadPolicy m_networkLoadPolicy;
+    const CanBeCrossOriginIsolated m_canBeCrossOriginIsolated;
     const RefPtr<WorkerStorageConnection> m_storageConnection;
     RefPtr<WorkerFileSystemStorageConnection> m_fileSystemStorageConnection;
 };

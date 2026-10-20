@@ -134,6 +134,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_credentials(params.credentials)
     , m_agentClusterID(params.agentClusterID)
     , m_networkLoadPolicy(params.networkLoadPolicy)
+    , m_canBeCrossOriginIsolated(params.canBeCrossOriginIsolated)
 {
     {
         Locker locker { allWorkerGlobalScopeIdentifiersLock };
@@ -149,6 +150,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTF::move(origin)));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
     setCrossOriginEmbedderPolicy(params.crossOriginEmbedderPolicy);
+    setDocumentIsolationPolicy(params.documentIsolationPolicy);
 }
 
 WorkerGlobalScope::~WorkerGlobalScope()
@@ -750,6 +752,8 @@ void WorkerGlobalScope::clearDecodedScriptData()
 
 bool WorkerGlobalScope::crossOriginIsolated() const
 {
+    if (documentIsolationPolicy() != DocumentIsolationPolicy::None)
+        return m_canBeCrossOriginIsolated == CanBeCrossOriginIsolated::Yes;
     return crossOriginEmbedderPolicy().value == CrossOriginEmbedderPolicyValue::RequireCORP;
 }
 

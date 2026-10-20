@@ -63,6 +63,7 @@ imported/w3c/web-platform-tests/html/document-isolation-policy/blob-document-inh
 imported/w3c/web-platform-tests/html/document-isolation-policy/broadcast-channel.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-frame.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated.tentative.https.html [ Pass ]
+imported/w3c/web-platform-tests/html/document-isolation-policy/dedicated-worker.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/header-parsing.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp-load-from-cache-storage.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp.tentative.https.html [ Pass ]

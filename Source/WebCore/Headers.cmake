@@ -3564,6 +3564,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     testing/MockWebAuthenticationConfiguration.h
     testing/js/WebCoreTestSupport.h
 
+    workers/CanBeCrossOriginIsolated.h
     workers/FetchingWorkerIdentifier.h
     workers/ScriptBuffer.h
     workers/WorkerAnimationController.h

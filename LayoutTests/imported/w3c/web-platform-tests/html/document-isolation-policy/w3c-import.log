@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-websocket.https.tentative.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-frame.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/dedicated-worker.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/header-parsing.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp-load-from-cache-storage.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp-load-from-cache-storage.tentative.https.html.headers

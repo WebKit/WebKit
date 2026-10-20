@@ -92,7 +92,9 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         document.noiseInjectionHashSalt(),
         makeString(Process::identifier().toUInt64(), "-sharedworker-"_s, initializationData.clientIdentifier->toString()),
         document.networkLoadPolicy(),
-        clientOrigin.topOrigin.securityOrigin()->isPotentiallyTrustworthy() ? IsSecureContext::Yes : IsSecureContext::No
+        clientOrigin.topOrigin.securityOrigin()->isPotentiallyTrustworthy() ? IsSecureContext::Yes : IsSecureContext::No,
+        false,
+        CanBeCrossOriginIsolated::Yes
     };
 }
 

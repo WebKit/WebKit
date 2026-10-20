@@ -122,7 +122,9 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
         noiseInjectionHashSalt,
         makeString(Process::identifier().toUInt64(), "-serviceworker-"_s, contextData.serviceWorkerIdentifier.toUInt64()),
         NetworkLoadPolicy::unrestricted(),
-        IsSecureContext::Yes
+        IsSecureContext::Yes,
+        false,
+        CanBeCrossOriginIsolated::Yes
     };
 }
 
