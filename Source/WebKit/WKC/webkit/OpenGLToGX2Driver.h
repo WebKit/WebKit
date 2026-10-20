@@ -50,6 +50,39 @@ enum class Capability : uint8_t {
     PolygonOffsetFill,
 };
 
+enum class BlendFactor : uint8_t {
+    Zero, One, SourceColor, OneMinusSourceColor, DestinationColor,
+    OneMinusDestinationColor, SourceAlpha, OneMinusSourceAlpha,
+    DestinationAlpha, OneMinusDestinationAlpha, ConstantColor,
+    OneMinusConstantColor, ConstantAlpha, OneMinusConstantAlpha,
+    SourceAlphaSaturate,
+};
+
+enum class BlendEquation : uint8_t { Add, Subtract, ReverseSubtract, Minimum, Maximum };
+enum class CompareFunction : uint8_t {
+    Never, Less, Equal, LessEqual, Greater, NotEqual, GreaterEqual, Always
+};
+
+struct Color {
+    float red { 0.0f };
+    float green { 0.0f };
+    float blue { 0.0f };
+    float alpha { 0.0f };
+};
+
+struct ColorMask {
+    bool red { true };
+    bool green { true };
+    bool blue { true };
+    bool alpha { true };
+};
+
+enum ClearBuffer : uint8_t {
+    ClearColorBuffer = 1 << 0,
+    ClearDepthBuffer = 1 << 1,
+    ClearStencilBuffer = 1 << 2,
+};
+
 struct Viewport {
     int32_t x { 0 };
     int32_t y { 0 };
@@ -76,6 +109,13 @@ struct Backend {
     bool (*setViewport)(void*, const Viewport&) { nullptr };
     bool (*setScissor)(void*, const Scissor&) { nullptr };
     bool (*setCapability)(void*, Capability, bool) { nullptr };
+    bool (*setBlendFunction)(void*, BlendFactor sourceRGB, BlendFactor destinationRGB,
+        BlendFactor sourceAlpha, BlendFactor destinationAlpha) { nullptr };
+    bool (*setBlendEquation)(void*, BlendEquation rgb, BlendEquation alpha) { nullptr };
+    bool (*setDepthFunction)(void*, CompareFunction) { nullptr };
+    bool (*setColorMask)(void*, const ColorMask&) { nullptr };
+    bool (*setClearColor)(void*, const Color&) { nullptr };
+    bool (*clear)(void*, uint8_t bufferMask) { nullptr };
     bool (*draw)(void*, NativePrimitive, uint32_t first, uint32_t count, uint32_t instances) { nullptr };
     void (*reportUnsupported)(void*, const char* operation) { nullptr };
 };
@@ -88,6 +128,13 @@ public:
     Result setScissor(const Scissor&);
     Result enable(Capability);
     Result disable(Capability);
+    Result setBlendFunction(BlendFactor sourceRGB, BlendFactor destinationRGB,
+        BlendFactor sourceAlpha, BlendFactor destinationAlpha);
+    Result setBlendEquation(BlendEquation rgb, BlendEquation alpha);
+    Result setDepthFunction(CompareFunction);
+    Result setColorMask(const ColorMask&);
+    Result setClearColor(const Color&);
+    Result clear(uint8_t bufferMask);
     Result drawArrays(Primitive, int32_t first, int32_t count);
     Result drawArraysInstanced(Primitive, int32_t first, int32_t count, int32_t instances);
 
@@ -98,6 +145,9 @@ public:
 private:
     Result setCapability(Capability, bool);
     static bool validPrimitive(Primitive);
+    static bool validBlendFactor(BlendFactor);
+    static bool validBlendEquation(BlendEquation);
+    static bool validCompareFunction(CompareFunction);
     static NativePrimitive translatePrimitive(Primitive);
 
     Backend m_backend;
