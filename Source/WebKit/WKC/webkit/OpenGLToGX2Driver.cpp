@@ -318,6 +318,24 @@ Result Driver::setClearColor(const Color& color)
         ? Result::Ok : Result::Unsupported;
 }
 
+Result Driver::setClearDepth(float depth)
+{
+    if (!(depth >= 0.0f && depth <= 1.0f))
+        return Result::InvalidArgument;
+    if (!m_backend.setClearDepth)
+        return Result::MissingBackend;
+    return m_backend.setClearDepth(m_backend.context, depth)
+        ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setClearStencil(int32_t value)
+{
+    if (!m_backend.setClearStencil)
+        return Result::MissingBackend;
+    return m_backend.setClearStencil(m_backend.context, value)
+        ? Result::Ok : Result::Unsupported;
+}
+
 Result Driver::clear(uint8_t bufferMask)
 {
     constexpr uint8_t validMask = ClearColorBuffer | ClearDepthBuffer | ClearStencilBuffer;
