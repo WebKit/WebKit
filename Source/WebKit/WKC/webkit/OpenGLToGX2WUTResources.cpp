@@ -4,7 +4,6 @@
 #if defined(__WUT__)
 #include <gx2r/resource.h>
 #include <gx2/draw.h>
-#include <gx2/attrib.h>
 
 #include <cstring>
 #include <limits>
