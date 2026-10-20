@@ -168,13 +168,6 @@ void RemoteLayerTreeDrawingArea::removeRootFrame(WebCore::FrameIdentifier frameI
     ASSERT_UNUSED(count, count == 1);
 }
 
-bool RemoteLayerTreeDrawingArea::hasRootFrame(WebCore::FrameIdentifier frameID) const
-{
-    return m_rootLayers.containsIf([frameID](const auto& layer) {
-        return layer.frameID == frameID;
-    });
-}
-
 void RemoteLayerTreeDrawingArea::setRootCompositingLayer(WebCore::Frame& frame, GraphicsLayer* rootGraphicsLayer)
 {
     for (auto& rootLayer : borrow(m_rootLayers)) {

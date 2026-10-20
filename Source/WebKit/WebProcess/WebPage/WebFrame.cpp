@@ -655,14 +655,12 @@ void WebFrame::removeFromTree()
 
     if (is<RemoteFrame>(*coreFrame))
         coreFrame->disconnectOwnerElement();
+
+    destroyProvisionalFrame();
+
     if (RefPtr parent = coreFrame->tree().parent())
         parent->tree().removeChild(*coreFrame);
     coreFrame->disconnectView();
-
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(*coreFrame);
-    bool detachFromPageWillRemoveRootFrame = localFrame && corePage->rootFrames().contains(*localFrame);
-    if (RefPtr drawingArea = webPage->drawingArea(); drawingArea && !detachFromPageWillRemoveRootFrame && drawingArea->hasRootFrame(frameID()))
-        drawingArea->removeRootFrame(frameID());
 }
 
 void WebFrame::didFinishLoadInAnotherProcess()
