@@ -407,8 +407,46 @@ bool DocumentScope::invalidateForAnchorDependencies(LayoutDependencyUpdateContex
 
     Vector<CheckedRef<Element>> anchoredElementsToInvalidate;
 
+    // An anchor whose box went away (removed from the document, display: none) is no longer in anchors(),
+    // so find it from the anchor-positioned side. This can't happen at unregister time because style
+    // invalidation is ignored during render tree updates.
+    for (auto& [weakAnchorPositioned, entry] : m_anchorPositionedToAnchorMap) {
+        bool lostAnchor = false;
+        for (auto& anchor : entry.anchors) {
+            if (anchor.hadRenderer && !anchor.renderer) {
+                anchor.hadRenderer = false;
+                lostAnchor = true;
+            }
+        }
+        auto anchorPositioned = weakAnchorPositioned.styleable();
+        if (!anchorPositioned)
+            continue;
+        CheckedPtr renderer = anchorPositioned->renderer();
+        bool changedContainingBlock = renderer && entry.containingBlock.get() != renderer->containingBlock();
+        if (!lostAnchor && !changedContainingBlock)
+            continue;
+        if (renderer)
+            entry.containingBlock = renderer->containingBlock();
+
+        RefPtr element = &anchorPositioned->element;
+        if (anchorPositioned->pseudoElementIdentifier)
+            element = element->pseudoElementIfExists(*anchorPositioned->pseudoElementIdentifier);
+        if (element && context.invalidatedAnchorPositioned.add(*element).isNewEntry)
+            anchoredElementsToInvalidate.append(*element);
+    }
+
+    auto invalidateAnchoredElements = [&] {
+        for (auto& toInvalidate : anchoredElementsToInvalidate) {
+            CheckedPtr renderer = toInvalidate->renderer();
+            if (renderer && AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(renderer->style()))
+                renderer->setNeedsLayout();
+            toInvalidate->invalidateForAnchorRectChange();
+        }
+        return !anchoredElementsToInvalidate.isEmpty();
+    };
+
     if (m_document->renderView()->anchors().isEmptyIgnoringNullReferences())
-        return false;
+        return invalidateAnchoredElements();
 
     auto anchorMap = AnchorPositionEvaluator::makeAnchorPositionedForAnchorMap(m_anchorPositionedToAnchorMap);
 
@@ -444,14 +482,7 @@ bool DocumentScope::invalidateForAnchorDependencies(LayoutDependencyUpdateContex
         }
     }
 
-    for (auto& toInvalidate : anchoredElementsToInvalidate) {
-        CheckedPtr renderer = toInvalidate->renderer();
-        if (renderer && AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(renderer->style()))
-            renderer->setNeedsLayout();
-        toInvalidate->invalidateForAnchorRectChange();
-    }
-
-    return !anchoredElementsToInvalidate.isEmpty();
+    return invalidateAnchoredElements();
 }
 
 bool DocumentScope::invalidateForPositionTryFallbacks(LayoutDependencyUpdateContext& context)

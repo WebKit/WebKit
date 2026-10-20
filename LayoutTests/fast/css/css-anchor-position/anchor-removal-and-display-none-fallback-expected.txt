@@ -1,0 +1,26 @@
+Tests that an anchor-positioned element whose own style is unchanged uses its anchor() fallback when its anchor is removed or stops being rendered, and is anchored again when the anchor returns.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial: anchored to the right edge of --a.
+PASS target.getBoundingClientRect().left is 200
+
+Anchor removed from the document: fallback 7px.
+PASS target.getBoundingClientRect().left is 7
+
+Anchor inserted again: anchored again.
+PASS target.getBoundingClientRect().left is 200
+
+Anchor's parent display: none: fallback 7px.
+PASS target.getBoundingClientRect().left is 7
+
+Anchor's parent displayed again: anchored again.
+PASS target.getBoundingClientRect().left is 200
+
+Anchor moved, target style unchanged: target follows.
+PASS target.getBoundingClientRect().left is 250
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+#first, #second, #third, #host::before { position: absolute; top: 0; width: 20px; height: 20px; }
+#first { left: 100px; anchor-name: --first; }
+#second { left: anchor(--first right, 7px); anchor-name: --second; }
+#third { left: anchor(--second right, 7px); anchor-name: --third; }
+#host::before { content: ""; left: anchor(--third right, 7px); }
+</style>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="first"></div><div id="second"></div><div id="third"></div><div id="host"></div><div id="unrelated"></div>
+<script>
+description("Tests a warmed anchor chain ending in a pseudo-element after unrelated style changes, anchor movement, removal and reinsertion.");
+let first = document.getElementById("first");
+let second = document.getElementById("second");
+let third = document.getElementById("third");
+let host = document.getElementById("host");
+let unrelated = document.getElementById("unrelated");
+let color = 0;
+function warm()
+{
+    for (let i = 0; i < 3; ++i) {
+        unrelated.style.backgroundColor = `rgb(${++color}, 0, 0)`;
+        document.body.offsetTop;
+    }
+}
+function checkChain(secondLeft, thirdLeft, pseudoLeft)
+{
+    warm();
+    shouldBe("second.getBoundingClientRect().left", String(secondLeft));
+    shouldBe("third.getBoundingClientRect().left", String(thirdLeft));
+    shouldBe("parseFloat(getComputedStyle(host, '::before').left)", String(pseudoLeft));
+}
+checkChain(120, 140, 160);
+first.style.left = "200px";
+checkChain(220, 240, 260);
+first.remove();
+checkChain(7, 27, 47);
+document.body.insertBefore(first, second);
+checkChain(220, 240, 260);
+</script>
+</body>
+</html>

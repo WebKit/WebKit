@@ -1304,14 +1304,17 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
                 Vector<ResolvedAnchor> anchors;
                 for (auto& anchorNameAndElement : state->anchorElements) {
                     CheckedPtr anchorElement = anchorNameAndElement.value.get();
+                    CheckedPtr anchorRenderer = anchorElement ? dynamicDowncast<RenderBoxModelObject>(anchorElement->renderer()) : nullptr;
                     anchors.append(ResolvedAnchor {
-                        .renderer = anchorElement ? dynamicDowncast<RenderBoxModelObject>(anchorElement->renderer()) : nullptr,
-                        .name = anchorNameAndElement.key
+                        .renderer = anchorRenderer.get(),
+                        .name = anchorNameAndElement.key,
+                        .hadRenderer = !!anchorRenderer
                     });
                 }
 
                 anchorPositionedToAnchorMap.set(*anchorPositioned, AnchorPositionedToAnchorEntry {
-                    .anchors = WTF::move(anchors)
+                    .anchors = WTF::move(anchors),
+                    .containingBlock = renderer->containingBlock()
                 });
             }
 

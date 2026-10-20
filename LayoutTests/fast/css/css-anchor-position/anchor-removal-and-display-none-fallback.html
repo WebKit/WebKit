@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.anchor { position: absolute; top: 0; width: 100px; height: 50px; }
+#anchorA { anchor-name: --a; left: 100px; }
+#target { position: absolute; top: 200px; left: anchor(--a right, 7px); width: 20px; height: 20px; }
+#unrelated { width: 50px; height: 50px; background-color: rgb(0, 0, 0); }
+</style>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="host"><div id="anchorA" class="anchor"></div></div>
+<div id="target"></div>
+<div id="unrelated"></div>
+<div id="console"></div>
+<script>
+description("Tests that an anchor-positioned element whose own style is unchanged uses its anchor() fallback when its anchor is removed or stops being rendered, and is anchored again when the anchor returns.");
+
+let color = 0;
+function unrelatedStyleChanges()
+{
+    for (let i = 0; i < 3; ++i) {
+        color = (color + 50) % 256;
+        unrelated.style.backgroundColor = `rgb(0, 0, ${color})`;
+        document.body.offsetTop;
+    }
+}
+
+let host = document.getElementById("host");
+let anchorA = document.getElementById("anchorA");
+let target = document.getElementById("target");
+let unrelated = document.getElementById("unrelated");
+
+debug("Initial: anchored to the right edge of --a.");
+unrelatedStyleChanges();
+shouldBe("target.getBoundingClientRect().left", "200");
+
+debug("");
+debug("Anchor removed from the document: fallback 7px.");
+anchorA.remove();
+unrelatedStyleChanges();
+shouldBe("target.getBoundingClientRect().left", "7");
+
+debug("");
+debug("Anchor inserted again: anchored again.");
+host.appendChild(anchorA);
+unrelatedStyleChanges();
+shouldBe("target.getBoundingClientRect().left", "200");
+
+debug("");
+debug("Anchor's parent display: none: fallback 7px.");
+host.style.display = "none";
+unrelatedStyleChanges();
+shouldBe("target.getBoundingClientRect().left", "7");
+
+debug("");
+debug("Anchor's parent displayed again: anchored again.");
+host.style.display = "";
+unrelatedStyleChanges();
+shouldBe("target.getBoundingClientRect().left", "200");
+
+debug("");
+debug("Anchor moved, target style unchanged: target follows.");
+anchorA.style.left = "150px";
+unrelatedStyleChanges();
+shouldBe("target.getBoundingClientRect().left", "250");
+</script>
+</body>
+</html>
