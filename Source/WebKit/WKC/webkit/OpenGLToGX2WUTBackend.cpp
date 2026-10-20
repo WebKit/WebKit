@@ -11,12 +11,73 @@ namespace WKC {
 namespace GLGX2 {
 namespace {
 
-bool setViewport(void*, const Viewport& viewport)
+bool setViewport(void* context, const Viewport& viewport)
 {
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.viewport = viewport;
     GX2SetViewport(static_cast<float>(viewport.x), static_cast<float>(viewport.y),
         static_cast<float>(viewport.width), static_cast<float>(viewport.height),
         viewport.nearDepth, viewport.farDepth);
     return true;
+}
+
+bool setDepthRange(void* context, float nearDepth, float farDepth)
+{
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.viewport.nearDepth = nearDepth;
+    state.viewport.farDepth = farDepth;
+    const auto& viewport = state.viewport;
+    GX2SetViewport(static_cast<float>(viewport.x), static_cast<float>(viewport.y),
+        static_cast<float>(viewport.width), static_cast<float>(viewport.height),
+        viewport.nearDepth, viewport.farDepth);
+    return true;
+}
+
+bool applyDepthState(WUTBackendContext& state)
+{
+    GX2CompareFunction function;
+    switch (state.depthFunction) {
+    case CompareFunction::Never: function = GX2_COMPARE_FUNC_NEVER; break;
+    case CompareFunction::Less: function = GX2_COMPARE_FUNC_LESS; break;
+    case CompareFunction::Equal: function = GX2_COMPARE_FUNC_EQUAL; break;
+    case CompareFunction::LessEqual: function = GX2_COMPARE_FUNC_LEQUAL; break;
+    case CompareFunction::Greater: function = GX2_COMPARE_FUNC_GREATER; break;
+    case CompareFunction::NotEqual: function = GX2_COMPARE_FUNC_NOT_EQUAL; break;
+    case CompareFunction::GreaterEqual: function = GX2_COMPARE_FUNC_GEQUAL; break;
+    case CompareFunction::Always: function = GX2_COMPARE_FUNC_ALWAYS; break;
+    default: return false;
+    }
+    GX2SetDepthOnlyControl(state.depthTestEnabled ? TRUE : FALSE,
+        state.depthWriteEnabled ? TRUE : FALSE, function);
+    return true;
+}
+
+bool applyCullState(WUTBackendContext& state)
+{
+    const BOOL cullFront = state.cullEnabled
+        && (state.cullFace == Face::Front || state.cullFace == Face::FrontAndBack);
+    const BOOL cullBack = state.cullEnabled
+        && (state.cullFace == Face::Back || state.cullFace == Face::FrontAndBack);
+    GX2SetCullOnlyControl(state.frontFace == Winding::Clockwise
+        ? GX2_FRONT_FACE_CW : GX2_FRONT_FACE_CCW, cullFront, cullBack);
+    return true;
+}
+
+bool setCapability(void* context, Capability capability, bool enabled)
+{
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    switch (capability) {
+    case Capability::DepthTest:
+        state.depthTestEnabled = enabled;
+        return applyDepthState(state);
+    case Capability::CullFace:
+        state.cullEnabled = enabled;
+        return applyCullState(state);
+    default:
+        // Blend/stencil/scissor/polygon-offset state requires additional
+        // independent GX2 state mapping; do not silently claim it worked.
+        return false;
+    }
 }
 
 bool setScissor(void*, const Scissor& scissor)
@@ -75,45 +136,32 @@ bool drawIndexed(void*, NativePrimitive primitive, IndexType type, uint32_t coun
     return true;
 }
 
-bool setDepthFunction(void*, CompareFunction function)
+bool setDepthFunction(void* context, CompareFunction function)
 {
-    GX2CompareFunction nativeFunction;
-    switch (function) {
-    case CompareFunction::Never: nativeFunction = GX2_COMPARE_FUNC_NEVER; break;
-    case CompareFunction::Less: nativeFunction = GX2_COMPARE_FUNC_LESS; break;
-    case CompareFunction::Equal: nativeFunction = GX2_COMPARE_FUNC_EQUAL; break;
-    case CompareFunction::LessEqual: nativeFunction = GX2_COMPARE_FUNC_LEQUAL; break;
-    case CompareFunction::Greater: nativeFunction = GX2_COMPARE_FUNC_GREATER; break;
-    case CompareFunction::NotEqual: nativeFunction = GX2_COMPARE_FUNC_NOT_EQUAL; break;
-    case CompareFunction::GreaterEqual: nativeFunction = GX2_COMPARE_FUNC_GEQUAL; break;
-    case CompareFunction::Always: nativeFunction = GX2_COMPARE_FUNC_ALWAYS; break;
-    default: return false;
-    }
-    GX2SetDepthOnlyControl(TRUE, TRUE, nativeFunction);
-    return true;
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.depthFunction = function;
+    return applyDepthState(state);
 }
 
-bool setDepthWrite(void*, bool enabled)
+bool setDepthWrite(void* context, bool enabled)
 {
-    // The compare function is kept at GL's default LESS here. Embedders that
-    // need independent depth-test/write toggling should use a full state cache.
-    GX2SetDepthOnlyControl(TRUE, enabled ? TRUE : FALSE, GX2_COMPARE_FUNC_LESS);
-    return true;
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.depthWriteEnabled = enabled;
+    return applyDepthState(state);
 }
 
-bool setCullFace(void*, Face face)
+bool setCullFace(void* context, Face face)
 {
-    BOOL cullFront = face == Face::Front || face == Face::FrontAndBack;
-    BOOL cullBack = face == Face::Back || face == Face::FrontAndBack;
-    GX2SetCullOnlyControl(GX2_FRONT_FACE_CCW, cullFront, cullBack);
-    return true;
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.cullFace = face;
+    return applyCullState(state);
 }
 
-bool setFrontFace(void*, Winding winding)
+bool setFrontFace(void* context, Winding winding)
 {
-    GX2SetCullOnlyControl(winding == Winding::Clockwise ? GX2_FRONT_FACE_CW : GX2_FRONT_FACE_CCW,
-        FALSE, FALSE);
-    return true;
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.frontFace = winding;
+    return applyCullState(state);
 }
 
 bool setClearColor(void* context, const Color& color)
@@ -175,6 +223,8 @@ Backend makeWUTBackend(WUTBackendContext& context)
     backend.context = &context;
     backend.setViewport = setViewport;
     backend.setScissor = setScissor;
+    backend.setCapability = setCapability;
+    backend.setDepthRange = setDepthRange;
     backend.draw = draw;
     backend.drawIndexed = drawIndexed;
     backend.setDepthFunction = setDepthFunction;
