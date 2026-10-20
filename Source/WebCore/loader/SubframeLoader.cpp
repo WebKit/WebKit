@@ -310,6 +310,11 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
         return nullptr;
     }
 
+    if (url.hasCredentials() && isLocalIPAddressSpace(url) && !isLocalIPAddressSpace(document->url())) {
+        FrameLoader::reportBlockedCredentialedLocalLoadFailed(frame, url);
+        return nullptr;
+    }
+
     if (!SubframeLoadingDisabler::canLoadFrame(ownerElement))
         return nullptr;
 
