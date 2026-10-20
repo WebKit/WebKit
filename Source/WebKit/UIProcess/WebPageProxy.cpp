@@ -18949,9 +18949,22 @@ void WebPageProxy::setScrollPerformanceDataCollectionEnabled(bool enabled)
 
 void WebPageProxy::takeSnapshotLegacy(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& callback)
 {
+    takeSnapshotLegacy(std::nullopt, rect, bitmapSize, options, WTF::move(callback));
+}
+
+void WebPageProxy::takeSnapshotLegacy(std::optional<FrameIdentifier> rootFrameID, const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& callback)
+{
+    if (rootFrameID) {
+        RefPtr rootFrame = WebFrameProxy::webFrame(*rootFrameID);
+        if (!rootFrame || rootFrame->page() != this) {
+            callback(std::nullopt);
+            return;
+        }
+    }
+
     options.remove(SnapshotOption::Accelerated);
     options.remove(SnapshotOption::AllowHDR);
-    sendWithAsyncReply(Messages::WebPage::TakeSnapshot(rect, bitmapSize, options), [callback = WTF::move(callback)] (std::optional<ImageBufferBackendHandle>&& imageHandle, Headroom) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(rootFrameID, Messages::WebPage::TakeSnapshot(rootFrameID, rect, bitmapSize, options), [callback = WTF::move(callback)](std::optional<ImageBufferBackendHandle>&& imageHandle, Headroom) mutable {
         RELEASE_ASSERT(!imageHandle || std::holds_alternative<ShareableBitmap::Handle>(*imageHandle));
         callback(imageHandle ? std::make_optional(std::get<ShareableBitmap::Handle>(*imageHandle)) : std::nullopt);
     });
@@ -18960,8 +18973,19 @@ void WebPageProxy::takeSnapshotLegacy(const IntRect& rect, const IntSize& bitmap
 #if PLATFORM(COCOA)
 void WebPageProxy::takeSnapshot(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, CompletionHandler<void(CGImageRef)>&& callback)
 {
-    if (!shouldUseRemoteSnapshotting(protect(m_mainFrame).get())) {
-        sendWithAsyncReply(Messages::WebPage::TakeSnapshot(rect, bitmapSize, options), [callback = WTF::move(callback)] (std::optional<ImageBufferBackendHandle>&& imageHandle, Headroom headroom) mutable {
+    takeSnapshot(std::nullopt, rect, bitmapSize, options, WTF::move(callback));
+}
+
+void WebPageProxy::takeSnapshot(std::optional<FrameIdentifier> rootFrameID, const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, CompletionHandler<void(CGImageRef)>&& callback)
+{
+    RefPtr rootFrame = rootFrameID ? WebFrameProxy::webFrame(*rootFrameID) : m_mainFrame.get();
+    if (rootFrameID && (!rootFrame || rootFrame->page() != this)) {
+        callback(nullptr);
+        return;
+    }
+
+    if (!shouldUseRemoteSnapshotting(rootFrame.get())) {
+        sendWithAsyncReplyToProcessContainingFrame(rootFrameID, Messages::WebPage::TakeSnapshot(rootFrameID, rect, bitmapSize, options), [callback = WTF::move(callback)](std::optional<ImageBufferBackendHandle>&& imageHandle, Headroom headroom) mutable {
             if (!imageHandle) {
                 callback(nullptr);
                 return;
@@ -18995,15 +19019,14 @@ void WebPageProxy::takeSnapshot(const IntRect& rect, const IntSize& bitmapSize, 
         return;
     }
 
-    RefPtr mainFrame = m_mainFrame;
-    if (!mainFrame) {
+    if (!rootFrame) {
         callback(nullptr);
         return;
     }
 
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, mainFrame->frameID(), [callback = WTF::move(callback)] (std::optional<WebCore::ShareableBitmap::Handle>&& handle) mutable {
+    gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, rootFrame->frameID(), [callback = WTF::move(callback)](std::optional<WebCore::ShareableBitmap::Handle>&& handle) mutable {
         if (!handle) {
             callback(nullptr);
             return;
@@ -19013,7 +19036,7 @@ void WebPageProxy::takeSnapshot(const IntRect& rect, const IntSize& bitmapSize, 
             image = bitmap->createPlatformImage(DontCopyBackingStore);
         callback(image.get());
     });
-    sendWithAsyncReply(Messages::WebPage::TakeRemoteSnapshot(rect, bitmapSize, options, snapshotIdentifier), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
+    sendWithAsyncReplyToProcessContainingFrame(rootFrameID, Messages::WebPage::TakeRemoteSnapshot(rootFrameID, rect, bitmapSize, options, snapshotIdentifier), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
 
 }
 #endif
@@ -21780,6 +21803,9 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATIO
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::SetFilesForInputFileUpload);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::ResolveChildFrameWithOrdinal);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle);
+#if ENABLE(WEBDRIVER_BIDI)
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::RectForBidiScreenshot);
+#endif
 #undef INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID
 
 #define INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(message) \
