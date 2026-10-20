@@ -148,8 +148,6 @@ class WebKitPyFactory(Factory):
 
 
 class BuildFactory(Factory):
-    skipUpload = False
-
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=False, rebuild_without_change_on_builder=False, deployment_target=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance, rebuild_without_change_on_builder=rebuild_without_change_on_builder, deployment_target=deployment_target)
         self.addStep(KillOldProcesses())
@@ -163,7 +161,7 @@ class BuildFactory(Factory):
         self.addStep(ValidateChange(addURLs=False))
         if platform in ['gtk', 'wpe']:
             self.addStep(CleanDerivedSources())
-        self.addStep(CompileWebKit(skipUpload=self.skipUpload))
+        self.addStep(CompileWebKit())
 
 
 class TestFactory(Factory):
@@ -225,7 +223,7 @@ class JSCBuildAndTestsFactory(Factory):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
         self.addStep(KillOldProcesses())
         self.addStep(ValidateChange(addURLs=False))
-        self.addStep(CompileJSC(skipUpload=True))
+        self.addStep(CompileJSC())
         if runTests.lower() == 'true':
             self.addStep(RunJavaScriptCoreTests())
 
@@ -236,7 +234,7 @@ class JSCBuildO3AndTestsFactory(Factory):
         self.addStep(KillOldProcesses())
         self.addStep(ValidateChange(addURLs=False))
         self.addStep(SetO3OptimizationLevel())
-        self.addStep(CompileJSC(skipUpload=True))
+        self.addStep(CompileJSC())
         self.addStep(RunJavaScriptCoreTests())
 
 
@@ -253,26 +251,10 @@ class APITestsFactory(TestFactory):
     APITestClass = RunAPITests
 
 
-class iOSBuildFactory(BuildFactory):
-    pass
-
-
-class iOSEmbeddedBuildFactory(BuildFactory):
-    skipUpload = True
-
-
 class iOSTestsFactory(TestFactory):
     LayoutTestClass = RunWebKitTests
     findModifiedLayoutTests = True
     willTriggerCrashLogSubmission = True
-
-
-class visionOSBuildFactory(BuildFactory):
-    pass
-
-
-class visionOSEmbeddedBuildFactory(BuildFactory):
-    skipUpload = True
 
 
 class visionOSTestsFactory(TestFactory):
@@ -281,23 +263,9 @@ class visionOSTestsFactory(TestFactory):
     willTriggerCrashLogSubmission = True
 
 
-class macOSBuildFactory(BuildFactory):
-    pass
-
-
 class macOSBuildOnlyFactory(BuildFactory):
-    skipUpload = True
-
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=True, **kwargs):
         super().__init__(platform=platform, configuration=configuration, architectures=architectures, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance, **kwargs)
-
-
-class watchOSBuildFactory(BuildFactory):
-    skipUpload = True
-
-
-class tvOSBuildFactory(BuildFactory):
-    skipUpload = True
 
 
 class macOSWK1Factory(TestFactory):
@@ -332,7 +300,6 @@ class macOSSiteIsolationFactory(TestFactory):
 class PlayStationBuildFactory(BuildFactory):
     branches = [r'main']
     requiresUserValidation = True
-    skipUpload = True
 
 
 class WinBuildFactory(BuildFactory):
@@ -354,10 +321,6 @@ class GTKTestsFactory(TestFactory):
 
 class WPEBuildFactory(BuildFactory):
     branches = [r'main', r'webkit.+']
-
-
-class GTK3GCCBuildFactory(GTKBuildFactory):
-    skipUpload = True
 
 
 class WPETestsFactory(TestFactory):
@@ -408,7 +371,7 @@ class MergeQueueFactory(MergeQueueFactoryBase):
         super(MergeQueueFactory, self).__init__(platform, **kwargs)
 
         self.addStep(KillOldProcesses())
-        self.addStep(CompileWebKit(skipUpload=True))
+        self.addStep(CompileWebKit())
         self.addStep(KillOldProcesses())
 
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
