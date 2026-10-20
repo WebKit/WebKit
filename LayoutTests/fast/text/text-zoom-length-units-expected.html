@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html {
+    font-size: 15px;
+}
+.basic {
+    line-height: 1.5;
+    text-decoration: 6px aqua underline;
+    text-underline-offset: 3px;
+}
+.px {
+    font-size: 30px;
+    line-height: 45px;
+    letter-spacing: 3px;
+    word-spacing: 6px;
+    text-decoration: 6px aqua underline;
+    text-underline-offset: 3px;
+}
+.vb {
+    font-size: 3vb;
+    line-height: 3.75vb;
+    letter-spacing: 0.3vb;
+    word-spacing: 0.6vb;
+    text-decoration: 0.6vb aqua underline;
+    text-underline-offset: 0.3vb;
+
+}
+.percent {
+    font-size: 120%;
+    line-height: 150%;
+    letter-spacing: 50%;
+    word-spacing: 80%;
+    text-decoration: 40% aqua underline;
+    text-underline-offset: 20%;
+}
+.em {
+    font-size: 0.5em;
+    line-height: 2.5em;
+    letter-spacing: 0.2em;
+    word-spacing: 0.4em;
+    text-decoration: 0.4em aqua underline;
+    text-underline-offset: 0.2em;
+}
+.nested-em {
+    font-size: 2em;
+    line-height: 1.5em;
+    letter-spacing: 0.5em;
+    word-spacing: 1em;
+    text-decoration: 0.4em aqua underline;
+    text-underline-offset: 0.2em;
+
+}
+.rem {
+    font-size: 0.5em;
+    line-height: 1.5rem;
+    letter-spacing: 0.5em;
+    word-spacing: 0.8em;
+    text-decoration: 0.4rem aqua underline;
+    text-underline-offset: 0.2rem;
+}
+.calc1 {
+    font-size: calc(0.5em + 7.5px);
+    line-height: calc(1em + 7.5px);
+    letter-spacing: calc(0.1em + 1.5px);
+    word-spacing: calc(0.1em + 1.5px);
+    text-decoration: calc(0.2em + 1.5px) aqua underline;
+    text-underline-offset: calc(0.1em + 1.5px);
+
+
+}
+.calc2 {
+    font-size: calc(0.5em + 50%);
+    line-height: calc(1em + 50%);
+    letter-spacing: calc(0.1em + 10%);
+    word-spacing: calc(0.1em + 10%);
+    text-decoration: calc(0.2em + 10%) aqua underline;
+    text-underline-offset: calc(0.1em + 10%);
+
+}
+.calc3 {
+    font-size: calc(7.5px + 50%);
+    line-height: calc(7.5px + 100%);
+    letter-spacing: calc(1.5px + 10%);
+    word-spacing: calc(1.5px + 10%);
+    text-decoration: calc(1.5px + 10%) aqua underline;
+    text-underline-offset: calc(1.5px + 10%);
+}
+div[class] > div {
+    border: solid 1px gray;
+    margin: 1em calc(10px + 0.5em) 1rem calc(10px + 5%);
+    width: fit-content;
+}
+</style>
+</head>
+<body>
+<div class="basic"><div>Text with 10px font-size</div></div>
+<div class="px"><div>Text with 20px font-size</div></div>
+<div class="vb"><div>Text with 2vb font-size</div></div>
+<div class="percent"><div>Text with 120% font-size</div></div>
+<div class="em"><div>Text with 0.5em font-size</div>
+    <div class="nested-em"><div>Text with 0.5em x 2em font-size</div></div>
+</div>
+<div class="rem"><div>Text with 0.5rem font-size</div></div>
+<div class="calc1"><div>Text with calc(0.5em + 5px) font-size</div></div>
+<div class="calc2"><div>Text with calc(0.5em + 50%) font-size</div></div>
+<div class="calc3"><div>Text with calc(5px + 50%) font-size</div></div>
+
+<div style="border-top: 1px solid; color: red; position: absolute; top: 600px;">Make sure the test ends above this line.</div>
+

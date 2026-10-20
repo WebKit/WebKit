@@ -50,6 +50,9 @@ class ComputedStyle;
 double resolveLength(double value, CSS::LengthUnit, const BuilderState&);
 double resolveLength(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
 
+// Like `resolveLength`, but for canonicalizing calc() leaves, whose results are resolved again as px afterward.
+double resolveLengthForCalc(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
+
 // Only valid for absolute length units (Px, Cm, Mm, Q, In, Pt, Pc).
 double LEGACY_NODELETE resolveLength(double value, CSS::LengthUnit, NoConversionDataRequiredToken);
 

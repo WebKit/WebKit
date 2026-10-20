@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+    internals.setTextZoomFactor(1.5);
+</script>
+<style>
+html {
+    font-size: 10px;
+    line-height: 20px;
+}
+.number {
+    line-height: 1.5;
+}
+.length {
+    line-height: 15px;
+}
+.percent {
+    line-height: 150%;
+}
+.calc {
+    line-height: calc(5px + 100%);
+}
+div[class] > div {
+    font-size: 1lh;
+    line-height: 2lh;
+    letter-spacing: 0.1lh;
+    word-spacing: calc(0.2lh + 1px);
+    text-decoration: 0.1lh aqua underline;
+    text-underline-offset: calc(0.05lh + 1px);
+    border: solid 1px gray;
+    margin: 0.5lh calc(10px + 0.5lh) 1rlh calc(10px + 5%);
+    width: fit-content;
+}
+div.rlh > div {
+    font-size: 1rlh;
+    line-height: 1.5rlh;
+    letter-spacing: 0.1rlh;
+    word-spacing: calc(0.2rlh + 1px);
+    text-decoration: 0.1rlh aqua underline;
+    text-underline-offset: calc(0.05rlh + 1px);
+}
+</style>
+</head>
+<body>
+<div class="number"><div>Text with lh against a 1.5 line-height</div></div>
+<div class="length"><div>Text with lh against a 15px line-height</div></div>
+<div class="percent"><div>Text with lh against a 150% line-height</div></div>
+<div class="calc"><div>Text with lh against a calc(5px + 100%) line-height</div></div>
+<div class="rlh"><div>Text with rlh against a 20px root line-height</div></div>
+</body>
+</html>

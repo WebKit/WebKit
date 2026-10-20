@@ -80,11 +80,12 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
     };
 
     auto handleCalc = [&](const auto& calc) {
-        auto textZoomFactor = ZoomFactor { state.zoomWithTextZoomFactor() };
-        auto percentageBasis = state.style().fontDescription().unzoomedUsedSize();
+        // Length leaves already had text zoom applied when they were resolved, so only the percentage basis needs it.
+        auto textZoomFactor = state.zoomWithTextZoomFactor();
+        auto percentageBasis = state.style().fontDescription().unzoomedUsedSize() * textZoomFactor;
 
         return CSS::clampingToRangeOf<LineHeight::Length>(
-            evaluate<float>(calc, percentageBasis, textZoomFactor) * multiplier
+            evaluate<float>(calc, percentageBasis, ZoomFactor::none()) * multiplier
         );
     };
 
