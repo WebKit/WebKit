@@ -337,6 +337,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/PixelBufferConversionTests.cpp
         Tests/WebCore/PlatformDynamicRangeLimitTests.cpp
         Tests/WebCore/PlatformMediaSessionManagerTests.cpp
+        Tests/WebCore/PositionTests.cpp
         Tests/WebCore/PrivateClickMeasurement.cpp
         Tests/WebCore/PublicSuffix.cpp
         Tests/WebCore/PushDatabase.cpp
