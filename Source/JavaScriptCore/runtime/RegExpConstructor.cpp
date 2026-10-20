@@ -298,8 +298,11 @@ inline OptionSet<Yarr::Flags> toFlags(JSGlobalObject* globalObject, JSValue flag
     if (flags.isUndefined())
         return { };
     
-    auto result = Yarr::parseFlags(flags.toWTFString(globalObject));
+    auto* string = flags.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
+    auto view = string->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto result = Yarr::parseFlags(view);
     if (!result) {
         throwSyntaxError(globalObject, scope, "Invalid flags supplied to RegExp constructor."_s);
         return { };
