@@ -668,9 +668,16 @@ inline uint64_t growMemory(JSWebAssemblyInstance* instance, uint64_t delta, uint
     return grown.value().pageCount();
 }
 
-inline int64_t memorySize(JSWebAssemblyInstance* instance, uint8_t memoryIndex)
+inline int64_t memorySizeInBytes(JSWebAssemblyInstance* instance, uint8_t memoryIndex)
 {
     return instance->memory(memoryIndex)->memory().size();
+}
+
+// What memory.size evaluates to: a count of the memory's own pages, not of bytes.
+inline int64_t memorySizeInPages(JSWebAssemblyInstance* instance, uint8_t memoryIndex)
+{
+    auto& memory = instance->memory(memoryIndex)->memory();
+    return memory.size() >> memory.log2PageSize();
 }
 
 inline bool memoryInit(JSWebAssemblyInstance* instance, unsigned dataSegmentIndex, uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint8_t memoryIndex)

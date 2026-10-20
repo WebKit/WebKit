@@ -1485,7 +1485,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGrowMemory, int64_t, (JSWebAssemblyIn
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemorySizeInPages, int64_t, (JSWebAssemblyInstance* instance, uint8_t memoryIndex))
 {
-    return instance->memory(memoryIndex)->memory().size() >> 16;
+    return Wasm::memorySizeInPages(instance, memoryIndex);
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryFill, UCPUStrictInt32, (JSWebAssemblyInstance* instance, uint64_t dstAddress, uint32_t targetValue, uint64_t count, uint8_t memoryIndex))

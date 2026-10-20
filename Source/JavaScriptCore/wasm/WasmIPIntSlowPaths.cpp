@@ -646,7 +646,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_grow, int64_t delta, uint8_t memoryIndex)
 WASM_IPINT_EXTERN_CPP_DECL(memory_size, uint8_t memoryIndex)
 {
     ASSERT_WITH_MESSAGE(memoryIndex, "memory zero should go through the fast path");
-    IPINT_RETURN(Wasm::memorySize(instance, memoryIndex));
+    IPINT_RETURN(Wasm::memorySizeInPages(instance, memoryIndex));
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(memory_init, int32_t dataIndex, IPIntStackEntry* sp, uint8_t memoryIndex)

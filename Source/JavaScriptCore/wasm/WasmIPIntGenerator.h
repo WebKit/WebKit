@@ -181,6 +181,9 @@ struct AtomicMemoryAccessMetadata {
 
 struct MemorySizeMetadata {
     uint8_t memoryIndex;
+    uint8_t log2PageSize;
+    // An i32 memory's page count is canonicalized to 32 bits; an i64 memory's may exceed them.
+    uint8_t isMemory64;
     InstructionLengthMetadata instructionLength;
 };
 

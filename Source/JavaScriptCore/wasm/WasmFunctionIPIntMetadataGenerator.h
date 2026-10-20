@@ -139,7 +139,7 @@ private:
     };
 
     void addLength(size_t length);
-    void addMemorySize(uint8_t memoryIndex, size_t length);
+    void addMemorySize(uint8_t memoryIndex, uint8_t log2PageSize, bool isMemory64, size_t length);
     void addMemoryGrow(uint8_t memoryIndex, size_t length);
     void addTableAccess(uint32_t index, size_t length);
     void addRefFunc(uint32_t index, size_t length);

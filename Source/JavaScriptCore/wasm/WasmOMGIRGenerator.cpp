@@ -2220,9 +2220,8 @@ auto OMGIRGenerator::addCurrentMemory(ExpressionType& result, uint8_t memoryInde
         Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCachedMemory0Size()));
         m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_cachedMemory0Size, size);
 
-        constexpr uint32_t shiftValue = 16;
-        static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
-        Value* numPages = m_currentBlock->appendNew<Value>(m_proc, ZShr, origin(), size, constant(Int32, shiftValue));
+        const uint32_t shiftValue = m_info.memory(memoryIndex).log2PageSize();
+        Value* numPages = shiftValue ? m_currentBlock->appendNew<Value>(m_proc, ZShr, origin(), size, constant(Int32, shiftValue)) : size;
 
         if (m_info.memory(memoryIndex).isMemory64())
             result = push(numPages);

@@ -1049,7 +1049,7 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
 [[nodiscard]] PartialResult IPIntGenerator::addCurrentMemory(ExpressionType&, uint8_t memoryIndex)
 {
     changeStackSize(1);
-    m_metadata->addMemorySize(memoryIndex, getCurrentInstructionLength());
+    m_metadata->addMemorySize(memoryIndex, m_info.memory(memoryIndex).log2PageSize(), m_info.memory(memoryIndex).isMemory64(), getCurrentInstructionLength());
     return { };
 }
 

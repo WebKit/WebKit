@@ -1219,15 +1219,22 @@ end)
 ipintOp(_memory_size, macro()
     loadb IPInt::MemorySizeMetadata::memoryIndex[MC], t0
     btinz t0, .callMemorySize
+    # Memory 0's cached size is in bytes; the slow path below already returns a page count.
     loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemory0Size())[wasmInstance], t0 # size of memory 0
+    loadb IPInt::MemorySizeMetadata::log2PageSize[MC], t1
+    urshiftp t1, t0
     jmp .doneLoadingMemorySize
 .callMemorySize:
     move t0, a1
     operationCall(macro() cCall2(_ipint_extern_memory_size) end)
     move r0, t0
 .doneLoadingMemorySize:
-    urshiftp 16, t0
+    # An i32 result must have a clean upper half, but an i64 memory's page count
+    # may legitimately use it: one-byte pages give 2**64 of them.
+    loadb IPInt::MemorySizeMetadata::isMemory64[MC], t1
+    btbnz t1, .doneExtendingMemorySize
     zxi2q t0, t0
+.doneExtendingMemorySize:
     pushInt32(t0)
     loadb IPInt::MemorySizeMetadata::instructionLength[MC], t0
     advancePCByReg(t0)
