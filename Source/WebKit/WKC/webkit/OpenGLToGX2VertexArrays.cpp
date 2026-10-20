@@ -90,11 +90,31 @@ VertexArrayResult VertexArrays::destroy(VertexArrayName name)
 
 VertexArrayResult VertexArrays::bind(VertexArrayName name)
 {
-    if (m_arrays.find(name) == m_arrays.end())
+    auto it = m_arrays.find(name);
+    if (it == m_arrays.end())
         return VertexArrayResult::InvalidName;
-    State* state = &m_arrays[name];
-    if (m_backend.setElementBuffer && !m_backend.setElementBuffer(m_backend.context, state->elementBuffer))
+    State* state = &it->second;
+
+    // A VAO captures its element buffer and attribute descriptors. Reapply
+    // those bindings when switching VAOs; otherwise the GX2 backend keeps
+    // drawing with whichever buffers the previously bound VAO installed.
+    if (m_backend.setElementBuffer
+        && !m_backend.setElementBuffer(m_backend.context, state->elementBuffer))
         return VertexArrayResult::BackendFailure;
+    for (const auto& entry : state->attributes) {
+        const uint8_t index = entry.first;
+        const VertexAttribute& attribute = entry.second;
+        if (m_backend.setAttribute
+            && !m_backend.setAttribute(m_backend.context, index, attribute))
+            return VertexArrayResult::BackendFailure;
+        if (attribute.buffer) {
+            if (!m_backend.bindVertexBuffer)
+                return VertexArrayResult::MissingBackend;
+            if (!m_backend.bindVertexBuffer(m_backend.context, index, attribute.buffer,
+                    attribute.stride, attribute.offset))
+                return VertexArrayResult::BackendFailure;
+        }
+    }
     m_bound = name;
     return VertexArrayResult::Ok;
 }
