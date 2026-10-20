@@ -12,6 +12,7 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/back-forward-cache-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/blob-creator-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/fetch-and-create-url.html

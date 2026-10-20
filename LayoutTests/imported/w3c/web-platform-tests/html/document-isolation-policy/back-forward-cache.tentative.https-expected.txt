@@ -1,0 +1,12 @@
+
+PASS A document without a policy is restored after a cross-site navigation
+PASS A cross-origin isolated document with COOP and COEP is restored after a cross-site navigation
+PASS A document with a policy is restored after a cross-site navigation
+PASS A document with a policy is restored after a cross-site navigation to a document with a policy
+PASS A document with a policy is restored after a same-origin navigation to a document without one
+PASS A document without a policy is restored after a same-origin navigation to a document with one
+PASS A document with a policy is restored after a same-origin navigation to a document with a policy
+PASS A document with a policy is restored after a same-site navigation to a document with a policy
+PASS A document with a policy is restored after a same-origin navigation to a cross-origin isolated document with COOP and COEP
+PASS A cross-origin isolated document with COOP and COEP is restored after a same-origin navigation to a document with a policy
+

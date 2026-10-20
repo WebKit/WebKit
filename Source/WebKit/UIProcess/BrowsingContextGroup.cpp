@@ -128,9 +128,16 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     completionHandler(frameProcess.ptr());
 }
 
+bool BrowsingContextGroup::canUseProcessForCrossOriginIsolation(const WebProcessProxy& process) const
+{
+    if (m_crossOriginMode == CrossOriginMode::Isolated)
+        return process.crossOriginIsolation() == ProcessCrossOriginIsolation::BrowsingContextGroup;
+    return process.crossOriginIsolation() != ProcessCrossOriginIsolation::BrowsingContextGroup;
+}
+
 Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate)
 {
-    ASSERT(process.isDummyProcessProxy() || process.crossOriginMode() == m_crossOriginMode || (process.isDocumentIsolationPolicyProcess() && m_crossOriginMode == CrossOriginMode::Shared));
+    ASSERT(process.isDummyProcessProxy() || canUseProcessForCrossOriginIsolation(process));
 
     if (preferences.siteIsolationEnabled()) {
         RefPtr sharedProcess = liveSharedProcess();

@@ -74,6 +74,7 @@ public:
     WebCore::BrowsingContextGroupIdentifier identifier() const { return m_identifier; }
 
     WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
+    bool LEGACY_NODELETE canUseProcessForCrossOriginIsolation(const WebProcessProxy&) const;
 
     void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
     Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, LoadedWebArchive = LoadedWebArchive::No, BrowsingContextGroupUpdate = BrowsingContextGroupUpdate::AddProcessAndInjectBrowsingContext);

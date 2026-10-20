@@ -1463,7 +1463,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     RefPtr preferredFrameProcess = preferredBrowsingContextGroup ? preferredBrowsingContextGroup->processForSite(pageConfiguration->openedSite()) : nullptr;
     auto crossOriginMode = pageConfiguration->crossOriginMode();
     if (auto& openerInfo = pageConfiguration->openerInfo(); openerInfo && siteIsolationEnabled) {
-        ASSERT(openerInfo->process->crossOriginMode() == crossOriginMode || openerInfo->process->isDocumentIsolationPolicyProcess());
+        ASSERT(openerInfo->browsingContextGroup->canUseProcessForCrossOriginIsolation(openerInfo->process));
         process = openerInfo->process.ptr();
         pageConfiguration->setProcessInheritedFromOpener(true);
     } else if (preferredFrameProcess)
@@ -2289,7 +2289,6 @@ unsigned WebProcessPool::prewarmedProcessCountLimit() const
 void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, const URL& sourceURL, BrowsingContextGroup& browsingContextGroup, WebProcessProxy::IsolatedProcessType isolatedProcessType, const Site& mainFrameSite, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, LoadedWebArchive loadedWebArchive, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler)
 {
     Site site { navigation.currentRequest().url() };
-    auto crossOriginMode = browsingContextGroup.crossOriginMode();
 
     bool siteIsolationEnabled = protect(page.preferences())->siteIsolationEnabled();
     if (siteIsolationEnabled && !m_hasUsedSiteIsolation) {
@@ -2305,7 +2304,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         if (RefPtr targetItem = navigation.targetItem(); targetItem && frame.isMainFrame()) {
             if (RefPtr suspendedPage = targetItem->suspendedPage()) {
                 Ref process = suspendedPage->process();
-                if (process->state() != AuxiliaryProcessProxy::State::Terminated && process->crossOriginMode() == crossOriginMode) {
+                if (process->state() != AuxiliaryProcessProxy::State::Terminated && browsingContextGroup.canUseProcessForCrossOriginIsolation(process)) {
                     ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
                     prepareProcessForNavigation(WTF::move(process), page, suspendedPage.get(),
                         "Using target back/forward item's process and suspended page"_s, isolatedProcessType,
@@ -2319,7 +2318,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                 backForwardCacheProcess = entry->process();
             else if (auto processIdentifier = navigation.backForwardCacheMainFrameProcessIdentifier())
                 backForwardCacheProcess = WebProcessProxy::processForIdentifier(*processIdentifier);
-            if (backForwardCacheProcess && backForwardCacheProcess->state() != AuxiliaryProcessProxy::State::Terminated && backForwardCacheProcess->crossOriginMode() == crossOriginMode) {
+            if (backForwardCacheProcess && backForwardCacheProcess->state() != AuxiliaryProcessProxy::State::Terminated && browsingContextGroup.canUseProcessForCrossOriginIsolation(*backForwardCacheProcess)) {
                 ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
                 prepareProcessForNavigation(backForwardCacheProcess.releaseNonNull(), page, nullptr,
                     "Using target back/forward item's process (in-process BFCache)"_s, isolatedProcessType,
@@ -2523,12 +2522,12 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
 
     if (RefPtr targetItem = navigation.targetItem(); targetItem && frame.isMainFrame() && !siteIsolationEnabled) {
         if (CheckedPtr suspendedPage = targetItem->suspendedPage()) {
-            if (suspendedPage->process().state() != AuxiliaryProcessProxy::State::Terminated && suspendedPage->process().crossOriginMode() == crossOriginMode)
+            if (suspendedPage->process().state() != AuxiliaryProcessProxy::State::Terminated && browsingContextGroup.canUseProcessForCrossOriginIsolation(suspendedPage->process()))
                 return { suspendedPage->process(), suspendedPage.get(), "Using target back/forward item's process and suspended page"_s };
         }
 
         if (RefPtr process = WebProcessProxy::processForIdentifier(targetItem->lastProcessIdentifier())) {
-            if (process->state() != WebProcessProxy::State::Terminated && process->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration) && process->crossOriginMode() == crossOriginMode) {
+            if (process->state() != WebProcessProxy::State::Terminated && process->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration) && browsingContextGroup.canUseProcessForCrossOriginIsolation(*process)) {
                 // Make sure we remove the process from the cache if it is in there since we're about to use it.
                 if (process->isInProcessCache()) {
                     m_webProcessCache->removeProcess(*process, WebProcessCache::ShouldShutDownProcess::No);
