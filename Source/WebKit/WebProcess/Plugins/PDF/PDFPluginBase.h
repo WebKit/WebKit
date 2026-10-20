@@ -71,8 +71,8 @@ class Color;
 class FragmentedSharedBuffer;
 class GraphicsContext;
 class Element;
-class FrameView;
 class HTMLPlugInElement;
+class LocalFrameView;
 class NetscapePlugInStreamLoaderClient;
 class ResourceResponse;
 class Scrollbar;
@@ -265,7 +265,7 @@ public:
 
     // The view that convertFromPluginToRootView() maps into: the top of the plugin's widget tree,
     // where Widget::convertToRootView() stops.
-    RefPtr<WebCore::FrameView> rootView() const;
+    RefPtr<WebCore::LocalFrameView> rootView() const;
 
     // Under site isolation, the root view above is this process's local root, not the main frame.
     // Anything sent to the UI process in root view coordinates should be converted with these first.

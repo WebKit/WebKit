@@ -32,12 +32,14 @@
 #include "PDFKitSPI.h"
 #include "UnifiedPDFPlugin.h"
 #include "WebMouseEvent.h"
+#include <WebCore/DataDetection.h>
 #include <WebCore/DataDetectorElementInfo.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/IntPoint.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #include <pal/spi/mac/DataDetectorsSPI.h>
@@ -128,7 +130,7 @@ RetainPtr<DDHighlightRef> PDFDataDetectorOverlayController::createPlatformDataDe
 
     auto rectForSelectionInRootViewContentsSpace { plugin->rectForSelectionInRootViewContentsSpace(dataDetectorItem.selection().get()) };
 
-    return ::WebKit::createPlatformDataDetectorHighlight(Vector<FloatRect>::from(WTF::move(rectForSelectionInRootViewContentsSpace)), rootView->visibleContentRect());
+    return ::WebKit::createPlatformDataDetectorHighlight(Vector<FloatRect>::from(WTF::move(rectForSelectionInRootViewContentsSpace)), DataDetection::visibleContentRectForHighlights(*rootView));
 }
 
 bool PDFDataDetectorOverlayController::handleMouseEvent(const WebCore::PlatformMouseEvent& event, PDFDocumentLayout::PageIndex pageIndex)

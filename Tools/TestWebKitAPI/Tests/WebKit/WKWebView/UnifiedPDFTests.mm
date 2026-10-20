@@ -892,11 +892,15 @@ public:
     {
         pdf = pdfWithPhoneNumber();
 
-        auto mainHTML = [](const String& iframeURL) {
-            return makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, iframeLeft, "px; top:"_s, iframeTop,
+        auto iframeHTML = [](const String& iframeURL) {
+            return makeString("<iframe style='position:absolute; left:"_s, iframeLeft, "px; top:"_s, iframeTop,
                 "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight, "px; border:"_s, iframeBorder, "px solid black; padding:"_s, iframePadding, "px' src='"_s, iframeURL,
-                "'></iframe><div style='height:2000px'></div>"_s);
+                "'></iframe>"_s);
         };
+        auto mainHTML = [&](const String& iframeURL) {
+            return makeString("<body style='margin:0'>"_s, iframeHTML(iframeURL), "<div style='height:2000px'></div>"_s);
+        };
+        String mainHTMLWithoutScrollBars { makeString("<html style='overflow:hidden'><body style='margin:0'>"_s, iframeHTML(GetParam().subframeURL("/test.pdf"_s)), "</body></html>"_s) };
         auto nestedFrameHTML = makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, nestedFrameLeft, "px; top:"_s, nestedFrameTop,
             "px; width:300px; height:200px; border:0' src='test.pdf'></iframe></body>"_s);
         auto nestedFrameURL = GetParam().subframeURL("/nested.html"_s);
@@ -904,6 +908,7 @@ public:
         server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
             { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML(GetParam().subframeURL("/test.pdf"_s)) } },
             { "/main-with-nested-frame"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML(nestedFrameURL) } },
+            { "/main-without-scroll-bars"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTMLWithoutScrollBars } },
             { "/nested.html"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, nestedFrameHTML } },
             { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, pdf.data.get() } },
         }, HTTPServer::Protocol::HttpsProxy);
@@ -923,10 +928,9 @@ public:
 
     enum class PDFFrame : bool { IFrame, NestedFrame };
 
-    CGRect loadAndFindPhoneNumber(PDFFrame pdfFrame = PDFFrame::IFrame)
+    RetainPtr<WKFrameInfo> load(NSString *path, PDFFrame pdfFrame = PDFFrame::IFrame)
     {
-        RetainPtr path = pdfFrame == PDFFrame::NestedFrame ? @"/main-with-nested-frame" : @"/main";
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[@"https://example.com" stringByAppendingString:path.get()]]]];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[@"https://example.com" stringByAppendingString:path]]]];
         [navigationDelegate waitForDidFinishNavigation];
 
         RetainPtr<WKFrameInfo> frame;
@@ -936,7 +940,21 @@ public:
             return !!frame;
         });
         EXPECT_TRUE(foundFrame);
-        if (!foundFrame)
+        return frame;
+    }
+
+    CGRect loadAndFindPhoneNumber(PDFFrame pdfFrame = PDFFrame::IFrame)
+    {
+        RetainPtr frame { load(pdfFrame == PDFFrame::NestedFrame ? @"/main-with-nested-frame" : @"/main", pdfFrame) };
+        auto frameOrigin = iframeContentBox.origin;
+        if (pdfFrame == PDFFrame::NestedFrame)
+            frameOrigin = NSMakePoint(frameOrigin.x + nestedFrameLeft, frameOrigin.y + nestedFrameTop);
+        return findPhoneNumber(frame.get(), frameOrigin);
+    }
+
+    CGRect findPhoneNumber(WKFrameInfo *frame, CGPoint frameContentOrigin)
+    {
+        if (!frame)
             return CGRectNull;
 
         RetainPtr<NSArray> linkRect;
@@ -947,7 +965,7 @@ public:
                 "  if (!rects.length) return null;"
                 "  const box = plugin.getBoundingClientRect();"
                 "  return [box.x + rects[0].x, box.y + rects[0].y, rects[0].width];"
-                "})()" inFrame:frame.get()]);
+                "})()" inFrame:frame]);
             return !!linkRect;
         });
         EXPECT_TRUE(foundLink);
@@ -956,12 +974,8 @@ public:
 
         [webView waitForNextPresentationUpdate];
 
-        auto frameOrigin = iframeContentBox.origin;
-        if (pdfFrame == PDFFrame::NestedFrame)
-            frameOrigin = NSMakePoint(frameOrigin.x + nestedFrameLeft, frameOrigin.y + nestedFrameTop);
-
-        auto linkLeft = frameOrigin.x + [[linkRect objectAtIndex:0] doubleValue];
-        auto linkTop = frameOrigin.y + [[linkRect objectAtIndex:1] doubleValue];
+        auto linkLeft = frameContentOrigin.x + [[linkRect objectAtIndex:0] doubleValue];
+        auto linkTop = frameContentOrigin.y + [[linkRect objectAtIndex:1] doubleValue];
         auto scale = [[linkRect objectAtIndex:2] doubleValue] / CGRectGetWidth(pdf.linkRect);
         return CGRectMake(linkLeft + scale * (CGRectGetMinX(pdf.phoneNumberRect) - CGRectGetMinX(pdf.linkRect)),
             linkTop + scale * (CGRectGetMaxY(pdf.linkRect) - CGRectGetMaxY(pdf.phoneNumberRect)),
@@ -977,7 +991,7 @@ public:
     CGRect rootViewVisibleRect(int mainFrameScrollOffset = 0)
     {
         if (GetParam().isCrossOriginWithSiteIsolation())
-            return NSOffsetRect(iframeContentBox, 0, -mainFrameScrollOffset);
+            return CGRectIntersection(NSOffsetRect(iframeContentBox, 0, -mainFrameScrollOffset), [webView bounds]);
         return [webView bounds];
     }
 
@@ -1058,6 +1072,27 @@ TEST_P(EmbeddedPDFDataDetection, HighlightAndMenuAreAtThePhoneNumberInNestedFram
 {
     auto phoneNumberRect = loadAndFindPhoneNumber(PDFFrame::NestedFrame);
     showHighlightAndMenu(phoneNumberRect, rootViewVisibleRect());
+}
+
+TEST_P(EmbeddedPDFDataDetection, HighlightButtonStaysInViewWhenFrameIsPartlyOutOfView)
+{
+    RetainPtr frame { load(@"/main-without-scroll-bars") };
+    CGRect phoneNumberRect { findPhoneNumber(frame.get(), iframeContentBox.origin) };
+    ASSERT_FALSE(CGRectIsNull(phoneNumberRect));
+
+    CGRect visibleRect { [webView bounds] };
+    int offset { static_cast<int>(std::round(CGRectGetMaxX(visibleRect) - 10 - CGRectGetMaxX(phoneNumberRect))) };
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"document.querySelector('iframe').style.left = '%dpx'", iframeLeft + offset]];
+    CGRect contentBox { NSOffsetRect(iframeContentBox, offset, 0) };
+    ASSERT_TRUE(waitUntilWindowClipRectWidthIs(webView.get(), frame.get(), static_cast<int>(CGRectGetMaxX(visibleRect) - CGRectGetMinX(contentBox))));
+    phoneNumberRect = findPhoneNumber(frame.get(), contentBox.origin);
+    ASSERT_FALSE(CGRectIsNull(phoneNumberRect));
+
+    auto highlight { dataDetectorHighlightGeometry(phoneNumberRect, visibleRect) };
+    ASSERT_FALSE(rectsAreNear(highlight.boundingRect, dataDetectorHighlightGeometry(phoneNumberRect, contentBox).boundingRect, rectTolerance));
+    ASSERT_TRUE(rectsAreNear(highlight.boundingRect, dataDetectorHighlightGeometry(phoneNumberRect, CGRectIntersection(contentBox, visibleRect)).boundingRect, rectTolerance));
+
+    showHighlightAndMenu(phoneNumberRect, visibleRect);
 }
 
 INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFDataDetection, testing::ValuesIn(siteIsolationParams), &EmbeddedPDFDataDetection::testNameGenerator);

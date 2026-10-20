@@ -74,6 +74,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalFrameInlines.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PageIdentifier.h>
@@ -723,10 +724,10 @@ bool PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTra
     return true;
 }
 
-RefPtr<FrameView> PDFPluginBase::rootView() const
+RefPtr<LocalFrameView> PDFPluginBase::rootView() const
 {
     RefPtr view = m_view.get();
-    return view ? view->root() : nullptr;
+    return view ? dynamicDowncast<LocalFrameView>(view->root()) : nullptr;
 }
 
 FloatPoint PDFPluginBase::convertFromRootViewToMainFrameView(FloatPoint point) const
