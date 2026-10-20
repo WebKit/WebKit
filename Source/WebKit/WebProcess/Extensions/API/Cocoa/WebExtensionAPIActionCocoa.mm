@@ -60,8 +60,8 @@ namespace WebKit {
 std::expected<void, String> WebExtensionAPIAction::parseActionDetails(NSDictionary *details, std::optional<WebExtensionWindowIdentifier>& windowIdentifier, std::optional<WebExtensionTabIdentifier>& tabIdentifier)
 {
     static NSDictionary<NSString *, id> *types = @{
-        tabIdKey: NSNumber.class,
-        windowIdKey: NSNumber.class,
+        tabIdKey: [NSOrderedSet orderedSetWithObjects:NSNumber.class, NSNull.class, nil],
+        windowIdKey: [NSOrderedSet orderedSetWithObjects:NSNumber.class, NSNull.class, nil],
     };
 
     NSString *outExceptionString;
@@ -69,18 +69,21 @@ std::expected<void, String> WebExtensionAPIAction::parseActionDetails(NSDictiona
     if (!validateDictionary(details, @"details", nil, types, &outExceptionString))
         return makeUnexpected(String(outExceptionString));
 
-    if (details[tabIdKey] && details[windowIdKey]) {
+    auto *tabID = objectForKey<NSNumber>(details, tabIdKey);
+    auto *windowID = objectForKey<NSNumber>(details, windowIdKey);
+
+    if (tabID && windowID) {
         outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'tabId' and 'windowID'").createNSString().autorelease();
         return makeUnexpected(String(outExceptionString));
     }
 
-    if (NSNumber *tabID = details[tabIdKey]) {
+    if (tabID) {
         tabIdentifier = toWebExtensionTabIdentifier(tabID.doubleValue);
         if (!isValid(tabIdentifier, &outExceptionString))
             return makeUnexpected(String(outExceptionString));
     }
 
-    if (NSNumber *windowID = details[windowIdKey]) {
+    if (windowID) {
         windowIdentifier = toWebExtensionWindowIdentifier(windowID.doubleValue);
         if (!isValid(windowIdentifier, &outExceptionString))
             return makeUnexpected(String(outExceptionString));

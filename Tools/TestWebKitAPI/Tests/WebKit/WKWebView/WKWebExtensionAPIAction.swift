@@ -70,19 +70,19 @@ struct WKWebExtensionAPIActionTests {
     @Test
     func errors() async throws {
         let backgroundScript = """
-            browser.test.assertThrows(() => browser.action.setTitle({tabId: 'bad', title: 'Test'}), /'tabId' is expected to be a number, but a string was provided/i)
-            browser.test.assertThrows(() => browser.action.setTitle({windowId: 'bad', title: 'Test'}), /'windowId' is expected to be a number, but a string was provided/i)
+            browser.test.assertThrows(() => browser.action.setTitle({tabId: 'bad', title: 'Test'}), /'tabId' is expected to be a number or null, but a string was provided/i)
+            browser.test.assertThrows(() => browser.action.setTitle({windowId: 'bad', title: 'Test'}), /'windowId' is expected to be a number or null, but a string was provided/i)
             browser.test.assertThrows(() => browser.action.setIcon({path: 123}), /'path' is expected to be a string or an object or null, but a number was provided/i)
-            browser.test.assertThrows(() => browser.action.setIcon({tabId: true, path: 'icon.png'}), /'tabId' is expected to be a number, but a boolean was provided/i)
-            browser.test.assertThrows(() => browser.action.setIcon({windowId: true, path: 'icon.png'}), /'windowId' is expected to be a number, but a boolean was provided/i)
-            browser.test.assertThrows(() => browser.action.setPopup({tabId: 'bad', popup: 'popup.html'}), /'tabId' is expected to be a number, but a string was provided/i)
-            browser.test.assertThrows(() => browser.action.setPopup({windowId: 'bad', popup: 'popup.html'}), /'windowId' is expected to be a number, but a string was provided/i)
+            browser.test.assertThrows(() => browser.action.setIcon({tabId: true, path: 'icon.png'}), /'tabId' is expected to be a number or null, but a boolean was provided/i)
+            browser.test.assertThrows(() => browser.action.setIcon({windowId: true, path: 'icon.png'}), /'windowId' is expected to be a number or null, but a boolean was provided/i)
+            browser.test.assertThrows(() => browser.action.setPopup({tabId: 'bad', popup: 'popup.html'}), /'tabId' is expected to be a number or null, but a string was provided/i)
+            browser.test.assertThrows(() => browser.action.setPopup({windowId: 'bad', popup: 'popup.html'}), /'windowId' is expected to be a number or null, but a string was provided/i)
             browser.test.assertThrows(() => browser.action.setBadgeText({tabId: 1.2, text: '1'}), /'tabId' value is invalid, because it is not a tab identifier/i)
             browser.test.assertThrows(() => browser.action.setBadgeText({windowId: -3, text: '2'}), /'windowId' value is invalid, because it is not a window identifier/i)
             browser.test.assertThrows(() => browser.action.enable('bad'), /'tabId' value is invalid, because a number is expected/i)
             browser.test.assertThrows(() => browser.action.disable('bad'), /'tabId' value is invalid, because a number is expected/i)
-            browser.test.assertThrows(() => browser.action.isEnabled({tabId: Infinity}), /'tabId' is expected to be a number, but Infinity was provided/i)
-            browser.test.assertThrows(() => browser.action.isEnabled({windowId: NaN}), /'windowId' is expected to be a number, but NaN was provided/i)
+            browser.test.assertThrows(() => browser.action.isEnabled({tabId: Infinity}), /'tabId' is expected to be a number or null, but Infinity was provided/i)
+            browser.test.assertThrows(() => browser.action.isEnabled({windowId: NaN}), /'windowId' is expected to be a number or null, but NaN was provided/i)
 
             browser.test.assertThrows(() => browser.action.setTitle({tabId: 1}), /'details' value is invalid, because it is missing required keys: 'title'/i)
             browser.test.assertThrows(() => browser.action.setTitle({windowId: 1}), /'details' value is invalid, because it is missing required keys: 'title'/i)
@@ -618,6 +618,55 @@ struct WKWebExtensionAPIActionTests {
 
         secondWindowAction.closePopup()
         action.closePopup()
+    }
+
+    @Test
+    func setDefaultActionPropertiesWithNullIdentifiers() async throws {
+        let backgroundScript = """
+            const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })
+            const currentWindowId = currentTab.windowId
+
+            browser.test.assertEq(await browser.action.getTitle({ tabId: null }), 'Test Action', 'Title should be')
+            browser.test.assertEq(await browser.action.getPopup({ windowId: null }), 'popup.html', 'Popup should be')
+            browser.test.assertEq(await browser.action.getBadgeText({ tabId: null, windowId: null }), '', 'Badge text should be')
+            browser.test.assertTrue(await browser.action.isEnabled({ tabId: null }), 'Action should be enabled')
+
+            await browser.action.setTitle({ title: 'Modified Title', tabId: null })
+            await browser.action.setIcon({ path: 'toolbar-48.png', tabId: null })
+            await browser.action.setPopup({ popup: 'alt-popup.html', windowId: null })
+            await browser.action.setBadgeText({ text: '42', tabId: null, windowId: null })
+
+            browser.test.assertEq(await browser.action.getTitle({ }), 'Modified Title', 'Title should be')
+            browser.test.assertEq(await browser.action.getPopup({ }), 'alt-popup.html', 'Popup should be')
+            browser.test.assertEq(await browser.action.getBadgeText({ }), '42', 'Badge text should be')
+
+            await browser.action.setTitle({ title: 'Window Title', tabId: null, windowId: currentWindowId })
+
+            browser.test.assertEq(await browser.action.getTitle({ windowId: currentWindowId }), 'Window Title', 'Title should be')
+            browser.test.assertEq(await browser.action.getTitle({ }), 'Modified Title', 'Title should be')
+
+            browser.test.sendMessage('Properties Set')
+            """
+
+        let resources: [String: Any] = [
+            "background.js": backgroundScript,
+            "popup.html": "<b>Hello World!</b>",
+            "alt-popup.html": "<b>Hello Alternate World!</b>",
+            "toolbar-32.png": makePNGData(size: CGSize(width: 32, height: 32), color: .blue),
+            "toolbar-48.png": makePNGData(size: CGSize(width: 48, height: 48), color: .yellow),
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        let context = try #require(manager.context)
+
+        try await manager.waitForTestMessage("Properties Set")
+
+        let defaultAction = try #require(context.action(for: nil))
+        #expect(defaultAction.label == "Modified Title")
+        #expect(defaultAction.badgeText == "42")
+
+        let icon = try #require(defaultAction.icon(for: CGSize(width: 48, height: 48)))
+        #expect(icon.size == CGSize(width: 48, height: 48))
     }
 
     @Test
