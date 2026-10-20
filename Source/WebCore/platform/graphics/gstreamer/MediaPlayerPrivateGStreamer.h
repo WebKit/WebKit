@@ -303,7 +303,7 @@ protected:
         // Pipeline is suspended, and the requested state change was saved to be executed when it resumes.
         SavedUntilResume,
     };
-    ChangePipelineStateResult changePipelineState(GstState);
+    ChangePipelineStateResult changePipelineState(GstState, bool isForInterruptionSimulation = false);
 
     static bool isAvailable();
 
@@ -402,6 +402,7 @@ protected:
     GstState m_currentState { GST_STATE_NULL };
     GstState m_oldState { GST_STATE_NULL };
     GstState m_requestedState { GST_STATE_VOID_PENDING };
+    bool m_isPipelinePausedForInterruptionSimulation { false };
     bool m_shouldResetPipeline { false };
     bool m_isSeeking { false };
     std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise;

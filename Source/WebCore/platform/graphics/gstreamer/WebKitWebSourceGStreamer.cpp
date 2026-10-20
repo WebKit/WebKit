@@ -539,8 +539,10 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
         members->responseCondition.wait(members.mutex(), [&] {
             return members->isFlushing || gst_adapter_available(members->adapter.get()) || members->doesHaveEOS;
         });
-        if (members->isFlushing)
+        if (members->isFlushing) {
+            GST_TRACE_OBJECT(src, "Still flushing");
             return GST_FLOW_FLUSHING;
+        }
 
         queueSize = gst_adapter_available(members->adapter.get());
         GST_TRACE_OBJECT(src, "available %" G_GSIZE_FORMAT, queueSize);
@@ -794,7 +796,7 @@ static gboolean webKitWebSrcQuery(GstBaseSrc* baseSrc, GstQuery* query)
     if (!result)
         result = GST_BASE_SRC_CLASS(webkit_web_src_parent_class)->query(baseSrc, query);
 
-    URL url { String::fromLatin1(priv->originalURI.data()) };
+    URL url { priv->originalURI };
     if (url.protocolIsBlob() || url.protocolIsFile())
         return result;
 
@@ -846,6 +848,7 @@ static gboolean webKitWebSrcUnLock(GstBaseSrc* baseSrc)
         RunLoop::mainSingleton().dispatch([resource = WTF::move(members->resource), requestNumber = members->requestNumber] {
             GST_DEBUG("Stopping resource request R%u", requestNumber);
             resource->shutdown();
+            GST_DEBUG("Stopping resource request R%u DONE", requestNumber);
         });
     }
     ASSERT(!members->resource);
@@ -1036,7 +1039,11 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         members->redirectedURI = WTF::move(responseURI);
 
     // length will be zero (unknown) if no Content-Length is provided or the response is compressed with Content-Encoding.
-    uint64_t length = !response.httpHeaderFields().contains(HTTPHeaderName::ContentEncoding) ? response.expectedContentLength() : 0;
+    uint64_t length = 0;
+    if (response.url().protocolIsInHTTPFamily())
+        length = !response.httpHeaderFields().contains(HTTPHeaderName::ContentEncoding) ? response.expectedContentLength() : 0;
+    else
+        length = response.expectedContentLength();
 
     // But in some cases, Content-Encoding: chunked can specify the total length. Use it.
     std::optional<uint64_t> contentLength;
@@ -1197,6 +1204,10 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
     }
 
     int length = data.size();
+
+    URL url { priv->originalURI };
+    if (url.protocolIsFile())
+        length -= members->requestedPosition;
     GST_LOG_OBJECT(src.get(), "R%u: Have %d bytes of data", m_requestNumber, length);
 
     members->readPosition += length;
@@ -1207,6 +1218,8 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
 
     checkUpdateBlocksize(length);
     auto dataSpan = data.span();
+    if (url.protocolIsFile())
+        dataSpan = dataSpan.subspan(members->requestedPosition);
     GstBuffer* buffer = gstBufferNewWrappedFast(fastMemDup(dataSpan.data(), dataSpan.size()), length);
     gst_adapter_push(members->adapter.get(), buffer);
 
