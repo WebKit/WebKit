@@ -60,6 +60,7 @@ struct WUTBackendContext {
 
 Backend makeWUTBackend(WUTBackendContext&);
 BufferBackend makeWUTBufferBackend(WUTBackendContext&);
+VertexArrayBackend makeWUTVertexArrayBackend(WUTBackendContext&);
 
 } // namespace GLGX2
 } // namespace WKC
