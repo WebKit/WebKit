@@ -234,10 +234,13 @@ public:
     ~PromiseImageContext()
     {
         if (auto runLoop = m_runLoop.get()) {
-            if (runLoop.get() == &RunLoop::currentSingleton())
+            if (runLoop.get() == &RunLoop::currentSingleton()) {
+                PlatformDisplay::makeSkiaGLContextCurrentIfExists();
                 return;
+            }
 
-            runLoop->dispatch([image = WTF::move(m_image)]() mutable {
+            runLoop->dispatch([image = WTF::move(m_image)] mutable {
+                PlatformDisplay::makeSkiaGLContextCurrentIfExists();
                 image = nullptr;
             });
         }

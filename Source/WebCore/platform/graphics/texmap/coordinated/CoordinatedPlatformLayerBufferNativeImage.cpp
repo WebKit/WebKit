@@ -94,6 +94,7 @@ CoordinatedPlatformLayerBufferNativeImage::~CoordinatedPlatformLayerBufferNative
     // GPU resources on the wrong thread corrupts Skia's GrResourceCache.
     if (m_image && m_image->platformImage() && m_image->platformImage()->isTextureBacked()) {
         callOnMainThread([image = WTF::move(m_image)]() mutable {
+            PlatformDisplay::makeSkiaGLContextCurrentIfExists();
             image = nullptr;
         });
     }
