@@ -12,6 +12,7 @@
 
 #if defined(__WUT__)
 #include <gx2/enum.h>
+#include <gx2/shaders.h>
 #include <gx2r/buffer.h>
 #include <unordered_map>
 
@@ -21,6 +22,16 @@ namespace GLGX2 {
 struct WUTBufferResources {
     std::unordered_map<BufferName, GX2RBuffer*> buffers;
     std::unordered_map<uint8_t, BufferName> bindings;
+    // Native fetch metadata retained independently from buffer addresses so
+    // shader-link integration can build GX2AttribStream descriptors later.
+    struct AttributeDescriptor {
+        GX2AttribFormat format { GX2_ATTRIB_TYPE_32_FLOAT };
+        uint32_t componentMask { GX2_CHANNEL_MASK_RGBA };
+        uint32_t divisor { 0 };
+        GX2AttribIndexType indexType { GX2_ATTRIB_INDEX_PER_VERTEX };
+        bool enabled { false };
+    };
+    std::unordered_map<uint8_t, AttributeDescriptor> attributes;
 };
 
 BufferBackend makeWUTBufferBackend(WUTBufferResources&);
