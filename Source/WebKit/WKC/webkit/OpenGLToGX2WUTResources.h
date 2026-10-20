@@ -61,13 +61,6 @@ bool translateVertexAttributeFormat(const VertexAttribute&, GX2AttribFormat&);
 // and binding the actual GX2FetchShader.
 bool buildWUTAttributeStreams(const WUTBufferResources&, std::vector<GX2AttribStream>&);
 
-// Initialize and bind a native fetch shader using caller-owned, GX2-aligned
-// program memory. bufferSize must be at least GX2CalcFetchShaderSizeEx(...).
-bool initializeWUTFetchShader(const WUTBufferResources&, GX2FetchShader&,
-    void* programBuffer, uint32_t bufferSize,
-    GX2FetchShaderType type = GX2_FETCH_SHADER_TESSELLATION_NONE,
-    GX2TessellationMode tessellationMode = GX2_TESSELLATION_MODE_DISCRETE);
-
 bool buildWUTAttributeStreams(const WUTBufferResources&, const GX2VertexShader&,
     const WUTLinkedAttribute* bindings, size_t bindingCount, std::vector<GX2AttribStream>& output);
 
