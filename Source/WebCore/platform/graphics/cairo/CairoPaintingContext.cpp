@@ -55,8 +55,7 @@ PaintingContext::PaintingContext(WebCore::CoordinatedTileBuffer& baseBuffer)
     // Balanced by the deref in the s_bufferKey user data destroy callback.
     buffer.ref();
 
-    m_surface = adoptRef(cairo_image_surface_create_for_data(buffer.data(),
-        CAIRO_FORMAT_ARGB32, baseBuffer.size().width(), baseBuffer.size().height(), buffer.stride()));
+    m_surface = buffer.createSurface();
 
     static cairo_user_data_key_t s_bufferKey;
     cairo_surface_set_user_data(m_surface.get(), &s_bufferKey,

@@ -116,13 +116,7 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::createBuffer(RenderingMode render
 {
     if (renderingMode == RenderingMode::Accelerated) {
 #if USE(TEXTURE_MAPPER)
-        PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
-
-        OptionSet<BitmapTexture::Flags> textureFlags;
-        if (!contentsOpaque)
-            textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
-
-        return CoordinatedAcceleratedTileBuffer::create(BitmapTexturePool::singleton().acquireTexture(size, textureFlags));
+        return CoordinatedAcceleratedTileBuffer::create(size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);
 #else
         ASSERT(m_threadSafeGrContext);
         return CoordinatedAcceleratedTileBuffer::create(m_threadSafeGrContext, size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);

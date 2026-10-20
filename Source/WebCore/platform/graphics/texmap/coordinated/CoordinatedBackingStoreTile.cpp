@@ -97,14 +97,14 @@ void CoordinatedBackingStoreTile::processPendingUpdates()
         if (update.buffer->isBackedByOpenGL()) {
             WTFBeginSignpost(this, CopyTextureGPUToGPU);
             auto& buffer = static_cast<CoordinatedAcceleratedTileBuffer&>(update.buffer.get());
-            buffer.serverWait();
 
-            Ref texture = buffer.texture();
+            RefPtr texture = buffer.takeTexture();
+            ASSERT(texture);
             // Fast path: whole tile content changed -- take ownership of the incoming texture, replacing the existing tile buffer (avoiding texture copies).
             if (update.sourceRect.size() == update.tileRect.size()) {
                 ASSERT(update.sourceRect.location().isZero());
                 if (m_texture)
-                    m_texture->swapTexture(texture);
+                    m_texture->swapTexture(Ref { *texture });
                 else
                     m_texture = WTF::move(texture);
             } else {
@@ -118,13 +118,15 @@ void CoordinatedBackingStoreTile::processPendingUpdates()
         }
 #endif
         auto& buffer = static_cast<CoordinatedUnacceleratedTileBuffer&>(update.buffer.get());
-        ensureTexture(update.tileRect.size(), buffer);
+        auto data = buffer.takeData();
+        if (!data.isEmpty()) {
+            ensureTexture(update.tileRect.size(), buffer);
 
-        WTFBeginSignpost(this, CopyTextureCPUToGPU);
-        ASSERT(!update.buffer->isBackedByOpenGL());
-        m_texture->updateContents(buffer.data(), update.sourceRect, update.bufferOffset, buffer.stride(), update.buffer->pixelFormat());
-        WTFEndSignpost(this, CopyTextureCPUToGPU);
-
+            WTFBeginSignpost(this, CopyTextureCPUToGPU);
+            ASSERT(!update.buffer->isBackedByOpenGL());
+            m_texture->updateContents(data.span().data(), update.sourceRect, update.bufferOffset, buffer.stride(), update.buffer->pixelFormat());
+            WTFEndSignpost(this, CopyTextureCPUToGPU);
+        }
         WTFEndSignpost(this, CoordinatedSwapBuffer);
     }
     WTFEndSignpost(this, CoordinatedSwapBuffers);

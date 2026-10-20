@@ -299,8 +299,11 @@ void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& til
         }
     } else {
         auto& unacceleratedBuffer = static_cast<CoordinatedUnacceleratedTileBuffer&>(buffer);
-        ensureTexture(tileRect.size(), buffer);
-        m_texture->updateContents(unacceleratedBuffer.data(), dirtyRect, { }, unacceleratedBuffer.stride(), buffer.pixelFormat());
+        auto data = unacceleratedBuffer.takeData();
+        if (!data.isEmpty()) {
+            ensureTexture(tileRect.size(), buffer);
+            m_texture->updateContents(data.span().data(), dirtyRect, { }, unacceleratedBuffer.stride(), buffer.pixelFormat());
+        }
     }
 
     WTFEndSignpost(this, SkiaBackingStoreTileUpdate);
