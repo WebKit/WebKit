@@ -1,0 +1,11 @@
+A B
+
+
+PASS document.execCommand("delete") when <p>A  []B</p>
+PASS document.execCommand("delete") when <p>A [] B</p>
+PASS document.execCommand("delete") when <p>A   []B</p>
+PASS document.execCommand("delete") when <p>A  [] B</p>
+PASS document.execCommand("delete") when <p>A []  B</p>
+PASS document.execCommand("delete") when <p>A&nbsp; []B</p>
+PASS document.execCommand("delete") when <p>A&nbsp;[] B</p>
+

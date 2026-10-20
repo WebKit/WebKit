@@ -1,0 +1,153 @@
+abc
+
+PASS execCommand("backColor", false, "red") when a[b]c
+PASS execCommand("backColor", false, "red") when a[b]c: the command should be disabled
+PASS execCommand("backColor", false, "red") when a[b]c should return false
+PASS execCommand("backColor", false, "red") when a[b]c should not update the DOM
+PASS execCommand("backColor", false, "red") when a[b]c should not cause input event
+PASS execCommand("bold", false, undefined) when a[b]c
+PASS execCommand("bold", false, undefined) when a[b]c: the command should be disabled
+PASS execCommand("bold", false, undefined) when a[b]c should return false
+PASS execCommand("bold", false, undefined) when a[b]c should not update the DOM
+PASS execCommand("bold", false, undefined) when a[b]c should not cause input event
+PASS execCommand("createLink", false, "http://example.com") when a[b]c
+PASS execCommand("createLink", false, "http://example.com") when a[b]c: the command should be disabled
+PASS execCommand("createLink", false, "http://example.com") when a[b]c should return false
+PASS execCommand("createLink", false, "http://example.com") when a[b]c should not update the DOM
+PASS execCommand("createLink", false, "http://example.com") when a[b]c should not cause input event
+PASS execCommand("decreaseFontSize", false, undefined) when a[b]c
+PASS execCommand("decreaseFontSize", false, undefined) when a[b]c: the command should be disabled
+PASS execCommand("decreaseFontSize", false, undefined) when a[b]c should return false
+PASS execCommand("decreaseFontSize", false, undefined) when a[b]c should not update the DOM
+PASS execCommand("decreaseFontSize", false, undefined) when a[b]c should not cause input event
+PASS execCommand("fontName", false, "Arial") when a[b]c
+PASS execCommand("fontName", false, "Arial") when a[b]c: the command should be disabled
+PASS execCommand("fontName", false, "Arial") when a[b]c should return false
+PASS execCommand("fontName", false, "Arial") when a[b]c should not update the DOM
+PASS execCommand("fontName", false, "Arial") when a[b]c should not cause input event
+PASS execCommand("fontSize", false, "7") when a[b]c
+PASS execCommand("fontSize", false, "7") when a[b]c: the command should be disabled
+PASS execCommand("fontSize", false, "7") when a[b]c should return false
+PASS execCommand("fontSize", false, "7") when a[b]c should not update the DOM
+PASS execCommand("fontSize", false, "7") when a[b]c should not cause input event
+PASS execCommand("formatBlock", false, "blockquote") when a[b]c
+PASS execCommand("formatBlock", false, "blockquote") when a[b]c: the command should be disabled
+PASS execCommand("formatBlock", false, "blockquote") when a[b]c should return false
+PASS execCommand("formatBlock", false, "blockquote") when a[b]c should not update the DOM
+PASS execCommand("formatBlock", false, "blockquote") when a[b]c should not cause input event
+PASS execCommand("formatBlock", false, "div") when a[b]c
+PASS execCommand("formatBlock", false, "div") when a[b]c: the command should be disabled
+PASS execCommand("formatBlock", false, "div") when a[b]c should return false
+PASS execCommand("formatBlock", false, "div") when a[b]c should not update the DOM
+PASS execCommand("formatBlock", false, "div") when a[b]c should not cause input event
+PASS execCommand("formatBlock", false, "p") when a[b]c
+PASS execCommand("formatBlock", false, "p") when a[b]c: the command should be disabled
+PASS execCommand("formatBlock", false, "p") when a[b]c should return false
+PASS execCommand("formatBlock", false, "p") when a[b]c should not update the DOM
+PASS execCommand("formatBlock", false, "p") when a[b]c should not cause input event
+PASS execCommand("formatBlock", false, "pre") when a[b]c
+PASS execCommand("formatBlock", false, "pre") when a[b]c: the command should be disabled
+PASS execCommand("formatBlock", false, "pre") when a[b]c should return false
+PASS execCommand("formatBlock", false, "pre") when a[b]c should not update the DOM
+PASS execCommand("formatBlock", false, "pre") when a[b]c should not cause input event
+PASS execCommand("heading", false, "h1") when a[b]c
+PASS execCommand("heading", false, "h1") when a[b]c: the command should be disabled
+PASS execCommand("heading", false, "h1") when a[b]c should return false
+PASS execCommand("heading", false, "h1") when a[b]c should not update the DOM
+PASS execCommand("heading", false, "h1") when a[b]c should not cause input event
+PASS execCommand("hiliteColor", false, "red") when a[b]c
+PASS execCommand("hiliteColor", false, "red") when a[b]c: the command should be disabled
+PASS execCommand("hiliteColor", false, "red") when a[b]c should return false
+PASS execCommand("hiliteColor", false, "red") when a[b]c should not update the DOM
+PASS execCommand("hiliteColor", false, "red") when a[b]c should not cause input event
+PASS execCommand("increaseFontSize", false, undefined) when a[b]c
+PASS execCommand("increaseFontSize", false, undefined) when a[b]c: the command should be disabled
+PASS execCommand("increaseFontSize", false, undefined) when a[b]c should return false
+PASS execCommand("increaseFontSize", false, undefined) when a[b]c should not update the DOM
+PASS execCommand("increaseFontSize", false, undefined) when a[b]c should not cause input event
+PASS execCommand("indent", false, undefined) when <ul><li>[abc]</li></ul>
+PASS execCommand("indent", false, undefined) when <ul><li>[abc]</li></ul>: the command should be disabled
+PASS execCommand("indent", false, undefined) when <ul><li>[abc]</li></ul> should return false
+PASS execCommand("indent", false, undefined) when <ul><li>[abc]</li></ul> should not update the DOM
+PASS execCommand("indent", false, undefined) when <ul><li>[abc]</li></ul> should not cause input event
+PASS execCommand("indent", false, undefined) when <blockquote>[abc]</blockquote>
+PASS execCommand("indent", false, undefined) when <blockquote>[abc]</blockquote>: the command should be disabled
+PASS execCommand("indent", false, undefined) when <blockquote>[abc]</blockquote> should return false
+PASS execCommand("indent", false, undefined) when <blockquote>[abc]</blockquote> should not update the DOM
+PASS execCommand("indent", false, undefined) when <blockquote>[abc]</blockquote> should not cause input event
+PASS execCommand("insertOrderedList", false, undefined) when a[b]c
+PASS execCommand("insertOrderedList", false, undefined) when a[b]c: the command should be disabled
+PASS execCommand("insertOrderedList", false, undefined) when a[b]c should return false
+PASS execCommand("insertOrderedList", false, undefined) when a[b]c should not update the DOM
+PASS execCommand("insertOrderedList", false, undefined) when a[b]c should not cause input event
+PASS execCommand("insertUnorderedList", false, undefined) when a[b]c
+PASS execCommand("insertUnorderedList", false, undefined) when a[b]c: the command should be disabled
+PASS execCommand("insertUnorderedList", false, undefined) when a[b]c should return false
+PASS execCommand("insertUnorderedList", false, undefined) when a[b]c should not update the DOM
+PASS execCommand("insertUnorderedList", false, undefined) when a[b]c should not cause input event
+PASS execCommand("italic", false, undefined) when a[b]c
+PASS execCommand("italic", false, undefined) when a[b]c: the command should be disabled
+PASS execCommand("italic", false, undefined) when a[b]c should return false
+PASS execCommand("italic", false, undefined) when a[b]c should not update the DOM
+PASS execCommand("italic", false, undefined) when a[b]c should not cause input event
+PASS execCommand("justifyCenter", false, undefined) when <div>[abc]</div>
+PASS execCommand("justifyCenter", false, undefined) when <div>[abc]</div>: the command should be disabled
+PASS execCommand("justifyCenter", false, undefined) when <div>[abc]</div> should return false
+PASS execCommand("justifyCenter", false, undefined) when <div>[abc]</div> should not update the DOM
+PASS execCommand("justifyCenter", false, undefined) when <div>[abc]</div> should not cause input event
+PASS execCommand("justifyFull", false, undefined) when <div>[abc]</div>
+PASS execCommand("justifyFull", false, undefined) when <div>[abc]</div>: the command should be disabled
+PASS execCommand("justifyFull", false, undefined) when <div>[abc]</div> should return false
+PASS execCommand("justifyFull", false, undefined) when <div>[abc]</div> should not update the DOM
+PASS execCommand("justifyFull", false, undefined) when <div>[abc]</div> should not cause input event
+PASS execCommand("justifyLeft", false, undefined) when <div>[abc]</div>
+PASS execCommand("justifyLeft", false, undefined) when <div>[abc]</div>: the command should be disabled
+PASS execCommand("justifyLeft", false, undefined) when <div>[abc]</div> should return false
+PASS execCommand("justifyLeft", false, undefined) when <div>[abc]</div> should not update the DOM
+PASS execCommand("justifyLeft", false, undefined) when <div>[abc]</div> should not cause input event
+PASS execCommand("justifyRight", false, undefined) when <div>[abc]</div>
+PASS execCommand("justifyRight", false, undefined) when <div>[abc]</div>: the command should be disabled
+PASS execCommand("justifyRight", false, undefined) when <div>[abc]</div> should return false
+PASS execCommand("justifyRight", false, undefined) when <div>[abc]</div> should not update the DOM
+PASS execCommand("justifyRight", false, undefined) when <div>[abc]</div> should not cause input event
+PASS execCommand("outdent", false, undefined) when <ul><li>[abc]</li></ul>
+PASS execCommand("outdent", false, undefined) when <ul><li>[abc]</li></ul>: the command should be disabled
+PASS execCommand("outdent", false, undefined) when <ul><li>[abc]</li></ul> should return false
+PASS execCommand("outdent", false, undefined) when <ul><li>[abc]</li></ul> should not update the DOM
+PASS execCommand("outdent", false, undefined) when <ul><li>[abc]</li></ul> should not cause input event
+PASS execCommand("outdent", false, undefined) when <blockquote>[abc]</blockquote>
+PASS execCommand("outdent", false, undefined) when <blockquote>[abc]</blockquote>: the command should be disabled
+PASS execCommand("outdent", false, undefined) when <blockquote>[abc]</blockquote> should return false
+PASS execCommand("outdent", false, undefined) when <blockquote>[abc]</blockquote> should not update the DOM
+PASS execCommand("outdent", false, undefined) when <blockquote>[abc]</blockquote> should not cause input event
+PASS execCommand("removeFormat", false, undefined) when a<b>[b]</b>c
+FAIL execCommand("removeFormat", false, undefined) when a<b>[b]</b>c: the command should be disabled assert_false: expected false got true
+FAIL execCommand("removeFormat", false, undefined) when a<b>[b]</b>c should return false assert_false: expected false got true
+FAIL execCommand("removeFormat", false, undefined) when a<b>[b]</b>c should not update the DOM assert_equals: expected "<div contenteditable=\"plaintext-only\">abc</div>" but got "<div contenteditable=\"plaintext-only\">a<b>b</b>c</div>"
+FAIL execCommand("removeFormat", false, undefined) when a<b>[b]</b>c should not cause input event assert_equals: expected (undefined) undefined but got (string) "input={inputType=\"\"}"
+PASS execCommand("strikeThrough", false, undefined) when a[b]c
+PASS execCommand("strikeThrough", false, undefined) when a[b]c: the command should be disabled
+PASS execCommand("strikeThrough", false, undefined) when a[b]c should return false
+PASS execCommand("strikeThrough", false, undefined) when a[b]c should not update the DOM
+PASS execCommand("strikeThrough", false, undefined) when a[b]c should not cause input event
+PASS execCommand("subscript", false, undefined) when a[b]c
+PASS execCommand("subscript", false, undefined) when a[b]c: the command should be disabled
+PASS execCommand("subscript", false, undefined) when a[b]c should return false
+PASS execCommand("subscript", false, undefined) when a[b]c should not update the DOM
+PASS execCommand("subscript", false, undefined) when a[b]c should not cause input event
+PASS execCommand("superscript", false, undefined) when a[b]c
+PASS execCommand("superscript", false, undefined) when a[b]c: the command should be disabled
+PASS execCommand("superscript", false, undefined) when a[b]c should return false
+PASS execCommand("superscript", false, undefined) when a[b]c should not update the DOM
+PASS execCommand("superscript", false, undefined) when a[b]c should not cause input event
+PASS execCommand("underline", false, undefined) when a[b]c
+PASS execCommand("underline", false, undefined) when a[b]c: the command should be disabled
+PASS execCommand("underline", false, undefined) when a[b]c should return false
+PASS execCommand("underline", false, undefined) when a[b]c should not update the DOM
+PASS execCommand("underline", false, undefined) when a[b]c should not cause input event
+PASS execCommand("unlink", false, undefined) when a<a href="http://example.com">[b]</a>c
+PASS execCommand("unlink", false, undefined) when a<a href="http://example.com">[b]</a>c: the command should be disabled
+PASS execCommand("unlink", false, undefined) when a<a href="http://example.com">[b]</a>c should return false
+PASS execCommand("unlink", false, undefined) when a<a href="http://example.com">[b]</a>c should not update the DOM
+PASS execCommand("unlink", false, undefined) when a<a href="http://example.com">[b]</a>c should not cause input event
+
