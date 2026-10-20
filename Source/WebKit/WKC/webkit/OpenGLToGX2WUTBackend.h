@@ -8,6 +8,7 @@
 #pragma once
 
 #include "OpenGLToGX2Driver.h"
+#include "OpenGLToGX2WUTResources.h"
 
 #if defined(__WUT__)
 #include <gx2/surface.h>
@@ -16,6 +17,7 @@ namespace WKC {
 namespace GLGX2 {
 
 struct WUTBackendContext {
+    WUTBufferResources bufferResources;
     GX2ColorBuffer* colorBuffer { nullptr };
     GX2DepthBuffer* depthBuffer { nullptr };
     Color clearColor;
@@ -54,6 +56,7 @@ struct WUTBackendContext {
 };
 
 Backend makeWUTBackend(WUTBackendContext&);
+BufferBackend makeWUTBufferBackend(WUTBackendContext&);
 
 } // namespace GLGX2
 } // namespace WKC
