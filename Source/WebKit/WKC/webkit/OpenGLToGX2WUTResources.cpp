@@ -315,6 +315,31 @@ bool buildWUTAttributeStreams(const WUTBufferResources& resources, std::vector<G
     return true;
 }
 
+bool initializeWUTFetchShader(const WUTBufferResources& resources, GX2FetchShader& shader,
+    void* programBuffer, uint32_t bufferSize, GX2FetchShaderType type,
+    GX2TessellationMode tessellationMode)
+{
+    if (!programBuffer)
+        return false;
+
+    std::vector<GX2AttribStream> streams;
+    if (!buildWUTAttributeStreams(resources, streams))
+        return false;
+    if (streams.empty())
+        return false;
+
+    const uint32_t requiredSize = GX2CalcFetchShaderSizeEx(
+        static_cast<uint32_t>(streams.size()), type, tessellationMode);
+    if (!requiredSize || bufferSize < requiredSize
+        || (reinterpret_cast<uintptr_t>(programBuffer) & (GX2_SHADER_PROGRAM_ALIGNMENT - 1)))
+        return false;
+
+    GX2InitFetchShaderEx(&shader, static_cast<uint8_t*>(programBuffer),
+        static_cast<uint32_t>(streams.size()), streams.data(), type, tessellationMode);
+    GX2SetFetchShader(&shader);
+    return true;
+}
+
 bool setElementBuffer(void* context, BufferName name)
 {
     if (!name)
