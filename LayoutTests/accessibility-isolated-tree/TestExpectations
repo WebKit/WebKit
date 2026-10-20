@@ -74,3 +74,5 @@ accessibility/mac/iframe-position-after-scroll.html [ Failure ]
 accessibility/scroll-to-global-point-main-window.html [ Failure ]
 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Timeout ]
 
+# https://bugs.webkit.org/show_bug.cgi?id=328134
+accessibility/isolated-tree/datetime/time-input-meridiem.html [ Failure ]
