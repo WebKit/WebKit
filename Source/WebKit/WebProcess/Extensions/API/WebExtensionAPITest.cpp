@@ -354,7 +354,7 @@ JSValueRef WebExtensionAPITest::assertSafe(JSContextRef context, JSValueRef func
 JSValueRef WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValueRef function, const String& message)
 {
     JSValueRef result = assertSafe(context, function, message);
-    if (!isThenable(context, function))
+    if (!isThenable(context, result))
         return result;
 
     return assertResolves(context, result, message);

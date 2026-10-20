@@ -116,6 +116,9 @@ JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef 
     if (!isThenable(context, promiseRef))
         return JSValueMakeNull(context);
 
+    // The handler runs after this function returns, so it needs its own copy of the message.
+    String messageCopy = message;
+
     auto promiseHandler = ^(JSValue *result, JSValue *error) {
         if (!error) {
             succeed(context, @"Promise resolved without an error");
@@ -124,7 +127,7 @@ JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef 
         }
 
         JSValue *errorMessageValue = error.isObject && [error hasProperty:@"message"] ? error[@"message"] : error;
-        fail(context, combineMessages(message, makeString("Promise rejected with an error: "_s, debugString(context, errorMessageValue.JSValueRef))));
+        fail(context, combineMessages(messageCopy, makeString("Promise rejected with an error: "_s, debugString(context, errorMessageValue.JSValueRef))));
 
         [resolveCallback callWithArguments:nil];
     };

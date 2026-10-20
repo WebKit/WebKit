@@ -696,6 +696,142 @@ TEST(WKWebExtensionAPITest, RunTestsVerifyFailedTestAborts)
     EXPECT_EQ(manager.get().testResults.count, testNames.count);
 }
 
+TEST(WKWebExtensionAPITest, AssertionsThatPass)
+{
+    auto *testNames = @[
+        @"assertSafe",
+        @"assertSafeResolveWithResolvedPromise",
+        @"assertSafeResolveWithNonPromiseResult",
+        @"assertResolves",
+        @"assertRejects",
+        @"assertRejectsWithMatchingError",
+        @"assertThrows"
+    ];
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const tests = [",
+
+        @"  browser.test.addTest(async function assertSafe() {",
+        @"    const result = browser.test.assertSafe(() => 'Plain String')",
+        @"    browser.test.assertEq(result, 'Plain String')",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertSafeResolveWithResolvedPromise() {",
+        @"    const result = await browser.test.assertSafeResolve(() => Promise.resolve({ key: 'Value' }))",
+        @"    browser.test.assertDeepEq(result, { key: 'Value' })",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertSafeResolveWithNonPromiseResult() {",
+        @"    const result = await browser.test.assertSafeResolve(() => ({ key: 'Value' }))",
+        @"    browser.test.assertDeepEq(result, { key: 'Value' })",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertResolves() {",
+        @"    const result = await browser.test.assertResolves(Promise.resolve({ key: 'Value' }))",
+        @"    browser.test.assertDeepEq(result, { key: 'Value' })",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertRejects() {",
+        @"    await browser.test.assertRejects(Promise.reject(new Error('Expected Error')))",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertRejectsWithMatchingError() {",
+        @"    await browser.test.assertRejects(Promise.reject(new Error('Expected Error')), /Expected/)",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertThrows() {",
+        @"    browser.test.assertThrows(() => { throw new Error('Expected Error') })",
+        @"  })",
+        @"]",
+
+        @"Promise.allSettled(tests).then(() => browser.test.notifyPass())"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().testsAdded, testNames);
+    EXPECT_EQ(manager.get().testResults.count, testNames.count);
+
+    for (NSString *testName in testNames)
+        EXPECT_TRUE([manager.get().testResults[testName] boolValue]) << testName.UTF8String << " should have passed";
+}
+
+TEST(WKWebExtensionAPITest, AssertionsThatFail)
+{
+    auto *testNames = @[
+        @"assertSafeWithThrowingFunction",
+        @"assertSafeResolveWithRejectedPromise",
+        @"assertSafeResolveWithRejectedAsyncFunction",
+        @"assertSafeResolveWithThrowingFunction",
+        @"assertResolvesWithRejectedPromise",
+        @"assertRejectsWithResolvedPromise",
+        @"assertRejectsWithMismatchedError",
+        @"assertThrowsWithoutThrowing"
+    ];
+
+    // The catch blocks hide the rejection that await rethrows, so these only fail if the assertion reports it itself.
+    auto *backgroundScript = Util::constructScript(@[
+        @"const tests = [",
+
+        @"  browser.test.addTest(async function assertSafeWithThrowingFunction() {",
+        @"    browser.test.assertSafe(() => { throw new Error('Expected Error') })",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertSafeResolveWithRejectedPromise() {",
+        @"    try {",
+        @"      await browser.test.assertSafeResolve(() => Promise.reject(new Error('Expected Error')))",
+        @"    } catch (error) { }",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertSafeResolveWithRejectedAsyncFunction() {",
+        @"    try {",
+        @"      await browser.test.assertSafeResolve(async () => { throw new Error('Expected Error') })",
+        @"    } catch (error) { }",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertSafeResolveWithThrowingFunction() {",
+        @"    browser.test.assertSafeResolve(() => { throw new Error('Expected Error') })",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertResolvesWithRejectedPromise() {",
+        @"    try {",
+        @"      await browser.test.assertResolves(Promise.reject(new Error('Expected Error')))",
+        @"    } catch (error) { }",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertRejectsWithResolvedPromise() {",
+        @"    try {",
+        @"      await browser.test.assertRejects(Promise.resolve({ key: 'Value' }))",
+        @"    } catch (error) { }",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertRejectsWithMismatchedError() {",
+        @"    try {",
+        @"      await browser.test.assertRejects(Promise.reject(new Error('Other Error')), /Expected/)",
+        @"    } catch (error) { }",
+        @"  }),",
+
+        @"  browser.test.addTest(async function assertThrowsWithoutThrowing() {",
+        @"    browser.test.assertThrows(() => 'Plain String')",
+        @"  })",
+        @"]",
+
+        @"Promise.allSettled(tests).then(() => browser.test.notifyPass())"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().testsAdded, testNames);
+    EXPECT_EQ(manager.get().testResults.count, testNames.count);
+
+    for (NSString *testName in testNames)
+        EXPECT_FALSE([manager.get().testResults[testName] boolValue]) << testName.UTF8String << " should have failed";
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
