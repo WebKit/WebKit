@@ -362,18 +362,19 @@ bool setElementBuffer(void* context, BufferName name)
 
 bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName elementBuffer)
 {
-    if (!elementBuffer || draw.baseVertex != 0 || draw.indexOffset > UINT32_MAX)
+    if (!elementBuffer || draw.indexOffset > UINT32_MAX
+        || (draw.indexBytes != 1 && draw.indexBytes != 2 && draw.indexBytes != 4)
+        || draw.count > UINT32_MAX / sizeof(uint32_t))
         return false;
-    if (draw.indexBytes == 1)
-        return false; // GX2 has no U8 index format; use a widened staging store.
 
     auto& resources = *static_cast<WUTBufferResources*>(context);
     auto it = resources.buffers.find(elementBuffer);
     if (it == resources.buffers.end() || !it->second || !it->second->buffer)
         return false;
-    const size_t capacity = static_cast<size_t>(it->second->elemSize) * it->second->elemCount;
-    if (draw.indexOffset > capacity
-        || static_cast<size_t>(draw.count) > (capacity - draw.indexOffset) / draw.indexBytes)
+    GX2RBuffer* source = it->second;
+    const size_t capacity = static_cast<size_t>(source->elemSize) * source->elemCount;
+    const size_t indexDataSize = static_cast<size_t>(draw.count) * draw.indexBytes;
+    if (draw.indexOffset > capacity || indexDataSize > capacity - draw.indexOffset)
         return false;
 
     GX2PrimitiveMode mode;
@@ -387,16 +388,100 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
     default: return false;
     }
 
-    GX2IndexType type;
-    if (draw.indexBytes == 2)
-        type = GX2_INDEX_TYPE_U16_LE;
-    else if (draw.indexBytes == 4)
-        type = GX2_INDEX_TYPE_U32_LE;
-    else
+    // GX2 does not support GL's U8 indices or base-vertex draw semantics.
+    // Normalize every index to U32 in a temporary GX2R index buffer, applying
+    // baseVertex while staging. This also ensures the submitted byte offset is
+    // zero and the index pointer always refers to a real GPU-visible buffer.
+    void* sourceMemory = GX2RLockBufferEx(source,
+        static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
+    if (!sourceMemory)
         return false;
 
-    GX2DrawIndexedEx(mode, draw.count, type, it->second->buffer,
-        static_cast<uint32_t>(draw.indexOffset), draw.instances);
+    std::vector<uint32_t> indices;
+    try {
+        indices.resize(draw.count);
+    } catch (...) {
+        GX2RUnlockBufferEx(source,
+            static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
+        return false;
+    }
+
+    const auto* bytes = static_cast<const uint8_t*>(sourceMemory) + draw.indexOffset;
+    uint32_t maximumIndex = 0;
+    for (uint32_t i = 0; i < draw.count; ++i) {
+        uint32_t index = 0;
+        if (draw.indexBytes == 1) {
+            index = bytes[i];
+        } else if (draw.indexBytes == 2) {
+            uint16_t value;
+            std::memcpy(&value, bytes + static_cast<size_t>(i) * 2, sizeof(value));
+            index = value;
+        } else {
+            std::memcpy(&index, bytes + static_cast<size_t>(i) * 4, sizeof(index));
+        }
+        const int64_t adjusted = static_cast<int64_t>(index) + draw.baseVertex;
+        if (adjusted < 0 || adjusted > UINT32_MAX) {
+            GX2RUnlockBufferEx(source,
+                static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
+            return false;
+        }
+        indices[i] = static_cast<uint32_t>(adjusted);
+        if (indices[i] > maximumIndex)
+            maximumIndex = indices[i];
+    }
+    GX2RUnlockBufferEx(source,
+        static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
+
+    // Validate the actual referenced vertex range, rather than approximating
+    // it with draw.count. Instance-divisor attributes use instance indices.
+    for (const auto& entry : resources.attributes) {
+        const auto& attribute = entry.second;
+        if (!attribute.enabled)
+            continue;
+        auto vertexBuffer = resources.buffers.find(attribute.buffer);
+        if (!attribute.buffer || vertexBuffer == resources.buffers.end() || !vertexBuffer->second)
+            return false;
+        const size_t vertexCapacity = static_cast<size_t>(vertexBuffer->second->elemSize)
+            * vertexBuffer->second->elemCount;
+        const size_t scalarSize = attribute.sourceType == AttributeType::Byte
+            || attribute.sourceType == AttributeType::UnsignedByte ? 1
+            : attribute.sourceType == AttributeType::Short
+                || attribute.sourceType == AttributeType::UnsignedShort
+                || attribute.sourceType == AttributeType::HalfFloat ? 2 : 4;
+        const size_t elementSize = scalarSize * attribute.components;
+        const size_t stride = attribute.stride ? attribute.stride : elementSize;
+        if (attribute.offset > vertexCapacity || elementSize > vertexCapacity - attribute.offset)
+            return false;
+        const size_t available = vertexCapacity - attribute.offset;
+        const uint64_t lastElement = attribute.divisor
+            ? (draw.instances ? (draw.instances - 1) / attribute.divisor : 0)
+            : maximumIndex;
+        if (lastElement > (available - elementSize) / stride)
+            return false;
+    }
+
+    GX2RBuffer staged {};
+    staged.flags = static_cast<GX2RResourceFlags>(
+        GX2R_RESOURCE_BIND_INDEX_BUFFER
+        | GX2R_RESOURCE_USAGE_CPU_WRITE
+        | GX2R_RESOURCE_USAGE_GPU_READ);
+    staged.elemSize = sizeof(uint32_t);
+    staged.elemCount = draw.count;
+    if (!GX2RCreateBuffer(&staged))
+        return false;
+    void* stagedMemory = GX2RLockBufferEx(&staged,
+        static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+    if (!stagedMemory) {
+        GX2RDestroyBufferEx(&staged, staged.flags);
+        return false;
+    }
+    std::memcpy(stagedMemory, indices.data(), indices.size() * sizeof(uint32_t));
+    GX2RUnlockBufferEx(&staged,
+        static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+
+    GX2DrawIndexedEx(mode, draw.count, GX2_INDEX_TYPE_U32_LE,
+        staged.buffer, 0, draw.instances);
+    GX2RDestroyBufferEx(&staged, staged.flags);
     return true;
 }
 
