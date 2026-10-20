@@ -492,11 +492,11 @@ private:
             videoCounter++;
         }
 
-        bool isCaptureTrack = track.isCaptureTrack();
         m_src = makeGStreamerElement("appsrc"_s, elementName);
 
+        // Samples without timestamps, such as remote video frames, are timed by their arrival.
         g_object_set(m_src.get(), "is-live", TRUE, "format", GST_FORMAT_TIME, "min-percent", 100,
-            "do-timestamp", isCaptureTrack, "handle-segment-change", TRUE, nullptr);
+            "do-timestamp", TRUE, "handle-segment-change", TRUE, nullptr);
         if (track.isVideo())
             g_object_set(m_src.get(), "max-bytes", static_cast<guint64>(2 * MB), nullptr);
         gst_base_src_set_automatic_eos(GST_BASE_SRC_CAST(m_src.get()), FALSE);
