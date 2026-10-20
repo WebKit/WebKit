@@ -1,10 +1,10 @@
 if (WEBKIT_SDK_IS_MACOS)
-
-find_library(CARBON_LIBRARY Carbon)
+    find_library(CARBON_LIBRARY Carbon)
+endif ()
 find_library(QUARTZCORE_LIBRARY QuartzCore)
 
 execute_process(
-    COMMAND xcrun --sdk macosx --show-sdk-platform-path
+    COMMAND xcrun --sdk ${WEBKIT_SDK_NAME} --show-sdk-platform-path
     OUTPUT_VARIABLE _platform_dir
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
@@ -173,10 +173,19 @@ set_source_files_properties(
     SKIP_PRECOMPILE_HEADERS ON)
 
 list(APPEND TestWTF_LIBRARIES
-    ${CARBON_LIBRARY}
-    "-framework Cocoa"
     "-framework CoreFoundation"
 )
+if (WEBKIT_SDK_IS_MACOS)
+    list(APPEND TestWTF_LIBRARIES
+        ${CARBON_LIBRARY}
+        "-framework Cocoa"
+    )
+else ()
+    list(APPEND TestWTF_LIBRARIES
+        "-framework CoreGraphics"
+        "-framework Foundation"
+    )
+endif ()
 
 # Tests/WTF/{cf,cocoa,darwin} include headers from Tests/WTF by name.
 list(APPEND TestWTF_PRIVATE_INCLUDE_DIRECTORIES
@@ -246,46 +255,74 @@ list(APPEND TestWebCore_LIBRARIES
     ${QUARTZCORE_LIBRARY}
 )
 
+if (NOT WEBKIT_SDK_IS_MACOS)
+    list(APPEND TestWebCore_SOURCES
+        Tests/WebCore/ios/PreviewConverter.cpp
+    )
+endif ()
+
 # TestWebKitLegacy
 list(APPEND TestWebKitLegacy_SOURCES
     Helpers/cocoa/TestNSBundleExtras.m
 
     Tests/WebKitLegacy/cocoa/SubstituteDataLocalResourceAccess.mm
     Tests/WebKitLegacy/cocoa/WebPreferencesTest.mm
-
-    Tests/WebKitLegacy/mac/AccessingPastedImage.mm
-    Tests/WebKitLegacy/mac/ClosingWebView.mm
-    Tests/WebKitLegacy/mac/CustomProtocolsInvalidScheme.mm
-    Tests/WebKitLegacy/mac/CustomProtocolsTest.mm
-    Tests/WebKitLegacy/mac/DeallocWebViewInEventListener.mm
-    Tests/WebKitLegacy/mac/DeallocWebViewProviders.mm
-    Tests/WebKitLegacy/mac/DownloadThread.mm
-    Tests/WebKitLegacy/mac/EarlyKVOCrash.mm
-    Tests/WebKitLegacy/mac/EmbeddedPrintPagination.mm
-    Tests/WebKitLegacy/mac/PDFEmbeddedPrintScript.mm
-    Tests/WebKitLegacy/mac/PreventImageLoadWithAutoResizing.mm
-    Tests/WebKitLegacy/mac/URLExtras.mm
-    Tests/WebKitLegacy/mac/UserContentTest.mm
-    Tests/WebKitLegacy/mac/WKBrowsingContextLoadDelegateTest.mm
 )
 
 list(APPEND TestWebKitLegacy_LIBRARIES
     WebKit
-    ${CARBON_LIBRARY}
 )
+
+if (WEBKIT_SDK_IS_MACOS)
+    list(APPEND TestWebKitLegacy_SOURCES
+        Tests/WebKitLegacy/mac/AccessingPastedImage.mm
+        Tests/WebKitLegacy/mac/ClosingWebView.mm
+        Tests/WebKitLegacy/mac/CustomProtocolsInvalidScheme.mm
+        Tests/WebKitLegacy/mac/CustomProtocolsTest.mm
+        Tests/WebKitLegacy/mac/DeallocWebViewInEventListener.mm
+        Tests/WebKitLegacy/mac/DeallocWebViewProviders.mm
+        Tests/WebKitLegacy/mac/DownloadThread.mm
+        Tests/WebKitLegacy/mac/EarlyKVOCrash.mm
+        Tests/WebKitLegacy/mac/EmbeddedPrintPagination.mm
+        Tests/WebKitLegacy/mac/PDFEmbeddedPrintScript.mm
+        Tests/WebKitLegacy/mac/PreventImageLoadWithAutoResizing.mm
+        Tests/WebKitLegacy/mac/URLExtras.mm
+        Tests/WebKitLegacy/mac/UserContentTest.mm
+        Tests/WebKitLegacy/mac/WKBrowsingContextLoadDelegateTest.mm
+    )
+
+    list(APPEND TestWebKitLegacy_LIBRARIES
+        ${CARBON_LIBRARY}
+    )
+else ()
+    list(APPEND TestWebKitLegacy_SOURCES
+        Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm
+        Tests/WebKitLegacy/ios/DateTimeInputsAccessoryViewTests.mm
+        Tests/WebKitLegacy/ios/JSLockTakesWebThreadLock.mm
+        Tests/WebKitLegacy/ios/PreemptVideoFullscreen.mm
+        Tests/WebKitLegacy/ios/ScrollToRevealSelection.mm
+        Tests/WebKitLegacy/ios/ScrollingDoesNotPauseMedia.mm
+        Tests/WebKitLegacy/ios/SnapshotViaRenderInContext.mm
+        Tests/WebKitLegacy/ios/WebGLNoCrashOnOtherThreadAccess.mm
+        Tests/WebKitLegacy/ios/WebGLPrepareDisplayOnWebThread.mm
+        Tests/WebKitLegacy/ios/WebThreadLock.mm
+    )
+endif ()
 
 # TestWebKit
 set(TestWebKit_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/TestWebKit")
 
 list(APPEND TestWebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesCocoa.txt"
-    "SourcesMac.txt"
 )
+if (WEBKIT_SDK_IS_MACOS)
+    list(APPEND TestWebKit_UNIFIED_SOURCE_LIST_FILES
+        "SourcesMac.txt"
+    )
+endif ()
 
 # Files compiled outside unified sources (Xcode membershipExceptions).
 list(APPEND TestWebKit_SOURCES
-    ${TOOLS_DIR}/TestRunnerShared/mac/SyntheticNSEvent.mm
-
     Helpers/Counters.cpp
     Helpers/DeprecatedGlobalValues.cpp
     Helpers/GraphicsTestUtilities.cpp
@@ -295,37 +332,12 @@ list(APPEND TestWebKit_SOURCES
     Helpers/cocoa/HTTPServer.mm
     Helpers/cocoa/MiniTURNServer.mm
     Helpers/cocoa/TestCocoaImageAndCocoaColor.mm
+    Helpers/cocoa/TestContextMenuDriver.mm
     Helpers/cocoa/TestElementFullscreenDelegate.mm
     Helpers/cocoa/TestNSBundleExtras.m
     Helpers/cocoa/UtilitiesCocoa.mm
     Helpers/cocoa/WebExtensionUtilities.mm
     Helpers/cocoa/WebTransportServer.mm
-
-    Helpers/mac/DragAndDropSimulatorMac.mm
-    Helpers/mac/JavaScriptTestMac.mm
-    Helpers/mac/NSFontPanelTesting.mm
-    Helpers/mac/OffscreenWindow.mm
-    Helpers/mac/PlatformUtilitiesMac.mm
-    Helpers/mac/PlatformWebViewMac.mm
-    Helpers/mac/SyntheticBackingScaleFactorWindow.m
-    Helpers/mac/TestBrowsingContextLoadDelegate.mm
-    Helpers/mac/TestDraggingInfo.mm
-    Helpers/mac/TestFilePromiseReceiver.mm
-    Helpers/mac/TestFontOptions.mm
-    Helpers/mac/TestInspectorBar.mm
-    Helpers/mac/VirtualGamepad.mm
-    Helpers/mac/WKWebViewForTestingImmediateActions.mm
-    Helpers/mac/WebKitAgnosticTest.mm
-
-    Helpers/mac/GamepadMappings/GoogleStadia.mm
-    Helpers/mac/GamepadMappings/LogitechF310.mm
-    Helpers/mac/GamepadMappings/LogitechF710.mm
-    Helpers/mac/GamepadMappings/MicrosoftXboxOne.mm
-    Helpers/mac/GamepadMappings/ShenzhenLongshengweiTechnologyGamepad.mm
-    Helpers/mac/GamepadMappings/SonyDualShock3.mm
-    Helpers/mac/GamepadMappings/SonyDualShock4.mm
-    Helpers/mac/GamepadMappings/SteelSeriesNimbus.mm
-    Helpers/mac/GamepadMappings/SunLightApplicationGenericNES.mm
 
     Tests/TestWebKitAPIAdditionsHook.mm
 
@@ -388,10 +400,6 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKPage/cocoa/WebFilter.mm
     Tests/WebKit/WKPage/cocoa/XPCEndpoint.mm
 
-    Tests/WebKit/WKPage/mac/CustomProtocolsSyncXHRTest.mm
-    Tests/WebKit/WKPage/mac/DeferredViewInWindowStateChange.mm
-    Tests/WebKit/WKPage/mac/WKThumbnailView.mm
-
     Tests/WebKit/WKWebView/AdvancedPrivacyProtections.mm
     Tests/WebKit/WKWebView/AllowInlinePlaybackInDesktopClassBrowsing.mm
     Tests/WebKit/WKWebView/AnimationControl.mm
@@ -419,15 +427,110 @@ list(APPEND TestWebKit_SOURCES
 
     Tests/WebKit/WKWebView/ios/FullscreenTouchSecheuristicTests.cpp
 
-    Tests/WebKit/WKWebView/mac/AttributedSubstringForProposedRange.mm
-    Tests/WebKit/WKWebView/mac/GrammarMarkerPrecedence.mm
-    Tests/WebKit/WKWebView/mac/NSRefreshControllerTests.mm
-    Tests/WebKit/WKWebView/mac/PasteboardFileTypeBlocklist.mm
-    Tests/WebKit/WKWebView/mac/RunningBoardManagement.mm
-    Tests/WebKit/WKWebView/mac/WordBoundaryTypingAttributes.mm
-
     Tests/WebKit/WebPage/EnhancedSecurityTests.swift
 )
+
+if (WEBKIT_SDK_IS_MACOS)
+    list(APPEND TestWebKit_SOURCES
+        ${TOOLS_DIR}/TestRunnerShared/mac/SyntheticNSEvent.mm
+
+        Helpers/mac/DragAndDropSimulatorMac.mm
+        Helpers/mac/JavaScriptTestMac.mm
+        Helpers/mac/NSFontPanelTesting.mm
+        Helpers/mac/OffscreenWindow.mm
+        Helpers/mac/PlatformUtilitiesMac.mm
+        Helpers/mac/PlatformWebViewMac.mm
+        Helpers/mac/SyntheticBackingScaleFactorWindow.m
+        Helpers/mac/TestBrowsingContextLoadDelegate.mm
+        Helpers/mac/TestDraggingInfo.mm
+        Helpers/mac/TestFilePromiseReceiver.mm
+        Helpers/mac/TestFontOptions.mm
+        Helpers/mac/TestInspectorBar.mm
+        Helpers/mac/VirtualGamepad.mm
+        Helpers/mac/WKWebViewForTestingImmediateActions.mm
+        Helpers/mac/WebKitAgnosticTest.mm
+
+        Helpers/mac/GamepadMappings/GoogleStadia.mm
+        Helpers/mac/GamepadMappings/LogitechF310.mm
+        Helpers/mac/GamepadMappings/LogitechF710.mm
+        Helpers/mac/GamepadMappings/MicrosoftXboxOne.mm
+        Helpers/mac/GamepadMappings/ShenzhenLongshengweiTechnologyGamepad.mm
+        Helpers/mac/GamepadMappings/SonyDualShock3.mm
+        Helpers/mac/GamepadMappings/SonyDualShock4.mm
+        Helpers/mac/GamepadMappings/SteelSeriesNimbus.mm
+        Helpers/mac/GamepadMappings/SunLightApplicationGenericNES.mm
+
+        Tests/WebKit/WKPage/mac/CustomProtocolsSyncXHRTest.mm
+        Tests/WebKit/WKPage/mac/DeferredViewInWindowStateChange.mm
+        Tests/WebKit/WKPage/mac/WKThumbnailView.mm
+
+        Tests/WebKit/WKWebView/mac/AttributedSubstringForProposedRange.mm
+        Tests/WebKit/WKWebView/mac/GrammarMarkerPrecedence.mm
+        Tests/WebKit/WKWebView/mac/NSRefreshControllerTests.mm
+        Tests/WebKit/WKWebView/mac/PasteboardFileTypeBlocklist.mm
+        Tests/WebKit/WKWebView/mac/RunningBoardManagement.mm
+        Tests/WebKit/WKWebView/mac/WordBoundaryTypingAttributes.mm
+    )
+else ()
+    list(APPEND TestWebKit_SOURCES
+        Helpers/ios/DragAndDropSimulatorIOS.mm
+        Helpers/ios/PreferredContentMode.mm
+        Helpers/ios/TestUIMenuBuilder.mm
+        Helpers/ios/TestWKWebViewController.mm
+        Helpers/ios/UIKitTestingHelpers.mm
+
+        Tests/WebKit/WKWebView/ios/AccessibilityTestsIOS.mm
+        Tests/WebKit/WKWebView/ios/ActionSheetTests.mm
+        Tests/WebKit/WKWebView/ios/ApplicationStateTracking.mm
+        Tests/WebKit/WKWebView/ios/AutocorrectionTestsIOS.mm
+        Tests/WebKit/WKWebView/ios/BacklightLevelNotification.mm
+        Tests/WebKit/WKWebView/ios/CALayerTreeAsText.mm
+        Tests/WebKit/WKWebView/ios/CustomContentViewGestures.mm
+        Tests/WebKit/WKWebView/ios/DataDetectorsTestIOS.mm
+        Tests/WebKit/WKWebView/ios/DataListTextSuggestionTests.mm
+        Tests/WebKit/WKWebView/ios/DragAndDropTestsIOS.mm
+        Tests/WebKit/WKWebView/ios/ElementActionTests.mm
+        Tests/WebKit/WKWebView/ios/EnterKeyHintTests.mm
+        Tests/WebKit/WKWebView/ios/FocusPreservationTests.mm
+        Tests/WebKit/WKWebView/ios/FullscreenLayoutParameters.mm
+        Tests/WebKit/WKWebView/ios/GestureRecognizerTests.mm
+        Tests/WebKit/WKWebView/ios/GrantAccessToMobileAssets.mm
+        Tests/WebKit/WKWebView/ios/InteractiveWidget.mm
+        Tests/WebKit/WKWebView/ios/KeyboardInputTestsIOS.mm
+        Tests/WebKit/WKWebView/ios/ModalDialogDuringOverlappingFocus.mm
+        Tests/WebKit/WKWebView/ios/OverflowScrollViewTests.mm
+        Tests/WebKit/WKWebView/ios/RenderingProgressTests.mm
+        Tests/WebKit/WKWebView/ios/ScrollViewBouncesTests.mm
+        Tests/WebKit/WKWebView/ios/ScrollViewInsetTests.mm
+        Tests/WebKit/WKWebView/ios/ScrollViewScrollabilityTests.mm
+        Tests/WebKit/WKWebView/ios/SelectionByWord.mm
+        Tests/WebKit/WKWebView/ios/SelectionModifyByParagraphBoundary.mm
+        Tests/WebKit/WKWebView/ios/SetTimeoutFunction.mm
+        Tests/WebKit/WKWebView/ios/ShareSheetTests.mm
+        Tests/WebKit/WKWebView/ios/SynchronousTimeoutTests.mm
+        Tests/WebKit/WKWebView/ios/TestInputDelegate.mm
+        Tests/WebKit/WKWebView/ios/TextAlternatives.mm
+        Tests/WebKit/WKWebView/ios/TextAutosizingBoost.mm
+        Tests/WebKit/WKWebView/ios/TextServicesTests.mm
+        Tests/WebKit/WKWebView/ios/TextStyleFontSize.mm
+        Tests/WebKit/WKWebView/ios/TouchEventTests.mm
+        Tests/WebKit/WKWebView/ios/UIFocusTests.mm
+        Tests/WebKit/WKWebView/ios/UIPasteboardTests.mm
+        Tests/WebKit/WKWebView/ios/UIViewTreeAsText.mm
+        Tests/WebKit/WKWebView/ios/UIWKInteractionViewProtocol.mm
+        Tests/WebKit/WKWebView/ios/UserInterfaceIdiomUpdate.mm
+        Tests/WebKit/WKWebView/ios/Viewport.mm
+        Tests/WebKit/WKWebView/ios/VisualViewport.mm
+        Tests/WebKit/WKWebView/ios/WKScrollViewDelegate.mm
+        Tests/WebKit/WKWebView/ios/WKScrollViewTests.mm
+        Tests/WebKit/WKWebView/ios/WKWebViewAutofillTests.mm
+        Tests/WebKit/WKWebView/ios/WKWebViewOpaque.mm
+        Tests/WebKit/WKWebView/ios/WKWebViewPausePlayingAudioTests.mm
+        Tests/WebKit/WKWebView/ios/WKWebViewResize.mm
+        Tests/WebKit/WKWebView/ios/WindowOrientation.mm
+        Tests/WebKit/WKWebView/ios/ZoomToFocusedElement.mm
+    )
+endif ()
 
 list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
     ${ICU_INCLUDE_DIRS}
@@ -461,25 +564,73 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBKIT_DIR}/Platform/cocoa
 )
 
+if (NOT WEBKIT_SDK_IS_MACOS)
+    list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
+        ${TESTWEBKITAPI_DIR}/Helpers/ios
+        ${WEBKIT_DIR}/Platform/spi/ios
+        ${WEBKIT_DIR}/Shared/ios
+        ${WEBKIT_DIR}/UIProcess/ios
+    )
+endif ()
+
 list(APPEND TestWebKit_LIBRARIES
     "-framework AuthKit"
     "-framework AuthenticationServices"
-    "-framework HID"
     "-framework LocalAuthentication"
     "-framework Network"
     "-framework QuartzCore"
-    "-framework Reveal"
     "-framework UniformTypeIdentifiers"
     JavaScriptCore
     WebCoreTestSupport
     WebKitLegacy
-    ${CARBON_LIBRARY}
 )
 
 target_link_options(TestWebKit PRIVATE
     "LINKER:-weak_framework,WritingTools"
-    "LINKER:-weak_framework,WritingToolsUI"
 )
+
+if (WEBKIT_SDK_IS_MACOS)
+    list(APPEND TestWebKit_LIBRARIES
+        "-framework HID"
+        "-framework Reveal"
+        ${CARBON_LIBRARY}
+    )
+
+    target_link_options(TestWebKit PRIVATE
+        "LINKER:-weak_framework,WritingToolsUI"
+    )
+else ()
+    # Matches OTHER_LDFLAGS for the iOS family in TestWebKitAPIBase.xcconfig.
+    list(APPEND TestWebKit_LIBRARIES
+        "-framework AVKit"
+        "-framework AppServerSupport"
+        "-framework BrowserEngineKit"
+        "-framework CFNetwork"
+        "-framework CoreFoundation"
+        "-framework CoreGraphics"
+        "-framework CoreLocation"
+        "-framework CoreServices"
+        "-framework CoreText"
+        "-framework GameController"
+        "-framework IOKit"
+        "-framework IOSurface"
+        "-framework ImageIO"
+        "-framework Metal"
+        "-framework MobileCoreServices"
+        "-framework OpenGLES"
+        "-framework PDFKit"
+        "-framework Security"
+        "-framework UIKit"
+        "-framework VisionKitCore"
+        -licucore
+        -lxml2
+        WebCore
+    )
+
+    target_link_options(TestWebKit PRIVATE
+        "LINKER:-delay_framework,CoreTelephony"
+    )
+endif ()
 
 set_source_files_properties(
     Helpers/cocoa/WebExtensionUtilities.mm
@@ -499,23 +650,25 @@ WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit -Wno-deprecated-declarations)
 # run-api-tests expects the binary to be named TestWebKitAPI.
 set_target_properties(TestWebKit PROPERTIES OUTPUT_NAME TestWebKitAPI)
 
-# Embed the Info.plist in the __TEXT,__info_plist section. PRODUCT_NAME and
-# PRODUCT_BUNDLE_IDENTIFIER only exist for the configure_file substitution.
-set(PRODUCT_NAME TestWebKitAPI)
-set(PRODUCT_BUNDLE_IDENTIFIER com.apple.WebKit.TestWebKitAPI)
-configure_file("${TESTWEBKITAPI_DIR}/Info.plist"
-               "${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPI-Info.plist")
-unset(PRODUCT_NAME)
-unset(PRODUCT_BUNDLE_IDENTIFIER)
+if (WEBKIT_SDK_IS_MACOS)
+    # Embed the Info.plist in the __TEXT,__info_plist section. PRODUCT_NAME and
+    # PRODUCT_BUNDLE_IDENTIFIER only exist for the configure_file substitution.
+    set(PRODUCT_NAME TestWebKitAPI)
+    set(PRODUCT_BUNDLE_IDENTIFIER com.apple.WebKit.TestWebKitAPI)
+    configure_file("${TESTWEBKITAPI_DIR}/Info.plist"
+                   "${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPI-Info.plist")
+    unset(PRODUCT_NAME)
+    unset(PRODUCT_BUNDLE_IDENTIFIER)
 
-target_link_options(TestWebKit PRIVATE
-    "LINKER:-sectcreate,__TEXT,__info_plist,${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPI-Info.plist")
-set_property(TARGET TestWebKit APPEND PROPERTY LINK_DEPENDS
-    "${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPI-Info.plist")
+    target_link_options(TestWebKit PRIVATE
+        "LINKER:-sectcreate,__TEXT,__info_plist,${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPI-Info.plist")
+    set_property(TARGET TestWebKit APPEND PROPERTY LINK_DEPENDS
+        "${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPI-Info.plist")
 
-webkit_generate_entitlements(TestWebKit
-    USING ${TESTWEBKITAPI_DIR}/Scripts/process-entitlements.sh
-    BUNDLE_IDENTIFIER com.apple.WebKit.TestWebKitAPI)
+    webkit_generate_entitlements(TestWebKit
+        USING ${TESTWEBKITAPI_DIR}/Scripts/process-entitlements.sh
+        BUNDLE_IDENTIFIER com.apple.WebKit.TestWebKitAPI)
+endif ()
 
 # TestWGSL
 if (ENABLE_WEBGPU)
@@ -530,9 +683,13 @@ if (ENABLE_WEBGPU)
     )
 
     list(APPEND TestWGSL_LIBRARIES
-        ${CARBON_LIBRARY}
         "-framework Metal"
     )
+    if (WEBKIT_SDK_IS_MACOS)
+        list(APPEND TestWGSL_LIBRARIES
+            ${CARBON_LIBRARY}
+        )
+    endif ()
 
     # Resources used by MetalCompilationTests and TypeCheckingTests.
     # FIXME: Globbing is hazardous for incremental builds, tracking a
@@ -713,7 +870,6 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WebPage/SendInspectorMessage.swift
     Tests/WebKit/WebPage/SimulateClickOverTextTests.swift
     Tests/WebKit/WebPage/URLSchemeHandlerTests.swift
-    Tests/WebKit/WebPage/UserContentControllerTests.swift
     Tests/WebKit/WebPage/WebPageMouseEventsTests.swift
     Tests/WebKit/WebPage/WebPageNavigationTests.swift
     Tests/WebKit/WebPage/WebPageScrollbarTests.swift
@@ -722,6 +878,14 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WebPage/WebViewTests.swift
 )
 
+# FIXME: The iOS CMake build of WebKit doesn't include the WKUserContentController
+# Swift overlay that this tests.
+if (WEBKIT_SDK_IS_MACOS)
+    list(APPEND TestWebKit_SOURCES
+        Tests/WebKit/WebPage/UserContentControllerTests.swift
+    )
+endif ()
+
 # Tests importing both WebKit and SwiftUI load the _WebKit_SwiftUI cross-import
 # overlay; ensure it builds first.
 list(APPEND TestWebKit_FRAMEWORKS _WebKit_SwiftUI)
@@ -729,12 +893,11 @@ list(APPEND TestWebKit_FRAMEWORKS _WebKit_SwiftUI)
 # TestWebKitAPIBase needs framework headers for config.h includes.
 target_include_directories(TestWebKitAPIBase PRIVATE ${_testapi_framework_headers})
 
-# TestWebKitAPIInjectedBundle -- .bundle for NSBundle loading on Mac.
+# TestWebKitAPIInjectedBundle -- .bundle for NSBundle loading.
 target_sources(TestWebKitAPIInjectedBundle PRIVATE
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/TestNSBundleExtras.m
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/UtilitiesCocoa.mm
     ${TESTWEBKITAPI_DIR}/InjectedBundle/mac/InjectedBundleControllerMac.mm
-    ${TESTWEBKITAPI_DIR}/Helpers/mac/PlatformUtilitiesMac.mm
 
     # CustomBundleObject.mm is also in TestWebKit; both targets compile it.
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/cocoa/CustomBundleObject.mm
@@ -745,10 +908,17 @@ target_sources(TestWebKitAPIInjectedBundle PRIVATE
     ${TESTWEBKITAPI_DIR}/Tests/InjectInternals_Bundle.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/PasteboardNotifications_Bundle.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/cocoa/InjectedBundleAppleEvent_Bundle.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/mac/CustomProtocolsInvalidScheme_Bundle.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/mac/PreventImageLoadWithAutoResizing_Bundle.cpp
 )
+
+if (WEBKIT_SDK_IS_MACOS)
+    target_sources(TestWebKitAPIInjectedBundle PRIVATE
+        ${TESTWEBKITAPI_DIR}/Helpers/mac/PlatformUtilitiesMac.mm
+
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/cocoa/InjectedBundleAppleEvent_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/mac/CustomProtocolsInvalidScheme_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/mac/PreventImageLoadWithAutoResizing_Bundle.cpp
+    )
+endif ()
 
 target_include_directories(TestWebKitAPIInjectedBundle PRIVATE
     ${_testapi_framework_headers}
@@ -780,12 +950,17 @@ target_link_libraries(TestWebKitAPIInjectedBundle PRIVATE
     JavaScriptCore
     WebCoreTestSupport
     WebKit
-    "-framework Cocoa"
     "-framework Foundation"
 )
 
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework Cocoa")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa")
+if (WEBKIT_SDK_IS_MACOS)
+    target_link_libraries(TestWebKitAPIInjectedBundle PRIVATE "-framework Cocoa")
+
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework Cocoa")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa")
+else ()
+    target_link_options(TestWebKitAPIInjectedBundle PRIVATE "LINKER:-not_for_dyld_shared_cache")
+endif ()
 
 # TestWebKitAPIPlugIn.wkbundle -- modern Cocoa WKWebProcessPlugIn bundle loaded via
 # [_WKProcessPoolConfiguration setInjectedBundleURL:] in Util::testPlugInBundleURL().
@@ -862,6 +1037,9 @@ target_include_directories(TestWebKitAPIWebProcessPlugIn PRIVATE
 # Some pulgins still call -[WKWebProcessPlugInBrowserContextController mainFrame];
 target_compile_options(TestWebKitAPIWebProcessPlugIn PRIVATE -Wno-deprecated-declarations)
 
+# PlatformUtilities.h tests WK_HAVE_C_SPI, which config.h leaves undefined on iOS family.
+target_compile_options(TestWebKitAPIWebProcessPlugIn PRIVATE ${TestWebKitAPI_DISABLED_WARNINGS})
+
 # PlatformUtilitiesCocoa.mm uses the WebKit C API, which config.h only pulls in
 # under BUILDING_TestWebKit, as the sibling test targets also define.
 target_compile_definitions(TestWebKitAPIWebProcessPlugIn PRIVATE BUILDING_TestWebKit)
@@ -894,9 +1072,13 @@ target_link_libraries(TestWebKitAPIWebProcessPlugIn PRIVATE
     WebCoreTestSupport
     WebKit
     WebKit::gtest
-    "-framework Cocoa"
     "-framework Foundation"
 )
+if (WEBKIT_SDK_IS_MACOS)
+    target_link_libraries(TestWebKitAPIWebProcessPlugIn PRIVATE "-framework Cocoa")
+else ()
+    target_link_libraries(TestWebKitAPIWebProcessPlugIn PRIVATE "-framework UIKit")
+endif ()
 
 _WEBKIT_ADD_DSYM(TestWebKitAPIWebProcessPlugIn)
 
@@ -907,17 +1089,19 @@ add_dependencies(TestWebKit TestWebKitAPIWebProcessPlugIn)
 # TestWebKitAPIResources.bundle -- test resource files loaded via
 # [NSBundle.test_resourcesBundle URLForResource:withExtension:].
 # For a non-.app executable, NSBundle.mainBundle is the directory containing
-# the binary, so the .bundle must sit next to the test executables.
+# the binary, so the .bundle must sit next to the test executables. Where
+# TestWebKitAPI is an app, it goes inside the app instead.
 # Directory structure under Resources/cocoa/ is preserved -- some tests
 # (e.g. WKWebExtension.mm) load entire subdirectories as nested bundles via
 # URLForResource:withExtension:@"", which requires web-extension/, *.appex/,
 # and *.mlmodelc/ to retain their layout.
-set(_resources_bundle_dir "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPIResources.bundle")
 if (WEBKIT_SDK_IS_MACOS)
+    set(_resources_bundle_dir "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPIResources.bundle")
     set(_resources_info_plist "${_resources_bundle_dir}/Contents/Info.plist")
     set(_resources_dir "${_resources_bundle_dir}/Contents/Resources")
 else ()
-    set(_resources_info_plist ${_resources_bundle_dir})
+    set(_resources_bundle_dir "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI.app/TestWebKitAPIResources.bundle")
+    set(_resources_info_plist "${_resources_bundle_dir}/Info.plist")
     set(_resources_dir ${_resources_bundle_dir})
 endif ()
 
@@ -1002,98 +1186,76 @@ foreach (_test_target TestWTF TestJavaScriptCore TestWebCore TestWebKitLegacy Te
     endif ()
 endforeach ()
 
-elseif (WEBKIT_SDK_IS_IOS_FAMILY)
+if (NOT WEBKIT_SDK_IS_MACOS)
+    list(APPEND TestWTF_PRIVATE_COMPILE_OPTIONS -Wno-error)
 
-set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    # MACOSX_BUNDLE defaults on for the embedded SDKs. Like Xcode, only build
+    # TestWebKitAPI as an app, since it hosts the process extensions; run-api-tests
+    # expects the other test binaries in the build directory.
+    foreach (_test_target TestWTF TestIPC TestWGSL)
+        if (TARGET ${_test_target})
+            set_target_properties(${_test_target} PROPERTIES MACOSX_BUNDLE FALSE)
+        endif ()
+    endforeach ()
 
-set(_test_main_SOURCES generic/main.cpp)
+    # Bundle ID required for extension scoping.
+    set_target_properties(TestWebKit PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_GUI_IDENTIFIER "org.webkit.TestWebKitAPI"
+        MACOSX_BUNDLE_BUNDLE_NAME "TestWebKitAPI"
+    )
 
-# TestWTF
-list(APPEND TestWTF_SOURCES
-    ${_test_main_SOURCES}
-    Helpers/cocoa/UtilitiesCocoa.mm
-)
-list(APPEND TestWTF_PRIVATE_COMPILE_OPTIONS -Wno-error)
+    # NSBundle.mainBundle is the app, so the bundles that tests look up through it
+    # are built inside the app, as in Xcode's TestWebKitAPI.app. They can't be
+    # symlinked in: installd rejects symlinks that point outside the app.
+    # TestWebKitAPIResources.bundle is placed there by _resources_bundle_dir above.
+    set_target_properties(TestWebKitAPIInjectedBundle TestWebKitAPIWebProcessPlugIn PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI.app"
+    )
+    add_dependencies(TestWebKit TestWebKitAPIInjectedBundle TestWebKitAPIResources)
+    # The app is signed after TestWebKit links, so relink when anything inside it
+    # changes to keep the signature valid.
+    set_property(TARGET TestWebKit APPEND PROPERTY LINK_DEPENDS
+        "$<TARGET_FILE:TestWebKitAPIInjectedBundle>"
+        "$<TARGET_FILE:TestWebKitAPIWebProcessPlugIn>"
+        ${_resources_dst_files}
+    )
 
-# TestJavaScriptCore
-list(APPEND TestJavaScriptCore_SOURCES
-    ${_test_main_SOURCES}
-)
+    set(_twkapi_bundle_id "org.webkit.TestWebKitAPI")
 
-# TestWebCore
-list(APPEND TestWebCore_SOURCES
-    ${_test_main_SOURCES}
-    Helpers/cocoa/UtilitiesCocoa.mm
-)
-
-# TestWebKitLegacy
-list(APPEND TestWebKitLegacy_SOURCES
-    ${_test_main_SOURCES}
-)
-
-# TestWebKit
-# generic/main.cpp is also in the lists above; the merge deduplicates.
-list(APPEND TestWebKit_SOURCES
-    ${_test_main_SOURCES}
-    Helpers/cocoa/UtilitiesCocoa.mm
-)
-
-target_link_options(TestWebKit PRIVATE "LINKER:-undefined,dynamic_lookup")
-
-list(APPEND TestWebKit_LIBRARIES
-    "-framework QuartzCore"
-    "-framework UniformTypeIdentifiers"
-    JavaScriptCore
-    WebCoreTestSupport
-    WebKitLegacy
-)
-
-# TestIPC
-list(APPEND TestIPC_SOURCES
-    ${_test_main_SOURCES}
-)
-
-# InjectedBundle configuration.
-set_target_properties(TestWebKitAPIInjectedBundle PROPERTIES
-    BUNDLE TRUE
-    BUNDLE_EXTENSION bundle
-    OUTPUT_NAME InjectedBundleTestWebKitAPI
-)
-target_include_directories(TestWebKitAPIInjectedBundle PRIVATE
-    ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}
-    ${TESTWEBKITAPI_DIR}/InjectedBundle
-)
-target_link_options(TestWebKitAPIInjectedBundle PRIVATE "LINKER:-undefined,dynamic_lookup" "LINKER:-not_for_dyld_shared_cache")
-target_link_libraries(TestWebKitAPIInjectedBundle PRIVATE
-    JavaScriptCore
-    WebCoreTestSupport
-    WebKit
-    "-framework Foundation"
-)
-
-# Bundle ID required for extension scoping.
-set_target_properties(TestWebKit PROPERTIES
-    MACOSX_BUNDLE TRUE
-    MACOSX_BUNDLE_GUI_IDENTIFIER "org.webkit.TestWebKitAPI"
-    MACOSX_BUNDLE_BUNDLE_NAME "TestWebKitAPI"
-)
-
-set(_twkapi_bundle_id "org.webkit.TestWebKitAPI")
-
-if (USE_EXTENSIONKIT)
-    add_dependencies(TestWebKit WebContentExtension NetworkingExtension)
-    if (ENABLE_GPU_PROCESS)
-        add_dependencies(TestWebKit GPUExtension)
+    # The web-browser-engine.host entitlement is required to install an app
+    # that embeds the process extensions.
+    set(_twkapi_entitlements "${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPI.entitlements")
+    webkit_generate_entitlements(TestWebKit
+        USING ${TESTWEBKITAPI_DIR}/Scripts/process-entitlements.sh
+        BUNDLE_IDENTIFIER ${_twkapi_bundle_id}
+        OUTPUT ${_twkapi_entitlements})
+    if (WEBKIT_SDK_IS_SIMULATOR)
+        WEBKIT_EMBED_ENTITLEMENTS(TestWebKit ${_twkapi_entitlements})
+        # process-entitlements.sh writes the signing entitlements here for simulator builds.
+        set(_twkapi_sign_entitlements "${_twkapi_entitlements}.simulator")
+    else ()
+        set(_twkapi_sign_entitlements ${_twkapi_entitlements})
     endif ()
+    set_target_properties(TestWebKit PROPERTIES
+        CODE_SIGN_ENTITLEMENTS "${_twkapi_sign_entitlements}"
+        CODE_SIGN_BUNDLE "$<TARGET_BUNDLE_DIR:TestWebKit>"
+    )
 
-    WEBKIT_EMBED_EXTENSION(TestWebKit WebContentExtension ${_twkapi_bundle_id}
-        CHANGE_EXTENSION_POINT ADD_ATS)
-    WEBKIT_EMBED_EXTENSION(TestWebKit NetworkingExtension ${_twkapi_bundle_id}
-        ADD_ATS)
-    if (ENABLE_GPU_PROCESS)
-        WEBKIT_EMBED_EXTENSION(TestWebKit GPUExtension ${_twkapi_bundle_id})
+    if (USE_EXTENSIONKIT)
+        add_dependencies(TestWebKit WebContentExtension NetworkingExtension)
+        if (ENABLE_GPU_PROCESS)
+            add_dependencies(TestWebKit GPUExtension)
+        endif ()
+
+        WEBKIT_EMBED_EXTENSION(TestWebKit WebContentExtension ${_twkapi_bundle_id}
+            CHANGE_EXTENSION_POINT ADD_ATS)
+        WEBKIT_EMBED_EXTENSION(TestWebKit NetworkingExtension ${_twkapi_bundle_id}
+            ADD_ATS)
+        if (ENABLE_GPU_PROCESS)
+            WEBKIT_EMBED_EXTENSION(TestWebKit GPUExtension ${_twkapi_bundle_id})
+        endif ()
     endif ()
-endif ()
 
 set_target_properties(TestWebKit PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(TestWTF PROPERTIES LINKER_LANGUAGE CXX)
