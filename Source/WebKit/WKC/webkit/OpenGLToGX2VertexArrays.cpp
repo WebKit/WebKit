@@ -211,11 +211,18 @@ VertexArrayResult VertexArrays::drawIndexed(const IndexedDraw& draw, const Buffe
         size_t stride = attr.stride ? attr.stride : elementSize;
         if (!stride || attr.offset > vertexInfo.size)
             return VertexArrayResult::BufferRangeError;
-        // This is a conservative bound for the non-instanced portion. The
-        // backend must validate actual index values before GPU fetches.
-        if (!attr.divisor && draw.count > 0) {
-            size_t available = vertexInfo.size - attr.offset;
-            if (elementSize > available || (draw.count - 1) > (available - elementSize) / stride)
+        size_t available = vertexInfo.size - attr.offset;
+        if (elementSize > available)
+            return VertexArrayResult::BufferRangeError;
+
+        // Indexed vertex bounds depend on the actual index values in the
+        // element buffer, not draw.count. Do not reject valid sparse-index
+        // draws here; the native backend must scan/validate indices before
+        // submitting GX2 fetches. Divisor-backed attributes can be checked
+        // from the instance count alone.
+        if (attr.divisor && draw.instances > 0) {
+            size_t lastInstance = (draw.instances - 1) / attr.divisor;
+            if (lastInstance > (available - elementSize) / stride)
                 return VertexArrayResult::BufferRangeError;
         }
     }
