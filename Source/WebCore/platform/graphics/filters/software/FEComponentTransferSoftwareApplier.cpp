@@ -33,19 +33,43 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if USE(ACCELERATE)
+#include <Accelerate/Accelerate.h>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FEComponentTransferSoftwareApplier);
 
 void FEComponentTransferSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer) const
 {
-    auto data = pixelBuffer.bytes();
-    auto pixelByteLength = pixelBuffer.bytes().size();
-
     auto redTable   = FEComponentTransfer::computeLookupTable(m_effect->redFunction());
     auto greenTable = FEComponentTransfer::computeLookupTable(m_effect->greenFunction());
     auto blueTable  = FEComponentTransfer::computeLookupTable(m_effect->blueFunction());
     auto alphaTable = FEComponentTransfer::computeLookupTable(m_effect->alphaFunction());
+
+#if USE(ACCELERATE)
+    auto* pixelBytes = pixelBuffer.bytes().data();
+    auto bufferSize = pixelBuffer.size();
+
+    vImage_Buffer src;
+    src.width = bufferSize.width();
+    src.height = bufferSize.height();
+    src.rowBytes = bufferSize.width() * 4;
+    src.data = pixelBytes;
+
+    vImage_Buffer dest;
+    dest.width = bufferSize.width();
+    dest.height = bufferSize.height();
+    dest.rowBytes = bufferSize.width() * 4;
+    dest.data = pixelBytes;
+
+    // The pixel buffer is in RGBA8 memory order, so the four table arguments map to bytes 0-3 as R, G, B, A
+    // (the vImage parameter names follow an ARGB convention but are applied in memory order).
+    vImageTableLookUp_ARGB8888(&src, &dest, redTable.data(), greenTable.data(), blueTable.data(), alphaTable.data(), kvImageNoFlags);
+#else
+    auto data = pixelBuffer.bytes();
+    auto pixelByteLength = pixelBuffer.bytes().size();
 
     for (unsigned pixelOffset = 0; pixelOffset < pixelByteLength; pixelOffset += 4) {
         data[pixelOffset]     = redTable[data[pixelOffset]];
@@ -53,6 +77,7 @@ void FEComponentTransferSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer)
         data[pixelOffset + 2] = blueTable[data[pixelOffset + 2]];
         data[pixelOffset + 3] = alphaTable[data[pixelOffset + 3]];
     }
+#endif
 }
 
 bool FEComponentTransferSoftwareApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
