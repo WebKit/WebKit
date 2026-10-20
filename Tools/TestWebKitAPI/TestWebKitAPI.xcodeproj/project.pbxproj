@@ -599,6 +599,7 @@
 				WebKit/WKWebView/HTTP2Server.swift,
 				WebKit/WKWebView/HTTP3Server.swift,
 				WebKit/WKWebView/SiteIsolationCookieTests.swift,
+				WebKit/WKWebView/SiteIsolationDataDetectionTests.swift,
 				WebKit/WKWebView/SiteIsolationEditingTests.swift,
 				WebKit/WKWebView/SiteIsolationLookUpTests.swift,
 				WebKit/WKWebView/SiteIsolationNavigationTests.swift,

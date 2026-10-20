@@ -19502,7 +19502,15 @@ void WebPageProxy::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> ty
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::DetectDataInAllFrames(types), WTF::move(completionHandler));
+    auto result = Box<DataDetectionResult>::create();
+    Ref aggregator = CallbackAggregator::create([result, completionHandler = WTF::move(completionHandler)] mutable {
+        completionHandler(WTF::move(*result));
+    });
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.sendWithAsyncReply(Messages::WebPage::DetectDataInAllFrames(types), [result, aggregator](DataDetectionResult&& processResult) {
+            result->results.appendVector(WTF::move(processResult.results));
+        }, pageID);
+    });
 }
 
 void WebPageProxy::removeDataDetectedLinks(CompletionHandler<void(DataDetectionResult&&)>&& completionHandler)
@@ -19511,7 +19519,13 @@ void WebPageProxy::removeDataDetectedLinks(CompletionHandler<void(DataDetectionR
         completionHandler({ });
         return;
     }
-    sendWithAsyncReply(Messages::WebPage::RemoveDataDetectedLinks(), WTF::move(completionHandler));
+
+    Ref aggregator = CallbackAggregator::create([completionHandler = WTF::move(completionHandler)] mutable {
+        completionHandler({ });
+    });
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.sendWithAsyncReply(Messages::WebPage::RemoveDataDetectedLinks(), [aggregator](DataDetectionResult&&) { }, pageID);
+    });
 }
 
 #endif

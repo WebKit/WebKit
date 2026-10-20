@@ -5742,8 +5742,11 @@ void WebPage::removeDataDetectedLinks(CompletionHandler<void(DataDetectionResult
     completionHandler({ });
 }
 
-static void detectDataInFrame(const Ref<Frame>& frame, OptionSet<WebCore::DataDetectorType> dataDetectorTypes, const std::optional<double>& dataDetectionReferenceDate, UniqueRef<DataDetectionResult>&& mainFrameResult, CompletionHandler<void(DataDetectionResult&&)>&& completionHandler)
+static void detectDataInFrame(RefPtr<Frame>&& frame, OptionSet<WebCore::DataDetectorType> dataDetectorTypes, const std::optional<double>& dataDetectionReferenceDate, UniqueRef<DataDetectionResult>&& mainFrameResult, CompletionHandler<void(DataDetectionResult&&)>&& completionHandler)
 {
+    while (frame && !is<LocalFrame>(*frame))
+        frame = frame->tree().traverseNext();
+
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
     if (!localFrame) {
         completionHandler(WTF::move(mainFrameResult.get()));
@@ -5755,13 +5758,7 @@ static void detectDataInFrame(const Ref<Frame>& frame, OptionSet<WebCore::DataDe
         if (localFrame->isMainFrame())
             mainFrameResult->setResults(results);
 
-        RefPtr next = localFrame->tree().traverseNext();
-        if (!next) {
-            completionHandler(WTF::move(mainFrameResult.get()));
-            return;
-        }
-
-        detectDataInFrame(Ref { *next }, dataDetectorTypes, dataDetectionReferenceDate, WTF::move(mainFrameResult), WTF::move(completionHandler));
+        detectDataInFrame(localFrame->tree().traverseNext(), dataDetectorTypes, dataDetectionReferenceDate, WTF::move(mainFrameResult), WTF::move(completionHandler));
     });
 }
 
