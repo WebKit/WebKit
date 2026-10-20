@@ -35,11 +35,11 @@ class WebSocketTask;
 
 class NetworkSessionCurl final : public NetworkSession {
 public:
-    static std::unique_ptr<NetworkSession> create(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
+    static std::unique_ptr<NetworkSession> create(const NetworkSessionCreationParameters& parameters)
     {
-        return makeUnique<NetworkSessionCurl>(networkProcess, parameters);
+        return makeUnique<NetworkSessionCurl>(parameters);
     }
-    NetworkSessionCurl(NetworkProcess&, const NetworkSessionCreationParameters&);
+    explicit NetworkSessionCurl(const NetworkSessionCreationParameters&);
     ~NetworkSessionCurl();
 
     void clearAlternativeServices(WallTime) override;

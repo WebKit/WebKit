@@ -203,10 +203,6 @@ NetworkProcess::NetworkProcess()
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     addSupplementWithoutRefCountedCheck<LegacyCustomProtocolManager>();
 #endif
-#if PLATFORM(COCOA) && ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    LegacyCustomProtocolManager::networkProcessCreated(*this);
-#endif
-
     NetworkStateNotifier::singleton().addListener([weakThis = WeakPtr { *this }](bool isOnLine) {
         if (!weakThis)
             return;
@@ -710,7 +706,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 #endif
 
     auto& session = m_networkSessions.ensure(sessionID, [&]() {
-        return NetworkSession::create(*this, parameters.networkSessionParameters);
+        return NetworkSession::create(parameters.networkSessionParameters);
     }).iterator->value;
 
     if (m_isSuspended)
@@ -3517,7 +3513,7 @@ RTCDataChannelRemoteManagerProxy& NetworkProcess::rtcDataChannelProxy()
 {
     ASSERT(isMainRunLoop());
     if (!m_rtcDataChannelProxy)
-        lazyInitialize(m_rtcDataChannelProxy, RTCDataChannelRemoteManagerProxy::create(*this));
+        lazyInitialize(m_rtcDataChannelProxy, RTCDataChannelRemoteManagerProxy::create());
     return *m_rtcDataChannelProxy;
 }
 #endif

@@ -129,7 +129,7 @@ void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebC
         completionHandler(WebCore::ResourceRequest());
         m_networkLoad->cancel();
         if (m_webProcessID && !redirectRequest.url().protocolIsJavaScript() && m_networkLoad->webFrameID() && m_networkLoad->webPageID()) {
-            if (RefPtr webProcessConnection = m_networkLoad->networkProcess()->webProcessConnection(*m_webProcessID))
+            if (RefPtr webProcessConnection = m_networkLoad->networkProcess().webProcessConnection(*m_webProcessID))
                 webProcessConnection->loadCancelledDownloadRedirectRequestInFrame(redirectRequest, *m_networkLoad->webFrameID(), *m_networkLoad->webPageID());
         }
         return;
