@@ -1,0 +1,70 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests that content that became visible during a previous tap does not cause a later tap to be treated as a hover</title>
+<script src="../../../../../resources/ui-helper.js"></script>
+<style>
+#revealsOnTouch {
+    opacity: 0;
+    width: 300px;
+    height: 100px;
+    border: 1px solid green;
+}
+
+#revealed {
+    display: none;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+
+#tapThis {
+    width: 300px;
+    height: 100px;
+    border: 1px solid green;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals)
+        internals.settings.setContentChangeObserverEnabled(true);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    // This tap is treated as a hover because its (hidden) target becomes visible, leaving #revealed behind as a visibility candidate.
+    await UIHelper.activateElement(revealsOnTouch);
+    await UIHelper.renderingUpdate();
+
+    await UIHelper.activateElement(tapThis);
+}
+</script>
+</head>
+<body onload="test()">
+<div id=revealsOnTouch></div>
+<div id=revealed></div>
+<div id=tapThis>PASS if 'clicked' text is shown below.</div>
+<pre id=result></pre>
+<script>
+revealsOnTouch.addEventListener("touchstart", function( event ) {
+    revealsOnTouch.style.opacity = "1";
+    revealed.style.display = "block";
+}, false);
+
+revealsOnTouch.addEventListener("click", function( event ) {
+}, false);
+
+revealed.addEventListener("click", function( event ) {
+    result.innerHTML = "clicked revealed";
+}, false);
+
+tapThis.addEventListener("click", function( event ) {
+    result.innerHTML = "clicked";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+</script>
+</body>
+</html>

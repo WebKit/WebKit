@@ -700,6 +700,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
 {
     auto resetToStartObserving = [&] {
         setHasNoChangeState();
+        m_visibilityCandidateList.clear();
         m_observedAddedMouseoutListenerAboveClickTarget = false;
         m_hasScheduledClientNotification = false;
         clearObservedDOMTimers();
