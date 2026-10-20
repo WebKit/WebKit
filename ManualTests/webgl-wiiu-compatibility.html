@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Wii U WebKit WebGL 1 Compatibility Smoke Test</title>
+<style>
+body { font: 16px sans-serif; margin: 2em; background: #f5f5f5; color: #222; }
+h1 { font-size: 1.5em; }
+#summary { font-weight: bold; margin: 1em 0; }
+#results { padding-left: 1.5em; }
+.pass { color: #176b2c; }
+.fail { color: #a51d1d; }
+.skip { color: #765b00; }
+canvas { border: 1px solid #777; width: 256px; height: 256px; }
+code { overflow-wrap: anywhere; }
+</style>
+<h1>WebGL 1 compatibility smoke test</h1>
+<p>This local test exercises the WebGL 1 baseline needed by common 3D websites. It does not claim full WebGL conformance.</p>
+<div id="summary">Running…</div>
+<canvas id="canvas" width="64" height="64"></canvas>
+<ol id="results"></ol>
+<script>
+(function () {
+    "use strict";
+
+    var results = document.getElementById("results");
+    var summary = document.getElementById("summary");
+    var passed = 0;
+    var failed = 0;
+    var skipped = 0;
+
+    function report(name, ok, detail, isSkip) {
+        var item = document.createElement("li");
+        item.className = isSkip ? "skip" : (ok ? "pass" : "fail");
+        item.appendChild(document.createTextNode((isSkip ? "SKIP: " : (ok ? "PASS: " : "FAIL: ")) + name + (detail ? " — " + detail : "")));
+        results.appendChild(item);
+        if (isSkip) skipped++;
+        else if (ok) passed++;
+        else failed++;
+    }
+
+    function test(name, callback) {
+        try {
+            var detail = callback();
+            report(name, true, detail || "");
+        } catch (error) {
+            report(name, false, error && error.message ? error.message : String(error));
+        }
+    }
+
+    var canvas = document.getElementById("canvas");
+    var gl = null;
+    try {
+        gl = canvas.getContext("webgl", { alpha: false, depth: true, antialias: false }) ||
+             canvas.getContext("experimental-webgl", { alpha: false, depth: true, antialias: false });
+    } catch (error) {
+        report("Create WebGL 1 context", false, error.message);
+    }
+
+    if (!gl) {
+        report("Create WebGL 1 context", false, "canvas.getContext('webgl') returned null; remaining GPU tests cannot run.");
+        summary.textContent = "WebGL unavailable — " + failed + " failure(s), " + skipped + " skipped.";
+        return;
+    }
+    report("Create WebGL 1 context", true, gl.getParameter(gl.VERSION));
+
+    test("Expose core limits", function () {
+        var maxTexture = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+        var maxAttribs = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
+        if (!(maxTexture > 0) || !(maxAttribs > 0)) throw new Error("invalid limits: texture=" + maxTexture + ", attributes=" + maxAttribs);
+        return "MAX_TEXTURE_SIZE=" + maxTexture + ", MAX_VERTEX_ATTRIBS=" + maxAttribs;
+    });
+
+    function compile(type, source) {
+        var shader = gl.createShader(type);
+        if (!shader) throw new Error("createShader returned null");
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            var message = gl.getShaderInfoLog(shader) || "no shader info log";
+            gl.deleteShader(shader);
+            throw new Error(message);
+        }
+        return shader;
+    }
+
+    var program = null;
+    test("Compile GLSL vertex and fragment shaders", function () {
+        var vertex = compile(gl.VERTEX_SHADER,
+            "attribute vec2 a_position; void main() { gl_Position = vec4(a_position, 0.0, 1.0); }");
+        var fragment = compile(gl.FRAGMENT_SHADER,
+            "precision mediump float; uniform vec4 u_color; void main() { gl_FragColor = u_color; }");
+        program = gl.createProgram();
+        if (!program) throw new Error("createProgram returned null");
+        gl.attachShader(program, vertex);
+        gl.attachShader(program, fragment);
+        gl.bindAttribLocation(program, 0, "a_position");
+        gl.linkProgram(program);
+        gl.deleteShader(vertex);
+        gl.deleteShader(fragment);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program) || "program link failed");
+        return "program linked";
+    });
+
+    var buffer = null;
+    test("Upload vertex buffer and draw triangle", function () {
+        if (!program) throw new Error("shader program unavailable");
+        buffer = gl.createBuffer();
+        if (!buffer) throw new Error("createBuffer returned null");
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, 0, 1]), gl.STATIC_DRAW);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clearColor(0, 0, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.useProgram(program);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform4f(gl.getUniformLocation(program, "u_color"), 0.1, 0.8, 0.3, 1);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.disableVertexAttribArray(0);
+        var error = gl.getError();
+        if (error !== gl.NO_ERROR) throw new Error("draw returned GL error 0x" + error.toString(16));
+        return "triangle rendered";
+    });
+
+    test("Read pixels back from drawing buffer", function () {
+        var pixels = new Uint8Array(4);
+        gl.readPixels(32, 32, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        var error = gl.getError();
+        if (error !== gl.NO_ERROR) throw new Error("readPixels returned GL error 0x" + error.toString(16));
+        if (!(pixels[1] > pixels[0] && pixels[1] > pixels[2])) throw new Error("unexpected center pixel " + Array.prototype.join.call(pixels, ","));
+        return "center pixel RGBA=" + Array.prototype.join.call(pixels, ",");
+    });
+
+    test("Create and upload a texture", function () {
+        var texture = gl.createTexture();
+        if (!texture) throw new Error("createTexture returned null");
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 0, 255, 255]));
+        var error = gl.getError();
+        gl.deleteTexture(texture);
+        if (error !== gl.NO_ERROR) throw new Error("texture upload returned GL error 0x" + error.toString(16));
+        return "1×1 RGBA texture uploaded";
+    });
+
+    test("Create framebuffer and check completeness", function () {
+        var texture = gl.createTexture();
+        var framebuffer = gl.createFramebuffer();
+        if (!texture || !framebuffer) throw new Error("resource allocation failed");
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 4, 4, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.deleteFramebuffer(framebuffer);
+        gl.deleteTexture(texture);
+        if (status !== gl.FRAMEBUFFER_COMPLETE) throw new Error("framebuffer status 0x" + status.toString(16));
+        return "FRAMEBUFFER_COMPLETE";
+    });
+
+    test("Blend-state operation", function () {
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.disable(gl.BLEND);
+        var error = gl.getError();
+        if (error !== gl.NO_ERROR) throw new Error("blend state returned GL error 0x" + error.toString(16));
+        return "blend state accepted";
+    });
+
+    test("Report supported WebGL extensions", function () {
+        var extensions = gl.getSupportedExtensions() || [];
+        return extensions.length + " extension(s): " + (extensions.join(", ") || "none reported");
+    });
+
+    test("No pending WebGL errors", function () {
+        var error = gl.getError();
+        if (error !== gl.NO_ERROR) throw new Error("pending GL error 0x" + error.toString(16));
+        return "gl.getError() is NO_ERROR";
+    });
+
+    if (buffer) gl.deleteBuffer(buffer);
+    if (program) gl.deleteProgram(program);
+    summary.textContent = passed + " passed, " + failed + " failed, " + skipped + " skipped.";
+    summary.className = failed ? "fail" : "pass";
+}());
+</script>
