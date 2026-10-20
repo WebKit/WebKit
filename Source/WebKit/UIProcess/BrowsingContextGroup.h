@@ -55,6 +55,8 @@ class ResourceResponse;
 
 namespace WebKit {
 
+enum class ShouldSendCloseMessage : bool { No, Yes };
+
 class FrameProcess;
 class ProvisionalPageProxy;
 class RemotePageProxy;
@@ -105,8 +107,8 @@ public:
 
     void addPage(WebPageProxy&);
     void addRemotePage(WebPageProxy&, Ref<RemotePageProxy>&&);
-    void removePage(WebPageProxy&);
-    void closeRemotePagesForPage(WebPageProxy&);
+    void removePage(WebPageProxy&, ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
+    void closeRemotePagesForPage(WebPageProxy&, ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
     bool hasMultiplePages() const;
     bool hasVisiblePage() const;
     void forEachRemotePage(const WebPageProxy&, NOESCAPE const Function<void(RemotePageProxy&)>&);

@@ -2123,7 +2123,7 @@ void WebPageProxy::close()
 #endif
 
     if (protect(preferences())->siteIsolationEnabled())
-        protect(browsingContextGroup())->removePage(*this);
+        protect(browsingContextGroup())->removePage(*this, ShouldSendCloseMessage::No);
 }
 
 bool WebPageProxy::tryClose()

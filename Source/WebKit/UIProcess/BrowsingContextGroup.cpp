@@ -380,16 +380,16 @@ void BrowsingContextGroup::addRemotePage(WebPageProxy& page, Ref<RemotePageProxy
     }).iterator->value.add(WTF::move(remotePage));
 }
 
-void BrowsingContextGroup::removePage(WebPageProxy& page)
+void BrowsingContextGroup::removePage(WebPageProxy& page, ShouldSendCloseMessage shouldSendCloseMessage)
 {
     m_pages.remove(page);
-    closeRemotePagesForPage(page);
+    closeRemotePagesForPage(page, shouldSendCloseMessage);
 }
 
-void BrowsingContextGroup::closeRemotePagesForPage(WebPageProxy& page)
+void BrowsingContextGroup::closeRemotePagesForPage(WebPageProxy& page, ShouldSendCloseMessage shouldSendCloseMessage)
 {
     for (auto& remotePage : m_remotePages.take(page))
-        protect(remotePage)->disconnect();
+        protect(remotePage)->disconnect(shouldSendCloseMessage);
 }
 
 bool BrowsingContextGroup::hasMultiplePages() const

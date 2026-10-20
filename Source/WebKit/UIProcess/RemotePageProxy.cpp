@@ -138,7 +138,7 @@ void RemotePageProxy::initializeAfterAdoption()
     protectedPage->didCreateRemotePage(*this);
 }
 
-void RemotePageProxy::disconnect()
+void RemotePageProxy::disconnect(ShouldSendCloseMessage shouldSendCloseMessage)
 {
     RefPtr page = m_page;
     if (page)
@@ -147,7 +147,8 @@ void RemotePageProxy::disconnect()
         // The process's own stop messages would arrive after stopReceivingMessages() below, so stop its tasks here.
         if (page)
             page->stopAllURLSchemeTasks(m_process.ptr());
-        m_process->sendPageCloseMessage(page ? std::optional { page->identifier() } : std::nullopt, m_webPageID);
+        if (shouldSendCloseMessage == ShouldSendCloseMessage::Yes)
+            m_process->sendPageCloseMessage(page ? std::optional { page->identifier() } : std::nullopt, m_webPageID);
     }
     m_process->removeRemotePageProxy(*this);
 

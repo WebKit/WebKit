@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BrowsingContextGroup.h"
 #include "EditorState.h"
 #include "MessageReceiver.h"
 #include "NavigationActionData.h"
@@ -126,7 +127,7 @@ public:
     bool hasNetworkRequestsInProgress() const { return m_hasNetworkRequestsInProgress; }
     bool canShortCircuitHorizontalWheelEvents() const { return m_canShortCircuitHorizontalWheelEvents; }
 
-    void disconnect();
+    void disconnect(ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
 
 #if ENABLE(DEVICE_ORIENTATION)
     void clearDeviceOrientationAndMotionPermissions();
