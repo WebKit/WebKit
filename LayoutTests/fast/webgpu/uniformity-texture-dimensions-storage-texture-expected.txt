@@ -1,0 +1,16 @@
+textureDimensions() and textureNumLayers() of a storage texture are uniform, whatever the texel access mode. Per https://www.w3.org/TR/WGSL/#texture-resource the texture handle 'is in the handle address space and is always read-only', so an identifier resolving to it is uniform (CF), and the only texture built-in the spec tags as possibly returning a non-uniform value is textureLoad() of a read-write storage texture. The uniformity analysis used to treat the variable itself as non-uniform whenever the texel access mode was not 'read', which wrongly rejected these shaders.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textureDimensions() of a write-only storage texture: compiled
+PASS textureDimensions() of a read-write storage texture: compiled
+PASS textureDimensions() of a read-only storage texture: compiled
+PASS textureDimensions() of a sampled texture: compiled
+PASS textureNumLayers() of a write-only storage texture array: compiled
+PASS textureLoad() of a read-only storage texture: compiled
+PASS textureLoad() of a read-write storage texture is non-uniform: was rejected
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

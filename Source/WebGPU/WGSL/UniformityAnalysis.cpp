@@ -278,12 +278,10 @@ bool UniformityGraph::isGlobalNonUniform(AST::Variable& globalVar)
                 return true;
             break;
         case AddressSpace::Handle:
-            if (auto* storeType = globalVar.storeType()) {
-                if (auto* texStorage = std::get_if<Types::TextureStorage>(storeType)) {
-                    if (texStorage->access != AccessMode::Read)
-                        return true;
-                }
-            }
+            // https://www.w3.org/TR/WGSL/#texture-resource
+            // A texture variable "holds an opaque handle [...] The handle itself is in the
+            // handle address space and is always read-only", so it is uniform even when the
+            // underlying texels are mutable (write-only and read-write storage textures).
             break;
         case AddressSpace::Function:
         case AddressSpace::Uniform:
