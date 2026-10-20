@@ -532,8 +532,11 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
     if (parent()) {
         auto repaintRect = replacedContentRect();
         if (rect) {
+            // SVG images lay out at the container size, so their changed rects are in that space.
+            RefPtr cachedImage = this->cachedImage();
+            bool usesContainerSpace = cachedImage && protect(cachedImage->image())->usesConcreteObjectSizeAsViewport();
             auto naturalDimensions = imageResource().naturalDimensions();
-            auto changedRectSpace = naturalDimensions.width && naturalDimensions.height
+            auto changedRectSpace = !usesContainerSpace && naturalDimensions.width && naturalDimensions.height
                 ? FloatSize { *naturalDimensions.width, *naturalDimensions.height }
                 : FloatSize(imageContainerSize()) / style().usedZoom();
             repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), changedRectSpace), repaintRect)));
