@@ -516,17 +516,13 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
         // The below codepath is specific to implicit root, where the root is the main frame.
         ASSERT(!root());
 
-        // When page scale is > 1 (e.g by pinch-to-zoom), a scale transform is applied on the
-        // main frame's RenderView in Style::resolveForDocument(). Therefore we have to apply
-        // this transform to the local coordinate to turn it into absolute.
+        // When page scale is > 1 (e.g by pinch-to-zoom), a scale transform of frameScaleFactor() is
+        // applied on the main frame's RenderView in Style::resolveForDocument(). Therefore we have to
+        // apply this transform to the local coordinate to turn it into absolute.
         // This is identical to calling localToAbsoluteQuad() on the main frame's RenderView,
-        // as it'll apply the same transform.
-        // Not applicable on iOS family as they apply page scale differently.
-        // FIXME: replace the platform ifdef with something else.
-#if !PLATFORM(IOS_FAMILY)
-        if (RefPtr hostPage = hostFrameView.frame().page())
-            rect.scale(hostPage->pageScaleFactor());
-#endif
+        // as it'll apply the same transform. frameScaleFactor() is 1 when page scale is delegated
+        // to the UI process, in which case no transform is applied.
+        rect.scale(protect(hostFrameView.frame())->frameScaleFactor());
 
         return rect;
     };
