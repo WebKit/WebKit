@@ -786,6 +786,8 @@ namespace JSC {
         template<typename Op>
         void emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRightShiftGenerator::ShiftType);
 
+        bool emitModByPowerOfTwoConstant(VirtualRegister result, VirtualRegister op1, VirtualRegister op2);
+
         void updateTopCallFrame();
 
         // Loads the character value of a single character string into dst.

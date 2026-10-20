@@ -5888,6 +5888,32 @@ void SpeculativeJIT::compileValueMod(Node* node)
     jsValueResult(resultGPR, node);
 }
 
+bool SpeculativeJIT::compileArithModDoubleByPowerOfTwo(Node* node)
+{
+    if (!supportsFloatingPointRounding())
+        return false;
+
+    JSValue divisorValue = m_state.forNode(node->child2()).value();
+    if (!divisorValue || !divisorValue.isNumber())
+        return false;
+    std::optional<double> divisor = powerOfTwoDivisorForDoubleMod(divisorValue.asNumber());
+    if (!divisor)
+        return false;
+
+    SpeculateDoubleOperand op1(this, node->child1());
+    FPRTemporary result(this);
+    FPRTemporary scratch(this);
+
+    FPRReg op1FPR = op1.fpr();
+    FPRReg resultFPR = result.fpr();
+    FPRReg scratchFPR = scratch.fpr();
+
+    emitDoubleModByPowerOfTwo(op1FPR, *divisor, resultFPR, scratchFPR);
+
+    doubleResult(resultFPR, node);
+    return true;
+}
+
 void SpeculativeJIT::compileArithMod(Node* node)
 {
     switch (node->binaryUseKind()) {
@@ -6233,6 +6259,8 @@ void SpeculativeJIT::compileArithMod(Node* node)
     }
 
     case DoubleRepUse: {
+        if (compileArithModDoubleByPowerOfTwo(node))
+            return;
 #if CPU(ARM64)
         SpeculateDoubleOperand op1(this, node->child1());
         SpeculateDoubleOperand op2(this, node->child2());

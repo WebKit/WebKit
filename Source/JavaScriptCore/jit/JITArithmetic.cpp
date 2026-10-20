@@ -475,6 +475,66 @@ void JIT::emit_op_dec(const JSInstruction* currentInstruction)
 
 /* ------------------------------ BEGIN: OP_MOD ------------------------------ */
 
+bool JIT::emitModByPowerOfTwoConstant(VirtualRegister result, VirtualRegister op1, VirtualRegister op2)
+{
+    if (!supportsFloatingPointRounding())
+        return false;
+    if (!isOperandConstantInt(op2) && !isOperandConstantDouble(op2))
+        return false;
+    std::optional<double> divisor = powerOfTwoDivisorForDoubleMod(getConstantOperand(op2).asNumber());
+    if (!divisor)
+        return false;
+
+    JumpList done;
+    emitGetVirtualRegister(op1, regT0);
+
+    if (*divisor > static_cast<double>(1ULL << 31))
+        done.append(branchIfInt32(regT0));
+    else {
+        Jump notInt32 = branchIfNotInt32(regT0);
+        int32_t mask = static_cast<int32_t>(*divisor - 1);
+        if (mask) {
+            // Biasing a negative dividend by mask makes the masked bits round toward zero, as % does.
+            if (mask == 1)
+                urshift32(regT0, TrustedImm32(31), regT1);
+            else {
+                rshift32(regT0, TrustedImm32(31), regT1);
+                and32(TrustedImm32(mask), regT1);
+            }
+            add32(regT0, regT1, regT2);
+            and32(TrustedImm32(mask), regT2);
+            sub32(regT2, regT1, regT2);
+            boxInt32(regT2, regT2);
+        } else
+            move(GPRInfo::numberTagRegister, regT2);
+        // The result is -0 exactly when the dividend is negative and a multiple of the divisor.
+        xor32(TrustedImm32(std::numeric_limits<int32_t>::min()), regT0, regT1);
+        moveValue(jsDoubleNumber(-0.0), regT0);
+        moveConditionallyTest32(NonZero, regT1, TrustedImm32(std::numeric_limits<int32_t>::min() | mask), regT2, regT0);
+        done.append(jump());
+        notInt32.link(this);
+    }
+
+    addSlowCase(branchIfNotNumber(regT0));
+    unboxDouble(regT0, regT1, fpRegT0);
+    emitDoubleModByPowerOfTwoIgnoringSignOfZero(fpRegT0, *divisor, fpRegT1, fpRegT2);
+    moveDoubleTo64(fpRegT1, regT3);
+    and64(TrustedImm64(std::numeric_limits<int64_t>::min()), regT1);
+    or64(regT1, regT3);
+    // Box integral results as int32 like slow_path_mod does, so that use sites keep int32 predictions. Comparing
+    // bits after a round trip through int32 rejects -0, NaN, and out-of-range values.
+    truncateDoubleToInt32(fpRegT1, regT2);
+    convertInt32ToDouble(regT2, fpRegT2);
+    moveDoubleTo64(fpRegT2, regT1);
+    boxInt32(regT2, regT2);
+    sub64(regT3, GPRInfo::numberTagRegister, regT0);
+    moveConditionally64(Equal, regT3, regT1, regT2, regT0);
+
+    done.link(this);
+    emitPutVirtualRegister(result, regT0);
+    return true;
+}
+
 #if CPU(X86_64)
 
 void JIT::emit_op_mod(const JSInstruction* currentInstruction)
@@ -483,6 +543,9 @@ void JIT::emit_op_mod(const JSInstruction* currentInstruction)
     VirtualRegister result = bytecode.m_dst;
     VirtualRegister op1 = bytecode.m_lhs;
     VirtualRegister op2 = bytecode.m_rhs;
+
+    if (emitModByPowerOfTwoConstant(result, op1, op2))
+        return;
 
     // Make sure registers are correct for x86 IDIV instructions.
     ASSERT(regT0 == X86Registers::eax);
@@ -526,6 +589,9 @@ void JIT::emit_op_mod(const JSInstruction* currentInstruction)
     VirtualRegister result = bytecode.m_dst;
     VirtualRegister op1 = bytecode.m_lhs;
     VirtualRegister op2 = bytecode.m_rhs;
+
+    if (emitModByPowerOfTwoConstant(result, op1, op2))
+        return;
 
     emitGetVirtualRegister(op1, regT0);
     emitGetVirtualRegister(op2, regT2);

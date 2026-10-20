@@ -1489,6 +1489,7 @@ public:
     void compileArithF16Round(Node*);
     void compileValueMod(Node*);
     void compileArithMod(Node*);
+    bool compileArithModDoubleByPowerOfTwo(Node*);
     void compileArithPow(Node*);
     void compileValuePow(Node*);
     void compileArithRounding(Node*);

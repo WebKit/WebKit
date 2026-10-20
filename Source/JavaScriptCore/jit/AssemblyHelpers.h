@@ -1045,6 +1045,11 @@ public:
     
     void purifyNaN(FPRReg, FPRReg);
 
+    // The divisor must come from powerOfTwoDivisorForDoubleMod(). The IgnoringSignOfZero variant produces +0 where
+    // fmod produces -0, leaving it to the caller to copy the dividend's sign bit into the result.
+    void emitDoubleModByPowerOfTwo(FPRReg dividendFPR, double divisor, FPRReg resultFPR, FPRReg scratchFPR);
+    void emitDoubleModByPowerOfTwoIgnoringSignOfZero(FPRReg dividendFPR, double divisor, FPRReg resultFPR, FPRReg scratchFPR);
+
     // These methods convert between doubles, and doubles boxed and JSValues.
     GPRReg boxDouble(FPRReg fpr, GPRReg gpr, TagRegistersMode mode = HaveTagRegisters)
     {

@@ -38,6 +38,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JSCJSValueInlines.h"
 #include "JSDataView.h"
 #include "LinkBuffer.h"
+#include "MathCommon.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "MegamorphicCache.h"
 #include "SuperSampler.h"
@@ -87,6 +88,34 @@ void AssemblyHelpers::purifyNaN(FPRReg inputFPR, FPRReg resultFPR)
     ASSERT(inputFPR != fpTempRegister);
     move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(PNaN)), fpTempRegister);
     moveDoubleConditionallyDouble(DoubleEqualAndOrdered, inputFPR, inputFPR, inputFPR, fpTempRegister, resultFPR);
+}
+
+void AssemblyHelpers::emitDoubleModByPowerOfTwoIgnoringSignOfZero(FPRReg dividendFPR, double divisor, FPRReg resultFPR, FPRReg scratchFPR)
+{
+    ASSERT(supportsFloatingPointRounding());
+    ASSERT(powerOfTwoDivisorForDoubleMod(divisor) == divisor);
+    ASSERT(noOverlap(dividendFPR, resultFPR, scratchFPR));
+
+    if (divisor == 1) {
+        roundTowardZeroDouble(dividendFPR, resultFPR);
+        subDouble(dividendFPR, resultFPR, resultFPR);
+        return;
+    }
+
+    move64ToDouble(TrustedImm64(std::bit_cast<int64_t>(1 / divisor)), scratchFPR);
+    mulDouble(dividendFPR, scratchFPR, resultFPR);
+    roundTowardZeroDouble(resultFPR, resultFPR);
+    move64ToDouble(TrustedImm64(std::bit_cast<int64_t>(divisor)), scratchFPR);
+    mulDouble(resultFPR, scratchFPR, resultFPR);
+    subDouble(dividendFPR, resultFPR, resultFPR);
+}
+
+void AssemblyHelpers::emitDoubleModByPowerOfTwo(FPRReg dividendFPR, double divisor, FPRReg resultFPR, FPRReg scratchFPR)
+{
+    emitDoubleModByPowerOfTwoIgnoringSignOfZero(dividendFPR, divisor, resultFPR, scratchFPR);
+    move64ToDouble(TrustedImm64(std::numeric_limits<int64_t>::min()), scratchFPR);
+    andDouble(dividendFPR, scratchFPR, scratchFPR);
+    orDouble(resultFPR, scratchFPR, resultFPR);
 }
 
 #if ENABLE(SAMPLING_FLAGS)

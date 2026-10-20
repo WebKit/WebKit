@@ -2534,7 +2534,12 @@ void testModArgImmDouble(double a, double b)
     root->clearSuccessors();
     root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Mod, Origin(), valueA, valueB));
 
-    CHECK(isIdentical(compileAndRun<double>(proc, a), fmod(a, b)));
+    double expected = fmod(a, b);
+    double actual = compileAndRun<double>(proc, a);
+    if (std::isnan(expected))
+        CHECK(std::isnan(actual));
+    else
+        CHECK(isIdentical(actual, expected));
 }
 
 void testModImmArgDouble(double a, double b)
@@ -2560,7 +2565,12 @@ void testModImmsDouble(double a, double b)
     root->clearSuccessors();
     root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Mod, Origin(), valueA, valueB));
 
-    CHECK(isIdentical(compileAndRun<double>(proc), fmod(a, b)));
+    double expected = fmod(a, b);
+    double actual = compileAndRun<double>(proc);
+    if (std::isnan(expected))
+        CHECK(std::isnan(actual));
+    else
+        CHECK(isIdentical(actual, expected));
 }
 
 void testModArgFloat(float a)

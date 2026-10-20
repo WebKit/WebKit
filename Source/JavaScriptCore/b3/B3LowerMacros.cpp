@@ -155,6 +155,9 @@ private:
                 }
 
                 if (m_value->type() == Double) {
+                    if (lowerDoubleModByPowerOfTwo())
+                        break;
+
                     if constexpr (!isARM64()) {
                         // Non-ARM64: just call fmod directly.
                         Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(Math::fmodDouble));
@@ -1056,6 +1059,39 @@ private:
         Value* result = m_insertionSet.insert<SIMDValue>(m_index, m_origin, VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, compareResult, allOnesConst);
         m_value->replaceWithIdentity(result);
         m_changed = true;
+    }
+
+    bool lowerDoubleModByPowerOfTwo()
+    {
+        if (!MacroAssembler::supportsFloatingPointRounding())
+            return false;
+
+        Value* right = m_value->child(1);
+        if (!right->hasDouble())
+            return false;
+
+        std::optional<double> divisor = powerOfTwoDivisorForDoubleMod(right->asDouble());
+        if (!divisor)
+            return false;
+
+        Value* left = m_value->child(0);
+        Value* product;
+        if (*divisor == 1)
+            product = m_insertionSet.insert<Value>(m_index, FTrunc, m_origin, left);
+        else {
+            Value* scaled = m_insertionSet.insert<Value>(m_index, Mul, m_origin, left, m_insertionSet.insert<ConstDoubleValue>(m_index, m_origin, 1 / *divisor));
+            Value* quotient = m_insertionSet.insert<Value>(m_index, FTrunc, m_origin, scaled);
+            product = m_insertionSet.insert<Value>(m_index, Mul, m_origin, quotient, m_insertionSet.insert<ConstDoubleValue>(m_index, m_origin, *divisor));
+        }
+        Value* remainder = m_insertionSet.insert<Value>(m_index, Sub, m_origin, left, product);
+        // Masking in the integer domain keeps the sign mask an immediate instead of a constant-pool load.
+        Value* signBit = m_insertionSet.insert<Value>(m_index, BitwiseCast, m_origin,
+            m_insertionSet.insert<Value>(m_index, BitAnd, m_origin,
+                m_insertionSet.insert<Value>(m_index, BitwiseCast, m_origin, left),
+                m_insertionSet.insert<Const64Value>(m_index, m_origin, std::numeric_limits<int64_t>::min())));
+        m_value->replaceWithIdentity(m_insertionSet.insert<Value>(m_index, BitOr, m_origin, remainder, signBit));
+        m_changed = true;
+        return true;
     }
 
     void makeDivisionChill(Opcode nonChillOpcode)

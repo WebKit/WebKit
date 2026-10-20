@@ -236,6 +236,21 @@ inline std::optional<double> safeReciprocalForDivByConst(double constant)
     return reciprocal;
 }
 
+// Returns |constant| when fmod(x, constant) == copysign(x - trunc(x * (1 / |constant|)) * |constant|, x) for
+// every x, which holds when |constant| is a power of two no smaller than 1: scaling by a power of two is exact
+// whenever trunc() can see a nonzero integer part, the product does not exceed |x|, and the difference is a
+// multiple of x's lowest significant bit that is smaller than |x|.
+inline std::optional<double> powerOfTwoDivisorForDoubleMod(double constant)
+{
+    double divisor = std::abs(constant);
+    if (!std::isfinite(divisor) || divisor < 1)
+        return std::nullopt;
+    int exponent;
+    if (std::frexp(divisor, &exponent) != 0.5)
+        return std::nullopt;
+    return divisor;
+}
+
 extern "C" {
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(jsRound, double, (double));
 }
