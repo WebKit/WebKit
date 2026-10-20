@@ -2674,3 +2674,5 @@ webkit.org/b/327445 [ Debug arm64 ] imported/w3c/web-platform-tests/content-secu
 
 webkit.org/b/319930 [ Release ] media/video-webkit-playsinline.html [ Pass Timeout ]
 webkit.org/b/328134 [ Release ] accessibility/isolated-tree/datetime/time-input-meridiem.html [ Failure ]
+
+webkit.org/b/328239 [ x86_64 ] imported/w3c/web-platform-tests/svg/painting/inline-svg-resize-viewport-dependent-mask.html [ Failure ]
