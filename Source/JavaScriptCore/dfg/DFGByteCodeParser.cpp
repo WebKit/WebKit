@@ -3179,6 +3179,11 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (!arrayMode.isJSArray())
                 return CallOptimizationResult::DidNothing;
 
+            // push() with no arguments still sets length, which throws when length is not writable.
+            // Only ArrayStorage arrays can have such a length, so leave those to the generic call.
+            if (argumentCountIncludingThis == 1 && !arrayModeImpliesWritableLength(arrayMode.type()))
+                return CallOptimizationResult::DidNothing;
+
             insertChecks();
 
             addVarArgChild(nullptr); // For storage.

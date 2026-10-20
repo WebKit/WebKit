@@ -115,6 +115,12 @@ Array::Type LEGACY_NODELETE refineTypedArrayType(Array::Type, TypedArrayType);
 
 bool LEGACY_NODELETE permitsBoundsCheckLowering(Array::Type);
 
+// Only arrays with ArrayStorage can have a non-writable length.
+inline bool arrayModeImpliesWritableLength(Array::Type type)
+{
+    return type == Array::Int32 || type == Array::Double || type == Array::Contiguous;
+}
+
 class ArrayMode {
 public:
     ArrayMode()
