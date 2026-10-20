@@ -124,9 +124,25 @@ void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
     webkitWebViewBaseSynthesizeMouseEvent(toWebKitGLibAPI(m_view), MouseEventType::Release, 3, 0, x, y, 0, 0);
 }
 
-void PlatformWebView::simulateMouseMove(unsigned x, unsigned y, WKEventModifiers)
+static unsigned toGDKModifiers(WKEventModifiers wkModifiers)
 {
-    webkitWebViewBaseSynthesizeMouseEvent(toWebKitGLibAPI(m_view), MouseEventType::Motion, 0, 0, x, y, 0, 0);
+    unsigned modifiers = 0;
+    if (wkModifiers & kWKEventModifiersControlKey)
+        modifiers |= GDK_CONTROL_MASK;
+    if (wkModifiers & kWKEventModifiersShiftKey)
+        modifiers |= GDK_SHIFT_MASK;
+    if (wkModifiers & kWKEventModifiersAltKey)
+        modifiers |= GDK_MOD1_MASK;
+    if (wkModifiers & kWKEventModifiersMetaKey)
+        modifiers |= GDK_META_MASK;
+    if (wkModifiers & kWKEventModifiersCapsLockKey)
+        modifiers |= GDK_LOCK_MASK;
+    return modifiers;
+}
+
+void PlatformWebView::simulateMouseMove(unsigned x, unsigned y, WKEventModifiers modifiers)
+{
+    webkitWebViewBaseSynthesizeMouseEvent(toWebKitGLibAPI(m_view), MouseEventType::Motion, 0, 0, x, y, toGDKModifiers(modifiers), 0);
 }
 
 } // namespace TestWebKitAPI
