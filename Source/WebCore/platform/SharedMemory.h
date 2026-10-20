@@ -120,6 +120,7 @@ public:
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
     WEBCORE_EXPORT static RefPtr<SharedMemory> allocate(size_t);
     WEBCORE_EXPORT static RefPtr<SharedMemory> copyBuffer(const WebCore::FragmentedSharedBuffer&);
+    WEBCORE_EXPORT static RefPtr<SharedMemory> copySpan(std::span<const uint8_t>);
     WEBCORE_EXPORT static RefPtr<SharedMemory> map(Handle&&, Protection, CopyOnWrite = CopyOnWrite::No);
 #if USE(UNIX_DOMAIN_SOCKETS)
     WEBCORE_EXPORT static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);

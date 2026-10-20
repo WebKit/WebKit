@@ -55,7 +55,7 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const FragmentedSharedBuffer& buff
     if (buffer.isEmpty())
         return nullptr;
 
-    auto sharedMemory = allocate(buffer.size());
+    RefPtr sharedMemory = allocate(buffer.size());
     if (!sharedMemory)
         return nullptr;
 
@@ -64,6 +64,17 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const FragmentedSharedBuffer& buff
         memcpySpan(consumeSpan(destination, segment.size()), segment);
     });
 
+    return sharedMemory;
+}
+
+RefPtr<SharedMemory> SharedMemory::copySpan(std::span<const uint8_t> span)
+{
+    if (span.empty())
+        return nullptr;
+    RefPtr sharedMemory = allocate(span.size());
+    if (!sharedMemory)
+        return nullptr;
+    memcpySpan(sharedMemory->mutableSpan(), span);
     return sharedMemory;
 }
 
