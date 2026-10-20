@@ -69,6 +69,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly, copy) NSArray<NSString *> *buttonTitles;
 
 - (void)respondWithButtonIndex:(NSUInteger)index;
+- (void)dismissWithoutAnswer;
 
 @end
 

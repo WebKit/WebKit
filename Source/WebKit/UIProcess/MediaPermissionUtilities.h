@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/SecurityOriginData.h>
+#include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -70,6 +71,18 @@ bool checkUsageDescriptionStringForSpeechRecognition();
 
 RetainPtr<NSString> applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData&);
 RetainPtr<NSString> applicationVisibleName();
+
+struct PermissionPromptRequest {
+    MediaPermissionReason reason;
+    WebCore::SecurityOriginData origin;
+};
+
+struct MediaPermissionPromptResult {
+    bool granted { false };
+    bool wasAnswered { false };
+};
+
+void alertForPermission(WebPageProxy&, PermissionPromptRequest&&, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
 void alertForPermission(WebPageProxy&, MediaPermissionReason, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
 
 void requestAVCaptureAccessForType(MediaPermissionType, CompletionHandler<void(bool authorized)>&&);
@@ -80,22 +93,23 @@ MediaPermissionResult checkAVCaptureAccessForType(MediaPermissionType);
 // Lets an API test answer the capture permission prompt.
 class MediaPermissionPromptForTesting : public RefCounted<MediaPermissionPromptForTesting> {
 public:
-    static Ref<MediaPermissionPromptForTesting> create(String&& title, Vector<String>&& buttonTitles, CompletionHandler<void(bool granted)>&&);
+    static Ref<MediaPermissionPromptForTesting> create(String&& title, Vector<String>&& buttonTitles, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
 
     const String& title() const LIFETIME_BOUND { return m_title; }
     const Vector<String>& buttonTitles() const LIFETIME_BOUND { return m_buttonTitles; }
 
-    void respond(size_t buttonIndex);
+    // No button means the prompt closed without an answer.
+    void respond(std::optional<size_t> buttonIndex);
 
 private:
-    MediaPermissionPromptForTesting(String&& title, Vector<String>&& buttonTitles, CompletionHandler<void(bool granted)>&&);
+    MediaPermissionPromptForTesting(String&& title, Vector<String>&& buttonTitles, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
 
     String m_title;
     Vector<String> m_buttonTitles;
-    CompletionHandler<void(bool granted)> m_completionHandler;
+    CompletionHandler<void(MediaPermissionPromptResult&&)> m_completionHandler;
 };
 
-void alertForPermissionForTesting(WebPageProxy&, MediaPermissionReason, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
+void alertForPermissionForTesting(WebPageProxy&, PermissionPromptRequest&&, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
 #endif
 
 #if HAVE(SPEECHRECOGNIZER)

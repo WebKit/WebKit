@@ -154,6 +154,27 @@ TEST(MediaCapturePermissionPrompt, AnsweredDenialIsRemembered)
     EXPECT_EQ(1U, [delegate numberOfRequests]);
 }
 
+TEST(MediaCapturePermissionPrompt, UnansweredPromptIsNotRememberedAsDenial)
+{
+    auto [webView, delegate] = createWebView();
+
+    __block NSUInteger numberOfPromptsShown = 0;
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        ++numberOfPromptsShown;
+        [prompt dismissWithoutAnswer];
+    }];
+
+    [delegate setRequestHandler:^(WKWebView *, PermissionDecisionHandler decisionHandler) {
+        decisionHandler(WKPermissionDecisionPrompt);
+    }];
+
+    captureWithoutUserGesture(webView.get(), @{ @"video": @YES });
+    captureWithoutUserGesture(webView.get(), @{ @"video": @YES });
+
+    EXPECT_EQ(2U, numberOfPromptsShown);
+    EXPECT_EQ(2U, [delegate numberOfRequests]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MEDIA_STREAM)

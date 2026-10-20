@@ -158,6 +158,13 @@
 #endif
 }
 
+- (void)dismissWithoutAnswer
+{
+#if ENABLE(MEDIA_STREAM)
+    protect(_prompt)->respond(std::nullopt);
+#endif
+}
+
 @end
 
 @implementation WKWebView (WKTesting)
