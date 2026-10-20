@@ -463,6 +463,11 @@ BufferBackend makeWUTBufferBackend(WUTBackendContext& context)
     return makeWUTBufferBackend(context.bufferResources);
 }
 
+VertexArrayBackend makeWUTVertexArrayBackend(WUTBackendContext& context)
+{
+    return makeWUTVertexArrayBackend(context.bufferResources);
+}
+
 Backend makeWUTBackend(WUTBackendContext& context)
 {
     Backend backend;
