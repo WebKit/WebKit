@@ -44,12 +44,12 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketTask);
 
-Ref<WebSocketTask> WebSocketTask::create(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, WeakPtr<SessionWrapper>&& sessionWrapper, const WebCore::ResourceRequest& request, const WebCore::ClientOrigin& clientOrigin, RetainPtr<NSURLSessionWebSocketTask>&& task, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+Ref<WebSocketTask> WebSocketTask::create(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, WeakPtr<SessionWrapper>&& sessionWrapper, const WebCore::ResourceRequest& request, const WebCore::ClientOrigin& clientOrigin, RetainPtr<NSURLSessionWebSocketTask>&& task, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, IsInitiatedByWorker isInitiatedByWorker)
 {
-    return adoptRef(*new WebSocketTask(channel, webProxyPageID, frameID, pageID, WTF::move(sessionWrapper), request, clientOrigin, WTF::move(task), storedCredentialsPolicy, isInitiatedByDedicatedWorker));
+    return adoptRef(*new WebSocketTask(channel, webProxyPageID, frameID, pageID, WTF::move(sessionWrapper), request, clientOrigin, WTF::move(task), storedCredentialsPolicy, isInitiatedByWorker));
 }
 
-WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, WeakPtr<SessionWrapper>&& sessionWrapper, const WebCore::ResourceRequest& request, const WebCore::ClientOrigin& clientOrigin, RetainPtr<NSURLSessionWebSocketTask>&& task, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, WeakPtr<SessionWrapper>&& sessionWrapper, const WebCore::ResourceRequest& request, const WebCore::ClientOrigin& clientOrigin, RetainPtr<NSURLSessionWebSocketTask>&& task, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByWorker isInitiatedByWorker)
     : NetworkTaskCocoa(protect(*channel.session()))
     , m_channel(channel)
     , m_task(WTF::move(task))
@@ -59,7 +59,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
     , m_sessionWrapper(WTF::move(sessionWrapper))
     , m_partition(request.cachePartition())
     , m_storedCredentialsPolicy(storedCredentialsPolicy)
-    , m_isInitiatedByDedicatedWorker(isInitiatedByDedicatedWorker)
+    , m_isInitiatedByWorker(isInitiatedByWorker)
 {
     // We use topOrigin in case of service worker websocket connections, for which pageID does not link to a real page.
     // In that case, let's only call the callback for same origin loads.
@@ -70,7 +70,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
     if (storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless)
         thirdPartyCookieBlockingDecision = WebCore::ThirdPartyCookieBlockingDecision::All;
     else if (CheckedPtr session = networkSession(); CheckedPtr networkStorageSession = session ? session->networkStorageSession() : nullptr)
-        thirdPartyCookieBlockingDecision = networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID, webPageProxyID(), shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request), m_isInitiatedByDedicatedWorker == IsInitiatedByDedicatedWorker::Yes);
+        thirdPartyCookieBlockingDecision = networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID, webPageProxyID(), shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request), m_isInitiatedByWorker == IsInitiatedByWorker::Yes);
     if (NetworkStorageSession::shouldBlockCookies(thirdPartyCookieBlockingDecision))
         blockCookies();
 

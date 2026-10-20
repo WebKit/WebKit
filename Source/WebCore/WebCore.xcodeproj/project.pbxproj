@@ -2445,7 +2445,7 @@
 		55FA7FFB2110ECD7005AEFE7 /* SVGZoomAndPanType.h in Headers */ = {isa = PBXBuildFile; fileRef = 55FA7FFA2110ECD7005AEFE7 /* SVGZoomAndPanType.h */; };
 		55FD9FC127B20D520045DA1F /* WebAssemblyScriptSourceCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 55FD9FBF27B20D520045DA1F /* WebAssemblyScriptSourceCode.h */; };
 		564EF2812FA167E3008E9EC3 /* NavigatorGlobalPrivacyControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 564EF27D2FA05074008E9EC3 /* NavigatorGlobalPrivacyControl.h */; };
-		568AF20E2FEB4DE600AF8D54 /* IsInitiatedByDedicatedWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 568AF20D2FEB4DE600AF8D54 /* IsInitiatedByDedicatedWorker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		568AF20E2FEB4DE600AF8D54 /* IsInitiatedByWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 568AF20D2FEB4DE600AF8D54 /* IsInitiatedByWorker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5704405A1E53936200356601 /* JSAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 570440591E53936200356601 /* JSAesCbcCfbParams.h */; };
 		5706A6981DDE5E4600A03B14 /* JSRsaOaepParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5706A6971DDE5E4600A03B14 /* JSRsaOaepParams.h */; };
 		57093D1324C97C8F0086C52D /* FetchResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 413015D61C7B570400091C6E /* FetchResponse.h */; };
@@ -13207,7 +13207,7 @@
 		564EF27D2FA05074008E9EC3 /* NavigatorGlobalPrivacyControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatorGlobalPrivacyControl.h; sourceTree = "<group>"; };
 		564EF27E2FA05074008E9EC3 /* NavigatorGlobalPrivacyControl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorGlobalPrivacyControl.cpp; sourceTree = "<group>"; };
 		565E7E6449095E4933B5F978 /* Volume2.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = Volume2.svg; sourceTree = "<group>"; };
-		568AF20D2FEB4DE600AF8D54 /* IsInitiatedByDedicatedWorker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsInitiatedByDedicatedWorker.h; sourceTree = "<group>"; };
+		568AF20D2FEB4DE600AF8D54 /* IsInitiatedByWorker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsInitiatedByWorker.h; sourceTree = "<group>"; };
 		56FFE14C3114000000000000 /* StyleLocalPropertyRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleLocalPropertyRegistry.cpp; sourceTree = "<group>"; };
 		570440571E53851600356601 /* CryptoAlgorithmAESCFBCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAESCFBCocoa.cpp; sourceTree = "<group>"; };
 		570440591E53936200356601 /* JSAesCbcCfbParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAesCbcCfbParams.h; sourceTree = "<group>"; };
@@ -34097,7 +34097,7 @@
 				E3BF19E422AF2FCF009C9926 /* CloseEvent.cpp */,
 				97AABCF814FA09D5007457AE /* CloseEvent.h */,
 				97AABCF914FA09D5007457AE /* CloseEvent.idl */,
-				568AF20D2FEB4DE600AF8D54 /* IsInitiatedByDedicatedWorker.h */,
+				568AF20D2FEB4DE600AF8D54 /* IsInitiatedByWorker.h */,
 				5C688AA01D380509000B54FA /* ThreadableWebSocketChannel.cpp */,
 				97AABCFC14FA09D5007457AE /* ThreadableWebSocketChannel.h */,
 				97AABCFD14FA09D5007457AE /* ThreadableWebSocketChannelClientWrapper.cpp */,
@@ -46446,7 +46446,7 @@
 				45E434C32E74E6E5004BD91D /* IOSurfacePoolIdentifier.h in Headers */,
 				3C8D24EE2E25CF1A00D2A929 /* IPAddressSpace.h in Headers */,
 				9BAF70C12DC1C35A0027B01E /* IsImportant.h in Headers */,
-				568AF20E2FEB4DE600AF8D54 /* IsInitiatedByDedicatedWorker.h in Headers */,
+				568AF20E2FEB4DE600AF8D54 /* IsInitiatedByWorker.h in Headers */,
 				6DD53F3D2C49D37F0049F1C5 /* IsLoggedIn.h in Headers */,
 				E86097D22D84403B00A4E526 /* ISO18013.h in Headers */,
 				E86097D42D84403B00A4E526 /* ISO18013DocumentRequest.h in Headers */,

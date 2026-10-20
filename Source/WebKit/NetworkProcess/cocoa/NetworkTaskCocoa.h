@@ -55,7 +55,7 @@ public:
 
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const;
 
-    virtual bool isInitiatedByDedicatedWorker() const { return false; }
+    virtual bool isInitiatedByWorker() const { return false; }
 
     virtual bool navigationLosesFrameSpecificStorageAccess() const { return false; }
 

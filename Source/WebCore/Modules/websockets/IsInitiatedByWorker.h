@@ -27,6 +27,6 @@
 
 namespace WebCore {
 
-enum class IsInitiatedByDedicatedWorker : bool { No, Yes };
+enum class IsInitiatedByWorker : bool { No, Yes };
 
 } // namespace WebCore

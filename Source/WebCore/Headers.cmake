@@ -682,7 +682,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/webdriver/NavigatorWebDriverActivePolicy.h
 
-    Modules/websockets/IsInitiatedByDedicatedWorker.h
+    Modules/websockets/IsInitiatedByWorker.h
     Modules/websockets/ThreadableWebSocketChannel.h
     Modules/websockets/WebSocketChannelClient.h
     Modules/websockets/WebSocketChannelInspector.h

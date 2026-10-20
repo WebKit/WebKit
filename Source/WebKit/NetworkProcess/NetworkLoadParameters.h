@@ -79,7 +79,7 @@ struct NetworkLoadParameters {
     bool hadMainFrameMainResourcePrivateRelayed { false };
     bool allowPrivacyProxy { true };
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections { };
-    bool isInitiatedByDedicatedWorker { false };
+    bool isInitiatedByWorker { false };
 
     uint64_t requiredCookiesVersion { 0 };
 

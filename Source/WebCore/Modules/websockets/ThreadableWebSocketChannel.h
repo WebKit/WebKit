@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include <WebCore/IsInitiatedByDedicatedWorker.h>
+#include <WebCore/IsInitiatedByWorker.h>
 #include <WebCore/WebSocketIdentifier.h>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/Forward.h>
@@ -60,7 +60,7 @@ using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 class ThreadableWebSocketChannel : public AbstractRefCounted, public Identified<WebSocketIdentifier> {
     WTF_MAKE_NONCOPYABLE(ThreadableWebSocketChannel);
 public:
-    static RefPtr<ThreadableWebSocketChannel> create(Document&, WebSocketChannelClient&, SocketProvider&, IsInitiatedByDedicatedWorker = IsInitiatedByDedicatedWorker::No);
+    static RefPtr<ThreadableWebSocketChannel> create(Document&, WebSocketChannelClient&, SocketProvider&, IsInitiatedByWorker = IsInitiatedByWorker::No);
     static RefPtr<ThreadableWebSocketChannel> create(ScriptExecutionContext&, WebSocketChannelClient&, SocketProvider&);
     WEBCORE_EXPORT ThreadableWebSocketChannel();
 
