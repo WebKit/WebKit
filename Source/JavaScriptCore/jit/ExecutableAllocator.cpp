@@ -380,7 +380,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         if (Options::useJITDump())
             return PageReservation::tryReserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, hintAddress, EXECUTABLE_POOL_WRITABLE, true, true, false);
 #endif
-        if (Options::useJITCage() && JSC_ALLOW_JIT_CAGE_SPECIFIC_RESERVATION)
+        if (Options::useJITCage())
             return PageReservation::tryReserve(reservationSize, OSAllocator::JSJITCodePages, hintAddress, EXECUTABLE_POOL_WRITABLE, true, false, Options::useJITCage());
         return PageReservation::tryReserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, hintAddress, EXECUTABLE_POOL_WRITABLE, true, false, false);
     };

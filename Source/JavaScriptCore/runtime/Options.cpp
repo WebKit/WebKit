@@ -1547,8 +1547,6 @@ bool Option::operator==(const Option& other) const
 #if ENABLE(JIT_CAGE)
 SUPPRESS_ASAN bool canUseJITCage()
 {
-    if (JSC_FORCE_USE_JIT_CAGE)
-        return true;
     return JSC_JIT_CAGE_VERSION() && !ASAN_ENABLED && WTF::processHasEntitlement("com.apple.private.verified-jit"_s);
 }
 #else

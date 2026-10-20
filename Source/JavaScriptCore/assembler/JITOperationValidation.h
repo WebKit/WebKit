@@ -43,14 +43,6 @@
 #endif // OS(DARWIN)
 #endif
 
-#if !defined(JSC_FORCE_USE_JIT_CAGE)
-#define JSC_FORCE_USE_JIT_CAGE 0
-#endif
-
-#if !defined(JSC_ALLOW_JIT_CAGE_SPECIFIC_RESERVATION)
-#define JSC_ALLOW_JIT_CAGE_SPECIFIC_RESERVATION 1
-#endif
-
 namespace JSC {
 
 #ifndef JIT_OPERATION_VALIDATION_FUNCTOR
