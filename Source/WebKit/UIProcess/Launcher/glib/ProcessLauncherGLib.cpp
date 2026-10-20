@@ -60,31 +60,6 @@
 
 namespace WebKit {
 
-#if OS(LINUX)
-static bool isFlatpakSpawnUsable()
-{
-    ASSERT(isInsideFlatpak());
-    static std::optional<bool> ret;
-    if (ret)
-        return *ret;
-
-    // For our usage to work we need flatpak >= 1.5.2 on the host and flatpak-xdg-utils > 1.0.1 in the sandbox.
-    // Use the same working directory as flatpakSpawn(). The current working directory might not be visible in the sub-sandbox.
-    GRefPtr<GSubprocess> process = adoptGRef(g_subprocess_new(static_cast<GSubprocessFlags>(G_SUBPROCESS_FLAGS_STDOUT_SILENCE | G_SUBPROCESS_FLAGS_STDERR_SILENCE),
-        nullptr, "flatpak-spawn", "--sandbox", "--directory=/", "--sandbox-expose-path-ro-try=/this_path_doesnt_exist", "echo", nullptr));
-
-    if (!process.get())
-        ret = false;
-    else
-        ret = g_subprocess_wait_check(process.get(), nullptr, nullptr);
-
-    if (!*ret)
-        g_warning("flatpak-spawn --sandbox is not usable. Sandboxed processes will be spawned without a sandbox.");
-
-    return *ret;
-}
-#endif
-
 static int connectionOptions()
 {
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
@@ -255,7 +230,7 @@ void ProcessLauncher::launchProcess()
 #if OS(LINUX)
     bool sandboxEnabled = m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
 
-    if (sandboxEnabled && isInsideFlatpak() && isFlatpakSpawnUsable())
+    if (sandboxEnabled && isInsideFlatpak())
         process = flatpakSpawn(launcher.get(), m_launchOptions, argv, webkitClientSocketValue, &error.outPtr());
 #if ENABLE(BUBBLEWRAP_SANDBOX)
     // You cannot use bubblewrap within Flatpak or some containers so lets ensure it never happens.
@@ -267,8 +242,17 @@ void ProcessLauncher::launchProcess()
 #endif // OS(LINUX)
         process = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), argv.span().data(), &error.outPtr()));
 
-    if (!process.get())
+    if (!process.get()) {
+#if OS(LINUX)
+        if (sandboxEnabled && isInsideFlatpak())
+            g_error("Unable to spawn a new child process using flatpak-spawn: %s", error->message);
+#if ENABLE(BUBBLEWRAP_SANDBOX)
+        if (sandboxEnabled && shouldUseBubblewrap())
+            g_error("Unable to spawn a new child process using bubblewrap: %s", error->message);
+#endif // ENABLE(BUBBLEWRAP_SANDBOX)
+#endif // OS(LINUX)
         g_error("Unable to spawn a new child process: %s", error->message);
+    }
 
 #if OS(LINUX)
     if (isInsideFlatpak() || (sandboxEnabled && shouldUseBubblewrap())) {
