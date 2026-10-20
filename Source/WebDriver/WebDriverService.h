@@ -38,6 +38,7 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include "WebSocketServer.h"
+#include <span>
 #endif
 
 namespace WebDriver {
@@ -77,6 +78,7 @@ private:
     static std::optional<HTTPMethod> toCommandHTTPMethod(const String& method);
     static bool findCommand(HTTPMethod, const String& path, CommandHandler*, HashMap<String, String>& parameters);
 
+    void closeSession(Ref<Session>&&, Function<void(CommandResult&&)>&&);
     void newSession(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void deleteSession(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void status(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
@@ -142,6 +144,7 @@ private:
 
 #if ENABLE(WEBDRIVER_BIDI)
     void bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
+    void bidiSessionEnd(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
 #endif
 
     static Capabilities platformCapabilities();
@@ -177,8 +180,9 @@ private:
         String method;
         BidiCommandHandler handler;
     };
-    static const BidiCommand s_bidiCommands[];
-    static bool findBidiCommand(const RefPtr<JSON::Object>&, BidiCommandHandler*, RefPtr<JSON::Object>& parsedParams);
+    static const BidiCommand s_staticBidiCommands[];
+    static const BidiCommand s_sessionBoundBidiCommands[];
+    static const BidiCommand* findBidiCommand(std::span<const BidiCommand>, const String& method);
 #endif // ENABLE(WEBDRIVER_BIDI)
 
     HTTPServer m_server;
