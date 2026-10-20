@@ -1,0 +1,113 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ignoreWebProcessTermination=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileAnotherFrameIsPaused");
+
+    function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function processIdentifier(target) {
+        return target.identifier.split("-").pop();
+    }
+
+    async function evaluate(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    async function pause(target) {
+        let paused = new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (event.data.target !== target || !WI.debuggerManager.dataForTarget(target).paused)
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+                resolve();
+            });
+        });
+        target.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+        await paused;
+    }
+
+    async function waitForTargetRemoved(target) {
+        for (let attempt = 0; attempt < 50 && WI.targets.includes(target); ++attempt)
+            await sleep(100);
+        return !WI.targets.includes(target);
+    }
+
+    async function pauseFramesInTwoProcessesAndExpectMainFrameHeld(name) {
+        let firstTarget = await waitForFrameTargetForURLContaining(`same-process-frame.html?${name}1`);
+        let secondTarget = await waitForFrameTargetForURLContaining(`same-process-frame.html?${name}2`);
+        InspectorTest.expectNotNull(firstTarget, "Should find the frame target of the first cross-site frame.");
+        InspectorTest.expectNotNull(secondTarget, "Should find the frame target of the second cross-site frame.");
+        InspectorTest.expectNotEqual(processIdentifier(firstTarget), processIdentifier(secondTarget), "The two cross-site frames should be in different processes.");
+        InspectorTest.expectThat(await waitForExpressionInTarget(firstTarget, "window.ticks > 2"), "The first cross-site frame's interval should be running.");
+        InspectorTest.expectThat(await waitForExpressionInTarget(secondTarget, "window.ticks > 2"), "The second cross-site frame's interval should be running.");
+
+        await pause(firstTarget);
+        await pause(secondTarget);
+        let before = await evaluate(InspectorTest.mainFrameTarget, "window.mainTicks");
+        await sleep(300);
+        InspectorTest.expectEqual(await evaluate(InspectorTest.mainFrameTarget, "window.mainTicks"), before, "The main frame's interval should not advance while both cross-site frames are paused.");
+        return {firstTarget, secondTarget, before};
+    }
+
+    async function expectMainFrameHeldUntilResuming(target, before) {
+        await sleep(300);
+        InspectorTest.expectEqual(await evaluate(InspectorTest.mainFrameTarget, "window.mainTicks"), before, "The main frame's interval should not advance while the other cross-site frame is still paused.");
+
+        await target.DebuggerAgent.resume();
+        InspectorTest.expectThat(await waitForExpressionInTarget(InspectorTest.mainFrameTarget, `window.mainTicks > ${before}`), "The main frame's interval should advance after the other cross-site frame resumes.");
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileAnotherFrameIsPaused.PausedFrameResumed",
+        description: "If one of two frames paused in different cross-site processes resumes, the main frame should stay held until the other frame continues.",
+        async test() {
+            let {firstTarget, secondTarget, before} = await pauseFramesInTwoProcessesAndExpectMainFrameHeld("A");
+
+            await firstTarget.DebuggerAgent.resume();
+            await expectMainFrameHeldUntilResuming(secondTarget, before);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileAnotherFrameIsPaused.PausedFrameRemoved",
+        description: "If one of two frames paused in different cross-site processes is removed, the main frame should stay held until the other frame continues.",
+        async test() {
+            let {firstTarget, secondTarget, before} = await pauseFramesInTwoProcessesAndExpectMainFrameHeld("A");
+
+            await evaluate(InspectorTest.mainFrameTarget, "document.getElementById('frameA1').remove()");
+            InspectorTest.expectThat(await waitForTargetRemoved(firstTarget), "The removed frame's target should go away.");
+            await expectMainFrameHeldUntilResuming(secondTarget, before);
+        }
+    });
+
+    // Last, because the frame target of a process that exits stays, and waitForFrameTargetForURLContaining() evaluates in every frame target, which never returns for that one.
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileAnotherFrameIsPaused.PausingProcessTerminated",
+        description: "If the process of one of two frames paused in different cross-site processes exits, the main frame should stay held until the other frame continues.",
+        async test() {
+            let {firstTarget, secondTarget, before} = await pauseFramesInTwoProcessesAndExpectMainFrameHeld("T");
+
+            firstTarget.RuntimeAgent.evaluate.invoke({expression: "internals.terminateWebContentProcess()", objectGroup: "test"}).catch(() => { });
+            await expectMainFrameHeldUntilResuming(secondTarget, before);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that the frames held for two frames paused in different cross-site processes stay held when one of the paused frames resumes, is removed, or its process exits, until the other paused frame continues.</p>
+<iframe id="frameA1" src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A1"></iframe>
+<iframe id="frameA2" src="https://localhost:8443/site-isolation/inspector/debugger/resources/same-process-frame.html?A2"></iframe>
+<iframe id="frameT1" src="https://localhost:8443/site-isolation/inspector/debugger/resources/same-process-frame.html?T1"></iframe>
+<iframe id="frameT2" src="https://127.0.0.1:8443/site-isolation/inspector/debugger/resources/same-process-frame.html?T2"></iframe>
+</body>

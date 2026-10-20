@@ -1,0 +1,36 @@
+Test that the frames held for two frames paused in different cross-site processes stay held when one of the paused frames resumes, is removed, or its process exits, until the other paused frame continues.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileAnotherFrameIsPaused
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileAnotherFrameIsPaused.PausedFrameResumed
+PASS: Should find the frame target of the first cross-site frame.
+PASS: Should find the frame target of the second cross-site frame.
+PASS: The two cross-site frames should be in different processes.
+PASS: The first cross-site frame's interval should be running.
+PASS: The second cross-site frame's interval should be running.
+PASS: The main frame's interval should not advance while both cross-site frames are paused.
+PASS: The main frame's interval should not advance while the other cross-site frame is still paused.
+PASS: The main frame's interval should advance after the other cross-site frame resumes.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileAnotherFrameIsPaused.PausedFrameRemoved
+PASS: Should find the frame target of the first cross-site frame.
+PASS: Should find the frame target of the second cross-site frame.
+PASS: The two cross-site frames should be in different processes.
+PASS: The first cross-site frame's interval should be running.
+PASS: The second cross-site frame's interval should be running.
+PASS: The main frame's interval should not advance while both cross-site frames are paused.
+PASS: The removed frame's target should go away.
+PASS: The main frame's interval should not advance while the other cross-site frame is still paused.
+PASS: The main frame's interval should advance after the other cross-site frame resumes.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileAnotherFrameIsPaused.PausingProcessTerminated
+PASS: Should find the frame target of the first cross-site frame.
+PASS: Should find the frame target of the second cross-site frame.
+PASS: The two cross-site frames should be in different processes.
+PASS: The first cross-site frame's interval should be running.
+PASS: The second cross-site frame's interval should be running.
+PASS: The main frame's interval should not advance while both cross-site frames are paused.
+PASS: The main frame's interval should not advance while the other cross-site frame is still paused.
+PASS: The main frame's interval should advance after the other cross-site frame resumes.
+
