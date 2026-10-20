@@ -87,7 +87,15 @@ private:
         if (optimizeForX86() || optimizeForARM64()) {
             fixIntOrBooleanEdge(leftChild);
             fixIntOrBooleanEdge(rightChild);
-            node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            // We need to be careful about skipping overflow check because div / mod can generate non integer values
+            // from (Int32, Int32) inputs. For now, we always check non-zero divisor.
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()) && bytecodeCanIgnoreNaNAndInfinity(node->arithNodeFlags()) && bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+                node->setArithMode(Arith::Unchecked);
+                node->clearFlags(NodeMustGenerate);
+            } else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                node->setArithMode(Arith::CheckOverflow);
+            else
+                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
             return;
         }
 
@@ -103,7 +111,10 @@ private:
 
         node->setOp(DoubleAsInt32);
         node->children.initialize(Edge(newDivision, DoubleRepUse), Edge(), Edge());
-        node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+        if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+            node->setArithMode(Arith::CheckOverflow);
+        else
+            node->setArithMode(Arith::CheckOverflowAndNegativeZero);
 
     }
 
@@ -129,7 +140,13 @@ private:
         if ((node->op() == ArithMod || node->op() == ValueMod) && m_graph.modShouldSpeculateInt52(node)) {
             fixEdge<Int52RepUse>(leftChild);
             fixEdge<Int52RepUse>(rightChild);
-            node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            if (bytecodeCanIgnoreNaNAndInfinity(node->arithNodeFlags()) && bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+                node->setArithMode(Arith::Unchecked);
+                node->clearFlags(NodeMustGenerate);
+            } else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                node->setArithMode(Arith::CheckOverflow);
+            else
+                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
             node->setResult(NodeResultInt52);
             return;
         }
@@ -142,16 +159,25 @@ private:
     
     void fixupArithMul(Node* node, Edge& leftChild, Edge& rightChild)
     {
-        if (m_graph.mulShouldSpeculateInt32(node, FixupPass)) {
+        if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
             fixIntOrBooleanEdge(leftChild);
             fixIntOrBooleanEdge(rightChild);
-            node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+                node->setArithMode(Arith::Unchecked);
+                node->clearFlags(NodeMustGenerate);
+            } else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()) || leftChild.node() == rightChild.node())
+                node->setArithMode(Arith::CheckOverflow);
+            else
+                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
             return;
         }
         if (m_graph.binaryArithShouldSpeculateInt52(node, FixupPass)) {
             fixEdge<Int52RepUse>(leftChild);
             fixEdge<Int52RepUse>(rightChild);
-            node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()) || leftChild.node() == rightChild.node())
+                node->setArithMode(Arith::CheckOverflow);
+            else
+                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
             node->setResult(NodeResultInt52);
             return;
         }
@@ -292,6 +318,8 @@ private:
             }
 
             if (attemptToMakeIntegerAdd(node)) {
+                // FIXME: Clear ArithSub's NodeMustGenerate when ArithMode is unchecked
+                // https://bugs.webkit.org/show_bug.cgi?id=190607
                 node->setOp(ArithSub);
                 break;
             }
@@ -457,7 +485,13 @@ private:
             if (node->child1()->shouldSpeculateInt32OrBoolean() && node->canSpeculateInt32(FixupPass)) {
                 node->setOp(ArithNegate);
                 fixIntOrBooleanEdge(node->child1());
-                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+                if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+                    node->setArithMode(Arith::Unchecked);
+                    node->clearFlags(NodeMustGenerate);
+                } else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithMode(Arith::CheckOverflow);
+                else
+                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 node->setResult(NodeResultInt32);
                 break;
             }
@@ -465,7 +499,10 @@ private:
             if (m_graph.unaryArithShouldSpeculateInt52(node, FixupPass)) {
                 node->setOp(ArithNegate);
                 fixEdge<Int52RepUse>(node->child1());
-                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithMode(Arith::CheckOverflow);
+                else
+                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 node->setResult(NodeResultInt52);
                 break;
             }
@@ -587,6 +624,8 @@ private:
             
         case ArithAdd:
         case ArithSub: {
+            // FIXME: Clear ArithSub's NodeMustGenerate when ArithMode is unchecked
+            // https://bugs.webkit.org/show_bug.cgi?id=190607
             if (attemptToMakeIntegerAdd(node))
                 break;
             fixDoubleOrBooleanEdge(node->child1());
@@ -599,13 +638,22 @@ private:
         case ArithNegate: {
             if (node->child1()->shouldSpeculateInt32OrBoolean() && node->canSpeculateInt32(FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
-                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+                if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+                    node->setArithMode(Arith::Unchecked);
+                    node->clearFlags(NodeMustGenerate);
+                } else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithMode(Arith::CheckOverflow);
+                else
+                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 node->setResult(NodeResultInt32);
                 break;
             }
             if (m_graph.unaryArithShouldSpeculateInt52(node, FixupPass)) {
                 fixEdge<Int52RepUse>(node->child1());
-                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithMode(Arith::CheckOverflow);
+                else
+                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 node->setResult(NodeResultInt52);
                 break;
             }
@@ -651,7 +699,12 @@ private:
                 auto fixupNode = [&](Node* node) {
                     node->setOp(ArithMul);
                     node->setResult(NodeResultNumber);
-                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+                    if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                        node->setArithMode(Arith::Unchecked);
+                    else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()) || leftChild.node() == rightChild.node())
+                        node->setArithMode(Arith::CheckOverflow);
+                    else
+                        node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 };
 
                 if (leftChild->shouldSpeculateInt32() && rightChild->shouldSpeculateString()) {
@@ -791,7 +844,11 @@ private:
             if (node->child1()->shouldSpeculateInt32OrBoolean()
                 && node->canSpeculateInt32(FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
-                node->setArithMode(Arith::CheckOverflow);
+                if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+                    node->setArithMode(Arith::Unchecked);
+                    node->clearFlags(NodeMustGenerate);
+                } else
+                    node->setArithMode(Arith::CheckOverflow);
                 node->setResult(NodeResultInt32);
                 break;
             }
@@ -4293,7 +4350,10 @@ private:
                 // In that case, let's receive the child value as a Double value and convert it to Int32. This case happens in misc-bugs-847389-jpeg2000.
                 fixEdge<DoubleRepUse>(node->child1());
                 node->setOp(DoubleAsInt32);
-                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithMode(Arith::CheckOverflow);
+                else
+                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 return;
             }
 
@@ -5133,7 +5193,10 @@ private:
             truncateConstantsIfNecessary(node, mode);
             fixIntOrBooleanEdge(node->child1());
             fixIntOrBooleanEdge(node->child2());
-            node->setArithMode(Arith::CheckOverflow);
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                node->setArithMode(Arith::Unchecked);
+            else
+                node->setArithMode(Arith::CheckOverflow);
             return true;
         }
         

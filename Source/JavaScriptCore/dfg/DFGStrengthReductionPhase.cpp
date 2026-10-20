@@ -107,48 +107,12 @@ private:
         return false;
     }
 
-    // Only the CPS run, which directly follows BackwardsPropagation, can trust use flags. Later phases,
-    // starting with ConstantFolding, insert arithmetic without them, which would look truncatable.
-    bool hasBytecodeUseFlags() const
-    {
-        return m_graph.m_form != SSA;
-    }
-
-    bool relaxArithMode(Arith::Mode relaxedMode)
-    {
-        ASSERT(relaxedMode == Arith::Unchecked || relaxedMode == Arith::CheckOverflow);
-        Arith::Mode mode = m_node->arithMode();
-        if (mode != Arith::CheckOverflowAndNegativeZero && !(mode == Arith::CheckOverflow && relaxedMode == Arith::Unchecked))
-            return false;
-        m_node->setArithMode(relaxedMode);
-        m_changed = true;
-        return true;
-    }
-
-    void relaxDivOrModArithMode()
-    {
-        if (!hasBytecodeUseFlags())
-            return;
-        bool isInt32Operation = m_node->isBinaryInt32UseKind();
-        bool isInt52Operation = m_node->isBinaryUseKind(Int52RepUse);
-        if (!isInt32Operation && !isInt52Operation)
-            return;
-
-        // Even on integer operands, div and mod can produce fractions, NaN, and -0, so truncation
-        // alone does not make an unchecked result correct.
-        NodeFlags flags = m_node->arithNodeFlags();
-        if ((isInt52Operation || bytecodeCanTruncateInteger(flags)) && bytecodeCanIgnoreNaNAndInfinity(flags) && bytecodeCanIgnoreNegativeZero(flags)) {
-            if (relaxArithMode(Arith::Unchecked))
-                m_node->clearFlags(NodeMustGenerate);
-        } else if (bytecodeCanIgnoreNegativeZero(flags))
-            relaxArithMode(Arith::CheckOverflow);
-    }
-
     void handleNode()
     {
         switch (m_node->op()) {
         case Branch:
         case PurifyNaN:
+        case DoubleAsInt32:
         case ValueToInt32:
         case GlobalIsNaN:
         case NumberIsNaN:
@@ -165,40 +129,9 @@ private:
         case ArithCeil:
         case ArithTrunc:
         case ArithSqrt:
+        case ArithAbs:
+        case ArithNegate:
         case ArithUnary: {
-            if (foldPurifyNaNOnUnary(m_node))
-                m_changed = true;
-            break;
-        }
-
-        case DoubleAsInt32: {
-            if (hasBytecodeUseFlags() && bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags()))
-                relaxArithMode(Arith::CheckOverflow);
-            if (foldPurifyNaNOnUnary(m_node))
-                m_changed = true;
-            break;
-        }
-
-        case ArithAbs: {
-            if (hasBytecodeUseFlags() && isInt32(m_node->child1().useKind()) && bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
-                if (relaxArithMode(Arith::Unchecked))
-                    m_node->clearFlags(NodeMustGenerate);
-            }
-            if (foldPurifyNaNOnUnary(m_node))
-                m_changed = true;
-            break;
-        }
-
-        case ArithNegate: {
-            if (hasBytecodeUseFlags()) {
-                NodeFlags flags = m_node->arithNodeFlags();
-                UseKind useKind = m_node->child1().useKind();
-                if (isInt32(useKind) && bytecodeCanTruncateInteger(flags)) {
-                    if (relaxArithMode(Arith::Unchecked))
-                        m_node->clearFlags(NodeMustGenerate);
-                } else if ((isInt32(useKind) || useKind == Int52RepUse) && bytecodeCanIgnoreNegativeZero(flags))
-                    relaxArithMode(Arith::CheckOverflow);
-            }
             if (foldPurifyNaNOnUnary(m_node))
                 m_changed = true;
             break;
@@ -252,14 +185,10 @@ private:
             break;
             
         case ArithAdd:
-            if (hasBytecodeUseFlags() && m_node->isBinaryInt32UseKind() && bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
-                if (relaxArithMode(Arith::Unchecked))
-                    m_node->clearFlags(NodeMustGenerate);
-            }
             handleCommutativity();
             if (foldPurifyNaNOnBinary(m_node))
                 m_changed = true;
-
+            
             if (m_node->child2()->isInt32Constant() && !m_node->child2()->asInt32()) {
                 convertToIdentityOverChild1();
                 break;
@@ -277,17 +206,6 @@ private:
         }
 
         case ArithMul: {
-            if (hasBytecodeUseFlags()) {
-                NodeFlags flags = m_node->arithNodeFlags();
-                bool canTruncate = bytecodeCanTruncateInteger(flags) && m_graph.mulProductIsExact(m_node);
-                if (m_node->isBinaryInt32UseKind() && canTruncate) {
-                    if (relaxArithMode(Arith::Unchecked))
-                        m_node->clearFlags(NodeMustGenerate);
-                } else if ((m_node->isBinaryInt32UseKind() || m_node->isBinaryUseKind(Int52RepUse))
-                    && (bytecodeCanIgnoreNegativeZero(flags) || m_node->child1().node() == m_node->child2().node()))
-                    relaxArithMode(Arith::CheckOverflow);
-            }
-
             handleCommutativity();
             if (foldPurifyNaNOnBinary(m_node))
                 m_changed = true;
@@ -321,11 +239,6 @@ private:
             break;
         }
         case ArithSub: {
-            if (hasBytecodeUseFlags() && m_node->isBinaryInt32UseKind() && bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
-                if (relaxArithMode(Arith::Unchecked))
-                    m_node->clearFlags(NodeMustGenerate);
-            }
-
             if (foldPurifyNaNOnBinary(m_node))
                 m_changed = true;
 
@@ -366,8 +279,6 @@ private:
             break;
 
         case ArithMod: {
-            relaxDivOrModArithMode();
-
             if (foldPurifyNaNOnBinary(m_node))
                 m_changed = true;
 
@@ -404,8 +315,6 @@ private:
         }
 
         case ArithDiv: {
-            relaxDivOrModArithMode();
-
             if (foldPurifyNaNOnBinary(m_node))
                 m_changed = true;
 
