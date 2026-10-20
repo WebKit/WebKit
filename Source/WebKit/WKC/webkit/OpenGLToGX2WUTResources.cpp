@@ -273,7 +273,11 @@ bool setAttribute(void*, uint8_t attribute, const VertexAttribute& value)
     // Validate that the format is representable by GX2. Fetch-shader input
     // descriptors still need the linked vertex shader's attribute locations.
     GX2AttribFormat format;
-    return attribute < 32 && translateVertexAttributeFormat(value, format);
+    // Instanced attribute divisors require fetch-shader divisor metadata. Until
+    // that metadata is connected to the linked vertex shader, reject nonzero
+    // divisors instead of fetching per-vertex data for per-instance inputs.
+    return attribute < 32 && !value.divisor
+        && translateVertexAttributeFormat(value, format);
 }
 
 bool setElementBuffer(void* context, BufferName name)
