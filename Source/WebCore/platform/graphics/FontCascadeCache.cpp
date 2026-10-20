@@ -111,7 +111,8 @@ FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& descri
         hasComplexFontSelector ? fontSelector->uniqueId() : 0,
         hasComplexFontSelector ? fontSelector->version() : 0,
         hasComplexFontSelector,
-        description.kerning()
+        description.kerning(),
+        description.textSpacingTrim(),
     };
 }
 

@@ -224,13 +224,14 @@ struct FontCascadeCacheKey {
     unsigned fontSelectorVersion { 0 };
     bool hasComplexFontSelector { true };
     Kerning kerning { Kerning::Auto };
+    TextSpacingTrim textSpacingTrim { TextSpacingTrim::TrimType::SpaceAll };
 
     friend bool operator==(const FontCascadeCacheKey&, const FontCascadeCacheKey&) = default;
 };
 
 inline void add(Hasher& hasher, const FontCascadeCacheKey& key)
 {
-    add(hasher, key.fontDescriptionKey, key.families, key.fontSelectorId, key.fontSelectorVersion, key.kerning);
+    add(hasher, key.fontDescriptionKey, key.families, key.fontSelectorId, key.fontSelectorVersion, key.kerning, key.textSpacingTrim);
 }
 
 FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription&, FontSelector*);

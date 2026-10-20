@@ -26,6 +26,7 @@
 #pragma once
 #include <unicode/umachine.h>
 #include <wtf/Forward.h>
+#include <wtf/Hasher.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/TextStream.h>
 
@@ -90,6 +91,11 @@ public:
 private:
     TrimType m_trim { TrimType::SpaceAll };
 };
+
+inline void add(Hasher& hasher, const TextSpacingTrim& value)
+{
+    add(hasher, value.type());
+}
 
 inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextSpacingTrim& value)
 {

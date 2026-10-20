@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Text widths cached with text-spacing-trim: space-all are not used for text-spacing-trim: trim-all</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+@font-face {
+    font-family: halt-font;
+    src: url('../../imported/w3c/web-platform-tests/fonts/noto/cjk/NotoSansCJKjp-Regular-subset-halt.otf');
+}
+span { font: 20px halt-font; white-space: pre; }
+</style>
+<div id="container"></div>
+<script>
+function measure(textSpacingTrim)
+{
+    const span = document.createElement('span');
+    span.style.textSpacingTrim = textSpacingTrim;
+    span.textContent = '国（・）国';
+    container.append(span, document.createElement('br'));
+    return span.getBoundingClientRect().width;
+}
+
+promise_test(async t => {
+    t.add_cleanup(() => container.remove());
+    await document.fonts.load('20px halt-font', '国（・）');
+    const untrimmed = measure('space-all');
+    const trimmed = measure('trim-all');
+    assert_not_equals(trimmed, untrimmed, 'text-spacing-trim changes the width');
+    // The width cache only starts storing entries after 20 accesses. Use 50 here to be extra sure.
+    for (let i = 0; i < 50; ++i) {
+        assert_equals(measure('space-all'), untrimmed);
+        assert_equals(measure('trim-all'), trimmed);
+    }
+}, 'text-spacing-trim: space-all and trim-all measure independently once widths are cached');
+</script>

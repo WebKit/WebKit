@@ -1778,6 +1778,9 @@ fast/text/otsvg-spacing-canvas.html [ ImageOnlyFailure ]
 
 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
 
+# text-spacing-trim does not use half-width fonts for punctuation.
+webkit.org/b/281333 fast/text/text-spacing-trim-width-cache.html [ Failure ]
+
 # system-ui support
 webkit.org/b/221445 fast/text/system-font-width-2.html [ Skip ]
 webkit.org/b/221445 fast/text/system-font-width-3.html [ Skip ]
