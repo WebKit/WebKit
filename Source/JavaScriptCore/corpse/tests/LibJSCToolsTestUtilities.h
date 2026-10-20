@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +26,40 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-
-#include <mach/mach.h>
+#include <JavaScriptCore/CorpsePlatform.h>
+#include <array>
+#include <bit>
 #include <memory>
+#include <optional>
 #include <span>
 #include <stdint.h>
 #include <string_view>
+#include <sys/types.h>
 #include <wtf/DataLog.h>
+#include <wtf/Function.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 
+#if OS(DARWIN)
+#include <mach/mach.h>
+#endif
+
+#if ENABLE(MYA)
+#include <JavaScriptCore/CorpseAddress.h>
+
 namespace JSC {
+class VM;
 namespace Corpse {
 class Process;
 class Snapshot;
+class SnapshotDebugInfo;
+struct TargetType;
 }
 }
+#endif
 
 namespace JSCToolsTest {
 
@@ -59,6 +74,49 @@ extern const char* suiteFilter;
 extern bool verbose;
 
 void skipSuite(const char* name, const char* why);
+
+bool linuxSkip(const char* name, const char* why);
+
+void testAddress();
+void testByteParser();
+void testDiagnostics();
+void testExportsTrie();
+void testProcess();
+void testSymbol();
+void testRegion();
+void testMemory();
+void testSnapshot();
+void testThreads();
+void fuzzExportsTrie(uint64_t seed, unsigned iterations);
+void testTypeinfo();
+void testDebugInfo();
+void testHeapWalk();
+
+#if ENABLE(MYA_HEAP)
+// Each compile unit that includes this header has its own copy, so a heap walk
+// must find each copy's type in the compile unit that defines it.
+constinit const ASCIILiteral copiedHeaderConstant = "copied header constant"_s;
+const ASCIILiteral* copiedHeaderConstantInUtilities();
+
+// A function of this executable whose parameter has the type T* as this executable's debug info gives it.
+template<typename T> NEVER_INLINE void takesPointerTo(T*) { }
+
+template<typename T> JSC::Corpse::Address functionTakingPointerTo()
+{
+    return JSC::Corpse::Address { reinterpret_cast<const void*>(&takesPointerTo<T>) };
+}
+
+// Itanium C++ ABI: a pointer to a non-virtual member function starts with the function's address.
+template<typename MemberFunction> JSC::Corpse::Address memberFunctionAddress(MemberFunction memberFunction)
+{
+    return JSC::Corpse::Address { std::bit_cast<std::array<const void*, 2>>(memberFunction)[0] };
+}
+
+// The class that parameter `index` of the function at `function` points to, or null, which fails the test.
+const JSC::Corpse::TargetType* parameterClass(JSC::Corpse::SnapshotDebugInfo&, JSC::Corpse::Address function, unsigned index = 0);
+#endif
+
+void testVM();
 
 // Announces a suite, times it, and reports on the way out. Destroyed on every path out
 // of a suite, including the early returns a suite takes when it cannot set itself up.
@@ -77,7 +135,21 @@ public:
 private:
     const char* m_name;
     MonotonicTime m_start;
+    unsigned m_reportsAtStart { 0 };
     bool m_shouldRun;
+};
+
+class ExpectedErrors {
+public:
+    explicit ExpectedErrors(unsigned count = 1);
+    ~ExpectedErrors();
+
+    ExpectedErrors(const ExpectedErrors&) = delete;
+    ExpectedErrors& operator=(const ExpectedErrors&) = delete;
+
+private:
+    unsigned m_count;
+    unsigned m_reportsAtStart;
 };
 
 Seconds totalSuiteTime();
@@ -119,8 +191,11 @@ Seconds totalSuiteTime();
         } \
     } while (0)
 
+#if ENABLE(MYA) && OS(DARWIN)
+
 // The number of names in this task's Mach port name space. Used to show that a
-// sequence of operations leaves no port behind.
+// sequence of operations leaves no port behind, so it fails the test unless this
+// is the task's only thread.
 unsigned machPortNameCount();
 
 // The number of send rights this task holds for `port`, or 0 if it holds no name for
@@ -128,6 +203,10 @@ unsigned machPortNameCount();
 // under that same name rather than a new name, so a right that is taken and never
 // given back shows up here and not in machPortNameCount().
 unsigned machPortSendRightCount(mach_port_t);
+
+#endif // ENABLE(MYA) && OS(DARWIN)
+
+#if ENABLE(MYA)
 
 // Attaches to this process and takes a corpse of it. That is what lets a test
 // check what a corpse reports against what this process already knows about
@@ -160,7 +239,11 @@ public:
 
     // pthread keeps a thread name in a fixed buffer, so a longer name arrives cut
     // to this length.
+#if OS(DARWIN)
     static constexpr size_t maximumNameLength = 63;
+#else
+    static constexpr size_t maximumNameLength = 15;
+#endif
 
     ~ParkedThreads();
 
@@ -179,6 +262,47 @@ private:
     Vector<Thread*> m_threads;
 };
 
-} // namespace JSCToolsTest
+// A snapshot of `pid`, or null, having failed the test.
+std::unique_ptr<JSC::Corpse::Snapshot> takeSnapshot(pid_t);
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+// create() an object, then analyze() it in and out of process.
+void analyzeInAndOutOfProcess(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+// create() an object in a separate process only, then analyze() it there. Returns
+// false, having logged why, if the target could not be snapshotted.
+[[nodiscard]] bool analyzeInSeparateProcess(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+// analyzeInSeparateProcess, with the target started by a path relative to its own
+// working directory, while this process is in another, and on Darwin exited before analyze().
+void analyzeInSeparateProcessStartedByRelativePath(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+// create() an object in a separate process, snapshot it, and analyze() the
+// snapshot only after that process has exited. A Linux snapshot ends with its target.
+void analyzeAfterTargetExits(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+// create() an object in a separate process run from a copy of this executable,
+// rename another executable over that copy once the object is reported, then
+// snapshot the target and analyze() it.
+void analyzeAfterExecutableReplaced(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+#if OS(LINUX)
+// create() an object in a separate process, analyze() its snapshot, release the
+// snapshot, then call afterRelease() while the target still runs.
+void analyzeOutOfProcessThenRelease(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze, Function<void(pid_t target, pid_t copy)>&& afterRelease);
+
+#endif
+
+// The main function for a copy of this process launched as `--target <offset>`: runs the
+// create function at `offset` into this executable and holds its object.
+int runCorpseTarget(const char* offsetText);
+
+// What a target does with its object: reports it to the analysis, and offers
+// the analysis a snapshot of itself, at a safepoint of the target's VM if it set one.
+void reportTargetObject(JSC::Corpse::Address);
+void reportTargetAddress(JSC::Corpse::Address);
+void offerTargetSnapshot();
+void setTargetVM(JSC::VM&);
+
+#endif // ENABLE(MYA)
+
+} // namespace JSCToolsTest

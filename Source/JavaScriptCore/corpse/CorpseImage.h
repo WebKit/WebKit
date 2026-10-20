@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,47 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
 
-namespace JSCToolsTest {
+#if ENABLE(MYA)
 
-void testByteParser();
+#include <JavaScriptCore/CorpseAddress.h>
+#include <stdint.h>
+#include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
-} // namespace JSCToolsTest
+namespace JSC {
+namespace Corpse {
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+class Snapshot;
+
+// One image (the executable or a shared library) mapped into a snapshot
+class Image {
+public:
+    // Where the image's Mach-O or ELF header is mapped.
+    Address loadAddress() const { return m_loadAddress; }
+    const UTF8CString& path() const { return m_path; }
+
+    // In hex, as liblldb's AddModule takes it. Null on Linux.
+    const UTF8CString& uuid() const { return m_uuid; }
+
+private:
+    friend class Snapshot;
+    static Vector<Image> collect(Snapshot&);
+
+    Image(Address loadAddress, UTF8CString&& path, UTF8CString&& uuid)
+        : m_loadAddress(loadAddress)
+        , m_path(WTF::move(path))
+        , m_uuid(WTF::move(uuid))
+    {
+    }
+
+    Address m_loadAddress;
+    UTF8CString m_path;
+    UTF8CString m_uuid;
+};
+
+} // namespace Corpse
+} // namespace JSC
+
+#endif // ENABLE(MYA)
