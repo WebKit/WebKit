@@ -379,9 +379,13 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         // Ideally, these would be run to fixpoint with the object allocation sinking phase.
         if (Options::usePutStackSinking())
             RUN_PHASE(performPutStackSinking);
+        changed = false;
         RUN_PHASE(performArgumentsElimination);
-        if (Options::usePutStackSinking())
-            RUN_PHASE(performPutStackSinking);
+        // Only run if performArgumentsElimination did something.
+        if (changed) {
+            if (Options::usePutStackSinking())
+                RUN_PHASE(performPutStackSinking);
+        }
         
         RUN_PHASE(performConstantHoisting);
         RUN_PHASE(performGlobalCSE);
