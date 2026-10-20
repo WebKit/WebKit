@@ -222,6 +222,11 @@ bool VideoMediaSampleRenderer::useStereoDecoding() const
     return m_preferences.contains(VideoRendererPreference::UseStereoDecoding);
 }
 
+bool VideoMediaSampleRenderer::requiresHardwareDecoder() const
+{
+    return m_preferences.contains(VideoRendererPreference::DecoderInContentProcess);
+}
+
 size_t VideoMediaSampleRenderer::decodedSamplesCount() const
 {
     assertIsCurrent(dispatcher().get());
@@ -616,6 +621,8 @@ void VideoMediaSampleRenderer::decodeNextSampleIfNeeded()
             decodingFlags.add(WebCoreDecompressionSession::DecodingFlag::NonDisplaying);
         if (useStereoDecoding())
             decodingFlags.add(WebCoreDecompressionSession::DecodingFlag::EnableStereo);
+        if (requiresHardwareDecoder())
+            decodingFlags.add(WebCoreDecompressionSession::DecodingFlag::HardwareOnly);
         // Mirror AVF's RealTime policy. On iOS-family the flag is set
         // whenever we're in normal 1x playback and the sample is displaying.
         // On macOS it is additionally suppressed during the

@@ -44,7 +44,8 @@ namespace WebCore {
 
 class VideoDecoderVTBSession : public ThreadSafeRefCounted<VideoDecoderVTBSession> {
 public:
-    static RefPtr<VideoDecoderVTBSession> create(CMVideoFormatDescriptionRef, CFDictionaryRef);
+    enum class HardwareDecoder : bool { Enabled, Required };
+    static RefPtr<VideoDecoderVTBSession> create(CMVideoFormatDescriptionRef, CFDictionaryRef, HardwareDecoder = HardwareDecoder::Enabled);
     ~VideoDecoderVTBSession();
 
     OSStatus flush();

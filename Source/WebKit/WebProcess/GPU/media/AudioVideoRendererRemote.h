@@ -34,6 +34,7 @@
 #include "VideoLayerRemote.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/AudioVideoRenderer.h>
+#include <WebCore/FourCC.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/MediaSampleConverter.h>
@@ -291,6 +292,8 @@ private:
         std::optional<MediaTime> minimumUpcomingTime;
         // Formats a content-process decoder failed on; they stay on the GPU path.
         Vector<Ref<const WebCore::TrackInfo>> failedInfos;
+        // Codecs the GPU process has no hardware decoder for; they are decoded in the content process.
+        Vector<WebCore::FourCC> hardwareUnavailableCodecs;
     };
     TrackState& trackState(TrackIdentifier);
     static void flushDecoders(TrackState&);
@@ -312,6 +315,8 @@ private:
     void didDecode(TrackIdentifier, uint32_t generation, const WebCore::PacedMediaSamplesDecoder*, WebCore::PacedMediaSamplesDecoder::DecodePromise::Result&&);
     void deliverMinimumUpcomingTime(TrackState&);
     void fallBackToCompressed(TrackIdentifier, const WebCore::PacedMediaSamplesDecoder& failedDecoder, WebCore::PlatformMediaError);
+    void hardwareDecoderUnavailable();
+    void requestVideoReenqueue(TrackIdentifier);
     void decrementPendingSamples(TrackIdentifier);
     void willFlushTrack(TrackIdentifier);
     void sendFlushTrack(TrackIdentifier);

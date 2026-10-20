@@ -658,7 +658,7 @@ void AudioVideoRendererRemote::setScreenReserved(bool reserved)
 void AudioVideoRendererRemote::setPreferences(VideoRendererPreferences preferences)
 {
     ensureOnDispatcherWithConnection([preferences](auto& renderer, auto& connection) {
-        connection.send(Messages::RemoteAudioVideoRendererProxyManager::SetPreferences(renderer.m_identifier, preferences - VideoRendererPreference::DecoderInContentProcess), 0);
+        connection.send(Messages::RemoteAudioVideoRendererProxyManager::SetPreferences(renderer.m_identifier, preferences), 0);
     });
 }
 
@@ -804,6 +804,18 @@ void AudioVideoRendererRemote::selectMode(TrackIdentifier trackIdentifier, const
     beginMode(trackIdentifier, block);
 }
 
+static MediaSamplesDecoder::Filters contentProcessDecoderFilters()
+{
+    return { MediaSamplesDecoder::Filter::InProcess, MediaSamplesDecoder::Filter::SoftwareAllowed, MediaSamplesDecoder::Filter::UseSharedMemory };
+}
+
+static bool containsFormat(const Vector<Ref<const TrackInfo>>& infos, const TrackInfo& info)
+{
+    return std::ranges::any_of(infos, [&](auto& candidate) {
+        return MediaSamplesDecoder::canContinueWith(candidate.get(), info);
+    });
+}
+
 void AudioVideoRendererRemote::beginMode(TrackIdentifier trackIdentifier, const MediaSamplesBlock& block)
 {
     assertIsCurrent(queueSingleton());
@@ -820,12 +832,14 @@ void AudioVideoRendererRemote::beginMode(TrackIdentifier trackIdentifier, const 
         return;
     }
 
-    if (std::ranges::any_of(state.failedInfos, [&](auto& failedInfo) { return MediaSamplesDecoder::canContinueWith(failedInfo.get(), info); })) {
+    if (containsFormat(state.failedInfos, info)) {
         ALWAYS_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " codec ", info->codecName(), " failed to decode in the content process, compressed");
         return;
     }
 
-    PacedMediaSamplesDecoder::Filters filters { MediaSamplesDecoder::Filter::InProcess, MediaSamplesDecoder::Filter::SoftwareAllowed, MediaSamplesDecoder::Filter::UseSharedMemory };
+    PacedMediaSamplesDecoder::Filters filters = contentProcessDecoderFilters();
+    if (state.hardwareUnavailableCodecs.contains(info->codecName()))
+        filters.add(MediaSamplesDecoder::Filter::ForceSoftware);
     if (!MediaSamplesDecoder::canDecode(info, filters)) {
         ALWAYS_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " codec ", info->codecName(), " cannot be decoded in the content process, compressed");
         return;
@@ -1154,18 +1168,9 @@ void AudioVideoRendererRemote::fallBackToCompressed(TrackIdentifier trackIdentif
     updateDecoderReadiness(trackIdentifier);
     sendFlushTrack(trackIdentifier);
 
-    if (state.isVideo) {
-        if (m_notifyWhenRequiresFlushToResumeCallback) {
-            state.awaitingFlush = true;
-            {
-                Locker locker { m_lock };
-                if (auto* readyState = readyForMoreDataStateIfExists(trackIdentifier))
-                    readyState->setAwaitingFlush(true);
-            }
-            m_notifyWhenRequiresFlushToResumeCallback();
-        } else
-            state.awaitingKeyframe = true;
-    } else if (auto iterator = m_trackNeedsReenqueuingCallbacks.find(trackIdentifier); iterator != m_trackNeedsReenqueuingCallbacks.end() && iterator->value) {
+    if (state.isVideo)
+        requestVideoReenqueue(trackIdentifier);
+    else if (auto iterator = m_trackNeedsReenqueuingCallbacks.find(trackIdentifier); iterator != m_trackNeedsReenqueuingCallbacks.end() && iterator->value) {
         {
             Locker locker { m_lock };
             if (auto* readyState = readyForMoreDataStateIfExists(trackIdentifier))
@@ -1174,6 +1179,58 @@ void AudioVideoRendererRemote::fallBackToCompressed(TrackIdentifier trackIdentif
         iterator->value(trackIdentifier, currentTime());
     }
     resolveRequestMediaDataWhenReadyIfNeeded(trackIdentifier);
+}
+
+void AudioVideoRendererRemote::hardwareDecoderUnavailable()
+{
+    assertIsCurrent(queueSingleton());
+
+    bool hasCompressedVideo = false;
+    bool fellBack = false;
+    for (auto trackIdentifier : copyToVector(m_trackStates.keys())) {
+        auto& state = trackState(trackIdentifier);
+        if (!state.isVideo || state.mode != TrackState::Mode::Compressed || !state.lastSentInfo)
+            continue;
+        hasCompressedVideo = true;
+
+        Ref info = *state.lastSentInfo;
+        if (!m_decoderInContentProcess || containsFormat(state.failedInfos, info) || !MediaSamplesDecoder::canDecode(info, contentProcessDecoderFilters() | MediaSamplesDecoder::Filter::ForceSoftware))
+            continue;
+
+        ERROR_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " codec ", info->codecName(), " has no hardware decoder, decoding in the content process");
+        state.hardwareUnavailableCodecs.append(info->codecName());
+        state.selectedInfo = nullptr;
+        ++state.generation;
+        dropPendingBlocks(trackIdentifier);
+        flushDecoders(state);
+        sendFlushTrack(trackIdentifier);
+        requestVideoReenqueue(trackIdentifier);
+        resolveRequestMediaDataWhenReadyIfNeeded(trackIdentifier);
+        fellBack = true;
+    }
+
+    if (!hasCompressedVideo || fellBack)
+        return;
+    if (m_errorCallback)
+        m_errorCallback(PlatformMediaError::VideoDecodingError);
+}
+
+void AudioVideoRendererRemote::requestVideoReenqueue(TrackIdentifier trackIdentifier)
+{
+    assertIsCurrent(queueSingleton());
+
+    auto& state = trackState(trackIdentifier);
+    if (!m_notifyWhenRequiresFlushToResumeCallback) {
+        state.awaitingKeyframe = true;
+        return;
+    }
+    state.awaitingFlush = true;
+    {
+        Locker locker { m_lock };
+        if (auto* readyState = readyForMoreDataStateIfExists(trackIdentifier))
+            readyState->setAwaitingFlush(true);
+    }
+    m_notifyWhenRequiresFlushToResumeCallback();
 }
 
 void AudioVideoRendererRemote::willFlushTrack(TrackIdentifier trackIdentifier)
@@ -1840,6 +1897,10 @@ void AudioVideoRendererRemote::MessageReceiver::errorOccurred(WebCore::PlatformM
 {
     if (RefPtr parent = m_parent.get()) {
         assertIsCurrent(queueSingleton());
+        if (error == PlatformMediaError::HardwareDecoderUnavailable) {
+            parent->hardwareDecoderUnavailable();
+            return;
+        }
         if (parent->m_errorCallback)
             parent->m_errorCallback(error);
     }
