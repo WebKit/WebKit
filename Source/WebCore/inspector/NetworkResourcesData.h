@@ -33,10 +33,12 @@
 #include "InspectorResourceType.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -166,10 +168,12 @@ public:
 private:
     ResourceData* resourceDataForRequestId(const String& requestId);
     void ensureNoDataForRequestId(const String& requestId);
+    void removeRequestIdFromCachedResourceIndex(const ResourceData&, const String& requestId);
     bool ensureFreeSpace(size_t);
 
     ListHashSet<String> m_requestIdsDeque;
     MemoryCompactRobinHoodHashMap<String, std::unique_ptr<ResourceData>> m_requestIdToResourceDataMap;
+    WeakHashMap<CachedResource, HashSet<String>> m_cachedResourceToRequestIds;
     size_t m_contentSize { 0 };
     Settings m_settings;
 };
