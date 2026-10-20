@@ -240,11 +240,8 @@ private:
         void sampleEnqueued() { m_pendingSamples++; }
         void sampleReceived() { m_pendingSamples--; }
         size_t pendingSamples() const { return m_pendingSamples; }
-        uint64_t nextSampleSequence() { return ++m_lastSampleSequence; }
-        uint64_t lastSampleSequence() const { return m_lastSampleSequence; }
     private:
         size_t m_pendingSamples { 0 };
-        uint64_t m_lastSampleSequence { 0 };
         bool m_remoteReadyForMoreData { true };
         bool m_decoderReadyForMoreData { true };
         bool m_awaitingFlush { false };
@@ -266,15 +263,13 @@ private:
     };
     struct TrackState {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(TrackState);
-        enum class Mode : uint8_t { Compressed, Creating, Decoding };
+        enum class Mode : uint8_t { Compressed, Creating, Decoding, Failed };
         Mode mode { Mode::Compressed };
         bool isVideo { false };
         bool awaitingFlush { false };
         bool awaitingKeyframe { false };
         uint32_t generation { 0 };
         uint32_t creationID { 0 };
-        // Samples with a sequence up to this one were enqueued before the client was asked to re-enqueue.
-        uint64_t discardThrough { 0 };
         RefPtr<WebCore::PacedMediaSamplesDecoder> decoder;
         // Decoders draining after a format change, oldest first.
         Vector<DrainingDecoder> drainingDecoders;
@@ -290,15 +285,13 @@ private:
         RefPtr<const WebCore::TrackInfo> lastSentInfo;
         Vector<HeldBlock> waiting;
         std::optional<MediaTime> minimumUpcomingTime;
-        // Formats a content-process decoder failed on; they stay on the GPU path.
-        Vector<Ref<const WebCore::TrackInfo>> failedInfos;
         // Codecs the GPU process has no hardware decoder for; they are decoded in the content process.
         Vector<WebCore::FourCC> hardwareUnavailableCodecs;
     };
     TrackState& trackState(TrackIdentifier);
     static void flushDecoders(TrackState&);
     RefPtr<GPUProcessConnection> activeConnection();
-    void processSample(TrackIdentifier, Ref<WebCore::MediaSample>&&, std::optional<MediaTime>, uint64_t sequence);
+    void processSample(TrackIdentifier, Ref<WebCore::MediaSample>&&, std::optional<MediaTime>);
     void selectMode(TrackIdentifier, const WebCore::MediaSamplesBlock&);
     void beginMode(TrackIdentifier, const WebCore::MediaSamplesBlock&);
     void didDrainDecoder(TrackIdentifier, uint32_t generation, const WebCore::PacedMediaSamplesDecoder*, WebCore::PacedMediaSamplesDecoder::DecodePromise::Result&&);
@@ -314,7 +307,7 @@ private:
     void sendDecodedBlock(TrackIdentifier, WebCore::MediaSamplesBlock&&);
     void didDecode(TrackIdentifier, uint32_t generation, const WebCore::PacedMediaSamplesDecoder*, WebCore::PacedMediaSamplesDecoder::DecodePromise::Result&&);
     void deliverMinimumUpcomingTime(TrackState&);
-    void fallBackToCompressed(TrackIdentifier, const WebCore::PacedMediaSamplesDecoder& failedDecoder, WebCore::PlatformMediaError);
+    void decoderFailed(TrackIdentifier, WebCore::PlatformMediaError);
     void hardwareDecoderUnavailable();
     void requestVideoReenqueue(TrackIdentifier);
     void decrementPendingSamples(TrackIdentifier);

@@ -196,6 +196,8 @@ private:
     using LayerHostingContextCallback = CompletionHandler<void(WebCore::HostingContext)>;
     void requestHostingContext(RemoteAudioVideoRendererIdentifier, LayerHostingContextCallback&&);
     WebCore::MediaSampleConverter& converterFor(RendererContext&, TrackIdentifier);
+    bool isDecoderInContentProcessEnabled() const;
+    bool shouldHaveBeenDecodedInContentProcess(const WebCore::TrackInfo&) const;
     template<typename Message> void publishAndSend(RemoteAudioVideoRendererIdentifier, Message&&);
 
 #if PLATFORM(COCOA)

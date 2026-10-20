@@ -704,18 +704,15 @@ void AudioVideoRendererRemote::removeTrack(TrackIdentifier trackIdentifier)
 
 void AudioVideoRendererRemote::enqueueSample(TrackIdentifier trackIdentifier, Ref<MediaSample>&& sample, std::optional<MediaTime> expectedMinimum)
 {
-    uint64_t sequence;
     {
         Locker locker { m_lock };
-        auto& readyState = readyForMoreDataState(trackIdentifier);
-        readyState.sampleEnqueued();
-        sequence = readyState.nextSampleSequence();
+        readyForMoreDataState(trackIdentifier).sampleEnqueued();
     }
-    ensureOnDispatcher([weakThis = ThreadSafeWeakPtr { *this }, trackIdentifier, sample = WTF::move(sample), expectedMinimum, sequence] mutable {
+    ensureOnDispatcher([weakThis = ThreadSafeWeakPtr { *this }, trackIdentifier, sample = WTF::move(sample), expectedMinimum] mutable {
         RefPtr protectedThis { weakThis };
         if (!protectedThis || protectedThis->m_isShutdown || !protectedThis->isGPURunning())
             return;
-        protectedThis->processSample(trackIdentifier, WTF::move(sample), expectedMinimum, sequence);
+        protectedThis->processSample(trackIdentifier, WTF::move(sample), expectedMinimum);
     });
 }
 
@@ -744,12 +741,12 @@ RefPtr<GPUProcessConnection> AudioVideoRendererRemote::activeConnection()
     return m_gpuProcessConnection.get();
 }
 
-void AudioVideoRendererRemote::processSample(TrackIdentifier trackIdentifier, Ref<MediaSample>&& sample, std::optional<MediaTime> expectedMinimum, uint64_t sequence)
+void AudioVideoRendererRemote::processSample(TrackIdentifier trackIdentifier, Ref<MediaSample>&& sample, std::optional<MediaTime> expectedMinimum)
 {
     assertIsCurrent(queueSingleton());
 
     auto& state = trackState(trackIdentifier);
-    if (state.awaitingFlush || sequence <= state.discardThrough || (state.awaitingKeyframe && !sample->isSync())) {
+    if (state.mode == TrackState::Mode::Failed || state.awaitingFlush || (state.awaitingKeyframe && !sample->isSync())) {
         decrementPendingSamples(trackIdentifier);
         return;
     }
@@ -809,13 +806,6 @@ static MediaSamplesDecoder::Filters contentProcessDecoderFilters()
     return { MediaSamplesDecoder::Filter::InProcess, MediaSamplesDecoder::Filter::SoftwareAllowed, MediaSamplesDecoder::Filter::UseSharedMemory };
 }
 
-static bool containsFormat(const Vector<Ref<const TrackInfo>>& infos, const TrackInfo& info)
-{
-    return std::ranges::any_of(infos, [&](auto& candidate) {
-        return MediaSamplesDecoder::canContinueWith(candidate.get(), info);
-    });
-}
-
 void AudioVideoRendererRemote::beginMode(TrackIdentifier trackIdentifier, const MediaSamplesBlock& block)
 {
     assertIsCurrent(queueSingleton());
@@ -829,11 +819,6 @@ void AudioVideoRendererRemote::beginMode(TrackIdentifier trackIdentifier, const 
     Ref info = *block.info();
     if (block.isProtected()) {
         ALWAYS_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " content is protected, compressed");
-        return;
-    }
-
-    if (containsFormat(state.failedInfos, info)) {
-        ALWAYS_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " codec ", info->codecName(), " failed to decode in the content process, compressed");
         return;
     }
 
@@ -879,8 +864,7 @@ void AudioVideoRendererRemote::didDrainDecoder(TrackIdentifier trackIdentifier, 
     if (!result) {
         if (result.error() == PlatformMediaError::Cancelled)
             return;
-        ERROR_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " draining failed, falling back to compressed");
-        fallBackToCompressed(trackIdentifier, *decoder, result.error());
+        decoderFailed(trackIdentifier, result.error());
         return;
     }
 
@@ -903,10 +887,7 @@ void AudioVideoRendererRemote::didCreateDecoder(TrackIdentifier trackIdentifier,
         return;
 
     if (!result) {
-        ALWAYS_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), result.error() == PlatformMediaError::ProtectedContent ? " content is protected" : " decoder creation failed", ", compressed");
-        state.mode = TrackState::Mode::Compressed;
-        resumeWaitingBlocks(trackIdentifier);
-        deliverMinimumUpcomingTime(state);
+        decoderFailed(trackIdentifier, result.error());
         return;
     }
 
@@ -926,10 +907,13 @@ void AudioVideoRendererRemote::dispatchBlock(TrackIdentifier trackIdentifier, He
     auto& state = trackState(trackIdentifier);
     auto& block = waitingBlock.block;
     bool shouldSelectMode = block.info() != state.selectedInfo.get() || block.isProtected() != state.selectedProtected || (state.waitingForSyncSample && block.isSync());
-    if (state.mode != TrackState::Mode::Creating && shouldSelectMode)
+    if (state.mode != TrackState::Mode::Creating && state.mode != TrackState::Mode::Failed && shouldSelectMode)
         selectMode(trackIdentifier, block);
 
     switch (state.mode) {
+    case TrackState::Mode::Failed:
+        decrementPendingSamples(trackIdentifier);
+        return;
     case TrackState::Mode::Creating:
         state.waiting.append(WTF::move(waitingBlock));
         return;
@@ -1054,6 +1038,7 @@ void AudioVideoRendererRemote::deliverMinimumUpcomingTime(TrackState& state)
     case TrackState::Mode::Creating:
         return;
     case TrackState::Mode::Decoding:
+    case TrackState::Mode::Failed:
         state.minimumUpcomingTime.reset();
         return;
     case TrackState::Mode::Compressed: {
@@ -1142,42 +1127,32 @@ void AudioVideoRendererRemote::didDecode(TrackIdentifier trackIdentifier, uint32
     if (!result) {
         if (result.error() == PlatformMediaError::Cancelled)
             return;
-        ERROR_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " decoding failed, falling back to compressed");
-        fallBackToCompressed(trackIdentifier, *decoder, result.error());
+        decoderFailed(trackIdentifier, result.error());
         return;
     }
     for (auto& block : *result)
         emitBlock(trackIdentifier, decoder, { WTF::move(block), std::nullopt, true });
 }
 
-void AudioVideoRendererRemote::fallBackToCompressed(TrackIdentifier trackIdentifier, const PacedMediaSamplesDecoder& failedDecoder, PlatformMediaError error)
+void AudioVideoRendererRemote::decoderFailed(TrackIdentifier trackIdentifier, PlatformMediaError error)
 {
     assertIsCurrent(queueSingleton());
 
     auto& state = trackState(trackIdentifier);
-    if (state.mode == TrackState::Mode::Compressed && state.drainingDecoders.isEmpty())
+    if (state.mode == TrackState::Mode::Failed)
         return;
 
-    if (error != PlatformMediaError::ProtectedContent)
-        state.failedInfos.append(Ref { failedDecoder.info() });
-    state.mode = TrackState::Mode::Compressed;
+    ERROR_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " decoding in the content process failed: ", error);
+    state.mode = TrackState::Mode::Failed;
     ++state.creationID;
     ++state.generation;
+    state.minimumUpcomingTime.reset();
     dropPendingBlocks(trackIdentifier);
     flushDecoders(state);
     updateDecoderReadiness(trackIdentifier);
     sendFlushTrack(trackIdentifier);
-
-    if (state.isVideo)
-        requestVideoReenqueue(trackIdentifier);
-    else if (auto iterator = m_trackNeedsReenqueuingCallbacks.find(trackIdentifier); iterator != m_trackNeedsReenqueuingCallbacks.end() && iterator->value) {
-        {
-            Locker locker { m_lock };
-            if (auto* readyState = readyForMoreDataStateIfExists(trackIdentifier))
-                state.discardThrough = readyState->lastSampleSequence();
-        }
-        iterator->value(trackIdentifier, currentTime());
-    }
+    if (m_errorCallback)
+        m_errorCallback(state.isVideo ? PlatformMediaError::VideoDecodingError : PlatformMediaError::AudioDecodingError);
     resolveRequestMediaDataWhenReadyIfNeeded(trackIdentifier);
 }
 
@@ -1194,7 +1169,7 @@ void AudioVideoRendererRemote::hardwareDecoderUnavailable()
         hasCompressedVideo = true;
 
         Ref info = *state.lastSentInfo;
-        if (!m_decoderInContentProcess || containsFormat(state.failedInfos, info) || !MediaSamplesDecoder::canDecode(info, contentProcessDecoderFilters() | MediaSamplesDecoder::Filter::ForceSoftware))
+        if (!m_decoderInContentProcess || !MediaSamplesDecoder::canDecode(info, contentProcessDecoderFilters() | MediaSamplesDecoder::Filter::ForceSoftware))
             continue;
 
         ERROR_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " codec ", info->codecName(), " has no hardware decoder, decoding in the content process");

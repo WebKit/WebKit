@@ -57,7 +57,7 @@ enum class PlatformMediaError : uint8_t {
 
 using MediaPromise = NativePromise<void, PlatformMediaError>;
 
-String convertEnumerationToString(PlatformMediaError);
+WEBCORE_EXPORT String convertEnumerationToString(PlatformMediaError);
 
 } // namespace WebCore
 

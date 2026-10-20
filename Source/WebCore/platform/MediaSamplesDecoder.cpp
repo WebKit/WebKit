@@ -385,13 +385,8 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createVideo(const V
 
 bool MediaSamplesDecoder::canContinueWith(const TrackInfo& info) const
 {
-    return canContinueWith(m_inputInfo, info);
-}
-
-bool MediaSamplesDecoder::canContinueWith(const TrackInfo& decoderInfo, const TrackInfo& info)
-{
     if (RefPtr videoInfo = dynamicDowncast<VideoInfo>(info)) {
-        RefPtr currentInfo = dynamicDowncast<VideoInfo>(decoderInfo);
+        RefPtr currentInfo = dynamicDowncast<VideoInfo>(m_inputInfo);
         if (!currentInfo)
             return false;
 
@@ -405,7 +400,7 @@ bool MediaSamplesDecoder::canContinueWith(const TrackInfo& decoderInfo, const Tr
     }
 
     RefPtr audioInfo = dynamicDowncast<AudioInfo>(info);
-    RefPtr currentInfo = dynamicDowncast<AudioInfo>(decoderInfo);
+    RefPtr currentInfo = dynamicDowncast<AudioInfo>(m_inputInfo);
     if (!audioInfo || !currentInfo)
         return false;
 

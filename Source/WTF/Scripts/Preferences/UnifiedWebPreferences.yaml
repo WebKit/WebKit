@@ -1883,6 +1883,7 @@ DecoderInContentProcessEnabled:
   humanReadableName: "Decoder in content process"
   humanReadableDescription: "Decode media in the content process and send decoded samples to the GPU process"
   defaultValue: false
+  sharedPreferenceForWebProcess: true
 
 DefaultFixedFontSize:
   type: double

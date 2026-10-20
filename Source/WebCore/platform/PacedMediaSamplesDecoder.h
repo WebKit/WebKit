@@ -59,8 +59,6 @@ public:
     WEBCORE_EXPORT ~PacedMediaSamplesDecoder();
 
     WEBCORE_EXPORT bool canContinueWith(const TrackInfo&) const;
-    // The TrackInfo the decoder was created for.
-    const TrackInfo& info() const LIFETIME_BOUND { return m_decoder->inputInfo(); }
 
     // minimumUpcomingTime is the lowest presentation time of the video frames still to come, not finite when it isn't
     // known yet; nullopt when frames arrive in presentation order.

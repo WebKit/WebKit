@@ -69,9 +69,6 @@ public:
     WEBCORE_EXPORT ~MediaSamplesDecoder();
 
     WEBCORE_EXPORT bool canContinueWith(const TrackInfo&) const;
-    // Whether a decoder created for decoderInfo can decode content described by the second TrackInfo.
-    WEBCORE_EXPORT static bool canContinueWith(const TrackInfo& decoderInfo, const TrackInfo&);
-    const TrackInfo& inputInfo() const LIFETIME_BOUND { return m_inputInfo; }
 
     WEBCORE_EXPORT Ref<DecodePromise> decode(MediaSamplesBlock&&);
     WEBCORE_EXPORT Ref<DecodePromise> drain();
