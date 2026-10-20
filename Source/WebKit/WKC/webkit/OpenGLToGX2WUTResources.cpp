@@ -4,6 +4,7 @@
 #if defined(__WUT__)
 #include <gx2r/resource.h>
 #include <gx2/draw.h>
+#include <gx2/event.h>
 
 #include <cstring>
 #include <limits>
@@ -388,10 +389,6 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
     default: return false;
     }
 
-    // GX2 does not support GL's U8 indices or base-vertex draw semantics.
-    // Normalize every index to U32 in a temporary GX2R index buffer, applying
-    // baseVertex while staging. This also ensures the submitted byte offset is
-    // zero and the index pointer always refers to a real GPU-visible buffer.
     void* sourceMemory = GX2RLockBufferEx(source,
         static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
     if (!sourceMemory)
@@ -432,15 +429,37 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
     GX2RUnlockBufferEx(source,
         static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
 
-    // Validate the actual referenced vertex range, rather than approximating
-    // it with draw.count. Instance-divisor attributes use instance indices.
+    struct StagedAttribute {
+        uint8_t location { 0 };
+        GX2RBuffer buffer {};
+        uint32_t stride { 0 };
+    };
+    std::vector<StagedAttribute> stagedAttributes;
+    auto destroyStagedAttributes = [&]() {
+        for (auto& staged : stagedAttributes)
+            GX2RDestroyBufferEx(&staged.buffer, staged.buffer.flags);
+        stagedAttributes.clear();
+    };
+
+    // Validate referenced vertex ranges and stage formats for which GX2 has no
+    // three-component fetch encoding. Each attribute gets a packed four-value
+    // stream, so no fetch can read the absent fourth source component.
+    try {
+        stagedAttributes.reserve(resources.attributes.size());
+    } catch (...) {
+        return false;
+    }
     for (const auto& entry : resources.attributes) {
+        const uint8_t location = entry.first;
         const auto& attribute = entry.second;
         if (!attribute.enabled)
             continue;
         auto vertexBuffer = resources.buffers.find(attribute.buffer);
-        if (!attribute.buffer || vertexBuffer == resources.buffers.end() || !vertexBuffer->second)
+        if (!attribute.buffer || vertexBuffer == resources.buffers.end() || !vertexBuffer->second) {
+            destroyStagedAttributes();
             return false;
+        }
+
         const size_t vertexCapacity = static_cast<size_t>(vertexBuffer->second->elemSize)
             * vertexBuffer->second->elemCount;
         const size_t scalarSize = attribute.sourceType == AttributeType::Byte
@@ -450,38 +469,156 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
                 || attribute.sourceType == AttributeType::HalfFloat ? 2 : 4;
         const size_t elementSize = scalarSize * attribute.components;
         const size_t stride = attribute.stride ? attribute.stride : elementSize;
-        if (attribute.offset > vertexCapacity || elementSize > vertexCapacity - attribute.offset)
+        if (!stride || attribute.offset > vertexCapacity || elementSize > vertexCapacity - attribute.offset) {
+            destroyStagedAttributes();
             return false;
+        }
         const size_t available = vertexCapacity - attribute.offset;
         const uint64_t lastElement = attribute.divisor
             ? (draw.instances ? (draw.instances - 1) / attribute.divisor : 0)
             : maximumIndex;
-        if (lastElement > (available - elementSize) / stride)
+        if (lastElement > (available - elementSize) / stride) {
+            destroyStagedAttributes();
             return false;
+        }
+
+        const bool needsExpansion = attribute.components == 3
+            && (attribute.sourceType == AttributeType::Byte
+                || attribute.sourceType == AttributeType::UnsignedByte
+                || attribute.sourceType == AttributeType::Short
+                || attribute.sourceType == AttributeType::UnsignedShort
+                || attribute.sourceType == AttributeType::HalfFloat);
+        if (!needsExpansion)
+            continue;
+
+        const size_t outputStride = scalarSize * 4;
+        const size_t entryCount = static_cast<size_t>(lastElement) + 1;
+        if (!entryCount || entryCount > UINT32_MAX / outputStride) {
+            destroyStagedAttributes();
+            return false;
+        }
+
+        void* sourceVertices = GX2RLockBufferEx(vertexBuffer->second,
+            static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
+        if (!sourceVertices) {
+            destroyStagedAttributes();
+            return false;
+        }
+
+        StagedAttribute staged;
+        staged.location = location;
+        staged.stride = static_cast<uint32_t>(outputStride);
+        staged.buffer.flags = static_cast<GX2RResourceFlags>(
+            GX2R_RESOURCE_BIND_VERTEX_BUFFER
+            | GX2R_RESOURCE_USAGE_CPU_WRITE
+            | GX2R_RESOURCE_USAGE_GPU_READ);
+        staged.buffer.elemSize = static_cast<uint32_t>(outputStride);
+        staged.buffer.elemCount = static_cast<uint32_t>(entryCount);
+        if (!GX2RCreateBuffer(&staged.buffer)) {
+            GX2RUnlockBufferEx(vertexBuffer->second,
+                static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
+            destroyStagedAttributes();
+            return false;
+        }
+
+        void* destinationVertices = GX2RLockBufferEx(&staged.buffer,
+            static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+        if (!destinationVertices) {
+            GX2RUnlockBufferEx(vertexBuffer->second,
+                static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
+            GX2RDestroyBufferEx(&staged.buffer, staged.buffer.flags);
+            destroyStagedAttributes();
+            return false;
+        }
+
+        const auto* sourceBytes = static_cast<const uint8_t*>(sourceVertices);
+        auto* destinationBytes = static_cast<uint8_t*>(destinationVertices);
+        uint32_t fourthComponent = 1;
+        if (attribute.normalized) {
+            if (attribute.sourceType == AttributeType::Byte)
+                fourthComponent = 0x7f;
+            else if (attribute.sourceType == AttributeType::UnsignedByte)
+                fourthComponent = 0xff;
+            else if (attribute.sourceType == AttributeType::Short)
+                fourthComponent = 0x7fff;
+            else if (attribute.sourceType == AttributeType::UnsignedShort)
+                fourthComponent = 0xffff;
+        }
+        for (size_t vertex = 0; vertex < entryCount; ++vertex) {
+            const uint8_t* input = sourceBytes + attribute.offset + vertex * stride;
+            uint8_t* output = destinationBytes + vertex * outputStride;
+            std::memcpy(output, input, elementSize);
+            if (attribute.sourceType == AttributeType::HalfFloat) {
+                const uint16_t one = 0x3c00;
+                std::memcpy(output + elementSize, &one, sizeof(one));
+            } else if (scalarSize == 1) {
+                output[elementSize] = static_cast<uint8_t>(fourthComponent);
+            } else if (scalarSize == 2) {
+                const uint16_t one = static_cast<uint16_t>(fourthComponent);
+                std::memcpy(output + elementSize, &one, sizeof(one));
+            } else {
+                std::memcpy(output + elementSize, &fourthComponent, sizeof(fourthComponent));
+            }
+        }
+        GX2RUnlockBufferEx(&staged.buffer,
+            static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+        GX2RUnlockBufferEx(vertexBuffer->second,
+            static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
+
+        try {
+            stagedAttributes.push_back(staged);
+        } catch (...) {
+            GX2RDestroyBufferEx(&staged.buffer, staged.buffer.flags);
+            destroyStagedAttributes();
+            return false;
+        }
     }
 
-    GX2RBuffer staged {};
-    staged.flags = static_cast<GX2RResourceFlags>(
+    GX2RBuffer stagedIndices {};
+    stagedIndices.flags = static_cast<GX2RResourceFlags>(
         GX2R_RESOURCE_BIND_INDEX_BUFFER
         | GX2R_RESOURCE_USAGE_CPU_WRITE
         | GX2R_RESOURCE_USAGE_GPU_READ);
-    staged.elemSize = sizeof(uint32_t);
-    staged.elemCount = draw.count;
-    if (!GX2RCreateBuffer(&staged))
-        return false;
-    void* stagedMemory = GX2RLockBufferEx(&staged,
-        static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
-    if (!stagedMemory) {
-        GX2RDestroyBufferEx(&staged, staged.flags);
+    stagedIndices.elemSize = sizeof(uint32_t);
+    stagedIndices.elemCount = draw.count;
+    if (!GX2RCreateBuffer(&stagedIndices)) {
+        destroyStagedAttributes();
         return false;
     }
-    std::memcpy(stagedMemory, indices.data(), indices.size() * sizeof(uint32_t));
-    GX2RUnlockBufferEx(&staged,
+    void* stagedIndexMemory = GX2RLockBufferEx(&stagedIndices,
+        static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+    if (!stagedIndexMemory) {
+        GX2RDestroyBufferEx(&stagedIndices, stagedIndices.flags);
+        destroyStagedAttributes();
+        return false;
+    }
+    std::memcpy(stagedIndexMemory, indices.data(), indices.size() * sizeof(uint32_t));
+    GX2RUnlockBufferEx(&stagedIndices,
         static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
 
+    for (const auto& staged : stagedAttributes)
+        GX2SetAttribBuffer(staged.location,
+            static_cast<uint32_t>(static_cast<size_t>(staged.buffer.elemSize) * staged.buffer.elemCount),
+            staged.stride, staged.buffer.buffer);
+
     GX2DrawIndexedEx(mode, draw.count, GX2_INDEX_TYPE_U32_LE,
-        staged.buffer, 0, draw.instances);
-    GX2RDestroyBufferEx(&staged, staged.flags);
+        stagedIndices.buffer, 0, draw.instances);
+
+    // These temporary resources must remain alive until the GPU has consumed
+    // the draw. Restore the original attribute pointers only after completion.
+    if (!stagedAttributes.empty() || draw.indexBytes != 4 || draw.baseVertex)
+        GX2DrawDone();
+
+    GX2RDestroyBufferEx(&stagedIndices, stagedIndices.flags);
+    destroyStagedAttributes();
+
+    for (const auto& entry : resources.attributes) {
+        const auto& attribute = entry.second;
+        if (attribute.enabled && attribute.buffer
+            && !bindVertexBuffer(&resources, entry.first, attribute.buffer,
+                attribute.stride, attribute.offset))
+            return false;
+    }
     return true;
 }
 
