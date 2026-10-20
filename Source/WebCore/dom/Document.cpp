@@ -10580,9 +10580,7 @@ Element* Document::activeElement()
 {
     if (Element* element = treeScope().focusedElementInScope())
         return element;
-    if (Element* body = bodyOrFrameset())
-        return body;
-    return documentElement();
+    return bodyOrFrameset();
 }
 
 bool Document::hasFocus() const
