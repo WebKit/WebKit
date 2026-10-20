@@ -134,6 +134,7 @@ bool Pipeline::uses(const TVariable &var) const
                 case TQualifier::EvqPointCoord:
                 case TQualifier::EvqFrontFacing:
                 case TQualifier::EvqSampleID:
+                case TQualifier::EvqBaryCoordInternal:
                     return true;
                 case TQualifier::EvqSampleMaskIn:
                     return var.symbolType() == SymbolType::AngleInternal;

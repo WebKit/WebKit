@@ -186,6 +186,13 @@
             ]
         },
         {
+            "name": "use_barycentric_coordinates_for_helper_invocations",
+            "category": "Workarounds",
+            "description": [
+                "Some GPUs produce incorrect derivatives unless [[barycentric_coord]] is read"
+            ]
+        },
+        {
             "name": "pre_transform_texture_cube_grad_derivatives",
             "category": "Workarounds",
             "description": [

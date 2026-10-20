@@ -510,6 +510,7 @@ enum class Feature
     UploadDataToIosurfacesWithStagingBuffers,
     UploadOversizedMipLevelsViaUnpackBuffer,
     UploadTextureDataInChunks,
+    UseBarycentricCoordinatesForHelperInvocations,
     UseCullModeDynamicState,
     UseDepthBiasEnableDynamicState,
     UseDepthCompareOpDynamicState,

@@ -510,6 +510,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::UploadDataToIosurfacesWithStagingBuffers, "uploadDataToIosurfacesWithStagingBuffers"},
     {Feature::UploadOversizedMipLevelsViaUnpackBuffer, "uploadOversizedMipLevelsViaUnpackBuffer"},
     {Feature::UploadTextureDataInChunks, "uploadTextureDataInChunks"},
+    {Feature::UseBarycentricCoordinatesForHelperInvocations, "useBarycentricCoordinatesForHelperInvocations"},
     {Feature::UseCullModeDynamicState, "useCullModeDynamicState"},
     {Feature::UseDepthBiasEnableDynamicState, "useDepthBiasEnableDynamicState"},
     {Feature::UseDepthCompareOpDynamicState, "useDepthCompareOpDynamicState"},

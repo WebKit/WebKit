@@ -148,6 +148,7 @@ class DisplayMtl : public DisplayImpl, public ThreadSafeDisplayMtl
     bool supportsMacGPUFamily(uint8_t macFamily) const;
     bool supportsDepth24Stencil8PixelFormat() const;
     bool supports32BitFloatFiltering() const;
+    bool supportsShaderBarycentricCoordinates() const;
     bool supportsBCTextureCompression() const;
     bool supportsVariableRasterizationRate() const;
     bool isAMD() const;

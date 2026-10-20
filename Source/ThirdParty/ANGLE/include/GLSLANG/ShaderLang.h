@@ -1190,6 +1190,7 @@ extern const char kEmulateAlphaToCoverageConstName[];
 
 // Specialization constant to write helper sample mask output.
 extern const char kWriteHelperSampleMaskConstName[];
+extern const char kUseBarycentricCoordinatesForHelperInvocationsConstName[];
 
 // Specialization constant to enable sample mask output.
 extern const char kSampleMaskWriteEnabledConstName[];

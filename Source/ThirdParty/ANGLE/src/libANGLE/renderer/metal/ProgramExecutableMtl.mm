@@ -1044,6 +1044,11 @@ angle::Result ProgramExecutableMtl::getSpecializedShader(
         setConstantValue:&(context->getDisplay()->getFeatures().writeHelperSampleMask.enabled)
                     type:MTLDataTypeBool
                 withName:@"ANGLEWriteHelperSampleMask"];
+    [funcConstants setConstantValue:&(context->getDisplay()
+                                          ->getFeatures()
+                                          .useBarycentricCoordinatesForHelperInvocations.enabled)
+                               type:MTLDataTypeBool
+                           withName:@"ANGLEUseBarycentricCoordinatesForHelperInvocations"];
     ANGLE_TRY(CreateMslShader(context, translatedMslInfo->metalLibrary, SHADER_ENTRY_NAME,
                               funcConstants.get(), &shaderVariant->metalShader));
 

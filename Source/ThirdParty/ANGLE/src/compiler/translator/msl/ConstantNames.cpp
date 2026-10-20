@@ -21,6 +21,8 @@ const char kRasterizerDiscardEnabledConstName[] = "ANGLERasterizerDisabled";
 const char kDepthWriteEnabledConstName[]        = "ANGLEDepthWriteEnabled";
 const char kEmulateAlphaToCoverageConstName[]   = "ANGLEEmulateAlphaToCoverage";
 const char kWriteHelperSampleMaskConstName[]    = "ANGLEWriteHelperSampleMask";
+const char kUseBarycentricCoordinatesForHelperInvocationsConstName[] =
+    "ANGLEUseBarycentricCoordinatesForHelperInvocations";
 const char kSampleMaskWriteEnabledConstName[]   = "ANGLESampleMaskWriteEnabled";
 }  // namespace mtl
 
