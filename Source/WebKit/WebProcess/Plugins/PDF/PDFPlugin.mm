@@ -100,6 +100,8 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
+#import <pal/cocoa/PDFKitSoftLink.h>
+
 // In non-continuous modes, a single scroll event with a magnitude of >= 20px
 // will jump to the next or previous page, to match PDFKit behavior.
 static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
@@ -507,16 +509,9 @@ using namespace WebKit::PDFAnnotationTypeHelpers;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFPlugin);
 
-// PDFLayerController is not exported by PDFKit, so it must be looked up at runtime.
-static Class pdfLayerControllerClassSingleton()
-{
-    static Class pdfLayerControllerClass = NSClassFromString(@"PDFLayerController");
-    return pdfLayerControllerClass;
-}
-
 bool PDFPlugin::pdfKitLayerControllerIsAvailable()
 {
-    return pdfLayerControllerClassSingleton();
+    return PAL::getPDFLayerControllerClassSingleton();
 }
 
 Ref<PDFPlugin> PDFPlugin::create(HTMLPlugInElement& pluginElement)
@@ -529,7 +524,7 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     , m_containerLayer(adoptNS([[CALayer alloc] init]))
     , m_contentLayer(adoptNS([[CALayer alloc] init]))
     , m_scrollCornerLayer(adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this shouldFlip:NO]))
-    , m_pdfLayerController(adoptNS([[pdfLayerControllerClassSingleton() alloc] init]))
+    , m_pdfLayerController(adoptNS([PAL::allocPDFLayerControllerInstance() init]))
     , m_pdfLayerControllerDelegate(adoptNS([[WKPDFLayerControllerDelegate alloc] initWithPDFPlugin:this]))
 {
     Ref document = element.document();
@@ -563,8 +558,8 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)])
         [m_pdfLayerController setDeviceColorSpace:screenColorSpace(protect(frame->coreLocalFrame())->view()).platformColorSpace()];
     
-    if ([pdfLayerControllerClassSingleton() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
-        [pdfLayerControllerClassSingleton() setUseIOSurfaceForTiles:false];
+    if ([PAL::getPDFLayerControllerClassSingleton() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
+        [PAL::getPDFLayerControllerClassSingleton() setUseIOSurfaceForTiles:false];
 }
 
 PDFPlugin::~PDFPlugin() = default;
@@ -1337,7 +1332,7 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, bool searchFor
         foundSelection = [m_pdfDocument findString:nsTarget.get() fromSelection:initialSelection withOptions:options];
 
     if (!foundSelection && wrapSearch) {
-        RetainPtr emptySelection = adoptNS([[PDFSelection alloc] initWithDocument:m_pdfDocument.get()]);
+        RetainPtr emptySelection = adoptNS([PAL::allocPDFSelectionInstance() initWithDocument:m_pdfDocument.get()]);
         foundSelection = [m_pdfDocument findString:nsTarget.get() fromSelection:emptySelection.get() withOptions:options];
     }
 

@@ -75,6 +75,8 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 
+#import <pal/cocoa/PDFKitSoftLink.h>
+
 extern "C" {
     bool CGContextGetAllowsFontSmoothing(CGContextRef context);
     bool CGContextGetAllowsFontSubpixelQuantization(CGContextRef context);
@@ -1028,12 +1030,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 + (Class)_PDFViewClass
 {
-    return [PDFView class];
+    return PAL::getPDFViewClassSingleton();
 }
 
 + (Class)_PDFSelectionClass
 {
-    return [PDFSelection class];
+    return PAL::getPDFSelectionClassSingleton();
 }
 
 - (void)_applyPDFDefaults
