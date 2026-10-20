@@ -2986,6 +2986,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 case DoubleRepUse:
                     setNonCellTypeForNode(node, SpecFullDouble);
                     break;
+                case HeapBigIntUse:
+                    setTypeForNode(node, SpecHeapBigInt);
+                    break;
                 default:
                     DFG_CRASH(m_graph, node, "Bad use kind"_s);
                     break;
@@ -3130,6 +3133,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setNonCellTypeForNode(node, SpecBytecodeDouble | SpecOther);
             else
                 setNonCellTypeForNode(node, SpecFullDouble);
+            break;
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
+            if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                setTypeForNode(node, SpecBigInt | SpecOther);
+            else
+                setTypeForNode(node, SpecBigInt);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
