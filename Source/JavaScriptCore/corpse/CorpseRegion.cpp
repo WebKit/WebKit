@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,50 +27,167 @@
 #include "config.h"
 #include "CorpseRegion.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
+#include "CorpseError.h"
+#include "CorpseLimits.h"
+
+#if OS(DARWIN)
+#include <mach/mach_error.h>
 #include <mach/mach_vm.h>
+#else
+#include "CorpseProcess.h"
+#include <charconv>
+#include <unistd.h>
+#endif
 
 namespace JSC {
 namespace Corpse {
+
+#if OS(DARWIN)
 
 uint64_t Region::pageCount() const
 {
     return vm_kernel_page_size ? m_size / vm_kernel_page_size : 0;
 }
 
-std::optional<Region> Region::findContaining(mach_port_t task, Address address)
+// KERN_INVALID_ADDRESS means there is no region at or above `address`.
+kern_return_t Region::atOrAbove(mach_port_t task, Address address, Region& region)
 {
-    // mach_vm_region_recurse reports the region at or above the address it is given,
-    // so the result only describes `address` if it turns out to contain it.
     mach_vm_address_t regionAddress = 0;
     mach_vm_size_t regionSize = 0;
     vm_region_submap_info_data_64_t info;
     for (natural_t depth = 0; ; ++depth) {
-        regionAddress = address.toMachVMAddress();
+        regionAddress = address.toTargetVMAddress();
         regionSize = 0;
         natural_t depthLimit = depth; // We tell the kernel how deep we want to go. Kernel tells us how deep it can go.
         mach_msg_type_number_t infoCount = VM_REGION_SUBMAP_INFO_COUNT_64;
         kern_return_t kr = mach_vm_region_recurse(task, &regionAddress, &regionSize,
             &depthLimit, reinterpret_cast<vm_region_recurse_info_t>(&info), &infoCount);
         if (kr != KERN_SUCCESS)
-            return std::nullopt;
+            return kr;
         if (!info.is_submap)
             break;
     }
 
-    Region region;
     region.m_base = Address(regionAddress);
     region.m_size = static_cast<size_t>(regionSize);
-    if (!region.contains(address))
-        return std::nullopt;
-
     region.m_residentPageCount = info.pages_resident;
     region.m_dirtyPageCount = info.pages_dirtied;
+    return KERN_SUCCESS;
+}
+
+std::optional<Region> Region::findContaining(mach_port_t task, Address address)
+{
+    Region region;
+    if (atOrAbove(task, address, region) != KERN_SUCCESS || !region.contains(address))
+        return std::nullopt;
     return region;
 }
+
+Vector<Region> Region::all(mach_port_t task)
+{
+    Vector<Region> result;
+    Region region;
+    kern_return_t kr;
+    while ((kr = atOrAbove(task, result.isEmpty() ? Address { } : result.last().end(), region)) == KERN_SUCCESS) {
+        if (result.size() >= maxRegionCount) {
+            CORPSE_REPORT("The task lists more than %zu regions", maxRegionCount);
+            return { };
+        }
+        result.append(region);
+    }
+    if (kr != KERN_INVALID_ADDRESS) {
+        CORPSE_REPORT("Could not list the regions of the task: %s (0x%x)", mach_error_string(kr), kr);
+        return { };
+    }
+    return result;
+}
+
+#else
+
+uint64_t Region::pageCount() const
+{
+    return m_size / static_cast<size_t>(getpagesize());
+}
+
+std::optional<Region> Region::findContaining(TaskHandle pid, Address address)
+{
+    for (Region& region : all(pid)) {
+        if (region.contains(address))
+            return WTF::move(region);
+    }
+    return std::nullopt;
+}
+
+// One line of /proc/<pid>/maps: "start-end perms offset dev inode   name". See proc_pid_maps(5).
+std::optional<Region> Region::parseMapsLine(std::string_view line)
+{
+    auto field = [&] {
+        size_t start = line.find_first_not_of(' ');
+        if (start == std::string_view::npos)
+            return std::string_view { };
+        line.remove_prefix(start);
+        size_t end = std::min(line.find(' '), line.size());
+        std::string_view result = line.substr(0, end);
+        line.remove_prefix(end);
+        return result;
+    };
+    auto parse = [](std::string_view text, uint64_t& value, int base) {
+        return !text.empty() && std::from_chars(text.data(), text.data() + text.size(), value, base).ec == std::errc { };
+    };
+    std::string_view range = field();
+    std::string_view permissions = field();
+    std::string_view offset = field();
+    field(); // Device.
+    std::string_view inode = field();
+    size_t nameStart = line.find_first_not_of(' ');
+
+    size_t dash = range.find('-');
+    uint64_t start = 0;
+    uint64_t end = 0;
+    Region region;
+    if (dash == std::string_view::npos || !parse(range.substr(0, dash), start, 16) || !parse(range.substr(dash + 1), end, 16)
+        || end <= start || permissions.size() != 4 || !parse(offset, region.m_fileOffset, 16) || !parse(inode, region.m_inode, 10))
+        return std::nullopt;
+    region.m_base = Address { start };
+    region.m_size = static_cast<size_t>(end - start);
+    region.m_isExecutable = permissions[2] == 'x';
+    if (nameStart != std::string_view::npos)
+        region.m_name = String::fromUTF8(std::span { line.substr(nameStart) });
+    return region;
+}
+
+Vector<Region> Region::all(TaskHandle pid)
+{
+    auto maps = readProcFile(pid, "maps");
+    if (!maps) {
+        CORPSE_REPORT("Could not read the memory map of pid %d", pid);
+        return { };
+    }
+    Vector<Region> result;
+    std::string_view rest { *maps };
+    while (!rest.empty()) {
+        size_t lineEnd = std::min(rest.find('\n'), rest.size());
+        std::string_view line = rest.substr(0, lineEnd);
+        auto region = parseMapsLine(line);
+        if (!region) {
+            CORPSE_REPORT("Could not parse the line '%.*s' of the memory map of pid %d", static_cast<int>(line.size()), line.data(), pid);
+            return { };
+        }
+        if (result.size() >= maxRegionCount) {
+            CORPSE_REPORT("The memory map of pid %d lists more than %zu regions", pid, maxRegionCount);
+            return { };
+        }
+        result.append(WTF::move(*region));
+        rest.remove_prefix(std::min(lineEnd + 1, rest.size()));
+    }
+    return result;
+}
+
+#endif // OS(DARWIN)
 
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

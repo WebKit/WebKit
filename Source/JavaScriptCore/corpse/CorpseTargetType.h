@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,41 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
 
-namespace JSCToolsTest {
+#if ENABLE(MYA_HEAP)
 
-void testByteParser();
+#include <memory>
+#include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/text/WTFString.h>
 
-} // namespace JSCToolsTest
+namespace lldb {
+class SBType;
+}
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+namespace JSC {
+namespace Corpse {
+
+// A type from a snapshot's debug info, one per type, owned by the SnapshotDebugInfo.
+class TargetType {
+    WTF_MAKE_TZONE_ALLOCATED(TargetType);
+    WTF_MAKE_NONCOPYABLE(TargetType);
+public:
+    ~TargetType();
+
+    // As liblldb spells it, such as "JSC::StringFireDetail".
+    String name() const;
+    size_t byteSize() const;
+
+private:
+    friend class SnapshotDebugInfo;
+    explicit TargetType(const lldb::SBType&);
+
+    const std::unique_ptr<lldb::SBType> m_type;
+};
+
+} // namespace Corpse
+} // namespace JSC
+
+#endif // ENABLE(MYA_HEAP)
