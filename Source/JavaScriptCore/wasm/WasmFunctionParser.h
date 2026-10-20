@@ -3059,7 +3059,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         case ExtGCOpType::AnyConvertExtern: {
             TypedExpression reference;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "any.convert_extern"_s);
-            WASM_VALIDATOR_FAIL_IF(!isExternref(reference.type()), "any.convert_extern reference to type "_s, reference.type(), " expected "_s, TypeKind::Externref);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(reference.type(), externrefType()), "any.convert_extern reference to type "_s, reference.type(), " expected "_s, externrefType());
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addAnyConvertExtern(reference, result));
