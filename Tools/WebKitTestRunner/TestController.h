@@ -897,6 +897,7 @@ private:
     struct AbandonedDocumentInfo {
         String testURL;
         String abandonedDocumentURL;
+        bool hasBeenReported { false };
 
         AbandonedDocumentInfo() = default;
         AbandonedDocumentInfo(String inTestURL, String inAbandonedDocumentURL)

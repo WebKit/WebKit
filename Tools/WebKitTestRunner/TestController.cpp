@@ -1744,7 +1744,13 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
         runUntil(done, noTimeout);
     }
 
-    WKPageClearBackForwardListForTesting(m_mainWebView->page(), nullptr, [](void*) { });
+    {
+        bool done { false };
+        WKPageClearBackForwardListForTesting(m_mainWebView->page(), &done, [](void* context) {
+            *(bool*)context = true;
+        });
+        runUntil(done, noTimeout);
+    }
     WKPageClearBackForwardCache(m_mainWebView->page());
 
     if (resetStage == ResetStage::AfterTest) {
@@ -2037,19 +2043,23 @@ void TestController::findAndDumpWorldLeaks()
 
     StringBuilder builder;
     
-    if (m_abandonedDocumentInfo.size()) {
-        for (const auto& it : m_abandonedDocumentInfo) {
-            auto documentURL = it.value.abandonedDocumentURL;
-            if (documentURL.isEmpty())
-                documentURL = "(no url)"_s;
-            builder.append("TEST: "_s);
-            builder.append(it.value.testURL);
-            builder.append('\n');
-            builder.append("ABANDONED DOCUMENT: "_s);
-            builder.append(documentURL);
-            builder.append('\n');
-        }
-    } else
+    bool reportedAnyLeaks = false;
+    for (auto& it : m_abandonedDocumentInfo) {
+        if (it.value.hasBeenReported)
+            continue;
+        it.value.hasBeenReported = true;
+        reportedAnyLeaks = true;
+        auto documentURL = it.value.abandonedDocumentURL;
+        if (documentURL.isEmpty())
+            documentURL = "(no url)"_s;
+        builder.append("TEST: "_s);
+        builder.append(it.value.testURL);
+        builder.append('\n');
+        builder.append("ABANDONED DOCUMENT: "_s);
+        builder.append(documentURL);
+        builder.append('\n');
+    }
+    if (!reportedAnyLeaks)
         builder.append("no abandoned documents\n"_s);
 
     dumpResponse(builder.toString());
@@ -2058,6 +2068,7 @@ void TestController::findAndDumpWorldLeaks()
 void TestController::willDestroyWebView()
 {
     // Before we kill the web view, look for abandoned documents before that web process goes away.
+    SetForScope clearCurrentInvocation(m_currentInvocation, nullptr);
     checkForWorldLeaks();
 }
 
