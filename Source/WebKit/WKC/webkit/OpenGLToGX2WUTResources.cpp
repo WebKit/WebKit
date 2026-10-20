@@ -1,4 +1,5 @@
 #include "OpenGLToGX2WUTResources.h"
+#include "OpenGLToGX2VertexArrays.h"
 
 #if defined(__WUT__)
 #include <gx2r/resource.h>
