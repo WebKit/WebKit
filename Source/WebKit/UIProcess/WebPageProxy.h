@@ -3211,6 +3211,8 @@ private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
 
+    template<typename M> void sendToEveryWebContentProcess();
+
     void sendCORSDisablingPatternsToNetworkProcessIfNecessary();
     std::optional<WebCore::RegistrableDomain> unpartitionedStorageSiteForNavigation(const WebFrameProxy&, const URL&) const;
 

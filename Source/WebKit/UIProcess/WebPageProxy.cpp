@@ -14082,34 +14082,42 @@ void WebPageProxy::Internals::setTextFromItemForPopupMenu(WebPopupMenuProxy*, in
 }
 #endif // !PLATFORM(COCOA)
 
+template<typename M>
+void WebPageProxy::sendToEveryWebContentProcess()
+{
+    forEachWebContentProcess([](auto& process, auto pageID) {
+        process.send(M { }, pageID);
+    });
+}
+
 void WebPageProxy::startDeferringResizeEvents()
 {
-    protect(internals().page)->send(Messages::WebPage::StartDeferringResizeEvents());
+    sendToEveryWebContentProcess<Messages::WebPage::StartDeferringResizeEvents>();
 }
 
 void WebPageProxy::flushDeferredResizeEvents()
 {
-    protect(internals().page)->send(Messages::WebPage::FlushDeferredResizeEvents());
+    sendToEveryWebContentProcess<Messages::WebPage::FlushDeferredResizeEvents>();
 }
 
 void WebPageProxy::startDeferringScrollEvents()
 {
-    protect(internals().page)->send(Messages::WebPage::StartDeferringScrollEvents());
+    sendToEveryWebContentProcess<Messages::WebPage::StartDeferringScrollEvents>();
 }
 
 void WebPageProxy::flushDeferredScrollEvents()
 {
-    protect(internals().page)->send(Messages::WebPage::FlushDeferredScrollEvents());
+    sendToEveryWebContentProcess<Messages::WebPage::FlushDeferredScrollEvents>();
 }
 
 void WebPageProxy::startDeferringIntersectionObservations()
 {
-    protect(internals().page)->send(Messages::WebPage::StartDeferringIntersectionObservations());
+    sendToEveryWebContentProcess<Messages::WebPage::StartDeferringIntersectionObservations>();
 }
 
 void WebPageProxy::flushDeferredIntersectionObservations()
 {
-    protect(internals().page)->send(Messages::WebPage::FlushDeferredIntersectionObservations());
+    sendToEveryWebContentProcess<Messages::WebPage::FlushDeferredIntersectionObservations>();
 }
 
 bool WebPageProxy::isProcessingKeyboardEvents() const
