@@ -10,7 +10,7 @@ async_test(t => {
     const popup = open(get_host_info().UNAUTHENTICATED_ORIGIN + new URL("resources/geolocation-over-insecure-content.html", location).pathname);
     t.add_cleanup(() => popup.close());
     onmessage = t.step_func_done(event => {
-        assert_equals(event.data, "[blocked] Access to geolocation was blocked over insecure connection to " + get_host_info().UNAUTHENTICATED_ORIGIN + ".\n");
+        assert_equals(event.data, "[blocked] Access to geolocation was blocked in a non-secure context with origin " + get_host_info().UNAUTHENTICATED_ORIGIN + ".");
     });
 }, "Geolocation logs a console message when it is blocked in a non-secure context");
 </script>
