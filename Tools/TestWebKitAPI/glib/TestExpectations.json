@@ -247,9 +247,6 @@
             },
             "WebKit.ResizeWindowAfterCrash": {
                 "expected": {"all": {"slow": true}}
-            },
-            "WebKit.SpacebarScrolling": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/323624"}}
             }
         }
     },
