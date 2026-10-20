@@ -187,19 +187,21 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!optionalOrigin.isNull() && optionalOrigin != "viewport"_s && optionalOrigin != "document"_s, InvalidParameter);
     bool documentOrigin = optionalOrigin == "document"_s;
 
+    // https://w3c.github.io/webdriver-bidi/#encode-a-canvas-as-base64
+    String formatType = "image/png"_s;
+    std::optional<double> formatQuality;
     if (optionalFormat) {
         // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimageformat
-        RefPtr formatType = optionalFormat->getValue("type"_s);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!formatType, MissingParameter);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(formatType->asString().isNull(), InvalidParameter);
+        RefPtr formatTypeValue = optionalFormat->getValue("type"_s);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!formatTypeValue, MissingParameter);
+        formatType = formatTypeValue->asString();
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(formatType.isNull(), InvalidParameter);
 
         if (RefPtr quality = optionalFormat->getValue("quality"_s)) {
-            auto qualityValue = quality->asDouble();
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!qualityValue, InvalidParameter);
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*qualityValue < 0 || *qualityValue > 1, InvalidParameter);
+            formatQuality = quality->asDouble();
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!formatQuality, InvalidParameter);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*formatQuality < 0 || *formatQuality > 1, InvalidParameter);
         }
-
-        // FIXME: honor the requested image format and quality; captures are always encoded as PNG. <https://webkit.org/b/323422>
     }
 
     std::optional<double> maxWidth;
@@ -269,7 +271,7 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
     }
 
-    session->captureBidiScreenshot(pageHandle, frameHandle, documentOrigin, WTF::move(clip), WTF::move(maxWidth), WTF::move(maxHeight), WTF::move(callback));
+    session->captureBidiScreenshot(pageHandle, frameHandle, documentOrigin, WTF::move(clip), WTF::move(maxWidth), WTF::move(maxHeight), formatType, WTF::move(formatQuality), WTF::move(callback));
 }
 
 void BidiBrowsingContextAgent::close(const BrowsingContext& browsingContext, std::optional<bool>&& optionalPromptUnload, CommandCallback<void>&& callback)

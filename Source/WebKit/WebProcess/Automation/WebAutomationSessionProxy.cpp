@@ -77,6 +77,7 @@
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/RenderElement.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/Settings.h>
@@ -1441,7 +1442,7 @@ static WebCore::IntSize paintSizeForBidiScreenshot(const WebCore::FloatRect& rec
     return { clampTo<int>(std::floor(framebufferWidth)), clampTo<int>(std::floor(framebufferHeight)) };
 }
 
-void WebAutomationSessionProxy::captureBidiScreenshot(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, bool documentOrigin, std::optional<WebCore::FloatRect>&& clip, std::optional<double>&& maxWidth, std::optional<double>&& maxHeight, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+void WebAutomationSessionProxy::captureBidiScreenshot(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, bool documentOrigin, std::optional<WebCore::FloatRect>&& clip, std::optional<double>&& maxWidth, std::optional<double>&& maxHeight, String&& formatType, std::optional<double>&& formatQuality, CompletionHandler<void(String&&, String&&)>&& completionHandler)
 {
     // https://w3c.github.io/webdriver-bidi/#command-browsingContext-captureScreenshot
     auto errorType = [](Inspector::Protocol::Automation::ErrorMessage error) {
@@ -1524,7 +1525,13 @@ void WebAutomationSessionProxy::captureBidiScreenshot(WebCore::PageIdentifier pa
     // as background. https://webkit.org/b/330897
     frameView->paintContentsForSnapshot(context, WebCore::enclosingIntRect(paintRect), nullptr, WebCore::LocalFrameView::IncludeSelection, WebCore::LocalFrameView::DocumentCoordinates);
 
-    auto data = WebCore::encodeData(WTF::move(buffer), "image/png"_s);
+    // https://html.spec.whatwg.org/multipage/canvas.html#a-serialisation-of-the-bitmap-as-a-file
+    // Like a canvas, fall back to PNG for a type that cannot be encoded. Only lossy types read the quality.
+    auto mimeType = formatType.convertToASCIILowercase();
+    if (!WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
+        mimeType = "image/png"_s;
+
+    auto data = WebCore::encodeData(WTF::move(buffer), mimeType, formatQuality);
     if (data.isEmpty())
         return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError));
 
