@@ -51,7 +51,7 @@ private:
 
 static std::optional<String> readString(WTF::Persistence::Decoder& decoder)
 {
-    std::optional<size_t> size;
+    std::optional<uint64_t> size;
     decoder >> size;
     if (!size)
         return std::nullopt;
@@ -110,7 +110,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(std::span<const uint8_t> data)
                 ok = false;
             if (!ok)
                 break;
-            std::optional<size_t> size;
+            std::optional<uint64_t> size;
             decoder >> size;
             if (!size)
                 ok = false;
