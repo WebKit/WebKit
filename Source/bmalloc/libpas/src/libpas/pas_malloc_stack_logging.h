@@ -49,6 +49,7 @@ PAS_API PAS_NEVER_INLINE void pas_msl_free_logging_slow(void*, const pas_heap_co
 
 static PAS_ALWAYS_INLINE bool pas_msl_is_enabled(void)
 {
+#if PAS_ENABLE_MALLOC_STACK_LOGGER
     switch (pas_msl_is_enabled_flag_value) {
     case pas_msl_is_enabled_flag_indeterminate:
         return pas_compute_msl_is_enabled();
@@ -57,6 +58,7 @@ static PAS_ALWAYS_INLINE bool pas_msl_is_enabled(void)
     case pas_msl_is_enabled_flag_disabled:
         return false;
     }
+#endif
     return false;
 }
 

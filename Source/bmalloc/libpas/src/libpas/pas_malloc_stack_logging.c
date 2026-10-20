@@ -34,10 +34,12 @@
 
 PAS_BEGIN_EXTERN_C;
 
+#if PAS_ENABLE_MALLOC_STACK_LOGGER
+
 pas_msl_is_enabled_flag pas_msl_is_enabled_flag_value = pas_msl_is_enabled_flag_indeterminate;
 static void compute_msl_status(void)
 {
-    pas_msl_is_enabled_flag_value = getenv("MallocStackLogging") ? pas_msl_is_enabled_flag_enabled : pas_msl_is_enabled_flag_disabled;
+    pas_msl_is_enabled_flag_value = (malloc_logger || getenv("MallocStackLogging")) ? pas_msl_is_enabled_flag_enabled : pas_msl_is_enabled_flag_disabled;
 }
 
 bool pas_compute_msl_is_enabled(void)
@@ -46,8 +48,6 @@ bool pas_compute_msl_is_enabled(void)
     pthread_once(&key, compute_msl_status);
     return pas_msl_is_enabled_flag_value == pas_msl_is_enabled_flag_enabled;
 }
-
-#if PAS_ENABLE_MALLOC_STACK_LOGGER
 
 #if !PAS_OS(DARWIN)
 /* On Darwin the system libmalloc owns this global; elsewhere libpas provides it
