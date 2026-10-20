@@ -20,12 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import os
 import sys
 import re
+from typing import IO, Any, Callable, TYPE_CHECKING
 
 from webkitcorepy import CallByNeed, string_utils
+
+if TYPE_CHECKING:
+    from webkitscmpy import Commit
+    from webkitscmpy.scm_base import ScmBase
 
 
 class CommitClassifier(object):
@@ -33,7 +40,7 @@ class CommitClassifier(object):
         DEFAULT_FUZZ_RATIO = 90
 
         @classmethod
-        def fuzzy(cls, string, ratio=None):
+        def fuzzy(cls, string: str, ratio: int | None = None) -> Callable[[str], Any]:
             try:
                 from rapidfuzz import fuzz
             except ModuleNotFoundError:
@@ -42,30 +49,35 @@ class CommitClassifier(object):
             ratio = cls.DEFAULT_FUZZ_RATIO if not ratio else ratio
             return lambda x: fuzz.partial_ratio(string, x) >= ratio
 
-        def __init__(self, value):
+        def __init__(self, value: dict[str, Any] | str) -> None:
+            self.do: Callable[[str], Any]
             if isinstance(value, str) or isinstance(value, string_utils.unicode):
                 self.description = value
-                self.do = lambda x: re.search(value, x)
+                pattern = value
+                self.do = lambda x: re.search(pattern, x)
             elif isinstance(value, dict) and 'value' in value:
                 self.description = 'fuzz({}, {}%)'.format(value['value'], value.get('ratio', self.DEFAULT_FUZZ_RATIO))
                 self.do = self.fuzzy(value['value'], ratio=value.get('ratio'))
             else:
                 raise ValueError("'{}' not a valid header filter".format(value))
 
-        def __repr__(self):
+        def __repr__(self) -> str:
             return self.description
 
-        def __call__(self, string):
+        def __call__(self, string: str) -> bool:
             return bool(self.do(string))
 
     class CommitClass(object):
         @classmethod
-        def filter_header(cls, header):
+        def filter_header(cls, header: object) -> re.Pattern[str] | None:
             if isinstance(header, str):
                 return re.compile(header)
             return None
 
-        def __init__(self, name, pickable=True, headers=None, contents=None, trailers=None, paths=None, **kwargs):
+        def __init__(
+            self, name: str, pickable: bool = True, headers: list[dict[str, Any] | str] | None = None, contents: list[dict[str, Any] | str] | None = None,
+            trailers: list[dict[str, Any] | str] | None = None, paths: list[str] | None = None, **kwargs: Any,
+        ) -> None:
             self.name = name
             self.pickable = pickable
             self.headers = [CommitClassifier.LineFilter(header) for header in headers or []]
@@ -79,7 +91,7 @@ class CommitClassifier(object):
             for argument, _ in kwargs.items():
                 sys.stderr.write('{} is not a valid member in CommitClassifier.CommitClass\n'.format(argument))
 
-        def __repr__(self):
+        def __repr__(self) -> str:
             description = '{}(\n'.format(self.name)
             description += '    pickable = {}\n'.format(self.pickable)
             if self.headers:
@@ -96,21 +108,22 @@ class CommitClassifier(object):
             return description
 
     @classmethod
-    def load(cls, file):
+    def load(cls, file: IO[str]) -> CommitClassifier:
         result = cls()
         contents = json.load(file)
         for commit_class in contents:
             result.classes.append(cls.CommitClass(**commit_class))
         return result
 
-    def __init__(self, classes=None):
+    def __init__(self, classes: list[CommitClassifier.CommitClass] | None = None) -> None:
         self.classes = classes or []
 
-    def classify(self, commit, repository=None):
-        header = commit.message.splitlines()[0]
+    def classify(self, commit: Commit, repository: ScmBase | None = None) -> CommitClassifier.CommitClass | None:
+        lines = (commit.message or '').splitlines()
+        header = lines[0] if lines else ''
         trailers = commit.trailers
         contents = commit.message
-        paths_for = CallByNeed(
+        paths_for: CallByNeed[list[str]] = CallByNeed(
             callback=lambda: repository.files_changed(commit.hash or str(commit)) if repository else [],
             type=list,
         )

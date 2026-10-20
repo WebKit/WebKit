@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import tempfile
 import unittest
 
 from webkitscmpy.commit_parser import CommitMessageParser
@@ -59,6 +61,16 @@ class TestCommitParser(unittest.TestCase):
         self.assertEqual(['Commit Message Title', 'https://bugs.example.com', 'rdar://1234567'], commit_message_parser.title_lines)
         self.assertEqual(['Reviewed by NOBODY (OOPS!).'], commit_message_parser.reviewed_by_lines)
         self.assertEqual(['Commit description.'], commit_message_parser.description_lines)
+        self.assertEqual(['* Change.py:'], commit_message_parser.modified_files_lines)
+
+    def test_parse_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = os.path.join(directory, 'COMMIT_EDITMSG')
+            with open(path, 'w') as file:
+                file.write(COMMIT_MSG_BASE + '\n* Change.py:\n')
+            commit_message_parser = CommitMessageParser()
+            commit_message_parser.parse_file(path)
+        self.assertEqual(['Commit Message Title', 'https://bugs.example.com', 'rdar://1234567'], commit_message_parser.title_lines)
         self.assertEqual(['* Change.py:'], commit_message_parser.modified_files_lines)
 
     def test_changelog_comments(self):
