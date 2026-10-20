@@ -334,7 +334,7 @@ workers:
       - {name: ews2009, template: tahoe-m4pro}
       - {name: ews2010, template: tahoe-m4pro}
       - {template: mac-sequoia-aircloud, prefix: ews, first: 2011, count: 5}
-      - {template: mac-tahoe-aws, prefix: ews, first: 3000, count: 30}
+      - {template: mac-tahoe-aws, prefix: ews, first: 3000, count: 41}
     each(w):
       $if: "'template' in w"
       then:
@@ -415,7 +415,10 @@ builders:
     configuration: release
     architectures: [arm64]
     triggers: [api-tests-ios-sim-ews, ios-26-sim-wk2-tests-ews, ios-26-sim-wpt-wk2-tests-ews]
-    workernames: {$map: {$eval: "range(0, 7)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+        - {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: iOS-26-Simulator-WK2-Tests-EWS
     shortname: ios-wk2
     icon: testOnly
@@ -443,7 +446,10 @@ builders:
     architectures: [arm64]
     additionalArguments: [--cmake]
     triggers: [macos-tahoe-debug-api-tests-ews, macos-tahoe-debug-wk2-tests-ews]
-    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+        - {$map: {$eval: "range(0, 2)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: macOS-Tahoe-Debug-API-Tests-EWS
     shortname: api-mac-cmake-debug
     icon: testOnly
@@ -453,8 +459,8 @@ builders:
     triggered_by: [macos-tahoe-debug-build-ews]
     workernames:
       $flatten:
-        - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
-        - {$map: {$eval: "range(0, 7)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
+        - {$map: {$eval: "range(0, 8)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+        - {$map: {$eval: "range(0, 10)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1'\").name"}}
   - name: macOS-Tahoe-Debug-WK2-Tests-EWS
     shortname: mac-cmake-debug-wk2
     icon: testOnly
@@ -474,7 +480,10 @@ builders:
     deployment_target: '15.4'
     rebuild_without_change_on_builder: true
     triggers: [api-tests-mac-ews, macos-sequoia-release-wk2-tests-ews, macos-sequoia-release-wk2-intel-tests-ews, macos-release-wk2-stress-tests-ews, macos-sequoia-release-site-isolation-tests-ews, jsc-tests-x86-64-ews]
-    workernames: {$map: {$eval: "range(0, 6)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
+        - {$map: {$eval: "range(0, 6)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: macOS-Sequoia-Release-WK2-Tests-EWS
     shortname: mac-wk2
     icon: testOnly
