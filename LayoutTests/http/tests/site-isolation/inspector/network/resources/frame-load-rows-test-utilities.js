@@ -26,6 +26,22 @@ window.FrameLoadRowRecorder = class FrameLoadRowRecorder
         return Array.from(this._rows).filter((resource) => resource.url === url);
     }
 
+    rowsForURLPart(urlPart)
+    {
+        return Array.from(this._rows).filter((resource) => resource.url.includes(urlPart));
+    }
+
+    // Adds the rows the table already lists for loads that happened before recording started, as
+    // NetworkTableContentView._populateWithInitialResourcesIfNeeded does.
+    seedFromFrameTree(frame)
+    {
+        this._rows.add(frame.provisionalMainResource || frame.mainResource);
+        for (let resource of frame.resourceCollection)
+            this._rows.add(resource);
+        for (let childFrame of frame.childFrameCollection)
+            this.seedFromFrameTree(childFrame);
+    }
+
     // Private
 
     _handleResourceWasAdded(event)
@@ -48,7 +64,10 @@ window.FrameLoadRowRecorder = class FrameLoadRowRecorder
     }
 };
 
-window.pollUntil = async function(condition, timeout = 5000) {
+// How long the helpers below wait for the frontend model to catch up before reporting a failure.
+window.awaitTimeout = 5000;
+
+window.pollUntil = async function(condition, timeout = awaitTimeout) {
     let deadline = Date.now() + timeout;
     while (true) {
         let result = condition();
@@ -59,7 +78,7 @@ window.pollUntil = async function(condition, timeout = 5000) {
 };
 
 // Resolves to "pending" after the timeout, so a load that never finishes fails an assertion instead of timing out.
-window.awaitResourceSettled = function(resource, timeout = 5000) {
+window.awaitResourceSettled = function(resource, timeout = awaitTimeout) {
     if (resource.finished)
         return Promise.resolve("finished");
     if (resource.failed)
@@ -76,6 +95,10 @@ window.awaitChildFrame = function(predicate) {
     return pollUntil(() => Array.from(WI.networkManager.mainFrame?.childFrameCollection || []).find(predicate));
 };
 
+window.awaitSubresource = function(frame, urlPart) {
+    return pollUntil(() => Array.from(frame.resourceCollection).find((resource) => resource.url.includes(urlPart)));
+};
+
 window.expectSingleFinishedResource = async function(recorder, resource, label) {
     let state = await awaitResourceSettled(resource);
     InspectorTest.expectEqual(recorder.rowsForURL(resource.url).length, 1, `${label} should be listed once.`);
@@ -90,7 +113,7 @@ window.expectSingleFinishedDocument = async function(recorder, frame, label) {
 };
 
 window.expectSingleFinishedSubresource = async function(recorder, frame, urlPart, label) {
-    let resource = await pollUntil(() => Array.from(frame.resourceCollection).find((resource) => resource.url.includes(urlPart)));
+    let resource = await awaitSubresource(frame, urlPart);
     InspectorTest.expectThat(!!resource, `${label} should be added to the child frame.`);
     if (resource)
         await expectSingleFinishedResource(recorder, resource, label);

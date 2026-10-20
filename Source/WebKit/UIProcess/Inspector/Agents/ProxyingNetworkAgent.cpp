@@ -250,6 +250,9 @@ CommandResult<void> ProxyingNetworkAgent::enable()
 
     m_enabled = true;
 
+    // FIXME: <https://webkit.org/b/327562> This registers each process once, but WebPageInspectorController::willDestroyFrame
+    // releases once per frame, so removing a frame that existed before enable() can take a process that still hosts other frames
+    // to zero. Count per frame, as ProxyingPageAgent::enable() does.
     inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         Ref protectedWebProcess { webProcess };
         enableInstrumentationForProcess(protectedWebProcess, pageID);
