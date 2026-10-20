@@ -117,6 +117,7 @@ protected:
     WEBCORE_EXPORT void updateStateForClipOutRoundedRect(const FloatRoundedRect&);
     WEBCORE_EXPORT void updateStateForClipToImageBuffer(const FloatRect&);
     WEBCORE_EXPORT void LEGACY_NODELETE updateStateForApplyDeviceScaleFactor(float);
+    WEBCORE_EXPORT void updateStateForBeginPage();
     WEBCORE_EXPORT bool decomposeDrawGlyphsIfNeeded(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& anchorPoint, FontSmoothingMode);
     DrawGlyphsMode drawGlyphsMode() const { return m_drawGlyphsMode; }
 
@@ -152,7 +153,9 @@ private:
     Vector<ContextState, 4> m_stateStack;
     // The state the committed to the recording.
     GraphicsContextState m_committedState;
+    const GraphicsContextState m_initialState;
     ColorSpace m_colorSpace;
+    const AffineTransform m_initialCTM;
     const FloatRect m_initialClip;
     const DrawGlyphsMode m_drawGlyphsMode { DrawGlyphsMode::Normal };
 #if USE(CORE_TEXT)

@@ -48,7 +48,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Recorder);
 Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const ColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
     : GraphicsContext(isDeferred, state)
     , m_committedState(state)
+    , m_initialState(state)
     , m_colorSpace(colorSpace)
+    , m_initialCTM(initialCTM)
     , m_initialClip(initialCTM.mapRect(initialClip))
     , m_drawGlyphsMode(drawGlyphsMode)
 #if USE(CORE_TEXT)
@@ -296,6 +298,15 @@ void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)
 
     // FIXME: this changes the baseCTM, which will invalidate all of our cached extents.
     // Assert that it's only called early on?
+}
+
+void Recorder::updateStateForBeginPage()
+{
+    ASSERT(m_stateStack.size() == 1);
+    ASSERT(!m_state.changes());
+    m_state = m_initialState;
+    m_committedState = m_initialState;
+    m_stateStack.last() = { m_initialCTM, m_initialClip, { } };
 }
 
 const AffineTransform& Recorder::ctm() const

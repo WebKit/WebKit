@@ -437,6 +437,7 @@ void RecorderImpl::beginPage(const FloatRect& pageRect)
 {
     appendStateChangeItemIfNecessary();
     m_items.append(BeginPage({ pageRect }));
+    updateStateForBeginPage();
 }
 
 void RecorderImpl::endPage()

@@ -1607,6 +1607,11 @@ void GraphicsContextCG::beginPage(const FloatRect& pageRect)
     auto pageInfo = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     CGPDFContextBeginPage(context, pageInfo.get());
+
+    ASSERT(!stackSize());
+    m_state = GraphicsContextState { GraphicsContextState::basicChangeFlags, coreInterpolationQuality(context.get()) };
+    didUpdateState(m_state);
+    m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::endPage()

@@ -726,6 +726,7 @@ void RemoteGraphicsContextProxy::beginPage(const FloatRect& pageRect)
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
     send(Messages::RemoteGraphicsContext::BeginPage(pageRect));
+    updateStateForBeginPage();
 }
 
 void RemoteGraphicsContextProxy::endPage()
