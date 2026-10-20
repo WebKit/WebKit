@@ -73,9 +73,14 @@ private:
         RenderbufferDescriptor descriptor;
         bool allocated { false };
     };
+    struct AttachmentBinding {
+        bool attached { false };
+        bool texture { false };
+        uint32_t objectName { 0 };
+    };
     struct Framebuffer {
         uint64_t native { 0 };
-        std::unordered_map<Attachment, bool> attachments;
+        std::unordered_map<Attachment, AttachmentBinding> attachments;
     };
 
     FramebufferName nextFramebufferName();
