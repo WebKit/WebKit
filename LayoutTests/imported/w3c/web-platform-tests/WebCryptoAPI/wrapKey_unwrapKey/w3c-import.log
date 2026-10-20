@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/aes_kw_unwrapKey_failures.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey_vectors.js
