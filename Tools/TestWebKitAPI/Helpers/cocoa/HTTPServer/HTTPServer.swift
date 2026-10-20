@@ -27,7 +27,6 @@ import struct Swift.String
 #if USE_APPLE_INTERNAL_SDK
 @_spi(HTTP) public import Network
 #else
-public import Network
 public import Network_SPI
 #endif
 
