@@ -1,0 +1,4 @@
+
+PASS Text autosizing does not inflate text with <meta name=text-scale content=scale>
+PASS Removing and adding the text-scale meta toggles text autosizing
+

@@ -1,0 +1,7 @@
+
+PASS Changing text-scale meta elements in a createHTMLDocument document does not crash
+PASS Changing text-scale meta elements in a DOMParser document does not crash
+PASS Moving a text-scale meta between a frameless document and the main document does not crash
+PASS Changing the content size category with a frameless document that has a text-scale meta does not crash
+PASS Changing a text-scale meta in a document of a removed iframe does not crash
+

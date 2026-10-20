@@ -326,7 +326,7 @@ static inline float computeBaseComputedFontSize(const Document& document, const 
 
 static inline float computeLineHeightMultiplierDueToFontSize(const Document& document, const ComputedStyle& style, const CSSValue& value)
 {
-    bool percentageAutosizingEnabled = document.settings().textAutosizingEnabled() && style.textSizeAdjust().isPercentage();
+    bool percentageAutosizingEnabled = document.textAutosizingEnabled() && style.textSizeAdjust().isPercentage();
 
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value); primitiveValue && primitiveValue->isLength()) {
         auto minimumFontSize = document.settings().minimumFontSize();
@@ -410,7 +410,7 @@ inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
     // We need to adjust the size to account for the generic family change from monospace to non-monospace.
     if (fontDescription.useFixedDefaultSize()) {
         if (auto sizeIdentifier = fontDescription.keywordSizeAsIdentifier(); sizeIdentifier != CSSValueID::Invalid)
-            builderState.setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, false, builderState.document()));
+            builderState.setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, false, protect(builderState.document())));
     }
 
     builderState.setFontDescriptionFamilies(FontFamilies { standardFamily, FontFamilyKind::Generic });
@@ -432,14 +432,14 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
 
     if (fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize) {
         if (auto sizeIdentifier = fontDescription.keywordSizeAsIdentifier(); sizeIdentifier != CSSValueID::Invalid)
-            builderState.setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, builderState.document()));
+            builderState.setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, protect(builderState.document())));
     }
 }
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)
 {
     auto fontDescription = builderState.fontDescription();
-    float size = fontSizeForKeyword(CSSValueID::Medium, fontDescription.useFixedDefaultSize(), builderState.document());
+    float size = fontSizeForKeyword(CSSValueID::Medium, fontDescription.useFixedDefaultSize(), protect(builderState.document()));
 
     if (size < 0)
         return;
@@ -582,7 +582,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
         case CSSValueID::XLarge:
         case CSSValueID::XxLarge:
         case CSSValueID::XxxLarge:
-            size = fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), builderState.document());
+            size = fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), protect(builderState.document()));
             builderState.setFontDescriptionKeywordSizeFromIdentifier(ident);
             break;
         case CSSValueID::Larger:

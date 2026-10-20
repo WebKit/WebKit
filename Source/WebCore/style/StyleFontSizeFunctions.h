@@ -53,10 +53,10 @@ float LEGACY_NODELETE adjustedFontSize(float size, const WebCore::FontSizeAdjust
 // Given a CSS keyword id in the range (CSSValueID::XxSmall to CSSValueID::XxxLarge), this function will return
 // the correct font size scaled relative to the user's default (medium).
 float LEGACY_NODELETE fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const SettingsValues&, bool inQuirksMode = false);
-float LEGACY_NODELETE fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const Document&);
+float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const Document&);
 
 // Given a font size in pixel, this function will return legacy font size between 1 and 7.
-int LEGACY_NODELETE legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize, const Document&);
+int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize, const Document&);
 
 } // namespace Style
 } // namespace WebCore

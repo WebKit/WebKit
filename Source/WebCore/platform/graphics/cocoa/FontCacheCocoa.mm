@@ -60,6 +60,53 @@ CFStringRef contentSizeCategory()
 #endif
 }
 
+#if PLATFORM(IOS) || PLATFORM(VISION)
+// Pages that opt in with <meta name="text-scale" content="scale"> can read the text scale factor, for example
+// through getComputedStyle() or rem. Exposing the exact Body size ratio would reveal the user's content size
+// category, which is a fingerprinting surface. So we snap the factor to the closest of a few buckets:
+// - The default category maps to exactly 1, so medium stays 16px for most users.
+// - Buckets are close together near the default, where most users are, so a value says little about one person.
+// - Buckets are far apart away from it, so rare categories share a value with their neighbors
+//   (for example, the three largest accessibility categories all map to 2.5).
+static float snappedTextScaleFactor(float textScaleFactor)
+{
+    static constexpr std::array textScaleFactorBuckets { 0.85f, 0.94f, 1.f, 1.1f, 1.2f, 1.75f, 2.5f };
+    float closestBucket = textScaleFactorBuckets.front();
+    for (float bucket : textScaleFactorBuckets) {
+        if (std::abs(textScaleFactor - bucket) < std::abs(textScaleFactor - closestBucket))
+            closestBucket = bucket;
+    }
+    return closestBucket;
+}
+
+float textScaleFactorForContentSizeCategory()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<String> cachedCategory;
+    static float cachedTextScaleFactor = 1;
+
+    String category = contentSizeCategory();
+    if (category == cachedCategory.get())
+        return cachedTextScaleFactor;
+
+    // https://drafts.csswg.org/css-fonts-5/#scale-keyword
+    // "the text scale factor matches the user's preferred paragraph text size [...] divided by 16px."
+    // The Body text style is the paragraph text size. Its size relative to the default category scales
+    // the 16px default, so the factor is 1 at the default category. The factor is snapped to a few
+    // buckets to limit how much of the user's setting is exposed.
+    auto bodySizeForCategory = [](NSString *sizeCategory) -> CGFloat {
+        RetainPtr traitCollection = [PAL::getUITraitCollectionClassSingleton() traitCollectionWithPreferredContentSizeCategory:sizeCategory];
+        return [[PAL::getUIFontClassSingleton() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleBodySingleton() compatibleWithTraitCollection:traitCollection.get()] pointSize];
+    };
+    static const CGFloat defaultBodySize = bodySizeForCategory(RetainPtr { PAL::get_UIKit_UIContentSizeCategoryLargeSingleton() }.get());
+    CGFloat bodySize = bodySizeForCategory(category.createNSString().get());
+
+    cachedCategory.get() = WTF::move(category);
+    cachedTextScaleFactor = defaultBodySize && bodySize ? snappedTextScaleFactor(bodySize / defaultBodySize) : 1;
+    return cachedTextScaleFactor;
+}
+#endif
+
 void setContentSizeCategory(const String& contentSizeCategory)
 {
     if (contentSizeCategory == contentSizeCategoryStorage())

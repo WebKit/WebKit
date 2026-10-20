@@ -97,6 +97,9 @@ bool fontNameIsSystemFont(CFStringRef);
 CFStringRef getUIContentSizeCategoryDidChangeNotificationName();
 WEBCORE_EXPORT void setContentSizeCategory(const String&);
 WEBCORE_EXPORT CFStringRef contentSizeCategory();
+#if PLATFORM(IOS) || PLATFORM(VISION)
+float textScaleFactorForContentSizeCategory();
+#endif
 
 VariationDefaultsMap defaultVariationValues(CTFontRef, ShouldLocalizeAxisNames);
 

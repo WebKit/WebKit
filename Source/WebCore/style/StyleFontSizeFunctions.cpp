@@ -146,12 +146,11 @@ static constexpr std::array strictFontSizeTable {
 // factors for each keyword value.
 static constexpr std::array fontSizeFactors { 0.60f, 0.75f, 0.89f, 1.0f, 1.2f, 1.5f, 2.0f, 3.0f };
 
-float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const SettingsValues& settings, bool inQuirksMode)
+static float fontSizeForKeyword(CSSValueID keyword, int mediumSize, const SettingsValues& settings, bool inQuirksMode)
 {
     ASSERT(keyword >= CSSValueID::XxSmall && keyword <= CSSValueID::XxxLarge);
     unsigned keywordIndex = std::to_underlying(keyword) - std::to_underlying(CSSValueID::XxSmall);
 
-    int mediumSize = shouldUseFixedDefaultSize ? settings.defaultFixedFontSize : settings.defaultFontSize;
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
         // Look up the entry in the table.
         int row = mediumSize - fontSizeTableMin;
@@ -163,9 +162,21 @@ float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, con
     return std::max(fontSizeFactors[keywordIndex] * mediumSize, minLogicalSize);
 }
 
+float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const SettingsValues& settings, bool inQuirksMode)
+{
+    int mediumSize = shouldUseFixedDefaultSize ? settings.defaultFixedFontSize : settings.defaultFontSize;
+    return fontSizeForKeyword(keyword, mediumSize, settings, inQuirksMode);
+}
+
+static int scaledMediumFontSize(bool shouldUseFixedDefaultSize, const Document& document)
+{
+    int mediumSize = shouldUseFixedDefaultSize ? document.settings().defaultFixedFontSize() : document.settings().defaultFontSize();
+    return std::round(mediumSize * document.textScaleFactor());
+}
+
 float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const Document& document)
 {
-    return fontSizeForKeyword(keyword, shouldUseFixedDefaultSize, document.settingsValues(), document.inQuirksMode());
+    return fontSizeForKeyword(keyword, scaledMediumFontSize(shouldUseFixedDefaultSize, document), document.settingsValues(), document.inQuirksMode());
 }
 
 template<typename T, std::size_t Extent>
@@ -182,7 +193,7 @@ static int LEGACY_NODELETE findNearestLegacyFontSize(int pixelFontSize, std::spa
 int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize, const Document& document)
 {
     bool quirksMode = document.inQuirksMode();
-    int mediumSize = shouldUseFixedDefaultSize ? document.settings().defaultFixedFontSize() : document.settings().defaultFontSize();
+    int mediumSize = scaledMediumFontSize(shouldUseFixedDefaultSize, document);
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
         int row = mediumSize - fontSizeTableMin;
         return findNearestLegacyFontSize(pixelFontSize, std::span { quirksMode ? quirksFontSizeTable[row] : strictFontSizeTable[row] }, 1);
