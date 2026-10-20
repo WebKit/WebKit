@@ -127,6 +127,14 @@ public:
     const RemoteLayerTreeHost& remoteLayerTreeHost() const LIFETIME_BOUND { return *m_remoteLayerTreeHost; }
     std::unique_ptr<RemoteLayerTreeHost> detachRemoteLayerTreeHost();
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    void updateDeferredInteractionRegions()
+    {
+        if (m_remoteLayerTreeHost)
+            m_remoteLayerTreeHost->updateDeferredInteractionRegions();
+    }
+#endif
+
     virtual Ref<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const = 0;
 
     void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
