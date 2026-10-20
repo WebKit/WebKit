@@ -78,6 +78,8 @@ public:
     static PassOwnPtr<GraphicsContext3DPrivate> create(GraphicsContext3D::Attributes& attrs, HostWindow* hostwindow, bool in_direct);
     ~GraphicsContext3DPrivate()
     {
+        delete m_extensions;
+        m_extensions = 0;
         if (m_data)
             fastFree(m_data);
         if (m_layer)
@@ -209,6 +211,8 @@ void
 GraphicsContext3D::contextLostProc(void *in_opaque)
 {
     GraphicsContext3D* self = static_cast<GraphicsContext3D *>(in_opaque);
+    if (!self || !self->m_private || !self->m_private->contextLostCallback())
+        return;
     self->m_private->contextLostCallback()->onContextLost();
 }
 
@@ -228,6 +232,8 @@ GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback> cb)
 bool
 GraphicsContext3D::makeContextCurrent()
 {
+    if (!m_private || !peer())
+        return false;
     wkcGLMakeContextCurrentPeer(peer());
     return true;
 }
