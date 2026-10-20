@@ -1175,13 +1175,11 @@ void NetworkResourceLoader::processUseAsDictionaryHeader(const ResourceResponse&
     if (!WebCore::shouldTreatAsPotentiallyTrustworthy(url))
         return;
 
-    auto patternResult = URLPattern::create(info.match, String { url.string() }, { });
+    auto patternResult = URLPattern::createWithoutRegExpSupport(info.match, String { url.string() }, { });
     if (patternResult.hasException())
         return;
-    Ref pattern = patternResult.releaseReturnValue();
-    if (pattern->hasRegExpGroups())
-        return;
 
+    Ref pattern = patternResult.releaseReturnValue();
     auto port = url.port();
     if (pattern->protocol() != url.protocol() || pattern->hostname() != url.host() || pattern->port() != (port ? String::number(*port) : emptyString()))
         return;
