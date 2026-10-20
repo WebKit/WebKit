@@ -178,17 +178,6 @@ void wgpuAdapterRelease(WGPUAdapter adapter)
     WebGPU::Metal::fromAPI(adapter).deref();
 }
 
-size_t wgpuAdapterEnumerateFeatures(WGPUAdapter adapter, WGPUFeatureName* features)
-{
-    // The caller calls this twice: once for the count, and once with space for that many features.
-    auto apiFeatures = protect(WebGPU::Metal::fromAPI(adapter))->features();
-    if (features) {
-        for (auto [i, feature] : indexedRange(apiFeatures))
-            unsafeMakeSpan(features, apiFeatures.size())[i] = WebGPU::Metal::toAPI(feature);
-    }
-    return apiFeatures.size();
-}
-
 WGPUBool wgpuAdapterGetLimits(WGPUAdapter adapter, WGPUSupportedLimits* limits)
 {
     limits->limits = WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(adapter))->limits());
@@ -237,16 +226,4 @@ void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* d
     requestDevice(adapter, *descriptor, [callback, userdata](WGPURequestDeviceStatus status, WGPUDevice device, const char* message) {
         callback(status, device, message, userdata);
     });
-}
-
-void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback)
-{
-    requestDevice(adapter, *descriptor, [callback = WebGPU::Metal::fromAPI(WTF::move(callback))](WGPURequestDeviceStatus status, WGPUDevice device, const char* message) {
-        callback(status, device, message);
-    });
-}
-
-WGPUBool wgpuAdapterXRCompatible(WGPUAdapter adapter)
-{
-    return WebGPU::Metal::fromAPI(adapter).isXRCompatible();
 }

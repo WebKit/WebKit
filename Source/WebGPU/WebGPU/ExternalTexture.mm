@@ -139,13 +139,3 @@ void wgpuExternalTextureDestroy(WGPUExternalTexture externalTexture)
 {
     protect(WebGPU::Metal::fromAPI(externalTexture))->destroy();
 }
-
-void wgpuExternalTextureUndestroy(WGPUExternalTexture externalTexture)
-{
-    protect(WebGPU::Metal::fromAPI(externalTexture))->undestroy();
-}
-
-void wgpuExternalTextureUpdate(WGPUExternalTexture externalTexture, CVPixelBufferRef pixelBuffer)
-{
-    protect(WebGPU::Metal::fromAPI(externalTexture))->update(pixelBuffer);
-}

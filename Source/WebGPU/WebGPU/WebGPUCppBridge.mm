@@ -145,31 +145,6 @@ TextureView& fromAPI(WGPUTextureView object)
     return Metal::fromAPI(object);
 }
 
-XRBinding& fromAPI(WGPUXRBinding object)
-{
-    return Metal::fromAPI(object);
-}
-
-XRProjectionLayer& fromAPI(WGPUXRProjectionLayer object)
-{
-    return Metal::fromAPI(object);
-}
-
-XRSubImage& fromAPI(WGPUXRSubImage object)
-{
-    return Metal::fromAPI(object);
-}
-
-XRView& fromAPI(WGPUXRView object)
-{
-    return Metal::fromAPI(object);
-}
-
-PresentationContext& fromAPI(WGPUSwapChain swapChain)
-{
-    return Metal::fromAPI(swapChain);
-}
-
 WGPUAdapter toAPI(Adapter& object)
 {
     return Metal::toAPI(object);
@@ -283,31 +258,6 @@ WGPUTexture toAPI(Texture& object)
 WGPUTextureView toAPI(TextureView& object)
 {
     return Metal::toAPI(object);
-}
-
-WGPUXRBinding toAPI(XRBinding& object)
-{
-    return Metal::toAPI(object);
-}
-
-WGPUXRProjectionLayer toAPI(XRProjectionLayer& object)
-{
-    return Metal::toAPI(object);
-}
-
-WGPUXRSubImage toAPI(XRSubImage& object)
-{
-    return Metal::toAPI(object);
-}
-
-WGPUXRView toAPI(XRView& object)
-{
-    return Metal::toAPI(object);
-}
-
-WGPUSwapChain toAPISwapChain(PresentationContext& presentationContext)
-{
-    return Metal::toAPISwapChain(presentationContext);
 }
 
 } // namespace WebGPU

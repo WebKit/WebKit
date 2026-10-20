@@ -163,23 +163,3 @@ RefPtr<WebGPU::XRSubImage> XRBinding::getViewSubImage(WebGPU::XRProjectionLayer&
 } // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
-
-void LEGACY_NODELETE wgpuXRSubImageAddRef(WGPUXRSubImage subImage)
-{
-    WebGPU::Metal::fromAPI(subImage).ref();
-}
-
-void wgpuXRSubImageRelease(WGPUXRSubImage subImage)
-{
-    WebGPU::Metal::fromAPI(subImage).deref();
-}
-
-WGPUTexture wgpuXRSubImageGetColorTexture(WGPUXRSubImage subImage)
-{
-    return protect(WebGPU::Metal::fromAPI(subImage))->currentColorTexture();
-}
-
-WGPUTexture wgpuXRSubImageGetDepthStencilTexture(WGPUXRSubImage subImage)
-{
-    return protect(WebGPU::Metal::fromAPI(subImage))->depthTexture();
-}

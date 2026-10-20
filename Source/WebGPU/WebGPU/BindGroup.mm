@@ -1844,8 +1844,3 @@ void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, WGPUStringView label)
 {
     protect(WebGPU::Metal::fromAPI(bindGroup))->setLabel(WebGPU::Metal::fromAPI(label));
 }
-
-bool wgpuBindGroupUpdateExternalTextures(WGPUBindGroup bindGroup, WGPUExternalTexture externalTexture)
-{
-    return protect(WebGPU::Metal::fromAPI(bindGroup))->updateExternalTextures(protect(WebGPU::Metal::fromAPI(externalTexture)));
-}

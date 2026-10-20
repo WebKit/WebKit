@@ -199,18 +199,3 @@ RefPtr<WebGPU::XRProjectionLayer> XRBinding::createProjectionLayer(const WebGPU:
 } // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
-
-void LEGACY_NODELETE wgpuXRProjectionLayerAddRef(WGPUXRProjectionLayer projectionLayer)
-{
-    WebGPU::Metal::fromAPI(projectionLayer).ref();
-}
-
-void wgpuXRProjectionLayerRelease(WGPUXRProjectionLayer projectionLayer)
-{
-    WebGPU::Metal::fromAPI(projectionLayer).deref();
-}
-
-void wgpuXRProjectionLayerStartFrame(WGPUXRProjectionLayer layer, size_t frameIndex, WTF::MachSendRight&& colorBuffer, WTF::MachSendRight&& depthBuffer, WTF::MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples)
-{
-    WebGPU::Metal::fromAPI(layer).startFrame(frameIndex, WTF::move(colorBuffer), WTF::move(depthBuffer), WTF::move(completionSyncEvent), reusableTextureIndex, screenWidth, screenHeight, WTF::move(horizontalSamplesLeft), WTF::move(horizontalSamplesRight), WTF::move(verticalSamples));
-}

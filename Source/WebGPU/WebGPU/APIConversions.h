@@ -372,11 +372,6 @@ inline PresentationContext& fromAPI(WGPUSurface surface)
     return downcast<PresentationContext>(*surface);
 }
 
-inline PresentationContext& fromAPI(WGPUSwapChain swapChain)
-{
-    return downcast<PresentationContext>(*swapChain);
-}
-
 inline Texture& fromAPI(WGPUTexture texture)
 {
     return downcast<Texture>(*texture);
@@ -385,26 +380,6 @@ inline Texture& fromAPI(WGPUTexture texture)
 inline TextureView& fromAPI(WGPUTextureView textureView)
 {
     return downcast<TextureView>(*textureView);
-}
-
-inline XRBinding& fromAPI(WGPUXRBinding binding)
-{
-    return downcast<XRBinding>(*binding);
-}
-
-inline XRSubImage& fromAPI(WGPUXRSubImage subImage)
-{
-    return downcast<XRSubImage>(*subImage);
-}
-
-inline XRProjectionLayer& fromAPI(WGPUXRProjectionLayer layer)
-{
-    return downcast<XRProjectionLayer>(*layer);
-}
-
-inline XRView& fromAPI(WGPUXRView view)
-{
-    return downcast<XRView>(*view);
 }
 
 inline WGPUAdapter toAPI(WebGPU::Adapter& adapter)
@@ -520,31 +495,6 @@ inline WGPUTexture toAPI(WebGPU::Texture& texture)
 inline WGPUTextureView toAPI(WebGPU::TextureView& textureView)
 {
     return &downcast<TextureView>(textureView);
-}
-
-inline WGPUXRBinding toAPI(WebGPU::XRBinding& xRBinding)
-{
-    return &downcast<XRBinding>(xRBinding);
-}
-
-inline WGPUXRProjectionLayer toAPI(WebGPU::XRProjectionLayer& xRProjectionLayer)
-{
-    return &downcast<XRProjectionLayer>(xRProjectionLayer);
-}
-
-inline WGPUXRSubImage toAPI(WebGPU::XRSubImage& xRSubImage)
-{
-    return &downcast<XRSubImage>(xRSubImage);
-}
-
-inline WGPUXRView toAPI(WebGPU::XRView& xRView)
-{
-    return &downcast<XRView>(xRView);
-}
-
-inline WGPUSwapChain toAPISwapChain(WebGPU::PresentationContext& presentationContext)
-{
-    return &downcast<PresentationContext>(presentationContext);
 }
 
 // Literals have static storage, so the view can borrow them freely.

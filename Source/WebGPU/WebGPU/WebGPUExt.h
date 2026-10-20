@@ -62,14 +62,6 @@ typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 typedef struct WebMeshImpl* WebMesh;
 typedef struct WGPUExternalTextureImpl* WGPUExternalTexture;
 
-typedef enum WGPUBufferBindingTypeExtended {
-    WGPUBufferBindingType_Float3x2 = WGPUBufferBindingType_Force32 - 1,
-    WGPUBufferBindingType_Float4x3 = WGPUBufferBindingType_Force32 - 2,
-    WGPUBufferBindingType_ArrayLength = WGPUBufferBindingType_Force32 - 3,
-    WGPUBufferBindingType_Float3x3 = WGPUBufferBindingType_Force32 - 4,
-    WGPUBufferBindingType_UInt2 = WGPUBufferBindingType_Force32 - 5,
-} WGPUBufferBindingTypeExtended;
-
 typedef enum WGPUSTypeExtended {
     WGPUSTypeExtended_InstanceCocoaDescriptor = 0x151BBC00, // Random
     WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking = 0x017E9710, // Random
@@ -82,7 +74,6 @@ const int WGPUTextureSampleType_ExternalTexture = WGPUTextureSampleType_Force32 
 
 typedef void (^WGPUWorkItem)(void);
 typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
-typedef void (^WGPUDeviceLostBlockCallback)(WGPUDeviceLostReason reason, char const * message);
 
 typedef void (^WGPURenderBuffersWereRecreatedBlockCallback)(CFArrayRef ioSurfaces);
 typedef void (^WGPUOnSubmittedWorkScheduledCallback)(WGPUWorkItem);
@@ -107,9 +98,6 @@ typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
     WGPUChainedStruct chain;
     WGPUCompositorIntegrationRegisterBlockCallback compositorIntegrationRegister;
 } WGPUSurfaceDescriptorCocoaCustomSurface;
-
-typedef struct WGPUExternalTextureBindingLayout {
-} WGPUExternalTextureBindingLayout;
 
 typedef struct WGPUExternalTextureDescriptor {
     WGPUStringView label;
@@ -175,12 +163,9 @@ typedef struct WGPUImageCopyTextureTagged {
 
 #if !defined(WGPU_SKIP_PROCS)
 
-typedef void (*WGPUProcRenderBundleSetLabel)(WGPURenderBundle renderBundle, WGPUStringView label);
 
-typedef WGPUExternalTexture (*WGPUProcDeviceImportExternalTexture)(WGPUSwapChain swapChain);
 
 // FIXME: https://github.com/webgpu-native/webgpu-headers/issues/89 is about moving this from WebGPUExt.h to WebGPU.h
-typedef WGPUTexture (*WGPUProcSwapChainGetCurrentTexture)(WGPUSwapChain swapChain);
 
 #endif  // !defined(WGPU_SKIP_PROCS)
 
@@ -189,49 +174,22 @@ typedef WGPUTexture (*WGPUProcSwapChainGetCurrentTexture)(WGPUSwapChain swapChai
 WGPU_EXPORT void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, WGPUStringView label);
 
 // FIXME: https://github.com/webgpu-native/webgpu-headers/issues/89 is about moving this from WebGPUExt.h to WebGPU.h
-WGPU_EXPORT WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain, uint32_t frameIndex);
 
-WGPU_EXPORT double wgpuSurfaceGetLastFrameGPUCostSeconds(WGPUSurface surface);
-WGPU_EXPORT double wgpuSurfaceGetLastFramePresentStallSeconds(WGPUSurface surface);
 
-WGPU_EXPORT WGPUExternalTexture wgpuDeviceImportExternalTexture(WGPUDevice device, const WGPUExternalTextureDescriptor* descriptor);
-WGPU_EXPORT void wgpuQueueCopyExternalImageToTexture(WGPUQueue queue, const WGPUImageCopyExternalImage* source, const WGPUImageCopyTextureTagged* destination, const WGPUExtent3D* copySize) WGPU_FUNCTION_ATTRIBUTE;
 
-WGPU_EXPORT void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback callback, void* userdata);
-WGPU_EXPORT void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback);
 WGPU_EXPORT void wgpuExternalTextureAddRef(WGPUExternalTexture externalTexture);
 WGPU_EXPORT void wgpuExternalTextureRelease(WGPUExternalTexture externalTexture);
-WGPU_EXPORT void wgpuRenderBundleEncoderSetBindGroupWithDynamicOffsets(WGPURenderBundleEncoder renderBundleEncoder, uint32_t groupIndex, WGPU_NULLABLE WGPUBindGroup group, std::optional<Vector<uint32_t>>&& dynamicOffsets) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuExternalTextureDestroy(WGPUExternalTexture texture) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT void wgpuExternalTextureUndestroy(WGPUExternalTexture texture) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT void wgpuExternalTextureUpdate(WGPUExternalTexture texture, CVPixelBufferRef) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT WGPULimits wgpuDefaultLimits() WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT bool wgpuBindGroupUpdateExternalTextures(WGPUBindGroup bindGroup, WGPUExternalTexture externalTexture) WGPU_FUNCTION_ATTRIBUTE;
 
-WGPU_EXPORT WGPUXRBinding wgpuDeviceCreateXRBinding(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT void wgpuDevicePauseErrorReporting(WGPUDevice device, WGPUBool pauseErrors) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT void wgpuDeviceCreateComputePipelineWithPipelineLayoutFromPipelineAsync(WGPUDevice, const WGPUComputePipelineDescriptor*, WGPUComputePipeline, WGPUCreateComputePipelineAsyncCallback, void*) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT void wgpuDeviceCreateRenderPipelineWithPipelineLayoutFromPipelineAsync(WGPUDevice, const WGPURenderPipelineDescriptor*, WGPURenderPipeline, WGPUCreateRenderPipelineAsyncCallback, void*) WGPU_FUNCTION_ATTRIBUTE;
 
-WGPU_EXPORT WGPUXRProjectionLayer wgpuBindingCreateXRProjectionLayer(WGPUXRBinding binding, WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsage flags, double scale) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT WGPUXRSubImage wgpuBindingGetViewSubImage(WGPUXRBinding binding, WGPUXRProjectionLayer layer) WGPU_FUNCTION_ATTRIBUTE;
 
-WGPU_EXPORT WGPUTexture wgpuXRSubImageGetColorTexture(WGPUXRSubImage subImage) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT WGPUTexture wgpuXRSubImageGetDepthStencilTexture(WGPUXRSubImage subImage) WGPU_FUNCTION_ATTRIBUTE;
 
-WGPU_EXPORT WGPUBool wgpuAdapterXRCompatible(WGPUAdapter adapter) WGPU_FUNCTION_ATTRIBUTE;
 
-WGPU_EXPORT void wgpuXRProjectionLayerStartFrame(WGPUXRProjectionLayer layer, size_t frameIndex, WTF::MachSendRight&& colorBuffer, WTF::MachSendRight&& depthBuffer, WTF::MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples) WGPU_FUNCTION_ATTRIBUTE;
 
-WGPU_EXPORT RetainPtr<CGImageRef> wgpuSwapChainGetTextureAsNativeImage(WGPUSwapChain swapChain, uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat);
-WGPU_EXPORT WGPUBool wgpuExternalTextureIsValid(WGPUExternalTexture externalTexture) WGPU_FUNCTION_ATTRIBUTE;
 
-WGPU_EXPORT void wgpuDeviceClearDeviceLostCallback(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT void wgpuDeviceClearUncapturedErrorCallback(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 
 #endif  // !defined(WGPU_SKIP_DECLARATIONS)
 
-WGPU_EXPORT String wgpuAdapterFeatureName(WGPUFeatureName feature) WGPU_FUNCTION_ATTRIBUTE;
 
 #endif
 

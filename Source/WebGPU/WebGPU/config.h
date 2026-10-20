@@ -27,7 +27,6 @@
 
 #include "WebGPU.h"
 #include "WebGPUExt.h"
-#include "WebGPUInternal.h"
 
 #include <Metal/Metal.h>
 

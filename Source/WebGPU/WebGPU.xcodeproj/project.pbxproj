@@ -35,7 +35,6 @@
 		07D291802EC9CF1D00A32120 /* ShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEBD80D2716C3D800A5254D /* ShaderModule.h */; };
 		07D291812EC9CF2200A32120 /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACA99273A426D0095F8D5 /* Texture.h */; };
 		07D291822EC9CF2A00A32120 /* TextureView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACADD273A4F3D0095F8D5 /* TextureView.h */; };
-		07D291832EC9CF3100A32120 /* WebGPUInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */; };
 		0D164A3A2E8EE14700864EA1 /* TextureOrTextureView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D164A392E8EE14700864EA1 /* TextureOrTextureView.h */; };
 		0D212A652BC26336001160BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D212A642BC26336001160BF /* CoreGraphics.framework */; };
 		0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */; };
@@ -427,7 +426,6 @@
 		1CA5B4F32A6F28C400E5F297 /* wgslfuzz.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = wgslfuzz.cpp; sourceTree = "<group>"; };
 		1CA5B4F92A6F28E500E5F297 /* wgslfuzz.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = wgslfuzz.xcconfig; sourceTree = "<group>"; };
 		1CA5B4FE2A6F2A5800E5F297 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/System/iOSSupport/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUInternal.h; sourceTree = "<group>"; };
 		1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBD2E942977DAC900BBF52C /* PresentationContextIOSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresentationContextIOSurface.h; sourceTree = "<group>"; };
 		1CBD2E952977DAC900BBF52C /* PresentationContextIOSurface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PresentationContextIOSurface.mm; sourceTree = "<group>"; };
@@ -771,7 +769,6 @@
 				4606ED06320AD4C5A15A157B /* WebGPUCppBridge.mm */,
 				83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */,
 				1C5ACAD2273A4C860095F8D5 /* WebGPUExt.h */,
-				1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */,
 				075BAAB92EEFBCA2008765CE /* WGPUBufferImpl.h */,
 				075BAABF2EEFCAE1008765CE /* WGPUQuerySetImpl.h */,
 				075BAABB2EEFC6B4008765CE /* WGPUTextureImpl.h */,
@@ -1080,7 +1077,6 @@
 				CFABBD75A0EC0E1A9B26F610 /* WebGPUCppBridge.h in Headers */,
 				1BAE0AF932075C6734283F13 /* WebGPUCppConversions.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
-				07D291832EC9CF3100A32120 /* WebGPUInternal.h in Headers */,
 				075BAABA2EEFBCA2008765CE /* WGPUBufferImpl.h in Headers */,
 				075BAAC02EEFCAE1008765CE /* WGPUQuerySetImpl.h in Headers */,
 				075BAABC2EEFC6B4008765CE /* WGPUTextureImpl.h in Headers */,

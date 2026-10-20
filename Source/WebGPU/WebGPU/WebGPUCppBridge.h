@@ -58,11 +58,6 @@ Sampler& fromAPI(WGPUSampler);
 ShaderModule& fromAPI(WGPUShaderModule);
 Texture& fromAPI(WGPUTexture);
 TextureView& fromAPI(WGPUTextureView);
-XRBinding& fromAPI(WGPUXRBinding);
-XRProjectionLayer& fromAPI(WGPUXRProjectionLayer);
-XRSubImage& fromAPI(WGPUXRSubImage);
-XRView& fromAPI(WGPUXRView);
-PresentationContext& fromAPI(WGPUSwapChain);
 
 WGPUAdapter toAPI(Adapter&);
 WGPUBindGroup toAPI(BindGroup&);
@@ -87,10 +82,5 @@ WGPUSampler toAPI(Sampler&);
 WGPUShaderModule toAPI(ShaderModule&);
 WGPUTexture toAPI(Texture&);
 WGPUTextureView toAPI(TextureView&);
-WGPUXRBinding toAPI(XRBinding&);
-WGPUXRProjectionLayer toAPI(XRProjectionLayer&);
-WGPUXRSubImage toAPI(XRSubImage&);
-WGPUXRView toAPI(XRView&);
-WGPUSwapChain toAPISwapChain(PresentationContext&);
 
 } // namespace WebGPU

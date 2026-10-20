@@ -1158,20 +1158,7 @@ void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompi
     });
 }
 
-void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback)
-{
-    getCompilationInfo(shaderModule, [callback = WebGPU::Metal::fromAPI(WTF::move(callback))](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
-        callback(status, &compilationInfo);
-    });
-}
-
 void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, WGPUStringView label)
 {
     protect(WebGPU::Metal::fromAPI(shaderModule))->setLabel(WebGPU::Metal::fromAPI(label));
-}
-
-String wgpuAdapterFeatureName(WGPUFeatureName feature)
-{
-    auto apiFeature = WebGPU::Metal::fromAPI(feature);
-    return apiFeature ? WebGPU::Metal::featureName(*apiFeature) : emptyString();
 }

@@ -2197,13 +2197,6 @@ void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallback cal
     } });
 }
 
-void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlockCallback callback)
-{
-    protect(WebGPU::Metal::fromAPI(queue))->onSubmittedWorkDone(CompletionHandler<void(bool)> { [callback = WebGPU::Metal::fromAPI(WTF::move(callback))](bool success) {
-        callback(success ? WGPUQueueWorkDoneStatus_Success : WGPUQueueWorkDoneStatus_DeviceLost);
-    } });
-}
-
 void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuffer* commands)
 {
     Vector<Ref<WebGPU::Metal::CommandBuffer>> commandsToForward;
@@ -2226,18 +2219,6 @@ void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUTexelCopyTextureInfo* dest
         return;
     }
     protectedQueue->writeTexture(*apiDestination, data, WebGPU::Metal::fromAPI(*dataLayout), WebGPU::Metal::fromAPI(*writeSize));
-}
-
-void wgpuQueueCopyExternalImageToTexture(WGPUQueue queue, const WGPUImageCopyExternalImage* source, const WGPUImageCopyTextureTagged* destination, const WGPUExtent3D* copySize)
-{
-    Ref protectedQueue = WebGPU::Metal::fromAPI(queue);
-    auto apiSource = WebGPU::Metal::fromAPI(*source);
-    auto apiDestination = WebGPU::Metal::fromAPI(*destination);
-    if (!apiSource || !apiDestination) {
-        protectedQueue->generateAValidationError("GPUQueue.copyExternalImageToTexture: the source or the destination has an invalid value"_s);
-        return;
-    }
-    protectedQueue->copyExternalImageToTexture(*apiSource, *apiDestination, WebGPU::Metal::fromAPI(*copySize));
 }
 
 void wgpuQueueSetLabel(WGPUQueue queue, WGPUStringView label)

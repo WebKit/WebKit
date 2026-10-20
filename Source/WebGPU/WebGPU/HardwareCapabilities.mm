@@ -743,8 +743,3 @@ bool isValid(const Limits& limits)
 } // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
-
-WGPULimits LEGACY_NODELETE wgpuDefaultLimits()
-{
-    return WebGPU::Metal::toAPI(WebGPU::Metal::defaultLimits());
-}
