@@ -36,6 +36,7 @@
 #include "minalign32_heap_config.h"
 #include "pagesize64k_heap_config.h"
 #include "pas_epoch.h"
+#include "pas_page_sharing_participant.h"
 #include "pas_fd_stream.h"
 #include "pas_heap.h"
 #include "pas_mte_config.h"
@@ -222,6 +223,11 @@ EpochIsCounter::EpochIsCounter()
         [] () {
             pas_epoch_is_counter = true;
             pas_scavenger_max_epoch_delta = 0;
+            /* The epoch is just a counter here, so the time-based retention offsets are meaningless
+               (and would keep pages from ever expiring). */
+            memset(pas_segregated_participant_epoch_offsets, 0, sizeof(pas_segregated_participant_epoch_offsets));
+            memset(pas_bitfit_participant_epoch_offsets, 0, sizeof(pas_bitfit_participant_epoch_offsets));
+            pas_page_sharing_participant_large_sharing_pool_epoch_offset = 0;
         })
 {
 }
