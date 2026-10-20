@@ -40,7 +40,6 @@ class Instance;
 class PresentationContextIOSurface : public PresentationContext {
     WTF_MAKE_TZONE_ALLOCATED(PresentationContextIOSurface);
 public:
-    static Ref<PresentationContextIOSurface> create(const WGPUSurfaceDescriptor&, const Instance&);
     static Ref<PresentationContextIOSurface> create(const WebGPU::PresentationContextDescriptor&, const Instance&);
 
     virtual ~PresentationContextIOSurface();

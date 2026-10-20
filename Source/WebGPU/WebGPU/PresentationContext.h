@@ -50,7 +50,6 @@ class TextureView;
 class PresentationContext : public WebGPU::PresentationContext, public WGPUSurfaceImpl, public WGPUSwapChainImpl {
     WTF_MAKE_TZONE_ALLOCATED(PresentationContext);
 public:
-    static Ref<PresentationContext> create(const WGPUSurfaceDescriptor&, const Instance&);
     static Ref<PresentationContext> create(const WebGPU::PresentationContextDescriptor&, const Instance&);
     static Ref<PresentationContext> createInvalid()
     {

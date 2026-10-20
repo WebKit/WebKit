@@ -39,23 +39,6 @@ namespace WebGPU::Metal {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContextIOSurface);
 
-Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGPUSurfaceDescriptor& surfaceDescriptor, const Instance& instance)
-{
-    Ref presentationContextIOSurface = adoptRef(*new PresentationContextIOSurface(instance));
-
-    const auto* descriptor = findChainedStruct<WGPUSurfaceDescriptorCocoaCustomSurface>(surfaceDescriptor.nextInChain);
-    if (!descriptor)
-        return presentationContextIOSurface;
-
-    descriptor->compositorIntegrationRegister([presentationContext = presentationContextIOSurface.copyRef()](CFArrayRef ioSurfaces) {
-        presentationContext->renderBuffersWereRecreated(bridge_cast(ioSurfaces));
-    }, [presentationContext = presentationContextIOSurface.copyRef()](WGPUWorkItem workItem) {
-        presentationContext->onSubmittedWorkScheduled(makeBlockPtr(WTF::move(workItem)));
-    });
-
-    return presentationContextIOSurface;
-}
-
 Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WebGPU::PresentationContextDescriptor& descriptor, const Instance& instance)
 {
     Ref presentationContextIOSurface = adoptRef(*new PresentationContextIOSurface(instance));

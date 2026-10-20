@@ -35,11 +35,6 @@ namespace WebGPU::Metal {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContext);
 
-Ref<PresentationContext> PresentationContext::create(const WGPUSurfaceDescriptor& descriptor, const Instance& instance)
-{
-    return PresentationContextIOSurface::create(descriptor, instance);
-}
-
 Ref<PresentationContext> PresentationContext::create(const WebGPU::PresentationContextDescriptor& descriptor, const Instance& instance)
 {
     return PresentationContextIOSurface::create(descriptor, instance);

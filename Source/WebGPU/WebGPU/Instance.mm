@@ -54,35 +54,19 @@ static NSArray<id<MTLDevice>>* getDevices()
     return devices;
 }
 
-Ref<Instance> Instance::create(const WGPUInstanceDescriptor& descriptor)
-{
-    auto* cocoaDescriptor = findChainedStruct<WGPUInstanceCocoaDescriptor>(descriptor.nextInChain);
-    if (!cocoaDescriptor)
-        return adoptRef(*new Instance(nullptr, nullptr));
-
-    return adoptRef(*new Instance(cocoaDescriptor->scheduleWorkBlock, reinterpret_cast<const WTF::MachSendRight*>(cocoaDescriptor->webProcessResourceOwner)));
-}
-
 Ref<Instance> Instance::create(WebGPU::InstanceDescriptor&& descriptor)
 {
-    BlockPtr<void(WGPUWorkItem)> scheduleWorkBlock;
-    if (descriptor.scheduleWork) {
-        scheduleWorkBlock = makeBlockPtr([scheduleWork = WTF::move(descriptor.scheduleWork)](WGPUWorkItem workItem) {
-            scheduleWork(Function<void()>(makeBlockPtr(WTF::move(workItem))));
-        });
-    }
-    return adoptRef(*new Instance(scheduleWorkBlock.get(), descriptor.webProcessResourceOwner ? &*descriptor.webProcessResourceOwner : nullptr));
+    return adoptRef(*new Instance(WTF::move(descriptor.scheduleWork), descriptor.webProcessResourceOwner ? &*descriptor.webProcessResourceOwner : nullptr));
 }
 
-Instance::Instance(WGPUScheduleWorkBlock scheduleWorkBlock, const MachSendRight* webProcessResourceOwner)
+Instance::Instance(Function<void(WorkItem&&)>&& scheduleWork, const MachSendRight* webProcessResourceOwner)
     : m_webProcessID(webProcessResourceOwner ? std::optional<MachSendRight>(*webProcessResourceOwner) : std::nullopt)
-    , m_scheduleWorkBlock(scheduleWorkBlock ? WTF::move(scheduleWorkBlock) : ^(WGPUWorkItem workItem) { defaultScheduleWork(WTF::move(workItem)); })
+    , m_scheduleWork(WTF::move(scheduleWork))
 {
 }
 
 Instance::Instance()
-    : m_scheduleWorkBlock(^(WGPUWorkItem workItem) { defaultScheduleWork(WTF::move(workItem)); })
-    , m_isValid(false)
+    : m_isValid(false)
 {
 }
 
@@ -104,11 +88,6 @@ void Instance::waitForCommandBufferCompletions()
     }
 }
 
-Ref<PresentationContext> Instance::createSurface(const WGPUSurfaceDescriptor& descriptor)
-{
-    return PresentationContext::create(descriptor, *this);
-}
-
 RefPtr<WebGPU::PresentationContext> Instance::createPresentationContext(const WebGPU::PresentationContextDescriptor& descriptor)
 {
     return PresentationContext::create(descriptor, *this);
@@ -116,7 +95,11 @@ RefPtr<WebGPU::PresentationContext> Instance::createPresentationContext(const We
 
 void Instance::scheduleWork(WorkItem&& workItem)
 {
-    m_scheduleWorkBlock(makeBlockPtr(WTF::move(workItem)).get());
+    if (!m_scheduleWork) {
+        defaultScheduleWork(WTF::move(workItem));
+        return;
+    }
+    m_scheduleWork(WTF::move(workItem));
 }
 
 const std::optional<const MachSendRight>& Instance::webProcessID() const
@@ -124,7 +107,7 @@ const std::optional<const MachSendRight>& Instance::webProcessID() const
     return m_webProcessID;
 }
 
-void Instance::defaultScheduleWork(WGPUWorkItem&& workItem)
+void Instance::defaultScheduleWork(WorkItem&& workItem)
 {
     Locker locker(m_lock);
     m_pendingWork.append(WTF::move(workItem));
@@ -133,7 +116,7 @@ void Instance::defaultScheduleWork(WGPUWorkItem&& workItem)
 void Instance::processEvents()
 {
     while (true) {
-        Deque<WGPUWorkItem> localWork;
+        Deque<WorkItem> localWork;
         {
             Locker locker(m_lock);
             std::swap(m_pendingWork, localWork);
@@ -274,7 +257,17 @@ void wgpuInstanceRelease(WGPUInstance instance)
 
 WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor* descriptor)
 {
-    return WebGPU::Metal::releaseToAPI(WebGPU::Metal::Instance::create(*descriptor));
+    WebGPU::InstanceDescriptor apiDescriptor;
+    if (auto* cocoaDescriptor = WebGPU::Metal::findChainedStruct<WGPUInstanceCocoaDescriptor>(descriptor->nextInChain)) {
+        if (auto scheduleWorkBlock = makeBlockPtr(cocoaDescriptor->scheduleWorkBlock)) {
+            apiDescriptor.scheduleWork = [scheduleWorkBlock = WTF::move(scheduleWorkBlock)](Function<void()>&& workItem) {
+                scheduleWorkBlock(makeBlockPtr(WTF::move(workItem)).get());
+            };
+        }
+        if (cocoaDescriptor->webProcessResourceOwner)
+            apiDescriptor.webProcessResourceOwner.emplace(*reinterpret_cast<const MachSendRight*>(cocoaDescriptor->webProcessResourceOwner));
+    }
+    return WebGPU::Metal::releaseToAPI(WebGPU::Metal::Instance::create(WTF::move(apiDescriptor)));
 }
 
 WGPUProc LEGACY_NODELETE wgpuGetProcAddress(WGPUDevice, const char*)
@@ -284,7 +277,22 @@ WGPUProc LEGACY_NODELETE wgpuGetProcAddress(WGPUDevice, const char*)
 
 WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
 {
-    return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(instance))->createSurface(*descriptor));
+    WebGPU::PresentationContextDescriptor apiDescriptor;
+    if (auto* customSurface = WebGPU::Metal::findChainedStruct<WGPUSurfaceDescriptorCocoaCustomSurface>(descriptor->nextInChain)) {
+        apiDescriptor.registerCompositorIntegration = [compositorIntegrationRegister = makeBlockPtr(customSurface->compositorIntegrationRegister)](Function<void(std::span<const IOSurfaceRef>)>&& renderBuffersWereRecreated, Function<void(CompletionHandler<void()>&&)>&& onSubmittedWorkScheduled) {
+            compositorIntegrationRegister(makeBlockPtr([renderBuffersWereRecreated = WTF::move(renderBuffersWereRecreated)](CFArrayRef ioSurfaces) {
+                Vector<IOSurfaceRef> surfaces;
+                for (CFIndex i = 0, count = CFArrayGetCount(ioSurfaces); i < count; ++i)
+                    surfaces.append(static_cast<IOSurfaceRef>(const_cast<void*>(CFArrayGetValueAtIndex(ioSurfaces, i))));
+                renderBuffersWereRecreated(surfaces.span());
+            }).get(), makeBlockPtr([onSubmittedWorkScheduled = WTF::move(onSubmittedWorkScheduled)](WGPUWorkItem workItem) {
+                onSubmittedWorkScheduled([workItem = makeBlockPtr(workItem)] {
+                    workItem();
+                });
+            }).get());
+        };
+    }
+    return WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::PresentationContext>(protect(WebGPU::Metal::fromAPI(instance))->createPresentationContext(apiDescriptor));
 }
 
 void wgpuInstanceProcessEvents(WGPUInstance instance)

@@ -60,7 +60,6 @@ class Texture;
 class Instance final : public WebGPU::Instance, public WGPUInstanceImpl {
     WTF_MAKE_TZONE_ALLOCATED(Instance);
 public:
-    static Ref<Instance> create(const WGPUInstanceDescriptor&);
     static Ref<Instance> create(WebGPU::InstanceDescriptor&&);
     static Ref<Instance> createInvalid()
     {
@@ -69,7 +68,6 @@ public:
 
     virtual ~Instance();
 
-    Ref<PresentationContext> createSurface(const WGPUSurfaceDescriptor&);
     void processEvents();
     void requestAdapter(const WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<WebGPU::Adapter>&&)>&&) final;
     RefPtr<WebGPU::PresentationContext> createPresentationContext(const WebGPU::PresentationContextDescriptor&) final;
@@ -88,19 +86,20 @@ public:
     id<MTLDevice> device() const;
 
 private:
-    Instance(WGPUScheduleWorkBlock, const WTF::MachSendRight* webProcessResourceOwner);
+    Instance(Function<void(WorkItem&&)>&& scheduleWork, const WTF::MachSendRight* webProcessResourceOwner);
     explicit Instance();
 
     // This can be called on a background thread.
-    void defaultScheduleWork(WGPUWorkItem&&);
+    void defaultScheduleWork(WorkItem&&);
 
     // This can be used on a background thread.
-    Deque<WGPUWorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
+    Deque<WorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
     using CommandBufferContainer = Vector<WeakObjCPtr<id<MTLCommandBuffer>>>;
     HashMap<Ref<Device>, CommandBufferContainer> retainedDeviceInstances;
     Vector<std::pair<Ref<CommandBuffer>, WeakObjCPtr<id<MTLCommandBuffer>>>> m_retainedCommandBufferInstances;
     const std::optional<const MachSendRight> m_webProcessID;
-    const WGPUScheduleWorkBlock m_scheduleWorkBlock;
+    // Null when the work waits in m_pendingWork for processEvents().
+    const Function<void(WorkItem&&)> m_scheduleWork;
     Lock m_lock;
     bool m_isValid { true };
 };
