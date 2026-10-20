@@ -3864,6 +3864,24 @@ void testTruncSShrAddUnalignedConstant()
     CHECK_EQ(invoke<int32_t>(*code, static_cast<int64_t>(-2048)), static_cast<int32_t>((-2048LL + constant) >> 12));
 }
 
+void testTruncSShrShlSExt32(int32_t amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* extended = root->appendNew<Value>(proc, SExt32, Origin(), arguments[0]);
+    Value* shl = root->appendNew<Value>(proc, Shl, Origin(), extended, root->appendNew<Const32Value>(proc, Origin(), amount));
+    Value* sshr = root->appendNew<Value>(proc, SShr, Origin(), shl, root->appendNew<Const32Value>(proc, Origin(), amount));
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), sshr));
+    auto code = compileProc(proc);
+
+    unsigned maskedAmount = amount & 63;
+    for (auto operand : int32Operands()) {
+        int64_t shifted = static_cast<int64_t>(static_cast<uint64_t>(static_cast<int64_t>(operand.value)) << maskedAmount);
+        CHECK_EQ(invoke<int32_t>(*code, operand.value), static_cast<int32_t>(shifted >> maskedAmount));
+    }
+}
+
 // Test XOR-and-rotate-right pattern matching for XAR instruction (SHA3).
 // Pattern: VectorOr(VectorShl(VectorXor(a, b), shlConst), VectorShr(VectorXor(a, b), shrConst))
 // Should be folded into a single XAR instruction on ARM64 with SHA3 support.

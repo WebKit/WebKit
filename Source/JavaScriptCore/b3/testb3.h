@@ -1500,6 +1500,7 @@ void testSShrCompare64(int64_t);
 void testInt52RoundTripUnary(int32_t);
 void testInt52RoundTripBinary();
 void testTruncSShrAddUnalignedConstant();
+void testTruncSShrShlSExt32(int32_t);
 
 void testMulHigh32();
 void testMulHigh64();

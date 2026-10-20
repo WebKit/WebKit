@@ -394,6 +394,7 @@ public:
     template<typename T>
     IntRange LEGACY_NODELETE shl(int32_t shiftAmount)
     {
+        shiftAmount &= static_cast<int32_t>(sizeof(T) * 8 - 1);
         T newMin = static_cast<T>(m_min) << static_cast<T>(shiftAmount);
         T newMax = static_cast<T>(m_max) << static_cast<T>(shiftAmount);
 
@@ -422,6 +423,7 @@ public:
     template<typename T>
     IntRange LEGACY_NODELETE sShr(int32_t shiftAmount)
     {
+        shiftAmount &= static_cast<int32_t>(sizeof(T) * 8 - 1);
         T newMin = static_cast<T>(m_min) >> static_cast<T>(shiftAmount);
         T newMax = static_cast<T>(m_max) >> static_cast<T>(shiftAmount);
 
@@ -444,6 +446,8 @@ public:
     template<typename T>
     IntRange LEGACY_NODELETE zShr(int32_t shiftAmount)
     {
+        shiftAmount &= static_cast<int32_t>(sizeof(T) * 8 - 1);
+
         // This is an awkward corner case for all of the other logic.
         if (!shiftAmount)
             return *this;
@@ -1960,6 +1964,8 @@ private:
             break;
 
         case Shl:
+            maskConstantShiftAmount();
+
             // Turn this: Shl(constant1, constant2)
             // Into this: constant1 << constant2
             if (Value* constant = m_value->child(0)->shlConstant(m_proc, m_value->child(1))) {
@@ -1984,6 +1990,8 @@ private:
             break;
 
         case SShr:
+            maskConstantShiftAmount();
+
             // Turn this: SShr(constant1, constant2)
             // Into this: constant1 >> constant2
             if (Value* constant = m_value->child(0)->sShrConstant(m_proc, m_value->child(1))) {
@@ -2079,6 +2087,8 @@ private:
             break;
 
         case ZShr:
+            maskConstantShiftAmount();
+
             // Turn this: ZShr(constant1, constant2)
             // Into this: (unsigned)constant1 >> constant2
             if (Value* constant = m_value->child(0)->zShrConstant(m_proc, m_value->child(1))) {
@@ -2149,6 +2159,8 @@ private:
             break;
 
         case RotR:
+            maskConstantShiftAmount();
+
             // Turn this: RotR(constant1, constant2)
             // Into this: (constant1 >> constant2) | (constant1 << sizeof(constant1) * 8 - constant2)
             if (Value* constant = m_value->child(0)->rotRConstant(m_proc, m_value->child(1))) {
@@ -2160,6 +2172,8 @@ private:
             break;
 
         case RotL:
+            maskConstantShiftAmount();
+
             // Turn this: RotL(constant1, constant2)
             // Into this: (constant1 << constant2) | (constant1 >> sizeof(constant1) * 8 - constant2)
             if (Value* constant = m_value->child(0)->rotLConstant(m_proc, m_value->child(1))) {
@@ -2563,13 +2577,18 @@ private:
                 int32_t shiftAmountConstant = m_value->child(0)->child(1)->asInt32();
                 auto sshrArg0 = m_value->child(0)->child(0);
 
-                // Turn this: Trunc(SShr(Shl(SExt32(@a), $12), $12))
+                // Turn this: Trunc(SShr(Shl(SExt32(@a), $c), $c)) where (c & 63) <= 32
                 // Into this: @a
+                // SExt32 makes the top 33 bits copies of the sign bit, so shifting out up to 32 of them
+                // and shifting back in loses nothing.
                 if (sshrArg0->opcode() == Shl && sshrArg0->child(1)->hasInt32()
-                    && sshrArg0->child(1)->asInt32() == shiftAmountConstant && shiftAmountConstant < 31
                     && sshrArg0->child(0)->opcode() == SExt32) {
-                    replaceWithIdentity(sshrArg0->child(0)->child(0));
-                    break;
+                    unsigned shlAmount = sshrArg0->child(1)->asInt32() & 63;
+                    unsigned sshrAmount = shiftAmountConstant & 63;
+                    if (shlAmount == sshrAmount && sshrAmount <= 32) {
+                        replaceWithIdentity(sshrArg0->child(0)->child(0));
+                        break;
+                    }
                 }
 
                 // Shl(SExt32(@a), $12)
@@ -4662,6 +4681,20 @@ private:
     void replaceWithIdentity(Value* newValue)
     {
         m_value->replaceWithIdentity(newValue);
+        m_changed = true;
+    }
+
+    // Shifts and rotates use their amount modulo the operand width. Reducing a constant amount to
+    // that range up front lets the shift patterns compare and compute with it directly.
+    void maskConstantShiftAmount()
+    {
+        if (!m_value->child(1)->hasInt32())
+            return;
+        int32_t amount = m_value->child(1)->asInt32();
+        int32_t maskedAmount = amount & static_cast<int32_t>(sizeofType(m_value->type()) * 8 - 1);
+        if (amount == maskedAmount)
+            return;
+        m_value->child(1) = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), maskedAmount);
         m_changed = true;
     }
 
