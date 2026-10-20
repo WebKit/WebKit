@@ -835,57 +835,161 @@ uint32_t GetDeviceVendorId(id<MTLDevice> metalDevice)
     return vendorId;
 }
 
-static MTLLanguageVersion GetUserSetOrHighestMSLVersion(const MTLLanguageVersion currentVersion)
+// MTLLanguageVersion3_x is available in the macOS 15 / iOS 18 SDKs and later.
+#if (TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 150000) ||                             \
+    ((TARGET_OS_IOS || TARGET_OS_MACCATALYST) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 180000) || \
+    (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 180000) ||                                 \
+    (TARGET_OS_VISION && __VISION_OS_VERSION_MAX_ALLOWED >= 20000) ||                          \
+    (TARGET_OS_WATCH && __WATCH_OS_VERSION_MAX_ALLOWED >= 110000)
+#    define ANGLE_MTL_HAS_MSL_3_X_SDK 1
+#else
+#    define ANGLE_MTL_HAS_MSL_3_X_SDK 0
+#endif
+
+// MTLLanguageVersion4_0 is available in the macOS 26 / iOS 26 SDKs and later.
+#if (TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 260000) ||                             \
+    ((TARGET_OS_IOS || TARGET_OS_MACCATALYST) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000) || \
+    (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 260000) ||                                 \
+    (TARGET_OS_VISION && __VISION_OS_VERSION_MAX_ALLOWED >= 260000) ||                         \
+    (TARGET_OS_WATCH && __WATCH_OS_VERSION_MAX_ALLOWED >= 260000)
+#    define ANGLE_MTL_HAS_MSL_4_0_SDK 1
+#else
+#    define ANGLE_MTL_HAS_MSL_4_0_SDK 0
+#endif
+
+// Decodes the MSL version set in the environment. Returns nullopt if the version is not set or
+// is not supported.
+static std::optional<MTLLanguageVersion> DecodeUserSetMSLVersion()
 {
     const std::string major_str = angle::GetEnvironmentVar(kANGLEMSLVersionMajorEnv);
     const std::string minor_str = angle::GetEnvironmentVar(kANGLEMSLVersionMinorEnv);
-    if (major_str != "" && minor_str != "")
+    if (major_str == "" || minor_str == "")
     {
-        const int major = std::stoi(major_str);
-        const int minor = std::stoi(minor_str);
-#if !defined(NDEBUG)
-        NSLog(@"Forcing MSL Version: MTLLanguageVersion%d_%d\n", major, minor);
-#endif
-        switch (major)
-        {
-            case 1:
-                switch (minor)
-                {
-                    case 0:
-#if !defined(NDEBUG)
-                        NSLog(@"MSL 1.0 is deprecated, using MSL 1.1 instead\n");
-#endif
-                        return MTLLanguageVersion1_1;
-                    case 1:
-                        return MTLLanguageVersion1_1;
-                    case 2:
-                        return MTLLanguageVersion1_2;
-                    default:
-                        assert(0 && "Unsupported MSL Minor Language Version.");
-                }
-                break;
-            case 2:
-                switch (minor)
-                {
-                    case 0:
-                        return MTLLanguageVersion2_0;
-                    case 1:
-                        return MTLLanguageVersion2_1;
-                    case 2:
-                        return MTLLanguageVersion2_2;
-                    case 3:
-                        return MTLLanguageVersion2_3;
-                    case 4:
-                        return MTLLanguageVersion2_4;
-                    default:
-                        assert(0 && "Unsupported MSL Minor Language Version.");
-                }
-                break;
-            default:
-                assert(0 && "Unsupported MSL Major Language Version.");
-        }
+        return std::nullopt;
     }
-    return currentVersion;
+    const int major = std::stoi(major_str);
+    const int minor = std::stoi(minor_str);
+#if !defined(NDEBUG)
+    NSLog(@"Forcing MSL Version: MTLLanguageVersion%d_%d\n", major, minor);
+#endif
+    switch (major)
+    {
+        case 1:
+            switch (minor)
+            {
+                case 0:
+#if !defined(NDEBUG)
+                    NSLog(@"MSL 1.0 is deprecated, using MSL 1.1 instead\n");
+#endif
+                    return MTLLanguageVersion1_1;
+                case 1:
+                    return MTLLanguageVersion1_1;
+                case 2:
+                    return MTLLanguageVersion1_2;
+                default:
+                    assert(0 && "Unsupported MSL Minor Language Version.");
+            }
+            break;
+        case 2:
+            switch (minor)
+            {
+                case 0:
+                    return MTLLanguageVersion2_0;
+                case 1:
+                    return MTLLanguageVersion2_1;
+                case 2:
+                    return MTLLanguageVersion2_2;
+                case 3:
+                    return MTLLanguageVersion2_3;
+                case 4:
+                    return MTLLanguageVersion2_4;
+                default:
+                    assert(0 && "Unsupported MSL Minor Language Version.");
+            }
+            break;
+#if ANGLE_MTL_HAS_MSL_3_X_SDK
+        case 3:
+            switch (minor)
+            {
+                case 0:
+                    if (@available(macOS 13.0, iOS 16.0, *))
+                    {
+                        return MTLLanguageVersion3_0;
+                    }
+                    break;
+                case 1:
+                    if (@available(macOS 14.0, iOS 17.0, *))
+                    {
+                        return MTLLanguageVersion3_1;
+                    }
+                    break;
+                case 2:
+                    if (@available(macOS 15.0, iOS 18.0, *))
+                    {
+                        return MTLLanguageVersion3_2;
+                    }
+                    break;
+                default:
+                    assert(0 && "Unsupported MSL Minor Language Version.");
+            }
+            break;
+#endif
+#if ANGLE_MTL_HAS_MSL_4_0_SDK
+        case 4:
+            switch (minor)
+            {
+                case 0:
+                    if (@available(macOS 26.0, iOS 26.0, *))
+                    {
+                        return MTLLanguageVersion4_0;
+                    }
+                    break;
+                default:
+                    assert(0 && "Unsupported MSL Minor Language Version.");
+            }
+            break;
+#endif
+        default:
+            assert(0 && "Unsupported MSL Major Language Version.");
+    }
+    return std::nullopt;
+}
+
+// Resolves the highest MSL version that is known to work, up to MSL 3.2. MSL 2.4 is the baseline.
+static MTLLanguageVersion ResolveDefaultMaxMSLVersion()
+{
+    // Default to 3_2.
+    // Cubemap derivatives are worked around againts 3_2 implementation, not
+    // against the changes in 4_0+.
+#if ANGLE_MTL_HAS_MSL_3_X_SDK
+    if (@available(macOS 15.0, iOS 18.0, *))
+    {
+        return MTLLanguageVersion3_2;
+    }
+    if (@available(macOS 14.0, iOS 17.0, *))
+    {
+        return MTLLanguageVersion3_1;
+    }
+    if (@available(macOS 13.0, iOS 16.0, *))
+    {
+        return MTLLanguageVersion3_0;
+    }
+#endif
+    return MTLLanguageVersion2_4;
+}
+
+// Returns the MSL version set in the environment, if any. Otherwise returns the requested version
+// clamped to the highest version known to work, up to MSL 3.2.
+static MTLLanguageVersion GetForcedOrClampedMSLVersion(const MTLLanguageVersion requestedVersion)
+{
+    // Function-local static initialization is thread-safe.
+    static const std::optional<MTLLanguageVersion> userSetVersion = DecodeUserSetMSLVersion();
+    if (userSetVersion.has_value())
+    {
+        return *userSetVersion;
+    }
+    static const MTLLanguageVersion maxVersion = ResolveDefaultMaxMSLVersion();
+    return requestedVersion > maxVersion ? maxVersion : requestedVersion;
 }
 
 angle::ObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
@@ -944,7 +1048,7 @@ angle::ObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
         }
 
         options.get().languageVersion =
-            GetUserSetOrHighestMSLVersion(options.get().languageVersion);
+            GetForcedOrClampedMSLVersion(options.get().languageVersion);
 
         if (!substitutionMacros.empty())
         {
