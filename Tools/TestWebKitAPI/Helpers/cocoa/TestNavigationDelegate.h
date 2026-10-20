@@ -40,6 +40,7 @@ NS_SWIFT_UI_ACTOR
 @property (nonatomic, copy, nullable) void (^didFailProvisionalLoadWithRequestInFrameWithError)(WKWebView *, NSURLRequest *, WKFrameInfo *, NSError *);
 @property (nonatomic, copy, nullable) void (^didFailProvisionalLoadInSubframeWithError)(WKWebView *, WKFrameInfo *, NSError *);
 @property (nonatomic, copy, nullable) void (^didStartProvisionalNavigation)(WKWebView *, WKNavigation * _Null_unspecified);
+@property (nonatomic, copy, nullable) void (^didStartProvisionalLoadWithRequestInFrame)(WKWebView *, NSURLRequest *, WKFrameInfo *);
 @property (nonatomic, copy, nullable) void (^didCommitNavigation)(WKWebView *, WKNavigation * _Null_unspecified);
 @property (nonatomic, copy, nullable) void (^didCommitLoadWithRequestInFrame)(WKWebView *, NSURLRequest *, WKFrameInfo *);
 @property (nonatomic, copy, nullable) void (^didFinishNavigation)(WKWebView *, WKNavigation * _Null_unspecified);

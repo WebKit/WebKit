@@ -60,6 +60,12 @@
         _didStartProvisionalNavigation(webView, navigation);
 }
 
+- (void)_webView:(WKWebView *)webView didStartProvisionalLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame
+{
+    if (_didStartProvisionalLoadWithRequestInFrame)
+        _didStartProvisionalLoadWithRequestInFrame(webView, request, frame);
+}
+
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
 {
     if (_didCommitNavigation)

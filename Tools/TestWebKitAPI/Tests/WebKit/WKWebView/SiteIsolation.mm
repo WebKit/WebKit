@@ -6810,6 +6810,95 @@ TEST(SiteIsolation, ResetContentResponseStaysInDocumentIsolationPolicyProcess)
     testNonReplacingResponseStaysInDocumentIsolationPolicyProcess(205);
 }
 
+TEST(SiteIsolation, SameSiteNavigationStartsInDocumentIsolationPolicyProcess)
+{
+    HTTPServer server({
+        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_s) },
+        { "/isolated-again"_s, documentIsolationPolicyResponse("isolated again"_s) },
+        { "/plain"_s, { "plain"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/isolated"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t isolatedProcess = [webView _webProcessIdentifier];
+
+    // A same-site navigation stays in its process until the response decides, so it moves at most once.
+    // A navigation that moved when it started would already have a provisional page in another process.
+    WKWebView *view = webView.get();
+    std::optional<pid_t> provisionalProcessAtStart;
+    std::optional<pid_t> provisionalProcessAtResponse;
+    navigationDelegate.get().didStartProvisionalNavigation = makeBlockPtr([&](WKWebView *, WKNavigation *) {
+        if (!provisionalProcessAtStart)
+            provisionalProcessAtStart = view._provisionalWebProcessIdentifier;
+    }).get();
+    navigationDelegate.get().decidePolicyForNavigationResponse = makeBlockPtr([&](WKNavigationResponse *, void (^decisionHandler)(WKNavigationResponsePolicy)) {
+        provisionalProcessAtResponse = view._provisionalWebProcessIdentifier;
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    }).get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/isolated-again"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ(provisionalProcessAtStart.value_or(-1), 0);
+    EXPECT_EQ(provisionalProcessAtResponse.value_or(-1), 0);
+    EXPECT_EQ([webView _webProcessIdentifier], isolatedProcess);
+
+    provisionalProcessAtStart = std::nullopt;
+    provisionalProcessAtResponse = std::nullopt;
+    [webView reload];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ(provisionalProcessAtStart.value_or(-1), 0);
+    EXPECT_EQ(provisionalProcessAtResponse.value_or(-1), 0);
+    EXPECT_EQ([webView _webProcessIdentifier], isolatedProcess);
+
+    // Without a policy, the response moves the navigation once, before the delegate decides on it.
+    provisionalProcessAtStart = std::nullopt;
+    provisionalProcessAtResponse = std::nullopt;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/plain"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ(provisionalProcessAtStart.value_or(-1), 0);
+    pid_t plainProcess = [webView _webProcessIdentifier];
+    EXPECT_NE(plainProcess, isolatedProcess);
+    EXPECT_EQ(provisionalProcessAtResponse.value_or(-1), plainProcess);
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"crossOriginIsolated"] boolValue]);
+}
+
+TEST(SiteIsolation, SameSiteSubframeNavigationStartsInDocumentIsolationPolicyProcess)
+{
+    HTTPServer server({
+        { "/main"_s, { "<iframe id='frame' src='https://example.com/isolated'></iframe>"_s } },
+        { "/isolated"_s, documentIsolationPolicyResponse("<script>alert('isolated')</script>"_s) },
+        { "/isolated-again"_s, documentIsolationPolicyResponse("<script>alert('isolated again')</script>"_s) },
+        { "/plain"_s, { "<script>alert('plain')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainProcess = [webView _webProcessIdentifier];
+    pid_t isolatedProcess = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE(isolatedProcess, mainProcess);
+
+    // A provisional load that starts in the frame's process has the frame's document. One that starts in
+    // the main frame's process, where the frame is remote, has none.
+    std::optional<bool> startedInFrameProcess;
+    navigationDelegate.get().didStartProvisionalLoadWithRequestInFrame = makeBlockPtr([&](WKWebView *, NSURLRequest *, WKFrameInfo *frame) {
+        if (!frame.isMainFrame && !startedInFrameProcess)
+            startedInFrameProcess = frame._isLocalFrame;
+    }).get();
+
+    [webView evaluateJavaScript:@"document.getElementById('frame').src = '/isolated-again'" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "isolated again");
+    EXPECT_TRUE(startedInFrameProcess.value_or(false));
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, isolatedProcess);
+
+    startedInFrameProcess = std::nullopt;
+    [webView evaluateJavaScript:@"document.getElementById('frame').src = '/plain'" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "plain");
+    EXPECT_TRUE(startedInFrameProcess.value_or(false));
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, mainProcess);
+}
+
 TEST(SiteIsolation, AttachmentWithoutDocumentIsolationPolicyIsShown)
 {
     HTTPServer server({
