@@ -51,7 +51,13 @@ void WritingToolsCompositionCommand::replaceContentsOfRangeWithFragment(RefPtr<D
     if (matchStyle == MatchStyle::Yes)
         options.add(ReplaceSelectionCommand::MatchStyle);
 
+    bool isFirstReplacement = m_commands.isEmpty();
+    auto startingSelection = this->startingSelection();
+
     applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTF::move(fragment), options, EditAction::InsertReplacement), range);
+
+    if (!isFirstReplacement)
+        setStartingSelection(startingSelection);
 
     // Restore the context range to what it previously was, while taking into account the newly replaced contents.
     auto newContextRange = rangeExpandedAroundRangeByCharacters(endingSelection(), resolvedCharacterRange.location, contextRangeCount - (resolvedCharacterRange.location + resolvedCharacterRange.length));

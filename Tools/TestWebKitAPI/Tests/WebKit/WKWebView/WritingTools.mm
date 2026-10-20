@@ -580,6 +580,7 @@ TEST(WritingTools, ProofreadingUndoRevertsEverySuggestionInBatch)
 
         [webView _synchronouslyExecuteEditCommand:@"Undo" argument:@""];
         EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
+        EXPECT_WK_STREQ(@"thin", [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"]);
 
         [webView _synchronouslyExecuteEditCommand:@"Redo" argument:@""];
         EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
