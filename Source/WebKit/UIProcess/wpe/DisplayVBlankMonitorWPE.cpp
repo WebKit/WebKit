@@ -41,7 +41,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorWPE::create(PlatformDi
         return nullptr;
     }
 
-    GRefPtr<WPEScreenSyncObserver> observer = adoptGRef(wpe_screen_get_sync_observer(screen));
+    GRefPtr<WPEScreenSyncObserver> observer = wpe_screen_get_sync_observer(screen);
     if (!observer) {
         RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: screen sync not supported by WPE platform", displayID);
         return nullptr;
