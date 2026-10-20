@@ -4,6 +4,7 @@
 #if defined(__WUT__)
 #include <gx2r/resource.h>
 #include <gx2/draw.h>
+#include <gx2/attrib.h>
 
 #include <cstring>
 #include <limits>
@@ -158,6 +159,91 @@ BufferBackend makeWUTBufferBackend(WUTBufferResources& resources)
     backend.upload = uploadBuffer;
     backend.destroy = destroyBuffer;
     backend.bind = bindBuffer;
+    return backend;
+}
+
+bool bindVertexBuffer(void* context, uint8_t attribute, BufferName name,
+    uint32_t stride, size_t offset)
+{
+    auto& resources = *static_cast<WUTBufferResources*>(context);
+    auto it = resources.buffers.find(name);
+    if (it == resources.buffers.end() || !it->second || !it->second->buffer)
+        return false;
+
+    GX2RBuffer* buffer = it->second;
+    const size_t capacity = static_cast<size_t>(buffer->elemSize) * buffer->elemCount;
+    if (offset > capacity || offset > UINT32_MAX || capacity - offset > UINT32_MAX)
+        return false;
+    GX2SetAttribBuffer(attribute, static_cast<uint32_t>(capacity - offset), stride,
+        static_cast<const uint8_t*>(buffer->buffer) + offset);
+    return true;
+}
+
+bool setAttribute(void*, uint8_t attribute, const VertexAttribute& value)
+{
+    // GX2SetAttribBuffer binds the memory range and stride. The GX2 fetch-shader
+    // input descriptor still has to be generated from this format by the shader
+    // adapter; don't pretend this callback alone translates GLSL vertex inputs.
+    return attribute < 32 && value.components >= 1 && value.components <= 4;
+}
+
+bool setElementBuffer(void* context, BufferName name)
+{
+    if (!name)
+        return true;
+    auto& resources = *static_cast<WUTBufferResources*>(context);
+    auto it = resources.buffers.find(name);
+    return it != resources.buffers.end() && it->second && it->second->buffer;
+}
+
+bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName elementBuffer)
+{
+    if (!elementBuffer || draw.baseVertex != 0 || draw.indexOffset > UINT32_MAX)
+        return false;
+    if (draw.indexBytes == 1)
+        return false; // GX2 has no U8 index format; use a widened staging store.
+
+    auto& resources = *static_cast<WUTBufferResources*>(context);
+    auto it = resources.buffers.find(elementBuffer);
+    if (it == resources.buffers.end() || !it->second || !it->second->buffer)
+        return false;
+    const size_t capacity = static_cast<size_t>(it->second->elemSize) * it->second->elemCount;
+    if (draw.indexOffset > capacity
+        || static_cast<size_t>(draw.count) > (capacity - draw.indexOffset) / draw.indexBytes)
+        return false;
+
+    GX2PrimitiveMode mode;
+    switch (draw.primitive) {
+    case Primitive::Points: mode = GX2_PRIMITIVE_MODE_POINTS; break;
+    case Primitive::Lines: mode = GX2_PRIMITIVE_MODE_LINES; break;
+    case Primitive::LineStrip: mode = GX2_PRIMITIVE_MODE_LINE_STRIP; break;
+    case Primitive::Triangles: mode = GX2_PRIMITIVE_MODE_TRIANGLES; break;
+    case Primitive::TriangleStrip: mode = GX2_PRIMITIVE_MODE_TRIANGLE_STRIP; break;
+    case Primitive::TriangleFan: mode = GX2_PRIMITIVE_MODE_TRIANGLE_FAN; break;
+    default: return false;
+    }
+
+    GX2IndexType type;
+    if (draw.indexBytes == 2)
+        type = GX2_INDEX_TYPE_U16_LE;
+    else if (draw.indexBytes == 4)
+        type = GX2_INDEX_TYPE_U32_LE;
+    else
+        return false;
+
+    GX2DrawIndexedEx(mode, draw.count, type, it->second->buffer,
+        static_cast<uint32_t>(draw.indexOffset), draw.instances);
+    return true;
+}
+
+VertexArrayBackend makeWUTVertexArrayBackend(WUTBufferResources& resources)
+{
+    VertexArrayBackend backend;
+    backend.context = &resources;
+    backend.bindVertexBuffer = bindVertexBuffer;
+    backend.setAttribute = setAttribute;
+    backend.setElementBuffer = setElementBuffer;
+    backend.drawIndexed = drawVertexArrayIndexed;
     return backend;
 }
 
