@@ -21,6 +21,13 @@ struct WUTBackendContext {
     Color clearColor;
     float clearDepth { 1.0f };
     uint8_t clearStencil { 0 };
+    Viewport viewport;
+    bool depthTestEnabled { false };
+    bool depthWriteEnabled { true };
+    CompareFunction depthFunction { CompareFunction::Less };
+    bool cullEnabled { false };
+    Face cullFace { Face::Back };
+    Winding frontFace { Winding::CounterClockwise };
 };
 
 Backend makeWUTBackend(WUTBackendContext&);
