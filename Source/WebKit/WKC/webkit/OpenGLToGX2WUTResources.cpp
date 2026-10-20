@@ -37,7 +37,10 @@ bool createBuffer(void* context, BufferName name, size_t size, BufferUsage)
         | GX2R_RESOURCE_USAGE_CPU_WRITE
         | GX2R_RESOURCE_USAGE_GPU_READ);
     buffer->elemSize = 1;
-    buffer->elemCount = static_cast<uint32_t>(size);
+    // GL permits a zero-byte data store. GX2R expects a real allocation, so
+    // reserve one inert byte natively while BufferObjects retains the logical
+    // zero-byte size and rejects any attempt to access it.
+    buffer->elemCount = static_cast<uint32_t>(size ? size : 1);
 
     if (!GX2RCreateBuffer(buffer)) {
         delete buffer;
