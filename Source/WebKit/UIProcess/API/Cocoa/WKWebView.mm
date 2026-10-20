@@ -663,6 +663,7 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
     [self _setupPageConfiguration:pageConfiguration withPool:processPool.get()];
 
     _usePlatformFindUI = YES;
+    _enabledSystemBackgroundColorExtensionEdges = _WKRectEdgeLeft | _WKRectEdgeRight;
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
     _adjustedColorExtensionsForBannerViewOverlaysEnablement = WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::EnabledIfHorizontalBannerViewPresent;
@@ -3659,7 +3660,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
     auto createSystemBackgroundExtensionViewIfNeeded = [&](WebCore::BoxSide side) {
-        if (_systemBackgroundColorExtensionViews.at(side))
+        if (_systemBackgroundColorExtensionViews.at(side) || ![self _isSystemBackgroundColorExtensionEnabledForSide:side])
             return;
 
         RetainPtr view = adoptNS([[WKColorExtensionView alloc] initWithFrame:CGRectZero delegate:self]);
@@ -3718,7 +3719,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 
     auto leftExtensionFrame = [&] {
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
-        if ([self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays]) {
+        if ([self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays] && [self _isSystemBackgroundColorExtensionEnabledForSide:WebCore::BoxSide::Left]) {
             auto distanceFromLeftEdge = [self _webContentDistanceFromLeftEdge];
             auto colorExtensionWidth = std::clamp<CGFloat>(insets.left() - distanceFromLeftEdge, 0, insets.left());
             auto xPosition = insets.left() - colorExtensionWidth;
@@ -3730,7 +3731,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 
     auto rightExtensionFrame = [&] {
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
-        if ([self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays]) {
+        if ([self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays] && [self _isSystemBackgroundColorExtensionEnabledForSide:WebCore::BoxSide::Right]) {
             auto distanceFromRightEdge = [self _webContentDistanceFromRightEdge];
             auto colorExtensionWidth = std::clamp<CGFloat>(insets.right() - distanceFromRightEdge, 0, insets.right());
             auto xPosition = bounds.width() - insets.right();
@@ -3890,6 +3891,21 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 #endif
 }
 
+- (BOOL)_isSystemBackgroundColorExtensionEnabledForSide:(WebCore::BoxSide)side
+{
+    switch (side) {
+    case WebCore::BoxSide::Left:
+        return !!(_enabledSystemBackgroundColorExtensionEdges & _WKRectEdgeLeft);
+    case WebCore::BoxSide::Right:
+        return !!(_enabledSystemBackgroundColorExtensionEdges & _WKRectEdgeRight);
+    case WebCore::BoxSide::Top:
+    case WebCore::BoxSide::Bottom:
+        return NO;
+    }
+    ASSERT_NOT_REACHED();
+    return NO;
+}
+
 - (void)_updateAppearanceForSystemBackgroundColorExtensionViews
 {
     if (![self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays])
@@ -3901,7 +3917,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
         if (!view)
             return;
 
-        if (inset <= 0) {
+        if (inset <= 0 || ![self _isSystemBackgroundColorExtensionEnabledForSide:side]) {
             [view fadeOut];
             return;
         }
@@ -7235,6 +7251,27 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     [self _doAfterAdjustingColorForTopContentInsetFromUIDelegate:[strongSelf = RetainPtr { self }] {
         [strongSelf _updateFixedColorExtensionViews];
         [strongSelf _updateTopScrollPocketCaptureColor];
+    }];
+#endif
+}
+
+- (_WKRectEdge)_systemBackgroundColorExtensionEnabledEdges
+{
+    return _enabledSystemBackgroundColorExtensionEdges;
+}
+
+- (void)_setSystemBackgroundColorExtensionEnabledEdges:(_WKRectEdge)edges
+{
+    // System background color extensions are only supported on the left and right edges.
+    edges &= _WKRectEdgeLeft | _WKRectEdgeRight;
+    if (_enabledSystemBackgroundColorExtensionEdges == edges)
+        return;
+
+    _enabledSystemBackgroundColorExtensionEdges = edges;
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    [self _doAfterAdjustingColorForTopContentInsetFromUIDelegate:[strongSelf = RetainPtr { self }] {
+        [strongSelf _updateFixedColorExtensionViews];
     }];
 #endif
 }

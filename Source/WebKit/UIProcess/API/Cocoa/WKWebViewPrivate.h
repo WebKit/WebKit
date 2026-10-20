@@ -650,6 +650,9 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 
 @property (nonatomic, setter=_setShouldSuppressTopColorExtensionView:) BOOL _shouldSuppressTopColorExtensionView WK_API_AVAILABLE(macos(26.0), ios(26.0));
 
+// Only _WKRectEdgeLeft and _WKRectEdgeRight are supported; other edges are ignored. Defaults to _WKRectEdgeLeft | _WKRectEdgeRight.
+@property (nonatomic, setter=_setSystemBackgroundColorExtensionEnabledEdges:) _WKRectEdge _systemBackgroundColorExtensionEnabledEdges WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
+
 @property (nonatomic, setter=_setShouldSuppressFormValidationBubble:) BOOL _shouldSuppressFormValidationBubble WK_API_AVAILABLE(ios(27.0), visionos(27.0));
 
 #if TARGET_OS_OSX
