@@ -2,7 +2,9 @@ list(APPEND bmalloc_PUBLIC_HEADERS
     Configurations/module.modulemap
 )
 
-list(APPEND bmalloc_PRIVATE_DEFINITIONS PAS_BMALLOC_HIDDEN=1)
+if (NOT ENABLE_MYA_HEAP)
+    list(APPEND bmalloc_PRIVATE_DEFINITIONS PAS_BMALLOC_HIDDEN=1)
+endif ()
 
 list(APPEND bmalloc_SOURCES
     bmalloc/ProcessCheck.mm

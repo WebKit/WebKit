@@ -355,6 +355,40 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     include(OptionsCommon)
     include(Options${PORT})
 
+    # This has to come after Options${PORT} to see ENABLE_MYA and ENABLE_MYA_HEAP
+    if (ENABLE_MYA AND NOT APPLE)
+        # This helps us catch obsolete images.
+        add_link_options("LINKER:--build-id")
+    endif ()
+    if (ENABLE_MYA_HEAP)
+        # Off Darwin, clang otherwise emits a class's full definition only in the
+        # compile unit that emits its vtable or constructor, which may be in
+        # another image, leaving liblldb a declaration with no size.
+        WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fstandalone-debug)
+        # -dwarf-linkage-names=Abstract keeps DW_AT_linkage_name only on the
+        # abstract DIEs of inlined functions. Global variables and every other
+        # function lose it, so liblldb can find neither a global root's variable
+        # nor a vtable destructor's class from their mangled symbol names.
+        # -gsimple-template-names leaves template arguments out of DW_AT_name,
+        # and liblldb then takes some instances of a class template for others,
+        # such as the class of a destructor's `this`.
+        foreach (_flags CMAKE_C_FLAGS CMAKE_OBJC_FLAGS CMAKE_CXX_FLAGS CMAKE_OBJCXX_FLAGS)
+            string(REPLACE "-mllvm -dwarf-linkage-names=Abstract" "" ${_flags} "${${_flags}}")
+            string(REPLACE "-gsimple-template-names" "" ${_flags} "${${_flags}}")
+        endforeach ()
+        # Exports libpas's API, which the mya_heap tests use to measure effectiveness.
+        add_compile_definitions(PAS_BMALLOC_HIDDEN=0)
+        # -gsplit-dwarf doesn't play nicely with liblldb either.
+        if (DEBUG_FISSION)
+            string(REPLACE " -gsplit-dwarf" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+            string(REPLACE " -gsplit-dwarf" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+            get_property(_link_options DIRECTORY PROPERTY LINK_OPTIONS)
+            list(REMOVE_ITEM _link_options "LINKER:--gdb-index")
+            set_property(DIRECTORY PROPERTY LINK_OPTIONS ${_link_options})
+            set(DEBUG_FISSION OFF)
+        endif ()
+    endif ()
+
     # This has to come after Options${PORT} to see any ENABLE_THREAD_SAFETY_WARNING.
     if (ENABLE_THREAD_SAFETY_WARNING)
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wthread-safety)
