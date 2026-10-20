@@ -2997,25 +2997,30 @@ inline Value* OMGIRGenerator::emitAtomicLoadOp(ExtAtomicOpType op, Type valueTyp
 {
     pointer = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
 
-    Value* value = nullptr;
+    MemoryValue* atomic = nullptr;
     switch (accessWidth(op)) {
     case Width8:
+        atomic = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z, memoryIndex), origin(), pointer);
+        break;
     case Width16:
+        atomic = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16Z, memoryIndex), origin(), pointer);
+        break;
     case Width32:
-        value = constant(Int32, 0);
+        atomic = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load, memoryIndex), Int32, origin(), pointer);
         break;
     case Width64:
-        value = constant(Int64, 0);
+        atomic = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load, memoryIndex), Int64, origin(), pointer);
         break;
     case Width128:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
 
-    auto* atomic = m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicXchgAdd, memoryIndex), origin(), accessWidth(op), value, pointer);
     m_heaps.decorateMemory(&m_heaps.WebAssemblyMemory, atomic);
     m_heaps.decorateFencedAccess(&m_heaps.WebAssemblyMemory, atomic);
-    return sanitizeAtomicResult(op, valueType, atomic);
+    if (valueType.isI64() && accessWidth(op) != Width64)
+        return m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), atomic);
+    return atomic;
 }
 
 auto OMGIRGenerator::atomicLoad(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType& result, uint64_t offset, uint8_t memoryIndex) -> PartialResult
