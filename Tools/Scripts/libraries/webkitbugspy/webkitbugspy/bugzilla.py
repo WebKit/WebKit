@@ -857,7 +857,7 @@ class Tracker(GenericTracker):
                     if response == 'Skip CC':
                         print(f'Skipping CC for {issue.link}')
                         return None
-                    if response == 'No':
+                    if response == 'Exit':
                         raise ValueError('Radar is tracking a different bug')
                     user_to_cc = True
                 elif 'InRadar' not in (issue.keywords or []):
@@ -871,7 +871,7 @@ class Tracker(GenericTracker):
                     if response == 'Skip CC':
                         print(f'Skipping CC for {issue.link}')
                         return None
-                    if response == 'No':
+                    if response == 'Exit':
                         raise ValueError("Radar Importer is already CC'd")
                     user_to_cc = True
 

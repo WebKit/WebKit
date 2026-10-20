@@ -26,6 +26,7 @@ import logging
 import re
 import time
 import unittest
+from contextlib import contextmanager
 from unittest.mock import patch
 
 from webkitcorepy import OutputCapture
@@ -1255,6 +1256,79 @@ What component in 'WebKit' should the bug be associated with?:
                 self.assertEqual(issue.comments[-1].content, '<rdar://problem/1>')
                 # Should have prompted about overwriting
                 self.assertIn('tracking a different bug', captured.stderr.getvalue())
+
+    @contextmanager
+    def importer_cced(self, answer, description):
+        issues = [dict(
+            title='Bug with the importer CCed',
+            timestamp=1639536160,
+            opened=True,
+            creator=mocks.USERS['Tim Contributor'],
+            assignee=mocks.USERS['Tim Contributor'],
+            description=description,
+            project='WebKit',
+            component='Text',
+            version='Other',
+            keywords=[],
+            comments=[],
+            watchers=[
+                mocks.USERS['Tim Contributor'],
+                mocks.USERS['Radar WebKit Bug Importer'],
+            ],
+        )]
+        with wkmocks.Terminal.input(answer), OutputCapture(level=logging.INFO) as captured, mocks.Bugzilla(
+            self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ), users=mocks.USERS, issues=issues, projects=mocks.PROJECTS,
+        ), mocks.Radar(
+            users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS,
+        ), wkmocks.Time:
+            radar_tracker = radar.Tracker()
+            bugzilla_tracker = bugzilla.Tracker(self.URL, radar_importer=mocks.USERS['Radar WebKit Bug Importer'])
+
+            with patch('webkitbugspy.Tracker._trackers', [radar_tracker, bugzilla_tracker]):
+                yield bugzilla_tracker.issue(1), captured
+
+    def test_cc_radar_importer_already_cced_no_inradar_exit(self):
+        with self.importer_cced('Exit', 'A test issue') as (issue, _):
+            with self.assertRaises(ValueError) as context:
+                issue.cc_radar(block=True, radar=Tracker.from_string('<rdar://1>'))
+            self.assertEqual(str(context.exception), "Radar Importer is already CC'd")
+            self.assertEqual(issue.comments, [])
+
+    def test_cc_radar_importer_already_cced_no_inradar_default_is_exit(self):
+        with self.importer_cced('', 'A test issue') as (issue, _):
+            with self.assertRaises(ValueError) as context:
+                issue.cc_radar(block=True, radar=Tracker.from_string('<rdar://1>'))
+            self.assertEqual(str(context.exception), "Radar Importer is already CC'd")
+            self.assertEqual(issue.comments, [])
+
+    def test_cc_radar_importer_already_cced_no_inradar_skip_cc(self):
+        with self.importer_cced('Skip CC', 'A test issue') as (issue, captured):
+            self.assertIsNone(issue.cc_radar(block=True, radar=Tracker.from_string('<rdar://1>')))
+            self.assertEqual(issue.comments, [])
+            self.assertIn('Skipping CC for', captured.stdout.getvalue())
+
+    def test_cc_radar_importer_already_cced_different_tracked_bug_exit(self):
+        with self.importer_cced('Exit', 'A test issue\n<rdar://problem/2>') as (issue, _):
+            with self.assertRaises(ValueError) as context:
+                issue.cc_radar(block=True, radar=Tracker.from_string('<rdar://1>'))
+            self.assertEqual(str(context.exception), 'Radar is tracking a different bug')
+            self.assertEqual(issue.comments, [])
+
+    def test_cc_radar_importer_already_cced_different_tracked_bug_default_is_exit(self):
+        with self.importer_cced('', 'A test issue\n<rdar://problem/2>') as (issue, _):
+            with self.assertRaises(ValueError) as context:
+                issue.cc_radar(block=True, radar=Tracker.from_string('<rdar://1>'))
+            self.assertEqual(str(context.exception), 'Radar is tracking a different bug')
+            self.assertEqual(issue.comments, [])
+
+    def test_cc_radar_importer_already_cced_different_tracked_bug_skip_cc(self):
+        with self.importer_cced('Skip CC', 'A test issue\n<rdar://problem/2>') as (issue, captured):
+            self.assertIsNone(issue.cc_radar(block=True, radar=Tracker.from_string('<rdar://1>')))
+            self.assertEqual(issue.comments, [])
+            self.assertIn('Skipping CC for', captured.stdout.getvalue())
 
     def test_cc_radar_see_also_not_confused_as_tracked_radar(self):
         """When the importer is already CC'd and see-also links reference other

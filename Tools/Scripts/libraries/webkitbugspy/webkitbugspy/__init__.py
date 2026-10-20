@@ -50,7 +50,7 @@ except ImportError:
         "See https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy"
     )
 
-version = Version(0, 15, 9)
+version = Version(0, 15, 10)
 
 from .user import User
 from .issue import Issue
