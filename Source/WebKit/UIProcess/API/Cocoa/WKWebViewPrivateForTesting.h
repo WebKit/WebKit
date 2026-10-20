@@ -58,6 +58,20 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 @class _WKNowPlayingMetadata;
 @protocol _WKMediaSessionCoordinator;
 
+// What WebKit's capture permission prompt would show.
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKMediaCapturePermissionPromptForTesting : NSObject
+
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
+@property (nonatomic, readonly, copy) NSString *title;
+@property (nonatomic, readonly, copy) NSArray<NSString *> *buttonTitles;
+
+- (void)respondWithButtonIndex:(NSUInteger)index;
+
+@end
+
 @interface WKWebView (WKTesting)
 
 @property (nonatomic, readonly) NSString *_caLayerTreeAsText;
@@ -104,6 +118,8 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 - (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(nullable NSNumber *)index;
 - (void)_setSystemCanPromptForGetDisplayMediaForTesting:(BOOL)canPrompt;
+
+- (void)_setMediaCapturePermissionPromptHandlerForTesting:(nullable void (^)(_WKMediaCapturePermissionPromptForTesting *prompt))handler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (BOOL)_beginBackSwipeForTesting;
 - (BOOL)_completeBackSwipeForTesting;

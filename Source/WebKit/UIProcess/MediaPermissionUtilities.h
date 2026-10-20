@@ -27,6 +27,7 @@
 
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
@@ -73,6 +74,28 @@ void alertForPermission(WebPageProxy&, MediaPermissionReason, const WebCore::Sec
 
 void requestAVCaptureAccessForType(MediaPermissionType, CompletionHandler<void(bool authorized)>&&);
 MediaPermissionResult checkAVCaptureAccessForType(MediaPermissionType);
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+// Lets an API test answer the capture permission prompt.
+class MediaPermissionPromptForTesting : public RefCounted<MediaPermissionPromptForTesting> {
+public:
+    static Ref<MediaPermissionPromptForTesting> create(String&& title, Vector<String>&& buttonTitles, CompletionHandler<void(bool granted)>&&);
+
+    const String& title() const LIFETIME_BOUND { return m_title; }
+    const Vector<String>& buttonTitles() const LIFETIME_BOUND { return m_buttonTitles; }
+
+    void respond(size_t buttonIndex);
+
+private:
+    MediaPermissionPromptForTesting(String&& title, Vector<String>&& buttonTitles, CompletionHandler<void(bool granted)>&&);
+
+    String m_title;
+    Vector<String> m_buttonTitles;
+    CompletionHandler<void(bool granted)> m_completionHandler;
+};
+
+void alertForPermissionForTesting(WebPageProxy&, MediaPermissionReason, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if HAVE(SPEECHRECOGNIZER)

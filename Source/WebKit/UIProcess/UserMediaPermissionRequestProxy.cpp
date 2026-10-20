@@ -208,12 +208,18 @@ void UserMediaPermissionRequestProxy::promptForGetUserMedia()
     if (requiresAudioCapture())
         reason = requiresVideoCapture() ? MediaPermissionReason::CameraAndMicrophone : MediaPermissionReason::Microphone;
 
-    alertForPermission(*protect(manager->page()), reason, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
+    CompletionHandler<void(bool)> completionHandler = [this, protectedThis = Ref { *this }](bool granted) {
         if (!granted)
             deny(UserMediaAccessDenialReason::PermissionDenied);
         else
             allow();
-    });
+    };
+
+    Ref page = *manager->page();
+    if (page->mediaPermissionPromptHandlerForTesting())
+        alertForPermissionForTesting(page, reason, topLevelDocumentSecurityOrigin().data(), WTF::move(completionHandler));
+    else
+        alertForPermission(page, reason, topLevelDocumentSecurityOrigin().data(), WTF::move(completionHandler));
 #endif
 }
 

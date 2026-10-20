@@ -224,6 +224,7 @@ Tests/WebKit/WKWebView/LocalStorageNullEntries.mm @nonARC
 Tests/WebKit/WKWebView/LocalStoragePersistence.mm @nonARC
 Tests/WebKit/WKWebView/LocalStorageQuirkTest.mm @nonARC
 Tests/WebKit/WKWebView/MediaBufferingPolicy.mm @nonARC
+Tests/WebKit/WKWebView/MediaCapturePermissionPrompt.mm @nonARC
 Tests/WebKit/WKWebView/MediaDocument.mm @nonARC
 Tests/WebKit/WKWebView/MediaLoading.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/MediaMutedState.mm @nonARC

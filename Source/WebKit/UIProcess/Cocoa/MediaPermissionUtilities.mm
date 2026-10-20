@@ -236,6 +236,35 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const 
 #endif
 }
 
+#if ENABLE(MEDIA_STREAM)
+
+Ref<MediaPermissionPromptForTesting> MediaPermissionPromptForTesting::create(String&& title, Vector<String>&& buttonTitles, CompletionHandler<void(bool granted)>&& completionHandler)
+{
+    return adoptRef(*new MediaPermissionPromptForTesting(WTF::move(title), WTF::move(buttonTitles), WTF::move(completionHandler)));
+}
+
+MediaPermissionPromptForTesting::MediaPermissionPromptForTesting(String&& title, Vector<String>&& buttonTitles, CompletionHandler<void(bool granted)>&& completionHandler)
+    : m_title(WTF::move(title))
+    , m_buttonTitles(WTF::move(buttonTitles))
+    , m_completionHandler(WTF::move(completionHandler))
+{
+}
+
+void MediaPermissionPromptForTesting::respond(size_t buttonIndex)
+{
+    ASSERT(buttonIndex < m_buttonTitles.size());
+    if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
+        completionHandler(!buttonIndex);
+}
+
+void alertForPermissionForTesting(WebPageProxy& page, MediaPermissionReason reason, const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
+{
+    Ref prompt = MediaPermissionPromptForTesting::create(alertMessageText(reason, origin).get(), { allowButtonText(reason).get(), doNotAllowButtonText(reason).get() }, WTF::move(completionHandler));
+    page.mediaPermissionPromptHandlerForTesting()(WTF::move(prompt));
+}
+
+#endif // ENABLE(MEDIA_STREAM)
+
 
 
 void requestAVCaptureAccessForType(MediaPermissionType type, CompletionHandler<void(bool authorized)>&& completionHandler)

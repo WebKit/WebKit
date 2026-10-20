@@ -31,6 +31,7 @@
 #import "EndowmentStateTracker.h"
 #import "GPUProcessProxy.h"
 #import "LogStream.h"
+#import "MediaPermissionUtilities.h"
 #import "MediaSessionCoordinatorProxyPrivate.h"
 #import "NetworkProcessProxy.h"
 #import "PendingSnapshotDrawing.h"
@@ -68,6 +69,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #if USE(APPLE_INTERNAL_SDK)
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -111,6 +113,52 @@
 - (void)coordinatorStateChanged:(_WKMediaSessionCoordinatorState)state;
 @end
 #endif
+
+@implementation _WKMediaCapturePermissionPromptForTesting {
+#if ENABLE(MEDIA_STREAM)
+    RefPtr<WebKit::MediaPermissionPromptForTesting> _prompt;
+#endif
+}
+
+#if ENABLE(MEDIA_STREAM)
+- (instancetype)_initWithPrompt:(Ref<WebKit::MediaPermissionPromptForTesting>&&)prompt
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _prompt = WTF::move(prompt);
+    return self;
+}
+#endif
+
+- (NSString *)title
+{
+#if ENABLE(MEDIA_STREAM)
+    return _prompt->title().createNSString().autorelease();
+#else
+    return @"";
+#endif
+}
+
+- (NSArray<NSString *> *)buttonTitles
+{
+#if ENABLE(MEDIA_STREAM)
+    return createNSArray(_prompt->buttonTitles()).autorelease();
+#else
+    return @[ ];
+#endif
+}
+
+- (void)respondWithButtonIndex:(NSUInteger)index
+{
+#if ENABLE(MEDIA_STREAM)
+    protect(_prompt)->respond(index);
+#else
+    UNUSED_PARAM(index);
+#endif
+}
+
+@end
 
 @implementation WKWebView (WKTesting)
 
@@ -562,6 +610,25 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
     if (RefPtr pageForTesting = _page->pageForTesting())
         pageForTesting->setIndexOfGetDisplayMediaDeviceSelectedForTesting(index);
+#endif
+}
+
+- (void)_setMediaCapturePermissionPromptHandlerForTesting:(void (^)(_WKMediaCapturePermissionPromptForTesting *))handler
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!_page)
+        return;
+
+    if (!handler) {
+        _page->setMediaPermissionPromptHandlerForTesting(nullptr);
+        return;
+    }
+
+    _page->setMediaPermissionPromptHandlerForTesting([handler = makeBlockPtr(handler)](Ref<WebKit::MediaPermissionPromptForTesting>&& prompt) {
+        handler(adoptNS([[_WKMediaCapturePermissionPromptForTesting alloc] _initWithPrompt:WTF::move(prompt)]).get());
+    });
+#else
+    UNUSED_PARAM(handler);
 #endif
 }
 

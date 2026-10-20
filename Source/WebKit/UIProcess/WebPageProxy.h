@@ -651,6 +651,10 @@ class WebWheelEvent;
 class WebWheelEventCoalescer;
 class WebsiteDataStore;
 
+#if PLATFORM(COCOA)
+class MediaPermissionPromptForTesting;
+#endif
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
 class PortalPresentationManagerProxy;
 #endif
@@ -2543,6 +2547,11 @@ public:
     void LEGACY_NODELETE stopMonitoringCaptureDeviceRotation(const String&);
     void LEGACY_NODELETE rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
     void microphoneMuteStatusChanged(bool isMuting);
+#if PLATFORM(COCOA)
+    using MediaPermissionPromptHandlerForTesting = Function<void(Ref<MediaPermissionPromptForTesting>&&)>;
+    const MediaPermissionPromptHandlerForTesting& mediaPermissionPromptHandlerForTesting() const LIFETIME_BOUND { return m_mediaPermissionPromptHandlerForTesting; }
+    void setMediaPermissionPromptHandlerForTesting(MediaPermissionPromptHandlerForTesting&& handler) { m_mediaPermissionPromptHandlerForTesting = WTF::move(handler); }
+#endif
 #endif
 
     void maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, const URL& resourceDirectoryURL, bool checkAssumedReadAccessToResourceURL, CompletionHandler<void(std::optional<SandboxExtensionHandle>&&)>&&);
@@ -4129,6 +4138,9 @@ private:
     RefPtr<UserMediaPermissionRequestManagerProxy> m_userMediaPermissionRequestManager;
     bool m_shouldListenToVoiceActivity { false };
     OptionSet<WebCore::MediaProducerMediaCaptureKind> m_mutedCaptureKindsDesiredByWebApp;
+#if PLATFORM(COCOA)
+    MediaPermissionPromptHandlerForTesting m_mediaPermissionPromptHandlerForTesting;
+#endif
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
