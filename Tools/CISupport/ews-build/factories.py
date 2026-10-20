@@ -183,6 +183,8 @@ class TestFactory(Factory):
         elif platform == 'wpe':
             self.addStep(InstallWpeDependencies())
         self.addStep(KillOldProcesses())
+        self.addStep(InstallCMake(doStepIf=usesCMake, hideStepIf=lambda results, step: not usesCMake(step)))
+        self.addStep(InstallNinja(doStepIf=usesCMake, hideStepIf=lambda results, step: not usesCMake(step)))
         self.getProduct()
         if self.willTriggerCrashLogSubmission:
             self.addStep(WaitForCrashCollection())

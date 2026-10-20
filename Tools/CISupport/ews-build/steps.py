@@ -2825,7 +2825,7 @@ class RevertAppliedChanges(steps.ShellSequence):
             config = self.getProperty('configuration').capitalize()
             target = os.path.join("WebKitBuild", platform, config, "build-webkit-options.txt")
             self.commands.append(util.ShellArg(command=['rm', '-f', target], logname='stdio'))
-        elif '--cmake' in (self.getProperty('additionalArguments') or []):
+        elif usesCMake(self):
             config = self.getProperty('configuration').capitalize()
             if platform == 'ios':
                 is_simulator = 'simulator' in self.getProperty('fullPlatform')
@@ -2867,6 +2867,7 @@ class Trigger(trigger.Trigger):
             properties_to_pass['os_version_builder'] = properties.Property('os_version', default='')
             properties_to_pass['xcode_version_builder'] = properties.Property('xcode_version', default='')
             properties_to_pass['deployment_target_builder'] = properties.Property('deployment_target')
+            properties_to_pass['parent_additionalArguments'] = properties.Property('additionalArguments', default=[])
         properties_to_pass['parent_buildnumber'] = properties.Property('buildnumber')
         properties_to_pass['parent_builderid'] = properties.Property('builderid')
         properties_to_pass['rebuild_without_change_on_builder'] = properties.Property('rebuild_without_change_on_builder', default=False)
@@ -3172,6 +3173,21 @@ def customBuildFlag(platform, fullPlatform):
     return ['--' + platform]
 
 
+def additionalBuildArguments(step):
+    parent_arguments = step.getProperty('parent_additionalArguments')
+    if parent_arguments is not None:
+        return parent_arguments
+    return step.getProperty('additionalArguments') or []
+
+
+def usesCMake(step):
+    return '--cmake' in additionalBuildArguments(step)
+
+
+def cmakeBuildFlag(step):
+    return ['--cmake'] if usesCMake(step) else []
+
+
 def usesBuildWebKitForJSC(platform):
     # GTK and WPE use build-webkit rather than build-jsc, so the whole build process (build flags, etc.) matches what post-commit bots do.
     return platform in ('gtk', 'wpe')
@@ -3250,14 +3266,13 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
 
         build_command = self.build_command + [f'--{configuration}']
 
-        additionalArguments = self.getProperty('additionalArguments')
-        for additionalArgument in (additionalArguments or []):
+        for additionalArgument in additionalBuildArguments(self):
             if additionalArgument in self.VALID_ADDITIONAL_ARGUMENTS_LIST:
                 build_command += [additionalArgument]
-        if '--cmake' in (additionalArguments or []):
+        use_cmake = usesCMake(self)
+        if use_cmake:
             self.env['PATH'] = cmake_tools_path(self.getProperty('builddir'))
         if platform in self.APPLE_PLATFORMS:
-            use_cmake = '--cmake' in (additionalArguments or [])
             if architecture:
                 build_command += ['--architecture', f'"{architecture}"']
             deployment_target = self.getProperty('deployment_target')
@@ -4145,6 +4160,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
         additionalArguments = self.getProperty('additionalArguments')
         if additionalArguments and self.ENABLE_ADDITIONAL_ARGUMENTS:
             self.command += additionalArguments
+        self.command += cmakeBuildFlag(self)
 
         if self.ENABLE_GUARD_MALLOC:
             self.command += ['--guard-malloc']
@@ -5518,6 +5534,10 @@ class ArchiveBuiltProduct(shell.ShellCommand):
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, **kwargs)
 
+    def run(self):
+        self.command = self.command[:-1] + cmakeBuildFlag(self) + self.command[-1:]
+        return super().run()
+
 
 class UploadBuiltProduct(transfer.FileUpload):
     name = 'upload-built-product'
@@ -5851,6 +5871,10 @@ class ExtractBuiltProduct(shell.ShellCommand):
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, **kwargs)
 
+    def run(self):
+        self.command = self.command[:-1] + cmakeBuildFlag(self) + self.command[-1:]
+        return super().run()
+
 
 class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
     name = 'run-api-tests'
@@ -5902,6 +5926,7 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
                 if self.EXIT_AFTER_FAILURES is not None:
                     self.command += ['--exit-after-n-failures', f'{self.EXIT_AFTER_FAILURES}']
                 self.command += ['--skip-failing-tests']
+            self.command += cmakeBuildFlag(self)
 
         additionalArguments = self.getProperty('additionalArguments')
         if additionalArguments:
@@ -6476,6 +6501,7 @@ class FilterAPITestsForPlatform(shell.ShellCommand, AddToLogMixin):
             f'--{configuration}',
         ]
         self.command += customBuildFlag(platform, self.getProperty('fullPlatform'))
+        self.command += cmakeBuildFlag(self)
 
         yield self._addToLog('stdio', f'Querying available tests on this platform...\n')
         yield self._addToLog('stdio', f'Command: {" ".join(self.command)}\n\n')
@@ -6611,6 +6637,7 @@ class RunAPITestsParallelSafety(RunAPITests):
             self.command.append('--skip-failing-tests')
 
         self.command += customBuildFlag(platform, self.getProperty('fullPlatform'))
+        self.command += cmakeBuildFlag(self)
 
         # Add each test with its own --test-parallel-safety flag
         for test in modified_tests:

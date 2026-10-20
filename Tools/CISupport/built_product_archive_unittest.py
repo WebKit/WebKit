@@ -159,5 +159,34 @@ class ArchiveBuiltProductTest(unittest.TestCase):
         copyRuntime.assert_not_called()
 
 
+class ExtractBuiltProductTest(unittest.TestCase):
+    def extract(self, configurationBuildDirectory, platform):
+        oldConfigurationBuildDirectory = built_product_archive._configurationBuildDirectory
+        oldTopLevelBuildDirectory = built_product_archive._topLevelBuildDirectory
+        built_product_archive._configurationBuildDirectory = configurationBuildDirectory
+        built_product_archive._topLevelBuildDirectory = 'WebKitBuild'
+        try:
+            with patch.object(built_product_archive, 'removeDirectoryIfExists'), patch.object(
+                built_product_archive.os, 'makedirs'
+            ), patch.object(built_product_archive, 'unzipArchive', return_value=0) as unzip:
+                built_product_archive.extractBuiltProduct('debug', platform)
+        finally:
+            built_product_archive._configurationBuildDirectory = oldConfigurationBuildDirectory
+            built_product_archive._topLevelBuildDirectory = oldTopLevelBuildDirectory
+        return unzip
+
+    def test_mac_xcode_extracts_into_top_level_build_directory(self):
+        unzip = self.extract(os.path.join('WebKitBuild', 'Debug'), 'mac')
+        unzip.assert_called_once_with('WebKitBuild', 'debug')
+
+    def test_mac_cmake_extracts_into_cmake_build_tree(self):
+        unzip = self.extract(os.path.join('WebKitBuild', 'cmake-mac', 'Debug'), 'mac')
+        unzip.assert_called_once_with(os.path.join('WebKitBuild', 'cmake-mac'), 'debug')
+
+    def test_ios_extracts_into_top_level_build_directory(self):
+        unzip = self.extract(os.path.join('WebKitBuild', 'Debug-iphonesimulator'), 'ios')
+        unzip.assert_called_once_with('WebKitBuild', 'debug')
+
+
 if __name__ == '__main__':
     unittest.main()
