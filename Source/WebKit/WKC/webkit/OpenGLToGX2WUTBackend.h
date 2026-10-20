@@ -28,6 +28,9 @@ struct WUTBackendContext {
     bool depthWriteEnabled { true };
     CompareFunction depthFunction { CompareFunction::Less };
     bool cullEnabled { false };
+    bool polygonOffsetEnabled { false };
+    float polygonOffsetFactor { 0.0f };
+    float polygonOffsetUnits { 0.0f };
     Face cullFace { Face::Back };
     Winding frontFace { Winding::CounterClockwise };
     bool blendEnabled { false };
