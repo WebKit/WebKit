@@ -1,0 +1,6 @@
+
+PASS Navigating a cross-origin iframe that is same origin-domain to its current URL pushes
+PASS Navigating a same-origin iframe that is not same origin-domain to its current URL replaces
+PASS Navigating a cross-origin iframe that is same origin-domain to its current URL with a fragment pushes
+PASS Navigating a same-origin iframe that is not same origin-domain to its current URL with a fragment replaces
+

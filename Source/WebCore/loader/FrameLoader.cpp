@@ -1719,13 +1719,12 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     action.setNewFrameOpenerPolicy(frameLoadRequest.newFrameOpenerPolicy());
     auto historyHandling = frameLoadRequest.navigationHistoryBehavior();
     RefPtr document = m_frame->document();
-    bool isSameOrigin = protect(frameLoadRequest.requesterSecurityOrigin())->isSameOriginDomain(protect(document->securityOrigin()).get());
     if (!isReload(newLoadType)) {
         if (historyHandling == NavigationHistoryBehavior::Auto) {
             // https://html.spec.whatwg.org/multipage/browsing-the-web.html#navigate (navigate-convert-to-replace)
             // "If url equals navigable's active document's URL, and initiatorOriginSnapshot is
             // same origin with navigable's active document's origin, then set historyHandling to 'replace'."
-            if (document->url() == newURL && isSameOrigin)
+            if (document->url() == newURL && protect(frameLoadRequest.requesterSecurityOrigin())->isSameOriginAs(protect(document->securityOrigin())))
                 historyHandling = NavigationHistoryBehavior::Replace;
             else
                 historyHandling = NavigationHistoryBehavior::Push;
