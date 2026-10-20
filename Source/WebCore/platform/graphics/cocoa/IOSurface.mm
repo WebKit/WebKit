@@ -39,7 +39,6 @@
 #import "SharedMemory.h"
 #import <pal/spi/cf/CoreVideoSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/EnumTraits.h>
@@ -795,11 +794,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         CGContextSetOwnerIdentity(cgContext.get(), m_resourceOwner.taskIdToken());
 #endif
     return cgContext;
-}
-
-void IOSurface::releaseCGIOSurfaceContextResources()
-{
-    CABackingStoreCollectBlocking();
 }
 
 std::optional<IOSurface::LockAndContext> IOSurface::createBitmapPlatformContext()
