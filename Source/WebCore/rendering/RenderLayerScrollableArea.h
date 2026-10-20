@@ -119,6 +119,8 @@ public:
     OverscrollBehavior LEGACY_NODELETE horizontalOverscrollBehavior() const final;
     OverscrollBehavior LEGACY_NODELETE verticalOverscrollBehavior() const final;
 
+    ScrollAxisLock NODELETE scrollAxisLock() const final;
+
     Color scrollbarThumbColorStyle() const final;
     Color scrollbarTrackColorStyle() const final;
     Style::ScrollbarGutter LEGACY_NODELETE scrollbarGutterStyle() const final;
