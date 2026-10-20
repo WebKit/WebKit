@@ -697,6 +697,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     protect(*_processPool)->setUsesOnlyHIDGamepadProviderForTesting(usesHIDProvider);
 }
 
+- (void)_setHasEnhancedSecurityDefaultOptOutEntitlementForTesting:(BOOL)hasEntitlement
+{
+    protect(*_processPool)->setHasEnhancedSecurityDefaultOptOutEntitlementForTesting(!!hasEntitlement);
+}
+
+- (void)_clearHasEnhancedSecurityDefaultOptOutEntitlementForTesting
+{
+    protect(*_processPool)->setHasEnhancedSecurityDefaultOptOutEntitlementForTesting(std::nullopt);
+}
+
 - (void)_terminateAllWebContentProcesses
 {
     protect(*_processPool)->terminateAllWebContentProcesses(WebKit::ProcessTerminationReason::RequestedByClient);

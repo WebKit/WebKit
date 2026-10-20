@@ -128,6 +128,7 @@ class WebCompiledContentRuleList;
 class WebContextSupplement;
 class WebPageGroup;
 class WebPageProxy;
+class WebPreferences;
 class WebProcessCache;
 struct GPUProcessConnectionParameters;
 struct NetworkProcessCreationParameters;
@@ -537,6 +538,9 @@ public:
     
     static void setUseSeparateServiceWorkerProcess(bool);
     static bool useSeparateServiceWorkerProcess() { return s_useSeparateServiceWorkerProcess; }
+
+    void setHasEnhancedSecurityDefaultOptOutEntitlementForTesting(std::optional<bool>);
+    bool shouldEnableEnhancedSecurityByDefault(const WebPreferences&) const;
 
     void addRemoteWorkerProcess(WebProcessProxy&);
     void removeRemoteWorkerProcess(WebProcessProxy&);
@@ -990,6 +994,7 @@ private:
 #endif
 
     static bool s_useSeparateServiceWorkerProcess;
+    std::optional<bool> m_hasEnhancedSecurityDefaultOptOutEntitlementForTesting;
 
     HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
     HashMap<TopFrameDomain, Vector<SubResourceDomain>> m_domainsWithCrossPageStorageAccessQuirk;

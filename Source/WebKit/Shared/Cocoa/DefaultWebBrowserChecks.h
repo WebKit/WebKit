@@ -45,6 +45,7 @@ bool doesAppHaveTrackingPreventionEnabled();
 bool doesParentProcessHaveTrackingPreventionEnabled(AuxiliaryProcess&, bool hasRequestedCrossWebsiteTrackingPermission);
 bool shouldEvaluateJavaScriptWithoutTransientActivation();
 bool isFullWebBrowserOrRunningTest();
+bool isSystemApplicationOrRunningTest();
 bool isParentProcessAFullWebBrowser(AuxiliaryProcess&);
 
 } // namespace WebKit

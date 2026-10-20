@@ -27,6 +27,7 @@
 #import "DefaultWebBrowserChecks.h"
 
 #import "AuxiliaryProcess.h"
+#import "CodeSigning.h"
 #import "Connection.h"
 #import "Logging.h"
 #import <WebCore/RegistrableDomain.h>
@@ -314,6 +315,15 @@ bool isFullWebBrowserOrRunningTest()
     ASSERT(RunLoop::isMain());
 
     return isFullWebBrowserOrRunningTest(applicationBundleIdentifier());
+}
+
+bool isSystemApplicationOrRunningTest()
+{
+    ASSERT(!isInWebKitChildProcess());
+
+    static bool staticIsSystemApplicationOrRunningTest = isRunningTest(retainPtr([[NSBundle mainBundle] bundleIdentifier]).get())
+        || (WTF::CocoaApplication::isAppleApplication() && currentProcessIsPlatformBinary());
+    return staticIsSystemApplicationOrRunningTest;
 }
 
 } // namespace WebKit

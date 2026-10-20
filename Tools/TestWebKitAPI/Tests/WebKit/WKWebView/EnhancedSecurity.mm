@@ -1017,10 +1017,15 @@ TEST(EnhancedSecurity, ForceDisabledOverridesSecurityRestrictionMode)
 
 static void enableEnhancedSecurityTestFeature(WKWebViewConfiguration *configuration, NSString *key)
 {
+    bool found = false;
     for (_WKFeature *feature in [WKPreferences _features]) {
-        if ([feature.key isEqualToString:key])
+        if ([feature.key isEqualToString:key]) {
             [configuration.preferences _setEnabled:YES forFeature:feature];
+            found = true;
+            break;
+        }
     }
+    EXPECT_TRUE(found);
 }
 
 static RetainPtr<WKWebView> loadSimplePageForPlatformDefaultTest(WKWebViewConfiguration *configuration)
@@ -1152,6 +1157,173 @@ TEST(EnhancedSecurity, ForceDisabledOverridesPlatformDefault)
 
     EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
     EXPECT_STREQ("standard", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, SystemAppsDefaultEnablesEnhancedSecurity)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefaultForSystemApps");
+    RetainPtr webView = loadSimplePageForPlatformDefaultTest(webViewConfiguration.get());
+
+    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, SystemAppsDefaultOverridesSecurityRestrictionModeNone)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefaultForSystemApps");
+    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
+    RetainPtr webView = loadSimplePageForPlatformDefaultTest(webViewConfiguration.get());
+
+    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, SystemAppsDefaultOverridesNavigationSecurityRestrictionModeNone)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefaultForSystemApps");
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool finishedNavigation = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+
+    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, LockdownModeTakesPrecedenceOverSystemAppsDefault)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefaultForSystemApps");
+    webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
+    RetainPtr webView = loadSimplePageForPlatformDefaultTest(webViewConfiguration.get());
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, NavigationLockdownModeTakesPrecedenceOverSystemAppsDefault)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefaultForSystemApps");
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool finishedNavigation = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences.lockdownModeEnabled = YES;
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, SystemLockdownModeTakesPrecedenceOverSystemAppsDefault)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefaultForSystemApps");
+    RetainPtr webView = loadSimplePageForPlatformDefaultTest(webViewConfiguration.get());
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurity, ForceDisabledOverridesSystemAppsDefault)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefaultForSystemApps");
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityForceDisabled");
+    RetainPtr webView = loadSimplePageForPlatformDefaultTest(webViewConfiguration.get());
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("standard", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, OptOutEntitlementDisablesSystemAppsDefault)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [[webViewConfiguration processPool] _setHasEnhancedSecurityDefaultOptOutEntitlementForTesting:YES];
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefaultForSystemApps");
+    RetainPtr webView = loadSimplePageForPlatformDefaultTest(webViewConfiguration.get());
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("standard", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [[webViewConfiguration processPool] _clearHasEnhancedSecurityDefaultOptOutEntitlementForTesting];
+}
+
+TEST(EnhancedSecurity, OptOutEntitlementDisablesPlatformDefault)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [[webViewConfiguration processPool] _setHasEnhancedSecurityDefaultOptOutEntitlementForTesting:YES];
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefault");
+    RetainPtr webView = loadSimplePageForPlatformDefaultTest(webViewConfiguration.get());
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("standard", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [[webViewConfiguration processPool] _clearHasEnhancedSecurityDefaultOptOutEntitlementForTesting];
+}
+
+TEST(EnhancedSecurity, OptOutEntitlementDisablesBothDefaults)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [[webViewConfiguration processPool] _setHasEnhancedSecurityDefaultOptOutEntitlementForTesting:YES];
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefault");
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefaultForSystemApps");
+    RetainPtr webView = loadSimplePageForPlatformDefaultTest(webViewConfiguration.get());
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("standard", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [[webViewConfiguration processPool] _clearHasEnhancedSecurityDefaultOptOutEntitlementForTesting];
+}
+
+TEST(EnhancedSecurity, OptOutEntitlementDoesNotOverrideExplicitEnhancedSecurity)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [[webViewConfiguration processPool] _setHasEnhancedSecurityDefaultOptOutEntitlementForTesting:YES];
+    enableEnhancedSecurityTestFeature(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefaultForSystemApps");
+    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+    RetainPtr webView = loadSimplePageForPlatformDefaultTest(webViewConfiguration.get());
+
+    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [[webViewConfiguration processPool] _clearHasEnhancedSecurityDefaultOptOutEntitlementForTesting];
 }
 
 #endif
