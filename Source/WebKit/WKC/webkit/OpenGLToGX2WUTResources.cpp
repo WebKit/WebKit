@@ -178,12 +178,102 @@ bool bindVertexBuffer(void* context, uint8_t attribute, BufferName name,
     return true;
 }
 
+bool translateVertexAttributeFormat(const VertexAttribute& value, GX2AttribFormat& output)
+{
+    if (value.components < 1 || value.components > 4)
+        return false;
+
+    const bool signedType = value.type == AttributeType::Byte
+        || value.type == AttributeType::Short || value.type == AttributeType::Int;
+    const bool unsignedType = value.type == AttributeType::UnsignedByte
+        || value.type == AttributeType::UnsignedShort || value.type == AttributeType::UnsignedInt;
+    const bool floatingType = value.type == AttributeType::Float
+        || value.type == AttributeType::HalfFloat;
+    if (!signedType && !unsignedType && !floatingType)
+        return false;
+
+    // GX2 has no three-component 8-bit or 16-bit packed attribute format.
+    // Reject these rather than silently selecting a different component layout.
+    if ((value.type == AttributeType::Byte || value.type == AttributeType::UnsignedByte)
+        && value.components == 3)
+        return false;
+    if ((value.type == AttributeType::Short || value.type == AttributeType::UnsignedShort
+            || value.type == AttributeType::HalfFloat) && value.components == 3)
+        return false;
+
+    uint32_t typeBits = 0;
+    switch (value.type) {
+    case AttributeType::Byte:
+    case AttributeType::UnsignedByte:
+        switch (value.components) {
+        case 1: typeBits = GX2_ATTRIB_TYPE_8; break;
+        case 2: typeBits = GX2_ATTRIB_TYPE_8_8; break;
+        case 4: typeBits = GX2_ATTRIB_TYPE_8_8_8_8; break;
+        default: return false;
+        }
+        break;
+    case AttributeType::Short:
+    case AttributeType::UnsignedShort:
+        switch (value.components) {
+        case 1: typeBits = GX2_ATTRIB_TYPE_16; break;
+        case 2: typeBits = GX2_ATTRIB_TYPE_16_16; break;
+        case 4: typeBits = GX2_ATTRIB_TYPE_16_16_16_16; break;
+        default: return false;
+        }
+        break;
+    case AttributeType::Int:
+    case AttributeType::UnsignedInt:
+        switch (value.components) {
+        case 1: typeBits = GX2_ATTRIB_TYPE_32; break;
+        case 2: typeBits = GX2_ATTRIB_TYPE_32_32; break;
+        case 3: typeBits = GX2_ATTRIB_TYPE_32_32_32; break;
+        case 4: typeBits = GX2_ATTRIB_TYPE_32_32_32_32; break;
+        default: return false;
+        }
+        break;
+    case AttributeType::Float:
+        switch (value.components) {
+        case 1: typeBits = GX2_ATTRIB_TYPE_32_FLOAT; break;
+        case 2: typeBits = GX2_ATTRIB_TYPE_32_32_FLOAT; break;
+        case 3: typeBits = GX2_ATTRIB_TYPE_32_32_32_FLOAT; break;
+        case 4: typeBits = GX2_ATTRIB_TYPE_32_32_32_32_FLOAT; break;
+        default: return false;
+        }
+        break;
+    case AttributeType::HalfFloat:
+        switch (value.components) {
+        case 1: typeBits = GX2_ATTRIB_TYPE_16_FLOAT; break;
+        case 2: typeBits = GX2_ATTRIB_TYPE_16_16_FLOAT; break;
+        case 4: typeBits = GX2_ATTRIB_TYPE_16_16_16_16_FLOAT; break;
+        default: return false;
+        }
+        break;
+    }
+
+    uint32_t flags = 0;
+    if (value.type == AttributeType::Float || value.type == AttributeType::HalfFloat) {
+        output = static_cast<GX2AttribFormat>(typeBits
+            | (value.type == AttributeType::Float ? GX2_ATTRIB_FLAG_SCALED : 0));
+        return true;
+    }
+    if (value.normalized) {
+        if (signedType)
+            flags |= GX2_ATTRIB_FLAG_SIGNED;
+    } else {
+        flags |= GX2_ATTRIB_FLAG_INTEGER;
+        if (signedType)
+            flags |= GX2_ATTRIB_FLAG_SIGNED;
+    }
+    output = static_cast<GX2AttribFormat>(typeBits | flags);
+    return true;
+}
+
 bool setAttribute(void*, uint8_t attribute, const VertexAttribute& value)
 {
-    // GX2SetAttribBuffer binds the memory range and stride. The GX2 fetch-shader
-    // input descriptor still has to be generated from this format by the shader
-    // adapter; don't pretend this callback alone translates GLSL vertex inputs.
-    return attribute < 32 && value.components >= 1 && value.components <= 4;
+    // Validate that the format is representable by GX2. Fetch-shader input
+    // descriptors still need the linked vertex shader's attribute locations.
+    GX2AttribFormat format;
+    return attribute < 32 && translateVertexAttributeFormat(value, format);
 }
 
 bool setElementBuffer(void* context, BufferName name)
