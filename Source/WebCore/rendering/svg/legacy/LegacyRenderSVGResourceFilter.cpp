@@ -117,7 +117,7 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     }
 
     // Eliminate shear of the absolute transformation matrix, to be able to produce unsheared tile images for feTile.
-    FloatSize filterScale(absoluteTransform.xScale(), absoluteTransform.yScale());
+    FloatSize filterScale = FloatSize(absoluteTransform.xScale(), absoluteTransform.yScale()).expandedTo(context->scaleFactor());
 
     // Determine absolute boundaries of the filter and the drawing region.
     filterData->sourceImageRect = renderer.strokeBoundingBox();
