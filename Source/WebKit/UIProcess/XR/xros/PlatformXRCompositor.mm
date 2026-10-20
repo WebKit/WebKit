@@ -106,7 +106,7 @@ CompositorCoordinator* CompositorCoordinator::singleton()
 }
 
 CompositorCoordinator::CompositorCoordinator()
-    : m_sessionPage(0)
+    : m_sessionPage(nullptr)
 {
     ASSERT(isCompositorServicesAvailable());
 }
