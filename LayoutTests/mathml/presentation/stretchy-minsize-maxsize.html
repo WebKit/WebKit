@@ -5,32 +5,12 @@
   </head>
   <body>
 
+    <!-- Cases where an explicit minsize/maxsize actually clamps the stretch size are covered by
+         imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-axis-height-1.html.
+         Per MathML Core, the clamped target is distributed relative to the math axis rather than by
+         preserving the ascent/descent ratio, which cannot be expressed in a font-independent reference
+         here. This test keeps the cases that do not depend on that distribution. -->
     <p>
-      <!-- In theory, the bar should stretch to the size of the mspace (4em) but the minsize attribute forces it to stretch to 10em. -->
-      <math>
-        <mrow>
-          <mo symmetric="false" minsize="10em">|</mo>
-          <mspace height="2em" depth="2em"/>
-        </mrow>
-      </math>
-
-      <!-- In theory, the bar should stretch to the size of the mspace (6em) but the minsize attribute forces it to stretch to 3em. -->
-      <math>
-        <mrow>
-          <mo symmetric="false" maxsize="3em">|</mo>
-          <mspace height="3em" depth="3em"/>
-        </mrow>
-        <mspace height="5em" depth="5em"/>
-      </math>
-
-      <!-- Here minsize is more than maxsize, so minsize takes precedence. -->
-      <math>
-        <mrow>
-          <mo symmetric="false" minsize="10em" maxsize="3em">|</mo>
-          <mspace height="3em" depth="3em"/>
-        </mrow>
-      </math>
-
       <!-- We verify that invalid values are ignored. -->
       <math>
         <mrow>
@@ -58,35 +38,13 @@
           <mspace height="4em" depth="4em"/>
         </mrow>
       </math>
-      
 
-      <!-- We test default values for minsize and maxsize. -->
+      <!-- We test the default value for maxsize. -->
       <math>
         <mrow>
           <mo symmetric="false" maxsize="infinity">|</mo>
           <mspace height="10em" depth="10em"/>
         </mrow>
-      </math>
-      <math>
-        <mrow>
-          <mo symmetric="false" minsize="1em">|</mo>
-          <mspace height=".1em" depth=".1em"/>
-        </mrow>
-      </math>
-
-      <!-- We test that the ratio between height and depth is preserved. -->
-      <math>
-        <mrow>
-          <mo symmetric="false" minsize="18em">|</mo>
-          <mspace height="2em" depth="4em"/>
-        </mrow>
-      </math>
-      <math>
-        <mrow>
-          <mo symmetric="false" maxsize="4em">|</mo>
-          <mspace height="15em" depth="5em"/>
-        </mrow>
-        <mspace height="15em" depth="15em"/>
       </math>
 
       <!-- We test that the symmetric property is applied before the resize. -->
