@@ -359,7 +359,6 @@
 #include <JavaScriptCore/Identifier.h>
 #include <JavaScriptCore/ImplementationVisibility.h>
 #include <JavaScriptCore/IndexingHeader.h>
-#include <JavaScriptCore/IndexingHeaderInlines.h>
 #include <JavaScriptCore/IndexingType.h>
 #include <JavaScriptCore/Integrity.h>
 #include <JavaScriptCore/Interpreter.h>
