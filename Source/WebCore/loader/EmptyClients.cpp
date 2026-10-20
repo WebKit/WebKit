@@ -1079,6 +1079,11 @@ void EmptyFrameLoaderClient::dispatchEnqueueHistoryTraversalDelta(int)
 {
 }
 
+void EmptyFrameLoaderClient::dispatchEnqueueHistoryTraversalToItem(BackForwardFrameItemIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(false);
+}
+
 void EmptyFrameLoaderClient::saveViewStateToItem(HistoryItem&)
 {
 }

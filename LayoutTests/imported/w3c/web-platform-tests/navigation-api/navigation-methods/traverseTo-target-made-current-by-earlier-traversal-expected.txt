@@ -1,0 +1,4 @@
+
+
+PASS navigation.traverseTo() to an entry that an earlier traversal made current does not traverse again
+

@@ -517,6 +517,7 @@ enum class DrawingAreaType : bool;
 #endif
 enum class FindOptions : uint16_t;
 enum class FindDecorationStyle : uint8_t;
+enum class FrameTraversalResult : uint8_t;
 enum class ImageOption : uint8_t;
 enum class InputType : uint8_t;
 enum class NavigatingToAppBoundDomain : bool;
@@ -2459,7 +2460,7 @@ private:
     void loadSimulatedRequestAndResponse(LoadParameters&&, WebCore::ResourceResponse&&);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
     void reload(WebCore::NavigationIdentifier, OptionSet<WebCore::ReloadOption> reloadOptions, SandboxExtensionHandle&&);
-    void goToBackForwardItem(GoToBackForwardItemParameters&&);
+    void goToBackForwardItem(GoToBackForwardItemParameters&&, CompletionHandler<void(FrameTraversalResult)>&&);
     [[noreturn]] void LEGACY_NODELETE goToBackForwardItemWaitingForProcessLaunch(GoToBackForwardItemParameters&&, WebKit::WebPageProxyIdentifier);
     void tryRestoreScrollPosition();
     void setInitialFocus(bool forward, bool isKeyboardEventValid, RefPtr<WebKeyboardEvent>&&, CompletionHandler<void()>&&);

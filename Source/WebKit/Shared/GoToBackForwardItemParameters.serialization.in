@@ -34,3 +34,9 @@
     WebCore::ProcessSwapDisposition processSwapDisposition;
     std::optional<WebCore::AgentClusterAssignment> agentClusterAssignment;
 };
+
+enum class WebKit::FrameTraversalResult : uint8_t {
+    NotTaken,
+    Taken,
+    StartedLoad,
+};

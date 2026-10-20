@@ -60,9 +60,11 @@ public:
     Ref<WebBackForwardListFrameItem> rootFrame();
     Ref<WebBackForwardListFrameItem> mainFrame();
     WebBackForwardListFrameItem* LEGACY_NODELETE childItemForFrameID(WebCore::FrameIdentifier);
+    WebBackForwardListFrameItem* LEGACY_NODELETE childItemForFrameItemID(WebCore::BackForwardFrameItemIdentifier);
     WebBackForwardListFrameItem* LEGACY_NODELETE childItemForFrameName(const String& frameName);
     WebBackForwardListFrameItem* LEGACY_NODELETE childItemAtIndex(uint64_t);
     const Vector<Ref<WebBackForwardListFrameItem>>& children() const { return m_children; }
+    bool LEGACY_NODELETE containsItemSequenceNumber(int64_t) const;
 
     WebBackForwardListItem* LEGACY_NODELETE backForwardListItem() const;
 

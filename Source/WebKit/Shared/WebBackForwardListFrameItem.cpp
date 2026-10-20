@@ -93,6 +93,28 @@ WebBackForwardListFrameItem* WebBackForwardListFrameItem::childItemForFrameID(Fr
     return nullptr;
 }
 
+WebBackForwardListFrameItem* WebBackForwardListFrameItem::childItemForFrameItemID(BackForwardFrameItemIdentifier frameItemID)
+{
+    if (m_identifier == frameItemID)
+        return this;
+    for (auto& child : m_children) {
+        if (auto* childFrameItem = child->childItemForFrameItemID(frameItemID))
+            return childFrameItem;
+    }
+    return nullptr;
+}
+
+bool WebBackForwardListFrameItem::containsItemSequenceNumber(int64_t itemSequenceNumber) const
+{
+    if (m_frameState->itemSequenceNumber == itemSequenceNumber)
+        return true;
+    for (auto& child : m_children) {
+        if (child->containsItemSequenceNumber(itemSequenceNumber))
+            return true;
+    }
+    return false;
+}
+
 WebBackForwardListFrameItem* WebBackForwardListFrameItem::childItemAtIndex(uint64_t index)
 {
     if (index >= m_children.size())

@@ -9328,6 +9328,53 @@ TEST(SiteIsolation, ProcessTerminationReason)
     EXPECT_EQ(server.totalRequests(), 5u);
 }
 
+TEST(SiteIsolation, HistoryTraversalAfterProvisionalProcessTerminatesBeforeCommit)
+{
+    size_t requestsForA { 0 };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/a"_s) {
+                // Only the first load of a gets an answer.
+                if (++requestsForA == 1)
+                    co_await connection.awaitableSend(HTTPResponse({ { "Cache-Control"_s, "no-store"_s } }, "a"_s).serialize());
+                continue;
+            }
+            if (path == "/b"_s) {
+                co_await connection.awaitableSend(HTTPResponse("b"_s).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/b"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView objectByEvaluatingJavaScript:@"history.pushState(null, '', '#1')"];
+
+    // The load of a continues in a provisional process, which is killed before the server answers it.
+    [webView evaluateJavaScript:@"history.go(-2)" completionHandler:nil];
+    while (requestsForA < 2)
+        Util::spinRunLoop();
+    pid_t provisionalProcessIdentifier = [webView _provisionalWebProcessIdentifier];
+    ASSERT_TRUE(provisionalProcessIdentifier);
+    kill(provisionalProcessIdentifier, 9);
+    while ([webView _provisionalWebProcessIdentifier])
+        Util::spinRunLoop();
+
+    // Only check that the traversal applies. Its promises do not settle, because the back/forward list's current item
+    // stayed on a after its load was dropped, so the traversal is not seen as same-origin and fires no navigate event.
+    NSString *traversal = @"navigation.traverseTo(navigation.entries()[0].key);"
+        "for (let i = 0; i < 200 && location.hash; ++i)"
+        "    await new Promise(resolve => setTimeout(resolve, 10));"
+        "return location.href;";
+    EXPECT_WK_STREQ([webView objectByCallingAsyncFunction:traversal withArguments:nil], "https://webkit.org/b");
+}
+
 TEST(SiteIsolation, RemoteProcessTerminationAfterDisablingSiteIsolation)
 {
     HTTPServer server({

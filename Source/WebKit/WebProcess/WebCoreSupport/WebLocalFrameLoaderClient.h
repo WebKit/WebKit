@@ -181,6 +181,7 @@ private:
 
     void dispatchGoToBackForwardItemAtIndex(int steps) final;
     void dispatchEnqueueHistoryTraversalDelta(int delta) final;
+    void dispatchEnqueueHistoryTraversalToItem(WebCore::BackForwardFrameItemIdentifier, CompletionHandler<void(bool)>&&) final;
 
     void didFinishServiceWorkerPageRegistration(bool success) final;
     

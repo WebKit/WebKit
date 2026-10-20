@@ -1143,6 +1143,11 @@ void WebFrameLoaderClient::dispatchEnqueueHistoryTraversalDelta(int)
 {
 }
 
+void WebFrameLoaderClient::dispatchEnqueueHistoryTraversalToItem(WebCore::BackForwardFrameItemIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(false);
+}
+
 bool WebFrameLoaderClient::shouldFallBack(const WebCore::ResourceError& error) const
 {
     // FIXME: Needs to check domain.
