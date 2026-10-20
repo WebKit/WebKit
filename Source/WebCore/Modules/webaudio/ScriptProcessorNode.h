@@ -29,6 +29,7 @@
 #include "AudioNode.h"
 #include "EventListener.h"
 #include "EventTarget.h"
+#include <atomic>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -82,10 +83,28 @@ private:
     bool virtualHasPendingActivity() const final;
 
     void eventListenersDidChange() final;
-    void fireProcessEvent(unsigned bufferIndex);
+    void fireProcessEvent(AudioBuffer* inputBuffer, AudioBuffer* outputBuffer, double playbackTime);
 
     RefPtr<AudioBuffer> createInputBufferForJS(AudioBuffer*) const;
     RefPtr<AudioBuffer> createOutputBufferForJS(AudioBuffer&) const;
+
+    // Realtime contexts use a queue of periods instead of double buffering.
+    void initializeQueue(float sampleRate);
+    void processWithQueue(AudioBus& inputBus, AudioBus& outputBus, size_t framesToProcess);
+    void fireQueuedProcessEvent(uint64_t period, double playbackTime);
+    size_t queueSlot(uint64_t period) const { return period % m_queueSize; }
+
+    size_t m_queueSize { 0 };
+    unsigned m_outputLatencyPeriods { 0 };
+    Vector<RefPtr<AudioBuffer>> m_queueInputs;
+    Vector<RefPtr<AudioBuffer>> m_queueOutputs;
+    Vector<std::optional<uint64_t>> m_queueOutputPeriods;
+    std::atomic<uint64_t> m_queuePeriod { 0 };
+    std::atomic<uint64_t> m_queueConsumed { 0 };
+    uint64_t m_queuePosted { 0 };
+    bool m_isRecordingPeriod { false };
+    bool m_isPlayingPeriod { false };
+    size_t m_queuePeriodStartFrame { 0 };
 
     // Double buffering.
     static constexpr unsigned bufferCount = 2;

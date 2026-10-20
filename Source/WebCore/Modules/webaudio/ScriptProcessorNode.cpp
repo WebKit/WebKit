@@ -96,7 +96,44 @@ void ScriptProcessorNode::initialize()
         m_outputBuffers[i] = m_numberOfOutputChannels ? AudioBuffer::create(m_numberOfOutputChannels, bufferSize(), sampleRate, AudioBuffer::LegacyPreventDetaching::Yes) : nullptr;
     }
 
+    if (!protect(context())->isOfflineContext())
+        initializeQueue(sampleRate);
+
     AudioNode::initialize();
+}
+
+void ScriptProcessorNode::initializeQueue(float sampleRate)
+{
+    if (m_queueSize)
+        return;
+
+    constexpr double minimumMainThreadSlack = 0.1;
+    constexpr double queueDuration = 2;
+
+    auto periods = [&](double seconds) {
+        return static_cast<size_t>(std::ceil(seconds * sampleRate / bufferSize()));
+    };
+    unsigned outputLatencyPeriods = std::max<unsigned>(bufferCount, 1 + periods(minimumMainThreadSlack));
+    size_t queueSize = std::max<size_t>(outputLatencyPeriods + 1, periods(queueDuration));
+
+    Vector<RefPtr<AudioBuffer>> inputs;
+    Vector<RefPtr<AudioBuffer>> outputs;
+    for (size_t i = 0; i < queueSize; ++i) {
+        RefPtr<AudioBuffer> input = m_numberOfInputChannels ? AudioBuffer::create(m_numberOfInputChannels, bufferSize(), sampleRate) : nullptr;
+        RefPtr<AudioBuffer> output = m_numberOfOutputChannels ? AudioBuffer::create(m_numberOfOutputChannels, bufferSize(), sampleRate) : nullptr;
+        if ((m_numberOfInputChannels && !input) || (m_numberOfOutputChannels && !output))
+            return;
+        inputs.append(WTF::move(input));
+        outputs.append(WTF::move(output));
+    }
+
+    m_queueOutputPeriods.reserveInitialCapacity(queueSize);
+    for (size_t i = 0; i < queueSize; ++i)
+        m_queueOutputPeriods.append(std::nullopt);
+    m_queueInputs = WTF::move(inputs);
+    m_queueOutputs = WTF::move(outputs);
+    m_outputLatencyPeriods = outputLatencyPeriods;
+    m_queueSize = queueSize;
 }
 
 RefPtr<AudioBuffer> ScriptProcessorNode::createInputBufferForJS(AudioBuffer* inputBuffer) const
@@ -152,6 +189,11 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     Ref inputBus = firstInput->bus();
     CheckedPtr firstOutput = output(0);
     Ref outputBus = firstOutput->bus();
+
+    if (m_queueSize) {
+        processWithQueue(inputBus, outputBus, framesToProcess);
+        return;
+    }
 
     // Get input and output buffers. We double-buffer both the input and output sides.
     unsigned bufferIndex = this->bufferIndex();
@@ -213,16 +255,23 @@ void ScriptProcessorNode::process(size_t framesToProcess)
         // explicitly allow the following allocation(s).
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
+        // Calculate playbackTime with the buffersize which needs to be processed each time when onaudioprocess is called.
+        // The outputBuffer being passed to JS will be played after exhausting previous outputBuffer by double-buffering.
+        auto fireDoubleBufferedEvent = [this, protector = Ref { *this }](unsigned bufferIndex) {
+            double playbackTime = (protect(context())->currentSampleFrame() + m_bufferSize) / static_cast<double>(protect(context())->sampleRate());
+            fireProcessEvent(m_inputBuffers[bufferIndex].get(), m_outputBuffers[bufferIndex].get(), playbackTime);
+        };
+
         // Reference ourself so we don't accidentally get deleted before fireProcessEvent() gets called.
         // We only wait for script code execution when the context is an offline one for performance reasons.
         if (protect(context())->isOfflineContext()) {
-            callOnMainThreadAndWait([this, bufferIndex, protector = Ref { *this }] {
-                fireProcessEvent(bufferIndex);
+            callOnMainThreadAndWait([bufferIndex, fireDoubleBufferedEvent, protector = Ref { *this }] {
+                fireDoubleBufferedEvent(bufferIndex);
             });
         } else {
-            callOnMainThread([this, bufferIndex, protector = Ref { *this }] {
+            callOnMainThread([this, bufferIndex, fireDoubleBufferedEvent, protector = Ref { *this }] {
                 Locker locker { m_bufferLocks[bufferIndex] };
-                fireProcessEvent(bufferIndex);
+                fireDoubleBufferedEvent(bufferIndex);
             });
         }
 
@@ -230,12 +279,71 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     }
 }
 
-void ScriptProcessorNode::fireProcessEvent(unsigned bufferIndex)
+void ScriptProcessorNode::processWithQueue(AudioBus& inputBus, AudioBus& outputBus, size_t framesToProcess)
+{
+    bool isFramesToProcessGood = framesToProcess && bufferSize() >= framesToProcess && !(bufferSize() % framesToProcess);
+    ASSERT(isFramesToProcessGood);
+    if (!isFramesToProcessGood || m_bufferReadWriteIndex + framesToProcess > bufferSize()
+        || m_internalInputBus->numberOfChannels() != m_numberOfInputChannels || outputBus.numberOfChannels() != m_numberOfOutputChannels) {
+        outputBus.zero();
+        return;
+    }
+
+    uint64_t period = m_queuePeriod.load(std::memory_order_relaxed);
+    size_t slot = queueSlot(period);
+    if (!m_bufferReadWriteIndex) {
+        // Once every posted event has run, no slot is in use, however far behind the main thread was.
+        uint64_t consumed = m_queueConsumed.load(std::memory_order_acquire);
+        m_isRecordingPeriod = consumed == m_queuePosted || period - consumed < m_queueSize;
+        m_isPlayingPeriod = m_queueOutputPeriods[slot].value_or(std::numeric_limits<uint64_t>::max()) == period;
+        m_queuePeriodStartFrame = protect(context())->currentSampleFrame();
+    }
+
+    if (m_isRecordingPeriod && m_numberOfInputChannels) {
+        auto& input = m_queueInputs[slot];
+        for (unsigned i = 0; i < m_numberOfInputChannels; i++)
+            m_internalInputBus->setChannelMemory(i, input->rawChannelData(i).subspan(m_bufferReadWriteIndex).first(framesToProcess));
+        m_internalInputBus->copyFrom(inputBus);
+    }
+
+    if (m_isPlayingPeriod && m_numberOfOutputChannels) {
+        auto& output = m_queueOutputs[slot];
+        for (unsigned i = 0; i < m_numberOfOutputChannels; ++i)
+            memcpySpan(outputBus.channel(i)->mutableSpan(), output->rawChannelData(i).subspan(m_bufferReadWriteIndex, framesToProcess));
+    } else
+        outputBus.zero();
+
+    m_bufferReadWriteIndex = (m_bufferReadWriteIndex + framesToProcess) % bufferSize();
+    if (m_bufferReadWriteIndex)
+        return;
+
+    m_queuePeriod.store(period + 1, std::memory_order_release);
+    if (!m_isRecordingPeriod)
+        return;
+
+    m_queuePosted = period + 1;
+    double playbackTime = (m_queuePeriodStartFrame + m_outputLatencyPeriods * bufferSize()) / static_cast<double>(protect(context())->sampleRate());
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    callOnMainThread([this, period, playbackTime, protector = Ref { *this }] {
+        fireQueuedProcessEvent(period, playbackTime);
+    });
+}
+
+void ScriptProcessorNode::fireQueuedProcessEvent(uint64_t period, double playbackTime)
 {
     ASSERT(isMainThread());
 
-    RefPtr inputBuffer = m_inputBuffers[bufferIndex];
-    RefPtr outputBuffer = m_outputBuffers[bufferIndex];
+    uint64_t outputPeriod = period + m_outputLatencyPeriods;
+    size_t outputSlot = queueSlot(outputPeriod);
+    fireProcessEvent(m_queueInputs[queueSlot(period)].get(), m_queueOutputs[outputSlot].get(), playbackTime);
+    m_queueOutputPeriods[outputSlot] = outputPeriod;
+    m_queueConsumed.store(period + 1, std::memory_order_release);
+}
+
+void ScriptProcessorNode::fireProcessEvent(AudioBuffer* inputBuffer, AudioBuffer* outputBuffer, double playbackTime)
+{
+    ASSERT(isMainThread());
+
     ASSERT(outputBuffer);
     if (!outputBuffer)
         return;
@@ -244,10 +352,6 @@ void ScriptProcessorNode::fireProcessEvent(unsigned bufferIndex)
     Ref context = this->context();
     if (context->isStopped())
         return;
-
-    // Calculate playbackTime with the buffersize which needs to be processed each time when onaudioprocess is called.
-    // The outputBuffer being passed to JS will be played after exhausting previous outputBuffer by double-buffering.
-    double playbackTime = (context->currentSampleFrame() + m_bufferSize) / static_cast<double>(context->sampleRate());
 
     auto inputBufferForJS = createInputBufferForJS(inputBuffer);
     auto outputBufferForJS = createOutputBufferForJS(*outputBuffer);
