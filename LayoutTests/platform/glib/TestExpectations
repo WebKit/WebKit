@@ -5244,6 +5244,13 @@ webkit.org/b/327264 imported/w3c/web-platform-tests/css/css-view-transitions/nav
 # Spatial video support is not currently implemented
 media/modern-media-controls/spatial-video-support [ Skip ]
 
+# Gardening 2026-10-20
+webkit.org/b/309894 [ Release ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Timeout Crash ]
+webkit.org/b/320214 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Failure Timeout ]
+webkit.org/b/328192 [ Debug ] fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html [ ImageOnlyFailure Pass ]
+webkit.org/b/328194 inspector/timeline/timeline-event-EventDispatch.html [ Failure Pass Timeout ]
+webkit.org/b/328194 inspector/timeline/timeline-event-TimerRemove.html [ Failure Pass Timeout ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
