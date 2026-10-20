@@ -130,6 +130,8 @@ struct Backend {
     bool (*setBlendColor)(void*, const Color&) { nullptr };
     bool (*setColorMask)(void*, const ColorMask&) { nullptr };
     bool (*setClearColor)(void*, const Color&) { nullptr };
+    bool (*setClearDepth)(void*, float depth) { nullptr };
+    bool (*setClearStencil)(void*, int32_t value) { nullptr };
     bool (*clear)(void*, uint8_t bufferMask) { nullptr };
     bool (*draw)(void*, NativePrimitive, uint32_t first, uint32_t count, uint32_t instances) { nullptr };
     bool (*drawIndexed)(void*, NativePrimitive, IndexType, uint32_t count,
@@ -161,6 +163,8 @@ public:
     Result setBlendColor(const Color&);
     Result setColorMask(const ColorMask&);
     Result setClearColor(const Color&);
+    Result setClearDepth(float depth);
+    Result setClearStencil(int32_t value);
     Result clear(uint8_t bufferMask);
     Result drawArrays(Primitive, int32_t first, int32_t count);
     Result drawArraysInstanced(Primitive, int32_t first, int32_t count, int32_t instances);
