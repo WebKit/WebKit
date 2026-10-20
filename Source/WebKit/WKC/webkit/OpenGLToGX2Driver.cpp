@@ -40,12 +40,30 @@ Result Driver::setScissor(const Scissor& scissor)
 
 Result Driver::enable(Capability capability)
 {
-    return setCapability(capability, true);
+    switch (capability) {
+    case Capability::Blend:
+    case Capability::CullFace:
+    case Capability::DepthTest:
+    case Capability::ScissorTest:
+    case Capability::StencilTest:
+    case Capability::PolygonOffsetFill:
+        return setCapability(capability, true);
+    }
+    return Result::InvalidArgument;
 }
 
 Result Driver::disable(Capability capability)
 {
-    return setCapability(capability, false);
+    switch (capability) {
+    case Capability::Blend:
+    case Capability::CullFace:
+    case Capability::DepthTest:
+    case Capability::ScissorTest:
+    case Capability::StencilTest:
+    case Capability::PolygonOffsetFill:
+        return setCapability(capability, false);
+    }
+    return Result::InvalidArgument;
 }
 
 Result Driver::setCapability(Capability capability, bool enabled)
@@ -53,6 +71,122 @@ Result Driver::setCapability(Capability capability, bool enabled)
     if (!m_backend.setCapability)
         return Result::MissingBackend;
     return m_backend.setCapability(m_backend.context, capability, enabled)
+        ? Result::Ok : Result::Unsupported;
+}
+
+bool Driver::validBlendFactor(BlendFactor factor)
+{
+    switch (factor) {
+    case BlendFactor::Zero:
+    case BlendFactor::One:
+    case BlendFactor::SourceColor:
+    case BlendFactor::OneMinusSourceColor:
+    case BlendFactor::DestinationColor:
+    case BlendFactor::OneMinusDestinationColor:
+    case BlendFactor::SourceAlpha:
+    case BlendFactor::OneMinusSourceAlpha:
+    case BlendFactor::DestinationAlpha:
+    case BlendFactor::OneMinusDestinationAlpha:
+    case BlendFactor::ConstantColor:
+    case BlendFactor::OneMinusConstantColor:
+    case BlendFactor::ConstantAlpha:
+    case BlendFactor::OneMinusConstantAlpha:
+    case BlendFactor::SourceAlphaSaturate:
+        return true;
+    }
+    return false;
+}
+
+bool Driver::validBlendEquation(BlendEquation equation)
+{
+    switch (equation) {
+    case BlendEquation::Add:
+    case BlendEquation::Subtract:
+    case BlendEquation::ReverseSubtract:
+    case BlendEquation::Minimum:
+    case BlendEquation::Maximum:
+        return true;
+    }
+    return false;
+}
+
+bool Driver::validCompareFunction(CompareFunction function)
+{
+    switch (function) {
+    case CompareFunction::Never:
+    case CompareFunction::Less:
+    case CompareFunction::Equal:
+    case CompareFunction::LessEqual:
+    case CompareFunction::Greater:
+    case CompareFunction::NotEqual:
+    case CompareFunction::GreaterEqual:
+    case CompareFunction::Always:
+        return true;
+    }
+    return false;
+}
+
+Result Driver::setBlendFunction(BlendFactor sourceRGB, BlendFactor destinationRGB,
+    BlendFactor sourceAlpha, BlendFactor destinationAlpha)
+{
+    if (!validBlendFactor(sourceRGB) || !validBlendFactor(destinationRGB)
+        || !validBlendFactor(sourceAlpha) || !validBlendFactor(destinationAlpha))
+        return Result::InvalidArgument;
+    if (!m_backend.setBlendFunction)
+        return Result::MissingBackend;
+    return m_backend.setBlendFunction(m_backend.context, sourceRGB, destinationRGB,
+        sourceAlpha, destinationAlpha) ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setBlendEquation(BlendEquation rgb, BlendEquation alpha)
+{
+    if (!validBlendEquation(rgb) || !validBlendEquation(alpha))
+        return Result::InvalidArgument;
+    if (!m_backend.setBlendEquation)
+        return Result::MissingBackend;
+    return m_backend.setBlendEquation(m_backend.context, rgb, alpha)
+        ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setDepthFunction(CompareFunction function)
+{
+    if (!validCompareFunction(function))
+        return Result::InvalidArgument;
+    if (!m_backend.setDepthFunction)
+        return Result::MissingBackend;
+    return m_backend.setDepthFunction(m_backend.context, function)
+        ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setColorMask(const ColorMask& mask)
+{
+    if (!m_backend.setColorMask)
+        return Result::MissingBackend;
+    return m_backend.setColorMask(m_backend.context, mask)
+        ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::setClearColor(const Color& color)
+{
+    if (!(color.red >= 0.0f && color.red <= 1.0f)
+        || !(color.green >= 0.0f && color.green <= 1.0f)
+        || !(color.blue >= 0.0f && color.blue <= 1.0f)
+        || !(color.alpha >= 0.0f && color.alpha <= 1.0f))
+        return Result::InvalidArgument;
+    if (!m_backend.setClearColor)
+        return Result::MissingBackend;
+    return m_backend.setClearColor(m_backend.context, color)
+        ? Result::Ok : Result::Unsupported;
+}
+
+Result Driver::clear(uint8_t bufferMask)
+{
+    constexpr uint8_t validMask = ClearColorBuffer | ClearDepthBuffer | ClearStencilBuffer;
+    if (!bufferMask || (bufferMask & ~validMask))
+        return Result::InvalidArgument;
+    if (!m_backend.clear)
+        return Result::MissingBackend;
+    return m_backend.clear(m_backend.context, bufferMask)
         ? Result::Ok : Result::Unsupported;
 }
 
