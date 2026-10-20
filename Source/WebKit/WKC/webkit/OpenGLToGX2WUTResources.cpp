@@ -35,6 +35,7 @@ bool createBuffer(void* context, BufferName name, size_t size, BufferUsage)
         | GX2R_RESOURCE_BIND_INDEX_BUFFER
         | GX2R_RESOURCE_BIND_UNIFORM_BLOCK
         | GX2R_RESOURCE_USAGE_CPU_WRITE
+        | GX2R_RESOURCE_USAGE_CPU_READ
         | GX2R_RESOURCE_USAGE_GPU_READ);
     buffer->elemSize = 1;
     // GL permits a zero-byte data store. GX2R expects a real allocation, so
@@ -277,6 +278,11 @@ bool setAttribute(void* context, uint8_t attribute, const VertexAttribute& value
     WUTBufferResources::AttributeDescriptor descriptor;
     descriptor.format = format;
     descriptor.buffer = value.buffer;
+    descriptor.components = value.components;
+    descriptor.sourceType = value.type;
+    descriptor.normalized = value.normalized;
+    descriptor.stride = value.stride;
+    descriptor.offset = value.offset;
     descriptor.componentMask = value.components == 1 ? GX2_CHANNEL_MASK_R
         : value.components == 2 ? GX2_CHANNEL_MASK_RG
         : value.components == 3 ? GX2_CHANNEL_MASK_RGB : GX2_CHANNEL_MASK_RGBA;
