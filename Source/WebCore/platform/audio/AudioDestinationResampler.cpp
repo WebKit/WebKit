@@ -69,6 +69,10 @@ void AudioDestinationResampler::start(Function<void(Function<void()>&&)>&& dispa
         Locker locker { m_dispatchToRenderThreadLock };
         m_dispatchToRenderThread = WTF::move(dispatchToRenderThread);
     }
+    {
+        Locker locker { m_fifoLock };
+        m_fifo.reset();
+    }
     startRendering(WTF::move(completionHandler));
 }
 
@@ -77,6 +81,10 @@ void AudioDestinationResampler::stop(CompletionHandler<void(bool)>&& completionH
     ASSERT(isMainThread());
     LOG(Media, "AudioDestinationResampler::stop");
     stopRendering(WTF::move(completionHandler));
+    {
+        Locker locker { m_fifoLock };
+        m_fifo.reset();
+    }
     {
         Locker locker { m_dispatchToRenderThreadLock };
         m_dispatchToRenderThread = nullptr;
@@ -140,6 +148,8 @@ void AudioDestinationResampler::renderOnRenderingThreadIfPlaying(size_t framesTo
             callRenderCallback(m_renderBus, AudioUtilities::renderQuantumSize, m_outputTimestamp);
 
         Locker locker { m_fifoLock };
+        if (!m_isPlaying)
+            return;
         m_fifo.push(m_renderBus);
     }
 }
