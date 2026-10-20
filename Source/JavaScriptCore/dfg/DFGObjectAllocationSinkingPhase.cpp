@@ -735,18 +735,23 @@ private:
 
     void escapeAllocation(Node* identifier)
     {
-        Allocation& allocation = getAllocation(identifier);
-        if (allocation.isEscapedAllocation())
-            return;
+        Vector<Node*, 16> worklist;
+        worklist.append(identifier);
 
-        Allocation unescaped = WTF::move(allocation);
-        allocation = Allocation(unescaped.identifier(), Allocation::Kind::Escaped);
+        while (!worklist.isEmpty()) {
+            Allocation& allocation = getAllocation(worklist.takeLast());
+            if (allocation.isEscapedAllocation())
+                continue;
 
-        for (const auto& entry : unescaped.fields())
-            escapeAllocation(entry.value);
+            Allocation unescaped = WTF::move(allocation);
+            allocation = Allocation(unescaped.identifier(), Allocation::Kind::Escaped);
 
-        if (m_wantEscapees)
-            m_escapees.add(unescaped.identifier(), WTF::move(unescaped));
+            for (const auto& entry : unescaped.fields())
+                worklist.append(entry.value);
+
+            if (m_wantEscapees)
+                m_escapees.add(unescaped.identifier(), WTF::move(unescaped));
+        }
     }
 
     void prune()
