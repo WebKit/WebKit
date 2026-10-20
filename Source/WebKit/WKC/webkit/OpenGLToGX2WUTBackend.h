@@ -28,6 +28,14 @@ struct WUTBackendContext {
     bool cullEnabled { false };
     Face cullFace { Face::Back };
     Winding frontFace { Winding::CounterClockwise };
+    bool blendEnabled { false };
+    BlendFactor sourceRGB { BlendFactor::One };
+    BlendFactor destinationRGB { BlendFactor::Zero };
+    BlendFactor sourceAlpha { BlendFactor::One };
+    BlendFactor destinationAlpha { BlendFactor::Zero };
+    BlendEquation blendEquationRGB { BlendEquation::Add };
+    BlendEquation blendEquationAlpha { BlendEquation::Add };
+    ColorMask colorMask;
 };
 
 Backend makeWUTBackend(WUTBackendContext&);
