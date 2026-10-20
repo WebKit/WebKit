@@ -70,6 +70,7 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
     RetainPtr<QLItem> _item;
     RetainPtr<ASVThumbnailView> _thumbnailView;
     WeakObjCPtr<WKWebView> _webView;
+    BOOL _confirmationAlertPending;
 }
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView mimeType:(NSString *)mimeType
@@ -101,48 +102,86 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
         _data = WTF::move(dataCopy);
     }
 
+    if ([self _presentConfirmationAlertWithCompletionHandler:completionHandler])
+        return;
+
+    RELEASE_LOG(Process, "WKUSDPreviewView %p: no presenting view controller, deferring confirmation alert", self);
+    _confirmationAlertPending = YES;
+    completionHandler();
+}
+
+- (BOOL)_presentConfirmationAlertWithCompletionHandler:(void (^)(void))completionHandler
+{
+    RefPtr page = _webView.get()->_page;
+    RetainPtr presentingViewController = page ? page->uiClient().presentingViewController() : nil;
+    if (!presentingViewController)
+        return NO;
+
+    _confirmationAlertPending = NO;
+
     RetainPtr alert = WebKit::createUIAlertController(protect(WEB_UI_NSSTRING(@"View 3D Object?", "View 3D Object?")), protect(WEB_UI_NSSTRING(@"You can see a preview of this object before viewing in 3D.", "You can see a preview of this object before viewing in 3D.")));
 
     RetainPtr allowAction = [UIAlertAction actionWithTitle:protect(WEB_UI_NSSTRING_KEY(@"View 3D Object", @"View 3D Object (QuickLook Preview)", "Allow displaying QuickLook Preview of 3D object")).get() style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKUSDPreviewView>(self), completionHandler = makeBlockPtr(completionHandler)](UIAlertAction *) mutable {
-        RetainPtr strongSelf = weakSelf.get();
-        if (!strongSelf) {
+        [weakSelf.get() _showThumbnailView];
+        if (completionHandler)
             completionHandler();
-            return;
-        }
-
-        RetainPtr contentType = getUTIForUSDMIMEType(strongSelf->_mimeType.get());
-
-        strongSelf->_item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:strongSelf.get() contentType:contentType.get() previewTitle:strongSelf->_suggestedFilename.get()]);
-        [strongSelf->_item setUseLoadingTimeout:NO];
-
-        strongSelf->_thumbnailView = adoptNS([allocASVThumbnailViewInstance() init]);
-        [strongSelf->_thumbnailView setDelegate:strongSelf.get()];
-        [strongSelf setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-
-        [strongSelf setAutoresizesSubviews:YES];
-        [strongSelf setClipsToBounds:YES];
-        [strongSelf addSubview:strongSelf->_thumbnailView.get()];
-        [strongSelf _layoutThumbnailView];
-
-        auto screenBounds = strongSelf.get().window.windowScene.screen.bounds;
-        CGFloat maxDimension = CGFloatMin(screenBounds.size.width, screenBounds.size.height);
-        [strongSelf->_thumbnailView setMaxThumbnailSize:CGSizeMake(maxDimension, maxDimension)];
-
-        [strongSelf->_thumbnailView setThumbnailItem:strongSelf->_item.get()];
-
-        completionHandler();
     }];
 
     RetainPtr doNotAllowAction = [UIAlertAction actionWithTitle:protect(WEB_UI_NSSTRING_KEY(@"Cancel", @"Cancel (QuickLook Preview)", "Cancel displaying QuickLook Preview of 3D object")).get() style:UIAlertActionStyleCancel handler:[completionHandler = makeBlockPtr(completionHandler)](UIAlertAction *) {
-        completionHandler();
+        if (completionHandler)
+            completionHandler();
     }];
 
     [alert addAction:doNotAllowAction.get()];
     [alert addAction:allowAction.get()];
 
-    RefPtr page = _webView.get()->_page;
-    RetainPtr presentingViewController = page->uiClient().presentingViewController();
     [presentingViewController.get() presentViewController:alert.get() animated:YES completion:nil];
+    return YES;
+}
+
+- (void)_presentPendingConfirmationAlertIfPossible
+{
+    if (!_confirmationAlertPending || !self.window || self.isBackground)
+        return;
+
+    if ([self _presentConfirmationAlertWithCompletionHandler:nil])
+        RELEASE_LOG(Process, "WKUSDPreviewView %p: presented deferred confirmation alert", self);
+}
+
+- (void)didMoveToWindow
+{
+    [super didMoveToWindow];
+    [self _presentPendingConfirmationAlertIfPossible];
+}
+
+- (void)_applicationWillEnterForeground
+{
+    [super _applicationWillEnterForeground];
+    [self _presentPendingConfirmationAlertIfPossible];
+}
+
+- (void)_showThumbnailView
+{
+    RetainPtr contentType = getUTIForUSDMIMEType(_mimeType.get());
+
+    _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:contentType.get() previewTitle:_suggestedFilename.get()]);
+    [_item setUseLoadingTimeout:NO];
+
+    _thumbnailView = adoptNS([allocASVThumbnailViewInstance() init]);
+    [_thumbnailView setDelegate:self];
+    [self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+
+    [self setAutoresizesSubviews:YES];
+    [self setClipsToBounds:YES];
+    [self addSubview:_thumbnailView.get()];
+    [self _layoutThumbnailView];
+
+    UIScreen *screen = self.window.windowScene.screen;
+    CGRect screenBounds = screen ? screen.bounds : self.bounds;
+    CGFloat maxDimension = CGFloatMin(screenBounds.size.width, screenBounds.size.height);
+    [_thumbnailView setMaxThumbnailSize:CGSizeMake(maxDimension, maxDimension)];
+
+    [_thumbnailView setThumbnailItem:_item.get()];
 }
 
 - (void)_layoutThumbnailView
