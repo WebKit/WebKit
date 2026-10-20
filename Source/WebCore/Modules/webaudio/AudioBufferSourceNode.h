@@ -129,6 +129,8 @@ private:
     double m_grainOffset WTF_GUARDED_BY_LOCK(m_processLock) { 0 }; // in seconds
     double m_grainDuration WTF_GUARDED_BY_LOCK(m_processLock); // in seconds
     double m_wasGrainDurationGiven WTF_GUARDED_BY_LOCK(m_processLock) { false };
+    // Buffer samples produced toward start()'s duration. A negative pitch does not advance it.
+    double m_sourceFramesElapsed WTF_GUARDED_BY_LOCK(m_processLock) { 0 };
 
     // totalPitchRate() returns the instantaneous pitch rate (non-time preserving).
     // It incorporates the base pitch rate, any sample-rate conversion factor from the buffer.
