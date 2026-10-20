@@ -174,6 +174,7 @@ FrameDOMAgent::FrameDOMAgent(FrameAgentContext& context, InspectorOverlay& overl
     , m_overlay(overlay)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_destroyedNodesTimer(*this, &FrameDOMAgent::destroyedNodesTimerFired)
+    , m_focusNodeTimer(*this, &FrameDOMAgent::focusNode)
 {
 }
 
@@ -216,6 +217,7 @@ void FrameDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 
     m_inspectedNode = nullptr;
     m_nodeToFocus = nullptr;
+    m_focusNodeTimer.stop();
     m_mousedOverNode = nullptr;
 
     m_searchingForNode = false;
@@ -639,6 +641,12 @@ Inspector::CommandResult<Ref<Inspector::Protocol::DOM::Node>> FrameDOMAgent::get
 
     if (CheckedPtr cssAgent = Ref { m_instrumentingAgents.get() }->enabledFrameCSSAgent())
         cssAgent->didBindDocument();
+
+    // The frontend builds this frame's document tree from this reply, so a node chosen before the document
+    // was requested can only be pushed once the reply has been sent. A timer runs after the reply; pushing
+    // from inside this command would send setChildNodes and DOM.inspect before the frontend has a tree.
+    if (m_nodeToFocus)
+        m_focusNodeTimer.startOneShot(0_s);
 
     return root;
 }
@@ -1650,6 +1658,35 @@ Inspector::CommandResult<int> FrameDOMAgent::requestNode(const String& objectId)
     return nodeId;
 }
 
+Inspector::CommandResult<int> FrameDOMAgent::requestFrameOwner(const String& frameId)
+{
+    auto parsedFrameId = IdentifierRegistry::parseProtocolFrameId(frameId);
+    if (!parsedFrameId)
+        return makeUnexpected("Invalid frameId format"_s);
+
+    // Only direct children: every frame has its own FrameDOMAgent, and the frontend asks the target of the
+    // child's parent. Compare the FrameIdentifier only: the hosting process in a frame ID can be stale in a
+    // process that holds a RemoteFrame.
+    Ref frame = m_inspectedFrame;
+    for (RefPtr child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (child->frameID() != parsedFrameId->second)
+            continue;
+
+        RefPtr ownerElement = child->ownerElement();
+        if (!ownerElement)
+            return makeUnexpected("Missing owner element for given frameId"_s);
+
+        Inspector::Protocol::ErrorString errorString;
+        auto nodeId = pushNodePathToFrontend(errorString, ownerElement.get());
+        if (!nodeId)
+            return makeUnexpected(errorString);
+
+        return nodeId;
+    }
+
+    return makeUnexpected("Missing child frame for given frameId"_s);
+}
+
 Inspector::CommandResult<void> FrameDOMAgent::setInspectedNode(int nodeId)
 {
     Inspector::Protocol::ErrorString errorString;
@@ -1981,18 +2018,18 @@ void FrameDOMAgent::focusNode()
     if (!m_documentRequested)
         return;
 
-    ASSERT(m_nodeToFocus);
+    if (!m_document || !m_nodeToId.contains(*m_document))
+        return;
+
     auto node = std::exchange(m_nodeToFocus, nullptr);
-    RefPtr frame = node->document().frame();
-    if (!frame)
+    if (!node)
         return;
 
-    auto& globalObject = mainWorldGlobalObject(*frame);
-    auto injectedScript = m_injectedScriptManager->injectedScriptFor(&globalObject);
-    if (injectedScript.hasNoValue())
-        return;
-
-    injectedScript.inspectObject(InspectorDOMAgent::nodeAsScriptValue(globalObject, node.get()));
+    // Frame targets have no Inspector domain, so Inspector.inspect cannot reach the frontend from here.
+    // DOM.inspect is routed by the frontend to this frame target's tree.
+    Inspector::Protocol::ErrorString ignored;
+    if (auto nodeId = pushNodePathToFrontend(ignored, node.get()))
+        m_frontendDispatcher->inspect(nodeId);
 }
 
 // MARK: - Layout Overlays

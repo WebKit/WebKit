@@ -155,6 +155,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setInspectModeEnabled(bool, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
 #endif
     Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestNode(const Inspector::Protocol::Runtime::RemoteObjectId&);
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestFrameOwner(const Inspector::Protocol::Network::FrameId&);
     Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> pushNodeByPathToFrontend(const String& path);
     Inspector::Protocol::ErrorStringOr<void> hideHighlight();
     Inspector::Protocol::ErrorStringOr<void> highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates);

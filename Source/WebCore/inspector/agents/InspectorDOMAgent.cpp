@@ -1907,6 +1907,34 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> InspectorDO
     return nodeId;
 }
 
+Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> InspectorDOMAgent::requestFrameOwner(const Inspector::Protocol::Network::FrameId& frameId)
+{
+    auto parsedFrameId = IdentifierRegistry::parseProtocolFrameId(frameId);
+    if (!parsedFrameId)
+        return makeUnexpected("Invalid frameId format"_s);
+
+    // Compare the FrameIdentifier only: the hosting process in a frame ID can be stale in a process that
+    // holds a RemoteFrame. Do not look below a RemoteFrame: the frames there are reached through their own
+    // FrameDOMAgent, and an owner element in their documents is not part of this agent's tree.
+    for (RefPtr frame = &m_inspectedPage->mainFrame(); frame; frame = is<LocalFrame>(*frame) ? frame->tree().traverseNext() : frame->tree().traverseNextSkippingChildren()) {
+        if (frame->frameID() != parsedFrameId->second)
+            continue;
+
+        RefPtr ownerElement = frame->ownerElement();
+        if (!ownerElement)
+            return makeUnexpected("Missing owner element for given frameId"_s);
+
+        Inspector::Protocol::ErrorString errorString;
+        auto nodeId = pushNodePathToFrontend(errorString, ownerElement.get());
+        if (!nodeId)
+            return makeUnexpected("Unable to push the owner element for given frameId"_s);
+
+        return nodeId;
+    }
+
+    return makeUnexpected("Missing frame for given frameId"_s);
+}
+
 String InspectorDOMAgent::documentURLString(Document* document)
 {
     if (!document || document->url().isNull())

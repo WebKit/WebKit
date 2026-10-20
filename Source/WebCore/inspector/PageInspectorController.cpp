@@ -36,7 +36,10 @@
 #include "CommonVM.h"
 #include "DOMWrapperWorld.h"
 #include "DebuggerSuspensionController.h"
+#include "Document.h"
+#include "Frame.h"
 #include "FrameInspectorController.h"
+#include "FrameTree.h"
 #include "GraphicsContext.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorBackendClient.h"
@@ -56,6 +59,7 @@
 #include "JSExecState.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "NodeDocument.h"
 #include "Page.h"
 #include "PageAuditAgent.h"
 #include "PageCanvasAgent.h"
@@ -413,6 +417,17 @@ bool PageInspectorController::shouldShowOverlay() const
     return m_overlay->shouldShowOverlay();
 }
 
+// The page DOM agent covers the main frame's document and the documents of the frames below it that live in
+// this process. A frame with a RemoteFrame ancestor is only reachable through its own FrameDOMAgent.
+static bool isCoveredByPageDOMAgent(const LocalFrame& frame)
+{
+    for (RefPtr<const Frame> ancestor = &frame; ancestor; ancestor = ancestor->tree().parent()) {
+        if (!is<LocalFrame>(*ancestor))
+            return false;
+    }
+    return true;
+}
+
 void PageInspectorController::inspect(Node* node)
 {
     if (!enabled())
@@ -420,6 +435,13 @@ void PageInspectorController::inspect(Node* node)
 
     if (!hasRemoteFrontend())
         show();
+
+    if (node) {
+        if (RefPtr frame = node->document().frame(); frame && !isCoveredByPageDOMAgent(*frame)) {
+            frame->inspectorController().inspect(*node);
+            return;
+        }
+    }
 
     CheckedRef { ensureDOMAgent() }->inspect(node);
 }

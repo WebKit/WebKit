@@ -52,6 +52,8 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._frameTargetDOMData = new Map;
         this._unsplicedFrameDocuments = [];
         this._frameOwnerElementsByFrameKey = new Multimap;
+        this._pendingInspectedFrameNode = null;
+        this._frameOwnerRequestedDocuments = new WeakSet;
 
         this._activeSearch = null;
 
@@ -233,12 +235,157 @@ WI.DOMManager = class DOMManager extends WI.Object
         }
     }
 
-    _isInPageTree(node)
+    _rootNodeOf(node)
     {
         let root = node;
         while (root.parentNode)
             root = root.parentNode;
-        return !!this._document && root === this._document;
+        return root;
+    }
+
+    _isInPageTree(node)
+    {
+        return !!this._document && this._rootNodeOf(node) === this._document;
+    }
+
+    // A node inspected in a frame target can arrive before its frame document is spliced into the page tree.
+    // Hold it until the owner elements above it have been requested, hop by hop, from the targets that
+    // hold them; each owner that arrives splices the document below it and continues from there.
+    _revealPendingInspectedFrameNode()
+    {
+        let node = this._pendingInspectedFrameNode;
+        if (!node)
+            return;
+
+        if (node.destroyed) {
+            this._pendingInspectedFrameNode = null;
+            return;
+        }
+
+        if (!this._document) {
+            this.requestDocument((document) => {
+                // Without a page document there is no tree to connect the node to; reveal it as is.
+                if (document)
+                    this._revealPendingInspectedFrameNode();
+                else
+                    this._dispatchPendingInspectedFrameNode();
+            });
+            return;
+        }
+
+        let root = this._rootNodeOf(node);
+        if (root === this._document)
+            this._dispatchPendingInspectedFrameNode();
+        else
+            this._requestFrameOwner(root);
+    }
+
+    _dispatchPendingInspectedFrameNode()
+    {
+        let node = this._pendingInspectedFrameNode;
+        this._pendingInspectedFrameNode = null;
+        if (node && !node.destroyed)
+            this.dispatchEventToListeners(WI.DOMManager.Event.DOMNodeWasInspected, {node});
+    }
+
+    _requestFrameOwner(frameDocument)
+    {
+        if (this._frameOwnerRequestedDocuments.has(frameDocument))
+            return;
+        this._frameOwnerRequestedDocuments.add(frameDocument);
+
+        // Without the owner the node cannot be connected to the page tree; reveal it as is.
+        let inspectedNode = this._pendingInspectedFrameNode;
+        let revealAsIs = () => {
+            if (this._pendingInspectedFrameNode === inspectedNode)
+                this._dispatchPendingInspectedFrameNode();
+        };
+
+        let frameIdentifier = frameDocument.frameIdentifier;
+        if (!frameIdentifier) {
+            revealAsIs();
+            return;
+        }
+
+        // The owner's events arrive before this reply, so a splice below it has already happened.
+        let didReceiveOwner = (target, ownerNodeId) => {
+            if (this._pendingInspectedFrameNode !== inspectedNode)
+                return;
+
+            // An owner that is already in the page tree would have connected the node when it arrived, so the
+            // node is still pending only because the splice did not happen.
+            let owner = target instanceof WI.FrameTarget ? this.nodeForIdInFrameTarget(ownerNodeId, target) : this.nodeForId(ownerNodeId);
+            if (!owner || this._isInPageTree(owner)) {
+                revealAsIs();
+                return;
+            }
+
+            // The owner sits in another frame document that is not spliced yet, so that document needs its owner next.
+            let ownerRoot = this._rootNodeOf(owner);
+            if (this._frameOwnerRequestedDocuments.has(ownerRoot)) {
+                revealAsIs();
+                return;
+            }
+            this._requestFrameOwner(ownerRoot);
+        };
+
+        // The page target covers the owners of every frame whose parent lives in the main frame's process.
+        // It fails for the others, which only the parent frame's own target can push.
+        this._requestFrameOwnerFromTarget(WI.mainTarget, frameIdentifier, (error, ownerNodeId) => {
+            if (!error) {
+                didReceiveOwner(WI.mainTarget, ownerNodeId);
+                return;
+            }
+
+            this._requestFrameOwnerFromFrameTargets(frameIdentifier).then((result) => {
+                if (result)
+                    didReceiveOwner(result.target, result.ownerNodeId);
+                else
+                    revealAsIs();
+            });
+        });
+    }
+
+    async _requestFrameOwnerFromFrameTargets(frameIdentifier)
+    {
+        let mainFrameIdentifier = WI.networkManager.mainFrame?.id;
+        let targets = Array.from(this._frameTargetDOMData.keys()).filter((target) => {
+            if (target.isProvisional || !target.hasCommand("DOM.requestFrameOwner"))
+                return false;
+            return !mainFrameIdentifier || target.executionContext?.frameId !== mainFrameIdentifier;
+        });
+        if (!targets.length)
+            return null;
+
+        let targetRemovedPromises = new Map;
+        for (let target of targets)
+            targetRemovedPromises.set(target, Promise.withResolvers());
+
+        let handleTargetRemoved = (event) => {
+            targetRemovedPromises.get(event.data.target)?.resolve(null);
+        };
+
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetRemoved, this);
+
+        try {
+            let results = await Promise.all(targets.map(async (target) => {
+                let result = await Promise.race([target.DOMAgent.requestFrameOwner.invoke({frameId: frameIdentifier}).catch(() => null), targetRemovedPromises.get(target).promise]);
+                return result ? {target, ownerNodeId: result.nodeId} : null;
+            }));
+            return results.find(Boolean) || null;
+        } finally {
+            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetRemoved, this);
+        }
+    }
+
+    _requestFrameOwnerFromTarget(target, frameIdentifier, callback)
+    {
+        // A backend with frame targets can predate DOM.requestFrameOwner.
+        if (!target.hasCommand("DOM.requestFrameOwner")) {
+            callback("DOM.requestFrameOwner is not supported");
+            return;
+        }
+        target.DOMAgent.requestFrameOwner(frameIdentifier, callback);
     }
 
     _trySpliceUnsplicedFrameDocuments()
@@ -255,6 +402,8 @@ WI.DOMManager = class DOMManager extends WI.Object
                 return false;
             });
         }
+
+        this._revealPendingInspectedFrameNode();
     }
 
     _handleTargetRemoved(event)
@@ -1080,6 +1229,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     _documentUpdated()
     {
+        this._pendingInspectedFrameNode = null;
         this._setDocument(null);
     }
 
@@ -1266,10 +1416,17 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     inspectElementInFrameTarget(target, nodeId)
     {
+        // Same as inspectNodeObject(): don't let the Elements tab's restore of the last selected node
+        // replace this selection once the page tree finishes loading.
+        this._restoreSelectedNodeIsAllowed = false;
+
         let node = this.nodeForIdInFrameTarget(nodeId, target);
         console.assert(node, "Missing node for inspected frame target node id", nodeId);
-        if (node)
-            this.dispatchEventToListeners(WI.DOMManager.Event.DOMNodeWasInspected, {node, initiatorHint: WI.TabBrowser.TabNavigationInitiator.Inspect});
+        if (node) {
+            this._pendingInspectedFrameNode = node;
+            this._frameOwnerRequestedDocuments = new WeakSet;
+            this._revealPendingInspectedFrameNode();
+        }
 
         this._didInspectNodeInTarget(target);
     }

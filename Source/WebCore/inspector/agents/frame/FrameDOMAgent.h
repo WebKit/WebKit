@@ -106,6 +106,7 @@ public:
     Inspector::CommandResult<Ref<JSON::ArrayOf<int>>> getSearchResults(const String& searchId, int fromIndex, int toIndex) override;
     Inspector::CommandResult<void> discardSearchResults(const String& searchId) override;
     Inspector::CommandResult<int> requestNode(const String& objectId) override;
+    Inspector::CommandResult<int> requestFrameOwner(const String& frameId) override;
 #if PLATFORM(IOS_FAMILY)
     Inspector::CommandResult<void> setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig) override;
 #else
@@ -159,6 +160,7 @@ public:
     void flexibleBoxRendererBeganLayout(const RenderObject&);
     void flexibleBoxRendererWrappedToNextLine(const RenderObject&, size_t lineStartItemIndex);
     bool handleMousePress();
+    void inspect(Node&);
     bool handleTouchEvent(Node&);
     void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>);
     void mouseDidLeaveFrame();
@@ -208,7 +210,6 @@ private:
 
     void setSearchingForNode(Inspector::Protocol::ErrorString&, bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, bool showRulers);
     void highlightMousedOverNode();
-    void inspect(Node&);
     void focusNode();
 
     InspectorOverlay& overlay() const { return m_overlay.get(); }
@@ -273,6 +274,7 @@ private:
     Vector<Inspector::Protocol::DOM::NodeId> m_destroyedDetachedNodeIdentifiers;
     Vector<std::pair<Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOM::NodeId>> m_destroyedAttachedNodeIdentifiers;
     Timer m_destroyedNodesTimer;
+    Timer m_focusNodeTimer;
 
     using SearchResults = HashMap<String, Vector<RefPtr<Node>>>;
     SearchResults m_searchResults;

@@ -564,6 +564,17 @@
             ]
         },
         {
+            "name": "requestFrameOwner",
+            "description": "Requests that the frame owner element (such as <code>iframe</code>) of a child frame is sent to the caller. The child frame may be hosted by another process. All nodes that form the path from the owner element to the root are also sent to the client as a series of <code>setChildNodes</code> notifications.",
+            "targetTypes": ["frame", "page"],
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of a frame whose owner element is in the document tree of this target." }
+            ],
+            "returns": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "Node id for the frame owner element." }
+            ]
+        },
+        {
             "name": "setInspectModeEnabled",
             "description": "Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspect' command upon element selection.",
             "condition": "defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY",
