@@ -6,6 +6,7 @@
 #include <gx2/registers.h>
 
 #include <cstdint>
+#include <cmath>
 
 namespace WKC {
 namespace GLGX2 {
@@ -61,6 +62,30 @@ bool applyCullState(WUTBackendContext& state)
     GX2SetCullOnlyControl(state.frontFace == Winding::Clockwise
         ? GX2_FRONT_FACE_CW : GX2_FRONT_FACE_CCW, cullFront, cullBack);
     return true;
+}
+
+bool applyPolygonOffsetState(WUTBackendContext& state)
+{
+    const BOOL enabled = state.polygonOffsetEnabled ? TRUE : FALSE;
+    // GL's factor is the slope-scaled term and units is the constant depth
+    // offset. GX2 exposes these as front/back scale and offset respectively.
+    GX2SetPolygonOffset(state.polygonOffsetUnits, state.polygonOffsetFactor,
+        state.polygonOffsetUnits, state.polygonOffsetFactor, 0.0f);
+    GX2SetPolygonControl(state.frontFace == Winding::Clockwise
+        ? GX2_FRONT_FACE_CW : GX2_FRONT_FACE_CCW,
+        GX2_POLYGON_MODE_TRIANGLE, GX2_POLYGON_MODE_TRIANGLE,
+        enabled, enabled, enabled);
+    return true;
+}
+
+bool setPolygonOffset(void* context, float factor, float units)
+{
+    if (!std::isfinite(factor) || !std::isfinite(units))
+        return false;
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.polygonOffsetFactor = factor;
+    state.polygonOffsetUnits = units;
+    return applyPolygonOffsetState(state);
 }
 
 bool translateBlendFactor(BlendFactor factor, GX2BlendMode& output)
@@ -281,6 +306,9 @@ bool setCapability(void* context, Capability capability, bool enabled)
     case Capability::CullFace:
         state.cullEnabled = enabled;
         return applyCullState(state);
+    case Capability::PolygonOffsetFill:
+        state.polygonOffsetEnabled = enabled;
+        return applyPolygonOffsetState(state);
     case Capability::StencilTest:
         state.stencilEnabled = enabled;
         return applyStencilState(state);
@@ -440,6 +468,7 @@ Backend makeWUTBackend(WUTBackendContext& context)
     backend.setScissor = setScissor;
     backend.setCapability = setCapability;
     backend.setDepthRange = setDepthRange;
+    backend.setPolygonOffset = setPolygonOffset;
     backend.setBlendFunction = setBlendFunction;
     backend.setBlendEquation = setBlendEquation;
     backend.setBlendColor = setBlendColor;
