@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +25,20 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <CoreFoundation/CFBase.h>
 
-#include <stdint.h>
+// A struct this module defines, with a field of a struct that the CoreFoundation module defines without a name.
+struct HeapWalkModuleStruct {
+    CFRange range;
+    long value;
+};
 
-namespace JSCToolsTest {
+#ifdef __cplusplus
+// A C++ class, which Swift's C++ interoperability describes in its own object's debug info when Swift uses it.
+class HeapWalkModuleClass {
+public:
+    long rangeLength() const { return range.length; }
 
-void testExportsTrie();
-
-// Feeds mutated and random tries to the decoder. A trie out of a corpse is
-// untrusted, and the decoder promises to bound its work on any input, which only
-// a run over inputs nobody wrote can really check.
-void fuzzExportsTrie(uint64_t seed, unsigned iterations);
-
-} // namespace JSCToolsTest
-
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+    CFRange range { 0, 4 };
+};
+#endif
