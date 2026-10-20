@@ -311,11 +311,14 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncResize, (JSGlobalObject* globalObje
         size_t oldByteLength = thisObject->impl()->byteLength();
         if (newByteLength < oldByteLength)
             return throwVMRangeError(globalObject, scope, "Cannot shrink WebAssembly memory"_s);
-        if (newByteLength % PageCount::pageSize)
-            return throwVMRangeError(globalObject, scope, makeString("WebAssembly memory cannot be resized to new byte length "_s, newByteLength, " because it is not a multiple of "_s, PageCount::pageSize));
+        // A memory grows by whole pages of its own size, which need not be the default one.
+        const uint8_t log2PageSize = jsMemory->memory().log2PageSize();
+        const uint64_t memoryPageSize = 1ull << log2PageSize;
+        if (newByteLength % memoryPageSize)
+            return throwVMRangeError(globalObject, scope, makeString("WebAssembly memory cannot be resized to new byte length "_s, newByteLength, " because it is not a multiple of "_s, memoryPageSize));
         size_t delta = newByteLength - oldByteLength;
         if (delta) {
-            auto result = jsMemory->memory().grow(vm, PageCount::fromBytesUnchecked(delta));
+            auto result = jsMemory->memory().grow(vm, PageCount::fromBytesUnchecked(delta, log2PageSize));
             if (!result)
                 return throwVMRangeError(globalObject, scope, makeString("ArrayBuffer resize failed with new byte length "_s, newByteLength));
         }
