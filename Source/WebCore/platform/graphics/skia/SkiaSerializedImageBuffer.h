@@ -27,7 +27,9 @@
 
 #if USE(SKIA)
 #include "ImageBuffer.h"
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 class GLFence;
@@ -50,6 +52,7 @@ private:
     ColorSpace m_colorSpace { ColorSpace::SRGB() };
     ImageBufferFormat m_bufferFormat;
     RefPtr<NativeImage> m_image;
+    ThreadSafeWeakPtr<RunLoop> m_runLoop;
     std::unique_ptr<GLFence> m_fence;
     size_t m_memoryCost { 0 };
 };

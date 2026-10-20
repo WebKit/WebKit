@@ -52,6 +52,7 @@ SkiaSerializedImageBuffer::SkiaSerializedImageBuffer(ImageBuffer& imageBuffer)
     // new ImageBuffer to draw the image snapshot into.
     imageBuffer.flushDrawingContext();
     m_image = imageBuffer.createNativeImageReference();
+    m_runLoop = RunLoop::currentSingleton();
     m_logicalSize = imageBuffer.logicalSize();
     m_resolutionScale = imageBuffer.resolutionScale();
     m_colorSpace = imageBuffer.colorSpace();
@@ -59,7 +60,19 @@ SkiaSerializedImageBuffer::SkiaSerializedImageBuffer(ImageBuffer& imageBuffer)
     m_fence = GLFence::create(PlatformDisplay::sharedDisplay().glDisplay());
 }
 
-SkiaSerializedImageBuffer::~SkiaSerializedImageBuffer() = default;
+SkiaSerializedImageBuffer::~SkiaSerializedImageBuffer()
+{
+    // The snapshot holds the last reference to a texture of this thread's GrContext once the source
+    // ImageBuffer is gone, so it has to be released here too: Skia's resource cache is not thread safe.
+    if (!m_image)
+        return;
+
+    if (auto runLoop = m_runLoop.get(); runLoop && runLoop.get() != &RunLoop::currentSingleton()) {
+        runLoop->dispatch([image = WTF::move(m_image)] mutable {
+            image = nullptr;
+        });
+    }
+}
 
 RefPtr<ImageBuffer> SkiaSerializedImageBuffer::sinkIntoImageBuffer()
 {
