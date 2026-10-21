@@ -1325,30 +1325,25 @@ static void testWebKitInputMethodContextCursorArea(InputMethodTest* test, gconst
     test->loadHtml(testHTML, nullptr);
     test->waitUntilLoadFinished();
 
+    // Use a font small enough that one character moves the caret by less than 10 pixels.
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('editable').style.font = '8px monospace'", nullptr);
     test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->waitForCursorAreaCount(1, 1000);
+    auto previousArea = test->cursorArea();
+    g_assert_cmpint(previousArea.width, >, 0);
+    g_assert_cmpint(previousArea.height, >, 0);
 
-    // One character moves the caret by less than the 10px threshold in notifyCursorRect, so type
-    // enough of them to be sure a notification is sent whatever the caret did on focus.
-    auto areaCountBeforeTyping = test->cursorAreaCount();
-    test->keyStrokeAndWaitForEvents(KEY(a), 3);
-    test->m_events.clear();
-    test->keyStrokeAndWaitForEvents(KEY(b), 3);
-    test->m_events.clear();
-    test->waitForCursorAreaCount(areaCountBeforeTyping + 1);
-    auto firstArea = test->cursorArea();
-    g_assert_cmpint(firstArea.width, >, 0);
-    g_assert_cmpint(firstArea.height, >, 0);
-    test->m_events.clear();
-
-    auto areaCountBeforeMoving = test->cursorAreaCount();
-    test->keyStrokeAndWaitForEvents(KEY(c), 3);
-    test->m_events.clear();
-    test->keyStrokeAndWaitForEvents(KEY(d), 3);
-    test->m_events.clear();
-    test->keyStrokeAndWaitForEvents(KEY(e), 3);
-    test->m_events.clear();
-    test->waitForCursorAreaCount(areaCountBeforeMoving + 1);
-    g_assert_cmpint(test->cursorArea().x, >, firstArea.x);
+    // Every caret move must be reported, however small.
+    for (unsigned key : { KEY(a), KEY(b), KEY(c) }) {
+        auto areaCountBeforeTyping = test->cursorAreaCount();
+        test->keyStrokeAndWaitForEvents(key, 3);
+        test->m_events.clear();
+        test->waitForCursorAreaCount(areaCountBeforeTyping + 1, 1000);
+        auto area = test->cursorArea();
+        g_assert_cmpint(area.x, >, previousArea.x);
+        g_assert_cmpint(area.x - previousArea.x, <, 10);
+        previousArea = area;
+    }
 
     // Focusing the same field again must send the cursor area and the surrounding text again,
     // although neither has changed.
