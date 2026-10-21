@@ -2089,6 +2089,7 @@ public:
 
     WEBCORE_EXPORT Editor& editor();
     WEBCORE_EXPORT const Editor& editor() const;
+    Editor* editorIfExists() { return m_editor.get(); }
     FrameSelection& selection() { return m_selection; }
     const FrameSelection& selection() const { return m_selection; }
 

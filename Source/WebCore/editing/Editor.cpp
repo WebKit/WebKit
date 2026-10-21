@@ -1421,6 +1421,7 @@ void Editor::clear()
     m_oldSelectionForEditorUIUpdate = { };
     m_editorUIUpdateTimer.stop();
     m_alternativeTextController->stopAlternativeTextUITimer();
+    m_matchFinder = nullptr;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
     m_telephoneNumberDetectionUpdateTimer.stop();
