@@ -410,11 +410,11 @@ public:
 
     GCGLint getTexParameteri(GCGLenum target, GCGLenum pname) override;
 
-    void getUniformfv(PlatformGLObject program, GCGLint location, std::span<GCGLfloat> value) override { notImplemented(); }
+    void getUniformfv(PlatformGLObject program, GCGLint location, std::span<GCGLfloat> value) override;
 
-    void getUniformiv(PlatformGLObject program, GCGLint location, std::span<GCGLint> value) override { notImplemented(); }
+    void getUniformiv(PlatformGLObject program, GCGLint location, std::span<GCGLint> value) override;
 
-    void getUniformuiv(PlatformGLObject program, GCGLint location, std::span<GCGLuint> value) override { notImplemented(); }
+    void getUniformuiv(PlatformGLObject program, GCGLint location, std::span<GCGLuint> value) override;
 
     GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) override;
 
@@ -909,6 +909,8 @@ private:
         const GX2UniformVar* pixelVar { nullptr };
         const GX2SamplerVar* vertexSamplerVar { nullptr };
         const GX2SamplerVar* pixelSamplerVar { nullptr };
+        std::vector<uint8_t> value;
+        bool valueSet { false };
         uint32_t arrayElement { 0 };
     };
     struct UniformRecord {
@@ -1177,6 +1179,7 @@ bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
             uint8_t* destination = output.data() + (y * w + x) * 4;
             switch (format) {
             case GL_ALPHA_VALUE:
+                destination[0] = destination[1] = destination[2] = 255;
                 destination[3] = source[0];
                 break;
             case GL_LUMINANCE_VALUE:
@@ -1605,9 +1608,10 @@ bool GraphicsContextGLWKC::setUniformData(GCGLint loc,const void* values,size_t 
     }
     const auto* data = static_cast<const uint8_t*>(values);
     const bool samplerUniform = uniform.type == GL_SAMPLER_2D_VALUE || uniform.type == GL_SAMPLER_CUBE_VALUE;
+    const size_t scalarBytes = ints ? sizeof(int32_t) : sizeof(float);
     for (uint32_t i = 0; i < count; ++i) {
         const size_t element = l->second.elementIndex + i;
-        const void* elementData = data + static_cast<size_t>(i) * components * (ints ? sizeof(int32_t) : sizeof(float));
+        const void* elementData = data + static_cast<size_t>(i) * components * scalarBytes;
         if (samplerUniform) {
             const int32_t unit = *static_cast<const int32_t*>(elementData);
             if (unit < 0 || unit >= static_cast<int32_t>(m_boundTextures2D.size())) {
@@ -1617,12 +1621,18 @@ bool GraphicsContextGLWKC::setUniformData(GCGLint loc,const void* values,size_t 
             if (element >= uniform.samplerUnits.size())
                 uniform.samplerUnits.resize(uniform.elements.size(), 0);
             uniform.samplerUnits[element] = unit;
+            uniform.elements[element].value.assign(data + static_cast<size_t>(i) * components * scalarBytes,
+                data + static_cast<size_t>(i + 1) * components * scalarBytes);
+            uniform.elements[element].valueSet = true;
             continue;
         }
         if (!uploadUniformElement(uniform.elements[element], uniform.type, elementData, ints)) {
             addError(GL_INVALID_OPERATION_VALUE);
             return false;
         }
+        uniform.elements[element].value.assign(data + static_cast<size_t>(i) * components * scalarBytes,
+            data + static_cast<size_t>(i + 1) * components * scalarBytes);
+        uniform.elements[element].valueSet = true;
     }
     if (samplerUniform && !applyProgramSamplers(p->second)) {
         addError(GL_INVALID_OPERATION_VALUE);
@@ -2268,6 +2278,116 @@ GCGLint GraphicsContextGLWKC::getShaderi(PlatformGLObject n,GCGLenum what)
 }
 CString GraphicsContextGLWKC::getShaderInfoLog(PlatformGLObject n)
 {auto p=m_shaders.find(n);if(p==m_shaders.end()){addError(GL_INVALID_VALUE_VALUE);return CString();}return CString(p->second.log.c_str());}
+void GraphicsContextGLWKC::getUniformfv(PlatformGLObject programName, GCGLint location,
+    std::span<GCGLfloat> output)
+{
+    std::fill(output.begin(), output.end(), 0.0f);
+    auto program = m_programs.find(programName);
+    if (program == m_programs.end() || !program->second.linked) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    auto found = program->second.uniformLocations.find(location);
+    if (found == program->second.uniformLocations.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    const auto& uniform = program->second.uniforms[found->second.uniformIndex];
+    const auto& binding = uniform.elements[found->second.elementIndex];
+    if (!binding.valueSet)
+        return;
+    const size_t count = std::min(output.size(), static_cast<size_t>(uniformComponents(uniform.type)));
+    const bool integerType = uniform.type == GL_INT_VALUE || uniform.type == GL_BOOL_VALUE
+        || uniform.type == GL_INT_VEC2_VALUE || uniform.type == GL_INT_VEC3_VALUE || uniform.type == GL_INT_VEC4_VALUE
+        || uniform.type == GL_BOOL_VEC2_VALUE || uniform.type == GL_BOOL_VEC3_VALUE || uniform.type == GL_BOOL_VEC4_VALUE
+        || uniform.type == GL_SAMPLER_2D_VALUE || uniform.type == GL_SAMPLER_CUBE_VALUE;
+    for (size_t i = 0; i < count; ++i) {
+        if (integerType) {
+            if ((i + 1) * sizeof(int32_t) > binding.value.size()) break;
+            int32_t value;
+            std::memcpy(&value, binding.value.data() + i * sizeof(value), sizeof(value));
+            output[i] = static_cast<GCGLfloat>(value);
+        } else {
+            if ((i + 1) * sizeof(GCGLfloat) > binding.value.size()) break;
+            std::memcpy(&output[i], binding.value.data() + i * sizeof(GCGLfloat), sizeof(GCGLfloat));
+        }
+    }
+}
+
+void GraphicsContextGLWKC::getUniformiv(PlatformGLObject programName, GCGLint location,
+    std::span<GCGLint> output)
+{
+    std::fill(output.begin(), output.end(), 0);
+    auto program = m_programs.find(programName);
+    if (program == m_programs.end() || !program->second.linked) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    auto found = program->second.uniformLocations.find(location);
+    if (found == program->second.uniformLocations.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    const auto& uniform = program->second.uniforms[found->second.uniformIndex];
+    const auto& binding = uniform.elements[found->second.elementIndex];
+    if (!binding.valueSet)
+        return;
+    const size_t count = std::min(output.size(), static_cast<size_t>(uniformComponents(uniform.type)));
+    const bool integerType = uniform.type == GL_INT_VALUE || uniform.type == GL_BOOL_VALUE
+        || uniform.type == GL_INT_VEC2_VALUE || uniform.type == GL_INT_VEC3_VALUE || uniform.type == GL_INT_VEC4_VALUE
+        || uniform.type == GL_BOOL_VEC2_VALUE || uniform.type == GL_BOOL_VEC3_VALUE || uniform.type == GL_BOOL_VEC4_VALUE
+        || uniform.type == GL_SAMPLER_2D_VALUE || uniform.type == GL_SAMPLER_CUBE_VALUE;
+    for (size_t i = 0; i < count; ++i) {
+        if (integerType) {
+            if ((i + 1) * sizeof(int32_t) > binding.value.size()) break;
+            std::memcpy(&output[i], binding.value.data() + i * sizeof(int32_t), sizeof(int32_t));
+        } else {
+            GCGLfloat value = 0;
+            if ((i + 1) * sizeof(value) > binding.value.size()) break;
+            std::memcpy(&value, binding.value.data() + i * sizeof(value), sizeof(value));
+            output[i] = static_cast<GCGLint>(value);
+        }
+    }
+}
+
+void GraphicsContextGLWKC::getUniformuiv(PlatformGLObject programName, GCGLint location,
+    std::span<GCGLuint> output)
+{
+    std::fill(output.begin(), output.end(), 0);
+    auto program = m_programs.find(programName);
+    if (program == m_programs.end() || !program->second.linked) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    auto found = program->second.uniformLocations.find(location);
+    if (found == program->second.uniformLocations.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    const auto& uniform = program->second.uniforms[found->second.uniformIndex];
+    const auto& binding = uniform.elements[found->second.elementIndex];
+    if (!binding.valueSet)
+        return;
+    const size_t count = std::min(output.size(), static_cast<size_t>(uniformComponents(uniform.type)));
+    const bool integerType = uniform.type == GL_INT_VALUE || uniform.type == GL_BOOL_VALUE
+        || uniform.type == GL_INT_VEC2_VALUE || uniform.type == GL_INT_VEC3_VALUE || uniform.type == GL_INT_VEC4_VALUE
+        || uniform.type == GL_BOOL_VEC2_VALUE || uniform.type == GL_BOOL_VEC3_VALUE || uniform.type == GL_BOOL_VEC4_VALUE
+        || uniform.type == GL_SAMPLER_2D_VALUE || uniform.type == GL_SAMPLER_CUBE_VALUE;
+    for (size_t i = 0; i < count; ++i) {
+        if (integerType) {
+            if ((i + 1) * sizeof(int32_t) > binding.value.size()) break;
+            int32_t value;
+            std::memcpy(&value, binding.value.data() + i * sizeof(value), sizeof(value));
+            output[i] = static_cast<GCGLuint>(value);
+        } else {
+            GCGLfloat value = 0;
+            if ((i + 1) * sizeof(value) > binding.value.size()) break;
+            std::memcpy(&value, binding.value.data() + i * sizeof(value), sizeof(value));
+            output[i] = static_cast<GCGLuint>(std::max<GCGLfloat>(0, value));
+        }
+    }
+}
+
 GCGLErrorCodeSet GraphicsContextGLWKC::getErrors(){auto e=m_errors;m_errors={};return e;}
 void GraphicsContextGLWKC::linkProgram(PlatformGLObject n)
 {
