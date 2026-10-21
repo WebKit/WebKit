@@ -1598,8 +1598,28 @@ bool GraphicsContextGLWKC::uploadTextureLevel(TextureRecord& texture, uint32_t l
 
 bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
 {
+    // A texture can be the active framebuffer's color target. Flush and bind
+    // the default target before freeing/replacing its GX2 surface allocation.
+    bool wasBoundFramebufferTexture = false;
+    if (m_boundFramebuffer) {
+        auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        if (framebuffer != m_framebuffers.end() && framebuffer->second.colorTexture) {
+            auto attachedTexture = m_textures.find(framebuffer->second.colorTexture);
+            wasBoundFramebufferTexture = attachedTexture != m_textures.end()
+                && &attachedTexture->second == &texture;
+        }
+    }
+    if (wasBoundFramebufferTexture) {
+        GX2DrawDone();
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
+    }
+
     if (!texture.width || !texture.height || texture.levels.empty()) {
         releaseTextureStorage(texture);
+        if (wasBoundFramebufferTexture)
+            refreshFramebufferTextureViews();
         return true;
     }
     if (texture.levels.size() > 13 || texture.width > static_cast<uint32_t>(maxTextureSize())
