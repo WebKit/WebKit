@@ -38,6 +38,16 @@ using NumberToCSSStringBuffer = std::array<char, 329>;
 
 using NumberToStringSpan = std::span<const char>;
 
+// The longest output is 25 characters (<-> + "0." + <5 zeros> + <17 digits>), but the writer stores
+// in wide chunks that reach past the end of its output, so the buffer must be larger.
+constexpr size_t numberToShortestStringBufferSize = 34;
+
+// Writes the shortest round-tripping digits in Number::toString form and returns the length.
+WTF_EXPORT_PRIVATE size_t numberToShortestString(double, std::span<char, numberToShortestStringBufferSize>);
+
+// Like Number.prototype.toExponential with no argument: shortest digits, always in exponential form.
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToShortestExponentialString(double, NumberToStringBuffer& buffer LIFETIME_BOUND);
+
 WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedPrecisionString(float, unsigned significantFigures, NumberToStringBuffer& buffer LIFETIME_BOUND, bool truncateTrailingZeros = false);
 WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedWidthString(float, unsigned decimalPlaces, NumberToStringBuffer& buffer LIFETIME_BOUND);
 
@@ -61,6 +71,9 @@ inline double parseDouble(StringView string, size_t& parsedLength)
 } // namespace WTF
 
 using WTF::NumberToStringBuffer;
+using WTF::numberToShortestStringBufferSize;
+using WTF::numberToShortestExponentialString;
+using WTF::numberToShortestString;
 using WTF::numberToStringWithTrailingPoint;
 using WTF::numberToStringAndSize;
 using WTF::numberToFixedPrecisionString;

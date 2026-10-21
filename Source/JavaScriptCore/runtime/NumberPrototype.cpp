@@ -31,7 +31,6 @@
 #include "Uint16WithFraction.h"
 #include <wtf/Assertions.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/dragonbox/dragonbox_to_chars.h>
 #include <wtf/dtoa.h>
 #include <wtf/dtoa/double-conversion.h>
 #include <wtf/text/MakeString.h>
@@ -414,14 +413,13 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
 
     // Round if the argument is not undefined, always format as exponential.
     NumberToStringBuffer buffer;
+    if (arg.isUndefined())
+        return JSValue::encode(jsString(vm, String::fromLatin1(WTF::numberToShortestExponentialString(x, buffer))));
+
     DoubleConversionStringBuilder builder { std::span<char> { buffer } };
     builder.Reset();
-    if (arg.isUndefined())
-        WTF::dragonbox::ToExponential(x, &builder);
-    else {
-        const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
-        converter.ToExponential(x, decimalPlaces, &builder);
-    }
+    const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
+    converter.ToExponential(x, decimalPlaces, &builder);
     return JSValue::encode(jsString(vm, String::fromLatin1(builder.Finalize())));
 }
 

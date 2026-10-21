@@ -387,6 +387,7 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'ThirdParty', 'openvr'),
       os.path.join('Source', 'ThirdParty', 'skia'),
       os.path.join('Source', 'ThirdParty', 'xdgmime'),
+      os.path.join('Source', 'WTF', 'wtf', 'zmij'),
       os.path.join('Tools', 'WebGPUAPIStructure')],
      ["-",
       "+pep8/W191",  # Tabs

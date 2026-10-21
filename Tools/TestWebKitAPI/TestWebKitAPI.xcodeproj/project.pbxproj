@@ -1317,7 +1317,6 @@
 				WTF/DateMath.cpp,
 				WTF/Deque.cpp,
 				WTF/DominatorsTests.cpp,
-				WTF/DragonBoxTest.cpp,
 				WTF/EmbeddedFixedVector.cpp,
 				WTF/EnumeratedArray.cpp,
 				WTF/EnumSet.cpp,
@@ -1434,6 +1433,7 @@
 				WTF/WorkerPool.cpp,
 				WTF/WorkQueue.cpp,
 				WTF/WTFString.cpp,
+				WTF/ZmijTest.cpp,
 			);
 			target = 7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */;
 		};

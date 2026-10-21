@@ -42,7 +42,7 @@
 #include <charconv>
 #include <wtf/MathExtras.h>
 #include <wtf/UnalignedAccess.h>
-#include <wtf/dragonbox/dragonbox_to_chars.h>
+#include <wtf/dtoa.h>
 #include <wtf/text/EscapedFormsForJSON.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -1382,17 +1382,15 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             append('n', 'u', 'l', 'l');
             return;
         }
-        if (!hasRemainingCapacity(WTF::dragonbox::max_string_length<WTF::dragonbox::ieee754_binary64>())) [[unlikely]] {
+        if (!hasRemainingCapacity(numberToShortestStringBufferSize)) [[unlikely]] {
             recordBufferFull();
             return;
         }
-        if constexpr (sizeof(CharType) == 1) {
-            auto cursor = WTF::dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, byteCast<char>(bufferSpan().subspan(m_length)));
-            m_length = cursor.data() - reinterpret_cast<char*>(buffer());
-        } else {
-            std::array<char, WTF::dragonbox::max_string_length<WTF::dragonbox::ieee754_binary64>()> temporary;
-            auto cursor = WTF::dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, std::span { temporary });
-            size_t length = cursor.data() - temporary.data();
+        if constexpr (sizeof(CharType) == 1)
+            m_length += WTF::numberToShortestString(number, byteCast<char>(bufferSpan().subspan(m_length)).template first<numberToShortestStringBufferSize>());
+        else {
+            std::array<char, numberToShortestStringBufferSize> temporary;
+            size_t length = WTF::numberToShortestString(number, temporary);
             WTF::copyElements(spanReinterpretCast<uint16_t>(bufferSpan().subspan(m_length)), byteCast<uint8_t>(std::span { temporary }).first(length));
             m_length += length;
         }

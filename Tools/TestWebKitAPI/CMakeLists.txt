@@ -74,7 +74,6 @@ set(TestWTF_SOURCES
     Tests/WTF/DateMath.cpp
     Tests/WTF/Deque.cpp
     Tests/WTF/DominatorsTests.cpp
-    Tests/WTF/DragonBoxTest.cpp
     Tests/WTF/EmbeddedFixedVector.cpp
     Tests/WTF/EnumSet.cpp
     Tests/WTF/EnumTraits.cpp
@@ -193,6 +192,7 @@ set(TestWTF_SOURCES
     Tests/WTF/WeakPtr.cpp
     Tests/WTF/WorkQueue.cpp
     Tests/WTF/WorkerPool.cpp
+    Tests/WTF/ZmijTest.cpp
 )
 
 # These tests check conversions that copy elision would otherwise remove.
