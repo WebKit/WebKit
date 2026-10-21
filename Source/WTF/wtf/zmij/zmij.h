@@ -304,7 +304,7 @@ template <typename = void> struct pow10_data {
       0xd3c21bcecceda100, 0x84595161401484a0, 0xa56fa5b99019a5c8,
       0xcecb8f27f4200f3a,
   };
-  static constexpr uint128 major[] = {
+  static constexpr uint128 major[25] = {
       {0xaddcb9e83c6b1793, 0xdf4abe242a1bbf3e},  // -331 (+1 ULP: see fixups)
       {0xaf8e5410288e1b6f, 0x07ecf0ae5ee44dda},  // -303
       {0xb1442798f49ffb4a, 0x99cd11cfdf41779d},  // -275
