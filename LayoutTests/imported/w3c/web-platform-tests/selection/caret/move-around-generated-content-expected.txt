@@ -16,9 +16,9 @@ PASS Moving caret between list items using arrow keys
 PASS Moving caret past the block-quote using arrow keys
 PASS Moving caret between list items using arrow keys: caret should start at the beginning of the first line
 PASS Moving caret between list items using arrow keys: arrow-down should move the caret to the start of the first list item
-FAIL Moving caret between list items using arrow keys: arrow-down should move the caret to the second list item assert_equals: expected "(<li>, 0)" but got "(#text \"one\", 0)"
-FAIL Moving caret between list items using arrow keys: arrow-down should move the caret to the third list item assert_equals: expected "(#text \"three\", 0)" but got "(#text \"one\", 0)"
-FAIL Moving caret between list items using arrow keys: arrow-down should move the caret to the final paragraph assert_equals: expected "(#text \"xyz\", 0)" but got "(#text \"one\", 0)"
+PASS Moving caret between list items using arrow keys: arrow-down should move the caret to the second list item
+PASS Moving caret between list items using arrow keys: arrow-down should move the caret to the third list item
+PASS Moving caret between list items using arrow keys: arrow-down should move the caret to the final paragraph
 PASS Moving caret past the block-quote using arrow keys: caret should start at the beginning of the first line
 PASS Moving caret past the block-quote using arrow keys: arrow-down should move the caret to the start of the block quote
 PASS Moving caret past the block-quote using arrow keys: arrow-down should move the caret to the final paragraph

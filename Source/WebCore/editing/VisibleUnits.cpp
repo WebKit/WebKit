@@ -1001,7 +1001,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, Lay
         if (!box)
             return VisiblePosition();
         CheckedRef renderer = box->renderer();
-        RefPtr node = renderer->node();
+        RefPtr node = renderer->nonPseudoNode();
         if (node && editingIgnoresContent(*node))
             return positionInParentBeforeNode(*node);
         // FIXME: The HitTestSource state should be propagated down from calls into JavaScript bindings.
@@ -1063,7 +1063,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
         if (!box)
             return VisiblePosition();
         CheckedRef renderer = box->renderer();
-        RefPtr node = renderer->node();
+        RefPtr node = renderer->nonPseudoNode();
         if (node && editingIgnoresContent(*node))
             return VisiblePosition(positionInParentBeforeNode(*node), VisiblePosition::defaultAffinity, visiblePosition.allowUserSelectNone());
         // FIXME: The HitTestSource state should be propagated down from calls into JavaScript bindings.
