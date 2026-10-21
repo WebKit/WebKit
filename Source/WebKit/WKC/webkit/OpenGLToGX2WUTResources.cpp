@@ -12,6 +12,7 @@
 #include <cstring>
 #include <limits>
 #include <new>
+#include <utility>
 
 namespace WKC {
 namespace GLGX2 {
@@ -200,9 +201,6 @@ bool prepareWUTProgramForDraw(WUTBufferResources& resources)
             for (const auto& entry : resources.attributes) {
                 if (entry.second.enabled)
                     return false;
-            }
-            for (const auto& binding : resources.linkedAttributes) {
-                (void)binding;
             }
         }
 
