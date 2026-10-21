@@ -3959,6 +3959,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         }
 
         bool shouldPaintOutline = [&]() {
+            if (!renderer().hasOutline())
+                return false;
+
             if (!isSelfPaintingLayer)
                 return false;
 
