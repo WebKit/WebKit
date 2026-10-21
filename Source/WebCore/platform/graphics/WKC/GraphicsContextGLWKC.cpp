@@ -1013,6 +1013,341 @@ GraphicsContextGLWKC::~GraphicsContextGLWKC()
     }
     for (auto& entry : m_programs)
         releaseProgramNative(entry.second);
+    for (auto& entry : m_textures)
+        releaseTextureStorage(entry.second);
+    releaseTextureStorage(m_defaultTexture);
+}
+
+PlatformGLObject GraphicsContextGLWKC::nextTextureName()
+{
+    for (uint64_t attempts = 0; attempts < UINT32_MAX - 1ULL; ++attempts) {
+        PlatformGLObject name = m_nextTexture++;
+        if (!m_nextTexture)
+            m_nextTexture = 1;
+        if (name && !m_textures.contains(name))
+            return name;
+    }
+    return 0;
+}
+
+void GraphicsContextGLWKC::releaseTextureStorage(TextureRecord& texture)
+{
+    if (!texture.storageCreated)
+        return;
+    GX2DrawDone();
+    GX2RDestroySurfaceEx(&texture.native.surface, textureSurfaceFlags);
+    texture.native = {};
+    texture.storageCreated = false;
+}
+
+bool GraphicsContextGLWKC::uploadTextureLevel(TextureRecord& texture, uint32_t level)
+{
+    if (!texture.storageCreated || level >= texture.levels.size())
+        return false;
+
+    const uint32_t width = std::max<uint32_t>(1, texture.width >> level);
+    const uint32_t height = std::max<uint32_t>(1, texture.height >> level);
+    const auto& source = texture.levels[level];
+    if (source.size() != static_cast<size_t>(width) * height * 4)
+        return false;
+
+    void* locked = GX2RLockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
+        static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+    if (!locked)
+        return false;
+
+    // Linear-aligned RGBA8 surfaces expose rows with an aligned texel pitch.
+    // GX2RLockSurfaceEx selects the requested mip level, so level-local rows
+    // can be filled without overwriting adjacent mip levels.
+    const uint32_t pitchPixels = std::max<uint32_t>(width, texture.native.surface.pitch >> level);
+    if (pitchPixels < width) {
+        GX2RUnlockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
+            static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+        return false;
+    }
+    const size_t destinationPitch = static_cast<size_t>(pitchPixels) * 4;
+    for (uint32_t y = 0; y < height; ++y) {
+        std::memcpy(static_cast<uint8_t*>(locked) + static_cast<size_t>(y) * destinationPitch,
+            source.data() + static_cast<size_t>(y) * width * 4,
+            static_cast<size_t>(width) * 4);
+    }
+    GX2RUnlockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
+        static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+    return true;
+}
+
+bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
+{
+    if (!texture.width || !texture.height || texture.levels.empty()) {
+        releaseTextureStorage(texture);
+        return true;
+    }
+    if (texture.levels.size() > 13 || texture.width > static_cast<uint32_t>(maxTextureSize())
+        || texture.height > static_cast<uint32_t>(maxTextureSize()))
+        return false;
+
+    releaseTextureStorage(texture);
+    texture.native = {};
+    auto& surface = texture.native.surface;
+    surface.dim = GX2_SURFACE_DIM_TEXTURE_2D;
+    surface.width = texture.width;
+    surface.height = texture.height;
+    surface.depth = 1;
+    surface.mipLevels = static_cast<uint32_t>(texture.levels.size());
+    surface.format = GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8;
+    surface.aa = GX2_AA_MODE1X;
+    surface.use = GX2_SURFACE_USE_TEXTURE;
+    surface.tileMode = GX2_TILE_MODE_LINEAR_ALIGNED;
+    GX2CalcSurfaceSizeAndAlignment(&surface);
+    if (!surface.imageSize || !surface.alignment
+        || !GX2RCreateSurface(&surface, textureSurfaceFlags)) {
+        texture.native = {};
+        texture.storageCreated = false;
+        return false;
+    }
+
+    texture.native.viewFirstMip = 0;
+    texture.native.viewNumMips = surface.mipLevels;
+    texture.native.viewFirstSlice = 0;
+    texture.native.viewNumSlices = 1;
+    texture.native.compMap = GX2_COMP_MAP(GX2_SQ_SEL_X, GX2_SQ_SEL_Y, GX2_SQ_SEL_Z, GX2_SQ_SEL_W);
+    texture.storageCreated = true;
+
+    for (uint32_t level = 0; level < texture.levels.size(); ++level) {
+        if (!uploadTextureLevel(texture, level)) {
+            releaseTextureStorage(texture);
+            return false;
+        }
+    }
+    GX2InitTextureRegs(&texture.native);
+    applyTextureSampler(texture);
+    return true;
+}
+
+bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
+    GCGLsizei width, GCGLsizei height, std::span<const uint8_t> pixels,
+    std::vector<uint8_t>& output) const
+{
+    if (width < 0 || height < 0 || type != GL_UNSIGNED_BYTE_VALUE)
+        return false;
+
+    uint32_t sourceComponents = 0;
+    switch (format) {
+    case GL_ALPHA_VALUE:
+    case GL_LUMINANCE_VALUE:
+        sourceComponents = 1;
+        break;
+    case GL_LUMINANCE_ALPHA_VALUE:
+        sourceComponents = 2;
+        break;
+    case GL_RGB_VALUE:
+        sourceComponents = 3;
+        break;
+    case GL_RGBA_VALUE:
+        sourceComponents = 4;
+        break;
+    default:
+        return false;
+    }
+
+    const size_t w = static_cast<size_t>(width);
+    const size_t h = static_cast<size_t>(height);
+    if (w && h > std::numeric_limits<size_t>::max() / w / 4)
+        return false;
+    output.assign(w * h * 4, 0);
+    if (!width || !height || pixels.empty())
+        return true;
+
+    const size_t sourceRowBytes = w * sourceComponents;
+    const size_t alignment = static_cast<size_t>(m_unpackAlignment);
+    const size_t sourceStride = (sourceRowBytes + alignment - 1) & ~(alignment - 1);
+    const size_t requiredBytes = (h - 1) * sourceStride + sourceRowBytes;
+    if (pixels.size() < requiredBytes)
+        return false;
+
+    for (size_t y = 0; y < h; ++y) {
+        const uint8_t* row = pixels.data() + y * sourceStride;
+        for (size_t x = 0; x < w; ++x) {
+            const uint8_t* source = row + x * sourceComponents;
+            uint8_t* destination = output.data() + (y * w + x) * 4;
+            switch (format) {
+            case GL_ALPHA_VALUE:
+                destination[3] = source[0];
+                break;
+            case GL_LUMINANCE_VALUE:
+                destination[0] = destination[1] = destination[2] = source[0];
+                destination[3] = 255;
+                break;
+            case GL_LUMINANCE_ALPHA_VALUE:
+                destination[0] = destination[1] = destination[2] = source[0];
+                destination[3] = source[1];
+                break;
+            case GL_RGB_VALUE:
+                destination[0] = source[0];
+                destination[1] = source[1];
+                destination[2] = source[2];
+                destination[3] = 255;
+                break;
+            case GL_RGBA_VALUE:
+                std::memcpy(destination, source, 4);
+                break;
+            default:
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void GraphicsContextGLWKC::applyTextureSampler(TextureRecord& texture)
+{
+    auto translateWrap = [](GCGLint wrap, GX2TexClampMode& output) {
+        switch (wrap) {
+        case GL_REPEAT_VALUE: output = GX2_TEX_CLAMP_MODE_WRAP; return true;
+        case GL_CLAMP_TO_EDGE_VALUE: output = GX2_TEX_CLAMP_MODE_CLAMP; return true;
+        case GL_MIRRORED_REPEAT_VALUE: output = GX2_TEX_CLAMP_MODE_MIRROR; return true;
+        default: return false;
+        }
+    };
+    auto filterMode = [](GCGLint filter) {
+        return filter == GL_NEAREST_VALUE || filter == GL_NEAREST_MIPMAP_NEAREST_VALUE
+            || filter == GL_NEAREST_MIPMAP_LINEAR_VALUE
+            ? GX2_TEX_XY_FILTER_MODE_POINT : GX2_TEX_XY_FILTER_MODE_LINEAR;
+    };
+    auto mipMode = [](GCGLint filter) {
+        switch (filter) {
+        case GL_NEAREST_MIPMAP_NEAREST_VALUE:
+        case GL_LINEAR_MIPMAP_NEAREST_VALUE:
+            return GX2_TEX_MIP_FILTER_MODE_POINT;
+        case GL_NEAREST_MIPMAP_LINEAR_VALUE:
+        case GL_LINEAR_MIPMAP_LINEAR_VALUE:
+            return GX2_TEX_MIP_FILTER_MODE_LINEAR;
+        default:
+            return GX2_TEX_MIP_FILTER_MODE_NONE;
+        }
+    };
+
+    GX2TexClampMode clampS, clampT;
+    if (!translateWrap(texture.wrapS, clampS) || !translateWrap(texture.wrapT, clampT))
+        return;
+    const auto minFilter = filterMode(texture.minFilter);
+    const auto magFilter = filterMode(texture.magFilter);
+    GX2InitSampler(&texture.sampler, clampS, minFilter);
+    GX2InitSamplerClamping(&texture.sampler, clampS, clampT, clampS);
+    GX2InitSamplerXYFilter(&texture.sampler, magFilter, minFilter, GX2_TEX_ANISO_RATIO_NONE);
+    GX2InitSamplerZMFilter(&texture.sampler, GX2_TEX_Z_FILTER_MODE_NONE, mipMode(texture.minFilter));
+    GX2InitSamplerLOD(&texture.sampler, 0.0f, 1000.0f, 0.0f);
+}
+
+GraphicsContextGLWKC::TextureRecord* GraphicsContextGLWKC::boundTexture2D()
+{
+    if (m_activeTextureUnit >= m_boundTextures2D.size())
+        return nullptr;
+    auto name = m_boundTextures2D[m_activeTextureUnit];
+    auto it = m_textures.find(name);
+    if (!name || it == m_textures.end() || it->second.target != GL_TEXTURE_2D_VALUE)
+        return nullptr;
+    return &it->second;
+}
+
+bool GraphicsContextGLWKC::regenerateTextureMipmaps(TextureRecord& texture)
+{
+    if (!texture.width || !texture.height || texture.levels.empty() || !texture.definedLevels[0])
+        return false;
+
+    const auto base = texture.levels[0];
+    texture.levels.clear();
+    texture.definedLevels.clear();
+    texture.levels.push_back(base);
+    texture.definedLevels.push_back(true);
+
+    uint32_t sourceWidth = texture.width;
+    uint32_t sourceHeight = texture.height;
+    while (sourceWidth > 1 || sourceHeight > 1) {
+        const uint32_t destinationWidth = std::max<uint32_t>(1, sourceWidth / 2);
+        const uint32_t destinationHeight = std::max<uint32_t>(1, sourceHeight / 2);
+        std::vector<uint8_t> destination(static_cast<size_t>(destinationWidth) * destinationHeight * 4, 0);
+        const auto& source = texture.levels.back();
+        for (uint32_t y = 0; y < destinationHeight; ++y) {
+            for (uint32_t x = 0; x < destinationWidth; ++x) {
+                uint32_t sums[4] { 0, 0, 0, 0 };
+                uint32_t sampleCount = 0;
+                for (uint32_t dy = 0; dy < 2; ++dy) {
+                    const uint32_t sy = std::min(sourceHeight - 1, y * 2 + dy);
+                    for (uint32_t dx = 0; dx < 2; ++dx) {
+                        const uint32_t sx = std::min(sourceWidth - 1, x * 2 + dx);
+                        const size_t offset = (static_cast<size_t>(sy) * sourceWidth + sx) * 4;
+                        for (unsigned component = 0; component < 4; ++component)
+                            sums[component] += source[offset + component];
+                        ++sampleCount;
+                    }
+                }
+                const size_t outputOffset = (static_cast<size_t>(y) * destinationWidth + x) * 4;
+                for (unsigned component = 0; component < 4; ++component)
+                    destination[outputOffset + component] = static_cast<uint8_t>(sums[component] / sampleCount);
+            }
+        }
+        texture.levels.push_back(std::move(destination));
+        texture.definedLevels.push_back(true);
+        sourceWidth = destinationWidth;
+        sourceHeight = destinationHeight;
+    }
+    return recreateTextureStorage(texture);
+}
+
+bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
+{
+    if (!m_defaultTextureReady)
+        return false;
+
+    for (const auto& uniform : program.uniforms) {
+        if (uniform.type != GL_SAMPLER_2D_VALUE && uniform.type != GL_SAMPLER_CUBE_VALUE)
+            continue;
+        for (size_t index = 0; index < uniform.elements.size(); ++index) {
+            const auto& binding = uniform.elements[index];
+            const GCGLint unit = index < uniform.samplerUnits.size() ? uniform.samplerUnits[index] : 0;
+            if (unit < 0 || unit >= static_cast<GCGLint>(m_boundTextures2D.size()))
+                return false;
+
+            TextureRecord* texture = nullptr;
+            auto name = m_boundTextures2D[unit];
+            auto found = m_textures.find(name);
+            if (name && found != m_textures.end() && found->second.storageCreated
+                && !found->second.levels.empty() && !found->second.definedLevels.empty()
+                && found->second.definedLevels[0] && found->second.target == GL_TEXTURE_2D_VALUE) {
+                const bool needsMipmaps = uniform.type == GL_SAMPLER_2D_VALUE
+                    && (found->second.minFilter == GL_NEAREST_MIPMAP_NEAREST_VALUE
+                        || found->second.minFilter == GL_LINEAR_MIPMAP_NEAREST_VALUE
+                        || found->second.minFilter == GL_NEAREST_MIPMAP_LINEAR_VALUE
+                        || found->second.minFilter == GL_LINEAR_MIPMAP_LINEAR_VALUE);
+                bool complete = true;
+                if (needsMipmaps) {
+                    for (bool defined : found->second.definedLevels)
+                        complete &= defined;
+                    uint32_t expectedLevels = 1;
+                    for (uint32_t dimension = std::max(found->second.width, found->second.height);
+                         dimension > 1; dimension >>= 1)
+                        ++expectedLevels;
+                    complete &= found->second.levels.size() == expectedLevels;
+                }
+                if (complete)
+                    texture = &found->second;
+            }
+            if (!texture)
+                texture = &m_defaultTexture;
+
+            applyTextureSampler(*texture);
+            if (binding.vertexSamplerVar) {
+                GX2SetVertexTexture(&texture->native, binding.vertexSamplerVar->location);
+                GX2SetVertexSampler(&texture->sampler, binding.vertexSamplerVar->location);
+            }
+            if (binding.pixelSamplerVar) {
+                GX2SetPixelTexture(&texture->native, binding.pixelSamplerVar->location);
+                GX2SetPixelSampler(&texture->sampler, binding.pixelSamplerVar->location);
+            }
+        }
+    }
+    return true;
 }
 
 bool GraphicsContextGLWKC::initialize()
@@ -1021,7 +1356,14 @@ bool GraphicsContextGLWKC::initialize()
         return false;
     m_currentWidth = m_currentHeight = 1;
     addDriverError(m_driver.setViewport({ 0, 0, 1, 1, 0.0f, 1.0f }), "initial viewport");
-    return true;
+
+    m_defaultTexture.target = GL_TEXTURE_2D_VALUE;
+    m_defaultTexture.width = 1;
+    m_defaultTexture.height = 1;
+    m_defaultTexture.levels = { std::vector<uint8_t> { 0, 0, 0, 0 } };
+    m_defaultTexture.definedLevels = { true };
+    m_defaultTextureReady = recreateTextureStorage(m_defaultTexture);
+    return m_defaultTextureReady;
 }
 
 PlatformGLObject GraphicsContextGLWKC::nextShaderName()
