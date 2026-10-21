@@ -29,16 +29,21 @@
 #include <cafeglsl/CafeGLSLCompiler.h>
 #include <gx2/draw.h>
 #include <gx2/event.h>
+#include <gx2/registers.h>
 #include <gx2/shaders.h>
 #include <gx2/texture.h>
 #include <gx2/sampler.h>
+#include <gx2/surface.h>
 #include <gx2/utils.h>
+#include <gx2/surface.h>
 #include <gx2r/surface.h>
 #include <coreinit/cache.h>
+#include <coreinit/memdefaultheap.h>
 #include <wtf/StdLibExtras.h>
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstring>
 #include <limits>
 #include <optional>
@@ -94,8 +99,37 @@ constexpr GCGLenum GL_DEPTH_BUFFER_BIT_VALUE = 0x00000100;
 constexpr GCGLenum GL_STENCIL_BUFFER_BIT_VALUE = 0x00000400;
 constexpr GCGLenum GL_FRAMEBUFFER_VALUE = 0x8D40;
 constexpr GCGLenum GL_FRAMEBUFFER_COMPLETE_VALUE = 0x8CD5;
+constexpr GCGLenum GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE = 0x8CD6;
+constexpr GCGLenum GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_VALUE = 0x8CD7;
+constexpr GCGLenum GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_VALUE = 0x8CD9;
 constexpr GCGLenum GL_FRAMEBUFFER_UNSUPPORTED_VALUE = 0x8CDD;
 constexpr GCGLenum GL_FRAMEBUFFER_BINDING_VALUE = 0x8CA6;
+constexpr GCGLenum GL_INVALID_FRAMEBUFFER_OPERATION_VALUE = 0x0506;
+constexpr GCGLenum GL_RENDERBUFFER_VALUE = 0x8D41;
+constexpr GCGLenum GL_RENDERBUFFER_BINDING_VALUE = 0x8CA7;
+constexpr GCGLenum GL_COLOR_ATTACHMENT0_VALUE = 0x8CE0;
+constexpr GCGLenum GL_DEPTH_ATTACHMENT_VALUE = 0x8D00;
+constexpr GCGLenum GL_STENCIL_ATTACHMENT_VALUE = 0x8D20;
+constexpr GCGLenum GL_DEPTH_STENCIL_ATTACHMENT_VALUE = 0x821A;
+constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_VALUE = 0x8CD0;
+constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_VALUE = 0x8CD1;
+constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE = 0x8CD2;
+constexpr GCGLenum GL_TEXTURE_OBJECT_VALUE = 0x1702;
+constexpr GCGLenum GL_RENDERBUFFER_WIDTH_VALUE = 0x8D42;
+constexpr GCGLenum GL_RENDERBUFFER_HEIGHT_VALUE = 0x8D43;
+constexpr GCGLenum GL_RENDERBUFFER_INTERNAL_FORMAT_VALUE = 0x8D44;
+constexpr GCGLenum GL_RENDERBUFFER_RED_SIZE_VALUE = 0x8D50;
+constexpr GCGLenum GL_RENDERBUFFER_GREEN_SIZE_VALUE = 0x8D51;
+constexpr GCGLenum GL_RENDERBUFFER_BLUE_SIZE_VALUE = 0x8D52;
+constexpr GCGLenum GL_RENDERBUFFER_ALPHA_SIZE_VALUE = 0x8D53;
+constexpr GCGLenum GL_RENDERBUFFER_DEPTH_SIZE_VALUE = 0x8D54;
+constexpr GCGLenum GL_RENDERBUFFER_STENCIL_SIZE_VALUE = 0x8D55;
+constexpr GCGLenum GL_RGBA4_VALUE = 0x8056;
+constexpr GCGLenum GL_RGB5_A1_VALUE = 0x8057;
+constexpr GCGLenum GL_RGB565_VALUE = 0x8D62;
+constexpr GCGLenum GL_DEPTH_COMPONENT16_VALUE = 0x81A5;
+constexpr GCGLenum GL_STENCIL_INDEX8_VALUE = 0x8D48;
+constexpr GCGLenum GL_DEPTH_STENCIL_VALUE = 0x84F9;
 constexpr GCGLenum GL_ARRAY_BUFFER_BINDING_VALUE = 0x8894;
 constexpr GCGLenum GL_ELEMENT_ARRAY_BUFFER_BINDING_VALUE = 0x8895;
 constexpr GCGLenum GL_BUFFER_SIZE_VALUE = 0x8764;
@@ -108,6 +142,9 @@ constexpr GCGLenum GL_UNSIGNED_BYTE_VALUE = 0x1401;
 constexpr GCGLenum GL_SHORT_VALUE = 0x1402;
 constexpr GCGLenum GL_UNSIGNED_SHORT_VALUE = 0x1403;
 constexpr GCGLenum GL_HALF_FLOAT_VALUE = 0x140B;
+constexpr GCGLenum GL_UNSIGNED_SHORT_5_6_5_VALUE = 0x8363;
+constexpr GCGLenum GL_UNSIGNED_SHORT_4_4_4_4_VALUE = 0x8033;
+constexpr GCGLenum GL_UNSIGNED_SHORT_5_5_5_1_VALUE = 0x8034;
 constexpr GCGLenum GL_BLEND_VALUE = 0x0BE2;
 constexpr GCGLenum GL_CULL_FACE_VALUE = 0x0B44;
 constexpr GCGLenum GL_DEPTH_TEST_VALUE = 0x0B71;
@@ -164,8 +201,15 @@ constexpr GCGLenum GL_SAMPLER_2D_VALUE = 0x8B5E;
 constexpr GCGLenum GL_SAMPLER_CUBE_VALUE = 0x8B60;
 
 constexpr GX2RResourceFlags textureSurfaceFlags = static_cast<GX2RResourceFlags>(
-    GX2R_RESOURCE_BIND_TEXTURE | GX2R_RESOURCE_USAGE_CPU_WRITE
-    | GX2R_RESOURCE_USAGE_CPU_READ | GX2R_RESOURCE_USAGE_GPU_READ);
+    GX2R_RESOURCE_BIND_TEXTURE | GX2R_RESOURCE_BIND_COLOR_BUFFER
+    | GX2R_RESOURCE_USAGE_CPU_WRITE | GX2R_RESOURCE_USAGE_CPU_READ
+    | GX2R_RESOURCE_USAGE_GPU_READ | GX2R_RESOURCE_USAGE_GPU_WRITE);
+constexpr GX2RResourceFlags colorRenderbufferFlags = static_cast<GX2RResourceFlags>(
+    GX2R_RESOURCE_BIND_COLOR_BUFFER | GX2R_RESOURCE_USAGE_CPU_READ
+    | GX2R_RESOURCE_USAGE_GPU_READ | GX2R_RESOURCE_USAGE_GPU_WRITE);
+constexpr GX2RResourceFlags depthRenderbufferFlags = static_cast<GX2RResourceFlags>(
+    GX2R_RESOURCE_BIND_DEPTH_BUFFER | GX2R_RESOURCE_USAGE_CPU_READ
+    | GX2R_RESOURCE_USAGE_GPU_READ | GX2R_RESOURCE_USAGE_GPU_WRITE);
 
 void initializeGLSLCompilerOnce()
 {
@@ -296,7 +340,7 @@ public:
 
     void bindFramebuffer(GCGLenum target, PlatformGLObject) override;
 
-    void bindRenderbuffer(GCGLenum target, PlatformGLObject) override { notImplemented(); }
+    void bindRenderbuffer(GCGLenum target, PlatformGLObject) override;
 
     void bindTexture(GCGLenum target, PlatformGLObject) override;
 
@@ -324,17 +368,17 @@ public:
 
     void compileShader(PlatformGLObject) override;
 
-    void copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border) override { notImplemented(); }
+    void copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border) override;
 
-    void copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) override { notImplemented(); }
+    void copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) override;
 
     PlatformGLObject createBuffer() override;
 
-    PlatformGLObject createFramebuffer() override { notImplemented(); return {}; }
+    PlatformGLObject createFramebuffer() override;
 
     PlatformGLObject createProgram() override;
 
-    PlatformGLObject createRenderbuffer() override { notImplemented(); return {}; }
+    PlatformGLObject createRenderbuffer() override;
 
     PlatformGLObject createShader(GCGLenum) override;
 
@@ -344,11 +388,11 @@ public:
 
     void deleteBuffer(PlatformGLObject) override;
 
-    void deleteFramebuffer(PlatformGLObject) override { notImplemented(); }
+    void deleteFramebuffer(PlatformGLObject) override;
 
     void deleteProgram(PlatformGLObject) override;
 
-    void deleteRenderbuffer(PlatformGLObject) override { notImplemented(); }
+    void deleteRenderbuffer(PlatformGLObject) override;
 
     void deleteShader(PlatformGLObject) override;
 
@@ -378,9 +422,9 @@ public:
 
     void flush() override;
 
-    void framebufferRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject) override { notImplemented(); }
+    void framebufferRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject) override;
 
-    void framebufferTexture2D(GCGLenum target, GCGLenum attachment, GCGLenum textarget, PlatformGLObject, GCGLint level) override { notImplemented(); }
+    void framebufferTexture2D(GCGLenum target, GCGLenum attachment, GCGLenum textarget, PlatformGLObject, GCGLint level) override;
 
     void frontFace(GCGLenum mode) override;
 
@@ -410,17 +454,17 @@ public:
 
     GCGLErrorCodeSet getErrors() override;
 
-    GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) override { notImplemented(); return {}; }
+    GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) override;
 
     CString getProgramInfoLog(PlatformGLObject) override;
 
-    GCGLint getRenderbufferParameteri(GCGLenum target, GCGLenum pname) override { notImplemented(); return {}; }
+    GCGLint getRenderbufferParameteri(GCGLenum target, GCGLenum pname) override;
 
     GCGLint getShaderi(PlatformGLObject, GCGLenum pname) override;
 
     CString getShaderInfoLog(PlatformGLObject) override;
 
-    void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, std::span<GCGLint, 2> range, GCGLint* precision) override { notImplemented(); }
+    void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, std::span<GCGLint, 2> range, GCGLint* precision) override;
 
     GCGLfloat getTexParameterf(GCGLenum target, GCGLenum pname) override;
 
@@ -434,23 +478,23 @@ public:
 
     GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) override;
 
-    void hint(GCGLenum target, GCGLenum mode) override { notImplemented(); }
+    void hint(GCGLenum target, GCGLenum mode) override;
 
     GCGLboolean isBuffer(PlatformGLObject) override;
 
     GCGLboolean isEnabled(GCGLenum cap) override;
 
-    GCGLboolean isFramebuffer(PlatformGLObject) override { notImplemented(); return {}; }
+    GCGLboolean isFramebuffer(PlatformGLObject) override;
 
     GCGLboolean isProgram(PlatformGLObject) override;
 
-    GCGLboolean isRenderbuffer(PlatformGLObject) override { notImplemented(); return {}; }
+    GCGLboolean isRenderbuffer(PlatformGLObject) override;
 
     GCGLboolean isShader(PlatformGLObject) override;
 
     GCGLboolean isTexture(PlatformGLObject) override;
 
-    void lineWidth(GCGLfloat) override { notImplemented(); }
+    void lineWidth(GCGLfloat) override;
 
     void linkProgram(PlatformGLObject) override;
 
@@ -458,25 +502,25 @@ public:
 
     void polygonOffset(GCGLfloat factor, GCGLfloat units) override;
 
-    void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) override { notImplemented(); }
+    void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) override;
 
-    void sampleCoverage(GCGLclampf value, GCGLboolean invert) override { notImplemented(); }
+    void sampleCoverage(GCGLclampf value, GCGLboolean invert) override;
 
     void scissor(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) override;
 
     void shaderSource(PlatformGLObject shader, const CString& source) override;
 
-    void stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask) override { notImplemented(); }
+    void stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask) override;
 
-    void stencilFuncSeparate(GCGLenum face, GCGLenum func, GCGLint ref, GCGLuint mask) override { notImplemented(); }
+    void stencilFuncSeparate(GCGLenum face, GCGLenum func, GCGLint ref, GCGLuint mask) override;
 
-    void stencilMask(GCGLuint mask) override { notImplemented(); }
+    void stencilMask(GCGLuint mask) override;
 
-    void stencilMaskSeparate(GCGLenum face, GCGLuint mask) override { notImplemented(); }
+    void stencilMaskSeparate(GCGLenum face, GCGLuint mask) override;
 
-    void stencilOp(GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override { notImplemented(); }
+    void stencilOp(GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override;
 
-    void stencilOpSeparate(GCGLenum face, GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override { notImplemented(); }
+    void stencilOpSeparate(GCGLenum face, GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override;
 
     void texParameterf(GCGLenum target, GCGLenum pname, GCGLfloat param) override;
 
@@ -524,21 +568,21 @@ public:
 
     void validateProgram(PlatformGLObject) override;
 
-    void vertexAttrib1f(GCGLuint index, GCGLfloat x) override { notImplemented(); }
+    void vertexAttrib1f(GCGLuint index, GCGLfloat x) override;
 
-    void vertexAttrib1fv(GCGLuint index, std::span<const GCGLfloat, 1> values) override { notImplemented(); }
+    void vertexAttrib1fv(GCGLuint index, std::span<const GCGLfloat, 1> values) override;
 
-    void vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y) override { notImplemented(); }
+    void vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y) override;
 
-    void vertexAttrib2fv(GCGLuint index, std::span<const GCGLfloat, 2> values) override { notImplemented(); }
+    void vertexAttrib2fv(GCGLuint index, std::span<const GCGLfloat, 2> values) override;
 
-    void vertexAttrib3f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z) override { notImplemented(); }
+    void vertexAttrib3f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z) override;
 
-    void vertexAttrib3fv(GCGLuint index, std::span<const GCGLfloat, 3> values) override { notImplemented(); }
+    void vertexAttrib3fv(GCGLuint index, std::span<const GCGLfloat, 3> values) override;
 
-    void vertexAttrib4f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) override { notImplemented(); }
+    void vertexAttrib4f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) override;
 
-    void vertexAttrib4fv(GCGLuint index, std::span<const GCGLfloat, 4> values) override { notImplemented(); }
+    void vertexAttrib4fv(GCGLuint index, std::span<const GCGLfloat, 4> values) override;
 
     void vertexAttribPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLboolean normalized, GCGLsizei stride, GCGLintptr offset) override;
 
@@ -550,7 +594,7 @@ public:
 
     void bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data) override;
 
-    void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint packAlignment, GCGLint packRowLength, GCGLboolean packReverseRowOrder) override { notImplemented(); }
+    void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint packAlignment, GCGLint packRowLength, GCGLboolean packReverseRowOrder) override;
 
     void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) override { notImplemented(); }
 
@@ -907,6 +951,7 @@ private:
     };
     struct TextureRecord {
         GCGLenum target { 0 };
+        GCGLenum internalFormat { 0 };
         GX2Texture native {};
         bool storageCreated { false };
         uint32_t width { 0 };
@@ -918,6 +963,32 @@ private:
         GCGLint magFilter { static_cast<GCGLint>(GL_LINEAR_VALUE) };
         GCGLint wrapS { static_cast<GCGLint>(GL_REPEAT_VALUE) };
         GCGLint wrapT { static_cast<GCGLint>(GL_REPEAT_VALUE) };
+    };
+    struct RenderbufferRecord {
+        GX2ColorBuffer colorBuffer {};
+        GX2DepthBuffer depthBuffer {};
+        GCGLenum internalFormat { 0 };
+        uint32_t width { 0 };
+        uint32_t height { 0 };
+        GX2RResourceFlags resourceFlags { GX2R_RESOURCE_BIND_NONE };
+        bool allocated { false };
+        bool isColor { false };
+        bool hasDepth { false };
+        bool hasStencil { false };
+        bool colorSurfaceCreated { false };
+        bool depthSurfaceCreated { false };
+        void* depthHiZMemory { nullptr };
+        uint32_t depthHiZSize { 0 };
+    };
+    struct FramebufferRecord {
+        PlatformGLObject colorTexture { 0 };
+        GCGLint colorTextureLevel { 0 };
+        PlatformGLObject colorRenderbuffer { 0 };
+        PlatformGLObject depthRenderbuffer { 0 };
+        PlatformGLObject stencilRenderbuffer { 0 };
+        GX2ColorBuffer textureColorView {};
+        bool textureColorViewReady { false };
+        RenderbufferRecord fallbackDepth;
     };
     struct UniformBinding {
         GCGLint location { -1 };
@@ -958,7 +1029,20 @@ private:
     PlatformGLObject nextShaderName();
     PlatformGLObject nextProgramName();
     PlatformGLObject nextTextureName();
+    PlatformGLObject nextFramebufferName();
+    PlatformGLObject nextRenderbufferName();
+    void setCurrentVertexAttribute(GCGLuint, const std::array<GCGLfloat, 4>&);
+    bool readPixelsInto(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t>,
+        GCGLint packAlignment, GCGLint packRowLength, GCGLboolean packReverseRowOrder);
     void releaseTextureStorage(TextureRecord&);
+    void releaseRenderbufferStorage(RenderbufferRecord&);
+    bool allocateRenderbufferStorage(RenderbufferRecord&, GCGLenum, uint32_t, uint32_t);
+    GCGLenum framebufferStatus(PlatformGLObject) const;
+    void refreshFramebufferTarget();
+    void refreshFramebufferTextureViews();
+    bool framebufferReadyForDraw();
+    void detachFramebufferTexture(PlatformGLObject);
+    void detachFramebufferRenderbuffer(PlatformGLObject);
     bool recreateTextureStorage(TextureRecord&);
     bool uploadTextureLevel(TextureRecord&, uint32_t level);
     bool convertTexturePixels(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height,
@@ -988,16 +1072,23 @@ private:
     std::unordered_map<PlatformGLObject, ShaderRecord> m_shaders;
     std::unordered_map<PlatformGLObject, ProgramRecord> m_programs;
     std::unordered_map<PlatformGLObject, TextureRecord> m_textures;
+    std::unordered_map<PlatformGLObject, FramebufferRecord> m_framebuffers;
+    std::unordered_map<PlatformGLObject, RenderbufferRecord> m_renderbuffers;
     std::unordered_map<PlatformGLObject, bool> m_vertexArrayObjects;
     TextureRecord m_defaultTexture;
     std::array<PlatformGLObject, 16> m_boundTextures2D {};
     PlatformGLObject m_nextShader { 1 };
     PlatformGLObject m_nextProgram { 1 };
     PlatformGLObject m_nextTexture { 1 };
+    PlatformGLObject m_nextFramebuffer { 1 };
+    PlatformGLObject m_nextRenderbuffer { 1 };
+    PlatformGLObject m_boundRenderbuffer { 0 };
     PlatformGLObject m_currentProgram { 0 };
     PlatformGLObject m_appliedProgram { 0 };
     PlatformGLObject m_boundFramebuffer { 0 };
     GCGLuint m_activeTextureUnit { 0 };
+    bool m_requestedDepthTest { false };
+    bool m_requestedStencilTest { false };
     GCGLint m_unpackAlignment { 4 };
     GCGLint m_packAlignment { 4 };
     bool m_defaultTextureReady { false };
@@ -1033,6 +1124,10 @@ GraphicsContextGLWKC::~GraphicsContextGLWKC()
         releaseProgramNative(entry.second);
     for (auto& entry : m_textures)
         releaseTextureStorage(entry.second);
+    for (auto& entry : m_renderbuffers)
+        releaseRenderbufferStorage(entry.second);
+    for (auto& entry : m_framebuffers)
+        releaseRenderbufferStorage(entry.second.fallbackDepth);
     releaseTextureStorage(m_defaultTexture);
 }
 
@@ -1046,6 +1141,415 @@ PlatformGLObject GraphicsContextGLWKC::nextTextureName()
             return name;
     }
     return 0;
+}
+
+PlatformGLObject GraphicsContextGLWKC::nextFramebufferName()
+{
+    for (uint64_t attempts = 0; attempts < UINT32_MAX - 1ULL; ++attempts) {
+        PlatformGLObject name = m_nextFramebuffer++;
+        if (!m_nextFramebuffer)
+            m_nextFramebuffer = 1;
+        if (name && !m_framebuffers.contains(name))
+            return name;
+    }
+    return 0;
+}
+
+PlatformGLObject GraphicsContextGLWKC::nextRenderbufferName()
+{
+    for (uint64_t attempts = 0; attempts < UINT32_MAX - 1ULL; ++attempts) {
+        PlatformGLObject name = m_nextRenderbuffer++;
+        if (!m_nextRenderbuffer)
+            m_nextRenderbuffer = 1;
+        if (name && !m_renderbuffers.contains(name))
+            return name;
+    }
+    return 0;
+}
+
+void GraphicsContextGLWKC::releaseRenderbufferStorage(RenderbufferRecord& renderbuffer)
+{
+    if (!renderbuffer.colorSurfaceCreated && !renderbuffer.depthSurfaceCreated
+        && !renderbuffer.depthHiZMemory) {
+        renderbuffer = {};
+        return;
+    }
+    GX2DrawDone();
+    if (renderbuffer.colorSurfaceCreated)
+        GX2RDestroySurfaceEx(&renderbuffer.colorBuffer.surface, renderbuffer.resourceFlags);
+    if (renderbuffer.depthSurfaceCreated)
+        GX2RDestroySurfaceEx(&renderbuffer.depthBuffer.surface, renderbuffer.resourceFlags);
+    if (renderbuffer.depthHiZMemory)
+        MEMFreeToDefaultHeap(renderbuffer.depthHiZMemory);
+    renderbuffer = {};
+}
+
+bool GraphicsContextGLWKC::allocateRenderbufferStorage(RenderbufferRecord& renderbuffer,
+    GCGLenum internalFormat, uint32_t width, uint32_t height)
+{
+    GX2SurfaceFormat nativeFormat = GX2_SURFACE_FORMAT_INVALID;
+    bool isColor = false;
+    bool hasDepth = false;
+    bool hasStencil = false;
+    GX2RResourceFlags flags = GX2R_RESOURCE_BIND_NONE;
+
+    switch (internalFormat) {
+    case GL_RGBA4_VALUE:
+        nativeFormat = GX2_SURFACE_FORMAT_UNORM_R4_G4_B4_A4;
+        isColor = true;
+        flags = colorRenderbufferFlags;
+        break;
+    case GL_RGB5_A1_VALUE:
+        nativeFormat = GX2_SURFACE_FORMAT_UNORM_R5_G5_B5_A1;
+        isColor = true;
+        flags = colorRenderbufferFlags;
+        break;
+    case GL_RGB565_VALUE:
+        nativeFormat = GX2_SURFACE_FORMAT_UNORM_R5_G6_B5;
+        isColor = true;
+        flags = colorRenderbufferFlags;
+        break;
+    case GL_DEPTH_COMPONENT16_VALUE:
+        // GX2 exposes D24S8 rather than a native D16 target. Store depth at
+        // D24 precision while preserving the WebGL-visible renderbuffer format.
+        nativeFormat = GX2_SURFACE_FORMAT_FLOAT_D24_S8;
+        hasDepth = true;
+        flags = depthRenderbufferFlags;
+        break;
+    case GL_STENCIL_INDEX8_VALUE:
+        nativeFormat = GX2_SURFACE_FORMAT_UINT_X24_G8;
+        hasStencil = true;
+        flags = depthRenderbufferFlags;
+        break;
+    case GL_DEPTH_STENCIL_VALUE:
+        nativeFormat = GX2_SURFACE_FORMAT_FLOAT_D24_S8;
+        hasDepth = true;
+        hasStencil = true;
+        flags = depthRenderbufferFlags;
+        break;
+    default:
+        return false;
+    }
+
+    if (width > static_cast<uint32_t>(maxRenderbufferSize())
+        || height > static_cast<uint32_t>(maxRenderbufferSize()))
+        return false;
+
+    releaseRenderbufferStorage(renderbuffer);
+    renderbuffer.internalFormat = internalFormat;
+    renderbuffer.width = width;
+    renderbuffer.height = height;
+    renderbuffer.resourceFlags = flags;
+    renderbuffer.isColor = isColor;
+    renderbuffer.hasDepth = hasDepth;
+    renderbuffer.hasStencil = hasStencil;
+    renderbuffer.allocated = true;
+    if (!width || !height)
+        return true;
+
+    GX2Surface* surface = nullptr;
+    if (isColor) {
+        auto& buffer = renderbuffer.colorBuffer;
+        buffer = {};
+        surface = &buffer.surface;
+        surface->use = GX2_SURFACE_USE_COLOR_BUFFER;
+    } else {
+        auto& buffer = renderbuffer.depthBuffer;
+        buffer = {};
+        surface = &buffer.surface;
+        surface->use = GX2_SURFACE_USE_DEPTH_BUFFER;
+    }
+
+    surface->dim = GX2_SURFACE_DIM_TEXTURE_2D;
+    surface->width = width;
+    surface->height = height;
+    surface->depth = 1;
+    surface->mipLevels = 1;
+    surface->format = nativeFormat;
+    surface->aa = GX2_AA_MODE1X;
+    surface->tileMode = GX2_TILE_MODE_DEFAULT;
+    GX2CalcSurfaceSizeAndAlignment(surface);
+    if (!surface->imageSize || !surface->alignment || !GX2RCreateSurface(surface, flags)) {
+        renderbuffer = {};
+        return false;
+    }
+
+    if (isColor) {
+        auto& buffer = renderbuffer.colorBuffer;
+        buffer.viewMip = 0;
+        buffer.viewFirstSlice = 0;
+        buffer.viewNumSlices = 1;
+        buffer.aaBuffer = nullptr;
+        buffer.aaSize = 0;
+        GX2InitColorBufferRegs(&buffer);
+        renderbuffer.colorSurfaceCreated = true;
+    } else {
+        auto& buffer = renderbuffer.depthBuffer;
+        buffer.viewMip = 0;
+        buffer.viewFirstSlice = 0;
+        buffer.viewNumSlices = 1;
+        buffer.depthClear = 1.0f;
+        buffer.stencilClear = 0;
+
+        uint32_t alignment = 0;
+        GX2CalcDepthBufferHiZInfo(&buffer, &renderbuffer.depthHiZSize, &alignment);
+        if (renderbuffer.depthHiZSize && alignment)
+            renderbuffer.depthHiZMemory = MEMAllocFromDefaultHeapEx(renderbuffer.depthHiZSize, alignment);
+        if (renderbuffer.depthHiZMemory) {
+            buffer.hiZPtr = renderbuffer.depthHiZMemory;
+            buffer.hiZSize = renderbuffer.depthHiZSize;
+            GX2InitDepthBufferHiZEnable(&buffer, TRUE);
+        } else {
+            buffer.hiZPtr = nullptr;
+            buffer.hiZSize = 0;
+            renderbuffer.depthHiZSize = 0;
+            GX2InitDepthBufferHiZEnable(&buffer, FALSE);
+        }
+        GX2InitDepthBufferRegs(&buffer);
+        renderbuffer.depthSurfaceCreated = true;
+    }
+    return true;
+}
+
+GCGLenum GraphicsContextGLWKC::framebufferStatus(PlatformGLObject name) const
+{
+    if (!name)
+        return GL_FRAMEBUFFER_COMPLETE_VALUE;
+    auto framebufferIt = m_framebuffers.find(name);
+    if (framebufferIt == m_framebuffers.end())
+        return GL_FRAMEBUFFER_UNSUPPORTED_VALUE;
+
+    const auto& framebuffer = framebufferIt->second;
+    bool hasColor = false;
+    bool hasDepth = false;
+    bool hasStencil = false;
+    uint32_t width = 0;
+    uint32_t height = 0;
+    auto adoptDimensions = [&](uint32_t candidateWidth, uint32_t candidateHeight) {
+        if (!candidateWidth || !candidateHeight)
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+        if (!width && !height) {
+            width = candidateWidth;
+            height = candidateHeight;
+            return GL_FRAMEBUFFER_COMPLETE_VALUE;
+        }
+        return width == candidateWidth && height == candidateHeight
+            ? GL_FRAMEBUFFER_COMPLETE_VALUE : GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_VALUE;
+    };
+
+    if (framebuffer.colorTexture) {
+        auto texture = m_textures.find(framebuffer.colorTexture);
+        if (texture == m_textures.end() || !texture->second.storageCreated
+            || !framebuffer.textureColorViewReady || framebuffer.colorTextureLevel != 0
+            || texture->second.definedLevels.empty() || !texture->second.definedLevels[0])
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+        const auto status = adoptDimensions(texture->second.width, texture->second.height);
+        if (status != GL_FRAMEBUFFER_COMPLETE_VALUE)
+            return status;
+        hasColor = true;
+    } else if (framebuffer.colorRenderbuffer) {
+        auto renderbuffer = m_renderbuffers.find(framebuffer.colorRenderbuffer);
+        if (renderbuffer == m_renderbuffers.end() || !renderbuffer->second.allocated
+            || !renderbuffer->second.isColor || !renderbuffer->second.colorSurfaceCreated)
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+        const auto status = adoptDimensions(renderbuffer->second.width, renderbuffer->second.height);
+        if (status != GL_FRAMEBUFFER_COMPLETE_VALUE)
+            return status;
+        hasColor = true;
+    }
+
+    if (framebuffer.depthRenderbuffer && framebuffer.stencilRenderbuffer
+        && framebuffer.depthRenderbuffer != framebuffer.stencilRenderbuffer)
+        return GL_FRAMEBUFFER_UNSUPPORTED_VALUE;
+
+    if (framebuffer.depthRenderbuffer) {
+        auto renderbuffer = m_renderbuffers.find(framebuffer.depthRenderbuffer);
+        if (renderbuffer == m_renderbuffers.end() || !renderbuffer->second.allocated
+            || !renderbuffer->second.hasDepth || !renderbuffer->second.depthSurfaceCreated)
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+        const auto status = adoptDimensions(renderbuffer->second.width, renderbuffer->second.height);
+        if (status != GL_FRAMEBUFFER_COMPLETE_VALUE)
+            return status;
+        hasDepth = true;
+    }
+    if (framebuffer.stencilRenderbuffer) {
+        auto renderbuffer = m_renderbuffers.find(framebuffer.stencilRenderbuffer);
+        if (renderbuffer == m_renderbuffers.end() || !renderbuffer->second.allocated
+            || !renderbuffer->second.hasStencil || !renderbuffer->second.depthSurfaceCreated)
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+        const auto status = adoptDimensions(renderbuffer->second.width, renderbuffer->second.height);
+        if (status != GL_FRAMEBUFFER_COMPLETE_VALUE)
+            return status;
+        hasStencil = true;
+    }
+
+    if (!hasColor)
+        return GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_VALUE;
+    UNUSED_PARAM(hasDepth);
+    UNUSED_PARAM(hasStencil);
+    return GL_FRAMEBUFFER_COMPLETE_VALUE;
+}
+
+void GraphicsContextGLWKC::refreshFramebufferTextureViews()
+{
+    for (auto& entry : m_framebuffers) {
+        auto& framebuffer = entry.second;
+        if (!framebuffer.colorTexture) {
+            framebuffer.textureColorView = {};
+            framebuffer.textureColorViewReady = false;
+            continue;
+        }
+        auto texture = m_textures.find(framebuffer.colorTexture);
+        if (texture == m_textures.end() || !texture->second.storageCreated
+            || framebuffer.colorTextureLevel != 0 || texture->second.definedLevels.empty()
+            || !texture->second.definedLevels[0]) {
+            framebuffer.textureColorView = {};
+            framebuffer.textureColorViewReady = false;
+            continue;
+        }
+        auto& view = framebuffer.textureColorView;
+        view = {};
+        view.surface = texture->second.native.surface;
+        view.viewMip = 0;
+        view.viewFirstSlice = 0;
+        view.viewNumSlices = 1;
+        view.aaBuffer = nullptr;
+        view.aaSize = 0;
+        GX2InitColorBufferRegs(&view);
+        framebuffer.textureColorViewReady = true;
+    }
+    if (m_boundFramebuffer)
+        refreshFramebufferTarget();
+}
+
+void GraphicsContextGLWKC::refreshFramebufferTarget()
+{
+    if (!m_boundFramebuffer) {
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
+        if (m_requestedDepthTest)
+            m_driver.enable(WKC::GLGX2::Capability::DepthTest);
+        else
+            m_driver.disable(WKC::GLGX2::Capability::DepthTest);
+        if (m_requestedStencilTest)
+            m_driver.enable(WKC::GLGX2::Capability::StencilTest);
+        else
+            m_driver.disable(WKC::GLGX2::Capability::StencilTest);
+        return;
+    }
+
+    if (framebufferStatus(m_boundFramebuffer) != GL_FRAMEBUFFER_COMPLETE_VALUE)
+        return;
+    auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+    if (framebuffer == m_framebuffers.end())
+        return;
+
+    auto& attachments = framebuffer->second;
+    if (attachments.colorTexture)
+        m_native.colorBuffer = &attachments.textureColorView;
+    else {
+        auto color = m_renderbuffers.find(attachments.colorRenderbuffer);
+        if (color == m_renderbuffers.end())
+            return;
+        m_native.colorBuffer = &color->second.colorBuffer;
+    }
+
+    uint32_t targetWidth = 0;
+    uint32_t targetHeight = 0;
+    if (attachments.colorTexture) {
+        auto texture = m_textures.find(attachments.colorTexture);
+        if (texture == m_textures.end())
+            return;
+        targetWidth = texture->second.width;
+        targetHeight = texture->second.height;
+    } else {
+        auto color = m_renderbuffers.find(attachments.colorRenderbuffer);
+        if (color == m_renderbuffers.end())
+            return;
+        targetWidth = color->second.width;
+        targetHeight = color->second.height;
+    }
+
+    // GX2's draw interface binds a depth target even for color-only passes.
+    // Give the FBO a matching private depth/stencil surface, but keep it out of
+    // WebGL's attachment/status queries. This avoids binding the screen-sized
+    // default depth buffer to a differently-sized offscreen color surface.
+    if (attachments.depthRenderbuffer) {
+        auto depth = m_renderbuffers.find(attachments.depthRenderbuffer);
+        if (depth == m_renderbuffers.end())
+            return;
+        if (attachments.fallbackDepth.allocated)
+            releaseRenderbufferStorage(attachments.fallbackDepth);
+        m_native.depthBuffer = &depth->second.depthBuffer;
+    } else if (attachments.stencilRenderbuffer) {
+        auto stencil = m_renderbuffers.find(attachments.stencilRenderbuffer);
+        if (stencil == m_renderbuffers.end())
+            return;
+        if (attachments.fallbackDepth.allocated)
+            releaseRenderbufferStorage(attachments.fallbackDepth);
+        m_native.depthBuffer = &stencil->second.depthBuffer;
+    } else {
+        auto& fallback = attachments.fallbackDepth;
+        if (!fallback.allocated || fallback.width != targetWidth || fallback.height != targetHeight
+            || !fallback.depthSurfaceCreated || !fallback.hasDepth || !fallback.hasStencil) {
+            if (!allocateRenderbufferStorage(fallback, GL_DEPTH_STENCIL_VALUE, targetWidth, targetHeight)) {
+                addError(GL_OUT_OF_MEMORY_VALUE);
+                return;
+            }
+        }
+        m_native.depthBuffer = &fallback.depthBuffer;
+    }
+
+    WKC::GLGX2::bindWUTRenderTarget(m_native);
+    const auto depth = attachments.depthRenderbuffer
+        ? m_renderbuffers.find(attachments.depthRenderbuffer) : m_renderbuffers.end();
+    const auto stencil = attachments.stencilRenderbuffer
+        ? m_renderbuffers.find(attachments.stencilRenderbuffer) : m_renderbuffers.end();
+    if (m_requestedDepthTest && depth != m_renderbuffers.end() && depth->second.hasDepth)
+        m_driver.enable(WKC::GLGX2::Capability::DepthTest);
+    else
+        m_driver.disable(WKC::GLGX2::Capability::DepthTest);
+    if (m_requestedStencilTest && stencil != m_renderbuffers.end() && stencil->second.hasStencil)
+        m_driver.enable(WKC::GLGX2::Capability::StencilTest);
+    else
+        m_driver.disable(WKC::GLGX2::Capability::StencilTest);
+}
+
+bool GraphicsContextGLWKC::framebufferReadyForDraw()
+{
+    if (!m_boundFramebuffer)
+        return true;
+    if (framebufferStatus(m_boundFramebuffer) == GL_FRAMEBUFFER_COMPLETE_VALUE)
+        return true;
+    addError(GL_INVALID_FRAMEBUFFER_OPERATION_VALUE);
+    return false;
+}
+
+void GraphicsContextGLWKC::detachFramebufferTexture(PlatformGLObject name)
+{
+    for (auto& entry : m_framebuffers) {
+        auto& framebuffer = entry.second;
+        if (framebuffer.colorTexture != name)
+            continue;
+        framebuffer.colorTexture = 0;
+        framebuffer.colorTextureLevel = 0;
+        framebuffer.textureColorView = {};
+        framebuffer.textureColorViewReady = false;
+    }
+}
+
+void GraphicsContextGLWKC::detachFramebufferRenderbuffer(PlatformGLObject name)
+{
+    for (auto& entry : m_framebuffers) {
+        auto& framebuffer = entry.second;
+        if (framebuffer.colorRenderbuffer == name)
+            framebuffer.colorRenderbuffer = 0;
+        if (framebuffer.depthRenderbuffer == name)
+            framebuffer.depthRenderbuffer = 0;
+        if (framebuffer.stencilRenderbuffer == name)
+            framebuffer.stencilRenderbuffer = 0;
+    }
 }
 
 void GraphicsContextGLWKC::releaseTextureStorage(TextureRecord& texture)
@@ -1119,7 +1623,7 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
     surface.mipLevels = static_cast<uint32_t>(texture.levels.size());
     surface.format = GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8;
     surface.aa = GX2_AA_MODE1X;
-    surface.use = GX2_SURFACE_USE_TEXTURE;
+    surface.use = static_cast<GX2SurfaceUse>(GX2_SURFACE_USE_TEXTURE | GX2_SURFACE_USE_COLOR_BUFFER);
     surface.tileMode = GX2_TILE_MODE_LINEAR_ALIGNED;
     GX2CalcSurfaceSizeAndAlignment(&surface);
     if (!surface.imageSize || !surface.alignment
@@ -1144,6 +1648,7 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
     }
     GX2InitTextureRegs(&texture.native);
     applyTextureSampler(texture);
+    refreshFramebufferTextureViews();
     return true;
 }
 
@@ -1151,7 +1656,17 @@ bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
     GCGLsizei width, GCGLsizei height, std::span<const uint8_t> pixels,
     std::vector<uint8_t>& output) const
 {
-    if (width < 0 || height < 0 || type != GL_UNSIGNED_BYTE_VALUE)
+    if (width < 0 || height < 0)
+        return false;
+
+    const bool packed565 = type == GL_UNSIGNED_SHORT_5_6_5_VALUE;
+    const bool packed4444 = type == GL_UNSIGNED_SHORT_4_4_4_4_VALUE;
+    const bool packed5551 = type == GL_UNSIGNED_SHORT_5_5_5_1_VALUE;
+    const bool packed = packed565 || packed4444 || packed5551;
+    if (type != GL_UNSIGNED_BYTE_VALUE && !packed)
+        return false;
+    if ((packed565 && format != GL_RGB_VALUE)
+        || ((packed4444 || packed5551) && format != GL_RGBA_VALUE))
         return false;
 
     uint32_t sourceComponents = 0;
@@ -1181,8 +1696,8 @@ bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
     if (!width || !height)
         return true;
     if (pixels.empty()) {
-        // GL expands legacy WebGL 1 formats to RGBA. A missing source buffer is
-        // security-initialized to zero in the source format before expansion.
+        // GL initializes a missing source buffer to zero in the source format
+        // before expanding legacy WebGL 1 formats to RGBA.
         for (size_t pixel = 0; pixel < w * h; ++pixel) {
             uint8_t* destination = output.data() + pixel * 4;
             if (format == GL_ALPHA_VALUE)
@@ -1193,18 +1708,50 @@ bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
         return true;
     }
 
-    const size_t sourceRowBytes = w * sourceComponents;
+    const size_t sourcePixelBytes = packed ? sizeof(uint16_t) : sourceComponents;
+    if (w > std::numeric_limits<size_t>::max() / sourcePixelBytes)
+        return false;
+    const size_t sourceRowBytes = w * sourcePixelBytes;
     const size_t alignment = static_cast<size_t>(m_unpackAlignment);
+    if (sourceRowBytes > std::numeric_limits<size_t>::max() - (alignment - 1))
+        return false;
     const size_t sourceStride = (sourceRowBytes + alignment - 1) & ~(alignment - 1);
+    if (h - 1 > (std::numeric_limits<size_t>::max() - sourceRowBytes) / sourceStride)
+        return false;
     const size_t requiredBytes = (h - 1) * sourceStride + sourceRowBytes;
     if (pixels.size() < requiredBytes)
         return false;
 
+    auto expandBits = [](uint32_t value, uint32_t maxValue) -> uint8_t {
+        return static_cast<uint8_t>((value * 255U + maxValue / 2U) / maxValue);
+    };
     for (size_t y = 0; y < h; ++y) {
         const uint8_t* row = pixels.data() + y * sourceStride;
         for (size_t x = 0; x < w; ++x) {
-            const uint8_t* source = row + x * sourceComponents;
             uint8_t* destination = output.data() + (y * w + x) * 4;
+            if (packed) {
+                uint16_t value = 0;
+                std::memcpy(&value, row + x * sizeof(value), sizeof(value));
+                if (packed565) {
+                    destination[0] = expandBits((value >> 11) & 0x1f, 0x1f);
+                    destination[1] = expandBits((value >> 5) & 0x3f, 0x3f);
+                    destination[2] = expandBits(value & 0x1f, 0x1f);
+                    destination[3] = 255;
+                } else if (packed4444) {
+                    destination[0] = expandBits((value >> 12) & 0x0f, 0x0f);
+                    destination[1] = expandBits((value >> 8) & 0x0f, 0x0f);
+                    destination[2] = expandBits((value >> 4) & 0x0f, 0x0f);
+                    destination[3] = expandBits(value & 0x0f, 0x0f);
+                } else {
+                    destination[0] = expandBits((value >> 11) & 0x1f, 0x1f);
+                    destination[1] = expandBits((value >> 6) & 0x1f, 0x1f);
+                    destination[2] = expandBits((value >> 1) & 0x1f, 0x1f);
+                    destination[3] = (value & 1) ? 255 : 0;
+                }
+                continue;
+            }
+
+            const uint8_t* source = row + x * sourceComponents;
             switch (format) {
             case GL_ALPHA_VALUE:
                 destination[0] = destination[1] = destination[2] = 255;
@@ -1695,12 +2242,21 @@ void GraphicsContextGLWKC::deleteTexture(PlatformGLObject name)
     auto it = m_textures.find(name);
     if (!name || it == m_textures.end())
         return;
+
+    if (m_boundFramebuffer) {
+        GX2DrawDone();
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
+    }
+    detachFramebufferTexture(name);
     releaseTextureStorage(it->second);
     m_textures.erase(it);
     for (auto& bound : m_boundTextures2D) {
         if (bound == name)
             bound = 0;
     }
+    refreshFramebufferTarget();
 }
 
 GCGLboolean GraphicsContextGLWKC::isTexture(PlatformGLObject name)
@@ -2015,11 +2571,347 @@ void GraphicsContextGLWKC::bindBuffer(GCGLenum target,PlatformGLObject name)
     if(mapped==WKC::GLGX2::BufferTarget::ElementArray &&
        m_vertexArrays.setElementBuffer(name,m_buffers)!=WKC::GLGX2::VertexArrayResult::Ok) addError(GL_INVALID_OPERATION_VALUE);
 }
-void GraphicsContextGLWKC::bindFramebuffer(GCGLenum target,PlatformGLObject name)
+void GraphicsContextGLWKC::bindFramebuffer(GCGLenum target, PlatformGLObject name)
 {
-    if(target!=GL_FRAMEBUFFER_VALUE) { addError(GL_INVALID_ENUM_VALUE); return; }
-    if(name) { addError(GL_INVALID_OPERATION_VALUE); return; }
-    m_boundFramebuffer=0; WKC::GLGX2::bindWUTRenderTarget(m_native);
+    if (target != GL_FRAMEBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (name && !m_framebuffers.contains(name)) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    m_boundFramebuffer = name;
+    refreshFramebufferTarget();
+}
+
+PlatformGLObject GraphicsContextGLWKC::createFramebuffer()
+{
+    const auto name = nextFramebufferName();
+    if (!name) {
+        addError(GL_OUT_OF_MEMORY_VALUE);
+        return 0;
+    }
+    m_framebuffers.emplace(name, FramebufferRecord {});
+    return name;
+}
+
+void GraphicsContextGLWKC::deleteFramebuffer(PlatformGLObject name)
+{
+    if (!name)
+        return;
+    auto framebuffer = m_framebuffers.find(name);
+    if (framebuffer == m_framebuffers.end())
+        return;
+    const bool wasBound = m_boundFramebuffer == name;
+    if (wasBound) {
+        GX2DrawDone();
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
+        m_boundFramebuffer = 0;
+    }
+    releaseRenderbufferStorage(framebuffer->second.fallbackDepth);
+    m_framebuffers.erase(framebuffer);
+    if (wasBound)
+        refreshFramebufferTarget();
+}
+
+GCGLboolean GraphicsContextGLWKC::isFramebuffer(PlatformGLObject name)
+{
+    return name && m_framebuffers.contains(name);
+}
+
+PlatformGLObject GraphicsContextGLWKC::createRenderbuffer()
+{
+    const auto name = nextRenderbufferName();
+    if (!name) {
+        addError(GL_OUT_OF_MEMORY_VALUE);
+        return 0;
+    }
+    m_renderbuffers.emplace(name, RenderbufferRecord {});
+    return name;
+}
+
+void GraphicsContextGLWKC::deleteRenderbuffer(PlatformGLObject name)
+{
+    if (!name)
+        return;
+    auto renderbuffer = m_renderbuffers.find(name);
+    if (renderbuffer == m_renderbuffers.end())
+        return;
+    if (m_boundFramebuffer) {
+        GX2DrawDone();
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
+    }
+    detachFramebufferRenderbuffer(name);
+    if (m_boundRenderbuffer == name)
+        m_boundRenderbuffer = 0;
+    releaseRenderbufferStorage(renderbuffer->second);
+    m_renderbuffers.erase(renderbuffer);
+    refreshFramebufferTarget();
+}
+
+GCGLboolean GraphicsContextGLWKC::isRenderbuffer(PlatformGLObject name)
+{
+    return name && m_renderbuffers.contains(name);
+}
+
+void GraphicsContextGLWKC::bindRenderbuffer(GCGLenum target, PlatformGLObject name)
+{
+    if (target != GL_RENDERBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (name && !m_renderbuffers.contains(name)) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    m_boundRenderbuffer = name;
+}
+
+void GraphicsContextGLWKC::renderbufferStorage(GCGLenum target, GCGLenum internalFormat,
+    GCGLsizei width, GCGLsizei height)
+{
+    if (target != GL_RENDERBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (width < 0 || height < 0
+        || width > maxRenderbufferSize() || height > maxRenderbufferSize()) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    switch (internalFormat) {
+    case GL_RGBA4_VALUE:
+    case GL_RGB5_A1_VALUE:
+    case GL_RGB565_VALUE:
+    case GL_DEPTH_COMPONENT16_VALUE:
+    case GL_STENCIL_INDEX8_VALUE:
+    case GL_DEPTH_STENCIL_VALUE:
+        break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    auto renderbuffer = m_renderbuffers.find(m_boundRenderbuffer);
+    if (!m_boundRenderbuffer || renderbuffer == m_renderbuffers.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    if (m_boundFramebuffer) {
+        auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        if (framebuffer != m_framebuffers.end()) {
+            const auto& attached = framebuffer->second;
+            if (attached.colorRenderbuffer == m_boundRenderbuffer
+                || attached.depthRenderbuffer == m_boundRenderbuffer
+                || attached.stencilRenderbuffer == m_boundRenderbuffer) {
+                GX2DrawDone();
+                m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+                m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+                WKC::GLGX2::bindWUTRenderTarget(m_native);
+            }
+        }
+    }
+    if (!allocateRenderbufferStorage(renderbuffer->second, internalFormat,
+            static_cast<uint32_t>(width), static_cast<uint32_t>(height))) {
+        addError(GL_OUT_OF_MEMORY_VALUE);
+        return;
+    }
+    refreshFramebufferTarget();
+}
+
+void GraphicsContextGLWKC::framebufferRenderbuffer(GCGLenum target, GCGLenum attachment,
+    GCGLenum renderbufferTarget, PlatformGLObject name)
+{
+    if (target != GL_FRAMEBUFFER_VALUE || renderbufferTarget != GL_RENDERBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+    if (!m_boundFramebuffer || framebuffer == m_framebuffers.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    RenderbufferRecord* renderbuffer = nullptr;
+    if (name) {
+        auto found = m_renderbuffers.find(name);
+        if (found == m_renderbuffers.end()) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        renderbuffer = &found->second;
+    }
+
+    auto& record = framebuffer->second;
+    switch (attachment) {
+    case GL_COLOR_ATTACHMENT0_VALUE:
+        record.colorRenderbuffer = name;
+        record.colorTexture = 0;
+        record.colorTextureLevel = 0;
+        record.textureColorView = {};
+        record.textureColorViewReady = false;
+        break;
+    case GL_DEPTH_ATTACHMENT_VALUE:
+        record.depthRenderbuffer = name;
+        break;
+    case GL_STENCIL_ATTACHMENT_VALUE:
+        record.stencilRenderbuffer = name;
+        break;
+    case GL_DEPTH_STENCIL_ATTACHMENT_VALUE:
+        record.depthRenderbuffer = name;
+        record.stencilRenderbuffer = name;
+        break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    refreshFramebufferTarget();
+}
+
+void GraphicsContextGLWKC::framebufferTexture2D(GCGLenum target, GCGLenum attachment,
+    GCGLenum textureTarget, PlatformGLObject name, GCGLint level)
+{
+    if (target != GL_FRAMEBUFFER_VALUE || textureTarget != GL_TEXTURE_2D_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (attachment != GL_COLOR_ATTACHMENT0_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+    if (!m_boundFramebuffer || framebuffer == m_framebuffers.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    if (level < 0 || level != 0) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+
+    if (name) {
+        auto texture = m_textures.find(name);
+        if (texture == m_textures.end() || texture->second.target != GL_TEXTURE_2D_VALUE) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+    }
+
+    auto& record = framebuffer->second;
+    record.colorTexture = name;
+    record.colorTextureLevel = level;
+    record.colorRenderbuffer = 0;
+    record.textureColorView = {};
+    record.textureColorViewReady = false;
+    refreshFramebufferTextureViews();
+    refreshFramebufferTarget();
+}
+
+GCGLint GraphicsContextGLWKC::getFramebufferAttachmentParameteri(GCGLenum target,
+    GCGLenum attachment, GCGLenum pname)
+{
+    if (target != GL_FRAMEBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+    auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+    if (!m_boundFramebuffer || framebuffer == m_framebuffers.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return 0;
+    }
+
+    PlatformGLObject objectName = 0;
+    GCGLenum objectType = 0;
+    GCGLint textureLevel = 0;
+    const auto& record = framebuffer->second;
+    switch (attachment) {
+    case GL_COLOR_ATTACHMENT0_VALUE:
+        if (record.colorTexture) {
+            objectName = record.colorTexture;
+            objectType = GL_TEXTURE_OBJECT_VALUE;
+            textureLevel = record.colorTextureLevel;
+        } else if (record.colorRenderbuffer) {
+            objectName = record.colorRenderbuffer;
+            objectType = GL_RENDERBUFFER_VALUE;
+        }
+        break;
+    case GL_DEPTH_ATTACHMENT_VALUE:
+        objectName = record.depthRenderbuffer;
+        if (objectName)
+            objectType = GL_RENDERBUFFER_VALUE;
+        break;
+    case GL_STENCIL_ATTACHMENT_VALUE:
+        objectName = record.stencilRenderbuffer;
+        if (objectName)
+            objectType = GL_RENDERBUFFER_VALUE;
+        break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+
+    switch (pname) {
+    case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_VALUE:
+        return objectType;
+    case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_VALUE:
+        return objectName;
+    case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE:
+        if (objectType != GL_TEXTURE_OBJECT_VALUE && pname == GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE)
+            return 0;
+        return textureLevel;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+}
+
+GCGLint GraphicsContextGLWKC::getRenderbufferParameteri(GCGLenum target, GCGLenum pname)
+{
+    if (target != GL_RENDERBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+    auto found = m_renderbuffers.find(m_boundRenderbuffer);
+    if (!m_boundRenderbuffer || found == m_renderbuffers.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return 0;
+    }
+    const auto& renderbuffer = found->second;
+    switch (pname) {
+    case GL_RENDERBUFFER_WIDTH_VALUE: return renderbuffer.width;
+    case GL_RENDERBUFFER_HEIGHT_VALUE: return renderbuffer.height;
+    case GL_RENDERBUFFER_INTERNAL_FORMAT_VALUE: return renderbuffer.internalFormat;
+    case GL_RENDERBUFFER_RED_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_RGBA4_VALUE) return 4;
+        if (renderbuffer.internalFormat == GL_RGB5_A1_VALUE || renderbuffer.internalFormat == GL_RGB565_VALUE) return 5;
+        return 0;
+    case GL_RENDERBUFFER_GREEN_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_RGBA4_VALUE) return 4;
+        if (renderbuffer.internalFormat == GL_RGB5_A1_VALUE) return 5;
+        if (renderbuffer.internalFormat == GL_RGB565_VALUE) return 6;
+        return 0;
+    case GL_RENDERBUFFER_BLUE_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_RGBA4_VALUE) return 4;
+        if (renderbuffer.internalFormat == GL_RGB5_A1_VALUE || renderbuffer.internalFormat == GL_RGB565_VALUE) return 5;
+        return 0;
+    case GL_RENDERBUFFER_ALPHA_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_RGBA4_VALUE) return 4;
+        if (renderbuffer.internalFormat == GL_RGB5_A1_VALUE) return 1;
+        return 0;
+    case GL_RENDERBUFFER_DEPTH_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_DEPTH_COMPONENT16_VALUE) return 16;
+        if (renderbuffer.internalFormat == GL_DEPTH_STENCIL_VALUE) return 24;
+        return 0;
+    case GL_RENDERBUFFER_STENCIL_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_STENCIL_INDEX8_VALUE || renderbuffer.internalFormat == GL_DEPTH_STENCIL_VALUE) return 8;
+        return 0;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
 }
 void GraphicsContextGLWKC::blendColor(GCGLclampf r,GCGLclampf g,GCGLclampf b,GCGLclampf a)
 { addDriverError(m_driver.setBlendColor({r,g,b,a}),"blendColor"); }
@@ -2059,11 +2951,37 @@ void GraphicsContextGLWKC::blendFuncSeparate(GCGLenum sr,GCGLenum dr,GCGLenum sa
 }
 GCGLenum GraphicsContextGLWKC::checkFramebufferStatus(GCGLenum target)
 {
-    if(target!=GL_FRAMEBUFFER_VALUE) { addError(GL_INVALID_ENUM_VALUE); return 0; }
-    return m_boundFramebuffer ? GL_FRAMEBUFFER_UNSUPPORTED_VALUE : GL_FRAMEBUFFER_COMPLETE_VALUE;
+    if (target != GL_FRAMEBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+    return framebufferStatus(m_boundFramebuffer);
 }
 void GraphicsContextGLWKC::clear(GCGLbitfield mask)
 {
+    if (!framebufferReadyForDraw())
+        return;
+    if (mask & ~(GL_COLOR_BUFFER_BIT_VALUE | GL_DEPTH_BUFFER_BIT_VALUE | GL_STENCIL_BUFFER_BIT_VALUE)) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    if (m_boundFramebuffer) {
+        auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        bool hasDepth = false;
+        bool hasStencil = false;
+        if (framebuffer != m_framebuffers.end()) {
+            auto depth = m_renderbuffers.find(framebuffer->second.depthRenderbuffer);
+            auto stencil = m_renderbuffers.find(framebuffer->second.stencilRenderbuffer);
+            hasDepth = depth != m_renderbuffers.end() && depth->second.hasDepth;
+            hasStencil = stencil != m_renderbuffers.end() && stencil->second.hasStencil;
+        }
+        if (!hasDepth)
+            mask &= ~GL_DEPTH_BUFFER_BIT_VALUE;
+        if (!hasStencil)
+            mask &= ~GL_STENCIL_BUFFER_BIT_VALUE;
+    }
+    if (!mask)
+        return;
     uint8_t translated=0;
     if(mask&GL_COLOR_BUFFER_BIT_VALUE) translated|=WKC::GLGX2::ClearColorBuffer;
     if(mask&GL_DEPTH_BUFFER_BIT_VALUE) translated|=WKC::GLGX2::ClearDepthBuffer;
@@ -2161,6 +3079,175 @@ void GraphicsContextGLWKC::deleteShader(PlatformGLObject name)
     it->second.deletePending=true;
     releaseShaderIfUnused(name);
 }
+void GraphicsContextGLWKC::getShaderPrecisionFormat(GCGLenum shaderType,
+    GCGLenum precisionType, std::span<GCGLint, 2> range, GCGLint* precision)
+{
+    if (shaderType != GL_VERTEX_SHADER_VALUE && shaderType != GL_FRAGMENT_SHADER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (!precision) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+
+    switch (precisionType) {
+    case 0x8DF0: // GL_LOW_FLOAT
+        range[0] = -8; range[1] = 8; *precision = 8;
+        return;
+    case 0x8DF1: // GL_MEDIUM_FLOAT
+        range[0] = -14; range[1] = 14; *precision = 10;
+        return;
+    case 0x8DF2: // GL_HIGH_FLOAT
+        range[0] = -126; range[1] = 127; *precision = 23;
+        return;
+    case 0x8DF3: // GL_LOW_INT
+        range[0] = 7; range[1] = 6; *precision = 0;
+        return;
+    case 0x8DF4: // GL_MEDIUM_INT
+        range[0] = 15; range[1] = 14; *precision = 0;
+        return;
+    case 0x8DF5: // GL_HIGH_INT
+        range[0] = 31; range[1] = 30; *precision = 0;
+        return;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+}
+
+void GraphicsContextGLWKC::hint(GCGLenum target, GCGLenum mode)
+{
+    // The Wii U compiler exposes no quality-control switch for shader
+    // derivatives or mip generation; the GL hints are valid but advisory.
+    if (mode != 0x1100 /* GL_DONT_CARE */ && mode != 0x1101 /* GL_FASTEST */
+        && mode != 0x1102 /* GL_NICEST */) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (target != 0x8192 /* GL_GENERATE_MIPMAP_HINT */
+        && target != 0x8B8B /* GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES */) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+}
+
+void GraphicsContextGLWKC::lineWidth(GCGLfloat width)
+{
+    if (!std::isfinite(width) || width <= 0.0f) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    GX2SetLineWidth(width);
+}
+
+void GraphicsContextGLWKC::sampleCoverage(GCGLclampf value, GCGLboolean invert)
+{
+    UNUSED_PARAM(invert);
+    if (!std::isfinite(value) || value < 0.0f || value > 1.0f) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    // This WebGL 1 backend creates single-sample GX2 targets only, so a valid
+    // sample-coverage state has no rasterization effect.
+}
+
+void GraphicsContextGLWKC::stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask)
+{
+    stencilFuncSeparate(0x0408 /* GL_FRONT_AND_BACK */, func, ref, mask);
+}
+
+void GraphicsContextGLWKC::stencilFuncSeparate(
+    GCGLenum face, GCGLenum func, GCGLint ref, GCGLuint mask)
+{
+    WKC::GLGX2::Face nativeFace;
+    switch (face) {
+    case 0x0404: nativeFace = WKC::GLGX2::Face::Front; break;
+    case 0x0405: nativeFace = WKC::GLGX2::Face::Back; break;
+    case 0x0408: nativeFace = WKC::GLGX2::Face::FrontAndBack; break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+
+    WKC::GLGX2::CompareFunction nativeFunction;
+    switch (func) {
+    case 0x0200: nativeFunction = WKC::GLGX2::CompareFunction::Never; break;
+    case 0x0201: nativeFunction = WKC::GLGX2::CompareFunction::Less; break;
+    case 0x0202: nativeFunction = WKC::GLGX2::CompareFunction::Equal; break;
+    case 0x0203: nativeFunction = WKC::GLGX2::CompareFunction::LessEqual; break;
+    case 0x0204: nativeFunction = WKC::GLGX2::CompareFunction::Greater; break;
+    case 0x0205: nativeFunction = WKC::GLGX2::CompareFunction::NotEqual; break;
+    case 0x0206: nativeFunction = WKC::GLGX2::CompareFunction::GreaterEqual; break;
+    case 0x0207: nativeFunction = WKC::GLGX2::CompareFunction::Always; break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    addDriverError(m_driver.setStencilFunction(nativeFace, nativeFunction, ref, mask), "stencilFuncSeparate");
+}
+
+void GraphicsContextGLWKC::stencilMask(GCGLuint mask)
+{
+    stencilMaskSeparate(0x0408 /* GL_FRONT_AND_BACK */, mask);
+}
+
+void GraphicsContextGLWKC::stencilMaskSeparate(GCGLenum face, GCGLuint mask)
+{
+    WKC::GLGX2::Face nativeFace;
+    switch (face) {
+    case 0x0404: nativeFace = WKC::GLGX2::Face::Front; break;
+    case 0x0405: nativeFace = WKC::GLGX2::Face::Back; break;
+    case 0x0408: nativeFace = WKC::GLGX2::Face::FrontAndBack; break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    addDriverError(m_driver.setStencilWriteMask(nativeFace, mask), "stencilMaskSeparate");
+}
+
+void GraphicsContextGLWKC::stencilOp(GCGLenum fail, GCGLenum zfail, GCGLenum zpass)
+{
+    stencilOpSeparate(0x0408 /* GL_FRONT_AND_BACK */, fail, zfail, zpass);
+}
+
+void GraphicsContextGLWKC::stencilOpSeparate(
+    GCGLenum face, GCGLenum fail, GCGLenum zfail, GCGLenum zpass)
+{
+    WKC::GLGX2::Face nativeFace;
+    switch (face) {
+    case 0x0404: nativeFace = WKC::GLGX2::Face::Front; break;
+    case 0x0405: nativeFace = WKC::GLGX2::Face::Back; break;
+    case 0x0408: nativeFace = WKC::GLGX2::Face::FrontAndBack; break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+
+    auto mapOperation = [](GCGLenum operation, WKC::GLGX2::StencilOperation& output) {
+        using WKC::GLGX2::StencilOperation;
+        switch (operation) {
+        case 0: output = StencilOperation::Zero; return true;
+        case 0x1E00: output = StencilOperation::Keep; return true;
+        case 0x1E01: output = StencilOperation::Replace; return true;
+        case 0x1E02: output = StencilOperation::Increment; return true;
+        case 0x1E03: output = StencilOperation::Decrement; return true;
+        case 0x150A: output = StencilOperation::Invert; return true;
+        case 0x8507: output = StencilOperation::IncrementWrap; return true;
+        case 0x8508: output = StencilOperation::DecrementWrap; return true;
+        default: return false;
+        }
+    };
+    WKC::GLGX2::StencilOperation nativeFail, nativeZFail, nativeZPass;
+    if (!mapOperation(fail, nativeFail) || !mapOperation(zfail, nativeZFail)
+        || !mapOperation(zpass, nativeZPass)) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    addDriverError(m_driver.setStencilOperation(nativeFace, nativeFail, nativeZFail, nativeZPass),
+        "stencilOpSeparate");
+}
+
 void GraphicsContextGLWKC::depthFunc(GCGLenum v)
 {
     WKC::GLGX2::CompareFunction out;
@@ -2187,6 +3274,16 @@ void GraphicsContextGLWKC::detachShader(PlatformGLObject p,PlatformGLObject s)
 }
 void GraphicsContextGLWKC::disable(GCGLenum cap)
 {
+    if (cap == GL_DEPTH_TEST_VALUE) {
+        m_requestedDepthTest = false;
+        refreshFramebufferTarget();
+        return;
+    }
+    if (cap == GL_STENCIL_TEST_VALUE) {
+        m_requestedStencilTest = false;
+        refreshFramebufferTarget();
+        return;
+    }
     auto map=[](GCGLenum v)->std::optional<WKC::GLGX2::Capability>{
         switch(v){case GL_BLEND_VALUE:return WKC::GLGX2::Capability::Blend;case GL_CULL_FACE_VALUE:return WKC::GLGX2::Capability::CullFace;
         case GL_DEPTH_TEST_VALUE:return WKC::GLGX2::Capability::DepthTest;case GL_SCISSOR_TEST_VALUE:return WKC::GLGX2::Capability::ScissorTest;
@@ -2198,12 +3295,16 @@ void GraphicsContextGLWKC::disableVertexAttribArray(GCGLuint i)
 {if(i>=32||m_vertexArrays.enableAttribute(i,false)!=WKC::GLGX2::VertexArrayResult::Ok)addError(i>=32?GL_INVALID_VALUE_VALUE:GL_INVALID_OPERATION_VALUE);}
 void GraphicsContextGLWKC::drawArrays(GCGLenum mode,GCGLint first,GCGLsizei count)
 {
+    if (!framebufferReadyForDraw())
+        return;
     WKC::GLGX2::Primitive p;if(!mapPrimitive(mode,p)){addError(GL_INVALID_ENUM_VALUE);return;}
     if(first<0||count<0){addError(GL_INVALID_VALUE_VALUE);return;}if(!activateProgram(m_currentProgram))return;
     addDriverError(m_driver.drawArrays(p,first,count),"drawArrays");
 }
 void GraphicsContextGLWKC::drawElements(GCGLenum mode,GCGLsizei count,GCGLenum type,GCGLintptr offset)
 {
+    if (!framebufferReadyForDraw())
+        return;
     WKC::GLGX2::Primitive p;WKC::GLGX2::IndexType t;
     if(!mapPrimitive(mode,p)||!mapIndexType(type,t)){addError(GL_INVALID_ENUM_VALUE);return;}
     if(count<0||offset<0){addError(GL_INVALID_VALUE_VALUE);return;}if(!activateProgram(m_currentProgram))return;
@@ -2211,12 +3312,16 @@ void GraphicsContextGLWKC::drawElements(GCGLenum mode,GCGLsizei count,GCGLenum t
 }
 void GraphicsContextGLWKC::drawArraysInstanced(GCGLenum mode,GCGLint first,GCGLsizei count,GCGLsizei instances)
 {
+    if (!framebufferReadyForDraw())
+        return;
     WKC::GLGX2::Primitive p;if(!mapPrimitive(mode,p)){addError(GL_INVALID_ENUM_VALUE);return;}
     if(first<0||count<0||instances<0){addError(GL_INVALID_VALUE_VALUE);return;}if(!activateProgram(m_currentProgram))return;
     addDriverError(m_driver.drawArraysInstanced(p,first,count,instances),"drawArraysInstanced");
 }
 void GraphicsContextGLWKC::drawElementsInstanced(GCGLenum mode,GCGLsizei count,GCGLenum type,GCGLintptr offset,GCGLsizei instances)
 {
+    if (!framebufferReadyForDraw())
+        return;
     WKC::GLGX2::Primitive p;WKC::GLGX2::IndexType t;
     if(!mapPrimitive(mode,p)||!mapIndexType(type,t)){addError(GL_INVALID_ENUM_VALUE);return;}
     if(count<0||offset<0||instances<0){addError(GL_INVALID_VALUE_VALUE);return;}if(!activateProgram(m_currentProgram))return;
@@ -2224,6 +3329,16 @@ void GraphicsContextGLWKC::drawElementsInstanced(GCGLenum mode,GCGLsizei count,G
 }
 void GraphicsContextGLWKC::enable(GCGLenum cap)
 {
+    if (cap == GL_DEPTH_TEST_VALUE) {
+        m_requestedDepthTest = true;
+        refreshFramebufferTarget();
+        return;
+    }
+    if (cap == GL_STENCIL_TEST_VALUE) {
+        m_requestedStencilTest = true;
+        refreshFramebufferTarget();
+        return;
+    }
     auto map=[](GCGLenum v)->std::optional<WKC::GLGX2::Capability>{
         switch(v){case GL_BLEND_VALUE:return WKC::GLGX2::Capability::Blend;case GL_CULL_FACE_VALUE:return WKC::GLGX2::Capability::CullFace;
         case GL_DEPTH_TEST_VALUE:return WKC::GLGX2::Capability::DepthTest;case GL_SCISSOR_TEST_VALUE:return WKC::GLGX2::Capability::ScissorTest;
@@ -2305,6 +3420,7 @@ void GraphicsContextGLWKC::getIntegerv(GCGLenum n,std::span<GCGLint> v)
     switch(n){case GL_ARRAY_BUFFER_BINDING_VALUE:v[0]=m_buffers.bound(WKC::GLGX2::BufferTarget::Array);return;
     case GL_ELEMENT_ARRAY_BUFFER_BINDING_VALUE:v[0]=m_vertexArrays.elementBuffer();return;
     case GL_FRAMEBUFFER_BINDING_VALUE:v[0]=m_boundFramebuffer;return;
+     case GL_RENDERBUFFER_BINDING_VALUE:v[0]=m_boundRenderbuffer;return;
     case GL_TEXTURE_BINDING_2D_VALUE:v[0]=m_boundTextures2D[m_activeTextureUnit];return;
     case GL_ACTIVE_TEXTURE_QUERY_VALUE:v[0]=GL_TEXTURE0_VALUE + m_activeTextureUnit;return;
     case GL_CURRENT_PROGRAM_VALUE:v[0]=m_currentProgram;return;
@@ -2497,6 +3613,58 @@ void GraphicsContextGLWKC::uniform4iv(GCGLint l,std::span<const GCGLint> v){if(v
 void GraphicsContextGLWKC::uniformMatrix2fv(GCGLint l,GCGLboolean t,std::span<const GCGLfloat> v){if(t||v.size()%4){addError(GL_INVALID_VALUE_VALUE);return;}setUniformData(l,v.data(),v.size_bytes(),4,v.size()/4,false,2);}
 void GraphicsContextGLWKC::uniformMatrix3fv(GCGLint l,GCGLboolean t,std::span<const GCGLfloat> v){if(t||v.size()%9){addError(GL_INVALID_VALUE_VALUE);return;}setUniformData(l,v.data(),v.size_bytes(),9,v.size()/9,false,3);}
 void GraphicsContextGLWKC::uniformMatrix4fv(GCGLint l,GCGLboolean t,std::span<const GCGLfloat> v){if(t||v.size()%16){addError(GL_INVALID_VALUE_VALUE);return;}setUniformData(l,v.data(),v.size_bytes(),16,v.size()/16,false,4);}
+void GraphicsContextGLWKC::setCurrentVertexAttribute(
+    GCGLuint index, const std::array<GCGLfloat, 4>& value)
+{
+    if (index >= static_cast<GCGLuint>(maxVertexAttribs())
+        || index >= m_native.bufferResources.currentAttributeValues.size()) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    m_native.bufferResources.currentAttributeValues[index] = value;
+}
+
+void GraphicsContextGLWKC::vertexAttrib1f(GCGLuint index, GCGLfloat x)
+{
+    setCurrentVertexAttribute(index, { x, 0.0f, 0.0f, 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib1fv(GCGLuint index, std::span<const GCGLfloat, 1> values)
+{
+    setCurrentVertexAttribute(index, { values[0], 0.0f, 0.0f, 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y)
+{
+    setCurrentVertexAttribute(index, { x, y, 0.0f, 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib2fv(GCGLuint index, std::span<const GCGLfloat, 2> values)
+{
+    setCurrentVertexAttribute(index, { values[0], values[1], 0.0f, 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib3f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z)
+{
+    setCurrentVertexAttribute(index, { x, y, z, 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib3fv(GCGLuint index, std::span<const GCGLfloat, 3> values)
+{
+    setCurrentVertexAttribute(index, { values[0], values[1], values[2], 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib4f(
+    GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w)
+{
+    setCurrentVertexAttribute(index, { x, y, z, w });
+}
+
+void GraphicsContextGLWKC::vertexAttrib4fv(GCGLuint index, std::span<const GCGLfloat, 4> values)
+{
+    setCurrentVertexAttribute(index, { values[0], values[1], values[2], values[3] });
+}
+
 void GraphicsContextGLWKC::vertexAttribPointer(GCGLuint i,GCGLint size,GCGLenum type,GCGLboolean norm,GCGLsizei stride,GCGLintptr offset)
 {
     WKC::GLGX2::AttributeType t;if(i>=32||size<1||size>4||stride<0||offset<0||!mapAttributeType(type,t)){addError(GL_INVALID_VALUE_VALUE);return;}
@@ -2527,9 +3695,9 @@ GCGLboolean GraphicsContextGLWKC::isEnabled(GCGLenum capability)
     switch (capability) {
     case GL_BLEND_VALUE: return m_native.blendEnabled;
     case GL_CULL_FACE_VALUE: return m_native.cullEnabled;
-    case GL_DEPTH_TEST_VALUE: return m_native.depthTestEnabled;
+    case GL_DEPTH_TEST_VALUE: return m_requestedDepthTest;
     case GL_SCISSOR_TEST_VALUE: return m_native.scissorEnabled;
-    case GL_STENCIL_TEST_VALUE: return m_native.stencilEnabled;
+    case GL_STENCIL_TEST_VALUE: return m_requestedStencilTest;
     case GL_POLYGON_OFFSET_FILL_VALUE: return m_native.polygonOffsetEnabled;
     default:
         addError(GL_INVALID_ENUM_VALUE);
