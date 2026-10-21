@@ -1095,8 +1095,6 @@ private:
     bool m_compilerAvailable { false };
 };
 
-};
-
 
 GraphicsContextGLWKC::GraphicsContextGLWKC(const GraphicsContextGLAttributes& attrs)
     : GraphicsContextGL(attrs)
