@@ -2712,6 +2712,39 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expect_outcome(result=FAILURE, state_string='layout-tests (failure)')
         return self.run_step()
 
+    def test_failure_with_failed_results_upload(self):
+        # When the upload to the results server fails, run-webkit-tests exits with -1 (255), but it still prints the results.
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        )
+            .log('stdio', stdout='''=> Results: 2/5 tests passed (40.0%)
+
+Unexpected flakiness: text-only failures (1)
+  failures/flaky/text.html [ Pass Failure ]
+
+
+Regressions: Unexpected crashes (1)
+  failures/unexpected/crash.html [ Crash ]
+
+Regressions: Unexpected image and text failures (1)
+  failures/unexpected/text-image-checksum.html [ Failure ]
+
+------------------------------------------------------------------------------
+
+Failed to upload test results to https://results.webkit.org (1 failed), exiting with status -1.
+''')
+            .exit(255),
+        )
+        self.expect_outcome(result=FAILURE, state_string='1 flakes 2 failures results upload failed')
+        return self.run_step()
+
     def test_failure_no_failure_limits(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
@@ -3166,6 +3199,33 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
             .exit(0),
         )
         self.expect_outcome(result=SUCCESS, state_string='layout-tests')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.run_step()
+
+    def test_passing_with_failed_results_upload(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests --builder-name iOS-13-Simulator-WK2-Tests-EWS --build-number 123 --buildbot-worker ews126 --buildbot-master {EWS_BUILD_HOSTNAMES[0]} --report https://results.webkit.org/ 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+                        )
+            .log('stdio', stdout='''=> Results: 2/2 tests passed (100.0%)
+
+=> Tests to be fixed (0):
+
+=> Tests that will only be fixed if they crash (WONTFIX) (0):
+
+
+Failed to upload test results to https://results.webkit.org/ (1 failed), exiting with status -1.
+''')
+            .exit(255),
+        )
+        self.expect_outcome(result=FAILURE, state_string='results upload failed')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.run_step()
 

@@ -48,7 +48,7 @@ import socket
 import sys
 import time
 
-from Shared.steps import ShellMixin, SetBuildSummary, SetO3OptimizationLevel, WaitForDuration, InstallSwiftToolchain, cmake_tools_path, SCAN_BUILD_PATH, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, SWIFT_DIR, USER_TOOLCHAINS_DIR, needs_swift_toolchain_setup
+from Shared.steps import ShellMixin, SetBuildSummary, SetO3OptimizationLevel, WaitForDuration, InstallSwiftToolchain, cmake_tools_path, FAILED_RESULTS_UPLOAD_MESSAGE, SCAN_BUILD_PATH, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, SWIFT_DIR, USER_TOOLCHAINS_DIR, needs_swift_toolchain_setup
 from Shared import generate_s3_url
 
 if sys.version_info < (3, 9):  # noqa: UP036
@@ -4191,10 +4191,14 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
             ('failures', re.compile(r'Regressions: Unexpected.+\((\d+)\)')),
         ]
         testFailures = {}
+        failed_results_upload = False
 
         for line in logText.splitlines():
             if line.find('Exiting early') >= 0 or line.find('leaks found') >= 0:
                 incorrectLayoutLines.append(self._strip_python_logging_prefix(line))
+                continue
+            if line.find(FAILED_RESULTS_UPLOAD_MESSAGE) >= 0:
+                failed_results_upload = True
                 continue
             for name, expression in expressions:
                 match = expression.search(line)
@@ -4207,6 +4211,8 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
 
         for name in testFailures:
             incorrectLayoutLines.append(str(testFailures[name]) + ' ' + name)
+        if failed_results_upload:
+            incorrectLayoutLines.append('results upload failed')
 
         self.incorrectLayoutLines = incorrectLayoutLines
 

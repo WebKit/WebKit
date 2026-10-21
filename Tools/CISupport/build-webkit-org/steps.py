@@ -34,7 +34,7 @@ import re
 import socket
 import sys
 
-from Shared.steps import ShellMixin, SetBuildSummary, InstallSwiftToolchain, InstallMetalToolchain, cmake_tools_path, SCAN_BUILD_PATH, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, USER_TOOLCHAINS_DIR, needs_swift_toolchain_setup
+from Shared.steps import ShellMixin, SetBuildSummary, InstallSwiftToolchain, InstallMetalToolchain, cmake_tools_path, FAILED_RESULTS_UPLOAD_MESSAGE, SCAN_BUILD_PATH, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, USER_TOOLCHAINS_DIR, needs_swift_toolchain_setup
 from Shared import generate_s3_url
 
 if sys.version_info < (3, 9):  # noqa: UP036
@@ -931,6 +931,7 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin, ShellMixin):
         ('failures', re.compile(r'Regressions: Unexpected.+\((\d+)\)')),
     ]
     cancelled_due_to_huge_logs = False
+    failed_results_upload = False
     line_count = 0
 
     def __init__(self, *args, **kwargs):
@@ -944,6 +945,7 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin, ShellMixin):
         self.addLogObserver('stdio', self.log_observer)
         self.incorrectLayoutLines = []
         self.testFailures = {}
+        self.failed_results_upload = False
 
         platform = self.getProperty('platform')
         self.appendCustomTestingFlags(platform, self.getProperty('device_model'))
@@ -986,6 +988,10 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin, ShellMixin):
             self.incorrectLayoutLines.append(self._strip_python_logging_prefix(line))
             return
 
+        if FAILED_RESULTS_UPLOAD_MESSAGE in line:
+            self.failed_results_upload = True
+            return
+
         for name, expression in self.expressions:
             match = expression.search(line)
             if match:
@@ -994,6 +1000,8 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin, ShellMixin):
     def processTestFailures(self):
         for name, result in self.testFailures.items():
             self.incorrectLayoutLines.append(str(result) + ' ' + name)
+        if self.failed_results_upload:
+            self.incorrectLayoutLines.append('results upload failed')
 
     def evaluateCommand(self, cmd):
         self.processTestFailures()
