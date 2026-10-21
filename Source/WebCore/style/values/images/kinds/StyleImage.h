@@ -129,6 +129,9 @@ public:
     virtual DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const { return DecodingMode::Synchronous; }
     virtual InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const void*, const LayoutSize&) const { return InterpolationQuality::Default; }
 
+    // Invalidation.
+    virtual FloatRect mapChangedRectToSource(const RenderElement&, ConcreteObjectSize, const FloatRect& changedRect) const;
+
     // Derived type.
     ALWAYS_INLINE bool isCachedImage() const { return m_type == Type::CachedImage; }
     ALWAYS_INLINE bool isCursorImage() const { return m_type == Type::CursorImage; }
@@ -165,7 +168,8 @@ protected:
     {
     }
 
-    static FloatRect mapSourceToSize(const FloatRect& source, ConcreteObjectSize, const FloatSize&);
+    static FloatRect mapSourceToSize(const FloatRect&, ConcreteObjectSize, const FloatSize&);
+    static FloatRect mapSizeToSource(const FloatRect&, const FloatSize&, ConcreteObjectSize);
 
     ImageDrawResult drawResolved(GraphicsContext&, const RenderElement&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) const;
     ImageDrawResult drawResolvedAsPattern(GraphicsContext&, const RenderElement&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) const;

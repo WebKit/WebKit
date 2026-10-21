@@ -101,6 +101,7 @@ public:
     WEBCORE_EXPORT std::optional<FloatSize> usedImageSize() const final;
 
     // FIXME: Condense these into fewer concrete categories of sizing algorithms once we know all the different sizing rules needed.
+    ConcreteObjectSize concreteObjectSizeForPainting() const;
     ConcreteObjectSize concreteObjectSizeForPasteboard() const;
     ConcreteObjectSize concreteObjectSizeForAccessibility() const;
     ConcreteObjectSize concreteObjectSizeForImageAnalysis() const;

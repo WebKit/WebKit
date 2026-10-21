@@ -89,7 +89,7 @@ FloatRect calculateSVGImageObjectBoundingBox(const SVGImageElement& imageElement
     return { imageElement.x().value(lengthContext), imageElement.y().value(lengthContext), concreteWidth, concreteHeight };
 }
 
-NaturalDimensions calculateSVGImageNaturalDimensions(const Style::Image& styleImage, const RenderElement& renderer)
+static NaturalDimensions calculateSVGImageNaturalDimensions(const Style::Image& styleImage, const RenderElement& renderer)
 {
     if (styleImage.errorOccurred()) {
         if (RefPtr cachedImage = styleImage.cachedImage()) {

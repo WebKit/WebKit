@@ -265,17 +265,31 @@ ImageDrawResult Image::drawNinePieceUsingImpl(GraphicsContext& context, const Sc
     return result;
 }
 
-FloatRect Image::mapSourceToSize(const FloatRect& source, ConcreteObjectSize concreteObjectSize, const FloatSize& size)
+static FloatRect scaleRect(const FloatRect& rect, const FloatSize& from, const FloatSize& to)
 {
-    auto box = concreteObjectSize.size() * concreteObjectSize.zoom();
-    if (box.isEmpty())
-        return { { }, size };
+    if (from.isEmpty())
+        return { { }, to };
 
-    auto mapX = [&](float x) { return narrowPrecisionToFloat(static_cast<double>(x) * size.width() / box.width()); };
-    auto mapY = [&](float y) { return narrowPrecisionToFloat(static_cast<double>(y) * size.height() / box.height()); };
-    auto minX = mapX(source.x());
-    auto minY = mapY(source.y());
-    return { minX, minY, mapX(source.maxX()) - minX, mapY(source.maxY()) - minY };
+    auto mapX = [&](float x) { return narrowPrecisionToFloat(static_cast<double>(x) * to.width() / from.width()); };
+    auto mapY = [&](float y) { return narrowPrecisionToFloat(static_cast<double>(y) * to.height() / from.height()); };
+    auto minX = mapX(rect.x());
+    auto minY = mapY(rect.y());
+    return { minX, minY, mapX(rect.maxX()) - minX, mapY(rect.maxY()) - minY };
+}
+
+FloatRect Image::mapSourceToSize(const FloatRect& rect, ConcreteObjectSize concreteObjectSize, const FloatSize& size)
+{
+    return scaleRect(rect, concreteObjectSize.size() * concreteObjectSize.zoom(), size);
+}
+
+FloatRect Image::mapSizeToSource(const FloatRect& rect, const FloatSize& size, ConcreteObjectSize concreteObjectSize)
+{
+    return scaleRect(rect, size, concreteObjectSize.size() * concreteObjectSize.zoom());
+}
+
+FloatRect Image::mapChangedRectToSource(const RenderElement&, ConcreteObjectSize concreteObjectSize, const FloatRect&) const
+{
+    return { { }, concreteObjectSize.size() * concreteObjectSize.zoom() };
 }
 
 RefPtr<NativeImage> Image::nativeImage(const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, float resolutionScale, ImagePaintingOptions options) const

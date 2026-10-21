@@ -294,12 +294,12 @@ void RenderSVGImage::repaintOrMarkForLayout(const IntRect* rect)
 
     FloatRect repaintRect = borderBoxRectEquivalent();
     if (RefPtr styleImage = imageResource().styleImage(); styleImage && rect) {
-        auto naturalDimensions = calculateSVGImageNaturalDimensions(*styleImage, *this);
         auto placement = calculateSVGImagePlacement(*styleImage, *this, imageElement().preserveAspectRatio(), repaintRect);
-
-        auto changedRectSpace = naturalDimensions.width && naturalDimensions.height ? FloatSize { *naturalDimensions.width, *naturalDimensions.height } : placement.imageRenderingRectangle.size();
-
-        repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), changedRectSpace), placement.imageRenderingRectangle)));
+        auto concreteObjectSize = ConcreteObjectSize::fixed(placement.imageRenderingRectangle.size());
+        if (!concreteObjectSize.isEmpty()) {
+            auto changedRect = styleImage->mapChangedRectToSource(*this, concreteObjectSize, *rect);
+            repaintRect.intersect(enclosingIntRect(mapRect(changedRect, FloatRect { { }, concreteObjectSize.size() }, placement.imageRenderingRectangle)));
+        }
     }
 
     repaintRectangle(enclosingLayoutRect(repaintRect));

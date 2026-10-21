@@ -380,6 +380,11 @@ std::optional<FloatSize> RenderImage::usedImageSize() const
     return imageResource().usedImageSize(imageContainerSize());
 }
 
+ConcreteObjectSize RenderImage::concreteObjectSizeForPainting() const
+{
+    return ConcreteObjectSize::fixed(FloatSize(imageContainerSize()));
+}
+
 ConcreteObjectSize RenderImage::concreteObjectSizeForPasteboard() const
 {
     static constexpr float maximumLength = 4096;
@@ -531,12 +536,12 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
 
     if (parent()) {
         auto repaintRect = replacedContentRect();
-        if (rect) {
-            auto naturalDimensions = imageResource().naturalDimensions();
-            auto changedRectSpace = naturalDimensions.width && naturalDimensions.height
-                ? FloatSize { *naturalDimensions.width, *naturalDimensions.height }
-                : FloatSize(imageContainerSize()) / style().usedZoom();
-            repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), changedRectSpace), repaintRect)));
+        if (RefPtr styleImage = imageResource().styleImage(); styleImage && rect) {
+            auto concreteObjectSize = concreteObjectSizeForPainting();
+            if (!concreteObjectSize.isEmpty()) {
+                auto changedRect = styleImage->mapChangedRectToSource(*this, concreteObjectSize, *rect);
+                repaintRect.intersect(enclosingIntRect(mapRect(changedRect, FloatRect { { }, concreteObjectSize.size() }, repaintRect)));
+            }
         }
         // FIXME: This needs to account for filter outsets: webkit.org/b/293553.
         repaintRectangle(repaintRect);
@@ -912,8 +917,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     if (!styleImage || !styleImage->canDrawAtSize(*this, rect.size()))
         return ImageDrawResult::DidNothing;
 
-    auto containerSize = FloatSize(imageContainerSize());
-    auto concreteObjectSize = ConcreteObjectSize::fixed(containerSize);
+    auto concreteObjectSize = concreteObjectSizeForPainting();
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     auto invertContent = [&] {
@@ -949,7 +953,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
 #endif
 
     if (drawResult == ImageDrawResult::DidNothing)
-        drawResult = styleImage->draw(paintInfo.context(), *this, concreteObjectSize, rect, FloatRect { { }, containerSize }, options);
+        drawResult = styleImage->draw(paintInfo.context(), *this, concreteObjectSize, rect, FloatRect { { }, concreteObjectSize.size() }, options);
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));

@@ -149,6 +149,14 @@ InterpolationQuality CanvasImage::interpolationQualityForImageDraw(GraphicsConte
     return ImageQualityController::chooseInterpolationQuality(context, renderer, IntSize(image->size()), layer, size);
 }
 
+FloatRect CanvasImage::mapChangedRectToSource(const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& changedRect) const
+{
+    RefPtr element = this->element(protect(renderer.document()));
+    if (!element)
+        return Image::mapChangedRectToSource(renderer, concreteObjectSize, changedRect);
+    return mapSizeToSource(changedRect, FloatSize { element->size() }, concreteObjectSize);
+}
+
 NaturalDimensions CanvasImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext&) const
 {
     if (auto* element = this->element(protect(renderer.document())))

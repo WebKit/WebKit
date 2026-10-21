@@ -554,6 +554,20 @@ InterpolationQuality CachedImage::interpolationQualityForImageDraw(GraphicsConte
     return ImageQualityController::chooseInterpolationQuality(context, renderer, IntSize(*contentSize), layer, size);
 }
 
+FloatRect CachedImage::mapChangedRectToSource(const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& changedRect) const
+{
+    if (isPending())
+        return Image::mapChangedRectToSource(renderer, concreteObjectSize, changedRect);
+
+    RefPtr image = resolvedImage();
+    if (!image)
+        return Image::mapChangedRectToSource(renderer, concreteObjectSize, changedRect);
+
+    if (auto size = fixedContentSize(*image, renderer.imageOrientation()))
+        return mapSizeToSource(changedRect, *size, concreteObjectSize);
+    return mapSizeToSource(changedRect, viewportSize(renderer, concreteObjectSize).size(), concreteObjectSize);
+}
+
 bool CachedImage::usesDataProtocol() const
 {
     return m_url.resolved.protocolIsData();

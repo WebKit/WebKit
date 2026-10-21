@@ -268,6 +268,13 @@ InterpolationQuality MultiImage::interpolationQualityForImageDraw(GraphicsContex
     return protect(m_selectedImage)->interpolationQualityForImageDraw(context, renderer, concreteObjectSize, layer, size);
 }
 
+FloatRect MultiImage::mapChangedRectToSource(const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& changedRect) const
+{
+    if (!m_selectedImage)
+        return Image::mapChangedRectToSource(renderer, concreteObjectSize, changedRect);
+    return protect(m_selectedImage)->mapChangedRectToSource(renderer, concreteObjectSize, changedRect);
+}
+
 bool MultiImage::containsCurrentColor() const
 {
     return m_selectedImage && protect(m_selectedImage)->containsCurrentColor();
