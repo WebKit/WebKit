@@ -1,0 +1,26 @@
+Tests symbolic breakpoint hooks on real exports that share native JIT code.
+
+
+== Running test suite: Debugger.SymbolicBreakpoint.SharedNativeCode
+-- Running test case: Debugger.SymbolicBreakpoint.SharedNativeCode.Prepare
+PASS: The actual page should compile both exports and materialize a DOM native method.
+PASS: Both real instances should return their own export results.
+
+-- Running test case: Debugger.SymbolicBreakpoint.SharedNativeCode.Install
+PASS: A broad native hook should preserve both shared instances.
+PASS: The hooked DOM native method should still read the actual page output.
+
+-- Running test case: Debugger.SymbolicBreakpoint.SharedNativeCode.NewExports
+PASS: Exports created while hooks are active should retain correct code through collection.
+
+-- Running test case: Debugger.SymbolicBreakpoint.SharedNativeCode.OverlappingOwners
+PASS: Removing one symbolic owner should preserve the other owner's native hooks.
+
+-- Running test case: Debugger.SymbolicBreakpoint.SharedNativeCode.Restore
+PASS: Removing all hooks should restore every real export.
+PASS: Restoring native code should preserve DOM method behavior.
+
+-- Running test case: Debugger.SymbolicBreakpoint.SharedNativeCode.Repeat
+PASS: Repeated native hook installation should leave no stale entry points.
+PASS: Disabling the debugger should leave every shared export executable after collection.
+
