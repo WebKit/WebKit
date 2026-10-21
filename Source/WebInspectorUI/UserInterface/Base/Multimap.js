@@ -55,13 +55,7 @@ class Multimap
 
     add(key, value)
     {
-        let valueSet = this._map.get(key);
-        if (!valueSet) {
-            valueSet = new Set;
-            this._map.set(key, valueSet);
-        }
-        valueSet.add(value);
-
+        this._map.getOrInsert(key, new Set).add(value);
         return this;
     }
 
