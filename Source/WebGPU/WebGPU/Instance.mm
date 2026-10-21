@@ -111,6 +111,49 @@ void Instance::defaultScheduleWork(WorkItem&& workItem)
 {
     Locker locker(m_lock);
     m_pendingWork.append(WTF::move(workItem));
+    m_condition.notifyAll();
+}
+
+uint64_t Instance::createFuture()
+{
+    Locker locker(m_lock);
+    return m_nextFuture++;
+}
+
+void Instance::completeFuture(uint64_t future)
+{
+    Locker locker(m_lock);
+    m_completedFutures.add(future);
+    m_condition.notifyAll();
+}
+
+bool Instance::waitForAnyFuture(std::span<const uint64_t> futures, Seconds timeout, NOESCAPE const Function<void(size_t)>& didComplete)
+{
+    auto deadline = MonotonicTime::timePointFromNow(timeout);
+    while (true) {
+        processEvents();
+        {
+            Locker locker(m_lock);
+            if (anyFutureCompleted(futures)) {
+                for (auto [index, future] : indexedRange(futures)) {
+                    if (m_completedFutures.remove(future))
+                        didComplete(index);
+                }
+                return true;
+            }
+            if (m_pendingWork.isEmpty() && !m_condition.waitUntil(m_lock, deadline, [&] WTF_REQUIRES_LOCK(m_lock) { return !m_pendingWork.isEmpty() || anyFutureCompleted(futures); }))
+                return false;
+        }
+    }
+}
+
+bool Instance::anyFutureCompleted(std::span<const uint64_t> futures) const
+{
+    for (auto future : futures) {
+        if (m_completedFutures.contains(future))
+            return true;
+    }
+    return false;
 }
 
 void Instance::processEvents()
@@ -255,10 +298,11 @@ void wgpuInstanceRelease(WGPUInstance instance)
     WebGPU::Metal::fromAPI(instance).deref();
 }
 
+// The required instance features are not checked: the instance has all of them.
 WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor* descriptor)
 {
     WebGPU::InstanceDescriptor apiDescriptor;
-    if (auto* cocoaDescriptor = WebGPU::Metal::findChainedStruct<WGPUInstanceCocoaDescriptor>(descriptor->nextInChain)) {
+    if (auto* cocoaDescriptor = descriptor ? WebGPU::Metal::findChainedStruct<WGPUInstanceCocoaDescriptor>(descriptor->nextInChain) : nullptr) {
         if (auto scheduleWorkBlock = makeBlockPtr(cocoaDescriptor->scheduleWorkBlock)) {
             apiDescriptor.scheduleWork = [scheduleWorkBlock = WTF::move(scheduleWorkBlock)](Function<void()>&& workItem) {
                 scheduleWorkBlock(makeBlockPtr(WTF::move(workItem)).get());
@@ -270,7 +314,7 @@ WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor* descriptor)
     return WebGPU::Metal::releaseToAPI(WebGPU::Metal::Instance::create(WTF::move(apiDescriptor)));
 }
 
-WGPUProc LEGACY_NODELETE wgpuGetProcAddress(WGPUDevice, const char*)
+WGPUProc LEGACY_NODELETE wgpuGetProcAddress(WGPUStringView)
 {
     return nullptr;
 }
@@ -300,23 +344,40 @@ void wgpuInstanceProcessEvents(WGPUInstance instance)
     protect(WebGPU::Metal::fromAPI(instance))->processEvents();
 }
 
-// The C API reports an adapter that is not available with WGPURequestAdapterStatus_Unavailable and no adapter.
-static void requestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions& options, Function<void(WGPURequestAdapterStatus, WGPUAdapter, const char*)>&& callback)
+// The C API reports an adapter that is not available with WGPURequestAdapterStatus_Unavailable
+// and no adapter. Null options are the default ones.
+WGPUFuture wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallbackInfo callbackInfo)
 {
     Ref protectedInstance = WebGPU::Metal::fromAPI(instance);
-    auto apiOptions = WebGPU::Metal::fromAPI(options);
-    if (!apiOptions)
-        return callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown power preference");
+    WebGPU::Metal::CAPIFuture future { protectedInstance.copyRef() };
+    auto callback = [callbackInfo, future](WGPURequestAdapterStatus status, WGPUAdapter adapter, ASCIILiteral message) {
+        callbackInfo.callback(status, adapter, WebGPU::Metal::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
+        future.complete();
+    };
+    WGPURequestAdapterOptions defaultOptions = WGPU_REQUEST_ADAPTER_OPTIONS_INIT;
+    auto apiOptions = WebGPU::Metal::fromAPI(options ? *options : defaultOptions);
+    if (!apiOptions) {
+        callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown power preference"_s);
+        return future.future();
+    }
     protectedInstance->requestAdapter(*apiOptions, [callback = WTF::move(callback)](RefPtr<WebGPU::Adapter>&& adapter) {
         if (!adapter)
-            return callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present");
-        callback(WGPURequestAdapterStatus_Success, WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::Adapter>(WTF::move(adapter)), "");
+            return callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present"_s);
+        callback(WGPURequestAdapterStatus_Success, WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::Adapter>(WTF::move(adapter)), ""_s);
     });
+    return future.future();
 }
 
-void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
+// A timeout of UINT64_MAX never passes.
+WGPUWaitStatus wgpuInstanceWaitAny(WGPUInstance instance, size_t futureCount, WGPUFutureWaitInfo* futures, uint64_t timeoutNS)
 {
-    requestAdapter(instance, *options, [callback, userdata](WGPURequestAdapterStatus status, WGPUAdapter adapter, const char* message) {
-        callback(status, adapter, message, userdata);
+    auto waitInfos = unsafeMakeSpan(futures, futureCount);
+    auto futureIDs = WTF::map(waitInfos, [](auto& waitInfo) {
+        return waitInfo.future.id;
     });
+    auto timeout = timeoutNS == UINT64_MAX ? Seconds::infinity() : Seconds::fromNanoseconds(timeoutNS);
+    bool completed = protect(WebGPU::Metal::fromAPI(instance))->waitForAnyFuture(futureIDs.span(), timeout, [&](size_t index) {
+        waitInfos[index].completed = true;
+    });
+    return completed ? WGPUWaitStatus_Success : WGPUWaitStatus_TimedOut;
 }

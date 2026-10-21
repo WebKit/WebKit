@@ -59,18 +59,13 @@
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 #endif
 
-typedef struct WebMeshImpl* WebMesh;
-typedef struct WGPUExternalTextureImpl* WGPUExternalTexture;
 
 typedef enum WGPUSTypeExtended {
     WGPUSTypeExtended_InstanceCocoaDescriptor = 0x151BBC00, // Random
     WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking = 0x017E9710, // Random
-    WGPUSTypeExtended_BindGroupEntryExternalTexture = 0xF7A6EBF9, // Random
-    WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture = 0x645C3DAA, // Random
     WGPUSTypeExtended_Force32 = 0x7FFFFFFF
 } WGPUSTypeExtended;
 
-const int WGPUTextureSampleType_ExternalTexture = WGPUTextureSampleType_Force32 - 1;
 
 typedef void (^WGPUWorkItem)(void);
 typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
@@ -98,98 +93,6 @@ typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
     WGPUChainedStruct chain;
     WGPUCompositorIntegrationRegisterBlockCallback compositorIntegrationRegister;
 } WGPUSurfaceDescriptorCocoaCustomSurface;
-
-typedef struct WGPUExternalTextureDescriptor {
-    WGPUStringView label;
-    // C API struct; cannot hold a RetainPtr.
-    SUPPRESS_UNRETAINED_MEMBER CVPixelBufferRef pixelBuffer;
-    WGPUColorSpace colorSpace;
-    // The size the source presents the frame at, which the pixel buffer does not carry. Zero when the
-    // source could not say, and then the frame's own decoded size stands in for it.
-    uint32_t visibleWidth;
-    uint32_t visibleHeight;
-} WGPUExternalTextureDescriptor;
-
-// How a decoded frame has to be transformed to be presented, which its pixel buffer does not carry:
-// the values are the clockwise angle in degrees, matching WebCore::VideoFrameRotation.
-typedef enum WGPUVideoFrameRotation {
-    WGPUVideoFrameRotation_None = 0,
-    WGPUVideoFrameRotation_Right = 90,
-    WGPUVideoFrameRotation_UpsideDown = 180,
-    WGPUVideoFrameRotation_Left = 270,
-} WGPUVideoFrameRotation;
-
-// Source of wgpuQueueCopyExternalImageToTexture(). The pixels stay on the GPU: the IOSurface, or the
-// planes of a decoded video frame, are wrapped in MTLTextures and rendered into the destination
-// texture. Exactly one of source and pixelBuffer names the source.
-typedef struct WGPUImageCopyExternalImage {
-    // C API struct; cannot hold a RetainPtr.
-    SUPPRESS_UNRETAINED_MEMBER IOSurfaceRef source;
-    // Set instead of source when the source is a video element or a WebCodecs frame. A frame carries
-    // its own extent, crop and primaries, so sourceFormat, sourceWidth and sourceHeight are unused
-    // and the frame is treated as opaque, the way an external texture is.
-    SUPPRESS_UNRETAINED_MEMBER CVPixelBufferRef pixelBuffer;
-    // The frame's display transform, applied to the pixel buffer to obtain the image script sees:
-    // a horizontal mirror if pixelBufferIsMirrored, then a clockwise rotation. Unused without
-    // pixelBuffer.
-    WGPUVideoFrameRotation pixelBufferRotation;
-    WGPUBool pixelBufferIsMirrored;
-    // Format of the IOSurface's single plane. Only the uncompressed color formats which can back an
-    // accelerated 2D canvas are accepted; anything else must not reach here.
-    WGPUTextureFormat sourceFormat;
-    // Top-left corner of the sub-rect to copy, in source pixels.
-    uint32_t originX;
-    uint32_t originY;
-    // Logical extent of the source. The IOSurface may be larger than this.
-    uint32_t sourceWidth;
-    uint32_t sourceHeight;
-    WGPUBool flipY;
-    // False when the alpha channel of sourceFormat carries no meaningful data, as it does not for an
-    // opaque canvas: the alpha read out of the surface is then replaced with 1.
-    WGPUBool hasAlpha;
-    WGPUBool premultipliedAlpha;
-    WGPUColorSpace colorSpace;
-} WGPUImageCopyExternalImage;
-
-// WGPUTexelCopyTextureInfo plus the GPUImageCopyTextureTagged color-space and alpha tags.
-typedef struct WGPUImageCopyTextureTagged {
-    WGPUTexture texture;
-    uint32_t mipLevel;
-    WGPUOrigin3D origin;
-    WGPUTextureAspect aspect;
-    WGPUColorSpace colorSpace;
-    WGPUBool premultipliedAlpha;
-} WGPUImageCopyTextureTagged;
-
-#if !defined(WGPU_SKIP_PROCS)
-
-
-
-// FIXME: https://github.com/webgpu-native/webgpu-headers/issues/89 is about moving this from WebGPUExt.h to WebGPU.h
-
-#endif  // !defined(WGPU_SKIP_PROCS)
-
-#if !defined(WGPU_SKIP_DECLARATIONS)
-
-WGPU_EXPORT void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, WGPUStringView label);
-
-// FIXME: https://github.com/webgpu-native/webgpu-headers/issues/89 is about moving this from WebGPUExt.h to WebGPU.h
-
-
-
-WGPU_EXPORT void wgpuExternalTextureAddRef(WGPUExternalTexture externalTexture);
-WGPU_EXPORT void wgpuExternalTextureRelease(WGPUExternalTexture externalTexture);
-WGPU_EXPORT void wgpuExternalTextureDestroy(WGPUExternalTexture texture) WGPU_FUNCTION_ATTRIBUTE;
-
-
-
-
-
-
-
-
-#endif  // !defined(WGPU_SKIP_DECLARATIONS)
-
 
 #endif
 

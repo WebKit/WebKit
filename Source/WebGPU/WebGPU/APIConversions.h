@@ -503,6 +503,51 @@ inline WGPUStringView toAPI(ASCIILiteral literal)
     return { literal.characters(), literal.length() };
 }
 
+// The view borrows the UTF-8 string.
+inline WGPUStringView toAPI(const UTF8CString& string LIFETIME_BOUND)
+{
+    auto characters = byteCast<char>(string.span());
+    return { characters.data(), characters.size() };
+}
+
+// A string that the caller of the C API frees, with fastFree() of its data. The *FreeMembers
+// functions free the strings of the structs they are for.
+inline WGPUStringView toAPIAllocated(const String& string)
+{
+    auto utf8 = string.utf8();
+    auto source = utf8.spanIncludingNullTerminator();
+    auto* data = static_cast<char*>(fastMalloc(source.size()));
+    memcpySpan(unsafeMakeSpan(data, source.size()), source);
+    return { data, utf8.length() };
+}
+
+inline void freeAllocated(WGPUStringView string)
+{
+    fastFree(const_cast<char*>(string.data));
+}
+
+// A future of the C API on an instance. complete() is called after the callback it stands for
+// has run. Without an instance, the future is WGPU_FUTURE_INIT, which nothing waits on.
+class CAPIFuture {
+public:
+    explicit CAPIFuture(RefPtr<Instance>&& instance)
+        : m_instance(WTF::move(instance))
+        , m_id(m_instance ? m_instance->createFuture() : 0)
+    {
+    }
+
+    WGPUFuture future() const { return { m_id }; }
+    void complete() const
+    {
+        if (m_instance)
+            m_instance->completeFuture(m_id);
+    }
+
+private:
+    const RefPtr<Instance> m_instance;
+    const uint64_t m_id { 0 };
+};
+
 template<typename R, typename... Args>
 inline BlockPtr<R (Args...)> fromAPI(R (^ __strong &&block)(Args...))
 {

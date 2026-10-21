@@ -1140,22 +1140,27 @@ void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 static void getCompilationInfo(WGPUShaderModule shaderModule, CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback)
 {
     Ref protectedShaderModule = WebGPU::Metal::fromAPI(shaderModule);
-    // The request succeeds for shader modules that compiled.
-    auto status = protectedShaderModule->isValid() ? WGPUCompilationInfoRequestStatus_Success : WGPUCompilationInfoRequestStatus_Error;
-    protectedShaderModule->compilationInfo([status, callback = WTF::move(callback)](WebGPU::CompilationInfo&& compilationInfo) mutable {
-        auto messages = WebGPU::Metal::toAPI(compilationInfo);
-        callback(status, WGPUCompilationInfo {
+    // WGPUCompilationInfoRequestStatus has no error value: the messages of a shader module that
+    // did not compile are reported with WGPUCompilationInfoRequestStatus_Success.
+    protectedShaderModule->compilationInfo([callback = WTF::move(callback)](WebGPU::CompilationInfo&& compilationInfo) mutable {
+        Vector<UTF8CString> messageStorage;
+        auto messages = WebGPU::Metal::toAPI(compilationInfo, messageStorage);
+        callback(WGPUCompilationInfoRequestStatus_Success, WGPUCompilationInfo {
+            .nextInChain = nullptr,
             .messageCount = messages.size(),
             .messages = messages.span().data(),
         });
     });
 }
 
-void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallback callback, void * userdata)
+WGPUFuture wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallbackInfo callbackInfo)
 {
-    getCompilationInfo(shaderModule, [callback, userdata](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
-        callback(status, &compilationInfo, userdata);
+    WebGPU::Metal::CAPIFuture future { WebGPU::Metal::fromAPI(shaderModule).device().instance() };
+    getCompilationInfo(shaderModule, [callbackInfo, future](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+        callbackInfo.callback(status, &compilationInfo, callbackInfo.userdata1, callbackInfo.userdata2);
+        future.complete();
     });
+    return future.future();
 }
 
 void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, WGPUStringView label)

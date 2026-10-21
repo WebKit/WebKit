@@ -2190,11 +2190,19 @@ void wgpuQueueRelease(WGPUQueue queue)
     WebGPU::Metal::fromAPI(queue).deref();
 }
 
-void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallback callback, void* userdata)
+// Work that cannot complete, because the device is lost, is WGPUQueueWorkDoneStatus_Error.
+WGPUFuture wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallbackInfo callbackInfo)
 {
-    protect(WebGPU::Metal::fromAPI(queue))->onSubmittedWorkDone(CompletionHandler<void(bool)> { [callback, userdata](bool success) {
-        callback(success ? WGPUQueueWorkDoneStatus_Success : WGPUQueueWorkDoneStatus_DeviceLost, userdata);
+    Ref protectedQueue = WebGPU::Metal::fromAPI(queue);
+    WebGPU::Metal::CAPIFuture future { protect(protectedQueue->device())->instance() };
+    protectedQueue->onSubmittedWorkDone(CompletionHandler<void(bool)> { [callbackInfo, future](bool success) {
+        if (success)
+            callbackInfo.callback(WGPUQueueWorkDoneStatus_Success, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        else
+            callbackInfo.callback(WGPUQueueWorkDoneStatus_Error, WebGPU::Metal::toAPI("The device is lost"_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        future.complete();
     } });
+    return future.future();
 }
 
 void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuffer* commands)
@@ -2205,20 +2213,22 @@ void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuff
     protect(WebGPU::Metal::fromAPI(queue))->submit(WTF::move(commandsToForward));
 }
 
-void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, std::span<uint8_t> data)
+void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, const void* data, size_t size)
 {
-    protect(WebGPU::Metal::fromAPI(queue))->writeBuffer(protect(WebGPU::Metal::fromAPI(buffer)), bufferOffset, data);
+    auto bytes = unsafeMakeSpan(static_cast<const uint8_t*>(data), size);
+    protect(WebGPU::Metal::fromAPI(queue))->writeBuffer(protect(WebGPU::Metal::fromAPI(buffer)), bufferOffset, bytes);
 }
 
-void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUTexelCopyTextureInfo* destination, std::span<uint8_t> data, const WGPUTexelCopyBufferLayout* dataLayout, const WGPUExtent3D* writeSize)
+void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUTexelCopyTextureInfo* destination, const void* data, size_t dataSize, const WGPUTexelCopyBufferLayout* dataLayout, const WGPUExtent3D* writeSize)
 {
+    auto bytes = unsafeMakeSpan(static_cast<const uint8_t*>(data), dataSize);
     Ref protectedQueue = WebGPU::Metal::fromAPI(queue);
     auto apiDestination = WebGPU::Metal::fromAPI(*destination);
     if (!apiDestination) {
         protectedQueue->generateAValidationError("GPUQueue.writeTexture: the destination has a null texture or an invalid aspect"_s);
         return;
     }
-    protectedQueue->writeTexture(*apiDestination, data, WebGPU::Metal::fromAPI(*dataLayout), WebGPU::Metal::fromAPI(*writeSize));
+    protectedQueue->writeTexture(*apiDestination, bytes, WebGPU::Metal::fromAPI(*dataLayout), WebGPU::Metal::fromAPI(*writeSize));
 }
 
 void wgpuQueueSetLabel(WGPUQueue queue, WGPUStringView label)

@@ -2665,7 +2665,7 @@ void wgpuCommandEncoderClearBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer
 WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, const WGPUCommandBufferDescriptor* descriptor)
 {
     // Every WebGPU::CommandBuffer that a WebGPU::Metal::CommandEncoder creates is a WebGPU::Metal::CommandBuffer.
-    Ref commandBuffer = downcast<WebGPU::Metal::CommandBuffer>(*protect(WebGPU::Metal::fromAPI(commandEncoder))->finish({ .label = descriptor->label }));
+    Ref commandBuffer = downcast<WebGPU::Metal::CommandBuffer>(*protect(WebGPU::Metal::fromAPI(commandEncoder))->finish({ .label = descriptor ? WebGPU::Metal::fromAPI(descriptor->label) : String() }));
     return WebGPU::Metal::releaseToAPI(WTF::move(commandBuffer));
 }
 

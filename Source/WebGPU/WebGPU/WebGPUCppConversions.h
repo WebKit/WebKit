@@ -70,6 +70,22 @@ template<> struct ChainedStructSType<WGPUShaderSourceWGSL> {
     static constexpr WGPUSType value = WGPUSType_ShaderSourceWGSL;
 };
 
+template<> struct ChainedStructSType<WGPUExternalTextureBindingEntry> {
+    static constexpr WGPUSType value = WGPUSType_ExternalTextureBindingEntry;
+};
+
+template<> struct ChainedStructSType<WGPUExternalTextureBindingLayout> {
+    static constexpr WGPUSType value = WGPUSType_ExternalTextureBindingLayout;
+};
+
+template<> struct ChainedStructSType<WGPUTextureComponentSwizzleDescriptor> {
+    static constexpr WGPUSType value = WGPUSType_TextureComponentSwizzleDescriptor;
+};
+
+template<> struct ChainedStructSType<WGPURenderPassMaxDrawCount> {
+    static constexpr WGPUSType value = WGPUSType_RenderPassMaxDrawCount;
+};
+
 template<> struct ChainedStructSType<WGPUInstanceCocoaDescriptor> {
     static constexpr WGPUSType value = static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor);
 };
@@ -99,6 +115,9 @@ inline String fromAPI(const char* string)
 constexpr std::optional<WebGPU::AddressMode> fromAPI(WGPUAddressMode value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUAddressMode_Undefined:
+        return WebGPU::AddressMode::ClampToEdge;
     case WGPUAddressMode_ClampToEdge:
         return WebGPU::AddressMode::ClampToEdge;
     case WGPUAddressMode_Repeat:
@@ -193,6 +212,9 @@ constexpr WGPUBlendFactor toAPI(WebGPU::BlendFactor value)
 constexpr std::optional<WebGPU::BlendOperation> fromAPI(WGPUBlendOperation value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUBlendOperation_Undefined:
+        return WebGPU::BlendOperation::Add;
     case WGPUBlendOperation_Add:
         return WebGPU::BlendOperation::Add;
     case WGPUBlendOperation_Subtract:
@@ -329,6 +351,9 @@ constexpr WGPUCompilationMessageType toAPI(WebGPU::CompilationMessageType value)
 constexpr std::optional<WebGPU::CullMode> fromAPI(WGPUCullMode value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUCullMode_Undefined:
+        return WebGPU::CullMode::None;
     case WGPUCullMode_None:
         return WebGPU::CullMode::None;
     case WGPUCullMode_Front:
@@ -358,7 +383,7 @@ constexpr std::optional<WebGPU::DeviceLostReason> fromAPI(WGPUDeviceLostReason v
     switch (value) {
     case WGPUDeviceLostReason_Destroyed:
         return WebGPU::DeviceLostReason::Destroyed;
-    case WGPUDeviceLostReason_Undefined:
+    case WGPUDeviceLostReason_Unknown:
         return WebGPU::DeviceLostReason::Unknown;
     default:
         return std::nullopt;
@@ -371,7 +396,7 @@ constexpr WGPUDeviceLostReason toAPI(WebGPU::DeviceLostReason value)
     case WebGPU::DeviceLostReason::Destroyed:
         return WGPUDeviceLostReason_Destroyed;
     case WebGPU::DeviceLostReason::Unknown:
-        return WGPUDeviceLostReason_Undefined;
+        return WGPUDeviceLostReason_Unknown;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -432,10 +457,6 @@ constexpr std::optional<WebGPU::FeatureName> fromAPI(WGPUFeatureName value)
         return WebGPU::FeatureName::Rg11b10ufloatRenderable;
     case WGPUFeatureName_Float32Filterable:
         return WebGPU::FeatureName::Float32Filterable;
-    case WGPUFeatureName_Float16Renderable:
-        return WebGPU::FeatureName::Float16Renderable;
-    case WGPUFeatureName_Float32Renderable:
-        return WebGPU::FeatureName::Float32Renderable;
     case WGPUFeatureName_Float32Blendable:
         return WebGPU::FeatureName::Float32Blendable;
     case WGPUFeatureName_ClipDistances:
@@ -457,62 +478,12 @@ constexpr std::optional<WebGPU::FeatureName> fromAPI(WGPUFeatureName value)
     }
 }
 
-constexpr WGPUFeatureName toAPI(WebGPU::FeatureName value)
-{
-    switch (value) {
-    case WebGPU::FeatureName::DepthClipControl:
-        return WGPUFeatureName_DepthClipControl;
-    case WebGPU::FeatureName::Depth32floatStencil8:
-        return WGPUFeatureName_Depth32FloatStencil8;
-    case WebGPU::FeatureName::TextureCompressionBc:
-        return WGPUFeatureName_TextureCompressionBC;
-    case WebGPU::FeatureName::TextureCompressionBcSliced3d:
-        return WGPUFeatureName_TextureCompressionBCSliced3D;
-    case WebGPU::FeatureName::TextureCompressionEtc2:
-        return WGPUFeatureName_TextureCompressionETC2;
-    case WebGPU::FeatureName::TextureCompressionAstc:
-        return WGPUFeatureName_TextureCompressionASTC;
-    case WebGPU::FeatureName::TextureCompressionAstcSliced3d:
-        return WGPUFeatureName_TextureCompressionASTCSliced3D;
-    case WebGPU::FeatureName::TimestampQuery:
-        return WGPUFeatureName_TimestampQuery;
-    case WebGPU::FeatureName::IndirectFirstInstance:
-        return WGPUFeatureName_IndirectFirstInstance;
-    case WebGPU::FeatureName::Bgra8unormStorage:
-        return WGPUFeatureName_BGRA8UnormStorage;
-    case WebGPU::FeatureName::ShaderF16:
-        return WGPUFeatureName_ShaderF16;
-    case WebGPU::FeatureName::Rg11b10ufloatRenderable:
-        return WGPUFeatureName_RG11B10UfloatRenderable;
-    case WebGPU::FeatureName::Float32Filterable:
-        return WGPUFeatureName_Float32Filterable;
-    case WebGPU::FeatureName::Float16Renderable:
-        return WGPUFeatureName_Float16Renderable;
-    case WebGPU::FeatureName::Float32Renderable:
-        return WGPUFeatureName_Float32Renderable;
-    case WebGPU::FeatureName::Float32Blendable:
-        return WGPUFeatureName_Float32Blendable;
-    case WebGPU::FeatureName::ClipDistances:
-        return WGPUFeatureName_ClipDistances;
-    case WebGPU::FeatureName::DualSourceBlending:
-        return WGPUFeatureName_DualSourceBlending;
-    case WebGPU::FeatureName::CoreFeaturesAndLimits:
-        return WGPUFeatureName_CoreFeaturesAndLimits;
-    case WebGPU::FeatureName::TextureFormatsTier1:
-        return WGPUFeatureName_TextureFormatsTier1;
-    case WebGPU::FeatureName::TextureFormatsTier2:
-        return WGPUFeatureName_TextureFormatsTier2;
-    case WebGPU::FeatureName::PrimitiveIndex:
-        return WGPUFeatureName_PrimitiveIndex;
-    case WebGPU::FeatureName::Subgroups:
-        return WGPUFeatureName_Subgroups;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 constexpr std::optional<WebGPU::FilterMode> fromAPI(WGPUFilterMode value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUFilterMode_Undefined:
+        return WebGPU::FilterMode::Nearest;
     case WGPUFilterMode_Nearest:
         return WebGPU::FilterMode::Nearest;
     case WGPUFilterMode_Linear:
@@ -536,6 +507,9 @@ constexpr WGPUFilterMode toAPI(WebGPU::FilterMode value)
 constexpr std::optional<WebGPU::FrontFace> fromAPI(WGPUFrontFace value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUFrontFace_Undefined:
+        return WebGPU::FrontFace::CCW;
     case WGPUFrontFace_CCW:
         return WebGPU::FrontFace::CCW;
     case WGPUFrontFace_CW:
@@ -605,6 +579,9 @@ constexpr WGPULoadOp toAPI(WebGPU::LoadOp value)
 constexpr std::optional<WebGPU::MipmapFilterMode> fromAPI(WGPUMipmapFilterMode value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUMipmapFilterMode_Undefined:
+        return WebGPU::MipmapFilterMode::Nearest;
     case WGPUMipmapFilterMode_Nearest:
         return WebGPU::MipmapFilterMode::Nearest;
     case WGPUMipmapFilterMode_Linear:
@@ -651,6 +628,9 @@ constexpr WGPUPowerPreference toAPI(WebGPU::PowerPreference value)
 constexpr std::optional<WebGPU::PrimitiveTopology> fromAPI(WGPUPrimitiveTopology value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUPrimitiveTopology_Undefined:
+        return WebGPU::PrimitiveTopology::TriangleList;
     case WGPUPrimitiveTopology_PointList:
         return WebGPU::PrimitiveTopology::PointList;
     case WGPUPrimitiveTopology_LineList:
@@ -736,6 +716,9 @@ constexpr WGPUSamplerBindingType toAPI(WebGPU::SamplerBindingType value)
 constexpr std::optional<WebGPU::StencilOperation> fromAPI(WGPUStencilOperation value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUStencilOperation_Undefined:
+        return WebGPU::StencilOperation::Keep;
     case WGPUStencilOperation_Keep:
         return WebGPU::StencilOperation::Keep;
     case WGPUStencilOperation_Zero:
@@ -839,6 +822,9 @@ constexpr WGPUStoreOp toAPI(WebGPU::StoreOp value)
 constexpr std::optional<WebGPU::TextureAspect> fromAPI(WGPUTextureAspect value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUTextureAspect_Undefined:
+        return WebGPU::TextureAspect::All;
     case WGPUTextureAspect_All:
         return WebGPU::TextureAspect::All;
     case WGPUTextureAspect_StencilOnly:
@@ -866,6 +852,9 @@ constexpr WGPUTextureAspect toAPI(WebGPU::TextureAspect value)
 constexpr std::optional<WebGPU::TextureDimension> fromAPI(WGPUTextureDimension value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUTextureDimension_Undefined:
+        return WebGPU::TextureDimension::_2d;
     case WGPUTextureDimension_1D:
         return WebGPU::TextureDimension::_1d;
     case WGPUTextureDimension_2D:
@@ -1464,111 +1453,21 @@ constexpr std::optional<WebGPU::VertexFormat> fromAPI(WGPUVertexFormat value)
         return WebGPU::VertexFormat::Sint32x3;
     case WGPUVertexFormat_Sint32x4:
         return WebGPU::VertexFormat::Sint32x4;
-    case WGPUVertexFormat_Snorm1010102:
-        return WebGPU::VertexFormat::Snorm1010102;
-    case WGPUVertexFormat_Unorm1010102:
+    case WGPUVertexFormat_Unorm10_10_10_2:
         return WebGPU::VertexFormat::Unorm1010102;
-    case WGPUVertexFormat_Unorm8x4Bgra:
+    case WGPUVertexFormat_Unorm8x4BGRA:
         return WebGPU::VertexFormat::Unorm8x4Bgra;
     default:
         return std::nullopt;
     }
 }
 
-constexpr WGPUVertexFormat toAPI(WebGPU::VertexFormat value)
-{
-    switch (value) {
-    case WebGPU::VertexFormat::Uint8:
-        return WGPUVertexFormat_Uint8;
-    case WebGPU::VertexFormat::Uint8x2:
-        return WGPUVertexFormat_Uint8x2;
-    case WebGPU::VertexFormat::Uint8x4:
-        return WGPUVertexFormat_Uint8x4;
-    case WebGPU::VertexFormat::Sint8:
-        return WGPUVertexFormat_Sint8;
-    case WebGPU::VertexFormat::Sint8x2:
-        return WGPUVertexFormat_Sint8x2;
-    case WebGPU::VertexFormat::Sint8x4:
-        return WGPUVertexFormat_Sint8x4;
-    case WebGPU::VertexFormat::Unorm8:
-        return WGPUVertexFormat_Unorm8;
-    case WebGPU::VertexFormat::Unorm8x2:
-        return WGPUVertexFormat_Unorm8x2;
-    case WebGPU::VertexFormat::Unorm8x4:
-        return WGPUVertexFormat_Unorm8x4;
-    case WebGPU::VertexFormat::Snorm8:
-        return WGPUVertexFormat_Snorm8;
-    case WebGPU::VertexFormat::Snorm8x2:
-        return WGPUVertexFormat_Snorm8x2;
-    case WebGPU::VertexFormat::Snorm8x4:
-        return WGPUVertexFormat_Snorm8x4;
-    case WebGPU::VertexFormat::Uint16:
-        return WGPUVertexFormat_Uint16;
-    case WebGPU::VertexFormat::Uint16x2:
-        return WGPUVertexFormat_Uint16x2;
-    case WebGPU::VertexFormat::Uint16x4:
-        return WGPUVertexFormat_Uint16x4;
-    case WebGPU::VertexFormat::Sint16:
-        return WGPUVertexFormat_Sint16;
-    case WebGPU::VertexFormat::Sint16x2:
-        return WGPUVertexFormat_Sint16x2;
-    case WebGPU::VertexFormat::Sint16x4:
-        return WGPUVertexFormat_Sint16x4;
-    case WebGPU::VertexFormat::Unorm16:
-        return WGPUVertexFormat_Unorm16;
-    case WebGPU::VertexFormat::Unorm16x2:
-        return WGPUVertexFormat_Unorm16x2;
-    case WebGPU::VertexFormat::Unorm16x4:
-        return WGPUVertexFormat_Unorm16x4;
-    case WebGPU::VertexFormat::Snorm16:
-        return WGPUVertexFormat_Snorm16;
-    case WebGPU::VertexFormat::Snorm16x2:
-        return WGPUVertexFormat_Snorm16x2;
-    case WebGPU::VertexFormat::Snorm16x4:
-        return WGPUVertexFormat_Snorm16x4;
-    case WebGPU::VertexFormat::Float16:
-        return WGPUVertexFormat_Float16;
-    case WebGPU::VertexFormat::Float16x2:
-        return WGPUVertexFormat_Float16x2;
-    case WebGPU::VertexFormat::Float16x4:
-        return WGPUVertexFormat_Float16x4;
-    case WebGPU::VertexFormat::Float32:
-        return WGPUVertexFormat_Float32;
-    case WebGPU::VertexFormat::Float32x2:
-        return WGPUVertexFormat_Float32x2;
-    case WebGPU::VertexFormat::Float32x3:
-        return WGPUVertexFormat_Float32x3;
-    case WebGPU::VertexFormat::Float32x4:
-        return WGPUVertexFormat_Float32x4;
-    case WebGPU::VertexFormat::Uint32:
-        return WGPUVertexFormat_Uint32;
-    case WebGPU::VertexFormat::Uint32x2:
-        return WGPUVertexFormat_Uint32x2;
-    case WebGPU::VertexFormat::Uint32x3:
-        return WGPUVertexFormat_Uint32x3;
-    case WebGPU::VertexFormat::Uint32x4:
-        return WGPUVertexFormat_Uint32x4;
-    case WebGPU::VertexFormat::Sint32:
-        return WGPUVertexFormat_Sint32;
-    case WebGPU::VertexFormat::Sint32x2:
-        return WGPUVertexFormat_Sint32x2;
-    case WebGPU::VertexFormat::Sint32x3:
-        return WGPUVertexFormat_Sint32x3;
-    case WebGPU::VertexFormat::Sint32x4:
-        return WGPUVertexFormat_Sint32x4;
-    case WebGPU::VertexFormat::Snorm1010102:
-        return WGPUVertexFormat_Snorm1010102;
-    case WebGPU::VertexFormat::Unorm1010102:
-        return WGPUVertexFormat_Unorm1010102;
-    case WebGPU::VertexFormat::Unorm8x4Bgra:
-        return WGPUVertexFormat_Unorm8x4Bgra;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 constexpr std::optional<WebGPU::VertexStepMode> fromAPI(WGPUVertexStepMode value)
 {
     switch (value) {
+    // _Undefined is the default.
+    case WGPUVertexStepMode_Undefined:
+        return WebGPU::VertexStepMode::Vertex;
     case WGPUVertexStepMode_Vertex:
         return WebGPU::VertexStepMode::Vertex;
     case WGPUVertexStepMode_Instance:
@@ -1782,13 +1681,9 @@ constexpr std::optional<OptionSet<WebGPU::TextureUsage>> textureUsageFromAPI(WGP
         result.add(WebGPU::TextureUsage::RenderAttachment);
         value &= ~WGPUTextureUsage_RenderAttachment;
     }
-    if (value & WGPUTextureUsage_Transient) {
+    if (value & WGPUTextureUsage_TransientAttachment) {
         result.add(WebGPU::TextureUsage::Transient);
-        value &= ~WGPUTextureUsage_Transient;
-    }
-    if (value & WGPUTextureUsage_Invalid) {
-        result.add(WebGPU::TextureUsage::Invalid);
-        value &= ~WGPUTextureUsage_Invalid;
+        value &= ~WGPUTextureUsage_TransientAttachment;
     }
     if (value)
         return std::nullopt;
@@ -1809,9 +1704,7 @@ constexpr WGPUTextureUsage toAPI(OptionSet<WebGPU::TextureUsage> value)
     if (value.contains(WebGPU::TextureUsage::RenderAttachment))
         result |= WGPUTextureUsage_RenderAttachment;
     if (value.contains(WebGPU::TextureUsage::Transient))
-        result |= WGPUTextureUsage_Transient;
-    if (value.contains(WebGPU::TextureUsage::Invalid))
-        result |= WGPUTextureUsage_Invalid;
+        result |= WGPUTextureUsage_TransientAttachment;
     return result;
 }
 
@@ -2016,7 +1909,10 @@ inline std::optional<WebGPU::TextureViewDescriptor> fromAPI(const WGPUTextureVie
 
     auto aspect = fromAPI(descriptor.aspect);
     auto usage = textureUsageFromAPI(descriptor.usage);
-    auto swizzle = fromAPI(descriptor.swizzle);
+    // Without a chained swizzle descriptor, the view does not swizzle.
+    std::optional<WebGPU::TextureComponentSwizzle> swizzle = WebGPU::TextureComponentSwizzle { };
+    if (auto* swizzleDescriptor = findChainedStruct<WGPUTextureComponentSwizzleDescriptor>(descriptor.nextInChain))
+        swizzle = fromAPI(swizzleDescriptor->swizzle);
     if (!aspect || !usage || !swizzle)
         return std::nullopt;
 
@@ -2050,12 +1946,13 @@ inline std::optional<WebGPU::BindGroupLayoutEntry> fromAPI(const WGPUBindGroupLa
         .externalTexture = std::nullopt,
     };
 
-    // A binding layout is present when its members are not _Undefined. An external texture binding
-    // layout is a texture binding layout with WGPUTextureSampleType_ExternalTexture.
-    // entry.metalBinding and entry.buffer.bufferSizeForBinding are only used by the layouts that
-    // the implementation generates, so they are not converted.
-    if (entry.buffer.type != WGPUBufferBindingType_Undefined) {
-        auto type = fromAPI(entry.buffer.type);
+    // A binding layout is present when its type is not _BindingNotUsed, and _Undefined is its
+    // default. An external texture binding layout is chained.
+    if (entry.bindingArraySize > 1)
+        return std::nullopt;
+
+    if (entry.buffer.type != WGPUBufferBindingType_BindingNotUsed) {
+        auto type = entry.buffer.type == WGPUBufferBindingType_Undefined ? std::optional { WebGPU::BufferBindingType::Uniform } : fromAPI(entry.buffer.type);
         if (!type)
             return std::nullopt;
         result.buffer = WebGPU::BufferBindingLayout {
@@ -2065,18 +1962,16 @@ inline std::optional<WebGPU::BindGroupLayoutEntry> fromAPI(const WGPUBindGroupLa
         };
     }
 
-    if (entry.sampler.type != WGPUSamplerBindingType_Undefined) {
-        auto type = fromAPI(entry.sampler.type);
+    if (entry.sampler.type != WGPUSamplerBindingType_BindingNotUsed) {
+        auto type = entry.sampler.type == WGPUSamplerBindingType_Undefined ? std::optional { WebGPU::SamplerBindingType::Filtering } : fromAPI(entry.sampler.type);
         if (!type)
             return std::nullopt;
         result.sampler = WebGPU::SamplerBindingLayout { .type = *type };
     }
 
-    if (entry.texture.sampleType == WGPUTextureSampleType_ExternalTexture)
-        result.externalTexture = WebGPU::ExternalTextureBindingLayout { };
-    else if (entry.texture.sampleType != WGPUTextureSampleType_Undefined && entry.texture.viewDimension != WGPUTextureViewDimension_Undefined) {
-        auto sampleType = fromAPI(entry.texture.sampleType);
-        auto viewDimension = fromAPI(entry.texture.viewDimension);
+    if (entry.texture.sampleType != WGPUTextureSampleType_BindingNotUsed) {
+        auto sampleType = entry.texture.sampleType == WGPUTextureSampleType_Undefined ? std::optional { WebGPU::TextureSampleType::Float } : fromAPI(entry.texture.sampleType);
+        auto viewDimension = entry.texture.viewDimension == WGPUTextureViewDimension_Undefined ? std::optional { WebGPU::TextureViewDimension::_2d } : fromAPI(entry.texture.viewDimension);
         if (!sampleType || !viewDimension)
             return std::nullopt;
         result.texture = WebGPU::TextureBindingLayout {
@@ -2086,10 +1981,10 @@ inline std::optional<WebGPU::BindGroupLayoutEntry> fromAPI(const WGPUBindGroupLa
         };
     }
 
-    if (entry.storageTexture.access != WGPUStorageTextureAccess_Undefined && entry.storageTexture.format != WGPUTextureFormat_Undefined && entry.storageTexture.viewDimension != WGPUTextureViewDimension_Undefined) {
-        auto access = fromAPI(entry.storageTexture.access);
+    if (entry.storageTexture.access != WGPUStorageTextureAccess_BindingNotUsed) {
+        auto access = entry.storageTexture.access == WGPUStorageTextureAccess_Undefined ? std::optional { WebGPU::StorageTextureAccess::WriteOnly } : fromAPI(entry.storageTexture.access);
         auto format = fromAPI(entry.storageTexture.format);
-        auto viewDimension = fromAPI(entry.storageTexture.viewDimension);
+        auto viewDimension = entry.storageTexture.viewDimension == WGPUTextureViewDimension_Undefined ? std::optional { WebGPU::TextureViewDimension::_2d } : fromAPI(entry.storageTexture.viewDimension);
         if (!access || !format || !viewDimension)
             return std::nullopt;
         result.storageTexture = WebGPU::StorageTextureBindingLayout {
@@ -2098,6 +1993,9 @@ inline std::optional<WebGPU::BindGroupLayoutEntry> fromAPI(const WGPUBindGroupLa
             .viewDimension = *viewDimension,
         };
     }
+
+    if (findChainedStruct<WGPUExternalTextureBindingLayout>(entry.nextInChain))
+        result.externalTexture = WebGPU::ExternalTextureBindingLayout { };
 
     return result;
 }
@@ -2148,8 +2046,10 @@ inline std::optional<WebGPU::PipelineLayoutDescriptor> fromAPI(const WGPUPipelin
 
 inline std::optional<WebGPU::BindGroupEntry> fromAPI(const WGPUBindGroupEntry& entry)
 {
-    // Exactly one of the resource handles has to be set.
-    if (!!entry.buffer + !!entry.sampler + !!entry.texture + !!entry.textureView + !!entry.externalTexture != 1)
+    // Exactly one of the resource handles has to be set. An external texture is chained.
+    auto* externalTextureEntry = findChainedStruct<WGPUExternalTextureBindingEntry>(entry.nextInChain);
+    WGPUExternalTexture externalTexture = externalTextureEntry ? externalTextureEntry->externalTexture : nullptr;
+    if (!!entry.buffer + !!entry.sampler + !!entry.textureView + !!externalTexture != 1)
         return std::nullopt;
 
     auto resource = [&]() -> WebGPU::BindingResource {
@@ -2162,11 +2062,9 @@ inline std::optional<WebGPU::BindGroupEntry> fromAPI(const WGPUBindGroupEntry& e
         }
         if (entry.sampler)
             return Ref { WebGPU::fromAPI(entry.sampler) };
-        if (entry.texture)
-            return Ref { WebGPU::fromAPI(entry.texture) };
         if (entry.textureView)
             return Ref { WebGPU::fromAPI(entry.textureView) };
-        return Ref { WebGPU::fromAPI(entry.externalTexture) };
+        return Ref { WebGPU::fromAPI(externalTexture) };
     }();
 
     return WebGPU::BindGroupEntry {
@@ -2214,52 +2112,49 @@ inline std::optional<WebGPU::ShaderModuleDescriptor> fromAPI(const WGPUShaderMod
     if (code.isNull())
         return std::nullopt;
 
-    storage.hints.clear();
-    for (auto& hint : unsafeMakeSpan(descriptor.hints, descriptor.hintCount)) {
-        if (!hint.layout)
-            return std::nullopt;
-        storage.hints.append({
-            .entryPoint = fromAPI(hint.entryPoint),
-            .layout = WebGPU::fromAPI(hint.layout),
-        });
-    }
-
+    UNUSED_PARAM(storage);
     return WebGPU::ShaderModuleDescriptor {
         .label = fromAPI(descriptor.label),
         .code = WTF::move(code),
-        .hints = storage.hints.span(),
+        .hints = { },
     };
 }
 
-// The C API line positions stay zero-based, as they were.
-inline Vector<WGPUCompilationMessage> toAPI(const WebGPU::CompilationInfo& compilationInfo)
+// The C API line positions stay zero-based, as they were. The messages point into the UTF-8
+// strings of messageStorage.
+inline Vector<WGPUCompilationMessage> toAPI(const WebGPU::CompilationInfo& compilationInfo, Vector<UTF8CString>& messageStorage LIFETIME_BOUND)
 {
-    return compilationInfo.messages.map([](auto& message) {
-        return WGPUCompilationMessage {
-            .message = message.message,
+    messageStorage.clear();
+    for (auto& message : compilationInfo.messages)
+        messageStorage.append(message.message.utf8());
+    Vector<WGPUCompilationMessage> result;
+    result.reserveInitialCapacity(compilationInfo.messages.size());
+    for (auto [i, message] : indexedRange(compilationInfo.messages)) {
+        auto utf8 = byteCast<char>(messageStorage[i].span());
+        result.append(WGPUCompilationMessage {
+            .nextInChain = nullptr,
+            .message = { .data = utf8.data(), .length = utf8.size() },
             .type = toAPI(message.type),
             .lineNum = message.lineNum,
             .linePos = message.linePos - 1,
             .offset = message.offset,
             .length = message.length,
-            .utf16LinePos = message.linePos - 1,
-            .utf16Offset = message.offset,
-            .utf16Length = message.length,
-        };
-    });
+        });
+    }
+    return result;
 }
 
-// A null entry point is the only entry point of the module for the stage. A non-null one names
+// The null string view is the only entry point of the module for the stage. Any other one names
 // an entry point even if it does not convert to a string.
-inline String entryPointFromAPI(const char* entryPoint)
+inline String entryPointFromAPI(WGPUStringView entryPoint)
 {
-    if (!entryPoint)
+    if (!entryPoint.data && entryPoint.length == WGPU_STRLEN)
         return { };
     auto result = fromAPI(entryPoint);
     return result.isNull() ? emptyString() : result;
 }
 
-inline std::optional<WebGPU::ProgrammableStage> programmableStageFromAPI(WGPUShaderModule module, const char* entryPoint, std::span<const WGPUConstantEntry> constants, Vector<WebGPU::ConstantEntry>& constantsStorage LIFETIME_BOUND)
+inline std::optional<WebGPU::ProgrammableStage> programmableStageFromAPI(WGPUShaderModule module, WGPUStringView entryPoint, std::span<const WGPUConstantEntry> constants, Vector<WebGPU::ConstantEntry>& constantsStorage LIFETIME_BOUND)
 {
     if (!module)
         return std::nullopt;
@@ -2294,8 +2189,9 @@ inline std::optional<WebGPU::ComputePipelineDescriptor> fromAPI(const WGPUComput
 inline std::optional<WebGPU::BlendComponent> fromAPI(const WGPUBlendComponent& component)
 {
     auto operation = fromAPI(component.operation);
-    auto srcFactor = fromAPI(component.srcFactor);
-    auto dstFactor = fromAPI(component.dstFactor);
+    // _Undefined is the default, which is One for the source and Zero for the destination.
+    auto srcFactor = component.srcFactor == WGPUBlendFactor_Undefined ? std::optional { WebGPU::BlendFactor::One } : fromAPI(component.srcFactor);
+    auto dstFactor = component.dstFactor == WGPUBlendFactor_Undefined ? std::optional { WebGPU::BlendFactor::Zero } : fromAPI(component.dstFactor);
     if (!operation || !srcFactor || !dstFactor)
         return std::nullopt;
     return WebGPU::BlendComponent { .operation = *operation, .srcFactor = *srcFactor, .dstFactor = *dstFactor };
@@ -2385,7 +2281,9 @@ inline std::optional<WebGPU::RenderPipelineDescriptor> fromAPI(const WGPURenderP
         storage.vertexAttributes.append(WTF::move(attributes));
     }
     for (auto [i, buffer] : indexedRange(buffers)) {
-        if (buffer.arrayStride == WGPU_COPY_STRIDE_UNDEFINED) {
+        // A slot is unused when its stride is WGPU_COPY_STRIDE_UNDEFINED, or its step mode is
+        // _Undefined and it has no attributes.
+        if (buffer.arrayStride == WGPU_COPY_STRIDE_UNDEFINED || (buffer.stepMode == WGPUVertexStepMode_Undefined && !buffer.attributeCount)) {
             storage.vertexBuffers.append(std::nullopt);
             continue;
         }
@@ -2510,18 +2408,16 @@ inline std::optional<WebGPU::ComputePassDescriptor> fromAPI(const WGPUComputePas
             return std::nullopt;
     }
     return WebGPU::ComputePassDescriptor {
-        .label = descriptor.label,
+        .label = fromAPI(descriptor.label),
         .timestampWrites = WTF::move(timestampWrites),
     };
 }
 
-// A view takes precedence over a texture. Neither is std::nullopt.
-inline std::optional<WebGPU::RenderPassAttachmentView> renderPassAttachmentViewFromAPI(WGPUTextureView view, WGPUTexture texture)
+// No view is std::nullopt.
+inline std::optional<WebGPU::RenderPassAttachmentView> renderPassAttachmentViewFromAPI(WGPUTextureView view)
 {
     if (view)
         return WebGPU::RenderPassAttachmentView { Ref { WebGPU::fromAPI(view) } };
-    if (texture)
-        return WebGPU::RenderPassAttachmentView { Ref { WebGPU::fromAPI(texture) } };
     return std::nullopt;
 }
 
@@ -2543,10 +2439,10 @@ struct RenderPassDescriptorStorage {
 
 inline std::optional<WebGPU::RenderPassDescriptor> fromAPI(const WGPURenderPassDescriptor& descriptor, RenderPassDescriptorStorage& storage LIFETIME_BOUND)
 {
-    // A color attachment without a view and a texture is an empty slot.
+    // A color attachment without a view is an empty slot.
     storage.colorAttachments.clear();
     for (auto& attachment : unsafeMakeSpan(descriptor.colorAttachments, descriptor.colorAttachmentCount)) {
-        auto view = renderPassAttachmentViewFromAPI(attachment.view, attachment.texture);
+        auto view = renderPassAttachmentViewFromAPI(attachment.view);
         if (!view) {
             storage.colorAttachments.append(std::nullopt);
             continue;
@@ -2558,7 +2454,7 @@ inline std::optional<WebGPU::RenderPassDescriptor> fromAPI(const WGPURenderPassD
         storage.colorAttachments.append(WebGPU::RenderPassColorAttachment {
             .view = WTF::move(*view),
             .depthSlice = attachment.depthSlice == WGPU_DEPTH_SLICE_UNDEFINED ? std::nullopt : std::optional { attachment.depthSlice },
-            .resolveTarget = renderPassAttachmentViewFromAPI(attachment.resolveTarget, attachment.resolveTexture),
+            .resolveTarget = renderPassAttachmentViewFromAPI(attachment.resolveTarget),
             .clearValue = fromAPI(attachment.clearValue),
             .loadOp = *loadOp,
             .storeOp = *storeOp,
@@ -2567,7 +2463,7 @@ inline std::optional<WebGPU::RenderPassDescriptor> fromAPI(const WGPURenderPassD
 
     std::optional<WebGPU::RenderPassDepthStencilAttachment> depthStencilAttachment;
     if (auto* attachment = descriptor.depthStencilAttachment) {
-        auto view = renderPassAttachmentViewFromAPI(attachment->view, attachment->texture);
+        auto view = renderPassAttachmentViewFromAPI(attachment->view);
         auto depthLoadOp = optionalOpFromAPI<WebGPU::LoadOp>(attachment->depthLoadOp, WGPULoadOp_Undefined);
         auto depthStoreOp = optionalOpFromAPI<WebGPU::StoreOp>(attachment->depthStoreOp, WGPUStoreOp_Undefined);
         auto stencilLoadOp = optionalOpFromAPI<WebGPU::LoadOp>(attachment->stencilLoadOp, WGPULoadOp_Undefined);
@@ -2594,13 +2490,14 @@ inline std::optional<WebGPU::RenderPassDescriptor> fromAPI(const WGPURenderPassD
             return std::nullopt;
     }
 
+    auto* maxDrawCount = findChainedStruct<WGPURenderPassMaxDrawCount>(descriptor.nextInChain);
     return WebGPU::RenderPassDescriptor {
         .label = fromAPI(descriptor.label),
         .colorAttachments = storage.colorAttachments.span(),
         .depthStencilAttachment = WTF::move(depthStencilAttachment),
         .occlusionQuerySet = descriptor.occlusionQuerySet ? RefPtr { &WebGPU::fromAPI(descriptor.occlusionQuerySet) } : nullptr,
         .timestampWrites = WTF::move(timestampWrites),
-        .maxDrawCount = descriptor.maxDrawCount,
+        .maxDrawCount = maxDrawCount ? std::optional { maxDrawCount->maxDrawCount } : std::nullopt,
     };
 }
 
@@ -2675,16 +2572,18 @@ constexpr WebGPU::Limits fromAPI(const WGPULimits& limits)
         .maxComputeWorkgroupSizeY = limits.maxComputeWorkgroupSizeY,
         .maxComputeWorkgroupSizeZ = limits.maxComputeWorkgroupSizeZ,
         .maxComputeWorkgroupsPerDimension = limits.maxComputeWorkgroupsPerDimension,
-        .maxStorageBuffersInFragmentStage = limits.maxStorageBuffersInFragmentStage,
-        .maxStorageTexturesInFragmentStage = limits.maxStorageTexturesInFragmentStage,
-        .maxStorageBuffersInVertexStage = limits.maxStorageBuffersInVertexStage,
-        .maxStorageTexturesInVertexStage = limits.maxStorageTexturesInVertexStage,
+        // The C API has no per-stage storage limits. They default to the per-shader-stage ones.
+        .maxStorageBuffersInFragmentStage = limits.maxStorageBuffersPerShaderStage,
+        .maxStorageTexturesInFragmentStage = limits.maxStorageTexturesPerShaderStage,
+        .maxStorageBuffersInVertexStage = limits.maxStorageBuffersPerShaderStage,
+        .maxStorageTexturesInVertexStage = limits.maxStorageTexturesPerShaderStage,
     };
 }
 
 constexpr WGPULimits toAPI(const WebGPU::Limits& limits)
 {
     return {
+        .nextInChain = nullptr,
         .maxTextureDimension1D = limits.maxTextureDimension1D,
         .maxTextureDimension2D = limits.maxTextureDimension2D,
         .maxTextureDimension3D = limits.maxTextureDimension3D,
@@ -2716,10 +2615,8 @@ constexpr WGPULimits toAPI(const WebGPU::Limits& limits)
         .maxComputeWorkgroupSizeY = limits.maxComputeWorkgroupSizeY,
         .maxComputeWorkgroupSizeZ = limits.maxComputeWorkgroupSizeZ,
         .maxComputeWorkgroupsPerDimension = limits.maxComputeWorkgroupsPerDimension,
-        .maxStorageBuffersInFragmentStage = limits.maxStorageBuffersInFragmentStage,
-        .maxStorageTexturesInFragmentStage = limits.maxStorageTexturesInFragmentStage,
-        .maxStorageBuffersInVertexStage = limits.maxStorageBuffersInVertexStage,
-        .maxStorageTexturesInVertexStage = limits.maxStorageTexturesInVertexStage,
+        // Immediates are not implemented.
+        .maxImmediateSize = 0,
     };
 }
 
@@ -2735,7 +2632,7 @@ inline std::optional<WebGPU::RequestAdapterOptions> fromAPI(const WGPURequestAda
     return WebGPU::RequestAdapterOptions {
         .powerPreference = powerPreference,
         .forceFallbackAdapter = !!options.forceFallbackAdapter,
-        .xrCompatible = !!options.xrCompatible,
+        .xrCompatible = false,
     };
 }
 
@@ -2755,7 +2652,7 @@ inline std::optional<WebGPU::DeviceDescriptor> fromAPI(const WGPUDeviceDescripto
     return WebGPU::DeviceDescriptor {
         .label = fromAPI(descriptor.label),
         .requiredFeatures = storage.requiredFeatures.span(),
-        .requiredLimits = descriptor.requiredLimits ? std::optional { fromAPI(descriptor.requiredLimits->limits) } : std::nullopt,
+        .requiredLimits = descriptor.requiredLimits ? std::optional { fromAPI(*descriptor.requiredLimits) } : std::nullopt,
     };
 }
 

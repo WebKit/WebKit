@@ -700,9 +700,14 @@ WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer)
     }
 }
 
-std::span<uint8_t> wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
+void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
-    return protect(WebGPU::Metal::fromAPI(buffer))->getMappedRangeSpan(offset, WebGPU::Metal::mapSizeFromAPI(size));
+    return protect(WebGPU::Metal::fromAPI(buffer))->getMappedRangeSpan(offset, WebGPU::Metal::mapSizeFromAPI(size)).data();
+}
+
+const void* wgpuBufferGetConstMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
+{
+    return wgpuBufferGetMappedRange(buffer, offset, size);
 }
 
 // mapAsync() validates only the Read and Write bits of the mode, as in the WebGPU specification, so the
@@ -712,16 +717,18 @@ static OptionSet<WebGPU::MapMode> mapModeFromAPIIgnoringUnknownBits(WGPUMapMode 
     return *WebGPU::Metal::mapModeFromAPI(mode & (WGPUMapMode_Read | WGPUMapMode_Write));
 }
 
-static WGPUMapAsyncStatus mapAsyncStatusToAPI(bool success)
+WGPUFuture wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallbackInfo callbackInfo)
 {
-    return success ? WGPUMapAsyncStatus_Success : WGPUMapAsyncStatus_ValidationError;
-}
-
-void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
-{
-    protect(WebGPU::Metal::fromAPI(buffer))->mapAsync(mapModeFromAPIIgnoringUnknownBits(mode), offset, WebGPU::Metal::mapSizeFromAPI(size), [callback, userdata](bool success) {
-        callback(mapAsyncStatusToAPI(success), userdata);
+    Ref protectedBuffer = WebGPU::Metal::fromAPI(buffer);
+    WebGPU::Metal::CAPIFuture future { protectedBuffer->device().instance() };
+    protectedBuffer->mapAsync(mapModeFromAPIIgnoringUnknownBits(mode), offset, WebGPU::Metal::mapSizeFromAPI(size), [callbackInfo, future](bool success) {
+        if (success)
+            callbackInfo.callback(WGPUMapAsyncStatus_Success, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        else
+            callbackInfo.callback(WGPUMapAsyncStatus_Error, WebGPU::Metal::toAPI("mapAsync failed"_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        future.complete();
     });
+    return future.future();
 }
 
 void wgpuBufferUnmap(WGPUBuffer buffer)

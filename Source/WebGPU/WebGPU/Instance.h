@@ -29,9 +29,11 @@
 #import <WebGPU/WebGPUCpp.h>
 #import <WebGPU/WebGPUExt.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/Condition.h>
 #import <wtf/Deque.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
 #import <wtf/Lock.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/Ref.h>
@@ -85,15 +87,28 @@ public:
     const std::optional<const MachSendRight>& LEGACY_NODELETE webProcessID() const;
     id<MTLDevice> device() const;
 
+    // The futures of the C API. A future completes when the callback it stands for has run.
+    uint64_t createFuture();
+    void completeFuture(uint64_t);
+    // Runs the pending work until one of the futures has completed, and calls didComplete with
+    // the index of each completed one, which is then forgotten. False when the timeout passes
+    // first. This can be called on a background thread.
+    bool waitForAnyFuture(std::span<const uint64_t> futures, Seconds timeout, NOESCAPE const Function<void(size_t)>& didComplete);
+
 private:
     Instance(Function<void(WorkItem&&)>&& scheduleWork, const WTF::MachSendRight* webProcessResourceOwner);
     explicit Instance();
 
     // This can be called on a background thread.
     void defaultScheduleWork(WorkItem&&);
+    bool anyFutureCompleted(std::span<const uint64_t> futures) const WTF_REQUIRES_LOCK(m_lock);
 
     // This can be used on a background thread.
     Deque<WorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
+    uint64_t m_nextFuture WTF_GUARDED_BY_LOCK(m_lock) { 1 };
+    HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_completedFutures WTF_GUARDED_BY_LOCK(m_lock);
+    // Signalled when work is appended to m_pendingWork or a future completes.
+    Condition m_condition;
     using CommandBufferContainer = Vector<WeakObjCPtr<id<MTLCommandBuffer>>>;
     HashMap<Ref<Device>, CommandBufferContainer> retainedDeviceInstances;
     Vector<std::pair<Ref<CommandBuffer>, WeakObjCPtr<id<MTLCommandBuffer>>>> m_retainedCommandBufferInstances;

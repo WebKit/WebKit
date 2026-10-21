@@ -629,9 +629,11 @@ void wgpuComputePassEncoderPushDebugGroup(WGPUComputePassEncoder computePassEnco
     protect(WebGPU::Metal::fromAPI(computePassEncoder))->pushDebugGroup(WebGPU::Metal::fromAPI(groupLabel));
 }
 
-void wgpuComputePassEncoderSetBindGroup(WGPUComputePassEncoder computePassEncoder, uint32_t groupIndex, WGPUBindGroup group, std::optional<Vector<uint32_t>>&& dynamicOffsets)
+// No dynamic offsets is std::nullopt.
+void wgpuComputePassEncoderSetBindGroup(WGPUComputePassEncoder computePassEncoder, uint32_t groupIndex, WGPUBindGroup group, size_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    protect(WebGPU::Metal::fromAPI(computePassEncoder))->setBindGroup(groupIndex, group ? protect(WebGPU::Metal::fromAPI(group)).ptr() : nullptr, dynamicOffsets ? std::optional { dynamicOffsets->span() } : std::nullopt);
+    auto offsets = dynamicOffsetCount ? std::optional { unsafeMakeSpan(dynamicOffsets, dynamicOffsetCount) } : std::nullopt;
+    protect(WebGPU::Metal::fromAPI(computePassEncoder))->setBindGroup(groupIndex, group ? protect(WebGPU::Metal::fromAPI(group)).ptr() : nullptr, offsets);
 }
 
 void wgpuComputePassEncoderSetPipeline(WGPUComputePassEncoder computePassEncoder, WGPUComputePipeline pipeline)
