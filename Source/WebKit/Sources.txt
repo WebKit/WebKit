@@ -386,6 +386,7 @@ UIProcess/AgentClusterRequest.cpp
 UIProcess/AuxiliaryProcessProxy.cpp @cost:4
 UIProcess/BackgroundProcessResponsivenessTimer.cpp
 UIProcess/BrowsingContextGroup.cpp
+UIProcess/BrowsingContextGroupModes.cpp
 UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/DisplayLink.cpp
 UIProcess/DisplayLinkProcessProxyClient.cpp
