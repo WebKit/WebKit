@@ -12,7 +12,6 @@
 #     webkit.org/b/12345 TestWebKitAPI.WTF.Test [ Pass Fail ]
 #     rdar://98765432 TestWebKitAPI.WebKit.Bug [ Crash ]
 webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.WebKit.InterruptionBetweenSameProcessPages [ Pass Failure ]
-webkit.org/b/326127 [ ios ] TestWebKitAPI.WKAttachmentTests.ChangeFileWrapperForPastedImage [ Pass Timeout ]
 webkit.org/b/326130 [ ios release siteisolation ] TestWebKitAPI.WKWebExtensionAPITabs.CaptureVisibleTab [ Pass Timeout ]
 #     [ debug ] TestWebKitAPI.WTF.DebugOnly [ Skip ]
 #     [ mac Sonoma+ ] TestWebKitAPI.WebKit.NewFeature [ Pass ]
