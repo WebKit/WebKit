@@ -161,6 +161,27 @@ bool setWUTLinkedProgram(WUTBufferResources& resources, const GX2VertexShader& v
         return false;
     }
 
+    if (vertexShader.attribVarCount && !vertexShader.attribVars)
+        return false;
+
+    // Every compiler-visible GX2 vertex input must have an explicit GL-index
+    // mapping. Requiring a complete map avoids accidentally drawing with no
+    // streams just because GL locations differ from GX2's locations.
+    for (uint32_t i = 0; i < vertexShader.attribVarCount; ++i) {
+        const char* inputName = vertexShader.attribVars[i].name;
+        if (!inputName)
+            return false;
+        bool found = false;
+        for (const auto& binding : linked) {
+            if (binding.shaderInputName == inputName) {
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            return false;
+    }
+
     // The caller retains ownership of the compiler's GX2 shader objects. This
     // context keeps references until the linked program is replaced or deleted.
     resources.vertexShader = &vertexShader;
