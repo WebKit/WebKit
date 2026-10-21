@@ -83,8 +83,37 @@ constexpr GCGLenum GL_DEPTH_BUFFER_BIT_VALUE = 0x00000100;
 constexpr GCGLenum GL_STENCIL_BUFFER_BIT_VALUE = 0x00000400;
 constexpr GCGLenum GL_FRAMEBUFFER_VALUE = 0x8D40;
 constexpr GCGLenum GL_FRAMEBUFFER_COMPLETE_VALUE = 0x8CD5;
+constexpr GCGLenum GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE = 0x8CD6;
+constexpr GCGLenum GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_VALUE = 0x8CD7;
+constexpr GCGLenum GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_VALUE = 0x8CD9;
 constexpr GCGLenum GL_FRAMEBUFFER_UNSUPPORTED_VALUE = 0x8CDD;
 constexpr GCGLenum GL_FRAMEBUFFER_BINDING_VALUE = 0x8CA6;
+constexpr GCGLenum GL_INVALID_FRAMEBUFFER_OPERATION_VALUE = 0x0506;
+constexpr GCGLenum GL_RENDERBUFFER_VALUE = 0x8D41;
+constexpr GCGLenum GL_RENDERBUFFER_BINDING_VALUE = 0x8CA7;
+constexpr GCGLenum GL_COLOR_ATTACHMENT0_VALUE = 0x8CE0;
+constexpr GCGLenum GL_DEPTH_ATTACHMENT_VALUE = 0x8D00;
+constexpr GCGLenum GL_STENCIL_ATTACHMENT_VALUE = 0x8D20;
+constexpr GCGLenum GL_DEPTH_STENCIL_ATTACHMENT_VALUE = 0x821A;
+constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_VALUE = 0x8CD0;
+constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_VALUE = 0x8CD1;
+constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE = 0x8CD2;
+constexpr GCGLenum GL_TEXTURE_OBJECT_VALUE = 0x1702;
+constexpr GCGLenum GL_RENDERBUFFER_WIDTH_VALUE = 0x8D42;
+constexpr GCGLenum GL_RENDERBUFFER_HEIGHT_VALUE = 0x8D43;
+constexpr GCGLenum GL_RENDERBUFFER_INTERNAL_FORMAT_VALUE = 0x8D44;
+constexpr GCGLenum GL_RENDERBUFFER_RED_SIZE_VALUE = 0x8D50;
+constexpr GCGLenum GL_RENDERBUFFER_GREEN_SIZE_VALUE = 0x8D51;
+constexpr GCGLenum GL_RENDERBUFFER_BLUE_SIZE_VALUE = 0x8D52;
+constexpr GCGLenum GL_RENDERBUFFER_ALPHA_SIZE_VALUE = 0x8D53;
+constexpr GCGLenum GL_RENDERBUFFER_DEPTH_SIZE_VALUE = 0x8D54;
+constexpr GCGLenum GL_RENDERBUFFER_STENCIL_SIZE_VALUE = 0x8D55;
+constexpr GCGLenum GL_RGBA4_VALUE = 0x8056;
+constexpr GCGLenum GL_RGB5_A1_VALUE = 0x8057;
+constexpr GCGLenum GL_RGB565_VALUE = 0x8D62;
+constexpr GCGLenum GL_DEPTH_COMPONENT16_VALUE = 0x81A5;
+constexpr GCGLenum GL_STENCIL_INDEX8_VALUE = 0x8D48;
+constexpr GCGLenum GL_DEPTH_STENCIL_VALUE = 0x84F9;
 constexpr GCGLenum GL_ARRAY_BUFFER_BINDING_VALUE = 0x8894;
 constexpr GCGLenum GL_ELEMENT_ARRAY_BUFFER_BINDING_VALUE = 0x8895;
 constexpr GCGLenum GL_BUFFER_SIZE_VALUE = 0x8764;
@@ -156,8 +185,15 @@ constexpr GCGLenum GL_SAMPLER_2D_VALUE = 0x8B5E;
 constexpr GCGLenum GL_SAMPLER_CUBE_VALUE = 0x8B60;
 
 constexpr GX2RResourceFlags textureSurfaceFlags = static_cast<GX2RResourceFlags>(
-    GX2R_RESOURCE_BIND_TEXTURE | GX2R_RESOURCE_USAGE_CPU_WRITE
-    | GX2R_RESOURCE_USAGE_CPU_READ | GX2R_RESOURCE_USAGE_GPU_READ);
+    GX2R_RESOURCE_BIND_TEXTURE | GX2R_RESOURCE_BIND_COLOR_BUFFER
+    | GX2R_RESOURCE_USAGE_CPU_WRITE | GX2R_RESOURCE_USAGE_CPU_READ
+    | GX2R_RESOURCE_USAGE_GPU_READ | GX2R_RESOURCE_USAGE_GPU_WRITE);
+constexpr GX2RResourceFlags colorRenderbufferFlags = static_cast<GX2RResourceFlags>(
+    GX2R_RESOURCE_BIND_COLOR_BUFFER | GX2R_RESOURCE_USAGE_CPU_READ
+    | GX2R_RESOURCE_USAGE_GPU_READ | GX2R_RESOURCE_USAGE_GPU_WRITE);
+constexpr GX2RResourceFlags depthRenderbufferFlags = static_cast<GX2RResourceFlags>(
+    GX2R_RESOURCE_BIND_DEPTH_BUFFER | GX2R_RESOURCE_USAGE_CPU_READ
+    | GX2R_RESOURCE_USAGE_GPU_READ | GX2R_RESOURCE_USAGE_GPU_WRITE);
 
 void initializeGLSLCompilerOnce()
 {
@@ -288,7 +324,7 @@ public:
 
     void bindFramebuffer(GCGLenum target, PlatformGLObject) override;
 
-    void bindRenderbuffer(GCGLenum target, PlatformGLObject) override { notImplemented(); }
+    void bindRenderbuffer(GCGLenum target, PlatformGLObject) override;
 
     void bindTexture(GCGLenum target, PlatformGLObject) override;
 
@@ -322,11 +358,11 @@ public:
 
     PlatformGLObject createBuffer() override;
 
-    PlatformGLObject createFramebuffer() override { notImplemented(); return {}; }
+    PlatformGLObject createFramebuffer() override;
 
     PlatformGLObject createProgram() override;
 
-    PlatformGLObject createRenderbuffer() override { notImplemented(); return {}; }
+    PlatformGLObject createRenderbuffer() override;
 
     PlatformGLObject createShader(GCGLenum) override;
 
@@ -336,11 +372,11 @@ public:
 
     void deleteBuffer(PlatformGLObject) override;
 
-    void deleteFramebuffer(PlatformGLObject) override { notImplemented(); }
+    void deleteFramebuffer(PlatformGLObject) override;
 
     void deleteProgram(PlatformGLObject) override;
 
-    void deleteRenderbuffer(PlatformGLObject) override { notImplemented(); }
+    void deleteRenderbuffer(PlatformGLObject) override;
 
     void deleteShader(PlatformGLObject) override;
 
@@ -370,9 +406,9 @@ public:
 
     void flush() override;
 
-    void framebufferRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject) override { notImplemented(); }
+    void framebufferRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject) override;
 
-    void framebufferTexture2D(GCGLenum target, GCGLenum attachment, GCGLenum textarget, PlatformGLObject, GCGLint level) override { notImplemented(); }
+    void framebufferTexture2D(GCGLenum target, GCGLenum attachment, GCGLenum textarget, PlatformGLObject, GCGLint level) override;
 
     void frontFace(GCGLenum mode) override;
 
@@ -402,11 +438,11 @@ public:
 
     GCGLErrorCodeSet getErrors() override;
 
-    GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) override { notImplemented(); return {}; }
+    GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) override;
 
     CString getProgramInfoLog(PlatformGLObject) override;
 
-    GCGLint getRenderbufferParameteri(GCGLenum target, GCGLenum pname) override { notImplemented(); return {}; }
+    GCGLint getRenderbufferParameteri(GCGLenum target, GCGLenum pname) override;
 
     GCGLint getShaderi(PlatformGLObject, GCGLenum pname) override;
 
@@ -432,11 +468,11 @@ public:
 
     GCGLboolean isEnabled(GCGLenum cap) override;
 
-    GCGLboolean isFramebuffer(PlatformGLObject) override { notImplemented(); return {}; }
+    GCGLboolean isFramebuffer(PlatformGLObject) override;
 
     GCGLboolean isProgram(PlatformGLObject) override;
 
-    GCGLboolean isRenderbuffer(PlatformGLObject) override { notImplemented(); return {}; }
+    GCGLboolean isRenderbuffer(PlatformGLObject) override;
 
     GCGLboolean isShader(PlatformGLObject) override;
 
@@ -450,7 +486,7 @@ public:
 
     void polygonOffset(GCGLfloat factor, GCGLfloat units) override;
 
-    void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) override { notImplemented(); }
+    void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) override;
 
     void sampleCoverage(GCGLclampf value, GCGLboolean invert) override { notImplemented(); }
 
@@ -911,6 +947,31 @@ private:
         GCGLint wrapS { static_cast<GCGLint>(GL_REPEAT_VALUE) };
         GCGLint wrapT { static_cast<GCGLint>(GL_REPEAT_VALUE) };
     };
+    struct RenderbufferRecord {
+        GX2ColorBuffer colorBuffer {};
+        GX2DepthBuffer depthBuffer {};
+        GCGLenum internalFormat { 0 };
+        uint32_t width { 0 };
+        uint32_t height { 0 };
+        GX2RResourceFlags resourceFlags { GX2R_RESOURCE_BIND_NONE };
+        bool allocated { false };
+        bool isColor { false };
+        bool hasDepth { false };
+        bool hasStencil { false };
+        bool colorSurfaceCreated { false };
+        bool depthSurfaceCreated { false };
+        void* depthHiZMemory { nullptr };
+        uint32_t depthHiZSize { 0 };
+    };
+    struct FramebufferRecord {
+        PlatformGLObject colorTexture { 0 };
+        GCGLint colorTextureLevel { 0 };
+        PlatformGLObject colorRenderbuffer { 0 };
+        PlatformGLObject depthRenderbuffer { 0 };
+        PlatformGLObject stencilRenderbuffer { 0 };
+        GX2ColorBuffer textureColorView {};
+        bool textureColorViewReady { false };
+    };
     struct UniformBinding {
         GCGLint location { -1 };
         const GX2UniformVar* vertexVar { nullptr };
@@ -950,7 +1011,16 @@ private:
     PlatformGLObject nextShaderName();
     PlatformGLObject nextProgramName();
     PlatformGLObject nextTextureName();
+    PlatformGLObject nextFramebufferName();
+    PlatformGLObject nextRenderbufferName();
     void releaseTextureStorage(TextureRecord&);
+    void releaseRenderbufferStorage(RenderbufferRecord&);
+    bool allocateRenderbufferStorage(RenderbufferRecord&, GCGLenum, uint32_t, uint32_t);
+    GCGLenum framebufferStatus(PlatformGLObject) const;
+    void refreshFramebufferTarget();
+    bool framebufferReadyForDraw();
+    void detachFramebufferTexture(PlatformGLObject);
+    void detachFramebufferRenderbuffer(PlatformGLObject);
     bool recreateTextureStorage(TextureRecord&);
     bool uploadTextureLevel(TextureRecord&, uint32_t level);
     bool convertTexturePixels(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height,
@@ -980,12 +1050,17 @@ private:
     std::unordered_map<PlatformGLObject, ShaderRecord> m_shaders;
     std::unordered_map<PlatformGLObject, ProgramRecord> m_programs;
     std::unordered_map<PlatformGLObject, TextureRecord> m_textures;
+    std::unordered_map<PlatformGLObject, FramebufferRecord> m_framebuffers;
+    std::unordered_map<PlatformGLObject, RenderbufferRecord> m_renderbuffers;
     std::unordered_map<PlatformGLObject, bool> m_vertexArrayObjects;
     TextureRecord m_defaultTexture;
     std::array<PlatformGLObject, 16> m_boundTextures2D {};
     PlatformGLObject m_nextShader { 1 };
     PlatformGLObject m_nextProgram { 1 };
     PlatformGLObject m_nextTexture { 1 };
+    PlatformGLObject m_nextFramebuffer { 1 };
+    PlatformGLObject m_nextRenderbuffer { 1 };
+    PlatformGLObject m_boundRenderbuffer { 0 };
     PlatformGLObject m_currentProgram { 0 };
     PlatformGLObject m_appliedProgram { 0 };
     PlatformGLObject m_boundFramebuffer { 0 };
@@ -1111,7 +1186,7 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
     surface.mipLevels = static_cast<uint32_t>(texture.levels.size());
     surface.format = GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8;
     surface.aa = GX2_AA_MODE1X;
-    surface.use = GX2_SURFACE_USE_TEXTURE;
+    surface.use = static_cast<GX2SurfaceUse>(GX2_SURFACE_USE_TEXTURE | GX2_SURFACE_USE_COLOR_BUFFER);
     surface.tileMode = GX2_TILE_MODE_LINEAR_ALIGNED;
     GX2CalcSurfaceSizeAndAlignment(&surface);
     if (!surface.imageSize || !surface.alignment
