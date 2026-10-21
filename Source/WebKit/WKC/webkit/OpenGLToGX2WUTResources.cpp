@@ -553,11 +553,20 @@ bool initializeWUTFetchShader(const WUTBufferResources& resources,
 
 bool setElementBuffer(void* context, BufferName name)
 {
-    if (!name)
-        return true;
     auto& resources = *static_cast<WUTBufferResources*>(context);
+    if (!name) {
+        resources.bindings[static_cast<uint8_t>(BufferTarget::ElementArray)] = 0;
+        return true;
+    }
+
     auto it = resources.buffers.find(name);
-    return it != resources.buffers.end() && it->second && it->second->buffer;
+    if (it == resources.buffers.end() || !it->second || !it->second->buffer)
+        return false;
+
+    // Keep the active GL element-array binding visible to the direct driver
+    // draw entry point as well as to the VAO object's captured state.
+    resources.bindings[static_cast<uint8_t>(BufferTarget::ElementArray)] = name;
+    return true;
 }
 
 bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName elementBuffer)
