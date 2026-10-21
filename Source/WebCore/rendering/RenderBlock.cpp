@@ -991,14 +991,14 @@ void RenderBlock::layoutOutOfFlowBoxes(RelayoutChildren relayoutChildren, bool f
     setOutOfFlowChildNeedsLayoutBit(false);
 }
 
-void RenderBlock::markOutOfFlowBoxesForLayout()
+void RenderBlock::markOutOfFlowBoxesForLayout(MarkingBehavior markingBehavior)
 {
     auto* outOfFlowDescendants = outOfFlowBoxes();
     if (!outOfFlowDescendants)
         return;
 
     for (auto& descendant : *outOfFlowDescendants)
-        descendant.setChildNeedsLayout();
+        descendant.setChildNeedsLayout(markingBehavior);
 }
 
 void RenderBlock::markForPaginationRelayoutIfNeeded()

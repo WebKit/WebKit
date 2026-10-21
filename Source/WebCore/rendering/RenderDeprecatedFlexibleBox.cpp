@@ -1065,9 +1065,11 @@ std::optional<LegacyLineClampUpdater::ClampedContent> RenderDeprecatedFlexibleBo
                 || (child->style().height().isAuto() && is<RenderBlockFlow>(*child))) {
                 child->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
 
-                // Dirty all the positioned objects.
+                // Dirty all the positioned objects. The child lays them out when it lays out below, so marking their
+                // containing block chain would only dirty ancestors, some of which may have finished layout already
+                // (e.g. this runs as part of the scrollbar relayout a flex or grid ancestor issues after its children are done).
                 if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*child))
-                    blockFlow->markOutOfFlowBoxesForLayout();
+                    blockFlow->markOutOfFlowBoxesForLayout(MarkingBehavior::MarkOnlyThis);
             }
         }
     };
