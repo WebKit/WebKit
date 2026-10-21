@@ -222,7 +222,7 @@ PASS new WheelEvent('eventType', { metaKey: false }).metaKey is false
 PASS new WheelEvent('eventType', { metaKey: true }).metaKey is true
 PASS new WheelEvent('eventType', { button: 0 }).button is 0
 PASS new WheelEvent('eventType', { button: -1 }).button is -1
-PASS new WheelEvent('eventType', { button: -2 }).button is 0
+PASS new WheelEvent('eventType', { button: -2 }).button is -2
 PASS new WheelEvent('eventType', { button: 1 }).button is 1
 PASS new WheelEvent('eventType', { button: -32768 }).button is -32768
 PASS new WheelEvent('eventType', { button: 32767 }).button is 32767

@@ -155,7 +155,7 @@ shouldBe("new WheelEvent('eventType', { deltaMode: {valueOf: function () { retur
 // Numbers within the short range.
 shouldBe("new WheelEvent('eventType', { button: 0 }).button", "0");
 shouldBe("new WheelEvent('eventType', { button: -1 }).button", "-1");
-shouldBe("new WheelEvent('eventType', { button: -2 }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: -2 }).button", "-2");
 shouldBe("new WheelEvent('eventType', { button: 1 }).button", "1");
 shouldBe("new WheelEvent('eventType', { button: -32768 }).button", "-32768");
 shouldBe("new WheelEvent('eventType', { button: 32767 }).button", "32767");

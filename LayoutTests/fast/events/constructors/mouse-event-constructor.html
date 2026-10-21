@@ -119,7 +119,7 @@ shouldThrow("new MouseEvent('eventType', { get view() { throw 'MouseEvent Error'
 // Numbers within the short range.
 shouldBe("new MouseEvent('eventType', { button: 0 }).button", "0");
 shouldBe("new MouseEvent('eventType', { button: -1 }).button", "-1");
-shouldBe("new MouseEvent('eventType', { button: -2 }).button", "0");
+shouldBe("new MouseEvent('eventType', { button: -2 }).button", "-2");
 shouldBe("new MouseEvent('eventType', { button: 1 }).button", "1");
 shouldBe("new MouseEvent('eventType', { button: -32768 }).button", "-32768");
 shouldBe("new MouseEvent('eventType', { button: 32767 }).button", "32767");

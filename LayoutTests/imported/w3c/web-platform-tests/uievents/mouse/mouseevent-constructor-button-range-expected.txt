@@ -1,0 +1,61 @@
+
+PASS new MouseEvent() with button -32768
+PASS new PointerEvent() with button -32768
+PASS new WheelEvent() with button -32768
+PASS new DragEvent() with button -32768
+PASS initMouseEvent() with button -32768
+PASS new MouseEvent() with button -3
+PASS new PointerEvent() with button -3
+PASS new WheelEvent() with button -3
+PASS new DragEvent() with button -3
+PASS initMouseEvent() with button -3
+PASS new MouseEvent() with button -2
+PASS new PointerEvent() with button -2
+PASS new WheelEvent() with button -2
+PASS new DragEvent() with button -2
+PASS initMouseEvent() with button -2
+PASS new MouseEvent() with button -1
+PASS new PointerEvent() with button -1
+PASS new WheelEvent() with button -1
+PASS new DragEvent() with button -1
+PASS initMouseEvent() with button -1
+PASS new MouseEvent() with button 0
+PASS new PointerEvent() with button 0
+PASS new WheelEvent() with button 0
+PASS new DragEvent() with button 0
+PASS initMouseEvent() with button 0
+PASS new MouseEvent() with button 1
+PASS new PointerEvent() with button 1
+PASS new WheelEvent() with button 1
+PASS new DragEvent() with button 1
+PASS initMouseEvent() with button 1
+PASS new MouseEvent() with button 2
+PASS new PointerEvent() with button 2
+PASS new WheelEvent() with button 2
+PASS new DragEvent() with button 2
+PASS initMouseEvent() with button 2
+PASS new MouseEvent() with button 3
+PASS new PointerEvent() with button 3
+PASS new WheelEvent() with button 3
+PASS new DragEvent() with button 3
+PASS initMouseEvent() with button 3
+PASS new MouseEvent() with button 4
+PASS new PointerEvent() with button 4
+PASS new WheelEvent() with button 4
+PASS new DragEvent() with button 4
+PASS initMouseEvent() with button 4
+PASS new MouseEvent() with button 5
+PASS new PointerEvent() with button 5
+PASS new WheelEvent() with button 5
+PASS new DragEvent() with button 5
+PASS initMouseEvent() with button 5
+PASS new MouseEvent() with button 32767
+PASS new PointerEvent() with button 32767
+PASS new WheelEvent() with button 32767
+PASS new DragEvent() with button 32767
+PASS initMouseEvent() with button 32767
+PASS new MouseEvent() without button defaults to 0
+PASS new PointerEvent() without button defaults to 0
+PASS new WheelEvent() without button defaults to 0
+PASS new DragEvent() without button defaults to 0
+
