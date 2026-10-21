@@ -2410,9 +2410,7 @@ bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
                 GX2SetVertexSampler(&texture->sampler, binding.vertexSamplerVar->location);
             }
             if (binding.pixelSamplerVar) {
-                GX2SetPixelTexture(&texture->native, binding.vertexSamplerVar
-                    ? binding.vertexSamplerVar->location
-                    : binding.pixelSamplerVar->location);
+                GX2SetPixelTexture(&texture->native, binding.pixelSamplerVar->location);
                 GX2SetPixelSampler(&texture->sampler, binding.pixelSamplerVar->location);
             }
         }
