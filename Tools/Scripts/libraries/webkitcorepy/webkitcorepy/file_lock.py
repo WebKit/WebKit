@@ -43,8 +43,8 @@ else:
 class FileLock(object):
     INTEGER_RE = re.compile(r'^\d+$')
     USE_WINDOWS = sys.platform.startswith('win')
-    USE_EXLOCK = not USE_WINDOWS and getattr(os, 'O_EXLOCK', False)
-    USE_FCNTL_FLOCK = not USE_WINDOWS and not USE_EXLOCK and hasattr(fcntl, 'flock')
+    O_EXLOCK: int = getattr(os, 'O_EXLOCK', 0) if not USE_WINDOWS else 0
+    USE_FCNTL_FLOCK = not USE_WINDOWS and not O_EXLOCK and hasattr(fcntl, 'flock')
 
     @classmethod
     def is_process_running(cls, pid: int) -> bool:
@@ -71,7 +71,7 @@ class FileLock(object):
         if self._descriptor:
             raise RuntimeError('Cannot re-enter acquired FileLock')
 
-        if not self.USE_EXLOCK and not self.USE_WINDOWS and not self.USE_FCNTL_FLOCK and os.path.exists(self.path):
+        if not self.O_EXLOCK and not self.USE_WINDOWS and not self.USE_FCNTL_FLOCK and os.path.exists(self.path):
             try:
                 with open(self.path) as file:
                     pid = file.readline().strip()
@@ -80,12 +80,12 @@ class FileLock(object):
             except FileNotFoundError:  # Protect from another racing Lock already cleaning up the stale lock
                 pass
 
-        if self.USE_EXLOCK and self.timeout:
+        if self.O_EXLOCK and self.timeout:
             with Timeout(
                 seconds=self.timeout, patch=False,
                 handler=OSError(errno.EAGAIN, "Resource temporarily unavailable: '{}'".format(self.path)),
             ):
-                self._descriptor = os.open(self.path, os.O_CREAT | os.O_WRONLY | os.O_EXLOCK)
+                self._descriptor = os.open(self.path, os.O_CREAT | os.O_WRONLY | self.O_EXLOCK)
             return True
 
         start_time = time.time()
@@ -94,8 +94,8 @@ class FileLock(object):
                 if sys.platform.startswith('win'):
                     self._descriptor = os.open(self.path, os.O_TRUNC | os.O_CREAT)
                     msvcrt.locking(self._descriptor, msvcrt.LK_NBLCK, 32)
-                elif self.USE_EXLOCK:
-                    self._descriptor = os.open(self.path, os.O_CREAT | os.O_WRONLY | os.O_EXLOCK | os.O_NONBLOCK)
+                elif self.O_EXLOCK:
+                    self._descriptor = os.open(self.path, os.O_CREAT | os.O_WRONLY | self.O_EXLOCK | os.O_NONBLOCK)
                 elif self.USE_FCNTL_FLOCK:
                     descriptor = os.open(self.path, os.O_CREAT | os.O_RDONLY, 0o666)
                     try:
@@ -125,7 +125,7 @@ class FileLock(object):
                 msvcrt.locking(self._descriptor, msvcrt.LK_UNLCK, 32)
             elif self.USE_FCNTL_FLOCK:
                 fcntl.flock(self._descriptor, fcntl.LOCK_UN)
-            elif not self.USE_EXLOCK:
+            elif not self.O_EXLOCK:
                 os.unlink(self.path)
         finally:
             os.close(self._descriptor)
