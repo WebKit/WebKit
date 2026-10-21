@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ProxyObject.h"
 
+#include "BuiltinNames.h"
 #include "GetterSetter.h"
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
@@ -78,13 +79,11 @@ void ProxyObject::finishCreation(VM& vm, JSGlobalObject* globalObject, JSValue t
 
     JSObject* targetAsObject = uncheckedDowncast<JSObject>(target);
 
-    m_isCallable = targetAsObject->isCallable();
-    if (m_isCallable) {
-        TypeInfo info = structure()->typeInfo();
-        RELEASE_ASSERT(info.implementsHasInstance() && info.implementsDefaultHasInstance());
-    }
+    RELEASE_ASSERT(isCallableProxy() == targetAsObject->isCallable());
+    if (isCallableProxy())
+        RELEASE_ASSERT(structure()->typeInfo().implementsHasInstance());
 
-    m_isConstructible = targetAsObject->isConstructor();
+    setPerCellBit(targetAsObject->isConstructor());
 
     internalField(Field::Target).set(vm, this, targetAsObject);
     internalField(Field::Handler).set(vm, this, handler);
@@ -618,10 +617,10 @@ JSC_DEFINE_HOST_FUNCTION(performProxyCall, (JSGlobalObject* globalObject, CallFr
 
     JSObject* handler = uncheckedDowncast<JSObject>(handlerValue);
     CallData callData;
-    JSValue applyMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "apply"_s), "'apply' property of a Proxy's handler should be callable"_s);
+    JSObject* applyMethod = proxy->getHandlerTrap(globalObject, handler, callData, vm.propertyNames->builtinNames().applyPublicName(), ProxyObject::HandlerTrap::Apply);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSObject* target = proxy->target();
-    if (applyMethod.isUndefined()) {
+    if (!applyMethod) {
         auto callData = JSC::getCallDataInline(target);
         RELEASE_ASSERT(callData.type != CallData::Type::None);
         RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, target, callData, callFrame->thisValue(), ArgList(callFrame))));
@@ -641,7 +640,7 @@ CallData ProxyObject::getCallData(JSCell* cell)
 {
     CallData callData;
     ProxyObject* proxy = uncheckedDowncast<ProxyObject>(cell);
-    if (proxy->m_isCallable) {
+    if (proxy->isCallableProxy()) {
         callData.type = CallData::Type::Native;
         callData.native.function = performProxyCall;
         callData.native.isBoundFunction = false;
@@ -700,7 +699,7 @@ CallData ProxyObject::getConstructData(JSCell* cell)
 {
     CallData constructData;
     ProxyObject* proxy = uncheckedDowncast<ProxyObject>(cell);
-    if (proxy->m_isConstructible) {
+    if (proxy->isConstructibleProxy()) {
         constructData.type = CallData::Type::Native;
         constructData.native.function = performProxyConstruct;
         constructData.native.isBoundFunction = false;

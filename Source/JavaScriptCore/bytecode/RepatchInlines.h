@@ -33,6 +33,7 @@
 #include "FunctionCodeBlock.h"
 #include "JSObjectInlines.h"
 #include "LLIntEntrypoint.h"
+#include "ProxyObject.h"
 #include "Repatch.h"
 #include "VMTrapsInlines.h"
 
@@ -128,6 +129,27 @@ inline void* handleHostCall(VM& vm, JSCell* owner, CallFrame* calleeFrame, JSVal
     RELEASE_AND_RETURN(scope, throwNotAConstructorErrorFromCallIC(globalObject, owner, callee, callLinkInfo));
 }
 
+// A proxy without an "apply" trap calls its target with the same this and arguments, so the call can
+// enter the target directly instead of re-entering the VM from performProxyCall.
+ALWAYS_INLINE bool forwardProxyCallToTarget(CallFrame* calleeFrame, JSValue callee, CodeSpecializationKind kind)
+{
+    if (kind != CodeSpecializationKind::CodeForCall)
+        return false;
+    JSValue target = callee;
+    while (auto* proxy = dynamicDowncast<ProxyObject>(target)) {
+        JSObject* proxyTarget = proxy->callTargetIfKnownToHaveNoApplyTrap();
+        if (!proxyTarget)
+            break;
+        target = proxyTarget;
+    }
+    if (target == callee)
+        return false;
+    calleeFrame->setCallee(asObject(target));
+    return true;
+}
+
+ALWAYS_INLINE void* virtualForWithFunction(VM&, JSCell* owner, CallFrame* calleeFrame, CallLinkInfo*, JSCell*& calleeAsFunctionCell);
+
 ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -137,6 +159,11 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
     JSValue calleeAsValue = calleeFrame->guaranteedJSValueCallee();
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell) {
+        // The call site sees the proxy as its callee, so it must not be linked to the target.
+        if (forwardProxyCallToTarget(calleeFrame, calleeAsValue, kind)) {
+            JSCell* unusedCalleeAsFunctionCell;
+            RELEASE_AND_RETURN(throwScope, virtualForWithFunction(vm, owner, calleeFrame, callLinkInfo, unusedCalleeAsFunctionCell));
+        }
         if (auto* internalFunction = dynamicDowncast<InternalFunction>(calleeAsValue)) {
             CodePtr<JSEntryPtrTag> codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
             RELEASE_ASSERT(!!codePtr);
@@ -236,9 +263,18 @@ ALWAYS_INLINE void* virtualForWithFunction(VM& vm, JSCell* owner, CallFrame* cal
 
     JSValue calleeAsValue = calleeFrame->guaranteedJSValueCallee();
     calleeAsFunctionCell = getJSFunction(calleeAsValue);
+    // The call site sees the proxy as its callee, so a forwarded call must not report the target for linking.
+    bool forwardedFromProxy = false;
+    if (!calleeAsFunctionCell) [[unlikely]] {
+        if (forwardProxyCallToTarget(calleeFrame, calleeAsValue, kind)) {
+            forwardedFromProxy = true;
+            calleeAsValue = calleeFrame->guaranteedJSValueCallee();
+            calleeAsFunctionCell = getJSFunction(calleeAsValue);
+        }
+    }
     if (!calleeAsFunctionCell) [[unlikely]] {
         if (auto* internalFunction = dynamicDowncast<InternalFunction>(calleeAsValue)) {
-            calleeAsFunctionCell = internalFunction;
+            calleeAsFunctionCell = forwardedFromProxy ? nullptr : internalFunction;
             CodePtr<JSEntryPtrTag> codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
             ASSERT(!!codePtr);
             return codePtr.taggedPtr();
@@ -247,6 +283,8 @@ ALWAYS_INLINE void* virtualForWithFunction(VM& vm, JSCell* owner, CallFrame* cal
     }
 
     JSFunction* function = uncheckedDowncast<JSFunction>(calleeAsFunctionCell);
+    if (forwardedFromProxy)
+        calleeAsFunctionCell = nullptr;
     JSScope* scope = function->scopeUnchecked();
     ExecutableBase* executable = function->executable();
 
