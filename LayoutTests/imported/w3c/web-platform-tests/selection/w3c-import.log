@@ -105,6 +105,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-after-editinghost-removed.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-after-textcontrol-removed.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-in-shadow-after-the-shadow-removed.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-painting-after-splitText-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-painting-after-splitText-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-painting-after-splitText.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-shadow-dom-crash-print.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-test-utils.js
