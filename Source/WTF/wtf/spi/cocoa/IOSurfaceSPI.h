@@ -46,7 +46,11 @@ DECLARE_SYSTEM_HEADER
 #include <wtf/spi/cocoa/IOReturnSPI.h>
 #include <wtf/spi/cocoa/IOTypesSPI.h>
 
+#if PLATFORM(VISION)
+#include <IOSurface/IOSurfaceRef.h>
+#else
 typedef struct __IOSurface *IOSurfaceRef;
+#endif
 
 #endif
 

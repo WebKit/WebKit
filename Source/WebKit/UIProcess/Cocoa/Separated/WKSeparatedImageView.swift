@@ -23,7 +23,6 @@
 
 #if HAVE_CORE_ANIMATION_SEPARATED_LAYERS
 
-import IOSurface
 import os
 @_weakLinked import RealityKit
 import WebKit_Internal
