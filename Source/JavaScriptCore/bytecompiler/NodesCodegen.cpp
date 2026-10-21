@@ -516,6 +516,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (!firstPutElement && !m_elision)
         return newArray(generator.finalDestination(dst), m_element, length);
 
+    if (!m_element)
+        return generator.emitNewArrayWithSize(generator.finalDestination(dst), generator.emitLoad(nullptr, jsNumber(m_elision)));
+
     allDenseStrings = false;
 
     if (firstPutElement && firstPutElement->value()->isSpreadExpression()) {
