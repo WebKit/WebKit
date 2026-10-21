@@ -72,7 +72,7 @@ messages -> RemoteGraphicsContext Stream {
     ClipToImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, WebCore::FloatRect destinationRect) StreamBatched
     ClipOutToPath(WebCore::Path path) StreamBatched
     ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule) StreamBatched
-    ClipCachedPath(WebKit::RemotePathImplIdentifier identifier, enum:bool WebCore::WindRule windRule)
+    ClipCachedPath(WebKit::RemotePathImplIdentifier identifier, enum:bool WebCore::WindRule windRule) StreamBatched
     ResetClip() StreamBatched
     DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode) StreamBatched
     DrawDisplayList(WebKit::RemoteDisplayListIdentifier identifier) StreamBatched
@@ -109,10 +109,10 @@ messages -> RemoteGraphicsContext Stream {
     FillQuadCurve(struct WebCore::PathDataQuadCurve curve) StreamBatched
     FillBezierCurve(struct WebCore::PathDataBezierCurve curve) StreamBatched
     FillPathSegment(WebCore::PathSegment segment) StreamBatched
-    FillPath(WebCore::Path path)
-    FillCachedPath(WebKit::RemotePathImplIdentifier identifier)
-    FillEllipse(WebCore::FloatRect rect)
-    StrokeRect(WebCore::FloatRect rect, float lineWidth)
+    FillPath(WebCore::Path path) StreamBatched
+    FillCachedPath(WebKit::RemotePathImplIdentifier identifier) StreamBatched
+    FillEllipse(WebCore::FloatRect rect) StreamBatched
+    StrokeRect(WebCore::FloatRect rect, float lineWidth) StreamBatched
     StrokeLine(struct WebCore::PathDataLine line) StreamBatched
     StrokeLinesWithColorAndThickness(std::span<const WebCore::PathDataLineColorThickness> lines) StreamBatched
     StrokeArc(struct WebCore::PathArc arc) StreamBatched
