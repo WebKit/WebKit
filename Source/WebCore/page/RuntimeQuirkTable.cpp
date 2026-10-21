@@ -615,7 +615,7 @@ static RuntimeQuirkTable loadQuirkTable()
     }
 
     auto result = parseQuirkTable(json);
-    for (auto& error : result.errors)
+    for ([[maybe_unused]] auto& error : result.errors)
         RELEASE_LOG_ERROR(Loading, "QuirkTable.json: %" PUBLIC_LOG_STRING, error.description().utf8());
     ASSERT_WITH_MESSAGE(result.errors.isEmpty(), "QuirkTable.json has errors; see the log");
     return WTF::move(result.table);
