@@ -31,7 +31,7 @@ import enum
 import re
 
 
-_VERSION_NUMBER_RE = re.compile(r'^\d+(\.\d+)*$')
+VERSION_NUMBER_RE = re.compile(r'^\d+(\.\d+)*$')
 
 _MAX_VERSION_PARTS = 3
 
@@ -131,7 +131,7 @@ class VersionSpecifier:
     def _resolve_version_number(self, version_str, version_name_map):
         if version_str in version_name_map:
             return version_name_map[version_str]
-        if _VERSION_NUMBER_RE.match(version_str):
+        if VERSION_NUMBER_RE.match(version_str):
             return tuple(int(x) for x in version_str.split('.'))
         return None
 

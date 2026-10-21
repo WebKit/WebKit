@@ -95,7 +95,13 @@ rdar://98765 [ ios simulator ] TestWebKitAPI.iOS.Test [ Skip ]
 3. **Style**: debug, release, asan, guardmalloc
 4. **Hardware**: simulator, device, iphone, ipad
 5. **Architecture**: arm64, x86_64, x86, arm64_32, armv7k
-6. **Flavor**: wk1, wk2, siteisolation, etc. (freeform)
+6. **Flavor**: wk1, wk2, siteisolation, etc. (freeform unless the suite declares its flavors)
+
+Tokens in the same category match any of them; every category must match. `[ mac gtk Debug Release ]` applies to Debug and Release on both mac and gtk.
+
+### Precedence
+
+When several lines match a test, a later file wins over an earlier one. Within a file, the longest test pattern wins, then the earlier line, as in webkitpy. Lines in one file for the same pattern whose configurations overlap are reported as warnings.
 
 ### Version Specifiers
 
@@ -105,6 +111,8 @@ rdar://98765 [ ios simulator ] TestWebKitAPI.iOS.Test [ Skip ]
 | `Sonoma+` | This version and later |
 | `Sonoma-` | This version and earlier |
 | `Ventura-Sequoia` | Inclusive range |
+
+Versions are compared using the caller's `version_order` or the suite's `version_name_map`. Without either, lines with a version don't match.
 
 ### Bug Identifiers
 

@@ -32,7 +32,7 @@ from typing import List, Optional, Set
 from webkitexpectationspy.expectations import Expectation, ResultStatus
 from webkitexpectationspy.modifiers import ModifiersBase
 from webkitexpectationspy.configuration import (
-    ConfigurationCategory, get_token_category
+    ConfigurationCategory, canonical_token, get_token_category
 )
 from webkitexpectationspy.version_specifier import VersionSpecifier
 
@@ -81,6 +81,7 @@ class ExpectationParser:
             self._modifier_class = ModifiersBase
 
         self._version_tokens = self._suite.version_tokens if self._suite else set()
+        self._flavor_tokens = self._suite.flavor_tokens if self._suite else None
 
     def parse(self, filename, content):
         results = []
@@ -172,8 +173,8 @@ class ExpectationParser:
                     break
 
             elif state == 'configuration':
-                token_lower = token.lower()
-                category = get_token_category(token, self._version_tokens)
+                token_lower = canonical_token(token)
+                category = get_token_category(token, self._version_tokens, self._flavor_tokens)
                 if category is not None:
                     if category == ConfigurationCategory.VERSION:
                         spec = VersionSpecifier.parse(token)
@@ -218,6 +219,8 @@ class ExpectationParser:
                         modifier_fields['wontfix'] = True
                     elif token_lower == 'rebaseline':
                         modifier_fields['rebaseline'] = True
+                    elif token_lower == 'dumpjsconsoleloginstderr':
+                        modifier_fields['dump_js_console_log_in_stderr'] = True
 
                 elif token_lower in self._expectation_map:
                     expected_results.add(self._expectation_map[token_lower])
@@ -305,5 +308,7 @@ class ExpectationParser:
             kwargs['wontfix'] = fields.get('wontfix', False)
         if hasattr(self._modifier_class, 'rebaseline'):
             kwargs['rebaseline'] = fields.get('rebaseline', False)
+        if hasattr(self._modifier_class, 'dump_js_console_log_in_stderr'):
+            kwargs['dump_js_console_log_in_stderr'] = fields.get('dump_js_console_log_in_stderr', False)
 
         return self._modifier_class(**kwargs)
