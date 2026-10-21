@@ -562,21 +562,21 @@ public:
 
     void validateProgram(PlatformGLObject) override;
 
-    void vertexAttrib1f(GCGLuint index, GCGLfloat x) override { notImplemented(); }
+    void vertexAttrib1f(GCGLuint index, GCGLfloat x) override;
 
-    void vertexAttrib1fv(GCGLuint index, std::span<const GCGLfloat, 1> values) override { notImplemented(); }
+    void vertexAttrib1fv(GCGLuint index, std::span<const GCGLfloat, 1> values) override;
 
-    void vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y) override { notImplemented(); }
+    void vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y) override;
 
-    void vertexAttrib2fv(GCGLuint index, std::span<const GCGLfloat, 2> values) override { notImplemented(); }
+    void vertexAttrib2fv(GCGLuint index, std::span<const GCGLfloat, 2> values) override;
 
-    void vertexAttrib3f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z) override { notImplemented(); }
+    void vertexAttrib3f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z) override;
 
-    void vertexAttrib3fv(GCGLuint index, std::span<const GCGLfloat, 3> values) override { notImplemented(); }
+    void vertexAttrib3fv(GCGLuint index, std::span<const GCGLfloat, 3> values) override;
 
-    void vertexAttrib4f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) override { notImplemented(); }
+    void vertexAttrib4f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) override;
 
-    void vertexAttrib4fv(GCGLuint index, std::span<const GCGLfloat, 4> values) override { notImplemented(); }
+    void vertexAttrib4fv(GCGLuint index, std::span<const GCGLfloat, 4> values) override;
 
     void vertexAttribPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLboolean normalized, GCGLsizei stride, GCGLintptr offset) override;
 
@@ -1024,6 +1024,7 @@ private:
     PlatformGLObject nextTextureName();
     PlatformGLObject nextFramebufferName();
     PlatformGLObject nextRenderbufferName();
+    void setCurrentVertexAttribute(GCGLuint, const std::array<GCGLfloat, 4>&);
     void releaseTextureStorage(TextureRecord&);
     void releaseRenderbufferStorage(RenderbufferRecord&);
     bool allocateRenderbufferStorage(RenderbufferRecord&, GCGLenum, uint32_t, uint32_t);
@@ -3434,6 +3435,58 @@ void GraphicsContextGLWKC::uniform4iv(GCGLint l,std::span<const GCGLint> v){if(v
 void GraphicsContextGLWKC::uniformMatrix2fv(GCGLint l,GCGLboolean t,std::span<const GCGLfloat> v){if(t||v.size()%4){addError(GL_INVALID_VALUE_VALUE);return;}setUniformData(l,v.data(),v.size_bytes(),4,v.size()/4,false,2);}
 void GraphicsContextGLWKC::uniformMatrix3fv(GCGLint l,GCGLboolean t,std::span<const GCGLfloat> v){if(t||v.size()%9){addError(GL_INVALID_VALUE_VALUE);return;}setUniformData(l,v.data(),v.size_bytes(),9,v.size()/9,false,3);}
 void GraphicsContextGLWKC::uniformMatrix4fv(GCGLint l,GCGLboolean t,std::span<const GCGLfloat> v){if(t||v.size()%16){addError(GL_INVALID_VALUE_VALUE);return;}setUniformData(l,v.data(),v.size_bytes(),16,v.size()/16,false,4);}
+void GraphicsContextGLWKC::setCurrentVertexAttribute(
+    GCGLuint index, const std::array<GCGLfloat, 4>& value)
+{
+    if (index >= static_cast<GCGLuint>(maxVertexAttribs())
+        || index >= m_native.bufferResources.currentAttributeValues.size()) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    m_native.bufferResources.currentAttributeValues[index] = value;
+}
+
+void GraphicsContextGLWKC::vertexAttrib1f(GCGLuint index, GCGLfloat x)
+{
+    setCurrentVertexAttribute(index, { x, 0.0f, 0.0f, 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib1fv(GCGLuint index, std::span<const GCGLfloat, 1> values)
+{
+    setCurrentVertexAttribute(index, { values[0], 0.0f, 0.0f, 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y)
+{
+    setCurrentVertexAttribute(index, { x, y, 0.0f, 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib2fv(GCGLuint index, std::span<const GCGLfloat, 2> values)
+{
+    setCurrentVertexAttribute(index, { values[0], values[1], 0.0f, 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib3f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z)
+{
+    setCurrentVertexAttribute(index, { x, y, z, 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib3fv(GCGLuint index, std::span<const GCGLfloat, 3> values)
+{
+    setCurrentVertexAttribute(index, { values[0], values[1], values[2], 1.0f });
+}
+
+void GraphicsContextGLWKC::vertexAttrib4f(
+    GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w)
+{
+    setCurrentVertexAttribute(index, { x, y, z, w });
+}
+
+void GraphicsContextGLWKC::vertexAttrib4fv(GCGLuint index, std::span<const GCGLfloat, 4> values)
+{
+    setCurrentVertexAttribute(index, { values[0], values[1], values[2], values[3] });
+}
+
 void GraphicsContextGLWKC::vertexAttribPointer(GCGLuint i,GCGLint size,GCGLenum type,GCGLboolean norm,GCGLsizei stride,GCGLintptr offset)
 {
     WKC::GLGX2::AttributeType t;if(i>=32||size<1||size>4||stride<0||offset<0||!mapAttributeType(type,t)){addError(GL_INVALID_VALUE_VALUE);return;}
