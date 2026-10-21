@@ -76,7 +76,7 @@ public:
     FontRanges(FontRanges&& other, IsGenericFontFamily);
     FontRanges& operator=(FontRanges&&) = default;
 
-    bool isNull() const { return m_ranges.isEmpty(); }
+    bool isNull() const { return m_ranges.isEmpty() || !m_ranges.data(); }
 
     void appendRange(Range&& range) { m_ranges.append(WTF::move(range)); }
     unsigned size() const { return m_ranges.size(); }
