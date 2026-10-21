@@ -1772,6 +1772,67 @@ TEST(WKWebExtensionAPITabs, UpdatedEventWithoutPrivateAccess)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITabs, UpdatedEventReportsRapidToggles)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const pinnedValues = []",
+
+        @"browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {",
+        @"  if (changeInfo.pinned === undefined)",
+        @"    return",
+
+        @"  browser.test.assertEq(changeInfo.pinned, tab.pinned, 'The pinned value in changeInfo should match the tab in the same event')",
+
+        @"  pinnedValues.push(changeInfo.pinned)",
+        @"  if (pinnedValues.length < 2)",
+        @"    return",
+
+        @"  browser.test.assertDeepEq(pinnedValues, [ true, false ], 'Both changes should be reported in order')",
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Ready')"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    [manager runUntilTestMessage:@"Ready"];
+
+    // Pinned flips on and back off before the coalescing delay ends, and both values must reach the extension.
+    manager.get().defaultTab.pinned = true;
+    [manager.get().controller didChangeTabProperties:WKWebExtensionTabChangedPropertiesPinned forTab:manager.get().defaultTab];
+
+    manager.get().defaultTab.pinned = false;
+    [manager.get().controller didChangeTabProperties:WKWebExtensionTabChangedPropertiesPinned forTab:manager.get().defaultTab];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, UpdatedEventOmitsUnchangedProperties)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.onUpdated.addListener((tabId, changeInfo) => {",
+        @"  browser.test.assertEq(changeInfo.pinned, undefined, 'A property that did not change should not be in changeInfo')",
+        @"  browser.test.assertTrue(changeInfo.mutedInfo?.muted, 'Muted should be reported')",
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Ready')"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    [manager runUntilTestMessage:@"Ready"];
+
+    // Pinned is notified without a new value, and shares the coalescing window with a real muted change.
+    [manager.get().controller didChangeTabProperties:WKWebExtensionTabChangedPropertiesPinned forTab:manager.get().defaultTab];
+
+    manager.get().defaultTab.muted = true;
+    [manager.get().controller didChangeTabProperties:WKWebExtensionTabChangedPropertiesMuted forTab:manager.get().defaultTab];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPITabs, UpdatedEventWithPrivateAccess)
 {
     TestWebKitAPI::HTTPServer server({

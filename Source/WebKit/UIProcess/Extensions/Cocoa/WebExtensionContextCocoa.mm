@@ -1606,6 +1606,10 @@ void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet
     if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
+    // A property that changes again before the event fires is toggling, so report the earlier value now.
+    if (tab.changedProperties().containsAny(properties))
+        firePendingTabsUpdatedEvent(tab, WebExtensionTab::ValueSource::Snapshot);
+
     bool hasChangesPending = !tab.changedProperties().isEmpty();
     tab.addChangedProperties(properties);
 
@@ -1625,10 +1629,24 @@ void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet
         if (!tab)
             return;
 
-        RELEASE_LOG_DEBUG(Extensions, "Firing updated tab properties (0x%{public}X) for tab %{public}llu", tab->changedProperties().toRaw(), tab->identifier().toUInt64());
-        fireTabsUpdatedEventIfNeeded(tab->parameters(), tab->changedParameters());
-        tab->clearChangedProperties();
+        // The pending changes were already fired early if a repeated change flushed them.
+        if (tab->changedProperties().isEmpty())
+            return;
+
+        firePendingTabsUpdatedEvent(*tab, WebExtensionTab::ValueSource::Live);
     }).get());
+}
+
+void WebExtensionContext::firePendingTabsUpdatedEvent(WebExtensionTab& tab, WebExtensionTab::ValueSource valueSource)
+{
+    RELEASE_LOG_DEBUG(Extensions, "Firing updated tab properties (0x%{public}X) for tab %{public}llu", tab.changedProperties().toRaw(), tab.identifier().toUInt64());
+
+    auto changedParameters = tab.changedParameters(valueSource);
+    tab.clearChangedProperties();
+    if (tab.removeUnchangedParameters(changedParameters) == WebExtensionTab::HasChanges::No)
+        return;
+
+    fireTabsUpdatedEventIfNeeded(tab.parametersApplying(changedParameters), changedParameters);
 }
 
 void WebExtensionContext::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, const WebExtensionFrameParameters& frameParameters, WallTime timestamp)
