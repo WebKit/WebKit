@@ -137,6 +137,7 @@ private:
     template<typename T>
     std::optional<SendSyncResult<T>> trySendSyncStream(T& message, Timeout, std::span<uint8_t>);
     Error trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout);
+    std::optional<std::span<uint8_t>> tryAcquire(Timeout);
     void sendProcessOutOfStreamMessage(std::span<uint8_t>);
     using WakeUpServer = StreamClientConnectionBuffer::WakeUpServer;
     void wakeUpServerBatched(WakeUpServer);
@@ -201,7 +202,7 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> de
         auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
         if (error != Error::NoError)
             return error;
-        span = m_buffer.tryAcquire(timeout);
+        span = tryAcquire(timeout);
         if (!span)
             return Error::FailedToAcquireBufferSpan;
     }
@@ -231,7 +232,7 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
     if (error != Error::NoError)
         return std::nullopt; // FIXME: Propagate errors.
 
-    auto span = m_buffer.tryAcquire(timeout);
+    auto span = tryAcquire(timeout);
     if (!span)
         return std::nullopt; // FIXME: Propagate errors.
 
@@ -289,7 +290,7 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
     if (error != Error::NoError)
         return { }; // FIXME: Propagate errors.
 
-    auto span = m_buffer.tryAcquire(timeout);
+    auto span = tryAcquire(timeout);
     if (!span)
         return { }; // FIXME: Propagate errors.
 
@@ -366,7 +367,7 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
     if (error != Error::NoError)
         return { error };
 
-    auto span = m_buffer.tryAcquire(timeout);
+    auto span = tryAcquire(timeout);
     if (!span)
         return { Error::FailedToAcquireBufferSpan };
 
@@ -448,7 +449,7 @@ inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t desti
     if (destinationID == m_currentDestinationID)
         return Error::NoError;
 
-    auto span = m_buffer.tryAcquire(timeout);
+    auto span = tryAcquire(timeout);
     if (!span)
         return Error::FailedToAcquireBufferSpan;
 
@@ -461,6 +462,16 @@ inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t desti
     wakeUpServerBatched(wakeUpResult);
     m_currentDestinationID = destinationID;
     return Error::NoError;
+}
+
+inline std::optional<std::span<uint8_t>> StreamClientConnection::tryAcquire(Timeout timeout)
+{
+    if (auto span = m_buffer.acquireNoWait())
+        return span;
+    // The buffer is full. If a batch is pending, the server may be asleep and nothing else will wake it, so it would
+    // never free the space waited for below. Flush the batch first. This does nothing if no batch is pending.
+    flushBatch();
+    return m_buffer.tryAcquire(timeout);
 }
 
 inline void StreamClientConnection::sendProcessOutOfStreamMessage(std::span<uint8_t> span)

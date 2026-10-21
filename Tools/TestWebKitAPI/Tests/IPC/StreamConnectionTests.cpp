@@ -63,6 +63,14 @@ struct MockStreamTestMessage1 {
     template<typename Encoder> void encode(Encoder&) { }
 };
 
+struct MockStreamTestMessageBatched {
+    static constexpr bool isSync = false;
+    static constexpr bool isStreamEncodable = true;
+    static constexpr bool isStreamBatched = true;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_EmptyMessage; }
+    template<typename Encoder> void encode(Encoder&) { }
+};
+
 struct MockStreamTestMessageNotStreamEncodable {
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = false;
@@ -552,6 +560,24 @@ TEST_P(StreamMessageTest, SendWithSwitchingDestinationIDs)
             EXPECT_EQ(message2.messageName, MockStreamTestMessage1::name());
             EXPECT_EQ(message2.destinationID, other.toUInt64());
         }
+    }
+}
+
+// The server is asleep after setup, so the first batched message starts a batch and nothing wakes the server until the
+// batch is flushed. Sending must not wait for buffer space that only the sleeping server can free.
+TEST_P(StreamMessageTest, SendBatchedFillsBufferWhileServerIsAsleep)
+{
+    auto cleanup = localReferenceBarrier();
+    m_clientConnection->setMaxBatchSize(std::numeric_limits<unsigned>::max());
+    // Each message takes the minimum message size of 16 bytes, so this fills the buffer several times.
+    const unsigned messageCount = 4u << (bufferSizeLog2() - 4);
+    for (unsigned i = 0u; i < messageCount; ++i)
+        ASSERT_EQ(m_clientConnection->send(MockStreamTestMessageBatched { }, defaultDestinationID()), IPC::Error::NoError);
+    m_clientConnection->flushBatch();
+    for (unsigned i = 0u; i < messageCount; ++i) {
+        auto message = m_mockServerReceiver->waitForMessage(defaultTimeout);
+        EXPECT_EQ(message.messageName, MockStreamTestMessageBatched::name());
+        EXPECT_EQ(message.destinationID, defaultDestinationID().toUInt64());
     }
 }
 
