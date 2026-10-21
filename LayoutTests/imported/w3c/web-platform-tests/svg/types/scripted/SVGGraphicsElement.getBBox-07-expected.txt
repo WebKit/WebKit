@@ -40,11 +40,6 @@ PASS group with only zero-dimension children has zero bbox
 PASS group with zero-dim and normal children: zero-dim child does not affect bbox
 PASS use element with unresolved href returns zero bbox
 PASS use element referencing zero-dimension rect returns zero bbox
-PASS getBBox on rect inside defs returns the rect it would have if rendered
-PASS getBBox on circle inside defs returns the circle it would have if rendered
-PASS getBBox on rect inside group inside defs returns the rect it would have if rendered
-PASS getBBox on rect inside clipPath returns the rect it would have if rendered
-PASS getBBox on rect inside mask returns the rect it would have if rendered
 PASS display:none rect with negative width does not throw and returns zero bbox
 PASS visibility:hidden rect has normal bbox
 PASS opacity:0 rect has normal bbox

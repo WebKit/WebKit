@@ -14,6 +14,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/accumulate-values-width-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/additive-color-precision-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/additive-from-to-width-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/additive-type-by-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/additive-values-width-animation.html
@@ -113,6 +114,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-line.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-mpath.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-path-moveto-only.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-path-zero-length-subpaths.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-rect.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-rotate-angle.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-spline-invalid-keyTimes.html
@@ -201,6 +204,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/slider-switch.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/smil-clock-value-large-hours.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/smil-clock-value-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/smil-detach-releases-animated-presentation-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/smil-values-trailing-semicolon.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/spaces-at-end-of-path-data.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/stop-animation-01-expected.html
@@ -275,6 +279,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-invalid-value-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-invalid-value-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-invalid-value-3.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-percentage.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-unitType.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumber-animation-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumber-animation-2.html

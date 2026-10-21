@@ -1,0 +1,11 @@
+
+FAIL distance inside the first line returns that segment path.getPathSegmentAtLength is not a function. (In 'path.getPathSegmentAtLength(50)', 'path.getPathSegmentAtLength' is undefined)
+FAIL distance inside the second line returns that segment path.getPathSegmentAtLength is not a function. (In 'path.getPathSegmentAtLength(150)', 'path.getPathSegmentAtLength' is undefined)
+FAIL the original (not normalized) relative command is returned path.getPathSegmentAtLength is not a function. (In 'path.getPathSegmentAtLength(50)', 'path.getPathSegmentAtLength' is undefined)
+FAIL an arc command is returned unmodified path.getPathSegmentAtLength is not a function. (In 'path.getPathSegmentAtLength(10)', 'path.getPathSegmentAtLength' is undefined)
+FAIL a cubic command is returned unmodified path.getPathSegmentAtLength is not a function. (In 'path.getPathSegmentAtLength(10)', 'path.getPathSegmentAtLength' is undefined)
+FAIL a quadratic (Q) command is returned and contributes length path.getPathSegmentAtLength is not a function. (In 'path.getPathSegmentAtLength(10)', 'path.getPathSegmentAtLength' is undefined)
+FAIL a smooth-quadratic (T) command is returned unmodified path.getPathSegmentAtLength is not a function. (In 'path.getPathSegmentAtLength(100)', 'path.getPathSegmentAtLength' is undefined)
+FAIL closed (Z) and multi-subpath geometry is measured correctly path.getPathSegmentAtLength is not a function. (In 'path.getPathSegmentAtLength(150)', 'path.getPathSegmentAtLength' is undefined)
+FAIL getPathSegmentAtLength() returns a fresh object on each call path.getPathSegmentAtLength is not a function. (In 'path.getPathSegmentAtLength(50)', 'path.getPathSegmentAtLength' is undefined)
+

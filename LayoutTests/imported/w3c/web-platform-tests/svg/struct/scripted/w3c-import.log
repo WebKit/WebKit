@@ -12,8 +12,16 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/SVGSVGElement-currentTranslate.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/autofocus-attribute.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/currentScale-outermost.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/element-defs.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/element-desc.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/element-g.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/element-metadata.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/element-switch.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/element-symbol.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/element.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/svg-checkIntersection-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/svg-checkIntersection-002.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/svg-getIntersectionList-001.svg
@@ -22,5 +30,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/svg-getIntersectionList-004.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/svg-getIntersectionList-005.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/svg-getIntersectionList-006.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/switch_reentrant_removal.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/use-composedpath-closed-shadow-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/use-external-reload-in-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/use-iframe-onload.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/use-inline-event-handlers.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/use-load-error-events.tentative.html

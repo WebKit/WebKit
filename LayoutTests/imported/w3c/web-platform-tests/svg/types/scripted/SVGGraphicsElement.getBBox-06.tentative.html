@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<title>SVGGraphicsElement.prototype.getBBox for non-rendered elements</title>
+<title>SVGGraphicsElement.prototype.getBBox for non-rendered elements (tentative)</title>
 <link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/coords.html#BoundingBoxes">
 <link rel="help" href="https://github.com/w3c/svgwg/issues/1018">
+<link rel="help" href="https://github.com/w3c/svgwg/issues/1176">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500px" height="500px">
@@ -22,6 +23,11 @@
     assert_equals(bbox.height, height, id + ".getBBox().height");
   }
 
+  // Tentative: coords.html asks for the box the element would have if it were
+  // rendered, but Gecko returns zero here and svgwg issue #1176 asks whether
+  // the rule should become "always zero". Until the WG decides, this file
+  // records the behaviour the current prose describes.
+  //
   // coords.html #BoundingBoxes says a non-rendered element still has one:
   //
   //   "Even if an element is not in the rendering tree - due to it being

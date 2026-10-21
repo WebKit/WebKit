@@ -148,6 +148,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/small-nested-viewbox-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/small-nested-viewbox-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/small-nested-viewbox.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dasharray-line-viewbox-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dasharray-line-viewbox-update.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dasharray-path-viewbox-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dasharray-path-viewbox-update.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dasharray-rect-viewbox-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dasharray-rect-viewbox-update.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dashoffset-line-viewbox-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dashoffset-line-viewbox-update.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dashoffset-path-viewbox-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dashoffset-path-viewbox-update.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dashoffset-rect-viewbox-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/svg-percent-stroke-dashoffset-rect-viewbox-update.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/symbol-in-mask-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/symbol-in-mask.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-01-expected.html
@@ -157,5 +169,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-03-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-03.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/visibility-collapse-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/visibility-collapse-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/visibility-collapse-001.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/zero-scale-svg-transform-inside-g-tag-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/zero-scale-svg-transform-inside-g-tag.html
