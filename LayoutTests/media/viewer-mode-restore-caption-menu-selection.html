@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>viewer-mode-restore-caption-menu-selection</title>
+	<script src=video-test.js></script>
+	<script src=media-file.js></script>
+	<script>
+	window.addEventListener('load', event => {
+		runTest().then(endTest).catch(failTest);
+	});
+
+	function findMenuItem(items, title)
+	{
+		for (let item of items) {
+			if (item.title == title && item.enabled)
+				return item;
+			let found = findMenuItem(item.children, title);
+			if (found)
+				return found;
+		}
+		return null;
+	}
+
+	function selectMediaControlsMenuItem(title)
+	{
+		document.addEventListener('contextmenu', event => {
+			event.preventDefault();
+			host.showMediaControlsContextMenu(video, { includeSubtitles: true }, () => { });
+		}, { capture: true, once: true });
+
+		let item = findMenuItem(eventSender.contextClick(), title);
+		if (!item)
+			return false;
+		item.click();
+		return true;
+	}
+
+	async function runTest()
+	{
+		findMediaElement();
+
+		run('internals.settings.setShouldDisplayTrackKind("Captions", true)');
+		run('internals.setCaptionDisplayMode("ForcedOnly")');
+		run('video.src = findMediaFile("video", "content/test")');
+		await waitFor(video, 'canplay');
+
+		run('host = internals.controlsHostForMediaElement(video)');
+		testExpected('video.textTracks[0].mode', 'disabled');
+		testExpected('internals.captionDisplayMode', 'forcedonly');
+
+		let enteredViewerMode = waitFor(document, 'fullscreenchange');
+		runWithKeyDown(() => internals.enterViewerMode(video));
+		await enteredViewerMode;
+		await testExpectedEventually('host.inWindowFullscreen', true, '==', 500);
+
+		run('trackTitle = host.displayNameForTrack(video.textTracks[0])');
+		testExpected('selectMediaControlsMenuItem(trackTitle)', true);
+		await testExpectedEventually('video.textTracks[0].mode', 'showing', '==', 500);
+		testExpected('internals.captionDisplayMode', 'alwayson');
+
+		let exitedViewerMode = waitFor(document, 'fullscreenchange');
+		run('document.webkitCancelFullScreen()');
+		await exitedViewerMode;
+		await testExpectedEventually('host.inWindowFullscreen', false, '==', 500);
+		run('host.presentationModeChanged()');
+
+		testExpected('video.textTracks[0].mode', 'disabled');
+		testExpected('internals.captionDisplayMode', 'forcedonly');
+		testExpected('host.captionMenuOffItem.mode', 'disabled');
+		testExpected('host.captionMenuAutomaticItem.mode', 'disabled');
+	}
+	</script>
+</head>
+<body>
+	<video controls width=320 height=240>
+		<track kind="captions" srclang="en" src="content/lorem-ipsum.vtt">
+	</video>
+</body>
+</html>
