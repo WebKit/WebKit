@@ -88,7 +88,8 @@ public:
         ASSERT(!object || object == m_impl->template get<T>());
     }
 
-    WeakPtr(const T& object, EnableWeakPtrThreadingAssertions shouldEnableAssertions = EnableWeakPtrThreadingAssertions::Yes) requires (!IsSmartPtr<T>::value && !std::is_pointer_v<T>)
+    template<typename U = T> requires (!IsSmartPtr<U>::value && !std::is_pointer_v<U>)
+    WeakPtr(const std::type_identity_t<U>& object, EnableWeakPtrThreadingAssertions shouldEnableAssertions = EnableWeakPtrThreadingAssertions::Yes)
         : m_impl(&object.weakImpl())
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         , m_shouldEnableAssertions(shouldEnableAssertions == EnableWeakPtrThreadingAssertions::Yes)
