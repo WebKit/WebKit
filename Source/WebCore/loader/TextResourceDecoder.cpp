@@ -288,11 +288,8 @@ TextResourceDecoder::~TextResourceDecoder() = default;
 // https://encoding.spec.whatwg.org/#utf-8-decode
 String TextResourceDecoder::textFromUTF8(std::span<const uint8_t> data)
 {
-    constexpr std::array<uint8_t, 3> byteOrderMarkUTF8 = { 0xEF, 0xBB, 0xBF };
-
     auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8"_s);
-    if (!spanHasPrefix(data, std::span { byteOrderMarkUTF8 }))
-        decoder->decode(byteOrderMarkUTF8);
+    decoder->setAlwaysUseUTF8();
     return decoder->decodeAndFlush(data);
 }
 
