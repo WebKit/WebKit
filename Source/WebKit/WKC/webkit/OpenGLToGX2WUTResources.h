@@ -90,6 +90,7 @@ bool prepareWUTProgramForDraw(WUTBufferResources&);
 // index widening, attribute-range validation/staging and restores GX2 fetch
 // state after the draw completes.
 bool drawVertexArrayIndexed(void* context, const IndexedDraw&, BufferName elementBuffer);
+bool drawVertexArrayArrays(void* context, Primitive, uint32_t first, uint32_t count, uint32_t instances);
 
 // Materialize enabled GL attribute state into GX2 fetch-shader descriptors.
 // The caller supplies linked shader locations/compatibility before initializing
