@@ -9,6 +9,7 @@
 #include <coreinit/cache.h>
 #include <coreinit/memdefaultheap.h>
 
+#include <algorithm>
 #include <cstring>
 #include <limits>
 #include <new>
