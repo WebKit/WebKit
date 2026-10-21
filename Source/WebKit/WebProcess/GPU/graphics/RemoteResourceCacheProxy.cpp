@@ -60,7 +60,14 @@ static std::optional<CreateShareableBitmapResult> createShareableBitmapForNative
 
     // If we failed to create ShareableBitmap or PlatformImage, fall back to image-draw method.
     if (!platformImage) {
-        bitmap = ShareableBitmap::createFromImageDraw(image, fallbackColorSpace);
+        auto colorSpace = fallbackColorSpace;
+#if USE(CG) && ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+        // ShareableBitmap would use 16-bit float extended sRGB for images in other color models
+        // (e.g. gray or CMYK).
+        if (!colorSpace.asRGBModelMayBeExtended() && CGImageGetBitsPerComponent(image.platformImage().get()) <= 8)
+            colorSpace = ColorSpace::DisplayP3();
+#endif
+        bitmap = ShareableBitmap::createFromImageDraw(image, colorSpace);
         if (bitmap)
             platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
 
