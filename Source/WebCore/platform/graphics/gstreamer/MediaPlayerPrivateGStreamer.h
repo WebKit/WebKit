@@ -420,7 +420,7 @@ protected:
 
     String m_originalPipelineName;
 
-    MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
+    mutable MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
     mutable MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
 
     mutable Lock m_sampleMutex;

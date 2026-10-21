@@ -448,9 +448,9 @@ void MediaPlayerPrivateGStreamer::cancelLoad()
 
 void MediaPlayerPrivateGStreamer::prepareToPlay()
 {
-    GST_DEBUG_OBJECT(pipeline(), "Prepare to play");
+    GST_DEBUG_OBJECT(pipeline(), "Prepare to play, delaying load: %s, readyState: %s", WTF::boolForPrinting(m_isDelayingLoad), convertEnumerationToString(m_readyState).utf8());
     m_preload = MediaPlayer::Preload::Auto;
-    if (m_isDelayingLoad) {
+    if (m_isDelayingLoad || m_readyState >= MediaPlayerEnums::ReadyState::HaveMetadata) {
         m_isDelayingLoad = false;
         commitLoad();
     }
@@ -839,7 +839,19 @@ MediaTime MediaPlayerPrivateGStreamer::duration() const
     if (duration.isInvalid())
         return m_isLiveStream.value_or(true) ? MediaTime::positiveInfiniteTime() : MediaTime::zeroTime();
 
-    m_cachedDuration = duration;
+    if (duration != m_cachedDuration) {
+        GST_DEBUG_OBJECT(pipeline(), "Duration changed to %s", duration.toString().utf8());
+        m_cachedDuration = duration;
+        if (m_readyState < MediaPlayerEnums::ReadyState::HaveMetadata) {
+            RefPtr player = m_player;
+            if (!player)
+                return m_cachedDuration;
+            auto oldReadyState = m_readyState;
+            m_readyState = MediaPlayerEnums::ReadyState::HaveMetadata;
+            GST_DEBUG_OBJECT(pipeline(), "Ready state changed from %s to %s", convertEnumerationToString(oldReadyState).utf8(), convertEnumerationToString(m_readyState).utf8());
+            player->readyStateChanged();
+        }
+    }
 
     return m_cachedDuration;
 }
@@ -3093,7 +3105,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
             } else if (m_didDownloadFinish || isLooping) {
                 m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
                 m_networkState = MediaPlayer::NetworkState::Loaded;
-            } else if (!isMediaStreamPlayer() && !m_isLegacyPlaybin && m_readyState < MediaPlayer::ReadyState::HaveFutureData) {
+            } else if (!isMediaStreamPlayer() && !m_isLegacyPlaybin && m_readyState >= MediaPlayer::ReadyState::HaveMetadata && m_readyState < MediaPlayer::ReadyState::HaveFutureData) {
                 // playbin3 download buffering support is not as flexible as in playbin2, so we
                 // need to manually dispatch ready/network state changes sequentially here.
                 m_readyState = MediaPlayer::ReadyState::HaveFutureData;
@@ -3101,7 +3113,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
                 maybeNotifyClientOfReadyAndNetworkChanges(oldNetworkState, oldReadyState);
                 oldReadyState = MediaPlayer::ReadyState::HaveFutureData;
                 oldNetworkState = MediaPlayer::NetworkState::Loading;
-            } else {
+            } else if (isMediaStreamPlayer() || (m_readyState >= MediaPlayer::ReadyState::HaveMetadata && m_readyState < MediaPlayer::ReadyState::HaveFutureData)) {
                 m_readyState = MediaPlayer::ReadyState::HaveFutureData;
                 m_networkState = MediaPlayer::NetworkState::Loading;
             }
