@@ -1431,7 +1431,8 @@ bool GraphicsContextGLWKC::activateProgram(PlatformGLObject name)
     if (it==m_programs.end() || !it->second.linked || !it->second.vertexShader || !it->second.pixelShader) {
         addError(GL_INVALID_OPERATION_VALUE); return false;
     }
-    if (m_appliedProgram==name && m_native.bufferResources.vertexShader==it->second.vertexShader) return true;
+    if (m_appliedProgram==name && m_native.bufferResources.vertexShader==it->second.vertexShader)
+        return applyProgramSamplers(it->second);
     std::vector<WKC::GLGX2::WUTLinkedAttribute> bindings;
     bindings.reserve(it->second.attributes.size());
     for (const auto& a:it->second.attributes)
@@ -1441,6 +1442,10 @@ bool GraphicsContextGLWKC::activateProgram(PlatformGLObject name)
         addError(GL_INVALID_OPERATION_VALUE); clearActiveNativeProgram(); return false;
     }
     m_currentProgram=name; m_appliedProgram=name;
+    if (!applyProgramSamplers(it->second)) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return false;
+    }
     return true;
 }
 void GraphicsContextGLWKC::buildProgramInterface(ProgramRecord& p)
@@ -1492,6 +1497,48 @@ void GraphicsContextGLWKC::buildProgramInterface(ProgramRecord& p)
         }
     };
     addUniforms(p.vertexShader,true); addUniforms(p.pixelShader,false);
+    auto addSamplers = [&](auto* shader, bool vertexStage) {
+        if (!shader || !shader->samplerVars)
+            return;
+        for (uint32_t i = 0; i < shader->samplerVarCount; ++i) {
+            const auto& native = shader->samplerVars[i];
+            if (!native.name)
+                continue;
+            GCGLenum glType = 0;
+            if (native.type == GX2_SAMPLER_VAR_TYPE_SAMPLER_2D)
+                glType = GL_SAMPLER_2D_VALUE;
+            else if (native.type == GX2_SAMPLER_VAR_TYPE_SAMPLER_CUBE)
+                glType = GL_SAMPLER_CUBE_VALUE;
+            else
+                continue;
+
+            std::string uniformName(native.name);
+            auto found = std::find_if(p.uniforms.begin(), p.uniforms.end(),
+                [&](const UniformRecord& uniform) { return uniform.name == uniformName; });
+            if (found == p.uniforms.end()) {
+                UniformRecord uniform;
+                uniform.name = uniformName;
+                uniform.type = glType;
+                uniform.size = 1;
+                uniform.elements.resize(1);
+                uniform.samplerUnits = { 0 };
+                p.uniforms.push_back(std::move(uniform));
+                found = std::prev(p.uniforms.end());
+            }
+            if (found->type != glType)
+                continue;
+            if (found->elements.empty())
+                found->elements.resize(1);
+            if (found->samplerUnits.empty())
+                found->samplerUnits.resize(found->elements.size(), 0);
+            if (vertexStage)
+                found->elements[0].vertexSamplerVar = &native;
+            else
+                found->elements[0].pixelSamplerVar = &native;
+        }
+    };
+    addSamplers(p.vertexShader, true);
+    addSamplers(p.pixelShader, false);
     for(size_t i=0;i<p.uniforms.size();++i)
         for(size_t el=0;el<p.uniforms[i].elements.size();++el) {
             auto& b=p.uniforms[i].elements[el]; b.location=p.nextUniformLocation++;
@@ -1500,6 +1547,8 @@ void GraphicsContextGLWKC::buildProgramInterface(ProgramRecord& p)
 }
 bool GraphicsContextGLWKC::uploadUniformElement(const UniformBinding& b,GCGLenum type,const void* values,bool ints)
 {
+    if (b.vertexSamplerVar || b.pixelSamplerVar)
+        return values && ints;
     if(!values) return false;
     std::array<uint32_t,16> packed{};
     const auto components=uniformComponents(type), regs=uniformRegisters(type);
@@ -1527,7 +1576,7 @@ bool GraphicsContextGLWKC::setUniformData(GCGLint loc,const void* values,size_t 
     if(p==m_programs.end() || !p->second.linked) { addError(GL_INVALID_OPERATION_VALUE); return false; }
     auto l=p->second.uniformLocations.find(loc);
     if(l==p->second.uniformLocations.end()) { addError(GL_INVALID_OPERATION_VALUE); return false; }
-    const auto& uniform=p->second.uniforms[l->second.uniformIndex];
+    auto& uniform=p->second.uniforms[l->second.uniformIndex];
     const bool matrixType = uniform.type == GL_FLOAT_MAT2_VALUE
         || uniform.type == GL_FLOAT_MAT3_VALUE || uniform.type == GL_FLOAT_MAT4_VALUE;
     const bool integerType = uniform.type == GL_INT_VALUE || uniform.type == GL_BOOL_VALUE
@@ -1550,13 +1599,29 @@ bool GraphicsContextGLWKC::setUniformData(GCGLint loc,const void* values,size_t 
         return false;
     }
     const auto* data = static_cast<const uint8_t*>(values);
+    const bool samplerUniform = uniform.type == GL_SAMPLER_2D_VALUE || uniform.type == GL_SAMPLER_CUBE_VALUE;
     for (uint32_t i = 0; i < count; ++i) {
         const size_t element = l->second.elementIndex + i;
-        if (!uploadUniformElement(uniform.elements[element], uniform.type,
-                data + static_cast<size_t>(i) * components * (ints ? sizeof(int32_t) : sizeof(float)), ints)) {
+        const void* elementData = data + static_cast<size_t>(i) * components * (ints ? sizeof(int32_t) : sizeof(float));
+        if (samplerUniform) {
+            const int32_t unit = *static_cast<const int32_t*>(elementData);
+            if (unit < 0 || unit >= static_cast<int32_t>(m_boundTextures2D.size())) {
+                addError(GL_INVALID_VALUE_VALUE);
+                return false;
+            }
+            if (element >= uniform.samplerUnits.size())
+                uniform.samplerUnits.resize(uniform.elements.size(), 0);
+            uniform.samplerUnits[element] = unit;
+            continue;
+        }
+        if (!uploadUniformElement(uniform.elements[element], uniform.type, elementData, ints)) {
             addError(GL_INVALID_OPERATION_VALUE);
             return false;
         }
+    }
+    if (samplerUniform && !applyProgramSamplers(p->second)) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return false;
     }
     return true;
 }
