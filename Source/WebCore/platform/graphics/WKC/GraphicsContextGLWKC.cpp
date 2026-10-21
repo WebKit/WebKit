@@ -1148,7 +1148,7 @@ void GraphicsContextGLWKC::releaseRenderbufferStorage(RenderbufferRecord& render
 {
     if (!renderbuffer.colorSurfaceCreated && !renderbuffer.depthSurfaceCreated
         && !renderbuffer.depthHiZMemory) {
-        renderbuffer.allocated = false;
+        renderbuffer = {};
         return;
     }
     GX2DrawDone();
@@ -1164,7 +1164,6 @@ void GraphicsContextGLWKC::releaseRenderbufferStorage(RenderbufferRecord& render
 bool GraphicsContextGLWKC::allocateRenderbufferStorage(RenderbufferRecord& renderbuffer,
     GCGLenum internalFormat, uint32_t width, uint32_t height)
 {
-    releaseRenderbufferStorage(renderbuffer);
     GX2SurfaceFormat nativeFormat = GX2_SURFACE_FORMAT_INVALID;
     bool isColor = false;
     bool hasDepth = false;
@@ -1213,6 +1212,7 @@ bool GraphicsContextGLWKC::allocateRenderbufferStorage(RenderbufferRecord& rende
         || height > static_cast<uint32_t>(maxRenderbufferSize()))
         return false;
 
+    releaseRenderbufferStorage(renderbuffer);
     renderbuffer.internalFormat = internalFormat;
     renderbuffer.width = width;
     renderbuffer.height = height;
@@ -1365,6 +1365,38 @@ GCGLenum GraphicsContextGLWKC::framebufferStatus(PlatformGLObject name) const
     UNUSED_PARAM(hasDepth);
     UNUSED_PARAM(hasStencil);
     return GL_FRAMEBUFFER_COMPLETE_VALUE;
+}
+
+void GraphicsContextGLWKC::refreshFramebufferTextureViews()
+{
+    for (auto& entry : m_framebuffers) {
+        auto& framebuffer = entry.second;
+        if (!framebuffer.colorTexture) {
+            framebuffer.textureColorView = {};
+            framebuffer.textureColorViewReady = false;
+            continue;
+        }
+        auto texture = m_textures.find(framebuffer.colorTexture);
+        if (texture == m_textures.end() || !texture->second.storageCreated
+            || framebuffer.colorTextureLevel != 0 || texture->second.definedLevels.empty()
+            || !texture->second.definedLevels[0]) {
+            framebuffer.textureColorView = {};
+            framebuffer.textureColorViewReady = false;
+            continue;
+        }
+        auto& view = framebuffer.textureColorView;
+        view = {};
+        view.surface = texture->second.native.surface;
+        view.viewMip = 0;
+        view.viewFirstSlice = 0;
+        view.viewNumSlices = 1;
+        view.aaBuffer = nullptr;
+        view.aaSize = 0;
+        GX2InitColorBufferRegs(&view);
+        framebuffer.textureColorViewReady = true;
+    }
+    if (m_boundFramebuffer)
+        refreshFramebufferTarget();
 }
 
 void GraphicsContextGLWKC::refreshFramebufferTarget()
@@ -1563,6 +1595,7 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
     }
     GX2InitTextureRegs(&texture.native);
     applyTextureSampler(texture);
+    refreshFramebufferTextureViews();
     return true;
 }
 
@@ -2156,12 +2189,21 @@ void GraphicsContextGLWKC::deleteTexture(PlatformGLObject name)
     auto it = m_textures.find(name);
     if (!name || it == m_textures.end())
         return;
+
+    if (m_boundFramebuffer) {
+        GX2DrawDone();
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
+    }
+    detachFramebufferTexture(name);
     releaseTextureStorage(it->second);
     m_textures.erase(it);
     for (auto& bound : m_boundTextures2D) {
         if (bound == name)
             bound = 0;
     }
+    refreshFramebufferTarget();
 }
 
 GCGLboolean GraphicsContextGLWKC::isTexture(PlatformGLObject name)
@@ -2538,6 +2580,12 @@ void GraphicsContextGLWKC::deleteRenderbuffer(PlatformGLObject name)
     auto renderbuffer = m_renderbuffers.find(name);
     if (renderbuffer == m_renderbuffers.end())
         return;
+    if (m_boundFramebuffer) {
+        GX2DrawDone();
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
+    }
     detachFramebufferRenderbuffer(name);
     if (m_boundRenderbuffer == name)
         m_boundRenderbuffer = 0;
@@ -2837,8 +2885,11 @@ void GraphicsContextGLWKC::blendFuncSeparate(GCGLenum sr,GCGLenum dr,GCGLenum sa
 }
 GCGLenum GraphicsContextGLWKC::checkFramebufferStatus(GCGLenum target)
 {
-    if(target!=GL_FRAMEBUFFER_VALUE) { addError(GL_INVALID_ENUM_VALUE); return 0; }
-    return m_boundFramebuffer ? GL_FRAMEBUFFER_UNSUPPORTED_VALUE : GL_FRAMEBUFFER_COMPLETE_VALUE;
+    if (target != GL_FRAMEBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+    return framebufferStatus(m_boundFramebuffer);
 }
 void GraphicsContextGLWKC::clear(GCGLbitfield mask)
 {
@@ -3305,9 +3356,9 @@ GCGLboolean GraphicsContextGLWKC::isEnabled(GCGLenum capability)
     switch (capability) {
     case GL_BLEND_VALUE: return m_native.blendEnabled;
     case GL_CULL_FACE_VALUE: return m_native.cullEnabled;
-    case GL_DEPTH_TEST_VALUE: return m_native.depthTestEnabled;
+    case GL_DEPTH_TEST_VALUE: return m_requestedDepthTest;
     case GL_SCISSOR_TEST_VALUE: return m_native.scissorEnabled;
-    case GL_STENCIL_TEST_VALUE: return m_native.stencilEnabled;
+    case GL_STENCIL_TEST_VALUE: return m_requestedStencilTest;
     case GL_POLYGON_OFFSET_FILL_VALUE: return m_native.polygonOffsetEnabled;
     default:
         addError(GL_INVALID_ENUM_VALUE);
