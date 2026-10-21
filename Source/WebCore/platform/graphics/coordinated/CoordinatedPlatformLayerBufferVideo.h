@@ -92,6 +92,7 @@ private:
 #if USE(TEXTURE_MAPPER)
     const std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
     std::optional<GstMappedFrame> m_mappedVideoFrame;
+    std::optional<GstMappedFrame> m_repackMappedFrame;
 #else
     sk_sp<SkImage> m_image;
 #endif
