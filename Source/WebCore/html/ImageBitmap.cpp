@@ -424,18 +424,28 @@ static std::optional<PixelFormat> bufferFormatForDecodedPixels(PixelFormat decod
     return std::nullopt;
 }
 
-static RefPtr<ImageBuffer> unpremultipliedImageBuffer(ScriptExecutionContext& scriptExecutionContext, Image& image, const IntRect& sourceRectangle, const FloatSize& outputSize, ImageOrientation orientation, const ImageBitmapOptions& options, DrawsHDRContent drawsHDRContent)
+RefPtr<ImageBuffer> ImageBitmap::unpremultipliedImageBuffer(ScriptExecutionContext& scriptExecutionContext, Image& image, const IntRect& sourceRectangle, const FloatSize& outputSize, const ImageBitmapOptions& options, DrawsHDRContent drawsHDRContent)
 {
     // Only a bitmap has decoded pixels to keep unpremultiplied. Other images take the premultiplied draw below.
     RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image);
     if (!bitmapImage)
         return nullptr;
 
+    auto orientation = bitmapImage->orientation();
+    if (orientation == ImageOrientation::Orientation::FromImage)
+        orientation = ImageOrientation::Orientation::None;
+
     RefPtr nativeImage = bitmapImage->nativeImage();
     if (!nativeImage)
         return nullptr;
 
     auto decoded = nativeImage->unpremultipliedPixels();
+    if (decoded.pixels.isEmpty()) {
+        nativeImage = bitmapImage->nativeImageForUnpremultipliedPixels();
+        if (!nativeImage)
+            return nullptr;
+        decoded = nativeImage->unpremultipliedPixels();
+    }
     if (decoded.pixels.isEmpty())
         return nullptr;
 
@@ -690,7 +700,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
     auto sourceRect = sourceRectangle.releaseReturnValue();
     auto bufferAlphaFormat = AlphaPremultiplication::Unpremultiplied;
-    RefPtr bitmapData = premultiplyAlpha ? nullptr : unpremultipliedImageBuffer(scriptExecutionContext, *sourceImage, sourceRect, outputSize, orientation, options, drawsHDRContent);
+    RefPtr bitmapData = premultiplyAlpha ? nullptr : unpremultipliedImageBuffer(scriptExecutionContext, *sourceImage, sourceRect, outputSize, options, drawsHDRContent);
     if (!bitmapData) {
         bufferAlphaFormat = AlphaPremultiplication::Premultiplied;
         bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), sourceImage->colorSpace(), 1, drawsHDRContent);
@@ -1117,7 +1127,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     const bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
     auto sourceRect = sourceRectangle.releaseReturnValue();
     auto bufferAlphaFormat = AlphaPremultiplication::Unpremultiplied;
-    RefPtr bitmapData = premultiplyAlpha ? nullptr : unpremultipliedImageBuffer(scriptExecutionContext, image, sourceRect, outputSize, orientation, options, drawsHDRContent);
+    RefPtr bitmapData = premultiplyAlpha ? nullptr : unpremultipliedImageBuffer(scriptExecutionContext, image, sourceRect, outputSize, options, drawsHDRContent);
     if (!bitmapData) {
         bufferAlphaFormat = AlphaPremultiplication::Premultiplied;
         bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), image->colorSpace(), 1, drawsHDRContent);
@@ -1193,7 +1203,10 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     // 6.4.1. Resolve p with ImageBitmap.
-    Ref imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+    // The draw above resampled the bytes the temporary buffer was given, in whichever mode they were
+    // given in: both buffers declare premultiplied alpha, so nothing converted them, and resampling
+    // filters each channel on its own.
+    Ref imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, alphaPremultiplication);
 
     // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
     completionHandler(WTF::move(imageBitmap));

@@ -42,6 +42,50 @@ PASS ImageData, premultiplyAlpha none into premultiplied texel 2
 PASS ImageData, premultiplyAlpha none into premultiplied texel 3
 PASS ImageData, premultiplyAlpha none into premultiplied texel 4
 PASS ImageData, premultiplyAlpha none into premultiplied texel 5
+PASS ImageData, premultiplyAlpha none, flipY into unpremultiplied texel 0
+PASS ImageData, premultiplyAlpha none, flipY into unpremultiplied texel 1
+PASS ImageData, premultiplyAlpha none, flipY into unpremultiplied texel 2
+PASS ImageData, premultiplyAlpha none, flipY into unpremultiplied texel 3
+PASS ImageData, premultiplyAlpha none, flipY into unpremultiplied texel 4
+PASS ImageData, premultiplyAlpha none, flipY into unpremultiplied texel 5
+PASS ImageData, premultiplyAlpha none, flipY into premultiplied texel 0
+PASS ImageData, premultiplyAlpha none, flipY into premultiplied texel 1
+PASS ImageData, premultiplyAlpha none, flipY into premultiplied texel 2
+PASS ImageData, premultiplyAlpha none, flipY into premultiplied texel 3
+PASS ImageData, premultiplyAlpha none, flipY into premultiplied texel 4
+PASS ImageData, premultiplyAlpha none, flipY into premultiplied texel 5
+PASS ImageData, premultiplyAlpha none, crop 1,0 4x1 into unpremultiplied texel 0
+PASS ImageData, premultiplyAlpha none, crop 1,0 4x1 into unpremultiplied texel 1
+PASS ImageData, premultiplyAlpha none, crop 1,0 4x1 into unpremultiplied texel 2
+PASS ImageData, premultiplyAlpha none, crop 1,0 4x1 into unpremultiplied texel 3
+PASS ImageData, premultiplyAlpha none, crop 1,0 4x1 into premultiplied texel 0
+PASS ImageData, premultiplyAlpha none, crop 1,0 4x1 into premultiplied texel 1
+PASS ImageData, premultiplyAlpha none, crop 1,0 4x1 into premultiplied texel 2
+PASS ImageData, premultiplyAlpha none, crop 1,0 4x1 into premultiplied texel 3
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 0
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 1
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 2
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 3
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 4
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 5
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 6
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 7
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 8
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 9
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 10
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into unpremultiplied texel 11
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 0
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 1
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 2
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 3
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 4
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 5
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 6
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 7
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 8
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 9
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 10
+PASS ImageData, premultiplyAlpha none, resize 2x pixelated into premultiplied texel 11
 PASS whole image at 0,0
 PASS whole image at 1,0
 PASS whole image at 2,0

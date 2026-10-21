@@ -79,6 +79,8 @@ public:
 
     virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned) { return primaryNativeImage(); }
 
+    virtual RefPtr<NativeImage> primaryNativeImageForUnpremultipliedPixels() { return nullptr; }
+
     virtual std::expected<Ref<NativeImage>, DecodingStatus> primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
     virtual std::expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
 

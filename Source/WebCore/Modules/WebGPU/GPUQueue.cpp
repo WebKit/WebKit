@@ -41,6 +41,7 @@
 #include "GraphicsContext.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageBitmapOptions.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "JSDOMConvertNull.h"
@@ -767,6 +768,17 @@ static bool LEGACY_NODELETE isSupportedGPUSourcePixelFormat(PixelFormat pixelFor
     ASSERT_NOT_REACHED();
     return false;
 }
+
+static bool isSupportedGPUSourceColorSpace(const ColorSpace& colorSpace)
+{
+    if (colorSpace == ColorSpace::SRGB())
+        return true;
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    if (colorSpace == ColorSpace::DisplayP3())
+        return true;
+#endif
+    return false;
+}
 #endif // HAVE(IOSURFACE)
 
 // Returns the source's ImageBuffer when its pixels are already GPU-resident, so that
@@ -842,6 +854,13 @@ static GPUResidentSource gpuResidentSourceForImageElement(ScriptExecutionContext
     auto destinationRect = FloatRect { { }, image->size() };
     if (sourceRect.isEmpty() || destinationRect.isEmpty())
         return { };
+
+    auto drawsHDRContent = image->hasHDRContent() ? DrawsHDRContent::Yes : DrawsHDRContent::No;
+
+    if (RefPtr unpremultipliedBuffer = ImageBitmap::unpremultipliedImageBuffer(context, *image, enclosingIntRect(sourceRect), destinationRect.size(), { }, drawsHDRContent)) {
+        if (isSupportedGPUSourceColorSpace(unpremultipliedBuffer->colorSpace()) && isSupportedGPUSourcePixelFormat(unpremultipliedBuffer->pixelFormat()))
+            return { WTF::move(unpremultipliedBuffer), false };
+    }
 
     // The image is converted into sRGB rather than kept in its own color space, because that is the
     // space copyExternalImageToTexture's destination is described relative to, and because the
@@ -919,12 +938,7 @@ static GPUResidentSource imageBufferForSource([[maybe_unused]] ScriptExecutionCo
 
     // The backing queue converts between sRGB and Display P3 only; anything else would need a color
     // matrix it does not have.
-    auto colorSpace = imageBuffer->colorSpace();
-    bool isSupportedColorSpace = colorSpace == ColorSpace::SRGB();
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-    isSupportedColorSpace = isSupportedColorSpace || colorSpace == ColorSpace::DisplayP3();
-#endif
-    if (!isSupportedColorSpace)
+    if (!isSupportedGPUSourceColorSpace(imageBuffer->colorSpace()))
         return { };
 
     return result;

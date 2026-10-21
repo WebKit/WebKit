@@ -52,6 +52,7 @@ class ColorSpace;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
+class Image;
 class ImageBitmapImageObserver;
 class ImageData;
 class ImageBuffer;
@@ -139,6 +140,8 @@ public:
     // color space does not imply, such as a 16 bit unorm decode.
     static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, RenderingMode, ColorSpace, float resolutionScale = 1, DrawsHDRContent = DrawsHDRContent::No, std::optional<PixelFormat> = std::nullopt);
     static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, ColorSpace, float resolutionScale = 1);
+
+    static RefPtr<ImageBuffer> unpremultipliedImageBuffer(ScriptExecutionContext&, Image&, const IntRect& sourceRectangle, const FloatSize& outputSize, const ImageBitmapOptions&, DrawsHDRContent);
 
     static RefPtr<ImageBitmap> create(ScriptExecutionContext&, const IntSize&, ColorSpace);
     static RefPtr<ImageBitmap> create(ScriptExecutionContext&, DetachedImageBitmap);

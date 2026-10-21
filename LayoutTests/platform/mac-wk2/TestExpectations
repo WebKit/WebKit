@@ -2080,6 +2080,13 @@ http/tests/webgpu/webgpu/web_platform/copyToTexture/image.html [ Pass Timeout ]
 # Very slow: 233s on Release arm64, past the 150s that Slow buys. Crashes on Intel, see below.
 [ arm64 ] http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.html [ Skip Slow ]
 
+# Since the whole file above cannot run, this runs the part of from_ImageData which covers an
+# ImageBitmap holding unpremultiplied channels: 33s on Release arm64. Skipped on Intel for the same
+# reasons the two tests around it are.
+[ Release arm64 ] http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap-from_ImageData-unpremultiplied-flipY.html [ Slow ]
+[ Debug arm64 ] http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap-from_ImageData-unpremultiplied-flipY.html [ Skip ]
+[ x86_64 ] http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap-from_ImageData-unpremultiplied-flipY.html [ Skip ]
+
 # skip on intel for now due to small precision error differences
 [ x86_64 ] http/tests/webgpu/webgpu/web_platform/copyToTexture/video.html [ Skip ]
 [ Release x86_64 ] http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageData.html [ Skip ]

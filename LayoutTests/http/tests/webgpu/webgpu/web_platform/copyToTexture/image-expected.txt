@@ -68,24 +68,7 @@ PASS :from_image:srcDoFlipYDuringCopy=false;dstColorFormat="rgb10a2unorm";dstPre
 PASS :from_image:srcDoFlipYDuringCopy=false;dstColorFormat="rg11b10ufloat";dstPremultiplied=true
 PASS :from_image:srcDoFlipYDuringCopy=false;dstColorFormat="rg11b10ufloat";dstPremultiplied=false
 PASS :from_fully_transparent_image:dstPremultiplied=true
-FAIL :from_fully_transparent_image:dstPremultiplied=false assert_unreached:
-  - EXPECTATION FAILED: Texture level had unexpected contents:
-     between 0,0,0 and 0,0,0 inclusive:
-                                coords ==   X,Y,Z:                             0,0,0
-      act. texel bytes (little-endian) ==      0x:                       00 00 00 00
-                           act. colors == R,G,B,A:   0.00000,0.00000,0.00000,0.00000
-                           exp. colors == R,G,B,A: 1.00000,0.400000,0.600000,0.00000
-
-            act. normal-ULPs-from-zero == R,G,B,A:                           0,0,0,0
-            exp. normal-ULPs-from-zero == R,G,B,A:                     255,102,153,0
-
-             tolerance ± 1 normal-ULPs
-       diff (act - exp) in normal-ULPs ==                           -255,-102,-153,0
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:416:34
-    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/image.spec.js:221:49
- Reached unreachable code
+PASS :from_fully_transparent_image:dstPremultiplied=false
 PASS :copy_subrect_from_2D_Canvas:srcDoFlipYDuringCopy=true;dstPremultiplied=true
 PASS :copy_subrect_from_2D_Canvas:srcDoFlipYDuringCopy=true;dstPremultiplied=false
 PASS :copy_subrect_from_2D_Canvas:srcDoFlipYDuringCopy=false;dstPremultiplied=true

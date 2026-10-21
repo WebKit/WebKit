@@ -155,6 +155,8 @@ private:
     RefPtr<NativeImage> nativeImageAtIndex(unsigned index) final;
     RefPtr<NativeImage> preTransformedNativeImageAtIndex(unsigned index, ImageOrientation);
 
+    RefPtr<NativeImage> primaryNativeImageForUnpremultipliedPixels() final;
+
     RefPtr<NativeImage> currentNativeImage() final { return nativeImageAtIndex(currentFrameIndex()); }
     RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation orientation) final { return preTransformedNativeImageAtIndex(currentFrameIndex(), orientation); }
 

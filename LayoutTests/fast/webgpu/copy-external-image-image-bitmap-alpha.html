@@ -81,12 +81,14 @@ function tracked(bitmap)
     return bitmap;
 }
 
-function check(label, texels, dstPremultiplied)
+// sourceOfDestination(x) names the source texel which must land at destination x.
+function check(label, texels, dstPremultiplied, copyWidth = width, sourceOfDestination = x => x)
 {
     // Only wide enough for the level that narrowing 16 bits to 8 costs.
     const tolerance = 2;
-    for (let x = 0; x < width; ++x) {
-        const expected = dstPremultiplied ? premultiplied(sourceTexels[x]) : sourceTexels[x];
+    for (let x = 0; x < copyWidth; ++x) {
+        const sourceTexel = sourceTexels[sourceOfDestination(x)];
+        const expected = dstPremultiplied ? premultiplied(sourceTexel) : sourceTexel;
         const actual = Array.from(texels.subarray(x * 4, x * 4 + 4));
         const withinTolerance = expected.every((value, i) => Math.abs(actual[i] - value) <= tolerance);
         // Only a failure prints the texel, so the expected output does not depend on GPU rounding.
@@ -95,10 +97,10 @@ function check(label, texels, dstPremultiplied)
 }
 
 // The copy converts between the two modes, so only destination.premultipliedAlpha decides the texels.
-async function checkBothDestinations(device, label, source)
+async function checkBothDestinations(device, label, source, copyWidth = width, sourceOfDestination = x => x)
 {
-    check(`${label} into unpremultiplied`, (await copiedTexels(device, source, false)).texels, false);
-    check(`${label} into premultiplied`, (await copiedTexels(device, source, true)).texels, true);
+    check(`${label} into unpremultiplied`, (await copiedTexels(device, source, false, copyWidth)).texels, false, copyWidth, sourceOfDestination);
+    check(`${label} into premultiplied`, (await copiedTexels(device, source, true, copyWidth)).texels, true, copyWidth, sourceOfDestination);
 }
 
 // sourceOfDestination(x, y) names the source texel that must land at destination (x, y).
@@ -144,6 +146,21 @@ onload = async () => {
         for (let x = 0; x < width; ++x)
             imageData.data.set(sourceTexels[x], x * 4);
         await checkBothDestinations(device, 'ImageData, premultiplyAlpha none', tracked(await createImageBitmap(imageData, { premultiplyAlpha: 'none' })));
+
+        // Asking for any geometry at all takes an ImageData through a second buffer and a draw
+        // rather than storing it directly, and the channels have to survive that too. The image is
+        // one row tall, so flipping it moves nothing and only the alpha mode is under test here.
+        await checkBothDestinations(device, 'ImageData, premultiplyAlpha none, flipY',
+            tracked(await createImageBitmap(imageData, { premultiplyAlpha: 'none', imageOrientation: 'flipY' })));
+
+        // A crop names a sub-rectangle of the same stored texels.
+        await checkBothDestinations(device, 'ImageData, premultiplyAlpha none, crop 1,0 4x1',
+            tracked(await createImageBitmap(imageData, 1, 0, 4, 1, { premultiplyAlpha: 'none' })), 4, x => 1 + x);
+
+        // resizeQuality pixelated is nearest neighbour, so an integer upscale is exact.
+        await checkBothDestinations(device, 'ImageData, premultiplyAlpha none, resize 2x pixelated',
+            tracked(await createImageBitmap(imageData, { premultiplyAlpha: 'none', resizeWidth: width * 2, resizeHeight: 2, resizeQuality: 'pixelated' })),
+            width * 2, x => x >> 1);
 
         // Cropping, flipping, resizing and reorienting all have to preserve the unpremultiplied
         // channels too, and they take a different path from the copy which resamples nothing.
