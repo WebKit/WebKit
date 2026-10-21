@@ -2003,8 +2003,8 @@ header: <WebCore/KeyboardScroll.h>
 };
 
 header: <WebCore/NotificationResources.h>
-[RefCounted] class WebCore::NotificationResources {
-    RefPtr<WebCore::BitmapImage> icon();
+[RefCounted, CreateUsing=createWithIconBitmap] class WebCore::NotificationResources {
+    RefPtr<WebCore::ShareableBitmap> iconBitmap();
 };
 
 [RefCounted] class WebCore::IdentityTransformOperation {

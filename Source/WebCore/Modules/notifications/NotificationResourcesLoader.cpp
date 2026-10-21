@@ -84,10 +84,10 @@ void NotificationResourcesLoader::start(CompletionHandler<void(RefPtr<Notificati
                 if (m_stopped)
                     return;
 
-                if (image && !image->size().isEmpty()) {
+                if (RefPtr icon = image && !image->size().isEmpty() ? image->nativeImage() : nullptr) {
                     if (!m_resources)
                         m_resources = NotificationResources::create();
-                    protect(m_resources)->setIcon(WTF::move(image));
+                    protect(m_resources)->setIcon(WTF::move(icon));
                 }
 
                 didFinishLoadingResource(loader);
