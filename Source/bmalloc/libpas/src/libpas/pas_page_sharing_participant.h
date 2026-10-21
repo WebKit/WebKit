@@ -148,7 +148,8 @@ PAS_API pas_page_sharing_pool_take_result
 pas_page_sharing_participant_take_least_recently_used(
     pas_page_sharing_participant participant,
     pas_deferred_decommit_log* decommit_log,
-    pas_lock_hold_mode heap_lock_hold_mode);
+    pas_lock_hold_mode heap_lock_hold_mode,
+    bool is_forced_scavenge);
 
 PAS_END_EXTERN_C;
 
