@@ -332,6 +332,7 @@ set_source_files_properties(
     ${WKC_DIR}/webkit/OpenGLToGX2Shaders.cpp
     ${WKC_DIR}/webkit/OpenGLToGX2Textures.cpp
     ${WKC_DIR}/webkit/OpenGLToGX2VertexArrays.cpp
+    ${WKC_DIR}/webkit/OpenGLToGX2WUTResources.cpp
     PROPERTIES COMPILE_OPTIONS "-fexceptions"
 )
 
