@@ -62,6 +62,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCVPXVideoDecoder);
 
+// The show_frame bit of the 3-byte VP8 frame tag (RFC 6386, section 9.1).
+static bool isHiddenVP8Frame(std::span<const uint8_t> data)
+{
+    return data.size() >= 3 && !(data[0] & 0x10);
+}
+
 static WorkQueue& vpxDecoderQueueSingleton()
 {
     static std::once_flag onceKey;
@@ -166,6 +172,10 @@ Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(VideoE
 
     m_hasUnsupportedOutput = false;
     auto error = m_internalDecoder->Decode(image, false, 0);
+
+    // A VP8 frame with show_frame unset, such as an alternate reference frame, is decoded but never output.
+    if (error == WEBRTC_VIDEO_CODEC_NO_OUTPUT && m_type == LibWebRTCVPXVideoDecoder::Type::VP8 && isHiddenVP8Frame(data))
+        return VideoDecoder::DecodePromise::createAndResolve();
 
     if (error && (error != WEBRTC_VIDEO_CODEC_NO_OUTPUT || m_treatNoOutputAsError))
         return VideoDecoder::DecodePromise::createAndReject(makeString("VPx decoding failed with error "_s, error));
