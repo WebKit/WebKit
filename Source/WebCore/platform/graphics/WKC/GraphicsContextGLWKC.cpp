@@ -18,6 +18,9 @@
 #include "GCGLSpan.h"
 #include "GraphicsContextGL.h"
 #include "NotImplemented.h"
+#if ENABLE(VIDEO)
+#include "VideoFrame.h"
+#endif
 #include "OpenGLToGX2Buffers.h"
 #include "OpenGLToGX2Driver.h"
 #include "OpenGLToGX2VertexArrays.h"
@@ -596,7 +599,7 @@ public:
 
     void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint packAlignment, GCGLint packRowLength, GCGLboolean packReverseRowOrder) override;
 
-    void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) override { notImplemented(); }
+    void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) override;
 
     void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) override;
 
