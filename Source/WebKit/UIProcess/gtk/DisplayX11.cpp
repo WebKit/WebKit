@@ -41,6 +41,10 @@
 #include <gdk/gdkx.h>
 #endif
 
+#ifdef Status
+#undef Status
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
