@@ -1085,6 +1085,11 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
     if (texture.levels.size() > 13 || texture.width > static_cast<uint32_t>(maxTextureSize())
         || texture.height > static_cast<uint32_t>(maxTextureSize()))
         return false;
+    uint32_t maximumLevelCount = 1;
+    for (uint32_t dimension = std::max(texture.width, texture.height); dimension > 1; dimension >>= 1)
+        ++maximumLevelCount;
+    if (texture.levels.size() > maximumLevelCount)
+        return false;
 
     releaseTextureStorage(texture);
     texture.native = {};
@@ -1836,10 +1841,10 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
+    const uint32_t baseWidth = level ? texture->width : static_cast<uint32_t>(width);
+    const uint32_t baseHeight = level ? texture->height : static_cast<uint32_t>(height);
     uint32_t maxMipLevels = 1;
-    for (uint32_t dimension = std::max(texture->width ? texture->width : static_cast<uint32_t>(width),
-             texture->height ? texture->height : static_cast<uint32_t>(height));
-         dimension > 1; dimension >>= 1)
+    for (uint32_t dimension = std::max(baseWidth, baseHeight); dimension > 1; dimension >>= 1)
         ++maxMipLevels;
     if (static_cast<uint32_t>(level) >= maxMipLevels) {
         addError(GL_INVALID_VALUE_VALUE);
