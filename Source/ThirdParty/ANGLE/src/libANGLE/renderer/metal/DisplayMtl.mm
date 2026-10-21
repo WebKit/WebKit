@@ -1272,7 +1272,11 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), emulateAlphaToCoverage,
                             isSimulator || !supportsAppleGPUFamily(1));
 
-    ANGLE_FEATURE_CONDITION((&mFeatures), writeHelperSampleMask, supportsAppleGPUFamily(1));
+    ANGLE_FEATURE_CONDITION((&mFeatures), useBarycentricCoordinatesForHelperInvocations,
+                            supportsAppleGPUFamily(1) && supportsShaderBarycentricCoordinates());
+    ANGLE_FEATURE_CONDITION((&mFeatures), writeHelperSampleMask,
+                            supportsAppleGPUFamily(1) &&
+                                !mFeatures.useBarycentricCoordinatesForHelperInvocations.enabled);
     ANGLE_FEATURE_CONDITION((&mFeatures), purgeableBufferPool, false);
 
     ANGLE_FEATURE_CONDITION((&mFeatures), multisampleColorFormatShaderReadWorkaround, isAMD());
@@ -1389,6 +1393,15 @@ bool DisplayMtl::supports32BitFloatFiltering() const
 {
 #if !TARGET_OS_WATCH
     return [mMetalDevice supports32BitFloatFiltering];
+#else
+    return false;
+#endif
+}
+
+bool DisplayMtl::supportsShaderBarycentricCoordinates() const
+{
+#if !TARGET_OS_WATCH
+    return [mMetalDevice supportsShaderBarycentricCoordinates];
 #else
     return false;
 #endif

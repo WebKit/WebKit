@@ -170,6 +170,12 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
+    FeatureInfo useBarycentricCoordinatesForHelperInvocations = {
+        "useBarycentricCoordinatesForHelperInvocations",
+        FeatureCategory::MetalWorkarounds,
+        &members,
+    };
+
     FeatureInfo preTransformTextureCubeGradDerivatives = {
         "preTransformTextureCubeGradDerivatives",
         FeatureCategory::MetalWorkarounds,

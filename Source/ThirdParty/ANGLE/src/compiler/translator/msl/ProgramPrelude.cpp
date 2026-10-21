@@ -1331,6 +1331,7 @@ PROGRAM_PRELUDE_DECLARE(functionConstants,
 #define ANGLE_DEPTH_WRITE_ENABLED_INDEX       3
 #define ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX 4
 #define ANGLE_WRITE_HELPER_SAMPLE_MASK_INDEX  5
+#define ANGLE_USE_BARYCENTRIC_COORDINATES_FOR_HELPER_INVOCATIONS_INDEX 6
 
 constant bool ANGLEUseSampleCompareGradient [[function_constant(ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX)]];
 constant bool ANGLERasterizerDisabled       [[function_constant(ANGLE_RASTERIZATION_DISCARD_INDEX)]];
@@ -1338,6 +1339,7 @@ constant bool ANGLEMultisampledRendering    [[function_constant(ANGLE_MULTISAMPL
 constant bool ANGLEDepthWriteEnabled        [[function_constant(ANGLE_DEPTH_WRITE_ENABLED_INDEX)]];
 constant bool ANGLEEmulateAlphaToCoverage   [[function_constant(ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX)]];
 constant bool ANGLEWriteHelperSampleMask    [[function_constant(ANGLE_WRITE_HELPER_SAMPLE_MASK_INDEX)]];
+constant bool ANGLEUseBarycentricCoordinatesForHelperInvocations [[function_constant(ANGLE_USE_BARYCENTRIC_COORDINATES_FOR_HELPER_INVOCATIONS_INDEX)]];
 
 #define ANGLE_ALPHA0
 )")

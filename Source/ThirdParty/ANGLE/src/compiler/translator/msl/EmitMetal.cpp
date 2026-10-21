@@ -937,6 +937,14 @@ void GenMetalTraverser::emitPostQualifier(const EmitVariableDeclarationConfig &e
             }
             break;
 
+        case TQualifier::EvqBaryCoordInternal:
+            if (evdConfig.isMainParameter)
+            {
+                mOut << " [[barycentric_coord, function_constant("
+                     << sh::mtl::kUseBarycentricCoordinatesForHelperInvocationsConstName << ")]]";
+            }
+            break;
+
         default:
             break;
     }

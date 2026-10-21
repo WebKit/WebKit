@@ -1008,6 +1008,10 @@ enum TQualifier
     // constant_id.
     EvqSpecConst,
 
+    // Metal [[barycentric_coord]] input, only generated internally by the Metal translator.
+    // In Fragment inputs.
+    EvqBaryCoordInternal,
+
     // end of list
     EvqLast
 };
@@ -1532,6 +1536,7 @@ inline const char *getQualifierString(TQualifier q)
     case EvqTessEvaluationOut:         return "out";
     case EvqTessCoord:                 return "TessCoord";
     case EvqSpecConst:                 return "const";
+    case EvqBaryCoordInternal:         return "BaryCoordInternal";
     default: UNREACHABLE();            return "unknown qualifier";
     }
     // clang-format on

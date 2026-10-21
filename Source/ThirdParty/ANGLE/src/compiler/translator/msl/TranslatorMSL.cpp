@@ -345,6 +345,113 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
     return RunAtTheBeginningOfShader(&compiler, &root, block);
 }
 
+// Finds a scalar or vector float, int or uint fragment output that is not an inout, or an array of
+// them, and returns an lvalue for its last component (or its first element's last component).
+TIntermTyped *CreateFragmentOutputLastComponent(TIntermBlock &root)
+{
+    for (TIntermNode *node : *root.getSequence())
+    {
+        TIntermDeclaration *declaration = node->getAsDeclarationNode();
+        if (!declaration)
+        {
+            continue;
+        }
+        TIntermNode *declarator = declaration->getSequence()->front();
+        if (TIntermBinary *init = declarator->getAsBinaryNode())
+        {
+            declarator = init->getLeft();
+        }
+        TIntermSymbol *symbol = declarator->getAsSymbolNode();
+        if (!symbol)
+        {
+            continue;
+        }
+        const TType &type = symbol->variable().getType();
+        switch (type.getQualifier())
+        {
+            case EvqFragmentOut:
+            case EvqFragColor:
+            case EvqFragData:
+                break;
+            default:
+                continue;
+        }
+        const TBasicType basicType = type.getBasicType();
+        if ((basicType != EbtFloat && basicType != EbtInt && basicType != EbtUInt) ||
+            type.isMatrix() || type.isArrayOfArrays())
+        {
+            continue;
+        }
+        TIntermTyped *output = new TIntermSymbol(&symbol->variable());
+        if (type.isArray())
+        {
+            output = new TIntermBinary(EOpIndexDirect, output, CreateIndexNode(0));
+        }
+        if (type.isVector())
+        {
+            output = new TIntermSwizzle(output, {type.getNominalSize() - 1u});
+        }
+        return output;
+    }
+    return nullptr;
+}
+
+// Work around the driver not running helper invocations on shared triangle edges, which gives wrong
+// derivatives, by reading [[barycentric_coord]] in the shader such that the result depends on it:
+//
+//     if (ANGLEUseBarycentricCoordinatesForHelperInvocations)
+//         output.a += ANGLE_metal_BaryCoord.x < -1e30 ? 0.1 : 0.0;
+//
+// The condition is never true since barycentric coordinates of a covered pixel are finite and
+// close to [0, 1]. Unlike a [[sample_mask]] output, reading the coordinate does not disable the
+// hidden surface removal.
+[[nodiscard]] bool AddHelperBaryCoordRead(TCompiler &compiler,
+                                          TIntermBlock &root,
+                                          TSymbolTable &symbolTable)
+{
+    TIntermTyped *output = CreateFragmentOutputLastComponent(root);
+    if (!output)
+    {
+        return true;
+    }
+
+    // float3 ANGLE_metal_BaryCoord [[barycentric_coord]]
+    TVariable *angleBaryCoord =
+        new TVariable(&symbolTable, ImmutableString("metal_BaryCoord"),
+                      new TType(EbtFloat, EbpHigh, EvqBaryCoordInternal, 3), SymbolType::AngleInternal);
+    DeclareRightBeforeMain(root, *angleBaryCoord);
+
+    TIntermTyped *isFarOutside =
+        new TIntermBinary(EOpLessThan, new TIntermSwizzle(new TIntermSymbol(angleBaryCoord), {0}),
+                          CreateFloatNode(-1e30f, EbpHigh));
+    TIntermTyped *increment = nullptr;
+    switch (output->getBasicType())
+    {
+        case EbtInt:
+            increment = new TIntermTernary(isFarOutside, CreateIndexNode(1), CreateIndexNode(0));
+            break;
+        case EbtUInt:
+            increment = new TIntermTernary(isFarOutside, CreateUIntNode(1), CreateUIntNode(0));
+            break;
+        default:
+            increment = new TIntermTernary(isFarOutside, CreateFloatNode(0.1f, EbpHigh),
+                                           CreateFloatNode(0.0f, EbpHigh));
+            break;
+    }
+
+    TIntermBlock *addBlock = new TIntermBlock;
+    addBlock->appendStatement(new TIntermBinary(EOpAddAssign, output, increment));
+
+    TVariable *useBarycentricCoordinatesVar = new TVariable(
+        &symbolTable,
+        sh::ImmutableString(mtl::kUseBarycentricCoordinatesForHelperInvocationsConstName),
+        StaticType::Get<EbtBool, EbpUndefined, EvqSpecConst, 1, 1>(), SymbolType::AngleInternal);
+    TIntermBlock *block = new TIntermBlock;
+    block->appendStatement(
+        new TIntermIfElse(new TIntermSymbol(useBarycentricCoordinatesVar), addBlock, nullptr));
+    return RunAtTheEndOfShader(&compiler, &root, block, &symbolTable);
+}
+
 [[nodiscard]] bool AddSampleMaskDeclaration(TCompiler &compiler,
                                             TIntermBlock &root,
                                             TSymbolTable &symbolTable,
@@ -1333,6 +1440,10 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
                                       compileOptions.emulateAlphaToCoverage ||
                                           compileOptions.metal.generateShareableShaders,
                                       usesSampleMask))
+        {
+            return false;
+        }
+        if (usesDerivatives() && !AddHelperBaryCoordRead(*this, *root, symbolTable))
         {
             return false;
         }
