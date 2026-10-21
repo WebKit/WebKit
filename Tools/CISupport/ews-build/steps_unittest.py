@@ -8833,6 +8833,17 @@ Build version 15F31d''')
         self.assertIn('Error: OS/SDK version mismatch, please inform an admin.', self.build.text)
         return rc
 
+    def test_success_ios_minor_version_mismatch(self):
+        self.setup_step(PrintConfiguration())
+        self.setProperty('buildername', 'Apple-iOS-17-Simulator-Release-WK2-Tests')
+        self.setProperty('platform', 'ios-simulator-17')
+        self.setProperty('os_version_builder', '14.6')
+        self.setProperty('xcode_version_builder', '15.3')
+
+        self.expectRemoteCommands(*self.ios_remote_commands)
+        self.expect_outcome(result=SUCCESS, state_string='OS: Sonoma (14.5), Xcode: 15.4')
+        return self.run_step()
+
     def test_success_webkitpy(self):
         self.setup_step(PrintConfiguration())
         self.setProperty('platform', '*')

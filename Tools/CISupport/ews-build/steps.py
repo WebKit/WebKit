@@ -6853,10 +6853,12 @@ class PrintConfiguration(steps.ShellSequence, ShellMixin):
                 self.build.stopBuild(reason=details, results=FAILURE)
                 self.build.buildFinished([message], FAILURE)
         elif os_version_builder and xcode_version_builder:
-            ob_major, ob_minor = os_version_builder.split('.')[:2]
-            xb_major, xb_minor = xcode_version_builder.split('.')[:2]
-            xc_major, xc_minor = xcode_version.split('.')[:2]
-            if (os_major, os_minor) != (ob_major, ob_minor) or (xc_major, xc_minor) != (xb_major, xb_minor):
+            # Binaries built on one minor OS or Xcode release run fine on another minor release of the same major version.
+            # FIXME: Make the fleet uniform so builders and testers run the same minor OS and Xcode releases, then compare minor versions again.
+            ob_major = os_version_builder.split('.')[0]
+            xb_major = xcode_version_builder.split('.')[0]
+            xc_major = xcode_version.split('.')[0]
+            if os_major != ob_major or xc_major != xb_major:
                 message = f'Error: OS/SDK version mismatch, please inform an admin.'
                 detailed_message = message + f' Builder: OS={os_version_builder}, Xcode={xcode_version_builder}; Tester: OS={os_version}, Xcode={xcode_version}'
                 self.build.stopBuild(reason=detailed_message, results=FAILURE)
