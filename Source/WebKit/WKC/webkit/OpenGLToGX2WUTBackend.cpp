@@ -327,34 +327,21 @@ bool setScissor(void*, const Scissor& scissor)
     return true;
 }
 
-bool translatePrimitive(NativePrimitive primitive, GX2PrimitiveMode& output)
-{
-    switch (primitive) {
-    case NativePrimitive::Points: output = GX2_PRIMITIVE_MODE_POINTS; return true;
-    case NativePrimitive::Lines: output = GX2_PRIMITIVE_MODE_LINES; return true;
-    case NativePrimitive::LineStrip: output = GX2_PRIMITIVE_MODE_LINE_STRIP; return true;
-    case NativePrimitive::Triangles: output = GX2_PRIMITIVE_MODE_TRIANGLES; return true;
-    case NativePrimitive::TriangleStrip: output = GX2_PRIMITIVE_MODE_TRIANGLE_STRIP; return true;
-    case NativePrimitive::TriangleFan: output = GX2_PRIMITIVE_MODE_TRIANGLE_FAN; return true;
-    }
-    return false;
-}
-
 bool draw(void* context, NativePrimitive primitive, uint32_t first, uint32_t count, uint32_t instances)
 {
-    GX2PrimitiveMode mode;
-    if (!translatePrimitive(primitive, mode))
-        return false;
+    Primitive translatedPrimitive;
+    switch (primitive) {
+    case NativePrimitive::Points: translatedPrimitive = Primitive::Points; break;
+    case NativePrimitive::Lines: translatedPrimitive = Primitive::Lines; break;
+    case NativePrimitive::LineStrip: translatedPrimitive = Primitive::LineStrip; break;
+    case NativePrimitive::Triangles: translatedPrimitive = Primitive::Triangles; break;
+    case NativePrimitive::TriangleStrip: translatedPrimitive = Primitive::TriangleStrip; break;
+    case NativePrimitive::TriangleFan: translatedPrimitive = Primitive::TriangleFan; break;
+    default: return false;
+    }
 
-    // The GX2 vertex fetch unit uses explicit shader and fetch-program state.
-    // Bind the exact linked WebGL program before any non-indexed draw so the
-    // draw cannot accidentally reuse the previous canvas/program's shaders.
     auto& state = *static_cast<WUTBackendContext*>(context);
-    if (!prepareWUTProgramForDraw(state.bufferResources))
-        return false;
-
-    GX2DrawEx(mode, count, first, instances);
-    return true;
+    return drawVertexArrayArrays(&state.bufferResources, translatedPrimitive, first, count, instances);
 }
 
 bool drawIndexed(void* context, NativePrimitive primitive, IndexType type, uint32_t count,
