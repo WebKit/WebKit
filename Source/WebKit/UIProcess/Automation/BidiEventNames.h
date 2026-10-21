@@ -34,6 +34,7 @@ static constexpr auto ContextCreated = "browsingContext.contextCreated"_s;
 static constexpr auto ContextDestroyed = "browsingContext.contextDestroyed"_s;
 static constexpr auto DomContentLoaded = "browsingContext.domContentLoaded"_s;
 static constexpr auto FragmentNavigated = "browsingContext.fragmentNavigated"_s;
+static constexpr auto HistoryUpdated = "browsingContext.historyUpdated"_s;
 static constexpr auto Load = "browsingContext.load"_s;
 static constexpr auto NavigationAborted = "browsingContext.navigationAborted"_s;
 static constexpr auto NavigationCommitted = "browsingContext.navigationCommitted"_s;
