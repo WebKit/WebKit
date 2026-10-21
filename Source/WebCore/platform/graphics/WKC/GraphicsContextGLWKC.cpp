@@ -30,8 +30,10 @@
 #include <gx2/texture.h>
 #include <gx2/sampler.h>
 #include <gx2/utils.h>
+#include <gx2/surface.h>
 #include <gx2r/surface.h>
 #include <coreinit/cache.h>
+#include <coreinit/memdefaultheap.h>
 #include <wtf/StdLibExtras.h>
 
 #include <algorithm>
@@ -979,6 +981,7 @@ private:
         PlatformGLObject stencilRenderbuffer { 0 };
         GX2ColorBuffer textureColorView {};
         bool textureColorViewReady { false };
+        RenderbufferRecord fallbackDepth;
     };
     struct UniformBinding {
         GCGLint location { -1 };
@@ -1113,6 +1116,8 @@ GraphicsContextGLWKC::~GraphicsContextGLWKC()
         releaseTextureStorage(entry.second);
     for (auto& entry : m_renderbuffers)
         releaseRenderbufferStorage(entry.second);
+    for (auto& entry : m_framebuffers)
+        releaseRenderbufferStorage(entry.second.fallbackDepth);
     releaseTextureStorage(m_defaultTexture);
 }
 
@@ -1440,21 +1445,51 @@ void GraphicsContextGLWKC::refreshFramebufferTarget()
         m_native.colorBuffer = &color->second.colorBuffer;
     }
 
+    uint32_t targetWidth = 0;
+    uint32_t targetHeight = 0;
+    if (attachments.colorTexture) {
+        auto texture = m_textures.find(attachments.colorTexture);
+        if (texture == m_textures.end())
+            return;
+        targetWidth = texture->second.width;
+        targetHeight = texture->second.height;
+    } else {
+        auto color = m_renderbuffers.find(attachments.colorRenderbuffer);
+        if (color == m_renderbuffers.end())
+            return;
+        targetWidth = color->second.width;
+        targetHeight = color->second.height;
+    }
+
     // GX2's draw interface binds a depth target even for color-only passes.
-    // Use the default depth allocation as an inert target, while suppressing
-    // depth/stencil tests and writes at the compatibility-state layer.
+    // Give the FBO a matching private depth/stencil surface, but keep it out of
+    // WebGL's attachment/status queries. This avoids binding the screen-sized
+    // default depth buffer to a differently-sized offscreen color surface.
     if (attachments.depthRenderbuffer) {
         auto depth = m_renderbuffers.find(attachments.depthRenderbuffer);
         if (depth == m_renderbuffers.end())
             return;
+        if (attachments.fallbackDepth.allocated)
+            releaseRenderbufferStorage(attachments.fallbackDepth);
         m_native.depthBuffer = &depth->second.depthBuffer;
     } else if (attachments.stencilRenderbuffer) {
         auto stencil = m_renderbuffers.find(attachments.stencilRenderbuffer);
         if (stencil == m_renderbuffers.end())
             return;
+        if (attachments.fallbackDepth.allocated)
+            releaseRenderbufferStorage(attachments.fallbackDepth);
         m_native.depthBuffer = &stencil->second.depthBuffer;
-    } else
-        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+    } else {
+        auto& fallback = attachments.fallbackDepth;
+        if (!fallback.allocated || fallback.width != targetWidth || fallback.height != targetHeight
+            || !fallback.depthSurfaceCreated || !fallback.hasDepth || !fallback.hasStencil) {
+            if (!allocateRenderbufferStorage(fallback, GL_DEPTH_STENCIL_VALUE, targetWidth, targetHeight)) {
+                addError(GL_OUT_OF_MEMORY_VALUE);
+                return;
+            }
+        }
+        m_native.depthBuffer = &fallback.depthBuffer;
+    }
 
     WKC::GLGX2::bindWUTRenderTarget(m_native);
     const auto depth = attachments.depthRenderbuffer
@@ -2558,11 +2593,18 @@ void GraphicsContextGLWKC::deleteFramebuffer(PlatformGLObject name)
     auto framebuffer = m_framebuffers.find(name);
     if (framebuffer == m_framebuffers.end())
         return;
-    m_framebuffers.erase(framebuffer);
-    if (m_boundFramebuffer == name) {
+    const bool wasBound = m_boundFramebuffer == name;
+    if (wasBound) {
+        GX2DrawDone();
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
         m_boundFramebuffer = 0;
-        refreshFramebufferTarget();
     }
+    releaseRenderbufferStorage(framebuffer->second.fallbackDepth);
+    m_framebuffers.erase(framebuffer);
+    if (wasBound)
+        refreshFramebufferTarget();
 }
 
 GCGLboolean GraphicsContextGLWKC::isFramebuffer(PlatformGLObject name)
@@ -2635,6 +2677,20 @@ void GraphicsContextGLWKC::renderbufferStorage(GCGLenum target, GCGLenum interna
     if (!m_boundRenderbuffer || renderbuffer == m_renderbuffers.end()) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
+    }
+    if (m_boundFramebuffer) {
+        auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        if (framebuffer != m_framebuffers.end()) {
+            const auto& attached = framebuffer->second;
+            if (attached.colorRenderbuffer == m_boundRenderbuffer
+                || attached.depthRenderbuffer == m_boundRenderbuffer
+                || attached.stencilRenderbuffer == m_boundRenderbuffer) {
+                GX2DrawDone();
+                m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+                m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+                WKC::GLGX2::bindWUTRenderTarget(m_native);
+            }
+        }
     }
     if (!allocateRenderbufferStorage(renderbuffer->second, internalFormat,
             static_cast<uint32_t>(width), static_cast<uint32_t>(height))) {
