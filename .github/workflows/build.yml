@@ -722,17 +722,39 @@ jobs:
               commands = json.load(file)
 
           failed = []
-          for relative_path in source_paths:
-              source_path = (workspace / relative_path).resolve()
-              entry = next((item for item in commands
-                            if pathlib.Path(item["file"]).resolve() == source_path), None)
-              if entry is None:
-                  failed.append(f"no compile command for {relative_path}")
-                  continue
-              print(f"=== Cross-compiling {relative_path} ===", flush=True)
-              result = subprocess.run(entry["command"], cwd=entry["directory"], shell=True)
-              if result.returncode:
-                  failed.append(f"{relative_path} exited {result.returncode}")
+          log_path = workspace / "gx2-driver-crosscompile.log"
+          with log_path.open("w", encoding="utf-8") as log:
+              for relative_path in source_paths:
+                  source_path = (workspace / relative_path).resolve()
+                  entry = next((item for item in commands
+                                if pathlib.Path(item["file"]).resolve() == source_path), None)
+                  if entry is None:
+                      failure = f"no compile command for {relative_path}"
+                      failed.append(failure)
+                      log.write(f"ERROR: {failure}\\n")
+                      continue
+                  header = f"=== Cross-compiling {relative_path} ===\\n"
+                  print(header, end="", flush=True)
+                  log.write(header)
+                  result = subprocess.run(entry["command"], cwd=entry["directory"],
+                                          shell=True, capture_output=True, text=True)
+                  for output in (result.stdout, result.stderr):
+                      if output:
+                          print(output, end="" if output.endswith("\\n") else "\\n", flush=True)
+                          log.write(output)
+                          if not output.endswith("\\n"):
+                              log.write("\\n")
+                  log.write(f"exit code: {result.returncode}\\n")
+                  if result.returncode:
+                      failure = f"{relative_path} exited {result.returncode}"
+                      failed.append(failure)
+                      log.write(f"ERROR: {failure}\\n")
+
+              if failed:
+                  log.write("\\nGX2 driver cross-compile failed:\\n")
+                  log.writelines(f"  - {failure}\\n" for failure in failed)
+              else:
+                  log.write("All selected OpenGL-to-GX2 translation units compiled successfully.\\n")
 
           if failed:
               print("GX2 driver cross-compile failed:", file=sys.stderr)
@@ -741,6 +763,15 @@ jobs:
               sys.exit(1)
           print("All selected OpenGL-to-GX2 translation units compiled successfully.")
           PY
+
+      - name: Upload GX2 cross-compile diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gx2-driver-crosscompile-diagnostics
+          path: gx2-driver-crosscompile.log
+          if-no-files-found: warn
+          retention-days: 7
 
       # Generate LLIntAssembly.h (the C_LOOP interpreter body that
       # LowLevelInterpreter.cpp #includes) OUTSIDE the CMake build graph, so a
