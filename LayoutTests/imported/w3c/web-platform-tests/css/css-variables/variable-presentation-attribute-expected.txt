@@ -3,7 +3,7 @@ PASS Testing 'stroke-width' on '#box1'.
 PASS Testing 'stroke-width' on '#box2'.
 PASS Testing 'stroke-width' on '#box3'.
 PASS Testing 'clip' on '#test4'.
-PASS Testing 'alignment-baseline'.
+FAIL Testing 'alignment-baseline'. assert_equals: Value Test. expected "text-before-edge" but got "text-top"
 PASS Testing 'baseline-shift'.
 PASS Testing 'clip-rule'.
 PASS Testing 'color'.
@@ -11,7 +11,7 @@ FAIL Testing 'color-interpolation-filters'. assert_equals: Default value. expect
 PASS Testing 'cursor'.
 PASS Testing 'direction'.
 PASS Testing 'display'.
-FAIL Testing 'dominant-baseline'. assert_equals: Value Test. expected "text-bottom" but got "auto"
+PASS Testing 'dominant-baseline'.
 FAIL Testing 'fill'. assert_equals: Default value. expected "black" but got "rgb(0, 0, 0)"
 PASS Testing 'fill-opacity'.
 PASS Testing 'fill-rule'.

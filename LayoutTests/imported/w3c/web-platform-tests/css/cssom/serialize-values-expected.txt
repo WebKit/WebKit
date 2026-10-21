@@ -1,12 +1,12 @@
 
 PASS alignment-baseline: baseline
-FAIL alignment-baseline: text-bottom assert_equals: alignment-baseline raw inline style declaration expected "text-bottom" but got ""
+PASS alignment-baseline: text-bottom
 PASS alignment-baseline: alphabetic
 PASS alignment-baseline: ideographic
 PASS alignment-baseline: middle
 PASS alignment-baseline: central
 PASS alignment-baseline: mathematical
-FAIL alignment-baseline: text-top assert_equals: alignment-baseline raw inline style declaration expected "text-top" but got ""
+PASS alignment-baseline: text-top
 PASS alignment-baseline: inherit
 PASS background-attachment: scroll
 PASS background-attachment: fixed
