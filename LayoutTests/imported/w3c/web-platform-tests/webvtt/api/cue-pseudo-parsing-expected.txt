@@ -1,0 +1,10 @@
+
+PASS "::cue" should be a valid selector
+PASS "::cue(v)" should be a valid selector
+PASS "::cue(*)" should be a valid selector
+PASS "::cue(.loud)" should be a valid selector
+PASS "video::cue" should be a valid selector
+PASS ":cue" should be an invalid selector
+PASS ":cue(v)" should be an invalid selector
+PASS ":cue(*)" should be an invalid selector
+

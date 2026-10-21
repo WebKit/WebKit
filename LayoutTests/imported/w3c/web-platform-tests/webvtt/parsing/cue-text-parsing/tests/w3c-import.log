@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/cue-text-parsing/tests/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/cue-text-parsing/tests/entities-trusted-types.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/cue-text-parsing/tests/entities.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/cue-text-parsing/tests/tags.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/cue-text-parsing/tests/text.html

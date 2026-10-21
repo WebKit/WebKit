@@ -15,5 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/api/categories.json
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/api/cue-pseudo-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/api/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/api/idlharness.window.js
