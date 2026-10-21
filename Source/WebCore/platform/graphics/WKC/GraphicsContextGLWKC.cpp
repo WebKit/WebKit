@@ -2669,8 +2669,21 @@ void GraphicsContextGLWKC::renderbufferStorage(GCGLenum target, GCGLenum interna
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
-    if (width < 0 || height < 0) {
+    if (width < 0 || height < 0
+        || width > maxRenderbufferSize() || height > maxRenderbufferSize()) {
         addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    switch (internalFormat) {
+    case GL_RGBA4_VALUE:
+    case GL_RGB5_A1_VALUE:
+    case GL_RGB565_VALUE:
+    case GL_DEPTH_COMPONENT16_VALUE:
+    case GL_STENCIL_INDEX8_VALUE:
+    case GL_DEPTH_STENCIL_VALUE:
+        break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
         return;
     }
     auto renderbuffer = m_renderbuffers.find(m_boundRenderbuffer);
@@ -2694,7 +2707,7 @@ void GraphicsContextGLWKC::renderbufferStorage(GCGLenum target, GCGLenum interna
     }
     if (!allocateRenderbufferStorage(renderbuffer->second, internalFormat,
             static_cast<uint32_t>(width), static_cast<uint32_t>(height))) {
-        addError(GL_INVALID_ENUM_VALUE);
+        addError(GL_OUT_OF_MEMORY_VALUE);
         return;
     }
     refreshFramebufferTarget();
@@ -2725,10 +2738,6 @@ void GraphicsContextGLWKC::framebufferRenderbuffer(GCGLenum target, GCGLenum att
     auto& record = framebuffer->second;
     switch (attachment) {
     case GL_COLOR_ATTACHMENT0_VALUE:
-        if (renderbuffer && !renderbuffer->isColor) {
-            addError(GL_INVALID_OPERATION_VALUE);
-            return;
-        }
         record.colorRenderbuffer = name;
         record.colorTexture = 0;
         record.colorTextureLevel = 0;
@@ -2736,24 +2745,12 @@ void GraphicsContextGLWKC::framebufferRenderbuffer(GCGLenum target, GCGLenum att
         record.textureColorViewReady = false;
         break;
     case GL_DEPTH_ATTACHMENT_VALUE:
-        if (renderbuffer && !renderbuffer->hasDepth) {
-            addError(GL_INVALID_OPERATION_VALUE);
-            return;
-        }
         record.depthRenderbuffer = name;
         break;
     case GL_STENCIL_ATTACHMENT_VALUE:
-        if (renderbuffer && !renderbuffer->hasStencil) {
-            addError(GL_INVALID_OPERATION_VALUE);
-            return;
-        }
         record.stencilRenderbuffer = name;
         break;
     case GL_DEPTH_STENCIL_ATTACHMENT_VALUE:
-        if (renderbuffer && (!renderbuffer->hasDepth || !renderbuffer->hasStencil)) {
-            addError(GL_INVALID_OPERATION_VALUE);
-            return;
-        }
         record.depthRenderbuffer = name;
         record.stencilRenderbuffer = name;
         break;
@@ -2788,11 +2785,6 @@ void GraphicsContextGLWKC::framebufferTexture2D(GCGLenum target, GCGLenum attach
     if (name) {
         auto texture = m_textures.find(name);
         if (texture == m_textures.end() || texture->second.target != GL_TEXTURE_2D_VALUE) {
-            addError(GL_INVALID_OPERATION_VALUE);
-            return;
-        }
-        if (!texture->second.storageCreated || texture->second.definedLevels.empty()
-            || !texture->second.definedLevels[0]) {
             addError(GL_INVALID_OPERATION_VALUE);
             return;
         }
