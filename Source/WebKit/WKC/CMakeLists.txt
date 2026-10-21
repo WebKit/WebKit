@@ -80,10 +80,24 @@ endif ()
 # WebGL requires a modern GraphicsContextGL platform backend. The 4.3 WKC
 # GraphicsContext3D implementation targets removed APIs and is not a valid
 # replacement. Keep WebGL disabled until the current WKC backend exists.
-option(WKC_ENABLE_WEBGL "Enable WebGL (requires Source/WebCore/platform/graphics/WKC/GraphicsContextGLWKC.cpp)" OFF)
+option(WKC_ENABLE_WEBGL "Enable WebGL 1 through the native WUT/GX2 backend and CafeGLSL runtime compiler" ON)
 if (WKC_ENABLE_WEBGL)
     if (NOT EXISTS "${WEBCORE_DIR}/platform/graphics/WKC/GraphicsContextGLWKC.cpp")
-        message(FATAL_ERROR "WKC_ENABLE_WEBGL=ON, but the modern WKC GraphicsContextGLWKC.cpp backend is missing. Port a backend for current WebKit before enabling WebGL.")
+        message(FATAL_ERROR "WKC_ENABLE_WEBGL=ON, but the modern WKC GraphicsContextGLWKC.cpp backend is missing.")
+    endif ()
+
+    # WebGL needs a real GLSL-to-GX2 compiler at runtime. Do not build a
+    # backend that accepts shader APIs but cannot produce native GX2 programs.
+    find_path(CAFEGLSL_INCLUDE_DIR
+        NAMES cafeglsl/CafeGLSLCompiler.h
+        HINTS "${PORTLIBS}/include"
+        NO_DEFAULT_PATH)
+    find_library(CAFEGLSL_LIBRARY
+        NAMES cafeglsl
+        HINTS "${PORTLIBS}/lib"
+        NO_DEFAULT_PATH)
+    if (NOT CAFEGLSL_INCLUDE_DIR OR NOT CAFEGLSL_LIBRARY)
+        message(FATAL_ERROR "WKC_ENABLE_WEBGL=ON requires CafeGLSL in ${PORTLIBS}/include and ${PORTLIBS}/lib. Install the Wii U CafeGLSL portlib before configuring.")
     endif ()
     set(_WKC_WEBGL_DEFINE 1)
 else ()
@@ -688,6 +702,17 @@ target_include_directories(WebKitWKC PUBLIC
     ${WKC_DIR}/include/wkc
     ${WKC_DIR}/webkit
 )
+
+if (WKC_ENABLE_WEBGL)
+    target_include_directories(WebKitWKC PRIVATE "${CAFEGLSL_INCLUDE_DIR}")
+    target_link_libraries(WebKitWKC PUBLIC "${CAFEGLSL_LIBRARY}")
+    # Export CafeGLSL with the standalone WebKitWKC SDK so Wave Browser's final
+    # Wii U link can resolve CompileShaderPair/FreeShaders without rebuilding
+    # the shader compiler itself.
+    install(FILES "${CAFEGLSL_LIBRARY}" DESTINATION lib)
+    install(DIRECTORY "${CAFEGLSL_INCLUDE_DIR}/cafeglsl/" DESTINATION include/cafeglsl
+        FILES_MATCHING PATTERN "*.h")
+endif ()
 
 if (WKC_ENABLE_WEBRTC_API)
     # WebKit's LibWebRTC provider includes libwebrtc and Abseil headers. Their
