@@ -227,6 +227,8 @@ uint32_t uniformRegisters(GCGLenum type)
 } // namespace
 #endif // __WUT__
 
+#if defined(__WUT__)
+
 class GraphicsContextGLWKC final : public GraphicsContextGL {
 public:
     explicit GraphicsContextGLWKC(const GraphicsContextGLAttributes&);
