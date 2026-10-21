@@ -27,7 +27,7 @@
 
 #if ENABLE(PHONE_NUMBER_POSSESSION)
 
-#include <WebCore/AggregatorResponseData.h>
+#include "AggregatorResponseData.h"
 #include <WebCore/BasicCredential.h>
 #include <WebCore/IDLTypes.h>
 
