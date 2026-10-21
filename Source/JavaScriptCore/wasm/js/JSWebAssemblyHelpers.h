@@ -79,11 +79,8 @@ ALWAYS_INLINE uint64_t toNonWrappingUint64(JSGlobalObject* globalObject, JSValue
     JSValue bigInt = value.toBigInt(globalObject);
     RETURN_IF_EXCEPTION(throwScope, { });
 
-    auto lo = JSBigInt::compare(bigInt, static_cast<uint64_t>(0));
-    auto high = JSBigInt::compare(bigInt, std::numeric_limits<uint64_t>::max());
-    bool validRange = lo != JSBigInt::ComparisonResult::LessThan && high != JSBigInt::ComparisonResult::GreaterThan;
-    if (validRange && bigInt)
-        RELEASE_AND_RETURN(throwScope, bigInt.toBigUInt64(globalObject));
+    if (auto result = JSBigInt::tryToBigUInt64(bigInt))
+        return *result;
 
     constexpr auto message = "Expect an integer argument in the range: [0, 2^64 - 1]"_s;
     if (errorType == ErrorType::RangeError)

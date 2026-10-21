@@ -63,10 +63,11 @@ std::optional<typename Adaptor::Type> toNativeFromValueWithoutCoercion(JSValue v
     if constexpr (std::is_same_v<Adaptor, BigInt64Adaptor> || std::is_same_v<Adaptor, BigUint64Adaptor>) {
         if (!value.isBigInt())
             return std::nullopt;
+        // Without coercion, a BigInt outside the element type's range matches no element. It must not wrap around.
         if constexpr (std::is_same_v<Adaptor, BigInt64Adaptor>)
-            return JSBigInt::toBigInt64(value);
+            return JSBigInt::tryToBigInt64(value);
         else
-            return JSBigInt::toBigUInt64(value);
+            return JSBigInt::tryToBigUInt64(value);
     } else {
         if (!value.isNumber())
             return std::nullopt;

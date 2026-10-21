@@ -6436,6 +6436,40 @@ uint64_t JSBigInt::toBigUInt64Heap(JSBigInt* bigInt)
     return ~(value - 1); // To avoid undefined behavior, we compute two's compliment by hand in C while this is simply `-value`.
 }
 
+std::optional<uint64_t> JSBigInt::tryToBigUInt64(JSValue bigInt)
+{
+    ASSERT(bigInt.isBigInt());
+#if USE(BIGINT32)
+    if (bigInt.isBigInt32()) {
+        int32_t value = bigInt.bigInt32AsInt32();
+        if (value < 0)
+            return std::nullopt;
+        return static_cast<uint64_t>(value);
+    }
+#endif
+    JSBigInt* heapBigInt = bigInt.asHeapBigInt();
+    if (heapBigInt->sign())
+        return std::nullopt;
+    return heapBigInt->tryAbsoluteValueAsUInt64();
+}
+
+std::optional<int64_t> JSBigInt::tryToBigInt64(JSValue bigInt)
+{
+    ASSERT(bigInt.isBigInt());
+#if USE(BIGINT32)
+    if (bigInt.isBigInt32())
+        return static_cast<int64_t>(bigInt.bigInt32AsInt32());
+#endif
+    JSBigInt* heapBigInt = bigInt.asHeapBigInt();
+    auto magnitude = heapBigInt->tryAbsoluteValueAsUInt64();
+    if (!magnitude)
+        return std::nullopt;
+    uint64_t maxMagnitude = static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) + (heapBigInt->sign() ? 1 : 0);
+    if (*magnitude > maxMagnitude)
+        return std::nullopt;
+    return static_cast<int64_t>(toBigUInt64Heap(heapBigInt));
+}
+
 static ALWAYS_INLINE unsigned LEGACY_NODELETE computeHash(JSBigInt::Digit* digits, unsigned length, bool sign)
 {
     Hasher hasher;

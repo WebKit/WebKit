@@ -75,27 +75,10 @@ ALWAYS_INLINE std::optional<double> JSBigInt::tryExtractDouble(JSValue value)
 
     ASSERT(value.isHeapBigInt());
     JSBigInt* bigInt = value.asHeapBigInt();
-    if (!bigInt->length())
-        return 0;
-
-    uint64_t integer = 0;
-    if constexpr (sizeof(Digit) == 8) {
-        if (bigInt->length() != 1)
-            return std::nullopt;
-        integer = bigInt->digit(0);
-    } else {
-        ASSERT(sizeof(Digit) == 4);
-        if (bigInt->length() > 2)
-            return std::nullopt;
-        integer = bigInt->digit(0);
-        if (bigInt->length() == 2)
-            integer |= (static_cast<uint64_t>(bigInt->digit(1)) << 32);
-    }
-
-    if (integer <= maxSafeIntegerAsUInt64())
-        return (bigInt->sign()) ? -static_cast<double>(integer) : static_cast<double>(integer);
-
-    return std::nullopt;
+    auto integer = bigInt->tryAbsoluteValueAsUInt64();
+    if (!integer || *integer > maxSafeIntegerAsUInt64())
+        return std::nullopt;
+    return bigInt->sign() ? -static_cast<double>(*integer) : static_cast<double>(*integer);
 }
 
 ALWAYS_INLINE JSValue JSBigInt::makeHeapBigIntOrBigInt32(JSGlobalObject* globalObject, double value)

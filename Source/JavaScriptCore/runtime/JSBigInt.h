@@ -452,6 +452,8 @@ public:
 
     inline static uint64_t toBigUInt64(JSValue); // Defined in JSBigIntInlines.h
     inline static int64_t toBigInt64(JSValue); // Defined in JSBigIntInlines.h
+    static std::optional<uint64_t> tryToBigUInt64(JSValue);
+    static std::optional<int64_t> tryToBigInt64(JSValue);
 
     Digit digit(unsigned) const;
     void setDigit(unsigned, Digit); // Use only when initializing.
@@ -681,6 +683,7 @@ private:
     static ImplResult truncateAndSubFromPowerOfTwo(JSGlobalObject*, unsigned, BigIntImpl, bool resultSign);
 
     JS_EXPORT_PRIVATE static uint64_t LEGACY_NODELETE toBigUInt64Heap(JSBigInt*);
+    inline std::optional<uint64_t> tryAbsoluteValueAsUInt64() const;
 
     inline Digit* dataStorage() { return std::bit_cast<Digit*>(std::bit_cast<uint8_t*>(this) + offsetOfData()); }
     inline const Digit* dataStorage() const { return std::bit_cast<const Digit*>(std::bit_cast<const uint8_t*>(this) + offsetOfData()); }
@@ -708,6 +711,16 @@ inline void JSBigInt::setDigit(unsigned n, Digit value)
 {
     ASSERT(n < length());
     dataStorage()[n] = value;
+}
+
+inline std::optional<uint64_t> JSBigInt::tryAbsoluteValueAsUInt64() const
+{
+    if (length() > 64 / digitBits)
+        return std::nullopt;
+    uint64_t value = 0;
+    for (unsigned index = 0; index < length(); ++index)
+        value |= static_cast<uint64_t>(digit(index)) << (index * digitBits);
+    return value;
 }
 
 ALWAYS_INLINE JSBigInt::ComparisonResult invertBigIntCompareResult(JSBigInt::ComparisonResult comparisonResult)
