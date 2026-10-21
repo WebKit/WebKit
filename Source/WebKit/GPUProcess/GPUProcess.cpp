@@ -76,6 +76,7 @@
 #if PLATFORM(COCOA)
 #include "ArgumentCodersCocoa.h"
 #include <WebCore/CoreAudioCaptureUnit.h>
+#include <WebCore/IOSurface.h>
 #include <WebCore/UTIUtilities.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
@@ -228,6 +229,11 @@ void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
         connection->lowMemoryHandler(critical, synchronous);
 
     WebCore::releaseGraphicsMemory(critical, synchronous);
+
+#if PLATFORM(COCOA)
+    if (critical == Critical::Yes)
+        WebCore::IOSurface::releaseCGIOSurfaceContextResources();
+#endif
 }
 
 void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters, CompletionHandler<void()>&& completionHandler)
