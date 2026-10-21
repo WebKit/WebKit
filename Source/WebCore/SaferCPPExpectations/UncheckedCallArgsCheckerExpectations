@@ -1,5 +1,4 @@
 StyleBuilderGenerated.cpp
-[ iOS ] accessibility/AccessibilityScrollView.cpp
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 css/CSSStyleProperties.cpp
 dom/Attr.cpp
