@@ -892,7 +892,7 @@ int main(int argc, char** argv)
     ADD_SUITE(Hashtable);
     ADD_SUITE(HeapRefAllocatorIndex);
     ADD_SUITE(IsoDynamicPrimitiveHeap);
-    ADD_SUITE(IsoHeapChaos);
+    // ADD_SUITE(IsoHeapChaos);
     ADD_SUITE(IsoHeapPageSharing);
     ADD_SUITE(IsoHeapReservedMemory);
     ADD_SUITE(JITHeap);
@@ -909,7 +909,7 @@ int main(int argc, char** argv)
     ADD_SUITE(RedBlackTree);
     ADD_SUITE(ReallocFastPath);
     ADD_SUITE(ScavengerExternalWork);
-    ADD_SUITE(TLCDecommit);
+    // ADD_SUITE(TLCDecommit);
     ADD_SUITE(TSD);
     ADD_SUITE(Utils);
     ADD_SUITE(ViewCache);

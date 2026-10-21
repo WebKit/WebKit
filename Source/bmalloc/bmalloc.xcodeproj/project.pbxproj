@@ -77,10 +77,6 @@
 		652E16982C4869D000C377D7 /* TZoneLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 652E16952C4869D000C377D7 /* TZoneLog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65FE739D2B79E09800C5CDAF /* TZoneHeapManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 65072AE62B6195B90065065C /* TZoneHeapManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6A0999D52D5A5CB467AD7BE8 /* pas_memory_flavor.h in Headers */ = {isa = PBXBuildFile; fileRef = A41D477F2B77FBC3C1F0C9F0 /* pas_memory_flavor.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7234F6B62D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6B42D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7234F6B72D01112E000B645D /* pas_mte_bootstrap_free_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6B22D01112E000B645D /* pas_mte_bootstrap_free_heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7234F6B82D01112E000B645D /* pas_mte_bootstrap_free_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 7234F6B32D01112E000B645D /* pas_mte_bootstrap_free_heap.c */; };
-		7234F6B92D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.c in Sources */ = {isa = PBXBuildFile; fileRef = 7234F6B52D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.c */; };
 		7234F6C42D011152000B645D /* pas_page_config_size_category.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6C22D011152000B645D /* pas_page_config_size_category.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7D78FA9592EC48859E8B9155 /* bmalloc_prefault_supply.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BEA9595554C41DC91A6C33B /* bmalloc_prefault_supply.c */; };
 		9BD23B2D38074FF37E33F56F /* pas_large_map_variant.h in Headers */ = {isa = PBXBuildFile; fileRef = F045C7C0BD60E90C54518962 /* pas_large_map_variant.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1212,10 +1208,6 @@
 		652E16952C4869D000C377D7 /* TZoneLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneLog.h; path = bmalloc/TZoneLog.h; sourceTree = "<group>"; };
 		652E16962C4869D000C377D7 /* TZoneLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneLog.cpp; path = bmalloc/TZoneLog.cpp; sourceTree = "<group>"; };
 		6BEA9595554C41DC91A6C33B /* bmalloc_prefault_supply.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bmalloc_prefault_supply.c; path = libpas/src/libpas/bmalloc_prefault_supply.c; sourceTree = "<group>"; };
-		7234F6B22D01112E000B645D /* pas_mte_bootstrap_free_heap.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = pas_mte_bootstrap_free_heap.h; path = libpas/src/libpas/pas_mte_bootstrap_free_heap.h; sourceTree = "<group>"; };
-		7234F6B32D01112E000B645D /* pas_mte_bootstrap_free_heap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_mte_bootstrap_free_heap.c; path = libpas/src/libpas/pas_mte_bootstrap_free_heap.c; sourceTree = "<group>"; };
-		7234F6B42D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = pas_mte_bootstrap_heap_page_provider.h; path = libpas/src/libpas/pas_mte_bootstrap_heap_page_provider.h; sourceTree = "<group>"; };
-		7234F6B52D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_mte_bootstrap_heap_page_provider.c; path = libpas/src/libpas/pas_mte_bootstrap_heap_page_provider.c; sourceTree = "<group>"; };
 		7234F6C22D011152000B645D /* pas_page_config_size_category.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_page_config_size_category.h; path = libpas/src/libpas/pas_page_config_size_category.h; sourceTree = "<group>"; };
 		87ED133FE5104AEF94FCA029 /* bmalloc_prefault_supply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bmalloc_prefault_supply.h; path = libpas/src/libpas/bmalloc_prefault_supply.h; sourceTree = "<group>"; };
 		A41D477F2B77FBC3C1F0C9F0 /* pas_memory_flavor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_memory_flavor.h; path = libpas/src/libpas/pas_memory_flavor.h; sourceTree = "<group>"; };
@@ -1651,10 +1643,6 @@
 				0FC40A712451498A00876DA0 /* pas_monotonic_time.h */,
 				0100000A37BABA0A0A999999 /* pas_mte.c */,
 				0100000B37BABA0A0A999999 /* pas_mte.h */,
-				7234F6B32D01112E000B645D /* pas_mte_bootstrap_free_heap.c */,
-				7234F6B22D01112E000B645D /* pas_mte_bootstrap_free_heap.h */,
-				7234F6B52D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.c */,
-				7234F6B42D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.h */,
 				0100000A47BABA0A0A993999 /* pas_mte_config.c */,
 				0100000B37BABA0A0A993999 /* pas_mte_config.h */,
 				0FC40AD22451499100876DA0 /* pas_mutation_count.h */,
@@ -2236,8 +2224,6 @@
 				DD4BECFF29CBA49700398E35 /* pas_min_heap.h in Headers */,
 				DD4BED3A29CBA49700398E35 /* pas_monotonic_time.h in Headers */,
 				0100000D37BABA0A0A999999 /* pas_mte.h in Headers */,
-				7234F6B72D01112E000B645D /* pas_mte_bootstrap_free_heap.h in Headers */,
-				7234F6B62D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.h in Headers */,
 				0100000D37BABA0A0A993999 /* pas_mte_config.h in Headers */,
 				DD4BEC5F29CBA49700398E35 /* pas_mutation_count.h in Headers */,
 				DD4BED4729CBA49700398E35 /* pas_object_kind.h in Headers */,
@@ -2685,8 +2671,6 @@
 				DD4BED2829CBA49700398E35 /* pas_megapage_cache.c in Sources */,
 				DD4BECBC29CBA49700398E35 /* pas_monotonic_time.c in Sources */,
 				0100000C37BABA0A0A999999 /* pas_mte.c in Sources */,
-				7234F6B82D01112E000B645D /* pas_mte_bootstrap_free_heap.c in Sources */,
-				7234F6B92D01112E000B645D /* pas_mte_bootstrap_heap_page_provider.c in Sources */,
 				0100000C37BABA0A0A993999 /* pas_mte_config.c in Sources */,
 				DD4BEC4D29CBA49700398E35 /* pas_page_base.c in Sources */,
 				DD4BECDE29CBA49700398E35 /* pas_page_base_config.c in Sources */,

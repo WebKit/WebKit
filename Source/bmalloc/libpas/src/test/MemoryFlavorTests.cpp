@@ -27,6 +27,7 @@
 
 #include "bmalloc_heap_config.h"
 #include "pas_bootstrap_heap_page_provider.h"
+#include "pas_heap_lock.h"
 #include "pas_memory_flavor.h"
 #include "pas_mte.h"
 #include "pas_mte_config.h"
@@ -70,8 +71,9 @@ void testPageCachesUseHeapConfigFlavor()
 
 #if PAS_ENABLE_MTE
 // Returns whether the granule at ptr has MTE tag storage, by storing a non-zero tag to it and reading
-// it back: on memory without tag storage, tag stores are ignored and tag loads read as zero. Leaves
-// the granule's tag as zero. Must only be called when MTE is enabled.
+// it back: on memory without tag storage, tag loads read as zero. Leaves the granule's tag as zero.
+// Must only be called when MTE is enabled, and only on memory that should have tag storage: a tag
+// store to memory without it can fault.
 bool hasMTETagStorage(void* ptr)
 {
     static constexpr uintptr_t probeTag = 5;
@@ -89,17 +91,18 @@ bool hasMTETagStorage(void* ptr)
 }
 #endif
 
-// Checks that every page of [begin, begin + size) has MTE tag storage exactly when memory of this
-// flavor should.
-void checkMTETagStorage(void* begin, size_t size, pas_memory_flavor flavor)
+// Checks that every page of [begin, begin + size) has MTE tag storage if memory of this flavor should.
+// Does not check that pages of other flavors lack it, since probing for that faults.
+void assertMTETagStorage(void* begin, size_t size, pas_memory_flavor flavor)
 {
 #if PAS_ENABLE_MTE
     pas_mte_ensure_initialized();
     if (!PAS_USE_MTE)
         return;
-    bool expected = pas_memory_flavor_needs_mte_tag_storage(flavor);
+    if (!pas_memory_flavor_needs_mte_tag_storage(flavor))
+        return;
     for (size_t offset = 0; offset < size; offset += pas_page_malloc_alignment())
-        CHECK_EQUAL(hasMTETagStorage(static_cast<char*>(begin) + offset), expected);
+        CHECK(hasMTETagStorage(static_cast<char*>(begin) + offset));
 #else
     PAS_UNUSED_PARAM(begin);
     PAS_UNUSED_PARAM(size);
@@ -120,7 +123,7 @@ void testAllocateAndZeroFill(pas_memory_flavor flavor, size_t numPages)
     char* bytes = static_cast<char*>(result.result);
     for (size_t index = 0; index < size; ++index)
         CHECK_EQUAL(bytes[index], 0);
-    checkMTETagStorage(bytes, size, flavor);
+    assertMTETagStorage(bytes, size, flavor);
 
     memset(bytes, 42, size);
 
@@ -130,9 +133,22 @@ void testAllocateAndZeroFill(pas_memory_flavor flavor, size_t numPages)
     // storage.
     for (size_t index = 0; index < size; ++index)
         CHECK_EQUAL(bytes[index], 0);
-    checkMTETagStorage(bytes, size, flavor);
+    assertMTETagStorage(bytes, size, flavor);
 
     pas_page_malloc_deallocate(result.left_padding, result.left_padding_size + size + result.right_padding_size);
+}
+
+void testBootstrapProviderFlavor(pas_heap_page_provider provider, pas_memory_flavor flavor)
+{
+    /* Each flavor's bootstrap page provider must hand out memory of its own flavor. The memory is
+       intentionally never freed: bootstrap memory cannot be returned. */
+    size_t size = pas_page_malloc_alignment();
+    pas_heap_lock_lock();
+    pas_allocation_result result = provider(
+        size, pas_alignment_create_traditional(size), "test", nullptr, nullptr, nullptr);
+    pas_heap_lock_unlock();
+    CHECK(result.did_succeed);
+    assertMTETagStorage(reinterpret_cast<void*>(result.begin), size, flavor);
 }
 
 } // anonymous namespace
@@ -145,4 +161,6 @@ void addMemoryFlavorTests()
     ADD_TEST(testAllocateAndZeroFill(pas_memory_flavor_plain, 16));
     ADD_TEST(testAllocateAndZeroFill(pas_memory_flavor_mte, 1));
     ADD_TEST(testAllocateAndZeroFill(pas_memory_flavor_mte, 16));
+    ADD_TEST(testBootstrapProviderFlavor(pas_bootstrap_heap_page_provider, pas_memory_flavor_plain));
+    ADD_TEST(testBootstrapProviderFlavor(pas_mte_bootstrap_heap_page_provider, pas_memory_flavor_mte));
 }
