@@ -685,22 +685,43 @@ jobs:
 
           image_dir = pathlib.Path(sys.argv[1])
           root = pathlib.Path(sys.argv[2])
-          manifests = json.loads((image_dir / "manifest.json").read_text())
-          if not manifests:
-              raise SystemExit("CafeGLSL image manifest is empty")
-          for layer in manifests[0].get("Layers", []):
+          manifest_data = json.loads((image_dir / "manifest.json").read_text())
+          if isinstance(manifest_data, list):
+              if not manifest_data:
+                  raise SystemExit("CafeGLSL image manifest is empty")
+              manifest = manifest_data[0]
+          elif isinstance(manifest_data, dict):
+              manifest = manifest_data
+          else:
+              raise SystemExit("CafeGLSL image manifest has an unsupported JSON shape")
+
+          # skopeo's dir: transport writes the OCI/Docker manifest as a single
+          # object with lowercase "layers"; other archive forms may use the
+          # Docker-save list with capitalized "Layers". Accept both formats.
+          layers = manifest.get("layers") or manifest.get("Layers") or []
+          if not layers:
+              raise SystemExit("CafeGLSL image manifest contains no layers")
+          for layer in layers:
+              if isinstance(layer, dict):
+                  layer_name = layer.get("digest") or layer.get("blobSum") or layer.get("id")
+              else:
+                  layer_name = str(layer)
+              if not layer_name:
+                  raise SystemExit(f"Unsupported CafeGLSL layer descriptor: {layer!r}")
               candidates = [
-                  image_dir / layer,
-                  image_dir / (layer + ".tar"),
-                  image_dir / layer.replace(":", "-"),
-                  image_dir / (layer.replace(":", "-") + ".tar"),
+                  image_dir / layer_name,
+                  image_dir / (layer_name + ".tar"),
+                  image_dir / layer_name.replace(":", "-"),
+                  image_dir / (layer_name.replace(":", "-") + ".tar"),
               ]
               archive = next((p for p in candidates if p.is_file()), None)
               if archive is None:
-                  raise SystemExit(f"CafeGLSL image layer is missing: {layer}")
+                  raise SystemExit(f"CafeGLSL image layer is missing: {layer_name}")
               with tarfile.open(archive, "r:*") as tar:
                   base = root.resolve()
                   for member in tar.getmembers():
+                      if pathlib.PurePosixPath(member.name).is_absolute():
+                          raise SystemExit(f"Unsafe absolute CafeGLSL image path: {member.name}")
                       destination = (root / member.name).resolve()
                       if destination != base and base not in destination.parents:
                           raise SystemExit(f"Unsafe CafeGLSL image path: {member.name}")
