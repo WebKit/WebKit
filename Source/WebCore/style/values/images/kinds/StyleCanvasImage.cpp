@@ -146,7 +146,7 @@ InterpolationQuality CanvasImage::interpolationQualityForImageDraw(GraphicsConte
     RefPtr image = resolvedImage(renderer);
     if (!image)
         return Image::interpolationQualityForImageDraw(context, renderer, concreteObjectSize, layer, size);
-    return ImageQualityController::chooseInterpolationQuality(context, renderer, *image, layer, size);
+    return ImageQualityController::chooseInterpolationQuality(context, renderer, IntSize(image->size()), layer, size);
 }
 
 NaturalDimensions CanvasImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext&) const

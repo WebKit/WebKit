@@ -372,7 +372,7 @@ bool CrossfadeImage::canDrawAtSize(const RenderElement& renderer, const FloatSiz
 
 InterpolationQuality CrossfadeImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const void* layer, const LayoutSize& size) const
 {
-    return ImageQualityController::chooseInterpolationQualityForBitmapOfSize(context, renderer, expandedIntSize(concreteObjectSize.size()), layer, size);
+    return ImageQualityController::chooseInterpolationQuality(context, renderer, expandedIntSize(concreteObjectSize.size()), layer, size);
 }
 
 NaturalDimensions CrossfadeImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext& context) const

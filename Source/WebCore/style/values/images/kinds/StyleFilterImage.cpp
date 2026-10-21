@@ -225,7 +225,7 @@ DecodingMode FilterImage::decodingModeForImageDraw(const RenderBoxModelObject& r
 
 InterpolationQuality FilterImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize, const void* layer, const LayoutSize& size) const
 {
-    return ImageQualityController::chooseInterpolationQualityForBitmapOfSize(context, renderer, calculateImageBufferBackendSize(size, 1), layer, size);
+    return ImageQualityController::chooseInterpolationQuality(context, renderer, calculateImageBufferBackendSize(size, 1), layer, size);
 }
 
 bool FilterImage::containsCurrentColor() const

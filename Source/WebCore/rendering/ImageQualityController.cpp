@@ -121,22 +121,11 @@ std::optional<InterpolationQuality> ImageQualityController::interpolationQuality
     return std::nullopt;
 }
 
-InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, const RenderElement& renderer, Image& image, const void* layer, const LayoutSize& size)
-{
-    // If the image is not a bitmap image, then none of this is relevant and we just paint at high quality.
-    if (!(image.isBitmapImage() || image.isPDFDocumentImage()))
-        return InterpolationQuality::Default;
-
-    // Make sure to use the unzoomed image size, since if a full page zoom is in effect, the image
-    // is actually being scaled.
-    return chooseInterpolationQualityForBitmapOfSize(context, renderer, IntSize(image.width(), image.height()), layer, size);
-}
-
-InterpolationQuality ImageQualityController::chooseInterpolationQualityForBitmapOfSize(GraphicsContext& context, const RenderElement& renderer, const IntSize& imageSize, const void* layer, const LayoutSize& size)
+InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, const RenderElement& renderer, const IntSize& imageSize, const void* layer, const LayoutSize& size)
 {
     if (CheckedPtr boxModelObject = dynamicDowncast<RenderBoxModelObject>(renderer)) {
         // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return boxModelObject->view().imageQualityController().chooseInterpolationQualityForBitmapOfSize(context, const_cast<RenderBoxModelObject&>(*boxModelObject), imageSize, layer, size);
+        SUPPRESS_MEMORY_UNSAFE_CAST return boxModelObject->view().imageQualityController().chooseInterpolationQuality(context, const_cast<RenderBoxModelObject&>(*boxModelObject), imageSize, layer, size);
     }
 
     if (context.paintingDisabled())
@@ -145,7 +134,7 @@ InterpolationQuality ImageQualityController::chooseInterpolationQualityForBitmap
     return interpolationQualityFromStyle(renderer.style()).value_or(InterpolationQuality::Default);
 }
 
-InterpolationQuality ImageQualityController::chooseInterpolationQualityForBitmapOfSize(GraphicsContext& context, RenderBoxModelObject& object, const IntSize& imageSize, const void* layer, const LayoutSize& size)
+InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, RenderBoxModelObject& object, const IntSize& imageSize, const void* layer, const LayoutSize& size)
 {
     if (context.paintingDisabled())
         return InterpolationQuality::Default;

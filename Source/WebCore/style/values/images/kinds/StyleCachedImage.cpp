@@ -548,7 +548,10 @@ InterpolationQuality CachedImage::interpolationQualityForImageDraw(GraphicsConte
 {
     if (!m_cachedImage || renderSVGResource(&renderer) || legacyRenderSVGResource(&renderer))
         return Image::interpolationQualityForImageDraw(context, renderer, concreteObjectSize, layer, size);
-    return ImageQualityController::chooseInterpolationQuality(context, renderer, *protect(protect(m_cachedImage)->image()), layer, size);
+    auto contentSize = fixedContentSize(*protect(protect(m_cachedImage)->image()));
+    if (!contentSize)
+        return InterpolationQuality::Default;
+    return ImageQualityController::chooseInterpolationQuality(context, renderer, IntSize(*contentSize), layer, size);
 }
 
 bool CachedImage::usesDataProtocol() const
