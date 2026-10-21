@@ -74,6 +74,7 @@ private:
 #else
     Lock m_lock;
 #endif // ENABLE(UNFAIR_LOCK)
+    bool m_isValid WTF_GUARDED_BY_LOCK(m_lock) { true };
 #else
     const Ref<IPC::Connection> m_connection;
 #endif
@@ -84,8 +85,14 @@ void LogClient::send(T&& message)
 {
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
     Locker locker { m_lock };
-#endif
+    if (!m_isValid) [[unlikely]]
+        return;
+    auto result = m_connection->send(WTF::move(message), identifier());
+    if (result != IPC::Error::NoError) [[unlikely]]
+        m_isValid = false;
+#else
     m_connection->send(WTF::move(message), identifier());
+#endif
 }
 
 }
