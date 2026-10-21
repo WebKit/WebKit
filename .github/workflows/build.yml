@@ -742,7 +742,7 @@ jobs:
             -DWKC_ENABLE_INDEXED_DATABASE=ON \
             -DWKC_ENABLE_GAMEPAD=ON \
             -DWKC_ENABLE_WEBRTC_API=ON \
-            -DWKC_ENABLE_WEB_INSPECTOR=ON
+            -DWKC_ENABLE_WEB_INSPECTOR=ON \
             -DWKC_ENABLE_WEBGL=ON
           ccache --zero-stats || true
 
