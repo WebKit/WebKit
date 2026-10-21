@@ -236,6 +236,8 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
         // Function / Getter / Setter.
         var nameElement = document.createElement("span");
         nameElement.className = "property-name";
+        if (this.property.isPrivateProperty)
+            nameElement.classList.add("private");
         nameElement.textContent = this.property.name;
         nameElement.title = this.propertyPathString(this.thisPropertyPath());
         container.appendChild(nameElement);
