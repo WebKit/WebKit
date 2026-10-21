@@ -1,0 +1,124 @@
+{% macro window_chooser(endpoint, window, choices, suite=None, rolling=None, filter_args={}) %}
+<div class="chooser">
+  <span class="text tiny">Window</span>
+  {% for choice in choices %}
+  <a class="badge{{ ' active' if choice == window.days }}" href="{{ url_for(endpoint, days=choice, suite=suite, rolling=rolling, **filter_args) }}">{{ choice }}d</a>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro suite_chooser(endpoint, window, choices, suite, rolling=None, filter_args={}) %}
+<div class="chooser start">
+  <span class="text tiny">Suite</span>
+  <a class="badge{{ ' active' if not suite }}" href="{{ url_for(endpoint, days=window.days, rolling=rolling, **filter_args) }}">all</a>
+  {% for choice in choices %}
+  <a class="badge{{ ' active' if choice == suite }}" href="{{ url_for(endpoint, days=window.days, suite=choice, rolling=rolling, **filter_args) }}">{{ choice }}</a>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{# The queue picker is a details dropdown carrying its own GET form, the way the tests-table chip
+   filter is: every control here works without JavaScript and stays answerable by the server: this
+   page also ships `dashboard.js`, which only removes round trips it does not require. `tree` groups
+   the window's own builders three levels deep — group, then version where a version actually splits
+   the group, then builder — so a queue absent from the window is never offered. Every checkbox here
+   is independently submittable without JavaScript: ticking a group's own box selects `group=<name>`,
+   a version's box selects `version=<group>:<version>`, and a builder's box selects `builder=<name>`,
+   unioned on the server. With JavaScript, ticking a group or version also ticks every box beneath it
+   on screen, but the browser narrows what gets submitted rather than widening it: at submit time it
+   disables the descendants a ticked parent's own value already covers, so the query string that
+   leaves stays `group=<name>` — not every builder that group happens to contain today — and a queue
+   added to that group later is still covered. Unticking any single box also unticks every parent
+   above it without touching its other children, so a reader who backs one builder out of a ticked
+   group is left with the rest still individually selected. `held` carries the hidden fields for every
+   other field this page is not editing, exactly as the page's own `held_fields()` built them. #}
+{% macro queue_dropdown(endpoint, tree, selected_groups, selected_versions, selected_builders, summary, held) %}
+{%- set active = selected_groups or selected_versions or selected_builders %}
+<details class="table-filter queue-tree"{{ ' open' if active }}>
+  <summary class="{{ 'active' if active }}" aria-label="Filter by queue">{{ summary }}</summary>
+  <form class="filter-form" method="get" action="{{ url_for(endpoint) }}">
+    {{ held }}
+    <ul class="tree">
+      {% for group in tree %}
+      {%- set group_open = namespace(value=group.name in selected_groups) %}
+      {%- for version in group.versions %}
+      {%- if group.name ~ ':' ~ version.version in selected_versions %}{% set group_open.value = True %}{% endif %}
+      {%- for leaf in version.builders %}
+      {%- if leaf.builder in selected_builders %}{% set group_open.value = True %}{% endif %}
+      {%- endfor %}
+      {%- endfor %}
+      {%- for leaf in group.builders %}
+      {%- if leaf.builder in selected_builders %}{% set group_open.value = True %}{% endif %}
+      {%- endfor %}
+      <li class="node group-node">
+        <div class="row">
+          <input type="checkbox" name="group" value="{{ group.name }}" aria-label="Select {{ group.name }}"{{ ' checked' if group.name in selected_groups }}>
+          <details class="tree-node"{{ ' open' if group_open.value }}>
+            <summary>{{ group.name }}</summary>
+            {% if group.versions %}
+            <ul>
+              {% for version in group.versions %}
+              {%- set version_value = group.name ~ ':' ~ version.version %}
+              {%- set version_open = namespace(value=version_value in selected_versions) %}
+              {%- for leaf in version.builders %}
+              {%- if leaf.builder in selected_builders %}{% set version_open.value = True %}{% endif %}
+              {%- endfor %}
+              <li class="node version-node">
+                <div class="row">
+                  <input type="checkbox" name="version" value="{{ version_value }}" aria-label="Select {{ version.version or 'unversioned' }}"{{ ' checked' if version_value in selected_versions }}>
+                  <details class="tree-node"{{ ' open' if version_open.value }}>
+                    <summary>{{ version.version or 'unversioned' }}</summary>
+                    <ul>
+                      {% for leaf in version.builders %}
+                      <li class="node leaf-node"><label title="{{ leaf.convictions }} convictions"><input type="checkbox" name="builder" value="{{ leaf.builder }}"{{ ' checked' if leaf.builder in selected_builders }}> {{ leaf.builder }}</label></li>
+                      {% endfor %}
+                    </ul>
+                  </details>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <ul>
+              {% for leaf in group.builders %}
+              <li class="node leaf-node"><label title="{{ leaf.convictions }} convictions"><input type="checkbox" name="builder" value="{{ leaf.builder }}"{{ ' checked' if leaf.builder in selected_builders }}> {{ leaf.builder }}</label></li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </details>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    <span class="actions">
+      <button type="submit">Apply</button>
+    </span>
+  </form>
+</details>
+{% endmacro %}
+
+{% macro rolling_chooser(endpoint, window, choices, rolling, suite=None, filter_args={}) %}
+<div class="chooser">
+  <span class="text tiny">Rolling average</span>
+  {% for choice in choices %}
+  <a class="badge{{ ' active' if choice == rolling }}" href="{{ url_for(endpoint, days=window.days, suite=suite, rolling=choice, **filter_args) }}">{{ choice }}d</a>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro staleness(freshness, dismissed=False) %}
+{# Dismissal is a request, not a click handler: this app needs no JavaScript, and a dismissal has to
+   hold across pages. The signature travels with it so a banner that starts saying something else
+   comes back. #}
+{% if not dismissed %}
+<div class="freshness {{ 'stale' if freshness.stale }}">
+  <span class="message">Refreshed {{ freshness.refresh_age_seconds | age }}{% if freshness.newest_build_at %}, newest build {{ freshness.newest_build_at | moment }}{% endif %}{% if freshness.reason == 'never_refreshed' %} — nothing has refreshed this database yet, so every number below is over an empty or partial window{% elif freshness.reason == 'refresh_failed' %} — the last refresh died and never finished: {{ freshness.failure }}{% elif freshness.reason == 'refresh_overdue' %} — older than the refresh interval, so read the numbers below as a lower bound{% elif freshness.reason == 'classification_behind' %} — builds are ingested but classification is {{ freshness.classification_lag_seconds | age }} behind them, so recent builds count as unclassified rather than clean{% endif %}.</span>
+  <a class="dismiss" href="{{ url_for('dismiss_freshness', state=freshness.signature, next=request.full_path) }}" title="Dismiss until this changes" aria-label="Dismiss">&times;</a>
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro rate(value, part, whole, unit) %}
+<span class="value">{{ value | percent }}</span>
+<span class="text tiny denominator">{{ part | count }} of {{ whole | count }} {{ unit }}</span>
+{% endmacro %}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>{% block title %}EWS flake detection{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+  <script defer src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</head>
+<body>
+  <div class="header">
+    <div class="title"><a href="{{ url_for('landing', days=window.days) }}">EWS flake detection</a></div>
+    <div class="actions">
+      <div class="list">
+        <div class="item"><a href="{{ url_for('landing', days=window.days) }}">Overview</a></div>
+        <div class="item"><a href="{{ url_for('tests', days=window.days) }}">Tests</a></div>
+        <div class="item"><a href="{{ url_for('explore', days=window.days) }}">Explore</a></div>
+        <div class="item"><a href="{{ url_for('escaped_regressions', days=window.days) }}">Escapes</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

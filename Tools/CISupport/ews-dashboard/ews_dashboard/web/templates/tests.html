@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% from 'parts.html' import window_chooser, suite_chooser, queue_dropdown, staleness %}
+
+{% block title %}EWS flake detection — tests{% endblock %}
+
+{% block content %}
+{# Everything a link has to keep hold of to leave the page reading as it did: the table's own
+   filters and sorts, and the test open in the drilldown beside it. Not a clause that did not parse,
+   which is not part of what the page is showing. #}
+{% set filter_args = {filter_argument: asked.filter_clauses, sort_argument: asked.sort_clauses, 'test': test_filter, 'group': group, 'version': version, 'builder': builder} %}
+{# Every argument the current request carries, so a link can ask for the same page with one thing
+   changed — here, which test's drilldown is open — without dropping anything else a reader set.
+   `current_args` comes from the route rather than `request.args.to_dict(flat=False)` directly, since
+   `url_for` below takes it as keywords and a reader-named argument starting with `_` would otherwise
+   collide with `url_for`'s own `_anchor`/`_method`/`_scheme`/`_external`. #}
+{# Sorting is a link, not a click handler: this app needs no JavaScript, so a column's order is a URL
+   the server answers. A heading names one key, so clicking one replaces the order rather than pushing
+   the current key down into a secondary; two keys at once are what the filter surface and the query
+   string are for. #}
+{% macro sort_header(key, label, classes='') %}
+{%- set active = sort == key %}
+{%- set flipped = (not descending) if active else descending_first[key] %}
+<th class="sortable{{ ' ' ~ classes if classes }}{{ ' sorted' if active }}"><a href="{{ url_for('tests', days=window.days, suite=suite, **dict(filter_args, **{sort_argument: key ~ ':' ~ ('desc' if flipped else 'asc')})) }}#convicted">{{ label }}{% if active %}<span class="arrow">{{ '▾' if descending else '▴' }}</span>{% endif %}</a></th>
+{%- endmacro %}
+{# Every form on this page carries the window and scope it is not editing, since a GET form sends its
+   own fields and nothing else. #}
+{% macro held_fields(include_queue=True) %}
+<input type="hidden" name="days" value="{{ window.days }}">
+{%- if suite %}<input type="hidden" name="suite" value="{{ suite }}">{% endif %}
+{%- if test_filter %}<input type="hidden" name="test" value="{{ test_filter }}">{% endif %}
+{%- for clause in asked.filter_clauses %}<input type="hidden" name="{{ filter_argument }}" value="{{ clause }}">{% endfor %}
+{%- for clause in asked.sort_clauses %}<input type="hidden" name="{{ sort_argument }}" value="{{ clause }}">{% endfor %}
+{%- if include_queue %}
+{%- for chosen in group %}<input type="hidden" name="group" value="{{ chosen }}">{% endfor %}
+{%- for chosen in version %}<input type="hidden" name="version" value="{{ chosen }}">{% endfor %}
+{%- for chosen in builder %}<input type="hidden" name="builder" value="{{ chosen }}">{% endfor %}
+{%- endif %}
+{%- endmacro %}
+{# The header is the only thing that says how many rows the pane holds, and the server wrote it after
+   taking the capped set it is describing, so the two cannot drift apart. A cap that cut the set says
+   so in words rather than leaving a reader to notice the table stopped short of the total. #}
+{% macro convicted_summary() %}
+{%- set shown = convicted.tests | length %}
+{%- if asked.narrowing %}
+{%- if convicted.truncated %}Showing the first {{ shown | count }} of {{ convicted.total | count }} tests matching {{ asked.filter_clauses | join(' and ') }}.{% else %}All {{ shown | count }} tests matching {{ asked.filter_clauses | join(' and ') }}.{% endif %}
+{%- elif convicted.truncated %}Showing the first {{ shown | count }} of {{ convicted.total | count }} convicted tests.
+{%- else %}All {{ convicted.total | count }} convicted tests.
+{%- endif %}
+{%- endmacro %}
+{{ staleness(freshness, freshness_dismissed) }}
+{# A clause that did not parse is dropped rather than refused, the way an unknown column already is,
+   because a copied URL is the only state this page has and a 400 would take the whole of it away for
+   one bad clause. Said once and in the open, since a filter that vanished silently would read as a
+   filter that matched everything. #}
+{% if asked.rejected %}
+<p class="note">Ignored {{ asked.rejected | length }} filter{{ '' if asked.rejected | length == 1 else 's' }} this page cannot read: {{ asked.rejected | join(', ') }}. Everything below is filtered by the rest.</p>
+{% endif %}
+
+<div class="row headline">
+  <div class="col-4">
+    <span class="text large">Tests</span>
+    <span class="text tiny">{% if suite %}{{ suite }}, {% endif %}{{ queue_summary }}, last {{ window.days }} days</span>
+  </div>
+  <div class="col-8">
+    <div class="chooser groups">
+      {{ queue_dropdown('tests', queue_tree, group, version, builder, queue_summary, held_fields(include_queue=False)) }}
+      {{ suite_chooser('tests', window, suite_choices, suite, filter_args=filter_args) }}
+      {{ window_chooser('tests', window, window_choices, suite=suite, filter_args=filter_args) }}
+    </div>
+  </div>
+</div>
+
+<div class="row tests-layout">
+<div class="section col-7" id="convicted">
+  <div class="header">
+    <div class="title">Convicted tests</div>
+    <span class="text tiny">{{ convicted_summary() }}</span>
+    {% if asked.narrowing %}<a class="badge" href="{{ url_for('tests', days=window.days, suite=suite, **dict(filter_args, **{filter_argument: None})) }}">clear</a>{% endif %}
+    {# A details in the header rather than an overlay: a :target overlay has neither an escape key nor
+       a focus trap in an app with no JavaScript. Inside it, each filter and each sort is a chip of
+       plain dropdowns built from the registry, because the canonical grammar is one string a script
+       would otherwise have to compose from three controls; the form instead submits the three exploded
+       and `filters.exploded_filter_specifications`/`exploded_sort_specifications` turn them back into
+       that string, which is all a route ever hands to `parse`. #}
+    {%- set filter_active = asked.narrowing or asked.rejected %}
+    <details class="table-filter"{{ ' open' if filter_active }}>
+      <summary class="{{ 'active' if filter_active }}" aria-label="Filter and sort">⇅{% if filter_active %}{{ asked.filter_clauses | length }}{% endif %}</summary>
+      <form class="filter-form chip-form" method="get" action="{{ url_for('tests') }}" id="table-filter-form">
+        {{ held_fields() }}
+        <div class="chip-group">
+          <span class="text tiny chip-group-label">Filter</span>
+          <span class="chip-row" data-chip-kind="filter" data-table="{{ tests_table.name }}">
+            {% for chip in filter_chips %}
+            <span class="chip">
+              <select name="{{ filter_chip_argument(tests_table, chip.index, 'column') }}" class="chip-column" aria-label="Filter {{ loop.index }} column">
+                <option value="">No filter{{ ' (choose to remove)' if chip.column }}</option>
+                {%- for name, column in tests_table.columns.items() if column.filterable %}
+                <option value="{{ name }}"{{ ' selected' if chip.column == name }}>{{ column.label }}</option>
+                {%- endfor %}
+              </select>
+              <select name="{{ filter_chip_argument(tests_table, chip.index, 'op') }}" class="chip-operator" aria-label="Filter {{ loop.index }} operator">
+                <option value=""></option>
+                {%- for operator in chip.operators %}
+                <option value="{{ operator.name }}"{{ ' selected' if chip.operator == operator.name }}>{{ operator.label }}</option>
+                {%- endfor %}
+              </select>
+              {% if chip.vocabulary %}
+              {% if chip.many_values %}
+              <select name="{{ filter_chip_argument(tests_table, chip.index, 'value') }}" class="chip-value" aria-label="Filter {{ loop.index }} value" multiple>
+                {%- for choice in chip.vocabulary %}
+                <option value="{{ choice }}"{{ ' selected' if choice in chip.values }}>{{ choice }}</option>
+                {%- endfor %}
+              </select>
+              {% else %}
+              <select name="{{ filter_chip_argument(tests_table, chip.index, 'value') }}" class="chip-value" aria-label="Filter {{ loop.index }} value">
+                <option value=""></option>
+                {%- for choice in chip.vocabulary %}
+                <option value="{{ choice }}"{{ ' selected' if chip.value == choice }}>{{ choice }}</option>
+                {%- endfor %}
+              </select>
+              {% endif %}
+              {% else %}
+              <input type="{{ chip.input_type }}" name="{{ filter_chip_argument(tests_table, chip.index, 'value') }}" class="chip-value" value="{{ chip.value }}" aria-label="Filter {{ loop.index }} value">
+              {% endif %}
+            </span>
+            {% endfor %}
+          </span>
+          <button type="submit" name="{{ add_filter_argument }}" value="1" class="badge chip-add">+ filter</button>
+        </div>
+        <div class="chip-group">
+          <span class="text tiny chip-group-label">Sort</span>
+          <span class="chip-row" data-chip-kind="sort" data-table="{{ tests_table.name }}">
+            {% for chip in sort_chips %}
+            <span class="chip">
+              <select name="{{ sort_chip_argument(tests_table, chip.index, 'column') }}" class="chip-column" aria-label="Sort {{ loop.index }} column">
+                <option value="">No sort{{ ' (choose to remove)' if chip.column }}</option>
+                {%- for name in tests_table.sortable_names %}
+                <option value="{{ name }}"{{ ' selected' if chip.column == name }}>{{ tests_table.columns[name].label }}</option>
+                {%- endfor %}
+              </select>
+              <select name="{{ sort_chip_argument(tests_table, chip.index, 'direction') }}" class="chip-direction" aria-label="Sort {{ loop.index }} direction">
+                <option value="asc"{{ ' selected' if chip.direction == 'asc' }}>Ascending</option>
+                <option value="desc"{{ ' selected' if chip.direction == 'desc' }}>Descending</option>
+              </select>
+            </span>
+            {% endfor %}
+          </span>
+          <button type="submit" name="{{ add_sort_argument }}" value="1" class="badge chip-add">+ sort</button>
+        </div>
+        <span class="actions">
+          <button type="submit">Apply</button>
+          {% if asked.narrowing or asked.sort_clauses %}<a class="badge" href="{{ url_for('tests', days=window.days, suite=suite, **dict(filter_args, **{filter_argument: None, sort_argument: None})) }}">reset</a>{% endif %}
+        </span>
+        <span class="text tiny vocabulary">A chip set back to “No filter” or “No sort” drops out the next time this form is applied.</span>
+      </form>
+    </details>
+  </div>
+  <div class="content">
+    {% if not convicted.tests %}
+    {% if asked.narrowing %}
+    <div class="placeholder">No convicted test matches {{ asked.filter_clauses | join(' and ') }}.</div>
+    {% else %}
+    <div class="placeholder">Nothing convicted in this window.</div>
+    {% endif %}
+    {% else %}
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Convicted tests table">
+    <table class="table full-width convicted-tests">
+      <thead>
+        <tr>
+          {{ sort_header('test', 'Test') }}
+          <th>Flake type</th>
+          {{ sort_header('convictions', 'Convictions', 'numeric') }}
+          {{ sort_header('queues', 'Queues', 'numeric') }}
+          {{ sort_header('last_seen', 'Last seen', 'when') }}
+          <th>Last build</th><th>Last PR</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for test in convicted.tests %}
+        <tr class="{{ 'selected' if test_filter == test.test_name }}">
+          <td>
+            <a href="{{ url_for('tests', **dict(current_args, test=[test.test_name])) }}">{{ test.test_name }}</a>
+            <a class="text tiny" href="{{ links.test_investigation(test.configuration, test.test_name) }}">all configurations</a>
+          </td>
+          <td>{% for rule in test.rules %}<span title="{{ rule_descriptions[rule] }}">{{ rule }}</span>{{ ', ' if not loop.last }}{% endfor %}</td>
+          <td class="numeric">{{ test.convictions | count }}</td>
+          <td class="numeric">{{ test.queues | count }}</td>
+          <td class="when text tiny">{{ test.last_seen | day }}<span class="clock">{{ test.last_seen | clock }}</span></td>
+          <td class="text tiny">
+            <a href="{{ links.build(test.builder_id, test.build_number) }}">#{{ test.build_number }}</a>
+          </td>
+          <td class="text tiny">
+            {% if test.pr_id %}<a href="{{ links.pull_request(test.pr_id) }}">{{ test.pr_id }}</a>{% else %}—{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if test_filter %}
+<div class="section detail-pane col-5" id="test-detail">
+  <div class="header">
+    {# The pane spans every configuration the test was convicted under, not the one configuration a
+       single row's history link would name, so the title links to the unfiltered timeline
+       (`test_investigation`) rather than `test_history`. That needs a configuration to read the
+       suite off of; the first conviction listed below stands in for all of them. #}
+    <div class="title">{% if drilldown.convictions %}<a href="{{ links.test_investigation(drilldown.convictions[0].configuration, test_filter) }}">{{ test_filter }}</a>{% else %}{{ test_filter }}{% endif %}</div>
+    {% if drilldown.truncated %}<span class="text tiny">Showing the first {{ drilldown.convictions | length | count }} of {{ drilldown.total | count }} convictions.</span>{% endif %}
+    <a class="badge" href="{{ url_for('tests', **dict(current_args, test=None)) }}">close</a>
+  </div>
+  <div class="content">
+    {% if not drilldown.convictions %}
+    <div class="placeholder">No convictions of “{{ test_filter }}” in this window.</div>
+    {% else %}
+    <div class="table-scroll" tabindex="0" role="region" aria-label="{{ test_filter }} convictions table">
+    <table class="table full-width test-convictions">
+      <thead>
+        <tr><th>Build</th><th>Queue</th><th>Flake type</th><th class="when">When</th><th>PR</th></tr>
+      </thead>
+      <tbody>
+        {% for conviction in drilldown.convictions %}
+        <tr>
+          <td><a href="{{ links.build(conviction.builder_id, conviction.build_number) }}">#{{ conviction.build_number }}</a></td>
+          <td><a href="{{ url_for('tests', days=window.days, suite=suite, **dict(filter_args, group=(), version=(), builder=(conviction.builder,))) }}">{{ conviction.builder }}</a></td>
+          <td><span title="{{ rule_descriptions[conviction.rule] }}">{{ conviction.rule }}</span></td>
+          <td class="when text tiny">{{ conviction.started_at | moment }}</td>
+          <td class="text tiny">
+            {% if conviction.pr_id %}<a href="{{ links.pull_request(conviction.pr_id) }}">{{ conviction.pr_id }}</a>{% else %}—{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+</div>
+
+<details class="section legend-pane" open>
+  <summary class="header"><span class="title">Legend</span></summary>
+  <div class="content">
+    <div class="legend-group">
+      <div class="legend-group-title text tiny">Flake type — why the classifier convicted a test</div>
+      <table class="table full-width">
+        <thead><tr><th>Flake type</th><th>What it means</th><th class="numeric">Convictions</th></tr></thead>
+        <tbody>
+          {% for rule in flake_types %}
+          <tr>
+            <td><a class="legend-entry" href="{{ url_for('tests', days=window.days, suite=suite, **dict(filter_args, **{filter_argument: 'rule:anyof:' ~ rule})) }}">{{ rule }}</a></td>
+            <td class="text tiny">{{ rule_descriptions[rule] }}</td>
+            <td class="numeric">{{ rule_counts[rule] | count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</details>
+
+{# The chip form's registry, read by dashboard.js and nowhere duplicated: one script block built from
+   the same `filters` table object the server validates against. Placed after the table rather than
+   inside the form, so a column's vocabulary — which a filter chip's value select can also render —
+   appears on the page in the order the visible table itself puts it in, not pinned ahead of it by a
+   JSON payload no reader sees. #}
+<script type="application/json" id="filter-registry">
+{
+  "filterArgument": {{ filter_argument | tojson }},
+  "sortArgument": {{ sort_argument | tojson }},
+  "anyOperators": [{% for operator in all_operators %}{"name": {{ operator.name | tojson }}, "label": {{ operator.label | tojson }}, "arity": {{ operator.arity | tojson }}}{{ ',' if not loop.last }}{% endfor %}],
+  "columns": {
+    {%- for name, column in tests_table.columns.items() %}
+    {{ name | tojson }}: {
+      "label": {{ column.label | tojson }},
+      "kind": {{ column.kind | tojson }},
+      "filterable": {{ column.filterable | tojson }},
+      "sortable": {{ column.sortable | tojson }},
+      "inputType": {{ input_types.get(column.kind, 'text') | tojson }},
+      "vocabulary": {{ column.vocabulary | tojson if column.vocabulary else 'null' }},
+      "operators": [{% for operator in column.operators.values() %}{"name": {{ operator.name | tojson }}, "label": {{ operator.label | tojson }}, "arity": {{ operator.arity | tojson }}}{{ ',' if not loop.last }}{% endfor %}]
+    }{{ ',' if not loop.last }}
+    {%- endfor %}
+  }
+}
+</script>
+{% endblock %}
