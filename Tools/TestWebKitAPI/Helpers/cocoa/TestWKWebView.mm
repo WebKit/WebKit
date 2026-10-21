@@ -1127,6 +1127,7 @@ static UIWindowScene *windowScene()
     [hostWindow contentView].wantsLayer = YES;
     [[hostWindow contentView] addSubview:self];
     [hostWindow makeKeyAndOrderFront:self];
+    [self _setWindowOcclusionDetectionEnabled:NO];
 #else
     hostWindow = adoptNS([[TestWKWebViewHostWindow alloc] initWithWebView:self frame:frame]);
     if (UIWindowScene *windowScene = ::windowScene())

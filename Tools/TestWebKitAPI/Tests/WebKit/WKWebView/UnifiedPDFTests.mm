@@ -684,7 +684,6 @@ public:
         navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [navigationDelegate allowAnyTLSCertificate];
         webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
-        [webView _setWindowOcclusionDetectionEnabled:NO];
         [webView setNavigationDelegate:navigationDelegate];
         [[webView window] makeKeyAndOrderFront:nil];
         [[webView window] orderFrontRegardless];
@@ -920,7 +919,6 @@ public:
         navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [navigationDelegate allowAnyTLSCertificate];
         webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
-        [webView _setWindowOcclusionDetectionEnabled:NO];
         [webView setNavigationDelegate:navigationDelegate];
         [[webView window] makeKeyAndOrderFront:nil];
         [[webView window] orderFrontRegardless];
@@ -1156,7 +1154,6 @@ INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFLookUpAfterPinch, testing::Value
 UNIFIED_PDF_TEST(SetPageZoomFactorDoesNotBailIncorrectly)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF(true).get()]);
-    [webView _setWindowOcclusionDetectionEnabled:NO];
     [webView loadData:testPDFData().get() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
     [webView _test_waitForDidFinishNavigation];
 
@@ -1200,7 +1197,6 @@ UNIFIED_PDF_TEST(PDFHUDMultiplePluginsDoNotInterceptHitTesting)
     RetainPtr configuration = configurationForWebViewTestingUnifiedPDF(true);
     [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
-    [webView _setWindowOcclusionDetectionEnabled:NO];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
     [webView _test_waitForDidFinishNavigation];
     [webView waitForNextPresentationUpdate];
@@ -1256,7 +1252,6 @@ static void checkFrame(NSRect frame, CGFloat x, CGFloat y, CGFloat width, CGFloa
 UNIFIED_PDF_TEST(PDFHUDMainResourcePDF)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF(true).get()]);
-    [webView _setWindowOcclusionDetectionEnabled:NO];
     [webView loadData:testPDFData().get() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
     EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
@@ -1305,7 +1300,6 @@ UNIFIED_PDF_TEST(PDFHUDMoveIFrame)
     RetainPtr configuration = configurationForWebViewTestingUnifiedPDF(true);
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView _setWindowOcclusionDetectionEnabled:NO];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
     EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
@@ -1370,7 +1364,6 @@ UNIFIED_PDF_TEST(PDFHUDNestedIFrames)
     RetainPtr configuration = configurationForWebViewTestingUnifiedPDF(true);
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView _setWindowOcclusionDetectionEnabled:NO];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
     EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
@@ -1405,7 +1398,6 @@ UNIFIED_PDF_TEST(PDFHUDIFrame3DTransform)
     RetainPtr configuration = configurationForWebViewTestingUnifiedPDF(true);
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView _setWindowOcclusionDetectionEnabled:NO];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
     EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
@@ -1437,7 +1429,6 @@ UNIFIED_PDF_TEST(PDFHUDMultipleIFrames)
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
-    [webView _setWindowOcclusionDetectionEnabled:NO];
     EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
     EXPECT_EQ([webView _pdfHUDs].count, 2u);
@@ -1519,7 +1510,6 @@ public:
         navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [navigationDelegate allowAnyTLSCertificate];
         webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
-        [webView _setWindowOcclusionDetectionEnabled:NO];
         [[webView window] makeKeyAndOrderFront:nil];
         [[webView window] orderFrontRegardless];
         [webView setNavigationDelegate:navigationDelegate];
@@ -1649,7 +1639,6 @@ UNIFIED_PDF_TEST(PDFHUDLoadPDFTypeWithPluginsBlocked)
     RetainPtr configuration = configurationForWebViewTestingUnifiedPDF(true);
     [configuration _setOverrideContentSecurityPolicy:@"object-src 'none'"];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView _setWindowOcclusionDetectionEnabled:NO];
     [webView loadData:testPDFData().get() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
     EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];

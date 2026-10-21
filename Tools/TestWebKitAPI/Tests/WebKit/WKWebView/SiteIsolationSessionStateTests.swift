@@ -68,9 +68,6 @@ struct SiteIsolationSessionStateTests {
             let (webView, _) = siteIsolatedWebViewAndDelegate(configuration: .init(httpsProxyFor: serverConfiguration))
             webView.navigationDelegate = navigationDelegate
             webView.uiDelegate = alerts
-            #if WTF_PLATFORM_MAC
-            webView._windowOcclusionDetectionEnabled = false
-            #endif
 
             webView.load(URLRequest(url: try #require(URL(string: "https://example.com/example"))))
             try await navigationDelegate.waitForDidFinishNavigation()

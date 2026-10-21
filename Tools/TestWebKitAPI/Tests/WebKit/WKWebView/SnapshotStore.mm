@@ -62,7 +62,6 @@ using namespace TestWebKitAPI;
     if (self) {
         [self _disableBackForwardSnapshotVolatilityForTesting];
         [self setAllowsBackForwardNavigationGestures:YES];
-        [self _setWindowOcclusionDetectionEnabled:NO];
 
         [self.window orderBack:nil];
     }

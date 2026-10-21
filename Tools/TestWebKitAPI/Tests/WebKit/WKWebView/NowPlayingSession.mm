@@ -75,10 +75,6 @@ static RetainPtr<TestWKWebView> createWebViewInItsOwnWebContentProcess()
     // each process elects its own best session, so only the GPU process can pick between them.
     [configuration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
-#if PLATFORM(MAC)
-    // Both windows share an origin, so the second occludes the first.
-    [webView _setWindowOcclusionDetectionEnabled:NO];
-#endif
     return webView;
 }
 

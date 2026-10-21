@@ -68,9 +68,6 @@ public:
     void createWebView()
     {
         webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
-#if PLATFORM(MAC)
-        [webView _setWindowOcclusionDetectionEnabled:NO];
-#endif
         [webView setVisibility:YES];
     }
 

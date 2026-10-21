@@ -10229,9 +10229,6 @@ TEST(SiteIsolation, AutoplayPolicyInRemoteFrameFollowsMainFrame)
     __block _WKWebsiteAutoplayPolicy subframePolicy = _WKWebsiteAutoplayPolicyAllow;
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
-#if PLATFORM(MAC)
-    [webView _setWindowOcclusionDetectionEnabled:NO];
-#endif
     [navigationDelegate setDecidePolicyForNavigationActionWithPreferences:^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         [preferences _setAutoplayPolicy:[action.request.URL.host isEqualToString:@"webkit.org"] ? subframePolicy : mainFramePolicy];
         completionHandler(WKNavigationActionPolicyAllow, preferences);
@@ -10285,7 +10282,6 @@ TEST(SiteIsolation, RemoteFrameMediaInheritsUserGestureFromMainFrame)
     WKPreferencesSetMediaUserGestureInheritsFromDocument((__bridge WKPreferencesRef)[configuration preferences], true);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
-    [webView _setWindowOcclusionDetectionEnabled:NO];
     [navigationDelegate setDecidePolicyForNavigationActionWithPreferences:^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         [preferences _setAutoplayPolicy:_WKWebsiteAutoplayPolicyAllowWithoutSound];
         completionHandler(WKNavigationActionPolicyAllow, preferences);
@@ -11300,9 +11296,7 @@ TEST(SiteIsolation, Events)
     Util::runFor(Seconds(0.1));
 
     NSArray *expectedExampleMessages = @[
-#if PLATFORM(IOS_FAMILY)
         @"pagereveal",
-#endif
         @"load",
         @"pageshow",
     ];
@@ -11314,9 +11308,7 @@ TEST(SiteIsolation, Events)
     NSArray *expectedWebKitMessages = @[
         @"load",
         @"pageshow",
-#if PLATFORM(IOS_FAMILY)
         @"pagereveal",
-#endif
         @"resize",
         @"pageswap",
     ];
@@ -11328,9 +11320,7 @@ TEST(SiteIsolation, Events)
     NSArray *expectedAppleMessages = @[
         @"load",
         @"pageshow",
-#if PLATFORM(IOS_FAMILY)
         @"pagereveal",
-#endif
     ];
     if (![appleMessages isEqualToArray:expectedAppleMessages]) {
         WTFLogAlways("Actual apple messages: %@", appleMessages.get());

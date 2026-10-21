@@ -269,7 +269,6 @@ public:
         navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [navigationDelegate allowAnyTLSCertificate];
         webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 600) configuration:configuration.get() addToWindow:YES]);
-        [webView _setWindowOcclusionDetectionEnabled:NO];
         [webView setNavigationDelegate:navigationDelegate.get()];
         [[webView window] makeKeyAndOrderFront:nil];
         [[webView window] orderFrontRegardless];
