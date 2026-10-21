@@ -48,6 +48,9 @@ static RefPtr<WebCore::RealtimeMediaSource> createMicrophoneSource(const String&
 
 TEST(CoreAudioCaptureSource, ResumedSourceCapturesFromItsOwnMicrophone)
 {
+#if ASSERT_ENABLED
+    WebCore::CoreAudioCaptureUnit::allowStarting();
+#endif
     WebCore::MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(true);
 
     RefPtr first = createMicrophoneSource(firstMicrophoneID);
