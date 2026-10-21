@@ -154,6 +154,8 @@ ImageBufferSkiaAcceleratedBackend::ImageBufferSkiaAcceleratedBackend(const Param
 
 ImageBufferSkiaAcceleratedBackend::~ImageBufferSkiaAcceleratedBackend()
 {
+    PlatformDisplay::makeSkiaGLContextCurrentIfExists();
+
     // Unwind the surface context's save/restore stack before destruction
     if (m_canvasRecordingContext)
         m_canvasRecordingContext->unwindStateStack();

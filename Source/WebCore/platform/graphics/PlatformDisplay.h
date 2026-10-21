@@ -119,6 +119,7 @@ public:
 
 #if USE(SKIA)
     GLContext* skiaGLContext();
+    static void makeSkiaGLContextCurrentIfExists();
     void setSkiaGLContextForCurrentThread(std::unique_ptr<GLContext>&&);
     GrDirectContext* skiaGrContext() const;
     unsigned msaaSampleCount() const;

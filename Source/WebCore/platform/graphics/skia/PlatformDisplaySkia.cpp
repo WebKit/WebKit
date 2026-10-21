@@ -382,6 +382,19 @@ GLContext* PlatformDisplay::skiaGLContext()
 #endif
 }
 
+void PlatformDisplay::makeSkiaGLContextCurrentIfExists()
+{
+#if PLATFORM(WIN)
+    auto* display = &sharedDisplay();
+#else
+    auto* display = sharedDisplayIfExists();
+    if (!display)
+        return;
+#endif
+    if (auto* glContext = display->skiaGLContext())
+        glContext->makeContextCurrent();
+}
+
 void PlatformDisplay::setSkiaGLContextForCurrentThread(std::unique_ptr<GLContext>&& glContext)
 {
     if (!glContext) {
