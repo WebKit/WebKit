@@ -14,6 +14,7 @@
 #include <gx2/enum.h>
 #include <gx2/shaders.h>
 #include <gx2r/buffer.h>
+#include <array>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -52,6 +53,15 @@ struct WUTBufferResources {
         std::string shaderInputName;
     };
     std::unordered_map<uint8_t, AttributeDescriptor> attributes;
+
+    // WebGL's generic (array-disabled) vertex attribute values are context
+    // state, not part of a VAO. Start with the GL-defined (0, 0, 0, 1) value.
+    std::array<std::array<float, 4>, 32> currentAttributeValues = [] {
+        std::array<std::array<float, 4>, 32> values { };
+        for (auto& value : values)
+            value = { 0.0f, 0.0f, 0.0f, 1.0f };
+        return values;
+    }();
 
     // These are the active linked-program objects. The owner keeps the shader
     // objects alive; this structure owns only the fetch-shader program memory.
