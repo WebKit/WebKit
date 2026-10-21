@@ -31,7 +31,6 @@
 #include "GCDeferralContextInlines.h"
 #include "GetterSetter.h"
 #include "HeapAnalyzer.h"
-#include "IndexingHeaderInlines.h"
 #include "JSCInlines.h"
 #include "JSCellButterfly.h"
 #include "JSCustomGetterFunction.h"
@@ -92,7 +91,7 @@ ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(Visitor& v
     bool hasIndexingHeader = structure->hasIndexingHeader(this);
     size_t preCapacity;
     if (hasIndexingHeader)
-        preCapacity = butterfly->indexingHeader()->preCapacity(structure);
+        preCapacity = butterfly->preCapacity(structure);
     else
         preCapacity = 0;
     
@@ -3847,7 +3846,7 @@ void JSObject::reallocateAndShrinkButterfly(VM& vm, unsigned length)
     ASSERT(hasContiguous(indexingType()) || hasInt32(indexingType()) || hasDouble(indexingType()) || hasUndecided(indexingType()));
     ASSERT(m_butterfly->vectorLength() > length);
     ASSERT(m_butterfly->publicLength() >= length);
-    ASSERT(!m_butterfly->indexingHeader()->preCapacity(structure()));
+    ASSERT(!m_butterfly->preCapacity(structure()));
 
     DeferGC deferGC(vm);
     Butterfly* newButterfly = butterfly()->resizeArray(vm, this, structure(), 0, ArrayStorage::sizeFor(length));
@@ -4049,8 +4048,8 @@ void JSObject::shiftButterflyAfterFlattening(const ConcurrentJSLocker&, VM& vm, 
     size_t indexingPayloadSizeInBytes;
     bool hasIndexingHeader = this->hasIndexingHeader();
     if (hasIndexingHeader) [[unlikely]] {
-        preCapacity = oldButterfly->indexingHeader()->preCapacity(structure);
-        indexingPayloadSizeInBytes = oldButterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
+        preCapacity = oldButterfly->preCapacity(structure);
+        indexingPayloadSizeInBytes = oldButterfly->indexingPayloadSizeInBytes(structure);
     } else {
         preCapacity = 0;
         indexingPayloadSizeInBytes = 0;

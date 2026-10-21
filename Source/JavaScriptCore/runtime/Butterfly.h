@@ -179,10 +179,16 @@ public:
     static Butterfly* create(VM&, JSObject* intendedOwner, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, const IndexingHeader&, size_t indexingPayloadSizeInBytes);
     static Butterfly* create(VM&, JSObject* intendedOwner, Structure*);
     
+    // Don't use the returned IndexingHeader on a butterfly that has none, as with an object with no indexed elements: in that case
+    // the returned address is past the end of the allocation. indexingHeader() can't check that, because it never sees the Structure.
     IndexingHeader* indexingHeader() { return IndexingHeader::from(this); }
     const IndexingHeader* indexingHeader() const { return IndexingHeader::from(this); }
-    PropertyStorage propertyStorage() { return indexingHeader()->propertyStorage(); }
-    ConstPropertyStorage propertyStorage() const { return indexingHeader()->propertyStorage(); }
+
+    size_t preCapacity(Structure*);
+    size_t indexingPayloadSizeInBytes(Structure*);
+
+    PropertyStorage propertyStorage() { return reinterpret_cast_ptr<PropertyStorage>(this) + indexOfPropertyStorage(); }
+    ConstPropertyStorage propertyStorage() const { return reinterpret_cast_ptr<ConstPropertyStorage>(this) + indexOfPropertyStorage(); }
     
     uint32_t publicLength() const { return indexingHeader()->publicLength(); }
     uint32_t vectorLength() const { return indexingHeader()->vectorLength(); }
@@ -215,7 +221,8 @@ public:
     static constexpr ptrdiff_t offsetOfPropertyStorage() { return -static_cast<ptrdiff_t>(sizeof(IndexingHeader)); }
     constexpr static int indexOfPropertyStorage()
     {
-        ASSERT(sizeof(IndexingHeader) == sizeof(EncodedJSValue));
+        static_assert(sizeof(IndexingHeader) == sizeof(EncodedJSValue));
+        static_assert(sizeof(WriteBarrierBase<Unknown>) == sizeof(IndexingHeader));
         return -1;
     }
 

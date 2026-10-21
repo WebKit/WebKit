@@ -97,7 +97,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
         array->putDirectOffset(vm, RegExpMatchesArrayInputPropertyOffset, input);
         array->putDirectOffset(vm, RegExpMatchesArrayGroupsPropertyOffset, hasNamedCaptures ? groups : jsUndefined());
 
-        ASSERT(!array->butterfly()->indexingHeader()->preCapacity(matchStructure));
+        ASSERT(!array->butterfly()->preCapacity(matchStructure));
         auto capacity = matchStructure->outOfLineCapacity();
         auto size = matchStructure->outOfLineSize();
         gcSafeZeroMemory(static_cast<JSValue*>(array->butterfly()->base(0, capacity)), (capacity - size) * sizeof(JSValue));
@@ -109,7 +109,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
 
             indicesArray->putDirectOffset(vm, RegExpMatchesIndicesGroupsPropertyOffset, indicesGroups ? indicesGroups : jsUndefined());
 
-            ASSERT(!indicesArray->butterfly()->indexingHeader()->preCapacity(indicesStructure));
+            ASSERT(!indicesArray->butterfly()->preCapacity(indicesStructure));
             auto indicesCapacity = indicesStructure->outOfLineCapacity();
             auto indicesSize = indicesStructure->outOfLineSize();
             gcSafeZeroMemory(static_cast<JSValue*>(indicesArray->butterfly()->base(0, indicesCapacity)), (indicesCapacity - indicesSize) * sizeof(JSValue));

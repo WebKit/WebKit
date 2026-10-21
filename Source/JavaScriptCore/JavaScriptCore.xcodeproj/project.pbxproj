@@ -487,7 +487,6 @@
 		0FB7F39715ED8E4600F167B2 /* Butterfly.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F38B15ED8E3800F167B2 /* Butterfly.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39815ED8E4600F167B2 /* ButterflyInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F38C15ED8E3800F167B2 /* ButterflyInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39915ED8E4600F167B2 /* IndexingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F38D15ED8E3800F167B2 /* IndexingHeader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FB7F39A15ED8E4600F167B2 /* IndexingHeaderInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F38E15ED8E3800F167B2 /* IndexingHeaderInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39B15ED8E4600F167B2 /* IndexingType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F38F15ED8E3800F167B2 /* IndexingType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39C15ED8E4600F167B2 /* PropertyStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F39015ED8E3800F167B2 /* PropertyStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39D15ED8E4600F167B2 /* TypeError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F39115ED8E3800F167B2 /* TypeError.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3388,7 +3387,6 @@
 		0FB7F38B15ED8E3800F167B2 /* Butterfly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Butterfly.h; sourceTree = "<group>"; };
 		0FB7F38C15ED8E3800F167B2 /* ButterflyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButterflyInlines.h; sourceTree = "<group>"; };
 		0FB7F38D15ED8E3800F167B2 /* IndexingHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexingHeader.h; sourceTree = "<group>"; };
-		0FB7F38E15ED8E3800F167B2 /* IndexingHeaderInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexingHeaderInlines.h; sourceTree = "<group>"; };
 		0FB7F38F15ED8E3800F167B2 /* IndexingType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexingType.h; sourceTree = "<group>"; };
 		0FB7F39015ED8E3800F167B2 /* PropertyStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyStorage.h; sourceTree = "<group>"; };
 		0FB7F39115ED8E3800F167B2 /* TypeError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeError.h; sourceTree = "<group>"; };
@@ -8577,7 +8575,6 @@
 				E3285D8E28DD8317008E0090 /* ImportMap.cpp */,
 				E3CDCFAE28DD065A00215350 /* ImportMap.h */,
 				0FB7F38D15ED8E3800F167B2 /* IndexingHeader.h */,
-				0FB7F38E15ED8E3800F167B2 /* IndexingHeaderInlines.h */,
 				0F13E04C16164A1B00DC8DE7 /* IndexingType.cpp */,
 				0FB7F38F15ED8E3800F167B2 /* IndexingType.h */,
 				14386A761DD6989C008652C4 /* IndirectEvalExecutable.cpp */,
@@ -11488,7 +11485,6 @@
 				A382C5312667111D0042CD99 /* InByVariant.h in Headers */,
 				C25F8BCE157544A900245B71 /* IncrementalSweeper.h in Headers */,
 				0FB7F39915ED8E4600F167B2 /* IndexingHeader.h in Headers */,
-				0FB7F39A15ED8E4600F167B2 /* IndexingHeaderInlines.h in Headers */,
 				0FB7F39B15ED8E4600F167B2 /* IndexingType.h in Headers */,
 				14386A791DD6989C008652C4 /* IndirectEvalExecutable.h in Headers */,
 				0FF8BDEB1AD4CF7100DFE884 /* InferredValue.h in Headers */,

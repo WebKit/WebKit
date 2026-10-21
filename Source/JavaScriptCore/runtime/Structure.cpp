@@ -1042,7 +1042,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
             (inlineCapacity() - inlineSize()) * sizeof(EncodedJSValue));
 
         if (Butterfly* butterfly = object->butterfly()) {
-            size_t preCapacity = butterfly->indexingHeader()->preCapacity(this);
+            size_t preCapacity = butterfly->preCapacity(this);
             void* base = butterfly->base(preCapacity, beforeOutOfLineCapacity);
             void* startOfPropertyStorageSlots = reinterpret_cast<EncodedJSValue*>(base) + preCapacity;
             gcSafeZeroMemory(static_cast<JSValue*>(startOfPropertyStorageSlots), (beforeOutOfLineCapacity - outOfLineSize()) * sizeof(EncodedJSValue));

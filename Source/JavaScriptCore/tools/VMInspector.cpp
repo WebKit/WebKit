@@ -560,8 +560,6 @@ void VMInspector::dumpCellMemoryToStream(JSCell* cell, PrintStream& out)
                 ? butterfly->base(preCapacity, propertyCapacity)
                 : butterfly->base(structure);
 
-            unsigned publicLength = butterfly->publicLength();
-            unsigned vectorLength = butterfly->vectorLength();
             size_t butterflyCellSize = MarkedSpace::optimalSizeFor(butterflySize);
 
             size_t endOfIndexedPropertiesIndex = butterflySize / sizeof(EncodedJSValue);
@@ -569,11 +567,13 @@ void VMInspector::dumpCellMemoryToStream(JSCell* cell, PrintStream& out)
 
             INDENT out.println("base ", RawPointer(base));
             INDENT out.println("hasIndexingHeader ", (hasIndexingHeader ? "YES" : "NO"), " hasAnyArrayStorage ", (hasAnyArrayStorage ? "YES" : "NO"));
-            if (hasIndexingHeader) {
-                INDENT out.print("publicLength ", publicLength, " vectorLength ", vectorLength);
+            if (hasIndexedProperties(indexingType)) {
+                INDENT out.print("publicLength ", butterfly->publicLength(), " vectorLength ", butterfly->vectorLength());
                 if (hasAnyArrayStorage)
                     out.print(" indexBias ", butterfly->arrayStorage()->m_indexBias);
                 out.print("\n");
+            } else if (hasIndexingHeader) {
+                INDENT out.println("arrayBuffer ", RawPointer(butterfly->indexingHeader()->arrayBuffer()));
             }
             INDENT out.println("preCapacity ", preCapacity, " propertyCapacity ", propertyCapacity);
 
