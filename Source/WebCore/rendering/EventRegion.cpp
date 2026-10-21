@@ -167,10 +167,13 @@ void EventRegionContext::uniteInteractionRegions(const RenderObject& renderer, c
         }
 
         auto result = m_interactionRectsAndContentHints.set(rectForTracking, interactionRegion.contentHint);
-        if (!result.isNewEntry)
-            return;
-
         bool defaultContentHint = interactionRegion.contentHint == InteractionRegion::ContentHint::Default;
+        if (!result.isNewEntry) {
+            if (!defaultContentHint || !sharesRectWithContainerAncestor(renderer, rectForTracking, interactionRegion.nodeIdentifier))
+                return;
+            m_hasRegionSharingRectWithContainer = true;
+        }
+
         if (defaultContentHint && shouldConsolidateInteractionRegion(renderer, rectForTracking, interactionRegion.nodeIdentifier)) {
             m_consolidatedElements.add(interactionRegion.nodeIdentifier);
             return;
@@ -262,6 +265,33 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(const RenderObject& 
             m_containersToRemove.add(ancestorElementIdentifier);
 
         return false;
+    }
+
+    return false;
+}
+
+bool EventRegionContext::sharesRectWithContainerAncestor(const RenderObject& renderer, const IntRect& bounds, const NodeIdentifier& nodeIdentifier) const
+{
+    if (!renderer.hasVisibleBoxDecorations())
+        return false;
+
+    for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
+        if (!ancestor.element())
+            continue;
+
+        auto ancestorElementIdentifier = ancestor.element()->nodeIdentifier();
+        auto discoveredIterator = m_discoveredRegionsByElement.find(ancestorElementIdentifier);
+        if (discoveredIterator == m_discoveredRegionsByElement.end()) {
+            if (ancestor.hasVisibleBoxDecorations())
+                return false;
+            continue;
+        }
+
+        auto& discoveredRegions = discoveredIterator->value;
+        return nodeIdentifier != ancestorElementIdentifier
+            && m_containerRemovalCandidates.contains(ancestorElementIdentifier)
+            && discoveredRegions.size() == 1
+            && enclosingIntRect(discoveredRegions.first().rectInLayerCoordinates) == bounds;
     }
 
     return false;
@@ -439,11 +469,24 @@ void EventRegionContext::removeSuperfluousInteractionRegions()
     });
 }
 
+void EventRegionContext::removeInteractionRegionsWithDuplicatedRects()
+{
+    HashSet<IntRect> interactionRects;
+    m_interactionRegions.removeAllMatching([&](auto& region) {
+        if (region.type != InteractionRegion::Type::Interaction)
+            return false;
+        return !interactionRects.add(enclosingIntRect(region.rectInLayerCoordinates)).isNewEntry;
+    });
+}
+
 void EventRegionContext::copyInteractionRegionsToEventRegion(float minimumCornerRadius)
 {
     resolveGuardContainers(minimumCornerRadius);
     removeSuperfluousInteractionRegions();
     shrinkWrapInteractionRegions();
+    // A region that shares its container's rect duplicates the container's region if the container was kept.
+    if (m_hasRegionSharingRectWithContainer)
+        removeInteractionRegionsWithDuplicatedRects();
     m_eventRegion.appendInteractionRegions(m_interactionRegions);
 }
 

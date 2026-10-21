@@ -69,9 +69,11 @@ public:
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     void uniteInteractionRegions(const RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
     bool shouldConsolidateInteractionRegion(const RenderObject&, const IntRect&, const NodeIdentifier&);
+    bool sharesRectWithContainerAncestor(const RenderObject&, const IntRect&, const NodeIdentifier&) const;
     void resolveGuardContainers(float minimumCornerRadius);
     void removeSuperfluousInteractionRegions();
     void shrinkWrapInteractionRegions();
+    void removeInteractionRegionsWithDuplicatedRects();
     void copyInteractionRegionsToEventRegion(float minimumCornerRadius);
     void reserveCapacityForInteractionRegions(size_t);
 #endif
@@ -89,6 +91,7 @@ private:
     HashSet<NodeIdentifier> m_containersToRemove;
     HashMap<NodeIdentifier, Vector<InteractionRegion>> m_discoveredRegionsByElement;
     HashSet<NodeIdentifier> m_consolidatedElements;
+    bool m_hasRegionSharingRectWithContainer { false };
 #endif
 };
 

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { margin: 0; }
+    .control {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+    }
+    .card {
+        padding: 10px;
+        border-radius: 10px;
+        background: lightgray;
+    }
+    .with-child {
+        position: relative;
+    }
+    .with-child > span {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        width: 10px;
+        height: 10px;
+        cursor: pointer;
+    }
+    button {
+        display: block;
+        width: 40px;
+        height: 40px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: white;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<div id="test">
+    <div class="control"><button aria-label="Round control"></button></div>
+    <div class="control card"><button aria-label="Round control in a decorated card"></button></div>
+    <div class="control with-child"><button aria-label="Round control next to a clickable child"></button><span></span></div>
+</div>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById('test').remove();
+};
+</script>
+</body>
+</html>
