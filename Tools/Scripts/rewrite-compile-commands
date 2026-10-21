@@ -47,29 +47,23 @@ args = parser.parse_args()
 source_dir = args.source_dir
 build_dir = args.build_dir
 
-# CMake regenerates the input on every reconfigure with a fresh mtime even when
-# content is identical, so ninja keeps invoking us. Short-circuit on input hash.
 with open(args.input_file, 'rb') as f:
     input_data = f.read()
-input_hash = hashlib.sha256(input_data).hexdigest()
-hash_sentinel = args.output_file + '.input_hash'
-try:
-    with open(hash_sentinel) as f:
-        last_hash = f.read().strip()
-except FileNotFoundError:
-    last_hash = None
+fingerprint = hashlib.sha256()
+with open(__file__, 'rb') as f:
+    fingerprint.update(f.read())
+for part in (source_dir, build_dir):
+    fingerprint.update(part.encode() + b'\0')
+fingerprint.update(input_data)
 
-if last_hash == input_hash and os.path.exists(args.output_file):
-    sys.exit(0)
-
-generated_compile_commands = []
+expansion = []
 
 compile_commands = json.loads(input_data)
 
 for entry in compile_commands:
     entry_file = entry['file']
     if not 'UnifiedSource' in entry_file:
-        generated_compile_commands.append(entry)
+        expansion.append((entry, entry_file, None))
         continue
 
     # The paths we expect are in the style of:
@@ -95,19 +89,38 @@ for entry in compile_commands:
                 include_file = os.path.join(d, include_path)
 
                 if os.path.exists(include_file):
-                    renamed_entry = {
-                        "directory": entry["directory"],
-                        "file": include_file,
-                    }
-
-                    if "command" in entry:
-                        renamed_entry["command"] = entry["command"].replace(entry_file, include_file)
-                    else:
-                        renamed_arguments = [arg.replace(entry_file, include_file) for arg in entry["arguments"]]
-                        renamed_entry["arguments"] = renamed_arguments
-
-                    generated_compile_commands.append(renamed_entry)
+                    fingerprint.update(entry_file.encode() + b'\0' + include_file.encode() + b'\0')
+                    expansion.append((entry, entry_file, include_file))
                     break
+
+fingerprint_sentinel = args.output_file + '.fingerprint'
+try:
+    with open(fingerprint_sentinel) as f:
+        last_fingerprint = f.read().strip()
+except FileNotFoundError:
+    last_fingerprint = None
+
+if last_fingerprint == fingerprint.hexdigest() and os.path.exists(args.output_file):
+    sys.exit(0)
+
+generated_compile_commands = []
+for entry, entry_file, include_file in expansion:
+    if include_file is None:
+        generated_compile_commands.append(entry)
+        continue
+
+    renamed_entry = {
+        "directory": entry["directory"],
+        "file": include_file,
+    }
+
+    if "command" in entry:
+        renamed_entry["command"] = entry["command"].replace(entry_file, include_file)
+    else:
+        renamed_arguments = [arg.replace(entry_file, include_file) for arg in entry["arguments"]]
+        renamed_entry["arguments"] = renamed_arguments
+
+    generated_compile_commands.append(renamed_entry)
 
 output_directory = os.path.dirname(args.output_file)
 if not os.path.isdir(output_directory):
@@ -124,5 +137,5 @@ if new_content != existing_content:
     with open(args.output_file, 'w') as f:
         f.write(new_content)
 
-with open(hash_sentinel, 'w') as f:
-    f.write(input_hash)
+with open(fingerprint_sentinel, 'w') as f:
+    f.write(fingerprint.hexdigest())

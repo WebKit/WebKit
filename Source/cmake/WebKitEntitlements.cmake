@@ -7,12 +7,13 @@
 #   [PRODUCT_NAME <product name>]           # if different from bundle identifier
 #   [VARIANT <variant>]                     # XPC service variant to base extra entitlements off of
 #   [NO_RESTRICTED_ENTITLEMENTS]            # omit restricted entitlements even if USE_RESTRICTED_ENTITLEMENTS
+#   [WRITES_SIMULATOR_ENTITLEMENTS]         # the script writes <output>.simulator when building for a simulator SDK
 #   [OUTPUT <output path>]                  # if unspecified, a default will be used and set as <target>'s CODE_SIGN_ENTITLEMENTS path
 #   [DEPENDS <file>...]                     # other files the script reads
 # )
 
 function(WEBKIT_GENERATE_ENTITLEMENTS _target)
-    cmake_parse_arguments(_arg "EXTENSION;NO_RESTRICTED_ENTITLEMENTS" "PRODUCT_NAME;BUNDLE_IDENTIFIER;USING;OUTPUT;VARIANT" "DEPENDS" ${ARGN})
+    cmake_parse_arguments(_arg "EXTENSION;NO_RESTRICTED_ENTITLEMENTS;WRITES_SIMULATOR_ENTITLEMENTS" "PRODUCT_NAME;BUNDLE_IDENTIFIER;USING;OUTPUT;VARIANT" "DEPENDS" ${ARGN})
     if (NOT _arg_OUTPUT)
         set(_arg_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_target}.entitlements)
         set_target_properties(${_target} PROPERTIES CODE_SIGN_ENTITLEMENTS ${_arg_OUTPUT})
@@ -45,10 +46,13 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
     if (CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
         set(_skip_rosetta_breaking_entitlements 1)
     endif ()
+    set(_byproducts "")
+    if (_arg_WRITES_SIMULATOR_ENTITLEMENTS AND WEBKIT_SDK_IS_SIMULATOR)
+        set(_byproducts BYPRODUCTS ${_arg_OUTPUT}.simulator)
+    endif ()
     add_custom_command(
         OUTPUT ${_arg_OUTPUT}
-        # See WK_PROCESSED_SIMULATOR_XCENT_FILE below.
-        BYPRODUCTS ${_arg_OUTPUT}.simulator
+        ${_byproducts}
         COMMAND env
             BUILT_PRODUCTS_DIR=${CMAKE_BINARY_DIR}
             CONFIGURATION=${CMAKE_BUILD_TYPE}

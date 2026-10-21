@@ -1231,6 +1231,7 @@ if (NOT WEBKIT_SDK_IS_MACOS)
     webkit_generate_entitlements(TestWebKit
         USING ${TESTWEBKITAPI_DIR}/Scripts/process-entitlements.sh
         BUNDLE_IDENTIFIER ${_twkapi_bundle_id}
+        WRITES_SIMULATOR_ENTITLEMENTS
         OUTPUT ${_twkapi_entitlements})
     if (WEBKIT_SDK_IS_SIMULATOR)
         WEBKIT_EMBED_ENTITLEMENTS(TestWebKit ${_twkapi_entitlements})
