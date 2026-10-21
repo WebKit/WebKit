@@ -1878,7 +1878,7 @@ DeclarativeWebPush:
 
 DecoderInContentProcessEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: media
   humanReadableName: "Decoder in content process"
   humanReadableDescription: "Decode media in the content process and send decoded samples to the GPU process"
