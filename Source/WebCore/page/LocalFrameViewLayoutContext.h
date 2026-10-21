@@ -199,6 +199,27 @@ public:
 
     bool repaintsBlocked() const { return m_repaintsBlocked; }
 
+    // Flex item block-axis content sizes measured during the current render tree layout. See
+    // LayoutIntegration::FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem.
+    struct FlexItemBlockAxisMeasurement {
+        LayoutUnit flexContainerContentLogicalWidth;
+        std::optional<LayoutUnit> overridingBorderBoxLogicalWidth;
+        std::optional<LayoutUnit> flexContainerPercentageBasis;
+        LayoutUnit blockAxisContentSize;
+    };
+    using FlexItemBlockAxisMeasurementCache = SingleThreadWeakHashMap<RenderBox, Vector<FlexItemBlockAxisMeasurement, 1>>;
+    FlexItemBlockAxisMeasurementCache& flexItemBlockAxisMeasurementCache() { return m_flexItemBlockAxisMeasurementCache; }
+
+    // A measurement may only be cached if this didn't change while it was taken.
+    unsigned layoutMeasurementCacheEpoch() const { return m_layoutMeasurementCacheEpoch; }
+    // Called when something outside of style and content that layout depends on changes during the render tree layout
+    // (e.g. a scroll container gaining or losing a scrollbar, which changes the space available to its content).
+    void invalidateLayoutMeasurementCaches()
+    {
+        m_flexItemBlockAxisMeasurementCache.clear();
+        ++m_layoutMeasurementCacheEpoch;
+    }
+
     using ExcludedMarkerList = Vector<SingleThreadWeakPtr<RenderListOutsideMarker>>;
     const ExcludedMarkerList& excludedMarkers() const LIFETIME_BOUND { return m_excludedMarkers; }
 
@@ -299,6 +320,8 @@ private:
     LayoutStateStack m_layoutStateStack;
     const std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
     SingleThreadWeakHashMap<RenderBlock, Vector<SingleThreadWeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
+    FlexItemBlockAxisMeasurementCache m_flexItemBlockAxisMeasurementCache;
+    unsigned m_layoutMeasurementCacheEpoch { 0 };
     SingleThreadWeakHashSet<RenderBox> m_percentHeightIgnoreList;
     SingleThreadWeakHashSet<RenderBox> m_boxesInOrthogonalIntrinsicContributionLayout;
     SingleThreadWeakHashSet<RenderBox> m_intrinsicLogicalWidthComputationList;

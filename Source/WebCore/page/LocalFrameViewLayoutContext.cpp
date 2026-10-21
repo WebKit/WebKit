@@ -272,7 +272,11 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
 #ifndef NDEBUG
         RenderTreeNeedsLayoutChecker checker(*renderView());
 #endif
+        // Style and content can't change while the render tree lays out, so flex item measurements stay valid for its
+        // duration. Drop them afterwards, before text autosizing below can change font sizes and lay out again.
+        invalidateLayoutMeasurementCaches();
         protect(layoutRoot)->layout();
+        invalidateLayoutMeasurementCaches();
         {
             CheckedPtr renderView = this->renderView();
             auto state = renderView ? renderView->textAutosizingState() : RenderView::TextAutosizingState::Normal;

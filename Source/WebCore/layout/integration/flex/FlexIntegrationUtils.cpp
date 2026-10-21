@@ -27,6 +27,7 @@
 #include "FlexIntegrationUtils.h"
 
 #include "LocalFrameView.h"
+#include "LocalFrameViewLayoutContext.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
@@ -365,10 +366,36 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
             return *cachedBlockAxisContentSize;
     }
 
+    // Nested flex containers are laid out several times per render tree layout (once per ancestor measuring and final
+    // pass), and would measure their dirty items again every time. While style and content don't change, a measurement
+    // only depends on the flex container's content width, the item's overriding inline size and (quirks mode) the flex
+    // container's percentage basis, so reuse an earlier one with the same inputs. The item stays dirty, so its final
+    // layout still lays it out. In a fragmentation context the result also depends on where the item falls relative to
+    // the fragment breaks, which can differ between passes, so don't cache there.
+    CheckedRef layoutContext = flexBox().view().frameView().layoutContext();
+    auto& measurementCache = layoutContext->flexItemBlockAxisMeasurementCache();
+    bool canUseMeasurementCache = !renderer->enclosingFragmentedFlow() && !(layoutContext->layoutState() && layoutContext->layoutState()->isPaginated());
+    auto flexContainerContentLogicalWidth = flexBox().contentBoxLogicalWidth();
+    auto overridingBorderBoxLogicalWidth = renderer->overridingBorderBoxLogicalWidth();
+    auto flexContainerPercentageBasis = flexBox().availableLogicalHeightForPercentageComputation();
+    if (canUseMeasurementCache && renderer->needsLayout()) {
+        if (auto measurements = measurementCache.find(renderer.get()); measurements != measurementCache.end()) {
+            for (auto& measurement : measurements->value) {
+                if (measurement.flexContainerContentLogicalWidth == flexContainerContentLogicalWidth
+                    && measurement.overridingBorderBoxLogicalWidth == overridingBorderBoxLogicalWidth
+                    && measurement.flexContainerPercentageBasis == flexContainerPercentageBasis) {
+                    m_flexItemContentCache.setBlockAxisSize(renderer, measurement.blockAxisContentSize);
+                    return measurement.blockAxisContentSize;
+                }
+            }
+        }
+    }
+
     // Don't resolve percentages in children. This is especially important for the min-height calculation,
     // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
     // by definition we have an indefinite flex basis here and thus percentages should not resolve.
-    auto percentResolveDisableScope = FlexPercentResolveDisabler { protect(flexBox().view().frameView().layoutContext()), renderer };
+    auto measurementCacheEpoch = layoutContext->layoutMeasurementCacheEpoch();
+    auto percentResolveDisableScope = FlexPercentResolveDisabler { layoutContext, renderer };
     renderer->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
     renderer->layoutIfNeeded();
     flexLayoutState().setFlexItemHasCompletedLayout(renderer);
@@ -382,6 +409,11 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
 
     // Cache it so a later layout can skip re-laying-out this item while it stays clean, and record that we laid it out this iteration.
     m_flexItemContentCache.setBlockAxisSize(renderer, blockAxisContentSize);
+    // A scroll container gaining or losing a scrollbar during the measurement changes the epoch; don't keep that result.
+    if (canUseMeasurementCache && measurementCacheEpoch == layoutContext->layoutMeasurementCacheEpoch()) {
+        measurementCache.add(renderer.get(), Vector<LocalFrameViewLayoutContext::FlexItemBlockAxisMeasurement, 1> { }).iterator->value.append({
+            flexContainerContentLogicalWidth, overridingBorderBoxLogicalWidth, flexContainerPercentageBasis, blockAxisContentSize });
+    }
     return blockAxisContentSize;
 }
 
