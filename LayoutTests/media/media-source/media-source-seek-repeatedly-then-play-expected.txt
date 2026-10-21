@@ -1,0 +1,22 @@
+This tests that playback after repeated back-to-back seeks in a MediaSource video is not stalled and reaches the end.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(audioSourceBuffer = source.addSourceBuffer(audioLoader.type()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.initSegment()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(0)))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(1)))
+RUN(source.endOfStream())
+-
+Seek back and forth, each seek starting when the previous one completed.
+++ seek 0 completed.
+++ seek 1 completed.
+++ seek 2 completed.
+++ seek 3 completed.
+++ seek 4 completed.
+-
+RUN(video.play())
+++ ended.
+EXPECTED (video.currentTime == video.duration == 'true') OK
+END OF TEST
+

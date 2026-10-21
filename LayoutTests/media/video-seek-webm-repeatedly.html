@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=video-test.js></script>
+    <script>
+        var seekCount = 0;
+        var finished = false;
+        var targets;
+
+        function bufferedRanges()
+        {
+            let ranges = [];
+            for (let i = 0; i < video.buffered.length; ++i)
+                ranges.push("[" + video.buffered.start(i) + ", " + video.buffered.end(i) + "]");
+            return ranges.join(" ");
+        }
+
+        function seeked()
+        {
+            consoleWrite("++ seek " + seekCount + " completed.");
+            if (seekCount < targets.length) {
+                video.currentTime = targets[seekCount++];
+                return;
+            }
+            video.removeEventListener("seeked", seeked);
+            run("video.play()");
+        }
+
+        function start()
+        {
+            findMediaElement();
+            video.muted = true;
+            video.addEventListener("ended", function() {
+                consoleWrite("++ ended.");
+                finished = true;
+                endTest();
+            });
+            video.addEventListener("canplaythrough", function() {
+                targets = [0, video.duration - 0.5, 0, video.duration - 0.5];
+                consoleWrite("<em>++ seek back and forth, each seek starting when the previous one completed, then play to the end.</em>");
+                video.addEventListener("seeked", seeked);
+                video.currentTime = video.duration - 0.5;
+            }, { once: true });
+            video.src = "content/test-vp8.webm";
+
+            setTimeout(function() {
+                if (finished)
+                    return;
+                failTest("Video did not play to the end; currentTime = " + video.currentTime + ", duration = " + video.duration + ", paused = " + video.paused + ", ended = " + video.ended + ", readyState = " + video.readyState + ", seeking = " + video.seeking + ", buffered = " + bufferedRanges());
+            }, 15000);
+        }
+    </script>
+</head>
+<body onload="start()">
+    <video></video>
+    <p>Test that playback after repeated back-to-back seeks in a WebM video isn't stalled.</p>
+</body>
+</html>
