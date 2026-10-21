@@ -672,64 +672,61 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          IMAGE_DIR=/tmp/cafeglsl-wiiu-image
+          IMAGE_ARCHIVE=/tmp/cafeglsl-wiiu-image.tar
           ROOTFS=/tmp/cafeglsl-wiiu-rootfs
-          rm -rf "$IMAGE_DIR" "$ROOTFS"
-          mkdir -p "$IMAGE_DIR" "$ROOTFS"
-          skopeo copy docker://ghcr.io/exzap/cafeglsl-wiiu:latest "dir:$IMAGE_DIR"
-          python3 - "$IMAGE_DIR" "$ROOTFS" <<'PY'
+          rm -f "$IMAGE_ARCHIVE"
+          rm -rf "$ROOTFS"
+          mkdir -p "$ROOTFS"
+
+          # docker-archive carries both manifest.json and its layer tar files
+          # inside one archive. The dir: transport writes layer blobs under
+          # content-addressed names that vary by skopeo version, so guessing a
+          # filename from the manifest is not reliable.
+          skopeo copy docker://ghcr.io/exzap/cafeglsl-wiiu:latest \
+            "docker-archive:$IMAGE_ARCHIVE:ghcr.io/exzap/cafeglsl-wiiu:latest"
+
+          python3 - "$IMAGE_ARCHIVE" "$ROOTFS" <<'PY'
           import json
           import pathlib
           import sys
           import tarfile
 
-          image_dir = pathlib.Path(sys.argv[1])
+          archive_path = pathlib.Path(sys.argv[1])
           root = pathlib.Path(sys.argv[2])
-          manifest_data = json.loads((image_dir / "manifest.json").read_text())
-          if isinstance(manifest_data, list):
-              if not manifest_data:
-                  raise SystemExit("CafeGLSL image manifest is empty")
-              manifest = manifest_data[0]
-          elif isinstance(manifest_data, dict):
-              manifest = manifest_data
-          else:
-              raise SystemExit("CafeGLSL image manifest has an unsupported JSON shape")
 
-          # skopeo's dir: transport writes the OCI/Docker manifest as a single
-          # object with lowercase "layers"; other archive forms may use the
-          # Docker-save list with capitalized "Layers". Accept both formats.
-          layers = manifest.get("layers") or manifest.get("Layers") or []
-          if not layers:
-              raise SystemExit("CafeGLSL image manifest contains no layers")
-          for layer in layers:
-              if isinstance(layer, dict):
-                  layer_name = layer.get("digest") or layer.get("blobSum") or layer.get("id")
-              else:
-                  layer_name = str(layer)
-              if not layer_name:
-                  raise SystemExit(f"Unsupported CafeGLSL layer descriptor: {layer!r}")
-              candidates = [
-                  image_dir / layer_name,
-                  image_dir / (layer_name + ".tar"),
-                  image_dir / layer_name.replace(":", "-"),
-                  image_dir / (layer_name.replace(":", "-") + ".tar"),
-              ]
-              archive = next((p for p in candidates if p.is_file()), None)
-              if archive is None:
-                  raise SystemExit(f"CafeGLSL image layer is missing: {layer_name}")
-              with tarfile.open(archive, "r:*") as tar:
-                  base = root.resolve()
-                  for member in tar.getmembers():
-                      if pathlib.PurePosixPath(member.name).is_absolute():
-                          raise SystemExit(f"Unsafe absolute CafeGLSL image path: {member.name}")
-                      destination = (root / member.name).resolve()
-                      if destination != base and base not in destination.parents:
-                          raise SystemExit(f"Unsafe CafeGLSL image path: {member.name}")
-                  tar.extractall(root)
+          def extract_layer(layer_archive, destination):
+              # The data filter rejects path traversal and unsafe link targets.
+              # Keep extraction inside the temporary root before copying only
+              # the published /artifacts subtree into DEVKITPRO.
+              with tarfile.open(fileobj=layer_archive, mode="r:*") as layer:
+                  try:
+                      layer.extractall(destination, filter="data")
+                  except TypeError as error:
+                      raise SystemExit(
+                          "Python tarfile safety filters are required to unpack CafeGLSL layers."
+                      ) from error
+
+          with tarfile.open(archive_path, mode="r:*") as image:
+              manifest_file = image.extractfile("manifest.json")
+              if manifest_file is None:
+                  raise SystemExit("CafeGLSL Docker archive has no manifest.json")
+              manifests = json.load(manifest_file)
+              if not isinstance(manifests, list) or not manifests:
+                  raise SystemExit("CafeGLSL Docker archive manifest is empty or malformed")
+              layers = manifests[0].get("Layers", [])
+              if not layers:
+                  raise SystemExit("CafeGLSL Docker archive manifest contains no layers")
+              for layer_name in layers:
+                  layer_file = image.extractfile(layer_name)
+                  if layer_file is None:
+                      raise SystemExit(f"CafeGLSL archive layer is missing: {layer_name}")
+                  extract_layer(layer_file, root)
+
           PY
+
           test -d "$ROOTFS/artifacts" || {
             echo "CafeGLSL image did not contain /artifacts"
-            find "$ROOTFS" -maxdepth 4 -type f | head -80
+            find "$ROOTFS" -maxdepth 5 -type f | head -100
             exit 1
           }
           cp -a "$ROOTFS/artifacts/." "$DEVKITPRO/"
