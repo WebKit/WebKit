@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>href - feImage element with a fragmented external reference reference</title>
+<body>
+  <svg width="256" height="256" viewBox="0 0 256 256"
+       xmlns:xlink="http://www.w3.org/1999/xlink">
+    <filter id="Fitted" x="0" y="0" width="100%" height="100%">
+      <feImage xlink:href="/images/green-256x256.png"
+               preserveAspectRatio="none"/>
+    </filter>
+    <rect width="256" height="256" filter="url(#Fitted)"/>
+  </svg>
+</body>
