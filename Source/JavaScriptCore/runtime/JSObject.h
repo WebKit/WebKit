@@ -31,7 +31,6 @@
 #include <JavaScriptCore/DOMAttributeGetterSetter.h>
 #include <JavaScriptCore/DeletePropertySlot.h>
 #include <JavaScriptCore/Heap.h>
-#include <JavaScriptCore/IndexingHeaderInlines.h>
 #include <JavaScriptCore/Intrinsic.h>
 #include <JavaScriptCore/JSCJSValueCell.h>
 #include <JavaScriptCore/JSCast.h>
@@ -1250,7 +1249,7 @@ constexpr inline intptr_t offsetInButterfly(PropertyOffset offset)
 inline size_t JSObject::butterflyPreCapacity()
 {
     if (hasIndexingHeader()) [[unlikely]]
-        return butterfly()->indexingHeader()->preCapacity(structure());
+        return butterfly()->preCapacity(structure());
     return 0;
 }
 
@@ -1263,8 +1262,8 @@ inline size_t JSObject::butterflyTotalSize()
     bool hasIndexingHeader = this->hasIndexingHeader();
 
     if (hasIndexingHeader) [[unlikely]] {
-        preCapacity = butterfly->indexingHeader()->preCapacity(structure);
-        indexingPayloadSizeInBytes = butterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
+        preCapacity = butterfly->preCapacity(structure);
+        indexingPayloadSizeInBytes = butterfly->indexingPayloadSizeInBytes(structure);
     } else {
         preCapacity = 0;
         indexingPayloadSizeInBytes = 0;
