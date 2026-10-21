@@ -1118,14 +1118,34 @@ bool GraphicsContextGLWKC::setUniformData(GCGLint loc,const void* values,size_t 
     auto l=p->second.uniformLocations.find(loc);
     if(l==p->second.uniformLocations.end()) { addError(GL_INVALID_OPERATION_VALUE); return false; }
     const auto& uniform=p->second.uniforms[l->second.uniformIndex];
-    if(matrixDim && components!=matrixDim*matrixDim) { addError(GL_INVALID_OPERATION_VALUE); return false; }
-    if(bytes < static_cast<size_t>(components)*count*(ints?sizeof(int32_t):sizeof(float))) { addError(GL_INVALID_VALUE_VALUE); return false; }
-    const auto* data=static_cast<const uint8_t*>(values);
-    for(uint32_t i=0;i<count;++i) {
-        const size_t element=l->second.elementIndex+i;
-        if(element>=uniform.elements.size()) break;
-        if(!uploadUniformElement(uniform.elements[element],uniform.type,data+static_cast<size_t>(i)*components*(ints?sizeof(int32_t):sizeof(float)),ints)) {
-            addError(GL_INVALID_OPERATION_VALUE); return false;
+    const bool matrixType = uniform.type == GL_FLOAT_MAT2_VALUE
+        || uniform.type == GL_FLOAT_MAT3_VALUE || uniform.type == GL_FLOAT_MAT4_VALUE;
+    const bool integerType = uniform.type == GL_INT_VALUE || uniform.type == GL_BOOL_VALUE
+        || uniform.type == GL_INT_VEC2_VALUE || uniform.type == GL_INT_VEC3_VALUE || uniform.type == GL_INT_VEC4_VALUE
+        || uniform.type == GL_BOOL_VEC2_VALUE || uniform.type == GL_BOOL_VEC3_VALUE || uniform.type == GL_BOOL_VEC4_VALUE
+        || uniform.type == 0x8B5E /* SAMPLER_2D */ || uniform.type == 0x8B60 /* SAMPLER_CUBE */;
+    if (matrixType != !!matrixDim || (matrixDim && (matrixDim != uniformRegisters(uniform.type)
+            || components != matrixDim * matrixDim))
+        || (!matrixDim && (uniformComponents(uniform.type) != components || ints != integerType))) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return false;
+    }
+    if (l->second.elementIndex > uniform.elements.size()
+        || count > uniform.elements.size() - l->second.elementIndex) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return false;
+    }
+    if (bytes < static_cast<size_t>(components) * count * (ints ? sizeof(int32_t) : sizeof(float))) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return false;
+    }
+    const auto* data = static_cast<const uint8_t*>(values);
+    for (uint32_t i = 0; i < count; ++i) {
+        const size_t element = l->second.elementIndex + i;
+        if (!uploadUniformElement(uniform.elements[element], uniform.type,
+                data + static_cast<size_t>(i) * components * (ints ? sizeof(int32_t) : sizeof(float)), ints)) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return false;
         }
     }
     return true;
