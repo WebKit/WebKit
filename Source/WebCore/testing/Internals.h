@@ -1148,6 +1148,7 @@ public:
     void setMediaStreamSourceInterrupted(MediaStreamTrack&, bool);
     const String& LEGACY_NODELETE mediaStreamTrackPersistentId(const MediaStreamTrack&);
     size_t audioCaptureSourceCount() const;
+    void sharedAudioCaptureDeviceInGPUProcess(DOMPromiseDeferred<IDLDOMString>&&);
     bool LEGACY_NODELETE supportsMultiMicrophoneCaptureWithoutEchoCancellation() const;
     bool isMediaStreamSourceInterrupted(MediaStreamTrack&) const;
     bool LEGACY_NODELETE isMediaStreamSourceEnded(MediaStreamTrack&) const;
