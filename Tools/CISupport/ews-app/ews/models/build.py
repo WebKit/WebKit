@@ -24,6 +24,8 @@ from __future__ import unicode_literals
 
 import logging
 
+from typing import Optional
+
 from django.db import models
 from ews.config import ERR_UNEXPECTED, SUCCESS
 from ews.models.buildbotinstance import BuildbotInstance
@@ -45,6 +47,9 @@ class Build(models.Model):
     started_at = models.IntegerField(null=True, blank=True)
     complete_at = models.IntegerField(null=True, blank=True)
     retried = models.BooleanField(default=False)
+    failing_tests = models.TextField(blank=True, default='')
+    failing_tests_count = models.IntegerField(default=0)
+    failing_tests_category = models.CharField(max_length=32, blank=True, default='')
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -52,7 +57,7 @@ class Build(models.Model):
         return str(self.uid)
 
     @classmethod
-    def save_build(cls, change_id, hostname, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at=None, pr_number=-1, pr_project=''):
+    def save_build(cls, change_id: str, hostname: str, build_id: int, builder_id: int, builder_name: str, builder_display_name: str, number: int, result: Optional[int], state_string: Optional[str], started_at: Optional[int], complete_at: Optional[int] = None, pr_number: int = -1, pr_project: str = '', failing_tests: str = '', failing_tests_count: int = 0, failing_tests_category: str = '') -> int:
         if not Build.is_valid_result(build_id, builder_id, number, result, state_string, started_at, complete_at):
             _log.warn('Invalid build data for change: {}. Skipped saving build.'.format(change_id))
             return ERR_UNEXPECTED
@@ -64,19 +69,19 @@ class Build(models.Model):
         build = Build.get_existing_build(uid)
         if build:
             # If the build data is already present in database, update it, e.g.: build complete event.
-            return Build.update_build(build, change_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at)
+            return Build.update_build(build, change_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at, failing_tests=failing_tests, failing_tests_count=failing_tests_count, failing_tests_category=failing_tests_category)
 
         if not Change.is_existing_change_id(change_id):
             Change.save_change(change_id=change_id, pr_number=pr_number, pr_project=pr_project)
             _log.info('Received result for unknown change. Saved change {} to database'.format(change_id))
 
         # Save the new build data, e.g.: build start event.
-        Build(change_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at).save()
+        Build(change_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at, failing_tests=failing_tests, failing_tests_count=failing_tests_count, failing_tests_category=failing_tests_category).save()
         _log.info('Saved build {} in database for change_id: {}'.format(uid, change_id))
         return SUCCESS
 
     @classmethod
-    def update_build(cls, build, change_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at):
+    def update_build(cls, build: 'Build', change_id: str, uid: str, builder_id: int, builder_name: str, builder_display_name: str, number: int, result: Optional[int], state_string: Optional[str], started_at: Optional[int], complete_at: Optional[int], failing_tests: str = '', failing_tests_count: int = 0, failing_tests_category: str = '') -> int:
         if str(build.change_id) != str(change_id):
             _log.error('existing change_id {} of type {} does not match with new change_id {} of type {}. Ignoring new data.'.format(build.change_id, type(build.change_id), change_id, type(change_id)))
             return ERR_UNEXPECTED
@@ -93,7 +98,10 @@ class Build(models.Model):
         build.state_string = state_string
         build.started_at = started_at
         build.complete_at = complete_at
-        build.save(update_fields=['result', 'state_string', 'started_at', 'complete_at', 'modified'])
+        build.failing_tests = failing_tests
+        build.failing_tests_count = failing_tests_count
+        build.failing_tests_category = failing_tests_category
+        build.save(update_fields=['result', 'state_string', 'started_at', 'complete_at', 'failing_tests', 'failing_tests_count', 'failing_tests_category', 'modified'])
         _log.debug('Updated build {} in database for change_id: {}'.format(uid, change_id))
         return SUCCESS
 
