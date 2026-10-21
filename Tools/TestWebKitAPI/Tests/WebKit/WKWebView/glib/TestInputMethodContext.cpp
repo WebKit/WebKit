@@ -1201,6 +1201,104 @@ static void testWebKitInputMethodContextSurrounding(InputMethodTest* test, gcons
     test->m_events.clear();
 }
 
+static void testWebKitInputMethodContextSurroundingLongText(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml(testHTML, nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    auto repeated = [](const char* string, unsigned count) {
+        GString* result = g_string_new(nullptr);
+        for (unsigned i = 0; i < count; ++i)
+            g_string_append(result, string);
+        return GUniquePtr<char>(g_string_free(result, FALSE));
+    };
+    // A selection change made by a script is sent to the input method with the next rendering update, which
+    // the test doesn't wait for, so the selection is set next to its final position and completed with a key press.
+    // The surrounding text of that intermediate selection differs from the expected one.
+    auto setValueAndSelection = [&](const char* value, unsigned start, unsigned end, const char* expectedSurroundingText) {
+        unsigned scriptStart = start;
+        unsigned scriptEnd = end;
+        unsigned key = KEY(Right);
+        OptionSet<WebViewTest::Modifiers> modifiers;
+        if (start < end) {
+            scriptEnd--;
+            modifiers.add(WebViewTest::Modifiers::Shift);
+        } else if (start)
+            scriptStart = scriptEnd = start - 1;
+        else {
+            scriptStart = scriptEnd = 1;
+            key = KEY(Left);
+        }
+        GUniquePtr<char> script(g_strdup_printf("input.value = %s; input.setSelectionRange(%u, %u)", value, scriptStart, scriptEnd));
+        test->runJavaScriptAndWaitUntilFinished(script.get(), nullptr);
+        test->keyStrokeAndWaitForEvents(key, 2, modifiers);
+        test->m_events.clear();
+        test->waitForSurroundingText(expectedSurroundingText);
+    };
+
+    // Only the 1000 characters before and after the selection are sent.
+    {
+        GUniquePtr<char> expected(g_strconcat(repeated("a", 1000).get(), repeated("b", 1000).get(), nullptr));
+        setValueAndSelection("'a'.repeat(1500) + 'b'.repeat(1500)", 1500, 1500, expected.get());
+        g_assert_cmpuint(test->surroundingCursorIndex(), ==, 1000);
+        g_assert_cmpuint(test->surroundingSelectionIndex(), ==, 1000);
+    }
+
+    // Near the start of the field, all the text before the caret is sent.
+    setValueAndSelection("'a'.repeat(3000)", 10, 10, repeated("a", 1010).get());
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 10);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, 10);
+
+    // The selected text is always sent whole.
+    setValueAndSelection("'a'.repeat(5000)", 1500, 3000, repeated("a", 3500).get());
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 1000);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, 2500);
+
+    // The offset of delete-surrounding is still relative to the caret.
+    {
+        GUniquePtr<char> expected(g_strconcat(repeated("a", 1000).get(), repeated("b", 1000).get(), nullptr));
+        setValueAndSelection("'a'.repeat(1500) + 'b'.repeat(1500)", 1500, 1500, expected.get());
+    }
+    test->deleteSurrounding(-1, 2);
+    test->assertJavaScriptBecomesTrue("input.value === 'a'.repeat(1499) + 'b'.repeat(1499)");
+
+    // The preedit string is not sent and the limits apply on both sides of it. The cursor area is sent
+    // right before the surrounding text, so once it changes, the surrounding text is up to date too.
+    {
+        GUniquePtr<char> expected(g_strconcat(repeated("a", 1000).get(), repeated("c", 1000).get(), nullptr));
+        setValueAndSelection("'a'.repeat(1500) + 'c'.repeat(1500)", 1500, 1500, expected.get());
+        test->clearInputMethodCounters();
+        test->keyStrokeAndWaitForEvents(KEY(w), 4, { WebViewTest::Modifiers::Control, WebViewTest::Modifiers::Shift });
+        test->keyStrokeAndWaitForEvents(KEY(w), 7);
+        test->waitForCursorAreaCount(2, 1000);
+        g_assert_cmpstr(test->surroundingText(), ==, expected.get());
+        g_assert_cmpuint(test->surroundingCursorIndex(), ==, 1000);
+        test->keyStrokeAndWaitForEvents(KEY(Escape), 10);
+        test->m_events.clear();
+    }
+
+    // A surrogate pair split by the limits is left out. The emoji is 2 UTF-16 code units and 4 UTF-8 bytes.
+    {
+        GUniquePtr<char> expected(g_strconcat(repeated("😀", 499).get(), "b", nullptr));
+        setValueAndSelection("'😀'.repeat(600) + 'b'", 1201, 1201, expected.get());
+        g_assert_cmpuint(test->surroundingCursorIndex(), ==, 499 * 4 + 1);
+    }
+    {
+        GUniquePtr<char> expected(g_strconcat("b", repeated("😀", 499).get(), nullptr));
+        setValueAndSelection("'b' + '😀'.repeat(600)", 0, 0, expected.get());
+        g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    }
+
+    // An unpaired surrogate at the ends of the field is not split by the limits, so it is kept. It is sent as U+FFFD.
+    setValueAndSelection("'\\uDC00a'", 0, 0, "\xEF\xBF\xBD" "a");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, 0);
+    setValueAndSelection("'a\\uD800'", 2, 2, "a" "\xEF\xBF\xBD");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 4);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, 4);
+}
+
 static void testWebKitInputMethodContextDeleteSurroundingContentEditable(InputMethodTest* test, gconstpointer)
 {
     test->loadHtml("<html><body><h1>Title</h1><div id='editable' contenteditable></div></body></html>", nullptr);
@@ -2166,6 +2264,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "invalid-sequence", testWebKitInputMethodContextInvalidSequence);
     InputMethodTest::add("WebKitInputMethodContext", "cancel-sequence", testWebKitInputMethodContextCancelSequence);
     InputMethodTest::add("WebKitInputMethodContext", "surrounding", testWebKitInputMethodContextSurrounding);
+    InputMethodTest::add("WebKitInputMethodContext", "surrounding-long-text", testWebKitInputMethodContextSurroundingLongText);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-contenteditable", testWebKitInputMethodContextDeleteSurroundingContentEditable);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-before-start", testWebKitInputMethodContextDeleteSurroundingBeforeStart);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-utf16", testWebKitInputMethodContextDeleteSurroundingUTF16);
