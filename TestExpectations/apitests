@@ -76,8 +76,6 @@ webkit.org/b/326525 [ ios debug ] TestWebKitAPI.MessagePortSecurity.SharedWorker
 webkit.org/b/326126 [ ios release siteisolation ] TestWebKitAPI.ResourceLoadStatistics.StorageAccessGrantMultipleSubFrameDomains [ Pass Timeout ]
 webkit.org/b/326129 [ ios ] TestWebKitAPI.ResourceLoadStatistics.UserGestureLogsUserInteraction [ Pass Failure ]
 webkit.org/b/322663 [ ios ] TestWebKitAPI.SafeBrowsing.DeferredModalsClearedOnNavigation [ Pass Failure ]
-webkit.org/b/326123 [ ios debug ] TestWebKitAPI.SiteIsolation.SelectPositionAtBoundaryInCrossOriginIframe [ Crash ]
-webkit.org/b/326123 [ ios debug ] TestWebKitAPI.SiteIsolation.SelectPositionAtBoundaryInUnfocusedCrossOriginIframe [ Crash ]
 webkit.org/b/326125 [ ios release ] TestWebKitAPI.SiteIsolation.SharedProcessBasicWebProcessCacheCrash [ Pass Crash Failure ]
 webkit.org/b/326125 [ ios release ] TestWebKitAPI.SiteIsolation.SharedProcessInProcessCacheAfterNavigation [ Pass Crash ]
 webkit.org/b/326131 [ ios ] TestWebKitAPI.UnifiedPDF.BackgroundAdaptsToColorScheme [ Pass Failure ]
