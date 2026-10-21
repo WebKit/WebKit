@@ -1,0 +1,21 @@
+Testing that MediaController.deinitialize() disconnects the MutationObserver watching the media element's "controls" attribute, so mutating that attribute no longer updates controls availability once the controls have been torn down.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaController is an instance of MediaController
+PASS mediaController.controls.visible is true
+
+Sanity check: while the controls are live, removing the "controls" attribute updates availability.
+PASS mediaController.controls.visible is false
+PASS mediaController.controls.visible is true
+
+Tearing down the controls with deinitialize().
+
+Removing the "controls" attribute again. A leaked MutationObserver would flip controls.visible back to false.
+PASS mediaController.controls.visible is true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
