@@ -126,7 +126,7 @@ public:
     // The function may be called multiple times.
     // The function may be called from an arbitrary thread.
     // The function should always produce the same GraphicsContext calls.
-    WEBCORE_EXPORT void drawPlaceholder(Function<void(GraphicsContext&)>&&);
+    WEBCORE_EXPORT void drawPlaceholder(Function<void(GraphicsContext&)>&&, std::optional<FrameIdentifier> = std::nullopt);
 
 private:
     WEBCORE_EXPORT RecorderImpl(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const ColorSpace&, DrawGlyphsMode);

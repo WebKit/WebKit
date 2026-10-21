@@ -76,7 +76,7 @@ void RemoteSnapshotRecorder::drawSnapshotFrame(FrameIdentifier frameIdentifier)
     m_recorder->drawPlaceholder([snapshot = m_snapshot, frameIdentifier] (GraphicsContext& context) {
         bool result = snapshot->applyFrame(frameIdentifier, context);
         ASSERT_UNUSED(result, result); // Programming error, consistency checked with isComplete().
-    });
+    }, frameIdentifier);
 }
 
 }

@@ -32,6 +32,7 @@
 #include <WebCore/Filter.h>
 #include <WebCore/FloatRoundedRect.h>
 #include <WebCore/Font.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/GlyphBuffer.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/GraphicsContext.h>
@@ -504,6 +505,7 @@ public:
     {
     }
 
+    const FontBase& font() const LIFETIME_BOUND { return m_font; }
     const Vector<GlyphBufferGlyph>& glyphs() const LIFETIME_BOUND { return m_glyphs; }
     const Vector<GlyphBufferAdvance>& advances() const LIFETIME_BOUND { return m_advances; }
     size_t length() const { return m_glyphs.size(); }
@@ -584,8 +586,10 @@ class DrawPlaceholder {
 public:
     static constexpr char name[] = "draw-placeholder";
 
-    DrawPlaceholder(Function<void(GraphicsContext&)>&&);
+    DrawPlaceholder(Function<void(GraphicsContext&)>&&, std::optional<FrameIdentifier>);
     ~DrawPlaceholder();
+
+    std::optional<FrameIdentifier> frameIdentifier() const { return m_frameIdentifier; }
 
     void apply(GraphicsContext&) const;
     void LEGACY_NODELETE dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -593,6 +597,7 @@ public:
 private:
     using FunctionHolder = Box<Function<void(GraphicsContext&)>>;
     FunctionHolder m_function;
+    std::optional<FrameIdentifier> m_frameIdentifier;
 };
 
 class DrawImageBuffer {

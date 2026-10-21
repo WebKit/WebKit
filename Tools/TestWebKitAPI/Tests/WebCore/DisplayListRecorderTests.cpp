@@ -30,6 +30,7 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListRecorderImpl.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
 #include <numbers>
@@ -722,5 +723,25 @@ TYPED_TEST_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreser
 REGISTER_TYPED_TEST_SUITE_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreserved);
 
 INSTANTIATE_TYPED_TEST_SUITE_P(DisplayListRecorderTest, DisplayListRecorderResultStateTest, AllOperations);
+
+TEST(DisplayListRecorderTest, DrawPlaceholderRemembersFrameIdentifier)
+{
+    Ref recorder = WebCore::DisplayList::RecorderImpl::create({ 0, 0, testContextWidth, testContextHeight });
+    auto frameIdentifier = WebCore::generateFrameIdentifier();
+    recorder->drawPlaceholder([](WebCore::GraphicsContext&) { }, frameIdentifier);
+    recorder->drawPlaceholder([](WebCore::GraphicsContext&) { });
+
+    Ref displayList = recorder->takeDisplayList();
+    auto items = displayList->items();
+    ASSERT_EQ(items.size(), 2u);
+
+    auto* placeholderWithFrame = std::get_if<WebCore::DisplayList::DrawPlaceholder>(&items[0]);
+    ASSERT_TRUE(placeholderWithFrame);
+    EXPECT_EQ(placeholderWithFrame->frameIdentifier(), frameIdentifier);
+
+    auto* placeholderWithoutFrame = std::get_if<WebCore::DisplayList::DrawPlaceholder>(&items[1]);
+    ASSERT_TRUE(placeholderWithoutFrame);
+    EXPECT_FALSE(placeholderWithoutFrame->frameIdentifier());
+}
 
 }

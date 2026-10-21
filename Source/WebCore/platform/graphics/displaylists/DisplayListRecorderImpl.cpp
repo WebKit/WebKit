@@ -496,9 +496,9 @@ void RecorderImpl::appendStateChangeItemIfNecessary()
     commitStateChanges(changes);
 }
 
-void RecorderImpl::drawPlaceholder(Function<void(GraphicsContext&)>&& function)
+void RecorderImpl::drawPlaceholder(Function<void(GraphicsContext&)>&& function, std::optional<FrameIdentifier> frameIdentifier)
 {
-    m_items.append(DrawPlaceholder(WTF::move(function)));
+    m_items.append(DrawPlaceholder(WTF::move(function), frameIdentifier));
 }
 
 } // namespace DisplayList

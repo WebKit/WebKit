@@ -329,8 +329,9 @@ void DrawDisplayList::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("display-list"_s, displayList);
 }
 
-DrawPlaceholder::DrawPlaceholder(Function<void(GraphicsContext&)>&& function)
+DrawPlaceholder::DrawPlaceholder(Function<void(GraphicsContext&)>&& function, std::optional<FrameIdentifier> frameIdentifier)
     : m_function(FunctionHolder::create(WTF::move(function)))
+    , m_frameIdentifier(frameIdentifier)
 {
 }
 
