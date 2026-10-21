@@ -115,15 +115,6 @@ test/language/statements/class/elements/private-class-field-on-nonextensible-obj
   strict mode: 3
 test/language/statements/class/subclass/private-class-field-on-nonextensible-return-override.js:
   strict mode: 3
-test/language/statements/for-await-of/head-lhs-async.js:
-  default: 3
-  strict mode: 3
-test/language/statements/for-in/head-lhs-let.js:
-  default: 3
-test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expression-not-strict.js:
-  default: 3
-test/language/statements/for/head-lhs-let.js:
-  default: 3
 test/language/statements/with/get-binding-value-call-with-proxy-env.js:
   default: 3
 test/language/statements/with/get-binding-value-idref-with-proxy-env.js:
@@ -180,8 +171,5 @@ test/staging/sm/generators/delegating-yield-6.js:
   default: 3
   strict mode: 3
 test/staging/sm/generators/delegating-yield-7.js:
-  default: 3
-  strict mode: 3
-test/staging/sm/lexical-environment/for-loop.js:
   default: 3
   strict mode: 3
