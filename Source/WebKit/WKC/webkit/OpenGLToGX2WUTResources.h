@@ -14,11 +14,20 @@
 #include <gx2/enum.h>
 #include <gx2/shaders.h>
 #include <gx2r/buffer.h>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
 namespace WKC {
 namespace GLGX2 {
+
+// Explicit bridge from a GL attribute index to the name of the input in
+// the already-linked GX2 vertex shader. GX2AttribVar::location is authoritative;
+// GL indices must never be assumed to equal GX2 shader locations.
+struct WUTLinkedAttribute {
+    uint8_t attributeIndex { 0 };
+    const char* shaderInputName { nullptr };
+};
 
 struct WUTBufferResources {
     std::unordered_map<BufferName, GX2RBuffer*> buffers;
@@ -38,15 +47,27 @@ struct WUTBufferResources {
         GX2AttribIndexType indexType { GX2_ATTRIB_INDEX_PER_VERTEX };
         bool enabled { false };
     };
+    struct AttributeBinding {
+        uint8_t attributeIndex { 0 };
+        std::string shaderInputName;
+    };
     std::unordered_map<uint8_t, AttributeDescriptor> attributes;
-};
 
-// Explicit bridge from a GL attribute index to the name of the input in
-// the already-linked GX2 vertex shader. GX2AttribVar::location is authoritative;
-// GL indices must never be assumed to equal GX2 shader locations.
-struct WUTLinkedAttribute {
-    uint8_t attributeIndex { 0 };
-    const char* shaderInputName { nullptr };
+    // These are the active linked-program objects. The owner keeps the shader
+    // objects alive; this structure owns only the fetch-shader program memory.
+    const GX2VertexShader* vertexShader { nullptr };
+    const GX2PixelShader* pixelShader { nullptr };
+    GX2ShaderMode shaderMode { GX2_SHADER_MODE_UNIFORM_REGISTER };
+    std::vector<AttributeBinding> linkedAttributes;
+    GX2FetchShader fetchShader {};
+    void* fetchShaderProgramBuffer { nullptr };
+    uint32_t fetchShaderProgramBufferSize { 0 };
+    bool fetchShaderDirty { true };
+
+    WUTBufferResources() = default;
+    ~WUTBufferResources();
+    WUTBufferResources(const WUTBufferResources&) = delete;
+    WUTBufferResources& operator=(const WUTBufferResources&) = delete;
 };
 
 BufferBackend makeWUTBufferBackend(WUTBufferResources&);
@@ -55,6 +76,15 @@ VertexArrayBackend makeWUTVertexArrayBackend(WUTBufferResources&);
 // Translate a GL-facing vertex attribute format to the closest native GX2
 // fetch format. Returns false for combinations GX2 cannot represent directly.
 bool translateVertexAttributeFormat(const VertexAttribute&, GX2AttribFormat&);
+
+// Install the native result of a successfully linked WebGL program. Names
+// are copied because fetch-shader creation can happen on later draw calls.
+bool setWUTLinkedProgram(WUTBufferResources&, const GX2VertexShader&, const GX2PixelShader&,
+    GX2ShaderMode, const WUTLinkedAttribute* bindings, size_t bindingCount);
+
+// Bind the active vertex/pixel shaders and lazily (re)build the fetch program
+// from the current VAO descriptors. Called immediately before every GX2 draw.
+bool prepareWUTProgramForDraw(WUTBufferResources&);
 
 // Materialize enabled GL attribute state into GX2 fetch-shader descriptors.
 // The caller supplies linked shader locations/compatibility before initializing
