@@ -2816,12 +2816,17 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
     GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type,
     std::span<const uint8_t> pixels)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    const bool is2D = target == GL_TEXTURE_2D_VALUE;
+    const bool isCubeFace = target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE
+        && target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE;
+    if (!is2D && !isCubeFace) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
+
+    const GCGLint maximumTextureSize = isCubeFace ? maxCubeMapTextureSize() : maxTextureSize();
     if (level < 0 || level >= 13 || width < 0 || height < 0
-        || width > maxTextureSize() || height > maxTextureSize() || border) {
+        || width > maximumTextureSize || height > maximumTextureSize || border) {
         addError(GL_INVALID_VALUE_VALUE);
         return;
     }
@@ -2829,28 +2834,71 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
-    auto* texture = boundTexture2D();
+
+    TextureRecord* texture = is2D ? boundTexture2D() : boundTextureCubeMap();
     if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
+
     if (!width || !height) {
         if (level != 0) {
             addError(GL_INVALID_VALUE_VALUE);
             return;
         }
-        releaseTextureStorage(*texture);
-        texture->width = texture->height = 0;
-        texture->levels.clear();
-        texture->definedLevels.clear();
+        if (is2D) {
+            releaseTextureStorage(*texture);
+            texture->width = texture->height = 0;
+            texture->internalFormat = internalformat;
+            texture->levels.clear();
+            texture->definedLevels.clear();
+        } else {
+            const uint32_t face = target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE;
+            texture->cubeWidths[face] = texture->cubeHeights[face] = 0;
+            texture->cubeInternalFormats[face] = internalformat;
+            texture->cubeLevels[face].clear();
+            texture->cubeDefinedLevels[face].clear();
+            if (!recreateTextureStorage(*texture))
+                addError(GL_OUT_OF_MEMORY_VALUE);
+        }
         return;
     }
-    if (level && (!texture->width || !texture->height)) {
-        addError(GL_INVALID_OPERATION_VALUE);
+
+    if (isCubeFace && width != height) {
+        addError(GL_INVALID_VALUE_VALUE);
         return;
     }
-    const uint32_t baseWidth = level ? texture->width : static_cast<uint32_t>(width);
-    const uint32_t baseHeight = level ? texture->height : static_cast<uint32_t>(height);
+
+    const uint32_t face = isCubeFace ? target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE : 0;
+    uint32_t baseWidth = static_cast<uint32_t>(width);
+    uint32_t baseHeight = static_cast<uint32_t>(height);
+    GCGLenum baseFormat = internalformat;
+    if (is2D) {
+        if (level && (!texture->width || !texture->height)) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        if (level) {
+            baseWidth = texture->width;
+            baseHeight = texture->height;
+            baseFormat = texture->internalFormat;
+        }
+    } else {
+        if (level && (!texture->cubeWidths[face] || !texture->cubeHeights[face])) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        if (level) {
+            baseWidth = texture->cubeWidths[face];
+            baseHeight = texture->cubeHeights[face];
+            baseFormat = texture->cubeInternalFormats[face];
+            if (internalformat != baseFormat) {
+                addError(GL_INVALID_OPERATION_VALUE);
+                return;
+            }
+        }
+    }
+
     uint32_t maxMipLevels = 1;
     for (uint32_t dimension = std::max(baseWidth, baseHeight); dimension > 1; dimension >>= 1)
         ++maxMipLevels;
@@ -2858,8 +2906,8 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
         addError(GL_INVALID_VALUE_VALUE);
         return;
     }
-    const uint32_t expectedWidth = level ? std::max<uint32_t>(1, texture->width >> level) : static_cast<uint32_t>(width);
-    const uint32_t expectedHeight = level ? std::max<uint32_t>(1, texture->height >> level) : static_cast<uint32_t>(height);
+    const uint32_t expectedWidth = level ? std::max<uint32_t>(1, baseWidth >> level) : static_cast<uint32_t>(width);
+    const uint32_t expectedHeight = level ? std::max<uint32_t>(1, baseHeight >> level) : static_cast<uint32_t>(height);
     if (static_cast<uint32_t>(width) != expectedWidth || static_cast<uint32_t>(height) != expectedHeight) {
         addError(GL_INVALID_VALUE_VALUE);
         return;
@@ -2867,30 +2915,65 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
 
     std::vector<uint8_t> converted;
     if (!convertTexturePixels(format, type, width, height, pixels, converted)) {
-        addError(type != GL_UNSIGNED_BYTE_VALUE ? GL_INVALID_ENUM_VALUE : GL_INVALID_VALUE_VALUE);
+        addError(type != GL_UNSIGNED_BYTE_VALUE
+            && type != GL_UNSIGNED_SHORT_5_6_5_VALUE
+            && type != GL_UNSIGNED_SHORT_4_4_4_4_VALUE
+            && type != GL_UNSIGNED_SHORT_5_5_5_1_VALUE
+                ? GL_INVALID_ENUM_VALUE : GL_INVALID_VALUE_VALUE);
         return;
     }
-    if (!level) {
-        releaseTextureStorage(*texture);
-        texture->width = static_cast<uint32_t>(width);
-        texture->height = static_cast<uint32_t>(height);
-        texture->levels.clear();
-        texture->definedLevels.clear();
+
+    if (is2D) {
+        if (!level) {
+            releaseTextureStorage(*texture);
+            texture->width = static_cast<uint32_t>(width);
+            texture->height = static_cast<uint32_t>(height);
+            texture->internalFormat = internalformat;
+            texture->levels.clear();
+            texture->definedLevels.clear();
+        }
+
+        const size_t levelCount = static_cast<size_t>(level) + 1;
+        if (texture->levels.size() < levelCount) {
+            texture->levels.resize(levelCount);
+            texture->definedLevels.resize(levelCount, false);
+        }
+        for (size_t mip = 0; mip < texture->levels.size(); ++mip) {
+            const uint32_t mipWidth = std::max<uint32_t>(1, texture->width >> mip);
+            const uint32_t mipHeight = std::max<uint32_t>(1, texture->height >> mip);
+            const size_t expectedBytes = static_cast<size_t>(mipWidth) * mipHeight * 4;
+            if (texture->levels[mip].size() != expectedBytes)
+                texture->levels[mip].assign(expectedBytes, 0);
+        }
+        texture->levels[level] = std::move(converted);
+        texture->definedLevels[level] = true;
+    } else {
+        auto& levels = texture->cubeLevels[face];
+        auto& definedLevels = texture->cubeDefinedLevels[face];
+        if (!level) {
+            texture->cubeWidths[face] = static_cast<uint32_t>(width);
+            texture->cubeHeights[face] = static_cast<uint32_t>(height);
+            texture->cubeInternalFormats[face] = internalformat;
+            levels.clear();
+            definedLevels.clear();
+        }
+
+        const size_t levelCount = static_cast<size_t>(level) + 1;
+        if (levels.size() < levelCount) {
+            levels.resize(levelCount);
+            definedLevels.resize(levelCount, false);
+        }
+        for (size_t mip = 0; mip < levels.size(); ++mip) {
+            const uint32_t mipWidth = std::max<uint32_t>(1, texture->cubeWidths[face] >> mip);
+            const uint32_t mipHeight = std::max<uint32_t>(1, texture->cubeHeights[face] >> mip);
+            const size_t expectedBytes = static_cast<size_t>(mipWidth) * mipHeight * 4;
+            if (levels[mip].size() != expectedBytes)
+                levels[mip].assign(expectedBytes, 0);
+        }
+        levels[level] = std::move(converted);
+        definedLevels[level] = true;
     }
-    const size_t levelCount = static_cast<size_t>(level) + 1;
-    if (texture->levels.size() < levelCount) {
-        texture->levels.resize(levelCount);
-        texture->definedLevels.resize(levelCount, false);
-    }
-    for (size_t mip = 0; mip < texture->levels.size(); ++mip) {
-        const uint32_t mipWidth = std::max<uint32_t>(1, texture->width >> mip);
-        const uint32_t mipHeight = std::max<uint32_t>(1, texture->height >> mip);
-        const size_t expectedBytes = static_cast<size_t>(mipWidth) * mipHeight * 4;
-        if (texture->levels[mip].size() != expectedBytes)
-            texture->levels[mip].assign(expectedBytes, 0);
-    }
-    texture->levels[level] = std::move(converted);
-    texture->definedLevels[level] = true;
+
     if (!recreateTextureStorage(*texture))
         addError(GL_OUT_OF_MEMORY_VALUE);
 }
@@ -2899,7 +2982,10 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
     GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type,
     std::span<const uint8_t> pixels)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    const bool is2D = target == GL_TEXTURE_2D_VALUE;
+    const bool isCubeFace = target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE
+        && target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE;
+    if (!is2D && !isCubeFace) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
@@ -2909,14 +2995,36 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
     }
     if (!width || !height)
         return;
-    auto* texture = boundTexture2D();
-    if (!texture || !texture->storageCreated || static_cast<size_t>(level) >= texture->levels.size()
-        || !texture->definedLevels[level]) {
+
+    TextureRecord* texture = is2D ? boundTexture2D() : boundTextureCubeMap();
+    if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
-    const uint32_t levelWidth = std::max<uint32_t>(1, texture->width >> level);
-    const uint32_t levelHeight = std::max<uint32_t>(1, texture->height >> level);
+    const uint32_t face = isCubeFace ? target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE : 0;
+    std::vector<std::vector<uint8_t>>* faceLevels = nullptr;
+    std::vector<bool>* faceDefined = nullptr;
+    uint32_t baseWidth = texture->width;
+    uint32_t baseHeight = texture->height;
+    bool levelDefined = false;
+    if (isCubeFace) {
+        faceLevels = &texture->cubeLevels[face];
+        faceDefined = &texture->cubeDefinedLevels[face];
+        baseWidth = texture->cubeWidths[face];
+        baseHeight = texture->cubeHeights[face];
+        levelDefined = static_cast<size_t>(level) < faceDefined->size() && (*faceDefined)[level];
+    } else
+        levelDefined = texture->storageCreated && static_cast<size_t>(level) < texture->definedLevels.size()
+            && texture->definedLevels[level];
+
+    const size_t levelCount = isCubeFace ? faceLevels->size() : texture->levels.size();
+    if (!baseWidth || !baseHeight || static_cast<size_t>(level) >= levelCount || !levelDefined) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+
+    const uint32_t levelWidth = std::max<uint32_t>(1, baseWidth >> level);
+    const uint32_t levelHeight = std::max<uint32_t>(1, baseHeight >> level);
     if (static_cast<uint32_t>(xoffset) > levelWidth || static_cast<uint32_t>(yoffset) > levelHeight
         || static_cast<uint32_t>(width) > levelWidth - static_cast<uint32_t>(xoffset)
         || static_cast<uint32_t>(height) > levelHeight - static_cast<uint32_t>(yoffset)) {
@@ -2926,10 +3034,15 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
 
     std::vector<uint8_t> converted;
     if (!convertTexturePixels(format, type, width, height, pixels, converted)) {
-        addError(type != GL_UNSIGNED_BYTE_VALUE ? GL_INVALID_ENUM_VALUE : GL_INVALID_VALUE_VALUE);
+        addError(type != GL_UNSIGNED_BYTE_VALUE
+            && type != GL_UNSIGNED_SHORT_5_6_5_VALUE
+            && type != GL_UNSIGNED_SHORT_4_4_4_4_VALUE
+            && type != GL_UNSIGNED_SHORT_5_5_5_1_VALUE
+                ? GL_INVALID_ENUM_VALUE : GL_INVALID_VALUE_VALUE);
         return;
     }
-    auto& destination = texture->levels[level];
+
+    auto& destination = isCubeFace ? (*faceLevels)[level] : texture->levels[level];
     for (GCGLsizei y = 0; y < height; ++y) {
         const size_t destinationOffset =
             (static_cast<size_t>(yoffset + y) * levelWidth + static_cast<size_t>(xoffset)) * 4;
@@ -2937,23 +3050,35 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
         std::memcpy(destination.data() + destinationOffset, converted.data() + sourceOffset,
             static_cast<size_t>(width) * 4);
     }
-    if (!uploadTextureLevel(*texture, static_cast<uint32_t>(level)))
+
+    if (texture->storageCreated && !uploadTextureLevel(*texture, static_cast<uint32_t>(level), face))
         addError(GL_INVALID_OPERATION_VALUE);
 }
 
 void GraphicsContextGLWKC::generateMipmap(GCGLenum target)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    if (target != GL_TEXTURE_2D_VALUE && target != GL_TEXTURE_CUBE_MAP_VALUE) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
-    auto* texture = boundTexture2D();
-    if (!texture || !texture->storageCreated || texture->levels.empty()
-        || texture->definedLevels.empty() || !texture->definedLevels[0]) {
+    if (target == GL_TEXTURE_2D_VALUE) {
+        auto* texture = boundTexture2D();
+        if (!texture || !texture->storageCreated || texture->levels.empty()
+            || texture->definedLevels.empty() || !texture->definedLevels[0]) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        if (!regenerateTextureMipmaps(*texture))
+            addError(GL_OUT_OF_MEMORY_VALUE);
+        return;
+    }
+
+    auto* texture = boundTextureCubeMap();
+    if (!texture || !texture->storageCreated || !cubeTextureBaseComplete(*texture)) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
-    if (!regenerateTextureMipmaps(*texture))
+    if (!regenerateCubeMapMipmaps(*texture))
         addError(GL_OUT_OF_MEMORY_VALUE);
 }
 
