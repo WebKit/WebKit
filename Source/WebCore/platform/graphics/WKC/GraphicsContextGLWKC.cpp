@@ -178,6 +178,14 @@ constexpr GCGLenum GL_ACTIVE_TEXTURE_QUERY_VALUE = 0x84E0;
 constexpr GCGLenum GL_CURRENT_PROGRAM_VALUE = 0x8B8D;
 constexpr GCGLenum GL_VERTEX_ARRAY_BINDING_VALUE = 0x85B5;
 constexpr GCGLenum GL_TEXTURE_2D_VALUE = 0x0DE1;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_VALUE = 0x8513;
+constexpr GCGLenum GL_TEXTURE_BINDING_CUBE_MAP_VALUE = 0x8514;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE = 0x8515;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_X_VALUE = 0x8516;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_POSITIVE_Y_VALUE = 0x8517;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_VALUE = 0x8518;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_POSITIVE_Z_VALUE = 0x8519;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE = 0x851A;
 constexpr GCGLenum GL_TEXTURE_MIN_FILTER_VALUE = 0x2801;
 constexpr GCGLenum GL_TEXTURE_MAG_FILTER_VALUE = 0x2800;
 constexpr GCGLenum GL_TEXTURE_WRAP_S_VALUE = 0x2802;
@@ -962,6 +970,11 @@ private:
         uint32_t height { 0 };
         std::vector<std::vector<uint8_t>> levels;
         std::vector<bool> definedLevels;
+        std::array<uint32_t, 6> cubeWidths {};
+        std::array<uint32_t, 6> cubeHeights {};
+        std::array<GCGLenum, 6> cubeInternalFormats {};
+        std::array<std::vector<std::vector<uint8_t>>, 6> cubeLevels;
+        std::array<std::vector<bool>, 6> cubeDefinedLevels;
         GX2Sampler sampler {};
         GCGLint minFilter { static_cast<GCGLint>(GL_NEAREST_MIPMAP_LINEAR_VALUE) };
         GCGLint magFilter { static_cast<GCGLint>(GL_LINEAR_VALUE) };
@@ -1048,13 +1061,16 @@ private:
     void detachFramebufferTexture(PlatformGLObject);
     void detachFramebufferRenderbuffer(PlatformGLObject);
     bool recreateTextureStorage(TextureRecord&);
-    bool uploadTextureLevel(TextureRecord&, uint32_t level);
+    bool uploadTextureLevel(TextureRecord&, uint32_t level, uint32_t face = 0);
+    bool cubeTextureBaseComplete(const TextureRecord&) const;
+    bool regenerateCubeMapMipmaps(TextureRecord&);
     bool convertTexturePixels(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height,
         std::span<const uint8_t> pixels, std::vector<uint8_t>& output) const;
     bool regenerateTextureMipmaps(TextureRecord&);
     void applyTextureSampler(TextureRecord&);
     bool applyProgramSamplers(ProgramRecord&);
     TextureRecord* boundTexture2D();
+    TextureRecord* boundTextureCubeMap();
     void releaseShaderIfUnused(PlatformGLObject);
     void addError(GCGLenum);
     void addDriverError(WKC::GLGX2::Result, const char*);
@@ -1080,7 +1096,9 @@ private:
     std::unordered_map<PlatformGLObject, RenderbufferRecord> m_renderbuffers;
     std::unordered_map<PlatformGLObject, bool> m_vertexArrayObjects;
     TextureRecord m_defaultTexture;
+    TextureRecord m_defaultCubeTexture;
     std::array<PlatformGLObject, 16> m_boundTextures2D {};
+    std::array<PlatformGLObject, 16> m_boundTexturesCube {};
     PlatformGLObject m_nextShader { 1 };
     PlatformGLObject m_nextProgram { 1 };
     PlatformGLObject m_nextTexture { 1 };
@@ -1096,6 +1114,7 @@ private:
     GCGLint m_unpackAlignment { 4 };
     GCGLint m_packAlignment { 4 };
     bool m_defaultTextureReady { false };
+    bool m_defaultCubeTextureReady { false };
     bool m_compilerAvailable { false };
 };
 
@@ -1564,14 +1583,20 @@ void GraphicsContextGLWKC::releaseTextureStorage(TextureRecord& texture)
     texture.storageCreated = false;
 }
 
-bool GraphicsContextGLWKC::uploadTextureLevel(TextureRecord& texture, uint32_t level)
+bool GraphicsContextGLWKC::uploadTextureLevel(TextureRecord& texture, uint32_t level, uint32_t face)
 {
-    if (!texture.storageCreated || level >= texture.levels.size())
+    const bool cubeMap = texture.target == GL_TEXTURE_CUBE_MAP_VALUE;
+    if (!texture.storageCreated)
+        return false;
+    if (cubeMap) {
+        if (face >= texture.cubeLevels.size() || level >= texture.cubeLevels[face].size())
+            return false;
+    } else if (level >= texture.levels.size())
         return false;
 
     const uint32_t width = std::max<uint32_t>(1, texture.width >> level);
     const uint32_t height = std::max<uint32_t>(1, texture.height >> level);
-    const auto& source = texture.levels[level];
+    const auto& source = cubeMap ? texture.cubeLevels[face][level] : texture.levels[level];
     if (source.size() != static_cast<size_t>(width) * height * 4)
         return false;
 
@@ -1580,23 +1605,70 @@ bool GraphicsContextGLWKC::uploadTextureLevel(TextureRecord& texture, uint32_t l
     if (!locked)
         return false;
 
-    // Linear-aligned RGBA8 surfaces expose rows with an aligned texel pitch.
-    // GX2RLockSurfaceEx selects the requested mip level, so level-local rows
-    // can be filled without overwriting adjacent mip levels.
-    const uint32_t pitchPixels = std::max<uint32_t>(width, texture.native.surface.pitch >> level);
+    uint8_t* facePixels = static_cast<uint8_t*>(locked);
+    uint32_t pitchPixels = std::max<uint32_t>(width, texture.native.surface.pitch >> level);
+    if (cubeMap) {
+        // GX2 cube surfaces store six faces in each mip level. Calculate the
+        // padded size of one RGBA8 2D face using the same linear tile mode,
+        // then address the requested face within the locked mip-level slice.
+        GX2Surface faceSurface {};
+        faceSurface.dim = GX2_SURFACE_DIM_TEXTURE_2D;
+        faceSurface.width = width;
+        faceSurface.height = height;
+        faceSurface.depth = 1;
+        faceSurface.mipLevels = 1;
+        faceSurface.format = texture.native.surface.format;
+        faceSurface.aa = GX2_AA_MODE1X;
+        faceSurface.use = GX2_SURFACE_USE_TEXTURE;
+        faceSurface.tileMode = texture.native.surface.tileMode;
+        GX2CalcSurfaceSizeAndAlignment(&faceSurface);
+        const size_t faceStride = faceSurface.imageSize;
+        const size_t faceOffset = static_cast<size_t>(face) * faceStride;
+        const size_t allocatedBytes = level ? texture.native.surface.mipmapSize : texture.native.surface.imageSize;
+        if (!faceStride || faceSurface.pitch < width || faceOffset > allocatedBytes
+            || faceStride > allocatedBytes - faceOffset) {
+            GX2RUnlockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
+                static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+            return false;
+        }
+        facePixels += faceOffset;
+        pitchPixels = faceSurface.pitch;
+    }
     if (pitchPixels < width) {
         GX2RUnlockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
             static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
         return false;
     }
+
     const size_t destinationPitch = static_cast<size_t>(pitchPixels) * 4;
     for (uint32_t y = 0; y < height; ++y) {
-        std::memcpy(static_cast<uint8_t*>(locked) + static_cast<size_t>(y) * destinationPitch,
+        std::memcpy(facePixels + static_cast<size_t>(y) * destinationPitch,
             source.data() + static_cast<size_t>(y) * width * 4,
             static_cast<size_t>(width) * 4);
     }
     GX2RUnlockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
         static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+    return true;
+}
+
+bool GraphicsContextGLWKC::cubeTextureBaseComplete(const TextureRecord& texture) const
+{
+    if (texture.target != GL_TEXTURE_CUBE_MAP_VALUE)
+        return false;
+
+    const uint32_t width = texture.cubeWidths[0];
+    const uint32_t height = texture.cubeHeights[0];
+    const GCGLenum format = texture.cubeInternalFormats[0];
+    if (!width || width != height || !format || texture.cubeDefinedLevels[0].empty()
+        || !texture.cubeDefinedLevels[0][0])
+        return false;
+
+    for (size_t face = 1; face < texture.cubeLevels.size(); ++face) {
+        if (texture.cubeWidths[face] != width || texture.cubeHeights[face] != height
+            || texture.cubeInternalFormats[face] != format || texture.cubeDefinedLevels[face].empty()
+            || !texture.cubeDefinedLevels[face][0])
+            return false;
+    }
     return true;
 }
 
@@ -1620,32 +1692,66 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
         WKC::GLGX2::bindWUTRenderTarget(m_native);
     }
 
-    if (!texture.width || !texture.height || texture.levels.empty()) {
-        releaseTextureStorage(texture);
-        if (wasBoundFramebufferTexture)
-            refreshFramebufferTextureViews();
-        return true;
+    const bool cubeMap = texture.target == GL_TEXTURE_CUBE_MAP_VALUE;
+    if (cubeMap) {
+        if (!cubeTextureBaseComplete(texture)) {
+            releaseTextureStorage(texture);
+            texture.width = texture.height = 0;
+            if (wasBoundFramebufferTexture)
+                refreshFramebufferTextureViews();
+            return true;
+        }
+        texture.width = texture.cubeWidths[0];
+        texture.height = texture.cubeHeights[0];
+        texture.internalFormat = texture.cubeInternalFormats[0];
+        size_t levelCount = 1;
+        for (const auto& levels : texture.cubeLevels)
+            levelCount = std::max(levelCount, levels.size());
+        if (levelCount > 13 || texture.width > static_cast<uint32_t>(maxCubeMapTextureSize())
+            || texture.height > static_cast<uint32_t>(maxCubeMapTextureSize()))
+            return false;
+
+        for (size_t face = 0; face < texture.cubeLevels.size(); ++face) {
+            texture.cubeLevels[face].resize(levelCount);
+            texture.cubeDefinedLevels[face].resize(levelCount, false);
+            for (size_t level = 0; level < levelCount; ++level) {
+                const uint32_t levelWidth = std::max<uint32_t>(1, texture.width >> level);
+                const uint32_t levelHeight = std::max<uint32_t>(1, texture.height >> level);
+                const size_t expectedBytes = static_cast<size_t>(levelWidth) * levelHeight * 4;
+                if (texture.cubeLevels[face][level].size() != expectedBytes)
+                    texture.cubeLevels[face][level].assign(expectedBytes, 0);
+            }
+        }
+    } else {
+        if (!texture.width || !texture.height || texture.levels.empty()) {
+            releaseTextureStorage(texture);
+            if (wasBoundFramebufferTexture)
+                refreshFramebufferTextureViews();
+            return true;
+        }
+        if (texture.levels.size() > 13 || texture.width > static_cast<uint32_t>(maxTextureSize())
+            || texture.height > static_cast<uint32_t>(maxTextureSize()))
+            return false;
+
+        uint32_t maximumLevelCount = 1;
+        for (uint32_t dimension = std::max(texture.width, texture.height); dimension > 1; dimension >>= 1)
+            ++maximumLevelCount;
+        if (texture.levels.size() > maximumLevelCount)
+            return false;
     }
-    if (texture.levels.size() > 13 || texture.width > static_cast<uint32_t>(maxTextureSize())
-        || texture.height > static_cast<uint32_t>(maxTextureSize()))
-        return false;
-    uint32_t maximumLevelCount = 1;
-    for (uint32_t dimension = std::max(texture.width, texture.height); dimension > 1; dimension >>= 1)
-        ++maximumLevelCount;
-    if (texture.levels.size() > maximumLevelCount)
-        return false;
 
     releaseTextureStorage(texture);
     texture.native = {};
     auto& surface = texture.native.surface;
-    surface.dim = GX2_SURFACE_DIM_TEXTURE_2D;
+    surface.dim = cubeMap ? GX2_SURFACE_DIM_TEXTURE_CUBE : GX2_SURFACE_DIM_TEXTURE_2D;
     surface.width = texture.width;
     surface.height = texture.height;
     surface.depth = 1;
-    surface.mipLevels = static_cast<uint32_t>(texture.levels.size());
+    surface.mipLevels = static_cast<uint32_t>(cubeMap ? texture.cubeLevels[0].size() : texture.levels.size());
     surface.format = GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8;
     surface.aa = GX2_AA_MODE1X;
-    surface.use = static_cast<GX2SurfaceUse>(GX2_SURFACE_USE_TEXTURE | GX2_SURFACE_USE_COLOR_BUFFER);
+    surface.use = cubeMap ? GX2_SURFACE_USE_TEXTURE
+        : static_cast<GX2SurfaceUse>(GX2_SURFACE_USE_TEXTURE | GX2_SURFACE_USE_COLOR_BUFFER);
     surface.tileMode = GX2_TILE_MODE_LINEAR_ALIGNED;
     GX2CalcSurfaceSizeAndAlignment(&surface);
     if (!surface.imageSize || !surface.alignment
@@ -1658,14 +1764,25 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
     texture.native.viewFirstMip = 0;
     texture.native.viewNumMips = surface.mipLevels;
     texture.native.viewFirstSlice = 0;
-    texture.native.viewNumSlices = 1;
+    texture.native.viewNumSlices = cubeMap ? 6 : 1;
     texture.native.compMap = GX2_COMP_MAP(GX2_SQ_SEL_X, GX2_SQ_SEL_Y, GX2_SQ_SEL_Z, GX2_SQ_SEL_W);
     texture.storageCreated = true;
 
-    for (uint32_t level = 0; level < texture.levels.size(); ++level) {
-        if (!uploadTextureLevel(texture, level)) {
-            releaseTextureStorage(texture);
-            return false;
+    if (cubeMap) {
+        for (uint32_t level = 0; level < surface.mipLevels; ++level) {
+            for (uint32_t face = 0; face < 6; ++face) {
+                if (!uploadTextureLevel(texture, level, face)) {
+                    releaseTextureStorage(texture);
+                    return false;
+                }
+            }
+        }
+    } else {
+        for (uint32_t level = 0; level < texture.levels.size(); ++level) {
+            if (!uploadTextureLevel(texture, level)) {
+                releaseTextureStorage(texture);
+                return false;
+            }
         }
     }
     GX2InitTextureRegs(&texture.native);
