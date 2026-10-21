@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>DataTransfer types attribute lists "Files" after the text item types</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/dnd.html#the-datatransfer-interface">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function makeFile(name = "test.txt") {
+  return new File(["abc"], name);
+}
+
+test(() => {
+  const dt = new DataTransfer();
+  dt.items.add(makeFile());
+  dt.setData("text/plain", "foo");
+  assert_array_equals(dt.types, ["text/plain", "Files"]);
+}, '"Files" is last when the File is added before the text item');
+
+test(() => {
+  const dt = new DataTransfer();
+  dt.setData("text/plain", "foo");
+  dt.items.add(makeFile());
+  assert_array_equals(dt.types, ["text/plain", "Files"]);
+}, '"Files" is last when the File is added after the text item');
+
+test(() => {
+  const dt = new DataTransfer();
+  dt.setData("text/plain", "foo");
+  dt.setData("text/uri-list", "https://webkit.org/");
+  dt.items.add(makeFile());
+  dt.setData("text/html", "<b>bar</b>");
+  assert_array_equals(dt.types, ["text/plain", "text/uri-list", "text/html", "Files"]);
+}, 'The text item types keep their relative order and "Files" comes after all of them');
+
+test(() => {
+  const dt = new DataTransfer();
+  dt.setData("text/plain", "foo");
+  dt.items.add(makeFile("one.txt"));
+  dt.items.add(makeFile("two.txt"));
+  assert_equals(dt.files.length, 2);
+  assert_array_equals(dt.types, ["text/plain", "Files"],
+                      '"Files" is listed once regardless of the number of File items');
+}, 'Multiple File items add a single trailing "Files" entry');
+
+test(() => {
+  const dt = new DataTransfer();
+  dt.items.add(makeFile());
+  dt.setData("text/plain", "foo");
+  assert_array_equals(dt.types, ["text/plain", "Files"]);
+
+  // The item list keeps its own order; only types moves "Files" to the end.
+  assert_equals(dt.items.length, 2);
+  assert_equals(dt.items[0].kind, "file");
+  assert_equals(dt.items[1].kind, "string");
+  assert_equals(dt.items[1].type, "text/plain");
+}, 'The order of types does not have to match the order of the item list');
+</script>
