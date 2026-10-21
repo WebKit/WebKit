@@ -1000,6 +1000,8 @@ private:
     struct FramebufferRecord {
         PlatformGLObject colorTexture { 0 };
         GCGLint colorTextureLevel { 0 };
+        uint32_t colorTextureFace { 0 };
+        bool colorTextureIsCubeFace { false };
         PlatformGLObject colorRenderbuffer { 0 };
         PlatformGLObject depthRenderbuffer { 0 };
         PlatformGLObject stencilRenderbuffer { 0 };
@@ -1362,10 +1364,25 @@ GCGLenum GraphicsContextGLWKC::framebufferStatus(PlatformGLObject name) const
     if (framebuffer.colorTexture) {
         auto texture = m_textures.find(framebuffer.colorTexture);
         if (texture == m_textures.end() || !texture->second.storageCreated
-            || !framebuffer.textureColorViewReady || framebuffer.colorTextureLevel != 0
+            || !framebuffer.textureColorViewReady || framebuffer.colorTextureLevel != 0)
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+
+        uint32_t width = texture->second.width;
+        uint32_t height = texture->second.height;
+        if (framebuffer.colorTextureIsCubeFace) {
+            const uint32_t face = framebuffer.colorTextureFace;
+            if (texture->second.target != GL_TEXTURE_CUBE_MAP_VALUE
+                || face >= texture->second.cubeLevels.size()
+                || texture->second.cubeDefinedLevels[face].empty()
+                || !texture->second.cubeDefinedLevels[face][0])
+                return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+            width = texture->second.cubeWidths[face];
+            height = texture->second.cubeHeights[face];
+        } else if (texture->second.target != GL_TEXTURE_2D_VALUE
             || texture->second.definedLevels.empty() || !texture->second.definedLevels[0])
             return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
-        const auto status = adoptDimensions(texture->second.width, texture->second.height);
+
+        const auto status = adoptDimensions(width, height);
         if (status != GL_FRAMEBUFFER_COMPLETE_VALUE)
             return status;
         hasColor = true;
@@ -1421,19 +1438,47 @@ void GraphicsContextGLWKC::refreshFramebufferTextureViews()
             framebuffer.textureColorViewReady = false;
             continue;
         }
+
         auto texture = m_textures.find(framebuffer.colorTexture);
         if (texture == m_textures.end() || !texture->second.storageCreated
-            || framebuffer.colorTextureLevel != 0 || texture->second.definedLevels.empty()
-            || !texture->second.definedLevels[0]) {
+            || framebuffer.colorTextureLevel != 0) {
             framebuffer.textureColorView = {};
             framebuffer.textureColorViewReady = false;
             continue;
         }
+
+        const auto& textureRecord = texture->second;
+        uint32_t width = textureRecord.width;
+        uint32_t height = textureRecord.height;
+        if (framebuffer.colorTextureIsCubeFace) {
+            if (textureRecord.target != GL_TEXTURE_CUBE_MAP_VALUE
+                || framebuffer.colorTextureFace >= textureRecord.cubeLevels.size()
+                || textureRecord.cubeDefinedLevels[framebuffer.colorTextureFace].empty()
+                || !textureRecord.cubeDefinedLevels[framebuffer.colorTextureFace][0]) {
+                framebuffer.textureColorView = {};
+                framebuffer.textureColorViewReady = false;
+                continue;
+            }
+            width = textureRecord.cubeWidths[framebuffer.colorTextureFace];
+            height = textureRecord.cubeHeights[framebuffer.colorTextureFace];
+        } else if (textureRecord.target != GL_TEXTURE_2D_VALUE
+            || textureRecord.definedLevels.empty() || !textureRecord.definedLevels[0]) {
+            framebuffer.textureColorView = {};
+            framebuffer.textureColorViewReady = false;
+            continue;
+        }
+
+        if (!width || !height) {
+            framebuffer.textureColorView = {};
+            framebuffer.textureColorViewReady = false;
+            continue;
+        }
+
         auto& view = framebuffer.textureColorView;
         view = {};
-        view.surface = texture->second.native.surface;
+        view.surface = textureRecord.native.surface;
         view.viewMip = 0;
-        view.viewFirstSlice = 0;
+        view.viewFirstSlice = framebuffer.colorTextureIsCubeFace ? framebuffer.colorTextureFace : 0;
         view.viewNumSlices = 1;
         view.aaBuffer = nullptr;
         view.aaSize = 0;
@@ -1556,6 +1601,8 @@ void GraphicsContextGLWKC::detachFramebufferTexture(PlatformGLObject name)
             continue;
         framebuffer.colorTexture = 0;
         framebuffer.colorTextureLevel = 0;
+        framebuffer.colorTextureFace = 0;
+        framebuffer.colorTextureIsCubeFace = false;
         framebuffer.textureColorView = {};
         framebuffer.textureColorViewReady = false;
     }
@@ -3380,6 +3427,8 @@ void GraphicsContextGLWKC::framebufferRenderbuffer(GCGLenum target, GCGLenum att
         record.colorRenderbuffer = name;
         record.colorTexture = 0;
         record.colorTextureLevel = 0;
+        record.colorTextureFace = 0;
+        record.colorTextureIsCubeFace = false;
         record.textureColorView = {};
         record.textureColorViewReady = false;
         break;
@@ -3403,7 +3452,10 @@ void GraphicsContextGLWKC::framebufferRenderbuffer(GCGLenum target, GCGLenum att
 void GraphicsContextGLWKC::framebufferTexture2D(GCGLenum target, GCGLenum attachment,
     GCGLenum textureTarget, PlatformGLObject name, GCGLint level)
 {
-    if (target != GL_FRAMEBUFFER_VALUE || textureTarget != GL_TEXTURE_2D_VALUE) {
+    const bool is2D = textureTarget == GL_TEXTURE_2D_VALUE;
+    const bool isCubeFace = textureTarget >= GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE
+        && textureTarget <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE;
+    if (target != GL_FRAMEBUFFER_VALUE || (!is2D && !isCubeFace)) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
@@ -3423,7 +3475,8 @@ void GraphicsContextGLWKC::framebufferTexture2D(GCGLenum target, GCGLenum attach
 
     if (name) {
         auto texture = m_textures.find(name);
-        if (texture == m_textures.end() || texture->second.target != GL_TEXTURE_2D_VALUE) {
+        if (texture == m_textures.end()
+            || texture->second.target != (is2D ? GL_TEXTURE_2D_VALUE : GL_TEXTURE_CUBE_MAP_VALUE)) {
             addError(GL_INVALID_OPERATION_VALUE);
             return;
         }
@@ -3432,6 +3485,8 @@ void GraphicsContextGLWKC::framebufferTexture2D(GCGLenum target, GCGLenum attach
     auto& record = framebuffer->second;
     record.colorTexture = name;
     record.colorTextureLevel = level;
+    record.colorTextureFace = isCubeFace ? textureTarget - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE : 0;
+    record.colorTextureIsCubeFace = isCubeFace;
     record.colorRenderbuffer = 0;
     record.textureColorView = {};
     record.textureColorViewReady = false;
