@@ -15,6 +15,14 @@
 #include "OpenGLToGX2VertexArrays.h"
 #include "OpenGLToGX2WUTBackend.h"
 
+// CafeGLSL's compatibility header predates the WUT GX2 headers. In this
+// Wii U-only translation unit, force its supported WUT ABI path before
+// including the compiler header so it consumes WUT's single source of truth
+// for GX2 shader and resource types instead of redeclaring legacy copies.
+#if defined(WKC_CUSTOMER_WIIU) && !defined(__WUT__)
+#define __WUT__ 1
+#endif
+
 #include <cafeglsl/CafeGLSLCompiler.h>
 #include <gx2/draw.h>
 #include <gx2/event.h>
