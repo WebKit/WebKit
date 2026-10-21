@@ -910,6 +910,7 @@ public:
     double privatePlayerVolume(const HTMLMediaElement&);
     bool privatePlayerMuted(const HTMLMediaElement&);
     double privatePlayerCurrentTime(HTMLMediaElement&);
+    void seekMediaElementToFindMatch(HTMLMediaElement&, double);
     bool isMediaElementHidden(const HTMLMediaElement&);
     double elementEffectivePlaybackRate(const HTMLMediaElement&);
 
