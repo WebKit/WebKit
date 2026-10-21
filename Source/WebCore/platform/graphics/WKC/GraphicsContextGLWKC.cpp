@@ -2893,6 +2893,29 @@ GCGLenum GraphicsContextGLWKC::checkFramebufferStatus(GCGLenum target)
 }
 void GraphicsContextGLWKC::clear(GCGLbitfield mask)
 {
+    if (!framebufferReadyForDraw())
+        return;
+    if (mask & ~(GL_COLOR_BUFFER_BIT_VALUE | GL_DEPTH_BUFFER_BIT_VALUE | GL_STENCIL_BUFFER_BIT_VALUE)) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    if (m_boundFramebuffer) {
+        auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        bool hasDepth = false;
+        bool hasStencil = false;
+        if (framebuffer != m_framebuffers.end()) {
+            auto depth = m_renderbuffers.find(framebuffer->second.depthRenderbuffer);
+            auto stencil = m_renderbuffers.find(framebuffer->second.stencilRenderbuffer);
+            hasDepth = depth != m_renderbuffers.end() && depth->second.hasDepth;
+            hasStencil = stencil != m_renderbuffers.end() && stencil->second.hasStencil;
+        }
+        if (!hasDepth)
+            mask &= ~GL_DEPTH_BUFFER_BIT_VALUE;
+        if (!hasStencil)
+            mask &= ~GL_STENCIL_BUFFER_BIT_VALUE;
+    }
+    if (!mask)
+        return;
     uint8_t translated=0;
     if(mask&GL_COLOR_BUFFER_BIT_VALUE) translated|=WKC::GLGX2::ClearColorBuffer;
     if(mask&GL_DEPTH_BUFFER_BIT_VALUE) translated|=WKC::GLGX2::ClearDepthBuffer;
@@ -3016,6 +3039,16 @@ void GraphicsContextGLWKC::detachShader(PlatformGLObject p,PlatformGLObject s)
 }
 void GraphicsContextGLWKC::disable(GCGLenum cap)
 {
+    if (cap == GL_DEPTH_TEST_VALUE) {
+        m_requestedDepthTest = false;
+        refreshFramebufferTarget();
+        return;
+    }
+    if (cap == GL_STENCIL_TEST_VALUE) {
+        m_requestedStencilTest = false;
+        refreshFramebufferTarget();
+        return;
+    }
     auto map=[](GCGLenum v)->std::optional<WKC::GLGX2::Capability>{
         switch(v){case GL_BLEND_VALUE:return WKC::GLGX2::Capability::Blend;case GL_CULL_FACE_VALUE:return WKC::GLGX2::Capability::CullFace;
         case GL_DEPTH_TEST_VALUE:return WKC::GLGX2::Capability::DepthTest;case GL_SCISSOR_TEST_VALUE:return WKC::GLGX2::Capability::ScissorTest;
@@ -3027,12 +3060,16 @@ void GraphicsContextGLWKC::disableVertexAttribArray(GCGLuint i)
 {if(i>=32||m_vertexArrays.enableAttribute(i,false)!=WKC::GLGX2::VertexArrayResult::Ok)addError(i>=32?GL_INVALID_VALUE_VALUE:GL_INVALID_OPERATION_VALUE);}
 void GraphicsContextGLWKC::drawArrays(GCGLenum mode,GCGLint first,GCGLsizei count)
 {
+    if (!framebufferReadyForDraw())
+        return;
     WKC::GLGX2::Primitive p;if(!mapPrimitive(mode,p)){addError(GL_INVALID_ENUM_VALUE);return;}
     if(first<0||count<0){addError(GL_INVALID_VALUE_VALUE);return;}if(!activateProgram(m_currentProgram))return;
     addDriverError(m_driver.drawArrays(p,first,count),"drawArrays");
 }
 void GraphicsContextGLWKC::drawElements(GCGLenum mode,GCGLsizei count,GCGLenum type,GCGLintptr offset)
 {
+    if (!framebufferReadyForDraw())
+        return;
     WKC::GLGX2::Primitive p;WKC::GLGX2::IndexType t;
     if(!mapPrimitive(mode,p)||!mapIndexType(type,t)){addError(GL_INVALID_ENUM_VALUE);return;}
     if(count<0||offset<0){addError(GL_INVALID_VALUE_VALUE);return;}if(!activateProgram(m_currentProgram))return;
@@ -3040,12 +3077,16 @@ void GraphicsContextGLWKC::drawElements(GCGLenum mode,GCGLsizei count,GCGLenum t
 }
 void GraphicsContextGLWKC::drawArraysInstanced(GCGLenum mode,GCGLint first,GCGLsizei count,GCGLsizei instances)
 {
+    if (!framebufferReadyForDraw())
+        return;
     WKC::GLGX2::Primitive p;if(!mapPrimitive(mode,p)){addError(GL_INVALID_ENUM_VALUE);return;}
     if(first<0||count<0||instances<0){addError(GL_INVALID_VALUE_VALUE);return;}if(!activateProgram(m_currentProgram))return;
     addDriverError(m_driver.drawArraysInstanced(p,first,count,instances),"drawArraysInstanced");
 }
 void GraphicsContextGLWKC::drawElementsInstanced(GCGLenum mode,GCGLsizei count,GCGLenum type,GCGLintptr offset,GCGLsizei instances)
 {
+    if (!framebufferReadyForDraw())
+        return;
     WKC::GLGX2::Primitive p;WKC::GLGX2::IndexType t;
     if(!mapPrimitive(mode,p)||!mapIndexType(type,t)){addError(GL_INVALID_ENUM_VALUE);return;}
     if(count<0||offset<0||instances<0){addError(GL_INVALID_VALUE_VALUE);return;}if(!activateProgram(m_currentProgram))return;
@@ -3053,6 +3094,16 @@ void GraphicsContextGLWKC::drawElementsInstanced(GCGLenum mode,GCGLsizei count,G
 }
 void GraphicsContextGLWKC::enable(GCGLenum cap)
 {
+    if (cap == GL_DEPTH_TEST_VALUE) {
+        m_requestedDepthTest = true;
+        refreshFramebufferTarget();
+        return;
+    }
+    if (cap == GL_STENCIL_TEST_VALUE) {
+        m_requestedStencilTest = true;
+        refreshFramebufferTarget();
+        return;
+    }
     auto map=[](GCGLenum v)->std::optional<WKC::GLGX2::Capability>{
         switch(v){case GL_BLEND_VALUE:return WKC::GLGX2::Capability::Blend;case GL_CULL_FACE_VALUE:return WKC::GLGX2::Capability::CullFace;
         case GL_DEPTH_TEST_VALUE:return WKC::GLGX2::Capability::DepthTest;case GL_SCISSOR_TEST_VALUE:return WKC::GLGX2::Capability::ScissorTest;
@@ -3134,6 +3185,7 @@ void GraphicsContextGLWKC::getIntegerv(GCGLenum n,std::span<GCGLint> v)
     switch(n){case GL_ARRAY_BUFFER_BINDING_VALUE:v[0]=m_buffers.bound(WKC::GLGX2::BufferTarget::Array);return;
     case GL_ELEMENT_ARRAY_BUFFER_BINDING_VALUE:v[0]=m_vertexArrays.elementBuffer();return;
     case GL_FRAMEBUFFER_BINDING_VALUE:v[0]=m_boundFramebuffer;return;
+     case GL_RENDERBUFFER_BINDING_VALUE:v[0]=m_boundRenderbuffer;return;
     case GL_TEXTURE_BINDING_2D_VALUE:v[0]=m_boundTextures2D[m_activeTextureUnit];return;
     case GL_ACTIVE_TEXTURE_QUERY_VALUE:v[0]=GL_TEXTURE0_VALUE + m_activeTextureUnit;return;
     case GL_CURRENT_PROGRAM_VALUE:v[0]=m_currentProgram;return;
