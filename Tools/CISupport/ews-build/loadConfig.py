@@ -37,9 +37,9 @@ from twisted.internet import defer
 
 from .factories import (APITestsFactory, BindingsFactory, BuildFactory, Factory, GTKBuildFactory,
                         GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCBuildO3AndTestsFactory, JSCTestsFactory, MergeQueueFactory, SafeMergeQueueFactory, StressTestFactory,
-                        StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, GTK3GCCBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory, PlayStationBuildFactory,
-                        WinBuildFactory, WinTestsFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory,  visionOSBuildFactory, visionOSEmbeddedBuildFactory, visionOSTestsFactory, macOSBuildFactory, macOSBuildOnlyFactory,
-                        macOSWK1Factory, macOSWK2Factory, macOSSiteIsolationFactory, ServicesFactory, SaferCPPStaticAnalyzerFactory, UnsafeMergeQueueFactory, watchOSBuildFactory)
+                        StyleFactory, TestFactory, WPEBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory, PlayStationBuildFactory,
+                        WinBuildFactory, WinTestsFactory, iOSTestsFactory, visionOSTestsFactory, macOSBuildOnlyFactory,
+                        macOSWK1Factory, macOSWK2Factory, macOSSiteIsolationFactory, ServicesFactory, SaferCPPStaticAnalyzerFactory, UnsafeMergeQueueFactory)
 
 from .utils import get_custom_suffix
 
