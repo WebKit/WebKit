@@ -293,7 +293,7 @@ void WebChromeClient::unfocus()
         page->send(Messages::WebPageProxy::SetFocus(false, std::nullopt));
 }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
 
 void WebChromeClient::elementDidFocus(Element& element, const FocusOptions& options)
 {
@@ -319,11 +319,19 @@ void WebChromeClient::focusedElementDidChangeInputMode(Element& element, InputMo
         page->focusedElementDidChangeInputMode(element, mode);
 }
 
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+
 void WebChromeClient::focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement& element)
 {
     if (RefPtr page = m_page.get())
         page->focusedSelectElementDidChangeOptions(element);
 }
+
+#endif
+
+#if PLATFORM(COCOA)
 
 #endif
 

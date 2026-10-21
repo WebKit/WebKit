@@ -1087,9 +1087,9 @@ public:
     static InputType inputTypeForElement(const WebCore::Element&);
 #if PLATFORM(IOS_FAMILY)
     void flushPendingFocusedElementUpdateIfNeeded();
+    void focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement&);
 #endif
     void focusedElementDidChangeInputMode(WebCore::Element&, WebCore::InputMode);
-    void focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement&);
     void resetFocusedElementForFrame(WebFrame*);
     void updateInputContextAfterBlurringAndRefocusingElementIfNeeded(WebCore::Element&);
 

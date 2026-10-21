@@ -686,6 +686,29 @@ public:
         g_assert_cmpuint(m_context->surroundingCount, >=, count);
     }
 
+    void waitForContentType(WebKitInputPurpose purpose, unsigned hints, unsigned timeoutMilliseconds = 5000)
+    {
+        if (this->purpose() == purpose && this->hints() == hints)
+            return;
+
+        m_expectedPurpose = purpose;
+        m_expectedHints = hints;
+        m_contentTypeSourceID = g_idle_add([](gpointer userData) -> gboolean {
+            auto* test = static_cast<InputMethodTest*>(userData);
+            if (test->purpose() == test->m_expectedPurpose && test->hints() == test->m_expectedHints) {
+                test->m_contentTypeSourceID = 0;
+                test->quitMainLoop();
+                return FALSE;
+            }
+
+            return TRUE;
+        }, this);
+        runMainLoopWithTimeout(timeoutMilliseconds);
+        g_clear_handle_id(&m_contentTypeSourceID, g_source_remove);
+        g_assert_cmpuint(this->purpose(), ==, purpose);
+        g_assert_cmpuint(this->hints(), ==, hints);
+    }
+
     void runMainLoopWithTimeout(unsigned timeoutMilliseconds)
     {
         if (timeoutMilliseconds) {
@@ -760,6 +783,9 @@ public:
     unsigned m_expectedSurroundingCount { 0 };
     unsigned m_surroundingSourceID { 0 };
     unsigned m_timeoutSourceID { 0 };
+    WebKitInputPurpose m_expectedPurpose { WEBKIT_INPUT_PURPOSE_FREE_FORM };
+    unsigned m_expectedHints { 0 };
+    unsigned m_contentTypeSourceID { 0 };
 };
 
 static void testWebKitInputMethodContextSimple(InputMethodTest* test, gconstpointer)
@@ -1799,6 +1825,67 @@ static void testWebKitInputMethodContextReadOnlyChange(InputMethodTest* test, gc
     }
 }
 
+static void testWebKitInputMethodContextInputModeChange(InputMethodTest* test, gconstpointer)
+{
+    // The button changes the inputmode of the field from its click handler. It does not take the focus.
+    auto changeInputModeByClick = [&](const char* inputMode) {
+        GUniquePtr<char> script(g_strdup_printf("mode = %s", inputMode));
+        test->runJavaScriptAndWaitUntilFinished(script.get(), nullptr);
+        test->clickMouseButton(20, 65);
+    };
+
+    for (auto* element : { "<textarea id='editable' spellcheck='false'></textarea>", "<input id='editable' spellcheck='false'>", "<div id='editable' contenteditable spellcheck='false'></div>" }) {
+        GUniquePtr<char> html(g_strdup_printf("<style>*{position:absolute;left:0;width:200px;height:30px;margin:0;padding:0;border:0}</style>%s"
+            "<button style='top:50px' onmousedown='event.preventDefault()' "
+            "onclick=\"mode === null ? editable.removeAttribute('inputmode') : editable.setAttribute('inputmode', mode)\"></button>"
+            "<script>var mode, editable = document.getElementById('editable')</script>", element));
+        test->loadHtml(html.get(), nullptr);
+        test->waitUntilLoadFinished();
+        test->clickMouseButton(20, 15);
+        test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+        test->waitUntilInputMethodEnabled();
+        g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+        g_assert_cmpuint(test->hints(), ==, 0);
+        test->clearInputMethodCounters();
+
+        changeInputModeByClick("'numeric'");
+        test->waitForContentType(WEBKIT_INPUT_PURPOSE_DIGITS, 0);
+        changeInputModeByClick("'none'");
+        test->waitForContentType(WEBKIT_INPUT_PURPOSE_FREE_FORM, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+        changeInputModeByClick("'tel'");
+        test->waitForContentType(WEBKIT_INPUT_PURPOSE_PHONE, 0);
+        changeInputModeByClick("null");
+        test->waitForContentType(WEBKIT_INPUT_PURPOSE_FREE_FORM, 0);
+
+        // The embedder is told about the change of content type only, not about a new focus.
+        g_assert_cmpuint(test->focusInCount(), ==, 0);
+        g_assert_cmpuint(test->focusOutCount(), ==, 0);
+        g_assert_true(test->isInputMethodEnabled());
+        test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+        test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+        // A change by a script alone is not a user interaction, so the on-screen keyboard is inhibited from
+        // then on even though the field was focused by a click. This doesn't close an on-screen keyboard
+        // that is already open, but the user may have closed it, and it shouldn't be opened again automatically.
+        test->clickMouseButton(20, 15);
+        test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+        test->waitUntilInputMethodEnabled();
+        g_assert_cmpuint(test->hints(), ==, 0);
+        test->runJavaScriptAndWaitUntilFinished("editable.setAttribute('inputmode', 'numeric')", nullptr);
+        test->waitForContentType(WEBKIT_INPUT_PURPOSE_DIGITS, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+        test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+        // A change in a click handler is a user interaction, so the on-screen keyboard is no longer inhibited
+        // even though the field was focused programmatically.
+        test->runJavaScriptAndWaitUntilFinished("editable.removeAttribute('inputmode')", nullptr);
+        test->focusEditableAndWaitUntilInputMethodEnabled();
+        g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+        changeInputModeByClick("'numeric'");
+        test->waitForContentType(WEBKIT_INPUT_PURPOSE_DIGITS, 0);
+        test->unfocusEditableAndWaitUntilInputMethodDisabled();
+    }
+}
+
 void beforeAll()
 {
     InputMethodTest::add("WebKitInputMethodContext", "simple", testWebKitInputMethodContextSimple);
@@ -1825,6 +1912,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "read-only", testWebKitInputMethodContextReadOnly);
     InputMethodTest::add("WebKitInputMethodContext", "read-only-change", testWebKitInputMethodContextReadOnlyChange);
     InputMethodTest::add("WebKitInputMethodContext", "input-mode", testWebKitInputMethodContextInputMode);
+    InputMethodTest::add("WebKitInputMethodContext", "input-mode-change", testWebKitInputMethodContextInputModeChange);
 }
 
 void afterAll()

@@ -350,16 +350,19 @@ private:
     void exitFullScreenForElement(WebCore::Element*, CompletionHandler<void()>&&) final;
 #endif // ENABLE(FULLSCREEN_API)
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     void elementDidFocus(WebCore::Element&, const WebCore::FocusOptions&) final;
     void elementDidBlur(WebCore::Element&) final;
     void elementDidRefocus(WebCore::Element&, const WebCore::FocusOptions&) final;
     void focusedElementDidChangeInputMode(WebCore::Element&, WebCore::InputMode) final;
-    void focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement&) final;
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void focusedElementDidChangeReadOnly(WebCore::Element&) final;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    void focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement&) final;
 #endif
 
 #if PLATFORM(COCOA)

@@ -7908,22 +7908,23 @@ void WebPage::focusedElementDidChangeInputMode(WebCore::Element& element, WebCor
         return;
 
     send(Messages::WebPageProxy::FocusedElementDidChangeInputMode(mode));
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+    UNUSED_PARAM(mode);
+    setInputMethodState(&element);
 #else
     UNUSED_PARAM(mode);
 #endif
 }
 
+#if PLATFORM(IOS_FAMILY)
 void WebPage::focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement& element)
 {
-#if PLATFORM(IOS_FAMILY)
     if (m_focusedElement != &element)
         return;
 
     m_updateFocusedElementInformationTimer.restart();
-#else
-    UNUSED_PARAM(element);
-#endif
 }
+#endif
 
 void WebPage::didUpdateComposition()
 {
