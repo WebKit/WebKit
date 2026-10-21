@@ -485,14 +485,14 @@ TEST(WebKit, SystemPreviewCanonicalWebPageURLIsPageURL)
     bool alertPresented = false;
     bool dataSourceSet = false;
 
-    auto swizzledSetDataSourceBlock = makeBlockPtr([&](id self, SEL _cmd, id newDataSource) {
+    auto swizzledSetDataSourceBlock = makeBlockPtr([&](id self, id newDataSource) {
         previewController = self;
         dataSource = newDataSource;
         dataSourceSet = true;
     });
     InstanceMethodSwizzler setDataSourceSwizzler { PAL::getQLPreviewControllerClassSingleton(), @selector(setDataSource:), imp_implementationWithBlock(swizzledSetDataSourceBlock.get()) };
 
-    auto swizzledSetCanonicalWebPageURLBlock = makeBlockPtr([&](id self, SEL _cmd, NSURL *url) {
+    auto swizzledSetCanonicalWebPageURLBlock = makeBlockPtr([&](id self, NSURL *url) {
         canonicalWebPageURL = url;
     });
     InstanceMethodSwizzler canonicalURLSwizzler { PAL::getARQuickLookPreviewItemClassSingleton(), @selector(setCanonicalWebPageURL:), imp_implementationWithBlock(swizzledSetCanonicalWebPageURLBlock.get()) };
