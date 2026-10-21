@@ -42,6 +42,7 @@ _log = logging.getLogger(__name__)
 
 
 class XvfbDriver(Driver):
+    _XVFB_DISPLAY_TIMEOUT_SECONDS = 5
 
     def __init__(self, *args, **kwargs):
         Driver.__init__(self, *args, **kwargs)
@@ -61,27 +62,35 @@ class XvfbDriver(Driver):
     def _xvfb_pipe(self):
         return os.pipe()
 
+    def _xvfb_close_fd(self, fd):
+        os.close(fd)
+
     def _xvfb_read_display_id(self, read_fd):
-        while True:
+        # Xvfb writes the digits and the trailing newline in separate writes,
+        # so a single read may return just the digits; keep reading until the newline arrives.
+        deadline = time.monotonic() + self._XVFB_DISPLAY_TIMEOUT_SECONDS
+        display_id = b''
+        while not display_id.endswith(b'\n'):
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return None
             try:
-                fd_list_ready_read = select.select([read_fd], [], [])[0]
+                ready = select.select([read_fd], [], [], remaining)[0]
             except select.error as e:
                 if e.args[0] == errno.EINTR:
                     continue
                 raise
-            if read_fd in fd_list_ready_read:
-                # We need to keep reading in a loop until getting EOL because Xvfb first writes the number and then the EOL
-                # and we shouldn't close the descriptor before reading the complete line to avoid crashing Xvfb
-                display_id = b''
-                while not display_id.endswith(b'\n'):
-                    display_id += os.read(read_fd, 256)
-                display_id = display_id.decode().strip()
-                break
-        return int(display_id)
-
-    def _xvfb_close_pipe(self, pipe_fds):
-        os.close(pipe_fds[0])
-        os.close(pipe_fds[1])
+            if read_fd not in ready:
+                return None
+            chunk = os.read(read_fd, 256)
+            if not chunk:
+                # EOF: Xvfb closed its write end (exited) without writing.
+                return None
+            display_id += chunk
+        try:
+            return int(display_id.decode().strip())
+        except ValueError:
+            return None
 
     def _xvfb_run(self, environment):
         read_fd, write_fd = self._xvfb_pipe()
@@ -92,8 +101,17 @@ class XvfbDriver(Driver):
             run_xvfb = self._port._jhbuild_wrapper + run_xvfb
         with open(os.devnull, 'w') as devnull:
             self._xvfb_process = self._port.host.executive.popen(run_xvfb, stdout=devnull, stderr=devnull, env=environment, pass_fds=[write_fd])
-        display_id = self._xvfb_read_display_id(read_fd)
-        self._xvfb_close_pipe((read_fd, write_fd))
+        # Drop our copy of the write end so the read end can observe EOF
+        # if Xvfb exits before producing a display ID.
+        self._xvfb_close_fd(write_fd)
+        try:
+            display_id = self._xvfb_read_display_id(read_fd)
+        finally:
+            self._xvfb_close_fd(read_fd)
+        if display_id is None:
+            _log.error('Xvfb did not return a display ID within %ss; killing it.',
+                       self._XVFB_DISPLAY_TIMEOUT_SECONDS)
+            self._xvfb_stop()
         return display_id
 
     def _xvfb_screen_depth(self):
@@ -147,6 +165,9 @@ class XvfbDriver(Driver):
         if display_id is None:
             self._xvfb_stop()
             display_id = self._xvfb_run(port_server_environment)
+            if display_id is None:
+                _log.error('Xvfb did not produce a display ID, retrying [ %s of 9 ].' % current_retry_start_xvfb)
+                return self._start_and_check_xvfb(port_server_environment, current_retry_start_xvfb)
 
         if current_retry_start_xvfb > 1:
             time.sleep(1)
