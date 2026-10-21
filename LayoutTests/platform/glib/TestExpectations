@@ -4508,7 +4508,7 @@ webkit.org/b/213783 webanimations/accelerated-animation-with-easing.html [ Pass 
 
 # Seek on live streams not implemented.
 
-webkit.org/b/285921 media/media-source/media-source-seek-past-end.html [ Failure Crash Pass ]
+webkit.org/b/285921 media/media-source/media-source-seek-past-end.html [ Failure Pass ]
 
 
 # CSS image-orientation is not yet enabled.
