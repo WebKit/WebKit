@@ -61,11 +61,6 @@ void MediaStrategy::isRemoteCommandTargetSessionInGPUProcessForTesting(MediaSess
     completion(false);
 }
 
-void MediaStrategy::sharedAudioCaptureDeviceInGPUProcessForTesting(CompletionHandler<void(String&&)>&& completion)
-{
-    completion({ });
-}
-
 void MediaStrategy::resetMediaEngines()
 {
 #if ENABLE(VIDEO)

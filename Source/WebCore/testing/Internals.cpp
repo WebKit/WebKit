@@ -7341,13 +7341,6 @@ size_t Internals::audioCaptureSourceCount() const
     return false;
 }
 
-void Internals::sharedAudioCaptureDeviceInGPUProcess(DOMPromiseDeferred<IDLDOMString>&& promise)
-{
-    platformStrategies()->mediaStrategy()->sharedAudioCaptureDeviceInGPUProcessForTesting([promise = WTF::move(promise)](String&& persistentID) mutable {
-        promise.resolve(WTF::move(persistentID));
-    });
-}
-
 bool Internals::supportsMultiMicrophoneCaptureWithoutEchoCancellation() const
 {
 #if PLATFORM(MAC)

@@ -162,17 +162,6 @@ void WebMediaStrategy::isActiveNowPlayingSessionInGPUProcessForTesting(WebCore::
     completion(false);
 }
 
-void WebMediaStrategy::sharedAudioCaptureDeviceInGPUProcessForTesting(CompletionHandler<void(String&&)>&& completion)
-{
-#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection()) {
-        gpuProcessConnection->connection().sendWithAsyncReply(Messages::GPUConnectionToWebProcess::SharedAudioCaptureDeviceForTesting(), WTF::move(completion), 0);
-        return;
-    }
-#endif
-    completion({ });
-}
-
 void WebMediaStrategy::isRemoteCommandTargetSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier identifier, CompletionHandler<void(bool)>&& completion)
 {
 #if ENABLE(GPU_PROCESS)

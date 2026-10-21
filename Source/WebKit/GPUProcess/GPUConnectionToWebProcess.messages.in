@@ -71,7 +71,6 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     UpdateSampleBufferDisplayLayerBoundsAndPosition(WebKit::SampleBufferDisplayLayerIdentifier identifier, WebCore::FloatRect bounds, std::optional<MachSendRightAnnotated> fence);
-    [EnabledBy=AllowTestOnlyIPC] SharedAudioCaptureDeviceForTesting() -> (String persistentID)
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)

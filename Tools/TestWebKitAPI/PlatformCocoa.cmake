@@ -224,7 +224,6 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/cocoa/AudioVideoRendererAVFObjCTests.mm
     Tests/WebCore/cocoa/BifurcatedGraphicsContextTestsCG.cpp
     Tests/WebCore/cocoa/CaptionPreferencesTests.mm
-    Tests/WebCore/cocoa/CoreAudioCaptureSourceTests.mm
     Tests/WebCore/cocoa/CoreMediaUtilities.mm
     Tests/WebCore/cocoa/DatabaseTrackerTest.mm
     Tests/WebCore/cocoa/DecodedMediaSamplesBlockTests.mm

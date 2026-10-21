@@ -22,7 +22,6 @@ const skippedInternalFunctions = [
   "setSystemHasBatteryForTesting",
   "setVP9DecoderDisabledForTesting",
   "setVP9ScreenSizeAndScaleForTesting",
-  "sharedAudioCaptureDeviceInGPUProcess", // Calls IPC method behind AllowTestOnlyIPC which this test doesn't set.
   "storeRegistrationsOnDisk",
   "systemAudioSessionCategory", // Calls IPC method behind AllowTestOnlyIPC which this test doesn't set.
   "systemAudioSessionActivationCount", // Calls IPC method behind AllowTestOnlyIPC which this test doesn't set.

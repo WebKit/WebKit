@@ -335,7 +335,6 @@ private:
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void updateSampleBufferDisplayLayerBoundsAndPosition(WebKit::SampleBufferDisplayLayerIdentifier, WebCore::FloatRect, std::optional<WTF::MachSendRightAnnotated>&&);
-    void sharedAudioCaptureDeviceForTesting(CompletionHandler<void(String&&)>&&);
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
