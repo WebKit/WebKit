@@ -11189,7 +11189,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpHasPrivateName>();
             Node* base = get(bytecode.m_base);
             Node* property = get(bytecode.m_property);
-            bool compiledAsInById = false;
+            bool compiledAsMatchStructure = false;
 
             if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
@@ -11204,12 +11204,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     ASSERT(identifier.isSymbolCell());
                     FrozenValue* frozen = m_graph.freezeStrong(identifier.cell());
                     addToGraph(CheckIsConstant, OpInfo(frozen), property);
-                    handleInById(bytecode.m_dst, base, identifier, status, nextOpcodeIndex());
-                    compiledAsInById = true;
+                    compiledAsMatchStructure = handleInByAsMatchStructure(bytecode.m_dst, base, status);
                 }
             }
 
-            if (!compiledAsInById)
+            if (!compiledAsMatchStructure)
                 set(bytecode.m_dst, addToGraph(HasPrivateName, base, property));
             NEXT_OPCODE(op_has_private_name);
         }
