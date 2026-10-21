@@ -1,0 +1,86 @@
+Tests that Console evaluation previews do not have side effects in the inspected page.
+
+
+== Running test suite: Console.EvaluationPreview.SideEffects
+-- Running test setup.
+-- Running test case: Console.EvaluationPreview.SideEffects.AppendIframe
+PASS: Evaluation preview should not append an iframe to the page.
+
+-- Running test setup.
+-- Running test case: Console.EvaluationPreview.SideEffects.PreviewThenCommit
+PASS: Exactly one iframe should be appended to the page.
+
+-- Running test setup.
+-- Running test case: Console.EvaluationPreview.SideEffects.Increment
+PASS: Evaluation preview should not increment the counter.
+PASS: Committing should increment the counter exactly once.
+
+-- Running test case: Console.EvaluationPreview.SideEffects.PropertyAccess
+PASS: Evaluation preview should not throw.
+PASS: Evaluation preview should produce the property value.
+
+-- Running test case: Console.EvaluationPreview.SideEffects.ObjectLiteral
+PASS: Evaluation preview should not throw.
+PASS: Evaluation preview should produce an object.
+
+-- Running test setup.
+-- Running test case: Console.EvaluationPreview.SideEffects.GetterDefinition
+PASS: Evaluation preview should not invoke the getter.
+
+-- Running test case: Console.EvaluationPreview.SideEffects.AllowList
+PASS: Should allow "this".
+PASS: Should allow "foo.bar".
+PASS: Should allow "foo.bar.baz".
+PASS: Should allow "a?.b".
+PASS: Should allow "a[0]".
+PASS: Should allow "a['x']".
+PASS: Should allow "a[b]".
+PASS: Should allow "a[/x/]".
+PASS: Should allow "!a".
+PASS: Should allow "-a".
+PASS: Should allow "typeof a".
+PASS: Should allow "1 + 2".
+PASS: Should allow "a in b".
+PASS: Should allow "a && b || c".
+PASS: Should allow "a ?? b".
+PASS: Should allow "a ? b : c".
+PASS: Should allow "[1, a]".
+PASS: Should allow "({a: 1, b})".
+PASS: Should allow "{a: 1}".
+PASS: Should allow "({[a]: 1})".
+PASS: Should allow "({...a})".
+PASS: Should allow "({get a() {}})".
+PASS: Should allow "({a() { foo(); }})".
+PASS: Should allow "() => foo()".
+PASS: Should allow "(class { foo() { bar(); } })".
+PASS: Should allow "(class { x = foo(); })".
+PASS: Should allow "(class { static x = 1; })".
+PASS: Should allow "(class extends a {})".
+PASS: Should allow "`x`".
+PASS: Should allow "`${x}`".
+PASS: Should reject "foo()".
+PASS: Should reject "a?.()".
+PASS: Should reject "x++".
+PASS: Should reject "x = 1".
+PASS: Should reject "delete a.b".
+PASS: Should reject "new Foo".
+PASS: Should reject "tag`x`".
+PASS: Should reject "[...a]".
+PASS: Should reject "a[b()]".
+PASS: Should reject "({[b()]: 1})".
+PASS: Should reject "`${b()}`".
+PASS: Should reject "({...b()})".
+PASS: Should reject "-b()".
+PASS: Should reject "1 + b()".
+PASS: Should reject "a, b()".
+PASS: Should reject "(class { static { foo(); } })".
+PASS: Should reject "(class { static x = foo(); })".
+PASS: Should reject "(class { [foo()]() {} })".
+PASS: Should reject "(class extends foo() {})".
+PASS: Should reject "(@foo class {})".
+PASS: Should reject "await x".
+PASS: Should reject "let f = 1".
+PASS: Should reject "{foo()}".
+PASS: Should reject "a; b".
+PASS: Should reject "a.".
+

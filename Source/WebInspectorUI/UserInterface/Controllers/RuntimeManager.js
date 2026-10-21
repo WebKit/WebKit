@@ -51,6 +51,13 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         return WI.settings.consoleSavedResultAlias.value || "$";
     }
 
+    static wrapLiteralExpression(expression)
+    {
+        if (/^\s*\{/.test(expression) && /\}\s*$/.test(expression))
+            return "(" + expression + ")";
+        return expression;
+    }
+
     // Target
 
     initializeTarget(target)
@@ -121,12 +128,14 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         if (!expression) {
             // There is no expression, so the completion should happen against global properties.
             expression = "this";
-        } else if (/^\s*\{/.test(expression) && /\}\s*$/.test(expression)) {
-            // Transform {a:1} to ({a:1}) so it is treated like an object literal instead of a block with a label.
-            expression = "(" + expression + ")";
-        } else if (!disableAwaitConvenience && /\bawait\b/.test(expression)) {
-            // Transform `await <expr>` into an async function assignment.
-            expression = this._tryApplyAwaitConvenience(expression);
+        } else {
+            let wrappedExpression = WI.RuntimeManager.wrapLiteralExpression(expression);
+            if (wrappedExpression !== expression)
+                expression = wrappedExpression;
+            else if (!disableAwaitConvenience && /\bawait\b/.test(expression)) {
+                // Transform `await <expr>` into an async function assignment.
+                expression = this._tryApplyAwaitConvenience(expression);
+            }
         }
 
         expression = sourceURLAppender(expression);

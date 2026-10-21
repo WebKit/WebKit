@@ -73,6 +73,86 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         this.startNewSession();
     }
 
+    // Static
+
+    static isSideEffectFreeForEvaluationPreview(text)
+    {
+        // Match WI.RuntimeManager.prototype.evaluateInInspectedWindow, which treats `{a: 1}` as an object literal.
+        text = WI.RuntimeManager.wrapLiteralExpression(text);
+
+        let program = null;
+        try {
+            program = esprima.parse(text);
+        } catch {
+            return false;
+        }
+
+        if (program.body.length !== 1 || program.body[0].type !== "ExpressionStatement")
+            return false;
+
+        // Reject syntax that explicitly calls, constructs, mutates, or iterates. Implicit calls (e.g. getters,
+        // `valueOf`/`toString` coercion, `Proxy` traps) can't be detected statically, so they are allowed.
+        function isSideEffectFree(node) {
+            switch (node.type) {
+            case "Identifier":
+            case "Literal":
+            case "ThisExpression":
+            case "FunctionExpression":
+            case "ArrowFunctionExpression":
+                return true;
+
+            case "ChainExpression":
+                return isSideEffectFree(node.expression);
+
+            case "MemberExpression":
+                return isSideEffectFree(node.object) && (!node.computed || isSideEffectFree(node.property));
+
+            case "ArrayExpression":
+                // Spreading invokes the iterator protocol, which can consume generators.
+                return node.elements.every((element) => !element || (element.type !== "SpreadElement" && isSideEffectFree(element)));
+
+            case "ObjectExpression":
+                return node.properties.every((property) => {
+                    if (property.type === "SpreadElement")
+                        return isSideEffectFree(property.argument);
+                    return (!property.computed || isSideEffectFree(property.key)) && isSideEffectFree(property.value);
+                });
+
+            case "ClassExpression":
+                if (node.decorators?.length || (node.superClass && !isSideEffectFree(node.superClass)))
+                    return false;
+                // Static blocks, static field initializers, computed keys, and decorators run when the class is defined.
+                return node.body.body.every((element) => {
+                    if (element.type === "StaticBlock" || element.decorators?.length)
+                        return false;
+                    if (element.computed && !isSideEffectFree(element.key))
+                        return false;
+                    return element.type === "MethodDefinition" || !element.static || !element.value || isSideEffectFree(element.value);
+                });
+
+            case "TemplateLiteral":
+                return node.expressions.every(isSideEffectFree);
+
+            case "UnaryExpression":
+                return node.operator !== "delete" && isSideEffectFree(node.argument);
+
+            case "BinaryExpression":
+            case "LogicalExpression":
+                return isSideEffectFree(node.left) && isSideEffectFree(node.right);
+
+            case "ConditionalExpression":
+                return isSideEffectFree(node.test) && isSideEffectFree(node.consequent) && isSideEffectFree(node.alternate);
+
+            case "SequenceExpression":
+                return node.expressions.every(isSideEffectFree);
+            }
+
+            return false;
+        }
+
+        return isSideEffectFree(program.body[0].expression);
+    }
+
     // Public
 
     clear()
@@ -252,6 +332,11 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
     consolePromptGetEvaluationPreviewObject(prompt, text, callback)
     {
+        if (!WI.JavaScriptLogViewController.isSideEffectFreeForEvaluationPreview(text)) {
+            callback(null, false);
+            return;
+        }
+
         let activeCallFrame = WI.runtimeManager.useActiveCallFrame ? WI.debuggerManager.activeCallFrame : null;
         let target = activeCallFrame?.target || WI.runtimeManager.activeExecutionContext.target;
         let options = {
