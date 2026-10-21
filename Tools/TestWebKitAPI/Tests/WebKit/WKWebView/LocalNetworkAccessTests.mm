@@ -34,7 +34,7 @@
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKSecurityOrigin.h>
 #import <WebKit/WKString.h>
-#import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStoreConfigurationRef.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
@@ -75,6 +75,9 @@ static RetainPtr<TestWKWebView> createWebViewForLocalNetworkAccessTesting(BOOL l
 // Address-space overrides are fixed when the session is created, so they ride on the data store
 // configuration. Keyed on resolved address and port, so a page staged through one has to be loaded via
 // 127.0.0.1: HTTPServer also listens on IPv6, and localhost resolves to ::1.
+// Answers every prompt the web view raises the same way, as an embedder with a stored decision would.
+static void answerLoopbackPromptsWith(TestWKWebView *, bool granted);
+
 static RetainPtr<WKWebsiteDataStore> dataStoreWithAddressSpaceOverrides(const String& overrides)
 {
     auto configuration = adoptWK(WKWebsiteDataStoreConfigurationCreate());
@@ -89,11 +92,11 @@ static RetainPtr<TestWKWebView> createWebViewWithAddressSpaceOverrides(const Str
     setLocalNetworkAccessEnabledForConfiguration(configuration.get(), YES);
     configuration.get()._allowTestOnlyIPC = YES;
     configuration.get().websiteDataStore = dataStoreWithAddressSpaceOverrides(overrides).get();
-    return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    // Without a delegate answer, a visible view would raise WebKit's built-in alert and wait for a click.
+    answerLoopbackPromptsWith(webView.get(), false);
+    return webView;
 }
-
-// Answers every prompt the web view raises the same way, as an embedder with a stored decision would.
-static void answerLoopbackPromptsWith(TestWKWebView *, bool granted);
 
 
 
@@ -363,7 +366,7 @@ TEST(LocalNetworkAccessTests, LocalToLoopbackFetchAllowedWithGrant)
 // The prompt is the only part of the feature an embedder implements, and it is reached through this
 // delegate. Most tests answer every prompt the same way through answerLoopbackPromptsWith(); these
 // exercise the prompt itself.
-@interface TestLocalNetworkAccessUIDelegate : NSObject <WKUIDelegatePrivate>
+@interface TestLocalNetworkAccessUIDelegate : NSObject <WKUIDelegate>
 @property (nonatomic) WKPermissionDecision decision;
 @property (nonatomic) BOOL deferDecisions;
 @property (nonatomic, readonly) NSUInteger promptCount;
@@ -384,12 +387,12 @@ static RetainPtr<NSString> originDescription(WKSecurityOrigin *origin)
     return adoptNS([[NSString alloc] initWithFormat:@"%@://%@:%ld", origin.protocol, origin.host, (long)origin.port]);
 }
 
-- (void)_webView:(WKWebView *)webView requestLocalNetworkAccessPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin topLevelOrigin:(WKSecurityOrigin *)topLevelOrigin isLoopback:(BOOL)isLoopback decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
+- (void)webView:(WKWebView *)webView requestLocalNetworkAccessPermissionForOrigin:(WKSecurityOrigin *)origin topLevelOrigin:(WKSecurityOrigin *)topLevelOrigin type:(WKLocalNetworkAccessType)type decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
 {
     ++_promptCount;
-    _lastRequestingOrigin = originDescription(securityOrigin);
+    _lastRequestingOrigin = originDescription(origin);
     _lastTopLevelOrigin = originDescription(topLevelOrigin);
-    _lastWasLoopback = isLoopback;
+    _lastWasLoopback = type == WKLocalNetworkAccessTypeLoopback;
 
     if (_deferDecisions) {
         _deferred.append(makeBlockPtr(decisionHandler));
@@ -637,17 +640,36 @@ TEST(LocalNetworkAccessTests, RevokingDuringAPromptDiscardsTheLateAnswer)
     EXPECT_WK_STREQ(recordedLoopbackPermission(webView.get()), "prompt");
 }
 
-// With no delegate method the answer is a denial, recorded like any other.
-TEST(LocalNetworkAccessTests, NoDelegateDeniesTheRequest)
+// WebKit's built-in alert is never raised for a view the user cannot see, such as a prefetched page.
+// The request fails, but no decision is recorded, so the alert can still appear once the page is shown.
+static void expectHiddenViewRefusesWithoutRecording(TestWKWebView *webView, HTTPServer& pageServer)
 {
     auto targetServer = makeLoopbackTargetServer();
-    auto server = makePageServer();
-    auto webView = loadPublicPageOverLoopback(server, NO);
+    [webView synchronouslyLoadRequest:pageServer.request("/index.html"_s)];
+    [webView removeFromSuperview];
 
     RetainPtr targetOrigin = targetServer.origin().createNSString();
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
-    EXPECT_TRUE(waitForFetchResult(webView.get()).startsWith("error:"_s));
-    EXPECT_WK_STREQ(recordedLoopbackPermission(webView.get()), "denied");
+    EXPECT_TRUE(waitForFetchResult(webView).startsWith("error:"_s));
+    EXPECT_WK_STREQ(recordedLoopbackPermission(webView), "prompt");
+}
+
+TEST(LocalNetworkAccessTests, NoDelegateDoesNotPromptInAHiddenView)
+{
+    auto server = makePageServer();
+    RetainPtr webView = createWebViewWithAddressSpaceOverrides(makeString("127.0.0.1:"_s, server.port(), "=public"_s));
+    [webView setUIDelegate:nil];
+    expectHiddenViewRefusesWithoutRecording(webView.get(), server);
+}
+
+TEST(LocalNetworkAccessTests, DelegateAnsweringPromptDoesNotPromptInAHiddenView)
+{
+    auto server = makePageServer();
+    RetainPtr delegate = adoptNS([[TestLocalNetworkAccessUIDelegate alloc] init]);
+    delegate.get().decision = WKPermissionDecisionPrompt;
+    auto webView = createWebViewForPromptTesting(delegate.get(), server);
+    expectHiddenViewRefusesWithoutRecording(webView.get(), server);
+    EXPECT_EQ(delegate.get().promptCount, 1u);
 }
 
 // A response served from the cache is checked too. The address space is not part of the request, so a

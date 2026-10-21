@@ -2188,7 +2188,7 @@ void WebsiteDataStore::askPageForLocalNetworkAccess(const LocalNetworkAccessPerm
     if (!page)
         return finishLocalNetworkAccessPrompt(key, WebCore::PermissionState::Prompt, RecordLocalNetworkAccessDecision::No);
 
-    page->requestLocalNetworkAccessPermission(key.first, key.second, [weakThis = WeakPtr { *this }, key, identifier = iterator->value.identifier](bool granted) {
+    page->requestLocalNetworkAccessPermission(key.first, key.second, [weakThis = WeakPtr { *this }, key, identifier = iterator->value.identifier](WebCore::PermissionState state) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -2198,7 +2198,7 @@ void WebsiteDataStore::askPageForLocalNetworkAccess(const LocalNetworkAccessPerm
         if (pendingIterator == protectedThis->m_pendingLocalNetworkAccessPrompts.end() || pendingIterator->value.identifier != identifier)
             return;
 
-        protectedThis->finishLocalNetworkAccessPrompt(key, granted ? WebCore::PermissionState::Granted : WebCore::PermissionState::Denied, RecordLocalNetworkAccessDecision::Yes);
+        protectedThis->finishLocalNetworkAccessPrompt(key, state, state == WebCore::PermissionState::Prompt ? RecordLocalNetworkAccessDecision::No : RecordLocalNetworkAccessDecision::Yes);
     });
 }
 
