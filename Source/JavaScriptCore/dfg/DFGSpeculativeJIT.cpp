@@ -12960,11 +12960,12 @@ void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRR
         isRopeCases.link(this);
         JumpList notReadableInPlace;
         notReadableInPlace.append(branchTest64(Zero, tempGPR, TrustedImm64(JSRopeString::isSubstringInPointer)));
-        notReadableInPlace.append(branchTest64(Zero, tempGPR, TrustedImm64(JSRopeString::is8BitInPointer)));
 
         load64(Address(stringGPR, JSRopeString::offsetOfFiber1Lower()), tempGPR);
         and64(TrustedImm64(JSRopeString::CompactFibers::addressMask), tempGPR);
         loadPtr(Address(tempGPR, JSString::offsetOfValue()), tempGPR);
+        // The base's current impl decides the width; the rope's cached is8BitInPointer can be stale.
+        notReadableInPlace.append(branchTest32(Zero, Address(tempGPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit())));
 
         load32(Address(stringGPR, JSRopeString::offsetOfFiber2Lower()), lengthGPR);
         loadPtr(Address(tempGPR, StringImpl::dataOffset()), tempGPR);
@@ -13883,6 +13884,40 @@ void SpeculativeJIT::compileRegExpMatchFast(Node* node)
     GPRReg argumentGPR = argument.gpr();
     speculateRegExpObject(node->child2(), baseGPR);
     speculateString(node->child3(), argumentGPR);
+
+    // Anchored non-global non-sticky match fast-fail; tests input[0]. Strength reduction normally turns
+    // this node into RegExpExecNonGlobalOrSticky, which has the same filter, but it can miss a RegExp
+    // that only becomes visible after later phases (e.g. a literal passed into an inlined helper).
+    if (const auto* localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(node->child2().node(), FirstCharacterFilterPosition::AtStart)) {
+        GPRTemporary result(this);
+        GPRTemporary scratch1(this);
+        GPRTemporary scratch2(this);
+        GPRReg resultGPR = result.gpr();
+        GPRReg scratch1GPR = scratch1.gpr();
+        GPRReg scratch2GPR = scratch2.gpr();
+
+        // baseGPR/argumentGPR/globalObjectGPR are preserved across flushRegisters for the slow-path
+        // operation call; the scratch registers are free to clobber.
+        flushRegisters();
+
+        JumpList slowCases;
+        JumpList doneCases;
+
+        // Reading a non-int32 lastIndex may be observable, so leave that to the operation.
+        load64(Address(baseGPR, RegExpObject::offsetOfLastIndex()), scratch1GPR);
+        slowCases.append(branchIfNotInt32(scratch1GPR));
+        emitRegExpAnchoredFirstCharacterFilterGuards(localBitmap->storageBytes().data(), argumentGPR, scratch1GPR, scratch2GPR, resultGPR, slowCases);
+
+        move(TrustedImm64(JSValue::encode(jsNull())), resultGPR);
+        doneCases.append(jump());
+
+        slowCases.link(this);
+        callOperation(operationRegExpMatchFastString, resultGPR, globalObjectGPR, baseGPR, argumentGPR);
+
+        doneCases.link(this);
+        jsValueResult(resultGPR, node);
+        return;
+    }
 
     flushRegisters();
     GPRFlushedCallResult result(this);
