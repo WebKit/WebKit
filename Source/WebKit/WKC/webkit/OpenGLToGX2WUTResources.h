@@ -14,6 +14,7 @@
 #include <gx2/enum.h>
 #include <gx2/shaders.h>
 #include <gx2r/buffer.h>
+#include <array>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -53,6 +54,11 @@ struct WUTBufferResources {
     };
     std::unordered_map<uint8_t, AttributeDescriptor> attributes;
 
+    // OpenGL's current generic attribute values are context state, not VAO
+    // state. They are rebound as zero-stride GX2 input streams before draws
+    // whenever a shader consumes a disabled vertex attribute array.
+    std::array<std::array<float, 4>, 32> currentAttributeValues {};
+
     // These are the active linked-program objects. The owner keeps the shader
     // objects alive; this structure owns only the fetch-shader program memory.
     const GX2VertexShader* vertexShader { nullptr };
@@ -64,7 +70,7 @@ struct WUTBufferResources {
     uint32_t fetchShaderProgramBufferSize { 0 };
     bool fetchShaderDirty { true };
 
-    WUTBufferResources() = default;
+    WUTBufferResources();
     ~WUTBufferResources();
     WUTBufferResources(const WUTBufferResources&) = delete;
     WUTBufferResources& operator=(const WUTBufferResources&) = delete;
