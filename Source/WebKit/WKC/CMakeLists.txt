@@ -308,6 +308,19 @@ message(STATUS "WTF core: ${WTF_CORE_COUNT} source files selected (agnostic + ge
 # translation unit with -fpermissive; every other file keeps strict diagnostics.
 set_source_files_properties(${WTF_DIR}/wtf/SIMDUTF.cpp PROPERTIES COMPILE_OPTIONS "-fpermissive")
 
+# The reusable GL-to-GX2 object managers convert std::bad_alloc into explicit
+# backend failures. WebKit itself is compiled with -fno-exceptions, so isolate
+# exception support to these small translator TUs rather than changing the
+# policy for the WebCore/JavaScriptCore engine.
+set_source_files_properties(
+    ${WKC_DIR}/webkit/OpenGLToGX2Buffers.cpp
+    ${WKC_DIR}/webkit/OpenGLToGX2Framebuffers.cpp
+    ${WKC_DIR}/webkit/OpenGLToGX2Shaders.cpp
+    ${WKC_DIR}/webkit/OpenGLToGX2Textures.cpp
+    ${WKC_DIR}/webkit/OpenGLToGX2VertexArrays.cpp
+    PROPERTIES COMPILE_OPTIONS "-fexceptions"
+)
+
 # ---------------------------------------------------------------------------
 # Engine bring-up, step 2: JavaScriptCore core (interpreter/CLoop tier).
 # Compile the non-JIT engine. JIT/DFG/FTL/B3 and architecture-specific assembler/
