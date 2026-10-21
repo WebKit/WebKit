@@ -692,6 +692,56 @@ jobs:
             -DWKC_ENABLE_WEB_INSPECTOR=ON
           ccache --zero-stats || true
 
+      # Compile the GL-to-GX2 driver translation units independently of the
+      # later LLInt generator. This gives the hardware backend a direct Wii U
+      # cross-compile gate even when the optional interpreter-offset bootstrap
+      # fails before the whole-engine target can start.
+      - name: Cross-compile OpenGL-to-GX2 driver sources
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import pathlib
+          import subprocess
+          import sys
+
+          workspace = pathlib.Path(os.environ["GITHUB_WORKSPACE"]).resolve()
+          source_paths = [
+              "Source/WebKit/WKC/webkit/OpenGLToGX2Buffers.cpp",
+              "Source/WebKit/WKC/webkit/OpenGLToGX2Capabilities.cpp",
+              "Source/WebKit/WKC/webkit/OpenGLToGX2Driver.cpp",
+              "Source/WebKit/WKC/webkit/OpenGLToGX2Framebuffers.cpp",
+              "Source/WebKit/WKC/webkit/OpenGLToGX2Shaders.cpp",
+              "Source/WebKit/WKC/webkit/OpenGLToGX2Textures.cpp",
+              "Source/WebKit/WKC/webkit/OpenGLToGX2VertexArrays.cpp",
+              "Source/WebKit/WKC/webkit/OpenGLToGX2WUTBackend.cpp",
+              "Source/WebKit/WKC/webkit/OpenGLToGX2WUTResources.cpp",
+          ]
+          with open(workspace / "build/compile_commands.json", encoding="utf-8") as file:
+              commands = json.load(file)
+
+          failed = []
+          for relative_path in source_paths:
+              source_path = (workspace / relative_path).resolve()
+              entry = next((item for item in commands
+                            if pathlib.Path(item["file"]).resolve() == source_path), None)
+              if entry is None:
+                  failed.append(f"no compile command for {relative_path}")
+                  continue
+              print(f"=== Cross-compiling {relative_path} ===", flush=True)
+              result = subprocess.run(entry["command"], cwd=entry["directory"], shell=True)
+              if result.returncode:
+                  failed.append(f"{relative_path} exited {result.returncode}")
+
+          if failed:
+              print("GX2 driver cross-compile failed:", file=sys.stderr)
+              for failure in failed:
+                  print(f"  - {failure}", file=sys.stderr)
+              sys.exit(1)
+          print("All selected OpenGL-to-GX2 translation units compiled successfully.")
+          PY
+
       # Generate LLIntAssembly.h (the C_LOOP interpreter body that
       # LowLevelInterpreter.cpp #includes) OUTSIDE the CMake build graph, so a
       # failure here can only leave that one file unable to find its header --
