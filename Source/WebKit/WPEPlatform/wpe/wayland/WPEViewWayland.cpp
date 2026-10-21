@@ -680,7 +680,7 @@ static gboolean wpeViewWaylandUnlockPointer(WPEView* view)
     return TRUE;
 }
 
-static void wpeViewWaylandSetCursorFromBytes(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY)
+static void wpeViewWaylandSetCursorFromBytesWithScale(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY, double scale)
 {
     auto* display = WPE_DISPLAY_WAYLAND(wpe_view_get_display(view));
     auto* cursor = wpeDisplayWaylandGetCursor(display);
@@ -692,7 +692,7 @@ static void wpeViewWaylandSetCursorFromBytes(WPEView* view, GBytes* bytes, guint
         return;
 
     wl_buffer_add_listener(sharedMemoryBuffer->wlBuffer(), &cursorBufferListener, sharedMemoryBuffer);
-    cursor->setFromBuffer(sharedMemoryBuffer->wlBuffer(), width, height, hotspotX, hotspotY);
+    cursor->setFromBuffer(sharedMemoryBuffer->wlBuffer(), width, height, hotspotX, hotspotY, scale);
 }
 
 static void wpeViewWaylandSetOpaqueRectangles(WPEView* view, WPERectangle* rects, guint rectsCount)
@@ -731,7 +731,7 @@ static void wpe_view_wayland_class_init(WPEViewWaylandClass* viewWaylandClass)
     viewClass->lock_pointer = wpeViewWaylandLockPointer;
     viewClass->unlock_pointer = wpeViewWaylandUnlockPointer;
     viewClass->set_cursor_from_name = wpeViewWaylandSetCursorFromName;
-    viewClass->set_cursor_from_bytes = wpeViewWaylandSetCursorFromBytes;
+    viewClass->set_cursor_from_bytes_with_scale = wpeViewWaylandSetCursorFromBytesWithScale;
     viewClass->set_opaque_rectangles = wpeViewWaylandSetOpaqueRectangles;
     viewClass->can_be_mapped = wpeViewWaylandCanBeMapped;
 }

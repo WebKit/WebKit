@@ -42,7 +42,7 @@ public:
     ~WaylandCursor();
 
     void setFromName(UTF8CStringView, double);
-    void setFromBuffer(struct wl_buffer*, uint32_t width, uint32_t height, uint32_t hotspotX, uint32_t hotspotY);
+    void setFromBuffer(struct wl_buffer*, uint32_t width, uint32_t height, uint32_t hotspotX, uint32_t hotspotY, double scale);
     void update() const;
 
 private:
