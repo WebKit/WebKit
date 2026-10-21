@@ -2025,9 +2025,10 @@ private:
                 }
 
                 // SpecObject | something.
-                // Only for types having structures, we check "then" existence.
+                // Only for types having structures, we check "then" existence. A promise resolved with
+                // itself must reject, so the argument must not be a promise.
                 auto& structureSet = argument.m_structure;
-                if (structureSet.isFinite() && structureSet.size() == 1) {
+                if (argument.isType(~SpecPromiseObject) && structureSet.isFinite() && structureSet.size() == 1) {
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                     auto conditionSet = m_graph.tryEnsureAbsence(globalObject, structureSet.toStructureSet(), CacheableIdentifier::createFromImmortalIdentifier(m_graph.m_vm.propertyNames->then.impl()));
                     if (conditionSet.isValid()) {
