@@ -837,7 +837,8 @@ public:
 
     void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei> countsOffsetsAndInstanceCounts, GCGLenum type) override { notImplemented(); }
 
-    bool enableExtension(GCGLExtension) override { notImplemented(); return {}; }
+    bool supportsExtension(GCGLExtension) override;
+    bool enableExtension(GCGLExtension) override;
 
     CString getTranslatedShaderSourceANGLE(PlatformGLObject) override { notImplemented(); return {}; }
 
@@ -3664,10 +3665,50 @@ GCGLint GraphicsContextGLWKC::getBufferParameteri(GCGLenum target,GCGLenum pname
 }
 CString GraphicsContextGLWKC::getString(GCGLenum n)
 {
-    switch(n){case GL_VENDOR_VALUE:return CString("Nintendo/WKC");case GL_RENDERER_VALUE:return CString("Wii U GX2");
-    case GL_VERSION_VALUE:return CString("WebGL 1.0 (GX2)");case GL_SHADING_LANGUAGE_VERSION_VALUE:return CString("OpenGL ES GLSL ES 1.00 (CafeGLSL)");
-    case GL_EXTENSIONS_VALUE:return CString("");default:addError(GL_INVALID_ENUM_VALUE);return CString();}
+    switch (n) {
+    case GL_VENDOR_VALUE:
+        return CString("Nintendo/WKC");
+    case GL_RENDERER_VALUE:
+        return CString("Wii U GX2");
+    case GL_VERSION_VALUE:
+        return CString("WebGL 1.0 (GX2)");
+    case GL_SHADING_LANGUAGE_VERSION_VALUE:
+        return CString("OpenGL ES GLSL ES 1.00 (CafeGLSL)");
+    case GL_EXTENSIONS_VALUE:
+        return CString("ANGLE_instanced_arrays ANGLE_pack_reverse_row_order EXT_blend_minmax OES_element_index_uint OES_packed_depth_stencil OES_vertex_array_object");
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return CString();
+    }
 }
+bool GraphicsContextGLWKC::supportsExtension(GCGLExtension extension)
+{
+    // Advertise only the extensions whose entry points and GX2 mappings are
+    // implemented by this backend. In particular, do not expose depth textures,
+    // float textures, compressed formats or WebGL 2 features just because their
+    // enum values exist in WebKit's shared extension catalogue.
+    switch (extension) {
+    case GCGLExtension::ANGLE_instanced_arrays:
+    case GCGLExtension::ANGLE_pack_reverse_row_order:
+    case GCGLExtension::EXT_blend_minmax:
+    case GCGLExtension::OES_element_index_uint:
+    case GCGLExtension::OES_packed_depth_stencil:
+    case GCGLExtension::OES_vertex_array_object:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool GraphicsContextGLWKC::enableExtension(GCGLExtension extension)
+{
+    if (!supportsExtension(extension))
+        return false;
+
+    m_knownActiveExtensions.add(extension);
+    return true;
+}
+
 void GraphicsContextGLWKC::getBooleanv(GCGLenum pname, std::span<GCGLboolean> output)
 {
     std::fill(output.begin(), output.end(), false);
