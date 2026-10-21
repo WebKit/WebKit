@@ -9,6 +9,7 @@
 
 #include <cstdint>
 #include <cmath>
+#include <algorithm>
 
 namespace WKC {
 namespace GLGX2 {
@@ -47,6 +48,37 @@ void destroyOwnedRenderTarget(WUTBackendContext& state)
     state.ownsRenderTarget = false;
 }
 
+bool applyScissorState(WUTBackendContext& state)
+{
+    // The GX2 scissor register accepts only unsigned values. Clip the GL
+    // rectangle against the active drawing buffer rather than rejecting
+    // negative x/y or allowing integer wraparound. With scissor testing off,
+    // the effective rectangle is the complete color target.
+    if (!state.colorBuffer)
+        return true;
+
+    const int64_t targetWidth = state.colorBuffer->surface.width;
+    const int64_t targetHeight = state.colorBuffer->surface.height;
+    int64_t left = 0;
+    int64_t top = 0;
+    int64_t right = targetWidth;
+    int64_t bottom = targetHeight;
+    if (state.scissorEnabled) {
+        left = state.scissor.x;
+        top = state.scissor.y;
+        right = left + static_cast<int64_t>(state.scissor.width);
+        bottom = top + static_cast<int64_t>(state.scissor.height);
+    }
+
+    left = std::clamp<int64_t>(left, 0, targetWidth);
+    top = std::clamp<int64_t>(top, 0, targetHeight);
+    right = std::clamp<int64_t>(right, left, targetWidth);
+    bottom = std::clamp<int64_t>(bottom, top, targetHeight);
+    GX2SetScissor(static_cast<uint32_t>(left), static_cast<uint32_t>(top),
+        static_cast<uint32_t>(right - left), static_cast<uint32_t>(bottom - top));
+    return true;
+}
+
 bool setViewport(void* context, const Viewport& viewport)
 {
     auto& state = *static_cast<WUTBackendContext*>(context);
@@ -56,7 +88,7 @@ bool setViewport(void* context, const Viewport& viewport)
     GX2SetViewport(static_cast<float>(viewport.x), static_cast<float>(viewport.y),
         static_cast<float>(viewport.width), static_cast<float>(viewport.height),
         viewport.nearDepth, viewport.farDepth);
-    return true;
+    return applyScissorState(state);
 }
 
 bool setDepthRange(void* context, float nearDepth, float farDepth)
@@ -349,19 +381,20 @@ bool setCapability(void* context, Capability capability, bool enabled)
     case Capability::StencilTest:
         state.stencilEnabled = enabled;
         return applyStencilState(state);
+    case Capability::ScissorTest:
+        state.scissorEnabled = enabled;
+        return applyScissorState(state);
     default:
         // Do not report capabilities as implemented until their state is mapped.
         return false;
     }
 }
 
-bool setScissor(void*, const Scissor& scissor)
+bool setScissor(void* context, const Scissor& scissor)
 {
-    if (scissor.x < 0 || scissor.y < 0)
-        return false;
-    GX2SetScissor(static_cast<uint32_t>(scissor.x), static_cast<uint32_t>(scissor.y),
-        static_cast<uint32_t>(scissor.width), static_cast<uint32_t>(scissor.height));
-    return true;
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    state.scissor = scissor;
+    return applyScissorState(state);
 }
 
 bool draw(void* context, NativePrimitive primitive, uint32_t first, uint32_t count, uint32_t instances)
@@ -617,6 +650,7 @@ bool resizeWUTRenderTarget(WUTBackendContext& state, uint32_t width, uint32_t he
     bindWUTRenderTarget(state);
     GX2SetViewport(0.0f, 0.0f, static_cast<float>(width),
         static_cast<float>(height), 0.0f, 1.0f);
+    applyScissorState(state);
     return true;
 }
 

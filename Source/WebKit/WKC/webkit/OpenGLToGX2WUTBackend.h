@@ -39,6 +39,8 @@ struct WUTBackendContext {
     WUTBackendContext(const WUTBackendContext&) = delete;
     WUTBackendContext& operator=(const WUTBackendContext&) = delete;
     Color clearColor;
+    Scissor scissor;
+    bool scissorEnabled { false };
     float clearDepth { 1.0f };
     uint8_t clearStencil { 0 };
     Viewport viewport;
