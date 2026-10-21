@@ -4,6 +4,8 @@
 #include <gx2/clear.h>
 #include <gx2/draw.h>
 #include <gx2/registers.h>
+#include <gx2r/surface.h>
+#include <coreinit/memdefaultheap.h>
 
 #include <cstdint>
 #include <cmath>
@@ -12,10 +14,45 @@ namespace WKC {
 namespace GLGX2 {
 namespace {
 
+constexpr GX2RResourceFlags colorSurfaceFlags = static_cast<GX2RResourceFlags>(
+    GX2R_RESOURCE_BIND_COLOR_BUFFER | GX2R_RESOURCE_USAGE_CPU_READ
+    | GX2R_RESOURCE_USAGE_GPU_READ | GX2R_RESOURCE_USAGE_GPU_WRITE);
+constexpr GX2RResourceFlags depthSurfaceFlags = static_cast<GX2RResourceFlags>(
+    GX2R_RESOURCE_BIND_DEPTH_BUFFER | GX2R_RESOURCE_USAGE_CPU_READ
+    | GX2R_RESOURCE_USAGE_GPU_READ | GX2R_RESOURCE_USAGE_GPU_WRITE);
+
+void destroyOwnedRenderTarget(WUTBackendContext& state)
+{
+    if (!state.ownsRenderTarget)
+        return;
+
+    // Do not release image or HiZ storage while submitted GX2 work can still
+    // reference it (resize and context teardown share this path).
+    GX2DrawDone();
+    if (state.hasColorSurface)
+        GX2RDestroySurfaceEx(&state.ownedColorBuffer.surface, colorSurfaceFlags);
+    if (state.hasDepthSurface)
+        GX2RDestroySurfaceEx(&state.ownedDepthBuffer.surface, depthSurfaceFlags);
+    if (state.depthHiZMemory)
+        MEMFreeToDefaultHeap(state.depthHiZMemory);
+
+    state.depthHiZMemory = nullptr;
+    state.depthHiZSize = 0;
+    state.hasColorSurface = false;
+    state.hasDepthSurface = false;
+    state.renderTargetWidth = 0;
+    state.renderTargetHeight = 0;
+    state.colorBuffer = nullptr;
+    state.depthBuffer = nullptr;
+    state.ownsRenderTarget = false;
+}
+
 bool setViewport(void* context, const Viewport& viewport)
 {
     auto& state = *static_cast<WUTBackendContext*>(context);
     state.viewport = viewport;
+    if (state.colorBuffer)
+        bindWUTRenderTarget(state);
     GX2SetViewport(static_cast<float>(viewport.x), static_cast<float>(viewport.y),
         static_cast<float>(viewport.width), static_cast<float>(viewport.height),
         viewport.nearDepth, viewport.farDepth);
@@ -341,6 +378,9 @@ bool draw(void* context, NativePrimitive primitive, uint32_t first, uint32_t cou
     }
 
     auto& state = *static_cast<WUTBackendContext*>(context);
+    if (!state.colorBuffer)
+        return false;
+    bindWUTRenderTarget(state);
     return drawVertexArrayArrays(&state.bufferResources, translatedPrimitive, first, count, instances);
 }
 
@@ -373,6 +413,9 @@ bool drawIndexed(void* context, NativePrimitive primitive, IndexType type, uint3
     }
 
     auto& state = *static_cast<WUTBackendContext*>(context);
+    if (!state.colorBuffer)
+        return false;
+    bindWUTRenderTarget(state);
     const auto binding = state.bufferResources.bindings.find(
         static_cast<uint8_t>(BufferTarget::ElementArray));
     if (binding == state.bufferResources.bindings.end() || !binding->second)
@@ -449,6 +492,10 @@ bool setClearStencil(void* context, int32_t value)
 bool clear(void* context, uint8_t mask)
 {
     auto& state = *static_cast<WUTBackendContext*>(context);
+    if ((mask & ClearColorBuffer) && !state.colorBuffer)
+        return false;
+    if (state.colorBuffer)
+        bindWUTRenderTarget(state);
     const bool clearColor = mask & ClearColorBuffer;
     const bool clearDepth = mask & ClearDepthBuffer;
     const bool clearStencil = mask & ClearStencilBuffer;
@@ -477,6 +524,109 @@ bool clear(void* context, uint8_t mask)
 }
 
 } // namespace
+
+WUTBackendContext::~WUTBackendContext()
+{
+    destroyOwnedRenderTarget(*this);
+}
+
+bool resizeWUTRenderTarget(WUTBackendContext& state, uint32_t width, uint32_t height)
+{
+    // GX2 surface dimensions and all downstream pitches/sizes are 32-bit.
+    // Keep WebGL zero-sized drawing buffers valid without allocating a surface.
+    if (width > 16384 || height > 16384)
+        return false;
+    if (!state.ownsRenderTarget && (state.colorBuffer || state.depthBuffer))
+        return false;
+
+    destroyOwnedRenderTarget(state);
+    state.ownsRenderTarget = true;
+    if (!width || !height) {
+        state.renderTargetWidth = width;
+        state.renderTargetHeight = height;
+        return true;
+    }
+
+    auto& color = state.ownedColorBuffer;
+    color = {};
+    color.surface.dim = GX2_SURFACE_DIM_TEXTURE_2D;
+    color.surface.width = width;
+    color.surface.height = height;
+    color.surface.depth = 1;
+    color.surface.mipLevels = 1;
+    color.surface.format = GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8;
+    color.surface.aa = GX2_AA_MODE1X;
+    color.surface.use = GX2_SURFACE_USE_COLOR_BUFFER;
+    color.surface.tileMode = GX2_TILE_MODE_DEFAULT;
+    GX2CalcSurfaceSizeAndAlignment(&color.surface);
+    if (!color.surface.imageSize || !color.surface.alignment
+        || !GX2RCreateSurface(&color.surface, colorSurfaceFlags)) {
+        destroyOwnedRenderTarget(state);
+        return false;
+    }
+    state.hasColorSurface = true;
+    color.viewMip = 0;
+    color.viewFirstSlice = 0;
+    color.viewNumSlices = 1;
+    GX2InitColorBufferRegs(&color);
+
+    auto& depth = state.ownedDepthBuffer;
+    depth = {};
+    depth.surface.dim = GX2_SURFACE_DIM_TEXTURE_2D;
+    depth.surface.width = width;
+    depth.surface.height = height;
+    depth.surface.depth = 1;
+    depth.surface.mipLevels = 1;
+    depth.surface.format = GX2_SURFACE_FORMAT_FLOAT_D24_S8;
+    depth.surface.aa = GX2_AA_MODE1X;
+    depth.surface.use = GX2_SURFACE_USE_DEPTH_BUFFER;
+    depth.surface.tileMode = GX2_TILE_MODE_DEFAULT;
+    GX2CalcSurfaceSizeAndAlignment(&depth.surface);
+    if (!depth.surface.imageSize || !depth.surface.alignment
+        || !GX2RCreateSurface(&depth.surface, depthSurfaceFlags)) {
+        destroyOwnedRenderTarget(state);
+        return false;
+    }
+    state.hasDepthSurface = true;
+    depth.viewMip = 0;
+    depth.viewFirstSlice = 0;
+    depth.viewNumSlices = 1;
+    depth.depthClear = 1.0f;
+    depth.stencilClear = 0;
+
+    uint32_t hiZAlignment = 0;
+    GX2CalcDepthBufferHiZInfo(&depth, &state.depthHiZSize, &hiZAlignment);
+    if (state.depthHiZSize && hiZAlignment)
+        state.depthHiZMemory = MEMAllocFromDefaultHeapEx(state.depthHiZSize, hiZAlignment);
+    if (state.depthHiZMemory) {
+        depth.hiZPtr = state.depthHiZMemory;
+        depth.hiZSize = state.depthHiZSize;
+        GX2InitDepthBufferHiZEnable(&depth, TRUE);
+    } else {
+        depth.hiZPtr = nullptr;
+        depth.hiZSize = 0;
+        state.depthHiZSize = 0;
+        GX2InitDepthBufferHiZEnable(&depth, FALSE);
+    }
+    GX2InitDepthBufferRegs(&depth);
+
+    state.colorBuffer = &color;
+    state.depthBuffer = &depth;
+    state.renderTargetWidth = width;
+    state.renderTargetHeight = height;
+    bindWUTRenderTarget(state);
+    GX2SetViewport(0.0f, 0.0f, static_cast<float>(width),
+        static_cast<float>(height), 0.0f, 1.0f);
+    return true;
+}
+
+void bindWUTRenderTarget(WUTBackendContext& state)
+{
+    if (state.colorBuffer)
+        GX2SetColorBuffer(state.colorBuffer, GX2_RENDER_TARGET_0);
+    if (state.depthBuffer)
+        GX2SetDepthBuffer(state.depthBuffer);
+}
 
 BufferBackend makeWUTBufferBackend(WUTBackendContext& context)
 {
