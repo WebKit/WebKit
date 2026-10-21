@@ -8,6 +8,14 @@
 
 #if ENABLE(WEBGL)
 
+// Several WKC-only adapter headers expose their declarations only under the
+// devkitPro platform macro. Define it before including those headers, not
+// later at the CafeGLSL include site.
+#if defined(WKC_CUSTOMER_WIIU) && !defined(__WUT__)
+#define __WUT__ 1
+#endif
+
+#include "GCGLSpan.h"
 #include "GraphicsContextGL.h"
 #include "NotImplemented.h"
 #include "OpenGLToGX2Buffers.h"
@@ -15,14 +23,9 @@
 #include "OpenGLToGX2VertexArrays.h"
 #include "OpenGLToGX2WUTBackend.h"
 
-// CafeGLSL's compatibility header predates the WUT GX2 headers. In this
-// Wii U-only translation unit, force its supported WUT ABI path before
-// including the compiler header so it consumes WUT's single source of truth
-// for GX2 shader and resource types instead of redeclaring legacy copies.
-#if defined(WKC_CUSTOMER_WIIU) && !defined(__WUT__)
-#define __WUT__ 1
-#endif
-
+// Keep CafeGLSL on the WUT GX2 ABI selected above. Its current Wii U
+// portlib header includes <gx2/shaders.h> under __WUT__ and must not bring in
+// the stale compatibility declarations from cafe_gx2.h.
 #include <cafeglsl/CafeGLSLCompiler.h>
 #include <gx2/draw.h>
 #include <gx2/event.h>
