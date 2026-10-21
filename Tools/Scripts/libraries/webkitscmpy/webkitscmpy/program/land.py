@@ -36,6 +36,7 @@ from argparse import Namespace
 from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, string_utils, Terminal
 from webkitscmpy import Commit, local, log, remote
+from webkitscmpy.commit_parser import REVIEWED_BY_LINE_RE, OOPS_LINE_RE
 
 
 class Land(Command):
@@ -43,8 +44,6 @@ class Land(Command):
     help = 'If on a pull-request or commit-queue branch, rebase the ' \
            'current branch onto the target production branch and push.'
 
-    OOPS_RE = re.compile(r'^[^-]+\(O+P+S!*\)')
-    REVIEWED_BY_RE = re.compile('^Reviewed by (?P<approver>.+)', re.MULTILINE)
     GIT_SVN_COMMITTED_RE = re.compile(r'Committed r(?P<revision>\d+)')
     REMOTE = 'origin'
     MIRROR_TIMEOUT = 60
@@ -208,8 +207,8 @@ class Land(Command):
                 return 1
             need_review = False
             if pull_request.approvers:
-                review_lines = [cls.REVIEWED_BY_RE.search(commit.message) for commit in commits]
-                need_review = any([cls.OOPS_RE.search(match.group('approver')) for match in review_lines if match])
+                review_lines = [REVIEWED_BY_LINE_RE.search(commit.message) for commit in commits]
+                need_review = any([OOPS_LINE_RE.search(match.group('approver')) for match in review_lines if match])
             if need_review and (args.defaults or Terminal.choose("Set '{}' as your reviewer{}?".format(
                 string_utils.join([p.name for p in pull_request.approvers]),
                 's' if len(pull_request.approvers) > 1 else '',
@@ -242,13 +241,13 @@ class Land(Command):
         elif not pull_request:
             sys.stderr.write("Failed to find pull-request associated with '{}'\n".format(source_branch))
 
-        if not args.oops and any([cls.OOPS_RE.search(commit.message) for commit in commits if commit.message]):
+        if not args.oops and any([OOPS_LINE_RE.search(commit.message) for commit in commits if commit.message]):
             sys.stderr.write("Found '(OOPS!)' message in commit messages, please resolve before committing\n")
             return 1
 
         if not args.oops:
             for line in repository.diff(base=branch_point.hash, head=source_branch):
-                if cls.OOPS_RE.search(line):
+                if OOPS_LINE_RE.search(line):
                     sys.stderr.write("Found '(OOPS!)' in commit diff, please resolve before committing\n")
                     return 1
 

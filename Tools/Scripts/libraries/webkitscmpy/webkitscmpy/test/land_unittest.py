@@ -36,25 +36,24 @@ from webkitscmpy import Commit, Contributor, local, mocks, program
 from webkitscmpy.program.canonicalize import IdentifierTrailer
 
 
-def repository(path, has_oops=True, remote=None, remotes=None, git_svn=False, issue_url=None):
+def repository(path, remote=None, remotes=None, git_svn=False, issue_url=None, reviewed_by='Reviewed by', approver='NOBODY (OOPS!)', body=''):
     branch = 'eng/example'
     result = mocks.local.Git(path, remote=remote, remotes=remotes, git_svn=git_svn)
+    issue_line = f'{issue_url}\n' if issue_url else ''
+    svn_id = ''
+    if git_svn:
+        host = result.remote.split('@')[-1].split(':')[0]
+        svn_id = f'\ngit-svn-id: https://svn.{host}/repository/{os.path.basename(result.path)}/trunk@10 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'
+
     result.commits[branch] = [
         result.commits[result.default_branch][2],
         Commit(
             hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
-            identifier='3.1@{}'.format(branch),
+            identifier=f'3.1@{branch}',
             revision=10,
             timestamp=int(time.time()) - 60,
             author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
-            message='To Be Committed\n{}\nReviewed by {}.\n{}'.format(
-                '{}\n'.format(issue_url) if issue_url else '',
-                {True: 'NOBODY (OOPS!)', False: 'Ricky Reviewer'}.get(has_oops, has_oops),
-                '\ngit-svn-id: https://svn.{}/repository/{}/trunk@10 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
-                    result.remote.split('@')[-1].split(':')[0],
-                    os.path.basename(result.path),
-                ) if git_svn else '',
-            ),
+            message=f'To Be Committed\n{issue_line}{body}\n{reviewed_by} {approver}.\n{svn_id}',
         )
     ]
     result.head = result.commits[branch][-1]
@@ -119,7 +118,7 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_with_removed_oops(self):
-        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops='- NOBODY (OOPS!)') as repo, mocks.local.Svn(), MockTerminal.input('n'):
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, approver='- NOBODY (OOPS!)') as repo, mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
                 args=('land', '-v'),
                 path=self.path,
@@ -145,8 +144,21 @@ class TestLand(testing.PathTestCase):
             "Delete branch 'eng/example'? ([Yes]/No): \n",
         )
 
+    def test_with_oops_after_bullet(self):
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, body='\n- A bulleted line\n'), mocks.local.Svn():
+            self.assertEqual(1, program.main(
+                args=('land', '-v'),
+                path=self.path,
+            ))
+            self.assertEqual(str(local.Git(self.path).commit()), '3.1@eng/example')
+
+        self.assertIn(
+            "Found '(OOPS!)' message in commit messages, please resolve before committing\n",
+            captured.stderr.getvalue(),
+        )
+
     def test_default(self):
-        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False), mocks.local.Svn(), MockTerminal.input('n'):
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, approver='Ricky Reviewer'), mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
                 args=('land', '-v'),
                 path=self.path,
@@ -173,7 +185,7 @@ class TestLand(testing.PathTestCase):
         )
 
     def test_canonicalize(self):
-        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False), mocks.local.Svn(), MockTerminal.input('n'):
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, approver='Ricky Reviewer'), mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
                 args=('land', '-v'),
                 path=self.path,
@@ -215,7 +227,7 @@ class TestLand(testing.PathTestCase):
         )
 
     def test_canonicalize_with_identifier_trailer(self):
-        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False), mocks.local.Svn(), MockTerminal.input('n'):
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, approver='Ricky Reviewer'), mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
                 args=('land', '-v'),
                 path=self.path,
@@ -241,7 +253,7 @@ class TestLand(testing.PathTestCase):
         )
 
     def test_no_svn_canonical_svn(self):
-        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, approver='Ricky Reviewer'), mocks.local.Svn():
             self.assertEqual(1, program.main(
                 args=('land', '-v'),
                 path=self.path, canonical_svn=True,
@@ -255,7 +267,7 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_svn(self):
-        with MockTime, OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False, git_svn=True), mocks.local.Svn(), MockTerminal.input('n'):
+        with MockTime, OutputCapture(level=logging.INFO) as captured, repository(self.path, approver='Ricky Reviewer', git_svn=True), mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
                 args=('land', '-v'),
                 path=self.path, canonical_svn=True,
@@ -282,7 +294,7 @@ class TestLand(testing.PathTestCase):
         )
 
     def test_default_with_radar(self):
-        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False, issue_url='<rdar://problem/1>'), mocks.local.Svn(), \
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, approver='Ricky Reviewer', issue_url='<rdar://problem/1>'), mocks.local.Svn(), \
                 MockTerminal.input('n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
                 patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
 
@@ -317,7 +329,7 @@ class TestLand(testing.PathTestCase):
         )
 
     def test_canonicalize_with_bugzilla(self):
-        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False, issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA)), \
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, approver='Ricky Reviewer', issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA)), \
                 mocks.local.Svn(), MockTerminal.input('n'), bmocks.Bugzilla(
                     self.BUGZILLA.split('://')[-1],
                     issues=bmocks.ISSUES,
@@ -374,7 +386,7 @@ class TestLand(testing.PathTestCase):
 
     def test_svn_with_bugzilla(self):
         with MockTime, OutputCapture(level=logging.INFO) as captured, \
-                repository(self.path, has_oops=False, git_svn=True, issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA)), \
+                repository(self.path, approver='Ricky Reviewer', git_svn=True, issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA)), \
                 mocks.local.Svn(), MockTerminal.input('n'), bmocks.Bugzilla(
                     self.BUGZILLA.split('://')[-1],
                     issues=bmocks.ISSUES,
@@ -492,7 +504,7 @@ class TestLandGitHub(testing.PathTestCase):
 
     def test_blocking_reviewer(self):
         with OutputCapture(level=logging.INFO) as captured, self.webserver(approved=False) as remote, \
-                repository(self.path, has_oops=False, remote='https://{}'.format(remote.remote)), mocks.local.Svn():
+                repository(self.path, approver='Ricky Reviewer', remote='https://{}'.format(remote.remote)), mocks.local.Svn():
 
             self.assertEqual(1, program.main(
                 args=('land', '-v'),
@@ -515,7 +527,7 @@ class TestLandGitHub(testing.PathTestCase):
     def test_insert_review(self):
         with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(
                 approved=True) as remote, \
-                repository(self.path, has_oops=True, remote='https://{}'.format(remote.remote)), mocks.local.Svn():
+                repository(self.path, remote='https://{}'.format(remote.remote)), mocks.local.Svn():
             self.assertEqual(0, program.main(
                 args=('land', '-v'),
                 path=self.path,
@@ -547,6 +559,28 @@ class TestLandGitHub(testing.PathTestCase):
             "Delete branch 'eng/example'? ([Yes]/No): \n",
         )
 
+    def test_insert_review_indented(self):
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(
+                approved=True) as remote, \
+                repository(self.path, reviewed_by='    Reviewed by', remote='https://{}'.format(remote.remote)), mocks.local.Svn():
+            self.assertEqual(0, program.main(
+                args=('land', '-v'),
+                path=self.path,
+            ))
+
+        self.assertIn('Setting Ricky Reviewer as reviewer', captured.root.log.getvalue())
+
+    def test_insert_review_rubber_stamped(self):
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(
+                approved=True) as remote, \
+                repository(self.path, reviewed_by='Rubber-stamped by', remote='https://{}'.format(remote.remote)), mocks.local.Svn():
+            self.assertEqual(0, program.main(
+                args=('land', '-v'),
+                path=self.path,
+            ))
+
+        self.assertIn('Setting Ricky Reviewer as reviewer', captured.root.log.getvalue())
+
     def test_merge_queue(self):
         with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(
             approved=True, labels={'merge-queue': dict(color='3AE653', description="Send PR to merge-queue")},
@@ -555,7 +589,7 @@ class TestLandGitHub(testing.PathTestCase):
                 GITHUB_EXAMPLE_COM_TOKEN='token',
             ),
         ) as remote, mocks.local.Svn(), repository(
-            self.path, has_oops=True,
+            self.path,
             remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
         ):
@@ -599,7 +633,7 @@ class TestLandGitHub(testing.PathTestCase):
                 GITHUB_EXAMPLE_COM_TOKEN='token',
             ),
         ) as remote, mocks.local.Svn(), repository(
-            self.path, has_oops=True,
+            self.path,
             issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA),
             remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
@@ -720,7 +754,7 @@ class TestLandBitBucket(testing.PathTestCase):
 
     def test_blocking_reviewer(self):
         with OutputCapture(level=logging.INFO) as captured, self.webserver(approved=False) as remote, repository(
-                self.path, has_oops=False, remote='ssh://git@{}/{}/{}.git'.format(
+                self.path, approver='Ricky Reviewer', remote='ssh://git@{}/{}/{}.git'.format(
                     remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
                 )), mocks.local.Svn():
 
@@ -744,7 +778,7 @@ class TestLandBitBucket(testing.PathTestCase):
 
     def test_insert_review(self):
         with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(approved=True) as remote, repository(
-                self.path, has_oops=True, remote='ssh://git@{}/{}/{}.git'.format(
+                self.path, remote='ssh://git@{}/{}/{}.git'.format(
                     remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
                 )), mocks.local.Svn():
 
