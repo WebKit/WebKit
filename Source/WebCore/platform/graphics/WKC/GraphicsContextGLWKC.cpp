@@ -1065,6 +1065,8 @@ private:
     PlatformGLObject m_appliedProgram { 0 };
     PlatformGLObject m_boundFramebuffer { 0 };
     GCGLuint m_activeTextureUnit { 0 };
+    bool m_requestedDepthTest { false };
+    bool m_requestedStencilTest { false };
     GCGLint m_unpackAlignment { 4 };
     GCGLint m_packAlignment { 4 };
     bool m_defaultTextureReady { false };
@@ -1100,6 +1102,8 @@ GraphicsContextGLWKC::~GraphicsContextGLWKC()
         releaseProgramNative(entry.second);
     for (auto& entry : m_textures)
         releaseTextureStorage(entry.second);
+    for (auto& entry : m_renderbuffers)
+        releaseRenderbufferStorage(entry.second);
     releaseTextureStorage(m_defaultTexture);
 }
 
@@ -1113,6 +1117,353 @@ PlatformGLObject GraphicsContextGLWKC::nextTextureName()
             return name;
     }
     return 0;
+}
+
+PlatformGLObject GraphicsContextGLWKC::nextFramebufferName()
+{
+    for (uint64_t attempts = 0; attempts < UINT32_MAX - 1ULL; ++attempts) {
+        PlatformGLObject name = m_nextFramebuffer++;
+        if (!m_nextFramebuffer)
+            m_nextFramebuffer = 1;
+        if (name && !m_framebuffers.contains(name))
+            return name;
+    }
+    return 0;
+}
+
+PlatformGLObject GraphicsContextGLWKC::nextRenderbufferName()
+{
+    for (uint64_t attempts = 0; attempts < UINT32_MAX - 1ULL; ++attempts) {
+        PlatformGLObject name = m_nextRenderbuffer++;
+        if (!m_nextRenderbuffer)
+            m_nextRenderbuffer = 1;
+        if (name && !m_renderbuffers.contains(name))
+            return name;
+    }
+    return 0;
+}
+
+void GraphicsContextGLWKC::releaseRenderbufferStorage(RenderbufferRecord& renderbuffer)
+{
+    if (!renderbuffer.colorSurfaceCreated && !renderbuffer.depthSurfaceCreated
+        && !renderbuffer.depthHiZMemory) {
+        renderbuffer.allocated = false;
+        return;
+    }
+    GX2DrawDone();
+    if (renderbuffer.colorSurfaceCreated)
+        GX2RDestroySurfaceEx(&renderbuffer.colorBuffer.surface, renderbuffer.resourceFlags);
+    if (renderbuffer.depthSurfaceCreated)
+        GX2RDestroySurfaceEx(&renderbuffer.depthBuffer.surface, renderbuffer.resourceFlags);
+    if (renderbuffer.depthHiZMemory)
+        MEMFreeToDefaultHeap(renderbuffer.depthHiZMemory);
+    renderbuffer = {};
+}
+
+bool GraphicsContextGLWKC::allocateRenderbufferStorage(RenderbufferRecord& renderbuffer,
+    GCGLenum internalFormat, uint32_t width, uint32_t height)
+{
+    releaseRenderbufferStorage(renderbuffer);
+    GX2SurfaceFormat nativeFormat = GX2_SURFACE_FORMAT_INVALID;
+    bool isColor = false;
+    bool hasDepth = false;
+    bool hasStencil = false;
+    GX2RResourceFlags flags = GX2R_RESOURCE_BIND_NONE;
+
+    switch (internalFormat) {
+    case GL_RGBA4_VALUE:
+        nativeFormat = GX2_SURFACE_FORMAT_UNORM_R4_G4_B4_A4;
+        isColor = true;
+        flags = colorRenderbufferFlags;
+        break;
+    case GL_RGB5_A1_VALUE:
+        nativeFormat = GX2_SURFACE_FORMAT_UNORM_R5_G5_B5_A1;
+        isColor = true;
+        flags = colorRenderbufferFlags;
+        break;
+    case GL_RGB565_VALUE:
+        nativeFormat = GX2_SURFACE_FORMAT_UNORM_R5_G6_B5;
+        isColor = true;
+        flags = colorRenderbufferFlags;
+        break;
+    case GL_DEPTH_COMPONENT16_VALUE:
+        // GX2 exposes D24S8 rather than a native D16 target. Store depth at
+        // D24 precision while preserving the WebGL-visible renderbuffer format.
+        nativeFormat = GX2_SURFACE_FORMAT_FLOAT_D24_S8;
+        hasDepth = true;
+        flags = depthRenderbufferFlags;
+        break;
+    case GL_STENCIL_INDEX8_VALUE:
+        nativeFormat = GX2_SURFACE_FORMAT_UINT_X24_G8;
+        hasStencil = true;
+        flags = depthRenderbufferFlags;
+        break;
+    case GL_DEPTH_STENCIL_VALUE:
+        nativeFormat = GX2_SURFACE_FORMAT_FLOAT_D24_S8;
+        hasDepth = true;
+        hasStencil = true;
+        flags = depthRenderbufferFlags;
+        break;
+    default:
+        return false;
+    }
+
+    if (width > static_cast<uint32_t>(maxRenderbufferSize())
+        || height > static_cast<uint32_t>(maxRenderbufferSize()))
+        return false;
+
+    renderbuffer.internalFormat = internalFormat;
+    renderbuffer.width = width;
+    renderbuffer.height = height;
+    renderbuffer.resourceFlags = flags;
+    renderbuffer.isColor = isColor;
+    renderbuffer.hasDepth = hasDepth;
+    renderbuffer.hasStencil = hasStencil;
+    renderbuffer.allocated = true;
+    if (!width || !height)
+        return true;
+
+    GX2Surface* surface = nullptr;
+    if (isColor) {
+        auto& buffer = renderbuffer.colorBuffer;
+        buffer = {};
+        surface = &buffer.surface;
+        surface->use = GX2_SURFACE_USE_COLOR_BUFFER;
+    } else {
+        auto& buffer = renderbuffer.depthBuffer;
+        buffer = {};
+        surface = &buffer.surface;
+        surface->use = GX2_SURFACE_USE_DEPTH_BUFFER;
+    }
+
+    surface->dim = GX2_SURFACE_DIM_TEXTURE_2D;
+    surface->width = width;
+    surface->height = height;
+    surface->depth = 1;
+    surface->mipLevels = 1;
+    surface->format = nativeFormat;
+    surface->aa = GX2_AA_MODE1X;
+    surface->tileMode = GX2_TILE_MODE_DEFAULT;
+    GX2CalcSurfaceSizeAndAlignment(surface);
+    if (!surface->imageSize || !surface->alignment || !GX2RCreateSurface(surface, flags)) {
+        renderbuffer = {};
+        return false;
+    }
+
+    if (isColor) {
+        auto& buffer = renderbuffer.colorBuffer;
+        buffer.viewMip = 0;
+        buffer.viewFirstSlice = 0;
+        buffer.viewNumSlices = 1;
+        buffer.aaBuffer = nullptr;
+        buffer.aaSize = 0;
+        GX2InitColorBufferRegs(&buffer);
+        renderbuffer.colorSurfaceCreated = true;
+    } else {
+        auto& buffer = renderbuffer.depthBuffer;
+        buffer.viewMip = 0;
+        buffer.viewFirstSlice = 0;
+        buffer.viewNumSlices = 1;
+        buffer.depthClear = 1.0f;
+        buffer.stencilClear = 0;
+
+        uint32_t alignment = 0;
+        GX2CalcDepthBufferHiZInfo(&buffer, &renderbuffer.depthHiZSize, &alignment);
+        if (renderbuffer.depthHiZSize && alignment)
+            renderbuffer.depthHiZMemory = MEMAllocFromDefaultHeapEx(renderbuffer.depthHiZSize, alignment);
+        if (renderbuffer.depthHiZMemory) {
+            buffer.hiZPtr = renderbuffer.depthHiZMemory;
+            buffer.hiZSize = renderbuffer.depthHiZSize;
+            GX2InitDepthBufferHiZEnable(&buffer, TRUE);
+        } else {
+            buffer.hiZPtr = nullptr;
+            buffer.hiZSize = 0;
+            renderbuffer.depthHiZSize = 0;
+            GX2InitDepthBufferHiZEnable(&buffer, FALSE);
+        }
+        GX2InitDepthBufferRegs(&buffer);
+        renderbuffer.depthSurfaceCreated = true;
+    }
+    return true;
+}
+
+GCGLenum GraphicsContextGLWKC::framebufferStatus(PlatformGLObject name) const
+{
+    if (!name)
+        return GL_FRAMEBUFFER_COMPLETE_VALUE;
+    auto framebufferIt = m_framebuffers.find(name);
+    if (framebufferIt == m_framebuffers.end())
+        return GL_FRAMEBUFFER_UNSUPPORTED_VALUE;
+
+    const auto& framebuffer = framebufferIt->second;
+    bool hasColor = false;
+    bool hasDepth = false;
+    bool hasStencil = false;
+    uint32_t width = 0;
+    uint32_t height = 0;
+    auto adoptDimensions = [&](uint32_t candidateWidth, uint32_t candidateHeight) {
+        if (!candidateWidth || !candidateHeight)
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+        if (!width && !height) {
+            width = candidateWidth;
+            height = candidateHeight;
+            return GL_FRAMEBUFFER_COMPLETE_VALUE;
+        }
+        return width == candidateWidth && height == candidateHeight
+            ? GL_FRAMEBUFFER_COMPLETE_VALUE : GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_VALUE;
+    };
+
+    if (framebuffer.colorTexture) {
+        auto texture = m_textures.find(framebuffer.colorTexture);
+        if (texture == m_textures.end() || !texture->second.storageCreated
+            || !framebuffer.textureColorViewReady || framebuffer.colorTextureLevel != 0
+            || texture->second.definedLevels.empty() || !texture->second.definedLevels[0])
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+        const auto status = adoptDimensions(texture->second.width, texture->second.height);
+        if (status != GL_FRAMEBUFFER_COMPLETE_VALUE)
+            return status;
+        hasColor = true;
+    } else if (framebuffer.colorRenderbuffer) {
+        auto renderbuffer = m_renderbuffers.find(framebuffer.colorRenderbuffer);
+        if (renderbuffer == m_renderbuffers.end() || !renderbuffer->second.allocated
+            || !renderbuffer->second.isColor || !renderbuffer->second.colorSurfaceCreated)
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+        const auto status = adoptDimensions(renderbuffer->second.width, renderbuffer->second.height);
+        if (status != GL_FRAMEBUFFER_COMPLETE_VALUE)
+            return status;
+        hasColor = true;
+    }
+
+    if (framebuffer.depthRenderbuffer && framebuffer.stencilRenderbuffer
+        && framebuffer.depthRenderbuffer != framebuffer.stencilRenderbuffer)
+        return GL_FRAMEBUFFER_UNSUPPORTED_VALUE;
+
+    if (framebuffer.depthRenderbuffer) {
+        auto renderbuffer = m_renderbuffers.find(framebuffer.depthRenderbuffer);
+        if (renderbuffer == m_renderbuffers.end() || !renderbuffer->second.allocated
+            || !renderbuffer->second.hasDepth || !renderbuffer->second.depthSurfaceCreated)
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+        const auto status = adoptDimensions(renderbuffer->second.width, renderbuffer->second.height);
+        if (status != GL_FRAMEBUFFER_COMPLETE_VALUE)
+            return status;
+        hasDepth = true;
+    }
+    if (framebuffer.stencilRenderbuffer) {
+        auto renderbuffer = m_renderbuffers.find(framebuffer.stencilRenderbuffer);
+        if (renderbuffer == m_renderbuffers.end() || !renderbuffer->second.allocated
+            || !renderbuffer->second.hasStencil || !renderbuffer->second.depthSurfaceCreated)
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+        const auto status = adoptDimensions(renderbuffer->second.width, renderbuffer->second.height);
+        if (status != GL_FRAMEBUFFER_COMPLETE_VALUE)
+            return status;
+        hasStencil = true;
+    }
+
+    if (!hasColor)
+        return GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_VALUE;
+    UNUSED_PARAM(hasDepth);
+    UNUSED_PARAM(hasStencil);
+    return GL_FRAMEBUFFER_COMPLETE_VALUE;
+}
+
+void GraphicsContextGLWKC::refreshFramebufferTarget()
+{
+    if (!m_boundFramebuffer) {
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
+        if (m_requestedDepthTest)
+            m_driver.enable(WKC::GLGX2::Capability::DepthTest);
+        else
+            m_driver.disable(WKC::GLGX2::Capability::DepthTest);
+        if (m_requestedStencilTest)
+            m_driver.enable(WKC::GLGX2::Capability::StencilTest);
+        else
+            m_driver.disable(WKC::GLGX2::Capability::StencilTest);
+        return;
+    }
+
+    if (framebufferStatus(m_boundFramebuffer) != GL_FRAMEBUFFER_COMPLETE_VALUE)
+        return;
+    auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+    if (framebuffer == m_framebuffers.end())
+        return;
+
+    auto& attachments = framebuffer->second;
+    if (attachments.colorTexture)
+        m_native.colorBuffer = &attachments.textureColorView;
+    else {
+        auto color = m_renderbuffers.find(attachments.colorRenderbuffer);
+        if (color == m_renderbuffers.end())
+            return;
+        m_native.colorBuffer = &color->second.colorBuffer;
+    }
+
+    // GX2's draw interface binds a depth target even for color-only passes.
+    // Use the default depth allocation as an inert target, while suppressing
+    // depth/stencil tests and writes at the compatibility-state layer.
+    if (attachments.depthRenderbuffer) {
+        auto depth = m_renderbuffers.find(attachments.depthRenderbuffer);
+        if (depth == m_renderbuffers.end())
+            return;
+        m_native.depthBuffer = &depth->second.depthBuffer;
+    } else if (attachments.stencilRenderbuffer) {
+        auto stencil = m_renderbuffers.find(attachments.stencilRenderbuffer);
+        if (stencil == m_renderbuffers.end())
+            return;
+        m_native.depthBuffer = &stencil->second.depthBuffer;
+    } else
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+
+    WKC::GLGX2::bindWUTRenderTarget(m_native);
+    const auto depth = attachments.depthRenderbuffer
+        ? m_renderbuffers.find(attachments.depthRenderbuffer) : m_renderbuffers.end();
+    const auto stencil = attachments.stencilRenderbuffer
+        ? m_renderbuffers.find(attachments.stencilRenderbuffer) : m_renderbuffers.end();
+    if (m_requestedDepthTest && depth != m_renderbuffers.end() && depth->second.hasDepth)
+        m_driver.enable(WKC::GLGX2::Capability::DepthTest);
+    else
+        m_driver.disable(WKC::GLGX2::Capability::DepthTest);
+    if (m_requestedStencilTest && stencil != m_renderbuffers.end() && stencil->second.hasStencil)
+        m_driver.enable(WKC::GLGX2::Capability::StencilTest);
+    else
+        m_driver.disable(WKC::GLGX2::Capability::StencilTest);
+}
+
+bool GraphicsContextGLWKC::framebufferReadyForDraw()
+{
+    if (!m_boundFramebuffer)
+        return true;
+    if (framebufferStatus(m_boundFramebuffer) == GL_FRAMEBUFFER_COMPLETE_VALUE)
+        return true;
+    addError(GL_INVALID_FRAMEBUFFER_OPERATION_VALUE);
+    return false;
+}
+
+void GraphicsContextGLWKC::detachFramebufferTexture(PlatformGLObject name)
+{
+    for (auto& entry : m_framebuffers) {
+        auto& framebuffer = entry.second;
+        if (framebuffer.colorTexture != name)
+            continue;
+        framebuffer.colorTexture = 0;
+        framebuffer.colorTextureLevel = 0;
+        framebuffer.textureColorView = {};
+        framebuffer.textureColorViewReady = false;
+    }
+}
+
+void GraphicsContextGLWKC::detachFramebufferRenderbuffer(PlatformGLObject name)
+{
+    for (auto& entry : m_framebuffers) {
+        auto& framebuffer = entry.second;
+        if (framebuffer.colorRenderbuffer == name)
+            framebuffer.colorRenderbuffer = 0;
+        if (framebuffer.depthRenderbuffer == name)
+            framebuffer.depthRenderbuffer = 0;
+        if (framebuffer.stencilRenderbuffer == name)
+            framebuffer.stencilRenderbuffer = 0;
+    }
 }
 
 void GraphicsContextGLWKC::releaseTextureStorage(TextureRecord& texture)
