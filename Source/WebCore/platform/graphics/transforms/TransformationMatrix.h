@@ -139,6 +139,18 @@ public:
 
     WEBCORE_EXPORT static const TransformationMatrix identity;
 
+    static constexpr inline TransformationMatrix nan()
+    {
+        return {
+            std::numeric_limits<float>::quiet_NaN(),
+            std::numeric_limits<float>::quiet_NaN(),
+            std::numeric_limits<float>::quiet_NaN(),
+            std::numeric_limits<float>::quiet_NaN(),
+            std::numeric_limits<float>::quiet_NaN(),
+            std::numeric_limits<float>::quiet_NaN()
+        };
+    }
+
     void setMatrix(double a, double b, double c, double d, double e, double f)
     {
         m_matrix[0][0] = a; m_matrix[0][1] = b; m_matrix[0][2] = 0; m_matrix[0][3] = 0; 
@@ -170,6 +182,11 @@ public:
                m_matrix[1][0] == 0 && m_matrix[1][1] == 1 && m_matrix[1][2] == 0 && m_matrix[1][3] == 0 &&
                m_matrix[2][0] == 0 && m_matrix[2][1] == 0 && m_matrix[2][2] == 1 && m_matrix[2][3] == 0 &&
                m_matrix[3][0] == 0 && m_matrix[3][1] == 0 && m_matrix[3][2] == 0 && m_matrix[3][3] == 1;
+    }
+
+    bool isNaN() const
+    {
+        return isNaNConstExpr(m_matrix[0][0]);
     }
 
     // This form preserves the double math from input to output.
@@ -494,3 +511,12 @@ private:
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const TransformationMatrix&);
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct MarkableTraits<WebCore::TransformationMatrix> {
+    static bool isEmptyValue(const WebCore::TransformationMatrix& mat) { return mat.isNaN(); }
+    static WebCore::TransformationMatrix emptyValue() { return WebCore::TransformationMatrix::nan(); }
+};
+
+} // namespace WTF

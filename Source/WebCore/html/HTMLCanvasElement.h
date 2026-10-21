@@ -91,7 +91,8 @@ public:
     std::optional<CanvasElementSnapshot> canvasDrawableSnapshot(Element&) const;
     ExceptionOr<Ref<CanvasElementImage>> captureElementImage(Element&) const;
 
-    ExceptionOr<void> updateElementGeometry(const CanvasElementImageSource&, std::optional<UpdateElementGeometryOptions>);
+    ExceptionOr<void> updateElementGeometry(const CanvasElementImageSource&, const std::optional<TransformationMatrix>&);
+    ExceptionOr<void> updateElementGeometry(const CanvasElementImageSource&, const UpdateElementGeometryOptions&);
     ExceptionOr<void> clearElementGeometry(const CanvasElementImageSource&);
     ExceptionOr<Ref<DOMMatrix>> getElementTransform(const Element&);
 
@@ -187,6 +188,8 @@ private:
 
     bool canContainRangeEndPoint() const final;
     bool canStartSelection() const final;
+
+    ExceptionOr<Ref<Element>> canvasDrawableElement(const CanvasElementImageSource&) const;
 
     void didUpdateSizeProperties();
 

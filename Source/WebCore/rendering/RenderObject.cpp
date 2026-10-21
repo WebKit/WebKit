@@ -35,6 +35,7 @@
 #include "EditingInlines.h"
 #include "Editor.h"
 #include "ElementAncestorIteratorInlines.h"
+#include "ElementInlines.h"
 #include "FloatQuad.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -1685,6 +1686,18 @@ bool RenderObject::shouldUseTransformFromContainer(const RenderElement* containe
     if (containerObject && !containerObject->style().perspective().isNone())
         return containerObject == parent();
     return false;
+}
+
+std::optional<TransformationMatrix> RenderObject::canvasTransform() const
+{
+    if (auto* element = dynamicDowncast<Element>(node()))
+        return element->canvasTransform();
+    return std::nullopt;
+}
+
+bool RenderObject::hasCanvasTransform() const
+{
+    return canvasTransform().has_value();
 }
 
 // FIXME: Now that it's no longer passed a container maybe this should be renamed?
