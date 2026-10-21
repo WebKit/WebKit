@@ -86,6 +86,11 @@ bool setWUTLinkedProgram(WUTBufferResources&, const GX2VertexShader&, const GX2P
 // from the current VAO descriptors. Called immediately before every GX2 draw.
 bool prepareWUTProgramForDraw(WUTBufferResources&);
 
+// Execute the native indexed draw path used by the VAO backend. This performs
+// index widening, attribute-range validation/staging and restores GX2 fetch
+// state after the draw completes.
+bool drawVertexArrayIndexed(void* context, const IndexedDraw&, BufferName elementBuffer);
+
 // Materialize enabled GL attribute state into GX2 fetch-shader descriptors.
 // The caller supplies linked shader locations/compatibility before initializing
 // and binding the actual GX2FetchShader.
