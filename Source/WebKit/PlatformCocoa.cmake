@@ -2372,6 +2372,80 @@ add_custom_command(
     VERBATIM
 )
 
+# Headers which import WebKitAdditions fragments have to be run through the
+# replacement script rather than being copied verbatim. The processed copy takes
+# the source header's place in the list, so that the header maps resolve
+# <WebKit/Foo.h> to the copy with the additions spliced in rather than to the
+# source tree. WebKit's own sources are pointed back at the unprocessed headers
+# below.
+set(_webkitadditions_source_headers)
+set(_header_lists WebKit_PUBLIC_FRAMEWORK_HEADERS WebKit_PRIVATE_FRAMEWORK_HEADERS)
+set(_header_dirs WebKit_HEADERS_DIR WebKit_PRIVATE_HEADERS_DIR)
+foreach (_header_list _header_dir IN ZIP_LISTS _header_lists _header_dirs)
+    set(_updated_headers)
+    foreach (_header IN LISTS ${_header_list})
+        # Entries are relative to WEBKIT_DIR unless they are already absolute.
+        set(_src ${WEBKIT_DIR})
+        cmake_path(APPEND _src ${_header})
+        file(READ ${_src} _contents)
+        # Only run headers through the replacement script if they actually contain
+        # a WKA import.
+        if (NOT _contents MATCHES "#import <WebKitAdditions/.*\.h>")
+            list(APPEND _updated_headers ${_header})
+            continue ()
+        endif ()
+
+        cmake_path(GET _src FILENAME _name)
+        set(_dst ${${_header_dir}}/${_name})
+        add_custom_command(
+            OUTPUT ${_dst}
+            COMMAND
+                env ${WEBKITADDITIONS_DEFINITIONS_FOR_HEADER_REPLACEMENT}
+                    ${WEBKIT_DIR}/mac/replace-webkit-additions-includes.py
+                    ${WebKitAdditions_FRAMEWORK_HEADERS_DIR} ${CMAKE_OSX_SYSROOT}
+                    ${_src} ${_dst}
+            MAIN_DEPENDENCY ${_src}
+            DEPENDS ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
+            VERBATIM
+        )
+        list(APPEND _updated_headers ${_dst})
+        list(APPEND WebKit_WEBKITADDITIONS_HEADERS ${_dst})
+        list(APPEND _webkitadditions_source_headers ${_src})
+    endforeach ()
+    set(${_header_list} ${_updated_headers})
+endforeach ()
+
+if (WebKit_WEBKITADDITIONS_HEADERS)
+    # Everything reading these headers through a header map has to wait for the
+    # replacement to run, including targets that only link against WebKit.
+    add_custom_target(WebKit_ReplaceWebKitAdditionsIncludes ALL
+        DEPENDS ${WebKit_WEBKITADDITIONS_HEADERS})
+    list(APPEND WebKit_DEPENDENCIES WebKit_ReplaceWebKitAdditionsIncludes)
+    list(APPEND WebKit_INTERFACE_DEPENDENCIES WebKit_ReplaceWebKitAdditionsIncludes)
+
+    if (USE_HEADER_MAPS)
+        # WebKit's own sources are the exception: they have to keep seeing the
+        # unprocessed headers, the way the Xcode build's project header map points
+        # them at the source tree. A spliced-in fragment declares its API inside one
+        # of WebKit's own categories, while the WebKitAdditions .mm that implements
+        # it declares a category of its own and imports the same fragment into that,
+        # so a translation unit which sees both ends up with duplicate declarations
+        # and with properties whose implementation is in the wrong category.
+        #
+        # The targets built from this directory pick up the header maps through the
+        # directory's include directories, and `include_directories(BEFORE)`
+        # prepends, so the last caller wins. Defer the call to the end of the
+        # directory so this override is searched ahead of WebKit-framework-headers.
+        WEBKIT_WRITE_HEADER_MAP(WebKit
+            DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/WebKit-webkitadditions-source-headers.hmap
+            FILES ${_webkitadditions_source_headers}
+            QUOTED BRACKETED
+        )
+        cmake_language(DEFER DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} CALL include_directories BEFORE
+            ${CMAKE_CURRENT_BINARY_DIR}/WebKit-webkitadditions-source-headers.hmap)
+    endif ()
+endif ()
+
 # LINKER:-u forces a symbol reference so -dead_strip_dylibs won't prune the weak framework.
 target_link_options(WebKit PRIVATE
     -lsandbox
@@ -2535,80 +2609,6 @@ target_link_options(WebKit PRIVATE
     "SHELL:-Xlinker -weak_library -Xlinker ${CMAKE_OSX_SYSROOT}/usr/lib/libbsm.tbd"
 )
 
-endif ()
-
-# Headers which import WebKitAdditions fragments have to be run through the
-# replacement script rather than being copied verbatim. The processed copy takes
-# the source header's place in the list, so that the header maps resolve
-# <WebKit/Foo.h> to the copy with the additions spliced in rather than to the
-# source tree. WebKit's own sources are pointed back at the unprocessed headers
-# below.
-set(_webkitadditions_source_headers)
-set(_header_lists WebKit_PUBLIC_FRAMEWORK_HEADERS WebKit_PRIVATE_FRAMEWORK_HEADERS)
-set(_header_dirs WebKit_HEADERS_DIR WebKit_PRIVATE_HEADERS_DIR)
-foreach (_header_list _header_dir IN ZIP_LISTS _header_lists _header_dirs)
-    set(_updated_headers)
-    foreach (_header IN LISTS ${_header_list})
-        # Entries are relative to WEBKIT_DIR unless they are already absolute.
-        set(_src ${WEBKIT_DIR})
-        cmake_path(APPEND _src ${_header})
-        file(READ ${_src} _contents)
-        # Only run headers through the replacement script if they actually contain
-        # a WKA import.
-        if (NOT _contents MATCHES "#import <WebKitAdditions/.*\.h>")
-            list(APPEND _updated_headers ${_header})
-            continue ()
-        endif ()
-
-        cmake_path(GET _src FILENAME _name)
-        set(_dst ${${_header_dir}}/${_name})
-        add_custom_command(
-            OUTPUT ${_dst}
-            COMMAND
-                env ${WEBKITADDITIONS_DEFINITIONS_FOR_HEADER_REPLACEMENT}
-                    ${WEBKIT_DIR}/mac/replace-webkit-additions-includes.py
-                    ${WebKitAdditions_FRAMEWORK_HEADERS_DIR} ${CMAKE_OSX_SYSROOT}
-                    ${_src} ${_dst}
-            MAIN_DEPENDENCY ${_src}
-            DEPENDS ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
-            VERBATIM
-        )
-        list(APPEND _updated_headers ${_dst})
-        list(APPEND WebKit_WEBKITADDITIONS_HEADERS ${_dst})
-        list(APPEND _webkitadditions_source_headers ${_src})
-    endforeach ()
-    set(${_header_list} ${_updated_headers})
-endforeach ()
-
-if (WebKit_WEBKITADDITIONS_HEADERS)
-    # Everything reading these headers through a header map has to wait for the
-    # replacement to run, including targets that only link against WebKit.
-    add_custom_target(WebKit_ReplaceWebKitAdditionsIncludes ALL
-        DEPENDS ${WebKit_WEBKITADDITIONS_HEADERS})
-    list(APPEND WebKit_DEPENDENCIES WebKit_ReplaceWebKitAdditionsIncludes)
-    list(APPEND WebKit_INTERFACE_DEPENDENCIES WebKit_ReplaceWebKitAdditionsIncludes)
-
-    if (USE_HEADER_MAPS)
-        # WebKit's own sources are the exception: they have to keep seeing the
-        # unprocessed headers, the way the Xcode build's project header map points
-        # them at the source tree. A spliced-in fragment declares its API inside one
-        # of WebKit's own categories, while the WebKitAdditions .mm that implements
-        # it declares a category of its own and imports the same fragment into that,
-        # so a translation unit which sees both ends up with duplicate declarations
-        # and with properties whose implementation is in the wrong category.
-        #
-        # The targets built from this directory pick up the header maps through the
-        # directory's include directories, and `include_directories(BEFORE)`
-        # prepends, so the last caller wins. Defer the call to the end of the
-        # directory so this override is searched ahead of WebKit-framework-headers.
-        WEBKIT_WRITE_HEADER_MAP(WebKit
-            DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/WebKit-webkitadditions-source-headers.hmap
-            FILES ${_webkitadditions_source_headers}
-            QUOTED BRACKETED
-        )
-        cmake_language(DEFER DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} CALL include_directories BEFORE
-            ${CMAKE_CURRENT_BINARY_DIR}/WebKit-webkitadditions-source-headers.hmap)
-    endif ()
 endif ()
 
 # WebKit.framework/Modules: the module maps, the Swift module and the SwiftUI

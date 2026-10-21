@@ -1200,7 +1200,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/cocoa/CAAudioStreamDescription.h
     platform/audio/cocoa/CARingBuffer.h
     platform/audio/cocoa/MediaSessionManagerCocoa.h
-    platform/audio/cocoa/PitchShiftAudioUnit.h
     platform/audio/cocoa/SpatialAudioExperienceHelper.h
     platform/audio/cocoa/SpatialAudioPlaybackHelper.h
     platform/audio/cocoa/WebAudioBufferList.h
@@ -1265,7 +1264,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h
     platform/graphics/avfoundation/AudioVideoRendererAVFObjC.h
-    platform/graphics/avfoundation/FormatDescriptionUtilities.h
     platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.h
     platform/graphics/avfoundation/ImageDecoderFactoryAVF.h
     platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h
@@ -1777,10 +1775,14 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/mac/ScrollingTreePluginScrollingNodeMac.h
     page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h
 
+    platform/audio/cocoa/PitchShiftAudioUnit.h
+
     platform/audio/mac/SharedRoutingArbitrator.h
 
     platform/gamepad/mac/HIDGamepad.h
     platform/gamepad/mac/HIDGamepadElement.h
+
+    platform/graphics/avfoundation/FormatDescriptionUtilities.h
 
     platform/graphics/mac/AppKitControlSystemImage.h
     platform/graphics/mac/GraphicsChecksMac.h
