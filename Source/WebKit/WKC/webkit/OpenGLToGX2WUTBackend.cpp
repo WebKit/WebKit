@@ -340,11 +340,19 @@ bool translatePrimitive(NativePrimitive primitive, GX2PrimitiveMode& output)
     return false;
 }
 
-bool draw(void*, NativePrimitive primitive, uint32_t first, uint32_t count, uint32_t instances)
+bool draw(void* context, NativePrimitive primitive, uint32_t first, uint32_t count, uint32_t instances)
 {
     GX2PrimitiveMode mode;
     if (!translatePrimitive(primitive, mode))
         return false;
+
+    // The GX2 vertex fetch unit uses explicit shader and fetch-program state.
+    // Bind the exact linked WebGL program before any non-indexed draw so the
+    // draw cannot accidentally reuse the previous canvas/program's shaders.
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    if (!prepareWUTProgramForDraw(state.bufferResources))
+        return false;
+
     GX2DrawEx(mode, count, first, instances);
     return true;
 }
