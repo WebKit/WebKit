@@ -767,7 +767,7 @@ jobs:
           if grep -q 'cafe_gx2\.h' "$HEADER"; then
             sed -i 's|^[[:space:]]*#include ["<]cafe_gx2\.h[">]|#if !defined(__WUT__)\n#include "cafe_gx2.h"\n#endif|' "$HEADER"
           fi
-          if grep -q 'cafe_gx2\.h' "$HEADER"; then
+          if ! grep -q '#if !defined(__WUT__)' "$HEADER"; then
             echo "::error::Could not isolate the legacy CafeGLSL GX2 declarations"
             exit 1
           fi
