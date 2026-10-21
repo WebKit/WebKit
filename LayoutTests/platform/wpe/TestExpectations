@@ -1226,9 +1226,6 @@ webkit.org/b/321450 [ arm64 ] fast/mediacapturefromelement/CanvasCaptureMediaStr
 
 # Tests expected to crash report Timeout instead on ARM64.
 webkit.org/b/321481 [ arm64 ] fast/css/container-query-orientation-modal-dialog-crash.html [ Crash Pass Timeout ]
-webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/alignment/row-subgrid-alignment-in-subgridded-axis-002.html [ Crash Timeout ]
-webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-003.html [ Crash Timeout ]
-webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-006.html [ Crash Timeout ]
 
 webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
 
@@ -1237,7 +1234,6 @@ webkit.org/b/321107 imported/w3c/web-platform-tests/css/selectors/media/media-lo
 webkit.org/b/321789 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
 webkit.org/b/322637 [ Debug ] imported/w3c/web-platform-tests/fullscreen/model/remove-last.html [ Pass Failure ]
 webkit.org/b/322639 [ Debug ] imported/w3c/web-platform-tests/html/semantics/popovers/popover-remove-attribute-during-focusing-steps.html [ Pass Failure ]
-webkit.org/b/323004 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-002.html [ ImageOnlyFailure Crash Timeout ]
 webkit.org/b/323006 [ Debug ] imported/w3c/web-platform-tests/wasm/webapi/contenttype.any.serviceworker.html [ Failure Pass ]
 webkit.org/b/323008 [ Release ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-events-and-exceptions.html [ Pass Timeout ]
 webkit.org/b/323009 [ Release ] webgl/1.0.x/conformance/textures/misc/image-decoder-to-texture.html [ Failure Pass ]
