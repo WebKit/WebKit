@@ -892,6 +892,12 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # FIXME: This log message is confusing; tests that were skipped should be called out separately.
         self.assertTrue('0 tests ran as expected, 2 didn\'t:\n' in regular_output.getvalue())
 
+    def test_results_are_unchanged_by_expected_failure_time_out(self):
+        tests = ['failures/expected', 'failures/unexpected/timeout.html', 'failures/unexpected/text-image-checksum.html', 'corner-cases/ews', 'passes/text.html']
+        results = {(result.test_name, result.type) for result in get_test_results(['--time-out-ms', '30000'] + tests)}
+        short_results = {(result.test_name, result.type) for result in get_test_results(['--time-out-ms', '30000', '--expected-failure-time-out-ms', '6000'] + tests)}
+        self.assertEqual(results, short_results)
+
     def test_exit_after_n_failures(self):
         # Unexpected failures should result in tests stopping.
         tests_run = get_tests_run(['failures/unexpected/text-image-checksum.html', 'passes/text.html', '--exit-after-n-failures', '1'])
