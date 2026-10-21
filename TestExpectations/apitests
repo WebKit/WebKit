@@ -11,8 +11,6 @@
 #     TestWebKitAPI.WTF.HashSet [ Fail ]
 #     webkit.org/b/12345 TestWebKitAPI.WTF.Test [ Pass Fail ]
 #     rdar://98765432 TestWebKitAPI.WebKit.Bug [ Crash ]
-webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.WebKit.InterruptionBetweenSameProcessPages [ Pass Failure ]
-webkit.org/b/326130 [ ios release siteisolation ] TestWebKitAPI.WKWebExtensionAPITabs.CaptureVisibleTab [ Pass Timeout ]
 #     [ debug ] TestWebKitAPI.WTF.DebugOnly [ Skip ]
 #     [ mac Sonoma+ ] TestWebKitAPI.WebKit.NewFeature [ Pass ]
 #     [ ios simulator arm64 ] TestWebKitAPI.WTF.Test [ Timeout ]
@@ -61,6 +59,7 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ iOS Debug ] TestWebKitAPI.ContentRuleList.ResourceTypes [ Pass Timeout ]
 webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.EnhancedSecurityTests/securityRestrictionModeFromNavigationDecider(enabled:) [ Pass Failure ]
 webkit.org/b/326128 [ ios release ipad ] TestWebKitAPI.Fullscreen.AllowsInlinePlaybackInDesktopContentMode [ Pass Timeout ]
+webkit.org/b/327794 [ ios release siteisolation ] TestWebKitAPI.GetUserMedia.OriginAndWebArchivePermission [ Timeout ]
 webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.InAppBrowserPrivacy.NonAppBoundUserStyleSheetForSpecificWebViewFails [ Pass Timeout ]
 
 # webkit.org/b/318893 [ iOS DEBUG ] 2x TestWebKitAPI.IPCTestingAPI.* (api-tests) are constant fails.
@@ -73,18 +72,30 @@ webkit.org/b/326525 [ ios debug ] TestWebKitAPI.MessagePortSecurity.SharedWorker
 [ mac debug siteisolation Tahoe ] TestWebKitAPI.ProcessSwap.CrossSiteClientSideRedirectWithoutPSON [ Crash ]
 [ mac debug siteisolation Tahoe ] TestWebKitAPI.ProcessSwap.NavigationWithLockedHistoryWithoutPSON [ Crash ]
 [ mac debug siteisolation Tahoe ] TestWebKitAPI.ProcessSwap.QuickBackForwardNavigationWithoutPSON [ Crash ]
+webkit.org/b/328297 [ ios ipad ] TestWebKitAPI.RequestTextInputContext.TextInteraction_FocusDefocusFocusAgainShouldScrollToReveal [ Failure ]
+webkit.org/b/328297 [ ios ipad ] TestWebKitAPI.RequestTextInputContext.TextInteraction_FocusingElementMultipleTimesShouldScrollToReveal [ Failure ]
+webkit.org/b/328297 [ ios ipad ] TestWebKitAPI.RequestTextInputContext.TextInteraction_FocusingElementShouldScrollToReveal [ Failure ]
+webkit.org/b/328297 [ ios ipad ] TestWebKitAPI.RequestTextInputContext.TextInteraction_FocusingNonAssistedFocusedElementScrollsToReveal [ Failure ]
+webkit.org/b/328297 [ ios ipad ] TestWebKitAPI.RequestTextInputContext.TextInteraction_FocusingReadOnlyElementShouldScrollToReveal [ Timeout ]
+webkit.org/b/328344 [ ios ] TestWebKitAPI.ResourceLoadStatistics.ClientEvaluatedJavaScriptDoesNotLogUserInteraction [ Pass Failure ]
 webkit.org/b/326126 [ ios release siteisolation ] TestWebKitAPI.ResourceLoadStatistics.StorageAccessGrantMultipleSubFrameDomains [ Pass Timeout ]
 webkit.org/b/326129 [ ios ] TestWebKitAPI.ResourceLoadStatistics.UserGestureLogsUserInteraction [ Pass Failure ]
 webkit.org/b/322663 [ ios ] TestWebKitAPI.SafeBrowsing.DeferredModalsClearedOnNavigation [ Pass Failure ]
+webkit.org/b/327801 [ ios debug ] TestWebKitAPI.SiteIsolation.DocumentEditingContextForTextInputOutsideFocusedCrossOriginIframe [ Failure ]
+webkit.org/b/327801 [ ios release ] TestWebKitAPI.SiteIsolation.DocumentEditingContextForTextInputOutsideFocusedCrossOriginIframe [ Pass Failure ]
 webkit.org/b/326125 [ ios release ] TestWebKitAPI.SiteIsolation.SharedProcessBasicWebProcessCacheCrash [ Pass Crash Failure ]
 webkit.org/b/326125 [ ios release ] TestWebKitAPI.SiteIsolation.SharedProcessInProcessCacheAfterNavigation [ Pass Crash ]
 webkit.org/b/326131 [ ios ] TestWebKitAPI.UnifiedPDF.BackgroundAdaptsToColorScheme [ Pass Failure ]
 webkit.org/b/269885 [ ios release ] TestWebKitAPI.WebAuthenticationPanel.LAError [ Pass Timeout ]
+webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.WebKit.InterruptionBetweenSameProcessPages [ Pass Failure ]
+webkit.org/b/328304 [ ios ] TestWebKitAPI.WebKit.SystemPreviewCanonicalWebPageURLIsPageURL [ Failure ]
 
 # webkit.org/b/318742 [ iOS DEBUG ] 3x TestWebKitAPI.WKWebExtensionAPICookies.* (api-tests) are constant crashes/timeout.
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.GetAllAfterNetworkProcessTermination [ Timeout ]
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookie [ Crash ]
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookieNotFound [ Crash ]
+
+webkit.org/b/326130 [ ios release siteisolation ] TestWebKitAPI.WKWebExtensionAPITabs.CaptureVisibleTab [ Pass Timeout ]
 
 # webkit.org/b/327334 [ Tahoe arm64 ] 6x TestWebKitAPI.WKWeb* (api-tests) are constant failures.
 [ mac release arm64 Tahoe ] TestWebKitAPI.WKWebsiteDataStore.RemoveAndFetchData [ Pass Failure ]

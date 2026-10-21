@@ -8160,7 +8160,7 @@ webkit.org/b/290564 imported/w3c/web-platform-tests/css/css-viewport/computedSty
 
 webkit.org/b/290568 [ Debug ] fast/dynamic/link-href-change.html [ Pass Crash ]
 
-webkit.org/b/290580 [ Debug ] fast/multicol/simple-line-layout-line-index-after-strut-2.html [ Pass Crash ]
+webkit.org/b/290580 webkit.org/b/328341 [ Debug ] fast/multicol/simple-line-layout-line-index-after-strut-2.html [ Pass Crash ImageOnlyFailure ]
 
 webkit.org/b/290568 [ Debug ] compositing/child-layer-with-subpixel-gap-needs-repaint-when-parent-moves.html [ Pass Crash ]
 
@@ -9135,7 +9135,7 @@ http/tests/websocket/tests/hybi/interleaved-fragments.html [ Pass Failure ] # rd
 
 http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html [ Pass Crash ] # rdar://176377254
 
-http/tests/site-isolation/history/add-iframes-and-navigate-mainframe.html [ Pass Timeout ] # rdar://170336250
+webkit.org/b/328340 http/tests/site-isolation/history/add-iframes-and-navigate-mainframe.html [ Pass Crash Timeout ] # rdar://170336250
 
 media/modern-media-controls/tracks-support/audio-single-track.html [ Pass Timeout ] # rdar://170345395
 
@@ -10403,3 +10403,56 @@ webkit.org/b/326715 [ Debug ] compositing/contents-format/deep-color-backing-sto
 webkit.org/b/327400 fast/canvas/canvas-gradient-premultiplied-color-not-exceeding-alpha.html [ Failure ]
 
 webkit.org/b/328264 [ Debug ] http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Failure ]
+
+webkit.org/b/327795 [ Debug ] fast/text-extraction/debug-text-extraction-word-limit-with-links.html [ Pass Crash ]
+
+webkit.org/b/327797 imported/w3c/web-platform-tests/css/css-scroll-anchoring/after-scrollable-range-shrinkage-001.html [ Pass Failure ]
+webkit.org/b/327797 imported/w3c/web-platform-tests/css/css-scroll-anchoring/after-scrollable-range-shrinkage-003.html [ Pass Failure ]
+webkit.org/b/327797 imported/w3c/web-platform-tests/css/css-scroll-anchoring/after-scrollable-range-shrinkage-004.html [ Pass Failure ]
+
+webkit.org/b/327798 [ Release ] compositing/backing/backface-visibility-flip.html [ Pass Failure ]
+
+webkit.org/b/328303 platform/ios/media/video-fullscreen-background-playback.html [ Timeout ]
+
+webkit.org/b/328332 [ Release ] http/wpt/service-workers/service-worker-fetch-task-cancel-on-redirect.https.html [ Pass Failure ]
+
+webkit.org/b/328339 compositing/hdr/hdr-basic-image-dynamic-range-limit.html [ Pass Failure ]
+
+webkit.org/b/328341 [ Release ] fast/multicol/simple-line-layout-line-index-after-strut-2.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/328343 [ Debug ] http/tests/IndexedDB/transaction-abort-pending-requests-stop.html [ Failure ]
+
+webkit.org/b/327767 svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context.svg [ Failure ]
+webkit.org/b/327767 svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg [ Failure ]
+webkit.org/b/327767 svg/W3C-SVG-1.1/text-align-06-b.svg [ Failure ]
+webkit.org/b/327767 svg/W3C-SVG-1.1/text-spacing-01-b.svg [ Failure ]
+webkit.org/b/327767 svg/W3C-SVG-1.1/text-text-04-t.svg [ Failure ]
+webkit.org/b/327767 svg/W3C-SVG-1.1/text-text-05-t.svg [ Failure ]
+webkit.org/b/327767 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]
+webkit.org/b/327767 svg/W3C-SVG-1.1/text-text-07-t.svg [ Failure ]
+webkit.org/b/327767 svg/W3C-SVG-1.1/text-tspan-01-b.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/textAnchor2.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/textAnchor3.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/textLayout.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/textLayout2.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/textOnPath.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/textOnPathSpaces.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/textPosition.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/textPosition2.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/verticalText.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/verticalTextOnPath.svg [ Failure ]
+webkit.org/b/327767 svg/batik/text/xmlSpace.svg [ Failure ]
+webkit.org/b/327767 svg/custom/glyph-transformation-with-hkern.svg [ Failure ]
+webkit.org/b/327767 svg/custom/text-letter-spacing.svg [ Failure ]
+webkit.org/b/327767 svg/custom/text-x-dx-lists.svg [ Failure ]
+webkit.org/b/327767 svg/custom/text-x-override-in-tspan-child.svg [ Failure ]
+webkit.org/b/327767 svg/text/bidi-embedded-direction.svg [ Failure ]
+webkit.org/b/327767 svg/text/bidi-reorder-value-lists.svg [ Failure ]
+webkit.org/b/327767 svg/text/text-align-06-b.svg [ Failure ]
+webkit.org/b/327767 svg/text/text-spacing-01-b.svg [ Failure ]
+webkit.org/b/327767 svg/text/text-text-04-t.svg [ Failure ]
+webkit.org/b/327767 svg/text/text-text-05-t.svg [ Failure ]
+webkit.org/b/327767 svg/text/text-text-06-t.svg [ Failure ]
+webkit.org/b/327767 svg/text/text-text-07-t.svg [ Failure ]
+webkit.org/b/327767 svg/text/text-tspan-01-b.svg [ Failure ]
+webkit.org/b/327767 svg/text/text-vkern.svg [ Failure ]

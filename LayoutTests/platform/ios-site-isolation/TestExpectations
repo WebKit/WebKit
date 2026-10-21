@@ -12,6 +12,8 @@ http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-redir
 http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-requests.html [ Timeout ]
 http/tests/workers/service/resultingClientId.https.html [ Timeout ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Timeout ]
+webkit.org/b/328333 http/tests/history/back-with-fragment-change.py [ Failure Timeout ]
+webkit.org/b/328333 http/tests/navigation/forward-and-cancel.html [ Timeout ]
 
 ########################
 # Tests that Text fail #
@@ -32,6 +34,8 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html?rest [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
 webaudio/MediaElementAudioSource/mediaelementaudiosourcenode-channel-count.html [ Pass Failure ]
+webkit.org/b/327796 http/wpt/fetch/local-network-access/address-space-overrides-apply-to-both-host-forms.html [ Failure ]
+webkit.org/b/328298 http/wpt/fetch/local-network-access/navigating-a-frame-is-checked-against-the-initiator.html [ Failure ]
 
 #########################
 # Tests that Image fail #
