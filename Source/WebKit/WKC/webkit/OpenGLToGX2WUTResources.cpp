@@ -129,8 +129,12 @@ bool bindBuffer(void* context, BufferTarget target, BufferName name)
 
 WUTBufferResources::~WUTBufferResources()
 {
-    if (fetchShaderProgramBuffer)
+    // GX2 may still be fetching this program after the CPU-side draw call has
+    // returned. Drain queued work before releasing shader program storage.
+    if (fetchShaderProgramBuffer) {
+        GX2DrawDone();
         MEMFreeToDefaultHeap(fetchShaderProgramBuffer);
+    }
     fetchShaderProgramBuffer = nullptr;
     fetchShaderProgramBufferSize = 0;
 }
@@ -202,6 +206,11 @@ bool prepareWUTProgramForDraw(WUTBufferResources& resources)
         return false;
 
     if (resources.fetchShaderDirty) {
+        // Fetch shader code may still be in use by prior submitted draws. Do not
+        // rewrite or free its backing allocation until GX2 has finished with it.
+        if (resources.fetchShaderProgramBuffer)
+            GX2DrawDone();
+
         std::vector<WUTLinkedAttribute> bindings;
         std::vector<GX2AttribStream> streams;
         try {
@@ -805,11 +814,12 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
     GX2DrawIndexedEx(mode, draw.count, GX2_INDEX_TYPE_U32_LE,
         stagedIndices.buffer, 0, draw.instances);
 
-    // These temporary resources must remain alive until the GPU has consumed
-    // the draw. Restore the original attribute pointers only after completion.
-    if (!stagedAttributes.empty() || draw.indexBytes != 4 || draw.baseVertex)
-        GX2DrawDone();
+    // The index stream is always staged into a fresh GX2R buffer, even when
+    // the incoming indices are already 32-bit. Never free it before GX2 has
+    // consumed the submitted draw; staged vertex buffers share this lifetime.
+    GX2DrawDone();
 
+    // Restore the original attribute pointers only after completion.
     GX2RDestroyBufferEx(&stagedIndices, stagedIndices.flags);
     destroyStagedAttributes();
 
