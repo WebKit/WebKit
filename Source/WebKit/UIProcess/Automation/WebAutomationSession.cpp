@@ -1813,6 +1813,35 @@ CommandResult<bool> WebAutomationSession::isShowingJavaScriptDialog(const Inspec
     return m_client->isShowingJavaScriptDialogOnPage(*this, *page);
 }
 
+CommandResult<Inspector::Protocol::Automation::JavaScriptDialogType> WebAutomationSession::typeOfCurrentJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle)
+{
+    ASSERT(m_client);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!m_client, InternalError);
+
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    bool isShowingJavaScriptDialog = m_client->isShowingJavaScriptDialogOnPage(*this, *page);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!isShowingJavaScriptDialog, NoJavaScriptDialog);
+
+    auto apiDialogType = m_client->typeOfCurrentJavaScriptDialogOnPage(*this, *page);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!apiDialogType, InternalError);
+
+    switch (*apiDialogType) {
+    case API::AutomationSessionClient::JavaScriptDialogType::Alert:
+        return Inspector::Protocol::Automation::JavaScriptDialogType::Alert;
+    case API::AutomationSessionClient::JavaScriptDialogType::Confirm:
+        return Inspector::Protocol::Automation::JavaScriptDialogType::Confirm;
+    case API::AutomationSessionClient::JavaScriptDialogType::Prompt:
+        return Inspector::Protocol::Automation::JavaScriptDialogType::Prompt;
+    case API::AutomationSessionClient::JavaScriptDialogType::BeforeUnloadConfirm:
+        return Inspector::Protocol::Automation::JavaScriptDialogType::Beforeunload;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Automation::JavaScriptDialogType::Alert;
+}
+
 CommandResult<void> WebAutomationSession::dismissCurrentJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle)
 {
     ASSERT(m_client);

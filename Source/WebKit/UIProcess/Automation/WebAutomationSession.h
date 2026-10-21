@@ -281,6 +281,7 @@ public:
     void consumeUserActivation(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, Inspector::CommandCallback<bool>&&) override;
     void selectOptionElement(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const Inspector::Protocol::Automation::NodeHandle&, Inspector::CommandCallback<void>&&) override;
     Inspector::CommandResult<bool> isShowingJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle&) override;
+    Inspector::CommandResult<Inspector::Protocol::Automation::JavaScriptDialogType> typeOfCurrentJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle&) override;
     Inspector::CommandResult<void> dismissCurrentJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle&) override;
     Inspector::CommandResult<void> acceptCurrentJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle&) override;
     Inspector::CommandResult<String> messageOfCurrentJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle&) override;
