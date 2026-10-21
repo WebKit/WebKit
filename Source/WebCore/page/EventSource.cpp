@@ -71,6 +71,7 @@ inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url,
     , m_withCredentials(eventSourceInit.withCredentials)
     , m_decoder(TextResourceDecoder::create("text/plain"_s, "UTF-8"_s))
 {
+    m_decoder->setAlwaysUseUTF8();
 }
 
 ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& context, const String& url, Init&& eventSourceInit)
