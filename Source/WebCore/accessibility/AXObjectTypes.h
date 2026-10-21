@@ -98,10 +98,16 @@ struct VisiblePositionIndexRange {
     bool isNull() const { return startIndex.value == -1 || endIndex.value == -1; }
 };
 
+// State a frame inherits from the element hosting it (e.g. its <iframe>), which may be in another process.
+// When this is updated, WebCoreArgumentCoders.serialization.in must be updated as well.
 struct InheritedFrameState {
     bool isAXHidden { false };
     bool isInert { false };
     bool isRenderHidden { false };
+    // The accessible name of the hosting element, which takes precedence over the frame's document title.
+    String hostingFrameName;
+
+    bool operator==(const InheritedFrameState&) const = default;
 };
 
 // When this is updated, WebCoreArgumentCoders.serialization.in must be updated as well.

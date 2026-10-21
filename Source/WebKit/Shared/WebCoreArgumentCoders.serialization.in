@@ -7387,6 +7387,7 @@ header: <WebCore/AXObjectTypes.h>
     bool isAXHidden;
     bool isInert;
     bool isRenderHidden;
+    String hostingFrameName;
 };
 
 header: <WebCore/AXObjectTypes.h>

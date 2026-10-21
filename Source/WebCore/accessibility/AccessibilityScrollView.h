@@ -84,10 +84,15 @@ public:
     bool isHostingFrameInert() const;
     bool isHostingFrameRenderHidden() const;
     bool isIgnoredFromHostingFrame() const { return isHostingFrameHidden() || isHostingFrameInert() || isHostingFrameRenderHidden(); }
+    // The accessible name of the iframe element, which names the hosted frame's web area.
+    String hostingFrameName() const;
 #endif // ENABLE(ACCESSIBLITY_LOCAL_FRAME)
 
 private:
     explicit AccessibilityScrollView(AXID, ScrollView&, AXObjectCache&);
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    InheritedFrameState hostingFrameInheritedState() const { return { isHostingFrameHidden(), isHostingFrameInert(), isHostingFrameRenderHidden(), hostingFrameName() }; }
+#endif
     void detachRemoteParts(AccessibilityDetachmentType) final;
 
     ScrollView* currentScrollView() const;

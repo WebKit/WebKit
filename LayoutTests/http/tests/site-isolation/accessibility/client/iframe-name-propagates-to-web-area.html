@@ -1,0 +1,58 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+
+<iframe id="same-site-titled" title="Same-site iframe title" src="/site-isolation/resources/iframe.html"></iframe>
+<iframe id="cross-site-titled" title="Cross-site iframe title" src="http://localhost:8000/site-isolation/resources/iframe.html"></iframe>
+<iframe id="cross-site-aria-label" aria-label="Cross-site iframe aria-label" src="http://localhost:8000/site-isolation/resources/iframe.html"></iframe>
+<iframe id="cross-site-untitled" src="http://localhost:8000/site-isolation/resources/iframe.html"></iframe>
+
+<script>
+var output = "Tests that an iframe's accessible name becomes the name of its web area, whether or not the iframe is in another process. Without one, the web area is named by the frame's document title.\n\n";
+
+window.jsTestIsAsync = true;
+accessibilityController.setClientAccessibilityMode(true);
+
+function collectWebAreas(element, webAreas) {
+    if (element.role.includes("AXWebArea"))
+        webAreas.push(element);
+    for (let i = 0; i < element.childrenCount; i++)
+        collectWebAreas(element.childAtIndex(i), webAreas);
+    return webAreas;
+}
+
+function countHeadings(element) {
+    let headingCount = element.role.includes("AXHeading") ? 1 : 0;
+    for (let i = 0; i < element.childrenCount; i++)
+        headingCount += countHeadings(element.childAtIndex(i));
+    return headingCount;
+}
+
+window.onload = async function() {
+    if (!window.accessibilityController)
+        return;
+
+    // Wait for the heading inside each of the four iframes. Exposing four remote frames can take longer
+    // than waitFor() allows.
+    for (let attempt = 0; attempt < 150 && countHeadings(accessibilityController.rootElement) != 4; attempt++)
+        await sleep(100);
+
+    // The first web area is the main page's; the rest are the iframes', in document order.
+    const webAreas = collectWebAreas(accessibilityController.rootElement, []).slice(1);
+    for (const webArea of webAreas)
+        output += `${webArea.description}\n`;
+
+    output += "\nAdding a title to the untitled cross-site iframe.\n";
+    document.getElementById("cross-site-untitled").title = "New cross-site iframe title";
+    await waitFor(() => webAreas[3].description.includes("New cross-site iframe title"));
+    output += `${webAreas[3].description}\n`;
+
+    debug(output);
+    finishJSTest();
+};
+</script>
+</body>
+</html>

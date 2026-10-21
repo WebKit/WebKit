@@ -28,6 +28,7 @@
 
 #include "AXLocalFrame.h"
 #include "AXLoggerBase.h"
+#include "AXNotifications.h"
 #include "AXObjectCacheInlines.h"
 #include "AXRemoteFrame.h"
 #include "AccessibilityObjectInlines.h"
@@ -40,6 +41,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "FrameInlines.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLNames.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "LocalFrameViewInlines.h"
@@ -51,6 +53,8 @@
 #include "Widget.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 AccessibilityScrollView::AccessibilityScrollView(AXID axID, ScrollView& view, AXObjectCache& cache)
     : AccessibilityObject(axID, cache)
@@ -345,7 +349,7 @@ void AccessibilityScrollView::addLocalFrameChild()
 
         // Set the initial hosting node state on the child frame's root scroll view.
         if (RefPtr childScrollView = dynamicDowncast<AccessibilityScrollView>(frameRoot.get())) {
-            childScrollView->setInheritedFrameState({ isHostingFrameHidden(), isHostingFrameInert(), isHostingFrameRenderHidden() });
+            childScrollView->setInheritedFrameState(hostingFrameInheritedState());
 
             // Request the screen position for the UI process to update asynchronously.
             if (RefPtr page = this->page())
@@ -406,8 +410,7 @@ void AccessibilityScrollView::addRemoteFrameChild()
             scrollFrame->updateRemoteFrameOffsetInMainFrame(iframePosition);
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-            InheritedFrameState state { isHostingFrameHidden(), isHostingFrameInert(), isHostingFrameRenderHidden() };
-            scrollFrame->updateRemoteFrameAccessibilityInheritedState(state);
+            scrollFrame->updateRemoteFrameAccessibilityInheritedState(hostingFrameInheritedState());
 
             // Request the screen position for the UI process to update asynchronously.
             if (RefPtr page = this->page())
@@ -671,19 +674,46 @@ bool AccessibilityScrollView::isHostingFrameRenderHidden() const
     return false;
 }
 
+String AccessibilityScrollView::hostingFrameName() const
+{
+    if (isRoot())
+        return m_inheritedFrameState.hostingFrameName;
+
+    RefPtr frameOwner = frameOwnerElement();
+    if (!frameOwner || (frameOwner->elementName() != ElementName::HTML_iframe && frameOwner->elementName() != ElementName::HTML_frame))
+        return { };
+
+    const AtomString& ariaLabel = frameOwner->attributeWithoutSynchronization(aria_labelAttr);
+    if (!ariaLabel.isEmpty())
+        return ariaLabel;
+    return frameOwner->attributeWithoutSynchronization(titleAttr);
+}
+
 void AccessibilityScrollView::setInheritedFrameState(InheritedFrameState state)
 {
-    if (m_inheritedFrameState.isAXHidden == state.isAXHidden
-        && m_inheritedFrameState.isInert == state.isInert
-        && m_inheritedFrameState.isRenderHidden == state.isRenderHidden)
+    if (m_inheritedFrameState == state)
         return;
 
-    m_inheritedFrameState = state;
+    bool ignoredStateChanged = m_inheritedFrameState.isAXHidden != state.isAXHidden
+        || m_inheritedFrameState.isInert != state.isInert
+        || m_inheritedFrameState.isRenderHidden != state.isRenderHidden;
+    bool nameChanged = m_inheritedFrameState.hostingFrameName != state.hostingFrameName;
+    m_inheritedFrameState = WTF::move(state);
+
+    CheckedPtr cache = axObjectCache();
+    if (nameChanged && cache) {
+        // The hosting frame's name is the web area's name, so this is like a document title change.
+        if (RefPtr webArea = webAreaObject())
+            cache->postNotification(webArea.get(), AXNotification::TextChanged);
+    }
+
+    if (!ignoredStateChanged)
+        return;
 
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     recomputeIsIgnoredForDescendants(/* includeSelf */ true);
 #else
-    if (WeakPtr cache = axObjectCache())
+    if (cache)
         cache->childrenChanged(this);
 #endif
 }
@@ -703,8 +733,7 @@ void AccessibilityScrollView::updateHostedFrameInheritedState()
         if (!hostedFrameScrollView)
             return;
 
-        InheritedFrameState state { isHostingFrameHidden(), isHostingFrameInert(), isHostingFrameRenderHidden() };
-        hostedFrameScrollView->setInheritedFrameState(state);
+        hostedFrameScrollView->setInheritedFrameState(hostingFrameInheritedState());
     }
 
     if (m_remoteFrame) {
@@ -713,8 +742,7 @@ void AccessibilityScrollView::updateHostedFrameInheritedState()
             return;
 
         Ref remoteFrame = remoteFrameView->frame();
-        InheritedFrameState state { isHostingFrameHidden(), isHostingFrameInert(), isHostingFrameRenderHidden() };
-        remoteFrame->updateRemoteFrameAccessibilityInheritedState(state);
+        remoteFrame->updateRemoteFrameAccessibilityInheritedState(hostingFrameInheritedState());
     }
 }
 

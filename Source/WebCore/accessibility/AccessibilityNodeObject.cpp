@@ -44,6 +44,7 @@
 #include "AccessibilityNodeObjectInlines.h"
 #include "AccessibilityObjectInlines.h"
 #include "AccessibilityRenderObject.h"
+#include "AccessibilityScrollView.h"
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTableColumn.h"
 #include "CSSSelector.h"
@@ -3700,12 +3701,25 @@ String AccessibilityNodeObject::alternativeTextForWebArea() const
     if (auto* owner = document->ownerElement()) {
         auto elementName = owner->elementName();
         if (elementName == ElementName::HTML_frame || elementName == ElementName::HTML_iframe) {
+            const AtomString& ariaLabel = owner->attributeWithoutSynchronization(aria_labelAttr);
+            if (!ariaLabel.isEmpty())
+                return ariaLabel;
             const AtomString& title = owner->attributeWithoutSynchronization(titleAttr);
             if (!title.isEmpty())
                 return title;
         }
         return owner->getNameAttribute();
     }
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // The <iframe> of a frame in another process (site isolation) isn't in this document's frame tree,
+    // so its name comes through the frame's root scroll view.
+    if (RefPtr parent = parentObject(); parent && parent->isRoot()) {
+        String hostingFrameName = downcast<AccessibilityScrollView>(*parent).hostingFrameName();
+        if (!hostingFrameName.isEmpty())
+            return hostingFrameName;
+    }
+#endif
 
     String documentTitle = document->title();
     if (!documentTitle.isEmpty())

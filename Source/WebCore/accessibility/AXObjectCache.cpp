@@ -4593,6 +4593,17 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     if (isRelationAttribute(attrName))
         updateRelations(*element, attrName);
 
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    if (attrName == aria_labelAttr || attrName == titleAttr) {
+        // The hosted frame's web area is named by its <iframe>, which may be in another process.
+        if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(*element)) {
+            RefPtr contentFrame = frameOwner->contentFrame();
+            if (RefPtr frameHost = dynamicDowncast<AccessibilityScrollView>(get(contentFrame ? contentFrame->virtualView() : nullptr)))
+                frameHost->updateHostedFrameInheritedState();
+        }
+    }
+#endif
+
     if (attrName == hrefAttr) {
         // An anchor's role depends on whether it is a link (Element::isLink(), i.e. whether it has an
         // href). Recompute the role when href changes so a hrefless anchor with a click handler can

@@ -1,0 +1,14 @@
+Tests that an iframe's accessible name becomes the name of its web area, whether or not the iframe is in another process. Without one, the web area is named by the frame's document title.
+
+Same-site iframe title
+Cross-site iframe title
+Cross-site iframe aria-label
+Site Isolation frame test
+
+Adding a title to the untitled cross-site iframe.
+New cross-site iframe title
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
