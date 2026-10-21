@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Every drag and drop event is cancelable except dragleave and dragend</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/dnd.html#fire-a-dnd-event">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<style>
+  #source        { width: 80px; height: 80px; background: cornflowerblue; }
+  #zoneA, #zoneB { width: 120px; height: 120px; display: inline-block; }
+  #zoneA         { background: salmon; }
+  #zoneB         { background: lightgreen; }
+</style>
+
+<div id="source" draggable="true">Drag me</div>
+<div id="zoneA">Zone A</div>
+<div id="zoneB">Zone B</div>
+
+<script>
+// "Fire a DND event" step: "If e is not dragleave or dragend, then initialize
+// event's cancelable attribute to true."
+const NOT_CANCELABLE = ["dragleave", "dragend"];
+
+const source = document.getElementById("source");
+const zoneA = document.getElementById("zoneA");
+const zoneB = document.getElementById("zoneB");
+
+// The drag, dragenter and dragover events fire repeatedly; only the first of
+// each is recorded so that a single drag yields one value per event type.
+const cancelable = new Map();
+function record(event) {
+    if (!cancelable.has(event.type))
+        cancelable.set(event.type, event.cancelable);
+}
+
+function acceptDrop(event) {
+    record(event);
+    event.preventDefault();
+}
+
+source.addEventListener("dragstart", event => {
+    record(event);
+    event.dataTransfer.setData("text/plain", "drag-test");
+});
+source.addEventListener("drag", record);
+source.addEventListener("dragend", record);
+
+for (const zone of [zoneA, zoneB]) {
+    zone.addEventListener("dragenter", acceptDrop);
+    zone.addEventListener("dragover", acceptDrop);
+}
+zoneA.addEventListener("dragleave", record);
+zoneB.addEventListener("drop", acceptDrop);
+
+function centerOf(element) {
+    const rect = element.getBoundingClientRect();
+    return { x: Math.round(rect.left + rect.width / 2),
+             y: Math.round(rect.top + rect.height / 2) };
+}
+
+// Drag the source across zone A (producing dragleave) and drop it on zone B.
+// Performed once and shared by every subtest below, so that one event type
+// going missing in an implementation does not mask the other assertions.
+let dragPromise = null;
+function performDrag() {
+    if (!dragPromise) {
+        const start = centerOf(source);
+        const a = centerOf(zoneA);
+        const b = centerOf(zoneB);
+        dragPromise = new test_driver.Actions()
+            .addPointer("mouse", "mouse")
+            .pointerMove(start.x, start.y)
+            .pointerDown()
+            .pause(200)  // Exceed the drag-start hysteresis threshold.
+            .pointerMove(a.x, a.y)
+            .pause(50)
+            .pointerMove(b.x, b.y)
+            .pause(50)
+            .pointerUp()
+            .pause(50)
+            .send();
+    }
+    return dragPromise;
+}
+
+function cancelableTest(type) {
+    const expected = !NOT_CANCELABLE.includes(type);
+    promise_test(async t => {
+        await performDrag();
+        assert_true(cancelable.has(type), `${type} fired`);
+        assert_equals(cancelable.get(type), expected,
+            `${type}.cancelable should be ${expected}`);
+    }, `${type} should${expected ? "" : " not"} be cancelable`);
+}
+
+for (const type of ["dragstart", "drag", "dragenter", "dragover", "dragleave", "drop", "dragend"])
+    cancelableTest(type);
+</script>
