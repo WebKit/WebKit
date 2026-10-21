@@ -30,6 +30,9 @@ class TimeControlSupport extends MediaControllerSupport
 
     enable()
     {
+        if (!this._shouldBeEnabled())
+            return;
+
         super.enable();
 
         this.control.supportsSeeking = !this.mediaController.host || this.mediaController.host.supportsSeeking;
@@ -45,11 +48,27 @@ class TimeControlSupport extends MediaControllerSupport
         return ["timeupdate", "durationchange"];
     }
 
+    controlsUserVisibilityDidChange()
+    {
+        if (this._shouldBeEnabled())
+            this.enable();
+        else
+            this.disable();
+    }
+
     syncControl()
     {
         const media = this.mediaController.media;
         this.control.currentTime = media.currentTime;
         this.control.duration = media.duration;
+    }
+
+    // Private
+
+    _shouldBeEnabled()
+    {
+        const controls = this.mediaController.controls;
+        return controls.visible && !controls.faded;
     }
 
 }
