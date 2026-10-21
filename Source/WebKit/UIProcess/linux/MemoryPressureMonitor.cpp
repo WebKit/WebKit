@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/PageBlock.h>
 #include <wtf/Threading.h>
 #include <wtf/UniStdExtras.h>
@@ -377,6 +378,7 @@ void MemoryPressureMonitor::start()
             if (usedPercentage >= s_memoryPresurePercentageThreshold) {
                 bool isCritical = (usedPercentage >= s_memoryPresurePercentageThresholdCritical);
                 RunLoop::mainSingleton().dispatch([isCritical] {
+                    MemoryPressureHandler::singleton().triggerMemoryPressureEvent(isCritical);
                     for (auto& processPool : WebProcessPool::allProcessPools())
                         processPool->sendMemoryPressureEvent(isCritical);
                 });
