@@ -127,6 +127,12 @@ bool bindBuffer(void* context, BufferTarget target, BufferName name)
 
 } // namespace
 
+WUTBufferResources::WUTBufferResources()
+{
+    for (auto& value : currentAttributeValues)
+        value[3] = 1.0f;
+}
+
 WUTBufferResources::~WUTBufferResources()
 {
     // GX2 may still be fetching this program after the CPU-side draw call has
@@ -267,6 +273,18 @@ bool prepareWUTProgramForDraw(WUTBufferResources& resources)
     GX2SetVertexShader(resources.vertexShader);
     GX2SetPixelShader(resources.pixelShader);
     GX2SetFetchShader(&resources.fetchShader);
+
+    // Disabled arrays use GL's current generic attribute values. They are
+    // context state rather than VAO state, so refresh the zero-stride streams
+    // immediately before each draw and after other VAOs have reused these slots.
+    for (const auto& binding : resources.linkedAttributes) {
+        auto attribute = resources.attributes.find(binding.attributeIndex);
+        if (attribute != resources.attributes.end() && attribute->second.enabled)
+            continue;
+        auto& value = resources.currentAttributeValues[binding.attributeIndex];
+        DCFlushRange(value.data(), sizeof(value));
+        GX2SetAttribBuffer(binding.attributeIndex, static_cast<uint32_t>(sizeof(value)), 0, value.data());
+    }
     return true;
 }
 
@@ -455,55 +473,55 @@ bool buildWUTAttributeStreams(const WUTBufferResources& resources,
         return false;
 
     try {
-        output.reserve(resources.attributes.size());
-        for (const auto& entry : resources.attributes) {
-            const uint8_t glIndex = entry.first;
-            const auto& attribute = entry.second;
-            if (!attribute.enabled)
-                continue;
-
-            // The GL attribute index is not necessarily the linked GX2 input
-            // location. Require an explicit name mapping to prevent mismatched
-            // fetch streams after the shader linker assigns locations.
-            const char* inputName = nullptr;
-            for (size_t i = 0; i < bindingCount; ++i) {
-                if (bindings[i].attributeIndex != glIndex)
-                    continue;
-                if (!bindings[i].shaderInputName || inputName)
-                    return false;
-                inputName = bindings[i].shaderInputName;
-            }
-
-            // An enabled VAO attribute that is not referenced by the linked
-            // shader is legal GL state and must not become a fetch stream.
-            if (!inputName)
-                continue;
+        output.reserve(bindingCount);
+        for (size_t index = 0; index < bindingCount; ++index) {
+            const auto& binding = bindings[index];
+            if (binding.attributeIndex >= resources.currentAttributeValues.size()
+                || !binding.shaderInputName || !*binding.shaderInputName)
+                return false;
 
             const GX2AttribVar* linkedInput = nullptr;
             for (uint32_t i = 0; i < vertexShader.attribVarCount; ++i) {
                 const GX2AttribVar& candidate = vertexShader.attribVars[i];
-                if (!candidate.name || std::strcmp(candidate.name, inputName))
+                if (!candidate.name || std::strcmp(candidate.name, binding.shaderInputName))
                     continue;
                 if (linkedInput)
                     return false;
                 linkedInput = &candidate;
             }
+            // Keep the fetch stream tied to the actual linked shader input,
+            // not the GL attribute index.
             if (!linkedInput)
                 return false;
 
-            if (!attribute.buffer || resources.buffers.find(attribute.buffer) == resources.buffers.end()) {
-                output.clear();
-                return false;
-            }
+            auto attributeIt = resources.attributes.find(binding.attributeIndex);
+            const bool enabled = attributeIt != resources.attributes.end()
+                && attributeIt->second.enabled;
             GX2AttribStream stream {};
             stream.location = linkedInput->location;
-            stream.buffer = glIndex;
-            stream.offset = 0; // bindVertexBuffer applies the GL byte offset.
-            stream.format = attribute.format;
-            stream.type = attribute.indexType;
-            stream.aluDivisor = attribute.divisor;
-            stream.mask = attribute.componentMask;
+            stream.buffer = binding.attributeIndex;
+            stream.offset = 0; // GX2SetAttribBuffer applies each GL byte offset.
             stream.endianSwap = GX2_ENDIAN_SWAP_DEFAULT;
+
+            if (enabled) {
+                const auto& attribute = attributeIt->second;
+                if (!attribute.buffer || resources.buffers.find(attribute.buffer) == resources.buffers.end()) {
+                    output.clear();
+                    return false;
+                }
+                stream.format = attribute.format;
+                stream.type = attribute.indexType;
+                stream.aluDivisor = attribute.divisor;
+                stream.mask = attribute.componentMask;
+            } else {
+                // A disabled GL attribute reads its current generic vec4. GX2
+                // has no direct "constant input" fetch descriptor, so back it
+                // with a zero-stride four-float stream updated before each draw.
+                stream.format = GX2_ATTRIB_FORMAT_FLOAT_32_32_32_32;
+                stream.type = GX2_ATTRIB_INDEX_PER_VERTEX;
+                stream.aluDivisor = 0;
+                stream.mask = GX2_CHANNEL_MASK_RGBA;
+            }
             output.push_back(stream);
         }
     } catch (...) {
@@ -511,8 +529,6 @@ bool buildWUTAttributeStreams(const WUTBufferResources& resources,
         return false;
     }
 
-    // Two GL inputs must not accidentally alias one GX2 location. Zero
-    // active inputs is legal; the caller can build a zero-stream fetch shader.
     for (size_t i = 0; i < output.size(); ++i) {
         for (size_t j = i + 1; j < output.size(); ++j) {
             if (output[i].location == output[j].location) {
