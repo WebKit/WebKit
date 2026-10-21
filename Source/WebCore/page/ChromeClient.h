@@ -445,6 +445,9 @@ public:
     virtual void elementDidRefocus(Element&, const FocusOptions&) { }
 
     virtual void focusedElementDidChangeInputMode(Element&, InputMode) { }
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    virtual void focusedElementDidChangeReadOnly(Element&) { }
+#endif
     virtual void focusedSelectElementDidChangeOptions(const HTMLSelectElement&) { }
 
     virtual bool shouldPaintEntireContents() const { return false; }

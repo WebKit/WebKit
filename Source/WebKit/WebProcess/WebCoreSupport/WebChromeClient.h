@@ -356,7 +356,13 @@ private:
     void elementDidRefocus(WebCore::Element&, const WebCore::FocusOptions&) final;
     void focusedElementDidChangeInputMode(WebCore::Element&, WebCore::InputMode) final;
     void focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement&) final;
+#endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void focusedElementDidChangeReadOnly(WebCore::Element&) final;
+#endif
+
+#if PLATFORM(COCOA)
     void makeFirstResponder() final;
     void assistiveTechnologyMakeFirstResponder() final;
 #endif

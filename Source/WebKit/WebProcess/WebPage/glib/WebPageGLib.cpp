@@ -226,6 +226,14 @@ void WebPage::setInputMethodState(Element* element)
     send(Messages::WebPageProxy::SetInputMethodState(state));
 }
 
+void WebPage::focusedElementDidChangeReadOnly(Element& element)
+{
+    if (m_focusedElement != &element)
+        return;
+
+    setInputMethodState(&element);
+}
+
 String WebPage::platformUserAgent(const URL& url) const
 {
     if (url.isNull() || !m_page->settings().needsSiteSpecificQuirks())
