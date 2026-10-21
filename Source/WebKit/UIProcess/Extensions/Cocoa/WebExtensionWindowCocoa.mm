@@ -165,7 +165,7 @@ bool WebExtensionWindow::extensionHasAccess() const
     return !isPrivate || (isPrivate && extensionContext()->hasAccessToPrivateData());
 }
 
-WebExtensionWindow::TabVector WebExtensionWindow::tabs(SkipValidation skipValidation) const
+WebExtensionWindow::TabVector WebExtensionWindow::tabs() const
 {
     if (!isValid() || !m_respondsToTabs || !m_respondsToActiveTab)
         return { };
@@ -186,20 +186,10 @@ WebExtensionWindow::TabVector WebExtensionWindow::tabs(SkipValidation skipValida
     for (id tab in tabs)
         result.append(extensionContext->getOrCreateTab(checked_objc_cast<WKWebExtensionTab>(tab)));
 
-    if (skipValidation == SkipValidation::No) {
-        // SkipValidation::Yes is needed to avoid reentry, since activeTab() calls tabs().
-        RefPtr activeTab = this->activeTab(SkipValidation::Yes);
-        if (!activeTab || !result.contains(*activeTab)) {
-            RELEASE_LOG_ERROR(Extensions, "Array returned by tabsForWebExtensionContext: does not contain the active tab; %{sensitive}@ not in %{sensitive}@", activeTab ? activeTab->delegate() : nil, tabs);
-            ASSERT_NOT_REACHED();
-            return { };
-        }
-    }
-
     return result;
 }
 
-RefPtr<WebExtensionTab> WebExtensionWindow::activeTab(SkipValidation skipValidation) const
+RefPtr<WebExtensionTab> WebExtensionWindow::activeTab() const
 {
     if (!isValid() || !m_respondsToActiveTab || !m_respondsToTabs)
         return nullptr;
@@ -212,19 +202,7 @@ RefPtr<WebExtensionTab> WebExtensionWindow::activeTab(SkipValidation skipValidat
     if (!activeTab)
         return nullptr;
 
-    Ref result = extensionContext->getOrCreateTab(activeTab);
-
-    if (skipValidation == SkipValidation::No) {
-        // SkipValidation::Yes is needed to avoid reentry, since tabs() calls activeTab().
-        auto tabs = this->tabs(SkipValidation::Yes);
-        if (!tabs.contains(result)) {
-            RELEASE_LOG_ERROR(Extensions, "Array returned by tabsForWebExtensionContext: does not contain the active tab; %{sensitive}@ not in %{sensitive}@", result->delegate(), [m_delegate tabsForWebExtensionContext:m_extensionContext->wrapper()] ?: @[ ]);
-            ASSERT_NOT_REACHED();
-            return nullptr;
-        }
-    }
-
-    return result;
+    return extensionContext->getOrCreateTab(activeTab);
 }
 
 WKWebExtensionWindowType LEGACY_NODELETE toAPI(WebExtensionWindow::Type type)
