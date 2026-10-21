@@ -173,8 +173,10 @@ bool applyBlend(WUTDriverContext& context)
 
     GX2SetBlendControl(GX2_RENDER_TARGET_0, sourceRGB, destinationRGB, equationRGB,
         GX2_TRUE, sourceAlpha, destinationAlpha, equationAlpha);
+    const bool anyColorChannel = context.colorMask.red || context.colorMask.green
+        || context.colorMask.blue || context.colorMask.alpha;
     GX2SetColorControl(GX2_LOGIC_OP_COPY,
-        context.blendEnabled ? 1 : 0, GX2_FALSE, GX2_TRUE);
+        context.blendEnabled ? 1 : 0, GX2_FALSE, anyColorChannel ? GX2_TRUE : GX2_FALSE);
     return true;
 }
 
@@ -370,7 +372,7 @@ bool setStencilWriteMask(void* opaque, Face face, uint32_t mask)
 
 bool setBlendColor(void* opaque, const Color& color)
 {
-    auto& context = *static_cast<WUTDriverContext*>(opaque);
+    (void)opaque;
     GX2SetBlendConstantColor(color.red, color.green, color.blue, color.alpha);
     return true;
 }
@@ -414,9 +416,19 @@ bool setClearStencil(void* opaque, int32_t value)
 bool clear(void* opaque, uint8_t mask)
 {
     auto& context = *static_cast<WUTDriverContext*>(opaque);
+    constexpr uint8_t knownMask = ClearColorBuffer | ClearDepthBuffer | ClearStencilBuffer;
+    if (mask & static_cast<uint8_t>(~knownMask))
+        return false;
+
+    // Validate every requested target before issuing any GPU commands. This
+    // avoids a color-only partial clear when a requested depth/stencil target
+    // is missing.
+    if ((mask & ClearColorBuffer) && !context.colorBuffer)
+        return false;
+    if ((mask & (ClearDepthBuffer | ClearStencilBuffer)) && !context.depthBuffer)
+        return false;
+
     if (mask & ClearColorBuffer) {
-        if (!context.colorBuffer)
-            return false;
         GX2ClearColor(context.colorBuffer, context.clearColor.red, context.clearColor.green,
             context.clearColor.blue, context.clearColor.alpha);
     }
@@ -426,12 +438,9 @@ bool clear(void* opaque, uint8_t mask)
         flags = static_cast<GX2ClearFlags>(static_cast<uint32_t>(flags) | GX2_CLEAR_FLAGS_DEPTH);
     if (mask & ClearStencilBuffer)
         flags = static_cast<GX2ClearFlags>(static_cast<uint32_t>(flags) | GX2_CLEAR_FLAGS_STENCIL);
-    if (flags) {
-        if (!context.depthBuffer)
-            return false;
+    if (flags)
         GX2ClearDepthStencilEx(context.depthBuffer, context.clearDepth,
             static_cast<uint8_t>(context.clearStencil), flags);
-    }
     return true;
 }
 
