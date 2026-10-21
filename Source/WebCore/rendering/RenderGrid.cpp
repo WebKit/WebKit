@@ -364,8 +364,20 @@ Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems(Rende
         // For a grid item that has an aspect-ratio and block-constraints such as the relative logical height,
         // when the grid width is auto, we may need get the real grid width before laying out the item.
         if (GridLayoutFunctions::isAspectRatioBlockSizeDependentGridItem(*gridItem) && (style().logicalWidth().isAuto() || style().logicalWidth().isMinContent() || style().logicalWidth().isMaxContent())) {
-            dependentGridItems.append(gridItem);
-            gridLayoutState.setHasAspectRatioBlockSizeDependentItem();
+            if (gridItem->parent() == this) {
+                dependentGridItems.append(gridItem);
+                gridLayoutState.setHasAspectRatioBlockSizeDependentItem();
+                return;
+            }
+            // The traversal descends into subgrids, whose items are placed in the subgrid's grid and get
+            // their grid area from the subgrid's own layout. When the subgrid inherits its rows from this
+            // grid, the item's inline size still depends on this grid's row sizes, so its min-content
+            // contribution has to be recomputed in the second column pass like a direct child's.
+            CheckedRef parentGrid = downcast<RenderGrid>(*gridItem->parent());
+            if (parentGrid->isSubgridOf(GridLayoutFunctions::flowAwareDirectionForGridItem(*this, parentGrid, Style::GridTrackSizingDirection::Rows), *this)) {
+                gridLayoutState.setHasAspectRatioBlockSizeDependentItem();
+                gridLayoutState.setLayoutRequirementForGridItem(*gridItem, ItemLayoutRequirement::MinContentContributionForSecondColumnPass);
+            }
         }
     };
 
@@ -1713,7 +1725,7 @@ LayoutUnit RenderGrid::gridAreaBreadthForGridItemIncludingAlignmentOffsets(const
     // We need the cached value when available because Content Distribution alignment properties
     // may have some influence in the final grid area breadth.
     const auto& tracks = m_trackSizingAlgorithm.tracks(direction);
-    const auto& span = currentGrid().gridItemSpan(gridItem, direction);
+    const auto& span = gridSpanForGridItem(gridItem, direction);
     const auto& positions = this->positions(direction);
 
     auto initialTrackPosition = positions[span.startLine()];
