@@ -33,6 +33,7 @@
 #include <gx2/shaders.h>
 #include <gx2/texture.h>
 #include <gx2/sampler.h>
+#include <gx2/surface.h>
 #include <gx2/utils.h>
 #include <gx2/surface.h>
 #include <gx2r/surface.h>
@@ -367,9 +368,9 @@ public:
 
     void compileShader(PlatformGLObject) override;
 
-    void copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border) override { notImplemented(); }
+    void copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border) override;
 
-    void copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) override { notImplemented(); }
+    void copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) override;
 
     PlatformGLObject createBuffer() override;
 
@@ -593,7 +594,7 @@ public:
 
     void bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data) override;
 
-    void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint packAlignment, GCGLint packRowLength, GCGLboolean packReverseRowOrder) override { notImplemented(); }
+    void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint packAlignment, GCGLint packRowLength, GCGLboolean packReverseRowOrder) override;
 
     void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) override { notImplemented(); }
 
@@ -950,6 +951,7 @@ private:
     };
     struct TextureRecord {
         GCGLenum target { 0 };
+        GCGLenum internalFormat { 0 };
         GX2Texture native {};
         bool storageCreated { false };
         uint32_t width { 0 };
@@ -1030,6 +1032,8 @@ private:
     PlatformGLObject nextFramebufferName();
     PlatformGLObject nextRenderbufferName();
     void setCurrentVertexAttribute(GCGLuint, const std::array<GCGLfloat, 4>&);
+    bool readPixelsInto(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t>,
+        GCGLint packAlignment, GCGLint packRowLength, GCGLboolean packReverseRowOrder);
     void releaseTextureStorage(TextureRecord&);
     void releaseRenderbufferStorage(RenderbufferRecord&);
     bool allocateRenderbufferStorage(RenderbufferRecord&, GCGLenum, uint32_t, uint32_t);
