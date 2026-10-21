@@ -19,6 +19,10 @@
 #include <gx2/draw.h>
 #include <gx2/event.h>
 #include <gx2/shaders.h>
+#include <gx2/texture.h>
+#include <gx2/sampler.h>
+#include <gx2/utils.h>
+#include <gx2r/surface.h>
 #include <coreinit/cache.h>
 #include <wtf/StdLibExtras.h>
 
@@ -117,6 +121,35 @@ constexpr GCGLenum GL_VIEWPORT_VALUE = 0x0BA2;
 constexpr GCGLenum GL_COLOR_CLEAR_VALUE_VALUE = 0x0C22;
 constexpr GCGLenum GL_DEPTH_CLEAR_VALUE_VALUE = 0x0B73;
 constexpr GCGLenum GL_DEPTH_RANGE_VALUE = 0x0B70;
+constexpr GCGLenum GL_TEXTURE_2D_VALUE = 0x0DE1;
+constexpr GCGLenum GL_TEXTURE_MIN_FILTER_VALUE = 0x2801;
+constexpr GCGLenum GL_TEXTURE_MAG_FILTER_VALUE = 0x2800;
+constexpr GCGLenum GL_TEXTURE_WRAP_S_VALUE = 0x2802;
+constexpr GCGLenum GL_TEXTURE_WRAP_T_VALUE = 0x2803;
+constexpr GCGLenum GL_TEXTURE_BINDING_2D_VALUE = 0x8069;
+constexpr GCGLenum GL_UNPACK_ALIGNMENT_VALUE = 0x0CF5;
+constexpr GCGLenum GL_PACK_ALIGNMENT_VALUE = 0x0D05;
+constexpr GCGLenum GL_RGB_VALUE = 0x1907;
+constexpr GCGLenum GL_RGBA_VALUE = 0x1908;
+constexpr GCGLenum GL_ALPHA_VALUE = 0x1906;
+constexpr GCGLenum GL_LUMINANCE_VALUE = 0x1909;
+constexpr GCGLenum GL_LUMINANCE_ALPHA_VALUE = 0x190A;
+constexpr GCGLenum GL_TEXTURE0_VALUE = 0x84C0;
+constexpr GCGLenum GL_NEAREST_VALUE = 0x2600;
+constexpr GCGLenum GL_LINEAR_VALUE = 0x2601;
+constexpr GCGLenum GL_NEAREST_MIPMAP_NEAREST_VALUE = 0x2700;
+constexpr GCGLenum GL_LINEAR_MIPMAP_NEAREST_VALUE = 0x2701;
+constexpr GCGLenum GL_NEAREST_MIPMAP_LINEAR_VALUE = 0x2702;
+constexpr GCGLenum GL_LINEAR_MIPMAP_LINEAR_VALUE = 0x2703;
+constexpr GCGLenum GL_REPEAT_VALUE = 0x2901;
+constexpr GCGLenum GL_CLAMP_TO_EDGE_VALUE = 0x812F;
+constexpr GCGLenum GL_MIRRORED_REPEAT_VALUE = 0x8370;
+constexpr GCGLenum GL_SAMPLER_2D_VALUE = 0x8B5E;
+constexpr GCGLenum GL_SAMPLER_CUBE_VALUE = 0x8B60;
+
+constexpr GX2RResourceFlags textureSurfaceFlags = static_cast<GX2RResourceFlags>(
+    GX2R_RESOURCE_BIND_TEXTURE | GX2R_RESOURCE_USAGE_CPU_WRITE
+    | GX2R_RESOURCE_USAGE_CPU_READ | GX2R_RESOURCE_USAGE_GPU_READ);
 
 void initializeGLSLCompilerOnce()
 {
@@ -249,7 +282,7 @@ public:
 
     void bindRenderbuffer(GCGLenum target, PlatformGLObject) override { notImplemented(); }
 
-    void bindTexture(GCGLenum target, PlatformGLObject) override { notImplemented(); }
+    void bindTexture(GCGLenum target, PlatformGLObject) override;
 
     void blendColor(GCGLclampf red, GCGLclampf green, GCGLclampf blue, GCGLclampf alpha) override;
 
@@ -289,7 +322,7 @@ public:
 
     PlatformGLObject createShader(GCGLenum) override;
 
-    PlatformGLObject createTexture() override { notImplemented(); return {}; }
+    PlatformGLObject createTexture() override;
 
     void cullFace(GCGLenum mode) override;
 
@@ -303,7 +336,7 @@ public:
 
     void deleteShader(PlatformGLObject) override;
 
-    void deleteTexture(PlatformGLObject) override { notImplemented(); }
+    void deleteTexture(PlatformGLObject) override;
 
     void depthFunc(GCGLenum func) override;
 
@@ -335,7 +368,7 @@ public:
 
     void frontFace(GCGLenum mode) override;
 
-    void generateMipmap(GCGLenum target) override { notImplemented(); }
+    void generateMipmap(GCGLenum target) override;
 
     Vector<GCGLAttribActiveInfo> activeAttribs(PlatformGLObject program) override;
 
@@ -373,9 +406,9 @@ public:
 
     void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, std::span<GCGLint, 2> range, GCGLint* precision) override { notImplemented(); }
 
-    GCGLfloat getTexParameterf(GCGLenum target, GCGLenum pname) override { notImplemented(); return {}; }
+    GCGLfloat getTexParameterf(GCGLenum target, GCGLenum pname) override;
 
-    GCGLint getTexParameteri(GCGLenum target, GCGLenum pname) override { notImplemented(); return {}; }
+    GCGLint getTexParameteri(GCGLenum target, GCGLenum pname) override;
 
     void getUniformfv(PlatformGLObject program, GCGLint location, std::span<GCGLfloat> value) override { notImplemented(); }
 
@@ -399,13 +432,13 @@ public:
 
     GCGLboolean isShader(PlatformGLObject) override;
 
-    GCGLboolean isTexture(PlatformGLObject) override { notImplemented(); return {}; }
+    GCGLboolean isTexture(PlatformGLObject) override;
 
     void lineWidth(GCGLfloat) override { notImplemented(); }
 
     void linkProgram(PlatformGLObject) override;
 
-    void pixelStorei(GCGLenum pname, GCGLint param) override { notImplemented(); }
+    void pixelStorei(GCGLenum pname, GCGLint param) override;
 
     void polygonOffset(GCGLfloat factor, GCGLfloat units) override;
 
@@ -429,9 +462,9 @@ public:
 
     void stencilOpSeparate(GCGLenum face, GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override { notImplemented(); }
 
-    void texParameterf(GCGLenum target, GCGLenum pname, GCGLfloat param) override { notImplemented(); }
+    void texParameterf(GCGLenum target, GCGLenum pname, GCGLfloat param) override;
 
-    void texParameteri(GCGLenum target, GCGLenum pname, GCGLint param) override { notImplemented(); }
+    void texParameteri(GCGLenum target, GCGLenum pname, GCGLint param) override;
 
     void uniform1f(GCGLint location, GCGLfloat x) override;
 
@@ -505,11 +538,11 @@ public:
 
     void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) override { notImplemented(); }
 
-    void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type,  std::span<const uint8_t> pixels) override { notImplemented(); }
+    void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) override;
 
     void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset) override { notImplemented(); }
 
-    void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) override { notImplemented(); }
+    void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) override;
 
     void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) override { notImplemented(); }
 
@@ -856,10 +889,26 @@ private:
         GCGLenum type { 0 };
         GCGLint size { 1 };
     };
+    struct TextureRecord {
+        GCGLenum target { 0 };
+        GX2Texture native {};
+        bool storageCreated { false };
+        uint32_t width { 0 };
+        uint32_t height { 0 };
+        std::vector<std::vector<uint8_t>> levels;
+        std::vector<bool> definedLevels;
+        GX2Sampler sampler {};
+        GCGLint minFilter { static_cast<GCGLint>(GL_LINEAR_MIPMAP_LINEAR_VALUE) };
+        GCGLint magFilter { static_cast<GCGLint>(GL_LINEAR_VALUE) };
+        GCGLint wrapS { static_cast<GCGLint>(GL_REPEAT_VALUE) };
+        GCGLint wrapT { static_cast<GCGLint>(GL_REPEAT_VALUE) };
+    };
     struct UniformBinding {
         GCGLint location { -1 };
         const GX2UniformVar* vertexVar { nullptr };
         const GX2UniformVar* pixelVar { nullptr };
+        const GX2SamplerVar* vertexSamplerVar { nullptr };
+        const GX2SamplerVar* pixelSamplerVar { nullptr };
         uint32_t arrayElement { 0 };
     };
     struct UniformRecord {
@@ -867,6 +916,7 @@ private:
         GCGLenum type { 0 };
         GCGLint size { 1 };
         std::vector<UniformBinding> elements;
+        std::vector<GCGLint> samplerUnits;
     };
     struct UniformLocationInfo {
         size_t uniformIndex { 0 };
@@ -889,6 +939,16 @@ private:
     };
     PlatformGLObject nextShaderName();
     PlatformGLObject nextProgramName();
+    PlatformGLObject nextTextureName();
+    void releaseTextureStorage(TextureRecord&);
+    bool recreateTextureStorage(TextureRecord&);
+    bool uploadTextureLevel(TextureRecord&, uint32_t level);
+    bool convertTexturePixels(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height,
+        std::span<const uint8_t> pixels, std::vector<uint8_t>& output) const;
+    bool regenerateTextureMipmaps(TextureRecord&);
+    void applyTextureSampler(TextureRecord&);
+    bool applyProgramSamplers(ProgramRecord&);
+    TextureRecord* boundTexture2D();
     void releaseShaderIfUnused(PlatformGLObject);
     void addError(GCGLenum);
     void addDriverError(WKC::GLGX2::Result, const char*);
@@ -909,13 +969,20 @@ private:
     GCGLErrorCodeSet m_errors;
     std::unordered_map<PlatformGLObject, ShaderRecord> m_shaders;
     std::unordered_map<PlatformGLObject, ProgramRecord> m_programs;
+    std::unordered_map<PlatformGLObject, TextureRecord> m_textures;
     std::unordered_map<PlatformGLObject, bool> m_vertexArrayObjects;
+    TextureRecord m_defaultTexture;
+    std::array<PlatformGLObject, 16> m_boundTextures2D {};
     PlatformGLObject m_nextShader { 1 };
     PlatformGLObject m_nextProgram { 1 };
+    PlatformGLObject m_nextTexture { 1 };
     PlatformGLObject m_currentProgram { 0 };
     PlatformGLObject m_appliedProgram { 0 };
     PlatformGLObject m_boundFramebuffer { 0 };
     GCGLuint m_activeTextureUnit { 0 };
+    GCGLint m_unpackAlignment { 4 };
+    GCGLint m_packAlignment { 4 };
+    bool m_defaultTextureReady { false };
     bool m_compilerAvailable { false };
 };
 
