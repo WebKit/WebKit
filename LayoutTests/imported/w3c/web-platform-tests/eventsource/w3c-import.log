@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-request-cancellation.any.window.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-url.any.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-bom-2.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-bom-split.any.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-bom.any.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-comments.any.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-data-before-final-empty-line.any.js

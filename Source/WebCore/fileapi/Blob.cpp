@@ -48,7 +48,6 @@
 #include "ScriptWrappableInlines.h"
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
-#include "TextResourceDecoder.h"
 #include "ThreadableBlobRegistry.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -310,13 +309,12 @@ void Blob::loadBlob(FileReaderLoader::ReadType readType, Function<void(BlobLoade
 
 void Blob::text(Ref<DeferredPromise>&& promise)
 {
-    loadBlob(FileReaderLoader::ReadAsArrayBuffer, [promise = WTF::move(promise)](BlobLoader& blobLoader) mutable {
+    loadBlob(FileReaderLoader::ReadAsUTF8Text, [promise = WTF::move(promise)](BlobLoader& blobLoader) mutable {
         if (auto optionalErrorCode = blobLoader.errorCode()) {
             promise->reject(Exception { *optionalErrorCode });
             return;
         }
-        RefPtr arrayBuffer = blobLoader.arrayBufferResult();
-        promise->resolve<IDLDOMString>(arrayBuffer ? TextResourceDecoder::textFromUTF8(arrayBuffer->span()) : emptyString());
+        promise->resolve<IDLDOMString>(blobLoader.stringResult());
     });
 }
 

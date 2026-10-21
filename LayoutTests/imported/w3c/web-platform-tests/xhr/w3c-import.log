@@ -283,6 +283,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/setrequestheader-header-allowed.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/setrequestheader-header-forbidden.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/setrequestheader-open-setrequestheader.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/split-byte-order-mark.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/status-async.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/status-basic.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/status-error.htm

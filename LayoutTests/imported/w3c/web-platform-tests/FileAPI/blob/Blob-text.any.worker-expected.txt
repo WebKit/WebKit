@@ -10,5 +10,9 @@ PASS Blob.text() strips a UTF-8 byte order mark
 PASS Blob.text() strips only one UTF-8 byte order mark
 PASS Blob.text() does not sniff a UTF-16LE byte order mark
 PASS Blob.text() does not sniff a UTF-16BE byte order mark
+PASS Blob.text() strips a UTF-8 byte order mark split across blob parts
+PASS Blob.text() does not strip a UTF-8 byte order mark in a later blob part
+PASS Blob.text() decodes a UTF-8 sequence split across blob parts
+PASS Blob.text() replaces a truncated UTF-8 sequence at the end
 PASS Blob.text() concurrent reads
 

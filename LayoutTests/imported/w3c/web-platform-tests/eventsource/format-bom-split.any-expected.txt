@@ -1,0 +1,3 @@
+
+PASS EventSource: byte order mark split across chunks
+

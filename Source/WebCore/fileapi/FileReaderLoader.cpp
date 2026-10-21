@@ -165,6 +165,13 @@ bool FileReaderLoader::processResponse(const ResourceResponse& response)
     if (m_readType == ReadType::ReadAsBinaryChunks)
         return true;
 
+    // https://encoding.spec.whatwg.org/#utf-8-decode
+    if (m_readType == ReadType::ReadAsUTF8Text) {
+        lazyInitialize(m_decoder, TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding()));
+        m_decoder->setAlwaysUseUTF8();
+        return true;
+    }
+
     long long length = response.expectedContentLength();
 
     // A negative value means that the content length wasn't specified, so the buffer will need to be dynamically grown.
@@ -216,6 +223,11 @@ void FileReaderLoader::didReceiveData(const SharedBuffer& buffer)
         return;
     }
 
+    if (m_readType == ReadType::ReadAsUTF8Text) {
+        m_utf8Text.append(m_decoder->decode(buffer.span()));
+        return;
+    }
+
     int length = buffer.size();
     unsigned remainingBufferSpace = m_totalBytes - m_bytesLoaded;
     if (length > static_cast<long long>(remainingBufferSpace)) {
@@ -264,6 +276,14 @@ void FileReaderLoader::didFinishLoading(ScriptExecutionContextIdentifier, std::o
     if (m_variableLength && m_totalBytes > m_bytesLoaded) {
         m_rawData = protect(m_rawData)->slice(0, m_bytesLoaded);
         m_totalBytes = m_bytesLoaded;
+    }
+    if (m_readType == ReadType::ReadAsUTF8Text && !m_errorCode) {
+        m_utf8Text.append(m_decoder->flush());
+        if (m_utf8Text.hasOverflowed()) {
+            failed(ExceptionCode::NotReadableError);
+            return;
+        }
+        m_stringResult = m_utf8Text.toString();
     }
     cleanup();
     if (RefPtr client = m_client.get())
@@ -352,6 +372,7 @@ String FileReaderLoader::stringResult()
         break;
     case ReadAsBlob:
     case ReadAsBinaryChunks:
+    case ReadAsUTF8Text:
         ASSERT_NOT_REACHED();
     }
     

@@ -40,6 +40,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -63,6 +64,7 @@ public:
         ReadAsBinaryString,
         ReadAsBlob,
         ReadAsText,
+        ReadAsUTF8Text,
         ReadAsDataURL,
         ReadAsBinaryChunks
     };
@@ -125,6 +127,9 @@ private:
 
     // The decoder used to decode the text data.
     const RefPtr<TextResourceDecoder> m_decoder;
+
+    // ReadAsUTF8Text decodes the data as it arrives instead of buffering it.
+    StringBuilder m_utf8Text { OverflowPolicy::RecordOverflow };
 
     bool m_variableLength;
     unsigned m_bytesLoaded;

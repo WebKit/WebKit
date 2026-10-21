@@ -551,8 +551,13 @@ bool TextResourceDecoder::shouldAutoDetect() const
 String TextResourceDecoder::decode(std::span<const uint8_t> data)
 {
     size_t lengthOfBOM = 0;
-    if (!m_checkedForBOM)
+    if (!m_checkedForBOM) {
         lengthOfBOM = checkForBOM(data);
+        if (!m_checkedForBOM) {
+            m_buffer.append(data);
+            return emptyString();
+        }
+    }
 
     bool movedDataToBuffer = false;
 
