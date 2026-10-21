@@ -119,6 +119,7 @@ class HeapAnalyzer;
 class HeapProfiler;
 class IntlCache;
 enum Intrinsic : uint8_t;
+class JSCellButterfly;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
 class JSSentinel;
@@ -630,6 +631,7 @@ public:
     KeyAtomStringCache keyAtomStringCache;
     Vector<unsigned> stringSplitIndice;
     StringReplaceCache stringReplaceCache;
+    UncheckedKeyHashMap<JSCellButterfly*, JSString*> immutableButterflyToStringCache;
 
     bool mightBeExecutingTaintedCode() const { return m_mightBeExecutingTaintedCode; }
     bool* addressOfMightBeExecutingTaintedCode() LIFETIME_BOUND { return &m_mightBeExecutingTaintedCode; }

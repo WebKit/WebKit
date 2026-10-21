@@ -1134,8 +1134,8 @@ JSString* JSArray::fastToString(JSGlobalObject* globalObject)
         JSCellButterfly* immutableButterfly = nullptr;
         if (isCoW) {
             immutableButterfly = JSCellButterfly::fromButterfly(this->butterfly());
-            auto iter = vm.heap.immutableButterflyToStringCache.find(immutableButterfly);
-            if (iter != vm.heap.immutableButterflyToStringCache.end())
+            auto iter = vm.immutableButterflyToStringCache.find(immutableButterfly);
+            if (iter != vm.immutableButterflyToStringCache.end())
                 return iter->value;
         }
 
@@ -1146,7 +1146,7 @@ JSString* JSArray::fastToString(JSGlobalObject* globalObject)
 
         if (!sawHoles && !genericCase && result && isCoW) {
             ASSERT(JSCellButterfly::fromButterfly(this->butterfly()) == immutableButterfly);
-            vm.heap.immutableButterflyToStringCache.add(immutableButterfly, result);
+            vm.immutableButterflyToStringCache.add(immutableButterfly, result);
         }
 
         return result;

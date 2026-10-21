@@ -1729,7 +1729,7 @@ void Heap::runCollectionEpilogue()
     });
     m_stringsFoundOnStack.clear();
 
-    immutableButterflyToStringCache.clear();
+    vm().immutableButterflyToStringCache.clear();
     
     for (const GCCompletionCallback& callback : m_gcCompletionCallbacks)
         callback.run(vm());
