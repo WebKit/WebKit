@@ -4992,6 +4992,7 @@ webgl/2.0.y/conformance/rendering/triangle.html [ Pass Failure ]
 
 # New failures on Win-Tests-EWS, 2026-10-21
 webkit.org/b/328270 http/tests/IndexedDB/transaction-abort-pending-requests-stop.html [ Failure ]
+webkit.org/b/328270 http/tests/IndexedDB/transaction-commit-pending-requests-stop.html [ Failure ]
 webkit.org/b/328271 fast/events/suspend-timers.html [ Skip ] # Timeout
 
 # GPU process crashes in WebGL tests. A webgl directory entry here overrides
