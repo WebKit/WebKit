@@ -1,0 +1,3 @@
+
+PASS Video received before audio is offset by the AAC priming
+

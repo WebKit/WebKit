@@ -551,6 +551,16 @@ Ref<FragmentedSharedBuffer> MediaRecorderPrivateEncoder::takeData()
     }
 }
 
+static void offsetTimes(MediaSamplesBlock& block, const MediaTime& offset)
+{
+    auto samples = block.takeSamples();
+    for (auto& sample : samples) {
+        sample.presentationTime += offset;
+        sample.decodeTime += offset;
+    }
+    block.append(WTF::move(samples));
+}
+
 void MediaRecorderPrivateEncoder::enqueueCompressedAudioSampleBuffers()
 {
     assertIsCurrent(queueSingleton());
@@ -575,6 +585,12 @@ void MediaRecorderPrivateEncoder::enqueueCompressedAudioSampleBuffers()
             RELEASE_LOG_ERROR(MediaStream, "appendAudioFrame: Failed to create audio track");
             return;
         }
+        auto rate = m_audioCompressedAudioInfo->rate();
+        m_audioPrimingDuration = rate ? MediaTime(audioConverter()->preSkip(), rate) : MediaTime::zeroTime();
+        for (auto& frame : m_encodedVideoFrames)
+            offsetTimes(frame, *m_audioPrimingDuration);
+        if (m_pendingAudioFramePromise)
+            m_pendingAudioFramePromise->first += *m_audioPrimingDuration;
         maybeStartWriter();
     }
 
@@ -601,6 +617,9 @@ void MediaRecorderPrivateEncoder::enqueueCompressedAudioSampleBuffers()
             // Writing audio samples requiring an edit list is forbidden by the AVAssetWriterInput when used with fMP4, remove the keys.
             PAL::CMRemoveAttachment(sampleBlock.get(), PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart);
             PAL::CMRemoveAttachment(sampleBlock.get(), PAL::kCMSampleBufferAttachmentKey_TrimDurationAtEnd);
+            // The packets keep the first encoder's priming offset, which the video follows, and their own priming is played.
+            auto rawTime = PAL::toMediaTime(PAL::CMSampleBufferGetPresentationTimeStamp(sampleBlock.get()));
+            PAL::CMSampleBufferSetOutputPresentationTimeStamp(sampleBlock.get(), PAL::toCMTime(rawTime + m_audioPrimingDuration.value_or(MediaTime::zeroTime())));
         }
 
         if (m_audioCodec == kAudioFormatLinearPCM) {
@@ -719,7 +738,7 @@ void MediaRecorderPrivateEncoder::enqueueCompressedVideoFrame(VideoEncoder::Enco
         return;
     }
 
-    MediaTime compressedFrameTime { frame.timestamp, 1000000 };
+    auto compressedFrameTime = mediaTimeForClockTime(MediaTime { frame.timestamp, 1000000 });
 
     ASSERT(m_videoTrackInfo);
 
@@ -777,7 +796,7 @@ Ref<GenericPromise> MediaRecorderPrivateEncoder::waitForMatchingAudio(const Medi
 
     // The audio frame matching the last video frame is still pending in the converter and requires more data to be produced.
     // It will be resolved once we receive the compressed audio sample in enqueueCompressedAudioSampleBuffers().
-    m_pendingAudioFramePromise.emplace(std::min(m_lastRawVideoFrameReceived, videoFrame->presentationTime()), GenericPromise::Producer());
+    m_pendingAudioFramePromise.emplace(std::min(mediaTimeForClockTime(m_lastRawVideoFrameReceived), videoFrame->presentationTime()), GenericPromise::Producer());
 
     LOG(MediaStream, "MediaRecorderPrivateEncoder::waitForMatchingAudio waiting for audio:%f", videoFrame->presentationTime().toDouble());
 
@@ -946,7 +965,7 @@ void MediaRecorderPrivateEncoder::stopRecording()
                 Ref { *m_videoEncoder }->close();
 
             flushAllEncodedQueues();
-            return m_writer->writeFrames(std::exchange(m_interleavedFrames, { }), currentEndTime())->whenSettled(queueSingleton(), [protectedThis, this] {
+            return m_writer->writeFrames(std::exchange(m_interleavedFrames, { }), mediaTimeForClockTime(currentEndTime()))->whenSettled(queueSingleton(), [protectedThis, this] {
                 assertIsCurrent(queueSingleton());
                 ASSERT(!m_videoEncoderCreationPromise && m_pendingVideoFrames.isEmpty() && m_encodedVideoFrames.isEmpty());
                 ASSERT(m_encodedAudioFrames.isEmpty() && (!m_audioConverter || audioConverter()->isEmpty()));
@@ -1005,14 +1024,14 @@ Ref<GenericPromise> MediaRecorderPrivateEncoder::flushPendingData(const MediaTim
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return GenericPromise::createAndResolve();
-        return protectedThis->waitForMatchingAudio(currentTime);
+        return protectedThis->waitForMatchingAudio(protectedThis->mediaTimeForClockTime(currentTime));
     })->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, currentTime](auto&& result) {
         assertIsCurrent(queueSingleton());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return GenericPromise::createAndResolve();
 
-        auto endMuxedTime = protectedThis->flushToEndSegment(currentTime);
+        auto endMuxedTime = protectedThis->flushToEndSegment(protectedThis->mediaTimeForClockTime(currentTime));
 
         protectedThis->m_pendingFlush--;
 
@@ -1070,6 +1089,16 @@ MediaTime MediaRecorderPrivateEncoder::currentEndTime() const
         return MediaTime(m_currentAudioTimeUs.load(), 1000000);
 
     return currentTime();
+}
+
+// Encoded audio is presented after its priming, and the video is delayed to match.
+MediaTime MediaRecorderPrivateEncoder::mediaTimeForClockTime(const MediaTime& time) const
+{
+    assertIsCurrent(queueSingleton());
+
+    if (m_audioPrimingDuration)
+        return time + *m_audioPrimingDuration;
+    return time;
 }
 
 RefPtr<AudioSampleBufferConverter> MediaRecorderPrivateEncoder::audioConverter() const

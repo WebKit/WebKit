@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+    <title>AudioDecoder output timestamps follow the input of a decoder with a delay</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// The chunks of sfx.mp3: 1152 frames of 48kHz mono audio each.
+const chunkOffsets = [333, 621, 909, 1197, 1485, 1773, 2061, 2349, 2637, 2925];
+const chunkSize = 288;
+const chunkDuration = 24000;
+
+async function decode(data, withDuration)
+{
+    const outputs = [];
+    let error;
+    const decoder = new AudioDecoder({
+        output: audioData => {
+            outputs.push({ timestamp: audioData.timestamp, duration: audioData.duration });
+            audioData.close();
+        },
+        error: e => error = e
+    });
+    decoder.configure({ codec: 'mp3', sampleRate: 48000, numberOfChannels: 1 });
+    chunkOffsets.forEach((offset, index) => {
+        const init = { type: 'key', timestamp: index * chunkDuration, data: new Uint8Array(data, offset, chunkSize) };
+        if (withDuration)
+            init.duration = chunkDuration;
+        decoder.decode(new EncodedAudioChunk(init));
+    });
+    await decoder.flush();
+    decoder.close();
+    assert_equals(error, undefined, 'decoding succeeds');
+    return outputs;
+}
+
+function checkTimestamps(outputs)
+{
+    assert_greater_than(outputs.length, 0, 'audio is decoded');
+    assert_equals(outputs[0].timestamp, 0, 'the first output starts with the first chunk');
+    for (let i = 1; i < outputs.length; ++i)
+        assert_approx_equals(outputs[i].timestamp, outputs[i - 1].timestamp + outputs[i - 1].duration, 1, `output ${i} follows the previous output`);
+    const last = outputs[outputs.length - 1];
+    assert_less_than_equal(last.timestamp + last.duration, chunkOffsets.length * chunkDuration + 1, 'the output ends with the input');
+}
+
+let data;
+promise_setup(async () => {
+    data = await (await fetch('/webcodecs/sfx.mp3')).arrayBuffer();
+});
+
+promise_test(async () => {
+    checkTimestamps(await decode(data, true));
+}, 'Output timestamps follow chunks that have a duration');
+
+promise_test(async () => {
+    checkTimestamps(await decode(data, false));
+}, 'Output timestamps follow chunks that have no duration');
+</script>
+</body>
+</html>

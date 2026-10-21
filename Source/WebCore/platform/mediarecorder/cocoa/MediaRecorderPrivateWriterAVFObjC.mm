@@ -162,6 +162,39 @@ bool MediaRecorderPrivateWriterAVFObjC::allTracksAdded()
     return true;
 }
 
+// Writes the frame, or holds back the priming frames until the first audible one completes them.
+template<typename Function>
+MediaRecorderPrivateWriterAVFObjC::Result MediaRecorderPrivateWriterAVFObjC::writeAudioFrame(const MediaSamplesBlock& frame, NOESCAPE const Function& write)
+{
+    if (!m_audioPriming && !std::ranges::any_of(frame, [](auto& item) { return item.trimInterval.first > MediaTime::zeroTime(); }))
+        return write(frame);
+
+    bool completesPriming = !frame.isEmpty() && frame.last().duration > MediaTime::zeroTime();
+    if (!m_audioPriming) {
+        if (completesPriming)
+            return write(frame);
+        m_audioPriming = makeUnique<MediaSamplesBlock>(frame.info(), MediaSamplesBlock::SamplesVector { });
+    }
+    for (auto& item : frame)
+        m_audioPriming->append(MediaSamplesBlock::MediaSampleItem { item });
+    if (!completesPriming)
+        return Result::Success;
+    return write(*std::exchange(m_audioPriming, nullptr));
+}
+
+MediaRecorderPrivateWriterAVFObjC::Result MediaRecorderPrivateWriterAVFObjC::writeAudioBlock(const MediaSamplesBlock& frame)
+{
+    auto sample = toCMSampleBuffer(frame, m_audioDescription.get());
+    if (sample) {
+        if ([m_audioAssetWriterInput appendSampleBuffer:sample->get()])
+            return Result::Success;
+        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriterAVFObjC::writeAudioBlock failed with %ld", static_cast<long>([m_writer error].code));
+        return Result::Failure;
+    }
+    RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriterAVFObjC::writeAudioBlock toCMSampleBuffer failed with %s", sample.error());
+    return Result::Failure;
+}
+
 MediaRecorderPrivateWriterAVFObjC::Result MediaRecorderPrivateWriterAVFObjC::writeFrame(const MediaSamplesBlock& frame)
 {
     if (frame.trackID() == m_audioTrackIndex) {
@@ -170,15 +203,9 @@ MediaRecorderPrivateWriterAVFObjC::Result MediaRecorderPrivateWriterAVFObjC::wri
             return Result::NotReady;
         }
 
-        auto sample = toCMSampleBuffer(frame, m_audioDescription.get());
-        if (sample) {
-            if ([m_audioAssetWriterInput appendSampleBuffer:sample->get()])
-                return Result::Success;
-            RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPMediaRecorderPrivateWriterAVFObjC::writeFrame audio failed with %ld", static_cast<long>([m_writer error].code));
-            return Result::Failure;
-        }
-        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPMediaRecorderPrivateWriterAVFObjC::writeFrame autio toCMSampleBuffer failed with %s", sample.error());
-        return Result::Failure;
+        return writeAudioFrame(frame, [&](auto& block) {
+            return writeAudioBlock(block);
+        });
     }
 
     ASSERT(frame.trackID() == m_videoTrackIndex);
@@ -217,6 +244,10 @@ static inline void appendEndsPreviousSampleDurationMarker(AVAssetWriterInput *as
 
 void MediaRecorderPrivateWriterAVFObjC::forceNewSegment(const MediaTime& endTime)
 {
+    // A segment can't end while the audio priming is held back.
+    if (m_audioPriming)
+        return;
+
     if (m_hasAddedVideoFrame)
         appendEndsPreviousSampleDurationMarker(m_videoAssetWriterInput.get(), PAL::toCMTime(endTime));
     m_hasAddedVideoFrame = false;
@@ -231,15 +262,21 @@ Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(Deque<UniqueRef<Med
     Deque<RetainPtr<CMSampleBufferRef>> audioSamples;
     Deque<RetainPtr<CMSampleBufferRef>> videoSamples;
 
+    auto appendAudioSample = [&](const MediaSamplesBlock& block) {
+        auto cmSample = toCMSampleBuffer(block, m_audioDescription.get());
+        if (!cmSample) {
+            ASSERT_NOT_REACHED();
+            return Result::Failure;
+        }
+        audioSamples.append(WTF::move(*cmSample));
+        return Result::Success;
+    };
+
     while (!samples.isEmpty()) {
         auto sample = samples.takeFirst();
         if (sample->trackID() == m_audioTrackIndex) {
-            if (auto cmSample = toCMSampleBuffer(sample, m_audioDescription.get()))
-                audioSamples.append(WTF::move(*cmSample));
-            else {
-                ASSERT_NOT_REACHED();
+            if (writeAudioFrame(sample, appendAudioSample) != Result::Success)
                 break;
-            }
             continue;
         }
         if (auto cmSample = toCMSampleBuffer(sample, m_videoDescription.get())) {
@@ -250,6 +287,8 @@ Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(Deque<UniqueRef<Med
             break;
         }
     }
+    if (auto priming = std::exchange(m_audioPriming, nullptr))
+        appendAudioSample(*priming);
 
     RetainPtr queue = m_waitingQueue->dispatchQueue();
     Vector<Ref<GenericPromise>> promises;

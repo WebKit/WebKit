@@ -183,7 +183,8 @@ MediaRecorderPrivateWriterWebM::Result MediaRecorderPrivateWriterWebM::writeFram
     for (auto& block : sample) {
         ASSERT(block.data);
         Ref buffer = Ref { *block.data }->makeContiguous();
-        success &= m_delegate->addFrame(buffer->span(), sample.trackID(), Seconds { block.presentationTime.toDouble() }.nanosecondsAs<uint64_t>(), block.isSync());
+        auto rawPresentationTime = block.presentationTime - block.trimInterval.first;
+        success &= m_delegate->addFrame(buffer->span(), sample.trackID(), Seconds { rawPresentationTime.toDouble() }.nanosecondsAs<uint64_t>(), block.isSync());
     }
     return success ? Result::Success : Result::Failure;
 }

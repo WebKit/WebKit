@@ -1428,8 +1428,8 @@ WebMParser::ConsumeFrameDataResult WebMParser::AudioTrackData::consumeFrameData(
     m_lastPresentationEndTime = localPresentationTime + packetDuration;
 
     m_processedMediaSamples.append({
-        .presentationTime = localPresentationTime,
-        .duration = packetDuration,
+        .presentationTime = localPresentationTime + trimDuration,
+        .duration = packetDuration - trimDuration,
         .trimInterval = { trimDuration, MediaTime::zeroTime() },
         .data = WTF::move(m_completeFrameData),
         .flags = MediaSample::SampleFlags::IsSync
@@ -1625,7 +1625,9 @@ void SourceBufferParserWebM::parsedMediaData(MediaSamplesBlock&& samplesBlock)
     // Pack audio if needed.
     if (m_queuedAudioSamples.size()) {
         auto& lastSample = m_queuedAudioSamples.last();
-        if (lastSample.duration + lastSample.presentationTime != samplesBlock.first().presentationTime)
+        auto& nextSample = samplesBlock.first();
+        // Fully trimmed samples have no output, so contiguity is checked on the untrimmed times.
+        if (lastSample.presentationTime + lastSample.duration + lastSample.trimInterval.second != nextSample.presentationTime - nextSample.trimInterval.first)
             flushPendingAudioSamples();
     }
     for (auto& sample : samplesBlock)

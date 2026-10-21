@@ -54,8 +54,13 @@ private:
     void forceNewSegment(const WTF::MediaTime&) final;
     Ref<GenericPromise> close(Deque<UniqueRef<MediaSamplesBlock>>&&, const WTF::MediaTime&) final;
 
+    template<typename Function> Result writeAudioFrame(const MediaSamplesBlock&, NOESCAPE const Function& write);
+    Result writeAudioBlock(const MediaSamplesBlock&);
+
     RetainPtr<AVAssetWriterInput> m_audioAssetWriterInput;
     RetainPtr<AVAssetWriterInput> m_videoAssetWriterInput;
+    // fMP4 holds a single edit, so the audio priming is written as one sample buffer carrying the whole trim.
+    std::unique_ptr<MediaSamplesBlock> m_audioPriming;
     bool m_hasAddedVideoFrame { false };
     bool m_writerStarted { false };
 

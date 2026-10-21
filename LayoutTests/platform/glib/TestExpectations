@@ -1868,6 +1868,7 @@ webkit.org/b/213699 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [
 webkit.org/b/306457 [ Release ] http/wpt/mediarecorder/MediaRecorder-audio-bitrate-webm.html [ Failure Pass ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-first-frame.html [ Failure Pass ]
+webkit.org/b/328313 http/wpt/mediarecorder/MediaRecorder-video-before-audio.html [ Failure ]
 
 webkit.org/b/323054 http/wpt/mediarecorder/MediaRecorder-single-frame-timeslice.html [ Skip ]
 webkit.org/b/213699 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Skip ]

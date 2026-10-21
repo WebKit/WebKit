@@ -32,6 +32,7 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebCore/CMUtilities.h>
 #import <WebCore/FormatDescriptionUtilities.h>
+#import <WebCore/MediaSamplesBlock.h>
 #import <WebCore/PlatformVideoChromaLocation.h>
 #import <WebCore/PlatformVideoColorPrimaries.h>
 #import <WebCore/PlatformVideoColorSpace.h>
@@ -859,6 +860,95 @@ TEST(CMUtilities, SquarePixelAspectRatioEmitsNoExtension)
     ASSERT_TRUE(desc);
     RetainPtr pixelAspectRatio = PAL::CMFormatDescriptionGetExtension(desc.get(), kCVImageBufferPixelAspectRatioKey);
     EXPECT_FALSE(pixelAspectRatio);
+}
+
+static MediaTime aacFrames(int64_t frames)
+{
+    return MediaTime(frames, 48000);
+}
+
+static WebCore::MediaSamplesBlock::SamplesVector makeAACPackets(size_t count)
+{
+    WebCore::MediaSamplesBlock::SamplesVector items;
+    for (size_t index = 0; index < count; ++index) {
+        auto time = aacFrames(index * 1024);
+        items.append({
+            .presentationTime = time,
+            .decodeTime = time,
+            .duration = aacFrames(1024),
+            .data = WebCore::SharedBuffer::create(Vector<uint8_t>(FillWith { }, 16, static_cast<uint8_t>(index))),
+            .flags = WebCore::MediaSample::IsSync
+        });
+    }
+    return items;
+}
+
+static void setTrims(WebCore::MediaSamplesBlock::MediaSampleItem& item, const MediaTime& trimAtStart, const MediaTime& trimAtEnd)
+{
+    item.presentationTime += trimAtStart;
+    item.decodeTime += trimAtStart;
+    item.duration -= trimAtStart + trimAtEnd;
+    item.trimInterval = { trimAtStart, trimAtEnd };
+}
+
+static MediaTime trimAttachment(CMSampleBufferRef sampleBuffer, CFStringRef key)
+{
+    RetainPtr dictionary = dynamic_cf_cast<CFDictionaryRef>(PAL::CMGetAttachment(sampleBuffer, key, nullptr));
+    return dictionary ? PAL::toMediaTime(PAL::CMTimeMakeFromDictionary(dictionary.get())) : MediaTime::zeroTime();
+}
+
+static Ref<WebCore::AudioInfo> makeAACInfo()
+{
+    return WebCore::AudioInfo::create({ { .codecName = kAudioFormatMPEG4AAC }, { .rate = 48000, .channels = 2, .framesPerPacket = 1024 } });
+}
+
+TEST(CMUtilities, AudioTrimsSpanningSeveralPacketsRoundTrip)
+{
+    Ref info = makeAACInfo();
+    auto items = makeAACPackets(5);
+    // The 2112 frames of AAC priming span the first three packets, and the end trim the last two.
+    setTrims(items[0], aacFrames(1024), MediaTime::zeroTime());
+    setTrims(items[1], aacFrames(1024), MediaTime::zeroTime());
+    setTrims(items[2], aacFrames(64), MediaTime::zeroTime());
+    setTrims(items[3], MediaTime::zeroTime(), aacFrames(500));
+    setTrims(items[4], MediaTime::zeroTime(), aacFrames(1024));
+    auto expected = items;
+
+    WebCore::MediaSamplesBlock block { info.ptr(), WTF::move(items) };
+    EXPECT_EQ(block.presentationTime(), aacFrames(2112));
+    EXPECT_EQ(block.presentationEndTime(), aacFrames(5 * 1024 - 1524));
+
+    auto sampleBuffer = WebCore::toCMSampleBuffer(block);
+    ASSERT_TRUE(sampleBuffer);
+    EXPECT_EQ(trimAttachment(sampleBuffer->get(), PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart), aacFrames(2112));
+    EXPECT_EQ(trimAttachment(sampleBuffer->get(), PAL::kCMSampleBufferAttachmentKey_TrimDurationAtEnd), aacFrames(1524));
+    EXPECT_EQ(PAL::toMediaTime(PAL::CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer->get())), block.presentationTime());
+
+    auto roundTrip = WebCore::samplesBlockFromCMSampleBuffer(sampleBuffer->get(), info.ptr());
+    ASSERT_EQ(roundTrip->size(), expected.size());
+    for (size_t index = 0; index < expected.size(); ++index) {
+        EXPECT_EQ(roundTrip.get()[index].presentationTime, expected[index].presentationTime);
+        EXPECT_EQ(roundTrip.get()[index].duration, expected[index].duration);
+        EXPECT_EQ(roundTrip.get()[index].trimInterval, expected[index].trimInterval);
+    }
+    EXPECT_EQ(roundTrip->presentationTime(), block.presentationTime());
+    EXPECT_EQ(roundTrip->presentationEndTime(), block.presentationEndTime());
+}
+
+TEST(CMUtilities, InvalidAudioTrimsAreRejected)
+{
+    Ref info = makeAACInfo();
+    auto convert = [&](const MediaTime& trimAtStart, const MediaTime& trimAtEnd, const MediaTime& duration) {
+        auto items = makeAACPackets(1);
+        items[0].trimInterval = { trimAtStart, trimAtEnd };
+        items[0].duration = duration;
+        return WebCore::toCMSampleBuffer(WebCore::MediaSamplesBlock { info.ptr(), WTF::move(items) });
+    };
+    EXPECT_TRUE(convert(aacFrames(64), aacFrames(64), aacFrames(896)));
+    EXPECT_FALSE(convert(aacFrames(-64), MediaTime::zeroTime(), aacFrames(1024)));
+    EXPECT_FALSE(convert(MediaTime::zeroTime(), MediaTime::positiveInfiniteTime(), aacFrames(1024)));
+    EXPECT_FALSE(convert(MediaTime::invalidTime(), MediaTime::zeroTime(), aacFrames(1024)));
+    EXPECT_FALSE(convert(aacFrames(1024), aacFrames(64), aacFrames(-64)));
 }
 
 } // namespace TestWebKitAPI

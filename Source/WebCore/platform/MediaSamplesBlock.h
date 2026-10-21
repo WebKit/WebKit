@@ -70,7 +70,15 @@ public:
 
     void setInfo(RefPtr<const TrackInfo>&& info) { m_info = WTF::move(info); }
     const TrackInfo* info() const { return m_info.get(); }
-    MediaTime presentationTime() const { return isEmpty() ? MediaTime::invalidTime() : first().presentationTime; }
+    // Leading items whose output is entirely trimmed don't start the block's output.
+    MediaTime presentationTime() const
+    {
+        for (auto& sample : *this) {
+            if (sample.duration || !sample.trimInterval.first)
+                return sample.presentationTime;
+        }
+        return isEmpty() ? MediaTime::invalidTime() : last().presentationTime;
+    }
     MediaTime duration() const
     {
         MediaTime duration = MediaTime::zeroTime();

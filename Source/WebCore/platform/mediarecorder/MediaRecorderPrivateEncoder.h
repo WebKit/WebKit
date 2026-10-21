@@ -94,6 +94,7 @@ private:
     MediaTime currentTime() const;
     MediaTime currentTime(const MediaTime&, const MonotonicTime&) const;
     MediaTime currentEndTime() const;
+    MediaTime mediaTimeForClockTime(const MediaTime&) const;
 
     void flushDataBuffer();
     bool segmentsMustStartWithVideoKeyframe() const;
@@ -152,7 +153,7 @@ private:
     bool m_formatChangedOccurred WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     std::optional<AudioStreamBasicDescription> m_originalOutputDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Deque<UniqueRef<MediaSamplesBlock>> m_encodedAudioFrames WTF_GUARDED_BY_CAPABILITY(queueSingleton());
-    std::optional<std::pair<const MediaTime, GenericPromise::Producer>> m_pendingAudioFramePromise WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    std::optional<std::pair<MediaTime, GenericPromise::Producer>> m_pendingAudioFramePromise WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Deque<std::pair<std::unique_ptr<InProcessCARingBuffer>, size_t>, 4> m_ringBuffers;
     size_t m_lastRingBufferId { 0 }; // accessed on the audio thread only.
     InProcessCARingBuffer* m_currentRingBuffer WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { nullptr };
@@ -177,6 +178,7 @@ private:
     Deque<UniqueRef<MediaSamplesBlock>> m_encodedVideoFrames WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Deque<UniqueRef<MediaSamplesBlock>> m_interleavedFrames WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     bool m_firstVideoFrameProcessed WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
+    std::optional<MediaTime> m_audioPrimingDuration WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     std::optional<MonotonicTime> m_currentVideoSegmentStartTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     uint64_t m_previousSegmentVideoDurationUs WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { 0 };
     MediaTime m_lastRawVideoFrameReceived WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { MediaTime::negativeInfiniteTime() };
