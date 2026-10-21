@@ -2231,6 +2231,17 @@ GraphicsContextGLWKC::TextureRecord* GraphicsContextGLWKC::boundTexture2D()
     return &it->second;
 }
 
+GraphicsContextGLWKC::TextureRecord* GraphicsContextGLWKC::boundTextureCubeMap()
+{
+    if (m_activeTextureUnit >= m_boundTexturesCube.size())
+        return nullptr;
+    auto name = m_boundTexturesCube[m_activeTextureUnit];
+    auto it = m_textures.find(name);
+    if (!name || it == m_textures.end() || it->second.target != GL_TEXTURE_CUBE_MAP_VALUE)
+        return nullptr;
+    return &it->second;
+}
+
 bool GraphicsContextGLWKC::regenerateTextureMipmaps(TextureRecord& texture)
 {
     if (!texture.width || !texture.height || texture.levels.empty() || !texture.definedLevels[0])
@@ -2654,6 +2665,10 @@ void GraphicsContextGLWKC::deleteTexture(PlatformGLObject name)
         if (bound == name)
             bound = 0;
     }
+    for (auto& bound : m_boundTexturesCube) {
+        if (bound == name)
+            bound = 0;
+    }
     refreshFramebufferTarget();
 }
 
@@ -2665,7 +2680,7 @@ GCGLboolean GraphicsContextGLWKC::isTexture(PlatformGLObject name)
 
 void GraphicsContextGLWKC::bindTexture(GCGLenum target, PlatformGLObject name)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    if (target != GL_TEXTURE_2D_VALUE && target != GL_TEXTURE_CUBE_MAP_VALUE) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
@@ -2673,8 +2688,9 @@ void GraphicsContextGLWKC::bindTexture(GCGLenum target, PlatformGLObject name)
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
+    auto& bindings = target == GL_TEXTURE_2D_VALUE ? m_boundTextures2D : m_boundTexturesCube;
     if (!name) {
-        m_boundTextures2D[m_activeTextureUnit] = 0;
+        bindings[m_activeTextureUnit] = 0;
         return;
     }
     auto it = m_textures.find(name);
@@ -2687,17 +2703,17 @@ void GraphicsContextGLWKC::bindTexture(GCGLenum target, PlatformGLObject name)
         return;
     }
     it->second.target = target;
-    m_boundTextures2D[m_activeTextureUnit] = name;
+    bindings[m_activeTextureUnit] = name;
     applyTextureSampler(it->second);
 }
 
 GCGLint GraphicsContextGLWKC::getTexParameteri(GCGLenum target, GCGLenum pname)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    if (target != GL_TEXTURE_2D_VALUE && target != GL_TEXTURE_CUBE_MAP_VALUE) {
         addError(GL_INVALID_ENUM_VALUE);
         return 0;
     }
-    auto* texture = boundTexture2D();
+    auto* texture = target == GL_TEXTURE_2D_VALUE ? boundTexture2D() : boundTextureCubeMap();
     if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
         return 0;
@@ -2720,11 +2736,11 @@ GCGLfloat GraphicsContextGLWKC::getTexParameterf(GCGLenum target, GCGLenum pname
 
 void GraphicsContextGLWKC::texParameteri(GCGLenum target, GCGLenum pname, GCGLint param)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    if (target != GL_TEXTURE_2D_VALUE && target != GL_TEXTURE_CUBE_MAP_VALUE) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
-    auto* texture = boundTexture2D();
+    auto* texture = target == GL_TEXTURE_2D_VALUE ? boundTexture2D() : boundTextureCubeMap();
     if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
@@ -3866,6 +3882,7 @@ void GraphicsContextGLWKC::getIntegerv(GCGLenum n,std::span<GCGLint> v)
     case GL_FRAMEBUFFER_BINDING_VALUE:v[0]=m_boundFramebuffer;return;
      case GL_RENDERBUFFER_BINDING_VALUE:v[0]=m_boundRenderbuffer;return;
     case GL_TEXTURE_BINDING_2D_VALUE:v[0]=m_boundTextures2D[m_activeTextureUnit];return;
+    case GL_TEXTURE_BINDING_CUBE_MAP_VALUE:v[0]=m_boundTexturesCube[m_activeTextureUnit];return;
     case GL_ACTIVE_TEXTURE_QUERY_VALUE:v[0]=GL_TEXTURE0_VALUE + m_activeTextureUnit;return;
     case GL_CURRENT_PROGRAM_VALUE:v[0]=m_currentProgram;return;
     case GL_VERTEX_ARRAY_BINDING_VALUE:v[0]=m_vertexArrays.bound();return;
