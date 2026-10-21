@@ -72,6 +72,8 @@ class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE, pub
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GraphicsContextGLCocoa);
 public:
     static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
+    // Returns false after the display was terminated.
+    static bool isDisplayInitializedForTesting(GCGLDisplay);
     ~GraphicsContextGLCocoa();
     IOSurface* LEGACY_NODELETE displayBufferSurface();
 

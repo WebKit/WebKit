@@ -430,12 +430,14 @@ GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa(GraphicsContextGLCocoa& owner
     : m_owner(owner)
 {
     // Create compatible context that shares state with owner, but one that does not
-    // have robustness or WebGL compatibility.
+    // have robustness or WebGL compatibility. The reset notification strategy must match the owner's.
     const EGLint contextAttributes[] = {
         EGL_CONTEXT_CLIENT_VERSION,
         owner.m_isForWebGL2 ? 3 : 2,
         EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE,
         EGL_FALSE,
+        EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT,
+        EGL_LOSE_CONTEXT_ON_RESET_EXT,
         EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE,
         EGL_FALSE,
         EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM,

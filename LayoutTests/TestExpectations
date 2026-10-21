@@ -5002,6 +5002,10 @@ imported/w3c/web-platform-tests/css/css-fonts/font-weight-normal-001.xht [ Image
 # DEQP is skipped on the main fleet of bots because of the long run time.
 webgl/2.0.y/deqp [ Skip ]
 
+# These tests cause a real GPU failure, so they are run only manually, with run-webkit-tests --force.
+webgl/context-lost-gpu-reset-long-fragment-shader.html [ Skip ]
+webgl/context-lost-gpu-reset-long-vertex-shader.html [ Skip ]
+
 # Flaky failures
 
 webgl/1.0.x/conformance/glsl [ Slow ]

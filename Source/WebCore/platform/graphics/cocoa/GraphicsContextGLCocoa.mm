@@ -42,6 +42,9 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/HashCountedSet.h>
+#import <wtf/Lock.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/Scope.h>
 #import <wtf/StdLibExtras.h>
@@ -73,6 +76,39 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLCocoa);
 // For WK1, this variable is accessed from multiple threads but always sequentially.
 static GraphicsContextGLANGLE* currentContext;
 
+// ANGLE shares one EGLDisplay between all the contexts that are created with the same display attributes.
+// After a GPU reset, the display stays lost and contexts cannot be created on it. The reset increments the
+// key, so that the contexts created after the reset use a new display. A display of an older key is
+// terminated when its last context is destroyed.
+static Lock displaysLock;
+static EGLAttrib currentDisplayKey WTF_GUARDED_BY_LOCK(displaysLock);
+
+static HashCountedSet<EGLDisplay>& displayContextCounts() WTF_REQUIRES_LOCK(displaysLock)
+{
+    static NeverDestroyed<HashCountedSet<EGLDisplay>> counts;
+    return counts;
+}
+
+// The other contexts of the display may notice the reset later, so the key is incremented only once.
+static void didLoseDisplay(EGLAttrib displayKey)
+{
+    Locker locker { displaysLock };
+    if (displayKey == currentDisplayKey)
+        ++currentDisplayKey;
+}
+
+static void releaseDisplay(EGLDisplay display, EGLAttrib displayKey)
+{
+    {
+        Locker locker { displaysLock };
+        RELEASE_ASSERT(displayContextCounts().contains(display));
+        if (!displayContextCounts().remove(display) || displayKey >= currentDisplayKey)
+            return;
+    }
+    // A display of an older key is not handed out again, so it is terminated without the lock.
+    EGL_Terminate(display);
+}
+
 static const char* const enabledANGLEMetalFeatures[] = {
     "ensureLoopForwardProgress",
     nullptr
@@ -101,7 +137,7 @@ static bool platformSupportsMetal()
     return true;
 }
 
-static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
+static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs, EGLAttrib displayKey)
 {
     if (!platformIsANGLEAvailable()) {
         WTFLogAlways("Failed to load ANGLE shared library.");
@@ -150,6 +186,8 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     displayAttributes.append(reinterpret_cast<EGLAttrib>(disabledANGLEMetalFeatures));
     displayAttributes.append(EGL_FEATURE_OVERRIDES_ENABLED_ANGLE);
     displayAttributes.append(reinterpret_cast<EGLAttrib>(enabledANGLEMetalFeatures));
+    displayAttributes.append(EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE);
+    displayAttributes.append(displayKey);
     displayAttributes.append(EGL_NONE);
 
     EGLDisplay display = EGL_GetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(EGL_DEFAULT_DISPLAY), displayAttributes.span().data());
@@ -202,72 +240,96 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
     if (!platformSupportsMetal())
         return false;
 
-    m_displayObj = initializeEGLDisplay(attributes);
-    if (!m_displayObj)
-        return false;
+    // Returns the error of the context creation.
+    auto createDisplayAndContext = [&] -> EGLint {
+        {
+            // The display is initialized and counted under the lock, so that it is not terminated in between.
+            Locker locker { displaysLock };
+            m_displayKey = currentDisplayKey;
+            m_displayObj = initializeEGLDisplay(attributes, m_displayKey);
+            if (!m_displayObj)
+                return EGL_NOT_INITIALIZED;
+            displayContextCounts().add(m_displayObj);
+        }
 
-    EGLint configAttributes[] = {
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-        EGL_RED_SIZE, 8,
-        EGL_GREEN_SIZE, 8,
-        EGL_BLUE_SIZE, 8,
-        EGL_ALPHA_SIZE, 8,
-        EGL_DEPTH_SIZE, 0,
-        EGL_STENCIL_SIZE, 0,
-        EGL_NONE
-    };
-    EGLint numberConfigsReturned = 0;
-    EGL_ChooseConfig(m_displayObj, configAttributes, &m_configObj, 1, &numberConfigsReturned);
-    if (numberConfigsReturned != 1) {
-        LOG(WebGL, "EGLConfig Initialization failed.");
-        return false;
-    }
-    LOG(WebGL, "Got EGLConfig");
+        EGLint configAttributes[] = {
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+            EGL_RED_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_BLUE_SIZE, 8,
+            EGL_ALPHA_SIZE, 8,
+            EGL_DEPTH_SIZE, 0,
+            EGL_STENCIL_SIZE, 0,
+            EGL_NONE
+        };
+        EGLint numberConfigsReturned = 0;
+        EGL_ChooseConfig(m_displayObj, configAttributes, &m_configObj, 1, &numberConfigsReturned);
+        if (numberConfigsReturned != 1) {
+            LOG(WebGL, "EGLConfig Initialization failed.");
+            return EGL_BAD_CONFIG;
+        }
+        LOG(WebGL, "Got EGLConfig");
 
-    EGL_BindAPI(EGL_OPENGL_ES_API);
-    if (EGL_GetError() != EGL_SUCCESS) {
-        LOG(WebGL, "Unable to bind to OPENGL_ES_API");
-        return false;
-    }
+        EGL_BindAPI(EGL_OPENGL_ES_API);
+        if (EGLint error = EGL_GetError(); error != EGL_SUCCESS) {
+            LOG(WebGL, "Unable to bind to OPENGL_ES_API");
+            return error;
+        }
 
-    Vector<EGLint> eglContextAttributes;
-    if (m_isForWebGL2) {
-        eglContextAttributes.append(EGL_CONTEXT_CLIENT_VERSION);
-        eglContextAttributes.append(3);
-    } else {
-        eglContextAttributes.append(EGL_CONTEXT_CLIENT_VERSION);
-        eglContextAttributes.append(2);
-        // ANGLE will upgrade the context to ES3 automatically unless this is specified.
-        eglContextAttributes.append(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
+        Vector<EGLint> eglContextAttributes;
+        if (m_isForWebGL2) {
+            eglContextAttributes.append(EGL_CONTEXT_CLIENT_VERSION);
+            eglContextAttributes.append(3);
+        } else {
+            eglContextAttributes.append(EGL_CONTEXT_CLIENT_VERSION);
+            eglContextAttributes.append(2);
+            // ANGLE will upgrade the context to ES3 automatically unless this is specified.
+            eglContextAttributes.append(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
+            eglContextAttributes.append(EGL_FALSE);
+        }
+        eglContextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
+        eglContextAttributes.append(EGL_TRUE);
+
+        // WebGL requires that all resources are cleared at creation.
+        eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
+        eglContextAttributes.append(EGL_TRUE);
+
+        // Report GPU resets, so that the context can be lost when the GPU resets.
+        eglContextAttributes.append(EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT);
+        eglContextAttributes.append(EGL_LOSE_CONTEXT_ON_RESET_EXT);
+
+        // WebGL doesn't allow client arrays.
+        eglContextAttributes.append(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
         eglContextAttributes.append(EGL_FALSE);
-    }
-    eglContextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
-    eglContextAttributes.append(EGL_TRUE);
-
-    // WebGL requires that all resources are cleared at creation.
-    eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
-    eglContextAttributes.append(EGL_TRUE);
-
-    // WebGL doesn't allow client arrays.
-    eglContextAttributes.append(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
-    eglContextAttributes.append(EGL_FALSE);
-    // WebGL doesn't allow implicit creation of objects on bind.
-    eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
-    eglContextAttributes.append(EGL_FALSE);
+        // WebGL doesn't allow implicit creation of objects on bind.
+        eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
+        eglContextAttributes.append(EGL_FALSE);
 
 #if HAVE(TASK_IDENTITY_TOKEN)
-    auto displayExtensions = unsafeSpan(EGL_QueryString(m_displayObj, EGL_EXTENSIONS));
-    bool supportsOwnershipIdentity = WTF::contains(displayExtensions, "EGL_ANGLE_metal_create_context_ownership_identity"_span);
-    if (m_resourceOwner && supportsOwnershipIdentity) {
-        eglContextAttributes.append(EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE);
-        eglContextAttributes.append(m_resourceOwner.taskIdToken());
-    }
+        auto displayExtensions = unsafeSpan(EGL_QueryString(m_displayObj, EGL_EXTENSIONS));
+        bool supportsOwnershipIdentity = WTF::contains(displayExtensions, "EGL_ANGLE_metal_create_context_ownership_identity"_span);
+        if (m_resourceOwner && supportsOwnershipIdentity) {
+            eglContextAttributes.append(EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE);
+            eglContextAttributes.append(m_resourceOwner.taskIdToken());
+        }
 #endif
 
-    eglContextAttributes.append(EGL_NONE);
+        eglContextAttributes.append(EGL_NONE);
 
-    m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, EGL_NO_CONTEXT, eglContextAttributes.span().data());
-    if (m_contextObj == EGL_NO_CONTEXT || !makeCurrent(m_displayObj, m_contextObj)) {
+        m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, EGL_NO_CONTEXT, eglContextAttributes.span().data());
+        return m_contextObj == EGL_NO_CONTEXT ? EGL_GetError() : EGL_SUCCESS;
+    };
+
+    EGLint error = createDisplayAndContext();
+    if (error == EGL_CONTEXT_LOST || error == EGL_BAD_DISPLAY) {
+        // The display was lost in a GPU reset that no context noticed. Create the context on a new display.
+        didLoseDisplay(m_displayKey);
+        releaseDisplay(std::exchange(m_displayObj, nullptr), m_displayKey);
+        // The config belongs to the released display.
+        m_configObj = nullptr;
+        error = createDisplayAndContext();
+    }
+    if (error != EGL_SUCCESS || !makeCurrent(m_displayObj, m_contextObj)) {
         LOG(WebGL, "EGLContext Initialization failed.");
         return false;
     }
@@ -312,6 +374,9 @@ bool GraphicsContextGLCocoa::platformInitialize()
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
     if (makeContextCurrent()) {
+        // A context that is destroyed before it noticed a GPU reset must not leave the lost display to the new contexts.
+        if (GL_GetGraphicsResetStatusEXT() != GL_NO_ERROR)
+            didLoseDisplay(m_displayKey);
         GL_Disable(DEBUG_OUTPUT);
         if (m_texture)
             GL_DeleteTextures(1, &m_texture);
@@ -331,6 +396,13 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
         EGL_DestroyContext(m_displayObj, m_contextObj);
     }
     ASSERT(currentContext != this);
+    if (m_displayObj)
+        releaseDisplay(m_displayObj, m_displayKey);
+}
+
+bool GraphicsContextGLCocoa::isDisplayInitializedForTesting(GCGLDisplay display)
+{
+    return EGL_QueryString(display, EGL_VENDOR);
 }
 
 bool GraphicsContextGLANGLE::makeContextCurrent()
@@ -347,13 +419,14 @@ bool GraphicsContextGLANGLE::makeContextCurrent()
 
 void GraphicsContextGLANGLE::checkGPUStatus()
 {
-    if (m_failNextStatusCheck) {
-        LOG(WebGL, "Pretending the GPU has reset (%p). Lose the context.", this);
-        m_failNextStatusCheck = false;
-        forceContextLost();
-        makeCurrent(m_displayObj, EGL_NO_CONTEXT);
+    if (isContextLost())
         return;
-    }
+    if (GL_GetGraphicsResetStatusEXT() == GL_NO_ERROR)
+        return;
+    RELEASE_LOG(WebGL, "GPU has reset (%p). Lose the context.", this);
+    didLoseDisplay(m_displayKey);
+    forceContextLost();
+    makeCurrent(m_displayObj, EGL_NO_CONTEXT);
 }
 
 bool GraphicsContextGLCocoa::reshapeDrawingBuffer()
@@ -847,6 +920,12 @@ void GraphicsContextGLCocoa::prepareForDisplay()
 void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()> finishedSignal)
 {
     if (!makeContextCurrent()) {
+        finishedSignal();
+        return;
+    }
+    // The next drawing buffer cannot be created on a display lost in a GPU reset.
+    checkGPUStatus();
+    if (isContextLost()) {
         finishedSignal();
         return;
     }

@@ -428,6 +428,10 @@ protected:
     GraphicsContextGLState m_state;
 
     GCGLDisplay m_displayObj { nullptr };
+#if PLATFORM(COCOA)
+    // The EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE of m_displayObj.
+    intptr_t m_displayKey { 0 };
+#endif
     GCGLContext m_contextObj { nullptr };
     GCGLContext m_angleSharingContextObj { nullptr };
     GCGLConfig m_configObj { nullptr };

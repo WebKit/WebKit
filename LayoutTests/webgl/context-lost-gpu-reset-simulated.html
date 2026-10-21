@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL context loss caused by a simulated GPU failure</title>
+<script src="../resources/js-test.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Tests that a simulated GPU failure loses the context, and that the context is restored. The simulated failure loses only the context, so the other contexts keep working. A context created after the failure works.");
+window.jsTestIsAsync = true;
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var wtu = WebGLTestUtils;
+var canvas;
+var gl;
+var otherCanvas;
+var otherGL;
+var newGL;
+var failureGL;
+var buffer;
+
+function waitForEvent(target, eventName, timeoutSeconds, handler)
+{
+    return new Promise((resolve, reject) => {
+        var timeout = setTimeout(() => reject(new Error("timed out waiting for " + eventName)), timeoutSeconds * 1000);
+        target.addEventListener(eventName, (event) => {
+            clearTimeout(timeout);
+            if (handler)
+                handler(event);
+            resolve(event);
+        }, { once: true });
+    });
+}
+
+function checkRenders(context, contextName, color)
+{
+    context.clearColor(color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255);
+    context.clear(context.COLOR_BUFFER_BIT);
+    wtu.checkCanvasRect(context, 0, 0, 1, 1, color, contextName + " renders");
+    wtu.glErrorShouldBe(context, context.NO_ERROR, contextName + " has no errors");
+}
+
+function createContext()
+{
+    var newCanvas = document.createElement("canvas");
+    newCanvas.width = 2;
+    newCanvas.height = 2;
+    return newCanvas.getContext("webgl2");
+}
+
+async function runSimulatedGPUResetTest()
+{
+    if (!window.internals) {
+        testFailed("This test requires internals.");
+        return;
+    }
+    gl = createContext();
+    if (!gl) {
+        testFailed("Unable to fetch the WebGL 2 rendering context for canvas.");
+        return;
+    }
+    canvas = gl.canvas;
+    otherGL = createContext();
+    otherCanvas = otherGL.canvas;
+    checkRenders(gl, "context", [0, 255, 0, 255]);
+    checkRenders(otherGL, "other context", [0, 0, 255, 255]);
+    buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    shouldBeTrue("gl.isBuffer(buffer)");
+
+    var contextLost = waitForEvent(canvas, "webglcontextlost", 10, (event) => event.preventDefault());
+    var contextRestored = waitForEvent(canvas, "webglcontextrestored", 10);
+    otherCanvas.addEventListener("webglcontextlost", () => testFailed("The other context was lost."));
+
+    debug("Simulating a GPU failure.");
+    internals.simulateEventForWebGLContext("GPUStatusFailure", gl);
+    failureGL = createContext();
+    shouldBeNonNull("failureGL");
+    checkRenders(failureGL, "context created after the failure", [255, 0, 255, 255]);
+
+    // The context notices the failure when it next draws.
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    await contextLost;
+    testPassed("The context was lost.");
+    shouldBeTrue("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+
+    await contextRestored;
+    testPassed("The context was restored.");
+    shouldBeFalse("gl.isContextLost()");
+    checkRenders(gl, "restored context", [0, 255, 0, 255]);
+    // The objects of the lost context do not belong to the restored context.
+    shouldBeFalse("gl.isBuffer(buffer)");
+
+    shouldBeFalse("otherGL.isContextLost()");
+    checkRenders(otherGL, "other context", [0, 0, 255, 255]);
+    shouldBeFalse("failureGL.isContextLost()");
+    checkRenders(failureGL, "context created after the failure", [255, 0, 255, 255]);
+
+    newGL = createContext();
+    shouldBeNonNull("newGL");
+    checkRenders(newGL, "context created after the restore", [255, 255, 0, 255]);
+}
+
+runSimulatedGPUResetTest().catch((error) => testFailed("" + error)).finally(finishJSTest);
+</script>
+</body>
+</html>

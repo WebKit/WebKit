@@ -834,6 +834,353 @@ TEST_P(AnyContextAttributeTest, FinishIsSignaled)
     EXPECT_NE(Thread::currentSingleton().uid(), signalThreadUID);
 }
 
+// Tests that WebGL 1 and WebGL 2 contexts report GPU resets.
+TEST_F(GraphicsContextGLCocoaTest, ContextsLoseContextOnReset)
+{
+    constexpr GCGLenum resetNotificationStrategy = 0x8256; // GL_RESET_NOTIFICATION_STRATEGY_EXT
+    constexpr GCGLenum loseContextOnReset = 0x8252; // GL_LOSE_CONTEXT_ON_RESET_EXT
+    for (bool isWebGL2 : { false, true }) {
+        GraphicsContextGLAttributes attributes;
+        attributes.isWebGL2 = isWebGL2;
+        RefPtr context = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
+        ASSERT_NE(context, nullptr);
+        GCGLint strategy = 0;
+        context->getIntegerv(resetNotificationStrategy, singleElementSpan(strategy));
+        EXPECT_EQ(static_cast<GCGLint>(loseContextOnReset), strategy);
+        EXPECT_TRUE(context->getErrors().isEmpty());
+    }
+}
+
+// Tests that the contexts created after a GPU reset use a new display, and that the display of the
+// reset context is terminated when its last context is destroyed. Contexts share resources only
+// through native objects, such as IOSurfaces, so a display buffer of the terminated display is used
+// in a context of the new display.
+TEST_F(GraphicsContextGLCocoaTest, GPUResetCreatesNewDisplay)
+{
+    using GL = GraphicsContextGL;
+    GraphicsContextGLAttributes attributes;
+    attributes.isWebGL2 = true;
+    MockGraphicsContextGLClient client;
+    RefPtr resetContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes });
+    ASSERT_NE(resetContext, nullptr);
+    resetContext->setClient(&client);
+    resetContext->reshape(4, 4);
+    RefPtr otherContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes });
+    ASSERT_NE(otherContext, nullptr);
+    otherContext->reshape(4, 4);
+    GCGLDisplay resetDisplay = resetContext->platformDisplay();
+    EXPECT_EQ(resetDisplay, otherContext->platformDisplay());
+
+    resetContext->clearColor(0.f, 1.f, 0.f, 1.f);
+    resetContext->clear(GL::COLOR_BUFFER_BIT);
+    std::atomic<bool> signalled = false;
+    resetContext->prepareForDisplayWithFinishedSignal([&signalled] {
+        signalled = true;
+    });
+    while (!signalled)
+        sleep(.1_s);
+    ASSERT_NE(resetContext->displayBufferSurface(), nullptr);
+    RetainPtr<IOSurfaceRef> resetDisplaySurface = resetContext->displayBufferSurface()->surface();
+
+    resetContext->simulateEventForTesting(GraphicsContextGLSimulatedEventForTesting::GPUStatusFailure);
+    resetContext->clear(GL::COLOR_BUFFER_BIT);
+    EXPECT_EQ(1, client.contextLostCalls());
+
+    RefPtr newContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes });
+    ASSERT_NE(newContext, nullptr);
+    newContext->reshape(4, 4);
+    EXPECT_NE(resetDisplay, newContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*newContext, 0));
+
+    // The context that was not reset keeps the display of the reset context in use.
+    resetContext = nullptr;
+    EXPECT_TRUE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(resetDisplay));
+    EXPECT_TRUE(changeContextContents(*otherContext, 0));
+    otherContext = nullptr;
+    EXPECT_FALSE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(resetDisplay));
+    EXPECT_TRUE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(newContext->platformDisplay()));
+
+    auto texture = newContext->createTexture();
+    newContext->bindTexture(GL::TEXTURE_2D, texture);
+    void* pbuffer = newContext->createPbufferAndAttachIOSurface(GL::TEXTURE_2D, GraphicsContextGLCocoa::PbufferAttachmentUsage::Read, GL::BGRA_EXT, 4, 4, GL::UNSIGNED_BYTE, resetDisplaySurface.get(), 0);
+    ASSERT_NE(pbuffer, nullptr);
+    auto framebuffer = newContext->createFramebuffer();
+    newContext->bindFramebuffer(GL::FRAMEBUFFER, framebuffer);
+    newContext->framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, texture, 0);
+    EXPECT_EQ(GL::FRAMEBUFFER_COMPLETE, newContext->checkFramebufferStatus(GL::FRAMEBUFFER));
+    EXPECT_TRUE(checkReadPixel(*newContext, { 1, 1 }, Color::green));
+    newContext->destroyPbufferAndDetachIOSurface(pbuffer);
+    EXPECT_TRUE(newContext->getErrors().isEmpty());
+}
+
+static RefPtr<TestedGraphicsContextGLCocoa> createGPUResetTestContext(MockGraphicsContextGLClient* client = nullptr)
+{
+    GraphicsContextGLAttributes attributes;
+    attributes.isWebGL2 = true;
+    RefPtr context = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
+    if (!context)
+        return nullptr;
+    if (client)
+        context->setClient(client);
+    context->reshape(4, 4);
+    return context;
+}
+
+// Draws with a vertex shader that does not complete in a reasonable time, so that the GPU stops the draw
+// and the display of the context is lost. Returns after the GPU stopped the draw, before the context
+// noticed the reset.
+static void drawUntilGPUReset(GraphicsContextGL& context)
+{
+    using GL = GraphicsContextGL;
+    auto vertexShader = context.createShader(GL::VERTEX_SHADER);
+    // The loop count is a vertex attribute, so the shader compiler cannot remove or bound the loops.
+    context.shaderSource(vertexShader,
+        "#version 300 es\n"
+        "in float count;\n"
+        "void main() {\n"
+        "    int n = int(count);\n"
+        "    float value = 0.5;\n"
+        "    for (int i = 0; i < n; ++i) {\n"
+        "        for (int j = 0; j < n; ++j)\n"
+        "            value = fract(sin(value + float(i) * 0.001 + float(j)) * 43758.5453);\n"
+        "    }\n"
+        "    gl_Position = vec4(value * 0.0001, 0.0, 0.0, 1.0);\n"
+        "    gl_PointSize = 1.0;\n"
+        "}\n"_s);
+    context.compileShader(vertexShader);
+    auto fragmentShader = context.createShader(GL::FRAGMENT_SHADER);
+    context.shaderSource(fragmentShader,
+        "#version 300 es\n"
+        "precision mediump float;\n"
+        "out vec4 color;\n"
+        "void main() {\n"
+        "    color = vec4(1.0, 0.0, 0.0, 1.0);\n"
+        "}\n"_s);
+    context.compileShader(fragmentShader);
+    auto program = context.createProgram();
+    context.attachShader(program, vertexShader);
+    context.attachShader(program, fragmentShader);
+    context.bindAttribLocation(program, 0, "count"_s);
+    context.linkProgram(program);
+    context.useProgram(program);
+    context.vertexAttrib1f(0, 1000000000.f);
+    context.drawArrays(GL::POINTS, 0, 10000);
+    // Reading the pixels waits until the GPU stopped the draw.
+    uint8_t pixel[4] = { };
+    context.readPixels({ 0, 0, 1, 1 }, GL::RGBA, GL::UNSIGNED_BYTE, pixel, 1, 0, false);
+}
+
+// The tests below cause a real GPU failure, so they are disabled. Run them manually with run-api-tests --force.
+
+// Tests that a context can be created right after a GPU reset, before any context noticed the reset.
+TEST_F(GraphicsContextGLCocoaTest, DISABLED_GPUResetThenCreateContext)
+{
+    MockGraphicsContextGLClient client;
+    RefPtr resetContext = createGPUResetTestContext(&client);
+    ASSERT_NE(resetContext, nullptr);
+    GCGLDisplay resetDisplay = resetContext->platformDisplay();
+    drawUntilGPUReset(*resetContext);
+    EXPECT_EQ(0, client.contextLostCalls());
+
+    RefPtr newContext = createGPUResetTestContext();
+    ASSERT_NE(newContext, nullptr);
+    EXPECT_NE(resetDisplay, newContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*newContext, 0));
+    // The contexts created after the first one use the same new display.
+    RefPtr secondNewContext = createGPUResetTestContext();
+    ASSERT_NE(secondNewContext, nullptr);
+    EXPECT_EQ(newContext->platformDisplay(), secondNewContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*secondNewContext, 0));
+
+    // The reset context notices the reset when it next draws.
+    resetContext->clear(GraphicsContextGL::COLOR_BUFFER_BIT);
+    EXPECT_EQ(1, client.contextLostCalls());
+    resetContext = nullptr;
+    EXPECT_FALSE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(resetDisplay));
+}
+
+// Tests that a context that is destroyed before it noticed a GPU reset does not leave the lost display
+// to the contexts created after it.
+TEST_F(GraphicsContextGLCocoaTest, DISABLED_GPUResetThenDestroyContext)
+{
+    RefPtr resetContext = createGPUResetTestContext();
+    ASSERT_NE(resetContext, nullptr);
+    GCGLDisplay resetDisplay = resetContext->platformDisplay();
+    drawUntilGPUReset(*resetContext);
+    resetContext = nullptr;
+    EXPECT_FALSE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(resetDisplay));
+
+    RefPtr newContext = createGPUResetTestContext();
+    ASSERT_NE(newContext, nullptr);
+    EXPECT_NE(resetDisplay, newContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*newContext, 0));
+}
+
+// Tests that a context that is displayed after a GPU reset is lost, and that a context can be created after it.
+TEST_F(GraphicsContextGLCocoaTest, DISABLED_GPUResetThenPrepareForDisplay)
+{
+    MockGraphicsContextGLClient client;
+    RefPtr resetContext = createGPUResetTestContext(&client);
+    ASSERT_NE(resetContext, nullptr);
+    GCGLDisplay resetDisplay = resetContext->platformDisplay();
+    drawUntilGPUReset(*resetContext);
+
+    resetContext->prepareForDisplay();
+    EXPECT_EQ(1, client.contextLostCalls());
+
+    RefPtr newContext = createGPUResetTestContext();
+    ASSERT_NE(newContext, nullptr);
+    EXPECT_NE(resetDisplay, newContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*newContext, 0));
+}
+
+// Tests that a context can be created after a GPU reset when the reset context is lost without checking
+// for the reset. Resizing allocates a drawing buffer, which fails on the lost display.
+TEST_F(GraphicsContextGLCocoaTest, DISABLED_GPUResetThenReshape)
+{
+    MockGraphicsContextGLClient client;
+    RefPtr resetContext = createGPUResetTestContext(&client);
+    ASSERT_NE(resetContext, nullptr);
+    GCGLDisplay resetDisplay = resetContext->platformDisplay();
+    drawUntilGPUReset(*resetContext);
+
+    resetContext->reshape(8, 8);
+    EXPECT_EQ(1, client.contextLostCalls());
+
+    RefPtr newContext = createGPUResetTestContext();
+    ASSERT_NE(newContext, nullptr);
+    EXPECT_NE(resetDisplay, newContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*newContext, 0));
+}
+
+// Tests that a GPU reset loses all the contexts of the display, and that the display is terminated after
+// its last context is destroyed.
+TEST_F(GraphicsContextGLCocoaTest, DISABLED_GPUResetLosesOtherContexts)
+{
+    MockGraphicsContextGLClient resetClient;
+    RefPtr resetContext = createGPUResetTestContext(&resetClient);
+    ASSERT_NE(resetContext, nullptr);
+    MockGraphicsContextGLClient otherClient;
+    RefPtr otherContext = createGPUResetTestContext(&otherClient);
+    ASSERT_NE(otherContext, nullptr);
+    GCGLDisplay resetDisplay = resetContext->platformDisplay();
+    EXPECT_EQ(resetDisplay, otherContext->platformDisplay());
+    drawUntilGPUReset(*resetContext);
+
+    resetContext->clear(GraphicsContextGL::COLOR_BUFFER_BIT);
+    EXPECT_EQ(1, resetClient.contextLostCalls());
+    otherContext->clear(GraphicsContextGL::COLOR_BUFFER_BIT);
+    EXPECT_EQ(1, otherClient.contextLostCalls());
+
+    RefPtr newContext = createGPUResetTestContext();
+    ASSERT_NE(newContext, nullptr);
+    EXPECT_NE(resetDisplay, newContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*newContext, 0));
+
+    resetContext = nullptr;
+    EXPECT_TRUE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(resetDisplay));
+    otherContext = nullptr;
+    EXPECT_FALSE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(resetDisplay));
+}
+
+// The tests below simulate the GPU failure of the tests above. The simulated failure loses only the
+// context, not the display or the other contexts of the display.
+
+static void simulateGPUReset(GraphicsContextGL& context)
+{
+    context.simulateEventForTesting(GraphicsContextGLSimulatedEventForTesting::GPUStatusFailure);
+}
+
+TEST_F(GraphicsContextGLCocoaTest, SimulatedGPUResetThenCreateContext)
+{
+    MockGraphicsContextGLClient client;
+    RefPtr resetContext = createGPUResetTestContext(&client);
+    ASSERT_NE(resetContext, nullptr);
+    GCGLDisplay resetDisplay = resetContext->platformDisplay();
+    simulateGPUReset(*resetContext);
+    EXPECT_EQ(0, client.contextLostCalls());
+
+    // The display is not lost, so the contexts created before the reset context notices the failure use it.
+    RefPtr newContext = createGPUResetTestContext();
+    ASSERT_NE(newContext, nullptr);
+    EXPECT_EQ(resetDisplay, newContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*newContext, 0));
+
+    resetContext->clear(GraphicsContextGL::COLOR_BUFFER_BIT);
+    EXPECT_EQ(1, client.contextLostCalls());
+    RefPtr secondNewContext = createGPUResetTestContext();
+    ASSERT_NE(secondNewContext, nullptr);
+    EXPECT_NE(resetDisplay, secondNewContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*secondNewContext, 0));
+
+    // The context that was created on the display before the reset context noticed the failure keeps working.
+    EXPECT_TRUE(changeContextContents(*newContext, 1));
+
+    // Destroying the reset context, which still reports the reset, does not replace the new display again.
+    resetContext = nullptr;
+    EXPECT_TRUE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(resetDisplay));
+    RefPtr thirdNewContext = createGPUResetTestContext();
+    ASSERT_NE(thirdNewContext, nullptr);
+    EXPECT_EQ(secondNewContext->platformDisplay(), thirdNewContext->platformDisplay());
+
+    newContext = nullptr;
+    EXPECT_FALSE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(resetDisplay));
+}
+
+TEST_F(GraphicsContextGLCocoaTest, SimulatedGPUResetThenDestroyContext)
+{
+    RefPtr resetContext = createGPUResetTestContext();
+    ASSERT_NE(resetContext, nullptr);
+    GCGLDisplay resetDisplay = resetContext->platformDisplay();
+    simulateGPUReset(*resetContext);
+    resetContext = nullptr;
+    EXPECT_FALSE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(resetDisplay));
+
+    RefPtr newContext = createGPUResetTestContext();
+    ASSERT_NE(newContext, nullptr);
+    GCGLDisplay newDisplay = newContext->platformDisplay();
+    EXPECT_NE(resetDisplay, newDisplay);
+    EXPECT_TRUE(changeContextContents(*newContext, 0));
+
+    // The display of the current key is not terminated when its last context is destroyed.
+    newContext = nullptr;
+    EXPECT_TRUE(GraphicsContextGLCocoa::isDisplayInitializedForTesting(newDisplay));
+}
+
+TEST_F(GraphicsContextGLCocoaTest, SimulatedGPUResetThenPrepareForDisplay)
+{
+    MockGraphicsContextGLClient client;
+    RefPtr resetContext = createGPUResetTestContext(&client);
+    ASSERT_NE(resetContext, nullptr);
+    GCGLDisplay resetDisplay = resetContext->platformDisplay();
+    simulateGPUReset(*resetContext);
+
+    resetContext->prepareForDisplay();
+    EXPECT_EQ(1, client.contextLostCalls());
+
+    RefPtr newContext = createGPUResetTestContext();
+    ASSERT_NE(newContext, nullptr);
+    EXPECT_NE(resetDisplay, newContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*newContext, 0));
+}
+
+TEST_F(GraphicsContextGLCocoaTest, SimulatedGPUResetThenReshape)
+{
+    MockGraphicsContextGLClient client;
+    RefPtr resetContext = createGPUResetTestContext(&client);
+    ASSERT_NE(resetContext, nullptr);
+    GCGLDisplay resetDisplay = resetContext->platformDisplay();
+    simulateGPUReset(*resetContext);
+
+    // Resizing the lost context fails, but the display is not lost, so it is not replaced.
+    resetContext->reshape(8, 8);
+    EXPECT_EQ(1, client.contextLostCalls());
+    RefPtr newContext = createGPUResetTestContext();
+    ASSERT_NE(newContext, nullptr);
+    EXPECT_EQ(resetDisplay, newContext->platformDisplay());
+    EXPECT_TRUE(changeContextContents(*newContext, 0));
+}
+
 #if ENABLE(WEBXR)
 
 // Render to RGBA+depth MSAA renderbuffers.

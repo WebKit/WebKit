@@ -395,26 +395,6 @@ static constexpr GCGLenum LEGACY_NODELETE errorCodeToGLenum(GCGLErrorCode error)
     return GraphicsContextGL::INVALID_OPERATION;
 }
 
-static constexpr GCGLErrorCode LEGACY_NODELETE glEnumToErrorCode(GCGLenum error)
-{
-    switch (error) {
-    case GraphicsContextGL::INVALID_ENUM:
-        return GCGLErrorCode::InvalidEnum;
-    case GraphicsContextGL::INVALID_VALUE:
-        return GCGLErrorCode::InvalidValue;
-    case GraphicsContextGL::INVALID_OPERATION:
-        return GCGLErrorCode::InvalidOperation;
-    case GraphicsContextGL::OUT_OF_MEMORY:
-        return GCGLErrorCode::OutOfMemory;
-    case GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION:
-        return GCGLErrorCode::InvalidFramebufferOperation;
-    case GraphicsContextGL::CONTEXT_LOST_WEBGL:
-        return GCGLErrorCode::ContextLost;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return GCGLErrorCode::InvalidOperation;
-}
-
 // Conversion function converting GraphicsContextGL member function results that are directly
 // UTF8CStrings. The returned values might be null on implementation error or context loss during
 // that function.
@@ -6001,7 +5981,7 @@ void WebGLRenderingContextBase::addDebugMessage(GCGLenum type, GCGLenum id, GCGL
 
     if (type == GraphicsContextGL::DEBUG_TYPE_ERROR) {
         level = MessageLevel::Error;
-        formattedMessage = makeString("WebGL: "_s, errorCodeToString(glEnumToErrorCode(id)), ": "_s, message);
+        formattedMessage = makeString("WebGL: "_s, errorCodeToString(GraphicsContextGL::enumToErrorCode(id)), ": "_s, message);
     } else
         formattedMessage = makeString("WebGL debug message: type:"_s, debugMessageTypeToString(type), ", id:"_s, id, " severity: "_s, debugMessageSeverityToString(severity), ": "_s, message);
 
