@@ -467,6 +467,7 @@ private:
     // reference reports "no such element" again instead of "stale element reference".
     HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownNodeReferences;
 
+    HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingCloseBrowsingContextCallbacksPerPage;
     HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingNormalNavigationInBrowsingContextCallbacksPerPage;
     HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingEagerNavigationInBrowsingContextCallbacksPerPage;
     HashMap<WebCore::FrameIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
