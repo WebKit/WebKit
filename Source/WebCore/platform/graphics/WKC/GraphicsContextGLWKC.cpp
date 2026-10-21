@@ -383,21 +383,21 @@ public:
 
     void getUniformuiv(PlatformGLObject program, GCGLint location, std::span<GCGLuint> value) override { notImplemented(); }
 
-    GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) override { notImplemented(); return {}; }
+    GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) override;
 
     void hint(GCGLenum target, GCGLenum mode) override { notImplemented(); }
 
-    GCGLboolean isBuffer(PlatformGLObject) override { notImplemented(); return {}; }
+    GCGLboolean isBuffer(PlatformGLObject) override;
 
-    GCGLboolean isEnabled(GCGLenum cap) override { notImplemented(); return {}; }
+    GCGLboolean isEnabled(GCGLenum cap) override;
 
     GCGLboolean isFramebuffer(PlatformGLObject) override { notImplemented(); return {}; }
 
-    GCGLboolean isProgram(PlatformGLObject) override { notImplemented(); return {}; }
+    GCGLboolean isProgram(PlatformGLObject) override;
 
     GCGLboolean isRenderbuffer(PlatformGLObject) override { notImplemented(); return {}; }
 
-    GCGLboolean isShader(PlatformGLObject) override { notImplemented(); return {}; }
+    GCGLboolean isShader(PlatformGLObject) override;
 
     GCGLboolean isTexture(PlatformGLObject) override { notImplemented(); return {}; }
 
@@ -1486,6 +1486,54 @@ void GraphicsContextGLWKC::vertexAttribPointer(GCGLuint i,GCGLint size,GCGLenum 
     WKC::GLGX2::VertexAttribute a;a.buffer=buffer;a.components=size;a.type=t;a.normalized=norm;a.stride=stride;a.offset=offset;
     if(m_vertexArrays.setAttribute(i,a,m_buffers)!=WKC::GLGX2::VertexArrayResult::Ok)addError(GL_INVALID_OPERATION_VALUE);
 }
+GCGLboolean GraphicsContextGLWKC::isBuffer(PlatformGLObject name)
+{
+    WKC::GLGX2::BufferInfo info;
+    return name && m_buffers.info(name, info);
+}
+
+GCGLboolean GraphicsContextGLWKC::isProgram(PlatformGLObject name)
+{
+    return name && m_programs.contains(name);
+}
+
+GCGLboolean GraphicsContextGLWKC::isShader(PlatformGLObject name)
+{
+    auto it = m_shaders.find(name);
+    return name && it != m_shaders.end() && !it->second.deletePending;
+}
+
+GCGLboolean GraphicsContextGLWKC::isEnabled(GCGLenum capability)
+{
+    switch (capability) {
+    case GL_BLEND_VALUE: return m_native.blendEnabled;
+    case GL_CULL_FACE_VALUE: return m_native.cullEnabled;
+    case GL_DEPTH_TEST_VALUE: return m_native.depthTestEnabled;
+    case GL_SCISSOR_TEST_VALUE: return m_native.scissorEnabled;
+    case GL_STENCIL_TEST_VALUE: return m_native.stencilEnabled;
+    case GL_POLYGON_OFFSET_FILL_VALUE: return m_native.polygonOffsetEnabled;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return false;
+    }
+}
+
+GCGLsizeiptr GraphicsContextGLWKC::getVertexAttribOffset(GCGLuint index, GCGLenum pname)
+{
+    // GL_VERTEX_ATTRIB_ARRAY_POINTER is 0x8645. WebGL exposes only the pointer
+    // value recorded by vertexAttribPointer; other pnames belong to getVertexAttrib.
+    if (pname != 0x8645) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+    WKC::GLGX2::VertexAttribute attribute;
+    if (index >= 32 || !m_vertexArrays.attribute(index, attribute)) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return 0;
+    }
+    return static_cast<GCGLsizeiptr>(attribute.offset);
+}
+
 void GraphicsContextGLWKC::vertexAttribDivisor(GCGLuint i,GCGLuint divisor)
 {
     WKC::GLGX2::VertexAttribute a;if(i>=32||!m_vertexArrays.attribute(i,a)){addError(GL_INVALID_VALUE_VALUE);return;}
