@@ -20,6 +20,24 @@ struct WUTBackendContext {
     WUTBufferResources bufferResources;
     GX2ColorBuffer* colorBuffer { nullptr };
     GX2DepthBuffer* depthBuffer { nullptr };
+
+    // Optional offscreen WebGL default framebuffer owned by this context.
+    // Externally supplied render targets remain non-owning; resizeWUTRenderTarget
+    // only creates/replaces the target when this context owns the current one.
+    GX2ColorBuffer ownedColorBuffer {};
+    GX2DepthBuffer ownedDepthBuffer {};
+    void* depthHiZMemory { nullptr };
+    uint32_t depthHiZSize { 0 };
+    bool ownsRenderTarget { false };
+    bool hasColorSurface { false };
+    bool hasDepthSurface { false };
+    uint32_t renderTargetWidth { 0 };
+    uint32_t renderTargetHeight { 0 };
+
+    WUTBackendContext() = default;
+    ~WUTBackendContext();
+    WUTBackendContext(const WUTBackendContext&) = delete;
+    WUTBackendContext& operator=(const WUTBackendContext&) = delete;
     Color clearColor;
     float clearDepth { 1.0f };
     uint8_t clearStencil { 0 };
@@ -61,6 +79,11 @@ struct WUTBackendContext {
 Backend makeWUTBackend(WUTBackendContext&);
 BufferBackend makeWUTBufferBackend(WUTBackendContext&);
 VertexArrayBackend makeWUTVertexArrayBackend(WUTBackendContext&);
+
+// Allocate a GPU-backed RGBA8 + D24S8 offscreen default framebuffer. Resizing
+// waits for queued GX2 work before freeing the old native surfaces.
+bool resizeWUTRenderTarget(WUTBackendContext&, uint32_t width, uint32_t height);
+void bindWUTRenderTarget(WUTBackendContext&);
 
 } // namespace GLGX2
 } // namespace WKC
