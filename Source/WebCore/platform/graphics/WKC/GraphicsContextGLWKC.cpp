@@ -29,6 +29,7 @@
 #include <cafeglsl/CafeGLSLCompiler.h>
 #include <gx2/draw.h>
 #include <gx2/event.h>
+#include <gx2/registers.h>
 #include <gx2/shaders.h>
 #include <gx2/texture.h>
 #include <gx2/sampler.h>
@@ -41,6 +42,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstring>
 #include <limits>
 #include <optional>
@@ -461,7 +463,7 @@ public:
 
     CString getShaderInfoLog(PlatformGLObject) override;
 
-    void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, std::span<GCGLint, 2> range, GCGLint* precision) override { notImplemented(); }
+    void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, std::span<GCGLint, 2> range, GCGLint* precision) override;
 
     GCGLfloat getTexParameterf(GCGLenum target, GCGLenum pname) override;
 
@@ -475,7 +477,7 @@ public:
 
     GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) override;
 
-    void hint(GCGLenum target, GCGLenum mode) override { notImplemented(); }
+    void hint(GCGLenum target, GCGLenum mode) override;
 
     GCGLboolean isBuffer(PlatformGLObject) override;
 
@@ -491,7 +493,7 @@ public:
 
     GCGLboolean isTexture(PlatformGLObject) override;
 
-    void lineWidth(GCGLfloat) override { notImplemented(); }
+    void lineWidth(GCGLfloat) override;
 
     void linkProgram(PlatformGLObject) override;
 
@@ -501,23 +503,23 @@ public:
 
     void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) override;
 
-    void sampleCoverage(GCGLclampf value, GCGLboolean invert) override { notImplemented(); }
+    void sampleCoverage(GCGLclampf value, GCGLboolean invert) override;
 
     void scissor(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) override;
 
     void shaderSource(PlatformGLObject shader, const CString& source) override;
 
-    void stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask) override { notImplemented(); }
+    void stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask) override;
 
-    void stencilFuncSeparate(GCGLenum face, GCGLenum func, GCGLint ref, GCGLuint mask) override { notImplemented(); }
+    void stencilFuncSeparate(GCGLenum face, GCGLenum func, GCGLint ref, GCGLuint mask) override;
 
-    void stencilMask(GCGLuint mask) override { notImplemented(); }
+    void stencilMask(GCGLuint mask) override;
 
-    void stencilMaskSeparate(GCGLenum face, GCGLuint mask) override { notImplemented(); }
+    void stencilMaskSeparate(GCGLenum face, GCGLuint mask) override;
 
-    void stencilOp(GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override { notImplemented(); }
+    void stencilOp(GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override;
 
-    void stencilOpSeparate(GCGLenum face, GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override { notImplemented(); }
+    void stencilOpSeparate(GCGLenum face, GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override;
 
     void texParameterf(GCGLenum target, GCGLenum pname, GCGLfloat param) override;
 
@@ -3073,6 +3075,175 @@ void GraphicsContextGLWKC::deleteShader(PlatformGLObject name)
     it->second.deletePending=true;
     releaseShaderIfUnused(name);
 }
+void GraphicsContextGLWKC::getShaderPrecisionFormat(GCGLenum shaderType,
+    GCGLenum precisionType, std::span<GCGLint, 2> range, GCGLint* precision)
+{
+    if (shaderType != GL_VERTEX_SHADER_VALUE && shaderType != GL_FRAGMENT_SHADER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (!precision) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+
+    switch (precisionType) {
+    case 0x8DF0: // GL_LOW_FLOAT
+        range[0] = -8; range[1] = 8; *precision = 8;
+        return;
+    case 0x8DF1: // GL_MEDIUM_FLOAT
+        range[0] = -14; range[1] = 14; *precision = 10;
+        return;
+    case 0x8DF2: // GL_HIGH_FLOAT
+        range[0] = -126; range[1] = 127; *precision = 23;
+        return;
+    case 0x8DF3: // GL_LOW_INT
+        range[0] = 7; range[1] = 6; *precision = 0;
+        return;
+    case 0x8DF4: // GL_MEDIUM_INT
+        range[0] = 15; range[1] = 14; *precision = 0;
+        return;
+    case 0x8DF5: // GL_HIGH_INT
+        range[0] = 31; range[1] = 30; *precision = 0;
+        return;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+}
+
+void GraphicsContextGLWKC::hint(GCGLenum target, GCGLenum mode)
+{
+    // The Wii U compiler exposes no quality-control switch for shader
+    // derivatives or mip generation; the GL hints are valid but advisory.
+    if (mode != 0x1100 /* GL_DONT_CARE */ && mode != 0x1101 /* GL_FASTEST */
+        && mode != 0x1102 /* GL_NICEST */) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (target != 0x8192 /* GL_GENERATE_MIPMAP_HINT */
+        && target != 0x8B8B /* GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES */) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+}
+
+void GraphicsContextGLWKC::lineWidth(GCGLfloat width)
+{
+    if (!std::isfinite(width) || width <= 0.0f) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    GX2SetLineWidth(width);
+}
+
+void GraphicsContextGLWKC::sampleCoverage(GCGLclampf value, GCGLboolean invert)
+{
+    UNUSED_PARAM(invert);
+    if (!std::isfinite(value) || value < 0.0f || value > 1.0f) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    // This WebGL 1 backend creates single-sample GX2 targets only, so a valid
+    // sample-coverage state has no rasterization effect.
+}
+
+void GraphicsContextGLWKC::stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask)
+{
+    stencilFuncSeparate(0x0408 /* GL_FRONT_AND_BACK */, func, ref, mask);
+}
+
+void GraphicsContextGLWKC::stencilFuncSeparate(
+    GCGLenum face, GCGLenum func, GCGLint ref, GCGLuint mask)
+{
+    WKC::GLGX2::Face nativeFace;
+    switch (face) {
+    case 0x0404: nativeFace = WKC::GLGX2::Face::Front; break;
+    case 0x0405: nativeFace = WKC::GLGX2::Face::Back; break;
+    case 0x0408: nativeFace = WKC::GLGX2::Face::FrontAndBack; break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+
+    WKC::GLGX2::CompareFunction nativeFunction;
+    switch (func) {
+    case 0x0200: nativeFunction = WKC::GLGX2::CompareFunction::Never; break;
+    case 0x0201: nativeFunction = WKC::GLGX2::CompareFunction::Less; break;
+    case 0x0202: nativeFunction = WKC::GLGX2::CompareFunction::Equal; break;
+    case 0x0203: nativeFunction = WKC::GLGX2::CompareFunction::LessEqual; break;
+    case 0x0204: nativeFunction = WKC::GLGX2::CompareFunction::Greater; break;
+    case 0x0205: nativeFunction = WKC::GLGX2::CompareFunction::NotEqual; break;
+    case 0x0206: nativeFunction = WKC::GLGX2::CompareFunction::GreaterEqual; break;
+    case 0x0207: nativeFunction = WKC::GLGX2::CompareFunction::Always; break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    addDriverError(m_driver.setStencilFunction(nativeFace, nativeFunction, ref, mask), "stencilFuncSeparate");
+}
+
+void GraphicsContextGLWKC::stencilMask(GCGLuint mask)
+{
+    stencilMaskSeparate(0x0408 /* GL_FRONT_AND_BACK */, mask);
+}
+
+void GraphicsContextGLWKC::stencilMaskSeparate(GCGLenum face, GCGLuint mask)
+{
+    WKC::GLGX2::Face nativeFace;
+    switch (face) {
+    case 0x0404: nativeFace = WKC::GLGX2::Face::Front; break;
+    case 0x0405: nativeFace = WKC::GLGX2::Face::Back; break;
+    case 0x0408: nativeFace = WKC::GLGX2::Face::FrontAndBack; break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    addDriverError(m_driver.setStencilWriteMask(nativeFace, mask), "stencilMaskSeparate");
+}
+
+void GraphicsContextGLWKC::stencilOp(GCGLenum fail, GCGLenum zfail, GCGLenum zpass)
+{
+    stencilOpSeparate(0x0408 /* GL_FRONT_AND_BACK */, fail, zfail, zpass);
+}
+
+void GraphicsContextGLWKC::stencilOpSeparate(
+    GCGLenum face, GCGLenum fail, GCGLenum zfail, GCGLenum zpass)
+{
+    WKC::GLGX2::Face nativeFace;
+    switch (face) {
+    case 0x0404: nativeFace = WKC::GLGX2::Face::Front; break;
+    case 0x0405: nativeFace = WKC::GLGX2::Face::Back; break;
+    case 0x0408: nativeFace = WKC::GLGX2::Face::FrontAndBack; break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+
+    auto mapOperation = [](GCGLenum operation, WKC::GLGX2::StencilOperation& output) {
+        using WKC::GLGX2::StencilOperation;
+        switch (operation) {
+        case 0: output = StencilOperation::Zero; return true;
+        case 0x1E00: output = StencilOperation::Keep; return true;
+        case 0x1E01: output = StencilOperation::Replace; return true;
+        case 0x1E02: output = StencilOperation::Increment; return true;
+        case 0x1E03: output = StencilOperation::Decrement; return true;
+        case 0x150A: output = StencilOperation::Invert; return true;
+        case 0x8507: output = StencilOperation::IncrementWrap; return true;
+        case 0x8508: output = StencilOperation::DecrementWrap; return true;
+        default: return false;
+        }
+    };
+    WKC::GLGX2::StencilOperation nativeFail, nativeZFail, nativeZPass;
+    if (!mapOperation(fail, nativeFail) || !mapOperation(zfail, nativeZFail)
+        || !mapOperation(zpass, nativeZPass)) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    addDriverError(m_driver.setStencilOperation(nativeFace, nativeFail, nativeZFail, nativeZPass),
+        "stencilOpSeparate");
+}
+
 void GraphicsContextGLWKC::depthFunc(GCGLenum v)
 {
     WKC::GLGX2::CompareFunction out;
