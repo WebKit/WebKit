@@ -443,8 +443,11 @@ bool buildWUTAttributeStreams(const WUTBufferResources& resources,
                     return false;
                 inputName = bindings[i].shaderInputName;
             }
+
+            // An enabled VAO attribute that is not referenced by the linked
+            // shader is legal GL state and must not become a fetch stream.
             if (!inputName)
-                return false;
+                continue;
 
             const GX2AttribVar* linkedInput = nullptr;
             for (uint32_t i = 0; i < vertexShader.attribVarCount; ++i) {
@@ -478,7 +481,8 @@ bool buildWUTAttributeStreams(const WUTBufferResources& resources,
         return false;
     }
 
-    // Two GL inputs must not accidentally alias one GX2 location.
+    // Two GL inputs must not accidentally alias one GX2 location. Zero
+    // active inputs is legal; the caller can build a zero-stream fetch shader.
     for (size_t i = 0; i < output.size(); ++i) {
         for (size_t j = i + 1; j < output.size(); ++j) {
             if (output[i].location == output[j].location) {
@@ -487,7 +491,7 @@ bool buildWUTAttributeStreams(const WUTBufferResources& resources,
             }
         }
     }
-    return !output.empty();
+    return true;
 }
 
 bool initializeWUTFetchShader(const WUTBufferResources& resources,
