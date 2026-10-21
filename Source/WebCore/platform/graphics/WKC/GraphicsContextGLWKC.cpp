@@ -1150,6 +1150,7 @@ GraphicsContextGLWKC::~GraphicsContextGLWKC()
     for (auto& entry : m_framebuffers)
         releaseRenderbufferStorage(entry.second.fallbackDepth);
     releaseTextureStorage(m_defaultTexture);
+    releaseTextureStorage(m_defaultCubeTexture);
 }
 
 PlatformGLObject GraphicsContextGLWKC::nextTextureName()
@@ -2287,9 +2288,58 @@ bool GraphicsContextGLWKC::regenerateTextureMipmaps(TextureRecord& texture)
     return recreateTextureStorage(texture);
 }
 
+bool GraphicsContextGLWKC::regenerateCubeMapMipmaps(TextureRecord& texture)
+{
+    if (!cubeTextureBaseComplete(texture))
+        return false;
+
+    for (size_t face = 0; face < texture.cubeLevels.size(); ++face) {
+        const auto base = texture.cubeLevels[face][0];
+        auto& levels = texture.cubeLevels[face];
+        auto& defined = texture.cubeDefinedLevels[face];
+        levels.clear();
+        defined.clear();
+        levels.push_back(base);
+        defined.push_back(true);
+
+        uint32_t sourceWidth = texture.cubeWidths[face];
+        uint32_t sourceHeight = texture.cubeHeights[face];
+        while (sourceWidth > 1 || sourceHeight > 1) {
+            const uint32_t destinationWidth = std::max<uint32_t>(1, sourceWidth / 2);
+            const uint32_t destinationHeight = std::max<uint32_t>(1, sourceHeight / 2);
+            std::vector<uint8_t> destination(static_cast<size_t>(destinationWidth) * destinationHeight * 4, 0);
+            const auto& source = levels.back();
+            for (uint32_t y = 0; y < destinationHeight; ++y) {
+                for (uint32_t x = 0; x < destinationWidth; ++x) {
+                    uint32_t sums[4] { 0, 0, 0, 0 };
+                    uint32_t sampleCount = 0;
+                    for (uint32_t dy = 0; dy < 2; ++dy) {
+                        const uint32_t sy = std::min(sourceHeight - 1, y * 2 + dy);
+                        for (uint32_t dx = 0; dx < 2; ++dx) {
+                            const uint32_t sx = std::min(sourceWidth - 1, x * 2 + dx);
+                            const size_t offset = (static_cast<size_t>(sy) * sourceWidth + sx) * 4;
+                            for (unsigned component = 0; component < 4; ++component)
+                                sums[component] += source[offset + component];
+                            ++sampleCount;
+                        }
+                    }
+                    const size_t outputOffset = (static_cast<size_t>(y) * destinationWidth + x) * 4;
+                    for (unsigned component = 0; component < 4; ++component)
+                        destination[outputOffset + component] = static_cast<uint8_t>(sums[component] / sampleCount);
+                }
+            }
+            levels.push_back(std::move(destination));
+            defined.push_back(true);
+            sourceWidth = destinationWidth;
+            sourceHeight = destinationHeight;
+        }
+    }
+    return recreateTextureStorage(texture);
+}
+
 bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
 {
-    if (!m_defaultTextureReady)
+    if (!m_defaultTextureReady || !m_defaultCubeTextureReady)
         return false;
 
     for (const auto& uniform : program.uniforms) {
@@ -2301,32 +2351,58 @@ bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
             if (unit < 0 || unit >= static_cast<GCGLint>(m_boundTextures2D.size()))
                 return false;
 
-            TextureRecord* texture = nullptr;
-            auto name = m_boundTextures2D[unit];
+            const bool cubeSampler = uniform.type == GL_SAMPLER_CUBE_VALUE;
+            const PlatformGLObject name = cubeSampler ? m_boundTexturesCube[unit] : m_boundTextures2D[unit];
             auto found = m_textures.find(name);
-            if (uniform.type == GL_SAMPLER_2D_VALUE && name && found != m_textures.end() && found->second.storageCreated
+            TextureRecord* texture = nullptr;
+
+            if (!cubeSampler && name && found != m_textures.end()
+                && found->second.target == GL_TEXTURE_2D_VALUE && found->second.storageCreated
                 && !found->second.levels.empty() && !found->second.definedLevels.empty()
-                && found->second.definedLevels[0] && found->second.target == GL_TEXTURE_2D_VALUE) {
-                const bool needsMipmaps = uniform.type == GL_SAMPLER_2D_VALUE
-                    && (found->second.minFilter == GL_NEAREST_MIPMAP_NEAREST_VALUE
-                        || found->second.minFilter == GL_LINEAR_MIPMAP_NEAREST_VALUE
-                        || found->second.minFilter == GL_NEAREST_MIPMAP_LINEAR_VALUE
-                        || found->second.minFilter == GL_LINEAR_MIPMAP_LINEAR_VALUE);
+                && found->second.definedLevels[0]) {
+                const auto& candidate = found->second;
+                const bool needsMipmaps = candidate.minFilter == GL_NEAREST_MIPMAP_NEAREST_VALUE
+                    || candidate.minFilter == GL_LINEAR_MIPMAP_NEAREST_VALUE
+                    || candidate.minFilter == GL_NEAREST_MIPMAP_LINEAR_VALUE
+                    || candidate.minFilter == GL_LINEAR_MIPMAP_LINEAR_VALUE;
                 bool complete = true;
                 if (needsMipmaps) {
-                    for (bool defined : found->second.definedLevels)
+                    for (bool defined : candidate.definedLevels)
                         complete &= defined;
                     uint32_t expectedLevels = 1;
-                    for (uint32_t dimension = std::max(found->second.width, found->second.height);
+                    for (uint32_t dimension = std::max(candidate.width, candidate.height);
                          dimension > 1; dimension >>= 1)
                         ++expectedLevels;
-                    complete &= found->second.levels.size() == expectedLevels;
+                    complete &= candidate.levels.size() == expectedLevels;
+                }
+                if (complete)
+                    texture = &found->second;
+            } else if (cubeSampler && name && found != m_textures.end()
+                && found->second.target == GL_TEXTURE_CUBE_MAP_VALUE && found->second.storageCreated
+                && cubeTextureBaseComplete(found->second)) {
+                const auto& candidate = found->second;
+                const bool needsMipmaps = candidate.minFilter == GL_NEAREST_MIPMAP_NEAREST_VALUE
+                    || candidate.minFilter == GL_LINEAR_MIPMAP_NEAREST_VALUE
+                    || candidate.minFilter == GL_NEAREST_MIPMAP_LINEAR_VALUE
+                    || candidate.minFilter == GL_LINEAR_MIPMAP_LINEAR_VALUE;
+                bool complete = true;
+                if (needsMipmaps) {
+                    uint32_t expectedLevels = 1;
+                    for (uint32_t dimension = candidate.width; dimension > 1; dimension >>= 1)
+                        ++expectedLevels;
+                    for (size_t face = 0; face < candidate.cubeDefinedLevels.size(); ++face) {
+                        complete &= candidate.cubeLevels[face].size() == expectedLevels;
+                        complete &= candidate.cubeDefinedLevels[face].size() == expectedLevels;
+                        for (bool defined : candidate.cubeDefinedLevels[face])
+                            complete &= defined;
+                    }
                 }
                 if (complete)
                     texture = &found->second;
             }
+
             if (!texture)
-                texture = &m_defaultTexture;
+                texture = cubeSampler ? &m_defaultCubeTexture : &m_defaultTexture;
 
             applyTextureSampler(*texture);
             if (binding.vertexSamplerVar) {
@@ -2334,7 +2410,9 @@ bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
                 GX2SetVertexSampler(&texture->sampler, binding.vertexSamplerVar->location);
             }
             if (binding.pixelSamplerVar) {
-                GX2SetPixelTexture(&texture->native, binding.pixelSamplerVar->location);
+                GX2SetPixelTexture(&texture->native, binding.vertexSamplerVar
+                    ? binding.vertexSamplerVar->location
+                    : binding.pixelSamplerVar->location);
                 GX2SetPixelSampler(&texture->sampler, binding.pixelSamplerVar->location);
             }
         }
@@ -2352,10 +2430,24 @@ bool GraphicsContextGLWKC::initialize()
     m_defaultTexture.target = GL_TEXTURE_2D_VALUE;
     m_defaultTexture.width = 1;
     m_defaultTexture.height = 1;
+    m_defaultTexture.internalFormat = GL_RGBA_VALUE;
     m_defaultTexture.levels = { std::vector<uint8_t> { 0, 0, 0, 255 } };
     m_defaultTexture.definedLevels = { true };
     m_defaultTextureReady = recreateTextureStorage(m_defaultTexture);
-    return m_defaultTextureReady;
+
+    m_defaultCubeTexture.target = GL_TEXTURE_CUBE_MAP_VALUE;
+    m_defaultCubeTexture.cubeWidths.fill(1);
+    m_defaultCubeTexture.cubeHeights.fill(1);
+    m_defaultCubeTexture.cubeInternalFormats.fill(GL_RGBA_VALUE);
+    for (size_t face = 0; face < m_defaultCubeTexture.cubeLevels.size(); ++face) {
+        m_defaultCubeTexture.cubeLevels[face] = { std::vector<uint8_t> { 0, 0, 0, 255 } };
+        m_defaultCubeTexture.cubeDefinedLevels[face] = { true };
+    }
+    m_defaultCubeTexture.minFilter = GL_LINEAR_VALUE;
+    m_defaultCubeTexture.wrapS = GL_CLAMP_TO_EDGE_VALUE;
+    m_defaultCubeTexture.wrapT = GL_CLAMP_TO_EDGE_VALUE;
+    m_defaultCubeTextureReady = recreateTextureStorage(m_defaultCubeTexture);
+    return m_defaultTextureReady && m_defaultCubeTextureReady;
 }
 
 PlatformGLObject GraphicsContextGLWKC::nextShaderName()
