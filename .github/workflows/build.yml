@@ -61,7 +61,7 @@ jobs:
         id: install-build-tools
         run: |
           apt-get update -q
-          apt-get install -y ca-certificates cmake ninja-build python3 libicu-dev libssl-dev libcurl4-openssl-dev libsqlite3-dev libpsl-dev libxml2-dev gperf ruby perl ccache
+          apt-get install -y ca-certificates cmake ninja-build python3 libicu-dev libssl-dev libcurl4-openssl-dev libsqlite3-dev libpsl-dev libxml2-dev gperf ruby perl ccache skopeo
 
       # ccache makes the WKC modernization loop fast: object files are keyed on
       # preprocessed content, not mtime, so a fresh checkout (which re-stamps every
@@ -668,6 +668,59 @@ jobs:
               print('patched:', name)
           PY
 
+      - name: Install CafeGLSL Wii U runtime compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMAGE_DIR=/tmp/cafeglsl-wiiu-image
+          ROOTFS=/tmp/cafeglsl-wiiu-rootfs
+          rm -rf "$IMAGE_DIR" "$ROOTFS"
+          mkdir -p "$IMAGE_DIR" "$ROOTFS"
+          skopeo copy docker://ghcr.io/exzap/cafeglsl-wiiu:latest "dir:$IMAGE_DIR"
+          python3 - "$IMAGE_DIR" "$ROOTFS" <<'PY'
+          import json
+          import pathlib
+          import sys
+          import tarfile
+
+          image_dir = pathlib.Path(sys.argv[1])
+          root = pathlib.Path(sys.argv[2])
+          manifests = json.loads((image_dir / "manifest.json").read_text())
+          if not manifests:
+              raise SystemExit("CafeGLSL image manifest is empty")
+          for layer in manifests[0].get("Layers", []):
+              candidates = [
+                  image_dir / layer,
+                  image_dir / (layer + ".tar"),
+                  image_dir / layer.replace(":", "-"),
+                  image_dir / (layer.replace(":", "-") + ".tar"),
+              ]
+              archive = next((p for p in candidates if p.is_file()), None)
+              if archive is None:
+                  raise SystemExit(f"CafeGLSL image layer is missing: {layer}")
+              with tarfile.open(archive, "r:*") as tar:
+                  base = root.resolve()
+                  for member in tar.getmembers():
+                      destination = (root / member.name).resolve()
+                      if destination != base and base not in destination.parents:
+                          raise SystemExit(f"Unsafe CafeGLSL image path: {member.name}")
+                  tar.extractall(root)
+          PY
+          test -d "$ROOTFS/artifacts" || {
+            echo "CafeGLSL image did not contain /artifacts"
+            find "$ROOTFS" -maxdepth 4 -type f | head -80
+            exit 1
+          }
+          cp -a "$ROOTFS/artifacts/." "$DEVKITPRO/"
+          HEADER=$(find "$DEVKITPRO" -path '*/include/cafeglsl/CafeGLSLCompiler.h' -print -quit)
+          LIBRARY=$(find "$DEVKITPRO" -path '*/lib/libcafeglsl.a' -print -quit)
+          test -n "$HEADER" && test -n "$LIBRARY" || {
+            echo "CafeGLSL Wii U portlib header/library not found after extraction"
+            find "$DEVKITPRO" -name '*cafeglsl*' -o -name 'CafeGLSLCompiler.h' | head -100
+            exit 1
+          }
+          echo "CafeGLSL header: $HEADER"
+          echo "CafeGLSL library: $LIBRARY"
       - name: Configure (CMake)
         shell: bash
         run: |
@@ -690,6 +743,7 @@ jobs:
             -DWKC_ENABLE_GAMEPAD=ON \
             -DWKC_ENABLE_WEBRTC_API=ON \
             -DWKC_ENABLE_WEB_INSPECTOR=ON
+            -DWKC_ENABLE_WEBGL=ON
           ccache --zero-stats || true
 
       # Compile the GL-to-GX2 driver translation units independently of the
@@ -717,6 +771,7 @@ jobs:
               "Source/WebKit/WKC/webkit/OpenGLToGX2VertexArrays.cpp",
               "Source/WebKit/WKC/webkit/OpenGLToGX2WUTBackend.cpp",
               "Source/WebKit/WKC/webkit/OpenGLToGX2WUTResources.cpp",
+              "Source/WebCore/platform/graphics/WKC/GraphicsContextGLWKC.cpp",
           ]
           with open(workspace / "build/compile_commands.json", encoding="utf-8") as file:
               commands = json.load(file)
