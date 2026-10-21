@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ PDFJSViewerEnabled=true dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="resources/pdfjs-test.js"></script>
+</head>
+<body>
+<script>
+description("A PDF document should finish loading, so that embedders stop showing it as still loading.");
+jsTestIsAsync = true;
+
+(async () => {
+    const frame = loadPDFInFrame("resources/multi-page.pdf");
+    await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+    // Wait for the viewer too, so that the messages it logs are always in the same place.
+    await waitForPDFToLoad(frame);
+    pdfDocument = frame.contentDocument;
+    shouldBeEqualToString("pdfDocument.readyState", "complete");
+    finishJSTest();
+})();
+</script>
+</body>
+</html>
