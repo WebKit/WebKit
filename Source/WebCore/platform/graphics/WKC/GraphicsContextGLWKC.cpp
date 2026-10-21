@@ -2846,6 +2846,12 @@ GCGLint GraphicsContextGLWKC::getFramebufferAttachmentParameteri(GCGLenum target
         if (objectName)
             objectType = GL_RENDERBUFFER_VALUE;
         break;
+    case GL_DEPTH_STENCIL_ATTACHMENT_VALUE:
+        if (record.depthRenderbuffer && record.depthRenderbuffer == record.stencilRenderbuffer) {
+            objectName = record.depthRenderbuffer;
+            objectType = GL_RENDERBUFFER_VALUE;
+        }
+        break;
     default:
         addError(GL_INVALID_ENUM_VALUE);
         return 0;
