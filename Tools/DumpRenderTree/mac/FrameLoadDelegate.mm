@@ -138,7 +138,7 @@ IGNORE_WARNINGS_END
     [super dealloc];
 }
 
-- (void)dumpAfterWaitAttributeIsRemoved:(id)dummy
+- (void)dumpIfStillReady
 {
 #if PLATFORM(IOS_FAMILY)
     WebThreadLock();
@@ -147,6 +147,21 @@ IGNORE_WARNINGS_END
         [self performSelector:@selector(dumpAfterWaitAttributeIsRemoved:) withObject:nil afterDelay:0];
     else
         dump();
+}
+
+- (void)dumpAfterWaitAttributeIsRemoved:(id)dummy
+{
+#if PLATFORM(IOS_FAMILY)
+    WebThreadLock();
+#endif
+    if (WTR::hasTestWaitAttribute(mainFrame.globalContext))
+        [self performSelector:@selector(dumpAfterWaitAttributeIsRemoved:) withObject:nil afterDelay:0];
+    else {
+        RetainPtr<FrameLoadDelegate> strongSelf = self;
+        WTR::waitForDoubleRequestAnimationFrame(mainFrame.globalContext, [strongSelf] {
+            [strongSelf dumpIfStillReady];
+        });
+    }
 }
 
 - (void)readyToDumpState
@@ -176,6 +191,7 @@ IGNORE_WARNINGS_END
 - (void)resetToConsistentState
 {
     accessibilityController->resetToConsistentState();
+    WTR::cancelPendingDoubleRequestAnimationFrameWait(mainFrame.globalContext);
 }
 
 - (void)webView:(WebView *)webView locationChangeDone:(NSError *)error forDataSource:(WebDataSource *)dataSource
