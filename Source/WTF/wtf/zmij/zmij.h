@@ -331,7 +331,7 @@ template <typename = void> struct pow10_data {
       {0xd94ad8b1c7380874, 0x18375281ae7822bd},  //  313 (+1 ULP: see fixups)
       {0xdb68c2ca82ed2a05, 0xa67398db9f6820e1},  //  341
   };
-  static constexpr uint32_t fixups[] = {
+  static constexpr uint32_t fixups[21] = {
       0x8d8fc810, 0x06100293, 0x19000000, 0x00100000, 0x00000908, 0x00000000,
       0x04e00300, 0x3807e0b2, 0x3d83d793, 0x0006f5cc, 0x00000000, 0xffff0000,
       0x8076337d, 0x4ff45ba0, 0x09405033, 0x034376d9, 0x09000000, 0x4e100501,
