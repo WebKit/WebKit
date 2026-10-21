@@ -687,7 +687,9 @@ jobs:
 
           python3 - "$IMAGE_ARCHIVE" "$ROOTFS" <<'PY'
           import json
+          import os
           import pathlib
+          import shutil
           import sys
           import tarfile
 
@@ -695,16 +697,33 @@ jobs:
           root = pathlib.Path(sys.argv[2])
 
           def extract_layer(layer_archive, destination):
-              # The data filter rejects path traversal and unsafe link targets.
-              # Keep extraction inside the temporary root before copying only
-              # the published /artifacts subtree into DEVKITPRO.
+              # Older Python releases in devkitPro do not support tarfile's
+              # newer filter= argument. Validate each path ourselves and copy
+              # only regular files/directories; refusing links and special
+              # files also prevents a later member from escaping via a symlink.
+              base = destination.resolve()
               with tarfile.open(fileobj=layer_archive, mode="r:*") as layer:
-                  try:
-                      layer.extractall(destination, filter="data")
-                  except TypeError as error:
-                      raise SystemExit(
-                          "Python tarfile safety filters are required to unpack CafeGLSL layers."
-                      ) from error
+                  for member in layer.getmembers():
+                      name = pathlib.PurePosixPath(member.name)
+                      if name.is_absolute() or ".." in name.parts:
+                          raise SystemExit(f"Unsafe CafeGLSL image path: {member.name}")
+                      target = (destination / member.name).resolve()
+                      if target != base and base not in target.parents:
+                          raise SystemExit(f"Unsafe CafeGLSL image path: {member.name}")
+                      if member.issym() or member.islnk() or member.isdev():
+                          raise SystemExit(f"Unsupported link/special file in CafeGLSL layer: {member.name}")
+                      if not member.isdir() and not member.isfile():
+                          continue
+                      if member.isdir():
+                          target.mkdir(parents=True, exist_ok=True)
+                          continue
+                      source = layer.extractfile(member)
+                      if source is None:
+                          raise SystemExit(f"Unreadable CafeGLSL image file: {member.name}")
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      with source, target.open("wb") as output:
+                          shutil.copyfileobj(source, output)
+                      os.chmod(target, member.mode & 0o777)
 
           with tarfile.open(archive_path, mode="r:*") as image:
               manifest_file = image.extractfile("manifest.json")
