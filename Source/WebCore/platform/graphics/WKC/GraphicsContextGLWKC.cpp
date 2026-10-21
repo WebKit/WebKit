@@ -3380,13 +3380,13 @@ void GraphicsContextGLWKC::getShaderPrecisionFormat(GCGLenum shaderType,
 
     switch (precisionType) {
     case 0x8DF0: // GL_LOW_FLOAT
-        range[0] = -8; range[1] = 8; *precision = 8;
+        range[0] = 8; range[1] = 8; *precision = 8;
         return;
     case 0x8DF1: // GL_MEDIUM_FLOAT
-        range[0] = -14; range[1] = 14; *precision = 10;
+        range[0] = 14; range[1] = 14; *precision = 10;
         return;
     case 0x8DF2: // GL_HIGH_FLOAT
-        range[0] = -126; range[1] = 127; *precision = 23;
+        range[0] = 127; range[1] = 127; *precision = 23;
         return;
     case 0x8DF3: // GL_LOW_INT
         range[0] = 7; range[1] = 6; *precision = 0;
