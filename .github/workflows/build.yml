@@ -786,7 +786,7 @@ jobs:
                   else:
                       rewritten.append(line)
               if changed:
-                  header.write_text("\\n".join(rewritten) + "\\n")
+                  header.write_text("\n".join(rewritten) + "\n")
               else:
                   # Newer CafeGLSL headers can include WUT's GX2 definitions
                   # directly. In that case no compatibility rewrite is needed.
