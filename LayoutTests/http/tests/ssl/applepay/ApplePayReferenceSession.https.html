@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ApplePayReferenceSessionEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+
+description("Test the ApplePayReferenceSession scaffolding: construction and prepare().");
+
+window.jsTestIsAsync = true;
+
+const request = { clientIdentifier: "com.example.client" };
+let session;
+
+// Logs only the error name, since the bindings word their own TypeErrors.
+function shouldThrowNamed(expression, name) {
+    try {
+        eval(expression);
+        testFailed(`${expression} did not throw.`);
+    } catch (e) {
+        if (e.name === name)
+            testPassed(`${expression} threw ${name}.`);
+        else
+            testFailed(`${expression} threw ${e.name}, not ${name}: ${e.message}`);
+    }
+}
+
+async function shouldRejectNamed(expression, name) {
+    try {
+        await eval(expression);
+        testFailed(`${expression} resolved.`);
+    } catch (e) {
+        if (e.name === name)
+            testPassed(`${expression} rejected with ${name}.`);
+        else
+            testFailed(`${expression} rejected with ${e.name}, not ${name}: ${e.message}`);
+    }
+}
+
+window.onload = async () => {
+    shouldBeEqualToString("typeof ApplePayReferenceSession", "function");
+    shouldThrowNamed("new ApplePayReferenceSession()", "TypeError");
+    shouldThrowNamed("new ApplePayReferenceSession({})", "TypeError");
+    shouldNotThrow("session = new ApplePayReferenceSession(request)");
+    debug("");
+
+    await shouldRejectNamed("session.prepare()", "NotSupportedError");
+    debug("");
+
+    finishJSTest();
+};
+
+</script>
+</body>
+</html>

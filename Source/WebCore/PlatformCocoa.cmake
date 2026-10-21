@@ -1498,6 +1498,8 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayPaymentTokenContext.idl
     Modules/applepay/ApplePayRecurringPaymentDateUnit.idl
     Modules/applepay/ApplePayRecurringPaymentRequest.idl
+    Modules/applepay/ApplePayReferenceRequest.idl
+    Modules/applepay/ApplePayReferenceSession.idl
     Modules/applepay/ApplePayRequestBase.idl
     Modules/applepay/ApplePaySession.idl
     Modules/applepay/ApplePaySessionError.idl

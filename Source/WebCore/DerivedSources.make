@@ -254,6 +254,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/applepay/ApplePayPaymentTokenContext.idl \
     $(WebCore)/Modules/applepay/ApplePayRecurringPaymentDateUnit.idl \
     $(WebCore)/Modules/applepay/ApplePayRecurringPaymentRequest.idl \
+    $(WebCore)/Modules/applepay/ApplePayReferenceRequest.idl \
+    $(WebCore)/Modules/applepay/ApplePayReferenceSession.idl \
     $(WebCore)/Modules/applepay/ApplePayRequestBase.idl \
     $(WebCore)/Modules/applepay/ApplePaySession.idl \
     $(WebCore)/Modules/applepay/ApplePaySessionError.idl \

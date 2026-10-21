@@ -389,6 +389,8 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentTiming.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentTokenContext.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayRecurringPaymentDateUnit.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayRecurringPaymentRequest.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayReferenceRequest.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayReferenceSession.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayRequestBase.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySession.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySessionError.idl
