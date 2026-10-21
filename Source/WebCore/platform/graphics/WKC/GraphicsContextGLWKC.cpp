@@ -1018,6 +1018,7 @@ private:
     bool allocateRenderbufferStorage(RenderbufferRecord&, GCGLenum, uint32_t, uint32_t);
     GCGLenum framebufferStatus(PlatformGLObject) const;
     void refreshFramebufferTarget();
+    void refreshFramebufferTextureViews();
     bool framebufferReadyForDraw();
     void detachFramebufferTexture(PlatformGLObject);
     void detachFramebufferRenderbuffer(PlatformGLObject);
@@ -2475,11 +2476,328 @@ void GraphicsContextGLWKC::bindBuffer(GCGLenum target,PlatformGLObject name)
     if(mapped==WKC::GLGX2::BufferTarget::ElementArray &&
        m_vertexArrays.setElementBuffer(name,m_buffers)!=WKC::GLGX2::VertexArrayResult::Ok) addError(GL_INVALID_OPERATION_VALUE);
 }
-void GraphicsContextGLWKC::bindFramebuffer(GCGLenum target,PlatformGLObject name)
+void GraphicsContextGLWKC::bindFramebuffer(GCGLenum target, PlatformGLObject name)
 {
-    if(target!=GL_FRAMEBUFFER_VALUE) { addError(GL_INVALID_ENUM_VALUE); return; }
-    if(name) { addError(GL_INVALID_OPERATION_VALUE); return; }
-    m_boundFramebuffer=0; WKC::GLGX2::bindWUTRenderTarget(m_native);
+    if (target != GL_FRAMEBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (name && !m_framebuffers.contains(name)) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    m_boundFramebuffer = name;
+    refreshFramebufferTarget();
+}
+
+PlatformGLObject GraphicsContextGLWKC::createFramebuffer()
+{
+    const auto name = nextFramebufferName();
+    if (!name) {
+        addError(GL_OUT_OF_MEMORY_VALUE);
+        return 0;
+    }
+    m_framebuffers.emplace(name, FramebufferRecord {});
+    return name;
+}
+
+void GraphicsContextGLWKC::deleteFramebuffer(PlatformGLObject name)
+{
+    if (!name)
+        return;
+    auto framebuffer = m_framebuffers.find(name);
+    if (framebuffer == m_framebuffers.end())
+        return;
+    m_framebuffers.erase(framebuffer);
+    if (m_boundFramebuffer == name) {
+        m_boundFramebuffer = 0;
+        refreshFramebufferTarget();
+    }
+}
+
+GCGLboolean GraphicsContextGLWKC::isFramebuffer(PlatformGLObject name)
+{
+    return name && m_framebuffers.contains(name);
+}
+
+PlatformGLObject GraphicsContextGLWKC::createRenderbuffer()
+{
+    const auto name = nextRenderbufferName();
+    if (!name) {
+        addError(GL_OUT_OF_MEMORY_VALUE);
+        return 0;
+    }
+    m_renderbuffers.emplace(name, RenderbufferRecord {});
+    return name;
+}
+
+void GraphicsContextGLWKC::deleteRenderbuffer(PlatformGLObject name)
+{
+    if (!name)
+        return;
+    auto renderbuffer = m_renderbuffers.find(name);
+    if (renderbuffer == m_renderbuffers.end())
+        return;
+    detachFramebufferRenderbuffer(name);
+    if (m_boundRenderbuffer == name)
+        m_boundRenderbuffer = 0;
+    releaseRenderbufferStorage(renderbuffer->second);
+    m_renderbuffers.erase(renderbuffer);
+    refreshFramebufferTarget();
+}
+
+GCGLboolean GraphicsContextGLWKC::isRenderbuffer(PlatformGLObject name)
+{
+    return name && m_renderbuffers.contains(name);
+}
+
+void GraphicsContextGLWKC::bindRenderbuffer(GCGLenum target, PlatformGLObject name)
+{
+    if (target != GL_RENDERBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (name && !m_renderbuffers.contains(name)) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    m_boundRenderbuffer = name;
+}
+
+void GraphicsContextGLWKC::renderbufferStorage(GCGLenum target, GCGLenum internalFormat,
+    GCGLsizei width, GCGLsizei height)
+{
+    if (target != GL_RENDERBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (width < 0 || height < 0) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    auto renderbuffer = m_renderbuffers.find(m_boundRenderbuffer);
+    if (!m_boundRenderbuffer || renderbuffer == m_renderbuffers.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    if (!allocateRenderbufferStorage(renderbuffer->second, internalFormat,
+            static_cast<uint32_t>(width), static_cast<uint32_t>(height))) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    refreshFramebufferTarget();
+}
+
+void GraphicsContextGLWKC::framebufferRenderbuffer(GCGLenum target, GCGLenum attachment,
+    GCGLenum renderbufferTarget, PlatformGLObject name)
+{
+    if (target != GL_FRAMEBUFFER_VALUE || renderbufferTarget != GL_RENDERBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+    if (!m_boundFramebuffer || framebuffer == m_framebuffers.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    RenderbufferRecord* renderbuffer = nullptr;
+    if (name) {
+        auto found = m_renderbuffers.find(name);
+        if (found == m_renderbuffers.end()) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        renderbuffer = &found->second;
+    }
+
+    auto& record = framebuffer->second;
+    switch (attachment) {
+    case GL_COLOR_ATTACHMENT0_VALUE:
+        if (renderbuffer && !renderbuffer->isColor) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        record.colorRenderbuffer = name;
+        record.colorTexture = 0;
+        record.colorTextureLevel = 0;
+        record.textureColorView = {};
+        record.textureColorViewReady = false;
+        break;
+    case GL_DEPTH_ATTACHMENT_VALUE:
+        if (renderbuffer && !renderbuffer->hasDepth) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        record.depthRenderbuffer = name;
+        break;
+    case GL_STENCIL_ATTACHMENT_VALUE:
+        if (renderbuffer && !renderbuffer->hasStencil) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        record.stencilRenderbuffer = name;
+        break;
+    case GL_DEPTH_STENCIL_ATTACHMENT_VALUE:
+        if (renderbuffer && (!renderbuffer->hasDepth || !renderbuffer->hasStencil)) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        record.depthRenderbuffer = name;
+        record.stencilRenderbuffer = name;
+        break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    refreshFramebufferTarget();
+}
+
+void GraphicsContextGLWKC::framebufferTexture2D(GCGLenum target, GCGLenum attachment,
+    GCGLenum textureTarget, PlatformGLObject name, GCGLint level)
+{
+    if (target != GL_FRAMEBUFFER_VALUE || textureTarget != GL_TEXTURE_2D_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (attachment != GL_COLOR_ATTACHMENT0_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+    if (!m_boundFramebuffer || framebuffer == m_framebuffers.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    if (level < 0 || level != 0) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+
+    if (name) {
+        auto texture = m_textures.find(name);
+        if (texture == m_textures.end() || texture->second.target != GL_TEXTURE_2D_VALUE) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        if (!texture->second.storageCreated || texture->second.definedLevels.empty()
+            || !texture->second.definedLevels[0]) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+    }
+
+    auto& record = framebuffer->second;
+    record.colorTexture = name;
+    record.colorTextureLevel = level;
+    record.colorRenderbuffer = 0;
+    record.textureColorView = {};
+    record.textureColorViewReady = false;
+    refreshFramebufferTextureViews();
+    refreshFramebufferTarget();
+}
+
+GCGLint GraphicsContextGLWKC::getFramebufferAttachmentParameteri(GCGLenum target,
+    GCGLenum attachment, GCGLenum pname)
+{
+    if (target != GL_FRAMEBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+    auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+    if (!m_boundFramebuffer || framebuffer == m_framebuffers.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return 0;
+    }
+
+    PlatformGLObject objectName = 0;
+    GCGLenum objectType = 0;
+    GCGLint textureLevel = 0;
+    const auto& record = framebuffer->second;
+    switch (attachment) {
+    case GL_COLOR_ATTACHMENT0_VALUE:
+        if (record.colorTexture) {
+            objectName = record.colorTexture;
+            objectType = GL_TEXTURE_OBJECT_VALUE;
+            textureLevel = record.colorTextureLevel;
+        } else if (record.colorRenderbuffer) {
+            objectName = record.colorRenderbuffer;
+            objectType = GL_RENDERBUFFER_VALUE;
+        }
+        break;
+    case GL_DEPTH_ATTACHMENT_VALUE:
+        objectName = record.depthRenderbuffer;
+        if (objectName)
+            objectType = GL_RENDERBUFFER_VALUE;
+        break;
+    case GL_STENCIL_ATTACHMENT_VALUE:
+        objectName = record.stencilRenderbuffer;
+        if (objectName)
+            objectType = GL_RENDERBUFFER_VALUE;
+        break;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+
+    switch (pname) {
+    case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_VALUE:
+        return objectType;
+    case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_VALUE:
+        return objectName;
+    case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE:
+        if (objectType != GL_TEXTURE_OBJECT_VALUE && pname == GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE)
+            return 0;
+        return textureLevel;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+}
+
+GCGLint GraphicsContextGLWKC::getRenderbufferParameteri(GCGLenum target, GCGLenum pname)
+{
+    if (target != GL_RENDERBUFFER_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
+    auto found = m_renderbuffers.find(m_boundRenderbuffer);
+    if (!m_boundRenderbuffer || found == m_renderbuffers.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return 0;
+    }
+    const auto& renderbuffer = found->second;
+    switch (pname) {
+    case GL_RENDERBUFFER_WIDTH_VALUE: return renderbuffer.width;
+    case GL_RENDERBUFFER_HEIGHT_VALUE: return renderbuffer.height;
+    case GL_RENDERBUFFER_INTERNAL_FORMAT_VALUE: return renderbuffer.internalFormat;
+    case GL_RENDERBUFFER_RED_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_RGBA4_VALUE) return 4;
+        if (renderbuffer.internalFormat == GL_RGB5_A1_VALUE || renderbuffer.internalFormat == GL_RGB565_VALUE) return 5;
+        return 0;
+    case GL_RENDERBUFFER_GREEN_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_RGBA4_VALUE) return 4;
+        if (renderbuffer.internalFormat == GL_RGB5_A1_VALUE) return 5;
+        if (renderbuffer.internalFormat == GL_RGB565_VALUE) return 6;
+        return 0;
+    case GL_RENDERBUFFER_BLUE_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_RGBA4_VALUE) return 4;
+        if (renderbuffer.internalFormat == GL_RGB5_A1_VALUE || renderbuffer.internalFormat == GL_RGB565_VALUE) return 5;
+        return 0;
+    case GL_RENDERBUFFER_ALPHA_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_RGBA4_VALUE) return 4;
+        if (renderbuffer.internalFormat == GL_RGB5_A1_VALUE) return 1;
+        return 0;
+    case GL_RENDERBUFFER_DEPTH_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_DEPTH_COMPONENT16_VALUE) return 16;
+        if (renderbuffer.internalFormat == GL_DEPTH_STENCIL_VALUE) return 24;
+        return 0;
+    case GL_RENDERBUFFER_STENCIL_SIZE_VALUE:
+        if (renderbuffer.internalFormat == GL_STENCIL_INDEX8_VALUE || renderbuffer.internalFormat == GL_DEPTH_STENCIL_VALUE) return 8;
+        return 0;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return 0;
+    }
 }
 void GraphicsContextGLWKC::blendColor(GCGLclampf r,GCGLclampf g,GCGLclampf b,GCGLclampf a)
 { addDriverError(m_driver.setBlendColor({r,g,b,a}),"blendColor"); }
