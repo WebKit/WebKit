@@ -2134,29 +2134,36 @@ void GraphicsContextGLWKC::readPixelsBufferObject(IntRect rect, GCGLenum format,
 void GraphicsContextGLWKC::copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalFormat,
     GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border)
 {
-    if (target != GL_TEXTURE_2D_VALUE || (internalFormat != GL_RGB_VALUE && internalFormat != GL_RGBA_VALUE)) {
+    const bool is2D = target == GL_TEXTURE_2D_VALUE;
+    const bool isCubeFace = target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE
+        && target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE;
+    if ((!is2D && !isCubeFace) || (internalFormat != GL_RGB_VALUE && internalFormat != GL_RGBA_VALUE)) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
+    const GCGLint maximumTextureSize = isCubeFace ? maxCubeMapTextureSize() : maxTextureSize();
     if (level < 0 || level >= 13 || width < 0 || height < 0 || border
-        || width > maxTextureSize() || height > maxTextureSize()) {
+        || width > maximumTextureSize || height > maximumTextureSize) {
         addError(GL_INVALID_VALUE_VALUE);
         return;
     }
-    auto* texture = boundTexture2D();
+    TextureRecord* texture = is2D ? boundTexture2D() : boundTextureCubeMap();
     if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
+
     if (m_boundFramebuffer) {
         auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
         if (framebuffer != m_framebuffers.end() && framebuffer->second.colorTexture
-            && m_textures.contains(framebuffer->second.colorTexture)
-            && &m_textures.find(framebuffer->second.colorTexture)->second == texture) {
+            && framebuffer->second.colorTexture == m_boundTextures2D[m_activeTextureUnit]
+            && (!isCubeFace || (framebuffer->second.colorTextureIsCubeFace
+                && framebuffer->second.colorTextureFace == target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE))) {
             addError(GL_INVALID_OPERATION_VALUE);
             return;
         }
     }
+
     std::vector<uint8_t> rgba(static_cast<size_t>(width) * height * 4, 0);
     if (!readPixelsInto(IntRect(x, y, width, height), GL_RGBA_VALUE, GL_UNSIGNED_BYTE_VALUE,
             rgba, 4, 0, false)) {
@@ -2176,7 +2183,10 @@ void GraphicsContextGLWKC::copyTexImage2D(GCGLenum target, GCGLint level, GCGLen
 void GraphicsContextGLWKC::copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset,
     GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    const bool is2D = target == GL_TEXTURE_2D_VALUE;
+    const bool isCubeFace = target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE
+        && target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE;
+    if (!is2D && !isCubeFace) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
@@ -2184,23 +2194,43 @@ void GraphicsContextGLWKC::copyTexSubImage2D(GCGLenum target, GCGLint level, GCG
         addError(GL_INVALID_VALUE_VALUE);
         return;
     }
-    auto* texture = boundTexture2D();
-    if (!texture || !texture->storageCreated || static_cast<size_t>(level) >= texture->levels.size()
-        || !texture->definedLevels[level]) {
+    TextureRecord* texture = is2D ? boundTexture2D() : boundTextureCubeMap();
+    if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
+
+    const uint32_t face = isCubeFace ? target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE : 0;
+    uint32_t baseWidth = texture->width;
+    uint32_t baseHeight = texture->height;
+    GCGLenum internalFormat = texture->internalFormat;
+    bool levelDefined = texture->storageCreated && static_cast<size_t>(level) < texture->definedLevels.size()
+        && texture->definedLevels[level];
+    if (isCubeFace) {
+        baseWidth = texture->cubeWidths[face];
+        baseHeight = texture->cubeHeights[face];
+        internalFormat = texture->cubeInternalFormats[face];
+        levelDefined = static_cast<size_t>(level) < texture->cubeDefinedLevels[face].size()
+            && texture->cubeDefinedLevels[face][level];
+    }
+    if (!baseWidth || !baseHeight || !levelDefined) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+
     if (m_boundFramebuffer) {
         auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
         if (framebuffer != m_framebuffers.end() && framebuffer->second.colorTexture
-            && m_textures.contains(framebuffer->second.colorTexture)
-            && &m_textures.find(framebuffer->second.colorTexture)->second == texture) {
+            && framebuffer->second.colorTexture == (is2D ? m_boundTextures2D[m_activeTextureUnit] : m_boundTexturesCube[m_activeTextureUnit])
+            && (!isCubeFace || (framebuffer->second.colorTextureIsCubeFace
+                && framebuffer->second.colorTextureFace == face))) {
             addError(GL_INVALID_OPERATION_VALUE);
             return;
         }
     }
-    const uint32_t levelWidth = std::max<uint32_t>(1, texture->width >> level);
-    const uint32_t levelHeight = std::max<uint32_t>(1, texture->height >> level);
+
+    const uint32_t levelWidth = std::max<uint32_t>(1, baseWidth >> level);
+    const uint32_t levelHeight = std::max<uint32_t>(1, baseHeight >> level);
     if (static_cast<uint32_t>(xoffset) > levelWidth || static_cast<uint32_t>(yoffset) > levelHeight
         || static_cast<uint32_t>(width) > levelWidth - static_cast<uint32_t>(xoffset)
         || static_cast<uint32_t>(height) > levelHeight - static_cast<uint32_t>(yoffset)) {
@@ -2216,7 +2246,7 @@ void GraphicsContextGLWKC::copyTexSubImage2D(GCGLenum target, GCGLint level, GCG
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
-    const GCGLenum format = texture->internalFormat == GL_RGB_VALUE ? GL_RGB_VALUE : GL_RGBA_VALUE;
+    const GCGLenum format = internalFormat == GL_RGB_VALUE ? GL_RGB_VALUE : GL_RGBA_VALUE;
     std::vector<uint8_t> pixels;
     std::span<const uint8_t> source = rgba;
     if (format == GL_RGB_VALUE) {
@@ -2984,11 +3014,12 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
             return;
         }
         if (is2D) {
-            releaseTextureStorage(*texture);
             texture->width = texture->height = 0;
             texture->internalFormat = internalformat;
             texture->levels.clear();
             texture->definedLevels.clear();
+            if (!recreateTextureStorage(*texture))
+                addError(GL_OUT_OF_MEMORY_VALUE);
         } else {
             const uint32_t face = target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE;
             texture->cubeWidths[face] = texture->cubeHeights[face] = 0;
@@ -3062,7 +3093,6 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
 
     if (is2D) {
         if (!level) {
-            releaseTextureStorage(*texture);
             texture->width = static_cast<uint32_t>(width);
             texture->height = static_cast<uint32_t>(height);
             texture->internalFormat = internalformat;
