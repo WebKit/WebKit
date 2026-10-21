@@ -1116,8 +1116,8 @@ void main() {
         R"(void ANGLE__0_main(thread ANGLE_FragmentOut & ANGLE_fragmentOut, thread ANGLE_FragmentIn & ANGLE_fragmentIn)
 {
   metal::int4 _uii = ANGLE_ftoi<metal::int4>(ANGLE_fragmentIn._ui);
-  _uii = ANGLE_addAssignInt(_uii, 2);
-  _uii = ANGLE_subAssignInt(_uii, 3);
+  _uii = ANGLE_addInt(_uii, 2);
+  _uii = ANGLE_subInt(_uii, 3);
   _uii = ANGLE_imul(_uii, 4);
   _uii = ANGLE_div(_uii, 5);
   _uii = ANGLE_imod(_uii, 6);
