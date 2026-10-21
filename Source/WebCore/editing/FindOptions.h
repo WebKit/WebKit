@@ -42,6 +42,7 @@ enum class FindOption : uint16_t {
     AtWordEnds = 1 << 7,
     DoNotTraverseFlatTree = 1 << 8,
     DoNotSetSelection = 1 << 9,
+    IcuOnlyWordBoundaries = 1 << 10
 };
 
 using FindOptions = OptionSet<FindOption>;
