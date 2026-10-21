@@ -467,6 +467,16 @@ file(GLOB_RECURSE WEBCORE_PLATFORM_SOURCES
     ${WEBCORE_DIR}/platform/text/WKC/*.cpp
 )
 
+# The current GraphicsContextGL base class is normally selected from Sources.txt
+# only in the full-WebCore profile. The WKC WebGL adapter depends on its common
+# error mapping, context-attribute storage and pixel-buffer helpers even during
+# the smaller bootstrap profile, so compile it explicitly and only once.
+if (WKC_ENABLE_WEBGL)
+    list(APPEND WEBCORE_PLATFORM_SOURCES
+        ${WEBCORE_DIR}/platform/graphics/GraphicsContextGL.cpp
+    )
+endif ()
+
 # A full in-process page engine must compile the WKC ResourceHandle bridge.
 # Modern WebKit's default ResourceHandle.cpp delegates networking to the
 # separate NetworkProcess, which this single-process Wii U port does not run.
