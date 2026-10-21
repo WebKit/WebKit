@@ -155,15 +155,24 @@ size_t WebBackForwardListFrameItem::insertionIndexForChild(std::optional<WebCore
 {
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     RefPtr parentFrame = frame ? frame->parentFrame() : nullptr;
-    auto siblingIndex = frame ? frame->indexInFrameTreeSiblings() : std::nullopt;
-    if (!parentFrame || !siblingIndex)
+    if (!parentFrame)
+        return m_children.size();
+
+    auto& siblingFrames = parentFrame->childFrames();
+    auto iterator = siblingFrames.find(frame.get());
+    if (iterator == siblingFrames.end()) {
+        ASSERT_NOT_REACHED("This frame should be in its parent's child frames");
+        return m_children.size();
+    }
+
+    HashSet<WebCore::FrameIdentifier> laterSiblingFrameIDs;
+    for (++iterator; iterator != siblingFrames.end(); ++iterator)
+        laterSiblingFrameIDs.add((*iterator)->frameID());
+    if (laterSiblingFrameIDs.isEmpty())
         return m_children.size();
 
     for (size_t i = 0; i < m_children.size(); ++i) {
-        RefPtr siblingFrame = WebFrameProxy::webFrame(m_children[i]->frameID());
-        if (!siblingFrame || siblingFrame->parentFrame() != parentFrame)
-            continue;
-        if (auto index = siblingFrame->indexInFrameTreeSiblings(); index && *index > *siblingIndex)
+        if (auto childFrameID = m_children[i]->frameID(); childFrameID && laterSiblingFrameIDs.contains(*childFrameID))
             return i;
     }
     return m_children.size();
