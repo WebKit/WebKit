@@ -48,8 +48,16 @@ namespace WebKit {
 
 using namespace WebCore;
 
-BrowsingContextGroup::BrowsingContextGroup(CrossOriginMode crossOriginMode)
+#if ASSERT_ENABLED
+static bool processHasModes(const WebProcessProxy& process, const BrowsingContextGroupModes& modes)
+{
+    return process.isDummyProcessProxy() || process.processPool().usesSingleWebProcess() || modes.matches(process);
+}
+#endif
+
+BrowsingContextGroup::BrowsingContextGroup(CrossOriginMode crossOriginMode, const BrowsingContextGroupModes& modes)
     : m_crossOriginMode(crossOriginMode)
+    , m_modes(modes)
 {
 }
 
@@ -67,6 +75,8 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
 {
     if (!preferences.siteIsolationEnabled() || !preferences.siteIsolationSharedProcessEnabled())
         return completionHandler(nullptr);
+
+    ASSERT(protect(pageConfiguration.processPool())->usesSingleWebProcess() || m_modes.matches(lockdownMode, enhancedSecurity, websiteDataStore));
 
     if (site.isEmpty() || hasProcessForSite(site) || m_crossOriginMode == CrossOriginMode::Isolated)
         return completionHandler(nullptr);
@@ -111,6 +121,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
 
     if (existingSharedProcess) {
         ASSERT(existingSharedProcess->isSharedProcess());
+        ASSERT(processHasModes(existingSharedProcess->process(), m_modes));
         RELEASE_ASSERT(!existingSharedProcess->process().isInProcessCache());
         existingSharedProcess->process().addSharedProcessDomain(site.domain());
         BROWSINGCONTEXTGROUP_RELEASE_LOG("sharedProcessForSite: site %" SENSITIVE_LOG_STRING " joined shared process %d, which now hosts %u sites", site.loggingString().utf8(), existingSharedProcess->process().processID(), m_sharedProcessSites.size());
@@ -135,9 +146,15 @@ bool BrowsingContextGroup::canUseProcessForCrossOriginIsolation(const WebProcess
     return process.crossOriginIsolation() != ProcessCrossOriginIsolation::BrowsingContextGroup;
 }
 
+bool BrowsingContextGroup::canUseProcessForCrossOriginIsolationAndModes(const WebProcessProxy& process) const
+{
+    return canUseProcessForCrossOriginIsolation(process) && m_modes.matches(process);
+}
+
 Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate)
 {
     ASSERT(process.isDummyProcessProxy() || canUseProcessForCrossOriginIsolation(process));
+    ASSERT(!preferences.siteIsolationEnabled() || processHasModes(process, m_modes));
 
     if (preferences.siteIsolationEnabled()) {
         RefPtr sharedProcess = liveSharedProcess();
@@ -286,9 +303,9 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
 // (e.g. data:, blob:, file:) all collapse to the same key in m_processMap, so they
 // never represented a unique site-to-process binding; replacing them is benign.
 // Otherwise the previous FrameProcess must be used by at most the one frame the navigation causing
-// this replacement is replacing, so it is destroyed when that navigation commits. Navigations that
-// would move a site away from a FrameProcess other frames still need are declined before they get
-// this far (see canMoveSiteToEnhancedSecurityProcess in WebPageProxy.cpp).
+// this replacement is replacing, so it is destroyed when that navigation commits. A navigation in the
+// group never needs another process for a site the group has a live process for, as all of the
+// group's processes have its modes.
 static bool canReplaceFrameProcessInProcessMap(const WebCore::Site& site, const FrameProcess& existing)
 {
     if (existing.process().state() == WebProcessProxy::State::Terminated)
@@ -304,6 +321,7 @@ bool BrowsingContextGroup::addFrameProcessWithoutInjectingPageContext(FrameProce
     auto key = processMapKey(process);
     if (m_processMap.get(key) == &process)
         return false;
+    ASSERT(processHasModes(process.process(), m_modes));
     ASSERT(!m_processMap.get(key) || canReplaceFrameProcessInProcessMap(key.first, *m_processMap.get(key)));
     m_processMap.set(WTF::move(key), process);
     return true;

@@ -519,7 +519,7 @@ static void runHttpToHttpsRedirectNoEnhancedSecurityProcess(bool useSiteIsolatio
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpToHttpsRedirectNoEnhancedSecurityProcess)
 
-static void runIframeKeepsSiteOutOfEnhancedSecurityProcess(bool useSiteIsolation)
+static void runIframeDoesNotKeepSiteOutOfEnhancedSecurityProcess(bool useSiteIsolation)
 {
     HTTPServer plaintextServer({
         { "http://insecure.example.internal/iframe"_s, { "<script>alert('iframe-in-page')</script>"_s } },
@@ -535,23 +535,23 @@ static void runIframeKeepsSiteOutOfEnhancedSecurityProcess(bool useSiteIsolation
         { "iframe-in-page"_s, ExpectedEnhancedSecurity::Disabled }
     });
 
+    auto pidWithIframeAlive = [webView _webProcessIdentifier];
+
     loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/first", {
-        { "with-iframe-alive"_s, ExpectedEnhancedSecurity::Disabled }
+        { "with-iframe-alive"_s, ExpectedEnhancedSecurity::Enabled }
     });
 
     EXPECT_WK_STREQ([webView URL].absoluteString, @"http://insecure.example.internal/first");
-
-    auto pidWithoutEnhancedSecurity = [webView _webProcessIdentifier];
+    EXPECT_NE([webView _webProcessIdentifier], pidWithIframeAlive);
 
     loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/second", {
         { "after-iframe-gone"_s, ExpectedEnhancedSecurity::Enabled }
     });
 
     EXPECT_WK_STREQ([webView URL].absoluteString, @"http://insecure.example.internal/second");
-    EXPECT_NE([webView _webProcessIdentifier], pidWithoutEnhancedSecurity);
     EXPECT_EQ(plaintextServer.totalRequests(), 3u);
 }
-TEST_WITH_SITE_ISOLATION(IframeKeepsSiteOutOfEnhancedSecurityProcess)
+TEST_WITH_SITE_ISOLATION(IframeDoesNotKeepSiteOutOfEnhancedSecurityProcess)
 
 TEST(EnhancedSecurityPolicies, IframeInSharedProcessDoesNotKeepSiteOutOfEnhancedSecurityProcess)
 {

@@ -267,9 +267,10 @@ BrowsingContextGroup* PageConfiguration::preferredBrowsingContextGroup() const
     if (auto opener = openerInfo())
         return opener->browsingContextGroup.ptr();
 
-    // Only an opener can bring a page into a cross-origin-isolated group.
-    if (auto relatedPage = this->relatedPage()) {
-        if (!relatedPage->isClosed() && relatedPage->browsingContextGroup().crossOriginMode() == WebCore::CrossOriginMode::Shared)
+    // Only an opener can bring a page into a cross-origin-isolated group, or into a group with other modes.
+    if (auto relatedPage = this->relatedPage(); relatedPage && !relatedPage->isClosed() && relatedPage->browsingContextGroup().crossOriginMode() == WebCore::CrossOriginMode::Shared) {
+        auto modes = BrowsingContextGroupModes::forConfiguration(*this);
+        if (relatedPage->browsingContextGroup().modes().matches(modes.lockdownMode, modes.enhancedSecurity, websiteDataStore()))
             return &relatedPage->browsingContextGroup();
     }
 

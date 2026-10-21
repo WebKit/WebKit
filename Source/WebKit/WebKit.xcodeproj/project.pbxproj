@@ -6807,6 +6807,8 @@
 		5176354F146186C311E0E0A1 /* AgentClusterRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AgentClusterRequest.h; sourceTree = "<group>"; };
 		5C6D69352AC3935D0099BDAF /* BrowsingContextGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BrowsingContextGroup.cpp; sourceTree = "<group>"; };
 		5C6D69362AC3935D0099BDAF /* BrowsingContextGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BrowsingContextGroup.h; sourceTree = "<group>"; };
+		5C6D69372AC3935D0099BDAF /* BrowsingContextGroupModes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BrowsingContextGroupModes.cpp; sourceTree = "<group>"; };
+		5C6D69382AC3935D0099BDAF /* BrowsingContextGroupModes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BrowsingContextGroupModes.h; sourceTree = "<group>"; };
 		5C6E7D86232361E700C2159D /* WKWebsiteDataStoreConfigurationRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsiteDataStoreConfigurationRef.h; sourceTree = "<group>"; };
 		5C6E7D87232361E700C2159D /* WKWebsiteDataStoreConfigurationRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebsiteDataStoreConfigurationRef.cpp; sourceTree = "<group>"; };
 		5C74300E21500492004BFA17 /* WKWebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcess.h; sourceTree = "<group>"; };
@@ -16352,6 +16354,8 @@
 				46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */,
 				5C6D69352AC3935D0099BDAF /* BrowsingContextGroup.cpp */,
 				5C6D69362AC3935D0099BDAF /* BrowsingContextGroup.h */,
+				5C6D69372AC3935D0099BDAF /* BrowsingContextGroupModes.cpp */,
+				5C6D69382AC3935D0099BDAF /* BrowsingContextGroupModes.h */,
 				5CA98549210BEB5A0057EB6B /* BrowsingWarning.h */,
 				07297F9C1C1711EA003F0735 /* DeviceIdHashSaltStorage.cpp */,
 				07297F9D1C17BBEA223F0735 /* DeviceIdHashSaltStorage.h */,

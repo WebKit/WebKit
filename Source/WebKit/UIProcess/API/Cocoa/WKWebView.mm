@@ -648,8 +648,11 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
         RetainPtr relatedWebViewProcessPool = [relatedWebView->_configuration processPool];
         if (processPool && processPool != relatedWebViewProcessPool)
             [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has process pool %@ but configuration specifies a different process pool %@", relatedWebView.get(), relatedWebViewProcessPool.get(), retainPtr(configuration.processPool).get()];
-        if ([relatedWebView->_configuration websiteDataStore] != [_configuration websiteDataStore] && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExceptionsForRelatedWebViewsUsingDifferentDataStores))
-            [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has data store %@ but configuration specifies a different data store %@", relatedWebView.get(), retainPtr([relatedWebView->_configuration websiteDataStore]).get(), retainPtr([_configuration websiteDataStore]).get()];
+        // A popup gets the data store its opener uses, which can differ from the one its opener was configured with.
+        RetainPtr websiteDataStore = [_configuration websiteDataStore];
+        bool usesDataStoreOfRelatedWebView = websiteDataStore == [relatedWebView->_configuration websiteDataStore] || (relatedWebView->_page && websiteDataStore->_websiteDataStore.get() == &relatedWebView->_page->websiteDataStore());
+        if (!usesDataStoreOfRelatedWebView && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExceptionsForRelatedWebViewsUsingDifferentDataStores))
+            [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has data store %@ but configuration specifies a different data store %@", relatedWebView.get(), retainPtr([relatedWebView->_configuration websiteDataStore]).get(), websiteDataStore.get()];
 
         [_configuration setProcessPool:relatedWebViewProcessPool.get()];
     }
