@@ -1499,8 +1499,9 @@ GCGLboolean GraphicsContextGLWKC::isProgram(PlatformGLObject name)
 
 GCGLboolean GraphicsContextGLWKC::isShader(PlatformGLObject name)
 {
-    auto it = m_shaders.find(name);
-    return name && it != m_shaders.end() && !it->second.deletePending;
+    // A delete-pending shader remains a valid object while programs still
+    // reference it; deleting the shader only schedules its final destruction.
+    return name && m_shaders.contains(name);
 }
 
 GCGLboolean GraphicsContextGLWKC::isEnabled(GCGLenum capability)
