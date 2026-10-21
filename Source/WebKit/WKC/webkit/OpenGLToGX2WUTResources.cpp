@@ -842,6 +842,138 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
     return true;
 }
 
+
+bool drawVertexArrayArrays(void* context, Primitive primitive, uint32_t first,
+    uint32_t count, uint32_t instances)
+{
+    if (!count || !instances)
+        return true;
+    if (count > UINT32_MAX / sizeof(uint32_t)
+        || static_cast<uint64_t>(first) + count - 1 > UINT32_MAX)
+        return false;
+
+    auto& resources = *static_cast<WUTBufferResources*>(context);
+    GX2PrimitiveMode mode;
+    switch (primitive) {
+    case Primitive::Points: mode = GX2_PRIMITIVE_MODE_POINTS; break;
+    case Primitive::Lines: mode = GX2_PRIMITIVE_MODE_LINES; break;
+    case Primitive::LineStrip: mode = GX2_PRIMITIVE_MODE_LINE_STRIP; break;
+    case Primitive::Triangles: mode = GX2_PRIMITIVE_MODE_TRIANGLES; break;
+    case Primitive::TriangleStrip: mode = GX2_PRIMITIVE_MODE_TRIANGLE_STRIP; break;
+    case Primitive::TriangleFan: mode = GX2_PRIMITIVE_MODE_TRIANGLE_FAN; break;
+    default: return false;
+    }
+
+    const uint32_t lastVertex = first + count - 1;
+    bool requiresAttributeExpansion = false;
+
+    // Validate every enabled vertex/instance stream before submitting work.
+    // Packed U8/I8/U16/I16/half-float vec3 attributes need a staged fourth
+    // component because GX2 has no native three-lane fetch encoding for them.
+    for (const auto& entry : resources.attributes) {
+        const auto& attribute = entry.second;
+        if (!attribute.enabled)
+            continue;
+
+        auto vertexBuffer = resources.buffers.find(attribute.buffer);
+        if (!attribute.buffer || vertexBuffer == resources.buffers.end()
+            || !vertexBuffer->second || !vertexBuffer->second->buffer)
+            return false;
+
+        const size_t vertexCapacity = static_cast<size_t>(vertexBuffer->second->elemSize)
+            * vertexBuffer->second->elemCount;
+        const size_t scalarSize = attribute.sourceType == AttributeType::Byte
+            || attribute.sourceType == AttributeType::UnsignedByte ? 1
+            : attribute.sourceType == AttributeType::Short
+                || attribute.sourceType == AttributeType::UnsignedShort
+                || attribute.sourceType == AttributeType::HalfFloat ? 2 : 4;
+        const size_t elementSize = scalarSize * attribute.components;
+        const size_t stride = attribute.stride ? attribute.stride : elementSize;
+        if (!stride || attribute.offset > vertexCapacity
+            || elementSize > vertexCapacity - attribute.offset)
+            return false;
+
+        const size_t available = vertexCapacity - attribute.offset;
+        const uint64_t lastElement = attribute.divisor
+            ? (static_cast<uint64_t>(instances) - 1) / attribute.divisor
+            : lastVertex;
+        if (lastElement > (available - elementSize) / stride)
+            return false;
+
+        requiresAttributeExpansion |= attribute.components == 3
+            && (attribute.sourceType == AttributeType::Byte
+                || attribute.sourceType == AttributeType::UnsignedByte
+                || attribute.sourceType == AttributeType::Short
+                || attribute.sourceType == AttributeType::UnsignedShort
+                || attribute.sourceType == AttributeType::HalfFloat);
+    }
+
+    if (!requiresAttributeExpansion) {
+        if (!prepareWUTProgramForDraw(resources))
+            return false;
+        GX2DrawEx(mode, count, first, instances);
+        return true;
+    }
+
+    // Reuse the indexed staging path for precisely the cases that GX2 cannot
+    // fetch safely in-place. Sequential indices preserve drawArrays semantics,
+    // including first, while the shared path widens indices, expands vec3 data,
+    // binds the active linked shaders/fetch program, and drains GX2 before it
+    // frees temporary GPU buffers.
+    GX2RBuffer sequentialIndices {};
+    sequentialIndices.flags = static_cast<GX2RResourceFlags>(
+        GX2R_RESOURCE_BIND_INDEX_BUFFER
+        | GX2R_RESOURCE_USAGE_CPU_READ
+        | GX2R_RESOURCE_USAGE_CPU_WRITE
+        | GX2R_RESOURCE_USAGE_GPU_READ);
+    sequentialIndices.elemSize = sizeof(uint32_t);
+    sequentialIndices.elemCount = count;
+    if (!GX2RCreateBuffer(&sequentialIndices))
+        return false;
+
+    void* indexMemory = GX2RLockBufferEx(&sequentialIndices,
+        static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+    if (!indexMemory) {
+        GX2RDestroyBufferEx(&sequentialIndices, sequentialIndices.flags);
+        return false;
+    }
+
+    auto* indices = static_cast<uint32_t*>(indexMemory);
+    for (uint32_t i = 0; i < count; ++i)
+        indices[i] = first + i;
+    GX2RUnlockBufferEx(&sequentialIndices,
+        static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+
+    BufferName temporaryName = std::numeric_limits<BufferName>::max();
+    while (!temporaryName || resources.buffers.find(temporaryName) != resources.buffers.end()) {
+        if (temporaryName == 1) {
+            GX2RDestroyBufferEx(&sequentialIndices, sequentialIndices.flags);
+            return false;
+        }
+        --temporaryName;
+    }
+
+    try {
+        resources.buffers.emplace(temporaryName, &sequentialIndices);
+    } catch (...) {
+        GX2RDestroyBufferEx(&sequentialIndices, sequentialIndices.flags);
+        return false;
+    }
+
+    IndexedDraw draw;
+    draw.primitive = primitive;
+    draw.count = count;
+    draw.instances = instances;
+    draw.indexBytes = sizeof(uint32_t);
+    draw.indexOffset = 0;
+    draw.baseVertex = 0;
+    const bool succeeded = drawVertexArrayIndexed(&resources, draw, temporaryName);
+
+    resources.buffers.erase(temporaryName);
+    GX2RDestroyBufferEx(&sequentialIndices, sequentialIndices.flags);
+    return succeeded;
+}
+
 VertexArrayBackend makeWUTVertexArrayBackend(WUTBufferResources& resources)
 {
     VertexArrayBackend backend;
