@@ -5,6 +5,9 @@
 #include <gx2r/resource.h>
 #include <gx2/draw.h>
 #include <gx2/event.h>
+#include <gx2/shaders.h>
+#include <coreinit/cache.h>
+#include <coreinit/memdefaultheap.h>
 
 #include <cstring>
 #include <limits>
@@ -98,6 +101,13 @@ bool destroyBuffer(void* context, BufferName name)
         if (binding.second == name)
             binding.second = 0;
     }
+    for (auto& attribute : resources.attributes) {
+        if (attribute.second.buffer == name) {
+            attribute.second.buffer = 0;
+            attribute.second.enabled = false;
+            resources.fetchShaderDirty = true;
+        }
+    }
     return true;
 }
 
@@ -115,6 +125,122 @@ bool bindBuffer(void* context, BufferTarget target, BufferName name)
 // range, and keeps staging allocations alive until GX2DrawDone().
 
 } // namespace
+
+WUTBufferResources::~WUTBufferResources()
+{
+    if (fetchShaderProgramBuffer)
+        MEMFreeToDefaultHeap(fetchShaderProgramBuffer);
+    fetchShaderProgramBuffer = nullptr;
+    fetchShaderProgramBufferSize = 0;
+}
+
+bool setWUTLinkedProgram(WUTBufferResources& resources, const GX2VertexShader& vertexShader,
+    const GX2PixelShader& pixelShader, GX2ShaderMode mode,
+    const WUTLinkedAttribute* bindings, size_t bindingCount)
+{
+    if (!vertexShader.program || !vertexShader.size || !pixelShader.program || !pixelShader.size
+        || vertexShader.mode != mode || pixelShader.mode != mode
+        || (bindingCount && !bindings))
+        return false;
+
+    std::vector<WUTBufferResources::AttributeBinding> linked;
+    try {
+        linked.reserve(bindingCount);
+        for (size_t i = 0; i < bindingCount; ++i) {
+            if (!bindings[i].shaderInputName || !*bindings[i].shaderInputName)
+                return false;
+            for (size_t j = 0; j < i; ++j) {
+                if (bindings[j].attributeIndex == bindings[i].attributeIndex
+                    || !std::strcmp(bindings[j].shaderInputName, bindings[i].shaderInputName))
+                    return false;
+            }
+            linked.push_back({ bindings[i].attributeIndex, bindings[i].shaderInputName });
+        }
+    } catch (...) {
+        return false;
+    }
+
+    // The caller retains ownership of the compiler's GX2 shader objects. This
+    // context keeps references until the linked program is replaced or deleted.
+    resources.vertexShader = &vertexShader;
+    resources.pixelShader = &pixelShader;
+    resources.shaderMode = mode;
+    resources.linkedAttributes = std::move(linked);
+    resources.fetchShaderDirty = true;
+    return true;
+}
+
+bool prepareWUTProgramForDraw(WUTBufferResources& resources)
+{
+    if (!resources.vertexShader || !resources.pixelShader
+        || !resources.vertexShader->program || !resources.vertexShader->size
+        || !resources.pixelShader->program || !resources.pixelShader->size
+        || resources.vertexShader->mode != resources.shaderMode
+        || resources.pixelShader->mode != resources.shaderMode)
+        return false;
+
+    if (resources.fetchShaderDirty) {
+        std::vector<WUTLinkedAttribute> bindings;
+        std::vector<GX2AttribStream> streams;
+        try {
+            bindings.reserve(resources.linkedAttributes.size());
+            for (const auto& binding : resources.linkedAttributes)
+                bindings.push_back({ binding.attributeIndex, binding.shaderInputName.c_str() });
+        } catch (...) {
+            return false;
+        }
+
+        // An empty vertex-input interface is legal (for example, shaders that
+        // synthesize positions). Build an empty fetch program rather than
+        // assuming there must be at least one enabled GL attribute.
+        if (!buildWUTAttributeStreams(resources, *resources.vertexShader,
+                bindings.data(), bindings.size(), streams)) {
+            if (!streams.empty())
+                return false;
+            for (const auto& entry : resources.attributes) {
+                if (entry.second.enabled)
+                    return false;
+            }
+            for (const auto& binding : resources.linkedAttributes) {
+                (void)binding;
+            }
+        }
+
+        const auto fetchType = GX2_FETCH_SHADER_TESSELLATION_NONE;
+        const auto tessellationMode = GX2_TESSELLATION_MODE_DISCRETE;
+        const uint32_t requiredSize = GX2CalcFetchShaderSizeEx(
+            static_cast<uint32_t>(streams.size()), fetchType, tessellationMode);
+        if (!requiredSize)
+            return false;
+
+        if (!resources.fetchShaderProgramBuffer
+            || resources.fetchShaderProgramBufferSize < requiredSize) {
+            void* replacement = MEMAllocFromDefaultHeapEx(requiredSize, GX2_SHADER_PROGRAM_ALIGNMENT);
+            if (!replacement)
+                return false;
+            if (resources.fetchShaderProgramBuffer)
+                MEMFreeToDefaultHeap(resources.fetchShaderProgramBuffer);
+            resources.fetchShaderProgramBuffer = replacement;
+            resources.fetchShaderProgramBufferSize = requiredSize;
+        }
+
+        if (reinterpret_cast<uintptr_t>(resources.fetchShaderProgramBuffer)
+            & (GX2_SHADER_PROGRAM_ALIGNMENT - 1))
+            return false;
+
+        GX2InitFetchShaderEx(&resources.fetchShader,
+            static_cast<uint8_t*>(resources.fetchShaderProgramBuffer),
+            static_cast<uint32_t>(streams.size()), streams.data(), fetchType, tessellationMode);
+        DCFlushRange(resources.fetchShaderProgramBuffer, requiredSize);
+        resources.fetchShaderDirty = false;
+    }
+
+    GX2SetShaderMode(resources.shaderMode);
+    GX2SetVertexShader(resources.vertexShader);
+    GX2SetPixelShader(resources.pixelShader);
+    GX2SetFetchShader(&resources.fetchShader);
+    return true;
+}
 
 BufferBackend makeWUTBufferBackend(WUTBufferResources& resources)
 {
@@ -256,6 +382,7 @@ bool setAttribute(void* context, uint8_t attribute, const VertexAttribute& value
         ? GX2_ATTRIB_INDEX_PER_INSTANCE : GX2_ATTRIB_INDEX_PER_VERTEX;
     descriptor.enabled = value.enabled;
     resources.attributes[attribute] = descriptor;
+    resources.fetchShaderDirty = true;
     return true;
 }
 
@@ -640,6 +767,12 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
     std::memcpy(stagedIndexMemory, indices.data(), indices.size() * sizeof(uint32_t));
     GX2RUnlockBufferEx(&stagedIndices,
         static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+
+    if (!prepareWUTProgramForDraw(resources)) {
+        GX2RDestroyBufferEx(&stagedIndices, stagedIndices.flags);
+        destroyStagedAttributes();
+        return false;
+    }
 
     for (const auto& staged : stagedAttributes)
         GX2SetAttribBuffer(staged.location,
