@@ -97,6 +97,9 @@ constexpr GCGLenum GL_UNSIGNED_BYTE_VALUE = 0x1401;
 constexpr GCGLenum GL_SHORT_VALUE = 0x1402;
 constexpr GCGLenum GL_UNSIGNED_SHORT_VALUE = 0x1403;
 constexpr GCGLenum GL_HALF_FLOAT_VALUE = 0x140B;
+constexpr GCGLenum GL_UNSIGNED_SHORT_5_6_5_VALUE = 0x8363;
+constexpr GCGLenum GL_UNSIGNED_SHORT_4_4_4_4_VALUE = 0x8033;
+constexpr GCGLenum GL_UNSIGNED_SHORT_5_5_5_1_VALUE = 0x8034;
 constexpr GCGLenum GL_BLEND_VALUE = 0x0BE2;
 constexpr GCGLenum GL_CULL_FACE_VALUE = 0x0B44;
 constexpr GCGLenum GL_DEPTH_TEST_VALUE = 0x0B71;
@@ -1140,7 +1143,17 @@ bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
     GCGLsizei width, GCGLsizei height, std::span<const uint8_t> pixels,
     std::vector<uint8_t>& output) const
 {
-    if (width < 0 || height < 0 || type != GL_UNSIGNED_BYTE_VALUE)
+    if (width < 0 || height < 0)
+        return false;
+
+    const bool packed565 = type == GL_UNSIGNED_SHORT_5_6_5_VALUE;
+    const bool packed4444 = type == GL_UNSIGNED_SHORT_4_4_4_4_VALUE;
+    const bool packed5551 = type == GL_UNSIGNED_SHORT_5_5_5_1_VALUE;
+    const bool packed = packed565 || packed4444 || packed5551;
+    if (type != GL_UNSIGNED_BYTE_VALUE && !packed)
+        return false;
+    if ((packed565 && format != GL_RGB_VALUE)
+        || ((packed4444 || packed5551) && format != GL_RGBA_VALUE))
         return false;
 
     uint32_t sourceComponents = 0;
@@ -1170,8 +1183,8 @@ bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
     if (!width || !height)
         return true;
     if (pixels.empty()) {
-        // GL expands legacy WebGL 1 formats to RGBA. A missing source buffer is
-        // security-initialized to zero in the source format before expansion.
+        // GL initializes a missing source buffer to zero in the source format
+        // before expanding legacy WebGL 1 formats to RGBA.
         for (size_t pixel = 0; pixel < w * h; ++pixel) {
             uint8_t* destination = output.data() + pixel * 4;
             if (format == GL_ALPHA_VALUE)
@@ -1182,18 +1195,50 @@ bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
         return true;
     }
 
-    const size_t sourceRowBytes = w * sourceComponents;
+    const size_t sourcePixelBytes = packed ? sizeof(uint16_t) : sourceComponents;
+    if (w > std::numeric_limits<size_t>::max() / sourcePixelBytes)
+        return false;
+    const size_t sourceRowBytes = w * sourcePixelBytes;
     const size_t alignment = static_cast<size_t>(m_unpackAlignment);
+    if (sourceRowBytes > std::numeric_limits<size_t>::max() - (alignment - 1))
+        return false;
     const size_t sourceStride = (sourceRowBytes + alignment - 1) & ~(alignment - 1);
+    if (h - 1 > (std::numeric_limits<size_t>::max() - sourceRowBytes) / sourceStride)
+        return false;
     const size_t requiredBytes = (h - 1) * sourceStride + sourceRowBytes;
     if (pixels.size() < requiredBytes)
         return false;
 
+    auto expandBits = [](uint32_t value, uint32_t maxValue) -> uint8_t {
+        return static_cast<uint8_t>((value * 255U + maxValue / 2U) / maxValue);
+    };
     for (size_t y = 0; y < h; ++y) {
         const uint8_t* row = pixels.data() + y * sourceStride;
         for (size_t x = 0; x < w; ++x) {
-            const uint8_t* source = row + x * sourceComponents;
             uint8_t* destination = output.data() + (y * w + x) * 4;
+            if (packed) {
+                uint16_t value = 0;
+                std::memcpy(&value, row + x * sizeof(value), sizeof(value));
+                if (packed565) {
+                    destination[0] = expandBits((value >> 11) & 0x1f, 0x1f);
+                    destination[1] = expandBits((value >> 5) & 0x3f, 0x3f);
+                    destination[2] = expandBits(value & 0x1f, 0x1f);
+                    destination[3] = 255;
+                } else if (packed4444) {
+                    destination[0] = expandBits((value >> 12) & 0x0f, 0x0f);
+                    destination[1] = expandBits((value >> 8) & 0x0f, 0x0f);
+                    destination[2] = expandBits((value >> 4) & 0x0f, 0x0f);
+                    destination[3] = expandBits(value & 0x0f, 0x0f);
+                } else {
+                    destination[0] = expandBits((value >> 11) & 0x1f, 0x1f);
+                    destination[1] = expandBits((value >> 6) & 0x1f, 0x1f);
+                    destination[2] = expandBits((value >> 1) & 0x1f, 0x1f);
+                    destination[3] = (value & 1) ? 255 : 0;
+                }
+                continue;
+            }
+
+            const uint8_t* source = row + x * sourceComponents;
             switch (format) {
             case GL_ALPHA_VALUE:
                 destination[0] = destination[1] = destination[2] = 255;
