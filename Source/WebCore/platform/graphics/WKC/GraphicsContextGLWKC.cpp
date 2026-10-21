@@ -121,6 +121,11 @@ constexpr GCGLenum GL_VIEWPORT_VALUE = 0x0BA2;
 constexpr GCGLenum GL_COLOR_CLEAR_VALUE_VALUE = 0x0C22;
 constexpr GCGLenum GL_DEPTH_CLEAR_VALUE_VALUE = 0x0B73;
 constexpr GCGLenum GL_DEPTH_RANGE_VALUE = 0x0B70;
+constexpr GCGLenum GL_DEPTH_WRITEMASK_VALUE = 0x0B72;
+constexpr GCGLenum GL_COLOR_WRITEMASK_VALUE = 0x0C23;
+constexpr GCGLenum GL_ACTIVE_TEXTURE_QUERY_VALUE = 0x84E0;
+constexpr GCGLenum GL_CURRENT_PROGRAM_VALUE = 0x8B8D;
+constexpr GCGLenum GL_VERTEX_ARRAY_BINDING_VALUE = 0x85B5;
 constexpr GCGLenum GL_TEXTURE_2D_VALUE = 0x0DE1;
 constexpr GCGLenum GL_TEXTURE_MIN_FILTER_VALUE = 0x2801;
 constexpr GCGLenum GL_TEXTURE_MAG_FILTER_VALUE = 0x2800;
@@ -390,7 +395,7 @@ public:
 
     GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) override;
 
-    void getBooleanv(GCGLenum pname, std::span<GCGLboolean> value) override { notImplemented(); }
+    void getBooleanv(GCGLenum pname, std::span<GCGLboolean> value) override;
 
     GCGLErrorCodeSet getErrors() override;
 
@@ -1162,8 +1167,20 @@ bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
     if (w && h > std::numeric_limits<size_t>::max() / w / 4)
         return false;
     output.assign(w * h * 4, 0);
-    if (!width || !height || pixels.empty())
+    if (!width || !height)
         return true;
+    if (pixels.empty()) {
+        // GL expands legacy WebGL 1 formats to RGBA. A missing source buffer is
+        // security-initialized to zero in the source format before expansion.
+        for (size_t pixel = 0; pixel < w * h; ++pixel) {
+            uint8_t* destination = output.data() + pixel * 4;
+            if (format == GL_ALPHA_VALUE)
+                destination[0] = destination[1] = destination[2] = 255;
+            else if (format == GL_RGB_VALUE || format == GL_LUMINANCE_VALUE)
+                destination[3] = 255;
+        }
+        return true;
+    }
 
     const size_t sourceRowBytes = w * sourceComponents;
     const size_t alignment = static_cast<size_t>(m_unpackAlignment);
@@ -2239,6 +2256,31 @@ CString GraphicsContextGLWKC::getString(GCGLenum n)
     case GL_VERSION_VALUE:return CString("WebGL 1.0 (GX2)");case GL_SHADING_LANGUAGE_VERSION_VALUE:return CString("OpenGL ES GLSL ES 1.00 (CafeGLSL)");
     case GL_EXTENSIONS_VALUE:return CString("");default:addError(GL_INVALID_ENUM_VALUE);return CString();}
 }
+void GraphicsContextGLWKC::getBooleanv(GCGLenum pname, std::span<GCGLboolean> output)
+{
+    std::fill(output.begin(), output.end(), false);
+    if (output.empty())
+        return;
+    switch (pname) {
+    case GL_DEPTH_WRITEMASK_VALUE:
+        output[0] = m_native.depthWriteEnabled;
+        return;
+    case GL_COLOR_WRITEMASK_VALUE:
+        if (output.size() < 4) {
+            addError(GL_INVALID_VALUE_VALUE);
+            return;
+        }
+        output[0] = m_native.colorMask.red;
+        output[1] = m_native.colorMask.green;
+        output[2] = m_native.colorMask.blue;
+        output[3] = m_native.colorMask.alpha;
+        return;
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+}
+
 void GraphicsContextGLWKC::getFloatv(GCGLenum n,std::span<GCGLfloat> v)
 {
     std::fill(v.begin(),v.end(),0.0f);
@@ -2253,6 +2295,11 @@ void GraphicsContextGLWKC::getIntegerv(GCGLenum n,std::span<GCGLint> v)
     case GL_ELEMENT_ARRAY_BUFFER_BINDING_VALUE:v[0]=m_vertexArrays.elementBuffer();return;
     case GL_FRAMEBUFFER_BINDING_VALUE:v[0]=m_boundFramebuffer;return;
     case GL_TEXTURE_BINDING_2D_VALUE:v[0]=m_boundTextures2D[m_activeTextureUnit];return;
+    case GL_ACTIVE_TEXTURE_QUERY_VALUE:v[0]=GL_TEXTURE0_VALUE + m_activeTextureUnit;return;
+    case GL_CURRENT_PROGRAM_VALUE:v[0]=m_currentProgram;return;
+    case GL_VERTEX_ARRAY_BINDING_VALUE:v[0]=m_vertexArrays.bound();return;
+    case GL_UNPACK_ALIGNMENT_VALUE:v[0]=m_unpackAlignment;return;
+    case GL_PACK_ALIGNMENT_VALUE:v[0]=m_packAlignment;return;
     case GL_MAX_VERTEX_ATTRIBS_VALUE:v[0]=maxVertexAttribs();return;case GL_MAX_TEXTURE_SIZE_VALUE:v[0]=maxTextureSize();return;
     case GL_MAX_CUBE_MAP_TEXTURE_SIZE_VALUE:v[0]=maxCubeMapTextureSize();return;case GL_MAX_RENDERBUFFER_SIZE_VALUE:v[0]=maxRenderbufferSize();return;
     case GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS_VALUE:v[0]=maxCombinedTextureImageUnits();return;
