@@ -1346,7 +1346,7 @@ void GraphicsContextGLWKC::enable(GCGLenum cap)
 void GraphicsContextGLWKC::enableVertexAttribArray(GCGLuint i)
 {if(i>=32||m_vertexArrays.enableAttribute(i,true)!=WKC::GLGX2::VertexArrayResult::Ok)addError(i>=32?GL_INVALID_VALUE_VALUE:GL_INVALID_OPERATION_VALUE);}
 void GraphicsContextGLWKC::finish(){GX2DrawDone();}
-void GraphicsContextGLWKC::flush(){GX2Flush();}
+void GraphicsContextGLWKC::flush(){GX2DrawDone();}
 void GraphicsContextGLWKC::frontFace(GCGLenum m)
 {
     WKC::GLGX2::Winding w;if(m==0x0900)w=WKC::GLGX2::Winding::Clockwise;else if(m==0x0901)w=WKC::GLGX2::Winding::CounterClockwise;
