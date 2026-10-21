@@ -1800,6 +1800,265 @@ bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
     return true;
 }
 
+bool GraphicsContextGLWKC::readPixelsInto(IntRect rect, GCGLenum format, GCGLenum type,
+    std::span<uint8_t> output, GCGLint packAlignment, GCGLint packRowLength,
+    GCGLboolean packReverseRowOrder)
+{
+    if ((format != GL_RGBA_VALUE && format != GL_RGB_VALUE) || type != GL_UNSIGNED_BYTE_VALUE)
+        return false;
+    if (packAlignment != 1 && packAlignment != 2 && packAlignment != 4 && packAlignment != 8)
+        return false;
+    if (packRowLength < 0 || (packRowLength && packRowLength < rect.width()))
+        return false;
+    if (rect.width() < 0 || rect.height() < 0)
+        return false;
+
+    const size_t width = static_cast<size_t>(rect.width());
+    const size_t height = static_cast<size_t>(rect.height());
+    const size_t components = format == GL_RGBA_VALUE ? 4 : 3;
+    const size_t rowPixels = packRowLength ? static_cast<size_t>(packRowLength) : width;
+    if (rowPixels && rowPixels > std::numeric_limits<size_t>::max() / components)
+        return false;
+    const size_t rowBytes = rowPixels * components;
+    const size_t alignment = static_cast<size_t>(packAlignment);
+    if (rowBytes > std::numeric_limits<size_t>::max() - (alignment - 1))
+        return false;
+    const size_t rowStride = (rowBytes + alignment - 1) & ~(alignment - 1);
+    if (height && rowStride && height - 1 > (std::numeric_limits<size_t>::max() - rowBytes) / rowStride)
+        return false;
+    const size_t requiredBytes = height ? (height - 1) * rowStride + width * components : 0;
+    if (output.size() < requiredBytes)
+        return false;
+    std::fill(output.begin(), output.end(), 0);
+    if (!width || !height)
+        return true;
+
+    const GX2ColorBuffer* colorBuffer = m_native.colorBuffer;
+    if (!colorBuffer || !colorBuffer->surface.image || !colorBuffer->surface.width
+        || !colorBuffer->surface.height)
+        return true;
+
+    const auto& source = colorBuffer->surface;
+    GX2Surface staging {};
+    staging.dim = GX2_SURFACE_DIM_TEXTURE_2D;
+    staging.width = source.width;
+    staging.height = source.height;
+    staging.depth = 1;
+    staging.mipLevels = 1;
+    staging.format = source.format;
+    staging.aa = GX2_AA_MODE1X;
+    staging.use = GX2_SURFACE_USE_TEXTURE;
+    staging.tileMode = GX2_TILE_MODE_LINEAR_ALIGNED;
+    GX2CalcSurfaceSizeAndAlignment(&staging);
+    const auto stagingFlags = static_cast<GX2RResourceFlags>(
+        GX2R_RESOURCE_BIND_TEXTURE | GX2R_RESOURCE_USAGE_CPU_READ | GX2R_RESOURCE_USAGE_GPU_WRITE);
+    if (!staging.imageSize || !staging.alignment || !GX2RCreateSurface(&staging, stagingFlags))
+        return false;
+
+    GX2DrawDone();
+    GX2CopySurface(&source, 0, 0, &staging, 0, 0);
+    GX2DrawDone();
+    DCInvalidateRange(staging.image, staging.imageSize);
+
+    const uint32_t bytesPerPixel = [&]() -> uint32_t {
+        switch (source.format) {
+        case GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8: return 4;
+        case GX2_SURFACE_FORMAT_UNORM_R4_G4_B4_A4:
+        case GX2_SURFACE_FORMAT_UNORM_R5_G5_B5_A1:
+        case GX2_SURFACE_FORMAT_UNORM_R5_G6_B5: return 2;
+        default: return 0;
+        }
+    }();
+
+    bool validFormat = bytesPerPixel != 0;
+    if (validFormat) {
+        for (size_t row = 0; row < height; ++row) {
+            const int32_t sourceY = static_cast<int32_t>(source.height) - 1 - (rect.y() + static_cast<int32_t>(row));
+            if (sourceY < 0 || sourceY >= static_cast<int32_t>(source.height))
+                continue;
+            const size_t destinationRow = packReverseRowOrder ? height - 1 - row : row;
+            uint8_t* destination = output.data() + destinationRow * rowStride;
+            for (size_t column = 0; column < width; ++column) {
+                const int32_t sourceX = rect.x() + static_cast<int32_t>(column);
+                if (sourceX < 0 || sourceX >= static_cast<int32_t>(source.width))
+                    continue;
+                const size_t sourceOffset = (static_cast<size_t>(sourceY) * staging.pitch
+                    + static_cast<size_t>(sourceX)) * bytesPerPixel;
+                uint8_t rgba[4] { 0, 0, 0, 255 };
+                if (sourceOffset + bytesPerPixel > staging.imageSize) {
+                    validFormat = false;
+                    break;
+                }
+                if (source.format == GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8) {
+                    std::memcpy(rgba, static_cast<const uint8_t*>(staging.image) + sourceOffset, 4);
+                } else {
+                    uint16_t packed = 0;
+                    std::memcpy(&packed, static_cast<const uint8_t*>(staging.image) + sourceOffset, sizeof(packed));
+                    auto expand = [](uint32_t value, uint32_t maxValue) -> uint8_t {
+                        return static_cast<uint8_t>((value * 255U + maxValue / 2U) / maxValue);
+                    };
+                    if (source.format == GX2_SURFACE_FORMAT_UNORM_R4_G4_B4_A4) {
+                        rgba[0] = expand((packed >> 12) & 0x0f, 0x0f);
+                        rgba[1] = expand((packed >> 8) & 0x0f, 0x0f);
+                        rgba[2] = expand((packed >> 4) & 0x0f, 0x0f);
+                        rgba[3] = expand(packed & 0x0f, 0x0f);
+                    } else if (source.format == GX2_SURFACE_FORMAT_UNORM_R5_G5_B5_A1) {
+                        rgba[0] = expand((packed >> 11) & 0x1f, 0x1f);
+                        rgba[1] = expand((packed >> 6) & 0x1f, 0x1f);
+                        rgba[2] = expand((packed >> 1) & 0x1f, 0x1f);
+                        rgba[3] = (packed & 1) ? 255 : 0;
+                    } else {
+                        rgba[0] = expand((packed >> 11) & 0x1f, 0x1f);
+                        rgba[1] = expand((packed >> 5) & 0x3f, 0x3f);
+                        rgba[2] = expand(packed & 0x1f, 0x1f);
+                    }
+                }
+                uint8_t* pixel = destination + column * components;
+                std::memcpy(pixel, rgba, components);
+            }
+            if (!validFormat)
+                break;
+        }
+    }
+    GX2RDestroySurfaceEx(&staging, stagingFlags);
+    return validFormat;
+}
+
+void GraphicsContextGLWKC::readPixels(IntRect rect, GCGLenum format, GCGLenum type,
+    std::span<uint8_t> data, GCGLint packAlignment, GCGLint packRowLength,
+    GCGLboolean packReverseRowOrder)
+{
+    if (format != GL_RGBA_VALUE && format != GL_RGB_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (type != GL_UNSIGNED_BYTE_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (packAlignment != 1 && packAlignment != 2 && packAlignment != 4 && packAlignment != 8) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    if (packRowLength < 0 || (packRowLength && packRowLength < rect.width())) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    if (!readPixelsInto(rect, format, type, data, packAlignment, packRowLength, packReverseRowOrder))
+        addError(GL_INVALID_OPERATION_VALUE);
+}
+
+void GraphicsContextGLWKC::readPixelsBufferObject(IntRect rect, GCGLenum format, GCGLenum type,
+    GCGLintptr offset, GCGLint alignment, GCGLint rowLength)
+{
+    UNUSED_PARAM(rect);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(alignment);
+    UNUSED_PARAM(rowLength);
+    // The WKC factory deliberately exposes WebGL 1 only; pixel-pack buffers
+    // are a WebGL 2 feature and are never enabled for this context.
+    addError(GL_INVALID_OPERATION_VALUE);
+}
+
+void GraphicsContextGLWKC::copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalFormat,
+    GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border)
+{
+    if (target != GL_TEXTURE_2D_VALUE || (internalFormat != GL_RGB_VALUE && internalFormat != GL_RGBA_VALUE)) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (level < 0 || level >= 13 || width < 0 || height < 0 || border
+        || width > maxTextureSize() || height > maxTextureSize()) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    auto* texture = boundTexture2D();
+    if (!texture) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    if (m_boundFramebuffer) {
+        auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        if (framebuffer != m_framebuffers.end() && framebuffer->second.colorTexture
+            && m_textures.contains(framebuffer->second.colorTexture)
+            && &m_textures.find(framebuffer->second.colorTexture)->second == texture) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+    }
+    std::vector<uint8_t> rgba(static_cast<size_t>(width) * height * 4, 0);
+    if (!readPixelsInto(IntRect(x, y, width, height), GL_RGBA_VALUE, GL_UNSIGNED_BYTE_VALUE,
+            rgba, 4, 0, false)) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    if (internalFormat == GL_RGBA_VALUE) {
+        texImage2D(target, level, internalFormat, width, height, border, GL_RGBA_VALUE, GL_UNSIGNED_BYTE_VALUE, rgba);
+        return;
+    }
+    std::vector<uint8_t> rgb(static_cast<size_t>(width) * height * 3, 0);
+    for (size_t i = 0, pixels = static_cast<size_t>(width) * height; i < pixels; ++i)
+        std::memcpy(rgb.data() + i * 3, rgba.data() + i * 4, 3);
+    texImage2D(target, level, internalFormat, width, height, border, GL_RGB_VALUE, GL_UNSIGNED_BYTE_VALUE, rgb);
+}
+
+void GraphicsContextGLWKC::copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset,
+    GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
+{
+    if (target != GL_TEXTURE_2D_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (level < 0 || level >= 13 || xoffset < 0 || yoffset < 0 || width < 0 || height < 0) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    auto* texture = boundTexture2D();
+    if (!texture || !texture->storageCreated || static_cast<size_t>(level) >= texture->levels.size()
+        || !texture->definedLevels[level]) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    if (m_boundFramebuffer) {
+        auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        if (framebuffer != m_framebuffers.end() && framebuffer->second.colorTexture
+            && m_textures.contains(framebuffer->second.colorTexture)
+            && &m_textures.find(framebuffer->second.colorTexture)->second == texture) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+    }
+    const uint32_t levelWidth = std::max<uint32_t>(1, texture->width >> level);
+    const uint32_t levelHeight = std::max<uint32_t>(1, texture->height >> level);
+    if (static_cast<uint32_t>(xoffset) > levelWidth || static_cast<uint32_t>(yoffset) > levelHeight
+        || static_cast<uint32_t>(width) > levelWidth - static_cast<uint32_t>(xoffset)
+        || static_cast<uint32_t>(height) > levelHeight - static_cast<uint32_t>(yoffset)) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    if (!width || !height)
+        return;
+
+    std::vector<uint8_t> rgba(static_cast<size_t>(width) * height * 4, 0);
+    if (!readPixelsInto(IntRect(x, y, width, height), GL_RGBA_VALUE, GL_UNSIGNED_BYTE_VALUE,
+            rgba, 4, 0, false)) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    const GCGLenum format = texture->internalFormat == GL_RGB_VALUE ? GL_RGB_VALUE : GL_RGBA_VALUE;
+    std::vector<uint8_t> pixels;
+    std::span<const uint8_t> source = rgba;
+    if (format == GL_RGB_VALUE) {
+        pixels.resize(static_cast<size_t>(width) * height * 3);
+        for (size_t i = 0, count = static_cast<size_t>(width) * height; i < count; ++i)
+            std::memcpy(pixels.data() + i * 3, rgba.data() + i * 4, 3);
+        source = pixels;
+    }
+    texSubImage2D(target, level, xoffset, yoffset, width, height, format, GL_UNSIGNED_BYTE_VALUE, source);
+}
+
 void GraphicsContextGLWKC::applyTextureSampler(TextureRecord& texture)
 {
     auto translateWrap = [](GCGLint wrap, GX2TexClampMode& output) {
