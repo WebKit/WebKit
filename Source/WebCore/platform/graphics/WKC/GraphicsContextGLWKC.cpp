@@ -889,6 +889,7 @@ private:
     };
     PlatformGLObject nextShaderName();
     PlatformGLObject nextProgramName();
+    void releaseShaderIfUnused(PlatformGLObject);
     void addError(GCGLenum);
     void addDriverError(WKC::GLGX2::Result, const char*);
     void clearActiveNativeProgram();
@@ -1160,7 +1161,11 @@ void GraphicsContextGLWKC::activeTexture(GCGLenum tex)
 void GraphicsContextGLWKC::attachShader(PlatformGLObject p,PlatformGLObject s)
 {
     auto pi=m_programs.find(p);
-    if(pi==m_programs.end() || !m_shaders.contains(s)) { addError(GL_INVALID_VALUE_VALUE); return; }
+    auto shader=m_shaders.find(s);
+    if(pi==m_programs.end() || shader==m_shaders.end() || shader->second.deletePending) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
     if(pi->second.linked) { addError(GL_INVALID_OPERATION_VALUE); return; }
     auto& attached=pi->second.shaders;
     if(std::find(attached.begin(),attached.end(),s)==attached.end()) attached.push_back(s);
@@ -1289,16 +1294,43 @@ void GraphicsContextGLWKC::deleteBuffer(PlatformGLObject name)
 }
 void GraphicsContextGLWKC::deleteProgram(PlatformGLObject name)
 {
-    auto it=m_programs.find(name);if(it==m_programs.end())return;
-    if(m_currentProgram==name){m_currentProgram=0;clearActiveNativeProgram();}
-    releaseProgramNative(it->second);m_programs.erase(it);
+    auto it=m_programs.find(name);
+    if(it==m_programs.end())
+        return;
+    if(m_currentProgram==name) {
+        m_currentProgram=0;
+        clearActiveNativeProgram();
+    }
+    // Removing a program detaches its shaders. Delete-pending shader objects
+    // can be reclaimed only after their final program reference disappears.
+    const auto attachedShaders=it->second.shaders;
+    releaseProgramNative(it->second);
+    m_programs.erase(it);
+    for(auto shaderName:attachedShaders)
+        releaseShaderIfUnused(shaderName);
 }
+void GraphicsContextGLWKC::releaseShaderIfUnused(PlatformGLObject name)
+{
+    auto shader=m_shaders.find(name);
+    if(shader==m_shaders.end() || !shader->second.deletePending)
+        return;
+    for(const auto& program:m_programs) {
+        if(std::find(program.second.shaders.begin(),program.second.shaders.end(),name)
+            !=program.second.shaders.end())
+            return;
+    }
+    FreeVertexShader(shader->second.compiledVertex);
+    FreePixelShader(shader->second.compiledPixel);
+    m_shaders.erase(shader);
+}
+
 void GraphicsContextGLWKC::deleteShader(PlatformGLObject name)
 {
-    auto it=m_shaders.find(name);if(it==m_shaders.end())return;
+    auto it=m_shaders.find(name);
+    if(it==m_shaders.end())
+        return;
     it->second.deletePending=true;
-    FreeVertexShader(it->second.compiledVertex);FreePixelShader(it->second.compiledPixel);
-    it->second.compiledVertex=nullptr;it->second.compiledPixel=nullptr;
+    releaseShaderIfUnused(name);
 }
 void GraphicsContextGLWKC::depthFunc(GCGLenum v)
 {
@@ -1315,7 +1347,14 @@ void GraphicsContextGLWKC::depthRange(GCGLclampf n,GCGLclampf f){addDriverError(
 void GraphicsContextGLWKC::detachShader(PlatformGLObject p,PlatformGLObject s)
 {
     auto i=m_programs.find(p);if(i==m_programs.end()){addError(GL_INVALID_VALUE_VALUE);return;}
-    auto& a=i->second.shaders;a.erase(std::remove(a.begin(),a.end(),s),a.end());
+    auto& a=i->second.shaders;
+    auto attached=std::find(a.begin(),a.end(),s);
+    if(attached==a.end()) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    a.erase(attached);
+    releaseShaderIfUnused(s);
 }
 void GraphicsContextGLWKC::disable(GCGLenum cap)
 {
@@ -1443,8 +1482,17 @@ void GraphicsContextGLWKC::linkProgram(PlatformGLObject n)
     auto it=m_programs.find(n);if(it==m_programs.end()){addError(GL_INVALID_VALUE_VALUE);return;}
     auto& p=it->second;p.log.clear();p.linked=false;p.validated=false;releaseProgramNative(p);
     ShaderRecord* vs=nullptr;ShaderRecord* ps=nullptr;
-    for(auto sname:p.shaders){auto s=m_shaders.find(sname);if(s==m_shaders.end()||!s->second.compiled||s->second.deletePending){p.log="Attached shaders must compile and remain attached.";return;}
-        if(s->second.type==GL_VERTEX_SHADER_VALUE)vs=&s->second;if(s->second.type==GL_FRAGMENT_SHADER_VALUE)ps=&s->second;}
+    for(auto sname:p.shaders) {
+        auto s=m_shaders.find(sname);
+        if(s==m_shaders.end() || !s->second.compiled) {
+            p.log="Every attached shader must compile successfully before linking.";
+            return;
+        }
+        if(s->second.type==GL_VERTEX_SHADER_VALUE)
+            vs=&s->second;
+        if(s->second.type==GL_FRAGMENT_SHADER_VALUE)
+            ps=&s->second;
+    }
     if(!vs||!ps){p.log="A graphics program requires vertex and fragment shaders.";return;}
     std::array<char,4096> log{};GX2VertexShader* vertex=nullptr;GX2PixelShader* pixel=nullptr;
     auto mode=CompileShaderPair(vs->source.c_str(),ps->source.c_str(),GLSL_COMPILE_REGISTER,&vertex,&pixel,log.data(),log.size(),GLSL_COMPILER_FLAG_NONE);
