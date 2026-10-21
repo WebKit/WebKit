@@ -208,74 +208,70 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
 {
     const VkPhysicalDeviceProperties &props = mRenderer->getPhysicalDeviceProperties();
 
-    // Setup initial device mInfo fields
-    // TODO(aannestrand) Create cl::Caps and use for device creation
-    // http://anglebug.com/42266954
-    mInfoString = {
-        {cl::DeviceInfo::Name, std::string(props.deviceName)},
-        {cl::DeviceInfo::Vendor, mRenderer->getVendorString()},
-        {cl::DeviceInfo::DriverVersion, mRenderer->getVersionString(true)},
-        {cl::DeviceInfo::Version, std::string("OpenCL 3.0 " + mRenderer->getVersionString(true))},
-        {cl::DeviceInfo::Profile, std::string("FULL_PROFILE")},
-        {cl::DeviceInfo::OpenCL_C_Version, std::string("OpenCL C 1.2 ")},
-        {cl::DeviceInfo::LatestConformanceVersionPassed, std::string("FIXME")}};
+    // Setup initial device caps
+    // Populate all the string values.
+    mCaps.name             = std::string(props.deviceName);
+    mCaps.vendor           = mRenderer->getVendorString();
+    mCaps.driverVersion    = mRenderer->getVersionString(true);
+    mCaps.version          = std::string("OpenCL 3.0 " + mRenderer->getVersionString(true));
+    mCaps.profile          = std::string("FULL_PROFILE");
+    mCaps.openCL_C_Version = std::string("OpenCL C 1.2 ");
+    mCaps.latestConformanceVersionPassed = std::string("FIXME");
 
-    mInfoSizeT = {
-        // Below caps are retrieved from Vulkan queries
-        {cl::DeviceInfo::MaxWorkGroupSize, props.limits.maxComputeWorkGroupInvocations},
-        {cl::DeviceInfo::ProfilingTimerResolution, props.limits.timestampPeriod},
+    // Populate all the size_t values.
+    // Below caps are retrieved from Vulkan queries
+    mCaps.maxWorkGroupSize         = props.limits.maxComputeWorkGroupInvocations;
+    mCaps.profilingTimerResolution = static_cast<size_t>(props.limits.timestampPeriod);
 
-        // Below caps are retrieved from vendor specific extensions if present
-        {cl::DeviceInfo::PreferredWorkGroupSizeMultiple, getWorkGroupSizeMultiple()},
+    // Below caps are retrieved from vendor specific extensions if present
+    mCaps.preferredWorkGroupSizeMultiple = getWorkGroupSizeMultiple();
 
-        // Below caps are not supported by current implementation
-        {cl::DeviceInfo::MaxGlobalVariableSize, 0},
-        {cl::DeviceInfo::GlobalVariablePreferredTotalSize, 0},
+    // Below caps are not supported by current implementation
+    mCaps.maxGlobalVariableSize            = 0;
+    mCaps.globalVariablePreferredTotalSize = 0;
 
-        // Below caps are set to some known good values
-        // TODO(aannestrand) Update these hardcoded platform/device queries
-        // http://anglebug.com/42266935
-        {cl::DeviceInfo::MaxParameterSize, 1024},
-        {cl::DeviceInfo::PrintfBufferSize, 1024 * 1024},
-    };
+    // Below caps are set to some known good values
+    // TODO(aannestrand) Update these hardcoded platform/device queries
+    // http://anglebug.com/42266935
+    mCaps.maxParameterSize = 1024;
+    mCaps.printfBufferSize = 1024 * 1024;
 
-    mInfoULong = {
-        // Below caps are retrieved from Vulkan queries
-        {cl::DeviceInfo::MaxMemAllocSize, getMaxMemAllocSize()},
-        {cl::DeviceInfo::GlobalMemSize, getGlobalMemSize()},
-        {cl::DeviceInfo::LocalMemSize, props.limits.maxComputeSharedMemorySize},
+    // Populate all the ulong values.
+    // Below caps are retrieved from Vulkan queries
+    mCaps.maxMemAllocSize = getMaxMemAllocSize();
+    mCaps.globalMemSize   = getGlobalMemSize();
+    mCaps.localMemSize    = props.limits.maxComputeSharedMemorySize;
 
-        // Below caps are retrieved from vendor specific extensions if present
-        {cl::DeviceInfo::SingleFpConfig, getSingleFpConfig()},
-        {cl::DeviceInfo::HalfFpConfig, getHalfFpConfig()},
-        {cl::DeviceInfo::DoubleFpConfig, getDoubleFpConfig()},
-        {cl::DeviceInfo::GlobalMemCacheSize, getCacheSize()},
+    // Below caps are retrieved from vendor specific extensions if present
+    mCaps.singleFpConfig     = getSingleFpConfig();
+    mCaps.halfFpConfig       = getHalfFpConfig();
+    mCaps.doubleFpConfig     = getDoubleFpConfig();
+    mCaps.globalMemCacheSize = getCacheSize();
 
-        // Below are Vulkan backend implementation details
-        {cl::DeviceInfo::QueueOnHostProperties, CL_QUEUE_PROFILING_ENABLE},
-        {cl::DeviceInfo::AtomicMemoryCapabilities,
-         CL_DEVICE_ATOMIC_ORDER_RELAXED | CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP |
-             CL_DEVICE_ATOMIC_ORDER_ACQ_REL | CL_DEVICE_ATOMIC_SCOPE_DEVICE |
-             CL_DEVICE_ATOMIC_ORDER_SEQ_CST},
-        // TODO (http://anglebug.com/379669750) Add these based on the Vulkan features query
-        {cl::DeviceInfo::AtomicFenceCapabilities, CL_DEVICE_ATOMIC_ORDER_RELAXED |
-                                                      CL_DEVICE_ATOMIC_ORDER_ACQ_REL |
-                                                      CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP |
-                                                      // non-mandatory
-                                                      CL_DEVICE_ATOMIC_SCOPE_WORK_ITEM},
+    // Below are Vulkan backend implementation details
+    mCaps.queueOnHostProperties    = CL_QUEUE_PROFILING_ENABLE;
+    mCaps.atomicMemoryCapabilities = CL_DEVICE_ATOMIC_ORDER_RELAXED |
+                                     CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP |
+                                     CL_DEVICE_ATOMIC_ORDER_ACQ_REL |
+                                     CL_DEVICE_ATOMIC_SCOPE_DEVICE | CL_DEVICE_ATOMIC_ORDER_SEQ_CST;
+    // TODO (http://anglebug.com/379669750) Add these based on the Vulkan features query
+    mCaps.atomicFenceCapabilities = CL_DEVICE_ATOMIC_ORDER_RELAXED |
+                                    CL_DEVICE_ATOMIC_ORDER_ACQ_REL |
+                                    CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP |
+                                    // non-mandatory
+                                    CL_DEVICE_ATOMIC_SCOPE_WORK_ITEM;
 
-        // Below caps are not supported by current implementation
-        {cl::DeviceInfo::SVM_Capabilities, 0ULL},
-        {cl::DeviceInfo::QueueOnDeviceProperties, 0ULL},
-        {cl::DeviceInfo::PartitionAffinityDomain, 0ULL},
-        {cl::DeviceInfo::DeviceEnqueueCapabilities, 0ULL},
+    // Below caps are not supported by current implementation
+    mCaps.sVM_Capabilities          = 0ULL;
+    mCaps.queueOnDeviceProperties   = 0ULL;
+    mCaps.partitionAffinityDomain   = 0ULL;
+    mCaps.deviceEnqueueCapabilities = 0ULL;
 
-        // Below caps are set to some known good values
-        // TODO(aannestrand) Update these hardcoded platform/device queries
-        // http://anglebug.com/42266935
-        // Constant buffer size is same as global variable size in SGPU
-        {cl::DeviceInfo::MaxConstantBufferSize, 1024 * 1024 * 1024ULL},
-    };
+    // Below caps are set to some known good values
+    // TODO(aannestrand) Update these hardcoded platform/device queries
+    // http://anglebug.com/42266935
+    // Constant buffer size is same as global variable size in SGPU
+    mCaps.maxConstantBufferSize = 1024 * 1024 * 1024ULL;
 
     cl_uint maxNumSubGroups = 0u;
     if (mRenderer->getFeatures().supportsClKhrSubgroups.enabled)
@@ -283,92 +279,84 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         const uint32_t subgroupSize = mRenderer->getPhysicalDeviceSubgroupProperties().subgroupSize;
         ASSERT(subgroupSize > 0);
         maxNumSubGroups =
-            static_cast<uint32_t>(mInfoSizeT[cl::DeviceInfo::MaxWorkGroupSize]) / subgroupSize;
+            UnsignedCeilDivide(static_cast<uint32_t>(mCaps.maxWorkGroupSize), subgroupSize);
     }
 
-    mInfoUInt = {
-        // Below caps are retrieved from Vulkan queries
-        {cl::DeviceInfo::VendorID, props.vendorID},
-        {cl::DeviceInfo::GlobalMemCachelineSize,
-         static_cast<cl_uint>(props.limits.nonCoherentAtomSize)},
-        {cl::DeviceInfo::MaxNumSubGroups, maxNumSubGroups},
-        {cl::DeviceInfo::SubGroupIndependentForwardProgress,
-         maxNumSubGroups > 0 ? CL_TRUE : CL_FALSE},
-        {cl::DeviceInfo::AddressBits,
-         mRenderer->getFeatures().supportsBufferDeviceAddress.enabled ? 64 : 32},
+    // Populate all the uint values.
+    // Below caps are retrieved from Vulkan queries
+    mCaps.vendorID               = props.vendorID;
+    mCaps.globalMemCachelineSize = static_cast<cl_uint>(props.limits.nonCoherentAtomSize);
+    mCaps.maxNumSubGroups        = maxNumSubGroups;
+    mCaps.subGroupIndependentForwardProgress = maxNumSubGroups > 0 ? CL_TRUE : CL_FALSE;
+    mCaps.addressBits = mRenderer->getFeatures().supportsBufferDeviceAddress.enabled ? 64 : 32;
 
-        // Below caps are retrieved from vendor specific extensions if present
-        {cl::DeviceInfo::MaxComputeUnits, getNumComputeUnits()},
-        // Frequency is reported in MHz
-        {cl::DeviceInfo::MaxClockFrequency, 555},
-        // Report the number of CU's as max sub devices for now
-        {cl::DeviceInfo::PartitionMaxSubDevices, getNumComputeUnits()},
+    // Below caps are retrieved from vendor specific extensions if present
+    mCaps.maxComputeUnits = getNumComputeUnits();
+    // Frequency is reported in MHz
+    mCaps.maxClockFrequency = 555;
+    // Report the number of CU's as max sub devices for now
+    mCaps.partitionMaxSubDevices = getNumComputeUnits();
 
-        // Below are currently setup as Vulkan backend implementation details
-        {cl::DeviceInfo::MaxReadImageArgs, cl::IMPLEMENTATION_MAX_READ_IMAGES},
-        {cl::DeviceInfo::MaxWriteImageArgs, cl::IMPLEMENTATION_MAX_WRITE_IMAGES},
-        {cl::DeviceInfo::MaxReadWriteImageArgs, cl::IMPLEMENTATION_MAX_WRITE_IMAGES},
-        {cl::DeviceInfo::Available, CL_TRUE},
-        {cl::DeviceInfo::LinkerAvailable, CL_TRUE},
-        {cl::DeviceInfo::CompilerAvailable, CL_TRUE},
-        {cl::DeviceInfo::ExecutionCapabilities, CL_EXEC_KERNEL},
-        {cl::DeviceInfo::PreferredInteropUserSync, CL_TRUE},
-        {cl::DeviceInfo::GlobalMemCacheType, CL_READ_WRITE_CACHE},
-        {cl::DeviceInfo::HostUnifiedMemory, CL_TRUE},
-        // TODO(aannestrand) Update these hardcoded platform/device queries
-        // http://anglebug.com/42266935
-        {cl::DeviceInfo::EndianLittle, CL_TRUE},
-        {cl::DeviceInfo::LocalMemType, CL_LOCAL},
-        {cl::DeviceInfo::MaxWorkItemDimensions, 3},
-        {cl::DeviceInfo::NonUniformWorkGroupSupport, CL_TRUE},
+    // Below are currently setup as Vulkan backend implementation details
+    mCaps.maxReadImageArgs         = cl::IMPLEMENTATION_MAX_READ_IMAGES;
+    mCaps.maxWriteImageArgs        = cl::IMPLEMENTATION_MAX_WRITE_IMAGES;
+    mCaps.maxReadWriteImageArgs    = cl::IMPLEMENTATION_MAX_WRITE_IMAGES;
+    mCaps.available                = CL_TRUE;
+    mCaps.linkerAvailable          = CL_TRUE;
+    mCaps.compilerAvailable        = CL_TRUE;
+    mCaps.executionCapabilities    = CL_EXEC_KERNEL;
+    mCaps.preferredInteropUserSync = CL_TRUE;
+    mCaps.globalMemCacheType       = CL_READ_WRITE_CACHE;
+    mCaps.hostUnifiedMemory        = CL_TRUE;
+    // TODO(aannestrand) Update these hardcoded platform/device queries
+    // http://anglebug.com/42266935
+    mCaps.endianLittle               = CL_TRUE;
+    mCaps.localMemType               = CL_LOCAL;
+    mCaps.maxWorkItemDimensions      = 3;
+    mCaps.nonUniformWorkGroupSupport = CL_TRUE;
 
-        // Below caps are not supported by current implementation
-        {cl::DeviceInfo::MaxOnDeviceQueues, 0},
-        {cl::DeviceInfo::MaxOnDeviceEvents, 0},
-        {cl::DeviceInfo::QueueOnDeviceMaxSize, 0},
-        {cl::DeviceInfo::QueueOnDevicePreferredSize, 0},
-        {cl::DeviceInfo::MaxPipeArgs, 0},
-        {cl::DeviceInfo::PipeMaxPacketSize, 0},
-        {cl::DeviceInfo::PipeSupport, CL_FALSE},
-        {cl::DeviceInfo::PipeMaxActiveReservations, 0},
-        {cl::DeviceInfo::ErrorCorrectionSupport, CL_FALSE},
-        {cl::DeviceInfo::GenericAddressSpaceSupport, CL_FALSE},
-        {cl::DeviceInfo::WorkGroupCollectiveFunctionsSupport, CL_FALSE},
+    // Below caps are not supported by current implementation
+    mCaps.maxOnDeviceQueues                   = 0;
+    mCaps.maxOnDeviceEvents                   = 0;
+    mCaps.queueOnDeviceMaxSize                = 0;
+    mCaps.queueOnDevicePreferredSize          = 0;
+    mCaps.maxPipeArgs                         = 0;
+    mCaps.pipeMaxPacketSize                   = 0;
+    mCaps.pipeSupport                         = CL_FALSE;
+    mCaps.pipeMaxActiveReservations           = 0;
+    mCaps.errorCorrectionSupport              = CL_FALSE;
+    mCaps.genericAddressSpaceSupport          = CL_FALSE;
+    mCaps.workGroupCollectiveFunctionsSupport = CL_FALSE;
 
-        // Below caps are set to some known good values
-        // TODO (http://anglebug.com/379669750) Vulkan reports a big sampler count number, we dont
-        // need that many and set it to minimum req for now.
-        {cl::DeviceInfo::MaxSamplers, 16u},
-        {cl::DeviceInfo::MaxConstantArgs, 8},
-        {cl::DeviceInfo::MinDataTypeAlignSize, 128},
+    // Below caps are set to some known good values
+    // TODO (http://anglebug.com/379669750) Vulkan reports a big sampler count number, we dont
+    // need that many and set it to minimum req for now.
+    mCaps.maxSamplers          = 16u;
+    mCaps.maxConstantArgs      = 8;
+    mCaps.minDataTypeAlignSize = 128;
 
-        // TODO: vulkan currently does not have a way to query vector widths. we can just
-        // emulate/return "1" for now, but come back to this if that changes
-        // https://anglebug.com/561370394
-        {cl::DeviceInfo::NativeVectorWidthChar, 1},
-        {cl::DeviceInfo::NativeVectorWidthShort, 1},
-        {cl::DeviceInfo::NativeVectorWidthInt, 1},
-        {cl::DeviceInfo::NativeVectorWidthLong, 1},
-        {cl::DeviceInfo::NativeVectorWidthFloat, 1},
-        {cl::DeviceInfo::NativeVectorWidthDouble,
-         mRenderer->getFeatures().supportsClFp64.enabled ? 1 : 0},
-        {cl::DeviceInfo::NativeVectorWidthHalf,
-         mRenderer->getFeatures().supportsClFp16.enabled ? 1 : 0},
-        {cl::DeviceInfo::PreferredVectorWidthChar, 1},
-        {cl::DeviceInfo::PreferredVectorWidthShort, 1},
-        {cl::DeviceInfo::PreferredVectorWidthInt, 1},
-        {cl::DeviceInfo::PreferredVectorWidthLong, 1},
-        {cl::DeviceInfo::PreferredVectorWidthFloat, 1},
-        {cl::DeviceInfo::PreferredVectorWidthDouble,
-         mRenderer->getFeatures().supportsClFp64.enabled ? 1 : 0},
-        {cl::DeviceInfo::PreferredVectorWidthHalf,
-         mRenderer->getFeatures().supportsClFp16.enabled ? 1 : 0},
+    // TODO: vulkan currently does not have a way to query vector widths. we can just
+    // emulate/return "1" for now, but come back to this if that changes
+    // https://anglebug.com/561370394
+    mCaps.nativeVectorWidthChar      = 1;
+    mCaps.nativeVectorWidthShort     = 1;
+    mCaps.nativeVectorWidthInt       = 1;
+    mCaps.nativeVectorWidthLong      = 1;
+    mCaps.nativeVectorWidthFloat     = 1;
+    mCaps.nativeVectorWidthDouble    = mRenderer->getFeatures().supportsClFp64.enabled ? 1 : 0;
+    mCaps.nativeVectorWidthHalf      = mRenderer->getFeatures().supportsClFp16.enabled ? 1 : 0;
+    mCaps.preferredVectorWidthChar   = 1;
+    mCaps.preferredVectorWidthShort  = 1;
+    mCaps.preferredVectorWidthInt    = 1;
+    mCaps.preferredVectorWidthLong   = 1;
+    mCaps.preferredVectorWidthFloat  = 1;
+    mCaps.preferredVectorWidthDouble = mRenderer->getFeatures().supportsClFp64.enabled ? 1 : 0;
+    mCaps.preferredVectorWidthHalf   = mRenderer->getFeatures().supportsClFp16.enabled ? 1 : 0;
 
-        {cl::DeviceInfo::PreferredLocalAtomicAlignment, 0},
-        {cl::DeviceInfo::PreferredGlobalAtomicAlignment, 0},
-        {cl::DeviceInfo::PreferredPlatformAtomicAlignment, 0},
-    };
-}
+    mCaps.preferredLocalAtomicAlignment    = 0;
+    mCaps.preferredGlobalAtomicAlignment   = 0;
+    mCaps.preferredPlatformAtomicAlignment = 0;
+}  // namespace rx
 
 CLDeviceVk::~CLDeviceVk() = default;
 
@@ -382,7 +370,7 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     info.maxWorkItemSizes.push_back(properties.limits.maxComputeWorkGroupSize[1]);
     info.maxWorkItemSizes.push_back(properties.limits.maxComputeWorkGroupSize[2]);
 
-    info.maxMemAllocSize = mInfoULong.at(cl::DeviceInfo::MaxMemAllocSize);
+    info.maxMemAllocSize = mCaps.maxMemAllocSize;
     if (info.maxMemAllocSize == cl::kMaxAllocSentinel)
     {  // got sentinel - skips/removes device via CLDeviceImpl::Info::isValid check
         return info;
@@ -407,11 +395,11 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     info.imagePitchAlignment       = 1u;
     info.imageBaseAddressAlignment = 1u;
 
-    info.execCapabilities     = CL_EXEC_KERNEL;
+    info.execCapabilities     = mCaps.executionCapabilities;
     info.queueOnDeviceMaxSize = 0u;
     info.builtInKernels       = "";
     info.version              = CL_MAKE_VERSION(3, 0, 0);
-    info.versionStr           = "OpenCL 3.0 " + mRenderer->getVersionString(true);
+    info.versionStr           = mCaps.version;
     info.OpenCL_C_AllVersions = {{CL_MAKE_VERSION(1, 0, 0), "OpenCL C"},
                                  {CL_MAKE_VERSION(1, 1, 0), "OpenCL C"},
                                  {CL_MAKE_VERSION(1, 2, 0), "OpenCL C"},
@@ -578,56 +566,6 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     return info;
 }
 
-angle::Result CLDeviceVk::getInfoUInt(cl::DeviceInfo name, cl_uint *value) const
-{
-    if (mInfoUInt.count(name))
-    {
-        *value = mInfoUInt.at(name);
-        return angle::Result::Continue;
-    }
-    ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
-}
-
-angle::Result CLDeviceVk::getInfoULong(cl::DeviceInfo name, cl_ulong *value) const
-{
-    if (mInfoULong.count(name))
-    {
-        *value = mInfoULong.at(name);
-        return angle::Result::Continue;
-    }
-    ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
-}
-
-angle::Result CLDeviceVk::getInfoSizeT(cl::DeviceInfo name, size_t *value) const
-{
-    if (mInfoSizeT.count(name))
-    {
-        *value = mInfoSizeT.at(name);
-        return angle::Result::Continue;
-    }
-    ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
-}
-
-angle::Result CLDeviceVk::getInfoStringLength(cl::DeviceInfo name, size_t *value) const
-{
-    if (mInfoString.count(name))
-    {
-        *value = mInfoString.at(name).length() + 1;
-        return angle::Result::Continue;
-    }
-    ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
-}
-
-angle::Result CLDeviceVk::getInfoString(cl::DeviceInfo name, size_t size, char *value) const
-{
-    if (mInfoString.count(name))
-    {
-        ANGLE_UNSAFE_TODO(std::strcpy(value, mInfoString.at(name).c_str()));
-        return angle::Result::Continue;
-    }
-    ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
-}
-
 bool CLDeviceVk::supportsExternalMemoryFd() const
 {
     return mRenderer->getFeatures().supportsExternalMemoryFd.enabled;
@@ -650,7 +588,7 @@ angle::Result CLDeviceVk::createSubDevices(const cl_device_partition_property *p
 cl::WorkgroupSize CLDeviceVk::selectWorkGroupSize(const cl::NDRange &ndrange) const
 {
     uint32_t subgroupSize = 0;
-    uint32_t maxSize      = static_cast<uint32_t>(mInfoSizeT.at(cl::DeviceInfo::MaxWorkGroupSize));
+    uint32_t maxSize      = static_cast<uint32_t>(mCaps.maxWorkGroupSize);
     if (mRenderer->getFeatures().supportsClKhrSubgroups.enabled)
     {
         // query the renderer SIMD width

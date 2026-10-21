@@ -75,22 +75,18 @@ fn replace_output_variable(
     let global = TypedId::from_variable_id(&ir.meta, variable_id);
 
     let mut postamble = Block::new();
+    let mut builder = instruction::Builder::<&mut Block>::new(&mut postamble);
 
     if let Some(array_size) = array_size {
         for index in 0..array_size {
             // globalN = AccessArrayElement global N
             // outputN = AccessArrayElement output N
             let index = ir.meta.get_constant_uint_typed(index, Precision::Low);
-            let global_indexed =
-                postamble.add_typed_instruction(instruction::index(&mut ir.meta, global, index));
-            let output_indexed = postamble.add_typed_instruction(instruction::index(
-                &mut ir.meta,
-                new_output,
-                index,
-            ));
+            let global_indexed = builder.index(&mut ir.meta, global, index);
+            let output_indexed = builder.index(&mut ir.meta, new_output, index);
             copy_and_expand(
                 &mut ir.meta,
-                &mut postamble,
+                &mut builder,
                 global_indexed,
                 output_indexed,
                 expanded_type_id,
@@ -101,7 +97,7 @@ fn replace_output_variable(
     } else {
         copy_and_expand(
             &mut ir.meta,
-            &mut postamble,
+            &mut builder,
             global,
             new_output,
             expanded_type_id,
@@ -115,7 +111,7 @@ fn replace_output_variable(
 
 fn copy_and_expand(
     ir_meta: &mut IRMeta,
-    postamble: &mut Block,
+    builder: &mut instruction::Builder<&mut Block>,
     global: TypedId,
     output: TypedId,
     expanded_type_id: TypeId,
@@ -131,23 +127,16 @@ fn copy_and_expand(
         // expanded = ConstructVectorFromMultiple (x, y, zero, zero)
         (0..component_count)
             .map(|component| {
-                let swizzle = postamble.add_typed_instruction(instruction::vector_component(
-                    ir_meta, global, component,
-                ));
-                postamble.add_typed_instruction(instruction::load(ir_meta, swizzle))
+                let swizzle = builder.vector_component(ir_meta, global, component);
+                builder.load(ir_meta, swizzle)
             })
             .collect::<Vec<_>>()
     } else {
         // x        = Load global
         // expanded = ConstructVectorFromMultiple (x, zero, zero, zero)
-        vec![postamble.add_typed_instruction(instruction::load(ir_meta, global))]
+        vec![builder.load(ir_meta, global)]
     };
     constructor_args.resize(4, basic_type_zero);
-    let expanded = postamble.add_typed_instruction(instruction::construct(
-        ir_meta,
-        expanded_type_id,
-        constructor_args,
-        None,
-    ));
-    postamble.add_void_instruction(OpCode::Store(output, expanded));
+    let expanded = builder.construct(ir_meta, expanded_type_id, constructor_args, None);
+    builder.store(ir_meta, output, expanded);
 }

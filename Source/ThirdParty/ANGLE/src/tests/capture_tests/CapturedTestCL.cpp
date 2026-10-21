@@ -150,9 +150,9 @@ class MultiFrameCL
 
         // Print the results
         std::cout << "Results from " << kernelName << ":\n";
-        for (size_t i = 0; i < results.size(); ++i)
+        for (float result : results)
         {
-            std::cout << results[i] << " ";
+            std::cout << result << " ";
         }
         std::cout << "\n";
 

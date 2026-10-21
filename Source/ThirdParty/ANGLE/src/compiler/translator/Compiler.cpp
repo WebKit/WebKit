@@ -1066,14 +1066,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
-    if (compileOptions.avoidComplexExpressionsInStructConstructor)
-    {
-        if (!WrapStructConstructors(this, root, &mSymbolTable))
-        {
-            return false;
-        }
-    }
-
     if (compileOptions.clampIndirectArrayBounds)
     {
         if (!ClampIndirectIndices(this, root, &mSymbolTable, mExtensionBehavior))
@@ -1154,6 +1146,15 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
 
         if (!InitializeUninitializedLocals(this, root, getShaderVersion(), canUseLoopsToInitialize,
                                            &getSymbolTable()))
+        {
+            return false;
+        }
+    }
+
+    if (compileOptions.avoidComplexExpressionsInStructConstructor)
+    {
+        // Must run after InitializeUninitializedLocals, as that would introduce struct constructors
+        if (!WrapStructConstructors(this, root, &mSymbolTable))
         {
             return false;
         }
@@ -1814,16 +1815,16 @@ const ShBuiltInResources &TCompiler::getResources() const
 bool TCompiler::isVaryingDefined(const char *varyingName)
 {
     ASSERT(mVariablesCollected);
-    for (size_t ii = 0; ii < mInputVaryings.size(); ++ii)
+    for (const ShaderVariable &inputVarying : mInputVaryings)
     {
-        if (mInputVaryings[ii].name == varyingName)
+        if (inputVarying.name == varyingName)
         {
             return true;
         }
     }
-    for (size_t ii = 0; ii < mOutputVaryings.size(); ++ii)
+    for (const ShaderVariable &outputVarying : mOutputVaryings)
     {
-        if (mOutputVaryings[ii].name == varyingName)
+        if (outputVarying.name == varyingName)
         {
             return true;
         }

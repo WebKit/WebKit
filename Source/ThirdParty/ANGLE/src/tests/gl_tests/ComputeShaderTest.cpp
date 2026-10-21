@@ -5595,9 +5595,9 @@ TEST_P(ComputeShaderTest, SSBOAliasOverWrite)
     ASSERT_GL_NO_ERROR();
 
     bool error = false;
-    for (int index = 0; index < static_cast<int>(results.size()); ++index)
+    for (int result : results)
     {
-        if (results[index] != 1)
+        if (result != 1)
         {
             error = true;
         }
@@ -5654,9 +5654,9 @@ TEST_P(ComputeShaderTest, AtomicOpPreviousValueAssignedToSSBO)
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
     ASSERT_GL_NO_ERROR();
 
-    for (int index = 0; index < static_cast<int>(results.size()); ++index)
+    for (int result : results)
     {
-        EXPECT_EQ(results[index], 0);
+        EXPECT_EQ(result, 0);
     }
 }
 

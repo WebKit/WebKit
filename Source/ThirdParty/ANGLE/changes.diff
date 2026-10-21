@@ -278,7 +278,7 @@ index c26d5611b3741086a7df57a206e1eaf026a54d58..e3a555a2b8071390cc4a715fa1395dd6
      "2056d54ea07156f1988ca1366bdee21a",
    "third_party/OpenCL-Docs/src/xml/cl.xml":
 diff --git a/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json b/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
-index 001eb298bc5ad90da9717fcba902d2f69234701b..93f857e7653a2cdd0a861a4de94a5aa6d47fdac2 100644
+index 0a8d6d6ba11af18bc1cdae461eef3b7925a3c4ee..93f857e7653a2cdd0a861a4de94a5aa6d47fdac2 100644
 --- a/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
 +++ b/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
 @@ -11,166 +11,8 @@
@@ -324,9 +324,9 @@ index 001eb298bc5ad90da9717fcba902d2f69234701b..93f857e7653a2cdd0a861a4de94a5aa6
 -  "third_party/VK-GL-CTS/src/external/vulkan-validationlayers/CMakeLists.txt":
 -    "53b56df74a8a4ac5ae1cedcbb1ff440f",
 -  "third_party/VK-GL-CTS/src/external/vulkan-video-samples/CMakeLists.txt":
--    "620a4f4d6962cb9a300a31be329b3b2a",
+-    "ffc9ed11365167a5ba2aeb556578c2bc",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/framework/vulkan/CMakeLists.txt":
--    "f10f1d60d6120763c8a4f2878e605b68",
+-    "49bf67d37303b8034825afc5fd5b39b9",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/CMakeLists.txt":
 -    "2879725046df90880029b24f0585596f",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/amber/CMakeLists.txt":
@@ -512,7 +512,7 @@ index 15a86079b0c71d1789138fe19b1f5c5be676216e..aa37e9f0ef61bab5dacfc688faec5134
      "373b062587eab8a163121255f54597dc",
    "util/windows/wgl_loader_autogen.h":
 diff --git a/scripts/code_generation_hashes/GL_EGL_entry_points.json b/scripts/code_generation_hashes/GL_EGL_entry_points.json
-index c5ece186c9706837bf04396c9e381405d4d999bf..5ea0b62f0a470bfe2dae2b72c39bf370c557a2c7 100644
+index 3b8e7ec30c3e7aaf02f3eef5411b2ae67686948e..92f1a3d082212cc6484d19c66f7b43e9961b3479 100644
 --- a/scripts/code_generation_hashes/GL_EGL_entry_points.json
 +++ b/scripts/code_generation_hashes/GL_EGL_entry_points.json
 @@ -4,21 +4,21 @@
@@ -522,8 +522,8 @@ index c5ece186c9706837bf04396c9e381405d4d999bf..5ea0b62f0a470bfe2dae2b72c39bf370
 -    "85befcc3cca0d4b360c88b9878623ecf",
 +    "33b85b918382ff9e6407d6f265b584fd",
    "scripts/generate_entry_points.py":
--    "8823179e5da09544f42d1fa156cbda46",
-+    "bc75270eb6643878f88b6ea133f1f9af",
+-    "cb74c084c478fbab8f248e9c58917e55",
++    "567f01c7ed8f0f673dca069a5cc1402a",
    "scripts/gl_angle_ext.xml":
 -    "8f56490b636971c54bd2e62f408215b9",
 +    "fc346145012b6744a27199a3210f6f88",
@@ -726,7 +726,7 @@ index 437bfe89f10df330e2b6b70b6b7a3c6667e6183b..700b68afa5c6f7205c829aeaa2167dc6
          "renderbuffer": "RenderbufferID"
      },
 diff --git a/scripts/generate_entry_points.py b/scripts/generate_entry_points.py
-index 5646c195dfc562bed6096ce16a14be616f0c07ef..cbc85344c7f497d00f7c8be25b9330ab9bc94913 100755
+index cc0a512406c1d01ccd88af10680a2dd6e3212ef9..428a43eea37409aa313b72eff4ebf83308ca2751 100755
 --- a/scripts/generate_entry_points.py
 +++ b/scripts/generate_entry_points.py
 @@ -1115,6 +1115,7 @@ FORMAT_DICT = {
@@ -1857,10 +1857,10 @@ index 1bd58533ba04b6f3cf9afbb30975ad74696561e0..fccf98562dabe3aa906606cf5cd828db
 +
  }  // namespace angle
 diff --git a/src/common/SimpleMutex.h b/src/common/SimpleMutex.h
-index 84ffa1a1da568de14247f8a10476634301089984..486a3ae506b3813a46138b8a52852556ecfc4f6f 100644
+index 7d08e8aa8182298404ead8a554d6c2de9b5fd9f7..0d5bac37874700f5c6ddab0992a744801dc80e0d 100644
 --- a/src/common/SimpleMutex.h
 +++ b/src/common/SimpleMutex.h
-@@ -104,8 +104,8 @@ class MutexOnFutex
+@@ -105,8 +105,8 @@ class MutexOnFutex
  class MutexOnStd
  {
    public:
@@ -1869,13 +1869,13 @@ index 84ffa1a1da568de14247f8a10476634301089984..486a3ae506b3813a46138b8a52852556
 +    void lock() ANGLE_ACQUIRE_CAPABILITY(mutex) { mutex.lock(); }
 +    void unlock() ANGLE_RELEASE_CAPABILITY(mutex) { mutex.unlock(); }
      void assertLocked() { ASSERT(isLocked()); }
+     void assertUnlocked() { ASSERT(!isLocked()); }
  
-   private:
 diff --git a/src/common/angleutils.h b/src/common/angleutils.h
-index 2c09989a22053e775dc8f016c244647d6ea159f6..5949ab380edfd5f6a76a34d6edafc7446fdff856 100644
+index 1b64f903814944bd99f5f4c7be0dbb61db9f1ac9..fd5d4d35dfea6b3ae61c1578361a2033ae9c76bf 100644
 --- a/src/common/angleutils.h
 +++ b/src/common/angleutils.h
-@@ -449,6 +449,13 @@ inline bool IsLittleEndian()
+@@ -487,6 +487,13 @@ inline bool IsLittleEndian()
      UNREACHABLE();                    \
      ANGLE_CHECK(context, false, "Unreachable code.", GL_INVALID_OPERATION)
  
@@ -1889,7 +1889,7 @@ index 2c09989a22053e775dc8f016c244647d6ea159f6..5949ab380edfd5f6a76a34d6edafc744
  #if defined(ANGLE_WITH_LSAN)
  #    define ANGLE_SCOPED_DISABLE_LSAN() __lsan::ScopedDisabler lsanDisabler
  #else
-@@ -491,6 +498,25 @@ class MsanScopedDisableInterceptorChecks final : angle::NonCopyable
+@@ -529,6 +536,25 @@ class MsanScopedDisableInterceptorChecks final : angle::NonCopyable
  #    define ANGLE_NO_SANITIZE_CFI_ICALL
  #endif
  
@@ -2940,10 +2940,10 @@ index 512668941204463ffcb167887c645365285b40d5..244bc7c4ff7378cade5f06eea5d087f1
  }
  }  // anonymous namespace
 diff --git a/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp b/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp
-index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab31ea2661 100644
+index 12aee888214e3dff80951b9ca26c37b26ead238f..3f5edb98bcfa8d3f1f631076df0ec526809001af 100644
 --- a/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp
 +++ b/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp
-@@ -40,18 +40,19 @@ using StructureMap        = angle::HashMap<const TStructure *, StructureData>;
+@@ -41,18 +41,19 @@ using StructureMap        = angle::HashMap<const TStructure *, StructureData>;
  using StructureUniformMap = angle::HashMap<const TVariable *, const TVariable *>;
  using ExtractedSamplerMap = angle::HashMap<std::string, const TVariable *>;
  
@@ -2968,7 +2968,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
  {
      // Only interested in EOpIndex* binary nodes.
      switch (node->getOp())
-@@ -62,20 +63,22 @@ TIntermTyped *RewriteExpressionVisitBinaryHelper(TCompiler *compiler,
+@@ -63,20 +64,22 @@ TIntermTyped *RewriteExpressionVisitBinaryHelper(TCompiler *compiler,
          case EOpIndexDirectStruct:
              break;
          default:
@@ -2994,7 +2994,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
      }
  
      // Otherwise, replace the whole expression such that:
-@@ -85,8 +88,13 @@ TIntermTyped *RewriteExpressionVisitBinaryHelper(TCompiler *compiler,
+@@ -86,8 +89,13 @@ TIntermTyped *RewriteExpressionVisitBinaryHelper(TCompiler *compiler,
      //   the intermediate nodes would have the correct type (and therefore fields).
      ASSERT(structureMap.find(structure) != structureMap.end());
  
@@ -3010,7 +3010,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
  }
  
  // Given an expression, this traverser calculates a new expression where sampler-in-structs are
-@@ -104,13 +112,19 @@ class RewriteExpressionTraverser final : public TIntermTraverser
+@@ -105,13 +113,19 @@ class RewriteExpressionTraverser final : public TIntermTraverser
            mCompiler(compiler),
            mStructureMap(structureMap),
            mStructureUniformMap(structureUniformMap),
@@ -3033,7 +3033,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
  
          if (rewritten == nullptr)
          {
-@@ -139,6 +153,11 @@ class RewriteExpressionTraverser final : public TIntermTraverser
+@@ -140,6 +154,11 @@ class RewriteExpressionTraverser final : public TIntermTraverser
      const StructureMap &mStructureMap;
      const StructureUniformMap &mStructureUniformMap;
      const ExtractedSamplerMap &mExtractedSamplers;
@@ -3045,7 +3045,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
  };
  
  // Rewrite the index of an EOpIndexIndirect expression.  The root can never need replacing, because
-@@ -180,12 +199,12 @@ void RewriteIndexExpression(TCompiler *compiler,
+@@ -181,12 +200,12 @@ void RewriteIndexExpression(TCompiler *compiler,
  //
  // If the expression is not a sampler, it only replaces the struct with the modified one, while
  // still processing the EOpIndexIndirect expressions (which may contain more structs to map).
@@ -3061,7 +3061,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
  {
      const bool isSampler = node->getType().isSampler();
  
-@@ -222,19 +241,18 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+@@ -223,19 +242,18 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
          iter = iter->getLeft()->getAsBinaryNode();
      }
  
@@ -3083,7 +3083,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
          }
          else
          {
-@@ -242,7 +260,8 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+@@ -243,7 +261,8 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
              // to the struct itself gets removed as dead-code, but it may survive in some cases
              // (such as |(side_effect, struct_uniform)|.  The result of such a comma expression
              // cannot be used, so it's safe to just replace the |struct_uniform| with anything.
@@ -3093,7 +3093,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
          }
      }
  
-@@ -256,13 +275,30 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+@@ -255,13 +274,30 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
              case EOpIndexDirectStruct:
                  if (!isSampler)
                  {
@@ -3127,7 +3127,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
                  break;
  
              case EOpIndexIndirect:
-@@ -273,7 +309,7 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+@@ -272,7 +308,7 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
                  TIntermTyped *indexExpression = indexNode->getRight();
                  RewriteIndexExpression(compiler, indexExpression, structureMap, structureUniformMap,
                                         extractedSamplers);
@@ -3136,7 +3136,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
                  break;
              }
  
-@@ -283,14 +319,16 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+@@ -282,14 +318,16 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
          }
      }
  
@@ -3155,7 +3155,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
      {}
  
  
-@@ -352,8 +390,13 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
+@@ -351,8 +389,13 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
      // Same implementation as in RewriteExpressionTraverser.  That traverser cannot replace root.
      bool visitBinary(Visit visit, TIntermBinary *node) override
      {
@@ -3171,7 +3171,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
  
          if (rewritten == nullptr)
          {
-@@ -377,6 +420,8 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
+@@ -376,6 +419,8 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
          }
      }
  
@@ -3180,7 +3180,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
    private:
      // Removes all samplers from a struct specifier.
      void stripStructSpecifierSamplers(const TStructure *structure, TIntermSequence *newSequence)
-@@ -613,6 +658,11 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
+@@ -609,6 +654,11 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
      // A stack of array sizes.  Used to figure out the array dimensions of the extracted sampler,
      // for example when it's nested in an array of structs in an array of structs.
      TVector<unsigned int> mArraySizeStack;
@@ -3192,7 +3192,7 @@ index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab
  };
  }  // anonymous namespace
  
-@@ -620,6 +670,10 @@ bool RewriteStructSamplers(TCompiler *compiler, TIntermBlock *root, TSymbolTable
+@@ -616,6 +666,10 @@ bool RewriteStructSamplers(TCompiler *compiler, TIntermBlock *root, TSymbolTable
  {
      RewriteStructSamplersTraverser traverser(compiler, symbolTable);
      root->traverse(&traverser);
@@ -3505,7 +3505,7 @@ index eafe6ade3cbd5b5ec2fbb55921afedf6f00382d7..73cf52db0d08a8d39403493b9b2921b8
      uint8_t index = ((sourceWidth > 1)  ? 1 : 0) |
                      ((sourceHeight > 1) ? 2 : 0) |
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index c79c87d4c97114235c499c205db7f1e496b75b6c..2216bbdb05cc04f2cfc5098f34f8affb14cdadc6 100644
+index 6b8be2287b1c4c1a29251d34a8bf26b39cc09067..e455a557df8b31d46933d134744613ed8c83f1f0 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
 @@ -10136,6 +10136,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
@@ -3652,10 +3652,10 @@ index c5742bc4ed683aa1ed398218f9ca4e04cd2766e3..9d1b6121818ed6590c2abb6ca5992ab7
  
  #endif  // ANGLE_CONTEXT_API_EXT_AUTOGEN_H_
 diff --git a/src/libANGLE/Display.cpp b/src/libANGLE/Display.cpp
-index 02e0c549452499ec716af105dc8e7b363142e749..550d2ff283f6999dbd4de89e15032ae0368da038 100644
+index 0dff8f5e46e547283e7d4567b21ee1b52f1b13bc..1585c400110afaed30ac48f12a634e35e979edaa 100644
 --- a/src/libANGLE/Display.cpp
 +++ b/src/libANGLE/Display.cpp
-@@ -2614,7 +2614,7 @@ Error Display::validateImageClientBuffer(const gl::Context *context,
+@@ -2625,7 +2625,7 @@ Error Display::validateImageClientBuffer(const gl::Context *context,
      return mImplementation->validateImageClientBuffer(context, target, clientBuffer, attribs);
  }
  
@@ -3665,7 +3665,7 @@ index 02e0c549452499ec716af105dc8e7b363142e749..550d2ff283f6999dbd4de89e15032ae0
                                const AttributeMap &attributes) const
  {
 diff --git a/src/libANGLE/Display.h b/src/libANGLE/Display.h
-index 661dec5961e8ba4079aa95adbf220ee190aba9a4..18e16e7f85b8b0f61fd939d98441e0d26e60c3b1 100644
+index ec489ebd7974b58380a1aad1ac75a5556866e2ae..66fbf90e9932be53bcfc3011b9eb601ab60dbf46 100644
 --- a/src/libANGLE/Display.h
 +++ b/src/libANGLE/Display.h
 @@ -381,7 +381,7 @@ class Display final : public angle::ObserverInterface, public ThreadSafeDisplay
@@ -3691,7 +3691,7 @@ index 48c91ed76f8e9ec0e56597172fa8ed6dba127d76..8aa004302cd1eb4ca215c751198b8c08
  inline constexpr const char *kNegativeLayer = "Negative layer.";
  inline constexpr const char *kNegativeLength = "Negative length.";
 diff --git a/src/libANGLE/Framebuffer.cpp b/src/libANGLE/Framebuffer.cpp
-index 2b279d5fe247d56311dfdbcd7c09f23fefa535ec..ba3473d15e456170f2d78fe53afcb587462dda5e 100644
+index 6233d1cfaf50553bbce4d7af11f74d62d367cfbb..19d656e548980ba95e09e64b416bf71053000d0f 100644
 --- a/src/libANGLE/Framebuffer.cpp
 +++ b/src/libANGLE/Framebuffer.cpp
 @@ -128,6 +128,48 @@ FramebufferStatus CheckAttachmentCompleteness(const Context *context,
@@ -3818,7 +3818,7 @@ index 2b279d5fe247d56311dfdbcd7c09f23fefa535ec..ba3473d15e456170f2d78fe53afcb587
      if (mPixelLocalStorage)
      {
          mPixelLocalStorage->onFramebufferDestroyed(context);
-@@ -1102,6 +1184,23 @@ size_t Framebuffer::getDrawbufferStateCount() const
+@@ -1101,6 +1183,23 @@ size_t Framebuffer::getDrawbufferStateCount() const
      return mState.mDrawBufferStates.size();
  }
  
@@ -3842,7 +3842,7 @@ index 2b279d5fe247d56311dfdbcd7c09f23fefa535ec..ba3473d15e456170f2d78fe53afcb587
  GLenum Framebuffer::getDrawBufferState(size_t drawBuffer) const
  {
      ASSERT(drawBuffer < mState.mDrawBufferStates.size());
-@@ -1352,6 +1451,25 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+@@ -1351,6 +1450,25 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
          }
      }
  
@@ -3868,7 +3868,7 @@ index 2b279d5fe247d56311dfdbcd7c09f23fefa535ec..ba3473d15e456170f2d78fe53afcb587
      const FramebufferAttachment &depthAttachment = mState.mDepthAttachment;
      if (depthAttachment.isAttached())
      {
-@@ -1404,6 +1522,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+@@ -1403,6 +1521,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
                      err::kFramebufferIncompleteMismatchedLayeredAttachments);
              }
          }
@@ -3889,7 +3889,7 @@ index 2b279d5fe247d56311dfdbcd7c09f23fefa535ec..ba3473d15e456170f2d78fe53afcb587
      }
  
      const FramebufferAttachment &stencilAttachment = mState.mStencilAttachment;
-@@ -1458,6 +1590,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+@@ -1457,6 +1589,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
                      err::kFramebufferIncompleteMismatchedLayeredAttachments);
              }
          }
@@ -3910,7 +3910,7 @@ index 2b279d5fe247d56311dfdbcd7c09f23fefa535ec..ba3473d15e456170f2d78fe53afcb587
      }
  
      // Starting from ES 3.0 stencil and depth, if present, should be the same image
-@@ -1704,21 +1850,22 @@ angle::Result Framebuffer::partialClearNeedsInit(const Context *context,
+@@ -1703,21 +1849,22 @@ angle::Result Framebuffer::partialClearNeedsInit(const Context *context,
          }
      }
  
@@ -3938,7 +3938,7 @@ index 2b279d5fe247d56311dfdbcd7c09f23fefa535ec..ba3473d15e456170f2d78fe53afcb587
          {
              *needsInitOut = true;
              return angle::Result::Continue;
-@@ -2055,6 +2202,66 @@ void Framebuffer::setAttachmentMultisampleMultiview(const Context *context,
+@@ -2054,6 +2201,66 @@ void Framebuffer::setAttachmentMultisampleMultiview(const Context *context,
                    samples);
  }
  
@@ -4005,7 +4005,7 @@ index 2b279d5fe247d56311dfdbcd7c09f23fefa535ec..ba3473d15e456170f2d78fe53afcb587
  void Framebuffer::commitWebGL1DepthStencilIfConsistent(const Context *context,
                                                         GLsizei numViews,
                                                         GLuint baseViewIndex,
-@@ -2237,11 +2444,40 @@ void Framebuffer::updateAttachment(const Context *context,
+@@ -2236,11 +2443,40 @@ void Framebuffer::updateAttachment(const Context *context,
      invalidateCompletenessCache();
  }
  
@@ -4046,7 +4046,7 @@ index 2b279d5fe247d56311dfdbcd7c09f23fefa535ec..ba3473d15e456170f2d78fe53afcb587
  void Framebuffer::setWriteControlMode(SrgbWriteControlMode srgbWriteControlMode)
  {
      if (srgbWriteControlMode != mState.getWriteControlMode())
-@@ -3092,4 +3328,5 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
+@@ -3091,4 +3327,5 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
  
      return angle::Result::Continue;
  }
@@ -4157,7 +4157,7 @@ index 0f389641237ba6db41aae330047b681ec6afd204..74cfd646c2623d65259a1f7854b908b1
  
  bool FramebufferAttachment::isLayered() const
 diff --git a/src/libANGLE/FramebufferAttachment.h b/src/libANGLE/FramebufferAttachment.h
-index 924d9ba785a40c4b9020926a7fcabe52fafddabb..33d365366b087baf4794d9913fc45409cbdfca35 100644
+index 14172eae4cb6aec53d5b16cd1639829f6308ded6..45eb7a668973d0f6a33edfdc21cc6d320aacb279 100644
 --- a/src/libANGLE/FramebufferAttachment.h
 +++ b/src/libANGLE/FramebufferAttachment.h
 @@ -110,7 +110,7 @@ class FramebufferAttachment final
@@ -4221,7 +4221,7 @@ index 330d0cae7f1b02fc15660fa78ec7f41b21475746..75f5119b466eb03a4c664ecbf7c3d6f6
          ASSERT(getOwnerThreadId() == angle::GetCurrentThreadId());
          ASSERT(mLockLevel > 0);
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index aba82f9485aa471cd369c57d47aaf5cca965462c..66940fe271b4f7bef03f2642ff3796acbc4e3dcb 100644
+index f756b77c52ce810076017de54f801a6bba7c9d5b..326d67c6389b72c21721728b47ad2cf502830e10 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -4648,10 +4648,10 @@ index 8e4c836b00abea1828257e3280390c552ee52e95..513821bb4ac81cd6908925a3b2b55ceb
      "-weak_framework",
      "Metal",
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
-index aec1ca8aee07b3181cf5e37ab6730f86174a8a64..930be8a4396ff2e1beb9994564e49367c6d93c5b 100644
+index ae1f15122c9dd3711b33d16abf381f3856961d43..359dcb57796d3e894a22e6f32611ea1803e0f16c 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/BufferMtl.mm
-@@ -339,12 +339,13 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
+@@ -356,12 +356,13 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
  
  angle::Span<const uint8_t> BufferMtl::getBufferDataReadOnly(ContextMtl *contextMtl, size_t offset)
  {
@@ -4667,7 +4667,7 @@ index aec1ca8aee07b3181cf5e37ab6730f86174a8a64..930be8a4396ff2e1beb9994564e49367
  }
  
  bool BufferMtl::clientShadowCopyDataNeedSync(ContextMtl *contextMtl)
-@@ -428,7 +429,7 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
+@@ -445,7 +446,7 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
          {
              if (buffer.offset.second <= offset.second &&
                  (offset.second - buffer.offset.second) % buffer.uniformBufferBlockSize == 0)
@@ -4676,7 +4676,7 @@ index aec1ca8aee07b3181cf5e37ab6730f86174a8a64..930be8a4396ff2e1beb9994564e49367
          }
      }
  
-@@ -476,7 +477,8 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
+@@ -534,7 +535,8 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
  static std::vector<DrawIndexRange> CalculateDrawIndexRanges(angle::Span<const uint8_t> data)
  {
      std::vector<DrawIndexRange> result;
@@ -5440,7 +5440,7 @@ index 8ace984134a3a72867c4b481616cf3bcd2703b55..01fa41724f240ffa49c6912ce5e92715
      mutable bool mHasFragmentMemoryBarriers;
  
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index ceb52c2c17d43dd9444d476a58bc00f1b755bf0a..fa0242a65f22e7ed4028068fd52bab1e9e57deea 100644
+index ac2d2da52ac80e40d8bc40055680b4dca2abd21b..3195de9f2b7dd548bda06c989e0543237305b56a 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -175,14 +175,24 @@ bool IsMetalDisplayAvailable()
@@ -6069,10 +6069,10 @@ index 71017e47adb8bc8392fb15bbe063430a58d3ca84..a5d041804e92662fccaafe13c535ebc6
      {
          size_t resourceSize = EstimateTextureSizeInBytes(
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-index 1495633157948a0c0b762d003027dd3e1d1a5223..3d3c08127b352aa7f492b39e3e67e3cd931c9ca9 100644
+index 189e2a6e2542b44df9ecabf199d479336d6f723d..491756003a5519cbfb768e2861015afb9512ba1b 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-@@ -306,18 +306,6 @@ void UpdateDefaultUniformBlockWithElementSize(GLsizei count,
+@@ -305,18 +305,6 @@ void UpdateDefaultUniformBlockWithElementSize(GLsizei count,
          }
      }
  }
@@ -6091,7 +6091,7 @@ index 1495633157948a0c0b762d003027dd3e1d1a5223..3d3c08127b352aa7f492b39e3e67e3cd
  void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
                                                  uint32_t arrayIndex,
                                                  void *dst,
-@@ -900,7 +888,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
+@@ -897,7 +885,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
  {
      ContextMtl *context = mtl::GetImpl(glContext);
  
@@ -6373,7 +6373,7 @@ index 446f81d5c90d84c8ab732561e3da4ede46a1b9cd..fec387e8e52a7d833ec48229fdae85ae
                                                  int slice,
                                                  const MTLRegion &mtlArea,
 diff --git a/src/libANGLE/renderer/metal/TextureMtl.mm b/src/libANGLE/renderer/metal/TextureMtl.mm
-index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f82570a64 100644
+index e60b91e796c13a3d00742f9ea3dc2d544b6bcd97..dd79e3f54f963e5650d2d18f6dae5bf6e6546f38 100644
 --- a/src/libANGLE/renderer/metal/TextureMtl.mm
 +++ b/src/libANGLE/renderer/metal/TextureMtl.mm
 @@ -151,27 +151,6 @@ GLuint GetImageCubeFaceIndexOrZeroFrom(const gl::ImageIndex &index)
@@ -6404,7 +6404,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  // D24X8 by default writes depth data to high 24 bits of 32 bit integers. However, Metal separate
  // depth stencil blitting expects depth data to be in low 24 bits of the data.
  void WriteDepthStencilToDepth24(const uint8_t *srcPtr, uint8_t *dstPtr)
-@@ -865,7 +844,7 @@ uint32_t height(GLuint glLevel) const
+@@ -882,7 +861,7 @@ uint32_t height(GLuint glLevel) const
      mBoundSurface = nullptr;
  }
  
@@ -6413,7 +6413,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  {
  
      if (!keepImages)
-@@ -882,6 +861,7 @@ uint32_t height(GLuint glLevel) const
+@@ -899,6 +878,7 @@ uint32_t height(GLuint glLevel) const
      mNativeTextureStorage       = nullptr;
      mViewFromBaseToMaxLevel     = nullptr;
      mSwizzleStencilSamplingView = nullptr;
@@ -6421,7 +6421,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  
      // Clear render target cache for each texture's image. We don't erase them because they
      // might still be referenced by a framebuffer.
-@@ -905,11 +885,6 @@ uint32_t height(GLuint glLevel) const
+@@ -922,11 +902,6 @@ uint32_t height(GLuint glLevel) const
      {
          view.reset();
      }
@@ -6433,7 +6433,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  }
  
  GLuint TextureMtl::getStorageMipLevelCount(ImageMipLevels mipLevels) const
-@@ -963,7 +938,7 @@ uint32_t height(GLuint glLevel) const
+@@ -980,7 +955,7 @@ uint32_t height(GLuint glLevel) const
          // already-populated image data.
          if (!isImmutableOrPBuffer() && mNativeTextureStorage->mipmapLevels() < mips)
          {
@@ -6442,7 +6442,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
          }
          else
          {
-@@ -988,9 +963,9 @@ uint32_t height(GLuint glLevel) const
+@@ -1005,9 +980,9 @@ uint32_t height(GLuint glLevel) const
      ANGLE_CHECK(contextMtl, desc.format.valid(), gl::err::kInternalError, GL_INVALID_OPERATION);
      angle::FormatID angleFormatId =
          angle::Format::InternalFormatToID(desc.format.info->sizedInternalFormat);
@@ -6454,7 +6454,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  
      // Transfer data from defined images to actual texture object
      int numCubeFaces = static_cast<int>(mNativeTextureStorage->cubeFaces());
-@@ -1019,7 +994,7 @@ uint32_t height(GLuint glLevel) const
+@@ -1036,7 +1011,7 @@ uint32_t height(GLuint glLevel) const
  
                  // Invalidate texture image definition at this index so that we can make it a
                  // view of the native texture at this index later.
@@ -6463,7 +6463,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
              }
          }
      }
-@@ -1253,7 +1228,7 @@ uint32_t height(GLuint glLevel) const
+@@ -1270,7 +1245,7 @@ uint32_t height(GLuint glLevel) const
      // Note: We release the native texture storage but keep old image definitions. So that when the
      // storage is recreated, its levels can be recreated with data from the old image definitions
      // respectively.
@@ -6472,7 +6472,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  
      // Tell context to rebind textures
      contextMtl->invalidateCurrentTextures();
-@@ -1261,25 +1236,6 @@ uint32_t height(GLuint glLevel) const
+@@ -1278,25 +1253,6 @@ uint32_t height(GLuint glLevel) const
      return angle::Result::Continue;
  }
  
@@ -6498,7 +6498,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  angle::Result TextureMtl::ensureLevelViewsWithinBaseMaxCreated()
  {
      ASSERT(mViewFromBaseToMaxLevel);
-@@ -1414,32 +1370,24 @@ uint32_t height(GLuint glLevel) const
+@@ -1431,32 +1387,24 @@ uint32_t height(GLuint glLevel) const
              ? gl::RenderToTextureImageIndex::Default
              : static_cast<gl::RenderToTextureImageIndex>(PackSampleCount(implicitSamples));
  
@@ -6539,7 +6539,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
          }
          rtt.setImplicitMSTexture(msTexture);
      }
-@@ -1716,7 +1664,20 @@ uint32_t height(GLuint glLevel) const
+@@ -1733,7 +1681,20 @@ uint32_t height(GLuint glLevel) const
      ANGLE_TRY(ensureNativeStorageCreated(context, /*keepImages=*/false,
                                           ImageMipLevels::FullMipChainForGenerateMipmap));
  
@@ -6560,7 +6560,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      if (!mViewFromBaseToMaxLevel)
      {
          return angle::Result::Continue;
-@@ -1759,8 +1720,7 @@ uint32_t height(GLuint glLevel) const
+@@ -1776,8 +1737,7 @@ uint32_t height(GLuint glLevel) const
      ContextMtl *contextMtl           = mtl::GetImpl(context);
      const angle::Format &angleFormat = mViewFromBaseToMaxLevel->getFormat().actualAngleFormat();
      // This format must have mip generation function.
@@ -6570,7 +6570,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  
      for (uint32_t slice = 0; slice < mSlices; ++slice)
      {
-@@ -2084,54 +2044,58 @@ uint32_t height(GLuint glLevel) const
+@@ -2101,54 +2061,59 @@ uint32_t height(GLuint glLevel) const
                                          const mtl::Format &mtlFormat,
                                          const gl::Extents &size)
  {
@@ -6585,7 +6585,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
 -        // must release it.
 -        ASSERT(mNativeTextureStorage->textureType() == mtl::GetTextureType(index.getType()));
 -        if (mNativeTextureStorage->getFormat() != mtlFormat ||
--            size != mNativeTextureStorage->size(glLevel))
+-            size != mNativeTextureStorage->getGLSize(glLevel))
 +    ImageDefinitionMtl &imageDef = mTexImageDefs[cubeFaceOrZero][glLevel];
 +
 +    // Discarding the image below leaves the render targets that point at it holding an expired
@@ -6614,7 +6614,8 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
 +    {
 +        // mNativeTextureStorage stores the complete mipmap chain when present.
 +        ASSERT(mNativeTextureStorage->textureType() == mtl::GetTextureType(index.getType()));
-+        if (mNativeTextureStorage->getFormat() == mtlFormat && size == mNativeTextureStorage->size(glLevel))
++        if (mNativeTextureStorage->getFormat() == mtlFormat &&
++            size == mNativeTextureStorage->getGLSize(glLevel))
          {
 +            // The view might be from mNativeTextureStorage, but it might also be from previous
 +            // storages. Always discard.
@@ -6642,7 +6643,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
 -            imageDef.image->textureType() ==
 -                mtl::GetTextureType(GetTextureImageType(index.getType())) &&
 -            imageDef.formatID == mNativeTextureStorage->getFormat().intendedFormatId &&
--            imageDef.image->sizeAt0() == size)
+-            GetTextureGLSize(imageDef.image, mtl::kZeroNativeMipLevel) == size)
 -        {
 -            // Keep it! (No-op)
 -        }
@@ -6664,7 +6665,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      bool allowFormatView =
          mtlFormat.hasDepthAndStencilBits() ||
          needsFormatViewForPixelLocalStorage(
-@@ -2143,29 +2107,26 @@ uint32_t height(GLuint glLevel) const
+@@ -2160,29 +2125,26 @@ uint32_t height(GLuint glLevel) const
          case gl::TextureType::CubeMap:
              ANGLE_TRY(mtl::Texture::Make2DTexture(
                  contextMtl, mtlFormat, size.width, size.height, 1,
@@ -6699,7 +6700,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      return angle::Result::Continue;
  }
  
-@@ -2183,7 +2144,6 @@ uint32_t height(GLuint glLevel) const
+@@ -2200,7 +2162,6 @@ uint32_t height(GLuint glLevel) const
  
      // Tell context to rebind textures
      contextMtl->invalidateCurrentTextures();
@@ -6707,7 +6708,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      ANGLE_TRY(createNativeStorage(context, type, mips, samples, size, mtlFormat));
      ANGLE_TRY(createViewFromBaseToMaxLevel());
  
-@@ -2243,15 +2203,15 @@ uint32_t height(GLuint glLevel) const
+@@ -2260,15 +2221,15 @@ uint32_t height(GLuint glLevel) const
  
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
@@ -6728,7 +6729,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  
      // Get corresponding source data's ANGLE format
      angle::FormatID srcAngleFormatId;
-@@ -2439,9 +2399,8 @@ uint32_t height(GLuint glLevel) const
+@@ -2456,9 +2417,8 @@ uint32_t height(GLuint glLevel) const
                                                          const uint8_t *pixels,
                                                          const ImageDefinitionMtl &imageDef)
  {
@@ -6739,7 +6740,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      mtl::Format imageFormat = contextMtl->getPixelFormat(imageDef.formatID);
  
      if (unpackBuffer)
-@@ -2687,9 +2646,9 @@ uint32_t height(GLuint glLevel) const
+@@ -2704,9 +2664,9 @@ uint32_t height(GLuint glLevel) const
      }
  
      ASSERT(index.getLayerCount() == 1 && !index.isLayered());
@@ -6750,7 +6751,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      const mtl::TextureRef &image = imageDef.image;
      const mtl::Format &format    = contextMtl->getPixelFormat(imageDef.formatID);
      // For Texture's image definition, we always use zero mip level.
-@@ -2731,13 +2690,11 @@ uint32_t height(GLuint glLevel) const
+@@ -2748,13 +2708,11 @@ uint32_t height(GLuint glLevel) const
      const gl::Offset modifiedDestOffset(destOffset.x + clippedSourceArea.x - sourceArea.x,
                                          destOffset.y + clippedSourceArea.y - sourceArea.y, 0);
  
@@ -6768,7 +6769,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      {
          return copySubImageCPU(context, index, modifiedDestOffset, clippedSourceArea,
                                 internalFormat, source, colorReadRT);
-@@ -2793,14 +2750,11 @@ uint32_t height(GLuint glLevel) const
+@@ -2810,14 +2768,11 @@ uint32_t height(GLuint glLevel) const
                                            const FramebufferMtl *source,
                                            const RenderTargetMtl *colorReadRT)
  {
@@ -6786,7 +6787,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      const int dstRowPitch          = dstFormat.pixelBytes * clippedSourceArea.width;
      angle::MemoryBuffer conversionRow;
      ANGLE_CHECK_GL_ALLOC(contextMtl, conversionRow.resize(dstRowPitch));
-@@ -2847,7 +2801,7 @@ uint32_t height(GLuint glLevel) const
+@@ -2864,7 +2819,7 @@ uint32_t height(GLuint glLevel) const
          // Upload to texture
          ANGLE_TRY(UploadTextureContents(context, dstFormat, mtlDstRowArea, mtl::kZeroNativeMipLevel,
                                          dstSlice, conversionRow.data(), dstRowPitch, 0,
@@ -6795,7 +6796,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      }
  
      return angle::Result::Continue;
-@@ -2872,18 +2826,15 @@ uint32_t height(GLuint glLevel) const
+@@ -2889,18 +2844,15 @@ uint32_t height(GLuint glLevel) const
      ContextMtl *contextMtl = mtl::GetImpl(context);
      TextureMtl *sourceMtl  = mtl::GetImpl(source);
  
@@ -6822,7 +6823,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      {
          return copySubTextureCPU(context, index, destOffset, internalFormat,
                                   mtl::kZeroNativeMipLevel, sourceBox, sourceAngleFormat,
-@@ -2908,10 +2859,9 @@ uint32_t height(GLuint glLevel) const
+@@ -2925,10 +2877,9 @@ uint32_t height(GLuint glLevel) const
                                                   const mtl::TextureRef &sourceTexture)
  {
      ContextMtl *contextMtl = mtl::GetImpl(context);
@@ -6836,7 +6837,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  
      if (internalFormat.colorEncoding == GL_SRGB)
      {
-@@ -2926,7 +2876,7 @@ uint32_t height(GLuint glLevel) const
+@@ -2943,7 +2894,7 @@ uint32_t height(GLuint glLevel) const
      blitParams.dstRect =
          gl::Rectangle(destOffset.x, destOffset.y, sourceBox.width, sourceBox.height);
      blitParams.dstScissorRect = blitParams.dstRect;
@@ -6845,7 +6846,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      blitParams.enabledBuffers.set(0);
  
      blitParams.src      = sourceTexture;
-@@ -2941,10 +2891,9 @@ uint32_t height(GLuint glLevel) const
+@@ -2958,10 +2909,9 @@ uint32_t height(GLuint glLevel) const
      blitParams.unpackUnmultiplyAlpha  = unpackUnmultiplyAlpha;
      blitParams.transformLinearToSrgb  = sourceAngleFormat.isSRGB;
  
@@ -6858,7 +6859,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
  }
  
  angle::Result TextureMtl::copySubTextureCPU(const gl::Context *context,
-@@ -2959,14 +2908,11 @@ uint32_t height(GLuint glLevel) const
+@@ -2976,14 +2926,11 @@ uint32_t height(GLuint glLevel) const
                                              bool unpackUnmultiplyAlpha,
                                              const mtl::TextureRef &sourceTexture)
  {
@@ -6876,7 +6877,7 @@ index ab2813837e37098e06ca02be6e91d27692cc4f95..6c76e51473180a8b49494f313a21d31f
      const int srcRowPitch               = sourceAngleFormat.pixelBytes * sourceBox.width;
      const int srcImageSize              = srcRowPitch * sourceBox.height;
      const int convRowPitch              = dstAngleFormat.pixelBytes * sourceBox.width;
-@@ -2994,7 +2940,7 @@ uint32_t height(GLuint glLevel) const
+@@ -3011,7 +2958,7 @@ uint32_t height(GLuint glLevel) const
  
      // Upload to texture
      ANGLE_TRY(UploadTextureContents(context, dstAngleFormat, mtlDstArea, mtl::kZeroNativeMipLevel,
@@ -6898,7 +6899,7 @@ index 6115160fee12ba87e55e99644c5a441d45e0dc36..ee8666b1e0b74dc888125a816a04e56f
                                        const void *indices);
  
 diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.mm b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-index 26b5dec350dfd5dc24c09b24ad015c1c43bf6a9b..1fc0317ca5726e6e71c0a68d70f5d0f59df02e26 100644
+index 9c66ebc6e7c31f84b7918f36f475cd9012df65a5..7fe86da42d14a992c612fb1032eb40fd29cfdaf5 100644
 --- a/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 +++ b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 @@ -11,6 +11,7 @@
@@ -6973,7 +6974,7 @@ index 26b5dec350dfd5dc24c09b24ad015c1c43bf6a9b..1fc0317ca5726e6e71c0a68d70f5d0f5
  }
  
  inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
-@@ -461,6 +466,7 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -460,6 +465,7 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
                                                    GLint firstVertex,
                                                    GLsizei vertexOrIndexCount,
                                                    GLsizei instanceCount,
@@ -6981,7 +6982,7 @@ index 26b5dec350dfd5dc24c09b24ad015c1c43bf6a9b..1fc0317ca5726e6e71c0a68d70f5d0f5
                                                    gl::DrawElementsType indexTypeOrInvalid,
                                                    const void *indices)
  {
-@@ -499,8 +505,10 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -498,8 +504,10 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
          }
          else
          {
@@ -6994,7 +6995,7 @@ index 26b5dec350dfd5dc24c09b24ad015c1c43bf6a9b..1fc0317ca5726e6e71c0a68d70f5d0f5
              elementCount = UnsignedCeilDivide(instanceCount, binding.getDivisor());
          }
          size_t bytesIntendedToUse = (startElement + elementCount) * binding.getStride();
-@@ -615,17 +623,27 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -614,17 +622,27 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
                  (binding.getStride() < format.actualAngleFormat().pixelBytes) ||
                  (binding.getStride() % mtl::kVertexAttribBufferStrideAlignment) != 0;
  
@@ -7025,7 +7026,7 @@ index 26b5dec350dfd5dc24c09b24ad015c1c43bf6a9b..1fc0317ca5726e6e71c0a68d70f5d0f5
              }
          }
          else
-@@ -1038,18 +1056,6 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
+@@ -1058,18 +1076,6 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
  {
      unsigned srcFormatSize = srcVertexFormat.intendedAngleFormat().pixelBytes;
  
@@ -7044,7 +7045,7 @@ index 26b5dec350dfd5dc24c09b24ad015c1c43bf6a9b..1fc0317ca5726e6e71c0a68d70f5d0f5
      ContextMtl *contextMtl = mtl::GetImpl(glContext);
  
      // Convert to tightly packed format
-@@ -1076,7 +1082,7 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
+@@ -1096,7 +1102,7 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
          mCurrentArrayBufferStrides[attribIndex] = stride;
          return angle::Result::Continue;
      }
@@ -7053,7 +7054,7 @@ index 26b5dec350dfd5dc24c09b24ad015c1c43bf6a9b..1fc0317ca5726e6e71c0a68d70f5d0f5
          srcBuffer, static_cast<VertexConversionBufferMtl *>(conversion), binding, srcFormatSize);
  
      const angle::Format &convertedAngleFormat = convertedFormat.actualAngleFormat();
-@@ -1162,16 +1168,27 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
+@@ -1182,16 +1188,27 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
      mtl::BufferSlice newBuffer;
      ANGLE_TRY(conversion->bufferPool.allocate(contextMtl, numVertices * targetStride, &newBuffer));
  
@@ -10374,7 +10375,7 @@ index 33325e9c469dbcc23c3d7da8e9f0f3cfb8aaf1b7..7c4d503c80dc16302e490e7e4ae365ab
      bool mResetFirstQuery = false;
      bool mUsed            = false;
 diff --git a/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.mm b/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.mm
-index 8b5555d122aa57af5a7bab5ca8b63987ddbfa5f2..07c6b9704589ff2e150713d34f9500520fe7abf3 100644
+index dc1737b87b8f228d7e79977b7a1dc573684313a1..07c6b9704589ff2e150713d34f9500520fe7abf3 100644
 --- a/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.mm
 +++ b/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.mm
 @@ -9,9 +9,10 @@
@@ -10558,7 +10559,7 @@ index 8b5555d122aa57af5a7bab5ca8b63987ddbfa5f2..07c6b9704589ff2e150713d34f950052
  }
  
  void OcclusionQueryPool::resolveVisibilityResults(ContextMtl *contextMtl)
-@@ -131,61 +133,49 @@
+@@ -131,60 +133,49 @@
  
      RenderUtils &utils              = contextMtl->getDisplay()->getUtils();
      BlitCommandEncoder *blitEncoder = nullptr;
@@ -10620,17 +10621,16 @@ index 8b5555d122aa57af5a7bab5ca8b63987ddbfa5f2..07c6b9704589ff2e150713d34f950052
  
      // Request synchronization and cleanup
      blitEncoder = contextMtl->getBlitCommandEncoder();
--    for (size_t i = 0; i < mAllocatedQueries.size(); ++i)
+-    for (QueryMtl *query : mAllocatedQueries)
 +    for (auto &entry : mAllocatedQueries)
      {
--        QueryMtl *query = mAllocatedQueries[i];
 -        if (!query)
 +        if (entry.resultBuffer() == nullptr)
          {
              continue;
          }
 -
--        const BufferRef &dstBuf = mAllocatedQueries[i]->getVisibilityResultBuffer();
+-        const BufferRef &dstBuf = query->getVisibilityResultBuffer();
 -
 -        dstBuf->syncContent(contextMtl, blitEncoder);
 -
@@ -10639,7 +10639,7 @@ index 8b5555d122aa57af5a7bab5ca8b63987ddbfa5f2..07c6b9704589ff2e150713d34f950052
      }
  
      mAllocatedQueries.clear();
-@@ -211,9 +201,9 @@
+@@ -210,9 +201,9 @@
      // If the current visibility pool buffer was used before,
      // ensure that it does not contain previous results.
      auto blitEncoder = contextMtl->getBlitCommandEncoderWithoutEndingRenderEncoder();
@@ -11775,7 +11775,7 @@ index 6b7f524e2236df25b5ea5ae14327b2e803c3b6ea..01aa53dfd6dc42d809b016ff985557fc
              {
                  case BuildType::BUILD:
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index ae3eaf24c8ae5210058c961153e9e40067a08e4f..2cbaae5dd65fb34c1ab5ffd7b1f793307d66e477 100644
+index ea5958dcc99eade3029911d6d513b0c79382a58c..c02cc1eedd3d99f1c8dc1e8a39c5eadcebad3a72 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
 @@ -6005,6 +6005,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
@@ -11803,10 +11803,10 @@ index 0aa0b64324fcb33c94f56dc6c54b13f16190a0bc..2a2499f9bfbae9ffeefaa468b6e2a686
          ASSERT(false);
          return angle::FormatID::NONE;
 diff --git a/src/libANGLE/renderer/vulkan/vk_helpers.cpp b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-index e5cfa5cb6fa2e3f0ebe79db0f4bac22f409290fa..38c96e4136bd0201cb470df536f4f514e3ed895b 100644
+index a60e0e2a899e9d24afef9cfb89382b94e7fb431d..2a1b641c74c4b896c5bc6f8fc8e1f25d45b346a5 100644
 --- a/src/libANGLE/renderer/vulkan/vk_helpers.cpp
 +++ b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-@@ -9475,10 +9475,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
+@@ -9494,10 +9494,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
          return angle::Result::Continue;
      }
  
@@ -11846,10 +11846,10 @@ index 1a9be1cb7e3cbf52b6a59fc85f69a2c5b64a637f..0817383b43cd79d1bcbee7f7a063a629
  #include <string>
  
 diff --git a/src/libANGLE/validationEGL.cpp b/src/libANGLE/validationEGL.cpp
-index c33399b9f7d41d7022bfc7c281df5f47150bc75b..a839d5dcb2a573c01de5517bd472a56b35cccff7 100644
+index 21dbec52b8bc7ce92182446c6bec46e5075b028d..550ca556f77d02c86031a054320de796756f1fe4 100644
 --- a/src/libANGLE/validationEGL.cpp
 +++ b/src/libANGLE/validationEGL.cpp
-@@ -3637,11 +3637,11 @@ bool ValidateCreatePixmapSurface(const ValidationContext *val,
+@@ -3645,11 +3645,11 @@ bool ValidateCreatePixmapSurface(const ValidationContext *val,
  
      if (!(config->surfaceType & EGL_PIXMAP_BIT))
      {
@@ -11863,14 +11863,14 @@ index c33399b9f7d41d7022bfc7c281df5f47150bc75b..a839d5dcb2a573c01de5517bd472a56b
                           val->entryPoint, val->labeledObject, false);
  
      return true;
-@@ -7229,7 +7229,7 @@ bool ValidateQuerySurface64KHR(const ValidationContext *val,
+@@ -7230,7 +7230,7 @@ bool ValidateQuerySurface64KHR(const ValidationContext *val,
              break;
          default:
          {
 -            EGLint querySurfaceValue;
 +            EGLint querySurfaceValue = 0;
              ANGLE_VALIDATION_TRY(
-                 ValidateQuerySurface(val, dpy, surfaceID, attribute, &querySurfaceValue));
+                 ValidateQuerySurface(val, dpy, surface, attribute, &querySurfaceValue));
          }
 diff --git a/src/libANGLE/validationES.cpp b/src/libANGLE/validationES.cpp
 index 7e0b75f2d5b6d1a3f0f5a6cf8b96bd8aadcb9513..a111eb0f3cf5a69b51c7b2c5a3b0815c0cf47091 100644
@@ -12271,7 +12271,7 @@ index 0edcad5163e20ba0de30271686232d3ba8d4b633..2109869e530e585a5c1f34ccf33628f0
  
  #endif  // LIBANGLE_VALIDATION_ESEXT_AUTOGEN_H_
 diff --git a/src/libGLESv2.gni b/src/libGLESv2.gni
-index 2360cc03a993546d4ce4124e9854f242cbe252f7..83a2cbd70da2654d023b89e1174d6ee24d3d9c37 100644
+index 2c3770be7ed8a122fa168e616b5a0392ffcc1be6..d504d35ca481a274c37471aa2f9b2fa32efb0895 100644
 --- a/src/libGLESv2.gni
 +++ b/src/libGLESv2.gni
 @@ -14,6 +14,7 @@ libangle_common_headers = [
@@ -12764,7 +12764,7 @@ index bda5052638ab3fa802c09eaba8c60085544cd6e9..a90f3795177d1f5483ce09ddbb3ee2b0
    "gl_tests/LineLoopTest.cpp",
    "gl_tests/LinkAndRelinkTest.cpp",
 diff --git a/src/tests/angle_end2end_tests_expectations.txt b/src/tests/angle_end2end_tests_expectations.txt
-index 495cd202fff0f7fba172a0e69318ec6bf66e91a6..3a76556187beccec0b787e0ef2a2a271eb06d36f 100644
+index 2f8e7e1f015c7c0578afd5f7940eec1a26edd10d..11da6af56215dc8cbc05de76da747cc01b8f55fc 100644
 --- a/src/tests/angle_end2end_tests_expectations.txt
 +++ b/src/tests/angle_end2end_tests_expectations.txt
 @@ -608,6 +608,8 @@
@@ -12805,9 +12805,9 @@ index 495cd202fff0f7fba172a0e69318ec6bf66e91a6..3a76556187beccec0b787e0ef2a2a271
  
  // D3D11 backend does not support LOD options with shadow samplers
  365066518 D3D11 : ShadowSamplerFunctionTexture2DTest.Test/*__TextureBias_Mipmapped = SKIP
-@@ -3031,6 +3037,61 @@
- // Unimplemented parts.
+@@ -3030,6 +3036,61 @@
  515493666 D3D11 : Restart/DrawElementsVariantsTest.Draw/* = SKIP
+ 565475913 D3D11 : ProvokingVertexTest.FlatIndexedDrawWithOffset/* = SKIP
  
 +0 METAL : IncompatibleTextureTest.*/* = SKIP
 +0 METAL : WebGL2GLSLValidationTest.ManyChainedBinaryExpressions/* = SKIP
@@ -13141,7 +13141,7 @@ index 171d5a1a1a247c27954e6811b6861c1db97b6192..cccf8bcae221e70fc703edc951583109
          argv.push_back("--deqp-visibility=hidden");
      }
 diff --git a/src/tests/deqp_support/deqp_gles2_test_expectations.txt b/src/tests/deqp_support/deqp_gles2_test_expectations.txt
-index 06a26ebf7bde0d5298637afd00c07534f787cb33..b765ce0ad6fc34059038a089fbc77c96ba791518 100644
+index 5e4be17eb129132cf1d33f150e8df84a0dc4d318..bafb6e1e4090f52980f2e9a43b1cc195ea10105c 100644
 --- a/src/tests/deqp_support/deqp_gles2_test_expectations.txt
 +++ b/src/tests/deqp_support/deqp_gles2_test_expectations.txt
 @@ -414,6 +414,9 @@
@@ -13234,10 +13234,10 @@ index 26e09a54e106f4f534a562b53e49a52013f412a1..afc33621d43a9dfd727ebb5e440b7c00
  
      void initializeContextForDisplay(EGLDisplay display, EGLContext *context)
 diff --git a/src/tests/egl_tests/EGLDisplayTest.cpp b/src/tests/egl_tests/EGLDisplayTest.cpp
-index 025e357a2ea137df30c9fab3582199a2118fe899..b70daba4e3451b30fbe142edaadaef151ae2f780 100644
+index 5f4795fc508b8345c60f780a9037118ca000ea9a..cc94ce058e42a30971c4515ae9fdd0506156bbc1 100644
 --- a/src/tests/egl_tests/EGLDisplayTest.cpp
 +++ b/src/tests/egl_tests/EGLDisplayTest.cpp
-@@ -222,7 +222,9 @@ TEST_P(EGLDisplayTest, GetPlatformDisplayEXT)
+@@ -230,7 +230,9 @@ TEST_P(EGLDisplayTest, GetPlatformDisplayEXT)
      // eglGetPlatformDisplayEXT() requires EGL_EXT_platform_base.
      ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_EXT_platform_base"));
  
@@ -13475,7 +13475,7 @@ index 9b0d0facc1bb6b4b2570d3b4dccabe6ce4d5ef7d..e82974f351797df675951a6a54636e9e
      }
  
 diff --git a/src/tests/gl_tests/CopyTexImageTest.cpp b/src/tests/gl_tests/CopyTexImageTest.cpp
-index 76a4a4e4c367c3ee00e52adcc422a208bb309099..b93d1dd9bba5566f9eabb653da0e69231e6ac22c 100644
+index f0a0330ad7674343e490c56fc518f5d705a7f180..16670c09c743162ed9cb57d6db75b08f2a96be1c 100644
 --- a/src/tests/gl_tests/CopyTexImageTest.cpp
 +++ b/src/tests/gl_tests/CopyTexImageTest.cpp
 @@ -1465,6 +1465,41 @@ TEST_P(CopyTexImageTestES3, CopyTexSubImageToNonZeroBase)
@@ -14878,7 +14878,7 @@ index b75c7c5043ff3beee6c69ab4db10a71bc09b6ab2..caa8add04cc2a9e398b090332c53bcc9
          compileShader(GL_FRAGMENT_SHADER, shader.c_str());
          verifyIsInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
 diff --git a/src/tests/gl_tests/GLSLTest.cpp b/src/tests/gl_tests/GLSLTest.cpp
-index fcede154e29044fa424f464390d56ecbae2f28bc..699ed6e22ba2f204a83fee5eeb96d060851db5d1 100644
+index b567c56e322599112b219cccf26827fd5364e0e0..7985e8ff5eac74601cfd392aee04439c05d9f296 100644
 --- a/src/tests/gl_tests/GLSLTest.cpp
 +++ b/src/tests/gl_tests/GLSLTest.cpp
 @@ -810,6 +810,29 @@ TEST_P(GLSLTest, SwizzledChainedAssignIncrement)
@@ -15074,7 +15074,7 @@ index fcede154e29044fa424f464390d56ecbae2f28bc..699ed6e22ba2f204a83fee5eeb96d060
  // Test a fragment shader that returns inside if (that being the only branch that actually gets
  // executed). Regression test for http://anglebug.com/42261034
  TEST_P(GLSLTest, IfElseIfAndReturn)
-@@ -24421,6 +24586,830 @@ void main()
+@@ -24423,6 +24588,830 @@ void main()
      ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
      drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -15906,7 +15906,7 @@ index fcede154e29044fa424f464390d56ecbae2f28bc..699ed6e22ba2f204a83fee5eeb96d060
  }
  
 diff --git a/src/tests/gl_tests/ImageTest.cpp b/src/tests/gl_tests/ImageTest.cpp
-index 63e5314637b8153408b27c49856bcfbcfcbce24d..c520c291ecdbd86f768da06a45cac3fe968c5875 100644
+index ef927f4dd77b5ad130894bd35abd1a611b66f43a..3e1ebd3778c286c5467a04ec3994729ea9e88292 100644
 --- a/src/tests/gl_tests/ImageTest.cpp
 +++ b/src/tests/gl_tests/ImageTest.cpp
 @@ -2983,8 +2983,8 @@ TEST_P(ImageTestES3, SourceAHBTargetTexture2DGenerateMipmap)
@@ -17612,7 +17612,7 @@ index 5925ec944964f46aefbd1d36448eabf92ed692ec..282641614e0e2478c79b81fc2e66f316
      window->makeCurrent();
  
 diff --git a/src/tests/gl_tests/ProvokingVertexTest.cpp b/src/tests/gl_tests/ProvokingVertexTest.cpp
-index 47b525a22b550c08d21425975d8698c2e4ddbfd2..080cf7f35b1a37e88a797b6e422be60e892cccad 100644
+index 7d33308fc13459dd95fab734bd4b9251744978df..1b8a84f5d3b5d894d7832c24e39d87648cb70cf8 100644
 --- a/src/tests/gl_tests/ProvokingVertexTest.cpp
 +++ b/src/tests/gl_tests/ProvokingVertexTest.cpp
 @@ -15,7 +15,6 @@
@@ -17967,7 +17967,7 @@ index d87dd3dc5299e44482cdda4fde6d51623bd67093..882be7ceac6c71a30e21357d6d49358f
  {};
  
 diff --git a/src/tests/gl_tests/TextureTest.cpp b/src/tests/gl_tests/TextureTest.cpp
-index 565777216df986d8d849268cfe241a9f97860988..7ce10a24211d803b263e0c76adbb85fd71246864 100644
+index 017749976ccac40790f29cf54cc1c30a6874a49a..68dd9e3be0256793d3db1abba0e3d5b0a73ee032 100644
 --- a/src/tests/gl_tests/TextureTest.cpp
 +++ b/src/tests/gl_tests/TextureTest.cpp
 @@ -2040,6 +2040,7 @@ void Texture2DDepthStencilTestES3::TestSampleWithDepthStencilMode(GLenum format,
@@ -18017,7 +18017,7 @@ index 565777216df986d8d849268cfe241a9f97860988..7ce10a24211d803b263e0c76adbb85fd
  TEST_P(TextureCubeTest, CubeMapBug)
  {
      glActiveTexture(GL_TEXTURE0);
-@@ -15188,7 +15219,7 @@ class TextureLimitsTest : public ANGLETest<>
+@@ -15222,7 +15253,7 @@ class TextureLimitsTest : public ANGLETest<>
          initTextures(vertexTextureCount + fragmentTextureCount, 0);
  
          glUseProgram(mProgram);
@@ -18026,7 +18026,7 @@ index 565777216df986d8d849268cfe241a9f97860988..7ce10a24211d803b263e0c76adbb85fd
          for (GLint texIndex = 0; texIndex < vertexTextureCount; ++texIndex)
          {
              std::stringstream uniformNameStr;
-@@ -16344,6 +16375,81 @@ TEST_P(Texture2DTestES3, UnpackSkipImages2D)
+@@ -16378,6 +16409,81 @@ TEST_P(Texture2DTestES3, UnpackSkipImages2D)
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
  }
  
@@ -18108,7 +18108,7 @@ index 565777216df986d8d849268cfe241a9f97860988..7ce10a24211d803b263e0c76adbb85fd
  // Test that skip defined in unpack parameters is taken into account when determining whether
  // unpacking source extends outside unpack buffer bounds.
  TEST_P(Texture2DTestES3, UnpackSkipPixelsOutOfBounds)
-@@ -21419,7 +21525,7 @@ TEST_P(Texture2DTestES3, LargeTextureOverflow)
+@@ -21453,7 +21559,7 @@ TEST_P(Texture2DTestES3, LargeTextureOverflow)
  }
  
  // Create an integer format texture but specify a FLOAT sampler. OpenGL
@@ -18117,7 +18117,7 @@ index 565777216df986d8d849268cfe241a9f97860988..7ce10a24211d803b263e0c76adbb85fd
  TEST_P(Texture2DTestES3, TexImageFormatMismatch)
  {
      GLint textureUnit = 2;
-@@ -21520,6 +21626,172 @@ TEST_P(Texture2DTestES3, PackPixels3DAnd2DArrayTypeConfusion)
+@@ -21554,6 +21660,172 @@ TEST_P(Texture2DTestES3, PackPixels3DAnd2DArrayTypeConfusion)
      glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
  }
  
@@ -18389,7 +18389,7 @@ index 3db493dbdcf7d972d9e6d1f72956881e69674dfe..2199b24a2c08b3e300d62f1a459ba418
          uniformMatrixCxRfv = {{
              {nullptr, nullptr, nullptr, nullptr, nullptr},
 diff --git a/src/tests/gl_tests/VertexAttributeTest.cpp b/src/tests/gl_tests/VertexAttributeTest.cpp
-index c03fdc91d9c1c602c5f75225d116082910109f6e..ec86586fb5d972794c62255ca6ec28324b95debf 100644
+index f84aeced8657ee5875b80276cb2ee3b9a91dfc7f..c178b96be2b9ddab40aea17770d5c8e1be51b832 100644
 --- a/src/tests/gl_tests/VertexAttributeTest.cpp
 +++ b/src/tests/gl_tests/VertexAttributeTest.cpp
 @@ -1523,6 +1523,72 @@ TEST_P(VertexAttributeOORTest, ANGLEDrawArraysOutOfBoundsCases)
@@ -18943,7 +18943,7 @@ index f304aa2bfcfafef0df4f2a69c12405212ae2496e..a24c0134155e5b5e7eeaf73df995abcb
  // correctly generates an error in hardened contexts.
  TEST_P(HardenedContextTest, UniformBufferRangeExceedsSize)
 diff --git a/src/tests/perf_tests/ANGLEPerfTest.cpp b/src/tests/perf_tests/ANGLEPerfTest.cpp
-index c15259faebce0e3f419298911666fc8d9fdb30aa..b5d6887f25735a2395481800fd2b9e91c7fb7834 100644
+index a147fa1d941f19dd16f303db3521c75ffa8b7d8d..74af929878145ae28f2b93c791403706554586ab 100644
 --- a/src/tests/perf_tests/ANGLEPerfTest.cpp
 +++ b/src/tests/perf_tests/ANGLEPerfTest.cpp
 @@ -772,9 +772,9 @@ void ANGLEPerfTest::atraceCounter(const char *counterName, int64_t counterValue)
@@ -19011,7 +19011,7 @@ index fe13e667f945eae5bcf53b57cf5a64958aafd344..27f01016a0d0bed51eb852022c325cb8
          kConditionGLDesktop,
          kConditionGLES,
 diff --git a/src/tests/test_expectations/GPUTestExpectationsParser.cpp b/src/tests/test_expectations/GPUTestExpectationsParser.cpp
-index 73f8423737a722ba90e9f2b26ae7562ee5299b2a..4b62e800fc15b4ef82c7e54d3b1ca8b7cfb2da74 100644
+index ac8ba0f4c06006926ab043af4af4a1c9f1275180..e4a7bd5363dc65fc584f5a093870c7bd31b16d13 100644
 --- a/src/tests/test_expectations/GPUTestExpectationsParser.cpp
 +++ b/src/tests/test_expectations/GPUTestExpectationsParser.cpp
 @@ -56,6 +56,7 @@ enum Token
@@ -19046,7 +19046,7 @@ index 73f8423737a722ba90e9f2b26ae7562ee5299b2a..4b62e800fc15b4ef82c7e54d3b1ca8b7
      {"d3d11", GPUTestConfig::kConditionD3D11},
      {"opengl", GPUTestConfig::kConditionGLDesktop},
      {"gles", GPUTestConfig::kConditionGLES},
-@@ -567,6 +571,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
+@@ -568,6 +572,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
              case kConfigMacMojave:
              case kConfigMac:
              case kConfigIOS:
@@ -19054,7 +19054,7 @@ index 73f8423737a722ba90e9f2b26ae7562ee5299b2a..4b62e800fc15b4ef82c7e54d3b1ca8b7
              case kConfigLinux:
              case kConfigChromeOS:
              case kConfigAndroid:
-@@ -580,6 +585,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
+@@ -581,6 +586,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
              case kConfigSamsung:
              case kConfigRelease:
              case kConfigDebug:
@@ -19063,7 +19063,7 @@ index 73f8423737a722ba90e9f2b26ae7562ee5299b2a..4b62e800fc15b4ef82c7e54d3b1ca8b7
              case kConfigGLDesktop:
              case kConfigGLES:
 diff --git a/src/tests/test_utils/ANGLETest.cpp b/src/tests/test_utils/ANGLETest.cpp
-index d52d1ac71400a1598907aa5398d5c34308fa583f..193773717dc8c6a9ff8fadc9ce8650543bf66b93 100644
+index 0843faee4172b067514f8f157acced5ae127402a..2bd3973f6a7d81108578989133c0a0b51f3e6818 100644
 --- a/src/tests/test_utils/ANGLETest.cpp
 +++ b/src/tests/test_utils/ANGLETest.cpp
 @@ -26,9 +26,7 @@
@@ -19216,7 +19216,7 @@ index e46f9911fb452bf59b007ee69345e6bafc7bf54c..5e39009c10e9958228d57da4c93e5e1f
  {
      return gSelectedConfig[0] != 0;
 diff --git a/src/tests/test_utils/angle_test_instantiate.h b/src/tests/test_utils/angle_test_instantiate.h
-index 7448d6f92425caf009e5fef71d244772591d1fdb..9551edb254733eb23ea5ce128a365fbd503171fc 100644
+index 9c27e67bc4ffbe7e53eab44575be3fcda4b73583..e7f423973bb3a6a6d3d4b95092beac1cbaeaeb2c 100644
 --- a/src/tests/test_utils/angle_test_instantiate.h
 +++ b/src/tests/test_utils/angle_test_instantiate.h
 @@ -396,6 +396,8 @@ extern bool gEnableANGLEPerTestCaptureLabel;
@@ -19676,7 +19676,7 @@ index 63710e7589b0479ede4630fde35b5c5d511c59f0..54d225db62abc0a15ee469a4a44df6c2
  
      for (const std::string &path : searchPaths)
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index 7e0d667b50cbcf8470b8beeedb3988c8ac3a081b..958f0ffdd1209a1668cb43cba599069d51969204 100644
+index bd0a23f8643e5510b7262c00bd4aa442d6c346ce..25919c882a02fce85a068decb83f640e23365b81 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
 @@ -75,6 +75,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
@@ -19696,7 +19696,7 @@ index 7e0d667b50cbcf8470b8beeedb3988c8ac3a081b..958f0ffdd1209a1668cb43cba599069d
      {Feature::InitializeColorAttachmentWithWhite, "initializeColorAttachmentWithWhite"},
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index 2a973e006b598d6e406cce573939c9e4333e8671..0d4c0155d05f2aa9facb46e4c7b681c966d053d4 100644
+index 6d6b17a8e5e57f907d8826308eb79c253db08363..1a0031c3de824807a371afcdc5707df973dbcadd 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
 @@ -75,6 +75,7 @@ enum class Feature

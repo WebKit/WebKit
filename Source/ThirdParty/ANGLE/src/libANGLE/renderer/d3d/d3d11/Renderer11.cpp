@@ -400,7 +400,8 @@ Renderer11::Renderer11(egl::Display *display)
       mCreateDebugDevice(false),
       mStateCache(),
       mStateManager(this),
-      mDebug(nullptr)
+      mDebug(nullptr),
+      mResourceManager11(this)
 {
     mLineLoopIB    = nullptr;
     mTriangleFanIB = nullptr;

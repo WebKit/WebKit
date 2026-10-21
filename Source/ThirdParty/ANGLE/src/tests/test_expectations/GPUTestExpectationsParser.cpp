@@ -525,10 +525,11 @@ std::vector<std::string> GPUTestExpectationsParser::getUnusedExpectationsMessage
     std::vector<std::string> messages;
     std::vector<GPUTestExpectationsParser::GPUTestExpectationEntry> unusedExpectations =
         getUnusedExpectations();
-    for (size_t i = 0; i < unusedExpectations.size(); ++i)
+    for (const GPUTestExpectationsParser::GPUTestExpectationEntry &unusedExpectation :
+         unusedExpectations)
     {
         std::string message =
-            "Line " + ToString(unusedExpectations[i].lineNumber) + ": expectation was unused.";
+            "Line " + ToString(unusedExpectation.lineNumber) + ": expectation was unused.";
         messages.push_back(message);
     }
     return messages;
@@ -787,11 +788,11 @@ std::vector<GPUTestExpectationsParser::GPUTestExpectationEntry>
 GPUTestExpectationsParser::getUnusedExpectations() const
 {
     std::vector<GPUTestExpectationsParser::GPUTestExpectationEntry> unusedExpectations;
-    for (size_t i = 0; i < mEntries.size(); ++i)
+    for (const GPUTestExpectationsParser::GPUTestExpectationEntry &entry : mEntries)
     {
-        if (!mEntries[i].used)
+        if (!entry.used)
         {
-            unusedExpectations.push_back(mEntries[i]);
+            unusedExpectations.push_back(entry);
         }
     }
     return unusedExpectations;

@@ -1360,6 +1360,59 @@ impl Block {
         self.block2.as_mut().map(|sub_block| transform(state, sub_block));
         self.case_blocks.iter_mut().for_each(|sub_block| transform(state, sub_block));
     }
+
+    // Appends `block`'s variables and instructions to this block and takes over its branch
+    // targets.  `self` must be the unterminated tail of its merge chain.
+    pub fn append_block(&mut self, mut block: Block) {
+        debug_assert!(block.input.is_none());
+        debug_assert!(!self.is_terminated());
+        self.variables.extend(std::mem::take(&mut block.variables));
+        self.instructions.extend(std::mem::take(&mut block.instructions));
+        self.inherit_branch_targets(&mut block);
+    }
+
+    pub fn inherit_branch_targets(&mut self, old_block: &mut Block) {
+        debug_assert!(self.merge_block.is_none());
+        debug_assert!(self.loop_condition.is_none());
+        debug_assert!(self.block1.is_none());
+        debug_assert!(self.block2.is_none());
+        debug_assert!(self.case_blocks.is_empty());
+
+        self.merge_block = old_block.merge_block.take();
+        self.loop_condition = old_block.loop_condition.take();
+        self.block1 = old_block.block1.take();
+        self.block2 = old_block.block2.take();
+        self.case_blocks = std::mem::take(&mut old_block.case_blocks);
+    }
+}
+
+impl instruction::InstructionContainer for &mut Block {
+    fn add_register(&mut self, register_id: RegisterId) {
+        self.get_merge_chain_last_block_mut().add_register_instruction(register_id);
+    }
+    fn add_typed_instruction(&mut self, inst: instruction::Result) -> TypedId {
+        let last = self.get_merge_chain_last_block_mut();
+        debug_assert!(!last.is_terminated());
+        last.add_typed_instruction(inst)
+    }
+    fn add_void_instruction(&mut self, inst: instruction::Result) {
+        let last = self.get_merge_chain_last_block_mut();
+        debug_assert!(!last.is_terminated());
+        last.add_instruction(inst);
+    }
+    fn declare(&mut self, variable_id: VariableId) {
+        self.get_merge_chain_last_block_mut().add_variable_declaration(variable_id);
+    }
+    fn add_block(&mut self, block: Block) {
+        self.get_merge_chain_last_block_mut().append_block(block);
+    }
+    // If the last transform is BlockInstruction::Register(register), returns `&mut register`.
+    fn get_last_instruction_result_register_mut(&mut self) -> Option<&mut RegisterId> {
+        self.instructions.last_mut().and_then(|instruction| match instruction {
+            BlockInstruction::Register(result) => Some(result),
+            _ => None,
+        })
+    }
 }
 
 #[derive(Copy, Clone)]

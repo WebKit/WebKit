@@ -547,6 +547,9 @@ class StateResetHelper final : angle::NonCopyable
     void setResetActiveTexture(size_t textureID) { mResetActiveTexture = textureID; }
     size_t getResetActiveTexture() { return mResetActiveTexture; }
 
+    void setCurrentResetActiveTexture(size_t textureID) { mCurrentResetActiveTexture = textureID; }
+    size_t getCurrentResetActiveTexture() const { return mCurrentResetActiveTexture; }
+
     const std::set<gl::BufferBinding> &getDirtyBufferBindings() const
     {
         return mDirtyBufferBindings;
@@ -568,7 +571,8 @@ class StateResetHelper final : angle::NonCopyable
         mResetCalls.clear();
         mDirtyTextureBindings.clear();
         mResetTextureBindings.clear();
-        mResetActiveTexture = 0;
+        mResetActiveTexture        = 0;
+        mCurrentResetActiveTexture = 0;
         mStartingBufferBindings.clear();
         mDirtyBufferBindings.clear();
     }
@@ -585,7 +589,8 @@ class StateResetHelper final : angle::NonCopyable
 
     // Texture bindings and active texture to restore
     TextureResetMap mResetTextureBindings;
-    size_t mResetActiveTexture = 0;
+    size_t mResetActiveTexture        = 0;
+    size_t mCurrentResetActiveTexture = 0;
 
     // Starting and dirty buffer bindings
     std::set<BufferBindingPair> mStartingBufferBindings;

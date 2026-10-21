@@ -28,11 +28,7 @@ class CLDeviceVk : public CLDeviceImpl
 
     const vk::Renderer *getRenderer() const { return mRenderer; }
     const cl::Device &getFrontendObject() const { return const_cast<cl::Device &>(mDevice); }
-    angle::Result getInfoUInt(cl::DeviceInfo name, cl_uint *value) const override;
-    angle::Result getInfoULong(cl::DeviceInfo name, cl_ulong *value) const override;
-    angle::Result getInfoSizeT(cl::DeviceInfo name, size_t *value) const override;
-    angle::Result getInfoStringLength(cl::DeviceInfo name, size_t *value) const override;
-    angle::Result getInfoString(cl::DeviceInfo name, size_t size, char *value) const override;
+    const cl::DeviceCaps &getCaps() const override;
     bool supportsExternalMemoryFd() const;
     bool supportsExternalMemoryDmaBuf() const;
     angle::Result createSubDevices(const cl_device_partition_property *properties,
@@ -68,10 +64,7 @@ class CLDeviceVk : public CLDeviceImpl
   private:
     vk::Renderer *mRenderer;
     spv_target_env mSpirvVersion;
-    angle::HashMap<cl::DeviceInfo, cl_uint> mInfoUInt;
-    angle::HashMap<cl::DeviceInfo, cl_ulong> mInfoULong;
-    angle::HashMap<cl::DeviceInfo, size_t> mInfoSizeT;
-    angle::HashMap<cl::DeviceInfo, std::string> mInfoString;
+
     cl_device_integer_dot_product_capabilities_khr getIntegerDotProductCapabilities() const;
     cl_device_integer_dot_product_acceleration_properties_khr
     getIntegerDotProductAccelerationProperties8Bit() const;
@@ -80,6 +73,11 @@ class CLDeviceVk : public CLDeviceImpl
     bool populateSupportedExternalMemoryHandleTypes(Info &info) const;
     bool setupAndReportDepthImageSupport(Info &info) const;
 };
+
+inline const cl::DeviceCaps &CLDeviceVk::getCaps() const
+{
+    return mCaps;
+}
 
 }  // namespace rx
 

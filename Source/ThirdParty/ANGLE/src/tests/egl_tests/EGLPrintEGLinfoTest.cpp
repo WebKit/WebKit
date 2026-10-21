@@ -84,13 +84,14 @@ TEST_P(EGLPrintEGLinfoTest, PrintEGLInfo)
     std::cout << "    Client APIs: " << GetEGLString(mDisplay, EGL_CLIENT_APIS) << std::endl;
 
     std::cout << "    EGL Client Extensions:" << std::endl;
-    for (auto extension : ParseExtensions(GetEGLString(EGL_NO_DISPLAY, EGL_EXTENSIONS)))
+    for (const std::string &extension :
+         ParseExtensions(GetEGLString(EGL_NO_DISPLAY, EGL_EXTENSIONS)))
     {
         std::cout << "        " << extension << std::endl;
     }
 
     std::cout << "    EGL Display Extensions:" << std::endl;
-    for (auto extension : ParseExtensions(GetEGLString(mDisplay, EGL_EXTENSIONS)))
+    for (const std::string &extension : ParseExtensions(GetEGLString(mDisplay, EGL_EXTENSIONS)))
     {
         std::cout << "        " << extension << std::endl;
     }

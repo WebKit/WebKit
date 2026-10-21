@@ -692,6 +692,19 @@ mtl::TextureRef &GetLayerLevelTextureView(
     return levelTextureViews[level];
 }
 
+// Returns the texture extents in GL terms, substituting arrayLength into depth for array textures
+// since MTLTexture stores layer count in arrayLength with depth == 1.
+gl::Extents GetTextureGLSize(const mtl::TextureRef &texture,
+                             const mtl::MipmapNativeLevel &nativeLevel)
+{
+    gl::Extents size = texture->size(nativeLevel);
+    if (texture->textureType() == MTLTextureType2DArray)
+    {
+        size.depth = static_cast<int>(texture->arrayLength());
+    }
+    return size;
+}
+
 }  // namespace
 
 // TextureMtl::NativeTextureWrapper implementation.
@@ -778,6 +791,10 @@ class TextureMtl::NativeTextureWrapper : angle::NonCopyable
     uint32_t depth(GLuint glLevel) const { return mNativeTexture->depth(getNativeLevel(glLevel)); }
 
     gl::Extents size(GLuint glLevel) const { return mNativeTexture->size(getNativeLevel(glLevel)); }
+    gl::Extents getGLSize(GLuint glLevel) const
+    {
+        return GetTextureGLSize(mNativeTexture, getNativeLevel(glLevel));
+    }
 
     // Get width, height, depth, size at base level.
     uint32_t widthAt0() const { return width(mBaseGLLevel); }
@@ -2070,7 +2087,8 @@ angle::Result TextureMtl::redefineImage(const gl::Context *context,
     {
         // mNativeTextureStorage stores the complete mipmap chain when present.
         ASSERT(mNativeTextureStorage->textureType() == mtl::GetTextureType(index.getType()));
-        if (mNativeTextureStorage->getFormat() == mtlFormat && size == mNativeTextureStorage->size(glLevel))
+        if (mNativeTextureStorage->getFormat() == mtlFormat &&
+            size == mNativeTextureStorage->getGLSize(glLevel))
         {
             // The view might be from mNativeTextureStorage, but it might also be from previous
             // storages. Always discard.

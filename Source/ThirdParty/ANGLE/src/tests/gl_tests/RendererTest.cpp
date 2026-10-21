@@ -99,9 +99,9 @@ TEST_P(RendererTest, RequestedRendererCreated)
         }
 
         bool found = false;
-        for (size_t i = 0; i < acceptableShaderModels.size(); i++)
+        for (const std::string &acceptableShaderModel : acceptableShaderModels)
         {
-            if (rendererString.find(acceptableShaderModels[i]) != std::string::npos)
+            if (rendererString.find(acceptableShaderModel) != std::string::npos)
             {
                 found = true;
             }

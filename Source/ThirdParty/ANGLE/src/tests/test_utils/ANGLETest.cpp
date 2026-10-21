@@ -1033,9 +1033,9 @@ void ANGLETestBase::ANGLETestTearDown()
 
 void ANGLETestBase::ReleaseFixtures()
 {
-    for (auto it = gFixtures.begin(); it != gFixtures.end(); it++)
+    for (auto &entry : gFixtures)
     {
-        TestFixture &fixture = it->second;
+        TestFixture &fixture = entry.second;
         if (fixture.eglWindow != nullptr)
         {
             fixture.eglWindow->destroyGL();

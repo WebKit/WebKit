@@ -277,6 +277,7 @@ set(libangle_headers
     "src/libANGLE/Buffer.h"
     "src/libANGLE/Caps.h"
     "src/libANGLE/CLBitField.h"
+    "src/libANGLE/CLCaps.h"
     "src/libANGLE/CLRefPointer.h"
     "src/libANGLE/Compiler.h"
     "src/libANGLE/Config.h"
@@ -540,6 +541,7 @@ set(cl_includes
 set(libangle_cl_headers
     "src/libANGLE/CLBitField.h"
     "src/libANGLE/CLBuffer.h"
+    "src/libANGLE/CLCaps.h"
     "src/libANGLE/CLCommandQueue.h"
     "src/libANGLE/CLContext.h"
     "src/libANGLE/CLDevice.h"

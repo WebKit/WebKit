@@ -11,6 +11,7 @@
 
 #if defined(ANGLE_ENABLE_CL)
 #    include "libANGLE/CLBitField.h"
+#    include "libANGLE/CLCaps.h"
 #    include "libANGLE/CLRefPointer.h"
 #    include "libANGLE/Debug.h"
 #    include "libANGLE/Error.h"

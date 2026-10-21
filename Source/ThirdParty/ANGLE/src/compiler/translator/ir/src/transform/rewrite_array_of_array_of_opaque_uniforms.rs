@@ -97,7 +97,7 @@ pub fn run(ir: &mut IR) {
                 OpCode::AccessArrayElement(pointer, index) => {
                     transform_array_element(state, pointer, index, result.unwrap())
                 }
-                _ => vec![],
+                _ => traverser::Transforms::new(),
             }
         },
     );
@@ -171,17 +171,14 @@ fn flatten_array_of_array_uniforms(
 
 fn multiply_index_by_stride(
     ir_meta: &mut IRMeta,
-    transforms: &mut Vec<traverser::Transform>,
+    builder: &mut instruction::Builder<traverser::Transforms>,
     index: TypedId,
     stride: u32,
 ) -> TypedId {
     // Make sure the type of all indices match by using unsigned int for all
     let stride_constant = ir_meta.get_constant_uint_typed(stride, index.precision);
     let index = if index.type_id == TYPE_ID_INT {
-        traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(construct, ir_meta, TYPE_ID_UINT, vec![index], None),
-        )
+        builder.construct(ir_meta, TYPE_ID_UINT, vec![index], None)
     } else {
         index
     };
@@ -190,23 +187,17 @@ fn multiply_index_by_stride(
         // No need to multiply by one, just take the index
         index
     } else {
-        traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(mul, ir_meta, index, stride_constant),
-        )
+        builder.mul(ir_meta, index, stride_constant)
     }
 }
 
 fn accumulate_offset(
     ir_meta: &mut IRMeta,
-    transforms: &mut Vec<traverser::Transform>,
+    builder: &mut instruction::Builder<traverser::Transforms>,
     acc_offset: TypedId,
     offset: TypedId,
 ) -> TypedId {
-    traverser::add_typed_instruction(
-        transforms,
-        instruction::make!(add, ir_meta, acc_offset, offset),
-    )
+    builder.add(ir_meta, acc_offset, offset)
 }
 
 fn transform_array_element(
@@ -214,8 +205,8 @@ fn transform_array_element(
     pointer: TypedId,
     index: TypedId,
     result: TypedRegisterId,
-) -> Vec<traverser::Transform> {
-    let mut transforms = vec![];
+) -> traverser::Transforms {
+    let mut builder = instruction::Builder::<traverser::Transforms>::new();
 
     match pointer.id {
         Id::Variable(variable_id) => {
@@ -230,15 +221,15 @@ fn transform_array_element(
             if state.array_of_array_uniforms.contains(&variable_id) {
                 let info = &state.array_info[pointer.type_id.id as usize];
                 let acc_offset =
-                    multiply_index_by_stride(state.ir_meta, &mut transforms, index, info.stride);
+                    multiply_index_by_stride(state.ir_meta, &mut builder, index, info.stride);
 
                 state.access_info[result.id.id as usize] =
                     Some(AccessInfo { uniform_var: pointer, acc_offset });
 
-                if transforms.is_empty() {
+                if builder.is_empty() {
                     // Ensure the instruction is removed even if the new instructions are constant
                     // folded
-                    transforms.push(traverser::Transform::Remove);
+                    builder.remove();
                 }
             }
         }
@@ -258,9 +249,8 @@ fn transform_array_element(
                 let info = &state.array_info[pointer.type_id.id as usize];
                 let is_final_index = !info.is_array_of_array;
                 let offset =
-                    multiply_index_by_stride(state.ir_meta, &mut transforms, index, info.stride);
-                let acc_offset =
-                    accumulate_offset(state.ir_meta, &mut transforms, acc_offset, offset);
+                    multiply_index_by_stride(state.ir_meta, &mut builder, index, info.stride);
+                let acc_offset = accumulate_offset(state.ir_meta, &mut builder, acc_offset, offset);
 
                 if is_final_index {
                     // The result of this access is no longer an array.  Replace it with the final
@@ -268,24 +258,16 @@ fn transform_array_element(
                     //
                     //     indexed1 = AccessArrayElement u accOffset1
                     //
-                    traverser::add_typed_instruction(
-                        &mut transforms,
-                        instruction::make_with_result_id!(
-                            index,
-                            state.ir_meta,
-                            result,
-                            uniform_var,
-                            acc_offset,
-                        ),
-                    );
+                    let element = builder.index(state.ir_meta, uniform_var, acc_offset);
+                    builder.alias_result(state.ir_meta, result, element);
                 } else {
                     state.access_info[result.id.id as usize] =
                         Some(AccessInfo { uniform_var, acc_offset });
 
-                    if transforms.is_empty() {
+                    if builder.is_empty() {
                         // Ensure the instruction is removed even if the new instructions are
                         // constant folded
-                        transforms.push(traverser::Transform::Remove);
+                        builder.remove();
                     }
                 }
             }
@@ -293,5 +275,5 @@ fn transform_array_element(
         Id::Constant(..) => panic!("Internal error: Unexpected AccessArrayElement on a constant"),
     };
 
-    transforms
+    builder.finish()
 }

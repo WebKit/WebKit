@@ -78,9 +78,9 @@ egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
         UNIMPLEMENTED();
     }
 
-    for (size_t i = 0; i < rendererCreationFunctions.size(); i++)
+    for (CreateRendererD3DFunction rendererCreationFunction : rendererCreationFunctions)
     {
-        RendererD3D *renderer = rendererCreationFunctions[i](display);
+        RendererD3D *renderer = rendererCreationFunction(display);
         egl::Error result     = renderer->initialize();
 
 #if defined(ANGLE_ENABLE_D3D11)

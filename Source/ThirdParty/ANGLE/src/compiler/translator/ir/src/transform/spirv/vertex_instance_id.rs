@@ -8,6 +8,8 @@
 use crate::ir::*;
 use crate::*;
 
+use crate::transform::add_driver_uniforms::DriverUniforms;
+
 pub struct State {}
 
 pub fn init(ir_meta: &mut IRMeta) -> State {
@@ -27,36 +29,25 @@ pub fn init(ir_meta: &mut IRMeta) -> State {
 pub fn transform_instance_index_load(
     ir_meta: &mut IRMeta,
     _state: &State,
+    driver_uniforms: &DriverUniforms,
     instance_index: TypedId,
-    _result: TypedRegisterId,
-) -> Vec<traverser::Transform> {
+    result: TypedRegisterId,
+) -> traverser::Transforms {
     debug_assert!(matches!(
         ir_meta.get_variable(instance_index.id.get_variable()).built_in,
         Some(BuiltIn::InstanceIndex)
     ));
 
-    let transforms = vec![];
+    let mut builder = instruction::Builder::<traverser::Transforms>::new();
 
-    // Note: when driver uniforms are added by the IR, need to subtract base_instance here.
-    // Currently, that's done by ShaderBuiltinsWorkaround():
+    // Generate the following:
     //
-    //     // Generate the following:
-    //     //
-    //     //     base_instance'   = Load base_instance
-    //     //     instance_index'  = Load instance_index
-    //     //     result           = Sub instance_index' base_instance'
-    //     let base_instance = traverser::add_typed_instruction(
-    //         &mut transforms,
-    //         instruction::make!(load, ir_meta, base_instance),
-    //     );
-    //     let instance_index = traverser::add_typed_instruction(
-    //         &mut transforms,
-    //         instruction::make!(load, ir_meta, instance_index),
-    //     );
-    //     traverser::add_typed_instruction(
-    //         &mut transforms,
-    //         instruction::make_with_result_id!(sub, ir_meta, result, instance_index,
-    //         base_instance));
+    //     base_instance'   = Load base_instance
+    //     instance_index'  = Load instance_index
+    //     result           = Sub instance_index' base_instance'
+    let base_instance = driver_uniforms.base_instance(ir_meta, &mut builder);
+    let instance_index = builder.load(ir_meta, instance_index);
+    let instance_index = builder.sub(ir_meta, instance_index, base_instance);
 
-    transforms
+    builder.finish_with_result(ir_meta, result, instance_index)
 }

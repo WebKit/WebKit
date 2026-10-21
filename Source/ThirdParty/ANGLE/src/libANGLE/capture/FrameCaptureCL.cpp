@@ -727,10 +727,10 @@ void FrameCaptureShared::captureUpdateCLObjs(std::vector<CallCapture> *calls)
     std::vector<cl_mem> &mCLDirtyMem         = mResourceTrackerCL.mCLDirtyMem;
     std::vector<void *> &mCLDirtySVM         = mResourceTrackerCL.mCLDirtySVM;
     cl_command_queue &mCLCurrentCommandQueue = mResourceTrackerCL.mCLCurrentCommandQueue;
-    for (uint32_t i = 0; i < mCLDirtyMem.size(); ++i)
+    for (cl_mem dirtyMem : mCLDirtyMem)
     {
         cl_mem_object_type memType;
-        if (IsError(mCLDirtyMem.at(i)->cast<cl::Memory>().getInfo(
+        if (IsError(dirtyMem->cast<cl::Memory>().getInfo(
                 cl::MemInfo::Type, sizeof(cl_mem_object_type), &memType, nullptr)))
         {
             continue;
@@ -752,8 +752,8 @@ void FrameCaptureShared::captureUpdateCLObjs(std::vector<CallCapture> *calls)
                 ptr = malloc(size);
 
                 // Call clEnqueueReadBuffer to get the current data in the buffer
-                EnqueueReadBuffer(mCLCurrentCommandQueue, mCLDirtyMem.at(i), true, offset, size,
-                                  ptr, 0, nullptr, nullptr);
+                EnqueueReadBuffer(mCLCurrentCommandQueue, dirtyMem, true, offset, size, ptr, 0,
+                                  nullptr, nullptr);
 
                 // Inject memcpy call BEFORE unmap
                 injectMemcpy(ptr,
@@ -764,21 +764,21 @@ void FrameCaptureShared::captureUpdateCLObjs(std::vector<CallCapture> *calls)
             }
             else
             {
-                size_t bufferSize = mCLDirtyMem.at(i)->cast<cl::Buffer>().getSize();
+                size_t bufferSize = dirtyMem->cast<cl::Buffer>().getSize();
                 ptr               = malloc(bufferSize);
 
                 // Call clEnqueueReadBuffer to get the current data in the buffer
-                EnqueueReadBuffer(mCLCurrentCommandQueue, mCLDirtyMem.at(i), true, 0, bufferSize,
-                                  ptr, 0, nullptr, nullptr);
+                EnqueueReadBuffer(mCLCurrentCommandQueue, dirtyMem, true, 0, bufferSize, ptr, 0,
+                                  nullptr, nullptr);
 
                 // Pretend that a "clEnqueueWriteBuffer" was called with the above data retrieved
-                calls->push_back(CaptureEnqueueWriteBuffer(true, mCLCurrentCommandQueue,
-                                                           mCLDirtyMem.at(i), true, 0, bufferSize,
-                                                           ptr, 0, nullptr, nullptr, CL_SUCCESS));
+                calls->push_back(CaptureEnqueueWriteBuffer(true, mCLCurrentCommandQueue, dirtyMem,
+                                                           true, 0, bufferSize, ptr, 0, nullptr,
+                                                           nullptr, CL_SUCCESS));
 
                 // Implicit release, so going into the starting frame the buffer has the correct
                 // reference count
-                mCLDirtyMem.at(i)->cast<cl::Memory>().release();
+                dirtyMem->cast<cl::Memory>().release();
             }
             free(ptr);
         }
@@ -788,7 +788,7 @@ void FrameCaptureShared::captureUpdateCLObjs(std::vector<CallCapture> *calls)
         }
         else
         {
-            cl::Image *clImg = &mCLDirtyMem.at(i)->cast<cl::Image>();
+            cl::Image *clImg = &dirtyMem->cast<cl::Image>();
             void *ptr;
 
             if (calls->back().entryPoint == EntryPoint::CLEnqueueUnmapMemObject)
@@ -821,8 +821,8 @@ void FrameCaptureShared::captureUpdateCLObjs(std::vector<CallCapture> *calls)
                 ptr = malloc(totalSize);
 
                 // Call clEnqueueReadBuffer to get the current data in the image
-                EnqueueReadImage(mCLCurrentCommandQueue, mCLDirtyMem.at(i), true, origin, region,
-                                 rowPitch, slicePitch, ptr, 0, nullptr, nullptr);
+                EnqueueReadImage(mCLCurrentCommandQueue, dirtyMem, true, origin, region, rowPitch,
+                                 slicePitch, ptr, 0, nullptr, nullptr);
 
                 // Inject memcpy call BEFORE unmap
                 injectMemcpy(ptr,
@@ -838,19 +838,19 @@ void FrameCaptureShared::captureUpdateCLObjs(std::vector<CallCapture> *calls)
                 size_t region[3] = {clImg->getWidth(), clImg->getHeight(), clImg->getDepth()};
 
                 // Call clEnqueueReadBuffer to get the current data in the image
-                EnqueueReadImage(mCLCurrentCommandQueue, mCLDirtyMem.at(i), true, origin, region,
+                EnqueueReadImage(mCLCurrentCommandQueue, dirtyMem, true, origin, region,
                                  clImg->getRowSize(), clImg->getSliceSize(), ptr, 0, nullptr,
                                  nullptr);
 
                 // Pretend that a "clEnqueueWriteImage" was called with the above data retrieved
-                calls->push_back(CaptureEnqueueWriteImage(
-                    true, mCLCurrentCommandQueue, mCLDirtyMem.at(i), true, origin, region,
-                    clImg->getRowSize(), clImg->getSliceSize(), ptr, 0, nullptr, nullptr,
-                    CL_SUCCESS));
+                calls->push_back(CaptureEnqueueWriteImage(true, mCLCurrentCommandQueue, dirtyMem,
+                                                          true, origin, region, clImg->getRowSize(),
+                                                          clImg->getSliceSize(), ptr, 0, nullptr,
+                                                          nullptr, CL_SUCCESS));
 
                 // Implicit release, so going into the starting frame the buffer has the correct
                 // reference count
-                mCLDirtyMem.at(i)->cast<cl::Memory>().release();
+                dirtyMem->cast<cl::Memory>().release();
             }
 
             free(ptr);
@@ -1150,15 +1150,14 @@ void FrameCaptureShared::removeCLProgramOccurrences(const cl_program *program,
         }
     }
 
-    if (mResourceTrackerCL.mCLProgramToKernels.find(*program) !=
-        mResourceTrackerCL.mCLProgramToKernels.end())
+    auto it = mResourceTrackerCL.mCLProgramToKernels.find(*program);
+    if (it != mResourceTrackerCL.mCLProgramToKernels.end())
     {
-        for (size_t i = 0; i < mResourceTrackerCL.mCLProgramToKernels[*program].size(); ++i)
+        for (cl_kernel kernel : it->second)
         {
-            removeCLKernelOccurrences(&mResourceTrackerCL.mCLProgramToKernels[*program].at(i),
-                                      calls);
+            removeCLKernelOccurrences(&kernel, calls);
         }
-        mResourceTrackerCL.mCLProgramToKernels.erase(*program);
+        mResourceTrackerCL.mCLProgramToKernels.erase(it);
     }
 }
 
@@ -1369,48 +1368,43 @@ void FrameCaptureShared::removeCLResetObj(const ParamCapture &param)
 
 void FrameCaptureShared::printCLResetObjs(std::stringstream &stream)
 {
-    std::vector<ParamCapture> &mCLResetObjs = mResourceTrackerCL.mCLResetObjs;
-    for (size_t i = 0; i < mCLResetObjs.size(); ++i)
+    const std::vector<ParamCapture> &mCLResetObjs = mResourceTrackerCL.mCLResetObjs;
+    for (const ParamCapture &resetObj : mCLResetObjs)
     {
         stream << "    ";
-        switch (mCLResetObjs.at(i).type)
+        switch (resetObj.type)
         {
             case ParamType::Tcl_device_id:
                 stream << "clReleaseDevice(clDevicesMap["
-                       << std::to_string(getIndex(&mCLResetObjs.at(i).value.cl_device_idVal))
-                       << "]);";
+                       << std::to_string(getIndex(&resetObj.value.cl_device_idVal)) << "]);";
                 break;
             case ParamType::Tcl_mem:
                 stream << "clReleaseMemObject(clMemMap["
-                       << std::to_string(getIndex(&mCLResetObjs.at(i).value.cl_memVal)) << "]);";
+                       << std::to_string(getIndex(&resetObj.value.cl_memVal)) << "]);";
                 break;
             case ParamType::Tcl_kernel:
                 stream << "clReleaseKernel(clKernelsMap["
-                       << std::to_string(getIndex(&mCLResetObjs.at(i).value.cl_kernelVal)) << "]);";
+                       << std::to_string(getIndex(&resetObj.value.cl_kernelVal)) << "]);";
                 break;
             case ParamType::Tcl_program:
                 stream << "clReleaseProgram(clProgramsMap["
-                       << std::to_string(getIndex(&mCLResetObjs.at(i).value.cl_programVal))
-                       << "]);";
+                       << std::to_string(getIndex(&resetObj.value.cl_programVal)) << "]);";
                 break;
             case ParamType::Tcl_command_queue:
                 stream << "clReleaseCommandQueue(clCommandQueuesMap["
-                       << std::to_string(getIndex(&mCLResetObjs.at(i).value.cl_command_queueVal))
-                       << "]);";
+                       << std::to_string(getIndex(&resetObj.value.cl_command_queueVal)) << "]);";
                 break;
             case ParamType::Tcl_context:
                 stream << "clReleaseContext(clContextsMap["
-                       << std::to_string(getIndex(&mCLResetObjs.at(i).value.cl_contextVal))
-                       << "]);";
+                       << std::to_string(getIndex(&resetObj.value.cl_contextVal)) << "]);";
                 break;
             case ParamType::Tcl_sampler:
                 stream << "clReleaseSampler(clSamplersMap["
-                       << std::to_string(getIndex(&mCLResetObjs.at(i).value.cl_samplerVal))
-                       << "]);";
+                       << std::to_string(getIndex(&resetObj.value.cl_samplerVal)) << "]);";
                 break;
             case ParamType::Tcl_event:
                 stream << "clReleaseEvent(clEventsMap["
-                       << std::to_string(getIndex(&mCLResetObjs.at(i).value.cl_eventVal)) << "]);";
+                       << std::to_string(getIndex(&resetObj.value.cl_eventVal)) << "]);";
                 break;
             default:
                 break;
@@ -3269,7 +3263,7 @@ void FrameCaptureShared::writeCppReplayIndexFilesCL()
         mReplayWriter.addPublicFunction(proto, std::stringstream(), source);
     }
 
-    for (auto extFuncName : mExtFuncsAdded)
+    for (const std::string &extFuncName : mExtFuncsAdded)
     {
         mReplayWriter.addStaticVariable(extFuncName + "_fn", extFuncName);
     }

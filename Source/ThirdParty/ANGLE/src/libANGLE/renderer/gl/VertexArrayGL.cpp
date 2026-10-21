@@ -974,9 +974,8 @@ angle::Result VertexArrayGL::syncState(const gl::Context *context,
     StateManagerGL *stateManager = GetStateManagerGL(context);
     stateManager->bindVertexArray(mVertexArrayID);
 
-    for (auto iter = dirtyBits.begin(), endIter = dirtyBits.end(); iter != endIter; ++iter)
+    for (size_t dirtyBit : dirtyBits)
     {
-        size_t dirtyBit = *iter;
         switch (dirtyBit)
         {
             case VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:

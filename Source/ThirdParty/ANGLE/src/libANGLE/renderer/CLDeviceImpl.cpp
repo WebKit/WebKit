@@ -7,8 +7,6 @@
 
 #include "libANGLE/renderer/CLDeviceImpl.h"
 
-#include "libANGLE/Debug.h"
-
 namespace rx
 {
 
