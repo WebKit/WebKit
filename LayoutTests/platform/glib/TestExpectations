@@ -3833,6 +3833,7 @@ webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disab
 webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
 [ Debug ] fast/events/document-destruction-during-event-firing-crash.html [ Slow ]
+[ Debug ] accessibility/accessible-name-recursion-no-crash.html [ Slow ]
 
 # Started failing after it was added in r116473.
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
