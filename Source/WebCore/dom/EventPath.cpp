@@ -251,7 +251,8 @@ Vector<Ref<EventTarget>> EventPath::computePathUnclosedToTarget(const EventTarge
     RELEASE_ASSERT(pathSize);
     path.reserveInitialCapacity(pathSize);
 
-    auto currentTargetIndex = m_path.findIf([&target] (auto& context) {
+    // The last match is the use element's own context, not its shadow tree's.
+    auto currentTargetIndex = m_path.reverseFindIf([&target](auto& context) {
         return context.currentTarget() == &target;
     });
     RELEASE_ASSERT(currentTargetIndex != notFound);
