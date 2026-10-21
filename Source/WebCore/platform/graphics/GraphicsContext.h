@@ -383,6 +383,8 @@ public:
 #endif
 
 protected:
+    static Vector<TextRun> visuallyOrderedSubruns(const TextRun&);
+
     // Returns the interpolation quality a draw operation should use. InterpolationQuality::Default
     // in the options means the context image interpolation quality is used.
     InterpolationQuality imageInterpolationQualityForOptions(ImagePaintingOptions options) const

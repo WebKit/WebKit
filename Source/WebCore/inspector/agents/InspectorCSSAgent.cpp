@@ -43,6 +43,7 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "CharacterData.h"
 #include "CommonAtomStrings.h"
 #include "ContainerNodeInlines.h"
 #include "ContentSecurityPolicy.h"
@@ -50,15 +51,13 @@
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "EventTarget.h"
-#include "Font.h"
 #include "FontCache.h"
-#include "FontCascadeInlines.h"
-#include "FontPlatformData.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorFontData.h"
 #include "InspectorHistory.h"
 #include "InspectorIdentifierRegistry.h"
 #include "InspectorPageAgent.h"
@@ -169,6 +168,14 @@ void InspectorCSSAgent::documentDetached(Document& document)
     m_documentToKnownCSSStyleSheets.remove(&document);
     m_documentToInspectorStyleSheet.remove(document);
     m_documentsWithForcedPseudoStates.remove(&document);
+}
+
+void InspectorCSSAgent::fontDataChanged()
+{
+    if (m_suppressFontDataChanged)
+        return;
+    m_suppressFontDataChanged = true;
+    m_frontendDispatcher->fontDataChanged();
 }
 
 void InspectorCSSAgent::mediaQueryResultChanged()
@@ -452,48 +459,19 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
     return inspectorStyle->buildArrayForComputedStyle();
 }
 
-static Ref<Inspector::Protocol::CSS::Font> buildObjectForFont(const Font& font)
-{
-    auto& fontPlatformData = font.platformData();
-    
-    auto resultVariationAxes = JSON::ArrayOf<Inspector::Protocol::CSS::FontVariationAxis>::create();
-    for (auto& variationAxis : fontPlatformData.variationAxes(ShouldLocalizeAxisNames::Yes)) {
-        auto axis = Inspector::Protocol::CSS::FontVariationAxis::create()
-            .setTag(variationAxis.tag())
-            .setMinimumValue(variationAxis.minimumValue())
-            .setMaximumValue(variationAxis.maximumValue())
-            .setDefaultValue(variationAxis.defaultValue())
-            .release();
-        
-        if (variationAxis.name().length() && variationAxis.name() != variationAxis.tag())
-            axis->setName(variationAxis.name());
-        
-        resultVariationAxes->addItem(WTF::move(axis));
-    }
-
-    auto protocolFont = Inspector::Protocol::CSS::Font::create()
-        .setDisplayName(font.platformData().familyName())
-        .setVariationAxes(WTF::move(resultVariationAxes))
-        .release();
-
-    protocolFont->setSynthesizedBold(fontPlatformData.syntheticBold());
-    protocolFont->setSynthesizedOblique(fontPlatformData.syntheticOblique());
-
-    return protocolFont;
-}
-
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Font>> InspectorCSSAgent::getFontDataForNode(Inspector::Protocol::DOM::NodeId nodeId)
+Inspector::Protocol::ErrorStringOr<std::tuple<Ref<Inspector::Protocol::CSS::Font>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::Font>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CharacterRange>>>> InspectorCSSAgent::getFontDataForNode(Inspector::Protocol::DOM::NodeId nodeId)
 {
     Inspector::Protocol::ErrorString errorString;
     RefPtr node = nodeForId(errorString, nodeId);
     if (!node)
         return makeUnexpected(errorString);
-    
-    CheckedPtr computedStyle = node->computedStyle();
-    if (!computedStyle)
-        return makeUnexpected("No computed style for node."_s);
-    
-    return buildObjectForFont(protect(protect(computedStyle->fontCascade())->primaryFont()));
+
+    auto result = getFontData(*node);
+    if (!result)
+        return makeUnexpected("Rendered font data is temporarily unavailable."_s);
+
+    m_suppressFontDataChanged = false;
+    return { { WTF::move(result->primaryFont), WTF::move(result->renderedFonts), WTF::move(result->missingCharacterRanges) } };
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>> InspectorCSSAgent::getAllStyleSheets()
@@ -1085,6 +1063,12 @@ void InspectorCSSAgent::didChangeAssignedNodes(Element& slotElement)
     nodeHasLayoutFlagsChange(slotElement);
 }
 
+void InspectorCSSAgent::characterDataModified(CharacterData& characterData)
+{
+    if (characterData.isConnected() && characterData.isTextNode())
+        fontDataChanged();
+}
+
 void InspectorCSSAgent::nodeHasLayoutFlagsChange(Node& node)
 {
     m_nodesWithPendingLayoutFlagsChange.add(node);
@@ -1352,23 +1336,52 @@ RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttr
     return inspectorStyle->buildObjectForStyle();
 }
 
+void InspectorCSSAgent::didInsertDOMNode(Node& node)
+{
+    if (RefPtr parent = node.parentNode(); parent && parent->isConnected() && (is<Element>(node) || is<Text>(node)))
+        fontDataChanged();
+}
+
+void InspectorCSSAgent::didRemoveDOMNode(Node& node)
+{
+    if (node.isConnected() && (is<Element>(node) || is<Text>(node)))
+        fontDataChanged();
+}
+
 void InspectorCSSAgent::didRemoveDOMNode(Node& node, Inspector::Protocol::DOM::NodeId nodeId)
 {
     // This can be called in response to GC.
     m_nodeIdToForcedPseudoState.remove(nodeId);
 
-    auto sheet = m_nodeToInspectorStyleSheet.take(&node);
-    if (!sheet)
-        return;
-    m_idToInspectorStyleSheet.remove(sheet->id());
+    if (RefPtr sheet = m_nodeToInspectorStyleSheet.take(&node))
+        m_idToInspectorStyleSheet.remove(sheet->id());
+}
+
+void InspectorCSSAgent::willDestroyDOMNode(Node& node)
+{
+    if (node.isConnected() && is<Text>(node))
+        fontDataChanged();
 }
 
 void InspectorCSSAgent::didModifyDOMAttr(Element& element)
 {
-    RefPtr sheet = m_nodeToInspectorStyleSheet.get(&element);
-    if (!sheet)
-        return;
-    sheet->didModifyElementAttribute();
+    if (RefPtr sheet = m_nodeToInspectorStyleSheet.get(&element))
+        sheet->didModifyElementAttribute();
+
+    if (element.isConnected())
+        fontDataChanged();
+}
+
+void InspectorCSSAgent::didRemoveDOMAttr(Element& element)
+{
+    if (element.isConnected())
+        fontDataChanged();
+}
+
+void InspectorCSSAgent::didInvalidateStyleAttr(Element& element)
+{
+    if (element.isConnected())
+        fontDataChanged();
 }
 
 void InspectorCSSAgent::styleSheetChanged(InspectorStyleSheet* styleSheet)

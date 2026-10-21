@@ -44,7 +44,7 @@ function test()
                 let cssStyles = WI.cssManager.stylesForNode(domNode);
                 InspectorTest.assert(cssStyles, `Should find CSS Styles for DOM Node.`);
 
-                await cssStyles.refreshIfNeeded();
+                await cssStyles.refresh({includeFontData: true});
                 let fontStyles = new WI.FontStyles(cssStyles);
 
                 for (let [tag, value] of Object.entries(variations)) {
@@ -52,7 +52,7 @@ function test()
                     fontStyles.writeFontVariation(tag, value);
                 }
 
-                await cssStyles.refreshIfNeeded();
+                await cssStyles.refresh({includeFontData: true});
                 fontStyles.refresh();
 
                 let properties = cssStyles.inlineStyle.visibleProperties;

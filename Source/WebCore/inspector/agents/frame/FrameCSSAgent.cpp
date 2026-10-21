@@ -41,6 +41,7 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "CharacterData.h"
 #include "CommonAtomStrings.h"
 #include "ContainerNodeInlines.h"
 #include "ContentSecurityPolicy.h"
@@ -49,19 +50,18 @@
 #include "DocumentPage.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ExtensionStyleSheets.h"
-#include "Font.h"
-#include "FontCascadeInlines.h"
-#include "FontPlatformData.h"
 #include "FrameDOMAgent.h"
 #include "HTMLHeadElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorFontData.h"
 #include "InspectorHistory.h"
 #include "InspectorIdentifierRegistry.h"
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
+#include "Node.h"
 #include "Page.h"
 #include "PageInspectorController.h"
 #include "PseudoElement.h"
@@ -213,41 +213,21 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputed
     return inspectorStyle->buildArrayForComputedStyle();
 }
 
-Inspector::CommandResult<Ref<Inspector::Protocol::CSS::Font>> FrameCSSAgent::getFontDataForNode(Inspector::Protocol::DOM::NodeId nodeId)
+Inspector::CommandResultOf<Ref<Inspector::Protocol::CSS::Font>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::Font>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CharacterRange>>> FrameCSSAgent::getFontDataForNode(Inspector::Protocol::DOM::NodeId nodeId)
 {
-    Inspector::Protocol::ErrorString errorString;
-    RefPtr element = elementForId(errorString, nodeId);
-    if (!element)
-        return makeUnexpected(errorString);
+    CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentFrameDOMAgent();
+    if (!domAgent)
+        return makeUnexpected("DOM domain must be enabled"_s);
+    RefPtr node = domAgent->nodeForId(nodeId);
+    if (!node)
+        return makeUnexpected("Missing node for given nodeId"_s);
 
-    CheckedPtr computedStyle = element->computedStyle();
-    if (!computedStyle)
-        return makeUnexpected("No computed style for node."_s);
+    auto result = getFontData(*node);
+    if (!result)
+        return makeUnexpected("Rendered font data is temporarily unavailable."_s);
 
-    Ref font = protect(computedStyle->fontCascade())->primaryFont();
-    auto& fontPlatformData = font->platformData();
-
-    auto resultVariationAxes = JSON::ArrayOf<Inspector::Protocol::CSS::FontVariationAxis>::create();
-    for (auto& variationAxis : fontPlatformData.variationAxes(ShouldLocalizeAxisNames::Yes)) {
-        auto axis = Inspector::Protocol::CSS::FontVariationAxis::create()
-            .setTag(variationAxis.tag())
-            .setMinimumValue(variationAxis.minimumValue())
-            .setMaximumValue(variationAxis.maximumValue())
-            .setDefaultValue(variationAxis.defaultValue())
-            .release();
-        if (variationAxis.name().length() && variationAxis.name() != variationAxis.tag())
-            axis->setName(variationAxis.name());
-        resultVariationAxes->addItem(WTF::move(axis));
-    }
-
-    auto protocolFont = Inspector::Protocol::CSS::Font::create()
-        .setDisplayName(fontPlatformData.familyName())
-        .setVariationAxes(WTF::move(resultVariationAxes))
-        .release();
-    protocolFont->setSynthesizedBold(fontPlatformData.syntheticBold());
-    protocolFont->setSynthesizedOblique(fontPlatformData.syntheticOblique());
-
-    return protocolFont;
+    m_suppressFontDataChanged = false;
+    return { { WTF::move(result->primaryFont), WTF::move(result->renderedFonts), WTF::move(result->missingCharacterRanges) } };
 }
 
 Inspector::CommandResultOf<RefPtr<Inspector::Protocol::CSS::CSSStyle>, RefPtr<Inspector::Protocol::CSS::CSSStyle>> FrameCSSAgent::getInlineStylesForNode(Inspector::Protocol::DOM::NodeId nodeId)
@@ -777,6 +757,12 @@ void FrameCSSAgent::didChangeAssignedNodes(Element& slotElement)
     nodeHasLayoutFlagsChange(slotElement);
 }
 
+void FrameCSSAgent::characterDataModified(CharacterData& characterData)
+{
+    if (characterData.isConnected() && characterData.isTextNode())
+        fontDataChanged();
+}
+
 RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> FrameCSSAgent::protocolLayoutFlagsForNode(Node& node)
 {
     auto layoutFlags = InspectorCSSAgent::layoutFlagsForNode(node);
@@ -842,11 +828,61 @@ void FrameCSSAgent::styleSheetChanged(InspectorStyleSheet* inspectorStyleSheet)
     m_frontendDispatcher->styleSheetChanged(inspectorStyleSheet->id());
 }
 
+void FrameCSSAgent::didInsertDOMNode(Node& node)
+{
+    if (RefPtr parent = node.parentNode(); parent && parent->isConnected() && (is<Element>(node) || is<Text>(node)))
+        fontDataChanged();
+}
+
+void FrameCSSAgent::didRemoveDOMNode(Node& node)
+{
+    if (node.isConnected() && (is<Element>(node) || is<Text>(node)))
+        fontDataChanged();
+}
+
+void FrameCSSAgent::willDestroyDOMNode(Node& node)
+{
+    if (node.isConnected() && is<Text>(node))
+        fontDataChanged();
+}
+
+void FrameCSSAgent::didModifyDOMAttr(Element& element)
+{
+    if (RefPtr sheet = m_nodeToInspectorStyleSheet.get(&element))
+        sheet->didModifyElementAttribute();
+
+    if (element.isConnected())
+        fontDataChanged();
+}
+
+void FrameCSSAgent::didRemoveDOMAttr(Element& element)
+{
+    if (element.isConnected())
+        fontDataChanged();
+}
+
+void FrameCSSAgent::didInvalidateStyleAttr(Element& element)
+{
+    if (element.isConnected())
+        fontDataChanged();
+}
+
 void FrameCSSAgent::documentDetached(Document& document)
 {
     Vector<CSSStyleSheet*> emptyList;
     setActiveStyleSheetsForDocument(document, emptyList);
     m_documentToKnownCSSStyleSheets.remove(&document);
+}
+
+void FrameCSSAgent::fontDataChanged()
+{
+    if (documentIsReportedByPageCSSAgent())
+        return;
+
+    if (m_suppressFontDataChanged)
+        return;
+    m_suppressFontDataChanged = true;
+    m_frontendDispatcher->fontDataChanged();
 }
 
 void FrameCSSAgent::mediaQueryResultChanged()

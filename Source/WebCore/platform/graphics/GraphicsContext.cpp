@@ -192,7 +192,7 @@ void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& 
 }
 
 // Splits the run at its bidi level boundaries and returns the pieces in visual (left to right) order, each in its resolved direction.
-static Vector<TextRun> visuallyOrderedSubruns(const TextRun& run)
+Vector<TextRun> GraphicsContext::visuallyOrderedSubruns(const TextRun& run)
 {
     if (!run.length())
         return { };

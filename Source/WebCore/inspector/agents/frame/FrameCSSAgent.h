@@ -47,6 +47,7 @@ namespace WebCore {
 
 class CSSRule;
 class CSSStyleSheet;
+class CharacterData;
 class Document;
 class Element;
 class EventTarget;
@@ -80,7 +81,7 @@ public:
     Inspector::CommandResult<void> enable() override;
     Inspector::CommandResult<void> disable() override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>>> getComputedStyleForNode(Inspector::Protocol::DOM::NodeId) override;
-    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::Font>> getFontDataForNode(Inspector::Protocol::DOM::NodeId) override;
+    Inspector::CommandResultOf<Ref<Inspector::Protocol::CSS::Font>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::Font>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CharacterRange>>> getFontDataForNode(Inspector::Protocol::DOM::NodeId) override;
     Inspector::CommandResultOf<RefPtr<Inspector::Protocol::CSS::CSSStyle>, RefPtr<Inspector::Protocol::CSS::CSSStyle>> getInlineStylesForNode(Inspector::Protocol::DOM::NodeId) override;
     Inspector::CommandResultOf<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>>> getMatchedStylesForNode(Inspector::Protocol::DOM::NodeId, std::optional<bool>&& includePseudo, std::optional<bool>&& includeInherited, std::optional<bool>&& includeKeyframes) override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>> getAllStyleSheets() override;
@@ -101,8 +102,15 @@ public:
     void styleSheetChanged(InspectorStyleSheet*) override;
 
     // InspectorInstrumentation
+    void didInsertDOMNode(Node&);
+    void didRemoveDOMNode(Node&);
+    void willDestroyDOMNode(Node&);
+    void didModifyDOMAttr(Element&);
+    void didRemoveDOMAttr(Element&);
+    void didInvalidateStyleAttr(Element&);
     bool forcePseudoState(const Element&, CSSSelector::PseudoClass);
     void documentDetached(Document&);
+    void fontDataChanged();
     void mediaQueryResultChanged();
     void activeStyleSheetsUpdated(Document&);
     void didChangeRendererForDOMNode(Node&);
@@ -110,6 +118,7 @@ public:
     void willRemoveEventListener(EventTarget&);
     void didChangeAssignedSlot(Node&);
     void didChangeAssignedNodes(Element& slotElement);
+    void characterDataModified(CharacterData&);
 
     // FrameDOMAgent
     RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlagsForNode(Node&);
@@ -156,6 +165,7 @@ private:
     int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };
     bool m_needsLayoutContextNodesPush { false };
+    bool m_suppressFontDataChanged { false };
 };
 
 } // namespace WebCore

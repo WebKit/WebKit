@@ -253,7 +253,7 @@ WI.FontStyles = class FontStyles
         let cssSettings = new Map;
         let cssSettingsRawValue = this._computedPropertyValueForName(domNodeStyle, property);
 
-        if (cssSettingsRawValue !== "normal") {
+        if (cssSettingsRawValue && cssSettingsRawValue !== "normal") {
             for (let axis of cssSettingsRawValue.split(",")) {
                 // Tags can contains upper and lowercase latin letters, numbers, and spaces (only ending with space(s)). Values will be numbers, `on`, or `off`.
                 let [tag, value] = axis.match(WI.FontStyles.SettingPattern);

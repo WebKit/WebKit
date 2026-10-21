@@ -11,6 +11,14 @@ Unregisted Feature Property Test
 Variable Font Test
 
 == Running test suite: WI.FontStyles
+-- Running test case: WI.FontStyles.MissingComputedProperties
+PASS: Missing computed styles should have no font features.
+PASS: Missing computed styles should have no font variations.
+PASS: Missing computed font properties should remain empty.
+PASS: Refreshing empty font styles should not introduce axes.
+PASS: Absent computed feature settings should have no font features.
+PASS: Absent computed variation settings should have no font variations.
+
 -- Running test case: WI.FontStyles.BasicPropertiesTest
 PASS: Font size property value should be '2rem'.
 PASS: Font size property value should be 'italic'.

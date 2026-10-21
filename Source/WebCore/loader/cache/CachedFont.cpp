@@ -168,6 +168,13 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
         }
         }
 
+        if (RefPtr fontCustomPlatformData = m_fontCustomPlatformData) {
+            URL sourceURL = response().url();
+            if (sourceURL.isEmpty())
+                sourceURL = url();
+            fontCustomPlatformData->setSourceURL(sourceURL.string());
+        }
+
         m_hasCreatedFontDataWrappingResource = m_fontCustomPlatformData && wrapping;
         if (!m_fontCustomPlatformData) {
             if (m_fontParsingPolicy == FontParsingPolicy::LoadWithSafeFontParser) {

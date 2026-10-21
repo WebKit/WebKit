@@ -35,7 +35,7 @@ function test()
                 let cssStyles = WI.cssManager.stylesForNode(domNode);
                 InspectorTest.assert(cssStyles, `Should find CSS Styles for DOM Node.`);
 
-                await cssStyles.refreshIfNeeded();
+                await cssStyles.refresh({includeFontData: true});
 
                 let {propertiesMap, featuresMap, variationsMap} = new WI.FontStyles(cssStyles);
 
@@ -51,6 +51,34 @@ function test()
 	        InspectorTest.evaluateInPage(`loadFontFace("${fontDeclaration}", "${text}", "${eventName}")`),
         ]);
     }
+
+    suite.addTestCase({
+        name: "WI.FontStyles.MissingComputedProperties",
+        async test() {
+            let nodeStyles = {
+                computedStyle: null,
+                computedPrimaryFont: null,
+                effectivePropertyForName() {
+                    return null;
+                },
+            };
+            let fontStyles = new WI.FontStyles(nodeStyles);
+            InspectorTest.expectEqual(fontStyles.featuresMap.size, 0, "Missing computed styles should have no font features.");
+            InspectorTest.expectEqual(fontStyles.variationsMap.size, 0, "Missing computed styles should have no font variations.");
+            InspectorTest.expectEqual(fontStyles.propertiesMap.get("font-size").value, "", "Missing computed font properties should remain empty.");
+            fontStyles.refresh();
+            InspectorTest.expectFalse(fontStyles.significantChangeSinceLastRefresh, "Refreshing empty font styles should not introduce axes.");
+
+            nodeStyles.computedStyle = {
+                propertyForName() {
+                    return null;
+                },
+            };
+            fontStyles.refresh();
+            InspectorTest.expectEqual(fontStyles.featuresMap.size, 0, "Absent computed feature settings should have no font features.");
+            InspectorTest.expectEqual(fontStyles.variationsMap.size, 0, "Absent computed variation settings should have no font variations.");
+        },
+    });
 
     addTestCase({
         name: "WI.FontStyles.BasicPropertiesTest",

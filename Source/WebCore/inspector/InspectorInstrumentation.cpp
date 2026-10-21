@@ -190,9 +190,13 @@ void InspectorInstrumentation::didInsertDOMNodeImpl(InstrumentingAgents& instrum
     if (RefPtr frame = node.document().frame()) {
         if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
             frameDOMAgent->didInsertDOMNode(node);
+        if (CheckedPtr frameCSSAgent = frame->inspectorController().instrumentingAgents().enabledFrameCSSAgent())
+            frameCSSAgent->didInsertDOMNode(node);
     }
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->didInsertDOMNode(node);
+    if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->didInsertDOMNode(node);
 }
 
 void InspectorInstrumentation::willRemoveDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)
@@ -206,11 +210,15 @@ void InspectorInstrumentation::didRemoveDOMNodeImpl(InstrumentingAgents& instrum
     if (RefPtr frame = node.document().frame()) {
         if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
             frameDOMAgent->didRemoveDOMNode(node);
+        if (CheckedPtr frameCSSAgent = frame->inspectorController().instrumentingAgents().enabledFrameCSSAgent())
+            frameCSSAgent->didRemoveDOMNode(node);
     }
     if (CheckedPtr pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
         pageDOMDebuggerAgent->didRemoveDOMNode(node);
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->didRemoveDOMNode(node);
+    if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->didRemoveDOMNode(node);
 }
 
 void InspectorInstrumentation::willDestroyDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)
@@ -218,11 +226,15 @@ void InspectorInstrumentation::willDestroyDOMNodeImpl(InstrumentingAgents& instr
     if (RefPtr frame = node.document().frame()) {
         if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
             frameDOMAgent->willDestroyDOMNode(node);
+        if (CheckedPtr frameCSSAgent = frame->inspectorController().instrumentingAgents().enabledFrameCSSAgent())
+            frameCSSAgent->willDestroyDOMNode(node);
     }
     if (CheckedPtr pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
         pageDOMDebuggerAgent->willDestroyDOMNode(node);
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->willDestroyDOMNode(node);
+    if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->willDestroyDOMNode(node);
 }
 
 void InspectorInstrumentation::didChangeRendererForDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)
@@ -282,9 +294,13 @@ void InspectorInstrumentation::didModifyDOMAttrImpl(InstrumentingAgents& instrum
     if (RefPtr frame = element.document().frame()) {
         if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
             frameDOMAgent->didModifyDOMAttr(element, name, value);
+        if (CheckedPtr frameCSSAgent = frame->inspectorController().instrumentingAgents().enabledFrameCSSAgent())
+            frameCSSAgent->didModifyDOMAttr(element);
     }
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->didModifyDOMAttr(element, name, value);
+    if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->didModifyDOMAttr(element);
 }
 
 void InspectorInstrumentation::didRemoveDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomString& name)
@@ -292,9 +308,13 @@ void InspectorInstrumentation::didRemoveDOMAttrImpl(InstrumentingAgents& instrum
     if (RefPtr frame = element.document().frame()) {
         if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
             frameDOMAgent->didRemoveDOMAttr(element, name);
+        if (CheckedPtr frameCSSAgent = frame->inspectorController().instrumentingAgents().enabledFrameCSSAgent())
+            frameCSSAgent->didRemoveDOMAttr(element);
     }
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->didRemoveDOMAttr(element, name);
+    if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->didRemoveDOMAttr(element);
 }
 
 void InspectorInstrumentation::willInvalidateStyleAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element)
@@ -308,9 +328,13 @@ void InspectorInstrumentation::didInvalidateStyleAttrImpl(InstrumentingAgents& i
     if (RefPtr frame = element.document().frame()) {
         if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
             frameDOMAgent->didInvalidateStyleAttr(element);
+        if (CheckedPtr frameCSSAgent = frame->inspectorController().instrumentingAgents().enabledFrameCSSAgent())
+            frameCSSAgent->didInvalidateStyleAttr(element);
     }
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->didInvalidateStyleAttr(element);
+    if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->didInvalidateStyleAttr(element);
 }
 
 void InspectorInstrumentation::documentDetachedImpl(InstrumentingAgents& instrumentingAgents, Document& document)
@@ -334,6 +358,17 @@ void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents& ins
 
     if (CheckedPtr consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->frameWindowDiscarded(*window);
+}
+
+void InspectorInstrumentation::fontDataChangedImpl(InstrumentingAgents& instrumentingAgents, Document& document)
+{
+    if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->fontDataChanged();
+
+    if (RefPtr frame = document.frame()) {
+        if (CheckedPtr frameCSSAgent = frame->inspectorController().instrumentingAgents().enabledFrameCSSAgent())
+            frameCSSAgent->fontDataChanged();
+    }
 }
 
 void InspectorInstrumentation::mediaQueryResultChangedImpl(InstrumentingAgents& instrumentingAgents, Document& document)
@@ -520,9 +555,13 @@ void InspectorInstrumentation::characterDataModifiedImpl(InstrumentingAgents& in
     if (RefPtr frame = characterData.document().frame()) {
         if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
             frameDOMAgent->characterDataModified(characterData);
+        if (CheckedPtr frameCSSAgent = frame->inspectorController().instrumentingAgents().enabledFrameCSSAgent())
+            frameCSSAgent->characterDataModified(characterData);
     }
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->characterDataModified(characterData);
+    if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->characterDataModified(characterData);
 }
 
 void InspectorInstrumentation::willSendXMLHttpRequestImpl(InstrumentingAgents& instrumentingAgents, const String& url)
