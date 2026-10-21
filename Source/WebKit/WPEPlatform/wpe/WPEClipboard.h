@@ -46,6 +46,8 @@ struct _WPEClipboardClass
 {
     GObjectClass parent_class;
 
+    /*< public >*/
+
     GBytes* (*read)    (WPEClipboard        *clipboard,
                         const char          *format);
     void    (*changed) (WPEClipboard        *clipboard,
@@ -53,6 +55,7 @@ struct _WPEClipboardClass
                         gboolean             is_local,
                         WPEClipboardContent *content);
 
+    /*< private >*/
     gpointer padding[8];
 };
 
