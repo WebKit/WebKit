@@ -585,6 +585,8 @@ static constexpr Quirk fullTable[] = {
         .behaviors = {
             // imdb.com: rdar://137991466
             needsChromeMediaControlsPseudoElementQuirk,
+            // imdb.com: rdar://137012134
+            needsWebKitMediaTextTrackDisplayQuirk,
             // imdb.com: rdar://162684936
             needsZeroMaxTouchPointsQuirk,
         } },

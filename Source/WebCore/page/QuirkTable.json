@@ -668,6 +668,7 @@
             "matches": ["*://*.imdb.com/*"],
             "behaviors": [
                 { "id": "NeedsChromeMediaControlsPseudoElementQuirk", "bugs": ["rdar://137991466"] },
+                { "id": "NeedsWebKitMediaTextTrackDisplayQuirk", "bugs": ["rdar://137012134"] },
                 { "id": "NeedsZeroMaxTouchPointsQuirk", "bugs": ["rdar://162684936"] }
             ]
         },
