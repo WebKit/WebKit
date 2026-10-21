@@ -37,6 +37,7 @@ from webkitcorepy import TaskPool
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.interrupt_debugging import log_stack_trace_on_signal
 from webkitpy.layout_tests.controllers import single_test_runner
+from webkitpy.layout_tests.controllers.reference_cache import ReferenceCache
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
@@ -335,6 +336,7 @@ class Worker(object):
         self._batch_count = 0
         self._driver = None
         self._batch_size = self._port.get_option('batch_size') or 0
+        self._reference_cache = None
 
     def run_tests(self, shard):
         for input in shard.test_inputs:
@@ -396,6 +398,8 @@ class Worker(object):
     def stop(self):
         _log.debug('cleaning up')
         self._kill_driver()
+        if self._reference_cache:
+            self._reference_cache.save()
 
     def _timeout(self, test_input):
         """Compute the appropriate timeout value for a test."""
@@ -514,10 +518,12 @@ class Worker(object):
         return self._run_single_test(self._driver, test_input, stop_when_done)
 
     def _run_single_test(self, driver, test_input, stop_when_done):
+        if self._port.get_option('cache_references') and not self._reference_cache:
+            self._reference_cache = ReferenceCache(self._port, driver)
         return single_test_runner.run_single_test(
             self._port, self._port._options, self._results_directory,
             TaskPool.Process.name,
-            driver, test_input, stop_when_done,
+            driver, test_input, stop_when_done, self._reference_cache,
         )
 
 
