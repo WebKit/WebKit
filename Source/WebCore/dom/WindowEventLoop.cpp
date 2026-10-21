@@ -211,8 +211,27 @@ std::optional<MonotonicTime> WindowEventLoop::nextScheduledWorkTime() const
     return *timerTime < *renderingTime ? *timerTime : *renderingTime;
 }
 
+void WindowEventLoop::addAssociatedContext(ScriptExecutionContext& context)
+{
+    EventLoop::addAssociatedContext(context);
+    m_nextRenderingTimeCache = std::nullopt;
+}
+
+void WindowEventLoop::removeAssociatedContext(ScriptExecutionContext& context)
+{
+    EventLoop::removeAssociatedContext(context);
+    m_nextRenderingTimeCache = std::nullopt;
+}
+
 std::optional<MonotonicTime> WindowEventLoop::nextRenderingTime() const
 {
+    // Page::nextRenderingUpdateTimestamp() always returns the next update tick strictly
+    // after "now", so a previously computed tick remains correct for as long as "now"
+    // hasn't reached it yet, and self-invalidates the moment it does. The cache is also
+    // invalidated whenever a context is associated with or disassociated from this loop.
+    if (m_nextRenderingTimeCache && MonotonicTime::now() < *m_nextRenderingTimeCache)
+        return *m_nextRenderingTimeCache;
+
     std::optional<MonotonicTime> nextRenderingTime;
     // FIXME: Remove suppression once rdar://189998365 is fixed.
     SUPPRESS_MEMORY_UNSAFE_CAST const_cast<WindowEventLoop*>(this)->forEachAssociatedContext([&](ScriptExecutionContext& context) {
@@ -228,6 +247,7 @@ std::optional<MonotonicTime> WindowEventLoop::nextRenderingTime() const
         if (!nextRenderingTime || *renderingUpdateTimeForPage < *nextRenderingTime)
             nextRenderingTime = *renderingUpdateTimeForPage;
     });
+    m_nextRenderingTimeCache = nextRenderingTime;
     return nextRenderingTime;
 }
 

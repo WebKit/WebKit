@@ -132,8 +132,8 @@ public:
 
     void forEachAssociatedContext(NOESCAPE const Function<void(ScriptExecutionContext&)>&);
     bool findMatchingAssociatedContext(NOESCAPE const Function<bool(ScriptExecutionContext&)>&);
-    void addAssociatedContext(ScriptExecutionContext&);
-    void removeAssociatedContext(ScriptExecutionContext&);
+    virtual void addAssociatedContext(ScriptExecutionContext&);
+    virtual void removeAssociatedContext(ScriptExecutionContext&);
 
     void invalidateNextTimerFireTimeCache() { m_nextTimerFireTimeCache = std::nullopt; }
     Markable<MonotonicTime> nextTimerFireTime() const;
