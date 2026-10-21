@@ -2155,9 +2155,11 @@ void GraphicsContextGLWKC::copyTexImage2D(GCGLenum target, GCGLint level, GCGLen
 
     if (m_boundFramebuffer) {
         auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        const PlatformGLObject boundTexture = is2D
+            ? m_boundTextures2D[m_activeTextureUnit] : m_boundTexturesCube[m_activeTextureUnit];
         if (framebuffer != m_framebuffers.end() && framebuffer->second.colorTexture
-            && framebuffer->second.colorTexture == m_boundTextures2D[m_activeTextureUnit]
-            && (!isCubeFace || (framebuffer->second.colorTextureIsCubeFace
+            && framebuffer->second.colorTexture == boundTexture
+            && (is2D || (framebuffer->second.colorTextureIsCubeFace
                 && framebuffer->second.colorTextureFace == target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE))) {
             addError(GL_INVALID_OPERATION_VALUE);
             return;
