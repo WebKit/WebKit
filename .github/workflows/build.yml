@@ -759,18 +759,42 @@ jobs:
           echo "CafeGLSL header: $HEADER"
           echo "CafeGLSL library: $LIBRARY"
 
-          # The current portlib header still includes its legacy cafe_gx2.h
-          # declarations, which duplicate WUT's GX2 ABI types in WebCore.
-          # The WKC backend includes WUT's gx2 headers first, so retain those
-          # canonical types and skip only the stale compatibility declaration
-          # header when compiling this WUT target.
-          if grep -q 'cafe_gx2\.h' "$HEADER"; then
-            sed -i 's|^[[:space:]]*#include ["<]cafe_gx2\.h[">]|#if !defined(__WUT__)\n#include "cafe_gx2.h"\n#endif|' "$HEADER"
-          fi
-          if ! grep -q '#if !defined(__WUT__)' "$HEADER"; then
-            echo "::error::Could not isolate the legacy CafeGLSL GX2 declarations"
-            exit 1
-          fi
+          # Some published portlib images predate CafeGLSL's __WUT__ header
+          # selection and include cafe_gx2.h unconditionally. That header
+          # redeclares GX2 types already supplied by devkitPro WUT. Guard every
+          # direct include containing cafe_gx2.h, including path-qualified ones.
+          python3 - "$HEADER" <<'PY'
+          import pathlib
+          import sys
+
+          header = pathlib.Path(sys.argv[1])
+          text = header.read_text()
+          marker = "/* WKC_CAFEGX2_WUT_COMPAT_GUARD */"
+          if marker not in text:
+              lines = text.splitlines()
+              rewritten = []
+              changed = False
+              for line in lines:
+                  if "#include" in line and "cafe_gx2.h" in line:
+                      rewritten.extend([
+                          marker,
+                          "#if !defined(__WUT__) && !defined(__WIIU__)",
+                          line,
+                          "#endif",
+                      ])
+                      changed = True
+                  else:
+                      rewritten.append(line)
+              if changed:
+                  header.write_text("\\n".join(rewritten) + "\\n")
+              else:
+                  # Newer CafeGLSL headers can include WUT's GX2 definitions
+                  # directly. In that case no compatibility rewrite is needed.
+                  print("CafeGLSL header already uses WUT-compatible GX2 declarations.")
+          contents = header.read_text()
+          if "cafe_gx2.h" in contents and marker not in contents:
+              raise SystemExit("Could not isolate CafeGLSL's legacy GX2 declarations")
+          PY
       - name: Configure (CMake)
         shell: bash
         run: |
