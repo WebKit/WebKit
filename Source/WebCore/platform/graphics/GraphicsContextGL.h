@@ -73,9 +73,6 @@ namespace WebCore {
 class ImageBuffer;
 class PixelBuffer;
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-class GraphicsContextGLCV;
-#endif
 #if ENABLE(VIDEO)
 class MediaPlayer;
 class VideoFrame;
@@ -1681,7 +1678,9 @@ public:
     virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;
 
 #if ENABLE(VIDEO)
-    virtual bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum  format, GCGLenum type, bool premultiplyAlpha, bool flipY) = 0;
+    // Like glCopyTextureCHROMIUM with the video frame as the source texture.
+    // Returns false if the copy is not possible, in which case the texture is not modified.
+    virtual bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum type, bool unpackFlipY, bool unpackPremultiplyAlpha) = 0;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> videoFrameToNativeImage(VideoFrame&);
 #endif
 

@@ -1,0 +1,55 @@
+texImage2D(video) of the same video frame uploads the frame again after the texture has been modified by other calls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+WebGL 1.0
+
+A cube map face is redefined while a 2D texture is bound to the same texture unit.
+PASS getError was expected value: NO_ERROR : uploads
+PASS checkFramebufferStatus was FRAMEBUFFER_COMPLETE: cube map face
+PASS cube map face: top of the video should be blue
+PASS cube map face: bottom of the video should be red
+PASS getError was expected value: NO_ERROR : cube map face: after checking the content
+
+The texture is modified with copyTexSubImage2D.
+PASS getError was expected value: NO_ERROR : uploads
+PASS checkFramebufferStatus was FRAMEBUFFER_COMPLETE: copyTexSubImage2D
+PASS copyTexSubImage2D: top of the video should be blue
+PASS copyTexSubImage2D: bottom of the video should be red
+PASS getError was expected value: NO_ERROR : copyTexSubImage2D: after checking the content
+
+The texture is attached to a framebuffer and cleared while another texture is bound.
+PASS getError was expected value: NO_ERROR : uploads
+PASS checkFramebufferStatus was FRAMEBUFFER_COMPLETE: framebufferTexture2D
+PASS framebufferTexture2D: top of the video should be blue
+PASS framebufferTexture2D: bottom of the video should be red
+PASS getError was expected value: NO_ERROR : framebufferTexture2D: after checking the content
+
+WebGL 2.0
+
+A cube map face is redefined while a 2D texture is bound to the same texture unit.
+PASS getError was expected value: NO_ERROR : uploads
+PASS checkFramebufferStatus was FRAMEBUFFER_COMPLETE: cube map face
+PASS cube map face: top of the video should be blue
+PASS cube map face: bottom of the video should be red
+PASS getError was expected value: NO_ERROR : cube map face: after checking the content
+
+The texture is modified with copyTexSubImage2D.
+PASS getError was expected value: NO_ERROR : uploads
+PASS checkFramebufferStatus was FRAMEBUFFER_COMPLETE: copyTexSubImage2D
+PASS copyTexSubImage2D: top of the video should be blue
+PASS copyTexSubImage2D: bottom of the video should be red
+PASS getError was expected value: NO_ERROR : copyTexSubImage2D: after checking the content
+
+The texture is attached to a framebuffer and cleared while another texture is bound.
+PASS getError was expected value: NO_ERROR : uploads
+PASS checkFramebufferStatus was FRAMEBUFFER_COMPLETE: framebufferTexture2D
+PASS framebufferTexture2D: top of the video should be blue
+PASS framebufferTexture2D: bottom of the video should be red
+PASS getError was expected value: NO_ERROR : framebufferTexture2D: after checking the content
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
