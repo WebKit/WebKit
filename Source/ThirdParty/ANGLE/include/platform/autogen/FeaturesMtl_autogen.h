@@ -302,12 +302,6 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
-    FeatureInfo generateShareableShaders = {
-        "generateShareableShaders",
-        FeatureCategory::MetalFeatures,
-        &members,
-    };
-
     FeatureInfo disableMetalOnNvidia = {
         "disableMetalOnNvidia",
         FeatureCategory::MetalFeatures,

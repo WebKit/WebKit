@@ -363,16 +363,6 @@
             "issue": "http://anglebug.com/40644905"
         },
         {
-            "name": "generate_shareable_shaders",
-            "category": "Features",
-            "description": [
-                "Attempts to generate shaders that are shareable. More specifically, shaders",
-                " end up with conditionals that are decided at run time via input parameters vs",
-                " compile time. This results in bigger shaders."
-            ],
-            "issue": "http://crbug.com/1423136"
-        },
-        {
             "name": "disable_metal_on_nvidia",
             "category": "Features",
             "description": [

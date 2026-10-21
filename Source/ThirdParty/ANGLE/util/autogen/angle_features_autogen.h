@@ -230,7 +230,6 @@ enum class Feature
     ForceTextureLodOffset4,
     ForceWaitForSubmissionToCompleteForQueryResult,
     GenerateFragmentShadingRateAttchementWithCpu,
-    GenerateShareableShaders,
     GetDimensionsIgnoresBaseLevel,
     HasBaseVertexInstancedDraw,
     HasBlobCacheThatEvictsOldItemsFirst,

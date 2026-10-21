@@ -656,8 +656,7 @@ angle::Result MTLGetMSL(const angle::FeaturesMtl &features,
         else
         {
             ASSERT(type == gl::ShaderType::Fragment);
-            const bool defineAlpha0 = features.emulateAlphaToCoverage.enabled ||
-                                      features.generateShareableShaders.enabled;
+            const bool defineAlpha0 = features.emulateAlphaToCoverage.enabled;
             source = UpdateFragmentShaderOutputs(shaderSources[type], executable, defineAlpha0);
         }
         (*mslShaderInfoOut)[type].metalShaderSource =
