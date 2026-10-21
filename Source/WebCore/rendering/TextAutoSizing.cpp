@@ -234,7 +234,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
 
         auto* parentRenderer = renderer.parent();
 
-        auto style = cloneRenderStyleWithState(renderer.style());
+        auto style = cloneRenderStyleWithState(parentRenderer->style());
         auto fontDescription = style.fontDescription();
         fontDescription.setUsedSize(averageSize);
         style.setFontDescription(FontCascadeDescription { fontDescription });
@@ -358,7 +358,7 @@ TextAutoSizing::~TextAutoSizing() = default;
 void TextAutoSizing::addTextNode(Text& node, float candidateSize)
 {
     LOG(TextAutosizing, " addAutoSizedNode %p candidateSize=%f", &node, candidateSize);
-    auto addResult = m_textNodes.add<TextAutoSizingHashTranslator>(node.renderer()->style(), nullptr);
+    auto addResult = m_textNodes.add<TextAutoSizingHashTranslator>(node.renderer()->parent()->style(), nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = makeUnique<TextAutoSizingValue>();
     addResult.iterator->value->addTextNode(node, candidateSize);

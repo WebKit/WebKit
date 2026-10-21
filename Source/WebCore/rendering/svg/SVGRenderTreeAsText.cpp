@@ -585,7 +585,8 @@ void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, Opt
 
 void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<RenderAsTextFlag> behavior)
 {
-    CheckedRef style = renderer.style();
+    // Inline text dumps the resources of its parent.
+    CheckedRef style = is<RenderText>(renderer) ? renderer.parent()->style() : renderer.style();
 
     // FIXME: We want to use SVGResourcesCache to determine which resources are present, instead of quering the resource <-> id cache.
     // For now leave the DRT output as is, but later on we should change this so cycles are properly ignored in the DRT output.

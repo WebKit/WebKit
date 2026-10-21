@@ -176,7 +176,8 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const Style::Co
             forceBackgroundToWhite = false;
 
         if (forceBackgroundToWhite) {
-            if (Style::hasAnyBackgroundClipText(renderer.style().backgroundLayers()))
+            // background-clip: text on the parent paints its background through the text.
+            if (Style::hasAnyBackgroundClipText(renderer.parent()->style().backgroundLayers()))
                 paintStyle.fillColor = Color::black;
         }
     }

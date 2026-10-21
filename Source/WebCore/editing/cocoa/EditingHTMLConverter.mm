@@ -496,8 +496,9 @@ static AttributedString editingAttributedStringInternal(const SimpleRange& range
             node = it.range().start.container.ptr();
         CheckedPtr renderer = node->renderer();
 
+        // updateAttributes() reads non-inherited properties like the background color. For text these are its parent's.
         if (renderer)
-            updateAttributes(node.get(), protect(renderer->style()), includedElements, elementQualifiesForWritingToolsPreservationCache, enclosingLinkCache, enclosingListCache, attributes.get(), textListsForListElements, clientPreservedNodes);
+            updateAttributes(node.get(), protect(is<RenderText>(*renderer) ? renderer->parent()->style() : renderer->style()), includedElements, elementQualifiesForWritingToolsPreservationCache, enclosingLinkCache, enclosingListCache, attributes.get(), textListsForListElements, clientPreservedNodes);
         else if (!includedElements.contains(IncludedElement::NonRenderedContent))
             continue;
 

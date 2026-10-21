@@ -234,7 +234,7 @@ void SVGTextBoxPainter::paint()
     }
 
     // Finally, paint the outline if any.
-    if (renderer().style().hasOutline()) {
+    if (style.hasOutline()) {
         if (parentRenderer.isInlineBox())
             OutlinePainter { m_paintInfo }.paintOutline(parentRenderer, m_paintOffset);
     }

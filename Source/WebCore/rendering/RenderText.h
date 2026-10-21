@@ -136,9 +136,6 @@ public:
 
     LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>&);
 
-    inline LayoutUnit marginLeft() const;
-    inline LayoutUnit marginRight() const;
-
     int caretMinOffset() const final;
     int caretMaxOffset() const final;
     unsigned countRenderedCharacterOffsetsUntil(unsigned) const;

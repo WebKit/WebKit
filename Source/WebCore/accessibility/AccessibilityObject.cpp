@@ -3475,7 +3475,8 @@ const Style::ComputedStyle* AccessibilityObject::style() const
             // Trying to get the style from a RenderText that has no parent (e.g. because it hasn't been
             // set yet, or it was destroyed as part of an in-progress render-tree update) will cause a
             // crash because RenderTexts get their style from their parent.
-            return renderText->parent() ? &renderText->style() : nullptr;
+            // Non-inherited properties like the background color come from the parent.
+            return renderText->parent() ? &renderText->parent()->style() : nullptr;
         }
         return &renderer->style();
     }

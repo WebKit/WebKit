@@ -2054,7 +2054,8 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const LayoutPoint&
         result.setInnerNode(node.get());
         if (!result.innerNonSharedNode())
             result.setInnerNonSharedNode(node.get());
-        result.setPseudoElementIdentifier(style().pseudoElementIdentifier());
+        // Text in generated content like ::before or ::marker reports the pseudo-element of its parent.
+        result.setPseudoElementIdentifier((isRenderText() ? parent()->style() : style()).pseudoElementIdentifier());
         result.setLocalPoint(point);
     }
 }

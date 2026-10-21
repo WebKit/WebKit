@@ -198,7 +198,9 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (behavior.contains(RenderAsTextFlag::ShowAddresses))
         ts << ' ' << &o;
 
-    if (auto value = o.style().usedZIndex().tryValue(); value && value->value) // FIXME: This should log even when value->value is zero.
+    // Text dumps the z-index of its parent.
+    CheckedRef zIndexStyle = is<RenderText>(o) ? o.parent()->style() : o.style();
+    if (auto value = zIndexStyle->usedZIndex().tryValue(); value && value->value) // FIXME: This should log even when value->value is zero.
         ts << " zI: "_s << value->value;
 
     if (o.node()) {
