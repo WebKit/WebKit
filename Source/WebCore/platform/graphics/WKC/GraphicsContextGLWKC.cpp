@@ -898,7 +898,7 @@ private:
         std::vector<std::vector<uint8_t>> levels;
         std::vector<bool> definedLevels;
         GX2Sampler sampler {};
-        GCGLint minFilter { static_cast<GCGLint>(GL_LINEAR_MIPMAP_LINEAR_VALUE) };
+        GCGLint minFilter { static_cast<GCGLint>(GL_NEAREST_MIPMAP_LINEAR_VALUE) };
         GCGLint magFilter { static_cast<GCGLint>(GL_LINEAR_VALUE) };
         GCGLint wrapS { static_cast<GCGLint>(GL_REPEAT_VALUE) };
         GCGLint wrapT { static_cast<GCGLint>(GL_REPEAT_VALUE) };
@@ -1312,7 +1312,7 @@ bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
             TextureRecord* texture = nullptr;
             auto name = m_boundTextures2D[unit];
             auto found = m_textures.find(name);
-            if (name && found != m_textures.end() && found->second.storageCreated
+            if (uniform.type == GL_SAMPLER_2D_VALUE && name && found != m_textures.end() && found->second.storageCreated
                 && !found->second.levels.empty() && !found->second.definedLevels.empty()
                 && found->second.definedLevels[0] && found->second.target == GL_TEXTURE_2D_VALUE) {
                 const bool needsMipmaps = uniform.type == GL_SAMPLER_2D_VALUE
@@ -1360,7 +1360,7 @@ bool GraphicsContextGLWKC::initialize()
     m_defaultTexture.target = GL_TEXTURE_2D_VALUE;
     m_defaultTexture.width = 1;
     m_defaultTexture.height = 1;
-    m_defaultTexture.levels = { std::vector<uint8_t> { 0, 0, 0, 0 } };
+    m_defaultTexture.levels = { std::vector<uint8_t> { 0, 0, 0, 255 } };
     m_defaultTexture.definedLevels = { true };
     m_defaultTextureReady = recreateTextureStorage(m_defaultTexture);
     return m_defaultTextureReady;
@@ -1834,6 +1834,15 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
     }
     if (level && (!texture->width || !texture->height)) {
         addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    uint32_t maxMipLevels = 1;
+    for (uint32_t dimension = std::max(texture->width ? texture->width : static_cast<uint32_t>(width),
+             texture->height ? texture->height : static_cast<uint32_t>(height));
+         dimension > 1; dimension >>= 1)
+        ++maxMipLevels;
+    if (static_cast<uint32_t>(level) >= maxMipLevels) {
+        addError(GL_INVALID_VALUE_VALUE);
         return;
     }
     const uint32_t expectedWidth = level ? std::max<uint32_t>(1, texture->width >> level) : static_cast<uint32_t>(width);
