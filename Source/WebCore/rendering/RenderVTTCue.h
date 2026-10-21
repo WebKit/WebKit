@@ -48,6 +48,7 @@ public:
 
 private:
     void layout() override;
+    void paint(PaintInfo&, const LayoutPoint&) override;
 
     bool isOutside() const;
     bool rectIsWithinContainer(const FloatRect&) const;
