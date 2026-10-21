@@ -1,0 +1,51 @@
+<!doctype html>
+<title>SVGPathElement.getPathSegmentAtLength(): a distance inside a segment</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/paths/#__svg__SVGPathElement__getPathSegmentAtLength">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/getPathData-helpers.js"></script>
+
+<svg></svg>
+<script>
+// Four segments. Each lineto is exactly 5 units and axis-aligned, so the
+// cumulative lengths 0, 5, 10 and 15 are exact in floating point and the
+// segment boundaries can be probed without tolerance.
+//
+//   index 0   M 0 0   zero length, ends at 0
+//   index 1   L 0 5   ends at 5
+//   index 2   L 5 5   ends at 10
+//   index 3   L 5 0   ends at 15
+const D = "M 0 0 L 0 5 L 5 5 L 5 0";
+const SEGMENTS = [
+  { type: "M", values: [0, 0] },
+  { type: "L", values: [0, 5] },
+  { type: "L", values: [5, 5] },
+  { type: "L", values: [5, 0] }
+];
+
+function assert_segment_equals(actual, expectedIndex, description) {
+  assert_not_equals(actual, null, description + ": expected a segment, got null");
+  assert_path_data_equals([actual], [SEGMENTS[expectedIndex]]);
+}
+
+for (const [distance, index] of [[2.5, 1], [7.5, 2], [12.5, 3]]) {
+  test(() => {
+    const path = createPath(D);
+    assert_segment_equals(path.getPathSegmentAtLength(distance), index, "at " + distance);
+  }, `getPathSegmentAtLength(${distance}) returns the segment containing that distance`);
+}
+
+test(() => {
+  const path = createPath(D);
+  const first = path.getPathSegmentAtLength(2.5);
+  const second = path.getPathSegmentAtLength(2.5);
+  assert_not_equals(first, second, "each call builds a new object");
+  assert_path_data_equals([first], [second]);
+}, "getPathSegmentAtLength() returns a fresh object on each call");
+
+test(() => {
+  // No renderer, no layout: the method reads the d attribute's base value.
+  const path = createPath(D);
+  assert_segment_equals(path.getPathSegmentAtLength(7.5), 2, "detached");
+}, "getPathSegmentAtLength() works on a detached path element");
+</script>

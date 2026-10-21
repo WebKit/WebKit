@@ -1,0 +1,43 @@
+<!doctype html>
+<title>SVGPathData is included by SVGPathElement only</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/paths/#InterfaceSVGPathData">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<script>
+// The module says "SVGPathElement includes SVGPathData;" and nothing else, so the
+// mixin must not leak onto the other geometry elements or onto their shared base.
+const MIXIN_MEMBERS = ["getPathData", "setPathData"];
+
+test(() => {
+  for (const member of MIXIN_MEMBERS)
+    assert_true(member in SVGPathElement.prototype, member);
+  assert_true("getPathSegmentAtLength" in SVGPathElement.prototype,
+      "getPathSegmentAtLength is on the interface, not the mixin");
+}, "SVGPathElement has the SVGPathData members");
+
+const OTHER_GEOMETRY = ["SVGRectElement", "SVGCircleElement", "SVGEllipseElement",
+                        "SVGLineElement", "SVGPolygonElement", "SVGPolylineElement"];
+
+for (const name of OTHER_GEOMETRY) {
+  test(() => {
+    assert_true(name in self, name + " exists");
+    for (const member of MIXIN_MEMBERS)
+      assert_false(member in self[name].prototype, member);
+  }, `${name} does not have the SVGPathData members`);
+}
+
+test(() => {
+  for (const member of MIXIN_MEMBERS)
+    assert_false(member in SVGGeometryElement.prototype, member);
+}, "SVGGeometryElement does not have the SVGPathData members");
+
+test(() => {
+  // The members belong to SVGPathElement.prototype itself, not to something it
+  // inherits from.
+  for (const member of MIXIN_MEMBERS) {
+    assert_true(Object.prototype.hasOwnProperty.call(SVGPathElement.prototype, member),
+        member + " is an own property of SVGPathElement.prototype");
+  }
+}, "the SVGPathData members sit on SVGPathElement.prototype");
+</script>

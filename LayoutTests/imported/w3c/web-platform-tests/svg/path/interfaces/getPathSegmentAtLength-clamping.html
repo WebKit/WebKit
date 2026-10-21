@@ -1,0 +1,39 @@
+<!doctype html>
+<title>SVGPathElement.getPathSegmentAtLength(): a distance at or past the end of the path</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/paths/#__svg__SVGPathElement__getPathSegmentAtLength">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/getPathData-helpers.js"></script>
+
+<svg></svg>
+<script>
+// Four segments. Each lineto is exactly 5 units and axis-aligned, so the
+// cumulative lengths 0, 5, 10 and 15 are exact in floating point and the
+// segment boundaries can be probed without tolerance.
+//
+//   index 0   M 0 0   zero length, ends at 0
+//   index 1   L 0 5   ends at 5
+//   index 2   L 5 5   ends at 10
+//   index 3   L 5 0   ends at 15
+const D = "M 0 0 L 0 5 L 5 5 L 5 0";
+const SEGMENTS = [
+  { type: "M", values: [0, 0] },
+  { type: "L", values: [0, 5] },
+  { type: "L", values: [5, 5] },
+  { type: "L", values: [5, 0] }
+];
+
+function assert_segment_equals(actual, expectedIndex, description) {
+  assert_not_equals(actual, null, description + ": expected a segment, got null");
+  assert_path_data_equals([actual], [SEGMENTS[expectedIndex]]);
+}
+
+// Spec: "the distance shall be clamped to the range [0, total-length-of-path]".
+// The path is 15 units long.
+for (const distance of [15, 15.5, 100, 1e9]) {
+  test(() => {
+    const path = createPath(D);
+    assert_segment_equals(path.getPathSegmentAtLength(distance), 3, "at " + distance);
+  }, `getPathSegmentAtLength(${distance}) clamps to the end and returns the last segment`);
+}
+</script>

@@ -1,0 +1,7 @@
+
+PASS getPathData() segments are plain objects with type and values
+PASS getPathData() segment values is an Array
+PASS mutating a returned segment does not change the path
+PASS getPathData() shares nothing between calls
+PASS there is no SVGPathSegment interface object
+
