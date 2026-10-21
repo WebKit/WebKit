@@ -1,0 +1,77 @@
+<html>
+<head>
+    <script>
+        if (window.testRunner && window.internals) {
+            testRunner.dumpAsText();
+            internals.clearMemoryCache();
+        }
+    </script>
+
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=101&test=picture-img-not-direct-child"></script>
+</head>
+<body>
+<script>
+    description("The speculative preload scanner must only treat an &lt;img&gt; that is a direct child of a &lt;picture&gt; as that &lt;picture&gt;'s image.");
+
+    if (window.testRunner && window.internals) {
+        // Direct child.
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?case1-source');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?case1-img');");
+
+        // Wrapped in a <div>.
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?case2-source');");
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?case2-img');");
+
+        // Void element does not nest.
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?case3-source');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?case3-img');");
+
+        // Foster-parented out of the table.
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?case4-source');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?case4-img');");
+
+        // Closed wrapper.
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?case5-source');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?case5-img');");
+
+        // Nested <img> then a direct-child <img>.
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?case6-source');");
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?case6-nested');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?case6-img');");
+    }
+</script>
+<picture>
+    <source type="image/jpeg" srcset="/resources/square20.jpg?case1-source">
+    <img src="/resources/square20.jpg?case1-img">
+</picture>
+
+<picture>
+    <source type="image/jpeg" srcset="/resources/square20.jpg?case2-source">
+    <div><img src="/resources/square20.jpg?case2-img"></div>
+</picture>
+
+<picture>
+    <source type="image/jpeg" srcset="/resources/square20.jpg?case3-source">
+    <br>
+    <img src="/resources/square20.jpg?case3-img">
+</picture>
+
+<picture>
+    <source type="image/jpeg" srcset="/resources/square20.jpg?case4-source">
+    <table><img src="/resources/square20.jpg?case4-img"></table>
+</picture>
+
+<picture>
+    <source type="image/jpeg" srcset="/resources/square20.jpg?case5-source">
+    <div></div>
+    <img src="/resources/square20.jpg?case5-img">
+</picture>
+
+<picture>
+    <source type="image/jpeg" srcset="/resources/square20.jpg?case6-source">
+    <div><img src="/resources/square20.jpg?case6-nested"></div>
+    <img src="/resources/square20.jpg?case6-img">
+</picture>
+</body>
+</html>

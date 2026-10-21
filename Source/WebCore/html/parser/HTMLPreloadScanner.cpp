@@ -107,6 +107,45 @@ ASCIILiteral TokenPreloadScanner::initiatorFor(TagId tagId)
     return "unknown"_s;
 }
 
+// Void elements are popped as soon as they are inserted, and an <img> in a table context is
+// foster-parented out to the <picture>, so neither nests a following <img>.
+static bool tagCreatesNestingLevel(const HTMLToken::DataVector& tagName)
+{
+    static constexpr SortedArraySet set { WTF::toArray<PackedASCIILiteral<uint64_t>>({
+        "area"_s,
+        "base"_s,
+        "basefont"_s,
+        "bgsound"_s,
+        "br"_s,
+        "col"_s,
+        "colgroup"_s,
+        "embed"_s,
+        "frame"_s,
+        "hr"_s,
+        "image"_s,
+        "img"_s,
+        "input"_s,
+        "keygen"_s,
+        "link"_s,
+        "meta"_s,
+        "param"_s,
+        "source"_s,
+        "table"_s,
+        "tbody"_s,
+        "tfoot"_s,
+        "thead"_s,
+        "tr"_s,
+        "track"_s,
+        "wbr"_s,
+    }) };
+    return !set.contains(tagName.span());
+}
+
+static bool isPictureChild(const Vector<PreloadScannerPictureState>& pictureState)
+{
+    return !pictureState.isEmpty() && !pictureState.last().elementDepth;
+}
+
 class TokenPreloadScanner::StartTagScanner {
 public:
     explicit StartTagScanner(Document& document, TagId tagId, float deviceScaleFactor = 1.0)
@@ -132,7 +171,7 @@ public:
             processAttribute(knownAttributeName, attribute.value.span(), pictureState);
         }
 
-        if (m_tagId == TagId::Source && !pictureState.isEmpty() && !pictureState.last().sourceMatched && m_mediaMatched && m_typeMatched && !m_srcSetAttribute.isEmpty()) {
+        if (m_tagId == TagId::Source && isPictureChild(pictureState) && !pictureState.last().sourceMatched && m_mediaMatched && m_typeMatched && !m_srcSetAttribute.isEmpty()) {
             auto sourceSize = SizesAttributeParser(m_sizesAttribute, m_document).effectiveSize();
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             if (!imageCandidate.isEmpty()) {
@@ -234,7 +273,7 @@ private:
 
     void processAttribute(const AtomString& attributeName, StringView attributeValue, const Vector<PreloadScannerPictureState>& pictureState)
     {
-        bool inPicture = !pictureState.isEmpty();
+        bool inPicture = isPictureChild(pictureState);
         bool alreadyMatchedSource = inPicture && pictureState.last().sourceMatched;
         switch (m_tagId) {
         case TagId::Img:
@@ -506,6 +545,11 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
         }
         if (m_templateCount)
             return;
+        if (tagId != TagId::Picture && !m_pictureSourceState.isEmpty() && tagCreatesNestingLevel(token.name())) {
+            auto& elementDepth = m_pictureSourceState.last().elementDepth;
+            if (elementDepth)
+                --elementDepth;
+        }
         if (tagId == TagId::Style) {
             if (m_inStyle)
                 m_cssScanner.reset();
@@ -540,6 +584,9 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
         }
         if (m_templateCount)
             return;
+        // Track nesting so that only a direct child of the innermost <picture> is its content.
+        if (tagId != TagId::Picture && !m_pictureSourceState.isEmpty() && tagCreatesNestingLevel(token.name()))
+            ++m_pictureSourceState.last().elementDepth;
         if (tagId == TagId::Style) {
             m_inStyle = true;
             return;
@@ -589,7 +636,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
             return;
         }
 
-        if (tagId == TagId::Img && !m_pictureSourceState.isEmpty()) {
+        if (tagId == TagId::Img && isPictureChild(m_pictureSourceState)) {
             auto& pictureState = m_pictureSourceState.last();
             if (scanner.isLazyloadingImage())
                 pictureState.bufferedSourceRequest.reset();
