@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 20px; }
+    .card {
+        position: relative;
+        width: 300px;
+        margin-bottom: 20px;
+    }
+    .card input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+    .card label {
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        min-height: 80px;
+        padding: 15px;
+        border: 1px solid #86868b;
+        border-radius: 12px;
+        cursor: pointer;
+    }
+    .column {
+        display: flex;
+        flex-direction: column;
+    }
+    .right {
+        text-align: end;
+    }
+    .decorative label {
+        cursor: auto;
+    }
+    .decorative .own-pointer {
+        cursor: pointer;
+    }
+</style>
+<body>
+<!-- The label owns the glow: its nested blocks and text must not get regions of their own. -->
+<div class="card">
+    <input type="radio" name="model" id="small">
+    <label for="small"><span class="column"><span>iPhone Pro</span><span>6.3-inch display</span></span><span class="column right"><span>Buy from $1199</span><span>or $49.95/mo.</span></span></label>
+</div>
+<!-- A link inside the label is a separate target: it keeps its own region. -->
+<div class="card">
+    <input type="radio" name="model" id="large">
+    <label for="large"><span class="column"><span>iPhone Pro Max</span><a href="#">Compare</a></span></label>
+</div>
+<!-- A label without a pointer cursor and without a control owns nothing: content with its own pointer keeps its region. -->
+<div class="card decorative">
+    <label><span class="own-pointer">Own pointer</span></label>
+</div>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function() { });
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>
