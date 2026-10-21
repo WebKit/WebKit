@@ -2365,7 +2365,7 @@ RefPtr<AXCoreObject> AccessibilityRenderObject::accessibilityHitTest(const IntPo
     adjustedPoint.moveBy(-remoteFrameOffset());
 #endif
 
-    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AccessibilityHitTest };
+    constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AccessibilityHitTest };
     HitTestResult hitTestResult { adjustedPoint };
 
     protect(protect(dynamicDowncast<RenderLayerModelObject>(*m_renderer))->layer())->hitTest(hitType, hitTestResult);
