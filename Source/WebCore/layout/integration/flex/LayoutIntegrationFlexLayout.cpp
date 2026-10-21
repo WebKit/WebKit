@@ -37,7 +37,6 @@
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
-#include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -122,30 +121,21 @@ FlexLayoutItems FlexLayout::buildFlexLayoutItems(RelayoutChildren relayoutChildr
 {
     FlexLayoutItems flexLayoutItems;
     flexLayoutItems.reserveInitialCapacity(m_flexItems.size());
+    auto contentBoxLogicalWidth = flexBox().contentBoxLogicalWidth();
     for (auto& renderer : m_flexItems) {
         // buildFlexItemList has just collected these from the container's children, so none of them is gone.
         CheckedRef flexItem = *renderer;
 
-        // Before running the flex algorithm, 'auto' has a margin of 0.
-        // Also, if we're not auto sizing, we don't do a layout that computes the start/end margins.
-        auto flexItemMarginValue = [&](auto& margin) {
-            // When resolving the margins, we use the content size for resolving percent and calc (for percents in calc expressions) margins.
-            // Fortunately, percent margins are always computed with respect to the block's width, even for margin-top and margin-bottom.
-            return Style::evaluateMinimum<LayoutUnit>(margin, flexBox().contentBoxLogicalWidth(), flexBox().style().usedZoomForLength());
-        };
-        if (constraints.isHorizontalFlow) {
-            flexItem->setMarginLeft(flexItemMarginValue(flexItem->style().marginLeft()));
-            flexItem->setMarginRight(flexItemMarginValue(flexItem->style().marginRight()));
-        } else {
-            flexItem->setMarginTop(flexItemMarginValue(flexItem->style().marginTop()));
-            flexItem->setMarginBottom(flexItemMarginValue(flexItem->style().marginBottom()));
-        }
+        // Before running the flex algorithm, 'auto' has a margin of 0. Percentages resolve against the container's content box
+        // width, even for margin-top and margin-bottom, and lengths against the item's own zoom.
+        auto usedStyle = flexItem->usedStyle();
+        auto margins = LayoutBoxExtent { usedStyle.marginTop(contentBoxLogicalWidth).value_or(0_lu), usedStyle.marginRight(contentBoxLogicalWidth).value_or(0_lu), usedStyle.marginBottom(contentBoxLogicalWidth).value_or(0_lu), usedStyle.marginLeft(contentBoxLogicalWidth).value_or(0_lu) };
 
         auto everHadLayout = flexItem->everHadLayout();
         if (flexItem->shouldInvalidateContentWidths())
             flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
         flexBox().updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, flexItem.get());
-        flexLayoutItems.append({ flexItem.get(), constraints.isHorizontalFlow, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
+        flexLayoutItems.append({ flexItem.get(), constraints.isHorizontalFlow, margins, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
     }
     return flexLayoutItems;
 }
