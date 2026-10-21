@@ -1147,8 +1147,6 @@ webkit.org/b/319055 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-
 webkit.org/b/319056 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure Pass ]
 webkit.org/b/319057 [ Debug ] media/media-h264-webm-source.html [ Failure Pass ]
 webkit.org/b/319058 [ Debug ] media/media-h264-webm-error.html [ Failure Pass ]
-webkit.org/b/319059 [ Debug ] media/vp9.html [ Failure ]
-webkit.org/b/319060 [ Debug ] media/auto-play-video-in-about-blank-iframe.html [ Failure ]
 webkit.org/b/319061 [ Debug ] media/muted-video-is-playing-audio.html [ Timeout Pass ]
 webkit.org/b/319062 [ Debug ] inspector/dom/getMediaStats.html [ Failure Pass ]
 webkit.org/b/319063 [ Debug ] fullscreen/full-screen-enter-while-exiting.html [ Timeout Pass ]
