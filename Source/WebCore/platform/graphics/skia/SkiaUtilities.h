@@ -51,6 +51,7 @@ namespace WebCore {
 
 class BitmapTexture;
 class GLFence;
+class IntSize;
 enum class BlendMode : uint8_t;
 enum class CompositeOperator : uint8_t;
 
@@ -117,6 +118,8 @@ std::unique_ptr<GLFence> flushAndSubmitWithFence(GrDirectContext*);
 SkBlendMode toSkiaBlendMode(BlendMode, std::optional<CompositeOperator> = std::nullopt);
 
 sk_sp<SkImage> createPromiseImageIfNeeded(const sk_sp<SkImage>&, const sk_sp<GrContextThreadSafeProxy>&);
+
+sk_sp<SkImage> scaleImagePixels(const sk_sp<SkImage>&, const IntSize& scaledSize);
 
 } // namespace SkiaUtilities
 } // namespace WebCore

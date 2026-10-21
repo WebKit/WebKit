@@ -76,6 +76,7 @@
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
 #include <WebCore/Scrollbar.h>
+#include <WebCore/SkiaUtilities.h>
 #include <WebCore/SystemSettings.h>
 #include <cmath>
 #include <gdk/gdk.h>
@@ -3752,6 +3753,15 @@ static const char* cursorName(const Cursor& cursor)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+#if GTK_CHECK_VERSION(4, 22, 0)
+struct SetCursorCallbackData {
+    GRefPtr<GdkTexture> texture;
+    IntPoint hotSpot;
+    float scale { 1 };
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(SetCursorCallbackData)
+#endif
+
 void webkitWebViewBaseSetCursor(WebKitWebViewBase* webViewBase, const Cursor& cursor)
 {
     if (cursor.type() == Cursor::Type::Invalid)
@@ -3788,10 +3798,40 @@ void webkitWebViewBaseSetCursor(WebKitWebViewBase* webViewBase, const Cursor& cu
     if (!nativeImage)
         return;
 
-    IntPoint effectiveHotSpot = cursor.hotSpot();
+    auto cursorScale = cursor.imageScaleFactor();
+    IntPoint effectiveHotSpot = cursor.hotSpot().scaled(1 / cursorScale);
     auto platformImage = nativeImage->platformImage();
 
 #if USE(GTK4)
+    if (cursorScale != 1) {
+#if GTK_CHECK_VERSION(4, 22, 0)
+        auto texture = skiaImageToGdkTexture(*platformImage.get());
+        if (!texture)
+            return;
+
+        auto* data = createSetCursorCallbackData();
+        data->texture = WTF::move(texture);
+        data->hotSpot = effectiveHotSpot;
+        data->scale = cursorScale;
+
+        GRefPtr<GdkCursor> newCursor = adoptGRef(gdk_cursor_new_from_callback(+[](GdkCursor*, int, double, int* width, int* height, int* x, int* y, gpointer userData) -> GdkTexture* {
+            auto* data = static_cast<SetCursorCallbackData*>(userData);
+            *width = gdk_texture_get_width(data->texture.get()) / data->scale;
+            *height = gdk_texture_get_height(data->texture.get()) / data->scale;
+            *x = data->hotSpot.x();
+            *y = data->hotSpot.y();
+            return GDK_TEXTURE(g_object_ref(data->texture.get()));
+        }, data, reinterpret_cast<GDestroyNotify>(destroySetCursorCallbackData), fallbackCursor().get()));
+        gtk_widget_set_cursor(GTK_WIDGET(webViewBase), newCursor.get());
+        return;
+#else
+        auto scaledSize = expandedIntSize(FloatSize(nativeImage->size()).scaled(1 / cursorScale));
+        platformImage = SkiaUtilities::scaleImagePixels(platformImage, scaledSize);
+        if (!platformImage)
+            return;
+#endif
+    }
+
     auto texture = skiaImageToGdkTexture(*platformImage.get());
     if (!texture)
         return;
@@ -3799,11 +3839,12 @@ void webkitWebViewBaseSetCursor(WebKitWebViewBase* webViewBase, const Cursor& cu
     GRefPtr<GdkCursor> newCursor = adoptGRef(gdk_cursor_new_from_texture(texture.get(), effectiveHotSpot.x(), effectiveHotSpot.y(), fallbackCursor().get()));
     gtk_widget_set_cursor(GTK_WIDGET(webViewBase), newCursor.get());
 #else
-    auto pixbuf = skiaImageToGdkPixbuf(*platformImage.get());
-    if (!pixbuf)
+    RefPtr surface = skiaImageToCairoSurface(*platformImage.get());
+    if (!surface)
         return;
 
-    GRefPtr<GdkCursor> newCursor = adoptGRef(gdk_cursor_new_from_pixbuf(gtk_widget_get_display(GTK_WIDGET(webViewBase)), pixbuf.get(), effectiveHotSpot.x(), effectiveHotSpot.y()));
+    cairo_surface_set_device_scale(surface.get(), cursorScale, cursorScale);
+    GRefPtr<GdkCursor> newCursor = adoptGRef(gdk_cursor_new_from_surface(gtk_widget_get_display(GTK_WIDGET(webViewBase)), surface.get(), effectiveHotSpot.x(), effectiveHotSpot.y()));
     gdk_window_set_cursor(window, newCursor.get());
 #endif // USE(GTK4)
 }
