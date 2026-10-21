@@ -2711,6 +2711,9 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarGlobalObjectFor, (JSGlobalObject* globalO
     return JSValue::encode(jsUndefined());
 }
 
+constexpr unsigned maxLiveAgentsInFuzzerMode = 64;
+static std::atomic<unsigned> numLiveAgents;
+
 JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -2739,7 +2742,13 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
         workerPath = callFrame->argument(1).toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
-    
+
+    unsigned previousLiveAgents = numLiveAgents.fetch_add(1);
+    if (Options::useFuzzerMode() && previousLiveAgents >= maxLiveAgentsInFuzzerMode) {
+        numLiveAgents.fetch_sub(1);
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Too many live agents"_s)));
+    }
+
     Thread::create(
         "JSC Agent"_s,
         [sourceCode = WTF::move(sourceCode).isolatedCopy(), workerPath = WTF::move(workerPath).isolatedCopy(), &didStartLock, &didStartCondition, &didStart] () {
@@ -2764,6 +2773,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
                     if (!success)
                         exitProcess(EXIT_FAILURE);
                 });
+            numLiveAgents.fetch_sub(1);
         })->detach();
     
     {
