@@ -143,7 +143,7 @@ class Config(object):
             configuration_path = self._filesystem.join(self.build_directory(None), "Configuration")
             if not self._filesystem.exists(configuration_path):
                 return None
-        except:
+        except Exception:
             return None
 
         return self._filesystem.read_text_file(configuration_path).rstrip()
@@ -156,5 +156,14 @@ class Config(object):
             return True
         try:
             return self._filesystem.exists(self._filesystem.join(self.build_directory(None), "ASan"))
-        except:
+        except Exception:
+            return False
+
+    @property
+    @memoized
+    def tsan(self):
+        # There is no --tsan option, so the marker file written by build-webkit --tsan is the only signal.
+        try:
+            return self._filesystem.exists(self._filesystem.join(self.build_directory(None), "TSan"))
+        except Exception:
             return False
