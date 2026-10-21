@@ -1200,6 +1200,55 @@ static void testWebKitInputMethodContextDeleteSurroundingBeforeStart(InputMethod
     g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
 }
 
+static void testWebKitInputMethodContextDeleteSurroundingUTF16(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    // The emoji is 2 UTF-16 code units.
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'a😀b'; getSelection().collapse(editable.firstChild, 3)", nullptr);
+    test->deleteSurrounding(-2, 2);
+    auto textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "ab");
+
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'a😀b'; getSelection().collapse(editable.firstChild, 1)", nullptr);
+    test->deleteSurrounding(0, 3);
+    textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "a");
+}
+
+static void testWebKitInputMethodContextDeleteSurroundingSelection(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    // The offset is counted from the start of the selection, and the deleted text can include part of the selection.
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'abcd'; getSelection().setBaseAndExtent(editable.firstChild, 1, editable.firstChild, 3)", nullptr);
+    test->deleteSurrounding(-1, 2);
+    auto textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "cd");
+}
+
+static void testWebKitInputMethodContextDeleteSurroundingMoveCursor(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    // Deleting 0 code units moves the cursor by the offset.
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'a😀b'; getSelection().collapse(editable.firstChild, 4)", nullptr);
+    test->deleteSurrounding(-3, 0);
+    auto textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "a😀b");
+    auto* jsResult = test->runJavaScriptAndWaitUntilFinished("getSelection().isCollapsed && getSelection().focusNode === editable.firstChild && getSelection().focusOffset === 1", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+}
+
 static void testWebKitInputMethodContextReset(InputMethodTest* test, gconstpointer)
 {
     test->loadHtml(testHTML, nullptr);
@@ -1701,6 +1750,9 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "surrounding", testWebKitInputMethodContextSurrounding);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-contenteditable", testWebKitInputMethodContextDeleteSurroundingContentEditable);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-before-start", testWebKitInputMethodContextDeleteSurroundingBeforeStart);
+    InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-utf16", testWebKitInputMethodContextDeleteSurroundingUTF16);
+    InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-selection", testWebKitInputMethodContextDeleteSurroundingSelection);
+    InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-move-cursor", testWebKitInputMethodContextDeleteSurroundingMoveCursor);
     InputMethodTest::add("WebKitInputMethodContext", "reset", testWebKitInputMethodContextReset);
     InputMethodTest::add("WebKitInputMethodContext", "cursor-area", testWebKitInputMethodContextCursorArea);
     InputMethodTest::add("WebKitInputMethodContext", "preedit-cursor", testWebKitInputMethodContextPreeditCursor);

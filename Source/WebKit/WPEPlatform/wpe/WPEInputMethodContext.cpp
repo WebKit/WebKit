@@ -337,11 +337,18 @@ static void wpe_input_method_context_class_init(WPEInputMethodContextClass* klas
     /**
      * WPEInputMethodContext::delete-surrounding:
      * @context: the #WPEInputMethodContext on which the signal is emitted
-     * @offset: the character offset from the cursor position of the text to be deleted.
-     * @n_chars: the number of characters to be deleted
+     * @offset: the offset of the text to be deleted from the start of the selection, in UTF-16 code units
+     * @n_chars: the number of UTF-16 code units to be deleted
      *
      * Emitted when the input method wants to delete the context surrounding the cursor.
-     * If @offset is a negative value, it means a position before the cursor.
+     * If @offset is a negative value, it means a position before the start of the selection,
+     * or before the cursor if there is no selection. The text to be deleted can include
+     * part of the selection. If @n_chars is 0, nothing is deleted and the cursor is moved
+     * by @offset.
+     *
+     * Both @offset and @n_chars are counted in UTF-16 code units, not in characters:
+     * a character outside the Basic Multilingual Plane, like most emoji, counts as 2.
+     * Note that the indexes passed to wpe_input_method_context_set_surrounding() are in bytes instead.
      */
     signals[DELETE_SURROUNDING] = g_signal_new(
         "delete-surrounding",
