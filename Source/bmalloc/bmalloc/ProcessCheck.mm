@@ -157,7 +157,11 @@ bool shouldAllowMiniMode()
     bool isApplication = false;
     bool isWebKitProcess = false;
     if (const char* serviceName = getenv("XPC_SERVICE_NAME")) {
+#if BPLATFORM(IOS_FAMILY)
+        static constexpr char appPrefix[] = "UIKitApplication:";
+#else
         static constexpr char appPrefix[] = "application.";
+#endif
         static constexpr char webKitPrefix[] = "com.apple.WebKit.";
         isApplication = !strncmp(serviceName, appPrefix, sizeof(appPrefix) - 1);
         isWebKitProcess = !strncmp(serviceName, webKitPrefix, sizeof(webKitPrefix) - 1);
