@@ -3098,7 +3098,6 @@ rendering/RenderMultiColumnSet.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderMultiColumnSpannerPlaceholder.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderObject.cpp @header:RenderStyleGetters @cost:9
 rendering/RenderProgress.cpp @header:RenderStyleGetters @cost:5
-rendering/RenderQuote.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderReplaced.cpp @header:RenderStyleGetters @cost:8
 rendering/RenderReplica.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderScrollbar.cpp @header:RenderStyleGetters @cost:7

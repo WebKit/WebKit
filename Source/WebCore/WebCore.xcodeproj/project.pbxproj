@@ -2569,7 +2569,6 @@
 		59B5977511086579007159E8 /* BridgeJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59B5977411086579007159E8 /* BridgeJSC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		59C27F07138D28CF0079B7E2 /* NetworkResourcesData.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C27F06138D28CF0079B7E2 /* NetworkResourcesData.h */; };
 		59C28046138DC2410079B7E2 /* XMLErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C28044138DC2410079B7E2 /* XMLErrors.h */; };
-		5A574F25131DB93900471B88 /* RenderQuote.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A574F23131DB93900471B88 /* RenderQuote.h */; };
 		5A574F29131DB96D00471B88 /* StyleQuotes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A574F27131DB96D00471B88 /* StyleQuotes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5A7CBA0C28B01A1B000A23D9 /* MediaPlayerPrivateWebM.h in Headers */ = {isa = PBXBuildFile; fileRef = 5AEBAD8B283583AE0069741F /* MediaPlayerPrivateWebM.h */; };
 		5B2D767227B1460800F9BA3C /* ScrollAlignment.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B2D767027B1460800F9BA3C /* ScrollAlignment.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13483,8 +13482,6 @@
 		59D1C10311EB5DCF00B638C8 /* DeviceOrientationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceOrientationData.cpp; sourceTree = "<group>"; };
 		5A502612288B5CB300D4FC8A /* PlatformMediaError.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformMediaError.cpp; sourceTree = "<group>"; };
 		5A551F9473B2A7F6783FF6C1 /* UnifiedSource6-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource6-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
-		5A574F22131DB93900471B88 /* RenderQuote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderQuote.cpp; sourceTree = "<group>"; };
-		5A574F23131DB93900471B88 /* RenderQuote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderQuote.h; sourceTree = "<group>"; };
 		5A574F26131DB96D00471B88 /* StyleQuotes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleQuotes.cpp; sourceTree = "<group>"; };
 		5A574F27131DB96D00471B88 /* StyleQuotes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleQuotes.h; sourceTree = "<group>"; };
 		5A67F23B284966AC00964D2E /* TrackBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TrackBuffer.cpp; sourceTree = "<group>"; };
@@ -42553,8 +42550,6 @@
 				A43BF59A1149292800C643CA /* RenderProgress.cpp */,
 				A43BF59B1149292800C643CA /* RenderProgress.h */,
 				ADE16736181050C300463A2E /* RenderPtr.h */,
-				5A574F22131DB93900471B88 /* RenderQuote.cpp */,
-				5A574F23131DB93900471B88 /* RenderQuote.h */,
 				A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */,
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				BCA846D40DC67A350026C309 /* RenderReplica.cpp */,
@@ -48483,7 +48478,6 @@
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
 				A43BF59D1149292800C643CA /* RenderProgress.h in Headers */,
 				B5B65874186FDE4C009C26E8 /* RenderPtr.h in Headers */,
-				5A574F25131DB93900471B88 /* RenderQuote.h in Headers */,
 				A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */,
 				BCA846D70DC67A350026C309 /* RenderReplica.h in Headers */,
 				BC3BE9940E9C1C7C00835588 /* RenderScrollbar.h in Headers */,

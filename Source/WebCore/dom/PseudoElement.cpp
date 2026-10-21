@@ -34,7 +34,6 @@
 #include "PseudoElementUtilitiesInlines.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
-#include "RenderQuote.h"
 #include "StyleableInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"

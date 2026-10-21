@@ -369,6 +369,11 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
         WeakPtr beforeChild = currentTextChild.nextSibling();
         WeakPtr inlineWrapperForDisplayContents = currentTextChild.inlineWrapperForDisplayContents();
         auto hasInlineWrapperForDisplayContents = inlineWrapperForDisplayContents.get();
+        auto quoteType = [&] -> std::optional<QuoteType> {
+            if (CheckedPtr textFragment = dynamicDowncast<RenderTextFragment>(currentTextChild))
+                return textFragment->quoteType();
+            return { };
+        }();
         m_builder.destroy(currentTextChild);
 
         // Construct a text fragment for the text after the first letter.
@@ -377,8 +382,12 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
         if (textNode) {
             newRemainingText = createRenderer<RenderTextFragment>(*textNode, oldText, length, oldText.length() - length);
             textNode->setRenderer(newRemainingText.get());
-        } else
+        } else {
             newRemainingText = createRenderer<RenderTextFragment>(protect(m_builder.m_view.document()), oldText, length, oldText.length() - length);
+            // Like the text node above, the quote moves over to the remaining text.
+            if (quoteType)
+                newRemainingText->setQuoteTypeForRemainingText(*quoteType, oldText);
+        }
 
         RenderTextFragment& remainingText = *newRemainingText;
         ASSERT_UNUSED(hasInlineWrapperForDisplayContents, hasInlineWrapperForDisplayContents == inlineWrapperForDisplayContents.get());
