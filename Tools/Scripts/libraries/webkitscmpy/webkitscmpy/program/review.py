@@ -32,7 +32,7 @@ from .command import Command
 from .pull_request import PullRequest
 
 from webkitcorepy import arguments, run, string_utils, Terminal
-from webkitscmpy import local, log, remote
+from webkitscmpy import agent_review, local, log, remote
 
 
 class Review(Command):
@@ -64,6 +64,12 @@ class Review(Command):
             dest='dry_run', default=False,
             help='View but do not edit a pull-request',
             action=arguments.NoAction,
+        )
+        parser.add_argument(
+            '--agent',
+            dest='agent', default=False,
+            help='Run a local AI agent code review and fold its comments into the review file',
+            action='store_true',
         )
 
     @classmethod
@@ -127,6 +133,7 @@ class Review(Command):
         messages=None,
         comments=None,
         diff=None,
+        diff_with_agent=None,
     ):
         # Textual wizards are split into 4 sections, seperated by a line of '=' characters
         output = [[], [], [], []]
@@ -167,12 +174,21 @@ class Review(Command):
         for line in diff:
             output[3].append(line.rstrip())
 
+        # The file written for editing may carry the agent's annotations folded
+        # into the diff section, but output[3] stays clean: it is the baseline the
+        # diff of the edited file is taken against, so the agent's lines register
+        # as new reviewer comments (postable on save) rather than pre-existing
+        # ones.
+        file_sections = list(output)
+        if diff_with_agent is not None:
+            file_sections[3] = [line.rstrip() for line in diff_with_agent]
+
         with open(edited_path, 'w') as ofile:
             cnt = 0
-            while cnt < len(output):
-                for line in output[cnt]:
+            while cnt < len(file_sections):
+                for line in file_sections[cnt]:
                     ofile.write(line + '\n')
-                if output[cnt] and cnt + 1 < len(output):
+                if file_sections[cnt] and cnt + 1 < len(file_sections):
                     ofile.write('=' * cls.SEPERATOR_SIZE + '\n')
                 cnt += 1
 
@@ -326,6 +342,41 @@ class Review(Command):
         return response
 
     @classmethod
+    def warn_if_not_pre_change_tree(cls, pull_request, local_repository):
+        """The agent reads the checkout to understand the code the diff changes, so
+        warn when the checkout is not plausibly the state that diff was taken
+        against: findings from an unrelated tree read as confidently as real
+        ones."""
+        if not local_repository:
+            sys.stderr.write('Warning: No local checkout to review against; the agent has no source to read.\n')
+            return
+        modified = local_repository.modified()
+        if modified:
+            counted = string_utils.pluralize(len(modified), 'file')
+            verb = 'has' if len(modified) == 1 else 'have'
+            sys.stderr.write(f'Warning: {counted} in the checkout {verb} uncommitted changes the agent will read as-is.\n')
+        if not pull_request.base:
+            return
+        # The base branch of a pull-request need not exist locally, in which case
+        # there is nothing to compare the checkout against.
+        try:
+            merge_base = local_repository.merge_base(
+                pull_request.base, 'HEAD',
+                include_log=False, include_identifier=False,
+            )
+            head = local_repository.commit(include_log=False, include_identifier=False)
+        except (ValueError, local_repository.Exception):
+            merge_base = head = None
+        if not merge_base or not head:
+            sys.stderr.write(
+                f"Warning: Cannot resolve '{pull_request.base}' locally to check the checkout against the diff.\n")
+            return
+        if merge_base.hash != head.hash:
+            sys.stderr.write(
+                f"Warning: This checkout is not on '{pull_request.base}' (the pull-request base), so the agent is\n")
+            sys.stderr.write('    reading source the diff was not taken against and may report accordingly.\n')
+
+    @classmethod
     def main(cls, args, repository, **kwargs):
         editor = cls.editor(repository)
 
@@ -342,6 +393,8 @@ class Review(Command):
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
+
+        local_repository = repository if isinstance(repository, local.Git) else None
 
         if isinstance(repository, local.Git):
             original = repository
@@ -383,6 +436,14 @@ class Review(Command):
             if pr_issue.labels:
                 header['Labels'] = string_utils.join(pr_issue.labels)
 
+        diff_lines = list(pull_request.diff(comments=True))
+        diff_with_agent = None
+        if args.agent:
+            cls.warn_if_not_pre_change_tree(pull_request, local_repository)
+            diff_with_agent = agent_review.run(
+                pull_request, diff_lines,
+                repo_root=local_repository.root_path if local_repository else None,
+            )
         print('Waiting for user to modify textual pull-request...')
         response = cls.invoke_wizard(
             editor=editor,
@@ -392,8 +453,22 @@ class Review(Command):
             comments=[
                 '{}: {}'.format(comment.author, re.sub(cls.DETAILS_RE, '', comment.content, flags=re.S))
                 for comment in pull_request.comments
-            ], diff=pull_request.diff(comments=True),
+            ], diff=diff_lines,
+            diff_with_agent=diff_with_agent,
         )
+
+        # The agent's annotations carry an 'agent: ' marker in the review file;
+        # strip it (and any '[severity]' tag) from comments the user kept so they
+        # post as clean prose. truncate_strs has already split every comment body
+        # into a list of lines, so several findings stacked at one anchor each get
+        # stripped.
+        if args.agent:
+            diff_section = response.get('diff') or {}
+            for line_comments in (diff_section.get('diff_comments') or {}).values():
+                for key, body in line_comments.items():
+                    line_comments[key] = [agent_review.strip_line(line) for line in body]
+            if diff_section.get('comment'):
+                diff_section['comment'] = [agent_review.strip_line(line) for line in diff_section['comment']]
 
         if args.dry_run:
             if response:
