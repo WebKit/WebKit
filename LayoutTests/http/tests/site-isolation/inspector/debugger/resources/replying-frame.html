@@ -1,0 +1,9 @@
+<script>
+window.ticks = 0;
+setInterval(() => { window.ticks++; }, 50);
+
+addEventListener("message", (event) => {
+    event.source.postMessage("reply", "*");
+});
+</script>
+<p>Cross-site frame that answers every message, for debugger stepping tests.</p>

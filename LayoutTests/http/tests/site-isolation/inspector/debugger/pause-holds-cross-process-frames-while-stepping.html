@@ -1,0 +1,161 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function busyWait(ms)
+{
+    let end = performance.now() + ms;
+    while (performance.now() < end) { }
+}
+
+function stepOverBusyStatements()
+{
+    debugger;
+    busyWait(300);
+    busyWait(300);
+    return "done";
+}
+
+async function awaitReplyFromFrame()
+{
+    debugger;
+    await new Promise((resolve) => {
+        window.addEventListener("message", (event) => {
+            window.reply = event.data;
+            resolve();
+        }, { once: true });
+        document.getElementById("frame").contentWindow.postMessage("ping", "*");
+    });
+    return window.reply;
+}
+
+function stepOutOfOutermostFrame()
+{
+    debugger;
+}
+
+function resumeIntoPauseInSameProcessFrame()
+{
+    debugger;
+    return document.getElementById("sameProcessFrame").contentWindow.pauseHere();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping");
+
+    let mainTarget;
+    let crossProcessTarget;
+    let sameProcessTarget;
+
+    async function evaluate(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    function awaitPause(target) {
+        return new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (event.data.target !== target || !WI.debuggerManager.dataForTarget(target).paused)
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+                resolve();
+            });
+        });
+    }
+
+    async function pause(target, expression) {
+        let paused = awaitPause(target);
+        target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"}).catch(() => { });
+        await paused;
+    }
+
+    async function resume() {
+        let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+        await WI.debuggerManager.resume();
+        await resumed;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping.Setup",
+        description: "Find the frame targets of a cross-site iframe, which runs in another process, and of a same-site iframe.",
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            crossProcessTarget = await frameTargetForURLContaining("replying-frame.html");
+            InspectorTest.expectNotNull(crossProcessTarget, "Should find the cross-site frame target.");
+            sameProcessTarget = await frameTargetForURLContaining("same-process-frame.html");
+            InspectorTest.expectNotNull(sameProcessTarget, "Should find the same-site frame target.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(crossProcessTarget, "window.ticks > 2"), "The cross-site frame's interval should be running.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping.StepOver",
+        description: "Stepping over statements in the main frame should keep the cross-site frame held between steps.",
+        async test() {
+            await pause(mainTarget, "stepOverBusyStatements()");
+            await WI.debuggerManager.stepOver();
+            let before = await evaluate(crossProcessTarget, "window.ticks");
+
+            for (let step = 1; step <= 2; ++step) {
+                await WI.debuggerManager.stepOver();
+                InspectorTest.expectEqual(await evaluate(crossProcessTarget, "window.ticks"), before, `The cross-site frame's interval should not advance while stepping over busy statement ${step}.`);
+            }
+
+            await resume();
+            InspectorTest.expectThat(await waitForExpressionInTarget(crossProcessTarget, `window.ticks > ${before}`), "The cross-site frame's interval should advance after resuming.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping.StepOverAwait",
+        description: "Stepping over an await should let the cross-site frame run, so that a promise it resolves can settle.",
+        async test() {
+            await pause(mainTarget, "awaitReplyFromFrame()");
+            await WI.debuggerManager.stepOver();
+            await WI.debuggerManager.stepOver();
+
+            InspectorTest.expectEqual(await waitForExpressionInTarget(mainTarget, "window.reply"), "reply", "The cross-site frame should have answered the message posted before the await.");
+            await WI.debuggerManager.resume();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping.StepOutOfOutermostFrame",
+        description: "Stepping out of the outermost frame leaves the VM, so the cross-site frame should run again.",
+        async test() {
+            await pause(mainTarget, "setTimeout(stepOutOfOutermostFrame)");
+            let before = await evaluate(crossProcessTarget, "window.ticks");
+
+            await WI.debuggerManager.stepOut();
+            InspectorTest.expectFalse(WI.debuggerManager.paused, "The debugger should not be paused after stepping out of the outermost frame.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(crossProcessTarget, `window.ticks > ${before}`), "The cross-site frame's interval should advance after stepping out of the outermost frame.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping.PauseInAnotherFrameBeforeIdle",
+        description: "When another frame of the same process pauses before the VM goes idle, the cross-site frame should stay held until that pause ends too.",
+        async test() {
+            await pause(mainTarget, "resumeIntoPauseInSameProcessFrame()");
+            let pausedInFrame = awaitPause(sameProcessTarget);
+            await resume();
+            await pausedInFrame;
+
+            let before = await evaluate(crossProcessTarget, "window.ticks");
+            await new Promise((resolve) => setTimeout(resolve, 200));
+            InspectorTest.expectEqual(await evaluate(crossProcessTarget, "window.ticks"), before, "The cross-site frame's interval should not advance while the same-site frame is paused.");
+
+            await resume();
+            InspectorTest.expectThat(await waitForExpressionInTarget(crossProcessTarget, `window.ticks > ${before}`), "The cross-site frame's interval should advance after the same-site frame resumes.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that stepping in a paused frame keeps the frames of the same page in other processes held between steps, and that a step that leaves the VM lets them run.</p>
+<iframe id="frame" src="http://localhost:8000/site-isolation/inspector/debugger/resources/replying-frame.html"></iframe>
+<iframe id="sameProcessFrame" src="resources/same-process-frame.html"></iframe>
+</body>

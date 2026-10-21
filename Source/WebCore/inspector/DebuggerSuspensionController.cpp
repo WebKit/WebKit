@@ -27,6 +27,7 @@
 #include "DebuggerSuspensionController.h"
 
 #include "ActiveDOMObject.h"
+#include "CommonVM.h"
 #include "Document.h"
 #include "DocumentPage.h"
 #include "FrameDestructionObserverInlines.h"
@@ -37,6 +38,7 @@
 #include "PageInspectorController.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include <JavaScriptCore/VM.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -47,13 +49,29 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DebuggerSuspensionController);
 static bool s_isFrameDebuggerPaused;
 
 // The paused frame may be detached by the time the pause ends, so remember its page and identifier for the end-of-pause notification.
-static WeakPtr<Page>& LEGACY_NODELETE pausedPage()
+struct PausedFrame {
+    WeakPtr<Page> page;
+    FrameIdentifier frameID;
+};
+
+static std::optional<PausedFrame>& LEGACY_NODELETE pausedFrame()
 {
-    static NeverDestroyed<WeakPtr<Page>> page;
-    return page;
+    static NeverDestroyed<std::optional<PausedFrame>> frame;
+    return frame;
 }
 
-static std::optional<FrameIdentifier> s_pausedFrameID;
+static bool s_isWaitingForIdleToReportContinue;
+
+static void reportFrameDebuggerDidContinue(std::optional<PausedFrame>&& frame)
+{
+    if (!frame)
+        return;
+    RefPtr page = frame->page;
+    if (!page)
+        return;
+    if (auto* client = page->inspectorController().inspectorBackendClient())
+        client->frameDebuggerDidContinue(frame->frameID);
+}
 
 DebuggerSuspensionController::DebuggerSuspensionController(Page& page)
     : m_page(page)
@@ -68,14 +86,18 @@ void DebuggerSuspensionController::frameDebuggerDidPause(LocalFrame& frame)
     s_isFrameDebuggerPaused = true;
     updateHeldDocumentsInAllPages();
 
-    RefPtr page = frame.page();
-    if (!page || !page->settings().siteIsolationGlobalDebuggerPauseEnabled())
-        return;
+    auto previous = std::exchange(pausedFrame(), std::nullopt);
 
-    pausedPage() = page.get();
-    s_pausedFrameID = frame.frameID();
-    if (auto* client = page->inspectorController().inspectorBackendClient())
-        client->frameDebuggerDidPause(frame.frameID());
+    RefPtr page = frame.page();
+    if (page && page->settings().siteIsolationGlobalDebuggerPauseEnabled()) {
+        pausedFrame() = PausedFrame { page.get(), frame.frameID() };
+        if (auto* client = page->inspectorController().inspectorBackendClient())
+            client->frameDebuggerDidPause(frame.frameID());
+    }
+
+    // A previous pause whose end is still waiting for VM idle is over only if another frame paused; a step pauses the same frame again.
+    if (previous && (!pausedFrame() || pausedFrame()->frameID != previous->frameID))
+        reportFrameDebuggerDidContinue(WTF::move(previous));
 }
 
 void DebuggerSuspensionController::frameDebuggerDidContinue()
@@ -84,12 +106,16 @@ void DebuggerSuspensionController::frameDebuggerDidContinue()
     s_isFrameDebuggerPaused = false;
     updateHeldDocumentsInAllPages();
 
-    RefPtr page = std::exchange(pausedPage(), nullptr).get();
-    auto frameID = std::exchange(s_pausedFrameID, std::nullopt);
-    if (page && frameID) {
-        if (auto* client = page->inspectorController().inspectorBackendClient())
-            client->frameDebuggerDidContinue(*frameID);
-    }
+    if (!pausedFrame() || s_isWaitingForIdleToReportContinue)
+        return;
+
+    // A step pauses again before the VM goes idle.
+    s_isWaitingForIdleToReportContinue = true;
+    commonVM().whenIdle([] {
+        ASSERT(!s_isFrameDebuggerPaused);
+        s_isWaitingForIdleToReportContinue = false;
+        reportFrameDebuggerDidContinue(std::exchange(pausedFrame(), std::nullopt));
+    });
 }
 
 void DebuggerSuspensionController::addSessionHold(DebuggerPauseSessionIdentifier sessionID)

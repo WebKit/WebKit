@@ -1,0 +1,26 @@
+Test that stepping in a paused frame keeps the frames of the same page in other processes held between steps, and that a step that leaves the VM lets them run.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping.Setup
+PASS: Should find the cross-site frame target.
+PASS: Should find the same-site frame target.
+PASS: The cross-site frame's interval should be running.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping.StepOver
+PASS: The cross-site frame's interval should not advance while stepping over busy statement 1.
+PASS: The cross-site frame's interval should not advance while stepping over busy statement 2.
+PASS: The cross-site frame's interval should advance after resuming.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping.StepOverAwait
+PASS: The cross-site frame should have answered the message posted before the await.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping.StepOutOfOutermostFrame
+PASS: The debugger should not be paused after stepping out of the outermost frame.
+PASS: The cross-site frame's interval should advance after stepping out of the outermost frame.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesWhileStepping.PauseInAnotherFrameBeforeIdle
+PASS: The cross-site frame's interval should not advance while the same-site frame is paused.
+PASS: The cross-site frame's interval should advance after the same-site frame resumes.
+
