@@ -357,29 +357,54 @@ bool draw(void* context, NativePrimitive primitive, uint32_t first, uint32_t cou
     return true;
 }
 
-bool drawIndexed(void*, NativePrimitive primitive, IndexType type, uint32_t count,
+bool drawIndexed(void* context, NativePrimitive primitive, IndexType type, uint32_t count,
     uint64_t byteOffset, uint32_t instances)
 {
-    GX2PrimitiveMode mode;
-    if (!translatePrimitive(primitive, mode) || byteOffset > UINT32_MAX)
+    // WebGL permits zero-count and zero-instance draws without issuing GPU work.
+    if (!count || !instances)
+        return true;
+    if (byteOffset > UINT32_MAX)
         return false;
 
-    GX2IndexType nativeType;
-    switch (type) {
-    case IndexType::UnsignedShort: nativeType = GX2_INDEX_TYPE_U16_LE; break;
-    case IndexType::UnsignedInt: nativeType = GX2_INDEX_TYPE_U32_LE; break;
-    case IndexType::UnsignedByte:
-        // GX2 indexed drawing does not expose an 8-bit index type. The caller
-        // must widen these indices in a staging buffer before dispatch.
-        return false;
-    default:
-        return false;
+    Primitive translatedPrimitive;
+    switch (primitive) {
+    case NativePrimitive::Points: translatedPrimitive = Primitive::Points; break;
+    case NativePrimitive::Lines: translatedPrimitive = Primitive::Lines; break;
+    case NativePrimitive::LineStrip: translatedPrimitive = Primitive::LineStrip; break;
+    case NativePrimitive::Triangles: translatedPrimitive = Primitive::Triangles; break;
+    case NativePrimitive::TriangleStrip: translatedPrimitive = Primitive::TriangleStrip; break;
+    case NativePrimitive::TriangleFan: translatedPrimitive = Primitive::TriangleFan; break;
+    default: return false;
     }
 
-    // WUT's offset argument is a byte offset into the bound index stream.
-    GX2DrawIndexedEx(mode, count, nativeType, nullptr,
-        static_cast<uint32_t>(byteOffset), instances);
-    return true;
+    uint8_t indexBytes;
+    switch (type) {
+    case IndexType::UnsignedByte: indexBytes = 1; break;
+    case IndexType::UnsignedShort: indexBytes = 2; break;
+    case IndexType::UnsignedInt: indexBytes = 4; break;
+    default: return false;
+    }
+
+    auto& state = *static_cast<WUTBackendContext*>(context);
+    const auto binding = state.bufferResources.bindings.find(
+        static_cast<uint8_t>(BufferTarget::ElementArray));
+    if (binding == state.bufferResources.bindings.end() || !binding->second)
+        return false;
+
+    // GX2 has no native U8 index type, and indexed draws must use the current
+    // vertex-fetch descriptors as well as the element-array binding. Route all
+    // index widths through the shared VAO draw path: it validates source ranges,
+    // widens U8/U16 indices into a GX2R U32 stream, applies the linked shader's
+    // actual input locations, stages GX2-incompatible vec3 formats, and waits
+    // for GX2 before releasing temporary buffers.
+    IndexedDraw draw;
+    draw.primitive = translatedPrimitive;
+    draw.count = count;
+    draw.instances = instances;
+    draw.indexBytes = indexBytes;
+    draw.indexOffset = static_cast<size_t>(byteOffset);
+    draw.baseVertex = 0;
+    return drawVertexArrayIndexed(&state.bufferResources, draw, binding->second);
 }
 
 bool setDepthFunction(void* context, CompareFunction function)
