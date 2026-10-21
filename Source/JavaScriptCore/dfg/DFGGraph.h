@@ -357,6 +357,99 @@ public:
             pass);
     }
     
+    // Tests if the absolute value is strictly less than the power of two.
+    template<int power>
+    bool isWithinPowerOfTwoForConstant(Node* node)
+    {
+        JSValue immediateValue = node->asJSValue();
+        if (!immediateValue.isNumber())
+            return false;
+        double immediate = immediateValue.asNumber();
+        return isInteger(immediate) && immediate > -(static_cast<int64_t>(1) << power) && immediate < (static_cast<int64_t>(1) << power);
+    }
+
+    template<int power>
+    bool isWithinPowerOfTwo(Node* node)
+    {
+        switch (node->op()) {
+        case DoubleConstant:
+        case JSConstant:
+        case Int52Constant: {
+            return isWithinPowerOfTwoForConstant<power>(node);
+        }
+
+        // Fixup wraps operands in these representation changes, which preserve the value.
+        case Identity:
+        case ValueRep:
+        case DoubleRep:
+        case Int52Rep:
+            return isWithinPowerOfTwo<power>(node->child1());
+
+        case GetByVal: {
+            // Before fixup the array mode is only a guess, which fixup can widen into a generic access.
+            if (!afterFixup())
+                return false;
+            ArrayMode arrayMode = node->arrayMode();
+            if (!arrayMode.isInBounds())
+                return false;
+            TypedArrayType arrayType = arrayMode.typedArrayType();
+            return isInt(arrayType) && elementSize(arrayType) * 8 <= power;
+        }
+
+        case ValueBitAnd:
+        case ArithBitAnd: {
+            if (power > 31)
+                return true;
+
+            // (x & mask) is only bounded by |mask| when mask is non-negative; a negative
+            // mask preserves the sign bit and the result can span the full int32 range.
+            auto isNonNegativeMaskWithinPower = [](Node* operand) {
+                if (!operand->isNumberConstant())
+                    return false;
+                double immediate = operand->asNumber();
+                return immediate >= 0 && immediate < (static_cast<int64_t>(1) << power);
+            };
+            return isNonNegativeMaskWithinPower(node->child1().node())
+                || isNonNegativeMaskWithinPower(node->child2().node());
+        }
+
+        case ArithBitOr:
+        case ArithBitXor:
+        case ValueBitOr:
+        case ValueBitXor:
+        case ValueBitLShift:
+        case ArithBitLShift: {
+            return power > 31;
+        }
+
+        case ArithBitRShift:
+        case ValueBitRShift:
+        case ArithBitURShift:
+        case ValueBitURShift: {
+            if (power > 31)
+                return true;
+
+            Node* shiftAmount = node->child2().node();
+            if (!shiftAmount->isNumberConstant())
+                return false;
+            JSValue immediateValue = shiftAmount->asJSValue();
+            if (!immediateValue.isInt32())
+                return false;
+            // Shifting right by k = (count & 31) leaves |result| < 2^(32 - k), for both >> and >>>.
+            return (immediateValue.asInt32() & 31) > 31 - power;
+        }
+
+        default:
+            return false;
+        }
+    }
+
+    template<int power>
+    bool isWithinPowerOfTwo(Edge edge)
+    {
+        return isWithinPowerOfTwo<power>(edge.node());
+    }
+
     AddSpeculationMode arithAddSpeculationMode(Node* add, PredictionPass pass)
     {
         return addSpeculationMode(
@@ -455,7 +548,20 @@ public:
         return Node::shouldSpeculateInt32OrBooleanForArithmetic(left, right)
             && node->canSpeculateInt32(node->sourceFor(pass));
     }
-    
+
+    // A wrapping int32 multiply matches ToInt32 of the double product only when that product is exact.
+    bool mulProductIsExact(Node* node)
+    {
+        return isWithinPowerOfTwo<22>(node->child1()) || isWithinPowerOfTwo<22>(node->child2());
+    }
+
+    bool mulShouldSpeculateInt32(Node* node, PredictionPass pass)
+    {
+        if (!binaryArithShouldSpeculateInt32(node, pass))
+            return false;
+        return !nodeMayOverflowInt32(node->arithNodeFlags(), node->sourceFor(pass)) || mulProductIsExact(node);
+    }
+
     bool binaryArithShouldSpeculateInt52(Node* node, PredictionPass pass)
     {
         Node* left = node->child1().node();
