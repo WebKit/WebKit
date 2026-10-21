@@ -82,9 +82,13 @@ static bool processContentRuleListsForLoad(const LocalFrame& frame, ResourceRequ
         return false;
 
     auto results = userContentProvider->processContentRuleListsForLoad(*page, request.url(), resourceType, *documentLoader);
-    bool shouldBlock = results.shouldBlock();
+    if (!results.shouldBlock())
+        return false;
+
+    // CachedResourceLoader applies the results of an allowed ping, so only a blocked ping is handled here.
     ContentExtensions::applyResultsToRequest(WTF::move(results), page.get(), request);
-    return shouldBlock;
+
+    return true;
 }
 
 #endif

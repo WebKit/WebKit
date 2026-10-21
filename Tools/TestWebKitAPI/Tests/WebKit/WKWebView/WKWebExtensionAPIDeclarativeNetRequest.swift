@@ -4700,6 +4700,7 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
         try testModifyHeaders("responseHeaders", [["header": "accept", "operation": "remove", "value": "v1"]], nil, nil)
         try testModifyHeaders("requestHeaders", [["operation": "set", "value": "v1"]], nil, nil)
         try testModifyHeaders("requestHeaders", [["header": "ellie's custom header", "operation": "set", "value": "v1"]], nil, nil)
+        try testModifyHeaders("requestHeaders", [["header": "authorization", "operation": "append", "value": "v1"]], nil, nil)
 
         try testModifyHeaders(
             "requestHeaders",
@@ -4718,6 +4719,24 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
             [["header": "accept", "operation": "append", "value": "v1"]],
             "request-headers",
             [["header": "accept", "operation": "append", "value": "v1"]]
+        )
+        try testModifyHeaders(
+            "requestHeaders",
+            [["header": "cookie", "operation": "append", "value": "a=1"]],
+            "request-headers",
+            [["header": "cookie", "operation": "append", "value": "a=1"]]
+        )
+        try testModifyHeaders(
+            "requestHeaders",
+            [["header": "authorization", "operation": "set", "value": "v1"]],
+            "request-headers",
+            [["header": "authorization", "operation": "set", "value": "v1"]]
+        )
+        try testModifyHeaders(
+            "responseHeaders",
+            [["header": "authorization", "operation": "append", "value": "v1"]],
+            "response-headers",
+            [["header": "authorization", "operation": "append", "value": "v1"]]
         )
         try testModifyHeaders(
             "requestHeaders",
@@ -4832,6 +4851,54 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
 
         #expect(actionType(of: sortedTranslatedRules[0]) == "ignore-following-rules")
         #expect(actionType(of: sortedTranslatedRules[1]) == "block")
+    }
+
+    @Test
+    func translatingRulesDropsOnlyRulesAppendingToUnsupportedRequestHeaders() {
+        let rules: [String: [[String: Any]]] = [
+            "Test Ruleset": [
+                [
+                    "id": 1,
+                    "priority": 1,
+                    "action": ["type": "block"],
+                    "condition": [
+                        "urlFilter": "foo",
+                        "resourceTypes": ["script"],
+                    ],
+                ],
+                [
+                    "id": 2,
+                    "priority": 1,
+                    "action": [
+                        "type": "modifyHeaders",
+                        "requestHeaders": [["header": "authorization", "operation": "append", "value": "Bearer token"]],
+                    ],
+                    "condition": [
+                        "urlFilter": "bar",
+                        "resourceTypes": ["script"],
+                    ],
+                ],
+                [
+                    "id": 3,
+                    "priority": 1,
+                    "action": [
+                        "type": "modifyHeaders",
+                        "responseHeaders": [["header": "authorization", "operation": "append", "value": "Bearer token"]],
+                    ],
+                    "condition": [
+                        "urlFilter": "baz",
+                        "resourceTypes": ["script"],
+                    ],
+                ],
+            ]
+        ]
+
+        var errorStrings: NSArray?
+        let translatedRules = unsafe _WKWebExtensionDeclarativeNetRequestTranslator.translateRules(rules, errorStrings: &errorStrings)
+
+        #expect(translatedRules.count == 2)
+        #expect(errorStrings?.count == 1)
+        #expect((errorStrings?.firstObject as? String)?.contains("Rule with id 2 is invalid") == true)
     }
 
     @Test

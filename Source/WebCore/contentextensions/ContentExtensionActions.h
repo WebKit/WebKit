@@ -100,7 +100,8 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
         using OperationVariant = Variant<AppendOperation, SetOperation, RemoveOperation>;
         OperationVariant operation;
 
-        static std::expected<ModifyHeaderInfo, std::error_code> parse(const JSON::Value&);
+        enum class HeaderType : bool { Request, Response };
+        static std::expected<ModifyHeaderInfo, std::error_code> parse(const JSON::Value&, HeaderType);
         ModifyHeaderInfo isolatedCopy() const &;
         ModifyHeaderInfo isolatedCopy() &&;
         friend bool operator==(const ModifyHeaderInfo&, const ModifyHeaderInfo&) = default;

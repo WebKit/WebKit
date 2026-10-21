@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ContentExtensionError.h"
+#include "HTTPParsers.h"
 #include "ResourceRequest.h"
 #include <JavaScriptCore/JSStringRefCPP.h>
 #include <JavaScriptCore/JavaScript.h>
@@ -75,7 +76,7 @@ static void LEGACY_NODELETE writeLengthToVectorAtOffset(Vector<uint8_t>& vector,
 
 std::expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const JSON::Object& modifyHeaders)
 {
-    auto parseHeaders = [] (const JSON::Object& modifyHeaders, ASCIILiteral arrayName) -> std::expected<Vector<ModifyHeaderInfo>, std::error_code> {
+    auto parseHeaders = [](const JSON::Object& modifyHeaders, ASCIILiteral arrayName, ModifyHeaderInfo::HeaderType headerType) -> std::expected<Vector<ModifyHeaderInfo>, std::error_code> {
         auto value = modifyHeaders.getValue(arrayName);
         if (!value)
             return { };
@@ -85,7 +86,7 @@ std::expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(c
         Vector<ModifyHeaderInfo> vector;
         vector.reserveInitialCapacity(array->length());
         for (auto& value : *array) {
-            auto info = ModifyHeaderInfo::parse(value.get());
+            auto info = ModifyHeaderInfo::parse(value.get(), headerType);
             if (!info)
                 return makeUnexpected(info.error());
             vector.append(WTF::move(*info));
@@ -93,11 +94,11 @@ std::expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(c
         return vector;
     };
 
-    auto requestHeaders = parseHeaders(modifyHeaders, "request-headers"_s);
+    auto requestHeaders = parseHeaders(modifyHeaders, "request-headers"_s, ModifyHeaderInfo::HeaderType::Request);
     if (!requestHeaders)
         return makeUnexpected(requestHeaders.error());
 
-    auto responseHeaders = parseHeaders(modifyHeaders, "response-headers"_s);
+    auto responseHeaders = parseHeaders(modifyHeaders, "response-headers"_s, ModifyHeaderInfo::HeaderType::Response);
     if (!responseHeaders)
         return makeUnexpected(responseHeaders.error());
 
@@ -174,10 +175,21 @@ void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& requ
             return;
 
         auto existingValue = request.httpHeaderField(operation.header);
+
+        // CFNetwork adds Accept-Language and Accept-Encoding after content rules run, and only when the request
+        // has none. Seed the default value so appending doesn't replace it.
+        if (existingValue.isEmpty()) {
+            if (equalLettersIgnoringASCIICase(operation.header, "accept-language"_s))
+                existingValue = defaultAcceptLanguageHeaderValue();
+            else if (equalLettersIgnoringASCIICase(operation.header, "accept-encoding"_s))
+                existingValue = defaultAcceptEncodingHeaderValue(request.url());
+        }
+
+
         if (existingValue.isEmpty())
             request.setHTTPHeaderField(operation.header, operation.value);
         else
-            request.setHTTPHeaderField(operation.header, makeString(existingValue, "; "_s, operation.value));
+            request.setHTTPHeaderField(operation.header, makeString(existingValue, requestHeaderAppendDelimiter(operation.header).value_or(", "_s), operation.value));
 
         if (previouslyAppliedHeaderOperation == ModifyHeadersAction::ModifyHeadersOperationType::Unknown)
             headerNameToFirstOperationApplied.add(operation.header, ModifyHeadersAction::ModifyHeadersOperationType::Append);
@@ -196,7 +208,7 @@ void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& requ
     }), operation);
 }
 
-auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) -> std::expected<ModifyHeaderInfo, std::error_code>
+auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue, HeaderType headerType) -> std::expected<ModifyHeaderInfo, std::error_code>
 {
     auto object = infoValue.asObject();
     if (!object)
@@ -220,6 +232,8 @@ auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) 
     if (operation == "append"_s) {
         if (!value)
             return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingValue);
+        if (headerType == HeaderType::Request && !requestHeaderAppendDelimiter(header))
+            return makeUnexpected(ContentExtensionError::JSONModifyHeadersAppendNotAllowed);
         return ModifyHeaderInfo { AppendOperation { WTF::move(header), WTF::move(value) } };
     }
     if (operation == "remove"_s)

@@ -1233,7 +1233,10 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
             std::optional<String> consoleMessage;
             if (shouldBlock && document)
                 consoleMessage = ContentExtensions::customTrackerBlockingMessageForConsole(results, resourceRequest.url());
+
+            request.updateUserAgentHeader(frame->loader());
             request.applyResults(WTF::move(results), page.ptr());
+
             if (shouldBlock) {
                 CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("requestResource: Resource blocked by content blocker", frame.get());
                 page->chrome().client().contentRuleListDidBlockLoad({ frame->frameID(), resourceRequest.url(), resourceRequest.httpMethod(), resourceType, WTF::move(blockingIdentifiers) });
