@@ -1516,9 +1516,8 @@ GCGLint GraphicsContextGLWKC::maxTransformFeedbackSeparateAttribs(){return 0;}
 GCGLint GraphicsContextGLWKC::maxUniformBufferBindings(){return 0;}
 GCGLint GraphicsContextGLWKC::uniformBufferOffsetAlignment(){return 256;}
 GCGLint GraphicsContextGLWKC::max3DTextureSize(){return 0;}
-GCGLint GraphicsContextGLWKC::maxArrayTextureLayers(){return 0}
+GCGLint GraphicsContextGLWKC::maxArrayTextureLayers(){return 0;}
 
-;
 #endif // __WUT__
 
 RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
