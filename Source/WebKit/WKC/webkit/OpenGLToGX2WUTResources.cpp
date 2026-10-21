@@ -646,7 +646,8 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
         resources.linkedAttributes.begin(), resources.linkedAttributes.end(),
         [&](const WUTBufferResources::AttributeBinding& binding) {
             auto attribute = resources.attributes.find(binding.attributeIndex);
-            return attribute != resources.attributes.end() && attribute->second.enabled;
+            return attribute != resources.attributes.end() && attribute->second.enabled
+                && !attribute->second.divisor;
         });
     if (!anyEnabledLinkedAttribute) {
         for (uint32_t i = 0; i < draw.count; ++i)
