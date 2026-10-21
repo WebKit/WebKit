@@ -117,6 +117,7 @@ constexpr GCGLenum GL_DEPTH_STENCIL_ATTACHMENT_VALUE = 0x821A;
 constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_VALUE = 0x8CD0;
 constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_VALUE = 0x8CD1;
 constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE = 0x8CD2;
+constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE_VALUE = 0x8CD3;
 constexpr GCGLenum GL_TEXTURE_OBJECT_VALUE = 0x1702;
 constexpr GCGLenum GL_RENDERBUFFER_WIDTH_VALUE = 0x8D42;
 constexpr GCGLenum GL_RENDERBUFFER_HEIGHT_VALUE = 0x8D43;
@@ -1798,8 +1799,9 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
     surface.mipLevels = static_cast<uint32_t>(cubeMap ? texture.cubeLevels[0].size() : texture.levels.size());
     surface.format = GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8;
     surface.aa = GX2_AA_MODE1X;
-    surface.use = cubeMap ? GX2_SURFACE_USE_TEXTURE
-        : static_cast<GX2SurfaceUse>(GX2_SURFACE_USE_TEXTURE | GX2_SURFACE_USE_COLOR_BUFFER);
+    // Texture images can also be attached as framebuffer color targets;
+    // keep the GX2 allocation and surface usage flags compatible with both uses.
+    surface.use = static_cast<GX2SurfaceUse>(GX2_SURFACE_USE_TEXTURE | GX2_SURFACE_USE_COLOR_BUFFER);
     surface.tileMode = GX2_TILE_MODE_LINEAR_ALIGNED;
     GX2CalcSurfaceSizeAndAlignment(&surface);
     if (!surface.imageSize || !surface.alignment
@@ -3581,9 +3583,13 @@ GCGLint GraphicsContextGLWKC::getFramebufferAttachmentParameteri(GCGLenum target
     case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_VALUE:
         return objectName;
     case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE:
-        if (objectType != GL_TEXTURE_OBJECT_VALUE && pname == GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE)
+        if (objectType != GL_TEXTURE_OBJECT_VALUE)
             return 0;
         return textureLevel;
+    case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE_VALUE:
+        if (objectType != GL_TEXTURE_OBJECT_VALUE || !record.colorTextureIsCubeFace)
+            return 0;
+        return GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE + record.colorTextureFace;
     default:
         addError(GL_INVALID_ENUM_VALUE);
         return 0;
