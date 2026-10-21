@@ -189,7 +189,8 @@ static String shippedQuirkTableJSON()
 {
 #if PLATFORM(PLAYSTATION)
     return { };
-#elif PLATFORM(COCOA)
+#else
+#if PLATFORM(COCOA)
     RetainPtr resourcesBundleURL = adoptCF(CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("TestWebKitAPIResources"), CFSTR("bundle"), nullptr));
     if (!resourcesBundleURL)
         return { };
@@ -205,6 +206,7 @@ static String shippedQuirkTableJSON()
     if (!contents)
         return { };
     return String::fromUTF8(contents->span());
+#endif
 }
 
 static String describe(const WebCore::RuntimeQuirk& quirk)
