@@ -758,6 +758,19 @@ jobs:
           }
           echo "CafeGLSL header: $HEADER"
           echo "CafeGLSL library: $LIBRARY"
+
+          # The current portlib header still includes its legacy cafe_gx2.h
+          # declarations, which duplicate WUT's GX2 ABI types in WebCore.
+          # The WKC backend includes WUT's gx2 headers first, so retain those
+          # canonical types and skip only the stale compatibility declaration
+          # header when compiling this WUT target.
+          if grep -q 'cafe_gx2\.h' "$HEADER"; then
+            sed -i 's|^[[:space:]]*#include ["<]cafe_gx2\.h[">]|#if !defined(__WUT__)\n#include "cafe_gx2.h"\n#endif|' "$HEADER"
+          fi
+          if grep -q 'cafe_gx2\.h' "$HEADER"; then
+            echo "::error::Could not isolate the legacy CafeGLSL GX2 declarations"
+            exit 1
+          fi
       - name: Configure (CMake)
         shell: bash
         run: |
