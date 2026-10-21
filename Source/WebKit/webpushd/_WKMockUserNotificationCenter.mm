@@ -126,8 +126,10 @@ static _WKMockUserNotificationCenter *centersByBundleIdentifier(NSString *bundle
 {
     BOOL hasPermission = m_hasPermission;
     dispatch_async(m_queue.get(), ^{
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         UNMutableNotificationSettings *settings = [UNMutableNotificationSettings emptySettings];
         settings.authorizationStatus = hasPermission ? UNAuthorizationStatusAuthorized : UNAuthorizationStatusNotDetermined;
+ALLOW_DEPRECATED_DECLARATIONS_END
         completionHandler(settings);
     });
 }
@@ -147,8 +149,10 @@ static _WKMockUserNotificationCenter *centersByBundleIdentifier(NSString *bundle
 
 - (UNNotificationSettings *)notificationSettings
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr settings = [UNMutableNotificationSettings emptySettings];
     [settings setAuthorizationStatus:m_hasPermission ? UNAuthorizationStatusAuthorized : UNAuthorizationStatusNotDetermined];
+ALLOW_DEPRECATED_DECLARATIONS_END
     return settings.autorelease();
 }
 
