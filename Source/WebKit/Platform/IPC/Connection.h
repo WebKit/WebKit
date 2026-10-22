@@ -685,7 +685,12 @@ private:
     bool canSendOutgoingMessages() const;
     bool LEGACY_NODELETE platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();
+#if PLATFORM(COCOA)
+    enum class SendMessageResult : uint8_t { Success, Parked, Failure, MessageTooLarge };
+    SendMessageResult sendOutgoingMessage(UniqueRef<Encoder>&&);
+#else
     bool sendOutgoingMessage(UniqueRef<Encoder>&&);
+#endif
     void connectionDidClose();
 
     // Called on the connection run loop.
@@ -711,10 +716,23 @@ private:
     Error sendMessageImpl(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions, std::optional<ThreadQOS> = std::nullopt);
 
 #if PLATFORM(COCOA)
-    enum class SendMessageResult : uint8_t { Success, Failure, MessageTooLarge };
+    // The state of the last message dequeued by sendOutgoingMessages().
+    enum class OutgoingMessageState : uint8_t {
+        Initial, // No message has been dequeued yet.
+        Sending, // Message is dequeued and in flight.
+        Parked, // Mach port queue was full, so we parked the message in m_pendingOutgoingMachMessage.
+        Done, // Message is done sending (or was dropped).
+    };
+
+    static bool isInFlight(OutgoingMessageState state)
+    {
+        return state == OutgoingMessageState::Sending || state == OutgoingMessageState::Parked;
+    }
+
     enum class IsRetryDueToLargeSize : bool { No, Yes };
     SendMessageResult sendMessage(std::unique_ptr<MachMessage>&, IsRetryDueToLargeSize = IsRetryDueToLargeSize::No);
-    bool retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> failedMessage, UniqueRef<Encoder>&);
+    SendMessageResult retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> failedMessage, UniqueRef<Encoder>&);
+    void didFinishParkedOutgoingMessage() WTF_EXCLUDES_LOCK(m_outgoingMessagesLock);
 #endif
     template<typename F>
     void dispatchToClient(F&& clientRunLoopTask) WTF_EXCLUDES_LOCK(m_incomingMessagesLock);
@@ -792,6 +810,10 @@ private:
     Lock m_outgoingMessagesLock;
     Deque<UniqueRef<Encoder>> m_outgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
     Condition m_outgoingMessagesEmptyCondition WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
+
+#if PLATFORM(COCOA)
+    OutgoingMessageState m_outgoingMessageState WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock) { OutgoingMessageState::Initial };
+#endif
 
     Condition m_waitForMessageCondition;
     Lock m_waitForMessageLock;
