@@ -42,8 +42,7 @@ WEBCORE_EXPORT @interface WebCoreFullScreenPlaceholderView : NSView {
     WeakObjCPtr<NSResponder> _target;
 }
 @property (nullable, strong) id contents;
-/* This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, weak) NSResponder *target SUPPRESS_UNRETAINED_MEMBER;
+@property (nullable, weak) NSResponder *target;
 - (void)setExitWarningVisible:(BOOL)visible;
 @end
 

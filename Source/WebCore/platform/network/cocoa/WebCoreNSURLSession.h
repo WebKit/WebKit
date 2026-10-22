@@ -88,13 +88,10 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     RefPtr<WebCore::RangeResponseGenerator> _rangeResponseGenerator; // Only created/accessed on _targetQueue
 }
 - (id)initWithResourceLoader:(WebCore::PlatformMediaResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (readonly, retain) NSOperationQueue *delegateQueue SUPPRESS_UNRETAINED_MEMBER;
+@property (readonly, retain) NSOperationQueue *delegateQueue;
 @property (nullable, readonly) id <NSURLSessionDelegate> delegate;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (readonly, copy) NSURLSessionConfiguration *configuration SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (copy) NSString *sessionDescription SUPPRESS_UNRETAINED_MEMBER;
+@property (readonly, copy) NSURLSessionConfiguration *configuration;
+@property (copy) NSString *sessionDescription;
 @property (readonly) BOOL didPassCORSAccessChecks;
 @property (assign, atomic) WebCoreNSURLSessionCORSAccessCheckResults corsResults;
 @property (assign, atomic) BOOL invalidated;
@@ -154,21 +151,16 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 }
 
 @property NSUInteger taskIdentifier;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, readonly, copy) NSURLRequest *originalRequest SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, readonly, copy) NSURLRequest *currentRequest SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, readonly, copy) NSURLResponse *response SUPPRESS_UNRETAINED_MEMBER;
+@property (nullable, readonly, copy) NSURLRequest *originalRequest;
+@property (nullable, readonly, copy) NSURLRequest *currentRequest;
+@property (nullable, readonly, copy) NSURLResponse *response;
 @property (assign, atomic) int64_t countOfBytesReceived;
 @property int64_t countOfBytesSent;
 @property int64_t countOfBytesExpectedToSend;
 @property int64_t countOfBytesExpectedToReceive;
 @property (readonly) NSURLSessionTaskState state;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, readonly, copy) NSError *error SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy) NSString *taskDescription SUPPRESS_UNRETAINED_MEMBER;
+@property (nullable, readonly, copy) NSError *error;
+@property (nullable, copy) NSString *taskDescription;
 @property float priority;
 - (void)cancel;
 - (void)suspend;

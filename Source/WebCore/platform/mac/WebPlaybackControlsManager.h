@@ -63,11 +63,9 @@ WEBCORE_EXPORT
 
 @property (assign) WebCore::PlaybackSessionInterfaceMac* playbackSessionInterfaceMac;
 @property (readwrite) NSTimeInterval contentDuration;
-/* This is a safer cpp false positive (rdar://161063702). */
-@property (nonatomic, retain, readwrite) AVValueTiming *timing SUPPRESS_UNRETAINED_MEMBER;
+@property (nonatomic, retain, readwrite) AVValueTiming *timing;
 @property (nonatomic) NSTimeInterval seekToTime;
-/* This is a safer cpp false positive (rdar://161063702). */
-@property (nonatomic, retain, readwrite) NSArray *seekableTimeRanges SUPPRESS_UNRETAINED_MEMBER;
+@property (nonatomic, retain, readwrite) NSArray *seekableTimeRanges;
 @property (nonatomic) BOOL hasEnabledAudio;
 @property (nonatomic) BOOL hasEnabledVideo;
 @property (getter=isPlaying) BOOL playing;

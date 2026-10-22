@@ -60,26 +60,16 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 
 @interface WebCoreNSURLSessionTaskTransactionMetrics : NSObject
 - (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(GuaranteedSerialFunctionDispatcher*)targetDispatcher;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy, readonly) NSDate *fetchStartDate SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy, readonly) NSDate *domainLookupStartDate SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy, readonly) NSDate *domainLookupEndDate SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy, readonly) NSDate *connectStartDate SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy, readonly) NSDate *secureConnectionStartDate SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy, readonly) NSDate *connectEndDate SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy, readonly) NSDate *requestStartDate SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy, readonly) NSDate *responseStartDate SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy, readonly) NSDate *responseEndDate SUPPRESS_UNRETAINED_MEMBER;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (nullable, copy, readonly) NSString *networkProtocolName SUPPRESS_UNRETAINED_MEMBER;
+@property (nullable, copy, readonly) NSDate *fetchStartDate;
+@property (nullable, copy, readonly) NSDate *domainLookupStartDate;
+@property (nullable, copy, readonly) NSDate *domainLookupEndDate;
+@property (nullable, copy, readonly) NSDate *connectStartDate;
+@property (nullable, copy, readonly) NSDate *secureConnectionStartDate;
+@property (nullable, copy, readonly) NSDate *connectEndDate;
+@property (nullable, copy, readonly) NSDate *requestStartDate;
+@property (nullable, copy, readonly) NSDate *responseStartDate;
+@property (nullable, copy, readonly) NSDate *responseEndDate;
+@property (nullable, copy, readonly) NSString *networkProtocolName;
 @property (assign, readonly, getter=isReusedConnection) BOOL reusedConnection;
 @property (readonly, getter=isCellular) BOOL cellular;
 @property (readonly, getter=isExpensive) BOOL expensive;
@@ -235,8 +225,7 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 
 @interface WebCoreNSURLSessionTaskMetrics : NSObject
 - (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(nonnull GuaranteedSerialFunctionDispatcher *)targetDispatcher;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (copy, readonly) NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics SUPPRESS_UNRETAINED_MEMBER;
+@property (copy, readonly) NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics;
 @end
 
 @implementation WebCoreNSURLSessionTaskMetrics {
@@ -285,8 +274,7 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 @interface WebCoreNSURLSessionDataTask ()
 - (id)initWithSession:(WebCoreNSURLSession *)session identifier:(NSUInteger)identifier request:(NSURLRequest *)request targetDispatcher:(GuaranteedSerialFunctionDispatcher *)targetDispatcher;
 - (void)_cancel;
-/* FIXME: This is a safer cpp false positive (rdar://161063702). */
-@property (assign) WebCoreNSURLSession * _Nullable session SUPPRESS_UNRETAINED_MEMBER;
+@property (assign) WebCoreNSURLSession * _Nullable session;
 
 @end
 
