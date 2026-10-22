@@ -2671,6 +2671,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     SendStopResponsivenessTimer stopper;
 
     m_pendingNavigationID = loadParameters.navigationID;
+    NavigationRequestDispatchScope dispatchScope { *this, loadParameters.navigationID };
     m_internals->pendingWebsitePolicies = WTF::move(loadParameters.websitePolicies);
     m_pendingUnpartitionedStorageSite = WTF::move(loadParameters.unpartitionedStorageSite);
     m_pendingAgentClusterAssignment = loadParameters.agentClusterAssignment;
@@ -2751,6 +2752,7 @@ void WebPage::loadDataImpl(std::optional<WebCore::NavigationIdentifier> navigati
     SendStopResponsivenessTimer stopper;
 
     m_pendingNavigationID = navigationID;
+    NavigationRequestDispatchScope dispatchScope { *this, navigationID };
     m_internals->pendingWebsitePolicies = WTF::move(websitePolicies);
 
     SubstituteData substituteData(WTF::move(sharedBuffer), WTF::move(unreachableURL), WTF::move(response), sessionHistoryVisibility);
@@ -2892,6 +2894,7 @@ void WebPage::reload(WebCore::NavigationIdentifier navigationID, OptionSet<WebCo
 
     ASSERT(!m_mainFrame->coreLocalFrame()->loader().frameHasLoaded() || !m_pendingNavigationID);
     m_pendingNavigationID = navigationID;
+    NavigationRequestDispatchScope dispatchScope { *this, navigationID };
 
     Ref mainFrame = m_mainFrame;
     m_sandboxExtensionTracker.beginReload(mainFrame.ptr(), WTF::move(sandboxExtensionHandle));
@@ -2961,6 +2964,7 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters, Co
 #endif
 
     m_pendingNavigationID = parameters.navigationID;
+    NavigationRequestDispatchScope dispatchScope { *this, parameters.navigationID };
     m_internals->pendingWebsitePolicies = WTF::move(parameters.websitePolicies);
     m_pendingAgentClusterAssignment = parameters.agentClusterAssignment;
     auto pendingAgentClusterAssignmentScope = makeScopeExit([this] {
@@ -2970,6 +2974,10 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters, Co
     Ref targetFrame = m_mainFrame;
     if (RefPtr historyItemFrame = WebProcess::singleton().webFrame(item->frameID()); historyItemFrame && historyItemFrame->page() == this)
         targetFrame = historyItemFrame.releaseNonNull();
+
+    // A same-document history traversal creates no document loader to carry the id.
+    if (targetFrame->isMainFrame())
+        m_navigationIDOfPendingMainFrameDocumentLoader = parameters.navigationID;
 
     if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreLocalFrame()) {
         if (targetFrame.ptr() == m_mainFrame.ptr())
@@ -8814,8 +8822,26 @@ void WebPage::didSameDocumentNavigationForFrame(WebFrame& frame)
 
 void WebPage::didNavigateWithinPageForFrame(WebFrame& frame)
 {
-    if (frame.isMainFrame())
-        m_pendingNavigationID = std::nullopt;
+    if (!frame.isMainFrame())
+        return;
+    // A same-document history traversal creates no document loader to consume the pending id.
+    m_pendingNavigationID = std::nullopt;
+    // popstate dispatch is synchronous and re-entrant.
+    m_sameDocumentNavigationIDs.append(std::exchange(m_navigationIDOfPendingMainFrameDocumentLoader, { }).asOptional());
+}
+
+WebPage::NavigationRequestDispatchScope::~NavigationRequestDispatchScope()
+{
+    // A same-document navigation consumes the id synchronously while the request is dispatched.
+    if (m_navigationID && m_page->m_navigationIDOfPendingMainFrameDocumentLoader == *m_navigationID)
+        m_page->m_navigationIDOfPendingMainFrameDocumentLoader = { };
+}
+
+std::optional<WebCore::NavigationIdentifier> WebPage::takeSameDocumentNavigationIDForPopStateReport()
+{
+    if (m_sameDocumentNavigationIDs.isEmpty())
+        return std::nullopt;
+    return m_sameDocumentNavigationIDs.takeLast();
 }
 
 void WebPage::testProcessIncomingSyncMessagesWhenWaitingForSyncReply(CompletionHandler<void(bool)>&& reply)
@@ -9064,6 +9090,8 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(LocalFrame& frame, ResourceReq
     if (frame.isMainFrame() || m_page->settings().siteIsolationEnabled()) {
         if (m_pendingNavigationID) {
             documentLoader->setNavigationID(*m_pendingNavigationID);
+            if (frame.isMainFrame())
+                m_navigationIDOfPendingMainFrameDocumentLoader = *m_pendingNavigationID;
             m_pendingNavigationID = std::nullopt;
         }
 

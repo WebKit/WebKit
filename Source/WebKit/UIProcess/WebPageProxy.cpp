@@ -3033,7 +3033,17 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
     auto publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(URL(item->url()));
 
     if (preferences->shouldUseUIProcessForBackForwardItemLoading()) {
-        Ref framesDidHandleTraversalAggregator = CallbackAggregator::create(WTF::move(framesDidHandleTraversal));
+        Ref framesDidHandleTraversalAggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, navigationID = navigation->navigationID(), framesDidHandleTraversal = WTF::move(framesDidHandleTraversal)] mutable {
+#if ENABLE(WEBDRIVER_BIDI)
+            if (RefPtr protectedThis = weakThis) {
+                if (RefPtr automationSession = protectedThis->activeAutomationSession())
+                    automationSession->backForwardTraversalDidFinishDispatch(navigationID);
+            }
+#else
+            UNUSED_PARAM(navigationID);
+#endif
+            framesDidHandleTraversal();
+        });
         bool anySent = false;
         if (RefPtr currentItem = backForwardList().currentItem())
             anySent = dispatchPerFrameTraversals(protect(currentItem->mainFrameItem()), protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix, framesDidHandleTraversalAggregator);
@@ -3159,6 +3169,11 @@ bool WebPageProxy::sendGoToBackForwardItemForFrame(WebBackForwardListFrameItem& 
             return false;
         }
     }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    if (RefPtr automationSession = activeAutomationSession())
+        automationSession->backForwardRequestSentForNavigation(navigationID, *this);
+#endif
 
     Ref process = processForTheFrameItem(targetFrame);
     auto suffixCopy = publicSuffix;
@@ -8763,9 +8778,6 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(webPageIDInMainFrameProcess(), frameID);
 #endif
-    if (RefPtr automationSession = m_configuration->processPool().automationSession())
-        automationSession->didDestroyFrame(frameID);
-
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (!webProcess.hasConnection() || &webProcess.connection() == &connection)
             return;
@@ -8774,8 +8786,12 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
 
     revokeOutstandingForcedUserActivationsForFrame(frameID);
 
+    // Disconnect the frame first: that calls WebAutomationSession::willDestroyFrame(), which still
+    // needs the frame's handle and navigation state. Only after that may the session release them.
     if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         frame->disconnect();
+    if (RefPtr automationSession = m_configuration->processPool().automationSession())
+        automationSession->didDestroyFrame(frameID);
 
     bool didRemove = m_framesWithSubresourceLoadingForPageLoadTiming.remove(frameID);
 #if PLATFORM(COCOA)
@@ -9344,10 +9360,9 @@ void WebPageProxy::didCancelClientRedirectForFrame(IPC::Connection& connection, 
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didCancelClientRedirectForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.toUInt64(), frame->isMainFrame());
 
-#if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
-        automationSession->navigationAbortedForFrame(*frame, std::nullopt);
-#endif
+    // This is not reported to automation as a navigation abort: FrameLoader::clientRedirectCancelledOrFinished
+    // sends it whenever a client redirect's status changes, including when the redirect succeeds. A
+    // navigation interrupted by a redirect is reported when the redirect's own navigation starts.
 
     if (frame->isMainFrame())
         m_navigationClient->didCancelClientRedirect(*this);
@@ -9456,7 +9471,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
 #if ENABLE(WEBDRIVER_BIDI)
     if (willInternallyHandleFailure == WillInternallyHandleFailure::No) {
         if (RefPtr automationSession = activeAutomationSession())
-            automationSession->navigationFailedForFrame(frame, navigationID);
+            automationSession->navigationFailedForFrame(frame, navigationID, provisionalURL);
     }
 #endif
 
@@ -10540,10 +10555,9 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
     frame->didSameDocumentNavigation(WTF::move(url));
 
     protectedPageLoadState->commitChanges();
-#if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
-        automationSession->fragmentNavigatedForFrame(*frame, navigationID);
-#endif
+    // Automation is not told here: FrameLoader::loadInSameDocument already reported this navigation
+    // through didSameDocumentNavigationForFrameViaJS, which carries its navigation, and a second
+    // report would emit a duplicate fragmentNavigated under the retained document's id.
 
     if (isMainFrame)
         m_navigationClient->didSameDocumentNavigation(*this, navigation.get(), navigationType, process->transformHandlesToObjects(protect(userData.object()).get()).get());
@@ -10591,13 +10605,17 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJS(IPC::Connection& conne
             automationSession->navigationOccurredForFrame(*frame);
     }
 
-    protectedPageLoadState->clearPendingAPIRequest(transaction);
+    // An older same-document report can arrive after a newer API request became pending.
+    auto requestedNavigationID = navigationActionData.navigationID;
+    auto& pendingAPIRequest = protectedPageLoadState->pendingAPIRequest();
+    if (!pendingAPIRequest.navigationID || pendingAPIRequest.navigationID.asOptional() == requestedNavigationID)
+        protectedPageLoadState->clearPendingAPIRequest(transaction);
     frame->didSameDocumentNavigation(WTF::move(url));
 
     protectedPageLoadState->commitChanges();
 #if ENABLE(WEBDRIVER_BIDI)
     if (RefPtr automationSession = activeAutomationSession())
-        automationSession->fragmentNavigatedForFrame(*frame, navigation ? std::optional(navigation->navigationID()) : std::nullopt);
+        automationSession->fragmentNavigatedForFrame(*frame, navigation ? std::optional(navigation->navigationID()) : std::nullopt, requestedNavigationID);
 #endif
 
     if (isMainFrame)
@@ -10961,6 +10979,11 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     RefPtr<API::Navigation> navigation;
     if (navigationID)
         navigation = m_navigationState->navigation(*navigationID);
+
+#if ENABLE(WEBDRIVER_BIDI)
+    if (RefPtr automationSession = activeAutomationSession(); automationSession && navigationID)
+        automationSession->navigationPolicyRequestedForFrame(frame, *navigationID);
+#endif
 
     if (navigation && !fromAPI)
         protectedPageLoadState->clearPendingAPIRequest(*transaction);

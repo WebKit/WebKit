@@ -3171,6 +3171,18 @@
             "test_unsubscribe": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
+            "test_subscribe": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_timestamp": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_page_with_base_tag": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_early_same_document_navigation": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
             "test_new_context_not_emitted[tab]": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/302058"}}
             },
@@ -3331,6 +3343,18 @@
         "subtests": {
             "test_unsubscribe": {
                 "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_subscribe": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_timestamp": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_page_with_base_tag": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_early_same_document_navigation": {
+                "expected": { "all": { "status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288340"}}
@@ -3464,6 +3488,9 @@
             "test_unsubscribe": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
+            "test_navigate_history_pushstate": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
             "test_same_document": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287934"}}
             },
@@ -3539,6 +3566,27 @@
             },
             "test_window_open_with_url": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/287934"}}
+            },
+            "test_timestamp": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_navigate_history_pushstate": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_navigate_to_about_blank": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_subscribe": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_page_with_base_tag": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_redirect_http_equiv": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_redirect_navigation": {
+                "expected": { "all": { "status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288342"}}
@@ -3567,6 +3615,18 @@
             },
             "test_with_content_blocking_header_in_top_context[Content-Security-Policy, default-src 'self']": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/287933"}}
+            },
+            "test_with_new_navigation": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_with_new_navigation_inside_page": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_close_context[tab]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_close_context[window]": {
+                "expected": { "all": { "status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287933"}}

@@ -75,8 +75,14 @@ public:
     using NavigationMap = HashMap<WebCore::NavigationIdentifier, Ref<API::Navigation>>;
 
 private:
+    void didReleaseNavigation(WebCore::NavigationIdentifier);
+
     WeakRef<WebPageProxy> m_page;
     NavigationMap m_navigations;
+#if ENABLE(WEBDRIVER_BIDI)
+    // Navigations taken out of m_navigations, with their owning process, until that process reports them destroyed.
+    HashMap<WebCore::NavigationIdentifier, WebCore::ProcessIdentifier> m_takenNavigationsAwaitingRelease;
+#endif
 };
 
 } // namespace WebKit

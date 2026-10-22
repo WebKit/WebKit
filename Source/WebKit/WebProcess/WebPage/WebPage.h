@@ -1480,6 +1480,22 @@ public:
 #endif
 
     bool isStoppingLoadingDueToProcessSwap() const { return m_isStoppingLoadingDueToProcessSwap; }
+    std::optional<WebCore::NavigationIdentifier> takeSameDocumentNavigationIDForPopStateReport();
+    void didStartProvisionalLoadForMainFrameDocumentLoader() { m_navigationIDOfPendingMainFrameDocumentLoader = { }; }
+    // Clears the pending main-frame document loader's id when the request that produced it finishes dispatching.
+    class NavigationRequestDispatchScope {
+    public:
+        NavigationRequestDispatchScope(WebPage& page, std::optional<WebCore::NavigationIdentifier> navigationID)
+            : m_page(page)
+            , m_navigationID(navigationID)
+        {
+        }
+        ~NavigationRequestDispatchScope();
+
+    private:
+        const Ref<WebPage> m_page;
+        std::optional<WebCore::NavigationIdentifier> m_navigationID;
+    };
     void keepBlobURLAliveForNewWindowNavigation(URL&&, std::optional<WebCore::SecurityOriginData>&&);
 
     bool LEGACY_NODELETE isIOSurfaceLosslessCompressionEnabled() const;
@@ -3391,6 +3407,11 @@ private:
     Markable<WebCore::NavigationIdentifier> m_pendingNavigationID;
     std::optional<WebCore::RegistrableDomain> m_pendingUnpartitionedStorageSite;
     std::optional<WebCore::AgentClusterAssignment> m_pendingAgentClusterAssignment;
+    // The id of the main frame's request-created document loader or same-document history traversal,
+    // until that request's load starts, resolves to a same-document navigation, or unwinds.
+    Markable<WebCore::NavigationIdentifier> m_navigationIDOfPendingMainFrameDocumentLoader;
+    // Innermost same-document navigation last.
+    Vector<std::optional<WebCore::NavigationIdentifier>, 1> m_sameDocumentNavigationIDs;
 
     bool m_shouldConsiderEnhancedSecurityForInsecureResponseForCurrentNavigation { false };
     bool m_mainFrameProgressCompleted { false };
