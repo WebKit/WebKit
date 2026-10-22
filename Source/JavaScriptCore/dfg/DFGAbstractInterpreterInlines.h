@@ -2110,6 +2110,41 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ObjectIsExtensible: {
+        AbstractValue& child = forNode(node->child1());
+        if (!child.couldBeType(SpecObject)) {
+            didFoldClobberWorld();
+            setConstant(node, jsBoolean(false));
+            break;
+        }
+        if (!child.couldBeType(SpecProxyObject | SpecGlobalProxy)) {
+            didFoldClobberWorld();
+            if (child.m_structure.isFinite() && !child.m_structure.isClear()) {
+                bool allExtensible = true;
+                bool allNonExtensible = true;
+                child.m_structure.forEach([&](RegisteredStructure structure) {
+                    if (structure->isStructureExtensible())
+                        allNonExtensible = false;
+                    else
+                        allExtensible = false;
+                });
+                if (allNonExtensible) {
+                    setConstant(node, jsBoolean(false));
+                    break;
+                }
+                if (allExtensible) {
+                    setConstant(node, jsBoolean(true));
+                    break;
+                }
+            }
+            setNonCellTypeForNode(node, SpecBoolean);
+            break;
+        }
+        clobberWorld();
+        setNonCellTypeForNode(node, SpecBoolean);
+        break;
+    }
+
     case NumberIsNaN: {
         AbstractValue& child = forNode(node->child1());
         if (JSValue value = child.value()) {
