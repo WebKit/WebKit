@@ -189,6 +189,7 @@ inline void HTMLToken::clear()
     else
         m_data.shrink(0);
     m_processingInstructionTarget = nullptr;
+    m_doctypeData = nullptr;
     m_data8BitCheck = 0;
     m_isReplacedNullCharacter = false;
 }
