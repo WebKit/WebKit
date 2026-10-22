@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<title>requestIdleCallback timeout fires for a callback that is waiting in the list of runnable idle callbacks</title>
+<link rel="help" href="https://w3c.github.io/requestidlecallback/#dfn-invoke-idle-callback-timeout-algorithm">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function busyWait(duration) {
+  const start = performance.now();
+  while (performance.now() - start < duration) { }
+}
+
+async_test(t => {
+  addEventListener("load", t.step_func(() => t.step_timeout(() => {
+    const order = [];
+    requestIdleCallback(t.step_func(() => {
+      order.push("first");
+      busyWait(250);
+    }));
+    for (let i = 0; i < 3; i++)
+      requestIdleCallback(t.step_func(() => {
+        order.push("filler");
+        busyWait(45);
+      }));
+    requestIdleCallback(t.step_func(deadline => {
+      order.push(deadline.didTimeout ? "timed out" : "idle");
+      assert_array_equals(order, ["first", "timed out"]);
+      t.done();
+    }), { timeout: 100 });
+  }, 0)));
+}, "A timeout runs a callback that is already in the list of runnable idle callbacks");
+</script>
