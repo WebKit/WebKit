@@ -44,6 +44,7 @@
 #include "NestingLevelIncrementer.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
+#include "TaskSource.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -57,6 +58,7 @@ HTMLScriptRunner::HTMLScriptRunner(Document& document, HTMLScriptRunnerHost& hos
     , m_host(host)
     , m_scriptNestingLevel(0)
     , m_hasScriptsWaitingForStylesheets(false)
+    , m_executingScriptsAsync(false)
 {
 }
 
@@ -193,6 +195,82 @@ void HTMLScriptRunner::executeScriptsWaitingForStylesheets()
 
 bool HTMLScriptRunner::executeScriptsWaitingForParsing()
 {
+    // If the feature is enabled, execute scripts one at a time with event loop
+    // yields between them to prevent long tasks and improve responsiveness.
+    if (m_document && m_document->settings().separateDeferModuleScriptTasksEnabled()) {
+        WTFLogAlways("SeparateDeferModuleScriptTasks: Feature is ENABLED, using async execution");
+
+        // Check if all scripts have been executed
+        if (m_scriptsToExecuteAfterParsing.isEmpty()) {
+            // All scripts completed, clear the flag and allow parsing to complete.
+            m_executingScriptsAsync = false;
+            WTFLogAlways("SeparateDeferModuleScriptTasks: All scripts completed");
+            return true;
+        }
+
+        ASSERT(!isExecutingScript());
+        ASSERT(!hasParserBlockingScript());
+        ASSERT(m_scriptsToExecuteAfterParsing.first()->needsLoading());
+
+        // Check if the first script is ready
+        if (!m_scriptsToExecuteAfterParsing.first()->isLoaded()) {
+            watchForLoad(m_scriptsToExecuteAfterParsing.first());
+            return false;
+        }
+
+        // If we're already in async mode, execute one script now
+        if (m_executingScriptsAsync) {
+            WTFLogAlways("SeparateDeferModuleScriptTasks: Executing script %zu of %zu",
+                m_scriptsToExecuteAfterParsing.size(), m_scriptsToExecuteAfterParsing.size());
+
+            // Execute the script element given by the first script in the list
+            executePendingScriptAndDispatchEvent(m_scriptsToExecuteAfterParsing.takeFirst().get());
+
+            // FIXME: What is this m_document check for?
+            if (!m_document)
+                return false;
+
+            // If there are more scripts, queue the next one
+            if (!m_scriptsToExecuteAfterParsing.isEmpty()) {
+                // Use a RefPtr to the document since HTMLScriptRunner is owned by
+                // HTMLDocumentParser which is owned by the document
+                RefPtr<Document> protectedDocument = m_document.get();
+                m_document->eventLoop().queueTask(TaskSource::DOMManipulation, [this, protectedDocument]() {
+                    if (!protectedDocument || !m_document || !protectedDocument->frame())
+                        return;
+                    WTFLogAlways("SeparateDeferModuleScriptTasks: Task executing, continuing script execution");
+                    // Directly call executeScriptsWaitingForParsing recursively
+                    executeScriptsWaitingForParsing();
+                });
+                // Return false to keep the parser paused until all scripts complete
+                return false;
+            }
+
+            // Last script executed, allow parsing to continue
+            m_executingScriptsAsync = false;
+            return true;
+        }
+
+        // First call - start async execution by queuing the first script
+        m_executingScriptsAsync = true;
+        WTFLogAlways("SeparateDeferModuleScriptTasks: Starting async execution with %zu scripts",
+            m_scriptsToExecuteAfterParsing.size());
+
+        // Queue a task to execute the first script on the next event loop iteration.
+        // This ensures even the first script runs asynchronously.
+        RefPtr<Document> protectedDocument = m_document.get();
+        m_document->eventLoop().queueTask(TaskSource::DOMManipulation, [this, protectedDocument]() {
+            if (!protectedDocument || !m_document || !protectedDocument->frame())
+                return;
+            WTFLogAlways("SeparateDeferModuleScriptTasks: First task executing, continuing script execution");
+            // Directly call executeScriptsWaitingForParsing recursively
+            executeScriptsWaitingForParsing();
+        });
+        // Return false to keep the parser paused until all scripts complete
+        return false;
+    }
+
+    // Original synchronous execution code follows...
     while (!m_scriptsToExecuteAfterParsing.isEmpty()) {
         ASSERT(!isExecutingScript());
         ASSERT(!hasParserBlockingScript());
@@ -272,5 +350,6 @@ void HTMLScriptRunner::runScript(ScriptElement& scriptElement, const TextPositio
     } else
         requestParsingBlockingScript(scriptElement);
 }
+
 
 }
