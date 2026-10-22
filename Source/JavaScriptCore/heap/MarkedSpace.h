@@ -216,9 +216,9 @@ private:
     PreciseAllocation** m_preciseAllocationsForThisCollectionEnd { nullptr };
 
     size_t m_capacity { 0 };
-    HeapVersion m_markingVersion { initialVersion };
-    HeapVersion m_newlyAllocatedVersion { initialVersion };
-    HeapVersion m_edenVersion { initialVersion };
+    HeapVersion m_markingVersion;
+    HeapVersion m_newlyAllocatedVersion;
+    HeapVersion m_edenVersion;
     bool m_isIterating { false };
     bool m_isMarking { false };
     bool m_conservativeScanIsPrepared { false };

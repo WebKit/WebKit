@@ -793,7 +793,7 @@ def shouldCollectContinuously?
     $buildType == "release" or $forceCollectContinuously
 end
 
-COLLECT_CONTINUOUSLY_OPTIONS = shouldCollectContinuously? ? ["--collectContinuously=true", "--useGenerationalGC=false", "--verifyGC=true", "--initialMarkingVersion=#{2**32 - 1 - rand(32)}"] : []
+COLLECT_CONTINUOUSLY_OPTIONS = shouldCollectContinuously? ? ["--collectContinuously=true", "--useGenerationalGC=false", "--verifyGC=true", "--initialHeapVersion=#{2**32 - 1 - rand(32)}"] : []
 
 $serialPlans = Set.new
 $exclusivePlans = Set.new
@@ -1423,8 +1423,9 @@ BASE_MODES = [
             "--useSourceProviderCache=false",
             "--useRandomizingExecutableIslandAllocation=true",
             "--useLLIntICs=false",
-            # Wrap on the second Full collection, so the first has populated the marks.
-            "--initialMarkingVersion=#{2**32 - 2}",
+            # Wrap on the second collection, so the first has populated the marks and newly
+            # allocated bits.
+            "--initialHeapVersion=#{2**32 - 2}",
         ] +
         NO_CJIT_OPTIONS
     ],

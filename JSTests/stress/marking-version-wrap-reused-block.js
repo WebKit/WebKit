@@ -1,4 +1,4 @@
-//@ runDefault("--initialMarkingVersion=4294967294")
+//@ runDefault("--initialHeapVersion=4294967294")
 
 // Starts each heap two Full collections short of the marking version's wrap. The wrap collection resets every block to
 // nullVersion, keeping the marks of blocks whose marks were current, as the survivors of the collection before. A block
