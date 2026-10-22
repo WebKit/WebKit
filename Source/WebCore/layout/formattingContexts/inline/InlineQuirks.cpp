@@ -259,6 +259,18 @@ bool InlineQuirks::shouldCollapseLineBoxHeight(const LineRunList& lineContent, s
     return true;
 }
 
+bool InlineQuirks::hasSoftWrapOpportunityAroundImages(std::optional<IntrinsicWidthMode> intrinsicWidthMode) const
+{
+    // https://quirks.spec.whatwg.org/#the-table-cell-width-calculation-quirk
+    // "In quirks mode, for the purpose of calculating the min-content width of an inline formatting context for which a table cell cell is the containing block,
+    // if cell has a computed value of the width property that is auto, img elements that are inline-level replaced elements in that inline formatting context
+    // must not have a soft wrap opportunity before or after them."
+    if (intrinsicWidthMode != IntrinsicWidthMode::Minimum || !formattingContext().layoutState().inQuirksMode())
+        return true;
+    auto& rootBox = formattingContext().root();
+    return !rootBox.isTableCell() || !rootBox.style().width().isAuto();
+}
+
 }
 }
 

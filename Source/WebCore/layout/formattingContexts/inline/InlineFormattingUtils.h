@@ -37,6 +37,7 @@ namespace Layout {
 class InlineFormattingContext;
 class InlineLevelBox;
 class LineBox;
+enum class IntrinsicWidthMode;
 
 class InlineFormattingUtils {
 public:
@@ -62,8 +63,9 @@ public:
     static InlineItemPosition LEGACY_NODELETE leadingInlineItemPositionForNextLine(const LineLayoutResult&, std::optional<InlineItemPosition> previousLineContentEnd, InlineItemPosition layoutRangeEnd);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const;
+    InlineLayoutUnit intrinsicMarginBoxWidth(const ElementBox&, IntrinsicWidthMode) const;
 
-    size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, std::span<const InlineItem>) const;
+    size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, std::span<const InlineItem>, std::optional<IntrinsicWidthMode> = { }) const;
 
     static std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasisForInlineBox(const Box&, const ElementBox& rootBox);
 
@@ -76,7 +78,7 @@ public:
     std::optional<BlockOverflowEllipsis> blockEllipsisForLine() const;
 
 private:
-    bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const;
+    bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next, std::optional<IntrinsicWidthMode>) const;
 
     const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
 
