@@ -8785,6 +8785,24 @@ void WebPageProxy::didCreateSubframe(FrameIdentifier parentID, FrameIdentifier n
 
 void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier frameID)
 {
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    // The UI process may already have dropped the frame while other processes still have it, so its removal is still broadcast.
+    if (frame && frame->page()) {
+        MESSAGE_CHECK_BASE(frame->page() == this, connection);
+
+        Ref process = WebProcessProxy::fromConnection(connection);
+        RefPtr parentFrame = frame->parentFrame();
+        RefPtr parentProvisionalFrame = parentFrame ? parentFrame->provisionalFrame() : nullptr;
+        bool fromFrameProcess = process.ptr() == &frame->process();
+        // The parent's process, or its provisional process during a cross-site navigation, reports the removal of its children.
+        bool fromParentProcess = parentFrame && process.ptr() == &parentFrame->process();
+        bool fromParentProvisionalProcess = parentProvisionalFrame && process.ptr() == &parentProvisionalFrame->process();
+        // The UI process detaches the children of a main frame that commits in another process.
+        bool isDetachedSubframe = !frame->isMainFrame() && !parentFrame;
+        if (!fromFrameProcess && !fromParentProcess && !fromParentProvisionalProcess && !isDetachedSubframe)
+            return;
+    }
+
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(webPageIDInMainFrameProcess(), frameID);
 #endif
@@ -8799,7 +8817,7 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
 
     revokeOutstandingForcedUserActivationsForFrame(frameID);
 
-    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+    if (frame)
         frame->disconnect();
 
     bool didRemove = m_framesWithSubresourceLoadingForPageLoadTiming.remove(frameID);
@@ -8987,6 +9005,19 @@ void WebPageProxy::updateScrollingMode(IPC::Connection& connection, WebCore::Fra
 
 void WebPageProxy::setFramePrinting(IPC::Connection& connection, WebCore::FrameIdentifier frameID, bool printing, const WebCore::FloatSize& pageSize, const WebCore::FloatSize& originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSize shouldAdjustViewSize)
 {
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame || !frame->page())
+        return;
+    MESSAGE_CHECK_BASE(frame->page() == this, connection);
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    RefPtr parentFrame = frame->parentFrame();
+    bool fromFrameProcess = process.ptr() == &frame->process();
+    // The parent's process also reports the printing state of its remote children.
+    bool fromParentProcess = parentFrame && process.ptr() == &parentFrame->process();
+    if (!fromFrameProcess && !fromParentProcess)
+        return;
+
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess.hasConnection(connection))
             return;
@@ -21638,8 +21669,16 @@ void WebPageProxy::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
 
 void WebPageProxy::frameNameChanged(IPC::Connection& connection, WebCore::FrameIdentifier frameID, const String& frameName)
 {
-    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
-        frame->setSpecifiedName(frameName);
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame || !frame->page())
+        return;
+    MESSAGE_CHECK_BASE(frame->page() == this, connection);
+
+    // FIXME: Accept the name from a subframe's previous process unless the new process has set its own, so the name carries over without overwriting it.
+    if (&frame->process() != WebProcessProxy::fromConnection(connection).ptr())
+        return;
+
+    frame->setSpecifiedName(frameName);
 
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (!webProcess.hasConnection() || &webProcess.connection() == &connection)

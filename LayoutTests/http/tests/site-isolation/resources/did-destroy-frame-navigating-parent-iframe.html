@@ -1,0 +1,12 @@
+<body>
+<script>
+if (location.search == "?destination")
+    parent.postMessage("navigated", "*");
+else {
+    const child = document.createElement("iframe");
+    child.src = "https://127.0.0.1:8443/site-isolation/resources/frame-with-text.html";
+    child.onload = () => parent.postMessage("loaded", "*");
+    document.body.appendChild(child);
+}
+</script>
+</body>

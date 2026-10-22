@@ -1,0 +1,5 @@
+
+PASS frameNameChanged accepts a rename of the iframe's own frame (allowed)
+PASS frameNameChanged ignores a rename of the main frame from an iframe's process (disallowed)
+PASS frameNameChanged rejects a frame of another page (disallowed)
+

@@ -1,0 +1,21 @@
+<script>
+addEventListener("message", (event) => {
+    if (event.data.setName !== undefined) {
+        window.name = event.data.setName;
+        parent.postMessage("sent", "*");
+        return;
+    }
+
+    if (event.data.query == "print") {
+        parent.postMessage({ print: matchMedia("print").matches }, "*");
+        return;
+    }
+
+    IPC.sendMessage("UI", IPC.pageID, IPC.messages[event.data.name].name, event.data.args);
+    parent.postMessage("sent", "*");
+});
+
+onload = () => {
+    parent.postMessage({ loaded: window.IPC ? IPC.frameID[0].toString() : "" }, "*");
+};
+</script>

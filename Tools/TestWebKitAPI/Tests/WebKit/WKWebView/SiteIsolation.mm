@@ -1064,6 +1064,52 @@ TEST(SiteIsolation, NavigationAfterWindowOpen)
         Util::spinRunLoop();
 }
 
+TEST(SiteIsolation, CrossSiteIframeWithPendingNavigationIsRemovedWhenMainFrameCommitsInAnotherProcess)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<iframe src='https://webkit.org/child' onload='w = window.open(\"https://example.com/opened\")'></iframe>"_s } },
+        { "/opened"_s, { "opened"_s } },
+        { "/child"_s, { "child"_s } },
+        { "/next"_s, { "next"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/opener");
+    checkFrameTreesInProcesses(opener.webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://webkit.org"_s } } }
+    });
+
+    // The pending navigation keeps the iframe's WebFrameProxy alive after the UI process detaches it.
+    __block BlockPtr<void(WKNavigationActionPolicy)> heldDecision;
+    opener.navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.path isEqualToString:@"/child2"]) {
+            heldDecision = makeBlockPtr(completionHandler);
+            return;
+        }
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    [opener.webView evaluateJavaScript:@"location.href = '/child2'" inFrame:[opener.webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(Util::waitFor(^{
+        return !!heldDecision;
+    }));
+
+    // The opened window shares the browsing context group, so the main frame commits in another process and the UI process detaches its children.
+    [opener.webView evaluateJavaScript:@"location.href = 'https://apple.com/next'" completionHandler:nil];
+    [opener.navigationDelegate waitForDidFinishNavigation];
+
+    // The old main frame's process reports the removal of the detached iframe, which removes it from the iframe's process.
+    Vector<ExpectedFrameTree> expectedFrameTrees {
+        { "https://apple.com"_s },
+        { RemoteFrame },
+        { RemoteFrame }
+    };
+    while (!frameTreesMatch(frameTrees(opener.webView.get()).get(), Vector<ExpectedFrameTree> { expectedFrameTrees }))
+        Util::spinRunLoop();
+    checkFrameTreesInProcesses(opener.webView.get(), WTF::move(expectedFrameTrees));
+
+    heldDecision(WKNavigationActionPolicyCancel);
+}
+
 #if PLATFORM(MAC)
 
 TEST(SiteIsolation, ObscuredContentInsetsSurviveWindowOpenProcessSwap)

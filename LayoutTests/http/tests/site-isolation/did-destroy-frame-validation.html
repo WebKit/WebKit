@@ -1,0 +1,51 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/ipc-validation-helpers.js"></script>
+<body>
+<script>
+// The IPC testing API exists only in debug and ASan builds; the subtests that need it pass either way.
+
+promise_test(async (t) => {
+    const frame = document.createElement("iframe");
+    t.add_cleanup(() => frame.remove());
+    frame.src = crossSiteOrigin + "/site-isolation/resources/did-destroy-frame-navigating-parent-iframe.html";
+    document.body.appendChild(frame);
+    await waitForMessage(null, (data) => data == "loaded");
+    const navigated = waitForMessage(null, (data) => data == "navigated");
+    frame.src = "https://localhost:8443/site-isolation/resources/did-destroy-frame-navigating-parent-iframe.html?destination";
+    await navigated;
+    assert_equals(frame.contentWindow.length, 0);
+}, "didDestroyFrame accepts the parent's provisional process (allowed)");
+
+promise_test(async (t) => {
+    if (!window.IPC)
+        return;
+    const sibling = await addSameSiteFrame(t);
+    const sender = await addMessageSenderFrame(t);
+    const frameCount = window.length;
+    await sendMessageFromFrame(sender, "WebPageProxy_DidDestroyFrame", [frameIDArgument(sibling.contentWindow.IPC.frameID[0])]);
+    assert_equals(window.length, frameCount);
+    assert_not_equals(sibling.contentWindow, null);
+}, "didDestroyFrame ignores a sibling from an iframe's process (disallowed)");
+
+promise_test(async (t) => {
+    if (!window.IPC)
+        return;
+    assert_true(await isFrameOfAnotherPageRejected(t, "WebPageProxy_DidDestroyFrame", []));
+}, "didDestroyFrame rejects a frame of another page (disallowed)");
+
+// The popup's own main frame is the target, so a failure shows as no response from the popup instead of a hang here.
+promise_test(async (t) => {
+    if (!window.IPC)
+        return;
+    const popup = window.open("resources/did-destroy-frame-main-frame-popup.html");
+    t.add_cleanup(() => popup.close());
+    const response = await Promise.race([
+        waitForMessage(popup, (data) => data == "main frame still responding"),
+        new Promise((resolve) => setTimeout(() => resolve("no response"), 3000)),
+    ]);
+    assert_equals(response, "main frame still responding");
+}, "didDestroyFrame ignores the main frame from an iframe's process (disallowed)");
+</script>

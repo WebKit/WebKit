@@ -1,0 +1,33 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/ipc-validation-helpers.js"></script>
+<body>
+<script>
+// The IPC testing API exists only in debug and ASan builds; the subtests that need it pass either way.
+
+promise_test(async (t) => {
+    const sender = await addMessageSenderFrame(t);
+    const sent = waitForMessage(sender.contentWindow, (data) => data == "sent");
+    sender.contentWindow.postMessage({ setName: "control" }, "*");
+    await sent;
+    assert_equals(frames["control"], sender.contentWindow);
+}, "frameNameChanged accepts a rename of the iframe's own frame (allowed)");
+
+promise_test(async (t) => {
+    if (!window.IPC)
+        return;
+    window.name = "original";
+    t.add_cleanup(() => { window.name = ""; });
+    const sender = await addMessageSenderFrame(t);
+    await sendMessageFromFrame(sender, "WebPageProxy_FrameNameChanged", [frameIDArgument(IPC.frameID[0]), { type: "String", value: "renamed" }]);
+    assert_equals(window.name, "original");
+}, "frameNameChanged ignores a rename of the main frame from an iframe's process (disallowed)");
+
+promise_test(async (t) => {
+    if (!window.IPC)
+        return;
+    assert_true(await isFrameOfAnotherPageRejected(t, "WebPageProxy_FrameNameChanged", [{ type: "String", value: "renamed" }]));
+}, "frameNameChanged rejects a frame of another page (disallowed)");
+</script>

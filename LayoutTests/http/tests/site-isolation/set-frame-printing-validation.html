@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/ipc-validation-helpers.js"></script>
+<body>
+<script>
+// The IPC testing API exists only in debug and ASan builds; the subtests that need it pass either way.
+
+const printingArgs = [{ type: "bool", value: 1 }, ...[0, 0, 0, 0, 0].map((value) => ({ type: "float", value })), { type: "bool", value: 0 }];
+
+async function isInPrintMode(frame)
+{
+    const reply = waitForMessage(frame.contentWindow, (data) => data?.print !== undefined);
+    frame.contentWindow.postMessage({ query: "print" }, "*");
+    return (await reply).print;
+}
+
+promise_test(async (t) => {
+    if (!window.IPC)
+        return;
+    const sender = await addMessageSenderFrame(t);
+    IPC.sendMessage("UI", IPC.pageID, IPC.messages.WebPageProxy_SetFramePrinting.name, [frameIDArgument(sender.frameID), ...printingArgs]);
+    assert_true(await isInPrintMode(sender));
+}, "setFramePrinting accepts print mode for an iframe from the main frame's process (allowed)");
+
+promise_test(async (t) => {
+    if (!window.IPC)
+        return;
+    const sibling = await addSameSiteFrame(t);
+    const sender = await addMessageSenderFrame(t);
+    await sendMessageFromFrame(sender, "WebPageProxy_SetFramePrinting", [frameIDArgument(IPC.frameID[0]), ...printingArgs]);
+    await sendMessageFromFrame(sender, "WebPageProxy_SetFramePrinting", [frameIDArgument(sibling.contentWindow.IPC.frameID[0]), ...printingArgs]);
+    assert_false(matchMedia("print").matches, "main frame");
+    assert_false(sibling.contentWindow.matchMedia("print").matches, "sibling");
+}, "setFramePrinting ignores print mode for the main frame and its sibling from an iframe's process (disallowed)");
+
+promise_test(async (t) => {
+    if (!window.IPC)
+        return;
+    assert_true(await isFrameOfAnotherPageRejected(t, "WebPageProxy_SetFramePrinting", printingArgs));
+}, "setFramePrinting rejects a frame of another page (disallowed)");
+</script>
