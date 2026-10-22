@@ -39,6 +39,7 @@
 #include <WebCore/ApplePayCouponCodeUpdate.h>
 #include <WebCore/ApplePayPaymentAuthorizationResult.h>
 #include <WebCore/ApplePayPaymentMethodUpdate.h>
+#include <WebCore/ApplePayReferenceRequest.h>
 #include <WebCore/ApplePayShippingContactUpdate.h>
 #include <WebCore/ApplePayShippingMethodUpdate.h>
 #include <WebCore/LocalFrame.h>
@@ -256,6 +257,15 @@ void WebPaymentCoordinator::endApplePaySetup()
     if (RefPtr webPage = m_webPage.get())
         webPage->send(Messages::WebPaymentCoordinatorProxy::EndApplePaySetup());
 }
+
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+
+void WebPaymentCoordinator::prepareReferenceSession(const WebCore::ApplePayReferenceRequest& request, bool shouldDiscloseCapability, CompletionHandler<void(std::optional<String>&&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::PrepareReferenceSession(request, shouldDiscloseCapability), WTF::move(completionHandler));
+}
+
+#endif // ENABLE(APPLE_PAY_REFERENCE_SESSION)
 
 }
 

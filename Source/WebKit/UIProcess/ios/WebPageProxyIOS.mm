@@ -91,6 +91,7 @@
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -1380,6 +1381,13 @@ const String& WebPageProxy::Internals::paymentCoordinatorCTDataConnectionService
 {
     return page->websiteDataStore().configuration().dataConnectionServiceType();
 }
+
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+bool WebPageProxy::Internals::paymentCoordinatorHostAppHasWebBrowserEntitlement(const WebPaymentCoordinatorProxy&)
+{
+    return WTF::processHasEntitlement("com.apple.developer.web-browser"_s);
+}
+#endif
 
 #endif
 

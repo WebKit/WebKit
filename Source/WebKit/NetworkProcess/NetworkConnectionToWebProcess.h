@@ -538,6 +538,9 @@ private:
     void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
     CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const final;
         std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebPaymentMessages() const final;
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+    bool paymentCoordinatorHostAppHasWebBrowserEntitlement(const WebPaymentCoordinatorProxy&) final;
+#endif
 #endif // ENABLE(APPLE_PAY_REMOTE_UI)
 
 #if ENABLE(CONTENT_EXTENSIONS)

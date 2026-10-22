@@ -670,6 +670,10 @@
 #define HAVE_PASSKIT_MAC_HELPER_TEMP 1
 #endif
 
+#if PLATFORM(IOS) && __has_include(<PassKit/PKPaymentReferenceSession.h>)
+#define HAVE_PASSKIT_PAYMENT_REFERENCE_SESSION 1
+#endif
+
 #if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 #define HAVE_PASSKIT_APPLE_PAY_LATER_AVAILABILITY 1
 #endif

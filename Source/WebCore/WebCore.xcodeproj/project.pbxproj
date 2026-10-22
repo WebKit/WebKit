@@ -664,7 +664,7 @@
 		1A8A643C1D19FC5300D0E00F /* PaymentMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64391D19FC5300D0E00F /* PaymentMethod.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8A64521D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A643E1D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.h */; };
 		1A8A64561D19FCFC00D0E00F /* ApplePayPaymentMethodSelectedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64421D19FCFB00D0E00F /* ApplePayPaymentMethodSelectedEvent.h */; };
-		D707664EBA2DDCDCB7E6F852 /* ApplePayReferenceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1906CFF103D44DE95C6595D1 /* ApplePayReferenceRequest.h */; };
+		D707664EBA2DDCDCB7E6F852 /* ApplePayReferenceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1906CFF103D44DE95C6595D1 /* ApplePayReferenceRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		73220808CB7ACDDA537AEAC3 /* ApplePayReferenceSession.h in Headers */ = {isa = PBXBuildFile; fileRef = E57F1549871EA40584964D67 /* ApplePayReferenceSession.h */; };
 		1A8A64591D19FCFC00D0E00F /* ApplePaySession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64451D19FCFB00D0E00F /* ApplePaySession.h */; };
 		1A8A645C1D19FCFC00D0E00F /* ApplePayShippingContactSelectedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64481D19FCFB00D0E00F /* ApplePayShippingContactSelectedEvent.h */; };

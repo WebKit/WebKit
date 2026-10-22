@@ -51,6 +51,10 @@ messages -> WebPaymentCoordinatorProxy {
     GetSetupFeatures(WebKit::PaymentSetupConfiguration configuration) -> (WebKit::PaymentSetupFeatures features)
     BeginApplePaySetup(WebKit::PaymentSetupConfiguration configuration, WebKit::PaymentSetupFeatures features) -> (bool result)
     EndApplePaySetup()
+
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+    [EnabledBy=ApplePayReferenceSessionEnabled] PrepareReferenceSession(struct WebCore::ApplePayReferenceRequest request, bool shouldDiscloseCapability) -> (std::optional<String> token)
+#endif
 }
 
 #endif

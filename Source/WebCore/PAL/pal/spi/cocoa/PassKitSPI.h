@@ -109,6 +109,14 @@ DECLARE_SYSTEM_HEADER
 #endif
 #endif
 
+#if HAVE(PASSKIT_PAYMENT_REFERENCE_SESSION)
+#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
+#import <PassKitCore/PKPaymentReferenceSession.h>
+#else
+#import <PassKit/PKPaymentReferenceSession.h>
+#endif
+#endif
+
 #if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 #if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)

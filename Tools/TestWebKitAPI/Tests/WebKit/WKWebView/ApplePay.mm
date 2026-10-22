@@ -30,6 +30,8 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestProtocol.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -270,6 +272,68 @@ TEST(ApplePay, CanMakePaymentFalseDoesNotBlockUserAgentScripts)
 {
     runActiveSessionTest([NSURL URLWithString:@"https://bundle-file/apple-pay-can-make-payment.html?false"], NO);
 }
+
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+
+static RetainPtr<TestWKWebView> createReferenceSessionWebView(const HTTPServer& server, WKWebViewConfiguration *configuration)
+{
+    setFeatureEnabled(configuration, @"ApplePayReferenceSessionEnabled", true);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    [webView synchronouslyLoadRequestIgnoringSSLErrors:server.request()];
+    return webView;
+}
+
+TEST(ApplePay, ReferenceSessionPrepareRejectsWithoutWebBrowserEntitlement)
+{
+    HTTPServer server({ { "/"_s, { "<body></body>"_s } } }, HTTPServer::Protocol::Https);
+    RetainPtr webView = createReferenceSessionWebView(server, adoptNS([[WKWebViewConfiguration alloc] init]).get());
+
+    NSString *result = [webView objectByCallingAsyncFunction:@"try { await new ApplePayReferenceSession({ clientIdentifier: 'com.example.client' }).prepare(); return 'resolved'; } catch (e) { return `${e.name}: ${e.message}`; }" withArguments:nil];
+    EXPECT_WK_STREQ(result, "NotSupportedError: Reference sessions are not supported.");
+}
+
+#if ENABLE(IPC_TESTING_API)
+
+TEST(ApplePay, ReferenceSessionPrepareIsSentToNetworkProcess)
+{
+    HTTPServer server({ { "/"_s, { "<body></body>"_s } } }, HTTPServer::Protocol::Https);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+    RetainPtr webView = createReferenceSessionWebView(server, configuration.get());
+
+    NSString *result = [webView objectByCallingAsyncFunction:@"const sentTo = [];"
+        "for (const target of ['Networking', 'UI']) {"
+        "    IPC.addOutgoingMessageListener(target, message => {"
+        "        if (message.name === IPC.messages.WebPaymentCoordinatorProxy_PrepareReferenceSession.name)"
+        "            sentTo.push(target);"
+        "    });"
+        "}"
+        "await new ApplePayReferenceSession({ clientIdentifier: 'com.example.client' }).prepare().catch(() => { });"
+        // Outgoing message listeners are called asynchronously.
+        "await new Promise(resolve => setTimeout(resolve, 0));"
+        "return sentTo.join();" withArguments:nil];
+    EXPECT_WK_STREQ(result, "Networking");
+}
+
+TEST(ApplePay, ReferenceSessionPrepareWithEmptyClientIdentifierTerminatesWebProcess)
+{
+    HTTPServer server({ { "/"_s, { "<body></body>"_s } } }, HTTPServer::Protocol::Https);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+    setFeatureEnabled(configuration.get(), @"IgnoreInvalidMessageWhenIPCTestingAPIEnabled", false);
+    RetainPtr webView = createReferenceSessionWebView(server, configuration.get());
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    // Only IPC can carry an empty clientIdentifier, since the ApplePayReferenceSession constructor rejects one.
+    [webView evaluateJavaScript:@"IPC.connectionForProcessTarget('Networking').sendWithAsyncReply(0, IPC.messages.WebPaymentCoordinatorProxy_PrepareReferenceSession.name, [{ type: 'String', value: '' }, { type: 'bool', value: 1 }], () => { })" completionHandler:nil];
+    [navigationDelegate waitForWebContentProcessDidTerminate];
+}
+
+#endif // ENABLE(IPC_TESTING_API)
+
+#endif // ENABLE(APPLE_PAY_REFERENCE_SESSION)
 
 } // namespace TestWebKitAPI
 
