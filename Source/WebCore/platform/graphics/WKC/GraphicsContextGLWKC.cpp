@@ -18,6 +18,9 @@
 #include "GCGLSpan.h"
 #include "GraphicsContextGL.h"
 #include "NotImplemented.h"
+#if ENABLE(VIDEO)
+#include "VideoFrame.h"
+#endif
 #include "OpenGLToGX2Buffers.h"
 #include "OpenGLToGX2Driver.h"
 #include "OpenGLToGX2VertexArrays.h"
@@ -114,6 +117,7 @@ constexpr GCGLenum GL_DEPTH_STENCIL_ATTACHMENT_VALUE = 0x821A;
 constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_VALUE = 0x8CD0;
 constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_VALUE = 0x8CD1;
 constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE = 0x8CD2;
+constexpr GCGLenum GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE_VALUE = 0x8CD3;
 constexpr GCGLenum GL_TEXTURE_OBJECT_VALUE = 0x1702;
 constexpr GCGLenum GL_RENDERBUFFER_WIDTH_VALUE = 0x8D42;
 constexpr GCGLenum GL_RENDERBUFFER_HEIGHT_VALUE = 0x8D43;
@@ -175,6 +179,14 @@ constexpr GCGLenum GL_ACTIVE_TEXTURE_QUERY_VALUE = 0x84E0;
 constexpr GCGLenum GL_CURRENT_PROGRAM_VALUE = 0x8B8D;
 constexpr GCGLenum GL_VERTEX_ARRAY_BINDING_VALUE = 0x85B5;
 constexpr GCGLenum GL_TEXTURE_2D_VALUE = 0x0DE1;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_VALUE = 0x8513;
+constexpr GCGLenum GL_TEXTURE_BINDING_CUBE_MAP_VALUE = 0x8514;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE = 0x8515;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_X_VALUE = 0x8516;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_POSITIVE_Y_VALUE = 0x8517;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_VALUE = 0x8518;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_POSITIVE_Z_VALUE = 0x8519;
+constexpr GCGLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE = 0x851A;
 constexpr GCGLenum GL_TEXTURE_MIN_FILTER_VALUE = 0x2801;
 constexpr GCGLenum GL_TEXTURE_MAG_FILTER_VALUE = 0x2800;
 constexpr GCGLenum GL_TEXTURE_WRAP_S_VALUE = 0x2802;
@@ -596,7 +608,7 @@ public:
 
     void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint packAlignment, GCGLint packRowLength, GCGLboolean packReverseRowOrder) override;
 
-    void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) override { notImplemented(); }
+    void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) override;
 
     void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) override;
 
@@ -834,7 +846,8 @@ public:
 
     void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei> countsOffsetsAndInstanceCounts, GCGLenum type) override { notImplemented(); }
 
-    bool enableExtension(GCGLExtension) override { notImplemented(); return {}; }
+    bool supportsExtension(GCGLExtension) override;
+    bool enableExtension(GCGLExtension) override;
 
     CString getTranslatedShaderSourceANGLE(PlatformGLObject) override { notImplemented(); return {}; }
 
@@ -958,6 +971,11 @@ private:
         uint32_t height { 0 };
         std::vector<std::vector<uint8_t>> levels;
         std::vector<bool> definedLevels;
+        std::array<uint32_t, 6> cubeWidths {};
+        std::array<uint32_t, 6> cubeHeights {};
+        std::array<GCGLenum, 6> cubeInternalFormats {};
+        std::array<std::vector<std::vector<uint8_t>>, 6> cubeLevels;
+        std::array<std::vector<bool>, 6> cubeDefinedLevels;
         GX2Sampler sampler {};
         GCGLint minFilter { static_cast<GCGLint>(GL_NEAREST_MIPMAP_LINEAR_VALUE) };
         GCGLint magFilter { static_cast<GCGLint>(GL_LINEAR_VALUE) };
@@ -983,6 +1001,8 @@ private:
     struct FramebufferRecord {
         PlatformGLObject colorTexture { 0 };
         GCGLint colorTextureLevel { 0 };
+        uint32_t colorTextureFace { 0 };
+        bool colorTextureIsCubeFace { false };
         PlatformGLObject colorRenderbuffer { 0 };
         PlatformGLObject depthRenderbuffer { 0 };
         PlatformGLObject stencilRenderbuffer { 0 };
@@ -1044,13 +1064,16 @@ private:
     void detachFramebufferTexture(PlatformGLObject);
     void detachFramebufferRenderbuffer(PlatformGLObject);
     bool recreateTextureStorage(TextureRecord&);
-    bool uploadTextureLevel(TextureRecord&, uint32_t level);
+    bool uploadTextureLevel(TextureRecord&, uint32_t level, uint32_t face = 0);
+    bool cubeTextureBaseComplete(const TextureRecord&) const;
+    bool regenerateCubeMapMipmaps(TextureRecord&);
     bool convertTexturePixels(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height,
         std::span<const uint8_t> pixels, std::vector<uint8_t>& output) const;
     bool regenerateTextureMipmaps(TextureRecord&);
     void applyTextureSampler(TextureRecord&);
     bool applyProgramSamplers(ProgramRecord&);
     TextureRecord* boundTexture2D();
+    TextureRecord* boundTextureCubeMap();
     void releaseShaderIfUnused(PlatformGLObject);
     void addError(GCGLenum);
     void addDriverError(WKC::GLGX2::Result, const char*);
@@ -1076,7 +1099,9 @@ private:
     std::unordered_map<PlatformGLObject, RenderbufferRecord> m_renderbuffers;
     std::unordered_map<PlatformGLObject, bool> m_vertexArrayObjects;
     TextureRecord m_defaultTexture;
+    TextureRecord m_defaultCubeTexture;
     std::array<PlatformGLObject, 16> m_boundTextures2D {};
+    std::array<PlatformGLObject, 16> m_boundTexturesCube {};
     PlatformGLObject m_nextShader { 1 };
     PlatformGLObject m_nextProgram { 1 };
     PlatformGLObject m_nextTexture { 1 };
@@ -1092,9 +1117,8 @@ private:
     GCGLint m_unpackAlignment { 4 };
     GCGLint m_packAlignment { 4 };
     bool m_defaultTextureReady { false };
+    bool m_defaultCubeTextureReady { false };
     bool m_compilerAvailable { false };
-};
-
 };
 
 
@@ -1129,6 +1153,7 @@ GraphicsContextGLWKC::~GraphicsContextGLWKC()
     for (auto& entry : m_framebuffers)
         releaseRenderbufferStorage(entry.second.fallbackDepth);
     releaseTextureStorage(m_defaultTexture);
+    releaseTextureStorage(m_defaultCubeTexture);
 }
 
 PlatformGLObject GraphicsContextGLWKC::nextTextureName()
@@ -1340,10 +1365,25 @@ GCGLenum GraphicsContextGLWKC::framebufferStatus(PlatformGLObject name) const
     if (framebuffer.colorTexture) {
         auto texture = m_textures.find(framebuffer.colorTexture);
         if (texture == m_textures.end() || !texture->second.storageCreated
-            || !framebuffer.textureColorViewReady || framebuffer.colorTextureLevel != 0
+            || !framebuffer.textureColorViewReady || framebuffer.colorTextureLevel != 0)
+            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+
+        uint32_t width = texture->second.width;
+        uint32_t height = texture->second.height;
+        if (framebuffer.colorTextureIsCubeFace) {
+            const uint32_t face = framebuffer.colorTextureFace;
+            if (texture->second.target != GL_TEXTURE_CUBE_MAP_VALUE
+                || face >= texture->second.cubeLevels.size()
+                || texture->second.cubeDefinedLevels[face].empty()
+                || !texture->second.cubeDefinedLevels[face][0])
+                return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
+            width = texture->second.cubeWidths[face];
+            height = texture->second.cubeHeights[face];
+        } else if (texture->second.target != GL_TEXTURE_2D_VALUE
             || texture->second.definedLevels.empty() || !texture->second.definedLevels[0])
             return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_VALUE;
-        const auto status = adoptDimensions(texture->second.width, texture->second.height);
+
+        const auto status = adoptDimensions(width, height);
         if (status != GL_FRAMEBUFFER_COMPLETE_VALUE)
             return status;
         hasColor = true;
@@ -1399,19 +1439,47 @@ void GraphicsContextGLWKC::refreshFramebufferTextureViews()
             framebuffer.textureColorViewReady = false;
             continue;
         }
+
         auto texture = m_textures.find(framebuffer.colorTexture);
         if (texture == m_textures.end() || !texture->second.storageCreated
-            || framebuffer.colorTextureLevel != 0 || texture->second.definedLevels.empty()
-            || !texture->second.definedLevels[0]) {
+            || framebuffer.colorTextureLevel != 0) {
             framebuffer.textureColorView = {};
             framebuffer.textureColorViewReady = false;
             continue;
         }
+
+        const auto& textureRecord = texture->second;
+        uint32_t width = textureRecord.width;
+        uint32_t height = textureRecord.height;
+        if (framebuffer.colorTextureIsCubeFace) {
+            if (textureRecord.target != GL_TEXTURE_CUBE_MAP_VALUE
+                || framebuffer.colorTextureFace >= textureRecord.cubeLevels.size()
+                || textureRecord.cubeDefinedLevels[framebuffer.colorTextureFace].empty()
+                || !textureRecord.cubeDefinedLevels[framebuffer.colorTextureFace][0]) {
+                framebuffer.textureColorView = {};
+                framebuffer.textureColorViewReady = false;
+                continue;
+            }
+            width = textureRecord.cubeWidths[framebuffer.colorTextureFace];
+            height = textureRecord.cubeHeights[framebuffer.colorTextureFace];
+        } else if (textureRecord.target != GL_TEXTURE_2D_VALUE
+            || textureRecord.definedLevels.empty() || !textureRecord.definedLevels[0]) {
+            framebuffer.textureColorView = {};
+            framebuffer.textureColorViewReady = false;
+            continue;
+        }
+
+        if (!width || !height) {
+            framebuffer.textureColorView = {};
+            framebuffer.textureColorViewReady = false;
+            continue;
+        }
+
         auto& view = framebuffer.textureColorView;
         view = {};
-        view.surface = texture->second.native.surface;
+        view.surface = textureRecord.native.surface;
         view.viewMip = 0;
-        view.viewFirstSlice = 0;
+        view.viewFirstSlice = framebuffer.colorTextureIsCubeFace ? framebuffer.colorTextureFace : 0;
         view.viewNumSlices = 1;
         view.aaBuffer = nullptr;
         view.aaSize = 0;
@@ -1534,6 +1602,8 @@ void GraphicsContextGLWKC::detachFramebufferTexture(PlatformGLObject name)
             continue;
         framebuffer.colorTexture = 0;
         framebuffer.colorTextureLevel = 0;
+        framebuffer.colorTextureFace = 0;
+        framebuffer.colorTextureIsCubeFace = false;
         framebuffer.textureColorView = {};
         framebuffer.textureColorViewReady = false;
     }
@@ -1562,14 +1632,20 @@ void GraphicsContextGLWKC::releaseTextureStorage(TextureRecord& texture)
     texture.storageCreated = false;
 }
 
-bool GraphicsContextGLWKC::uploadTextureLevel(TextureRecord& texture, uint32_t level)
+bool GraphicsContextGLWKC::uploadTextureLevel(TextureRecord& texture, uint32_t level, uint32_t face)
 {
-    if (!texture.storageCreated || level >= texture.levels.size())
+    const bool cubeMap = texture.target == GL_TEXTURE_CUBE_MAP_VALUE;
+    if (!texture.storageCreated)
+        return false;
+    if (cubeMap) {
+        if (face >= texture.cubeLevels.size() || level >= texture.cubeLevels[face].size())
+            return false;
+    } else if (level >= texture.levels.size())
         return false;
 
     const uint32_t width = std::max<uint32_t>(1, texture.width >> level);
     const uint32_t height = std::max<uint32_t>(1, texture.height >> level);
-    const auto& source = texture.levels[level];
+    const auto& source = cubeMap ? texture.cubeLevels[face][level] : texture.levels[level];
     if (source.size() != static_cast<size_t>(width) * height * 4)
         return false;
 
@@ -1578,18 +1654,44 @@ bool GraphicsContextGLWKC::uploadTextureLevel(TextureRecord& texture, uint32_t l
     if (!locked)
         return false;
 
-    // Linear-aligned RGBA8 surfaces expose rows with an aligned texel pitch.
-    // GX2RLockSurfaceEx selects the requested mip level, so level-local rows
-    // can be filled without overwriting adjacent mip levels.
-    const uint32_t pitchPixels = std::max<uint32_t>(width, texture.native.surface.pitch >> level);
+    uint8_t* facePixels = static_cast<uint8_t*>(locked);
+    uint32_t pitchPixels = std::max<uint32_t>(width, texture.native.surface.pitch >> level);
+    if (cubeMap) {
+        // GX2 cube surfaces store six faces in each mip level. Calculate the
+        // padded size of one RGBA8 2D face using the same linear tile mode,
+        // then address the requested face within the locked mip-level slice.
+        GX2Surface faceSurface {};
+        faceSurface.dim = GX2_SURFACE_DIM_TEXTURE_2D;
+        faceSurface.width = width;
+        faceSurface.height = height;
+        faceSurface.depth = 1;
+        faceSurface.mipLevels = 1;
+        faceSurface.format = texture.native.surface.format;
+        faceSurface.aa = GX2_AA_MODE1X;
+        faceSurface.use = GX2_SURFACE_USE_TEXTURE;
+        faceSurface.tileMode = texture.native.surface.tileMode;
+        GX2CalcSurfaceSizeAndAlignment(&faceSurface);
+        const size_t faceStride = faceSurface.imageSize;
+        const size_t faceOffset = static_cast<size_t>(face) * faceStride;
+        const size_t allocatedBytes = level ? texture.native.surface.mipmapSize : texture.native.surface.imageSize;
+        if (!faceStride || faceSurface.pitch < width || faceOffset > allocatedBytes
+            || faceStride > allocatedBytes - faceOffset) {
+            GX2RUnlockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
+                static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+            return false;
+        }
+        facePixels += faceOffset;
+        pitchPixels = faceSurface.pitch;
+    }
     if (pitchPixels < width) {
         GX2RUnlockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
             static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
         return false;
     }
+
     const size_t destinationPitch = static_cast<size_t>(pitchPixels) * 4;
     for (uint32_t y = 0; y < height; ++y) {
-        std::memcpy(static_cast<uint8_t*>(locked) + static_cast<size_t>(y) * destinationPitch,
+        std::memcpy(facePixels + static_cast<size_t>(y) * destinationPitch,
             source.data() + static_cast<size_t>(y) * width * 4,
             static_cast<size_t>(width) * 4);
     }
@@ -1598,31 +1700,107 @@ bool GraphicsContextGLWKC::uploadTextureLevel(TextureRecord& texture, uint32_t l
     return true;
 }
 
+bool GraphicsContextGLWKC::cubeTextureBaseComplete(const TextureRecord& texture) const
+{
+    if (texture.target != GL_TEXTURE_CUBE_MAP_VALUE)
+        return false;
+
+    const uint32_t width = texture.cubeWidths[0];
+    const uint32_t height = texture.cubeHeights[0];
+    const GCGLenum format = texture.cubeInternalFormats[0];
+    if (!width || width != height || !format || texture.cubeDefinedLevels[0].empty()
+        || !texture.cubeDefinedLevels[0][0])
+        return false;
+
+    for (size_t face = 1; face < texture.cubeLevels.size(); ++face) {
+        if (texture.cubeWidths[face] != width || texture.cubeHeights[face] != height
+            || texture.cubeInternalFormats[face] != format || texture.cubeDefinedLevels[face].empty()
+            || !texture.cubeDefinedLevels[face][0])
+            return false;
+    }
+    return true;
+}
+
 bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
 {
-    if (!texture.width || !texture.height || texture.levels.empty()) {
-        releaseTextureStorage(texture);
-        return true;
+    // A texture can be the active framebuffer's color target. Flush and bind
+    // the default target before freeing/replacing its GX2 surface allocation.
+    bool wasBoundFramebufferTexture = false;
+    if (m_boundFramebuffer) {
+        auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        if (framebuffer != m_framebuffers.end() && framebuffer->second.colorTexture) {
+            auto attachedTexture = m_textures.find(framebuffer->second.colorTexture);
+            wasBoundFramebufferTexture = attachedTexture != m_textures.end()
+                && &attachedTexture->second == &texture;
+        }
     }
-    if (texture.levels.size() > 13 || texture.width > static_cast<uint32_t>(maxTextureSize())
-        || texture.height > static_cast<uint32_t>(maxTextureSize()))
-        return false;
-    uint32_t maximumLevelCount = 1;
-    for (uint32_t dimension = std::max(texture.width, texture.height); dimension > 1; dimension >>= 1)
-        ++maximumLevelCount;
-    if (texture.levels.size() > maximumLevelCount)
-        return false;
+    if (wasBoundFramebufferTexture) {
+        GX2DrawDone();
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
+    }
+
+    const bool cubeMap = texture.target == GL_TEXTURE_CUBE_MAP_VALUE;
+    if (cubeMap) {
+        if (!cubeTextureBaseComplete(texture)) {
+            releaseTextureStorage(texture);
+            texture.width = texture.height = 0;
+            if (wasBoundFramebufferTexture)
+                refreshFramebufferTextureViews();
+            return true;
+        }
+        texture.width = texture.cubeWidths[0];
+        texture.height = texture.cubeHeights[0];
+        texture.internalFormat = texture.cubeInternalFormats[0];
+        size_t levelCount = 1;
+        for (const auto& levels : texture.cubeLevels)
+            levelCount = std::max(levelCount, levels.size());
+        if (levelCount > 13 || texture.width > static_cast<uint32_t>(maxCubeMapTextureSize())
+            || texture.height > static_cast<uint32_t>(maxCubeMapTextureSize()))
+            return false;
+
+        for (size_t face = 0; face < texture.cubeLevels.size(); ++face) {
+            texture.cubeLevels[face].resize(levelCount);
+            texture.cubeDefinedLevels[face].resize(levelCount, false);
+            for (size_t level = 0; level < levelCount; ++level) {
+                const uint32_t levelWidth = std::max<uint32_t>(1, texture.width >> level);
+                const uint32_t levelHeight = std::max<uint32_t>(1, texture.height >> level);
+                const size_t expectedBytes = static_cast<size_t>(levelWidth) * levelHeight * 4;
+                if (texture.cubeLevels[face][level].size() != expectedBytes)
+                    texture.cubeLevels[face][level].assign(expectedBytes, 0);
+            }
+        }
+    } else {
+        if (!texture.width || !texture.height || texture.levels.empty()) {
+            releaseTextureStorage(texture);
+            if (wasBoundFramebufferTexture)
+                refreshFramebufferTextureViews();
+            return true;
+        }
+        if (texture.levels.size() > 13 || texture.width > static_cast<uint32_t>(maxTextureSize())
+            || texture.height > static_cast<uint32_t>(maxTextureSize()))
+            return false;
+
+        uint32_t maximumLevelCount = 1;
+        for (uint32_t dimension = std::max(texture.width, texture.height); dimension > 1; dimension >>= 1)
+            ++maximumLevelCount;
+        if (texture.levels.size() > maximumLevelCount)
+            return false;
+    }
 
     releaseTextureStorage(texture);
     texture.native = {};
     auto& surface = texture.native.surface;
-    surface.dim = GX2_SURFACE_DIM_TEXTURE_2D;
+    surface.dim = cubeMap ? GX2_SURFACE_DIM_TEXTURE_CUBE : GX2_SURFACE_DIM_TEXTURE_2D;
     surface.width = texture.width;
     surface.height = texture.height;
     surface.depth = 1;
-    surface.mipLevels = static_cast<uint32_t>(texture.levels.size());
+    surface.mipLevels = static_cast<uint32_t>(cubeMap ? texture.cubeLevels[0].size() : texture.levels.size());
     surface.format = GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8;
     surface.aa = GX2_AA_MODE1X;
+    // Texture images can also be attached as framebuffer color targets;
+    // keep the GX2 allocation and surface usage flags compatible with both uses.
     surface.use = static_cast<GX2SurfaceUse>(GX2_SURFACE_USE_TEXTURE | GX2_SURFACE_USE_COLOR_BUFFER);
     surface.tileMode = GX2_TILE_MODE_LINEAR_ALIGNED;
     GX2CalcSurfaceSizeAndAlignment(&surface);
@@ -1636,14 +1814,25 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
     texture.native.viewFirstMip = 0;
     texture.native.viewNumMips = surface.mipLevels;
     texture.native.viewFirstSlice = 0;
-    texture.native.viewNumSlices = 1;
+    texture.native.viewNumSlices = cubeMap ? 6 : 1;
     texture.native.compMap = GX2_COMP_MAP(GX2_SQ_SEL_X, GX2_SQ_SEL_Y, GX2_SQ_SEL_Z, GX2_SQ_SEL_W);
     texture.storageCreated = true;
 
-    for (uint32_t level = 0; level < texture.levels.size(); ++level) {
-        if (!uploadTextureLevel(texture, level)) {
-            releaseTextureStorage(texture);
-            return false;
+    if (cubeMap) {
+        for (uint32_t level = 0; level < surface.mipLevels; ++level) {
+            for (uint32_t face = 0; face < 6; ++face) {
+                if (!uploadTextureLevel(texture, level, face)) {
+                    releaseTextureStorage(texture);
+                    return false;
+                }
+            }
+        }
+    } else {
+        for (uint32_t level = 0; level < texture.levels.size(); ++level) {
+            if (!uploadTextureLevel(texture, level)) {
+                releaseTextureStorage(texture);
+                return false;
+            }
         }
     }
     GX2InitTextureRegs(&texture.native);
@@ -1782,6 +1971,297 @@ bool GraphicsContextGLWKC::convertTexturePixels(GCGLenum format, GCGLenum type,
     return true;
 }
 
+bool GraphicsContextGLWKC::readPixelsInto(IntRect rect, GCGLenum format, GCGLenum type,
+    std::span<uint8_t> output, GCGLint packAlignment, GCGLint packRowLength,
+    GCGLboolean packReverseRowOrder)
+{
+    if ((format != GL_RGBA_VALUE && format != GL_RGB_VALUE) || type != GL_UNSIGNED_BYTE_VALUE)
+        return false;
+    if (packAlignment != 1 && packAlignment != 2 && packAlignment != 4 && packAlignment != 8)
+        return false;
+    if (packRowLength < 0 || (packRowLength && packRowLength < rect.width()))
+        return false;
+    if (rect.width() < 0 || rect.height() < 0)
+        return false;
+
+    const size_t width = static_cast<size_t>(rect.width());
+    const size_t height = static_cast<size_t>(rect.height());
+    const size_t components = format == GL_RGBA_VALUE ? 4 : 3;
+    const size_t rowPixels = packRowLength ? static_cast<size_t>(packRowLength) : width;
+    if (rowPixels && rowPixels > std::numeric_limits<size_t>::max() / components)
+        return false;
+    const size_t rowBytes = rowPixels * components;
+    const size_t alignment = static_cast<size_t>(packAlignment);
+    if (rowBytes > std::numeric_limits<size_t>::max() - (alignment - 1))
+        return false;
+    const size_t rowStride = (rowBytes + alignment - 1) & ~(alignment - 1);
+    if (height && rowStride && height - 1 > (std::numeric_limits<size_t>::max() - rowBytes) / rowStride)
+        return false;
+    const size_t requiredBytes = height ? (height - 1) * rowStride + width * components : 0;
+    if (output.size() < requiredBytes)
+        return false;
+    std::fill(output.begin(), output.end(), 0);
+    if (!width || !height)
+        return true;
+
+    const GX2ColorBuffer* colorBuffer = m_native.colorBuffer;
+    if (!colorBuffer || !colorBuffer->surface.image || !colorBuffer->surface.width
+        || !colorBuffer->surface.height)
+        return true;
+
+    const auto& source = colorBuffer->surface;
+    GX2Surface staging {};
+    staging.dim = GX2_SURFACE_DIM_TEXTURE_2D;
+    staging.width = source.width;
+    staging.height = source.height;
+    staging.depth = 1;
+    staging.mipLevels = 1;
+    staging.format = source.format;
+    staging.aa = GX2_AA_MODE1X;
+    staging.use = GX2_SURFACE_USE_TEXTURE;
+    staging.tileMode = GX2_TILE_MODE_LINEAR_ALIGNED;
+    GX2CalcSurfaceSizeAndAlignment(&staging);
+    const auto stagingFlags = static_cast<GX2RResourceFlags>(
+        GX2R_RESOURCE_BIND_TEXTURE | GX2R_RESOURCE_USAGE_CPU_READ | GX2R_RESOURCE_USAGE_GPU_WRITE);
+    if (!staging.imageSize || !staging.alignment || !GX2RCreateSurface(&staging, stagingFlags))
+        return false;
+
+    GX2DrawDone();
+    GX2CopySurface(&source, 0, 0, &staging, 0, 0);
+    GX2DrawDone();
+    DCInvalidateRange(staging.image, staging.imageSize);
+
+    const uint32_t bytesPerPixel = [&]() -> uint32_t {
+        switch (source.format) {
+        case GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8: return 4;
+        case GX2_SURFACE_FORMAT_UNORM_R4_G4_B4_A4:
+        case GX2_SURFACE_FORMAT_UNORM_R5_G5_B5_A1:
+        case GX2_SURFACE_FORMAT_UNORM_R5_G6_B5: return 2;
+        default: return 0;
+        }
+    }();
+
+    bool validFormat = bytesPerPixel != 0;
+    if (validFormat) {
+        for (size_t row = 0; row < height; ++row) {
+            const int32_t sourceY = static_cast<int32_t>(source.height) - 1 - (rect.y() + static_cast<int32_t>(row));
+            if (sourceY < 0 || sourceY >= static_cast<int32_t>(source.height))
+                continue;
+            const size_t destinationRow = packReverseRowOrder ? height - 1 - row : row;
+            uint8_t* destination = output.data() + destinationRow * rowStride;
+            for (size_t column = 0; column < width; ++column) {
+                const int32_t sourceX = rect.x() + static_cast<int32_t>(column);
+                if (sourceX < 0 || sourceX >= static_cast<int32_t>(source.width))
+                    continue;
+                const size_t sourceOffset = (static_cast<size_t>(sourceY) * staging.pitch
+                    + static_cast<size_t>(sourceX)) * bytesPerPixel;
+                uint8_t rgba[4] { 0, 0, 0, 255 };
+                if (sourceOffset + bytesPerPixel > staging.imageSize) {
+                    validFormat = false;
+                    break;
+                }
+                if (source.format == GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8) {
+                    std::memcpy(rgba, static_cast<const uint8_t*>(staging.image) + sourceOffset, 4);
+                } else {
+                    uint16_t packed = 0;
+                    std::memcpy(&packed, static_cast<const uint8_t*>(staging.image) + sourceOffset, sizeof(packed));
+                    auto expand = [](uint32_t value, uint32_t maxValue) -> uint8_t {
+                        return static_cast<uint8_t>((value * 255U + maxValue / 2U) / maxValue);
+                    };
+                    if (source.format == GX2_SURFACE_FORMAT_UNORM_R4_G4_B4_A4) {
+                        rgba[0] = expand((packed >> 12) & 0x0f, 0x0f);
+                        rgba[1] = expand((packed >> 8) & 0x0f, 0x0f);
+                        rgba[2] = expand((packed >> 4) & 0x0f, 0x0f);
+                        rgba[3] = expand(packed & 0x0f, 0x0f);
+                    } else if (source.format == GX2_SURFACE_FORMAT_UNORM_R5_G5_B5_A1) {
+                        rgba[0] = expand((packed >> 11) & 0x1f, 0x1f);
+                        rgba[1] = expand((packed >> 6) & 0x1f, 0x1f);
+                        rgba[2] = expand((packed >> 1) & 0x1f, 0x1f);
+                        rgba[3] = (packed & 1) ? 255 : 0;
+                    } else {
+                        rgba[0] = expand((packed >> 11) & 0x1f, 0x1f);
+                        rgba[1] = expand((packed >> 5) & 0x3f, 0x3f);
+                        rgba[2] = expand(packed & 0x1f, 0x1f);
+                    }
+                }
+                uint8_t* pixel = destination + column * components;
+                std::memcpy(pixel, rgba, components);
+            }
+            if (!validFormat)
+                break;
+        }
+    }
+    GX2RDestroySurfaceEx(&staging, stagingFlags);
+    return validFormat;
+}
+
+void GraphicsContextGLWKC::readPixels(IntRect rect, GCGLenum format, GCGLenum type,
+    std::span<uint8_t> data, GCGLint packAlignment, GCGLint packRowLength,
+    GCGLboolean packReverseRowOrder)
+{
+    if (format != GL_RGBA_VALUE && format != GL_RGB_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (type != GL_UNSIGNED_BYTE_VALUE) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (packAlignment != 1 && packAlignment != 2 && packAlignment != 4 && packAlignment != 8) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    if (packRowLength < 0 || (packRowLength && packRowLength < rect.width())) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    if (!readPixelsInto(rect, format, type, data, packAlignment, packRowLength, packReverseRowOrder))
+        addError(GL_INVALID_OPERATION_VALUE);
+}
+
+void GraphicsContextGLWKC::readPixelsBufferObject(IntRect rect, GCGLenum format, GCGLenum type,
+    GCGLintptr offset, GCGLint alignment, GCGLint rowLength)
+{
+    UNUSED_PARAM(rect);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(alignment);
+    UNUSED_PARAM(rowLength);
+    // The WKC factory deliberately exposes WebGL 1 only; pixel-pack buffers
+    // are a WebGL 2 feature and are never enabled for this context.
+    addError(GL_INVALID_OPERATION_VALUE);
+}
+
+void GraphicsContextGLWKC::copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalFormat,
+    GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border)
+{
+    const bool is2D = target == GL_TEXTURE_2D_VALUE;
+    const bool isCubeFace = target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE
+        && target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE;
+    if ((!is2D && !isCubeFace) || (internalFormat != GL_RGB_VALUE && internalFormat != GL_RGBA_VALUE)) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    const GCGLint maximumTextureSize = isCubeFace ? maxCubeMapTextureSize() : maxTextureSize();
+    if (level < 0 || level >= 13 || width < 0 || height < 0 || border
+        || width > maximumTextureSize || height > maximumTextureSize) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    TextureRecord* texture = is2D ? boundTexture2D() : boundTextureCubeMap();
+    if (!texture) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+
+    if (m_boundFramebuffer) {
+        auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        const PlatformGLObject boundTexture = is2D
+            ? m_boundTextures2D[m_activeTextureUnit] : m_boundTexturesCube[m_activeTextureUnit];
+        if (framebuffer != m_framebuffers.end() && framebuffer->second.colorTexture
+            && framebuffer->second.colorTexture == boundTexture
+            && (is2D || (framebuffer->second.colorTextureIsCubeFace
+                && framebuffer->second.colorTextureFace == target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE))) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+    }
+
+    std::vector<uint8_t> rgba(static_cast<size_t>(width) * height * 4, 0);
+    if (!readPixelsInto(IntRect(x, y, width, height), GL_RGBA_VALUE, GL_UNSIGNED_BYTE_VALUE,
+            rgba, 4, 0, false)) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    if (internalFormat == GL_RGBA_VALUE) {
+        texImage2D(target, level, internalFormat, width, height, border, GL_RGBA_VALUE, GL_UNSIGNED_BYTE_VALUE, rgba);
+        return;
+    }
+    std::vector<uint8_t> rgb(static_cast<size_t>(width) * height * 3, 0);
+    for (size_t i = 0, pixels = static_cast<size_t>(width) * height; i < pixels; ++i)
+        std::memcpy(rgb.data() + i * 3, rgba.data() + i * 4, 3);
+    texImage2D(target, level, internalFormat, width, height, border, GL_RGB_VALUE, GL_UNSIGNED_BYTE_VALUE, rgb);
+}
+
+void GraphicsContextGLWKC::copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset,
+    GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
+{
+    const bool is2D = target == GL_TEXTURE_2D_VALUE;
+    const bool isCubeFace = target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE
+        && target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE;
+    if (!is2D && !isCubeFace) {
+        addError(GL_INVALID_ENUM_VALUE);
+        return;
+    }
+    if (level < 0 || level >= 13 || xoffset < 0 || yoffset < 0 || width < 0 || height < 0) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    TextureRecord* texture = is2D ? boundTexture2D() : boundTextureCubeMap();
+    if (!texture) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+
+    const uint32_t face = isCubeFace ? target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE : 0;
+    uint32_t baseWidth = texture->width;
+    uint32_t baseHeight = texture->height;
+    GCGLenum internalFormat = texture->internalFormat;
+    bool levelDefined = texture->storageCreated && static_cast<size_t>(level) < texture->definedLevels.size()
+        && texture->definedLevels[level];
+    if (isCubeFace) {
+        baseWidth = texture->cubeWidths[face];
+        baseHeight = texture->cubeHeights[face];
+        internalFormat = texture->cubeInternalFormats[face];
+        levelDefined = static_cast<size_t>(level) < texture->cubeDefinedLevels[face].size()
+            && texture->cubeDefinedLevels[face][level];
+    }
+    if (!baseWidth || !baseHeight || !levelDefined) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+
+    if (m_boundFramebuffer) {
+        auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
+        if (framebuffer != m_framebuffers.end() && framebuffer->second.colorTexture
+            && framebuffer->second.colorTexture == (is2D ? m_boundTextures2D[m_activeTextureUnit] : m_boundTexturesCube[m_activeTextureUnit])
+            && (!isCubeFace || (framebuffer->second.colorTextureIsCubeFace
+                && framebuffer->second.colorTextureFace == face))) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+    }
+
+    const uint32_t levelWidth = std::max<uint32_t>(1, baseWidth >> level);
+    const uint32_t levelHeight = std::max<uint32_t>(1, baseHeight >> level);
+    if (static_cast<uint32_t>(xoffset) > levelWidth || static_cast<uint32_t>(yoffset) > levelHeight
+        || static_cast<uint32_t>(width) > levelWidth - static_cast<uint32_t>(xoffset)
+        || static_cast<uint32_t>(height) > levelHeight - static_cast<uint32_t>(yoffset)) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return;
+    }
+    if (!width || !height)
+        return;
+
+    std::vector<uint8_t> rgba(static_cast<size_t>(width) * height * 4, 0);
+    if (!readPixelsInto(IntRect(x, y, width, height), GL_RGBA_VALUE, GL_UNSIGNED_BYTE_VALUE,
+            rgba, 4, 0, false)) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+    const GCGLenum format = internalFormat == GL_RGB_VALUE ? GL_RGB_VALUE : GL_RGBA_VALUE;
+    std::vector<uint8_t> pixels;
+    std::span<const uint8_t> source = rgba;
+    if (format == GL_RGB_VALUE) {
+        pixels.resize(static_cast<size_t>(width) * height * 3);
+        for (size_t i = 0, count = static_cast<size_t>(width) * height; i < count; ++i)
+            std::memcpy(pixels.data() + i * 3, rgba.data() + i * 4, 3);
+        source = pixels;
+    }
+    texSubImage2D(target, level, xoffset, yoffset, width, height, format, GL_UNSIGNED_BYTE_VALUE, source);
+}
+
 void GraphicsContextGLWKC::applyTextureSampler(TextureRecord& texture)
 {
     auto translateWrap = [](GCGLint wrap, GX2TexClampMode& output) {
@@ -1833,6 +2313,17 @@ GraphicsContextGLWKC::TextureRecord* GraphicsContextGLWKC::boundTexture2D()
     return &it->second;
 }
 
+GraphicsContextGLWKC::TextureRecord* GraphicsContextGLWKC::boundTextureCubeMap()
+{
+    if (m_activeTextureUnit >= m_boundTexturesCube.size())
+        return nullptr;
+    auto name = m_boundTexturesCube[m_activeTextureUnit];
+    auto it = m_textures.find(name);
+    if (!name || it == m_textures.end() || it->second.target != GL_TEXTURE_CUBE_MAP_VALUE)
+        return nullptr;
+    return &it->second;
+}
+
 bool GraphicsContextGLWKC::regenerateTextureMipmaps(TextureRecord& texture)
 {
     if (!texture.width || !texture.height || texture.levels.empty() || !texture.definedLevels[0])
@@ -1878,9 +2369,58 @@ bool GraphicsContextGLWKC::regenerateTextureMipmaps(TextureRecord& texture)
     return recreateTextureStorage(texture);
 }
 
+bool GraphicsContextGLWKC::regenerateCubeMapMipmaps(TextureRecord& texture)
+{
+    if (!cubeTextureBaseComplete(texture))
+        return false;
+
+    for (size_t face = 0; face < texture.cubeLevels.size(); ++face) {
+        const auto base = texture.cubeLevels[face][0];
+        auto& levels = texture.cubeLevels[face];
+        auto& defined = texture.cubeDefinedLevels[face];
+        levels.clear();
+        defined.clear();
+        levels.push_back(base);
+        defined.push_back(true);
+
+        uint32_t sourceWidth = texture.cubeWidths[face];
+        uint32_t sourceHeight = texture.cubeHeights[face];
+        while (sourceWidth > 1 || sourceHeight > 1) {
+            const uint32_t destinationWidth = std::max<uint32_t>(1, sourceWidth / 2);
+            const uint32_t destinationHeight = std::max<uint32_t>(1, sourceHeight / 2);
+            std::vector<uint8_t> destination(static_cast<size_t>(destinationWidth) * destinationHeight * 4, 0);
+            const auto& source = levels.back();
+            for (uint32_t y = 0; y < destinationHeight; ++y) {
+                for (uint32_t x = 0; x < destinationWidth; ++x) {
+                    uint32_t sums[4] { 0, 0, 0, 0 };
+                    uint32_t sampleCount = 0;
+                    for (uint32_t dy = 0; dy < 2; ++dy) {
+                        const uint32_t sy = std::min(sourceHeight - 1, y * 2 + dy);
+                        for (uint32_t dx = 0; dx < 2; ++dx) {
+                            const uint32_t sx = std::min(sourceWidth - 1, x * 2 + dx);
+                            const size_t offset = (static_cast<size_t>(sy) * sourceWidth + sx) * 4;
+                            for (unsigned component = 0; component < 4; ++component)
+                                sums[component] += source[offset + component];
+                            ++sampleCount;
+                        }
+                    }
+                    const size_t outputOffset = (static_cast<size_t>(y) * destinationWidth + x) * 4;
+                    for (unsigned component = 0; component < 4; ++component)
+                        destination[outputOffset + component] = static_cast<uint8_t>(sums[component] / sampleCount);
+                }
+            }
+            levels.push_back(std::move(destination));
+            defined.push_back(true);
+            sourceWidth = destinationWidth;
+            sourceHeight = destinationHeight;
+        }
+    }
+    return recreateTextureStorage(texture);
+}
+
 bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
 {
-    if (!m_defaultTextureReady)
+    if (!m_defaultTextureReady || !m_defaultCubeTextureReady)
         return false;
 
     for (const auto& uniform : program.uniforms) {
@@ -1892,32 +2432,58 @@ bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
             if (unit < 0 || unit >= static_cast<GCGLint>(m_boundTextures2D.size()))
                 return false;
 
-            TextureRecord* texture = nullptr;
-            auto name = m_boundTextures2D[unit];
+            const bool cubeSampler = uniform.type == GL_SAMPLER_CUBE_VALUE;
+            const PlatformGLObject name = cubeSampler ? m_boundTexturesCube[unit] : m_boundTextures2D[unit];
             auto found = m_textures.find(name);
-            if (uniform.type == GL_SAMPLER_2D_VALUE && name && found != m_textures.end() && found->second.storageCreated
+            TextureRecord* texture = nullptr;
+
+            if (!cubeSampler && name && found != m_textures.end()
+                && found->second.target == GL_TEXTURE_2D_VALUE && found->second.storageCreated
                 && !found->second.levels.empty() && !found->second.definedLevels.empty()
-                && found->second.definedLevels[0] && found->second.target == GL_TEXTURE_2D_VALUE) {
-                const bool needsMipmaps = uniform.type == GL_SAMPLER_2D_VALUE
-                    && (found->second.minFilter == GL_NEAREST_MIPMAP_NEAREST_VALUE
-                        || found->second.minFilter == GL_LINEAR_MIPMAP_NEAREST_VALUE
-                        || found->second.minFilter == GL_NEAREST_MIPMAP_LINEAR_VALUE
-                        || found->second.minFilter == GL_LINEAR_MIPMAP_LINEAR_VALUE);
+                && found->second.definedLevels[0]) {
+                const auto& candidate = found->second;
+                const bool needsMipmaps = candidate.minFilter == GL_NEAREST_MIPMAP_NEAREST_VALUE
+                    || candidate.minFilter == GL_LINEAR_MIPMAP_NEAREST_VALUE
+                    || candidate.minFilter == GL_NEAREST_MIPMAP_LINEAR_VALUE
+                    || candidate.minFilter == GL_LINEAR_MIPMAP_LINEAR_VALUE;
                 bool complete = true;
                 if (needsMipmaps) {
-                    for (bool defined : found->second.definedLevels)
+                    for (bool defined : candidate.definedLevels)
                         complete &= defined;
                     uint32_t expectedLevels = 1;
-                    for (uint32_t dimension = std::max(found->second.width, found->second.height);
+                    for (uint32_t dimension = std::max(candidate.width, candidate.height);
                          dimension > 1; dimension >>= 1)
                         ++expectedLevels;
-                    complete &= found->second.levels.size() == expectedLevels;
+                    complete &= candidate.levels.size() == expectedLevels;
+                }
+                if (complete)
+                    texture = &found->second;
+            } else if (cubeSampler && name && found != m_textures.end()
+                && found->second.target == GL_TEXTURE_CUBE_MAP_VALUE && found->second.storageCreated
+                && cubeTextureBaseComplete(found->second)) {
+                const auto& candidate = found->second;
+                const bool needsMipmaps = candidate.minFilter == GL_NEAREST_MIPMAP_NEAREST_VALUE
+                    || candidate.minFilter == GL_LINEAR_MIPMAP_NEAREST_VALUE
+                    || candidate.minFilter == GL_NEAREST_MIPMAP_LINEAR_VALUE
+                    || candidate.minFilter == GL_LINEAR_MIPMAP_LINEAR_VALUE;
+                bool complete = true;
+                if (needsMipmaps) {
+                    uint32_t expectedLevels = 1;
+                    for (uint32_t dimension = candidate.width; dimension > 1; dimension >>= 1)
+                        ++expectedLevels;
+                    for (size_t face = 0; face < candidate.cubeDefinedLevels.size(); ++face) {
+                        complete &= candidate.cubeLevels[face].size() == expectedLevels;
+                        complete &= candidate.cubeDefinedLevels[face].size() == expectedLevels;
+                        for (bool defined : candidate.cubeDefinedLevels[face])
+                            complete &= defined;
+                    }
                 }
                 if (complete)
                     texture = &found->second;
             }
+
             if (!texture)
-                texture = &m_defaultTexture;
+                texture = cubeSampler ? &m_defaultCubeTexture : &m_defaultTexture;
 
             applyTextureSampler(*texture);
             if (binding.vertexSamplerVar) {
@@ -1943,10 +2509,24 @@ bool GraphicsContextGLWKC::initialize()
     m_defaultTexture.target = GL_TEXTURE_2D_VALUE;
     m_defaultTexture.width = 1;
     m_defaultTexture.height = 1;
+    m_defaultTexture.internalFormat = GL_RGBA_VALUE;
     m_defaultTexture.levels = { std::vector<uint8_t> { 0, 0, 0, 255 } };
     m_defaultTexture.definedLevels = { true };
     m_defaultTextureReady = recreateTextureStorage(m_defaultTexture);
-    return m_defaultTextureReady;
+
+    m_defaultCubeTexture.target = GL_TEXTURE_CUBE_MAP_VALUE;
+    m_defaultCubeTexture.cubeWidths.fill(1);
+    m_defaultCubeTexture.cubeHeights.fill(1);
+    m_defaultCubeTexture.cubeInternalFormats.fill(GL_RGBA_VALUE);
+    for (size_t face = 0; face < m_defaultCubeTexture.cubeLevels.size(); ++face) {
+        m_defaultCubeTexture.cubeLevels[face] = { std::vector<uint8_t> { 0, 0, 0, 255 } };
+        m_defaultCubeTexture.cubeDefinedLevels[face] = { true };
+    }
+    m_defaultCubeTexture.minFilter = GL_LINEAR_VALUE;
+    m_defaultCubeTexture.wrapS = GL_CLAMP_TO_EDGE_VALUE;
+    m_defaultCubeTexture.wrapT = GL_CLAMP_TO_EDGE_VALUE;
+    m_defaultCubeTextureReady = recreateTextureStorage(m_defaultCubeTexture);
+    return m_defaultTextureReady && m_defaultCubeTextureReady;
 }
 
 PlatformGLObject GraphicsContextGLWKC::nextShaderName()
@@ -2256,6 +2836,10 @@ void GraphicsContextGLWKC::deleteTexture(PlatformGLObject name)
         if (bound == name)
             bound = 0;
     }
+    for (auto& bound : m_boundTexturesCube) {
+        if (bound == name)
+            bound = 0;
+    }
     refreshFramebufferTarget();
 }
 
@@ -2267,7 +2851,7 @@ GCGLboolean GraphicsContextGLWKC::isTexture(PlatformGLObject name)
 
 void GraphicsContextGLWKC::bindTexture(GCGLenum target, PlatformGLObject name)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    if (target != GL_TEXTURE_2D_VALUE && target != GL_TEXTURE_CUBE_MAP_VALUE) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
@@ -2275,8 +2859,9 @@ void GraphicsContextGLWKC::bindTexture(GCGLenum target, PlatformGLObject name)
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
+    auto& bindings = target == GL_TEXTURE_2D_VALUE ? m_boundTextures2D : m_boundTexturesCube;
     if (!name) {
-        m_boundTextures2D[m_activeTextureUnit] = 0;
+        bindings[m_activeTextureUnit] = 0;
         return;
     }
     auto it = m_textures.find(name);
@@ -2289,17 +2874,17 @@ void GraphicsContextGLWKC::bindTexture(GCGLenum target, PlatformGLObject name)
         return;
     }
     it->second.target = target;
-    m_boundTextures2D[m_activeTextureUnit] = name;
+    bindings[m_activeTextureUnit] = name;
     applyTextureSampler(it->second);
 }
 
 GCGLint GraphicsContextGLWKC::getTexParameteri(GCGLenum target, GCGLenum pname)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    if (target != GL_TEXTURE_2D_VALUE && target != GL_TEXTURE_CUBE_MAP_VALUE) {
         addError(GL_INVALID_ENUM_VALUE);
         return 0;
     }
-    auto* texture = boundTexture2D();
+    auto* texture = target == GL_TEXTURE_2D_VALUE ? boundTexture2D() : boundTextureCubeMap();
     if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
         return 0;
@@ -2322,11 +2907,11 @@ GCGLfloat GraphicsContextGLWKC::getTexParameterf(GCGLenum target, GCGLenum pname
 
 void GraphicsContextGLWKC::texParameteri(GCGLenum target, GCGLenum pname, GCGLint param)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    if (target != GL_TEXTURE_2D_VALUE && target != GL_TEXTURE_CUBE_MAP_VALUE) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
-    auto* texture = boundTexture2D();
+    auto* texture = target == GL_TEXTURE_2D_VALUE ? boundTexture2D() : boundTextureCubeMap();
     if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
@@ -2402,12 +2987,17 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
     GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type,
     std::span<const uint8_t> pixels)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    const bool is2D = target == GL_TEXTURE_2D_VALUE;
+    const bool isCubeFace = target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE
+        && target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE;
+    if (!is2D && !isCubeFace) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
+
+    const GCGLint maximumTextureSize = isCubeFace ? maxCubeMapTextureSize() : maxTextureSize();
     if (level < 0 || level >= 13 || width < 0 || height < 0
-        || width > maxTextureSize() || height > maxTextureSize() || border) {
+        || width > maximumTextureSize || height > maximumTextureSize || border) {
         addError(GL_INVALID_VALUE_VALUE);
         return;
     }
@@ -2415,28 +3005,72 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
-    auto* texture = boundTexture2D();
+
+    TextureRecord* texture = is2D ? boundTexture2D() : boundTextureCubeMap();
     if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
+
     if (!width || !height) {
         if (level != 0) {
             addError(GL_INVALID_VALUE_VALUE);
             return;
         }
-        releaseTextureStorage(*texture);
-        texture->width = texture->height = 0;
-        texture->levels.clear();
-        texture->definedLevels.clear();
+        if (is2D) {
+            texture->width = texture->height = 0;
+            texture->internalFormat = internalformat;
+            texture->levels.clear();
+            texture->definedLevels.clear();
+            if (!recreateTextureStorage(*texture))
+                addError(GL_OUT_OF_MEMORY_VALUE);
+        } else {
+            const uint32_t face = target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE;
+            texture->cubeWidths[face] = texture->cubeHeights[face] = 0;
+            texture->cubeInternalFormats[face] = internalformat;
+            texture->cubeLevels[face].clear();
+            texture->cubeDefinedLevels[face].clear();
+            if (!recreateTextureStorage(*texture))
+                addError(GL_OUT_OF_MEMORY_VALUE);
+        }
         return;
     }
-    if (level && (!texture->width || !texture->height)) {
-        addError(GL_INVALID_OPERATION_VALUE);
+
+    if (isCubeFace && width != height) {
+        addError(GL_INVALID_VALUE_VALUE);
         return;
     }
-    const uint32_t baseWidth = level ? texture->width : static_cast<uint32_t>(width);
-    const uint32_t baseHeight = level ? texture->height : static_cast<uint32_t>(height);
+
+    const uint32_t face = isCubeFace ? target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE : 0;
+    uint32_t baseWidth = static_cast<uint32_t>(width);
+    uint32_t baseHeight = static_cast<uint32_t>(height);
+    GCGLenum baseFormat = internalformat;
+    if (is2D) {
+        if (level && (!texture->width || !texture->height)) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        if (level) {
+            baseWidth = texture->width;
+            baseHeight = texture->height;
+            baseFormat = texture->internalFormat;
+        }
+    } else {
+        if (level && (!texture->cubeWidths[face] || !texture->cubeHeights[face])) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        if (level) {
+            baseWidth = texture->cubeWidths[face];
+            baseHeight = texture->cubeHeights[face];
+            baseFormat = texture->cubeInternalFormats[face];
+            if (internalformat != baseFormat) {
+                addError(GL_INVALID_OPERATION_VALUE);
+                return;
+            }
+        }
+    }
+
     uint32_t maxMipLevels = 1;
     for (uint32_t dimension = std::max(baseWidth, baseHeight); dimension > 1; dimension >>= 1)
         ++maxMipLevels;
@@ -2444,8 +3078,8 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
         addError(GL_INVALID_VALUE_VALUE);
         return;
     }
-    const uint32_t expectedWidth = level ? std::max<uint32_t>(1, texture->width >> level) : static_cast<uint32_t>(width);
-    const uint32_t expectedHeight = level ? std::max<uint32_t>(1, texture->height >> level) : static_cast<uint32_t>(height);
+    const uint32_t expectedWidth = level ? std::max<uint32_t>(1, baseWidth >> level) : static_cast<uint32_t>(width);
+    const uint32_t expectedHeight = level ? std::max<uint32_t>(1, baseHeight >> level) : static_cast<uint32_t>(height);
     if (static_cast<uint32_t>(width) != expectedWidth || static_cast<uint32_t>(height) != expectedHeight) {
         addError(GL_INVALID_VALUE_VALUE);
         return;
@@ -2453,30 +3087,64 @@ void GraphicsContextGLWKC::texImage2D(GCGLenum target, GCGLint level, GCGLenum i
 
     std::vector<uint8_t> converted;
     if (!convertTexturePixels(format, type, width, height, pixels, converted)) {
-        addError(type != GL_UNSIGNED_BYTE_VALUE ? GL_INVALID_ENUM_VALUE : GL_INVALID_VALUE_VALUE);
+        addError(type != GL_UNSIGNED_BYTE_VALUE
+            && type != GL_UNSIGNED_SHORT_5_6_5_VALUE
+            && type != GL_UNSIGNED_SHORT_4_4_4_4_VALUE
+            && type != GL_UNSIGNED_SHORT_5_5_5_1_VALUE
+                ? GL_INVALID_ENUM_VALUE : GL_INVALID_VALUE_VALUE);
         return;
     }
-    if (!level) {
-        releaseTextureStorage(*texture);
-        texture->width = static_cast<uint32_t>(width);
-        texture->height = static_cast<uint32_t>(height);
-        texture->levels.clear();
-        texture->definedLevels.clear();
+
+    if (is2D) {
+        if (!level) {
+            texture->width = static_cast<uint32_t>(width);
+            texture->height = static_cast<uint32_t>(height);
+            texture->internalFormat = internalformat;
+            texture->levels.clear();
+            texture->definedLevels.clear();
+        }
+
+        const size_t levelCount = static_cast<size_t>(level) + 1;
+        if (texture->levels.size() < levelCount) {
+            texture->levels.resize(levelCount);
+            texture->definedLevels.resize(levelCount, false);
+        }
+        for (size_t mip = 0; mip < texture->levels.size(); ++mip) {
+            const uint32_t mipWidth = std::max<uint32_t>(1, texture->width >> mip);
+            const uint32_t mipHeight = std::max<uint32_t>(1, texture->height >> mip);
+            const size_t expectedBytes = static_cast<size_t>(mipWidth) * mipHeight * 4;
+            if (texture->levels[mip].size() != expectedBytes)
+                texture->levels[mip].assign(expectedBytes, 0);
+        }
+        texture->levels[level] = std::move(converted);
+        texture->definedLevels[level] = true;
+    } else {
+        auto& levels = texture->cubeLevels[face];
+        auto& definedLevels = texture->cubeDefinedLevels[face];
+        if (!level) {
+            texture->cubeWidths[face] = static_cast<uint32_t>(width);
+            texture->cubeHeights[face] = static_cast<uint32_t>(height);
+            texture->cubeInternalFormats[face] = internalformat;
+            levels.clear();
+            definedLevels.clear();
+        }
+
+        const size_t levelCount = static_cast<size_t>(level) + 1;
+        if (levels.size() < levelCount) {
+            levels.resize(levelCount);
+            definedLevels.resize(levelCount, false);
+        }
+        for (size_t mip = 0; mip < levels.size(); ++mip) {
+            const uint32_t mipWidth = std::max<uint32_t>(1, texture->cubeWidths[face] >> mip);
+            const uint32_t mipHeight = std::max<uint32_t>(1, texture->cubeHeights[face] >> mip);
+            const size_t expectedBytes = static_cast<size_t>(mipWidth) * mipHeight * 4;
+            if (levels[mip].size() != expectedBytes)
+                levels[mip].assign(expectedBytes, 0);
+        }
+        levels[level] = std::move(converted);
+        definedLevels[level] = true;
     }
-    const size_t levelCount = static_cast<size_t>(level) + 1;
-    if (texture->levels.size() < levelCount) {
-        texture->levels.resize(levelCount);
-        texture->definedLevels.resize(levelCount, false);
-    }
-    for (size_t mip = 0; mip < texture->levels.size(); ++mip) {
-        const uint32_t mipWidth = std::max<uint32_t>(1, texture->width >> mip);
-        const uint32_t mipHeight = std::max<uint32_t>(1, texture->height >> mip);
-        const size_t expectedBytes = static_cast<size_t>(mipWidth) * mipHeight * 4;
-        if (texture->levels[mip].size() != expectedBytes)
-            texture->levels[mip].assign(expectedBytes, 0);
-    }
-    texture->levels[level] = std::move(converted);
-    texture->definedLevels[level] = true;
+
     if (!recreateTextureStorage(*texture))
         addError(GL_OUT_OF_MEMORY_VALUE);
 }
@@ -2485,7 +3153,10 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
     GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type,
     std::span<const uint8_t> pixels)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    const bool is2D = target == GL_TEXTURE_2D_VALUE;
+    const bool isCubeFace = target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE
+        && target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE;
+    if (!is2D && !isCubeFace) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
@@ -2495,14 +3166,36 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
     }
     if (!width || !height)
         return;
-    auto* texture = boundTexture2D();
-    if (!texture || !texture->storageCreated || static_cast<size_t>(level) >= texture->levels.size()
-        || !texture->definedLevels[level]) {
+
+    TextureRecord* texture = is2D ? boundTexture2D() : boundTextureCubeMap();
+    if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
-    const uint32_t levelWidth = std::max<uint32_t>(1, texture->width >> level);
-    const uint32_t levelHeight = std::max<uint32_t>(1, texture->height >> level);
+    const uint32_t face = isCubeFace ? target - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE : 0;
+    std::vector<std::vector<uint8_t>>* faceLevels = nullptr;
+    std::vector<bool>* faceDefined = nullptr;
+    uint32_t baseWidth = texture->width;
+    uint32_t baseHeight = texture->height;
+    bool levelDefined = false;
+    if (isCubeFace) {
+        faceLevels = &texture->cubeLevels[face];
+        faceDefined = &texture->cubeDefinedLevels[face];
+        baseWidth = texture->cubeWidths[face];
+        baseHeight = texture->cubeHeights[face];
+        levelDefined = static_cast<size_t>(level) < faceDefined->size() && (*faceDefined)[level];
+    } else
+        levelDefined = texture->storageCreated && static_cast<size_t>(level) < texture->definedLevels.size()
+            && texture->definedLevels[level];
+
+    const size_t levelCount = isCubeFace ? faceLevels->size() : texture->levels.size();
+    if (!baseWidth || !baseHeight || static_cast<size_t>(level) >= levelCount || !levelDefined) {
+        addError(GL_INVALID_OPERATION_VALUE);
+        return;
+    }
+
+    const uint32_t levelWidth = std::max<uint32_t>(1, baseWidth >> level);
+    const uint32_t levelHeight = std::max<uint32_t>(1, baseHeight >> level);
     if (static_cast<uint32_t>(xoffset) > levelWidth || static_cast<uint32_t>(yoffset) > levelHeight
         || static_cast<uint32_t>(width) > levelWidth - static_cast<uint32_t>(xoffset)
         || static_cast<uint32_t>(height) > levelHeight - static_cast<uint32_t>(yoffset)) {
@@ -2512,10 +3205,15 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
 
     std::vector<uint8_t> converted;
     if (!convertTexturePixels(format, type, width, height, pixels, converted)) {
-        addError(type != GL_UNSIGNED_BYTE_VALUE ? GL_INVALID_ENUM_VALUE : GL_INVALID_VALUE_VALUE);
+        addError(type != GL_UNSIGNED_BYTE_VALUE
+            && type != GL_UNSIGNED_SHORT_5_6_5_VALUE
+            && type != GL_UNSIGNED_SHORT_4_4_4_4_VALUE
+            && type != GL_UNSIGNED_SHORT_5_5_5_1_VALUE
+                ? GL_INVALID_ENUM_VALUE : GL_INVALID_VALUE_VALUE);
         return;
     }
-    auto& destination = texture->levels[level];
+
+    auto& destination = isCubeFace ? (*faceLevels)[level] : texture->levels[level];
     for (GCGLsizei y = 0; y < height; ++y) {
         const size_t destinationOffset =
             (static_cast<size_t>(yoffset + y) * levelWidth + static_cast<size_t>(xoffset)) * 4;
@@ -2523,23 +3221,35 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
         std::memcpy(destination.data() + destinationOffset, converted.data() + sourceOffset,
             static_cast<size_t>(width) * 4);
     }
-    if (!uploadTextureLevel(*texture, static_cast<uint32_t>(level)))
+
+    if (texture->storageCreated && !uploadTextureLevel(*texture, static_cast<uint32_t>(level), face))
         addError(GL_INVALID_OPERATION_VALUE);
 }
 
 void GraphicsContextGLWKC::generateMipmap(GCGLenum target)
 {
-    if (target != GL_TEXTURE_2D_VALUE) {
+    if (target != GL_TEXTURE_2D_VALUE && target != GL_TEXTURE_CUBE_MAP_VALUE) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
-    auto* texture = boundTexture2D();
-    if (!texture || !texture->storageCreated || texture->levels.empty()
-        || texture->definedLevels.empty() || !texture->definedLevels[0]) {
+    if (target == GL_TEXTURE_2D_VALUE) {
+        auto* texture = boundTexture2D();
+        if (!texture || !texture->storageCreated || texture->levels.empty()
+            || texture->definedLevels.empty() || !texture->definedLevels[0]) {
+            addError(GL_INVALID_OPERATION_VALUE);
+            return;
+        }
+        if (!regenerateTextureMipmaps(*texture))
+            addError(GL_OUT_OF_MEMORY_VALUE);
+        return;
+    }
+
+    auto* texture = boundTextureCubeMap();
+    if (!texture || !texture->storageCreated || !cubeTextureBaseComplete(*texture)) {
         addError(GL_INVALID_OPERATION_VALUE);
         return;
     }
-    if (!regenerateTextureMipmaps(*texture))
+    if (!regenerateCubeMapMipmaps(*texture))
         addError(GL_OUT_OF_MEMORY_VALUE);
 }
 
@@ -2751,6 +3461,8 @@ void GraphicsContextGLWKC::framebufferRenderbuffer(GCGLenum target, GCGLenum att
         record.colorRenderbuffer = name;
         record.colorTexture = 0;
         record.colorTextureLevel = 0;
+        record.colorTextureFace = 0;
+        record.colorTextureIsCubeFace = false;
         record.textureColorView = {};
         record.textureColorViewReady = false;
         break;
@@ -2774,7 +3486,10 @@ void GraphicsContextGLWKC::framebufferRenderbuffer(GCGLenum target, GCGLenum att
 void GraphicsContextGLWKC::framebufferTexture2D(GCGLenum target, GCGLenum attachment,
     GCGLenum textureTarget, PlatformGLObject name, GCGLint level)
 {
-    if (target != GL_FRAMEBUFFER_VALUE || textureTarget != GL_TEXTURE_2D_VALUE) {
+    const bool is2D = textureTarget == GL_TEXTURE_2D_VALUE;
+    const bool isCubeFace = textureTarget >= GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE
+        && textureTarget <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_VALUE;
+    if (target != GL_FRAMEBUFFER_VALUE || (!is2D && !isCubeFace)) {
         addError(GL_INVALID_ENUM_VALUE);
         return;
     }
@@ -2794,7 +3509,8 @@ void GraphicsContextGLWKC::framebufferTexture2D(GCGLenum target, GCGLenum attach
 
     if (name) {
         auto texture = m_textures.find(name);
-        if (texture == m_textures.end() || texture->second.target != GL_TEXTURE_2D_VALUE) {
+        if (texture == m_textures.end()
+            || texture->second.target != (is2D ? GL_TEXTURE_2D_VALUE : GL_TEXTURE_CUBE_MAP_VALUE)) {
             addError(GL_INVALID_OPERATION_VALUE);
             return;
         }
@@ -2803,6 +3519,8 @@ void GraphicsContextGLWKC::framebufferTexture2D(GCGLenum target, GCGLenum attach
     auto& record = framebuffer->second;
     record.colorTexture = name;
     record.colorTextureLevel = level;
+    record.colorTextureFace = isCubeFace ? textureTarget - GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE : 0;
+    record.colorTextureIsCubeFace = isCubeFace;
     record.colorRenderbuffer = 0;
     record.textureColorView = {};
     record.textureColorViewReady = false;
@@ -2848,6 +3566,12 @@ GCGLint GraphicsContextGLWKC::getFramebufferAttachmentParameteri(GCGLenum target
         if (objectName)
             objectType = GL_RENDERBUFFER_VALUE;
         break;
+    case GL_DEPTH_STENCIL_ATTACHMENT_VALUE:
+        if (record.depthRenderbuffer && record.depthRenderbuffer == record.stencilRenderbuffer) {
+            objectName = record.depthRenderbuffer;
+            objectType = GL_RENDERBUFFER_VALUE;
+        }
+        break;
     default:
         addError(GL_INVALID_ENUM_VALUE);
         return 0;
@@ -2859,9 +3583,13 @@ GCGLint GraphicsContextGLWKC::getFramebufferAttachmentParameteri(GCGLenum target
     case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_VALUE:
         return objectName;
     case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE:
-        if (objectType != GL_TEXTURE_OBJECT_VALUE && pname == GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_VALUE)
+        if (objectType != GL_TEXTURE_OBJECT_VALUE)
             return 0;
         return textureLevel;
+    case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE_VALUE:
+        if (objectType != GL_TEXTURE_OBJECT_VALUE || !record.colorTextureIsCubeFace)
+            return 0;
+        return GL_TEXTURE_CUBE_MAP_POSITIVE_X_VALUE + record.colorTextureFace;
     default:
         addError(GL_INVALID_ENUM_VALUE);
         return 0;
@@ -3093,13 +3821,13 @@ void GraphicsContextGLWKC::getShaderPrecisionFormat(GCGLenum shaderType,
 
     switch (precisionType) {
     case 0x8DF0: // GL_LOW_FLOAT
-        range[0] = -8; range[1] = 8; *precision = 8;
+        range[0] = 8; range[1] = 8; *precision = 8;
         return;
     case 0x8DF1: // GL_MEDIUM_FLOAT
-        range[0] = -14; range[1] = 14; *precision = 10;
+        range[0] = 14; range[1] = 14; *precision = 10;
         return;
     case 0x8DF2: // GL_HIGH_FLOAT
-        range[0] = -126; range[1] = 127; *precision = 23;
+        range[0] = 127; range[1] = 127; *precision = 23;
         return;
     case 0x8DF3: // GL_LOW_INT
         range[0] = 7; range[1] = 6; *precision = 0;
@@ -3378,10 +4106,50 @@ GCGLint GraphicsContextGLWKC::getBufferParameteri(GCGLenum target,GCGLenum pname
 }
 CString GraphicsContextGLWKC::getString(GCGLenum n)
 {
-    switch(n){case GL_VENDOR_VALUE:return CString("Nintendo/WKC");case GL_RENDERER_VALUE:return CString("Wii U GX2");
-    case GL_VERSION_VALUE:return CString("WebGL 1.0 (GX2)");case GL_SHADING_LANGUAGE_VERSION_VALUE:return CString("OpenGL ES GLSL ES 1.00 (CafeGLSL)");
-    case GL_EXTENSIONS_VALUE:return CString("");default:addError(GL_INVALID_ENUM_VALUE);return CString();}
+    switch (n) {
+    case GL_VENDOR_VALUE:
+        return CString("Nintendo/WKC");
+    case GL_RENDERER_VALUE:
+        return CString("Wii U GX2");
+    case GL_VERSION_VALUE:
+        return CString("WebGL 1.0 (GX2)");
+    case GL_SHADING_LANGUAGE_VERSION_VALUE:
+        return CString("OpenGL ES GLSL ES 1.00 (CafeGLSL)");
+    case GL_EXTENSIONS_VALUE:
+        return CString("ANGLE_instanced_arrays ANGLE_pack_reverse_row_order EXT_blend_minmax OES_element_index_uint OES_packed_depth_stencil OES_vertex_array_object");
+    default:
+        addError(GL_INVALID_ENUM_VALUE);
+        return CString();
+    }
 }
+bool GraphicsContextGLWKC::supportsExtension(GCGLExtension extension)
+{
+    // Advertise only the extensions whose entry points and GX2 mappings are
+    // implemented by this backend. In particular, do not expose depth textures,
+    // float textures, compressed formats or WebGL 2 features just because their
+    // enum values exist in WebKit's shared extension catalogue.
+    switch (extension) {
+    case GCGLExtension::ANGLE_instanced_arrays:
+    case GCGLExtension::ANGLE_pack_reverse_row_order:
+    case GCGLExtension::EXT_blend_minmax:
+    case GCGLExtension::OES_element_index_uint:
+    case GCGLExtension::OES_packed_depth_stencil:
+    case GCGLExtension::OES_vertex_array_object:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool GraphicsContextGLWKC::enableExtension(GCGLExtension extension)
+{
+    if (!supportsExtension(extension))
+        return false;
+
+    m_knownActiveExtensions.add(extension);
+    return true;
+}
+
 void GraphicsContextGLWKC::getBooleanv(GCGLenum pname, std::span<GCGLboolean> output)
 {
     std::fill(output.begin(), output.end(), false);
@@ -3422,6 +4190,7 @@ void GraphicsContextGLWKC::getIntegerv(GCGLenum n,std::span<GCGLint> v)
     case GL_FRAMEBUFFER_BINDING_VALUE:v[0]=m_boundFramebuffer;return;
      case GL_RENDERBUFFER_BINDING_VALUE:v[0]=m_boundRenderbuffer;return;
     case GL_TEXTURE_BINDING_2D_VALUE:v[0]=m_boundTextures2D[m_activeTextureUnit];return;
+    case GL_TEXTURE_BINDING_CUBE_MAP_VALUE:v[0]=m_boundTexturesCube[m_activeTextureUnit];return;
     case GL_ACTIVE_TEXTURE_QUERY_VALUE:v[0]=GL_TEXTURE0_VALUE + m_activeTextureUnit;return;
     case GL_CURRENT_PROGRAM_VALUE:v[0]=m_currentProgram;return;
     case GL_VERTEX_ARRAY_BINDING_VALUE:v[0]=m_vertexArrays.bound();return;
