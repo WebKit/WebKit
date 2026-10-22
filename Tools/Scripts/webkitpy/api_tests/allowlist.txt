@@ -4678,9 +4678,13 @@ TestWebKitAPI.WritingTools.AppMenuNonEditable
 TestWebKitAPI.WritingTools.BlockquoteAndPreContentsAreIgnored
 TestWebKitAPI.WritingTools.Composition
 TestWebKitAPI.WritingTools.CompositionRevert
+TestWebKitAPI.WritingTools.CompositionShowOriginalHasNoTransparentMarkers
+TestWebKitAPI.WritingTools.CompositionWithAttemptedEditing
+TestWebKitAPI.WritingTools.CompositionWithAttributedStringAttributes
 TestWebKitAPI.WritingTools.CompositionWithComposeCompositionType
 TestWebKitAPI.WritingTools.CompositionWithImageAttachmentRoundTrip
 TestWebKitAPI.WritingTools.CompositionWithImageRoundTrip
+TestWebKitAPI.WritingTools.CompositionWithList
 TestWebKitAPI.WritingTools.CompositionWithMultipleUndoAfterEndingAfterShowOriginalAndRewritten
 TestWebKitAPI.WritingTools.CompositionWithMultipleUndosAndRestarts
 TestWebKitAPI.WritingTools.CompositionWithNonImageAttachmentRoundTrip
@@ -4689,6 +4693,7 @@ TestWebKitAPI.WritingTools.CompositionWithRestart
 TestWebKitAPI.WritingTools.CompositionWithSystemFont
 TestWebKitAPI.WritingTools.CompositionWithTabCharacters
 TestWebKitAPI.WritingTools.CompositionWithTable
+TestWebKitAPI.WritingTools.CompositionWithTextAttachment
 TestWebKitAPI.WritingTools.CompositionWithTrailingBreaks
 TestWebKitAPI.WritingTools.CompositionWithTrailingNewlines
 TestWebKitAPI.WritingTools.CompositionWithUnderline
@@ -4701,21 +4706,32 @@ TestWebKitAPI.WritingTools.ContextRangeWithNoSelection
 TestWebKitAPI.WritingTools.EphemeralSession
 TestWebKitAPI.WritingTools.EphemeralSessionWithDeeplyNestedContent
 TestWebKitAPI.WritingTools.EphemeralSessionWithDifferingTextLengths
+TestWebKitAPI.WritingTools.IntelligenceTextEffectCoordinatorDelegate_RectsForProofreadingSuggestionsInRange
 TestWebKitAPI.WritingTools.IntelligenceTextEffectCoordinatorDelegate_TextPreviewsForRange
 TestWebKitAPI.WritingTools.IntelligenceTextEffectCoordinatorDelegate_UpdateTextVisibilityForRange
 TestWebKitAPI.WritingTools.IsWritingToolsActiveAPI
 TestWebKitAPI.WritingTools.IsWritingToolsActiveAPIWithNoInlineEditing
 TestWebKitAPI.WritingTools.NoCrashWhenWebProcessTerminates
+TestWebKitAPI.WritingTools.ProofreadingAcceptReject
+TestWebKitAPI.WritingTools.ProofreadingRevert
+TestWebKitAPI.WritingTools.ProofreadingRevertWithMultiwordSuggestions
+TestWebKitAPI.WritingTools.ProofreadingRevertWithSuggestionAtEndOfText
 TestWebKitAPI.WritingTools.ProofreadingReview
 TestWebKitAPI.WritingTools.ProofreadingReviewBailsOnAmbiguousDriftedMarker
 TestWebKitAPI.WritingTools.ProofreadingReviewContextRangeFromRangeSelection
 TestWebKitAPI.WritingTools.ProofreadingReviewDoesNotWriteIntoDriftedMarker
+TestWebKitAPI.WritingTools.ProofreadingShowOriginal
 TestWebKitAPI.WritingTools.ProofreadingShowOriginalWithMultiwordSuggestions
+TestWebKitAPI.WritingTools.ProofreadingUndoRevertsEverySuggestionInBatch
+TestWebKitAPI.WritingTools.ProofreadingWithAttemptedEditing
 TestWebKitAPI.WritingTools.ProofreadingWithImage
 TestWebKitAPI.WritingTools.ProofreadingWithLinks
+TestWebKitAPI.WritingTools.ProofreadingWithLongReplacement
+TestWebKitAPI.WritingTools.ProofreadingWithStreamingSuggestions
 TestWebKitAPI.WritingTools.ProofreadingWithUntitledImageAttachment
 TestWebKitAPI.WritingTools.ShowDetailsForSuggestions
 TestWebKitAPI.WritingTools.SmartRepliesMatchStyle
+TestWebKitAPI.WritingTools.SmartRepliesTextColor
 TestWebKitAPI.WritingTools.SuggestedTextIsSelectedAfterCompose
 TestWebKitAPI.WritingTools.SuggestedTextIsSelectedAfterSmartReply
 TestWebKitAPI.WritingTools.TransparencyMarkersForInlineEditing
@@ -7164,20 +7180,14 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WritingTools.ContextMenuItemsEditable
 [ ios ] TestWebKitAPI.WritingTools.ContextMenuItemsEditableEmpty
 [ ios ] TestWebKitAPI.WritingTools.ContextMenuItemsNonEditable
-[ ios ] TestWebKitAPI.WritingTools.IntelligenceTextEffectCoordinatorDelegate_RectsForProofreadingSuggestionsInRange
 [ ios ] TestWebKitAPI.WritingTools.PDFTextSelections
-[ ios ] TestWebKitAPI.WritingTools.ProofreadingRevert
-[ ios ] TestWebKitAPI.WritingTools.ProofreadingRevertWithMultiwordSuggestions
-[ ios ] TestWebKitAPI.WritingTools.ProofreadingRevertWithSuggestionAtEndOfText
-[ ios ] TestWebKitAPI.WritingTools.ProofreadingWithAttemptedEditing
-[ ios ] TestWebKitAPI.WritingTools.ProofreadingWithLongReplacement
-[ ios ] TestWebKitAPI.WritingTools.ProofreadingWithStreamingSuggestions
 [ ios ] TestWebKitAPI.WritingTools.ShowAffordance
 [ ios ] TestWebKitAPI.WritingTools.ShowInvalidToolWithRangedSelection
 [ ios ] TestWebKitAPI.WritingTools.ShowPanelWithCaretSelection
 [ ios ] TestWebKitAPI.WritingTools.ShowPanelWithNoSelection
 [ ios ] TestWebKitAPI.WritingTools.ShowPanelWithRangedSelection
 [ ios ] TestWebKitAPI.WritingTools.ShowToolWithRangedSelection
+[ ios ] TestWebKitAPI.WritingToolsWebKitLegacy.AttributedString
 [ ios ] TestWebKitAPI.ZoomToFocusedElement
 [ ios ] TestWebKitAPI._WKActivatedElementInfo.HitTestPointOutsideView
 [ ios ] TestWebKitAPI._WKActivatedElementInfo.InfoForAttachment
@@ -8535,10 +8545,14 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WritingTools.APIWithBehaviorComplete
 [ mac ] TestWebKitAPI.WritingTools.APIWithBehaviorDefault
 [ mac ] TestWebKitAPI.WritingTools.APIWithBehaviorNone
+[ mac ] TestWebKitAPI.WritingTools.CompositionWithMultipleChunks
 [ mac ] TestWebKitAPI.WritingTools.ContextMenuItemsEditable
 [ mac ] TestWebKitAPI.WritingTools.ContextMenuItemsEditableEmpty
 [ mac ] TestWebKitAPI.WritingTools.ContextMenuItemsNonEditable
+[ mac ] TestWebKitAPI.WritingTools.FocusWebViewAfterAnimation
+[ mac ] TestWebKitAPI.WritingTools.FocusWebViewAfterProofreadingAnimation
 [ mac ] TestWebKitAPI.WritingTools.PDFTextSelections
+[ mac ] TestWebKitAPI.WritingTools.RevealOffScreenSuggestionWhenActive
 [ mac ] TestWebKitAPI.WritingTools.ShouldAllowAffordance
 [ mac ] TestWebKitAPI.WritingTools.ShowAffordance
 [ mac ] TestWebKitAPI.WritingTools.ShowInvalidToolWithRangedSelection
