@@ -1,0 +1,30 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["cenc"])
+RUN(capabilities.initDataTypes = ["cenc"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+A "cenc" initData at least kCencMaxBoxSize long with no zero byte should reject.
+RUN(initData = unterminatedInitData(64 * 1024))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("cenc", initData))
+Promise rejected correctly OK
+
+A short "cenc" initData whose first box is not a pssh box should reject.
+RUN(initData = unterminatedInitData(16))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("cenc", initData))
+Promise rejected correctly OK
+
+A "cenc" initData whose only open angle bracket is its last byte should reject.
+RUN(initData = unterminatedInitData(16, 0x3c))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("cenc", initData))
+Promise rejected correctly OK
+END OF TEST
+
