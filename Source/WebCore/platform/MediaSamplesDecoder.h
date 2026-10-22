@@ -29,6 +29,7 @@
 #include <WebCore/PlatformMediaError.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
+#include <wtf/HashMap.h>
 #include <wtf/NativePromise.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -43,6 +44,9 @@ class AudioDecoder;
 class AudioInfo;
 class PlatformRawAudioData;
 class TrackInfo;
+class VideoDecoder;
+class VideoFrame;
+class VideoInfo;
 
 class MediaSamplesDecoder final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSamplesDecoder> {
     WTF_MAKE_TZONE_ALLOCATED(MediaSamplesDecoder);
@@ -73,20 +77,34 @@ private:
 
     template<typename PromiseType> Ref<PromiseType> enqueueOperation(Function<Ref<PromiseType>()>&&);
     static Ref<CreatePromise> createAudio(const AudioInfo&, Filters);
+    static Ref<CreatePromise> createVideo(const VideoInfo&, Filters);
 
     Ref<DecodePromise> decodeOnQueue(MediaSamplesBlock&&);
     Ref<DecodePromise> drainOnQueue();
     Ref<MediaPromise> flushOnQueue();
     void didDecodeAudio(Ref<PlatformRawAudioData>&&);
+    void didDecodeVideo(Ref<VideoFrame>&&, int64_t sequence);
     void didFailDecoding();
+    PlatformMediaError decodingError() const;
     Ref<DecodePromise> settleWithPendingOutput(bool succeeded, uint32_t generation);
     Ref<MediaPromise> finishFlush(bool succeeded);
 
     const Ref<WorkQueue> m_queue;
     const Ref<const TrackInfo> m_inputInfo;
-    const Ref<const TrackInfo> m_outputInfo;
+    Ref<const TrackInfo> m_outputInfo WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     const Filters m_filters;
     RefPtr<AudioDecoder> m_audioDecoder WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    RefPtr<VideoDecoder> m_videoDecoder WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    struct InFlightFrame {
+        MediaSamplesBlock::MediaSampleItem metadata;
+        // The first sequence of the block the frame was decoded from.
+        int64_t blockSequence { 0 };
+    };
+    HashMap<int64_t, InFlightFrame, DefaultHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_inFlight WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    int64_t m_nextSequence WTF_GUARDED_BY_CAPABILITY(m_queue.get()) { 0 };
+    Vector<MediaSamplesBlock> m_completedOutput WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    // The block the last frame in m_completedOutput was decoded from.
+    std::optional<int64_t> m_lastOutputBlockSequence WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     MediaSamplesBlock::SamplesVector m_pendingOutput WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     Deque<std::pair<MediaTime, MediaTime>> m_trimmedRanges WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     RefPtr<GenericPromise> m_lastOperation WTF_GUARDED_BY_CAPABILITY(m_queue.get());

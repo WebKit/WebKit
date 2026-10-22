@@ -41,6 +41,10 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SourceBufferParser.h>
 #import <WebCore/TrackInfo.h>
+#import <WebCore/VideoPixelFormat.h>
+#if ENABLE(VP9)
+#import <WebCore/VP9UtilitiesCocoa.h>
+#endif
 #import <cmath>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <wtf/RunLoop.h>
@@ -678,6 +682,324 @@ TEST(MediaSamplesDecoder, FrameCountMatchesWebAudioWebMOpus)
 TEST(MediaSamplesDecoder, FrameCountMatchesWebAudioWAV)
 {
     EXPECT_EQ(decodedFrameCount(parseAVFAudioFile(@"pinknoise", @"wav", @"audio/wav")), 176400u);
+}
+
+static Ref<VideoInfo> makeVideoInfo(FourCC codecName, const String& codecString, uint8_t bitDepth = 8, FloatSize size = { 320, 240 }, std::optional<VideoPixelFormat> pixelFormat = std::nullopt)
+{
+    return VideoInfo::create({
+        {
+            .codecName = codecName,
+            .codecString = codecString
+        }, {
+            .size = size,
+            .displaySize = size,
+            .bitDepth = bitDepth,
+            .pixelFormat = pixelFormat
+        }
+    });
+}
+
+static bool isVPXDecodingAvailable()
+{
+    return MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp08" }, "vp08.00.10.08"_s), allowedFilters);
+}
+
+static Vector<UniqueRef<MediaSamplesBlock>> parseWebMVideoFile(NSString *resourceName, const String& contentType)
+{
+    auto blocks = parseWebMFile(resourceName, contentType);
+    blocks.removeAllMatching([](auto& block) {
+        return !block->isVideo();
+    });
+    return blocks;
+}
+
+struct DecodedVideo {
+    Vector<Vector<uint8_t>> frames;
+    Vector<MediaTime> inputPresentationTimes;
+    Vector<MediaTime> outputPresentationTimes;
+    Vector<FloatSize> outputSizes;
+    RefPtr<const TrackInfo> outputInfo;
+};
+
+static DecodedVideo decodeVideoBlocks(MediaSamplesDecoder& decoder, Vector<UniqueRef<MediaSamplesBlock>>& blocks)
+{
+    DecodedVideo result;
+    auto collect = [&](Vector<MediaSamplesBlock>&& outputs) {
+        for (auto& output : outputs) {
+            if (!result.outputInfo)
+                result.outputInfo = output.info();
+            for (auto& item : output) {
+                result.frames.append(Vector<uint8_t>(item.data->makeContiguous()->span()));
+                result.outputPresentationTimes.append(item.presentationTime);
+                result.outputSizes.append(downcast<VideoInfo>(*output.info()).size());
+                EXPECT_TRUE(item.isSync());
+            }
+        }
+    };
+
+    for (auto& block : blocks) {
+        for (auto& item : block.get())
+            result.inputPresentationTimes.append(item.presentationTime);
+        auto decodePromise = decoder.decode(WTF::move(block.get()));
+        auto decodeResult = settle(decodePromise.get());
+        EXPECT_TRUE(decodeResult);
+        if (decodeResult)
+            collect(WTF::move(*decodeResult));
+    }
+
+    auto drainPromise = decoder.drain();
+    auto drainResult = settle(drainPromise.get());
+    EXPECT_TRUE(drainResult);
+    if (drainResult)
+        collect(WTF::move(*drainResult));
+    return result;
+}
+
+static constexpr auto vp8ContentType = "video/webm; codecs=vp8"_s;
+
+#if ENABLE(VP9)
+class ScopedVP9HardwareDecoder {
+public:
+    explicit ScopedVP9HardwareDecoder(bool available) { VP9TestingOverrides::singleton().setVP9HardwareDecoderEnabledOverride(available); }
+    ~ScopedVP9HardwareDecoder() { VP9TestingOverrides::singleton().setVP9HardwareDecoderEnabledOverride(std::nullopt); }
+};
+#endif
+
+TEST(MediaSamplesDecoder, CanDecodeVP8)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    Ref vp8 = makeVideoInfo(FourCC { "vp08" }, "vp08.00.10.08"_s);
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(vp8, allowedFilters | MediaSamplesDecoder::Filter::UseSharedMemory));
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(vp8, allowedFilters | MediaSamplesDecoder::Filter::HardwareAllowed));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(vp8, { MediaSamplesDecoder::Filter::InProcess }));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(vp8, { MediaSamplesDecoder::Filter::SoftwareAllowed }));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp08" }, "vp08.00.10.10"_s, 10), allowedFilters));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp08" }, "vp08.00.10.08"_s, 8, { }), allowedFilters));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp08" }, "vp08.00.10.08"_s, 8, { 320, 240 }, VideoPixelFormat::I420), allowedFilters));
+}
+
+TEST(MediaSamplesDecoder, CanDecodeRejectsHardwareDecodableVideo)
+{
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "avc1" }, "avc1.640028"_s), allowedFilters));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "avc3" }, "avc3.640028"_s), allowedFilters));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "av01" }, "av01.0.04M.08"_s), allowedFilters));
+
+#if ENABLE(VP9)
+    ScopedVP9HardwareDecoder hardwareDecoder { true };
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp09" }, "vp09.00.10.08"_s), allowedFilters));
+#endif
+}
+
+#if ENABLE(VP9)
+TEST(MediaSamplesDecoder, CanDecodeVP9WithoutHardwareDecoder)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    {
+        ScopedVP9HardwareDecoder noHardwareDecoder { false };
+        EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp09" }, "vp09.00.10.08"_s), allowedFilters));
+        EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp09" }, "vp09.02.10.10"_s, 10), allowedFilters));
+        EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp09" }, "vp09.01.10.08"_s), allowedFilters));
+        EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp09" }, { }), allowedFilters));
+    }
+    {
+        ScopedVP9HardwareDecoder hardwareDecoder { true };
+        EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp09" }, "vp09.00.10.08"_s), allowedFilters));
+    }
+}
+#endif
+
+TEST(MediaSamplesDecoder, CreateRejectsHardwareDecodableVideo)
+{
+    Ref h264 = makeVideoInfo(FourCC { "avc1" }, "avc1.640028"_s);
+    auto promise = MediaSamplesDecoder::create(h264, allowedFilters);
+    auto result = settle(promise.get());
+    ASSERT_FALSE(result);
+    EXPECT_EQ(result.error(), PlatformMediaError::NotSupportedError);
+}
+
+TEST(MediaSamplesDecoder, DecodeVP8)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_FALSE(blocks.isEmpty());
+    ASSERT_TRUE(blocks[0]->info());
+    ASSERT_TRUE(MediaSamplesDecoder::canDecode(*blocks[0]->info(), allowedFilters));
+
+    Ref decoder = createDecoder(*blocks[0]->info());
+    EXPECT_TRUE(decoder->canContinueWith(*blocks[0]->info()));
+
+    auto decoded = decodeVideoBlocks(decoder, blocks);
+    ASSERT_TRUE(decoded.outputInfo);
+    RefPtr info = dynamicDowncast<VideoInfo>(decoded.outputInfo);
+    ASSERT_TRUE(info);
+    EXPECT_TRUE(info->isDecoded());
+    EXPECT_EQ(info->pixelFormat(), VideoPixelFormat::I420);
+
+    size_t width = info->size().width();
+    size_t height = info->size().height();
+    size_t frameSize = width * height + 2 * ((width + 1) / 2) * ((height + 1) / 2);
+    ASSERT_EQ(decoded.frames.size(), decoded.inputPresentationTimes.size());
+    for (auto& frame : decoded.frames)
+        EXPECT_EQ(frame.size(), frameSize);
+    EXPECT_EQ(decoded.outputPresentationTimes, decoded.inputPresentationTimes);
+}
+
+TEST(MediaSamplesDecoder, DecodeVP8SizeChangeWithoutNewTrackInfo)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"400x300-red-resize-200x150-green", vp8ContentType);
+    ASSERT_FALSE(blocks.isEmpty());
+    RefPtr firstInfo = blocks[0]->info();
+    ASSERT_TRUE(firstInfo);
+
+    // Simulates a container that does not report the in-band size change.
+    for (auto& block : blocks)
+        block->setInfo(RefPtr { firstInfo });
+
+    Ref decoder = createDecoder(*firstInfo);
+    auto decoded = decodeVideoBlocks(decoder, blocks);
+    ASSERT_EQ(decoded.frames.size(), decoded.inputPresentationTimes.size());
+
+    for (size_t i = 0; i < decoded.frames.size(); ++i) {
+        size_t width = decoded.outputSizes[i].width();
+        size_t height = decoded.outputSizes[i].height();
+        EXPECT_EQ(decoded.frames[i].size(), width * height + 2 * ((width + 1) / 2) * ((height + 1) / 2));
+    }
+    EXPECT_TRUE(decoded.outputSizes.contains(FloatSize { 400, 300 }));
+    EXPECT_TRUE(decoded.outputSizes.contains(FloatSize { 200, 150 }));
+}
+
+TEST(MediaSamplesDecoder, DecodeVP8IntoSharedMemory)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto sharedBlocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_FALSE(blocks.isEmpty());
+    ASSERT_EQ(blocks.size(), sharedBlocks.size());
+
+    auto sharedPromise = MediaSamplesDecoder::create(*sharedBlocks[0]->info(), allowedFilters | MediaSamplesDecoder::Filter::UseSharedMemory);
+    auto sharedResult = settle(sharedPromise.get());
+    ASSERT_TRUE(sharedResult);
+    Ref sharedDecoder = WTF::move(*sharedResult);
+
+    Ref decoder = createDecoder(*blocks[0]->info());
+
+    auto shared = decodeVideoBlocks(sharedDecoder, sharedBlocks);
+    auto copied = decodeVideoBlocks(decoder, blocks);
+    EXPECT_FALSE(copied.frames.isEmpty());
+    EXPECT_EQ(shared.frames, copied.frames);
+}
+
+TEST(MediaSamplesDecoder, VideoBlockReturnsOnlyItsLastFrame)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_FALSE(blocks.isEmpty());
+    ASSERT_TRUE(blocks[0]->isSync());
+    RefPtr info = blocks[0]->info();
+    ASSERT_TRUE(info);
+
+    // Two frames sharing a block, as the WebM parser groups frames with the same timestamp.
+    auto first = blocks[0]->first();
+    auto second = first;
+    second.presentationTime = first.presentationTime + MediaTime(1, 1000000);
+    second.decodeTime = second.presentationTime;
+    MediaTime lastTime = second.presentationTime;
+    MediaSamplesBlock::SamplesVector items;
+    items.append(WTF::move(first));
+    items.append(WTF::move(second));
+
+    Ref decoder = createDecoder(*info);
+    auto promise = decoder->decode(MediaSamplesBlock { info.get(), WTF::move(items) });
+    auto result = settle(promise.get());
+    ASSERT_TRUE(result);
+    ASSERT_EQ(result->size(), 1u);
+    ASSERT_EQ(result->first().size(), 1u);
+    EXPECT_EQ(result->first().first().presentationTime, lastTime);
+}
+
+TEST(MediaSamplesDecoder, VideoFlushRequiresSyncSample)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_GE(blocks.size(), 2u);
+    ASSERT_TRUE(blocks[0]->isSync());
+    ASSERT_FALSE(blocks[1]->isSync());
+
+    Ref decoder = createDecoder(*blocks[0]->info());
+
+    auto decodePromise = decoder->decode(WTF::move(blocks[0].get()));
+    EXPECT_TRUE(settle(decodePromise.get()));
+
+    auto flushPromise = decoder->flush();
+    EXPECT_TRUE(settle(flushPromise.get()));
+
+    auto drainPromise = decoder->drain();
+    auto drainResult = settle(drainPromise.get());
+    ASSERT_TRUE(drainResult);
+    EXPECT_TRUE(drainResult->isEmpty());
+
+    auto deltaPromise = decoder->decode(WTF::move(blocks[1].get()));
+    auto deltaResult = settle(deltaPromise.get());
+    ASSERT_FALSE(deltaResult);
+    EXPECT_EQ(deltaResult.error(), PlatformMediaError::InvalidState);
+}
+
+TEST(MediaSamplesDecoder, CanContinueWithRejectsChangedVideoSize)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_FALSE(blocks.isEmpty());
+
+    Ref decoder = createDecoder(*blocks[0]->info());
+
+    auto& original = downcast<VideoInfo>(*blocks[0]->info());
+    EXPECT_TRUE(decoder->canContinueWith(original));
+
+    Ref differentSize = VideoInfo::create({
+        {
+            .codecName = original.codecName(),
+            .codecString = original.codecString()
+        }, {
+            .size = original.size() / 2,
+            .displaySize = original.displaySize() / 2,
+            .bitDepth = original.bitDepth(),
+            .colorSpace = original.colorSpace(),
+            .extensionAtoms = original.extensionAtoms()
+        }
+    });
+    EXPECT_FALSE(decoder->canContinueWith(differentSize));
+
+    Ref differentDisplaySize = VideoInfo::create({
+        {
+            .codecName = original.codecName(),
+            .codecString = original.codecString()
+        }, {
+            .size = original.size(),
+            .displaySize = original.displaySize() / 2,
+            .bitDepth = original.bitDepth(),
+            .colorSpace = original.colorSpace(),
+            .extensionAtoms = original.extensionAtoms()
+        }
+    });
+    EXPECT_FALSE(decoder->canContinueWith(differentDisplaySize));
+    EXPECT_FALSE(decoder->canContinueWith(makeAudioInfo(FourCC { "opus" })));
 }
 
 } // namespace TestWebKitAPI

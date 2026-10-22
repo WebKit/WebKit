@@ -29,6 +29,7 @@
 #if ENABLE(VP9) && PLATFORM(COCOA)
 
 #include <WebCore/VP9Utilities.h>
+#include <wtf/Lock.h>
 
 typedef const struct opaqueCMFormatDescription* CMVideoFormatDescriptionRef;
 
@@ -76,10 +77,18 @@ public:
     static WEBCORE_EXPORT VP9TestingOverrides& LEGACY_NODELETE singleton();
 
     WEBCORE_EXPORT void setHardwareDecoderDisabled(std::optional<bool>&&);
-    std::optional<bool> hardwareDecoderDisabled() const { return m_hardwareDecoderDisabled; }
-    
+    std::optional<bool> hardwareDecoderDisabled() const
+    {
+        Locker locker { m_hardwareDecoderLock };
+        return m_hardwareDecoderDisabled;
+    }
+
     WEBCORE_EXPORT void setVP9HardwareDecoderEnabledOverride(std::optional<bool>&&);
-    std::optional<bool> vp9HardwareDecoderEnabledOverride() const { return m_vp9HardwareDecoderEnabledOverride; }
+    std::optional<bool> vp9HardwareDecoderEnabledOverride() const
+    {
+        Locker locker { m_hardwareDecoderLock };
+        return m_vp9HardwareDecoderEnabledOverride;
+    }
 
     WEBCORE_EXPORT void setVP9DecoderDisabled(std::optional<bool>&&);
     std::optional<bool> vp9DecoderDisabled() const { return m_vp9DecoderDisabled; }
@@ -97,9 +106,10 @@ public:
     WEBCORE_EXPORT bool LEGACY_NODELETE shouldEnableVP9Decoder() const;
 
 private:
-    std::optional<bool> m_hardwareDecoderDisabled;
+    mutable Lock m_hardwareDecoderLock;
+    std::optional<bool> m_hardwareDecoderDisabled WTF_GUARDED_BY_LOCK(m_hardwareDecoderLock);
     std::optional<bool> m_vp9DecoderDisabled;
-    std::optional<bool> m_vp9HardwareDecoderEnabledOverride;
+    std::optional<bool> m_vp9HardwareDecoderEnabledOverride WTF_GUARDED_BY_LOCK(m_hardwareDecoderLock);
     std::optional<ScreenDataOverrides> m_screenSizeAndScale;
     Function<void(bool)> m_configurationChangedCallback;
     bool m_vp9DecoderEnabled { false };
