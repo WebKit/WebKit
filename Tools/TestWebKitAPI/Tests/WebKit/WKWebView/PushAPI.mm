@@ -43,6 +43,7 @@
 #import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
+#import <wtf/FileSystem.h>
 #import <wtf/HexNumber.h>
 
 static NSDictionary *messageDictionary(NSData *data, NSURL *registration)
@@ -130,38 +131,56 @@ static void clearWebsiteDataStore(WKWebsiteDataStore *store)
 static bool pushMessageProcessed = false;
 static bool pushMessageSuccessful = false;
 
-static bool pushAPIWaitUntilEvaluatesToTrue(const Function<bool()>& f)
-{
-    unsigned timeout = 0;
-    do {
-        if (f())
-            return true;
-        TestWebKitAPI::Util::runFor(0.1_s);
-    } while (++timeout < 100);
-    return false;
-}
+class PushAPI : public ::testing::Test {
+public:
+    void SetUp() override
+    {
+        [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+        m_dataStoreDirectory = FileSystem::createTemporaryDirectory(@"PushAPI");
+    }
 
-static RetainPtr<WKWebViewConfiguration> createConfigurationWithNotificationsEnabled()
-{
-    RetainPtr dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
-    dataStoreConfiguration.get().overridePersistentNotificationMinimumLifetimeForTesting = WebCore::silentPushTimeoutForTesting.value();
-    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    void TearDown() override
+    {
+        [[NSFileManager defaultManager] removeItemAtPath:m_dataStoreDirectory.get() error:nil];
+    }
 
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().websiteDataStore = dataStore.get();
-    [[configuration preferences] _setNotificationsEnabled:YES];
-    [[configuration preferences] _setNotificationEventEnabled:YES];
-    return configuration;
-}
+    RetainPtr<_WKWebsiteDataStoreConfiguration> createDataStoreConfiguration()
+    {
+        return adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:[NSURL fileURLWithPath:m_dataStoreDirectory.get() isDirectory:YES]]);
+    }
 
-TEST(PushAPI, firePushEvent)
+    RetainPtr<WKWebViewConfiguration> createConfigurationWithNotificationsEnabled()
+    {
+        RetainPtr dataStoreConfiguration = createDataStoreConfiguration();
+        dataStoreConfiguration.get().overridePersistentNotificationMinimumLifetimeForTesting = WebCore::silentPushTimeoutForTesting.value();
+        return createConfigurationWithNotificationsEnabled(dataStoreConfiguration.get());
+    }
+
+    RetainPtr<WKWebViewConfiguration> createConfigurationWithNotificationsEnabled(_WKWebsiteDataStoreConfiguration *dataStoreConfiguration)
+    {
+        RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration]);
+
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        configuration.get().websiteDataStore = dataStore.get();
+        [[configuration preferences] _setNotificationsEnabled:YES];
+        [[configuration preferences] _setNotificationEventEnabled:YES];
+        return configuration;
+    }
+
+#if WK_HAVE_C_SPI
+    void testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspection);
+#endif
+
+private:
+    RetainPtr<NSString> m_dataStoreDirectory;
+};
+
+TEST_F(PushAPI, firePushEvent)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, scriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     auto configuration = createConfigurationWithNotificationsEnabled();
 
@@ -170,8 +189,6 @@ TEST(PushAPI, firePushEvent)
 
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    clearWebsiteDataStore([configuration websiteDataStore]);
 
     expectedMessage = "Ready"_s;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -254,7 +271,7 @@ TEST(PushAPI, firePushEvent)
 }
 @end
 
-TEST(PushAPI, notificationPermissionsDelegateInvalidResponse)
+TEST_F(PushAPI, notificationPermissionsDelegateInvalidResponse)
 {
     auto configuration = createConfigurationWithNotificationsEnabled();
     RetainPtr<FirePushEventDataStoreDelegate> delegate = adoptNS([FirePushEventDataStoreDelegate new]);
@@ -268,20 +285,16 @@ TEST(PushAPI, notificationPermissionsDelegateInvalidResponse)
     [webView synchronouslyLoadHTMLString:@"Hello"];
 }
 
-TEST(PushAPI, firePushEventDataStoreDelegate)
+TEST_F(PushAPI, firePushEventDataStoreDelegate)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     auto configuration = createConfigurationWithNotificationsEnabled();
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    clearWebsiteDataStore([configuration websiteDataStore]);
 
     RetainPtr<FirePushEventDataStoreDelegate> delegate = adoptNS([FirePushEventDataStoreDelegate new]);
     delegate.get().permissions = @{
@@ -376,20 +389,16 @@ self.addEventListener("push", (event) => {
 });
 )SWRESOURCE"_s;
 
-TEST(PushAPI, testSilentFlag)
+TEST_F(PushAPI, testSilentFlag)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, testSilentFlagScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     auto configuration = createConfigurationWithNotificationsEnabled();
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    clearWebsiteDataStore([configuration websiteDataStore]);
 
     RetainPtr<FirePushEventDataStoreDelegate> delegate = adoptNS([FirePushEventDataStoreDelegate new]);
     delegate.get().permissions = @{
@@ -534,17 +543,14 @@ static void terminateNetworkProcessWhileRegistrationIsStored(WKWebViewConfigurat
     [configuration.websiteDataStore _terminateNetworkProcess];
 }
 
-TEST(PushAPI, firePushEventWithNoPagesSuccessful)
+TEST_F(PushAPI, firePushEventWithNoPagesSuccessful)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, waitOneSecondScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
     auto configuration = createConfigurationWithNotificationsEnabled();
-    clearWebsiteDataStore([configuration websiteDataStore]);
 
     auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
     provider.setPermission(server.origin(), true);
@@ -572,27 +578,28 @@ TEST(PushAPI, firePushEventWithNoPagesSuccessful)
         pushMessageProcessed = true;
     }];
 
-    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     EXPECT_TRUE(pushMessageSuccessful);
 
-    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
 
-TEST(PushAPI, firePushEventWithNoPagesFail)
+TEST_F(PushAPI, firePushEventWithNoPagesFail)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, waitOneSecondScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
     auto configuration = createConfigurationWithNotificationsEnabled();
-    clearWebsiteDataStore([configuration websiteDataStore]);
 
     auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
     provider.setPermission(server.origin(), true);
@@ -620,32 +627,30 @@ TEST(PushAPI, firePushEventWithNoPagesFail)
         pushMessageProcessed = true;
     }];
 
-    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     EXPECT_FALSE(pushMessageSuccessful);
-    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
 
-TEST(PushAPI, firePushEventWithNoPagesTimeout)
+TEST_F(PushAPI, firePushEventWithNoPagesTimeout)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, waitOneSecondScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
     // Disable service worker delay for the purpose of testing, push event should timeout after 1 second.
-    RetainPtr dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    RetainPtr dataStoreConfiguration = createDataStoreConfiguration();
     [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
-    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
-
-    auto configuration = createConfigurationWithNotificationsEnabled();
-    configuration.get().websiteDataStore = dataStore.get();
-    clearWebsiteDataStore([configuration websiteDataStore]);
+    auto configuration = createConfigurationWithNotificationsEnabled(dataStoreConfiguration.get());
 
     auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
     provider.setPermission(server.origin(), true);
@@ -655,33 +660,32 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
 
     expectedMessage = "Ready"_s;
 
-    fprintf(stderr, "totot1\n");
     @autoreleasepool {
         RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
         [webView loadRequest:server.request()];
         TestWebKitAPI::Util::run(&done);
     }
 
-    fprintf(stderr, "totot2\n");
     terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
 
     // Push event for service worker without any related page, should timeout so fail.
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Timeless Potatoes";
-    fprintf(stderr, "totot3\n");
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
-        fprintf(stderr, "totot3.1\n");
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
     }];
 
-    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
-    fprintf(stderr, "totot4\n");
     EXPECT_FALSE(pushMessageSuccessful);
-    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
@@ -722,17 +726,28 @@ self.addEventListener("push", (event) => {
 });
 )SWRESOURCE"_s;
 
-TEST(PushAPI, pushEventsAndInspectedServiceWorker)
+static bool waitUntilServiceWorkersAreTerminated(WKWebsiteDataStore *dataStore)
+{
+    return TestWebKitAPI::Util::waitFor([&] {
+        __block bool receivedCount = false;
+        __block NSUInteger count = 0;
+        [dataStore _runningOrTerminatingServiceWorkerCountForTesting:^(NSUInteger result) {
+            count = result;
+            receivedCount = true;
+        }];
+        TestWebKitAPI::Util::run(&receivedCount);
+        return !count;
+    });
+}
+
+TEST_F(PushAPI, pushEventsAndInspectedServiceWorker)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, pushEventsAndInspectedServiceWorkerScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
     auto configuration = createConfigurationWithNotificationsEnabled();
-    clearWebsiteDataStore([configuration websiteDataStore]);
 
     auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
     [configuration setProcessPool:(WKProcessPool *)context.get()];
@@ -785,8 +800,7 @@ TEST(PushAPI, pushEventsAndInspectedServiceWorker)
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     EXPECT_FALSE(pushMessageSuccessful);
 
-    // We delay so that the timer to terminate service worker kicks in.
-    sleep(3);
+    EXPECT_TRUE(waitUntilServiceWorkersAreTerminated([configuration websiteDataStore]));
 
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
@@ -837,22 +851,16 @@ self.addEventListener("push", async (event) => {
 });
 )SWRESOURCE"_s;
 
-static void testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspection)
+void PushAPI::testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspection)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, inspectedServiceWorkerWithoutPageScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    RetainPtr dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    RetainPtr dataStoreConfiguration = createDataStoreConfiguration();
     [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
-    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
-
-    auto configuration = createConfigurationWithNotificationsEnabled();
-    configuration.get().websiteDataStore = dataStore.get();
-    clearWebsiteDataStore([configuration websiteDataStore]);
+    auto configuration = createConfigurationWithNotificationsEnabled(dataStoreConfiguration.get());
 
     auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
     [configuration setProcessPool:(WKProcessPool *)context.get()];
@@ -880,8 +888,10 @@ static void testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspec
         pushMessageProcessed = true;
     }];
 
-    // We delay so that the push message will happen before the unregistration of the service worker client.
-    usleep(500000);
+    // The push handler shows a notification first, so wait for it before the service worker client goes away.
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return provider.hasReceivedShowNotification();
+    }));
 
     // Closing the web view should not terminate the service worker as service worker is inspected.
     [webView _close];
@@ -890,8 +900,11 @@ static void testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspec
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     EXPECT_TRUE(pushMessageSuccessful);
 
-    // We delay so that the timer to terminate service worker kicks in, at most up to the max push message allowed time, aka 2 seconds.
-    sleep(3);
+    // An inspected service worker must survive its 2 second termination timer; an uninspected one must be terminated by it.
+    if (enableServiceWorkerInspection)
+        sleep(3);
+    else
+        EXPECT_TRUE(waitUntilServiceWorkersAreTerminated([configuration websiteDataStore]));
 
     // Send message at which point the service worker will not be inspected anymore and will be closed.
     pushMessageProcessed = false;
@@ -904,8 +917,7 @@ static void testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspec
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     EXPECT_EQ(pushMessageSuccessful, enableServiceWorkerInspection);
 
-    // We delay so that the timer to terminate service worker kicks in, at most up to the max push message allowed time, aka 2 seconds.
-    sleep(3);
+    EXPECT_TRUE(waitUntilServiceWorkersAreTerminated([configuration websiteDataStore]));
 
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
@@ -919,13 +931,13 @@ static void testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspec
     EXPECT_TRUE(pushMessageSuccessful);
 }
 
-TEST(PushAPI, inspectedServiceWorkerWithoutPage)
+TEST_F(PushAPI, inspectedServiceWorkerWithoutPage)
 {
     bool enableServiceWorkerInspection = true;
     testInspectedServiceWorkerWithoutPage(enableServiceWorkerInspection);
 }
 
-TEST(PushAPI, uninspectedServiceWorkerWithoutPage)
+TEST_F(PushAPI, uninspectedServiceWorkerWithoutPage)
 {
     bool enableServiceWorkerInspection = false;
     testInspectedServiceWorkerWithoutPage(enableServiceWorkerInspection);
@@ -989,14 +1001,12 @@ self.addEventListener("notificationclose", async (event) => {
 });
 )SWRESOURCE"_s;
 
-TEST(PushAPI, fireNotificationClickEvent)
+TEST_F(PushAPI, fireNotificationClickEvent)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { fireNotificationClickEventMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, fireNotificationClickEventScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     auto configuration = createConfigurationWithNotificationsEnabled();
 
@@ -1005,8 +1015,6 @@ TEST(PushAPI, fireNotificationClickEvent)
 
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    clearWebsiteDataStore([configuration websiteDataStore]);
 
     expectedMessage = "Ready"_s;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -1044,14 +1052,12 @@ TEST(PushAPI, fireNotificationClickEvent)
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
 
-TEST(PushAPI, fireNotificationCloseEvent)
+TEST_F(PushAPI, fireNotificationCloseEvent)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { fireNotificationClickEventMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, fireNotificationClickEventScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     auto configuration = createConfigurationWithNotificationsEnabled();
 
@@ -1060,8 +1066,6 @@ TEST(PushAPI, fireNotificationCloseEvent)
 
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    clearWebsiteDataStore([configuration websiteDataStore]);
 
     expectedMessage = "Ready"_s;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -1130,14 +1134,12 @@ self.addEventListener("notificationclose", async (event) => {
 });
 )SWRESOURCE"_s;
 
-TEST(PushAPI, fireMultipleNotificationCloseEvents)
+TEST_F(PushAPI, fireMultipleNotificationCloseEvents)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { fireNotificationClickEventMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, fireMultipleNotificationCloseEventsScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     auto configuration = createConfigurationWithNotificationsEnabled();
 
@@ -1146,8 +1148,6 @@ TEST(PushAPI, fireMultipleNotificationCloseEvents)
 
     RetainPtr messageHandler = adoptNS([[CountNotificationCloseMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    clearWebsiteDataStore([configuration websiteDataStore]);
 
     notificationCloseEventCount = 0;
 
@@ -1176,7 +1176,7 @@ TEST(PushAPI, fireMultipleNotificationCloseEvents)
     EXPECT_TRUE(pushMessageSuccessful);
 
     // Both notifications must have reached the provider before we close them together.
-    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] {
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
         return providerRef.pendingNotificationCount() >= 2;
     }));
     EXPECT_EQ(providerRef.pendingNotificationCount(), 2u);
@@ -1190,7 +1190,7 @@ TEST(PushAPI, fireMultipleNotificationCloseEvents)
     EXPECT_TRUE(providerRef.simulateMultipleNotificationsClose());
 
     // Allow ample time for both notificationclose events to be delivered.
-    pushAPIWaitUntilEvaluatesToTrue([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         return notificationCloseEventCount >= 2;
     });
     EXPECT_EQ(notificationCloseEventCount, 2u);
@@ -1258,14 +1258,12 @@ self.addEventListener("push", (event) => {
 });
 )SWRESOURCE"_s;
 
-TEST(PushAPI, callNotificationClose)
+TEST_F(PushAPI, callNotificationClose)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { closeNotificationMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, closeNotificationScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     auto configuration = createConfigurationWithNotificationsEnabled();
 
@@ -1274,8 +1272,6 @@ TEST(PushAPI, callNotificationClose)
 
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    clearWebsiteDataStore([configuration websiteDataStore]);
 
     expectedMessage = "Ready"_s;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -1315,11 +1311,9 @@ TEST(PushAPI, callNotificationClose)
     expectedMessage = "PASS close notification"_s;
     TestWebKitAPI::Util::run(&done);
 
-    int counter = 0;
-    while (!providerRef.hasReceivedCloseNotification() && ++counter < 10)
-        TestWebKitAPI::Util::spinRunLoop(10);
-
-    EXPECT_LT(counter, 10);
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return providerRef.hasReceivedCloseNotification();
+    }));
 
     providerRef.resetHasReceivedNotification();
 
