@@ -10502,7 +10502,7 @@ void Document::adjustStyleColorOptionsIfNeeded(OptionSet<StyleColorOptions>&) co
 bool Document::isAXCustomColorModeActive() const
 {
     if (RefPtr page = this->page())
-        return page->isAXCustomColorModeActive();
+        return page->isAXCustomColorModeActive(url());
 
     return false;
 }

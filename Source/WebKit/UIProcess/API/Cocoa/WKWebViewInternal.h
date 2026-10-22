@@ -373,6 +373,9 @@ struct LiveResizeSnapshotState {
     BOOL _shouldSuppressTopColorExtensionView;
     _WKRectEdge _enabledSystemBackgroundColorExtensionEdges;
     BOOL _shouldSuppressFormValidationBubble;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    RetainPtr<NSArray<NSURL *>> _axCustomColorModeBlockedDomains;
+#endif
 #if PLATFORM(MAC)
     OptionSet<WebKit::PreferSolidColorHardPocketReason> _preferSolidColorHardPocketReasons;
     BOOL _isGettingAdjustedColorForTopContentInsetColorFromDelegate;

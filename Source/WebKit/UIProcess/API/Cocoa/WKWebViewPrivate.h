@@ -655,6 +655,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 
 @property (nonatomic, setter=_setShouldSuppressFormValidationBubble:) BOOL _shouldSuppressFormValidationBubble WK_API_AVAILABLE(ios(27.0), visionos(27.0));
 
+@property (nonatomic, setter=_setAXCustomColorModeBlockedDomains:) NSArray<NSURL *> *_axCustomColorModeBlockedDomains;
+
 #if TARGET_OS_OSX
 - (NSUInteger)accessibilityRemoteChildTokenHash;
 - (NSUInteger)accessibilityUIProcessLocalTokenHash;

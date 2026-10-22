@@ -790,6 +790,7 @@ set(WebCore_SERIALIZATION_IN_FILES
 
 if (USE_APPLE_INTERNAL_SDK)
     set(WebKitAdditions_MESSAGES_IN_FILES
+        ${WebKitAdditions_HEADERS_DIR}/WebPageAdditions.messages.in
         ${WebKitAdditions_HEADERS_DIR}/WebPageProxyAdditions.messages.in
     )
     set(WebKitAdditions_MESSAGES_IN_ARGS --additions-dir ${WebKitAdditions_HEADERS_DIR})

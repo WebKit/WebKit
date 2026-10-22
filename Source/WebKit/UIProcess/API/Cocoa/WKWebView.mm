@@ -7288,6 +7288,23 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     _shouldSuppressFormValidationBubble = value;
 }
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+- (NSArray<NSURL *> *)_axCustomColorModeBlockedDomains
+{
+    return _axCustomColorModeBlockedDomains;
+}
+
+- (void)_setAXCustomColorModeBlockedDomains:(NSArray<NSURL *> *)blockedDomains
+{
+    HashSet<String> domains;
+    for (NSURL *url in blockedDomains) {
+        domains.add(URL { url }.hostAndPort());
+    }
+
+    _page->updateAXCustomColorModeBlockedDomains(WTF::move(domains));
+}
+#endif
+
 #if PLATFORM(MAC)
 - (NSUInteger)accessibilityRemoteChildTokenHash
 {

@@ -573,12 +573,6 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 settings->fontGenericFamilies() = parentSettings->fontGenericFamilies();
                 settings->setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
                 settings->setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-                m_fallbackInvertContent = AXCustomColorModeController::shouldAdjustSVGImages(m_page);
-                m_appliedDocumentState.invertContent = m_fallbackInvertContent;
-                settings->setAxCustomColorModeEnabled(m_fallbackInvertContent);
-                settings->setAxCustomColorModeAppearanceDetectionEnabled(false);
-#endif
             }
             protect(m_page)->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
         }
@@ -610,6 +604,15 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         // Set the intrinsic size before a container size is available.
         m_intrinsicSize = containerSize();
         reportApproximateMemoryCost();
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        // FIXME: this is wrong, as m_page is created solely for the SVG,
+        // and is not the page that loads the SVG.
+        m_fallbackInvertContent = AXCustomColorModeController::shouldAdjustSVGImages(protect(*localMainFrame->document()));
+        m_appliedDocumentState.invertContent = m_fallbackInvertContent;
+        settings->setAxCustomColorModeEnabled(m_fallbackInvertContent);
+        settings->setAxCustomColorModeAppearanceDetectionEnabled(false);
+#endif
     }
 
     return m_page ? EncodedDataStatus::Complete : EncodedDataStatus::Unknown;
