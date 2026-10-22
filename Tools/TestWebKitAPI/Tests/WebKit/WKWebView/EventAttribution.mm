@@ -127,9 +127,14 @@ static NSURL *exampleURL()
     return [NSURL URLWithString:@"https://example.com/"];
 }
 
+static RetainPtr<_WKWebsiteDataStoreConfiguration> temporaryDataStoreConfiguration()
+{
+    return adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:[NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString] isDirectory:YES]]);
+}
+
 static RetainPtr<WKWebViewConfiguration> configurationWithoutUsingDaemon()
 {
-    RetainPtr dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    RetainPtr dataStoreConfiguration = temporaryDataStoreConfiguration();
     dataStoreConfiguration.get().pcmMachServiceName = nil;
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
     configuration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
@@ -455,19 +460,17 @@ TEST(PrivateClickMeasurement, EphemeralWithAttributedBundleIdentifier)
 TEST(PrivateClickMeasurement, DatabaseLocation)
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"EventAttributionDatabaseLocationTest"] isDirectory:YES];
-    if ([fileManager fileExistsAtPath:tempDir.path])
-        [fileManager removeItemAtURL:tempDir error:nil];
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString] isDirectory:YES];
 
     RetainPtr webViewToKeepNetworkProcessAlive = adoptNS([TestWKWebView new]);
     [webViewToKeepNetworkProcessAlive synchronouslyLoadHTMLString:@"start network process"];
 
     pid_t originalNetworkProcessPid = 0;
     @autoreleasepool {
-        RetainPtr dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+        RetainPtr dataStoreConfiguration = temporaryDataStoreConfiguration();
         dataStoreConfiguration.get()._resourceLoadStatisticsDirectory = tempDir;
         dataStoreConfiguration.get().pcmMachServiceName = nil;
-        auto viewConfiguration = configurationWithoutUsingDaemon();
+        RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
         RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
         viewConfiguration.get().websiteDataStore = dataStore.get();
         runBasicPCMTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
@@ -537,7 +540,7 @@ static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfigu
 
     registerPlistWithLaunchD(testDaemonPList(tempDir), tempDir);
 
-    RetainPtr dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    RetainPtr dataStoreConfiguration = temporaryDataStoreConfiguration();
     dataStoreConfiguration.get().pcmMachServiceName = @"org.webkit.pcmtestdaemon.service";
     viewConfiguration.websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
 
@@ -577,7 +580,7 @@ TEST(PrivateClickMeasurement, DISABLED_DaemonBasicFunctionality)
 TEST(PrivateClickMeasurement, DaemonBasicFunctionality)
 #endif
 {
-    auto [tempDir, configuration] = setUpDaemon(configurationWithoutUsingDaemon().autorelease());
+    auto [tempDir, configuration] = setUpDaemon(adoptNS([WKWebViewConfiguration new]).autorelease());
     attemptConnectionInProcessWithoutEntitlement();
     runBasicPCMTest(configuration, [](WKWebView *webView, const HTTPServer& server) {
         [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id" ephemeral:NO];
