@@ -57,7 +57,10 @@ bool GraphicsLayerAsyncContentsDisplayDelegateCoordinated::tryCopyToLayer(ImageB
 #if USE(TEXTURE_MAPPER)
     m_delegate->setDisplayBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), nullptr));
 #else
-    m_delegate->setDisplayBuffer(CoordinatedPlatformLayerBufferSkiaImage::create(image->platformImage(), m_threadSafeGrContext));
+    auto buffer = CoordinatedPlatformLayerBufferSkiaImage::create(image->platformImage(), m_threadSafeGrContext);
+    if (!buffer)
+        return false;
+    m_delegate->setDisplayBuffer(WTF::move(buffer));
 #endif
 
     return true;
