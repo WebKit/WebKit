@@ -233,7 +233,9 @@ InlineLayoutUnit IntrinsicWidthHandler::lineBuilderMinimumContentSize()
 
 InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
 {
-    if (isContentEligibleForNonLineBuilderMinimumWidth(formattingContextRoot(), m_inlineItems, m_mayUseSimplifiedTextOnlyInlineLayoutInRange))
+    // The simplified minimum width takes each image by itself, which does not work where images stick to the content next to them.
+    auto mayUseSimplifiedMinimumWidth = formattingContext().quirks().hasSoftWrapOpportunityAroundImages(IntrinsicWidthMode::Minimum) && isContentEligibleForNonLineBuilderMinimumWidth(formattingContextRoot(), m_inlineItems, m_mayUseSimplifiedTextOnlyInlineLayoutInRange);
+    if (mayUseSimplifiedMinimumWidth)
         return simplifiedMinimumWidth(formattingContextRoot());
 
     if (auto minimumContentSize = minimumContentSizeForBreakSpaces()) {

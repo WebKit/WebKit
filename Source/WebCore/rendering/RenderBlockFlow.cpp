@@ -5552,9 +5552,6 @@ bool RenderBlockFlow::tryComputeIntrinsicLogicalWidthsUsingInlinePath(LayoutUnit
 
     computeAndSetLineLayoutPath();
 
-    if (!LayoutIntegration::LineLayout::canUseForIntrinsicWidthComputation(*this))
-        return false;
-
     std::tie(minLogicalWidth, maxLogicalWidth) = ensureInlineLayout().computeIntrinsicWidthConstraints();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto* renderer = walker.current();

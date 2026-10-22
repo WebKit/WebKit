@@ -6878,7 +6878,6 @@
 		E401B3632A942E3F0018B557 /* ScopedName.h in Headers */ = {isa = PBXBuildFile; fileRef = E401B3622A942E3E0018B557 /* ScopedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E401C27517CE53EC00C41A35 /* ElementIteratorAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E401E0A41C3C0B8300F34D10 /* StyleChange.h in Headers */ = {isa = PBXBuildFile; fileRef = E401E0A31C3C0B8300F34D10 /* StyleChange.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E403B7A2251B11930019E800 /* LayoutIntegrationCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = E403B7A1251B11930019E800 /* LayoutIntegrationCoverage.h */; };
 		E403B7A3251B11C10019E800 /* LayoutIntegrationPagination.h in Headers */ = {isa = PBXBuildFile; fileRef = E4312AB724B3265600678349 /* LayoutIntegrationPagination.h */; };
 		C814C569BBA6F36D17A949B9 /* SVGTextDisplayContentBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C34B552C743CB4BA7256D9A /* SVGTextDisplayContentBuilder.h */; };
 		89ACE0522BC1BB06CFFF1775 /* SVGTextLayoutAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 00580A55849484D03A89EE07 /* SVGTextLayoutAlgorithm.h */; };
@@ -22789,8 +22788,6 @@
 		E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIteratorAssertions.h; sourceTree = "<group>"; };
 		E401E0A31C3C0B8300F34D10 /* StyleChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleChange.h; sourceTree = "<group>"; };
 		E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleChange.cpp; sourceTree = "<group>"; };
-		E403B79F251B118B0019E800 /* LayoutIntegrationCoverage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutIntegrationCoverage.cpp; sourceTree = "<group>"; };
-		E403B7A1251B11930019E800 /* LayoutIntegrationCoverage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutIntegrationCoverage.h; sourceTree = "<group>"; };
 		E406204B2E5F2EC0009144F4 /* StyleRuleFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleRuleFunction.h; sourceTree = "<group>"; };
 		E406204D2E5F2ECA009144F4 /* StyleRuleFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleRuleFunction.cpp; sourceTree = "<group>"; };
 		E406F3FB1198307D009D59D6 /* ColorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorData.cpp; sourceTree = "<group>"; };
@@ -41673,8 +41670,6 @@
 				DD5ACFD72B14DADE00B36C57 /* LayoutIntegrationBoxGeometryUpdater.h */,
 				E418025623D454B500FFB071 /* LayoutIntegrationBoxTreeUpdater.cpp */,
 				E418025323D4549A00FFB071 /* LayoutIntegrationBoxTreeUpdater.h */,
-				E403B79F251B118B0019E800 /* LayoutIntegrationCoverage.cpp */,
-				E403B7A1251B11930019E800 /* LayoutIntegrationCoverage.h */,
 				E43E64F52C6365E50060F493 /* LayoutIntegrationFormattingContextLayout.cpp */,
 				E43E64F62C6365EE0060F493 /* LayoutIntegrationFormattingContextLayout.h */,
 				DD76D1502C7B63B600DFDD70 /* LayoutIntegrationUtils.cpp */,
@@ -47369,7 +47364,6 @@
 				6F0B98B523F268EC00EEC2F2 /* LayoutInlineTextBox.h in Headers */,
 				DD5ACFD82B14DADE00B36C57 /* LayoutIntegrationBoxGeometryUpdater.h in Headers */,
 				E418025523D4549B00FFB071 /* LayoutIntegrationBoxTreeUpdater.h in Headers */,
-				E403B7A2251B11930019E800 /* LayoutIntegrationCoverage.h in Headers */,
 				6FAC251F281326580045683F /* LayoutIntegrationFlexLayout.h in Headers */,
 				E43E64F72C6365EE0060F493 /* LayoutIntegrationFormattingContextLayout.h in Headers */,
 				A5FA575E2E85BFE500EF058F /* LayoutIntegrationGridCoverage.h in Headers */,

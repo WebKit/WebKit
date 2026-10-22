@@ -413,7 +413,7 @@ static inline const ElementBox& nearestCommonAncestor(const Box& first, const Bo
     return rootBox;
 }
 
-bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const
+bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next, std::optional<IntrinsicWidthMode> intrinsicWidthMode) const
 {
     // FIXME: Transition no-wrapping logic from InlineContentBreaker to here where we compute the soft wrap opportunity indexes.
     // "is at" simple means that there's a soft wrap opportunity right after the [previous].
@@ -481,6 +481,15 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
         return true;
     }
     if (previous.isAtomicInlineBox() || next.isAtomicInlineBox()) {
+        auto isImageWithNoSoftWrapOpportunityNextTo = [&](auto& inlineItem, auto& adjacentInlineItem) {
+            if (!inlineItem.layoutBox().isImage() || formattingContext().quirks().hasSoftWrapOpportunityAroundImages(intrinsicWidthMode))
+                return false;
+            // Whitespace next to the image is a soft wrap opportunity of its own.
+            auto* adjacentInlineTextItem = dynamicDowncast<InlineTextItem>(adjacentInlineItem);
+            return !adjacentInlineTextItem || !adjacentInlineTextItem->isWhitespace();
+        };
+        if (isImageWithNoSoftWrapOpportunityNextTo(previous, next) || isImageWithNoSoftWrapOpportunityNextTo(next, previous))
+            return false;
         // [text][inline box start][inline box end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
         return true;
@@ -490,7 +499,7 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
     return true;
 }
 
-size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, std::span<const InlineItem> inlineItemList) const
+size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, std::span<const InlineItem> inlineItemList, std::optional<IntrinsicWidthMode> intrinsicWidthMode) const
 {
     // 1. Find the start candidate by skipping leading non-content items e.g "<span><span>start". Opportunity is after "<span><span>".
     // 2. Find the end candidate by skipping non-content items inbetween e.g. "<span><span>start</span>end". Opportunity is after "</span>".
@@ -540,7 +549,7 @@ size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const Inlin
         }
         // At this point previous and current items are not necessarily adjacent items e.g "previous<span>current</span>"
         auto& previousItem = inlineItemList[*previousInlineItemIndex];
-        if (isAtSoftWrapOpportunity(previousItem, currentItem)) {
+        if (isAtSoftWrapOpportunity(previousItem, currentItem, intrinsicWidthMode)) {
             if (*previousInlineItemIndex + 1 == index && (!previousItem.isText() || !currentItem.isText())) {
                 // We only know the exact soft wrap opportunity index when the previous and current items are next to each other.
                 return index;

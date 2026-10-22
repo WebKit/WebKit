@@ -44,7 +44,6 @@
 #include "InlineItemsBuilder.h"
 #include "InlineIteratorSVGTextBox.h"
 #include "LayoutBoxGeometry.h"
-#include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
 #include "LayoutIntegrationInlineContentPainter.h"
 #include "LayoutIntegrationPagination.h"
@@ -338,11 +337,6 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
 const LineLayout* LineLayout::containing(const RenderObject& renderer)
 {
     return containing(const_cast<RenderObject&>(renderer));
-}
-
-bool LineLayout::canUseForIntrinsicWidthComputation(const RenderBlockFlow& flow)
-{
-    return LayoutIntegration::canUseForIntrinsicWidthComputation(flow);
 }
 
 bool LineLayout::shouldInvalidateLineLayoutAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout& lineLayout)
