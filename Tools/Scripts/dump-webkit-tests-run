@@ -5,6 +5,8 @@ import optparse
 import os
 import sys
 
+from webkitpy.layout_tests.layout_package.json_results_generator import convert_trie_to_flat_paths
+
 
 def main(argv):
     parser = optparse.OptionParser(usage='%prog worker_number [path-to-stats.json]')
@@ -31,22 +33,6 @@ def main(argv):
             tests_run.append((test, result['results'][1]))
 
     print("\n".join(t[0] for t in sorted(tests_run, key=lambda t: t[1])))
-
-
-def convert_trie_to_flat_paths(trie, prefix=None):
-    # Cloned from webkitpy.layout_tests.layout_package.json_results_generator
-    # so that this code can stand alone.
-    result = {}
-    for name, data in trie.items():
-        if prefix:
-            name = prefix + "/" + name
-
-        if len(data) and not "results" in data:
-            result.update(convert_trie_to_flat_paths(data, name))
-        else:
-            result[name] = data
-
-    return result
 
 
 if __name__ ==  '__main__':

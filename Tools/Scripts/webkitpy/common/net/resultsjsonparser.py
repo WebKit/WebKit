@@ -39,16 +39,6 @@ from webkitpy.layout_tests.models.test_expectations import TestExpectations
 _log = logging.getLogger(__name__)
 
 
-# These are helper functions for navigating the results json structure.
-def for_each_test(tree, handler, prefix=''):
-    for key in tree:
-        new_prefix = (prefix + '/' + key) if prefix else key
-        if 'actual' not in tree[key]:
-            for_each_test(tree[key], handler, new_prefix)
-        else:
-            handler(new_prefix, tree[key])
-
-
 def result_for_test(tree, test):
     parts = test.split('/')
     for part in parts:
@@ -147,8 +137,7 @@ class ParsedJSONResults(object):
     def __init__(self, json_string):
         json_dict = json_results_generator.load_jsons(json_string)
 
-        json_results = []
-        for_each_test(json_dict['tests'], lambda test, result: json_results.append(JSONTestResult(test, result)))
+        json_results = [JSONTestResult(test, result) for test, result in json_results_generator.convert_trie_to_flat_paths(json_dict['tests']).items()]
 
         unexpected_failures = []
         for json_result in json_results:
