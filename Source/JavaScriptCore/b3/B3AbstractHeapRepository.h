@@ -187,6 +187,7 @@ namespace JSC::B3 {
     macro(WasmRTT_displaySizeExcludingThis, Wasm::RTT::offsetOfDisplaySizeExcludingThis(), Mutability::Immutable) \
     macro(WasmRTT_kind, Wasm::RTT::offsetOfKind(), Mutability::Immutable) \
     macro(WasmTable_length, Wasm::Table::offsetOfLength(), Mutability::Mutable) \
+    macro(WasmTable_owner, Wasm::Table::offsetOfOwner(), Mutability::Immutable) \
     macro(WasmExternOrAnyRefTable_jsValues, Wasm::ExternOrAnyRefTable::offsetOfJSValues(), Mutability::Mutable) \
     macro(WeakMapImpl_capacity, WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfCapacity(), Mutability::Mutable) \
     macro(WeakMapImpl_buffer,  WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer(), Mutability::Mutable) \
