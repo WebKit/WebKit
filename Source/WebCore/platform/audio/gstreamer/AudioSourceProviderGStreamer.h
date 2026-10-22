@@ -25,6 +25,7 @@
 #include "GRefPtrGStreamer.h"
 #include "MainThreadNotifier.h"
 #include "WebAudioSourceProvider.h"
+#include <atomic>
 #include <gst/gst.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
@@ -73,6 +74,7 @@ private:
 
     void initialize();
     void copyGStreamerBuffersToAudioChannel(GstAdapter*, AudioBus&, int, size_t);
+    void provideLiveCaptureInput(AudioBus&, size_t framesToProcess) WTF_REQUIRES_LOCK(m_adapterLock);
 
     void determineSampleRate(const GstCaps*);
 
@@ -94,6 +96,10 @@ private:
     unsigned long m_deinterleavePadRemovedHandlerId { 0 };
     Lock m_adapterLock;
     CString m_providerId;
+
+    bool m_isLiveCapture { false };
+    std::atomic<int> m_sampleRate { 0 };
+    bool m_isBuffering WTF_GUARDED_BY_LOCK(m_adapterLock) { true };
 };
 
 }
