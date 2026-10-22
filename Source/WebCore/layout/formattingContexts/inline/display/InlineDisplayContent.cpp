@@ -34,6 +34,7 @@ void Content::clear()
     lines.clear();
     boxes.clear();
     lineEllipses = { };
+    maxedOutGlyphOverflows.clear();
 }
 
 void Content::set(Content&& newContent)
@@ -41,13 +42,20 @@ void Content::set(Content&& newContent)
     lines = WTF::move(newContent.lines);
     boxes = WTF::move(newContent.boxes);
     lineEllipses = WTF::move(newContent.lineEllipses);
+    maxedOutGlyphOverflows = WTF::move(newContent.maxedOutGlyphOverflows);
 }
 
 void Content::append(Content&& newContent)
 {
     auto oldLineCount = lines.size();
+    auto oldBoxCount = boxes.size();
     lines.appendVector(WTF::move(newContent.lines));
     boxes.appendVector(WTF::move(newContent.boxes));
+
+    if (!newContent.maxedOutGlyphOverflows.isEmpty())
+        maxedOutGlyphOverflows.reserveCapacity(maxedOutGlyphOverflows.size() + newContent.maxedOutGlyphOverflows.size());
+    for (auto& entry : newContent.maxedOutGlyphOverflows)
+        maxedOutGlyphOverflows.append({ entry.boxIndex + oldBoxCount, entry.top, entry.bottom });
 
     if (newContent.lineEllipses) {
         if (!lineEllipses)
@@ -60,8 +68,16 @@ void Content::append(Content&& newContent)
 
 void Content::insert(Content&& newContent, size_t lineIndex, size_t boxIndex)
 {
+    auto newBoxCount = newContent.boxes.size();
     lines.insertVector(lineIndex, WTF::move(newContent.lines));
     boxes.insertVector(boxIndex, WTF::move(newContent.boxes));
+
+    auto insertionPosition = maxedOutGlyphOverflowPosition(boxIndex);
+    for (auto position = insertionPosition; position < maxedOutGlyphOverflows.size(); ++position)
+        maxedOutGlyphOverflows[position].boxIndex += newBoxCount;
+    for (auto& entry : newContent.maxedOutGlyphOverflows)
+        entry.boxIndex += boxIndex;
+    maxedOutGlyphOverflows.insertVector(insertionPosition, WTF::move(newContent.maxedOutGlyphOverflows));
 
     if (newContent.lineEllipses) {
         if (!lineEllipses) {
@@ -82,6 +98,56 @@ void Content::remove(size_t firstLineIndex, size_t numberOfLines, size_t firstBo
         if (end > firstLineIndex)
             lineEllipses->removeAt(firstLineIndex, end - firstLineIndex);
     }
+
+    auto firstRemoved = maxedOutGlyphOverflowPosition(firstBoxIndex);
+    auto firstKept = maxedOutGlyphOverflowPosition(firstBoxIndex + numberOfBoxes);
+    for (auto position = firstKept; position < maxedOutGlyphOverflows.size(); ++position)
+        maxedOutGlyphOverflows[position].boxIndex -= numberOfBoxes;
+    maxedOutGlyphOverflows.removeAt(firstRemoved, firstKept - firstRemoved);
+}
+
+size_t Content::maxedOutGlyphOverflowPosition(size_t boxIndex) const
+{
+    auto* position = std::lower_bound(maxedOutGlyphOverflows.begin(), maxedOutGlyphOverflows.end(), boxIndex, [](auto& entry, size_t boxIndex) {
+        return entry.boxIndex < boxIndex;
+    });
+    return position - maxedOutGlyphOverflows.begin();
+}
+
+FloatBoxExtent Content::maxedOutGlyphOverflow(size_t boxIndex) const
+{
+    ASSERT(boxes[boxIndex].hasMaxedOutGlyphOverflow());
+    auto position = maxedOutGlyphOverflowPosition(boxIndex);
+    if (position == maxedOutGlyphOverflows.size() || maxedOutGlyphOverflows[position].boxIndex != boxIndex) {
+        ASSERT_NOT_REACHED();
+        return boxes[boxIndex].glyphOverflow();
+    }
+    auto& entry = maxedOutGlyphOverflows[position];
+    return { entry.top, 0.f, entry.bottom, 0.f };
+}
+
+void Content::setMaxedOutGlyphOverflow(size_t boxIndex, const FloatBoxExtent& glyphOverflow)
+{
+    ASSERT(boxes[boxIndex].hasMaxedOutGlyphOverflow());
+    auto entry = MaxedOutGlyphOverflow { boxIndex, glyphOverflow.top(), glyphOverflow.bottom() };
+    // Boxes are built in ascending order, so the entry normally goes last.
+    if (maxedOutGlyphOverflows.isEmpty() || maxedOutGlyphOverflows.last().boxIndex < boxIndex) {
+        maxedOutGlyphOverflows.append(entry);
+        return;
+    }
+    auto position = maxedOutGlyphOverflowPosition(boxIndex);
+    if (position < maxedOutGlyphOverflows.size() && maxedOutGlyphOverflows[position].boxIndex == boxIndex) {
+        maxedOutGlyphOverflows[position] = entry;
+        return;
+    }
+    maxedOutGlyphOverflows.insert(position, entry);
+}
+
+void Content::shrinkToFit()
+{
+    boxes.shrinkToFit();
+    lines.shrinkToFit();
+    maxedOutGlyphOverflows.shrinkToFit();
 }
 
 void Content::setLineEllipsis(size_t lineIndex, Line::Ellipsis&& ellipsis)

@@ -46,6 +46,9 @@ public:
     InlineDisplay::Boxes build(const LineLayoutResult&);
     InlineDisplay::Boxes buildTextOnlyContent(const LineLayoutResult&);
 
+    // Set when a built text box's glyph overflow did not fit its packed fields.
+    bool hasMaxedOutGlyphOverflow() const { return m_hasMaxedOutGlyphOverflow; }
+
 private:
     void processNonBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
     void processBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
@@ -100,6 +103,7 @@ private:
     // FIXME: This should take DisplayLine::isFullyTruncatedInBlockDirection() for non-prefixed line-clamp.
     bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };
+    bool m_hasMaxedOutGlyphOverflow { false };
     bool m_hasSeenRubyBase { false };
 };
 
