@@ -507,6 +507,17 @@ header: <WebCore/ElementTargetingTypes.h>
     bool hasAudibleMedia
 };
 
+header: <WebCore/ElementTargetingTypes.h>
+[CustomHeader] struct WebCore::TargetedTextMatch {
+    Vector<WebCore::TargetedElementInfo> targets
+};
+
+header: <WebCore/ElementTargetingTypes.h>
+[CustomHeader] struct WebCore::TargetedTextSearchResult {
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::TargetedTextSearchItem>> itemsByFrame
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::TargetedElementInfo>> targetsBySubframe
+};
+
 header: <WebCore/RenderStyleConstants.h>
 [CustomHeader] enum class WebCore::PositionType : uint8_t {
     Static,

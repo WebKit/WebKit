@@ -3214,6 +3214,7 @@ private:
     template<typename M> void sendToEveryWebContentProcess();
 
     void sendCORSDisablingPatternsToNetworkProcessIfNecessary();
+    void requestTargetedElementForText(WebCore::TargetedElementRequest&&, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&&);
     std::optional<WebCore::RegistrableDomain> unpartitionedStorageSiteForNavigation(const WebFrameProxy&, const URL&) const;
 
     void getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);

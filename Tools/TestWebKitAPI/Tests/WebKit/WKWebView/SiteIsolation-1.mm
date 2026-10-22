@@ -55,6 +55,8 @@
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKOverlayScrollbarStyle.h>
 #import <WebKit/_WKResourceLoadInfo.h>
+#import <WebKit/_WKTargetedElementInfo.h>
+#import <WebKit/_WKTargetedElementRequest.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <wtf/BlockPtr.h>
@@ -2857,6 +2859,87 @@ TEST(SiteIsolation, HitTestResultAPI)
     };
     runTest(true);
     runTest(false);
+}
+
+static NSArray<_WKTargetedElementInfo *> *synchronouslyRequestTargetedElementInfo(WKWebView *webView, _WKTargetedElementRequest *request)
+{
+    __block RetainPtr<NSArray<_WKTargetedElementInfo *>> result;
+    __block bool done = false;
+    [webView _requestTargetedElementInfo:request completionHandler:^(NSArray<_WKTargetedElementInfo *> *elements) {
+        result = elements;
+        done = true;
+    }];
+    Util::run(&done);
+    return result.autorelease();
+}
+
+static NSArray<_WKTargetedElementInfo *> *synchronouslyRequestTargetedElementInfoWithSelectors(WKWebView *webView, NSArray<NSSet<NSString *> *> *selectors)
+{
+    RetainPtr request = adoptNS([[_WKTargetedElementRequest alloc] initWithSelectors:selectors]);
+    return synchronouslyRequestTargetedElementInfo(webView, request.get());
+}
+
+// Element targeting only reports top-document elements; content inside an iframe is represented by its
+// <iframe> element. These check that the <iframe> element behaves the same when its content is in
+// another process. The <p> sibling keeps the <iframe> from being rejected as the page's only content.
+static void waitForIframeText(TestWKWebView *webView, NSString *text)
+{
+    EXPECT_TRUE(Util::waitFor([&] {
+        RetainPtr childFrame = [webView firstChildFrame];
+        return childFrame && [[webView stringByEvaluatingJavaScript:@"document.body.innerText" inFrame:childFrame.get()] containsString:text];
+    }));
+    [webView waitForNextPresentationUpdate];
+}
+
+TEST(SiteIsolation, TextSearchInCrossOriginIframeTargetsIframeElement)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><p style='margin: 0; height: 20px;'>main frame text</p>"
+            "<iframe id='frame' style='display: block; width: 300px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><p>unique iframe text</p></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    waitForIframeText(webView.get(), @"unique iframe text");
+    // The text only exists inside the iframe, which is in another process, so the search reports the <iframe> element itself.
+    RetainPtr request = adoptNS([[_WKTargetedElementRequest alloc] initWithSearchText:@"unique iframe text"]);
+    RetainPtr targetsFromText = synchronouslyRequestTargetedElementInfo(webView.get(), request.get());
+    ASSERT_EQ(1UL, [targetsFromText count]);
+    RetainPtr iframeTargets = synchronouslyRequestTargetedElementInfoWithSelectors(webView.get(), @[ [NSSet setWithObject:@"#frame"] ]);
+    ASSERT_EQ(1UL, [iframeTargets count]);
+    EXPECT_TRUE([[targetsFromText firstObject] isSameElement:[iframeTargets firstObject]]);
+}
+
+TEST(SiteIsolation, TextSearchInSameSiteIframeNestedInCrossOriginIframeTargetsIframeElement)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><p style='margin: 0; height: 20px;'>main frame text</p>"
+            "<iframe id='frame' style='display: block; width: 300px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe src='https://example.com/nested'></iframe></body>"_s } },
+        { "/nested"_s, { "<!DOCTYPE html><body style='margin: 0'><p>unique nested text</p></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr<_WKFrameTreeNode> nestedFrame;
+    EXPECT_TRUE(Util::waitFor([&] {
+        nestedFrame = [webView mainFrame].childFrames.firstObject.childFrames.firstObject;
+        return nestedFrame && [[webView stringByEvaluatingJavaScript:@"document.body.innerText" inFrame:[nestedFrame info]] containsString:@"unique nested text"];
+    }));
+    [webView waitForNextPresentationUpdate];
+    // The nested frame shares the main frame's process, but the main document can't reach it through the
+    // cross-site iframe in between.
+    RetainPtr mainFrame = [webView mainFrame];
+    EXPECT_EQ([nestedFrame info]._processIdentifier, [mainFrame info]._processIdentifier);
+    EXPECT_NE([mainFrame childFrames].firstObject.info._processIdentifier, [mainFrame info]._processIdentifier);
+    // The text only exists inside the nested frame, so the search reports the outermost <iframe> element.
+    RetainPtr request = adoptNS([[_WKTargetedElementRequest alloc] initWithSearchText:@"unique nested text"]);
+    RetainPtr targetsFromText = synchronouslyRequestTargetedElementInfo(webView.get(), request.get());
+    ASSERT_EQ(1UL, [targetsFromText count]);
+    RetainPtr iframeTargets = synchronouslyRequestTargetedElementInfoWithSelectors(webView.get(), @[ [NSSet setWithObject:@"#frame"] ]);
+    ASSERT_EQ(1UL, [iframeTargets count]);
+    EXPECT_TRUE([[targetsFromText firstObject] isSameElement:[iframeTargets firstObject]]);
 }
 
 #if PLATFORM(MAC) && ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

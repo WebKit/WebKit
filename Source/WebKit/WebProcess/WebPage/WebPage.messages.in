@@ -911,6 +911,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     RequestAllTextAndRects() -> (Vector<std::pair<String, WebCore::FloatRect>> textAndRects)
 
     RequestTargetedElement(struct WebCore::TargetedElementRequest request) -> (Vector<WebCore::TargetedElementInfo> elements)
+    RequestTargetedElementsForText(struct WebCore::TargetedElementRequest request) -> (struct WebCore::TargetedTextSearchResult result)
 
     RequestAllTargetableElements(float hitTestInterval) -> (Vector<Vector<WebCore::TargetedElementInfo>> elements)
 

@@ -11144,6 +11144,15 @@ void WebPage::requestTargetedElement(TargetedElementRequest&& request, Completio
     completion(protect(page->elementTargetingController())->findTargets(WTF::move(request)));
 }
 
+void WebPage::requestTargetedElementsForText(TargetedElementRequest&& request, CompletionHandler<void(WebCore::TargetedTextSearchResult&&)>&& completion)
+{
+    RefPtr page = corePage();
+    if (!page || !std::holds_alternative<String>(request.data))
+        return completion({ });
+
+    completion(protect(page->elementTargetingController())->searchTextInLocalFrames(WTF::move(request)));
+}
+
 void WebPage::requestAllTargetableElements(float hitTestInterval, CompletionHandler<void(Vector<Vector<WebCore::TargetedElementInfo>>&&)>&& completion)
 {
     RefPtr page = corePage();
