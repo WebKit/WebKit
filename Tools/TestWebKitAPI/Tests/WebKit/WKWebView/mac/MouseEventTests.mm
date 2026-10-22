@@ -33,11 +33,15 @@
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKPage.h>
+#import <WebKit/WKPageUIClient.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface OverrideMouseLocation : NSObject
@@ -656,6 +660,88 @@ TEST(MouseEventTests, MouseMoveNotForwardedWhenCoveredByOverlay)
     [observer mouseMoved:eventOnWebView.get()];
     [webView waitForPendingMouseEvents];
     EXPECT_GE([[webView objectByEvaluatingJavaScript:@"moveCount"] intValue], 1);
+}
+
+static NSString *toolTipTestMarkup = @"<!DOCTYPE html>"
+    "<style>body, html { margin: 0; width: 100%; height: 100%; }</style>"
+    "<div title='Hello' style='position: absolute; left: 0; top: 0; width: 200px; height: 400px;'></div>";
+
+static size_t windowNumberAtPointCallCount;
+static NSInteger windowNumberUnderMouse;
+
+static NSInteger countingWindowNumberAtPoint(id, SEL, NSPoint, NSInteger)
+{
+    ++windowNumberAtPointCallCount;
+    return windowNumberUnderMouse;
+}
+
+static NSString *currentToolTip(TestWKWebView *webView)
+{
+    return [(id<NSViewToolTipOwner>)webView view:webView stringForToolTip:0 point:NSZeroPoint userData:nullptr];
+}
+
+static NSMutableArray<NSString *> *toolTipChanges()
+{
+    static NeverDestroyed<RetainPtr<NSMutableArray<NSString *>>> changes = adoptNS([[NSMutableArray alloc] init]);
+    return changes.get().get();
+}
+
+TEST(MouseEventTests, MouseMoveWithoutToolTipDoesNotAskForWindowUnderMouse)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:toolTipTestMarkup];
+
+    windowNumberAtPointCallCount = 0;
+    windowNumberUnderMouse = [[webView window] windowNumber];
+    ClassMethodSwizzler swizzler(NSWindow.class, @selector(windowNumberAtPoint:belowWindowWithWindowNumber:), reinterpret_cast<IMP>(countingWindowNumberAtPoint));
+
+    // The right half of the page has no title, so no tooltip shows while the mouse moves over it.
+    static constexpr unsigned numberOfMouseMoves = 20;
+    for (unsigned i = 0; i < numberOfMouseMoves; ++i) {
+        [webView mouseMoveToPoint:NSMakePoint(250 + i, 200) withFlags:0];
+        [webView waitForPendingMouseEvents];
+    }
+
+    EXPECT_EQ(currentToolTip(webView.get()).length, 0U);
+    EXPECT_EQ(windowNumberAtPointCallCount, 0U);
+}
+
+TEST(MouseEventTests, ToolTipIsClearedWhenAnotherWindowIsUnderMouse)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:toolTipTestMarkup];
+
+    [toolTipChanges() removeAllObjects];
+    WKPageUIClientV19 uiClient;
+    zeroBytes(uiClient);
+    uiClient.base.version = 19;
+    uiClient.tooltipDidChange = [](WKPageRef, WKStringRef toolTip, const void*) {
+        [toolTipChanges() addObject:Util::toNS(toolTip)];
+    };
+    WKPageSetPageUIClient([webView _pageRefForTransitionToWKWebView], &uiClient.base);
+
+    windowNumberUnderMouse = [[webView window] windowNumber];
+    ClassMethodSwizzler swizzler(NSWindow.class, @selector(windowNumberAtPoint:belowWindowWithWindowNumber:), reinterpret_cast<IMP>(countingWindowNumberAtPoint));
+
+    [webView mouseMoveToPoint:NSMakePoint(100, 200) withFlags:0];
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ(@"Hello", currentToolTip(webView.get()));
+    EXPECT_EQ([toolTipChanges() count], 1U);
+
+    // While the web view's window is the one under the mouse, the tooltip stays.
+    [webView mouseMoveToPoint:NSMakePoint(101, 200) withFlags:0];
+    [webView waitForPendingMouseEvents];
+    EXPECT_EQ([toolTipChanges() count], 1U);
+
+    // When another window is under the mouse, the next mouse event clears the tooltip
+    // before the web process handles the event (and sets it again, since the mouse is still over the element).
+    windowNumberAtPointCallCount = 0;
+    windowNumberUnderMouse = [[webView window] windowNumber] + 1;
+    [webView mouseMoveToPoint:NSMakePoint(102, 200) withFlags:0];
+    [webView waitForPendingMouseEvents];
+    EXPECT_GE(windowNumberAtPointCallCount, 1U);
+    ASSERT_GE([toolTipChanges() count], 2U);
+    EXPECT_WK_STREQ(@"", [toolTipChanges() objectAtIndex:1]);
 }
 
 } // namespace TestWebKitAPI
