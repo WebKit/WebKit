@@ -2682,3 +2682,4 @@ webkit.org/b/328134 [ Release ] accessibility/isolated-tree/datetime/time-input-
 
 webkit.org/b/328264 [ Debug ] http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Failure ]
 webkit.org/b/328278 [ x86_64 ] imported/w3c/web-platform-tests/css/css-images/cross-fade-target-alpha.html [ ImageOnlyFailure ]
+webkit.org/b/328523 fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html [ Pass ImageOnlyFailure ]
