@@ -91,11 +91,7 @@ void WPEQtUnderlayRenderNode::advanceFrame()
         return;
     }
 
-    if (!m_blitter.importEGLImage(image)) {
-        if (didPromote)
-            wpe_view_qtquick_rollback_frame(m_wpeView.get());
-        return;
-    }
+    m_blitter.importEGLImage(image);
 
     m_buffer = WTF::move(buffer);
     if (didPromote)
