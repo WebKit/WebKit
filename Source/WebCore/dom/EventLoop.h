@@ -211,6 +211,7 @@ public:
     EventLoopTimerHandle scheduleTask(Seconds timeout, TaskSource, EventLoop::TaskFunction&&);
     EventLoopTimerHandle scheduleTask(Seconds timeout, TimerAlignment&, HasReachedMaxNestingLevel, TaskSource, EventLoop::TaskFunction&&);
     void didExecuteScheduledTask(EventLoopTimer&);
+    void didFireTimer();
     void removeScheduledTimer(EventLoopTimer&);
 
     EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TaskSource, EventLoop::TaskFunction&&);

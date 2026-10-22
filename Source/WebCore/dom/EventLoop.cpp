@@ -147,6 +147,8 @@ private:
         if (!m_task)
             return;
         WeakPtr group = m_task->group();
+        if (group)
+            group->didFireTimer();
         m_task->execute();
         if (group && m_type == Type::OneShot)
             group->removeScheduledTimer(*this);
@@ -642,6 +644,12 @@ void EventLoopTaskGroup::removeRepeatingTimer(EventLoopTimer& timer)
     if (RefPtr eventLoop = m_eventLoop.get())
         eventLoop->removeRepeatingTimer(timer);
     m_timers.remove(timer);
+}
+
+void EventLoopTaskGroup::didFireTimer()
+{
+    if (RefPtr eventLoop = m_eventLoop)
+        eventLoop->invalidateNextTimerFireTimeCache();
 }
 
 void EventLoopTaskGroup::didChangeTimerAlignmentInterval(EventLoopTimerHandle handle)
