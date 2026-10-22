@@ -1,0 +1,117 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../model-element/resources/model-utils.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 300px; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+const centeredCube = "2x2x2-center.usdz";
+
+const portalCenter = portal => {
+    const rect = portal.getBoundingClientRect();
+    return { x: Math.round(rect.left + rect.width / 2), y: Math.round(rect.top + rect.height / 2) };
+};
+
+const pressAndDrag = async (portal, deltaX) => {
+    const center = portalCenter(portal);
+    eventSender.mouseMoveTo(center.x, center.y);
+    eventSender.mouseDown();
+    await sleepForSeconds(0.1);
+    eventSender.mouseMoveTo(center.x + deltaX, center.y);
+    await sleepForSeconds(0.1);
+};
+
+const release = async () => {
+    eventSender.mouseUp();
+    await sleepForSeconds(0.1);
+};
+
+const loadedPortal = async (t, options) => {
+    const portal = createPortal(t, options);
+    const model = appendModel(portal, centeredCube);
+    await model.ready;
+    const fit = await waitForPortalTransform(portal, portalTransformIsResolved, "initial fit");
+    return { portal, fit };
+};
+
+promise_test(async t => {
+    const { portal, fit } = await loadedPortal(t, { portalAction: "orbit" });
+
+    await pressAndDrag(portal, -100);
+    await release();
+
+    await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, fit), "the content to rotate");
+}, `dragging a portal-action: orbit portal rotates its content`);
+
+promise_test(async t => {
+    const { portal, fit } = await loadedPortal(t);
+
+    await pressAndDrag(portal, -100);
+    await release();
+
+    assert_3d_matrix_approx_equals(resolvedPortalTransform(portal), fit);
+}, `dragging a portal-action: none portal leaves its content alone`);
+
+promise_test(async t => {
+    const { portal, fit } = await loadedPortal(t, { portalAction: "orbit" });
+
+    const preventDefault = event => event.preventDefault();
+    document.addEventListener("mousedown", preventDefault, { capture: true });
+    t.add_cleanup(() => document.removeEventListener("mousedown", preventDefault, { capture: true }));
+
+    await pressAndDrag(portal, -100);
+    await release();
+
+    assert_3d_matrix_approx_equals(resolvedPortalTransform(portal), fit);
+}, `preventDefault() on mousedown stops a portal-action: orbit gesture from starting`);
+
+promise_test(async t => {
+    const { fit: boxFit } = await loadedPortal(t);
+    const { portal, fit: sphereFit } = await loadedPortal(t, { portalAction: "orbit" });
+
+    await pressAndDrag(portal, -100);
+    await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, sphereFit), "the content to rotate");
+
+    portal.style.portalAction = "none";
+    const restored = await waitForPortalTransform(portal, transform => transform && portalTransformsApproxEqual(transform, boxFit), "the bounding box fit");
+
+    const center = portalCenter(portal);
+    eventSender.mouseMoveTo(center.x + 100, center.y);
+    await sleepForSeconds(0.1);
+    await release();
+
+    assert_3d_matrix_approx_equals(resolvedPortalTransform(portal), restored);
+}, `switching to portal-action: none in the middle of a drag cancels the gesture and restores the fit`);
+
+promise_test(async t => {
+    const { fit: boxFit } = await loadedPortal(t);
+    const { portal, fit } = await loadedPortal(t, { portalAction: "orbit" });
+
+    await pressAndDrag(portal, -100);
+    await release();
+    await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, fit), "the content to rotate");
+
+    portal.style.portalAction = "none";
+    await waitForPortalTransform(portal, transform => transform && portalTransformsApproxEqual(transform, boxFit), "the bounding box fit");
+
+    portal.style.portalAction = "orbit";
+    await waitForPortalTransform(portal, transform => transform && portalTransformsApproxEqual(transform, fit), "the bounding sphere fit");
+
+    await pressAndDrag(portal, 0);
+    const pressed = resolvedPortalTransform(portal);
+    await release();
+
+    assert_3d_matrix_approx_equals(pressed, fit);
+}, `re-enabling portal-action: orbit starts from the fitted pose rather than the previous rotation`);
+
+</script>
+</body>
+</html>

@@ -83,20 +83,27 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpatialPortalController);
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(GPU_PROCESS_MODEL) || ENABLE(TOUCH_EVENTS)
 class SpatialPortalEventListener final : public EventListener {
 public:
-    static Ref<SpatialPortalEventListener> create()
+    static Ref<SpatialPortalEventListener> create(SpatialPortalController& controller)
     {
-        return adoptRef(*new SpatialPortalEventListener());
+        return adoptRef(*new SpatialPortalEventListener(controller));
     }
 
-    void handleEvent(ScriptExecutionContext&, Event&) override { }
+    void handleEvent(ScriptExecutionContext&, Event& event) override
+    {
+        if (CheckedPtr controller = m_controller)
+            controller->handleGestureEvent(event);
+    }
 
 private:
-    explicit SpatialPortalEventListener()
+    explicit SpatialPortalEventListener(SpatialPortalController& controller)
         : EventListener(EventListener::CPPEventListenerType)
+        , m_controller(controller)
     { }
+
+    const WeakPtr<SpatialPortalController> m_controller;
 };
 #endif
 
@@ -577,10 +584,10 @@ void SpatialPortalController::setPortalAction(PortalActionKind kind)
 
     m_portalAction = kind;
 
+    updateGestureHandling();
+
     if (RefPtr player = m_modelPlayer)
         player->setPortalAction(m_portalAction);
-
-    updateGestureHandling();
 }
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
@@ -729,20 +736,33 @@ void SpatialPortalController::updateGestureHandling()
 
     m_handlesGesture = shouldHandleGesture;
 
-#if ENABLE(TOUCH_EVENTS)
+    if (!shouldHandleGesture)
+        cancelGesture();
+
+#if ENABLE(GPU_PROCESS_MODEL) || ENABLE(TOUCH_EVENTS)
     if (RefPtr element = m_portalElement.get()) {
         if (!m_eventListener)
-            lazyInitialize(m_eventListener, SpatialPortalEventListener::create());
+            lazyInitialize(m_eventListener, SpatialPortalEventListener::create(*this));
 
-        if (shouldHandleGesture) {
-            element->addEventListener(eventNames().touchstartEvent, *m_eventListener, { });
-            element->addEventListener(eventNames().touchmoveEvent, *m_eventListener, { });
-            element->addEventListener(eventNames().touchendEvent, *m_eventListener, { });
-        } else {
-            element->removeEventListener(eventNames().touchstartEvent, *m_eventListener, { });
-            element->removeEventListener(eventNames().touchmoveEvent, *m_eventListener, { });
-            element->removeEventListener(eventNames().touchendEvent, *m_eventListener, { });
-        }
+        auto updateListener = [&](const AtomString& eventName) {
+            if (shouldHandleGesture)
+                element->addEventListener(eventName, *m_eventListener, { });
+            else
+                element->removeEventListener(eventName, *m_eventListener, { });
+        };
+
+        auto& names = eventNames();
+#if ENABLE(GPU_PROCESS_MODEL)
+        updateListener(names.mousedownEvent);
+        updateListener(names.mousemoveEvent);
+        updateListener(names.mouseupEvent);
+#endif
+#if ENABLE(TOUCH_EVENTS)
+        updateListener(names.touchstartEvent);
+        updateListener(names.touchmoveEvent);
+        updateListener(names.touchendEvent);
+        updateListener(names.touchcancelEvent);
+#endif
     }
 #endif
 
@@ -754,6 +774,22 @@ void SpatialPortalController::updateGestureHandling()
             page->decrementModelElementCount();
     }
 #endif
+}
+
+void SpatialPortalController::handleGestureEvent(Event& event)
+{
+    RefPtr element = m_portalElement;
+    RefPtr player = m_modelPlayer;
+    if (!element || !player || !player->supportsMouseInteraction())
+        return;
+
+    m_interactionGesture.handleEvent(*element, *player, event);
+}
+
+void SpatialPortalController::cancelGesture()
+{
+    RefPtr player = m_modelPlayer;
+    m_interactionGesture.cancel(player.get());
 }
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
@@ -808,6 +844,7 @@ void SpatialPortalController::endStageModeInteraction()
 void SpatialPortalController::deleteModelPlayer()
 {
     if (m_modelPlayer) {
+        cancelGesture();
         if (RefPtr provider = m_modelPlayerProvider.get())
             provider->deleteModelPlayer(*m_modelPlayer);
         m_modelPlayer = nullptr;

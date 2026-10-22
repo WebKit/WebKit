@@ -74,6 +74,9 @@ private:
     void setEntityTransform(const WebModel::Float4x4&) final;
 #if PLATFORM(COCOA)
     std::optional<WebModel::Float4x4> entityTransform() const final;
+#if ENABLE(SPATIAL_PORTAL)
+    std::optional<WebModel::Float4x4> resolvedPortalTransform() const final;
+#endif
 #endif
     void setFOV(float) final;
     void play(bool) final;

@@ -5006,6 +5006,7 @@
 		B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = B656626E120B1227006EA85C /* JSIDBTransaction.h */; };
 		B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = B658FFA01522EF3A00DD5595 /* JSRadioNodeList.h */; };
 		B658FFA61522EFAA00DD5595 /* RadioNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = B658FFA41522EFAA00DD5595 /* RadioNodeList.h */; };
+		B65F48F93089162D00E24595 /* PortalInteractionGesture.h in Headers */ = {isa = PBXBuildFile; fileRef = B65F48F73089162D00E24595 /* PortalInteractionGesture.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B6621299300A6EA900330D60 /* SpatialPortalController.h in Headers */ = {isa = PBXBuildFile; fileRef = B6621297300A6EA900330D60 /* SpatialPortalController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B6885C5F0B6BD0CFDBE1DB17 /* StyleFlexLineCount.h in Headers */ = {isa = PBXBuildFile; fileRef = 17E2804C741600AE026FD7D4 /* StyleFlexLineCount.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B6D814722EE0C6D400397547 /* SpatialImageTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D8146E2EE0C39C00397547 /* SpatialImageTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -18959,6 +18960,8 @@
 		B65C81DD305DD4BF00DE9CAF /* CSSEnvironmentMapRule.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSEnvironmentMapRule.idl; sourceTree = "<group>"; };
 		B65C81DE305DD4E200DE9CAF /* EnvironmentMapLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnvironmentMapLoader.h; sourceTree = "<group>"; };
 		B65C81DF305DD4E200DE9CAF /* EnvironmentMapLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnvironmentMapLoader.cpp; sourceTree = "<group>"; };
+		B65F48F73089162D00E24595 /* PortalInteractionGesture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PortalInteractionGesture.h; sourceTree = "<group>"; };
+		B65F48F83089162D00E24595 /* PortalInteractionGesture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PortalInteractionGesture.cpp; sourceTree = "<group>"; };
 		B6621297300A6EA900330D60 /* SpatialPortalController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpatialPortalController.h; sourceTree = "<group>"; };
 		B6621298300A6EA900330D60 /* SpatialPortalController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpatialPortalController.cpp; sourceTree = "<group>"; };
 		B6D8146E2EE0C39C00397547 /* SpatialImageTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpatialImageTypes.h; sourceTree = "<group>"; };
@@ -32116,6 +32119,8 @@
 				52597BE62DC6533200CAAF01 /* PlaceholderModelPlayer.cpp */,
 				52597BE52DC6533200CAAF01 /* PlaceholderModelPlayer.h */,
 				1F2E3D4C5B6A79880716253F /* PortalAction.h */,
+				B65F48F83089162D00E24595 /* PortalInteractionGesture.cpp */,
+				B65F48F73089162D00E24595 /* PortalInteractionGesture.h */,
 				329D390B53E4795024178E9D /* PortalTransform.h */,
 				B6621298300A6EA900330D60 /* SpatialPortalController.cpp */,
 				B6621297300A6EA900330D60 /* SpatialPortalController.h */,
@@ -48241,6 +48246,7 @@
 				BC3BE12B0E98092F00835588 /* PopupMenuStyle.h in Headers */,
 				37F567CE165358F400DDE92B /* PopupOpeningObserver.h in Headers */,
 				0A1B2C3D4E5F60718293A4B5 /* PortalAction.h in Headers */,
+				B65F48F93089162D00E24595 /* PortalInteractionGesture.h in Headers */,
 				053F6589A66D76BEEA136C23 /* PortalTransform.h in Headers */,
 				86EB71C0298C0A0F00C1DC77 /* PortIdentifier.h in Headers */,
 				93F199DE08245E59001E9ABC /* Position.h in Headers */,

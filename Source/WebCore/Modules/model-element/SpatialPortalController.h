@@ -31,6 +31,7 @@
 #include <WebCore/ModelPlayer.h>
 #include <WebCore/NodeIdentifier.h>
 #include <WebCore/PortalAction.h>
+#include <WebCore/PortalInteractionGesture.h>
 #include <WebCore/PortalTransform.h>
 #include <WebCore/ResolvedScopedName.h>
 #include <WebCore/TransformationMatrix.h>
@@ -51,6 +52,7 @@ namespace WebCore {
 class Color;
 class Element;
 class EnvironmentMapLoader;
+class Event;
 class GraphicsLayer;
 class HTMLModelElement;
 class IntersectionObserver;
@@ -79,6 +81,7 @@ class SpatialPortalController : public CanMakeWeakPtr<SpatialPortalController>, 
     friend class PortalModelPlayerClient;
     friend class PortalIntersectionObserverCallback;
     friend class PortalVisibilityChangeClient;
+    friend class SpatialPortalEventListener;
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     friend class ElementVolumetricScene;
 #endif
@@ -184,6 +187,8 @@ private:
     void stopObservingPortalVisibility();
     LayoutSize portalContentSize() const;
     void updateGestureHandling();
+    void handleGestureEvent(Event&);
+    void cancelGesture();
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
 
@@ -210,9 +215,10 @@ private:
     const RefPtr<PortalModelPlayerClient> m_playerClient;
     RefPtr<IntersectionObserver> m_intersectionObserver;
     RefPtr<PortalVisibilityChangeClient> m_visibilityChangeClient;
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(GPU_PROCESS_MODEL) || ENABLE(TOUCH_EVENTS)
     const RefPtr<SpatialPortalEventListener> m_eventListener;
 #endif
+    PortalInteractionGesture m_interactionGesture;
     std::optional<LayoutSize> m_lastPushedContentSize;
     std::optional<TransformationMatrix> m_resolvedPortalTransform;
     UsedPortalTransform m_portalTransform;

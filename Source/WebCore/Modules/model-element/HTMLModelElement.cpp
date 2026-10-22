@@ -113,10 +113,6 @@
 #include "ElementVolumetricScene.h"
 #endif
 
-#if ENABLE(TOUCH_EVENTS) && (ENABLE(GPU_PROCESS_MODEL) || ENABLE(MODEL_PROCESS))
-#include <WebCore/TouchEvent.h>
-#endif
-
 #if ENABLE(SPATIAL_PORTAL)
 #include "ElementAncestorIteratorInlines.h"
 #include "SpatialPortalController.h"
@@ -1397,57 +1393,18 @@ void HTMLModelElement::defaultEventHandler(Event& event)
     if (!modelPlayer || !modelPlayer->supportsMouseInteraction())
         return;
 
-    auto type = event.type();
-    bool isMouseEvent = type == eventNames().mousedownEvent || type == eventNames().mousemoveEvent || type == eventNames().mouseupEvent;
-
-#if ENABLE(TOUCH_EVENTS) && (ENABLE(GPU_PROCESS_MODEL) || ENABLE(MODEL_PROCESS))
-    bool isTouchEvent = type == eventNames().touchstartEvent || type == eventNames().touchmoveEvent || type == eventNames().touchendEvent || type == eventNames().touchcancelEvent;
-
-    if (isTouchEvent) {
-        auto& touchEvent = downcast<TouchEvent>(event);
-
+    auto phase = m_interactionGesture.handleEvent(*this, *modelPlayer, event, [&](FloatPoint location) {
 #if USE(SYSTEM_PREVIEW)
-        if (type == eventNames().touchstartEvent && !m_isDragging && isPointInSystemPreviewBadge(FloatPoint(touchEvent.offsetX(), touchEvent.offsetY())))
-            return;
+        if (isPointInSystemPreviewBadge(location))
+            return false;
+#else
+        UNUSED_PARAM(location);
 #endif
+        return isInteractive();
+    });
 
-        if (type == eventNames().touchstartEvent && !m_isDragging && !event.defaultPrevented() && isInteractive())
-            dragDidStart(touchEvent);
-        else if (type == eventNames().touchmoveEvent && m_isDragging)
-            dragDidChange(touchEvent);
-        else if ((type == eventNames().touchendEvent || type == eventNames().touchcancelEvent) && m_isDragging)
-            dragDidEnd(touchEvent);
-        return;
-    }
-#endif
-
-    if (!isMouseEvent)
-        return;
-
-    auto& mouseEvent = downcast<MouseEvent>(event);
-
-    if (mouseEvent.button() != MouseButton::Left)
-        return;
-
-#if USE(SYSTEM_PREVIEW)
-    if (type == eventNames().mousedownEvent && !m_isDragging && isPointInSystemPreviewBadge(FloatPoint(mouseEvent.offsetX(), mouseEvent.offsetY())))
-        return;
-#endif
-
-    if (type == eventNames().mousedownEvent && !m_isDragging && !event.defaultPrevented() && isInteractive())
-        dragDidStart(mouseEvent);
-    else if (type == eventNames().mousemoveEvent && m_isDragging)
-        dragDidChange(mouseEvent);
-    else if (type == eventNames().mouseupEvent && m_isDragging)
-        dragDidEnd(mouseEvent);
-}
-
-LayoutPoint HTMLModelElement::flippedLocationInElementForMouseEvent(WebCore::MouseRelatedEvent& event)
-{
-    LayoutUnit flippedY { event.offsetY() };
-    if (CheckedPtr renderModel = dynamicDowncast<RenderModel>(renderer()))
-        flippedY = renderModel->paddingBoxHeight() - flippedY;
-    return { LayoutUnit(event.offsetX()), flippedY };
+    if (phase == PortalInteractionGesture::Phase::Began)
+        logInteractionDiagnostic();
 }
 
 #if USE(SYSTEM_PREVIEW)
@@ -1501,50 +1458,6 @@ void HTMLModelElement::logInteractionDiagnostic()
     DiagnosticLoggingClient::ValueDictionary dictionary;
     dictionary.set("type"_s, modelType);
     protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary("ModelElementInteraction"_s, "Safari"_s, dictionary, ShouldSample::No);
-}
-
-void HTMLModelElement::dragDidStart(WebCore::MouseRelatedEvent& event)
-{
-    ASSERT(!m_isDragging);
-
-    RefPtr frame = document().frame();
-    if (!frame)
-        return;
-
-    frame->eventHandler().setCapturingMouseEventsElement(this);
-    event.setDefaultHandled();
-    m_isDragging = true;
-
-    logInteractionDiagnostic();
-
-    if (RefPtr modelPlayer = m_modelPlayer)
-        modelPlayer->handleMouseDown(flippedLocationInElementForMouseEvent(event), event.timeStamp());
-}
-
-void HTMLModelElement::dragDidChange(WebCore::MouseRelatedEvent& event)
-{
-    ASSERT(m_isDragging);
-
-    event.setDefaultHandled();
-
-    if (RefPtr modelPlayer = m_modelPlayer)
-        modelPlayer->handleMouseMove(flippedLocationInElementForMouseEvent(event), event.timeStamp());
-}
-
-void HTMLModelElement::dragDidEnd(WebCore::MouseRelatedEvent& event)
-{
-    ASSERT(m_isDragging);
-
-    RefPtr frame = document().frame();
-    if (!frame)
-        return;
-
-    frame->eventHandler().setCapturingMouseEventsElement(nullptr);
-    event.setDefaultHandled();
-    m_isDragging = false;
-
-    if (RefPtr modelPlayer = m_modelPlayer)
-        modelPlayer->handleMouseUp(flippedLocationInElementForMouseEvent(event), event.timeStamp());
 }
 
 std::optional<PlatformLayerIdentifier> HTMLModelElement::layerID() const

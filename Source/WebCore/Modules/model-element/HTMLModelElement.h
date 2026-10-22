@@ -43,6 +43,7 @@
 #include <WebCore/ModelPlayerClient.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/PlatformLayerIdentifier.h>
+#include <WebCore/PortalInteractionGesture.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/VisibilityChangeClient.h>
 #include <wtf/UniqueRef.h>
@@ -322,13 +323,9 @@ private:
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) override;
 
     void defaultEventHandler(Event&) final;
-    void dragDidStart(WebCore::MouseRelatedEvent&);
-    void dragDidChange(WebCore::MouseRelatedEvent&);
-    void dragDidEnd(WebCore::MouseRelatedEvent&);
 
     void logInteractionDiagnostic();
 
-    LayoutPoint flippedLocationInElementForMouseEvent(WebCore::MouseRelatedEvent&);
 #if USE(SYSTEM_PREVIEW)
     bool isPointInSystemPreviewBadge(const FloatPoint&) const;
 #endif
@@ -405,8 +402,8 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     const RefPtr<HTMLModelElementEventListener> m_eventListener;
 #endif
+    PortalInteractionGesture m_interactionGesture;
     bool m_dataComplete { false };
-    bool m_isDragging { false };
     bool m_shouldCreateModelPlayerUponRendererAttachment { false };
     bool m_isIntersectingViewport { false };
     bool m_hasFallbackContentQuirk { false };

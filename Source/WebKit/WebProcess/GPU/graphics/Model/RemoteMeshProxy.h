@@ -40,6 +40,10 @@
 #include <simd/simd.h>
 #endif
 
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)
+#include <WebCore/PortalTransform.h>
+#endif
+
 namespace WebModel {
 struct ImageAsset;
 struct Float4x4;
@@ -133,6 +137,13 @@ private:
     void computeTransform();
     void setRotation(float yaw, float pitch, float roll) final;
 #endif
+#if ENABLE(SPATIAL_PORTAL) && PLATFORM(COCOA)
+    void setPortalTransform(const WebCore::UsedPortalTransform&) final;
+    std::optional<WebModel::Float4x4> resolvedPortalTransform() const final;
+#endif
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)
+    std::pair<simd_float4, simd_float4> portalContentCenterAndExtents(const simd_float4x4& transformBeforeAuto) const;
+#endif
     void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) final;
     void updateContentsHeadroom(float) final;
 
@@ -149,6 +160,10 @@ private:
     float m_viewportHeight { 0.f };
     WebCore::StageModeOperation m_stageMode { WebCore::StageModeOperation::None };
     bool m_entityTransformSetByScript { false };
+#endif
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)
+    std::optional<WebCore::UsedPortalTransform> m_portalTransform;
+    std::optional<WebModel::Float4x4> m_fittedPortalTransform;
 #endif
 };
 

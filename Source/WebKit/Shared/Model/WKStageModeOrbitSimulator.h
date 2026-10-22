@@ -37,6 +37,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)gestureDidEnd;
 - (BOOL)stepWithElapsedTime:(float)dt;
 - (void)setCurrentYaw:(float)yaw pitch:(float)pitch;
+- (void)reset;
 
 @end
 

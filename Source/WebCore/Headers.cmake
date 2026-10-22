@@ -498,6 +498,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/model-element/ModelPlayerTransformState.h
     Modules/model-element/ModelPresentationMode.h
     Modules/model-element/PortalAction.h
+    Modules/model-element/PortalInteractionGesture.h
     Modules/model-element/PortalTransform.h
     Modules/model-element/SpatialPortalController.h
 

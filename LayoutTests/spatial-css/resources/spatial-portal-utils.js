@@ -1,3 +1,5 @@
+const modelResourcesURL = new URL("../../model-element/resources/", document.currentScript.src);
+
 const createPortal = (test, { width, height, portalTransform, portalAction } = {}) => {
     const portal = document.createElement("div");
     portal.className = "portal";
@@ -20,7 +22,7 @@ const appendModel = (portal, asset, stageMode) => {
         model.stageMode = stageMode;
     portal.appendChild(model);
     const source = document.createElement("source");
-    source.src = `../model-element/resources/${asset}`;
+    source.src = new URL(asset, modelResourcesURL).href;
     model.appendChild(source);
     return model;
 };

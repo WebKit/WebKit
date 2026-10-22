@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
 <html>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
@@ -65,59 +65,21 @@ promise_test(async t => {
     assert_true(portalTransformScaleIsUnit(after), "portal-transform: none still yields a 1:1 CSS unit mapping");
 }, `portal-action: orbit does not fit the content when portal-transform is none`);
 
-// Only a portal taking part in the gesture registers touch handlers and advertises a model element to
-// the page, so the two follow portal-action together.
 promise_test(async t => {
-    const before = internals.touchEventHandlerCount();
-
-    const portal = createPortal(t);
-    await UIHelper.ensureStablePresentationUpdate();
-    assert_equals(internals.touchEventHandlerCount(), before, "portal-action: none registers no touch handlers");
-
-    portal.style.portalAction = "orbit";
-    await UIHelper.ensureStablePresentationUpdate();
-    assert_greater_than(internals.touchEventHandlerCount(), before, "orbit registers touch handlers");
-
-    portal.style.portalAction = "none";
-    await UIHelper.ensureStablePresentationUpdate();
-    assert_equals(internals.touchEventHandlerCount(), before, "switching back to none removes them");
-}, `portal-action drives the portal's gesture handling`);
-
-promise_test(async t => {
-    const before = internals.touchEventHandlerCount();
-
-    const portal = createPortal(t, { portalAction: "orbit" });
-    await UIHelper.ensureStablePresentationUpdate();
-    assert_greater_than(internals.touchEventHandlerCount(), before, "orbit registers touch handlers");
-
-    portal.style.portalAction = "none";
-    await UIHelper.ensureStablePresentationUpdate();
-    portal.remove();
-    await UIHelper.ensureStablePresentationUpdate();
-    assert_equals(internals.touchEventHandlerCount(), before, "removing the portal removes them exactly once");
-}, `portal-action: orbit removes its gesture handling once when the portal is removed`);
-
-promise_test(async t => {
-    const before = internals.touchEventHandlerCount();
-
     const portal = createPortal(t, { portalAction: "orbit" });
     const model = appendModel(portal, centeredCube);
 
     await model.ready;
     const fit = await waitForPortalTransform(portal, portalTransformIsResolved, "initial bounding sphere fit");
-    const withOrbit = internals.touchEventHandlerCount();
-    assert_greater_than(withOrbit, before, "orbit registers touch handlers");
 
     portal.style.display = "none";
     await UIHelper.ensureStablePresentationUpdate();
     assert_false(internals.establishesSpatialPortal(portal), "the element no longer establishes a portal");
-    assert_equals(internals.touchEventHandlerCount(), before, "its touch handlers are removed");
     await waitForPortalTransform(portal, portalTransformIsCleared, "the resolved transform is cleared");
 
     portal.style.display = "block";
     await UIHelper.ensureStablePresentationUpdate();
     assert_true(internals.establishesSpatialPortal(portal), "the element establishes a portal again");
-    assert_equals(internals.touchEventHandlerCount(), withOrbit, "its touch handlers are registered again");
 
     const refit = await waitForPortalTransform(portal, portalTransformIsResolved, "bounding sphere fit once the box is back");
     assert_3d_matrix_approx_equals(refit, fit);

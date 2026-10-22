@@ -83,6 +83,13 @@ std::optional<WebModel::Float4x4> MeshImpl::entityTransform() const
 {
     return std::nullopt;
 }
+
+#if ENABLE(SPATIAL_PORTAL)
+std::optional<WebModel::Float4x4> MeshImpl::resolvedPortalTransform() const
+{
+    return std::nullopt;
+}
+#endif
 #endif
 
 void MeshImpl::setFOV(float fovY)

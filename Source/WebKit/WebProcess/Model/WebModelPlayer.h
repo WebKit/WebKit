@@ -184,8 +184,13 @@ private:
     void setStageMode(WebCore::StageModeOperation) final;
     void notifyEntityTransformUpdated();
     void setEnvironmentMap(Ref<WebCore::SharedBuffer>&&, const URL&) final;
+    WebCore::StageModeOperation effectiveStageMode() const;
 #if ENABLE(SPATIAL_PORTAL)
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
+    void setPortalAction(WebCore::PortalActionKind) final;
+    bool isSpatialPortal() const { return !!m_portalTransform; }
+    void pushPortalStateToModel();
+    void notifyPortalTransformUpdated();
 #endif
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -216,7 +221,8 @@ private:
     const RetainPtr<WKStageModeOrbitSimulator> m_orbitSimulator;
     MonotonicTime m_lastUpdateTime;
 #if ENABLE(SPATIAL_PORTAL)
-    bool m_isSpatialPortal { false };
+    std::optional<WebCore::UsedPortalTransform> m_portalTransform;
+    WebCore::PortalActionKind m_portalAction { WebCore::PortalActionKind::None };
 #endif
 
     bool m_isUpdateLoopRunning { false };

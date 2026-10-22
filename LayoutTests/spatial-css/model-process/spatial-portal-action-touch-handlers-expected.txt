@@ -1,0 +1,8 @@
+
+PASS portal-action drives the portal's gesture handling
+PASS portal-action: orbit removes its gesture handling once when the portal is removed
+PASS portal-action: orbit touch handlers follow the display property
+PASS portal-action: orbit only sets up interaction when portal-transform contains auto
+PASS portal-action: orbit follows the auto keyword through a portal-transform list
+PASS portal-action: orbit withdraws its touch handlers when portal-transform stops containing auto
+
