@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: ok
+CONSOLE MESSAGE: ok
+PASS if no crash.
