@@ -554,7 +554,11 @@ final class WebBackForwardList {
         guard makeAPIArray else {
             return (count: count, array: nil)
         }
+        #if compiler(>=6.4)
+        let array = count > 0 ? API.Array.create(list: items.map { WebKit.toAPIObject($0) }) : API.RefAPIArray(API.Array.create())
+        #else
         let array = count > 0 ? API.Array.create(list: items.map { WebKit.toAPIObject($0) }) : API.Array.create()
+        #endif
         return (count: count, array: array)
     }
 
@@ -1039,16 +1043,27 @@ final class WebBackForwardList {
         if mainFrameItem.childItemForFrameID(navigatedFrameID) == nil {
             return navigatedFrameState
         }
-        let frameStateRef = currentItem.copyMainFrameStateWithChildren()
-        let frameState = frameStateRef.ptr()
+        #if compiler(>=6.4)
+        let frameState = currentItem.copyMainFrameStateWithChildren()
+        #else
+        let frameState = currentItem.copyMainFrameStateWithChildren().ptr()
+        #endif
         setBackForwardItemIdentifier(frameState: frameState, itemID: navigatedFrameState.itemID.pointee)
         frameState.replaceChildFrameState(consuming: WebKit.RefFrameState(navigatedFrameState))
         return frameState
     }
 
+    private func webProcess(for connection: IPC.Connection) -> WebKit.WebProcessProxy {
+        #if compiler(>=6.4)
+        WebKit.WebProcessProxy.fromConnection(connection)
+        #else
+        WebKit.WebProcessProxy.fromConnection(connection).ptr()
+        #endif
+    }
+
     private func messageCheckItemURLs(
         frameState: WebKit.RefFrameState,
-        process: WebKit.RefWebProcessProxy,
+        process: WebKit.WebProcessProxy,
         depth: UInt32 = 0
     ) throws(InvalidMessage) {
         try messageCheck { depth < maxFrameStateDepthForMessageCheck() }
@@ -1069,10 +1084,10 @@ final class WebBackForwardList {
         #endif
         if doMessageChecks { // corresponds to the first 'if' condition in C++ messageCheckItemURLs
             try messageCheck {
-                !itemURL.protocolIsFile() || process.ptr().wasPreviouslyApprovedFileURL(itemURL)
+                !itemURL.protocolIsFile() || process.wasPreviouslyApprovedFileURL(itemURL)
             }
             try messageCheck {
-                !itemOriginalURL.protocolIsFile() || process.ptr().wasPreviouslyApprovedFileURL(itemOriginalURL)
+                !itemOriginalURL.protocolIsFile() || process.wasPreviouslyApprovedFileURL(itemOriginalURL)
             }
         }
         #endif
@@ -1110,7 +1125,7 @@ final class WebBackForwardList {
         loadedWebArchive: WebKit.LoadedWebArchive,
         browsingContextGroup: WebKit.BrowsingContextGroup
     ) throws(InvalidMessage) {
-        let process = WebKit.WebProcessProxy.fromConnection(connection)
+        let process = webProcess(for: connection)
 
         #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
         let hasItemID = Bool(fromCxx: navigatedFrameState.ptr().itemID)
@@ -1122,13 +1137,13 @@ final class WebBackForwardList {
 
         try messageCheck {
             !hasItemID
-                || contentsMatch(navigatedFrameState.ptr().itemID.pointee.processIdentifier(), process.ptr().coreProcessIdentifier())
+                || contentsMatch(navigatedFrameState.ptr().itemID.pointee.processIdentifier(), process.coreProcessIdentifier())
         }
         try messageCheck {
             !hasFrameItemID
                 || contentsMatch(
                     navigatedFrameState.ptr().frameItemID.pointee.processIdentifier(),
-                    process.ptr().coreProcessIdentifier()
+                    process.coreProcessIdentifier()
                 )
         }
 
@@ -1165,18 +1180,21 @@ final class WebBackForwardList {
             return
         }
 
-        let item = WebKit.WebBackForwardListItem
-            .create(
-                consuming: WebKit.RefFrameState(completeFrameStateForNavigation(navigatedFrameState: navigatedFrameState.ptr())),
-                webPageProxy.identifier(),
-                navigatedFrameID,
-                browsingContextGroup
-            )
-            .ptr()
+        let createdItem = WebKit.WebBackForwardListItem.create(
+            consuming: WebKit.RefFrameState(completeFrameStateForNavigation(navigatedFrameState: navigatedFrameState.ptr())),
+            webPageProxy.identifier(),
+            navigatedFrameID,
+            browsingContextGroup
+        )
+        #if compiler(>=6.4)
+        let item = createdItem
+        #else
+        let item = createdItem.ptr()
+        #endif
         item.setResourceDirectoryURL(consuming: webPageProxy.currentResourceDirectoryURL())
-        item.setEnhancedSecurity(process.ptr().enhancedSecurity())
+        item.setEnhancedSecurity(process.enhancedSecurity())
         if loadedWebArchive == WebKit.LoadedWebArchive.Yes {
-            item.setDataStoreForWebArchive(process.ptr().websiteDataStore())
+            item.setDataStoreForWebArchive(process.websiteDataStore())
         }
         addItem(newItem: item)
     }
@@ -1209,7 +1227,7 @@ final class WebBackForwardList {
         frameItemID: WebCore.BackForwardFrameItemIdentifier,
         frameState: WebKit.RefFrameState
     ) throws(InvalidMessage) {
-        let process = WebKit.WebProcessProxy.fromConnection(connection)
+        let process = webProcess(for: connection)
         try messageCheckItemURLs(frameState: frameState, process: process)
 
         guard let item = currentEntry() else {
@@ -1234,7 +1252,7 @@ final class WebBackForwardList {
 
     @MainActor
     func backForwardUpdateItem(connection: IPC.Connection, frameState: WebKit.RefFrameState) throws(InvalidMessage) {
-        let process = WebKit.WebProcessProxy.fromConnection(connection)
+        let process = webProcess(for: connection)
 
         // In the case of a process swap, the `backForwardUpdateItem` message can be received from the old process,
         // and therefore present an unexpected file: URL.
@@ -1380,7 +1398,11 @@ final class WebBackForwardList {
         var frameStates: [WebKit.FrameState] = []
         for item in entries {
             if let frameItem = item.mainFrameItem().childItemForFrameID(frameID) {
+                #if compiler(>=6.4)
+                frameStates.append(frameItem.copyFrameStateWithChildren())
+                #else
                 frameStates.append(frameItem.copyFrameStateWithChildren().ptr())
+                #endif
             }
         }
         return WebKit.VectorRefFrameState(array: frameStates)
@@ -1414,9 +1436,17 @@ final class WebBackForwardList {
             guard frame.isMainFrame() else {
                 return WebKit.RefPtrFrameState()
             }
+            #if compiler(>=6.4)
+            return WebKit.RefPtrFrameState(item.copyMainFrameStateWithChildren())
+            #else
             return WebKit.RefPtrFrameState(item.copyMainFrameStateWithChildren().ptr())
+            #endif
         }
+        #if compiler(>=6.4)
+        return WebKit.RefPtrFrameState(frameItem.copyFrameStateWithChildren())
+        #else
         return WebKit.RefPtrFrameState(frameItem.copyFrameStateWithChildren().ptr())
+        #endif
     }
 
     @MainActor

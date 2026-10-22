@@ -301,6 +301,31 @@ void resetSharedProbe()
     sharedProbe().resetRefCount();
 }
 
+SharedProbeRef makeSharedProbeRef()
+{
+    return SharedProbeRef { sharedProbe() };
+}
+
+SharedProbeRefPtr makeSharedProbeRefPtr()
+{
+    return SharedProbeRefPtr { &sharedProbe() };
+}
+
+SharedProbeRefPtr makeNullSharedProbeRefPtr()
+{
+    return nullptr;
+}
+
+int sharedProbeRefCountWhileHoldingRef(SharedProbeRef probe)
+{
+    return probe->refCount();
+}
+
+int sharedProbeRefCountWhileHoldingRefPtr(SharedProbeRefPtr probe)
+{
+    return probe ? probe->refCount() : 0;
+}
+
 SelfReferentialProbe::SelfReferentialProbe(int value)
     : m_value(value)
     , m_self(&m_value)
