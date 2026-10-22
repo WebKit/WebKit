@@ -28,10 +28,62 @@
 #import "TestsController.h"
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
+#if PLATFORM(MAC)
+#import <AppKit/AppKit.h>
+#import <objc/runtime.h>
+#import <wtf/RetainPtr.h>
+#endif
+
 void TestWebKitAPIEnableAllSDKAlignedBehaviors(void)
 {
     WTF::enableAllSDKAlignedBehaviors();
 }
+
+#if PLATFORM(MAC)
+
+using PasteboardWithNameFunction = NSPasteboard *(*)(id, SEL, NSPasteboardName);
+static PasteboardWithNameFunction originalPasteboardWithName;
+
+static NSPasteboard *isolatedPasteboard(NSPasteboardName name)
+{
+    static NeverDestroyed<RetainPtr<NSDictionary<NSPasteboardName, NSPasteboard *>>> pasteboards = [] -> RetainPtr<NSDictionary<NSPasteboardName, NSPasteboard *>> {
+        RetainPtr pasteboards = adoptNS([[NSMutableDictionary alloc] init]);
+        for (NSPasteboardName standardName in @[ NSPasteboardNameGeneral, NSPasteboardNameDrag, NSPasteboardNameFind, NSPasteboardNameFont, NSPasteboardNameRuler ]) {
+            // A run-api-tests worker runs its test processes one at a time, so they can share pasteboards.
+            RetainPtr pasteboard = originalPasteboardWithName(NSPasteboard.class, @selector(pasteboardWithName:), [NSString stringWithFormat:@"%@ (TestWebKitAPI %d)", standardName, getppid()]);
+            [pasteboard clearContents];
+            [pasteboards setObject:pasteboard.get() forKey:standardName];
+        }
+        atexit_b(^{
+            for (NSPasteboard *pasteboard in [pasteboards objectEnumerator])
+                [pasteboard releaseGlobally];
+        });
+        return pasteboards;
+    }();
+    return [pasteboards.get() objectForKey:name];
+}
+
+static NSPasteboard *isolatedPasteboardWithName(id self, SEL selector, NSPasteboardName name)
+{
+    if (NSPasteboard *pasteboard = isolatedPasteboard(name))
+        return pasteboard;
+    return originalPasteboardWithName(self, selector, name);
+}
+
+static NSPasteboard *isolatedGeneralPasteboard(id, SEL)
+{
+    return isolatedPasteboard(NSPasteboardNameGeneral);
+}
+
+void TestWebKitAPIIsolatePasteboards(void)
+{
+    Method pasteboardWithName = class_getClassMethod(NSPasteboard.class, @selector(pasteboardWithName:));
+    originalPasteboardWithName = reinterpret_cast<PasteboardWithNameFunction>(method_getImplementation(pasteboardWithName));
+    method_setImplementation(pasteboardWithName, reinterpret_cast<IMP>(isolatedPasteboardWithName));
+    method_setImplementation(class_getClassMethod(NSPasteboard.class, @selector(generalPasteboard)), reinterpret_cast<IMP>(isolatedGeneralPasteboard));
+}
+
+#endif // PLATFORM(MAC)
 
 BOOL TestWebKitAPIRunTests(int argc, char** argv, bool *didRunAnyTest)
 {
