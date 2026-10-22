@@ -70,45 +70,11 @@ FontDescription::FontDescription()
 {
 }
 
-static AtomString computeSpecializedChineseLocale()
-{
-    // FIXME: This is not passing ShouldMinimizeLanguages::No and then getting minimized languages,
-    // which may cause the matching below to fail.
-    for (auto& language : userPreferredLanguages()) {
-        if (startsWithLettersIgnoringASCIICase(language, "zh-"_s))
-            return AtomString { language };
-    }
-    return "zh-hans"_s; // We have no signal. Pick one option arbitrarily.
-}
-
-static AtomString& LEGACY_NODELETE cachedSpecializedChineseLocale()
-{
-    static MainThreadNeverDestroyed<AtomString> specializedChineseLocale;
-    return specializedChineseLocale.get();
-}
-
-static void fontDescriptionLanguageChanged(void*)
-{
-    cachedSpecializedChineseLocale() = computeSpecializedChineseLocale();
-}
-
-static const AtomString& specializedChineseLocale()
-{
-    auto& locale = cachedSpecializedChineseLocale();
-    if (cachedSpecializedChineseLocale().isNull()) {
-        static char forNonNullPointer;
-        addLanguageChangeObserver(&forNonNullPointer, &fontDescriptionLanguageChanged); // We will never remove the observer, so all we need is a non-null pointer.
-        fontDescriptionLanguageChanged(nullptr);
-    }
-    return locale;
-}
-
 void FontDescription::setComputedLocale(const AtomString& computedLocale)
 {
-    ASSERT(isMainThread());
     m_computedLocale = computedLocale;
     m_script = localeToScriptCode(m_computedLocale);
-    m_usedLocale = m_script == USCRIPT_HAN ? specializedChineseLocale() : m_computedLocale;
+    m_usedLocale = m_script == USCRIPT_HAN ? AtomString { userPreferredChineseLocale() } : m_computedLocale;
 }
 
 #if !PLATFORM(COCOA)

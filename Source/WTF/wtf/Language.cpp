@@ -56,6 +56,11 @@ static Vector<String>& LEGACY_NODELETE preferredLanguagesOverride() WTF_REQUIRES
     return override;
 }
 static std::optional<bool> cachedUserPrefersSimplifiedChinese WTF_GUARDED_BY_LOCK(languagesLock);
+static String& LEGACY_NODELETE cachedUserPreferredChineseLocale() WTF_REQUIRES_LOCK(languagesLock)
+{
+    static NeverDestroyed<String> locale;
+    return locale;
+}
 
 static Lock observerMapLock;
 using ObserverMap = HashMap<void*, LanguageChangeObserverFunction>;
@@ -85,6 +90,7 @@ void languageDidChange()
         cachedFullPlatformPreferredLanguages().clear();
         cachedMinimizedPlatformPreferredLanguages().clear();
         cachedUserPrefersSimplifiedChinese = std::nullopt;
+        cachedUserPreferredChineseLocale() = String();
     }
 
     Locker locker { observerMapLock };
@@ -146,6 +152,26 @@ bool userPrefersSimplifiedChinese()
     if (!cachedUserPrefersSimplifiedChinese)
         cachedUserPrefersSimplifiedChinese = computeUserPrefersSimplifiedChinese();
     return *cachedUserPrefersSimplifiedChinese;
+}
+
+static String computeUserPreferredChineseLocale() WTF_REQUIRES_LOCK(languagesLock)
+{
+    // FIXME: This is not passing ShouldMinimizeLanguages::No and then getting minimized languages,
+    // which may cause the matching below to fail.
+    for (auto& language : computeUserPreferredLanguages(ShouldMinimizeLanguages::Yes)) {
+        if (startsWithLettersIgnoringASCIICase(language, "zh-"_s))
+            return language;
+    }
+    return "zh-hans"_s; // We have no signal. Pick one option arbitrarily.
+}
+
+String userPreferredChineseLocale()
+{
+    Locker locker { languagesLock };
+    auto& locale = cachedUserPreferredChineseLocale();
+    if (locale.isNull())
+        locale = computeUserPreferredChineseLocale();
+    return crossThreadCopy(locale);
 }
 
 #if !PLATFORM(COCOA)
