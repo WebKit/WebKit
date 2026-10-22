@@ -215,7 +215,7 @@ ArrayMode ArrayMode::refine(
         return ArrayMode(Array::Generic, action());
     
     // If we had exited because of an exotic object behavior, then don't try to specialize.
-    if (graph.hasExitSite(node->origin.semantic, ExoticObjectMode))
+    if (!isJSArray() && graph.hasExitSite(node->origin.semantic, ExoticObjectMode))
         return ArrayMode(Array::Generic, action());
 
     if (isInBounds() && graph.hasExitSite(node->origin.semantic, LoadFromHole))
