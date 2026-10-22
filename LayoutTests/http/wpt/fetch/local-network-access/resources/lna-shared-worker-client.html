@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+// Asks a shared worker of this document's origin to fetch a loopback address, and reports the outcome to
+// whichever window created this document. The worker script's URL carries this document's fragment so each
+// subtest gets its own worker rather than reusing one another subtest started.
+
+const worker = new SharedWorker('lna-shared-worker.js?' + location.hash.slice(1));
+worker.port.onmessage = (event) => (opener || parent).postMessage(event.data, '*');
+worker.port.postMessage('fetch');
+
+</script>
+</body>
+</html>

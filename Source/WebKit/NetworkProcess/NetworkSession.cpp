@@ -340,6 +340,11 @@ void NetworkSession::requestLocalNetworkAccessPermission(WebPageProxyIdentifier 
     protect(m_networkProcess->parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestLocalNetworkAccessPermission(m_sessionID, pageID, origin, addressSpace), WTF::move(completionHandler));
 }
 
+void NetworkSession::requestLocalNetworkAccessPermissionForWorker(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
+{
+    protect(m_networkProcess->parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestLocalNetworkAccessPermissionForWorker(m_sessionID, origin, addressSpace), WTF::move(completionHandler));
+}
+
 static std::optional<WebCore::IPAddressSpace> addressSpaceFromName(StringView name)
 {
     if (name == "local"_s)

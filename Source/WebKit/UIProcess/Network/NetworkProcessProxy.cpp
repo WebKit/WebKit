@@ -646,6 +646,14 @@ void NetworkProcessProxy::queryLocalNetworkAccessPermission(PAL::SessionID sessi
     store->queryLocalNetworkAccessPermission(pageID, origin, addressSpace, WTF::move(completionHandler));
 }
 
+void NetworkProcessProxy::requestLocalNetworkAccessPermissionForWorker(PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
+{
+    RefPtr store = websiteDataStoreFromSessionID(sessionID);
+    if (!store)
+        return completionHandler(WebCore::PermissionState::Denied);
+    store->requestLocalNetworkAccessPermissionForWorker(origin, addressSpace, WTF::move(completionHandler));
+}
+
 void NetworkProcessProxy::negotiatedLegacyTLS(WebPageProxyIdentifier pageID)
 {
     if (RefPtr page = WebProcessProxy::webPage(pageID))

@@ -2191,7 +2191,7 @@ public:
     void setViewportSegments(const WebCore::ViewportSegments&);
 
     void didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChallengeProxy>&&, NegotiatedLegacyTLS);
-    bool canShowLocalNetworkAccessPrompt(const WebCore::ClientOrigin&) const;
+    bool canShowLocalNetworkAccessPrompt(const WebCore::SecurityOriginData& topOrigin) const;
     void requestLocalNetworkAccessPermission(const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(bool)>&&);
     void queryLocalNetworkAccessPermission(const WebCore::SecurityOriginData& topOrigin, WebCore::IPAddressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
     void negotiatedLegacyTLS();

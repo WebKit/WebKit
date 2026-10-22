@@ -16252,10 +16252,10 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChal
     m_navigationClient->didReceiveAuthenticationChallenge(*this, authenticationChallenge.get());
 }
 
-bool WebPageProxy::canShowLocalNetworkAccessPrompt(const WebCore::ClientOrigin& origin) const
+bool WebPageProxy::canShowLocalNetworkAccessPrompt(const WebCore::SecurityOriginData& topOrigin) const
 {
     // A page that navigated away would otherwise show the prompt under whatever origin it shows now.
-    return protocolHostAndPortAreEqual(pageLoadState().activeURL(), origin.topOrigin.toURL());
+    return protocolHostAndPortAreEqual(pageLoadState().activeURL(), topOrigin.toURL());
 }
 
 void WebPageProxy::requestLocalNetworkAccessPermission(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(bool)>&& completionHandler)
@@ -16267,6 +16267,9 @@ void WebPageProxy::requestLocalNetworkAccessPermission(const WebCore::ClientOrig
 
 void WebPageProxy::queryLocalNetworkAccessPermission(const WebCore::SecurityOriginData& topOrigin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
+    if (!canShowLocalNetworkAccessPrompt(topOrigin))
+        return completionHandler(WebCore::PermissionState::Prompt);
+
     Ref origin = API::SecurityOrigin::create(topOrigin);
     m_uiClient->queryPermission(addressSpace == WebCore::IPAddressSpace::Loopback ? "loopback-network"_s : "local-network"_s, origin, [completionHandler = WTF::move(completionHandler)](std::optional<WebCore::PermissionState> state) mutable {
         completionHandler(state.value_or(WebCore::PermissionState::Prompt));

@@ -78,6 +78,7 @@
 #include <WebCore/WebLockRegistry.h>
 #include <algorithm>
 #include <wtf/Borrow.h>
+#include <wtf/Box.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
@@ -2180,7 +2181,7 @@ void WebsiteDataStore::askPageForLocalNetworkAccess(const LocalNetworkAccessPerm
     RefPtr<WebPageProxy> page;
     for (auto& waiter : borrow(iterator->value.waiters)) {
         page = WebProcessProxy::webPage(waiter.pageID);
-        if (page && page->canShowLocalNetworkAccessPrompt(key.first))
+        if (page && page->canShowLocalNetworkAccessPrompt(key.first.topOrigin))
             break;
         page = nullptr;
     }
@@ -2222,6 +2223,26 @@ void WebsiteDataStore::queryLocalNetworkAccessPermission(std::optional<WebPagePr
         return completionHandler(WebCore::PermissionState::Prompt);
 
     page->queryLocalNetworkAccessPermission(origin.topOrigin, addressSpace, WTF::move(completionHandler));
+}
+
+void WebsiteDataStore::requestLocalNetworkAccessPermissionForWorker(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
+{
+    if (auto iterator = m_localNetworkAccessPermissions.find({ origin, addressSpace }); iterator != m_localNetworkAccessPermissions.end())
+        return completionHandler(iterator->value);
+
+    if (origin.clientOrigin != origin.topOrigin)
+        return completionHandler(WebCore::PermissionState::Prompt);
+
+    auto decision = Box<WebCore::PermissionState>::create(WebCore::PermissionState::Prompt);
+    Ref aggregator = MainRunLoopCallbackAggregator::create([decision, completionHandler = WTF::move(completionHandler)] mutable {
+        completionHandler(*decision);
+    });
+    for (Ref page : m_pages) {
+        page->queryLocalNetworkAccessPermission(origin.topOrigin, addressSpace, [decision, aggregator](std::optional<WebCore::PermissionState> state) {
+            if (state == WebCore::PermissionState::Granted || (state == WebCore::PermissionState::Denied && *decision == WebCore::PermissionState::Prompt))
+                *decision = *state;
+        });
+    }
 }
 
 void WebsiteDataStore::cancelLocalNetworkAccessPrompts(const std::optional<WebCore::SecurityOriginData>& topOrigin)

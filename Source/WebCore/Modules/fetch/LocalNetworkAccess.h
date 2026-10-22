@@ -62,6 +62,6 @@ enum class LocalNetworkAccessRequirement : bool { None, Permission };
 // currentURL is the URL the connection was made to, which after a redirect differs from the request's
 // URL, and is what the same-origin exemption has to be judged against.
 WEBCORE_EXPORT std::expected<LocalNetworkAccessRequirement, ResourceError> checkLocalNetworkAccess(const ResourceRequest&, const URL& currentURL, IPAddressSpace connectionAddressSpace, IPAddressSpace clientPolicyContainerAddressSpace, bool clientIsSecureContext, const ClientOrigin&, bool localNetworkAllowedByPermissionsPolicy, bool loopbackNetworkAllowedByPermissionsPolicy);
-WEBCORE_EXPORT std::optional<ResourceError> localNetworkAccessPermissionError(const URL&, PermissionState);
+WEBCORE_EXPORT std::optional<ResourceError> localNetworkAccessErrorIfNotGranted(const URL&, PermissionState);
 
 } // namespace WebCore
