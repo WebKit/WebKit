@@ -101,6 +101,32 @@ extension Cxx.CountedErrorExpected: TestWTFLibrary.CxxConsumingExpected {
     }
 }
 
+// Made by Swift as well as read, so that a test can read back what `init(catching:)` made.
+extension Cxx.IntExpected: TestWTFLibrary.CxxInitializableExpected {
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public init(value: Value) {
+        self = WTF.makeExpected(value)
+    }
+
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public init(unexpected error: Failure) {
+        self = WTF.makeUnexpected(error)
+    }
+}
+
+// Copyable but not trivially copyable, so a test can count the probes `init(catching:)` leaves behind.
+extension Cxx.CopyCountingProbeExpected: TestWTFLibrary.CxxInitializableExpected {
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public init(value: Value) {
+        self = WTF.makeExpected(value)
+    }
+
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public init(unexpected error: Failure) {
+        self = WTF.makeUnexpected(error)
+    }
+}
+
 // MARK: - Helpers
 
 /// Observed via a weak reference to prove the closure context was released.
@@ -589,6 +615,194 @@ struct SwiftCxxInteropTests {
             "a noncopyable value must be relocated with its move constructor, not by copying its bytes"
         )
         #expect(valueThroughInteriorPointer == 7)
+    }
+
+    // MARK: Making an expected from Swift
+
+    @Test
+    func expectedMadeFromSwiftHoldsItsValue() async throws {
+        let expected: Cxx.IntExpected = WTF.makeExpected(CInt(3))
+
+        #expect(try expected.value == 3)
+    }
+
+    @Test
+    func unexpectedMadeFromSwiftHoldsItsError() async throws {
+        let unexpected: Cxx.IntExpected = WTF.makeUnexpected(Cxx.ProbeError.TooLarge)
+
+        #expect(unexpected.has_value() == false)
+
+        let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+            _ = try unexpected.value
+        }
+        #expect(thrown.error == .TooLarge)
+    }
+
+    @Test
+    func expectedTypeCanBeInferredFromAParameter() async throws {
+        // How Swift usually hands one to C++: straight into a parameter, like a completion handler's.
+        func value(of expected: Cxx.IntExpected) throws(CxxUnexpected<Cxx.ProbeError>) -> CInt {
+            try expected.value
+        }
+
+        #expect(try value(of: WTF.makeExpected(CInt(4))) == 4)
+    }
+
+    @Test
+    func makingAnExpectedCopiesTheValueExactlyOnce() async throws {
+        Cxx.resetCopyCountingProbeCounts()
+
+        // See readingACopyableValueCopiesItExactlyOnce().
+        let baseline = Cxx.liveCopyCountingProbeCount()
+
+        do {
+            let probe = Cxx.CopyCountingProbe(13)
+            let expected: Cxx.CopyCountingProbeExpected = WTF.makeExpected(probe)
+
+            // Sampled before `expected` is read below, which makes a copy of its own.
+            let copies = Cxx.copyCountingProbeCopyCount()
+            let live = Cxx.liveCopyCountingProbeCount() - baseline
+
+            // `probe` is still used here, so Swift has to copy it into makeExpected's by-value parameter
+            // rather than give it up. makeExpected then moves that copy into the expected.
+            #expect(probe.value() == 13)
+            #expect(try expected.value.value() == 13)
+            #expect(copies == 1, "the value should be copied exactly once on its way into the expected")
+            #expect(live == 2, "only Swift's probe and the expected's should be alive")
+        }
+
+        #expect(Cxx.liveCopyCountingProbeCount() == baseline, "every probe should be destroyed")
+    }
+
+    @Test
+    func makingAnUnexpectedNeverMakesAValue() async throws {
+        // See readingACopyableValueCopiesItExactlyOnce().
+        let baseline = Cxx.liveCopyCountingProbeCount()
+
+        let unexpected: Cxx.CopyCountingProbeExpected = WTF.makeUnexpected(Cxx.ProbeError.TooSmall)
+
+        #expect(Cxx.liveCopyCountingProbeCount() == baseline, "an expected holding an error holds no value")
+
+        let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+            _ = try unexpected.value
+        }
+        #expect(thrown.error == .TooSmall)
+    }
+
+    @Test
+    func makingAnExpectedFromAValueHoldingAManagedReferenceBalancesItsCount() async throws {
+        Cxx.resetSharedProbe()
+
+        do {
+            let holder = try Cxx.makeSharedProbeHolderExpected().value
+            let expected: Cxx.SharedProbeHolderExpected = WTF.makeExpected(holder)
+
+            withExtendedLifetime(holder) {}
+            withExtendedLifetime(expected) {}
+        }
+
+        // SharedProbeHolder is trivially copyable, so C++ never retains the probe it points to. Passing it
+        // to makeExpected must not leave behind a retain that only C++ was in a position to balance.
+        #expect(
+            Cxx.sharedProbeRefCalls() == Cxx.sharedProbeDerefCalls(),
+            "making the expected must balance every retain and release it causes"
+        )
+        #expect(Cxx.sharedProbeRefCount() == 1, "the C++ side's own reference must survive")
+    }
+
+    @Test
+    func voidExpectedCanBeMadeFromSwift() async throws {
+        let expected: Cxx.VoidExpected = WTF.makeExpected()
+        let unexpected: Cxx.VoidExpected = WTF.makeUnexpected(Cxx.ProbeError.TooSmall)
+
+        #expect(expected.has_value())
+        #expect(unexpected.has_value() == false)
+        #expect(Cxx.voidExpectedError(unexpected) == .TooSmall)
+    }
+
+    // MARK: Making an expected from a throwing closure
+
+    @Test
+    func initializersMakeWhatTheirLabelsSay() async throws {
+        // `.TooSmall` resolves here, unlike with `WTF.makeUnexpected(_:)`, because `init(unexpected:)` takes the
+        // concrete error type rather than a generic parameter.
+        let expected = Cxx.IntExpected(value: 8)
+        let unexpected = Cxx.IntExpected(unexpected: .TooSmall)
+
+        #expect(try expected.value == 8)
+
+        let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+            _ = try unexpected.value
+        }
+        #expect(thrown.error == .TooSmall)
+    }
+
+    @Test
+    func catchingAReturnedValueMakesAnExpected() async throws {
+        let expected = Cxx.IntExpected { () throws(CxxUnexpected<Cxx.ProbeError>) in 9 }
+
+        #expect(try expected.value == 9)
+    }
+
+    @Test
+    func catchingAThrownErrorMakesAnUnexpected() async throws {
+        let unexpected = Cxx.IntExpected { () throws(CxxUnexpected<Cxx.ProbeError>) in
+            throw CxxUnexpected(error: .TooLarge)
+        }
+
+        let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+            _ = try unexpected.value
+        }
+        #expect(thrown.error == .TooLarge)
+    }
+
+    @Test
+    func catchingAnAsyncClosureMakesAnExpected() async throws {
+        var suspensions = 0
+
+        let expected = await Cxx.IntExpected { () async throws(CxxUnexpected<Cxx.ProbeError>) in
+            await Task.yield()
+            suspensions += 1
+            return 10
+        }
+
+        // Reading `suspensions` after the closure mutated it only compiles because init(catching:) runs the closure
+        // on the caller's isolation. Without `nonisolated(nonsending)`, passing the closure would send it.
+        #expect(suspensions == 1)
+        #expect(try expected.value == 10)
+    }
+
+    @Test
+    func catchingAnAsyncThrownErrorMakesAnUnexpected() async throws {
+        let unexpected = await Cxx.IntExpected { () async throws(CxxUnexpected<Cxx.ProbeError>) in
+            await Task.yield()
+            throw CxxUnexpected(error: .TooSmall)
+        }
+
+        let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+            _ = try unexpected.value
+        }
+        #expect(thrown.error == .TooSmall)
+    }
+
+    @Test
+    func catchingLeavesOnlyTheExpectedsValueAlive() async throws {
+        // See readingACopyableValueCopiesItExactlyOnce().
+        let baseline = Cxx.liveCopyCountingProbeCount()
+
+        do {
+            let expected = Cxx.CopyCountingProbeExpected { () throws(CxxUnexpected<Cxx.ProbeError>) in
+                Cxx.CopyCountingProbe(14)
+            }
+
+            // Sampled before `expected` is read below, which makes a copy of its own.
+            let live = Cxx.liveCopyCountingProbeCount() - baseline
+
+            #expect(try expected.value.value() == 14)
+            #expect(live == 1, "every probe made on the way into the expected should be gone")
+        }
+
+        #expect(Cxx.liveCopyCountingProbeCount() == baseline, "every probe should be destroyed")
     }
 }
 

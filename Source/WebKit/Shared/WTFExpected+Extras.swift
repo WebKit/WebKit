@@ -81,6 +81,16 @@ protocol CxxExpectedBase: ~Copyable {
 /// let value = try expectedResult.value
 /// ```
 ///
+/// To go the other way, make an `expected` with `WTF.makeExpected(_:)` and `WTF.makeUnexpected(_:)`,
+/// which take the expected type from context and need no conformance:
+///
+/// ```swift
+/// let expectedResult: ExpectedResult = WTF.makeExpected(CInt(42))
+/// let unexpectedResult: ExpectedResult = WTF.makeUnexpected(ErrorCode.Failed)
+/// ```
+///
+/// To make one from a throwing closure, conform to ``CxxInitializableExpected`` too.
+///
 protocol CxxExpected: CxxExpectedBase where Value: Copyable {
 }
 
@@ -172,6 +182,93 @@ extension CxxConsumingExpected where Self: ~Copyable, Value: ~Copyable {
         }
 
         return Self.__take(self)
+    }
+}
+
+/// A protocol for concrete specializations of `std::expected<T, E>` that Swift makes, when `T` is `Copyable`.
+///
+/// Conforming a specialization to this protocol lets Swift make one from a throwing closure, the inverse of reading
+/// one with ``CxxExpected/value``. For example, this makes it possible to make an `expected` like
+///
+/// ```cpp
+/// using ExpectedResult = std::expected<int, ErrorCode>;
+/// ```
+///
+/// by creating this conformance:
+///
+/// ```swift
+/// extension ExpectedResult: CxxInitializableExpected {
+///     init(value: Value) { self = WTF.makeExpected(value) }
+///     init(unexpected error: Failure) { self = WTF.makeUnexpected(error) }
+/// }
+/// ```
+///
+/// Swift can then write:
+///
+/// ```swift
+/// let expectedResult = ExpectedResult { () throws(CxxUnexpected<ErrorCode>) in
+///     try somethingThatThrows()
+/// }
+/// ```
+///
+/// - Note: Swift can't call `WTF.makeExpected(_:)` or `WTF.makeUnexpected(_:)` from generic code, which is why every
+///   conformance implements the requirements itself, exactly as above.
+protocol CxxInitializableExpected: CxxExpectedBase where Value: Copyable {
+    /// Creates an `expected` holding `value`.
+    ///
+    /// Implement this as `self = WTF.makeExpected(value)`.
+    ///
+    /// - Parameter value: The expected value.
+    init(value: Value)
+
+    /// Creates an `expected` holding the unexpected `error`.
+    ///
+    /// Implement this as `self = WTF.makeUnexpected(error)`.
+    ///
+    /// - Parameter error: The unexpected error.
+    init(unexpected error: Failure)
+}
+
+extension CxxInitializableExpected {
+    /// Creates an `expected` holding the value `body` returns, or the unexpected error it throws.
+    ///
+    /// A closure's thrown type is `any Error` unless it says otherwise, so state it:
+    ///
+    /// ```swift
+    /// let expectedResult = ExpectedResult { () throws(CxxUnexpected<ErrorCode>) in
+    ///     try somethingThatThrows()
+    /// }
+    /// ```
+    ///
+    /// - Parameter body: The closure to run.
+    init(catching body: () throws(CxxUnexpected<Failure>) -> Value) {
+        do throws(CxxUnexpected<Failure>) {
+            self.init(value: try body())
+        } catch {
+            self.init(unexpected: error.error)
+        }
+    }
+
+    /// Creates an `expected` holding the value `body` returns, or the unexpected error it throws, running `body` on the
+    /// caller's isolation.
+    ///
+    /// As with the synchronous `init(catching:)`, state the closure's thrown type:
+    ///
+    /// ```swift
+    /// let expectedResult = await ExpectedResult { () async throws(CxxUnexpected<ErrorCode>) in
+    ///     try await somethingThatThrows()
+    /// }
+    /// ```
+    ///
+    /// - Parameter body: The closure to run.
+    nonisolated(nonsending) init(
+        catching body: nonisolated(nonsending) () async throws(CxxUnexpected<Failure>) -> Value
+    ) async {
+        do throws(CxxUnexpected<Failure>) {
+            self.init(value: try await body())
+        } catch {
+            self.init(unexpected: error.error)
+        }
     }
 }
 

@@ -147,6 +147,7 @@ using SharedProbeHolderExpected = std::expected<SharedProbeHolder, ProbeError>;
 using MoveOnlyProbeExpected = std::expected<MoveOnlyProbe, ProbeError>;
 using SelfReferentialProbeExpected = std::expected<SelfReferentialProbe, ProbeError>;
 using CountedErrorExpected = std::expected<MoveOnlyProbe, CountingProbeError>;
+using VoidExpected = std::expected<void, ProbeError>;
 
 // MARK: Function declarations
 
@@ -221,6 +222,12 @@ CountedErrorExpected makeCountedErrorUnexpected(ProbeError);
 
 // Zero once every error the bridge constructed has been destroyed. See CountingProbeError.
 int liveCountingProbeErrorCount();
+
+// A void expected has no value for CxxExpected to read, so it can't conform, and Swift reads its error with this.
+inline ProbeError voidExpectedError(const VoidExpected& expected)
+{
+    return expected.error();
+}
 
 // The `__take(_:)` witnesses for the `CxxConsumingExpected` conformances. Swift imports the rvalue
 // reference as the `consuming` the protocol hands over, and destroys the moved-from `Expected` once the

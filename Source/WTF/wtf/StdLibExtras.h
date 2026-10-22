@@ -1685,6 +1685,32 @@ static constexpr auto dereferenceView = std::views::transform([](auto&& x) -> de
 
 template<class E> constexpr std::unexpected<std::decay_t<E>> makeUnexpected(E&& v) { return std::unexpected<typename std::decay<E>::type>(std::forward<E>(v)); }
 
+#ifdef __swift__
+template<typename Expected, typename Value>
+    requires(IsExpected<Expected>::value)
+Expected makeExpected(Value value)
+{
+    static_assert(std::is_same_v<Value, typename Expected::value_type>, "makeExpected's argument must be the expected's value_type");
+    return Expected(std::in_place, WTF::move(value));
+}
+
+template<typename Expected>
+    requires(IsExpected<Expected>::value)
+Expected makeExpected()
+{
+    static_assert(std::is_void_v<typename Expected::value_type>, "makeExpected() without an argument needs an expected whose value_type is void");
+    return Expected();
+}
+
+template<typename Expected, typename Error>
+    requires(IsExpected<Expected>::value)
+Expected makeUnexpected(Error error)
+{
+    static_assert(std::is_same_v<Error, typename Expected::error_type>, "makeUnexpected's argument must be the expected's error_type");
+    return Expected(std::unexpect, WTF::move(error));
+}
+#endif // __swift__
+
 } // namespace WTF
 
 namespace WTF {
