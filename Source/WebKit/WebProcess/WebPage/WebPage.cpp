@@ -5860,6 +5860,9 @@ void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> fl
 #endif
 
     protect(corePage())->finalizeRenderingUpdate(flags);
+#if !PLATFORM(COCOA)
+    serviceCanvasPaintEvents();
+#endif
 #if ENABLE(GPU_PROCESS)
     if (m_remoteRenderingBackendProxy)
         m_remoteRenderingBackendProxy->finalizeRenderingUpdate();
@@ -5883,6 +5886,11 @@ void WebPage::didCompleteRenderingUpdateDisplay()
     if (m_isClosed)
         return;
     protect(corePage())->didCompleteRenderingUpdateDisplay();
+}
+
+void WebPage::serviceCanvasPaintEvents()
+{
+    protect(corePage())->serviceCanvasPaintEvents();
 }
 
 void WebPage::didCompleteRenderingFrame()

@@ -739,6 +739,7 @@ public:
     String rootFrameOriginString();
     bool LEGACY_NODELETE shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const;
     void finalizeRenderingUpdate(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
+    void serviceCanvasPaintEvents();
 
     void willStartRenderingUpdateDisplay();
     void didCompleteRenderingUpdateDisplay();

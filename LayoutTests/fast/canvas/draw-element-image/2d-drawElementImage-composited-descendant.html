@@ -18,7 +18,8 @@
             testRunner.notifyDone();
     }
 
-    requestAnimationFrame(() => requestAnimationFrame(runTest));
+    canvas.onpaint = runTest;
+    canvas.requestPaint();
 </script>
 </body>
 </html>

@@ -2605,10 +2605,6 @@ void Page::updateRendering()
         document.updateIntersectionObservers();
     });
 
-    runProcessingStep(RenderingUpdateStep::CanvasPaintEvent, [] (Document& document) {
-        document.serviceCanvasPaintEvents();
-    });
-
     runProcessingStep(RenderingUpdateStep::Images, [] (Document& document) {
         for (auto& image : protect(document.cachedResourceLoader())->allCachedSVGImages()) {
             if (RefPtr page = image->internalPage())
@@ -2761,6 +2757,9 @@ void Page::doAfterUpdateRendering()
         document.prepareCanvasesForDisplayOrFlushIfNeeded();
     });
 
+    // Canvas paint events are dispatched after the Paint step, in serviceCanvasPaintEvents().
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::CanvasPaintEvent);
+
     if (localMainFrame) {
         ASSERT(!localMainFrame->view() || !localMainFrame->view()->needsLayout());
 #if ASSERT_ENABLED
@@ -2821,6 +2820,13 @@ void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<
 #else
     UNUSED_PARAM(flags);
 #endif
+}
+
+void Page::serviceCanvasPaintEvents()
+{
+    forEachRenderableDocument([](Document& document) {
+        document.serviceCanvasPaintEvents();
+    });
 }
 
 void Page::renderingUpdateCompleted()
