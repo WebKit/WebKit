@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Playback ClearKey CENC video with full-sample encryption</title>
+    <script src="../../../LayoutTests/media/media-source/media-source-loader-simple.js"></script>
+    <script src="../../../LayoutTests/media/encrypted-media/clearKey/encrypted-media-clearKey-handler.js"></script>
+    <script>
+     // Re-define functions used by media-source/media-source-loader-simple.js and
+     // encrypted-media-clearKey-handler.js so we don't need to import more JS files.
+     function logResult(result, message)
+     {
+     }
+     function endTest()
+     {
+     }
+     function waitForEvent(eventName, func, endit, oneTimeOnly, element)
+     {
+         function _eventCallback(event)
+         {
+             if (oneTimeOnly)
+                 element.removeEventListener(eventName, _eventCallback, true);
+
+             if (func)
+                 func(event);
+         }
+
+         element.addEventListener(eventName, _eventCallback, true);
+     }
+     function waitForEventOn(element, eventName, func, endit, oneTimeOnly)
+     {
+         waitForEvent(eventName, func, endit, oneTimeOnly, element);
+     }
+
+     const media = { video : { initDataType : "cenc",
+                               mimeType     : 'video/mp4; codecs="avc1.64001F"',
+                               segments     : [ "../../../LayoutTests/media/content/encrypted/segments/VideoClearKeyCenc-seg-0.mp4",
+                                                "../../../LayoutTests/media/content/encrypted/segments/VideoClearKeyCenc-seg-1.mp4",
+                                                "../../../LayoutTests/media/content/encrypted/segments/VideoClearKeyCenc-seg-2.mp4",
+                                                "../../../LayoutTests/media/content/encrypted/segments/VideoClearKeyCenc-seg-3.mp4",
+                               ],
+                               keys         : { "d0d1d2d3d4d5d6d7d8d9dadbdcdddedf" : "c0c1c2c3c4c5c6c7c8c9cacbcccdcecf" }
+     },
+                     audio : { initDataType : "cenc",
+                               mimeType     : 'audio/mp4; codecs="mp4a.40.2"',
+                               segments     : [ "../../../LayoutTests/media/content/encrypted/segments/AudioClearKeyCenc-seg-0.mp4",
+                                                "../../../LayoutTests/media/content/encrypted/segments/AudioClearKeyCenc-seg-1.mp4",
+                                                "../../../LayoutTests/media/content/encrypted/segments/AudioClearKeyCenc-seg-2.mp4",
+                                                "../../../LayoutTests/media/content/encrypted/segments/AudioClearKeyCenc-seg-3.mp4",
+                               ],
+                               keys         : { "b0b1b2b3b4b5b6b7b8b9babbbcbdbebf" : "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf" }
+                     }
+     }
+
+     function playVideo()
+     {
+         let video = document.getElementById("video");
+         const emeHandler = new EncryptedMediaHandler(video, media);
+         const ms = new MediaSourceLoaderSimple(video);
+         ms.onready = function() {
+             ms.createSourceBuffer(media.video, 4);
+             video.play();
+         };
+     }
+
+     function unloadVideo()
+     {
+         let video = document.getElementById("video");
+         video.pause();
+         video.src = "";
+         video.setMediaKeys(null);
+     }
+    </script>
+</head>
+<body>
+    <video id="video"></video>
+</body>
+</html>

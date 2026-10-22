@@ -861,10 +861,11 @@ HTMLMediaElement::~HTMLMediaElement()
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    if (RefPtr mediaKeys = m_mediaKeys) {
+    if (RefPtr mediaKeys = std::exchange(m_mediaKeys, nullptr)) {
         mediaKeys->detachCDMClient(*this);
         if (RefPtr player = m_player)
             player->cdmInstanceDetached(mediaKeys->cdmInstance());
+        updateMediaState();
     }
 #endif
 
@@ -3682,6 +3683,7 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys, Ref<DeferredPromise>&&
         // 5.6. Resolve promise.
         element.m_mediaKeys = WTF::move(mediaKeys);
         element.m_attachingMediaKeys = false;
+        element.updateMediaState();
         promise->resolve();
     });
 
@@ -9962,6 +9964,11 @@ MediaProducerMediaStateFlags HTMLMediaElement::mediaState() const
 #if ENABLE(MEDIA_SOURCE)
     if (RefPtr mediaSource = m_mediaSource; mediaSource && mediaSource->isStreamingContent())
         state.add(MediaProducerMediaState::HasStreamingActivity);
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (m_mediaKeys)
+        state.add(MediaProducerMediaState::HasProtectedMedia);
 #endif
 
     if (!isPlaying())

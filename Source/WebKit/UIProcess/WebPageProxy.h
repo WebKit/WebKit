@@ -2247,6 +2247,8 @@ public:
 
     bool LEGACY_NODELETE isPlayingAudio() const;
     bool LEGACY_NODELETE hasMediaStreaming() const;
+    bool LEGACY_NODELETE hasProtectedMedia() const;
+
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
     void updateReportedMediaCaptureState();
     void setIsPromptingForGetDisplayMedia(WebCore::MediaProducerMediaStateFlags);

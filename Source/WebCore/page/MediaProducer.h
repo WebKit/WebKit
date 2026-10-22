@@ -63,6 +63,7 @@ enum class MediaProducerMediaState : uint32_t {
     HasStreamingActivity = 1 << 27,
     IsPromptingForWindowCapture = 1 << 28,
     IsPromptingForScreenCapture = 1 << 29,
+    HasProtectedMedia = 1 << 30,
 };
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 

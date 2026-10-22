@@ -247,6 +247,7 @@ enum {
     PROP_MAGNIFICATION,
     PROP_IS_LOADING,
     PROP_IS_PLAYING_AUDIO,
+    PROP_HAS_PROTECTED_MEDIA,
 #if !ENABLE(2022_GLIB_API)
     PROP_IS_EPHEMERAL,
 #endif
@@ -531,6 +532,11 @@ void PageLoadStateObserver::didChangeActiveURL()
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView* webView)
 {
     g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_PLAYING_AUDIO]);
+}
+
+void webkitWebViewHasProtectedMediaChanged(WebKitWebView* webView)
+{
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_HAS_PROTECTED_MEDIA]);
 }
 
 void webkitWebViewMediaCaptureStateDidChange(WebKitWebView* webView, WebCore::MediaProducer::MediaStateFlags mediaStateFlags)
@@ -1267,6 +1273,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_IS_PLAYING_AUDIO:
         g_value_set_boolean(value, webkit_web_view_is_playing_audio(webView));
         break;
+    case PROP_HAS_PROTECTED_MEDIA:
+        g_value_set_boolean(value, webkit_web_view_has_protected_media(webView));
+        break;
 #if !ENABLE(2022_GLIB_API)
     case PROP_IS_EPHEMERAL:
         g_value_set_boolean(value, webkit_web_view_is_ephemeral(webView));
@@ -1638,6 +1647,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     sObjProperties[PROP_IS_PLAYING_AUDIO] =
         g_param_spec_boolean(
             "is-playing-audio",
+            nullptr, nullptr,
+            FALSE,
+            WEBKIT_PARAM_READABLE);
+
+    /**
+     * WebKitWebView:has-protected-media:
+     *
+     * Whether a page in the #WebKitWebView has a media element with
+     * Encrypted Media Extensions (EME) MediaKeys attached, i.e. it may be
+     * presenting DRM-protected content. This property becomes %TRUE as soon
+     * as MediaKeys are attached to a media element, independently of whether
+     * playback is running, and is set back to %FALSE once no media element
+     * has MediaKeys attached anymore.
+     *
+     * Since: 2.56
+     */
+    sObjProperties[PROP_HAS_PROTECTED_MEDIA] =
+        g_param_spec_boolean(
+            "has-protected-media",
             nullptr, nullptr,
             FALSE,
             WEBKIT_PARAM_READABLE);
@@ -3866,6 +3894,29 @@ gboolean webkit_web_view_is_playing_audio(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     return getPage(webView).isPlayingAudio();
+}
+
+/**
+ * webkit_web_view_has_protected_media:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the value of the #WebKitWebView:has-protected-media property.
+ *
+ * You can monitor when a page in a #WebKitWebView may be presenting
+ * DRM-protected media by connecting to the notify::has-protected-media
+ * signal of @web_view. This is useful when the application needs to keep
+ * protected content out of screenshots or recordings.
+ *
+ * Returns: %TRUE if a page in @web_view has a media element with MediaKeys
+ *    attached or %FALSE otherwise.
+ *
+ * Since: 2.56
+ */
+gboolean webkit_web_view_has_protected_media(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return getPage(webView).hasProtectedMedia();
 }
 
 /**

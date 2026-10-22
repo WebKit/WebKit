@@ -18230,6 +18230,11 @@ bool WebPageProxy::hasMediaStreaming() const
     return internals().mediaState.contains(MediaProducerMediaState::HasStreamingActivity);
 }
 
+bool WebPageProxy::hasProtectedMedia() const
+{
+    return internals().mediaState.contains(MediaProducerMediaState::HasProtectedMedia);
+}
+
 bool WebPageProxy::isCapturingAudio() const
 {
     return internals().mediaState.containsAny(MediaProducer::IsCapturingAudioMask);
@@ -18328,6 +18333,9 @@ void WebPageProxy::updatePlayingMediaDidChange(CanDelayNotification canDelayNoti
     playingMediaMask.add(WebCore::MediaProducer::MediaCaptureMask);
     if ((oldState & playingMediaMask) != (internals().mediaState & playingMediaMask))
         m_uiClient->isPlayingMediaDidChange(*this);
+
+    if (oldState.contains(MediaProducerMediaState::HasProtectedMedia) != internals().mediaState.contains(MediaProducerMediaState::HasProtectedMedia))
+        m_uiClient->hasProtectedMediaDidChange(*this);
 
     if ((oldState.containsAny(MediaProducerMediaState::HasAudioOrVideo)) != (internals().mediaState.containsAny(MediaProducerMediaState::HasAudioOrVideo)))
         videoControlsManagerDidChange();

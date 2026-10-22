@@ -62,6 +62,43 @@ private:
     uint32_t m_tickCount { 0 };
 };
 
+class HasProtectedMediaWebViewTest : public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(HasProtectedMediaWebViewTest);
+
+    static void hasProtectedMediaChanged(GObject*, GParamSpec*, HasProtectedMediaWebViewTest* test)
+    {
+        g_signal_handlers_disconnect_by_func(test->webView(), reinterpret_cast<void*>(hasProtectedMediaChanged), test);
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void waitUntilHasProtectedMediaChanged()
+    {
+        g_signal_connect(m_webView.get(), "notify::has-protected-media", G_CALLBACK(hasProtectedMediaChanged), this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    void periodicallyCheckHasProtectedMediaForAWhile()
+    {
+        m_tickCount = 0;
+        g_timeout_add(50, [](gpointer userData) -> gboolean {
+            auto* test = static_cast<HasProtectedMediaWebViewTest*>(userData);
+            g_assert_true(webkit_web_view_has_protected_media(test->webView()));
+            test->m_tickCount++;
+            if (test->m_tickCount >= 10) {
+                test->quitMainLoop();
+                return G_SOURCE_REMOVE;
+            }
+            return G_SOURCE_CONTINUE;
+        }, this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+private:
+    uint32_t m_tickCount { 0 };
+};
+
+
 #if ENABLE(2022_GLIB_API) && ENABLE(APPLICATION_MANIFEST)
 class ApplicationManifestWebViewTest : public WebViewTest {
 public:
@@ -2083,6 +2120,46 @@ static void testWebViewAutoplayPolicy(WebViewTest* test, gconstpointer)
     g_assert_cmpint(webkit_website_policies_get_autoplay_policy(policies), ==, WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND);
 }
 
+static void testWebViewHasProtectedMedia(HasProtectedMediaWebViewTest* test, gconstpointer)
+{
+    GRefPtr<WebKitSettings> newSettings = adoptGRef(webkit_settings_new());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newSettings.get()));
+    g_object_set(G_OBJECT(newSettings.get()), "enable-encrypted-media", TRUE, "disable-web-security", TRUE, NULL);
+    webkit_web_view_set_settings(test->webView(), newSettings.get());
+
+    g_signal_connect(test->webView(), "permission-request", G_CALLBACK(+[](WebKitWebView*, WebKitPermissionRequest* request, gpointer) -> gboolean {
+        webkit_permission_request_allow(request);
+        return TRUE;
+    }), nullptr);
+
+    // The web view must be realized for the video to start playback and
+    // trigger changes in WebKitWebView::has-protected-media.
+    test->showInWindow();
+
+    // Initially, web views should always report no protected media.
+    g_assert_false(webkit_web_view_has_protected_media(test->webView()));
+
+    auto resourcePath = gBuildFilename(Test::getResourcesDir(Test::WebKit2Resources), "eme-clearkey-mse-video.html");
+    GUniquePtr<char> resourceURL(g_filename_to_uri(resourcePath.utf8(), nullptr, nullptr));
+    webkit_web_view_load_uri(test->webView(), resourceURL.get());
+    test->waitUntilLoadFinished();
+    g_assert_false(webkit_web_view_has_protected_media(test->webView()));
+
+    test->runJavaScriptAndWaitUntilFinished("playVideo();", nullptr);
+    if (!webkit_web_view_has_protected_media(test->webView()))
+        test->waitUntilHasProtectedMediaChanged();
+    g_assert_true(webkit_web_view_has_protected_media(test->webView()));
+
+    test->periodicallyCheckHasProtectedMediaForAWhile();
+
+    // Stop the video, the webview should no longer report it has protected media.
+    test->runJavaScriptAndWaitUntilFinished("unloadVideo();", nullptr);
+    if (webkit_web_view_has_protected_media(test->webView()))
+        test->waitUntilHasProtectedMediaChanged();
+    g_assert_false(webkit_web_view_has_protected_media(test->webView()));
+}
+
+
 #if defined(NDEBUG)
 static void testWebViewIsWebProcessResponsive(WebViewTest* test, gconstpointer)
 {
@@ -2731,6 +2808,7 @@ void beforeAll()
     NotificationWebViewTest::add("WebKitWebView", "notification-initial-permission-disallowed", testWebViewNotificationInitialPermissionDisallowed);
 #endif
     IsPlayingAudioWebViewTest::add("WebKitWebView", "is-playing-audio", testWebViewIsPlayingAudio);
+    HasProtectedMediaWebViewTest::add("WebKitWebView", "has-protected-media", testWebViewHasProtectedMedia);
     WebViewTest::add("WebKitWebView", "background-color", testWebViewBackgroundColor);
     ThemeColorWebViewTest::add("WebKitWebView", "theme-color", testWebViewThemeColor);
 #if PLATFORM(GTK)

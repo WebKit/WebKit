@@ -351,6 +351,11 @@ private:
         webkitWebViewIsPlayingAudioChanged(m_webView);
     }
 
+    void hasProtectedMediaDidChange(WebPageProxy&) final
+    {
+        webkitWebViewHasProtectedMediaChanged(m_webView);
+    }
+
     void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags mediaStateFlags) final
     {
         webkitWebViewMediaCaptureStateDidChange(m_webView, mediaStateFlags);

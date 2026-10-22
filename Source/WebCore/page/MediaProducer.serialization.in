@@ -51,6 +51,7 @@
     HasStreamingActivity,
     IsPromptingForWindowCapture,
     IsPromptingForScreenCapture,
+    HasProtectedMedia,
 }
 
 [OptionSet] enum class WebCore::MediaProducerMutedState : uint8_t {
