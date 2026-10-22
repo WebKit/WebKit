@@ -167,6 +167,7 @@ private:
     Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
 
     FloatSize computeCurrentViewportSizeExcludingZoom() const;
+    FloatRect synthesizedViewBoxForSVGImage(float viewWidth, float viewHeight) const;
 
     RefPtr<SVGViewElement> findViewAnchor(StringView fragmentIdentifier) const;
     SVGSVGElement* LEGACY_NODELETE findRootAnchor(const SVGViewElement*) const;
