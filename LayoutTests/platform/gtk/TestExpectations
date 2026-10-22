@@ -1090,7 +1090,7 @@ pointer-lock/lock-lost-on-alert.html [ Pass Failure ]
 
 webkit.org/b/311927 accessibility/combobox/gtk/combobox-collapsed-selection-changed.html [ Failure Pass Timeout ]
 
-webkit.org/b/311930 [ Release ] fonts/font-cache-memory-pressure-crash.html [ Failure Pass ]
+webkit.org/b/311930 fonts/font-cache-memory-pressure-crash.html [ Failure Pass ]
 
 webkit.org/b/312892 [ Release ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/window-open-self.html [ Pass Failure ]
 
@@ -1181,7 +1181,7 @@ webkit.org/b/321789 animations/no-style-recalc-during-accelerated-animation.html
 
 webkit.org/b/322025 fast/animation/request-animation-frame-during-modal.html [ Failure Pass ]
 
-webkit.org/b/321107 imported/w3c/web-platform-tests/css/selectors/media/media-loading-state-timing.sub.html [ Failure ]
+webkit.org/b/321107 imported/w3c/web-platform-tests/css/selectors/media/media-loading-state-timing.sub.html [ Failure Pass ]
 webkit.org/b/322626 fast/events/touch/touch-target-limited.html [ Timeout ]
 webkit.org/b/322627 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-box-shadow-spread-elliptical.html [ ImageOnlyFailure ]
 webkit.org/b/322628 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-outline-offset-bevel.html [ ImageOnlyFailure ]
