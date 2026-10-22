@@ -20,8 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import tempfile
+from typing import IO, Any
 
 from webkitcorepy import Editor
 
@@ -29,25 +32,25 @@ from .diff import DiffBase
 
 
 class EditorDiff(DiffBase):
-    editor = None
+    editor: Editor | None = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super(EditorDiff, self).__init__(**kwargs)
 
         if self.block is None:
             self.block = False
 
-        self._file_handle = None
+        self._file_handle: IO[str] | None = None
         self.file = os.path.join(tempfile.gettempdir(), 'patch.diff')
 
-    def add_line(self, line):
+    def add_line(self, line: str | None) -> str:
         line = super(EditorDiff, self).add_line(line)
         if not self._file_handle:
             raise ValueError('EditorDiff context has not been initialized')
         self._file_handle.write(line)
         return line
 
-    def __enter__(self):
+    def __enter__(self) -> EditorDiff:
         if self.editor is None:
             raise ValueError('Undefined editor')
         if not self.editor:
@@ -56,9 +59,11 @@ class EditorDiff(DiffBase):
         self._file_handle = open(self.file, 'w')
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         if not self._file_handle:
             return
+        # __enter__ only opens the file once it has an editor.
+        assert self.editor is not None
         self._file_handle.close()
         self._file_handle = None
         self.editor.open(self.file, block=self.block)

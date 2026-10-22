@@ -20,10 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
 import shutil
 import subprocess
 import sys
+from typing import IO, Any
 
 from webkitcorepy import NullContext, Terminal
 
@@ -33,17 +36,17 @@ from .diff import DiffBase
 class TerminalDiff(DiffBase):
     name = 'terminal'
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super(TerminalDiff, self).__init__(**kwargs)
 
         if self.block is None:
             self.block = True
 
         self._is_conflicting = False
-        self._pager = None
-        self._out = None
+        self._pager: subprocess.Popen[str] | None = None
+        self._out: IO[str] | None = None
 
-    def __enter__(self):
+    def __enter__(self) -> TerminalDiff:
         if self.block and Terminal.isatty(sys.stdout) and shutil.which('less'):
             self._pager = subprocess.Popen(
                 ['less', '-R'],
@@ -52,24 +55,28 @@ class TerminalDiff(DiffBase):
                 errors='replace',
             )
             self._out = self._pager.stdin
+            assert self._out is not None  # stdin=subprocess.PIPE
             Terminal._atty_overrides[self._out.fileno()] = True
         else:
             self._out = sys.stdout
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         if self._pager:
+            assert self._pager.stdin is not None  # stdin=subprocess.PIPE
             Terminal._atty_overrides.pop(self._pager.stdin.fileno(), None)
             self._pager.stdin.close()
             self._pager.wait()
             self._pager = None
         self._out = None
 
-    def add_line(self, line):
+    def add_line(self, line: str | None) -> str:
         line = super(TerminalDiff, self).add_line(line)
         if not Terminal.isatty(sys.stdout):
             print(line.rstrip())
-            return
+            return line
+        # Every path from here on writes to the output, which __enter__ opens.
+        assert self._out is not None
 
         add_sub_match = self.ADD_SUB_RE.match(line)
         if add_sub_match:
@@ -84,7 +91,7 @@ class TerminalDiff(DiffBase):
             self._out.write('\n')
             return line
 
-        style = None
+        style: Terminal.Style | None = None
         if line.startswith('+<<<'):
             style = Terminal.Style(color=Terminal.Text.magenta)
             self._is_conflicting = True
