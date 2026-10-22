@@ -66,6 +66,8 @@ inline float decibelsToLinear(float decibels)
 
 void applyNoise(std::span<float> values, float standardDeviation);
 
+WEBCORE_EXPORT Vector<uint8_t> extractAudioSpecificConfigFromESDescriptor(std::span<const uint8_t> esDescriptor);
+
 } // AudioUtilites
 
 } // WebCore

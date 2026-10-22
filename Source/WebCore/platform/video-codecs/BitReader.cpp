@@ -154,6 +154,43 @@ uint32_t BitReader::readExpGolomb()
     return (1u << leadingZeroBits) - 1 + static_cast<uint32_t>(*value);
 }
 
+uint32_t BitReader::readExpandableSize()
+{
+    if (m_invalid)
+        return 0;
+
+    constexpr unsigned maxByteCount = 4;
+    uint32_t size = 0;
+    for (unsigned i = 0; i < maxByteCount; ++i) {
+        auto byte = read(8);
+        if (!byte) {
+            m_invalid = true;
+            return 0;
+        }
+        size = (size << 7) | (*byte & 0x7f);
+        if (!(*byte & 0x80))
+            return size;
+    }
+
+    m_invalid = true;
+    return 0;
+}
+
+std::span<const uint8_t> BitReader::readSpan(size_t bytes)
+{
+    if (m_invalid)
+        return { };
+
+    if (m_remainingBits || bytes > m_data.size() - m_index) {
+        m_invalid = true;
+        return { };
+    }
+
+    auto span = m_data.subspan(m_index, bytes);
+    m_index += bytes;
+    return span;
+}
+
 int32_t BitReader::readSignedExpGolomb()
 {
     uint32_t codeNum = readExpGolomb();

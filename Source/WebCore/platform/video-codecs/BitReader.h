@@ -59,6 +59,9 @@ public:
     void LEGACY_NODELETE consumeBits(size_t bits);
     uint32_t LEGACY_NODELETE readExpGolomb();
     int32_t LEGACY_NODELETE readSignedExpGolomb();
+    std::span<const uint8_t> readSpan(size_t bytes);
+    // Reads a size encoded as in MPEG-4 systems (ISO 14496-1, 8.3.3): 1 to 4 bytes holding 7 bits each, most significant first, the high bit meaning another byte follows.
+    uint32_t readExpandableSize();
 
 private:
     std::optional<uint64_t> readBytes(size_t bytes) { return read(bytes * 8); }

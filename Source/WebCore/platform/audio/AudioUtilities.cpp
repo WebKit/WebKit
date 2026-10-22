@@ -27,6 +27,7 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioUtilities.h"
+#include "BitReader.h"
 #include <random>
 #include <wtf/HashFunctions.h>
 #include <wtf/MathExtras.h>
@@ -100,6 +101,58 @@ void applyNoise(std::span<float> values, float standardDeviation)
             multiplier = distribution(generator);
         value *= multiplier;
     }
+}
+
+Vector<uint8_t> extractAudioSpecificConfigFromESDescriptor(std::span<const uint8_t> esDescriptor)
+{
+    constexpr uint8_t esDescriptorTag = 0x03;
+    constexpr uint8_t decoderConfigDescriptorTag = 0x04;
+    constexpr uint8_t decoderSpecificInfoTag = 0x05;
+
+    BitReader reader(esDescriptor);
+
+    // ES_Descriptor: tag (8 bits), size.
+    // Then ES_ID (16 bits), streamDependenceFlag (1 bit), URL_Flag (1 bit), OCRstreamFlag (1 bit), streamPriority (5 bits), optional fields, then the DecoderConfigDescriptor.
+    if (reader.readBits(8) != esDescriptorTag)
+        return { };
+    reader.readExpandableSize();
+    reader.consumeBits(16); // ES_ID
+    bool streamDependenceFlag = reader.readFlag();
+    bool urlFlag = reader.readFlag();
+    bool ocrStreamFlag = reader.readFlag();
+    reader.consumeBits(5); // streamPriority
+    if (streamDependenceFlag)
+        reader.consumeBits(16); // dependsOn_ES_ID
+    if (urlFlag) {
+        auto urlLength = reader.readBits(8);
+        reader.consumeBits(8 * urlLength); // URLstring
+    }
+    if (ocrStreamFlag)
+        reader.consumeBits(16); // OCR_ES_Id
+
+    // DecoderConfigDescriptor: tag (8 bits) + size.
+    // Then objectTypeIndication (8 bits), streamType (6 bits), upStream (1 bit), reserved (1 bit), bufferSizeDB (24 bits), maxBitrate (32 bits), avgBitrate (32 bits)
+    // Then the DecoderSpecificInfo.
+    if (reader.readBits(8) != decoderConfigDescriptorTag)
+        return { };
+    reader.readExpandableSize();
+
+    constexpr size_t objectTypeIndicationBits = 8;
+    constexpr size_t streamTypeUpStreamdAndReseveredBits = 8;
+    constexpr size_t bufferSizeDBBits = 24;
+    constexpr size_t maxBitrateBits = 32;
+    constexpr size_t avgBitrateBits = 32;
+    reader.consumeBits(objectTypeIndicationBits + streamTypeUpStreamdAndReseveredBits + bufferSizeDBBits + maxBitrateBits + avgBitrateBits);
+
+    // DecoderSpecificInfo: tag (8 bits), size.
+    // Then the AudioSpecificConfig, whose size is the number of bytes to read.
+    if (reader.readBits(8) != decoderSpecificInfoTag)
+        return { };
+    auto audioSpecificConfig = reader.readSpan(reader.readExpandableSize());
+
+    if (!reader.ok())
+        return { };
+    return audioSpecificConfig;
 }
 
 } // AudioUtilites
