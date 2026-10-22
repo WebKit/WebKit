@@ -1228,11 +1228,12 @@ void VTTCue::setCueSettings(const String& inputString)
                     if (!input.scan(','))
                         break;
 
-                    if (input.scan(startKeyword().span8()))
+                    auto alignmentRun = input.collectUntil<isTabOrSpace>();
+                    if (input.scanRun(alignmentRun, startKeyword()))
                         alignment = LineAlignSetting::Start;
-                    else if (input.scan(centerKeyword().span8()))
+                    else if (input.scanRun(alignmentRun, centerKeyword()))
                         alignment = LineAlignSetting::Center;
-                    else if (input.scan(endKeyword().span8()))
+                    else if (input.scanRun(alignmentRun, endKeyword()))
                         alignment = LineAlignSetting::End;
                     else {
                         ERROR_LOG(identifier, "Invalid line setting alignment");
@@ -1281,11 +1282,12 @@ void VTTCue::setCueSettings(const String& inputString)
                     return false;
 
                 // 2.2 One of the following strings: "line-left", "center", "line-right"
-                if (input.scan(lineLeftKeyword().span8()))
+                auto alignmentRun = input.collectUntil<isTabOrSpace>();
+                if (input.scanRun(alignmentRun, lineLeftKeyword()))
                     alignment = PositionAlignSetting::LineLeft;
-                else if (input.scan(centerKeyword().span8()))
+                else if (input.scanRun(alignmentRun, centerKeyword()))
                     alignment = PositionAlignSetting::Center;
-                else if (input.scan(lineRightKeyword().span8()))
+                else if (input.scanRun(alignmentRun, lineRightKeyword()))
                     alignment = PositionAlignSetting::LineRight;
                 else {
                     ALWAYS_LOG(identifier, "Invalid position setting alignment");
