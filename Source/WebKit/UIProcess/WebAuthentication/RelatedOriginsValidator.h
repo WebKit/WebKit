@@ -45,6 +45,9 @@ struct Result {
 
 void validate(WebPageProxy&, const WebCore::SecurityOriginData& callerOrigin, const String& relyingPartyIdentifier, CompletionHandler<void(Result&&)>&&);
 
+// Fetches the well-known list once and checks every origin against it. Result.isRelated is true only if all of them are listed.
+void validate(WebPageProxy&, Vector<WebCore::SecurityOriginData>&& originsToCheck, const String& relyingPartyIdentifier, CompletionHandler<void(Result&&)>&&);
+
 } // namespace RelatedOriginsValidation
 
 } // namespace WebKit

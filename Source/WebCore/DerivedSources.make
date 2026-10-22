@@ -785,6 +785,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webauthn/ResidentKeyRequirement.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \
+    $(WebCore)/Modules/webauthn/WebAuthnOperationErrorCode.idl \
+    $(WebCore)/Modules/webauthn/WebAuthnOperationException.idl \
     $(WebCore)/Modules/webauthn/UnknownCredentialOptions.idl \
     $(WebCore)/Modules/webauthn/AllAcceptedCredentialsOptions.idl \
     $(WebCore)/Modules/webauthn/CurrentUserDetailsOptions.idl \

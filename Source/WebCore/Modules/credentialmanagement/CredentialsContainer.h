@@ -65,6 +65,7 @@ private:
 
 protected:
     const Document* document() const { return m_document.get(); }
+    Document* document() { return m_document.get(); }
 };
 
 } // namespace WebCore

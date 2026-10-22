@@ -639,6 +639,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/webauthn/UserVerificationRequirement.h
     Modules/webauthn/WebAuthenticationConstants.h
     Modules/webauthn/WebAuthenticationUtils.h
+    Modules/webauthn/WebAuthnOperationErrorCode.h
     Modules/webauthn/WellKnownOriginList.h
 
     Modules/webauthn/apdu/ApduCommand.h
@@ -3741,7 +3742,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 # FIXME: Eventually add all non-installed headers to this list, so that the
 # per-directory -I paths can be removed.
 set(WebCore_PROJECT_HEADERS
+    Modules/webauthn/WebAuthnOperationException.h
     loader/cache/CachedCSSStyleSheet.h
-
     platform/graphics/FloatPolygon.h
 )

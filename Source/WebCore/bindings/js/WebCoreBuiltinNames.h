@@ -483,6 +483,7 @@ namespace WebCore {
     macro(WakeLock) \
     macro(WakeLockSentinel) \
     macro(WaveShaperNode) \
+    macro(WebAuthnOperationException) \
     macro(WebGL2RenderingContext) \
     macro(WebGLActiveInfo) \
     macro(WebGLBuffer) \

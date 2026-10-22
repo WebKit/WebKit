@@ -48,6 +48,7 @@ struct AuthenticationExtensionsClientInputsJSON {
     std::optional<bool> credProps;
     std::optional<LargeBlobInputsJSON> largeBlob;
     std::optional<PRFInputsJSON> prf;
+    String crossDeviceFallbackURL;
 };
 }
 
