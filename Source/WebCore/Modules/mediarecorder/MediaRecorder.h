@@ -33,7 +33,6 @@
 #include "MediaStream.h"
 #include "MediaStreamTrackPrivate.h"
 #include "Timer.h"
-#include <wtf/Deque.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -102,6 +101,7 @@ private:
     bool LEGACY_NODELETE virtualHasPendingActivity() const final;
     
     void stopRecordingInternal(CompletionHandler<void()>&& = [] { });
+    void discardRecording();
     void dispatchError(Exception&&);
 
     enum class TakePrivateRecorder : bool { No, Yes };
@@ -139,8 +139,7 @@ private:
     Timer m_timeSliceTimer;
 
     bool m_isActive { true };
-    bool m_isFetchingData { false };
-    Deque<FetchDataCallback> m_pendingFetchDataTasks;
+    uint64_t m_discardedRecordingCount { 0 };
 
     unsigned m_audioBitsPerSecond { 0 };
     unsigned m_videoBitsPerSecond { 0 };

@@ -984,8 +984,8 @@ void MediaRecorderPrivateEncoder::fetchData(CompletionHandler<void(Ref<Fragmente
 {
     assertIsMainThread();
 
-    m_currentFlushOperations = Ref { m_currentFlushOperations }->whenSettled(queueSingleton(), [protectedThis = Ref { *this }, this, completionHandler = WTF::move(completionHandler), audioTime = lastEnqueuedAudioTime(), now = MonotonicTime::now()]() mutable {
-        auto currentTime = this->currentTime(audioTime, now);
+    m_currentFlushOperations = Ref { m_currentFlushOperations }->whenSettled(queueSingleton(), [protectedThis = Ref { *this }, this, completionHandler = WTF::move(completionHandler)] mutable {
+        auto currentTime = this->currentTime(lastEnqueuedAudioTime(), MonotonicTime::now());
         return flushPendingData(currentTime)->whenSettled(queueSingleton(), [protectedThis, this, completionHandler = WTF::move(completionHandler), currentTime]() mutable {
             assertIsCurrent(queueSingleton());
             Ref data = takeData();

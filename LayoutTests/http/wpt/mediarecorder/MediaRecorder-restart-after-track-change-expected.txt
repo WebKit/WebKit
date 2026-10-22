@@ -1,0 +1,4 @@
+
+PASS Recording again after a track change stopped the recording
+PASS Recording again after the end of all tracks stopped the recording
+

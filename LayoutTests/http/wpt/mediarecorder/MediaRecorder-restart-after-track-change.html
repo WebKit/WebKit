@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder can record again after a track change or the end of its tracks stopped it</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function waitFor(target, name)
+{
+    return new Promise(resolve => target.addEventListener(name, resolve, { once: true }));
+}
+
+async function createAudioTrack(t)
+{
+    const audioContext = new AudioContext();
+    t.add_cleanup(() => audioContext.close());
+    const destination = audioContext.createMediaStreamDestination();
+    const oscillator = audioContext.createOscillator();
+    oscillator.connect(destination);
+    oscillator.start();
+    // The recorder only produces data once it receives audio.
+    await audioContext.resume();
+    while (!audioContext.currentTime)
+        await new Promise(resolve => setTimeout(resolve, 10));
+    return destination.stream.getAudioTracks()[0];
+}
+
+function createVideoTrack(t)
+{
+    const canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 240;
+    const context = canvas.getContext('2d');
+    let frameCount = 0;
+    const interval = setInterval(() => {
+        context.fillStyle = (frameCount++ % 2) ? '#00ff00' : '#ff0000';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }, 33);
+    t.add_cleanup(() => clearInterval(interval));
+    return canvas.captureStream(30).getVideoTracks()[0];
+}
+
+async function recordAgain(recorder)
+{
+    const blobs = [];
+    recorder.ondataavailable = event => blobs.push(event.data);
+    const started = waitFor(recorder, 'start');
+    recorder.start();
+    await started;
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+    const stopped = waitFor(recorder, 'stop');
+    recorder.stop();
+    await stopped;
+    assert_greater_than(new Blob(blobs).size, 0, 'the new recording has data');
+}
+
+promise_test(async (t) => {
+    const stream = new MediaStream([createVideoTrack(t), await createAudioTrack(t)]);
+    const recorder = new MediaRecorder(stream);
+    const started = waitFor(recorder, 'start');
+    recorder.start();
+    await started;
+
+    // Data fetches are in flight when the track change stops the recording.
+    recorder.requestData();
+    recorder.requestData();
+    const errored = waitFor(recorder, 'error');
+    const stopped = waitFor(recorder, 'stop');
+    stream.addTrack(createVideoTrack(t));
+    await errored;
+    await stopped;
+
+    await recordAgain(recorder);
+}, 'Recording again after a track change stopped the recording');
+
+promise_test(async (t) => {
+    const stream = new MediaStream([createVideoTrack(t), await createAudioTrack(t)]);
+    const recorder = new MediaRecorder(stream);
+    const started = waitFor(recorder, 'start');
+    recorder.start();
+    await started;
+
+    recorder.requestData();
+    const stopped = waitFor(recorder, 'stop');
+    stream.getTracks().forEach(track => track.stop());
+    await stopped;
+
+    stream.getTracks().forEach(track => stream.removeTrack(track));
+    stream.addTrack(createVideoTrack(t));
+    stream.addTrack(await createAudioTrack(t));
+    // Let the track changes be handled before recording again.
+    await new Promise(resolve => setTimeout(resolve, 0));
+    await recordAgain(recorder);
+}, 'Recording again after the end of all tracks stopped the recording');
+</script>
+</body>
+</html>

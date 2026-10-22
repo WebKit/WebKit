@@ -159,6 +159,7 @@ void MediaRecorder::suspend(ReasonForSuspension reason)
         return;
 
     stopRecordingInternal();
+    discardRecording();
 
     queueTaskToDispatchEvent(*this, TaskSource::Networking, MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { ExceptionCode::UnknownError, "MediaStream recording was interrupted"_s }));
 }
@@ -260,7 +261,10 @@ ExceptionOr<void> MediaRecorder::requestDataInternal(ReturnDataIfEmpty returnDat
     if (m_timeSliceTimer.isActive())
         m_timeSliceTimer.stop();
 
-    fetchData([returnDataIfEmpty](auto& recorder, auto&& buffer, auto& mimeType, auto timeCode) {
+    fetchData([returnDataIfEmpty, discardedRecordingCount = m_discardedRecordingCount](auto& recorder, auto&& buffer, auto& mimeType, auto timeCode) {
+        if (recorder.m_discardedRecordingCount != discardedRecordingCount)
+            return;
+
         if (returnDataIfEmpty == ReturnDataIfEmpty::Yes || !buffer->isEmpty()) {
             RefPtr scriptExecutionContext = recorder.scriptExecutionContext();
             recorder.dispatchEvent(createDataAvailableEvent(scriptExecutionContext.get(), WTF::move(buffer), mimeType, timeCode));
@@ -351,17 +355,8 @@ void MediaRecorder::fetchData(FetchDataCallback&& callback, TakePrivateRecorder 
         });
     };
 
-    if (m_isFetchingData) {
-        m_pendingFetchDataTasks.append(WTF::move(fetchDataCallback));
-        return;
-    }
-
-    m_isFetchingData = true;
     privateRecorder->fetchData([pendingActivity = makePendingActivity(*this), callback = WTF::move(fetchDataCallback)](auto&& buffer, auto& mimeType, auto timeCode) mutable {
-        pendingActivity->object().m_isFetchingData = false;
         callback(pendingActivity->object(), WTF::move(buffer), mimeType, timeCode);
-        for (auto& task : std::exchange(pendingActivity->object().m_pendingFetchDataTasks, { }))
-            task(pendingActivity->object(), SharedBuffer::create(), mimeType, timeCode);
     });
 }
 
@@ -377,6 +372,13 @@ void MediaRecorder::stopRecordingInternal(CompletionHandler<void()>&& completion
 
     m_state = RecordingState::Inactive;
     protect(m_private)->stop(WTF::move(completionHandler));
+}
+
+// Data still being fetched for a discarded recording is dropped rather than dispatched to a later one.
+void MediaRecorder::discardRecording()
+{
+    m_private = nullptr;
+    ++m_discardedRecordingCount;
 }
 
 void MediaRecorder::handleTrackChange()
@@ -401,6 +403,7 @@ void MediaRecorder::handleTrackChange()
                 recorder.dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
             });
         });
+        recorder.discardRecording();
     });
 }
 
@@ -434,6 +437,7 @@ void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
                 recorder.dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
             });
         });
+        recorder.discardRecording();
     });
 }
 

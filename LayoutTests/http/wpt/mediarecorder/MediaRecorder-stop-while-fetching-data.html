@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder returns the recorded data when stopped while fetching data</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function waitFor(target, name)
+{
+    return new Promise(resolve => target.addEventListener(name, resolve, { once: true }));
+}
+
+async function createAudioTrack(t)
+{
+    const audioContext = new AudioContext();
+    t.add_cleanup(() => audioContext.close());
+    const destination = audioContext.createMediaStreamDestination();
+    const oscillator = audioContext.createOscillator();
+    oscillator.connect(destination);
+    oscillator.start();
+    // The recorder only produces data once it receives audio.
+    await audioContext.resume();
+    while (!audioContext.currentTime)
+        await new Promise(resolve => setTimeout(resolve, 10));
+    return destination.stream.getAudioTracks()[0];
+}
+
+function createVideoTrack(t, width, height)
+{
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext('2d');
+    let frameCount = 0;
+    const interval = setInterval(() => {
+        context.fillStyle = (frameCount++ % 2) ? '#00ff00' : '#ff0000';
+        context.fillRect(0, 0, width, height);
+    }, 33);
+    t.add_cleanup(() => clearInterval(interval));
+    return canvas.captureStream(30).getVideoTracks()[0];
+}
+
+async function recordAndStopWhileFetching(stream, requestDataCount)
+{
+    const recorder = new MediaRecorder(stream);
+    const blobs = [];
+    recorder.ondataavailable = event => blobs.push(event.data);
+    const stopped = waitFor(recorder, 'stop');
+    recorder.start();
+
+    // Stop before a one second segment is complete, so the recorded data is only written when stopping.
+    await new Promise(resolve => setTimeout(resolve, 500));
+    for (let i = 0; i < requestDataCount; ++i)
+        recorder.requestData();
+    recorder.stop();
+    await stopped;
+
+    assert_equals(blobs.length, requestDataCount + 1, 'one dataavailable event per requestData() and one for stop()');
+    assert_greater_than(blobs[requestDataCount].size, 0, 'stop() returns the data written when stopping');
+    return new Blob(blobs, { type: recorder.mimeType });
+}
+
+async function loadRecording(t, element, blob)
+{
+    const url = URL.createObjectURL(blob);
+    t.add_cleanup(() => URL.revokeObjectURL(url));
+    element.src = url;
+    await waitFor(element, 'loadedmetadata');
+}
+
+promise_test(async (t) => {
+    const blob = await recordAndStopWhileFetching(new MediaStream([createVideoTrack(t, 320, 240), await createAudioTrack(t)]), 3);
+
+    const video = document.createElement('video');
+    await loadRecording(t, video, blob);
+    assert_equals(video.videoWidth, 320, 'the recording can be played');
+    assert_equals(video.videoHeight, 240, 'the recording can be played');
+    assert_greater_than(video.duration, 0, 'the recording can be played');
+}, 'Stopping an audio and video recording after several requestData() returns the recorded data');
+</script>
+</body>
+</html>
