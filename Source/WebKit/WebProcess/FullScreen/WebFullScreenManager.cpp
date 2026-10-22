@@ -604,9 +604,15 @@ void WebFullScreenManager::willEnterFullScreen(Element& element, CompletionHandl
     m_page->sendWithAsyncReply(Messages::WebFullScreenManagerProxy::BeganEnterFullScreen(frame->frameID(), m_initialFrameInMainFrameCoordinates, m_finalFrameInMainFrameCoordinates), [
         this,
         protectedThis = Ref { *this },
+        element = Ref { element },
         mode,
         completionHandler = WTF::move(didEnterFullscreenCallback)
     ] (bool success) mutable {
+        // A later request may have replaced the element while this one was in flight.
+        if (m_element != element.ptr()) {
+            completionHandler(false);
+            return;
+        }
         if (!success && mode != WebCore::HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
             completionHandler(false);
             return;
