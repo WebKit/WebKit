@@ -16724,10 +16724,7 @@ void WebPageProxy::validateCaptureStateUpdate(IPC::Connection& connection, WebCo
             responseHandler->handle(true);
         });
 
-        Ref userMediaOrigin = API::SecurityOrigin::create(request->userMediaDocumentSecurityOrigin());
-        Ref topLevelOrigin = API::SecurityOrigin::create(request->topLevelDocumentSecurityOrigin());
-        // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once rdar://144557500 is resolved.
-        uiClient().decidePolicyForUserMediaPermissionRequest(*this, *webFrame, userMediaOrigin, topLevelOrigin, request.get());
+        protect(userMediaPermissionRequestManager())->askDelegateToDecide(request);
     };
 
 

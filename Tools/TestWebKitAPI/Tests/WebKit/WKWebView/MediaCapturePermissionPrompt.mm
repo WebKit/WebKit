@@ -36,6 +36,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 using PermissionDecisionHandler = void (^)(WKPermissionDecision);
@@ -57,6 +58,11 @@ using PermissionDecisionHandler = void (^)(WKPermissionDecision);
 {
     ++_numberOfRequests;
     _requestHandler(webView, decisionHandler);
+}
+
+- (void)_webView:(WKWebView *)webView requestSpeechRecognitionPermissionForOrigin:(WKSecurityOrigin *)origin decisionHandler:(void (^)(BOOL))decisionHandler
+{
+    decisionHandler(YES);
 }
 
 @end
@@ -87,6 +93,7 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<MediaCapturePermissionPromp
     preferences.get()._mediaCaptureRequiresSecureConnection = NO;
     preferences.get()._mockCaptureDevicesEnabled = YES;
     preferences.get()._getUserMediaRequiresFocus = NO;
+    preferences.get()._speechRecognitionEnabled = YES;
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() addToWindow:YES]);
     RetainPtr delegate = adoptNS([[MediaCapturePermissionPromptUIDelegate alloc] init]);
@@ -112,6 +119,11 @@ static NSString *captureWithoutUserGesture(TestWKWebView *webView, NSDictionary 
     }];
     Util::run(&done);
     return result.autorelease();
+}
+
+static void startCapture(TestWKWebView *webView, NSString *constraints)
+{
+    [webView evaluateJavaScript:[NSString stringWithFormat:@"capture(%@)", constraints] completionHandler:nil];
 }
 
 TEST(MediaCapturePermissionPrompt, AllowGrantsCapture)
@@ -173,6 +185,34 @@ TEST(MediaCapturePermissionPrompt, UnansweredPromptIsNotRememberedAsDenial)
 
     EXPECT_EQ(2U, numberOfPromptsShown);
     EXPECT_EQ(2U, [delegate numberOfRequests]);
+}
+
+TEST(MediaCapturePermissionPrompt, SpeechRecognitionWaitsForTheCaptureDecision)
+{
+    auto [webView, delegate] = createWebView();
+
+    __block BlockPtr<void(WKPermissionDecision)> pendingCaptureDecision;
+    __block bool captureRequested = false;
+    [delegate setRequestHandler:^(WKWebView *, PermissionDecisionHandler decisionHandler) {
+        if (!pendingCaptureDecision) {
+            pendingCaptureDecision = makeBlockPtr(decisionHandler);
+            captureRequested = true;
+            return;
+        }
+        decisionHandler(WKPermissionDecisionDeny);
+    }];
+
+    startCapture(webView.get(), @"{ video: true }");
+    Util::run(&captureRequested);
+
+    [webView evaluateJavaScript:@"window.recognition = new webkitSpeechRecognition(); recognition.start();" completionHandler:nil];
+    Util::runFor(500_ms);
+    EXPECT_EQ(1U, [delegate numberOfRequests]);
+
+    pendingCaptureDecision(WKPermissionDecisionDeny);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [delegate numberOfRequests] == 2U;
+    }));
 }
 
 } // namespace TestWebKitAPI

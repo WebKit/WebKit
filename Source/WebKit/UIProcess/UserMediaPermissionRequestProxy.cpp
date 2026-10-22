@@ -56,6 +56,11 @@ UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermis
 
 UserMediaPermissionRequestProxy::~UserMediaPermissionRequestProxy()
 {
+#if ENABLE(MEDIA_STREAM)
+    if (RefPtr manager = m_manager)
+        manager->delegateDecisionEnded(*this);
+#endif
+
     if (m_decisionCompletionHandler)
         m_decisionCompletionHandler(false);
 }
@@ -130,7 +135,12 @@ void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
 
 void UserMediaPermissionRequestProxy::invalidate()
 {
-    m_manager = nullptr;
+    RefPtr manager = std::exchange(m_manager, nullptr);
+#if ENABLE(MEDIA_STREAM)
+    if (manager)
+        manager->delegateDecisionEnded(*this);
+#endif
+
     if (m_decisionCompletionHandler)
         m_decisionCompletionHandler(false);
 }
