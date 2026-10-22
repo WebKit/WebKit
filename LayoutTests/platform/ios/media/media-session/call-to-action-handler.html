@@ -1,0 +1,81 @@
+<!-- webkit-test-runner [ MediaSessionCallToActionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>call-to-action-handler</title>
+    <script src="../../../../media/video-test.js"></script>
+    <script>
+    function trySetHandler(description, options) {
+        try {
+            if (options === undefined)
+                navigator.mediaSession.setActionHandler("call-to-action", () => { });
+            else
+                navigator.mediaSession.setActionHandler("call-to-action", () => { }, options);
+            consoleWrite(`${description}: OK`);
+        } catch (e) {
+            consoleWrite(`${description}: threw ${e.name}`);
+        }
+    }
+
+    function runTest() {
+        if (!window.internals) {
+            failTest('This test requires Internals');
+            return;
+        }
+
+        consoleWrite('Test that the call-to-action handler accepts the three supported labels, and a default label.');
+        trySetHandler('no options');
+        trySetHandler('empty options', { });
+        trySetHandler('visit-website', { label: "visit-website" });
+        trySetHandler('download', { label: "download" });
+        trySetHandler('visit-app-store', { label: "visit-app-store" });
+
+        consoleWrite('');
+        consoleWrite('Test that any other label is rejected.');
+        trySetHandler('unsupported label', { label: "Buy Now" });
+        trySetHandler('wrong case', { label: "Download" });
+        trySetHandler('display string', { label: "Visit Website" });
+
+        consoleWrite('');
+        consoleWrite('Test that setting the handler again replaces the callback.');
+        navigator.mediaSession.setActionHandler("call-to-action", () => consoleWrite('first callback ran'));
+        consoleWrite('firing after the first call:');
+        internals.sendMediaSessionAction(navigator.mediaSession, { action: "call-to-action" });
+        navigator.mediaSession.setActionHandler("call-to-action", () => consoleWrite('second callback ran'));
+        consoleWrite('firing after the second call:');
+        internals.sendMediaSessionAction(navigator.mediaSession, { action: "call-to-action" });
+
+        consoleWrite('');
+        consoleWrite('Test that setting the handler again updates the label.');
+        const label = () => internals.mediaSessionCallToActionLabel(navigator.mediaSession);
+        navigator.mediaSession.setActionHandler("call-to-action", () => { }, { label: "download" });
+        consoleWrite(`label: ${label()}`);
+        navigator.mediaSession.setActionHandler("call-to-action", () => { }, { label: "visit-app-store" });
+        consoleWrite(`label after changing it: ${label()}`);
+        navigator.mediaSession.setActionHandler("call-to-action", () => { });
+        consoleWrite(`label after setting without options: ${label()}`);
+
+        consoleWrite('');
+        consoleWrite('Test that the callback and label can change in the same call.');
+        navigator.mediaSession.setActionHandler("call-to-action", () => consoleWrite('third callback ran'), { label: "download" });
+        internals.sendMediaSessionAction(navigator.mediaSession, { action: "call-to-action" });
+        consoleWrite(`label: ${label()}`);
+
+        consoleWrite('');
+        consoleWrite('Test that a rejected label leaves the previous callback and label in place.');
+        trySetHandler('unsupported label', { label: "Buy Now" });
+        internals.sendMediaSessionAction(navigator.mediaSession, { action: "call-to-action" });
+        consoleWrite(`label: ${label()}`);
+
+        consoleWrite('');
+        consoleWrite('Test that the handler can be removed.');
+        navigator.mediaSession.setActionHandler("call-to-action", null);
+        consoleWrite(`removed: OK, label: ${label()}`);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

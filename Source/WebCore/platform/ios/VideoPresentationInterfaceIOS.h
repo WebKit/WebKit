@@ -62,6 +62,10 @@ namespace WebCore {
 class FloatRect;
 class FloatSize;
 
+#if HAVE(PIP_CALL_TO_ACTION)
+enum class CallToActionLabel : uint8_t;
+#endif
+
 class VideoPresentationInterfaceIOS
     : public VideoPresentationModelClient
     , public PlaybackSessionModelClient
@@ -89,6 +93,10 @@ public:
     WEBCORE_EXPORT void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) override;
     WEBCORE_EXPORT void audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy) override;
     WEBCORE_EXPORT void routingContextUIDChanged(const String&) final;
+
+#if HAVE(PIP_CALL_TO_ACTION)
+    virtual void callToActionChanged(std::optional<CallToActionLabel>) { }
+#endif
 
     // PlaybackSessionModelClient
     WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName, const String& localizedRouteName) override;

@@ -48,6 +48,11 @@ namespace WebCore {
     class IntSize;
     class DateComponents;
 
+#if ENABLE(MEDIA_SESSION)
+    enum class CallToActionLabel : uint8_t;
+    WEBCORE_EXPORT String callToActionLabelTitle(CallToActionLabel);
+#endif
+
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT String truncatedStringForMenuItem(const String&);
 #endif

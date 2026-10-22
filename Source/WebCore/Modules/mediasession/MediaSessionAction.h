@@ -49,6 +49,7 @@ enum class MediaSessionAction : uint8_t {
     Voiceactivity,
     Togglecaptions,
     Selectcaptiontrack,
+    CallToAction,
     Settrack,
 };
 

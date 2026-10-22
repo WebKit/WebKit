@@ -1092,11 +1092,13 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/encryptedmedia/legacy/LegacyCDM.h
     Modules/encryptedmedia/legacy/LegacyCDMPrivate.h
 
+    Modules/mediasession/CallToActionLabel.h
     Modules/mediasession/MediaPositionState.h
     Modules/mediasession/MediaSession.h
     Modules/mediasession/MediaSessionAction.h
     Modules/mediasession/MediaSessionActionDetails.h
     Modules/mediasession/MediaSessionActionHandler.h
+    Modules/mediasession/MediaSessionActionHandlerOptions.h
     Modules/mediasession/MediaSessionCoordinator.h
     Modules/mediasession/MediaSessionCoordinatorPrivate.h
     Modules/mediasession/MediaSessionCoordinatorState.h

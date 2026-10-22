@@ -28,6 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
 
+#import "CallToActionLabel.h"
+#import "LocalizedStrings.h"
 #import "Logging.h"
 #import "PictureInPictureSupport.h"
 #import "PlaybackSessionInterfaceAVKitLegacy.h"
@@ -245,6 +247,16 @@ IGNORE_WARNINGS_END
 
 #endif // HAVE(PIP_CONTROLLER)
 
+#if HAVE(PIP_CALL_TO_ACTION)
+// On iOS, AVPlayerViewController is the AVPictureInPictureController's delegate and forwards to this delegate.
+// FIXME: The -playerViewController:didTapCallToAction: name is an assumption until AVKit publishes the forwarder.
+- (void)playerViewController:(AVPlayerViewController *)playerViewController didTapCallToAction:(id)callToAction
+{
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->didTapCallToAction();
+}
+#endif
+
 @end
 
 #if HAVE(PIP_CONTROLLER)
@@ -354,6 +366,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)playerViewControllerShouldHandleDoneButtonTap:(AVPlayerViewController *)playerViewController;
 #endif
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
+#if HAVE(PIP_CALL_TO_ACTION)
+- (void)setCallToActionTitle:(nullable NSString *)title;
+#endif
 #if !RELEASE_LOG_DISABLED
 @property (readonly, nonatomic) uint64_t logIdentifier;
 @property (readonly, nonatomic) const Logger* loggerPtr;
@@ -628,6 +643,18 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 #endif
 }
 
+#if HAVE(PIP_CALL_TO_ACTION)
+- (void)setCallToActionTitle:(NSString *)title
+{
+    // FIXME: The AVKit call-to-action API does not exist yet, so nothing is sent to AVKit. Temporarily, pretend the user tapped the call-to-action button as soon as it is set.
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, "AVKit call to action API is not available yet, ignoring title ", String(title));
+    if (auto fullscreenInterface = _fullscreenInterface.get(); fullscreenInterface && title) {
+        OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, "Simulating a tap on the call to action");
+        fullscreenInterface->didTapCallToAction();
+    }
+}
+#endif
+
 - (BOOL)isPictureInPicturePossible
 {
 #if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
@@ -859,6 +886,9 @@ void VideoPresentationInterfaceAVKitLegacy::setupPlayerViewController()
     [playerController setAllowsPictureInPicture:m_allowsPictureInPicturePlayback];
     if (!m_routingContextUID.isEmpty())
         [m_playerViewController setWebKitOverrideRouteSharingPolicy:(NSUInteger)m_routeSharingPolicy routingContextUID:m_routingContextUID.createNSString().get()];
+#if HAVE(PIP_CALL_TO_ACTION)
+    callToActionChanged(m_callToActionLabel);
+#endif
 
     if (!m_currentMode.hasPictureInPicture() && !m_changingStandbyOnly) {
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Moving videoView to fullscreen WebAVPlayerLayerView");
@@ -878,6 +908,23 @@ void VideoPresentationInterfaceAVKitLegacy::invalidatePlayerViewController()
     [m_playerViewController setPlayerController:nil];
     m_playerViewController = nil;
 }
+
+#if HAVE(PIP_CALL_TO_ACTION)
+void VideoPresentationInterfaceAVKitLegacy::callToActionChanged(std::optional<CallToActionLabel> label)
+{
+    m_callToActionLabel = label;
+    RetainPtr title = label ? callToActionLabelTitle(*label).createNSString() : nil;
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "label: ", label);
+    [m_playerViewController setCallToActionTitle:title.get()];
+}
+
+void VideoPresentationInterfaceAVKitLegacy::didTapCallToAction()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (CheckedPtr model = playbackSessionModel())
+        model->triggerCallToAction();
+}
+#endif
 
 void VideoPresentationInterfaceAVKitLegacy::presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {

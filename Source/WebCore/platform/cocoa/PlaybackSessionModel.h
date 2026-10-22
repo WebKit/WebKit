@@ -76,6 +76,9 @@ public:
 #if HAVE(PIP_SKIP_PREROLL)
     virtual void skipAd() { }
 #endif
+#if HAVE(PIP_CALL_TO_ACTION)
+    virtual void triggerCallToAction() { }
+#endif
     virtual void seekToTime(double time, double toleranceBefore = 0, double toleranceAfter = 0) = 0;
     virtual void fastSeek(double time) = 0;
     virtual void beginScanningForward() = 0;

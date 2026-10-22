@@ -510,6 +510,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediarecorder/MediaRecorder.idl
     Modules/mediarecorder/MediaRecorderErrorEvent.idl
 
+    Modules/mediasession/CallToActionLabel.idl
     Modules/mediasession/MediaImage.idl
     Modules/mediasession/MediaMetadata.idl
     Modules/mediasession/MediaMetadataInit.idl
@@ -518,6 +519,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasession/MediaSessionAction.idl
     Modules/mediasession/MediaSessionActionDetails.idl
     Modules/mediasession/MediaSessionActionHandler.idl
+    Modules/mediasession/MediaSessionActionHandlerOptions.idl
     Modules/mediasession/MediaSessionCaptionTrack.idl
     Modules/mediasession/MediaSessionCoordinator.idl
     Modules/mediasession/MediaSessionCoordinatorState.idl

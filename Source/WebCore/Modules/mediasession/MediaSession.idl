@@ -35,7 +35,7 @@
 
     attribute MediaSessionPlaybackState playbackState;
 
-    undefined setActionHandler(MediaSessionAction action, MediaSessionActionHandler? handler);
+    undefined setActionHandler(MediaSessionAction action, MediaSessionActionHandler? handler, optional MediaSessionActionHandlerOptions options = {});
 
     Promise<undefined> callActionHandler(MediaSessionActionDetails actionDetails);
 

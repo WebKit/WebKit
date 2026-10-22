@@ -431,6 +431,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/indexeddb/shared/IDBTransactionInfo.h
     Modules/indexeddb/shared/IndexKey.h
 
+    Modules/mediasession/CallToActionLabel.h
     Modules/mediasession/MediaImage.h
     Modules/mediasession/MediaMetadata.h
     Modules/mediasession/MediaMetadataInit.h
@@ -439,6 +440,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediasession/MediaSessionAction.h
     Modules/mediasession/MediaSessionActionDetails.h
     Modules/mediasession/MediaSessionActionHandler.h
+    Modules/mediasession/MediaSessionActionHandlerOptions.h
     Modules/mediasession/MediaSessionArtworkSizing.h
     Modules/mediasession/MediaSessionCoordinator.h
     Modules/mediasession/MediaSessionCoordinatorPrivate.h
