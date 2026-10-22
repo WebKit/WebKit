@@ -362,8 +362,8 @@ public:
     static void didCreateWebAnimation(WebAnimation&);
     static void willDestroyWebAnimation(WebAnimation&);
 
-    static void layerTreeDidChange(Page*);
-    static void renderLayerDestroyed(Page*, const RenderLayer&);
+    static void layerTreeDidChange(LocalFrame&);
+    static void renderLayerDestroyed(LocalFrame&, const RenderLayer&);
 
     static void frontendCreated();
     static void frontendDeleted();
@@ -1920,18 +1920,16 @@ inline void InspectorInstrumentation::didFireObserverCallback(ScriptExecutionCon
         didFireObserverCallbackImpl(*agents);
 }
 
-inline void InspectorInstrumentation::layerTreeDidChange(Page* page)
+inline void InspectorInstrumentation::layerTreeDidChange(LocalFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(page))
-        layerTreeDidChangeImpl(*agents);
+    layerTreeDidChangeImpl(protect(instrumentingAgents(frame)));
 }
 
-inline void InspectorInstrumentation::renderLayerDestroyed(Page* page, const RenderLayer& renderLayer)
+inline void InspectorInstrumentation::renderLayerDestroyed(LocalFrame& frame, const RenderLayer& renderLayer)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(page))
-        renderLayerDestroyedImpl(*agents, renderLayer);
+    renderLayerDestroyedImpl(protect(instrumentingAgents(frame)), renderLayer);
 }
 
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(ScriptExecutionContext* context)

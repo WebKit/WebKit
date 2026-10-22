@@ -1,0 +1,96 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.LayerTree.NodeScope.FrameTarget");
+
+        let mainFrameTarget;
+        let childFrameTarget;
+
+        async function documentForFrameTarget(target) {
+            let frameDocument;
+            while (!(frameDocument = WI.domManager.frameTargetDocumentForTarget(target)))
+                await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            return frameDocument;
+        }
+
+        async function pushNodeForExpression(target, expression) {
+            let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+            InspectorTest.expectEqual(result.subtype, "node", "Evaluating the expression should produce a node.");
+
+            let remoteObject = WI.RemoteObject.fromPayload(result, target);
+            return await new Promise((resolve) => remoteObject.pushNodeToFrontend(resolve));
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.NodeScope.FrameTarget.Setup",
+            description: "Find the main frame's frame target and the same-origin child frame's frame target.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                InspectorTest.assert(frameTargets.length === 2, "Should have exactly main and child frame targets.");
+
+                let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+                mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+                childFrameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+                InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame's frame target.");
+                InspectorTest.expectNotNull(childFrameTarget, "Should find the same-origin child frame's frame target.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.NodeScope.FrameTarget.MainFrameDocument",
+            description: "The main frame's frame target should report layers for its own document.",
+            async test() {
+                let mainFrameDocument = await documentForFrameTarget(mainFrameTarget);
+                let {layers} = await mainFrameTarget.LayerTreeAgent.layersForNode(mainFrameDocument.backendNodeId);
+                InspectorTest.expectGreaterThan(layers.length, 0, "Main frame target should report layers for its own document.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.NodeScope.FrameTarget.MainFrameExcludesChildFrameLayers",
+            description: "The main frame's frame target should not report the layers of the same-origin child frame, only where to place them.",
+            async test() {
+                let mainFrameDocument = await documentForFrameTarget(mainFrameTarget);
+                let {layers} = await mainFrameTarget.LayerTreeAgent.layersForNode(mainFrameDocument.backendNodeId);
+                let nodes = layers.map((layer) => WI.domManager.nodeForIdInFrameTarget(layer.nodeId, mainFrameTarget));
+
+                let iframeLayer = layers.find((layer, i) => nodes[i]?.localName() === "iframe");
+                InspectorTest.expectNotNull(iframeLayer, "Main frame target should report the layer hosting the iframe.");
+                InspectorTest.expectNotNull(iframeLayer?.contentFrameRect, "Layer hosting the iframe should report the frame's content box.");
+                InspectorTest.expectThat(nodes.every((node) => node?.getAttribute("id") !== "inner"), "Main frame target should not report the child frame's layers.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.NodeScope.FrameTarget.SameOriginChildFrameDocument",
+            description: "A same-origin child frame's frame target should report layers for its own document.",
+            async test() {
+                let childFrameDocument = await documentForFrameTarget(childFrameTarget);
+                let {layers} = await childFrameTarget.LayerTreeAgent.layersForNode(childFrameDocument.backendNodeId);
+                InspectorTest.expectGreaterThan(layers.length, 0, "Child frame target should report layers for its own document.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.NodeScope.FrameTarget.NodeInChildFrameRejected",
+            description: "The main frame's frame target should reject a node that belongs to the same-origin child frame.",
+            async test() {
+                let nodeId = await pushNodeForExpression(mainFrameTarget, `document.querySelector("iframe").contentDocument.getElementById("inner")`);
+                let backendNodeId = WI.domManager.nodeForId(nodeId).backendNodeId;
+
+                await InspectorTest.expectException(async () => {
+                    await mainFrameTarget.LayerTreeAgent.layersForNode(backendNodeId);
+                });
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that a frame target's LayerTree agent only reports layers for nodes in its own frame.</p>
+    <iframe src="resources/same-origin-frame.html"></iframe>
+</body>
