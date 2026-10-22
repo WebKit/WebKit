@@ -41,6 +41,7 @@
 #include <WebCore/StyleInterpolationClient.h>
 #include <WebCore/Styleable.h>
 #include <WebCore/WebAnimationTypes.h>
+#include <wtf/Markable.h>
 #include <wtf/Ref.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -324,6 +325,9 @@ private:
     CompositeOperation m_compositeOperation { CompositeOperation::Replace };
     AcceleratedProperties m_acceleratedPropertiesState { AcceleratedProperties::None };
     AnimationEffectPhase m_phaseAtLastApplication { AnimationEffectPhase::Idle };
+    Markable<double> m_progressAtLastApplication;
+    Markable<double> m_currentIterationAtLastApplication;
+    EndpointInclusiveActiveInterval m_endpointInclusiveActiveIntervalAtLastApplication { EndpointInclusiveActiveInterval::No };
     RunningAccelerated m_runningAccelerated { RunningAccelerated::NotStarted };
     bool m_needsForcedLayout : 1 { false };
     bool m_triggersStackingContext : 1 { false };

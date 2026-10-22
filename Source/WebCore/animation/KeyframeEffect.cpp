@@ -1655,6 +1655,10 @@ OptionSet<AnimationImpact> KeyframeEffect::apply(Style::ComputedStyle& targetSty
         impact.add(AnimationImpact::RequiresRecomposite);
     }
 
+    m_progressAtLastApplication = computedTiming.progress;
+    m_currentIterationAtLastApplication = computedTiming.currentIteration;
+    m_endpointInclusiveActiveIntervalAtLastApplication = endpointInclusiveActiveInterval;
+
     if (auto target = targetStyleable())
         InspectorInstrumentation::willApplyKeyframeEffect(*target, *this, computedTiming);
 
@@ -2127,10 +2131,27 @@ void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
 
 void KeyframeEffect::animationDidTick()
 {
-    auto canSkipInvalidation = [this] {
+    // Computing timing is not cheap, so compute it at most once for this function. The phase is
+    // all most callers need, so only compute the full computed timing when it is required.
+    std::optional<ComputedEffectTiming> computedTiming;
+    std::optional<AnimationEffectPhase> phase;
+    auto currentPhase = [&] {
+        if (!phase)
+            phase = computedTiming ? computedTiming->phase : getBasicTiming().phase;
+        return *phase;
+    };
+    auto timing = [&] -> const ComputedEffectTiming& {
+        if (!computedTiming) {
+            computedTiming = getComputedTiming();
+            phase = computedTiming->phase;
+        }
+        return *computedTiming;
+    };
+
+    auto canSkipInvalidation = [&] {
         if (!isCompletelyAccelerated() || !isRunningAccelerated())
             return false;
-        if (getBasicTiming().phase != m_phaseAtLastApplication)
+        if (currentPhase() != m_phaseAtLastApplication)
             return false;
 #if ENABLE(THREADED_ANIMATIONS)
         if (canHaveAcceleratedRepresentation() && m_isAssociatedWithProgressBasedTimeline)
@@ -2139,14 +2160,38 @@ void KeyframeEffect::animationDidTick()
         return true;
     };
 
-    if (!canSkipInvalidation())
+    // If this effect is associated with a progress-based timeline, such as a scroll-driven
+    // animation, and its computed timing is identical to when it was last applied, applying
+    // it again would produce identical styles and we can skip style invalidation. This avoids
+    // scheduling style recalculation on every rendering update for a scroll-driven animation
+    // whose timeline's current time is not changing (webkit.org/b/327680).
+    // Note that we cannot require the animation to not be pending here since an animation
+    // associated with a timeline whose current time is unresolved, such as a scroll timeline
+    // with a zero scroll range, remains pending until the timeline's current time resolves,
+    // and its computed timing is stable until then.
+    auto timingUnchangedSinceLastApplication = [&] {
+        if (!m_isAssociatedWithProgressBasedTimeline)
+            return false;
+        if (!animation())
+            return false;
+        // The last application may have used an endpoint-inclusive active interval, in which
+        // case timing must be computed the same way for the comparison to be meaningful.
+        auto lastApplicationTiming = m_endpointInclusiveActiveIntervalAtLastApplication == EndpointInclusiveActiveInterval::No
+            ? timing()
+            : getComputedTiming(UseCachedCurrentTime::Yes, m_endpointInclusiveActiveIntervalAtLastApplication);
+        return lastApplicationTiming.phase == m_phaseAtLastApplication
+            && lastApplicationTiming.progress == m_progressAtLastApplication
+            && lastApplicationTiming.currentIteration == m_currentIterationAtLastApplication;
+    };
+
+    if (!canSkipInvalidation() && !timingUnchangedSinceLastApplication())
         invalidate();
 
     updateAcceleratedActions();
 
 #if ENABLE(THREADED_ANIMATIONS)
     if (canHaveAcceleratedRepresentation() && isAboutToRunAccelerated()) {
-        if (getBasicTiming().phase == AnimationEffectPhase::Active)
+        if (currentPhase() == AnimationEffectPhase::Active)
             updateAcceleratedAnimationIfNecessary();
     }
 #endif

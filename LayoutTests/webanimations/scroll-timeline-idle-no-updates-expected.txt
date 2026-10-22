@@ -1,0 +1,5 @@
+
+PASS A scroll-driven animation whose timeline's current time is unresolved does not update style while idle.
+PASS A scroll-driven animation whose scroller does not move does not update style while idle.
+PASS A scroll-driven animation whose scroller moves updates its animated style.
+
