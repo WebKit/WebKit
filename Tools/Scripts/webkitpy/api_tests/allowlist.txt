@@ -1372,14 +1372,6 @@ TestWebKitAPI.DocumentEditingContext.SpatialRequest_RectAfterInput
 TestWebKitAPI.DocumentEditingContext.SpatialRequest_RectBeforeInput
 TestWebKitAPI.DocumentEditingContext.SpatialRequest_RectEncompassingInput
 TestWebKitAPI.DocumentEditingContext.SpatialRequest_RectInsideInput
-TestWebKitAPI.DownloadProgress.BasicSubscriptionAndProgressUpdates
-TestWebKitAPI.DownloadProgress.CancelDownloadWhenProgressIsCanceled
-TestWebKitAPI.DownloadProgress.ExtraData
-TestWebKitAPI.DownloadProgress.IndeterminateDownloadSize
-TestWebKitAPI.DownloadProgress.LoseProgressWhenDownloadFails
-TestWebKitAPI.DownloadProgress.LoseProgressWhenDownloadIsCanceled
-TestWebKitAPI.DownloadProgress.ProgressExtendedAttributeSetAfterPartialDownloadStops
-TestWebKitAPI.DownloadProgress.PublishProgressAfterDownloadFinished
 TestWebKitAPI.DownloadProgress.StartDownloadFromNavigationAction
 TestWebKitAPI.DragAndDropTests.AdditionalItemsCanBePreventedOnDragStart
 TestWebKitAPI.DragAndDropTests.AdditionalLinkAndImageIntoContentEditable
@@ -4290,7 +4282,6 @@ TestWebKitAPI.WebKit.DoAfterNextPresentationUpdateOnRelatedOffscreenView
 TestWebKitAPI.WebKit.DoAfterNextStablePresentationUpdateAfterCrash
 TestWebKitAPI.WebKit.DoLoadWithNonDefaultDataStoreAfterTerminatingNetworkProcess
 TestWebKitAPI.WebKit.DoNotCrashWhenDetectingDataAfterWebProcessTerminates
-TestWebKitAPI.WebKit.DownloadNavigationResponseFromMemoryCache
 TestWebKitAPI.WebKit.EnumerateDevicesCrash
 TestWebKitAPI.WebKit.EphemeralSessionPushStateNoHistoryCallback
 TestWebKitAPI.WebKit.EvaluateJavaScriptInAttachments
@@ -4744,7 +4735,6 @@ TestWebKitAPI._WKDownload.DownloadRequestOriginalURLDirectDownloadWithLoadedCont
 TestWebKitAPI._WKDownload.DownloadRequestOriginalURLFrame
 TestWebKitAPI._WKDownload.OriginatingWebView
 TestWebKitAPI._WKDownload.RedirectedDownload
-TestWebKitAPI._WKDownload.RedirectedLoadConvertedToDownload
 TestWebKitAPI._WKDownload.RedirectedSubframeLoadConvertedToDownload
 TestWebKitAPI._WKDownload.StartDownloadWithDownloadAttribute
 TestWebKitAPI._WKDownload.SubframeSecurityOrigin
@@ -5026,6 +5016,14 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.DocumentEditingContext.SpatialRequest_RectBeforeInput
 [ ios ] TestWebKitAPI.DocumentEditingContext.SpatialRequest_RectEncompassingInput
 [ ios ] TestWebKitAPI.DocumentEditingContext.SpatialRequest_RectInsideInput
+[ ios ] TestWebKitAPI.DownloadProgress.BasicSubscriptionAndProgressUpdates
+[ ios ] TestWebKitAPI.DownloadProgress.CancelDownloadWhenProgressIsCanceled
+[ ios ] TestWebKitAPI.DownloadProgress.ExtraData
+[ ios ] TestWebKitAPI.DownloadProgress.IndeterminateDownloadSize
+[ ios ] TestWebKitAPI.DownloadProgress.LoseProgressWhenDownloadFails
+[ ios ] TestWebKitAPI.DownloadProgress.LoseProgressWhenDownloadIsCanceled
+[ ios ] TestWebKitAPI.DownloadProgress.ProgressExtendedAttributeSetAfterPartialDownloadStops
+[ ios ] TestWebKitAPI.DownloadProgress.PublishProgressAfterDownloadFinished
 [ ios ] TestWebKitAPI.DownloadProgress.PublishProgressOnPartialDownload
 [ ios ] TestWebKitAPI.DragAndDropTests.AddLinkFromCrossOriginIframeToDragSession
 [ ios ] TestWebKitAPI.DragAndDropTests.AddLinkFromSameSiteIframeToDragSession
@@ -6618,7 +6616,29 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removeUnsupported()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removedEvent()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/update()
-[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.AboutBlankChildOfHostPermittedFrameSeesItsCookies
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.BroadcastChannelIsUnpartitionedInHostPermittedFrame
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.CacheStorageIsUnpartitionedInHostPermittedFrame
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.CrossSiteNavigationOfHostPermittedFrameDoesNotSendStrictCookies
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.DedicatedWorkerOfHostPermittedFrameIsUnpartitioned
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.FileSystemIsUnpartitionedInHostPermittedFrame
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.HostPermissionWithPathAppliesToWholeSite
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.IndexedDBIsUnpartitionedInHostPermittedFrame
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.LocalStorageIsUnpartitionedInHostPermittedFrame
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.NonExtensionPageDoesNotGiveSubframesUnpartitionedAccess
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectIntoHostPermittedFrameIsUnpartitioned
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectIntoHostPermittedFrameIsUnpartitionedWithSiteIsolation
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectOutOfHostPermittedFrameDoesNotUseItsCookiePartition
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectOutOfHostPermittedFrameIsPartitioned
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectOutOfHostPermittedFrameIsPartitionedWithSiteIsolation
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteCookiesAreSentToHostPermittedFrame
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteCookiesAreSentToHostPermittedFrameWithSiteIsolation
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteNavigationOfHostPermittedFrameSendsStrictCookies
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteNavigationToOtherHostOfHostPermittedFrameIsUnpartitioned
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteNavigationToOtherHostOfHostPermittedFrameIsUnpartitionedWithSiteIsolation
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.ServiceWorkerControlsHostPermittedFrame
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SharedWorkerOfHostPermittedFrameIsUnpartitioned
+[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.WebLocksAreUnpartitionedInHostPermittedFrame
 [ ios ] TestWebKitAPI.WKWebView.AlwaysShowsScroller
 [ ios ] TestWebKitAPI.WKWebView.AuxiliaryWindowsShareLocalStorage
 [ ios ] TestWebKitAPI.WKWebView.DiagnosticLoggingDelegateAfterClose
@@ -6855,6 +6875,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebKit.DoAfterNextStablePresentationUpdateAfterCrash
 [ ios ] TestWebKitAPI.WebKit.DoNotCrashWhenDetectingDataAfterWebProcessTerminates
 [ ios ] TestWebKitAPI.WebKit.DownloadDecideDestinationCrash
+[ ios ] TestWebKitAPI.WebKit.DownloadNavigationResponseFromMemoryCache
 [ ios ] TestWebKitAPI.WebKit.DrawsBackgroundAfterLoadingWebContentNoToYes
 [ ios ] TestWebKitAPI.WebKit.DrawsBackgroundAfterLoadingWebContentYesToNo
 [ ios ] TestWebKitAPI.WebKit.DuplicateCompletionHandlerCalls
@@ -7193,6 +7214,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI._WKActivatedElementInfo.InfoWithNestedRequests
 [ ios ] TestWebKitAPI._WKActivatedElementInfo.InfoWithNestedSynchronousUpdates
 [ ios ] TestWebKitAPI._WKDownload.DownloadMonitorCancel
+[ ios ] TestWebKitAPI._WKDownload.RedirectedLoadConvertedToDownload
 [ ios ] TestWebKitAPI.iOSMouseSupport.BasicPointerInteractionRegions
 [ ios ] TestWebKitAPI.iOSMouseSupport.CancelledTouchesDoNotTriggerClick
 [ ios ] TestWebKitAPI.iOSMouseSupport.ContextClickAtEndOfSelection
@@ -8222,8 +8244,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteNavigationOfHostPermittedFrameSendsStrictCookies
 [ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteNavigationToOtherHostOfHostPermittedFrameIsUnpartitioned
 [ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteNavigationToOtherHostOfHostPermittedFrameIsUnpartitionedWithSiteIsolation
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.ServiceWorkerControlsHostPermittedFrame
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SharedWorkerOfHostPermittedFrameIsUnpartitioned
+[ mac release ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.ServiceWorkerControlsHostPermittedFrame
+[ mac release ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SharedWorkerOfHostPermittedFrameIsUnpartitioned
 [ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.WebLocksAreUnpartitionedInHostPermittedFrame
 [ mac ] TestWebKitAPI.WKWebView.AlwaysShowsScroller
 [ mac ] TestWebKitAPI.WKWebView.AuxiliaryWindowsShareLocalStorage
@@ -8355,8 +8377,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebKit.ConfigurationDisableJavaScriptSVGAnimateElementComplex
 [ mac ] TestWebKitAPI.WebKit.ConfigurationSubclass
 [ mac ] TestWebKitAPI.WebKit.ConfigurationWebViewToCloneSessionStorageFrom
-[ mac ] TestWebKitAPI.WebKit.ContextMenuDownloadHTMLDownloadAttribute
-[ mac ] TestWebKitAPI.WebKit.ContextMenuDownloadHTMLDownloadAttributeWithSlashes
 [ mac ] TestWebKitAPI.WebKit.ContextMenuImgWithVideo
 [ mac ] TestWebKitAPI.WebKit.CookieAccessFromPDFInAboutBlank
 [ mac ] TestWebKitAPI.WebKit.CookiePrivateBrowsing
