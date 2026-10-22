@@ -1,0 +1,3 @@
+
+FAIL Inserting <meta> that uses alternate stylesheets, applies the style during DOM post-insertion steps assert_equals: display: none; style WAS applied during DOM post-insertion steps, before later-inserted script runs expected "none" but got "block"
+
