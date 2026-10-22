@@ -405,6 +405,11 @@ ConcreteObjectSize RenderImage::concreteObjectSizeForImageAnalysis() const
     return defaultConcreteObjectSize();
 }
 
+ConcreteObjectSize RenderImage::concreteObjectSizeForDragImageOriginalSizeComparison() const
+{
+    return defaultConcreteObjectSize();
+}
+
 ConcreteObjectSize RenderImage::concreteObjectSizeForPositionInformation() const
 {
     return defaultConcreteObjectSize();

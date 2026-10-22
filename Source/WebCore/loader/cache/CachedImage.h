@@ -93,6 +93,7 @@ public:
     void stopAnimation();
     void resetAnimation();
 
+    String filenameExtension() const;
     String accessibilityDescription() const;
 
 private:

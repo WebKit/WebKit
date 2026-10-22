@@ -105,6 +105,7 @@ public:
     ConcreteObjectSize concreteObjectSizeForPasteboard() const;
     ConcreteObjectSize concreteObjectSizeForAccessibility() const;
     ConcreteObjectSize concreteObjectSizeForImageAnalysis() const;
+    ConcreteObjectSize concreteObjectSizeForDragImageOriginalSizeComparison() const;
     WEBCORE_EXPORT ConcreteObjectSize concreteObjectSizeForPositionInformation() const;
 
     // FIXME: Condense these into fewer concrete categories of bitmap extraction once we know all the different behaviors needed.

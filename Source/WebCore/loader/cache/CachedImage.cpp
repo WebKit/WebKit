@@ -702,6 +702,11 @@ bool CachedImage::isVisibleInViewport(const Document& document) const
     return false;
 }
 
+String CachedImage::filenameExtension() const
+{
+    return m_image ? protect(m_image)->filenameExtension() : String();
+}
+
 String CachedImage::accessibilityDescription() const
 {
     return m_image ? protect(m_image)->accessibilityDescription() : String();

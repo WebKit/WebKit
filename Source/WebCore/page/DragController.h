@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class CachedImage;
 class DataTransfer;
 class Document;
 class DragClient;
@@ -52,6 +53,7 @@ class IntRect;
 class LocalFrame;
 class Page;
 class PlatformMouseEvent;
+class RenderImage;
 
 struct DragItem;
 struct DragState;
@@ -106,8 +108,8 @@ public:
 
     void prepareForDragStart(LocalFrame& sourceFrame, OptionSet<DragSourceAction>, Element& sourceElement, DataTransfer&, const IntPoint& dragOrigin) const;
     bool startDrag(LocalFrame& src, const DragState&, OptionSet<DragOperation>, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData, const std::optional<FrameIdentifier>& rootFrameID);
-    static const IntSize& LEGACY_NODELETE maxDragImageSize();
 
+    static const IntSize& LEGACY_NODELETE maxDragImageSize();
     static const int MaxOriginalImageArea;
     static const int DragIconRightInset;
     static const int DragIconBottomInset;
@@ -127,12 +129,13 @@ private:
     bool LEGACY_NODELETE isCopyKeyDown(const DragData&);
 
     void mouseMovedIntoDocument(RefPtr<Document>&&);
-    bool shouldUseCachedImageForDragImage(const Image&) const;
     void disallowFileAccessIfNeeded(DragData&);
 
     std::optional<HitTestResult> hitTestResultForDragStart(LocalFrame&, Element&, const IntPoint&) const;
 
-    void doImageDrag(Element&, const IntPoint&, const IntRect&, LocalFrame&, IntPoint&, const DragState&, PromisedAttachmentInfo&&);
+    static bool shouldUseFileIconForDragImage(const RenderImage&);
+    static DragImageRef createDragImageForElementImage(RenderImage&, const IntRect& layoutRect, Page&, float deviceScaleFactor);
+    void doImageDrag(RenderImage&, CachedImage&, const IntPoint&, const IntRect&, LocalFrame&, IntPoint&, const DragState&, PromisedAttachmentInfo&&);
     void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, LocalFrame&, const DragState&, PromisedAttachmentInfo&&, const std::optional<FrameIdentifier>&);
     void beginDrag(DragItem, LocalFrame&, const IntPoint& mouseDownPoint, const IntPoint& mouseDraggedPoint, DataTransfer&, DragSourceAction);
 

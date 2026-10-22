@@ -33,7 +33,9 @@
 #if ENABLE(DRAG_SUPPORT)
 #include "BoundaryPointInlines.h"
 #include "CachedImage.h"
+#include "Chrome.h"
 #include "ColorSerialization.h"
+#include "ConcreteObjectSize.h"
 #include "ContainerNodeInlines.h"
 #include "DataTransfer.h"
 #include "DocumentEventLoop.h"
@@ -889,19 +891,6 @@ RefPtr<Element> DragController::draggableElement(const LocalFrame* sourceFrame, 
     return selectionDragElement;
 }
 
-static CachedImage* getCachedImage(Element& element)
-{
-    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer());
-    return renderImage ? renderImage->cachedImage() : nullptr;
-}
-
-static Image* getImage(Element& element)
-{
-    RefPtr cachedImage = getCachedImage(element);
-    return (cachedImage && !cachedImage->errorOccurred()) ?
-        cachedImage->image() : nullptr;
-}
-
 static void selectElement(Element& element)
 {
     if (RefPtr frame = element.document().frame()) {
@@ -969,9 +958,10 @@ void DragController::prepareForDragStart(LocalFrame& source, OptionSet<DragSourc
         return;
     }
 
-    RefPtr image = getImage(element);
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer());
+    RefPtr cachedImage = renderImage ? renderImage->cachedImage() : nullptr;
     auto imageURL = hitTestResult->absoluteImageURL();
-    if (actionMask.contains(DragSourceAction::Image) && !imageURL.isEmpty() && image && image->hasSomethingToDraw()) {
+    if (actionMask.contains(DragSourceAction::Image) && !imageURL.isEmpty() && cachedImage && cachedImage->canRender()) {
         editor->writeImageToPasteboard(pasteboard, element, imageURL, { });
         return;
     }
@@ -1060,7 +1050,6 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
 
     bool mustUseLegacyDragClient = hasData == HasNonDefaultPasteboardData::Yes || client().useLegacyDragClient();
 
-    RefPtr image = getImage(element);
     if (state.type == DragSourceAction::Selection) {
         PasteboardWriterData pasteboardWriterData;
 
@@ -1141,10 +1130,12 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         return false;
     }
 
-    if (!imageURL.isEmpty() && image && image->hasSomethingToDraw() && m_dragSourceAction.contains(DragSourceAction::Image)) {
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer());
+    RefPtr cachedImage = renderImage ? renderImage->cachedImage() : nullptr;
+    if (!imageURL.isEmpty() && cachedImage && cachedImage->canRender() && m_dragSourceAction.contains(DragSourceAction::Image)) {
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
-        ASSERT(!image->filenameExtension().isEmpty());
+        ASSERT(!cachedImage->filenameExtension().isEmpty());
 
 #if ENABLE(ATTACHMENT_ELEMENT)
         auto attachmentInfo = protect(src.editor())->promisedAttachmentInfo(element);
@@ -1163,7 +1154,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         client().willPerformDragSourceAction(DragSourceAction::Image, dragOrigin, dataTransfer);
 
         if (!dragImage)
-            doImageDrag(element, dragOrigin, hitTestResult->imageRect(), src, m_dragOffset, state, WTF::move(attachmentInfo));
+            doImageDrag(*renderImage, *cachedImage, dragOrigin, hitTestResult->imageRect(), src, m_dragOffset, state, WTF::move(attachmentInfo));
         else {
             // DHTML defined drag image
             doSystemDrag(WTF::move(dragImage), dragLoc, dragOrigin, src, state, WTF::move(attachmentInfo), rootFrameID);
@@ -1338,36 +1329,31 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
     return false;
 }
 
-static DragImageRef createDragImageForElementImage(Element& element, LocalFrame& frame)
+DragImageRef DragController::createDragImageForElementImage(RenderImage& renderImage, const IntRect& layoutRect, Page& page, float deviceScaleFactor)
 {
-    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer());
-    if (!renderImage)
+    if (layoutRect.isEmpty() || shouldUseFileIconForDragImage(renderImage))
         return nullptr;
 
-    RefPtr nativeImage = renderImage->createNativeImageAsPainted(protect(element.document())->deviceScaleFactor(), DragController::maxDragImageSize());
+    RefPtr nativeImage = renderImage.createNativeImageAsPainted(deviceScaleFactor, maxDragImageSize());
     if (!nativeImage)
         return nullptr;
 
-    return createDragImageFromImage(*nativeImage, frame.view() ? protect(frame.view())->hostWindow() : nullptr, 1);
+    return createDragImageFromImage(*nativeImage, &page.chrome(), 1);
 }
 
-void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, const IntRect& layoutRect, LocalFrame& frame, IntPoint& dragImageOffset, const DragState& state, PromisedAttachmentInfo&& attachmentInfo)
+void DragController::doImageDrag(RenderImage& renderImage, CachedImage& cachedImage, const IntPoint& dragOrigin, const IntRect& layoutRect, LocalFrame& frame, IntPoint& dragImageOffset, const DragState& state, PromisedAttachmentInfo&& attachmentInfo)
 {
     IntPoint mouseDownPoint = dragOrigin;
-    DragImage dragImage;
     IntPoint scaledOrigin;
+    DragImage dragImage;
 
-    CheckedPtr renderer = element.renderer();
-    if (!renderer)
-        return;
+    auto deviceScaleFactor = m_page->deviceScaleFactor();
 
-    RefPtr image = getImage(element);
-    if (image && !layoutRect.isEmpty() && shouldUseCachedImageForDragImage(*image)
-        && (dragImage = DragImage { createDragImageForElementImage(element, frame) })) {
+    if ((dragImage = DragImage { createDragImageForElementImage(renderImage, layoutRect, protect(m_page), deviceScaleFactor) })) {
         dragImage = DragImage { fitDragImageToMaxSize(dragImage.get(), layoutRect.size(), maxDragImageSize()) };
-        IntSize fittedSize = dragImageSize(dragImage.get());
+        auto fittedSize = dragImageSize(dragImage.get());
 
-        dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page->deviceScaleFactor()) };
+        dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), deviceScaleFactor) };
         dragImage = DragImage { dissolveDragImageToFraction(dragImage.get(), DragImageAlpha) };
 
         // Properly orient the drag image and orient it differently if it's smaller than the original.
@@ -1380,14 +1366,9 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
 #endif
         float dy = scale * (originY - mouseDownPoint.y());
         scaledOrigin = IntPoint((int)(dx + 0.5), (int)(dy + 0.5));
-    } else {
-        if (RefPtr cachedImage = getCachedImage(element)) {
-            dragImage = DragImage { createDragImageIconForCachedImageFilename(cachedImage->response().suggestedFilename()) };
-            if (dragImage) {
-                dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page->deviceScaleFactor()) };
-                scaledOrigin = IntPoint(DragIconRightInset - dragImageSize(dragImage.get()).width(), DragIconBottomInset);
-            }
-        }
+    } else if ((dragImage = DragImage { createDragImageIconForCachedImageFilename(cachedImage.response().suggestedFilename()) })) {
+        dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), deviceScaleFactor) };
+        scaledOrigin = IntPoint(DragIconRightInset - dragImageSize(dragImage.get()).width(), DragIconBottomInset);
     }
 
     if (!dragImage)
@@ -1642,13 +1623,13 @@ void DragController::placeDragCaret(const IntPoint& windowPoint)
     m_page->dragCaretController().setCaretPosition(frame->visiblePositionForPoint(framePoint));
 }
 
-bool DragController::shouldUseCachedImageForDragImage(const Image& image) const
+bool DragController::shouldUseFileIconForDragImage(const RenderImage& renderImage)
 {
 #if PLATFORM(IOS_FAMILY)
-    UNUSED_PARAM(image);
-    return true;
+    UNUSED_PARAM(renderImage);
+    return false;
 #else
-    return image.size().height() * image.size().width() <= MaxOriginalImageArea;
+    return renderImage.concreteObjectSizeForDragImageOriginalSizeComparison().size().area() > MaxOriginalImageArea;
 #endif
 }
 
