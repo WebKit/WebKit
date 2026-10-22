@@ -47,6 +47,8 @@
 
     Promise<undefined> decode();
 
+    [Conditional=IMAGE_ELEMENT_IMMERSIVE, EnabledBySetting=ImageElementImmersiveEnabled] Promise<undefined> requestImmersive();
+
     // Obsolete: Still part of the HTML specification (https://html.spec.whatwg.org/multipage/obsolete.html#HTMLImageElement-partial)
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, ReflectURL] attribute USVString lowsrc;

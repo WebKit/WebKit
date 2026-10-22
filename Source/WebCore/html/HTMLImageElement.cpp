@@ -87,6 +87,11 @@
 #include "SpatialImageControls.h"
 #endif
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+#include "DocumentImmersive.h"
+#include "JSDOMPromiseDeferred.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLImageElement);
@@ -1197,5 +1202,31 @@ IntersectionObserverData* HTMLImageElement::intersectionObserverDataIfExists() c
 {
     return m_intersectionObserverData.get();
 }
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+
+std::optional<Exception> HTMLImageElement::immersiveImageError() const
+{
+    RefPtr image = this->image();
+    if (!image || !image->isPanorama())
+        return Exception { ExceptionCode::InvalidStateError, "requestImmersive() requires a panoramic image."_s };
+    return std::nullopt;
+}
+
+void HTMLImageElement::requestImmersive(Ref<DeferredPromise>&& promise)
+{
+    if (auto error = immersiveImageError())
+        return promise->reject(WTF::move(*error));
+
+    protect(document().immersive())->requestImmersive(this, [promise = WTF::move(promise)](ExceptionOr<void> result) mutable {
+        if (result.hasException()) {
+            promise->reject(result.releaseException());
+            return;
+        }
+        promise->resolve();
+    });
+}
+
+#endif
 
 }
