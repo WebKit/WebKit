@@ -10355,7 +10355,7 @@ fast/visual-viewport/ios/interactive-widget/resizes-content-keyboard-scroll.html
 imported/w3c/web-platform-tests/css/css-content/quotes-009.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-bidi-003.html [ ImageOnlyFailure ]
 fast/events/scroll-to-anchor-vertical-writing-mode-contained-2.html [ ImageOnlyFailure ]
-system-preview/svg-image.html [ Crash ]
+webkit.org/b/328401 system-preview/svg-image.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/content-security-policy/svg/svg-policy-resource-doc-includes.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-attribute-basic.html [ Failure ]
 fast/events/event-attribute.html [ Failure ]
