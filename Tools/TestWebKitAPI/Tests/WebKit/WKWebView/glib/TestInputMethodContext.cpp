@@ -516,6 +516,29 @@ public:
         waitUntilInputMethodDisabled();
     }
 
+    // When an element is blurred, WebPage::setInputMethodState() doesn't reset the input method state
+    // right away: WebPage::elementDidBlur() does it in the next run loop iteration, unless an element
+    // gets the focus in the meantime. The result of a script run after that is received after the reset.
+    void waitForPendingInputMethodResetAfterBlur()
+    {
+        runJavaScriptAndWaitUntilFinished("void 0", nullptr);
+    }
+
+#if ENABLE(WPE_PLATFORM)
+    void setViewFocused(bool focused)
+    {
+        auto* view = webkit_web_view_get_wpe_view(m_webView.get());
+        if (focused)
+            wpe_view_focus_in(view);
+        else
+            wpe_view_focus_out(view);
+        assertJavaScriptBecomesTrue(focused ? "document.hasFocus()" : "!document.hasFocus()");
+        // The page gets a blur event when the view loses the focus.
+        if (!focused)
+            waitForPendingInputMethodResetAfterBlur();
+    }
+#endif
+
     void resetEditable()
     {
         runJavaScriptAndWaitUntilFinished("document.getElementById('editable').value = ''", nullptr);
@@ -1549,11 +1572,9 @@ static void testWebKitInputMethodContextFocusBlurRefocus(InputMethodTest* test, 
     test->waitForSurroundingText("one");
 
     // Calling blur() and then focus() on the field in the same task is not a focus change for the embedder.
-    // The second script makes sure that a reset held back until the next run loop iteration, if any,
-    // has reached the UI process before checking the counters.
     test->clearInputMethodCounters();
     test->runJavaScriptAndWaitUntilFinished("editable.blur(); editable.focus()", nullptr);
-    test->runJavaScriptAndWaitUntilFinished("void 0", nullptr);
+    test->waitForPendingInputMethodResetAfterBlur();
     test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
     g_assert_cmpuint(test->focusOutCount(), ==, 0);
     g_assert_cmpuint(test->focusInCount(), ==, 0);
@@ -1572,7 +1593,7 @@ static void testWebKitInputMethodContextFocusBlurRefocus(InputMethodTest* test, 
     test->clearInputMethodCounters();
     test->runJavaScriptAndWaitUntilFinished("editable.blur(); second.focus()", nullptr);
     test->waitForSurroundingText("two");
-    test->runJavaScriptAndWaitUntilFinished("void 0", nullptr);
+    test->waitForPendingInputMethodResetAfterBlur();
     g_assert_cmpuint(test->focusOutCount(), ==, 0);
     g_assert_cmpuint(test->focusInCount(), ==, 0);
     g_assert_cmpuint(test->contentTypeNotificationCount(), ==, 0);
@@ -1607,12 +1628,87 @@ static void testWebKitInputMethodContextBlurRefocusInteraction(InputMethodTest* 
     test->clearInputMethodCounters();
     test->clickMouseButton(20, 65);
     test->waitForContentType(WEBKIT_INPUT_PURPOSE_FREE_FORM, 0);
-    test->runJavaScriptAndWaitUntilFinished("void 0", nullptr);
+    test->waitForPendingInputMethodResetAfterBlur();
     test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
     g_assert_cmpuint(test->focusOutCount(), ==, 0);
     g_assert_cmpuint(test->focusInCount(), ==, 0);
     g_assert_true(test->isInputMethodEnabled());
 }
+
+#if ENABLE(WPE_PLATFORM)
+static void testWebKitInputMethodContextBlurWhileViewUnfocused(InputMethodTest* test, gconstpointer)
+{
+    if (!test->m_display) {
+        g_test_skip("The view focus can only be changed with the WPE platform API");
+        return;
+    }
+
+    test->loadHtml("<input id='editable' type='text' spellcheck='false'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    // The page gets a blur event when the view loses the focus, but the field keeps the focus.
+    // The input method context gets a single focus out.
+    test->clearInputMethodCounters();
+    test->setViewFocused(false);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    g_assert_cmpuint(test->focusOutCount(), ==, 1);
+    g_assert_false(test->isInputMethodEnabled());
+
+    // Blurring the field while the view is unfocused doesn't send another focus out.
+    test->runJavaScriptAndWaitUntilFinished("editable.blur()", nullptr);
+    test->waitForPendingInputMethodResetAfterBlur();
+    test->assertJavaScriptBecomesTrue("document.activeElement === document.body");
+    g_assert_cmpuint(test->focusOutCount(), ==, 1);
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+}
+
+static void testWebKitInputMethodContextFocusWhileViewUnfocused(InputMethodTest* test, gconstpointer)
+{
+    if (!test->m_display) {
+        g_test_skip("The view focus can only be changed with the WPE platform API");
+        return;
+    }
+
+    test->loadHtml("<input id='editable' type='text' value='one' spellcheck='false'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->setViewFocused(false);
+
+    // Focusing and blurring the field while the view is unfocused doesn't notify the input method
+    // context of a focus in or out: it never got a focus in. The surrounding text is sent, though,
+    // so it is cached.
+    test->clearInputMethodCounters();
+    test->runJavaScriptAndWaitUntilFinished("editable.focus()", nullptr);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    test->waitForSurroundingCount(1, 1000);
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    test->runJavaScriptAndWaitUntilFinished("editable.blur()", nullptr);
+    test->waitForPendingInputMethodResetAfterBlur();
+    test->assertJavaScriptBecomesTrue("document.activeElement === document.body");
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    g_assert_cmpuint(test->focusOutCount(), ==, 0);
+
+    // Focusing the field again once the view has the focus sends the surrounding text again,
+    // although it hasn't changed.
+    test->setViewFocused(true);
+    test->clearInputMethodCounters();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->waitForSurroundingCount(1, 1000);
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+
+    // A field focused while the view is unfocused gets the focus in when the view gets the focus.
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+    test->setViewFocused(false);
+    test->clearInputMethodCounters();
+    test->runJavaScriptAndWaitUntilFinished("editable.focus()", nullptr);
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    test->setViewFocused(true);
+    test->waitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_cmpuint(test->focusOutCount(), ==, 0);
+    g_assert_cmpuint(test->hints() & WEBKIT_INPUT_HINT_INHIBIT_OSK, ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+}
+#endif
 
 static const char* navigationPageHTML = "<html><body>"
     "<input id='editable' type='text' spellcheck='false'>"
@@ -2183,6 +2279,10 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "focus-blur-refocus", testWebKitInputMethodContextFocusBlurRefocus);
     InputMethodTest::add("WebKitInputMethodContext", "remove-focused-element", testWebKitInputMethodContextRemoveFocusedElement);
     InputMethodTest::add("WebKitInputMethodContext", "blur-refocus-interaction", testWebKitInputMethodContextBlurRefocusInteraction);
+#if ENABLE(WPE_PLATFORM)
+    InputMethodTest::add("WebKitInputMethodContext", "blur-while-view-unfocused", testWebKitInputMethodContextBlurWhileViewUnfocused);
+    InputMethodTest::add("WebKitInputMethodContext", "focus-while-view-unfocused", testWebKitInputMethodContextFocusWhileViewUnfocused);
+#endif
     InputMethodTest::add("WebKitInputMethodContext", "focus-back-forward-cache", testWebKitInputMethodContextFocusBackForwardCache);
     InputMethodTest::add("WebKitInputMethodContext", "back-forward-cache-without-focus", testWebKitInputMethodContextBackForwardCacheWithoutFocus);
     InputMethodTest::add("WebKitInputMethodContext", "click-after-script-focus", testWebKitInputMethodContextClickAfterScriptFocus);
