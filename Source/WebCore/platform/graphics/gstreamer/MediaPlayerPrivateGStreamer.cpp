@@ -2849,7 +2849,7 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     if (startsWith(name.span(), "urisourcebin"_s) && !m_isLegacyPlaybin && m_preload == MediaPlayer::Preload::Auto) {
         m_urisourceBin = element;
         if (isBlob || isDataUri)
-            g_object_set(element, "ring-buffer-max-size", 2 * MB, nullptr);
+            g_object_set(element, "ring-buffer-max-size", static_cast<guint64>(2 * MB), nullptr);
         else if (!isMediaSource() && !isMediaStreamPlayer())
             g_object_set(element, "download", TRUE, nullptr);
 
