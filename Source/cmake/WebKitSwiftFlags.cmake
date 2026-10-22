@@ -69,6 +69,7 @@ set(WEBKIT_SWIFT_UPCOMING_FEATURE_FLAGS
     "-enable-upcoming-feature ExistentialAny"
     "-enable-upcoming-feature InternalImportsByDefault"
     "-enable-upcoming-feature MemberImportVisibility"
+    "-enable-upcoming-feature NonisolatedNonsendingByDefault"
 )
 
 set(WEBKIT_SWIFT_EXPERIMENTAL_FEATURE_FLAGS
