@@ -36,7 +36,6 @@
 #include "DocumentInlines.h"
 #include "DocumentPage.h"
 #include "DocumentPrefetcher.h"
-#include "DocumentResourceLoader.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventLoop.h"
@@ -54,7 +53,6 @@
 #include "LoadableScriptError.h"
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
-#include "MemoryCache.h"
 #include "ModuleFetchParameters.h"
 #include "PendingScript.h"
 #include "SVGElementTypeHelpers.h"
@@ -387,7 +385,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
         auto scriptURL = document->encodingParseURL(sourceURL);
         document->willLoadScriptElement(scriptURL);
 
-        if (protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(scriptURL, URL(), m_startPosition.m_line, element->nonce(), script->integrity(), String(), m_parserInserted)
+        if (protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(scriptURL, URL(), m_startPosition.m_line, element->nonce(), script->integrity(), nullString(), m_parserInserted)
             && script->load(document, scriptURL)) {
             m_loadableScript = WTF::move(script);
             m_isExternalScript = true;
@@ -401,17 +399,6 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
         element.dispatchErrorEvent();
     });
     return false;
-}
-
-ParserInserted ScriptElement::effectiveParserInsertedForModule(Document& document, const URL& moduleURL) const
-{
-    // A parser-inserted module script that reuses a <link rel=modulepreload> is not a new parser-inserted load.
-    if (m_parserInserted == ParserInserted::No)
-        return ParserInserted::No;
-
-    RefPtr resource = protect(document.cachedResourceLoader())->cachedResource(MemoryCache::removeFragmentIdentifierIfNeeded(moduleURL));
-    bool reusesModulePreload = (resource && resource->isLinkModulePreload());
-    return reusesModulePreload ? ParserInserted::No : ParserInserted::Yes;
 }
 
 bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosition& scriptStartPosition)
@@ -451,8 +438,7 @@ bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosi
         Ref script = LoadableModuleScript::create(LoadableModuleScript::IsInline::No, nonce, integrity, referrerPolicy(), fetchPriority(), crossOriginMode,
             scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
 
-        auto effectiveParserInserted = effectiveParserInsertedForModule(document, moduleScriptRootURL);
-        if (!protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(moduleScriptRootURL, URL(), m_startPosition.m_line, nonce, String(integrity), String(), effectiveParserInserted)) {
+        if (!protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(moduleScriptRootURL, URL(), m_startPosition.m_line, nonce, String(integrity), nullString(), m_parserInserted)) {
             queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [](auto& element) {
                 element.dispatchErrorEvent();
             });

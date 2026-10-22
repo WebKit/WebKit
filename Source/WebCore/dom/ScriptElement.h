@@ -131,7 +131,6 @@ private:
 
     bool requestClassicScript(const String& sourceURL);
     bool requestModuleScript(const String& sourceText, const TextPosition& scriptStartPosition);
-    ParserInserted effectiveParserInsertedForModule(Document&, const URL& moduleURL) const;
 
     void updateTaintedOriginFromSourceURL();
 
