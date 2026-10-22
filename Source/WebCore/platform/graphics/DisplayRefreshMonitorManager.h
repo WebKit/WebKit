@@ -44,7 +44,7 @@ public:
 
     void unregisterClient(DisplayRefreshMonitorClient&);
 
-    bool scheduleAnimation(DisplayRefreshMonitorClient&);
+    WEBCORE_EXPORT bool scheduleAnimation(DisplayRefreshMonitorClient&);
     void windowScreenDidChange(PlatformDisplayID, DisplayRefreshMonitorClient&);
     
     WEBCORE_EXPORT std::optional<FramesPerSecond> nominalFramesPerSecondForDisplay(PlatformDisplayID, DisplayRefreshMonitorFactory*);

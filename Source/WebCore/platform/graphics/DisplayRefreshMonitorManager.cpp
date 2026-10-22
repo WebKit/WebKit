@@ -79,8 +79,9 @@ void DisplayRefreshMonitorManager::clientPreferredFramesPerSecondChanged(Display
 bool DisplayRefreshMonitorManager::scheduleAnimation(DisplayRefreshMonitorClient& client)
 {
     if (RefPtr monitor = monitorForClient(client)) {
-        client.setIsScheduled(true);
-        return monitor->requestRefreshCallback();
+        bool scheduled = monitor->requestRefreshCallback();
+        client.setIsScheduled(scheduled);
+        return scheduled;
     }
     return false;
 }

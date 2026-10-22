@@ -287,6 +287,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/Decimal.cpp
         Tests/WebCore/DigitalCredentialsRequestDataBuilder.cpp
         Tests/WebCore/DisplayListRecorderTests.cpp
+        Tests/WebCore/DisplayRefreshMonitorManager.cpp
         Tests/WebCore/DocumentOrder.cpp
         Tests/WebCore/FidoHidMessageTest.cpp
         Tests/WebCore/FileMonitor.cpp

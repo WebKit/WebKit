@@ -38,7 +38,7 @@ class DisplayRefreshMonitorFactory;
 
 struct DisplayUpdate;
 
-class DisplayRefreshMonitorClient : public CanMakeCheckedPtr<DisplayRefreshMonitorClient> {
+class WEBCORE_EXPORT DisplayRefreshMonitorClient : public CanMakeCheckedPtr<DisplayRefreshMonitorClient> {
     WTF_MAKE_TZONE_ALLOCATED(DisplayRefreshMonitorClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DisplayRefreshMonitorClient);
 public:
