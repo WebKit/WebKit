@@ -548,6 +548,11 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
                 repaintRect.intersect(enclosingIntRect(mapRect(changedRect, FloatRect { { }, concreteObjectSize.size() }, repaintRect)));
             }
         }
+        // When the image changed size, the area the previous image painted into may extend past the new
+        // one (object-fit: contain with a smaller image, say). Painting is clipped to the content box,
+        // so repainting it covers whatever the previous image left behind.
+        if (imageSourceHasChangedSize)
+            repaintRect.unite(contentBoxRect());
         // FIXME: This needs to account for filter outsets: webkit.org/b/293553.
         repaintRectangle(repaintRect);
     }

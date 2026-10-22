@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reference: &lt;img&gt; with object-fit: contain after src changes to a smaller image</title>
+<style>
+    body {
+        margin: 0;
+    }
+    .container {
+        width: 200px;
+        height: 120px;
+        background: white;
+    }
+    .image {
+        object-fit: contain;
+    }
+</style>
+</head>
+<body>
+<p>You should see a green square centered on white, with no blue on either side of it.</p>
+<div class="container">
+    <img class="image" width="200" height="120" src="resources/green-100x100.png">
+</div>
+</body>
+</html>
