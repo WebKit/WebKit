@@ -976,12 +976,14 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
     if (is<HTMLCanvasElement>(element))
         return { ItemData { ContainerType::Canvas } };
 
+#if ENABLE(VIDEO)
     if (RefPtr media = dynamicDowncast<HTMLMediaElement>(element)) {
         return { MediaItemData {
             .type = is<HTMLVideoElement>(*media) ? MediaType::Video : MediaType::Audio,
             .hasControls = media->controls(),
         } };
     }
+#endif
 
     if (CheckedPtr box = dynamicDowncast<RenderBox>(node.renderer()); box && box->canBeScrolledAndHasScrollableArea()) {
         if (CheckedPtr layer = box->layer()) {
