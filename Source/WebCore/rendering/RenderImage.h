@@ -102,6 +102,7 @@ public:
 
     // FIXME: Condense these into fewer concrete categories of sizing algorithms once we know all the different sizing rules needed.
     ConcreteObjectSize concreteObjectSizeForPainting() const;
+    ConcreteObjectSize concreteObjectSizeForInteractionRegion() const;
     ConcreteObjectSize concreteObjectSizeForPasteboard() const;
     ConcreteObjectSize concreteObjectSizeForAccessibility() const;
     ConcreteObjectSize concreteObjectSizeForImageAnalysis() const;

@@ -385,6 +385,11 @@ ConcreteObjectSize RenderImage::concreteObjectSizeForPainting() const
     return ConcreteObjectSize::fixed(FloatSize(imageContainerSize()));
 }
 
+ConcreteObjectSize RenderImage::concreteObjectSizeForInteractionRegion() const
+{
+    return ConcreteObjectSize::fixed(FloatSize(imageContainerSize()));
+}
+
 ConcreteObjectSize RenderImage::concreteObjectSizeForPasteboard() const
 {
     static constexpr float maximumLength = 4096;

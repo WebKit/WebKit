@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=800">
+    <style>
+        body { margin: 0; }
+        section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px;
+            width: 500px;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        img { cursor: pointer; }
+    </style>
+</head>
+<body>
+  <section>
+    <img src="resources/square-viewbox-200x100.svg" style="width: 400px; height: 100px;">
+</section>
+<section>
+    <img src="resources/rotated-half-opaque.png" style="width: 40px; height: 80px;">
+</section>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.querySelectorAll('section').forEach(section => section.remove());
+};
+</script>
+</body>
+</html>
