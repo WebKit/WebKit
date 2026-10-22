@@ -20,10 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import os
 import re
 from datetime import datetime, timezone
+from types import TracebackType
+from typing import Any, cast
 from unittest.mock import patch
 
 from webkitcorepy import mocks
@@ -34,17 +38,18 @@ from webkitscmpy import Commit, Contributor, local
 class Svn(mocks.Subprocess):
     BRANCH_RE = re.compile(r'\^/(branches/)?(?P<branch>.+)')
 
-    def log_line(self, commit):
+    def log_line(self, commit: Commit) -> str:
         email = '(no author)'
         if commit.author:
             email = commit.author.email or commit.author.name
+        assert commit.timestamp is not None
         return 'r{revision} | {email} | {date}'.format(
             revision=commit.revision,
             email=email,
             date=datetime.fromtimestamp(commit.timestamp, timezone.utc).strftime('%Y-%m-%d %H:%M:%S {} (%a, %d %b %Y)'.format(self.utc_offset)),
         )
 
-    def __init__(self, path='/.invalid-svn', datafile=None, remote=None, utc_offset=None):
+    def __init__(self, path: str = '/.invalid-svn', datafile: str | None = None, remote: str | None = None, utc_offset: str | None = None) -> None:
         self.path = path
         self.remote = remote or 'https://svn.mock.org/repository/{}'.format(os.path.basename(path))
         self.utc_offset = utc_offset or '0000'
@@ -57,8 +62,9 @@ class Svn(mocks.Subprocess):
             self.executable = '/usr/bin/svn'
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'svn-repo.json')) as file:
-            self.commits = json.load(file)
-        for key, commits in self.commits.items():
+            json_commits: dict[str, list[dict[str, Any]]] = json.load(file)
+        self.commits: dict[str, list[Commit]] = {}
+        for key, commits in json_commits.items():
             self.commits[key] = [Commit(**kwargs) for kwargs in commits]
 
         self.head = self.commits['trunk'][-1]
@@ -67,7 +73,7 @@ class Svn(mocks.Subprocess):
             mocks.Subprocess.Route(
                 self.executable, 'info', self.BRANCH_RE,
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self._info(branch=self.BRANCH_RE.match(args[2]).group('branch'), cwd=kwargs.get('cwd', ''))
+                generator=lambda *args, **kwargs: self._info(branch=cast('re.Match[str]', self.BRANCH_RE.match(args[2])).group('branch'), cwd=kwargs.get('cwd', ''))
             ), mocks.Subprocess.Route(
                 self.executable, 'info', '-r', re.compile(r'\d+'),
                 cwd=self.path,
@@ -102,31 +108,31 @@ class Svn(mocks.Subprocess):
                         '    M /{branch}/file.cpp\n'
                         '    D /{branch}/deleted.cpp\n'
                         '    A /{branch}/added.cpp\n'.format(
-                            line=self.log_line(self.find(revision=args[6])),
-                            branch=self.find(revision=args[6]).branch if self.find(revision=args[6]).branch.split('/')[0] in ['trunk', 'tags'] else 'branches/{}'.format(self.find(revision=args[6]).branch)
+                            line=self.log_line(commit),
+                            branch=commit.branch if cast(str, commit.branch).split('/')[0] in ['trunk', 'tags'] else 'branches/{}'.format(commit.branch)
                         ),
-                ) if self.connected and self.find(revision=args[6]) else mocks.ProcessCompletion(returncode=1),
+                ) if self.connected and (commit := self.find(revision=args[6])) else mocks.ProcessCompletion(returncode=1),
             ), mocks.Subprocess.Route(
                 self.executable, 'log', '-q', self.BRANCH_RE,
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='\n{}\n'.format('-' * 72).join([
-                        self.log_line(commit) for commit in self._commits_for(branch=self.BRANCH_RE.match(args[3]).group('branch'))
+                        self.log_line(commit) for commit in self._commits_for(branch=cast('re.Match[str]', self.BRANCH_RE.match(args[3])).group('branch'))
                     ]),
-                ) if self.connected and self.BRANCH_RE.match(args[3]).group('branch') in self.commits else mocks.ProcessCompletion(returncode=1)
+                ) if self.connected and cast('re.Match[str]', self.BRANCH_RE.match(args[3])).group('branch') in self.commits else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'log', '-l', '1', '-r', re.compile(r'\d+'), self.BRANCH_RE,
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self._log_for(
-                    branch=self.BRANCH_RE.match(args[6]).group('branch'),
+                    branch=cast('re.Match[str]', self.BRANCH_RE.match(args[6])).group('branch'),
                     revision=args[5],
                 ) if self.connected else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'log', '-r', re.compile(r'\d+:\d+'), self.BRANCH_RE,
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self._log_range(
-                    branch=self.BRANCH_RE.match(args[4]).group('branch'),
+                    branch=cast('re.Match[str]', self.BRANCH_RE.match(args[4])).group('branch'),
                     end=int(args[3].split(':')[0]),
                     begin=int(args[3].split(':')[-1]),
                 ) if self.connected else mocks.ProcessCompletion(returncode=1)
@@ -168,28 +174,29 @@ class Svn(mocks.Subprocess):
             ),
         )
 
-    def __enter__(self):
+    def __enter__(self) -> Svn:
         local.Svn.executable.clear()  # Clear the memoized cache prior to patching
-        p = patch('shutil.which', lambda cmd: self.executable if cmd == 'svn' else p.temp_original(cmd))
+        p: Any = patch('shutil.which', lambda cmd: self.executable if cmd == 'svn' else p.temp_original(cmd))
         self.patches.append(p)
         return super(Svn, self).__enter__()
 
-    def __exit__(self, typ, exc, tb):
+    def __exit__(self, typ: type[BaseException] | None, exc: BaseException | None, tb: TracebackType | None) -> None:
         super().__exit__(typ, exc, tb)
         local.Svn.executable.clear()  # Clear the memoized cache after patching
 
     @property
-    def branch(self):
+    def branch(self) -> str | None:
         return self.head.branch
 
     @property
-    def tags(self):
+    def tags(self) -> set[str]:
         return set(branch for branch in self.commits.keys() if branch.startswith('tags'))
 
-    def _info(self, branch=None, revision=None, cwd=''):
+    def _info(self, branch: str | None = None, revision: int | None = None, cwd: str = '') -> mocks.ProcessCompletion:
         commit = self.find(branch=branch, revision=revision)
         if not commit:
             return mocks.ProcessCompletion(returncode=1, stderr='svn: E160006: No such revision {}\n'.format(revision))
+        assert commit.author is not None and commit.timestamp is not None
 
         return mocks.ProcessCompletion(
             returncode=0,
@@ -215,7 +222,7 @@ class Svn(mocks.Subprocess):
             ),
         )
 
-    def _commits_for(self, branch='trunk'):
+    def _commits_for(self, branch: str = 'trunk') -> list[Commit]:
         if branch not in self.commits:
             return []
         result = [commit for commit in reversed(self.commits[branch])]
@@ -223,10 +230,11 @@ class Svn(mocks.Subprocess):
             result += [commit for commit in reversed(self.commits['trunk'][:self.commits[branch][0].branch_point])]
         return result
 
-    def _log_for(self, branch=None, revision=None):
+    def _log_for(self, branch: str | None = None, revision: str | None = None) -> mocks.ProcessCompletion:
         commit = self.find(branch=branch, revision=revision)
         if not commit:
             return mocks.ProcessCompletion(returncode=1)
+        assert commit.message is not None
         return mocks.ProcessCompletion(
             returncode=0,
             stdout=
@@ -239,19 +247,24 @@ class Svn(mocks.Subprocess):
                 ),
         )
 
-    def _log_range(self, branch=None, end=None, begin=None):
+    def _log_range(self, branch: str | None = None, end: int | None = None, begin: int | None = None) -> mocks.ProcessCompletion:
+        assert end is not None and begin is not None
         if end < begin:
             return mocks.ProcessCompletion(returncode=1)
 
         output = ''
         previous = None
         for b in [branch, 'trunk']:
+            if b is None:
+                continue
             for candidate in reversed(self.commits.get(b, [])):
+                assert candidate.revision is not None
                 if candidate.revision > end or candidate.revision < begin:
                     continue
-                if previous and previous.revision <= candidate.revision:
+                if previous and cast(int, previous.revision) <= candidate.revision:
                     continue
                 previous = candidate
+                assert candidate.message is not None
                 output += ('------------------------------------------------------------------------\n'
                     '{line} | {lines} lines\n\n'
                     '{log}\n').format(
@@ -261,7 +274,7 @@ class Svn(mocks.Subprocess):
                 )
         return mocks.ProcessCompletion(returncode=0, stdout=output)
 
-    def find(self, branch=None, revision=None):
+    def find(self, branch: str | None = None, revision: int | str | None = None) -> Commit | None:
         if not branch and not revision:
             return self.head
         for candidate in [branch] if branch else sorted(self.commits.keys()):
@@ -274,7 +287,7 @@ class Svn(mocks.Subprocess):
                     return commit
         return None
 
-    def up(self, revision):
+    def up(self, revision: str) -> bool:
         commit = self.find(revision=revision)
         if commit:
             self.head = commit

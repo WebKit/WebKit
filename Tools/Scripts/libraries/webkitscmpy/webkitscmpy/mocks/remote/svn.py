@@ -20,9 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import os
 import re
+from typing import Any, ClassVar, Iterator, cast
 
 from collections import OrderedDict
 from webkitcorepy import mocks
@@ -31,10 +34,10 @@ from webkitscmpy import Commit, Contributor, remote as scmremote
 
 class Svn(mocks.Requests):
     top = None
-    remotes = []
+    remotes: ClassVar[list[str]] = []
     REVISION_REQUEST_RE = re.compile(r'svn/rvr/(?P<revision>\d+)(/(?P<category>\S+))?$')
 
-    def __init__(self, remote='svn.example.org/repository/webkit', datafile=None):
+    def __init__(self, remote: str = 'svn.example.org/repository/webkit', datafile: str | None = None) -> None:
         if not scmremote.Svn.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid Svn remote'.format(remote))
 
@@ -42,15 +45,16 @@ class Svn(mocks.Requests):
         if remote[-1] != '/':
             remote += '/'
         self.remote = remote
-        self._cache_contents = None
+        self._cache_contents: str | None = None
         self.patches.append(scmremote.Svn('http://{}'.format(self.remote))._cache_lock())
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'svn-repo.json')) as file:
-            self.commits = json.load(file)
-        for key, commits in self.commits.items():
+            json_commits: dict[str, list[dict[str, Any]]] = json.load(file)
+        self.commits: dict[str, list[Commit]] = {}
+        for key, commits in json_commits.items():
             self.commits[key] = [Commit(**kwargs) for kwargs in commits]
 
-    def __enter__(self):
+    def __enter__(self) -> Svn:
         super(Svn, self).__enter__()
 
         self.remotes.append(self.hosts[0])
@@ -62,7 +66,7 @@ class Svn(mocks.Requests):
 
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         cache_path = scmremote.Svn('http://{}'.format(self.remote))._cache_path
         if os.path.isfile(cache_path):
             os.remove(cache_path)
@@ -73,51 +77,58 @@ class Svn(mocks.Requests):
         self.remotes.remove(self.hosts[0])
         super(Svn, self).__exit__(*args, **kwargs)
 
-    def latest(self):
+    def latest(self) -> Commit:
         latest = self.commits['trunk'][-1]
         for branch in self.commits.values():
             for commit in branch:
+                assert commit.revision is not None and latest.revision is not None
                 if commit.revision > latest.revision:
                     latest = commit
         return latest
 
-    def branches(self, revision=None):
-        revision = revision or self.latest()
-        branches = set()
+    def branches(self, revision: int | None = None) -> list[str]:
+        revision = revision or self.latest().revision
+        assert revision is not None
+        branches: set[str] = set()
         for branch, commits in self.commits.items():
             for commit in commits:
+                assert commit.revision is not None and commit.branch is not None
                 if commit.revision <= revision and not commit.branch.startswith('tags') and commit.branch != 'trunk':
                     branches.add(commit.branch)
         return sorted(branches)
 
-    def tags(self, revision=None):
-        revision = revision or self.latest()
-        tags = set()
+    def tags(self, revision: int | None = None) -> list[str]:
+        revision = revision or self.latest().revision
+        assert revision is not None
+        tags: set[str] = set()
         for branch, commits in self.commits.items():
             for commit in commits:
+                assert commit.revision is not None and commit.branch is not None
                 if commit.revision <= revision and commit.branch.startswith('tags'):
                     tags.add(commit.branch)
         return sorted(tags)
 
-    def range(self, category=None, start=None, end=None):
-        start = start or self.latest()
+    def range(self, category: str | None = None, start: int | None = None, end: int | None = None) -> Iterator[Commit]:
+        start = start or self.latest().revision
         end = end or 1
+        assert start is not None
 
         if category and category.startswith('branches/'):
             category = category.split('/')[-1]
-        category = [category] if category else self.branches(start) + self.tags(start)
+        categories = [category] if category else self.branches(start) + self.tags(start)
 
         previous = None
-        for b in category + ['trunk']:
+        for b in categories + ['trunk']:
             for candidate in reversed(self.commits.get(b, [])):
+                assert candidate.revision is not None
                 if candidate.revision > start or candidate.revision < end:
                     continue
-                if previous and previous.revision <= candidate.revision:
+                if previous and cast(int, previous.revision) <= candidate.revision:
                     continue
                 previous = candidate
                 yield candidate
 
-    def request(self, method, url, data=None, **kwargs):
+    def request(self, method: str, url: str, data: Any = None, **kwargs: Any) -> mocks.Response:
         import xmltodict
         from datetime import datetime, timedelta, timezone
 
@@ -212,12 +223,14 @@ class Svn(mocks.Requests):
                 return mocks.Response.create404(url)
             commit = self.commits[branch][0]
             for candidate in self.commits[branch]:
+                assert candidate.revision is not None
                 if candidate.revision <= int(match.group('revision')):
                     commit = candidate
 
             stripped_url = stripped_url[len(stripped_url.split('/')[0]):]
             if stripped_url[-1] != '/':
                 stripped_url += '/'
+            assert commit.timestamp is not None and commit.author is not None
 
             return mocks.Response(
                 status_code=207,
@@ -278,17 +291,17 @@ class Svn(mocks.Requests):
                         '<S:date>{}</S:date>\n'
                         '{}{}</S:log-item>\n'.format(
                             commit.revision,
-                            datetime.fromtimestamp(commit.timestamp - timedelta(hours=7).seconds, timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.103754Z'),
+                            datetime.fromtimestamp(cast(int, commit.timestamp) - timedelta(hours=7).seconds, timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.103754Z'),
                             '' if data['S:log-report'].get('S:revpro') else '<D:comment>{}</D:comment>\n'
                             '<D:creator-displayname>{}</D:creator-displayname>\n'.format(
                                 commit.message,
-                                commit.author.email,
+                                cast(Contributor, commit.author).email,
                             ),
                             '<S:modified-path node-kind="file" text-mods="true" prop-mods="false">/{branch}/Changelog</S:modified-path>\n'
                             '<S:modified-path node-kind="file" text-mods="true" prop-mods="false">/{branch}/file.cpp</S:modified-path>\n'
                             '<S:added-path node-kind="file" text-mods="true" prop-mods="false">/{branch}/deleted.cpp</S:added-path>\n'
                             '<S:deleted-path node-kind="file" text-mods="true" prop-mods="false">/{branch}/added.cpp</S:deleted-path>\n'.format(
-                                branch=commit.branch if commit.branch.split('/')[0] in ['trunk', 'tags'] else 'branches/{}'.format(commit.branch),
+                                branch=commit.branch if cast(str, commit.branch).split('/')[0] in ['trunk', 'tags'] else 'branches/{}'.format(commit.branch),
                             ) if 'S:discover-changed-paths' in data['S:log-report'] else '',
                         ) for commit in commits
                     ])),
