@@ -45,6 +45,21 @@
 
 namespace WebCore {
 
+static constexpr auto coepUnsafeNoneToken { "unsafe-none"_s };
+static constexpr auto coepRequireCORPToken { "require-corp"_s };
+static constexpr auto coepCredentiallessToken { "credentialless"_s };
+
+bool isRecognizedCrossOriginEmbedderPolicyToken(StringView token)
+{
+    return token == coepRequireCORPToken || token == coepUnsafeNoneToken;
+}
+
+bool isUnsupportedCrossOriginEmbedderPolicyToken(StringView token)
+{
+    // FIXME: Support credentialless, then treat it as recognized.
+    return token == coepCredentiallessToken;
+}
+
 // https://html.spec.whatwg.org/multipage/origin.html#obtain-an-embedder-policy
 CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse& response, IsSecureContext isSecureContext, const ScriptExecutionContext* context)
 {
@@ -53,7 +68,7 @@ CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse
         if (!coepParsingResult)
             return;
         auto* policyString = std::get_if<RFC8941::Token>(&coepParsingResult->first);
-        if (!policyString || policyString->string() != "require-corp"_s)
+        if (!policyString || policyString->string() != coepRequireCORPToken)
             return;
 
         value = CrossOriginEmbedderPolicyValue::RequireCORP;

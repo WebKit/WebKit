@@ -1,2 +1,3 @@
+CONSOLE MESSAGE: This document is not cross-origin isolated because the Cross-Origin-Embedder-Policy header is missing (it must be 'require-corp'). window.crossOriginIsolated is false and SharedArrayBuffer is unavailable.
 PASS without coop
 PASS with coop

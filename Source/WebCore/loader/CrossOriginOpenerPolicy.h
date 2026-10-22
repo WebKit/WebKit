@@ -28,6 +28,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/SandboxFlags.h>
 #include <wtf/URL.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -92,6 +93,8 @@ struct CrossOriginOpenerPolicyEnforcementResult {
     bool needsBrowsingContextGroupSwitch { false };
     bool needsBrowsingContextGroupSwitchDueToReportOnly { false };
 };
+
+bool isRecognizedCrossOriginOpenerPolicyToken(StringView);
 
 WEBCORE_EXPORT CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&);
 WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient&, const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, const String& referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult);
