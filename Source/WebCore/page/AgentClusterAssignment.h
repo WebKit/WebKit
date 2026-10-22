@@ -35,7 +35,7 @@ namespace WebCore {
 struct AgentClusterAssignment {
     std::optional<AgentClusterIdentifier> identifier;
     OriginKeyed isOriginKeyed { OriginKeyed::No };
-    DocumentIsolationPolicy documentIsolationPolicy { DocumentIsolationPolicy::None };
+    DocumentIsolationPolicyValue documentIsolationPolicy { DocumentIsolationPolicyValue::None };
 };
 
 } // namespace WebCore

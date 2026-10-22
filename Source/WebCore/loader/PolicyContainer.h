@@ -40,7 +40,7 @@ struct PolicyContainer {
     ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     CrossOriginOpenerPolicy crossOriginOpenerPolicy;
-    DocumentIsolationPolicy documentIsolationPolicy = DocumentIsolationPolicy::None;
+    DocumentIsolationPolicy documentIsolationPolicy;
     ReferrerPolicy referrerPolicy = ReferrerPolicy::Default;
     IPAddressSpace ipAddressSpace = IPAddressSpace::Public;
 

@@ -5555,17 +5555,19 @@ void WebPage::adjustSettingsForLockdownMode(Settings& settings, const WebPrefere
 {
     bool originalSiteIsolationEnabled = settings.siteIsolationEnabled();
     bool originalUseUIProcessForBackForwardItemLoading = settings.useUIProcessForBackForwardItemLoading();
+    bool originalDocumentIsolationPolicyEnabled = settings.documentIsolationPolicyEnabled();
     // Disable unstable Experimental settings, even if the user enabled them for local use.
     settings.disableUnstableFeaturesForModernWebKit();
     Settings::disableGlobalUnstableFeaturesForModernWebKit();
     settings.disableFeaturesForLockdownMode();
 
-    // Though SiteIsolationEnabled is still unstable, web process must stay in sync with the UI process
-    // setting to avoid IPC state mismatch.
+    // Though these settings are still unstable, the web process must stay in sync with the UI process to avoid state mismatches.
     if (originalSiteIsolationEnabled)
         settings.setSiteIsolationEnabled(true);
     if (originalUseUIProcessForBackForwardItemLoading)
         settings.setUseUIProcessForBackForwardItemLoading(true);
+    if (originalDocumentIsolationPolicyEnabled)
+        settings.setDocumentIsolationPolicyEnabled(true);
 
 #if PLATFORM(COCOA)
     if (settings.downloadableBinaryFontTrustedTypes() != DownloadableBinaryFontTrustedTypes::None) {

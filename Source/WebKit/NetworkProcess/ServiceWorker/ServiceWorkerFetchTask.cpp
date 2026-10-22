@@ -310,7 +310,7 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
 
     if (loader->parameters().options.mode == FetchOptions::Mode::Navigate) {
         if (auto parentOrigin = loader->parameters().parentOrigin()) {
-            if (auto error = validateCrossOriginResourcePolicy(loader->parameters().parentCrossOriginEmbedderPolicy.value, DocumentIsolationPolicy::None, *parentOrigin, m_currentRequest.url(), response, ForNavigation::Yes, loader->connectionToWebProcess().originAccessPatterns())) {
+            if (auto error = validateCrossOriginResourcePolicy(loader->parameters().parentCrossOriginEmbedderPolicy.value, DocumentIsolationPolicyValue::None, *parentOrigin, m_currentRequest.url(), response, ForNavigation::Yes, loader->connectionToWebProcess().originAccessPatterns())) {
                 didFail(*error);
                 return;
             }

@@ -752,7 +752,7 @@ void WorkerGlobalScope::clearDecodedScriptData()
 
 bool WorkerGlobalScope::crossOriginIsolated() const
 {
-    if (documentIsolationPolicy() != DocumentIsolationPolicy::None)
+    if (documentIsolationPolicy().value != DocumentIsolationPolicyValue::None)
         return m_canBeCrossOriginIsolated == CanBeCrossOriginIsolated::Yes;
     return crossOriginEmbedderPolicy().value == CrossOriginEmbedderPolicyValue::RequireCORP;
 }

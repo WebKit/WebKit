@@ -1346,7 +1346,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
             RefPtr localParentFrame = dynamicDowncast<LocalFrame>(frame->tree().parent());
             if (RefPtr parentDocument = localParentFrame ? localParentFrame->document() : nullptr) {
                 auto coep = parentDocument->crossOriginEmbedderPolicy().value;
-                if (auto error = validateCrossOriginResourcePolicy(coep, DocumentIsolationPolicy::None, protect(parentDocument->securityOrigin()), request.resourceRequest().url(), resource->response(), ForNavigation::Yes, OriginAccessPatternsForWebProcess::singleton()))
+                if (auto error = validateCrossOriginResourcePolicy(coep, DocumentIsolationPolicyValue::None, protect(parentDocument->securityOrigin()), request.resourceRequest().url(), resource->response(), ForNavigation::Yes, OriginAccessPatternsForWebProcess::singleton()))
                     return makeUnexpected(WTF::move(*error));
             }
         }
@@ -1355,7 +1355,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
         // returning a response WITHOUT performing an HTTP fetch (and thus no CORP check).
         if (request.options().mode == FetchOptions::Mode::NoCors && !url.protocolIsData()) {
             auto coep = document ? document->crossOriginEmbedderPolicy().value : CrossOriginEmbedderPolicyValue::UnsafeNone;
-            auto documentIsolationPolicy = document ? document->documentIsolationPolicy() : DocumentIsolationPolicy::None;
+            auto documentIsolationPolicy = document ? document->documentIsolationPolicy().value : DocumentIsolationPolicyValue::None;
             if (auto error = validateCrossOriginResourcePolicy(coep, documentIsolationPolicy, *protect(request.origin()), request.resourceRequest().url(), resource->response(), ForNavigation::No, OriginAccessPatternsForWebProcess::singleton()))
                 return makeUnexpected(WTF::move(*error));
         }
@@ -1536,7 +1536,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // prefetch once its response shows the same policy (see DocumentPrefetcher::canServeNavigations()).
     // FIXME: A document without a policy can still join a prefetch whose response turns out to have one.
     if (type == CachedResource::Type::MainResource && existingResource->options().cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch && existingResource->response().isNull()) {
-        if (RefPtr document = frame() ? frame()->document() : nullptr; document && document->documentIsolationPolicy() != DocumentIsolationPolicy::None)
+        if (RefPtr document = frame() ? frame()->document() : nullptr; document && document->documentIsolationPolicy().value != DocumentIsolationPolicyValue::None)
             return Reload;
     }
 
@@ -1684,7 +1684,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
             // The same goes for navigations that may move to or from a process for documents with a Document-Isolation-Policy.
             if (cachedResourceRequest.options().mode == FetchOptions::Mode::Navigate && frame()
                 && frame()->settings().documentIsolationPolicyEnabled() && frame()->settings().siteIsolationEnabled()
-                && (ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated || obtainDocumentIsolationPolicy(existingResource->response(), IsSecureContext::Yes) != DocumentIsolationPolicy::None)) {
+                && (ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated || obtainDocumentIsolationPolicy(existingResource->response(), IsSecureContext::Yes).value != DocumentIsolationPolicyValue::None)) {
                 return Reload;
             }
             return Revalidate;

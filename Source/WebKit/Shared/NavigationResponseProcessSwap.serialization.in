@@ -23,7 +23,7 @@
 header: "NavigationResponseProcessSwap.h"
 [CustomHeader] struct WebKit::NavigationResponseForProcessSwap {
     URL url;
-    WebCore::DocumentIsolationPolicy documentIsolationPolicy;
+    WebCore::DocumentIsolationPolicyValue documentIsolationPolicy;
 };
 
 header: "NavigationResponseProcessSwap.h"

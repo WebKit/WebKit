@@ -39,7 +39,7 @@ struct RetrieveRecordsOptions {
 
     ResourceRequest request;
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
-    DocumentIsolationPolicy documentIsolationPolicy { DocumentIsolationPolicy::None };
+    DocumentIsolationPolicyValue documentIsolationPolicy { DocumentIsolationPolicyValue::None };
     const Ref<SecurityOrigin> sourceOrigin;
     bool ignoreSearch { false };
     bool ignoreMethod { false };

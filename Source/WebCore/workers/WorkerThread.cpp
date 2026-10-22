@@ -88,7 +88,7 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         isSecureContext,
         hasUnpartitionedStorageAccess,
         canBeCrossOriginIsolated,
-        documentIsolationPolicy
+        documentIsolationPolicy.isolatedCopy()
     };
 }
 

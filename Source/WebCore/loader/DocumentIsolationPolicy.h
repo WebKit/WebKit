@@ -27,22 +27,37 @@
 
 #include <WebCore/IsSecureContext.h>
 #include <WebCore/PlatformExportMacros.h>
-#include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class ResourceResponse;
 
 // https://wicg.github.io/document-isolation-policy/#dip-value
-enum class DocumentIsolationPolicy : bool {
+enum class DocumentIsolationPolicyValue : bool {
     None,
     IsolateAndRequireCORP
+};
+
+// https://wicg.github.io/document-isolation-policy/#dip-struct
+struct DocumentIsolationPolicy {
+    DocumentIsolationPolicyValue value { DocumentIsolationPolicyValue::None };
+    DocumentIsolationPolicyValue reportOnlyValue { DocumentIsolationPolicyValue::None };
+    String reportingEndpoint;
+    String reportOnlyReportingEndpoint;
+
+    DocumentIsolationPolicy isolatedCopy() const & { return { value, reportOnlyValue, reportingEndpoint.isolatedCopy(), reportOnlyReportingEndpoint.isolatedCopy() }; }
+    DocumentIsolationPolicy isolatedCopy() && { return { value, reportOnlyValue, WTF::move(reportingEndpoint).isolatedCopy(), WTF::move(reportOnlyReportingEndpoint).isolatedCopy() }; }
+
+    friend bool operator==(const DocumentIsolationPolicy&, const DocumentIsolationPolicy&) = default;
+
+    void addPolicyHeadersTo(ResourceResponse&) const;
 };
 
 // https://wicg.github.io/document-isolation-policy/#obtain-dip
 WEBCORE_EXPORT DocumentIsolationPolicy obtainDocumentIsolationPolicy(const ResourceResponse&, IsSecureContext);
 WEBCORE_EXPORT DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL&, DocumentIsolationPolicy headerPolicy, IsSecureContext);
 
-WEBCORE_EXPORT DocumentIsolationPolicy parseDocumentIsolationPolicy(StringView headerValue);
+WEBCORE_EXPORT DocumentIsolationPolicy parseDocumentIsolationPolicy(const ResourceResponse&);
 
 } // namespace WebCore

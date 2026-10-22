@@ -964,7 +964,13 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
                 auto& agentClusterAssignment = documentLoader->agentClusterAssignment();
                 if (frame->settings().originAgentClusterEnabled())
                     document->setIsOriginKeyed(agentClusterAssignment.isOriginKeyed);
-                document->setDocumentIsolationPolicy(agentClusterAssignment.documentIsolationPolicy);
+                // The UI process decides the value, since it determines the agent cluster. The rest is only for reporting.
+                DocumentIsolationPolicy documentIsolationPolicy;
+                if (settings->documentIsolationPolicyEnabled() && settings->siteIsolationEnabled())
+                    documentIsolationPolicy = obtainDocumentIsolationPolicy(documentLoader->response(), isSecureContext);
+                ASSERT(documentIsolationPolicy.value == agentClusterAssignment.documentIsolationPolicy);
+                documentIsolationPolicy.value = agentClusterAssignment.documentIsolationPolicy;
+                document->setDocumentIsolationPolicy(documentIsolationPolicy);
             }
         }
 

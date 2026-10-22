@@ -33,7 +33,7 @@ namespace WebKit {
 
 struct NavigationResponseForProcessSwap {
     URL url;
-    WebCore::DocumentIsolationPolicy documentIsolationPolicy { WebCore::DocumentIsolationPolicy::None };
+    WebCore::DocumentIsolationPolicyValue documentIsolationPolicy { WebCore::DocumentIsolationPolicyValue::None };
 };
 
 enum class NavigationResponseWithoutProcessSwap : bool {

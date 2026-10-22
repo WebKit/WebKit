@@ -177,7 +177,7 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
     }
 
     bool shouldRetrieveResponses = false;
-    RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), context.documentIsolationPolicy(), *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
+    RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), context.documentIsolationPolicy().value, *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
 
     SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTF::move(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTF::move(promise)](Vector<BackgroundFetchRecordInformation>&& results) mutable {
         RefPtr context = weakContext;
@@ -207,7 +207,7 @@ void BackgroundFetchRegistration::matchAll(ScriptExecutionContext& context, std:
     }
 
     bool shouldRetrieveResponses = false;
-    RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), context.documentIsolationPolicy(), *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
+    RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), context.documentIsolationPolicy().value, *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
 
     SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTF::move(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTF::move(promise)](auto&& results) mutable {
         if (!weakContext)

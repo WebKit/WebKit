@@ -6662,7 +6662,7 @@ bool WebPageProxy::topLevelIsSecureContext(const URL& url, bool isMainFrame) con
 void WebPageProxy::recordAgentClusterKeying(const API::Navigation& navigation)
 {
     auto& assignment = navigation.agentClusterAssignment();
-    if (!assignment || !assignment->identifier || assignment->documentIsolationPolicy != DocumentIsolationPolicy::None)
+    if (!assignment || !assignment->identifier || assignment->documentIsolationPolicy != DocumentIsolationPolicyValue::None)
         return;
     protect(browsingContextGroup())->resolveAgentClusterKeying(navigation.agentClusterOrigin(), assignment->isOriginKeyed);
 }
@@ -11556,7 +11556,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         // Never commit a document without a Document-Isolation-Policy in a process for documents with one.
         if (policyAction == PolicyAction::Use && process->isDocumentIsolationPolicyProcess()) {
             auto& response = navigationResponse->response();
-            if (response.url().protocolIsInHTTPFamilyOrBlob() && !needsDocumentIsolationPolicyProcess(response.url(), parseDocumentIsolationPolicy(response.httpHeaderField(HTTPHeaderName::DocumentIsolationPolicy)), frame->isMainFrame())) {
+            if (response.url().protocolIsInHTTPFamilyOrBlob() && !needsDocumentIsolationPolicyProcess(response.url(), parseDocumentIsolationPolicy(response).value, frame->isMainFrame())) {
                 WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "decidePolicyForResponseShared: Ignoring a response without a Document-Isolation-Policy in a process for documents with one");
                 policyAction = PolicyAction::Ignore;
             }
@@ -11897,9 +11897,9 @@ static bool canMoveSiteToEnhancedSecurityProcess(BrowsingContextGroup& browsingC
     return usesExistingFrameProcess(mainFrame) || usesExistingFrameProcess(provisionalPage ? provisionalPage->mainFrame() : nullptr);
 }
 
-bool WebPageProxy::needsDocumentIsolationPolicyProcess(const URL& url, WebCore::DocumentIsolationPolicy headerPolicy, bool isMainFrame) const
+bool WebPageProxy::needsDocumentIsolationPolicyProcess(const URL& url, WebCore::DocumentIsolationPolicyValue headerPolicy, bool isMainFrame) const
 {
-    return documentIsolationPolicyForNavigationResponse(url, headerPolicy, topLevelIsSecureContext(url, isMainFrame) ? IsSecureContext::Yes : IsSecureContext::No, protect(preferences())) != WebCore::DocumentIsolationPolicy::None;
+    return documentIsolationPolicyForNavigationResponse(url, headerPolicy, topLevelIsSecureContext(url, isMainFrame) ? IsSecureContext::Yes : IsSecureContext::No, protect(preferences())) != WebCore::DocumentIsolationPolicyValue::None;
 }
 
 void WebPageProxy::triggerProcessSwapForDocumentIsolationPolicy(WebCore::NavigationIdentifier navigationID, const NavigationResponseForProcessSwap& response, WebCore::ProcessIdentifier loadingWebProcess, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&& completionHandler)

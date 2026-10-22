@@ -199,7 +199,7 @@ bool DocumentPrefetcher::canServeNavigations(const ResourceResponse& response) c
     if (!document || !document->settings().documentIsolationPolicyEnabled() || !document->settings().siteIsolationEnabled())
         return true;
     auto documentIsolationPolicy = obtainDocumentIsolationPolicy(response, document->isSecureContext() ? IsSecureContext::Yes : IsSecureContext::No);
-    return documentIsolationPolicy == document->documentIsolationPolicy();
+    return documentIsolationPolicy.value == document->documentIsolationPolicy().value;
 }
 
 void DocumentPrefetcher::responseReceived(const CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)

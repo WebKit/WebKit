@@ -29,31 +29,61 @@
 #include "HTTPHeaderNames.h"
 #include "RFC8941.h"
 #include "ResourceResponse.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 DocumentIsolationPolicy obtainDocumentIsolationPolicy(const ResourceResponse& response, IsSecureContext isSecureContext)
 {
-    return obtainDocumentIsolationPolicy(response.url(), parseDocumentIsolationPolicy(response.httpHeaderField(HTTPHeaderName::DocumentIsolationPolicy)), isSecureContext);
+    return obtainDocumentIsolationPolicy(response.url(), parseDocumentIsolationPolicy(response), isSecureContext);
 }
 
 DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL& url, DocumentIsolationPolicy headerPolicy, IsSecureContext isSecureContext)
 {
     // FIXME: Get the blob URL entry's policy container directly instead of reading the headers it is reflected as.
     if (isSecureContext == IsSecureContext::No && !url.protocolIsBlob())
-        return DocumentIsolationPolicy::None;
+        return { };
     return headerPolicy;
 }
 
-DocumentIsolationPolicy parseDocumentIsolationPolicy(StringView headerValue)
+// As for Cross-Origin-Embedder-Policy, report-to is only used with a policy value and has to be a string.
+// https://github.com/WICG/document-isolation-policy/issues/10
+static std::pair<DocumentIsolationPolicyValue, String> parseDocumentIsolationPolicyHeader(StringView headerValue)
 {
     auto parsedItem = RFC8941::parseItemStructuredFieldValue(headerValue);
     if (!parsedItem)
-        return DocumentIsolationPolicy::None;
+        return { };
 
     // FIXME: Support isolate-and-credentialless.
     auto* token = std::get_if<RFC8941::Token>(&parsedItem->first);
-    return token && token->string() == "isolate-and-require-corp"_s ? DocumentIsolationPolicy::IsolateAndRequireCORP : DocumentIsolationPolicy::None;
+    if (!token || token->string() != "isolate-and-require-corp"_s)
+        return { };
+
+    auto* reportTo = parsedItem->second.getIf<String>("report-to"_s);
+    return { DocumentIsolationPolicyValue::IsolateAndRequireCORP, reportTo ? *reportTo : String { } };
+}
+
+DocumentIsolationPolicy parseDocumentIsolationPolicy(const ResourceResponse& response)
+{
+    auto [value, reportingEndpoint] = parseDocumentIsolationPolicyHeader(response.httpHeaderField(HTTPHeaderName::DocumentIsolationPolicy));
+    auto [reportOnlyValue, reportOnlyReportingEndpoint] = parseDocumentIsolationPolicyHeader(response.httpHeaderField(HTTPHeaderName::DocumentIsolationPolicyReportOnly));
+    return { value, reportOnlyValue, WTF::move(reportingEndpoint), WTF::move(reportOnlyReportingEndpoint) };
+}
+
+void DocumentIsolationPolicy::addPolicyHeadersTo(ResourceResponse& response) const
+{
+    auto addHeader = [&response](HTTPHeaderName headerName, DocumentIsolationPolicyValue value, const String& reportingEndpoint) {
+        if (value == DocumentIsolationPolicyValue::None)
+            return;
+        ASSERT(value == DocumentIsolationPolicyValue::IsolateAndRequireCORP);
+        auto escapedReportingEndpoint = reportingEndpoint.isEmpty() ? std::nullopt : RFC8941::escapeString(reportingEndpoint);
+        if (!escapedReportingEndpoint)
+            response.setHTTPHeaderField(headerName, "isolate-and-require-corp"_s);
+        else
+            response.setHTTPHeaderField(headerName, makeString("isolate-and-require-corp; report-to=\""_s, *escapedReportingEndpoint, '"'));
+    };
+    addHeader(HTTPHeaderName::DocumentIsolationPolicy, value, reportingEndpoint);
+    addHeader(HTTPHeaderName::DocumentIsolationPolicyReportOnly, reportOnlyValue, reportOnlyReportingEndpoint);
 }
 
 } // namespace WebCore

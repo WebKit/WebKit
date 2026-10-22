@@ -709,7 +709,7 @@ struct WebCore::ApplicationManifest {
 struct WebCore::RetrieveRecordsOptions {
     WebCore::ResourceRequest request;
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
-    WebCore::DocumentIsolationPolicy documentIsolationPolicy;
+    WebCore::DocumentIsolationPolicyValue documentIsolationPolicy;
     Ref<WebCore::SecurityOrigin> sourceOrigin;
     bool ignoreSearch;
     bool ignoreMethod;
@@ -2846,7 +2846,14 @@ struct WebCore::CrossOriginEmbedderPolicy {
 };
 
 header: <WebCore/DocumentIsolationPolicy.h>
-enum class WebCore::DocumentIsolationPolicy : bool
+enum class WebCore::DocumentIsolationPolicyValue : bool
+
+struct WebCore::DocumentIsolationPolicy {
+    WebCore::DocumentIsolationPolicyValue value;
+    WebCore::DocumentIsolationPolicyValue reportOnlyValue;
+    String reportingEndpoint;
+    String reportOnlyReportingEndpoint;
+};
 
 struct WebCore::SameSiteInfo {
     bool isSameSite;

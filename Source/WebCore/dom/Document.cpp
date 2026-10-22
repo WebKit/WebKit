@@ -8938,7 +8938,7 @@ bool Document::isInCrossOriginIsolatedAgentCluster() const
 {
     if (crossOriginOpenerPolicy().value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP)
         return true;
-    return documentIsolationPolicy() != DocumentIsolationPolicy::None && ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated;
+    return documentIsolationPolicy().value != DocumentIsolationPolicyValue::None && ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated;
 }
 
 bool Document::crossOriginIsolated() const
@@ -8966,7 +8966,7 @@ bool Document::originAgentCluster() const
 {
     if (securityOrigin().isOpaque())
         return true;
-    if (isInCrossOriginIsolatedAgentCluster() || documentIsolationPolicy() != DocumentIsolationPolicy::None)
+    if (isInCrossOriginIsolatedAgentCluster() || documentIsolationPolicy().value != DocumentIsolationPolicyValue::None)
         return true;
     return m_isOriginKeyed == OriginKeyed::Yes;
 }

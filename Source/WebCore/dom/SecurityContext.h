@@ -86,8 +86,8 @@ public:
     virtual CrossOriginOpenerPolicy crossOriginOpenerPolicy() const { return m_crossOriginOpenerPolicy; }
     void setCrossOriginOpenerPolicy(const CrossOriginOpenerPolicy& crossOriginOpenerPolicy) { m_crossOriginOpenerPolicy = crossOriginOpenerPolicy; }
 
-    DocumentIsolationPolicy documentIsolationPolicy() const { return m_documentIsolationPolicy; }
-    void setDocumentIsolationPolicy(DocumentIsolationPolicy documentIsolationPolicy) { m_documentIsolationPolicy = documentIsolationPolicy; }
+    const DocumentIsolationPolicy& documentIsolationPolicy() const LIFETIME_BOUND { return m_documentIsolationPolicy; }
+    void setDocumentIsolationPolicy(const DocumentIsolationPolicy& documentIsolationPolicy) { m_documentIsolationPolicy = documentIsolationPolicy; }
 
     const IntegrityPolicy* LEGACY_NODELETE integrityPolicy() const LIFETIME_BOUND;
     void setIntegrityPolicy(std::unique_ptr<IntegrityPolicy>&&);
@@ -143,7 +143,7 @@ private:
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
     CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
     CrossOriginOpenerPolicy m_crossOriginOpenerPolicy;
-    DocumentIsolationPolicy m_documentIsolationPolicy { DocumentIsolationPolicy::None };
+    DocumentIsolationPolicy m_documentIsolationPolicy;
     std::unique_ptr<IntegrityPolicy> m_integrityPolicy;
     std::unique_ptr<IntegrityPolicy> m_integrityPolicyReportOnly;
     SandboxFlags m_creationSandboxFlags;

@@ -43,19 +43,21 @@ static WebCore::IsSecureContext isSecureContextForNavigationResponse(const WebCo
     return origin.isPotentiallyTrustworthy() && topLevelIsSecureContext == WebCore::IsSecureContext::Yes ? WebCore::IsSecureContext::Yes : WebCore::IsSecureContext::No;
 }
 
-WebCore::DocumentIsolationPolicy documentIsolationPolicyForNavigationResponse(const URL& url, WebCore::DocumentIsolationPolicy headerPolicy, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences& preferences)
+WebCore::DocumentIsolationPolicyValue documentIsolationPolicyForNavigationResponse(const URL& url, WebCore::DocumentIsolationPolicyValue headerPolicy, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences& preferences)
 {
     // The WebContent process only applies policies from response headers to http(s) and blob: documents.
     if (!url.protocolIsInHTTPFamilyOrBlob() || !preferences.documentIsolationPolicyEnabled() || !preferences.siteIsolationEnabled())
-        return WebCore::DocumentIsolationPolicy::None;
-    return WebCore::obtainDocumentIsolationPolicy(url, headerPolicy, isSecureContextForNavigationResponse(WebCore::SecurityOrigin::create(url), topLevelIsSecureContext));
+        return WebCore::DocumentIsolationPolicyValue::None;
+    WebCore::DocumentIsolationPolicy policy;
+    policy.value = headerPolicy;
+    return WebCore::obtainDocumentIsolationPolicy(url, WTF::move(policy), isSecureContextForNavigationResponse(WebCore::SecurityOrigin::create(url), topLevelIsSecureContext)).value;
 }
 
 AgentClusterRequest AgentClusterRequest::forNavigationResponse(const WebCore::ResourceResponse& response, const URL& topLevelCreationURL, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences& preferences)
 {
     Ref origin = WebCore::SecurityOrigin::create(response.url());
     AgentClusterRequest request { Source::NavigationResponse, origin->data(), topLevelCreationURL };
-    request.documentIsolationPolicy = documentIsolationPolicyForNavigationResponse(response.url(), WebCore::parseDocumentIsolationPolicy(response.httpHeaderField(WebCore::HTTPHeaderName::DocumentIsolationPolicy)), topLevelIsSecureContext, preferences);
+    request.documentIsolationPolicy = documentIsolationPolicyForNavigationResponse(response.url(), WebCore::parseDocumentIsolationPolicy(response).value, topLevelIsSecureContext, preferences);
     if (preferences.originAgentClusterEnabled())
         request.requestedKeying = response.url().protocolIsInHTTPFamilyOrBlob() ? WebCore::obtainOriginAgentClusterPolicy(response, isSecureContextForNavigationResponse(origin, topLevelIsSecureContext), nullptr) : WebCore::OriginKeyed::No;
     return request;

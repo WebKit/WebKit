@@ -520,7 +520,7 @@ void DOMCache::queryCache(ResourceRequest&& request, const CacheQueryOptions& op
         return;
     }
 
-    RetrieveRecordsOptions retrieveOptions { WTF::move(request), context->crossOriginEmbedderPolicy(), context->documentIsolationPolicy(), *context->securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses == ShouldRetrieveResponses::Yes };
+    RetrieveRecordsOptions retrieveOptions { WTF::move(request), context->crossOriginEmbedderPolicy(), context->documentIsolationPolicy().value, *context->securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses == ShouldRetrieveResponses::Yes };
 
     context->enqueueTaskWhenSettled(m_connection->retrieveRecords(m_identifier, WTF::move(retrieveOptions)), TaskSource::DOMManipulation, [pendingActivity = makePendingActivity(*this), callback = WTF::move(callback)] (auto&& result) mutable {
         RefPtr scriptExecutionContext = pendingActivity->object().scriptExecutionContext();

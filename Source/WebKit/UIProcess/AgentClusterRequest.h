@@ -51,9 +51,9 @@ struct AgentClusterRequest {
     WebCore::SecurityOriginData origin;
     URL topLevelCreationURL;
     std::optional<WebCore::OriginKeyed> requestedKeying { };
-    WebCore::DocumentIsolationPolicy documentIsolationPolicy { WebCore::DocumentIsolationPolicy::None };
+    WebCore::DocumentIsolationPolicyValue documentIsolationPolicy { WebCore::DocumentIsolationPolicyValue::None };
 };
 
-WebCore::DocumentIsolationPolicy documentIsolationPolicyForNavigationResponse(const URL&, WebCore::DocumentIsolationPolicy headerPolicy, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences&);
+WebCore::DocumentIsolationPolicyValue documentIsolationPolicyForNavigationResponse(const URL&, WebCore::DocumentIsolationPolicyValue headerPolicy, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences&);
 
 } // namespace WebKit

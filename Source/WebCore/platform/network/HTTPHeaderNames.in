@@ -61,6 +61,7 @@ Date
 DNT
 Default-Style
 Document-Isolation-Policy
+Document-Isolation-Policy-Report-Only
 ETag
 Expect
 Expires

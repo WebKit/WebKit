@@ -99,7 +99,7 @@ public:
     IsSecureContext isSecureContext;
     bool hasUnpartitionedStorageAccess { false };
     CanBeCrossOriginIsolated canBeCrossOriginIsolated { CanBeCrossOriginIsolated::No };
-    DocumentIsolationPolicy documentIsolationPolicy { DocumentIsolationPolicy::None };
+    DocumentIsolationPolicy documentIsolationPolicy { };
 
     WorkerParameters isolatedCopy() const;
 };
