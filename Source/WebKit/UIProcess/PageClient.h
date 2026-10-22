@@ -115,6 +115,7 @@ class SecurityOrigin;
 namespace WebCore {
 class Color;
 class ColorSpace;
+class CornerRadii;
 class Cursor;
 class FloatQuad;
 class FloatRect;
@@ -601,7 +602,7 @@ public:
 
 #if ENABLE(TWO_PHASE_CLICKS)
     virtual void commitPotentialTapFailed() = 0;
-    virtual void didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius, bool nodeHasBuiltInClickHandling) = 0;
+    virtual void didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, WebCore::CornerRadii&&, bool nodeHasBuiltInClickHandling) = 0;
     virtual bool isPotentialTapInProgress() const = 0;
     virtual void disableDoubleTapGesturesDuringTapIfNecessary(WebKit::TapIdentifier) = 0;
     virtual void handleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel, bool nodeIsPluginElement) = 0;

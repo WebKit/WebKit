@@ -2614,13 +2614,13 @@ static void appendRecognizerIfNonNull(RetainPtr<NSMutableArray>& array, const Re
 #endif
 }
 
-- (void)_didGetTapHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
+- (void)_didGetTapHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
 {
     if (self._hasFocusedElement && _positionInformation.elementContext && _positionInformation.elementContext->isSameElement(_focusedElementInformation.elementContext))
         return;
 
     auto highlightColor = _showDebugTapHighlightsForFastClicking ? [self _tapHighlightColorForFastClick:![_doubleTapGestureRecognizer isEnabled]] : color;
-    [_clickHighlightController didReceiveHighlightForRequest:requestID color:highlightColor quads:highlightedQuads topLeftRadius:topLeftRadius topRightRadius:topRightRadius bottomLeftRadius:bottomLeftRadius bottomRightRadius:bottomRightRadius nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
+    [_clickHighlightController didReceiveHighlightForRequest:requestID color:highlightColor quads:highlightedQuads cornerRadii:WTF::move(cornerRadii) nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
 }
 
 - (BOOL)_mayDisableDoubleTapGesturesDuringSingleTap

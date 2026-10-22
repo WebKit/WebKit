@@ -2622,10 +2622,10 @@ void WebPageProxy::cancelPotentialTap()
     protect(legacyMainFrameProcess())->send(Messages::WebPage::CancelPotentialTap(), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius, bool nodeHasBuiltInClickHandling)
+void WebPageProxy::didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, WebCore::CornerRadii&& cornerRadii, bool nodeHasBuiltInClickHandling)
 {
     if (RefPtr pageClient = this->pageClient())
-        pageClient->didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, nodeHasBuiltInClickHandling);
+        pageClient->didGetTapHighlightGeometries(requestID, color, highlightedQuads, WTF::move(cornerRadii), nodeHasBuiltInClickHandling);
 }
 
 void WebPageProxy::commitPotentialTapFailed()

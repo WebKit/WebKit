@@ -5714,9 +5714,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [_contentView _commitPotentialTapFailed];
 }
 
-- (void)_didGetTapHighlightGeometries:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
+- (void)_didGetTapHighlightGeometries:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
 {
-    [_contentView _didGetTapHighlightForRequest:requestID color:color quads:highlightedQuads topLeftRadius:topLeftRadius topRightRadius:topRightRadius bottomLeftRadius:bottomLeftRadius bottomRightRadius:bottomRightRadius nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
+    [_contentView _didGetTapHighlightForRequest:requestID color:color quads:highlightedQuads cornerRadii:WTF::move(cornerRadii) nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
 }
 
 - (BOOL)_isPotentialTapInProgress

@@ -93,9 +93,9 @@ public:
     bool LEGACY_NODELETE hasEvenCorners() const;
     bool LEGACY_NODELETE isUniformCornerRadius() const; // Including no radius.
 
-    void LEGACY_NODELETE scale(float factor);
+    WEBCORE_EXPORT void LEGACY_NODELETE scale(float factor);
     void LEGACY_NODELETE scale(float horizontalFactor, float verticalFactor);
-    void expandEvenIfZero(float size);
+    WEBCORE_EXPORT void expandEvenIfZero(float size);
     WEBCORE_EXPORT void LEGACY_NODELETE expand(float topWidth, float bottomWidth, float leftWidth, float rightWidth);
     void expand(float size) { expand(size, size, size, size); }
     void shrink(float topWidth, float bottomWidth, float leftWidth, float rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }

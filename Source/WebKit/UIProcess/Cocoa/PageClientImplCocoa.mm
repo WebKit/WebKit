@@ -512,9 +512,9 @@ void PageClientImplCocoa::commitPotentialTapFailed()
     [webView() _commitPotentialTapFailed];
 }
 
-void PageClientImplCocoa::didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius, bool nodeHasBuiltInClickHandling)
+void PageClientImplCocoa::didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, WebCore::CornerRadii&& cornerRadii, bool nodeHasBuiltInClickHandling)
 {
-    [webView() _didGetTapHighlightGeometries:requestID color:color quads:highlightedQuads topLeftRadius:topLeftRadius topRightRadius:topRightRadius bottomLeftRadius:bottomLeftRadius bottomRightRadius:bottomRightRadius nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
+    [webView() _didGetTapHighlightGeometries:requestID color:color quads:highlightedQuads cornerRadii:WTF::move(cornerRadii) nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
 }
 
 bool PageClientImplCocoa::isPotentialTapInProgress() const

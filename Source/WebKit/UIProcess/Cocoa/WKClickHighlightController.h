@@ -29,9 +29,9 @@
 
 #import "IdentifierTypes.h"
 #import <WebCore/Color.h>
+#import <WebCore/CornerRadii.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FloatRect.h>
-#import <WebCore/IntSize.h>
 #import <wtf/Vector.h>
 
 @class WKClickHighlightController;
@@ -53,7 +53,7 @@
 
 - (void)beginRequest:(WebKit::TapIdentifier)requestID expectsFastCommit:(BOOL)expectsFastCommit;
 
-- (void)didReceiveHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)quads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;
+- (void)didReceiveHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)quads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;
 
 - (void)showPendingHighlightForCommittedClick;
 - (void)finishUnlessExpectingFastCommit;

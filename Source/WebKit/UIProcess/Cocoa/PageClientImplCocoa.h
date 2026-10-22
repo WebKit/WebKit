@@ -41,6 +41,7 @@ class Attachment;
 namespace WebCore {
 class AlternativeTextUIController;
 class Color;
+class CornerRadii;
 class FloatQuad;
 class FloatRect;
 class IntPoint;
@@ -175,7 +176,7 @@ public:
     void didHandleTapAsHover() final;
     void didCompleteSyntheticClick() final;
     void commitPotentialTapFailed() final;
-    void didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius, bool nodeHasBuiltInClickHandling) final;
+    void didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, WebCore::CornerRadii&&, bool nodeHasBuiltInClickHandling) final;
     bool isPotentialTapInProgress() const final;
     void disableDoubleTapGesturesDuringTapIfNecessary(WebKit::TapIdentifier) final;
     void handleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel, bool nodeIsPluginElement) final;

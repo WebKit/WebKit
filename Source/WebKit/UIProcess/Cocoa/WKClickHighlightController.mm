@@ -42,13 +42,6 @@ static constexpr auto clickHighlightFadeDuration = 0.1_s;
 static constexpr auto debugClickHighlightFadeDuration = 0.25_s;
 static NSString * const clickHighlightFadeAnimationKey = @"WKClickHighlightFade";
 
-static WebCore::FloatSize clickHighlightBorderRadius(WebCore::FloatSize borderRadii, CGFloat borderRadiusScale)
-{
-    auto inflatedSize = borderRadii * borderRadiusScale;
-    inflatedSize.expand(minimumClickHighlightRadius, minimumClickHighlightRadius);
-    return inflatedSize;
-}
-
 static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float inflateSize)
 {
     // We sort the output points like this (as expected by the highlight view):
@@ -90,10 +83,7 @@ struct ClickHighlightInformation {
     BOOL nodeHasBuiltInClickHandling { NO };
     WebCore::Color color;
     Vector<WebCore::FloatQuad> quads;
-    WebCore::IntSize topLeftRadius;
-    WebCore::IntSize topRightRadius;
-    WebCore::IntSize bottomLeftRadius;
-    WebCore::IntSize bottomRightRadius;
+    WebCore::CornerRadii cornerRadii;
 };
 
 @interface WKClickHighlightController () <CAAnimationDelegate>
@@ -133,7 +123,7 @@ struct ClickHighlightInformation {
     return [delegate clickHighlightControllerIsPotentialClickInProgress:self];
 }
 
-- (void)didReceiveHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)quads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
+- (void)didReceiveHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)quads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
 {
     if (!_isRequestValid || _requestID != requestID)
         return;
@@ -141,10 +131,7 @@ struct ClickHighlightInformation {
     _isRequestValid = NO;
 
     _highlightInformation.quads = quads;
-    _highlightInformation.topLeftRadius = topLeftRadius;
-    _highlightInformation.topRightRadius = topRightRadius;
-    _highlightInformation.bottomLeftRadius = bottomLeftRadius;
-    _highlightInformation.bottomRightRadius = bottomRightRadius;
+    _highlightInformation.cornerRadii = WTF::move(cornerRadii);
     _highlightInformation.nodeHasBuiltInClickHandling = nodeHasBuiltInClickHandling;
     _highlightInformation.color = color;
 
@@ -288,13 +275,10 @@ struct ClickHighlightInformation {
         [_highlightView setQuads:WTF::move(inflatedHighlightQuads) boundaryRect:[delegate clickHighlightControllerBoundaryRect:self]];
     }
 
-    auto cornerRadiusScale = [delegate clickHighlightControllerCornerRadiusScale:self];
-    [_highlightView setCornerRadii:WebCore::CornerRadii {
-        clickHighlightBorderRadius(_highlightInformation.topLeftRadius, cornerRadiusScale),
-        clickHighlightBorderRadius(_highlightInformation.topRightRadius, cornerRadiusScale),
-        clickHighlightBorderRadius(_highlightInformation.bottomLeftRadius, cornerRadiusScale),
-        clickHighlightBorderRadius(_highlightInformation.bottomRightRadius, cornerRadiusScale)
-    }];
+    auto cornerRadii = _highlightInformation.cornerRadii;
+    cornerRadii.scale([delegate clickHighlightControllerCornerRadiusScale:self]);
+    cornerRadii.expandEvenIfZero(minimumClickHighlightRadius);
+    [_highlightView setCornerRadii:WTF::move(cornerRadii)];
 }
 
 - (void)_fadeHighlightIfNeeded
