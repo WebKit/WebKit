@@ -186,7 +186,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     RefPtr fontWidth = style->getPropertyCSSValue(CSSPropertyID::FontWidth);
     RefPtr srcList = dynamicDowncast<CSSValueList>(style->getPropertyCSSValue(CSSPropertyID::Src));
     RefPtr unicodeRange = style->getPropertyCSSValue(CSSPropertyID::UnicodeRange);
-    RefPtr rangeList = downcast<CSSValueList>(unicodeRange.get());
+    RefPtr rangeList = dynamicDowncast<CSSValueList>(unicodeRange);
     RefPtr featureSettings = style->getPropertyCSSValue(CSSPropertyID::FontFeatureSettings);
     RefPtr display = style->getPropertyCSSValue(CSSPropertyID::FontDisplay);
     RefPtr ascentOverride = style->getPropertyCSSValue(CSSPropertyID::AscentOverride);
