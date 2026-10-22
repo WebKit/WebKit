@@ -292,12 +292,12 @@ LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& bo
 {
     // Either a box inline layout treats as atomic, or a block level box on a line: the render tree lays both of them
     // out, so it is the render tree that knows what they cost (see LineBuilder::handleBlockContent).
-    ASSERT(box.establishesFormattingContext() || box.isBlockLevelBox());
+    ASSERT(box.establishesFormattingContext() || box.isBlockLevelBox() || box.isAtomicInlineBox());
 
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
 
-    auto isOrthogonalBlockLevelBox = [&] {
-        if (!box.isBlockLevelBox())
+    auto isOrthogonalToContainingBlock = [&] {
+        if (!box.isBlockLevelBox() && !box.isAtomicInlineBox())
             return false;
         CheckedPtr containingBlock = renderer->containingBlock();
         return containingBlock && containingBlock->writingMode().isOrthogonal(renderer->writingMode());
@@ -316,11 +316,11 @@ LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& bo
 
     switch (logicalWidthType) {
     case LogicalWidthType::MaxContentContribution:
-        if (isOrthogonalBlockLevelBox())
+        if (isOrthogonalToContainingBlock())
             return intrinsicBlockSizeOfOrthogonalBox();
         return renderer->maxContentLogicalWidthContribution();
     case LogicalWidthType::MinContentContribution:
-        if (isOrthogonalBlockLevelBox())
+        if (isOrthogonalToContainingBlock())
             return intrinsicBlockSizeOfOrthogonalBox();
         return renderer->minContentLogicalWidthContribution();
     case LogicalWidthType::MaxContent:

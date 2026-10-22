@@ -1099,8 +1099,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
 
         auto needsLayout = inlineItem.isFloat() || inlineItem.isAtomicInlineBox() || (inlineItem.isOutOfFlow() && inlineItem.layoutBox().isRubyAnnotationBox());
         if (needsLayout) {
-            // FIXME: Intrinsic width mode should call into the intrinsic width codepath. Currently we only get here when box has fixed width (meaning no need to run intrinsic width on the box)
-            // or when it is a float, whose width IntrinsicWidthHandler takes from the render tree.
+            // Intrinsic width mode takes the box's width from the render tree instead (see InlineFormattingUtils::intrinsicMarginBoxWidth).
             if (!isInIntrinsicWidthMode())
                 formattingContext().integrationUtils().layoutWithFormattingContextForBox(downcast<ElementBox>(inlineItem.layoutBox()));
         }
@@ -1145,7 +1144,14 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
             continue;
         }
         if (inlineItem.isAtomicInlineBox()) {
-            auto logicalWidth = formattingContext().formattingUtils().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLineCandidate);
+            auto logicalWidth = [&] {
+                auto& formattingUtils = formattingContext().formattingUtils();
+                if (isInIntrinsicWidthMode() && !inlineItem.layoutBox().isListMarkerBox()) {
+                    CheckedRef atomicInlineBox = downcast<ElementBox>(inlineItem.layoutBox());
+                    return formattingUtils.intrinsicMarginBoxWidth(atomicInlineBox.get(), *intrinsicWidthMode());
+                }
+                return formattingUtils.inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLineCandidate);
+            }();
             // FIXME: While the line breaking related properties for atomic level boxes do not depend on the line index (first line style) it'd be great to figure out the correct style to pass in.
             lineCandidate.inlineContent.appendInlineItem(inlineItem, inlineItem.layoutBox().parent().style(), logicalWidth);
             currentLogicalRight += logicalWidth;
@@ -1455,11 +1461,7 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
     ASSERT(!m_line.hasContent());
     if (isInIntrinsicWidthMode()) {
         CheckedRef blockBox = downcast<ElementBox>(blockItem.layoutBox());
-        auto& boxGeometry = formattingContext().geometryForBox(blockBox.get());
-        auto& integrationUtils = formattingContext().integrationUtils();
-        auto contribution = *intrinsicWidthMode() == IntrinsicWidthMode::Minimum ? integrationUtils.minContentLogicalWidthContribution(blockBox.get()) : integrationUtils.maxContentLogicalWidthContribution(blockBox.get());
-        auto marginBoxWidth = contribution + boxGeometry.marginStart() + boxGeometry.marginEnd();
-        return m_line.appendBlock(blockItem, marginBoxWidth);
+        return m_line.appendBlock(blockItem, formattingContext().formattingUtils().intrinsicMarginBoxWidth(blockBox.get(), *intrinsicWidthMode()));
     }
 
     if (rootStyle().writingMode().isBidiRTL())
