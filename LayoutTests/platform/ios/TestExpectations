@@ -7584,7 +7584,6 @@ imported/w3c/web-platform-tests/density-size-correction/density-corrected-variou
 webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 
 webkit.org/b/235765 webrtc/canvas-to-peer-connection.html [ Failure ]
 webkit.org/b/235765 webrtc/canvas-to-peer-connection-2d.html [ Failure ]
