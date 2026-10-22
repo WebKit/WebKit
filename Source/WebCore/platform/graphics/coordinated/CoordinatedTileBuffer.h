@@ -72,9 +72,20 @@ public:
 
     bool supportsAlpha() const { return m_flags & SupportsAlpha; }
 
-    virtual bool beginPainting() = 0;
-    virtual void completePainting() = 0;
-    void waitUntilPaintingComplete();
+    enum class PaintingState : uint8_t {
+        Pending,
+        Painting,
+        Complete,
+        Cancelled
+    };
+
+    PaintingState paintingState() const;
+
+    enum class BeginPaintingResult : uint8_t { Started, Failed, Cancelled };
+    BeginPaintingResult beginPainting();
+    void completePainting();
+    bool cancelPainting();
+    void waitUntilPaintingFinished();
 
 #if USE(SKIA)
     virtual SkCanvas* canvas() = 0;
@@ -93,17 +104,11 @@ protected:
     static void didAllocateMemory(size_t);
     static void didReleaseMemory(size_t);
 
-    void didBeginPainting();
-    void didCompletePainting();
-
-    enum class PaintingState {
-        Pending,
-        Painting,
-        Complete
-    };
+    virtual bool prepareForPainting() = 0;
+    virtual void finishPainting() = 0;
 
     struct {
-        Lock lock;
+        mutable Lock lock;
         Condition condition;
         PaintingState state WTF_GUARDED_BY_LOCK(lock) { PaintingState::Pending };
     } m_painting;
@@ -133,8 +138,8 @@ private:
     IntSize size() const final { return m_size; }
     PixelFormat pixelFormat() const final { return PixelFormat::BGRA8; }
 
-    bool beginPainting() final;
-    void completePainting() final;
+    bool prepareForPainting() final;
+    void finishPainting() final;
 
 #if USE(SKIA)
     SkCanvas* canvas() final;
@@ -174,8 +179,8 @@ private:
     IntSize size() const final;
     PixelFormat pixelFormat() const final { return PixelFormat::RGBA8; }
 
-    bool beginPainting() final;
-    void completePainting() final;
+    bool prepareForPainting() final;
+    void finishPainting() final;
 
     SkCanvas* canvas() final;
 

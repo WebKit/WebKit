@@ -41,17 +41,9 @@
 #include "SkiaUtilities.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorSpace.h>
-#include <skia/core/SkImage.h>
-#include <skia/core/SkStream.h>
-#include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
+#include <skia/core/SkImageInfo.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/MainThread.h>
-
-#if USE(LIBEPOXY)
-#include <epoxy/gl.h>
-#else
-#include <GLES3/gl3.h>
-#endif
 #endif
 
 #if USE(CAIRO)
@@ -97,27 +89,53 @@ void CoordinatedTileBuffer::didReleaseMemory(size_t size)
     s_currentLayersMemoryUsage -= size;
 }
 
-void CoordinatedTileBuffer::didBeginPainting()
+CoordinatedTileBuffer::BeginPaintingResult CoordinatedTileBuffer::beginPainting()
 {
-    Locker locker { m_painting.lock };
-    ASSERT(m_painting.state == PaintingState::Pending);
-    m_painting.state = PaintingState::Painting;
+    {
+        Locker locker { m_painting.lock };
+        if (m_painting.state == PaintingState::Cancelled)
+            return BeginPaintingResult::Cancelled;
+
+        ASSERT(m_painting.state == PaintingState::Pending);
+        m_painting.state = PaintingState::Painting;
+    }
+
+    return prepareForPainting() ? BeginPaintingResult::Started : BeginPaintingResult::Failed;
 }
 
-void CoordinatedTileBuffer::didCompletePainting()
+void CoordinatedTileBuffer::completePainting()
 {
+    finishPainting();
+
     Locker locker { m_painting.lock };
-    ASSERT(m_painting.state == PaintingState::Pending || m_painting.state == PaintingState::Painting);
+    ASSERT(m_painting.state == PaintingState::Painting);
     m_painting.state = PaintingState::Complete;
     m_painting.condition.notifyAll();
 }
 
-void CoordinatedTileBuffer::waitUntilPaintingComplete()
+bool CoordinatedTileBuffer::cancelPainting()
+{
+    Locker locker { m_painting.lock };
+    if (m_painting.state != PaintingState::Pending)
+        return false;
+
+    m_painting.state = PaintingState::Cancelled;
+    m_painting.condition.notifyAll();
+    return true;
+}
+
+CoordinatedTileBuffer::PaintingState CoordinatedTileBuffer::paintingState() const
+{
+    Locker locker { m_painting.lock };
+    return m_painting.state;
+}
+
+void CoordinatedTileBuffer::waitUntilPaintingFinished()
 {
     Locker locker { m_painting.lock };
     m_painting.condition.wait(m_painting.lock, [this] {
         assertIsHeld(m_painting.lock);
-        return m_painting.state == PaintingState::Complete;
+        return m_painting.state == PaintingState::Complete || m_painting.state == PaintingState::Cancelled;
     });
 }
 
@@ -156,15 +174,9 @@ bool CoordinatedUnacceleratedTileBuffer::tryAllocateData()
 }
 
 #if USE(CAIRO)
-bool CoordinatedUnacceleratedTileBuffer::beginPainting()
+bool CoordinatedUnacceleratedTileBuffer::prepareForPainting()
 {
-    if (tryAllocateData()) {
-        didBeginPainting();
-        return true;
-    }
-
-    didCompletePainting();
-    return false;
+    return tryAllocateData();
 }
 
 RefPtr<cairo_surface_t> CoordinatedUnacceleratedTileBuffer::createSurface()
@@ -174,14 +186,13 @@ RefPtr<cairo_surface_t> CoordinatedUnacceleratedTileBuffer::createSurface()
     return adoptRef(cairo_image_surface_create_for_data(m_data.mutableSpan().data(), CAIRO_FORMAT_ARGB32, m_size.width(), m_size.height(), m_size.width() * 4));
 }
 
-void CoordinatedUnacceleratedTileBuffer::completePainting()
+void CoordinatedUnacceleratedTileBuffer::finishPainting()
 {
-    didCompletePainting();
 }
 #endif
 
 #if USE(SKIA)
-bool CoordinatedUnacceleratedTileBuffer::beginPainting()
+bool CoordinatedUnacceleratedTileBuffer::prepareForPainting()
 {
     if (tryAllocateData()) {
         auto alphaType = supportsAlpha() ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
@@ -190,14 +201,11 @@ bool CoordinatedUnacceleratedTileBuffer::beginPainting()
         m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.mutableSpan().data(), imageInfo.minRowBytes64(), &properties);
     }
 
-    if (m_surface) {
-        didBeginPainting();
+    if (m_surface)
         return true;
-    }
 
     didReleaseMemory(m_data.size());
     m_data.clear();
-    didCompletePainting();
     return false;
 }
 
@@ -207,10 +215,9 @@ SkCanvas* CoordinatedUnacceleratedTileBuffer::canvas()
     return m_surface->getCanvas();
 }
 
-void CoordinatedUnacceleratedTileBuffer::completePainting()
+void CoordinatedUnacceleratedTileBuffer::finishPainting()
 {
     m_surface = nullptr;
-    didCompletePainting();
 }
 
 #if USE(TEXTURE_MAPPER)
@@ -257,13 +264,11 @@ IntSize CoordinatedAcceleratedTileBuffer::size() const
 #endif
 }
 
-bool CoordinatedAcceleratedTileBuffer::beginPainting()
+bool CoordinatedAcceleratedTileBuffer::prepareForPainting()
 {
 #if USE(TEXTURE_MAPPER)
-    if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent()) {
-        didCompletePainting();
+    if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
         return false;
-    }
 
     OptionSet<BitmapTexture::Flags> textureFlags;
     if (supportsAlpha())
@@ -272,14 +277,12 @@ bool CoordinatedAcceleratedTileBuffer::beginPainting()
     m_surface = m_texture->createSkiaSurface(PlatformDisplay::sharedDisplay().skiaGrContext());
     if (!m_surface) {
         m_texture = nullptr;
-        didCompletePainting();
         return false;
     }
 #else
     m_recorder.emplace(m_characterization);
 #endif
 
-    didBeginPainting();
     return true;
 }
 
@@ -294,10 +297,12 @@ SkCanvas* CoordinatedAcceleratedTileBuffer::canvas()
 #endif
 }
 
-void CoordinatedAcceleratedTileBuffer::completePainting()
+void CoordinatedAcceleratedTileBuffer::finishPainting()
 {
 #if USE(TEXTURE_MAPPER)
-    ASSERT(m_surface);
+    if (!m_surface)
+        return;
+
     auto* recordingContext = m_surface->recordingContext();
     auto* grContext = recordingContext ? recordingContext->asDirectContext() : nullptr;
     if (grContext)
@@ -306,12 +311,12 @@ void CoordinatedAcceleratedTileBuffer::completePainting()
     // Surface is no longer needed, destroy it (in the same thread that created it).
     m_surface = nullptr;
 #else
-    ASSERT(m_recorder);
+    if (!m_recorder)
+        return;
+
     m_displayList = m_recorder->detach();
     m_recorder.reset();
 #endif
-
-    didCompletePainting();
 }
 
 #if USE(TEXTURE_MAPPER)

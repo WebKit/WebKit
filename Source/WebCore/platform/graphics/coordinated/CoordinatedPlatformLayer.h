@@ -215,7 +215,7 @@ public:
 
     void willPaintTile();
     void didPaintTile();
-    void waitUntilPaintingComplete();
+    void waitUntilPaintingFinished();
 
 private:
     explicit CoordinatedPlatformLayer(Client*);

@@ -71,8 +71,10 @@ void SkiaBackingStore::update(const FloatSize& size, float scale, CoordinatedBac
     for (const auto& tileUpdate : update.tilesToUpdate()) {
         auto it = m_tiles.find(tileUpdate.tileID);
         ASSERT(it != m_tiles.end());
-        it->value.scheduleUpdate(tileUpdate.dirtyRect, tileUpdate.tileRect, tileUpdate.buffer);
-        m_hasPendingTileUpdates = true;
+        if (tileUpdate.buffer->paintingState() != CoordinatedTileBuffer::PaintingState::Cancelled) {
+            it->value.scheduleUpdate(tileUpdate.dirtyRect, tileUpdate.tileRect, tileUpdate.buffer);
+            m_hasPendingTileUpdates = true;
+        }
     }
 }
 
@@ -234,8 +236,11 @@ void SkiaBackingStore::Tile::scheduleUpdate(const IntRect& dirtyRect, const IntR
 
 void SkiaBackingStore::Tile::processPendingUpdateIfNeeded()
 {
-    for (auto& pendingUpdate : m_pendingUpdates)
-        update(pendingUpdate.dirtyRect, pendingUpdate.tileRect, pendingUpdate.buffer.get());
+    for (auto& pendingUpdate : m_pendingUpdates) {
+        auto paintingState = pendingUpdate.buffer->paintingState();
+        if (paintingState != CoordinatedTileBuffer::PaintingState::Cancelled)
+            update(pendingUpdate.dirtyRect, pendingUpdate.tileRect, pendingUpdate.buffer.get());
+    }
     m_pendingUpdates.clear();
 }
 
@@ -273,17 +278,16 @@ void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& til
     FloatRect unscaledTileRect(tileRect);
     unscaledTileRect.scale(1. / m_scale);
 
-    if (unscaledTileRect != m_rect) {
-        m_rect = unscaledTileRect;
-        m_texture = nullptr;
-        m_surface = nullptr;
-    }
-
     if (buffer.isBackedByOpenGL()) {
         auto& acceleratedBuffer = static_cast<CoordinatedAcceleratedTileBuffer&>(buffer);
         if (auto displayList = acceleratedBuffer.takeDisplayList()) {
             ASSERT(!m_texture);
             ASSERT(!m_cachedImage);
+
+            if (unscaledTileRect != m_rect) {
+                m_rect = unscaledTileRect;
+                m_surface = nullptr;
+            }
 
             auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
             ASSERT(grContext);
@@ -301,6 +305,10 @@ void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& til
         auto& unacceleratedBuffer = static_cast<CoordinatedUnacceleratedTileBuffer&>(buffer);
         auto data = unacceleratedBuffer.takeData();
         if (!data.isEmpty()) {
+            if (unscaledTileRect != m_rect) {
+                m_rect = unscaledTileRect;
+                m_texture = nullptr;
+            }
             ensureTexture(tileRect.size(), buffer);
             m_texture->updateContents(data.span().data(), dirtyRect, { }, unacceleratedBuffer.stride(), buffer.pixelFormat());
         }

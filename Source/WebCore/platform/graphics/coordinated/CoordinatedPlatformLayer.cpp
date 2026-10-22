@@ -963,7 +963,7 @@ void CoordinatedPlatformLayer::updateContents(bool affectedByTransformAnimation)
         }
     } else {
         if (m_backingStoreProxy) {
-            m_backingStoreProxy->invalidate();
+            m_backingStoreProxy->invalidate(*this);
             m_backingStoreProxy = nullptr;
             m_pendingChanges.add(Change::BackingStore);
         }
@@ -979,7 +979,7 @@ void CoordinatedPlatformLayer::purgeBackingStores()
 {
     Locker locker { m_lock };
     if (m_backingStoreProxy) {
-        m_backingStoreProxy->invalidate();
+        m_backingStoreProxy->invalidate(*this);
         m_backingStoreProxy = nullptr;
     }
     m_imageBackingStore.current = nullptr;
@@ -1022,11 +1022,11 @@ void CoordinatedPlatformLayer::didPaintTile()
         m_client->didPaintTile();
 }
 
-void CoordinatedPlatformLayer::waitUntilPaintingComplete()
+void CoordinatedPlatformLayer::waitUntilPaintingFinished()
 {
     Locker locker { m_lock };
     if (m_backingStoreProxy)
-        m_backingStoreProxy->waitUntilPaintingComplete();
+        m_backingStoreProxy->waitUntilPaintingFinished();
 }
 
 void CoordinatedPlatformLayer::flushPendingState()

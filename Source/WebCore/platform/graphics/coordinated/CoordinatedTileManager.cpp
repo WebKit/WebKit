@@ -124,6 +124,19 @@ CoordinatedTileManager::CoordinatedTileManager(sk_sp<GrContextThreadSafeProxy>&&
 {
 }
 
+CoordinatedTileManager::~CoordinatedTileManager()
+{
+    auto tasks = [&] {
+        Locker locker { m_paintingTaskQueueLock };
+        return std::exchange(m_paintingTaskQueue, { });
+    }();
+
+    for (auto& task : tasks) {
+        if (task.buffer->cancelPainting())
+            task.layer->didPaintTile();
+    }
+}
+
 const sk_sp<GrContextThreadSafeProxy>& CoordinatedTileManager::threadSafeGrContext() const
 {
     return m_paintingEngine->threadSafeGrContext();
@@ -151,12 +164,34 @@ Ref<CoordinatedTileBuffer> CoordinatedTileManager::scheduleReplay(const Graphics
     Ref platformLayer = layer.coordinatedPlatformLayer();
     platformLayer->willPaintTile();
 
-    m_paintingWorkerPool->postTask([this, layer = WTF::move(platformLayer), buffer = Ref { buffer }, recording = Ref { recording }, tileRect, dirtyRect] {
-        if (buffer->beginPainting()) {
-            m_paintingEngine->replay(buffer, recording, tileRect, dirtyRect);
-            buffer->completePainting();
+    {
+        Locker locker { m_paintingTaskQueueLock };
+        m_paintingTaskQueue.insert(0, { WTF::move(platformLayer), buffer.copyRef(), recording.copyRef(), tileRect, dirtyRect });
+    }
+
+    m_paintingWorkerPool->postTask([this] {
+        auto task = [&] -> std::optional<PaintingTask> {
+            Locker locker { m_paintingTaskQueueLock };
+            if (m_paintingTaskQueue.isEmpty())
+                return std::nullopt;
+            return m_paintingTaskQueue.takeLast();
+        }();
+
+        if (!task)
+            return;
+
+        switch (task->buffer->beginPainting()) {
+        case CoordinatedTileBuffer::BeginPaintingResult::Cancelled:
+            return;
+        case CoordinatedTileBuffer::BeginPaintingResult::Failed:
+            break;
+        case CoordinatedTileBuffer::BeginPaintingResult::Started:
+            m_paintingEngine->replay(task->buffer, task->recording, task->tileRect, task->dirtyRect);
+            break;
         }
-        layer->didPaintTile();
+
+        task->buffer->completePainting();
+        task->layer->didPaintTile();
     });
     return buffer;
 }
@@ -183,9 +218,9 @@ Ref<CoordinatedTileBuffer> CoordinatedTileManager::schedulePaint(GraphicsLayerCo
     return buffer;
 }
 
-#endif
-
 CoordinatedTileManager::~CoordinatedTileManager() = default;
+
+#endif
 
 } // namespace WebCore
 
