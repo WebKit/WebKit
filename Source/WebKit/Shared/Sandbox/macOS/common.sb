@@ -42,10 +42,10 @@
 
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
-    (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
+    (regex (string-append "^" (regex-quote "${HOME}") home-relative-regex)))
 
 (define (home-subpath home-relative-subpath)
-    (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
+    (subpath (string-append "${HOME}" home-relative-subpath)))
 
 (define (home-literal home-relative-literal)
-    (literal (string-append (param "HOME_DIR") home-relative-literal)))
+    (literal (string-append "${HOME}" home-relative-literal)))
