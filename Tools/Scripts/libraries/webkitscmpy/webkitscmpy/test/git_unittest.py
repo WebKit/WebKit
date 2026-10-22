@@ -21,7 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import copy
+import json
 import os
+import re
 import shutil
 import subprocess
 import time
@@ -421,7 +423,7 @@ CommitDate: {time_c}
     def test_cache(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
             with mock, OutputCapture():
-                repo = local.Git(self.path, cached=True)
+                repo = local.Git(self.path, cached=True, prod_branches=re.compile(r'branch-[ab]'))
 
                 self.assertEqual(repo.cache.to_hash(identifier='1@main'), '9b8311f25a77ba14923d9d5a6532103f54abefcb')
                 self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c'), '5@main')
@@ -431,6 +433,208 @@ CommitDate: {time_c}
 
                 self.assertEqual(repo.cache.to_identifier(hash='badc0dd1f'), None)
                 self.assertEqual(repo.cache.to_hash(identifier='6@main'), None)
+
+    def test_cache_ignores_non_production_branches(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path, cached=True)
+
+            self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c'), '5@main')
+            self.assertEqual(repo.cache.to_hash(identifier='2.3@branch-b'), None)
+            self.assertEqual(repo.cache.to_identifier(hash='a30ce8494bf1'), None)
+            self.assertNotIn('branch-b', repo.cache._ordered_commits)
+
+            self.assertEqual(str(repo.commit(hash='790725a6d79e')), '2.3@branch-b')
+
+    def test_cache_ignores_local_commits(self):
+        with mocks.local.Git(self.path) as mock, MockTime, OutputCapture():
+            local_commit = Commit(
+                hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
+                identifier=6, branch='main',
+                timestamp=int(time.time()),
+                author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+                message='Not yet pushed\n',
+            )
+            mock.commits['main'].append(local_commit)
+            mock.head = local_commit
+
+            repo = local.Git(self.path, cached=True)
+            self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c'), '5@main')
+            self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7'), None)
+            self.assertEqual(repo.cache.to_hash(identifier='6@main'), None)
+            self.assertEqual(str(repo.commit(hash='a5fe8afe9bf7')), '6@main')
+
+            # Equivalent to `git-webkit pr` moving the commit to a PR branch and resetting main
+            mock.commits['main'].pop()
+            mock.head = mock.commits['main'][-1]
+
+            repo = local.Git(self.path, cached=True)
+            self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7', populate=False), None)
+            self.assertEqual(repo.cache.to_hash(identifier='6@main', populate=False), None)
+            self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c', populate=False), '5@main')
+
+    def test_cache_drops_stale_commits(self):
+        with mocks.local.Git(self.path) as mock, OutputCapture():
+            # Caches created before only canonical branches were cached may contain local commits
+            main = [commit.hash for commit in mock.commits['main']]
+            with open(os.path.join(self.path, '.git', 'identifiers.json'), 'w') as file:
+                json.dump(dict(
+                    hashes={'origin/main': [''] + main + ['a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd']},
+                    revisions={'origin/main': [0] + [None] * len(main) + [None]},
+                ), file)
+
+            repo = local.Git(self.path, cached=True)
+            self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7', populate=False), '6@main')
+
+            repo.cache.populate(branch='main')
+            self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7', populate=False), None)
+            self.assertEqual(repo.cache.to_hash(identifier='6@main', populate=False), None)
+            self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c', populate=False), '5@main')
+
+            repo = local.Git(self.path, cached=True)
+            self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7', populate=False), None)
+            self.assertEqual(repo.cache.to_hash(identifier='6@main', populate=False), None)
+
+    def _source_remotes(self, *names):
+        project_config = os.path.join(self.path, 'metadata', local.Git.GIT_CONFIG_EXTENSION)
+        os.mkdir(os.path.dirname(project_config))
+        with open(project_config, 'w') as f:
+            for level, name in enumerate(('origin',) + names):
+                f.write('[webkitscmpy "remotes.{}"]\n'.format(name))
+                f.write('    url = git@github.example.com:WebKit/{}.git\n'.format(name))
+                f.write('    security-level = {}\n'.format(level))
+
+    def _new_commit(self, hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd', branch='main'):
+        return Commit(
+            hash=hash,
+            identifier=6 if branch == 'main' else 3,
+            branch_point=None if branch == 'main' else 2,
+            branch=branch,
+            timestamp=int(time.time()),
+            author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+            message='Security fix\n',
+        )
+
+    def test_cache_default_branch_only_from_default_remote(self):
+        with mocks.local.Git(self.path, remotes=dict(security='git@github.example.com:WebKit/security.git')) as mock, OutputCapture():
+            self._source_remotes('security')
+            mock.remotes['security/main'].append(self._new_commit())
+
+            repo = local.Git(self.path, cached=True)
+            self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c'), '5@main')
+            self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7'), None)
+            self.assertEqual(repo.cache.to_hash(identifier='6@main'), None)
+            self.assertNotIn('security/main', repo.cache._ordered_commits)
+
+            # Caches which tracked the default branch on other remotes discard those copies
+            with open(repo.cache.path) as file:
+                content = json.load(file)
+            content['hashes']['security/main'] = content['hashes']['origin/main'] + ['a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd']
+            content['revisions']['security/main'] = content['revisions']['origin/main'] + [None]
+            with open(repo.cache.path, 'w') as file:
+                json.dump(content, file)
+
+            repo = local.Git(self.path, cached=True)
+            self.assertNotIn('security/main', repo.cache._ordered_commits)
+            self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7', populate=False), None)
+
+    def test_cache_remote_ahead(self):
+        with mocks.local.Git(self.path, remotes=dict(security='git@github.example.com:WebKit/security.git')) as mock, OutputCapture():
+            self._source_remotes('security')
+            mock.remotes['security/branch-a'].append(self._new_commit(branch='branch-a'))
+
+            repo = local.Git(self.path, cached=True, prod_branches=re.compile(r'branch-[ab]'))
+            self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7', branch='branch-a'), '2.3@branch-a')
+            self.assertEqual(repo.cache.to_identifier(hash='621652ad', branch='branch-a'), '2.2@branch-a')
+            self.assertEqual(repo.cache.to_hash(identifier='2.3@branch-a'), 'a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd')
+            self.assertEqual(len(repo.cache._ordered_commits['origin/branch-a']), 3)
+            self.assertEqual(len(repo.cache._ordered_commits['security/branch-a']), 4)
+
+    def test_cache_remote_behind(self):
+        with mocks.local.Git(self.path, remotes=dict(security='git@github.example.com:WebKit/security.git')) as mock, OutputCapture():
+            self._source_remotes('security')
+            mock.remotes['origin/branch-a'].append(self._new_commit(branch='branch-a'))
+
+            repo = local.Git(self.path, cached=True, prod_branches=re.compile(r'branch-[ab]'))
+            with patch.object(subprocess, 'Popen', wraps=subprocess.Popen) as popen:
+                self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7', branch='branch-a'), '2.3@branch-a')
+            self.assertEqual(repo.cache.to_hash(identifier='2.3@branch-a'), 'a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd')
+            self.assertEqual(repo.cache._ordered_commits['security/branch-a'], repo.cache._ordered_commits['origin/branch-a'][:3])
+
+            # The tip of security/branch-a is already on origin/branch-a, so we don't need to walk it
+            walked = [call.args[0][3] for call in popen.call_args_list if call.args[0][2:3] == ['log']]
+            self.assertIn('refs/remotes/origin/branch-a', walked)
+            self.assertNotIn('refs/remotes/security/branch-a', walked)
+
+    def test_cache_branch_name_suffix(self):
+        with mocks.local.Git(self.path) as mock, OutputCapture():
+            # rapid/branch-a is branched from branch-a, and its name ends with 'branch-a'
+            mock.remotes['origin/rapid/branch-a'] = mock.remotes['origin/branch-a'][1:] + [Commit(
+                hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
+                identifier=3, branch_point=2, branch='rapid/branch-a',
+                timestamp=int(time.time()),
+                author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+                message='Rapid fix\n',
+            )]
+
+            repo = local.Git(self.path, cached=True, prod_branches=re.compile(r'(rapid/)?branch-[ab]'))
+            repo.cache.populate(branch='rapid/branch-a')
+            self.assertEqual(repo.cache.to_identifier(hash='621652ad', branch='rapid/branch-a', populate=False), '2.2@rapid/branch-a')
+
+            # Walking branch-a shouldn't stop at commits we know from rapid/branch-a
+            repo.cache.populate(branch='branch-a')
+            self.assertEqual(repo.cache._ordered_commits['origin/branch-a'], repo.cache._ordered_commits['origin/rapid/branch-a'][:3])
+            self.assertEqual(repo.cache.to_hash(identifier='2.2@branch-a', populate=False), '621652add7fc416099bd2063366cc38ff61afe36')
+            self.assertEqual(repo.cache.to_identifier(hash='621652ad', branch='branch-a', populate=False), '2.2@branch-a')
+            self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7', branch='rapid/branch-a', populate=False), '2.3@rapid/branch-a')
+
+    def test_cache_remote_diverged(self):
+        with mocks.local.Git(self.path, remotes=dict(security='git@github.example.com:WebKit/security.git')) as mock, OutputCapture():
+            self._source_remotes('security')
+            mock.remotes['security/branch-a'].append(self._new_commit(branch='branch-a'))
+            mock.remotes['origin/branch-a'].append(self._new_commit(hash='c0ffee0123456789abcdef0123456789abcdef01', branch='branch-a'))
+
+            repo = local.Git(self.path, cached=True, prod_branches=re.compile(r'branch-[ab]'))
+            self.assertEqual(repo.cache.to_identifier(hash='a5fe8afe9bf7', branch='branch-a'), '2.3@branch-a')
+            self.assertEqual(repo.cache.to_identifier(hash='c0ffee012345', branch='branch-a'), '2.3@branch-a')
+            self.assertEqual(repo.cache.to_hash(identifier='2.3@branch-a'), 'c0ffee0123456789abcdef0123456789abcdef01')
+
+    def test_cache_branch_on_other_remote(self):
+        with mocks.local.Git(self.path, remotes=dict(apple='git@github.example.com:WebKit/apple.git')) as mock, OutputCapture():
+            self._source_remotes('apple')
+            del mock.remotes['origin/branch-a']
+
+            repo = local.Git(self.path, cached=True, prod_branches=re.compile(r'branch-[ab]'))
+            self.assertEqual(repo.cache.to_hash(identifier='2.1@branch-a'), 'a30ce8494bf1ac2807a69844f726be4a9843ca55')
+            self.assertEqual(repo.cache.to_identifier(hash='a30ce8494bf1'), '2.1@branch-a')
+            self.assertIn('apple/branch-a', repo.cache._ordered_commits)
+            self.assertNotIn('origin/branch-a', repo.cache._ordered_commits)
+
+    def test_cache_fills_on_demand(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path, cached=True, prod_branches=re.compile(r'branch-[ab]'))
+            repo.cache.populate(branch='branch-a')
+            repo.cache.populate(branch='branch-b')
+
+            def filled(repo):
+                return {identifier.split('@')[-1] for identifier in repo.cache._hash_to_identifiers.values()}
+
+            repo = local.Git(self.path, cached=True, prod_branches=re.compile(r'branch-[ab]'))
+            self.assertEqual(filled(repo), set())
+            self.assertEqual(repo.cache.to_hash(identifier='2.1@branch-a', populate=False), 'a30ce8494bf1ac2807a69844f726be4a9843ca55')
+            self.assertEqual(filled(repo), set())
+
+            self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c', branch='main', populate=False), '5@main')
+            self.assertEqual(filled(repo), {'main'})
+
+            self.assertEqual(repo.cache.to_identifier(hash='a30ce8494bf1', populate=False), '2.1@branch-a')
+            self.assertEqual(filled(repo), {'main', 'branch-a'})
+
+            # Production branches don't need identifiers for the entire default branch
+            repo = local.Git(self.path, cached=True, prod_branches=re.compile(r'branch-[ab]'))
+            self.assertEqual(repo.cache.to_identifier(hash='621652ad', branch='branch-a', populate=False), '2.2@branch-a')
+            self.assertEqual(filled(repo), {'branch-a'})
+            self.assertEqual(repo.cache.to_identifier(hash='790725a6', branch='branch-b', populate=False), '2.3@branch-b')
+            self.assertEqual(filled(repo), {'branch-a', 'branch-b'})
 
     def test_revision_cache(self):
         with mocks.local.Git(self.path, git_svn=True), OutputCapture():
