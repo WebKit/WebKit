@@ -26,6 +26,9 @@
 #define AudioUtilities_h
 
 #include <cmath>
+#include <optional>
+#include <span>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -65,6 +68,12 @@ inline float decibelsToLinear(float decibels)
 }
 
 void applyNoise(std::span<float> values, float standardDeviation);
+
+// Returns the AudioSpecificConfig of an AAC magic cookie, which is either a bare AudioSpecificConfig or an ES_Descriptor (ISO/IEC 14496-1).
+std::optional<Vector<uint8_t>> audioSpecificConfigFromAACCookie(std::span<const uint8_t>);
+
+// Returns a copy of an OpusHead with its pre-skip set to 0.
+Vector<uint8_t> opusHeadWithoutPreSkip(std::span<const uint8_t>);
 
 } // AudioUtilites
 

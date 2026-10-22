@@ -92,10 +92,10 @@ namespace WebCore {
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaSourceAVFObjC
 
-Ref<AudioVideoRenderer> MediaPlayerPrivateMediaSourceAVFObjC::createRenderer(LoggerHelper& loggerHelper, HTMLMediaElementIdentifier mediaElementIdentifier, MediaPlayerIdentifier playerIdentifier)
+Ref<AudioVideoRenderer> MediaPlayerPrivateMediaSourceAVFObjC::createRenderer(LoggerHelper& loggerHelper, HTMLMediaElementIdentifier mediaElementIdentifier, MediaPlayerIdentifier playerIdentifier, VideoRendererPreferences preferences)
 {
     RELEASE_ASSERT(hasPlatformStrategies());
-    RefPtr renderer = platformStrategies()->mediaStrategy()->createAudioVideoRenderer(&loggerHelper, mediaElementIdentifier, playerIdentifier);
+    RefPtr renderer = platformStrategies()->mediaStrategy()->createAudioVideoRenderer(&loggerHelper, mediaElementIdentifier, playerIdentifier, preferences);
     // Can't be null on cocoa platform.
     return renderer.releaseNonNull();
 }
@@ -117,7 +117,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_spatialTrackingLabel(player.spatialTrackingLabel())
 #endif
     , m_playerIdentifier(MediaPlayerIdentifier::generate())
-    , m_renderer(createRenderer(*this, player.clientIdentifier(), m_playerIdentifier))
+    , m_renderer(createRenderer(*this, player.clientIdentifier(), m_playerIdentifier, player.videoRendererPreferences()))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 

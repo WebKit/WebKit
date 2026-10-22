@@ -49,11 +49,15 @@ enum class PlatformMediaError : uint8_t {
     InvalidState,
     CDMInstanceKeyNeeded,
     Shutdown,
+    // Protected content can't be decoded here; it isn't an error.
+    ProtectedContent,
+    // The GPU process was asked to decode video in hardware only and couldn't.
+    HardwareDecoderUnavailable,
 };
 
 using MediaPromise = NativePromise<void, PlatformMediaError>;
 
-String convertEnumerationToString(PlatformMediaError);
+WEBCORE_EXPORT String convertEnumerationToString(PlatformMediaError);
 
 } // namespace WebCore
 

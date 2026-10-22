@@ -2055,6 +2055,7 @@
 		51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 51327D5E11A33A2B004F9D65 /* SinkDocument.h */; };
 		513C7B6D2E7C2C2400079881 /* MediaSamplesBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 513C7B6C2E7C2BC700079881 /* MediaSamplesBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D5A0032F1E000300C0FFEE /* MediaSamplesDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D5A0022F1E000200C0FFEE /* MediaSamplesDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51D5A0062F1E000600C0FFEE /* PacedMediaSamplesDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D5A0052F1E000500C0FFEE /* PacedMediaSamplesDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		513C7B6E2E7C2E7A00079881 /* TrackInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 513C7B6B2E7C2A0E00079881 /* TrackInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3DADD7E8080911858F0AC9DF /* PlaceholderRenderingContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 326D91AE1EB616954D5B5091 /* PlaceholderRenderingContextIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		42E88F7F164135AB4EC29FD7 /* PlaceholderRenderingContextSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D9D73727E3C1073890A32F2 /* PlaceholderRenderingContextSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12563,6 +12564,9 @@
 		513C7B762E7CD9CA00079881 /* MediaSamplesBlock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSamplesBlock.cpp; sourceTree = "<group>"; };
 		51D5A0012F1E000100C0FFEE /* MediaSamplesDecoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSamplesDecoder.cpp; sourceTree = "<group>"; };
 		51D5A0022F1E000200C0FFEE /* MediaSamplesDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSamplesDecoder.h; sourceTree = "<group>"; };
+		51D5A0042F1E000400C0FFEE /* PacedMediaSamplesDecoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PacedMediaSamplesDecoder.cpp; sourceTree = "<group>"; };
+		51D5A0052F1E000500C0FFEE /* PacedMediaSamplesDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PacedMediaSamplesDecoder.h; sourceTree = "<group>"; };
+		51D5A0072F1E000700C0FFEE /* VideoDecodeWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoDecodeWindow.h; sourceTree = "<group>"; };
 		513F14510AB634C400094DDF /* IconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconLoader.cpp; sourceTree = "<group>"; };
 		513F14520AB634C400094DDF /* IconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconLoader.h; sourceTree = "<group>"; };
 		51405C86190B014400754F94 /* SelectionGeometryGatherer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectionGeometryGatherer.cpp; sourceTree = "<group>"; };
@@ -39758,6 +39762,8 @@
 				07E4BDC12A3A6191000D5509 /* OpacityCaretAnimator.cpp */,
 				07E4BDC22A3A6191000D5509 /* OpacityCaretAnimator.h */,
 				4184F5151EAF059800F18BF0 /* OrientationNotifier.h */,
+				51D5A0042F1E000400C0FFEE /* PacedMediaSamplesDecoder.cpp */,
+				51D5A0052F1E000500C0FFEE /* PacedMediaSamplesDecoder.h */,
 				4192BB1227CF638300F29A46 /* PageIdentifier.h */,
 				2EE02A1E1F7324280006AF72 /* Pasteboard.cpp */,
 				4B2708C50AF19EE40065127F /* Pasteboard.h */,
@@ -39941,6 +39947,7 @@
 				83C45B8D1DC2B67C008871BA /* ValidationBubble.h */,
 				419BD1C328E5F4410089D7B7 /* VideoDecoder.cpp */,
 				419BD1BE28E5C5C00089D7B7 /* VideoDecoder.h */,
+				51D5A0072F1E000700C0FFEE /* VideoDecodeWindow.h */,
 				BD80140F6ACB4086AF35615B /* VideoEncodedData.h */,
 				41F898B328EAEAA20070549C /* VideoEncoder.cpp */,
 				41F898B228EAEAA20070549C /* VideoEncoder.h */,
@@ -47953,6 +47960,7 @@
 				3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */,
 				8326BF8E24D35C33001F8A85 /* OverSampleType.h in Headers */,
 				3AD4AB8A2C3CABCD00A3E7F3 /* OwnerPermissionsPolicyData.h in Headers */,
+				51D5A0062F1E000600C0FFEE /* PacedMediaSamplesDecoder.h in Headers */,
 				65A21468097A329100B9050A /* Page.h in Headers */,
 				1E8D17F2C31AF57C3D9059DC /* PageAgentInstrumentation.h in Headers */,
 				91278D5E21DEDAD600B57184 /* PageAuditAgent.h in Headers */,

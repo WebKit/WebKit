@@ -66,14 +66,20 @@ VP9TestingOverrides& VP9TestingOverrides::singleton()
 
 void VP9TestingOverrides::setHardwareDecoderDisabled(std::optional<bool>&& disabled)
 {
-    m_hardwareDecoderDisabled = WTF::move(disabled);
+    {
+        Locker locker { m_hardwareDecoderLock };
+        m_hardwareDecoderDisabled = WTF::move(disabled);
+    }
     if (m_configurationChangedCallback)
         m_configurationChangedCallback(false);
 }
 
 void VP9TestingOverrides::setVP9HardwareDecoderEnabledOverride(std::optional<bool>&& enabled)
 {
-    m_vp9HardwareDecoderEnabledOverride = WTF::move(enabled);
+    {
+        Locker locker { m_hardwareDecoderLock };
+        m_vp9HardwareDecoderEnabledOverride = WTF::move(enabled);
+    }
     if (m_configurationChangedCallback)
         m_configurationChangedCallback(false);
 }
@@ -157,19 +163,18 @@ void registerWebKitVP9Decoder()
 #endif
 }
 
-static std::optional<bool> s_vp9HardwareDecoderAvailableInProcess = { };
+static Lock s_vp9HardwareDecoderAvailableInProcessLock;
+static std::optional<bool> s_vp9HardwareDecoderAvailableInProcess WTF_GUARDED_BY_LOCK(s_vp9HardwareDecoderAvailableInProcessLock) = { };
 void setVP9HardwareDecoderAvailableInProcess(bool value)
 {
-    ASSERT(isMainThread());
-
+    Locker locker { s_vp9HardwareDecoderAvailableInProcessLock };
     ASSERT(!s_vp9HardwareDecoderAvailableInProcess || *s_vp9HardwareDecoderAvailableInProcess == value);
     s_vp9HardwareDecoderAvailableInProcess = value;
 }
 
 static bool internalVP9HardwareDecoderAvailableInProcess()
 {
-    ASSERT(isMainThread() || !!s_vp9HardwareDecoderAvailableInProcess);
-
+    Locker locker { s_vp9HardwareDecoderAvailableInProcessLock };
     if (!s_vp9HardwareDecoderAvailableInProcess)
         s_vp9HardwareDecoderAvailableInProcess = canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
     return *s_vp9HardwareDecoderAvailableInProcess;
@@ -185,6 +190,7 @@ void registerSupplementalVP9Decoder()
     if (canLoad_VideoToolbox_VTRegisterSupplementalVideoDecoderIfAvailable())
         softLink_VideoToolbox_VTRegisterSupplementalVideoDecoderIfAvailable(kCMVideoCodecType_VP9);
 
+    Locker locker { s_vp9HardwareDecoderAvailableInProcessLock };
     if (s_vp9HardwareDecoderAvailableInProcess && !*s_vp9HardwareDecoderAvailableInProcess)
         s_vp9HardwareDecoderAvailableInProcess = { };
 }

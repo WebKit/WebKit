@@ -36,6 +36,7 @@
 #include "GStreamerRegistryScanner.h"
 #endif
 
+#include "TrackInfo.h"
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -78,6 +79,40 @@ Ref<AudioDecoder::CreatePromise> AudioDecoder::create(const String& codecName, c
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(config);
+    UNUSED_PARAM(outputCallback);
+
+    return CreatePromise::createAndReject("Not supported"_s);
+#endif
+}
+
+bool AudioDecoder::canDecode(const AudioInfo& info)
+{
+    if (info.isDecoded() || !info.rate() || !info.channels())
+        return false;
+
+#if USE(GSTREAMER)
+    return GStreamerAudioDecoder::canDecode(info);
+#elif USE(AVFOUNDATION)
+    return AudioDecoderCocoa::canDecode(info);
+#else
+    return false;
+#endif
+}
+
+Ref<AudioDecoder::CreatePromise> AudioDecoder::create(const AudioInfo& info, OutputCallback&& outputCallback)
+{
+#if USE(GSTREAMER)
+    CreatePromise::Producer producer;
+    Ref promise = producer.promise();
+    CreateCallback callback = [producer = WTF::move(producer)](auto&& result) mutable {
+        producer.settle(WTF::move(result));
+    };
+    GStreamerAudioDecoder::create(info, WTF::move(callback), WTF::move(outputCallback));
+    return promise;
+#elif USE(AVFOUNDATION)
+    return AudioDecoderCocoa::create(info, WTF::move(outputCallback));
+#else
+    UNUSED_PARAM(info);
     UNUSED_PARAM(outputCallback);
 
     return CreatePromise::createAndReject("Not supported"_s);

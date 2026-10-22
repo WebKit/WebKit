@@ -49,6 +49,7 @@
 #endif
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/MediaSamplesBlock.h>
+#include <WebCore/MediaSamplesDecoder.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/SharedTimebase.h>
 
@@ -155,6 +156,11 @@ void RemoteAudioVideoRendererProxyManager::createManager(RemoteAudioVideoRendere
         .playerIdentifier = playerIdentifier,
     };
 
+    if (isDecoderInContentProcessEnabled()) {
+        context.preferences.add(VideoRendererPreference::DecoderInContentProcess);
+        context.renderer->setPreferences(context.preferences);
+    }
+
     context.renderer->notifyWhenErrorOccurs([weakThis = ThreadSafeWeakPtr { *this }, identifier](PlatformMediaError error) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::ErrorOccurred(error));
@@ -250,6 +256,7 @@ RemoteAudioVideoRendererProxyManager::RendererContext& RemoteAudioVideoRendererP
 
 void RemoteAudioVideoRendererProxyManager::setPreferences(RemoteAudioVideoRendererIdentifier identifier, WebCore::VideoRendererPreferences preferences)
 {
+    MESSAGE_CHECK(preferences.contains(VideoRendererPreference::DecoderInContentProcess) == isDecoderInContentProcessEnabled());
     if (RefPtr renderer = rendererFor(identifier)) {
         renderer->setPreferences(preferences);
         contextFor(identifier).preferences = preferences;
@@ -307,11 +314,22 @@ MediaSampleConverter& RemoteAudioVideoRendererProxyManager::converterFor(Rendere
     }).iterator->value;
 }
 
+bool RemoteAudioVideoRendererProxyManager::isDecoderInContentProcessEnabled() const
+{
+    return m_gpuConnectionToWebProcess.get()->sharedPreferencesForWebProcessValue().decoderInContentProcessEnabled;
+}
+
+bool RemoteAudioVideoRendererProxyManager::shouldHaveBeenDecodedInContentProcess(const TrackInfo& info) const
+{
+    return isDecoderInContentProcessEnabled() && MediaSamplesDecoder::mustDecodeInProcess(info);
+}
+
 void RemoteAudioVideoRendererProxyManager::newTrackInfoForTrack(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier, Ref<const WebCore::TrackInfo>&& info)
 {
     ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString());
 
     MESSAGE_CHECK(m_renderers.contains(identifier));
+    MESSAGE_CHECK(!shouldHaveBeenDecodedInContentProcess(info));
     converterFor(contextFor(identifier), trackIdentifier).setTrackInfo(WTF::move(info));
 }
 
@@ -321,13 +339,13 @@ void RemoteAudioVideoRendererProxyManager::enqueueSample(RemoteAudioVideoRendere
     MESSAGE_CHECK_COMPLETION(iterator != m_renderers.end(), completionHandler(false));
 
     auto& converter = converterFor(iterator->value, trackIdentifier);
-    MESSAGE_CHECK_COMPLETION(!!converter.currentTrackInfo(), completionHandler(false));
-    if (RefPtr mediaSample = converter.convert(WTF::move(samplesBlock))) {
-        iterator->value.renderer->enqueueSample(trackIdentifier, mediaSample.releaseNonNull(), minimumPresentationTime);
-        completionHandler(iterator->value.renderer->isReadyForMoreSamples(trackIdentifier));
-        return;
-    }
-    completionHandler(false);
+    RefPtr info = converter.currentTrackInfo();
+    MESSAGE_CHECK_COMPLETION(!!info, completionHandler(false));
+    MESSAGE_CHECK_COMPLETION(!shouldHaveBeenDecodedInContentProcess(*info), completionHandler(false));
+    RefPtr mediaSample = converter.convert(WTF::move(samplesBlock));
+    MESSAGE_CHECK_COMPLETION(!!mediaSample, completionHandler(false));
+    iterator->value.renderer->enqueueSample(trackIdentifier, mediaSample.releaseNonNull(), minimumPresentationTime);
+    completionHandler(iterator->value.renderer->isReadyForMoreSamples(trackIdentifier));
 }
 
 void RemoteAudioVideoRendererProxyManager::notifyTimeReachedAndStall(RemoteAudioVideoRendererIdentifier identifier, const MediaTime& time, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&& completionHandler)

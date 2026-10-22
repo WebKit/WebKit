@@ -23,14 +23,15 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEB_AUDIO)
-
 #include "AudioUtilities.h"
+
 #include <random>
 #include <wtf/HashFunctions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakRandomNumber.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
@@ -102,8 +103,93 @@ void applyNoise(std::span<float> values, float standardDeviation)
     }
 }
 
+// Returns the payload of the descriptor at the start of `data` (ISO/IEC 14496-1) and advances past it.
+static std::optional<std::pair<uint8_t, std::span<const uint8_t>>> nextDescriptor(std::span<const uint8_t>& data)
+{
+    if (data.size() < 2)
+        return { };
+
+    uint8_t tag = data[0];
+    size_t offset = 1;
+    size_t length = 0;
+    bool isLengthComplete = false;
+    for (unsigned i = 0; i < 4 && offset < data.size() && !isLengthComplete; ++i) {
+        uint8_t byte = data[offset++];
+        length = (length << 7) | (byte & 0x7f);
+        isLengthComplete = !(byte & 0x80);
+    }
+    if (!isLengthComplete || length > data.size() - offset)
+        return { };
+
+    auto payload = data.subspan(offset, length);
+    data = data.subspan(offset + length);
+    return std::pair { tag, payload };
+}
+
+static std::optional<std::span<const uint8_t>> audioSpecificConfigFromESDescriptor(std::span<const uint8_t> data)
+{
+    constexpr uint8_t esDescriptorTag = 0x03;
+    constexpr uint8_t decoderConfigDescriptorTag = 0x04;
+    constexpr uint8_t decoderSpecificInfoTag = 0x05;
+    constexpr size_t decoderConfigFixedSize = 13; // objectTypeIndication, streamType, bufferSizeDB, maxBitrate, avgBitrate.
+
+    auto esDescriptor = nextDescriptor(data);
+    if (!esDescriptor || esDescriptor->first != esDescriptorTag || esDescriptor->second.size() < 3)
+        return { };
+
+    auto esPayload = esDescriptor->second;
+    uint8_t flags = esPayload[2];
+    esPayload = esPayload.subspan(3);
+    auto skip = [&](size_t size) {
+        if (size > esPayload.size())
+            return false;
+        esPayload = esPayload.subspan(size);
+        return true;
+    };
+    // streamDependenceFlag: dependsOn_ES_ID.
+    if ((flags & 0x80) && !skip(2))
+        return { };
+    // URL_Flag: URLlength, URLstring.
+    if (flags & 0x40) {
+        if (esPayload.empty() || !skip(1 + esPayload[0]))
+            return { };
+    }
+    // OCRstreamFlag: OCR_ES_Id.
+    if ((flags & 0x20) && !skip(2))
+        return { };
+
+    auto decoderConfig = nextDescriptor(esPayload);
+    if (!decoderConfig || decoderConfig->first != decoderConfigDescriptorTag || decoderConfig->second.size() < decoderConfigFixedSize)
+        return { };
+
+    auto decoderConfigPayload = decoderConfig->second.subspan(decoderConfigFixedSize);
+    while (auto descriptor = nextDescriptor(decoderConfigPayload)) {
+        if (descriptor->first == decoderSpecificInfoTag)
+            return descriptor->second;
+    }
+    return { };
+}
+
+std::optional<Vector<uint8_t>> audioSpecificConfigFromAACCookie(std::span<const uint8_t> cookie)
+{
+    // An AudioSpecificConfig never starts with a byte below 0x08 (its audio object type would be 0).
+    if (cookie.empty() || cookie[0] >= 0x08)
+        return Vector<uint8_t>(cookie);
+    auto audioSpecificConfig = audioSpecificConfigFromESDescriptor(cookie);
+    if (!audioSpecificConfig)
+        return { };
+    return Vector<uint8_t>(*audioSpecificConfig);
+}
+
+Vector<uint8_t> opusHeadWithoutPreSkip(std::span<const uint8_t> cookie)
+{
+    constexpr size_t preSkipOffset = 10;
+    Vector<uint8_t> result(cookie);
+    if (spanHasPrefix(cookie, "OpusHead"_span8) && result.size() >= preSkipOffset + sizeof(uint16_t))
+        zeroSpan(result.mutableSpan().subspan(preSkipOffset, sizeof(uint16_t)));
+    return result;
+}
+
 } // AudioUtilites
 
 } // WebCore
-
-#endif // ENABLE(WEB_AUDIO)

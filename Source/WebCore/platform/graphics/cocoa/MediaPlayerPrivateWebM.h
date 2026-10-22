@@ -312,7 +312,7 @@ private:
 
     void monitorReadyState();
 
-    static Ref<AudioVideoRenderer> createRenderer(LoggerHelper&, HTMLMediaElementIdentifier, MediaPlayerIdentifier);
+    static Ref<AudioVideoRenderer> createRenderer(LoggerHelper&, HTMLMediaElementIdentifier, MediaPlayerIdentifier, VideoRendererPreferences);
 
     URL m_assetURL WTF_GUARDED_BY_CAPABILITY(mainThread);
     std::atomic<MediaPlayer::Preload> m_preload { MediaPlayer::Preload::Auto };

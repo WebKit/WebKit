@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class AudioInfo;
 class GStreamerInternalAudioDecoder;
 
 class GStreamerAudioDecoder final : public AudioDecoder {
@@ -34,6 +35,8 @@ class GStreamerAudioDecoder final : public AudioDecoder {
 
 public:
     static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&);
+    static void create(const AudioInfo&, CreateCallback&&, OutputCallback&&);
+    static bool canDecode(const AudioInfo&);
 
     ~GStreamerAudioDecoder();
 

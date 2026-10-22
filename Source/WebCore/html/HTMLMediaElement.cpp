@@ -2143,6 +2143,8 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
 #if USE(AVFOUNDATION)
     if (document().settings().mediaSourcePrefersDecompressionSession())
         options.videoRendererPreferences = videoRendererPreferences(protect(document().settings()), m_forceStereoDecoding);
+    if (document().settings().decoderInContentProcessEnabled())
+        options.videoRendererPreferences.add(VideoRendererPreference::DecoderInContentProcess);
 #endif
     if (!m_mediaSource && url.protocolIs(mediaSourceBlobProtocol) && !m_remotePlaybackConfiguration) {
         if (RefPtr mediaSource = MediaSource::lookup(url.string()))

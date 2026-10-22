@@ -32,6 +32,7 @@
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
 #import "VP9UtilitiesCocoa.h"
+#import "VideoDecodeWindow.h"
 #import "WebCoreDecompressionSession.h"
 #import "WebSampleBufferVideoRendering.h"
 #import <AVFoundation/AVFoundation.h>
@@ -74,12 +75,6 @@
 #endif
 
 namespace WebCore {
-
-static constexpr CMItemCount SampleQueueHighWaterMark = 30;
-static constexpr CMItemCount SampleQueueLowWaterMark = 15;
-
-static constexpr MediaTime DecodeLowWaterMark { 100, 1000 };
-static constexpr MediaTime DecodeHighWaterMark { 166, 1000 };
 
 static bool LEGACY_NODELETE isRendererThreadSafe(WebSampleBufferVideoRendering *renderering)
 {
@@ -227,6 +222,11 @@ bool VideoMediaSampleRenderer::useStereoDecoding() const
     return m_preferences.contains(VideoRendererPreference::UseStereoDecoding);
 }
 
+bool VideoMediaSampleRenderer::requiresHardwareDecoder() const
+{
+    return m_preferences.contains(VideoRendererPreference::DecoderInContentProcess);
+}
+
 size_t VideoMediaSampleRenderer::decodedSamplesCount() const
 {
     assertIsCurrent(dispatcher().get());
@@ -275,7 +275,7 @@ bool VideoMediaSampleRenderer::isReadyForMoreMediaData() const
     assertIsMainThread();
 
     RetainPtr renderer = this->renderer();
-    return areSamplesQueuesReadyForMoreMediaData(SampleQueueHighWaterMark) && (!renderer || [renderer isReadyForMoreMediaData]);
+    return areSamplesQueuesReadyForMoreMediaData(VideoDecodeWindow::sampleQueueHighWaterMark) && (!renderer || [renderer isReadyForMoreMediaData]);
 }
 
 bool VideoMediaSampleRenderer::areSamplesQueuesReadyForMoreMediaData(size_t waterMark) const
@@ -310,7 +310,7 @@ void VideoMediaSampleRenderer::maybeBecomeReadyForMoreMediaData()
         return;
     }
 
-    if (!areSamplesQueuesReadyForMoreMediaData(SampleQueueLowWaterMark))
+    if (!areSamplesQueuesReadyForMoreMediaData(VideoDecodeWindow::sampleQueueLowWaterMark))
         return;
 
     if (m_waitingForMoreMediaDataPending.exchange(true))
@@ -532,8 +532,8 @@ void VideoMediaSampleRenderer::decodeNextSampleIfNeeded()
     double playbackRate = timebase ? PAL::CMTimebaseGetRate(timebase.get()) : 0;
     RefPtr nextDecodedSample = this->nextDecodedSample();
     auto nextDecodedSampleTime = nextDecodedSample ? nextDecodedSample->presentationTime() : MediaTime::zeroTime();
-    auto lowWaterMarkTime = currentTime.isValid() ? std::max(currentTime, nextDecodedSampleTime) + DecodeLowWaterMark : MediaTime::invalidTime();
-    auto highWaterMarkTime = currentTime.isValid() ? std::max(currentTime, nextDecodedSampleTime) + DecodeHighWaterMark : MediaTime::invalidTime();
+    auto lowWaterMarkTime = currentTime.isValid() ? std::max(currentTime, nextDecodedSampleTime) + VideoDecodeWindow::lowWaterMark : MediaTime::invalidTime();
+    auto highWaterMarkTime = currentTime.isValid() ? std::max(currentTime, nextDecodedSampleTime) + VideoDecodeWindow::highWaterMark : MediaTime::invalidTime();
 
     DEBUG_LOG(LOGIDENTIFIER, "currentTime: ", currentTime, " rate: ", playbackRate, " nextDecodedSampleTime: ", nextDecodedSampleTime, " lowWaterMarkTime: ", lowWaterMarkTime, " highWaterMarkTime: ", highWaterMarkTime, " compressedSampleQueue: ", m_compressedSampleQueue.size(), " m_isDecodingSample:", m_isDecodingSample);
 
@@ -621,6 +621,8 @@ void VideoMediaSampleRenderer::decodeNextSampleIfNeeded()
             decodingFlags.add(WebCoreDecompressionSession::DecodingFlag::NonDisplaying);
         if (useStereoDecoding())
             decodingFlags.add(WebCoreDecompressionSession::DecodingFlag::EnableStereo);
+        if (requiresHardwareDecoder())
+            decodingFlags.add(WebCoreDecompressionSession::DecodingFlag::HardwareOnly);
         // Mirror AVF's RealTime policy. On iOS-family the flag is set
         // whenever we're in normal 1x playback and the sample is displaying.
         // On macOS it is additionally suppressed during the

@@ -132,7 +132,7 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
-    static Ref<NullMediaPlayerPrivate> LEGACY_NODELETE create(MediaPlayer& player) { return adoptRef(*new NullMediaPlayerPrivate(player)); }
+    static Ref<NullMediaPlayerPrivate> create(MediaPlayer& player) { return adoptRef(*new NullMediaPlayerPrivate(player)); }
 
     constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::Null; }
 
@@ -1928,6 +1928,11 @@ void MediaPlayer::setShouldDisableSleep(bool flag)
 bool MediaPlayer::shouldDisableSleep() const
 {
     return protect(client())->mediaPlayerShouldDisableSleep();
+}
+
+VideoRendererPreferences MediaPlayer::videoRendererPreferences() const
+{
+    return m_loadOptions.videoRendererPreferences;
 }
 
 String MediaPlayer::contentMIMEType() const
