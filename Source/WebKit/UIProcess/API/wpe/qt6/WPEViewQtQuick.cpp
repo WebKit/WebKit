@@ -258,15 +258,17 @@ void wpe_view_qtquick_invalidate_rendering(WPEViewQtQuick* view)
 {
     auto* priv = view->priv;
 
-    GRefPtr<WPEBuffer> committedBuffer = WTF::move(priv->bufferAwaitingAck);
+    GRefPtr<WPEBuffer> awaitingAckBuffer = WTF::move(priv->bufferAwaitingAck);
+    GRefPtr<WPEBuffer> committedBuffer = WTF::move(priv->committedBuffer);
     GRefPtr<WPEBuffer> previousCommittedBuffer = WTF::move(priv->previousCommittedBuffer);
     GRefPtr<WPEBuffer> pendingBuffer = WTF::move(priv->pendingBuffer);
-    priv->committedBuffer = nullptr;
 
     if (previousCommittedBuffer)
         wpe_view_buffer_released(WPE_VIEW(view), previousCommittedBuffer.get());
+    if (awaitingAckBuffer)
+        wpe_view_buffer_rendered(WPE_VIEW(view), awaitingAckBuffer.get());
     if (committedBuffer)
-        wpe_view_buffer_rendered(WPE_VIEW(view), committedBuffer.get());
+        wpe_view_buffer_released(WPE_VIEW(view), committedBuffer.get());
     if (pendingBuffer) {
         wpe_view_buffer_rendered(WPE_VIEW(view), pendingBuffer.get());
         wpe_view_buffer_released(WPE_VIEW(view), pendingBuffer.get());
