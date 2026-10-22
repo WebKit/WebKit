@@ -609,6 +609,7 @@ String HTMLSelectElement::selectedOptionsText(ForAccessibility forAccessibility,
 void HTMLSelectElement::buttonElementChildrenChanged()
 {
     setOptionsChangedOnRenderer();
+    invalidateStyle();
     invalidateButtonText();
 }
 

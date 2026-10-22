@@ -35,6 +35,18 @@
     <option id="baseButtonBanana">Banana</option>
 </select>
 
+<select id="nativeNestedButton">
+    <button><span>Fruit: </span><selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+    <option>Banana</option>
+</select>
+
+<select id="baseNestedButton" class="base">
+    <button><span>Fruit: </span><selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+    <option>Banana</option>
+</select>
+
 <select id="nativeMultipleButton" multiple size="1">
     <button>Toppings: <selectedcontent></selectedcontent></button>
     <option id="nativeMultipleButtonCheese" selected>Cheese</option>
@@ -82,6 +94,14 @@ if (window.accessibilityController) {
             output += await expectAsync("axSelect.stringValue", "'AXValue: Fruit: Banana'");
             document.querySelector(`#${id} > button`).firstChild.data = "Pick: ";
             output += await expectAsync("axSelect.stringValue", "'AXValue: Pick: Banana'");
+        }
+
+        for (const id of ["nativeNestedButton", "baseNestedButton"]) {
+            window.axSelect = await waitForElementById(id);
+            output += `${id}:\n`;
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Fruit: Apple'");
+            document.querySelector(`#${id} span`).firstChild.data = "Pick: ";
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Pick: Apple'");
         }
 
         for (const id of ["nativeMultipleButton", "baseMultipleButton"]) {

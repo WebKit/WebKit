@@ -50,7 +50,6 @@ private:
     void postConnectionSteps() final;
     void removingSteps(RemovalType, ContainerNode&) final;
     void movingSteps(MovingType, ContainerNode&) final;
-    void childrenChanged(const ChildChange&) final;
 
     RefPtr<HTMLSelectElement> recalculateDisabledness();
     void updateFromSelect();
