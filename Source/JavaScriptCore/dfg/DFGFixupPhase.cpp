@@ -2063,11 +2063,33 @@ private:
                 return;
             }
 
+            if (node->child1()->shouldSpeculateInt32()) {
+                fixEdge<Int32Use>(node->child1());
+                node->convertToToString();
+                node->clearFlags(NodeMustGenerate);
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateInt52()) {
+                fixEdge<Int52RepUse>(node->child1());
+                node->convertToToString();
+                node->clearFlags(NodeMustGenerate);
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateNumber()) {
+                fixEdge<DoubleRepUse>(node->child1());
+                node->convertToToString();
+                node->clearFlags(NodeMustGenerate);
+                return;
+            }
+
             if (node->child1()->shouldSpeculateStringObject()
                 && m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
                 addCheckStructureForOriginalStringObjectUse(StringObjectUse, node->origin, node->child1().node());
                 fixEdge<StringObjectUse>(node->child1());
                 node->convertToToString();
+                node->clearFlags(NodeMustGenerate);
                 return;
             }
 
@@ -2076,6 +2098,7 @@ private:
                 addCheckStructureForOriginalStringObjectUse(StringOrStringObjectUse, node->origin, node->child1().node());
                 fixEdge<StringOrStringObjectUse>(node->child1());
                 node->convertToToString();
+                node->clearFlags(NodeMustGenerate);
                 return;
             }
             break;
