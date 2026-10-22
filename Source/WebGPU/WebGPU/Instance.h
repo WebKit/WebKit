@@ -27,7 +27,6 @@
 
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
-#import <WebGPU/WebGPUExt.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Condition.h>
 #import <wtf/Deque.h>

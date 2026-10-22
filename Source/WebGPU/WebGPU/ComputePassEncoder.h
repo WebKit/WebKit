@@ -29,7 +29,6 @@
 #import "CommandsMixin.h"
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
-#import <WebGPU/WebGPUExt.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>

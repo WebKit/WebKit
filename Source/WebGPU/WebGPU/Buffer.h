@@ -32,7 +32,6 @@
 #import <WebGPU/WGPUBufferImpl.h>
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
-#import <WebGPU/WebGPUExt.h>
 #import <optional>
 #import <utility>
 #import <wtf/CanBorrow.h>

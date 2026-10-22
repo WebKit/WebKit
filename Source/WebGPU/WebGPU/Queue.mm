@@ -50,7 +50,6 @@
 
 namespace WebGPU::Metal {
 
-static_assert(WGPU_LARGE_BUFFER_SIZE == WebGPU::largeBufferSize);
 constexpr bool skipMemoryAttribution = true;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Queue);

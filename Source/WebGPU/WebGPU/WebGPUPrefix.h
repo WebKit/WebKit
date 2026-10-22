@@ -50,7 +50,6 @@
 
 #ifdef __OBJC__
 #include "WebGPU.h"
-#include "WebGPUExt.h"
 #include <Metal/Metal.h>
 #endif
 #endif

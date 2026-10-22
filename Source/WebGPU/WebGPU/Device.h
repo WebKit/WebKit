@@ -35,7 +35,6 @@
 #import <Metal/Metal.h>
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
-#import <WebGPU/WebGPUExt.h>
 #import <expected>
 #import <simd/matrix_types.h>
 #import <wtf/CompletionHandler.h>

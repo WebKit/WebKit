@@ -26,7 +26,6 @@
 #include "ExportMacros.h"
 
 #include "WebGPU.h"
-#include "WebGPUExt.h"
 
 // A handle type of webgpu.h that no object of the implementation stands for. Defining it keeps the
 // structs of webgpu.h that have such a handle from having a member of a forward declared type.

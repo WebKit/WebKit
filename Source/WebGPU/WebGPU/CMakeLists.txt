@@ -15,7 +15,6 @@ set(WebGPU_PRIVATE_FRAMEWORK_HEADERS
     WGPUTextureImpl.h
     WGPUTextureViewImpl.h
     WebGPU.h
-    WebGPUExt.h
 )
 
 set(WebGPU_PRIVATE_INCLUDE_DIRECTORIES

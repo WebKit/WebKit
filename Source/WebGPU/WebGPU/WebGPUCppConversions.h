@@ -28,7 +28,6 @@
 #import "WebGPUCppBridge.h"
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
-#import <WebGPU/WebGPUExt.h>
 #import <optional>
 #import <type_traits>
 #import <wtf/IndexedRange.h>
@@ -84,14 +83,6 @@ template<> struct ChainedStructSType<WGPUTextureComponentSwizzleDescriptor> {
 
 template<> struct ChainedStructSType<WGPURenderPassMaxDrawCount> {
     static constexpr WGPUSType value = WGPUSType_RenderPassMaxDrawCount;
-};
-
-template<> struct ChainedStructSType<WGPUInstanceCocoaDescriptor> {
-    static constexpr WGPUSType value = static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor);
-};
-
-template<> struct ChainedStructSType<WGPUSurfaceDescriptorCocoaCustomSurface> {
-    static constexpr WGPUSType value = static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking);
 };
 
 // Walks a descriptor's nextInChain looking for one particular extension struct. Every

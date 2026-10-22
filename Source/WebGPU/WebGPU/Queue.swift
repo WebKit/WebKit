@@ -23,9 +23,9 @@
 
 import Metal
 import WebGPU_Internal.Queue
-import WebGPU_Private.WebGPUExt
+import WebGPU_Private.WebGPUCpp
 
-private let largeBufferSize = Int(WGPU_LARGE_BUFFER_SIZE)
+private let largeBufferSize = Int(WebGPU.largeBufferSize)
 
 @_expose(Cxx)
 func queueWriteBuffer(_ queue: WebGPU.Metal.Queue, buffer: any MTLBuffer, bufferOffset: UInt64, data: WebGPU.SpanUInt8) {

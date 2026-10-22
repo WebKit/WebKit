@@ -27,7 +27,6 @@
 
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
-#import <WebGPU/WebGPUExt.h>
 
 // Bridge between the handles of the WebGPU C API and the objects of the WebGPU C++ API, for the
 // conversions of the C API shim, which cannot include the headers of the Metal objects. Remove it

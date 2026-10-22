@@ -298,20 +298,11 @@ void wgpuInstanceRelease(WGPUInstance instance)
     WebGPU::Metal::fromAPI(instance).deref();
 }
 
-// The required instance features are not checked: the instance has all of them.
-WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor* descriptor)
+// The required instance features are not checked: the instance has all of them. The instance has
+// no scheduler: its callbacks run in wgpuInstanceProcessEvents() and wgpuInstanceWaitAny().
+WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor*)
 {
-    WebGPU::InstanceDescriptor apiDescriptor;
-    if (auto* cocoaDescriptor = descriptor ? WebGPU::Metal::findChainedStruct<WGPUInstanceCocoaDescriptor>(descriptor->nextInChain) : nullptr) {
-        if (auto scheduleWorkBlock = makeBlockPtr(cocoaDescriptor->scheduleWorkBlock)) {
-            apiDescriptor.scheduleWork = [scheduleWorkBlock = WTF::move(scheduleWorkBlock)](Function<void()>&& workItem) {
-                scheduleWorkBlock(makeBlockPtr(WTF::move(workItem)).get());
-            };
-        }
-        if (cocoaDescriptor->webProcessResourceOwner)
-            apiDescriptor.webProcessResourceOwner.emplace(*reinterpret_cast<const MachSendRight*>(cocoaDescriptor->webProcessResourceOwner));
-    }
-    return WebGPU::Metal::releaseToAPI(WebGPU::Metal::Instance::create(WTF::move(apiDescriptor)));
+    return WebGPU::Metal::releaseToAPI(WebGPU::Metal::Instance::create({ }));
 }
 
 WGPUProc LEGACY_NODELETE wgpuGetProcAddress(WGPUStringView)
@@ -319,24 +310,10 @@ WGPUProc LEGACY_NODELETE wgpuGetProcAddress(WGPUStringView)
     return nullptr;
 }
 
-WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
+// The surface sources of the descriptor are not supported: the surface presents nowhere.
+WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor*)
 {
-    WebGPU::PresentationContextDescriptor apiDescriptor;
-    if (auto* customSurface = WebGPU::Metal::findChainedStruct<WGPUSurfaceDescriptorCocoaCustomSurface>(descriptor->nextInChain)) {
-        apiDescriptor.registerCompositorIntegration = [compositorIntegrationRegister = makeBlockPtr(customSurface->compositorIntegrationRegister)](Function<void(std::span<const IOSurfaceRef>)>&& renderBuffersWereRecreated, Function<void(CompletionHandler<void()>&&)>&& onSubmittedWorkScheduled) {
-            compositorIntegrationRegister(makeBlockPtr([renderBuffersWereRecreated = WTF::move(renderBuffersWereRecreated)](CFArrayRef ioSurfaces) {
-                Vector<IOSurfaceRef> surfaces;
-                for (CFIndex i = 0, count = CFArrayGetCount(ioSurfaces); i < count; ++i)
-                    surfaces.append(static_cast<IOSurfaceRef>(const_cast<void*>(CFArrayGetValueAtIndex(ioSurfaces, i))));
-                renderBuffersWereRecreated(surfaces.span());
-            }).get(), makeBlockPtr([onSubmittedWorkScheduled = WTF::move(onSubmittedWorkScheduled)](WGPUWorkItem workItem) {
-                onSubmittedWorkScheduled([workItem = makeBlockPtr(workItem)] {
-                    workItem();
-                });
-            }).get());
-        };
-    }
-    return WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::PresentationContext>(protect(WebGPU::Metal::fromAPI(instance))->createPresentationContext(apiDescriptor));
+    return WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::PresentationContext>(protect(WebGPU::Metal::fromAPI(instance))->createPresentationContext({ }));
 }
 
 void wgpuInstanceProcessEvents(WGPUInstance instance)

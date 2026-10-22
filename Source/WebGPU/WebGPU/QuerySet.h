@@ -29,7 +29,6 @@
 #import <WebGPU/WGPUQuerySetImpl.h>
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
-#import <WebGPU/WebGPUExt.h>
 #import <optional>
 #import <wtf/FastMalloc.h>
 #import <wtf/Range.h>
