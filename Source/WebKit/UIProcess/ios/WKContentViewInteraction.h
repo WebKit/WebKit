@@ -797,6 +797,7 @@ struct ImageAnalysisContextMenuActionData {
 @property (nonatomic, readonly, getter=_isSuppressingSelectionAssistant) BOOL _suppressingSelectionAssistant;
 
 - (BOOL)_hasFocusedElement;
+- (BOOL)_focusedElementUsesSoftwareKeyboard;
 - (BOOL)_isSameAsFocusedElement:(const WebCore::ElementContext&)context;
 - (void)_zoomToRevealFocusedElement;
 @property (nonatomic, readonly) WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement;

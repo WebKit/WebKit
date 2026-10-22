@@ -50,6 +50,7 @@ struct TemporaryFileMoveResults {
 
 @interface WKFileUploadPanel : UIViewController
 @property (nonatomic, weak) id <WKFileUploadPanelDelegate> delegate;
+@property (nonatomic, readonly) BOOL didDeferResigningFirstResponderUntilPickerIsPresented;
 - (instancetype)initWithView:(WKContentView *)view;
 - (void)presentWithParameters:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 
