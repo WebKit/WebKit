@@ -40,8 +40,7 @@
 - (void)setBounds:(CGRect)bounds
 {
     [super setBounds:bounds];
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL CALayer* layer in self.sublayers)
+    for (CALayer* layer in self.sublayers)
         layer.frame = bounds;
 }
 

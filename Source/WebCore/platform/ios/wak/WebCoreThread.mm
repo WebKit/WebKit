@@ -532,8 +532,7 @@ static void WebRunLoopUnlockInternal(AutoreleasePoolOperation poolOperation)
 {
     ASSERT(sAsyncDelegates());
     if ([sAsyncDelegates() count]) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSInvocation* invocation in sAsyncDelegates().get())
+        for (NSInvocation* invocation in sAsyncDelegates().get())
             SendDelegateMessage(invocation);
         [sAsyncDelegates() removeAllObjects];
     }

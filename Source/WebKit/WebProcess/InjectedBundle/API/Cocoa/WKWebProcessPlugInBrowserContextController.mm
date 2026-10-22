@@ -547,8 +547,7 @@ static inline WKEditorInsertAction LEGACY_NODELETE toWK(WebCore::EditorInsertAct
 
             RetainPtr controller = m_controller.get();
             RetainPtr dataByType = [controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:controller.get() pasteboardDataForRange:protect(wrapper(WebKit::createHandle(range).get())).get()];
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString *type in dataByType.get()) {
+            for (NSString *type in dataByType.get()) {
                 pasteboardTypes.append(type);
                 pasteboardData.append(WebCore::SharedBuffer::create(dataByType.get()[type]));
             };

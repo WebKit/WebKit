@@ -41,8 +41,7 @@ static bool arrayElementsTheSameType(NSArray *array, Class c)
 {
     if (!array.count)
         return true;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id element in array) {
+    for (id element in array) {
         if (![element isKindOfClass:c])
             return false;
     }
@@ -84,8 +83,7 @@ CoreIPCSecTrust::PolicyOptionValueShape CoreIPCSecTrust::detectPolicyOptionShape
 static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData::PolicyOption& policyVector)
 {
     policyVector.reserveCapacity(policyOption.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *optionKey in policyOption) {
+    for (NSString *optionKey in policyOption) {
         if (![optionKey isKindOfClass:NSString.class])
             return makeString("optionKey was not an NSString"_s);
         CoreIPCString k { optionKey };
@@ -122,8 +120,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers unexpected type for key "_s, (String)optionKey, " (expecting NSNumber)"_s);
             Vector<CoreIPCNumber> vector;
             vector.reserveCapacity([value count]);
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSNumber *element in value.get()) {
+            for (NSNumber *element in value.get()) {
                 CoreIPCNumber n { element };
                 vector.append(WTF::move(n));
             }
@@ -141,8 +138,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings unexpected type for key "_s, (String)optionKey, " (expecting NSString)"_s);
             Vector<CoreIPCString> vector;
             vector.reserveCapacity([value count]);
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString *element in value.get()) {
+            for (NSString *element in value.get()) {
                 CoreIPCString s { element };
                 vector.append(WTF::move(s));
             }
@@ -160,8 +156,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData unexpected type for key "_s, (String)optionKey, " (expecting NSData)"_s);
             Vector<CoreIPCData> vector;
             vector.reserveCapacity([value count]);
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSData *element in value.get()) {
+            for (NSData *element in value.get()) {
                 CoreIPCData d { element };
                 vector.append(WTF::move(d));
             }
@@ -181,16 +176,14 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers outerVector;
             outerVector.reserveCapacity([value count]);
 
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSArray *secondLevelArray in value.get()) {
+            for (NSArray *secondLevelArray in value.get()) {
                 if (![secondLevelArray isKindOfClass:NSArray.class])
                     return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber second level array unexpected type for key "_s, (String)optionKey);
 
                 Vector<Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate>> innerVector;
                 innerVector.reserveCapacity(secondLevelArray.count);
 
-                // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-                for (SUPPRESS_UNRETAINED_LOCAL id element in secondLevelArray) {
+                for (id element in secondLevelArray) {
                     if (RetainPtr e = dynamic_objc_cast<NSNumber>(element)) {
                         Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate> v = CoreIPCNumber(e.get());
                         innerVector.append(WTF::move(v));
@@ -212,8 +205,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber unexpected type for key "_s, (String)optionKey, " (expecting NSDictionary)"_s);
             CoreIPCSecTrustData::PolicyDictionaryValueIsNumber vector;
             vector.reserveCapacity([d count]);
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString* key in d.get()) {
+            for (NSString* key in d.get()) {
                 if (![key isKindOfClass:NSString.class])
                     return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber unexpected dictionary key type for key "_s, (String)optionKey, " (expecting NSString)"_s);
                 NSNumber *value = [d objectForKey:key];
@@ -248,8 +240,7 @@ static String optionalArrayOfDataHelper(std::optional<Vector<CoreIPCData>>& toSe
     if (RetainPtr array = dynamic_objc_cast<NSArray>([dict objectForKey:topLevelKey])) {
         Vector<CoreIPCData> vector;
         vector.reserveCapacity([array count]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSData* item in array.get()) {
+        for (NSData* item in array.get()) {
             if (![item isKindOfClass:NSData.class])
                 return makeString("optionalArrayOfDataHelper had invalid type in array"_s);
             CoreIPCData c { item };
@@ -332,8 +323,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (RetainPtr certificates = dynamic_objc_cast<NSArray>([dict objectForKey:@"certificates"])) {
         Vector<CoreIPCData> vector;
         vector.reserveCapacity([certificates count]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSData* item in certificates.get()) {
+        for (NSData* item in certificates.get()) {
             if (![item isKindOfClass:NSData.class]) {
                 RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'certificates' array contains a non NSData item");
                 ASSERT_NOT_REACHED();
@@ -348,8 +338,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (RetainPtr chain = dynamic_objc_cast<NSArray>([dict objectForKey:@"chain"])) {
         Vector<CoreIPCData> vector;
         vector.reserveCapacity([chain count]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSData* item in chain.get()) {
+        for (NSData* item in chain.get()) {
             if (![item isKindOfClass:NSData.class]) {
                 RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'chain' array contains a non NSData item");
                 ASSERT_NOT_REACHED();
@@ -364,8 +353,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (RetainPtr details = dynamic_objc_cast<NSArray>([dict objectForKey:@"details"])) {
         Vector<CoreIPCSecTrustData::Detail> vector;
         vector.reserveCapacity([details count]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *detail in details.get()) {
+        for (NSDictionary *detail in details.get()) {
             if (![detail isKindOfClass:NSDictionary.class]) {
                 RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'details' array contains unexpected type");
                 ASSERT_NOT_REACHED();
@@ -373,8 +361,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             }
             CoreIPCSecTrustData::Detail d;
             d.reserveCapacity(detail.count);
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString *key in detail) {
+            for (NSString *key in detail) {
                 if (![key isKindOfClass:NSString.class]) {
                     RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'details' dictionary contains unexpected key type");
                     ASSERT_NOT_REACHED();
@@ -397,8 +384,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (RetainPtr info = dynamic_objc_cast<NSDictionary>([dict objectForKey:@"info"])) {
         CoreIPCSecTrustData::InfoType vector;
         vector.reserveCapacity([info count]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *key in info.get()) {
+        for (NSString *key in info.get()) {
             if (![key isKindOfClass:NSString.class]) {
                 RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'info' dictionary key contains unexpected type");
                 ASSERT_NOT_REACHED();
@@ -427,8 +413,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 CoreIPCSecTrustData::RevocationInfoArray revocationInfo;
                 revocationInfo.reserveCapacity([revocationInfoArray count]);
 
-                // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-                for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *entry in revocationInfoArray.get()) {
+                for (NSDictionary *entry in revocationInfoArray.get()) {
                     if (![entry isKindOfClass:NSDictionary.class]) {
                         RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' array contains non-dictionary element");
                         ASSERT_NOT_REACHED();
@@ -438,8 +423,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     CoreIPCSecTrustData::RevocationInfoEntry revocationEntry;
                     revocationEntry.reserveCapacity([entry count]);
 
-                    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-                    for (SUPPRESS_UNRETAINED_LOCAL NSString *entryKey in entry) {
+                    for (NSString *entryKey in entry) {
                         if (![entryKey isKindOfClass:NSString.class]) {
                             RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' entry key is not a string");
                             ASSERT_NOT_REACHED();
@@ -456,8 +440,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                         CoreIPCSecTrustData::RevocationInfoSubDict revocationSubDict;
                         revocationSubDict.reserveCapacity([subDict count]);
 
-                        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-                        for (SUPPRESS_UNRETAINED_LOCAL NSString *subKey in subDict) {
+                        for (NSString *subKey in subDict) {
                             if (![subKey isKindOfClass:NSString.class]) {
                                 RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' sub-dictionary key is not a string");
                                 ASSERT_NOT_REACHED();
@@ -503,8 +486,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             } else if (RetainPtr subDict = dynamic_objc_cast<NSDictionary>(value)) {
                 CoreIPCSecTrustData::InfoSubDict infoSubDict;
                 infoSubDict.reserveCapacity([subDict count]);
-                // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-                for (SUPPRESS_UNRETAINED_LOCAL NSString *subKey in subDict.get()) {
+                for (NSString *subKey in subDict.get()) {
                     if (![subKey isKindOfClass:NSString.class]) {
                         RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'info' sub-dictionary key is not a string");
                         ASSERT_NOT_REACHED();
@@ -540,8 +522,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (RetainPtr policies = dynamic_objc_cast<NSArray>([dict objectForKey:@"policies"])) {
         Vector<CoreIPCSecTrustData::PolicyType> outerVector;
         outerVector.reserveCapacity([policies count]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *policy in policies.get()) {
+        for (NSDictionary *policy in policies.get()) {
             if (![policy isKindOfClass:NSDictionary.class]) {
                 RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust policy is not an NSDictionary");
                 ASSERT_NOT_REACHED();
@@ -549,8 +530,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             }
             CoreIPCSecTrustData::PolicyType innerVector;
             innerVector.reserveCapacity(policy.count);
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString *key in policy) {
+            for (NSString *key in policy) {
                 if (![key isKindOfClass:NSString.class]) {
                     RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust policy key is not an NSString");
                     ASSERT_NOT_REACHED();
@@ -601,8 +581,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (RetainPtr exceptions = dynamic_objc_cast<NSArray>([dict objectForKey:@"exceptions"])) {
         Vector<CoreIPCSecTrustData::ExceptionType> vector;
         vector.reserveCapacity([exceptions count]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *exception in exceptions.get()) {
+        for (NSDictionary *exception in exceptions.get()) {
             if (![exception isKindOfClass:NSDictionary.class]) {
                 RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'exceptions' array contains non NSDictionary member");
                 ASSERT_NOT_REACHED();
@@ -610,8 +589,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             }
             CoreIPCSecTrustData::ExceptionType innerVector;
             innerVector.reserveCapacity([exception count]);
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString *key in exception) {
+            for (NSString *key in exception) {
                 if (![key isKindOfClass:NSString.class]) {
                     RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'exceptions' dictionary key is not an NSString");
                     ASSERT_NOT_REACHED();

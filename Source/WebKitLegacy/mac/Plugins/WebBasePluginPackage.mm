@@ -142,13 +142,11 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
         WebCore::MimeClassInfo mimeClassInfo;
         
         NSArray *extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *extension in extensions) {
+        for (NSString *extension in extensions) {
             // The DivX plug-in lists multiple extensions in a comma separated string instead of using
             // multiple array elements in the property list. Work around this here by splitting the
             // extension string into components.
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString *component in [extension componentsSeparatedByString:@","])
+            for (NSString *component in [extension componentsSeparatedByString:@","])
                 mimeClassInfo.extensions.append(component);
         }
 

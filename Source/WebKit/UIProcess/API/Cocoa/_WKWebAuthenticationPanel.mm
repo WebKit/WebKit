@@ -317,8 +317,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     auto retainAttributesArray = adoptCF(attributesArrayRef);
 
     auto result = adoptNS([[NSMutableArray alloc] init]);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *attributes in (NSArray *)attributesArrayRef) {
+    for (NSDictionary *attributes in (NSArray *)attributesArrayRef) {
         auto decodedResponse = cbor::CBORReader::read(makeVector(protect(dynamic_objc_cast<NSData>(attributes[bridge_id_cast(kSecAttrApplicationTag)]))));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
@@ -997,8 +996,7 @@ static WebCore::AuthenticationExtensionsClientInputs authenticationExtensionsCli
         if (evalByCredentialValue) {
             RetainPtr<NSDictionary<NSData *, _WKAuthenticationPRFInputValues *>> evalByCredential = (NSDictionary<NSData *, _WKAuthenticationPRFInputValues *> *)evalByCredentialValue;
             Vector<KeyValuePair<String, WebCore::AuthenticationExtensionsClientInputs::PRFValues>> evalByCredentialVector;
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSData *credentialId in evalByCredential.get()) {
+            for (NSData *credentialId in evalByCredential.get()) {
                 _WKAuthenticationPRFInputValues *prfInputValues = evalByCredential.get()[credentialId];
                 evalByCredentialVector.append({
                     base64URLEncodeToString(span(credentialId)),

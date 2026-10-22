@@ -83,16 +83,14 @@ TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysis *analysis)
 
     bool isFirstLine = true;
     size_t nextLineIndex = 1;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL VKWKLineInfo *line in allLines.get()) {
+    for (VKWKLineInfo *line in allLines.get()) {
         Vector<TextRecognitionWordData> children;
         RetainPtr<NSArray<VKWKTextInfo *>> vkChildren = line.children;
         children.reserveInitialCapacity(vkChildren.get().count);
 
         String lineText = line.string;
         unsigned searchLocation = 0;
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL VKWKTextInfo *child in vkChildren.get()) {
+        for (VKWKTextInfo *child in vkChildren.get()) {
             if (searchLocation >= lineText.length()) {
                 ASSERT_NOT_REACHED();
                 continue;
@@ -129,8 +127,7 @@ TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysis *analysis)
     if ([analysis respondsToSelector:@selector(textDataDetectors)]) {
         auto dataDetectors = RetainPtr { analysis.textDataDetectors };
         result.dataDetectors.reserveInitialCapacity([dataDetectors count]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL VKWKDataDetectorInfo *info in dataDetectors.get())
+        for (VKWKDataDetectorInfo *info in dataDetectors.get())
             result.dataDetectors.append({ info.result, floatQuads(retainPtr(info.boundingQuads).get()) });
     }
 #endif // ENABLE(DATA_DETECTION)
@@ -154,8 +151,7 @@ bool languageIdentifierSupportsLiveText(NSString *languageIdentifier)
 
     static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> supportedLanguages = [] {
         MemoryCompactRobinHoodHashSet<String> set;
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *identifier in [PAL::getVKCImageAnalyzerClassSingleton() supportedRecognitionLanguages]) {
+        for (NSString *identifier in [PAL::getVKCImageAnalyzerClassSingleton() supportedRecognitionLanguages]) {
             if (auto code = languageCodeForLocale(identifier); !code.isEmpty())
                 set.add(WTF::move(code));
         }
@@ -171,8 +167,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
     RetainPtr<NSArray<VKCTranslatedParagraph *>> paragraphs = translation.paragraphs;
     result.blocks.reserveInitialCapacity(paragraphs.get().count);
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL VKCTranslatedParagraph *paragraph in paragraphs.get()) {
+    for (VKCTranslatedParagraph *paragraph in paragraphs.get()) {
         if (!paragraph.text.length) {
             RELEASE_LOG(Translation, "[#%{public}s] Skipping empty translation paragraph", transactionID.loggingString().utf8());
             continue;
@@ -230,8 +225,7 @@ void requestVisualTranslation(VKCImageAnalyzer *analyzer, NSURL *imageURL, const
             if (shouldLogFullImageTranslationResults()) {
                 StringBuilder stringToLog;
                 bool firstLine = true;
-                // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-                for (SUPPRESS_UNRETAINED_LOCAL VKWKLineInfo *info in allLines.get()) {
+                for (VKWKLineInfo *info in allLines.get()) {
                     if (!firstLine)
                         stringToLog.append("\\n"_s);
                     stringToLog.append(String { info.string });
@@ -252,8 +246,7 @@ void requestVisualTranslation(VKCImageAnalyzer *analyzer, NSURL *imageURL, const
                 if (shouldLogFullImageTranslationResults()) {
                     StringBuilder stringToLog;
                     bool firstLine = true;
-                    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-                    for (SUPPRESS_UNRETAINED_LOCAL VKCTranslatedParagraph *paragraph in translation.paragraphs) {
+                    for (VKCTranslatedParagraph *paragraph in translation.paragraphs) {
                         if (!firstLine)
                             stringToLog.append("\\n"_s);
                         stringToLog.append(String { paragraph.text });
@@ -398,8 +391,7 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
                 return;
             }
 
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL VNBarcodeObservation *result in request.results) {
+            for (VNBarcodeObservation *result in request.results) {
                 if (![result.symbology isEqualToString:PAL::get_Vision_VNBarcodeSymbologyQRSingleton()])
                     continue;
 
@@ -448,8 +440,7 @@ void recognizeText(CGImageRef image, std::optional<TextRecognitionLevel> level, 
             }
 
             RetainPtr resultBuffer = adoptNS([NSMutableString new]);
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL VNRecognizedTextObservation *observation in observations.get()) {
+            for (VNRecognizedTextObservation *observation in observations.get()) {
                 RetainPtr best = [[observation topCandidates:1] firstObject];
                 if (!best)
                     continue;

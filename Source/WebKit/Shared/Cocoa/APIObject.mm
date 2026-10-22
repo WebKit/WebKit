@@ -620,8 +620,7 @@ RefPtr<API::Object> Object::fromNSObject(id object)
         return API::Double::create([number doubleValue]);
     if (auto *array = dynamic_objc_cast<NSArray>(object)) {
         Vector<RefPtr<API::Object>> result(ReserveCapacityTag { }, array.count);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL id member in array) {
+        for (id member in array) {
             if (auto memberObject = fromNSObject(member))
                 result.append(WTF::move(memberObject));
         }

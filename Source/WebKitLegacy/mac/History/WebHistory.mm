@@ -360,8 +360,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     // Next, we rebuild the history, restore the states, and notify the clients.
     _entriesByURL = entriesByURL;
     for (size_t dayIndex = 0; dayIndex < entryArrays.size(); ++dayIndex) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL WebHistoryItem *entry in (entryArrays[dayIndex]).get())
+        for (WebHistoryItem *entry in (entryArrays[dayIndex]).get())
             [self addItemToDateCaches:entry];
     }
     [webHistory _sendNotification:WebHistoryItemsAddedNotification entries:allEntries];
@@ -570,8 +569,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     BOOL itemLimitPassed = NO;
     ASSERT(*numberOfItemsLoaded == 0);
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *itemAsDictionary in array) {
+    for (NSDictionary *itemAsDictionary in array) {
         @autoreleasepool {
             auto item = adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:itemAsDictionary]);
 
@@ -647,8 +645,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)addVisitedLinksToVisitedLinkStore:(WebVisitedLinkStore&)visitedLinkStore
 {
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *urlString in _entriesByURL.get())
+    for (NSString *urlString in _entriesByURL.get())
         visitedLinkStore.addVisitedLink(urlString);
 }
 

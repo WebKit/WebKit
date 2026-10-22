@@ -210,8 +210,7 @@ HashSet<String> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID)
 {
     HashSet<String> hostNames;
     if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *host in protect(networkSession->hstsStorage()).get().nonPreloadedHosts)
+        for (NSString *host in protect(networkSession->hstsStorage()).get().nonPreloadedHosts)
             hostNames.add(host);
     }
     return hostNames;

@@ -1097,8 +1097,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (void)_setMaskedURLSchemes:(NSSet<NSString *> *)schemes
 {
     HashSet<String> set;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *scheme in schemes)
+    for (NSString *scheme in schemes)
         set.add(scheme);
     protect(*_pageConfiguration)->setMaskedURLSchemes(WTF::move(set));
 }
@@ -1118,8 +1117,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     if (!hosts)
         return protect(*_pageConfiguration)->setAllowedNetworkHosts(std::nullopt);
     MemoryCompactLookupOnlyRobinHoodHashSet<String> set;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *host in hosts)
+    for (NSString *host in hosts)
         set.add(host);
     protect(*_pageConfiguration)->setAllowedNetworkHosts(WTF::move(set));
 }

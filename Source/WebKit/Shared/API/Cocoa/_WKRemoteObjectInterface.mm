@@ -273,8 +273,7 @@ static HashSet<CFTypeRef>& classesForSelectorArgument(_WKRemoteObjectInterface *
 - (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex ofReply:(BOOL)ofReply
 {
     HashSet<CFTypeRef> allowedClasses;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL Class allowedClass in classes)
+    for (Class allowedClass in classes)
         allowedClasses.add((__bridge CFTypeRef)allowedClass);
 
     classesForSelectorArgument(self, selector, argumentIndex, ofReply) = WTF::move(allowedClasses);

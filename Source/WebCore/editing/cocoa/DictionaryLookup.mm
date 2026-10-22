@@ -110,8 +110,7 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
 {
     UNUSED_PARAM(item);
     
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSValue *rectVal in context.itemRectsInView) {
+    for (NSValue *rectVal in context.itemRectsInView) {
         NSRect rect = rectVal.rectValue;
 
         // Get current font attributes from the attributed string above, and add paragraph style attribute in order to center text.

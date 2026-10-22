@@ -992,8 +992,7 @@ void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::Gram
         *badGrammarLocation = (range.location == NSNotFound) ? -1 : static_cast<int>(range.location);
     if (badGrammarLength)
         *badGrammarLength = range.length;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *detail in grammarDetails) {
+    for (NSDictionary *detail in grammarDetails) {
         ASSERT(detail);
         WebCore::GrammarDetail grammarDetail;
         NSValue *detailRangeAsNSValue = [detail objectForKey:NSGrammarRange];
@@ -1003,8 +1002,7 @@ void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::Gram
         grammarDetail.range = detailRangeAsNSValue.rangeValue;
         grammarDetail.userDescription = dynamic_objc_cast<NSString>([detail objectForKey:NSGrammarUserDescription]);
         NSArray *guesses = [detail objectForKey:NSGrammarCorrections];
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *guess in guesses)
+        for (NSString *guess in guesses)
             grammarDetail.guesses.append(String(guess));
         details.append(grammarDetail);
     }
@@ -1014,8 +1012,7 @@ static Vector<WebCore::TextCheckingResult> core(NSArray *incomingResults, Option
 {
     Vector<WebCore::TextCheckingResult> results;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSTextCheckingResult *incomingResult in incomingResults) {
+    for (NSTextCheckingResult *incomingResult in incomingResults) {
         NSTextCheckingType resultType = [incomingResult resultType];
         ASSERT(incomingResult.range.location != NSNotFound);
         ASSERT(incomingResult.range.length > 0);
@@ -1030,8 +1027,7 @@ static Vector<WebCore::TextCheckingResult> core(NSArray *incomingResults, Option
             NSArray *details = [incomingResult grammarDetails];
             result.type = WebCore::TextCheckingType::Grammar;
             result.range = resultRange;
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *incomingDetail in details) {
+            for (NSDictionary *incomingDetail in details) {
                 ASSERT(incomingDetail);
                 WebCore::GrammarDetail detail;
                 NSValue *detailRangeAsNSValue = [incomingDetail objectForKey:NSGrammarRange];
@@ -1042,8 +1038,7 @@ static Vector<WebCore::TextCheckingResult> core(NSArray *incomingResults, Option
                 detail.range = detailNSRange;
                 detail.userDescription = dynamic_objc_cast<NSString>([incomingDetail objectForKey:NSGrammarUserDescription]);
                 NSArray *guesses = [incomingDetail objectForKey:NSGrammarCorrections];
-                // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-                for (SUPPRESS_UNRETAINED_LOCAL NSString *guess in guesses)
+                for (NSString *guess in guesses)
                     detail.guesses.append(String(guess));
                 detail.uuid = dynamic_objc_cast<NSString>([incomingDetail objectForKey:@"NSGrammarUUID"]);
                 result.details.append(detail);

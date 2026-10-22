@@ -110,8 +110,7 @@ NSArray *RemoteLayerTreeScrollingPerformanceData::data()
 
 static CALayer *findTileGridContainerLayer(CALayer *layer)
 {
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL CALayer *currLayer : [layer sublayers]) {
+    for (CALayer *currLayer : [layer sublayers]) {
         String layerName = [currLayer name];
         if (layerName == TileController::tileGridContainerLayerName())
             return currLayer;
@@ -148,8 +147,7 @@ unsigned RemoteLayerTreeScrollingPerformanceData::blankPixelCount(const FloatRec
 
     Region paintedVisibleTileRegion;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL CALayer *tileLayer : [tileGridContainer sublayers]) {
+    for (CALayer *tileLayer : [tileGridContainer sublayers]) {
         if (!tileLayer.contents)
             continue;
         FloatRect tileRect = [tileLayer convertRect:[tileLayer bounds] toLayer:tileGridContainer.get()];

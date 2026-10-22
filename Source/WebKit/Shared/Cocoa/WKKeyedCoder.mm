@@ -99,8 +99,7 @@
     RetainPtr<id> object = [m_dictionary objectForKey:key];
     if (!object)
         return nil;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id aClass in classes) {
+    for (id aClass in classes) {
         if ([object isKindOfClass:aClass])
             return object.autorelease();
     }

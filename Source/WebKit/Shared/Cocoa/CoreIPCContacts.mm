@@ -119,32 +119,27 @@ CoreIPCCNContact::CoreIPCCNContact(CNContact *contact)
         m_nonGregorianBirthday = contact.nonGregorianBirthday;
 
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactDatesKeySingleton()] && contact.dates) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL CNLabeledValue *labeledValue in contact.dates)
+        for (CNLabeledValue *labeledValue in contact.dates)
             m_dates.append({ labeledValue.identifier, labeledValue.label, CoreIPCDateComponents(labeledValue.value) });
     }
 
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneNumbersKeySingleton()] && contact.phoneNumbers) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL CNLabeledValue *labeledValue in contact.phoneNumbers)
+        for (CNLabeledValue *labeledValue in contact.phoneNumbers)
             m_phoneNumbers.append({ labeledValue.identifier, labeledValue.label, CoreIPCCNPhoneNumber(labeledValue.value) });
     }
 
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactEmailAddressesKeySingleton()] && contact.emailAddresses) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL CNLabeledValue *labeledValue in contact.emailAddresses)
+        for (CNLabeledValue *labeledValue in contact.emailAddresses)
             m_emailAddresses.append({ labeledValue.identifier, labeledValue.label, (NSString *)labeledValue.value });
     }
 
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPostalAddressesKeySingleton()] && contact.postalAddresses) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL CNLabeledValue *labeledValue in contact.postalAddresses)
+        for (CNLabeledValue *labeledValue in contact.postalAddresses)
             m_postalAddresses.append({ labeledValue.identifier, labeledValue.label, CoreIPCCNPostalAddress(labeledValue.value) });
     }
 
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactUrlAddressesKeySingleton()] && contact.urlAddresses) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL CNLabeledValue *labeledValue in contact.urlAddresses)
+        for (CNLabeledValue *labeledValue in contact.urlAddresses)
             m_urlAddresses.append({ labeledValue.identifier, labeledValue.label, (NSString *)labeledValue.value });
     }
 }

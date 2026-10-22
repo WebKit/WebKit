@@ -152,8 +152,7 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
             supportedTypes.append(UTTypeContent.identifier);
             supportedTypes.append(UTTypeItem.identifier);
         } else {
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString *type in Pasteboard::supportedWebContentPasteboardTypes())
+            for (NSString *type in Pasteboard::supportedWebContentPasteboardTypes())
                 supportedTypes.append(type);
         }
         break;
@@ -161,8 +160,7 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
         supportedTypes.append(UIColorPboardType);
         break;
     default:
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *type in Pasteboard::supportedFileUploadPasteboardTypes())
+        for (NSString *type in Pasteboard::supportedFileUploadPasteboardTypes())
             supportedTypes.append(type);
         break;
     }

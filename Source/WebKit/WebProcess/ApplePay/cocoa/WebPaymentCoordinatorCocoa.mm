@@ -40,8 +40,7 @@ WebPaymentCoordinator::AvailablePaymentNetworksSet WebPaymentCoordinator::platfo
 #endif
 
     WebPaymentCoordinator::AvailablePaymentNetworksSet availableNetworks;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL PKPaymentNetwork network in [PAL::getPKPaymentRequestClassSingleton() availableNetworks])
+    for (PKPaymentNetwork network in [PAL::getPKPaymentRequestClassSingleton() availableNetworks])
         availableNetworks.add(network);
     return availableNetworks;
 }

@@ -411,8 +411,7 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
 #if PLATFORM(IOS_FAMILY)
                 NSString *faceName = [fontName substringFromIndex:(dividingRange.location + dividingRange.length)];
                 NSArray *familyMemberFaceNames = [PlatformFontClass fontNamesForFamilyName:familyName];
-                // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-                for (SUPPRESS_UNRETAINED_LOCAL NSString *familyMemberFaceName in familyMemberFaceNames) {
+                for (NSString *familyMemberFaceName in familyMemberFaceNames) {
                     if ([familyMemberFaceName compare:faceName options:NSCaseInsensitiveSearch] == NSOrderedSame) {
                         font = [PlatformFontClass fontWithName:familyMemberFaceName size:size];
                         break;

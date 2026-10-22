@@ -342,8 +342,7 @@ static RetainPtr<NSArray>& LEGACY_NODELETE additionalWebPlugInPaths()
 
     NSView <WebDocumentView> *documentView = [[webFrame frameView] documentView]; 
     if ([documentView isKindOfClass:[WebHTMLView class]]) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSView *subview in [documentView subviews]) {
+        for (NSView *subview in [documentView subviews]) {
             if ([WebPluginController isPlugInView:subview])
                 [instanceViews removeObject:subview];
         }

@@ -40,8 +40,7 @@ CoreIPCStringSet::CoreIPCStringSet(NSSet *stringSet)
 {
     if (![stringSet isKindOfClass:[NSSet class]])
         return;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id value in stringSet) {
+    for (id value in stringSet) {
         if (![value isKindOfClass:[NSString class]])
             continue;
         m_stringSet.append(value);

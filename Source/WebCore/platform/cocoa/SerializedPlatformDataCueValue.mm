@@ -42,8 +42,7 @@ SerializedPlatformDataCueValue::SerializedPlatformDataCueValue(AVMetadataItem *i
     auto dictionary = adoptNS([[NSMutableDictionary alloc] init]);
     NSDictionary *extras = [item extraAttributes];
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id key in [extras keyEnumerator]) {
+    for (id key in [extras keyEnumerator]) {
         RetainPtr keyString = dynamic_objc_cast<NSString>(key);
         if (!keyString)
             continue;

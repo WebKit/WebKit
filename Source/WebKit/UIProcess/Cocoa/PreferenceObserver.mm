@@ -55,8 +55,7 @@
     if (!strongObserver)
         return;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *key in oldValues) {
+    for (NSString *key in oldValues) {
         RetainPtr<id> oldValue = oldValues[key];
         RetainPtr<id> newValue = newValues[key];
 
