@@ -143,12 +143,12 @@ constexpr void assertInRange(ColorType color)
 {
     auto components = asColorComponents(color.unresolved());
     for (unsigned i = 0; i < 3; ++i) {
-        if (isNaNConstExpr(components[i]))
+        if (std::isnan(components[i]))
             continue;
         ASSERT_WITH_MESSAGE(components[i] >= ColorType::Model::componentInfo[i].min, "Component at index %d is %f and is less than the allowed minimum %f", i, components[i], ColorType::Model::componentInfo[i].min);
         ASSERT_WITH_MESSAGE(components[i] <= ColorType::Model::componentInfo[i].max, "Component at index %d is %f and is greater than the allowed maximum %f", i, components[i], ColorType::Model::componentInfo[i].max);
     }
-    if (!isNaNConstExpr(components[3])) {
+    if (!std::isnan(components[3])) {
         ASSERT_WITH_MESSAGE(components[3] >= AlphaTraits<typename ColorType::ComponentType>::transparent, "Alpha is %f and is less than the allowed minimum (transparent) %f", components[3], AlphaTraits<typename ColorType::ComponentType>::transparent);
         ASSERT_WITH_MESSAGE(components[3] <= AlphaTraits<typename ColorType::ComponentType>::opaque, "Alpha is %f and is greater than the allowed maximum (opaque) %f", components[3], AlphaTraits<typename ColorType::ComponentType>::opaque);
     }
