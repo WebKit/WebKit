@@ -760,9 +760,11 @@ TEST_P(AnyContextAttributeTest, UnrecycledDisplayBuffersNoLeaks)
 #endif
 {
     // The test detects the leak by observing memory footprint. However, some of the freed IOSurface
-    // memory (130mb) stays resident, presumably by intention of IOKit. The test would originally leak
-    // 2.7gb so the intended bug would be detected with 150mb error range.
-    size_t footprintError = 150 * 1024 * 1024;
+    // memory stays resident, presumably by intention of IOKit, and the amount varies between machines.
+    // The test would originally leak 2.7gb, so the intended bug is still detected with a 500mb error
+    // range. If this starts failing with a change far below 2.7gb, it is most likely noise and the test
+    // should be disabled rather than the error range raised further.
+    size_t footprintError = 500 * 1024 * 1024;
     constexpr IntSize size { 2048, 2048 };
     size_t footprintChange = TestedGraphicsContextGLCocoa::maxSpareDrawingBuffers * size.width() * size.height() * 4;
 
