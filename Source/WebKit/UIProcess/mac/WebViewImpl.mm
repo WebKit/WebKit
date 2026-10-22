@@ -213,10 +213,6 @@
 #import <pal/cocoa/WritingToolsUISoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
-#if ENABLE(WRITING_TOOLS) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebViewImplWritingToolsAdditions.mm>)
-#import <WebKitAdditions/WebViewImplWritingToolsAdditions.mm>
-#endif
-
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
 SOFT_LINK_CLASS(AVKit, AVTouchBarPlaybackControlsProvider)
@@ -7838,8 +7834,8 @@ bool WebViewImpl::canHandleContextMenuWritingTools() const
     if (!PAL::isWritingToolsUIFrameworkAvailable() || ![PAL::getWTWritingToolsViewControllerClassSingleton() isAvailable] || m_page->writingToolsBehavior() == WebCore::WritingTools::Behavior::None)
         return false;
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebViewImplWritingToolsAdditions.mm>)
-    if (!shouldShowWritingToolsInContextMenu())
+#if HAVE(APPKIT_SIRI_AFFORDANCE)
+    if ([PAL::getWTWritingToolsViewControllerClassSingleton() isEnhancedSiriAvailable])
         return false;
 #endif
 
