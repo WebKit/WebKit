@@ -43,7 +43,6 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FrameDestructionObserverInlines.h"
-#include "FrameInlines.h"
 #include "FrameSnapshotting.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
@@ -867,24 +866,16 @@ static bool LEGACY_NODELETE shouldIgnoreExistingVisibilityAdjustments(const Targ
     return std::holds_alternative<String>(request.data) || std::holds_alternative<TargetedElementSelectors>(request.data);
 }
 
-static Vector<ClearVisibilityAdjustmentForScope> clearVisibilityAdjustmentsIfNeeded(const TargetedElementRequest& request, WeakHashSet<Element, WeakPtrImplWithEventTargetData>& adjustedElements, Document* mainDocument)
-{
-    Vector<ClearVisibilityAdjustmentForScope> clearVisibilityAdjustmentScopes;
-    if (!shouldIgnoreExistingVisibilityAdjustments(request))
-        return clearVisibilityAdjustmentScopes;
-
-    for (Ref element : adjustedElements)
-        clearVisibilityAdjustmentScopes.append({ element });
-
-    if (mainDocument && !clearVisibilityAdjustmentScopes.isEmpty())
-        mainDocument->updateLayoutIgnorePendingStylesheets();
-
-    return clearVisibilityAdjustmentScopes;
-}
-
 Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElementRequest&& request)
 {
-    auto clearVisibilityAdjustmentScopes = clearVisibilityAdjustmentsIfNeeded(request, m_adjustedElements, mainDocument().get());
+    Vector<ClearVisibilityAdjustmentForScope> clearVisibilityAdjustmentScopes;
+    if (shouldIgnoreExistingVisibilityAdjustments(request) && m_adjustedElements.computeSize()) {
+        for (Ref element : m_adjustedElements)
+            clearVisibilityAdjustmentScopes.append({ element });
+
+        if (RefPtr document = mainDocument())
+            document->updateLayoutIgnorePendingStylesheets();
+    }
 
     auto checkViewportAreaRatio = CheckViewportAreaRatio::Yes;
     auto [nodes, innerElement] = switchOn(request.data, [this](const String& searchText) {
@@ -1045,7 +1036,7 @@ std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNo
     return { copyToVector(result.listBasedTestResult()), result.innerNonSharedElement() };
 }
 
-static RefPtr<Element> searchForElementContainingTextInContainer(ContainerNode& container, const String& searchText)
+static RefPtr<Element> searchForElementContainingText(ContainerNode& container, const String& searchText)
 {
     auto remainingRange = makeRangeSelectingNodeContents(container);
     while (is_lt(treeOrder(remainingRange.start, remainingRange.end))) {
@@ -1072,14 +1063,6 @@ static RefPtr<Element> searchForElementContainingTextInContainer(ContainerNode& 
         return ancestorsOfType<Element>(*target).first();
     }
 
-    return nullptr;
-}
-
-static RefPtr<Element> searchForElementContainingText(ContainerNode& container, const String& searchText)
-{
-    if (RefPtr target = searchForElementContainingTextInContainer(container, searchText))
-        return target;
-
     auto documentElements = collectDocumentElementsFromChildFrames(container);
     for (auto& documentElement : documentElements) {
         if (RefPtr target = searchForElementContainingText(documentElement, searchText))
@@ -1087,14 +1070,6 @@ static RefPtr<Element> searchForElementContainingText(ContainerNode& container, 
     }
 
     return nullptr;
-}
-
-static Vector<Ref<Node>> elementLineage(Element& element)
-{
-    Vector<Ref<Node>> lineage;
-    for (Ref ancestor : lineageOfType<Element>(element))
-        lineage.append(ancestor);
-    return lineage;
 }
 
 std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(const String& searchText)
@@ -1119,64 +1094,11 @@ std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNo
         return { };
     }
 
-    auto nodes = elementLineage(*foundElement);
-    return { WTF::move(nodes), WTF::move(foundElement) };
-}
-
-TargetedTextSearchResult ElementTargetingController::searchTextInLocalFrames(TargetedElementRequest&& request)
-{
-    RefPtr page = m_page;
-    if (!page)
-        return { };
-
-    auto clearVisibilityAdjustmentScopes = clearVisibilityAdjustmentsIfNeeded(request, m_adjustedElements, mainDocument().get());
-    auto includeNearbyElements = request.canIncludeNearbyElements ? IncludeNearbyElements::Yes : IncludeNearbyElements::No;
-    auto& searchText = std::get<String>(request.data);
-
-    TargetedTextSearchResult result;
-    for (RefPtr frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
-        if (!localFrame)
-            continue;
-
-        RefPtr document = localFrame->document();
-        if (!document)
-            continue;
-
-        Vector<TargetedTextSearchItem> items;
-        if (RefPtr foundElement = searchForElementContainingTextInContainer(*document, searchText)) {
-            TargetedTextMatch match;
-            if (localFrame->isMainFrame()) {
-                auto nodes = elementLineage(*foundElement);
-                match.targets = extractTargets(WTF::move(nodes), WTF::move(foundElement), CheckViewportAreaRatio::Yes, includeNearbyElements);
-            }
-            items.append(WTF::move(match));
-        }
-
-        for (Ref owner : descendantsOfType<HTMLFrameOwnerElement>(*document)) {
-            if (RefPtr contentFrame = owner->contentFrame())
-                items.append(contentFrame->frameID());
-        }
-
-        if (!items.isEmpty())
-            result.itemsByFrame.add(localFrame->frameID(), WTF::move(items));
-    }
-
-    // Like findNodes(const String&), a match in a subframe targets the main document's element that contains the subframe.
-    if (RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame())) {
-        for (RefPtr subframe = mainFrame->tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
-            RefPtr<Element> ownerElement = subframe->ownerElement();
-            if (!ownerElement)
-                continue;
-
-            auto nodes = elementLineage(*ownerElement);
-            auto targets = extractTargets(WTF::move(nodes), WTF::move(ownerElement), CheckViewportAreaRatio::Yes, includeNearbyElements);
-            if (!targets.isEmpty())
-                result.targetsBySubframe.add(subframe->frameID(), WTF::move(targets));
-        }
-    }
-
-    return result;
+    Vector<Ref<Node>> potentialCandidates;
+    potentialCandidates.append(*foundElement);
+    for (Ref ancestor : ancestorsOfType<Element>(*foundElement))
+        potentialCandidates.append(ancestor);
+    return { WTF::move(potentialCandidates), WTF::move(foundElement) };
 }
 
 std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(const TargetedElementSelectors& selectors)
