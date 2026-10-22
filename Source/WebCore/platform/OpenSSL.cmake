@@ -6,6 +6,7 @@ list(APPEND WebCore_SOURCES
     crypto/openssl/CryptoAlgorithmAESKWOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmECDHOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmECDSAOpenSSL.cpp
+    crypto/openssl/CryptoAlgorithmEd25519OpenSSL.cpp
     crypto/openssl/CryptoAlgorithmHKDFOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmHMACOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmPBKDF2OpenSSL.cpp
@@ -13,7 +14,9 @@ list(APPEND WebCore_SOURCES
     crypto/openssl/CryptoAlgorithmRSA_OAEPOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmRSA_PSSOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmRegistryOpenSSL.cpp
+    crypto/openssl/CryptoAlgorithmX25519OpenSSL.cpp
     crypto/openssl/CryptoKeyECOpenSSL.cpp
+    crypto/openssl/CryptoKeyOKPOpenSSL.cpp
     crypto/openssl/CryptoKeyRSAOpenSSL.cpp
     crypto/openssl/OpenSSLUtilities.cpp
     crypto/openssl/SerializedCryptoKeyWrapOpenSSL.cpp

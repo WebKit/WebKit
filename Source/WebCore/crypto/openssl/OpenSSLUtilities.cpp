@@ -131,4 +131,31 @@ AESKey::~AESKey()
     secureZeroBytes(m_key);
 }
 
+#if HAVE(OPENSSL_OKP)
+
+int okpPKeyType(CryptoKeyOKP::NamedCurve curve)
+{
+    switch (curve) {
+    case CryptoKeyOKP::NamedCurve::X25519:
+        return EVP_PKEY_X25519;
+    case CryptoKeyOKP::NamedCurve::Ed25519:
+        return EVP_PKEY_ED25519;
+    }
+
+    ASSERT_NOT_REACHED();
+    return EVP_PKEY_NONE;
+}
+
+EvpPKeyPtr createOKPPrivateKey(CryptoKeyOKP::NamedCurve curve, std::span<const uint8_t> privateKey)
+{
+    return EvpPKeyPtr(EVP_PKEY_new_raw_private_key(okpPKeyType(curve), nullptr, privateKey.data(), privateKey.size()));
+}
+
+EvpPKeyPtr createOKPPublicKey(CryptoKeyOKP::NamedCurve curve, std::span<const uint8_t> publicKey)
+{
+    return EvpPKeyPtr(EVP_PKEY_new_raw_public_key(okpPKeyType(curve), nullptr, publicKey.data(), publicKey.size()));
+}
+
+#endif // HAVE(OPENSSL_OKP)
+
 } // namespace WebCore

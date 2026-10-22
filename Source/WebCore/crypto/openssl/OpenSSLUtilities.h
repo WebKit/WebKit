@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CryptoAlgorithmIdentifier.h"
+#include "CryptoKeyOKP.h"
 #include "OpenSSLCryptoUniquePtr.h"
 #include <openssl/aes.h>
 #include <openssl/evp.h>
@@ -44,6 +45,12 @@ Vector<uint8_t> convertToBytes(const BIGNUM*);
 Vector<uint8_t> convertToBytesExpand(const BIGNUM*, size_t bufferSize);
 
 BIGNUMPtr convertToBigNumber(const Vector<uint8_t>& bytes);
+
+#if HAVE(OPENSSL_OKP)
+int okpPKeyType(CryptoKeyOKP::NamedCurve);
+EvpPKeyPtr createOKPPrivateKey(CryptoKeyOKP::NamedCurve, std::span<const uint8_t>);
+EvpPKeyPtr createOKPPublicKey(CryptoKeyOKP::NamedCurve, std::span<const uint8_t>);
+#endif
 
 class AESKey {
     WTF_MAKE_NONCOPYABLE(AESKey);

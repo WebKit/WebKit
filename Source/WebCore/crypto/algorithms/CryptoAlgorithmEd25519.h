@@ -36,6 +36,8 @@ public:
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::Ed25519;
     static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
+    static bool isSmallOrderPoint(std::span<const uint8_t>);
+
 private:
     CryptoAlgorithmEd25519() = default;
     CryptoAlgorithmIdentifier identifier() const final;

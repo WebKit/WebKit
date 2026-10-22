@@ -44,6 +44,11 @@
 #include "CryptoAlgorithmSHA384.h"
 #include "CryptoAlgorithmSHA512.h"
 
+#if HAVE(OPENSSL_OKP)
+#include "CryptoAlgorithmEd25519.h"
+#include "CryptoAlgorithmX25519.h"
+#endif
+
 namespace WebCore {
 
 void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
@@ -65,6 +70,10 @@ void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
     registerAlgorithm<CryptoAlgorithmSHA256>();
     registerAlgorithm<CryptoAlgorithmSHA384>();
     registerAlgorithm<CryptoAlgorithmSHA512>();
+#if HAVE(OPENSSL_OKP)
+    registerAlgorithm<CryptoAlgorithmEd25519>();
+    registerAlgorithm<CryptoAlgorithmX25519>();
+#endif
 }
 
 } // namespace WebCore

@@ -157,6 +157,10 @@
 #define HAVE_RSA_PSS 1
 #endif
 
+#if USE(OPENSSL) && !PLATFORM(PLAYSTATION)
+#define HAVE_OPENSSL_OKP 1
+#endif
+
 /* FIXME: Remove dependence on ENABLE(WEB_RTC). */
 #if PLATFORM(COCOA) && ENABLE(WEB_RTC)
 #define USE_LIBWEBRTC 1
