@@ -3,7 +3,7 @@ Probe: does Storage.getCookies surface a CHIPS partitioned cookie (set via the P
 
 == Running test suite: Storage.getCookies.Partitioned
 -- Running test case: Storage.getCookies.Partitioned.Probe
-PASS: Storage.getCookies should surface the partitioned cookie from the flat store.
+PASS: Storage.getCookies should surface the partitioned cookie from the top-level site's partition.
 PASS: Partitioned cookie value should be 'PASS'.
 PASS: Partitioned cookie should carry a non-empty partitionKey.
 Observed partitionKey is a non-empty string: true

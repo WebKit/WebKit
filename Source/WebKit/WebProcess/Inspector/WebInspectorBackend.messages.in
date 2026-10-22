@@ -70,6 +70,10 @@ messages -> WebInspectorBackend {
     # Page.getResourceTree cross-process under Site Isolation. The proxy walks the frame tree and
     # asks each process only for the frames it hosts. See webkit.org/b/308896.
     GetFrameResourceData(Vector<WebCore::FrameIdentifier> frameIDs) -> (Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>> resourcesByFrame) Async
+    # Returns the cookies each requested frame local to this process would send to its document's URL and its cached
+    # same-site subresources' URLs (the Page.getCookies lookup), for the UIProcess InspectorStorageAgent to serve Storage.getCookies
+    # and Storage.deleteCookies cross-process under Site Isolation.
+    GetFrameCookies(Vector<WebCore::FrameIdentifier> frameIDs) -> (Vector<WebCore::Cookie> cookies) Async
 
     # Returns the content of a resource (the frame's committed main document, or a cached
     # subresource identified by url) for a frame local to this WebContent process, for the

@@ -410,38 +410,13 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>> buildArrayForCookie
     return cookies;
 }
 
-static Vector<URL> allResourcesURLsForFrame(LocalFrame* frame)
-{
-    Vector<URL> result;
-
-    result.append(protect(frame->loader().documentLoader())->url());
-
-    for (RefPtr cachedResource : ResourceUtilities::cachedResourcesForFrame(frame))
-        result.append(cachedResource->url());
-
-    return result;
-}
-
 Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>>> InspectorPageAgent::getCookies()
 {
     ListHashSet<Cookie> allRawCookies;
 
     for (RefPtr frame = &m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
-            continue;
-        RefPtr document = localFrame->document();
-        if (!document || !document->page())
-            continue;
-
-        for (auto& url : allResourcesURLsForFrame(localFrame)) {
-            Vector<Cookie> rawCookiesForURLInDocument;
-            if (!protect(document->page()->cookieJar())->getRawCookies(*document, url, rawCookiesForURLInDocument))
-                continue;
-
-            for (auto& rawCookieForURLInDocument : rawCookiesForURLInDocument)
-                allRawCookies.add(rawCookieForURLInDocument);
-        }
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
+            ResourceUtilities::collectRawCookiesForFrame(*localFrame, allRawCookies);
     }
 
     return buildArrayForCookies(allRawCookies);

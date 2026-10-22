@@ -39,6 +39,10 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+struct Cookie;
+}
+
 namespace Inspector {
 struct FrameResourceData;
 struct SearchMatch;
@@ -115,6 +119,7 @@ public:
     void suspendForDebugger(WebCore::DebuggerPauseSessionIdentifier);
     void resumeFromDebugger(WebCore::DebuggerPauseSessionIdentifier);
     void getFrameResourceData(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>>&&)>&&);
+    void getFrameCookies(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void getFrameResourceContent(WebCore::FrameIdentifier, String url, CompletionHandler<void(String content, bool base64Encoded, String errorString)>&&);
 
     void searchInRequest(WebCore::ResourceLoaderIdentifier, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&&);

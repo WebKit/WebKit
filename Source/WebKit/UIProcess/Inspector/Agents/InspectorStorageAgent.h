@@ -28,12 +28,17 @@
 #include "WebPageInspectorAgentBase.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace API {
 class HTTPCookieStore;
+}
+
+namespace WebCore {
+struct Cookie;
 }
 
 namespace WebKit {
@@ -64,6 +69,7 @@ public:
 private:
     Inspector::Protocol::ErrorStringOr<Ref<API::HTTPCookieStore>> cookieStoreForPartition(const RefPtr<JSON::Object>& partition);
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Storage::PartitionKey>> makePartitionKey(const RefPtr<JSON::Object>& partition);
+    void fetchCookiesAccessibleToInspectedPage(CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
     const Ref<Inspector::StorageBackendDispatcher> m_backendDispatcher;
     WeakRef<WebPageProxy> m_inspectedPage;
