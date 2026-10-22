@@ -1,0 +1,17 @@
+This test ensures that when an accessibility press on iOS dispatches a simulated touch, and so touch pointer events, the simulated click that follows dispatches the compatibility mouse events and a click like a tap does, but not a second set of pointer events. Pages that act on pointerdown would otherwise act twice on one press.
+
+PASS: eventCount('touchstart') === 1
+PASS: eventCount('touchend') === 1
+PASS: eventCount('pointerdown') === 1
+PASS: pointerDown.pointerType === 'touch'
+PASS: eventCount('pointerup') === 1
+PASS: pointerUp.pointerType === 'touch'
+PASS: eventCount('mousedown') === 1
+PASS: eventCount('mouseup') === 1
+PASS: eventCount('click') === 1
+PASS: click.detail === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

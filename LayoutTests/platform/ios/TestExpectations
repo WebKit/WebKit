@@ -6048,6 +6048,8 @@ fast/block/positioning/vertical-rl/fixed-positioning.html [ Failure ]
 fast/forms/indeterminate-progress-inline-height.html [ Failure ]
 fast/forms/input-appearance-spinbutton.html [ Failure ]
 accessibility/ios-simulator/press-fires-touch-events.html [ Skip ]
+# Requires ENABLE(IOS_TOUCH_EVENTS), so that accessibility presses dispatch simulated touches.
+accessibility/ios-simulator/press-with-simulated-touch-dispatches-one-set-of-pointer-events.html [ Skip ]
 # Requires ENABLE(ACCESSIBILITY_LOCAL_FRAME) for FrameGeometry support.
 accessibility/ios-simulator/frame-geometry-update-after-uiscroll.html [ Skip ]
 

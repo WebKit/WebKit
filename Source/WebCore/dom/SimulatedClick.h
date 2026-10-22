@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SimulatedClickOptions.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
@@ -38,5 +39,17 @@ enum class SimulatedClickSource {
 };
 
 bool simulateClick(Element&, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions, SimulatedClickSource);
+
+// While in scope, simulated clicks that act like a click of the primary mouse button don't dispatch pointerdown and
+// pointerup. This is for activations that already dispatched the pointer events of a simulated touch, so that, like a
+// tap, they are followed by the compatibility mouse events and a click, but no second set of pointer events.
+class SimulatedClickWithoutPointerEventsScope {
+    WTF_MAKE_NONCOPYABLE(SimulatedClickWithoutPointerEventsScope);
+public:
+    SimulatedClickWithoutPointerEventsScope();
+    ~SimulatedClickWithoutPointerEventsScope();
+
+    static bool isActive();
+};
 
 } // namespace WebCore

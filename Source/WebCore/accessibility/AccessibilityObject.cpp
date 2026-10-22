@@ -118,6 +118,7 @@
 #include "SVGNames.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
+#include "SimulatedClick.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
 #include "TextControlInnerElements.h"
@@ -1645,9 +1646,14 @@ bool AccessibilityObject::press()
     UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document.get());
 
     bool dispatchedEvent = false;
+    bool dispatchedSimulatedTouch = false;
 #if PLATFORM(IOS_FAMILY)
-    if (hasTouchEventListener())
+    if (hasTouchEventListener()) {
+#if ENABLE(IOS_TOUCH_EVENTS)
+        dispatchedSimulatedTouch = !!localMainFrame();
+#endif
         dispatchedEvent = dispatchTouchEvent();
+    }
 #endif
 
     if (dispatchedEvent)
@@ -1659,6 +1665,12 @@ bool AccessibilityObject::press()
             return true;
         }
     }
+
+    // The simulated touch already dispatched pointerdown and pointerup, so like a tap, follow it with the
+    // compatibility mouse events and a click, but not a second set of pointer events.
+    std::optional<SimulatedClickWithoutPointerEventsScope> withoutPointerEventsScope;
+    if (dispatchedSimulatedTouch)
+        withoutPointerEventsScope.emplace();
 
     return pressElement->accessKeyAction(true) || pressElement->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents);
 }

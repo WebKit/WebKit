@@ -204,19 +204,22 @@ bool simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouse
     // click of the primary mouse button, so dispatch the same events as one, like other browsers do. Pages commonly rely on
     // these, e.g. by acting on pointerdown rather than click, or by treating a click with a detail of 0 as keyboard activation.
     auto device = mouseEventOptions == SendMouseUpDownEvents ? SimulatedPointingDevice::Mouse : SimulatedPointingDevice::None;
+    bool sendPointerEvents = device == SimulatedPointingDevice::Mouse && !SimulatedClickWithoutPointerEventsScope::isActive();
 
     auto& eventNames = WebCore::eventNames();
     // Canceling pointerdown prevents the compatibility mouse events, but not click.
     bool pointerDownWasCanceled = false;
     if (device == SimulatedPointingDevice::Mouse) {
-        pointerDownWasCanceled = simulatePointerEvent(eventNames.pointerdownEvent, element, underlyingEvent, creationOptions, device);
+        if (sendPointerEvents)
+            pointerDownWasCanceled = simulatePointerEvent(eventNames.pointerdownEvent, element, underlyingEvent, creationOptions, device);
         if (!pointerDownWasCanceled)
             simulateMouseEvent(eventNames.mousedownEvent, element, underlyingEvent, creationOptions, device);
     }
     if (device == SimulatedPointingDevice::Mouse || visualOptions == ShowPressedLook)
         element.setActive(true);
     if (device == SimulatedPointingDevice::Mouse) {
-        simulatePointerEvent(eventNames.pointerupEvent, element, underlyingEvent, creationOptions, device);
+        if (sendPointerEvents)
+            simulatePointerEvent(eventNames.pointerupEvent, element, underlyingEvent, creationOptions, device);
         if (!pointerDownWasCanceled)
             simulateMouseEvent(eventNames.mouseupEvent, element, underlyingEvent, creationOptions, device);
     }
@@ -226,6 +229,27 @@ bool simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouse
 
     elementsDispatchingSimulatedClicks.get().remove(element);
     return true;
+}
+
+static unsigned simulatedClickWithoutPointerEventsScopeCount;
+
+SimulatedClickWithoutPointerEventsScope::SimulatedClickWithoutPointerEventsScope()
+{
+    ASSERT(isMainThread());
+    ++simulatedClickWithoutPointerEventsScopeCount;
+}
+
+SimulatedClickWithoutPointerEventsScope::~SimulatedClickWithoutPointerEventsScope()
+{
+    ASSERT(isMainThread());
+    ASSERT(simulatedClickWithoutPointerEventsScopeCount);
+    --simulatedClickWithoutPointerEventsScopeCount;
+}
+
+bool SimulatedClickWithoutPointerEventsScope::isActive()
+{
+    ASSERT(isMainThread());
+    return simulatedClickWithoutPointerEventsScopeCount;
 }
 
 } // namespace WebCore
