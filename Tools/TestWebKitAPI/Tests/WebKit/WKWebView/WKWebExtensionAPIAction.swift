@@ -1454,32 +1454,39 @@ struct WKWebExtensionAPIActionTests {
         }
 
         let backgroundScript = """
-            const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })
+            browser.test.onMessage.addListener(async (message) => {
+              if (message !== 'Set Properties')
+                return
 
-            browser.action.setTitle({ title: 'Tab Title', tabId: currentTab.id })
-            browser.action.setIcon({ path: 'toolbar-48.png', tabId: currentTab.id })
-            browser.action.setPopup({ popup: 'alt-popup.html', tabId: currentTab.id })
-            browser.action.setBadgeText({ text: '42', tabId: currentTab.id })
-            browser.action.disable(currentTab.id)
+              const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })
 
-            browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Tab Title', 'Title should be before navigation')
-            browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), 'alt-popup.html', 'Popup should be before navigation')
-            browser.test.assertEq(await browser.action.getBadgeText({ tabId: currentTab.id }), '42', 'Badge text should be before navigation')
-            browser.test.assertFalse(await browser.action.isEnabled({ tabId: currentTab.id }), 'Action should be disabled before navigation')
+              browser.action.setTitle({ title: 'Tab Title', tabId: currentTab.id })
+              browser.action.setIcon({ path: 'toolbar-48.png', tabId: currentTab.id })
+              browser.action.setPopup({ popup: 'alt-popup.html', tabId: currentTab.id })
+              browser.action.setBadgeText({ text: '42', tabId: currentTab.id })
+              browser.action.disable(currentTab.id)
 
-            browser.webNavigation.onCompleted.addListener(async (details) => {
-              browser.test.assertEq(details.tabId, currentTab.id, 'Only the tab we expect should be changing')
-              browser.test.assertEq(details.frameId, 0, 'Only main frame should be changing')
+              browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Tab Title', 'Title should be before navigation')
+              browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), 'alt-popup.html', 'Popup should be before navigation')
+              browser.test.assertEq(await browser.action.getBadgeText({ tabId: currentTab.id }), '42', 'Badge text should be before navigation')
+              browser.test.assertFalse(await browser.action.isEnabled({ tabId: currentTab.id }), 'Action should be disabled before navigation')
 
-              browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Test Action', 'Title should be after navigation')
-              browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), 'popup.html', 'Popup should be after navigation')
-              browser.test.assertEq(await browser.action.getBadgeText({ tabId: currentTab.id }), '', 'Badge text should be after navigation')
-              browser.test.assertTrue(await browser.action.isEnabled({ tabId: currentTab.id }), 'Action should be enabled after navigation')
+              browser.webNavigation.onCompleted.addListener(async (details) => {
+                browser.test.assertEq(details.tabId, currentTab.id, 'Only the tab we expect should be changing')
+                browser.test.assertEq(details.frameId, 0, 'Only main frame should be changing')
 
-              browser.test.notifyPass()
+                browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Test Action', 'Title should be after navigation')
+                browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), 'popup.html', 'Popup should be after navigation')
+                browser.test.assertEq(await browser.action.getBadgeText({ tabId: currentTab.id }), '', 'Badge text should be after navigation')
+                browser.test.assertTrue(await browser.action.isEnabled({ tabId: currentTab.id }), 'Action should be enabled after navigation')
+
+                browser.test.notifyPass()
+              })
+
+              browser.test.sendMessage('Load Tab')
             })
 
-            browser.test.sendMessage('Load Tab')
+            browser.test.sendMessage('Background Ready')
             """
 
         let resources: [String: Any] = [
@@ -1505,8 +1512,10 @@ struct WKWebExtensionAPIActionTests {
 
             let webView = try #require(manager.defaultTab?.webView)
 
-            webView.load(URLRequest(url: localhostURL))
+            try await manager.waitForTestMessage("Background Ready")
+            try await webView.loadAndWait(URLRequest(url: localhostURL))
 
+            manager.sendTestMessage("Set Properties")
             try await manager.waitForTestMessage("Load Tab")
 
             webView.load(URLRequest(url: addressURL))
