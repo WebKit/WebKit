@@ -96,6 +96,10 @@ public:
 
     void storeStickyEvent(const GRefPtr<GstEvent>&);
 
+    // Whether the element is told its input is live, as a LATENCY query on the input pad answers. Set it before
+    // the first push.
+    void setIsLive(bool isLive) { m_isLive.storeRelaxed(isLive); }
+
     GstPad* inputPad() const { return m_srcPad.get(); }
     const GRefPtr<GstCaps>& inputCaps() const { return m_inputCaps; }
     const Vector<RefPtr<Stream>>& outputStreams() const LIFETIME_BOUND { return m_outputStreams; }
@@ -135,6 +139,7 @@ private:
     Atomic<bool> m_playing { false };
     Atomic<bool> m_capsEventSent { false };
     Atomic<bool> m_segmentEventSent { false };
+    Atomic<bool> m_isLive { false };
 };
 
 } // namespace WebCore
