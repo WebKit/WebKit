@@ -153,7 +153,7 @@ final class HTTPServerCore {
 
         await withTaskGroup { group in
             for connection in terminating {
-                group.addTask {
+                group.addTask { @concurrent in
                     await connection.terminate()
                 }
             }

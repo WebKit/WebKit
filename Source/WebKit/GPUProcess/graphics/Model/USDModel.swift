@@ -512,6 +512,7 @@ extension WKBridgeUSDConfiguration {
 
     var standardDynamicRange: Bool = false
 
+    @concurrent
     func makeStandaloneResources() async {
         do {
             appRenderer.pendingStandaloneResources = try await LowLevelRenderContextStandalone.Resources(device: self.device)
@@ -531,6 +532,7 @@ extension WKBridgeUSDConfiguration {
         }
     }
 
+    @concurrent
     func makeRendererResources() async {
         do {
             let colorPixelFormat: MTLPixelFormat = standardDynamicRange ? .bgra8Unorm : .rgba16Float
@@ -2820,12 +2822,14 @@ extension WKBridgeUSDConfiguration {
 
     var standardDynamicRange: Bool = false
 
+    @concurrent
     func makeStandaloneResources() async {
     }
 
     func createMaterialCompiler() {
     }
 
+    @concurrent
     func makeRendererResources() async {
     }
 

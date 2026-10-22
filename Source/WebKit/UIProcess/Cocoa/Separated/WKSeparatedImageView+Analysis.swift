@@ -131,7 +131,7 @@ actor AnalysisActor {
 
     static let shared = AnalysisActor()
 
-    private var taskQueue: [() async -> Void] = []
+    private var taskQueue: [@concurrent () async -> Void] = []
     private var shouldWait = false
     private var idleTask: Task<Void, Never>?
     private var idleContinuation: CheckedContinuation<Void, Never>?
@@ -181,7 +181,7 @@ actor AnalysisActor {
         await task.value
     }
 
-    private func enqueue(_ task: @escaping () async -> Result) async -> Result {
+    private func enqueue(_ task: @escaping @concurrent () async -> Result) async -> Result {
         await withCheckedContinuation { continuation in
             Task {
                 taskQueue.append {
