@@ -34,6 +34,7 @@
 #include "PlatformLayerIdentifier.h"
 #include "TransformationMatrix.h"
 #include <wtf/EnumSet.h>
+#include <wtf/EnumeratedArray.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -227,15 +228,24 @@ private:
     bool needsBackingStore() const;
     void purgeBackingStores();
 
+    // The Skia target gets the damage of a change in the composition that flushes the change. If a
+    // composition drew the area before the change arrived, nothing would damage it again and its target
+    // would keep the old contents. The TextureMapper target takes all the groups on rendering updates.
+    enum class DamageGroup : uint8_t {
+        RenderingUpdate, // Backing store tiles and the properties flushed only on rendering updates.
+        Contents, // Contents rect, clipping rect and clip shape, and contents image.
+        ContentsBuffer,
+    };
 #if ENABLE(DAMAGE_TRACKING)
-    void addDamage(Damage&&) WTF_REQUIRES_LOCK(m_lock);
+    void addDamage(Damage&&, DamageGroup = DamageGroup::RenderingUpdate) WTF_REQUIRES_LOCK(m_lock);
 #endif
-    void damageWholeLayer() WTF_REQUIRES_LOCK(m_lock);
+    void damageWholeLayer(DamageGroup = DamageGroup::RenderingUpdate) WTF_REQUIRES_LOCK(m_lock);
 
 #if USE(TEXTURE_MAPPER)
     void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, TextureMapperLayer&);
 #else
     void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, SkiaCompositingLayer&);
+    void flushDamage(DamageGroup, SkiaCompositingLayer&) WTF_REQUIRES_LOCK(m_lock);
 #endif
 
     enum class Change : uint8_t {
@@ -364,7 +374,7 @@ private:
     float m_debugBorderWidth WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     int m_repaintCount WTF_GUARDED_BY_LOCK(m_lock) { -1 };
 #if ENABLE(DAMAGE_TRACKING)
-    std::optional<Damage> m_damage WTF_GUARDED_BY_LOCK(m_lock);
+    EnumeratedArray<DamageGroup, std::optional<Damage>, DamageGroup::ContentsBuffer> m_damage WTF_GUARDED_BY_LOCK(m_lock);
 #endif
 #if ENABLE(SCROLLING_THREAD)
     Markable<ScrollingNodeID> m_scrollingNodeID WTF_GUARDED_BY_LOCK(m_lock);
