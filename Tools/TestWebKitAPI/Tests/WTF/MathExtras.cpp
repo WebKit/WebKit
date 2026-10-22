@@ -644,6 +644,21 @@ TEST(WTF, isIntegral)
     EXPECT_FALSE(WTF::isIntegral(std::numeric_limits<float>::quiet_NaN()));
 }
 
+TEST(WTF, isPowerOfTwo)
+{
+    for (size_t i = 0; i < 10000; ++i) {
+        if (i && !((i & (i - 1))))
+            EXPECT_TRUE(WTF::isPowerOfTwo(i));
+        else
+            EXPECT_FALSE(WTF::isPowerOfTwo(i));
+    }
+
+    // Even though std::numeric_limits<int64_t>::min() is a negative value,
+    // isPowerOfTwo expects true
+    constexpr size_t INT64_MIN_VALUE = static_cast<size_t>(std::numeric_limits<int64_t>::min());
+    EXPECT_TRUE(WTF::isPowerOfTwo<size_t>(INT64_MIN_VALUE));
+}
+
 TEST(WTF, negate)
 {
     auto expected_int8_t = WTF::negate<int8_t>(0);
