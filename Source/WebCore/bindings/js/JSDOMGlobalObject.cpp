@@ -114,6 +114,9 @@ JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, Ref<DOMWrappe
     , m_crossOriginFunctionMap(vm)
     , m_crossOriginGetterSetterMap(vm)
 {
+#if ENABLE(WEBASSEMBLY)
+    setWebAssemblyESMIntegrationEnabled(false);
+#endif
 }
 
 JSDOMGlobalObject::~JSDOMGlobalObject() = default;
