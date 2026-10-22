@@ -148,7 +148,7 @@ class PullRequest(Command):
         parser.add_argument(
             '--update-radar', '--no-update-radar',
             dest='update_radar', default=True,
-            help=('Update the state of the associated Radar when creating a pull request'
+            help=('Update the state of the associated Radar when creating a pull request or landing'
                   if radar.Tracker.radarclient() is not None
                   else argparse.SUPPRESS),
             action=arguments.NoAction,

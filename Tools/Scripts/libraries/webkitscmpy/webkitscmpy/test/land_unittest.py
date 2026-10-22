@@ -23,7 +23,7 @@
 import logging
 import os
 import time
-from unittest.mock import patch
+from unittest.mock import PropertyMock, patch
 
 from webkitbugspy import Tracker, User, bugzilla, radar
 from webkitbugspy import mocks as bmocks
@@ -32,7 +32,7 @@ from webkitcorepy.mocks import Environment
 from webkitcorepy.mocks import Terminal as MockTerminal
 from webkitcorepy.mocks import Time as MockTime
 
-from webkitscmpy import Commit, Contributor, local, mocks, program
+from webkitscmpy import Commit, CommitClassifier, Contributor, local, mocks, program
 from webkitscmpy.program.canonicalize import IdentifierTrailer
 
 
@@ -61,9 +61,23 @@ def repository(path, has_oops=True, remote=None, remotes=None, git_svn=False, is
     return result
 
 
+def add_commit(result, issue_url):
+    branch = 'eng/example'
+    result.commits[branch].append(Commit(
+        hash='6e3c9fdc67f1cf79f2a58e8e9f50cb3a9ab2c8d4',
+        identifier='3.2@{}'.format(branch),
+        revision=11,
+        timestamp=int(time.time()) - 30,
+        author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+        message='Also To Be Committed\n{}\nReviewed by Ricky Reviewer.\n'.format(issue_url),
+    ))
+    result.head = result.commits[branch][-1]
+
+
 class TestLand(testing.PathTestCase):
     basepath = 'mock/repository'
     BUGZILLA = 'https://bugs.example.com'
+    COMMENT = 'Committed a5fe8afe9bf7 to git@example.org:mock/repository (origin/main).'
 
     def setUp(self):
         super(TestLand, self).setUp()
@@ -291,11 +305,13 @@ class TestLand(testing.PathTestCase):
                 path=self.path,
             ))
             self.assertEqual(str(local.Git(self.path).commit()), '6@main')
-            self.assertEqual(
-                Tracker.instance().issue(1).comments[-1].content,
-                'Landed a5fe8afe9bf7!',
-            )
+            self.assertEqual(Tracker.instance().issue(1).comments[-1].content, self.COMMENT)
             self.assertFalse(Tracker.instance().issue(1).opened)
+            self.assertEqual(Tracker.instance().issue(1).state, 'Verify')
+            self.assertEqual(
+                Tracker.instance().issue(1).source_changes,
+                ['Repository, merge, a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd'],
+            )
 
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
@@ -313,8 +329,262 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             'Landed a5fe8afe9bf7!\n'
+            'Moved rdar://1 to Verify\n'
             "Delete branch 'eng/example'? ([Yes]/No): \n",
         )
+
+    def test_integrate_radar(self):
+        with OutputCapture(), repository(self.path, has_oops=False, issue_url='<rdar://problem/1>') as repo, mocks.local.Svn(), \
+                MockTerminal.input('n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+            repo.edit_config('webkitscmpy.land-radar-state', 'Integrate')
+
+            self.assertEqual(0, program.main(args=('land',), path=self.path))
+            issue = Tracker.instance().issue(1)
+            self.assertEqual(issue.state, 'Integrate')
+            self.assertTrue(issue.opened)
+            self.assertEqual(issue.comments[-1].content, self.COMMENT)
+            self.assertEqual(issue.source_changes, ['Repository, merge, a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd'])
+
+    def test_radar_state_argument(self):
+        with OutputCapture(), repository(self.path, has_oops=False, issue_url='<rdar://problem/1>') as repo, mocks.local.Svn(), \
+                MockTerminal.input('n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+            repo.edit_config('webkitscmpy.land-radar-state', 'Integrate')
+
+            self.assertEqual(0, program.main(args=('land', '--radar-state', 'Verify'), path=self.path))
+            self.assertEqual(Tracker.instance().issue(1).state, 'Verify')
+
+    def test_invalid_radar_state(self):
+        with OutputCapture() as captured, repository(self.path, has_oops=False, issue_url='<rdar://problem/1>') as repo, mocks.local.Svn(), \
+                MockTerminal.input('n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+            repo.edit_config('webkitscmpy.land-radar-state', 'Closed')
+
+            self.assertEqual(0, program.main(args=('land',), path=self.path))
+            self.assertEqual(Tracker.instance().issue(1).state, 'Verify')
+
+        self.assertIn(
+            "'Closed' is not a valid value for 'webkitscmpy.land-radar-state', using 'Verify' instead\n",
+            captured.stderr.getvalue(),
+        )
+
+    def test_radar_does_not_move_backwards(self):
+        with OutputCapture(), repository(self.path, has_oops=False, issue_url='<rdar://problem/3>') as repo, mocks.local.Svn(), \
+                MockTerminal.input('n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+            repo.edit_config('webkitscmpy.land-radar-state', 'Integrate')
+
+            self.assertEqual(0, program.main(args=('land',), path=self.path))
+            issue = Tracker.instance().issue(3)
+            self.assertEqual(issue.state, 'Verify')
+            self.assertEqual(issue.comments[-1].content, self.COMMENT)
+            self.assertEqual(issue.source_changes, ['Repository, merge, a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd'])
+
+    def test_radar_without_milestone(self):
+        with OutputCapture() as captured, repository(self.path, has_oops=False, issue_url='<rdar://problem/1>'), mocks.local.Svn(), \
+                Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=[dict(issue, milestone='') for issue in bmocks.ISSUES]), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+
+            self.assertEqual(1, program.main(args=('land',), path=self.path))
+            self.assertEqual(str(local.Git(self.path).commit()), '3.1@eng/example')
+            self.assertEqual(Tracker.instance().issue(1).source_changes, [])
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "rdar://1 has no milestone, set one or pass '--no-update-radar' to land without moving it to Verify\n",
+        )
+
+    def test_unreadable_radar(self):
+        with OutputCapture() as captured, repository(self.path, has_oops=False, issue_url='<rdar://problem/1>'), mocks.local.Svn(), \
+                Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]), \
+                patch('webkitbugspy.Issue.state', new_callable=PropertyMock, return_value=None):
+
+            self.assertEqual(1, program.main(args=('land',), path=self.path))
+            self.assertEqual(str(local.Git(self.path).commit()), '3.1@eng/example')
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "Failed to read rdar://1, pass '--no-issue' to land without updating it\n",
+        )
+
+    def test_gardening_radar(self):
+        with OutputCapture() as captured, repository(self.path, has_oops=False, issue_url='<rdar://problem/1>'), mocks.local.Svn(), \
+                MockTerminal.input('No', 'n'), Environment(RADAR_USERNAME='tcontributor'), \
+                bmocks.Radar(issues=[dict(issue, milestone='') for issue in bmocks.ISSUES]), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+
+            self.assertEqual(0, program.main(
+                args=('land',), path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(name='Gardening', headers=['To Be Committed'])]),
+            ))
+            issue = Tracker.instance().issue(1)
+            self.assertEqual(issue.state, 'Analyze')
+            self.assertEqual(issue.comments[-1].content, self.COMMENT)
+            self.assertEqual(issue.source_changes, ['Repository, merge, a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd'])
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Move rdar://1 to Verify? It only has gardening changes (Yes/[No]): \n'
+            'Landed a5fe8afe9bf7!\n'
+            'Not moving rdar://1 to Verify for a gardening change\n'
+            "Delete branch 'eng/example'? ([Yes]/No): \n",
+        )
+
+    def test_gardening_radar_finished(self):
+        with OutputCapture(), repository(self.path, has_oops=False, issue_url='<rdar://problem/1>'), mocks.local.Svn(), \
+                MockTerminal.input('Yes', 'n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+
+            self.assertEqual(0, program.main(
+                args=('land',), path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(name='Gardening', headers=['To Be Committed'])]),
+            ))
+            self.assertEqual(Tracker.instance().issue(1).state, 'Verify')
+
+    def test_gardening_radar_failure(self):
+        with OutputCapture() as captured, repository(self.path, has_oops=False, issue_url='<rdar://problem/1>'), mocks.local.Svn(), \
+                MockTerminal.input('No', 'n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES) as radar_mock, \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]), \
+                patch('webkitbugspy.Issue.add_comment', side_effect=radar_mock.exceptions.UnsuccessfulResponseException('Radar refused the comment')):
+
+            self.assertEqual(0, program.main(
+                args=('land',), path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(name='Gardening', headers=['To Be Committed'])]),
+            ))
+
+        self.assertTrue(captured.stderr.getvalue().endswith(" --issue rdar://1 --no-update-radar' to retry updating issues\n"))
+
+    def test_no_update_radar(self):
+        with OutputCapture(), repository(self.path, has_oops=False, issue_url='<rdar://problem/1>'), mocks.local.Svn(), \
+                MockTerminal.input('n'), Environment(RADAR_USERNAME='tcontributor'), \
+                bmocks.Radar(issues=[dict(issue, milestone='') for issue in bmocks.ISSUES]), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+
+            self.assertEqual(0, program.main(args=('land', '--no-update-radar'), path=self.path))
+            issue = Tracker.instance().issue(1)
+            self.assertEqual(issue.state, 'Analyze')
+            self.assertEqual(issue.comments[-1].content, self.COMMENT)
+            self.assertEqual(issue.source_changes, ['Repository, merge, a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd'])
+
+    def test_no_issue(self):
+        with OutputCapture(), repository(self.path, has_oops=False, issue_url='<rdar://problem/1>'), mocks.local.Svn(), \
+                MockTerminal.input('n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+
+            self.assertEqual(0, program.main(args=('land', '--no-issue'), path=self.path))
+            self.assertEqual(str(local.Git(self.path).commit()), '6@main')
+            issue = Tracker.instance().issue(1)
+            self.assertEqual(issue.state, 'Analyze')
+            self.assertEqual(issue.comments[-1].content, 'Trying to prepare a fix for 1.2.4')
+            self.assertEqual(issue.source_changes, [])
+
+    def test_multiple_commits(self):
+        with OutputCapture(), repository(self.path, has_oops=False, issue_url='<rdar://problem/1>') as repo, mocks.local.Svn(), \
+                MockTerminal.input('n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+            add_commit(repo, issue_url='<rdar://problem/1>')
+
+            self.assertEqual(0, program.main(args=('land', '--no-squash'), path=self.path))
+            issue = Tracker.instance().issue(1)
+            self.assertEqual(
+                issue.comments[-1].content,
+                'Committed 6e3c9fdc67f1 and a5fe8afe9bf7 to git@example.org:mock/repository (origin/main).',
+            )
+            self.assertEqual(
+                issue.source_changes, [
+                    'Repository, merge, 6e3c9fdc67f1cf79f2a58e8e9f50cb3a9ab2c8d4',
+                    'Repository, merge, a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
+                ],
+            )
+
+    def test_multiple_radars(self):
+        with OutputCapture() as captured, repository(self.path, has_oops=False, issue_url='<rdar://problem/1>') as repo, mocks.local.Svn(), \
+                MockTerminal.input('No'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+            add_commit(repo, issue_url='<rdar://problem/2>')
+
+            self.assertEqual(1, program.main(args=('land',), path=self.path))
+            self.assertEqual(str(local.Git(self.path).commit()), '3.2@eng/example')
+
+        self.assertEqual(captured.stdout.getvalue(), 'Update rdar://2 and rdar://1 once landed? ([Yes]/No): \n')
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "Pass '--no-issue' to land without updating issues\n",
+        )
+
+    def test_multiple_gardening_radars(self):
+        with OutputCapture() as captured, repository(self.path, has_oops=False, issue_url='<rdar://problem/1>') as repo, mocks.local.Svn(), \
+                MockTerminal.input('No'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+            add_commit(repo, issue_url='<rdar://problem/2>')
+
+            self.assertEqual(1, program.main(
+                args=('land', '--no-squash'), path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(name='Gardening', headers=['To Be Committed'])]),
+            ))
+
+        self.assertEqual(captured.stdout.getvalue(), 'Update rdar://2 and rdar://1 once landed? ([Yes]/No): \n')
+
+    def test_squashed_radars(self):
+        with OutputCapture(), mocks.local.Git(self.path) as repo, mocks.local.Svn(), \
+                MockTerminal.input('Yes', 'n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+            repo.checkout('eng/squash-branch')
+            repo.commits['eng/squash-branch'][1].message = 'Changed something 1\n<rdar://problem/1>\n'
+            repo.commits['eng/squash-branch'][2].message = 'Changed something 2\n<rdar://problem/2>\n'
+            repo.commits['eng/squash-branch'][3].message = 'Changed something 3\n<rdar://problem/1>\n'
+
+            self.assertEqual(0, program.main(args=('land', '--squash'), path=self.path))
+            landed = local.Git(self.path).commit()
+            for id in (1, 2):
+                self.assertIn('Repository, merge, {}'.format(landed.hash), Tracker.instance().issue(id).source_changes)
+                self.assertEqual(Tracker.instance().issue(id).state, 'Verify')
+
+    def test_squashed_gardening(self):
+        with OutputCapture(), mocks.local.Git(self.path) as repo, mocks.local.Svn(), \
+                MockTerminal.input('No', 'n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+            repo.checkout('eng/squash-branch')
+            for commit in repo.commits['eng/squash-branch'][1:]:
+                commit.message = 'Changed something\n<rdar://problem/1>\n'
+
+            self.assertEqual(0, program.main(
+                args=('land', '--squash'), path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(name='Gardening', headers=['^Changed something$'])]),
+            ))
+            landed = local.Git(self.path).commit()
+            self.assertEqual(Tracker.instance().issue(1).state, 'Analyze')
+            self.assertIn('Repository, merge, {}'.format(landed.hash), Tracker.instance().issue(1).source_changes)
+
+    def test_first_radar_per_commit(self):
+        with OutputCapture(), repository(self.path, has_oops=False, issue_url='<rdar://problem/2>\nReverted change: <rdar://problem/1>'), mocks.local.Svn(), \
+                MockTerminal.input('n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+
+            self.assertEqual(0, program.main(args=('land',), path=self.path))
+            self.assertEqual(Tracker.instance().issue(2).state, 'Verify')
+            self.assertEqual(Tracker.instance().issue(1).state, 'Analyze')
+            self.assertEqual(Tracker.instance().issue(1).source_changes, [])
+
+    def test_radar_update_failure(self):
+        with OutputCapture() as captured, repository(self.path, has_oops=False, issue_url='<rdar://problem/1>'), mocks.local.Svn(), \
+                MockTerminal.input('n'), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES) as radar_mock, \
+                patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]), \
+                patch('webkitbugspy.Issue.set_state', side_effect=radar_mock.exceptions.UnsuccessfulResponseException('Radar refused the state change')):
+
+            self.assertEqual(0, program.main(args=('land',), path=self.path))
+            self.assertEqual(str(local.Git(self.path).commit()), '6@main')
+            self.assertEqual(Tracker.instance().issue(1).state, 'Analyze')
+
+        self.assertTrue(captured.stderr.getvalue().startswith(
+            "Failed to find pull-request associated with 'eng/example'\n"
+            'Failed to update rdar://1:\n'
+            'Radar refused the state change\n'
+            "Run 'git-webkit mark-fixed a5fe8afe9bf7",
+        ))
+        self.assertTrue(captured.stderr.getvalue().endswith(" --issue rdar://1' to retry updating issues\n"))
 
     def test_canonicalize_with_bugzilla(self):
         with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False, issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA)), \
@@ -333,7 +603,7 @@ class TestLand(testing.PathTestCase):
             ))
             self.assertEqual(
                 Tracker.instance().issue(1).comments[-1].content,
-                'Landed https://commits.webkit.org/6@main (a5fe8afe9bf7)!',
+                'Committed https://commits.webkit.org/6@main (a5fe8afe9bf7) to git@example.org:mock/repository (origin/main).',
             )
             self.assertFalse(Tracker.instance().issue(1).opened)
 
@@ -390,7 +660,7 @@ class TestLand(testing.PathTestCase):
             self.assertEqual(str(local.Git(self.path).commit()), '6@main')
             self.assertEqual(
                 Tracker.instance().issue(1).comments[-1].content,
-                'Landed r10!',
+                'Committed r10 to git@example.org:mock/repository (origin/main).',
             )
             self.assertFalse(Tracker.instance().issue(1).opened)
 

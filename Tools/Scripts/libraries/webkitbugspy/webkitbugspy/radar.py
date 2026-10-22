@@ -561,6 +561,7 @@ class Tracker(GenericTracker):
         if source_changes:
             did_change = True
             radar.sourceChanges = '\n'.join(source_changes)
+            issue._source_changes = source_changes
 
         if see_also:
             sys.stderr.write('Radar does not support the see_also field at this time\n')

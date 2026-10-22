@@ -624,6 +624,9 @@ class GitHub(Scm):
             return 'https://{}/{}/{}.git'.format(self.domain, self.owner, self.name)
         return 'git@{}:{}/{}.git'.format(self.domain, self.owner, self.name)
 
+    def commit_url(self, hash: str) -> str:
+        return '{}/commit/{}'.format(self.url, hash)
+
     # Returns the decoded JSON (paginated lists are concatenated), the response itself if it isn't JSON, or None on failure.
     def request(
         self, path: str | None = None, params: dict[str, Any] | None = None, headers: dict[str, str] | None = None,
