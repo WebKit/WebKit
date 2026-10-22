@@ -63,6 +63,9 @@ static void initializeAudioSourceProviderDebugCategory()
     });
 }
 
+// Audio buffered for live capture sources before output starts, and again after an underflow.
+static constexpr size_t liveCapturePrebufferMs = 40;
+
 static void onGStreamerDeinterleavePadAddedCallback(GstElement*, GstPad* pad, AudioSourceProviderGStreamer* provider)
 {
     provider->handleNewDeinterleavePad(pad);
@@ -114,6 +117,8 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
 {
     initialize();
     registerWebKitGStreamerElements();
+
+    m_isLiveCapture = true;
 
     auto pipelineNamePrefix = ""_s;
     if (m_captureSource->source().isIncomingAudioSource())
@@ -239,12 +244,61 @@ void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstEl
 void AudioSourceProviderGStreamer::provideInput(AudioBus& bus, size_t framesToProcess)
 {
     ASP_TRACE("Fetching buffers from adapters");
-    if (!m_adapterLock.tryLock())
+    if (m_isLiveCapture) {
+        // The streaming threads only hold the lock to push a buffer, so waiting is bounded and
+        // short; skipping the quantum instead would insert a glitch into live capture.
+        Locker locker { m_adapterLock };
+        provideLiveCaptureInput(bus, framesToProcess);
         return;
+    }
+
+    if (!m_adapterLock.tryLock()) {
+        // Leaving the bus untouched would replay its previous contents (the resampler reuses it).
+        bus.zero();
+        return;
+    }
 
     Locker locker { AdoptLock, m_adapterLock };
     for (const auto& [channelId, adapter] : m_adapters)
         copyGStreamerBuffersToAudioChannel(adapter.get(), bus, channelId - 1, framesToProcess);
+}
+
+void AudioSourceProviderGStreamer::provideLiveCaptureInput(AudioBus& bus, size_t framesToProcess)
+{
+    unsigned numberOfChannels = bus.numberOfChannels();
+    if (!numberOfChannels)
+        return;
+
+    size_t available = std::numeric_limits<size_t>::max();
+    for (unsigned channel = 0; channel < numberOfChannels; ++channel) {
+        auto it = m_adapters.find(channel + 1);
+        if (it == m_adapters.end()) {
+            bus.zero();
+            return;
+        }
+        available = std::min(available, gst_adapter_available(it->value.get()) / sizeof(float));
+    }
+
+    size_t sampleRate = m_sampleRate.load() > 0 ? m_sampleRate.load() : 48000;
+    size_t prebufferFrames = std::max(framesToProcess, sampleRate * liveCapturePrebufferMs / 1000);
+
+    if (m_isBuffering) {
+        if (available < prebufferFrames) {
+            bus.zero();
+            return;
+        }
+        m_isBuffering = false;
+    }
+
+    if (available < framesToProcess) {
+        // Rebuild the cushion rather than alternating between data and silence every quantum.
+        m_isBuffering = true;
+        bus.zero();
+        return;
+    }
+
+    for (unsigned channel = 0; channel < numberOfChannels; ++channel)
+        copyGStreamerBuffersToAudioChannel(m_adapters.find(channel + 1)->value.get(), bus, channel, framesToProcess);
 }
 
 GstFlowReturn AudioSourceProviderGStreamer::handleSample(GstAppSink* sink)
@@ -490,6 +544,7 @@ void AudioSourceProviderGStreamer::determineSampleRate(const GstCaps* caps)
     auto sampleRate = gstStructureGet<int>(structure, "rate"_s);
     if (!sampleRate) [[unlikely]]
         return;
+    m_sampleRate = *sampleRate;
 
     ASP_DEBUG("Deinterleave configured with %d channels, notifying client", m_deinterleaveSourcePads);
     m_notifier->notify(MainThreadNotification::DeinterleavePadsConfigured, [numberOfChannels = m_deinterleaveSourcePads, client = m_client, sampleRate = *sampleRate] {
@@ -503,6 +558,7 @@ void AudioSourceProviderGStreamer::clearAdapters()
     Locker locker { m_adapterLock };
     for (auto& adapter : m_adapters.values())
         gst_adapter_clear(adapter.get());
+    m_isBuffering = true;
 }
 
 #undef GST_CAT_DEFAULT
