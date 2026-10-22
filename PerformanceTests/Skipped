@@ -149,6 +149,9 @@ MediaTime/
 # Bug 203229 - [GTK] Perf test SVG/UnderTheSeeBenchmark.html timeouts
 [GTK] SVG/UnderTheSeeBenchmark.html
 
+# Bug 328473 - [GTK] perf bot is failing the test Canvas/drawImageSourceImageBitmapCanvasWebGL.html
+[GTK] Canvas/drawImageSourceImageBitmapCanvasWebGL.html
+
 # Bug 167616 - Performance test IndexedDB/large-binary-keys.html creates a DB of more than 6GB and takes more than 10 minutes to run.
 [GTK] IndexedDB/stress/large-binary-keys.html
 
