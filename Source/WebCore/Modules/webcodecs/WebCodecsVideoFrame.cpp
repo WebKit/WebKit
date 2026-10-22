@@ -445,7 +445,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     if (init.timestamp)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), shouldCloneIfUpdating);
     if (baseRotation != finalRotation)
-        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateRotation(finalRotation, shouldCloneIfUpdating);
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateOrientation(finalRotation, protect(result->m_data.internalFrame)->isMirrored(), shouldCloneIfUpdating);
     if (init.alpha == WebCodecsAlphaOption::Discard && format != initialFormat)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateShouldIgnoreAlpha(true, shouldCloneIfUpdating);
     result->m_data.timestamp = mediaTimeToTimestamp(result->m_data.internalFrame->presentationTime());
@@ -477,7 +477,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     if (init.timestamp)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), shouldCloneIfUpdating);
     if (finalRotation != baseRotation)
-        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateRotation(finalRotation, shouldCloneIfUpdating);
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateOrientation(finalRotation, protect(result->m_data.internalFrame)->isMirrored(), shouldCloneIfUpdating);
     if (init.alpha == WebCodecsAlphaOption::Discard && format != initialFormat)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateShouldIgnoreAlpha(true, shouldCloneIfUpdating);
     result->m_data.timestamp = mediaTimeToTimestamp(result->m_data.internalFrame->presentationTime());
@@ -514,7 +514,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
     if (init.timestamp)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), VideoFrame::ShouldClone::No);
     if (finalRotation != baseRotation)
-        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateRotation(finalRotation, VideoFrame::ShouldClone::No);
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateOrientation(finalRotation, protect(result->m_data.internalFrame)->isMirrored(), VideoFrame::ShouldClone::No);
     if (init.alpha == WebCodecsAlphaOption::Discard && format != initialFormat)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateShouldIgnoreAlpha(true, VideoFrame::ShouldClone::No);
     result->m_data.timestamp = mediaTimeToTimestamp(result->m_data.internalFrame->presentationTime());

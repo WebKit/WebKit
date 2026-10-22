@@ -298,6 +298,7 @@ public:
 #if ENABLE(WEB_CODECS)
     bool hasPendingActivity(const WebCodecsVideoDecoder&) const;
     bool is10bitsVideoFrame(const WebCodecsVideoFrame&) const;
+    RefPtr<WebCodecsVideoFrame> mirroredVideoFrame(const WebCodecsVideoFrame&) const;
 #endif
 
     void LEGACY_NODELETE setGridMaxTracksLimit(unsigned);

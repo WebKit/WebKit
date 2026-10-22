@@ -28,6 +28,7 @@
 #include "GUniquePtrGStreamer.h"
 #include "VideoEncoderPrivateGStreamer.h"
 #include "VideoFrameGStreamer.h"
+#include "VideoFrameMetadataGStreamer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -332,7 +333,7 @@ bool GStreamerInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bo
     auto& gstVideoFrame = downcast<VideoFrameGStreamer>(rawFrame.frame.get());
     GRefPtr sample = gstVideoFrame.sample();
 
-    auto orientation = makeString(gstVideoFrame.isMirrored() ? "flip-"_s : ""_s, "rotate-"_s, gstVideoFrame.rotation());
+    auto orientation = webkitGstImageOrientationTag(gstVideoFrame.rotation(), gstVideoFrame.isMirrored());
     if (orientation != m_orientation) {
         auto orientationCString = orientation.utf8();
         GST_DEBUG_OBJECT(m_harness->element(), "New orientation: %s", orientationCString);

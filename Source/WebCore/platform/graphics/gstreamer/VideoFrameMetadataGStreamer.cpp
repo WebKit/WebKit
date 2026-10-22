@@ -25,6 +25,7 @@
 #include "GStreamerCommon.h"
 #include <wtf/HashMap.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY_STATIC(webkit_video_frame_meta_debug);
 #define GST_CAT_DEFAULT webkit_video_frame_meta_debug
@@ -160,6 +161,16 @@ GRefPtr<GstBuffer> webkitGstBufferSetVideoFrameMetadata(GRefPtr<GstBuffer>&& buf
     }
     webkitGstBufferAddVideoFrameMetadata(modifiedBuffer.get(), metadata, rotation, isMirrored, hint, colorSpace);
     return modifiedBuffer;
+}
+
+String webkitGstImageOrientationTag(VideoFrame::Rotation rotation, bool isMirrored)
+{
+    if (!isMirrored)
+        return makeString("rotate-"_s, rotation);
+
+    // Mirroring after a rotation of R is mirroring before a rotation of -R.
+    auto tagRotation = static_cast<VideoFrame::Rotation>((360 - static_cast<int>(rotation)) % 360);
+    return makeString("flip-rotate-"_s, tagRotation);
 }
 
 void webkitGstTraceProcessingTimeForElement(GstElement* element)
