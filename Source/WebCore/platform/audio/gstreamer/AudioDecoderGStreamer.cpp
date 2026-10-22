@@ -22,11 +22,13 @@
 
 #if USE(GSTREAMER)
 
+#include "AudioUtilities.h"
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
 #include "PlatformRawAudioDataGStreamer.h"
 #include "SharedBuffer.h"
+#include "TrackInfo.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
@@ -76,6 +78,93 @@ private:
     GRefPtr<GstBuffer> m_header;
     bool m_isClosed { false };
 };
+
+struct AudioDecoderConfiguration {
+    String codec;
+    AudioDecoder::Config config;
+};
+
+static std::optional<AudioDecoderConfiguration> audioDecoderConfiguration(const AudioInfo& info)
+{
+    RefPtr cookieData = info.cookieData();
+    auto cookie = cookieData ? cookieData->span() : std::span<const uint8_t> { };
+    auto codecName = info.codecName();
+
+    auto configuration = [&](String&& codec, Vector<uint8_t>&& description = { }) {
+        return AudioDecoderConfiguration { WTF::move(codec), { .description = WTF::move(description), .sampleRate = info.rate(), .numberOfChannels = info.channels() } };
+    };
+
+    if (codecName == FourCC { "opus" }) {
+        if (cookie.empty() || info.channels() > 2)
+            return { };
+        return configuration("opus"_s, AudioUtilities::opusHeadWithoutPreSkip(cookie));
+    }
+    if (codecName == FourCC { "vorb" }) {
+        if (cookie.empty())
+            return { };
+        return configuration("vorbis"_s, Vector<uint8_t>(cookie));
+    }
+    if (codecName == FourCC { "flac" }) {
+        if (cookie.empty())
+            return { };
+        return configuration("flac"_s, Vector<uint8_t>(cookie));
+    }
+    if (codecName == FourCC { ".mp3" })
+        return configuration("mp3"_s);
+    if (codecName == FourCC { "alaw" })
+        return configuration("alaw"_s);
+    if (codecName == FourCC { "ulaw" })
+        return configuration("ulaw"_s);
+
+    // FIXME: AAC-LD and AAC-ELD ('aacl', 'aace') are not accepted by AudioDecoder::isCodecSupported.
+    String aacCodec;
+    if (codecName == FourCC { "aac " })
+        aacCodec = "mp4a.40.2"_s;
+    else if (codecName == FourCC { "aach" })
+        aacCodec = "mp4a.40.5"_s;
+    else if (codecName == FourCC { "aacp" })
+        aacCodec = "mp4a.40.29"_s;
+    if (!aacCodec.isNull()) {
+        auto audioSpecificConfig = AudioUtilities::audioSpecificConfigFromAACCookie(cookie);
+        if (!audioSpecificConfig)
+            return { };
+        return configuration(WTF::move(aacCodec), WTF::move(*audioSpecificConfig));
+    }
+
+    // FIXME: only 32-bit floating point is recognised for 32-bit PCM, and PCM is assumed little-endian.
+    if (codecName == FourCC { "lpcm" }) {
+        switch (info.bitDepth()) {
+        case 8:
+            return configuration("pcm-u8"_s);
+        case 16:
+            return configuration("pcm-s16"_s);
+        case 24:
+            return configuration("pcm-s24"_s);
+        case 32:
+            return configuration("pcm-f32"_s);
+        default:
+            return { };
+        }
+    }
+
+    return { };
+}
+
+bool GStreamerAudioDecoder::canDecode(const AudioInfo& info)
+{
+    auto configuration = audioDecoderConfiguration(info);
+    return configuration && AudioDecoder::isCodecSupported(configuration->codec);
+}
+
+void GStreamerAudioDecoder::create(const AudioInfo& info, CreateCallback&& callback, OutputCallback&& outputCallback)
+{
+    auto configuration = audioDecoderConfiguration(info);
+    if (!configuration) {
+        callback(makeUnexpected("Unsupported AudioInfo"_s));
+        return;
+    }
+    create(configuration->codec, configuration->config, WTF::move(callback), WTF::move(outputCallback));
+}
 
 void GStreamerAudioDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
 {

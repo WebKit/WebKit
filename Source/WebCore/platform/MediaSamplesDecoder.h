@@ -65,8 +65,10 @@ public:
     using DecodePromise = NativePromise<Vector<MediaSamplesBlock>, PlatformMediaError>;
 
     WEBCORE_EXPORT static bool canDecode(const TrackInfo&, Filters);
+    // Whether content must be decoded in process, with no fallback to an out-of-process decoder.
+    WEBCORE_EXPORT static bool mustDecodeInProcess(const TrackInfo&);
     WEBCORE_EXPORT static Ref<CreatePromise> create(const TrackInfo&, Filters);
-    WEBCORE_EXPORT ~MediaSamplesDecoder();
+    WEBCORE_EXPORT ~MediaSamplesDecoder() WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
 
     WEBCORE_EXPORT bool canContinueWith(const TrackInfo&) const;
 

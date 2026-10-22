@@ -493,6 +493,23 @@ static void addImageBufferProperties(const VideoInfo& videoInfo, Add&& add)
     }
 }
 
+// FIXME: only 32-bit floating point is recognised for 32-bit PCM (the only producer is the WebM parser), and PCM is assumed little-endian.
+static std::optional<AudioStreamDescription::PCMFormat> encodedPCMFormat(const AudioInfo& info)
+{
+    switch (info.bitDepth()) {
+    case 8:
+        return AudioStreamDescription::Uint8;
+    case 16:
+        return AudioStreamDescription::Int16;
+    case 24:
+        return AudioStreamDescription::Int24;
+    case 32:
+        return AudioStreamDescription::Float32;
+    default:
+        return { };
+    }
+}
+
 RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const TrackInfo& info)
 {
     ASSERT(info.isVideo() || info.isAudio());
@@ -511,11 +528,22 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
                 return nullptr;
             return createAudioFormatDescription(*audioInfo);
 #endif
+        case kAudioFormatFLAC:
+            if (!audioInfo->cookieData() || !audioInfo->cookieData()->size())
+                return nullptr;
+            return createAudioFormatDescription(*audioInfo);
         case kAudioFormatLinearPCM: {
-            if (audioInfo->isDecoded() && audioInfo->sampleFormat() != AudioSampleFormat::F32)
+            std::optional<AudioStreamDescription::PCMFormat> format;
+            if (audioInfo->isDecoded()) {
+                if (audioInfo->sampleFormat() != AudioSampleFormat::F32)
+                    return nullptr;
+                format = AudioStreamDescription::Float32;
+            } else
+                format = encodedPCMFormat(*audioInfo);
+            if (!format)
                 return nullptr;
 
-            auto absd = CAAudioStreamDescription { static_cast<double>(audioInfo->rate()), audioInfo->channels(), AudioStreamDescription::Float32, CAAudioStreamDescription::IsInterleaved::Yes }.streamDescription();
+            auto absd = CAAudioStreamDescription { static_cast<double>(audioInfo->rate()), audioInfo->channels(), *format, CAAudioStreamDescription::IsInterleaved::Yes }.streamDescription();
 
             RetainPtr extensions = createExtensionsDictionary(info);
             CMFormatDescriptionRef newFormat = nullptr;

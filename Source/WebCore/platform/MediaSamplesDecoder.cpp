@@ -28,7 +28,6 @@
 
 #include "AudioDecoder.h"
 #include "AudioSampleFormat.h"
-#include "AudioUtilities.h"
 #include "PlatformRawAudioData.h"
 #include "SharedBuffer.h"
 #include "SharedMemory.h"
@@ -52,78 +51,6 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSamplesDecoder);
 
 static constexpr uint32_t microsecondsTimeScale = 1000000;
-
-struct AudioDecoderConfiguration {
-    String codec;
-    AudioDecoder::Config config;
-};
-
-static std::optional<AudioDecoderConfiguration> audioDecoderConfiguration(const AudioInfo& info)
-{
-    RefPtr cookieData = info.cookieData();
-    auto cookie = cookieData ? cookieData->span() : std::span<const uint8_t> { };
-    auto codecName = info.codecName();
-
-    auto configuration = [&](String&& codec, Vector<uint8_t>&& description = { }) {
-        return AudioDecoderConfiguration { WTF::move(codec), { .description = WTF::move(description), .sampleRate = info.rate(), .numberOfChannels = info.channels() } };
-    };
-
-    if (codecName == FourCC { "opus" }) {
-        if (cookie.empty() || info.channels() > 2)
-            return { };
-        // The pre-skip is applied through the samples' trimInterval, so the decoder must not apply it too.
-        return configuration("opus"_s, AudioUtilities::opusHeadWithoutPreSkip(cookie));
-    }
-    if (codecName == FourCC { "vorb" }) {
-        if (cookie.empty())
-            return { };
-        return configuration("vorbis"_s, Vector<uint8_t>(cookie));
-    }
-    if (codecName == FourCC { "flac" }) {
-        if (cookie.empty())
-            return { };
-        return configuration("flac"_s, Vector<uint8_t>(cookie));
-    }
-    if (codecName == FourCC { ".mp3" })
-        return configuration("mp3"_s);
-    if (codecName == FourCC { "alaw" })
-        return configuration("alaw"_s);
-    if (codecName == FourCC { "ulaw" })
-        return configuration("ulaw"_s);
-
-    // FIXME: AAC-LD and AAC-ELD ('aacl', 'aace') are not accepted by AudioDecoder::isCodecSupported.
-    String aacCodec;
-    if (codecName == FourCC { "aac " })
-        aacCodec = "mp4a.40.2"_s;
-    else if (codecName == FourCC { "aach" })
-        aacCodec = "mp4a.40.5"_s;
-    else if (codecName == FourCC { "aacp" })
-        aacCodec = "mp4a.40.29"_s;
-    if (!aacCodec.isNull()) {
-        auto audioSpecificConfig = AudioUtilities::audioSpecificConfigFromAACCookie(cookie);
-        if (!audioSpecificConfig)
-            return { };
-        return configuration(WTF::move(aacCodec), WTF::move(*audioSpecificConfig));
-    }
-
-    // FIXME: only 32-bit floating point is recognised for 32-bit PCM (the only producer is the WebM parser), and PCM is assumed little-endian.
-    if (codecName == FourCC { "lpcm" }) {
-        switch (info.bitDepth()) {
-        case 8:
-            return configuration("pcm-u8"_s);
-        case 16:
-            return configuration("pcm-s16"_s);
-        case 24:
-            return configuration("pcm-s24"_s);
-        case 32:
-            return configuration("pcm-f32"_s);
-        default:
-            return { };
-        }
-    }
-
-    return { };
-}
 
 static bool isProtected(const TrackInfo& info)
 {
@@ -149,15 +76,9 @@ static bool canUseInProcessDecoder(const TrackInfo& info, MediaSamplesDecoder::F
 #endif
 }
 
-static std::optional<AudioDecoderConfiguration> decoderConfiguration(const AudioInfo& info, MediaSamplesDecoder::Filters filters)
+static bool canDecodeAudio(const AudioInfo& info, MediaSamplesDecoder::Filters filters)
 {
-    if (!canUseInProcessDecoder(info, filters) || info.isDecoded() || !info.rate() || !info.channels())
-        return { };
-
-    auto configuration = audioDecoderConfiguration(info);
-    if (!configuration || !AudioDecoder::isCodecSupported(configuration->codec))
-        return { };
-    return configuration;
+    return canUseInProcessDecoder(info, filters) && AudioDecoder::canDecode(info);
 }
 
 static RefPtr<SharedBuffer> vpcCAtom(const VideoInfo& info)
@@ -277,7 +198,7 @@ MediaSamplesDecoder::MediaSamplesDecoder(Ref<const TrackInfo>&& inputInfo, Ref<c
 {
 }
 
-MediaSamplesDecoder::~MediaSamplesDecoder() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+MediaSamplesDecoder::~MediaSamplesDecoder()
 {
     if (RefPtr audioDecoder = m_audioDecoder)
         audioDecoder->close();
@@ -288,10 +209,21 @@ MediaSamplesDecoder::~MediaSamplesDecoder() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 bool MediaSamplesDecoder::canDecode(const TrackInfo& info, Filters filters)
 {
     if (RefPtr audioInfo = dynamicDowncast<AudioInfo>(info))
-        return !!decoderConfiguration(*audioInfo, filters);
+        return canDecodeAudio(*audioInfo, filters);
     if (RefPtr videoInfo = dynamicDowncast<VideoInfo>(info))
         return !!decoderConfiguration(*videoInfo, filters);
     return false;
+}
+
+bool MediaSamplesDecoder::mustDecodeInProcess(const TrackInfo& info)
+{
+#if PLATFORM(COCOA)
+    RefPtr audioInfo = dynamicDowncast<AudioInfo>(info);
+    return audioInfo && !audioInfo->isDecoded() && !isProtected(info);
+#else
+    UNUSED_PARAM(info);
+    return false;
+#endif
 }
 
 Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::create(const TrackInfo& info, Filters filters)
@@ -305,8 +237,7 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::create(const TrackI
 
 Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createAudio(const AudioInfo& audioInfo, Filters filters)
 {
-    auto configuration = decoderConfiguration(audioInfo, filters);
-    if (!configuration)
+    if (!canDecodeAudio(audioInfo, filters))
         return CreatePromise::createAndReject(isProtected(audioInfo) ? PlatformMediaError::ProtectedContent : PlatformMediaError::NotSupportedError);
 
     Ref outputInfo = AudioInfo::create({
@@ -337,7 +268,7 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createAudio(const A
         });
     };
 
-    return AudioDecoder::create(configuration->codec, configuration->config, WTF::move(outputCallback))->whenSettled(decoder->m_queue.get(), [decoder](auto&& result) -> Ref<CreatePromise> {
+    return AudioDecoder::create(audioInfo, WTF::move(outputCallback))->whenSettled(decoder->m_queue.get(), [decoder](auto&& result) -> Ref<CreatePromise> {
         if (!result)
             return CreatePromise::createAndReject(PlatformMediaError::DecoderCreationError);
         assertIsCurrent(decoder->m_queue.get());

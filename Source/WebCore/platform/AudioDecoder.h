@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class AudioInfo;
 class PlatformRawAudioData;
 
 class AudioDecoder : public ThreadSafeRefCounted<AudioDecoder> {
@@ -59,7 +60,12 @@ public:
     using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&);
     WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
 
+    // FIXME: combine with the AudioInfo variant into a single create(), with the codec string and Config converted to an AudioInfo.
     static Ref<CreatePromise> create(const String&, const Config&, OutputCallback&&);
+
+    // The codec's pre-skip isn't applied, trimming is left to the caller.
+    static bool canDecode(const AudioInfo&);
+    static Ref<CreatePromise> create(const AudioInfo&, OutputCallback&&);
 
     using DecodePromise = NativePromise<void, String>;
     virtual Ref<DecodePromise> decode(AudioEncodedData&&) = 0;
