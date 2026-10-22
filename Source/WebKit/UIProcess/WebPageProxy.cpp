@@ -12351,8 +12351,11 @@ void WebPageProxy::addOpenedPage(WebPageProxy& page)
 void WebPageProxy::exitFullscreenImmediately()
 {
 #if ENABLE(FULLSCREEN_API)
-    if (RefPtr manager = fullScreenManager())
+    if (RefPtr manager = fullScreenManager()) {
+        if (manager->fullscreenState() != WebFullScreenManagerProxy::FullscreenState::InFullscreen)
+            return;
         manager->close();
+    }
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
