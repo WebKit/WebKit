@@ -1,5 +1,5 @@
 
 (repaint rects
-  (rect 8 8 25 57)
+  (rect 9 9 7 14)
 )
 

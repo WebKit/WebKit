@@ -1,7 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x116
-  RenderBlock {HTML} at (0,0) size 800x116
-    RenderBody {BODY} at (8,8) size 784x100
-      RenderListBox {SELECT} at (0,0) size 35x100 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+layer at (0,0) size 800x117
+  RenderBlock {HTML} at (0,0) size 800x117
+    RenderBody {BODY} at (8,8) size 784x101
       RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 31x101 clip at (9,9) size 14x99
+  RenderBlock {SELECT} at (0,0) size 31x101 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+    RenderBlock {OPTION} at (1,1) size 14x11
+      RenderInline {SPAN} at (0,0) size 14x10
+        RenderText {#text} at (0,0) size 14x10
+          text run at (0,0) width 14: "test"

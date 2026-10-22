@@ -130,7 +130,6 @@
 #include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
-#include "RenderListBox.h"
 #include "RenderListOutsideMarker.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMeter.h"
@@ -3102,6 +3101,17 @@ void AXObjectCache::onSelectedOptionChanged(HTMLSelectElement& select, int optio
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     // Make sure the string value is updated in the same cycle as the expanded-state change.
     updateIsolatedTree(protect(get(select)), AXProperty::StringValue);
+#endif
+}
+
+void AXObjectCache::onOptGroupLabelChanged(Element& label)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    // The label of an optgroup is exposed as an item whose value is the label text.
+    if (RefPtr object = get(label))
+        updateIsolatedTree(*object, AXProperty::StringValue);
+#else
+    UNUSED_PARAM(label);
 #endif
 }
 

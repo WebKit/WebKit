@@ -48,7 +48,8 @@ if (window.accessibilityController) {
 
         document.getElementById("apple").remove();
         output += await expectAsync("axSelect.childrenCount", "6");
-        output += await expectAsync("axSelect.childAtIndex(0)?.domIdentifier", "'group'");
+        // The optgroup is represented by its label.
+        output += await expectAsync("axSelect.childAtIndex(0)?.stringValue", "'AXValue: More'");
 
         debug(output);
         finishJSTest();

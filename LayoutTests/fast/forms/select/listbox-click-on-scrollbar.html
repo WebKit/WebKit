@@ -28,7 +28,8 @@ window.onload = function() {
         debug('Click on the scrollbar. The test passes if nothing is printed.');
     else {
         debug('Click on the scrollbar. No change event should be fired.')
-        eventSender.mouseMoveTo(selectElement.offsetLeft + selectElement.offsetWidth - 2, selectElement.offsetTop + selectElement.offsetHeight - 2);
+        // Press the thumb, which is at the top of the scrollbar while the list is not scrolled, so that the press does not scroll the list.
+        eventSender.mouseMoveTo(selectElement.offsetLeft + selectElement.offsetWidth - 2, selectElement.offsetTop + 2);
         eventSender.mouseDown();
         eventSender.mouseUp();
         shouldBe('selectElement.selectedIndex', '-1');
@@ -45,7 +46,7 @@ window.onload = function() {
         debug('');
         debug('Add an option item and then click on the scrollbar again. No change event should be fired.');
         selectElement.appendChild(new Option('9'));
-        eventSender.mouseMoveTo(selectElement.offsetLeft + selectElement.offsetWidth - 2, selectElement.offsetTop + selectElement.offsetHeight - 2);
+        eventSender.mouseMoveTo(selectElement.offsetLeft + selectElement.offsetWidth - 2, selectElement.offsetTop + 2);
         eventSender.mouseDown();
         eventSender.mouseUp();
         shouldBe('selectElement.selectedIndex', '0');

@@ -65,7 +65,6 @@
 #import "RemoteFrame.h"
 #import "RenderLayer.h"
 #import "RenderLayerScrollableArea.h"
-#import "RenderListBox.h"
 #import "RenderView.h"
 #import "RenderWidgetInlines.h"
 #import "ScreenProperties.h"
@@ -774,9 +773,6 @@ OptionSet<PlatformEvent::Modifier> EventHandler::accessKeyModifiers()
 
 static ScrollableArea* LEGACY_NODELETE scrollableAreaForBox(RenderBox& box)
 {
-    if (auto* listBox = dynamicDowncast<RenderListBox>(box))
-        return listBox;
-
     if (auto* scrollableArea = box.layer() ? box.layer()->scrollableArea() : nullptr)
         return scrollableArea;
 

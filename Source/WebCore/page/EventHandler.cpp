@@ -77,6 +77,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "HTMLSelectElement.h"
 #include "HTMLVideoElement.h"
 #include "HandleUserInputEventResult.h"
 #include "HitTestRequest.h"
@@ -116,7 +117,6 @@
 #include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
-#include "RenderListBox.h"
 #include "RenderObjectStyle.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderView.h"
@@ -1037,15 +1037,8 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
         return false;
 
     CheckedPtr renderer = targetNode->renderer();
-    if (!renderer) {
-        auto* parent = targetNode->parentOrShadowHostElement();
-        if (!parent)
-            return false;
-
-        renderer = parent->renderer();
-        if (!renderer || !renderer->isRenderListBox())
-            return false;
-    }
+    if (!renderer)
+        return false;
 
 #if PLATFORM(COCOA) // FIXME: Why does this assertion fire on other platforms?
     ASSERT(mouseDownMayStartSelect() || m_mouseDownMayStartAutoscroll);
@@ -1438,6 +1431,13 @@ void EventHandler::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
     m_autoscrollController->stopAutoscrollTimer(rendererIsBeingDestroyed);
 }
 
+// A list box handles the keys that move through its options, so it is not scrolled by the default handling of the other keys.
+static bool isListBox(const Node& node)
+{
+    auto* select = dynamicDowncast<HTMLSelectElement>(node);
+    return select && !select->isDropdownBox();
+}
+
 bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity granularity, Node* startingNode)
 {
     RefPtr node = startingNode;
@@ -1450,7 +1450,7 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
     
     if (node) {
         CheckedPtr r = node->renderer();
-        if (r && !r->isRenderListBox() && protect(r->enclosingBox())->scroll(direction, granularity)) {
+        if (r && !isListBox(*node) && protect(r->enclosingBox())->scroll(direction, granularity)) {
             setFrameWasScrolledByUser();
             return true;
         }
@@ -1471,7 +1471,7 @@ bool EventHandler::logicalScrollOverflow(ScrollLogicalDirection direction, Scrol
     
     if (node) {
         CheckedPtr r = node->renderer();
-        if (r && !r->isRenderListBox() && protect(r->enclosingBox())->logicalScroll(direction, granularity)) {
+        if (r && !isListBox(*node) && protect(r->enclosingBox())->logicalScroll(direction, granularity)) {
             setFrameWasScrolledByUser();
             return true;
         }
@@ -2211,11 +2211,6 @@ ScrollableArea* EventHandler::enclosingScrollableArea(Node* node) const
         CheckedPtr renderer = ancestor->renderer();
         if (!renderer)
             continue;
-
-        if (auto* renderListBox = dynamicDowncast<RenderListBox>(*renderer)) {
-            if (renderListBox->isScrollableOrRubberbandable())
-                return renderListBox;
-        }
 
         if (RefPtr plugin = dynamicDowncast<RenderEmbeddedObject>(*renderer)) {
             if (CheckedPtr scrollableArea = plugin->scrollableArea()) {
@@ -3785,17 +3780,6 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
     return handledEvent;
 }
 
-static void handleWheelEventPhaseInScrollableArea(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
-{
-#if PLATFORM(MAC)
-    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
-        scrollableArea.scrollAnimator().handleWheelEventPhase(wheelEvent.phase());
-#else
-    UNUSED_PARAM(scrollableArea);
-    UNUSED_PARAM(wheelEvent);
-#endif
-}
-
 static bool scrollViaNonPlatformEvent(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
 {
     auto filteredDelta = FloatSize(wheelEvent.deltaX(), wheelEvent.deltaY());
@@ -3822,17 +3806,10 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
 
     CheckedRef initialEnclosingBox = startNode->renderer()->enclosingBox();
 
-    // RenderListBox is special because it's a ScrollableArea that the scrolling tree doesn't know about.
-    if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(initialEnclosingBox.get()))
-        handleWheelEventPhaseInScrollableArea(*renderListBox, wheelEvent);
-
     if (!shouldHandleEvent)
         return false;
 
     auto scrollableAreaForBox = [](RenderBox& box) -> ScrollableArea* {
-        if (auto* renderListBox = dynamicDowncast<RenderListBox>(box))
-            return renderListBox;
-
         if (box.hasLayer())
             return box.layer()->scrollableArea();
 
@@ -5351,7 +5328,7 @@ bool EventHandler::startKeyboardScrollAnimationOnEnclosingScrollableContainer(Sc
         }
 
         CheckedRef renderBox = renderer->enclosingBox();
-        if (!renderer->isRenderListBox() && startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(direction, granularity, renderBox.ptr(), isKeyRepeat))
+        if (!isListBox(*node) && startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(direction, granularity, renderBox.ptr(), isKeyRepeat))
             return true;
     }
     return false;

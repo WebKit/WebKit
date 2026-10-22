@@ -57,6 +57,7 @@ class FloatSize;
 class Frame;
 class GraphicsContext;
 class HTMLFrameOwnerElement;
+class HTMLSelectElement;
 class Page;
 class RegionContext;
 class RenderBox;
@@ -762,6 +763,9 @@ public:
 
     // overflow:hidden scrollable areas can participate in anchoring, so they need their own set.
     void addScrollableAreaForScrollAnchoring(ScrollableArea&);
+
+    // A list box reveals its selection once its options are laid out.
+    void scheduleListBoxSelectionReveal(HTMLSelectElement&);
     void removeScrollableAreaForScrollAnchoring(ScrollableArea&);
     const ScrollableAreaSet* scrollableAreasForScrollAnchoring() const LIFETIME_BOUND { return m_anchoringScrollableAreas.get(); }
 
@@ -1023,6 +1027,7 @@ private:
     LocalFrameViewLayoutContext m_layoutContext;
 
     HashSet<SingleThreadWeakRef<Widget>> m_widgetsInRenderTree;
+    WeakHashSet<HTMLSelectElement, WeakPtrImplWithEventTargetData> m_listBoxesNeedingSelectionReveal;
     const std::unique_ptr<ListHashSet<SingleThreadWeakRef<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;
     std::unique_ptr<SingleThreadWeakKeyHashSet<RenderElement>> m_slowRepaintObjects;
 

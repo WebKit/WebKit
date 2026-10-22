@@ -45,6 +45,7 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FallbackPopupMenu.h"
+#include "FloatQuad.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FormController.h"
 #include "GenericCachedHTMLCollection.h"
@@ -70,9 +71,12 @@
 #include "NodeTraversal.h"
 #include "PlatformRenderTheme.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
-#include "RenderListBox.h"
+#include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderMenuList.h"
+#include "RenderObjectInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
@@ -122,7 +126,7 @@ static const AtomString& listBoxSlotName()
 // rendered as the box type this implies, it is rendered natively, which does not use the slots.
 static bool LEGACY_NODELETE usesListBoxSlot(const HTMLSelectElement& select)
 {
-    return select.document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled() && !select.supportsPickerPseudoElement();
+    return !select.supportsPickerPseudoElement();
 }
 
 static bool LEGACY_NODELETE isFirstElementChildButton(const Node& child)
@@ -230,6 +234,14 @@ void HTMLSelectElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     root.appendChild(fallbackButton);
     m_fallbackButton = WTF::move(fallbackButton);
 
+    // A list box renders its options and optgroups through this slot.
+    Ref listBoxSlot = HTMLSlotElement::create(slotTag, document);
+    ScriptDisallowedScope::EventAllowedScope listBoxSlotScope { listBoxSlot };
+    listBoxSlot->setAttributeWithoutSynchronization(nameAttr, listBoxSlotName());
+    listBoxSlot->setUserAgentPart(UserAgentParts::internalSelectListBoxSlot());
+    root.appendChild(listBoxSlot);
+    m_listBoxSlot = WTF::move(listBoxSlot);
+
     if (!document->settings().htmlEnhancedSelectEnabled()) {
         root.appendChild(HTMLSlotElement::create(slotTag, document));
         return;
@@ -244,17 +256,6 @@ void HTMLSelectElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
     root.appendChild(popover);
     m_popover = WTF::move(popover);
-
-    if (!document->settings().htmlEnhancedSelectMultipleAndListBoxEnabled())
-        return;
-
-    Ref listBoxSlot = HTMLSlotElement::create(slotTag, document);
-    ScriptDisallowedScope::EventAllowedScope listBoxSlotScope { listBoxSlot };
-    listBoxSlot->setAttributeWithoutSynchronization(nameAttr, listBoxSlotName());
-    // Options in the picker inherit read-only from its user agent part. Match that here.
-    listBoxSlot->setInlineStyleProperty(CSSPropertyID::WebkitUserModify, CSSValueID::ReadOnly);
-    root.appendChild(listBoxSlot);
-    m_listBoxSlot = WTF::move(listBoxSlot);
 }
 
 HTMLSelectElement* HTMLSelectElement::findOwnerSelect(ContainerNode* startNode, ExcludeOptGroup excludeOptGroup)
@@ -494,6 +495,12 @@ bool HTMLSelectElement::usesBaseAppearancePicker() const
 bool HTMLSelectElement::optionsAreRenderedWithBaseAppearance() const
 {
     return usesBaseAppearancePicker() || isBaseListBox();
+}
+
+bool HTMLSelectElement::rendersOptionLabels() const
+{
+    CheckedPtr box = renderBox();
+    return box && box->isDefaultAppearanceListBox();
 }
 
 Element* HTMLSelectElement::optionContainer() const
@@ -906,24 +913,18 @@ bool HTMLSelectElement::supportsBaseAppearance(StyleAppearance appearance) const
 
 RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
 {
-    if (isBaseListBox(&style))
-        return HTMLElement::createElementRenderer(WTF::move(style), position);
-    if (boxType(&style) == BoxType::DropdownBox) {
-        if (hasBaseAppearance(&style))
-            return HTMLElement::createElementRenderer(WTF::move(style), position);
+    // A list box is a scroll container of its options and optgroups.
+    if (boxType(&style) == BoxType::DropdownBox && !hasBaseAppearance(&style))
         return createRenderer<RenderMenuList>(*this, WTF::move(style));
-    }
-    return createRenderer<RenderListBox>(*this, WTF::move(style));
+    return HTMLElement::createElementRenderer(WTF::move(style), position);
 }
 
 bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
 {
     if (!HTMLFormControlElement::childShouldCreateRenderer(child))
         return false;
-    if (isBaseListBox())
-        return &child != m_buttonSlot && &child != m_fallbackButton;
     if (boxType() == BoxType::ListBox)
-        return isAnyOf<HTMLOptionElement, HTMLOptGroupElement>(child) || validationMessageShadowTreeContains(child);
+        return &child != m_buttonSlot && &child != m_fallbackButton;
     if (&child == m_listBoxSlot.get())
         return false;
     if (child.isInShadowTree() && child.containingShadowRoot() == userAgentShadowRoot())
@@ -1274,9 +1275,7 @@ int HTMLSelectElement::nextSelectableListIndexPageAway(int startIndex, SkipDirec
     auto& items = listItems();
 
     // Can't use m_size because renderer forces a minimum size.
-    int pageSize = 0;
-    if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(*renderer()))
-        pageSize = renderListBox->size() - 1; // -1 so we still show context.
+    int pageSize = isDropdownBox() ? 0 : static_cast<int>(preferredSize()) - 1; // -1 so we still show context.
 
     // One page away, but not outside valid bounds.
     // If there is a valid option item one page away, the index is chosen.
@@ -1386,9 +1385,9 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
     ASSERT(renderer());
 
 #if !PLATFORM(IOS_FAMILY)
-    ASSERT(renderer()->isRenderListBox() || m_multiple || isBaseListBox());
+    ASSERT(m_multiple || !isDropdownBox());
 #else
-    ASSERT(renderer()->isRenderMenuList() || m_multiple || isBaseListBox());
+    ASSERT(renderer()->isRenderMenuList() || m_multiple || !isDropdownBox());
 #endif
 
     ASSERT(!listItems().size() || m_activeSelectionAnchorIndex >= 0);
@@ -1487,14 +1486,117 @@ void HTMLSelectElement::dispatchChangeEventForMenuList()
     }
 }
 
+void HTMLSelectElement::scrollListItemIntoView(int listIndex)
+{
+    auto& items = listItems();
+    if (listIndex < 0 || static_cast<size_t>(listIndex) >= items.size())
+        return;
+
+    RefPtr item = items[listIndex];
+    CheckedPtr itemRenderer = item ? item->renderer() : nullptr;
+    if (!itemRenderer)
+        return;
+
+    // Like scrollIntoView({ block: "nearest", inline: "nearest", container: "nearest" }), so only the list box scrolls,
+    // as little as needed. This does not update layout, which the callers have already done.
+    bool insideFixed = false;
+    auto absoluteBounds = itemRenderer->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
+    LocalFrameView::scrollRectToVisible(absoluteBounds, *itemRenderer, insideFixed, {
+        .revealMode = SelectionRevealMode::Reveal,
+        .alignX = ScrollAlignment::alignToEdgeIfNeeded,
+        .alignY = ScrollAlignment::alignToEdgeIfNeeded,
+        .container = ScrollIntoViewContainer::Nearest,
+    });
+}
+
+int HTMLSelectElement::listIndexForMouseEvent(const MouseEvent& event, ListIndexFallback fallback) const
+{
+    auto& items = listItems();
+    CheckedPtr listBox = renderBox();
+    if (!listBox)
+        return -1;
+
+    FloatPoint point { event.absoluteLocation() };
+
+    // A press on a scrollbar, which can be on top of the items, is not a press on an item.
+    if (fallback == ListIndexFallback::None) {
+        if (CheckedPtr scrollableArea = listBox->layer() ? listBox->layer()->scrollableArea() : nullptr) {
+            auto localPoint = roundedIntPoint(listBox->absoluteToLocal(point, MapCoordinatesMode::UseTransforms));
+            auto controls = scrollableArea->overflowControlsRects();
+            if (controls.verticalScrollbar.contains(localPoint) || controls.horizontalScrollbar.contains(localPoint) || controls.scrollCornerOrResizerRect().contains(localPoint))
+                return -1;
+        }
+    }
+
+    // The event is usually targeted at the item under the mouse, or at one of its descendants.
+    for (RefPtr node = dynamicDowncast<Node>(event.target()); node && node != this; node = node->parentInComposedTree()) {
+        RefPtr item = dynamicDowncast<HTMLElement>(*node);
+        if (!item || !isAnyOf<HTMLOptionElement, HTMLOptGroupElement>(*item))
+            continue;
+        auto index = items.find(item.get());
+        if (index != notFound)
+            return static_cast<int>(index);
+    }
+
+    // Otherwise the event is targeted at the select, for instance when it captures the mouse during a drag.
+    // A point on the edge between two items is in the second one.
+    auto containsPoint = [&](const FloatRect& rect) {
+        return rect.x() <= point.x() && point.x() < rect.maxX() && rect.y() <= point.y() && point.y() < rect.maxY();
+    };
+    auto scrollport = listBox->localToAbsoluteQuad(FloatQuad { listBox->paddingBoxRect() }).boundingBox();
+    bool isHorizontal = listBox->writingMode().isHorizontal();
+    float mouseOffset = isHorizontal ? point.y() : point.x();
+    int nearestIndex = -1;
+    float nearestDistance = std::numeric_limits<float>::max();
+    for (size_t i = 0; i < items.size(); ++i) {
+        // An optgroup row is its label, which is not an item that can be selected.
+        RefPtr option = dynamicDowncast<HTMLOptionElement>(items[i]);
+        CheckedPtr itemRenderer = option ? option->renderer() : nullptr;
+        if (!itemRenderer)
+            continue;
+        auto rect = FloatRect { itemRenderer->absoluteBoundingBoxRect() };
+        if (fallback == ListIndexFallback::None) {
+            if (containsPoint(scrollport) && containsPoint(rect))
+                return static_cast<int>(i);
+            continue;
+        }
+        // Only the visible items are candidates, so that dragging past the list extends the selection as it scrolls.
+        if (!rect.intersects(scrollport))
+            continue;
+        float start = isHorizontal ? rect.y() : rect.x();
+        float end = isHorizontal ? rect.maxY() : rect.maxX();
+        float distance = mouseOffset < start ? start - mouseOffset : (mouseOffset >= end ? mouseOffset - end : 0);
+        if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestIndex = static_cast<int>(i);
+        }
+    }
+    return nearestIndex;
+}
+
 void HTMLSelectElement::scrollToSelection()
 {
 #if !PLATFORM(IOS_FAMILY)
     if (usesMenuList())
         return;
 
-    if (CheckedPtr renderer = dynamicDowncast<RenderListBox>(this->renderer()))
-        renderer->selectionChanged();
+    if (isDropdownBox())
+        return;
+
+    // The option may not be laid out yet, in which case the selection is revealed after the next layout.
+    RefPtr view = document().view();
+    if (!view)
+        return;
+    int listIndex = activeSelectionEndListIndex();
+    auto& items = listItems();
+    RefPtr item = listIndex >= 0 && static_cast<size_t>(listIndex) < items.size() ? items[listIndex].get() : nullptr;
+    if (!item)
+        return;
+    if (!item->renderer() || view->needsLayout()) {
+        view->scheduleListBoxSelectionReveal(*this);
+        return;
+    }
+    scrollListItemIntoView(listIndex);
 #else
     if (CheckedPtr renderer = this->renderer())
         renderer->repaint();
@@ -1506,8 +1608,6 @@ void HTMLSelectElement::setOptionsChangedOnRenderer()
     if (auto* renderer = this->renderer()) {
         if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(*renderer))
             renderMenuList->setOptionsChanged(true);
-        else if (auto* renderListBox = dynamicDowncast<RenderListBox>(*renderer))
-            renderListBox->setOptionsChanged(true);
     }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -1556,12 +1656,6 @@ void HTMLSelectElement::setRecalcListItems()
     }
 
     Ref document = this->document();
-    // A RenderListBox paints the list items itself, so the render tree does not report changes to them.
-    if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(this->renderer())) {
-        if (CheckedPtr cache = document->existingAXObjectCache())
-            cache->childrenChanged(*renderListBox);
-    }
-
     if (this == document->focusedElement()) {
         if (RefPtr page = document->page())
             page->chrome().client().focusedSelectElementDidChangeOptions(*this);
@@ -2211,13 +2305,10 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
         protect(document())->updateStyleIfNeeded();
 
         // Calling focus() may remove or change our renderer, in which case we don't want to handle the event further.
-        CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(this->renderer());
-        if (!renderListBox)
+        if (!renderer() || isDropdownBox())
             return;
 
-        // Convert to coords relative to the list box if needed.
-        IntPoint localOffset = roundedIntPoint(renderListBox->absoluteToLocal(mouseEvent->absoluteLocation(), MapCoordinatesMode::UseTransforms));
-        int listIndex = renderListBox->listIndexAtOffset(toIntSize(localOffset));
+        int listIndex = listIndexForMouseEvent(*mouseEvent, ListIndexFallback::None);
         if (listIndex >= 0) {
             if (!isDisabledFormControl()) {
 #if PLATFORM(COCOA)
@@ -2232,17 +2323,10 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
             mouseEvent->setDefaultHandled();
         }
     } else if (event.type() == eventNames.mousemoveEvent && mouseEvent) {
-        CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(*renderer());
-        if (!renderListBox)
-            return;
-        if (renderListBox->canBeScrolledAndHasScrollableArea())
-            return;
-
         if (mouseEvent->button() != MouseButton::Left || !mouseEvent->buttonDown())
             return;
 
-        IntPoint localOffset = roundedIntPoint(renderListBox->absoluteToLocal(mouseEvent->absoluteLocation(), MapCoordinatesMode::UseTransforms));
-        int listIndex = renderListBox->listIndexAtOffset(toIntSize(localOffset));
+        int listIndex = listIndexForMouseEvent(*mouseEvent, ListIndexFallback::Nearest);
         if (listIndex >= 0) {
             if (!isDisabledFormControl() && !updateListBoxSelectionForDrag(listIndex))
                 return;
@@ -2258,11 +2342,6 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
             m_isCapturingMouseEvents = false;
         }
-        // If this select is autoscrolling, stopAutoscroll() will call
-        // handleListBoxMouseRelease() when the autoscroll timer stops,
-        // so avoid calling it here.
-        if (frame->eventHandler().autoscrollRenderer() == renderer())
-            return;
         handleListBoxMouseRelease();
     } else if (event.type() == eventNames.keydownEvent) {
         RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event);
@@ -2352,8 +2431,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
                 setActiveSelectionAnchorIndex(m_activeSelectionEndIndex);
             }
 
-            if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(this->renderer()))
-                renderListBox->scrollToRevealElementAtListIndex(endIndex);
+            scrollListItemIntoView(endIndex);
             if (selectNewItem) {
                 updateListBoxSelection(deselectOthers);
                 listBoxOnChange();

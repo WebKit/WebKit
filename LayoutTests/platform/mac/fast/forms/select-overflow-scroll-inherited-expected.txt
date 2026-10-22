@@ -3,8 +3,48 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 784x128 clip at (8,8) size 769x113
-  RenderBlock {DIV} at (0,0) size 784x128
+layer at (8,8) size 784x140 clip at (8,8) size 769x125
+  RenderBlock {DIV} at (0,0) size 784x140
     RenderText {#text} at (0,0) size 0x0
-layer at (8,8) size 49x113 clip at (9,9) size 47x111
-  RenderListBox {SELECT} at (0,0) size 49x113 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+layer at (8,8) size 45x125 clip at (9,9) size 32x112 scrollHeight 140
+  RenderBlock {SELECT} at (0,0) size 45x125 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+    RenderBlock {OPTION} at (1,1) size 32x14
+      RenderInline {SPAN} at (0,0) size 22x13
+        RenderText {#text} at (0,0) size 22x13
+          text run at (0,0) width 22: "One"
+    RenderBlock {OPTION} at (1,15) size 32x14
+      RenderInline {SPAN} at (0,0) size 22x13
+        RenderText {#text} at (0,0) size 22x13
+          text run at (0,0) width 22: "Two"
+    RenderBlock {OPTION} at (1,29) size 32x14
+      RenderInline {SPAN} at (0,0) size 31x13
+        RenderText {#text} at (0,0) size 31x13
+          text run at (0,0) width 31: "Three"
+    RenderBlock {OPTION} at (1,43) size 32x14
+      RenderInline {SPAN} at (0,0) size 24x13
+        RenderText {#text} at (0,0) size 24x13
+          text run at (0,0) width 24: "Four"
+    RenderBlock {OPTION} at (1,57) size 32x14
+      RenderInline {SPAN} at (0,0) size 22x13
+        RenderText {#text} at (0,0) size 22x13
+          text run at (0,0) width 22: "Five"
+    RenderBlock {OPTION} at (1,71) size 32x14
+      RenderInline {SPAN} at (0,0) size 16x13
+        RenderText {#text} at (0,0) size 16x13
+          text run at (0,0) width 16: "Six"
+    RenderBlock {OPTION} at (1,85) size 32x14
+      RenderInline {SPAN} at (0,0) size 32x13
+        RenderText {#text} at (0,0) size 32x13
+          text run at (0,0) width 32: "Seven"
+    RenderBlock {OPTION} at (1,99) size 32x14
+      RenderInline {SPAN} at (0,0) size 27x13
+        RenderText {#text} at (0,0) size 27x13
+          text run at (0,0) width 27: "Eight"
+    RenderBlock {OPTION} at (1,113) size 32x14
+      RenderInline {SPAN} at (0,0) size 24x13
+        RenderText {#text} at (0,0) size 24x13
+          text run at (0,0) width 24: "Nine"
+    RenderBlock {OPTION} at (1,127) size 32x14
+      RenderInline {SPAN} at (0,0) size 19x13
+        RenderText {#text} at (0,0) size 19x13
+          text run at (0,0) width 19: "Ten"

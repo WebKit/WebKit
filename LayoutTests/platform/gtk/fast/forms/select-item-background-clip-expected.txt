@@ -16,7 +16,24 @@ layer at (0,0) size 800x600
             text run at (0,18) width 158: "not clipped to the list box"
         RenderText {#text} at (158,18) size 4x18
           text run at (158,18) width 4: "."
-      RenderBlock (anonymous) at (0,52) size 784x70
-        RenderListBox {SELECT} at (0,0) size 67x70 [bgcolor=#FFFFFF] [border: (3px solid #0000FF)]
+      RenderBlock (anonymous) at (0,52) size 784x74
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
+layer at (8,60) size 63x74 clip at (11,63) size 42x68 scrollHeight 82
+  RenderBlock {SELECT} at (0,0) size 63x74 [bgcolor=#FFFFFF] [border: (3px solid #0000FF)]
+    RenderBlock {OPTION} at (6,6) size 36x19
+      RenderInline {SPAN} at (0,0) size 27x18
+        RenderText {#text} at (0,0) size 27x18
+          text run at (0,0) width 27: "one"
+    RenderBlock {OPTION} at (6,25) size 36x19
+      RenderInline {SPAN} at (0,0) size 25x18
+        RenderText {#text} at (0,0) size 25x18
+          text run at (0,0) width 25: "two"
+    RenderBlock {OPTION} at (6,44) size 36x19
+      RenderInline {SPAN} at (0,0) size 36x18
+        RenderText {#text} at (0,0) size 36x18
+          text run at (0,0) width 36: "three"
+    RenderBlock {OPTION} at (6,63) size 36x19 [bgcolor=#800080]
+      RenderInline {SPAN} at (0,0) size 27x18
+        RenderText {#text} at (0,0) size 27x18
+          text run at (0,0) width 27: "four"

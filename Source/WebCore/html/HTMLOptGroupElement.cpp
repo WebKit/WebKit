@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLOptGroupElement.h"
 
+#include "AXObjectCache.h"
 #include "Document.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementIterator.h"
@@ -98,8 +99,11 @@ void HTMLOptGroupElement::updateUserAgentShadowTree()
 
     ScriptDisallowedScope::EventAllowedScope labelContainerScope { labelContainer };
 
-    if (auto label = groupLabelText(); labelContainer->textContent() != label)
+    if (auto label = groupLabelText(); labelContainer->textContent() != label) {
         labelContainer->setTextContent(WTF::move(label));
+        if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+            cache->onOptGroupLabelChanged(labelContainer.get());
+    }
 
     if (showLabel)
         labelContainer->removeInlineStyleProperty(CSSPropertyID::Display);
@@ -239,6 +243,11 @@ void HTMLOptGroupElement::legendElementChanged()
 {
     recalcSelectOptions();
     invalidateShadowTree();
+
+    if (RefPtr legend = legendElement()) {
+        if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+            cache->onOptGroupLabelChanged(*legend);
+    }
 }
 
 void HTMLOptGroupElement::parseDisabledAttribute(const AtomString& value)

@@ -47,7 +47,6 @@
 #include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
-#include "RenderListBox.h"
 #include "RenderObjectDocument.h"
 #include "RenderSVGModelObject.h"
 #include "RenderTheme.h"
@@ -373,43 +372,12 @@ void OutlinePainter::collectFocusRingRects(const RenderElement& renderer, Vector
         collectFocusRingRectsForInline(downcast<RenderBoxModelObject>(renderer), rects, additionalOffset, paintContainer);
         return;
     }
-    if (CheckedPtr listBox = dynamicDowncast<RenderListBox>(renderer)) {
-        if (collectFocusRingRectsForListBox(*listBox, rects, additionalOffset, paintContainer))
-            return;
-    }
     if (CheckedPtr block = dynamicDowncast<RenderBlock>(renderer)) {
         if (collectFocusRingRectsForBlock(*block, rects, additionalOffset, paintContainer))
             return;
     }
     if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer))
         appendIfNotEmpty(rects, { additionalOffset, box->borderBoxSize() });
-}
-
-bool OutlinePainter::collectFocusRingRectsForListBox(const RenderListBox& renderer, Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*)
-{
-    if (!renderer.selectElement().allowsNonContiguousSelection())
-        return false;
-
-    CheckedRef selectElement = renderer.selectElement();
-
-    // Focus the last selected item.
-    int selectedItem = selectElement->activeSelectionEndListIndex();
-    if (selectedItem >= 0) {
-        rects.append(snappedIntRect(renderer.itemBoundingBoxRect(additionalOffset, selectedItem)));
-        return true;
-    }
-
-    // No selected items, find the first non-disabled item.
-    int indexOfFirstEnabledOption = 0;
-    for (RefPtr item : selectElement->listItems()) {
-        if (is<HTMLOptionElement>(item) && !item->isDisabledFormControl()) {
-            selectElement->setActiveSelectionEndIndex(indexOfFirstEnabledOption);
-            rects.append(renderer.itemBoundingBoxRect(additionalOffset, indexOfFirstEnabledOption));
-            return true;
-        }
-        indexOfFirstEnabledOption++;
-    }
-    return true;
 }
 
 void OutlinePainter::collectFocusRingRectsForInline(const RenderBoxModelObject& renderer, Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)

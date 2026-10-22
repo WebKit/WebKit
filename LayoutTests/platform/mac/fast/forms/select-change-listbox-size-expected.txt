@@ -19,7 +19,32 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 323x18
           text run at (0,0) width 323: "This list box should be tall enough to fit 6 options."
-      RenderBlock (anonymous) at (0,86) size 784x85
-        RenderListBox {SELECT} at (0,0) size 48x85 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBlock (anonymous) at (0,86) size 784x86
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
+layer at (8,94) size 43x86 clip at (9,95) size 30x84
+  RenderBlock {SELECT} at (0,0) size 44x86 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+    RenderBlock {OPTION} at (1,1) size 31x14
+      RenderInline {SPAN} at (0,0) size 22x13
+        RenderText {#text} at (0,0) size 22x13
+          text run at (0,0) width 22: "One"
+    RenderBlock {OPTION} at (1,15) size 31x14
+      RenderInline {SPAN} at (0,0) size 22x13
+        RenderText {#text} at (0,0) size 22x13
+          text run at (0,0) width 22: "Two"
+    RenderBlock {OPTION} at (1,29) size 31x14
+      RenderInline {SPAN} at (0,0) size 31x13
+        RenderText {#text} at (0,0) size 31x13
+          text run at (0,0) width 31: "Three"
+    RenderBlock {OPTION} at (1,43) size 31x14
+      RenderInline {SPAN} at (0,0) size 24x13
+        RenderText {#text} at (0,0) size 24x13
+          text run at (0,0) width 24: "Four"
+    RenderBlock {OPTION} at (1,57) size 31x14
+      RenderInline {SPAN} at (0,0) size 22x13
+        RenderText {#text} at (0,0) size 22x13
+          text run at (0,0) width 22: "Five"
+    RenderBlock {OPTION} at (1,71) size 31x14
+      RenderInline {SPAN} at (0,0) size 16x13
+        RenderText {#text} at (0,0) size 16x13
+          text run at (0,0) width 16: "Six"

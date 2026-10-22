@@ -180,6 +180,9 @@ public:
     bool isSupportedPropertyIndex(unsigned index);
 
     void scrollToSelection();
+    void scrollListItemIntoView(int listIndex);
+    enum class ListIndexFallback : bool { None, Nearest };
+    int listIndexForMouseEvent(const MouseEvent&, ListIndexFallback) const;
     void selectDefaultOptionIfNeeded(HTMLOptionElement&);
     void selectedOptionAdded(HTMLOptionElement&);
 
@@ -220,6 +223,8 @@ public:
 
     bool usesBaseAppearancePicker() const;
     WEBCORE_EXPORT bool optionsAreRenderedWithBaseAppearance() const;
+    // A list box with the default appearance renders the labels of its options rather than their content.
+    bool rendersOptionLabels() const;
     Element* LEGACY_NODELETE optionContainer() const;
     SelectPopoverElement* LEGACY_NODELETE pickerPopoverElement() const;
     Element* LEGACY_NODELETE buttonElement() const;

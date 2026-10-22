@@ -282,6 +282,13 @@ bool isFrameOwnerFullyClipped(HTMLFrameOwnerElement& owner, TextIteratorBehavior
 
 // FIXME: editingIgnoresContent and isRendererReplacedElement try to do the same job.
 // It's not good to have both of them.
+// A list box with the default appearance renders the labels of its options rather than their content, so the content is not iterated.
+static bool hidesOptionContent(const Node& node)
+{
+    RefPtr select = dynamicDowncast<HTMLSelectElement>(node);
+    return select && select->rendersOptionLabels();
+}
+
 bool isRendererReplacedElement(RenderObject* renderer, TextIteratorBehaviors behaviors)
 {
     if (!renderer)
@@ -539,6 +546,8 @@ void TextIterator::advance()
                     m_handledNode = handleReplacedElement();
                 else
                     m_handledNode = handleNonTextNode();
+                if (hidesOptionContent(*protect(m_currentNode)))
+                    m_handledChildren = true;
                 if (m_positionNode)
                     return;
             }
@@ -1463,6 +1472,8 @@ void SimplifiedBackwardsTextIterator::advance()
                     m_handledNode = handleReplacedElement();
             } else
                 m_handledNode = handleNonTextNode();
+            if (hidesOptionContent(*protect(m_node)))
+                m_handledChildren = true;
             if (m_positionNode)
                 return;
         }

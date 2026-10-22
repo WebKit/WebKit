@@ -59,11 +59,11 @@ function mouseDownOnSelect(selId, index, fudge)
     y += sl.offsetTop;
 
     if (fudge == kClickOnPaddingLeftArea) {
-       x = opt.offsetLeft + (paddingLeft / 2); // middle of the padding left area.
+       x = sl.offsetLeft + sl.clientLeft + (paddingLeft / 2); // middle of the padding left area.
     } else if (fudge == kClickOnOptionElement) {
        // do nothing, already set as default value above.
     } else if (fudge == kClickOnPaddingRightArea) {
-       x = opt.offsetRight + (paddingRight / 2); // middle of the padding right area.
+       x = sl.offsetLeft + sl.clientLeft + sl.clientWidth - (paddingRight / 2); // middle of the padding right area.
     }
     var event = document.createEvent("MouseEvent");
     event.initMouseEvent("mousedown", true, true, document.defaultView, 1, x, y, x, y, false, false, false, false, 0, document);

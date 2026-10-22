@@ -28,7 +28,6 @@
 namespace WebCore {
 
 class Path;
-class RenderListBox;
 struct PaintInfo;
 
 namespace Style {
@@ -50,7 +49,6 @@ private:
 
     static void collectFocusRingRects(const RenderElement&, Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer);
     static void collectFocusRingRectsForInline(const RenderBoxModelObject&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
-    static bool collectFocusRingRectsForListBox(const RenderListBox&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
     static bool collectFocusRingRectsForBlock(const RenderBlock&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
     static void collectFocusRingRectsForInlineChildren(const RenderBlockFlow&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
     static void collectFocusRingRectsForChildBox(const RenderBox&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);

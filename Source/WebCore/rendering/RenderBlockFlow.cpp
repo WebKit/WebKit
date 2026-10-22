@@ -378,6 +378,17 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeIntrinsicLogicalWidths
     };
     resetMinimumWidthForMarqueeIfApplicable();
 
+    // Like other form controls, a list box does not wrap its options, and can shrink to nothing when its width is a percentage.
+    if (isDefaultAppearanceListBox()) {
+        auto& logicalWidth = style().logicalWidth();
+        if (logicalWidth.isCalculated())
+            minLogicalWidth = std::max(0_lu, Style::evaluate<LayoutUnit>(logicalWidth, 0_lu, style().usedZoomForLength()));
+        else if (logicalWidth.isPercent())
+            minLogicalWidth = { };
+        else
+            minLogicalWidth = maxLogicalWidth;
+    }
+
     if (auto* cell = dynamicDowncast<RenderTableCell>(*this)) {
         auto [tableCellWidth, usedZoom] = cell->styleOrColLogicalWidth();
         if (auto fixedTableCellWidth = tableCellWidth.tryFixed(); fixedTableCellWidth && fixedTableCellWidth->isPositive())
@@ -439,7 +450,7 @@ void RenderBlockFlow::computeColumnCountAndWidth()
 bool RenderBlockFlow::willCreateColumns() const
 {
     // The following types are not supposed to create multicol context.
-    if (isRenderFileUploadControl() || isRenderTextControl() || isRenderListBox())
+    if (isRenderFileUploadControl() || isRenderTextControl())
         return false;
     if (isRenderSVGBlock())
         return false;

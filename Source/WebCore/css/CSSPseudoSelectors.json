@@ -428,6 +428,12 @@
         "-internal-optgroup-label": {
             "user-agent-part": true
         },
+        "-internal-option-content": {
+            "user-agent-part": true
+        },
+        "-internal-option-label": {
+            "user-agent-part": true
+        },
         "-webkit-progress-bar": {
             "status": "non-standard",
             "user-agent-part": true
@@ -485,6 +491,9 @@
             "user-agent-part": true
         },
         "-internal-select-button-slot": {
+            "user-agent-part": true
+        },
+        "-internal-select-list-box-slot": {
             "user-agent-part": true
         },
         "-webkit-slider-container": {

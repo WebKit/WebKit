@@ -6,5 +6,61 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 279x18
           text run at (0,0) width 279: "This tests GraphicsContext::drawBidiText()."
-      RenderListBox {SELECT} at (0,34) size 311x190 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderListBox {SELECT} at (0,224) size 326x18 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+layer at (8,42) size 306x200 clip at (9,43) size 289x198
+  RenderBlock {SELECT} at (0,34) size 307x200 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+    RenderBlock {OPTION} at (1,1) size 290x22
+      RenderInline {SPAN} at (0,0) size 197x21
+        RenderText {#text} at (0,0) size 197x21
+          text run at (0,0) width 38: "First "
+          text run at (38,0) width 60 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
+          text run at (98,0) width 18: "03"
+          text run at (116,0) width 45 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+          text run at (161,0) width 36: " fifth"
+    RenderBlock {OPTION} at (1,23) size 290x22
+      RenderInline {SPAN} at (92,0) size 198x21
+        RenderText {#text} at (92,0) size 198x21
+          text run at (92,0) width 32: "fifth"
+          text run at (123,0) width 66 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
+          text run at (188,0) width 19: "03"
+          text run at (206,0) width 51 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+          text run at (256,0) width 34: "First"
+    RenderBlock {OPTION} at (1,45) size 290x22
+      RenderInline {SPAN} at (0,0) size 197x21
+        RenderText {#text} at (0,0) size 197x21
+          text run at (0,0) width 197: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+    RenderBlock {OPTION} at (1,67) size 290x22
+      RenderInline {SPAN} at (92,0) size 198x21
+        RenderText {#text} at (92,0) size 198x21
+          text run at (92,0) width 198 RTL: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+    RenderBlock {OPTION} at (1,89) size 290x22
+      RenderInline {SPAN} at (0,0) size 100x21
+        RenderText {#text} at (0,0) size 100x21
+          text run at (0,0) width 100 RTL: "\x{5DE}\x{5E9}\x{5D4}\x{5D5} \x{5E2}\x{5DD} \x{5E0}\x{5B4}\x{5E7}\x{5BC}\x{5D5}\x{5BC}\x{5D3}"
+    RenderBlock {OPTION} at (1,111) size 290x22
+      RenderInline {SPAN} at (0,1) size 89x20
+        RenderText {#text} at (0,1) size 89x20
+          text run at (0,1) width 89 RTL: "\x{627}\x{644}\x{644}\x{63A}\x{629} \x{627}\x{644}\x{639}\x{631}\x{628}\x{64A}\x{629}"
+    RenderBlock {OPTION} at (1,133) size 290x22
+      RenderInline {SPAN} at (0,0) size 125x21
+        RenderText {#text} at (0,0) size 125x21
+          text run at (0,0) width 125: "Et volia\x{300}: ATSUI!"
+    RenderBlock {OPTION} at (1,155) size 290x22
+      RenderInline {SPAN} at (0,0) size 261x21
+        RenderText {#text} at (0,0) size 261x21
+          text run at (0,0) width 86: "Directional "
+          text run at (86,0) width 67 RTL: "\x{202E}overrides"
+          text run at (153,0) width 108: "\x{202C} are confusing."
+    RenderBlock {OPTION} at (1,177) size 290x22
+      RenderInline {SPAN} at (0,0) size 290x21
+        RenderText {#text} at (0,0) size 290x21
+          text run at (0,0) width 74: "She said \x{201C}"
+          text run at (74,0) width 65 RTL: " \x{5D1}\x{5DE}\x{5D6}\x{5D5}\x{5D5}\x{5D3}\x{5D4}!"
+          text run at (139,0) width 35: "TNT"
+          text run at (173,0) width 24 RTL: "\x{202B}\x{5D9}\x{5E9} "
+          text run at (196,0) width 94: "\x{202C}\x{201D} and ran off"
+layer at (8,242) size 322x18 clip at (9,243) size 305x16
+  RenderBlock {SELECT} at (0,234) size 322x18 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+    RenderBlock {OPTION} at (1,1) size 305x16
+      RenderInline {SPAN} at (0,0) size 305x15
+        RenderText {#text} at (0,0) size 305x15
+          text run at (0,0) width 305: "There are two ways to measure text: my way and the wrong way"

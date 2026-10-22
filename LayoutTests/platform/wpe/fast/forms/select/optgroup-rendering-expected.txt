@@ -1,5 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
+<<<<<<< HEAD
 layer at (0,0) size 800x408
   RenderBlock {HTML} at (0,0) size 800x408
     RenderBody {BODY} at (8,8) size 784x392
@@ -10,6 +11,115 @@ layer at (0,0) size 800x408
         RenderMenuList {SELECT} at (0,361) size 81x31 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
 layer at (9,371) size 79x28
+=======
+layer at (0,0) size 800x428
+  RenderBlock {HTML} at (0,0) size 800x428
+    RenderBody {BODY} at (8,8) size 784x412
+      RenderBlock {FORM} at (0,0) size 784x412
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (82,361) size 0x17
+        RenderMenuList {SELECT} at (0,382) size 81x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 82x382 clip at (9,9) size 65x380
+  RenderBlock {SELECT} at (0,0) size 82x382 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+    RenderBlock {OPTGROUP} at (1,1) size 65x95 [color=#008000]
+      RenderBlock {DIV} at (0,0) size 65x19
+        RenderText {#text} at (0,0) size 57x18
+          text run at (0,0) width 57: "Enabled"
+      RenderBlock {OPTION} at (0,19) size 65x19 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 27x18
+          RenderText {#text} at (16,0) size 27x18
+            text run at (16,0) width 27: "One"
+      RenderBlock {OPTION} at (0,38) size 65x19 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 29x18
+          RenderText {#text} at (16,0) size 29x18
+            text run at (16,0) width 29: "Two"
+      RenderBlock {OPTION} at (0,57) size 65x19 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 37x18
+          RenderText {#text} at (16,0) size 37x18
+            text run at (16,0) width 37: "Three"
+      RenderBlock {OPTION} at (0,76) size 65x19 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 30x18
+          RenderText {#text} at (16,0) size 30x18
+            text run at (16,0) width 30: "Four"
+    RenderBlock {OPTGROUP} at (1,96) size 65x95 [color=#FFC0CB]
+      RenderBlock {DIV} at (0,0) size 65x19
+        RenderText {#text} at (0,0) size 59x18
+          text run at (0,0) width 59: "Disabled"
+      RenderBlock {OPTION} at (0,19) size 65x19 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 27x18
+          RenderText {#text} at (16,0) size 27x18
+            text run at (16,0) width 27: "One"
+      RenderBlock {OPTION} at (0,38) size 65x19 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 29x18
+          RenderText {#text} at (16,0) size 29x18
+            text run at (16,0) width 29: "Two"
+      RenderBlock {OPTION} at (0,57) size 65x19 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 37x18
+          RenderText {#text} at (16,0) size 37x18
+            text run at (16,0) width 37: "Three"
+      RenderBlock {OPTION} at (0,76) size 65x19 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 30x18
+          RenderText {#text} at (16,0) size 30x18
+            text run at (16,0) width 30: "Four"
+    RenderBlock {OPTGROUP} at (1,191) size 65x95 [color=#008000]
+      RenderBlock {DIV} at (0,0) size 65x19
+        RenderText {#text} at (0,0) size 65x18
+          text run at (0,0) width 65: "Enabled2"
+      RenderBlock {OPTION} at (0,19) size 65x19 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 27x18
+          RenderText {#text} at (16,0) size 27x18
+            text run at (16,0) width 27: "One"
+      RenderBlock {OPTION} at (0,38) size 65x19 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 29x18
+          RenderText {#text} at (16,0) size 29x18
+            text run at (16,0) width 29: "Two"
+      RenderBlock {OPTION} at (0,57) size 65x19 [color=#0000FF] [bgcolor=color(srgb 0 0 0 / 0.1)]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 37x18
+          RenderText {#text} at (16,0) size 37x18
+            text run at (16,0) width 37: "Three"
+      RenderBlock {OPTION} at (0,76) size 65x19 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 16x18
+          RenderText at (0,0) size 16x18
+            text run at (0,0) width 16: "    "
+        RenderInline {SPAN} at (16,0) size 30x18
+          RenderText {#text} at (16,0) size 30x18
+            text run at (16,0) width 30: "Four"
+layer at (9,391) size 79x28
+>>>>>>> e1f8f7b56c8a (Remove RenderListBox)
   RenderBlock {DIV} at (1,1) size 79x28
     RenderText {#text} at (5,5) size 37x18
       text run at (5,5) width 37: "Three"

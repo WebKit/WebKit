@@ -73,18 +73,22 @@ shouldBe('selectionPattern("sl1")', '"01000000000000000"');
 mouseDownOnSelect("sl1", 6);
 shouldBe('selectionPattern("sl1")', '"00000010000000000"');
 
+// The eighth item is only partly visible, so selecting it scrolls the list just enough to reveal it.
 mouseDownOnSelect("sl1", 7);
 shouldBe('selectionPattern("sl1")', '"00000001000000000"');
+shouldBeTrue('sl1.scrollTop > 0 && sl1.scrollTop < itemHeight');
 
 mouseDownOnSelect("sl1", 8);
 shouldBe('selectionPattern("sl1")', '"00000001000000000"');
 
+// The list scrolled by less than an item, so the first item is still at the top.
 mouseDownOnSelect("sl1", 0);
-shouldBe('selectionPattern("sl1")', '"01000000000000000"');
+shouldBe('selectionPattern("sl1")', '"10000000000000000"');
 
+// The eighth item is fully visible now, so selecting it again does not scroll any further.
 for (i = 0; i < 9; i++)
     mouseDownOnSelect("sl1", 7);
-shouldBe('selectionPattern("sl1")', '"00000000000000001"');
+shouldBe('selectionPattern("sl1")', '"00000001000000000"');
 
 mouseDownOnSelect("sl2", 1);
 shouldBe('selectionPattern("sl2")', '"010"');

@@ -50,6 +50,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "Text.h"
+#include "UserAgentParts.h"
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -101,10 +102,14 @@ void HTMLOptionElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     ScriptDisallowedScope::EventAllowedScope rootScope { root };
 
     Ref labelContainer = HTMLSpanElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope labelContainerScope { labelContainer };
+    labelContainer->setUserAgentPart(UserAgentParts::internalOptionLabel());
     root.appendChild(labelContainer);
     m_labelContainer = WTF::move(labelContainer);
 
     Ref slot = HTMLSlotElement::create(slotTag, document);
+    ScriptDisallowedScope::EventAllowedScope slotScope { slot };
+    slot->setUserAgentPart(UserAgentParts::internalOptionContent());
     root.appendChild(slot);
     m_slot = WTF::move(slot);
 }
@@ -133,11 +138,9 @@ void HTMLOptionElement::updateUserAgentShadowTree()
     if (!m_ownerSelect && !userAgentShadowRoot())
         return;
 
-    if (!userAgentShadowRoot()) {
-        if (attributeWithoutSynchronization(labelAttr).isNull())
-            return;
+    // A list box with the default appearance renders the label of each of its options, see html.css.
+    if (!userAgentShadowRoot())
         ensureUserAgentShadowRoot();
-    }
 
     Ref labelContainer = *m_labelContainer;
     Ref slot = *m_slot;
@@ -146,8 +149,10 @@ void HTMLOptionElement::updateUserAgentShadowTree()
     ScriptDisallowedScope::EventAllowedScope labelContainerScope { labelContainer };
     ScriptDisallowedScope::EventAllowedScope slotScope { slot };
 
-    labelContainer->setTextContent(String { labelValue });
-    if (m_ownerSelect && !labelValue.isNull()) {
+    if (auto label = displayLabel(); labelContainer->textContent() != label)
+        labelContainer->setTextContent(WTF::move(label));
+    // An empty label attribute is the same as none.
+    if (m_ownerSelect && !labelValue.isEmpty()) {
         labelContainer->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::Inline);
         slot->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
     } else {
@@ -166,6 +171,9 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
             m_ownerSelect = select.get();
             newOwnerSelect = select;
             select->setRecalcListItems();
+            // The shadow tree renders the label, see updateUserAgentShadowTree(). It is queued for an update below once connected.
+            if (document().settings().htmlEnhancedSelectEnabled())
+                m_shadowTreeNeedsUpdate = true;
             // If this non-selected option is the first non-disabled option in a
             // single-select that has no explicitly selected option, select it by
             // default. This maintains m_isSelected incrementally so that
@@ -582,6 +590,8 @@ void HTMLOptionElement::descendantsChanged()
 {
     if (RefPtr select = ownerSelectElement())
         select->optionElementChildrenChanged();
+    // The label rendered from the shadow tree is the text of the option, unless it has a label attribute.
+    invalidateShadowTree();
 }
 
 void HTMLOptionElement::willResetComputedStyle()

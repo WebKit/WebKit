@@ -1,14 +1,112 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x316
-  RenderBlock {HTML} at (0,0) size 800x316
-    RenderBody {BODY} at (8,8) size 784x300
-      RenderBlock {FORM} at (0,0) size 784x300
-        RenderListBox {SELECT} at (0,0) size 69x281 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+layer at (0,0) size 800x318
+  RenderBlock {HTML} at (0,0) size 800x319
+    RenderBody {BODY} at (8,8) size 784x303
+      RenderBlock {FORM} at (0,0) size 784x303
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (69,260) size 0x18
-        RenderMenuList {SELECT} at (0,282) size 74x18 [bgcolor=#FFFFFF]
-          RenderBlock {DIV} at (0,0) size 74x18
-            RenderText {#text} at (8,2) size 31x13
-              text run at (8,2) width 31: "Three"
+        RenderBR {BR} at (67,261) size 1x18
+        RenderMenuList {SELECT} at (0,282) size 76x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
         RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 67x282 clip at (9,9) size 54x280
+  RenderBlock {SELECT} at (0,0) size 68x282 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+    RenderBlock {OPTGROUP} at (1,1) size 55x70 [color=#008000]
+      RenderBlock {DIV} at (0,0) size 55x14
+        RenderText {#text} at (0,0) size 47x13
+          text run at (0,0) width 47: "Enabled"
+      RenderBlock {OPTION} at (0,14) size 55x14 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 23x13
+          RenderText {#text} at (12,0) size 23x13
+            text run at (12,0) width 23: "One"
+      RenderBlock {OPTION} at (0,28) size 55x14 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 22x13
+          RenderText {#text} at (12,0) size 22x13
+            text run at (12,0) width 22: "Two"
+      RenderBlock {OPTION} at (0,42) size 55x14 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 31x13
+          RenderText {#text} at (12,0) size 31x13
+            text run at (12,0) width 31: "Three"
+      RenderBlock {OPTION} at (0,56) size 55x14 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 25x13
+          RenderText {#text} at (12,0) size 25x13
+            text run at (12,0) width 25: "Four"
+    RenderBlock {OPTGROUP} at (1,71) size 55x70 [color=#FFC0CB]
+      RenderBlock {DIV} at (0,0) size 55x14
+        RenderText {#text} at (0,0) size 51x13
+          text run at (0,0) width 51: "Disabled"
+      RenderBlock {OPTION} at (0,14) size 55x14 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 23x13
+          RenderText {#text} at (12,0) size 23x13
+            text run at (12,0) width 23: "One"
+      RenderBlock {OPTION} at (0,28) size 55x14 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 22x13
+          RenderText {#text} at (12,0) size 22x13
+            text run at (12,0) width 22: "Two"
+      RenderBlock {OPTION} at (0,42) size 55x14 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 31x13
+          RenderText {#text} at (12,0) size 31x13
+            text run at (12,0) width 31: "Three"
+      RenderBlock {OPTION} at (0,56) size 55x14 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 25x13
+          RenderText {#text} at (12,0) size 25x13
+            text run at (12,0) width 25: "Four"
+    RenderBlock {OPTGROUP} at (1,141) size 55x70 [color=#008000]
+      RenderBlock {DIV} at (0,0) size 55x14
+        RenderText {#text} at (0,0) size 55x13
+          text run at (0,0) width 55: "Enabled2"
+      RenderBlock {OPTION} at (0,14) size 55x14 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 23x13
+          RenderText {#text} at (12,0) size 23x13
+            text run at (12,0) width 23: "One"
+      RenderBlock {OPTION} at (0,28) size 55x14 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 22x13
+          RenderText {#text} at (12,0) size 22x13
+            text run at (12,0) width 22: "Two"
+      RenderBlock {OPTION} at (0,42) size 55x14 [color=#0000FF] [bgcolor=#DCDCDC]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 31x13
+          RenderText {#text} at (12,0) size 31x13
+            text run at (12,0) width 31: "Three"
+      RenderBlock {OPTION} at (0,56) size 55x14 [color=#0000FF]
+        RenderInline (generated) at (0,0) size 13x13
+          RenderText at (0,0) size 13x13
+            text run at (0,0) width 13: "    "
+        RenderInline {SPAN} at (12,0) size 25x13
+          RenderText {#text} at (12,0) size 25x13
+            text run at (12,0) width 25: "Four"
+layer at (9,291) size 74x18
+  RenderBlock {DIV} at (1,1) size 74x18
+    RenderText {#text} at (8,2) size 31x13
+      text run at (8,2) width 31: "Three"

@@ -217,7 +217,6 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
-#include "RenderListBox.h"
 #include "RenderObjectInlines.h"
 #include "RenderSearchField.h"
 #include "RenderTheme.h"
@@ -4020,12 +4019,8 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
             return Exception { ExceptionCode::InvalidAccessError };
 
         CheckedRef renderBox = *element->renderBox();
-        if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(renderBox.get()))
-            scrollableArea = renderListBox.get();
-        else {
-            ASSERT(renderBox->layer());
-            scrollableArea = renderBox->layer()->scrollableArea();
-        }
+        ASSERT(renderBox->layer());
+        scrollableArea = renderBox->layer()->scrollableArea();
     } else
         return Exception { ExceptionCode::InvalidNodeTypeError };
 

@@ -604,9 +604,7 @@ option
       AXRoleDescription: text
 
 optgroup
-      AXRole: AXStaticText
-      AXSubrole:
-      AXRoleDescription: text
+      Could not get AX element.
 
 small
       Could not get AX element.

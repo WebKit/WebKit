@@ -63,9 +63,10 @@ if (window.eventSender) {
     debug("\n");
 
     debug("Drag horizontal scrollbar");
-    eventSender.mouseMoveTo(select.offsetLeft + 5, select.offsetTop + select.offsetHeight - 5);
+    // The thumb starts after the 1px border and the 20px decrement button.
+    eventSender.mouseMoveTo(select.offsetLeft + 26, select.offsetTop + select.offsetHeight - 5);
     eventSender.mouseDown();
-    eventSender.mouseMoveTo(select.offsetLeft + 25, select.offsetTop + select.offsetHeight - 5);
+    eventSender.mouseMoveTo(select.offsetLeft + 46, select.offsetTop + select.offsetHeight - 5);
     eventSender.mouseUp();
     shouldBeEqualToNumber("select.scrollTop", 0);
     shouldBeGreaterThan("select.scrollLeft", "0");

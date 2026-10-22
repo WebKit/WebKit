@@ -1073,9 +1073,15 @@ Style::ScrollbarGutter RenderLayerScrollableArea::scrollbarGutterStyle()  const
 
 ScrollbarWidth RenderLayerScrollableArea::scrollbarWidthStyle()  const
 {
-    if (m_layer.renderBox())
-        return Style::toPlatform(m_layer.renderer().style().scrollbarWidth());
-    return ScrollbarWidth::Auto;
+    CheckedPtr box = m_layer.renderBox();
+    if (!box)
+        return ScrollbarWidth::Auto;
+
+    auto scrollbarWidth = Style::toPlatform(box->style().scrollbarWidth());
+    // A list box keeps the scrollbars of its native appearance.
+    if (scrollbarWidth == ScrollbarWidth::Auto && box->isDefaultAppearanceListBox())
+        return box->theme().scrollbarWidthStyleForPart(StyleAppearance::Listbox);
+    return scrollbarWidth;
 }
 
 std::optional<ScrollbarColor> RenderLayerScrollableArea::scrollbarColorStyle() const
@@ -1279,10 +1285,6 @@ void RenderLayerScrollableArea::updateScrollbarsAfterStyleChange(const Style::Co
     if (!box)
         return;
 
-    // List box parts handle the scrollbars by themselves so we have nothing to do.
-    if (box->style().usedAppearance() == StyleAppearance::Listbox)
-        return;
-
     bool hadVerticalScrollbar = hasVerticalScrollbar();
     updateScrollbarPresenceAndState();
     bool hasVerticalScrollbar = this->hasVerticalScrollbar();
@@ -1329,10 +1331,6 @@ std::optional<ScrollbarUpdateScope> RenderLayerScrollableArea::updateScrollInfoA
                 scrollToOffset(clampedScrollOffset);
         }
     }
-
-    // List box parts handle the scrollbars by themselves so we have nothing to do.
-    if (box->style().usedAppearance() == StyleAppearance::Listbox)
-        return { };
 
     bool hadHorizontalScrollbar = hasHorizontalScrollbar();
     bool hadVerticalScrollbar = hasVerticalScrollbar();
