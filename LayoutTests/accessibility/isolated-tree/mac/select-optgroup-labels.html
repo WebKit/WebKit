@@ -53,6 +53,12 @@ if (window.accessibilityController) {
         window.axBase = await waitForElementById("base");
         output += await expectAsync("items(axBase)", `'${listBoxItems}'`);
 
+        document.querySelector("#native legend").firstChild.data = "Seeds";
+        const legend = document.createElement("legend");
+        legend.textContent = "Berries";
+        document.querySelector("#native optgroup").prepend(legend);
+        output += await expectAsync("items(axNative)", "'AXStaticText Berries (disabled), AXStaticText Apple, AXStaticText Seeds (disabled), AXStaticText Almond, AXStaticText Gone (disabled), AXStaticText Durian (disabled)'");
+
         window.axPicker = await waitForElementById("picker");
         axPicker.press();
         output += await expectAsync("axPicker.isExpanded", "true");

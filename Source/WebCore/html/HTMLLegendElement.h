@@ -39,6 +39,8 @@ public:
 
 private:
     HTMLLegendElement(const QualifiedName&, Document&);
+
+    void descendantsChanged() final;
 };
 
 } // namespace WebCore

@@ -43,6 +43,7 @@ public:
 
     WEBCORE_EXPORT String groupLabelText() const;
     static HTMLOptGroupElement* LEGACY_NODELETE optGroupForLabel(const Element&);
+    void legendElementChanged();
 
     void updateUserAgentShadowTree() final;
 
@@ -74,6 +75,7 @@ private:
     bool m_shadowTreeNeedsUpdate { false };
     WeakPtr<HTMLSelectElement, WeakPtrImplWithEventTargetData> m_ownerSelect;
     WeakPtr<HTMLDivElement, WeakPtrImplWithEventTargetData> m_labelContainer;
+    WeakPtr<HTMLLegendElement, WeakPtrImplWithEventTargetData> m_legendElement;
 };
 
 } // namespace WebCore

@@ -29,6 +29,7 @@
 #include "ElementIterator.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptGroupElement.h"
 #include "SelectionRestorationMode.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -60,6 +61,12 @@ RefPtr<HTMLFormElement> HTMLLegendElement::formForBindings() const
 {
     // FIXME: The downcast should be unnecessary, but the WPT was written before https://github.com/WICG/webcomponents/issues/1072 was resolved. Update once the WPT has been updated.
     return dynamicDowncast<HTMLFormElement>(retargetReferenceTargetForBindings(form()));
+}
+
+void HTMLLegendElement::descendantsChanged()
+{
+    if (RefPtr optGroup = HTMLOptGroupElement::optGroupForLabel(*this))
+        optGroup->legendElementChanged();
 }
 
 } // namespace WebCore

@@ -218,8 +218,12 @@ const AtomString& HTMLOptGroupElement::formControlType() const
 void HTMLOptGroupElement::childrenChanged(const ChildChange& change)
 {
     if (document().settings().htmlEnhancedSelectParsingEnabled()) {
-        if (change.affectsElements != ChildChange::AffectsElements::No)
-            invalidateShadowTree();
+        if (change.affectsElements != ChildChange::AffectsElements::No) {
+            if (RefPtr legend = legendElement(); m_legendElement != legend) {
+                m_legendElement = legend;
+                legendElementChanged();
+            }
+        }
         HTMLElement::childrenChanged(change);
         return;
     }
@@ -250,6 +254,12 @@ void HTMLOptGroupElement::attributeChanged(const QualifiedName& name, const Atom
 
     if (name == labelAttr)
         invalidateShadowTree();
+}
+
+void HTMLOptGroupElement::legendElementChanged()
+{
+    recalcSelectOptions();
+    invalidateShadowTree();
 }
 
 void HTMLOptGroupElement::parseDisabledAttribute(const AtomString& value)
