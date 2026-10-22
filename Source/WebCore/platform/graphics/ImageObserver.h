@@ -33,8 +33,8 @@
 namespace WebCore {
 
 class Image;
+class ImageDrawingExtras;
 class IntRect;
-class Settings;
 
 // Interface for notification about changes to an image, including decoding,
 // drawing, and animating.
@@ -53,14 +53,10 @@ public:
     virtual void didDraw(const Image&) = 0;
 
     virtual bool canDestroyDecodedData(const Image&) const { return true; }
-    virtual void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) = 0;
+    virtual void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid, const ImageDrawingExtras* changedFor = nullptr) = 0;
     virtual void changedInRect(const Image&, const IntRect* changeRect = nullptr) = 0;
     virtual void imageContentChanged(const Image&) = 0;
     virtual void scheduleRenderingUpdate(const Image&) = 0;
-
-    virtual bool allowsAnimation(const Image&) const { return true; }
-    virtual const Settings* settings() { return nullptr; }
-    virtual bool useSystemDarkAppearance() const { return false; }
 
 protected:
     ImageObserver() = default;

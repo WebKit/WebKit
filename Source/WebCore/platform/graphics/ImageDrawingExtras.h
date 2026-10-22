@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class ImageAnimationTimeline;
+
 // Additional, optional information a caller can hand to Image::draw() for image kinds
 // that can make use of it. The base type carries nothing itself, it exists so that
 // platform code can pass information through without knowing what is in it.
@@ -44,6 +46,8 @@ public:
     virtual ~ImageDrawingExtras() = default;
 
     Type type() const { return m_type; }
+
+    virtual ImageAnimationTimeline* animationTimeline() const { return nullptr; }
 
     virtual std::unique_ptr<ImageDrawingExtras> copy() const = 0;
     bool operator==(const ImageDrawingExtras& other) const { return m_type == other.m_type && equals(other); }

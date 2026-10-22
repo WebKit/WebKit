@@ -87,7 +87,7 @@ BitmapImage::BitmapImage(Ref<NativeImage>&& image)
 {
 }
 
-EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived)
+EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived, const ImageDrawingExtras*)
 {
     return m_source->dataChanged(protect(data()), allDataReceived);
 }
@@ -116,7 +116,7 @@ NaturalDimensions BitmapImage::unorientedNaturalDimensions() const
     return NaturalDimensions::fixed(size);
 }
 
-ImageDrawResult BitmapImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options, const ImageDrawingExtras*)
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     if (destinationRect.isEmpty() || sourceRect.isEmpty())
         return ImageDrawResult::DidNothing;
@@ -135,7 +135,8 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, ConcreteObjectSize, 
     auto preferredDecodingDestination = m_source->preferredDecodingDestination(context, options);
 
     auto decodingOptions = DecodingOptions { options.decodingMode(), preferredDecodingDestination, sizeForDrawing };
-    auto nativeImageOrError = m_source->currentNativeImageForDrawing(subsamplingLevel, decodingOptions);
+    auto heldFrameIndex = this->heldFrameIndex(extras);
+    auto nativeImageOrError = heldFrameIndex ? m_source->nativeImageAtIndexForDrawing(*heldFrameIndex, subsamplingLevel, decodingOptions) : m_source->currentNativeImageForDrawing(subsamplingLevel, decodingOptions);
 
     if (!nativeImageOrError) {
         // The decoder has not returned a frame. Fill the image rectangle with a debugging color to show what has happened.
@@ -159,7 +160,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, ConcreteObjectSize, 
 
         auto orientation = options.orientation();
         if (orientation == ImageOrientation::Orientation::FromImage)
-            orientation = currentFrameOrientation();
+            orientation = heldFrameIndex ? m_source->frameOrientationAtIndex(*heldFrameIndex) : currentFrameOrientation();
 
 #if !HAVE(SUPPORT_HDR_DISPLAY_APIS)
         if (hasHDRContentForTesting() && options.dynamicRangeLimit() != PlatformDynamicRangeLimit::standard())
@@ -183,7 +184,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, ConcreteObjectSize, 
     return ImageDrawResult::DidDraw;
 }
 
-void BitmapImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras*)
+void BitmapImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     if (tileRect.isEmpty())
         return;
@@ -192,12 +193,49 @@ void BitmapImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concr
     if (headroom == Headroom::FromImage && hasHDRContentForTesting())
         fillWithSolidColor(context, destinationRect, Color::gold, options.compositeOperator());
     else if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
-        drawLuminanceMaskPattern(context, destinationRect, tileRect, transform, phase, spacing, options);
+        drawLuminanceMaskPattern(context, destinationRect, tileRect, transform, phase, spacing, options, extras);
     else
-        Image::drawPattern(context, concreteObjectSize, destinationRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
+        Image::drawPattern(context, concreteObjectSize, destinationRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage }, extras);
 }
 
-void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+RefPtr<NativeImage> BitmapImage::currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation orientation, const ImageDrawingExtras* extras)
+{
+    if (auto heldFrameIndex = this->heldFrameIndex(extras))
+        return m_source->preTransformedNativeImageAtIndex(*heldFrameIndex, orientation);
+    return currentPreTransformedNativeImage(orientation);
+}
+
+RefPtr<NativeImage> BitmapImage::currentNativeImage(ImageAnimationTimeline* timeline)
+{
+    if (auto heldFrameIndex = this->heldFrameIndex(timeline))
+        return m_source->nativeImageAtIndex(*heldFrameIndex);
+    return currentNativeImage();
+}
+
+std::optional<unsigned> BitmapImage::heldFrameIndex(const ImageDrawingExtras* extras)
+{
+    return heldFrameIndex(extras ? extras->animationTimeline() : nullptr);
+}
+
+std::optional<unsigned> BitmapImage::heldFrameIndex(ImageAnimationTimeline* timeline)
+{
+    if (!timeline || !isAnimated())
+        return std::nullopt;
+
+    switch (timeline->mode()) {
+    case ImageAnimationTimeline::Mode::Stopped:
+        return m_source->primaryFrameIndex();
+    case ImageAnimationTimeline::Mode::Paused:
+        return m_pausedFrameIndices.ensure(*timeline, [&] {
+            return m_source->currentFrameIndex();
+        }).iterator->value;
+    case ImageAnimationTimeline::Mode::Running:
+        return std::nullopt;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     ASSERT(!tileRect.isEmpty());
     ASSERT(options.drawLuminanceMask() == DrawLuminanceMask::Yes);
@@ -210,7 +248,7 @@ void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const Float
     {
         // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
         ImageObserverDisableScope imageObserverDisabler(*this);
-        draw(buffer->context(), ConcreteObjectSize::fixed(size()), bufferRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::Orientation::FromImage });
+        draw(buffer->context(), ConcreteObjectSize::fixed(size()), bufferRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::Orientation::FromImage }, extras);
     }
 
     buffer->convertToLuminanceMask();

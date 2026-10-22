@@ -37,6 +37,7 @@ namespace WebCore {
 class ContainerNode;
 class BlendingKeyframes;
 class GraphicsLayerAnimation;
+class ImageAnimationTimeline;
 class ReferencedSVGResources;
 class RenderBlock;
 class RenderHTMLCanvas;
@@ -263,7 +264,8 @@ public:
     bool isClippedByLineClamp() const { return lineClampState() == LineClampState::Clipped; }
     void setIsClippedByLineClamp(bool isClipped) { setLineClampState(isClipped ? LineClampState::Clipped : LineClampState::None); }
 
-    bool allowsAnimation() const final;
+    bool allowsAnimation() const;
+    ImageAnimationTimeline* imageAnimationTimeline() const;
     bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage&);
     bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
     void setHasPausedImageAnimations(bool b) { m_hasPausedImageAnimations = b; }
@@ -457,8 +459,7 @@ private:
     Style::Difference adjustStyleDifference(Style::Difference) const;
 
     bool canDestroyDecodedData() const final { return !isVisibleInViewport(); }
-    bool useSystemDarkAppearance() const final;
-    VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect* changeRect) final;
+    VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect* changeRect, const ImageDrawingExtras* changedFor) final;
     VisibleInViewportState imageVisibleInViewport(const Document&) const final;
     void didRemoveCachedImageClient(CachedImage&) final;
     void imageContentChanged(CachedImage&) final;

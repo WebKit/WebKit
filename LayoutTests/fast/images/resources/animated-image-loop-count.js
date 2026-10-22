@@ -1,12 +1,26 @@
-function drawFrame(image, canvasId) {
+function waitForNextFrame(image) {
     return new Promise((resolve) => {
-        let canvas = document.getElementById(canvasId);
-        let context = canvas.getContext("2d");
-        context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        setTimeout(() => {
-            resolve();
-        }, 30);
+        if (!window.internals) {
+            setTimeout(resolve, 30);
+            return;
+        }
+        let frameIndex = internals.imageFrameIndex(image);
+        let start = performance.now();
+        (function check() {
+            if (internals.imageFrameIndex(image) != frameIndex || performance.now() - start > 200) {
+                resolve();
+                return;
+            }
+            setTimeout(check, 5);
+        })();
     });
+}
+
+function drawFrame(image, canvasId) {
+    let canvas = document.getElementById(canvasId);
+    let context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    return waitForNextFrame(image);
 }
 
 function drawImage(image, canvasIds, frameCount) {

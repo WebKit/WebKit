@@ -3214,20 +3214,6 @@ void RenderObject::CachedImageListener::imageChanged(CachedImage* image, const I
         renderer->imageChanged(static_cast<WrappedImagePtr>(image), rect);
 }
 
-bool RenderObject::CachedImageListener::allowsAnimation() const
-{
-    if (CheckedPtr renderer = m_renderer.get())
-        return renderer->allowsAnimation();
-    return true;
-}
-
-bool RenderObject::CachedImageListener::useSystemDarkAppearance() const
-{
-    if (CheckedPtr renderer = m_renderer.get())
-        return renderer->useSystemDarkAppearance();
-    return false;
-}
-
 bool RenderObject::CachedImageListener::canDestroyDecodedData() const
 {
     if (CheckedPtr renderer = m_renderer.get())
@@ -3235,10 +3221,10 @@ bool RenderObject::CachedImageListener::canDestroyDecodedData() const
     return true;
 }
 
-VisibleInViewportState RenderObject::CachedImageListener::imageFrameAvailable(CachedImage& image, ImageAnimatingState state, const IntRect* rect)
+VisibleInViewportState RenderObject::CachedImageListener::imageFrameAvailable(CachedImage& image, ImageAnimatingState state, const IntRect* rect, const ImageDrawingExtras* changedFor)
 {
     if (CheckedPtr renderer = m_renderer.get())
-        return renderer->imageFrameAvailable(image, state, rect);
+        return renderer->imageFrameAvailable(image, state, rect, changedFor);
     return VisibleInViewportState::No;
 }
 
@@ -3267,7 +3253,7 @@ void RenderObject::CachedImageListener::scheduleRenderingUpdateForImage(CachedIm
         renderer->scheduleRenderingUpdateForImage(image);
 }
 
-VisibleInViewportState RenderObject::imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect)
+VisibleInViewportState RenderObject::imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect, const ImageDrawingExtras*)
 {
     imageChanged(static_cast<WrappedImagePtr>(&image), changeRect);
     return VisibleInViewportState::No;

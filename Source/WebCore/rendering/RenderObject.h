@@ -55,6 +55,7 @@ class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
 class HostWindow;
+class ImageDrawingExtras;
 class LocalFrame;
 class LocalFrameViewLayoutContext;
 class Node;
@@ -1068,10 +1069,8 @@ public:
     // CachedImageClient emulation.
     virtual void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) { }
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
-    virtual bool allowsAnimation() const { return true; }
     virtual bool canDestroyDecodedData() const { return true; }
-    virtual bool useSystemDarkAppearance() const { return false; }
-    virtual VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*);
+    virtual VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*, const ImageDrawingExtras* changedFor);
     virtual VisibleInViewportState imageVisibleInViewport(const Document&) const { return VisibleInViewportState::No; }
     virtual void didRemoveCachedImageClient(CachedImage&) { }
     virtual void imageContentChanged(CachedImage&) { }
@@ -1159,10 +1158,8 @@ private:
 
         // CachedImageClient.
         void imageChanged(CachedImage*, const IntRect* = nullptr) final;
-        bool allowsAnimation() const final;
         bool canDestroyDecodedData() const final;
-        bool useSystemDarkAppearance() const final;
-        VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*) final;
+        VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*, const ImageDrawingExtras* changedFor) final;
         VisibleInViewportState imageVisibleInViewport(const Document&) const final;
         void didRemoveCachedImageClient(CachedImage&) final;
         void imageContentChanged(CachedImage&) final;

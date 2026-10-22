@@ -84,7 +84,6 @@
 #include "ResourceLoadInfo.h"
 #include "ResourceTiming.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGImage.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -1104,18 +1103,6 @@ static FetchOptions::Destination LEGACY_NODELETE destinationForType(CachedResour
     return FetchOptions::Destination::EmptyString;
 }
 
-static inline bool isSVGImageCachedResource(const CachedResource* resource)
-{
-    auto* cachedImage = dynamicDowncast<CachedImage>(resource);
-    return cachedImage && is<SVGImage>(cachedImage->image());
-}
-
-static inline SVGImage* cachedResourceSVGImage(CachedResource* resource)
-{
-    auto* cachedImage = dynamicDowncast<CachedImage>(resource);
-    return cachedImage ? dynamicDowncast<SVGImage>(cachedImage->image()) : nullptr;
-}
-
 static bool LEGACY_NODELETE computeMayAddToMemoryCache(const CachedResourceRequest& newRequest, const CachedResource* existingResource)
 {
     return !existingResource || !existingResource->isPreloaded() || newRequest.options().serviceWorkersMode != ServiceWorkersMode::None || existingResource->options().serviceWorkersMode == ServiceWorkersMode::None;
@@ -1869,25 +1856,6 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource& resource)
 
     --m_requestCount;
     ASSERT(m_requestCount > -1);
-}
-
-void CachedResourceLoader::notifyFinished(const CachedResource& resource)
-{
-    if (isSVGImageCachedResource(&resource))
-        m_cachedSVGImagesURLs.add(resource.url());
-}
-
-Vector<Ref<SVGImage>> CachedResourceLoader::allCachedSVGImages() const
-{
-    Vector<Ref<SVGImage>> allCachedSVGImages;
-
-    for (auto& cachedSVGImageURL : m_cachedSVGImagesURLs) {
-        RefPtr resource = cachedResource(cachedSVGImageURL);
-        if (RefPtr image = cachedResourceSVGImage(resource.get()))
-            allCachedSVGImages.append(image.releaseNonNull());
-    }
-        
-    return allCachedSVGImages;
 }
 
 ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest&& request)

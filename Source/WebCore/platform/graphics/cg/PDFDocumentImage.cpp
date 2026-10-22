@@ -73,7 +73,7 @@ FloatSize PDFDocumentImage::size(ImageOrientation) const
     return expandedCropBoxSize;
 }
 
-EncodedDataStatus PDFDocumentImage::dataChanged(bool allDataReceived)
+EncodedDataStatus PDFDocumentImage::dataChanged(bool allDataReceived, const ImageDrawingExtras*)
 {
     ASSERT(!m_document);
     if (allDataReceived && !m_document) {

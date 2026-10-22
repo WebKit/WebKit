@@ -148,6 +148,8 @@ class HTMLImageElement;
 class HTMLMediaElement;
 class HistoryItem;
 class HistoryItemClient;
+class Image;
+class ImageAnimationTimeline;
 class OpportunisticTaskScheduler;
 class ImageAnalysisQueue;
 class ImageOverlayController;
@@ -896,6 +898,7 @@ public:
 
     // Schedule a rendering update that coordinates with display refresh.
     WEBCORE_EXPORT void scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps);
+    void scheduleRenderingUpdate(Image&);
     void didScheduleRenderingUpdate();
     // Trigger a rendering update in the current runloop. Only used for testing.
     void triggerRenderingUpdateForTesting();
@@ -907,13 +910,15 @@ public:
     WEBCORE_EXPORT void resumeScriptedAnimations();
     bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    bool systemImageAnimationEnabled() const { return m_systemImageAnimationEnabled; }
+    void setSystemImageAnimationEnabled(bool enabled) { m_systemImageAnimationEnabled = enabled; }
+
     void updatePlayStateForAllAnimations();
     WEBCORE_EXPORT void setImageAnimationEnabled(bool);
     void addIndividuallyPlayingAnimationElement(HTMLImageElement&);
     void removeIndividuallyPlayingAnimationElement(HTMLImageElement&);
-#endif
     bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
+    ImageAnimationTimeline* imageAnimationTimeline() const { return m_imageAnimationTimeline.get(); }
 
 #if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
     WEBCORE_EXPORT void LEGACY_NODELETE setVideoAutoplayPreviewsEnabled(bool);
@@ -1674,6 +1679,8 @@ private:
 
     bool m_canStartMedia { true };
     bool m_imageAnimationEnabled { true };
+    bool m_systemImageAnimationEnabled { true };
+    RefPtr<ImageAnimationTimeline> m_imageAnimationTimeline;
     bool m_videoAutoplayPreviewsEnabled { true };
     // Elements containing animations that are individually playing (potentially overriding the page-wide m_imageAnimationEnabled state).
     WeakHashSet<HTMLImageElement, WeakPtrImplWithEventTargetData> m_individuallyPlayingAnimationElements;
@@ -1775,6 +1782,7 @@ private:
     bool m_inSwipeAnimation { false };
 
     Vector<OptionSet<RenderingUpdateStep>, 2> m_renderingUpdateRemainingSteps;
+    WeakHashSet<Image> m_imagesNeedingRenderingUpdate;
     OptionSet<RenderingUpdateStep> m_unfulfilledRequestedSteps;
     
     UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };

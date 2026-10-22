@@ -213,6 +213,8 @@
 #include "ReadableStream.h"
 #include "RenderBlockFlow.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderImage.h"
+#include "RenderImageResource.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
@@ -228,6 +230,7 @@
 #include "ResourceLoadObserver.h"
 #include "SMILTimeContainer.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGImage.h"
 #include "SVGPathStringBuilder.h"
 #include "SVGSVGElement.h"
 #include "SWClientConnection.h"
@@ -262,6 +265,8 @@
 #include "StyleDocumentScope.h"
 #include "StyleExtractor.h"
 #include "StyleGridPosition.h"
+#include "StyleImage.h"
+#include "StyleImageDrawingExtras.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
@@ -654,6 +659,9 @@ void Internals::resetToConsistentState(Page& page)
 #if ENABLE(SERVICE_CONTROLS)
     page.servicesOverlayController().setHasRelevantSelectionServicesForTesting(std::nullopt);
 #endif
+    page.setSystemImageAnimationEnabled(true);
+    if (!page.imageAnimationEnabled())
+        page.setImageAnimationEnabled(true);
 
     RefPtr localMainFrame = page.localMainFrame();
     if (!localMainFrame)
@@ -1275,12 +1283,11 @@ bool Internals::isImageAnimating(HTMLImageElement& element)
     return image && (image->isAnimating() || image->animationPending());
 }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Internals::setImageAnimationEnabled(bool enabled)
 {
     if (RefPtr page = contextDocument() ? contextDocument()->page() : nullptr) {
         // We need to set this here to mimic the behavior of the AX preference changing
-        Image::setSystemAllowsAnimationControls(!enabled);
+        page->setSystemImageAnimationEnabled(enabled);
         page->setImageAnimationEnabled(enabled);
     }
 }
@@ -1294,7 +1301,20 @@ void Internals::pauseImageAnimation(HTMLImageElement& element)
 {
     element.setAllowsAnimation(false);
 }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+
+double Internals::svgImageAnimationTime(HTMLImageElement& element)
+{
+    protect(element.document())->updateStyleIfNeeded();
+
+    RefPtr image = dynamicDowncast<SVGImage>(imageFromImageElement(element));
+    CheckedPtr renderer = dynamicDowncast<RenderImage>(element.renderer());
+    RefPtr styleImage = renderer ? renderer->imageResource().styleImage() : nullptr;
+    if (!image || !styleImage)
+        return 0;
+
+    auto extras = styleImage->drawingExtrasForRenderer(*renderer);
+    return image->animationTimeForTesting(&extras).seconds();
+}
 
 #if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
 void Internals::setVideoAutoplayPreviewsEnabled(bool enabled)

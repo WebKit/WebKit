@@ -989,7 +989,7 @@ public:
 
     void LEGACY_NODELETE didDraw(const Image&) override { }
 
-    void LEGACY_NODELETE imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* = nullptr, DecodingStatus = DecodingStatus::Invalid) override { }
+    void LEGACY_NODELETE imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* = nullptr, DecodingStatus = DecodingStatus::Invalid, const ImageDrawingExtras* = nullptr) override { }
     void LEGACY_NODELETE changedInRect(const Image&, const IntRect* = nullptr) override { }
     void LEGACY_NODELETE imageContentChanged(const Image&) override { }
     void LEGACY_NODELETE scheduleRenderingUpdate(const Image&) override { }

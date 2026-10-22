@@ -29,6 +29,8 @@
 #import "BitmapImage.h"
 #import "FloatRect.h"
 #import "GraphicsContext.h"
+#import "ImageAnimationTimeline.h"
+#import "ImageDrawingExtras.h"
 #import "SharedBuffer.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <wtf/PointerComparison.h>
@@ -132,6 +134,12 @@ ImageAdapter::RasterizationKey::RasterizationKey(ConcreteObjectSize concreteObje
 {
 }
 
+static bool canKeepRasterization(const ImageDrawingExtras* extras)
+{
+    RefPtr timeline = extras ? extras->animationTimeline() : nullptr;
+    return !timeline || timeline->mode() == ImageAnimationTimeline::Mode::Stopped;
+}
+
 bool ImageAdapter::RasterizationKey::matches(ConcreteObjectSize otherConcreteObjectSize, const ImageDrawingExtras* otherExtras) const
 {
     return concreteObjectSize == otherConcreteObjectSize
@@ -153,7 +161,10 @@ CFDataRef ImageAdapter::tiffRepresentation(ConcreteObjectSize concreteObjectSize
         return nullptr;
 
     m_tiffRep = data;
-    m_tiffRepKey.emplace(concreteObjectSize, extras);
+    if (canKeepRasterization(extras))
+        m_tiffRepKey.emplace(concreteObjectSize, extras);
+    else
+        m_tiffRepKey = std::nullopt;
     return m_tiffRep.get();
 }
 
@@ -173,7 +184,10 @@ NSImage* ImageAdapter::nsImage(ConcreteObjectSize concreteObjectSize, const Imag
         return nullptr;
 
     m_nsImage = adoptNS([[NSImage alloc] initWithData:(__bridge NSData *)data.get()]);
-    m_nsImageKey.emplace(concreteObjectSize, extras);
+    if (canKeepRasterization(extras))
+        m_nsImageKey.emplace(concreteObjectSize, extras);
+    else
+        m_nsImageKey = std::nullopt;
     return m_nsImage.get();
 }
 

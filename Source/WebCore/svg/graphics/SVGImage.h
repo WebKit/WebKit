@@ -27,21 +27,20 @@
 #pragma once
 
 #include <WebCore/Image.h>
-#include <WebCore/StyleLinkParameters.h>
-#include <WebCore/Timer.h>
-#include <wtf/URL.h>
 
 namespace WebCore {
 
 class Element;
-class ImageBuffer;
+class ImageEnvironmentSettings;
 class LocalFrameView;
 class Page;
-class RenderObject;
 class RenderReplaced;
-class SVGSVGElement;
 class SVGImageChromeClient;
+class SVGImageInstance;
+class SVGImageInstanceCache;
+class SVGSVGElement;
 class Settings;
+struct SVGImageDocumentState;
 
 class SVGImage final : public Image {
 public:
@@ -56,27 +55,28 @@ public:
 
     void subresourcesAreFinished(Document*, CompletionHandler<void()>&&) final;
 
-    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final { return m_intrinsicSize; }
+    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final;
 
     bool hasSomethingToDraw() const final;
 
     bool renderingTaintsOrigin() const final;
 
     void startAnimation() final;
-    void stopAnimation() final;
+    void stopAnimation(const ImageDrawingExtras* = nullptr) final;
     void resetAnimation() final;
     bool isAnimating() const final;
 
-    Page* internalPage() { return m_page.get(); }
+    Page* internalPage();
+    void updateRendering() final;
     WEBCORE_EXPORT RefPtr<SVGSVGElement> rootElement() const;
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    // Used by draws with InvertContent::FromResource. The internal page's settings are only changed by
-    // applyDocumentState(), so they stay in sync with m_appliedDocumentState.
-    void setFallbackInvertContent(bool invertContent) { m_fallbackInvertContent = invertContent; }
+    void setFallbackInvertContent(bool);
 #endif
 
     RefPtr<NativeImage> nativeImage(const FloatSize&, const ColorSpace& = ColorSpace::SRGB(), const ImageDrawingExtras* = nullptr, ImageDrawingOptions = { });
+
+    WEBCORE_EXPORT Seconds animationTimeForTesting(const ImageDrawingExtras*) const;
 
 private:
     friend class SVGImageChromeClient;
@@ -86,21 +86,18 @@ private:
 
     String filenameExtension() const final;
 
-    void setContainerSize(const FloatSize&);
-    IntSize containerSize() const;
-
     NaturalDimensions unorientedNaturalDimensions() const final;
 
     bool usesConcreteObjectSizeAsViewport() const final { return true; }
 
     void reportApproximateMemoryCost() const;
-    EncodedDataStatus dataChanged(bool allDataReceived) final;
+    EncodedDataStatus dataChanged(bool allDataReceived, const ImageDrawingExtras*) final;
 
-    // FIXME: SVGImages will be unable to prune because destroyDecodedData() is not implemented yet.
+    void destroyDecodedData(bool destroyAll = true) final;
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
-    bool currentFrameIsComplete() const final { return !!m_page; }
+    bool currentFrameIsComplete() const final;
 
     bool hasHDRContent() const final;
 
@@ -108,36 +105,26 @@ private:
     RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr) final;
     RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation = ImageOrientation::Orientation::FromImage, const ImageDrawingExtras* = nullptr) final;
 
-    void startAnimationTimerFired();
-
     ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
     void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
 
-    // FIXME: This should also hold the variable state dataChanged() sets on the Page and its Settings.
-    struct DocumentState {
-        IntSize containerSize;
-        URL fragmentURL;
-        Style::LinkParameters linkParameters;
-        IgnoreRootPreserveAspectRatio ignoreRootPreserveAspectRatio { IgnoreRootPreserveAspectRatio::No };
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-        bool invertContent { false };
-#endif
+    SVGImageDocumentState documentStateForDraw(ImageDrawingOptions, const ImageDrawingExtras*) const;
+    const ImageEnvironmentSettings* environmentSettingsForDraw(const ImageDrawingExtras*) const;
+    Ref<SVGImageInstance> instanceForDraw(const ImageEnvironmentSettings*, const SVGImageDocumentState&);
+    void reportChangesHeldWhileObserverWasDisabled();
+    void reportDecodedSizeChange();
+    void scheduleRenderingUpdate();
 
-        bool operator==(const DocumentState&) const = default;
-    };
+    RefPtr<const ImageEnvironmentSettings> m_environmentSettings;
 
-    DocumentState documentStateForDraw(ConcreteObjectSize, ImageDrawingOptions, const ImageDrawingExtras*) const;
-    void applyDocumentState(Document&, LocalFrameView&, const DocumentState&);
+    const UniqueRef<SVGImageInstanceCache> m_instances;
 
-    RefPtr<Page> m_page;
-    FloatSize m_intrinsicSize;
+    bool m_needsRenderingUpdate { false };
 
-    DocumentState m_appliedDocumentState;
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-    bool m_fallbackInvertContent { false };
-#endif
+    bool m_tookPlayingInstance { false };
 
-    Timer m_startAnimationTimer;
+    bool m_hasDrawnLight { false };
+    bool m_hasDrawnDark { false };
 };
 
 bool isInSVGImage(const Element*);

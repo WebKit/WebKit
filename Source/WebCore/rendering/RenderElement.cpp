@@ -106,6 +106,7 @@
 #include "ShadowRoot.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleDifference.h"
+#include "StyleImageDrawingExtras.h"
 #include "StylePendingResources.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
@@ -1869,15 +1870,13 @@ bool RenderElement::isVisibleInViewport() const
     return isVisibleInDocumentRect(visibleRect);
 }
 
-bool RenderElement::useSystemDarkAppearance() const
+VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect, const ImageDrawingExtras* changedFor)
 {
-    if (RefPtr page = document().page())
-        return page->useDarkAppearance();
-    return false;
-}
+    if (auto* styleChangedFor = dynamicDowncast<Style::ImageDrawingExtras>(changedFor)) {
+        if (!styleChangedFor->hasSameEnvironment({ { }, CSS::Keyword::None { }, protect(page())->useDarkAppearance(), protect(page())->useElevatedUserInterfaceLevel(), &document().settings().imageEnvironmentSettings() }))
+            return VisibleInViewportState::No;
+    }
 
-VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect)
-{
     bool isVisible = isVisibleInViewport();
 
     if (!isVisible && animatingState == ImageAnimatingState::Yes)
@@ -1906,8 +1905,6 @@ void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMe
 {
     if (auto* cachedImage = dynamicDowncast<CachedImage>(resource))
         imageContentChanged(*cachedImage);
-
-    protect(protect(document())->cachedResourceLoader())->notifyFinished(resource);
 }
 
 bool RenderElement::allowsAnimation() const
@@ -1915,6 +1912,16 @@ bool RenderElement::allowsAnimation() const
     if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
         return imageElement->allowsAnimation();
     return page().imageAnimationEnabled();
+}
+
+ImageAnimationTimeline* RenderElement::imageAnimationTimeline() const
+{
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element())) {
+        if (auto* timeline = imageElement->imageAnimationTimeline())
+            return timeline;
+    }
+
+    return page().imageAnimationTimeline();
 }
 
 void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
@@ -1948,10 +1955,12 @@ void RenderElement::imageContentChanged(CachedImage& cachedImage)
 #endif
 }
 
-void RenderElement::scheduleRenderingUpdateForImage(CachedImage&)
+void RenderElement::scheduleRenderingUpdateForImage(CachedImage& cachedImage)
 {
-    if (RefPtr page = document().page())
-        page->scheduleRenderingUpdate(RenderingUpdateStep::Images);
+    RefPtr page = document().page();
+    RefPtr image = cachedImage.image();
+    if (page && image)
+        page->scheduleRenderingUpdate(*image);
 }
 
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)

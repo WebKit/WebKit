@@ -48,6 +48,7 @@
 #include "HTMLPictureElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
+#include "ImageAnimationTimeline.h"
 #include "ImageOrientation.h"
 #include "ImageRequestState.h"
 #include "JSRequestPriority.h"
@@ -122,10 +123,8 @@ HTMLImageElement::~HTMLImageElement()
     Ref document = this->document();
     document->removeDynamicMediaQueryDependentImage(*this);
     setForm(nullptr);
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     if (RefPtr page = document->page())
         page->removeIndividuallyPlayingAnimationElement(*this);
-#endif
 }
 
 void HTMLImageElement::resetFormOwner()
@@ -966,18 +965,25 @@ Image* HTMLImageElement::image() const
 
 bool HTMLImageElement::allowsAnimation() const
 {
-    if (RefPtr image = this->image())
-        return image->allowsAnimation().value_or(document().page() ? document().page()->imageAnimationEnabled() : false);
-    return false;
+    if (!image())
+        return false;
+    return m_allowsAnimation.value_or(document().page() ? document().page()->imageAnimationEnabled() : false);
 }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void HTMLImageElement::setAllowsAnimation(std::optional<bool> allowsAnimation)
 {
-    if (RefPtr image = this->image()) {
-        image->setAllowsAnimation(allowsAnimation);
-        if (CheckedPtr renderer = this->renderer())
+    if (image()) {
+        m_allowsAnimation = allowsAnimation;
+        if (allowsAnimation)
+            m_imageAnimationTimeline = ImageAnimationTimeline::create(*allowsAnimation ? ImageAnimationTimeline::Mode::Running : ImageAnimationTimeline::Mode::Paused);
+        else
+            m_imageAnimationTimeline = nullptr;
+
+        if (CheckedPtr renderer = this->renderer()) {
             renderer->repaint();
+            if (CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(*renderer))
+                modelObject->contentChanged(ContentChangeType::Image);
+        }
 
         if (RefPtr page = document().page()) {
             if (allowsAnimation.value_or(false))
@@ -987,7 +993,6 @@ void HTMLImageElement::setAllowsAnimation(std::optional<bool> allowsAnimation)
         }
     }
 }
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 

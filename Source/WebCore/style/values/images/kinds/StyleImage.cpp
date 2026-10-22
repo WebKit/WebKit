@@ -27,6 +27,7 @@
 #include "StyleImage.h"
 
 #include "GraphicsContext.h"
+#include "ImageAnimationTimeline.h"
 #include "ImageBuffer.h"
 #include "ImageDrawingOptions.h"
 #include "ImageSizingContext.h"
@@ -40,7 +41,9 @@ namespace Style {
 static ImageDrawResult drawImageAsPattern(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const WebCore::ImageDrawingExtras* extras)
 {
     image.drawPattern(context, concreteObjectSize, destination, tile, patternTransform, phase, spacing, options, extras);
-    image.startAnimation();
+
+    if (RefPtr timeline = extras ? extras->animationTimeline() : nullptr; !timeline || timeline->mode() == ImageAnimationTimeline::Mode::Running)
+        image.startAnimation();
     return ImageDrawResult::DidDraw;
 }
 

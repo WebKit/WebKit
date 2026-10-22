@@ -72,6 +72,7 @@ DownloadableBinaryFontTrustedTypes:
     feature download files they can't use by. Leaving enabled for now to not change existing behavior.
   type: uint32_t
   refinedType: DownloadableBinaryFontTrustedTypes
+  webcoreOnChange: imageEnvironmentSettingsChanged
   defaultValue:
     PLATFORM(WATCHOS): DownloadableBinaryFontTrustedTypes::None
     default: DownloadableBinaryFontTrustedTypes::Any

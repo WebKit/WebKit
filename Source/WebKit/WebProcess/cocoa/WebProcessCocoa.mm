@@ -1320,10 +1320,6 @@ void WebProcess::setMediaAccessibilityPreferredCaptionDisplayMode(WebCore::Capti
 
 void WebProcess::updatePageAccessibilitySettings()
 {
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    Image::setSystemAllowsAnimationControls(!imageAnimationEnabled());
-#endif
-
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) || ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL) || ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     for (auto& page : m_pageMap.values()) {
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

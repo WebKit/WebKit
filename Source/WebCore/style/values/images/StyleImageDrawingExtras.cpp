@@ -37,7 +37,16 @@ bool ImageDrawingExtras::equals(const WebCore::ImageDrawingExtras& other) const
 {
     auto& otherExtras = downcast<ImageDrawingExtras>(other);
     return m_fragmentURL == otherExtras.m_fragmentURL
-        && m_linkParameters == otherExtras.m_linkParameters;
+        && m_linkParameters == otherExtras.m_linkParameters
+        && m_animationTimeline == otherExtras.m_animationTimeline
+        && hasSameEnvironment(otherExtras);
+}
+
+bool ImageDrawingExtras::hasSameEnvironment(const ImageDrawingExtras& other) const
+{
+    return m_useDarkAppearance == other.m_useDarkAppearance
+        && m_useElevatedUserInterfaceLevel == other.m_useElevatedUserInterfaceLevel
+        && arePointingToEqualData(m_environmentSettings, other.m_environmentSettings);
 }
 
 } // namespace Style

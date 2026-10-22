@@ -36,10 +36,15 @@ namespace WebCore {
 
 class CachedImageClient;
 class CachedResourceLoader;
+class ImageEnvironmentSettings;
 class WeakPtrImplWithEventTargetData;
 class MemoryCache;
 class NativeImage;
 class SecurityOrigin;
+
+namespace Style {
+class ImageDrawingExtras;
+}
 
 class CachedImage final : public CachedResource {
     friend class MemoryCache;
@@ -88,7 +93,6 @@ public:
 
     bool isVisibleInViewport(const Document&) const;
 
-    bool allowsAnimation(const Image&) const;
     bool isAnimated() const;
     void stopAnimation();
     void resetAnimation();
@@ -120,6 +124,7 @@ private:
     RefPtr<SharedBuffer> convertedDataIfNeeded(const FragmentedSharedBuffer* data) const;
     void didUpdateImageData();
     EncodedDataStatus updateImageData(bool allDataReceived);
+    Style::ImageDrawingExtras dataExtras() const;
     void updateData(const SharedBuffer&) override;
     void error(CachedResource::Status) override;
     void responseReceived(ResourceResponse&&) override;
@@ -147,14 +152,10 @@ private:
         void didDraw(const Image&) final;
 
         bool canDestroyDecodedData(const Image&) const final;
-        void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) final;
+        void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid, const ImageDrawingExtras* changedFor = nullptr) final;
         void changedInRect(const Image&, const IntRect*) final;
         void imageContentChanged(const Image&) final;
         void scheduleRenderingUpdate(const Image&) final;
-
-        bool allowsAnimation(const Image&) const final;
-        const Settings* settings() final { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).m_settings.get() : nullptr; }
-        bool useSystemDarkAppearance() const final { return !m_cachedImages.isEmptyIgnoringNullReferences() && protect(*m_cachedImages.begin())->useSystemDarkAppearance(); }
 
         WeakHashSet<CachedImage> m_cachedImages;
     };
@@ -163,11 +164,10 @@ private:
     void decodedSizeChanged(const Image&, long long delta);
     void didDraw(const Image&);
     bool canDestroyDecodedData(const Image&) const;
-    void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid);
+    void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid, const ImageDrawingExtras* changedFor = nullptr);
     void changedInRect(const Image&, const IntRect*);
     void imageContentChanged(const Image&);
     void scheduleRenderingUpdate(const Image&);
-    bool useSystemDarkAppearance() const;
 
     void updateBufferInternal(const FragmentedSharedBuffer&);
 
@@ -181,7 +181,7 @@ private:
     MonotonicTime m_lastUpdateImageDataTime;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_skippingRevalidationDocument;
-    RefPtr<const Settings> m_settings;
+    RefPtr<const ImageEnvironmentSettings> m_environmentSettings;
 
     static constexpr unsigned maxUpdateImageDataCount = 4;
     unsigned m_updateImageDataCount : 3;

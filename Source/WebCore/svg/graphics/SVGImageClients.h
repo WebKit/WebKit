@@ -31,6 +31,8 @@
 #include "EmptyClients.h"
 #include "ImageObserver.h"
 #include "SVGImage.h"
+#include "SVGImageInstance.h"
+#include "StyleImageDrawingExtras.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -51,6 +53,8 @@ public:
     
     bool isSVGImageChromeClient() const final { return true; }
     SVGImage* image() const { return m_image.get(); }
+
+    void setInstance(SVGImageInstance& instance) { m_instance = instance; }
     
 private:
     void chromeDestroyed() final
@@ -80,20 +84,24 @@ private:
         if (!imageObserver)
             return;
 
-        imageObserver->imageFrameAvailable(*image, image->isAnimating() ? ImageAnimatingState::Yes : ImageAnimatingState::No, &rect);
+        auto* instance = m_instance.get();
+        if (!instance || !instance->page())
+            return;
+
+        auto changedFor = protect(*instance)->drawingExtrasForChanges();
+
+        imageObserver->imageFrameAvailable(*image, image->isAnimating() ? ImageAnimatingState::Yes : ImageAnimatingState::No, &rect, DecodingStatus::Invalid, changedFor ? &*changedFor : nullptr);
     }
 
     bool scheduleRenderingUpdate() final
     {
-        RefPtr image { m_image.get() };
-        if (!image)
-            return true;
-        if (RefPtr imageObserver = image->imageObserver())
-            imageObserver->scheduleRenderingUpdate(*image);
+        if (RefPtr image = m_image.get())
+            image->scheduleRenderingUpdate();
         return true;
     }
 
     WeakPtr<SVGImage> m_image;
+    WeakPtr<SVGImageInstance> m_instance;
 };
 
 } // namespace WebCore

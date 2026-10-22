@@ -7129,6 +7129,7 @@
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
 		ECA680C71E67724500731D20 /* StringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680C61E67724500731D20 /* StringUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ECB15D3681944F2886E4820B /* ObjectSizeNegotiation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5268A3FEA3789C5F09CFB72A /* ObjectSizeNegotiation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AD8D192315B05C2468F1C6EC /* ImageAnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = AB7ACCC75DDA2E6C318301FB /* ImageAnimationTimeline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ECC2B535B9F2983B774A915F /* ImageDrawingExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 89AAA5F5CEBC35EFDF20580F /* ImageDrawingExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDB04F3A278E5539008D3678 /* libwebrtc.dylib in Product Dependencies */ = {isa = PBXBuildFile; fileRef = EDB04F39278E5531008D3678 /* libwebrtc.dylib */; platformFilters = (ios, macos, tvos, ); };
@@ -7208,6 +7209,7 @@
 		F46C447E234654540039A79D /* ClipboardItemBindingsDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = F46C447C234654540039A79D /* ClipboardItemBindingsDataSource.h */; };
 		F46D5386273D7E460009FA80 /* ImageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = F46D5385273D7E3F0009FA80 /* ImageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F46D53A1273EEFA00009FA80 /* ImageAnalysisQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = F46D539D273EECF70009FA80 /* ImageAnalysisQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DCE3C69ED4086BC4B18C0D11 /* ImageEnvironmentSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DB2E612D88FD3ACA5610BA /* ImageEnvironmentSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F471137527A0AFA6001BC7CA /* libPAL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C09D0501E31C32900725F18 /* libPAL.a */; };
 		F473845825DDE9FB006DE8DD /* DataOwnerType.h in Headers */ = {isa = PBXBuildFile; fileRef = F473845725DDE9FB006DE8DD /* DataOwnerType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F47A09D120A93A9700240FAE /* DisabledAdaptations.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A09CF20A939F600240FAE /* DisabledAdaptations.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13184,6 +13186,10 @@
 		55BE025E223B29C40032F08A /* SVGAnimatedPropertyPairAccessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPropertyPairAccessor.h; sourceTree = "<group>"; };
 		55BE025F223B29C50032F08A /* SVGAnimationAdditiveFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimationAdditiveFunction.h; sourceTree = "<group>"; };
 		55D408F71A7C631800C78450 /* SVGImageClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageClients.h; sourceTree = "<group>"; };
+		F9B9735224AD5FC8165923B1 /* SVGImageInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageInstance.cpp; sourceTree = "<group>"; };
+		00632DD1A6750FB2E6355632 /* SVGImageInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageInstance.h; sourceTree = "<group>"; };
+		EAE2684072450B5567B16573 /* SVGImageInstanceCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageInstanceCache.cpp; sourceTree = "<group>"; };
+		FD6B7D1E108575DB66189304 /* SVGImageInstanceCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageInstanceCache.h; sourceTree = "<group>"; };
 		55DCC51C2240605E00C26E32 /* SVGAnimationDiscreteFunctionImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimationDiscreteFunctionImpl.h; sourceTree = "<group>"; };
 		55DCC51D2240615500C26E32 /* SVGAnimationDiscreteFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimationDiscreteFunction.h; sourceTree = "<group>"; };
 		55DCC523224073FE00C26E32 /* SVGList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGList.h; sourceTree = "<group>"; };
@@ -15934,6 +15940,8 @@
 		89321A9857B6158E963247AF /* CrossOriginEmbedderPolicyValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrossOriginEmbedderPolicyValue.h; sourceTree = "<group>"; };
 		898785F2122E1EAC003AABDA /* JSFileReaderSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileReaderSync.cpp; sourceTree = "<group>"; };
 		898785F3122E1EAC003AABDA /* JSFileReaderSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileReaderSync.h; sourceTree = "<group>"; };
+		92CC7396AF49A284CAA6DC44 /* ImageAnimationTimeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageAnimationTimeline.cpp; sourceTree = "<group>"; };
+		AB7ACCC75DDA2E6C318301FB /* ImageAnimationTimeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageAnimationTimeline.h; sourceTree = "<group>"; };
 		89AAA5F5CEBC35EFDF20580F /* ImageDrawingExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDrawingExtras.h; sourceTree = "<group>"; };
 		89C20A7AC4BA0F7144DDF0B9 /* UnifiedSource2-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource2-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		8A00EEC72A680139006A53A2 /* EXTDepthClamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTDepthClamp.h; sourceTree = "<group>"; };
@@ -23420,6 +23428,8 @@
 		F46D5384273D7E3E0009FA80 /* ImageOverlay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageOverlay.cpp; sourceTree = "<group>"; };
 		F46D5385273D7E3F0009FA80 /* ImageOverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageOverlay.h; sourceTree = "<group>"; };
 		F46D539D273EECF70009FA80 /* ImageAnalysisQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageAnalysisQueue.h; sourceTree = "<group>"; };
+		3741F227BD4945A310B505E5 /* ImageEnvironmentSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageEnvironmentSettings.cpp; sourceTree = "<group>"; };
+		66DB2E612D88FD3ACA5610BA /* ImageEnvironmentSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageEnvironmentSettings.h; sourceTree = "<group>"; };
 		F46D539E273EECF70009FA80 /* ImageAnalysisQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageAnalysisQueue.cpp; sourceTree = "<group>"; };
 		F473845725DDE9FB006DE8DD /* DataOwnerType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataOwnerType.h; sourceTree = "<group>"; };
 		F47A09CF20A939F600240FAE /* DisabledAdaptations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisabledAdaptations.h; sourceTree = "<group>"; };
@@ -31183,6 +31193,8 @@
 				BC94D1520C275C8B006BC617 /* History.idl */,
 				F46D539E273EECF70009FA80 /* ImageAnalysisQueue.cpp */,
 				F46D539D273EECF70009FA80 /* ImageAnalysisQueue.h */,
+				3741F227BD4945A310B505E5 /* ImageEnvironmentSettings.cpp */,
+				66DB2E612D88FD3ACA5610BA /* ImageEnvironmentSettings.h */,
 				F482434A260C32F10022497C /* ImageOverlayController.cpp */,
 				F4824348260C32F10022497C /* ImageOverlayController.h */,
 				33E5A6A92C6E023400F2CD04 /* ImmediateActionStage.h */,
@@ -36534,6 +36546,10 @@
 				B255990B0D00D8B900BB825C /* SVGImage.cpp */,
 				B255990C0D00D8B900BB825C /* SVGImage.h */,
 				55D408F71A7C631800C78450 /* SVGImageClients.h */,
+				F9B9735224AD5FC8165923B1 /* SVGImageInstance.cpp */,
+				00632DD1A6750FB2E6355632 /* SVGImageInstance.h */,
+				EAE2684072450B5567B16573 /* SVGImageInstanceCache.cpp */,
+				FD6B7D1E108575DB66189304 /* SVGImageInstanceCache.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -36870,6 +36886,8 @@
 				B27535420B053814002CE64F /* Image.h */,
 				72ECA8AB2B62FBB30094F595 /* ImageAdapter.cpp */,
 				72ECA8AC2B62FBB40094F595 /* ImageAdapter.h */,
+				92CC7396AF49A284CAA6DC44 /* ImageAnimationTimeline.cpp */,
+				AB7ACCC75DDA2E6C318301FB /* ImageAnimationTimeline.h */,
 				55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */,
 				43D2597613C816F400608559 /* ImageBuffer.cpp */,
 				B2A10B910B3818BD00099AA4 /* ImageBuffer.h */,
@@ -46262,6 +46280,7 @@
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				72ECA8AE2B62FBB40094F595 /* ImageAdapter.h in Headers */,
 				F46D53A1273EEFA00009FA80 /* ImageAnalysisQueue.h in Headers */,
+				AD8D192315B05C2468F1C6EC /* ImageAnimationTimeline.h in Headers */,
 				55A336F91D821E3C0022C4C7 /* ImageBackingStore.h in Headers */,
 				31815A311F9A6C8F00FCBF89 /* ImageBitmap.h in Headers */,
 				7C7903B31F86F95C00463A70 /* ImageBitmapRenderingContext.h in Headers */,
@@ -46294,6 +46313,7 @@
 				97205AB61239291000B17380 /* ImageDocument.h in Headers */,
 				ECC2B535B9F2983B774A915F /* ImageDrawingExtras.h in Headers */,
 				7B0C389F2ACEDEF400F1FDDC /* ImageDrawingOptions.h in Headers */,
+				DCE3C69ED4086BC4B18C0D11 /* ImageEnvironmentSettings.h in Headers */,
 				5576A5651D88A70800CCC04C /* ImageFrame.h in Headers */,
 				F55B3DC21251F12D003EF269 /* ImageInputType.h in Headers */,
 				281A941CB72C48E5886C9BC1 /* ImageInputTypeSizing.h in Headers */,

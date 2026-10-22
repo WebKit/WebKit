@@ -58,13 +58,11 @@ public:
     unsigned decodedSize() const { return m_decodedSize; }
     void didDecodeProperties(unsigned decodedPropertiesSize);
 
-    // Animation
-    bool isAnimationAllowed() const;
-
     // Decoding & animation
     bool isPendingDecodingAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
     void destroyNativeImageAtIndex(unsigned index, std::optional<DecodingDestination> = std::nullopt);
     void imageFrameAtIndexAvailable(unsigned index, ImageAnimatingState, DecodingStatus);
+    void scheduleRenderingUpdate();
     void imageFrameDecodeAtIndexHasFinished(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&, RefPtr<NativeImage>&&);
 
     // ImageFrame
@@ -119,6 +117,7 @@ private:
     bool startAnimation(SubsamplingLevel, const DecodingOptions&);
     void stopAnimation() final;
     void resetAnimation() final;
+    void updateRendering() final;
     bool isAnimated() const final;
     bool isAnimating() const final;
     bool hasEverAnimated() const final;
@@ -148,12 +147,12 @@ private:
 
     std::expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexCacheIfNeeded(unsigned index, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { });
     std::expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexRequestIfNeeded(unsigned index, SubsamplingLevel, const DecodingOptions&);
-    std::expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexForDrawing(unsigned index, SubsamplingLevel, const DecodingOptions&);
+    std::expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexForDrawing(unsigned index, SubsamplingLevel, const DecodingOptions&) final;
 
     std::expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&) final;
 
     RefPtr<NativeImage> nativeImageAtIndex(unsigned index) final;
-    RefPtr<NativeImage> preTransformedNativeImageAtIndex(unsigned index, ImageOrientation);
+    RefPtr<NativeImage> preTransformedNativeImageAtIndex(unsigned index, ImageOrientation) final;
 
     RefPtr<NativeImage> primaryNativeImageForUnpremultipliedPixels() final;
 

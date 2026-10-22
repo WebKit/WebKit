@@ -10829,7 +10829,10 @@ void WebPage::generateTestReport(String&& message, String&& group)
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void WebPage::updateImageAnimationEnabled()
 {
-    protect(corePage())->setImageAnimationEnabled(WebProcess::singleton().imageAnimationEnabled());
+    Ref page = *corePage();
+    auto imageAnimationEnabled = WebProcess::singleton().imageAnimationEnabled();
+    page->setSystemImageAnimationEnabled(imageAnimationEnabled);
+    page->setImageAnimationEnabled(imageAnimationEnabled);
 }
 
 void WebPage::pauseAllAnimations(CompletionHandler<void()>&& completionHandler)

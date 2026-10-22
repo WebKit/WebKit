@@ -28,8 +28,10 @@
 #pragma once
 
 #include <WebCore/Image.h>
+#include <WebCore/ImageAnimationTimeline.h>
 #include <WebCore/ImageSource.h>
 #include <wtf/Function.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
@@ -50,8 +52,9 @@ public:
 
     // Animation
     void startAnimation() final { m_source->startAnimation(); }
-    void stopAnimation() final { m_source->stopAnimation(); }
+    void stopAnimation(const ImageDrawingExtras* = nullptr) final { m_source->stopAnimation(); }
     void resetAnimation() final { m_source->resetAnimation(); }
+    void updateRendering() final { m_source->updateRendering(); }
     bool isAnimated() const final { return m_source->isAnimated(); }
     bool hasEverAnimated() const { return m_source->hasEverAnimated(); }
 
@@ -70,6 +73,7 @@ public:
     RefPtr<NativeImage> primaryNativeImage() { return m_source->primaryNativeImage(); }
     RefPtr<NativeImage> nativeImage(const ColorSpace& = ColorSpace::SRGB()) { return primaryNativeImage(); }
     RefPtr<NativeImage> currentNativeImage() { return m_source->currentNativeImage(); }
+    RefPtr<NativeImage> currentNativeImage(ImageAnimationTimeline*);
 
     RefPtr<NativeImage> nativeImageForUnpremultipliedPixels() { return m_source->primaryNativeImageForUnpremultipliedPixels(); }
 
@@ -123,7 +127,7 @@ private:
     BitmapImage(Ref<NativeImage>&&);
 
     // Encoded and decoded data
-    EncodedDataStatus dataChanged(bool allDataReceived) final;
+    EncodedDataStatus dataChanged(bool allDataReceived, const ImageDrawingExtras*) final;
     void destroyDecodedData(bool destroyAll = true) final;
 
     bool canReplaceData() const final { return m_source->canReplaceData(); }
@@ -135,7 +139,7 @@ private:
 
     // Current NativeImage
     RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) { return m_source->currentPreTransformedNativeImage(orientation); }
-    RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation orientation = ImageOrientation::Orientation::FromImage, const ImageDrawingExtras* = nullptr) final { return currentPreTransformedNativeImage(orientation); }
+    RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation = ImageOrientation::Orientation::FromImage, const ImageDrawingExtras* = nullptr) final;
 
     // Image Metadata
     bool hasDensityCorrectedSize() const final { return m_source->hasDensityCorrectedSize(); }
@@ -159,11 +163,16 @@ private:
 
     ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
     void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
-    void drawLuminanceMaskPattern(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions);
+    void drawLuminanceMaskPattern(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions, const ImageDrawingExtras*);
 
     void dump(WTF::TextStream&) const final;
 
+    std::optional<unsigned> heldFrameIndex(const ImageDrawingExtras*);
+    std::optional<unsigned> heldFrameIndex(ImageAnimationTimeline*);
+
     const Ref<ImageSource> m_source;
+
+    WeakHashMap<ImageAnimationTimeline, unsigned> m_pausedFrameIndices;
 };
 
 } // namespace WebCore
