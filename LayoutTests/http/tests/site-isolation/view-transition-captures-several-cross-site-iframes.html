@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true RemoteSnapshottingEnabled=true UseGPUProcessForDOMRenderingEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<style>
+#first { view-transition-name: first; }
+#second { view-transition-name: second; }
+iframe { width: 100px; height: 100px; border: none; }
+</style>
+<body>
+<div id="first"><iframe src="http://localhost:8000/site-isolation/resources/green-background.html"></iframe></div>
+<div id="second"><iframe src="http://localhost:8000/site-isolation/resources/green-background.html"></iframe></div>
+<script>
+description("Each captured element containing a cross-site iframe gets its own image, and the transition waits for all of them before it starts.");
+jsTestIsAsync = true;
+
+let firstState = null;
+let secondState = null;
+let loadedFrames = 0;
+
+onmessage = (event) => {
+    if (event.data != "onload" || ++loadedFrames < 2)
+        return;
+
+    const transition = document.startViewTransition(() => { });
+    transition.ready.then(() => {
+        firstState = internals.viewTransitionOldCaptureState(document, "first");
+        secondState = internals.viewTransitionOldCaptureState(document, "second");
+        shouldBeEqualToString("firstState", "remote");
+        shouldBeEqualToString("secondState", "remote");
+        transition.skipTransition();
+        finishJSTest();
+    }, (error) => {
+        testFailed("the transition was skipped: " + error);
+        finishJSTest();
+    });
+};
+</script>
+</body>

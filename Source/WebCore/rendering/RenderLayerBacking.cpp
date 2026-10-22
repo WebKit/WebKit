@@ -3981,6 +3981,9 @@ bool RenderLayerBacking::containsPaintedContent(PaintedContentsInfo& contentsInf
     if (contentsInfo.isSimpleContainer() || paintsIntoWindow() || paintsIntoCompositedAncestor() || m_artificiallyInflatedBounds || m_owningLayer.isReflection())
         return false;
 
+    if (auto* viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer()); viewTransitionCapture && viewTransitionCapture->displayOnlyImage())
+        return m_owningLayer.hasVisibleBoxDecorationsOrBackground();
+
     if (contentsInfo.isDirectlyCompositedImage())
         return false;
 
@@ -4011,6 +4014,11 @@ bool RenderLayerBacking::containsPaintedContent(PaintedContentsInfo& contentsInf
 // that require painting. Direct compositing saves backing store.
 bool RenderLayerBacking::isDirectlyCompositedImage() const
 {
+    // Cannot be painted, so it is composited whatever else the layer has.
+    // FIXME: A clip, corner shape, or filter that has to be painted is not applied to it.
+    if (auto* viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer()); viewTransitionCapture && viewTransitionCapture->displayOnlyImage())
+        return true;
+
     if (m_owningLayer.hasVisibleBoxDecorationsOrBackground() || m_owningLayer.shouldPaintWithFilters() || renderer().hasClip())
         return false;
 
@@ -4178,7 +4186,9 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType, const std:
 void RenderLayerBacking::updateImageContents(PaintedContentsInfo& contentsInfo)
 {
     if (auto* viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer())) {
-        if (auto image = viewTransitionCapture->image())
+        if (RefPtr image = viewTransitionCapture->displayOnlyImage())
+            m_graphicsLayer->setContentsToNativeImage(image.get());
+        else if (auto image = viewTransitionCapture->image())
             m_graphicsLayer->setContentsToImageBuffer(image.get());
     } else {
         auto& imageRenderer = downcast<RenderImage>(renderer());
