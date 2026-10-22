@@ -174,3 +174,5 @@ webkit.org/b/325030 fast/css/cocoa/content-visibility-with-obscured-insets.html 
 webkit.org/b/325030 fast/events/ios/viewport-zooms-from-element-to-initial-scale.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Pass ]
+
+webkit.org/b/326577 imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html [ Failure ]
