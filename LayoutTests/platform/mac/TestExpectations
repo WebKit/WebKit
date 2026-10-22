@@ -1319,7 +1319,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_appended
 imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_auxclick_is_a_pointerevent.html?mouse [ Pass ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_auxclick_is_a_pointerevent.html?pen [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_click_is_a_pointerevent.html?mouse [ Pass ]
@@ -1327,7 +1326,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_click_is_a_pointereve
 imported/w3c/web-platform-tests/pointerevents/pointerevent_click_is_a_pointerevent.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_click_is_a_pointerevent_multiple_clicks.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_contextmenu_is_a_pointerevent.html?touch [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_iframe-touch-action-none_touch.html [ Skip ]
@@ -1340,11 +1338,9 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerleave_after_po
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_after_pointercancel_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_pen.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_received_once.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_events_to_original_target.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_events_to_original_target.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_onpointercancel_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_pointerup_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_drag.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_pointerup_touch.html [ Skip ]
@@ -1695,8 +1691,6 @@ webkit.org/b/225670 webaudio/AudioContext/audiocontext-close-basic.html [ Slow ]
 # rdar://80345970 ([ Mac ] imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html is a flaky failure)
 imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html [ Pass Failure Crash ]
 
-webkit.org/b/227910 imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
-
 # rdar://80345578 ([ Mac iOS Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html is flaky crashing)
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html [ Pass Failure Crash ]
 
@@ -1726,8 +1720,6 @@ imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html [ Pass Fa
 webkit.org/b/261316 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
 
 webkit.org/b/228364 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Pass Timeout ]
-
-webkit.org/b/228642 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Pass Failure ]
 
 # accent-color is currently only supported on Cocoa platforms
 fast/css/accent-color/checkbox.html [ Pass ]

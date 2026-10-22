@@ -919,8 +919,6 @@ webkit.org/b/264680 imported/w3c/web-platform-tests/webcodecs/videoFrame-constru
 # Also webkit.org/b/266573
 webkit.org/b/266577 webgl/2.0.y/conformance2/textures/video/tex-2d-rgb16f-rgb-half_float.html [ Failure Timeout Pass ]
 
-imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ Failure ]
-
 webkit.org/b/273196 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-combinations.html [ Failure ]
 
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-003.html [ ImageOnlyFailure ]
