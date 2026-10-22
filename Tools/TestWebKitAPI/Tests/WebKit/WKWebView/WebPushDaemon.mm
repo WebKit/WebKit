@@ -154,10 +154,12 @@ enum LaunchOnlyOnce : BOOL { No, Yes };
 enum class InstallDataStoreDelegate : bool { No, Yes };
 enum class BuiltInNotificationsEnabled : bool { No, Yes };
 
+static NSString * const testWebPushDaemonLabel = @"org.webkit.webpushtestdaemon";
+
 static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocation, LaunchOnlyOnce launchOnlyOnce)
 {
     return @{
-        @"Label" : @"org.webkit.webpushtestdaemon",
+        @"Label" : testWebPushDaemonLabel,
         @"LaunchOnlyOnce" : @(static_cast<BOOL>(launchOnlyOnce)),
         @"ThrottleInterval" : @(1),
         @"StandardErrorPath" : [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path,
@@ -200,8 +202,6 @@ static NSURL *setUpTestWebPushD(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::
         [fileManager removeItemAtURL:tempDir error:&error];
     EXPECT_NULL(error);
 
-    killFirstInstanceOfDaemon(@"webpushd");
-
     registerPlistWithLaunchD(testWebPushDaemonPList(tempDir, launchOnlyOnce), tempDir);
 
     return tempDir;
@@ -210,7 +210,7 @@ static NSURL *setUpTestWebPushD(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::
 // Only works if the test daemon was registered with LaunchOnlyOnce::No.
 static BOOL restartTestWebPushD()
 {
-    return restartService(@"org.webkit.webpushtestdaemon", @"webpushd");
+    return restartService(testWebPushDaemonLabel, @"webpushd");
 }
 
 static void cleanUpTestWebPushD(NSURL *tempDir)
@@ -218,7 +218,7 @@ static void cleanUpTestWebPushD(NSURL *tempDir)
     if (!shouldSetupWebPushD())
         return;
 
-    killFirstInstanceOfDaemon(@"webpushd");
+    EXPECT_TRUE(stopTestDaemon(testWebPushDaemonLabel, @"webpushd"));
 
     if (![[NSFileManager defaultManager] fileExistsAtPath:tempDir.path])
         return;
