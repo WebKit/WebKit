@@ -1938,7 +1938,6 @@ webkit.org/b/146720 media/accessibility-describes-video.html [ Failure ]
 
 webkit.org/b/227934 media/media-source/media-webm-vorbis-partial.html [ Failure ]
 webkit.org/b/265016 media/media-webm-opus-error.html [ Timeout Failure ]
-webkit.org/b/277327 media/media-vp8-webm-with-preload.html [ Skip ]
 webkit.org/b/280991 media/media-vp8-webm-error.html [ Pass Failure ]
 webkit.org/b/280991 media/media-vp8-webm-error-offscreen.html [ Pass Failure ]
 webkit.org/b/280991 media/media-vp8-webm-seek-to-start.html [ Pass ImageOnlyFailure Timeout ]
