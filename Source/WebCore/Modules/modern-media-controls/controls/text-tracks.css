@@ -86,6 +86,7 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
 
     /* The backdrop breaks propogation of styles like text-decoration. Explicitly propogate those styles by declaring them as `inherit`: */
     text-decoration: inherit;
+    unicode-bidi: inherit;
 }
 
 ::-webkit-media-text-track-region {
