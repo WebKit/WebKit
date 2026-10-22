@@ -14,7 +14,7 @@
     <key>DefaultProperties</key>
     <dict>
         <key>WK_SDK_DIR_macosx</key>
-        <string>$(DEVELOPER_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk</string>
+        <string>$(DEVELOPER_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk</string>
         <key>WK_DERIVED_SDK_HEADERS_DIR</key>
         <string>$(BUILT_PRODUCTS_DIR)/SDKAdditions</string>
         <key>SYSTEM_FRAMEWORK_SEARCH_PATHS</key>
