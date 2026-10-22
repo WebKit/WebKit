@@ -102,6 +102,7 @@ public:
     bool isPageInstrumentationEnabled() const;
 
     void setShowPaintRects(bool);
+    void setSettingOverride(const String& setting, std::optional<bool>);
 
     void disconnectFrameTargetForTesting(WebCore::FrameIdentifier);
 

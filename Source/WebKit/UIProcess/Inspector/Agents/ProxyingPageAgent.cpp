@@ -207,6 +207,9 @@ void ProxyingPageAgent::enableInstrumentationForProcess(WebProcessProxy& webProc
     if (m_showPaintRects)
         webProcess.send(Messages::WebInspectorBackend::SetShowPaintRects { true }, pageID);
 
+    for (auto& [setting, value] : m_settingOverrides)
+        webProcess.send(Messages::WebInspectorBackend::SetSettingOverride { setting, value }, pageID);
+
     // Sent before the provisional frame's load is allowed to start (see WebFrameProxy::prepareForProvisionalLoadInProcess),
     // so the first document committed in a new process already sees the script.
     if (!m_bootstrapScript.isEmpty())
@@ -272,6 +275,8 @@ CommandResult<void> ProxyingPageAgent::enable()
 
 CommandResult<void> ProxyingPageAgent::disable()
 {
+    m_settingOverrides.clear();
+
     if (!m_enabled)
         return { };
 
@@ -726,6 +731,21 @@ CommandResult<void> ProxyingPageAgent::setShowPaintRects(bool show)
     });
 
     return { };
+}
+
+void ProxyingPageAgent::setSettingOverride(const String& setting, std::optional<bool> value)
+{
+    if (!Protocol::Helpers::parseEnumValueFromString<Protocol::Page::Setting>(setting))
+        return;
+
+    if (value)
+        m_settingOverrides.set(setting, *value);
+    else
+        m_settingOverrides.remove(setting);
+
+    forEachInstrumentedProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebInspectorBackend::SetSettingOverride { setting, value }, pageID);
+    });
 }
 
 CommandResult<void> ProxyingPageAgent::setEmulatedMedia(const String&)
