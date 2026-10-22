@@ -91,12 +91,14 @@ void RenderSVGResourceGradient::invalidateGradientOnLayoutSizeChange()
 
 bool RenderSVGResourceGradient::buildGradientIfNeeded(const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style, AffineTransform& userspaceTransform)
 {
-    if (!m_gradient) {
+    if (!m_gradient || m_gradientColorFilter != style.appleColorFilter()) {
         collectGradientAttributesIfNeeded();
         m_gradient = createGradient(style);
 
         if (!m_gradient)
             return false;
+
+        m_gradientColorFilter = style.appleColorFilter();
     }
 
     auto objectBoundingBox = targetRenderer.objectBoundingBox();

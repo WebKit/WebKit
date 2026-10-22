@@ -21,6 +21,7 @@
 
 #include "RenderSVGResourcePaintServer.h"
 #include "SVGGradientElement.h"
+#include "StyleAppleColorFilter.h"
 
 namespace WebCore {
 
@@ -56,6 +57,9 @@ protected:
     ColorInterpolationMethod LEGACY_NODELETE gradientColorInterpolationMethod() const;
 
     RefPtr<Gradient> m_gradient;
+
+private:
+    Style::AppleColorFilter m_gradientColorFilter { CSS::Keyword::None { } };
 };
 
 }

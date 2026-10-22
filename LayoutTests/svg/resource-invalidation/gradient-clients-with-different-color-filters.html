@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ColorFilterEnabled=true ] -->
+<body>
+<svg width="450" height="350">
+    <defs>
+        <linearGradient id="unfiltered-client-first">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="filtered-client-first">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <radialGradient id="radial">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </radialGradient>
+        <linearGradient id="stroke">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="filter-changes-after-paint">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+    </defs>
+
+    <!-- Clients sharing a gradient each apply their own filter: invert(1) turns the red to yellow stops into cyan to blue. -->
+    <rect x="50" y="50" width="50" height="50" fill="url(#unfiltered-client-first)"/>
+    <rect x="150" y="50" width="50" height="50" fill="url(#unfiltered-client-first)" style="-apple-color-filter: invert(1)"/>
+
+    <rect x="250" y="50" width="50" height="50" fill="url(#filtered-client-first)" style="-apple-color-filter: invert(1)"/>
+    <rect x="350" y="50" width="50" height="50" fill="url(#filtered-client-first)"/>
+
+    <rect x="50" y="150" width="50" height="50" fill="url(#radial)"/>
+    <rect x="150" y="150" width="50" height="50" fill="url(#radial)" style="-apple-color-filter: invert(1)"/>
+
+    <rect x="250" y="150" width="50" height="50" fill="none" stroke="url(#stroke)" stroke-width="10"/>
+    <rect x="350" y="150" width="50" height="50" fill="none" stroke="url(#stroke)" stroke-width="10" style="-apple-color-filter: invert(1)"/>
+
+    <!-- The client's filter changes after it has painted, while the gradient's stops keep their style. -->
+    <rect id="filter-changes" x="50" y="250" width="50" height="50" fill="url(#filter-changes-after-paint)"/>
+</svg>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.addEventListener("load", () => {
+    // Let the gradient paint with the client's original filter first.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.getElementById("filter-changes").style.setProperty("-apple-color-filter", "invert(1)");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }));
+});
+</script>
+</body>

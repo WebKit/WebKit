@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<body>
+<svg width="450" height="350">
+    <defs>
+        <linearGradient id="authored">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="inverted">
+            <stop offset="0" stop-color="cyan"/>
+            <stop offset="1" stop-color="blue"/>
+        </linearGradient>
+        <radialGradient id="radial-authored">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </radialGradient>
+        <radialGradient id="radial-inverted">
+            <stop offset="0" stop-color="cyan"/>
+            <stop offset="1" stop-color="blue"/>
+        </radialGradient>
+    </defs>
+
+    <rect x="50" y="50" width="50" height="50" fill="url(#authored)"/>
+    <rect x="150" y="50" width="50" height="50" fill="url(#inverted)"/>
+
+    <rect x="250" y="50" width="50" height="50" fill="url(#inverted)"/>
+    <rect x="350" y="50" width="50" height="50" fill="url(#authored)"/>
+
+    <rect x="50" y="150" width="50" height="50" fill="url(#radial-authored)"/>
+    <rect x="150" y="150" width="50" height="50" fill="url(#radial-inverted)"/>
+
+    <rect x="250" y="150" width="50" height="50" fill="none" stroke="url(#authored)" stroke-width="10"/>
+    <rect x="350" y="150" width="50" height="50" fill="none" stroke="url(#inverted)" stroke-width="10"/>
+
+    <rect x="50" y="250" width="50" height="50" fill="url(#inverted)"/>
+</svg>
+</body>
