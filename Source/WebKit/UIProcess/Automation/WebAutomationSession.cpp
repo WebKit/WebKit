@@ -370,6 +370,8 @@ String WebAutomationSession::handleForWebPageProxy(const WebPageProxy& webPagePr
 
 void WebAutomationSession::didDestroyFrame(FrameIdentifier frameID)
 {
+    // Only releases the frame's handle and state: the frame's events were reported from
+    // willDestroyFrame, which WebPageProxy::didDestroyFrame runs first.
     auto handle = m_webFrameHandleMap.take(frameID);
     if (!handle.isEmpty())
         m_handleWebFrameMap.remove(handle);
@@ -384,6 +386,13 @@ void WebAutomationSession::didDestroyFrame(FrameIdentifier frameID)
     // moved the set onto the replacement frame's identifier, so it drops nothing that
     // is still reachable.
     m_knownNodeReferences.remove(frameID);
+
+#if ENABLE(WEBDRIVER_BIDI)
+    m_lastNavigationPerFrame.remove(frameID);
+    forgetTerminatedNavigationsInFrames([frameID](FrameIdentifier terminatedFrameID) {
+        return terminatedFrameID == frameID;
+    });
+#endif
 }
 
 std::optional<FrameIdentifier> WebAutomationSession::webFrameIDForHandle(const String& handle, bool& frameNotFound)
@@ -1166,6 +1175,11 @@ void WebAutomationSession::navigateBrowsingContextForBidi(const Inspector::Proto
 
     RefPtr navigation = page->loadRequest(URL { url });
     String navigationID = navigation ? navigationIDToProtocolString(navigation->navigationID()) : nullString();
+    // Tracked before WebCore starts it, so a superseding navigation or a close can still report it.
+    if (navigation) {
+        if (RefPtr mainFrame = page->mainFrame(); mainFrame && handleForWebPageProxy(*page) == handle)
+            trackBidiNavigationForFrame(*mainFrame, navigation->navigationID(), url, BidiNavigationSource::Command);
+    }
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, [requestedURL = url, navigationID = WTF::move(navigationID), callback = WTF::move(callback)](CommandResult<void>&& result) mutable {
         if (!result) {
             callback(makeUnexpected(result.error()));
@@ -1185,6 +1199,10 @@ void WebAutomationSession::reloadBrowsingContextForBidi(const Inspector::Protoco
 
     RefPtr navigation = page->reload({ });
     String navigationID = navigation ? navigationIDToProtocolString(navigation->navigationID()) : nullString();
+    if (navigation) {
+        if (RefPtr mainFrame = page->mainFrame(); mainFrame && handleForWebPageProxy(*page) == handle)
+            trackBidiNavigationForFrame(*mainFrame, navigation->navigationID(), page->currentURL(), BidiNavigationSource::Command);
+    }
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, [page = Ref { *page }, navigationID = WTF::move(navigationID), callback = WTF::move(callback)](CommandResult<void>&& result) mutable {
         if (!result) {
             callback(makeUnexpected(result.error()));
@@ -1198,9 +1216,11 @@ void WebAutomationSession::reloadBrowsingContextForBidi(const Inspector::Protoco
 void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID, WallTime timestamp)
 {
 #if ENABLE(WEBDRIVER_BIDI)
-    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::DomContentLoaded, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().domContentLoaded(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(timestamp.secondsSinceEpoch().milliseconds()), frame.url().string());
-    });
+    if (!isBidiNavigationTerminated(frame.frameID(), navigationID)) {
+        m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::DomContentLoaded, { }, [&] {
+            m_bidiProcessor->browsingContextDomainNotifier().domContentLoaded(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(timestamp.secondsSinceEpoch().milliseconds()), frame.url().string());
+        });
+    }
 #endif
 
     if (frame.isMainFrame()) {
@@ -1217,6 +1237,12 @@ void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame, st
 void WebAutomationSession::loadCompletedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID, WallTime timestamp)
 {
 #if ENABLE(WEBDRIVER_BIDI)
+    if (isBidiNavigationTerminated(frame.frameID(), navigationID))
+        return;
+
+    if (auto it = m_lastNavigationPerFrame.find(frame.frameID()); it != m_lastNavigationPerFrame.end() && it->value.navigationID == navigationID)
+        it->value.loaded = true;
+
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::Load, { }, [&]() {
         m_bidiProcessor->browsingContextDomainNotifier().load(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(timestamp.secondsSinceEpoch().milliseconds()), frame.url().string());
     });
@@ -1266,19 +1292,168 @@ void WebAutomationSession::didCreatePage(WebPageProxy& page)
     emitContextCreatedEvent(page);
 }
 
+auto WebAutomationSession::trackBidiNavigationForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID, const String& url, BidiNavigationSource source) -> BidiNavigationTrackingResult
+{
+    auto frameID = frame.frameID();
+
+    // A report for a navigation that has already terminated is stale; do not resurrect it.
+    if (isBidiNavigationTerminated(frameID, navigationID))
+        return BidiNavigationTrackingResult::Ignored;
+
+    auto it = m_lastNavigationPerFrame.find(frameID);
+    if (it != m_lastNavigationPerFrame.end() && navigationID && it->value.navigationID) {
+        if (*it->value.navigationID == *navigationID) {
+            // A start is a document load, so it cannot have finished as a same-document navigation.
+            if (source == BidiNavigationSource::WebCore) {
+                it->value.started = true;
+                it->value.loaded = false;
+                it->value.acknowledged = true;
+            }
+            return BidiNavigationTrackingResult::Advanced;
+        }
+        if (source == BidiNavigationSource::WebCore && it->value.requestedByCommand && !it->value.acknowledged) {
+            // The initial document is never reported.
+            if (url.isEmpty() || url == "about:blank"_s) {
+                markBidiNavigationTerminated(frameID, *navigationID);
+                return BidiNavigationTrackingResult::Ignored;
+            }
+            return BidiNavigationTrackingResult::Untracked;
+        }
+    }
+
+    if (it != m_lastNavigationPerFrame.end())
+        emitBidiNavigationAbortedIfInFlight(frame);
+
+    bool started = source == BidiNavigationSource::WebCore;
+    m_lastNavigationPerFrame.set(frameID, BidiFrameNavigationState { navigationID, url, false, started, !started, started });
+    return BidiNavigationTrackingResult::NewlyTracked;
+}
+
+bool WebAutomationSession::markBidiNavigationTerminated(WebCore::FrameIdentifier frameID, WebCore::NavigationIdentifier navigationID)
+{
+    return m_terminatedNavigations.ensure(navigationID, [] {
+        return HashSet<WebCore::FrameIdentifier> { };
+    }).iterator->value.add(frameID).isNewEntry;
+}
+
+bool WebAutomationSession::isBidiNavigationTerminated(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID) const
+{
+    if (!navigationID)
+        return false;
+    auto it = m_terminatedNavigations.find(*navigationID);
+    return it != m_terminatedNavigations.end() && it->value.contains(frameID);
+}
+
+void WebAutomationSession::emitBidiNavigationTerminal(const WebFrameProxy& frame, BidiNavigationTerminalType type, std::optional<WebCore::NavigationIdentifier> navigationID, const String& url)
+{
+    auto frameID = frame.frameID();
+
+    auto tracked = m_lastNavigationPerFrame.find(frameID);
+    bool released = tracked != m_lastNavigationPerFrame.end() && tracked->value.navigationID == navigationID && tracked->value.released;
+    if (navigationID && !released && !markBidiNavigationTerminated(frameID, *navigationID))
+        return;
+
+    auto timestamp = std::trunc(WallTime::now().secondsSinceEpoch().milliseconds());
+    auto effectiveURL = url.isNull() ? frame.url().string() : url;
+    if (type == BidiNavigationTerminalType::Failed) {
+        m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationFailed, { }, [&] {
+            m_bidiProcessor->browsingContextDomainNotifier().navigationFailed(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), timestamp, effectiveURL);
+        });
+    } else {
+        m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationAborted, { }, [&] {
+            m_bidiProcessor->browsingContextDomainNotifier().navigationAborted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), timestamp, effectiveURL);
+        });
+    }
+
+    // Drop the tracked navigation only if it is the one that just terminated, so a terminal for an
+    // older navigation cannot erase a newer navigation's state.
+    if (auto it = m_lastNavigationPerFrame.find(frameID); it != m_lastNavigationPerFrame.end() && it->value.navigationID == navigationID)
+        m_lastNavigationPerFrame.remove(it);
+}
+
+void WebAutomationSession::emitBidiNavigationAbortedIfInFlight(const WebFrameProxy& frame)
+{
+    auto it = m_lastNavigationPerFrame.find(frame.frameID());
+    if (it == m_lastNavigationPerFrame.end())
+        return;
+
+    auto& state = it->value;
+    if (state.loaded)
+        return;
+
+    // The initial document is not a client navigation unless a command requested it.
+    if (!state.requestedByCommand && (state.url.isEmpty() || state.url == "about:blank"_s))
+        return;
+
+    // WebCore may never report the start if the navigation is cancelled during its policy check.
+    if (state.requestedByCommand && !state.started) {
+        m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationStarted, { }, [&] {
+            m_bidiProcessor->browsingContextDomainNotifier().navigationStarted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(state.navigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), state.url);
+        });
+    }
+
+    emitBidiNavigationTerminal(frame, BidiNavigationTerminalType::Aborted, state.navigationID, state.url);
+}
+
+void WebAutomationSession::navigationPolicyRequestedForFrame(const WebFrameProxy& frame, WebCore::NavigationIdentifier navigationID)
+{
+    if (auto it = m_lastNavigationPerFrame.find(frame.frameID()); it != m_lastNavigationPerFrame.end() && it->value.navigationID == navigationID)
+        it->value.acknowledged = true;
+}
+
+void WebAutomationSession::forgetTerminatedNavigationsInFrames(NOESCAPE const Function<bool(FrameIdentifier)>& frameMatches)
+{
+    m_terminatedNavigations.removeIf([&](auto& entry) {
+        entry.value.removeIf(frameMatches);
+        return entry.value.isEmpty();
+    });
+}
+
+void WebAutomationSession::backForwardRequestSentForNavigation(WebCore::NavigationIdentifier navigationID, const WebPageProxy& page)
+{
+    auto& requests = m_backForwardRequestCounts.add(navigationID, std::pair { page.identifier(), 0u }).iterator->value;
+    if (++requests.second == 2)
+        m_navigationsSentToSeveralFrames.set(navigationID, page.identifier());
+}
+
+void WebAutomationSession::backForwardTraversalDidFinishDispatch(WebCore::NavigationIdentifier navigationID)
+{
+    m_backForwardRequestCounts.remove(navigationID);
+}
+
+void WebAutomationSession::navigationReleased(WebCore::NavigationIdentifier navigationID)
+{
+    // A navigation sent to several frames has a loader in each, and one release does not show they all detached.
+    if (m_navigationsSentToSeveralFrames.remove(navigationID))
+        return;
+    m_terminatedNavigations.remove(navigationID);
+    for (auto& state : m_lastNavigationPerFrame.values()) {
+        if (state.navigationID == navigationID)
+            state.released = true;
+    }
+}
+
 void WebAutomationSession::navigationStartedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
-    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationStarted, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().navigationStarted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), frame.url().string());
+    // frame.url() is still the previous document's.
+    auto url = frame.provisionalURL().string();
+    if (trackBidiNavigationForFrame(frame, navigationID, url, BidiNavigationSource::WebCore) == BidiNavigationTrackingResult::Ignored)
+        return;
+
+    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationStarted, { }, [&] {
+        m_bidiProcessor->browsingContextDomainNotifier().navigationStarted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), url);
     });
 }
 
 void WebAutomationSession::navigationCommittedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
     auto frameHandle = effectiveHandleForWebFrameProxy(frame);
-    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationCommitted, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().navigationCommitted(frameHandle, navigationIDToProtocolString(navigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), frame.url().string());
-    });
+    // A commit reported after the navigation already terminated is stale; do not emit it.
+    if (!isBidiNavigationTerminated(frame.frameID(), navigationID)) {
+        m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationCommitted, { }, [&] {
+            m_bidiProcessor->browsingContextDomainNotifier().navigationCommitted(frameHandle, navigationIDToProtocolString(navigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), frame.url().string());
+        });
+    }
 
     if (RefPtr page = frame.page()) {
         auto pageHandle = handleForWebPageProxy(*page);
@@ -1286,24 +1461,37 @@ void WebAutomationSession::navigationCommittedForFrame(const WebFrameProxy& fram
     }
 }
 
-void WebAutomationSession::navigationFailedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
+std::optional<WebCore::NavigationIdentifier> WebAutomationSession::resolveBidiTerminalNavigationID(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
-    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationFailed, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().navigationFailed(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), frame.url().string());
-    });
+    if (navigationID)
+        return navigationID;
+
+    // WebCore reports a stopped load's failure before the next start, so only a started navigation can own it.
+    if (auto it = m_lastNavigationPerFrame.find(frame.frameID()); it != m_lastNavigationPerFrame.end() && it->value.started)
+        return it->value.navigationID;
+    return std::nullopt;
 }
 
-void WebAutomationSession::navigationAbortedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
+void WebAutomationSession::navigationFailedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID, const String& url)
 {
-    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationAborted, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().navigationAborted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), frame.url().string());
-    });
+    emitBidiNavigationTerminal(frame, BidiNavigationTerminalType::Failed, resolveBidiTerminalNavigationID(frame, navigationID), url);
 }
 
-void WebAutomationSession::fragmentNavigatedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
+void WebAutomationSession::fragmentNavigatedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> documentNavigationID, std::optional<WebCore::NavigationIdentifier> requestedNavigationID)
 {
+    // A report for a navigation that has already terminated must not follow its terminal.
+    if (isBidiNavigationTerminated(frame.frameID(), requestedNavigationID))
+        return;
+
+    auto eventNavigationID = documentNavigationID;
+    if (requestedNavigationID) {
+        if (auto it = m_lastNavigationPerFrame.find(frame.frameID()); it != m_lastNavigationPerFrame.end() && it->value.navigationID == requestedNavigationID)
+            it->value.loaded = true;
+        eventNavigationID = requestedNavigationID;
+    }
+
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::FragmentNavigated, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().fragmentNavigated(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), frame.url().string());
+        m_bidiProcessor->browsingContextDomainNotifier().fragmentNavigated(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(eventNavigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), frame.url().string());
     });
     // NOTE: fragment navigations don't create a new document, and therefore do not trigger preload scripts.
 }
@@ -1350,6 +1538,13 @@ void WebAutomationSession::didCreateFrame(const WebFrameProxy& frame)
 void WebAutomationSession::willDestroyFrame(const WebFrameProxy& frame)
 {
 #if ENABLE(WEBDRIVER_BIDI)
+    // Report a navigation still in flight when this frame is destroyed as aborted, before the context is.
+    emitBidiNavigationAbortedIfInFlight(frame);
+    m_lastNavigationPerFrame.remove(frame.frameID());
+    forgetTerminatedNavigationsInFrames([frameID = frame.frameID()](FrameIdentifier terminatedFrameID) {
+        return terminatedFrameID == frameID;
+    });
+
     contextDestroyedForFrame(frame);
 #endif
 }
@@ -1504,6 +1699,39 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
         callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
 
 #if ENABLE(WEBDRIVER_BIDI)
+    // Report any navigation still in flight in this page's frames as aborted before the context goes away.
+    Vector<Ref<WebFrameProxy>> framesWithTrackedNavigations;
+    for (auto& frameID : m_lastNavigationPerFrame.keys()) {
+        RefPtr frame = WebFrameProxy::webFrame(frameID);
+        if (frame && frame->page() == &page)
+            framesWithTrackedNavigations.append(frame.releaseNonNull());
+    }
+    for (auto& frame : framesWithTrackedNavigations)
+        emitBidiNavigationAbortedIfInFlight(frame);
+
+    // Closing a page disconnects its frames without willDestroyFrame or didDestroyFrame, so release
+    // their navigation state here; entries whose frame or page is already gone are dead too.
+    auto closingPageID = page.identifier();
+    auto belongsToClosingPage = [closingPageID](FrameIdentifier frameID) {
+        RefPtr frame = WebFrameProxy::webFrame(frameID);
+        if (!frame)
+            return true;
+        RefPtr framePage = frame->page();
+        return !framePage || framePage->identifier() == closingPageID;
+    };
+    m_lastNavigationPerFrame.removeIf([&](auto& entry) {
+        return belongsToClosingPage(entry.key);
+    });
+    forgetTerminatedNavigationsInFrames([&](FrameIdentifier frameID) {
+        return belongsToClosingPage(frameID);
+    });
+    m_navigationsSentToSeveralFrames.removeIf([closingPageID](auto& entry) {
+        return entry.value == closingPageID;
+    });
+    m_backForwardRequestCounts.removeIf([closingPageID](auto& entry) {
+        return entry.value.first == closingPageID;
+    });
+
     contextDestroyedForPage(page);
     m_bidiProcessor->inputAgent().willClosePage(handle);
 #endif

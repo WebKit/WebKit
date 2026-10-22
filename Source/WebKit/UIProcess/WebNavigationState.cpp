@@ -27,6 +27,7 @@
 #include "WebNavigationState.h"
 
 #include "APINavigation.h"
+#include "WebAutomationSession.h"
 #include "WebPageProxy.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -100,6 +101,11 @@ RefPtr<API::Navigation> WebNavigationState::takeNavigation(WebCore::NavigationId
     RefPtr navigation = m_navigations.take(navigationID);
     if (navigation)
         navigation->clearAgentClusterKeyingReservation();
+#if ENABLE(WEBDRIVER_BIDI)
+    // The web process still owns the navigation until it reports it destroyed.
+    if (navigation && protect(m_page.get())->activeAutomationSession())
+        m_takenNavigationsAwaitingRelease.set(navigationID, navigation->processID());
+#endif
     return navigation;
 }
 
@@ -109,24 +115,62 @@ void WebNavigationState::didDestroyNavigation(WebCore::ProcessIdentifier process
     if (it != m_navigations.end() && (*it).value->processID() == processID) {
         protect(it->value)->clearAgentClusterKeyingReservation();
         m_navigations.remove(it);
+        didReleaseNavigation(navigationID);
+        return;
     }
+#if ENABLE(WEBDRIVER_BIDI)
+    if (auto taken = m_takenNavigationsAwaitingRelease.find(navigationID); taken != m_takenNavigationsAwaitingRelease.end() && taken->value == processID) {
+        m_takenNavigationsAwaitingRelease.remove(taken);
+        didReleaseNavigation(navigationID);
+    }
+#endif
 }
 
 void WebNavigationState::clearAllNavigations()
 {
     for (Ref navigation : m_navigations.values())
         navigation->clearAgentClusterKeyingReservation();
+    auto navigationIDs = copyToVector(m_navigations.keys());
     m_navigations.clear();
+#if ENABLE(WEBDRIVER_BIDI)
+    navigationIDs.appendVector(copyToVector(m_takenNavigationsAwaitingRelease.keys()));
+    m_takenNavigationsAwaitingRelease.clear();
+#endif
+    for (auto navigationID : navigationIDs)
+        didReleaseNavigation(navigationID);
 }
 
 void WebNavigationState::clearNavigationsFromProcess(WebCore::ProcessIdentifier processID)
 {
+    Vector<WebCore::NavigationIdentifier> releasedNavigationIDs;
     m_navigations.removeIf([&](auto& entry) {
         if (entry.value->processID() != processID)
             return false;
         protect(entry.value)->clearAgentClusterKeyingReservation();
+        releasedNavigationIDs.append(entry.key);
         return true;
     });
+#if ENABLE(WEBDRIVER_BIDI)
+    m_takenNavigationsAwaitingRelease.removeIf([&](auto& entry) {
+        if (entry.value != processID)
+            return false;
+        releasedNavigationIDs.append(entry.key);
+        return true;
+    });
+#endif
+    for (auto navigationID : releasedNavigationIDs)
+        didReleaseNavigation(navigationID);
+}
+
+void WebNavigationState::didReleaseNavigation(WebCore::NavigationIdentifier navigationID)
+{
+#if ENABLE(WEBDRIVER_BIDI)
+    // No further report for this navigation can reach the UI process from the process that owned it.
+    if (RefPtr automationSession = protect(m_page.get())->activeAutomationSession())
+        automationSession->navigationReleased(navigationID);
+#else
+    UNUSED_PARAM(navigationID);
+#endif
 }
 
 void WebNavigationState::ref() const
