@@ -53,7 +53,7 @@ from webkitcorepy.filtered_call import filtered_call
 from webkitcorepy.partial_proxy import PartialProxy
 from webkitcorepy.config import Config
 
-version = Version(1, 0, 8)
+version = Version(1, 0, 9)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 

@@ -27,7 +27,7 @@ import subprocess
 import sys
 import time
 import threading
-from typing import Any
+from typing import Any, Callable, Sequence
 
 from webkitcorepy import Timeout
 
@@ -53,6 +53,50 @@ def run(*popenargs: Any, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
             kwargs['stdout'] = subprocess.PIPE
             kwargs['stderr'] = subprocess.PIPE
         return subprocess.run(*popenargs, timeout=timeout, **kwargs)
+
+
+def wait_until_exit(process: subprocess.Popen[Any], timeout: float | None = None) -> tuple[int, Any, Any]:
+    """Returns (returncode, stdout, stderr), killing the process if it overruns its timeout.
+
+    Unlike Timeout, this does not rely on SIGALRM, so it is safe to call off the main thread."""
+    try:
+        stdout, stderr = process.communicate(timeout=timeout)
+    except TimeoutExpired:
+        process.kill()
+        stdout, stderr = process.communicate()
+    return process.returncode, stdout, stderr
+
+
+def run_all(
+    commands: Sequence[Sequence[str]], timeout: float | None = None,
+    popen: Callable[..., subprocess.Popen[Any]] | None = None, **kwargs: Any,
+) -> list[tuple[int, Any, Any]]:
+    """Starts every command before waiting on any, returning each one's (returncode, stdout, stderr).
+
+    Each process is drained by its own thread, since one with a full stdout pipe blocks until something reads it."""
+    popen = popen or subprocess.Popen
+    processes: list[subprocess.Popen[Any]] = []
+    results: dict[int, tuple[int, Any, Any]] = {}
+
+    try:
+        for command in commands:
+            processes.append(popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs))
+    except BaseException:
+        for process in processes:
+            process.kill()
+            process.communicate()
+        raise
+
+    def drain(index: int, process: subprocess.Popen[Any]) -> None:
+        results[index] = wait_until_exit(process, timeout=timeout)
+
+    threads = [Thread(target=drain, args=(index, process), name='run-all-{}'.format(index))
+               for index, process in enumerate(processes)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    return [results[index] for index in range(len(processes))]
 
 
 class Thread(threading.Thread):
