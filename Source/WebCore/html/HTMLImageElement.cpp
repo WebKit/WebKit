@@ -450,6 +450,10 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
     case AttributeNames::altAttr:
         if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer()))
             renderImage->updateAltText();
+        if (isInSelectOrDataListSubtree()) {
+            if (RefPtr parent = parentElement())
+                parent->notifyDescendantsChanged();
+        }
         break;
     case AttributeNames::srcAttr:
     case AttributeNames::srcsetAttr:
