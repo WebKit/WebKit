@@ -89,7 +89,8 @@ def convert_trie_to_flat_paths(trie, prefix=None):
     result = {}
     for name, value in trie.items():
         path = prefix + "/" + name if prefix else name
-        if isinstance(value, dict) and "results" not in value:
+        # A test's results always hold a plain value; a directory holds only other nodes.
+        if isinstance(value, dict) and all(isinstance(child, dict) for child in value.values()):
             result.update(convert_trie_to_flat_paths(value, path))
         else:
             result[path] = value
