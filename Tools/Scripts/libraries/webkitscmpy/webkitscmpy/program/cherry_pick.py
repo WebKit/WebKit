@@ -20,8 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import sys
+from typing import Any, TYPE_CHECKING
 
 from .branch import Branch
 from .command import Command
@@ -30,13 +33,17 @@ from webkitbugspy import Tracker, radar
 from webkitcorepy import arguments, run
 from webkitscmpy import local
 
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+
 
 class CherryPick(Command):
     name = 'cherry-pick'
     help = 'Cherry-pick a commit with an annotated commit message'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         Branch.parser(parser, loggers=loggers)
         parser.add_argument(
             'argument', nargs=1,
@@ -51,7 +58,7 @@ class CherryPick(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -82,6 +89,7 @@ class CherryPick(Command):
                         issue = candidate
                         break
 
+        assert commit.hash is not None
         if str(commit) == commit.hash[:commit.HASH_LABEL_SIZE]:
             cherry_pick_string = str(commit)
         else:
@@ -91,11 +99,13 @@ class CherryPick(Command):
         env['GIT_WEBKIT_CHERRY_PICKED'] = cherry_pick_string
         env['COMMIT_MESSAGE_BUG'] = issue.link if issue else ''
 
-        cls.write_branch_variables(
-            repository, repository.branch,
-            cherry_pick=cherry_pick_string,
-            bug=[issue.link] if issue else [],
-        )
+        branch = repository.branch
+        if branch:
+            cls.write_branch_variables(
+                repository, branch,
+                cherry_pick=cherry_pick_string,
+                bug=[issue.link] if issue else [],
+            )
 
         return run(
             [repository.executable(), 'cherry-pick', '-e', commit.hash],

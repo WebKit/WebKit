@@ -20,11 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import collections
 import getpass
 import os
 import re
 import sys
+from typing import Any, TYPE_CHECKING
 
 from .command import Command
 from .install_hooks import InstallHooks
@@ -32,13 +35,19 @@ from .track import Track
 from webkitcorepy import arguments, run, string_utils, Terminal
 from webkitscmpy import log, local
 
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy import Commit
+    from webkitscmpy.scm_base import ScmBase
+
 
 class Publish(Command):
     name = 'publish'
     help = "Push a specific branch or tag and all its history to a specified remote."
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'arguments', nargs='+',
             type=str, default=None,
@@ -58,7 +67,7 @@ class Publish(Command):
         )
 
     @classmethod
-    def branches_on(cls, repository, ref, exclude):
+    def branches_on(cls, repository: local.Git, ref: str, exclude: list[str]) -> dict[str | None, set[str]]:
         output = run(
             [repository.executable(), 'branch', '-a', '--format', '%(refname)', '--merged', ref],
             cwd=repository.root_path,
@@ -68,7 +77,7 @@ class Publish(Command):
         if output.returncode:
             sys.stderr.write(output.stderr)
             return {}
-        result = collections.defaultdict(set)
+        result: collections.defaultdict[str | None, set[str]] = collections.defaultdict(set)
         for line in output.stdout.splitlines():
             _, typ, name = line.split('/', 2)
             if typ == 'remotes':
@@ -81,7 +90,7 @@ class Publish(Command):
         return result
 
     @classmethod
-    def tags_on(cls, repository, ref, exclude):
+    def tags_on(cls, repository: local.Git, ref: str, exclude: list[str]) -> list[str]:
         result = run(
             [repository.executable(), 'tag', '--merged', ref],
             cwd=repository.root_path,
@@ -94,9 +103,10 @@ class Publish(Command):
         return []
 
     @classmethod
-    def parental_intersection(cls, repository, commit):
+    def parental_intersection(cls, repository: local.Git, commit: Commit) -> Commit | None:
         if commit.branch == repository.default_branch:
             return None
+        assert commit.identifier is not None
         if commit.identifier <= 1:
             return None
         try:
@@ -105,24 +115,31 @@ class Publish(Command):
             return None
         if parent_branch == commit.branch:
             return None
+        assert parent_branch is not None and commit.hash is not None
         remote = repository.remote_for(parent_branch)
         intersection = repository.merge_base(commit.hash, 'refs/remotes/{}/{}'.format(remote, parent_branch))
+        assert intersection is not None
         if intersection.hash == commit.hash:
             return None
         return intersection
 
     @classmethod
-    def _add_branch_ref_to(cls, mapping, repository, branch, commit):
+    def _add_branch_ref_to(cls, mapping: dict[str, Commit], repository: local.Git, branch: str, commit: Commit) -> None:
         if branch not in mapping:
             mapping[branch] = commit
-        elif mapping[branch].hash != commit.hash and repository.merge_base(
-                mapping[branch].hash, commit.hash,
+        elif mapping[branch].hash != commit.hash:
+            existing_hash = mapping[branch].hash
+            assert existing_hash is not None and commit.hash is not None  # Git.commit() always finds a hash
+            merge_base = repository.merge_base(
+                existing_hash, commit.hash,
                 include_log=False, include_identifier=False
-        ).hash == mapping[branch].hash:
-            mapping[branch] = commit
+            )
+            assert merge_base is not None
+            if merge_base.hash == existing_hash:
+                mapping[branch] = commit
 
     @classmethod
-    def main(cls, args, repository, hooks=None, **kwargs):
+    def main(cls, args: Namespace, repository: ScmBase | None, hooks: str | None = None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -135,9 +152,9 @@ class Publish(Command):
             return 1
         args.exclude.append(repository.default_branch)
 
-        commits = set()
-        branches_to_publish = {}
-        tags_to_publish = set()
+        commits: set[Commit] = set()
+        branches_to_publish: dict[str, Commit] = {}
+        tags_to_publish: set[str] = set()
         for ref in args.arguments:
             try:
                 if ref.startswith(tuple(args.exclude)):
@@ -177,7 +194,7 @@ class Publish(Command):
 
         if not args.remote:
             for commit in commits:
-                prevailing_remote = None
+                prevailing_remote: str | None = None
                 remotes_for = repository.branches_for(hash=commit.hash, remote=None).keys()
                 for candidate in repository.source_remotes():
                     if candidate in remotes_for:
@@ -198,14 +215,17 @@ class Publish(Command):
         existing_tags = set(repository.tags(remote=args.remote))
         tags_to_publish = tags_to_publish - existing_tags
         for commit in commits:
+            assert commit.hash is not None  # Git.commit() always finds a hash
             tags_to_publish |= set(cls.tags_on(repository, commit.hash, exclude=args.exclude)) - existing_tags
             intersection = cls.parental_intersection(repository, commit)
-            if intersection and not any([intersection.branch.startswith(e) for e in args.exclude]):
-                cls._add_branch_ref_to(
-                    mapping=branches_to_publish,
-                    repository=repository,
-                    branch=intersection.branch, commit=intersection,
-                )
+            if intersection:
+                assert intersection.branch is not None
+                if not any([intersection.branch.startswith(e) for e in args.exclude]):
+                    cls._add_branch_ref_to(
+                        mapping=branches_to_publish,
+                        repository=repository,
+                        branch=intersection.branch, commit=intersection,
+                    )
             for remote, branches in cls.branches_on(repository, commit.hash, exclude=args.exclude).items():
                 if remote is not None and remote not in repository.source_remotes():
                     continue
@@ -257,23 +277,25 @@ class Publish(Command):
         remote_arg = args.remote
 
         if args.user:
-            remote = repository.remote(remote_arg)
-            if not remote or not getattr(remote, 'domain', None):
+            rmt = repository.remote(remote_arg)
+            domain = getattr(rmt, 'domain', None)
+            if not rmt or not domain:
                 sys.stderr.write("Cannot convert '{}' to an ephemeral HTTP url\n".format(remote_arg))
                 return 1
-            remote_arg = remote.checkout_url(http=True)
+            remote_arg = rmt.checkout_url(http=True)
 
             credentials = (args.user, getpass.getpass('API token for {}: '.format(args.user)).strip())
-            tokenized_domain = remote.domain.replace('.', '_').upper()
+            tokenized_domain = domain.replace('.', '_').upper()
             push_env['{}_USERNAME'.format(tokenized_domain)] = credentials[0]
             push_env['{}_TOKEN'.format(tokenized_domain)] = credentials[1]
 
         return_code = 0
         if branches_to_publish:
             print('Pushing branches to {}...'.format(args.remote))
-            command = [repository.executable(), 'push', '--atomic', remote_arg] + [
-                '{}:refs/heads/{}'.format(commit.hash[:commit.HASH_LABEL_SIZE], branch) for branch, commit in branches_to_publish.items()
-            ]
+            command = [repository.executable(), 'push', '--atomic', remote_arg]
+            for branch, commit in branches_to_publish.items():
+                assert commit.hash is not None  # Git.commit() always finds a hash
+                command.append('{}:refs/heads/{}'.format(commit.hash[:commit.HASH_LABEL_SIZE], branch))
             log.info("Invoking '{}'".format(' '.join(command)))
             if run(
                 command,

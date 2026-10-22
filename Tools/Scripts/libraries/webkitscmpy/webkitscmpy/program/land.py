@@ -20,11 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import re
 import subprocess
 import sys
 import time
+from typing import Any, TYPE_CHECKING
 
 from .canonicalize import Canonicalize
 from .command import Command
@@ -36,6 +39,12 @@ from argparse import Namespace
 from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, string_utils, Terminal
 from webkitscmpy import Commit, local, log, remote
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser
+    from logging import Logger, RootLogger
+    from webkitscmpy.program.canonicalize import IdentifierTrailer
+    from webkitscmpy.pull_request import PullRequest as PullRequestType
 
 
 class Land(Command):
@@ -50,7 +59,7 @@ class Land(Command):
     MIRROR_TIMEOUT = 60
 
     @classmethod
-    def revert_branch(cls, repository, remote, branch):
+    def revert_branch(cls, repository: local.Git, remote: str, branch: str) -> bool:
         if run(
             [repository.executable(), 'branch', '-f', branch, 'remotes/{}/{}'.format(remote, branch)],
             cwd=repository.root_path,
@@ -59,7 +68,7 @@ class Land(Command):
         return True
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         PullRequest.parser(parser, loggers=loggers)
         parser.add_argument(
             '--no-force-review', '--force-review', '--no-review',
@@ -81,8 +90,9 @@ class Land(Command):
         )
 
     @classmethod
-    def merge_queue(cls, args, repository, branch_point, merge_labels=None):
+    def merge_queue(cls, args: Namespace, repository: local.Git, branch_point: Commit, merge_labels: dict[str, str] | None = None) -> int:
         log.info('Detected merging automation, using that instead of local git tooling')
+        assert merge_labels is not None
         merge_type = {
             True: 'safe',
             False: 'unsafe',
@@ -92,7 +102,8 @@ class Land(Command):
             sys.stderr.write("No {} merge-queue available for this repository\n".format(merge_type))
             return 1
 
-        def callback(pr):
+        def callback(pr: PullRequestType) -> int:
+            assert pr._metadata is not None
             pr_issue = pr._metadata.get('issue')
             if not pr_issue:
                 sys.stderr.write("Cannot set any labels on '{}' because the service doesn't support labels\n".format(pr))
@@ -120,7 +131,7 @@ class Land(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, identifier_template=None, canonical_svn=False, hooks=None, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | None, identifier_template: IdentifierTrailer | None = None, canonical_svn: bool | None = False, hooks: str | None = None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -148,7 +159,9 @@ class Land(Command):
         modified_files = [] if args.will_add is False else repository.modified()
         if args.will_add:
             modified_files = list(set(modified_files).union(set(repository.modified(staged=False))))
-        if not Branch.editable(repository.branch, repository=repository) and not modified_files:
+        current_branch = repository.branch
+        assert current_branch is not None
+        if not Branch.editable(current_branch, repository=repository) and not modified_files:
             sys.stderr.write("Can only 'land' editable branches\n")
             return 1
 
@@ -156,6 +169,7 @@ class Land(Command):
         if not branch_point:
             return 1
         source_branch = repository.branch
+        assert source_branch is not None
         if not Branch.editable(source_branch, repository=repository):
             sys.stderr.write("Can only 'land' editable branches\n")
             return 1
@@ -177,7 +191,7 @@ class Land(Command):
 
         rmt = repository.remote()
         if rmt and isinstance(rmt, remote.GitHub):
-            merge_labels = dict()
+            merge_labels: dict[str, str] = dict()
             for name in rmt.tracker.labels.keys():
                 if name in PullRequest.MERGE_LABELS:
                     merge_labels['safe'] = name
@@ -207,22 +221,23 @@ class Land(Command):
                 ))
                 return 1
             need_review = False
-            if pull_request.approvers:
-                review_lines = [cls.REVIEWED_BY_RE.search(commit.message) for commit in commits]
+            approvers = pull_request.approvers or []
+            if approvers:
+                review_lines = [cls.REVIEWED_BY_RE.search(commit.message) for commit in commits if commit.message]
                 need_review = any([cls.OOPS_RE.search(match.group('approver')) for match in review_lines if match])
             if need_review and (args.defaults or Terminal.choose("Set '{}' as your reviewer{}?".format(
-                string_utils.join([p.name for p in pull_request.approvers]),
-                's' if len(pull_request.approvers) > 1 else '',
+                string_utils.join([p.name for p in approvers]),
+                's' if len(approvers) > 1 else '',
             ), default='Yes') == 'Yes'):
                 log.info("Setting {} as reviewer{}".format(
-                    string_utils.join([p.name for p in pull_request.approvers]),
-                    's' if len(pull_request.approvers) > 1 else '',
+                    string_utils.join([p.name for p in approvers]),
+                    's' if len(approvers) > 1 else '',
                 ))
                 command = [
                     repository.executable(), 'filter-branch', '-f',
                     '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(
                         date='{} -{}'.format(int(time.time()), repository.gmtoffset())
-                    ), '--msg-filter', 'sed "s/NOBODY (OO*PP*S!*)/{}/g"'.format(string_utils.join([p.name for p in pull_request.approvers])),
+                    ), '--msg-filter', 'sed "s/NOBODY (OO*PP*S!*)/{}/g"'.format(string_utils.join([p.name for p in approvers])),
                 ]
                 if repository.commit_signing_enabled():
                     command += ['--commit-filter', 'git commit-tree -S "$@"']
@@ -260,7 +275,7 @@ class Land(Command):
 
         target = pull_request.base if pull_request else branch_point.branch
         log.info("Rebasing '{}' from '{}' to '{}'...".format(source_branch, branch_point.branch, target))
-        if repository.fetch(branch=target, remote=cls.REMOTE):
+        if not target or repository.fetch(branch=target, remote=cls.REMOTE):
             sys.stderr.write("Failed to fetch '{}' from '{}'\n".format(target, cls.REMOTE))
             return 1
         if repository.rebase(target=target, base=branch_point.branch, head=source_branch):
@@ -280,7 +295,7 @@ class Land(Command):
                 sys.stderr.write("Failed to embed identifiers to '{}'\n".format(target))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
             if run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path).returncode:
-                sys.stderr.write("Failed to move '{}' ref to the canonicalized head of '{}'\n".format(source, target))
+                sys.stderr.write("Failed to move '{}' ref to the canonicalized head of '{}'\n".format(source_branch, target))
                 cls.revert_branch(repository, cls.REMOTE, target)
                 return -1
 
@@ -292,7 +307,7 @@ class Land(Command):
 
         if canonical_svn:
             if run([repository.executable(), 'svn', 'fetch'], cwd=repository.root_path).returncode:
-                sys.stderr.write("Failed to update subversion refs\n".format(target))
+                sys.stderr.write("Failed to update subversion refs\n")
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
 
             dcommit = run(
@@ -306,7 +321,7 @@ class Land(Command):
                 sys.stderr.write(dcommit.stderr)
                 sys.stderr.write("Failed to commit '{}' to Subversion remote\n".format(target))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
-            revisions = []
+            revisions: list[int] = []
             for line in dcommit.stdout.splitlines():
                 match = cls.GIT_SVN_COMMITTED_RE.match(line)
                 if not match:
@@ -323,6 +338,7 @@ class Land(Command):
             # Verify the mirror processed our change
             started = time.time()
             latest = repository.find('HEAD', include_log=True, include_identifier=False)
+            assert latest.revision is not None
             while latest.revision < revisions[-1]:
                 if time.time() - started > cls.MIRROR_TIMEOUT:
                     sys.stderr.write("Timed out waiting for the git-svn mirror, '{}' landed but not closed\n".format(pull_request or source_branch))
@@ -331,6 +347,7 @@ class Land(Command):
                 time.sleep(5)
                 run([repository.executable(), 'pull'], cwd=repository.root_path)
                 latest = repository.find('HEAD', include_log=True, include_identifier=False)
+                assert latest.revision is not None
             if repository.cache and target in repository.cache._last_populated:
                 del repository.cache._last_populated[target]
 
@@ -342,6 +359,7 @@ class Land(Command):
             if pull_request:
                 run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path)
                 run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
+                assert rmt is not None and rmt.pull_requests is not None
                 rmt.pull_requests.update(
                     pull_request=pull_request,
                     title=PullRequest.title_for(commits),
@@ -355,6 +373,7 @@ class Land(Command):
                 log.info("Updating '{}' to match landing commits...".format(pull_request))
                 commits = list(repository.commits(begin=dict(argument='{}~{}'.format(source_branch, len(commits))), end=dict(branch=source_branch)))
                 run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
+                assert rmt is not None and rmt.pull_requests is not None
                 rmt.pull_requests.update(
                     pull_request=pull_request,
                     title=PullRequest.title_for(commits),
@@ -369,6 +388,7 @@ class Land(Command):
             repository.checkout(target)
             commit = repository.commit(branch=target, include_log=False)
 
+        assert commit.hash is not None
         if identifier_template and commit.identifier:
             land_message = 'Landed {} ({})!'.format(identifier_template.value_template.format(commit), commit.hash[:Commit.HASH_LABEL_SIZE])
         else:

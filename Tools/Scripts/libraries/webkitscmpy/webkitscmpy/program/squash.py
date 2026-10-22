@@ -20,12 +20,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import logging
 import re
 import sys
 import os
 import re
 from unittest import result
+from typing import TYPE_CHECKING, Any
 
 from .command import Command
 from .branch import Branch
@@ -34,13 +37,18 @@ from webkitcorepy import arguments, run, Terminal
 from webkitscmpy import local, log, remote
 from ..commit import Commit
 
+if TYPE_CHECKING:
+    import subprocess
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+
 
 class Squash(Command):
     name = 'squash'
     help = 'Combine all commits on the current development branch into a single commit'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         group = parser.add_mutually_exclusive_group(required=False)
         group.add_argument(
             '--interactive',
@@ -66,20 +74,21 @@ class Squash(Command):
         )
 
     @classmethod
-    def get_commits_hashes(cls, repository, base_commit):
+    def get_commits_hashes(cls, repository: local.Git, base_commit: Commit) -> list[str] | None:
         result = run([repository.executable(), 'rev-list', 'HEAD...{}'.format(base_commit.hash)], capture_output=True, cwd=repository.root_path)
         if result.returncode:
             sys.stderr.write(result.stderr)
             sys.stderr.write('Failed to get all commits from HEAD to {}'.format(base_commit.hash))
             return None
-        return result.stdout.decode('utf-8').strip().splitlines()
+        hashes: list[str] = result.stdout.decode('utf-8').strip().splitlines()
+        return hashes
 
     @classmethod
-    def undo_reset(cls, repository):
+    def undo_reset(cls, repository: local.Git) -> subprocess.CompletedProcess[Any]:
         return run([repository.executable(), 'reset', "'HEAD@{1}'"], cwd=repository.root_path)
 
     @classmethod
-    def squash_commit(cls, args, repository, branch_point, **kwargs):
+    def squash_commit(cls, args: Namespace, repository: local.Git, branch_point: Commit, **kwargs: Any) -> int:
         # Make sure we have the commit that user want to revert
         try:
             if args.base_commit:
@@ -108,11 +117,11 @@ class Squash(Command):
                 return 1
             if not args.no_sub_commit_message:
                 commits = map(lambda hash: repository.find(hash, include_log=True), commit_hash_list)
-                previous_history += '\n\n'.join(map(lambda commit: commit.message, commits))
+                previous_history += '\n\n'.join(map(lambda commit: commit.message or '', commits))
             result = run([repository.executable(), 'reset'] + [base_commit.hash], cwd=repository.root_path)
             if result.returncode:
                 sys.stderr.write('Failed to merge the diff.')
-                cls.undo_reset()
+                cls.undo_reset(repository)
             modified_files = repository.modified()
             if not modified_files:
                 sys.stderr.write('Failed to detect any diff to merge.')
@@ -133,7 +142,7 @@ class Squash(Command):
         return 0
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: local.Svn | local.Git | None, **kwargs: Any) -> int:
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
             return 1
