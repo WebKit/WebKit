@@ -3081,7 +3081,7 @@ static bool paintTextAreaOrTextField(const RenderElement& box, const PaintInfo& 
 #endif
 
     const auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
-    auto backgroundColor = style->visitedDependentUsedBackgroundColor();
+    auto backgroundColor = style->visitedDependentUsedBackgroundColorApplyingColorFilter();
 #if PLATFORM(MAC)
     const auto prefersContrast = Theme::singleton().userPreferredContrast() == InterfaceContrastPreference::MoreContrast;
     auto borderColor = prefersContrast ? highContrastOutlineColor(styleColorOptions) : RenderTheme::singleton().systemColor(CSSValueID::AppleSystemContainerBorder, styleColorOptions);
