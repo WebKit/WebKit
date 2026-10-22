@@ -44,9 +44,11 @@ struct WebCodecsVideoDecoderConfig {
     std::optional<VideoColorSpaceInit> colorSpace;
     HardwareAcceleration hardwareAcceleration { HardwareAcceleration::NoPreference };
     std::optional<bool> optimizeForLatency;
+    double rotation { 0 };
+    bool flip { false };
 
-    WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() && { return { WTF::move(codec).isolatedCopy(), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency }; }
-    WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() const & { return { codec.isolatedCopy(), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency }; }
+    WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() && { return { WTF::move(codec).isolatedCopy(), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency, rotation, flip }; }
+    WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() const & { return { codec.isolatedCopy(), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency, rotation, flip }; }
 };
 
 }

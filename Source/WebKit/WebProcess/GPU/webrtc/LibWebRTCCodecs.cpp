@@ -210,7 +210,7 @@ static inline VideoFrame::Rotation LEGACY_NODELETE toVideoRotation(webrtc::Video
 
 static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connection& connection, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace> colorSpaceOverride, Function<void(bool)>&& callback)
 {
-    connection.sendWithAsyncReplyOnDispatcher(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, decoder.codec, useRemoteFrames, enableAdditionalLogging, WTF::move(colorSpaceOverride) }, protect(WebProcess::singleton().libWebRTCCodecs().workQueue()), WTF::move(callback), 0);
+    connection.sendWithAsyncReplyOnDispatcher(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, decoder.codec, useRemoteFrames, enableAdditionalLogging, WTF::move(colorSpaceOverride), decoder.rotation, decoder.isMirrored }, protect(WebProcess::singleton().libWebRTCCodecs().workQueue()), WTF::move(callback), 0);
 }
 
 static int32_t encodeVideoFrame(webrtc::WebKitVideoEncoder encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
@@ -340,17 +340,17 @@ void LibWebRTCCodecs::setWebRTCMediaPipelineAdditionalLoggingEnabled(bool enable
 // May be called on any thread.
 LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(WebCore::VideoCodecType type, bool isAnnexB)
 {
-    return createDecoderInternal(type, { }, isAnnexB, std::nullopt, [](auto*) { });
+    return createDecoderInternal(type, { }, isAnnexB, std::nullopt, WebCore::VideoFrameRotation::None, false, [](auto*) { });
 }
 
-void LibWebRTCCodecs::createDecoderAndWaitUntilReady(WebCore::VideoCodecType type, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, Function<void(Decoder*)>&& callback)
+void LibWebRTCCodecs::createDecoderAndWaitUntilReady(WebCore::VideoCodecType type, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation rotation, bool isMirrored, Function<void(Decoder*)>&& callback)
 {
-    createDecoderInternal(type, codec, isAnnexB, WTF::move(colorSpaceOverride), WTF::move(callback));
+    createDecoderInternal(type, codec, isAnnexB, WTF::move(colorSpaceOverride), rotation, isMirrored, WTF::move(callback));
 }
 
-LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoderInternal(WebCore::VideoCodecType type, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, Function<void(Decoder*)>&& callback)
+LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoderInternal(WebCore::VideoCodecType type, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation rotation, bool isMirrored, Function<void(Decoder*)>&& callback)
 {
-    auto decoder = makeUnique<Decoder>(VideoDecoderIdentifier::generate(), type, codec, isAnnexB, WTF::move(colorSpaceOverride));
+    auto decoder = makeUnique<Decoder>(VideoDecoderIdentifier::generate(), type, codec, isAnnexB, WTF::move(colorSpaceOverride), rotation, isMirrored);
     auto* result = decoder.get();
 
     ensureGPUProcessConnectionAndDispatchToThread([this, protectedThis = Ref { *this }, decoder = WTF::move(decoder), callback = WTF::move(callback)]() mutable {
@@ -655,7 +655,7 @@ void LibWebRTCCodecs::completedDecodingCV(VideoDecoderIdentifier decoderIdentifi
     }
 
     if (decoder->decoderCallback) {
-        decoder->decoderCallback(VideoFrameCV::create(MediaTime { timeStampNs, 1000000000 }, false, VideoFrame::Rotation::None, WTF::move(pixelBuffer)), timeStamp);
+        decoder->decoderCallback(VideoFrameCV::create(MediaTime { timeStampNs, 1000000000 }, decoder->isMirrored, decoder->rotation, WTF::move(pixelBuffer)), timeStamp);
         return;
     }
 
