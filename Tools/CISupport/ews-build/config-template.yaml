@@ -682,7 +682,7 @@ builders:
     factory: APITestsFactory
     platform: '*'
     triggered_by: [ios-26-sim-build-ews]
-    additionalArguments: [--child-processes=3]
+    additionalArguments: [--child-processes=5]
     workernames:
       $flatten:
         - {$map: {$eval: "range(0, 9)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
