@@ -33,6 +33,7 @@
 #include "HTMLDocumentParser.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "Page.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -181,6 +182,24 @@ void HTMLParserScheduler::scheduleForResume()
 {
     ASSERT(!m_suspended);
     m_continueNextChunkTimer.startOneShot(0_s);
+}
+
+void HTMLParserScheduler::scheduleForResumeAfterRenderingUpdate()
+{
+    ASSERT(!m_suspended);
+    ASSERT(m_parser);
+
+    static constexpr auto maximumDelayForRenderingUpdate = 100_ms;
+    m_continueNextChunkTimer.startOneShot(maximumDelayForRenderingUpdate);
+
+    RefPtr document = m_parser->document();
+    document->scheduleRenderingUpdate({ });
+    if (RefPtr page = document->page()) {
+        page->callAfterNextRenderingUpdate([weakThis = WeakPtr { *this }] {
+            if (RefPtr scheduler = weakThis.get(); scheduler && scheduler->m_continueNextChunkTimer.isActive())
+                scheduler->m_continueNextChunkTimer.startOneShotBeforeDueTimers();
+        });
+    }
 }
 
 void HTMLParserScheduler::suspend()

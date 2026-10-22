@@ -136,6 +136,7 @@
 #include "HTMLConstructionSite.h"
 #include "HTMLDialogElement.h"
 #include "HTMLDocument.h"
+#include "HTMLDocumentParser.h"
 #include "HTMLDocumentParserFastPath.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormControlElement.h"
@@ -8227,7 +8228,14 @@ bool Document::shouldDeferAsynchronousScriptsUntilParsingFinishes() const
     if (quirks().shouldBypassAsyncScriptDeferring())
         return false;
 
-    return parsing() && !(view() && view()->hasEverPainted());
+    if (!parsing())
+        return false;
+
+    if (!(view() && view()->hasEverPainted()))
+        return true;
+
+    RefPtr parser = htmlDocumentParser();
+    return parser && parser->isYieldingForFirstPaintBeforeDeferredScripts();
 }
 
 #if ENABLE(XSLT)

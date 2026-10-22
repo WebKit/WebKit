@@ -209,6 +209,11 @@ bool HTMLScriptRunner::executeScriptsWaitingForParsing()
     return true;
 }
 
+bool HTMLScriptRunner::isFirstScriptWaitingForParsingLoaded() const
+{
+    return !m_scriptsToExecuteAfterParsing.isEmpty() && protect(m_scriptsToExecuteAfterParsing.first())->isLoaded();
+}
+
 static Ref<PendingScript> requestPendingScript(ScriptElement& scriptElement)
 {
     ASSERT(scriptElement.willBeParserExecuted());
