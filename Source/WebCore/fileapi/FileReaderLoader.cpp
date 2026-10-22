@@ -167,8 +167,7 @@ bool FileReaderLoader::processResponse(const ResourceResponse& response)
 
     // https://encoding.spec.whatwg.org/#utf-8-decode
     if (m_readType == ReadType::ReadAsUTF8Text) {
-        lazyInitialize(m_decoder, TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding()));
-        m_decoder->setAlwaysUseUTF8();
+        lazyInitialize(m_decoder, TextResourceDecoder::createUTF8());
         return true;
     }
 

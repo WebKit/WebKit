@@ -98,9 +98,7 @@ std::expected<String, CachedCSSStyleSheet::Error> CachedCSSStyleSheet::sheetText
         return protect(m_decoder)->decodeAndFlush(data->makeContiguous()->span());
 
     case ForceUTF8Encoding::Yes:
-        auto utf8Decoder = TextResourceDecoder::create(cssContentTypeAtom(), PAL::UTF8Encoding());
-        utf8Decoder->setAlwaysUseUTF8();
-        return utf8Decoder->decodeAndFlush(data->makeContiguous()->span());
+        return TextResourceDecoder::textFromUTF8(data->makeContiguous()->span());
     }
 }
 

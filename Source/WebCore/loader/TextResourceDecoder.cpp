@@ -272,6 +272,13 @@ inline TextResourceDecoder::TextResourceDecoder(ContentType contentType, const P
 {
 }
 
+inline TextResourceDecoder::TextResourceDecoder()
+    : m_contentType(PlainText)
+    , m_encoding(PAL::UTF8Encoding())
+    , m_alwaysUseUTF8(true)
+{
+}
+
 Ref<TextResourceDecoder> TextResourceDecoder::create(const String& mimeType, const PAL::TextEncoding& encoding, bool usesEncodingDetector)
 {
     auto contentType = determineContentType(mimeType);
@@ -285,12 +292,15 @@ Ref<TextResourceDecoder> TextResourceDecoder::create(ContentType contentType, co
 
 TextResourceDecoder::~TextResourceDecoder() = default;
 
+Ref<TextResourceDecoder> TextResourceDecoder::createUTF8()
+{
+    return adoptRef(*new TextResourceDecoder);
+}
+
 // https://encoding.spec.whatwg.org/#utf-8-decode
 String TextResourceDecoder::textFromUTF8(std::span<const uint8_t> data)
 {
-    auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8"_s);
-    decoder->setAlwaysUseUTF8();
-    return decoder->decodeAndFlush(data);
+    return createUTF8()->decodeAndFlush(data);
 }
 
 void TextResourceDecoder::setEncoding(const PAL::TextEncoding& encoding, EncodingSource source)

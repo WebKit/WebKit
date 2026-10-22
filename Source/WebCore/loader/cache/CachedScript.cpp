@@ -95,11 +95,9 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
     if (!m_script || shouldForceRedecoding) {
         ASSERT(contiguousData->span().size() == encodedSize());
         String result;
-        if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes) {
-            Ref forceUTF8Decoder = TextResourceDecoder::create("text/javascript"_s, PAL::UTF8Encoding());
-            forceUTF8Decoder->setAlwaysUseUTF8();
-            result = forceUTF8Decoder->decodeAndFlush(contiguousData->span());
-        } else
+        if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes)
+            result = TextResourceDecoder::textFromUTF8(contiguousData->span());
+        else
             result = protect(m_decoder)->decodeAndFlush(contiguousData->span());
 
 
@@ -159,11 +157,9 @@ void CachedScript::withScriptConcurrently(ShouldDecodeAsUTF8Only shouldDecodeAsU
     }
 
     String result;
-    if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes) {
-        Ref forceUTF8Decoder = TextResourceDecoder::create("text/javascript"_s, PAL::UTF8Encoding());
-        forceUTF8Decoder->setAlwaysUseUTF8();
-        result = forceUTF8Decoder->decodeAndFlush(contiguousData->span());
-    } else {
+    if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes)
+        result = TextResourceDecoder::textFromUTF8(contiguousData->span());
+    else {
         auto decoder = TextResourceDecoder::create(m_decoder->contentType(), m_decoder->encoding(), m_decoder->usesEncodingDetector());
         result = decoder->decodeAndFlush(contiguousData->span());
     }

@@ -1,4 +1,8 @@
 
 PASS Ensure the correct JSON parser is used
 PASS Ensure UTF-16 results in an error
+PASS Ensure the response charset (windows-1252) is ignored
+PASS Ensure the overrideMimeType() charset (windows-1252) is ignored
+PASS Ensure the response charset (utf-16le) is ignored
+PASS Ensure the overrideMimeType() charset (utf-16le) is ignored
 

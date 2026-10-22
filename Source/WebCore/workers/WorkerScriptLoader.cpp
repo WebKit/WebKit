@@ -293,12 +293,9 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
     }
 #endif
 
-    if (!m_decoder) {
-        // FIXME: Share more code with CachedScript / CachedScriptSourceProvider.
-        Ref decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s);
-        decoder->setAlwaysUseUTF8();
-        lazyInitialize(m_decoder, WTF::move(decoder));
-    }
+    // FIXME: Share more code with CachedScript / CachedScriptSourceProvider.
+    if (!m_decoder)
+        lazyInitialize(m_decoder, TextResourceDecoder::createUTF8());
 
     if (buffer.isEmpty())
         return;

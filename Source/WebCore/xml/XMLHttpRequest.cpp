@@ -1039,6 +1039,9 @@ PAL::TextEncoding XMLHttpRequest::finalResponseCharset() const
 
 Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
 {
+    if (responseType() == ResponseType::Json)
+        return TextResourceDecoder::createUTF8();
+
     PAL::TextEncoding finalResponseCharset = this->finalResponseCharset();
     if (finalResponseCharset.isValid())
         return TextResourceDecoder::create("text/plain"_s, finalResponseCharset);
@@ -1053,15 +1056,10 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
         }
         [[fallthrough]];
     case ResponseType::Text:
-    case ResponseType::Json: {
-        auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8"_s);
-        if (responseType() == ResponseType::Json)
-            decoder->setAlwaysUseUTF8();
-        return decoder;
-    }
+        return TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding());
     case ResponseType::Document: {
         if (equalLettersIgnoringASCIICase(responseMIMEType(), "text/html"_s))
-            return TextResourceDecoder::create("text/html"_s, "UTF-8"_s);
+            return TextResourceDecoder::create("text/html"_s, PAL::UTF8Encoding());
         auto decoder = TextResourceDecoder::create("application/xml"_s);
         // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.
         decoder->useLenientXMLDecoding();
@@ -1069,10 +1067,11 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
     }
     case ResponseType::Arraybuffer:
     case ResponseType::Blob:
+    case ResponseType::Json:
         ASSERT_NOT_REACHED();
         break;
     }
-    return TextResourceDecoder::create("text/plain"_s, "UTF-8"_s);
+    return TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding());
 }
 
 void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)
