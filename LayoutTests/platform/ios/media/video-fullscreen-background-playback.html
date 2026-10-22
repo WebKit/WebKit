@@ -14,9 +14,8 @@
                 internals.setMockVideoPresentationModeEnabled(true);
                 run("internals.setMediaSessionRestrictions('videoaudio', 'BackgroundProcessPlaybackRestricted')");
 
-                const canPlayThrough = waitFor(video, 'canplaythrough');
+                video.addEventListener('error', () => failTest(`video error: code ${video.error?.code}, readyState ${video.readyState}, networkState ${video.networkState}`));
                 video.src = findMediaFile('video', '../../../media/content/test');
-                await canPlayThrough;
 
                 const playing = waitFor(video, 'playing');
                 runWithKeyDown("video.play()");
