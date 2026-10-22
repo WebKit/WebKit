@@ -111,6 +111,10 @@ ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray
 
         constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
         RETURN_IF_EXCEPTION(scope, exceptionResult);
+
+        if (constructor == globalObject->arrayConstructor() && globalObject->arraySpeciesWatchpointSet().state() == IsWatched)
+            return std::pair { SpeciesConstructResult::FastPath, nullptr };
+
         if (constructor.isConstructor()) {
             JSObject* constructorObject = uncheckedDowncast<JSObject>(constructor);
             bool isArrayConstructorFromAnotherRealm = globalObject != constructorObject->realm()
