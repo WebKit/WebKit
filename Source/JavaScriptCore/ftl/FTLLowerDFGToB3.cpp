@@ -15057,6 +15057,12 @@ IGNORE_CLANG_WARNINGS_END
 
                     done.link(&jit);
                 } else {
+                    if (data->isFunctionApply) {
+                        jit.setupArguments<decltype(operationThrowIfNotFunctionApplyCallee)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), calleeGPR);
+                        jit.prepareCallOperation(jit.vm());
+                        callWithExceptionCheck(reinterpret_cast<void(*)()>(operationThrowIfNotFunctionApplyCallee));
+                        argumentsLateRep.emitRestore(jit, argumentsGPR);
+                    }
                     jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR1);
                     jit.setupArguments<decltype(operationSizeFrameForVarargs)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), argumentsGPR, scratchGPR1, CCallHelpers::TrustedImm32(data->firstVarArgOffset));
                     jit.prepareCallOperation(jit.vm());
