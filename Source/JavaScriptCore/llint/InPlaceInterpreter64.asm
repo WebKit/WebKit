@@ -1,4 +1,4 @@
-# Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+# Copyright (C) 2023-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -924,18 +924,18 @@ end
 # For store ops, the data register (t3 for int, ft0 for float) is also set by the handler.
 macro loadStoreMakePointerSlow(cursor, wasmAddrReg, size, scratch, scratch2, decodeScratch1, decodeScratch2)
     # 1. Decode flags/alignment, check multi-memory bit
-    decodeLEBVarUInt(scratch, cursor, decodeScratch1, decodeScratch2)
+    decodeLEBVarUInt32(scratch, cursor, decodeScratch1, decodeScratch2)
 
     # 2. If multi-memory, decode memory index; otherwise 0
     btiz scratch, 0x40, .memoryIndex0
-    decodeLEBVarUInt(scratch, cursor, decodeScratch1, decodeScratch2)
+    decodeLEBVarUInt32(scratch, cursor, decodeScratch1, decodeScratch2)
     jmp .decodeOffset
 .memoryIndex0:
     move 0, scratch
 
 .decodeOffset:
     # 3. Decode offset
-    decodeLEBVarUInt(scratch2, cursor, decodeScratch1, decodeScratch2)
+    decodeLEBVarUInt64(scratch2, cursor, decodeScratch1, decodeScratch2)
 
     # 4. Narrow the address unless the memory being accessed is 64-bit. This has to happen before the
     # offset is added, and it consults the accessed memory rather than memory 0.
@@ -2851,87 +2851,73 @@ reservedOpcode(0xf8)
 reservedOpcode(0xf9)
 reservedOpcode(0xfa)
 
+macro dispatchPrefixedOpcode(opcodeLimit, dispatchBase)
+    biaeq t0, opcodeLimit, .nonexistent
+    leap _os_script_config_storage, t1
+    loadp dispatchBase[t1], t1
+    if ARM64 or ARM64E
+        addlshiftp t1, t0, (constexpr (WTF::fastLog2(JSC::IPInt::alignIPInt))), t0
+        jmp t0
+    elsif X86_64
+        lshiftq (constexpr (WTF::fastLog2(JSC::IPInt::alignIPInt))), t0
+        addq t1, t0
+        jmp t0
+    end
+
+.nonexistent:
+    break
+end
+
+macro dispatchGcOpcode()
+    # Security guarantee: always less than 30 (0x00 -> 0x1e)
+    dispatchPrefixedOpcode(0x1f, JSC::LLInt::OpcodeConfig::ipint_gc_dispatch_base)
+end
+
+macro dispatchConversionOpcode()
+    # Security guarantee: always less than 23 (0x00 -> 0x16)
+    dispatchPrefixedOpcode(0x17, JSC::LLInt::OpcodeConfig::ipint_conversion_dispatch_base)
+end
+
+macro dispatchSimdOpcode()
+    # Security guarantee: always less than 276 (0x00 -> 0x113, including relaxed SIMD)
+    dispatchPrefixedOpcode(0x114, JSC::LLInt::OpcodeConfig::ipint_simd_dispatch_base)
+end
+
+macro dispatchAtomicOpcode()
+    # Security guarantee: always less than 78 (0x00 -> 0x4e)
+    dispatchPrefixedOpcode(0x4f, JSC::LLInt::OpcodeConfig::ipint_atomic_dispatch_base)
+end
+
+macro decodeAndDispatchPrefixedOpcode(slowPath, dispatchOpcode)
+    loadb 1[PC], t0
+    bbaeq t0, 0x80, slowPath
+    leap 2[PC], t4
+    dispatchOpcode()
+end
+
+macro decodeAndDispatchPrefixedOpcodeSlow(dispatchOpcode)
+    leap 2[PC], t4
+    decodeMultiByteLEBVarUInt32(t0, t4, t1, t2)
+    dispatchOpcode()
+end
+
 # If the following four instructions are given more descriptive names,
 # the changes should be matched in IPINT_INSTRUCTIONS in Tools/lldb/debug_ipint.py
 
 ipintOp(_gc_prefix, macro()
-    leap 1[PC], t4
-    decodeLEBVarUInt(t0, t4, t1, t2)
-    # Security guarantee: always less than 30 (0x00 -> 0x1e)
-    biaeq t0, 0x1f, .ipint_gc_nonexistent
-    leap _os_script_config_storage, t1
-    loadp JSC::LLInt::OpcodeConfig::ipint_gc_dispatch_base[t1], t1
-    if ARM64 or ARM64E
-        addlshiftp t1, t0, (constexpr (WTF::fastLog2(JSC::IPInt::alignIPInt))), t0
-        jmp t0
-    elsif X86_64
-        lshiftq (constexpr (WTF::fastLog2(JSC::IPInt::alignIPInt))), t0
-        addq t1, t0
-        jmp t0
-    end
-
-.ipint_gc_nonexistent:
-    break
+    decodeAndDispatchPrefixedOpcode(.ipint_gc_prefix_slow_path, dispatchGcOpcode)
 end)
 
 ipintOp(_conversion_prefix, macro()
-    leap 1[PC], t4
-    decodeLEBVarUInt(t0, t4, t1, t2)
-    # Security guarantee: always less than 23 (0x00 -> 0x16)
-    biaeq t0, 0x17, .ipint_conversion_nonexistent
-    leap _os_script_config_storage, t1
-    loadp JSC::LLInt::OpcodeConfig::ipint_conversion_dispatch_base[t1], t1
-    if ARM64 or ARM64E
-        addlshiftp t1, t0, (constexpr (WTF::fastLog2(JSC::IPInt::alignIPInt))), t0
-        jmp t0
-    elsif X86_64
-        lshiftq (constexpr (WTF::fastLog2(JSC::IPInt::alignIPInt))), t0
-        addq t1, t0
-        jmp t0
-    end
-
-.ipint_conversion_nonexistent:
-    break
+    decodeAndDispatchPrefixedOpcode(.ipint_conversion_prefix_slow_path, dispatchConversionOpcode)
 end)
 
 ipintOp(_simd_prefix, macro()
-    leap 1[PC], t4
-    decodeLEBVarUInt(t0, t4, t1, t2)
-    # Security guarantee: always less than 276 (0x00 -> 0x113, including relaxed SIMD)
-    biaeq t0, 0x114, .ipint_simd_nonexistent
-    leap _os_script_config_storage, t1
-    loadp JSC::LLInt::OpcodeConfig::ipint_simd_dispatch_base[t1], t1
-    if ARM64 or ARM64E
-        addlshiftp t1, t0, (constexpr (WTF::fastLog2(JSC::IPInt::alignIPInt))), t0
-        jmp t0
-    elsif X86_64
-        lshiftq (constexpr (WTF::fastLog2(JSC::IPInt::alignIPInt))), t0
-        addq t1, t0
-        jmp t0
-    end
-
-.ipint_simd_nonexistent:
-    break
+    decodeAndDispatchPrefixedOpcode(.ipint_simd_prefix_slow_path, dispatchSimdOpcode)
 end)
 
 ipintOp(_atomic_prefix, macro()
-    leap 1[PC], t4
-    decodeLEBVarUInt(t0, t4, t1, t2)
-    # Security guarantee: always less than 78 (0x00 -> 0x4e)
-    biaeq t0, 0x4f, .ipint_atomic_nonexistent
-    leap _os_script_config_storage, t1
-    loadp JSC::LLInt::OpcodeConfig::ipint_atomic_dispatch_base[t1], t1
-    if ARM64 or ARM64E
-        addlshiftp t1, t0, (constexpr (WTF::fastLog2(JSC::IPInt::alignIPInt))), t0
-        jmp t0
-    elsif X86_64
-        lshiftq (constexpr (WTF::fastLog2(JSC::IPInt::alignIPInt))), t0
-        addq t1, t0
-        jmp t0
-    end
-
-.ipint_atomic_nonexistent:
-    break
+    decodeAndDispatchPrefixedOpcode(.ipint_atomic_prefix_slow_path, dispatchAtomicOpcode)
 end)
 
 reservedOpcode(0xff)
@@ -10733,24 +10719,24 @@ _ipint_op_memory_atomic_wait64:
 #######################################
 
 .ipint_local_get_slow_path:
-    leap 1[PC], t4
-    decodeLEBVarUInt(t0, t4, t1, t2)
+    leap 2[PC], t4
+    decodeMultiByteLEBVarUInt32(t0, t4, t1, t2)
     localGet()
     pushVec(v0)
     move t4, PC
     nextIPIntInstruction()
 
 .ipint_local_set_slow_path:
-    leap 1[PC], t4
-    decodeLEBVarUInt(t0, t4, t1, t2)
+    leap 2[PC], t4
+    decodeMultiByteLEBVarUInt32(t0, t4, t1, t2)
     popVec(v0)
     localSet()
     move t4, PC
     nextIPIntInstruction()
 
 .ipint_local_tee_slow_path:
-    leap 1[PC], t4
-    decodeLEBVarUInt(t0, t4, t1, t2)
+    leap 2[PC], t4
+    decodeMultiByteLEBVarUInt32(t0, t4, t1, t2)
     loadv [sp], v0
     localSet()
     move t4, PC
@@ -10761,18 +10747,34 @@ _ipint_op_memory_atomic_wait64:
 ##########################################
 
 .ipint_i32_const_slow_path:
-    leap 1[PC], t4
-    decodeLEBVarSInt32(t0, t4, t1, t2)
+    leap 2[PC], t4
+    decodeMultiByteLEBVarSInt32(t0, t4, t1, t2)
     pushInt32(t0)
     move t4, PC
     nextIPIntInstruction()
 
 .ipint_i64_const_slow_path:
-    leap 1[PC], t4
-    decodeLEBVarSInt64(t0, t4, t1, t2)
+    leap 2[PC], t4
+    decodeMultiByteLEBVarSInt64(t0, t4, t1, t2)
     pushInt64(t0)
     move t4, PC
     nextIPIntInstruction()
+
+################################################
+## Out-of-line prefixed sub-opcode slow paths ##
+################################################
+
+.ipint_gc_prefix_slow_path:
+    decodeAndDispatchPrefixedOpcodeSlow(dispatchGcOpcode)
+
+.ipint_conversion_prefix_slow_path:
+    decodeAndDispatchPrefixedOpcodeSlow(dispatchConversionOpcode)
+
+.ipint_simd_prefix_slow_path:
+    decodeAndDispatchPrefixedOpcodeSlow(dispatchSimdOpcode)
+
+.ipint_atomic_prefix_slow_path:
+    decodeAndDispatchPrefixedOpcodeSlow(dispatchAtomicOpcode)
 
 ##################################################
 ## Out-of-line slow paths for memory load/store ##

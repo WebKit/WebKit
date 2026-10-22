@@ -415,7 +415,7 @@ def riscLowerMalformedImmediates(list, validImmediates, validLogicalImmediates)
                 else
                     newList << node.riscLowerMalformedImmediatesRecurse(newList, validImmediates)
                 end
-            when "ori", "orh", "orp", "oris", "xori", "xorp", "andi", "andp"
+            when "ori", "orh", "orp", "orq", "oris", "xori", "xorp", "xorq", "andi", "andp", "andq"
                 newList << node.riscLowerMalformedImmediatesRecurse(newList, validLogicalImmediates)
             else
                 newList << node.riscLowerMalformedImmediatesRecurse(newList, validImmediates)

@@ -42,16 +42,46 @@ static std::string toString(const Vector<uint8_t>& vector)
     return out.str();
 }
 
+template<typename T>
+static void testLEBDecodeWithTrailingBytes(std::initializer_list<uint8_t> data, size_t startOffset, T expectedResult, size_t expectedOffset, bool (*decode)(std::span<const uint8_t>, size_t&, T&))
+{
+    for (uint8_t trailingByte : std::initializer_list<uint8_t> { 0x00, 0x7f, 0x80 }) {
+        Vector<uint8_t> vector(data);
+        for (unsigned i = 0; i < 8; ++i) {
+            vector.append(trailingByte);
+            auto string = toString(vector);
+            T result;
+            size_t offset = startOffset;
+            EXPECT_TRUE(decode(vector, offset, result)) << string;
+            EXPECT_EQ(expectedResult, result) << string;
+            EXPECT_EQ(expectedOffset, offset) << string;
+        }
+    }
+}
+
+template<typename T>
+static void testLEBDecodeFailure(std::initializer_list<uint8_t> data, size_t startOffset, size_t expectedOffset, bool (*decode)(std::span<const uint8_t>, size_t&, T&))
+{
+    Vector<uint8_t> vector(data);
+    auto string = toString(vector);
+    T result;
+    size_t offset = startOffset;
+    EXPECT_FALSE(decode(vector, offset, result)) << string;
+    EXPECT_EQ(expectedOffset, offset) << string;
+}
+
 static void testUInt32LEBDecode(std::initializer_list<uint8_t> data, size_t startOffset, bool expectedStatus, uint32_t expectedResult, size_t expectedOffset)
 {
     Vector<uint8_t> vector(data);
     auto string = toString(vector);
     uint32_t result;
-    bool status = WTF::LEBDecoder::decodeUInt32(vector, startOffset, result);
+    size_t offset = startOffset;
+    bool status = WTF::LEBDecoder::decodeUInt32(vector, offset, result);
     EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
         EXPECT_EQ(expectedResult, result) << string;
-        EXPECT_EQ(expectedOffset, startOffset) << string;
+        EXPECT_EQ(expectedOffset, offset) << string;
+        testLEBDecodeWithTrailingBytes<uint32_t>(data, startOffset, expectedResult, expectedOffset, WTF::LEBDecoder::decodeUInt32);
     }
 }
 
@@ -99,11 +129,13 @@ static void testUInt64LEBDecode(std::initializer_list<uint8_t> data, size_t star
     Vector<uint8_t> vector(data);
     auto string = toString(vector);
     uint64_t result;
-    bool status = WTF::LEBDecoder::decodeUInt64(vector, startOffset, result);
+    size_t offset = startOffset;
+    bool status = WTF::LEBDecoder::decodeUInt64(vector, offset, result);
     EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
         EXPECT_EQ(expectedResult, result) << string;
-        EXPECT_EQ(expectedOffset, startOffset) << string;
+        EXPECT_EQ(expectedOffset, offset) << string;
+        testLEBDecodeWithTrailingBytes<uint64_t>(data, startOffset, expectedResult, expectedOffset, WTF::LEBDecoder::decodeUInt64);
     }
 }
 
@@ -163,11 +195,13 @@ static void testInt32LEBDecode(std::initializer_list<uint8_t> data, size_t start
     Vector<uint8_t> vector(data);
     auto string = toString(vector);
     int32_t result;
-    bool status = WTF::LEBDecoder::decodeInt32(vector, startOffset, result);
+    size_t offset = startOffset;
+    bool status = WTF::LEBDecoder::decodeInt32(vector, offset, result);
     EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
         EXPECT_EQ(expectedResult, result) << string;
-        EXPECT_EQ(expectedOffset, startOffset) << string;
+        EXPECT_EQ(expectedOffset, offset) << string;
+        testLEBDecodeWithTrailingBytes<int32_t>(data, startOffset, expectedResult, expectedOffset, WTF::LEBDecoder::decodeInt32);
     }
 }
 
@@ -217,11 +251,13 @@ static void testInt64LEBDecode(std::initializer_list<uint8_t> data, size_t start
     Vector<uint8_t> vector(data);
     auto string = toString(vector);
     int64_t result;
-    bool status = WTF::LEBDecoder::decodeInt64(vector, startOffset, result);
+    size_t offset = startOffset;
+    bool status = WTF::LEBDecoder::decodeInt64(vector, offset, result);
     EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
         EXPECT_EQ(expectedResult, result) << string;
-        EXPECT_EQ(expectedOffset, startOffset) << string;
+        EXPECT_EQ(expectedOffset, offset) << string;
+        testLEBDecodeWithTrailingBytes<int64_t>(data, startOffset, expectedResult, expectedOffset, WTF::LEBDecoder::decodeInt64);
     }
 }
 
@@ -274,5 +310,28 @@ TEST(WTF, LEBDecoderInt64)
     testInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7e }, 0, false, 0, 0lu);
 }
 
+TEST(WTF, LEBDecoderWithAtLeastEightBytesAvailable)
+{
+    testUInt32LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0x0f, 0x00, 0x00, 0x00 }, 0, true, 0xfffffffflu, 5lu);
+    testLEBDecodeFailure<uint32_t>({ 0xff, 0xff, 0xff, 0xff, 0x10, 0x00, 0x00, 0x00 }, 0, 5lu, WTF::LEBDecoder::decodeUInt32);
+    testLEBDecodeFailure<uint32_t>({ 0x80, 0x80, 0x80, 0x80, 0x80, 0x00, 0x00, 0x00 }, 0, 5lu, WTF::LEBDecoder::decodeUInt32);
+    testLEBDecodeFailure<uint32_t>({ 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x00 }, 0, 5lu, WTF::LEBDecoder::decodeUInt32);
+    testUInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f }, 0, true, 0xfffffffffffffflu, 8lu);
+    testUInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f }, 0, true, 0x7ffffffffffffffflu, 9lu);
+    testLEBDecodeFailure<uint64_t>({ 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x00 }, 0, 10lu, WTF::LEBDecoder::decodeUInt64);
+    testLEBDecodeFailure<uint64_t>({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x02, 0x00 }, 0, 10lu, WTF::LEBDecoder::decodeUInt64);
+    testInt32LEBDecode({ 0x80, 0x80, 0x80, 0x80, 0x78, 0x00, 0x00, 0x00 }, 0, true, INT32_MIN, 5lu);
+    testInt32LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0x07, 0x00, 0x00, 0x00 }, 0, true, INT32_MAX, 5lu);
+    testLEBDecodeFailure<int32_t>({ 0xff, 0xff, 0xff, 0xff, 0x08, 0x00, 0x00, 0x00 }, 0, 5lu, WTF::LEBDecoder::decodeInt32);
+    testLEBDecodeFailure<int32_t>({ 0x80, 0x80, 0x80, 0x80, 0x70, 0x00, 0x00, 0x00 }, 0, 5lu, WTF::LEBDecoder::decodeInt32);
+    testLEBDecodeFailure<int32_t>({ 0x80, 0x80, 0x80, 0x80, 0x80, 0x00, 0x00, 0x00 }, 0, 5lu, WTF::LEBDecoder::decodeInt32);
+    testInt64LEBDecode({ 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x40 }, 0, true, -(1ll << 55), 8lu);
+    testInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x3f }, 0, true, (1ll << 55) - 1, 8lu);
+    testInt64LEBDecode({ 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x7f }, 0, true, INT64_MIN, 10lu);
+    testLEBDecodeFailure<int64_t>({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00 }, 0, 10lu, WTF::LEBDecoder::decodeInt64);
+    // Bytes after the number that look like the end of a negative number.
+    testInt32LEBDecode({ 0x80, 0x01, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40 }, 0, true, 0x80, 2lu);
+    testInt64LEBDecode({ 0xff, 0x3f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f }, 0, true, 0x1fff, 2lu);
+}
 
 } // namespace TestWebKitAPI

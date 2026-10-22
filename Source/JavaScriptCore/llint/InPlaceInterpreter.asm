@@ -1,4 +1,4 @@
-# Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+# Copyright (C) 2023-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -223,12 +223,73 @@ macro loadbAndAdvance(cursor, dst)
     end
 end
 
-macro decodeLEBVarUInt(dst, cursor, scratch1, scratch2)
-    loadbAndAdvance(cursor, dst)
-    bbb dst, 0x80, .done
+# See LEBDecoder.h for a summary of how LEBDecoding works. We should try to keep these in sync.
+# cursor has already stepped past the first byte, so the window's last byte is at 6[cursor].
+macro loadLEBWindow(cursor, window, terminators, slowPath)
+    loadp Wasm::IPIntCallee::m_bytecodeEnd[ws0], window
+    leap 6[cursor], terminators
+    bpa terminators, window, slowPath
+    loadq -1[cursor], window
+    move window, terminators
+    notq terminators
+    andq 0x8080808080808080, terminators
+    btqz terminators, slowPath
+end
+
+macro orLEBPayload(bytes, dst, scratch, index, mask)
+    urshiftq bytes, index, scratch
+    andq mask, scratch
+    orq scratch, dst
+end
+
+macro gatherLEBPayloads5(bytes, dst, scratch)
+    andq bytes, 0x7f, dst
+    orLEBPayload(bytes, dst, scratch, 1, 0x3f80)
+    orLEBPayload(bytes, dst, scratch, 2, 0x1fc000)
+    orLEBPayload(bytes, dst, scratch, 3, 0xfe00000)
+    orLEBPayload(bytes, dst, scratch, 4, 0x7f0000000)
+end
+
+macro gatherLEBPayloads8(bytes, dst, scratch)
+    gatherLEBPayloads5(bytes, dst, scratch)
+    orLEBPayload(bytes, dst, scratch, 5, 0x3f800000000)
+    orLEBPayload(bytes, dst, scratch, 6, 0x1fc0000000000)
+    orLEBPayload(bytes, dst, scratch, 7, 0xfe000000000000)
+end
+
+# Masks window to the number's bytes and fills the bits above them with its sign.
+macro takeSignedLEBWindow(dst, cursor, window, terminators)
+    move terminators, dst
+    negq dst
+    andq dst, terminators
+    tzcntq terminators, dst
+    urshiftq 3, dst
+    addp dst, cursor
+    urshiftq terminators, 1, dst
+    andq window, dst
+    negq dst
+    subq 1, terminators
+    andq terminators, window
+    orq dst, window
+end
+
+# The decodeMultiByteLEBVar macros expect dst to hold the first byte, which has bit 7 set, and cursor
+# to have stepped past it.
+macro decodeMultiByteLEBVarUInt(dst, cursor, scratch1, scratch2, gatherLEBPayloads)
+    validateOpcodeConfig(scratch2)
+if ARM64 or ARM64E
+    loadLEBWindow(cursor, scratch1, scratch2, .byteLoop)
+    tzcntq scratch2, dst
+    urshiftq 3, dst
+    addp dst, cursor
+    subq 1, scratch2
+    andq scratch2, scratch1
+    gatherLEBPayloads(scratch1, dst, scratch2)
+    jmp .done
+.byteLoop:
+end
     andq 0x7f, dst
     move 7, scratch1
-    validateOpcodeConfig(scratch2)
 .loop:
     loadbAndAdvance(cursor, scratch2)
     bbb scratch2, 0x80, .lastByte
@@ -244,12 +305,40 @@ macro decodeLEBVarUInt(dst, cursor, scratch1, scratch2)
 .done:
 end
 
-macro decodeLEBVarSInt32(dst, cursor, scratch1, scratch2)
+macro decodeMultiByteLEBVarUInt32(dst, cursor, scratch1, scratch2)
+    decodeMultiByteLEBVarUInt(dst, cursor, scratch1, scratch2, gatherLEBPayloads5)
+end
+
+macro decodeMultiByteLEBVarUInt64(dst, cursor, scratch1, scratch2)
+    decodeMultiByteLEBVarUInt(dst, cursor, scratch1, scratch2, gatherLEBPayloads8)
+end
+
+macro decodeLEBVarUInt32(dst, cursor, scratch1, scratch2)
     loadbAndAdvance(cursor, dst)
-    bbb dst, 0x80, .singleByte
+    bbb dst, 0x80, .done
+    decodeMultiByteLEBVarUInt32(dst, cursor, scratch1, scratch2)
+.done:
+end
+
+macro decodeLEBVarUInt64(dst, cursor, scratch1, scratch2)
+    loadbAndAdvance(cursor, dst)
+    bbb dst, 0x80, .done
+    decodeMultiByteLEBVarUInt64(dst, cursor, scratch1, scratch2)
+.done:
+end
+
+macro decodeMultiByteLEBVarSInt32(dst, cursor, scratch1, scratch2)
+    validateOpcodeConfig(scratch2)
+if ARM64 or ARM64E
+    loadLEBWindow(cursor, scratch1, scratch2, .byteLoop)
+    takeSignedLEBWindow(dst, cursor, scratch1, scratch2)
+    gatherLEBPayloads5(scratch1, dst, scratch2)
+    zxi2q dst, dst
+    jmp .done
+.byteLoop:
+end
     andq 0x7f, dst
     move 7, scratch1
-    validateOpcodeConfig(scratch2)
 .loop:
     loadbAndAdvance(cursor, scratch2)
     bbb scratch2, 0x80, .lastByte
@@ -274,19 +363,22 @@ macro decodeLEBVarSInt32(dst, cursor, scratch1, scratch2)
 .noSignExtend:
     lshiftq scratch1, scratch2
     ori scratch2, dst # Ensure output is always upper zero-cleared.
-    jmp .done
-.singleByte:
-    lshifti 25, dst
-    rshifti 25, dst
 .done:
 end
 
-macro decodeLEBVarSInt64(dst, cursor, scratch1, scratch2)
-    loadbAndAdvance(cursor, dst)
-    bbb dst, 0x80, .singleByte
+macro decodeMultiByteLEBVarSInt64(dst, cursor, scratch1, scratch2)
+    validateOpcodeConfig(scratch2)
+if ARM64 or ARM64E
+    loadLEBWindow(cursor, scratch1, scratch2, .byteLoop)
+    takeSignedLEBWindow(dst, cursor, scratch1, scratch2)
+    gatherLEBPayloads8(scratch1, dst, scratch2)
+    lshiftq 8, dst
+    rshiftq 8, dst
+    jmp .done
+.byteLoop:
+end
     andq 0x7f, dst
     move 7, scratch1
-    validateOpcodeConfig(scratch2)
 .loop:
     loadbAndAdvance(cursor, scratch2)
     bbb scratch2, 0x80, .lastByte
@@ -311,10 +403,6 @@ macro decodeLEBVarSInt64(dst, cursor, scratch1, scratch2)
 .noSignExtend:
     lshiftq scratch1, scratch2
     orq scratch2, dst
-    jmp .done
-.singleByte:
-    lshiftq 57, dst
-    rshiftq 57, dst
 .done:
 end
 
