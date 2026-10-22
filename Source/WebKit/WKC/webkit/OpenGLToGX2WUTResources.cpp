@@ -9,6 +9,7 @@
 #include <coreinit/cache.h>
 #include <coreinit/memdefaultheap.h>
 
+#include <algorithm>
 #include <cstring>
 #include <limits>
 #include <new>
@@ -658,30 +659,88 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
     GX2RUnlockBufferEx(source,
         static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
 
+    const bool anyEnabledLinkedAttribute = std::any_of(
+        resources.linkedAttributes.begin(), resources.linkedAttributes.end(),
+        [&](const WUTBufferResources::AttributeBinding& binding) {
+            auto attribute = resources.attributes.find(binding.attributeIndex);
+            return attribute != resources.attributes.end() && attribute->second.enabled
+                && !attribute->second.divisor;
+        });
+    if (!anyEnabledLinkedAttribute) {
+        for (uint32_t i = 0; i < draw.count; ++i)
+            indices[i] = i;
+        maximumIndex = draw.count - 1;
+    }
+
     struct StagedAttribute {
         uint8_t location { 0 };
         GX2RBuffer buffer {};
         uint32_t stride { 0 };
+        BufferName registeredName { 0 };
+    };
+    struct AttributeOverride {
+        uint8_t index { 0 };
+        bool hadOriginal { false };
+        WUTBufferResources::AttributeDescriptor original {};
     };
     std::vector<StagedAttribute> stagedAttributes;
+    std::vector<AttributeOverride> attributeOverrides;
+    BufferName nextTemporaryBufferName = std::numeric_limits<BufferName>::max();
+    auto allocateTemporaryBufferName = [&]() -> BufferName {
+        while (nextTemporaryBufferName
+            && resources.buffers.find(nextTemporaryBufferName) != resources.buffers.end())
+            --nextTemporaryBufferName;
+        if (!nextTemporaryBufferName)
+            return 0;
+        const BufferName name = nextTemporaryBufferName;
+        --nextTemporaryBufferName;
+        return name;
+    };
     auto destroyStagedAttributes = [&]() {
-        for (auto& staged : stagedAttributes)
-            GX2RDestroyBufferEx(&staged.buffer, staged.buffer.flags);
+        for (const auto& overrideState : attributeOverrides) {
+            if (overrideState.hadOriginal)
+                resources.attributes[overrideState.index] = overrideState.original;
+            else
+                resources.attributes.erase(overrideState.index);
+        }
+        if (!attributeOverrides.empty())
+            resources.fetchShaderDirty = true;
+        attributeOverrides.clear();
+
+        for (auto& staged : stagedAttributes) {
+            if (staged.registeredName) {
+                auto registered = resources.buffers.find(staged.registeredName);
+                if (registered != resources.buffers.end() && registered->second == &staged.buffer)
+                    resources.buffers.erase(registered);
+            }
+            if (staged.buffer.buffer)
+                GX2RDestroyBufferEx(&staged.buffer, staged.buffer.flags);
+        }
         stagedAttributes.clear();
     };
 
     // Validate referenced vertex ranges and stage formats for which GX2 has no
     // three-component fetch encoding. Each attribute gets a packed four-value
     // stream, so no fetch can read the absent fourth source component.
+    if (resources.linkedAttributes.size()
+        > std::numeric_limits<size_t>::max() - resources.attributes.size())
+        return false;
     try {
-        stagedAttributes.reserve(resources.attributes.size());
+        stagedAttributes.reserve(resources.attributes.size() + resources.linkedAttributes.size());
+        attributeOverrides.reserve(resources.linkedAttributes.size());
     } catch (...) {
         return false;
     }
+    auto hasLinkedInput = [&](uint8_t index) {
+        return std::any_of(resources.linkedAttributes.begin(), resources.linkedAttributes.end(),
+            [&](const WUTBufferResources::AttributeBinding& binding) {
+                return binding.attributeIndex == index;
+            });
+    };
     for (const auto& entry : resources.attributes) {
         const uint8_t location = entry.first;
         const auto& attribute = entry.second;
-        if (!attribute.enabled)
+        if (!attribute.enabled || !hasLinkedInput(location))
             continue;
         auto vertexBuffer = resources.buffers.find(attribute.buffer);
         if (!attribute.buffer || vertexBuffer == resources.buffers.end() || !vertexBuffer->second) {
@@ -803,6 +862,108 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
         }
     }
 
+    for (const auto& binding : resources.linkedAttributes) {
+        const uint8_t glIndex = binding.attributeIndex;
+        auto existing = resources.attributes.find(glIndex);
+        if (existing != resources.attributes.end() && existing->second.enabled)
+            continue;
+        if (glIndex >= resources.currentAttributeValues.size()) {
+            destroyStagedAttributes();
+            return false;
+        }
+
+        const uint64_t entryCount64 = static_cast<uint64_t>(maximumIndex) + 1;
+        constexpr uint32_t genericStride = sizeof(std::array<float, 4>);
+        if (!entryCount64 || entryCount64 > UINT32_MAX / genericStride) {
+            destroyStagedAttributes();
+            return false;
+        }
+
+        StagedAttribute staged;
+        staged.location = glIndex;
+        staged.stride = genericStride;
+        staged.buffer.flags = static_cast<GX2RResourceFlags>(
+            GX2R_RESOURCE_BIND_VERTEX_BUFFER
+            | GX2R_RESOURCE_USAGE_CPU_WRITE
+            | GX2R_RESOURCE_USAGE_GPU_READ);
+        staged.buffer.elemSize = genericStride;
+        staged.buffer.elemCount = static_cast<uint32_t>(entryCount64);
+        if (!GX2RCreateBuffer(&staged.buffer)) {
+            destroyStagedAttributes();
+            return false;
+        }
+
+        void* memory = GX2RLockBufferEx(&staged.buffer,
+            static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+        if (!memory) {
+            GX2RDestroyBufferEx(&staged.buffer, staged.buffer.flags);
+            staged.buffer = {};
+            destroyStagedAttributes();
+            return false;
+        }
+        const auto& value = resources.currentAttributeValues[glIndex];
+        auto* bytes = static_cast<uint8_t*>(memory);
+        for (uint32_t vertex = 0; vertex < staged.buffer.elemCount; ++vertex)
+            std::memcpy(bytes + static_cast<size_t>(vertex) * genericStride, value.data(), genericStride);
+        GX2RUnlockBufferEx(&staged.buffer,
+            static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+
+        try {
+            stagedAttributes.push_back(staged);
+        } catch (...) {
+            GX2RDestroyBufferEx(&staged.buffer, staged.buffer.flags);
+            destroyStagedAttributes();
+            return false;
+        }
+
+        auto& saved = stagedAttributes.back();
+        const BufferName temporaryName = allocateTemporaryBufferName();
+        if (!temporaryName) {
+            destroyStagedAttributes();
+            return false;
+        }
+        try {
+            resources.buffers.emplace(temporaryName, &saved.buffer);
+        } catch (...) {
+            destroyStagedAttributes();
+            return false;
+        }
+        saved.registeredName = temporaryName;
+
+        AttributeOverride overrideState;
+        overrideState.index = glIndex;
+        if (existing != resources.attributes.end()) {
+            overrideState.hadOriginal = true;
+            overrideState.original = existing->second;
+        }
+        try {
+            attributeOverrides.push_back(overrideState);
+        } catch (...) {
+            destroyStagedAttributes();
+            return false;
+        }
+
+        WUTBufferResources::AttributeDescriptor descriptor {};
+        descriptor.format = GX2_ATTRIB_FORMAT_FLOAT_32_32_32_32;
+        descriptor.componentMask = GX2_CHANNEL_MASK_RGBA;
+        descriptor.buffer = temporaryName;
+        descriptor.components = 4;
+        descriptor.sourceType = AttributeType::Float;
+        descriptor.normalized = false;
+        descriptor.stride = genericStride;
+        descriptor.offset = 0;
+        descriptor.divisor = 0;
+        descriptor.indexType = GX2_ATTRIB_INDEX_PER_VERTEX;
+        descriptor.enabled = true;
+        try {
+            resources.attributes[glIndex] = descriptor;
+        } catch (...) {
+            destroyStagedAttributes();
+            return false;
+        }
+        resources.fetchShaderDirty = true;
+    }
+
     GX2RBuffer stagedIndices {};
     stagedIndices.flags = static_cast<GX2RResourceFlags>(
         GX2R_RESOURCE_BIND_INDEX_BUFFER
@@ -882,13 +1043,27 @@ bool drawVertexArrayArrays(void* context, Primitive primitive, uint32_t first,
 
     const uint32_t lastVertex = first + count - 1;
     bool requiresAttributeExpansion = false;
+    bool requiresGenericAttributeStaging = false;
+    for (const auto& binding : resources.linkedAttributes) {
+        auto attribute = resources.attributes.find(binding.attributeIndex);
+        if (attribute == resources.attributes.end() || !attribute->second.enabled) {
+            requiresGenericAttributeStaging = true;
+            break;
+        }
+    }
+    auto hasLinkedInput = [&](uint8_t index) {
+        return std::any_of(resources.linkedAttributes.begin(), resources.linkedAttributes.end(),
+            [&](const WUTBufferResources::AttributeBinding& binding) {
+                return binding.attributeIndex == index;
+            });
+    };
 
     // Validate every enabled vertex/instance stream before submitting work.
     // Packed U8/I8/U16/I16/half-float vec3 attributes need a staged fourth
     // component because GX2 has no native three-lane fetch encoding for them.
     for (const auto& entry : resources.attributes) {
         const auto& attribute = entry.second;
-        if (!attribute.enabled)
+        if (!attribute.enabled || !hasLinkedInput(entry.first))
             continue;
 
         auto vertexBuffer = resources.buffers.find(attribute.buffer);
@@ -924,7 +1099,7 @@ bool drawVertexArrayArrays(void* context, Primitive primitive, uint32_t first,
                 || attribute.sourceType == AttributeType::HalfFloat);
     }
 
-    if (!requiresAttributeExpansion) {
+    if (!requiresAttributeExpansion && !requiresGenericAttributeStaging) {
         if (!prepareWUTProgramForDraw(resources))
             return false;
         GX2DrawEx(mode, count, first, instances);
