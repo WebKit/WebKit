@@ -852,6 +852,13 @@ void WebPage::getContentsAsAttributedString(CompletionHandler<void(const WebCore
     completionHandler(localFrame ? attributedString(makeRangeSelectingNodeContents(*protect(localFrame->document())), IgnoreUserSelectNone::No) : AttributedString { });
 }
 
+void WebPage::getSelectionAsAttributedStringForTesting(CompletionHandler<void(const WebCore::AttributedString&)>&& completionHandler)
+{
+    RefPtr frame = corePage()->focusController().focusedOrMainFrame();
+    auto range = frame ? frame->selection().selection().firstRange() : std::nullopt;
+    completionHandler(range ? attributedString(*range, IgnoreUserSelectNone::Yes) : AttributedString { });
+}
+
 HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> WebPage::attributedStringsForRemoteFrames(WebCore::FrameIdentifier rootFrameIdentifier, const Vector<WebCore::FrameIdentifier>& selectedSubframeIdentifiers)
 {
     if (selectedSubframeIdentifiers.isEmpty())

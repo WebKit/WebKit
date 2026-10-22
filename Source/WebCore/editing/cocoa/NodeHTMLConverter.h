@@ -41,4 +41,7 @@ WEBCORE_EXPORT bool containsRemoteFrameContentMarkers(NSAttributedString *);
 
 WEBCORE_EXPORT AttributedString attributedString(const SimpleRange&, IgnoreUserSelectNone, MarkRemoteFrameContentPositions = MarkRemoteFrameContentPositions::No);
 
+// Overrides the __NSPresentationIntentHTMLInterchange default, or stops overriding it if the value is null.
+WEBCORE_EXPORT void setPresentationIntentHTMLInterchangeEnabledForTesting(std::optional<bool>);
+
 } // namespace WebCore

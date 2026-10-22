@@ -8444,6 +8444,16 @@ void WebPageProxy::getContentsAsAttributedString(CompletionHandler<void(const We
         completionHandler(string);
     });
 }
+
+void WebPageProxy::getSelectionAsAttributedStringForTesting(CompletionHandler<void(const WebCore::AttributedString&)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler({ });
+        return;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::GetSelectionAsAttributedStringForTesting(), WTF::move(completionHandler));
+}
 #endif
 
 void WebPageProxy::getAllFrames(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&& completionHandler)

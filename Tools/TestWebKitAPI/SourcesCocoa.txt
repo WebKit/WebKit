@@ -272,6 +272,7 @@ Tests/WebKit/WKWebView/Preconnect.mm @nonARC
 Tests/WebKit/WKWebView/Preferences.mm @nonARC
 Tests/WebKit/WKWebView/PreferredAudioBufferSize.mm @nonARC
 Tests/WebKit/WKWebView/PrepareForMoveToWindow.mm @nonARC
+Tests/WebKit/WKWebView/PresentationIntents.mm @nonARC
 Tests/WebKit/WKWebView/PrivateClickMeasurement.mm @nonARC
 Tests/WebKit/WKWebView/ProcessInfo.mm @nonARC
 Tests/WebKit/WKWebView/ProcessJetsamPriority.mm @nonARC

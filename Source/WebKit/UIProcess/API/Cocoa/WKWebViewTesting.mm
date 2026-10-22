@@ -58,6 +58,7 @@
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorInternal.h"
 #import <WebCore/AXObjectTypes.h>
+#import <WebCore/AttributedString.h>
 #import <WebCore/BoxSides.h>
 #import <WebCore/Color.h>
 #import <WebCore/NowPlayingInfo.h>
@@ -878,6 +879,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 {
     _page->getRenderTreeExternalRepresentation([callback = makeBlockPtr(callback)] (const String& result) {
         callback(result.createNSString().get(), nil);
+    });
+}
+
+- (void)_getSelectionAsAttributedStringForTesting:(void (^)(NSAttributedString *))completionHandler
+{
+    _page->getSelectionAsAttributedStringForTesting([completionHandler = makeBlockPtr(completionHandler)](const WebCore::AttributedString& attributedString) {
+        completionHandler(attributedString.nsAttributedString().get());
     });
 }
 

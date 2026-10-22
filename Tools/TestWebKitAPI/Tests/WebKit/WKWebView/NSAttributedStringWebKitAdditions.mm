@@ -29,7 +29,9 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebCore/FontCocoa.h>
 #import <WebKit/NSAttributedString.h>
+#import <WebKit/PreferenceObserver.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 
 TEST(NSAttributedStringWebKitAdditions, DefaultFontSize)
 {
@@ -74,6 +76,90 @@ TEST(NSAttributedStringWebKitAdditions, BlockQuotes)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+// Like the global preference tests in PreferenceChanges.mm, this relies on global defaults reaching the
+// web content process, which is only covered on macOS. The converter itself is tested in PresentationIntents.mm.
+#if PLATFORM(MAC) && ENABLE(CFPREFS_DIRECT_MODE)
+
+static RetainPtr<NSAttributedString> attributedStringFromHTML(NSString *html)
+{
+    __block RetainPtr<NSAttributedString> result;
+    __block bool done = false;
+    [NSAttributedString loadFromHTMLWithString:html options:@{ } completionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
+        result = attributedString;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+static NSPresentationIntent *presentationIntentForSubstring(NSAttributedString *attributedString, NSString *substring)
+{
+    NSRange range = [attributedString.string rangeOfString:substring];
+    if (range.location == NSNotFound)
+        return nil;
+    return [attributedString attribute:NSPresentationIntentAttributeName atIndex:range.location effectiveRange:nil];
+}
+
+static NSInlinePresentationIntent inlinePresentationIntentForSubstring(NSAttributedString *attributedString, NSString *substring)
+{
+    NSRange range = [attributedString.string rangeOfString:substring];
+    if (range.location == NSNotFound)
+        return 0;
+    return [[attributedString attribute:NSInlinePresentationIntentAttributeName atIndex:range.location effectiveRange:nil] unsignedIntegerValue];
+}
+
+static const CFStringRef presentationIntentHTMLInterchangeKey = CFSTR("__NSPresentationIntentHTMLInterchange");
+
+// Sets the global default that makes WebKit read every presentation intent kind, or removes it if the value is null.
+// The web content process sees changes to global defaults asynchronously, so this waits until the change takes effect,
+// and returns false if it doesn't within a few seconds. The wait is bounded so that a failure still restores the default.
+static bool setPresentationIntentHTMLInterchangeValue(CFPropertyListRef value)
+{
+    CFPreferencesSetValue(presentationIntentHTMLInterchangeKey, value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+
+    id object = (__bridge id)value;
+    bool enabled = [object respondsToSelector:@selector(boolValue)] && [object boolValue];
+    return TestWebKitAPI::Util::waitFor([enabled] {
+        return !!presentationIntentForSubstring(attributedStringFromHTML(@"<p>probe</p>").get(), @"probe") == enabled;
+    }, 50);
+}
+
+TEST(NSAttributedStringWebKitAdditions, PresentationIntentHTMLInterchangeDefault)
+{
+    // The UI process only forwards changes to global defaults to web content processes while a preference observer
+    // is running. WebKit starts its shared observer when the app becomes active, which the test runner may never do.
+    RetainPtr preferenceObserver = adoptNS([[WKPreferenceObserver alloc] init]);
+
+    // NSAttributedString keeps its web views, and so their web content process, for a while after a load. Make sure
+    // that process exists first, so it receives the changes instead of depending on what it read at launch.
+    attributedStringFromHTML(@"<p>launch</p>");
+
+    RetainPtr previousValue = adoptCF(CFPreferencesCopyValue(presentationIntentHTMLInterchangeKey, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+    auto restoreDefault = makeScopeExit([previousValue] {
+        setPresentationIntentHTMLInterchangeValue(previousValue.get());
+    });
+
+    // Turn the default off and then on, so at least one of the changes has to reach the web content process whatever its value was.
+    ASSERT_TRUE(setPresentationIntentHTMLInterchangeValue(kCFBooleanFalse));
+    ASSERT_TRUE(setPresentationIntentHTMLInterchangeValue(kCFBooleanTrue));
+
+    RetainPtr attributedString = attributedStringFromHTML(@"<h1>Title</h1><ul><li>item <em>soft</em></li></ul>");
+
+    NSPresentationIntent *title = presentationIntentForSubstring(attributedString.get(), @"Title");
+    ASSERT_NOT_NULL(title);
+    EXPECT_EQ(title.intentKind, NSPresentationIntentKindHeader);
+    EXPECT_EQ(title.headerLevel, 1);
+
+    NSPresentationIntent *item = presentationIntentForSubstring(attributedString.get(), @"item");
+    ASSERT_NOT_NULL(item);
+    EXPECT_EQ(item.intentKind, NSPresentationIntentKindListItem);
+    EXPECT_EQ(item.parentIntent.intentKind, NSPresentationIntentKindUnorderedList);
+    EXPECT_EQ(inlinePresentationIntentForSubstring(attributedString.get(), @"soft"), NSInlinePresentationIntentEmphasized);
+}
+
+#endif // PLATFORM(MAC) && ENABLE(CFPREFS_DIRECT_MODE)
 
 #if PLATFORM(IOS_FAMILY)
 TEST(NSAttributedStringWebKitAdditions, DirectoriesNotCreated)

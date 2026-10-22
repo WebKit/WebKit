@@ -273,6 +273,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     GetContentsAsString(enum:bool WebKit::ContentAsStringIncludesChildFrames inChildFrames) -> (String string)
 #if PLATFORM(COCOA)
     GetContentsAsAttributedString() -> (struct WebCore::AttributedString result)
+    GetSelectionAsAttributedStringForTesting() -> (struct WebCore::AttributedString result)
 #endif
 #if ENABLE(MHTML)
     GetContentsAsMHTMLData() -> (IPC::SharedBufferReference data)

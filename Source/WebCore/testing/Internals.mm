@@ -38,6 +38,7 @@
 #import "LocalFrameView.h"
 #import "Logging.h"
 #import "MediaPlayerPrivate.h"
+#import "NodeHTMLConverter.h"
 #import "Range.h"
 #import "SharedBuffer.h"
 #import "SimpleRange.h"
@@ -241,6 +242,16 @@ String Internals::encodedPreferenceValue(const String& domain, const String& key
     RetainPtr value = [userDefaults objectForKey:key.createNSString().get()];
     RetainPtr data = retainPtr([NSKeyedArchiver archivedDataWithRootObject:value.get() requiringSecureCoding:YES error:nullptr]);
     return [data base64EncodedStringWithOptions:0];
+}
+
+void Internals::setPresentationIntentHTMLInterchangeEnabled(bool enabled)
+{
+    setPresentationIntentHTMLInterchangeEnabledForTesting(enabled);
+}
+
+void Internals::resetPresentationIntentHTMLInterchangeEnabled()
+{
+    setPresentationIntentHTMLInterchangeEnabledForTesting(std::nullopt);
 }
 
 bool Internals::isRemoteUIAppForAccessibility()

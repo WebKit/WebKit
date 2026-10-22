@@ -1589,6 +1589,8 @@ public:
     int readPreferenceInteger(const String& domain, const String& key);
     String encodedPreferenceValue(const String& domain, const String& key);
 
+    void setPresentationIntentHTMLInterchangeEnabled(bool);
+
     bool supportsPictureInPicture();
 
     String focusRingColor();
@@ -1813,6 +1815,10 @@ private:
 #endif
 
     static RefPtr<SharedBuffer> pngDataForTesting();
+
+#if PLATFORM(COCOA)
+    static void resetPresentationIntentHTMLInterchangeEnabled();
+#endif
 
     CachedResource* resourceFromMemoryCache(const String& url);
 

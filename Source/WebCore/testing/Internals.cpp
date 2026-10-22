@@ -710,6 +710,7 @@ void Internals::resetToConsistentState(Page& page)
     AXObjectCache::setAnnouncementTranslationTimeoutForTesting(std::nullopt);
 #if PLATFORM(COCOA)
     AXFormActivityMonitor::setSettleDelayForTesting(std::nullopt);
+    resetPresentationIntentHTMLInterchangeEnabled();
 #endif
     WebCore::setShouldMockParentSearchResultsForTesting(false);
     WebCore::setShouldMockChildFrameSearchResultsForTesting(false);
@@ -8388,6 +8389,10 @@ int Internals::readPreferenceInteger(const String& domain, const String& key)
 String Internals::encodedPreferenceValue(const String&, const String&)
 {
     return emptyString();
+}
+
+void Internals::setPresentationIntentHTMLInterchangeEnabled(bool)
+{
 }
 
 bool Internals::isRemoteUIAppForAccessibility()

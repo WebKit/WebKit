@@ -119,6 +119,28 @@ TEST(PasteHTML, SanitizesHTML)
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"clipboardData.values[0].includes('dangerousCode')"].boolValue);
 }
 
+#if PLATFORM(IOS)
+TEST(PasteHTML, DISABLED_SanitizerKeepsPresentationIntentAttributes)
+#else
+TEST(PasteHTML, SanitizerKeepsPresentationIntentAttributes)
+#endif
+{
+    auto webView = createWebViewWithCustomPasteboardDataSetting(true);
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+
+    writeHTMLToPasteboard(@"<!DOCTYPE html><ol start=\"3\"><li value=\"5\">item</li></ol><pre><code class=\"language-swift\">code</code></pre>"
+        "<div role=\"heading\" aria-level=\"2\">heading</div>");
+    [webView paste:nil];
+
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.types.includes('text/html')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"editor.innerHTML = clipboardData.values[0]"];
+    EXPECT_WK_STREQ("3", [webView stringByEvaluatingJavaScript:@"editor.querySelector('ol').getAttribute('start')"]);
+    EXPECT_WK_STREQ("5", [webView stringByEvaluatingJavaScript:@"editor.querySelector('li').getAttribute('value')"]);
+    EXPECT_WK_STREQ("language-swift", [webView stringByEvaluatingJavaScript:@"editor.querySelector('code').getAttribute('class')"]);
+    EXPECT_WK_STREQ("heading", [webView stringByEvaluatingJavaScript:@"editor.querySelector('[role]').getAttribute('role')"]);
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"editor.querySelector('[role]').getAttribute('aria-level')"]);
+}
+
 // rdar://138144869
 #if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_DoesNotSanitizeHTMLWhenCustomPasteboardDataIsDisabled)

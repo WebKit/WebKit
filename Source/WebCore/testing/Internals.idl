@@ -1520,6 +1520,8 @@ enum ContentsFormat {
     long readPreferenceInteger(DOMString domain, DOMString key);
     DOMString encodedPreferenceValue(DOMString domain, DOMString key);
 
+    undefined setPresentationIntentHTMLInterchangeEnabled(boolean enabled);
+
     boolean supportsPictureInPicture();
 
     boolean isRemoteUIAppForAccessibility();
