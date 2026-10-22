@@ -438,9 +438,9 @@ std::optional<LayoutRect> LineLayout::updateOverflow()
 
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
-    auto parentBlockLayoutState = Layout::BlockLayoutState { ensureBlockFormattingState().placedFloats(), { } };
+    auto parentBlockLayoutState = Layout::BlockLayoutState { { } };
     auto& inlineContentCache = ensureInlineContentCache();
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState };
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState, ensureBlockFormattingState().placedFloats() };
     if (m_lineDamage || flow().hasInvalidContentLogicalWidths()) {
         // Content inside a block level box on a line does not damage the lines around it, but it does invalidate the width this box contributes to them.
         inlineContentCache.resetMinimumMaximumContentSizes();
@@ -631,7 +631,6 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
         renderTreeLayoutState.setLineClamp(lineClamp);
     }
     auto parentBlockLayoutState = Layout::BlockLayoutState {
-        ensureBlockFormattingState().placedFloats(),
         Layout::IntegrationUtils::toMarginState(marginInfo),
         lineClamp(flow()),
         textBoxTrim(flow()),
@@ -639,7 +638,7 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
         intrusiveInitialLetterBottom(),
         lineGrid(flow())
     };
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState };
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState, ensureBlockFormattingState().placedFloats() };
     // Temporary, integration only.
     inlineFormattingContext.layoutState().setNestedListMarkerOffsets(m_boxGeometryUpdater.takeNestedListMarkerOffsets());
     auto excludedMarkers = excludedMarkersForFirstFormattedLine(inlineFormattingContext.layoutState());
@@ -665,7 +664,7 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
         ASSERT(!m_lineDamage);
     }
 
-    marginInfo = Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState());
+    Layout::IntegrationUtils::updateMarginInfo(marginInfo, inlineFormattingContext.layoutState().marginState());
 
     if (!m_inlineContent->hasPaintedInlineLevelBoxes()) {
         // Nothing to repaint. If layout affects painted block level content those issue their own repaints.
