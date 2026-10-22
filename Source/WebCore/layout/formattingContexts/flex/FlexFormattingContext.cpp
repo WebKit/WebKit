@@ -127,6 +127,37 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
     return m_result;
 }
 
+std::pair<LayoutUnit, LayoutUnit> FlexFormattingContext::minimumMaximumContentSize(const RenderFlexibleBox& flexBox, const Vector<IntrinsicWidthContribution>& contributions)
+{
+    auto isColumnFlow = FlexFormattingUtils::isColumnFlow(flexBox);
+    auto isMultiline = FlexFormattingUtils::isMultiline(flexBox);
+    auto minimumContentSize = LayoutUnit { };
+    auto maximumContentSize = LayoutUnit { };
+
+    for (auto& contribution : contributions) {
+        if (!isColumnFlow) {
+            maximumContentSize += contribution.maximum;
+            if (isMultiline) {
+                // For multiline, the min preferred width is if you put a break between
+                // each item.
+                minimumContentSize = std::max(minimumContentSize, contribution.minimum);
+            } else
+                minimumContentSize += contribution.minimum;
+        } else {
+            minimumContentSize = std::max(contribution.minimum, minimumContentSize);
+            maximumContentSize = std::max(contribution.maximum, maximumContentSize);
+        }
+    }
+
+    if (!isColumnFlow && contributions.size() > 1) {
+        auto inlineGapSize = (contributions.size() - 1) * FlexFormattingUtils::computeGap(flexBox, FlexFormattingUtils::GapType::BetweenItems);
+        maximumContentSize += inlineGapSize;
+        if (!isMultiline)
+            minimumContentSize += inlineGapSize;
+    }
+    return { minimumContentSize, maximumContentSize };
+}
+
 FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext::computeFlexBaseAndHypotheticalMainSizes(FlexLayoutItems& flexItems)
 {
     layoutState().setPhase(LayoutPhase::ComputingFlexBaseSizes);
