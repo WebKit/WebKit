@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import logging
 import os
 import unittest
 from unittest.mock import MagicMock, patch
@@ -46,6 +47,10 @@ class ESLintCheckerTest(LoggingTestCase):
         self.increment_error_count = MagicMock()
         self.host = MagicMock()
         self.host.filesystem.exists.return_value = True
+
+        logger = logging.getLogger('webkitpy.style.checkers.eslint')
+        self.addCleanup(logger.setLevel, logger.level)
+        logger.setLevel(logging.INFO)
 
     def _check(self, files, output='[]'):
         self.host.executive.run_command.return_value = output
