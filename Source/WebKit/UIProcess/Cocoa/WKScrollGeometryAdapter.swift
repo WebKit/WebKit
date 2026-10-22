@@ -37,18 +37,10 @@ public struct WKScrollGeometryAdapter {
     #if WTF_PLATFORM_IOS_FAMILY
     // SPI for the cross-import overlay.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    #if compiler(>=6.2.3)
-    // Workaround for rdar://170308157
-    @_expose(!Cxx)
-    #endif
     public let contentInsets: UIEdgeInsets
     #else
     // SPI for the cross-import overlay.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    #if compiler(>=6.2.3)
-    // Workaround for rdar://170308157
-    @_expose(!Cxx)
-    #endif
     public let contentInsets: NSEdgeInsets
     #endif
 
@@ -60,10 +52,6 @@ public struct WKScrollGeometryAdapter {
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public let contentSize: CGSize
 
-    #if compiler(>=6.2.3)
-    // Workaround for rdar://164465358
-    @_expose(!Cxx)
-    #endif
     init(_ geometry: WKScrollGeometry) {
         self.containerSize = geometry.containerSize
         self.contentInsets = geometry.contentInsets

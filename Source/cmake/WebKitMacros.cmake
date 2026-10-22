@@ -1717,7 +1717,9 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
                 "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-emit-clang-header-path ${_header_tmp_path}>")
             if (CAN_USE_EMIT_CLANG_HEADER_MIN_ACCESS)
                 list(APPEND _swift_emit_header_flags
-                    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -emit-clang-header-min-access -Xfrontend ${${_target}_SWIFT_EMIT_CLANG_HEADER_MIN_ACCESS}>")
+                    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -emit-clang-header-min-access -Xfrontend ${${_target}_SWIFT_EMIT_CLANG_HEADER_MIN_ACCESS}>"
+                    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib>"
+                )
             endif ()
             if (POLICY CMP0157)
                 # New Swift support: ${_target} is the only Swift compile, so emit here.

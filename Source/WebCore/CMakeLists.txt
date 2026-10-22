@@ -3367,7 +3367,6 @@ if (SWIFT_REQUIRED AND APPLE)
 
     webkit_target_add_swift_options(WebCore
         "-library-level spi"
-        "-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib"
     )
 
     # C++ sources that include WebCoreSwift-Generated.h.

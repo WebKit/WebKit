@@ -377,12 +377,8 @@ SWIFT_OBJC_INTERFACE_HEADER_NAME = WebKit-Swift-Generated.h;
 
 // FIXME: (rdar://149474443) Swift/Cxx interop does not respect CLANG_CXX_LANGUAGE_STANDARD = "c++2b";
 OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)) -enable-experimental-feature RequiresObjC=Foundation $(WK_SWIFT_PGO_USE_FLAGS) $(WK_SWIFT_PGO_GEN_FLAGS);
-OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_YES = -Xcc -std=c++2b $(OTHER_SWIFT_FLAGS_MIN_ACCESS);
+OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_YES = -Xcc -std=c++2b -Xfrontend -emit-clang-header-min-access -Xfrontend internal -Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib;
 OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_NO = ;
-OTHER_SWIFT_FLAGS_MIN_ACCESS = -Xfrontend -emit-clang-header-min-access -Xfrontend internal;
-OTHER_SWIFT_FLAGS_MIN_ACCESS[sdk=*26.2*] = ;
-OTHER_SWIFT_FLAGS_MIN_ACCESS[sdk=*26.3*] = ;
-OTHER_SWIFT_FLAGS_MIN_ACCESS[sdk=*26.4*] = ;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
 INSTALLHDRS_COPY_PHASE = YES;

@@ -28,6 +28,7 @@ import WebKit_Internal
 
 #if ENABLE_SWIFT_TEST_CONDITION
 // Safety: target is only written in init, assumeIsolated asserts the main thread, and weak loads are atomic in the Swift runtime
+@_expose(Cxx)
 final class TestWithSwiftConditionallyWeakRef: @unchecked Sendable {
     private weak var target: TestWithSwiftConditionally?
     init(target: TestWithSwiftConditionally) {

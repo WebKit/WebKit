@@ -94,9 +94,7 @@ import WebKit_Internal
 @available(anyAppleOSAndDownlevels 26.0, *)
 @_spi_available(watchOSAndOpenSourceTBA, *)
 @_spi_available(tvOSAndOpenSourceTBA, *)
-#if compiler(>=6.2.3)
-@_expose(!Cxx)
-#endif
+@_expose(!Cxx) // FIXME: rdar://190371687
 final public class WebPage {
     /// A CSS media type as defined by the [CSS specification](https://www.w3.org/TR/mediaqueries-4/#media-types), or an arbitrary media type value.
     ///

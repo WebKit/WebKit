@@ -27,6 +27,7 @@ import WebKit_Internal
 import wtf
 
 // Proxy interface to test IPC activities related to receiving messages in Swift.
+@_expose(Cxx)
 final class IPCTesterReceiver {
     // Optional just because of an initialization order issue. Always occupied after initialization finished.
     private var messageForwarder: RefIPCTesterReceiverMessageForwarder?

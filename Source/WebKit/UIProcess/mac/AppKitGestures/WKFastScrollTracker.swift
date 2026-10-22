@@ -27,6 +27,7 @@ import Foundation
 import WebKit_Internal
 private import CoreGraphics
 
+@_expose(Cxx)
 struct WKFastScrollTracker {
     private var multiplier: CGFloat = 1
     private var endTime: TimeInterval = 0

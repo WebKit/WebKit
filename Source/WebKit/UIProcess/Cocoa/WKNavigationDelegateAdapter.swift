@@ -30,7 +30,6 @@ private struct DefaultNavigationDecider: WebPage.NavigationDeciding {
 }
 
 @MainActor
-@_expose(!Cxx)
 final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate, WKHistoryDelegatePrivate {
     init(navigationDecider: (any WebPage.NavigationDeciding)?) {
         self.navigationDecider = navigationDecider ?? DefaultNavigationDecider()

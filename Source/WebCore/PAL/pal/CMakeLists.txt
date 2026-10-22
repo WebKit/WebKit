@@ -112,7 +112,6 @@ if (SWIFT_REQUIRED AND APPLE)
 
     webkit_target_add_swift_options(PAL
         "-library-level spi"
-        "-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib"
         "-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}"
         "-Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}"
         "-Xcc -I${CMAKE_BINARY_DIR}/ICU/Headers"

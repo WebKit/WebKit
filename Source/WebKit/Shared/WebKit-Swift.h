@@ -57,6 +57,7 @@
 #include "WebPageProxy.h"
 
 #ifdef __OBJC__
+#include "WKHistoryDelegatePrivate.h"
 #include "WKSeparatedImageView.h"
 #include "WKUIDelegatePrivate.h"
 #if PLATFORM(MAC) && HAVE(NSREFRESHCONTROLLER)

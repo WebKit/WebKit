@@ -167,7 +167,6 @@ if (SWIFT_REQUIRED)
     webkit_target_add_swift_options(WebGPU
         -I${CMAKE_CURRENT_SOURCE_DIR}/Internal
         "-library-level spi"
-        "-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib"
     )
 
     set(WebGPU_SWIFT_EMIT_CLANG_HEADER_MIN_ACCESS internal)

@@ -32,6 +32,7 @@ import WebKit_Internal
 // The axis decision stays open for the first `panHysteresis` of each gesture, and re-opens after a
 // >= `pauseInterval` pause, but only a definite axis ever replaces an established lock: a user whose scroll is
 // locked can transition to the other axis, not scroll freely around.
+@_expose(Cxx)
 struct WKDirectionalScrollLockTracker {
     private var lockedAxis: Axis?
     private var lastLockedAxis: Axis?

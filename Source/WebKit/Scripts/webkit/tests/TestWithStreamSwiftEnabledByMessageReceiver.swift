@@ -25,6 +25,7 @@
 import WebKit_Internal
 
 // Safety: target is only written in init, assumeIsolated asserts the main thread, and weak loads are atomic in the Swift runtime
+@_expose(Cxx)
 final class TestWithStreamSwiftEnabledByWeakRef: @unchecked Sendable {
     private weak var target: TestWithStreamSwiftEnabledBy?
     init(target: TestWithStreamSwiftEnabledBy) {

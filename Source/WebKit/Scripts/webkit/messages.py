@@ -2342,6 +2342,7 @@ def generate_swift_message_handler(receiver):
         result.append('#if ENABLE_%s\n' % (receiver.swift_receiver_build_enabled_by))
 
     result.append('// Safety: target is only written in init, assumeIsolated asserts the main thread, and weak loads are atomic in the Swift runtime\n')
+    result.append('@_expose(Cxx)\n')
     result.append('final class %s: @unchecked Sendable {\n' % (weak_ref_class))
     result.append('    private weak var target: %s?\n' % (class_name))
     result.append('    init(target: %s) {\n' % (class_name))
