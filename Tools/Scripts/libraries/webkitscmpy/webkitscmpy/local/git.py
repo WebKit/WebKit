@@ -953,8 +953,12 @@ class Git(Scm):
         hash = match.group('hash')
 
         branch_point = None
+        # Avoid a merge-base call for commits on main which are already in our cache
+        cached_identifier = Commit._parse_identifier(self.cache.to_identifier(hash=hash, populate=False)) if self.cache else None
+        if cached_identifier and cached_identifier[2] == default_branch:
+            branch_point, identifier, branch = cached_identifier
         # A commit is often on multiple branches, the canonical branch is the one with the highest priority
-        if self._is_on_default_branch(hash):
+        elif self._is_on_default_branch(hash):
             branch = default_branch
         if branch != default_branch:
             branch = self.prioritize_branches(self.branches_for(hash), self.branch)
