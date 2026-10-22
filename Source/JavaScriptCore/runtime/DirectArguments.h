@@ -75,7 +75,7 @@ public:
         return m_length;
     }
     
-    uint32_t length(JSGlobalObject*) const;
+    uint64_t length(JSGlobalObject*) const;
     
     bool isMappedArgument(uint32_t i) const
     {

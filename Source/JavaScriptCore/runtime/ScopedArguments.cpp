@@ -38,14 +38,14 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ScopedArguments);
 
 const ClassInfo ScopedArguments::s_info = { "Arguments"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ScopedArguments) };
 
-uint32_t ScopedArguments::length(JSGlobalObject* globalObject) const
+uint64_t ScopedArguments::length(JSGlobalObject* globalObject) const
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (m_overrodeThings) [[unlikely]] {
         auto value = get(globalObject, vm.propertyNames->length);
         RETURN_IF_EXCEPTION(scope, 0);
-        RELEASE_AND_RETURN(scope, value.toUInt32(globalObject));
+        RELEASE_AND_RETURN(scope, value.toLength(globalObject));
     }
     return internalLength();
 }

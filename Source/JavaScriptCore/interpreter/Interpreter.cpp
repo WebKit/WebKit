@@ -246,10 +246,10 @@ unsigned sizeOfVarargs(JSGlobalObject* globalObject, JSValue arguments, uint32_t
     unsigned length;
     switch (cell->type()) {
     case DirectArgumentsType:
-        length = uncheckedDowncast<DirectArguments>(cell)->length(globalObject);
+        length = clampToUnsigned(uncheckedDowncast<DirectArguments>(cell)->length(globalObject));
         break;
     case ScopedArgumentsType:
-        length = uncheckedDowncast<ScopedArguments>(cell)->length(globalObject);
+        length = clampToUnsigned(uncheckedDowncast<ScopedArguments>(cell)->length(globalObject));
         break;
     case ClonedArgumentsType:
         length = clampToUnsigned(uncheckedDowncast<ClonedArguments>(cell)->length(globalObject));
