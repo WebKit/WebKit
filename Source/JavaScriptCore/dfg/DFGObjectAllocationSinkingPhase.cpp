@@ -1264,6 +1264,23 @@ private:
             break;
         }
 
+        case Switch: {
+            if (node->switchData()->kind != SwitchStructure)
+                goto escapeChildren;
+            Allocation* allocation = m_heap.onlyLocalAllocation(node->child1().node());
+            if (allocation && allocation->isObjectAllocation()) {
+                // Switching on the promoted structure cell itself picks the same target.
+                if (Node* value = heapResolve(PromotedHeapLocation(allocation->identifier(), StructurePLoc))) {
+                    for (SwitchCase& switchCase : node->switchData()->cases)
+                        switchCase.value = LazyJSValue(m_graph.freeze(switchCase.structure.get()));
+                    node->switchData()->kind = SwitchCell;
+                    node->child1() = Edge(value, CellUse);
+                }
+            } else
+                m_heap.escape(node->child1().node());
+            break;
+        }
+
         case GetByOffset:
         case GetGetterSetterByOffset:
             target = m_heap.onlyLocalAllocation(node->child2().node());

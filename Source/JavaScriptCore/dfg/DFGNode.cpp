@@ -574,6 +574,9 @@ void printInternal(PrintStream& out, SwitchKind kind)
     case SwitchCell:
         out.print("SwitchCell");
         return;
+    case SwitchStructure:
+        out.print("SwitchStructure");
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
