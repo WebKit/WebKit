@@ -646,6 +646,9 @@ class BitBucket(Scm):
             return 'https://{}/scm/{}/{}.git'.format(self.domain, self.project, self.name)
         return 'git@{}/{}/{}.git'.format(self.domain, self.project, self.name)
 
+    def commit_url(self, hash: str) -> str:
+        return '{}/commits/{}'.format(self.url, hash)
+
     # Returns None on failure, the response's "values" (across all pages) if it has any, and the response otherwise.
     def request(self, path: str | None = None, params: dict[str, Any] | None = None, headers: dict[str, str] | None = None, api: str | None = None, ignore_errors: bool = False) -> Any:
         headers = {key: value for key, value in headers.items()} if headers else dict()

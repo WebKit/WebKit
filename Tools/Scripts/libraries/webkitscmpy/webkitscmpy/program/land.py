@@ -30,10 +30,10 @@ from .canonicalize import Canonicalize
 from .command import Command
 from .branch import Branch
 from .install_hooks import InstallHooks
+from .mark_fixed import MarkFixed
 from .pull_request import PullRequest
 from .squash import Squash
 from argparse import Namespace
-from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, string_utils, Terminal
 from webkitscmpy import Commit, local, log, remote
 
@@ -79,6 +79,7 @@ class Land(Command):
             help='Land change via safe (or unsafe) merge queue, if available.',
             action=arguments.NoAction,
         )
+        MarkFixed.radar_state_parser(parser)
 
     @classmethod
     def merge_queue(cls, args, repository, branch_point, merge_labels=None):
@@ -169,22 +170,31 @@ class Land(Command):
             sys.stderr.write('Failed to find commits to land\n')
             return 1
 
+        rmt = repository.remote()
+        merge_labels = dict()
+        if rmt and isinstance(rmt, remote.GitHub):
+            for name in rmt.tracker.labels.keys():
+                if name in PullRequest.MERGE_LABELS:
+                    merge_labels['safe'] = name
+                if name in PullRequest.UNSAFE_MERGE_LABELS:
+                    merge_labels['unsafe'] = name
+
+        issues = MarkFixed.issues_for(commits) if args.update_issue and not merge_labels else []
+        radar_state = MarkFixed.radar_state(args, repository)
+        if issues and not MarkFixed.confirm(args, issues):
+            return 1
+        held = MarkFixed.held_issues(args, repository, commits, issues, radar_state)
+        if issues and not MarkFixed.validate(args, issues, held, radar_state):
+            return 1
+
         if args.squash or (args.squash is None and len(commits) > 1):
             result = Squash.squash_commit(args, repository, branch_point, **kwargs)
             if result:
                 return result
             commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=source_branch)))
 
-        rmt = repository.remote()
-        if rmt and isinstance(rmt, remote.GitHub):
-            merge_labels = dict()
-            for name in rmt.tracker.labels.keys():
-                if name in PullRequest.MERGE_LABELS:
-                    merge_labels['safe'] = name
-                if name in PullRequest.UNSAFE_MERGE_LABELS:
-                    merge_labels['unsafe'] = name
-            if merge_labels:
-                return cls.merge_queue(args, repository, branch_point, merge_labels=merge_labels)
+        if merge_labels:
+            return cls.merge_queue(args, repository, branch_point, merge_labels=merge_labels)
 
         if args.safe is not None:
             sys.stderr.write("No merge-queue available for this repository\n")
@@ -251,12 +261,6 @@ class Land(Command):
                 if cls.OOPS_RE.search(line):
                     sys.stderr.write("Found '(OOPS!)' in commit diff, please resolve before committing\n")
                     return 1
-
-        issue = None
-        for line in commits[0].message.split() if commits[0] and commits[0].message else []:
-            issue = Tracker.from_string(line)
-            if issue:
-                break
 
         target = pull_request.base if pull_request else branch_point.branch
         log.info("Rebasing '{}' from '{}' to '{}'...".format(source_branch, branch_point.branch, target))
@@ -351,9 +355,9 @@ class Land(Command):
                 )
 
         else:
+            commits = list(repository.commits(begin=dict(argument='{}~{}'.format(source_branch, len(commits))), end=dict(branch=source_branch)))
             if pull_request:
                 log.info("Updating '{}' to match landing commits...".format(pull_request))
-                commits = list(repository.commits(begin=dict(argument='{}~{}'.format(source_branch, len(commits))), end=dict(branch=source_branch)))
                 run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
                 rmt.pull_requests.update(
                     pull_request=pull_request,
@@ -369,18 +373,21 @@ class Land(Command):
             repository.checkout(target)
             commit = repository.commit(branch=target, include_log=False)
 
-        if identifier_template and commit.identifier:
-            land_message = 'Landed {} ({})!'.format(identifier_template.value_template.format(commit), commit.hash[:Commit.HASH_LABEL_SIZE])
-        else:
-            land_message = 'Landed {}!'.format(commit.hash[:Commit.HASH_LABEL_SIZE])
+        land_message = 'Landed {}!'.format(MarkFixed.label(commit, identifier_template=identifier_template))
         print(land_message)
 
         if pull_request:
             pull_request.comment(land_message)
-        if issue:
-            if canonical_svn and commit.revision:
-                land_message = land_message.replace(commit.hash[:Commit.HASH_LABEL_SIZE], 'r{}'.format(commit.revision))
-            issue.close(why=land_message)
+        if issues and not MarkFixed.update_issues(
+            args, repository, commits, target, issues=issues, held=held,
+            identifier_template=identifier_template, canonical_svn=canonical_svn,
+        ):
+            hashes = [landed.hash[:Commit.HASH_LABEL_SIZE] for landed in commits]
+            for group, options in (([issue for issue in issues if issue not in held], []), (held, ['--no-update-radar'])):
+                if group:
+                    sys.stderr.write("Run 'git-webkit {} {}' to retry updating issues\n".format(
+                        MarkFixed.name, ' '.join(hashes + ['--issue {}'.format(issue.link) for issue in group] + options),
+                    ))
 
         if args.defaults or Terminal.choose("Delete branch '{}'?".format(source_branch), default='Yes') == 'Yes':
             regex = re.compile(r'^{}-(?P<count>\d+)$'.format(source_branch))
