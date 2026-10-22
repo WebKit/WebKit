@@ -156,7 +156,7 @@
 #include "LocalAudioSessionRoutingArbitrator.h"
 #endif
 
-#if PLATFORM(MAC) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #include <WebCore/CoreAudioCaptureUnit.h>
 #endif
 
@@ -1353,6 +1353,11 @@ RemoteVideoFrameObjectHeap& GPUConnectionToWebProcess::videoFrameObjectHeap() co
 void GPUConnectionToWebProcess::updateSampleBufferDisplayLayerBoundsAndPosition(SampleBufferDisplayLayerIdentifier identifier, WebCore::FloatRect bounds, std::optional<MachSendRightAnnotated>&& fence)
 {
     m_sampleBufferDisplayLayerManager->updateSampleBufferDisplayLayerBoundsAndPosition(identifier, bounds, WTF::move(fence));
+}
+
+void GPUConnectionToWebProcess::sharedAudioCaptureDeviceForTesting(CompletionHandler<void(String&&)>&& completion)
+{
+    completion(String { WebCore::CoreAudioCaptureUnit::defaultSingleton().persistentIDForTesting() });
 }
 #endif
 
