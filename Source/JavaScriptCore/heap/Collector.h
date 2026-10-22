@@ -164,6 +164,7 @@ private:
     void startCollectingContinuously();
     void stopCollectingContinuously();
 
+    void shutDown();
     void stopThread();
 
     enum class RunCurrentPhaseResult {

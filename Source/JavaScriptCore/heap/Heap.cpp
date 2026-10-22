@@ -466,6 +466,11 @@ void Heap::shutDown()
         dataLogIf(Options::logGC(), "left the collector, ");
     }
 
+    if (m_localCollector) {
+        m_localCollector->shutDown();
+        dataLogIf(Options::logGC(), "stopped the collector's threads, ");
+    }
+
     if (Options::dumpHeapStatisticsAtVMDestruction()) [[unlikely]]
         dumpHeapStatisticsAtVMDestruction();
 
