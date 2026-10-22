@@ -23,7 +23,7 @@
 
 #include "ArrayConstructor.h"
 #include "GetterSetter.h"
-#include "HasOwnPropertyCache.h"
+#include "HasOwnPropertyCacheInlines.h"
 #include "IntegrityInlines.h"
 #include "JSCInlines.h"
 #include "ObjectPrototypeInlines.h"

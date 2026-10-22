@@ -84,35 +84,7 @@ public:
         return std::nullopt;
     }
 
-    ALWAYS_INLINE void tryAdd(PropertySlot& slot, JSObject* object, PropertyName propName, bool result)
-    {
-        if (parseIndex(propName))
-            return;
-
-        if (!slot.isCacheable() && !slot.isUnset())
-            return;
-
-        if (object->type() == GlobalProxyType)
-            return;
-
-        Structure* structure = object->structure();
-        if (!structure->typeInfo().prohibitsPropertyCaching()
-            && structure->propertyAccessesAreCacheable()
-            && (!slot.isUnset() || structure->propertyAccessesAreCacheableForAbsence())) {
-            if (structure->isDictionary()) {
-                // FIXME: We should be able to flatten a dictionary object again.
-                // https://bugs.webkit.org/show_bug.cgi?id=163092
-                return;
-            }
-
-            ASSERT(!result == slot.isUnset());
-
-            UniquedStringImpl* impl = propName.uid();
-            StructureID id = structure->id();
-            uint32_t index = HasOwnPropertyCache::hash(id, impl) & mask;
-            std::bit_cast<Entry*>(this)[index] = Entry { RefPtr<UniquedStringImpl>(impl), id, result };
-        }
-    }
+    inline void tryAdd(PropertySlot&, JSObject*, PropertyName, bool result);
 
     void clear()
     {

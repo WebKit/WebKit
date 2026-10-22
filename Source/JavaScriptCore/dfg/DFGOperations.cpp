@@ -49,7 +49,7 @@
 #include "FTLOSREntry.h"
 #include "FrameTracers.h"
 #include "GCMemoryOperations.h"
-#include "HasOwnPropertyCache.h"
+#include "HasOwnPropertyCacheInlines.h"
 #include "Interpreter.h"
 #include "InterpreterInlines.h"
 #include "IntlCollator.h"

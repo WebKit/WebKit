@@ -1179,6 +1179,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/GlobalObjectMethodTable.h
     runtime/HashMapHelper.h
     runtime/HasOwnPropertyCache.h
+    runtime/HasOwnPropertyCacheInlines.h
     runtime/ISO8601.h
     runtime/Identifier.h
     runtime/IdentifierInlines.h

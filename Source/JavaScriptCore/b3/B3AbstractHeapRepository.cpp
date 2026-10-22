@@ -63,6 +63,7 @@
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ShadowChicken.h"
+#include "StructureArrayStorageInlines.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
 #include "Symbol.h"

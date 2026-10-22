@@ -51,6 +51,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "MegamorphicCache.h"
 #include "SetupVarargsFrame.h"
 #include "SpillRegistersMode.h"
+#include "StructureArrayStorageInlines.h"
 #include "StructureChain.h"
 #include "SuperSampler.h"
 #include "YarrJITRegisters.h"

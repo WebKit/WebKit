@@ -26,6 +26,8 @@
 #include "config.h"
 #include "HasOwnPropertyCache.h"
 
+#include "StructureArrayStorageInlines.h"
+
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HasOwnPropertyCache);
