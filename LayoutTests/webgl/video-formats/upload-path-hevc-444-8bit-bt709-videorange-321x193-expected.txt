@@ -1,0 +1,19 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of hevc-444-8bit-bt709-videorange-321x193.mp4, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+hevc-444-8bit-bt709-videorange-321x193.mp4: hevc yuv444p bt709/videorange/bt709/bt709
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 <video> default path: hardware (converted), pixel format 444v
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 <video> software path: software (forced)
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 <video> hardware path: hardware (converted)
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 <video> hardware vs software: match
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format null) default path: software (gate-videoframe-format)
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format null) software path: software (forced)
+hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,20 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of h264-rgb.mp4, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+h264-rgb.mp4: h264 gbrp rgb/range untagged/bt709/iec61966-2-1
+FAIL h264-rgb.mp4 <video> default path: hardware (converted), pixel format &8f4: up to 135 off: red at 24,24: (178,0,0,255), expected (255,0,0,255); desat-red at 88,24: (154,40,0,255), expected (192,64,64,255); yellow at 152,24: (255,208,28,255), expected (255,255,0,255); desat-green at 216,24: (102,255,79,255), expected (64,192,64,255); 10 more
+FAIL h264-rgb.mp4 <video> software path: software (forced): up to 135 off: red at 24,24: (177,0,0,255), expected (255,0,0,255); desat-red at 88,24: (153,41,0,255), expected (192,64,64,255); yellow at 152,24: (255,209,29,255), expected (255,255,0,255); desat-green at 216,24: (102,255,79,255), expected (64,192,64,255); 10 more
+FAIL h264-rgb.mp4 <video> hardware path: hardware (converted): up to 135 off: red at 24,24: (178,0,0,255), expected (255,0,0,255); desat-red at 88,24: (154,40,0,255), expected (192,64,64,255); yellow at 152,24: (255,208,28,255), expected (255,255,0,255); desat-green at 216,24: (102,255,79,255), expected (64,192,64,255); 10 more
+PASS h264-rgb.mp4 <video> hardware vs software: match
+FAIL h264-rgb.mp4 VideoFrame(video) (format null) default path: software (gate-videoframe-format): up to 135 off: red at 24,24: (177,0,0,255), expected (255,0,0,255); desat-red at 88,24: (153,41,0,255), expected (192,64,64,255); yellow at 152,24: (255,209,29,255), expected (255,255,0,255); desat-green at 216,24: (102,255,79,255), expected (64,192,64,255); 10 more
+FAIL h264-rgb.mp4 VideoFrame(video) (format null) software path: software (forced): up to 135 off: red at 24,24: (177,0,0,255), expected (255,0,0,255); desat-red at 88,24: (153,41,0,255), expected (192,64,64,255); yellow at 152,24: (255,209,29,255), expected (255,255,0,255); desat-green at 216,24: (102,255,79,255), expected (64,192,64,255); 10 more
+h264-rgb.mp4 VideoFrame(video) (format null) hardware path: hardware not available (gate-videoframe-format)
+h264-rgb.mp4 VideoFrame(video) (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

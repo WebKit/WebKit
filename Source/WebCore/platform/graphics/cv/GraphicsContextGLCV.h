@@ -39,8 +39,8 @@ public:
 
     using FlipY = GraphicsContextGL::FlipY;
     // Copies CV pixel buffer to GraphicsContextGL TEXTURE_2D texture of the same size as the pixel buffer.
-    // Returns true on success.
-    virtual bool copyVideoSampleToTexture(const VideoFrameCV&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) = 0;
+    // Returns how the copy was done, or why it was not done (see isSuccessfulVideoUpload()).
+    virtual GraphicsContextGLVideoUploadOutcome copyVideoSampleToTexture(const VideoFrameCV&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) = 0;
 };
 
 }

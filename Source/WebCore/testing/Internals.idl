@@ -501,6 +501,23 @@ enum ContentsFormat {
 #endif
 };
 
+[Conditional=WEBGL&VIDEO] enum WebGLVideoUploadPath {
+    "default",
+    "software",
+    "hardware"
+};
+
+[
+    Conditional=WEBGL&VIDEO,
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary WebGLVideoUploadRecord {
+    DOMString path;
+    DOMString reason;
+    DOMString pixelFormat;
+    unsigned long long sequence = 0;
+};
+
 [
     Conditional=DAMAGE_TRACKING,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
@@ -1299,6 +1316,10 @@ enum ContentsFormat {
     [Conditional=WEBGL] sequence<long> webglMaxDrawingBufferSize(WebGL2RenderingContext context);
     [Conditional=WEBGL] sequence<long> webglDefaultFramebufferAllocatedSize(WebGLRenderingContext context);
     [Conditional=WEBGL] sequence<long> webglDefaultFramebufferAllocatedSize(WebGL2RenderingContext context);
+    [Conditional=WEBGL&VIDEO] undefined setWebGLVideoUploadPath(WebGLRenderingContext context, WebGLVideoUploadPath path);
+    [Conditional=WEBGL&VIDEO] undefined setWebGLVideoUploadPath(WebGL2RenderingContext context, WebGLVideoUploadPath path);
+    [Conditional=WEBGL&VIDEO] WebGLVideoUploadRecord? webglLastVideoUpload(WebGLRenderingContext context);
+    [Conditional=WEBGL&VIDEO] WebGLVideoUploadRecord? webglLastVideoUpload(WebGL2RenderingContext context);
 
     undefined setPageVisibility(boolean isVisible);
     undefined setPageIsFocused(boolean isFocused);

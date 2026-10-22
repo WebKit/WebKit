@@ -1,0 +1,20 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of vp8-420-bt601-videorange.webm played through MediaSource, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+vp8-420-bt601-videorange.webm: vp8 yuv420p bt601/videorange/smpte170m/smpte170m
+PASS vp8-420-bt601-videorange.webm (MSE) <video> default path: hardware (direct), pixel format 420v
+FAIL vp8-420-bt601-videorange.webm (MSE) <video> software path: software (forced): up to 63 off: red at 24,24: (248,46,0,255), expected (254,0,0,255); desat-red at 88,24: (204,91,70,255), expected (192,64,64,255); yellow at 152,24: (253,240,0,255), expected (255,255,0,255); desat-green at 216,24: (74,178,67,255), expected (64,191,64,255); 5 more
+PASS vp8-420-bt601-videorange.webm (MSE) <video> hardware path: hardware (direct)
+FAIL vp8-420-bt601-videorange.webm (MSE) <video> hardware vs software: differ by up to 63 at cyan: hardware (1,255,255,255), software (64,233,255,255)
+PASS vp8-420-bt601-videorange.webm (MSE) VideoFrame(video) (format NV12) default path: hardware (direct), pixel format 420v
+PASS vp8-420-bt601-videorange.webm (MSE) VideoFrame(video) (format NV12) software path: software (forced)
+PASS vp8-420-bt601-videorange.webm (MSE) VideoFrame(video) (format NV12) hardware path: hardware (direct)
+PASS vp8-420-bt601-videorange.webm (MSE) VideoFrame(video) (format NV12) hardware vs software: match
+
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

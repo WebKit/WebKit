@@ -1,0 +1,19 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of mjpeg-420-bt601-fullrange.mov, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+mjpeg-420-bt601-fullrange.mov: mjpeg yuvj420p bt601/fullrange/bt709/iec61966-2-1
+PASS mjpeg-420-bt601-fullrange.mov <video> default path: hardware (direct), pixel format 420f
+PASS mjpeg-420-bt601-fullrange.mov <video> software path: software (forced)
+PASS mjpeg-420-bt601-fullrange.mov <video> hardware path: hardware (direct)
+PASS mjpeg-420-bt601-fullrange.mov <video> hardware vs software: match
+PASS mjpeg-420-bt601-fullrange.mov VideoFrame(video) (format NV12) default path: hardware (direct), pixel format 420f
+PASS mjpeg-420-bt601-fullrange.mov VideoFrame(video) (format NV12) software path: software (forced)
+PASS mjpeg-420-bt601-fullrange.mov VideoFrame(video) (format NV12) hardware path: hardware (direct)
+PASS mjpeg-420-bt601-fullrange.mov VideoFrame(video) (format NV12) hardware vs software: match
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

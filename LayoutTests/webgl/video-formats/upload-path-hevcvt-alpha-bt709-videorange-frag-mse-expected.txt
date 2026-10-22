@@ -1,0 +1,20 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of hevcvt-alpha-bt709-videorange-frag.mp4 played through MediaSource, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+hevcvt-alpha-bt709-videorange-frag.mp4: hevc yuv420p bt709/videorange/bt709/bt709
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 (MSE) <video> default path: hardware (direct), pixel format &8v0: alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 (MSE) <video> software path: software (forced): alpha lost: the 3 translucent patches are opaque; up to 11 off: desat-red at 88,24: (200,72,72,255), expected (191,64,63,255); desat-green at 216,24: (74,199,74,255), expected (65,192,65,255); desat-blue at 88,152: (73,73,201,255), expected (64,64,192,255); gray128 at 216,152: (139,139,139,255), expected (128,128,128,255)
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 (MSE) <video> hardware path: hardware (direct): alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 (MSE) <video> hardware vs software: differ by up to 11 at gray128: hardware (128,128,128,255), software (139,139,139,255)
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 (MSE) VideoFrame(video) (format NV12) default path: hardware (direct), pixel format &8v0: alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 (MSE) VideoFrame(video) (format NV12) software path: software (forced): alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 (MSE) VideoFrame(video) (format NV12) hardware path: hardware (direct): alpha lost: the 3 translucent patches are opaque
+PASS hevcvt-alpha-bt709-videorange-frag.mp4 (MSE) VideoFrame(video) (format NV12) hardware vs software: match
+
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

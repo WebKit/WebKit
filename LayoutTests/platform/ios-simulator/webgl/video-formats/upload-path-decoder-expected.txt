@@ -1,0 +1,207 @@
+The first VideoDecoder output frame of every test video the decoder supports, with prefer-hardware and prefer-software, uploaded in WebGL 2 with a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The decoder is not given the track's rotation, so the frames are not rotated. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS h264-420-bt601-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt601-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-bt601-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt601-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-bt601-videorange.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt601-videorange.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-bt601-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt601-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-fullrange.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420f
+PASS h264-420-bt709-fullrange.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-fullrange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-fullrange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-fullrange.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420f
+PASS h264-420-bt709-fullrange.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-fullrange.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-fullrange.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-bt2020-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt2020-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-bt2020-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt2020-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-bt2020-videorange.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt2020-videorange.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-bt2020-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt2020-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-smpte240m-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+FAIL h264-420-smpte240m-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced): up to 23 off: red at 24,24: (232,0,1,255), expected (255,0,0,255); desat-red at 88,24: (180,50,65,255), expected (191,64,64,255); yellow at 152,24: (252,255,7,255), expected (254,255,0,255); desat-green at 216,24: (74,211,67,255), expected (64,192,64,255); 4 more
+PASS h264-420-smpte240m-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+FAIL h264-420-smpte240m-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: differ by up to 23 at red: hardware (255,0,0,255), software (232,0,1,255)
+PASS h264-420-smpte240m-videorange.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+FAIL h264-420-smpte240m-videorange.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced): up to 23 off: red at 24,24: (232,0,1,255), expected (255,0,0,255); desat-red at 88,24: (180,50,65,255), expected (191,64,64,255); yellow at 152,24: (252,255,7,255), expected (254,255,0,255); desat-green at 216,24: (74,211,67,255), expected (64,192,64,255); 4 more
+PASS h264-420-smpte240m-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+FAIL h264-420-smpte240m-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: differ by up to 23 at red: hardware (255,0,0,255), software (232,0,1,255)
+PASS h264-420-untagged.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-untagged.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-untagged.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-untagged.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-untagged.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-untagged.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-untagged.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-untagged.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-p3d65-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-p3d65-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-p3d65-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-p3d65-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-p3d65-videorange.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-p3d65-videorange.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-p3d65-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-p3d65-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS hevc-420-10bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format null) software path: software (forced)
+hevc-420-10bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-420-10bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format null) software path: software (forced)
+hevc-420-10bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-420-10bit-pq-videorange.mp4 VideoDecoder prefer-hardware frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-pq-videorange.mp4 VideoDecoder prefer-hardware frame (format null) software path: software (forced)
+hevc-420-10bit-pq-videorange.mp4 VideoDecoder prefer-hardware frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-pq-videorange.mp4 VideoDecoder prefer-hardware frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-420-10bit-pq-videorange.mp4 VideoDecoder prefer-software frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-pq-videorange.mp4 VideoDecoder prefer-software frame (format null) software path: software (forced)
+hevc-420-10bit-pq-videorange.mp4 VideoDecoder prefer-software frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-pq-videorange.mp4 VideoDecoder prefer-software frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-420-10bit-hlg-videorange.mp4 VideoDecoder prefer-hardware frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-hlg-videorange.mp4 VideoDecoder prefer-hardware frame (format null) software path: software (forced)
+hevc-420-10bit-hlg-videorange.mp4 VideoDecoder prefer-hardware frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-hlg-videorange.mp4 VideoDecoder prefer-hardware frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-420-10bit-hlg-videorange.mp4 VideoDecoder prefer-software frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-hlg-videorange.mp4 VideoDecoder prefer-software frame (format null) software path: software (forced)
+hevc-420-10bit-hlg-videorange.mp4 VideoDecoder prefer-software frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-hlg-videorange.mp4 VideoDecoder prefer-software frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-420-10bit-bt709-fullrange.mp4 VideoDecoder prefer-hardware frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-bt709-fullrange.mp4 VideoDecoder prefer-hardware frame (format null) software path: software (forced)
+hevc-420-10bit-bt709-fullrange.mp4 VideoDecoder prefer-hardware frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-bt709-fullrange.mp4 VideoDecoder prefer-hardware frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-420-10bit-bt709-fullrange.mp4 VideoDecoder prefer-software frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-bt709-fullrange.mp4 VideoDecoder prefer-software frame (format null) software path: software (forced)
+hevc-420-10bit-bt709-fullrange.mp4 VideoDecoder prefer-software frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-bt709-fullrange.mp4 VideoDecoder prefer-software frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+h264-422-bt709-videorange.mp4 VideoDecoder prefer-hardware: Error: VideoDecoder does not support avc1.7A000C
+h264-422-bt709-videorange.mp4 VideoDecoder prefer-software: Error: VideoDecoder does not support avc1.7A000C
+PASS hevc-422-10bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-422-10bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format null) software path: software (forced)
+hevc-422-10bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-422-10bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-422-10bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-422-10bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format null) software path: software (forced)
+hevc-422-10bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-422-10bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-444-8bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS hevc-444-8bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS hevc-444-8bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS hevc-444-8bit-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS hevc-444-8bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS hevc-444-8bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS hevc-444-8bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS hevc-444-8bit-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+h264-rgb.mp4 VideoDecoder prefer-hardware: Error: VideoDecoder does not support avc1.F4000C
+h264-rgb.mp4 VideoDecoder prefer-software: Error: VideoDecoder does not support avc1.F4000C
+FAIL hevcvt-alpha-bt709-videorange.mov VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v: alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange.mov VideoDecoder prefer-hardware frame (format NV12) software path: software (forced): alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange.mov VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct): alpha lost: the 3 translucent patches are opaque
+PASS hevcvt-alpha-bt709-videorange.mov VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+FAIL hevcvt-alpha-bt709-videorange.mov VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v: alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange.mov VideoDecoder prefer-software frame (format NV12) software path: software (forced): alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange.mov VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct): alpha lost: the 3 translucent patches are opaque
+PASS hevcvt-alpha-bt709-videorange.mov VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS av1-420-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS av1-420-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS av1-420-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS av1-420-bt709-videorange.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS av1-420-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS av1-420-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS av1-420-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS av1-420-bt709-videorange.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-192x192.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-192x192.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-192x192.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-192x192.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-192x192.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-192x192.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-192x192.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-192x192.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-rot90.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-rot90.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-rot90.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-rot90.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-rot90.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-rot90.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-rot90.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-rot90.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-rot180.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-rot180.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-rot180.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-rot180.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-rot180.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-rot180.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-rot180.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-rot180.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-rot270.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-rot270.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-rot270.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-rot270.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-rot270.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-rot270.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-rot270.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-rot270.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-hflip.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-hflip.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-hflip.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-hflip.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-hflip.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-hflip.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-hflip.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-hflip.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+PASS h264-420-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced)
+PASS h264-420-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct)
+PASS h264-420-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+PASS hevc-420-10bit-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format null) software path: software (forced)
+hevc-420-10bit-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-420-10bit-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format null) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format null) software path: software (forced)
+hevc-420-10bit-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format null) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format NV12) default path: hardware (direct), pixel format 420v: alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format NV12) software path: software (forced): alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware path: hardware (direct): alpha lost: the 3 translucent patches are opaque
+PASS hevcvt-alpha-bt709-videorange-frag.mp4 VideoDecoder prefer-hardware frame (format NV12) hardware vs software: match
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format NV12) default path: hardware (direct), pixel format 420v: alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format NV12) software path: software (forced): alpha lost: the 3 translucent patches are opaque
+FAIL hevcvt-alpha-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format NV12) hardware path: hardware (direct): alpha lost: the 3 translucent patches are opaque
+PASS hevcvt-alpha-bt709-videorange-frag.mp4 VideoDecoder prefer-software frame (format NV12) hardware vs software: match
+
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

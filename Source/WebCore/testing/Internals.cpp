@@ -103,6 +103,7 @@
 #include "FloatQuad.h"
 #include "FontCache.h"
 #include "FormController.h"
+#include "FourCC.h"
 #include "FragmentDirectiveGenerator.h"
 #include "FrameInspectorController.h"
 #include "FrameLoader.h"
@@ -7201,6 +7202,101 @@ Vector<int> Internals::webglDefaultFramebufferAllocatedSize(WebGLRenderingContex
     auto size = context.defaultFramebufferAllocatedSize();
     return { size.width(), size.height() };
 }
+
+#if ENABLE(VIDEO)
+void Internals::setWebGLVideoUploadPath(WebGLRenderingContextBase& context, WebGLVideoUploadPath path)
+{
+    using Path = WebGLRenderingContextBase::VideoUploadPathForTesting;
+    switch (path) {
+    case WebGLVideoUploadPath::Default:
+        context.setVideoUploadPathForTesting(Path::Default);
+        return;
+    case WebGLVideoUploadPath::Software:
+        context.setVideoUploadPathForTesting(Path::Software);
+        return;
+    case WebGLVideoUploadPath::Hardware:
+        context.setVideoUploadPathForTesting(Path::Hardware);
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+static String webglVideoUploadFourCCString(uint32_t value)
+{
+    if (!value)
+        return emptyString();
+    auto characters = FourCC(value).string();
+    if (std::ranges::all_of(std::span { characters }.first(4), [](char c) { return c >= 0x20 && c < 0x7f; }))
+        return String::fromLatin1(characters.data());
+    return makeString("0x"_s, hex(value, 8));
+}
+
+static ASCIILiteral webglVideoUploadOutcomeName(GraphicsContextGL::VideoUploadOutcome outcome)
+{
+    switch (outcome) {
+    case GraphicsContextGL::VideoUploadOutcome::Direct: return "direct"_s;
+    case GraphicsContextGL::VideoUploadOutcome::Converted: return "converted"_s;
+    case GraphicsContextGL::VideoUploadOutcome::Cached: return "cached"_s;
+    case GraphicsContextGL::VideoUploadOutcome::NotTransferable: return "not-transferable"_s;
+    case GraphicsContextGL::VideoUploadOutcome::ContextLost: return "context-lost"_s;
+    case GraphicsContextGL::VideoUploadOutcome::NoFrame: return "gpu-no-frame"_s;
+    case GraphicsContextGL::VideoUploadOutcome::Unsupported: return "unsupported"_s;
+    case GraphicsContextGL::VideoUploadOutcome::ConversionFailed: return "conversion-failed"_s;
+    case GraphicsContextGL::VideoUploadOutcome::NoIOSurface: return "no-iosurface"_s;
+    case GraphicsContextGL::VideoUploadOutcome::FramebufferIncomplete: return "fbo-incomplete"_s;
+    case GraphicsContextGL::VideoUploadOutcome::PbufferFailed: return "pbuffer-failed"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "unknown"_s;
+}
+
+static ASCIILiteral webglVideoUploadDecisionName(WebGLRenderingContextBase::VideoUploadDecision decision)
+{
+    using Decision = WebGLRenderingContextBase::VideoUploadDecision;
+    switch (decision) {
+    case Decision::Copy: return "copy"_s;
+    case Decision::Forced: return "forced"_s;
+    case Decision::GateFunction: return "gate-function"_s;
+    case Decision::GateTarget: return "gate-target"_s;
+    case Decision::GateSourceRect: return "gate-source-rect"_s;
+    case Decision::GateCombination: return "gate-combination"_s;
+    case Decision::GateLevel: return "gate-level"_s;
+    case Decision::GateVideoFrameFormat: return "gate-videoframe-format"_s;
+    case Decision::NoFrame: return "no-frame"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "unknown"_s;
+}
+
+static ASCIILiteral webglVideoUploadPathName(WebGLRenderingContextBase::VideoUploadPathTakenForTesting path)
+{
+    using Path = WebGLRenderingContextBase::VideoUploadPathTakenForTesting;
+    switch (path) {
+    case Path::Hardware: return "hardware"_s;
+    case Path::Software: return "software"_s;
+    case Path::None: return "none"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "unknown"_s;
+}
+
+std::optional<Internals::WebGLVideoUploadRecord> Internals::webglLastVideoUpload(WebGLRenderingContextBase& context)
+{
+    auto record = context.lastVideoUploadForTesting();
+    if (!record)
+        return std::nullopt;
+    WebGLVideoUploadRecord result { webglVideoUploadPathName(record->path), { }, emptyString(), record->sequence };
+    if (record->decision != WebGLRenderingContextBase::VideoUploadDecision::Copy)
+        result.reason = webglVideoUploadDecisionName(record->decision);
+    else if (!record->copy)
+        result.reason = "unknown"_s; // The copy record is not this upload's.
+    else {
+        result.reason = webglVideoUploadOutcomeName(record->copy->outcome);
+        result.pixelFormat = webglVideoUploadFourCCString(record->copy->pixelFormat);
+    }
+    return result;
+}
+#endif
 #endif
 
 void Internals::setPageVisibility(bool isVisible)

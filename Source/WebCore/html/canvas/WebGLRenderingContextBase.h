@@ -445,6 +445,36 @@ public:
     void forceRestoreContext();
     using SimulatedEventForTesting = GraphicsContextGL::SimulatedEventForTesting;
     WEBCORE_EXPORT void simulateEventForTesting(SimulatedEventForTesting);
+#if ENABLE(VIDEO)
+    // Test-only. Forces the path of video and VideoFrame uploads. Hardware: an upload that cannot use
+    // the hardware path leaves the texture unchanged and raises INVALID_OPERATION.
+    enum class VideoUploadPathForTesting : uint8_t { Default, Software, Hardware };
+    WEBCORE_EXPORT void setVideoUploadPathForTesting(VideoUploadPathForTesting);
+    // Why a video upload takes the path it takes, as decided in this process.
+    enum class VideoUploadDecision : uint8_t {
+        Copy, // GraphicsContextGL::copyTextureFromVideoFrame() was tried.
+        Forced, // Software path forced for testing.
+        GateFunction,
+        GateTarget, // Not TEXTURE_2D, e.g. a cube map face.
+        GateSourceRect,
+        GateCombination,
+        GateLevel,
+        GateVideoFrameFormat,
+        NoFrame,
+    };
+    // Test-only. The path a video upload took. None: the hardware path was forced but not possible.
+    enum class VideoUploadPathTakenForTesting : uint8_t { Hardware, Software, None };
+    // Test-only. How the last video or VideoFrame upload that passed validation was done.
+    struct VideoUploadRecordForTesting {
+        uint64_t sequence { 0 };
+        VideoUploadPathTakenForTesting path { VideoUploadPathTakenForTesting::Software };
+        VideoUploadDecision decision { VideoUploadDecision::Copy };
+        // For decision Copy: the record of the copy, or nullopt when the context's last copy is not this
+        // upload's (e.g. the copy was not sent to the GPU process).
+        std::optional<GraphicsContextGL::VideoUploadRecord> copy;
+    };
+    WEBCORE_EXPORT std::optional<VideoUploadRecordForTesting> lastVideoUploadForTesting();
+#endif
 
     GraphicsContextGL* graphicsContextGL() const { return m_context; }
 
@@ -1101,6 +1131,23 @@ private:
     ExceptionOr<void> texElementSnapshot2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, const CanvasElementSnapshot&, std::optional<WebGLCopyElementImageConfig>);
 #if ENABLE(VIDEO)
     ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, HTMLVideoElement& source);
+
+    std::optional<VideoUploadDecision> videoUploadGate(TexImageFunctionID, GCGLenum target, bool sourceImageRectIsDefault, GCGLenum format, GCGLenum type, GCGLint level) const;
+    // Returns true when the upload is done: the frame was copied, or the copy failed and the software path is not allowed.
+    bool copyVideoFrameToTexture(VideoFrame&, WebGLTexture&, ASCIILiteral functionName, GCGLint level, GCGLint internalformat, GCGLenum format, GCGLenum type);
+    // Returns true when the upload continues on the software path.
+    bool recordSoftwareVideoUpload(VideoUploadDecision, ASCIILiteral functionName);
+
+    struct LastVideoUploadForTesting {
+        uint64_t sequence { 0 };
+        VideoUploadDecision decision { VideoUploadDecision::Copy };
+        bool hardwareOnly { false };
+        bool copied { false };
+        uint64_t copyNumber { 0 };
+    };
+    LastVideoUploadForTesting m_lastVideoUploadForTesting;
+    uint64_t m_videoCopiesForTesting { 0 };
+    VideoUploadPathForTesting m_videoUploadPathForTesting { VideoUploadPathForTesting::Default };
 #endif
 #if ENABLE(OFFSCREEN_CANVAS)
     ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, OffscreenCanvas& source);

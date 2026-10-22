@@ -114,6 +114,9 @@ fast/webcodecs/audio-data-copy-to-planar-frame-offset.html [ Skip ]
 # WebGPU is disabled
 http/tests/webgpu [ Skip ]
 fast/webgpu [ Skip ]
+
+# WebGL video-format tests: the baselines record macOS decoder and WebGL video upload behaviour.
+webgl/video-formats [ Skip ]
 inspector/canvas/console-record-webgpu.html [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
 inspector/canvas/recording-webgpu-frameCount.html [ Skip ]

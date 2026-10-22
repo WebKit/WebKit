@@ -8304,3 +8304,15 @@ webkit.org/b/328230 media/modern-media-controls/spatial-video-support/spatial-vi
 media/modern-media-controls/spatial-video-support/spatial-video-support-render-cubemap.html [ Failure ]
 media/modern-media-controls/spatial-video-support/spatial-video-support-render-equirect.html [ Failure ]
 media/modern-media-controls/spatial-video-support/spatial-video-support-render-fisheye.html [ Failure ]
+
+# The expected results record the correct output. VideoFrames with alpha upload the half-transparent
+# desaturated blue patch wrongly, and SRGB8_ALPHA8 uploads are sRGB-encoded twice on the hardware path.
+webgl/video-formats/upload-path-api.html [ Failure ]
+# The expected results record the correct output. The software upload path of 10-bit HEVC video played
+# through MSE uploads black.
+webgl/video-formats/upload-path-hevc-420-10bit-bt709-videorange-frag-mse.html [ Failure ]
+# The expected results record the correct output. SRGB8_ALPHA8 uploads are sRGB-encoded twice on the hardware path.
+webgl/video-formats/upload-path-srgb.html [ Failure ]
+# The expected results record the correct output. The software upload path of 10-bit VP9 video played through MSE
+# uploads black.
+webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videorange-mse.html [ Failure ]

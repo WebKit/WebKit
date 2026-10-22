@@ -100,8 +100,10 @@ public:
 #endif
     GCGLErrorCodeSet getErrors() final;
 #if ENABLE(VIDEO)
-    bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type , bool premultiplyAlpha, bool flipY) final;
+    bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject texture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type , bool premultiplyAlpha, bool flipY) final;
     RefPtr<WebCore::NativeImage> videoFrameToNativeImage(WebCore::VideoFrame&) final;
+    std::optional<VideoUploadRecord> lastVideoUploadForTesting() final;
+    void setVideoUploadHardwareOnlyForTesting(bool) final;
 #endif
 
     void simulateEventForTesting(WebCore::GraphicsContextGLSimulatedEventForTesting) final;
@@ -431,6 +433,12 @@ private:
     bool m_didInitialize { false };
 #if PLATFORM(COCOA)
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
+#endif
+#if ENABLE(VIDEO)
+    // Test-only. The base class record numbers every copyTextureFromVideoFrame() call and holds the outcome
+    // of calls that did not reach the GPU process. The GPU process numbers the calls it received.
+    uint64_t m_videoUploadsSentForTesting { 0 };
+    bool m_lastVideoUploadWasSentForTesting { false };
 #endif
 #if ENABLE(VIDEO)
     const RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
