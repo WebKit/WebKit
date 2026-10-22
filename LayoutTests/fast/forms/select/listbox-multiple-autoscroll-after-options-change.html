@@ -40,7 +40,8 @@ window.onload = () => {
     setTimeout(() => {
         eventSender.mouseUp();
         testPassed('Did not crash.');
-        shouldBeEqualToString('selectedOptionsText()', 'Option 1');
+        // The drag selected up to the last visible option, and changing the options stopped autoscrolling from extending the selection.
+        shouldBeEqualToString('selectedOptionsText()', 'Option 1,Option 2,Option 3');
         finishJSTest();
     }, 200);
 };

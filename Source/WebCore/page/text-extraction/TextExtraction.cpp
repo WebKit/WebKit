@@ -1549,7 +1549,9 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
     if (isScrollable)
         context.hasOverflowItemsStack.append(false);
 
-    if (RefPtr container = dynamicDowncast<ContainerNode>(node)) {
+    // A select is represented by the list of its options, which are not extracted again from its rendered content.
+    bool isSelectWithOptions = item && std::holds_alternative<SelectData>(item->data);
+    if (RefPtr container = dynamicDowncast<ContainerNode>(node); container && !isSelectWithOptions) {
         for (Ref child : composedTreeChildren<0>(*container))
             extractRecursive(child.get(), item ? *item : parentItem, context);
 

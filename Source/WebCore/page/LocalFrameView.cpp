@@ -74,6 +74,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLPlugInElement.h"
+#include "HTMLSelectElement.h"
 #include "HighlightRegistry.h"
 #include "ImageDocument.h"
 #include "InspectorBackendClient.h"
@@ -106,7 +107,6 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
-#include "RenderListBox.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGRoot.h"
 #include "RenderScrollbar.h"
@@ -3385,9 +3385,6 @@ ScrollableArea* LocalFrameView::scrollableAreaForNode(ContainerNode& node)
         return this;
 
     if (CheckedPtr renderer = node.renderer()) {
-        if (auto* renderListBox = dynamicDowncast<RenderListBox>(*renderer))
-            return renderListBox;
-
         if (CheckedPtr layer = renderer->enclosingLayer()) {
             if (CheckedPtr scrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No))
                 return scrollableLayer->scrollableArea();
@@ -4992,11 +4989,23 @@ void LocalFrameView::performPostLayoutTasks()
 
     resnapAfterLayout();
 
+    if (!m_listBoxesNeedingSelectionReveal.isEmptyIgnoringNullReferences()) {
+        auto listBoxes = copyToVectorOf<Ref<HTMLSelectElement>>(m_listBoxesNeedingSelectionReveal);
+        m_listBoxesNeedingSelectionReveal.clear();
+        for (auto& listBox : listBoxes)
+            listBox->scrollToSelection();
+    }
+
     protect(m_frame->document())->scheduleDeferredAXObjectCacheUpdate();
 
     RefPtr document = m_frame->document();
     if (document && !document->quirks().needsSuppressPostLayoutBoundaryEventsQuirk())
         m_frame->eventHandler().scheduleMouseEventTargetUpdateAfterLayout();
+}
+
+void LocalFrameView::scheduleListBoxSelectionReveal(HTMLSelectElement& listBox)
+{
+    m_listBoxesNeedingSelectionReveal.add(listBox);
 }
 
 void LocalFrameView::addScrollableAreaForScrollAnchoring(ScrollableArea& scrollableArea)

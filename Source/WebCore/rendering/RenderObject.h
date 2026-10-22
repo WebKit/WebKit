@@ -146,7 +146,6 @@ public:
         Image,
         Inline,
         LineBreak,
-        ListBox,
         ListItem,
         ListOutsideMarker,
         Media,
@@ -449,7 +448,6 @@ public:
     bool isRenderFrame() const { return type() == Type::Frame; }
     bool isRenderFrameSet() const { return type() == Type::FrameSet; }
     virtual bool isImage() const { return false; }
-    bool isRenderListBox() const { return type() == Type::ListBox; }
     bool isRenderListItem() const { return type() == Type::ListItem; }
     bool isRenderListOutsideMarker() const { return type() == Type::ListOutsideMarker; }
     bool isRenderMedia() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsMedia); }

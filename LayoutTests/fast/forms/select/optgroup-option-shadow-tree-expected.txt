@@ -11,7 +11,8 @@ PASS ogShadow.firstChild.textContent is "Group"
 PASS ogShadow.lastChild.tagName is "SLOT"
 
 Option without label attribute:
-PASS opt1Shadow === null is true
+PASS opt1Shadow !== null is true
+PASS opt1Shadow.firstChild.textContent is "Child text"
 
 Option with label attribute:
 PASS opt2Shadow !== null is true
@@ -19,17 +20,17 @@ PASS opt2Shadow.childNodes.length is 2
 PASS opt2Shadow.firstChild.textContent is "Label text"
 
 After setting label attribute on option:
-PASS opt1Shadow !== null is true
+PASS internals.shadowRoot(opt1) === opt1Shadow is true
 PASS opt1Shadow.firstChild.textContent is "Dynamic label"
 
 After changing label attribute on option:
 PASS opt1Shadow.firstChild.textContent is "Changed label"
 
 After removing label attribute from option:
-PASS opt1Shadow.firstChild.textContent is ""
+PASS opt1Shadow.firstChild.textContent is "Child text"
 
 After removing label attribute from option with initial label:
-PASS opt2Shadow.firstChild.textContent is ""
+PASS opt2Shadow.firstChild.textContent is "Hidden text"
 
 After changing optgroup label attribute:
 PASS ogShadow.firstChild.textContent is "New Group"

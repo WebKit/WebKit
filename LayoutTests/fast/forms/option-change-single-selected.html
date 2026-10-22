@@ -27,5 +27,7 @@ if (document.forms[0].elements[0].value != "SUCCESS" || document.forms[0].elemen
   document.getElementById("result").innerHTML = "FAILURE";
  else
   document.getElementById("result").innerHTML = "SUCCESS";
+// Hide the controls, whose options would otherwise be part of the text output.
+document.forms[0].style.display = "none";
 </script>
 </body>

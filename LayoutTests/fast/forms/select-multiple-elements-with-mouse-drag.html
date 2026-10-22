@@ -11,7 +11,8 @@ function test() {
         var selectObject = document.getElementById("selectId");
 
         var optionHeight =  selectObject.offsetHeight / selectObject.size;
-        var x = selectObject.offsetLeft + selectObject.offsetWidth / 2;
+        // The middle of the options, which are left of the scrollbar.
+        var x = selectObject.offsetLeft + selectObject.clientLeft + selectObject.clientWidth / 2;
         var y = selectObject.offsetTop + optionHeight / 2;
 
         eventSender.dragMode = false;

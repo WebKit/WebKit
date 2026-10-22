@@ -1115,8 +1115,93 @@ select:not(:-internal-uses-menulist):enabled {
     color: CanvasText;
 }
 
+/*
+ * List box with the default appearance. The options and optgroups are rendered by their own
+ * renderers in a scroll container: rows one line tall plus a pixel of spacing, with the selected
+ * options highlighted. The first value of -internal-auto-base() is for the
+ * default appearance; selectMultipleAndListBox.css covers base appearance.
+ */
+
+select:not(:-internal-uses-menulist) {
+    /* RenderBox::listBoxIntrinsicInnerLogicalHeight() makes the select as tall as its preferred number of rows. */
+    overflow: -internal-auto-base(hidden scroll, revert-rule);
+    padding: -internal-auto-base(0, revert-rule);
+    -webkit-user-select: -internal-auto-base(none, revert-rule);
+}
+
+/* Like legacy list boxes, rows are as tall as the font needs, whatever the line height. */
+select:not(:-internal-uses-menulist) option,
+select:not(:-internal-uses-menulist) optgroup {
+    line-height: -internal-auto-base(initial, revert-rule) !important;
+}
+
+select:not(:-internal-uses-menulist) option,
+select:not(:-internal-uses-menulist) optgroup legend,
+select:not(:-internal-uses-menulist) optgroup::-internal-optgroup-label {
+    display: -internal-auto-base(block, revert-rule);
+    min-block-size: -internal-auto-base(calc(round(1lh, 1px) + 1px), revert-rule);
+    padding-block: -internal-auto-base(0, revert-rule);
+    padding-inline: -internal-auto-base(0, revert-rule);
+}
+
+/* Like legacy list boxes, options show their label rather than their content, whatever the styles of the page. */
+select:not(:-internal-uses-menulist) option::-internal-option-label {
+    display: -internal-auto-base(inline, revert-rule) !important;
+}
+
+select:not(:-internal-uses-menulist) option::-internal-option-content {
+    display: -internal-auto-base(none, revert-rule) !important;
+}
+
+/* A separator takes a row, with its 2px of border in the middle. */
+select:not(:-internal-uses-menulist) hr {
+    margin-block: -internal-auto-base(calc((round(1lh, 1px) + 1px - 2px) / 2), revert-rule);
+}
+
+/* Indent the options of an optgroup with spaces rather than padding, which stays at its initial value. */
+select:not(:-internal-uses-menulist) optgroup option::before {
+    content: -internal-auto-base("\a0\a0\a0\a0", revert-rule);
+}
+
+select:not(:-internal-uses-menulist) optgroup legend,
+select:not(:-internal-uses-menulist) optgroup::-internal-optgroup-label {
+    font-size: -internal-auto-base(1em, revert-rule);
+    font-weight: -internal-auto-base(bolder, revert-rule);
+    color: -internal-auto-base(inherit, revert-rule);
+    white-space: -internal-auto-base(nowrap, revert-rule);
+}
+
+/* The selection is highlighted whatever the styles of the page. */
+select:not(:-internal-uses-menulist) option:checked {
+    background-color: -internal-auto-base(color-mix(in srgb, GrayText 25%, transparent), revert-rule) !important;
+#if defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA
+    background-color: -internal-auto-base(-apple-system-unemphasized-selected-content-background, revert-rule) !important;
+#endif
+}
+
+select:not(:-internal-uses-menulist):focus option:checked {
+    background-color: -internal-auto-base(Highlight, revert-rule) !important;
+    color: -internal-auto-base(HighlightText, revert-rule) !important;
+#if defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA
+    background-color: -internal-auto-base(-apple-system-selected-content-background, revert-rule) !important;
+#endif
+}
+
+select:not(:-internal-uses-menulist) option:disabled {
+    color: -internal-auto-base(GrayText, revert-rule);
+}
+
+select:not(:-internal-uses-menulist) option:checked:disabled {
+    color: -internal-auto-base(GrayText, revert-rule) !important;
+}
+
 select::-internal-select-button-slot {
     text-overflow: inherit;
+}
+
+/* Options in the picker inherit read-only from its user agent part. Match that in a list box. */
+select::-internal-select-list-box-slot {
+    -webkit-user-modify: read-only;
 }
 
 select:-internal-uses-menulist > button:first-child {

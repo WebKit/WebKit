@@ -323,6 +323,10 @@ public:
     void computeLogicalWidth(LogicalExtentComputedValues&) const;
 
     void overrideLogicalHeightForSizeContainment();
+    // A list box is as tall as its preferred number of rows, whatever its options are.
+    std::optional<LayoutUnit> listBoxIntrinsicInnerLogicalHeight() const;
+    // A select rendered as a list box, without base appearance.
+    bool isDefaultAppearanceListBox() const;
 
     // This function will compute the logical border-box height, without laying
     // out the box. This means that the result is only "correct" when the height

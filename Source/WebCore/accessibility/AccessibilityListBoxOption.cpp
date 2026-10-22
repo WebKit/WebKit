@@ -40,7 +40,6 @@
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "IntRect.h"
-#include "RenderListBox.h"
 #include "RenderObjectInlines.h"
 
 namespace WebCore {
@@ -50,9 +49,8 @@ using namespace HTMLNames;
 // This needs to match how AccessibilityRenderObject and AccessibilityNodeObject add the children of a select.
 static bool LEGACY_NODELETE listItemsAreChildrenOfSelect(const HTMLSelectElement& select)
 {
-    if (CheckedPtr renderer = select.renderer())
-        return is<RenderListBox>(*renderer);
-    return !select.isDropdownBox();
+    // Once the select has a renderer, its options and optgroups have renderers of their own.
+    return !select.renderer() && !select.isDropdownBox();
 }
 
 AccessibilityListBoxOption::AccessibilityListBoxOption(AXID axID, RenderObject& renderer, AXObjectCache& cache)
@@ -119,20 +117,7 @@ LayoutRect AccessibilityListBoxOption::elementRect() const
     if (!listBoxParentNode)
         return { };
 
-    CheckedPtr listBoxRenderer = dynamicDowncast<RenderListBox>(listBoxParentNode->renderer());
-    if (!listBoxRenderer)
-        return AccessibilityRenderObject::elementRect();
-
-    CheckedPtr cache = protect(listBoxRenderer->document())->axObjectCache();
-    RefPtr listbox = cache ? cache->getOrCreate(*listBoxRenderer) : nullptr;
-    if (!listbox)
-        return { };
-
-    auto parentRect = listbox->boundingBoxRect();
-    int index = listBoxOptionIndex();
-    if (index != -1)
-        return listBoxRenderer->itemBoundingBoxRect(parentRect.location(), index);
-    return { };
+    return AccessibilityRenderObject::elementRect();
 }
 
 bool AccessibilityListBoxOption::computeIsIgnored() const
