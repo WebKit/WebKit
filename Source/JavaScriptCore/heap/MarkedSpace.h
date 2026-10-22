@@ -68,14 +68,15 @@ public:
     // We have an extra size class for size zero.
     static constexpr size_t numSizeClasses = largeCutoff / sizeStep + 1;
     
-    // Versions identify which collection a block's bits belong to. A heap's versions are
-    // never nullVersion or nextVersion(nullVersion): they start at initialVersion and
-    // wrap back to it. So a block at nullVersion (new, or reset at a wrap) can never look
-    // current, or look one version behind, by accident.
+    // Versions identify which collection a block's bits belong to. A heap's versions start
+    // at initialVersion and wrap back to it, never reaching nullVersion, so a block at
+    // nullVersion (new, or reset at a wrap) never looks current. initialVersion is
+    // nextVersion(nullVersion), so a block a wrap resets is one version behind the
+    // version the wrap moves to, and its kept marks still record the survivors.
     static constexpr HeapVersion nullVersion = 0;
-    static constexpr HeapVersion initialVersion = 2;
+    static constexpr HeapVersion initialVersion = 1;
     
-    static HeapVersion nextVersion(HeapVersion version)
+    static constexpr HeapVersion nextVersion(HeapVersion version)
     {
         version++;
         if (version == nullVersion)

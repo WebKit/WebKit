@@ -179,7 +179,16 @@ void MarkedSpace::initializeSizeClassForStepSize()
         });
 }
 
+// Options::initialMarkingVersion() lets tests start a heap near the version wrap.
+static HeapVersion startingMarkingVersion()
+{
+    if (unsigned version = Options::initialMarkingVersion())
+        return version;
+    return MarkedSpace::initialVersion;
+}
+
 MarkedSpace::MarkedSpace(JSC::Heap* heap)
+    : m_markingVersion(startingMarkingVersion())
 {
     ASSERT_UNUSED(heap, heap == &this->heap());
     initializeSizeClassForStepSize();
@@ -463,12 +472,12 @@ void MarkedSpace::endMarking()
 }
 
 // For a space that has never been marked: each collection advances either the marking version or
-// the Eden version, so both are still initial, and every block is at nullVersion, which matches
-// neither the old version nor the new one, so no block's marks change meaning.
+// the Eden version, so both are still at their start versions, and every block is at nullVersion,
+// which matches neither the old version nor the new one, so no block's marks change meaning.
 void MarkedSpace::adoptMarkingVersion(HeapVersion version)
 {
     ASSERT(!m_isMarking);
-    ASSERT(m_markingVersion == initialVersion && m_edenVersion == initialVersion);
+    ASSERT(m_markingVersion == startingMarkingVersion() && m_edenVersion == initialVersion);
     m_markingVersion = version;
 }
 

@@ -75,10 +75,10 @@ inline bool MarkedBlock::staleMarksStillRecordSurvivors(HeapVersion myMarkingVer
 {
     // Whether this block's stale marks still record the survivors. Only during a Full
     // collection, whose Begin made them stale:
-    // - nullVersion: yes. A new block has no survivors and marks are clear; a block reset
-    //   at a version wrap kept the marks as survivors.
     // - Exactly one version behind: yes. These are the marks made since the previous Full
-    //   collection began, which are the survivors.
+    //   collection began, which are the survivors. That includes a block this collection's
+    //   version wrap reset to nullVersion, one behind initialVersion; a new block counts
+    //   too in that collection, which is harmless, since its marks are clear.
     // - Anything older: no. The block has no survivors.
     // An Eden collection does not advance the marking version, so marks stale then
     // predate the last Full collection. Between collections, marks one version behind
@@ -86,8 +86,7 @@ inline bool MarkedBlock::staleMarksStillRecordSurvivors(HeapVersion myMarkingVer
     ASSERT(space()->isMarking());
     if (heap()->collectionScope() != CollectionScope::Full)
         return false;
-    return myMarkingVersion == MarkedSpace::nullVersion
-        || MarkedSpace::nextVersion(myMarkingVersion) == markingVersion;
+    return MarkedSpace::nextVersion(myMarkingVersion) == markingVersion;
 }
 
 inline bool MarkedBlock::Handle::isAllocated()

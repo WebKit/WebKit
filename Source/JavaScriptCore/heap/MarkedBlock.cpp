@@ -358,15 +358,19 @@ void MarkedBlock::resetNewlyAllocatedForVersionWrap()
     header().m_newlyAllocatedVersion = MarkedSpace::nullVersion;
 }
 
-// Called when the heap's marking version is about to wrap, at a collections's Begin. Keeps the marks of the
+// Called when the heap's marking version is about to wrap, at a collection's Begin. Keeps the marks of the
 // survivors, those from the version about to be replaced, clears any older stale marks,
-// and sets the version to nullVersion which staleMarksStillRecordSurvivors() has a special case for.
+// and sets the version to nullVersion, one behind initialVersion, the version this collection moves to.
 void MarkedBlock::resetMarksForVersionWrap()
 {
     if (areMarksStale())
         header().m_marks.clearAll();
     header().m_markingVersion = MarkedSpace::nullVersion;
 }
+
+// staleMarksStillRecordSurvivors() relies on this to find the survivors of the blocks resetMarksForVersionWrap()
+// leaves at nullVersion.
+static_assert(MarkedSpace::nextVersion(MarkedSpace::nullVersion) == MarkedSpace::initialVersion);
 
 #if ASSERT_ENABLED
 void MarkedBlock::assertMarksNotStale()
