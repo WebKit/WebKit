@@ -487,16 +487,15 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             return;
         }
 
-        let promises = [];
-
-        // Editing a cookie can change its identity (name/domain/path), so delete the original first.
+        // Editing a cookie can change its identity (name/domain/path), so delete the original first. Run these in
+        // order: a delete that finishes after the set would remove the cookie that was just written when the
+        // identity is unchanged, and a reload that finishes early would show stale cookies.
         if (editingCookie)
-            promises.push(this._deleteCookie(editingCookie));
+            await this._deleteCookie(editingCookie);
 
-        promises.push(this._setCookie(cookieToSet, cookieProtocolPayload));
+        await this._setCookie(cookieToSet, cookieProtocolPayload);
 
-        promises.push(this._reloadCookies());
-        await Promise.all(promises);
+        await this._reloadCookies();
 
         let index = this._filteredCookies.findIndex((existingCookie) => cookieToSet.equals(existingCookie));
         if (index >= 0)

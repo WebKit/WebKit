@@ -94,6 +94,7 @@ enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : uint8_t;
 enum class StoredCredentialsPolicy : uint8_t;
 struct ClientOrigin;
+struct Cookie;
 struct NotificationData;
 struct NotificationPayload;
 struct OrganizationStorageAccessPromptQuirk;
@@ -182,6 +183,7 @@ public:
     void hasHadUserInteraction(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void isRelationshipOnlyInDatabaseOnce(PAL::SessionID, const RegistrableDomain& subDomain, const RegistrableDomain& topDomain, CompletionHandler<void(bool)>&&);
     void hasLocalStorageOrCookies(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
+    void getCookiesForInspectedPage(PAL::SessionID, WebPageProxyIdentifier, const URL& mainFrameURL, Vector<std::pair<URL, WebCore::FrameIdentifier>>&& frames, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void hasLocalStorage(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void isGrandfathered(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void isPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);

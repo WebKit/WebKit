@@ -990,6 +990,16 @@ void NetworkProcessProxy::hasLocalStorageOrCookies(PAL::SessionID sessionID, con
     sendWithAsyncReply(Messages::NetworkProcess::HasLocalStorageOrCookies(sessionID, resourceDomain), WTF::move(completionHandler));
 }
 
+void NetworkProcessProxy::getCookiesForInspectedPage(PAL::SessionID sessionID, WebPageProxyIdentifier pageID, const URL& mainFrameURL, Vector<std::pair<URL, WebCore::FrameIdentifier>>&& frames, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler({ });
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::GetCookiesForInspectedPage(sessionID, pageID, mainFrameURL, WTF::move(frames)), WTF::move(completionHandler));
+}
+
 void NetworkProcessProxy::hasLocalStorage(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!canSendMessage()) {

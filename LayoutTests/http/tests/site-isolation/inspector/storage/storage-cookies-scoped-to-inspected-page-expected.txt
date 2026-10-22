@@ -1,0 +1,20 @@
+Tests that under Site Isolation Storage.getCookies and Storage.deleteCookies are scoped to the cookies the inspected page can access.
+
+
+== Running test suite: SiteIsolation.Storage.Cookies.ScopedToInspectedPage
+-- Running test case: SiteIsolation.Storage.Cookies.ScopedToInspectedPage.Setup
+PASS: Cross-site iframe should be its own Frame Target (out-of-process).
+Seeded cookies.
+
+-- Running test case: SiteIsolation.Storage.Cookies.ScopedToInspectedPage.NotBlocked
+PASS: Cross-site iframe's cookie should be returned when not blocked.
+PASS: Top site's path-scoped cookie should be returned even though its path was never loaded.
+PASS: Cookie for a site not in the frame tree should not be returned.
+
+-- Running test case: SiteIsolation.Storage.Cookies.ScopedToInspectedPage.BlockAll
+PASS: Blocked cross-site iframe's cookie should not be returned.
+PASS: Top site's cookie should still be returned.
+
+-- Running test case: SiteIsolation.Storage.Cookies.ScopedToInspectedPage.DeleteCannotReachHiddenCookie
+PASS: Hidden cookie should survive a delete issued while it was hidden.
+

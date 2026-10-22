@@ -1,0 +1,26 @@
+Tests that under Site Isolation Storage.getCookies applies third-party cookie blocking and partition scoping per site, and that Storage.deleteCookies honors partitionKey.
+
+
+== Running test suite: SiteIsolation.Storage.Cookies.PartitionScoping
+-- Running test case: SiteIsolation.Storage.Cookies.PartitionScoping.Setup
+PASS: Cross-site iframe should be its own Frame Target (out-of-process).
+Seeded cookies.
+
+-- Running test case: SiteIsolation.Storage.Cookies.PartitionScoping.NotBlocked
+PASS: Cross-site unpartitioned cookie should be returned.
+PASS: Cross-site cookie in the top site's partition should be returned with its partitionKey.
+PASS: Cookie in another top site's partition should not be returned.
+PASS: Both the unpartitioned and the partitioned 'Twin' should be returned.
+
+-- Running test case: SiteIsolation.Storage.Cookies.PartitionScoping.BlockAllExceptPartitioned
+PASS: Cross-site unpartitioned cookie should not be returned.
+PASS: Cross-site cookie in the top site's partition should be returned.
+
+-- Running test case: SiteIsolation.Storage.Cookies.PartitionScoping.BlockAll
+PASS: Cross-site unpartitioned cookie should not be returned.
+PASS: Cross-site cookie in the top site's partition should not be returned.
+
+-- Running test case: SiteIsolation.Storage.Cookies.PartitionScoping.DeleteByPartitionKey
+PASS: Unpartitioned 'Twin' should be deleted.
+PASS: Partitioned 'Twin' should survive.
+

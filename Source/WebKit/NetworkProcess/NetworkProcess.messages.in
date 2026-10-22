@@ -79,6 +79,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     ApplicationWillEnterForeground()
 
     FlushCookies(PAL::SessionID sessionID) -> ()
+    GetCookiesForInspectedPage(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID, URL mainFrameURL, Vector<std::pair<URL, WebCore::FrameIdentifier>> frames) -> (Vector<WebCore::Cookie> cookies)
     FlushNetworkProcessIPC() -> ()
 
 #if PLATFORM(MAC)

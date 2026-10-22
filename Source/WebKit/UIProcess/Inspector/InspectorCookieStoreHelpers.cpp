@@ -44,6 +44,8 @@ CookieFilter CookieFilter::fromProtocol(const RefPtr<JSON::Object>& filter)
     parsed.path = filter->getString("path"_s);
     parsed.httpOnly = filter->getBoolean("httpOnly"_s);
     parsed.secure = filter->getBoolean("secure"_s);
+    if (auto partitionKey = filter->getValue("partitionKey"_s); partitionKey && partitionKey->type() == JSON::Value::Type::String)
+        parsed.partitionKey = partitionKey->asString();
     return parsed;
 }
 
@@ -65,6 +67,10 @@ bool CookieFilter::matches(const WebCore::Cookie& cookie) const
         return false;
 
     if (secure && cookie.secure != *secure)
+        return false;
+
+    // Compare by emptiness first: an unpartitioned cookie's key may be a null String, which != "".
+    if (partitionKey && (partitionKey->isEmpty() ? !cookie.partitionKey.isEmpty() : cookie.partitionKey != *partitionKey))
         return false;
 
     return true;

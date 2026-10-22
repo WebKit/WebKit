@@ -192,6 +192,8 @@ public:
     bool trackingPreventionDebugLoggingEnabled() const { return m_isTrackingPreventionDebugLoggingEnabled; }
     WebCore::ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecisionForRequest(const WebCore::ResourceRequest&, std::optional<WebCore::FrameIdentifier>, std::optional<WebPageProxyIdentifier>, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::IsKnownCrossSiteTracker, bool isInitiatedByWorker = false, bool navigationLosesFrameSpecificStorageAccess = false) const;
     WebCore::ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecisionForRequest(const URL& firstPartyForCookies, const URL& resource, std::optional<WebCore::FrameIdentifier>, std::optional<WebPageProxyIdentifier>, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::IsKnownCrossSiteTracker, bool isInitiatedByWorker = false, bool navigationLosesFrameSpecificStorageAccess = false) const;
+    // The partition identifier cookies set under this first party are stored in, or empty if cookie partitioning is unavailable.
+    String partitionIdentifierForInspector(const URL& firstParty) const;
     bool shouldBlockCookies(const WebCore::ResourceRequest&, std::optional<WebCore::FrameIdentifier>, std::optional<WebPageProxyIdentifier>, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::IsKnownCrossSiteTracker) const;
     bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, std::optional<WebCore::FrameIdentifier>, std::optional<WebPageProxyIdentifier>, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::IsKnownCrossSiteTracker) const;
     bool shouldBlockThirdPartyCookies(const WebCore::RegistrableDomain&) const;
