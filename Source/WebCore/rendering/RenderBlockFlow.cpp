@@ -1101,7 +1101,8 @@ RenderBlockFlow::BlockPositionAndMargin RenderBlockFlow::layoutBlockChildFromInl
     auto applyMarginTrimBlockStartIfApplicable = [&]() -> std::optional<bool> {
         if (!style().marginTrim().contains(Style::MarginTrimSide::BlockStart))
             return { };
-        if (!marginInfo.canCollapseMarginBeforeWithChildren())
+        // Only a block that is still at the block-start edge has its margin trimmed; a preceding line or block has already cleared that state.
+        if (!marginInfo.canCollapseWithMarginBefore())
             return { };
         auto previousMarginTrimBlockStart = layoutState->marginTrimBlockStart();
         layoutState->setMarginTrimBlockStart(true);
