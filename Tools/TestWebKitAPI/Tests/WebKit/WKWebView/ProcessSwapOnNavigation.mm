@@ -7017,6 +7017,15 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpenerViaClientInitiatedNavigation)
     done = false;
 }
 
+static constexpr auto pageShowWithLinkToAppleTestBytes = R"PSONRESOURCE(
+<script>
+window.addEventListener('pageshow', function(event) {
+    window.webkit.messageHandlers.pson.postMessage(event.persisted ? "persisted" : "NOT persisted");
+});
+</script>
+<a id="testLink" href="pson://www.apple.com/main.html">Navigate</a>
+)PSONRESOURCE"_s;
+
 TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -7025,7 +7034,7 @@ TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
     RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addMappingFromURLString:@"pson://www.webkit.org/main2.html" toData:linkToAppleTestBytes];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main2.html" toData:pageShowWithLinkToAppleTestBytes];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     RetainPtr messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
@@ -7080,9 +7089,21 @@ TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
     EXPECT_NE(pid1, pid3); // Should have process-swapped.
 
     // Navigate back to the suspended page (should use the back/forward cache).
+    receivedMessage = false;
+    [receivedMessages removeAllObjects];
     [createdWebView goBack];
     TestWebKitAPI::Util::run(&receivedMessage);
     receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Under Site Isolation, related web views share a BrowsingContextGroup, so the old page is not
+    // put in the back/forward cache and going back reloads it.
+    EXPECT_EQ(1u, [receivedMessages count]);
+    if (isSiteIsolationEnabled(createdWebView.get()))
+        EXPECT_WK_STREQ(@"NOT persisted", receivedMessages.get()[0]);
+    else
+        EXPECT_WK_STREQ(@"persisted", receivedMessages.get()[0]);
 
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main2.html", [[createdWebView URL] absoluteString]);
     auto pid4 = [createdWebView _webProcessIdentifier];
