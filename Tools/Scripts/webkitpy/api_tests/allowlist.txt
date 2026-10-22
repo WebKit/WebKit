@@ -2269,7 +2269,6 @@ TestWebKitAPI.SOAuthorizationSubFrame.NoInterceptionsNonAppleFirstPartyMainFrame
 TestWebKitAPI.SOAuthorizationSubFrame.SOAuthorizationLoadPolicyIgnore
 TestWebKitAPI.SOAuthorizationSubFrame.SOAuthorizationLoadPolicyIgnoreAsync
 TestWebKitAPI.SOAuthorizationSubFrame.UserCancel
-TestWebKitAPI.SafeBrowsing
 TestWebKitAPI.SampledPageTopColor.DifferentColorsCumulativelyAboveMaxDifference
 TestWebKitAPI.SampledPageTopColor.DifferentColorsIndividuallyAboveMaxDifference
 TestWebKitAPI.SampledPageTopColor.DifferentColorsWithLeftOutlierAboveMaxDifference
@@ -4082,7 +4081,6 @@ TestWebKitAPI.WKWebView.PrintToPDFUsingPrintInteractionController
 TestWebKitAPI.WKWebView.PrintToPDFUsingPrintInteractionControllerAndPrintPageRenderer
 TestWebKitAPI.WKWebView.PrintToPDFUsingPrintPageRenderer
 TestWebKitAPI.WKWebView.PrivateSessionDiagnosticLoggingDelegate
-TestWebKitAPI.WKWebView.QualifiedServerTrustKVC
 TestWebKitAPI.WKWebView.RenderTree
 TestWebKitAPI.WKWebView.RequestAllTextRunsWithSubframes
 TestWebKitAPI.WKWebView.ServerTrustAfterTwoProcessSwaps
@@ -5053,7 +5051,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.DragAndDropTests.DragOutOfSameSiteIframeTwice
 [ ios ] TestWebKitAPI.DragAndDropTests.DragPromisedImageFileIntoFileUpload
 [ ios ] TestWebKitAPI.DragAndDropTests.DragSelectedTextInImageOverlay
-[ ios ] TestWebKitAPI.DragAndDropTests.DragStartScreenCoordinatesInCrossOriginOffsetIframe
 [ ios ] TestWebKitAPI.DragAndDropTests.DragStartScreenCoordinatesInSameSiteOffsetIframe
 [ ios ] TestWebKitAPI.DragAndDropTests.DraggableElementWithOnlyCustomPasteboardDataFiresDragEvents
 [ ios ] TestWebKitAPI.DragAndDropTests.DraggableElementWithTinyDragImageDoesNotCrash
@@ -5356,7 +5353,13 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.InsertTextAlternatives.InsertTrailingSpaceWhitespaceRebalance
 [ ios ] TestWebKitAPI.InsertTextAlternatives.Simple
 [ ios ] TestWebKitAPI.InteractiveWidget
-[ ios ] TestWebKitAPI.IsolatedSiteStore
+[ ios ] TestWebKitAPI.IsolatedSiteStore.DataRemoval
+[ ios ] TestWebKitAPI.IsolatedSiteStore.DataRemovalDoesNotImport
+[ ios ] TestWebKitAPI.IsolatedSiteStore.EvictionIsPersisted
+[ ios ] TestWebKitAPI.IsolatedSiteStore.EvictsOneOfTwoTiedSitesWithinTier
+[ ios ] TestWebKitAPI.IsolatedSiteStore.ImportsWhenTrackingPreventionIsTurnedOnLater
+[ ios ] TestWebKitAPI.IsolatedSiteStore.PartialDataRemovalAllowsImport
+[ ios ] TestWebKitAPI.IsolatedSiteStore.PersistsAcrossSessions
 [ ios ] TestWebKitAPI.JSBuffer.Data
 [ ios ] TestWebKitAPI.JSBuffer.EvaluateScript
 [ ios ] TestWebKitAPI.JSBuffer.IDLExposed
@@ -5628,6 +5631,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.SOAuthorizationRedirect.DismissUIDuringMiniaturizationThenAnother
 [ ios ] TestWebKitAPI.SOAuthorizationRedirect.SOAuthorizationLoadPolicyAllowAsync
 [ ios ] TestWebKitAPI.SOAuthorizationSubFrame.SOAuthorizationLoadPolicyAllowAsync
+[ ios ] TestWebKitAPI.SafeBrowsing
 [ ios ] TestWebKitAPI.SafeBrowsing.AllModalTypesProperlyDeferred
 [ ios ] TestWebKitAPI.SafeBrowsing.DeferredModalShownWhenProceedingThroughWarning
 [ ios ] TestWebKitAPI.SafeBrowsing.DeferredModalSuppressedWhenGoingBack
@@ -6111,7 +6115,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKDownload.UnknownContentLength
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.Basic
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.CookieAccessAfterNetworkProcessTermination
-[ ios ] TestWebKitAPI.WKHTTPCookieStore.CookiePolicy
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.CookiesForURL
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.DeletePartitionedCookie
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.HttpOnly
@@ -6653,6 +6656,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebView.PrintToPDFUsingPrintInteractionController
 [ ios ] TestWebKitAPI.WKWebView.PrintToPDFUsingPrintInteractionControllerAndPrintPageRenderer
 [ ios ] TestWebKitAPI.WKWebView.PrintToPDFUsingPrintPageRenderer
+[ ios ] TestWebKitAPI.WKWebView.QualifiedServerTrustKVC
 [ ios ] TestWebKitAPI.WKWebView.RepeatLoadFileURL
 [ ios ] TestWebKitAPI.WKWebView.ServerTrustKVC
 [ ios ] TestWebKitAPI.WKWebView.SetOpaqueNo
@@ -7389,7 +7393,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.FontManagerTests
 [ mac ] TestWebKitAPI.FragmentDirectiveGeneration.GenerateFragment
 [ mac ] TestWebKitAPI.FragmentDirectiveGeneration.VerifyFragmentRanges
-[ mac ] TestWebKitAPI.Fullscreen.AudioLifecycle
 [ mac ] TestWebKitAPI.GrammarMarkerPrecedence
 [ mac ] TestWebKitAPI.ImageAnalysisTests.AnalyzeDynamicallyLoadedImages
 [ mac ] TestWebKitAPI.ImageAnalysisTests.AnalyzeImageAfterChangingSource
@@ -7467,8 +7470,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.PrivateClickMeasurement.DaemonPrivateRelayEnforcement
 [ mac ] TestWebKitAPI.PrivateClickMeasurement.NetworkProcessDebugMode
 [ mac ] TestWebKitAPI.PrivateClickMeasurement.NetworkProcessPrivateRelayEnforcement
-[ mac ] TestWebKitAPI.PrivateClickMeasurement.SKAdNetwork
-[ mac ] TestWebKitAPI.PrivateClickMeasurement.SKAdNetworkAboutBlank
 [ mac ] TestWebKitAPI.PrivateClickMeasurement.SKAdNetworkWithoutNavigatingToAppStoreLink
 [ mac ] TestWebKitAPI.ProcessSwap.CrashWithGestureController
 [ mac ] TestWebKitAPI.ProcessSwap.DoNotUseWebProcessCacheForCOOPSwapAfterCommittingOtherOrigin
@@ -7507,7 +7508,47 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SOAuthorizationRedirect.InterceptionSucceed1
 [ mac ] TestWebKitAPI.SOAuthorizationRedirect.InterceptionSucceed2
 [ mac ] TestWebKitAPI.SOAuthorizationRedirect.InterceptionSucceedEntersWaitingWithDeferredViewInWindowChanges
-[ mac ] TestWebKitAPI.SOAuthorizationSubFrame.SOAuthorizationLoadPolicyAllowAsync
+[ mac ] TestWebKitAPI.SafeBrowsing.AllModalTypesProperlyDeferred
+[ mac ] TestWebKitAPI.SafeBrowsing.CleanDownloadProceedsAfterSafeBrowsingCheck
+[ mac ] TestWebKitAPI.SafeBrowsing.DeferredModalShownWhenProceedingThroughWarning
+[ mac ] TestWebKitAPI.SafeBrowsing.DeferredModalSuppressedWhenGoingBack
+[ mac ] TestWebKitAPI.SafeBrowsing.DownloadDeferredAndBlockedBySafeBrowsing
+[ mac ] TestWebKitAPI.SafeBrowsing.DownloadDeferredAndBlockedBySafeBrowsingPostTimeout
+[ mac ] TestWebKitAPI.SafeBrowsing.GoBack
+[ mac ] TestWebKitAPI.SafeBrowsing.GoBackAfterRestoreFromSessionState
+[ mac ] TestWebKitAPI.SafeBrowsing.HangTimeout
+[ mac ] TestWebKitAPI.SafeBrowsing.MissingFramework
+[ mac ] TestWebKitAPI.SafeBrowsing.ModalDeferredDuringCheck
+[ mac ] TestWebKitAPI.SafeBrowsing.ModalShownImmediatelyWhenNoCheck
+[ mac ] TestWebKitAPI.SafeBrowsing.ModalShownWhenCheckCompletesClean
+[ mac ] TestWebKitAPI.SafeBrowsing.MultipleDeferredModalsShownInOrder
+[ mac ] TestWebKitAPI.SafeBrowsing.MultipleRedirectsFirstPhishing
+[ mac ] TestWebKitAPI.SafeBrowsing.MultipleRedirectsLastPhishing
+[ mac ] TestWebKitAPI.SafeBrowsing.MultipleRedirectsMiddlePhishing
+[ mac ] TestWebKitAPI.SafeBrowsing.NavigationActionDownloadDeferredBySafeBrowsing
+[ mac ] TestWebKitAPI.SafeBrowsing.NavigationClearsWarning
+[ mac ] TestWebKitAPI.SafeBrowsing.NavigationFromWarningPage
+[ mac ] TestWebKitAPI.SafeBrowsing.PhishingInFrame
+[ mac ] TestWebKitAPI.SafeBrowsing.PostResponse
+[ mac ] TestWebKitAPI.SafeBrowsing.PostResponseIframe
+[ mac ] TestWebKitAPI.SafeBrowsing.PostResponseInjectedBundleSkipsDecidePolicyForResponse
+[ mac ] TestWebKitAPI.SafeBrowsing.PostResponseServerSideRedirect
+[ mac ] TestWebKitAPI.SafeBrowsing.PostTimeout
+[ mac ] TestWebKitAPI.SafeBrowsing.Preference
+[ mac ] TestWebKitAPI.SafeBrowsing.PreresponseSafeBrowsingWarning
+[ mac ] TestWebKitAPI.SafeBrowsing.SetTimeoutNavigationFromWarningPage
+[ mac ] TestWebKitAPI.SafeBrowsing.ShowWarningSPI
+[ mac ] TestWebKitAPI.SafeBrowsing.SubframeDownloadBlockedBySafeBrowsing
+[ mac ] TestWebKitAPI.SafeBrowsing.URLObservation
+[ mac ] TestWebKitAPI.SafeBrowsing.VisitUnsafeWebsite
+[ mac ] TestWebKitAPI.SafeBrowsing.WKWebViewGoBack
+[ mac ] TestWebKitAPI.SafeBrowsing.WKWebViewGoBackIFrame
+[ mac ] TestWebKitAPI.SafeBrowsing.WarningShownAfterCOOPProcessSwap
+[ mac ] TestWebKitAPI.SafeBrowsing.WarningShownAfterCOOPProcessSwapSlowLookup
+[ mac ] TestWebKitAPI.SafeBrowsing.WarningShownAfterCOOPProcessSwapWithSkippedResponse
+[ mac ] TestWebKitAPI.SafeBrowsing.WarningShownAfterCOOPProcessSwapWithSkippedResponseSlowLookup
+[ mac ] TestWebKitAPI.SafeBrowsing.WarningShownAfterRedirectWithLateResult
+[ mac ] TestWebKitAPI.SafeBrowsing.WarningShownWhenLookupCompletesBeforeResponse
 [ mac ] TestWebKitAPI.ServiceWorker.ExtensionServiceWorkerFailureBadScript
 [ mac ] TestWebKitAPI.ServiceWorker.ExtensionServiceWorkerFailureBadURL
 [ mac ] TestWebKitAPI.ServiceWorker.ExtensionServiceWorkerFailureViewClosed
@@ -7517,7 +7558,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.ServiceWorker.WindowClientNavigate
 [ mac ] TestWebKitAPI.ServiceWorker.openWindowWithoutDelegate
 [ mac ] TestWebKitAPI.ServiceWorkers.CacheStorageInPrivateBrowsingMode
-[ mac ] TestWebKitAPI.ServiceWorkers.CacheStorageNetworkProcessCrash
 [ mac ] TestWebKitAPI.ServiceWorkers.CacheStorageRestoreFromDisk
 [ mac ] TestWebKitAPI.ServiceWorkers.ChangeOfServerCertificate
 [ mac ] TestWebKitAPI.ServiceWorkers.DifferentSessionsUseDifferentRegistrations
@@ -8434,7 +8474,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebKit2.GetUserMediaRepromptAfterAudioVideoBeingDenied
 [ mac ] TestWebKitAPI.WebKit2.GetUserMediaRepromptWithoutUserGesture
 [ mac ] TestWebKitAPI.WebKit2.NoCrashWhenInitializeWebViewWhenChangingUserDefaults
-[ mac ] TestWebKitAPI.WebKit2.SpeechRecognitionErrorWhenStartingAudioCaptureOnDifferentPage
 [ mac ] TestWebKitAPI.WebKit2.SpeechRecognitionMediaCaptureStateChange
 [ mac ] TestWebKitAPI.WebKit2.SpeechRecognitionPageBecomesInvisible
 [ mac ] TestWebKitAPI.WebKit2.SpeechRecognitionPageIsDestroyed
