@@ -128,7 +128,11 @@ static const struct wl_data_device_listener wlDataDeviceListener = {
         priv->offer = offer;
         wl_data_offer_add_listener(priv->offer, &wlDataOfferListener, data);
 
+#if GLIB_CHECK_VERSION(2, 74, 0)
         priv->formats = adoptGRef(g_ptr_array_new_null_terminated(3, nullptr, TRUE));
+#else
+        priv->formats = adoptGRef(g_ptr_array_new());
+#endif
     },
     // enter
     [](void*, wl_data_device*, uint32_t /*serial*/, wl_surface*, wl_fixed_t /*x*/, wl_fixed_t /*y*/, wl_data_offer*) {
@@ -148,7 +152,11 @@ static const struct wl_data_device_listener wlDataDeviceListener = {
         GRefPtr<GPtrArray> formats;
         if (offer) {
             if (priv->offer == offer) {
+#if !GLIB_CHECK_VERSION(2, 74, 0)
+                // Null-terminate pdata without counting the terminator in len.
                 g_ptr_array_add(priv->formats.get(), nullptr);
+                g_ptr_array_set_size(priv->formats.get(), priv->formats->len - 1);
+#endif
                 formats = std::exchange(priv->formats, nullptr);
             } else {
                 g_clear_pointer(&priv->offer, wl_data_offer_destroy);
