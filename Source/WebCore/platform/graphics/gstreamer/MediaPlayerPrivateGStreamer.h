@@ -715,6 +715,7 @@ private:
     };
     ContainerType m_containerType { ContainerType::Other };
 
+    GRefPtr<GstElement> m_parseBin;
     GRefPtr<GstElement> m_urisourceBin;
 };
 

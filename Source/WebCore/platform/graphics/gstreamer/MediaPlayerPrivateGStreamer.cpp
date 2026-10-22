@@ -1482,6 +1482,22 @@ MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
 
     int64_t duration = 0;
 
+    // The duration query would fail on a not-prerolled pipeline, so check if the source element has
+    // a BYTES duration and attempt conversion to TIME format.
+    if (m_source && m_parseBin && GST_STATE(m_pipeline.get()) < GST_STATE_PAUSED) {
+        int64_t bytesDuration;
+        if (!gst_element_query_duration(m_source.get(), GST_FORMAT_BYTES, &bytesDuration))
+            return MediaTime::invalidTime();
+
+        GST_DEBUG_OBJECT(m_pipeline.get(), "BYTES duration: %" G_GINT64_FORMAT, bytesDuration);
+        GRefPtr pad = adoptGRef(gst_element_get_static_pad(m_parseBin.get(), "sink"));
+        if (!gst_pad_query_convert(pad.get(), GST_FORMAT_BYTES, bytesDuration, GST_FORMAT_TIME, &duration))
+            return MediaTime::invalidTime();
+
+        GST_LOG_OBJECT(pipeline(), "Duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(duration));
+        return MediaTime(duration, GST_SECOND);
+    }
+
     if (!gst_element_query_duration(m_pipeline.get(), GST_FORMAT_TIME, &duration) || !GST_CLOCK_TIME_IS_VALID(duration)) {
         GST_DEBUG_OBJECT(pipeline(), "Time duration query failed for %s", m_url.string().utf8());
         // https://www.w3.org/TR/2011/WD-html5-20110113/video.html#getting-media-metadata
@@ -2744,6 +2760,8 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 
 void MediaPlayerPrivateGStreamer::configureParsebin(GstElement* parsebin)
 {
+    m_parseBin = parsebin;
+
     // We can save some overhead by not parsing again streams that are already parsed and that
     // the caps match the decoder's. In that case, we can skip creating a parser element in parsebin.
     g_signal_connect(parsebin, "autoplug-select",
