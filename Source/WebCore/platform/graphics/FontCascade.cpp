@@ -218,20 +218,68 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
     drawEmphasisMarks(context, glyphBuffer, mark, startPoint);
 }
 
-RefPtr<const DisplayList::DisplayList> FontCascade::displayListForTextRun(GraphicsContext& context, const TextRun& run, unsigned from, std::optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
+RefPtr<const DisplayList::DisplayList> FontCascade::displayListForTextRun(GraphicsContext& context, const TextRun& run, unsigned from, std::optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction, AllowShapedTextCacheReuse allowShapedTextCacheReuse) const
 {
     ASSERT(!context.paintingDisabled());
     unsigned destination = to.value_or(run.length());
+
+    if (RefPtr fonts = this->fonts()) {
+        if (auto* shapedText = fonts->getOrCreateCachedShapedText(run, *this, from, destination, ForTextEmphasis::No)) {
+            if (allowShapedTextCacheReuse == AllowShapedTextCacheReuse::Yes)
+                return displayListForShapedText(context, *shapedText, customFontNotReadyAction);
+            return displayListForGlyphBuffer(context, shapedText->textShapingResult.glyphBuffer, customFontNotReadyAction);
+        }
+    }
 
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
     CodePath codePathToUse = codePath(run);
     if (codePathToUse != CodePath::Complex && !canHandleRunAsSimpleText(run, from, destination))
         codePathToUse = CodePath::Complex;
 
-    auto glyphBuffer = layoutText(codePathToUse, run, from, destination).glyphBuffer;
-    glyphBuffer.flatten();
+    auto result = shouldUseComplexTextController(codePathToUse) ? layoutComplexText(run, from, destination) : layoutSimpleText(run, from, destination);
+    result.glyphBuffer.flatten();
 
-    return displayListForGlyphBuffer(context, glyphBuffer, customFontNotReadyAction);
+    return displayListForGlyphBuffer(context, result.glyphBuffer, customFontNotReadyAction);
+}
+
+static bool canRetainDisplayListForShapedText(const DisplayList::DisplayList& displayList, const GlyphBuffer& glyphBuffer)
+{
+#if USE(SKIA)
+    UNUSED_PARAM(displayList);
+    UNUSED_PARAM(glyphBuffer);
+    return false;
+#else
+    if (std::ranges::any_of(glyphBuffer.fonts(), [](auto& font) { return !font || font->platformData().isColorBitmapFont(); }))
+        return false;
+
+    return std::ranges::all_of(displayList.items(), [](auto& item) {
+        return std::holds_alternative<DisplayList::Translate>(item)
+            || std::holds_alternative<DisplayList::Scale>(item)
+            || std::holds_alternative<DisplayList::ConcatenateCTM>(item)
+            || std::holds_alternative<DisplayList::DrawGlyphs>(item);
+    });
+#endif
+}
+
+RefPtr<const DisplayList::DisplayList> FontCascade::displayListForShapedText(GraphicsContext& context, TextShapingResultAndDisplayList& shapedText, CustomFontNotReadyAction customFontNotReadyAction) const
+{
+    const auto& glyphBuffer = shapedText.textShapingResult.glyphBuffer;
+    TextShapingResultAndDisplayList::PaintDisplayListParameters parameters {
+        .scaleFactor = context.scaleFactor(),
+        .fontSmoothing = m_fontDescription.usedFontSmoothing(),
+        .shouldSubpixelQuantizeFonts = context.shouldSubpixelQuantizeFonts(),
+        .customFontNotReadyAction = customFontNotReadyAction,
+    };
+
+    if (shapedText.paintDisplayList && shapedText.paintDisplayListParameters == parameters)
+        return shapedText.paintDisplayList;
+
+    RefPtr displayList = displayListForGlyphBuffer(context, glyphBuffer, customFontNotReadyAction);
+    if (displayList && canRetainDisplayListForShapedText(*displayList, glyphBuffer)) {
+        shapedText.paintDisplayList = displayList;
+        shapedText.paintDisplayListParameters = parameters;
+    }
+    return displayList;
 }
 
 RefPtr<const DisplayList::DisplayList> FontCascade::displayListForGlyphBuffer(GraphicsContext& context, const GlyphBuffer& glyphBuffer,  CustomFontNotReadyAction customFontNotReadyAction) const

@@ -1,0 +1,3 @@
+PASS: antialiased text is recorded as antialiased.
+PASS: text that differs only in color has the same display list.
+PASS: unsmoothed text is recorded as unsmoothed.
