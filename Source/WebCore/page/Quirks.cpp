@@ -152,6 +152,7 @@ static inline bool LEGACY_NODELETE shouldPreventOrientationMediaQueryFromEvaluat
 static inline bool LEGACY_NODELETE shouldNotAutoUpgradeToHTTPSNavigationInternal(const URL&) { return false; }
 static inline bool LEGACY_NODELETE shouldDisableBlobFileAccessEnforcementInternal() { return false; }
 static inline bool LEGACY_NODELETE needsConsistentQueryParameterFilteringInternal(const URL&) { return false; }
+static inline bool LEGACY_NODELETE shouldExemptCookieFromITPDataRemovalInternal(const String&) { return false; }
 #if PLATFORM(COCOA)
 static inline String LEGACY_NODELETE standardUserAgentWithApplicationNameIncludingCompatOverridesInternal(const String&, const String&, UserAgentType) { return { }; }
 #endif
@@ -836,6 +837,11 @@ bool Quirks::needsPartitionedCookies(const ResourceRequest& request)
     if (request.isTopSite())
         return false;
     return urlHasQuirk(request.url(), QuirkBehaviors::needsPartitionedCookiesQuirk);
+}
+
+bool Quirks::shouldExemptCookieFromITPDataRemoval(const String& cookieName)
+{
+    return shouldExemptCookieFromITPDataRemovalInternal(cookieName);
 }
 
 // m365.cloud.microsoft rdar://157794706

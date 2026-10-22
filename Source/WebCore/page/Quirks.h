@@ -101,6 +101,7 @@ public:
     WEBCORE_EXPORT static std::optional<String> needsCustomUserAgentOverride(const URL&, const String& applicationNameForUserAgent, const String& currentUserAgent);
 
     WEBCORE_EXPORT static bool needsPartitionedCookies(const ResourceRequest&);
+    WEBCORE_EXPORT static bool shouldExemptCookieFromITPDataRemoval(const String& cookieName);
 
     WEBCORE_EXPORT static std::optional<Vector<HashSet<String>>> LEGACY_NODELETE defaultVisibilityAdjustmentSelectors(const URL&);
 

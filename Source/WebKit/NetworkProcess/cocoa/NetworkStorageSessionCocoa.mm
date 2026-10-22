@@ -32,6 +32,7 @@
 #import <WebCore/CookieJar.h>
 #import <WebCore/CookieStoreGetOptions.h>
 #import <WebCore/HTTPCookieAcceptPolicyCocoa.h>
+#import <WebCore/Quirks.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SameSiteInfo.h>
 #import <algorithm>
@@ -119,12 +120,6 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, Completi
         protect(cookieStorageObserver())->registerInternalsForNotifications(true);
 
     completionHandler(hasCookieForDomain);
-}
-
-static bool isAllowlistedCookieName(const String& name)
-{
-    // To be implemented.
-    return false;
 }
 
 void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
@@ -358,7 +353,7 @@ void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> ho
         if (!cookie.domain || (includeHttpOnlyCookies == IncludeHttpOnlyCookies::No && cookie.isHTTPOnly))
             return false;
         if (exemptAllowlistedCookies == ExemptAllowlistedCookies::Yes && m_exemptAllowlistedCookiesFromITP) {
-            if (isAllowlistedCookieName(cookie.name))
+            if (Quirks::shouldExemptCookieFromITPDataRemoval(cookie.name))
                 return false;
         }
 #if ENABLE(JS_COOKIE_CHECKING)
