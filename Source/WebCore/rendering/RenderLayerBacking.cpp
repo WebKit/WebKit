@@ -62,6 +62,8 @@
 #include "HTMLVideoElement.h"
 #include "ImageObserver.h"
 #include "InspectorInstrumentation.h"
+#include "KeyframeEffect.h"
+#include "KeyframeEffectStack.h"
 #include "LayerAncestorClippingStack.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
@@ -129,8 +131,6 @@
 #include "AcceleratedEffect.h"
 #include "AcceleratedEffectStack.h"
 #include "AcceleratedEffectValues.h"
-#include "KeyframeEffect.h"
-#include "KeyframeEffectStack.h"
 #include <wtf/WeakListHashSet.h>
 #endif
 
@@ -933,6 +933,38 @@ static IntOutsets clampedFilterSamplingOutsets(const IntOutsets& outsets)
     return { clampSide(outsets.top()), clampSide(outsets.right()), clampSide(outsets.bottom()), clampSide(outsets.left()) };
 }
 
+static IntOutsets maximumOutsets(const IntOutsets& a, const IntOutsets& b)
+{
+    return { std::max(a.top(), b.top()), std::max(a.right(), b.right()), std::max(a.bottom(), b.bottom()), std::max(a.left(), b.left()) };
+}
+
+static IntOutsets outsetsOfFilterAnimations(const RenderElement& renderer)
+{
+    IntOutsets outsets;
+    auto styleable = Styleable::fromRenderer(renderer);
+    if (!styleable)
+        return outsets;
+
+    auto* effectStack = styleable->keyframeEffectStack();
+    if (!effectStack)
+        return outsets;
+
+    for (auto& effect : effectStack->sortedEffects()) {
+        if (!effect || !effect->animatesProperty(CSSPropertyFilter))
+            continue;
+
+        for (auto& keyframe : effect->blendingKeyframes()) {
+            CheckedPtr keyframeStyle = keyframe.style();
+            if (!keyframeStyle)
+                continue;
+
+            if (auto keyframeOutsets = keyframeStyle->filter().calculateOutsets(keyframeStyle->usedZoomForLength()))
+                outsets = maximumOutsets(outsets, *keyframeOutsets);
+        }
+    }
+    return outsets;
+}
+
 static IntOutsets filterSamplingOutsets(const RenderLayer& layer)
 {
     auto& renderer = layer.renderer();
@@ -943,10 +975,10 @@ static IntOutsets filterSamplingOutsets(const RenderLayer& layer)
     if (auto* backing = layer.backing(); backing && !filter.isNone() && !backing->canCompositeFilters())
         return { };
 
-    if (!filter.hasFilterThatMovesPixels())
-        return { };
-
-    return clampedFilterSamplingOutsets(renderer.computeFilterOutsets()).xyFlippedCopy();
+    auto outsets = outsetsOfFilterAnimations(renderer);
+    if (filter.hasFilterThatMovesPixels())
+        outsets = maximumOutsets(outsets, renderer.computeFilterOutsets());
+    return clampedFilterSamplingOutsets(outsets).xyFlippedCopy();
 }
 
 static void expandClipRectByFilterSamplingOutsets(LayoutRect& clipRect, const IntOutsets& outsets)
@@ -5224,6 +5256,10 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAn
     if (didAnimate) {
         m_owningLayer.setNeedsPostLayoutCompositingUpdate();
         m_owningLayer.setNeedsCompositingGeometryUpdate();
+        if (hasFilter) {
+            m_graphicsLayer->setFilterSamplingOutsets(filterSamplingOutsets(m_owningLayer));
+            m_owningLayer.setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+        }
     }
 
     return didAnimate;
@@ -5419,6 +5455,8 @@ void RenderLayerBacking::animationFinished(const String& animationName)
     m_graphicsLayer->removeAnimation(animationName, std::nullopt);
     m_owningLayer.setNeedsPostLayoutCompositingUpdate();
     m_owningLayer.setNeedsCompositingGeometryUpdate();
+    if (!m_graphicsLayer->filterSamplingOutsets().isZero())
+        m_owningLayer.setDescendantsNeedUpdateBackingAndHierarchyTraversal();
 }
 
 void RenderLayerBacking::transformRelatedPropertyDidChange()
