@@ -30,6 +30,7 @@
 
 #include "AbortSignal.h"
 #include "DocumentPage.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MediationRequirement.h"
 #include "Page.h"
