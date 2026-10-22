@@ -147,7 +147,7 @@ WI.DOMManager = class DOMManager extends WI.Object
     }
 
     // The hosting process in a frame ID can be stale. The FrameIdentifier is globally unique.
-    static _frameKey(frameIdentifier)
+    static frameKeyForFrameIdentifier(frameIdentifier)
     {
         let match = /^frame-\d+\.(\d+)$/.exec(frameIdentifier);
         return match ? match[1] : frameIdentifier;
@@ -155,13 +155,13 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     _registerFrameOwnerElement(node)
     {
-        this._frameOwnerElementsByFrameKey.add(DOMManager._frameKey(node.contentFrameIdentifier), node);
+        this._frameOwnerElementsByFrameKey.add(DOMManager.frameKeyForFrameIdentifier(node.contentFrameIdentifier), node);
     }
 
     _unregisterFrameOwnerElement(node)
     {
         if (node.contentFrameIdentifier)
-            this._frameOwnerElementsByFrameKey.delete(DOMManager._frameKey(node.contentFrameIdentifier), node);
+            this._frameOwnerElementsByFrameKey.delete(DOMManager.frameKeyForFrameIdentifier(node.contentFrameIdentifier), node);
     }
 
     _willDestroyFrameOwnerElement(node)
@@ -175,7 +175,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     _trySpliceFrameDocumentIntoNode(frameDocument)
     {
-        let ownerElements = this._frameOwnerElementsByFrameKey.get(DOMManager._frameKey(frameDocument.frameIdentifier));
+        let ownerElements = this._frameOwnerElementsByFrameKey.get(DOMManager.frameKeyForFrameIdentifier(frameDocument.frameIdentifier));
         if (!ownerElements)
             return false;
 
@@ -1523,9 +1523,9 @@ WI.DOMManager = class DOMManager extends WI.Object
         });
     }
 
-    highlightRect(rect, usePageCoordinates)
+    highlightRect(rect, usePageCoordinates, target)
     {
-        let target = WI.assumingMainTarget();
+        target ||= WI.assumingMainTarget();
         target.DOMAgent.highlightRect.invoke({
             x: rect.x,
             y: rect.y,

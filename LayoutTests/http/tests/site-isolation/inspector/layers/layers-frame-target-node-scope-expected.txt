@@ -1,0 +1,25 @@
+Test that a frame target's LayerTree agent only reports layers for nodes in its own frame.
+
+
+
+== Running test suite: SiteIsolation.LayerTree.NodeScope.FrameTarget
+-- Running test case: SiteIsolation.LayerTree.NodeScope.FrameTarget.Setup
+PASS: Should find the main frame's frame target.
+PASS: Should find the same-origin child frame's frame target.
+
+-- Running test case: SiteIsolation.LayerTree.NodeScope.FrameTarget.MainFrameDocument
+PASS: Main frame target should report layers for its own document.
+
+-- Running test case: SiteIsolation.LayerTree.NodeScope.FrameTarget.MainFrameExcludesChildFrameLayers
+PASS: Main frame target should report the layer hosting the iframe.
+PASS: Layer hosting the iframe should report the frame's content box.
+PASS: Main frame target should not report the child frame's layers.
+
+-- Running test case: SiteIsolation.LayerTree.NodeScope.FrameTarget.SameOriginChildFrameDocument
+PASS: Child frame target should report layers for its own document.
+
+-- Running test case: SiteIsolation.LayerTree.NodeScope.FrameTarget.NodeInChildFrameRejected
+PASS: Evaluating the expression should produce a node.
+PASS: Should produce an exception.
+Error: Node does not belong to this frame target
+

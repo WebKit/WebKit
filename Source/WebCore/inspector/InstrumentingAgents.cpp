@@ -37,6 +37,7 @@
 #include "FrameDOMAgent.h"
 #include "FrameDOMStorageAgent.h"
 #include "FrameDebuggerAgent.h"
+#include "FrameLayerTreeAgent.h"
 #include "FrameRuntimeAgent.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCPUProfilerAgent.h"
