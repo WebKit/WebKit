@@ -32,15 +32,14 @@
 #include <WebCore/IOSurfacePoolIdentifier.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/IntSizeHash.h>
-#include <WebCore/Timer.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -100,19 +99,18 @@ private:
     void tryEvictInUseSurface() WTF_REQUIRES_LOCK(m_lock);
     void tryEvictOldestCachedSurface() WTF_REQUIRES_LOCK(m_lock);
 
-    void scheduleCollectionTimer() WTF_REQUIRES_LOCK(m_lock);
-    void stopCollectionTimer() WTF_REQUIRES_LOCK(m_lock);
-    void collectionTimerFired();
+    void scheduleCollection() WTF_REQUIRES_LOCK(m_lock);
+    void performCollection(uint64_t token);
     void collectInUseSurfaces() WTF_REQUIRES_LOCK(m_lock);
-
-    void platformGarbageCollectNow();
 
     void discardAllSurfacesInternal() WTF_REQUIRES_LOCK(m_lock);
 
     String LEGACY_NODELETE poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
-    RunLoop::Timer m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);
+    // The collection runs as a delayed task on a shared work queue. It holds only a weak reference, so the pool can be destroyed on any thread.
+    // Identifies the pending task, or 0 if there is none. A task whose token no longer matches was cancelled.
+    uint64_t m_collectionToken WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     CachedSurfaceMap m_cachedSurfaces WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceQueue m_inUseSurfaces WTF_GUARDED_BY_LOCK(m_lock);
     Vector<IntSize> m_sizesInPruneOrder WTF_GUARDED_BY_LOCK(m_lock);

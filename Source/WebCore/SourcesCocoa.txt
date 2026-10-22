@@ -437,7 +437,7 @@ platform/graphics/cg/GradientCG.cpp
 platform/graphics/cg/GradientRendererCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp
 platform/graphics/cg/GraphicsContextGLCG.cpp
-platform/graphics/cg/IOSurfacePool.cpp
+platform/graphics/cg/IOSurfacePool.mm @nonARC
 platform/graphics/cg/ImageBackingStoreCG.cpp
 platform/graphics/cg/ImageBufferCGBackend.cpp
 platform/graphics/cg/ImageBufferCGBitmapBackend.cpp
@@ -474,7 +474,6 @@ platform/graphics/cocoa/GraphicsContextCocoa.mm @nonARC
 platform/graphics/cocoa/H264UtilitiesCocoa.mm @nonARC
 platform/graphics/cocoa/HEVCUtilitiesCocoa.mm @nonARC
 platform/graphics/cocoa/IOSurface.mm @nonARC
-platform/graphics/cocoa/IOSurfacePoolCocoa.mm @nonARC
 platform/graphics/cocoa/ISOBMFFPreParser.cpp
 platform/graphics/cocoa/ISOBMFFTrackInfoParser.cpp
 platform/graphics/cocoa/IconCocoa.mm @nonARC
