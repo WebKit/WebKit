@@ -1,0 +1,20 @@
+xx xxx xxxxxxxx
+
+PASS An absolutely positioned box in inline content is as wide as its own content
+PASS An absolutely positioned box between words (absoluteBetweenWords, min-content)
+PASS An absolutely positioned box between words (absoluteBetweenWords, max-content)
+PASS A fixed positioned box between words (fixedBetweenWords, min-content)
+PASS A fixed positioned box between words (fixedBetweenWords, max-content)
+PASS An absolutely positioned box does not split the word around it (absoluteInsideWord, min-content)
+PASS An absolutely positioned box does not split the word around it (absoluteInsideWord, max-content)
+PASS An absolutely positioned box after the line's trailing space (absoluteAfterTrailingSpace, min-content)
+PASS An absolutely positioned box after the line's trailing space (absoluteAfterTrailingSpace, max-content)
+PASS An absolutely positioned box inside an inline box with padding (absoluteInsideInlineBox, min-content)
+PASS An absolutely positioned box inside an inline box with padding (absoluteInsideInlineBox, max-content)
+PASS An absolutely positioned image in front of text that can break anywhere (absoluteReplacedWithBreakAll, min-content)
+PASS An absolutely positioned image in front of text that can break anywhere (absoluteReplacedWithBreakAll, max-content)
+PASS A container with nothing but an absolutely positioned box (absoluteOnly, min-content)
+PASS A container with nothing but an absolutely positioned box (absoluteOnly, max-content)
+PASS A container with text-indent and nothing but an absolutely positioned box (absoluteOnlyWithTextIndent, min-content)
+PASS A container with text-indent and nothing but an absolutely positioned box (absoluteOnlyWithTextIndent, max-content)
+
