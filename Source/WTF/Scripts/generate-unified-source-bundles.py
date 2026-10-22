@@ -119,15 +119,17 @@ class SourceFile:
         return self._derived
 
     def __str__(self):
+        # Always return a POSIX style path to avoid CMake and
+        # clang -Wnonportable-include-path-separator errors on Windows
         if self._args.mode == 'GenerateXCFilelists':
             if self.derived:
-                return str(self._args.derived_sources_path / self.path)
+                return str((self._args.derived_sources_path / self.path).as_posix())
             else:
-                return f'$(SRCROOT)/{self.path}'
+                return f'$(SRCROOT)/{self.path.as_posix()}'
         elif self._args.mode == 'GenerateBundles' or not self.derived:
-            return str(self.path)
+            return str(self.path.as_posix())
         else:
-            return str(self._args.derived_sources_path / self.path)
+            return str((self._args.derived_sources_path / self.path).as_posix())
 
     def bundled_source_form(self) -> str:
         # String form for the --print-bundled-sources list: derived sources are
