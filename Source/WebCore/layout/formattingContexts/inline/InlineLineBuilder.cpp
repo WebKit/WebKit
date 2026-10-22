@@ -1099,7 +1099,8 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
 
         auto needsLayout = inlineItem.isFloat() || inlineItem.isAtomicInlineBox() || (inlineItem.isOutOfFlow() && inlineItem.layoutBox().isRubyAnnotationBox());
         if (needsLayout) {
-            // FIXME: Intrinsic width mode should call into the intrinsic width codepath. Currently we only get here when box has fixed width (meaning no need to run intrinsic width on the box).
+            // FIXME: Intrinsic width mode should call into the intrinsic width codepath. Currently we only get here when box has fixed width (meaning no need to run intrinsic width on the box)
+            // or when it is a float, whose width IntrinsicWidthHandler takes from the render tree.
             if (!isInIntrinsicWidthMode())
                 formattingContext().integrationUtils().layoutWithFormattingContextForBox(downcast<ElementBox>(inlineItem.layoutBox()));
         }
@@ -1373,6 +1374,12 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
 
     auto& floatingContext = this->floatingContext();
     auto& boxGeometry = formattingContext().geometryForBox(floatBox);
+    if (isInIntrinsicWidthMode()) {
+        // The float is not given a position here, only listed with the line it is on, so that IntrinsicWidthHandler adds its width to that line.
+        m_placedFloats.append(PlacedFloats::Item { floatBox, floatingContext.isStartPositioned(floatBox) ? PlacedFloats::Item::Position::Start : PlacedFloats::Item::Position::End, boxGeometry, { }, { } });
+        return true;
+    }
+
     if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), mayOverConstrainLine))
         return false;
 
@@ -1927,9 +1934,13 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
 
 bool LineBuilder::unplaceFloatBox(const Box& floatBox)
 {
-    m_placedFloats.removeFirstMatching([&floatBox](auto& placedFloatItem) {
+    auto isPlacedOnThisLine = m_placedFloats.removeFirstMatching([&floatBox](auto& placedFloatItem) {
         return placedFloatItem.layoutBox() == &floatBox;
     });
+    if (isInIntrinsicWidthMode()) {
+        // These floats were never added to the placed floats (see tryPlacingFloatBox).
+        return isPlacedOnThisLine;
+    }
     return layoutState().placedFloats().remove(floatBox);
 }
 
