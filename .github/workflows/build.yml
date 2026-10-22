@@ -687,9 +687,7 @@ jobs:
 
           python3 - "$IMAGE_ARCHIVE" "$ROOTFS" <<'PY'
           import json
-          import os
           import pathlib
-          import shutil
           import sys
           import tarfile
 
@@ -697,33 +695,16 @@ jobs:
           root = pathlib.Path(sys.argv[2])
 
           def extract_layer(layer_archive, destination):
-              # Older Python releases in devkitPro do not support tarfile's
-              # newer filter= argument. Validate each path ourselves and copy
-              # only regular files/directories; refusing links and special
-              # files also prevents a later member from escaping via a symlink.
-              base = destination.resolve()
+              # The data filter rejects path traversal and unsafe link targets.
+              # Keep extraction inside the temporary root before copying only
+              # the published /artifacts subtree into DEVKITPRO.
               with tarfile.open(fileobj=layer_archive, mode="r:*") as layer:
-                  for member in layer.getmembers():
-                      name = pathlib.PurePosixPath(member.name)
-                      if name.is_absolute() or ".." in name.parts:
-                          raise SystemExit(f"Unsafe CafeGLSL image path: {member.name}")
-                      target = (destination / member.name).resolve()
-                      if target != base and base not in target.parents:
-                          raise SystemExit(f"Unsafe CafeGLSL image path: {member.name}")
-                      if member.issym() or member.islnk() or member.isdev():
-                          raise SystemExit(f"Unsupported link/special file in CafeGLSL layer: {member.name}")
-                      if not member.isdir() and not member.isfile():
-                          continue
-                      if member.isdir():
-                          target.mkdir(parents=True, exist_ok=True)
-                          continue
-                      source = layer.extractfile(member)
-                      if source is None:
-                          raise SystemExit(f"Unreadable CafeGLSL image file: {member.name}")
-                      target.parent.mkdir(parents=True, exist_ok=True)
-                      with source, target.open("wb") as output:
-                          shutil.copyfileobj(source, output)
-                      os.chmod(target, member.mode & 0o777)
+                  try:
+                      layer.extractall(destination, filter="data")
+                  except TypeError as error:
+                      raise SystemExit(
+                          "Python tarfile safety filters are required to unpack CafeGLSL layers."
+                      ) from error
 
           with tarfile.open(archive_path, mode="r:*") as image:
               manifest_file = image.extractfile("manifest.json")
@@ -758,43 +739,6 @@ jobs:
           }
           echo "CafeGLSL header: $HEADER"
           echo "CafeGLSL library: $LIBRARY"
-
-          # Some published portlib images predate CafeGLSL's __WUT__ header
-          # selection and include cafe_gx2.h unconditionally. That header
-          # redeclares GX2 types already supplied by devkitPro WUT. Guard every
-          # direct include containing cafe_gx2.h, including path-qualified ones.
-          python3 - "$HEADER" <<'PY'
-          import pathlib
-          import sys
-
-          header = pathlib.Path(sys.argv[1])
-          text = header.read_text()
-          marker = "/* WKC_CAFEGX2_WUT_COMPAT_GUARD */"
-          if marker not in text:
-              lines = text.splitlines()
-              rewritten = []
-              changed = False
-              for line in lines:
-                  if "#include" in line and "cafe_gx2.h" in line:
-                      rewritten.extend([
-                          marker,
-                          "#if !defined(__WUT__) && !defined(__WIIU__)",
-                          line,
-                          "#endif",
-                      ])
-                      changed = True
-                  else:
-                      rewritten.append(line)
-              if changed:
-                  header.write_text("\n".join(rewritten) + "\n")
-              else:
-                  # Newer CafeGLSL headers can include WUT's GX2 definitions
-                  # directly. In that case no compatibility rewrite is needed.
-                  print("CafeGLSL header already uses WUT-compatible GX2 declarations.")
-          contents = header.read_text()
-          if "cafe_gx2.h" in contents and marker not in contents:
-              raise SystemExit("Could not isolate CafeGLSL's legacy GX2 declarations")
-          PY
       - name: Configure (CMake)
         shell: bash
         run: |

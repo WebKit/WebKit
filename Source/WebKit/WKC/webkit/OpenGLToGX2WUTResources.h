@@ -54,8 +54,9 @@ struct WUTBufferResources {
     };
     std::unordered_map<uint8_t, AttributeDescriptor> attributes;
 
-    // WebGL's generic (array-disabled) vertex attribute values are context
-    // state, not part of a VAO. Start with the GL-defined (0, 0, 0, 1) value.
+    // WebGL's generic attribute values are context state, not VAO state.
+    // Start with the GL-defined (0, 0, 0, 1) value and rebind disabled-array
+    // values as zero-stride GX2 streams before each draw.
     std::array<std::array<float, 4>, 32> currentAttributeValues = [] {
         std::array<std::array<float, 4>, 32> values { };
         for (auto& value : values)
@@ -74,7 +75,7 @@ struct WUTBufferResources {
     uint32_t fetchShaderProgramBufferSize { 0 };
     bool fetchShaderDirty { true };
 
-    WUTBufferResources() = default;
+    WUTBufferResources();
     ~WUTBufferResources();
     WUTBufferResources(const WUTBufferResources&) = delete;
     WUTBufferResources& operator=(const WUTBufferResources&) = delete;
