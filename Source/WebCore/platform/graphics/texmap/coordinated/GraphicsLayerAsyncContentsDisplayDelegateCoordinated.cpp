@@ -53,7 +53,10 @@ bool GraphicsLayerAsyncContentsDisplayDelegateCoordinated::tryCopyToLayer(ImageB
 
 #if USE(SKIA)
     if (m_threadSafeGrContext) {
-        m_delegate->setDisplayBuffer(CoordinatedPlatformLayerBufferSkiaImage::create(image->platformImage(), m_threadSafeGrContext));
+        auto buffer = CoordinatedPlatformLayerBufferSkiaImage::create(image->platformImage(), m_threadSafeGrContext);
+        if (!buffer)
+            return false;
+        m_delegate->setDisplayBuffer(WTF::move(buffer));
         return true;
     }
 #endif
