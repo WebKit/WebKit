@@ -336,6 +336,335 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 @end
 
+// NSStackView makes the constraints for its arranged subviews, and removes them when a view stops being arranged.
+struct ArrangedSubviewPosition {
+    // The index is within the gravity area, when the stack view uses gravity areas.
+    NSUInteger index { 0 };
+    std::optional<NSStackViewGravity> gravity;
+    CGFloat customSpacingAfter { NSStackViewSpacingUseDefault };
+    NSStackViewVisibilityPriority visibilityPriority { NSStackViewVisibilityPriorityMustHold };
+};
+
+static std::optional<ArrangedSubviewPosition> removeFromArrangedSubviews(NSView *view)
+{
+    RetainPtr stackView = dynamic_objc_cast<NSStackView>(retainPtr([view superview]).get());
+    if (!stackView)
+        return std::nullopt;
+    NSUInteger index = [retainPtr([stackView arrangedSubviews]) indexOfObject:view];
+    if (index == NSNotFound)
+        return std::nullopt;
+    ArrangedSubviewPosition position { index, std::nullopt, [stackView customSpacingAfterView:view], [stackView visibilityPriorityForView:view] };
+    if ([stackView distribution] == NSStackViewDistributionGravityAreas) {
+        for (auto gravity : { NSStackViewGravityLeading, NSStackViewGravityCenter, NSStackViewGravityTrailing }) {
+            NSUInteger indexInGravity = [retainPtr([stackView viewsInGravity:gravity]) indexOfObject:view];
+            if (indexInGravity != NSNotFound) {
+                position.index = indexInGravity;
+                position.gravity = gravity;
+                break;
+            }
+        }
+    }
+    [stackView removeArrangedSubview:view];
+    [stackView updateConstraintsForSubtreeIfNeeded];
+    return position;
+}
+
+static void insertIntoArrangedSubviews(NSView *view, NSView *superview, const ArrangedSubviewPosition& position)
+{
+    RetainPtr stackView = dynamic_objc_cast<NSStackView>(superview);
+    if (!stackView)
+        return;
+    if (position.gravity)
+        [stackView insertView:view atIndex:position.index inGravity:*position.gravity];
+    else
+        [stackView insertArrangedSubview:view atIndex:position.index];
+    [stackView setCustomSpacing:position.customSpacingAfter afterView:view];
+    [stackView setVisibilityPriority:position.visibilityPriority forView:view];
+}
+
+static RetainPtr<NSView> viewForLayoutItem(id item)
+{
+    if (RetainPtr view = dynamic_objc_cast<NSView>(item))
+        return view;
+    if (RetainPtr guide = dynamic_objc_cast<NSLayoutGuide>(item))
+        return [guide owningView];
+    return nil;
+}
+
+// Returns the constraints that place the view among the views around it. A constraint is installed on the nearest common
+// ancestor of its items, so only the view itself and its ancestors can hold one.
+static Vector<RetainPtr<NSLayoutConstraint>> constraintsPlacingView(NSView *view)
+{
+    Vector<RetainPtr<NSLayoutConstraint>> result;
+    for (RetainPtr<NSView> ancestor = view; ancestor; ancestor = [ancestor superview]) {
+        RetainPtr constraints = [ancestor constraints];
+        for (SUPPRESS_UNRETAINED_LOCAL NSLayoutConstraint *constraint in constraints.get()) {
+            // AppKit's own kinds of constraints, such as the ones for intrinsic content size, can't be recreated.
+            if (![constraint isMemberOfClass:NSLayoutConstraint.class])
+                continue;
+            RetainPtr firstItem = [constraint firstItem];
+            RetainPtr secondItem = [constraint secondItem];
+            if (firstItem.get() != view && secondItem.get() != view)
+                continue;
+            // Constraints between the view and its own content stay valid when the view moves.
+            RetainPtr otherItem = firstItem.get() == view ? secondItem : firstItem;
+            if (otherItem && otherItem.get() != view && [viewForLayoutItem(otherItem.get()) isDescendantOf:view])
+                continue;
+            result.append(constraint);
+        }
+    }
+    return result;
+}
+
+static RetainPtr<NSLayoutConstraint> copyConstraint(NSLayoutConstraint *constraint, NSView *item, NSView *replacementItem)
+{
+    RetainPtr<id> firstItem = [constraint firstItem];
+    RetainPtr<id> secondItem = [constraint secondItem];
+    if (firstItem.get() == item)
+        firstItem = replacementItem;
+    if (secondItem.get() == item)
+        secondItem = replacementItem;
+    RetainPtr copy = [NSLayoutConstraint constraintWithItem:firstItem.get() attribute:[constraint firstAttribute] relatedBy:[constraint relation] toItem:secondItem.get() attribute:[constraint secondAttribute] multiplier:[constraint multiplier] constant:[constraint constant]];
+    [copy setPriority:[constraint priority]];
+    [copy setIdentifier:retainPtr([constraint identifier]).get()];
+    return copy;
+}
+
+// An NSLayoutConstraint doesn't retain its items, and an inactive one can outlive them.
+struct SavedConstraint {
+    RetainPtr<NSLayoutConstraint> constraint;
+    WeakObjCPtr<id> firstItem;
+    WeakObjCPtr<id> secondItem;
+    // When the app activates or deactivates the constraint while the inspector is attached, it's up to the app whether the
+    // constraint is active after detaching.
+    bool appChangedActivation { false };
+};
+
+static void* kSavedConstraintActivationObserverContext = &kSavedConstraintActivationObserverContext;
+
+static bool isSingleItemConstraint(const SavedConstraint& savedConstraint)
+{
+    return [savedConstraint.constraint secondAttribute] == NSLayoutAttributeNotAnAttribute;
+}
+
+// Activating a constraint between views that have no common ancestor raises an exception.
+static bool canActivateConstraint(const SavedConstraint& savedConstraint)
+{
+    RetainPtr firstView = viewForLayoutItem(savedConstraint.firstItem.get().get());
+    if (!firstView)
+        return false;
+    if (isSingleItemConstraint(savedConstraint))
+        return true;
+    RetainPtr secondView = viewForLayoutItem(savedConstraint.secondItem.get().get());
+    return secondView && [firstView ancestorSharedWithView:secondView.get()];
+}
+
+static bool canWrapInspectedView(NSView *view)
+{
+    RetainPtr superview = [view superview];
+    if (!superview)
+        return false;
+
+    // These keep track of the view as a particular child, such as a document view or a tab's view. An NSBox also forwards
+    // -addSubview: to its content view.
+    if (view == [retainPtr([view window]) contentView])
+        return false;
+    if ([superview isKindOfClass:NSClipView.class] || [superview isKindOfClass:NSBox.class] || [superview isKindOfClass:NSTabView.class])
+        return false;
+
+    // Taking a pane out of an NSSplitView, which by default arranges all of its subviews, also removes it from the split view,
+    // together with the app's constraints to other panes.
+    if ([superview isKindOfClass:NSSplitView.class])
+        return false;
+
+    // The container has no intrinsic content size to stand in for the view's.
+    NSSize intrinsicContentSize = [view intrinsicContentSize];
+    return intrinsicContentSize.width == NSViewNoIntrinsicMetric && intrinsicContentSize.height == NSViewNoIntrinsicMetric;
+}
+
+// Constraints that the app activates for the inspected view while the inspector is attached conflict with the container's
+// layout, and AppKit leaves the ones that it breaks out of the layout even after the conflict is gone, until they are
+// activated again.
+static void reactivateConstraintsPlacingView(NSView *view)
+{
+    auto constraints = constraintsPlacingView(view);
+    for (auto& constraint : constraints)
+        [constraint setActive:NO];
+    for (auto& constraint : constraints)
+        [constraint setActive:YES];
+}
+
+static void restoreAutoLayout(NSView *view, NSAutoresizingMaskOptions autoresizingMask)
+{
+    [view setAutoresizingMask:autoresizingMask];
+    [view setTranslatesAutoresizingMaskIntoConstraints:NO];
+}
+
+// For a view that is no longer where the container is. Its constraints to other views don't apply anymore, but the ones that
+// only refer to the view itself, such as for its size, still do.
+static void restoreAutoLayoutElsewhere(NSView *view, NSAutoresizingMaskOptions autoresizingMask, const Vector<SavedConstraint>& originalConstraints)
+{
+    restoreAutoLayout(view, autoresizingMask);
+    for (auto& savedConstraint : originalConstraints) {
+        if (savedConstraint.appChangedActivation)
+            continue;
+        if (savedConstraint.firstItem.get().get() == view && (isSingleItemConstraint(savedConstraint) || savedConstraint.secondItem.get().get() == view))
+            [savedConstraint.constraint setActive:YES];
+    }
+}
+
+// Takes the place of an inspected view that is laid out with Auto Layout while the inspector is attached to it. The inspector
+// sets the frames of the inspected view and of itself, which the inspected view's constraints would override, so the container
+// takes over those constraints, and lays out both views by their frames.
+@interface WKInspectorAttachmentContainerView : NSView
+- (instancetype)initWithInspectedView:(NSView *)inspectedView;
+- (BOOL)isWrappingInspectedView:(NSView *)view;
+- (void)restoreInspectedView;
+@end
+
+@implementation WKInspectorAttachmentContainerView {
+    WeakObjCPtr<NSView> _inspectedView;
+    NSAutoresizingMaskOptions _inspectedViewAutoresizingMask;
+    Vector<SavedConstraint> _inspectedViewConstraints;
+    Vector<RetainPtr<NSLayoutConstraint>> _containerConstraints;
+    BOOL _isObservingInspectedViewConstraints;
+}
+
+- (instancetype)initWithInspectedView:(NSView *)inspectedView
+{
+    if (!(self = [super initWithFrame:inspectedView.frame]))
+        return nil;
+
+    _inspectedView = inspectedView;
+    _inspectedViewAutoresizingMask = inspectedView.autoresizingMask;
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+
+    RetainPtr superview = [inspectedView superview];
+    auto arrangedSubviewPosition = removeFromArrangedSubviews(inspectedView);
+
+    for (auto& constraint : constraintsPlacingView(inspectedView)) {
+        _inspectedViewConstraints.append({ constraint, [constraint firstItem], [constraint secondItem] });
+        _containerConstraints.append(copyConstraint(constraint.get(), inspectedView, self));
+    }
+    for (auto orientation : { NSLayoutConstraintOrientationHorizontal, NSLayoutConstraintOrientationVertical }) {
+        [self setContentHuggingPriority:[inspectedView contentHuggingPriorityForOrientation:orientation] forOrientation:orientation];
+        [self setContentCompressionResistancePriority:[inspectedView contentCompressionResistancePriorityForOrientation:orientation] forOrientation:orientation];
+    }
+
+    // Add the container first, so that the inspected view doesn't leave the window when moving into it.
+    [superview addSubview:self positioned:NSWindowAbove relativeTo:inspectedView];
+    if (arrangedSubviewPosition)
+        insertIntoArrangedSubviews(self, superview.get(), *arrangedSubviewPosition);
+
+    for (auto& savedConstraint : _inspectedViewConstraints)
+        [savedConstraint.constraint setActive:NO];
+    [self _startObservingInspectedViewConstraints];
+    inspectedView.translatesAutoresizingMaskIntoConstraints = YES;
+    inspectedView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    inspectedView.frame = self.bounds;
+    [self addSubview:inspectedView];
+    for (auto& constraint : _containerConstraints)
+        [constraint setActive:YES];
+
+    return self;
+}
+
+- (void)dealloc
+{
+    [self _stopObservingInspectedViewConstraints];
+
+    // The app released the views around the container while the inspector was attached.
+    if (RetainPtr inspectedView = _inspectedView.get(); inspectedView && [inspectedView superview] == self)
+        restoreAutoLayoutElsewhere(inspectedView.get(), _inspectedViewAutoresizingMask, _inspectedViewConstraints);
+    [super dealloc];
+}
+
+// KVO tells about every change to "active", including through +[NSLayoutConstraint deactivateConstraints:], and even when the
+// value stays the same.
+- (void)_startObservingInspectedViewConstraints
+{
+    for (auto& savedConstraint : _inspectedViewConstraints)
+        [savedConstraint.constraint addObserver:self forKeyPath:@"active" options:0 context:kSavedConstraintActivationObserverContext];
+    _isObservingInspectedViewConstraints = YES;
+}
+
+- (void)_stopObservingInspectedViewConstraints
+{
+    if (!std::exchange(_isObservingInspectedViewConstraints, NO))
+        return;
+    for (auto& savedConstraint : _inspectedViewConstraints)
+        [savedConstraint.constraint removeObserver:self forKeyPath:@"active" context:kSavedConstraintActivationObserverContext];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey, id> *)change context:(void *)context
+{
+    if (context != kSavedConstraintActivationObserverContext) {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        return;
+    }
+
+    for (auto& savedConstraint : _inspectedViewConstraints) {
+        if (savedConstraint.constraint.get() == object)
+            savedConstraint.appChangedActivation = true;
+    }
+}
+
+- (BOOL)isWrappingInspectedView:(NSView *)view
+{
+    return _inspectedView.get() == view && view.superview == self;
+}
+
+- (void)restoreInspectedView
+{
+    [self _stopObservingInspectedViewConstraints];
+
+    // AppKit has already deactivated the copies that refer to views the app removed.
+    for (auto& constraint : std::exchange(_containerConstraints, { })) {
+        if ([constraint isActive])
+            [constraint setActive:NO];
+    }
+    auto inspectedViewConstraints = std::exchange(_inspectedViewConstraints, { });
+
+    RetainPtr inspectedView = _inspectedView.get();
+    RetainPtr superview = [self superview];
+    if ([inspectedView superview] != self || !superview) {
+        // The app moved or removed the inspected view while the inspector was attached. Go back to Auto Layout if the app
+        // removed the view, or placed it with constraints again.
+        if (inspectedView && (![inspectedView superview] || !constraintsPlacingView(inspectedView.get()).isEmpty())) {
+            restoreAutoLayoutElsewhere(inspectedView.get(), _inspectedViewAutoresizingMask, inspectedViewConstraints);
+            reactivateConstraintsPlacingView(inspectedView.get());
+        }
+        [self removeFromSuperview];
+        return;
+    }
+
+    restoreAutoLayout(inspectedView.get(), _inspectedViewAutoresizingMask);
+    [inspectedView setFrame:self.frame];
+    auto arrangedSubviewPosition = removeFromArrangedSubviews(self);
+    [superview replaceSubview:self with:inspectedView.get()];
+    if (arrangedSubviewPosition)
+        insertIntoArrangedSubviews(inspectedView.get(), superview.get(), *arrangedSubviewPosition);
+
+    reactivateConstraintsPlacingView(inspectedView.get());
+    for (auto& savedConstraint : inspectedViewConstraints) {
+        // The app may have removed or released a view that the constraint refers to while the inspector was attached.
+        if (!savedConstraint.appChangedActivation && canActivateConstraint(savedConstraint))
+            [savedConstraint.constraint setActive:YES];
+    }
+}
+
+@end
+
+static bool unwrapInspectedView(WeakObjCPtr<WKInspectorAttachmentContainerView>& weakContainerView)
+{
+    RetainPtr containerView = weakContainerView.get();
+    if (!containerView)
+        return false;
+    weakContainerView = nullptr;
+    [containerView restoreInspectedView];
+    return true;
+}
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -871,6 +1200,13 @@ void WebInspectorUIProxy::platformAttach()
 
     [inspectorView removeFromSuperview];
 
+    if (RetainPtr attachmentContainerView = m_attachmentContainerView.get(); attachmentContainerView && ![attachmentContainerView isWrappingInspectedView:inspectedView.get()])
+        unwrapInspectedView(m_attachmentContainerView);
+    if (!m_attachmentContainerView && ![inspectedView translatesAutoresizingMaskIntoConstraints] && canWrapInspectedView(inspectedView.get())) {
+        RetainPtr attachmentContainerView = adoptNS([[WKInspectorAttachmentContainerView alloc] initWithInspectedView:inspectedView.get()]);
+        m_attachmentContainerView = attachmentContainerView.get();
+    }
+
     CGFloat currentDimension;
     switch (m_attachmentSide) {
     case AttachmentSide::Bottom:
@@ -904,10 +1240,11 @@ void WebInspectorUIProxy::platformDetach()
     [inspectorView removeFromSuperview];
     [inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
-    // Make sure that we size the inspected view's frame after detaching so that it takes up the space that the
-    // attached inspector used to. Preserve the top position of the inspected view so banners in Safari still work.
-    if (inspectedView)
+    if (!unwrapInspectedView(m_attachmentContainerView) && inspectedView) {
+        // Make sure that we size the inspected view's frame after detaching so that it takes up the space that the
+        // attached inspector used to. Preserve the top position of the inspected view so banners in Safari still work.
         inspectedView.get().frame = NSMakeRect(0, 0, NSWidth(inspectedView.get().superview.bounds), NSMaxY(inspectedView.get().frame));
+    }
 
     // Return early if we are not visible. This means the inspector was closed while attached
     // and we should not create and show the inspector window.
