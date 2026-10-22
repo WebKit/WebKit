@@ -53,18 +53,13 @@
 #endif
 
 namespace WebCore {
+class CoordinatedTileManager;
 class Damage;
 class IntRect;
 class IntSize;
 class GraphicsLayer;
 class GraphicsLayerFactory;
 class NativeImage;
-class SkiaPaintingEngine;
-#if USE(CAIRO)
-namespace Cairo {
-class PaintingEngine;
-}
-#endif
 }
 
 namespace WebKit {
@@ -140,11 +135,7 @@ private:
 #endif
 
     // CoordinatedPlatformLayer::Client
-#if USE(CAIRO)
-    WebCore::Cairo::PaintingEngine& LEGACY_NODELETE paintingEngine() override;
-#elif USE(SKIA)
-    WebCore::SkiaPaintingEngine& paintingEngine() const LIFETIME_BOUND override { return *m_skiaPaintingEngine.get(); }
-#endif
+    WebCore::CoordinatedTileManager& tileManager() const LIFETIME_BOUND override { return *m_tileManager; }
     Ref<WebCore::CoordinatedImageBackingStore> imageBackingStore(Ref<WebCore::NativeImage>&&) override;
 
     void attachLayer(WebCore::CoordinatedPlatformLayer&) override;
@@ -200,11 +191,7 @@ private:
 #if !HAVE(DISPLAY_LINK)
     WebCore::PlatformDisplayID m_displayID;
 #endif
-#if USE(CAIRO)
-    const std::unique_ptr<WebCore::Cairo::PaintingEngine> m_paintingEngine;
-#elif USE(SKIA)
-    std::unique_ptr<WebCore::SkiaPaintingEngine> m_skiaPaintingEngine;
-#endif
+    std::unique_ptr<WebCore::CoordinatedTileManager> m_tileManager;
     HashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
 
     uint32_t m_compositionRequestID { 0 };

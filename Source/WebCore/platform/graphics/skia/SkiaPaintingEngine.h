@@ -32,7 +32,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
-#include <wtf/WorkerPool.h>
 
 namespace WebCore {
 
@@ -42,7 +41,6 @@ class GraphicsContext;
 class GraphicsLayer;
 class GraphicsLayerCoordinated;
 class IntRect;
-class IntSize;
 class SkiaGPUAtlas;
 class SkiaImageAtlasLayout;
 class SkiaRecordingResult;
@@ -57,27 +55,21 @@ public:
 
     static std::unique_ptr<SkiaPaintingEngine> create(sk_sp<GrContextThreadSafeProxy>&&);
 
-    static unsigned numberOfCPUPaintingThreads();
-#if USE(TEXTURE_MAPPER)
-    static unsigned numberOfGPUPaintingThreads();
-#endif
     static bool shouldUseDMABufAtlasTextures();
     static bool shouldUseLinearTileTextures();
     static bool shouldUseVivanteSuperTiledTileTextures();
 
     const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext() const { return m_threadSafeGrContext; }
 
-    Ref<SkiaRecordingResult> record(const GraphicsLayerCoordinated&, const IntRect& recordRect, bool contentsOpaque, float contentsScale, unsigned dirtyTilesCount);
-    Ref<CoordinatedTileBuffer> replay(const GraphicsLayerCoordinated&, Ref<SkiaRecordingResult>&&, const IntRect& tileRect, const IntRect& dirtyRect);
+    Ref<SkiaRecordingResult> record(const GraphicsLayerCoordinated&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale, unsigned dirtyTilesCount);
+    void replay(const Ref<CoordinatedTileBuffer>&, const Ref<SkiaRecordingResult>&, const IntRect& tileRect, const IntRect& dirtyRect) const;
 
 private:
-    Ref<CoordinatedTileBuffer> createBuffer(RenderingMode, const IntSize&, bool contentsOpaque) const;
     void paintIntoGraphicsContext(const GraphicsLayer&, GraphicsContext&, const IntRect&, bool contentsOpaque, float contentsScale) const;
     RefPtr<SkiaGPUAtlas> createAtlas(const SkiaImageAtlasLayout&, AtlasUploadCondition&);
     bool tryReuseCachedAtlases(SkiaRecordingResult&, unsigned fingerprint);
 
     sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
-    const RefPtr<WorkerPool> m_paintingWorkerPool;
     const RefPtr<WorkQueue> m_uploadWorkQueue;
     unsigned m_cachedImageFingerprint { 0 };
     Vector<Ref<SkiaGPUAtlas>> m_cachedGPUAtlases;

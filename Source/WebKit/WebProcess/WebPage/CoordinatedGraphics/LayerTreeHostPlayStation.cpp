@@ -37,6 +37,7 @@
 #include "WebProcess.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
 #include <WebCore/Chrome.h>
+#include <WebCore/CoordinatedTileManager.h>
 #include <WebCore/Damage.h>
 #include <WebCore/GraphicsLayerCoordinated.h>
 #include <WebCore/LocalFrame.h>
@@ -51,12 +52,6 @@
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
-
-#if USE(CAIRO)
-#include <WebCore/CairoPaintingEngine.h>
-#elif USE(SKIA)
-#include <WebCore/SkiaPaintingEngine.h>
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -75,9 +70,9 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
     , m_displayID(displayID)
 #endif
 #if USE(CAIRO)
-    , m_paintingEngine(Cairo::PaintingEngine::create())
+    , m_tileManager(CoordinatedTileManager::create())
 #elif USE(SKIA)
-    , m_skiaPaintingEngine(SkiaPaintingEngine::create())
+    , m_tileManager(CoordinatedTileManager::create(nullptr))
 #endif
 {
     {
@@ -123,9 +118,7 @@ LayerTreeHost::~LayerTreeHost()
 
     cancelRenderingUpdate();
 
-#if USE(SKIA)
-    m_skiaPaintingEngine = nullptr;
-#endif
+    m_tileManager = nullptr;
 
     // ThreadedCompositor must be invalidated before invalidating CoordinatedSceneState
     // to invalidate pending layers in the compositor thread.
@@ -428,13 +421,6 @@ int LayerTreeHost::maxTextureSize() const
 {
     return m_compositor->maxTextureSize();
 }
-
-#if USE(CAIRO)
-Cairo::PaintingEngine& LayerTreeHost::paintingEngine()
-{
-    return *m_paintingEngine;
-}
-#endif
 
 Ref<CoordinatedImageBackingStore> LayerTreeHost::imageBackingStore(Ref<NativeImage>&& nativeImage)
 {

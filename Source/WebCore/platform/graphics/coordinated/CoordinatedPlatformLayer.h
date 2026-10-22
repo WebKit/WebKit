@@ -55,6 +55,7 @@ class CoordinatedImageBackingStore;
 class CoordinatedPlatformLayer;
 class CoordinatedPlatformLayerBuffer;
 class CoordinatedTileBuffer;
+class CoordinatedTileManager;
 class GraphicsLayerCoordinated;
 class NativeImage;
 
@@ -64,15 +65,6 @@ class TextureMapperLayer;
 class SkiaCompositingLayer;
 #endif
 
-#if USE(SKIA)
-class SkiaPaintingEngine;
-#endif
-#if USE(CAIRO)
-namespace Cairo {
-class PaintingEngine;
-}
-#endif
-
 class CoordinatedPlatformLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CoordinatedPlatformLayer> {
 public:
     // FIXME: remove this client when a subclass is added for the WebProcess.
@@ -80,11 +72,7 @@ public:
     public:
         virtual void attachLayer(CoordinatedPlatformLayer&) = 0;
         virtual void detachLayer(CoordinatedPlatformLayer&) = 0;
-#if USE(CAIRO)
-        virtual Cairo::PaintingEngine& paintingEngine() = 0;
-#elif USE(SKIA)
-        virtual SkiaPaintingEngine& paintingEngine() const = 0;
-#endif
+        virtual CoordinatedTileManager& tileManager() const = 0;
         virtual Ref<CoordinatedImageBackingStore> imageBackingStore(Ref<NativeImage>&&) = 0;
         virtual void notifyCompositionRequired() = 0;
         virtual bool isCompositionRequiredOrOngoing() const = 0;
@@ -108,6 +96,8 @@ public:
 
     void setOwner(GraphicsLayerCoordinated*);
     GraphicsLayerCoordinated* owner() const;
+
+    CoordinatedTileManager& tileManager() const;
 
 #if USE(TEXTURE_MAPPER)
     TextureMapperLayer& ensureTarget();
