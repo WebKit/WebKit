@@ -74,14 +74,12 @@ static Vector<WebCore::CertificateInfo> buildRequestAuthentications(WKIdentityDo
 {
     Vector<WebCore::CertificateInfo> requestAuthentications;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSArray<WKIdentityDocumentPresentmentRequestAuthenticationCertificate *> *certificateChain in mobileDocumentRequest.authenticationCertificates) {
+    for (NSArray<WKIdentityDocumentPresentmentRequestAuthenticationCertificate *> *certificateChain in mobileDocumentRequest.authenticationCertificates) {
 
         Vector<RetainPtr<SecCertificateRef>> certificateChainVector;
         certificateChainVector.reserveInitialCapacity(certificateChain.count);
 
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL WKIdentityDocumentPresentmentRequestAuthenticationCertificate *certificate in certificateChain)
+        for (WKIdentityDocumentPresentmentRequestAuthenticationCertificate *certificate in certificateChain)
             certificateChainVector.append(RetainPtr<SecCertificateRef>(certificate.certificate));
 
         auto trust = createSecTrustForChain(certificateChainVector);
@@ -97,16 +95,14 @@ static WebCore::ISO18013DocumentRequest buildDocumentRequest(WKIdentityDocumentP
 
     mappedDocumentRequest.documentType = individualDocumentRequest.documentType;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *namespaceKey in individualDocumentRequest.namespaces) {
+    for (NSString *namespaceKey in individualDocumentRequest.namespaces) {
         String mappedNamespaceKey = namespaceKey;
 
         using ElementDictionaryType = NSDictionary<NSString *, WKIdentityDocumentPresentmentMobileDocumentElementInfo *>;
         RetainPtr<ElementDictionaryType> elementDictionary = individualDocumentRequest.namespaces[namespaceKey];
 
         WebCore::ISO18013ElementNamespaceVector innerVector;
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *elementIdentifier in elementDictionary.get()) {
+        for (NSString *elementIdentifier in elementDictionary.get()) {
             String mappedElementIdentifier = elementIdentifier;
             WebCore::ISO18013ElementInfo elementInfo {
                 static_cast<bool>(elementDictionary.get()[elementIdentifier].isRetaining)
@@ -121,8 +117,7 @@ static WebCore::ISO18013DocumentRequest buildDocumentRequest(WKIdentityDocumentP
         Vector<WebCore::X509SubjectKeyIdentifier> issuerIdentifiers;
         issuerIdentifiers.reserveInitialCapacity([individualDocumentRequest.issuerIdentifiers count]);
 
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSData *data in individualDocumentRequest.issuerIdentifiers)
+        for (NSData *data in individualDocumentRequest.issuerIdentifiers)
             issuerIdentifiers.append(WebCore::X509SubjectKeyIdentifier { makeVector(data) });
 
         if (!issuerIdentifiers.isEmpty()) {
@@ -139,17 +134,14 @@ static Vector<WebCore::ISO18013PresentmentRequest> buildPresentmentRequests(WKId
 {
     Vector<WebCore::ISO18013PresentmentRequest> presentmentRequests;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WKIdentityDocumentPresentmentMobileDocumentPresentmentRequest *presentmentRequest in mobileDocumentRequest.presentmentRequests) {
+    for (WKIdentityDocumentPresentmentMobileDocumentPresentmentRequest *presentmentRequest in mobileDocumentRequest.presentmentRequests) {
         WebCore::ISO18013PresentmentRequest mappedPresentmentRequest;
         mappedPresentmentRequest.isMandatory = presentmentRequest.isMandatory;
 
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *> *documentSet in presentmentRequest.documentSets) {
+        for (NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *> *documentSet in presentmentRequest.documentSets) {
             WebCore::ISO18013DocumentRequestSet mappedDocumentSet;
 
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *documentRequest in documentSet) {
+            for (WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *documentRequest in documentSet) {
                 WebCore::ISO18013DocumentRequest mappedDocumentRequest = buildDocumentRequest(documentRequest);
                 mappedDocumentSet.requests.append(mappedDocumentRequest);
             }

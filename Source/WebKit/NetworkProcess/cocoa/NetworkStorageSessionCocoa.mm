@@ -106,8 +106,7 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, Completi
 
     bool hasCookieForDomain = false;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
+    for (NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
         if (RegistrableDomain::uncheckedCreateFromHost(nsCookie.domain) == domain) {
             hasCookieForDomain = true;
             break;
@@ -134,8 +133,7 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
     RetainPtr<NSMutableArray<NSHTTPCookie *>> oldCookiesToDelete = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<NSMutableArray<NSHTTPCookie *>> newCookiesToAdd = adoptNS([[NSMutableArray alloc] init]);
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
+    for (NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
         if (RegistrableDomain::uncheckedCreateFromHost(nsCookie.domain) == domain && nsCookie.sameSitePolicy != NSHTTPCookieSameSiteStrict) {
             [oldCookiesToDelete addObject:nsCookie];
             RetainPtr<NSMutableDictionary<NSHTTPCookiePropertyKey, id>> mutableProperties = adoptNS([[nsCookie properties] mutableCopy]);
@@ -147,16 +145,14 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
 
     auto aggregator = CallbackAggregator::create([completionHandler = WTF::move(completionHandler), newCookiesToAdd = WTF::move(newCookiesToAdd), cookieStorage = RetainPtr { nsCookieStorage() }] () mutable {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *newCookie in newCookiesToAdd.get())
+        for (NSHTTPCookie *newCookie in newCookiesToAdd.get())
             [cookieStorage setCookie:newCookie];
         END_BLOCK_OBJC_EXCEPTIONS
         completionHandler();
     });
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *oldCookie in oldCookiesToDelete.get())
+    for (NSHTTPCookie *oldCookie in oldCookiesToDelete.get())
         deleteHTTPCookie(cookieStorage().get(), oldCookie, [aggregator] { });
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -291,8 +287,7 @@ void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
 
     RetainPtr<NSArray> cookies = httpCookies(cookieStorage().get());
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie* cookie in cookies.get()) {
+    for (NSHTTPCookie* cookie in cookies.get()) {
         RetainPtr<NSString> domain = [cookie domain];
         if (!domain) {
             ASSERT_NOT_REACHED();
@@ -322,8 +317,7 @@ void NetworkStorageSession::deleteCookiesMatching(NOESCAPE const Function<bool(N
     if (!cookies)
         return;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *cookie in cookies.get()) {
+    for (NSHTTPCookie *cookie in cookies.get()) {
         @autoreleasepool {
             if (matches(cookie))
                 deleteHTTPCookie(cookieStorage.get(), cookie, [aggregator] { });
@@ -415,8 +409,7 @@ Vector<Cookie> NetworkStorageSession::domCookiesForHost(const URL& firstParty)
             wasCompletionHandlerCalled = true;
 
             RetainPtr registrableDomain = RegistrableDomain { firstParty }.string().createNSString();
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *nsCookie in cookies) {
+            for (NSHTTPCookie *nsCookie in cookies) {
                 if (![nsCookie.domain hasSuffix:registrableDomain.get()])
                     continue;
                 if (![host hasSuffix:nsCookie.domain])

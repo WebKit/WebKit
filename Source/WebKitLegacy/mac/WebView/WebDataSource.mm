@@ -161,8 +161,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 - (void)_addSubframeArchives:(NSArray *)subframeArchives
 {
     // FIXME: This SPI is poor, poor design. Can we come up with another solution for those who need it?
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WebArchive *archive in subframeArchives)
+    for (WebArchive *archive in subframeArchives)
         protect(toPrivate(_private)->loader)->addAllArchiveResources(protect(*[archive _coreLegacyWebArchive]));
 }
 

@@ -200,8 +200,7 @@ static inline void performEnterpriseAttestation(const WebCore::PublicKeyCredenti
     cbor::CBORValue::MapValue attestationStatementMap;
     {
         Vector<cbor::CBORValue> cborArray;
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL id nsCert in chain.get())
+        for (id nsCert in chain.get())
             cborArray.append(cbor::CBORValue(makeVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)nsCert)).get())));
         attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTF::move(cborArray));
         attestationStatementMap[cbor::CBORValue("alg")] = cbor::CBORValue(coseAlgorithmES256);
@@ -298,8 +297,7 @@ std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::g
     RetainPtr sortedAttributesArray = m_connection->getExistingCredentials(rpId);
     Vector<Ref<AuthenticatorAssertionResponse>> result;
     result.reserveInitialCapacity([sortedAttributesArray count]);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *attributes in sortedAttributesArray.get()) {
+    for (NSDictionary *attributes in sortedAttributesArray.get()) {
         auto decodedResponse = cbor::CBORReader::read(makeVector(protect(checked_objc_cast<NSData>(attributes[(id)kSecAttrApplicationTag])).get()));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();

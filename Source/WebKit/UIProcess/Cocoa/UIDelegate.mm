@@ -951,8 +951,7 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFr
                 filenames.append(maybeMovedURL.get().path);
         }
 #else
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSURL *url in URLs)
+        for (NSURL *url in URLs)
             filenames.append(url.path);
 #endif
         listener->chooseFiles(filenames, openPanelParameters->allowedMIMETypes()->toStringVector());

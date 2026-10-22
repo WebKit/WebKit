@@ -122,8 +122,7 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
     [actionContext setAllowedActionUTIs:@[ @"com.apple.dial" ]];
 
     RetainPtr<NSArray> proposedMenuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForValue:telephoneNumber.createNSString().get() type:PAL::get_DataDetectorsCore_DDBinderPhoneNumberKeySingleton() service:nil context:actionContext.get()];
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSMenuItem *item in proposedMenuItems.get()) {
+    for (NSMenuItem *item in proposedMenuItems.get()) {
         RetainPtr action = actionForMenuItem(item);
         if ([retainPtr(action.get().actionUTI) hasPrefix:@"com.apple.dial"]) {
             item.title = formattedPhoneNumberString(telephoneNumber.createNSString().get()).get();

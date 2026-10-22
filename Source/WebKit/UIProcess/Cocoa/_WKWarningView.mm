@@ -368,8 +368,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     [box setWarningViewBackgroundColor:colorForItem(WarningItem::BoxBackground, self).get()];
     [box layer].cornerRadius = boxCornerRadius;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL ViewType *view in @[ warningViewIcon.get(), title.get(), warning.get(), goBack.get(), primaryButton.get() ]) {
+    for (ViewType *view in @[ warningViewIcon.get(), title.get(), warning.get(), goBack.get(), primaryButton.get() ]) {
         view.translatesAutoresizingMaskIntoConstraints = NO;
         [box addSubview:view];
     }
@@ -463,8 +462,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 
     auto line = adoptNS([_WKWarningViewBox new]);
     [line setWarningViewBackgroundColor:[WebCore::CocoaColor lightGrayColor]];
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL ViewType *view in @[details.get(), bottom.get(), line.get()])
+    for (ViewType *view in @[details.get(), bottom.get(), line.get()])
         view.translatesAutoresizingMaskIntoConstraints = NO;
 
     [self addSubview:bottom.get()];

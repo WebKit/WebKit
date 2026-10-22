@@ -132,8 +132,7 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     UNUSED_PARAM(manager);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL CLLocation *location in locations)
+    for (CLLocation *location in locations)
         _client->positionChanged(_websiteIdentifier, WebCore::GeolocationPositionData { location });
 }
 

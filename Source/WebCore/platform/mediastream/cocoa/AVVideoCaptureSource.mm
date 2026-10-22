@@ -214,8 +214,7 @@ static IntSize maxPhotoSizeForFormat(AVCaptureDeviceFormat *format, IntSize requ
         return { };
 
     auto bestMaxPhotoSize = maxPhotoDimensions.firstObject.CMVideoDimensionsValue;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSValue *value in maxPhotoDimensions) {
+    for (NSValue *value in maxPhotoDimensions) {
         CMVideoDimensions dimensions = value.CMVideoDimensionsValue;
         if (dimensions.width >= requestedSize.width() && dimensions.height >= requestedSize.height()) {
             if (dimensions.width * dimensions.height < bestMaxPhotoSize.width * bestMaxPhotoSize.height)
@@ -1291,8 +1290,7 @@ RetainPtr<AVFrameRateRange> AVVideoCaptureSource::frameDurationForFrameRate(doub
     using namespace PAL; // For CMTIME_COMPARE_INLINE
 
     RetainPtr<AVFrameRateRange> bestFrameRateRange;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL AVFrameRateRange *frameRateRange in [[device() activeFormat] videoSupportedFrameRateRanges]) {
+    for (AVFrameRateRange *frameRateRange in [[device() activeFormat] videoSupportedFrameRateRanges]) {
         if (frameRateRangeIncludesRate({ [frameRateRange minFrameRate], [frameRateRange maxFrameRate] }, rate)) {
             if (!bestFrameRateRange || CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], >, [bestFrameRateRange.get() minFrameDuration]))
                 bestFrameRateRange = frameRateRange;
@@ -1539,8 +1537,7 @@ static bool isFormatPowerEfficient(AVCaptureDeviceFormat* format)
 void AVVideoCaptureSource::generatePresets()
 {
     Vector<VideoPreset> presets;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL AVCaptureDeviceFormat* format in [device() formats]) {
+    for (AVCaptureDeviceFormat* format in [device() formats]) {
 
         // Skip packed-Bayer ProRes RAW sensor formats as they are not currently supported.
         RetainPtr<CMFormatDescriptionRef> formatDescription = format.formatDescription;
@@ -1557,8 +1554,7 @@ void AVVideoCaptureSource::generatePresets()
             continue;
 
         Vector<FrameRateRange> frameRates;
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL AVFrameRateRange* range in [format videoSupportedFrameRateRanges])
+        for (AVFrameRateRange* range in [format videoSupportedFrameRateRanges])
             frameRates.append({ range.minFrameRate, range.maxFrameRate });
 
         VideoPreset preset { size, WTF::move(frameRates), computeMinZoom(), computeMaxZoom(format), isFormatPowerEfficient(format) };

@@ -103,7 +103,7 @@ template<typename T> Vector<RetainPtr<T>> vectorFromArray(NSArray *array)
     if (![array isKindOfClass:NSArray.class])
         return { };
     Vector<RetainPtr<T>> result;
-    for (SUPPRESS_UNRETAINED_LOCAL id element in array) {
+    for (id element in array) {
         SUPPRESS_UNRETAINED_ARG if ([element isKindOfClass:retainPtr(IPC::getClass<T>()).get()])
             result.append((T *)element);
     }

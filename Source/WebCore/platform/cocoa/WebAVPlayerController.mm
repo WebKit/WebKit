@@ -651,8 +651,7 @@ Class webAVPlayerControllerClassSingleton()
     CMTime currentTime = CMTimeMakeWithSeconds([[self timing] currentValue], 1000);
     CMTime thirtySecondsBeforeCurrentTime = CMTimeSubtract(currentTime, PAL::CMTimeMake(30, 1));
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSValue *seekableTimeRangeValue in [self seekableTimeRanges]) {
+    for (NSValue *seekableTimeRangeValue in [self seekableTimeRanges]) {
         if (CMTimeRangeContainsTime([seekableTimeRangeValue CMTimeRangeValue], thirtySecondsBeforeCurrentTime)) {
             isTimeWithinSeekableTimeRanges = YES;
             break;
@@ -670,8 +669,7 @@ Class webAVPlayerControllerClassSingleton()
     UNUSED_PARAM(sender);
     NSTimeInterval timeAtEndOfSeekableTimeRanges = NAN;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSValue *seekableTimeRangeValue in [self seekableTimeRanges]) {
+    for (NSValue *seekableTimeRangeValue in [self seekableTimeRanges]) {
         CMTimeRange seekableTimeRange = [seekableTimeRangeValue CMTimeRangeValue];
         NSTimeInterval endOfSeekableTimeRange = CMTimeGetSeconds(CMTimeRangeGetEnd(seekableTimeRange));
         if (isnan(timeAtEndOfSeekableTimeRanges) || endOfSeekableTimeRange > timeAtEndOfSeekableTimeRanges)
@@ -741,8 +739,7 @@ Class webAVPlayerControllerClassSingleton()
 
     CMTime minimumTime = kCMTimeIndefinite;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSValue *value in [self seekableTimeRanges])
+    for (NSValue *value in [self seekableTimeRanges])
         minimumTime = CMTimeMinimum([value CMTimeRangeValue].start, minimumTime);
 
     return CMTIME_IS_NUMERIC(minimumTime);
@@ -771,8 +768,7 @@ Class webAVPlayerControllerClassSingleton()
 
     CMTime maximumTime = kCMTimeIndefinite;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSValue *value in [self seekableTimeRanges])
+    for (NSValue *value in [self seekableTimeRanges])
         maximumTime = CMTimeMaximum(CMTimeRangeGetEnd([value CMTimeRangeValue]), maximumTime);
 
     return CMTIME_IS_NUMERIC(maximumTime);

@@ -335,8 +335,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
     if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey])
         _private->_redirectURLs = makeUnique<Vector<String>>(makeVector<String>(redirectURLs));
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id childDict in [[dict objectForKey:childrenKey] reverseObjectEnumerator]) {
+    for (id childDict in [[dict objectForKey:childrenKey] reverseObjectEnumerator]) {
         RetainPtr child = adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:dynamic_objc_cast<NSDictionary>(childDict)]);
         protect(core(_private))->addChildItem(*core(child->_private));
     }

@@ -493,8 +493,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
         CGPDFContextAddDestinationAtPoint(context.get(), bridge_cast(linkDestinationName(pdfDocument, destination.get())).get(), destinationPoint);
     }
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL PDFAnnotation *annotation in [pdfPage annotations]) {
+    for (PDFAnnotation *annotation in [pdfPage annotations]) {
         if (![[annotation valueForAnnotationKey:PAL::get_PDFKit_PDFAnnotationKeySubtypeSingleton()] isEqualToString:PAL::get_PDFKit_PDFAnnotationSubtypeLinkSingleton()])
             continue;
 
@@ -601,8 +600,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
         _linkDestinationsPerPage.resize(pageCount);
         for (unsigned i = 0; i < pageCount; i++) {
             RetainPtr page = [_printedPagesPDFDocument pageAtIndex:i];
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL PDFAnnotation *annotation in page.get().annotations) {
+            for (PDFAnnotation *annotation in page.get().annotations) {
                 if (![[annotation valueForAnnotationKey:PAL::get_PDFKit_PDFAnnotationKeySubtypeSingleton()] isEqualToString:PAL::get_PDFKit_PDFAnnotationSubtypeLinkSingleton()])
                     continue;
 
