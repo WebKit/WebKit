@@ -34,9 +34,12 @@
 
 namespace TestWebKitAPI {
 
-RetainPtr<DDHighlightRef> createDataDetectorHighlight(CGRect textRect, CGRect visibleRect)
+RetainPtr<DDHighlightRef> createDataDetectorHighlight(CGRect textRect, CGRect visibleRect, DataDetectorHighlightStyle style)
 {
-    return adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &textRect, 1, visibleRect, static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES, 0));
+    DDHighlightStyle ddStyle { style == DataDetectorHighlightStyle::Bubble
+        ? static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow)
+        : static_cast<DDHighlightStyle>(DDHighlightStyleBubbleNone) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow) | static_cast<DDHighlightStyle>(DDHighlightStyleButtonShowAlways) };
+    return adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &textRect, 1, visibleRect, ddStyle, YES, NSWritingDirectionNatural, NO, YES, 0));
 }
 
 bool pointIsOnDataDetectorHighlight(DDHighlightRef highlight, CGPoint point)
@@ -45,9 +48,9 @@ bool pointIsOnDataDetectorHighlight(DDHighlightRef highlight, CGPoint point)
     return PAL::softLink_DataDetectors_DDHighlightPointIsOnHighlight(highlight, point, &isOverButton);
 }
 
-DataDetectorHighlightGeometry dataDetectorHighlightGeometry(CGRect textRect, CGRect visibleRect)
+DataDetectorHighlightGeometry dataDetectorHighlightGeometry(CGRect textRect, CGRect visibleRect, DataDetectorHighlightStyle style)
 {
-    RetainPtr highlight { createDataDetectorHighlight(textRect, visibleRect) };
+    RetainPtr highlight { createDataDetectorHighlight(textRect, visibleRect, style) };
     CGRect boundingRect { PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(highlight.get()) };
     CGRect integralBounds { CGRectIntegral(boundingRect) };
     CGRect buttonRect { CGRectNull };

@@ -250,6 +250,7 @@ public:
             { "/main-with-telephone-number-next-to-iframe"_s, html(makeString("<body style='margin:0'><span id='phone' style='position:absolute; right:706px; top:130px; font:20px Helvetica; white-space:nowrap'>408-996-1010</span>"
                 "<iframe style='position:absolute; left:300px; top:120px; width:400px; height:300px; border:0' src='"_s, GetParam().subframeURL("/text.html"_s), "'></iframe></body>"_s)) },
             { "/main-with-scrollable-iframe"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/tall-telephone-number.html"_s)))) },
+            { "/main-with-text-and-iframe"_s, html(mainHTML(makeString("<p style='margin:40px; font:20px Helvetica'>Select these words</p>"_s, iframe(iframeLeft, GetParam().subframeURL("/text.html"_s))))) },
             { "/nested.html"_s, html(nestedFrameHTML("telephone-number.html"_s)) },
             { "/nested-main-site.html"_s, html(nestedFrameHTML("https://example.com/telephone-number.html"_s)) },
             { "/nested-main-site-at-origin.html"_s, html("<body style='margin:0'><iframe style='position:absolute; left:0; top:0; width:300px; height:200px; border:0' src='https://example.com/telephone-number.html'></iframe></body>"_s) },
@@ -291,6 +292,12 @@ public:
         return frame;
     }
 
+    static CGRect rectInWebView(NSArray *rectInFrame, CGPoint frameContentOrigin)
+    {
+        return CGRectMake(frameContentOrigin.x + [[rectInFrame objectAtIndex:0] doubleValue], frameContentOrigin.y + [[rectInFrame objectAtIndex:1] doubleValue],
+            [[rectInFrame objectAtIndex:2] doubleValue], [[rectInFrame objectAtIndex:3] doubleValue]);
+    }
+
     CGRect telephoneNumberRect(WKFrameInfo *frame, CGPoint frameContentOrigin)
     {
         RetainPtr rect { dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:@"(() => {"
@@ -299,8 +306,7 @@ public:
             "  const rect = range.getBoundingClientRect();"
             "  return [rect.x, rect.y, rect.width, rect.height];"
             "})()" inFrame:frame]) };
-        return CGRectMake(frameContentOrigin.x + [[rect objectAtIndex:0] doubleValue], frameContentOrigin.y + [[rect objectAtIndex:1] doubleValue],
-            [[rect objectAtIndex:2] doubleValue], [[rect objectAtIndex:3] doubleValue]);
+        return rectInWebView(rect.get(), frameContentOrigin);
     }
 
     static CGPoint pointInSecondFrame(CGPoint pointInFirstFrame)
@@ -935,6 +941,178 @@ TEST_P(TelephoneNumberInSubframe, HighlightsInTwoFramesWithSelectedTelephoneNumb
 }
 
 INSTANTIATE_TEST_SUITE_P(DataDetection, TelephoneNumberInSubframe, testing::ValuesIn(siteIsolationParams), &TelephoneNumberInSubframe::testNameGenerator);
+
+class SelectionServicesInSubframe : public TelephoneNumberInSubframe {
+public:
+    void makeSelectionServicesAvailable(WKFrameInfo *frame)
+    {
+        [webView objectByEvaluatingJavaScript:@"internals.setHasRelevantSelectionServicesForTesting(true); true" inFrame:frame];
+    }
+
+    CGRect wordRect(WKFrameInfo *frame, CGPoint frameContentOrigin, NSString *word)
+    {
+        RetainPtr rect { dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+            "  const text = document.querySelector('p').firstChild;"
+            "  const start = text.data.indexOf('%@');"
+            "  const range = document.createRange();"
+            "  range.setStart(text, start);"
+            "  range.setEnd(text, start + %lu);"
+            "  const rect = range.getBoundingClientRect();"
+            "  return [rect.x, rect.y, rect.width, rect.height];"
+            "})()", word, static_cast<unsigned long>(word.length)] inFrame:frame]) };
+        return rectInWebView(rect.get(), frameContentOrigin);
+    }
+
+    bool selectionIs(WKFrameInfo *frame, NSString *text)
+    {
+        return [[webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:frame] isEqualToString:text];
+    }
+
+    void selectWord(WKFrameInfo *frame, CGRect wordRect, NSString *word)
+    {
+        moveMouse(center(wordRect));
+        [webView sendClicksAtPoint:[webView convertPoint:center(wordRect) toView:nil] numberOfClicks:2];
+        [webView waitForPendingMouseEvents];
+        EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+            return selectionIs(frame, word) && frameHasFocus(frame);
+        }));
+    }
+
+    CGRect selectionRect(WKFrameInfo *frame, CGPoint frameContentOrigin)
+    {
+        RetainPtr rect { dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:@"(() => {"
+            "  const rect = internals.selectionBounds();"
+            "  return [rect.x, rect.y, rect.width, rect.height];"
+            "})()" inFrame:frame]) };
+        return rectInWebView(rect.get(), frameContentOrigin);
+    }
+
+    static DataDetectorHighlightGeometry selectionHighlightGeometry(CGRect selectionRect, CGRect visibleRect)
+    {
+        return dataDetectorHighlightGeometry(selectionRect, visibleRect, DataDetectorHighlightStyle::SelectionButton);
+    }
+
+    testing::AssertionResult hoverButtonUntilHighlightIsShown(const DataDetectorHighlightGeometry& highlight)
+    {
+        return hoverUntilHighlightIsShown(webView.get(), { highlight.buttonCenter, CGSizeZero }, highlight.boundingRect, telephoneNumberRectTolerance);
+    }
+
+    void clickServicesButtonAndExpectMenu(CGPoint pointOverButton, NSString *selectedText)
+    {
+        __block RetainPtr<NSString> menuText;
+
+        SEL initWithItems { @selector(initWithItems:) };
+        auto originalInitWithItems { reinterpret_cast<id (*)(id, SEL, NSArray *)>(method_getImplementation(class_getInstanceMethod(NSSharingServicePicker.class, initWithItems))) };
+        InstanceMethodSwizzler initWithItemsSwizzler {
+            NSSharingServicePicker.class,
+            initWithItems,
+            imp_implementationWithBlock(^(id picker, NSArray *items) {
+                menuText = dynamic_objc_cast<NSAttributedString>(items.firstObject).string;
+                return originalInitWithItems(picker, initWithItems, items);
+            })
+        };
+        InstanceMethodSwizzler pickerMenuSwizzler {
+            NSSharingServicePicker.class,
+            @selector(menu),
+            imp_implementationWithBlock(^NSMenu *(id) {
+                return adoptNS([[NSMenu alloc] init]).autorelease();
+            })
+        };
+
+        auto menu { clickButton(pointOverButton) };
+        ASSERT_TRUE(menu.has_value());
+
+        EXPECT_WK_STREQ(selectedText, menuText.get());
+        EXPECT_NEAR(menu->location.x, pointOverButton.x, 1);
+        EXPECT_NEAR(menu->location.y, pointOverButton.y, 1);
+    }
+};
+
+TEST_P(SelectionServicesInSubframe, ButtonAndMenuAreAtTheEndOfTheSelection)
+{
+    load(@"/main");
+    RetainPtr frame { [webView firstChildFrame] };
+    makeSelectionServicesAvailable(frame.get());
+    selectWord(frame.get(), wordRect(frame.get(), iframeContentBox.origin, @"Call"), @"Call");
+
+    auto highlight { selectionHighlightGeometry(selectionRect(frame.get(), iframeContentBox.origin), rootVisibleRect(iframeContentBox)) };
+    ASSERT_TRUE(hoverButtonUntilHighlightIsShown(highlight));
+    clickServicesButtonAndExpectMenu(highlight.buttonCenter, @"Call");
+}
+
+TEST_P(SelectionServicesInSubframe, ButtonStaysInViewWhenFrameIsPartlyOutOfView)
+{
+    load(@"/main-without-scroll-bars");
+    RetainPtr frame { [webView firstChildFrame] };
+    makeSelectionServicesAvailable(frame.get());
+
+    CGRect visibleRect { [webView bounds] };
+    CGRect word { wordRect(frame.get(), iframeContentBox.origin, @"Call") };
+    int offset { static_cast<int>(std::round(CGRectGetMaxX(visibleRect) - 10 - CGRectGetMaxX(word))) };
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"document.querySelector('iframe').style.left = '%dpx'", iframeLeft + offset]];
+    CGRect contentBox { NSOffsetRect(iframeContentBox, offset, 0) };
+    ASSERT_TRUE(waitUntilWindowClipRectWidthIs(webView.get(), frame.get(), static_cast<int>(CGRectGetMaxX(visibleRect) - CGRectGetMinX(contentBox))));
+
+    selectWord(frame.get(), wordRect(frame.get(), contentBox.origin, @"Call"), @"Call");
+    CGRect selection { selectionRect(frame.get(), contentBox.origin) };
+
+    auto highlight { selectionHighlightGeometry(selection, visibleRect) };
+    ASSERT_FALSE(rectsAreNear(highlight.boundingRect, selectionHighlightGeometry(selection, contentBox).boundingRect, telephoneNumberRectTolerance));
+    ASSERT_TRUE(rectsAreNear(highlight.boundingRect, selectionHighlightGeometry(selection, CGRectIntersection(contentBox, visibleRect)).boundingRect, telephoneNumberRectTolerance));
+
+    ASSERT_TRUE(hoverButtonUntilHighlightIsShown(highlight));
+    clickServicesButtonAndExpectMenu(highlight.buttonCenter, @"Call");
+}
+
+TEST_P(SelectionServicesInSubframe, ButtonIsNotShownForMainFrameSelectionAfterSelectingInSubframe)
+{
+    load(@"/main-with-text-and-iframe");
+    RetainPtr frame { [webView firstChildFrame] };
+    makeSelectionServicesAvailable(nil);
+    makeSelectionServicesAvailable(frame.get());
+
+    selectWord(nil, wordRect(nil, CGPointZero, @"these"), @"these");
+    auto mainFrameHighlight { selectionHighlightGeometry(selectionRect(nil, CGPointZero), [webView bounds]) };
+    ASSERT_TRUE(hoverButtonUntilHighlightIsShown(mainFrameHighlight));
+    EXPECT_TRUE(moveAwayUntilHighlightIsHidden(CGPointMake(50, 300), mainFrameHighlight.boundingRect));
+
+    selectWord(frame.get(), wordRect(frame.get(), iframeContentBox.origin, @"telephone"), @"telephone");
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.activeElement === document.querySelector('iframe')"] boolValue];
+    }));
+    EXPECT_TRUE(selectionIs(nil, @"these"));
+    EXPECT_FALSE(hoveringShowsHighlight(mainFrameHighlight.buttonCenter, mainFrameHighlight.boundingRect));
+
+    auto highlight { selectionHighlightGeometry(selectionRect(frame.get(), iframeContentBox.origin), rootVisibleRect(iframeContentBox)) };
+    ASSERT_TRUE(hoverButtonUntilHighlightIsShown(highlight));
+    clickServicesButtonAndExpectMenu(highlight.buttonCenter, @"telephone");
+}
+
+TEST_P(SelectionServicesInSubframe, ButtonIsNotShownForSubframeSelectionAfterSelectingInMainFrame)
+{
+    load(@"/main-with-text-and-iframe");
+    RetainPtr frame { [webView firstChildFrame] };
+    makeSelectionServicesAvailable(nil);
+    makeSelectionServicesAvailable(frame.get());
+
+    selectWord(frame.get(), wordRect(frame.get(), iframeContentBox.origin, @"telephone"), @"telephone");
+    auto highlight { selectionHighlightGeometry(selectionRect(frame.get(), iframeContentBox.origin), rootVisibleRect(iframeContentBox)) };
+    ASSERT_TRUE(hoverButtonUntilHighlightIsShown(highlight));
+    EXPECT_TRUE(moveAwayUntilHighlightIsHidden(CGPointMake(CGRectGetMidX(iframeContentBox), CGRectGetMaxY(iframeContentBox) - 20), highlight.boundingRect));
+
+    selectWord(nil, wordRect(nil, CGPointZero, @"these"), @"these");
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return !frameHasFocus(frame.get());
+    }));
+    EXPECT_TRUE(selectionIs(frame.get(), @"telephone"));
+    EXPECT_FALSE(hoveringShowsHighlight(highlight.buttonCenter, highlight.boundingRect));
+
+    auto mainFrameHighlight { selectionHighlightGeometry(selectionRect(nil, CGPointZero), [webView bounds]) };
+    ASSERT_TRUE(hoverButtonUntilHighlightIsShown(mainFrameHighlight));
+    clickServicesButtonAndExpectMenu(mainFrameHighlight.buttonCenter, @"these");
+}
+
+INSTANTIATE_TEST_SUITE_P(DataDetection, SelectionServicesInSubframe, testing::ValuesIn(siteIsolationParams), &SelectionServicesInSubframe::testNameGenerator);
 
 } // namespace TestWebKitAPI
 

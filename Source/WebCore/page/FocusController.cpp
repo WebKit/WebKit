@@ -77,6 +77,10 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
+#if PLATFORM(MAC)
+#include "ServicesOverlayController.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FocusController);
@@ -524,6 +528,9 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
     bool shouldBroadcast = broadcast == BroadcastFocusedFrame::Yes;
     m_isChangingFocusedFrame = true;
 
+#if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
+    bool wasRemoteFrameFocused { is<RemoteFrame>(m_focusedFrame) };
+#endif
     RefPtr oldFrame { localFocusedFrame() };
     RefPtr newFrame { dynamicDowncast<LocalFrame>(frame) };
 
@@ -550,6 +557,11 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
             protect(localFrame->document())->updateServiceWorkerClientData();
     } else if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(frame))
         remoteFrameWillGainFocus(*remoteFrame);
+
+#if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
+    if (wasRemoteFrameFocused || is<RemoteFrame>(frame))
+        protect(m_page->servicesOverlayController())->focusMovedToOrFromRemoteFrame();
+#endif
 
     if (shouldBroadcast)
         m_page->chrome().focusedFrameChanged(frame);

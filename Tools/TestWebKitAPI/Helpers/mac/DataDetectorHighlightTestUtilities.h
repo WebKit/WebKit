@@ -46,9 +46,11 @@ struct DataDetectorHighlightGeometry {
     CGPoint buttonCenter;
 };
 
-RetainPtr<DDHighlightRef> createDataDetectorHighlight(CGRect textRect, CGRect visibleRect);
+enum class DataDetectorHighlightStyle : bool { Bubble, SelectionButton };
+
+RetainPtr<DDHighlightRef> createDataDetectorHighlight(CGRect textRect, CGRect visibleRect, DataDetectorHighlightStyle = DataDetectorHighlightStyle::Bubble);
 bool pointIsOnDataDetectorHighlight(DDHighlightRef, CGPoint);
-DataDetectorHighlightGeometry dataDetectorHighlightGeometry(CGRect textRect, CGRect visibleRect);
+DataDetectorHighlightGeometry dataDetectorHighlightGeometry(CGRect textRect, CGRect visibleRect, DataDetectorHighlightStyle = DataDetectorHighlightStyle::Bubble);
 bool rectsAreNear(CGRect, CGRect, CGFloat tolerance);
 Vector<std::pair<RetainPtr<CALayer>, CGRect>> visibleLayersAndFrames(CALayer *rootLayer);
 RetainPtr<CALayer> visibleLayerNear(CALayer *rootLayer, CGRect expectedFrame, CGFloat tolerance);

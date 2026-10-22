@@ -60,8 +60,10 @@ public:
     void selectedTelephoneNumberRangesChanged();
     void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&, bool isTextOnly);
     void mouseDidLeaveLocalRoot(LocalFrame&);
+    void focusMovedToOrFromRemoteFrame();
 
     unsigned telephoneNumberRangesChangedCountForTesting() const { return m_telephoneNumberRangesChangedCountForTesting; }
+    WEBCORE_EXPORT void setHasRelevantSelectionServicesForTesting(std::optional<bool>);
 
 private:
     // PageOverlayClient
@@ -134,6 +136,7 @@ private:
     Timer m_buildHighlightsTimer;
 
     unsigned m_telephoneNumberRangesChangedCountForTesting { 0 };
+    std::optional<bool> m_hasRelevantSelectionServicesForTesting;
 };
 
 } // namespace WebCore

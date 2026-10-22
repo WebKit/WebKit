@@ -301,10 +301,8 @@ Seconds ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown(Data
     if (!highlight)
         return 0_s;
 
-    Ref page = m_page.get();
     Seconds minimumTimeUntilHighlightShouldBeShown = 200_ms;
-    RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
-    if (focusedOrMainFrame && focusedOrMainFrame->selection().selection().isContentEditable())
+    if (m_page->selection().isContentEditable())
         minimumTimeUntilHighlightShouldBeShown = 1_s;
 
     RefPtr rootFrame { rootFrameForHighlight(*highlight) };
@@ -468,7 +466,23 @@ void ServicesOverlayController::replaceHighlightsOfTypePreservingEquivalentHighl
 
 bool ServicesOverlayController::hasRelevantSelectionServices()
 {
+    if (m_hasRelevantSelectionServicesForTesting)
+        return *m_hasRelevantSelectionServicesForTesting;
     return m_page->chrome().client().hasRelevantSelectionServices(m_isTextOnly);
+}
+
+void ServicesOverlayController::setHasRelevantSelectionServicesForTesting(std::optional<bool> hasServices)
+{
+    if (m_hasRelevantSelectionServicesForTesting == hasServices)
+        return;
+
+    m_hasRelevantSelectionServicesForTesting = hasServices;
+    invalidateHighlightsOfType(DataDetectorHighlight::Type::Selection);
+}
+
+void ServicesOverlayController::focusMovedToOrFromRemoteFrame()
+{
+    invalidateHighlightsOfType(DataDetectorHighlight::Type::Selection);
 }
 
 void ServicesOverlayController::updateServicesOverlays()

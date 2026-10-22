@@ -1715,10 +1715,14 @@ void Page::setInteractionRegionsEnabled(bool enable)
 
 const VisibleSelection& Page::selection() const
 {
-    auto* focusedOrMainFrame = focusController().focusedOrMainFrame();
-    if (!focusedOrMainFrame)
+    auto* focusedFrame { focusController().focusedFrame() };
+    if (auto* localFocusedFrame { dynamicDowncast<LocalFrame>(focusedFrame) })
+        return localFocusedFrame->selection().selection();
+    if (is<RemoteFrame>(focusedFrame))
         return VisibleSelection::emptySelection();
-    return focusedOrMainFrame->selection().selection();
+    if (auto* localMainFrame { this->localMainFrame() })
+        return localMainFrame->selection().selection();
+    return VisibleSelection::emptySelection();
 }
 
 void Page::setDefersLoading(bool defers)

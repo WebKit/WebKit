@@ -1628,6 +1628,10 @@ public:
     unsigned telephoneNumberRangesChangedCount() const;
 #endif
 
+#if ENABLE(SERVICE_CONTROLS)
+    void setHasRelevantSelectionServicesForTesting(bool);
+#endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageControls(const HTMLImageElement&) const;
