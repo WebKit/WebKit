@@ -29,6 +29,8 @@
 #include "BackForwardController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentView.h"
+#include "EditorClient.h"
 #include "Element.h"
 #include "FocusController.h"
 #include "FrameLoader.h"
@@ -159,6 +161,7 @@ void CachedPage::restore(Page& page)
         }
 #endif
         element->updateFocusAppearance(SelectionRestorationMode::RestoreOrSelectAll);
+        page.editorClient().setInputMethodState(element.get());
 #if PLATFORM(IOS_FAMILY)
         if (frameView)
             frameView->setProhibitsScrolling(hadProhibitsScrolling);
