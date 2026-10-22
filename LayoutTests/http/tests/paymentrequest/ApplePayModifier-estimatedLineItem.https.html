@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing an `"estimated"` line item `type` as part of `ApplePayModifier`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+const estimatedLabel = "Estimated Label";
+const estimatedAmount = "20.00";
+const recurringPaymentIntervalUnit = "year";
+
+test((test) => {
+    const method = validPaymentMethod();
+    method.data.features = ["invalidFeatureThatsNotLineItemTypeEstimated"];
+    assert_throws_js(TypeError, () => new PaymentRequest([method], validPaymentDetails()), "check that an unknown feature throws");
+
+    method.data.features = ["lineItemTypeEstimated"];
+    new PaymentRequest([method], validPaymentDetails());
+}, "Should have a feature for `lineItemTypeEstimated`.");
+
+function validPaymentDetailsWithModifier(data) {
+    let details = validPaymentDetails();
+    delete details.displayItems;
+    details.modifiers = [ { supportedMethods: "https://apple.com/apple-pay", data } ];
+    return details;
+}
+
+function testModifierData(description, {data, expectedTotal, expectedLineItems}) {
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetailsWithModifier(data));
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        let actualTotal = internals.mockPaymentCoordinator.total;
+        assert_equals(actualTotal.label, expectedTotal.label, "check that the `label` matches for total");
+        assert_equals(actualTotal.amount, expectedTotal.amount, "check that the `amount` matches for total");
+        assert_equals(actualTotal.type, expectedTotal.type, "check that the `type` matches for total");
+        assert_equals(actualTotal.paymentTiming, expectedTotal.paymentTiming, "check that the `paymentTiming` matches for total");
+
+        let actualLineItems = internals.mockPaymentCoordinator.lineItems;
+        assert_equals(actualLineItems.length, expectedLineItems.length, `check that there are ${expectedLineItems.length} line items`);
+        for (let i = 0; i < actualLineItems.length; ++i) {
+            assert_equals(actualLineItems[i].label, expectedLineItems[i].label, `check that the \`label\` matches for line item ${i}`);
+            assert_equals(actualLineItems[i].amount, expectedLineItems[i].amount, `check that the \`amount\` matches for line item ${i}`);
+            assert_equals(actualLineItems[i].type, expectedLineItems[i].type, `check that the \`type\` matches for line item ${i}`);
+            assert_equals(actualLineItems[i].paymentTiming, expectedLineItems[i].paymentTiming, `check that the \`paymentTiming\` matches for line item ${i}`);
+            assert_equals(actualLineItems[i].recurringPaymentIntervalUnit, expectedLineItems[i].recurringPaymentIntervalUnit, `check that the \`recurringPaymentIntervalUnit\` matches for line item ${i}`);
+        }
+
+        await response.complete("success");
+    }, description);
+}
+
+testModifierData("Should propagate an `\"estimated\"` `type` for `total`.", {
+    data: { total: { label: estimatedLabel, amount: estimatedAmount, type: "estimated" } },
+    expectedTotal: { label: estimatedLabel, amount: estimatedAmount, type: "estimated", paymentTiming: "immediate" },
+    expectedLineItems: [],
+});
+
+testModifierData("Should propagate an `\"estimated\"` `type` for `additionalLineItems`.", {
+    data: { additionalLineItems: [ { label: estimatedLabel, amount: estimatedAmount, type: "estimated" } ] },
+    expectedTotal: { label: "Total", amount: "10.00", type: "final", paymentTiming: "immediate" },
+    expectedLineItems: [ { label: estimatedLabel, amount: estimatedAmount, type: "estimated", paymentTiming: "immediate", recurringPaymentIntervalUnit: "month" } ],
+});
+
+testModifierData("Should allow an `\"estimated\"` `type` together with a `\"recurring\"` `paymentTiming`.", {
+    data: { additionalLineItems: [ { label: estimatedLabel, amount: estimatedAmount, type: "estimated", paymentTiming: "recurring", recurringPaymentIntervalUnit } ] },
+    expectedTotal: { label: "Total", amount: "10.00", type: "final", paymentTiming: "immediate" },
+    expectedLineItems: [ { label: estimatedLabel, amount: estimatedAmount, type: "estimated", paymentTiming: "recurring", recurringPaymentIntervalUnit } ],
+});
+
+done();
+</script>

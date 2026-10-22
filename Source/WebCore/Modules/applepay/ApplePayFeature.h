@@ -40,6 +40,9 @@ enum class ApplePayFeature : uint8_t {
     AuthorizationResultOrderDetails,
 #endif
     LineItemPaymentTiming,
+#if ENABLE(APPLE_PAY_ESTIMATED_LINE_ITEM)
+    LineItemTypeEstimated,
+#endif
 #if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
     PaymentRequestAutomaticReload,
 #endif

@@ -36,6 +36,9 @@
     "authorizationResultOrderDetails",
 #endif
     "lineItemPaymentTiming",
+#if defined(ENABLE_APPLE_PAY_ESTIMATED_LINE_ITEM) && ENABLE_APPLE_PAY_ESTIMATED_LINE_ITEM
+    "lineItemTypeEstimated",
+#endif
 #if defined(ENABLE_APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS) && ENABLE_APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS
     "paymentRequestAutomaticReload",
 #endif
