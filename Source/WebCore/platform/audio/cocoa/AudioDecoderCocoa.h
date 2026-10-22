@@ -38,6 +38,7 @@ class WorkQueue;
 
 namespace WebCore {
 
+class AudioInfo;
 class InternalAudioDecoderCocoa;
 
 class AudioDecoderCocoa final : public AudioDecoder {
@@ -45,15 +46,18 @@ class AudioDecoderCocoa final : public AudioDecoder {
 
 public:
     static Ref<CreatePromise> create(const String& codecName, const Config&, OutputCallback&&);
+    static Ref<CreatePromise> create(const AudioInfo&, OutputCallback&&);
 
     ~AudioDecoderCocoa();
 
     static std::expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, String> isCodecSupported(const StringView&);
+    static bool canDecode(const AudioInfo&);
 
     static WTF::WorkQueue& queueSingleton();
 
 private:
     explicit AudioDecoderCocoa(OutputCallback&&);
+    static Ref<CreatePromise> createWithInitializer(OutputCallback&&, Function<String(InternalAudioDecoderCocoa&)>&&);
     Ref<DecodePromise> decode(AudioEncodedData&&) final;
     Ref<GenericPromise> flush() final;
     void reset() final;

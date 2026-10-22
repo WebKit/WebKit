@@ -269,9 +269,26 @@ static Vector<uint8_t> wrappedAACCookie()
     };
 }
 
+// The magic cookie of content/test-flac.mp4: a 'dfLa' box with a STREAMINFO block (4608 frames per block, 48 kHz, stereo, 16-bit).
+static Vector<uint8_t> flacCookie()
+{
+    return {
+        0x00, 0x00, 0x00, 0x32, 0x64, 0x66, 0x4C, 0x61, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x22,
+        0x12, 0x00, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4A, 0x58, 0x0B, 0xB8, 0x02, 0xF0, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00
+    };
+}
+
+// An OpusHead (stereo, 312 frames of pre-skip, 48 kHz, channel mapping family 0).
+static Vector<uint8_t> opusHeadCookie()
+{
+    return { 'O', 'p', 'u', 's', 'H', 'e', 'a', 'd', 0x01, 0x02, 0x38, 0x01, 0x80, 0xBB, 0x00, 0x00, 0x00, 0x00, 0x00 };
+}
+
 TEST(MediaSamplesDecoder, CanDecodeFilters)
 {
-    Ref opus = makeAudioInfo(FourCC { "opus" });
+    Ref opus = makeAudioInfo(FourCC { "opus" }, opusHeadCookie());
 
     EXPECT_TRUE(MediaSamplesDecoder::canDecode(opus, allowedFilters));
     EXPECT_TRUE(MediaSamplesDecoder::canDecode(opus, allowedFilters | MediaSamplesDecoder::Filter::UseSharedMemory));
@@ -283,19 +300,26 @@ TEST(MediaSamplesDecoder, CanDecodeFilters)
 
 TEST(MediaSamplesDecoder, CanDecodeSupportedCodecs)
 {
-    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "vorb" }), allowedFilters));
-    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "flac" }), allowedFilters));
+#if PLATFORM(MAC)
+    auto vorbis = parseAVFAudioFile(@"vbr-96kbps-44khz", @"ogg", @"audio/ogg");
+    ASSERT_FALSE(vorbis.isEmpty());
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(*vorbis[0]->info(), allowedFilters));
+#endif
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "flac" }, flacCookie()), allowedFilters));
     EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { ".mp3" }, { }), allowedFilters));
     EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "alaw" }, { }, 8), allowedFilters));
     EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "ulaw" }, { }, 8), allowedFilters));
     for (uint8_t bitDepth : { 8, 16, 24, 32 })
         EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "lpcm" }, { }, bitDepth), allowedFilters));
 
-    for (auto codec : { FourCC { "aac " }, FourCC { "aach" }, FourCC { "aacp" } }) {
-        EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(codec, { }), allowedFilters));
+    for (auto codec : { FourCC { "aac " }, FourCC { "aach" }, FourCC { "aacp" }, FourCC { "aacl" }, FourCC { "aace" } }) {
+        EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(codec, { }, 0), allowedFilters));
         EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(codec, { 0x12, 0x10 }), allowedFilters));
         EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(codec, wrappedAACCookie()), allowedFilters));
     }
+
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "ac-3" }, { }), allowedFilters));
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "ec-3" }, { }), allowedFilters));
 }
 
 TEST(MediaSamplesDecoder, CanDecodeRejectsUnsupportedTracks)
@@ -305,8 +329,8 @@ TEST(MediaSamplesDecoder, CanDecodeRejectsUnsupportedTracks)
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "opus" }, { 1, 2, 3, 4 }, 16, 2, AudioSampleFormat::F32), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "vorb" }, { }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "flac" }, { }), allowedFilters));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "flac" }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "lpcm" }, { }, 12), allowedFilters));
-    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "aacl" }, { }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "aac " }, { 0x03, 0xFF }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "aac " }, { 0x00, 0x00, 0x00, 0x0C, 'f', 'r', 'm', 'a', 'm', 'p', '4', 'a' }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "mp4a" }), allowedFilters));
@@ -784,6 +808,14 @@ TEST(MediaSamplesDecoder, CanDecodeVP8)
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp08" }, "vp08.00.10.10"_s, 10), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp08" }, "vp08.00.10.08"_s, 8, { }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp08" }, "vp08.00.10.08"_s, 8, { 320, 240 }, VideoPixelFormat::I420), allowedFilters));
+}
+
+TEST(MediaSamplesDecoder, MustDecodeInProcess)
+{
+    EXPECT_TRUE(MediaSamplesDecoder::mustDecodeInProcess(makeAudioInfo(FourCC { "opus" })));
+    EXPECT_TRUE(MediaSamplesDecoder::mustDecodeInProcess(makeAudioInfo(FourCC { "mp4a" })));
+    EXPECT_FALSE(MediaSamplesDecoder::mustDecodeInProcess(makeAudioInfo(FourCC { "lpcm" }, { }, 32, 2, AudioSampleFormat::F32)));
+    EXPECT_FALSE(MediaSamplesDecoder::mustDecodeInProcess(makeVideoInfo(FourCC { "vp08" }, "vp08.00.10.08"_s)));
 }
 
 TEST(MediaSamplesDecoder, CanDecodeRejectsHardwareDecodableVideo)

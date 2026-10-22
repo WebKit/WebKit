@@ -66,6 +66,7 @@ public:
         std::optional<bool> usedtx { };
     };
     static RefPtr<AudioSampleBufferConverter> create(Function<void()>&&, const Options&);
+    static bool canConvert(CMFormatDescriptionRef, const Options&);
     ~AudioSampleBufferConverter();
 
     bool isEmpty() const;

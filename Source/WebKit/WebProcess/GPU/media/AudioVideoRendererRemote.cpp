@@ -825,7 +825,7 @@ void AudioVideoRendererRemote::beginMode(TrackIdentifier trackIdentifier, const 
     PacedMediaSamplesDecoder::Filters filters = contentProcessDecoderFilters();
     if (state.hardwareUnavailableCodecs.contains(info->codecName()))
         filters.add(MediaSamplesDecoder::Filter::ForceSoftware);
-    if (!MediaSamplesDecoder::canDecode(info, filters)) {
+    if (!MediaSamplesDecoder::mustDecodeInProcess(info) && !MediaSamplesDecoder::canDecode(info, filters)) {
         ALWAYS_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " codec ", info->codecName(), " cannot be decoded in the content process, compressed");
         return;
     }

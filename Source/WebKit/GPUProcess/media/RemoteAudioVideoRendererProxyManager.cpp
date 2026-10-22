@@ -321,10 +321,7 @@ bool RemoteAudioVideoRendererProxyManager::isDecoderInContentProcessEnabled() co
 
 bool RemoteAudioVideoRendererProxyManager::shouldHaveBeenDecodedInContentProcess(const TrackInfo& info) const
 {
-    RefPtr audioInfo = dynamicDowncast<AudioInfo>(info);
-    if (!audioInfo || audioInfo->isDecoded())
-        return false;
-    return isDecoderInContentProcessEnabled() && MediaSamplesDecoder::canDecode(*audioInfo, { MediaSamplesDecoder::Filter::InProcess, MediaSamplesDecoder::Filter::SoftwareAllowed, MediaSamplesDecoder::Filter::UseSharedMemory });
+    return isDecoderInContentProcessEnabled() && MediaSamplesDecoder::mustDecodeInProcess(info);
 }
 
 void RemoteAudioVideoRendererProxyManager::newTrackInfoForTrack(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier, Ref<const WebCore::TrackInfo>&& info)
