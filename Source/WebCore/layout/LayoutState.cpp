@@ -74,11 +74,6 @@ void LayoutState::updateQuirksMode(const Document& document)
     setQuirksMode(quirksMode());
 }
 
-BoxGeometry& LayoutState::geometryForRootBox()
-{
-    return ensureGeometryForBox(root());
-}
-
 BoxGeometry& LayoutState::ensureGeometryForBoxSlow(const Box& layoutBox)
 {
     if (m_type == Type::Primary) [[likely]] {

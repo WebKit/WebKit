@@ -72,7 +72,6 @@ public:
     BlockFormattingState& ensureBlockFormattingState(const ElementBox& formattingContextRoot) LIFETIME_BOUND;
     void destroyBlockFormattingState(const ElementBox& formattingContextRoot);
 
-    BoxGeometry& geometryForRootBox() LIFETIME_BOUND;
     BoxGeometry& ensureGeometryForBox(const Box&) LIFETIME_BOUND;
     const BoxGeometry& geometryForBox(const Box&) const LIFETIME_BOUND;
 

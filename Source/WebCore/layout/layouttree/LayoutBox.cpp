@@ -521,42 +521,6 @@ bool Box::isPaddingApplicable() const
         && !isTableColumn();
 }
 
-void Box::setRowSpan(size_t rowSpan)
-{
-    ensureRareData().tableCellSpan.row = rowSpan;
-}
-
-void Box::setColumnSpan(size_t columnSpan)
-{
-    ensureRareData().tableCellSpan.column = columnSpan;
-}
-
-size_t Box::rowSpan() const
-{
-    if (!hasRareData())
-        return 1;
-    return rareData().tableCellSpan.row;
-}
-
-size_t Box::columnSpan() const
-{
-    if (!hasRareData())
-        return 1;
-    return rareData().tableCellSpan.column;
-}
-
-void Box::setColumnWidth(LayoutUnit columnWidth)
-{
-    ensureRareData().columnWidth = columnWidth;
-}
-
-std::optional<LayoutUnit> Box::columnWidth() const
-{
-    if (!hasRareData())
-        return { };
-    return rareData().columnWidth;
-}
-
 const LayoutShape* Box::shape() const
 {
     if (!hasRareData())

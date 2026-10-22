@@ -48,15 +48,6 @@ ElementBox::ElementBox(ElementAttributes&& attributes, IsListMarkerImage isListM
     m_replacedData->isListMarkerImage = isListMarkerImage == IsListMarkerImage::Yes;
 }
 
-ElementBox::ElementBox(ElementAttributes&& attributes, ReplacedAttributes&& replacedAttributes, Style::ComputedStyle&& style, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle)
-    : Box(WTF::move(attributes), WTF::move(style), WTF::move(firstLineStyle), ElementBoxFlag)
-    , m_replacedData(makeUnique<ReplacedData>())
-{
-    m_replacedData->intrinsicSize = replacedAttributes.intrinsicSize;
-    m_replacedData->intrinsicRatio = replacedAttributes.intrinsicRatio;
-    m_replacedData->cachedImage = replacedAttributes.cachedImage;
-}
-
 ElementBox::~ElementBox()
 {
     destroyChildren();

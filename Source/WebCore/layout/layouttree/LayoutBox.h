@@ -188,16 +188,6 @@ public:
     const Style::ComputedStyle& LEGACY_NODELETE firstLineStyle() const LIFETIME_BOUND { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
     WritingMode writingMode() const { return style().writingMode(); }
 
-    // FIXME: Find a better place for random DOM things.
-    void setRowSpan(size_t);
-    size_t LEGACY_NODELETE rowSpan() const;
-
-    void setColumnSpan(size_t);
-    size_t LEGACY_NODELETE columnSpan() const;
-
-    void setColumnWidth(LayoutUnit);
-    std::optional<LayoutUnit> LEGACY_NODELETE columnWidth() const;
-
     void setIsInlineIntegrationRoot() { m_isInlineIntegrationRoot = true; }
     void setIsAnonymousTextIndentCandidateForIntegration(bool value) { m_isAnonymousTextIndentCandidateForIntegration = value; }
 
@@ -226,8 +216,6 @@ private:
     public:
         BoxRareData() = default;
 
-        CellSpan tableCellSpan;
-        std::optional<LayoutUnit> columnWidth;
         std::unique_ptr<Style::ComputedStyle> firstLineStyle;
         RefPtr<const LayoutShape> shape;
     };

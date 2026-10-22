@@ -49,13 +49,6 @@ public:
     enum class IsListMarkerImage : bool { No, Yes };
     ElementBox(ElementAttributes&&, IsListMarkerImage, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr);
 
-    struct ReplacedAttributes {
-        LayoutSize intrinsicSize;
-        std::optional<LayoutUnit> intrinsicRatio { };
-        WeakPtr<CachedImage> cachedImage { };
-    };
-    ElementBox(ElementAttributes&&, ReplacedAttributes&&, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr);
-
     ~ElementBox();
 
     const Box* firstChild() const { return m_firstChild.get(); }

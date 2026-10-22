@@ -182,11 +182,6 @@ inline SlotPosition::SlotPosition(size_t column, size_t row)
 {
 }
 
-struct CellSpan {
-    size_t column { 1 };
-    size_t row { 1 };
-};
-
 }
 }
 
