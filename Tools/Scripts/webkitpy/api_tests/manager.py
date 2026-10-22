@@ -219,6 +219,13 @@ class Manager(object):
 
     _SPECIFIC_TEST_ARG_RE = re.compile(r'\S+\..+')
 
+    @staticmethod
+    def _arguments_with_parallel_safety_tests(args, parallel_safety_arguments):
+        # With no arguments every test is collected, including the ones being checked.
+        if not args:
+            return args
+        return args + [test for argument in parallel_safety_arguments for test in argument.split()]
+
     @classmethod
     def _args_specify_individual_tests(cls, args):
         return bool(args) and all(cls._SPECIFIC_TEST_ARG_RE.match(arg) for arg in args)
@@ -277,6 +284,8 @@ class Manager(object):
                     _log.error('--test-list file "%s" not found', list_path)
                     return Manager.FAILED_COLLECT_TESTS
             args = args + Manager._read_test_names_from_file(self._options.test_list, self.host.filesystem)
+
+        args = Manager._arguments_with_parallel_safety_tests(args, self._port.get_option('test_parallel_safety') or [])
 
         if json_output:
             json_output = self.host.filesystem.abspath(json_output)

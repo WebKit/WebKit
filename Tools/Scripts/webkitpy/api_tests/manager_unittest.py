@@ -120,6 +120,14 @@ TestWebKitAPI.WKWebViewSwiftOverlayTests/evaluateJavaScriptYieldsExpectedRespons
         superset = ["TestWebKitAPI.WebKit.SomeTest"]
         self.assertEqual([], Manager._find_test_subset(superset, ["NonExistent"]))
 
+    def test_parallel_safety_tests_are_collected_with_explicit_arguments(self):
+        self.assertEqual(
+            Manager._arguments_with_parallel_safety_tests(['TestWTF.Base64'], ['TestWTF.WTF_Vector.Basic TestWTF.WTF_Deque.Basic']),
+            ['TestWTF.Base64', 'TestWTF.WTF_Vector.Basic', 'TestWTF.WTF_Deque.Basic'])
+
+    def test_parallel_safety_tests_need_no_arguments_when_collecting_everything(self):
+        self.assertEqual(Manager._arguments_with_parallel_safety_tests([], ['TestWTF.WTF_Vector.Basic']), [])
+
     def test_args_specify_individual_tests(self):
         self.assertTrue(Manager._args_specify_individual_tests(["WebKit.SomeTest"]))
         self.assertTrue(Manager._args_specify_individual_tests(["TestWebKitAPI.WebKit.SomeTest"]))

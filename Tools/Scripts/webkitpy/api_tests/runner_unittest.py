@@ -23,9 +23,9 @@
 """Unit tests for runner.py."""
 
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
-from webkitpy.api_tests.runner import EarlyExitException, Runner, report_result
+from webkitpy.api_tests.runner import EarlyExitException, Runner, report_result, run_background_load, run_parallel_safety_iterations, run_shard
 
 
 class FakeDevice(object):
@@ -50,29 +50,110 @@ class RunnerTest(unittest.TestCase):
         self.assertFalse(Runner._is_disabled_test(
             "TestWebKitAPI.SiteIsolation.LoadingCallbacksAndPostMessage"))
 
-    def test_parallel_safety_tests_excludes_disabled(self):
-        supplied = [
-            "TestWebKitAPI.SiteIsolation.LoadingCallbacksAndPostMessage",
-            "TestWebKitAPI.SiteIsolation.DISABLED_PostMessageWithMessagePorts",
-            "TestWebKitAPI.SiteIsolation.GrandchildIframe",
-        ]
-        runnable, disabled = Runner._partition_parallel_safety_tests(supplied)
-        self.assertEqual(runnable, [
-            "TestWebKitAPI.SiteIsolation.LoadingCallbacksAndPostMessage",
-            "TestWebKitAPI.SiteIsolation.GrandchildIframe",
-        ])
-        self.assertEqual(disabled, [
-            "TestWebKitAPI.SiteIsolation.DISABLED_PostMessageWithMessagePorts",
+    def test_chunk_shards_splits_large_shards(self):
+        shards = {
+            'TestWebKitAPI.Big': [f'TestWebKitAPI.Big.Test{index}' for index in range(5)],
+            'TestWebKitAPI.Small': ['TestWebKitAPI.Small.Only'],
+        }
+        self.assertEqual(Runner._chunk_shards(shards, 2), [
+            ('TestWebKitAPI.Big', ['TestWebKitAPI.Big.Test0', 'TestWebKitAPI.Big.Test1']),
+            ('TestWebKitAPI.Big', ['TestWebKitAPI.Big.Test2', 'TestWebKitAPI.Big.Test3']),
+            ('TestWebKitAPI.Big', ['TestWebKitAPI.Big.Test4']),
+            ('TestWebKitAPI.Small', ['TestWebKitAPI.Small.Only']),
         ])
 
-    def test_partition_keeps_all_enabled_tests(self):
-        supplied = [
-            "TestWebKitAPI.WebKit.Foo",
-            "TestWebKitAPI.WebKit.Bar",
-        ]
-        runnable, disabled = Runner._partition_parallel_safety_tests(supplied)
-        self.assertEqual(runnable, supplied)
-        self.assertEqual(disabled, [])
+    def test_background_chunks_cover_every_test_in_a_shuffled_order(self):
+        background = [f'TestWebKitAPI.Suite{suite}.Test{index}' for suite in range(10) for index in range(3)]
+        chunks = Runner._parallel_safety_background_chunks(background, ['TestWebKitAPI.New.Test'])
+        self.assertEqual(sorted(test for _, tests in chunks for test in tests), sorted(background))
+        self.assertNotEqual([name for name, _ in chunks], sorted(name for name, _ in chunks))
+
+    def test_background_chunk_order_depends_only_on_the_checked_tests(self):
+        background = [f'TestWebKitAPI.Suite{suite}.Test' for suite in range(10)]
+        first = Runner._parallel_safety_background_chunks(background, ['TestWebKitAPI.New.A'])
+        self.assertEqual(Runner._parallel_safety_background_chunks(background, ['TestWebKitAPI.New.A']), first)
+        self.assertNotEqual(Runner._parallel_safety_background_chunks(background, ['TestWebKitAPI.New.B']), first)
+
+
+class RunnerRunTest(unittest.TestCase):
+    ALLOWLISTED = [
+        'TestWebKitAPI.SiteIsolation.Target',
+        'TestWebKitAPI.SiteIsolation.Other',
+        'TestWebKitAPI.WebKit.A',
+        'TestWebKitAPI.WebKit.B',
+    ]
+    NOT_ALLOWLISTED = ['TestWebKitAPI.System.Target']
+
+    def setUp(self):
+        self._saved_instance = Runner.instance
+        Runner.instance = None
+
+    def tearDown(self):
+        Runner.instance = self._saved_instance
+
+    def _run(self, parallel_safety_tests, num_workers=6, iterations=3):
+        options = dict(test_parallel_safety=parallel_safety_tests, parallel_safety_iterations=iterations, fully_parallel=False)
+        port = MagicMock()
+        port.get_option.side_effect = lambda name: options.get(name)
+        port.filter_api_tests_by_allowlist.return_value = (self.ALLOWLISTED, self.NOT_ALLOWLISTED)
+        port.sharding_groups.return_value = {}
+        with patch('webkitpy.api_tests.runner.TaskPool') as task_pool:
+            Runner(port, MagicMock()).run(self.ALLOWLISTED + self.NOT_ALLOWLISTED, num_workers)
+        return task_pool
+
+    @staticmethod
+    def _calls(task_pool, function):
+        return [call for call in task_pool.return_value.__enter__.return_value.do.call_args_list if call.args[0] is function]
+
+    def test_parallel_safety_runs_each_checked_test_in_one_task_with_background_on_repeat(self):
+        task_pool = self._run(['TestWebKitAPI.SiteIsolation.Target', 'TestWebKitAPI.WebKit.A'])
+
+        self.assertEqual(task_pool.call_count, 1)
+        checked_calls = self._calls(task_pool, run_parallel_safety_iterations)
+        self.assertEqual([call.args[1:] for call in checked_calls], [('TestWebKitAPI.SiteIsolation.Target', 3), ('TestWebKitAPI.WebKit.A', 3)])
+        self.assertFalse(any(call.kwargs.get('repeat') for call in checked_calls))
+
+        background_calls = self._calls(task_pool, run_background_load)
+        self.assertTrue(all(call.kwargs['repeat'] for call in background_calls))
+        self.assertEqual(sorted(call.kwargs['group'] for call in background_calls), sorted(task_pool.call_args.kwargs['mutually_exclusive_groups']))
+        background_tests = sorted(test for call in background_calls for _, tests in call.args[1] for test in tests)
+        self.assertEqual(background_tests, ['TestWebKitAPI.SiteIsolation.Other', 'TestWebKitAPI.WebKit.B'])
+        self.assertEqual(task_pool.call_args.kwargs['workers'], 2 + len(background_calls))
+
+    def test_parallel_safety_checks_a_test_outside_the_allowlist(self):
+        task_pool = self._run(['TestWebKitAPI.System.Target'], iterations=1)
+
+        self.assertEqual([call.args[1:] for call in self._calls(task_pool, run_parallel_safety_iterations)], [('TestWebKitAPI.System.Target', 1)])
+        background_tests = sorted(test for call in self._calls(task_pool, run_background_load) for _, tests in call.args[1] for test in tests)
+        self.assertEqual(background_tests, sorted(self.ALLOWLISTED))
+        self.assertEqual(self._calls(task_pool, run_shard), [])
+
+    def test_parallel_safety_skips_unavailable_tests(self):
+        task_pool = self._run(['TestWebKitAPI.SiteIsolation.Unavailable'])
+        self.assertEqual(task_pool.call_count, 0)
+
+    def test_parallel_safety_never_uses_more_workers_than_requested(self):
+        task_pool = self._run(['TestWebKitAPI.SiteIsolation.Target'], num_workers=1)
+
+        self.assertEqual(task_pool.call_args.kwargs['workers'], 1)
+        self.assertEqual(task_pool.call_args.kwargs['mutually_exclusive_groups'], [])
+        self.assertEqual([call.args[1:] for call in self._calls(task_pool, run_parallel_safety_iterations)], [('TestWebKitAPI.SiteIsolation.Target', 3)])
+        self.assertEqual(self._calls(task_pool, run_background_load), [])
+
+    def test_parallel_safety_with_two_workers_runs_background_on_one(self):
+        task_pool = self._run(['TestWebKitAPI.SiteIsolation.Target'], num_workers=2)
+
+        self.assertEqual(task_pool.call_args.kwargs['workers'], 2)
+        self.assertEqual(len(self._calls(task_pool, run_background_load)), 1)
+
+    def test_without_parallel_safety_runs_shards_then_the_system_shard(self):
+        task_pool = self._run(None)
+
+        self.assertEqual(task_pool.call_count, 2)
+        self.assertEqual([call.kwargs['workers'] for call in task_pool.call_args_list], [2, 1])
+        shard_names = [call.args[1] for call in self._calls(task_pool, run_shard)]
+        self.assertEqual(shard_names, ['TestWebKitAPI.SiteIsolation', 'TestWebKitAPI.WebKit', 'TestWebKitAPI.System'])
+        self.assertEqual(self._calls(task_pool, run_background_load), [])
 
 
 class ReportResultEarlyExitTest(unittest.TestCase):

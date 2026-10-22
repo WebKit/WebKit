@@ -22,6 +22,7 @@
 
 import os
 import logging
+import random
 import time
 
 from webkitcorepy import string_utils
@@ -58,24 +59,14 @@ def run_shard(name, *tests):
     return _Worker.instance.run(name, *tests)
 
 
-def run_test_parallel_safety_single_iteration(test_name):
-    """Run a single iteration of test-parallel-safety. TaskPool will handle repeat looping."""
-    # Check if worker is ready - repeat tasks can start before setup completes
-    if _Worker.instance is None:
-        # Worker not ready yet, return early (TaskPool will retry)
-        not_ready = f'Worker not ready for {test_name}, skipping iteration'
-        _log.debug(not_ready)
-        return not_ready
+def run_parallel_safety_iterations(test_name, iterations):
+    binary_name, _, test = test_name.partition('.')
+    for _ in range(iterations):
+        _Worker.instance._run_single_test(binary_name, test)
 
-    binary_name = test_name.split('.')[0]
-    test_suffix = '.'.join(test_name.split('.')[1:])
 
-    try:
-        _Worker.instance._run_single_test(binary_name, test_suffix)
-        return f"Test-parallel-safety iteration completed for {test_name}"
-    except Exception as e:
-        _log.error(f'Error in test-parallel-safety iteration for {test_name}: {e}')
-        raise  # Re-raise so TaskPool can handle the error appropriately
+def run_background_load(chunks):
+    _Worker.instance.run_next_background_chunk(chunks)
 
 
 class EarlyExitException(Exception):
@@ -116,6 +107,9 @@ class Runner(object):
     STATUS_RUNNING = 5
 
     ELAPSED_THRESHOLD = 3
+
+    # Background load only stops between chunks, so this bounds how long it outlives the tests being checked.
+    PARALLEL_SAFETY_BACKGROUND_CHUNK_SIZE = 20
 
     NAME_FOR_STATUS = [
         'Passed',
@@ -179,27 +173,23 @@ class Runner(object):
         return shards
 
     @staticmethod
+    def _chunk_shards(shards, chunk_size):
+        return [(name, shard_tests[index:index + chunk_size]) for name, shard_tests in iteritems(shards) for index in range(0, len(shard_tests), chunk_size)]
+
+    @staticmethod
+    def _parallel_safety_background_chunks(background_tests, checked_tests):
+        chunks = Runner._chunk_shards(Runner._shard_tests(background_tests, False), Runner.PARALLEL_SAFETY_BACKGROUND_CHUNK_SIZE)
+        # Tests arrive sorted, so without shuffling every run would only reach the first suites before the checked tests finish.
+        random.Random(' '.join(checked_tests)).shuffle(chunks)
+        return chunks
+
+    @staticmethod
     def _is_disabled_test(test_name):
         # gtest never runs a test whose method component is prefixed with
         # DISABLED_.  test_name is the full binary.suite.method form; strip the
         # binary name, then check the method component.
         components = test_name.split('.')[1:]
         return len(components) > 1 and components[1].startswith('DISABLED_')
-
-    @staticmethod
-    def _partition_parallel_safety_tests(tests):
-        # In test-parallel-safety mode each supplied test is dispatched as a
-        # repeat=True task, so a disabled test loops as an instant no-op and
-        # emits "Disabled" without bound until the log limit is hit.  Partition
-        # disabled tests out of the repeat set.
-        runnable = []
-        disabled = []
-        for test in tests:
-            if Runner._is_disabled_test(test):
-                disabled.append(test)
-            else:
-                runnable.append(test)
-        return runnable, disabled
 
     def run(self, tests, num_workers):
         if not tests:
@@ -212,12 +202,8 @@ class Runner(object):
         # Split tests by allowlist BEFORE sharding
         allowlisted_tests, non_allowlisted_tests = self.port.filter_api_tests_by_allowlist(tests)
 
-        if non_allowlisted_tests:
+        if non_allowlisted_tests and not self.port.get_option('test_parallel_safety'):
             _log.info(f'{len(non_allowlisted_tests)} tests not in allowlist will run in system shard')
-
-        self.printer.write_update('Sharding tests ...')
-        # Only shard allowlisted tests for parallel execution
-        shards = Runner._shard_tests(allowlisted_tests, self.port.get_option('fully_parallel'))
 
         original_level = server_process_logger.level
         server_process_logger.setLevel(logging.CRITICAL)
@@ -235,81 +221,34 @@ class Runner(object):
                     available_devices=self.port.DEVICE_MANAGER.AVAILABLE_DEVICES,
                     initialized_devices=self.port.DEVICE_MANAGER.INITIALIZED_DEVICES,
                 )
+            setupkwargs = dict(port=self.port, devices=devices, log_limit=self.log_limit)
 
-            supplied_tests_raw = self.port.get_option('test_parallel_safety')
-            # Reserve 1/3 of workers for repeat tasks
-            max_repeat_workers = max(1, workers // 3)
-            supplied_tests = []
-            test_parallel_safety_batches = []
-            # Calculate batching for test-parallel-safety tasks to prevent overwhelming workers
-            if supplied_tests_raw:
-                for test_arg in supplied_tests_raw:
-                    supplied_tests.extend(test_arg.split())
-                supplied_tests, disabled_tests = Runner._partition_parallel_safety_tests(supplied_tests)
-                if disabled_tests:
-                    _log.warning(f'Test-parallel-safety mode: skipping {len(disabled_tests)} disabled test(s) that cannot be repeat-run: {disabled_tests}')
-                _log.info(f'Test-parallel-safety mode: creating repeat loop tasks for tests: {supplied_tests}')
+            if self.port.get_option('test_parallel_safety'):
+                self._run_parallel_safety(tests, allowlisted_tests, workers, setupkwargs)
+                return
 
-                if len(supplied_tests) <= max_repeat_workers:
-                    # All tasks fit in one batch
-                    test_parallel_safety_batches = [supplied_tests]
-                else:
-                    # Split into batches of max_repeat_workers
-                    for i in range(0, len(supplied_tests), max_repeat_workers):
-                        batch = supplied_tests[i:i + max_repeat_workers]
-                        test_parallel_safety_batches.append(batch)
-                    _log.info(f'Test-parallel-safety batching: {len(supplied_tests)} tasks split into {len(test_parallel_safety_batches)} batches of max {max_repeat_workers} tasks each')
+            self.printer.write_update('Sharding tests ...')
+            # Only shard allowlisted tests for parallel execution
+            shards = Runner._shard_tests(allowlisted_tests, self.port.get_option('fully_parallel'))
+            self._num_workers = min(workers, max(len(shards), 1))
 
-            # For minimum worker calculation, use current batch size (first batch or all if unbatched)
-            self._num_workers = min(workers, max(len(shards) + (len(test_parallel_safety_batches[0]) if test_parallel_safety_batches else 0), 1))
+            with TaskPool(
+                workers=self._num_workers,
+                mutually_exclusive_groups=[group for group in mutually_exclusive_groups if group != 'system'],
+                setup=setup_shard, setupkwargs=setupkwargs, teardown=teardown_shard,
+            ) as pool:
+                for name, shard_tests in iteritems(shards):
+                    pool.do(run_shard, name, *shard_tests)
 
-            # Process test-parallel-safety batches sequentially
-            for batch_index, test_parallel_safety_batch in enumerate(test_parallel_safety_batches if test_parallel_safety_batches else [[]]):
-                if test_parallel_safety_batch:
-                    _log.info(f'Running batch {batch_index + 1}/{len(test_parallel_safety_batches)}: {len(shards)} regular shards with {len(test_parallel_safety_batch)} test-parallel-safety repeat tasks')
+                pool.wait()
 
-                non_system_groups = [group for group in mutually_exclusive_groups if group != 'system']
-                test_parallel_safety_groups = []
-                if test_parallel_safety_batch:
-                    # Create unique groups for each test-parallel-safety task so they get separate workers
-                    for i, test_name in enumerate(test_parallel_safety_batch):
-                        test_parallel_safety_group = f'test-parallel-safety-{i}'
-                        test_parallel_safety_groups.append(test_parallel_safety_group)
-                        non_system_groups.append(test_parallel_safety_group)
-                    batch_test_parallel_safety_count = len(test_parallel_safety_batch)
-                    batch_effective_work_count = len(shards) + batch_test_parallel_safety_count
-                    batch_workers = min(workers, max(batch_effective_work_count, 1))
-                else:
-                    batch_workers = self._num_workers
-
-                with TaskPool(
-                    workers=batch_workers,
-                    mutually_exclusive_groups=non_system_groups,
-                    setup=setup_shard, setupkwargs=dict(port=self.port, devices=devices, log_limit=self.log_limit), teardown=teardown_shard,
-                ) as pool:
-
-                    if test_parallel_safety_batch:
-                        for i, test_name in enumerate(test_parallel_safety_batch):
-                            test_parallel_safety_group = test_parallel_safety_groups[i]
-                            _log.info(f'Dispatching repeat test-parallel-safety task for {test_name} to group {test_parallel_safety_group} (batch {batch_index + 1}/{len(test_parallel_safety_batches)})')
-                            pool.do(run_test_parallel_safety_single_iteration, test_name, repeat=True, group=test_parallel_safety_group)
-
-                    # Run regular shards
-                    for name, shard_tests in iteritems(shards):
-                        if name.startswith('test-parallel-safety.'):
-                            continue
-
-                        pool.do(run_shard, name, *shard_tests)
-
-                    pool.wait()
-
-            # Run system shard tests after all parallel tests complete (unless in test-parallel-safety mode)
-            if non_allowlisted_tests and not self.port.get_option('test_parallel_safety'):
+            # Run system shard tests after all parallel tests complete
+            if non_allowlisted_tests:
                 _log.info(f'Running {len(non_allowlisted_tests)} system shard tests sequentially')
                 with TaskPool(
                     workers=1,  # System shard tests run with single worker to avoid conflicts
                     mutually_exclusive_groups=[],
-                    setup=setup_shard, setupkwargs=dict(port=self.port, devices=devices, log_limit=self.log_limit), teardown=teardown_shard,
+                    setup=setup_shard, setupkwargs=setupkwargs, teardown=teardown_shard,
                 ) as pool:
                     # Group system shard tests by suite for efficiency
                     non_allowlisted_shards = Runner._shard_tests(non_allowlisted_tests, False)
@@ -317,12 +256,49 @@ class Runner(object):
                         pool.do(run_shard, name, *shard_tests)
 
                     pool.wait()
-            elif self.port.get_option('test_parallel_safety'):
-                _log.info('Test-parallel-safety mode: skipping all system shard execution')
 
         finally:
             server_process_logger.setLevel(original_level)
             Runner.instance = None
+
+    def _run_parallel_safety(self, tests, allowlisted_tests, workers, setupkwargs):
+        supplied_tests = []
+        for test_arg in self.port.get_option('test_parallel_safety'):
+            supplied_tests.extend(test_arg.split())
+
+        available_tests = set(tests)
+        checked_tests = [test for test in supplied_tests if test in available_tests]
+        unavailable_tests = [test for test in supplied_tests if test not in available_tests]
+        if unavailable_tests:
+            _log.info(f'Test-parallel-safety mode: skipping {len(unavailable_tests)} test(s) that are skipped or unavailable: {unavailable_tests}')
+        if not checked_tests:
+            _log.info('Test-parallel-safety mode: no tests to check')
+            return
+
+        checked_set = set(checked_tests)
+        background_chunks = Runner._parallel_safety_background_chunks([test for test in allowlisted_tests if test not in checked_set], checked_tests)
+        iterations = self.port.get_option('parallel_safety_iterations') or 1
+        checked_workers = min(len(checked_tests), max(1, workers // 3))
+        background_workers = min(len(background_chunks), workers - checked_workers)
+        if background_chunks and not background_workers:
+            _log.warning('Test-parallel-safety mode: only one worker, so the tests are checked without background load')
+        background_groups = [f'parallel-safety-background-{index}' for index in range(background_workers)]
+
+        _log.info(f'Test-parallel-safety mode: running {len(checked_tests)} test(s) {iterations} time(s) each on {checked_workers} worker(s), '
+                  f'with {len(background_chunks)} background chunk(s) on {background_workers} worker(s): {checked_tests}')
+
+        self._num_workers = checked_workers + background_workers
+        with TaskPool(
+            workers=self._num_workers,
+            mutually_exclusive_groups=background_groups,
+            setup=setup_shard, setupkwargs=setupkwargs, teardown=teardown_shard,
+        ) as pool:
+            for index, group in enumerate(background_groups):
+                pool.do(run_background_load, background_chunks[index::background_workers], repeat=True, group=group)
+            # One task per test, so a test never runs alongside another copy of itself.
+            for test in checked_tests:
+                pool.do(run_parallel_safety_iterations, test, iterations)
+            pool.wait()
 
     def result_map_by_status(self, status=None):
         map = {}
@@ -352,6 +328,7 @@ class _Worker(object):
 
         # ServerProcess doesn't allow for a timeout of 'None,' this uses a week instead of None.
         self._timeout = int(self._port.get_option('timeout')) if self._port.get_option('timeout') else 60 * 24 * 7
+        self._background_chunk_index = 0
 
     @classmethod
     def _filter_noisy_output(cls, output):
@@ -461,6 +438,11 @@ class _Worker(object):
             self._filter_noisy_output(output_buffer),
             elapsed=time.time() - started,
         ))
+
+    def run_next_background_chunk(self, chunks):
+        name, tests = chunks[self._background_chunk_index % len(chunks)]
+        self._background_chunk_index += 1
+        self.run(name, *tests)
 
     def run(self, name, *tests):
         binary_name = name.split('.')[0]
