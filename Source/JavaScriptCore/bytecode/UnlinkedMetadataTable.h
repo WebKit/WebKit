@@ -169,6 +169,7 @@ private:
     bool m_isFinalized : 1;
     bool m_isLinked : 1;
     bool m_is32Bit : 1;
+    bool m_hasBeenLinked : 1;
     TriState m_didOptimize : 2 { TriState::Indeterminate };
     unsigned m_numValueProfiles { 0 };
     uint8_t* m_rawBuffer;
