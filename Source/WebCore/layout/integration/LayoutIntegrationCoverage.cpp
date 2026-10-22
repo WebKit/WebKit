@@ -55,19 +55,8 @@ bool canUseForIntrinsicWidthComputation(const RenderBlockFlow& blockContainer)
         if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer.get()); renderBlock && renderBlock->isBlockLevelBox())
             continue;
 
-        if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer.get()); renderBlock && renderBlock->isAtomicInlineLevelBox() && !renderBlock->firstChild()) {
-            if (renderBlock->style().usedAppearance() != StyleAppearance::None || (renderBlock->element() && renderBlock->element()->firstChild())) {
-                // FIXME: Various widgets with or without appearance.
-                // Dynamic content change (e.g. adding/removing select options) needs to dirty inlineContentCache.
-                return false;
-            }
+        if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer); renderBlock && renderBlock->isAtomicInlineLevelBox() && !renderBlock->firstChild())
             continue;
-        }
-
-        if (CheckedRef atomicInlineLevelBox = downcast<RenderElement>(renderer); atomicInlineLevelBox->style().usedAppearance() != StyleAppearance::None && !atomicInlineLevelBox->style().logicalWidth().isFixed()) {
-            // FIXME: Widgets.
-            return false;
-        }
 
         // FIXME: Implement this image special in line builder.
         auto allowImagesToBreak = !blockContainer.document().inQuirksMode() || !blockContainer.isRenderTableCell();
