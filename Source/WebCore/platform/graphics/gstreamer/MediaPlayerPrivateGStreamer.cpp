@@ -2806,7 +2806,7 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     // mode. Some demuxers (matroskademux) don't work as well in push mode.
     if (startsWith(name.span(), "urisourcebin"_s) && !m_isLegacyPlaybin && m_preload == MediaPlayer::Preload::Auto) {
         if (isBlob)
-            g_object_set(element, "ring-buffer-max-size", 2 * MB, nullptr);
+            g_object_set(element, "ring-buffer-max-size", static_cast<guint64>(2 * MB), nullptr);
         else if (!isMediaSource() && !isMediaStreamPlayer())
             g_object_set(element, "download", TRUE, nullptr);
     }
