@@ -35,16 +35,17 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageDrawingAreaProxy);
 
-Ref<RemotePageDrawingAreaProxy> RemotePageDrawingAreaProxy::create(DrawingAreaProxy& drawingArea, WebProcessProxy& process)
+Ref<RemotePageDrawingAreaProxy> RemotePageDrawingAreaProxy::create(DrawingAreaProxy& drawingArea, WebProcessProxy& process, WebCore::PageIdentifier webPageID)
 {
-    return adoptRef(*new RemotePageDrawingAreaProxy(drawingArea, process));
+    return adoptRef(*new RemotePageDrawingAreaProxy(drawingArea, process, webPageID));
 }
 
-RemotePageDrawingAreaProxy::RemotePageDrawingAreaProxy(DrawingAreaProxy& drawingArea, WebProcessProxy& process)
+RemotePageDrawingAreaProxy::RemotePageDrawingAreaProxy(DrawingAreaProxy& drawingArea, WebProcessProxy& process, WebCore::PageIdentifier webPageID)
     : m_drawingArea(drawingArea)
     , m_identifier(drawingArea.identifier())
     , m_names(drawingArea.messageReceiverNames())
     , m_process(process)
+    , m_webPageID(webPageID)
 {
     for (auto& name : m_names)
         process.addMessageReceiver(name, m_identifier, *this);

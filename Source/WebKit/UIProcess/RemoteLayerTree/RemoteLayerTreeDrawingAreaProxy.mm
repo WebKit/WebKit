@@ -123,21 +123,25 @@ std::span<IPC::ReceiverName> RemoteLayerTreeDrawingAreaProxy::messageReceiverNam
 
 void RemoteLayerTreeDrawingAreaProxy::addRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy& proxy)
 {
-    m_remotePageProcessState.add(proxy.process().coreProcessIdentifier(), ProcessState(proxy.process()));
+    m_remotePageProcessState.set(proxy.process().coreProcessIdentifier(), ProcessState(proxy.process(), proxy.webPageID()));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::removeRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy& proxy)
 {
     ASSERT(m_remotePageProcessState.contains(proxy.process().coreProcessIdentifier()));
-    m_remotePageProcessState.remove(proxy.process().coreProcessIdentifier());
+    auto it = m_remotePageProcessState.find(proxy.process().coreProcessIdentifier());
+    if (it == m_remotePageProcessState.end() || it->value.webPageID != proxy.webPageID())
+        return;
+    m_remotePageProcessState.remove(it);
 
     // The process may outlive its part in this page.
     if (m_remoteLayerTreeHost)
         m_remoteLayerTreeHost->removeDisplayOnlyImagesForProcess(proxy.process().coreProcessIdentifier());
 }
 
-ProcessState::ProcessState(WebProcessProxy& webProcess)
-    : nextLayerTreeTransactionID(TransactionID(TransactionIdentifier(), webProcess.coreProcessIdentifier()).next())
+ProcessState::ProcessState(WebProcessProxy& webProcess, std::optional<WebCore::PageIdentifier> webPageID)
+    : webPageID(webPageID)
+    , nextLayerTreeTransactionID(TransactionID(TransactionIdentifier(), webProcess.coreProcessIdentifier()).next())
 {
     pendingCommits.insert(0, { nextLayerTreeTransactionID, PendingCommitMessage::NotifyPendingCommitLayerTree, CommitDelayState::IntentionallyDeferred });
     nextLayerTreeTransactionID.increment();
@@ -292,10 +296,23 @@ IPC::Connection* RemoteLayerTreeDrawingAreaProxy::connectionForIdentifier(WebCor
     return nullptr;
 }
 
-void RemoteLayerTreeDrawingAreaProxy::notifyPendingCommitLayerTree(IPC::Connection& connection, std::optional<TransactionID> transactionID)
+bool RemoteLayerTreeDrawingAreaProxy::isFromPreviousWebPage(const ProcessState& state, WebCore::PageIdentifier webPageID, ASCIILiteral messageName) const
+{
+    if (!state.webPageID || *state.webPageID == webPageID)
+        return false;
+
+    RELEASE_LOG(RemoteLayerTree, "RemoteLayerTreeDrawingAreaProxy(%" PRIu64 ")::%" PUBLIC_LOG_STRING ": ignoring message from previous WebPage %" PRIu64 " (current WebPage %" PRIu64 ")",
+        identifier().toUInt64(), messageName.characters(), webPageID.toUInt64(), state.webPageID->toUInt64());
+    return true;
+}
+
+void RemoteLayerTreeDrawingAreaProxy::notifyPendingCommitLayerTree(IPC::Connection& connection, std::optional<TransactionID> transactionID, WebCore::PageIdentifier webPageID)
 {
     ProcessState& state = processStateForConnection(connection);
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::notifyPendingCommitLayerTree " << transactionID << " old state: " << state.pendingCommits);
+    if (isFromPreviousWebPage(state, webPageID, "notifyPendingCommitLayerTree"_s))
+        return;
+
     if (transactionID) {
         if (state.pendingCommits.isEmpty()) {
             // The very first commit is initiated by WebContent, all others get
@@ -324,10 +341,12 @@ void RemoteLayerTreeDrawingAreaProxy::notifyPendingCommitLayerTree(IPC::Connecti
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxy::notifyFlushingLayerTree(IPC::Connection& connection, TransactionID transactionID)
+void RemoteLayerTreeDrawingAreaProxy::notifyFlushingLayerTree(IPC::Connection& connection, TransactionID transactionID, WebCore::PageIdentifier webPageID)
 {
     ProcessState& state = processStateForConnection(connection);
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::notifyFlushingLayerTree " << transactionID << " old state: " << state.pendingCommits);
+    if (isFromPreviousWebPage(state, webPageID, "notifyFlushingLayerTree"_s))
+        return;
 
     MESSAGE_CHECK_BASE(state.pendingCommits[0].pendingMessage == PendingCommitMessage::NotifyFlushingLayerTree && state.pendingCommits[0].transactionID == transactionID, connection);
     state.pendingCommits[0].pendingMessage = PendingCommitMessage::CommitLayerTree;
@@ -347,6 +366,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
         if (bundle.mainFrameData)
             LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree main frame data: " << bundle.mainFrameData->description());
         LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree bundle data: " << bundle.description());
+        if (isFromPreviousWebPage(state, bundle.webPageID, "commitLayerTree"_s))
+            return;
         MESSAGE_CHECK_BASE(state.pendingCommits.size(), connection);
         MESSAGE_CHECK_BASE(state.pendingCommits.last().pendingMessage == PendingCommitMessage::CommitLayerTree, connection);
         MESSAGE_CHECK_BASE(state.pendingCommits.last().transactionID == bundle.transactionID, connection);

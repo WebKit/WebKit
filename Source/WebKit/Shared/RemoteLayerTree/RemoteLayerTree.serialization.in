@@ -305,5 +305,6 @@ struct WebKit::RemoteLayerTreeCommitBundle {
     std::optional<WebKit::EditorState> editorState;
     
     WebKit::TransactionID transactionID;
+    WebCore::PageIdentifier webPageID;
     MonotonicTime startTime;
 };

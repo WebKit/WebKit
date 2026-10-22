@@ -187,7 +187,7 @@ void RemotePageProxy::injectPageIntoNewProcess()
     }
 
     Ref drawingArea = *page->drawingArea();
-    m_drawingArea = RemotePageDrawingAreaProxy::create(drawingArea.get(), m_process);
+    m_drawingArea = RemotePageDrawingAreaProxy::create(drawingArea.get(), m_process, m_webPageID);
 #if ENABLE(FULLSCREEN_API)
     m_fullscreenManager = RemotePageFullscreenManagerProxy::create(pageID(), protect(page->fullScreenManager()), m_process);
 #endif
@@ -376,7 +376,7 @@ void RemotePageProxy::setDrawingArea(DrawingAreaProxy* drawingArea)
     if (m_drawingArea && m_drawingArea->identifier() == drawingArea->identifier())
         return;
 
-    m_drawingArea = RemotePageDrawingAreaProxy::create(*drawingArea, m_process);
+    m_drawingArea = RemotePageDrawingAreaProxy::create(*drawingArea, m_process, m_webPageID);
     RefPtr websitePolicies = page->mainFrameWebsitePolicies();
     m_process->send(
         Messages::WebProcess::CreateWebPage(
