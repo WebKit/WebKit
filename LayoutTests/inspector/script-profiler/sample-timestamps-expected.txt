@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: busy timer done true
+Tests that every stack trace sampled during a ScriptProfiler tracking session has a timestamp within that session.
+
+
+== Running test suite: ScriptProfiler.Samples.Timestamps
+-- Running test case: ScriptProfiler.Samples.Timestamps.WithinTrackingSession
+PASS: The execution stopwatch should be running.
+PASS: Should have collected at least 50 stack traces.
+PASS: Every stack trace timestamp should be within the tracking session.
+PASS: Stack trace timestamps should be in increasing order.
+
