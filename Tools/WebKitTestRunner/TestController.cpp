@@ -5179,6 +5179,11 @@ bool TestController::isDoingMediaCapture() const
 {
     return false;
 }
+
+bool TestController::isEnhancedSecurity() const
+{
+    return false;
+}
 #endif
 
 struct ResourceStatisticsCallbackContext {

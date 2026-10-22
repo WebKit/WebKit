@@ -205,10 +205,25 @@ void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLoc
 
     if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))
         JSC::Config::configureForTesting();
-    if (enableLockdownMode == EnableLockdownMode::Yes) {
+
+    // JSC::Options::initialize runs its customization callback only on the first
+    // call, so every option has to be predetermined and set in a single call.
+    bool lockdownMode = enableLockdownMode == EnableLockdownMode::Yes;
+    bool disableJIT = xpc_dictionary_get_bool(initializerMessage, "disable-jit") || enableEnhancedSecurity == EnableEnhancedSecurity::Yes;
+
+    // FIXME (276012): Remove this XPC bootstrap message when it's no longer necessary. See rdar://130669638 for more context.
+    bool disableJITCage = xpc_dictionary_get_bool(initializerMessage, "disable-jit-cage");
+
+    if (lockdownMode) {
         RELEASE_ASSERT(enableEnhancedSecurity == EnableEnhancedSecurity::No);
         JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Block;
-        JSC::Options::initialize([] {
+    }
+
+    if (!lockdownMode && !disableJIT && !disableJITCage)
+        return;
+
+    JSC::Options::initialize([&] {
+        if (lockdownMode) {
             JSC::ExecutableAllocator::disableJIT();
             JSC::Options::useGenerationalGC() = false;
             JSC::Options::useConcurrentGC() = false;
@@ -217,19 +232,12 @@ void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLoc
             JSC::Options::useZombieMode() = true;
             JSC::Options::allowDoubleShape() = false;
             JSC::Options::alwaysHaveABadTime() = true;
-        });
-    } else if (xpc_dictionary_get_bool(initializerMessage, "disable-jit") || enableEnhancedSecurity == EnableEnhancedSecurity::Yes) {
-        JSC::Options::initialize([] {
+        } else if (disableJIT)
             JSC::ExecutableAllocator::disableJIT();
-            JSC::Options::allowSharedArrayBuffer() = false;
-        });
-    }
-    // FIXME (276012): Remove this XPC bootstrap message when it's no longer necessary. See rdar://130669638 for more context.
-    if (xpc_dictionary_get_bool(initializerMessage, "disable-jit-cage")) {
-        JSC::Options::initialize([] {
+
+        if (disableJITCage)
             JSC::Options::useJITCage() = false;
-        });
-    }
+    });
 }
 
 void disableJSC(NOESCAPE WTF::CompletionHandler<void(void)>&& beforeFinalizeHandler)

@@ -756,6 +756,18 @@ bool TestController::isDoingMediaCapture() const
     return m_mainWebView->platformView().microphoneCaptureState != WKMediaCaptureStateNone || m_mainWebView->platformView().cameraCaptureState != WKMediaCaptureStateNone;
 }
 
+bool TestController::isEnhancedSecurity() const
+{
+    bool done = false;
+    bool result = false;
+    [m_mainWebView->platformView() _isEnhancedSecurityEnabled:makeBlockPtr([&](BOOL enabled) {
+        result = enabled;
+        done = true;
+    }).get()];
+    TestController::singleton().platformRunUntil(done, noTimeout);
+    return result;
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 static WKContentMode contentMode(const TestOptions& options)

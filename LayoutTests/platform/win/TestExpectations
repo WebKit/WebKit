@@ -4681,10 +4681,11 @@ imported/w3c/web-platform-tests/speculation-rules/speculation-tags/valid-tags.ht
 imported/w3c/web-platform-tests/speculation-rules/speculation-tags/valid-tags.https.html?tag-level=ruleset&type=prefetch [ Failure ]
 imported/w3c/web-platform-tests/speculation-rules/prefetch/no-http-cache-interference-slow-error.https.html [ Skip ] # timeout
 
-# Lockdown Mode does not apply
+# Lockdown Mode and Enhanced Security do not apply
 dom/xsl/lockdown-mode [ Skip ]
 fast/speechsynthesis/lockdown-mode [ Skip ]
 http/tests/lockdown-mode [ Skip ]
+http/tests/enhanced-security [ Skip ]
 js/dom/lockdown-mode [ Skip ]
 
 imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?mouse [ Pass ]
