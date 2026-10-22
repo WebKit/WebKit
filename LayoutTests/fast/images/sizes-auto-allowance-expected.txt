@@ -1,0 +1,4 @@
+
+PASS img sizes starting with whitespace does not allow auto-sizes
+PASS source sizes=auto is ignored when img does not allow auto-sizes
+PASS source sizes=auto is honored when img allows auto-sizes
