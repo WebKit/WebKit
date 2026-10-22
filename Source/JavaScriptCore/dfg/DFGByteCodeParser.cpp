@@ -501,6 +501,10 @@ private:
     CallOptimizationResult handleCallVariant(Node* callTargetNode, Operand result, CallVariant, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction, Node* newTarget, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee);
     CallOptimizationResult handleInlining(Node* callTargetNode, Operand result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction, Node* newTarget, ECMAMode);
     bool emitDirectCallForPolymorphicCallVariant(CallVariant, Operand result, NodeType callOp, InlineCallFrame::Kind, int argumentCountIncludingThis, int registerOffset, SpeculatedType prediction);
+    bool handlePolymorphicCallCase(Node* callTargetNode, Operand result, CallVariant, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction, Node* newTarget, unsigned& inliningBalance, BasicBlock* continuationBlock, bool mayEmitDirectCall);
+    void jumpToPolymorphicCallContinuation(BytecodeIndex osrExitIndex, BasicBlock* continuationBlock);
+    static unsigned polymorphicInliningAdjustment(unsigned inliningBalance, unsigned numberOfCallees);
+    static void refillPolymorphicInliningBalance(unsigned& inliningBalance, unsigned originalInliningBalance, unsigned& polyInliningAdjustment);
     template<typename ChecksFunctor>
     void inlineCall(Node* callTargetNode, Operand result, CallVariant, int registerOffset, int argumentCountIncludingThis, InlineCallFrame::Kind, BasicBlock* continuationBlock, NOESCAPE const ChecksFunctor& insertChecks);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
@@ -559,8 +563,10 @@ private:
 
     Node* replace(Node* base, unsigned identifier, const PutByVariant&, Node* value);
 
+    // Returns true if the instructions after the load were parsed too.
     template<typename Op>
-    void parseGetById(const JSInstruction*, unsigned identifierNumber, CacheableIdentifier);
+    bool parseGetById(const JSInstruction*, unsigned identifierNumber, CacheableIdentifier, unsigned limit);
+    bool handlePolymorphicMethodCall(const JSInstruction* getByIdInstruction, Node* base, const GetByStatus&, unsigned limit);
     void simplifyGetByStatus(Node* base, GetByStatus&);
     void handleGetById(
         VirtualRegister destination, SpeculatedType, Node* base, CacheableIdentifier, unsigned identifierNumber, GetByStatus, AccessType, BytecodeIndex osrExitIndex);
@@ -637,6 +643,14 @@ private:
     {
         m_exitOK = true;
         addToGraph(ExitOK);
+    }
+
+    void addCountExecution()
+    {
+        if (m_graph.compilation()) [[unlikely]] {
+            addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
+                Profiler::OriginStack(*m_vm->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
+        }
     }
 
     VariableAccessData* newVariableAccessData(Operand operand)
@@ -2688,10 +2702,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
         return CallOptimizationResult::DidNothing;
     }
 
-    // Adjusting inlining balance to accept a bit more candidates for polymorphic call inlining.
-    unsigned polyInliningAdjustment = 0;
-    if (callLinkStatus.size())
-        polyInliningAdjustment = static_cast<unsigned>(static_cast<double>(inliningBalance) * (std::sqrt(callLinkStatus.size()) - 1.0));
+    unsigned polyInliningAdjustment = polymorphicInliningAdjustment(inliningBalance, callLinkStatus.size());
 
     bool allAreClosureCalls = true;
     bool allAreDirectCalls = true;
@@ -2758,24 +2769,12 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
         
         Node* myCallTargetNode = getDirect(calleeReg);
 
-        constexpr bool needsToCheckCallee = false;
-        auto inliningResult = handleCallVariant(
+        bool handledCase = handlePolymorphicCallCase(
             myCallTargetNode, result, callLinkStatus[i], registerOffset,
             thisArgument, argumentCountIncludingThis, osrExitIndex, callOp, kind, prediction, newTarget,
-            inliningBalance, continuationBlock, needsToCheckCallee);
-        
-        if (inliningResult == CallOptimizationResult::DidNothing) {
+            inliningBalance, continuationBlock, allAreDirectCalls);
+        if (!handledCase) {
             ASSERT(m_graph.m_blocks.last().get() == m_currentBlock);
-            if (allAreDirectCalls && emitDirectCallForPolymorphicCallVariant(callLinkStatus[i], result, callOp, kind, argumentCountIncludingThis, registerOffset, prediction)) {
-                m_currentIndex = osrExitIndex;
-                m_exitOK = true;
-                processSetLocalQueue();
-                addJumpTo(continuationBlock);
-                data.cases.append(SwitchCase(m_graph.freeze(callLinkStatus[i].nonExecutableCallee()), calleeEntryBlock));
-                VERBOSE_LOG("Emitted a direct call for ", callLinkStatus[i], " at ", currentCodeOrigin(), ".\n");
-                continue;
-            }
-
             // That failed so we let the block die. Nothing interesting should have been added to
             // the block. We also give up on inlining any of the (less frequent) callees.
             m_graph.killBlockAndItsContents(m_currentBlock);
@@ -2786,7 +2785,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
             couldTakeSlowPath = true;
             break;
         }
-        
+
         JSCell* thingToCaseOn;
         if (allAreDirectCalls)
             thingToCaseOn = callLinkStatus[i].nonExecutableCallee();
@@ -2797,18 +2796,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
         data.cases.append(SwitchCase(m_graph.freeze(thingToCaseOn), calleeEntryBlock));
         VERBOSE_LOG("Finished optimizing ", callLinkStatus[i], " at ", currentCodeOrigin(), ".\n");
 
-        // Boosting inlining balance a bit for polymorphic calls. But we do not want to increase inliningBalance directly since it can be exhausted for one call.
-        // We refill balance when it is used in the other inlining. And the amount we refill is capped with polyInliningAdjustment.
-        if (inliningBalance < originalInliningBalance) {
-            unsigned usedBudget = originalInliningBalance - inliningBalance;
-            if (usedBudget > polyInliningAdjustment) {
-                inliningBalance += polyInliningAdjustment;
-                polyInliningAdjustment = 0;
-            } else {
-                inliningBalance += usedBudget;
-                polyInliningAdjustment -= usedBudget;
-            }
-        }
+        refillPolymorphicInliningBalance(inliningBalance, originalInliningBalance, polyInliningAdjustment);
     }
 
     // Slow path block
@@ -2853,6 +2841,56 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     
     VERBOSE_LOG("Done inlining (hard).\nStack: ", currentCodeOrigin(), "\n");
     return CallOptimizationResult::Inlined;
+}
+
+unsigned ByteCodeParser::polymorphicInliningAdjustment(unsigned inliningBalance, unsigned numberOfCallees)
+{
+    // Adjusting inlining balance to accept a bit more candidates for polymorphic call inlining.
+    if (!numberOfCallees)
+        return 0;
+    return static_cast<unsigned>(static_cast<double>(inliningBalance) * (std::sqrt(numberOfCallees) - 1.0));
+}
+
+void ByteCodeParser::refillPolymorphicInliningBalance(unsigned& inliningBalance, unsigned originalInliningBalance, unsigned& polyInliningAdjustment)
+{
+    // Boosting inlining balance a bit for polymorphic calls. But we do not want to increase inliningBalance directly since it can be exhausted for one call.
+    // We refill balance when it is used in the other inlining. And the amount we refill is capped with polyInliningAdjustment.
+    if (inliningBalance >= originalInliningBalance)
+        return;
+    unsigned usedBudget = originalInliningBalance - inliningBalance;
+    if (usedBudget > polyInliningAdjustment) {
+        inliningBalance += polyInliningAdjustment;
+        polyInliningAdjustment = 0;
+    } else {
+        inliningBalance += usedBudget;
+        polyInliningAdjustment -= usedBudget;
+    }
+}
+
+// Returns false, having added nothing, if the callee can be neither inlined nor called directly.
+bool ByteCodeParser::handlePolymorphicCallCase(Node* callTargetNode, Operand result, CallVariant callee, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind kind, SpeculatedType prediction, Node* newTarget, unsigned& inliningBalance, BasicBlock* continuationBlock, bool mayEmitDirectCall)
+{
+    constexpr bool needsToCheckCallee = false;
+    auto inliningResult = handleCallVariant(
+        callTargetNode, result, callee, registerOffset, thisArgument, argumentCountIncludingThis,
+        osrExitIndex, callOp, kind, prediction, newTarget, inliningBalance, continuationBlock, needsToCheckCallee);
+    if (inliningResult != CallOptimizationResult::DidNothing)
+        return true;
+
+    if (!mayEmitDirectCall || !emitDirectCallForPolymorphicCallVariant(callee, result, callOp, kind, argumentCountIncludingThis, registerOffset, prediction))
+        return false;
+    jumpToPolymorphicCallContinuation(osrExitIndex, continuationBlock);
+    VERBOSE_LOG("Emitted a direct call for ", callee, " at ", currentCodeOrigin(), ".\n");
+    return true;
+}
+
+void ByteCodeParser::jumpToPolymorphicCallContinuation(BytecodeIndex osrExitIndex, BasicBlock* continuationBlock)
+{
+    m_currentIndex = osrExitIndex;
+    m_exitOK = true;
+    processSetLocalQueue();
+    if (!m_currentBlock->terminal())
+        addJumpTo(continuationBlock);
 }
 
 bool ByteCodeParser::emitDirectCallForPolymorphicCallVariant(CallVariant variant, Operand result, NodeType callOp, InlineCallFrame::Kind kind, int argumentCountIncludingThis, int registerOffset, SpeculatedType prediction)
@@ -8203,23 +8241,275 @@ void LEGACY_NODELETE ByteCodeParser::clearCaches()
 }
 
 template<typename Op>
-void ByteCodeParser::parseGetById(const JSInstruction* currentInstruction, unsigned identifierNumber, CacheableIdentifier identifier)
+bool ByteCodeParser::parseGetById(const JSInstruction* currentInstruction, unsigned identifierNumber, CacheableIdentifier identifier, unsigned limit)
 {
     auto bytecode = currentInstruction->as<Op>();
     SpeculatedType prediction = getPrediction();
-    
+
     Node* base = get(bytecode.m_base);
-    
+
     AccessType type = AccessType::GetById;
     if constexpr (Op::opcodeID == op_get_by_id_direct)
         type = AccessType::GetByIdDirect;
-    
+
     GetByStatus getByStatus = GetByStatus::computeFor(
         m_inlineStackTop->m_profiledBlock,
         m_inlineStackTop->m_baselineMap, m_icContextStack,
         currentCodeOrigin());
 
+    if constexpr (Op::opcodeID == op_get_by_id) {
+        if (prediction != SpecNone && handlePolymorphicMethodCall(currentInstruction, base, getByStatus, limit))
+            return true;
+    }
+
     handleGetById(bytecode.m_dst, prediction, base, identifier, identifierNumber, getByStatus, type, nextOpcodeIndex());
+    return false;
+}
+
+// When a method load whose value depends on the base's structure feeds a call with only argument moves in
+// between, dispatching on the structure once gives every case its method as a constant. Loading the method
+// first would join the methods into one value that the call then has to dispatch on again. Any other
+// instruction in between could change the base's structure after the load, so it ends the search.
+bool ByteCodeParser::handlePolymorphicMethodCall(const JSInstruction* getByIdInstruction, Node* base, const GetByStatus& originalGetByStatus, unsigned limit)
+{
+    if (!m_graph.m_plan.isFTL() || !Options::useAccessInlining() || !Options::usePolymorphicAccessInlining() || !Options::usePolymorphicCallInlining())
+        return false;
+
+    if (!originalGetByStatus.isSimple() || originalGetByStatus.viaGlobalProxy() || originalGetByStatus.makesCalls()
+        || originalGetByStatus.numVariants() < 2 || originalGetByStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize())
+        return false;
+
+    auto getById = getByIdInstruction->as<OpGetById>();
+    if (getById.m_dst == getById.m_base)
+        return false;
+
+    auto& instructions = m_inlineStackTop->m_codeBlock->instructions();
+    Vector<BytecodeIndex, 4> argumentMoves;
+    BytecodeIndex callIndex = nextOpcodeIndex();
+    while (callIndex.offset() < limit) {
+        auto next = instructions.at(callIndex);
+        if (!next->is<OpMov>() || next->as<OpMov>().m_dst == getById.m_dst)
+            break;
+        argumentMoves.append(callIndex);
+        callIndex = BytecodeIndex(callIndex.offset() + next->size());
+    }
+    if (callIndex.offset() >= limit)
+        return false;
+
+    struct MethodCall {
+        NodeType op;
+        InlineCallFrame::Kind kind;
+        VirtualRegister callee;
+        int registerOffset;
+        int argumentCountIncludingThis;
+        Operand result;
+    };
+    auto decodeCall = [&](auto call, NodeType op, InlineCallFrame::Kind kind) {
+        return MethodCall { op, kind, call.m_callee,
+            -static_cast<int>(stackOffsetInRegistersForCall(call, callIndex.checkpoint())),
+            static_cast<int>(argumentCountIncludingThisFor(call, callIndex.checkpoint())),
+            destinationFor(call, callIndex.checkpoint(), JITType::DFGJIT) };
+    };
+    const JSInstruction* callInstruction = instructions.at(callIndex).ptr();
+    std::optional<MethodCall> methodCall;
+    switch (callInstruction->opcodeID()) {
+    case op_call:
+        methodCall = decodeCall(callInstruction->as<OpCall>(), Call, InlineCallFrame::Call);
+        break;
+    case op_call_ignore_result:
+        methodCall = decodeCall(callInstruction->as<OpCallIgnoreResult>(), Call, InlineCallFrame::Call);
+        break;
+    case op_tail_call:
+        methodCall = decodeCall(callInstruction->as<OpTailCall>(), TailCall, InlineCallFrame::TailCall);
+        break;
+    default:
+        return false;
+    }
+    auto [callOp, kind, calleeRegister, registerOffset, argumentCountIncludingThis, result] = *methodCall;
+    if (calleeRegister != getById.m_dst)
+        return false;
+
+    // A call that has never returned is not worth specializing, and handleCall plants a ForceOSRExit before it.
+    SpeculatedType prediction = getPredictionWithoutOSRExit(callIndex);
+    if (prediction == SpecNone)
+        return false;
+
+    StackCheck::Scope stackChecker(m_graph.m_stackChecker);
+    if (!stackChecker.isSafeToRecurse())
+        return false;
+
+    GetByStatus getByStatus = originalGetByStatus;
+    simplifyGetByStatus(base, getByStatus);
+    if (getByStatus.numVariants() < 2)
+        return false;
+
+    // planLoad() adds checks to the graph, so rule out the common failures from the current property values first.
+    Vector<JSFunction*, 2> knownFunctions;
+    bool allFunctionsAreKnown = true;
+    for (const GetByVariant& variant : getByStatus.variants()) {
+        if (variant.intrinsic() != NoIntrinsic)
+            return false;
+        ObjectPropertyCondition presence = variant.conditionSet().forConditionKind(PropertyCondition::Presence);
+        if (!presence)
+            return false;
+        ObjectPropertyCondition equivalence = presence.attemptToMakeEquivalenceWithoutBarrier();
+        if (!equivalence) {
+            allFunctionsAreKnown = false;
+            continue;
+        }
+        auto* function = dynamicDowncast<JSFunction>(equivalence.requiredValue());
+        if (!function)
+            return false;
+        knownFunctions.appendIfNotContains(function);
+    }
+    if (allFunctionsAreKnown && knownFunctions.size() < 2)
+        return false;
+
+    struct MethodArm {
+        JSCell* key;
+        Vector<std::pair<JSFunction*, RegisteredStructureSet>, 1> cases;
+    };
+    Vector<MethodArm, 2> arms;
+    for (const GetByVariant& variant : getByStatus.variants()) {
+        GetByOffsetMethod method = planLoad(variant.conditionSet());
+        if (method.kind() != GetByOffsetMethod::Constant)
+            return false;
+        JSFunction* function = method.constant()->dynamicCast<JSFunction*>();
+        if (!function)
+            return false;
+        // Functions sharing a FunctionExecutable share one arm, which inlines the body once as a closure call.
+        JSCell* armKey = function;
+        if (!function->isHostFunction())
+            armKey = function->jsExecutable();
+        size_t armIndex = arms.findIf([&](auto& arm) {
+            return arm.key == armKey;
+        });
+        if (armIndex == notFound) {
+            armIndex = arms.size();
+            arms.append({ armKey, { } });
+        }
+        MethodArm& arm = arms[armIndex];
+        size_t caseIndex = arm.cases.findIf([&](auto& methodCase) {
+            return methodCase.first == function;
+        });
+        if (caseIndex == notFound) {
+            caseIndex = arm.cases.size();
+            arm.cases.append({ function, RegisteredStructureSet() });
+        }
+        arm.cases[caseIndex].second.merge(*m_graph.addStructureSet(variant.structureSet()));
+    }
+    if (arms.size() < 2 && arms[0].cases.size() < 2)
+        return false;
+
+    if (m_graph.compilation()) [[unlikely]] {
+        m_graph.compilation()->noticeInlinedGetById();
+        m_graph.compilation()->noticeInlinedCall();
+    }
+    addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getByStatus)), base);
+
+    SwitchData& data = *m_graph.m_switchData.add();
+    data.kind = SwitchStructure;
+    addToGraph(Switch, OpInfo(&data), base);
+    m_currentBlock->didLink();
+
+    BasicBlock* continuationBlock = allocateUntargetableBlock();
+
+    BytecodeIndex getByIdIndex = m_currentIndex;
+    BytecodeIndex osrExitIndex(callIndex.offset() + callInstruction->size());
+    VirtualRegister thisArgument = virtualRegisterForArgumentIncludingThis(0, registerOffset);
+
+    auto startBlockAtGetById = [&](BasicBlock* block) {
+        m_currentBlock = block;
+        prepareToParseBlock();
+        m_currentIndex = getByIdIndex;
+        m_currentInstruction = getByIdInstruction;
+        m_exitOK = true;
+    };
+
+    // The parse loop skips the instructions parsed here, so each case does its per-instruction work.
+    auto startInstruction = [&](BytecodeIndex index) {
+        m_currentIndex = index;
+        m_currentInstruction = instructions.at(index).ptr();
+        m_exitOK = true;
+        processSetLocalQueue();
+        addCountExecution();
+    };
+
+    auto addCases = [&](const RegisteredStructureSet& structures, BasicBlock* target) {
+        for (RegisteredStructure structure : structures)
+            data.cases.append(SwitchCase(LazyJSValue(m_graph.freeze(structure.get())), target));
+    };
+
+    unsigned inliningBalance = getInliningBalance(CallLinkStatus(), CodeSpecializationKind::CodeForCall);
+    unsigned originalInliningBalance = inliningBalance;
+    unsigned polyInliningAdjustment = polymorphicInliningAdjustment(inliningBalance, arms.size());
+
+    RegisteredStructureSet allStructures;
+    for (MethodArm& arm : arms) {
+        BasicBlock* armBlock = allocateUntargetableBlock();
+        bool isClosureArm = arm.cases.size() > 1;
+        for (auto& [function, structures] : arm.cases) {
+            allStructures.merge(structures);
+            if (!isClosureArm) {
+                addCases(structures, armBlock);
+                continue;
+            }
+            BasicBlock* caseBlock = allocateUntargetableBlock();
+            addCases(structures, caseBlock);
+            startBlockAtGetById(caseBlock);
+            set(getById.m_dst, weakJSConstant(function));
+            processSetLocalQueue();
+            addJumpTo(armBlock);
+        }
+
+        startBlockAtGetById(armBlock);
+        Node* callee;
+        CallVariant callVariant(arm.cases[0].first);
+        if (isClosureArm) {
+            callee = get(getById.m_dst);
+            callVariant = callVariant.despecifiedClosure();
+        } else {
+            callee = weakJSConstant(arm.cases[0].first);
+            set(getById.m_dst, callee);
+        }
+
+        for (BytecodeIndex moveIndex : argumentMoves) {
+            startInstruction(moveIndex);
+            auto move = m_currentInstruction->as<OpMov>();
+            set(move.m_dst, get(move.m_src));
+        }
+
+        startInstruction(callIndex);
+        if (callOp == TailCall)
+            flushForReturn();
+
+        constexpr bool mayEmitDirectCall = true;
+        bool handledCase = handlePolymorphicCallCase(
+            callee, result, callVariant, registerOffset, thisArgument, argumentCountIncludingThis,
+            osrExitIndex, callOp, kind, prediction, nullptr, inliningBalance, continuationBlock, mayEmitDirectCall);
+        if (!handledCase) {
+            addCall(result, callOp, OpInfo(), callee, argumentCountIncludingThis, registerOffset, prediction);
+            jumpToPolymorphicCallContinuation(osrExitIndex, continuationBlock);
+        }
+
+        refillPolymorphicInliningBalance(inliningBalance, originalInliningBalance, polyInliningAdjustment);
+    }
+
+    // A structure that no case expects exits where the load would have, as MultiGetByOffset does. CheckBadValue,
+    // unlike ForceOSRExit, keeps the jump to the continuation, so a loop around this call keeps a single exit.
+    BasicBlock* fallThroughBlock = allocateUntargetableBlock();
+    data.fallThrough = BranchTarget(fallThroughBlock);
+    startBlockAtGetById(fallThroughBlock);
+    addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(allStructures)), get(getById.m_base));
+    addToGraph(CheckBadValue);
+    if (result.isValid())
+        set(result, addToGraph(BottomValue));
+    jumpToPolymorphicCallContinuation(osrExitIndex, continuationBlock);
+
+    prepareToParseBlock();
+    m_currentBlock = continuationBlock;
+    m_currentIndex = osrExitIndex;
+    return true;
 }
 
 static uint64_t LEGACY_NODELETE makeDynamicVarOpInfo(unsigned identifierNumber, unsigned getPutInfo)
@@ -8333,10 +8623,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         VERBOSE_LOG("    parsing ", currentCodeOrigin(), ": ", opcodeID, "\n");
         
-        if (m_graph.compilation()) [[unlikely]] {
-            addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
-                Profiler::OriginStack(*m_vm->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
-        }
+        addCountExecution();
         
         switch (opcodeID) {
 
@@ -8951,10 +9238,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     return;
                 }
                 // The fused jump is never visited by the parse loop, so count it here.
-                if (m_graph.compilation()) [[unlikely]] {
-                    addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
-                        Profiler::OriginStack(*m_vm->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
-                }
+                addCountExecution();
                 addToGraph(Branch, OpInfo(branchData(fusedTaken, fusedNotTaken)), get(bytecode.m_dst));
                 m_inlineStackTop->m_unlinkedBlocks.append(m_currentBlock);
             };
@@ -9656,7 +9940,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
             auto identifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid);
-            parseGetById<OpGetByIdDirect>(currentInstruction, identifierNumber, identifier);
+            parseGetById<OpGetByIdDirect>(currentInstruction, identifierNumber, identifier, limit);
             NEXT_OPCODE(op_get_by_id_direct);
         }
         case op_get_by_id: {
@@ -9664,14 +9948,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
             auto identifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid);
-            parseGetById<OpGetById>(currentInstruction, identifierNumber, identifier);
+            if (parseGetById<OpGetById>(currentInstruction, identifierNumber, identifier, limit))
+                continue;
             NEXT_OPCODE(op_get_by_id);
         }
         case op_get_length: {
             unsigned identifierNumber = m_graph.identifiers().ensure(m_vm->propertyNames->length.impl());
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
             auto identifier = CacheableIdentifier::createFromImmortalIdentifier(uid);
-            parseGetById<OpGetLength>(currentInstruction, identifierNumber, identifier);
+            parseGetById<OpGetLength>(currentInstruction, identifierNumber, identifier, limit);
             NEXT_OPCODE(op_get_length);
         }
         case op_get_by_id_with_this: {

@@ -3515,8 +3515,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case Switch: {
-        // Nothing to do for now.
-        // FIXME: Do sparse conditional things.
+        // InPlaceAbstractState narrows the switched value per target of a structure switch.
+        // FIXME: Do sparse conditional things for the other kinds.
         break;
     }
 

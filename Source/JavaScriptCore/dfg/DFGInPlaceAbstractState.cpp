@@ -341,8 +341,28 @@ void InPlaceAbstractState::activateVariable(size_t variableIndex)
     m_activeVariables[variableIndex] = true;
 }
 
-bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
+static bool holdsNode(Node* access, Node* node)
 {
+    while (access) {
+        switch (access->op()) {
+        case GetLocal:
+            return access == node;
+        case SetLocal:
+            return access->child1().node() == node;
+        case Flush:
+        case PhantomLocal:
+            access = access->child1().node();
+            break;
+        default:
+            return false;
+        }
+    }
+    return false;
+}
+
+bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to, Node* narrowedNode, const AbstractValue* narrowedValue)
+{
+    ASSERT(!narrowedNode == !narrowedValue);
     dataLogLnIf(DFGInPlaceAbstractStateInternal::verbose, "   Merging from ", pointerDump(from), " to ", pointerDump(to));
     ASSERT(from->variablesAtTail.numberOfArguments() == to->variablesAtHead.numberOfArguments());
     ASSERT(from->variablesAtTail.numberOfLocals() == to->variablesAtHead.numberOfLocals());
@@ -358,11 +378,19 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
     case ThreadedCPS: {
         for (size_t index = 0; index < from->variablesAtTail.size(); ++index) {
             AbstractValue& destination = to->valuesAtHead.at(index);
-            changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.at(index), to->variablesAtHead.at(index), from->variablesAtTail.at(index));
+            Node* sourceNode = from->variablesAtTail.at(index);
+            AbstractValue* source = &from->valuesAtTail.at(index);
+            AbstractValue narrowedSource;
+            if (narrowedNode && holdsNode(sourceNode, narrowedNode)) {
+                narrowedSource = *source;
+                narrowedSource.filter(*narrowedValue);
+                source = &narrowedSource;
+            }
+            changed |= mergeVariableBetweenBlocks(destination, *source, to->variablesAtHead.at(index), sourceNode);
         }
         break;
     }
-        
+
     case SSA: {
         for (size_t i = from->valuesAtTail.size(); i--;)
             changed |= to->valuesAtHead[i].merge(from->valuesAtTail[i]);
@@ -385,7 +413,7 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
 #endif
 
             if (!node->isTuple())
-                changed |= entry.value.merge(forNode(node));
+                changed |= entry.value.merge(narrowedNode && node == narrowedNode ? *narrowedValue : forNode(node));
 
             dataLogLnIf(DFGInPlaceAbstractStateInternal::verbose, "         Result: ", entry.value);
         }
@@ -429,16 +457,18 @@ inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
     }
         
     case Switch: {
-        // FIXME: It would be cool to be sparse conditional for Switch's. Currently
-        // we're not. However I somehow doubt that this will ever be a big deal.
+        // FIXME: Only structure switches are sparse conditional. However I somehow doubt
+        // that this will ever be a big deal for the other kinds.
         ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
         SwitchData* data = terminal->switchData();
+        if (data->kind == SwitchStructure)
+            return mergeToSwitchStructureSuccessors(basicBlock, terminal);
         bool changed = merge(basicBlock, data->fallThrough.block);
         for (unsigned i = data->cases.size(); i--;)
             changed |= merge(basicBlock, data->cases[i].target.block);
         return changed;
     }
-    
+
     case EntrySwitch: {
         EntrySwitchData* data = terminal->entrySwitchData();
         bool changed = false;
@@ -464,11 +494,50 @@ inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
     }
 }
 
+bool InPlaceAbstractState::mergeToSwitchStructureSuccessors(BasicBlock* basicBlock, Node* terminal)
+{
+    // A case target only sees the structures that lead to it, and the fall-through only the structures
+    // that no case expects. A target that none of the possible structures leads to gets nothing merged
+    // in, so it stays unreachable.
+    SwitchData* data = terminal->switchData();
+    Node* switched = terminal->child1().node();
+    BasicBlock* fallThrough = data->fallThrough.block;
+
+    Vector<std::pair<BasicBlock*, RegisteredStructureSet>, 4> targets;
+    RegisteredStructureSet caseStructures;
+    for (const SwitchCase& switchCase : data->cases) {
+        BasicBlock* target = switchCase.target.block;
+        if (target == fallThrough)
+            continue;
+        size_t index = targets.findIf([&](auto& entry) {
+            return entry.first == target;
+        });
+        if (index == notFound) {
+            index = targets.size();
+            targets.append({ target, RegisteredStructureSet() });
+        }
+        RegisteredStructure structure = m_graph.registerStructure(switchCase.value.value()->cast<Structure*>());
+        targets[index].second.add(structure);
+        caseStructures.add(structure);
+    }
+
+    bool changed = false;
+    if (!forNode(switched).m_structure.isSubsetOf(caseStructures))
+        changed |= merge(basicBlock, fallThrough);
+    for (auto& [target, structures] : targets) {
+        AbstractValue narrowedValue = forNode(switched);
+        if (narrowedValue.filter(m_graph, structures) == Contradiction)
+            continue;
+        changed |= merge(basicBlock, target, switched, &narrowedValue);
+    }
+    return changed;
+}
+
 inline bool InPlaceAbstractState::mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode)
 {
     if (!destinationNode)
         return false;
-    
+
     ASSERT_UNUSED(sourceNode, sourceNode);
     
     // FIXME: We could do some sparse conditional propagation here!
