@@ -648,7 +648,8 @@ void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
 
     SkPixmap pixmap;
     auto platformImage = nativeImage->platformImage();
-    ASSERT(platformImage->peekPixels(&pixmap));
+    if (!platformImage->peekPixels(&pixmap))
+        return;
 
     platformImage->ref();
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(pixmap.addr(), pixmap.computeByteSize(), [](gpointer data) {
