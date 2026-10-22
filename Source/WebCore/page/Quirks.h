@@ -27,6 +27,7 @@
 
 #include <WebCore/Event.h>
 #include <WebCore/QuirksAccessors.h>
+#include <WebCore/QuirksData.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/UserAgent.h>
 #include <optional>
@@ -60,6 +61,13 @@ enum class UserAgentType;
 namespace Style {
 class ComputedStyle;
 }
+
+enum class IsTopDocument : bool { No, Yes };
+
+WEBCORE_EXPORT QuirksData resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, IsTopDocument);
+
+// For callers with no Document, which therefore only see top-URL quirks.
+WEBCORE_EXPORT QuirksData resolveTopURLQuirks(const URL&);
 
 class Quirks : public QuirksAccessors {
     WTF_MAKE_TZONE_ALLOCATED(Quirks);

@@ -26,7 +26,7 @@
 #pragma once
 
 #include <WebCore/QuirkMatchPattern.h>
-#include <WebCore/QuirkTable.h>
+#include <WebCore/Quirks.h>
 #include <WebCore/QuirksData.h>
 #include <optional>
 #include <wtf/Vector.h>
@@ -44,16 +44,13 @@ struct RuntimeQuirk {
 
     Vector<RuntimeQuirkBehavior> behaviors;
 
-    WEBCORE_EXPORT static RuntimeQuirk from(const Quirk&);
-
     WEBCORE_EXPORT bool appliesTo(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument) const;
     void apply(QuirksData&) const;
 
     friend bool operator==(const RuntimeQuirk&, const RuntimeQuirk&) = default;
 };
 
-// QuirkTable.h holds the compile-time table generated from QuirkTable.json; RuntimeQuirkTable is the
-// same data parsed from that JSON at runtime, and is what quirkTable() and setQuirkTable() hold.
+// The contents of QuirkTable.json, parsed at runtime; what quirkTable() and setQuirkTable() hold.
 struct RuntimeQuirkTable {
     Vector<RuntimeQuirk> quirks;
 };

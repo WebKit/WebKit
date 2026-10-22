@@ -32,7 +32,6 @@
 #include <WebCore/QuirkBehaviorDefinitions.h>
 #include <WebCore/QuirkBehaviors.h>
 #include <WebCore/QuirkSelectors.h>
-#include <WebCore/QuirkTable.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeQuirkTable.h>
@@ -169,22 +168,6 @@ TEST_F(QuirksTest, EmbeddedQuirksResolveFromTheDocumentURL)
 }
 #endif
 
-TEST_F(QuirksTest, EveryCompiledPatternParses)
-{
-    auto expectEveryPatternParses = [](WebCore::URLPatternList patterns) {
-        for (auto pattern : patterns.span())
-            EXPECT_TRUE(WebCore::QuirkMatchPattern::parse(pattern)) << "invalid pattern in the compiled quirk table: " << pattern.characters();
-    };
-
-    for (auto& quirk : WebCore::compiledQuirks()) {
-        expectEveryPatternParses(quirk.matches);
-        expectEveryPatternParses(quirk.embeddedMatches);
-        expectEveryPatternParses(quirk.excludeMatches);
-        for (auto& behavior : quirk.behaviors.span())
-            expectEveryPatternParses(behavior.conditions.secondaryURL);
-    }
-}
-
 static String shippedQuirkTableJSON()
 {
 #if PLATFORM(PLAYSTATION)
@@ -207,31 +190,6 @@ static String shippedQuirkTableJSON()
         return { };
     return String::fromUTF8(contents->span());
 #endif
-}
-
-static String describe(const WebCore::RuntimeQuirk& quirk)
-{
-    auto& patterns = quirk.matches.isEmpty() ? quirk.embeddedMatches : quirk.matches;
-    return patterns.isEmpty() ? "(no patterns)"_str : patterns[0].string();
-}
-
-// FIXME: Remove this once the compiled table is removed
-TEST_F(QuirksTest, ParsedQuirkTableMatchesCompiledTable)
-{
-    auto json = shippedQuirkTableJSON();
-    if (json.isNull())
-        GTEST_SKIP() << "The shipped quirk table is unavailable on this platform";
-
-    auto result = WebCore::parseQuirkTable(json);
-    for (auto& error : result.errors)
-        ADD_FAILURE() << error.description();
-
-    auto compiled = WTF::map(WebCore::compiledQuirks(), WebCore::RuntimeQuirk::from);
-
-    auto& parsed = result.table.quirks;
-    ASSERT_EQ(parsed.size(), compiled.size());
-    for (size_t index = 0; index < parsed.size(); ++index)
-        EXPECT_TRUE(parsed[index] == compiled[index]) << "row " << index << ": parsed " << describe(parsed[index]) << ", compiled " << describe(compiled[index]);
 }
 
 TEST_F(QuirksTest, ShippedQuirkTableParsesWithoutErrors)

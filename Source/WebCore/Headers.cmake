@@ -1981,7 +1981,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/QuirkBehaviors.h
     page/QuirkMatchPattern.h
     page/QuirkSelectors.h
-    page/QuirkTable.h
     page/Quirks.h
     page/QuirksData.h
     page/RemoteDOMWindow.h

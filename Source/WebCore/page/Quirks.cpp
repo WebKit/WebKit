@@ -70,12 +70,12 @@
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "QuirkBehaviorDefinitions.h"
-#include "QuirkTable.h"
 #include "QuirksData.h"
 #include "RegistrableDomain.h"
 #include "RenderView.h"
 #include "ResourceLoadObserver.h"
 #include "ResourceRequest.h"
+#include "RuntimeQuirkTable.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
 #include "SVGSVGElement.h"
@@ -120,6 +120,59 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Quirks);
+
+static Vector<QuirkMatchPattern> parseCompiledPatterns(URLPatternList patterns)
+{
+    auto literals = patterns.span();
+    return WTF::compactMap(literals, [](ASCIILiteral pattern) {
+        auto parsed = QuirkMatchPattern::parse(pattern);
+        ASSERT_WITH_MESSAGE(parsed, "Invalid pattern in a compiled quirk behavior: %s", pattern.characters());
+        return parsed;
+    });
+}
+
+RuntimeQuirkBehavior RuntimeQuirkBehavior::from(const QuirkBehavior& behavior)
+{
+    RuntimeQuirkBehavior result { };
+    result.id = behavior.id;
+    if (auto& parameters = behavior.parameters) {
+        result.script = parameters->script;
+        result.userAgent = parameters->userAgent;
+        result.chromeCompatibilityVersion = parameters->chromeCompatibilityVersion;
+        result.cookieNames = WTF::map(parameters->cookieNames, [](ASCIILiteral name) {
+            return String { name };
+        });
+    }
+
+    auto& conditions = behavior.conditions;
+    if (conditions.elementSelector)
+        result.elementSelector = *conditions.elementSelector;
+    if (conditions.documentSelector)
+        result.documentSelector = *conditions.documentSelector;
+    result.secondaryURL = parseCompiledPatterns(conditions.secondaryURL);
+    return result;
+}
+
+static QuirksData resolveSiteSpecificQuirks(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument documentIsTopDocument)
+{
+    QuirksData quirksData;
+    for (auto& quirk : quirkTable().quirks) {
+        if (quirk.appliesTo(topContext, documentContext, documentIsTopDocument))
+            quirk.apply(quirksData);
+    }
+    return quirksData;
+}
+
+QuirksData resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, IsTopDocument documentIsTopDocument)
+{
+    return resolveSiteSpecificQuirks(URLMatchContext { topURL }, URLMatchContext { documentURL }, documentIsTopDocument);
+}
+
+QuirksData resolveTopURLQuirks(const URL& url)
+{
+    URLMatchContext context { url };
+    return resolveSiteSpecificQuirks(context, context, IsTopDocument::Yes);
+}
 
 static inline OptionSet<AutoplayQuirk> LEGACY_NODELETE allowedAutoplayQuirks(Document& document)
 {
