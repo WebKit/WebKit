@@ -549,6 +549,7 @@ private:
 
     HashMap<WebCore::WebSocketIdentifier, Ref<NetworkSocketChannel>> m_networkSocketChannels;
     NetworkResourceLoadMap m_networkResourceLoaders;
+    HashSet<WebCore::ResourceLoaderIdentifier> m_loadsWaitingForServiceWorkerImport;
     Vector<ResourceNetworkActivityTracker> m_networkActivityTrackers;
     HashMap<WebCore::PageIdentifier, NetworkActivityTracker::CompletionCode> m_lastRootActivityCompletionCodesForTesting;
     HashMap<WebCore::FrameIdentifier, LocalNetworkAccessFrameRecord> m_localNetworkAccessFrameRecords;

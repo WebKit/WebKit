@@ -612,12 +612,21 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 
     CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", existingLoaderToResume=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0, existingLoaderToResume ? existingLoaderToResume->toUInt64() : 0);
 
+    auto identifier = loadParameters.identifier;
+    MESSAGE_CHECK(identifier);
+
     if (CheckedPtr session = networkSession()) {
         Ref server = session->ensureSWServer();
         auto topOrigin = loadParameters.topOriginForServiceWorkers(loadParameters.request);
         if (!server->isImportCompletedForOrigin(topOrigin)) {
             CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: Deferring resource load until service worker registrations for origin are imported");
-            server->importRegistrationsForOrigin(topOrigin, [this, protectedThis = Ref { *this }, loadParameters = WTF::move(loadParameters), existingLoaderToResume]() mutable {
+            m_loadsWaitingForServiceWorkerImport.add(*identifier);
+            server->importRegistrationsForOrigin(topOrigin, [this, protectedThis = Ref { *this }, identifier = *identifier, loadParameters = WTF::move(loadParameters), existingLoaderToResume] mutable {
+                if (!m_loadsWaitingForServiceWorkerImport.remove(identifier)) {
+                    CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: Dropping deferred resource load %" PRIu64 " that was removed while service worker registrations were being imported", identifier.toUInt64());
+                    return;
+                }
+
                 if (!NetworkProcess::singleton().webProcessConnection(webProcessIdentifier()))
                     return;
 
@@ -627,8 +636,6 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
         }
     }
 
-    auto identifier = loadParameters.identifier;
-    MESSAGE_CHECK(identifier);
     RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(!m_networkResourceLoaders.contains(*identifier));
 
@@ -722,6 +729,11 @@ void NetworkConnectionToWebProcess::cookieAcceptPolicyChanged(HTTPCookieAcceptPo
 void NetworkConnectionToWebProcess::removeLoadIdentifier(WebCore::ResourceLoaderIdentifier identifier)
 {
     RELEASE_ASSERT(RunLoop::isMain());
+
+    if (m_loadsWaitingForServiceWorkerImport.remove(identifier)) {
+        CONNECTION_RELEASE_LOG(Loading, "removeLoadIdentifier: Removing identifier %" PRIu64 " of a resource load waiting for service worker registrations to be imported", identifier.toUInt64());
+        return;
+    }
 
     RefPtr<NetworkResourceLoader> loader = m_networkResourceLoaders.get(identifier);
 

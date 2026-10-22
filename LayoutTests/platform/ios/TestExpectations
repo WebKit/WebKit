@@ -10416,8 +10416,6 @@ webkit.org/b/327797 imported/w3c/web-platform-tests/css/css-scroll-anchoring/aft
 
 webkit.org/b/327798 [ Release ] compositing/backing/backface-visibility-flip.html [ Pass Failure ]
 
-webkit.org/b/328332 [ Release ] http/wpt/service-workers/service-worker-fetch-task-cancel-on-redirect.https.html [ Pass Failure ]
-
 webkit.org/b/328339 compositing/hdr/hdr-basic-image-dynamic-range-limit.html [ Pass Failure ]
 
 webkit.org/b/328341 [ Release ] fast/multicol/simple-line-layout-line-index-after-strut-2.html [ Pass ImageOnlyFailure ]
