@@ -576,18 +576,10 @@ void HTMLOptionElement::setSelectedState(bool selected, AllowStyleInvalidation a
         cache->onSelectedOptionChanged(*this);
 }
 
-void HTMLOptionElement::childrenChanged(const ChildChange& change)
+void HTMLOptionElement::descendantsChanged()
 {
-    Vector<Ref<HTMLDataListElement>> ancestors;
-    for (Ref dataList : ancestorsOfType<HTMLDataListElement>(*this))
-        ancestors.append(WTF::move(dataList));
-    for (auto& dataList : ancestors)
-        dataList->optionElementChildrenChanged();
-    if (change.source != ChildChange::Source::Clone) {
-        if (RefPtr select = ownerSelectElement())
-            select->optionElementChildrenChanged();
-    }
-    HTMLElement::childrenChanged(change);
+    if (RefPtr select = ownerSelectElement())
+        select->optionElementChildrenChanged();
 }
 
 void HTMLOptionElement::willResetComputedStyle()

@@ -56,7 +56,7 @@ public:
 private:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    void childrenChanged(const ChildChange&) final;
+    void descendantsChanged() final;
 
     HTMLDataListElement(const QualifiedName&, Document&);
 };

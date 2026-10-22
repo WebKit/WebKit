@@ -181,6 +181,7 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document& doc
     , m_shouldRecalcListItems(false)
 {
     ASSERT(hasTagName(selectTag));
+    setIsInSelectOrDataListSubtree();
 }
 
 Ref<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document& document)

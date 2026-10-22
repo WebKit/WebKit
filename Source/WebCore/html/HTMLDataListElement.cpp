@@ -48,6 +48,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDataListElement);
 inline HTMLDataListElement::HTMLDataListElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
 {
+    setIsInSelectOrDataListSubtree();
     document.incrementDataListElementCount();
 }
 
@@ -73,11 +74,9 @@ Ref<HTMLCollection> HTMLDataListElement::options()
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLDataListOptionsCollection>(*this);
 }
 
-void HTMLDataListElement::childrenChanged(const ChildChange& change)
+void HTMLDataListElement::descendantsChanged()
 {
-    HTMLElement::childrenChanged(change);
-    if (change.source == ChildChange::Source::API)
-        optionElementChildrenChanged();
+    optionElementChildrenChanged();
 }
 
 void HTMLDataListElement::optionElementChildrenChanged()

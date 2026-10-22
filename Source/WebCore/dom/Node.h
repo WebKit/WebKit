@@ -369,6 +369,8 @@ public:
     void clearDidMutateSubtreeAfterSetInnerHTML() { clearStateFlag(StateFlag::DidMutateSubtreeAfterSetInnerHTML); }
     void setDidMutateSubtreeAfterSetInnerHTMLOnAncestors();
 
+    bool isInSelectOrDataListSubtree() const { return hasStateFlag(StateFlag::IsInSelectOrDataListSubtree); }
+
     bool hasWasParsedWithFastPath() const { return hasStateFlag(StateFlag::WasParsedWithFastPath); }
     void setWasParsedWithFastPath() { setStateFlag(StateFlag::WasParsedWithFastPath); }
     void clearWasParsedWithFastPath() { clearStateFlag(StateFlag::WasParsedWithFastPath); }
@@ -674,7 +676,8 @@ protected:
         ShouldNotifyTextManipulationControllerIfDisplayed = 1 << 23,
         DescendantNeedsStyleResolution = 1 << 24,
         DirectChildNeedsStyleResolution = 1 << 25,
-        // 6 bits free.
+        IsInSelectOrDataListSubtree = 1 << 26, // Only used on Element.
+        // 5 bits free.
     };
 
     enum class TabIndexState : uint8_t {

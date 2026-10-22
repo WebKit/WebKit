@@ -90,6 +90,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-toggle-multiple-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-toggle-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-user-selection-dirtiness.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-validity-option-descendants.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-validity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-validity.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-value-option.tentative.html

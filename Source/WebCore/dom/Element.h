@@ -644,6 +644,9 @@ public:
     void beginParsingChildren() { clearIsParsingChildrenFinished(); }
     virtual void finishParsingChildren();
 
+    // Calls descendantsChanged() on this element and its ancestors, up to the outermost select or datalist element.
+    void notifyDescendantsChanged();
+
     PseudoElement& ensurePseudoElement(PseudoElementType);
     WEBCORE_EXPORT PseudoElement* LEGACY_NODELETE beforePseudoElement() const;
     WEBCORE_EXPORT PseudoElement* LEGACY_NODELETE afterPseudoElement() const;
@@ -951,6 +954,8 @@ protected:
     void removingSteps(RemovalType, ContainerNode&) override;
     void movingSteps(MovingType, ContainerNode&) override;
     void childrenChanged(const ChildChange&) override;
+    virtual void descendantsChanged() { }
+    void setIsInSelectOrDataListSubtree() { setStateFlag(StateFlag::IsInSelectOrDataListSubtree); }
     void removeAllEventListeners() override;
 
     void setTabIndexExplicitly(std::optional<int>);
@@ -1091,6 +1096,8 @@ private:
     void updateEffectiveLangStateFromParent();
     void setEffectiveLangStateOnOldDocumentElement();
     void clearEffectiveLangStateOnNewDocumentElement();
+
+    void LEGACY_NODELETE updateIsInSelectOrDataListSubtree();
 
     bool hasLangAttr() const { return hasEventTargetFlag(EventTargetFlag::HasLangAttr); }
     void setHasLangAttr(bool has) { setEventTargetFlag(EventTargetFlag::HasLangAttr, has); }

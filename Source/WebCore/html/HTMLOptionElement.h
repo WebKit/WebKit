@@ -107,7 +107,7 @@ private:
 
     void defaultEventHandler(Event&) final;
 
-    void childrenChanged(const ChildChange&) final;
+    void descendantsChanged() final;
 
     void willResetComputedStyle() final;
 

@@ -1203,6 +1203,9 @@ void ContainerNode::childrenChanged(const ChildChange& change)
 
     if (CheckedPtr cache = document->existingAXObjectCache())
         cache->childrenChanged(*this);
+
+    if (isInSelectOrDataListSubtree() && change.source != ChildChange::Source::Clone) [[unlikely]]
+        downcast<Element>(*this).notifyDescendantsChanged();
 }
 
 static constexpr size_t cloneMaxDepth = 1024;

@@ -73,6 +73,7 @@
 #include "HTMLBDIElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLDataListElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLDocument.h"
 #include "HTMLFrameOwnerElement.h"
@@ -3146,6 +3147,18 @@ void Element::updateEffectiveLangState()
     ensureElementRareData().setEffectiveLang(lang);
 }
 
+void Element::updateIsInSelectOrDataListSubtree()
+{
+    auto* parent = parentElement();
+    setStateFlag(StateFlag::IsInSelectOrDataListSubtree, (parent && parent->isInSelectOrDataListSubtree()) || isAnyOf<HTMLSelectElement, HTMLDataListElement>(*this));
+}
+
+void Element::notifyDescendantsChanged()
+{
+    for (RefPtr element = this; element && element->isInSelectOrDataListSubtree(); element = element->parentElement())
+        element->descendantsChanged();
+}
+
 bool Element::hasAttributes() const
 {
     synchronizeAllAttributes();
@@ -3255,6 +3268,8 @@ Node::NeedsPostConnectionSteps Element::insertionSteps(InsertionType insertionTy
             shadowRoot->hostChildElementDidChange(*this);
     }
 
+    updateIsInSelectOrDataListSubtree();
+
     if (parentNode() == &parentOfInsertedTree && is<Document>(*parentNode())) {
         clearEffectiveLangStateOnNewDocumentElement();
         protect(document())->setDocumentElementLanguage(langFromAttribute());
@@ -3358,6 +3373,9 @@ void Element::removingSteps(RemovalType removalType, ContainerNode& oldParentOfR
             shadowRoot->hostChildElementDidChange(*this);
     }
 
+    if (isInSelectOrDataListSubtree())
+        updateIsInSelectOrDataListSubtree();
+
     if (!parentNode()) {
         if (is<Document>(oldParentOfRemovedTree)) {
             setEffectiveLangStateOnOldDocumentElement();
@@ -3399,6 +3417,8 @@ void Element::movingSteps(MovingType movingType, ContainerNode& oldParent)
         updateEffectiveTextDirectionIfNeeded();
 
     updateEffectiveLangState();
+
+    updateIsInSelectOrDataListSubtree();
 
     if (!movingType.isSubtreeRoot || !hasFocusWithin())
         return;
