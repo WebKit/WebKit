@@ -259,7 +259,10 @@ public:
             CRASH();
         size_t sizeToAllocate = newCapacity * sizeof(T);
         m_capacity = sizeToAllocate / sizeof(T);
-        m_buffer = static_cast<T*>(Malloc::realloc(m_buffer, sizeToAllocate));
+        T* result = static_cast<T*>(Malloc::realloc(m_buffer, sizeToAllocate));
+        if (!result) [[unlikely]]
+            CRASH();
+        m_buffer = result;
     }
 
     void deallocateBuffer(T* bufferToDeallocate)
