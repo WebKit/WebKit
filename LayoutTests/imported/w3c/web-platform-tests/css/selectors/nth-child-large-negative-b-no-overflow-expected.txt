@@ -1,0 +1,7 @@
+
+PASS :nth-child(3n-2147483647) matches the second child
+PASS :nth-child(3n-2147483648) matches the first child
+PASS :nth-last-child(3n-2147483647) matches the second-to-last child
+PASS :nth-of-type(3n-2147483647) matches the second li
+PASS whitespace and of S forms match the second child
+

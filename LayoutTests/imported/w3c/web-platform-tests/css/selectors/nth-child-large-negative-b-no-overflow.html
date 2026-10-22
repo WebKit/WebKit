@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CSS Selectors: :nth-child() with a large negative b term does not overflow</title>
+<link rel="help" href="https://drafts.csswg.org/selectors-4/#the-nth-child-pseudo">
+<link rel="help" href="https://drafts.csswg.org/css-syntax-3/#anb-microsyntax">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<ul id="list">
+    <li id="first"></li>
+    <li id="second"></li>
+    <li id="third"></li>
+</ul>
+<script>
+const first = document.getElementById("first");
+const second = document.getElementById("second");
+const third = document.getElementById("third");
+
+test(() => {
+    assert_true(second.matches(":nth-child(3n-2147483647)"));
+    assert_false(first.matches(":nth-child(3n-2147483647)"));
+    assert_false(third.matches(":nth-child(3n-2147483647)"));
+}, ":nth-child(3n-2147483647) matches the second child");
+
+test(() => {
+    assert_true(first.matches(":nth-child(3n-2147483648)"));
+    assert_false(second.matches(":nth-child(3n-2147483648)"));
+    assert_false(third.matches(":nth-child(3n-2147483648)"));
+}, ":nth-child(3n-2147483648) matches the first child");
+
+test(() => {
+    assert_true(second.matches(":nth-last-child(3n-2147483647)"));
+    assert_false(first.matches(":nth-last-child(3n-2147483647)"));
+    assert_false(third.matches(":nth-last-child(3n-2147483647)"));
+}, ":nth-last-child(3n-2147483647) matches the second-to-last child");
+
+test(() => {
+    assert_true(second.matches(":nth-of-type(3n-2147483647)"));
+    assert_false(first.matches(":nth-of-type(3n-2147483647)"));
+    assert_false(third.matches(":nth-of-type(3n-2147483647)"));
+}, ":nth-of-type(3n-2147483647) matches the second li");
+
+test(() => {
+    assert_true(second.matches(":nth-child(3n - 2147483647)"));
+    assert_true(second.matches(":nth-child(3n-2147483647 of li)"));
+}, "whitespace and of S forms match the second child");
+</script>
+</body>
+</html>
