@@ -4533,7 +4533,7 @@ webkit.org/b/213783 webanimations/accelerated-animation-with-easing.html [ Pass 
 
 # Seek on live streams not implemented.
 
-webkit.org/b/285921 media/media-source/media-source-seek-past-end.html [ Failure Crash Pass ]
+webkit.org/b/285921 media/media-source/media-source-seek-past-end.html [ Failure Pass ]
 
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/iframe-blank-inherit.meta/unset/img-tag.https.html [ Failure ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/img-tag.https.html [ Failure ]

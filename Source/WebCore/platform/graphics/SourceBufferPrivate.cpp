@@ -342,10 +342,10 @@ void SourceBufferPrivate::clearTrackBuffers(bool shouldReportToClient)
         buffer.iterateTrackBuffers([&](auto& trackBuffer) {
             trackBuffer.clearSamples();
         });
+        buffer.computeEvictionData();
+
         if (!shouldReportToClient)
             return;
-
-        buffer.computeEvictionData();
 
         buffer.updateHighestPresentationTimestamp();
 
