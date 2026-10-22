@@ -79,7 +79,7 @@ public:
     RefPtr<NativeImage> primaryNativeImageIfExists() { return frameAtIndex(primaryFrameIndex()).nativeImage(std::nullopt); }
     RefPtr<NativeImage> primaryNativeImage() final { return nativeImageAtIndex(primaryFrameIndex()); }
 
-    void drawNativeImage(GraphicsContext&, NativeImage&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions) final;
+    void drawNativeImage(GraphicsContext&, NativeImage&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions) final;
 
     // Image Metadata
     unsigned frameCount() const final { return m_descriptor.frameCount(); }
@@ -124,7 +124,7 @@ private:
     bool hasEverAnimated() const final;
 
     // Decoding
-    DecodingDestination preferredDecodingDestination(GraphicsContext&, ImagePaintingOptions) const final;
+    DecodingDestination preferredDecodingDestination(GraphicsContext&, ImageDrawingOptions) const final;
     std::optional<DecodingDestination> LEGACY_NODELETE compatibleDecodingDestinationWithOptionsAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
     bool isLargeForDecoding() const final;
     bool LEGACY_NODELETE isDecodingWorkQueueIdle() const;

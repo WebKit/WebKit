@@ -168,7 +168,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
     };
 #endif
 
-    ImagePaintingOptions options {
+    ImageDrawingOptions options {
         CompositeOperator::SourceOver,
         DecodingMode::Synchronous,
         imageOrientation(),

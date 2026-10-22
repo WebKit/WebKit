@@ -102,7 +102,7 @@ enum class GradientSpreadMethod : uint8_t {
 };
 
 // InterpolationQuality::Default
-// For ImagePaintingOptions, it means:
+// For ImageDrawingOptions, it means:
 //  - Use context image interpolation quality.
 // For GraphicsContext CG it means:
 //  - If the CGImage has shouldInterpolate == true, use High

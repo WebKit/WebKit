@@ -236,7 +236,7 @@ void CrossfadeImage::load(CachedResourceLoader& loader, const ResourceLoaderOpti
     m_inputImagesAreReady = true;
 }
 
-static void drawCrossfadeInput(GraphicsContext& context, const RenderElement& renderer, const Image& input, ImagePaintingOptions inputOptions, CompositeOperator operation, float opacity, ConcreteObjectSize crossfadeSize, bool isForFirstLine)
+static void drawCrossfadeInput(GraphicsContext& context, const RenderElement& renderer, const Image& input, ImageDrawingOptions inputOptions, CompositeOperator operation, float opacity, ConcreteObjectSize crossfadeSize, bool isForFirstLine)
 {
     auto concreteSize = input.negotiate(renderer, CrossfadeInputSizing { crossfadeSize });
     auto imageSize = concreteSize.size();
@@ -289,9 +289,9 @@ void CrossfadeImage::drawCrossfade(GraphicsContext& context, const RenderElement
         auto operation = CompositeOperator::SourceOver;
         for (auto [input, percentage] : zippedRange(inputs, m_normalizedPercentages.percentages)) {
             Ref image = *input.image;
-            ImagePaintingOptions inputOptions;
+            ImageDrawingOptions inputOptions;
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-            inputOptions = ImagePaintingOptions { AXCustomColorModeController::shouldInvertSVGImage(renderer, image) ? InvertContent::Yes : InvertContent::No };
+            inputOptions = ImageDrawingOptions { AXCustomColorModeController::shouldInvertSVGImage(renderer, image) ? InvertContent::Yes : InvertContent::No };
 #endif
             drawCrossfadeInput(context, renderer, image, inputOptions, operation, percentage / 100, concreteObjectSize, isForFirstLine);
             operation = CompositeOperator::PlusLighter;
@@ -301,7 +301,7 @@ void CrossfadeImage::drawCrossfade(GraphicsContext& context, const RenderElement
     });
 }
 
-ImageDrawResult CrossfadeImage::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, bool isForFirstLine) const
+ImageDrawResult CrossfadeImage::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, bool isForFirstLine) const
 {
     if (isPending() || !canDrawAtSize(renderer, flooredIntSize(destination.size())))
         return ImageDrawResult::DidNothing;
@@ -312,7 +312,7 @@ ImageDrawResult CrossfadeImage::draw(GraphicsContext& context, const RenderEleme
     });
 }
 
-ImageDrawResult CrossfadeImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, bool isForFirstLine) const
+ImageDrawResult CrossfadeImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, bool isForFirstLine) const
 {
     if (!canDrawAtSize(renderer, concreteObjectSize.size()) || context.paintingDisabled())
         return ImageDrawResult::DidNothing;

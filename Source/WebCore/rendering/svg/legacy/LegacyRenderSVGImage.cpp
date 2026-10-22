@@ -201,7 +201,7 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
     };
 #endif
 
-    ImagePaintingOptions options = {
+    ImageDrawingOptions options = {
         imageOrientation(),
         styleImage->interpolationQualityForImageDraw(paintInfo.context(), *this, concreteObjectSize, styleImage.get(), LayoutSize(destRect.size())),
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,

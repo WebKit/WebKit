@@ -563,7 +563,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
 
             auto concreteObjectSize = ConcreteObjectSize::fixed(geometry.tileSizeWithoutPixelSnapping);
 
-            ImagePaintingOptions options = {
+            ImageDrawingOptions options = {
                 op == CompositeOperator::SourceOver ? layer.layer.compositeForPainting(layer.isLast) : op,
                 layerBlendMode,
                 bgImage->decodingModeForImageDraw(m_renderer, m_paintInfo),

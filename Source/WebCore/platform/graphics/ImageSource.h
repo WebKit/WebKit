@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include <WebCore/ImageDrawingOptions.h>
 #include <WebCore/ImageFrame.h>
 #include <WebCore/ImageOrientation.h>
-#include <WebCore/ImagePaintingOptions.h>
 #include <WebCore/ImageResolution.h>
 #include <WebCore/ImageTypes.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -61,7 +61,7 @@ public:
     virtual bool hasEverAnimated() const { return false; }
 
     // Decoding
-    virtual DecodingDestination preferredDecodingDestination(GraphicsContext&, ImagePaintingOptions) const { return DecodingDestination::Base; }
+    virtual DecodingDestination preferredDecodingDestination(GraphicsContext&, ImageDrawingOptions) const { return DecodingDestination::Base; }
     virtual bool isLargeForDecoding() const { return false; }
     virtual void stopDecodingWorkQueue() { RELEASE_ASSERT_NOT_REACHED(); }
     virtual void decode(Function<void(DecodingStatus)>&&)  { RELEASE_ASSERT_NOT_REACHED(); }
@@ -86,7 +86,7 @@ public:
 
     // Overridden by BitmapImageSource to keep decoded-size accounting in step with the
     // platform-image replacement the GPU process performs while the image is drawn.
-    virtual void drawNativeImage(GraphicsContext&, NativeImage&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions);
+    virtual void drawNativeImage(GraphicsContext&, NativeImage&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions);
 
     // Image Metadata
     virtual IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;

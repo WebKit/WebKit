@@ -450,7 +450,7 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const UsedSt
     if (!modelObject)
         return false;
 
-    ImagePaintingOptions options = {
+    ImageDrawingOptions options = {
         op,
         m_renderer->imageOrientation(),
         m_paintInfo.paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,

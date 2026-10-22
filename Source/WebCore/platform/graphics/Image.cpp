@@ -210,7 +210,7 @@ RefPtr<NativeImage> Image::currentPreTransformedNativeImage(ConcreteObjectSize c
     return currentNativeImage(concreteObjectSize, extras);
 }
 
-void Image::drawPattern(GraphicsContext& ctxt, ConcreteObjectSize concreteObjectSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* extras)
+void Image::drawPattern(GraphicsContext& ctxt, ConcreteObjectSize concreteObjectSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     RefPtr tileImage = currentPreTransformedNativeImage(concreteObjectSize, options.orientation(), extras);
     if (!tileImage)

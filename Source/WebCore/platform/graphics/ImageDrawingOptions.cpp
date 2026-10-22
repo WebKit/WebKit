@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#include "ImagePaintingOptions.h"
+#include "ImageDrawingOptions.h"
 
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-TextStream& operator<<(TextStream& ts, ImagePaintingOptions options)
+TextStream& operator<<(TextStream& ts, ImageDrawingOptions options)
 {
     ts.dumpProperty("composite-operator"_s, options.compositeOperator());
     ts.dumpProperty("blend-mode"_s, options.blendMode());

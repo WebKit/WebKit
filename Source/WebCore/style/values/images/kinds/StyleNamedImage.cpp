@@ -90,7 +90,7 @@ static WTF::String LEGACY_NODELETE adjustNamedImage(const RenderElement& rendere
 #endif
 }
 
-ImageDrawResult NamedImage::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, bool) const
+ImageDrawResult NamedImage::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, bool) const
 {
     auto size = concreteObjectSize.size() * concreteObjectSize.zoom();
     if (size.isEmpty())
@@ -102,7 +102,7 @@ ImageDrawResult NamedImage::draw(GraphicsContext& context, const RenderElement& 
     });
 }
 
-ImageDrawResult NamedImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, bool) const
+ImageDrawResult NamedImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, bool) const
 {
     auto size = concreteObjectSize.size() * concreteObjectSize.zoom();
     if (size.isEmpty() || context.paintingDisabled())

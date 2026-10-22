@@ -707,9 +707,9 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
                 RefPtr buffer = renderingContext->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
                 if (buffer) {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-                    ImagePaintingOptions options { renderingContext->paintingOptionsForDisplay(), context.compositeOperation() };
+                    ImageDrawingOptions options { renderingContext->drawingOptionsForDisplay(), context.compositeOperation() };
 #else
-                    ImagePaintingOptions options { context.compositeOperation() };
+                    ImageDrawingOptions options { context.compositeOperation() };
 #endif
                     context.drawImageBuffer(*buffer, snappedIntRect(r), options);
                 }

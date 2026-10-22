@@ -56,7 +56,7 @@ class IntSize;
 class NativeImageBackend;
 class PixelBuffer;
 struct ImageOrientation;
-struct ImagePaintingOptions;
+struct ImageDrawingOptions;
 
 class NativeImage : public ThreadSafeRefCounted<NativeImage>, public CanMakeThreadSafeCheckedPtr<NativeImage> {
     WTF_MAKE_TZONE_ALLOCATED(NativeImage);

@@ -2517,10 +2517,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
     platform/graphics/ImageDrawingExtras.h
+    platform/graphics/ImageDrawingOptions.h
     platform/graphics/ImageFrame.h
     platform/graphics/ImageObserver.h
     platform/graphics/ImageOrientation.h
-    platform/graphics/ImagePaintingOptions.h
     platform/graphics/ImageResolution.h
     platform/graphics/ImageSizingContext.h
     platform/graphics/ImageSource.h

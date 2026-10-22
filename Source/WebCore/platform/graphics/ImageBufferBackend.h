@@ -32,7 +32,7 @@
 #include <WebCore/GraphicsTypesGL.h>
 #include <WebCore/ImageBufferAllocator.h>
 #include <WebCore/ImageBufferParameters.h>
-#include <WebCore/ImagePaintingOptions.h>
+#include <WebCore/ImageDrawingOptions.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PixelBufferFormat.h>
 #include <WebCore/PlatformLayer.h>

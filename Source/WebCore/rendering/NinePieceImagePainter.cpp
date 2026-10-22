@@ -27,7 +27,7 @@
 
 #include "BoxExtents.h"
 #include "GraphicsContext.h"
-#include "ImagePaintingOptions.h"
+#include "ImageDrawingOptions.h"
 #include "ImageQualityController.h"
 #include "LayoutRect.h"
 #include "NinePieceGeometry.h"
@@ -199,7 +199,7 @@ static NinePieceScales LEGACY_NODELETE computeTileScales(const NinePieceRects& d
 }
 
 template<typename T>
-static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
+static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImageDrawingOptions options)
 {
     auto styleImage = ninePieceImage.source().tryStyleImage();
     ASSERT(styleImage);
@@ -242,12 +242,12 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
 
 // MARK: - Painter entry point
 
-void NinePieceImagePainter::paint(const Style::BorderImage& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
+void NinePieceImagePainter::paint(const Style::BorderImage& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImageDrawingOptions options)
 {
     return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, usedStyle, destination, source, deviceScaleFactor, options);
 }
 
-void NinePieceImagePainter::paint(const Style::MaskBorder& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
+void NinePieceImagePainter::paint(const Style::MaskBorder& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImageDrawingOptions options)
 {
     return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, usedStyle, destination, source, deviceScaleFactor, options);
 }

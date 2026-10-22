@@ -35,7 +35,7 @@ class RenderElement;
 
 enum class CompositeOperator : uint8_t;
 
-struct ImagePaintingOptions;
+struct ImageDrawingOptions;
 
 class UsedStyle;
 
@@ -47,8 +47,8 @@ struct MaskBorder;
 
 class NinePieceImagePainter {
 public:
-    static void paint(const Style::BorderImage&, GraphicsContext&, const RenderElement&, const UsedStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions);
-    static void paint(const Style::MaskBorder&, GraphicsContext&, const RenderElement&, const UsedStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions);
+    static void paint(const Style::BorderImage&, GraphicsContext&, const RenderElement&, const UsedStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImageDrawingOptions);
+    static void paint(const Style::MaskBorder&, GraphicsContext&, const RenderElement&, const UsedStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImageDrawingOptions);
 };
 
 } // namespace WebCore

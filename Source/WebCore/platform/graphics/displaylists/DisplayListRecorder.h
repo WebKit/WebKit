@@ -48,7 +48,7 @@ class Image;
 class SourceImage;
 class VideoFrame;
 
-struct ImagePaintingOptions;
+struct ImageDrawingOptions;
 
 namespace DisplayList {
 
@@ -140,7 +140,7 @@ private:
 
     WEBCORE_EXPORT void didUpdateState(GraphicsContextState&) final;
 
-    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
+    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions) final;
     WEBCORE_EXPORT AffineTransform getCTM(GraphicsContext::IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;
     WEBCORE_EXPORT IntRect clipBounds() const final;
 

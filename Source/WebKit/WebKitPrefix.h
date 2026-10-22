@@ -343,8 +343,8 @@
 #include <WebCore/IPAddressSpace.h>
 #include <WebCore/Image.h>
 #include <WebCore/ImageAdapter.h>
+#include <WebCore/ImageDrawingOptions.h>
 #include <WebCore/ImageOrientation.h>
-#include <WebCore/ImagePaintingOptions.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>

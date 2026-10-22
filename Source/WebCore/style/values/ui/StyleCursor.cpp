@@ -89,7 +89,7 @@ std::optional<WebCore::Cursor> Cursor::selectImageCursor(const RenderObject* ren
         if (!visibleContentRect.contains(cursorRect))
             continue;
 
-        ImagePaintingOptions options {
+        ImageDrawingOptions options {
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
             AXCustomColorModeController::shouldInvertSVGImage(*renderElement, styleImage.get()) ? InvertContent::Yes : InvertContent::No,
 #endif

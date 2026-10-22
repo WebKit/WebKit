@@ -62,11 +62,11 @@ private:
 
     void didUpdateState(GraphicsContextState&) final { }
 
-    void drawNativeImage(const NativeImage&, const FloatRect&, const FloatRect&, ImagePaintingOptions) final { }
+    void drawNativeImage(const NativeImage&, const FloatRect&, const FloatRect&, ImageDrawingOptions) final { }
 
     void drawSystemImage(SystemImage&, const FloatRect&) final { };
 
-    void drawPattern(const NativeImage&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImagePaintingOptions) final { }
+    void drawPattern(const NativeImage&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImageDrawingOptions) final { }
 
     IntRect clipBounds() const final { return { }; }
 
@@ -118,12 +118,12 @@ private:
 
     void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final { }
 
-    ImageDrawResult drawImage(Image&, ConcreteObjectSize, const FloatRect&, const FloatRect&, ImagePaintingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr) final { return ImageDrawResult::DidNothing; }
+    ImageDrawResult drawImage(Image&, ConcreteObjectSize, const FloatRect&, const FloatRect&, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr) final { return ImageDrawResult::DidNothing; }
 
     void drawFocusRing(const Path&, float, const Color&, float) final { }
     void drawFocusRing(const Vector<FloatRect>&, float, const Color&, float) final { }
 
-    void drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, ImagePaintingOptions = { }) final { }
+    void drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, ImageDrawingOptions = { }) final { }
 
     void clipRoundedRect(const FloatRoundedRect&) final { }
     void clipOutRoundedRect(const FloatRoundedRect&) final { }
@@ -136,7 +136,7 @@ private:
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final { }
 
 #if ENABLE(VIDEO)
-    void drawVideoFrame(const VideoFrame&, const FloatRect&, ShouldDiscardAlpha, ImagePaintingOptions) final { }
+    void drawVideoFrame(const VideoFrame&, const FloatRect&, ShouldDiscardAlpha, ImageDrawingOptions) final { }
 #endif
 
 private:

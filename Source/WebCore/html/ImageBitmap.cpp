@@ -710,11 +710,11 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         }
         auto concreteSize = ConcreteObjectSize::fixed(imageSize);
         FloatRect destRect(FloatPoint(), outputSize);
-        ImagePaintingOptions paintingOptions { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No };
+        ImageDrawingOptions drawingOptions { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No };
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        paintingOptions = { paintingOptions, InvertContent::No };
+        drawingOptions = { drawingOptions, InvertContent::No };
 #endif
-        bitmapData->context().drawImage(*sourceImage, concreteSize, destRect, sourceRect, paintingOptions);
+        bitmapData->context().drawImage(*sourceImage, concreteSize, destRect, sourceRect, drawingOptions);
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);

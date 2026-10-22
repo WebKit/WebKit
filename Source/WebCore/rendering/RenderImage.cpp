@@ -928,7 +928,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     };
 #endif
 
-    ImagePaintingOptions options = {
+    ImageDrawingOptions options = {
         CompositeOperator::SourceOver,
         styleImage->decodingModeForImageDraw(*this, paintInfo),
         imageOrientation(),

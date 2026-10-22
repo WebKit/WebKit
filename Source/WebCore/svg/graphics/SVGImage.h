@@ -76,7 +76,7 @@ public:
     void setFallbackInvertContent(bool invertContent) { m_fallbackInvertContent = invertContent; }
 #endif
 
-    RefPtr<NativeImage> nativeImage(const FloatSize&, const ColorSpace& = ColorSpace::SRGB(), const ImageDrawingExtras* = nullptr, ImagePaintingOptions = { });
+    RefPtr<NativeImage> nativeImage(const FloatSize&, const ColorSpace& = ColorSpace::SRGB(), const ImageDrawingExtras* = nullptr, ImageDrawingOptions = { });
 
 private:
     friend class SVGImageChromeClient;
@@ -110,8 +110,8 @@ private:
 
     void startAnimationTimerFired();
 
-    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
-    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
+    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
+    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
 
     // FIXME: This should also hold the variable state dataChanged() sets on the Page and its Settings.
     struct DocumentState {
@@ -126,7 +126,7 @@ private:
         bool operator==(const DocumentState&) const = default;
     };
 
-    DocumentState documentStateForDraw(ConcreteObjectSize, ImagePaintingOptions, const ImageDrawingExtras*) const;
+    DocumentState documentStateForDraw(ConcreteObjectSize, ImageDrawingOptions, const ImageDrawingExtras*) const;
     void applyDocumentState(Document&, LocalFrameView&, const DocumentState&);
 
     RefPtr<Page> m_page;

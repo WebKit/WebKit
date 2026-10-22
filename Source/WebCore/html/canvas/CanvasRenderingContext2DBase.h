@@ -457,7 +457,7 @@ private:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     void setDynamicRangeLimit(PlatformDynamicRangeLimit) final;
     std::optional<double> getEffectiveDynamicRangeLimitValue() const final;
-    ImagePaintingOptions paintingOptionsForDisplay() const final;
+    ImageDrawingOptions drawingOptionsForDisplay() const final;
 #endif
 
     void realizeSavesLoop();
@@ -514,7 +514,7 @@ private:
 
     FloatRect LEGACY_NODELETE inflatedStrokeRect(const FloatRect&) const;
 
-    template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator, ImagePaintingOptions = { });
+    template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator, ImageDrawingOptions = { });
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;

@@ -1,7 +1,7 @@
 description("Tests that drawImage() of an HDR video element preserves its HDR values in a float16 canvas and clamps them in an SDR one, and that createImageBitmap() of the video behaves the same way.");
 
 // drawImage() of a video ignores globalCompositeOperation on the CG fast path, which passes no
-// ImagePaintingOptions at all, so this only uses source-over.
+// ImageDrawingOptions at all, so this only uses source-over.
 
 window.jsTestIsAsync = true;
 

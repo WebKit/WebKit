@@ -33,7 +33,7 @@ namespace WebCore {
 
 class GraphicsContext;
 class ImageBuffer;
-struct ImagePaintingOptions;
+struct ImageDrawingOptions;
 
 class CachedSubimage {
     WTF_MAKE_TZONE_ALLOCATED(CachedSubimage);

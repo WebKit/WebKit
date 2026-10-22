@@ -200,7 +200,7 @@ IntSize SVGImage::containerSize() const
     return IntSize(currentSize);
 }
 
-auto SVGImage::documentStateForDraw(ConcreteObjectSize concreteObjectSize, ImagePaintingOptions options, const ImageDrawingExtras* extras) const -> DocumentState
+auto SVGImage::documentStateForDraw(ConcreteObjectSize concreteObjectSize, ImageDrawingOptions options, const ImageDrawingExtras* extras) const -> DocumentState
 {
     auto state = m_appliedDocumentState;
     state.containerSize = roundedIntSize(concreteObjectSize.size());
@@ -283,7 +283,7 @@ RefPtr<NativeImage> SVGImage::nativeImage(ConcreteObjectSize concreteObjectSize,
     return nativeImage(concreteObjectSize.size(), colorSpace, extras);
 }
 
-RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const ColorSpace& colorSpace, const ImageDrawingExtras* extras, ImagePaintingOptions options)
+RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const ColorSpace& colorSpace, const ImageDrawingExtras* extras, ImageDrawingOptions options)
 {
     if (!m_page)
         return nullptr;
@@ -316,7 +316,7 @@ RefPtr<NativeImage> SVGImage::currentPreTransformedNativeImage(ConcreteObjectSiz
 }
 
 void SVGImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect,
-    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* extras)
+    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     FloatRect zoomedContainerRect = FloatRect(FloatPoint(), concreteObjectSize.size());
     zoomedContainerRect.scale(concreteObjectSize.zoom());
@@ -334,7 +334,7 @@ void SVGImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concrete
     if (!buffer)
         return;
 
-    ImagePaintingOptions bufferOptions {
+    ImageDrawingOptions bufferOptions {
         options.ignoreRootPreserveAspectRatio(),
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         options.invertContent(),
@@ -353,7 +353,7 @@ void SVGImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concrete
     context.drawPattern(*buffer, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
-ImageDrawResult SVGImage::draw(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras* extras)
+ImageDrawResult SVGImage::draw(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;

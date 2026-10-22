@@ -116,7 +116,7 @@ NaturalDimensions BitmapImage::unorientedNaturalDimensions() const
     return NaturalDimensions::fixed(size);
 }
 
-ImageDrawResult BitmapImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options, const ImageDrawingExtras*)
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options, const ImageDrawingExtras*)
 {
     if (destinationRect.isEmpty() || sourceRect.isEmpty())
         return ImageDrawResult::DidNothing;
@@ -183,7 +183,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, ConcreteObjectSize, 
     return ImageDrawResult::DidDraw;
 }
 
-void BitmapImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras*)
+void BitmapImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras*)
 {
     if (tileRect.isEmpty())
         return;
@@ -197,7 +197,7 @@ void BitmapImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concr
         Image::drawPattern(context, concreteObjectSize, destinationRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
 }
 
-void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
 {
     ASSERT(!tileRect.isEmpty());
     ASSERT(options.drawLuminanceMask() == DrawLuminanceMask::Yes);

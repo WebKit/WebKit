@@ -49,22 +49,22 @@ void InvalidImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
 }
 
-ImageDrawResult InvalidImage::draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect&, const FloatRect&, ImagePaintingOptions, bool) const
+ImageDrawResult InvalidImage::draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect&, const FloatRect&, ImageDrawingOptions, bool) const
 {
     return ImageDrawResult::DidNothing;
 }
 
-ImageDrawResult InvalidImage::drawAsPattern(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImagePaintingOptions, bool) const
+ImageDrawResult InvalidImage::drawAsPattern(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImageDrawingOptions, bool) const
 {
     return ImageDrawResult::DidNothing;
 }
 
-ImageDrawResult InvalidImage::drawTiled(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect&, const FloatPoint&, const FloatSize&, const FloatSize&, ImagePaintingOptions, bool) const
+ImageDrawResult InvalidImage::drawTiled(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect&, const FloatPoint&, const FloatSize&, const FloatSize&, ImageDrawingOptions, bool) const
 {
     return ImageDrawResult::DidNothing;
 }
 
-ImageDrawResult InvalidImage::drawNinePiece(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const NinePieceGeometry&, ImagePaintingOptions) const
+ImageDrawResult InvalidImage::drawNinePiece(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const NinePieceGeometry&, ImageDrawingOptions) const
 {
     return ImageDrawResult::DidNothing;
 }

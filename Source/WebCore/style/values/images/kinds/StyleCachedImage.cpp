@@ -333,7 +333,7 @@ CachedImage::ReferencedSVGResource CachedImage::referencedSVGResource(const Rend
     return { nullptr, legacyRenderSVGResource(&renderer) };
 }
 
-ImageDrawResult CachedImage::drawSVGResource(GraphicsContext& context, const ReferencedSVGResource& referenced, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options) const
+ImageDrawResult CachedImage::drawSVGResource(GraphicsContext& context, const ReferencedSVGResource& referenced, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options) const
 {
     if (CheckedPtr masker = dynamicDowncast<RenderSVGResourceMasker>(referenced.resource.get())) {
         if (masker->drawContentIntoContext(context, destination, source, options))
@@ -348,7 +348,7 @@ ImageDrawResult CachedImage::drawSVGResource(GraphicsContext& context, const Ref
     return ImageDrawResult::DidNothing;
 }
 
-ImageDrawResult CachedImage::drawSVGResourceAsPattern(GraphicsContext& context, const ReferencedSVGResource& referenced, const FloatSize& size, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options) const
+ImageDrawResult CachedImage::drawSVGResourceAsPattern(GraphicsContext& context, const ReferencedSVGResource& referenced, const FloatSize& size, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options) const
 {
     RefPtr imageBuffer = context.createImageBuffer(size);
     if (!imageBuffer)
@@ -392,7 +392,7 @@ NaturalDimensions CachedImage::tileNaturalDimensions(const WebCore::Image& image
     return image.naturalDimensions();
 }
 
-ImageDrawResult CachedImage::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, bool) const
+ImageDrawResult CachedImage::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, bool) const
 {
     if (isPending())
         return ImageDrawResult::DidNothing;
@@ -409,7 +409,7 @@ ImageDrawResult CachedImage::draw(GraphicsContext& context, const RenderElement&
     return drawResolved(context, renderer, *image, viewportSize(renderer, concreteObjectSize), destination, source, options);
 }
 
-ImageDrawResult CachedImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, bool) const
+ImageDrawResult CachedImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, bool) const
 {
     if (context.paintingDisabled())
         return ImageDrawResult::DidNothing;
@@ -424,7 +424,7 @@ ImageDrawResult CachedImage::drawAsPattern(GraphicsContext& context, const Rende
     return drawResolvedAsPattern(context, renderer, *image, concreteSizeToDrawAt(*image, renderer, concreteObjectSize), destination, tile, patternTransform, phase, spacing, options);
 }
 
-ImageDrawResult CachedImage::drawTiled(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options, bool) const
+ImageDrawResult CachedImage::drawTiled(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions options, bool) const
 {
     if (context.paintingDisabled())
         return ImageDrawResult::DidNothing;
@@ -444,7 +444,7 @@ ImageDrawResult CachedImage::drawTiled(GraphicsContext& context, const RenderEle
     return drawResolvedTiled(context, renderer, *image, tileNaturalDimensions(*image), concreteSizeToDrawAt(*image, renderer, concreteObjectSize), destination, phase, tileSize, spacing, options);
 }
 
-ImageDrawResult CachedImage::drawNinePiece(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry, ImagePaintingOptions options) const
+ImageDrawResult CachedImage::drawNinePiece(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry, ImageDrawingOptions options) const
 {
     if (context.paintingDisabled())
         return ImageDrawResult::DidNothing;
@@ -494,7 +494,7 @@ bool CachedImage::canDrawAtSize(const RenderElement& renderer, const FloatSize& 
     return !size.isEmpty() && canDraw(renderer);
 }
 
-RefPtr<NativeImage> CachedImage::nativeImage(const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, float resolutionScale, ImagePaintingOptions options) const
+RefPtr<NativeImage> CachedImage::nativeImage(const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, float resolutionScale, ImageDrawingOptions options) const
 {
     if (!referencedSVGResource(renderer)) {
         if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(resolvedImage()))

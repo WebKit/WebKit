@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-struct ImagePaintingOptions {
+struct ImageDrawingOptions {
     template<typename Type> static constexpr bool isOptionType =
         std::is_same_v<Type, CompositeOperator>
         || std::is_same_v<Type, BlendMode>
@@ -59,11 +59,11 @@ struct ImagePaintingOptions {
         || std::is_same_v<Type, PlatformDynamicRangeLimit>;
 
     // This is a single-argument initializer to support pattern of
-    // ImageDrawResult drawImage(..., ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
+    // ImageDrawResult drawImage(..., ImageDrawingOptions = { ImageOrientation::Orientation::FromImage });
     // Should be removed once the pattern is not so prevalent.
     template<typename T>
         requires isOptionType<std::decay_t<T>>
-    ImagePaintingOptions(std::initializer_list<T> options)
+    ImageDrawingOptions(std::initializer_list<T> options)
     {
         for (auto& option : options)
             setOption(option);
@@ -71,14 +71,14 @@ struct ImagePaintingOptions {
 
     template<typename T>
         requires isOptionType<std::decay_t<T>>
-    explicit ImagePaintingOptions(T option)
+    explicit ImageDrawingOptions(T option)
     {
         setOption(option);
     }
 
     template<typename T, typename U, typename... Rest>
         requires isOptionType<std::decay_t<T>>
-    ImagePaintingOptions(T first, U second, Rest... rest)
+    ImageDrawingOptions(T first, U second, Rest... rest)
     {
         setOption(first);
         setOption(second);
@@ -86,17 +86,17 @@ struct ImagePaintingOptions {
     }
 
     template<typename... Overrides>
-    ImagePaintingOptions(const ImagePaintingOptions& other, Overrides... overrides)
-        : ImagePaintingOptions(other)
+    ImageDrawingOptions(const ImageDrawingOptions& other, Overrides... overrides)
+        : ImageDrawingOptions(other)
     {
         (setOption(overrides), ...);
     }
 
-    ImagePaintingOptions() = default;
-    ImagePaintingOptions(const ImagePaintingOptions&) = default;
-    ImagePaintingOptions(ImagePaintingOptions&&) = default;
-    ImagePaintingOptions& operator=(const ImagePaintingOptions&) = default;
-    ImagePaintingOptions& operator=(ImagePaintingOptions&&) = default;
+    ImageDrawingOptions() = default;
+    ImageDrawingOptions(const ImageDrawingOptions&) = default;
+    ImageDrawingOptions(ImageDrawingOptions&&) = default;
+    ImageDrawingOptions& operator=(const ImageDrawingOptions&) = default;
+    ImageDrawingOptions& operator=(ImageDrawingOptions&&) = default;
 
     CompositeOperator compositeOperator() const { return m_compositeOperator; }
     BlendMode blendMode() const { return m_blendMode; }
@@ -161,6 +161,6 @@ private:
     PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
 };
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, ImagePaintingOptions);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, ImageDrawingOptions);
 
 } // namespace WebCore

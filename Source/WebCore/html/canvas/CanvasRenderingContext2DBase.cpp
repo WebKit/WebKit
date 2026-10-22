@@ -1999,7 +1999,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     else
         willUpdateContents(normalizedDstRect);
 
-    ImagePaintingOptions options = {
+    ImageDrawingOptions options = {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         (isHDR() && usesITUR2100TF(internalFrame->colorSpace())) ? DrawsHDRContent::Yes : DrawsHDRContent::No
 #endif
@@ -2061,7 +2061,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
         shouldPostProcess = false;
     }
 
-    ImagePaintingOptions options = {
+    ImageDrawingOptions options = {
         op,
         blendMode,
         orientation,
@@ -2458,22 +2458,22 @@ void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const In
     c->restore();
 }
 
-static void drawImageToContext(const SizedImage& sizedImage, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
+static void drawImageToContext(const SizedImage& sizedImage, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImageDrawingOptions options)
 {
     context.drawImage(sizedImage.image, sizedImage.concreteObjectSize, dest, src, options);
 }
 
-static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
+static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImageDrawingOptions options)
 {
     context.drawImageBuffer(imageBuffer, dest, src, options);
 }
 
-static void drawImageToContext(NativeImage& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
+static void drawImageToContext(NativeImage& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImageDrawingOptions options)
 {
     context.drawNativeImage(image, dest, src, options);
 }
 
-template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage(T& image, const FloatRect& dest, const FloatRect& src, CompositeOperator op, ImagePaintingOptions options)
+template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage(T& image, const FloatRect& dest, const FloatRect& src, CompositeOperator op, ImageDrawingOptions options)
 {
     ASSERT(isFullCanvasCompositeMode(op));
 
@@ -3654,7 +3654,7 @@ std::optional<double> CanvasRenderingContext2DBase::getEffectiveDynamicRangeLimi
     return effectiveDynamicRangeLimit(m_dynamicRangeLimit, displayEDRState(protect(canvasBase())).suppressEDR).value();
 }
 
-ImagePaintingOptions CanvasRenderingContext2DBase::paintingOptionsForDisplay() const
+ImageDrawingOptions CanvasRenderingContext2DBase::drawingOptionsForDisplay() const
 {
     if (!isHDR() || m_dynamicRangeLimit == PlatformDynamicRangeLimit::noLimit())
         return { };
