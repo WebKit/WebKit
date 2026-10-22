@@ -8,4 +8,5 @@ PASS location.replace() of a cross-site popup
 PASS location.replace() of a popup by the cross-site popup it opened
 PASS Setting location.href of a cross-site iframe
 PASS Setting location.href of a cross-site popup
+PASS Setting location.href of a cross-site iframe that is not completely loaded
 

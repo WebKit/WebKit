@@ -2923,7 +2923,7 @@ void LocalDOMWindow::finalizeAndQueueEventTimingEntries()
     m_performanceEventTimingCandidates.clear();
 }
 
-void LocalDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior historyHandling, SetLocationLocking locking, CanNavigateState navigationState)
+void LocalDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior historyHandling, ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded, SetLocationLocking locking, CanNavigateState navigationState)
 {
     if (!passesSetLocationSecurityChecks(activeWindow, completedURL, navigationState))
         return;
@@ -2950,7 +2950,7 @@ void LocalDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& comple
         // FIXME: What if activeDocument()->frame() is 0?
         completedURL, protect(activeDocument->frame()->loader())->outgoingReferrer(),
         lockHistory, lockBackForwardList,
-        historyHandling);
+        historyHandling, replaceIfNotCompletelyLoaded);
 }
 
 ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures& initialWindowFeatures, LocalDOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, NOESCAPE const Function<void(LocalDOMWindow&)>& prepareDialogFunction)

@@ -87,6 +87,7 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 WebCore::LockHistory::No, /* lockHistory */
                 WebCore::LockBackForwardList::No, /* lockBackForwardList */
                 WebCore::NavigationHistoryBehavior::Auto, /* navigationHistoryBehavior */
+                WebCore::ReplaceIfNotCompletelyLoaded::No, /* replaceIfNotCompletelyLoaded */
                 { }, /* clientRedirectSourceForHistory */
                 { }, /* effectiveSandboxFlags */
                 WebCore::ReferrerPolicy::EmptyString, /* effectiveReferrerPolicy */

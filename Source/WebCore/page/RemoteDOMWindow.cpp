@@ -155,7 +155,7 @@ ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGloba
     return { };
 }
 
-void RemoteDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior historyHandling, SetLocationLocking locking, CanNavigateState navigationState)
+void RemoteDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior historyHandling, ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded, SetLocationLocking locking, CanNavigateState navigationState)
 {
     if (!passesSetLocationSecurityChecks(activeWindow, completedURL, navigationState))
         return;
@@ -172,7 +172,7 @@ void RemoteDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& compl
         // FIXME: What if activeDocument()->frame() is 0?
         completedURL, protect(activeDocument->frame()->loader())->outgoingReferrer(),
         lockHistory, lockBackForwardList,
-        historyHandling);
+        historyHandling, replaceIfNotCompletelyLoaded);
 }
 
 } // namespace WebCore

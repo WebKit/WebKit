@@ -524,6 +524,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJS(SameDocum
         WebCore::LockHistory::No,
         WebCore::LockBackForwardList::No,
         WebCore::NavigationHistoryBehavior::Auto,
+        WebCore::ReplaceIfNotCompletelyLoaded::No,
         { }, /* clientRedirectSourceForHistory */
         localFrame->effectiveSandboxFlags(),
         localFrame->effectiveReferrerPolicy(),
@@ -1078,6 +1079,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         WebCore::LockHistory::No,
         WebCore::LockBackForwardList::No,
         WebCore::NavigationHistoryBehavior::Auto,
+        WebCore::ReplaceIfNotCompletelyLoaded::No,
         { }, /* clientRedirectSourceForHistory */
         localFrame->effectiveSandboxFlags(),
         localFrame->effectiveReferrerPolicy(),

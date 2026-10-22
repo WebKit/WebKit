@@ -98,6 +98,7 @@ struct WindowPostMessageOptions;
 enum class IncludeTargetOrigin : bool { No, Yes };
 enum class SetLocationLocking : bool { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 enum class NavigationHistoryBehavior : uint8_t;
+enum class ReplaceIfNotCompletelyLoaded : bool;
 
 using IntDegrees = int32_t;
 
@@ -117,7 +118,7 @@ public:
     using RefCounted::deref;
 
     WEBCORE_EXPORT Location& location();
-    virtual void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior, SetLocationLocking = SetLocationLocking::LockHistoryBasedOnGestureState, CanNavigateState = CanNavigateState::Unchecked) = 0;
+    virtual void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior, ReplaceIfNotCompletelyLoaded, SetLocationLocking = SetLocationLocking::LockHistoryBasedOnGestureState, CanNavigateState = CanNavigateState::Unchecked) = 0;
 
     bool LEGACY_NODELETE closed() const;
     WEBCORE_EXPORT void close();

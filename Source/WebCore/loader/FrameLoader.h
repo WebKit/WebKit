@@ -280,6 +280,7 @@ public:
     void checkCompleted();
 
     bool isComplete() const { return m_isComplete; }
+    bool LEGACY_NODELETE isDocumentCompletelyLoaded() const;
     bool loadingFromCachedPage() const { return m_loadingFromCachedPage; }
 
     void commitProvisionalLoad();

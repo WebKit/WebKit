@@ -75,5 +75,27 @@ for (const kind of ["iframe", "popup"]) {
     assert_equals(await historyGrowth(t, kind, sites[from], sites[to], (target, url) => target.location.href = url), 1);
   }, `Setting location.href of ${article(kind)} ${kind} in ${from} to ${to}`);
 }
+
+for (const where of ["the shared process", "a process of its own"]) {
+  promise_test(async t => {
+    const iframe = document.createElement("iframe");
+    const loading = new Promise(resolve => addEventListener("message", function listener(event) {
+      if (event.source !== iframe.contentWindow || !event.data.loading)
+        return;
+      removeEventListener("message", listener);
+      resolve();
+    }));
+    iframe.src = `${sites[where]}?slow`;
+    document.body.append(iframe);
+    t.add_cleanup(() => iframe.remove());
+    await loading;
+    const historyLength = history.length;
+    const url = `${sites[where]}?navigated-while-loading`;
+    const report = reportOf(url);
+    iframe.contentWindow.location.href = url;
+    await report;
+    assert_equals(history.length, historyLength);
+  }, `Setting location.href of an iframe in ${where} that is not completely loaded`);
+}
 </script>
 </body>

@@ -170,6 +170,7 @@ enum class LockHistory : bool { No, Yes };
 enum class AbortOngoingNavigation : bool { No, Yes };
 enum class DeferCheckLoadComplete : bool { No, Yes };
 enum class LockBackForwardList : bool { No, Yes };
+enum class ReplaceIfNotCompletelyLoaded : bool { No, Yes };
 enum class AllowNavigationToInvalidURL : bool { No, Yes };
 enum class HasInsecureContent : bool { No, Yes };
 enum class LoadWillContinueInAnotherProcess : bool { No, Yes };

@@ -45,6 +45,7 @@ struct WebKit::NavigationActionData {
     WebCore::LockHistory lockHistory;
     WebCore::LockBackForwardList lockBackForwardList;
     WebCore::NavigationHistoryBehavior navigationHistoryBehavior;
+    WebCore::ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded;
     String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags;
     WebCore::ReferrerPolicy effectiveReferrerPolicy;

@@ -17,4 +17,6 @@ PASS navigation.navigate() with history: "replace" of a popup in the shared proc
 PASS navigation.navigate() with history: "replace" of a popup in the shared process to this site
 PASS navigation.navigate() with history: "replace" of a popup in a process of its own to the shared process
 PASS Setting location.href of a popup in the shared process to the shared process
+PASS Setting location.href of an iframe in the shared process that is not completely loaded
+PASS Setting location.href of an iframe in a process of its own that is not completely loaded
 

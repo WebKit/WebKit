@@ -191,6 +191,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationAction.lockHistory(),
         navigationAction.lockBackForwardList(),
         navigationAction.navigationHistoryBehavior(),
+        navigationAction.replaceIfNotCompletelyLoaded(),
         clientRedirectSourceForHistory,
         sandboxFlags,
         ReferrerPolicy::EmptyString,
