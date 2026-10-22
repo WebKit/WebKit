@@ -1256,22 +1256,20 @@ static HTMLSelectElement* LEGACY_NODELETE owningSelectElement(const Element& ele
     return nullptr;
 }
 
-static bool isListBoxItem(const Element& element)
+static HTMLSelectElement* LEGACY_NODELETE listBoxSelectElement(const Element& element)
 {
     auto* selectElement = owningSelectElement(element);
-    return selectElement && is<RenderListBox>(selectElement->renderer());
+    return selectElement && is<RenderListBox>(selectElement->renderer()) ? selectElement : nullptr;
 }
 
 static std::optional<std::pair<SingleThreadWeakPtr<RenderElement>, LayoutRect>> listBoxElementScrollIntoView(const Element& element)
 {
-    RefPtr selectElement = owningSelectElement(element);
+    RefPtr selectElement = listBoxSelectElement(element);
     if (!selectElement)
         return std::nullopt;
 
-    CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(selectElement->renderer());
-    if (!renderListBox)
-        return std::nullopt;
-    
+    CheckedPtr renderListBox = downcast<RenderListBox>(selectElement->renderer());
+
     auto itemIndex = selectElement->listItems().find(&element);
     if (itemIndex != notFound)
         renderListBox->scrollToRevealElementAtListIndex(itemIndex);
@@ -2132,13 +2130,11 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
 
 static std::optional<std::pair<CheckedRef<RenderListBox>, LayoutRect>> listBoxElementBoundingBox(const Element& element)
 {
-    RefPtr selectElement = owningSelectElement(element);
+    RefPtr selectElement = listBoxSelectElement(element);
     if (!selectElement)
         return std::nullopt;
 
-    CheckedPtr listBoxRenderer = dynamicDowncast<RenderListBox>(selectElement->renderer());
-    if (!listBoxRenderer)
-        return std::nullopt;
+    CheckedPtr listBoxRenderer = downcast<RenderListBox>(selectElement->renderer());
 
     std::optional<LayoutRect> boundingBox;
     if (RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(element))
@@ -2206,7 +2202,11 @@ std::optional<std::pair<CheckedPtr<RenderElement>, FloatRect>> Element::bounding
 FloatRect Element::boundingClientRect()
 {
     Ref document = this->document();
-    document->updateLayoutIfDimensionsOutOfDate(*this, { DimensionsCheck::Left, DimensionsCheck::Top, DimensionsCheck::Width, DimensionsCheck::Height, DimensionsCheck::IgnoreOverflow }, { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::CanDeferUpdateLayerPositions, LayoutOptions::IgnorePendingStylesheets });
+    OptionSet<DimensionsCheck> dimensionsCheck { DimensionsCheck::Left, DimensionsCheck::Top, DimensionsCheck::Width, DimensionsCheck::Height, DimensionsCheck::IgnoreOverflow };
+    OptionSet<LayoutOptions> layoutOptions { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::CanDeferUpdateLayerPositions, LayoutOptions::IgnorePendingStylesheets };
+    document->updateLayoutIfDimensionsOutOfDate(*this, dimensionsCheck, layoutOptions);
+    if (RefPtr selectElement = listBoxSelectElement(*this))
+        document->updateLayoutIfDimensionsOutOfDate(*selectElement, dimensionsCheck, layoutOptions);
     LocalFrameView::AutoPreventLayerAccess preventAccess(document->view());
     auto pair = boundingAbsoluteRectWithoutLayout();
     if (!pair)
@@ -6631,7 +6631,7 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
     protect(document())->updateStyleIfNeeded();
 
     // List box items are painted by the list box renderer and have no renderer of their own.
-    if (!renderer() && !isListBoxItem(*this))
+    if (!renderer() && !listBoxSelectElement(*this))
         return false;
 
     CheckedPtr style = computedStyle();

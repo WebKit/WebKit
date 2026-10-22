@@ -1,0 +1,31 @@
+Tests getBoundingClientRect() on list box items when layout is out of date, including a dropdown that becomes a list box, and on optgroups that follow an option, wrap their options in another element, or follow a separator.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS option1BoxAfterLayout.width is > 0
+PASS option1Box.left is option1BoxAfterLayout.left
+PASS option1Box.top is option1BoxAfterLayout.top
+PASS option1Box.width is option1BoxAfterLayout.width
+PASS option1Box.height is option1BoxAfterLayout.height
+PASS groupClientRects.length is 1
+PASS groupBox.left is option1BoxAfterLayout.left
+PASS groupBox.top is option1BoxAfterLayout.bottom
+PASS groupBox.width is option1BoxAfterLayout.width
+PASS groupBox.height is 2 * option1BoxAfterLayout.height
+PASS groupClientRects[0].top is groupBox.top
+PASS groupClientRects[0].height is groupBox.height
+PASS option3BoxAfterLayout.width is > 0
+PASS option3Box.left is option3BoxAfterLayout.left
+PASS option3Box.top is option3BoxAfterLayout.top
+PASS option3Box.width is option3BoxAfterLayout.width
+PASS option3Box.height is option3BoxAfterLayout.height
+PASS option5Box.width is > 0
+PASS wrappedGroupBox.top is option5Box.top - option5Box.height
+PASS wrappedGroupBox.height is 3 * option5Box.height
+PASS groupAfterSeparatorBox.top is wrappedGroupBox.bottom + option5Box.height
+PASS groupAfterSeparatorBox.height is 2 * option5Box.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

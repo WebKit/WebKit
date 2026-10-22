@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<script src="../../../resources/js-test.js"></script>
+<select id="select" size="2" style="appearance: base-select">
+    <option id="option">Option 1</option>
+    <option>Option 2</option>
+</select>
+<script>
+description("Tests getBoundingClientRect() on an option when its list box stops using base appearance and layout is out of date.");
+
+var select = document.getElementById("select");
+var option = document.getElementById("option");
+
+var optionBoxInBaseAppearance = option.getBoundingClientRect();
+
+select.style.appearance = "auto";
+var optionBox = option.getBoundingClientRect();
+
+document.body.offsetTop;
+var optionBoxAfterLayout = option.getBoundingClientRect();
+
+shouldBeGreaterThan("optionBoxInBaseAppearance.width", "0");
+shouldBeGreaterThan("optionBoxAfterLayout.width", "0");
+shouldBe("optionBox.left", "optionBoxAfterLayout.left");
+shouldBe("optionBox.top", "optionBoxAfterLayout.top");
+shouldBe("optionBox.width", "optionBoxAfterLayout.width");
+shouldBe("optionBox.height", "optionBoxAfterLayout.height");
+
+select.remove();
+</script>

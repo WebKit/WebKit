@@ -1,0 +1,16 @@
+Tests getBoundingClientRect() on an option when its list box stops using base appearance and layout is out of date.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS optionBoxInBaseAppearance.width is > 0
+FAIL optionBoxAfterLayout.width should be > 0. Was 0 (of type number).
+PASS optionBox.left is optionBoxAfterLayout.left
+PASS optionBox.top is optionBoxAfterLayout.top
+PASS optionBox.width is optionBoxAfterLayout.width
+PASS optionBox.height is optionBoxAfterLayout.height
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

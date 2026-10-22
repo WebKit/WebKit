@@ -371,15 +371,13 @@ std::optional<LayoutRect> RenderListBox::localBoundsOfOptGroup(const HTMLOptGrou
     int rowIndex = 0;
 
     for (auto& item : protect(selectElement())->listItems()) {
-        if (is<HTMLOptGroupElement>(*item)) {
-            if (item == &optGroupElement)
-                boundingBox = itemBoundingBoxRect({ }, rowIndex);
-        } else if (is<HTMLOptionElement>(*item)) {
-            if (item->parentNode() != &optGroupElement)
+        if (boundingBox) {
+            if (!item->isDescendantOf(optGroupElement))
                 break;
 
             boundingBox->setHeight(boundingBox->height() + itemBoundingBoxRect({ }, rowIndex).height());
-        }
+        } else if (item == &optGroupElement)
+            boundingBox = itemBoundingBoxRect({ }, rowIndex);
         ++rowIndex;
     }
 

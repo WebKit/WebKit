@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<div id="container"></div>
+<script>
+description("Tests getBoundingClientRect() on list box items when layout is out of date, including a dropdown that becomes a list box, and on optgroups that follow an option, wrap their options in another element, or follow a separator.");
+
+document.getElementById("container").innerHTML = `
+    <select id="list" multiple>
+        <option id="option1">Option 1</option>
+        <optgroup id="group" label="Group">
+            <option id="option2">Option 2</option>
+        </optgroup>
+    </select>
+    <select id="dropdown">
+        <option id="option3">Option 3</option>
+        <option>Option 4</option>
+    </select>
+    <select id="nested" multiple>
+        <optgroup id="wrappedGroup" label="Wrapped">
+            <div><option id="option5">Option 5</option><option>Option 6</option></div>
+        </optgroup>
+        <hr>
+        <optgroup id="groupAfterSeparator" label="After separator">
+            <option>Option 7</option>
+        </optgroup>
+    </select>`;
+
+var option1 = document.getElementById("option1");
+var group = document.getElementById("group");
+var dropdown = document.getElementById("dropdown");
+var option3 = document.getElementById("option3");
+
+// The list box was just inserted, so layout is out of date.
+var option1Box = option1.getBoundingClientRect();
+
+document.body.offsetTop;
+var option1BoxAfterLayout = option1.getBoundingClientRect();
+var groupBox = group.getBoundingClientRect();
+var groupClientRects = group.getClientRects();
+
+// The dropdown was laid out as a menu list, so its new list box is not laid out yet.
+dropdown.size = 2;
+var option3Box = option3.getBoundingClientRect();
+
+document.body.offsetTop;
+var option3BoxAfterLayout = option3.getBoundingClientRect();
+
+var option5Box = document.getElementById("option5").getBoundingClientRect();
+var wrappedGroupBox = document.getElementById("wrappedGroup").getBoundingClientRect();
+var groupAfterSeparatorBox = document.getElementById("groupAfterSeparator").getBoundingClientRect();
+
+shouldBeGreaterThan("option1BoxAfterLayout.width", "0");
+shouldBe("option1Box.left", "option1BoxAfterLayout.left");
+shouldBe("option1Box.top", "option1BoxAfterLayout.top");
+shouldBe("option1Box.width", "option1BoxAfterLayout.width");
+shouldBe("option1Box.height", "option1BoxAfterLayout.height");
+
+shouldBe("groupClientRects.length", "1");
+shouldBe("groupBox.left", "option1BoxAfterLayout.left");
+shouldBe("groupBox.top", "option1BoxAfterLayout.bottom");
+shouldBe("groupBox.width", "option1BoxAfterLayout.width");
+shouldBe("groupBox.height", "2 * option1BoxAfterLayout.height");
+shouldBe("groupClientRects[0].top", "groupBox.top");
+shouldBe("groupClientRects[0].height", "groupBox.height");
+
+shouldBeGreaterThan("option3BoxAfterLayout.width", "0");
+shouldBe("option3Box.left", "option3BoxAfterLayout.left");
+shouldBe("option3Box.top", "option3BoxAfterLayout.top");
+shouldBe("option3Box.width", "option3BoxAfterLayout.width");
+shouldBe("option3Box.height", "option3BoxAfterLayout.height");
+
+shouldBeGreaterThan("option5Box.width", "0");
+shouldBe("wrappedGroupBox.top", "option5Box.top - option5Box.height");
+shouldBe("wrappedGroupBox.height", "3 * option5Box.height");
+shouldBe("groupAfterSeparatorBox.top", "wrappedGroupBox.bottom + option5Box.height");
+shouldBe("groupAfterSeparatorBox.height", "2 * option5Box.height");
+
+document.getElementById("container").remove();
+</script>
