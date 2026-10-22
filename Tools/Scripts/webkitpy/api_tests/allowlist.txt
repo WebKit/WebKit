@@ -1574,7 +1574,6 @@ TestWebKitAPI.EvaluateJavaScript.WindowPersistency
 TestWebKitAPI.FindInPage/FindPrivateSPI
 TestWebKitAPI.FindInPage/FindPublicAPI
 TestWebKitAPI.FlowMode
-TestWebKitAPI.FocusWebView
 TestWebKitAPI.FocusWebView.MultipleFramesSomeUnfocusable
 TestWebKitAPI.FocusWebView/CrossOriginIframeRelinquishToChromeTests
 TestWebKitAPI.FontAttributes
@@ -1590,7 +1589,6 @@ TestWebKitAPI.FullscreenTouchSecheuristic.Basic
 TestWebKitAPI.FullscreenTouchSecheuristic.TapOnceVsTapTwice
 TestWebKitAPI.FullscreenTouchSecheuristic.WKFullScreenViewControllerParameters
 TestWebKitAPI.GPUProcess.CrashWhilePlayingAudioViaCreateMediaElementSource
-TestWebKitAPI.GPUProcess.CrashWhilePlayingVideo
 TestWebKitAPI.GPUProcess.DoNotLeakConnectionAfterClosingWebPage
 TestWebKitAPI.GPUProcess.GPUProcessForDOMRenderingCarriesOverFromRelatedPage
 TestWebKitAPI.GPUProcess.LegacyCDM
@@ -1824,7 +1822,6 @@ TestWebKitAPI.MediaQueryListCapacity
 TestWebKitAPI.MediaRecorderPrivateWriter
 TestWebKitAPI.MediaSource
 TestWebKitAPI.MemoryCache
-TestWebKitAPI.MessagePortSecurity
 TestWebKitAPI.MouseEventTests.AltModifierIsKeptWhenJSInterceptsClick
 TestWebKitAPI.MouseEventTests.CmdModifierIsKeptWhenJSInterceptsClick
 TestWebKitAPI.MouseEventTests.CmdShiftModifierIsKeptWhenJSInterceptsClick
@@ -1848,11 +1845,9 @@ TestWebKitAPI.NavigationSwipeTests.DoNotBecomeFirstResponderAfterNavigationSwipe
 TestWebKitAPI.NavigationSwipeTests.RestoreFirstResponderAfterNavigationSwipe
 TestWebKitAPI.NavigationSwipeTests.SwipeSnapshotLayerBounds
 TestWebKitAPI.NavigationSwipeTests.WindowRelativeBoundsForCustomSwipeViews
-TestWebKitAPI.NetworkProcess
 TestWebKitAPI.NetworkProcess.CustomSchemeWasPrivateRelayed
 TestWebKitAPI.NetworkProcess.URLSchemeHandlerWasPrivateRelayed
 TestWebKitAPI.NowPlayingControlsTests
-TestWebKitAPI.NowPlayingMetadataObserver
 TestWebKitAPI.NowPlayingSession
 TestWebKitAPI.NowPlayingSession.NoSession
 TestWebKitAPI.ObjectSizeNegotiation
@@ -1888,7 +1883,6 @@ TestWebKitAPI.PixelBufferConversionTests.convertImagePixels
 TestWebKitAPI.PixelBufferConversionTests.convertImagePixels2
 TestWebKitAPI.PlatformMediaSessionManager
 TestWebKitAPI.PlatformScreen
-TestWebKitAPI.PointerLockTests
 TestWebKitAPI.PointerLockTests.DeniedWithoutMouseDevice
 TestWebKitAPI.PointerLockTests.MouseDeviceDisconnect
 TestWebKitAPI.PointerLockTests.MouseDeviceMove
@@ -1904,7 +1898,6 @@ TestWebKitAPI.PrivateClickMeasurement.AttributionTriggerData
 TestWebKitAPI.PrivateClickMeasurement.BasicWithEphemeralIOSSPI
 TestWebKitAPI.PrivateClickMeasurement.BasicWithIOSSPI
 TestWebKitAPI.PrivateClickMeasurement.EarliestTimeToSendAttributionMinimumDelay
-TestWebKitAPI.PrivateClickMeasurement.FetchAndRemoveSafariCampaignDomains
 TestWebKitAPI.PrivateClickMeasurement.InvalidBlindedSecret
 TestWebKitAPI.PrivateClickMeasurement.InvalidConversionURLs
 TestWebKitAPI.PrivateClickMeasurement.InvalidConversionWithDisallowedURLComponents
@@ -3166,7 +3159,6 @@ TestWebKitAPI.SiteIsolation.DrawPagesToPDFSynchronouslyIncludesCrossSiteFrames
 TestWebKitAPI.SiteIsolation.DropTextOnContentEditableInCrossOriginSubframe
 TestWebKitAPI.SiteIsolation.EndPrintingIsRoutedToTheFrameThatStartedPrinting
 TestWebKitAPI.SiteIsolation.EvaluateJavaScriptInFrame
-TestWebKitAPI.SiteIsolation.Events
 TestWebKitAPI.SiteIsolation.FindStringAcrossMultipleFramesIOS
 TestWebKitAPI.SiteIsolation.FindStringAcrossMultipleFramesOrderIOS
 TestWebKitAPI.SiteIsolation.FindStringInFrame
@@ -3401,7 +3393,6 @@ TestWebKitAPI.SiteIsolation.SharedProcessExcludesSiteWithDocumentIsolationPolicy
 TestWebKitAPI.SiteIsolation.SharedProcessIgnoresHighValueFraudTargetDomainsWhenDisabled
 TestWebKitAPI.SiteIsolation.SharedProcessInProcessCacheAfterNavigation
 TestWebKitAPI.SiteIsolation.SharedProcessLoadIsolatedSiteInSubframeOfNewWindow
-TestWebKitAPI.SiteIsolation.SharedProcessMainFrameNotReusedAfterCrash
 TestWebKitAPI.SiteIsolation.SharedProcessMostBasic
 TestWebKitAPI.SiteIsolation.SharedProcessNotReusedAfterCrash
 TestWebKitAPI.SiteIsolation.SharedProcessSameOrigin
@@ -3964,9 +3955,6 @@ TestWebKitAPI.WKWebExtensionAPIOffscreenTests/hasDocumentFalseByDefault()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenAPIAvailableWhenManifestRequests()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenCreateDocumentArgumentValidation()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentAPIAvailability()
-TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentImmediatelyVisibleToClientsMatchAllWhenWokenByTabMessage()
-TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentRemovedFromClientsMatchAllAfterClose()
-TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentVisibleToClientsMatchAll()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentVisibleToClientsMatchAllAfterBackgroundContentReloads()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/sendMessageToDocument()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/tabAndOffscreenDocumentVisibleToClientsMatchAll()
@@ -4388,8 +4376,6 @@ TestWebKitAPI.WebKit.LockdownModeAskAgainFirstUseMessage
 TestWebKitAPI.WebKit.LockdownModeDefaultFirstUseMessage
 TestWebKitAPI.WebKit.LockdownModeNoFirstUseMessage
 TestWebKitAPI.WebKit.LogForwarding
-TestWebKitAPI.WebKit.ManagedMSEMediaStreamingActivityClearedOnProcessCrash
-TestWebKitAPI.WebKit.ManagedMSEMediaStreamingActivityClearedOnProcessSuspend
 TestWebKitAPI.WebKit.MediaStreamTrackDetached
 TestWebKitAPI.WebKit.MenuAndButtonForAltLeftClick
 TestWebKitAPI.WebKit.MenuAndButtonForAltMiddleClick
@@ -5195,6 +5181,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.FindInPage/FindInteraction.ZeroSizeChildFrame/SiteIsolation
 [ ios ] TestWebKitAPI.FocusPreservationTests.PreserveAndRestoreFocus
 [ ios ] TestWebKitAPI.FocusPreservationTests.UserCanDismissInputViewRegardlessOfFocusPreservationCount
+[ ios ] TestWebKitAPI.FocusWebView
 [ ios ] TestWebKitAPI.FocusWebView.AdvanceFocusRelinquishToChrome
 [ ios ] TestWebKitAPI.FocusWebView.DoNotFocusWebViewWhenUnparented
 [ ios ] TestWebKitAPI.FocusWebView.FocusNavigationIntoFrameWithNestedRemoteFrame
@@ -5241,6 +5228,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.FullscreenVideoTextRecognition.NoOverlayInstalledAfterExitingVideoFullscreenViaEscape
 [ ios ] TestWebKitAPI.FullscreenVideoTextRecognition.NoOverlayInstalledAfterSeekAndExitingVideoFullscreenViaEscape
 [ ios ] TestWebKitAPI.FullscreenZoomInitialFrame.WebKit
+[ ios ] TestWebKitAPI.GPUProcess.CrashWhilePlayingVideo
 [ ios ] TestWebKitAPI.Gamepad.Basic
 [ ios ] TestWebKitAPI.Gamepad.DisconnectDuringInput
 [ ios ] TestWebKitAPI.Gamepad.Dualshock3Basic
@@ -5426,6 +5414,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.LoadWebArchive.DragNavigationReload
 [ ios ] TestWebKitAPI.LoadWebArchive.DragNavigationSucceed
 [ ios ] TestWebKitAPI.LockdownMode.SVGFonts
+[ ios ] TestWebKitAPI.MessagePortSecurity
 [ ios ] TestWebKitAPI.ModalDialogDuringOverlappingFocus
 [ ios ] TestWebKitAPI.MonospaceFontsTest.EnsureMonospaceFontInvariants
 [ ios ] TestWebKitAPI.MouseEventTests.AutoscrollOnMouseDragBelowWindow
@@ -5437,6 +5426,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.NavigatorWebDriverOverrideTests/navigatorWebDriverReflectsPolicy(controlledByAutomation:policy:expected:)
 [ ios ] TestWebKitAPI.NetworkActivityTracker.NavigationCancelReportsCancel
 [ ios ] TestWebKitAPI.NetworkActivityTracker.PageLoadCompletedReportsSuccess
+[ ios ] TestWebKitAPI.NetworkProcess
+[ ios ] TestWebKitAPI.NowPlayingMetadataObserver
 [ ios ] TestWebKitAPI.NowPlayingTest.VideoElementWithMutedAudio
 [ ios ] TestWebKitAPI.NowPlayingTest.VideoElementWithoutAudio
 [ ios ] TestWebKitAPI.NowPlayingTest.VideoElementWithoutAudioPlayWithUserGesture
@@ -5517,6 +5508,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.PictureInPicture.AudioCannotTogglePictureInPicture
 [ ios ] TestWebKitAPI.PictureInPicture.WKPageUIClient
 [ ios ] TestWebKitAPI.PictureInPicture.WKUIDelegate
+[ ios ] TestWebKitAPI.PointerLockTests
 [ ios ] TestWebKitAPI.PointerLockTests.ClientDisplaysAlertSheetWhilePointerLockActive
 [ ios ] TestWebKitAPI.PointerLockTests.DeniedWithoutMouseDevice
 [ ios ] TestWebKitAPI.PointerLockTests.MouseDeviceDisconnect
@@ -5532,6 +5524,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.PrivateClickMeasurement.DaemonDebugMode
 [ ios ] TestWebKitAPI.PrivateClickMeasurement.DestinationClickFraudPrevention
 [ ios ] TestWebKitAPI.PrivateClickMeasurement.EphemeralWithAttributedBundleIdentifier
+[ ios ] TestWebKitAPI.PrivateClickMeasurement.FetchAndRemoveSafariCampaignDomains
 [ ios ] TestWebKitAPI.PrivateClickMeasurement.ManualAttributionAndConversion
 [ ios ] TestWebKitAPI.PrivateClickMeasurement.MigrateFromResourceLoadStatistics1
 [ ios ] TestWebKitAPI.PrivateClickMeasurement.MigrateFromResourceLoadStatistics2
@@ -5810,6 +5803,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.SiteIsolation.DragAndDrop
 [ ios ] TestWebKitAPI.SiteIsolation.DragSourceEndedAtCoordinateTransformationNested
 [ ios ] TestWebKitAPI.SiteIsolation.EditMenuSelectsWordInCrossOriginIframe
+[ ios ] TestWebKitAPI.SiteIsolation.Events
 [ ios ] TestWebKitAPI.SiteIsolation.FileUploadPanelAnchorRectForHiddenInputInCrossOriginIframe
 [ ios ] TestWebKitAPI.SiteIsolation.FileUploadPanelAnchorRectInCrossOriginIframe
 [ ios ] TestWebKitAPI.SiteIsolation.FileUploadPanelAnchorRectInMainFrameIsNotOffset
@@ -5868,6 +5862,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.SiteIsolation.SharedProcessAfterClick
 [ ios ] TestWebKitAPI.SiteIsolation.SharedProcessAfterKeyDown
 [ ios ] TestWebKitAPI.SiteIsolation.SharedProcessDropsPageLoadActivityAfterCrossSiteNavigation
+[ ios ] TestWebKitAPI.SiteIsolation.SharedProcessMainFrameNotReusedAfterCrash
 [ ios ] TestWebKitAPI.SiteIsolation.SharedProcessWithResourceLoadStatistics
 [ ios ] TestWebKitAPI.SiteIsolation.SpeakSelectionInCrossOriginIframe
 [ ios ] TestWebKitAPI.SiteIsolation.SynchronousPositionInformationForTextInCrossOriginIframe
@@ -6351,6 +6346,9 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.TabMenus
 [ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.ToggleCheckboxMenuItems
 [ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.UpdateMenuItemWithIconVariants
+[ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentImmediatelyVisibleToClientsMatchAllWhenWokenByTabMessage()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentRemovedFromClientsMatchAllAfterClose()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentVisibleToClientsMatchAll()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/clipboardWrite()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/clipboardWriteWithRequest()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/clipboardWriteWithoutPermission()
@@ -6929,6 +6927,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebKit.MSEHasMediaStreamingActivity
 [ ios ] TestWebKitAPI.WebKit.ManagedMSEHasMediaStreamingActivity
 [ ios ] TestWebKitAPI.WebKit.ManagedMSEHasMediaStreamingActivityWithPolicy
+[ ios ] TestWebKitAPI.WebKit.ManagedMSEMediaStreamingActivityClearedOnProcessCrash
+[ ios ] TestWebKitAPI.WebKit.ManagedMSEMediaStreamingActivityClearedOnProcessSuspend
 [ ios ] TestWebKitAPI.WebKit.NavigateDuringDeviceEnumeration
 [ ios ] TestWebKitAPI.WebKit.NetworkProcessCrashNonPersistentDataStore
 [ ios ] TestWebKitAPI.WebKit.NoPauseWhenSwitchingTabs
@@ -7186,7 +7186,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI._WKActivatedElementInfo.InfoForRotatedImage
 [ ios ] TestWebKitAPI._WKActivatedElementInfo.InfoWithNestedRequests
 [ ios ] TestWebKitAPI._WKActivatedElementInfo.InfoWithNestedSynchronousUpdates
-[ ios ] TestWebKitAPI._WKDataTask.Basic
 [ ios ] TestWebKitAPI._WKDownload.DownloadMonitorCancel
 [ ios ] TestWebKitAPI.iOSMouseSupport.BasicPointerInteractionRegions
 [ ios ] TestWebKitAPI.iOSMouseSupport.CancelledTouchesDoNotTriggerClick
@@ -7246,8 +7245,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendSyncMaintainOrderingWithAsyncMessagesOrder/ServerIsA
 [ mac ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendSyncMaintainOrderingWithAsyncMessagesOrderMultipleSendingThreads/ClientIsA
 [ mac ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendSyncMaintainOrderingWithAsyncMessagesOrderMultipleSendingThreads/ServerIsA
-[ mac ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendSyncMaintainOrderingWithAsyncMessagesWaitForOrderMultipleSendingThreads/ClientIsA
-[ mac ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendSyncMaintainOrderingWithAsyncMessagesWaitForOrderMultipleSendingThreads/ServerIsA
 [ mac ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendWithConvertedPromisedReply/ClientIsA
 [ mac ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendWithConvertedPromisedReply/ServerIsA
 [ mac ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SyncMessageNotHandledIsCancelled/ClientIsA
@@ -7383,6 +7380,12 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.FindInPage/FindTextFinder.StepWithoutWrapFindsNothingAtEnd/SiteIsolation
 [ mac ] TestWebKitAPI.FindInPage/FindTextFinder.TextControls/NoSiteIsolation
 [ mac ] TestWebKitAPI.FindInPage/FindTextFinder.TextControls/SiteIsolation
+[ mac ] TestWebKitAPI.FocusWebView.AdvanceFocusRelinquishToChrome
+[ mac ] TestWebKitAPI.FocusWebView.DoNotFocusWebViewWhenUnparented
+[ mac ] TestWebKitAPI.FocusWebView.FocusNavigationIntoFrameWithNestedRemoteFrame
+[ mac ] TestWebKitAPI.FocusWebView.FocusNavigationIntoFrameWithNestedRemoteFrameSiteIsolation
+[ mac ] TestWebKitAPI.FocusWebView.MultipleFrames
+[ mac ] TestWebKitAPI.FocusWebView.MultipleFramesSomeUnfocusable
 [ mac ] TestWebKitAPI.FontManagerTests
 [ mac ] TestWebKitAPI.FragmentDirectiveGeneration.GenerateFragment
 [ mac ] TestWebKitAPI.FragmentDirectiveGeneration.VerifyFragmentRanges
@@ -7426,6 +7429,14 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.LoadWebArchive.QuarantinedWebArchiveWithFragmentInName
 [ mac ] TestWebKitAPI.LoadWebArchive.SiteToWebArchiveAndBack
 [ mac ] TestWebKitAPI.LoadWebArchive.WebArchiveToSiteAndBack
+[ mac ] TestWebKitAPI.MessagePortSecurity.CrossProcessMessageTheftViaTakeAllMessagesForPort
+[ mac ] TestWebKitAPI.MessagePortSecurity.CrossProcessTransferChannelCreationWithForgedProcessIdentifier
+[ mac ] TestWebKitAPI.MessagePortSecurity.CrossProcessTransferForcedCloseViaUnauthenticatedMessagePortIdentifier
+[ mac ] TestWebKitAPI.MessagePortSecurity.CrossProcessTransferForcedDisentangleViaUnauthenticatedMessagePortIdentifier
+[ mac ] TestWebKitAPI.MessagePortSecurity.CrossProcessTransferForcedEntangleViaUnauthenticatedMessagePortIdentifier
+[ mac ] TestWebKitAPI.MessagePortSecurity.MessagePortsSurviveNetworkProcessRestart
+[ mac ] TestWebKitAPI.MessagePortSecurity.MessagePortsSurviveNetworkProcessRestartWithSiteIsolation
+[ mac ] TestWebKitAPI.MessagePortSecurity.WorkerMessagePortsSurviveNetworkProcessRestart
 [ mac ] TestWebKitAPI.MouseEventTests.MouseMoveNotForwardedWhenCoveredByOverlay
 [ mac ] TestWebKitAPI.MouseEventTests.OverlappingWebViewsBottomViewReceivesMouseEnterAndMouseExit
 [ mac ] TestWebKitAPI.MouseEventTests.OverlappingWebViewsBottomViewReceivesMouseMove
@@ -7433,8 +7444,20 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.MouseEventTests.OverlappingWebViewsTopViewReceivesMouseEnterAndMouseExit
 [ mac ] TestWebKitAPI.MouseEventTests.OverlappingWebViewsTopViewReceivesMouseMove
 [ mac ] TestWebKitAPI.MouseEventTests.TerminateWebContentProcessDuringMouseEventHandling
-[ mac ] TestWebKitAPI.MouseEventTests.WindowChangeShouldCauseMouseLeaveEvent
-[ mac ] TestWebKitAPI.NetworkActivityTracker.PageLoadCompletedReportsSuccess
+[ mac ] TestWebKitAPI.NetworkProcess.BroadcastChannelOriginSpoof
+[ mac ] TestWebKitAPI.NetworkProcess.CORSPreflightCachePartitioned
+[ mac ] TestWebKitAPI.NetworkProcess.CrashWhenNotAssociatedWithDataStore
+[ mac ] TestWebKitAPI.NetworkProcess.CustomSchemeWasPrivateRelayed
+[ mac ] TestWebKitAPI.NetworkProcess.DoNotLaunchForDOMCacheDestruction
+[ mac ] TestWebKitAPI.NetworkProcess.DoNotLaunchOnDataStoreDestruction
+[ mac ] TestWebKitAPI.NetworkProcess.Entitlements
+[ mac ] TestWebKitAPI.NetworkProcess.LaunchOnlyWhenNecessary
+[ mac ] TestWebKitAPI.NetworkProcess.NavigationErrorIncludesNetworkResolutionReport
+[ mac ] TestWebKitAPI.NetworkProcess.TerminateWhenNetworkProcessIsSuspended
+[ mac ] TestWebKitAPI.NetworkProcess.TerminateWhenNoDefaultWebsiteDataStore
+[ mac ] TestWebKitAPI.NetworkProcess.TerminateWhenNoWebsiteDataStore
+[ mac ] TestWebKitAPI.NetworkProcess.URLSchemeHandlerWasPrivateRelayed
+[ mac ] TestWebKitAPI.NowPlayingMetadataObserver.VideoTitle
 [ mac ] TestWebKitAPI.NowPlayingTest
 [ mac ] TestWebKitAPI.PasteHTML.QuotedContentOnPunchedOutBackgroundRemainsLegible
 [ mac ] TestWebKitAPI.PictureInPicture.AudioCannotTogglePictureInPicture
@@ -7709,7 +7732,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.UserInitiatedActionTest.MailtoInLoopAfterLongTimer
 [ mac ] TestWebKitAPI.UserInitiatedActionTest.MailtoInLoopAfterPostMessage
 [ mac ] TestWebKitAPI.UserInitiatedActionTest.MailtoInNormalLoop
-[ mac ] TestWebKitAPI.VideoControlsManager.MediaSourceSeekableRangesFollowDurationChange
 [ mac ] TestWebKitAPI.VideoControlsManager.VideoControlsManagerDoesNotShowMediaControlsForOffscreenVideo
 [ mac ] TestWebKitAPI.VideoControlsManager.VideoControlsManagerMultipleVideosWithAudio
 [ mac ] TestWebKitAPI.VideoControlsManager.VideoControlsManagerOffscreenIframeMediaDocument
@@ -7771,7 +7793,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKDownload.OriginatingFrameHostWhenDownloadComesFromGoBackNavigation
 [ mac ] TestWebKitAPI.WKDownload.RedirectAllow
 [ mac ] TestWebKitAPI.WKDownload.Resume
-[ mac ] TestWebKitAPI.WKDownload.ResumeCantReconnect
 [ mac ] TestWebKitAPI.WKDownload.ResumeWithExtraInitialDataOnDisk
 [ mac ] TestWebKitAPI.WKDownload.ResumeWithInvalidResumeData
 [ mac ] TestWebKitAPI.WKDownload.ResumeWithoutInitialDataOnDisk
@@ -7811,7 +7832,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKUserContentController.AsyncScriptMessageHandlerBasicPost
 [ mac ] TestWebKitAPI.WKUserContentController.AutoFillWorldTrustedEventHandler
 [ mac ] TestWebKitAPI.WKUserContentController.BeforeBlurEvent
-[ mac ] TestWebKitAPI.WKUserContentController.BeforeFocusEvent
 [ mac ] TestWebKitAPI.WKUserContentController.DidAssociateFormControls
 [ mac ] TestWebKitAPI.WKUserContentController.DidAssociateFormControlsFromShadowTree
 [ mac ] TestWebKitAPI.WKUserContentController.DisableAutofillSpellcheck
@@ -7856,7 +7876,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKUserContentController.UserStyleSheetSpecificityLevelAuthor
 [ mac ] TestWebKitAPI.WKUserContentController.UserStyleSheetSpecificityLevelNotSpecified
 [ mac ] TestWebKitAPI.WKUserContentController.UserStyleSheetSpecificityLevelUser
-[ mac ] TestWebKitAPI.WKUserContentController.WebKitSubmitEvent
 [ mac ] TestWebKitAPI.WKUserContentController.WorldLifetime
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/browserAction()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/clickedEvent()
@@ -7993,7 +8012,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.UpdateContentScriptsWithMinimalParametersShouldNotCrash
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.World
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ActivatedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ActiveTab
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ActiveTabRemovedWithDeniedPermissions
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ActiveTabWithDeniedPermissions
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CSSAuthorOrigin
@@ -8363,8 +8381,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebKit.IsNavigationActionTrusted
 [ mac ] TestWebKitAPI.WebKit.IsRemoteUIAppForAccessibility
 [ mac ] TestWebKitAPI.WebKit.LayoutMilestonesWithAllContentInFrame
-[ mac ] TestWebKitAPI.WebKit.MSEHasMediaStreamingActivity
-[ mac ] TestWebKitAPI.WebKit.ManagedMSEHasMediaStreamingActivity
 [ mac ] TestWebKitAPI.WebKit.ManagedMSEHasMediaStreamingActivityWithPolicy
 [ mac ] TestWebKitAPI.WebKit.MediaBufferingPolicyWhenSuspendedOrHidden
 [ mac ] TestWebKitAPI.WebKit.NavigateDuringDeviceEnumeration
@@ -8413,9 +8429,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebKit2.CaptureMute
 [ mac ] TestWebKitAPI.WebKit2.CaptureMute2
 [ mac ] TestWebKitAPI.WebKit2.CaptureMuteAPI
-[ mac ] TestWebKitAPI.WebKit2.CrashGPUProcessAfterApplyingConstraints
 [ mac ] TestWebKitAPI.WebKit2.GetDisplayMediaWindowAndScreenPrompt
-[ mac ] TestWebKitAPI.WebKit2.GetUserMediaAfterMuting
 [ mac ] TestWebKitAPI.WebKit2.GetUserMediaReprompt
 [ mac ] TestWebKitAPI.WebKit2.GetUserMediaRepromptAfterAudioVideoBeingDenied
 [ mac ] TestWebKitAPI.WebKit2.GetUserMediaRepromptWithoutUserGesture
@@ -8426,8 +8440,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebKit2.SpeechRecognitionPageIsDestroyed
 [ mac ] TestWebKitAPI.WebKit2.SpeechRecognitionUserPermissionPersistence
 [ mac ] TestWebKitAPI.WebKit2.SpeechRecognitionWebProcessCrash
-[ mac ] TestWebKitAPI.WebKit2.ToggleCameraCaptureWhenRestarting
-[ mac ] TestWebKitAPI.WebKit2.ToggleMicrophoneCaptureWhenRestarting
 [ mac ] TestWebKitAPI.WebKit2.ToggleScreenshare
 [ mac ] TestWebKitAPI.WebKit2.WebRTCAndRemoteCommands
 [ mac ] TestWebKitAPI.WebKit2CustomProtocolsTest
