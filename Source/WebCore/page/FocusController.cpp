@@ -780,8 +780,14 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, cons
     if (!document)
         return false;
 
+    RefPtr focusedElement = document->focusedElement();
     RefPtr startingNode = document->focusNavigationStartingNode(direction);
     auto findResult = findFocusableElementInDocumentOrderStartingWithFrame(*frame, startingNode, startingNode, direction, focusEventData, initialFocus, ContinuingRemoteSearch::No, ShouldFocusElement::Yes);
+
+    // A backward search from inside the focused element finds the element itself if nothing focusable precedes the
+    // starting point within it. Continue past it so focus doesn't get stuck. See <https://github.com/whatwg/html/issues/12514>.
+    if (direction == FocusDirection::Backward && focusedElement && startingNode != focusedElement && findResult.element == focusedElement)
+        findResult = findFocusableElementInDocumentOrderStartingWithFrame(*frame, focusedElement, focusedElement, direction, focusEventData, initialFocus, ContinuingRemoteSearch::No, ShouldFocusElement::Yes);
 
     return findResult.element || findResult.relinquishedFocusToChrome == RelinquishedFocusToChrome::Yes;
 }
