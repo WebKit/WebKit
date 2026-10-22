@@ -440,7 +440,8 @@ struct exp_shift_table {
 };
 
 // An optional table of precomputed exponent strings for exponential notation.
-// Each entry packs "e+dd" or "e+ddd" into a uint64_t with the length in byte 7.
+// Each entry packs "e+dd" or "e+ddd" (or "e+d" with ZMIJ_ECMASCRIPT) into a
+// uint64_t with the length in byte 7.
 struct exp_string_table {
   static constexpr bool enable =
       ZMIJ_USE_EXP_STRING_TABLE && ZMIJ_USE_CONSTEXPR;
@@ -458,6 +459,10 @@ struct exp_string_table {
       uint64_t val = ((bc % 10 + '0') << 8) | (bc / 10 + '0');
       if (uint64_t a = abs_e / 100) val = (val << 8) | (a + '0');
       uint64_t len = 4 + (abs_e >= 100);
+      if (ZMIJ_ECMASCRIPT && abs_e < 10) {
+        val >>= 8;  // Drop the leading '0'.
+        len = 3;
+      }
       t.data[e + offset] =
           (len << 48) | (val << 16) | (uint64_t(e >= 0 ? '+' : '-') << 8) | 'e';
     }
@@ -486,8 +491,9 @@ struct exp_string_table {
 // the exponential layout. Keep it branchless: floats reach the fixed range
 // often enough that predicting the shape costs more than emitting it.
 struct float_shuffle_table {
-  static constexpr bool enable =
-      (ZMIJ_USE_SSE4_1 || ZMIJ_USE_NEON) && exp_string_table::enable;
+  // ZMIJ_ECMASCRIPT's fixed layouts are longer than a 16-byte shuffle.
+  static constexpr bool enable = (ZMIJ_USE_SSE4_1 || ZMIJ_USE_NEON) &&
+                                 exp_string_table::enable && !ZMIJ_ECMASCRIPT;
   using traits = float_traits<float>;
   static constexpr unsigned char exp_pos = 8;
   static constexpr unsigned char last_digit_pos = 12;
@@ -1157,12 +1163,17 @@ ZMIJ_INLINE auto write_zero(char* buffer, int precision) noexcept -> char* {
   return buffer + 1 + precision;
 }
 
-// Writes the exponent as 'e', a sign and at least two digits (e.g. e+05).
-template <typename Float>
+// Writes the exponent as 'e', a sign and at least two digits (e.g. e+05), or
+// at least one digit if `pad` is false (e.g. e+5).
+template <typename Float, bool pad = true>
 ZMIJ_INLINE auto write_exp(char* buffer, int dec_exp) noexcept -> char* {
   static_assert(float_traits<Float>::max_exponent10 < 1000, "");
   buffer = write2(buffer, 'e', dec_exp >= 0 ? '+' : '-');
   uint32_t abs_exp = dec_exp >= 0 ? uint32_t(dec_exp) : uint32_t(-dec_exp);
+  if (!pad && abs_exp < 10) {
+    *buffer = char('0' + abs_exp);
+    return buffer + 1;
+  }
   if (float_traits<Float>::max_exponent10 >= 100) {
     uint32_t hi = use_umul128_hi64 ? umul128_hi64(abs_exp, 0x290000000000000)
                                    : (abs_exp * div100_sig) >> div100_exp;
@@ -1684,8 +1695,18 @@ auto write_big_exp(char* buffer, int dec_exp) noexcept -> char* {
   return buffer + 2;
 }
 
+// Fixed notation for an exponent of bcd_size or more puts the decimal point
+// past the last significand digit, so the integer part ends in zeros.
+template <typename Float, int bcd_size>
+ZMIJ_INLINE void write_integer_zeros(char* digits_end, int dec_exp) noexcept {
+  constexpr int max_zeros =
+      float_traits<Float>::max_fixed_dec_exp + 1 - bcd_size;
+  if (max_zeros <= 0 || dec_exp < bcd_size) return;
+  for (int i = 0; i < max_zeros; i += 8) memcpy(digits_end + i, &zeros, 8);
+}
+
 // It is slightly faster to return a pointer to the end than the size.
-template <typename Float>
+template <typename Float, bool scientific>
 auto write(char* buffer, Float value) noexcept -> char* {
   using traits = float_traits<Float>;
   auto bits = traits::to_bits(value);
@@ -1701,9 +1722,16 @@ auto write(char* buffer, Float value) noexcept -> char* {
 
   shortest_decimal dec;
   if (!traits::is_normal(bin_exp)) [[ZMIJ_UNLIKELY]] {
+    if (ZMIJ_ECMASCRIPT && bin_exp != 0) {
+      if (bin_sig == 0) return memcpy(buffer, "Infinity", 8), buffer + 8;
+      buffer -= traits::is_negative(bits);
+      return memcpy(buffer, "NaN", 3), buffer + 3;
+    }
     if (bin_exp != 0) return write_inf_nan(buffer, bin_sig != 0);
     if (bin_sig == 0) {
+      if (ZMIJ_ECMASCRIPT) buffer -= traits::is_negative(bits);
       *buffer = '0';
+      if (scientific) return write_exp<Float, !ZMIJ_ECMASCRIPT>(buffer + 1, 0);
       return buffer + 1;
     }
     dec = ::to_decimal<Float>(bin_sig, 1, true, *d);
@@ -1733,7 +1761,7 @@ auto write(char* buffer, Float value) noexcept -> char* {
 
   auto dig = to_digits<traits::num_bits>(dec.sig, *d);
 
-  if (traits::num_bits == 32 && float_shuffle_table::enable) {
+  if (traits::num_bits == 32 && float_shuffle_table::enable && !scientific) {
     return write_float_simd(buffer, dig, dec.last_digit, has_last_digit,
                             has_extra_digit, dec_exp, *d);
   }
@@ -1741,7 +1769,7 @@ auto write(char* buffer, Float value) noexcept -> char* {
   // Write significand/fixed.
   char* start = buffer;
   constexpr int bcd_size = traits::num_bits == 64 ? 16 : 8;
-  if (dec_exp >= traits::min_fixed_dec_exp &&
+  if (!scientific && dec_exp >= traits::min_fixed_dec_exp &&
       dec_exp <= traits::max_fixed_dec_exp) {
     memcpy(start, &zeros, 8);  // For dec_exp < 0.
     char last_digit = '0' + (-has_last_digit & dec.last_digit);
@@ -1764,6 +1792,8 @@ auto write(char* buffer, Float value) noexcept -> char* {
       // The point can push BCD[15] outside the vector to buffer[16], so write
       // it unconditionally (otherwise it's in-vector or overwritten below).
       buffer[bcd_size] = char(_mm_extract_epi8(digits, 15));
+      write_integer_zeros<Float, bcd_size>(buffer + bcd_size + has_extra_digit,
+                                           dec_exp);
       start[layout.point_pos] = '.';
       buffer[layout.last_digit_pos[has_extra_digit]] = last_digit;
       return buffer + layout.end_pos[num_digits + has_extra_digit - 1];
@@ -1771,6 +1801,8 @@ auto write(char* buffer, Float value) noexcept -> char* {
 #endif  // ZMIJ_USE_SSE4_1
     write_digits(buffer, dig.digits, !has_extra_digit, *d);
     buffer[bcd_size + has_extra_digit - 1] = last_digit;
+    write_integer_zeros<Float, bcd_size>(buffer + bcd_size + has_extra_digit,
+                                         dec_exp);
     unsigned point_pos = layout.point_pos;
     memmove(start + layout.shift_pos, start + point_pos, bcd_size);
     start[point_pos] = '.';
@@ -1793,7 +1825,7 @@ auto write(char* buffer, Float value) noexcept -> char* {
     memcpy(buffer, &exp_data, traits::max_exponent10 >= 100 ? 8 : 4);
     return buffer + len;
   }
-  return write_exp<Float>(buffer, dec_exp);
+  return write_exp<Float, !ZMIJ_ECMASCRIPT>(buffer, dec_exp);
 }
 
 template <typename Float>
@@ -2221,6 +2253,7 @@ template auto to_decimal(double value) noexcept -> dec_fp<>;
 
 template auto write(char* buffer, float value) noexcept -> char*;
 template auto write(char* buffer, double value) noexcept -> char*;
+template auto write<double, true>(char* buffer, double value) noexcept -> char*;
 
 template auto write_big(char* out, size_t n, double value, int precision,
                         format fmt) noexcept -> size_t;

@@ -135,6 +135,11 @@ TEST(WTF, ZmijSpecialValues)
             checkDouble(x);
         for (double x = power, i = 0; i < 64; ++i, x = std::nextafter(x, std::numeric_limits<double>::infinity()))
             checkDouble(x);
+        float floatPower = std::ldexp(1.0f, binaryExponent);
+        for (float x = floatPower, i = 0; i < 64; ++i, x = std::nextafter(x, 0.0f))
+            checkFloat(x);
+        for (float x = floatPower, i = 0; i < 64; ++i, x = std::nextafter(x, std::numeric_limits<float>::infinity()))
+            checkFloat(x);
     }
 
     float floats[] = {

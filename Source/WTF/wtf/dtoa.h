@@ -40,7 +40,7 @@ using NumberToStringSpan = std::span<const char>;
 
 // The longest output is 25 characters (<-> + "0." + <5 zeros> + <17 digits>), but the writer stores
 // in wide chunks that reach past the end of its output, so the buffer must be larger.
-constexpr size_t numberToShortestStringBufferSize = 34;
+constexpr size_t numberToShortestStringBufferSize = 39;
 
 // Writes the shortest round-tripping digits in Number::toString form and returns the length.
 WTF_EXPORT_PRIVATE size_t numberToShortestString(double, std::span<char, numberToShortestStringBufferSize>);
