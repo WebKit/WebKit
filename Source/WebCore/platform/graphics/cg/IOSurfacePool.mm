@@ -254,6 +254,22 @@ void IOSurfacePool::setPoolSize(size_t poolSizeInBytes)
     evict(0);
 }
 
+void IOSurfacePool::setMaximumInUseBytes(size_t maximumInUseBytes)
+{
+    Locker locker { m_lock };
+    m_maximumInUseBytes = maximumInUseBytes;
+    evict(0);
+}
+
+size_t IOSurfacePool::surfaceCountForTesting()
+{
+    Locker locker { m_lock };
+    size_t count = m_inUseSurfaces.size();
+    for (auto& surfaces : m_cachedSurfaces.values())
+        count += surfaces.size();
+    return count;
+}
+
 void IOSurfacePool::tryEvictInUseSurface()
 {
     if (m_inUseSurfaces.isEmpty())
@@ -308,11 +324,11 @@ void IOSurfacePool::evict(size_t additionalSize)
     while (m_bytesCached > targetSize) {
         tryEvictOldestCachedSurface();
 
-        if (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
+        if (m_inUseBytesCached > m_maximumInUseBytes || m_bytesCached > targetSize)
             tryEvictInUseSurface();
     }
 
-    while (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
+    while (m_inUseBytesCached > m_maximumInUseBytes || m_bytesCached > targetSize)
         tryEvictInUseSurface();
 
     DUMP_POOL_STATISTICS(stream << "IOSurfacePool::evict [" << m_poolIdentifier << "] - after evict\n" << poolStatistics());

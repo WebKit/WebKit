@@ -62,6 +62,9 @@ public:
     WEBCORE_EXPORT void discardAllSurfaces();
 
     WEBCORE_EXPORT void setPoolSize(size_t);
+    WEBCORE_EXPORT void setMaximumInUseBytes(size_t);
+
+    WEBCORE_EXPORT size_t surfaceCountForTesting();
 
 private:
     IOSurfacePool();
@@ -79,12 +82,12 @@ private:
     // limit caching in use surfaces so that we don't end up with a pool of surfaces we
     // can't readily recycle.
 #if PLATFORM(MAC)
-    static constexpr size_t maximumInUseBytes = 0.5 * defaultMaximumBytesCached;
+    static constexpr size_t defaultMaximumInUseBytes = 0.5 * defaultMaximumBytesCached;
 #else
     // 32 MB is chosen for iOS as it is approximately the size of a set of front and back buffer
     // for 4 page tiles of dimensions 1024x1024. This should provide a good trade off of soon to be
     // available surfaces without contributing too much non-volatile footprint during memory pressure situations.
-    static constexpr size_t maximumInUseBytes { 32 * MB };
+    static constexpr size_t defaultMaximumInUseBytes { 32 * MB };
 #endif
 
     bool LEGACY_NODELETE shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
@@ -118,6 +121,7 @@ private:
     size_t m_bytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_inUseBytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_maximumBytesCached WTF_GUARDED_BY_LOCK(m_lock) { defaultMaximumBytesCached };
+    size_t m_maximumInUseBytes WTF_GUARDED_BY_LOCK(m_lock) { defaultMaximumInUseBytes };
     const IOSurfacePoolIdentifier m_poolIdentifier { IOSurfacePoolIdentifier::generate() };
 };
 

@@ -28,11 +28,13 @@
 
 #if PLATFORM(COCOA) && ENABLE(WEBGL)
 #import "Helpers/GraphicsTestUtilities.h"
+#import "Helpers/Utilities.h"
 #import "Helpers/WebCoreTestUtilities.h"
 #import <Metal/Metal.h>
 #import <WebCore/AlphaPremultiplication.h>
 #import <WebCore/Color.h>
 #import <WebCore/GraphicsContextGLCocoa.h>
+#import <WebCore/IOSurfacePool.h>
 #import <WebCore/ProcessIdentity.h>
 #import <atomic>
 #import <limits>
@@ -75,18 +77,7 @@ public:
 
     using GraphicsContextGLCocoa::maxSpareDrawingBuffers;
 
-    size_t spareDrawingBufferCount() const { return m_spareDrawingBuffers.size(); }
-    // As the kernel has it, rather than as WebCore::IOSurface last set it.
-    size_t volatileSpareDrawingBufferCount() const
-    {
-        size_t count = 0;
-        for (auto& spare : m_spareDrawingBuffers) {
-            uint32_t state = 0;
-            IOSurfaceSetPurgeable(spare.surface->surface(), kIOSurfacePurgeableKeepCurrent, &state);
-            count += state == kIOSurfacePurgeableVolatile || state == kIOSurfacePurgeableEmpty;
-        }
-        return count;
-    }
+    size_t spareDrawingBufferCount() const { return m_spareDrawingBuffers->surfaceCountForTesting(); }
 private:
     TestedGraphicsContextGLCocoa(GraphicsContextGLAttributes attributes)
         : GraphicsContextGLCocoa(WTF::move(attributes), { })
@@ -710,23 +701,33 @@ static void releaseBuffers(Vector<RetainPtr<IOSurfaceRef>>& heldSurfaceRefs)
     heldSurfaceRefs.clear();
 }
 
-TEST_P(AnyContextAttributeTest, IdleSpareDrawingBuffersAreReleased)
+// As the kernel has it, rather than as WebCore::IOSurface last set it.
+static bool isVolatile(IOSurfaceRef surface)
+{
+    uint32_t state = 0;
+    IOSurfaceSetPurgeable(surface, kIOSurfacePurgeableKeepCurrent, &state);
+    return state == kIOSurfacePurgeableVolatile || state == kIOSurfacePurgeableEmpty;
+}
+
+TEST_P(AnyContextAttributeTest, SpareDrawingBuffersBecomeVolatileOnceReleased)
 {
     auto context = createTestContext({ 20, 20 });
     ASSERT_NE(context, nullptr);
     Vector<RetainPtr<IOSurfaceRef>> heldSurfaceRefs;
     displayFramesKeepingBuffersInUse(*context, 6, heldSurfaceRefs);
-    auto sparesInUse = context->spareDrawingBufferCount();
-    EXPECT_GT(sparesInUse, 1u);
-    EXPECT_TRUE(context->hasSpareDrawingBuffersInUse());
-    EXPECT_EQ(context->volatileSpareDrawingBufferCount(), 0u);
+    auto spareCount = context->spareDrawingBufferCount();
+    EXPECT_GT(spareCount, 1u);
+    for (auto& surfaceRef : heldSurfaceRefs)
+        EXPECT_FALSE(isVolatile(surfaceRef.get()));
 
     // The spares are the earliest frames' buffers. Release the first one, and keep the others in use.
     IOSurfaceDecrementUseCount(heldSurfaceRefs[0].get());
-    context->releaseIdleSpareDrawingBuffers();
-    EXPECT_EQ(context->spareDrawingBufferCount(), 1u);
-    EXPECT_EQ(context->volatileSpareDrawingBufferCount(), 1u);
-    EXPECT_FALSE(context->hasSpareDrawingBuffersInUse());
+    EXPECT_TRUE(Util::waitFor([&] {
+        return isVolatile(heldSurfaceRefs[0].get());
+    }));
+    EXPECT_EQ(context->spareDrawingBufferCount(), spareCount);
+    for (size_t i = 1; i < heldSurfaceRefs.size(); ++i)
+        EXPECT_FALSE(isVolatile(heldSurfaceRefs[i].get())) << "for i: " << i;
 
     heldSurfaceRefs.removeAt(0);
     releaseBuffers(heldSurfaceRefs);
