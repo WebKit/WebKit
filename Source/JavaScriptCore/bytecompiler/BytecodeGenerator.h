@@ -643,9 +643,17 @@ namespace JSC {
             return (m_codeType != FunctionCode || rightHasAssignments) && !rightIsPure;
         }
 
+        ALWAYS_INLINE bool leftHandSideNeedsCopy(ExpressionNode* leftHandSide, bool rightHasAssignments, bool rightIsPure)
+        {
+            // Reading |this| checks that it is bound, and super() throws instead of rebinding it, so it cannot change afterwards.
+            if (leftHandSide->isThisNode())
+                return false;
+            return leftHandSideNeedsCopy(rightHasAssignments, rightIsPure);
+        }
+
         ALWAYS_INLINE RefPtr<RegisterID> emitNodeForLeftHandSide(ExpressionNode* n, bool rightHasAssignments, bool rightIsPure)
         {
-            if (leftHandSideNeedsCopy(rightHasAssignments, rightIsPure)) {
+            if (leftHandSideNeedsCopy(n, rightHasAssignments, rightIsPure)) {
                 RefPtr<RegisterID> dst = newTemporary();
                 emitNode(dst.get(), n);
                 return dst;
@@ -656,7 +664,7 @@ namespace JSC {
 
         ALWAYS_INLINE RefPtr<RegisterID> emitNodeForLeftHandSideForProperty(ExpressionNode* n, bool rightHasAssignments, bool rightIsPure)
         {
-            if (leftHandSideNeedsCopy(rightHasAssignments, rightIsPure)) {
+            if (leftHandSideNeedsCopy(n, rightHasAssignments, rightIsPure)) {
                 RefPtr<RegisterID> dst = newTemporary();
                 emitNodeForProperty(dst.get(), n);
                 return dst;

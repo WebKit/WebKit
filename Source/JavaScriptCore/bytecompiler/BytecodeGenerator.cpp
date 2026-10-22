@@ -5401,6 +5401,10 @@ void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGenerator::A
     // Restore the try contexts, which start offset is updated to the merge point.
     m_tryContextStack.swap(savedTryContextStack);
     emitLabel(mergePoint.get());
+
+    // The body is resumed with an undefined |this| because super() may not have run when the generator was created.
+    if (parseMode() == SourceParseMode::AsyncArrowFunctionBodyMode && isDerivedConstructorContext() && (m_scopeNode->usesThis() || m_scopeNode->usesSuperProperty()))
+        emitLoadThisFromArrowFunctionLexicalEnvironment();
 }
 
 RegisterID* BytecodeGenerator::emitYield(RegisterID* argument)
