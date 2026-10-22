@@ -1768,8 +1768,6 @@ editing/spelling/grammar-text-effect-not-reapplied.html [ Skip ]
 # This test is somewhat heavy and better skipped for debug
 [ Debug ] fast/css/many-rules.html [ Skip ]
 
-webkit.org/b/315069 [ Debug ] fast/css/container-query-orientation-modal-dialog-crash.html [ Skip ]
-
 webkit.org/b/112521 [ Release ] webaudio/audioprocessingevent.html [ Pass Failure ]
 webkit.org/b/112521 [ Debug ] webaudio/audioprocessingevent.html [ Skip ]
 
