@@ -40,7 +40,7 @@
 		],
 		"paths": [
 			"LayoutTests/TestExpectations",
-			"LayoutTests/platform/.+/TestExpectations",
+			"LayoutTests/.+/TestExpectations",
 			"LayoutTests/.+-expected(-mismatch)?\\.",
 			"TestExpectations/apitests",
 			"Tools/TestWebKitAPI/.+/TestExpectations"
