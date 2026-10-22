@@ -512,6 +512,8 @@ header: <WebCore/ElementTargetingTypes.h>
     Vector<WebCore::TargetedElementInfo> targets
 };
 
+using WebCore::TargetedTextSearchItem = Variant<WebCore::TargetedTextMatch, WebCore::FrameIdentifier>;
+
 header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedTextSearchResult {
     HashMap<WebCore::FrameIdentifier, Vector<WebCore::TargetedTextSearchItem>> itemsByFrame
