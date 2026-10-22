@@ -27,6 +27,7 @@
 #include "config.h"
 #include "JSDOMGlobalObject.h"
 
+#include "CrossOriginMode.h"
 #include "DOMConstructors.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentInlines.h"
@@ -56,6 +57,7 @@
 #include "LocalDOMWindow.h"
 #include "RejectedPromiseTracker.h"
 #include "ScriptController.h"
+#include "ScriptExecutionContext.h"
 #include "ScriptModuleLoader.h"
 #include "StructuredClone.h"
 #include "TrustedType.h"
@@ -340,6 +342,9 @@ SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.createWritableStreamFromInternalPrivateName(), JSFunction::create(vm, this, 1, String(), createWritableStreamFromInternal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
     };
     addStaticGlobals(staticGlobals);
+
+    if (ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated)
+        exposeSharedArrayBuffer();
 }
 
 void JSDOMGlobalObject::finishCreation(VM& vm)

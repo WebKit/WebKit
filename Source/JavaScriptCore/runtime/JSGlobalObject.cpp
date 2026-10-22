@@ -3824,6 +3824,14 @@ void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
     ASSERT(type() == GlobalObjectType);
 }
 
+void JSGlobalObject::exposeSharedArrayBuffer()
+{
+    if (!Options::allowSharedArrayBuffer() || Options::useSharedArrayBuffer())
+        return;
+    VM& vm = this->vm();
+    putDirect(vm, vm.propertyNames->SharedArrayBuffer, m_sharedArrayBufferStructure.constructor(this), static_cast<unsigned>(PropertyAttribute::DontEnum));
+}
+
 #ifdef JSC_GLIB_API_ENABLED
 void JSGlobalObject::setWrapperMap(std::unique_ptr<WrapperMap>&& map)
 {

@@ -761,6 +761,7 @@ static void LEGACY_NODELETE disableAllSignalHandlerBasedOptions()
 {
     Options::usePollingTraps() = true;
     Options::useSharedArrayBuffer() = false;
+    Options::allowSharedArrayBuffer() = false;
     Options::useWasmFastMemory() = false;
     Options::useWasmFaultSignalHandler() = false;
 }

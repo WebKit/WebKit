@@ -68,6 +68,7 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
         document->advancedPrivacyProtections(),
         document->noiseInjectionHashSalt(),
         document->agentClusterID(),
+        document->crossOriginIsolated() ? CanBeCrossOriginIsolated::Yes : CanBeCrossOriginIsolated::No,
         protect(document->contentSecurityPolicy())->responseHeaders(),
         document->networkLoadPolicy()
     };

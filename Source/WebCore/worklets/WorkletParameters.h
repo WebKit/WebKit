@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AdvancedPrivacyProtections.h"
+#include "CanBeCrossOriginIsolated.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "NetworkLoadPolicy.h"
 #include "Settings.h"
@@ -48,11 +49,12 @@ struct WorkletParameters {
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
     std::optional<uint64_t> noiseInjectionHashSalt;
     String agentClusterID;
+    CanBeCrossOriginIsolated canBeCrossOriginIsolated { CanBeCrossOriginIsolated::No };
     ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
     NetworkLoadPolicy networkLoadPolicy;
 
-    WorkletParameters isolatedCopy() const & { return { windowURL.isolatedCopy(), jsRuntimeFlags, sampleRate, currentFrame, identifier.isolatedCopy(), sessionID, settingsValues.isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, noiseInjectionHashSalt, agentClusterID.isolatedCopy(), contentSecurityPolicyResponseHeaders.isolatedCopy(), networkLoadPolicy.isolatedCopy() }; }
-    WorkletParameters isolatedCopy() && { return { WTF::move(windowURL).isolatedCopy(), jsRuntimeFlags, sampleRate, currentFrame, WTF::move(identifier).isolatedCopy(), sessionID, WTF::move(settingsValues).isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, WTF::move(noiseInjectionHashSalt), WTF::move(agentClusterID).isolatedCopy(), WTF::move(contentSecurityPolicyResponseHeaders).isolatedCopy(), networkLoadPolicy.isolatedCopy() }; }
+    WorkletParameters isolatedCopy() const & { return { windowURL.isolatedCopy(), jsRuntimeFlags, sampleRate, currentFrame, identifier.isolatedCopy(), sessionID, settingsValues.isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, noiseInjectionHashSalt, agentClusterID.isolatedCopy(), canBeCrossOriginIsolated, contentSecurityPolicyResponseHeaders.isolatedCopy(), networkLoadPolicy.isolatedCopy() }; }
+    WorkletParameters isolatedCopy() && { return { WTF::move(windowURL).isolatedCopy(), jsRuntimeFlags, sampleRate, currentFrame, WTF::move(identifier).isolatedCopy(), sessionID, WTF::move(settingsValues).isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, WTF::move(noiseInjectionHashSalt), WTF::move(agentClusterID).isolatedCopy(), canBeCrossOriginIsolated, WTF::move(contentSecurityPolicyResponseHeaders).isolatedCopy(), networkLoadPolicy.isolatedCopy() }; }
 };
 
 } // namespace WebCore

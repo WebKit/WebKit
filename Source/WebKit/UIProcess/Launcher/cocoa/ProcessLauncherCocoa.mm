@@ -394,8 +394,6 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
             xpc_dictionary_set_bool(bootstrapMessage.get(), "configure-jsc-for-testing", true);
         if (!client->isJITEnabled())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit", true);
-        if (client->shouldEnableSharedArrayBuffer())
-            xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-shared-array-buffer", true);
         if (client->shouldDisableJITCage())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit-cage", true);
     }

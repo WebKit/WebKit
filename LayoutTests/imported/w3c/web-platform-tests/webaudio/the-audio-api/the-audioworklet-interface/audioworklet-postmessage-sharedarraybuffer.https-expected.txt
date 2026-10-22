@@ -1,0 +1,10 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test postMessage from AudioWorkletProcessor to AudioWorkletNode"
+PASS Audit report
+PASS > [Test postMessage from AudioWorkletProcessor to AudioWorkletNode]
+PASS   event.data.sab from worklet is an instance of SharedArrayBuffer is true.
+PASS   event.data from main thread is an instance of SharedArrayBuffer is true.
+PASS < [Test postMessage from AudioWorkletProcessor to AudioWorkletNode] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

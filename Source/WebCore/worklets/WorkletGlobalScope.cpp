@@ -59,6 +59,7 @@ WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::V
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
     , m_settingsValues(parameters.settingsValues)
     , m_agentClusterID(parameters.agentClusterID)
+    , m_canBeCrossOriginIsolated(parameters.canBeCrossOriginIsolated)
     , m_networkLoadPolicy(parameters.networkLoadPolicy)
 {
     ++gNumberOfWorkletGlobalScopes;
@@ -77,6 +78,7 @@ WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, Sc
     , m_code(WTF::move(code))
     , m_settingsValues(document.settingsValues().isolatedCopy())
     , m_agentClusterID(document.agentClusterID())
+    , m_canBeCrossOriginIsolated(document.crossOriginIsolated() ? CanBeCrossOriginIsolated::Yes : CanBeCrossOriginIsolated::No)
     , m_networkLoadPolicy(document.networkLoadPolicy().isolatedCopy())
 {
     ++gNumberOfWorkletGlobalScopes;

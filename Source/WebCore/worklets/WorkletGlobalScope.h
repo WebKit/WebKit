@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CanBeCrossOriginIsolated.h"
 #include "Document.h"
 #include "EventTargetInterfaces.h"
 #include "FetchRequestCredentials.h"
@@ -80,6 +81,7 @@ public:
     bool isSecureContext() const final { return true; }
 
     String agentClusterID() const final { return m_agentClusterID; }
+    bool crossOriginIsolated() const final { return m_canBeCrossOriginIsolated == CanBeCrossOriginIsolated::Yes; }
 
     JSC::RuntimeFlags jsRuntimeFlags() const { return m_jsRuntimeFlags; }
 
@@ -127,6 +129,7 @@ private:
 
     SettingsValues m_settingsValues;
     String m_agentClusterID;
+    const CanBeCrossOriginIsolated m_canBeCrossOriginIsolated;
     const NetworkLoadPolicy m_networkLoadPolicy;
 };
 

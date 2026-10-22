@@ -1,0 +1,5 @@
+
+PASS A cross-origin frame with isolate-and-require-corp without allow="cross-origin-isolated" is not cross-origin isolated and cannot serialize a SharedArrayBuffer
+PASS A same-origin frame with isolate-and-require-corp and allow="cross-origin-isolated 'none'" is not cross-origin isolated and cannot serialize a SharedArrayBuffer
+PASS A cross-origin frame with isolate-and-require-corp and allow="cross-origin-isolated" is cross-origin isolated and can serialize a SharedArrayBuffer
+

@@ -132,7 +132,6 @@ public:
         virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier&&) = 0;
         virtual bool shouldConfigureJSCForTesting() const { return false; }
         virtual bool isJITEnabled() const { return true; }
-        virtual bool shouldEnableSharedArrayBuffer() const { return false; }
         virtual bool shouldEnableLockdownMode() const { return false; }
         virtual bool shouldEnableEnhancedSecurity() const { return false; }
         virtual bool shouldDisableJITCage() const { return false; }
