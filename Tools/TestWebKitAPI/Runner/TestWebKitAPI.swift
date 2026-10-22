@@ -99,6 +99,7 @@ struct TestWebKitAPI {
         TestWebKitAPIEnableAllSDKAlignedBehaviors()
 
         #if WTF_PLATFORM_MAC
+        TestWebKitAPIIsolatePasteboards()
         _ = NSApplication.shared
         #endif
 
