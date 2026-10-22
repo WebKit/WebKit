@@ -65,7 +65,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: multiscript-type:post, tag:mi
 ------------
-AXRole: AXGroup
+AXRole: AXSection
 AXParent: AXSection
 AXChildren: 0
 AXPosition:  { 8.00000, -33.0000 }
