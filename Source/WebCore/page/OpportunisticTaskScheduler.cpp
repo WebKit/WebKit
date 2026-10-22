@@ -141,6 +141,9 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
     }
 
     page->performOpportunisticallyScheduledTasks(deadline);
+
+    JSC::JSLockHolder locker(commonVM());
+    JSC::sanitizeStackForVM(commonVM());
 }
 
 ImminentlyScheduledWorkScope::ImminentlyScheduledWorkScope(OpportunisticTaskScheduler& scheduler)
