@@ -1,0 +1,8 @@
+
+PASS a declared targetAddressSpace survives both host forms
+PASS a request with no declared targetAddressSpace takes the one its host form gives
+PASS a local target address space is refused for the literal address
+PASS a local target address space is refused for a hostname that resolves to that address
+PASS a loopback target address space is allowed for both host forms
+PASS a target with no declared address space keeps the space its resolved address gives it
+
