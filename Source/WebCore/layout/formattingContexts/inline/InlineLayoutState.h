@@ -47,6 +47,11 @@ public:
     const PlacedFloats& placedFloats() const LIFETIME_BOUND { return m_parentBlockLayoutState.placedFloats(); }
     PlacedFloats& placedFloats() LIFETIME_BOUND { return m_parentBlockLayoutState.placedFloats(); }
 
+    // The margins carried across the lines and the block-level boxes of the content: the parent's to start with, and once the content is
+    // laid out, what is left for the parent.
+    const BlockLayoutState::MarginState& marginState() const LIFETIME_BOUND { return m_marginState; }
+    BlockLayoutState::MarginState& marginState() LIFETIME_BOUND { return m_marginState; }
+
     void setAvailableLineWidthOverride(AvailableLineWidthOverride availableLineWidthOverride) { m_availableLineWidthOverride = availableLineWidthOverride; }
     const AvailableLineWidthOverride& availableLineWidthOverride() const LIFETIME_BOUND { return m_availableLineWidthOverride; }
 
@@ -89,6 +94,7 @@ public:
 
 private:
     BlockLayoutState& m_parentBlockLayoutState;
+    BlockLayoutState::MarginState m_marginState;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0.f };
     InlineLayoutUnit m_clearGapAfterLastLine { 0.f };
     InlineLayoutUnit m_firstLineStartTrimForInitialLetter { 0.f };
@@ -109,6 +115,7 @@ private:
 
 inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState)
     : m_parentBlockLayoutState(parentBlockLayoutState)
+    , m_marginState(parentBlockLayoutState.marginState())
 {
 }
 
