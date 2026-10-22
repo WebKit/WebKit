@@ -28,6 +28,7 @@
 #pragma once
 
 #include <WebCore/DecodingOptions.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/GainMap.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/PixelFormat.h>
@@ -37,6 +38,11 @@
 #include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE) && USE(CG)
+#include <WebCore/IntRectHash.h>
+#include <wtf/HashMap.h>
+#endif
 
 #if USE(SKIA)
 class GrDirectContext;
@@ -107,7 +113,7 @@ public:
     RefPtr<NativeImage> rotatedImage(ImageOrientation);
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE) && USE(CG)
-    ImagePaintTimeTransformation paintTimeTransformation() const;
+    ImagePaintTimeTransformation paintTimeTransformation(std::optional<FloatRect> sourceRect = std::nullopt) const;
 #endif
 
     void clearSubimages();
@@ -150,6 +156,7 @@ protected:
     mutable WeakHashSet<RenderingResourceObserver> m_observers;
 #if ENABLE(AX_CUSTOM_COLOR_MODE) && USE(CG)
     mutable std::optional<ImagePaintTimeTransformation> m_paintTimeTransformation WTF_GUARDED_BY_LOCK(m_lock);
+    mutable HashMap<IntRect, ImagePaintTimeTransformation> m_subimagePaintTimeTransformations WTF_GUARDED_BY_LOCK(m_lock);
 #endif
     RenderingResourceIdentifier m_renderingResourceIdentifier { RenderingResourceIdentifier::generate() };
 #if USE(SKIA)
