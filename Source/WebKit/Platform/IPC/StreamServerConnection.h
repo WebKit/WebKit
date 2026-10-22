@@ -32,6 +32,7 @@
 #include "MessageNames.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnectionBuffer.h"
+#include <wtf/Atomics.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/SwiftBridging.h>
@@ -95,6 +96,8 @@ public:
 
     static RefPtr<StreamServerConnection> tryCreate(Handle&&, const StreamServerConnectionParameters&);
     ~StreamServerConnection() final;
+
+    uint64_t dispatchedMessageCount() const { return m_dispatchedMessageCount.loadRelaxed(); }
 
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
@@ -163,6 +166,7 @@ private:
     // Signalled to release the client from ring buffer backpressure.
     Signal m_clientWaitSignal;
     bool m_isProcessingStreamMessage { false };
+    Atomic<uint64_t> m_dispatchedMessageCount;
     bool m_didReceiveInvalidMessage { false };
 #if ASSERT_ENABLED
     bool m_isDispatchingMessage { false };

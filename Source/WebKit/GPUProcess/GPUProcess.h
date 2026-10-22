@@ -292,6 +292,7 @@ private:
     void snapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
     void waitForSnapshot(RemoteSnapshotIdentifier, CompletionHandler<void()>&&);
     Ref<RemoteSnapshot> ensureSnapshot(RemoteSnapshotIdentifier, std::optional<WebCore::FrameIdentifier> rootFrameIdentifier);
+    void scheduleSnapshotDeadline(RemoteSnapshotIdentifier, MonotonicTime finalDeadline, uint64_t activityAtSchedule);
     void snapshotDeadlineExpired(RemoteSnapshotIdentifier);
     // Takes the snapshot once it is complete, or passes null if it failed.
     void takeSnapshotWhenComplete(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<RemoteSnapshot>&&)>&&);

@@ -618,9 +618,10 @@ void GPUProcess::removeTransferredImageBuffersForProcess(WebCore::ProcessIdentif
     });
 }
 
-// Long enough for any frame whose process is responsive. One whose process is not, or went away
-// before connecting here, draws nothing rather than holding up whoever is waiting for the snapshot.
-static constexpr Seconds snapshotDeadline = 10_s;
+// A frame whose process stops recording, or went away before connecting here, draws nothing rather
+// than holding up whoever is waiting for the snapshot. One whose process is still recording is waited
+// for, up to remoteSnapshotMaximumDuration, since a large document can take longer than this.
+static constexpr Seconds snapshotInactivityDeadline = 10_s;
 
 Ref<RemoteSnapshot> GPUProcess::ensureSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, std::optional<FrameIdentifier> rootFrameIdentifier)
 {
@@ -640,12 +641,26 @@ Ref<RemoteSnapshot> GPUProcess::ensureSnapshot(RemoteSnapshotIdentifier snapshot
     if (isNewEntry) {
         // Identifiers are never reused, so finding one when the deadline comes means it is this snapshot.
         callOnMainRunLoop([snapshotIdentifier] {
-            RunLoop::mainSingleton().dispatchAfter(snapshotDeadline, [snapshotIdentifier] {
-                GPUProcess::singleton().snapshotDeadlineExpired(snapshotIdentifier);
-            });
+            GPUProcess::singleton().scheduleSnapshotDeadline(snapshotIdentifier, MonotonicTime::now() + remoteSnapshotMaximumDuration, 0);
         });
     }
     return snapshot.releaseNonNull();
+}
+
+void GPUProcess::scheduleSnapshotDeadline(RemoteSnapshotIdentifier snapshotIdentifier, MonotonicTime finalDeadline, uint64_t activityAtSchedule)
+{
+    RunLoop::mainSingleton().dispatchAfter(snapshotInactivityDeadline, [snapshotIdentifier, finalDeadline, activityAtSchedule] {
+        auto& process = GPUProcess::singleton();
+        RefPtr snapshot = process.snapshot(snapshotIdentifier);
+        if (!snapshot)
+            return;
+        uint64_t activity = snapshot->recordingActivity();
+        if (activity != activityAtSchedule && MonotonicTime::now() < finalDeadline) {
+            process.scheduleSnapshotDeadline(snapshotIdentifier, finalDeadline, activity);
+            return;
+        }
+        process.snapshotDeadlineExpired(snapshotIdentifier);
+    });
 }
 
 void GPUProcess::snapshotDeadlineExpired(RemoteSnapshotIdentifier snapshotIdentifier)

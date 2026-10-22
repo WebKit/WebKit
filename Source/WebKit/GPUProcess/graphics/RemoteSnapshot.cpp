@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 #include "RemoteSnapshot.h"
 
+#include "StreamServerConnection.h"
 #include "WebImage.h"
 #include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
@@ -144,6 +145,21 @@ void RemoteSnapshot::abandonUnresolvedFrames()
     }
     for (auto frameIdentifier : frames)
         abandonFrame(frameIdentifier);
+}
+
+void RemoteSnapshot::addRecordingConnection(IPC::StreamServerConnection& connection)
+{
+    Locker locker(m_lock);
+    m_recordingConnections.appendIfNotContains(Ref { connection });
+}
+
+uint64_t RemoteSnapshot::recordingActivity() const
+{
+    Locker locker(m_lock);
+    uint64_t activity = 0;
+    for (auto& connection : m_recordingConnections)
+        activity += connection->dispatchedMessageCount();
+    return activity;
 }
 
 FloatSize RemoteSnapshot::size() const

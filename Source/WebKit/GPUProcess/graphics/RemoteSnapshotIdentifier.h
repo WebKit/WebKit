@@ -27,6 +27,7 @@
 
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <wtf/Seconds.h>
 #include <wtf/UUID.h>
 
 namespace WebKit {
@@ -35,6 +36,10 @@ namespace WebKit {
 // the snapshot. The rest is unguessable, since holding one is all it takes to record into the
 // snapshot, or to abandon or fail it.
 using RemoteSnapshotIdentifier = WebCore::ProcessQualified<WTF::UUID>;
+
+// The GPU process gives up on a snapshot's frames after this long at the latest, however busy their
+// processes are recording them.
+inline constexpr Seconds remoteSnapshotMaximumDuration = 30_s;
 
 // Cryptographically random, unlike ProcessQualified<WTF::UUID>::generate().
 inline RemoteSnapshotIdentifier generateRemoteSnapshotIdentifier()
