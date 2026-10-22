@@ -102,6 +102,18 @@ typedef NS_ENUM(NSUInteger, _WKDragInteractionPolicy) {
     _WKDragInteractionPolicyAlwaysDisable
 } WK_API_AVAILABLE(ios(11.0));
 
+typedef NS_ENUM(NSInteger, _WKEffectivePageAppearance) {
+    _WKEffectivePageAppearanceUnknown,
+    _WKEffectivePageAppearanceLight,
+    _WKEffectivePageAppearanceDark,
+} WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+typedef NS_ENUM(NSInteger, _WKContentInversion) {
+    _WKContentInversionSystem,
+    _WKContentInversionInverted,
+    _WKContentInversionNotInverted,
+} WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 #else
 #import <WebKit/WKBase.h>
 #endif
@@ -826,6 +838,17 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 
 - (void)_accessibilityRetrieveSpeakSelectionContent WK_API_AVAILABLE(ios(11.0));
 - (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content WK_API_AVAILABLE(ios(11.0));
+
+// Whether the page as currently displayed is light or dark, including any color transformations WebKit
+// applies to it. Without more specific information, based on whether white or black text has the higher
+// WCAG 2 contrast ratio against the page's background color, and Unknown when the page doesn't paint an
+// opaque background color, including when the web view is transparent or its background doesn't extend
+// beyond the page. Key-value observable.
+@property (nonatomic, readonly) _WKEffectivePageAppearance _effectivePageAppearance WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+// Tells the page whether the client is color-inverting its content, which determines whether the inverted-colors media
+// feature matches. System, the default, defers to UIAccessibilityIsInvertColorsEnabled().
+@property (nonatomic, setter=_setContentInversionForAccessibility:) _WKContentInversion _contentInversionForAccessibility WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 - (UIView *)_fullScreenPlaceholderView WK_API_AVAILABLE(ios(12.0));
 

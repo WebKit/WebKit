@@ -38,6 +38,7 @@
 #include "APIInjectedBundlePageUIClient.h"
 #include "Connection.h"
 #include "ContentAsStringIncludesChildFrames.h"
+#include "ContentInversion.h"
 #include "DragControllerAction.h"
 #include "DragEventForwardingData.h"
 #include "DrawingArea.h"
@@ -995,6 +996,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_backgroundColor = parameters.backgroundColor;
     setUseColorAppearance(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
+    setContentInversion(parameters.contentInversion);
 
     // We need to set the device scale factor before creating the drawing area
     // to ensure it's created with the right size.
@@ -1790,6 +1792,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 #endif
 
     setUseColorAppearance(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
+    setContentInversion(parameters.contentInversion);
 
     if (auto& remotePageParameters = parameters.remotePageParameters) {
         if (RefPtr page = m_page; page && is<RemoteFrame>(page->mainFrame()))
@@ -7299,6 +7302,30 @@ void WebPage::setCaretBlinkingSuspended(bool suspended)
 }
 
 #endif
+
+void WebPage::setContentInversion(ContentInversion contentInversion)
+{
+    auto forcedColorsAreInverted = [&] {
+        switch (contentInversion) {
+        case ContentInversion::System:
+            // The inverted-colors media feature then uses ScreenData::screenHasInvertedColors.
+            return ForcedAccessibilityValue::System;
+        case ContentInversion::Inverted:
+            return ForcedAccessibilityValue::On;
+        case ContentInversion::NotInverted:
+            return ForcedAccessibilityValue::Off;
+        }
+        ASSERT_NOT_REACHED();
+        return ForcedAccessibilityValue::System;
+    }();
+
+    Ref page = *m_page;
+    if (page->settings().forcedColorsAreInvertedAccessibilityValue() == forcedColorsAreInverted)
+        return;
+
+    page->settings().setForcedColorsAreInvertedAccessibilityValue(forcedColorsAreInverted);
+    page->accessibilitySettingsDidChange();
+}
 
 void WebPage::setUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {

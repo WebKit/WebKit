@@ -396,6 +396,7 @@ Tests/WebKit/WKWebView/WKWebViewAlwaysShowsScroller.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewCandidateTests.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewCloseAllMediaPresentations.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewConfiguration.mm @nonARC
+Tests/WebKit/WKWebView/WKWebViewContentInversion.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewDefaultNavigationDelegate.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewDiagnosticLogging.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewDisableSelection.mm @nonARC

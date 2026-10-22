@@ -307,6 +307,7 @@ $(PROJECT_DIR)/Shared/Cocoa/SecItemRequestData.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/SecItemResponseData.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/SharedCARingBuffer.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
+$(PROJECT_DIR)/Shared/ContentInversion.serialization.in
 $(PROJECT_DIR)/Shared/ContentWorldData.serialization.in
 $(PROJECT_DIR)/Shared/ContextMenuContextData.serialization.in
 $(PROJECT_DIR)/Shared/CoordinateSystem.serialization.in

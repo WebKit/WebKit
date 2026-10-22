@@ -729,6 +729,7 @@ struct RendererBufferFormat;
 enum class ColorControlSupportsAlpha : bool;
 enum class CompletesDoubleClick : bool;
 enum class ContentAsStringIncludesChildFrames : bool;
+enum class ContentInversion : uint8_t;
 enum class DragControllerAction : uint8_t;
 enum class EnhancedSecurity : uint8_t;
 enum class FindDecorationStyle : uint8_t;
@@ -1149,6 +1150,12 @@ public:
     // from the UIProcess, or by didCommitLayerTree(). When PLATFORM(MAC) adopts UI side compositing, we should get rid of
     // the message entirely.
     WebCore::Color LEGACY_NODELETE pageExtendedBackgroundColor() const;
+
+    // Whether the page as currently displayed is light or dark. Without more specific information, based on the page
+    // extended background color, and Unknown when that color isn't opaque, including when it is invalid because the
+    // web view is transparent or its background doesn't extend beyond the page.
+    enum class EffectivePageAppearance : uint8_t { Unknown, Light, Dark };
+    EffectivePageAppearance LEGACY_NODELETE effectivePageAppearance() const;
 
     WebCore::Color LEGACY_NODELETE sampledPageTopColor() const;
 
@@ -1683,6 +1690,8 @@ public:
     void setCustomDeviceScaleFactor(float, CompletionHandler<void()>&&);
 
     void accessibilitySettingsDidChange();
+    ContentInversion LEGACY_NODELETE contentInversion() const;
+    void setContentInversion(ContentInversion);
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     void updateAccessibilityFrameGeometry();
     void scheduleAccessibilityFrameGeometryUpdate();
@@ -3435,6 +3444,8 @@ private:
     void LEGACY_NODELETE didChangePageCount(unsigned);
     void themeColorChanged(const WebCore::Color&);
     void pageExtendedBackgroundColorDidChange(const WebCore::Color&);
+    EffectivePageAppearance computeEffectivePageAppearance() const;
+    void effectivePageAppearanceMightHaveChanged();
     void sampledPageTopColorChanged(const WebCore::Color&);
 #if __has_include(<WebKitAdditions/WebPageProxyPrivateAdditions.h>)
 #include <WebKitAdditions/WebPageProxyPrivateAdditions.h>

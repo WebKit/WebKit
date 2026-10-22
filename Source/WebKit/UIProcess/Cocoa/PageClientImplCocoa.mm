@@ -111,6 +111,18 @@ void PageClientImplCocoa::sampledPageTopColorDidChange()
     [webView() didChangeValueForKey:@"_sampledPageTopColor"];
 }
 
+#if PLATFORM(IOS_FAMILY)
+void PageClientImplCocoa::effectivePageAppearanceWillChange()
+{
+    [webView() willChangeValueForKey:@"_effectivePageAppearance"];
+}
+
+void PageClientImplCocoa::effectivePageAppearanceDidChange()
+{
+    [webView() didChangeValueForKey:@"_effectivePageAppearance"];
+}
+#endif
+
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
 void PageClientImplCocoa::allowImmersiveElement(Ref<API::FrameInfo>&& frameInfo, CompletionHandler<void(bool)>&& completion) const
 {
