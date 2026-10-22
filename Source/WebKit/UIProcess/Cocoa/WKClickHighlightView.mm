@@ -91,8 +91,15 @@ static void addLineToPoint(CocoaBezierPath *path, const WebCore::FloatPoint& poi
 
 - (id)initWithFrame:(CGRect)rect
 {
-    if (self = [super initWithFrame:rect])
+    if (self = [super initWithFrame:rect]) {
+#if PLATFORM(IOS_FAMILY)
+        self.userInteractionEnabled = NO;
+        self.opaque = NO;
+#else
+        self.wantsLayer = YES;
+#endif
         self.layer.needsDisplayOnBoundsChange = YES;
+    }
     return self;
 }
 

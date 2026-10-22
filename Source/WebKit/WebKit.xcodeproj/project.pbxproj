@@ -1028,6 +1028,7 @@
 		33D78DB13023F8D400F5EFCB /* WebEventPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D78DB03023F8D400F5EFCB /* WebEventPhase.h */; };
 		33E3DFBC3074B5240088E1B2 /* WKPointerTrackingGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 33E3DFBA3074B5240088E1B2 /* WKPointerTrackingGestureRecognizer.h */; };
 		33E3DFBD3074B5240088E1B2 /* WKPointerTrackingGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E3DFBB3074B5240088E1B2 /* WKPointerTrackingGestureRecognizer.swift */; };
+		33E56E183086C89B00B3EC0B /* WKClickHighlightController.h in Headers */ = {isa = PBXBuildFile; fileRef = 33E56E163086C89B00B3EC0B /* WKClickHighlightController.h */; };
 		33F6833E293FFA4B005C63C0 /* WebExtensionAPIWebNavigationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 33F6833D293FFA4B005C63C0 /* WebExtensionAPIWebNavigationEvent.h */; };
 		370F34A31829BE1E009027C8 /* WKNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 370F34A11829BE1E009027C8 /* WKNavigationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		370F34A51829BEA3009027C8 /* WKNavigationDataInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 370F34A41829BEA3009027C8 /* WKNavigationDataInternal.h */; };
@@ -5503,6 +5504,8 @@
 		33DAECEF2B9AAE92005C596E /* PDFDataDetectorOverlayController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFDataDetectorOverlayController.mm; sourceTree = "<group>"; };
 		33E3DFBA3074B5240088E1B2 /* WKPointerTrackingGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPointerTrackingGestureRecognizer.h; sourceTree = "<group>"; };
 		33E3DFBB3074B5240088E1B2 /* WKPointerTrackingGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKPointerTrackingGestureRecognizer.swift; sourceTree = "<group>"; };
+		33E56E163086C89B00B3EC0B /* WKClickHighlightController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKClickHighlightController.h; sourceTree = "<group>"; };
+		33E56E173086C89B00B3EC0B /* WKClickHighlightController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKClickHighlightController.mm; sourceTree = "<group>"; };
 		33E5A6B32C6F8F8D00F2CD04 /* ImageOptions.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ImageOptions.serialization.in; sourceTree = "<group>"; };
 		33EBE2852C98366200549FB9 /* PDFAnnotationTypeHelpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = PDFAnnotationTypeHelpers.h; path = PDF/PDFAnnotationTypeHelpers.h; sourceTree = "<group>"; tabWidth = 8; };
 		33EBE2872C9838F900549FB9 /* PDFAnnotationTypeHelpers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFAnnotationTypeHelpers.mm; path = PDF/PDFAnnotationTypeHelpers.mm; sourceTree = "<group>"; };
@@ -11095,6 +11098,8 @@
 				1A04F6171A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm */,
 				51D124311E6DE521002B2820 /* WebURLSchemeHandlerCocoa.h */,
 				51D124321E6DE521002B2820 /* WebURLSchemeHandlerCocoa.mm */,
+				33E56E163086C89B00B3EC0B /* WKClickHighlightController.h */,
+				33E56E173086C89B00B3EC0B /* WKClickHighlightController.mm */,
 				F4E8912E2AB7C344005AEBC3 /* WKClickHighlightView.h */,
 				F4E8912F2AB7C344005AEBC3 /* WKClickHighlightView.mm */,
 				F43019662DC97AAE006522E0 /* WKColorExtensionView.h */,
@@ -19606,6 +19611,7 @@
 				FA3825FA2E67BF740057AE68 /* WKCast.h in Headers */,
 				BC4075F6124FF0270068F20A /* WKCertificateInfo.h in Headers */,
 				BC407627124FF0400068F20A /* WKCertificateInfoMac.h in Headers */,
+				33E56E183086C89B00B3EC0B /* WKClickHighlightController.h in Headers */,
 				F43548382AB7C41E00150894 /* WKClickHighlightView.h in Headers */,
 				F43019682DC97B10006522E0 /* WKColorExtensionView.h in Headers */,
 				E596DD6A251E71D400C275A7 /* WKContactPicker.h in Headers */,
