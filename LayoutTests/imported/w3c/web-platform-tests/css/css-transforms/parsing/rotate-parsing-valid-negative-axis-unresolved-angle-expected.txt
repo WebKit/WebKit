@@ -1,0 +1,7 @@
+
+PASS -1 0 0 with an unresolved angle serializes as a keyword with a negated angle
+PASS 0 -1 0 with an unresolved angle serializes as a keyword with a negated angle
+PASS 0 0 -1 with an unresolved angle omits the axis and negates the angle
+PASS 1 0 0 with an unresolved angle serializes as a keyword
+PASS 0 0 1 with an unresolved angle omits the axis
+

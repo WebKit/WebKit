@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Transform Module Level 2: rotate specified value with a negative axis and an unresolved angle</title>
+<link rel="help" href="https://drafts.csswg.org/css-transforms-2/#individual-transform-serialization">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="container"><div></div><div></div><div id="target"></div></div>
+<script>
+const target = document.getElementById("target");
+const angle = "calc(10deg * sibling-index())";
+
+
+function specified(value) {
+    target.style.rotate = "";
+    target.style.rotate = value;
+    return target.style.rotate;
+}
+
+test(() => {
+    const value = specified(`-1 0 0 ${angle}`);
+    assert_true(value.startsWith("x "), "keyword");
+    assert_not_equals(value, `x ${angle}`, "angle negated");
+}, "-1 0 0 with an unresolved angle serializes as a keyword with a negated angle");
+
+test(() => {
+    const value = specified(`0 -1 0 ${angle}`);
+    assert_true(value.startsWith("y "), "keyword");
+    assert_not_equals(value, `y ${angle}`, "angle negated");
+}, "0 -1 0 with an unresolved angle serializes as a keyword with a negated angle");
+
+test(() => {
+    const value = specified(`0 0 -1 ${angle}`);
+    assert_false(value.startsWith("0 0 -1"), "axis omitted");
+    assert_not_equals(value, angle, "angle negated");
+}, "0 0 -1 with an unresolved angle omits the axis and negates the angle");
+
+test(() => {
+    assert_equals(specified(`1 0 0 ${angle}`), `x ${angle}`);
+}, "1 0 0 with an unresolved angle serializes as a keyword");
+
+test(() => {
+    assert_equals(specified(`0 0 1 ${angle}`), angle);
+}, "0 0 1 with an unresolved angle omits the axis");
+</script>
+</body>
+</html>
