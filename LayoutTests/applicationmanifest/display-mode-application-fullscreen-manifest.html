@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ applicationManifest=resources/fullscreen.manifest ] -->
+<script>
+    if (window.testRunner) testRunner.dumpAsText();
+</script>
+<pre id="output"></pre>
+<script>
+    const output = document.getElementById("output");
+    const queries = [
+        "(display-mode: application)",
+        "(display-mode: fullscreen)",
+        "(display-mode: application) and (display-mode: fullscreen)",
+        "(display-mode: standalone)",
+        "(display-mode: minimal-ui)",
+        "(display-mode: browser)",
+        "(display-mode)",
+    ];
+    for (const query of queries)
+        output.append(`${query}: ${matchMedia(query).matches}\n`);
+</script>
