@@ -49,6 +49,7 @@
 #include <cmath>
 #include <cstring>
 #include <limits>
+#include <mutex>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -225,11 +226,12 @@ constexpr GX2RResourceFlags depthRenderbufferFlags = static_cast<GX2RResourceFla
 
 void initializeGLSLCompilerOnce()
 {
-    static bool initialized = false;
-    if (!initialized) {
+    // Multiple WebGL contexts may be created concurrently. A plain static bool
+    // allows InitGLSLCompiler() to race and initialize the global compiler twice.
+    static std::once_flag initializeFlag;
+    std::call_once(initializeFlag, [] {
         InitGLSLCompiler();
-        initialized = true;
-    }
+    });
 }
 
 bool mapBufferTarget(GCGLenum target, WKC::GLGX2::BufferTarget& output)
