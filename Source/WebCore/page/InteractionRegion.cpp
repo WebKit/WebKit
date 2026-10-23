@@ -281,16 +281,20 @@ static bool LEGACY_NODELETE shouldGetOcclusion(const RenderElement& renderer)
     return false;
 }
 
-static bool hasTransparentContainerStyle(const Style::ComputedStyle& style)
+static bool hasTransparentBoxDecorations(const Style::ComputedStyle& style)
 {
     return !style.hasBackground()
         && !style.hasOutline()
         && style.boxShadow().isNone()
         && style.clipPath().isNone()
-        && !style.hasExplicitlySetBorderRadius()
         // No visible borders or borders that do not create a complete box.
         && (!style.border().hasVisibleBorder()
             || !(Style::effectiveBorderWidths(style).top() && Style::effectiveBorderWidths(style).right() && Style::effectiveBorderWidths(style).bottom() && Style::effectiveBorderWidths(style).left()));
+}
+
+static bool hasTransparentContainerStyle(const Style::ComputedStyle& style)
+{
+    return hasTransparentBoxDecorations(style) && !style.hasExplicitlySetBorderRadius();
 }
 
 static bool canTweakShapeForStyle(const Style::ComputedStyle& style)
@@ -340,7 +344,15 @@ static bool isGuardContainer(const Element& element)
         return false;
 
     CheckedRef renderer = *element.renderer();
-    return hasTransparentContainerStyle(protect(renderer->style()));
+    CheckedRef style = renderer->style();
+    if (hasTransparentContainerStyle(style))
+        return true;
+
+    if (!hasTransparentBoxDecorations(style) || style->border().hasBorderRadius())
+        return false;
+
+    CheckedPtr childRenderer = element.firstElementChild()->renderer();
+    return childRenderer && !hasTransparentBoxDecorations(protect(childRenderer->style()));
 }
 
 static FloatSize boundingSize(const RenderObject& renderer, const std::optional<AffineTransform>& transform)
