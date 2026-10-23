@@ -24,10 +24,11 @@
 import CoreGraphics
 public import Foundation
 private import TestWebKitAPILibrary.Helpers.cocoa.TestNavigationDelegate
-private import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
+public import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
 public import WebKit
 public import WebKit_Private
 private import WebKit_Private.WKWebViewPrivate
+private import WebKit_Private.WKWebViewPrivateForTesting
 
 public import struct Foundation.URL
 public import struct Swift.String
@@ -204,6 +205,30 @@ extension WKWebView {
                 continuation.resume()
             })
         }
+    }
+
+    /// Waits until all pending mouse events have been processed.
+    public func pendingMouseEvents() async {
+        await withCheckedContinuation { continuation in
+            _do(afterProcessingAllPendingMouseEvents: {
+                continuation.resume()
+            })
+        }
+    }
+}
+
+extension TestWKWebView {
+    /// Simulates a mouse click at a point in view coordinates and waits for it to be processed.
+    ///
+    /// - Parameter point: The location to click at, in points from the top-left corner of the view.
+    public func click(at point: CGPoint) async {
+        #if WTF_PLATFORM_IOS_FAMILY
+        sendClick(at: point)
+        #else
+        sendClick(at: NSPoint(x: point.x, y: frame.height - point.y))
+        #endif
+        await pendingMouseEvents()
+        await nextPresentationUpdate()
     }
 }
 
