@@ -582,6 +582,12 @@ static double scaleAfterViewportWidthChange(double currentScale, bool scaleToFit
     // end up zoomed too far in landscape->portrait, and too close in portrait->landscape.
     double widthToKeepInView = visibleHorizontalFraction * newContentSize.width();
     double newScale = unobscuredWidthInScrollViewCoordinates / widthToKeepInView;
+    if (!std::isfinite(newScale)) {
+        // An empty content size can make newScale NaN, which the clamp below lets through.
+        scale = viewportConfiguration.initialScale();
+        LOG(VisibleRects, "scaleAfterViewportWidthChange content width is empty, using initial scale: %.2f", scale);
+        return scale;
+    }
     scale = std::max(std::min(newScale, viewportConfiguration.maximumScale()), viewportConfiguration.minimumScale());
     LOG(VisibleRects, "scaleAfterViewportWidthChange scaling content to fit: %.2f", scale);
     return scale;

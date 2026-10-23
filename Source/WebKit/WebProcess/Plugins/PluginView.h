@@ -101,6 +101,7 @@ public:
     void didBeginMagnificationGesture();
     void didEndMagnificationGesture();
     void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin);
+    void setClampedPageScaleFactor(double);
     void mainFramePageScaleFactorDidChange();
     void pageScaleFactorDidChange();
     double pageScaleFactor() const;
