@@ -1309,13 +1309,22 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
         -DJS_EXPORT_PRIVATE=${_dllimport_decl}
         -DNODELETE=
         -DPAL_EXPORT=${_dllimport_decl}
-        -DUCHAR_TYPE=char16_t
         -DWEBCORE_EXPORT=${_dllimport_decl}
         -DWEBCORE_TESTSUPPORT_EXPORT=
         -DWK_EXPORT=
         -DWTF_EXPORT_PRIVATE=${_dllimport_decl}
         -D__WEBGPU__
     )
+    # Configure ICU as wtf/Platform.h does, so every module expands its headers the same way.
+    list(APPEND _flags
+        -DUCHAR_TYPE=char16_t
+        -DU_HIDE_DEPRECATED_API=1
+        -DU_SHOW_CPLUSPLUS_API=0
+        -DU_SHOW_CPLUSPLUS_HEADER_API=0
+    )
+    if (APPLE)
+        list(APPEND _flags -DU_DISABLE_RENAMING=1)
+    endif ()
     # iOS WebKit_Internal headers gate textual #imports behind this macro that
     # trip strict cross-module-import-visibility checks (bug 312083).
     if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
