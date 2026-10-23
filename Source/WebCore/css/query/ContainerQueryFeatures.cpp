@@ -74,6 +74,12 @@ struct SizeFeatureSchema : public FeatureSchema {
         if (!renderer)
             return EvaluationResult::Unknown;
 
+        // RenderLayerScrollableArea resolves the scroll corner and resizer pseudo-element styles from
+        // RenderLayer::styleChanged(), which for a new renderer runs from initializeStyle() before it
+        // is in the render tree. Such a box has no layout to query.
+        if (!renderer->parent())
+            return EvaluationResult::Unknown;
+
         if (!renderer->hasEligibleContainmentForSizeQuery())
             return EvaluationResult::Unknown;
 
