@@ -93,6 +93,8 @@ protected:
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;
 
+    virtual bool vmOutlivesInspectedTarget() const { return false; }
+
 private:
     void setTypeProfilerEnabledState(bool);
     void setControlFlowProfilerEnabledState(bool);
