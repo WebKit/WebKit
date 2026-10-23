@@ -143,11 +143,32 @@ WI.RemoteObject = class RemoteObject
         console.assert(typeof callback === "function");
 
         let target = WI.assumingMainTarget();
+        let objectTarget = webSocketResource.target;
+
+        // Under Site Isolation the Network domain lives on the backend target. A main-frame socket is wrapped by the
+        // page's injected script, so it belongs to the page target, which holds the console's default context. Any other
+        // socket is wrapped by the injected script of the frame that opened it, so it belongs to that frame's target.
+        // Object ids are only meaningful on the target whose injected script made them, so never guess another target.
+        if (WI.networkManager.enabledNetworkForSiteIsolation && WI.backendTarget && WI.backendTarget.hasDomain("Network")) {
+            target = WI.backendTarget;
+            let parentFrame = webSocketResource.parentFrame;
+            if (!parentFrame)
+                objectTarget = null;
+            else if (parentFrame.isMainFrame())
+                objectTarget = WI.pageTarget;
+            else
+                objectTarget = WI.targets.find((candidate) => candidate instanceof WI.FrameTarget && candidate.executionContext?.frame === parentFrame);
+            if (!objectTarget) {
+                callback(null);
+                return;
+            }
+        }
+
         target.NetworkAgent.resolveWebSocket(webSocketResource.requestIdentifier, objectGroup, (error, object) => {
             if (error || !object)
                 callback(null);
             else
-                callback(WI.RemoteObject.fromPayload(object, webSocketResource.target));
+                callback(WI.RemoteObject.fromPayload(object, objectTarget));
         });
     }
 

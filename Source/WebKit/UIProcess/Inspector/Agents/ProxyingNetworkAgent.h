@@ -91,7 +91,7 @@ public:
     CommandResult<void> setClearResourceDataOnNavigate(bool) final;
     void loadResource(const Protocol::Network::FrameId&, const String& url, Ref<LoadResourceCallback>&&) final;
     void getSerializedCertificate(const Protocol::Network::RequestId&, Ref<GetSerializedCertificateCallback>&&) final;
-    CommandResult<Ref<Protocol::Runtime::RemoteObject>> resolveWebSocket(const Protocol::Network::RequestId&, const String& objectGroup) final;
+    void resolveWebSocket(const Protocol::Network::RequestId&, const String& objectGroup, Ref<ResolveWebSocketCallback>&&) final;
     CommandResult<void> setInterceptionEnabled(bool) final;
     CommandResult<void> addInterception(const String& url, Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
     CommandResult<void> removeInterception(const String& url, Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
@@ -115,6 +115,14 @@ private:
     void loadingFinished(ResourceID, double timestamp, const String& sourceMapURL, WebCore::NetworkLoadMetrics&&);
     void loadingFailed(ResourceID, double timestamp, const String& errorText, bool canceled);
     void requestServedFromMemoryCache(ResourceID, FrameID, const String& loaderId, const String& documentURL, const WebCore::ResourceResponse&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&&);
+
+    void webSocketCreated(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, FrameID, const String& loaderId, const String& requestURL);
+    void webSocketWillSendHandshakeRequest(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, double walltime, const WebCore::HTTPHeaderMap&);
+    void webSocketHandshakeResponseReceived(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int statusCode, const String& statusText, const WebCore::HTTPHeaderMap&);
+    void webSocketFrameReceived(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int opcode, bool mask, const String& payloadData, uint64_t payloadLength);
+    void webSocketFrameSent(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int opcode, bool mask, const String& payloadData, uint64_t payloadLength);
+    void webSocketFrameError(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, const String& errorMessage);
+    void webSocketClosed(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp);
 
     void removeAllRegisteredReceivers();
 

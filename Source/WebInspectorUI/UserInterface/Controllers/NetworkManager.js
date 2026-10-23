@@ -35,7 +35,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._mainFrame = null;
         this._resourceRequestIdentifierMap = new Map;
         this._orphanedResources = new Map;
-        this._webSocketIdentifierToURL = new Map;
+        this._webSocketCreationInfo = new Map;
 
         this._waitingForMainFrameResourceTreePayload = true;
         this._transitioningPageTarget = false;
@@ -782,22 +782,36 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._resourceRequestIdentifierMap.set(requestIdentifier, resource);
     }
 
-    webSocketCreated(requestId, url)
+    webSocketCreated(requestId, url, frameId, loaderId)
     {
-        this._webSocketIdentifierToURL.set(requestId, url);
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): Network.webSocketCreated did not have "frameId" or "loaderId" parameters.
+        this._webSocketCreationInfo.set(requestId, {url, frameId: frameId || null, loaderId: loaderId || null});
     }
 
     webSocketWillSendHandshakeRequest(requestId, timestamp, walltime, request)
     {
-        let url = this._webSocketIdentifierToURL.get(requestId);
-        console.assert(url);
-        if (!url)
+        let creationInfo = this._webSocketCreationInfo.get(requestId);
+        console.assert(creationInfo);
+        if (!creationInfo)
             return;
 
-        // FIXME: <webkit.org/b/168475> Web Inspector: Correctly display iframe's and worker's WebSockets
+        // Under Site Isolation the backend reports the frame whose document opened the socket, which may be a
+        // cross-origin frame hosted in another process. Without it, fall back to the main frame.
+        // FIXME: <webkit.org/b/168475> Web Inspector: Correctly display worker's WebSockets
+        let frame = null;
+        if (creationInfo.frameId) {
+            frame = this.frameForIdentifier(creationInfo.frameId);
+            if (!frame && creationInfo.frameId.startsWith("frame-"))
+                frame = this._createPlaceholderFrame(creationInfo.frameId);
+        }
+        if (!frame)
+            frame = this._mainFrame;
+        console.assert(frame);
+        if (!frame)
+            return;
 
-        let resource = new WI.WebSocketResource(url, {
-            loaderIdentifier: WI.networkManager.mainFrame.id,
+        let resource = new WI.WebSocketResource(creationInfo.url, {
+            loaderIdentifier: creationInfo.loaderId || frame.id,
             requestIdentifier: requestId,
             requestHeaders: request.headers,
             timestamp,
@@ -805,7 +819,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             requestSentTimestamp: WI.timelineManager.computeElapsedTime(timestamp),
         });
 
-        let frame = this.frameForIdentifier(WI.networkManager.mainFrame.id);
         frame.addResource(resource);
 
         this._resourceRequestIdentifierMap.set(requestId, resource);
@@ -852,7 +865,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         let elapsedTime = WI.timelineManager.computeElapsedTime(timestamp);
         resource.markAsFinished(elapsedTime);
 
-        this._webSocketIdentifierToURL.delete(requestId);
+        this._webSocketCreationInfo.delete(requestId);
         this._resourceRequestIdentifierMap.delete(requestId);
     }
 
@@ -1260,6 +1273,19 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             frame.addExecutionContext(context);
     }
 
+    _createPlaceholderFrame(frameIdentifier, frameOptions = {})
+    {
+        let mainResource = new WI.Resource("about:blank");
+        let frame = new WI.Frame(frameIdentifier, frameOptions.name, frameOptions.securityOrigin, null, mainResource);
+        this._frameIdentifierMap.set(frame.id, frame);
+        this._associateTargetExecutionContextsWithFrame(frame);
+        mainResource.markAsFinished();
+        if (this._mainFrame)
+            this._mainFrame.addChildFrame(frame);
+        this._dispatchFrameWasAddedEvent(frame);
+        return frame;
+    }
+
     _addNewResourceToFrameOrTarget(url, frameIdentifier, resourceOptions = {}, frameOptions = {})
     {
         console.assert(!this._waitingForMainFrameResourceTreePayload);
@@ -1286,16 +1312,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         // rather than being treated as the main resource of a brand-new frame (firing FrameWasAdded).
         // A document request is the frame's own load, so it takes the new-frame path below instead.
         let isDocument = resourceOptions.type === InspectorBackend.Enum.Page.ResourceType.Document;
-        if (!frame && !isDocument && frameIdentifier.startsWith("frame-")) {
-            let mainResource = new WI.Resource("about:blank");
-            frame = new WI.Frame(frameIdentifier, frameOptions.name, frameOptions.securityOrigin, null, mainResource);
-            this._frameIdentifierMap.set(frame.id, frame);
-            this._associateTargetExecutionContextsWithFrame(frame);
-            mainResource.markAsFinished();
-            if (this._mainFrame)
-                this._mainFrame.addChildFrame(frame);
-            this._dispatchFrameWasAddedEvent(frame);
-        }
+        if (!frame && !isDocument && frameIdentifier.startsWith("frame-"))
+            frame = this._createPlaceholderFrame(frameIdentifier, frameOptions);
 
         if (frame) {
             if (isDocument && frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === resourceOptions.loaderIdentifier)
