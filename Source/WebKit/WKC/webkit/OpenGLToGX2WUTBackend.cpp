@@ -516,9 +516,11 @@ bool setClearDepth(void* context, float depth)
 
 bool setClearStencil(void* context, int32_t value)
 {
-    if (value < 0 || value > 255)
-        return false;
-    static_cast<WUTBackendContext*>(context)->clearStencil = static_cast<uint8_t>(value);
+    // GL clear-stencil values are masked to the stencil buffer's bit depth;
+    // they are not rejected merely because the supplied integer is negative
+    // or larger than the 8-bit stencil attachment can represent.
+    static_cast<WUTBackendContext*>(context)->clearStencil =
+        static_cast<uint8_t>(static_cast<uint32_t>(value) & 0xff);
     return true;
 }
 
