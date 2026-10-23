@@ -1291,7 +1291,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (script.resource || script.dynamicallyAddedScriptElement)
             return;
 
-        if (script.parentFrame) {
+        // Injected scripts, such as extension content scripts, are listed in the "Extension Scripts" and "Extra Scripts" folders.
+        if (!script.injected && script.parentFrame) {
             if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path) {
                 let origin = this._originForURLComponents(script.urlComponents, script.parentFrame?.securityOrigin);
                 let originTreeElement = this._originTreeElementMap.get(origin);
@@ -1358,7 +1359,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _removeScript(script)
     {
-        if (script.parentFrame && WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path) {
+        if (!script.injected && script.parentFrame && WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path) {
             this._handleResourceGroupingModeChanged();
             return;
         }
