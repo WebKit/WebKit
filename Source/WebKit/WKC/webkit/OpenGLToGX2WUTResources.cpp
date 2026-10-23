@@ -136,7 +136,11 @@ bool bindBuffer(void* context, BufferTarget target, BufferName name)
     auto& resources = *static_cast<WUTBufferResources*>(context);
     if (name && resources.buffers.find(name) == resources.buffers.end())
         return false;
-    resources.bindings[static_cast<uint8_t>(target)] = name;
+    try {
+        resources.bindings[static_cast<uint8_t>(target)] = name;
+    } catch (...) {
+        return false;
+    }
     return true;
 }
 
@@ -624,7 +628,11 @@ bool setElementBuffer(void* context, BufferName name)
 {
     auto& resources = *static_cast<WUTBufferResources*>(context);
     if (!name) {
-        resources.bindings[static_cast<uint8_t>(BufferTarget::ElementArray)] = 0;
+        try {
+            resources.bindings[static_cast<uint8_t>(BufferTarget::ElementArray)] = 0;
+        } catch (...) {
+            return false;
+        }
         return true;
     }
 
