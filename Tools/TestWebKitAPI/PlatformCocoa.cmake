@@ -674,6 +674,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/SiteIsolationDataDetectionTests.swift
     Tests/WebKit/WKWebView/SiteIsolationEditingTests.swift
     Tests/WebKit/WKWebView/SiteIsolationFullscreenTests.swift
+    Tests/WebKit/WKWebView/SiteIsolationLinkIndicatorTests.swift
     Tests/WebKit/WKWebView/SiteIsolationLookUpTests.swift
     Tests/WebKit/WKWebView/SiteIsolationNavigationTests.swift
     Tests/WebKit/WKWebView/SiteIsolationServiceWorkerTests.swift
