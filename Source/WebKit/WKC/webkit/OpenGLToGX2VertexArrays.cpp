@@ -250,14 +250,41 @@ VertexArrayResult VertexArrays::enableAttribute(uint8_t index, bool enabled)
     State* state = currentState();
     if (!state)
         return VertexArrayResult::InvalidName;
-    VertexAttribute value;
+
     auto it = state->attributes.find(index);
-    if (it != state->attributes.end())
-        value = it->second;
+    const bool hadOld = it != state->attributes.end();
+    VertexAttribute previous;
+    VertexAttribute value;
+    if (hadOld) {
+        previous = it->second;
+        value = previous;
+    }
     value.enabled = enabled;
-    if (m_backend.setAttribute && !m_backend.setAttribute(m_backend.context, index, value))
+
+    if (!hadOld) {
+        try {
+            it = state->attributes.emplace(index, value).first;
+        } catch (...) {
+            return VertexArrayResult::BackendFailure;
+        }
+    } else
+        it->second = value;
+
+    if (m_backend.setAttribute && !m_backend.setAttribute(m_backend.context, index, value)) {
+        if (hadOld)
+            state->attributes.find(index)->second = previous;
+        else
+            state->attributes.erase(index);
+        // Restore the native descriptor too in case the backend callback
+        // partially applied the requested enable-state change.
+        if (m_backend.setAttribute) {
+            VertexAttribute rollback;
+            if (hadOld)
+                rollback = previous;
+            m_backend.setAttribute(m_backend.context, index, rollback);
+        }
         return VertexArrayResult::BackendFailure;
-    state->attributes[index] = value;
+    }
     return VertexArrayResult::Ok;
 }
 
