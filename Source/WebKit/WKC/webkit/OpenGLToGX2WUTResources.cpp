@@ -586,7 +586,12 @@ bool buildWUTAttributeStreams(const WUTBufferResources& resources,
 
     for (size_t i = 0; i < output.size(); ++i) {
         for (size_t j = i + 1; j < output.size(); ++j) {
-            if (output[i].location == output[j].location) {
+            // Each fetch stream needs both a unique shader location and a
+            // distinct GX2SetAttribBuffer slot. Two GL attributes cannot share
+            // one buffer slot here because each slot has only one active base
+            // address/stride binding at draw time.
+            if (output[i].location == output[j].location
+                || output[i].buffer == output[j].buffer) {
                 output.clear();
                 return false;
             }
