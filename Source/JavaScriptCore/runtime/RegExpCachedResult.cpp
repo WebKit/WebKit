@@ -79,6 +79,10 @@ JSArray* RegExpCachedResult::lastResult(JSGlobalObject* globalObject, JSObject* 
             MatchResult ignoreMatched;
             result = createRegExpMatchesArray(vm, globalObject, string, input, m_lastRegExp.get(), m_result.start, ignoreMatched);
             RETURN_IF_EXCEPTION(scope, nullptr);
+            if (!result) [[unlikely]] {
+                throwOutOfMemoryError(globalObject, scope);
+                return nullptr;
+            }
         } else {
             result = createEmptyRegExpMatchesArray(globalObject, m_lastInput.get(), m_lastRegExp.get());
             RETURN_IF_EXCEPTION(scope, nullptr);
