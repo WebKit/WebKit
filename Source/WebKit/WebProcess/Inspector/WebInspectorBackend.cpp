@@ -50,6 +50,7 @@
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorPageAgent.h>
 #include <WebCore/InspectorResourceUtilities.h>
+#include <WebCore/InstrumentingAgents.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
@@ -431,6 +432,20 @@ void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)
         if (auto* client = corePage->inspectorController().inspectorBackendClient())
             client->willDestroyFrameOverlays(frameID);
     }
+}
+
+void WebInspectorBackend::removeInstrumentationForDestroyedFrame(LocalFrame& frame)
+{
+    // A proxy unregisters from the frame's InstrumentingAgents when destroyed, so it must go while they are alive.
+    // Only remove a proxy registered on this frame's agents: a newer frame can already own this frame identifier.
+    Ref agents = frame.inspectorController().instrumentingAgents();
+    auto frameID = frame.frameID();
+
+    if (auto it = m_frameNetworkAgentProxies.find(frameID); it != m_frameNetworkAgentProxies.end() && agents->enabledNetworkProxy() == it->value.get())
+        m_frameNetworkAgentProxies.remove(it);
+
+    if (auto it = m_framePageAgentProxies.find(frameID); it != m_framePageAgentProxies.end() && agents->enabledPageProxy() == it->value.get())
+        m_framePageAgentProxies.remove(it);
 }
 
 void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, CompletionHandler<void(std::expected<std::pair<String, bool>, String>&&)>&& completionHandler)

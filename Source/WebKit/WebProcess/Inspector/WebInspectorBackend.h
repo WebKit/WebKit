@@ -130,6 +130,7 @@ public:
     // domain is enabled.
     void ensureInstrumentationForFrame(WebCore::LocalFrame&);
     void removeInstrumentationForFrame(WebCore::FrameIdentifier);
+    void removeInstrumentationForDestroyedFrame(WebCore::LocalFrame&);
 
     void setFrontendConnection(IPC::Connection::Handle&&);
 

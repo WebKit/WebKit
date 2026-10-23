@@ -423,6 +423,13 @@ void WebInspectorBackendClient::frameDebuggerDidContinue(WebCore::FrameIdentifie
 
 void WebInspectorBackendClient::willDestroyFrameOverlays(WebCore::FrameIdentifier frameID)
 {
+    removeOverlaysForFrames([frameID](const LocalFrame& frame) {
+        return frame.frameID() == frameID;
+    });
+}
+
+void WebInspectorBackendClient::removeOverlaysForFrames(NOESCAPE const Function<bool(const LocalFrame&)>& matches)
+{
     RefPtr page = m_page.get();
     RefPtr corePage = page ? page->corePage() : nullptr;
 
@@ -432,7 +439,7 @@ void WebInspectorBackendClient::willDestroyFrameOverlays(WebCore::FrameIdentifie
         Vector<std::pair<Ref<LocalFrame>, RefPtr<PageOverlay>>> detachedHighlights;
         m_frameHighlightOverlays.removeIf([&](auto& entry) {
             Ref frame = entry.key;
-            if (frame->frameID() != frameID)
+            if (!matches(frame))
                 return false;
 
             detachedHighlights.append({ WTF::move(frame), entry.value });
@@ -457,9 +464,9 @@ void WebInspectorBackendClient::willDestroyFrameOverlays(WebCore::FrameIdentifie
     // Find it by identity, uninstall its overlay, detach its layers, and drop the controller's
     // per-frame container. Unconditional release is safe only after the highlight pass above; keep
     // these two passes in this order.
-    m_paintRectOverlays.removeIf([frameID, corePage](auto& entry) {
+    m_paintRectOverlays.removeIf([&matches, corePage](auto& entry) {
         Ref frame = entry.key;
-        if (frame->frameID() != frameID)
+        if (!matches(frame))
             return false;
 
         auto& bucket = entry.value;
@@ -475,6 +482,20 @@ void WebInspectorBackendClient::willDestroyFrameOverlays(WebCore::FrameIdentifie
             corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(frame.get());
         }
         return true;
+    });
+}
+
+void WebInspectorBackendClient::inspectedFrameDestroyed(LocalFrame& destroyedFrame)
+{
+    // Covers a frame destroyed without detachedFromParent2(), such as one destroyed with a remote ancestor. See webkit.org/b/327608.
+    if (RefPtr page = m_page) {
+        if (RefPtr backend = page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
+            backend->removeInstrumentationForDestroyedFrame(destroyedFrame);
+    }
+
+    // Match by identity, not by FrameIdentifier: a newer frame may already own this frame's identifier.
+    removeOverlaysForFrames([&destroyedFrame](const LocalFrame& frame) {
+        return &frame == &destroyedFrame;
     });
 }
 

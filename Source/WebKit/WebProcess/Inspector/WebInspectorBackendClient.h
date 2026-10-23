@@ -27,6 +27,8 @@
 
 #include <WebCore/InspectorBackendClient.h>
 #include <WebCore/PageOverlay.h>
+#include <wtf/Compiler.h>
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
@@ -83,6 +85,7 @@ private:
 
     void frameDebuggerDidPause(WebCore::FrameIdentifier) override;
     void frameDebuggerDidContinue(WebCore::FrameIdentifier) override;
+    void inspectedFrameDestroyed(WebCore::LocalFrame&) override;
     unsigned paintRectCount() const override;
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>) final;
@@ -99,6 +102,8 @@ private:
     // The frame identifying the owning bucket comes from the layer client that fired (each bucket
     // has its own), so there is no scan over frames.
     void animationEndedForLayer(WebCore::LocalFrame*, const WebCore::GraphicsLayer*);
+
+    void removeOverlaysForFrames(NOESCAPE const Function<bool(const WebCore::LocalFrame&)>& matches);
 
     WeakPtr<WebPage> m_page;
 
