@@ -13,6 +13,10 @@ http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-wit
 # -- The above has different, expected behavior on Tahoe than Sequoia --
 # -- New failure expectations for Sequoia below this point only!! --
 
+# Redirected WebSocket handshakes still carry blocked cookies on Sequoia; the similar
+# http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect.html also fails there.
+http/tests/storageAccess/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect-from-worker.https.html [ Failure ] # rdar://172426568
+http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect.html [ Failure ] # rdar://172426568
 ###
 ### NOTICE: Unless you know that the issue for which you're setting expectations specifically only
 ### occurs on Sequoia, you should probably use the platform/mac-wk2/TestExpectations file, NOT this one.

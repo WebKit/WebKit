@@ -211,6 +211,11 @@ NetworkSessionCocoa* WebSocketTask::networkSession()
     return downcast<NetworkSessionCocoa>(m_channel->session());
 }
 
+bool WebSocketTask::isInitiatedByWorker() const
+{
+    return m_isInitiatedByWorker == IsInitiatedByWorker::Yes;
+}
+
 NSURLSessionTask* WebSocketTask::task() const
 {
     return m_task.get();

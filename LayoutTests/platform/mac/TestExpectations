@@ -2365,7 +2365,6 @@ imported/w3c/web-platform-tests/trusted-types/should-trusted-type-policy-creatio
 # rdar://172426568
 imported/w3c/web-platform-tests/websockets/constructor/013.html?default [ Pass Failure ] # rdar://172426568
 imported/w3c/web-platform-tests/websockets/constructor/013.html?wss [ Pass Failure ] # rdar://172426568
-http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect.html [ Pass Failure ]
 
 # rdar://172401706
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/broken-chunked-encoding.https.html [ Pass Failure ] # rdar://172401706

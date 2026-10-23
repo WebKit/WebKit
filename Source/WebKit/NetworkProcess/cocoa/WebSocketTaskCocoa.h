@@ -79,6 +79,7 @@ public:
     std::optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; }
     std::optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
     std::optional<WebPageProxyIdentifier> webPageProxyID() const final { return m_webProxyPageID; }
+    bool isInitiatedByWorker() const final;
     String partition() const { return m_partition; }
     const WebCore::SecurityOriginData& topOrigin() const LIFETIME_BOUND { return m_topOrigin; }
 
