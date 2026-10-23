@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <new>
+#include <vector>
 
 namespace WKC {
 namespace GLGX2 {
@@ -31,7 +32,11 @@ BufferResult BufferObjects::create(BufferName& output)
         return BufferResult::OutOfMemory;
 
     try {
-        m_buffers.emplace(output, BufferInfo {});
+        const auto insertion = m_buffers.emplace(output, BufferInfo {});
+        if (!insertion.second) {
+            output = 0;
+            return BufferResult::OutOfMemory;
+        }
     } catch (const std::bad_alloc&) {
         output = 0;
         return BufferResult::OutOfMemory;
@@ -59,20 +64,48 @@ BufferResult BufferObjects::destroy(BufferName name)
     if (it == m_buffers.end())
         return BufferResult::InvalidName;
 
-    if (it->second.allocated) {
-        if (!m_backend.destroy)
-            return BufferResult::MissingBackend;
-        if (!m_backend.destroy(m_backend.context, name))
-            return BufferResult::BackendFailure;
+    if (it->second.allocated && !m_backend.destroy)
+        return BufferResult::MissingBackend;
+
+    // Unbind first so a backend failure cannot leave a deleted GPU allocation
+    // represented as a live, allocated GL object. Keep the logical bindings
+    // unchanged until every backend operation succeeds, and roll back any
+    // successful native unbinds if a later unbind or destruction fails.
+    std::vector<uint8_t> unboundTargets;
+    try {
+        unboundTargets.reserve(m_bindings.size());
+    } catch (const std::bad_alloc&) {
+        return BufferResult::OutOfMemory;
+    }
+
+    auto restoreBindings = [&] {
+        if (!m_backend.bind)
+            return;
+        for (uint8_t target : unboundTargets)
+            m_backend.bind(m_backend.context, static_cast<BufferTarget>(target), name);
+    };
+
+    if (m_backend.bind) {
+        for (const auto& binding : m_bindings) {
+            if (binding.second != name)
+                continue;
+            if (!m_backend.bind(m_backend.context,
+                    static_cast<BufferTarget>(binding.first), 0)) {
+                restoreBindings();
+                return BufferResult::BackendFailure;
+            }
+            unboundTargets.push_back(binding.first);
+        }
+    }
+
+    if (it->second.allocated && !m_backend.destroy(m_backend.context, name)) {
+        restoreBindings();
+        return BufferResult::BackendFailure;
     }
 
     for (auto& binding : m_bindings) {
-        if (binding.second == name) {
-            if (m_backend.bind && !m_backend.bind(m_backend.context,
-                    static_cast<BufferTarget>(binding.first), 0))
-                return BufferResult::BackendFailure;
+        if (binding.second == name)
             binding.second = 0;
-        }
     }
     m_buffers.erase(it);
     return BufferResult::Ok;
@@ -106,6 +139,7 @@ BufferResult BufferObjects::allocate(BufferName name, size_t size, BufferUsage u
         if (!m_backend.destroy(m_backend.context, name))
             return BufferResult::BackendFailure;
         buffer->allocated = false;
+        buffer->size = 0;
     }
 
     if (!m_backend.create(m_backend.context, name, size, usage))
