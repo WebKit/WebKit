@@ -1284,6 +1284,7 @@
 				WTF/cocoa/BlockPtr.mm,
 				WTF/cocoa/ContextualizedNSString.mm,
 				WTF/cocoa/CStringCocoa.mm,
+				WTF/cocoa/FileSystemCocoa.mm,
 				WTF/cocoa/LoggerCocoa.mm,
 				WTF/cocoa/RetainPtr.mm,
 				WTF/cocoa/RetainPtrARC.mm,
