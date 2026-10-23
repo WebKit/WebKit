@@ -26,9 +26,10 @@
 #pragma once
 
 #include <WebCore/Font.h>
-#include <WebCore/PlacedFloats.h>
+#include <WebCore/LayoutUnits.h>
 #include <WebCore/StyleTextBoxEdge.h>
 #include <algorithm>
+#include <wtf/EnumSet.h>
 
 namespace WebCore {
 namespace Layout {
@@ -92,10 +93,7 @@ public:
         LayoutUnit marginBeforeWithClearance;
     };
 
-    BlockLayoutState(PlacedFloats&, MarginState, std::optional<LineClamp> = { }, TextBoxTrim = { }, Style::TextBoxEdge = CSS::Keyword::Auto { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });
-
-    PlacedFloats& placedFloats() LIFETIME_BOUND { return m_placedFloats; }
-    const PlacedFloats& placedFloats() const LIFETIME_BOUND { return m_placedFloats; }
+    BlockLayoutState(MarginState, std::optional<LineClamp> = { }, TextBoxTrim = { }, Style::TextBoxEdge = CSS::Keyword::Auto { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });
 
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
     TextBoxTrim textBoxTrim() const { return m_textBoxTrim; }
@@ -104,11 +102,10 @@ public:
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
     const std::optional<LineGrid>& lineGrid() const LIFETIME_BOUND { return m_lineGrid; }
 
-    MarginState& marginState() LIFETIME_BOUND { return m_marginState; }
+    // The margins coming into the inline content; the inline formatting context carries its own copy (InlineLayoutState::marginState).
     const MarginState& marginState() const LIFETIME_BOUND { return m_marginState; }
 
 private:
-    PlacedFloats& m_placedFloats;
     std::optional<LineClamp> m_lineClamp;
     TextBoxTrim m_textBoxTrim;
     Style::TextBoxEdge m_textBoxEdge;
@@ -117,9 +114,8 @@ private:
     MarginState m_marginState;
 };
 
-inline BlockLayoutState::BlockLayoutState(PlacedFloats& placedFloats, MarginState marginState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, Style::TextBoxEdge textBoxEdge, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)
-    : m_placedFloats(placedFloats)
-    , m_lineClamp(lineClamp)
+inline BlockLayoutState::BlockLayoutState(MarginState marginState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, Style::TextBoxEdge textBoxEdge, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)
+    : m_lineClamp(lineClamp)
     , m_textBoxTrim(textBoxTrim)
     , m_textBoxEdge(textBoxEdge)
     , m_intrusiveInitialLetterLogicalBottom(intrusiveInitialLetterLogicalBottom)
