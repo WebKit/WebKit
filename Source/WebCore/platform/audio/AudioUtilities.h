@@ -26,6 +26,8 @@
 #define AudioUtilities_h
 
 #include <cmath>
+#include <span>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -67,6 +69,9 @@ inline float decibelsToLinear(float decibels)
 void applyNoise(std::span<float> values, float standardDeviation);
 
 WEBCORE_EXPORT Vector<uint8_t> extractAudioSpecificConfigFromESDescriptor(std::span<const uint8_t> esDescriptor);
+
+// Returns a copy of an OpusHead with its pre-skip set to 0.
+Vector<uint8_t> opusHeadWithoutPreSkip(std::span<const uint8_t>);
 
 } // AudioUtilites
 

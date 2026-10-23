@@ -23,16 +23,15 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEB_AUDIO)
-
 #include "AudioUtilities.h"
 #include "BitReader.h"
 #include <random>
 #include <wtf/HashFunctions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRandomNumber.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
@@ -156,8 +155,15 @@ Vector<uint8_t> extractAudioSpecificConfigFromESDescriptor(std::span<const uint8
     return audioSpecificConfig;
 }
 
+Vector<uint8_t> opusHeadWithoutPreSkip(std::span<const uint8_t> cookie)
+{
+    constexpr size_t preSkipOffset = 10;
+    Vector<uint8_t> result(cookie);
+    if (spanHasPrefix(cookie, "OpusHead"_span8) && result.size() >= preSkipOffset + sizeof(uint16_t))
+        zeroSpan(result.mutableSpan().subspan(preSkipOffset, sizeof(uint16_t)));
+    return result;
+}
+
 } // AudioUtilites
 
 } // WebCore
-
-#endif // ENABLE(WEB_AUDIO)
