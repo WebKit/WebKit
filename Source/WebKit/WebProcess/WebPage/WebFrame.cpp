@@ -1421,7 +1421,7 @@ void WebFrame::updateLocalFrameRect(WebCore::LocalFrame& localFrame, WebCore::In
     // Default to covering the entire view until the parent frame process sends an
     // exposedContentRect to us at least once to minimize blanking issues (see rdar://122429810).
     if (!frameView->hasEverSetExposedContentRectFromEmbedder())
-        frameView->setExposedContentRect(FloatRect { { }, frameView->size() });
+        frameView->setExposedViewRect(inViewSpace(FloatRect { { }, frameView->size() }));
 #endif
 
     if (oldRect.size() == newRect.size())

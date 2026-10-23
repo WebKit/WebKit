@@ -2581,7 +2581,7 @@ ExceptionOr<Ref<DOMRect>> Internals::exposedContentRect()
     document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     Ref frameView = *document->view();
-    return DOMRect::create(frameView->exposedContentRect());
+    return DOMRect::create(frameView->exposedContentRect().raw());
 }
 
 ExceptionOr<void> Internals::setViewIsTransparent(bool transparent)

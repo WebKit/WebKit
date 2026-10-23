@@ -4095,7 +4095,7 @@ bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, con
 #if ENABLE(ASYNC_SCROLLING)
     if (CheckedPtr tiledBacking = this->tiledBacking(); tiledBacking && options.animated == ScrollIsAnimated::No) {
 #if PLATFORM(IOS_FAMILY)
-        auto contentSize = exposedContentRect().size();
+        auto contentSize = exposedContentRect().raw().size();
 #else
         auto contentSize = visibleContentRect().size();
 #endif

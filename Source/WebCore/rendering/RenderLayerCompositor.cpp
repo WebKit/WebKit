@@ -804,7 +804,7 @@ FloatRect RenderLayerCompositor::visibleRectForLayerFlushing() const
 {
     const Ref frameView = m_renderView.frameView();
 #if PLATFORM(IOS_FAMILY)
-    return frameView->exposedContentRect();
+    return frameView->exposedContentRect().raw();
 #else
 
     // Having a m_scrolledContentsLayer indicates that we're doing scrolling via GraphicsLayers.
@@ -4682,7 +4682,7 @@ FloatSize RenderLayerCompositor::enclosingFrameViewVisibleSize() const
 {
     const Ref frameView = m_renderView.frameView();
 #if PLATFORM(IOS_FAMILY)
-    return frameView->exposedContentRect().size();
+    return frameView->exposedContentRect().raw().size();
 #else
     if (m_scrolledContentsLayer)
         return frameView->sizeForVisibleContent(scrollbarInclusionForVisibleRect());
