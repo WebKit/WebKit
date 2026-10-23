@@ -58,8 +58,8 @@ public:
     }
 
 protected:
-    ValueType m_from;
-    ValueType m_to;
+    ValueType m_from { };
+    ValueType m_to { };
 };
 
 } // namespace WebCore

@@ -138,7 +138,6 @@ AffineTransform SVGGraphicsElement::computeCTM(SVGElement* element, CTMScope mod
 SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document& document, const SVGPropertyRegistry& propertyRegistry, OptionSet<TypeFlag> typeFlags)
     : SVGElement(tagName, document, propertyRegistry, typeFlags)
     , SVGTests(this)
-    , m_shouldIsolateBlending(false)
     , m_transform(SVGAnimatedTransformList::create(this))
 {
     static bool didRegistration = false;

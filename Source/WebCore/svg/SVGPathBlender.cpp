@@ -367,7 +367,7 @@ bool SVGPathBlender::canBlendPaths()
     float progress = 0.5;
     bool fromSourceHadData = m_fromSource->hasMoreData();
     while (m_toSource->hasMoreData()) {
-        SVGPathSegType fromCommand;
+        auto fromCommand = SVGPathSegType::Unknown;
         if (fromSourceHadData) {
             auto parsedFromCommand = m_fromSource->parseSVGSegmentType();
             if (!parsedFromCommand)
@@ -456,7 +456,7 @@ bool SVGPathBlender::blendAnimatedPath(float progress)
 
     bool fromSourceHadData = m_fromSource->hasMoreData();
     while (m_toSource->hasMoreData()) {
-        SVGPathSegType fromCommand;
+        auto fromCommand = SVGPathSegType::Unknown;
         if (fromSourceHadData) {
             auto parsedFromCommand = m_fromSource->parseSVGSegmentType();
             if (!parsedFromCommand)

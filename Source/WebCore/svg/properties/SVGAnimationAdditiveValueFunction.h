@@ -37,8 +37,8 @@ public:
 protected:
     ValueType toAtEndOfDuration() const { return m_toAtEndOfDuration ? *m_toAtEndOfDuration : m_to; }
 
-    ValueType m_from;
-    ValueType m_to;
+    ValueType m_from { };
+    ValueType m_to { };
     std::optional<ValueType> m_toAtEndOfDuration;
 };
 
