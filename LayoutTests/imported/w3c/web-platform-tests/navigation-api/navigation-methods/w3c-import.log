@@ -50,9 +50,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-navigate-sibling.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-after-adding-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-after-data-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-and-forward-in-cross-site-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-cross-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-detach-between-navigate-and-navigatesuccess.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-multiple-steps.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-navigates-multiple-iframes.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-target-made-current-by-earlier-traversal.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-with-cross-origin-in-history.html

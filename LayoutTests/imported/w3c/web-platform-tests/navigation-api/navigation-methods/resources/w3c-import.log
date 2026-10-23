@@ -19,3 +19,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/resources/page-with-base-url-common.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/resources/service-worker-page.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/resources/slow-no-store.py
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/resources/traverseTo-and-forward-in-cross-site-iframe-helper.html
