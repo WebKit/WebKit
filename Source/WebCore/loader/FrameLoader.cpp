@@ -3743,7 +3743,7 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
         }
     }
 
-    if (page && isMainResource) {
+    if (page && isMainResource && !request.didFilterLinkDecoration()) {
         auto [filteredURL, didFilter] = page->chrome().client().applyLinkDecorationFilteringWithResult(request.url(), LinkDecorationFilteringTrigger::Navigation);
         request.setURL(WTF::move(filteredURL), didFilter == DidFilterLinkDecoration::Yes);
     }

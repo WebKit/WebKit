@@ -2142,6 +2142,19 @@ void WebsiteDataStore::setUserAgentStringQuirkForTesting(const String& domain, c
     completionHandler();
 }
 
+void WebsiteDataStore::setLinkDecorationFilteringDataForTesting(Vector<String>&& queryParameters, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    auto filteringData = WTF::map(WTF::move(queryParameters), [](String&& queryParameter) {
+        return WebCore::LinkDecorationFilteringData { WebCore::RegistrableDomain { }, { }, WTF::move(queryParameter) };
+    });
+    LinkDecorationFilteringController::sharedSingleton().setCachedListDataForTesting(WTF::move(filteringData));
+#else
+    UNUSED_PARAM(queryParameters);
+#endif
+    completionHandler();
+}
+
 void WebsiteDataStore::requestLocalNetworkAccessPermission(WebPageProxyIdentifier pageID, WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
 {
     auto key = LocalNetworkAccessPermissionKey { WTF::move(origin), addressSpace };

@@ -1132,6 +1132,11 @@ struct WKWebsiteData {
     });
 }
 
+- (void)_setLinkDecorationFilteringDataForTesting:(NSArray<NSString *> *)queryParameters completionHandler:(void (^)(void))completionHandler
+{
+    protect(*_websiteDataStore)->setLinkDecorationFilteringDataForTesting(makeVector<String>(queryParameters), makeBlockPtr(completionHandler));
+}
+
 - (void)_setPrivateTokenIPCForTesting:(bool)enabled
 {
     protect(*_websiteDataStore)->setPrivateTokenIPCForTesting(enabled);

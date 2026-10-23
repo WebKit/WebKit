@@ -797,7 +797,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (!newRequest.url().host().isEmpty() && SecurityOrigin::shouldIgnoreHost(newRequest.url())) {
         auto url = newRequest.url();
         url.removeHostAndPort();
-        newRequest.setURL(WTF::move(url));
+        newRequest.setURL(WTF::move(url), newRequest.didFilterLinkDecoration());
     }
 
 #if ENABLE(CONTENT_FILTERING)
@@ -2429,7 +2429,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
     // the fragment identifier, so add that back in.
     // Otherwise, if the main resource was loaded from a prefetch, we need to conserve the redirect URL here
     if (equalIgnoringFragmentIdentifier(m_request.url(), updatedRequest.url()) || (m_mainResource && m_mainResource->options().cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch))
-        updatedRequest.setURL(URL { m_request.url() });
+        updatedRequest.setURL(URL { m_request.url() }, m_request.didFilterLinkDecoration());
     setRequest(WTF::move(updatedRequest));
 }
 

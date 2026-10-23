@@ -1065,6 +1065,11 @@ void TestRunner::setStatisticsCrossSiteLoadWithLinkDecoration(JSStringRef fromHo
     }));
 }
 
+void TestRunner::setStatisticsLinkDecorationFilteringData(JSStringRef queryParameter)
+{
+    postSynchronousMessage("SetStatisticsLinkDecorationFilteringData", toWK(queryParameter));
+}
+
 void TestRunner::setStatisticsTimeToLiveUserInteraction(double seconds)
 {
     postSynchronousMessage("SetStatisticsTimeToLiveUserInteraction", seconds);

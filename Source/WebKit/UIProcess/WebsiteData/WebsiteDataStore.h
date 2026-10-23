@@ -226,6 +226,7 @@ public:
 
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
     void setUserAgentStringQuirkForTesting(const String& domain, const String& userAgentString, CompletionHandler<void()>&&);
+    void setLinkDecorationFilteringDataForTesting(Vector<String>&& queryParameters, CompletionHandler<void()>&&);
     void setPrivateTokenIPCForTesting(bool enabled);
     void requestLocalNetworkAccessPermission(WebPageProxyIdentifier, WebCore::ClientOrigin&&, WebCore::IPAddressSpace, CompletionHandler<void(WebCore::PermissionState)>&&);
     void queryLocalNetworkAccessPermission(std::optional<WebPageProxyIdentifier>, const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
