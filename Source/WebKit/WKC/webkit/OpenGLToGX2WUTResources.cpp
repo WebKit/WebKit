@@ -332,8 +332,10 @@ bool bindVertexBuffer(void* context, uint8_t attribute, BufferName name,
         return false;
 
     GX2RBuffer* buffer = it->second;
-    const size_t capacity = static_cast<size_t>(buffer->elemSize) * buffer->elemCount;
-    if (offset > capacity || offset > UINT32_MAX || capacity - offset > UINT32_MAX)
+    size_t capacity = 0;
+    if (!getBufferCapacity(*buffer, capacity)
+        || offset > capacity || offset > UINT32_MAX || capacity - offset > UINT32_MAX
+        || !buffer->buffer)
         return false;
     GX2SetAttribBuffer(attribute, static_cast<uint32_t>(capacity - offset), stride,
         static_cast<const uint8_t*>(buffer->buffer) + offset);
@@ -1020,10 +1022,14 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
         return false;
     }
 
-    for (const auto& staged : stagedAttributes)
-        GX2SetAttribBuffer(staged.location,
-            static_cast<uint32_t>(static_cast<size_t>(staged.buffer.elemSize) * staged.buffer.elemCount),
+    for (const auto& staged : stagedAttributes) {
+        size_t stagedCapacity = 0;
+        if (!getBufferCapacity(staged.buffer, stagedCapacity)
+            || stagedCapacity > UINT32_MAX || !staged.buffer.buffer)
+            return false;
+        GX2SetAttribBuffer(staged.location, static_cast<uint32_t>(stagedCapacity),
             staged.stride, staged.buffer.buffer);
+    }
 
     GX2DrawIndexedEx(mode, draw.count, GX2_INDEX_TYPE_U32_LE,
         stagedIndices.buffer, 0, draw.instances);
