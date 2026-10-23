@@ -1547,8 +1547,16 @@ void GraphicsContextGLWKC::refreshFramebufferTarget()
         auto texture = m_textures.find(attachments.colorTexture);
         if (texture == m_textures.end())
             return;
-        targetWidth = texture->second.width;
-        targetHeight = texture->second.height;
+        const auto& textureRecord = texture->second;
+        if (attachments.colorTextureIsCubeFace) {
+            if (attachments.colorTextureFace >= textureRecord.cubeWidths.size())
+                return;
+            targetWidth = textureRecord.cubeWidths[attachments.colorTextureFace];
+            targetHeight = textureRecord.cubeHeights[attachments.colorTextureFace];
+        } else {
+            targetWidth = textureRecord.width;
+            targetHeight = textureRecord.height;
+        }
     } else {
         auto color = m_renderbuffers.find(attachments.colorRenderbuffer);
         if (color == m_renderbuffers.end())
