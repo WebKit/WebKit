@@ -19,6 +19,16 @@ namespace WKC {
 namespace GLGX2 {
 namespace {
 
+bool getBufferCapacity(const GX2RBuffer& buffer, size_t& capacity)
+{
+    const size_t elementSize = buffer.elemSize;
+    const size_t elementCount = buffer.elemCount;
+    if (elementCount && elementSize > std::numeric_limits<size_t>::max() / elementCount)
+        return false;
+    capacity = elementSize * elementCount;
+    return true;
+}
+
 bool createBuffer(void* context, BufferName name, size_t size, BufferUsage)
 {
     if (!name || size > std::numeric_limits<uint32_t>::max())
@@ -72,7 +82,9 @@ bool uploadBuffer(void* context, BufferName name, size_t offset, const void* dat
         return false;
 
     GX2RBuffer* buffer = it->second;
-    const size_t capacity = static_cast<size_t>(buffer->elemSize) * buffer->elemCount;
+    size_t capacity = 0;
+    if (!getBufferCapacity(*buffer, capacity))
+        return false;
     if (offset > capacity || size > capacity - offset)
         return false;
     if (!size)
@@ -617,7 +629,9 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
     if (it == resources.buffers.end() || !it->second || !it->second->buffer)
         return false;
     GX2RBuffer* source = it->second;
-    const size_t capacity = static_cast<size_t>(source->elemSize) * source->elemCount;
+    size_t capacity = 0;
+    if (!getBufferCapacity(*source, capacity))
+        return false;
     const size_t indexDataSize = static_cast<size_t>(draw.count) * draw.indexBytes;
     if (draw.indexOffset > capacity || indexDataSize > capacity - draw.indexOffset)
         return false;
