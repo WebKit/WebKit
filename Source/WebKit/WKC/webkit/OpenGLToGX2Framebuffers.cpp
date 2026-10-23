@@ -152,14 +152,26 @@ FramebufferResult Framebuffers::attachTexture(FramebufferName framebufferName,
         return FramebufferResult::InvalidArgument;
     if (!m_backend.attachTexture)
         return FramebufferResult::MissingBackend;
-    if (!m_backend.attachTexture(m_backend.context, it->second.native, attachment,
-            nativeTexture, mipLevel, layer))
-        return FramebufferResult::Unsupported;
-    try {
-        it->second.attachments[attachment] = AttachmentBinding { true, true, textureName };
-    } catch (const std::bad_alloc&) {
-        return FramebufferResult::OutOfMemory;
+    // Reserve bookkeeping before mutating native GX2 state. If allocation
+    // fails after the native attach succeeds, the attachment would otherwise
+    // exist in GX2 but be invisible to completeness and lifetime checks.
+    auto existing = it->second.attachments.find(attachment);
+    bool inserted = false;
+    if (existing == it->second.attachments.end()) {
+        try {
+            existing = it->second.attachments.emplace(attachment, AttachmentBinding {}).first;
+            inserted = true;
+        } catch (const std::bad_alloc&) {
+            return FramebufferResult::OutOfMemory;
+        }
     }
+    if (!m_backend.attachTexture(m_backend.context, it->second.native, attachment,
+            nativeTexture, mipLevel, layer)) {
+        if (inserted)
+            it->second.attachments.erase(existing);
+        return FramebufferResult::Unsupported;
+    }
+    existing->second = AttachmentBinding { true, true, textureName };
     return FramebufferResult::Ok;
 }
 
@@ -176,14 +188,25 @@ FramebufferResult Framebuffers::attachRenderbuffer(FramebufferName framebufferNa
         return FramebufferResult::InvalidArgument;
     if (!m_backend.attachRenderbuffer)
         return FramebufferResult::MissingBackend;
-    if (!m_backend.attachRenderbuffer(m_backend.context, framebuffer->second.native,
-            attachment, renderbuffer->second.native))
-        return FramebufferResult::Unsupported;
-    try {
-        framebuffer->second.attachments[attachment] = AttachmentBinding { true, false, renderbufferName };
-    } catch (const std::bad_alloc&) {
-        return FramebufferResult::OutOfMemory;
+    // Keep the GL-side attachment record allocation-safe before changing
+    // the native framebuffer, matching attachTexture's failure guarantees.
+    auto existing = framebuffer->second.attachments.find(attachment);
+    bool inserted = false;
+    if (existing == framebuffer->second.attachments.end()) {
+        try {
+            existing = framebuffer->second.attachments.emplace(attachment, AttachmentBinding {}).first;
+            inserted = true;
+        } catch (const std::bad_alloc&) {
+            return FramebufferResult::OutOfMemory;
+        }
     }
+    if (!m_backend.attachRenderbuffer(m_backend.context, framebuffer->second.native,
+            attachment, renderbuffer->second.native)) {
+        if (inserted)
+            framebuffer->second.attachments.erase(existing);
+        return FramebufferResult::Unsupported;
+    }
+    existing->second = AttachmentBinding { true, false, renderbufferName };
     return FramebufferResult::Ok;
 }
 
