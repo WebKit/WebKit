@@ -96,6 +96,12 @@ bool destroyBuffer(void* context, BufferName name)
         return false;
 
     GX2RBuffer* buffer = it->second;
+    // GL permits deleting a buffer immediately after submitting a draw that
+    // references it. GX2 can still be fetching from the allocation after the
+    // CPU-side draw call returns, so retire queued GPU work before freeing the
+    // backing storage rather than leaving an in-flight fetch with a dangling
+    // resource address.
+    GX2DrawDone();
     GX2RDestroyBufferEx(buffer, buffer->flags);
     delete buffer;
     resources.buffers.erase(it);
