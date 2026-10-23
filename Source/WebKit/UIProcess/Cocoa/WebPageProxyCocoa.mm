@@ -2435,6 +2435,14 @@ void WebPageProxy::updateVisibleContentRectsLocally(const VisibleContentRectUpda
     internals().lastVisibleContentRectUpdate = visibleContentRectUpdate;
 }
 
+bool WebPageProxy::isRedundantUnstableVisibleContentRectUpdate(const VisibleContentRectUpdateInfo& visibleContentRectUpdate) const
+{
+    const auto& lastUpdate = internals().lastVisibleContentRectUpdate;
+    if (!lastUpdate || !lastUpdate->inStableState() || visibleContentRectUpdate.inStableState())
+        return false;
+    return equalIgnoringViewStability(*lastUpdate, visibleContentRectUpdate);
+}
+
 FloatRect WebPageProxy::updateVisibleContentRectsAndAdjustLayers(const VisibleContentRectUpdateInfo& visibleContentRectUpdate, bool sendEvenIfUnchanged)
 {
     updateVisibleContentRects(visibleContentRectUpdate, sendEvenIfUnchanged);

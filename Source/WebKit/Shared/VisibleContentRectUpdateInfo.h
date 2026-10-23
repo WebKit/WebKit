@@ -130,7 +130,7 @@ private:
     bool m_needsScrollend { false };
 };
 
-inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleContentRectUpdateInfo& b)
+inline bool equalIgnoringViewStability(const VisibleContentRectUpdateInfo& a, const VisibleContentRectUpdateInfo& b)
 {
     // Note: the comparison doesn't include timestamp and velocity since we care about equality based on the other data.
     return a.scale() == b.scale()
@@ -142,11 +142,15 @@ inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleConte
         && a.obscuredInsets() == b.obscuredInsets()
         && a.unobscuredSafeAreaInsets() == b.unobscuredSafeAreaInsets()
         && a.scrollVelocity().equalIgnoringTimestamp(b.scrollVelocity())
-        && a.viewStability() == b.viewStability()
         && a.isFirstUpdateForNewViewSize() == b.isFirstUpdateForNewViewSize()
         && a.allowShrinkToFit() == b.allowShrinkToFit()
         && a.enclosedInScrollableAncestorView() == b.enclosedInScrollableAncestorView()
         && a.needsScrollend() == b.needsScrollend();
+}
+
+inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleContentRectUpdateInfo& b)
+{
+    return a.viewStability() == b.viewStability() && equalIgnoringViewStability(a, b);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, ViewStabilityFlag);
