@@ -34,14 +34,14 @@ G_BEGIN_DECLS
 
 typedef struct _WebKitWebViewBackend WebKitWebViewBackend;
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_web_view_backend_get_type        (void);
 
-WEBKIT_API WebKitWebViewBackend *
+WEBKIT_DEPRECATED WebKitWebViewBackend *
 webkit_web_view_backend_new             (struct wpe_view_backend *backend,
                                          GDestroyNotify           notify,
                                          gpointer                 user_data);
-WEBKIT_API struct wpe_view_backend *
+WEBKIT_DEPRECATED struct wpe_view_backend *
 webkit_web_view_backend_get_wpe_backend (WebKitWebViewBackend    *view_backend);
 
 G_END_DECLS

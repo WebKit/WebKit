@@ -547,8 +547,10 @@ public:
             }
 #endif
 #if USE(LIBWPE)
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto* backend = webkit_web_view_get_backend(newWebView.get()))
                 wpe_view_backend_dispatch_set_size(webkit_web_view_backend_get_wpe_backend(backend), m_defaultGeometryNewWindows.width, m_defaultGeometryNewWindows.height);
+            ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
         }
 #endif
