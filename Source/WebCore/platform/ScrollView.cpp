@@ -237,12 +237,10 @@ FloatRect ScrollView::exposedContentRect() const
     
     RefPtr parent = this->parent();
     if (!parent)
-        return m_delegatedScrollingGeometry ? m_delegatedScrollingGeometry->exposedContentRect : FloatRect();
+        return m_delegatedScrollingGeometry ? viewToContents(m_delegatedScrollingGeometry->exposedViewRect) : FloatRect();
 
-    IntRect parentExposedRect = enclosingIntRect(parent->exposedContentRect());
-    bool parentIsTopFrameViewInProcess = !parent->parent();
-    auto parentExposedRootViewRect = parentIsTopFrameViewInProcess ? inRootViewSpace(parentExposedRect) : parent->contentsToRootView(inContentsSpace(parentExposedRect));
-    auto selfExposedContentsRect = rootViewToContents(parentExposedRootViewRect);
+    auto parentExposedRect = inContentsSpace(enclosingIntRect(parent->exposedContentRect()));
+    auto selfExposedContentsRect = rootViewToContents(parent->contentsToRootView(parentExposedRect));
     selfExposedContentsRect.intersect(viewToContents(inViewSpace(boundsRect())));
     return selfExposedContentsRect.raw();
 }
@@ -254,7 +252,7 @@ void ScrollView::setExposedContentRect(const FloatRect& rect)
     if (!m_delegatedScrollingGeometry)
         m_delegatedScrollingGeometry = DelegatedScrollingGeometry();
 
-    m_delegatedScrollingGeometry->exposedContentRect = rect;
+    m_delegatedScrollingGeometry->exposedViewRect = rect;
 }
 
 void ScrollView::adjustExposedContentRectForProgrammaticScroll(ScrollPosition newPosition)
@@ -262,14 +260,15 @@ void ScrollView::adjustExposedContentRectForProgrammaticScroll(ScrollPosition ne
     if (!m_delegatedScrollingGeometry)
         return;
 
-    if (parent())
+    // The stored rect is in view space, which only moves with the scroll position when it's also contents space.
+    if (!delegatesScrollingToNativeView())
         return;
 
     FloatSize delta = newPosition - scrollPosition();
     if (delta.isZero())
         return;
 
-    m_delegatedScrollingGeometry->exposedContentRect.move(delta);
+    m_delegatedScrollingGeometry->exposedViewRect.move(delta);
 }
 
 FloatSize ScrollView::unobscuredContentSize() const

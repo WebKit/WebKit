@@ -1578,7 +1578,7 @@ void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreF
         auto projected = exposedContentRectInChildView;
         projected.intersect(fullChildViewRect);
 
-        if (childView->exposedContentRect() != projected) {
+        if (childView->contentsToView(childView->exposedContentRect()) != projected) {
             childView->setExposedContentRect(projected);
             needsRenderingUpdate = true;
         }

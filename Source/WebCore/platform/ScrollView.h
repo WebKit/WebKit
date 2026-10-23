@@ -213,10 +213,11 @@ public:
     IntRect unobscuredContentRectIncludingScrollbars() const { return visibleContentRectIncludingScrollbars(); }
 #endif
 
-    // This is the area that is partially or fully exposed, and may extend under overlapping UI elements.
+    // This is the area that is partially or fully exposed, and may extend under overlapping UI elements. It's in contents space.
     WEBCORE_EXPORT FloatRect exposedContentRect() const;
 
-    // The given rects are only used if there is no platform widget.
+    // The given rect is only used if there is no platform widget, and is in view space. View space is the same as contents
+    // space only when scrolling is delegated to the native view.
     WEBCORE_EXPORT void LEGACY_NODELETE setExposedContentRect(const FloatRect&);
 
     void adjustExposedContentRectForProgrammaticScroll(ScrollPosition);
@@ -341,7 +342,7 @@ public:
     IntRect contentsToView(IntRect) const;
 
     FloatRect viewToContents(FloatRect) const;
-    FloatRect contentsToView(FloatRect) const;
+    WEBCORE_EXPORT FloatRect contentsToView(FloatRect) const;
 
     // The part of the view-to-contents translation that is not scaled by visibleContentScaleFactor().
     IntSize viewToContentsInsetOffset() const;
@@ -567,7 +568,8 @@ private:
     // FIXME: More things will move into here.
     struct DelegatedScrollingGeometry {
         FloatSize unobscuredContentSize;
-        FloatRect exposedContentRect;
+        // In view space, since the embedder of a root frame with a remote parent doesn't know its scroll position.
+        FloatRect exposedViewRect;
     };
     std::optional<DelegatedScrollingGeometry> m_delegatedScrollingGeometry;
 
