@@ -37,6 +37,7 @@ find_library(FRONTBOARDSERVICES_LIBRARY FrontBoardServices HINTS ${CMAKE_OSX_SYS
 find_library(GAMECONTROLLERUI_LIBRARY GameControllerUI HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 find_library(INSTALLCOORDINATION_LIBRARY InstallCoordination HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 find_library(MOBILEKEYBAG_LIBRARY MobileKeyBag HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(RUNNINGBOARDSERVICES_LIBRARY RunningBoardServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 find_library(NETWORKEXTENSION_LIBRARY NetworkExtension)
 find_library(PDFKIT_LIBRARY PDFKit)
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
@@ -659,6 +660,7 @@ elseif (WEBKIT_SDK_IS_IOS_FAMILY)
         $<$<BOOL:${INSTALLCOORDINATION_LIBRARY}>:${INSTALLCOORDINATION_LIBRARY}>
         $<$<BOOL:${MOBILECORESERVICES_LIBRARY}>:${MOBILECORESERVICES_LIBRARY}>
         $<$<BOOL:${MOBILEKEYBAG_LIBRARY}>:${MOBILEKEYBAG_LIBRARY}>
+        $<$<BOOL:${RUNNINGBOARDSERVICES_LIBRARY}>:${RUNNINGBOARDSERVICES_LIBRARY}>
         $<$<BOOL:${SPRINGBOARDSERVICES_LIBRARY}>:${SPRINGBOARDSERVICES_LIBRARY}>
         $<$<BOOL:${UIKITSERVICES_LIBRARY}>:${UIKITSERVICES_LIBRARY}>
     )
@@ -2000,7 +2002,10 @@ if (WEBKIT_SDK_IS_XROS)
 endif ()
 
 if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-    target_link_options(WebKit PRIVATE "SHELL:-L${CMAKE_OSX_SYSROOT}/usr/local/lib/dyld" "LINKER:-hidden-lsandbox-static")
+    # Link the static sandbox library only from an SDK that ships it, since the public simulator SDKs do not.
+    if (EXISTS "${CMAKE_OSX_SYSROOT}/usr/local/lib/dyld/libsandbox-static.a")
+        target_link_options(WebKit PRIVATE "SHELL:-L${CMAKE_OSX_SYSROOT}/usr/local/lib/dyld" "LINKER:-hidden-lsandbox-static")
+    endif ()
 else ()
     target_link_options(WebKit PRIVATE -lsandbox)
 endif ()
