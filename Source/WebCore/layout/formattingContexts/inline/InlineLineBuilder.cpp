@@ -565,7 +565,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
             // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
             // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
             // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-            auto candidateStartEndIndex = std::pair<size_t, size_t> { currentItemIndex, formattingContext().formattingUtils().nextWrapOpportunity(currentItemIndex, needsLayoutRange, m_inlineItemList) };
+            auto candidateStartEndIndex = std::pair<size_t, size_t> { currentItemIndex, formattingContext().formattingUtils().nextWrapOpportunity(currentItemIndex, needsLayoutRange, m_inlineItemList, intrinsicWidthMode()) };
             candidateContentForLine(lineCandidate, candidateStartEndIndex, needsLayoutRange, m_line.contentLogicalRight());
             // Now check if we can put this content on the current line.
             if (auto* floatItem = lineCandidate->floatItem) {
@@ -1099,7 +1099,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
 
         auto needsLayout = inlineItem.isFloat() || inlineItem.isAtomicInlineBox() || (inlineItem.isOutOfFlow() && inlineItem.layoutBox().isRubyAnnotationBox());
         if (needsLayout) {
-            // FIXME: Intrinsic width mode should call into the intrinsic width codepath. Currently we only get here when box has fixed width (meaning no need to run intrinsic width on the box).
+            // Intrinsic width mode takes the box's width from the render tree instead (see InlineFormattingUtils::intrinsicMarginBoxWidth).
             if (!isInIntrinsicWidthMode())
                 formattingContext().integrationUtils().layoutWithFormattingContextForBox(downcast<ElementBox>(inlineItem.layoutBox()));
         }
@@ -1144,7 +1144,14 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
             continue;
         }
         if (inlineItem.isAtomicInlineBox()) {
-            auto logicalWidth = formattingContext().formattingUtils().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLineCandidate);
+            auto logicalWidth = [&] {
+                auto& formattingUtils = formattingContext().formattingUtils();
+                if (isInIntrinsicWidthMode() && !inlineItem.layoutBox().isListMarkerBox()) {
+                    CheckedRef atomicInlineBox = downcast<ElementBox>(inlineItem.layoutBox());
+                    return formattingUtils.intrinsicMarginBoxWidth(atomicInlineBox.get(), *intrinsicWidthMode());
+                }
+                return formattingUtils.inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLineCandidate);
+            }();
             // FIXME: While the line breaking related properties for atomic level boxes do not depend on the line index (first line style) it'd be great to figure out the correct style to pass in.
             lineCandidate.inlineContent.appendInlineItem(inlineItem, inlineItem.layoutBox().parent().style(), logicalWidth);
             currentLogicalRight += logicalWidth;
@@ -1373,6 +1380,12 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
 
     auto& floatingContext = this->floatingContext();
     auto& boxGeometry = formattingContext().geometryForBox(floatBox);
+    if (isInIntrinsicWidthMode()) {
+        // The float is not given a position here, only listed with the line it is on, so that IntrinsicWidthHandler adds its width to that line.
+        m_placedFloats.append(PlacedFloats::Item { floatBox, floatingContext.isStartPositioned(floatBox) ? PlacedFloats::Item::Position::Start : PlacedFloats::Item::Position::End, boxGeometry, { }, { } });
+        return true;
+    }
+
     if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), mayOverConstrainLine))
         return false;
 
@@ -1448,11 +1461,7 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
     ASSERT(!m_line.hasContent());
     if (isInIntrinsicWidthMode()) {
         CheckedRef blockBox = downcast<ElementBox>(blockItem.layoutBox());
-        auto& boxGeometry = formattingContext().geometryForBox(blockBox.get());
-        auto& integrationUtils = formattingContext().integrationUtils();
-        auto contribution = *intrinsicWidthMode() == IntrinsicWidthMode::Minimum ? integrationUtils.minContentLogicalWidthContribution(blockBox.get()) : integrationUtils.maxContentLogicalWidthContribution(blockBox.get());
-        auto marginBoxWidth = contribution + boxGeometry.marginStart() + boxGeometry.marginEnd();
-        return m_line.appendBlock(blockItem, marginBoxWidth);
+        return m_line.appendBlock(blockItem, formattingContext().formattingUtils().intrinsicMarginBoxWidth(blockBox.get(), *intrinsicWidthMode()));
     }
 
     if (rootStyle().writingMode().isBidiRTL())
@@ -1927,9 +1936,13 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
 
 bool LineBuilder::unplaceFloatBox(const Box& floatBox)
 {
-    m_placedFloats.removeFirstMatching([&floatBox](auto& placedFloatItem) {
+    auto isPlacedOnThisLine = m_placedFloats.removeFirstMatching([&floatBox](auto& placedFloatItem) {
         return placedFloatItem.layoutBox() == &floatBox;
     });
+    if (isInIntrinsicWidthMode()) {
+        // These floats were never added to the placed floats (see tryPlacingFloatBox).
+        return isPlacedOnThisLine;
+    }
     return layoutState().placedFloats().remove(floatBox);
 }
 
