@@ -244,6 +244,12 @@ FontPlatformData FontPlatformData::create(const Attributes& data, const FontCust
     Vector<hb_feature_t> features = data.m_features;
     if (custom) {
         sk_sp<SkTypeface> typeface = custom->m_typeface;
+        if (!data.m_variations.isEmpty()) {
+            SkFontArguments fontArgs;
+            fontArgs.setVariationDesignPosition({ data.m_variations.span().data(), static_cast<int>(data.m_variations.size()) });
+            if (auto variationTypeface = typeface->makeClone(fontArgs))
+                typeface = WTF::move(variationTypeface);
+        }
         return { WTF::move(typeface), data.m_metadata, WTF::move(features), custom };
     }
     sk_sp<SkTypeface> typeface = FontCache::forCurrentThread().fontManager().matchFamilyStyle(data.m_familyName.c_str(), data.m_style);
@@ -252,11 +258,19 @@ FontPlatformData FontPlatformData::create(const Attributes& data, const FontCust
 
 FontPlatformData::Attributes FontPlatformData::attributes() const
 {
+    auto& typeface = *skFont().getTypeface();
     SkString familyName;
-    skFont().getTypeface()->getFamilyName(&familyName);
-    SkFontStyle style = skFont().getTypeface()->fontStyle();
+    typeface.getFamilyName(&familyName);
+    SkFontStyle style = typeface.fontStyle();
     Vector<hb_feature_t> features = m_features;
-    return { m_metadata, familyName, style, WTF::move(features) };
+    // Only custom fonts get variations applied, see FontCustomPlatformData::fontPlatformData().
+    Vector<SkFontArguments::VariationPosition::Coordinate> variations;
+    if (int coordinateCount = m_customPlatformData ? typeface.getVariationDesignPosition({ }) : 0; coordinateCount > 0) {
+        variations.grow(coordinateCount);
+        if (typeface.getVariationDesignPosition(variations.mutableSpan()) != coordinateCount)
+            variations.clear();
+    }
+    return { m_metadata, familyName, style, WTF::move(features), WTF::move(variations) };
 }
 
 hb_font_t* FontPlatformData::hbFont() const
