@@ -38,6 +38,7 @@
 #include "OpenXRInput.h"
 #include "OpenXRInputSource.h"
 #include "OpenXRLayer.h"
+#include "OpenXRPlaneDetectionManager.h"
 #include "OpenXRUtils.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -127,6 +128,11 @@ void OpenXRCoordinator::getPrimaryDeviceInfo(WebPageProxy& page, DeviceInfoCallb
         deviceInfo.arFeatures.append(PlatformXR::SessionFeature::HitTest);
     }
 #endif
+#endif
+
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    if (OpenXRPlaneDetectionManager::isSupported(m_instance, m_systemId))
+        deviceInfo.arFeatures.append(PlatformXR::SessionFeature::PlaneDetection);
 #endif
 
 #if ENABLE(WEBXR_LAYERS)
@@ -340,7 +346,7 @@ void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType 
 
 #endif // ENABLE(WEBXR_LAYERS)
 
-void OpenXRCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRCoordinatorSessionEventClient>&& sessionEventClient, const WebCore::SecurityOriginData&, PlatformXR::SessionMode sessionMode, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&)
+void OpenXRCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRCoordinatorSessionEventClient>&& sessionEventClient, const WebCore::SecurityOriginData&, PlatformXR::SessionMode sessionMode, const PlatformXR::Device::FeatureList& features, std::optional<WebCore::XRCanvasConfiguration>&&)
 {
     ASSERT(RunLoop::isMain());
     LOG(XR, "OpenXRCoordinator::startSession");
@@ -362,7 +368,7 @@ void OpenXRCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRCoord
                 .renderState = renderState,
                 .renderQueue = renderQueue.get()
             };
-            renderQueue->dispatch([this, renderState] {
+            renderQueue->dispatch([this, renderState, features] {
                 createSessionIfNeeded();
                 if (m_session == XR_NULL_HANDLE) {
                     LOG(XR, "OpenXRCoordinator: failed to create the session");
@@ -373,6 +379,10 @@ void OpenXRCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRCoord
                     cleanupAllResources();
                     return;
                 }
+#if ENABLE(WEBXR_PLANE_DETECTION)
+                if (features.contains(PlatformXR::SessionFeature::PlaneDetection))
+                    m_planeDetectionManager = OpenXRPlaneDetectionManager::create(m_instance, m_systemId, m_session);
+#endif
                 waitForSessionReady(renderState, [] { });
             });
         },
@@ -688,6 +698,15 @@ void OpenXRCoordinator::createInstance()
 #endif
 #endif
 #endif
+#if ENABLE(WEBXR_PLANE_DETECTION) && defined(XR_EXT_spatial_plane_tracking)
+    if (OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_FUTURE_EXTENSION_NAME ""_span)
+        && OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_SPATIAL_ENTITY_EXTENSION_NAME ""_span)
+        && OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_SPATIAL_PLANE_TRACKING_EXTENSION_NAME ""_span)) {
+        extensions.append(const_cast<char*>(XR_EXT_FUTURE_EXTENSION_NAME));
+        extensions.append(const_cast<char*>(XR_EXT_SPATIAL_ENTITY_EXTENSION_NAME));
+        extensions.append(const_cast<char*>(XR_EXT_SPATIAL_PLANE_TRACKING_EXTENSION_NAME));
+    }
+#endif
 #if defined(XR_KHR_composition_layer_equirect2)
     if (OpenXRExtensions::singleton().isExtensionSupported(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME ""_span))
         extensions.append(const_cast<char*>(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME));
@@ -872,6 +891,9 @@ void OpenXRCoordinator::cleanupSessionAndAssociatedResources()
     m_input.reset();
 #if ENABLE(WEBXR_HIT_TEST)
     m_hitTestManager.reset();
+#endif
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    m_planeDetectionManager.reset();
 #endif
 
     if (m_session != XR_NULL_HANDLE) {
@@ -1088,6 +1110,11 @@ PlatformXR::FrameData OpenXRCoordinator::populateFrameData(Box<RenderState> rend
         }
         frameData.transientInputHitTestResults.add(pair.key, WTF::move(results));
     }
+#endif
+
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    if (m_planeDetectionManager)
+        frameData.detectedPlanes = m_planeDetectionManager->update(m_localSpace, renderState->frameState.predictedDisplayTime);
 #endif
 
     auto toXREnvironmentBlendMode = [](XrEnvironmentBlendMode mode) {

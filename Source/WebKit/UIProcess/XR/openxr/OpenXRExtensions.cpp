@@ -115,6 +115,29 @@ bool OpenXRExtensions::loadMethods(XrInstance instance)
         RELEASE_ASSERT(m_methods->xrRaycastANDROID);
     }
 #endif
+    // FIXME: eventually use this macro for the above methods too.
+#define LOAD_SPATIAL_METHOD(name) xrGetInstanceProcAddr(instance, #name, reinterpret_cast<PFN_xrVoidFunction*>(&m_methods->name))
+#if defined(XR_EXT_future)
+    if (isExtensionSupported(XR_EXT_FUTURE_EXTENSION_NAME ""_span)) {
+        LOAD_SPATIAL_METHOD(xrPollFutureEXT);
+        LOAD_SPATIAL_METHOD(xrCancelFutureEXT);
+    }
+#endif
+#if defined(XR_EXT_spatial_entity)
+    if (isExtensionSupported(XR_EXT_SPATIAL_ENTITY_EXTENSION_NAME ""_span)) {
+        LOAD_SPATIAL_METHOD(xrEnumerateSpatialCapabilitiesEXT);
+        LOAD_SPATIAL_METHOD(xrEnumerateSpatialCapabilityComponentTypesEXT);
+        LOAD_SPATIAL_METHOD(xrCreateSpatialContextAsyncEXT);
+        LOAD_SPATIAL_METHOD(xrCreateSpatialContextCompleteEXT);
+        LOAD_SPATIAL_METHOD(xrDestroySpatialContextEXT);
+        LOAD_SPATIAL_METHOD(xrCreateSpatialDiscoverySnapshotAsyncEXT);
+        LOAD_SPATIAL_METHOD(xrCreateSpatialDiscoverySnapshotCompleteEXT);
+        LOAD_SPATIAL_METHOD(xrQuerySpatialComponentDataEXT);
+        LOAD_SPATIAL_METHOD(xrDestroySpatialSnapshotEXT);
+        LOAD_SPATIAL_METHOD(xrGetSpatialBufferVector2fEXT);
+    }
+#endif
+#undef LOAD_SPATIAL_METHOD
     return true;
 }
 

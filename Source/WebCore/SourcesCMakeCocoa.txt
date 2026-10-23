@@ -132,12 +132,15 @@ JSMediaConfiguration.cpp
 JSRTCRtpCodingParameters.cpp
 JSWebXRHitTestResult.cpp
 JSWebXRHitTestSource.cpp
+JSWebXRPlane.cpp
+JSWebXRPlaneSet.cpp
 JSWebXRRay.cpp
 JSWebXRTransientInputHitTestResult.cpp
 JSWebXRTransientInputHitTestSource.cpp
 JSXRHitTestOptionsInit.cpp
 JSXRHitTestTrackableType.cpp
 JSXRLayerInit.cpp
+JSXRPlaneOrientation.cpp
 JSXRRayDirectionInit.cpp
 JSXRTransientInputHitTestOptionsInit.cpp
 MathMLNames.cpp

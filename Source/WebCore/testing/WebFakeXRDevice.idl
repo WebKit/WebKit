@@ -67,6 +67,11 @@
   undefined simulateShutdown();
 
   // Hit test extensions:
-  [EnabledBySetting=WebXRHitTestModuleEnabled, Conditional=WEBXR_HIT_TEST] undefined setWorld(FakeXRWorldInit world);
-  [EnabledBySetting=WebXRHitTestModuleEnabled, Conditional=WEBXR_HIT_TEST] undefined clearWorld();
+  [EnabledBySetting=WebXRHitTestModuleEnabled|WebXRPlaneDetectionModuleEnabled, Conditional=WEBXR_HIT_TEST|WEBXR_PLANE_DETECTION] undefined setWorld(FakeXRWorldInit world);
+  [EnabledBySetting=WebXRHitTestModuleEnabled|WebXRPlaneDetectionModuleEnabled, Conditional=WEBXR_HIT_TEST|WEBXR_PLANE_DETECTION] undefined clearWorld();
+
+  // Plane detection extensions:
+  // Like setWorld() but planes at the same region index keep their identity, so they are updated in place instead of replaced.
+  [EnabledBySetting=WebXRPlaneDetectionModuleEnabled, Conditional=WEBXR_PLANE_DETECTION] undefined updateWorld(FakeXRWorldInit world);
+  [EnabledBySetting=WebXRPlaneDetectionModuleEnabled, Conditional=WEBXR_PLANE_DETECTION] undefined simulateIncompletePlaneDetectionData();
 };

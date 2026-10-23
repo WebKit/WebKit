@@ -1,0 +1,10 @@
+
+PASS XRPlane is updated in place and lastChangedTime increases when the polygon changes - webgl
+PASS XRPlane is updated in place and lastChangedTime increases when the polygon changes - webgl2
+PASS XRPlane lastChangedTime is unchanged when only the pose changes, and the plane space follows the new pose - webgl
+PASS XRPlane lastChangedTime is unchanged when only the pose changes, and the plane space follows the new pose - webgl2
+PASS XRPlane lastChangedTime increases when only the orientation or only the semanticLabel changes - webgl
+PASS XRPlane lastChangedTime increases when only the orientation or only the semanticLabel changes - webgl2
+PASS A plane removed from the world is gone from the next frame and its retained plane space has no pose - webgl
+PASS A plane removed from the world is gone from the next frame and its retained plane space has no pose - webgl2
+

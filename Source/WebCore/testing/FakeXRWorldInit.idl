@@ -24,8 +24,8 @@
  */
 
 [
-    Conditional=WEBXR_HIT_TEST,
-    EnabledBySetting=WebXRHitTestModuleEnabled
+    Conditional=WEBXR_HIT_TEST|WEBXR_PLANE_DETECTION,
+    EnabledBySetting=WebXRHitTestModuleEnabled|WebXRPlaneDetectionModuleEnabled
 ] enum FakeXRRegionType {
     "point",
     "plane",
@@ -33,23 +33,42 @@
 };
 
 [
-    Conditional=WEBXR_HIT_TEST,
-    EnabledBySetting=WebXRHitTestModuleEnabled,
+    Conditional=WEBXR_PLANE_DETECTION,
+    EnabledBySetting=WebXRPlaneDetectionModuleEnabled,
+] dictionary FakeXRPlanePointInit {
+    required float x;
+    required float z;
+};
+
+[
+    Conditional=WEBXR_PLANE_DETECTION,
+    EnabledBySetting=WebXRPlaneDetectionModuleEnabled,
+] dictionary FakeXRPlaneInfoInit {
+    required XRPlaneOrientation orientation;
+    required FakeXRRigidTransformInit origin;
+    required sequence<FakeXRPlanePointInit> polygon;
+    DOMString semanticLabel;
+};
+
+[
+    Conditional=WEBXR_HIT_TEST|WEBXR_PLANE_DETECTION,
+    EnabledBySetting=WebXRHitTestModuleEnabled|WebXRPlaneDetectionModuleEnabled,
 ] dictionary FakeXRTriangleInit {
     required sequence<DOMPointInit> vertices;
 };
 
 [
-    Conditional=WEBXR_HIT_TEST,
-    EnabledBySetting=WebXRHitTestModuleEnabled,
+    Conditional=WEBXR_HIT_TEST|WEBXR_PLANE_DETECTION,
+    EnabledBySetting=WebXRHitTestModuleEnabled|WebXRPlaneDetectionModuleEnabled,
 ] dictionary FakeXRRegionInit {
     required sequence<FakeXRTriangleInit> faces;
     required FakeXRRegionType type;
+    [Conditional=WEBXR_PLANE_DETECTION, EnabledBySetting=WebXRPlaneDetectionModuleEnabled] FakeXRPlaneInfoInit planeInfo;
 };
 
 [
-    Conditional=WEBXR_HIT_TEST,
-    EnabledBySetting=WebXRHitTestModuleEnabled,
+    Conditional=WEBXR_HIT_TEST|WEBXR_PLANE_DETECTION,
+    EnabledBySetting=WebXRHitTestModuleEnabled|WebXRPlaneDetectionModuleEnabled,
 ] dictionary FakeXRWorldInit {
     required sequence<FakeXRRegionInit> hitTestRegions;
 };

@@ -7701,6 +7701,18 @@ WebXRLayersAPIEnabled:
     default: false
     WebKitLegacy: false
 
+WebXRPlaneDetectionModuleEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "WebXR Plane Detection Module"
+  humanReadableDescription: "Adds support for the Plane Detection Module for WebXR"
+  condition: ENABLE(WEBXR_PLANE_DETECTION)
+  defaultValue:
+    "USE(OPENXR)": true
+    default: false
+  disableInLockdownMode: true
+
 WebXRWebGPUBindingsEnabled:
   type: bool
   status: Webgpu_webxr_feature_status

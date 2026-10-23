@@ -42,6 +42,9 @@ enum class PlatformXR::SessionFeature : uint8_t {
 #if ENABLE(WEBXR_HIT_TEST)
     HitTest,
 #endif
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    PlaneDetection,
+#endif
     WebGPU,
 #if ENABLE(WEBXR_LAYERS)
     Layers,
@@ -265,6 +268,28 @@ using PlatformXR::HitTestSource = WebCore::XRHitTestSourceIdentifier;
 using PlatformXR::TransientInputHitTestSource = WebCore::XRHitTestSourceIdentifier;
 #endif
 
+#if ENABLE(WEBXR_PLANE_DETECTION)
+enum class PlatformXR::PlaneOrientation : uint8_t {
+    Horizontal,
+    Vertical,
+};
+
+enum class PlatformXR::PlaneSemanticLabel : uint8_t {
+    Floor,
+    Wall,
+    Ceiling,
+    Table,
+};
+
+[Nested] struct PlatformXR::FrameData::Plane {
+    uint64_t id;
+    PlatformXR::FrameData::Pose pose;
+    Vector<WebCore::FloatPoint> polygon;
+    std::optional<PlatformXR::PlaneOrientation> orientation;
+    std::optional<PlatformXR::PlaneSemanticLabel> semanticLabel;
+};
+#endif
+
 using PlatformXR::LayerHandle = int;
 
 header: <WebCore/PlatformXR.h>
@@ -282,6 +307,9 @@ header: <WebCore/PlatformXR.h>
 #if ENABLE(WEBXR_HIT_TEST)
     HashMap<PlatformXR::HitTestSource, Vector<PlatformXR::FrameData::HitTestResult>> hitTestResults;
     HashMap<PlatformXR::TransientInputHitTestSource, Vector<PlatformXR::FrameData::TransientInputHitTestResult>> transientInputHitTestResults;
+#endif
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    std::optional<Vector<PlatformXR::FrameData::Plane>> detectedPlanes;
 #endif
     Vector<PlatformXR::FrameData::InputSource> inputSources;
     PlatformXR::XREnvironmentBlendMode environmentBlendMode;

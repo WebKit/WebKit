@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class FloatPoint3D;
+
 struct Quaternion {
     double x, y, z, w;
 
@@ -38,7 +40,9 @@ struct Quaternion {
     }
 
     Quaternion slerp(const Quaternion& other, double progress);
-    Quaternion LEGACY_NODELETE accumulate(const Quaternion& other);
+    WEBCORE_EXPORT Quaternion LEGACY_NODELETE accumulate(const Quaternion& other);
+    WEBCORE_EXPORT Quaternion LEGACY_NODELETE conjugate() const;
+    WEBCORE_EXPORT FloatPoint3D LEGACY_NODELETE rotate(const FloatPoint3D&) const;
     Quaternion interpolate(const Quaternion& other, double progress, CompositeOperation);
 };
 

@@ -41,6 +41,9 @@ namespace WebKit {
 #if ENABLE(WEBXR_HIT_TEST)
 class OpenXRHitTestManager;
 #endif
+#if ENABLE(WEBXR_PLANE_DETECTION)
+class OpenXRPlaneDetectionManager;
+#endif
 class OpenXRGraphicsBinding;
 class OpenXRInput;
 class OpenXRLayer;
@@ -140,6 +143,9 @@ private:
 
 #if ENABLE(WEBXR_HIT_TEST)
     std::unique_ptr<OpenXRHitTestManager> m_hitTestManager;
+#endif
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    std::unique_ptr<OpenXRPlaneDetectionManager> m_planeDetectionManager;
 #endif
 };
 

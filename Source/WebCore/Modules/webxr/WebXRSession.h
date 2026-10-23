@@ -35,6 +35,9 @@
 #include "VisibilityChangeClient.h"
 #include "WebXRFrame.h"
 #include "WebXRInputSourceArray.h"
+#if ENABLE(WEBXR_PLANE_DETECTION)
+#include "WebXRPlane.h"
+#endif
 #include "WebXRRenderState.h"
 #include "WebXRSessionListener.h"
 #include "WebXRView.h"
@@ -139,6 +142,11 @@ public:
     ExceptionOr<void> cancelTransientInputHitTestSource(PlatformXR::TransientInputHitTestSource);
 #endif
 
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    void initiateRoomCapture(DOMPromiseDeferred<void>&&);
+    Vector<Ref<WebXRPlane>> detectedPlanes() const;
+#endif
+
 #if ENABLE(WEBXR_LAYERS)
     unsigned maxRenderLayers() const;
 #endif
@@ -188,6 +196,11 @@ private:
     void cleanupInactiveHitTestSources();
 #endif
 
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    void updateDetectedPlanes(DOMHighResTimeStamp);
+    void invalidateDetectedPlanes();
+#endif
+
     XRInteractionMode m_interactionMode { XRInteractionMode::WorldSpace };
     XRVisibilityState m_visibilityState { XRVisibilityState::Visible };
     const UniqueRef<WebXRInputSourceArray> m_inputSources;
@@ -226,6 +239,11 @@ private:
 #if ENABLE(WEBXR_HIT_TEST)
     HashMap<PlatformXR::HitTestSource, WeakPtr<WebXRHitTestSource>> m_activeHitTestSources;
     HashMap<PlatformXR::HitTestSource, WeakPtr<WebXRTransientInputHitTestSource>> m_activeTransientInputHitTestSources;
+#endif
+
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    HashMap<uint64_t, Ref<WebXRPlane>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_detectedPlanes;
+    bool m_roomCaptureCompleted { false };
 #endif
 };
 

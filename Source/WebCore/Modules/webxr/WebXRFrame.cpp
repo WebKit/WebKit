@@ -47,6 +47,10 @@
 #include "WebXRTransientInputHitTestResult.h"
 #endif
 
+#if ENABLE(WEBXR_PLANE_DETECTION)
+#include "WebXRPlaneSet.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRFrame);
@@ -424,6 +428,19 @@ ExceptionOr<Vector<Ref<WebXRTransientInputHitTestResult>>> WebXRFrame::getHitTes
         results.append(WebXRTransientInputHitTestResult::create(inputSource.releaseNonNull(), WTF::move(hitTestResults)));
     }
     return results;
+}
+#endif
+
+#if ENABLE(WEBXR_PLANE_DETECTION)
+// https://immersive-web.github.io/plane-detection/#dom-xrframe-detectedplanes
+ExceptionOr<Ref<WebXRPlaneSet>> WebXRFrame::detectedPlanes()
+{
+    if (!m_active)
+        return Exception { ExceptionCode::InvalidStateError, "Frame is not active"_s };
+
+    if (!m_detectedPlanes)
+        m_detectedPlanes = WebXRPlaneSet::create(m_session->detectedPlanes());
+    return Ref { *m_detectedPlanes };
 }
 #endif
 
