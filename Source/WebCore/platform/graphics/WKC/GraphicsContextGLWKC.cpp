@@ -2759,22 +2759,39 @@ bool GraphicsContextGLWKC::setUniformData(GCGLint loc,const void* values,size_t 
         addError(GL_INVALID_OPERATION_VALUE);
         return false;
     }
-    if (bytes < static_cast<size_t>(components) * count * (ints ? sizeof(int32_t) : sizeof(float))) {
+    const size_t scalarBytes = ints ? sizeof(int32_t) : sizeof(float);
+    const size_t maximumSize = std::numeric_limits<size_t>::max();
+    if (count && static_cast<size_t>(components) > maximumSize / count) {
         addError(GL_INVALID_VALUE_VALUE);
         return false;
     }
+    const size_t scalarCount = static_cast<size_t>(components) * count;
+    if (scalarCount > maximumSize / scalarBytes || bytes < scalarCount * scalarBytes) {
+        addError(GL_INVALID_VALUE_VALUE);
+        return false;
+    }
+
     const auto* data = static_cast<const uint8_t*>(values);
     const bool samplerUniform = uniform.type == GL_SAMPLER_2D_VALUE || uniform.type == GL_SAMPLER_CUBE_VALUE;
-    const size_t scalarBytes = ints ? sizeof(int32_t) : sizeof(float);
+
+    // Validate the entire sampler array before changing any element. A bad
+    // unit in a later element must not leave earlier elements partially updated.
+    if (samplerUniform) {
+        for (uint32_t i = 0; i < count; ++i) {
+            int32_t unit;
+            std::memcpy(&unit, data + static_cast<size_t>(i) * scalarBytes, sizeof(unit));
+            if (unit < 0 || unit >= static_cast<int32_t>(m_boundTextures2D.size())) {
+                addError(GL_INVALID_VALUE_VALUE);
+                return false;
+            }
+        }
+    }
+
     for (uint32_t i = 0; i < count; ++i) {
         const size_t element = l->second.elementIndex + i;
         const void* elementData = data + static_cast<size_t>(i) * components * scalarBytes;
         if (samplerUniform) {
             const int32_t unit = *static_cast<const int32_t*>(elementData);
-            if (unit < 0 || unit >= static_cast<int32_t>(m_boundTextures2D.size())) {
-                addError(GL_INVALID_VALUE_VALUE);
-                return false;
-            }
             if (element >= uniform.samplerUnits.size())
                 uniform.samplerUnits.resize(uniform.elements.size(), 0);
             uniform.samplerUnits[element] = unit;
