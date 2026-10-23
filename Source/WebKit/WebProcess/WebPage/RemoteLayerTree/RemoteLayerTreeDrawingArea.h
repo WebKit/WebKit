@@ -185,7 +185,6 @@ private:
     Markable<MonotonicTime> m_updateStartTime;
     bool m_isRenderingSuspended { false };
     bool m_hasDeferredRenderingUpdate { false };
-    bool m_shouldStartRenderingUpdateBeforeDueTimers { false };
     bool m_inUpdateRendering { false };
 
     bool m_waitingForBackingStoreSwap { false };
