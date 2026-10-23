@@ -1,0 +1,13 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of h264-422-bt709-videorange.mp4, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+h264-422-bt709-videorange.mp4: h264 yuv422p bt709/videorange/bt709/bt709
+FAIL h264-422-bt709-videorange.mp4: could not load: timed out waiting for a video frame
+
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

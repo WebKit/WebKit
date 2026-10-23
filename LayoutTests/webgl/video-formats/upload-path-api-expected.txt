@@ -1,0 +1,100 @@
+Each condition of the hardware upload path, with the default path, in WebGL 1 and WebGL 2: every (internalformat, format, type) the hardware path accepts, a combination it does not accept, texSubImage2D, texImage3D, a source sub-rectangle, level 1, a cube map face, and NV12 against RGBA VideoFrames. The sources are a video the hardware path uses directly (h264-420-bt709-videorange.mp4), a video it converts first (hevc-420-10bit-bt709-videorange.mp4), and JS-built NV12 and RGBA VideoFrames. Each line gives the path and the reason; the texture is checked against the frame's own R'G'B' values, or against its previous contents where the upload is an error.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+h264-420-bt709-videorange.mp4: h264 yuv420p bt709/videorange/bt709/bt709
+hevc-420-10bit-bt709-videorange.mp4: hevc yuv420p10le bt709/videorange/bt709/bt709
+PASS WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(RGB/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(RGBA/UNSIGNED_SHORT_4_4_4_4): software (gate-combination)
+PASS WebGL 1 h264-420-bt709-videorange.mp4 <video> texSubImage2D(at 0,0, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(level 1, RGBA/UNSIGNED_BYTE): software (gate-level), INVALID_VALUE
+PASS WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(cube +X, RGBA/UNSIGNED_BYTE): software (gate-target), INVALID_VALUE
+PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGB/UNSIGNED_BYTE): hardware (converted)
+PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGBA/UNSIGNED_BYTE): hardware (converted)
+PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGBA/UNSIGNED_SHORT_4_4_4_4): software (gate-combination)
+PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texSubImage2D(at 0,0, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(level 1, RGBA/UNSIGNED_BYTE): software (gate-level), INVALID_VALUE
+PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(cube +X, RGBA/UNSIGNED_BYTE): software (gate-target), INVALID_VALUE
+PASS WebGL 1 VideoFrame(NV12 buffer) texImage2D(RGB/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 1 VideoFrame(NV12 buffer) texImage2D(RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 1 VideoFrame(NV12 buffer) texImage2D(RGBA/UNSIGNED_SHORT_4_4_4_4): software (gate-combination)
+PASS WebGL 1 VideoFrame(NV12 buffer) texSubImage2D(at 0,0, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 1 VideoFrame(NV12 buffer) texImage2D(level 1, RGBA/UNSIGNED_BYTE): software (gate-level), INVALID_VALUE
+PASS WebGL 1 VideoFrame(NV12 buffer) texImage2D(cube +X, RGBA/UNSIGNED_BYTE): software (gate-target), INVALID_VALUE
+PASS WebGL 1 VideoFrame(RGBA buffer) texImage2D(RGB/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 1 VideoFrame(RGBA buffer) texImage2D(RGBA/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 1 VideoFrame(RGBA buffer) texImage2D(RGBA/UNSIGNED_SHORT_4_4_4_4): software (gate-combination)
+PASS WebGL 1 VideoFrame(RGBA buffer) texSubImage2D(at 0,0, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 1 VideoFrame(RGBA buffer) texImage2D(level 1, RGBA/UNSIGNED_BYTE): software (gate-level), INVALID_VALUE
+PASS WebGL 1 VideoFrame(RGBA buffer) texImage2D(cube +X, RGBA/UNSIGNED_BYTE): software (gate-target), INVALID_VALUE
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(RGB/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(RGB8/RGB/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE): software (fbo-incomplete)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(RGB565/RGB/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(RGBA8/RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(RGB5_A1/RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(RGBA4/RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(RGBA16F/RGBA/HALF_FLOAT): software (gate-combination)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texSubImage2D(at 0,0, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage3D(2D_ARRAY, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(source 64,64 192x128, RGBA/UNSIGNED_BYTE): software (gate-source-rect)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(level 1, RGBA/UNSIGNED_BYTE): software (gate-level)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(cube +X, RGBA/UNSIGNED_BYTE): software (gate-target), INVALID_VALUE
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(cube +X, source 64,0 192x192, RGBA/UNSIGNED_BYTE): software (gate-target)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGB/UNSIGNED_BYTE): hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGBA/UNSIGNED_BYTE): hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGB8/RGB/UNSIGNED_BYTE): hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE): software (fbo-incomplete)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGB565/RGB/UNSIGNED_BYTE): hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGBA8/RGBA/UNSIGNED_BYTE): hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE): hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGB5_A1/RGBA/UNSIGNED_BYTE): hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGBA4/RGBA/UNSIGNED_BYTE): hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(RGBA16F/RGBA/HALF_FLOAT): software (gate-combination)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texSubImage2D(at 0,0, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage3D(2D_ARRAY, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(source 64,64 192x128, RGBA/UNSIGNED_BYTE): software (gate-source-rect)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(level 1, RGBA/UNSIGNED_BYTE): software (gate-level)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(cube +X, RGBA/UNSIGNED_BYTE): software (gate-target), INVALID_VALUE
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(cube +X, source 64,0 192x192, RGBA/UNSIGNED_BYTE): software (gate-target)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(RGB/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(RGB8/RGB/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(SRGB8/RGB/UNSIGNED_BYTE): software (fbo-incomplete)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(RGB565/RGB/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(RGBA8/RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(RGB5_A1/RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(RGBA4/RGBA/UNSIGNED_BYTE): hardware (direct)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(RGBA16F/RGBA/HALF_FLOAT): software (gate-combination)
+PASS WebGL 2 VideoFrame(NV12 buffer) texSubImage2D(at 0,0, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage3D(2D_ARRAY, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(source 64,64 192x128, RGBA/UNSIGNED_BYTE): software (gate-source-rect)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(level 1, RGBA/UNSIGNED_BYTE): software (gate-level)
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(cube +X, RGBA/UNSIGNED_BYTE): software (gate-target), INVALID_VALUE
+PASS WebGL 2 VideoFrame(NV12 buffer) texImage2D(cube +X, source 64,0 192x192, RGBA/UNSIGNED_BYTE): software (gate-target)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(RGB/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(RGBA/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(RGB8/RGB/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(SRGB8/RGB/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(RGB565/RGB/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(RGBA8/RGBA/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(RGB5_A1/RGBA/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(RGBA4/RGBA/UNSIGNED_BYTE): software (gate-videoframe-format)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(RGBA16F/RGBA/HALF_FLOAT): software (gate-combination)
+PASS WebGL 2 VideoFrame(RGBA buffer) texSubImage2D(at 0,0, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage3D(2D_ARRAY, RGBA/UNSIGNED_BYTE): software (gate-function)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(source 64,64 192x128, RGBA/UNSIGNED_BYTE): software (gate-source-rect)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(level 1, RGBA/UNSIGNED_BYTE): software (gate-level)
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(cube +X, RGBA/UNSIGNED_BYTE): software (gate-target), INVALID_VALUE
+PASS WebGL 2 VideoFrame(RGBA buffer) texImage2D(cube +X, source 64,0 192x192, RGBA/UNSIGNED_BYTE): software (gate-target)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

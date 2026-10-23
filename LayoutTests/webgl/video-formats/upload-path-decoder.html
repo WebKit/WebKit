@@ -1,0 +1,21 @@
+<!-- webkit-test-runner [ AllowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/video-formats/video-formats-manifest.js"></script>
+<script src="../../resources/video-formats/video-formats-test-utils.js"></script>
+<script src="resources/webgl-video-sink.js"></script>
+<script src="resources/webgl-upload-path-test.js"></script>
+</head>
+<body>
+<script>
+"use strict";
+description("The first VideoDecoder output frame of every test video the decoder supports, with prefer-hardware and prefer-software, uploaded in WebGL 2 with a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The decoder is not given the track's rotation, so the frames are not rotated. The pixel formats depend on the GPU and OS.");
+
+// 12-bit HEVC VideoDecoder output crashes the GPU process (videoframe-upload-decoder-hevc-12bit.html).
+UploadPathTest.run(() => UploadPathTest.runDecoderTest({ videos: VideoFormats.videoNames(info => info.decoderChunks && !(info.codec === "hevc" && info.bitDepth > 10)) }));
+</script>
+</body>
+</html>

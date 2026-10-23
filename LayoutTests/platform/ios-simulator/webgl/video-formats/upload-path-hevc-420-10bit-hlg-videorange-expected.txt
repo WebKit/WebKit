@@ -1,0 +1,19 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of hevc-420-10bit-hlg-videorange.mp4, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+hevc-420-10bit-hlg-videorange.mp4: hevc yuv420p10le bt2020/videorange/bt2020/arib-std-b67
+PASS hevc-420-10bit-hlg-videorange.mp4 <video> default path: hardware (converted), pixel format BGRA
+PASS hevc-420-10bit-hlg-videorange.mp4 <video> software path: software (forced)
+PASS hevc-420-10bit-hlg-videorange.mp4 <video> hardware path: hardware (converted)
+PASS hevc-420-10bit-hlg-videorange.mp4 <video> hardware vs software: match
+PASS hevc-420-10bit-hlg-videorange.mp4 VideoFrame(video) (format BGRA) default path: software (gate-videoframe-format)
+PASS hevc-420-10bit-hlg-videorange.mp4 VideoFrame(video) (format BGRA) software path: software (forced)
+hevc-420-10bit-hlg-videorange.mp4 VideoFrame(video) (format BGRA) hardware path: hardware not available (gate-videoframe-format)
+hevc-420-10bit-hlg-videorange.mp4 VideoFrame(video) (format BGRA) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

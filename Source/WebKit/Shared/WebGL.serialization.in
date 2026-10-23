@@ -163,6 +163,28 @@ enum class WebCore::GraphicsContextGLSimulatedEventForTesting : uint8_t {
     RenderbufferAllocationFailure
 };
 
+header: <WebCore/GraphicsContextGLEnums.h>
+enum class WebCore::GraphicsContextGLVideoUploadOutcome : uint8_t {
+    Direct,
+    Converted,
+    Cached,
+    NotTransferable,
+    ContextLost,
+    NoFrame,
+    Unsupported,
+    ConversionFailed,
+    NoIOSurface,
+    FramebufferIncomplete,
+    PbufferFailed,
+};
+
+header: <WebCore/GraphicsContextGLEnums.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::GraphicsContextGLVideoUploadRecord {
+    uint64_t sequence;
+    WebCore::GraphicsContextGLVideoUploadOutcome outcome;
+    uint32_t pixelFormat;
+};
+
 header: <WebCore/GraphicsContextGLActiveInfo.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::GCGLUniformActiveInfo {
     UTF8CString name;

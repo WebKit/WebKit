@@ -1,0 +1,20 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of h264-420-smpte240m-videorange.mp4, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+h264-420-smpte240m-videorange.mp4: h264 yuv420p smpte240m/videorange/smpte240m/smpte240m
+PASS h264-420-smpte240m-videorange.mp4 <video> default path: hardware (direct), pixel format &8v0
+FAIL h264-420-smpte240m-videorange.mp4 <video> software path: software (forced): up to 5 off: yellow at 152,24: (254,250,0,255), expected (254,255,0,255); green at 280,24: (1,251,0,255), expected (0,255,1,255); blue at 24,152: (0,5,255,255), expected (1,0,255,255)
+PASS h264-420-smpte240m-videorange.mp4 <video> hardware path: hardware (direct)
+FAIL h264-420-smpte240m-videorange.mp4 <video> hardware vs software: differ by up to 5 at yellow: hardware (254,255,0,255), software (254,250,0,255)
+PASS h264-420-smpte240m-videorange.mp4 VideoFrame(video) (format NV12) default path: hardware (direct), pixel format &8v0
+FAIL h264-420-smpte240m-videorange.mp4 VideoFrame(video) (format NV12) software path: software (forced): up to 5 off: yellow at 152,24: (254,250,0,255), expected (254,255,0,255); green at 280,24: (1,251,0,255), expected (0,255,1,255); blue at 24,152: (0,5,255,255), expected (1,0,255,255)
+PASS h264-420-smpte240m-videorange.mp4 VideoFrame(video) (format NV12) hardware path: hardware (direct)
+FAIL h264-420-smpte240m-videorange.mp4 VideoFrame(video) (format NV12) hardware vs software: differ by up to 5 at yellow: hardware (254,255,0,255), software (254,250,0,255)
+
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

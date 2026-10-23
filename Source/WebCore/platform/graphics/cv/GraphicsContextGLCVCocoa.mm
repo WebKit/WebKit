@@ -529,7 +529,7 @@ GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa(GraphicsContextGLCocoa& owner
     GL_BindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 }
 
-bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& videoFrame, PlatformGLObject outputTexture, GLint level, GLenum internalFormat, GLenum format, GLenum type, FlipY unpackFlipY)
+GraphicsContextGLVideoUploadOutcome GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& videoFrame, PlatformGLObject outputTexture, GLint level, GLenum internalFormat, GLenum format, GLenum type, FlipY unpackFlipY)
 {
     RetainPtr<CVPixelBufferRef> convertedImage;
     RetainPtr<CVPixelBufferRef> image = videoFrame.pixelBuffer();
@@ -545,7 +545,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
         convertedImage = convertPixelBuffer(image.get());
         if (!convertedImage) {
             LOG(WebGL, "GraphicsContextGLCVCocoa(%p) - failed converting an image with pixel format ('%s').", this, FourCC(pixelFormat).string().data());
-            return false;
+            return GraphicsContextGLVideoUploadOutcome::ConversionFailed;
         }
         image = convertedImage;
         pixelFormat = CVPixelBufferGetPixelFormatType(image.get());
@@ -553,7 +553,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     }
     RetainPtr<IOSurfaceRef> surface = CVPixelBufferGetIOSurface(image.get());
     if (!surface)
-        return false;
+        return GraphicsContextGLVideoUploadOutcome::NoIOSurface;
 
     auto orientation = videoFrame.orientation();
     TextureContent content { surface, IOSurfaceGetID(surface.get()), IOSurfaceGetSeed(surface.get()), level, internalFormat, format, type, unpackFlipY, orientation };
@@ -561,10 +561,13 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     if (it != m_knownContent.end() && it->value == content) {
         // If the texture hasn't been modified since the last time we copied to it, and the
         // image hasn't been modified since the last time it was copied, this is a no-op.
-        return true;
+        return GraphicsContextGLVideoUploadOutcome::Cached;
     }
     if (!m_context || !GraphicsContextGLCocoa::makeCurrent(m_display, m_context))
-        return false;
+        return GraphicsContextGLVideoUploadOutcome::ContextLost;
+    // When the caller does not fall back, a failure must not redefine the texture (see autoClearTextureOnError).
+    if (m_owner->videoUploadHardwareOnlyForTesting() && !isRenderableForTesting(internalFormat, format, type))
+        return GraphicsContextGLVideoUploadOutcome::FramebufferIncomplete;
     // Compute transform that undoes the `orientation`, e.g. moves the origin to top left.
     // Even number of operations (flipX, flipY, swapXY) means a rotation.
     // Odd number of operations means a rotation and a flip.
@@ -637,7 +640,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     GLenum status = GL_CheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE) {
         LOG(WebGL, "GraphicsContextGLCVCocoa(%p) - Unable to create framebuffer for outputTexture.", this);
-        return false;
+        return GraphicsContextGLVideoUploadOutcome::FramebufferIncomplete;
     }
     GL_BindTexture(GL_TEXTURE_2D, 0);
 
@@ -660,7 +663,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     auto uvHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, GL_TEXTURE_2D, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RG, uvPlaneWidth, uvPlaneHeight, GL_UNSIGNED_BYTE, surface.get(), 1);
     if (!uvHandle)
-        return false;
+        return GraphicsContextGLVideoUploadOutcome::PbufferFailed;
     auto uvHandleCleanup = makeScopeExit([display = m_display, uvHandle] {
         WebCore::destroyPbufferAndDetachIOSurface(display, uvHandle);
     });
@@ -678,7 +681,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     auto yHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, GL_TEXTURE_2D, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RED, yPlaneWidth, yPlaneHeight, GL_UNSIGNED_BYTE, surface.get(), 0);
     if (!yHandle)
-        return false;
+        return GraphicsContextGLVideoUploadOutcome::PbufferFailed;
     auto yHandleCleanup = makeScopeExit([display = m_display, yHandle] {
         destroyPbufferAndDetachIOSurface(display, yHandle);
     });
@@ -702,12 +705,28 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
 
     m_knownContent.set(outputTexture, content);
     autoClearTextureOnError.release();
-    return true;
+    return convertedImage ? GraphicsContextGLVideoUploadOutcome::Converted : GraphicsContextGLVideoUploadOutcome::Direct;
 }
 
 void GraphicsContextGLCVCocoa::invalidateKnownTextureContent(GCGLuint texture)
 {
     m_knownContent.remove(texture);
+}
+
+// Whether a level of the format can be rendered to, checked on a 1x1 texture so that the destination
+// texture stays unchanged. Only used when the caller does not fall back on failure.
+bool GraphicsContextGLCVCocoa::isRenderableForTesting(GLenum internalFormat, GLenum format, GLenum type)
+{
+    GLuint texture = 0;
+    GL_GenTextures(1, &texture);
+    GL_BindTexture(GL_TEXTURE_2D, texture);
+    GL_TexImage2D(GL_TEXTURE_2D, 0, internalFormat, 1, 1, 0, format, type, nullptr);
+    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    bool isComplete = GL_CheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+    GL_BindTexture(GL_TEXTURE_2D, 0);
+    GL_DeleteTextures(1, &texture);
+    return isComplete;
 }
 
 RetainPtr<CVPixelBufferRef> GraphicsContextGLCVCocoa::convertPixelBuffer(CVPixelBufferRef pixelBuffer)

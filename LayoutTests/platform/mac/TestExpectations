@@ -2483,3 +2483,39 @@ webkit.org/b/285186 [ Sequoia Tahoe ] fast/webgpu/copy-external-image-image-bitm
 
 # Accelerated radial gradients produce premultiplied pixels with color greater than alpha.
 webkit.org/b/327400 fast/canvas/canvas-gradient-premultiplied-color-not-exceeding-alpha.html [ Failure ]
+
+# AV1 and RGB-coded H.264 test videos do not load on Sequoia ("The operation is not supported"), and the
+# software upload of AV1 VideoDecoder output leaves the texture unchanged there.
+[ Sequoia ] webgl/video-formats/upload-path-av1-420-bt709-videorange.html [ Failure ]
+[ Sequoia ] webgl/video-formats/upload-path-h264-rgb.html [ Failure ]
+[ Sequoia ] webgl/video-formats/upload-path-decoder.html [ Failure ]
+
+# The video-formats baselines record Apple silicon results. Intel Macs decode to other pixel formats (420v and x420
+# instead of the compressed &8v0 and &xv0), and some videos take other upload paths.
+[ x86_64 ] webgl/video-formats/upload-path-h264-420-bt2020-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-h264-420-bt601-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-h264-420-bt709-fullrange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-h264-420-bt709-videorange-192x192.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-h264-420-bt709-videorange-frag-mse.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-h264-420-bt709-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-h264-420-p3d65-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-h264-420-smpte240m-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-h264-420-untagged.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-h264-422-bt709-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-hevc-420-10bit-bt709-fullrange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-hevc-420-10bit-bt709-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-hevc-420-10bit-hlg-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-hevc-420-10bit-pq-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-hevc-420-12bit-bt709-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-hevc-422-10bit-bt709-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-hevc-444-8bit-bt709-videorange-321x193.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-hevc-444-8bit-bt709-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-hevcvt-alpha-bt709-videorange-frag-mse.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-hevcvt-alpha-bt709-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-raw-2vuy-bt709-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-raw-bgra.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-vp9-alpha-420-bt709-videorange-mse.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-vp9-alpha-420-bt709-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-vp9-p0-420-bt709-videorange-mse.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-vp9-p0-420-bt709-videorange.html [ Failure ]
+[ x86_64 ] webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videorange.html [ Failure ]

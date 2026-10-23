@@ -36,6 +36,35 @@ enum class GraphicsContextGLSimulatedEventForTesting : uint8_t {
     RenderbufferAllocationFailure
 };
 
+// The outcome of GraphicsContextGL::copyTextureFromVideoFrame(). Recorded for tests.
+enum class GraphicsContextGLVideoUploadOutcome : uint8_t {
+    // The copy happened.
+    Direct, // The frame's pixel format was used as is.
+    Converted, // The frame was converted to a pixel format the copy supports.
+    Cached, // The texture already holds the frame.
+    // The copy did not happen.
+    NotTransferable, // The frame could not be sent to the GPU process.
+    ContextLost,
+    NoFrame, // The GPU process could not read the frame.
+    Unsupported,
+    ConversionFailed,
+    NoIOSurface,
+    FramebufferIncomplete,
+    PbufferFailed,
+};
+
+constexpr bool isSuccessfulVideoUpload(GraphicsContextGLVideoUploadOutcome outcome)
+{
+    return outcome == GraphicsContextGLVideoUploadOutcome::Direct || outcome == GraphicsContextGLVideoUploadOutcome::Converted || outcome == GraphicsContextGLVideoUploadOutcome::Cached;
+}
+
+// Test-only record of the last copyTextureFromVideoFrame() call of a context. `sequence` counts the calls.
+struct GraphicsContextGLVideoUploadRecord {
+    uint64_t sequence { 0 };
+    GraphicsContextGLVideoUploadOutcome outcome { GraphicsContextGLVideoUploadOutcome::Unsupported };
+    uint32_t pixelFormat { 0 }; // The frame's FourCC, before any conversion.
+};
+
 } // namespace WebCore
 
 #endif

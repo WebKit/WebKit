@@ -1,0 +1,20 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of prores-4444-alpha-bt709-videorange.mov, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+prores-4444-alpha-bt709-videorange.mov: prores yuva444p12le bt709/videorange/bt709/bt709
+FAIL prores-4444-alpha-bt709-videorange.mov <video> default path: hardware (converted), pixel format y416: alpha lost: the 3 translucent patches are opaque; up to 37 off: red at 24,24: (222,0,0,255), expected (255,0,0,255); desat-red at 88,24: (166,54,54,255), expected (192,64,64,255); yellow at 152,24: (218,218,0,255), expected (255,255,0,255); desat-green at 216,24: (53,165,53,255), expected (64,192,64,255); 6 more
+PASS prores-4444-alpha-bt709-videorange.mov <video> software path: software (forced)
+FAIL prores-4444-alpha-bt709-videorange.mov <video> hardware path: hardware (converted): alpha lost: the 3 translucent patches are opaque; up to 37 off: red at 24,24: (222,0,0,255), expected (255,0,0,255); desat-red at 88,24: (166,54,54,255), expected (192,64,64,255); yellow at 152,24: (218,218,0,255), expected (255,255,0,255); desat-green at 216,24: (53,165,53,255), expected (64,192,64,255); 6 more
+FAIL prores-4444-alpha-bt709-videorange.mov <video> hardware vs software: differ by up to 255 at cyan: hardware (0,220,220,255), software (0,0,0,0)
+FAIL prores-4444-alpha-bt709-videorange.mov VideoFrame(video) (format null) default path: software (gate-videoframe-format): up to 63 off: desat-blue at 88,152: (127,127,255,128), expected (64,64,192,128)
+FAIL prores-4444-alpha-bt709-videorange.mov VideoFrame(video) (format null) software path: software (forced): up to 63 off: desat-blue at 88,152: (127,127,255,128), expected (64,64,192,128)
+prores-4444-alpha-bt709-videorange.mov VideoFrame(video) (format null) hardware path: hardware not available (gate-videoframe-format)
+prores-4444-alpha-bt709-videorange.mov VideoFrame(video) (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

@@ -1681,8 +1681,18 @@ public:
     virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;
 
 #if ENABLE(VIDEO)
-    virtual bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum  format, GCGLenum type, bool premultiplyAlpha, bool flipY) = 0;
+    virtual bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) = 0;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> videoFrameToNativeImage(VideoFrame&);
+
+    // Test-only. The outcome of the last copyTextureFromVideoFrame() call.
+    using VideoUploadOutcome = GraphicsContextGLVideoUploadOutcome;
+    using VideoUploadRecord = GraphicsContextGLVideoUploadRecord;
+    WEBCORE_EXPORT virtual std::optional<VideoUploadRecord> lastVideoUploadForTesting();
+    // Test-only. When set, the caller does not fall back to another upload path when
+    // copyTextureFromVideoFrame() fails, so failures leave the texture unchanged where possible.
+    WEBCORE_EXPORT virtual void setVideoUploadHardwareOnlyForTesting(bool);
+    bool videoUploadHardwareOnlyForTesting() const { return m_videoUploadHardwareOnlyForTesting; }
+    void recordVideoUploadForTesting(VideoUploadOutcome outcome, uint32_t pixelFormat) { m_lastVideoUploadForTesting = { m_lastVideoUploadForTesting.sequence + 1, outcome, pixelFormat }; }
 #endif
 
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
@@ -1742,6 +1752,10 @@ protected:
     bool m_contextLost { false };
     EnumSet<GCGLExtension> m_knownActiveExtensions; // Not a full list since some extensions are implicitly enabled once another extension is enabled.
     EnumSet<GCGLExtension> m_requestableExtensions;
+#if ENABLE(VIDEO)
+    VideoUploadRecord m_lastVideoUploadForTesting;
+    bool m_videoUploadHardwareOnlyForTesting { false };
+#endif
 
 private:
     GraphicsContextGLAttributes m_attrs;
