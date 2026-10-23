@@ -210,6 +210,9 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (void)_endPrintingForTesting:(void(^)(void))completionHandler;
 // Blocks the main thread until the pages have been drawn, as UIKit printing does. Needs printing to have begun.
 - (NSData *)_drawPagesToPDFSynchronouslyForTesting:(_WKFrameHandle *)handle pageCount:(NSUInteger)pageCount;
+// Waits for the print process with this web view's Lockdown Mode to be ready. Reports 0 if there is no such process.
+- (void)_printProcessIdentifierForTesting:(void(^)(pid_t))completionHandler;
+- (void)_setPrintProcessIdleTimeoutForTesting:(NSTimeInterval)timeout;
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
 

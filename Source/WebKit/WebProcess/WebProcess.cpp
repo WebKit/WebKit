@@ -511,6 +511,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
     ASSERT(m_pageMap.isEmpty());
 
+    m_isPrintProcess = parameters.isPrintProcess;
+
     if (parameters.websiteDataStoreParameters)
         setWebsiteDataStoreParameters(WTF::move(*parameters.websiteDataStoreParameters));
 
@@ -853,8 +855,9 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
         supplement->setWebsiteDataStore(parameters);
 
     platformSetWebsiteDataStoreParameters(WTF::move(parameters));
-    
-    ensureNetworkProcessConnection();
+
+    if (!m_isPrintProcess)
+        ensureNetworkProcessConnection();
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     setOptInCookiePartitioningEnabled(parameters.isOptInCookiePartitioningEnabled);
@@ -1832,6 +1835,14 @@ void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::s
 #endif
 
 #if ENABLE(GPU_PROCESS)
+
+#if PLATFORM(COCOA)
+void WebProcess::prepareForPrinting(CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(m_isPrintProcess);
+    completionHandler(protect(ensureGPUProcessConnection())->waitForDidInitialize());
+}
+#endif
 
 // Received by the process rather than a page, because the frame's page may have gone here since the
 // frame was painted, and a request that reached nothing would leave the snapshot waiting for it.

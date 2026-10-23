@@ -340,6 +340,9 @@ public:
 
     bool LEGACY_NODELETE isDummyProcessProxy() const;
 
+    bool isPrintProcess() const { return m_isPrintProcess; }
+    void setIsPrintProcess() { m_isPrintProcess = true; }
+
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
     bool hasCommittedClientOrigin(const WebCore::ClientOrigin&) const;
@@ -968,6 +971,7 @@ private:
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_hasCommittedAnyMeaningfulProvisionalLoads { false }; // True if the process has committed a provisional load to a URL that was not about:*.
     bool m_isPrewarmed;
+    bool m_isPrintProcess { false };
     LockdownMode m_lockdownMode { LockdownMode::Disabled };
     EnhancedSecurity m_enhancedSecurity { EnhancedSecurity::Disabled };
     const ProcessCrossOriginIsolation m_crossOriginIsolation;

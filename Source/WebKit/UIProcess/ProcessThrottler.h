@@ -52,6 +52,9 @@ enum ProcessSuppressionDisabledCounterType { };
 using ProcessSuppressionDisabledCounter = RefCounter<ProcessSuppressionDisabledCounterType>;
 using ProcessSuppressionDisabledToken = ProcessSuppressionDisabledCounter::Token;
 
+enum PrintProcessUseCounterType { };
+using PrintProcessUseCounter = RefCounter<PrintProcessUseCounterType>;
+
 enum class IsQuietActivity : bool { No, Yes };
 enum class IsSuspensionImminent : bool { No, Yes };
 enum class ProcessThrottleState : uint8_t { Suspended, Background, Foreground };

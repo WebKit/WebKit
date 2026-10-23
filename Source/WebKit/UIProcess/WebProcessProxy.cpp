@@ -1556,6 +1556,8 @@ bool WebProcessProxy::shouldDisableJITCage() const
 
 void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply)
 {
+    MESSAGE_CHECK_COMPLETION(!m_isPrintProcess, reply({ }));
+
     RefPtr dataStore = websiteDataStore();
     if (!dataStore) {
         ASSERT_NOT_REACHED();
@@ -2185,6 +2187,11 @@ void WebProcessProxy::didDestroyUserGestureToken(PageIdentifier pageID, UserGest
 
 bool WebProcessProxy::canBeAddedToWebProcessCache() const
 {
+    if (m_isPrintProcess) {
+        WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is the print process");
+        return false;
+    }
+
     if (isRunningServiceWorkers()) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is running workers");
         return false;

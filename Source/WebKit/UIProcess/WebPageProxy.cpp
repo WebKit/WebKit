@@ -2003,6 +2003,10 @@ void WebPageProxy::close()
     // to release the wake locks.
     internals().sleepDisablers.clear();
 
+#if PLATFORM(MAC)
+    internals().printProcessUseToken = nullptr;
+#endif
+
     reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
 
     if (RefPtr activePopupMenu = m_activePopupMenu)
@@ -17522,6 +17526,9 @@ void WebPageProxy::beginPrinting(WebFrameProxy* frame, const PrintInfo& printInf
 
     auto frameID = frame->frameID();
     m_printingFrameID = frameID;
+#if PLATFORM(COCOA)
+    launchPrintProcessIfNeeded(frame);
+#endif
     if (m_isPerformingDOMPrintOperation)
         sendToProcessContainingFrame(frameID, Messages::WebPage::BeginPrintingDuringDOMPrintOperation(frameID, printInfo), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
     else
@@ -17530,6 +17537,10 @@ void WebPageProxy::beginPrinting(WebFrameProxy* frame, const PrintInfo& printInf
 
 void WebPageProxy::endPrinting(CompletionHandler<void()>&& callback)
 {
+#if PLATFORM(MAC)
+    internals().printProcessUseToken = nullptr;
+#endif
+
     if (!m_printingFrameID) {
         callback();
         return;
@@ -17545,6 +17556,10 @@ void WebPageProxy::endPrinting(CompletionHandler<void()>&& callback)
 std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& callback)
 {
     m_printingFrameID = frameID;
+#if PLATFORM(COCOA)
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    launchPrintProcessIfNeeded(frame.get());
+#endif
     if (m_isPerformingDOMPrintOperation)
         return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::ComputePagesForPrintingDuringDOMPrintOperation(frameID, printInfo), WTF::move(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::ComputePagesForPrinting(frameID, printInfo), WTF::move(callback));
@@ -17567,6 +17582,38 @@ bool WebPageProxy::shouldUseRemoteSnapshotting(const WebFrameProxy* rootFrame)
     }
 
     return false;
+}
+
+bool WebPageProxy::shouldLaunchPrintProcess(const WebFrameProxy* rootFrame)
+{
+    if (!protect(preferences())->remoteSnapshottingPrintProcessEnabled())
+        return false;
+
+    // FIXME: Launch the print process only when the UI process knows that the frames have PDF content.
+    return shouldUseRemoteSnapshotting(rootFrame);
+}
+
+void WebPageProxy::launchPrintProcessIfNeeded(const WebFrameProxy* rootFrame)
+{
+    if (!shouldLaunchPrintProcess(rootFrame))
+        return;
+
+    auto printProcessUseToken = protect(configuration().processPool())->ensurePrintProcess(protect(rootFrame->process())->lockdownMode());
+#if PLATFORM(MAC)
+    if (m_printingFrameID)
+        internals().printProcessUseToken = WTF::move(printProcessUseToken);
+#endif
+}
+
+CompletionHandler<void(RefPtr<SharedBuffer>&&)> WebPageProxy::launchPrintProcessForDrawingIfNeeded(const WebFrameProxy* rootFrame, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
+{
+    if (!shouldLaunchPrintProcess(rootFrame))
+        return WTF::move(completionHandler);
+
+    auto printProcessUseToken = protect(configuration().processPool())->ensurePrintProcess(protect(rootFrame->process())->lockdownMode());
+    return [completionHandler = WTF::move(completionHandler), printProcessUseToken = WTF::move(printProcessUseToken)](RefPtr<SharedBuffer>&& data) mutable {
+        completionHandler(WTF::move(data));
+    };
 }
 
 std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawRectToImage(WebFrameProxy& frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& callback)
@@ -17611,7 +17658,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
     Ref drawing = PendingSnapshotDrawing::create(snapshotIdentifier);
-    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(toAPIDataSharedBufferCallback(WTF::move(callback))));
+    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(launchPrintProcessForDrawingIfNeeded(&frame, toAPIDataSharedBufferCallback(WTF::move(callback)))));
     auto snapshotCallback = gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier);
 
     std::optional<IPC::Connection::AsyncReplyID> replyID;
@@ -17651,7 +17698,7 @@ void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTra
 
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, m_mainFrame->frameID(), WTF::move(callback));
+    gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, m_mainFrame->frameID(), launchPrintProcessForDrawingIfNeeded(protect(m_mainFrame).get(), WTF::move(callback)));
     sendWithAsyncReply(Messages::WebPage::DrawToSnapshot(rect, allowTransparentBackground, snapshotIdentifier), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
 }
 

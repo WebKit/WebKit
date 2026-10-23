@@ -284,6 +284,9 @@ public:
     UserObservablePageCounter::Token pageIsUserObservableCount;
     std::optional<MonotonicTime> pageLoadStart;
     PageLoadState pageLoadState;
+#if PLATFORM(MAC)
+    PrintProcessUseCounter::Token printProcessUseToken;
+#endif
 
     TextExtractionCache textExtractionCache;
     OptionSet<WebCore::ActivityState> potentiallyChangedActivityStateFlags;

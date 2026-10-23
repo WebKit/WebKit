@@ -985,6 +985,19 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return result->autorelease();
 }
 
+- (void)_printProcessIdentifierForTesting:(void(^)(pid_t))completionHandler
+{
+    auto lockdownMode = protect(_page->legacyMainFrameProcess())->lockdownMode();
+    protect(_page->configuration().processPool())->whenPrintProcessReady(lockdownMode, [completionHandler = makeBlockPtr(completionHandler)](WebKit::WebProcessProxy* process) {
+        completionHandler(process ? process->processID() : 0);
+    });
+}
+
+- (void)_setPrintProcessIdleTimeoutForTesting:(NSTimeInterval)timeout
+{
+    protect(_page->configuration().processPool())->setPrintProcessIdleTimeoutForTesting(Seconds { timeout });
+}
+
 - (void)_endPrintingForTesting:(void(^)(void))completionHandler
 {
     _page->endPrinting([completionHandler = makeBlockPtr(completionHandler)] {

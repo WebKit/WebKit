@@ -264,6 +264,10 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #if ENABLE(GPU_PROCESS)
     , m_resetGPUProcessCrashCountTimer(RunLoop::mainSingleton(), "WebProcessPool::ResetGPUProcessCrashCountTimer"_s, [this] { m_recentGPUProcessCrashCount = 0; })
 #endif
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    , m_printProcessState(*this, WebProcessProxy::LockdownMode::Disabled)
+    , m_lockdownPrintProcessState(*this, WebProcessProxy::LockdownMode::Enabled)
+#endif
 #if ENABLE(MODEL_PROCESS)
     , m_resetModelProcessCrashCountTimer(RunLoop::mainSingleton(), "WebProcessPool::ResetModelProcessCrashCountTimer"_s, [this] { m_recentModelProcessCrashCount = 0; })
 #endif
@@ -756,7 +760,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
     if (!remoteWorkerProcessProxy && !s_useSeparateServiceWorkerProcess) {
         for (Ref process : processPool->m_processes) {
-            if (process->isPrewarmed() || process->isDummyProcessProxy())
+            if (process->isPrewarmed() || process->isDummyProcessProxy() || process->isPrintProcess())
                 continue;
             if (process->websiteDataStore() != websiteDataStore)
                 continue;
@@ -1127,6 +1131,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     
     if (websiteDataStore)
         parameters.websiteDataStoreParameters = webProcessDataStoreParameters(process, *websiteDataStore);
+    parameters.isPrintProcess = process.isPrintProcess();
 
     process.initializeWebProcess(WTF::move(parameters));
 
@@ -1273,6 +1278,11 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
         ASSERT_UNUSED(removedProcess, removedProcess == &process);
     }
 
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (process.isPrintProcess())
+        printProcessDidDisconnect(process);
+#endif
+
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
     Ref protectedProcess { process };
@@ -1397,7 +1407,7 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
 #endif
 
         for (Ref process : m_processes) {
-            if (process->isPrewarmed() || process->isDummyProcessProxy())
+            if (process->isPrewarmed() || process->isDummyProcessProxy() || process->isPrintProcess())
                 continue;
             if (process->isRunningServiceWorkers())
                 continue;
@@ -1414,6 +1424,117 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
     updateWebProcessCacheEligibilityForCOOPSwap(process);
     return process;
 }
+
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+
+WebProcessPool::PrintProcessState::PrintProcessState(WebProcessPool& processPool, WebProcessProxy::LockdownMode lockdownMode)
+    : idleTimer(RunLoop::mainSingleton(), "WebProcessPool::PrintProcessIdleTimer"_s, [weakProcessPool = WeakPtr { processPool }, lockdownMode] {
+        if (RefPtr processPool = weakProcessPool)
+            processPool->shutDownPrintProcess(lockdownMode);
+    })
+    , useCounter([weakProcessPool = WeakPtr { processPool }, lockdownMode](RefCounterEvent) {
+        if (RefPtr processPool = weakProcessPool)
+            processPool->printProcessUseCountDidChange(lockdownMode);
+    })
+{
+}
+
+PrintProcessUseCounter::Token WebProcessPool::ensurePrintProcess(WebProcessProxy::LockdownMode lockdownMode)
+{
+    auto& state = printProcessState(lockdownMode);
+    if (state.process)
+        return state.useCounter.count();
+
+    if (!state.dataStore)
+        state.dataStore = WebsiteDataStore::createNonPersistent();
+    Ref dataStore = *state.dataStore;
+
+    Ref process = WebProcessProxy::create(*this, dataStore.ptr(), lockdownMode, EnhancedSecurity::EnabledPolicy, WebProcessProxy::IsPrewarmed::No);
+    process->setIsPrintProcess();
+    WEBPROCESSPOOL_RELEASE_LOG(Process, "ensurePrintProcess: Launching the print process (process=%p, lockdownMode=%d)", process.ptr(), lockdownMode == WebProcessProxy::LockdownMode::Enabled);
+    initializeNewWebProcess(process, dataStore.ptr(), WebProcessProxy::IsPrewarmed::No, WebProcessProxy::EnableWebAssemblyDebugger::No, WebKit::jscOptionsForWebProcess(protect(m_defaultPageGroup->preferences())->store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled));
+    m_processes.append(process.copyRef());
+    state.process = process.copyRef();
+
+    // The print process has no pages, so nothing else keeps it from being terminated or suspended.
+    state.shutdownPreventingScope = process->shutdownPreventingScope();
+    state.activity = protect(process->throttler())->backgroundActivity("Print process"_s);
+
+    process->sendWithAsyncReply(Messages::WebProcess::PrepareForPrinting(), [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process.get() }, lockdownMode](bool success) {
+        RefPtr protectedThis = weakThis;
+        RefPtr process = weakProcess;
+        if (!protectedThis || !process)
+            return;
+
+        auto& state = protectedThis->printProcessState(lockdownMode);
+        if (state.process != process)
+            return;
+
+        if (!success) {
+            RELEASE_LOG_ERROR(Process, "%p - WebProcessPool::ensurePrintProcess: The print process could not prepare for printing (process=%p)", protectedThis.get(), process.get());
+            // The reply is also cancelled while shutting down the process invalidates the connection, so shutting down
+            // from here would reenter it.
+            RunLoop::mainSingleton().dispatch([weakThis, weakProcess, lockdownMode] {
+                RefPtr protectedThis = weakThis;
+                if (protectedThis && protectedThis->printProcessState(lockdownMode).process == weakProcess.get())
+                    protectedThis->shutDownPrintProcess(lockdownMode);
+            });
+            return;
+        }
+
+        state.isReady = true;
+        for (auto& callback : std::exchange(state.readyCallbacks, { }))
+            callback(process.get());
+    });
+
+    return state.useCounter.count();
+}
+
+void WebProcessPool::printProcessUseCountDidChange(WebProcessProxy::LockdownMode lockdownMode)
+{
+    auto& state = printProcessState(lockdownMode);
+    if (state.useCounter.value())
+        state.idleTimer.stop();
+    else if (state.process)
+        state.idleTimer.startOneShot(m_printProcessIdleTimeout);
+}
+
+void WebProcessPool::whenPrintProcessReady(WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(WebProcessProxy*)>&& callback)
+{
+    auto& state = printProcessState(lockdownMode);
+    RefPtr process = state.process;
+    if (!process || state.isReady) {
+        callback(process.get());
+        return;
+    }
+    state.readyCallbacks.append(WTF::move(callback));
+}
+
+void WebProcessPool::shutDownPrintProcess(WebProcessProxy::LockdownMode lockdownMode)
+{
+    if (RefPtr process = printProcessState(lockdownMode).process) {
+        WEBPROCESSPOOL_RELEASE_LOG(Process, "shutDownPrintProcess: (process=%p, PID=%i)", process.get(), process->processID());
+        process->shutDown();
+    }
+}
+
+void WebProcessPool::printProcessDidDisconnect(WebProcessProxy& process)
+{
+    auto& state = printProcessState(process.lockdownMode());
+    if (state.process != &process)
+        return;
+
+    state.idleTimer.stop();
+    state.process = nullptr;
+    state.dataStore = nullptr;
+    state.activity = nullptr;
+    state.shutdownPreventingScope = nullptr;
+    state.isReady = false;
+    for (auto& callback : std::exchange(state.readyCallbacks, { }))
+        callback(nullptr);
+}
+
+#endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
 Ref<WebUserContentControllerProxy> WebProcessPool::userContentControllerForRemoteWorkers()
 {

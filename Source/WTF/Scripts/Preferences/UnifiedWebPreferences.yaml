@@ -5148,6 +5148,14 @@ RemoteSnapshottingEnabled:
     default: false
   sharedPreferenceForWebProcess: true
 
+RemoteSnapshottingPrintProcessEnabled:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "Remote Snapshotting Print Process"
+  humanReadableDescription: "Draw remote snapshot PDFs in a dedicated print process"
+  defaultValue: false
+
 RemoveBackgroundEnabled:
   type: bool
   # FIXME: Change to "embedder" when there is a way to enable/disable embedder features from API tests.

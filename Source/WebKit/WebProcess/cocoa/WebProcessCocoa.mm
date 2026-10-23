@@ -775,10 +775,10 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
     // During WebProcess initialization, we are still able to talk to LaunchServices to set the process name so there is no need to go
     // via the NetworkProcess. Prewarmed WebProcesses also do not have a network process connection until they are actually used by
-    // a page.
+    // a page, and the print process never has one.
 
     String displayName = applicationName.get();
-    if (m_sessionID) {
+    if (m_sessionID && !m_isPrintProcess) {
         auto auditToken = auditTokenForSelf();
         if (!auditToken)
             return;

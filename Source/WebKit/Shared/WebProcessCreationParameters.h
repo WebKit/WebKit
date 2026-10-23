@@ -210,6 +210,7 @@ struct WebProcessCreationParameters {
 #endif
 
     std::optional<WebProcessDataStoreParameters> websiteDataStoreParameters;
+    bool isPrintProcess { false };
 
 #if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
     std::optional<SandboxExtension::Handle> launchServicesExtensionHandle;

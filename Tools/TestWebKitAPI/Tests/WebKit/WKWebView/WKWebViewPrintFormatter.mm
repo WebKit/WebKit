@@ -29,12 +29,17 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoaImageAndCocoaColor.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestPDFDocument.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebKitPrivate.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKWebViewPrintFormatter.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
@@ -314,6 +319,40 @@ TEST(WKWebView, PrintToPDFUsingPrintInteractionControllerAndPrintPageRenderer)
     TestWebKitAPI::Util::run(&done);
     EXPECT_NE(printInteractionControllerPDFDataLength, 0UL);
     EXPECT_NE([printPageRendererPDFData length], 0UL);
+}
+
+TEST(WKWebView, PrintFormatterLaunchesPrintProcess)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 400, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    CGRect pageRect = CGRectMake(0, 0, 612, 792);
+    RetainPtr printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:[webView viewPrintFormatter] startingAtPageAtIndex:0];
+    [printPageRenderer setPaperRect:pageRect];
+    [printPageRenderer setPrintableRect:pageRect];
+    EXPECT_GE([printPageRenderer numberOfPages], 1);
+
+    __block pid_t printProcess = 0;
+    __block bool done = false;
+    [webView _printProcessIdentifierForTesting:^(pid_t identifier) {
+        printProcess = identifier;
+        done = true;
+    }];
+    Util::run(&done);
+    EXPECT_NE(printProcess, 0);
+    EXPECT_NE(printProcess, [webView mainFrame].info._processIdentifier);
+    EXPECT_NE(printProcess, [webView mainFrame].childFrames.firstObject.info._processIdentifier);
 }
 
 #endif

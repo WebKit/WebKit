@@ -146,6 +146,7 @@ using WebCore::SystemSettings::State = WebCore::SystemSettingsState;
 #endif
 
     std::optional<WebKit::WebProcessDataStoreParameters> websiteDataStoreParameters;
+    bool isPrintProcess;
 
 #if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
     std::optional<WebKit::SandboxExtensionHandle> launchServicesExtensionHandle;

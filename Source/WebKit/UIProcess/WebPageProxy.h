@@ -3324,6 +3324,9 @@ private:
 #if PLATFORM(COCOA)
     void didGeneratePageLoadTiming(const WebPageLoadTiming&);
     bool shouldUseRemoteSnapshotting(const WebFrameProxy* rootFrame);
+    bool shouldLaunchPrintProcess(const WebFrameProxy* rootFrame);
+    void launchPrintProcessIfNeeded(const WebFrameProxy* rootFrame);
+    CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)> launchPrintProcessForDrawingIfNeeded(const WebFrameProxy* rootFrame, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #else
     void didGeneratePageLoadTiming(const WebPageLoadTiming&) { }
 #endif
