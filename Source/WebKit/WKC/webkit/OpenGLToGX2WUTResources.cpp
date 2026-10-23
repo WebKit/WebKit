@@ -689,19 +689,11 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
     GX2RUnlockBufferEx(source,
         static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_READ));
 
-    const bool anyEnabledLinkedAttribute = std::any_of(
-        resources.linkedAttributes.begin(), resources.linkedAttributes.end(),
-        [&](const WUTBufferResources::AttributeBinding& binding) {
-            auto attribute = resources.attributes.find(binding.attributeIndex);
-            return attribute != resources.attributes.end() && attribute->second.enabled
-                && !attribute->second.divisor;
-        });
-    if (!anyEnabledLinkedAttribute) {
-        for (uint32_t i = 0; i < draw.count; ++i)
-            indices[i] = i;
-        maximumIndex = draw.count - 1;
-    }
-
+    // Preserve the original (base-vertex-adjusted) element indices even when
+    // no enabled per-vertex attribute is linked. Replacing them with sequential
+    // indices changes gl_VertexID and other shader-visible indexed-draw behavior.
+    // Generic-attribute staging below uses maximumIndex to cover those indices.
+    
     struct StagedAttribute {
         uint8_t location { 0 };
         GX2RBuffer buffer {};
