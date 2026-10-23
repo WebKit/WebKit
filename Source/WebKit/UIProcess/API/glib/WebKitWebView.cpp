@@ -970,7 +970,9 @@ static void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfigu
 #endif
 #endif
 #if USE(LIBWPE)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webView->priv->view = WKWPE::ViewLegacy::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get());
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #endif
 }
@@ -1408,19 +1410,23 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
 #if PLATFORM(WPE)
 #if USE(LIBWPE)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     /**
      * WebKitWebView:backend:
      *
      * The #WebKitWebViewBackend of the view.
      *
      * Since: 2.20
+     *
+     * Deprecated: 2.56: Use WPE Platform API instead.
      */
     sObjProperties[PROP_BACKEND] =
         g_param_spec_boxed(
             "backend",
             nullptr, nullptr,
             WEBKIT_TYPE_WEB_VIEW_BACKEND,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED));
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #if ENABLE(WPE_PLATFORM)
     /**
@@ -3433,6 +3439,8 @@ RendererBufferDescription webkitWebViewGetRendererBufferDescription(WebKitWebVie
  * Returns: (transfer none): the #WebKitWebViewBackend of @web_view
  *
  * Since: 2.20
+ *
+ * Deprecated: 2.56: Use WPE Platform API instead.
  */
 WebKitWebViewBackend* webkit_web_view_get_backend(WebKitWebView* webView)
 {

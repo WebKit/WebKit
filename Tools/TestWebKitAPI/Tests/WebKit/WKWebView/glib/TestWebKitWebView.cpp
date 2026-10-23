@@ -325,6 +325,7 @@ static void testWebViewWebBackend(Test* test, gconstpointer)
         return;
     }
 #endif
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     static struct wpe_view_backend_interface s_testingInterface = {
         // create
         [](void*, struct wpe_view_backend*) -> void* { return nullptr; },
@@ -387,6 +388,7 @@ static void testWebViewWebBackend(Test* test, gconstpointer)
     g_assert_true(hasInstance);
     webView = nullptr;
     g_assert_false(hasInstance);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif // USE(LIBWPE)
 

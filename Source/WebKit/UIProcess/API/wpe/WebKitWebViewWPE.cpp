@@ -84,6 +84,8 @@ void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&& comp
  * properties at construction to use a different configuration.
  *
  * Returns: The newly created web view.
+ *
+ * Deprecated: 2.56: Use g_object_new() instead.
  */
 WebKitWebView* webkit_web_view_new(WebKitWebViewBackend* backend)
 {
