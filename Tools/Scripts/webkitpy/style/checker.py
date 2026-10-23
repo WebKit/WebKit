@@ -695,6 +695,7 @@ def _all_categories():
     categories = categories.union(JSTestChecker.categories)
     categories = categories.union(TestExpectationsChecker.categories)
     categories = categories.union(APITestExpectationsChecker.categories)
+    categories = categories.union(APITestAllowlistChecker.categories)
     categories = categories.union(ChangeLogChecker.categories)
     categories = categories.union(PNGChecker.categories)
     categories = categories.union(FeatureDefinesChecker.categories)
@@ -987,6 +988,8 @@ class CheckerDispatcher(object):
             return FileType.PNG
         elif ((file_extension == _CMAKE_FILE_EXTENSION) or os.path.basename(file_path) == 'CMakeLists.txt'):
             return FileType.CMAKE
+        elif 'api_tests' in file_path and os.path.basename(file_path) == 'allowlist.txt':
+            return FileType.API_TEST_ALLOWLIST
         elif ((not file_extension and os.path.join("Tools", "Scripts") in file_path) or
               file_extension in _TEXT_FILE_EXTENSIONS or os.path.basename(file_path) == 'TestExpectations'):
             return FileType.TEXT
@@ -998,8 +1001,6 @@ class CheckerDispatcher(object):
             return FileType.BASE_XCCONFIG
         elif os.path.basename(file_path).startswith('AllowedSPI') and file_extension == 'toml':
             return FileType.SPI_ALLOWLIST
-        elif 'api_tests' in file_path and os.path.basename(file_path) == 'allowlist.txt':
-            return FileType.API_TEST_ALLOWLIST
         else:
             return FileType.NONE
 
