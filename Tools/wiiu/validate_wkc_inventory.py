@@ -17,7 +17,11 @@ CMAKE = ROOT / "Source/WebKit/WKC/CMakeLists.txt"
 # verifying how a tree is handled; do not blanket-compile old API implementations.
 SELECTORS = {
     # Reviewed legacy trees are intentionally excluded from the modern WebCore
-    # target; CMake documents their disposition and PORTING_STATUS.md tracks ports.\n    "Source/WebCore/html/shadow/WKC": (),\n    "Source/WebCore/loader/archive/mhtml/WKC": (),\n    "Source/WebCore/page/WKC": (),\n    "Source/WebCore/platform/WKC": ("platform/WKC/*.cpp",),
+    # target; CMake documents their disposition and PORTING_STATUS.md tracks ports.
+    "Source/WebCore/html/shadow/WKC": (),
+    "Source/WebCore/loader/archive/mhtml/WKC": (),
+    "Source/WebCore/page/WKC": (),
+    "Source/WebCore/platform/WKC": ("platform/WKC/*.cpp",),
     "Source/WebCore/platform/graphics/WKC": ("platform/graphics/WKC/*.cpp",),
     "Source/WebCore/platform/sql/WKC": ("platform/sql/WKC/*.cpp",),
     "Source/WebCore/platform/text/WKC": ("platform/text/WKC/*.cpp",),
