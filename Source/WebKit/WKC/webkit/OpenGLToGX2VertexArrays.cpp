@@ -100,49 +100,58 @@ VertexArrayResult VertexArrays::bind(VertexArrayName name)
     auto it = m_arrays.find(name);
     if (it == m_arrays.end())
         return VertexArrayResult::InvalidName;
-    State* state = &it->second;
+    const State* destination = &it->second;
+    const State* previous = currentState();
 
-    // GX2 keeps vertex-buffer slots globally bound, unlike GL's per-VAO
-    // attribute-enable state. Explicitly disable attributes that were enabled
-    // by the previously bound VAO but are absent/disabled in the destination,
-    // or the next fetch shader can observe stale descriptors.
-    if (m_backend.setAttribute) {
-        const State* previous = currentState();
-        for (uint16_t index = 0; index < 32; ++index) {
-            auto nextAttribute = state->attributes.find(static_cast<uint8_t>(index));
-            const bool nextEnabled = nextAttribute != state->attributes.end()
-                && nextAttribute->second.enabled;
-            if (nextEnabled)
-                continue;
-            // Avoid relying on the prior VAO's presence for correctness: a
-            // disabled descriptor is harmless and clears backend enable state.
-            VertexAttribute disabled;
-            disabled.enabled = false;
-            if (!m_backend.setAttribute(m_backend.context, static_cast<uint8_t>(index), disabled))
-                return VertexArrayResult::BackendFailure;
+    // GX2 keeps vertex-buffer slots and attribute descriptors globally bound,
+    // unlike GL's per-VAO state. Apply a complete destination state and keep
+    // the logical selection unchanged until every native operation succeeds.
+    auto applyState = [this](const State* state) -> VertexArrayResult {
+        if (m_backend.setAttribute) {
+            for (uint16_t index = 0; index < 32; ++index) {
+                VertexAttribute attribute;
+                if (state) {
+                    auto found = state->attributes.find(static_cast<uint8_t>(index));
+                    if (found != state->attributes.end())
+                        attribute = found->second;
+                }
+                if (!m_backend.setAttribute(m_backend.context, static_cast<uint8_t>(index), attribute))
+                    return VertexArrayResult::BackendFailure;
+            }
         }
+
+        if (m_backend.setElementBuffer) {
+            BufferName elementBuffer = state ? state->elementBuffer : 0;
+            if (!m_backend.setElementBuffer(m_backend.context, elementBuffer))
+                return VertexArrayResult::BackendFailure;
+        } else if (state && state->elementBuffer)
+            return VertexArrayResult::MissingBackend;
+
+        if (state) {
+            for (const auto& entry : state->attributes) {
+                const uint8_t index = entry.first;
+                const VertexAttribute& attribute = entry.second;
+                if (!attribute.buffer)
+                    continue;
+                if (!m_backend.bindVertexBuffer)
+                    return VertexArrayResult::MissingBackend;
+                if (!m_backend.bindVertexBuffer(m_backend.context, index, attribute.buffer,
+                        attribute.stride, attribute.offset))
+                    return VertexArrayResult::BackendFailure;
+            }
+        }
+        return VertexArrayResult::Ok;
+    };
+
+    VertexArrayResult result = applyState(destination);
+    if (result != VertexArrayResult::Ok) {
+        // Best-effort native rollback. Keep m_bound unchanged even if a backend
+        // callback also fails during rollback, so callers never observe a
+        // logical VAO switch that was not fully committed.
+        applyState(previous);
+        return result;
     }
 
-    // A VAO captures its element buffer and attribute descriptors. Reapply
-    // those bindings when switching VAOs; otherwise the GX2 backend keeps
-    // drawing with whichever buffers the previously bound VAO installed.
-    if (m_backend.setElementBuffer
-        && !m_backend.setElementBuffer(m_backend.context, state->elementBuffer))
-        return VertexArrayResult::BackendFailure;
-    for (const auto& entry : state->attributes) {
-        const uint8_t index = entry.first;
-        const VertexAttribute& attribute = entry.second;
-        if (m_backend.setAttribute
-            && !m_backend.setAttribute(m_backend.context, index, attribute))
-            return VertexArrayResult::BackendFailure;
-        if (attribute.buffer) {
-            if (!m_backend.bindVertexBuffer)
-                return VertexArrayResult::MissingBackend;
-            if (!m_backend.bindVertexBuffer(m_backend.context, index, attribute.buffer,
-                    attribute.stride, attribute.offset))
-                return VertexArrayResult::BackendFailure;
-        }
-    }
     m_bound = name;
     return VertexArrayResult::Ok;
 }
