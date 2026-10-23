@@ -740,6 +740,12 @@ void wgpuBufferSetLabel(WGPUBuffer buffer, WGPUStringView label)
     protect(WebGPU::Metal::fromAPI(buffer))->setLabel(WebGPU::Metal::fromAPI(label));
 }
 
+// The size of the descriptor of the buffer.
+uint64_t wgpuBufferGetSize(WGPUBuffer buffer)
+{
+    return WebGPU::Metal::fromAPI(buffer).initialSize();
+}
+
 WGPUBufferUsage wgpuBufferGetUsage(WGPUBuffer buffer)
 {
     return WebGPU::Metal::toAPI(WebGPU::Metal::fromAPI(buffer).usage());

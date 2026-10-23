@@ -166,6 +166,7 @@ public:
     void generateAnInternalError(String&& message);
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
+    Adapter& adapter() const { return m_adapter; }
 #if CPU(X86_64)
     bool hasUnifiedMemory() const { return false; }
 #else
