@@ -91,7 +91,7 @@ public:
 
     JS_EXPORT_PRIVATE JSC::JSValue findObjectById(const String& objectId) const;
     JS_EXPORT_PRIVATE void inspectObject(JSC::JSValue);
-    void releaseObject(const String& objectId);
+    JS_EXPORT_PRIVATE void releaseObject(const String& objectId);
     void releaseObjectGroup(const String& objectGroup);
 
     JSC::JSObject* createCommandLineAPIObject(JSC::JSValue callFrame = { }) const;

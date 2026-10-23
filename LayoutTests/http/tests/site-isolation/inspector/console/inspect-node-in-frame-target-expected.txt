@@ -1,0 +1,44 @@
+Tests that inspect() of a node in a cross-origin frame selects the node through the frame's DOM agent.
+
+First Second
+
+== Running test suite: SiteIsolation.Console.InspectNodeInFrame
+-- Running test case: Setup
+PASS: Should find the main frame's target.
+PASS: Should find the same-site frame's target.
+PASS: Should find the cross-origin frame's target.
+PASS: Should find the target of the same-site frame inside the cross-origin frame.
+PASS: The cross-origin frame's target should have sent its document.
+PASS: The nested same-site frame's target should have sent its document.
+PASS: Should have the page document.
+
+-- Running test case: CrossOriginFrameNode
+PASS: The first <button> of the frame should be inspected.
+PASS: The node should belong to the frame's target.
+PASS: The node should sit below the frame's <iframe> element.
+PASS: The node should be connected to the page document.
+PASS: DOM.inspect should come from the frame's target only.
+PASS: Inspector.inspect should not be sent.
+
+-- Running test case: NestedSameSiteFrameNode
+PASS: The first <button> of the frame should be inspected.
+PASS: The node should belong to the frame's target.
+PASS: The node should sit below the frame's <iframe> element.
+PASS: The node should be connected to the page document.
+PASS: DOM.inspect should come from the frame's target only.
+PASS: Inspector.inspect should not be sent.
+
+-- Running test case: MainFrameNode
+PASS: Inspector.inspect should be sent once.
+PASS: The inspected object should be a node.
+PASS: The inspected object should be the first <button>.
+PASS: DOM.inspect should not be sent.
+
+-- Running test case: SameSiteFrameNode
+PASS: Inspector.inspect should be sent once.
+PASS: The inspected object should be a node.
+PASS: The inspected object should be the first <button>.
+PASS: DOM.inspect should not be sent.
+
+-- Running test case: Teardown
+
