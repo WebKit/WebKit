@@ -1,0 +1,95 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+// Only the name of the exception is part of the contract, so the message is left out of the output.
+function shouldThrowTypeError(expression)
+{
+    let name = '';
+    try {
+        eval(expression);
+    } catch (e) {
+        name = e.name;
+    }
+
+    if (name === 'TypeError')
+        testPassed(expression + ' threw a TypeError.');
+    else if (name)
+        testFailed(expression + ' threw a ' + name + ' instead of a TypeError.');
+    else
+        testFailed(expression + ' did not throw.');
+}
+
+const textureDescriptor = {
+    size: [1, 1],
+    format: 'rgba8unorm',
+    usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING,
+};
+
+onload = async () => {
+    const adapter = await navigator.gpu.requestAdapter({});
+
+    globalThis.featureAdvertised = adapter.features.has('texture-component-swizzle');
+    shouldBeTrue('featureAdvertised');
+
+    globalThis.device = await adapter.requestDevice({});
+    globalThis.texture = device.createTexture(textureDescriptor);
+
+    // Validating the swizzle string happens on the content timeline, so a string that is not
+    // ^[rgba01]{4}$ throws whether or not the device enabled the feature.
+    shouldThrowTypeError('texture.createView({ swizzle: "" })');
+    shouldThrowTypeError('texture.createView({ swizzle: "rgb" })');
+    shouldThrowTypeError('texture.createView({ swizzle: "rgbaa" })');
+    shouldThrowTypeError('texture.createView({ swizzle: "rgbx" })');
+    shouldThrowTypeError('texture.createView({ swizzle: "RGBA" })');
+
+    // The identity swizzle needs no feature.
+    device.pushErrorScope('validation');
+    texture.createView({ swizzle: 'rgba' });
+    globalThis.identityError = await device.popErrorScope();
+    shouldBeNull('identityError');
+
+    // Any other one does.
+    device.pushErrorScope('validation');
+    texture.createView({ swizzle: 'bgra' });
+    globalThis.ungatedError = await device.popErrorScope();
+    shouldBeTrue('ungatedError instanceof GPUValidationError');
+
+    // An adapter is consumed by requestDevice(), so the feature-enabled device needs a fresh one.
+    const swizzleAdapter = await navigator.gpu.requestAdapter({});
+    globalThis.swizzleDevice = await swizzleAdapter.requestDevice({ requiredFeatures: ['texture-component-swizzle'] });
+    globalThis.swizzleTexture = swizzleDevice.createTexture(textureDescriptor);
+
+    swizzleDevice.pushErrorScope('validation');
+    globalThis.swizzledView = swizzleTexture.createView({ swizzle: '01ba' });
+    globalThis.gatedError = await swizzleDevice.popErrorScope();
+    shouldBeNull('gatedError');
+
+    // A swizzle describes how a shader reads a view, so a view with one is not renderable.
+    swizzleDevice.pushErrorScope('validation');
+    const commandEncoder = swizzleDevice.createCommandEncoder();
+    commandEncoder.beginRenderPass({
+        colorAttachments: [{ view: swizzledView, loadOp: 'clear', storeOp: 'store' }],
+    }).end();
+    commandEncoder.finish();
+    globalThis.attachmentError = await swizzleDevice.popErrorScope();
+    shouldBeTrue('attachmentError instanceof GPUValidationError');
+
+    // Nor may it back a storage binding.
+    swizzleDevice.pushErrorScope('validation');
+    swizzleDevice.createBindGroup({
+        layout: swizzleDevice.createBindGroupLayout({
+            entries: [
+                { binding: 0, visibility: GPUShaderStage.COMPUTE, storageTexture: { access: 'write-only', format: 'rgba8unorm' } },
+            ],
+        }),
+        entries: [
+            { binding: 0, resource: swizzledView },
+        ],
+    });
+    globalThis.storageError = await swizzleDevice.popErrorScope();
+    shouldBeTrue('storageError instanceof GPUValidationError');
+
+    finishJSTest();
+};
+</script>

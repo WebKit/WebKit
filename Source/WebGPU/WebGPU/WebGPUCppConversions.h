@@ -464,6 +464,8 @@ constexpr std::optional<WebGPU::FeatureName> fromAPI(WGPUFeatureName value)
         return WebGPU::FeatureName::PrimitiveIndex;
     case WGPUFeatureName_Subgroups:
         return WebGPU::FeatureName::Subgroups;
+    case WGPUFeatureName_TextureComponentSwizzle:
+        return WebGPU::FeatureName::TextureComponentSwizzle;
     default:
         return std::nullopt;
     }

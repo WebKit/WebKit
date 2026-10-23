@@ -176,6 +176,8 @@ enum class CompilationMessageType : uint8_t {
     Info,
 };
 
+// https://gpuweb.github.io/gpuweb/#dom-gputextureviewdescriptor-swizzle
+// Each of the 'r', 'g', 'b', 'a', '0' and '1' characters a swizzle string may contain.
 enum class ComponentSwizzle : uint8_t {
     Zero,
     One,
@@ -232,6 +234,7 @@ enum class FeatureName : uint8_t {
     TextureFormatsTier2,
     PrimitiveIndex,
     Subgroups,
+    TextureComponentSwizzle,
 };
 
 enum class FilterMode : uint8_t {
@@ -591,11 +594,18 @@ struct Color {
     double a { 0 };
 };
 
+// https://gpuweb.github.io/gpuweb/#dom-gputextureviewdescriptor-swizzle
+// The mapping a shader reads a texture view through, defaulting to the identity.
 struct TextureComponentSwizzle {
     ComponentSwizzle r { ComponentSwizzle::R };
     ComponentSwizzle g { ComponentSwizzle::G };
     ComponentSwizzle b { ComponentSwizzle::B };
     ComponentSwizzle a { ComponentSwizzle::A };
+
+    bool isIdentity() const
+    {
+        return r == ComponentSwizzle::R && g == ComponentSwizzle::G && b == ComponentSwizzle::B && a == ComponentSwizzle::A;
+    }
 
     friend bool operator==(const TextureComponentSwizzle&, const TextureComponentSwizzle&) = default;
 };

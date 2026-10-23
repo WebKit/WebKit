@@ -74,6 +74,7 @@ public:
     TEXTURE_OR_VIEW_HELPER(previouslyCleared)
     TEXTURE_OR_VIEW_HELPER_NONCONST(setPreviouslyCleared)
     TEXTURE_OR_VIEW_HELPER(texture)
+    TEXTURE_OR_VIEW_HELPER(hasSwizzle)
     TEXTURE_OR_VIEW_HELPER(isValid)
     TEXTURE_OR_VIEW_HELPER(usage)
     TEXTURE_OR_VIEW_HELPER(mipLevelCount)
@@ -128,7 +129,9 @@ bool isAllowableDepthStencilTextureView(const auto& texture, bool hasDepthCompon
 
 bool hasRenderableTextureViewProperties(const auto& texture)
 {
-    return texture.usage().contains(WebGPU::TextureUsage::RenderAttachment) && (texture.is2DTexture() || texture.is2DArrayTexture() || texture.is3DTexture()) && texture.mipLevelCount() == 1 && texture.arrayLayerCount() <= 1;
+    // A swizzle only describes how a shader reads the view; an attachment writes it, so a view with
+    // one is not renderable. https://gpuweb.github.io/gpuweb/#abstract-opdef-renderable-texture-view
+    return texture.usage().contains(WebGPU::TextureUsage::RenderAttachment) && (texture.is2DTexture() || texture.is2DArrayTexture() || texture.is3DTexture()) && texture.mipLevelCount() == 1 && texture.arrayLayerCount() <= 1 && !texture.hasSwizzle();
 }
 
 bool isRenderableTextureView(const auto& texture, WebGPU::LoadOp loadOp, WebGPU::StoreOp storeOp)

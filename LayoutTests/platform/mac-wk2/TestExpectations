@@ -1404,6 +1404,7 @@ http/tests/webgpu/webgpu/api/validation/capability_checks/features/texture_compo
 
 # Skip tests due to taking too long to run on EWS
 [ Debug ] http/tests/webgpu/webgpu/api/operation/render_pipeline/sample_mask.html [ Skip ]
+[ Debug ] http/tests/webgpu/webgpu/api/operation/texture_view/texture_component_swizzle.html [ Skip ]
 [ Debug ] http/tests/webgpu/webgpu/api/validation/image_copy/texture_related.html [ Skip ]
 [ Debug ] http/tests/webgpu/webgpu/api/validation/state/device_lost/destroy.html [ Skip ]
 

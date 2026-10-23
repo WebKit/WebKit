@@ -199,6 +199,8 @@ static String featureName(WebGPU::FeatureName feature)
         return "texture-formats-tier2"_s;
     case WebGPU::FeatureName::Subgroups:
         return "subgroups"_s;
+    case WebGPU::FeatureName::TextureComponentSwizzle:
+        return "texture-component-swizzle"_s;
     }
 }
 

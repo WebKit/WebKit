@@ -34,8 +34,9 @@ namespace WebGPU::Metal {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureView);
 
-TextureView::TextureView(id<MTLTexture> texture, const ResolvedTextureViewDescriptor& descriptor, const std::optional<WebGPU::Extent3D>& renderExtent, Texture& parentTexture, Device& device)
+TextureView::TextureView(id<MTLTexture> texture, id<MTLTexture> sampledTexture, const ResolvedTextureViewDescriptor& descriptor, const std::optional<WebGPU::Extent3D>& renderExtent, Texture& parentTexture, Device& device)
     : m_texture(texture)
+    , m_sampledTexture(sampledTexture)
     , m_format(descriptor.format)
     , m_dimension(descriptor.dimension)
     , m_baseMipLevel(descriptor.baseMipLevel)
@@ -44,6 +45,7 @@ TextureView::TextureView(id<MTLTexture> texture, const ResolvedTextureViewDescri
     , m_arrayLayerCount(descriptor.arrayLayerCount)
     , m_aspect(descriptor.aspect)
     , m_usage(descriptor.usage)
+    , m_hasSwizzle(!descriptor.swizzle.isIdentity())
     , m_renderExtent(renderExtent)
     , m_device(device)
     , m_parentTexture(parentTexture)
@@ -61,6 +63,7 @@ TextureView::~TextureView() = default;
 void TextureView::setLabel(String&& label)
 {
     m_texture.label = label.createNSString().get();
+    m_sampledTexture.label = m_texture.label;
 }
 
 id<MTLTexture> TextureView::parentTexture() const
@@ -114,6 +117,14 @@ OptionSet<WebGPU::TextureUsage> TextureView::usage() const
 id<MTLTexture> TextureView::texture() const
 {
     return isDestroyed() ? parentTexture() : m_texture;
+}
+
+id<MTLTexture> TextureView::sampledTexture() const
+{
+    if (isDestroyed())
+        return parentTexture();
+
+    return m_sampledTexture ? m_sampledTexture : m_texture;
 }
 
 uint32_t TextureView::sampleCount() const
@@ -179,6 +190,7 @@ bool TextureView::isValid() const
 void TextureView::destroy()
 {
     m_texture = protect(m_device)->placeholderTexture(format());
+    m_sampledTexture = nil;
     if (!m_parentTexture->isCanvasBacking())
         m_device->makeSubmitInvalidClearingEncoders(m_commandEncoders);
 

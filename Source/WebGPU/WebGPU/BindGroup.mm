@@ -1120,7 +1120,7 @@ static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Metal::D
 
     object.getQueue()->clearTextureViewIfNeeded(apiTextureView);
 
-    id<MTLTexture> texture = apiTextureView->texture();
+    id<MTLTexture> texture = (textureEntry && !externalTextureEntry) ? apiTextureView->sampledTexture() : apiTextureView->texture();
     if (!apiTextureView->isDestroyed()) {
         if (!apiTextureView->isValid()) {
             VALIDATION_ERROR(@"Underlying texture is not valid");
@@ -1149,6 +1149,10 @@ static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Metal::D
         }
         if (!validateStorageTextureViewFormat(storageTextureEntry, apiTextureView)) {
             VALIDATION_ERROR(@"Bind group storage texture entry format does not match TextureView format");
+            return BindGroup::createInvalid(object);
+        }
+        if (storageTextureEntry && apiTextureView->hasSwizzle()) {
+            VALIDATION_ERROR(@"Storage textures must be bound through a view whose swizzle is \"rgba\"");
             return BindGroup::createInvalid(object);
         }
         if (storageTextureEntry && apiTextureView->texture().mipmapLevelCount != 1) {

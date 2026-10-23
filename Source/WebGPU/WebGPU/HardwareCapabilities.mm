@@ -142,6 +142,7 @@ static Vector<WebGPU::FeatureName> baseFeatures(id<MTLDevice> device, const Hard
     features.append(WebGPU::FeatureName::Rg11b10ufloatRenderable);
     features.append(WebGPU::FeatureName::ShaderF16);
     features.append(WebGPU::FeatureName::Bgra8unormStorage);
+    features.append(WebGPU::FeatureName::TextureComponentSwizzle);
 #if CPU(ARM64)
     features.append(WebGPU::FeatureName::TextureFormatsTier1);
     features.append(WebGPU::FeatureName::TextureFormatsTier2);
