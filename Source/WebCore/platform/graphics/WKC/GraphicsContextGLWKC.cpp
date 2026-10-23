@@ -1781,8 +1781,9 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
         if (!cubeTextureBaseComplete(texture)) {
             releaseTextureStorage(texture);
             texture.width = texture.height = 0;
-            if (wasBoundFramebufferTexture)
-                refreshFramebufferTextureViews();
+            // Any framebuffer may reference this texture, not only the one
+            // currently bound. Clear every cached view after storage release.
+            refreshFramebufferTextureViews();
             return true;
         }
         texture.width = texture.cubeWidths[0];
@@ -1809,8 +1810,9 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
     } else {
         if (!texture.width || !texture.height || texture.levels.empty()) {
             releaseTextureStorage(texture);
-            if (wasBoundFramebufferTexture)
-                refreshFramebufferTextureViews();
+            // Attachments can outlive the current binding; invalidate all
+            // framebuffer texture views whenever this storage disappears.
+            refreshFramebufferTextureViews();
             return true;
         }
         if (texture.levels.size() > 13 || texture.width > static_cast<uint32_t>(maxTextureSize())
