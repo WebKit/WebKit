@@ -275,6 +275,11 @@ WorkerDedicatedRunLoop::RunInModeResult WorkerDedicatedRunLoop::runInMode(Worker
         this->postTaskForMode([predicateMode](ScriptExecutionContext&) { }, predicateMode);
     });
 
+    // Register before looking at pending timers below, so that a timer set from another thread in between still wakes the wait.
+    CheckedPtr script = context->script();
+    if (script)
+        script->addTimerSetNotification(timerAddedTask);
+
 #if USE(GLIB)
     GMainContext* mainContext = g_main_context_get_thread_default();
     if (g_main_context_pending(mainContext))
@@ -288,8 +293,6 @@ WorkerDedicatedRunLoop::RunInModeResult WorkerDedicatedRunLoop::runInMode(Worker
     double timeUntilNextCFRunLoopTimerInSeconds = nextCFRunLoopTimerFireDate - CFAbsoluteTimeGetCurrent();
     timeoutDelay = std::max(0_s, Seconds(timeUntilNextCFRunLoopTimerInSeconds));
 #endif
-
-    CheckedPtr script = context->script();
 
 #if OS(WINDOWS)
     RunLoop::cycle();
@@ -305,7 +308,6 @@ WorkerDedicatedRunLoop::RunInModeResult WorkerDedicatedRunLoop::runInMode(Worker
 
     if (script) {
         script->releaseHeapAccess();
-        script->addTimerSetNotification(timerAddedTask);
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
         // Apply the STW check cap last so it overrides all platform-specific timeouts.
