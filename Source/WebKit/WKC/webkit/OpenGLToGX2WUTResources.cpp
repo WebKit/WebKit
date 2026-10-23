@@ -572,6 +572,9 @@ bool initializeWUTFetchShader(const WUTBufferResources& resources,
 
     GX2InitFetchShaderEx(&shader, static_cast<uint8_t*>(programBuffer),
         static_cast<uint32_t>(streams.size()), streams.data(), type, tessellationMode);
+    // GX2 reads the generated fetch program from memory. Publish the CPU writes
+    // before binding it, matching the cache maintenance used by the main draw path.
+    DCFlushRange(programBuffer, requiredSize);
     // Keep vertex shader linkage and fetch program synchronized: GX2 locations
     // in the streams above came from this exact vertex shader's attribVars.
     GX2SetVertexShader(&vertexShader);
