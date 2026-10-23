@@ -291,8 +291,8 @@ Result Driver::setStencilWriteMask(Face face, uint32_t mask)
 
 Result Driver::setBlendColor(const Color& color)
 {
-    if (!std::isfinite(color.red) || !std::isfinite(color.green)
-        || !std::isfinite(color.blue) || !std::isfinite(color.alpha))
+    if (std::isnan(color.red) || std::isnan(color.green)
+        || std::isnan(color.blue) || std::isnan(color.alpha))
         return Result::InvalidArgument;
     if (!m_backend.setBlendColor)
         return Result::MissingBackend;
@@ -333,7 +333,7 @@ Result Driver::setClearColor(const Color& color)
 
 Result Driver::setClearDepth(float depth)
 {
-    if (!std::isfinite(depth))
+    if (std::isnan(depth))
         return Result::InvalidArgument;
     if (!m_backend.setClearDepth)
         return Result::MissingBackend;
