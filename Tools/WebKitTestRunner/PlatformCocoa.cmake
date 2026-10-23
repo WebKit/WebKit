@@ -404,7 +404,7 @@ set_property(TARGET WebKitTestRunner APPEND PROPERTY LINK_DEPENDS
     "${_wktr_app_dir}/Launch.storyboardc")
 
 if (USE_EXTENSIONKIT)
-    add_dependencies(WebKitTestRunner WebContentExtension WebContentCaptivePortalExtension NetworkingExtension)
+    add_dependencies(WebKitTestRunner WebContentExtension WebContentCaptivePortalExtension WebContentEnhancedSecurityExtension NetworkingExtension)
     if (ENABLE_GPU_PROCESS)
         add_dependencies(WebKitTestRunner GPUExtension)
     endif ()
@@ -412,6 +412,8 @@ if (USE_EXTENSIONKIT)
     WEBKIT_EMBED_EXTENSION(WebKitTestRunner WebContentExtension ${_wktr_bundle_id}
         CHANGE_EXTENSION_POINT ADD_ATS)
     WEBKIT_EMBED_EXTENSION(WebKitTestRunner WebContentCaptivePortalExtension ${_wktr_bundle_id}
+        CHANGE_EXTENSION_POINT ADD_ATS)
+    WEBKIT_EMBED_EXTENSION(WebKitTestRunner WebContentEnhancedSecurityExtension ${_wktr_bundle_id}
         CHANGE_EXTENSION_POINT ADD_ATS)
     WEBKIT_EMBED_EXTENSION(WebKitTestRunner NetworkingExtension ${_wktr_bundle_id}
         ADD_ATS)
