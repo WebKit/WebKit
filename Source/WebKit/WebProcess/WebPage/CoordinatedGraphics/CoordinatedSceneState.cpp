@@ -176,12 +176,12 @@ void CoordinatedSceneState::invalidate()
     m_pendingLayersToRemove = { };
 }
 
-void CoordinatedSceneState::waitUntilPaintingComplete()
+void CoordinatedSceneState::waitUntilPaintingFinished()
 {
     ASSERT(isMainRunLoop());
     Locker pendingLayersLock { m_pendingLayersLock };
     for (auto& layer : m_pendingLayers)
-        layer->waitUntilPaintingComplete();
+        layer->waitUntilPaintingFinished();
 }
 
 void CoordinatedSceneState::willPaintTile()

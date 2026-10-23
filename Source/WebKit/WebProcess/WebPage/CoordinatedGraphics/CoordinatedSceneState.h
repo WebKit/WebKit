@@ -62,7 +62,7 @@ public:
 
     bool layersDidChange() const { return m_didChangeLayers; }
 
-    void waitUntilPaintingComplete();
+    void waitUntilPaintingFinished();
 
     void willPaintTile();
     void didPaintTile();

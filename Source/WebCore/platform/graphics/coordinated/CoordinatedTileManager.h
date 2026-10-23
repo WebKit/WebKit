@@ -28,8 +28,11 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
+#include <WebCore/IntRect.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
 #include <wtf/WorkerPool.h>
 
 #if USE(SKIA)
@@ -39,9 +42,9 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 namespace WebCore {
+class CoordinatedPlatformLayer;
 class CoordinatedTileBuffer;
 class GraphicsLayerCoordinated;
-class IntRect;
 
 #if USE(SKIA)
 class SkiaPaintingEngine;
@@ -80,7 +83,17 @@ public:
 
 private:
 #if USE(SKIA)
+    struct PaintingTask {
+        Ref<CoordinatedPlatformLayer> layer;
+        Ref<CoordinatedTileBuffer> buffer;
+        Ref<SkiaRecordingResult> recording;
+        IntRect tileRect;
+        IntRect dirtyRect;
+    };
+
     const std::unique_ptr<SkiaPaintingEngine> m_paintingEngine;
+    Lock m_paintingTaskQueueLock;
+    Vector<PaintingTask> m_paintingTaskQueue WTF_GUARDED_BY_LOCK(m_paintingTaskQueueLock);
 
     // Keep the worker pool as last member to ensure it's destroyed first.
     const Ref<WorkerPool> m_paintingWorkerPool;

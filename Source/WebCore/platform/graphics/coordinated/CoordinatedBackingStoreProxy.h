@@ -48,7 +48,7 @@ public:
     void setAffectedByTransformAnimation(bool);
     CoordinatedAnimatedBackingStoreClient* animatedBackingStoreClient() const { return m_animatedBackingStoreClient.get(); }
 
-    void invalidate();
+    void invalidate(CoordinatedPlatformLayer&);
 
     class Update {
         WTF_MAKE_NONCOPYABLE(Update);
@@ -70,7 +70,7 @@ public:
         const Vector<uint32_t>& tilesToRemove() const LIFETIME_BOUND { return m_tilesToRemove; }
 
         void appendUpdate(Vector<uint32_t>&&, Vector<TileUpdate>&&, Vector<uint32_t>&&);
-        void waitUntilPaintingComplete();
+        void waitUntilPaintingFinished();
 
         bool isEmpty() const { return m_tilesToCreate.isEmpty() && m_tilesToUpdate.isEmpty() && m_tilesToRemove.isEmpty(); }
 
@@ -88,21 +88,17 @@ public:
     OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, Damage&, CoordinatedPlatformLayer&);
     Update takePendingUpdate();
 
-    void waitUntilPaintingComplete();
+    void waitUntilPaintingFinished();
 
 private:
     struct Tile {
         Tile() = default;
-        Tile(uint32_t id, IntRect&& tileRect)
-            : id(id)
-            , rect(WTF::move(tileRect))
-            , dirtyRect(rect)
-        {
-        }
+        Tile(uint32_t id, IntRect&&);
         Tile(const Tile&) = delete;
         Tile& operator=(const Tile&) = delete;
         Tile(Tile&&) = default;
         Tile& operator=(Tile&&) = default;
+        ~Tile();
 
         void resize(const IntSize& size)
         {
@@ -127,15 +123,22 @@ private:
             dirtyRect = { };
         }
 
+#if USE(SKIA)
+        void cancelActiveBuffers(CoordinatedPlatformLayer&);
+#endif
+
         uint32_t id { 0 };
         IntRect rect;
         IntRect dirtyRect;
+#if USE(SKIA)
+        Vector<Ref<CoordinatedTileBuffer>, 1> activeBuffers;
+#endif
     };
 
     CoordinatedBackingStoreProxy() = default;
 
     void invalidateRegion(const Vector<IntRect, 1>&);
-    void createOrDestroyTiles(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage&, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
+    void createOrDestroyTiles(CoordinatedPlatformLayer&, const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage&, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
     IntSize computeTileSize(const IntSize& viewportSize, int maxTextureSize) const;
     std::pair<IntRect, IntRect> computeCoverAndKeepRect() const;
     void adjustForContentsRect(IntRect&) const;

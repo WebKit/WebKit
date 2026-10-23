@@ -169,7 +169,7 @@ private:
     bool m_pendingForceRepaint { false };
 #endif
     bool m_isFlushingLayers { false };
-    bool m_waitUntilPaintingComplete { false };
+    bool m_waitUntilPaintingFinished { false };
     bool m_isSuspended { false };
     bool m_isWaitingForRenderer { false };
     bool m_scheduledWhileWaitingForRenderer { false };

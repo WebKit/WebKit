@@ -142,7 +142,7 @@ private:
     WebCore::GraphicsLayer* m_overlayCompositingLayer { nullptr };
     bool m_pendingResize { false };
     bool m_pendingForceRepaint { false };
-    bool m_waitUntilPaintingComplete { false };
+    bool m_waitUntilPaintingFinished { false };
     bool m_isWaitingForRenderer { false };
     bool m_scheduledWhileWaitingForRenderer { false };
     bool m_forceFrameSync { false };
