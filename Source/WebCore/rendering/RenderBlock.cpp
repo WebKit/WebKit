@@ -2572,6 +2572,10 @@ std::optional<LayoutUnit> RenderBlock::lastLineBaseline() const
         for (CheckedPtr child = lastInFlowChildBox(); child; child = child->previousInFlowSiblingBox()) {
             if ((child->isLegend() && child->isExcludedFromNormalLayout()) || child->isExcludedMarker())
                 continue;
+            // CSS Align §9.1: for legacy reasons a block container that is a block-axis scroll container has its last baseline at its block-end margin edge.
+            auto isBlockAxisScrollContainer = is<RenderBlockFlow>(*child) && !child->isWritingModeRoot() && (child->isHorizontalWritingMode() ? child->isScrollContainerY() : child->isScrollContainerX());
+            if (isBlockAxisScrollContainer)
+                return child->logicalTop() + child->logicalHeight() + child->marginAfter(writingMode());
             if (auto baseline = child->lastLineBaseline())
                 return child->logicalTop() + *baseline;
         }
