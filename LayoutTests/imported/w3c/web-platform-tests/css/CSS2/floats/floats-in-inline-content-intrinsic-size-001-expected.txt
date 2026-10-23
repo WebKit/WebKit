@@ -1,0 +1,18 @@
+
+PASS An empty float next to text (emptyFloatAndText, min-content)
+PASS An empty float next to text (emptyFloatAndText, max-content)
+PASS A float takes its own min-content width under a min-content constraint and its own max-content width under a max-content one (floatWithText, min-content)
+PASS A float takes its own min-content width under a min-content constraint and its own max-content width under a max-content one (floatWithText, max-content)
+PASS A left and a right float on the same line as text (leftAndRightFloats, min-content)
+PASS A left and a right float on the same line as text (leftAndRightFloats, max-content)
+PASS A container with nothing but floats (floatsOnly, min-content)
+PASS A container with nothing but floats (floatsOnly, max-content)
+PASS A container with text-indent and nothing but floats (floatsOnlyWithTextIndent, min-content)
+PASS A container with text-indent and nothing but floats (floatsOnlyWithTextIndent, max-content)
+PASS A float that clears the float before it goes below it (clearingFloatsOnly, min-content)
+PASS A float that clears the float before it goes below it (clearingFloatsOnly, max-content)
+PASS Text sits next to the floats that come before the clearing float (textNextToFirstFloat, min-content)
+PASS Text sits next to the floats that come before the clearing float (textNextToFirstFloat, max-content)
+PASS An orthogonal float contributes its block size and its left and right margins (orthogonalFloat, min-content)
+PASS An orthogonal float contributes its block size and its left and right margins (orthogonalFloat, max-content)
+

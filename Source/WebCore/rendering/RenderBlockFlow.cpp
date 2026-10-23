@@ -5541,7 +5541,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeInlineIntrinsicLogical
 
 bool RenderBlockFlow::tryComputeIntrinsicLogicalWidthsUsingInlinePath(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth)
 {
-    if (!firstInFlowChild())
+    if (!firstChild())
         return false;
 
     computeAndSetLineLayoutPath();
@@ -5552,6 +5552,10 @@ bool RenderBlockFlow::tryComputeIntrinsicLogicalWidthsUsingInlinePath(LayoutUnit
     std::tie(minLogicalWidth, maxLogicalWidth) = ensureInlineLayout().computeIntrinsicWidthConstraints();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto* renderer = walker.current();
+        if (renderer->isOutOfFlowPositioned()) {
+            // Out-of-flow boxes take no part in this computation, so their own content widths are still to be computed.
+            continue;
+        }
         renderer->clearContentLogicalWidthsInvalidation();
         if (auto* renderText = dynamicDowncast<RenderText>(renderer))
             renderText->resetMinMaxWidth();
