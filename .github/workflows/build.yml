@@ -688,6 +688,7 @@ jobs:
           # The devkitpro container's system Python may predate Python 3.12,
           # when tarfile's built-in "data" extraction filter was introduced.
           # Use the maintained backport rather than falling back to unsafe extraction.
+          apt-get install -y python3-pip
           python3 -m pip install --break-system-packages --disable-pip-version-check backports.tarfile
 
           python3 - "$IMAGE_ARCHIVE" "$ROOTFS" <<'PY'
