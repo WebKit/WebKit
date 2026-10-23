@@ -445,8 +445,8 @@ all : $(GENERATED_MESSAGES_FILES)
 # splice_additions() in generate-message-receiver.py. The script finds them by receiver name, but
 # they are listed here as well so make and DerivedSources-input.xcfilelist both track them.
 WEBKITADDITIONS_MESSAGES_IN_FILES = \
+	WebPageAdditions.messages.in \
 	WebPageProxyAdditions.messages.in \
-#
 
 MESSAGES_IN_ADDITIONS_ARGS := $(foreach D,$(WEBKITADDITIONS_HEADER_SEARCH_PATHS),--additions-dir $D)
 MESSAGES_IN_ADDITIONS_FILES := $(foreach I,$(WEBKITADDITIONS_MESSAGES_IN_FILES),$(call find-webkitadditions-file,$I))
