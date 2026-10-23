@@ -36,6 +36,7 @@
 #include "EditorState.h"
 #include "FocusedElementInformation.h"
 #include "ImageAnalysisUtilities.h"
+#include "NativeWebMouseEvent.h"
 #include "PDFPluginIdentifier.h"
 #include "TransientZoomState.h"
 #include "WKLayoutMode.h"
@@ -1011,6 +1012,7 @@ private:
 
     void nativeMouseEventHandler(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
     void nativeMouseEventHandlerInternal(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+    void dispatchPendingMouseEvents();
 
     void scheduleMouseDidMoveOverElementForModifierFlagsChange(NSEvent *);
 
@@ -1123,6 +1125,12 @@ private:
 
     RetainPtr<NSEvent> m_lastMouseDownEvent;
     RetainPtr<NSEvent> m_lastPressureEvent;
+
+    struct PendingMouseEvent {
+        Ref<NativeWebMouseEvent> event;
+        std::optional<bool> handledByInputMethod;
+    };
+    Deque<PendingMouseEvent> m_pendingMouseEvents;
 
     bool m_ignoresNonWheelEvents { false };
     bool m_ignoresMouseMoveEvents { false };
