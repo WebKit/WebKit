@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that an idle callback left over when an idle period reaches its deadline runs in a later idle period, even when nothing else happens on the page.');
+
+jsTestIsAsync = true;
+
+function synchronouslyWait(milliseconds) {
+    let start = performance.now();
+    while (performance.now() - start < milliseconds);
+}
+
+onload = () => {
+    // Let the page settle, so that no rendering update or task can start another idle period.
+    setTimeout(() => {
+        requestIdleCallback(() => synchronouslyWait(60));
+        requestIdleCallback(() => {
+            testPassed('The idle callback left over from the previous idle period ran.');
+            finishJSTest();
+        });
+    }, 100);
+}
+
+</script>
+</body>
+</html>

@@ -3932,6 +3932,9 @@ void Document::resumeActiveDOMObjects(ReasonForSuspension why)
         m_documentTaskGroup->resume();
     ScriptExecutionContext::resumeActiveDOMObjects(why);
     resumeDeviceMotionAndOrientationUpdates();
+    // Idle callbacks don't stay pending while suspended, so the idle timer may have stopped.
+    if (hasPendingIdleCallback())
+        protect(windowEventLoop())->scheduleIdlePeriod();
     // FIXME: For iOS, do we need to add content change observers that were removed in Document::suspendActiveDOMObjects()?
 }
 
