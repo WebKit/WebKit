@@ -212,7 +212,7 @@ struct UIEdgeInsets;
 
 - (void)_webView:(WKWebView *)webView requestPermissionForXRSessionOrigin:(NSString *)originString mode:(_WKXRSessionMode)mode grantedFeatures:(_WKXRSessionFeatureFlags)grantedFeatures consentRequiredFeatures:(_WKXRSessionFeatureFlags)consentRequiredFeatures consentOptionalFeatures:(_WKXRSessionFeatureFlags)consentOptionalFeatures completionHandler:(void (^)(_WKXRSessionFeatureFlags))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 - (void)_webView:(WKWebView *)webView requestPermissionForXRSessionOrigin:(NSString *)originString mode:(_WKXRSessionMode)mode grantedFeatures:(_WKXRSessionFeatureFlags)grantedFeatures consentRequiredFeatures:(_WKXRSessionFeatureFlags)consentRequiredFeatures consentOptionalFeatures:(_WKXRSessionFeatureFlags)consentOptionalFeatures requiredFeaturesRequested:(_WKXRSessionFeatureFlags)requiredFeaturesRequested optionalFeaturesRequested:(_WKXRSessionFeatureFlags)optionalFeaturesRequested completionHandler:(void (^)(_WKXRSessionFeatureFlags))completionHandler WK_API_AVAILABLE(macos(14.0), ios(17.0));
-- (void)_webView:(WKWebView *)webView supportedXRSessionFeatures:(_WKXRSessionFeatureFlags *)vrFeatures arFeatures:(_WKXRSessionFeatureFlags *)arFeatures WK_API_AVAILABLE(ios(18.0), visionos(2.0));
+- (void)_webView:(WKWebView *)webView supportedXRSessionFeatures:(_WKXRSessionFeatureFlags *)vrFeatures arFeatures:(_WKXRSessionFeatureFlags *)arFeatures WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(18.0), visionos(2.0));
 - (void)_webView:(WKWebView *)webView startXRSessionWithCompletionHandler:(void (^)(id))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(10.13.4), ios(16.0));
 
@@ -322,6 +322,8 @@ struct UIEdgeInsets;
 #else // !TARGET_OS_IPHONE
 
 - (NSViewController *)_presentingViewControllerForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(13.0));
+
+- (void)_webView:(WKWebView *)webView startXRSessionWithFeatures:(_WKXRSessionFeatureFlags)features colorFormat:(MTLPixelFormat)pixelFormat depthFormat:(MTLPixelFormat)depthFormat completionHandler:(void (^)(id layerRenderer, NSViewController *viewController, id remoteDevice))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 - (void)_prepareForImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_cancelImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));

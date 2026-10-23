@@ -34,6 +34,8 @@
 #include "WebXRSession.h"
 #include "XRLayerBacking.h"
 #include <WebCore/IntSize.h>
+#include <algorithm>
+#include <wtf/Assertions.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
@@ -187,16 +189,21 @@ uint32_t XRProjectionLayer::textureArrayLength() const
 
 bool XRProjectionLayer::ignoreDepthValues() const
 {
-    return false;
+    return m_ignoreDepthValues;
 }
 
 std::optional<float> XRProjectionLayer::fixedFoveation() const
 {
-    return 1.0;
+    return m_fixedFoveation.value_or(1.0);
 }
 
-void XRProjectionLayer::setFixedFoveation(std::optional<float>)
+void XRProjectionLayer::setFixedFoveation(std::optional<float> fixedFoveation)
 {
+    if (!fixedFoveation) {
+        m_fixedFoveation = std::nullopt;
+        return;
+    }
+    m_fixedFoveation = std::clamp(*fixedFoveation, 0.0f, 1.0f);
 }
 
 WebXRRigidTransform* XRProjectionLayer::deltaPose() const

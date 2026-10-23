@@ -1,0 +1,4 @@
+
+PASS XRProjectionLayer.ignoreDepthValues reflects whether the layer has a depth buffer - webgl
+PASS XRProjectionLayer.ignoreDepthValues reflects whether the layer has a depth buffer - webgl2
+

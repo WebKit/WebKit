@@ -702,7 +702,7 @@ ExceptionOr<Ref<GPUShaderModule>> GPUDevice::createShaderModule(GPUShaderModuleD
 
     auto descriptor = shaderModuleDescriptor.convertToBacking(*m_autoPipelineLayout);
     auto backingDescriptor = descriptor;
-#if PLATFORM(VISION)
+#if ENABLE(WEBXR)
     // FIXME: Remove once https://bugs.webkit.org/show_bug.cgi?id=297538 is addressed
     if (auto context = scriptExecutionContext(); context && context->url().string().contains("toji.github.io/webgpu-metaballs"_s))
         backingDescriptor.code = makeStringByReplacingAll(descriptor.code, "fma(depthSample"_s, "fma(min(depthSample, 0.95)"_s);

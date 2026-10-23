@@ -81,8 +81,7 @@ WebXRSession::WebXRSession(Document& document, XRSessionMode mode, PlatformXR::D
     }))
 {
     device.setTrackingAndRenderingClient(*this);
-    if (!m_requestedFeatures.contains(PlatformXR::SessionFeature::WebGPU))
-        device.initializeTrackingAndRendering(document.securityOrigin().data(), mode, m_requestedFeatures, std::nullopt);
+    device.initializeTrackingAndRendering(document.securityOrigin().data(), mode, m_requestedFeatures, std::nullopt);
 
     // https://immersive-web.github.io/webxr/#ref-for-dom-xrreferencespacetype-viewer%E2%91%A2
     // Every session MUST support viewer XRReferenceSpaces.
@@ -408,6 +407,9 @@ void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
     // 2. Set session's ended value to true.
     m_ended = true;
 
+    for (auto& callback : std::exchange(m_renderingInitializedCallbacks, { }))
+        callback(false);
+
     // 3. If the active immersive session is equal to session, set the active immersive session to null.
     // 4. Remove session from the list of inline sessions.
     for (WeakPtr listener : m_sessionListeners) {
@@ -543,6 +545,21 @@ void WebXRSession::updateSessionVisibilityState(PlatformXR::VisibilityState visi
 void WebXRSession::sessionDidInitializeRendering(uint32_t width, uint32_t height, uint32_t arrayLength)
 {
     m_initialRenderingDimensions = InitialRenderingDimensions { width, height, arrayLength };
+    for (auto& callback : std::exchange(m_renderingInitializedCallbacks, { }))
+        callback(true);
+}
+
+void WebXRSession::whenRenderingInitialized(CompletionHandler<void(bool)>&& callback)
+{
+    if (m_initialRenderingDimensions) {
+        callback(true);
+        return;
+    }
+    if (m_ended) {
+        callback(false);
+        return;
+    }
+    m_renderingInitializedCallbacks.append(WTF::move(callback));
 }
 
 void WebXRSession::applyPendingRenderState()

@@ -60,8 +60,18 @@
 
 #if defined(ENABLE_WEBXR_WEBGPU) && ENABLE_WEBXR_WEBGPU && PLATFORM(VISION)
 #define Webgpu_webxr_feature_status Stable
+#elif defined(ENABLE_WEBXR_WEBGPU) && ENABLE_WEBXR_WEBGPU
+#define Webgpu_webxr_feature_status Testable
 #else
 #define Webgpu_webxr_feature_status Unstable
+#endif
+
+#if defined(ENABLE_WEBXR) && ENABLE_WEBXR && PLATFORM(VISION)
+#define Webxr_feature_status Stable
+#elif defined(ENABLE_WEBXR) && ENABLE_WEBXR
+#define Webxr_feature_status Preview
+#else
+#define Webxr_feature_status Unstable
 #endif
 
 #if defined(ENABLE_UNPREFIXED_BACKDROP_FILTER) && ENABLE_UNPREFIXED_BACKDROP_FILTER

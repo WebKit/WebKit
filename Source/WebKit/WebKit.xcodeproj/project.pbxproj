@@ -3914,6 +3914,7 @@
 		118502622673B0DA00A6425E /* XRDeviceProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XRDeviceProxy.cpp; sourceTree = "<group>"; };
 		118502632673B0DA00A6425E /* XRDeviceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDeviceIdentifier.h; sourceTree = "<group>"; };
 		118502652673B0DA00A6425E /* XRDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDeviceInfo.h; sourceTree = "<group>"; };
+		51A0B2012F9E7B0000C0DE02 /* XRMetalPixelFormats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRMetalPixelFormats.h; sourceTree = "<group>"; };
 		17CF2486D8134D6FB486C07A /* WKWebView+TextExtraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "WKWebView+TextExtraction.mm"; sourceTree = "<group>"; };
 		1A002D3E196B329400B9AD44 /* _WKSessionState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSessionState.mm; sourceTree = "<group>"; };
 		1A002D3F196B329400B9AD44 /* _WKSessionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSessionState.h; sourceTree = "<group>"; };
@@ -10267,6 +10268,7 @@
 				118502652673B0DA00A6425E /* XRDeviceInfo.h */,
 				118502622673B0DA00A6425E /* XRDeviceProxy.cpp */,
 				118502612673B0DA00A6425E /* XRDeviceProxy.h */,
+				51A0B2012F9E7B0000C0DE02 /* XRMetalPixelFormats.h */,
 				86AA520D292523AF0065399E /* XRSystem.serialization.in */,
 			);
 			path = XR;

@@ -28,6 +28,7 @@
 		511AAEB72A8C1E77007ECBEE /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 511AAEB62A8C1E77007ECBEE /* UserNotifications.framework */; };
 		513EA7BF2ECFE34900828F2A /* HistoryButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 513EA7BE2ECFE34900828F2A /* HistoryButton.m */; };
 		51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E244F911EFCE07008228D1 /* MBToolbarItem.m */; };
+		51A0B1022F9E4A1000C0DE01 /* WebXRImmersiveSpaceHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A0B1012F9E4A1000C0DE01 /* WebXRImmersiveSpaceHost.swift */; };
 		5C9332AF24C1349C0036DECE /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C9332AE24C1349C0036DECE /* SecurityInterface.framework */; };
 		72945D0229B7F204006ACF75 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72945D0129B7F204006ACF75 /* QuartzCore.framework */; };
 		7CA379421AC381C10079DC37 /* ExtensionManagerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CA379401AC381C10079DC37 /* ExtensionManagerWindowController.m */; };
@@ -60,6 +61,7 @@
 		256AC3D80F4B6AC300CF3369 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = mac/AppDelegate.h; sourceTree = "<group>"; };
 		256AC3D90F4B6AC300CF3369 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = mac/AppDelegate.m; sourceTree = "<group>"; };
 		256AC3F00F4B6AF500CF3369 /* MiniBrowser_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniBrowser_Prefix.pch; path = mac/MiniBrowser_Prefix.pch; sourceTree = "<group>"; };
+		51A0B1012F9E4A1000C0DE01 /* WebXRImmersiveSpaceHost.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebXRImmersiveSpaceHost.swift; path = mac/WebXRImmersiveSpaceHost.swift; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		2DC37341198B62D300EC33E9 /* SettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsController.h; path = mac/SettingsController.h; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 				37BAF90620218053000EA879 /* MiniBrowser.entitlements */,
 				2DC37341198B62D300EC33E9 /* SettingsController.h */,
 				2DC37342198B62D300EC33E9 /* SettingsController.m */,
+				51A0B1012F9E4A1000C0DE01 /* WebXRImmersiveSpaceHost.swift */,
 				0FE643A2161FAC660059E3FF /* WK1BrowserWindowController.h */,
 				0FE643A3161FAC660059E3FF /* WK1BrowserWindowController.m */,
 				BC329496116A941B008635D0 /* WK2BrowserWindowController.h */,
@@ -274,6 +277,7 @@
 				BC329487116A92E2008635D0 /* main.m in Sources */,
 				51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */,
 				2DC37343198B62D300EC33E9 /* SettingsController.m in Sources */,
+				51A0B1022F9E4A1000C0DE01 /* WebXRImmersiveSpaceHost.swift in Sources */,
 				0FE643A4161FAC660059E3FF /* WK1BrowserWindowController.m in Sources */,
 				BC329498116A941B008635D0 /* WK2BrowserWindowController.m in Sources */,
 			);

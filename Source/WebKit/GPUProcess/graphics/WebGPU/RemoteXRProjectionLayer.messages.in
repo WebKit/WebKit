@@ -29,7 +29,7 @@
     EnabledBy=WebXRWebGPUBindingsEnabled
 ]
 messages -> RemoteXRProjectionLayer Stream {
-#if PLATFORM(VISION)
+#if HAVE(COMPOSITOR_SERVICES)
     void StartFrame(uint64_t frameIndex, MachSendRight colorBuffer, MachSendRight depthBuffer, MachSendRight completionSyncEvent, uint64_t textureIndex, struct PlatformXR::RateMapDescription rateMapDescription) NotStreamEncodable
 #endif
     void EndFrame()

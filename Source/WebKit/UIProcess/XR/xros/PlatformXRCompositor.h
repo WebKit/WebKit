@@ -11,6 +11,7 @@
 #import <CompositorServices/CompositorServices.h>
 #import <Metal/Metal.h>
 #import <WebCore/PageIdentifier.h>
+#import <WebCore/PlatformViewController.h>
 #import <WebCore/SecurityOriginData.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TZoneMalloc.h>
@@ -19,9 +20,18 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/threads/BinarySemaphore.h>
 
+@class WKXRTrackingManager;
+#if HAVE(CP_REMOTE_COMPOSITOR)
+@class CPRemoteCompositor;
+#endif
+#if PLATFORM(IOS_FAMILY)
 @class UIView;
 @class WKSpatialGestureRecognizer;
-@class WKXRTrackingManager;
+#endif
+#if PLATFORM(MAC)
+@class CAMetalLayer;
+@class NSWindow;
+#endif
 #if HAVE(SPATIAL_CONTROLLERS)
 @class WKXRControllerManager;
 #endif
@@ -71,13 +81,16 @@ private:
     bool processEvent();
     void update();
     void render(cp_frame_t, cp_drawable_t, NSTimeInterval);
+#if HAVE(CP_REMOTE_COMPOSITOR)
+    bool startSessionUsingRemoteCompositor(WebPageProxy&, WebCore::PageIdentifier, const WebCore::SecurityOriginData&, const PlatformXR::Device::FeatureList&, const std::optional<WebCore::XRCanvasConfiguration>&);
+#endif
     void terminateSession(WebPageProxy&, PlatformXRSessionEndReason);
     void currentSessionHasEnded();
     void setPaused(bool);
     void setBackgrounded(bool);
     void updateVisibilityStateIfNeeded();
 
-    void didCompleteSessionSetup(WebPageProxy&, WebCore::PageIdentifier, const WebCore::SecurityOriginData&, const PlatformXR::Device::FeatureList&, UIViewController *);
+    void didCompleteSessionSetup(WebPageProxy&, WebCore::PageIdentifier, const WebCore::SecurityOriginData&, const PlatformXR::Device::FeatureList&, PlatformViewController *);
     void setUpDepthTextures();
 
     void sessionRequestIsCancelled();
@@ -95,9 +108,28 @@ private:
 
     std::optional<size_t> indexOfReusableTextures(id<MTLTexture>, id<MTLTexture>);
 
+#if PLATFORM(MAC)
+    void mirrorToDebugWindow(id<MTLTexture> left, uint32_t leftSlice, id<MTLTexture> right, uint32_t rightSlice, uint64_t completionEventValue);
+    void closeDebugMirrorWindow();
+#endif
+
     RetainPtr<cp_layer_renderer_t> m_cpLayer;
+#if HAVE(CP_REMOTE_COMPOSITOR)
+    RetainPtr<CPRemoteCompositor> m_remoteCompositor;
+#endif
+#if PLATFORM(MAC)
+    RetainPtr<id> m_remoteDevice;
+    RetainPtr<id<MTLCommandQueue>> m_mirrorCommandQueue;
+    RetainPtr<NSWindow> m_mirrorWindow;
+    RetainPtr<CAMetalLayer> m_mirrorLayer;
+    std::atomic<bool> m_mirrorLayerReady { false };
+    bool m_mirrorWindowRequested { false };
+#endif
     RetainPtr<WKXRTrackingManager> m_xrTrackingManager;
+    RetainPtr<id> m_lastKnownDeviceAnchor;
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<WKSpatialGestureRecognizer> m_spatialGestureRecognizer;
+#endif
     std::optional<XRDeviceIdentifier> m_headsetIdentifier;
     PlatformXR::Device::FeatureList m_supportedVRFeatures;
     PlatformXR::Device::FeatureList m_supportedARFeatures;

@@ -29,10 +29,13 @@
 #import "APIConversions.h"
 #import "Device.h"
 #import "MetalSPI.h"
+#import "XRSubImage.h"
+#import <algorithm>
+#import <tuple>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
 
-#if USE(APPLE_INTERNAL_SDK) && PLATFORM(VISION)
+#if USE(APPLE_INTERNAL_SDK) && HAVE(COMPOSITOR_SERVICES)
 #import <CompositorServices/CompositorServices_Private.h>
 #import <Metal/MTLRasterizationRate_Private.h>
 #import <wtf/SoftLinking.h>
@@ -98,6 +101,45 @@ XRProjectionLayer::XRProjectionLayer(Device& device)
 
 XRProjectionLayer::~XRProjectionLayer() = default;
 
+void XRProjectionLayer::clearDepthTexture()
+{
+    id<MTLTexture> depthTexture = m_depthTexture;
+    if (!depthTexture)
+        return;
+
+    Ref queue = m_device->getQueue();
+    queue->finalizeBlitCommandEncoder();
+    id<MTLCommandBuffer> commandBuffer = queue->commandBufferWithDescriptor([MTLCommandBufferDescriptor new]);
+    if (!commandBuffer)
+        return;
+
+    bool hasStencilAspect = depthTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8;
+    for (NSUInteger slice = 0; slice < depthTexture.arrayLength; ++slice) {
+        MTLRenderPassDescriptor *descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
+        descriptor.depthAttachment.texture = depthTexture;
+        descriptor.depthAttachment.slice = slice;
+        descriptor.depthAttachment.loadAction = MTLLoadActionClear;
+        descriptor.depthAttachment.storeAction = MTLStoreActionStore;
+        descriptor.depthAttachment.clearDepth = 0.0;
+        if (hasStencilAspect) {
+            descriptor.stencilAttachment.texture = depthTexture;
+            descriptor.stencilAttachment.slice = slice;
+            descriptor.stencilAttachment.loadAction = MTLLoadActionLoad;
+            descriptor.stencilAttachment.storeAction = MTLStoreActionStore;
+        }
+        descriptor.renderTargetWidth = depthTexture.width;
+        descriptor.renderTargetHeight = depthTexture.height;
+        descriptor.defaultRasterSampleCount = depthTexture.sampleCount;
+
+        if (id<MTLRenderCommandEncoder> clearEncoder = [commandBuffer renderCommandEncoderWithDescriptor:descriptor]) {
+            queue->setEncoderForBuffer(commandBuffer, clearEncoder);
+            queue->endEncoding(clearEncoder, commandBuffer);
+        }
+    }
+
+    queue->commitMTLCommandBuffer(commandBuffer);
+}
+
 void XRProjectionLayer::setLabel(String&&)
 {
 }
@@ -129,7 +171,7 @@ size_t XRProjectionLayer::reusableTextureIndex() const
 
 void XRProjectionLayer::startFrame(size_t frameIndex, WTF::MachSendRight&& colorBuffer, WTF::MachSendRight&& depthBuffer, WTF::MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples)
 {
-#if USE(APPLE_INTERNAL_SDK) && PLATFORM(VISION) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if USE(APPLE_INTERNAL_SDK) && HAVE(COMPOSITOR_SERVICES) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     id<MTLDevice> device = m_device->device();
     m_reusableTextureIndex = reusableTextureIndex;
     NSNumber* textureKey = @(reusableTextureIndex);
@@ -146,6 +188,8 @@ void XRProjectionLayer::startFrame(size_t frameIndex, WTF::MachSendRight&& color
         [m_depthTextures setObject:m_depthTexture forKey:textureKey];
     } else
         m_depthTexture = [m_depthTextures objectForKey:textureKey];
+
+    clearDepthTexture();
 
     if (completionSyncEvent.sendRight())
         m_sharedEvent = std::make_pair([(id<MTLDeviceSPI>)device newSharedEventWithMachPort:completionSyncEvent.sendRight()], frameIndex);
