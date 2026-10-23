@@ -478,6 +478,7 @@ public:
     Ref<Range> subrange(Range&, unsigned rangeLocation, unsigned rangeLength);
     ExceptionOr<RefPtr<Range>> rangeForDictionaryLookupAtLocation(int x, int y);
     RefPtr<Range> rangeOfStringNearLocation(const Range&, const String&, unsigned);
+    unsigned textIteratorNodeIndexResolutionCount() const;
 
     struct TextIteratorState {
         String text;

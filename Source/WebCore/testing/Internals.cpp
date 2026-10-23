@@ -2944,6 +2944,11 @@ RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& liveRange, const
     return createLiveRange(findClosestPlainText(range, text, { }, targetOffset));
 }
 
+unsigned Internals::textIteratorNodeIndexResolutionCount() const
+{
+    return TextIterator::nodeIndexResolutionCountForTesting();
+}
+
 Vector<Internals::TextIteratorState> Internals::statesOfTextIterator(const Range& liveRange)
 {
     auto simpleRange = makeSimpleRange(liveRange);

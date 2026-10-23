@@ -126,6 +126,8 @@ public:
     WEBCORE_EXPORT TextIteratorPosition LEGACY_NODELETE position() const;
     WEBCORE_EXPORT Node* node() const;
 
+    WEBCORE_EXPORT static unsigned nodeIndexResolutionCountForTesting();
+
     // Returns true when the current output is a newline emitted from exiting
     // a block-level element, as opposed to text content or <br> newlines.
     bool isBlockNewline() const { return m_isBlockNewline; }
