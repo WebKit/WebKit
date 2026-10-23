@@ -281,6 +281,55 @@ InlineLayoutUnit IntrinsicWidthHandler::maximumContentSize()
     return maximumContentSize;
 }
 
+static InlineLayoutUnit lineLogicalWidthWithFloats(const InlineFormattingContext& formattingContext, IntrinsicWidthMode intrinsicWidthMode, const LineLayoutResult::PlacedFloatList& placedFloats, InlineLayoutUnit lineContentLogicalWidth)
+{
+    if (placedFloats.isEmpty())
+        return lineContentLogicalWidth;
+
+    auto floatMarginBoxWidth = [&](const ElementBox& floatBox) {
+        // The float's content is the render tree's to lay out, so it is the render tree that knows its width under this constraint (see LineBuilder::handleBlockContent).
+        auto& integrationUtils = formattingContext.integrationUtils();
+        auto contribution = intrinsicWidthMode == IntrinsicWidthMode::Minimum ? integrationUtils.minContentLogicalWidthContribution(floatBox) : integrationUtils.maxContentLogicalWidthContribution(floatBox);
+        auto& boxGeometry = formattingContext.geometryForBox(floatBox);
+        return std::max(InlineLayoutUnit { }, InlineLayoutUnit { contribution + boxGeometry.marginStart() + boxGeometry.marginEnd() });
+    };
+
+    if (intrinsicWidthMode == IntrinsicWidthMode::Minimum) {
+        // A float that does not fit next to the content goes below it.
+        auto lineLogicalWidth = lineContentLogicalWidth;
+        for (auto& floatItem : placedFloats) {
+            CheckedRef floatBox = downcast<ElementBox>(*floatItem.layoutBox());
+            lineLogicalWidth = std::max(lineLogicalWidth, floatMarginBoxWidth(floatBox.get()));
+        }
+        return lineLogicalWidth;
+    }
+
+    // Floats line up next to the content until one clears the floats before it. That float goes below them and, since a float may not
+    // be placed higher than an earlier one, so does every float after it. These line up next to each other, but not next to the content.
+    auto isLeftToRight = formattingContext.root().writingMode().isBidiLTR();
+    auto lineLogicalWidth = InlineLayoutUnit { };
+    auto contentWidthNextToFloats = lineContentLogicalWidth;
+    auto startFloatsWidth = InlineLayoutUnit { };
+    auto endFloatsWidth = InlineLayoutUnit { };
+    for (auto& floatItem : placedFloats) {
+        CheckedRef floatBox = downcast<ElementBox>(*floatItem.layoutBox());
+        auto clear = floatBox->style().clear();
+        auto clearsStartFloats = clear == Clear::Both || clear == Clear::InlineStart || clear == (isLeftToRight ? Clear::Left : Clear::Right);
+        auto clearsEndFloats = clear == Clear::Both || clear == Clear::InlineEnd || clear == (isLeftToRight ? Clear::Right : Clear::Left);
+        if ((clearsStartFloats && startFloatsWidth) || (clearsEndFloats && endFloatsWidth)) {
+            lineLogicalWidth = std::max(lineLogicalWidth, contentWidthNextToFloats + startFloatsWidth + endFloatsWidth);
+            contentWidthNextToFloats = { };
+            startFloatsWidth = { };
+            endFloatsWidth = { };
+        }
+        if (floatItem.isStartPositioned())
+            startFloatsWidth += floatMarginBoxWidth(floatBox.get());
+        else
+            endFloatsWidth += floatMarginBoxWidth(floatBox.get());
+    }
+    return std::max(lineLogicalWidth, contentWidthNextToFloats + startFloatsWidth + endFloatsWidth);
+}
+
 InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(IntrinsicWidthMode intrinsicWidthMode, AbstractLineBuilder& lineBuilder, MayCacheLayoutResult mayCacheLayoutResult)
 {
     auto layoutRange = m_inlineItemRange;
@@ -298,22 +347,8 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
 
     while (true) {
         auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, { 0.f, 0.f, availableWidth, 0.f } }, previousLine, isFirstFormattedLineCandidate);
-        auto floatContentWidth = [&] {
-            auto leftWidth = InlineLayoutUnit { };
-            auto rightWidth = InlineLayoutUnit { };
-            for (auto& floatItem : lineLayoutResult.floatContent.placedFloats) {
-                mayCacheLayoutResult = MayCacheLayoutResult::No;
-                auto marginBoxRect = BoxGeometry::marginBoxRect(floatItem.boxGeometry());
-                if (floatItem.isStartPositioned())
-                    leftWidth = std::max<InlineLayoutUnit>(leftWidth, marginBoxRect.right());
-                else
-                    rightWidth = std::max<InlineLayoutUnit>(rightWidth, availableWidth - marginBoxRect.left());
-            }
-            return InlineLayoutUnit { leftWidth + rightWidth };
-        };
-
         auto lineContentLogicalWidth = [&] {
-            auto contentWidth = lineLayoutResult.lineGeometry.logicalTopLeft.x() + lineLayoutResult.contentGeometry.logicalWidth + floatContentWidth();
+            auto contentWidth = lineLayoutResult.lineGeometry.logicalTopLeft.x() + lineLayoutResult.contentGeometry.logicalWidth;
             if (lineLayoutResult.runs.isEmpty())
                 return contentWidth;
             auto& leadingRun = lineLayoutResult.runs.first();
@@ -321,8 +356,12 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
                 contentWidth -= leadingRun.logicalRight();
             return contentWidth;
         }();
-        maximumContentWidth = std::max(maximumContentWidth, lineContentLogicalWidth);
-        contentWidthBetweenLineBreaks.current += (lineContentLogicalWidth + lineLayoutResult.hangingContent.logicalWidth);
+
+        if (!lineLayoutResult.floatContent.placedFloats.isEmpty())
+            mayCacheLayoutResult = MayCacheLayoutResult::No;
+        auto lineLogicalWidth = lineLogicalWidthWithFloats(formattingContext(), intrinsicWidthMode, lineLayoutResult.floatContent.placedFloats, lineContentLogicalWidth);
+        maximumContentWidth = std::max(maximumContentWidth, lineLogicalWidth);
+        contentWidthBetweenLineBreaks.current += (lineLogicalWidth + lineLayoutResult.hangingContent.logicalWidth);
         if (lineLayoutResult.endsWithLineBreak())
             contentWidthBetweenLineBreaks = { std::max(contentWidthBetweenLineBreaks.maximum, contentWidthBetweenLineBreaks.current), { } };
 

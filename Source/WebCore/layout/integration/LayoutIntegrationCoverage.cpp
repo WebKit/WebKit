@@ -45,8 +45,11 @@ bool canUseForIntrinsicWidthComputation(const RenderBlockFlow& blockContainer)
 {
     for (auto walker = InlineWalker(blockContainer); !walker.atEnd(); walker.advance()) {
         CheckedRef renderer = *walker.current();
-        if (!renderer->isInFlow())
+        if (renderer->isOutOfFlowPositioned())
             return false;
+
+        if (renderer->isFloating())
+            continue;
 
         auto isFullySupportedInFlowRenderer = isAnyOf<RenderText, RenderLineBreak, RenderListOutsideMarker>(renderer) || renderer->isInlineBox();
         if (isFullySupportedInFlowRenderer)
