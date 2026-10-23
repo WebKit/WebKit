@@ -688,9 +688,7 @@ class Manager(object):
         # Some crash logs can take a long time to be written out so look
         # for new logs after the test run finishes.
         _log.debug("looking for new crash logs")
-        self._look_for_new_crash_logs(initial_results, start_time)
-        if retry_results:
-            self._look_for_new_crash_logs(retry_results, start_time)
+        self._look_for_new_crash_logs_of_runs(initial_results, retry_results, start_time)
 
         _log.debug("summarizing results")
         flat_expectations = OrderedDict()
@@ -767,22 +765,48 @@ class Manager(object):
         self._options.pixel_tests = True
         return self._port.start_helper(prefer_integrated_gpu=self._options.prefer_integrated_gpu)
 
-    def _look_for_new_crash_logs(self, run_results, start_time):
+    @staticmethod
+    def _crashed_processes(results, crash_log_found_only=False):
+        crashed_processes = []
+        for result in results:
+            if (result.type != test_expectations.CRASH):
+                continue
+            for failure in result.failures:
+                if not isinstance(failure, test_failures.FailureCrash):
+                    continue
+                if crash_log_found_only and not failure.crash_log_found:
+                    continue
+                crashed_processes.append([result.test_name, failure.process_name, failure.pid])
+        return crashed_processes
+
+    @staticmethod
+    def _known_crashed_processes(initial_results, retry_results):
+        known_crashed_processes = []
+        for run_results in (initial_results, retry_results):
+            if run_results:
+                # Read every iteration because the by-name maps keep only one result per test.
+                # Skip crashes without a saved crash log so their crash logs are still reported as other crashes.
+                known_crashed_processes += Manager._crashed_processes(run_results.all_results, crash_log_found_only=True)
+        return known_crashed_processes
+
+    def _look_for_new_crash_logs_of_runs(self, initial_results, retry_results, start_time):
+        # Exclude the crashed tests of both runs from each pass, since each pass scans every crash log written since the run started.
+        known_crashed_processes = self._known_crashed_processes(initial_results, retry_results)
+        self._look_for_new_crash_logs(initial_results, start_time, known_crashed_processes)
+        if retry_results:
+            self._look_for_new_crash_logs(retry_results, start_time, known_crashed_processes)
+
+    def _look_for_new_crash_logs(self, run_results, start_time, known_crashed_processes):
         """Since crash logs can take a long time to be written out if the system is
            under stress do a second pass at the end of the test run.
 
            run_results: the results of the test run
            start_time: time the tests started at.  We're looking for crash
                logs after that time.
+           known_crashed_processes: crashed processes of every run whose crash logs
+               were saved, which are not reported again as new crashes.
         """
-        crashed_processes = []
-        for test, result in run_results.unexpected_results_by_name.items():
-            if (result.type != test_expectations.CRASH):
-                continue
-            for failure in result.failures:
-                if not isinstance(failure, test_failures.FailureCrash):
-                    continue
-                crashed_processes.append([test, failure.process_name, failure.pid])
+        crashed_processes = self._crashed_processes(run_results.unexpected_results_by_name.values())
 
         sample_files = self._port.look_for_new_samples(crashed_processes, start_time)
         if sample_files:
@@ -790,7 +814,7 @@ class Manager(object):
                 writer = TestResultWriter(self._port._filesystem, self._port, self._port.results_directory(), test)
                 writer.copy_sample_file(sample_file)
 
-        crash_logs = self._port.look_for_new_crash_logs(crashed_processes, start_time)
+        crash_logs = self._port.look_for_new_crash_logs(crashed_processes, start_time, known_crashed_processes)
         if crash_logs:
             for test, crash_log in crash_logs.items():
                 writer = TestResultWriter(self._port._filesystem, self._port, self._port.results_directory(), test)

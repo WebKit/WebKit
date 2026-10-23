@@ -40,6 +40,8 @@ from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.layout_tests.models.test_expectations import *
+from webkitpy.layout_tests.models.test_failures import FailureCrash
+from webkitpy.layout_tests.models.test_results import TestResult
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.port.test import TestPort
 from webkitpy.thirdparty.mock import Mock
@@ -54,15 +56,90 @@ class ManagerTest(unittest.TestCase):
         manager = Manager(port, options=MockOptions(test_list=None, http=True, verbose=False, driver_names=list(port.DEFAULT_SUPPORTED_DRIVERS)), printer=Mock())
         return manager
 
-    def test_look_for_new_crash_logs(self):
+    def _expectations(self, tests):
         host = MockHost()
         port = host.port_factory.get('test-mac-leopard')
-        tests = ['failures/expected/crash.html']
         expectations = test_expectations.TestExpectations(port, tests)
         expectations.parse_all_expectations()
-        run_results = TestRunResults(expectations, len(tests))
+        return expectations
+
+    def test_look_for_new_crash_logs(self):
+        tests = ['failures/expected/crash.html']
+        run_results = TestRunResults(self._expectations(tests), len(tests))
         manager = self._get_manager()
-        manager._look_for_new_crash_logs(run_results, time.time())
+        manager._look_for_new_crash_logs(run_results, time.time(), [])
+
+    def _add_crash(self, run_results, test, pid, expected, crash_log_found=True):
+        run_results.add(TestResult(test, failures=[FailureCrash(process_name='WebProcess', pid=pid, crash_log_found=crash_log_found)]), expected=expected)
+
+    def _crash_results(self):
+        tests = ['failures/expected/crash.html', 'failures/unexpected/crash.html']
+        expectations = self._expectations(tests)
+        initial_results = TestRunResults(expectations, len(tests))
+        self._add_crash(initial_results, 'failures/expected/crash.html', 1111, expected=True)
+        self._add_crash(initial_results, 'failures/unexpected/crash.html', 2222, expected=False)
+        retry_results = TestRunResults(expectations, 1)
+        self._add_crash(retry_results, 'failures/unexpected/crash.html', 3333, expected=False)
+        return initial_results, retry_results
+
+    def test_known_crashed_processes_include_every_iteration(self):
+        initial_results, _ = self._crash_results()
+        self._add_crash(initial_results, 'failures/expected/crash.html', 4444, expected=True)
+        self._add_crash(initial_results, 'failures/unexpected/crash.html', 5555, expected=False)
+        self.assertEqual([
+            ['failures/expected/crash.html', 'WebProcess', 1111],
+            ['failures/unexpected/crash.html', 'WebProcess', 2222],
+            ['failures/expected/crash.html', 'WebProcess', 4444],
+            ['failures/unexpected/crash.html', 'WebProcess', 5555],
+        ], Manager._known_crashed_processes(initial_results, None))
+
+    def test_known_crashed_processes_include_expected_crashes_and_both_runs(self):
+        initial_results, retry_results = self._crash_results()
+        self.assertEqual([
+            ['failures/expected/crash.html', 'WebProcess', 1111],
+            ['failures/unexpected/crash.html', 'WebProcess', 2222],
+            ['failures/unexpected/crash.html', 'WebProcess', 3333],
+        ], Manager._known_crashed_processes(initial_results, retry_results))
+
+    def test_known_crashed_processes_exclude_crashes_without_saved_crash_log(self):
+        initial_results, retry_results = self._crash_results()
+        self._add_crash(initial_results, 'failures/expected/crash.html', 4444, expected=True, crash_log_found=False)
+        self._add_crash(retry_results, 'failures/unexpected/crash.html', 5555, expected=False, crash_log_found=False)
+        self.assertEqual([
+            ['failures/expected/crash.html', 'WebProcess', 1111],
+            ['failures/unexpected/crash.html', 'WebProcess', 2222],
+            ['failures/unexpected/crash.html', 'WebProcess', 3333],
+        ], Manager._known_crashed_processes(initial_results, retry_results))
+
+    def test_look_for_new_crash_logs_gathers_only_unexpected_crashes_of_run(self):
+        initial_results, retry_results = self._crash_results()
+        known_crashed_processes = Manager._known_crashed_processes(initial_results, retry_results)
+
+        manager = self._get_manager()
+        calls = []
+        manager._port.look_for_new_samples = lambda crashed_processes, start_time: None
+        manager._port.look_for_new_crash_logs = lambda crashed_processes, start_time, known_crashed_processes: calls.append((crashed_processes, known_crashed_processes))
+        manager._look_for_new_crash_logs(retry_results, time.time(), known_crashed_processes)
+
+        self.assertEqual([([['failures/unexpected/crash.html', 'WebProcess', 3333]], known_crashed_processes)], calls)
+
+    def test_look_for_new_crash_logs_of_runs_excludes_crashed_tests_of_both_runs(self):
+        initial_results, retry_results = self._crash_results()
+        known_crashed_processes = [
+            ['failures/expected/crash.html', 'WebProcess', 1111],
+            ['failures/unexpected/crash.html', 'WebProcess', 2222],
+            ['failures/unexpected/crash.html', 'WebProcess', 3333],
+        ]
+
+        manager = self._get_manager()
+        calls = []
+        manager._look_for_new_crash_logs = lambda run_results, start_time, known_crashed_processes: calls.append((run_results, known_crashed_processes))
+        manager._look_for_new_crash_logs_of_runs(initial_results, retry_results, time.time())
+        self.assertEqual([(initial_results, known_crashed_processes), (retry_results, known_crashed_processes)], calls)
+
+        calls = []
+        manager._look_for_new_crash_logs_of_runs(initial_results, None, time.time())
+        self.assertEqual([(initial_results, known_crashed_processes[:2])], calls)
 
     def test_print_expectations_for_subset(self):
         def get_test_names():

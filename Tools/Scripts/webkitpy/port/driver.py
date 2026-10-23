@@ -87,8 +87,8 @@ class DriverOutput(object):
     metrics_patterns.append((re.compile('scrolled to [0-9]+,[0-9]+'), 'scrolled'))
 
     def __init__(self, text, image, image_hash, audio, crash=False,
-            test_time=0, measurements=None, timeout=False, error='', crashed_process_name='??',
-            crashed_pid=None, crash_log=None, pid=None):
+                 test_time=0, measurements=None, timeout=False, error='', crashed_process_name='??',
+                 crashed_pid=None, crash_log=None, crash_log_found=False, pid=None):
         # FIXME: Args could be renamed to better clarify what they do.
         self.text = string_utils.decode(text, target_type=str) if text else None
         self.image = image  # May be empty-string if the test crashes.
@@ -99,6 +99,7 @@ class DriverOutput(object):
         self.crashed_process_name = crashed_process_name
         self.crashed_pid = crashed_pid
         self.crash_log = crash_log
+        self.crash_log_found = crash_log_found
         self.test_time = test_time
         self.measurements = measurements
         self.timeout = timeout
@@ -256,8 +257,10 @@ class Driver(object):
             self._server_process = None
 
         crash_log = None
+        crash_log_found = False
         if self._crash_report_from_driver:
             crash_log = self._crash_report_from_driver
+            crash_log_found = True
         elif crashed:
             gather_crash_log = True
             if not self._port.get_option('gather-expected-crash-logs'):
@@ -266,6 +269,7 @@ class Driver(object):
             _log.debug('Test %s crashed, we will %s gather a crash log.', driver_input.test_name, gather_str)
             if gather_crash_log:
                 self.error_from_test, crash_log = self._get_crash_log(text, self.error_from_test, newer_than=start_time)
+                crash_log_found = bool(crash_log)
             # If we don't find a crash log use a placeholder error message instead.
             if not crash_log:
                 pid_str = str(self._crashed_pid) if self._crashed_pid else "unknown pid"
@@ -276,10 +280,10 @@ class Driver(object):
                     crash_log += '\nstdout:\n%s\nstderr:\n%s\n' % (text, self.error_from_test)
 
         return DriverOutput(text, image, actual_image_hash, audio,
-            crash=crashed, test_time=time.time() - test_begin_time, measurements=self._measurements,
-            timeout=timed_out or driver_timed_out, error=self.error_from_test,
-            crashed_process_name=self._crashed_process_name,
-            crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid)
+                            crash=crashed, test_time=time.time() - test_begin_time, measurements=self._measurements,
+                            timeout=timed_out or driver_timed_out, error=self.error_from_test,
+                            crashed_process_name=self._crashed_process_name,
+                            crashed_pid=self._crashed_pid, crash_log=crash_log, crash_log_found=crash_log_found, pid=pid)
 
     def do_post_tests_work(self):
         if not self._server_process:

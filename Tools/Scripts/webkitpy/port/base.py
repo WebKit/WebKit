@@ -1409,7 +1409,7 @@ class Port(object):
             '\n'.join(('STDOUT: ' + l) for l in stdout_lines),
             '\n'.join(('STDERR: ' + l) for l in stderr_lines)))
 
-    def look_for_new_crash_logs(self, crashed_processes, start_time):
+    def look_for_new_crash_logs(self, crashed_processes, start_time, known_crashed_processes=None):
         pass
 
     def look_for_new_samples(self, unresponsive_processes, start_time):
