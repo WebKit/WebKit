@@ -23,11 +23,15 @@
 header: "WebGPUPrimitiveState.h"
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::PrimitiveState {
-    ::WebGPU::PrimitiveTopology topology
-    std::optional<::WebGPU::IndexFormat> stripIndexFormat
-    ::WebGPU::FrontFace frontFace
-    ::WebGPU::CullMode cullMode
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::PrimitiveState {
+    ::WebGPU::PrimitiveTopology topology;
+    std::optional<::WebGPU::IndexFormat> stripIndexFormat;
+    ::WebGPU::FrontFace frontFace;
+    ::WebGPU::CullMode cullMode;
+    bool unclippedDepth;
+};
 
-    bool unclippedDepth
-}
+header: "WebGPUPrimitiveState.h"
+using WebKit::WebGPU::PrimitiveState = ::WebGPU::PrimitiveState;
+#endif

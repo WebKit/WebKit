@@ -21,9 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::MultisampleState {
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::MultisampleState {
     uint32_t count;
     uint32_t mask;
     bool alphaToCoverageEnabled;
 };
+
+header: "WebGPUMultisampleState.h"
+using WebKit::WebGPU::MultisampleState = ::WebGPU::MultisampleState;
 #endif
