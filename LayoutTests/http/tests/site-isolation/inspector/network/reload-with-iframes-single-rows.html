@@ -16,6 +16,8 @@ function test() {
             // The cross-origin frame is described by the aggregated resource tree, which can arrive after test() starts.
             let srcdocFrame = await awaitChildFrame((frame) => frame.name === "static-frame");
             InspectorTest.expectThat(!!srcdocFrame, "srcdoc frame should be attached before the reload.");
+            let secondSrcdocFrame = await awaitChildFrame((frame) => frame.name === "static-frame-2");
+            InspectorTest.expectThat(!!secondSrcdocFrame, "Second srcdoc frame should be attached before the reload.");
             let crossOriginFrame = await awaitChildFrame((frame) => frame.mainResource.url.includes(crossOriginDocumentURLPart));
             InspectorTest.expectThat(!!crossOriginFrame, "Cross-origin frame should be attached before the reload.");
             if (crossOriginFrame)
@@ -42,6 +44,8 @@ function test() {
 
             srcdocFrame = await awaitChildFrame((frame) => !framesBeforeReload.has(frame) && frame.name === "static-frame");
             InspectorTest.expectThat(!!srcdocFrame, "srcdoc frame should be attached after the reload.");
+            secondSrcdocFrame = await awaitChildFrame((frame) => !framesBeforeReload.has(frame) && frame.name === "static-frame-2");
+            InspectorTest.expectThat(!!secondSrcdocFrame, "Second srcdoc frame should be attached after the reload.");
             crossOriginFrame = await awaitChildFrame((frame) => !framesBeforeReload.has(frame) && frame.mainResource.url.includes(crossOriginDocumentURLPart));
             InspectorTest.expectThat(!!crossOriginFrame, "Cross-origin frame should be attached after the reload.");
 
@@ -55,7 +59,8 @@ function test() {
             InspectorTest.expectEqual(mainRows.length, 1, "Main document should be listed once.");
             InspectorTest.expectThat(!mainRows.includes(mainResourceBeforeReload), "Main document row from before the reload should be gone.");
             InspectorTest.expectThat(mainRows.includes(WI.networkManager.mainFrame?.mainResource), "Main frame's current document should be listed.");
-            InspectorTest.expectEqual(recorder.rowsForURL("about:srcdoc").length, 1, "srcdoc document should be listed once.");
+            InspectorTest.expectEqual(await awaitResourceSettled(WI.networkManager.mainFrame.mainResource), "finished", "Main document should finish loading.");
+            InspectorTest.expectEqual(recorder.rowsForURL("about:srcdoc").length, 2, "Each srcdoc document should be listed once.");
             InspectorTest.expectEqual(recorder.rowsForURLPart(crossOriginDocumentURLPart).length, 1, "Cross-origin document should be listed once.");
             InspectorTest.expectEqual(recorder.rowsForURLPart(crossOriginScriptURLPart).length, 1, "Cross-origin script should be listed once.");
             expectNoAboutBlankRow(recorder);
@@ -68,11 +73,9 @@ function test() {
 }
 </script>
 <body onload="runTest()">
-<p>Tests that reloading a page with a srcdoc iframe and a cross-origin iframe lists each document and script once under Site Isolation.</p>
-<!-- Only one same-process iframe on purpose. With two or more, ProxyingNetworkAgent (which still counts per process) drops the
-     new main document's responseReceived and loadingFinished after the reload, so its row would never finish.
-     FIXME: Add a second same-process iframe and assert the main document finishes once Network counts per frame. -->
+<p>Tests that reloading a page with two srcdoc iframes and a cross-origin iframe lists each document and script once, and finishes the main document, under Site Isolation.</p>
 <iframe name="static-frame" srcdoc="<p>srcdoc-frame-marker</p>"></iframe>
+<iframe name="static-frame-2" srcdoc="<p>srcdoc-frame-2-marker</p>"></iframe>
 <script>
 {
     // A new token on every load, so the reloaded iframe's document and script are not served from the memory cache.

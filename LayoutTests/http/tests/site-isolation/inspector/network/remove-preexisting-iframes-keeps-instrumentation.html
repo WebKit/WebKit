@@ -1,0 +1,71 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function navigateFrame(id, url) {
+    document.getElementById(id).src = url;
+}
+
+function test() {
+    const sameOriginBase = new URL("resources/iframe-with-script.html", WI.networkManager.mainFrame.url).href;
+    const crossOriginBase = "http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html";
+    const token = Math.random().toString(36).slice(2);
+
+    // All frames existed before the frontend attached, and the frontend sends Network.enable twice under Site Isolation. Without
+    // per-frame registration each process therefore holds two registrations, so it takes removing two of its frames, while a third
+    // keeps the process alive, to drop its instrumentation. Removing only one frame would not catch the bug.
+    async function removeTwoThenNavigateThird(prefix, base, label) {
+        let first = await awaitChildFrame((frame) => frame.name === `${prefix}-1`);
+        let second = await awaitChildFrame((frame) => frame.name === `${prefix}-2`);
+        let third = await awaitChildFrame((frame) => frame.name === `${prefix}-3`);
+        InspectorTest.assert(first && second && third, "All three frames should be in the frame model.");
+        if (!first || !second || !third)
+            return;
+
+        let recorder = new FrameLoadRowRecorder;
+
+        InspectorTest.evaluateInPage(`document.getElementById("${prefix}-1").remove(); document.getElementById("${prefix}-2").remove()`);
+        let removed = await pollUntil(() => !WI.networkManager.frameForIdentifier(first.id) && !WI.networkManager.frameForIdentifier(second.id));
+        InspectorTest.expectThat(!!removed, "Removed frames should be reported as removed.");
+
+        let url = `${base}?${prefix}-${token}`;
+        InspectorTest.evaluateInPage(`navigateFrame("${prefix}-3", "${url}")`);
+        let committed = await pollUntil(() => third.mainResource.url === url);
+        InspectorTest.expectThat(!!committed, "Remaining frame's navigation should be committed in the frame model.");
+        if (committed)
+            await expectSingleFinishedSubresource(recorder, third, `iframe-script.js?${prefix}-${token}`, label);
+
+        recorder.stop();
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.RemovePreexistingIFramesKeepsInstrumentation");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.RemovePreexistingIFramesKeepsInstrumentation.MainProcess",
+        description: "Removing two same-origin iframes should not stop network events from the main frame's process.",
+        async test() {
+            await removeTwoThenNavigateThird("same-origin", sameOriginBase, "Same-origin script");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.RemovePreexistingIFramesKeepsInstrumentation.CrossOriginProcess",
+        description: "Removing two cross-origin iframes should not stop network events from the process that hosts their sibling.",
+        async test() {
+            await removeTwoThenNavigateThird("cross-origin", crossOriginBase, "Cross-origin script");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that removing two of three iframes that existed before the inspector attached keeps Network events flowing from their process under Site Isolation.</p>
+<iframe id="same-origin-1" name="same-origin-1" src="resources/iframe-with-script.html?same-origin-1"></iframe>
+<iframe id="same-origin-2" name="same-origin-2" src="resources/iframe-with-script.html?same-origin-2"></iframe>
+<iframe id="same-origin-3" name="same-origin-3" src="resources/iframe-with-script.html?same-origin-3"></iframe>
+<iframe id="cross-origin-1" name="cross-origin-1" src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?cross-origin-1"></iframe>
+<iframe id="cross-origin-2" name="cross-origin-2" src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?cross-origin-2"></iframe>
+<iframe id="cross-origin-3" name="cross-origin-3" src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?cross-origin-3"></iframe>
+</body>

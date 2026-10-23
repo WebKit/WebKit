@@ -1,22 +1,25 @@
-Tests that reloading a page with a srcdoc iframe and a cross-origin iframe lists each document and script once under Site Isolation.
+Tests that reloading a page with two srcdoc iframes and a cross-origin iframe lists each document and script once, and finishes the main document, under Site Isolation.
 
 
 
 == Running test suite: SiteIsolation.Network.ReloadWithIFramesRows
 -- Running test case: SiteIsolation.Network.ReloadWithIFramesRows.Reload
 PASS: srcdoc frame should be attached before the reload.
+PASS: Second srcdoc frame should be attached before the reload.
 PASS: Cross-origin frame should be attached before the reload.
 PASS: Cross-origin script should be listed before the reload.
 Reloading...
 PASS: Main frame should commit the reload.
 PASS: srcdoc frame should be attached after the reload.
+PASS: Second srcdoc frame should be attached after the reload.
 PASS: Cross-origin frame should be attached after the reload.
 PASS: Cross-origin script should be added after the reload.
 PASS: Cross-origin script should finish loading.
 PASS: Main document should be listed once.
 PASS: Main document row from before the reload should be gone.
 PASS: Main frame's current document should be listed.
-PASS: srcdoc document should be listed once.
+PASS: Main document should finish loading.
+PASS: Each srcdoc document should be listed once.
 PASS: Cross-origin document should be listed once.
 PASS: Cross-origin script should be listed once.
 PASS: No about:blank placeholder row should be listed.
