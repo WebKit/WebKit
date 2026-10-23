@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
+class RenderBlock;
 class RenderBlockFlow;
 class RenderView;
 
@@ -51,9 +53,10 @@ public:
 private:
     std::optional<SingleThreadWeakHashMap<const RenderBlockFlow, bool>> m_canUseForNestedBlockLayout;
 };
-// Whether the new block formatting context lays out the root and an out-of-flow box whose containing block is the root or a box inside it.
-bool canUseForBlockLayoutWithOutOfFlowBoxes(const RenderBlockFlow&);
 bool canUseForIntrinsicInlineSizes(const RenderBlockFlow&);
+// The root of the block formatting context, laid out by the new block formatting context, that the block container is in or is the root of. It
+// lays out the out-of-flow boxes whose containing block is the block container.
+CheckedPtr<RenderBlockFlow> coveredBlockFormattingContextRoot(RenderBlock&);
 
 struct BlockLayoutCoverage {
     unsigned coveredBoxes { 0 };
