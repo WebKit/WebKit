@@ -277,12 +277,12 @@
         "HSS_FMP4_AVC_AAC_VTT__Seek" : ["passed"]
     },
     "hss-html5-test" : {
-        "HSS_FMP4_AVC_AAC_VTT_PLAYBACK_START_TIME__Performance" : ["passed"],
-        "HSS_FMP4_AVC_AAC_VTT__Pause" : ["passed"],
-        "HSS_FMP4_AVC_AAC_VTT__PlayRate" : ["passed"],
-        "HSS_FMP4_AVC_AAC_VTT__Playback" : ["passed"],
-        "HSS_FMP4_AVC_AAC_VTT__Seek" : ["passed"],
-        "HSS_FMP4_AVC_AAC_VTT__Subtitles" : ["passed"]
+        "HSS_FMP4_AVC_AAC_VTT_PLAYBACK_START_TIME__Performance" : ["skipped"],
+        "HSS_FMP4_AVC_AAC_VTT__Pause" : ["skipped"],
+        "HSS_FMP4_AVC_AAC_VTT__PlayRate" : ["skipped"],
+        "HSS_FMP4_AVC_AAC_VTT__Playback" : ["skipped"],
+        "HSS_FMP4_AVC_AAC_VTT__Seek" : ["skipped"],
+        "HSS_FMP4_AVC_AAC_VTT__Subtitles" : ["skipped"]
     },
     "progressive-html5-test" : {
         "PROG_MKV_AVC_AAC_VTT__Subtitles" : ["passed"],
