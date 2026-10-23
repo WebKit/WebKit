@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebCodecs VP8 decoding of frames that are not shown</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// Two-pass libvpx with alternate reference frames, 160x90, 31 frames. Frame 1 has show_frame unset:
+// a decoder takes it but outputs no picture for it.
+let chunks;
+
+promise_test(async () => {
+    const buffer = await (await fetch("vp8-hidden-frames.bin")).arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    const view = new DataView(buffer);
+    chunks = [];
+    for (let offset = view.getUint16(6, true); offset + 12 <= bytes.length;) {
+        const size = view.getUint32(offset, true);
+        chunks.push(bytes.slice(offset + 12, offset + 12 + size));
+        offset += 12 + size;
+    }
+    assert_equals(chunks.length, 31, "frames in the file");
+    assert_array_equals(chunks.flatMap((data, index) => data[0] & 0x10 ? [] : [index]), [1], "frames not shown");
+}, "Setup");
+
+promise_test(async () => {
+    const timestamps = [];
+    let error = null;
+    const decoder = new VideoDecoder({
+        output: frame => {
+            timestamps.push(frame.timestamp);
+            frame.close();
+        },
+        error: e => error = e,
+    });
+    decoder.configure({ codec: "vp8", codedWidth: 160, codedHeight: 90 });
+    chunks.forEach((data, index) => decoder.decode(new EncodedVideoChunk({ type: index ? "delta" : "key", timestamp: index, data })));
+    await decoder.flush();
+    assert_equals(error, null, "no error");
+    assert_array_equals(timestamps, chunks.map((_, index) => index).filter(index => index !== 1), "a frame for every shown chunk");
+}, "Decoding a VP8 stream with a frame that is not shown outputs every shown frame");
+</script>
+</body>
+</html>
