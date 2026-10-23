@@ -1,0 +1,10 @@
+
+PASS Keyword none
+FAIL Keyword context-stroke assert_equals: expected "context-stroke" but got ""
+PASS Color name
+PASS RGB color
+PASS URL
+PASS URL with keyword none as fallback
+PASS URL with color as fallback
+PASS Gradient, gradient is not included in SVG paint
+

@@ -14,6 +14,9 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a-download-click.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a-hyperlinkutils-getter-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a-hyperlinkutils-getter.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a-referrerpolicy-navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a-referrerpolicy-reflection.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.hreflang-getter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.hreflang-setter-01.svg
@@ -24,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-noopener-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-noreferrer-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-setter-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.target-dynamic-update.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.type-getter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.type-getter-02.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.type-setter-01.svg

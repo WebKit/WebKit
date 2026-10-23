@@ -1,0 +1,11 @@
+
+PASS currentTranslate initial value is (0, 0) on outermost svg
+PASS currentTranslate satisfies [SameObject] on outermost svg
+PASS currentTranslate attribute is readonly (not replaceable)
+PASS currentTranslate is (0, 0) on inner (non-outermost) svg
+PASS currentTranslate satisfies [SameObject] on inner svg
+PASS currentTranslate point is writable on outermost svg
+FAIL currentTranslate point is read only on non-outermost svg assert_throws_dom: cx.x should throw an exception on inner svg function "() => {
+    ct.x = 10;
+  }" did not throw
+

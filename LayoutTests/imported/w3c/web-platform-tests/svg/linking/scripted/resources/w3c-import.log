@@ -13,6 +13,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/resources/a-download-click.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/resources/a-referrerpolicy-navigation-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/resources/a-referrerpolicy-navigation-target.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/resources/a.rel-noopener-policy-target.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/resources/a.rel-noreferrer-policy-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/resources/a.rel-noreferrer-policy-target.html

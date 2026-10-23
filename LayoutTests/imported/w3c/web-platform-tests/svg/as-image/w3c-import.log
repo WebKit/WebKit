@@ -12,6 +12,12 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-import-helper.sub.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-import.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-import.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-sheet-helper.sub.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-sheet.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-sheet.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/as-image/external-resource-inline-sheet-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/as-image/external-resource-inline-sheet-helper.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/as-image/external-resource-inline-sheet-ref.html

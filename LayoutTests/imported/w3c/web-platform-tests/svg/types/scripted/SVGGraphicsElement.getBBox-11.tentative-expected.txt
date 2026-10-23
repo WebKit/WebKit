@@ -1,0 +1,7 @@
+
+PASS getBBox on rect inside defs returns the rect it would have if rendered
+PASS getBBox on circle inside defs returns the circle it would have if rendered
+PASS getBBox on rect inside group inside defs returns the rect it would have if rendered
+PASS getBBox on rect inside clipPath returns the rect it would have if rendered
+PASS getBBox on rect inside mask returns the rect it would have if rendered
+

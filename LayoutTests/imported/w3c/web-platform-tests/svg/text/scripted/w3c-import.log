@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getsubstringlength-emoji-ligatures.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/lengthadjust-char-positions.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/lengthadjust.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/range-getboundingclientrect-scaled.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/reattach-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textlength-inconsistent.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-href-path-mutated.html
@@ -34,7 +35,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-path-attr-positions.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-path-attr-smil.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-path-attr-startoffset.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-pathlength-zero-startoffset-expected.txt
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-pathlength-zero-startoffset.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-textlength-text-anchor-001.tentative.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/transform-dynamic-update.html
