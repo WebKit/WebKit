@@ -37,8 +37,6 @@
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 
-struct WGPUComputePipelineImpl {
-};
 
 namespace WebGPU::Metal {
 
@@ -47,7 +45,7 @@ class Device;
 class PipelineLayout;
 
 // https://gpuweb.github.io/gpuweb/#gpucomputepipeline
-class ComputePipeline final : public WebGPU::ComputePipeline, public WGPUComputePipelineImpl {
+class ComputePipeline final : public WebGPU::ComputePipeline {
     WTF_MAKE_TZONE_ALLOCATED(ComputePipeline);
 public:
     static Ref<ComputePipeline> create(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, BufferBindingSizesForPipeline&& minimumBufferSizes, uint64_t uniqueId, Device& device)

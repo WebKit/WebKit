@@ -37,8 +37,6 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-struct WGPUShaderModuleImpl {
-};
 
 namespace WGSL {
 namespace AST {
@@ -53,7 +51,7 @@ class Device;
 class PipelineLayout;
 
 // https://gpuweb.github.io/gpuweb/#gpushadermodule
-class ShaderModule final : public WebGPU::ShaderModule, public WGPUShaderModuleImpl {
+class ShaderModule final : public WebGPU::ShaderModule {
     WTF_MAKE_TZONE_ALLOCATED(ShaderModule);
 
     using CheckResult = Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck, std::monostate>;

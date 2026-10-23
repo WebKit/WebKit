@@ -27,7 +27,6 @@
 
 #import "BindableResource.h"
 #import <Metal/Metal.h>
-#import <WebGPU/WGPUTextureImpl.h>
 #import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
@@ -53,7 +52,7 @@ class TextureView;
 struct ResolvedTextureViewDescriptor;
 
 // https://gpuweb.github.io/gpuweb/#gputexture
-class Texture final : public WebGPU::Texture, public WGPUTextureImpl, public TrackedResource {
+class Texture final : public WebGPU::Texture, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(Texture);
 public:
     // The texture allows views in the given view formats, not in descriptor.viewFormats.

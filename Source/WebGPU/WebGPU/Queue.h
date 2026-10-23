@@ -41,8 +41,6 @@
 
 IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 
-struct WGPUQueueImpl {
-};
 
 namespace WebGPU::Metal {
 
@@ -61,7 +59,7 @@ std::optional<std::array<float, 9>> primariesConversionMatrixForPixelBuffer(CVPi
 
 // https://gpuweb.github.io/gpuweb/#gpuqueue
 // A device owns its default queue, not the other way around.
-class Queue final : public WebGPU::Queue, public WGPUQueueImpl {
+class Queue final : public WebGPU::Queue {
     WTF_MAKE_TZONE_ALLOCATED(Queue);
 public:
     static Ref<Queue> create(id<MTLCommandQueue> commandQueue, Adapter& adapter, Device& device)

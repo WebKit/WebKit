@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		075BAABA2EEFBCA2008765CE /* WGPUBufferImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 075BAAB92EEFBCA2008765CE /* WGPUBufferImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		075BAABC2EEFC6B4008765CE /* WGPUTextureImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 075BAABB2EEFC6B4008765CE /* WGPUTextureImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		075BAABE2EEFCA9C008765CE /* WGPUTextureViewImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 075BAABD2EEFCA9C008765CE /* WGPUTextureViewImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		075BAAC02EEFCAE1008765CE /* WGPUQuerySetImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 075BAABF2EEFCAE1008765CE /* WGPUQuerySetImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07662ED72EEB9E6B006C3698 /* Adapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACAB2273A426D0095F8D5 /* Adapter.h */; };
 		079861942EF13A1100659042 /* CxxBridgingPublic.h in Headers */ = {isa = PBXBuildFile; fileRef = 079861932EF13A1100659042 /* CxxBridgingPublic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07D2916D2EC9C4D200A32120 /* CxxBridging.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D2916C2EC9C4D200A32120 /* CxxBridging.h */; };
@@ -252,7 +248,6 @@
 		596E957DAF12D022D09D9ED4 /* WebGPUCpp.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D2ACF0E901738C24D0DDFE /* WebGPUCpp.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CFABBD75A0EC0E1A9B26F610 /* WebGPUCppBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */; };
 		1BAE0AF932075C6734283F13 /* WebGPUCppConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */; };
-		C58AE38494420555CFC65614 /* WebGPUCppBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4606ED06320AD4C5A15A157B /* WebGPUCppBridge.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -346,10 +341,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		075BAAB92EEFBCA2008765CE /* WGPUBufferImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WGPUBufferImpl.h; sourceTree = "<group>"; };
-		075BAABB2EEFC6B4008765CE /* WGPUTextureImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WGPUTextureImpl.h; sourceTree = "<group>"; };
-		075BAABD2EEFCA9C008765CE /* WGPUTextureViewImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WGPUTextureViewImpl.h; sourceTree = "<group>"; };
-		075BAABF2EEFCAE1008765CE /* WGPUQuerySetImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WGPUQuerySetImpl.h; sourceTree = "<group>"; };
 		07607E0D2EFC966700A2F311 /* WebGPU_Private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = WebGPU_Private.modulemap; sourceTree = "<group>"; };
 		079861932EF13A1100659042 /* CxxBridgingPublic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CxxBridgingPublic.h; sourceTree = "<group>"; };
 		07D2916C2EC9C4D200A32120 /* CxxBridging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CxxBridging.h; sourceTree = "<group>"; };
@@ -614,7 +605,6 @@
 		B6D2ACF0E901738C24D0DDFE /* WebGPUCpp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCpp.h; sourceTree = "<group>"; };
 		34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCppBridge.h; sourceTree = "<group>"; };
 		83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCppConversions.h; sourceTree = "<group>"; };
-		4606ED06320AD4C5A15A157B /* WebGPUCppBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGPUCppBridge.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -764,12 +754,7 @@
 				1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */,
 				07607E0D2EFC966700A2F311 /* WebGPU_Private.modulemap */,
 				34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */,
-				4606ED06320AD4C5A15A157B /* WebGPUCppBridge.mm */,
 				83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */,
-				075BAAB92EEFBCA2008765CE /* WGPUBufferImpl.h */,
-				075BAABF2EEFCAE1008765CE /* WGPUQuerySetImpl.h */,
-				075BAABB2EEFC6B4008765CE /* WGPUTextureImpl.h */,
-				075BAABD2EEFCA9C008765CE /* WGPUTextureViewImpl.h */,
 				DDE7487F2F7B4331008013AB /* WorkAround173516139.h */,
 				0D943C0D2C6571BC00D33BA5 /* XRBinding.h */,
 				0D943C0E2C6571BC00D33BA5 /* XRBinding.mm */,
@@ -1073,10 +1058,6 @@
 				596E957DAF12D022D09D9ED4 /* WebGPUCpp.h in Headers */,
 				CFABBD75A0EC0E1A9B26F610 /* WebGPUCppBridge.h in Headers */,
 				1BAE0AF932075C6734283F13 /* WebGPUCppConversions.h in Headers */,
-				075BAABA2EEFBCA2008765CE /* WGPUBufferImpl.h in Headers */,
-				075BAAC02EEFCAE1008765CE /* WGPUQuerySetImpl.h in Headers */,
-				075BAABC2EEFC6B4008765CE /* WGPUTextureImpl.h in Headers */,
-				075BAABE2EEFCA9C008765CE /* WGPUTextureViewImpl.h in Headers */,
 				DDE748802F7B4337008013AB /* WorkAround173516139.h in Headers */,
 				0D943C0F2C6571BC00D33BA5 /* XRBinding.h in Headers */,
 				0DD5FD352C66947B004AF552 /* XRProjectionLayer.h in Headers */,
@@ -1453,7 +1434,6 @@
 				14C834402EBA7CBB003B591A /* StdLibExtras.swift in Sources */,
 				1C5ACACF273A426E0095F8D5 /* Texture.mm in Sources */,
 				1C5ACAEB273A560D0095F8D5 /* TextureView.mm in Sources */,
-				C58AE38494420555CFC65614 /* WebGPUCppBridge.mm in Sources */,
 				0D943C102C6571BC00D33BA5 /* XRBinding.mm in Sources */,
 				0DD5FD362C66947B004AF552 /* XRProjectionLayer.mm in Sources */,
 				0D943C232C65E46400D33BA5 /* XRSubImage.mm in Sources */,

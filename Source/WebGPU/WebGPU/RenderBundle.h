@@ -33,8 +33,6 @@
 #import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 
-struct WGPURenderBundleImpl {
-};
 
 @interface ResourceUsageAndRenderStage : NSObject
 - (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::Metal::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding resource:(WebGPU::Metal::BindGroupEntryUsageData::Resource)resource;
@@ -61,7 +59,7 @@ class TextureOrTextureView;
 class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundle
-class RenderBundle final : public WebGPU::RenderBundle, public WGPURenderBundleImpl {
+class RenderBundle final : public WebGPU::RenderBundle {
     WTF_MAKE_TZONE_ALLOCATED(RenderBundle);
 public:
     using MinVertexCountsContainer = HashMap<uint64_t, IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;

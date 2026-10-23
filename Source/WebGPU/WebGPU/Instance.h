@@ -42,8 +42,6 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 
-struct WGPUInstanceImpl {
-};
 
 namespace WTF {
 class MachSendRight;
@@ -58,7 +56,7 @@ class PresentationContext;
 class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gpu
-class Instance final : public WebGPU::Instance, public WGPUInstanceImpl {
+class Instance final : public WebGPU::Instance {
     WTF_MAKE_TZONE_ALLOCATED(Instance);
 public:
     static Ref<Instance> create(WebGPU::InstanceDescriptor&&);

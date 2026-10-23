@@ -36,8 +36,6 @@
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 
-struct WGPURenderPipelineImpl {
-};
 
 namespace WebGPU::Metal {
 
@@ -47,7 +45,7 @@ class TextureOrTextureView;
 class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderpipeline
-class RenderPipeline final : public WebGPU::RenderPipeline, public WGPURenderPipelineImpl {
+class RenderPipeline final : public WebGPU::RenderPipeline {
     WTF_MAKE_TZONE_ALLOCATED(RenderPipeline);
 public:
     struct BufferData {

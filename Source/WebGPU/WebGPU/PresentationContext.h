@@ -33,11 +33,7 @@
 #import <wtf/TZoneMalloc.h>
 #import <wtf/TypeCasts.h>
 
-struct WGPUSurfaceImpl {
-};
 
-struct WGPUSwapChainImpl {
-};
 
 namespace WebGPU::Metal {
 
@@ -47,7 +43,7 @@ class Instance;
 class Texture;
 class TextureView;
 
-class PresentationContext : public WebGPU::PresentationContext, public WGPUSurfaceImpl, public WGPUSwapChainImpl {
+class PresentationContext : public WebGPU::PresentationContext {
     WTF_MAKE_TZONE_ALLOCATED(PresentationContext);
 public:
     static Ref<PresentationContext> create(const WebGPU::PresentationContextDescriptor&, const Instance&);

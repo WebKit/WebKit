@@ -51,8 +51,6 @@ IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 @property (nonatomic) NSUInteger depthPlane;
 @end
 
-struct WGPUCommandEncoderImpl {
-};
 
 namespace WebGPU::Metal {
 
@@ -68,7 +66,7 @@ class Texture;
 class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpucommandencoder
-class CommandEncoder final : public WebGPU::CommandEncoder, public CommandsMixin, public WGPUCommandEncoderImpl {
+class CommandEncoder final : public WebGPU::CommandEncoder, public CommandsMixin {
     WTF_MAKE_TZONE_ALLOCATED(CommandEncoder);
 public:
     static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer, Device& device, uint64_t uniqueId)

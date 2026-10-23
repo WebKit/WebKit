@@ -35,15 +35,13 @@
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
-struct WGPUSamplerImpl {
-};
 
 namespace WebGPU::Metal {
 
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpusampler
-class Sampler final : public WebGPU::Sampler, public WGPUSamplerImpl {
+class Sampler final : public WebGPU::Sampler {
     WTF_MAKE_TZONE_ALLOCATED(Sampler);
 public:
     using UniqueSamplerIdentifier = std::array<uint32_t, 4>;

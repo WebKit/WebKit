@@ -26,7 +26,6 @@
 #pragma once
 
 #import "BindableResource.h"
-#import <WebGPU/WGPUQuerySetImpl.h>
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
 #import <optional>
@@ -47,7 +46,7 @@ class CommandEncoder;
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpuqueryset
-class QuerySet final : public WebGPU::QuerySet, public WGPUQuerySetImpl, public TrackedResource {
+class QuerySet final : public WebGPU::QuerySet, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(QuerySet);
 public:
     struct CounterSampleBuffer {

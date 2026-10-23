@@ -32,15 +32,13 @@
 #import <wtf/Ref.h>
 #import <wtf/WeakPtr.h>
 
-struct WGPUXRProjectionLayerImpl {
-};
 
 namespace WebGPU::Metal {
 
 class CommandEncoder;
 class Device;
 
-class XRProjectionLayer final : public WebGPU::XRProjectionLayer, public WGPUXRProjectionLayerImpl {
+class XRProjectionLayer final : public WebGPU::XRProjectionLayer {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRProjectionLayer);
 public:
     static Ref<XRProjectionLayer> create(const WebGPU::XRProjectionLayerDescriptor& descriptor, Device& device)

@@ -26,7 +26,6 @@
 #pragma once
 
 #import "BindableResource.h"
-#import <WebGPU/WGPUTextureViewImpl.h>
 #import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
@@ -56,7 +55,7 @@ struct ResolvedTextureViewDescriptor {
 };
 
 // https://gpuweb.github.io/gpuweb/#gputextureview
-class TextureView final : public WebGPU::TextureView, public WGPUTextureViewImpl, public TrackedResource {
+class TextureView final : public WebGPU::TextureView, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(TextureView);
 public:
     static Ref<TextureView> create(id<MTLTexture> texture, const ResolvedTextureViewDescriptor& descriptor, const std::optional<WebGPU::Extent3D>& renderExtent, Texture& parentTexture, Device& device)

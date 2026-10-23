@@ -37,8 +37,6 @@
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 
-struct WGPUBindGroupImpl {
-};
 
 namespace WebGPU::Metal {
 
@@ -54,7 +52,7 @@ struct ExternalTextureIndices {
 };
 
 // https://gpuweb.github.io/gpuweb/#gpubindgroup
-class BindGroup final : public WebGPU::BindGroup, public WGPUBindGroupImpl {
+class BindGroup final : public WebGPU::BindGroup {
     WTF_MAKE_TZONE_ALLOCATED(BindGroup);
 public:
     template <typename T>

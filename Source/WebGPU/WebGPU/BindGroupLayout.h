@@ -37,8 +37,6 @@
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 
-struct WGPUBindGroupLayoutImpl {
-};
 
 namespace WebGPU::Metal {
 
@@ -47,7 +45,7 @@ class Device;
 class PipelineLayout;
 
 // https://gpuweb.github.io/gpuweb/#gpubindgrouplayout
-class BindGroupLayout final : public WebGPU::BindGroupLayout, public WGPUBindGroupLayoutImpl {
+class BindGroupLayout final : public WebGPU::BindGroupLayout {
     WTF_MAKE_TZONE_ALLOCATED(BindGroupLayout);
 public:
     template <typename T>

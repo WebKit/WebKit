@@ -40,14 +40,11 @@ typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 
 WTF_DECLARE_CF_TYPE_TRAIT(CVPixelBuffer);
 
-struct WGPUExternalTextureImpl {
-};
-
 namespace WebGPU::Metal {
 
 class CommandEncoder;
 
-class ExternalTexture final : public WebGPU::ExternalTexture, public WGPUExternalTextureImpl, public TrackedResource {
+class ExternalTexture final : public WebGPU::ExternalTexture, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(ExternalTexture);
 public:
     static Ref<ExternalTexture> create(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, simd::uint2 visibleSize, Device& device)

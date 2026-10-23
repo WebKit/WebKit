@@ -27,9 +27,37 @@
 
 #include "WebGPU.h"
 
-// A handle type of webgpu.h that no object of the implementation stands for. Defining it keeps the
-// structs of webgpu.h that have such a handle from having a member of a forward declared type.
+// The handles of webgpu.h point to the objects of the C++ API (see WebGPUCppBridge.h), never to
+// these structs. Defining them keeps the structs of webgpu.h, and the code that passes the
+// handles, from using forward declared types.
+struct WGPUAdapterImpl { };
+struct WGPUBindGroupImpl { };
+struct WGPUBindGroupLayoutImpl { };
+struct WGPUBufferImpl { };
+struct WGPUCommandBufferImpl { };
+struct WGPUCommandEncoderImpl { };
+struct WGPUComputePassEncoderImpl { };
+struct WGPUComputePipelineImpl { };
+struct WGPUDeviceImpl { };
+struct WGPUExternalTextureImpl { };
+struct WGPUInstanceImpl { };
+struct WGPUPipelineLayoutImpl { };
+struct WGPUQuerySetImpl { };
+struct WGPUQueueImpl { };
+struct WGPURenderBundleImpl { };
+struct WGPURenderBundleEncoderImpl { };
+struct WGPURenderPassEncoderImpl { };
+struct WGPURenderPipelineImpl { };
+struct WGPUResourceTableImpl { };
+struct WGPUSamplerImpl { };
+struct WGPUShaderModuleImpl { };
+struct WGPUSharedBufferMemoryImpl { };
+struct WGPUSharedFenceImpl { };
+struct WGPUSharedTextureMemoryImpl { };
+struct WGPUSurfaceImpl { };
 struct WGPUTexelBufferViewImpl { };
+struct WGPUTextureImpl { };
+struct WGPUTextureViewImpl { };
 
 #include <Metal/Metal.h>
 

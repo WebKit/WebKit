@@ -39,7 +39,6 @@
 #if ENABLE(WEBGPU_SWIFT)
 #import "CxxBridging.h"
 #import <WebGPU/CxxBridgingPublic.h>
-#import <WebGPU/WGPUTextureImpl.h>
 #import <WebGPU/WebGPU.h>
 #import "WebGPUSwift-Generated.h"
 #endif

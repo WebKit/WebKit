@@ -37,8 +37,6 @@
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 
-struct WGPUComputePassEncoderImpl {
-};
 
 namespace WebGPU::Metal {
 
@@ -51,7 +49,7 @@ class QuerySet;
 struct BindableResources;
 
 // https://gpuweb.github.io/gpuweb/#gpucomputepassencoder
-class ComputePassEncoder final : public WebGPU::ComputePassEncoder, public WGPUComputePassEncoderImpl, public CommandsMixin {
+class ComputePassEncoder final : public WebGPU::ComputePassEncoder, public CommandsMixin {
     WTF_MAKE_TZONE_ALLOCATED(ComputePassEncoder);
 public:
     static Ref<ComputePassEncoder> create(id<MTLComputeCommandEncoder> computeCommandEncoder, const WebGPU::ComputePassDescriptor& descriptor, CommandEncoder& parentEncoder, Device& device)

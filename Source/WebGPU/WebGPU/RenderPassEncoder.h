@@ -43,8 +43,6 @@
 
 @class TextureAndClearColor;
 
-struct WGPURenderPassEncoderImpl {
-};
 
 namespace WebGPU::Metal {
 
@@ -60,7 +58,7 @@ class TextureView;
 struct BindableResources;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderpassencoder
-class RenderPassEncoder final : public WebGPU::RenderPassEncoder, public WGPURenderPassEncoderImpl, public CommandsMixin {
+class RenderPassEncoder final : public WebGPU::RenderPassEncoder, public CommandsMixin {
     WTF_MAKE_TZONE_ALLOCATED(RenderPassEncoder);
 public:
     static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, const WebGPU::RenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, uint64_t maxDrawCount, Device& device, MTLRenderPassDescriptor* mtlDescriptor)

@@ -51,6 +51,8 @@
 // must also compile as C and Objective-C.
 #ifdef __cplusplus
 
+#include <wtf/Platform.h> // NOLINT
+
 #include <cstdint>
 #include <expected>
 #include <optional>

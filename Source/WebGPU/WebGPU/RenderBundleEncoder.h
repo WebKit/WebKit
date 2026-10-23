@@ -41,8 +41,6 @@ namespace WebGPU::Metal {
 class RenderPipeline;
 }
 
-struct WGPURenderBundleEncoderImpl {
-};
 
 @interface RenderBundleICBWithResources : NSObject
 
@@ -77,7 +75,7 @@ class RenderPipeline;
 class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundleencoder
-class RenderBundleEncoder final : public WebGPU::RenderBundleEncoder, public WGPURenderBundleEncoderImpl, public CommandsMixin {
+class RenderBundleEncoder final : public WebGPU::RenderBundleEncoder, public CommandsMixin {
     WTF_MAKE_TZONE_ALLOCATED(RenderBundleEncoder);
 public:
     static Ref<RenderBundleEncoder> create(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, const WebGPU::RenderBundleEncoderDescriptor& descriptor, Device& device)
