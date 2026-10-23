@@ -4979,7 +4979,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
 #endif
 
     RefPtr pageClient = this->pageClient();
-    if (pageClient && pageClient->windowIsFrontWindowUnderMouse(event))
+    if (!m_toolTip.isEmpty() && pageClient && pageClient->windowIsFrontWindowUnderMouse(event))
         setToolTip(String());
 
     RefPtr targetFrame = m_mainFrame;
