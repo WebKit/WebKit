@@ -181,6 +181,7 @@ public:
 
     void scrollToSelection();
     void selectDefaultOptionIfNeeded(HTMLOptionElement&);
+    void selectedOptionAdded(HTMLOptionElement&);
 
     bool canSelectAll() const { return m_multiple; }
     void selectAll();
@@ -197,8 +198,6 @@ public:
     // For use in the implementation of HTMLOptionElement.
     void optionSelectionStateChanged(HTMLOptionElement&, bool optionIsSelected);
     bool allowsNonContiguousSelection() const { return m_allowsNonContiguousSelection; };
-
-    CompletionHandlerCallingScope optionToSelectFromChildChangeScope(const ChildChange&);
 
     bool canContainRangeEndPoint() const override { return false; }
     bool shouldSaveAndRestoreFormControlState() const final { return true; }
@@ -339,6 +338,8 @@ private:
     int nextSelectableListIndexForPickerPageMove(int startIndex, SkipDirection, WritingMode) const;
 
     void childrenChanged(const ChildChange&) final;
+    void descendantsChanged() final;
+    void selectAddedOption();
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
     void updateUserAgentShadowTree() final;
@@ -383,6 +384,7 @@ private:
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_buttonSlot;
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_listBoxSlot;
     WeakPtr<SelectFallbackButtonElement, WeakPtrImplWithEventTargetData> m_fallbackButton;
+    WeakPtr<HTMLOptionElement, WeakPtrImplWithEventTargetData> m_addedSelectedOption;
     WeakPtr<SelectPopoverElement, WeakPtrImplWithEventTargetData> m_popover;
 
 #if !PLATFORM(IOS_FAMILY)
