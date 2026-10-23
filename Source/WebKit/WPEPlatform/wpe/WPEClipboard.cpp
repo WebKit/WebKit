@@ -268,7 +268,11 @@ void wpe_clipboard_set_content(WPEClipboard* clipboard, WPEClipboardContent* con
 
     GRefPtr<GPtrArray> formats;
     if (content) {
+#if GLIB_CHECK_VERSION(2, 74, 0)
         formats = adoptGRef(g_ptr_array_new_null_terminated(3, nullptr, TRUE));
+#else
+        formats = adoptGRef(g_ptr_array_new());
+#endif
         if (content->text) {
             g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(g_intern_static_string("text/plain"))));
             g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(g_intern_static_string("text/plain;charset=utf-8"))));
@@ -277,6 +281,11 @@ void wpe_clipboard_set_content(WPEClipboard* clipboard, WPEClipboardContent* con
             for (const auto* format : content->buffers->keys())
                 g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(format)));
         }
+#if !GLIB_CHECK_VERSION(2, 74, 0)
+        // Null-terminate pdata without counting the terminator in len.
+        g_ptr_array_add(formats.get(), nullptr);
+        g_ptr_array_set_size(formats.get(), formats->len - 1);
+#endif
     }
 
     WPE_CLIPBOARD_GET_CLASS(clipboard)->changed(clipboard, formats.get(), TRUE, content);
