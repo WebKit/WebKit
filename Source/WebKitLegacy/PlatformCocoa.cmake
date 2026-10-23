@@ -1106,10 +1106,15 @@ file(MAKE_DIRECTORY "${_wkl_migrate_tmp_dir}")
 
 # unifdef flags mirror Source/WebKitLegacy/scripts/postprocess-header-rule.
 # WK_PLATFORM_NAME = iphonesimulator | iphoneos. CMAKE_OSX_SYSROOT distinguishes.
-if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-    set(_wkl_unifdef_args -B -DTARGET_OS_IPHONE=1 -DTARGET_OS_SIMULATOR=1 -DUSE_APPLE_INTERNAL_SDK=1)
+if (USE_APPLE_INTERNAL_SDK)
+    set(_wkl_use_apple_internal_sdk 1)
 else ()
-    set(_wkl_unifdef_args -B -DTARGET_OS_IPHONE=1 -DTARGET_OS_SIMULATOR=0 -DUSE_APPLE_INTERNAL_SDK=1)
+    set(_wkl_use_apple_internal_sdk 0)
+endif ()
+if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
+    set(_wkl_unifdef_args -B -DTARGET_OS_IPHONE=1 -DTARGET_OS_SIMULATOR=1 -DUSE_APPLE_INTERNAL_SDK=${_wkl_use_apple_internal_sdk})
+else ()
+    set(_wkl_unifdef_args -B -DTARGET_OS_IPHONE=1 -DTARGET_OS_SIMULATOR=0 -DUSE_APPLE_INTERNAL_SDK=${_wkl_use_apple_internal_sdk})
 endif ()
 # ENABLE_TOUCH_EVENTS / ENABLE_IOS_GESTURE_EVENTS: postprocess uses 0 / 1
 # depending on the env value being non-empty. Mirror via cmake variable check.
