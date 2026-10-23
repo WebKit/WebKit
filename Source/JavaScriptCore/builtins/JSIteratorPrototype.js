@@ -237,25 +237,37 @@ function flatMap(mapper)
 
     var iterated = this;
     var iteratedNextMethod = iterated.next;
-    var iteratedWrapper = {
-        @@iterator: function() { return this; },
-        next: function() { return iteratedNextMethod.@call(iterated); },
-        return: function() {
-            var iteratedReturnMethod = iterated.return;
-            if (!@isUndefinedOrNull(iteratedReturnMethod))
-                return iteratedReturnMethod.@call(iterated);
-            return { done: true };
-        },
-    };
 
     var generator = (function*() {
         var counter = 0;
-        for (var item of iteratedWrapper) {
-            var mapped = mapper(item, counter++);
-            var innerIterator = @getIteratorFlattenable(mapped, /* rejectStrings: */ true);
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done)
+                return;
 
-            for (var innerItem of { @@iterator: function() { return innerIterator; } })
-                yield innerItem;
+            var value = result.value;
+            var innerIterator;
+            var innerNextMethod;
+            @ifAbruptCloseIterator(iterated, (
+                innerIterator = @getIteratorFlattenable(mapper(value, counter++), /* rejectStrings: */ true),
+                innerNextMethod = innerIterator.next
+            ));
+
+            for (;;) {
+                var innerResult;
+                var innerDone;
+                var innerValue;
+                @ifAbruptCloseIterator(iterated, (
+                    innerResult = @iteratorGenericNext(innerNextMethod, innerIterator),
+                    (innerDone = innerResult.done) || (innerValue = innerResult.value)
+                ));
+                if (innerDone)
+                    break;
+
+                @ifAbruptCloseIterator(iterated, @ifAbruptCloseIterator(innerIterator, (
+                    yield innerValue
+                )));
+            }
         }
     })();
 
@@ -279,14 +291,23 @@ function some(predicate)
     }
 
     var iterated = this;
+    var iteratedNextMethod = iterated.next;
     var count = 0;
-    var wrapper = { @@iterator: function () { return iterated; }};
-    for (var item of wrapper) {
-        if (predicate(item, count++))
-            return true;
-    }
+    for (;;) {
+        var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+        if (result.done)
+            return false;
 
-    return false;
+        var item = result.value;
+        var matched;
+        @ifAbruptCloseIterator(iterated, (
+            matched = predicate(item, count++)
+        ));
+        if (matched) {
+            @iteratorGenericClose(iterated);
+            return true;
+        }
+    }
 }
 
 // https://tc39.es/ecma262/#sec-iterator.prototype.every
@@ -306,14 +327,23 @@ function every(predicate)
     }
 
     var iterated = this;
+    var iteratedNextMethod = iterated.next;
     var count = 0;
-    var wrapper = { @@iterator: function () { return iterated; }};
-    for (var item of wrapper) {
-        if (!predicate(item, count++))
-            return false;
-    }
+    for (;;) {
+        var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+        if (result.done)
+            return true;
 
-    return true;
+        var item = result.value;
+        var matched;
+        @ifAbruptCloseIterator(iterated, (
+            matched = predicate(item, count++)
+        ));
+        if (!matched) {
+            @iteratorGenericClose(iterated);
+            return false;
+        }
+    }
 }
 
 // https://tc39.es/ecma262/#sec-iterator.prototype.find
@@ -333,14 +363,23 @@ function find(predicate)
     }
 
     var iterated = this;
+    var iteratedNextMethod = iterated.next;
     var count = 0;
-    var wrapper = { @@iterator: function () { return iterated; }};
-    for (var item of wrapper) {
-        if (predicate(item, count++))
-            return item;
-    }
+    for (;;) {
+        var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+        if (result.done)
+            return @undefined;
 
-    return @undefined;
+        var item = result.value;
+        var matched;
+        @ifAbruptCloseIterator(iterated, (
+            matched = predicate(item, count++)
+        ));
+        if (matched) {
+            @iteratorGenericClose(iterated);
+            return item;
+        }
+    }
 }
 
 // https://tc39.es/ecma262/#sec-iterator.prototype.reduce

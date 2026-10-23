@@ -55,21 +55,21 @@ function from(items /*, mapFn, thisArg */)
 
         var k = 0;
         var iterator = iteratorMethod.@call(items);
+        if (!@isObject(iterator))
+            @throwTypeError("Iterator result interface is not an object.");
+        var nextMethod = iterator.next;
 
-        // Since for-of loop once more looks up the @@iterator property of a given iterable,
-        // it could be observable if the user defines a getter for @@iterator.
-        // To avoid this situation, we define a wrapper object that @@iterator just returns a given iterator.
-        var wrapper = {
-            @@iterator: function () { return iterator; }
-        };
-
-        for (var value of wrapper) {
+        for (;;) {
+            var next = @iteratorGenericNext(nextMethod, iterator);
+            if (next.done)
+                break;
+            var value = next.value;
             if (k >= @MAX_SAFE_INTEGER)
-                @throwTypeError("Length exceeded the maximum array length");
+                @ifAbruptCloseIterator(iterator, @throwTypeError("Length exceeded the maximum array length"));
             if (mapFn === @undefined)
-                @putByValDirect(result, k, value);
+                @ifAbruptCloseIterator(iterator, @putByValDirect(result, k, value));
             else
-                @putByValDirect(result, k, thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
+                @ifAbruptCloseIterator(iterator, @putByValDirect(result, k, thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k)));
             k += 1;
         }
 
@@ -98,37 +98,6 @@ function from(items /*, mapFn, thisArg */)
 @linkTimeConstant
 @visibility=PrivateRecursive
 async function defaultAsyncFromAsyncIterator(iterator, mapFn, thisArg)
-{
-    "use strict";
-
-    var result = this !== @Array && @isConstructor(this) ? new this() : [];
-
-    var k = 0;
-
-    // Since for-of loop once more looks up the @@iterator property of a given iterable,
-    // it could be observable if the user defines a getter for @@iterator.
-    // To avoid this situation, we define a wrapper object that @@iterator just returns a given iterator.
-    var wrapper = {
-        @@asyncIterator: function () { return iterator; }
-    };
-
-    for await (var value of wrapper) {
-        if (k >= @MAX_SAFE_INTEGER)
-            @throwTypeError("Length exceeded the maximum array length");
-        if (mapFn === @undefined)
-            @putByValDirect(result, k, value);
-        else
-            @putByValDirect(result, k, await (thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k)));
-        k += 1;
-    }
-
-    result.length = k;
-    return result;
-}
-
-@linkTimeConstant
-@visibility=PrivateRecursive
-async function defaultAsyncFromAsyncIteratorWithNext(iterator, mapFn, thisArg)
 {
     "use strict";
 
@@ -230,7 +199,7 @@ function fromAsync(asyncItems  /*, mapFn, thisArg */)
 
         if (!@isUndefinedOrNull(usingAsyncIterator)) {
             var iterator = usingAsyncIterator.@call(asyncItems);
-            return @defaultAsyncFromAsyncIteratorWithNext.@call(this, iterator, mapFn, thisArg);
+            return @defaultAsyncFromAsyncIterator.@call(this, iterator, mapFn, thisArg);
         }
 
         if (!@isUndefinedOrNull(usingSyncIterator)) {

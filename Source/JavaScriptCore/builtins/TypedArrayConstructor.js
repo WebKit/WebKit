@@ -57,15 +57,15 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
         var count = 0;
         var iterator = iteratorMethod.@call(items);
+        if (!@isObject(iterator))
+            @throwTypeError("Iterator result interface is not an object.");
+        var nextMethod = iterator.next;
 
-        // Since for-of loop once more looks up the @@iterator property of a given iterable,
-        // it could be observable if the user defines a getter for @@iterator.
-        // To avoid this situation, we define a wrapper object that @@iterator just returns a given iterator.
-        var wrapper = {};
-        wrapper.@@iterator = function() { return iterator; }
-
-        for (var value of wrapper) {
-            @putByValDirect(accumulator, count, value);
+        for (;;) {
+            var next = @iteratorGenericNext(nextMethod, iterator);
+            if (next.done)
+                break;
+            @putByValDirect(accumulator, count, next.value);
             count++;
         }
 
