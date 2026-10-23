@@ -36,7 +36,7 @@ namespace WebCore {
 
 CachedApplicationManifest::CachedApplicationManifest(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTF::move(request), Type::ApplicationManifest, sessionID, cookieJar)
-    , m_decoder(TextResourceDecoder::create("application/manifest+json"_s, PAL::UTF8Encoding()))
+    , m_decoder(TextResourceDecoder::create(TextResourceDecoder::ContentType::JSON, PAL::UTF8Encoding()))
 {
 }
 
@@ -56,7 +56,7 @@ void CachedApplicationManifest::finishLoading(const FragmentedSharedBuffer* data
 
 void CachedApplicationManifest::setEncoding(const String& chs)
 {
-    protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingSource::HTTPHeader);
 }
 
 ASCIILiteral CachedApplicationManifest::encoding() const

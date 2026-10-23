@@ -2276,7 +2276,7 @@ String Document::defaultCharsetForLegacyBindings() const
 void Document::setCharset(const String& charset)
 {
     if (RefPtr decoder = this->decoder())
-        decoder->setEncoding(charset, TextResourceDecoder::UserChosenEncoding);
+        decoder->setEncoding(charset, TextResourceDecoder::EncodingSource::UserChosen);
 }
 
 void Document::setContentLanguage(const AtomString& language)

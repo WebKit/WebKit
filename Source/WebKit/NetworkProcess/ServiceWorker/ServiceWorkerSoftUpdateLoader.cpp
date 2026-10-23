@@ -187,9 +187,9 @@ void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(const WebCore::FragmentedSh
 {
     if (!m_decoder) {
         if (!m_responseEncoding.isEmpty())
-            lazyInitialize(m_decoder, TextResourceDecoder::create("text/javascript"_s, m_responseEncoding));
+            lazyInitialize(m_decoder, TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, m_responseEncoding));
         else
-            lazyInitialize(m_decoder, TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s));
+            lazyInitialize(m_decoder, TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, PAL::UTF8Encoding()));
     }
 
     buffer.forEachSegment([&](auto segment) {

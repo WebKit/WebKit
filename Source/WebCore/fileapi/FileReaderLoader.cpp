@@ -394,7 +394,7 @@ void FileReaderLoader::convertToText()
         auto encoding = m_encoding;
         if (!encoding.isValid())
             encoding = extractCharsetFromMediaType(m_dataType);
-        lazyInitialize(m_decoder, TextResourceDecoder::create("text/plain"_s, encoding.isValid() ? encoding : PAL::UTF8Encoding()));
+        lazyInitialize(m_decoder, TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, encoding.isValid() ? encoding : PAL::UTF8Encoding()));
     }
     Ref rawData = *m_rawData;
     if (isCompleted())

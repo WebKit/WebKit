@@ -193,7 +193,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                 auto markup = span(data);
                 if (!markup.empty()) {
                     // A byte order mark selects UTF-16 or UTF-8, otherwise the data is UTF-8. Decode as plain text to skip charset sniffing.
-                    m_selectionData->setMarkup(TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding())->decodeAndFlush(markup));
+                    m_selectionData->setMarkup(TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, PAL::UTF8Encoding())->decodeAndFlush(markup));
                 }
             } else if (mimeType == "_NETSCAPE_URL"_s) {
                 auto urlData = span(data);
