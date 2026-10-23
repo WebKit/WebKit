@@ -50,8 +50,9 @@ public:
     void layout(RelayoutChildren);
     // The min-content and max-content inline sizes of the root's content (css-sizing-3 §5.1), from the block formatting context that lays it out.
     static std::pair<LayoutUnit, LayoutUnit> computeIntrinsicInlineSizes(const RenderBlockFlow&);
-    // The out-of-flow boxes registered on the root, once RenderBlockFlow::layoutBlock has resolved the size of the root.
-    void layoutOutOfFlowBoxes();
+    // The out-of-flow boxes registered on the root or on a block container inside it, once their containing block has its size
+    // (RenderBlockFlow::layoutBlock, RenderBlock::simplifiedLayout).
+    void layoutOutOfFlowBoxes(const RenderBlock& containingBlock);
 
 private:
     void updateRenderers(const Layout::BlockLayoutResult&, PaintInvalidation&);
