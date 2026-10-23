@@ -22,7 +22,7 @@ def find_repository_root():
     for start in (Path.cwd(), Path(__file__).resolve().parent):
         try:
             result = subprocess.run(
-                ["git", "-c", f"safe.directory={ROOT}", "rev-parse", "--show-toplevel"],
+                ["git", "-c", f"safe.directory={os.environ.get('GITHUB_WORKSPACE', str(start.resolve()))}", "rev-parse", "--show-toplevel"],
                 cwd=start,
                 check=True,
                 capture_output=True,
