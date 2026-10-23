@@ -1,0 +1,26 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      /* Translated by half a pixel, the clip spans x = 10.5 to 60.5 and y = 10.5 to 60.5, so each of its
+         edges runs through the centres of a column or a row of pixels. */
+      .clip { position: fixed; left: 10px; top: 10px; width: 50px; height: 50px; overflow: hidden; transform: translate(0.5px, 0.5px); will-change: transform; }
+      .inner { position: absolute; left: -20px; top: -20px; width: 100px; height: 100px; background-color: green; will-change: transform; }
+    </style>
+  </head>
+  <body>
+    <div class="clip"><div class="inner"></div></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+      var inner = document.getElementsByClassName("inner")[0];
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { inner.style.backgroundColor = "blue"; },
+          // The clip rounded to whole pixels: layer-clip-to-bounds-half-pixel-edge-drawing.html checks that
+          // this is also exactly what gets drawn, so no pixel changes outside the damage.
+          () => { assertRectsEq(latestFrameDamage().rects, [[11, 11, 50, 50]]); },
+      ], 0);
+    </script>
+  </body>
+</html>
