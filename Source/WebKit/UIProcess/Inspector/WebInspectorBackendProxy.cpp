@@ -63,6 +63,11 @@ void WebInspectorBackendProxy::showPaintRectsChanged(bool show)
     protect(m_proxy)->showPaintRectsChanged(show);
 }
 
+void WebInspectorBackendProxy::settingOverrideChanged(const String& setting, std::optional<bool> value)
+{
+    protect(m_proxy)->settingOverrideChanged(setting, value);
+}
+
 void WebInspectorBackendProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     protect(m_proxy)->setDeveloperPreferenceOverride(developerPreference, overrideValue);

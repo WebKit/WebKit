@@ -79,6 +79,9 @@ public:
     // Retires the protocol ID the frame had in the process it left (the hosting process is part of the ID).
     void frameSwappedOutOfProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier oldProcessID);
 
+    // Fans out a Page.overrideSetting applied by the main-frame process. `setting` is the Page.Setting protocol name.
+    void setSettingOverride(const String& setting, std::optional<bool>);
+
     // PageBackendDispatcherHandler
     CommandResult<void> enable() final;
     CommandResult<void> disable() final;
@@ -137,6 +140,7 @@ private:
     // to any process that registers later (e.g. a cross-origin navigation spawns a new one).
     bool m_showPaintRects { false };
     String m_bootstrapScript;
+    HashMap<String, bool> m_settingOverrides;
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed

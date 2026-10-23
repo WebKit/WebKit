@@ -544,6 +544,21 @@ void WebInspectorBackendClient::setShowPaintRects(bool show)
         inspector->showPaintRectsChanged(show);
 }
 
+void WebInspectorBackendClient::settingOverrideChanged(const String& setting, std::optional<bool> value)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    // Without Site Isolation, every frame already shares this page's Settings.
+    RefPtr corePage = page->corePage();
+    if (!corePage || !corePage->settings().siteIsolationEnabled())
+        return;
+
+    if (RefPtr inspector = page->inspector())
+        inspector->settingOverrideChanged(setting, value);
+}
+
 void WebInspectorBackendClient::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     RefPtr page = m_page.get();

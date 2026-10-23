@@ -573,8 +573,14 @@ void RenderLayerBacking::setTiledBackingHasMargins(BoxSideSet margins)
 
 void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaintCounter)
 {
+    // The remote frame's process draws its own repaint counter at the same corner.
+    auto hostsRemoteFrame = [&] {
+        CheckedPtr renderWidget = dynamicDowncast<RenderWidget>(renderer());
+        return renderWidget && renderWidget->remoteFrame();
+    };
+
     m_graphicsLayer->setShowDebugBorder(showBorder);
-    m_graphicsLayer->setShowRepaintCounter(showRepaintCounter);
+    m_graphicsLayer->setShowRepaintCounter(showRepaintCounter && !hostsRemoteFrame());
 
     // m_viewportAnchorLayer can't show layer borders because it's a structural layer.
 

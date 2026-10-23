@@ -32,6 +32,7 @@ messages -> WebInspectorBackendProxy {
     ElementSelectionChanged(bool active)
     TimelineRecordingChanged(bool active)
     ShowPaintRectsChanged(bool show)
+    SettingOverrideChanged(String setting, std::optional<bool> value)
     SetDeveloperPreferenceOverride(enum:uint8_t WebCore::InspectorBackendClientDeveloperPreference developerPreference, std::optional<bool> overrideValue)
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     SetEmulatedConditions(std::optional<uint64_t> bandwidthBytesPerSecond, Seconds latency)

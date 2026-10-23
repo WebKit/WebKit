@@ -631,6 +631,12 @@ void WebPageInspectorController::setShowPaintRects(bool show)
         std::ignore = m_pageAgent->setShowPaintRects(show);
 }
 
+void WebPageInspectorController::setSettingOverride(const String& setting, std::optional<bool> value)
+{
+    if (m_pageAgent)
+        m_pageAgent->setSettingOverride(setting, value);
+}
+
 void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* agent)
 {
     if (m_enabledBrowserAgent == agent)

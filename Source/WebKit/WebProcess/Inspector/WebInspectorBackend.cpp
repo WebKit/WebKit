@@ -278,6 +278,11 @@ void WebInspectorBackend::showPaintRectsChanged(bool show)
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::ShowPaintRectsChanged(show), m_page->identifier());
 }
 
+void WebInspectorBackend::settingOverrideChanged(const String& setting, std::optional<bool> value)
+{
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::SettingOverrideChanged(setting, value), m_page->identifier());
+}
+
 void WebInspectorBackend::setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::SetDeveloperPreferenceOverride(developerPreference, overrideValue), m_page->identifier());
@@ -753,6 +758,13 @@ void WebInspectorBackend::disablePageInstrumentation()
     // resets on disable().
     m_showPaintRects = false;
     m_bootstrapScript = { };
+
+    if (RefPtr corePage = m_page ? m_page->corePage() : nullptr) {
+        for (auto& settingName : std::exchange(m_overriddenSettings, { })) {
+            if (auto setting = Inspector::Protocol::Helpers::parseEnumValueFromString<Inspector::Protocol::Page::Setting>(settingName))
+                InspectorPageAgent::applySettingOverride(*corePage, *setting, std::nullopt);
+        }
+    }
 }
 
 void WebInspectorBackend::setShowPaintRects(bool show)
@@ -762,6 +774,26 @@ void WebInspectorBackend::setShowPaintRects(bool show)
     m_showPaintRects = show;
     for (auto& proxy : m_framePageAgentProxies.values())
         proxy->setShowPaintRects(show);
+}
+
+void WebInspectorBackend::setSettingOverride(const String& settingName, std::optional<bool> value)
+{
+    RefPtr corePage = m_page ? m_page->corePage() : nullptr;
+    if (!corePage)
+        return;
+
+    // The main-frame process already applied it; this copy may be older than its current value.
+    if (corePage->localMainFrame())
+        return;
+
+    auto setting = Inspector::Protocol::Helpers::parseEnumValueFromString<Inspector::Protocol::Page::Setting>(settingName);
+    if (!setting || !InspectorPageAgent::applySettingOverride(*corePage, *setting, value))
+        return;
+
+    if (value)
+        m_overriddenSettings.add(settingName);
+    else
+        m_overriddenSettings.remove(settingName);
 }
 
 void WebInspectorBackend::setBootstrapScript(const String& source)

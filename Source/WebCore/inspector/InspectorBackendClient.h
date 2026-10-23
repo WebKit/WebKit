@@ -80,6 +80,9 @@ public:
     // it isn't retained past the frame's lifetime. No-op for clients without per-frame overlays.
     virtual void willDestroyFrameOverlays(FrameIdentifier) { }
 
+    // `setting` is the Page.Setting protocol name.
+    virtual void settingOverrideChanged(const String& /* setting */, std::optional<bool>) { }
+
     virtual void frameDebuggerDidPause(FrameIdentifier) { }
     virtual void frameDebuggerDidContinue(FrameIdentifier) { }
     virtual unsigned paintRectCount() const { return 0; }
