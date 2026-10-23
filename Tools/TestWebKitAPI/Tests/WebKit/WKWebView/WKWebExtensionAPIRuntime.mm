@@ -2033,6 +2033,64 @@ TEST(WKWebExtensionAPIRuntime, OpenOptionsPage)
     EXPECT_TRUE(optionsPageOpened);
 }
 
+TEST(WKWebExtensionAPIRuntime, OpenOptionsPageActivatesExistingTab)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const [originalTab] = await browser.tabs.query({ active: true, currentWindow: true })",
+
+        @"await browser.runtime.openOptionsPage()",
+
+        @"const [optionsTab] = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"browser.test.assertEq((await browser.tabs.query({ })).length, 2, 'The options page should open in a new tab')",
+
+        @"await browser.tabs.update(originalTab.id, { active: true })",
+        @"await browser.runtime.openOptionsPage()",
+
+        @"const [activeTab] = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"browser.test.assertEq(activeTab.id, optionsTab.id, 'The existing options page tab should be activated')",
+        @"browser.test.assertEq((await browser.tabs.query({ })).length, 2, 'A second options page tab should not be opened')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto resources = @{
+        @"background.js": backgroundScript,
+        @"options.html": @"Hello world!"
+    };
+
+    auto manager = Util::loadExtension(runtimeManifest, resources);
+
+    __block bool windowFocused = false;
+    manager.get().defaultWindow.didFocus = ^{
+        windowFocused = true;
+    };
+
+    [manager run];
+
+    EXPECT_TRUE(windowFocused);
+}
+
+TEST(WKWebExtensionAPIRuntime, OpenOptionsPageMatchesExistingTabIgnoringFragment)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.tabs.create({ url: browser.runtime.getURL('options.html?section=general'), active: false })",
+        @"const fragmentTab = await browser.tabs.create({ url: browser.runtime.getURL('options.html#general'), active: false })",
+
+        @"await browser.runtime.openOptionsPage()",
+
+        @"const [activeTab] = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"browser.test.assertEq(activeTab.id, fragmentTab.id, 'The tab that differs only by fragment should be activated')",
+        @"browser.test.assertEq((await browser.tabs.query({ })).length, 3, 'A new options page tab should not be opened')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(runtimeManifest, @{
+        @"background.js": backgroundScript,
+        @"options.html": @"Hello world!"
+    });
+}
+
 TEST(WKWebExtensionAPIRuntime, ConnectFromWebPage)
 {
     auto *uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";

@@ -36,6 +36,14 @@
 
 @implementation TestWebExtensionsDelegate
 
+- (BOOL)respondsToSelector:(SEL)selector
+{
+    if (selector == @selector(webExtensionController:openOptionsPageForExtensionContext:completionHandler:))
+        return !!_openOptionsPage;
+
+    return [super respondsToSelector:selector];
+}
+
 - (NSArray<id<WKWebExtensionWindow>> *)webExtensionController:(WKWebExtensionController *)controller openWindowsForExtensionContext:(WKWebExtensionContext *)extensionContext
 {
     if (_openWindows)

@@ -57,6 +57,26 @@ void WebExtensionContext::runtimeGetBackgroundPage(CompletionHandler<void(std::e
     });
 }
 
+static RefPtr<WebExtensionTab> findTabWithURLIgnoringFragment(WebExtensionWindow& window, const URL& url)
+{
+    auto tabs = window.tabs();
+    if (tabs.isEmpty())
+        return nullptr;
+
+    RefPtr activeTab = window.activeTab();
+    auto startIndex = tabs.find(activeTab.get());
+    if (startIndex == notFound)
+        startIndex = 0;
+
+    for (size_t i = 0; i < tabs.size(); ++i) {
+        Ref tab = tabs[(startIndex + i) % tabs.size()];
+        if (equalIgnoringFragmentIdentifier(tab->url(), url))
+            return tab;
+    }
+
+    return nullptr;
+}
+
 void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"runtime.openOptionsPage()";
@@ -97,29 +117,57 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(std::exp
 
     ASSERT(respondsToOpenNewTab);
 
-    auto frontmostWindow = this->frontmostWindow();
+    RefPtr frontmostWindow = this->frontmostWindow();
 
-    auto *configuration = [[WKWebExtensionTabConfiguration alloc] _init];
-    configuration.shouldBeActive = YES;
-    configuration.shouldAddToSelection = YES;
-    configuration.window = frontmostWindow ? frontmostWindow->delegate() : nil;
-    configuration.index = frontmostWindow ? frontmostWindow->tabs().size() : 0;
-    configuration.url = optionsPageURL().createNSURL().get();
+    auto openInNewTab = [this, protectedThis = Ref { *this }, extensionController, frontmostWindow](CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler) {
+        auto *configuration = [[WKWebExtensionTabConfiguration alloc] _init];
+        configuration.shouldBeActive = YES;
+        configuration.shouldAddToSelection = YES;
+        configuration.window = frontmostWindow ? frontmostWindow->delegate() : nil;
+        configuration.index = frontmostWindow ? frontmostWindow->tabs().size() : 0;
+        configuration.url = optionsPageURL().createNSURL().get();
 
-    [delegate webExtensionController:extensionController->wrapper() openNewTabUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
-        if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error opening options page in new tab: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+        [extensionController->delegate() webExtensionController:extensionController->wrapper() openNewTabUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
+            if (error) {
+                RELEASE_LOG_ERROR(Extensions, "Error opening options page in new tab: %{public}@", privacyPreservingDescription(error));
+                completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+                return;
+            }
+
+            if (!newTab) {
+                completionHandler(toWebExtensionError(apiName, nullString(), @"the options page cound not be opened"));
+                return;
+            }
+
+            completionHandler({ });
+        }).get()];
+    };
+
+    RefPtr optionsPageTab = frontmostWindow ? findTabWithURLIgnoringFragment(*frontmostWindow, optionsPageURL()) : nullptr;
+    if (!optionsPageTab) {
+        openInNewTab(WTF::move(completionHandler));
+        return;
+    }
+
+    auto focusWindow = [frontmostWindow](CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler) {
+        frontmostWindow->focus([completionHandler = WTF::move(completionHandler)](std::expected<void, WebExtensionError>&&) mutable {
+            completionHandler({ });
+        });
+    };
+
+    if (optionsPageTab->isActive()) {
+        focusWindow(WTF::move(completionHandler));
+        return;
+    }
+
+    optionsPageTab->activate([focusWindow = WTF::move(focusWindow), openInNewTab = WTF::move(openInNewTab), completionHandler = WTF::move(completionHandler)](std::expected<void, WebExtensionError>&& result) mutable {
+        if (!result) {
+            openInNewTab(WTF::move(completionHandler));
             return;
         }
 
-        if (!newTab) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"the options page cound not be opened"));
-            return;
-        }
-
-        completionHandler({ });
-    }).get()];
+        focusWindow(WTF::move(completionHandler));
+    });
 }
 
 void WebExtensionContext::runtimeReload()
