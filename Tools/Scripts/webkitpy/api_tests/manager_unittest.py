@@ -157,3 +157,43 @@ TestWebKitAPI.WKWebViewSwiftOverlayTests/evaluateJavaScriptYieldsExpectedRespons
     def test_expected_results_for_upload_flaky(self):
         result = Manager._expected_results_for_upload(Expectation('TestWebKitAPI.WebKit.SomeTest', expected={PASS, FAIL}))
         self.assertEqual({'PASS', 'FAIL'}, set(result.split()))
+
+    def test_merge_retry_results_flake_is_promoted_to_passed(self):
+        from webkitpy.api_tests.runner import Runner
+
+        first_run = {
+            'TestA': (Runner.STATUS_FAILED, 'fail output', 1.0),
+            'TestB': (Runner.STATUS_PASSED, '', 0.5),
+        }
+        retry = {'TestA': (Runner.STATUS_PASSED, '', 0.9)}
+
+        final, flakies = Manager._merge_retry_results(first_run, retry)
+
+        self.assertEqual(final['TestA'][0], Runner.STATUS_PASSED)
+        self.assertEqual(final['TestB'][0], Runner.STATUS_PASSED)
+        self.assertIn('TestA', flakies)
+        self.assertEqual(flakies['TestA'][0], Runner.STATUS_FAILED)
+        self.assertEqual(flakies['TestA'][1], 'fail output')
+
+    def test_merge_retry_results_consistent_failure_stays_failed(self):
+        from webkitpy.api_tests.runner import Runner
+
+        first_run = {'TestA': (Runner.STATUS_FAILED, 'first out', 1.0)}
+        retry = {'TestA': (Runner.STATUS_FAILED, 'second out', 1.1)}
+
+        final, flakies = Manager._merge_retry_results(first_run, retry)
+
+        self.assertEqual(final['TestA'][0], Runner.STATUS_FAILED)
+        self.assertEqual(final['TestA'][1], 'second out')
+        self.assertEqual(flakies, {})
+
+    def test_merge_retry_results_no_retry_data_preserves_first_run(self):
+        from webkitpy.api_tests.runner import Runner
+
+        first_run = {'TestA': (Runner.STATUS_CRASHED, 'crashed', 2.0)}
+        retry = {}
+
+        final, flakies = Manager._merge_retry_results(first_run, retry)
+
+        self.assertEqual(final['TestA'][0], Runner.STATUS_CRASHED)
+        self.assertEqual(flakies, {})
