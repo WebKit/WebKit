@@ -549,17 +549,19 @@ double XsumSmall::compute()
         ivalue = -ivalue;
         if ((ivalue & 3) == 3)
             shouldRoundAwayFromZero = true;
-        if (!lower) {
-            while (j > 0) {
-                j -= 1;
-                if (m_smallAccumulator.chunk[j]) {
-                    lower = 1;
-                    break;
+        else if ((ivalue & 3) > 1 && (ivalue & 4)) {
+            if (!lower) {
+                while (j > 0) {
+                    j -= 1;
+                    if (m_smallAccumulator.chunk[j]) {
+                        lower = 1;
+                        break;
+                    }
                 }
             }
+            if (!lower)
+                shouldRoundAwayFromZero = true;
         }
-        if (!lower)
-            shouldRoundAwayFromZero = true;
     }
 
     if (shouldRoundAwayFromZero) {

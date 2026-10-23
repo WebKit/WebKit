@@ -11,6 +11,10 @@ for (var i = 0; i < testLoopCount; i++) {
     shouldBe(Math.sumPrecise([1e308]), 1e308);
     shouldBe(Math.sumPrecise([1e308, -1e308]), 0);
     shouldBe(Math.sumPrecise([0.1]), 0.1);
+    shouldBe(Math.sumPrecise([-1]), -1);
+    shouldBe(Math.sumPrecise([-0.1]), -0.1);
+    shouldBe(Math.sumPrecise([1, -1, -1]), -1);
+    shouldBe(Math.sumPrecise([-8.8]), -8.8);
     shouldBe(Math.sumPrecise([0.1, 0.1]), 0.2);
     shouldBe(Math.sumPrecise([0.1, -0.1]), 0);
     shouldBe(Math.sumPrecise([1e308, 1e308, 0.1, 0.1, 1e30, 0.1, -1e30, -1e308, -1e308]), 0.30000000000000004);
@@ -44,6 +48,9 @@ for (var i = 0; i < testLoopCount; i++) {
     shouldBe(Math.sumPrecise([Infinity, Infinity]), Infinity);
     shouldBe(Math.sumPrecise([-Infinity]), -Infinity);
     shouldBe(Math.sumPrecise([-Infinity, -Infinity]), -Infinity);
+
+    shouldBe(Math.sumPrecise([Number.MAX_VALUE]), Number.MAX_VALUE);
+    shouldBe(Math.sumPrecise([-Number.MAX_VALUE]), -Number.MAX_VALUE);
 
     shouldBe(Math.sumPrecise([]), -0);
     shouldBe(Math.sumPrecise([-0]), -0);
