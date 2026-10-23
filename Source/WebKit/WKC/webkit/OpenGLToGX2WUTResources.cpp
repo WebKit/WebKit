@@ -337,6 +337,26 @@ bool bindVertexBuffer(void* context, uint8_t attribute, BufferName name,
         || offset > capacity || offset > UINT32_MAX || capacity - offset > UINT32_MAX
         || !buffer->buffer)
         return false;
+
+    // In GL, a zero vertex-attrib stride means tightly packed elements; GX2's
+    // stride is the byte distance between records and must be explicit.
+    if (!stride) {
+        auto descriptor = resources.attributes.find(attribute);
+        if (descriptor == resources.attributes.end()
+            || descriptor->second.components < 1 || descriptor->second.components > 4)
+            return false;
+        const auto type = descriptor->second.sourceType;
+        const size_t scalarSize = type == AttributeType::Byte
+            || type == AttributeType::UnsignedByte ? 1
+            : type == AttributeType::Short
+                || type == AttributeType::UnsignedShort
+                || type == AttributeType::HalfFloat ? 2 : 4;
+        const size_t componentCount = descriptor->second.components;
+        if (scalarSize > UINT32_MAX / componentCount)
+            return false;
+        stride = static_cast<uint32_t>(scalarSize * componentCount);
+    }
+
     GX2SetAttribBuffer(attribute, static_cast<uint32_t>(capacity - offset), stride,
         static_cast<const uint8_t*>(buffer->buffer) + offset);
     return true;
