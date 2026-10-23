@@ -5248,7 +5248,7 @@ media/modern-media-controls/spatial-video-support [ Skip ]
 # Gardening 2026-10-20
 webkit.org/b/309894 [ Release ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Timeout Crash ]
 webkit.org/b/320214 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Failure Timeout ]
-webkit.org/b/328192 [ Debug ] fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html [ ImageOnlyFailure Pass ]
+webkit.org/b/328192 fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html [ ImageOnlyFailure Pass ]
 webkit.org/b/328194 inspector/timeline/timeline-event-EventDispatch.html [ Failure Pass Timeout ]
 webkit.org/b/328194 inspector/timeline/timeline-event-TimerRemove.html [ Failure Pass Timeout ]
 
@@ -5256,13 +5256,15 @@ webkit.org/b/328194 inspector/timeline/timeline-event-TimerRemove.html [ Failure
 webkit.org/b/328432 [ Debug ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/mixed-content-cors.https.sub.html [ Failure Pass ]
 
 webkit.org/b/328003 imported/w3c/web-platform-tests/svg/painting/marker-with-mask-cycle-crash.html [ Crash Timeout ]
-webkit.org/b/328465 ipc/serialized-type-info.html [ Failure ]
 webkit.org/b/328474 media/track/track-paint-on-captions.html [ Pass Timeout ]
 webkit.org/b/328474 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/audio_has_no_subtitles.html [ ImageOnlyFailure Pass ]
 webkit.org/b/328474 media/track/in-band/track-in-band-srt-mkv-cues-added-once.html [ Failure Pass ]
 webkit.org/b/328474 http/tests/media/media-seeking-no-ranges-server.html [ Failure Pass ]
 webkit.org/b/328474 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/non-standard-pseudo-elements.html [ Pass Timeout ]
 webkit.org/b/328311 [ Debug ] media/media-source/media-source-dropped-iframe.html [ Crash Pass ]
+
+# Gardening 2026-10-23
+webkit.org/b/312871 media/media-source/media-source-seek-to-zero-then-play.html [ Pass Timeout ]
 
 # End: Common failures between GTK and WPE.
 

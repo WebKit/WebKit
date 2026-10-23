@@ -55,8 +55,8 @@ layer at (0,0) size 800x600
               RenderSVGRect {rect} at (50,191) size 334x34 [fill={[type=SOLID] [color=#EEEEEE]}] [x=0.00] [y=0.00] [width=200.00] [height=20.00]
               RenderSVGRect {rect} at (50,225) size 334x50 [fill={[type=SOLID] [color=#CCCCCC]}] [x=0.00] [y=20.00] [width=200.00] [height=30.00]
               RenderSVGRect {rect} at (49,190) size 336x86 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=200.00] [height=50.00]
-          RenderSVGText {text} at (5,0) size 135x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 135x18
+          RenderSVGText {text} at (5,0) size 136x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 136x18
               chunk 1 text run 1 at (5.00,15.00) startOffset 0 endOffset 19 width 135.00: "g1=\"gl_1\" g2=\"gl_2\""
           RenderSVGContainer {g} at (51,226) size 123x49 [transform={m=((2.00,0.00)(0.00,2.00)) t=(5.00,45.00)}]
             RenderSVGContainer {use} at (51,226) size 48x48

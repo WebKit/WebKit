@@ -77,7 +77,7 @@ layer at (0,0) size 800x600
         RenderSVGEllipse {circle} at (560,377) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=300.00] [cy=-10.00] [r=3.00]
         RenderSVGPath {line} at (565,388) size 3x79 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-7.00] [x2=0.00] [y2=40.00]
         RenderSVGText {text} at (310,5) size 69x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 69x18
+          RenderSVGInlineText {#text} at (0,0) size 70x18
             chunk 1 text run 1 at (310.00,20.00) startOffset 0 endOffset 9 width 69.00: "linearRGB"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x44

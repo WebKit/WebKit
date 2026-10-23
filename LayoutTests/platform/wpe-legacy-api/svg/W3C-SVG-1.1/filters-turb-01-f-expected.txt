@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 64x12
             chunk 1 (middle anchor) text run 1 at (193.20,117.00) startOffset 0 endOffset 15 width 63.60: "type=turbulence"
         RenderSVGText {text} at (187,120) size 76x12 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 75x12
+          RenderSVGInlineText {#text} at (0,0) size 76x12
             chunk 1 (middle anchor) text run 1 at (187.50,129.00) startOffset 0 endOffset 17 width 75.00: "baseFrequency=0.1"
         RenderSVGText {text} at (195,132) size 60x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 59x12
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 71x12
             chunk 1 (middle anchor) text run 1 at (39.60,272.00) startOffset 0 endOffset 17 width 70.80: "type=fractalNoise"
         RenderSVGText {text} at (37,275) size 76x12 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 75x12
+          RenderSVGInlineText {#text} at (0,0) size 76x12
             chunk 1 (middle anchor) text run 1 at (37.50,284.00) startOffset 0 endOffset 17 width 75.00: "baseFrequency=0.1"
         RenderSVGText {text} at (45,287) size 60x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 59x12
@@ -67,7 +67,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 71x12
             chunk 1 (middle anchor) text run 1 at (189.60,272.00) startOffset 0 endOffset 17 width 70.80: "type=fractalNoise"
         RenderSVGText {text} at (187,275) size 76x12 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 75x12
+          RenderSVGInlineText {#text} at (0,0) size 76x12
             chunk 1 (middle anchor) text run 1 at (187.50,284.00) startOffset 0 endOffset 17 width 75.00: "baseFrequency=0.4"
         RenderSVGText {text} at (195,287) size 60x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 59x12
@@ -78,7 +78,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 71x12
             chunk 1 (middle anchor) text run 1 at (339.60,272.00) startOffset 0 endOffset 17 width 70.80: "type=fractalNoise"
         RenderSVGText {text} at (337,275) size 76x12 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 75x12
+          RenderSVGInlineText {#text} at (0,0) size 76x12
             chunk 1 (middle anchor) text run 1 at (337.50,284.00) startOffset 0 endOffset 17 width 75.00: "baseFrequency=0.1"
         RenderSVGText {text} at (345,287) size 60x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 59x12

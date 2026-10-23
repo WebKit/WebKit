@@ -1229,6 +1229,7 @@ webkit.org/b/321107 imported/w3c/web-platform-tests/css/selectors/media/media-lo
 
 webkit.org/b/321789 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
 webkit.org/b/322637 [ Debug ] imported/w3c/web-platform-tests/fullscreen/model/remove-last.html [ Pass Failure ]
+webkit.org/b/328584 imported/w3c/web-platform-tests/fullscreen/model/remove-last-sibling.html [ Pass Failure ]
 webkit.org/b/322639 [ Debug ] imported/w3c/web-platform-tests/html/semantics/popovers/popover-remove-attribute-during-focusing-steps.html [ Pass Failure ]
 webkit.org/b/323006 [ Debug ] imported/w3c/web-platform-tests/wasm/webapi/contenttype.any.serviceworker.html [ Failure Pass ]
 webkit.org/b/323008 [ Release ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-events-and-exceptions.html [ Pass Timeout ]
@@ -1300,6 +1301,10 @@ webkit.org/b/326318 imported/w3c/web-platform-tests/fullscreen/api/document-full
 webkit.org/b/304278 [ Release ] inspector/worker/debugger-pause-subworker.html [ Failure Timeout ]
 webkit.org/b/328193 fast/forms/select/base/select-translated-option-content-repaint.html [ ImageOnlyFailure Pass ]
 webkit.org/b/328195 [ Debug ] inspector/dom-debugger/event-animation-frame-breakpoints.html [ Crash Pass ]
+webkit.org/b/322632 [ Release ] inspector/dom-debugger/dom-breakpoint-attribute-modified.html [ Pass Crash ]
+webkit.org/b/322632 [ Release ] inspector/dom-debugger/dom-breakpoint-node-removed-ancestor.html [ Pass Crash ]
+webkit.org/b/322632 [ Release ] inspector/dom-debugger/dom-breakpoint-node-removed-direct.html [ Pass Crash ]
+webkit.org/b/326559 [ Release ] inspector/dom-debugger/dom-breakpoint-subtree-modified-add.html [ Pass Crash ]
 webkit.org/b/328195 [ Debug ] inspector/unit-tests/debouncer.html [ Failure Pass ]
 webkit.org/b/328195 [ Debug ] inspector/unit-tests/throttler.html [ Failure Pass ]
 webkit.org/b/328195 inspector/worker/debugger-pause.html [ Failure Pass ]
