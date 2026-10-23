@@ -44,7 +44,10 @@ jobs:
             Source/ThirdParty/libwebrtc
             Tools/wiiu
             .github/workflows
-            .github/workflows
+
+      - name: Inventory and audit every WKC source tree
+        id: validate-wkc-inventory
+        run: python3 Tools/wiiu/validate_wkc_inventory.py
 
       - name: Validate page-loading behavior contracts
         id: validate-page-loading
