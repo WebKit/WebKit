@@ -8189,7 +8189,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/ne
 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/non-opaque-element.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/onpaint-after-scroll-2.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/onpaint-after-scroll.tentative.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/onpaint-changedElements.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/onpaint-css-animation.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/onpaint-fires-post-intersection-observation-steps.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/onpaint-fires-post-resize-observer.tentative.html [ Skip ]
