@@ -139,6 +139,10 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
 #endif
 
+#if HAVE(TEXT_SCALE_FACTOR)
+    SetTextScaleFactor(std::optional<float> textScaleFactor)
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     UserInterfaceIdiomDidChange(enum:uint8_t PAL::UserInterfaceIdiom idiom)
 #endif

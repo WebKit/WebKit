@@ -92,6 +92,7 @@ const TestFeatures& TestOptions::defaults()
             { "CaptureVideoInGPUProcessEnabled", captureVideoInGPUProcessEnabledValue },
             { "ContentChangeObserverEnabled", false },
             { "ContentSecurityPolicyExtensionModeAppliesToAllSchemesForTesting", true },
+            { "ContentSizeCategoryTextScaleEnabled", true },
             { "CustomPasteboardDataEnabled", true },
             { "DOMPasteAllowed", true },
             { "DOMTestingAPIsEnabled", true },

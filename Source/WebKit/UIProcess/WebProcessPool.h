@@ -734,6 +734,7 @@ private:
 
 #if PLATFORM(MAC)
     static void colorPreferencesDidChangeCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
+    static void preferredContentSizeCategoryDidChangeCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
@@ -886,6 +887,9 @@ private:
     std::unique_ptr<WebCore::PowerSourceNotifier> m_powerSourceNotifier;
     const RetainPtr<NSObject> m_activationObserver;
     const RetainPtr<NSObject> m_accessibilityEnabledObserver;
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    const RetainPtr<NSObject> m_contentSizeCategoryObserver;
+#endif
     const RetainPtr<NSObject> m_applicationLaunchObserver;
     const RetainPtr<NSObject> m_finishedMobileAssetFontDownloadObserver;
 

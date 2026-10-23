@@ -1,4 +1,3 @@
-// internals.setContentSizeCategory() only supports these categories, and only on iOS and visionOS.
 // The scale is the Body text style size for the category divided by the Body size at the default category (L),
 // snapped to the closest of 0.85, 0.94, 1, 1.1, 1.2, 1.75 and 2.5.
 const contentSizeCategoryScales = {
@@ -6,7 +5,7 @@ const contentSizeCategoryScales = {
     XXXL: 1.2,
 };
 
-const platformHasTextScale = !!(window.testRunner && testRunner.isIOSFamily);
+const platformHasTextScale = !!(window.testRunner && testRunner.haveTextScaleFactor);
 
 function textScaleForCategory(category) {
     return platformHasTextScale ? contentSizeCategoryScales[category] : 1;
@@ -47,9 +46,14 @@ function assertFontSize(element, expected, description) {
     assert_approx_equals(computedFontSize(element), expected, 0.01, description);
 }
 
+function applyContentSizeCategory(category) {
+    if (platformHasTextScale)
+        internals.setTextScaleFactor(testRunner.textScaleFactorForContentSizeCategory(`UICTContentSizeCategory${category}`));
+}
+
 function setContentSizeCategory(test, category) {
-    internals.setContentSizeCategory(category);
-    test.add_cleanup(() => internals.setContentSizeCategory("L"));
+    applyContentSizeCategory(category);
+    test.add_cleanup(() => applyContentSizeCategory("L"));
 }
 
 // An em value N such that 16N < innerWidth < N * scaledMediumSize(contentSizeCategoryScales.XXXL), so that a

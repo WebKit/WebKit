@@ -1649,6 +1649,16 @@ ContentSecurityPolicyExtensionModeAppliesToAllSchemesForTesting:
   humanReadableDescription: "Apply the extension Content Security Policy mode to documents regardless of their scheme"
   defaultValue: false
 
+ContentSizeCategoryTextScaleEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Text scale from the content size category"
+  humanReadableDescription: "Scale font sizes with the user's content size category in pages with <meta name=text-scale content=scale>"
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  defaultValue:
+    "PLATFORM(IOS) || PLATFORM(VISION)": true
+    default: false
+
 ContextMenuQRCodeDetectionEnabled:
   type: bool
   status: embedder

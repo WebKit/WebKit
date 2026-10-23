@@ -771,6 +771,10 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().simulateClickBackgroundFetch(stringValue(messageBody));
         return nullptr;
     }
+#if HAVE(TEXT_SCALE_FACTOR)
+    if (WKStringIsEqualToUTF8CString(messageName, "TextScaleFactorForContentSizeCategory"))
+        return adoptWK(WKDoubleCreate(TestController::singleton().textScaleFactorForContentSizeCategory(stringValue(messageBody))));
+#endif
     if (WKStringIsEqualToUTF8CString(messageName, "LastAddedBackgroundFetchIdentifier"))
         return TestController::singleton().lastAddedBackgroundFetchIdentifier();
     if (WKStringIsEqualToUTF8CString(messageName, "LastRemovedBackgroundFetchIdentifier"))

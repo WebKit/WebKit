@@ -5813,12 +5813,23 @@ TextScaleMeta Document::textScaleMeta() const
     return m_textScaleMeta;
 }
 
+bool Document::shouldUseTextScaleFactor() const
+{
+#if HAVE(TEXT_SCALE_FACTOR)
+    return textScaleMeta() == TextScaleMeta::Scale
+        && settings().contentSizeCategoryTextScaleEnabled()
+        && WebCore::textScaleFactor().has_value();
+#else
+    return false;
+#endif
+}
+
 float Document::textScaleFactor() const
 {
-    if (textScaleMeta() != TextScaleMeta::Scale)
+    if (!shouldUseTextScaleFactor())
         return 1;
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    return textScaleFactorForContentSizeCategory();
+#if HAVE(TEXT_SCALE_FACTOR)
+    return *WebCore::textScaleFactor();
 #else
     return 1;
 #endif

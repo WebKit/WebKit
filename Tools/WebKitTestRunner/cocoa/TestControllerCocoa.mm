@@ -209,6 +209,13 @@ void TestController::cocoaPlatformInitialize(const Options& options)
 #endif // !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 }
 
+#if HAVE(TEXT_SCALE_FACTOR)
+double TestController::textScaleFactorForContentSizeCategory(WKStringRef contentSizeCategory)
+{
+    return WebCoreTestSupport::textScaleFactorForContentSizeCategory(toWTFString(contentSizeCategory));
+}
+#endif
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 uint64_t TestController::currentImageAnalysisRequestID()

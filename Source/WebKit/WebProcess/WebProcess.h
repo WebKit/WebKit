@@ -751,6 +751,10 @@ private:
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
 #endif
 
+#if HAVE(TEXT_SCALE_FACTOR)
+    void setTextScaleFactor(std::optional<float>);
+#endif
+
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     void setScreenProperties(WebCore::ScreenProperties&&);
 #endif

@@ -40,4 +40,8 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, libAccessibility, _AXSReduceMotio
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, libAccessibility, _AXSUpdateWebAccessibilitySettings, void, (), ())
 #endif
 
+#if PLATFORM(MAC)
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, libAccessibility, _AXSCopyPreferredContentSizeCategoryName, CFStringRef, (), ())
+#endif
+
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) || (HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE))

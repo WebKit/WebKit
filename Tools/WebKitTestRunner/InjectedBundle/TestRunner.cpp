@@ -394,6 +394,14 @@ void TestRunner::setVirtualWalletBehavior(JSStringRef action, JSStringRef protoc
     }));
 }
 
+double TestRunner::textScaleFactorForContentSizeCategory(JSStringRef contentSizeCategory)
+{
+    auto result = postSynchronousMessageWithReturnValue("TextScaleFactorForContentSizeCategory", toWK(contentSizeCategory));
+    if (!result || WKGetTypeID(result.get()) != WKDoubleGetTypeID())
+        return 1;
+    return WKDoubleGetValue(static_cast<WKDoubleRef>(result.get()));
+}
+
 RefPtr<OpaqueJSString> TestRunner::lastAddedBackgroundFetchIdentifier() const
 {
     auto identifier = InjectedBundle::singleton().lastAddedBackgroundFetchIdentifier();

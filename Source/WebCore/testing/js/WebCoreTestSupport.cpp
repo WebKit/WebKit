@@ -67,6 +67,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if HAVE(TEXT_SCALE_FACTOR)
+#include "FontCacheCoreText.h"
+#endif
+
 namespace WebCoreTestSupport {
 using namespace JSC;
 using namespace WebCore;
@@ -341,6 +345,13 @@ void populateDisassemblyLabels()
 #endif // ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 #endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
+
+#if HAVE(TEXT_SCALE_FACTOR)
+double textScaleFactorForContentSizeCategory(const String& contentSizeCategory)
+{
+    return WebCore::textScaleFactorForContentSizeCategory(contentSizeCategory.createCFString().get());
+}
+#endif
 
 #if ENABLE(WEB_AUDIO)
 void testSincResamplerProcessBuffer(std::span<const float> source, std::span<float> destination, double scaleFactor)

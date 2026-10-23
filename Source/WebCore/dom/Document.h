@@ -2210,6 +2210,8 @@ private:
 
     void flushPendingCompressionDictionaryLoads();
 
+    bool shouldUseTextScaleFactor() const;
+
     void updateTitleElement(Element& changingTitleElement);
     void willDetachPage() final;
     void frameDestroyed() final;

@@ -60,7 +60,7 @@ CFStringRef contentSizeCategory()
 #endif
 }
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if HAVE(TEXT_SCALE_FACTOR)
 // Pages that opt in with <meta name="text-scale" content="scale"> can read the text scale factor, for example
 // through getComputedStyle() or rem. Exposing the exact Body size ratio would reveal the user's content size
 // category, which is a fingerprinting surface. So we snap the factor to the closest of a few buckets:
@@ -79,31 +79,44 @@ static float snappedTextScaleFactor(float textScaleFactor)
     return closestBucket;
 }
 
-float textScaleFactorForContentSizeCategory()
+static CGFloat bodyTextSizeForContentSizeCategory(CFStringRef contentSizeCategory)
 {
-    ASSERT(isMainThread());
-    static NeverDestroyed<String> cachedCategory;
-    static float cachedTextScaleFactor = 1;
+#if PLATFORM(MAC)
+    return CTFontDescriptorGetTextStyleSize(kCTUIFontTextStyleBody, contentSizeCategory, kCTFontTextStylePlatformDefault, nullptr, nullptr);
+#else
+    RetainPtr traitCollection = [PAL::getUITraitCollectionClassSingleton() traitCollectionWithPreferredContentSizeCategory:bridge_cast(contentSizeCategory)];
+    return [[PAL::getUIFontClassSingleton() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleBodySingleton() compatibleWithTraitCollection:traitCollection.get()] pointSize];
+#endif
+}
 
-    String category = contentSizeCategory();
-    if (category == cachedCategory.get())
-        return cachedTextScaleFactor;
-
+float textScaleFactorForContentSizeCategory(CFStringRef contentSizeCategory)
+{
     // https://drafts.csswg.org/css-fonts-5/#scale-keyword
     // "the text scale factor matches the user's preferred paragraph text size [...] divided by 16px."
     // The Body text style is the paragraph text size. Its size relative to the default category scales
     // the 16px default, so the factor is 1 at the default category. The factor is snapped to a few
     // buckets to limit how much of the user's setting is exposed.
-    auto bodySizeForCategory = [](NSString *sizeCategory) -> CGFloat {
-        RetainPtr traitCollection = [PAL::getUITraitCollectionClassSingleton() traitCollectionWithPreferredContentSizeCategory:sizeCategory];
-        return [[PAL::getUIFontClassSingleton() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleBodySingleton() compatibleWithTraitCollection:traitCollection.get()] pointSize];
-    };
-    static const CGFloat defaultBodySize = bodySizeForCategory(RetainPtr { PAL::get_UIKit_UIContentSizeCategoryLargeSingleton() }.get());
-    CGFloat bodySize = bodySizeForCategory(category.createNSString().get());
+    static const CGFloat defaultBodySize = bodyTextSizeForContentSizeCategory(kCTFontContentSizeCategoryL);
+    CGFloat bodySize = bodyTextSizeForContentSizeCategory(contentSizeCategory);
+    return defaultBodySize && bodySize ? snappedTextScaleFactor(bodySize / defaultBodySize) : 1;
+}
 
-    cachedCategory.get() = WTF::move(category);
-    cachedTextScaleFactor = defaultBodySize && bodySize ? snappedTextScaleFactor(bodySize / defaultBodySize) : 1;
-    return cachedTextScaleFactor;
+// The UI process computes the text scale factor and sends it. On macOS, CoreText only returns the user's text sizes to
+// apps that opt in to Dynamic Type, and the web process does not.
+static std::optional<float>& textScaleFactorStorage()
+{
+    static std::optional<float> textScaleFactor;
+    return textScaleFactor;
+}
+
+std::optional<float> textScaleFactor()
+{
+    return textScaleFactorStorage();
+}
+
+void setTextScaleFactor(std::optional<float> textScaleFactor)
+{
+    textScaleFactorStorage() = textScaleFactor;
 }
 #endif
 

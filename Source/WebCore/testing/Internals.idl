@@ -1542,6 +1542,7 @@ enum ContentsFormat {
     [Conditional=ENCRYPTED_MEDIA] unsigned long mediaKeySessionInternalInstanceSessionObjectRefCount(MediaKeySession session);
 
     undefined setContentSizeCategory(ContentSizeCategory category);
+    undefined setTextScaleFactor(float textScaleFactor);
 
     [Conditional=TELEPHONE_NUMBER_DETECTION] unsigned long telephoneNumberRangesChangedCount();
     [Conditional=SERVICE_CONTROLS] undefined setHasRelevantSelectionServicesForTesting(boolean hasServices);

@@ -84,6 +84,8 @@ extern Boolean _AXSPrefersNonBlinkingCursorIndicator(void);
 extern CFStringRef kAXSFullKeyboardAccessEnabledNotification;
 Boolean _AXSFullKeyboardAccessEnabled();
 
+CFStringRef _AXSCopyPreferredContentSizeCategoryName(void) CF_RETURNS_RETAINED;
+
 extern CFStringRef kAXSAccessibilityPreferenceDomain;
 
 WTF_EXTERN_C_END

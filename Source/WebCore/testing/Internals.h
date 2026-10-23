@@ -1625,6 +1625,7 @@ public:
 
     enum class ContentSizeCategory { L, XXXL };
     void setContentSizeCategory(ContentSizeCategory);
+    void setTextScaleFactor(float);
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     unsigned telephoneNumberRangesChangedCount() const;

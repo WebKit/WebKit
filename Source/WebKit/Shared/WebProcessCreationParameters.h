@@ -199,6 +199,10 @@ struct WebProcessCreationParameters {
     bool useOverlayScrollbars { true };
 #endif
 
+#if HAVE(TEXT_SCALE_FACTOR)
+    std::optional<float> textScaleFactor;
+#endif
+
 #if USE(WPE_RENDERER)
     bool isServiceWorkerProcess { false };
     UnixFileDescriptor hostClientFileDescriptor;

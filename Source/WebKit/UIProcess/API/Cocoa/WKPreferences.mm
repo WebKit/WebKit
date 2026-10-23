@@ -438,6 +438,16 @@ static _WKStorageBlockingPolicy LEGACY_NODELETE toAPI(WebCore::StorageBlockingPo
     protect(*_preferences)->setAnimatedImageAsyncDecodingEnabled(_animatedImageAsyncDecodingEnabled);
 }
 
+- (BOOL)_contentSizeCategoryTextScaleEnabled
+{
+    return protect(*_preferences)->contentSizeCategoryTextScaleEnabled();
+}
+
+- (void)_setContentSizeCategoryTextScaleEnabled:(BOOL)enabled
+{
+    protect(*_preferences)->setContentSizeCategoryTextScaleEnabled(enabled);
+}
+
 - (BOOL)_textAutosizingEnabled
 {
     return protect(*_preferences)->textAutosizingEnabled();

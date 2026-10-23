@@ -610,6 +610,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     scrollerStylePreferenceChanged(parameters.useOverlayScrollbars);
 #endif
 
+#if HAVE(TEXT_SCALE_FACTOR)
+    setTextScaleFactor(parameters.textScaleFactor);
+#endif
+
 #if PLATFORM(VISION)
     SandboxExtension::consumePermanently(parameters.metalCacheDirectoryExtensionHandles);
 #endif
@@ -1229,6 +1233,16 @@ void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
     [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
 }
 
+#endif
+
+#if HAVE(TEXT_SCALE_FACTOR)
+void WebProcess::setTextScaleFactor(std::optional<float> textScaleFactor)
+{
+    if (textScaleFactor == WebCore::textScaleFactor())
+        return;
+    WebCore::setTextScaleFactor(textScaleFactor);
+    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
+}
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

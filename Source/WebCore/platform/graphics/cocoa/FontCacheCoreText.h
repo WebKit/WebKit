@@ -97,8 +97,10 @@ bool fontNameIsSystemFont(CFStringRef);
 CFStringRef getUIContentSizeCategoryDidChangeNotificationName();
 WEBCORE_EXPORT void setContentSizeCategory(const String&);
 WEBCORE_EXPORT CFStringRef contentSizeCategory();
-#if PLATFORM(IOS) || PLATFORM(VISION)
-float textScaleFactorForContentSizeCategory();
+#if HAVE(TEXT_SCALE_FACTOR)
+WEBCORE_EXPORT float textScaleFactorForContentSizeCategory(CFStringRef);
+WEBCORE_EXPORT std::optional<float> textScaleFactor();
+WEBCORE_EXPORT void setTextScaleFactor(std::optional<float>);
 #endif
 
 VariationDefaultsMap defaultVariationValues(CTFontRef, ShouldLocalizeAxisNames);

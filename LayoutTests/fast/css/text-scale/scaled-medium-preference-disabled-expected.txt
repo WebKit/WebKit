@@ -1,0 +1,4 @@
+
+PASS Category L: content=scale does not scale font sizes when the embedder turns off following the content size category
+PASS Category XXXL: content=scale does not scale font sizes when the embedder turns off following the content size category
+

@@ -114,6 +114,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import "LibAccessibilitySoftLink.h"
 #import "WebInspectorPreferenceObserver.h"
 #import <notify_keys.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -163,6 +164,10 @@ static NSString * const WebKitJSCFTLJITEnabledDefaultsKey = @"WebKitJSCFTLJITEna
 #if !PLATFORM(IOS_FAMILY) || PLATFORM(MACCATALYST)
 static NSString * const WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 static CFStringRef AppleColorPreferencesChangedNotification = CFSTR("AppleColorPreferencesChangedNotification");
+#endif
+
+#if PLATFORM(MAC)
+static CFStringRef ApplePreferredContentSizeCategoryChangedNotification = CFSTR("ApplePreferredContentSizeCategoryChangedNotification");
 #endif
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
@@ -310,6 +315,22 @@ void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
             }
         });
     });
+}
+#endif
+
+#if HAVE(TEXT_SCALE_FACTOR)
+static std::optional<float> preferredTextScaleFactor()
+{
+#if PLATFORM(MAC)
+    if (!islibAccessibilityLibraryAvailable() || !canLoad_libAccessibility__AXSCopyPreferredContentSizeCategoryName())
+        return std::nullopt;
+    RetainPtr contentSizeCategory = adoptCF(softLink_libAccessibility__AXSCopyPreferredContentSizeCategoryName());
+#else
+    RetainPtr contentSizeCategory = WebCore::contentSizeCategory();
+#endif
+    if (!contentSizeCategory)
+        return std::nullopt;
+    return WebCore::textScaleFactorForContentSizeCategory(contentSizeCategory.get());
 }
 #endif
 
@@ -499,6 +520,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
     parameters.localizedDeviceModel = localizedDeviceModel();
     parameters.contentSizeCategory = contentSizeCategory();
+#endif
+
+#if HAVE(TEXT_SCALE_FACTOR)
+    parameters.textScaleFactor = preferredTextScaleFactor();
 #endif
 
 #if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
@@ -691,6 +716,14 @@ void WebProcessPool::colorPreferencesDidChangeCallback(CFNotificationCenterRef, 
     if (!pool)
         return;
     pool->sendToAllProcesses(Messages::WebProcess::ColorPreferencesDidChange());
+}
+
+void WebProcessPool::preferredContentSizeCategoryDidChangeCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    auto pool = extractWebProcessPool(observer);
+    if (!pool)
+        return;
+    pool->sendToAllProcesses(Messages::WebProcess::SetTextScaleFactor(preferredTextScaleFactor()));
 }
 #endif
 
@@ -920,6 +953,7 @@ void WebProcessPool::registerNotificationObservers()
 #endif
 
     addCFNotificationObserver(colorPreferencesDidChangeCallback, RetainPtr { AppleColorPreferencesChangedNotification }.get(), CFNotificationCenterGetDistributedCenterSingleton());
+    addCFNotificationObserver(preferredContentSizeCategoryDidChangeCallback, RetainPtr { ApplePreferredContentSizeCategoryChangedNotification }.get());
 
     const char* messages[] = { kNotifyDSCacheInvalidation, kNotifyDSCacheInvalidationGroup, kNotifyDSCacheInvalidationHost, kNotifyDSCacheInvalidationService, kNotifyDSCacheInvalidationUser };
     m_openDirectoryNotifyTokens.reserveInitialCapacity(std::size(messages));
@@ -968,6 +1002,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         for (auto& process : m_processes)
             process->unblockAccessibilityServerIfNeeded();
     }] });
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    lazyInitialize(m_contentSizeCategoryObserver, RetainPtr<NSObject> { [[NSNotificationCenter defaultCenter] addObserverForName:UIContentSizeCategoryDidChangeNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
+        sendToAllProcesses(Messages::WebProcess::SetTextScaleFactor(preferredTextScaleFactor()));
+    }] });
+#endif
 #if ENABLE(CFPREFS_DIRECT_MODE)
     lazyInitialize(m_activationObserver, RetainPtr<NSObject> { [[NSNotificationCenter defaultCenter] addObserverForName:@"UIApplicationDidBecomeActiveNotification" object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         startObservingPreferenceChanges();
@@ -1074,6 +1113,7 @@ void WebProcessPool::unregisterNotificationObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_didEndSuppressingHighDynamicRange.get()];
 #endif
     removeCFNotificationObserver(RetainPtr { AppleColorPreferencesChangedNotification }.get(), CFNotificationCenterGetDistributedCenterSingleton());
+    removeCFNotificationObserver(RetainPtr { ApplePreferredContentSizeCategoryChangedNotification }.get());
     for (auto token : m_openDirectoryNotifyTokens)
         notify_cancel(token);
 #elif !PLATFORM(MACCATALYST)
@@ -1090,6 +1130,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    [[NSNotificationCenter defaultCenter] removeObserver:m_contentSizeCategoryObserver.get()];
+#endif
     [[NSNotificationCenter defaultCenter] removeObserver:m_applicationLaunchObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_screenDidConnectObserver];
     [[NSNotificationCenter defaultCenter] removeObserver:m_screenDidDisconnectObserver];

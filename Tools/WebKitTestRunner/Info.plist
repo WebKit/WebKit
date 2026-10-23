@@ -6,5 +6,7 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleIdentifier</key>
 	<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
+	<key>UISupportsDynamicType</key>
+	<true/>
 </dict>
 </plist>

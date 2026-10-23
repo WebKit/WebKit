@@ -61,7 +61,7 @@ promise_test(async t => {
     }
     assert_false(query.matches, "XXXL");
     const changed = new Promise(resolve => query.addEventListener("change", resolve, { once: true }));
-    internals.setContentSizeCategory("L");
+    applyContentSizeCategory("L");
     await changed;
     assert_true(query.matches, "L");
 }, "A MediaQueryList with em gets a change event when the text scale changes");

@@ -310,6 +310,14 @@ selectors = [
 ]
 requires = ["PLATFORM_VISION"]
 
+[[temporary-usage]]
+request = "rdar://190791750"
+cleanup = "rdar://190791760"
+symbols = [
+    "_AXSCopyPreferredContentSizeCategoryName",
+]
+requires = ["PLATFORM_MAC"]
+
 [[staging]]
 request = "rdar://171222829"
 selectors = [

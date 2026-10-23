@@ -5,6 +5,7 @@
 <link rel="help" href="https://drafts.csswg.org/css-fonts-5/#text-scale-meta">
 <script src="../../../resources/testharness.js"></script>
 <script src="../../../resources/testharnessreport.js"></script>
+<script src="resources/text-scale-helpers.js"></script>
 </head>
 <body>
 <script>
@@ -61,8 +62,8 @@ test(() => {
     meta.name = "text-scale";
     meta.content = "scale";
     doc.head.appendChild(meta);
-    internals.setContentSizeCategory("XXXL");
-    internals.setContentSizeCategory("L");
+    applyContentSizeCategory("XXXL");
+    applyContentSizeCategory("L");
     doc.head.replaceChildren();
 }, "Changing the content size category with a frameless document that has a text-scale meta does not crash");
 

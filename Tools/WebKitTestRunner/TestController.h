@@ -516,6 +516,10 @@ public:
     void uiScriptDidComplete(const String& result, unsigned scriptCallbackID);
     void cursorDidChange(WKStringRef cursorInfo);
 
+#if HAVE(TEXT_SCALE_FACTOR)
+    double textScaleFactorForContentSizeCategory(WKStringRef);
+#endif
+
 #if PLATFORM(MAC)
     // Client accessibility testing support
     void initializeWebProcessAccessibility();

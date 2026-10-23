@@ -102,6 +102,10 @@ inline void populateJITOperations() { }
 
 TEST_SUPPORT_EXPORT bool testDocumentFragmentParseXML(const String&, OptionSet<WebCore::ParserContentPolicy>);
 
+#if HAVE(TEXT_SCALE_FACTOR)
+TEST_SUPPORT_EXPORT double textScaleFactorForContentSizeCategory(const String&);
+#endif
+
 #if ENABLE(WEB_AUDIO)
 TEST_SUPPORT_EXPORT void testSincResamplerProcessBuffer(std::span<const float> source, std::span<float> destination, double scaleFactor);
 #endif

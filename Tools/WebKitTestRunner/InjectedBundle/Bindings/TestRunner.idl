@@ -31,6 +31,7 @@ interface TestRunner {
     readonly attribute boolean isKeyboardImmediatelyAvailable;
     readonly attribute boolean keyboardAppearsOverContent;
     readonly attribute boolean haveSecureCodingDataDetectors;
+    readonly attribute boolean haveTextScaleFactor;
 
     // The basics.
     undefined dumpAsText(boolean dumpPixels);
@@ -188,6 +189,8 @@ interface TestRunner {
     undefined setBackgroundFetchPermission(boolean value);
     undefined setVirtualWalletBehavior(DOMString action, DOMString protocol, DOMString responseJSON);
     DOMString lastAddedBackgroundFetchIdentifier();
+
+    double textScaleFactorForContentSizeCategory(DOMString contentSizeCategory);
     DOMString lastRemovedBackgroundFetchIdentifier();
     DOMString lastUpdatedBackgroundFetchIdentifier();
     DOMString backgroundFetchState(DOMString identifier);

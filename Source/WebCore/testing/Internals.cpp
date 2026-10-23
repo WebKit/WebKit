@@ -785,6 +785,9 @@ void Internals::resetToConsistentState(Page& page)
 #if PLATFORM(IOS) || PLATFORM(VISION)
     WebCore::setContentSizeCategory(kCTFontContentSizeCategoryL);
 #endif
+#if HAVE(TEXT_SCALE_FACTOR)
+    WebCore::setTextScaleFactor(std::nullopt);
+#endif
 
 #if PLATFORM(COCOA)
     setOverrideEnhanceTextLegibility(false);
@@ -8534,6 +8537,16 @@ void Internals::setContentSizeCategory(Internals::ContentSizeCategory category)
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 #else
     UNUSED_PARAM(category);
+#endif
+}
+
+void Internals::setTextScaleFactor(float textScaleFactor)
+{
+#if HAVE(TEXT_SCALE_FACTOR)
+    WebCore::setTextScaleFactor(textScaleFactor);
+    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
+#else
+    UNUSED_PARAM(textScaleFactor);
 #endif
 }
 

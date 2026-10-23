@@ -99,9 +99,9 @@ dynamicTest(() => {
 dynamicTest(t => {
     document.head.appendChild(createMeta("scale"));
     assertSizes(scale, "at XXXL");
-    internals.setContentSizeCategory("L");
+    applyContentSizeCategory("L");
     assertSizes(textScaleForCategory("L"), "after changing the category to L");
-    internals.setContentSizeCategory("XXXL");
+    applyContentSizeCategory("XXXL");
     assertSizes(scale, "after changing the category back to XXXL");
 }, "Changing the content size category after load updates font sizes and media queries");
 </script>

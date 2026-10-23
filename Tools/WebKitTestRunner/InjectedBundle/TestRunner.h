@@ -84,6 +84,15 @@ public:
 #endif
     }
 
+    bool haveTextScaleFactor() const
+    {
+#if HAVE(TEXT_SCALE_FACTOR)
+        return true;
+#else
+        return false;
+#endif
+    }
+
     bool keyboardAppearsOverContent() const
     {
 #if PLATFORM(VISION)
@@ -297,6 +306,8 @@ public:
     void setBackgroundFetchPermission(bool);
     void setVirtualWalletBehavior(JSStringRef action, JSStringRef protocol, JSStringRef responseJSON);
     RefPtr<OpaqueJSString> lastAddedBackgroundFetchIdentifier() const;
+
+    double textScaleFactorForContentSizeCategory(JSStringRef contentSizeCategory);
     RefPtr<OpaqueJSString> lastRemovedBackgroundFetchIdentifier() const;
     RefPtr<OpaqueJSString> lastUpdatedBackgroundFetchIdentifier() const;
     RefPtr<OpaqueJSString> backgroundFetchState(JSStringRef);
