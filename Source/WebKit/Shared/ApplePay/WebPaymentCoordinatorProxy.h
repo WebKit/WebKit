@@ -61,6 +61,7 @@ class PaymentMerchantSession;
 class PaymentMethod;
 struct ApplePayCouponCodeUpdate;
 struct ApplePayPaymentMethodUpdate;
+struct ApplePayReferenceRequest;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethod;
 struct ApplePayShippingMethodUpdate;
@@ -113,6 +114,9 @@ public:
         virtual CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const = 0;
         virtual void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) = 0;
         virtual std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebPaymentMessages() const = 0;
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+        virtual bool paymentCoordinatorHostAppHasWebBrowserEntitlement(const WebPaymentCoordinatorProxy&) = 0;
+#endif
     };
 
     static Ref<WebPaymentCoordinatorProxy> create(Client&);
@@ -174,6 +178,11 @@ private:
     void endApplePaySetup();
     void platformBeginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool)>&&);
     void platformEndApplePaySetup();
+
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+    void prepareReferenceSession(const WebCore::ApplePayReferenceRequest&, bool shouldDiscloseCapability, CompletionHandler<void(std::optional<String>&&)>&&);
+    void platformPrepareReferenceSession(const WebCore::ApplePayReferenceRequest&, bool shouldDiscloseCapability, CompletionHandler<void(std::optional<String>&&)>&&);
+#endif
 
     bool LEGACY_NODELETE canBegin() const;
     bool LEGACY_NODELETE canCancel() const;

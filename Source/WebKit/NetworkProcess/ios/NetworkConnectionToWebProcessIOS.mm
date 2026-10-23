@@ -122,6 +122,13 @@ void NetworkConnectionToWebProcess::paymentCoordinatorRemoveMessageReceiver(WebP
 {
 }
 
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+bool NetworkConnectionToWebProcess::paymentCoordinatorHostAppHasWebBrowserEntitlement(const WebPaymentCoordinatorProxy&)
+{
+    return NetworkProcess::singleton().parentProcessHasEntitlement("com.apple.developer.web-browser"_s);
+}
+#endif
+
 #endif // ENABLE(APPLE_PAY_REMOTE_UI)
 
 } // namespace WebKit

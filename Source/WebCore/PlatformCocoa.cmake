@@ -1078,6 +1078,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/applepay/ApplePayPaymentTokenContext.h
     Modules/applepay/ApplePayRecurringPaymentDateUnit.h
     Modules/applepay/ApplePayRecurringPaymentRequest.h
+    Modules/applepay/ApplePayReferenceRequest.h
     Modules/applepay/ApplePaySetupConfiguration.h
     Modules/applepay/ApplePaySetupFeatureWebCore.h
     Modules/applepay/ApplePayShippingContactEditingMode.h

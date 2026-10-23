@@ -88,6 +88,10 @@ private:
     void beginApplePaySetup(const WebCore::ApplePaySetupConfiguration&, const URL&, Vector<Ref<WebCore::ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
     void endApplePaySetup() final;
 
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+    void prepareReferenceSession(const WebCore::ApplePayReferenceRequest&, bool shouldDiscloseCapability, CompletionHandler<void(std::optional<String>&&)>&&) final;
+#endif
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 

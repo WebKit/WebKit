@@ -124,6 +124,11 @@ selectors = [
 ]
 requires = ["HAVE_PASSKIT_ISSUING_REGION_CODE"]
 
+[[staging]]
+request = "rdar://190237414"
+classes = ["PKPaymentReferenceSession"]
+requires = ["HAVE_PASSKIT_PAYMENT_REFERENCE_SESSION"]
+
 [[temporary-usage]]
 request = "rdar://168834967"
 cleanup = "rdar://168834815"
