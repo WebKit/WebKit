@@ -159,7 +159,12 @@ bool setWUTLinkedProgram(WUTBufferResources& resources, const GX2VertexShader& v
     try {
         linked.reserve(bindingCount);
         for (size_t i = 0; i < bindingCount; ++i) {
-            if (!bindings[i].shaderInputName || !*bindings[i].shaderInputName)
+            // Attribute indices are later used to index the context's generic
+            // attribute-value array and to bind GX2 fetch streams. Reject
+            // invalid GL locations here instead of risking an out-of-bounds
+            // access immediately before a draw.
+            if (bindings[i].attributeIndex >= resources.currentAttributeValues.size()
+                || !bindings[i].shaderInputName || !*bindings[i].shaderInputName)
                 return false;
             for (size_t j = 0; j < i; ++j) {
                 if (bindings[j].attributeIndex == bindings[i].attributeIndex
