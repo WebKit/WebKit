@@ -389,6 +389,10 @@ public:
     WebCore::FloatSize viewportConfigurationViewLayoutSize;
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    WebCore::FloatBoxExtent unobscuredSafeAreaInsets;
+#endif
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     std::optional<ScrollingAccelerationCurve> lastSentScrollingAccelerationCurve;
     std::optional<ScrollingAccelerationCurve> scrollingAccelerationCurve;

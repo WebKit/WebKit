@@ -139,6 +139,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     WebCore::FloatSize overrideAvailableScreenSize;
     float textAutosizingWidth;
     WebCore::IntDegrees deviceOrientation;
+    WebCore::FloatBoxExtent unobscuredSafeAreaInsets;
     WebKit::HardwareKeyboardState hardwareKeyboardState;
     bool canShowWhileLocked;
     bool isCapturingScreen;
