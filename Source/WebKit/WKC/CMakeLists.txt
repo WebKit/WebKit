@@ -34,13 +34,12 @@ else ()
     set(_WKC_GAMEPAD_DEFINE 0)
 endif ()
 
-# Enable WebAssembly using JavaScriptCore's portable IPInt interpreter.
-# Wii U uses the CLoop interpreter and does not enable the architecture-specific
-# BBQ/OMG JIT tiers. Keep JIT support disabled in the feature definitions below;
-# the full WebAssembly interpreter sources are selected and compiled into JSC.
-# If a current upstream TU still requires unavailable PPC JIT register types,
-# fix or explicitly exclude that JIT-only TU rather than silently disabling Wasm.
-set(_WKC_WEBASSEMBLY_DEFAULT ON)
+# Keep WebAssembly opt-in on Wii U until the current upstream Wasm source set
+# builds cleanly with the PPC CLoop configuration. The current Wasm calling-
+# convention headers still depend on JIT register types that are unavailable in
+# this port, so enabling the whole wasm/*.cpp glob breaks JSC and LLInt offset
+# generation. Enable it explicitly only after those sources are ported/filtered.
+set(_WKC_WEBASSEMBLY_DEFAULT OFF)
 
 option(WKC_ENABLE_WEB_AUDIO "Compile Web Audio against the WKC audio backend" ${_WKC_WEB_AUDIO_DEFAULT})
 if (WKC_ENABLE_WEB_AUDIO)
