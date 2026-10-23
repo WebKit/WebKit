@@ -4588,6 +4588,15 @@ void Page::accessibilitySettingsDidChange()
     InspectorInstrumentation::accessibilitySettingsDidChange(*this);
 }
 
+void Page::displayModeDidChange()
+{
+    forEachDocument([](auto& document) {
+        document.styleScope().evaluateMediaQueriesForAppearanceChange();
+        document.updateElementsAffectedByMediaQueries();
+        document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
+    });
+}
+
 void Page::appearanceDidChange()
 {
     forEachDocument([] (auto& document) {
