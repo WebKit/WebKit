@@ -170,6 +170,7 @@ Tests/WebKit/WKWebView/FormValidation.mm @nonARC
 Tests/WebKit/WKWebView/FullscreenAlert.mm @nonARC
 Tests/WebKit/WKWebView/FullscreenDelegate.mm @nonARC
 Tests/WebKit/WKWebView/FullscreenLayoutConstraints.mm @nonARC
+Tests/WebKit/WKWebView/FullscreenRedundantExitRequest.mm @nonARC
 Tests/WebKit/WKWebView/FullscreenRemoveNodeBeforeEnter.mm @nonARC
 Tests/WebKit/WKWebView/FullscreenScrollAndResize.mm @nonARC
 Tests/WebKit/WKWebView/FullscreenVideoTextRecognition.mm @nonARC

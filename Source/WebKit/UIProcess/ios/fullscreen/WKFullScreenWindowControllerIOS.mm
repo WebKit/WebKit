@@ -1424,6 +1424,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)exitFullScreen:(CompletionHandler<void()>&&)completionHandler
 {
+    if (_fullScreenState > WebKit::InFullScreen) {
+        OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, _fullScreenState, " > InFullScreen, already exiting");
+        return completionHandler();
+    }
+
     [self _cancelWatchdogTimer];
 
     if (_fullScreenState == WebKit::NotInFullScreen) {
