@@ -2425,6 +2425,22 @@ bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
     if (!m_defaultTextureReady || !m_defaultCubeTextureReady)
         return false;
 
+    // This backend exposes the WebGL 1 texture model. NPOT textures are only
+    // complete when both wrap modes clamp to edge and the minification filter
+    // does not require mipmaps; otherwise WebGL must sample the default texture.
+    const auto isPowerOfTwo = [](uint32_t value) {
+        return value && !(value & (value - 1));
+    };
+    const auto isTextureCompleteForWebGL1 = [&](const TextureRecord& texture) {
+        if (isPowerOfTwo(texture.width) && isPowerOfTwo(texture.height))
+            return true;
+        const bool clampToEdge = texture.wrapS == GL_CLAMP_TO_EDGE_VALUE
+            && texture.wrapT == GL_CLAMP_TO_EDGE_VALUE;
+        const bool nonMipmappedFilter = texture.minFilter == GL_NEAREST_VALUE
+            || texture.minFilter == GL_LINEAR_VALUE;
+        return clampToEdge && nonMipmappedFilter;
+    };
+
     for (const auto& uniform : program.uniforms) {
         if (uniform.type != GL_SAMPLER_2D_VALUE && uniform.type != GL_SAMPLER_CUBE_VALUE)
             continue;
@@ -2448,7 +2464,7 @@ bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
                     || candidate.minFilter == GL_LINEAR_MIPMAP_NEAREST_VALUE
                     || candidate.minFilter == GL_NEAREST_MIPMAP_LINEAR_VALUE
                     || candidate.minFilter == GL_LINEAR_MIPMAP_LINEAR_VALUE;
-                bool complete = true;
+                bool complete = isTextureCompleteForWebGL1(candidate);
                 if (needsMipmaps) {
                     for (bool defined : candidate.definedLevels)
                         complete &= defined;
@@ -2468,7 +2484,7 @@ bool GraphicsContextGLWKC::applyProgramSamplers(ProgramRecord& program)
                     || candidate.minFilter == GL_LINEAR_MIPMAP_NEAREST_VALUE
                     || candidate.minFilter == GL_NEAREST_MIPMAP_LINEAR_VALUE
                     || candidate.minFilter == GL_LINEAR_MIPMAP_LINEAR_VALUE;
-                bool complete = true;
+                bool complete = isTextureCompleteForWebGL1(candidate);
                 if (needsMipmaps) {
                     uint32_t expectedLevels = 1;
                     for (uint32_t dimension = candidate.width; dimension > 1; dimension >>= 1)
