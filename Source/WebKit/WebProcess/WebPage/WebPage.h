@@ -2634,6 +2634,7 @@ private:
     void updateLastNodeBeforeWritingSuggestions(const WebCore::KeyboardEvent&);
 
     void findString(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
+    void countStringMatchesByFrame(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, uint32_t>>&&)>&&);
     void selectLastFoundRange(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, int32_t, bool)>&&);
 #if ENABLE(IMAGE_ANALYSIS)
     void findStringIncludingImages(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);

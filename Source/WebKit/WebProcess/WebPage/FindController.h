@@ -72,6 +72,7 @@ public:
     virtual ~FindController();
 
     void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
+    void countStringMatchesByFrame(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, uint32_t>>&&)>&&);
     void selectLastFoundRange(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, int32_t, bool)>&&);
 #if ENABLE(IMAGE_ANALYSIS)
     void findStringIncludingImages(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
@@ -119,6 +120,7 @@ private:
     void didScrollAffectingFindIndicatorPosition();
 
     RefPtr<WebCore::LocalFrame> frameWithSelection(WebCore::Page*);
+    std::optional<int32_t> indexOfSelectedMatchInFrame(const String&, OptionSet<FindOptions>);
 
     std::optional<WebCore::FrameIdentifier> applyFindMatch(const FindMatch&, OptionSet<FindOptions>);
 

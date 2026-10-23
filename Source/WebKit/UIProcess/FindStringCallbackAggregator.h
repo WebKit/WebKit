@@ -40,6 +40,7 @@ class FindStringCallbackAggregator : public RefCounted<FindStringCallbackAggrega
 public:
     static Ref<FindStringCallbackAggregator> create(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
     void foundString(std::optional<WebCore::FrameIdentifier>, uint32_t matchCount, bool didWrap);
+    void foundMatchCountsByFrame(Vector<std::pair<WebCore::FrameIdentifier, uint32_t>>&&);
     ~FindStringCallbackAggregator();
 
 private:
@@ -61,6 +62,7 @@ private:
     uint32_t m_matchCount { 0 };
     CompletionHandler<void(bool)> m_completionHandler;
     HashMap<WebCore::FrameIdentifier, FrameMatchResult> m_matches;
+    HashMap<WebCore::FrameIdentifier, uint32_t> m_matchCountsByFrame;
 };
 
 } // namespace WebKit
