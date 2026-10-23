@@ -38,7 +38,7 @@ struct TextOnlyLineBreakResult;
 class TextOnlySimpleLineBuilder final : public AbstractLineBuilder {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextOnlySimpleLineBuilder);
 public:
-    TextOnlySimpleLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
+    TextOnlySimpleLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&, std::span<const float> shapingAdjustments = { });
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLine) final;
 
     static bool LEGACY_NODELETE isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems&, const InlineLayoutState&);
@@ -60,10 +60,13 @@ private:
     size_t revertToTrailingItem(const Style::ComputedStyle&, const InlineItemRange&, const InlineTextItem&);
     size_t revertToLastNonOverflowingItem(const Style::ComputedStyle&, const InlineItemRange&);
     InlineLayoutUnit LEGACY_NODELETE availableWidth() const;
+    InlineLayoutUnit leadingShapingAdjustment(const InlineTextItem&) const;
 
 private:
     InlineLayoutUnit m_trimmedTrailingWhitespaceWidth { 0.f };
     std::optional<InlineLayoutUnit> m_overflowContentLogicalWidth { };
+    std::span<const float> m_shapingAdjustments;
+    std::optional<size_t> m_lineStartItemIndex;
 };
 
 }

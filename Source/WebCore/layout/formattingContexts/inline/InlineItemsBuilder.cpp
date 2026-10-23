@@ -94,6 +94,33 @@ static inline bool LEGACY_NODELETE isTextOrLineBreak(const Box& layoutBox)
     return layoutBox.isInFlow() && (layoutBox.isInlineTextBox() || (layoutBox.isLineBreakBox() && !layoutBox.isWordBreakOpportunity()));
 }
 
+static bool hasCJKContent(StringView text)
+{
+    if (text.is8Bit())
+        return false;
+    // CJK ideographs and kana start at U+2E80; anything below it is skipped without decoding.
+    for (auto character : text.span16()) {
+        if (character >= 0x2E80 && (U16_IS_SURROGATE(character) || FontCascade::isCJKIdeographOrSymbol(character)))
+            return true;
+    }
+    return false;
+}
+
+static bool canShapeAcrossInlineTextItems(const InlineTextBox& inlineTextBox)
+{
+    // Spacing and font features change how separately measured items add up, so only plain kerned CJK text is shaped for now.
+    CheckedRef style = inlineTextBox.style();
+    if (!style->writingMode().isHorizontal() || inlineTextBox.isCombined() || inlineTextBox.hasSynthesizedGlyph())
+        return false;
+    CheckedRef fontCascade = style->fontCascade();
+    if (!fontCascade->enableKerning() || fontCascade->letterSpacing() || fontCascade->wordSpacing())
+        return false;
+    auto& fontDescription = fontCascade->fontDescription();
+    if (!fontDescription.featureSettings().isEmpty() || !fontDescription.variantSettings().isAllNormal())
+        return false;
+    return hasCJKContent(inlineTextBox.content());
+}
+
 struct WidthAndGlyphOverflow {
     InlineLayoutUnit width { 0.f };
     std::optional<std::pair<LayoutUnit, LayoutUnit>> topBottomOverflow { };
@@ -135,14 +162,24 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         breakAndComputeBidiLevels(inlineItemList);
     }
 
-    if (contentRequiresVisualReordering() || m_hasTextAutospace)
+    auto contentMayAdjustWidths = contentRequiresVisualReordering() || m_hasTextAutospace;
+    if (contentMayAdjustWidths)
         computeInlineTextItemWidthsAndTextSpacing(inlineItemList);
+    auto shapingAdjustments = Vector<float> { };
+    if (m_hasNon8BitTextContent && shouldComputeShapingAdjustments(root(), contentMayAdjustWidths))
+        shapingAdjustments = computeShapingAdjustments(inlineItemList);
+    // The kerning of the first rebuilt item depends on the item before it, so adjustments are only kept from a full build.
+    m_needsFullRebuild = startPosition && !shapingAdjustments.isEmpty();
+    if (m_needsFullRebuild)
+        shapingAdjustments.clear();
+    m_hasShapingAdjustments = !shapingAdjustments.isEmpty();
+    inlineContentCache().setShapingAdjustments(WTF::move(shapingAdjustments));
 
     auto adjustInlineContentCacheWithNewInlineItems = [&] {
         ASSERT(!startPosition || startPosition.index < inlineContentCache().inlineItems().content().size());
 
-        auto contentAttributes = InlineContentCache::InlineItems::ContentAttributes { m_contentRequiresVisualReordering, m_hasTextAndLineBreakOnlyContent, m_hasTextAutospace, m_hasWhiteSpaceTrim, m_inlineBoxCount };
-        auto isPopulatedFromCache = m_textContentPopulatedFromCache && *m_textContentPopulatedFromCache ? InlineContentCache::InlineItems::IsPopulatedFromCache::Yes : InlineContentCache::InlineItems::IsPopulatedFromCache::No;
+        auto contentAttributes = InlineContentCache::InlineItems::ContentAttributes { m_contentRequiresVisualReordering, m_hasTextAndLineBreakOnlyContent, m_hasTextAutospace, m_hasWhiteSpaceTrim, m_hasShapingAdjustments, m_inlineBoxCount };
+        auto isPopulatedFromCache = m_textContentPopulatedFromCache && *m_textContentPopulatedFromCache && !m_hasShapingAdjustmentsToCache ? InlineContentCache::InlineItems::IsPopulatedFromCache::Yes : InlineContentCache::InlineItems::IsPopulatedFromCache::No;
         auto& inlineItemCache = inlineContentCache().inlineItems();
         if (!startPosition || startPosition.index >= inlineItemCache.content().size())
             return inlineItemCache.set(WTF::move(inlineItemList), contentAttributes, isPopulatedFromCache);
@@ -988,6 +1025,132 @@ void InlineItemsBuilder::computeInlineTextItemWidthsAndTextSpacing(InlineItemLis
     inlineContentCache().setTrimmableTextSpacings(WTF::move(trimmableTextSpacings));
 }
 
+struct ShapedText {
+    Vector<float> advances;
+    Vector<bool> startsCluster;
+};
+
+static bool shapeText(const InlineTextBox& inlineTextBox, unsigned start, unsigned end, ShapedText& shapedText)
+{
+    CheckedRef style = inlineTextBox.style();
+    CheckedRef fontCascade = style->fontCascade();
+    auto textRun = TextRun { StringView { inlineTextBox.content() }.substring(start, end - start), 0, 0, ExpansionBehavior::defaultBehavior(), TextDirection::LTR, false, !inlineTextBox.canUseSimpleFontCodePath() };
+    textRun.disableSpacing();
+    auto shapingResult = fontCascade->layoutText(fontCascade->codePath(textRun), textRun, 0, textRun.length());
+    auto& glyphs = shapingResult.glyphBuffer;
+
+    size_t length = end - start;
+    shapedText.advances.shrink(0);
+    shapedText.advances.fill(0.f, length);
+    shapedText.startsCluster.shrink(0);
+    shapedText.startsCluster.fill(false, length);
+    GlyphBufferStringOffset previousOffset = 0;
+    for (unsigned index = 0; index < glyphs.size(); ++index) {
+        auto offset = glyphs.uncheckedStringOffsetAt(index);
+        // Out of order glyphs mean reordered text, where a character's advance is not its own.
+        if (offset == GlyphBuffer::noOffset || offset < previousOffset || static_cast<size_t>(offset) >= length)
+            return false;
+        previousOffset = offset;
+        shapedText.advances[offset] += width(glyphs.advanceAt(index));
+        shapedText.startsCluster[offset] = true;
+    }
+    return true;
+}
+
+Vector<float> InlineItemsBuilder::computeShapingAdjustments(InlineItemList& inlineItemList)
+{
+    // Text items are measured one at a time, so kerning between two adjacent items of a text box is missing from their widths.
+    // It is added to the second item and trimmed when that item starts a line, like text-autospace spacing.
+    auto adjustments = Vector<float> { };
+    auto setAdjustment = [&](size_t index, float adjustment) {
+        if (adjustments.isEmpty())
+            adjustments.fill(0.f, inlineItemList.size());
+        adjustments[index] = adjustment;
+    };
+    for (auto [index, adjustment] : m_cachedShapingAdjustments)
+        setAdjustment(index, adjustment);
+
+    CheckedPtr<const InlineTextBox> currentInlineTextBox;
+    auto currentInlineTextBoxCanBeShaped = false;
+    auto shapableTextItem = [&](const InlineItem& inlineItem) -> const InlineTextItem* {
+        auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
+        if (!inlineTextItem || inlineTextItem->isWhitespace())
+            return nullptr;
+        if (currentInlineTextBox != &inlineTextItem->inlineTextBox()) {
+            currentInlineTextBox = &inlineTextItem->inlineTextBox();
+            // Text built from the breaking position cache already has its adjustments.
+            currentInlineTextBoxCanBeShaped = !m_inlineTextBoxesWithCachedShaping.contains(currentInlineTextBox) && canShapeAcrossInlineTextItems(*currentInlineTextBox);
+            // Have the next cache population store what this text shapes to.
+            m_hasShapingAdjustmentsToCache = m_hasShapingAdjustmentsToCache || currentInlineTextBoxCanBeShaped;
+        }
+        if (!currentInlineTextBoxCanBeShaped || !inlineTextItem->length() || !inlineTextItem->width() || inlineTextItem->direction() == TextDirection::RTL)
+            return nullptr;
+        // Line::appendText starts a new run at these, and each run is painted on its own.
+        if (inlineTextItem->isZeroWidthSpaceSeparator() || inlineTextItem->isQuirkNonBreakingSpace())
+            return nullptr;
+        return inlineTextItem;
+    };
+
+    size_t groupStartIndex = 0;
+    size_t groupEndIndex = 0;
+    auto shapedText = ShapedText { };
+    auto shapeGroup = [&] {
+        if (groupEndIndex - groupStartIndex < 2)
+            return;
+        auto& firstInlineTextItem = downcast<InlineTextItem>(inlineItemList[groupStartIndex]);
+        CheckedRef inlineTextBox = firstInlineTextItem.inlineTextBox();
+        auto start = firstInlineTextItem.start();
+        if (!shapeText(inlineTextBox.get(), start, downcast<InlineTextItem>(inlineItemList[groupEndIndex - 1]).end(), shapedText))
+            return;
+        auto previousWidthOnItsOwn = *firstInlineTextItem.width();
+        auto previousShapedWidth = 0.f;
+        for (auto position = firstInlineTextItem.start(); position < firstInlineTextItem.end(); ++position)
+            previousShapedWidth += shapedText.advances[position - start];
+        for (auto index = groupStartIndex + 1; index < groupEndIndex; ++index) {
+            auto& inlineTextItem = downcast<InlineTextItem>(inlineItemList[index]);
+            auto widthOnItsOwn = *inlineTextItem.width();
+            // Kerning adjusts the advance of the pair's first glyph, so it shows up in the previous item's shaped width.
+            auto kerning = previousShapedWidth - previousWidthOnItsOwn;
+            if (shapedText.startsCluster[inlineTextItem.start() - start] && std::abs(kerning) >= 0.001f) {
+                inlineItemList[index].setWidth(widthOnItsOwn + kerning);
+                setAdjustment(index, kerning);
+            }
+            previousWidthOnItsOwn = widthOnItsOwn;
+            previousShapedWidth = 0.f;
+            for (auto position = inlineTextItem.start(); position < inlineTextItem.end(); ++position)
+                previousShapedWidth += shapedText.advances[position - start];
+        }
+    };
+
+    for (size_t index = 0; index < inlineItemList.size(); ++index) {
+        auto* inlineTextItem = shapableTextItem(inlineItemList[index]);
+        auto continuesGroup = [&] {
+            if (!inlineTextItem || groupStartIndex == groupEndIndex || groupEndIndex != index)
+                return false;
+            auto& lastInlineTextItem = downcast<InlineTextItem>(inlineItemList[index - 1]);
+            return &lastInlineTextItem.inlineTextBox() == &inlineTextItem->inlineTextBox() && lastInlineTextItem.end() == inlineTextItem->start() && !lastInlineTextItem.hasTrailingSoftHyphen();
+        };
+        if (continuesGroup()) {
+            ++groupEndIndex;
+            continue;
+        }
+        shapeGroup();
+        groupStartIndex = index;
+        groupEndIndex = inlineTextItem ? index + 1 : index;
+    }
+    shapeGroup();
+    return adjustments;
+}
+
+bool InlineItemsBuilder::shouldComputeShapingAdjustments(const ElementBox& root, bool contentMayAdjustWidths)
+{
+    if (contentMayAdjustWidths)
+        return false;
+    // The line breaker that balances lines does not trim the adjustments.
+    CheckedRef rootStyle = root.style();
+    return rootStyle->textWrapMode() != TextWrapMode::Wrap || (rootStyle->textWrapStyle() != TextWrapStyle::Balance && rootStyle->textWrapStyle() != TextWrapStyle::Pretty);
+}
+
 bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(const InlineTextBox& inlineTextBox, InlineItemList& inlineItemList)
 {
     auto& text = inlineTextBox.content();
@@ -1013,11 +1176,17 @@ bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(co
     auto widthCacheEligible = inlineTextBoxWidthsAreCacheable(inlineTextBox, contentRequiresVisualReordering() || m_hasTextAutospace, mayHaveGlyphOverflow);
     std::optional<FontCascadeCacheKey> widthCacheFontCascadeIdentifier;
     const TextBreakingPositionCache::WidthList* cachedWidths = nullptr;
+    const TextBreakingPositionCache::WidthList* cachedShapingAdjustments = nullptr;
     TextBreakingPositionCache::WidthList measuredWidths;
-    if (widthCacheEligible) {
+    auto mayUseCachedShapingAdjustments = !deferNonWhitespaceMeasurement && !cacheEntry->shapingAdjustmentsByFontCascade.isEmpty() && shouldComputeShapingAdjustments(root(), contentRequiresVisualReordering() || m_hasTextAutospace);
+    if (widthCacheEligible || mayUseCachedShapingAdjustments)
         widthCacheFontCascadeIdentifier = fontCascadeIdentifier(fontCascade);
+    if (widthCacheEligible)
         cachedWidths = TextBreakingPositionCache::singleton().widths(*cacheEntry, *widthCacheFontCascadeIdentifier);
-    }
+    if (mayUseCachedShapingAdjustments)
+        cachedShapingAdjustments = TextBreakingPositionCache::singleton().shapingAdjustments(*cacheEntry, *widthCacheFontCascadeIdentifier);
+    if (cachedShapingAdjustments)
+        m_inlineTextBoxesWithCachedShaping.add(&inlineTextBox);
     size_t nonWhitespaceIndex = 0;
 
     auto nonWhitespaceItemWidth = [&](unsigned startPosition, unsigned endPosition) -> WidthAndGlyphOverflow {
@@ -1074,6 +1243,12 @@ bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(co
             continue;
         }
         auto [width, topBottomOverflow] = nonWhitespaceItemWidth(startPosition, endPosition);
+        if (cachedShapingAdjustments && nonWhitespaceIndex < cachedShapingAdjustments->size()) {
+            if (auto adjustment = (*cachedShapingAdjustments)[nonWhitespaceIndex]) {
+                m_cachedShapingAdjustments.append({ inlineItemList.size(), adjustment });
+                width += adjustment;
+            }
+        }
         inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, length, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, width, topBottomOverflow));
         ++nonWhitespaceIndex;
     }
@@ -1096,6 +1271,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     if (inlineTextBox.isCombined())
         return inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, { }, contentLength, UBIDI_DEFAULT_LTR, { }));
 
+    m_hasNon8BitTextContent = m_hasNon8BitTextContent || !inlineTextBox.content().is8Bit();
     if (!partialContentOffset && buildInlineItemListForTextFromBreakingPositionsCache(inlineTextBox, inlineItemList)) {
         if (!m_textContentPopulatedFromCache)
             m_textContentPopulatedFromCache = true;
@@ -1248,25 +1424,40 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemLi
     ASSERT_NOT_REACHED();
 }
 
-static TextBreakingPositionCache::WidthList collectWidthsFromBuiltItems(const InlineTextBox& inlineTextBox, std::span<const InlineItem> span, bool contentMayAdjustWidths)
-{
-    if (!inlineTextBoxWidthsAreCacheable(inlineTextBox, contentMayAdjustWidths, textBoxMayHaveGlyphOverflow(inlineTextBox)))
-        return { };
-
+struct WidthsAndShapingAdjustments {
     TextBreakingPositionCache::WidthList widths;
-    for (auto& inlineItem : span) {
-        auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem);
+    std::optional<TextBreakingPositionCache::WidthList> shapingAdjustments;
+};
+
+static WidthsAndShapingAdjustments collectWidthsFromBuiltItems(const InlineTextBox& inlineTextBox, std::span<const InlineItem> span, size_t spanStartIndex, bool contentMayAdjustWidths, std::optional<std::span<const float>> shapingAdjustments)
+{
+    // The cache keeps each item's width as measured on its own, and the kerning added to it separately.
+    auto widthsAreCacheable = inlineTextBoxWidthsAreCacheable(inlineTextBox, contentMayAdjustWidths, textBoxMayHaveGlyphOverflow(inlineTextBox));
+    auto result = WidthsAndShapingAdjustments { };
+    if (shapingAdjustments && canShapeAcrossInlineTextItems(inlineTextBox))
+        result.shapingAdjustments = TextBreakingPositionCache::WidthList { };
+    auto hasShapingAdjustment = false;
+    for (size_t index = 0; index < span.size(); ++index) {
+        auto* textItem = dynamicDowncast<InlineTextItem>(span[index]);
         if (!textItem || textItem->isWhitespace())
             continue;
         auto width = textItem->width();
         if (!width)
             return { };
-        widths.append(*width);
+        auto itemIndex = spanStartIndex + index;
+        auto shapingAdjustment = shapingAdjustments && itemIndex < shapingAdjustments->size() ? (*shapingAdjustments)[itemIndex] : 0.f;
+        if (widthsAreCacheable)
+            result.widths.append(*width - shapingAdjustment);
+        if (result.shapingAdjustments)
+            result.shapingAdjustments->append(shapingAdjustment);
+        hasShapingAdjustment = hasShapingAdjustment || shapingAdjustment;
     }
-    return widths;
+    if (result.shapingAdjustments && !hasShapingAdjustment)
+        result.shapingAdjustments->clear();
+    return result;
 }
 
-void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inlineItemList, const Document& document, bool contentMayAdjustWidths)
+void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inlineItemList, const Document& document, bool contentMayAdjustWidths, std::optional<std::span<const float>> shapingAdjustments)
 {
     if (inlineItemList.size() < TextBreakingPositionCache::minimumRequiredContentBreaks)
         return;
@@ -1307,7 +1498,16 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
         }
 
         TextBreakingPositionContext context { inlineTextBox->style() };
-        if (breakingPositionCache.get({ inlineTextBox->content(), context, securityOrigin->data() })) {
+        if (auto* cacheEntry = breakingPositionCache.get({ inlineTextBox->content(), context, securityOrigin->data() })) {
+            // The breaking positions are cached already, but the shaping adjustments may be missing or computed with other fonts.
+            if (shapingAdjustments && canShapeAcrossInlineTextItems(*inlineTextBox)) {
+                CheckedRef fontCascade = inlineTextBox->style().fontCascade();
+                auto fontCascadeKey = fontCascadeIdentifier(fontCascade);
+                if (!breakingPositionCache.shapingAdjustments(*cacheEntry, fontCascadeKey)) {
+                    if (auto spanShapingAdjustments = collectWidthsFromBuiltItems(*inlineTextBox, span, index, contentMayAdjustWidths, shapingAdjustments).shapingAdjustments)
+                        breakingPositionCache.addShapingAdjustments({ inlineTextBox->content(), context, securityOrigin->data() }, fontCascadeKey, WTF::move(*spanShapingAdjustments));
+                }
+            }
             // Cache is already populated.
             index += span.size();
             continue;
@@ -1329,12 +1529,16 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
 
         ASSERT(!breakingPositionList.isEmpty());
         if (breakingPositionList.size() >= TextBreakingPositionCache::minimumRequiredContentBreaks) {
-            auto widths = collectWidthsFromBuiltItems(*inlineTextBox, span, contentMayAdjustWidths);
+            auto [widths, spanShapingAdjustments] = collectWidthsFromBuiltItems(*inlineTextBox, span, index, contentMayAdjustWidths, shapingAdjustments);
             TextBreakingPositionCache::Key key { inlineTextBox->content(), context, securityOrigin->data() };
             breakingPositionCache.set(key, WTF::move(breakingPositionList));
-            if (!widths.isEmpty()) {
+            if (!widths.isEmpty() || spanShapingAdjustments) {
                 CheckedRef fontCascade = inlineTextBox->style().fontCascade();
-                breakingPositionCache.addWidths(key, fontCascadeIdentifier(fontCascade), WTF::move(widths));
+                auto fontCascadeKey = fontCascadeIdentifier(fontCascade);
+                if (!widths.isEmpty())
+                    breakingPositionCache.addWidths(key, fontCascadeKey, WTF::move(widths));
+                if (spanShapingAdjustments)
+                    breakingPositionCache.addShapingAdjustments(key, fontCascadeKey, WTF::move(*spanShapingAdjustments));
             }
         }
         index += span.size();
