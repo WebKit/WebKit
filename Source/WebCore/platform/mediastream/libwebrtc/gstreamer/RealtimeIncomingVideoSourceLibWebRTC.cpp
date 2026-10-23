@@ -79,6 +79,9 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
 #endif
 
     auto sample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
+    if (!sample)
+        return;
+
     VideoFrameGStreamer::CreateOptions options;
     options.timeMetadata = std::make_optional(metadataFromVideoFrame(frame));
     options.presentationTime = MediaTime(frame.timestamp_us(), G_USEC_PER_SEC);
