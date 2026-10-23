@@ -1020,8 +1020,11 @@ bool drawVertexArrayIndexed(void* context, const IndexedDraw& draw, BufferName e
     for (const auto& staged : stagedAttributes) {
         size_t stagedCapacity = 0;
         if (!getBufferCapacity(staged.buffer, stagedCapacity)
-            || stagedCapacity > UINT32_MAX || !staged.buffer.buffer)
+            || stagedCapacity > UINT32_MAX || !staged.buffer.buffer) {
+            GX2RDestroyBufferEx(&stagedIndices, stagedIndices.flags);
+            destroyStagedAttributes();
             return false;
+        }
         GX2SetAttribBuffer(staged.location, static_cast<uint32_t>(stagedCapacity),
             staged.stride, staged.buffer.buffer);
     }
