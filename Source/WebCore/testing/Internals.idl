@@ -463,6 +463,19 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+] dictionary AccessibilityProperties {
+    DOMString accessibilityId = "";
+    DOMString role = "";
+    DOMString label = "";
+    DOMString checked;
+    DOMString pressed;
+    DOMString parent;
+    sequence<DOMString> children = [];
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
 ] dictionary PDFAnnotationRect {
     float x = 0;
     float y = 0;
@@ -1595,6 +1608,8 @@ enum ContentsFormat {
 
     DOMString getComputedLabel(Element element);
     DOMString getComputedRole(Element element);
+    AccessibilityProperties getAccessibilityPropertiesForElement(Element element);
+    AccessibilityProperties getAccessibilityPropertiesForAccessibilityNode(DOMString accessibilityId);
 
     sequence<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element element);
     undefined setPDFTextAnnotationValueForTesting(Element element, unsigned long pageIndex, unsigned long annotationIndex, DOMString value);
