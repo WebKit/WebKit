@@ -3659,7 +3659,9 @@ private:
     void didReleaseAllTouchPoints() { }
 #endif // PLATFORM(IOS_FAMILY)
 
-    void performDragControllerAction(DragControllerAction, WebCore::DragData&, const std::optional<WebCore::FrameIdentifier>& = std::nullopt);
+    void performDragControllerAction(DragControllerAction, WebCore::DragData&, uint64_t dragEventNumber, const std::optional<WebCore::FrameIdentifier>& = std::nullopt);
+    void dragWasHandledInFrame(uint64_t dragEventNumber, const std::optional<WebCore::FrameIdentifier>&, const WebCore::DragData&);
+    void sendDragExitedToFrame(const std::optional<WebCore::FrameIdentifier>&, const WebCore::IntPoint& clientPosition, const WebCore::DragData&);
 
     void updateBackingStoreDiscardableState();
 

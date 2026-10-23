@@ -375,6 +375,15 @@ public:
     WebCore::IntRect currentDragCaretEditableElementRect;
     WebCore::IntRect currentDragCaretRect;
     WebCore::DragHandlingMethod currentDragHandlingMethod { WebCore::DragHandlingMethod::None };
+
+    struct DragTarget {
+        std::optional<WebCore::FrameIdentifier> frameID;
+        WebCore::IntPoint clientPosition;
+    };
+    uint64_t lastDragEventNumber { 0 };
+    uint64_t lastDragTargetEventNumber { 0 };
+    std::optional<DragTarget> lastDragTarget;
+    Vector<DragTarget> outdatedDragTargets;
 #endif
 
     RefPtr<WebColorPicker> colorPicker;
