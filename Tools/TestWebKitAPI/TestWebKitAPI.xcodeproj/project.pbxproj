@@ -600,6 +600,7 @@
 				WebKit/WKWebView/HTTP3Server.swift,
 				WebKit/WKWebView/SiteIsolationCookieTests.swift,
 				WebKit/WKWebView/SiteIsolationDataDetectionTests.swift,
+				WebKit/WKWebView/SiteIsolationEditableRegionTests.swift,
 				WebKit/WKWebView/SiteIsolationEditingTests.swift,
 				WebKit/WKWebView/SiteIsolationFullscreenTests.swift,
 				WebKit/WKWebView/SiteIsolationLookUpTests.swift,

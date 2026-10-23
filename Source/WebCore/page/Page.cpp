@@ -1624,12 +1624,11 @@ void Page::setEditableRegionEnabled(bool enabled)
     if (m_isEditableRegionEnabled == enabled)
         return;
     m_isEditableRegionEnabled = enabled;
-    RefPtr localMainFrame = this->localMainFrame();
-    RefPtr frameView = localMainFrame ? localMainFrame->view() : nullptr;
-    if (!frameView)
-        return;
-    if (CheckedPtr renderView = frameView->renderView())
-        protect(renderView->compositor())->invalidateEventRegionForAllLayers();
+    forEachLocalFrame([](LocalFrame& frame) {
+        if (CheckedPtr renderView = frame.contentRenderer())
+            protect(renderView->compositor())->invalidateEventRegionForAllLayers();
+    });
+    scheduleRenderingUpdate(RenderingUpdateStep::EventRegionUpdate);
 }
 
 #endif
