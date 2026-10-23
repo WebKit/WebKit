@@ -41,6 +41,12 @@ PAS_BEGIN_EXTERN_C;
 
 #define BMALLOC_SMALL_SHARING_SHIFT 4
 
+#define BMALLOC_SMALL_SEGREGATED_MIN_OBJECTS_PER_PAGE PAS_DEFAULT_MIN_OBJECTS_PER_PAGE
+#define BMALLOC_MEDIUM_SEGREGATED_MIN_OBJECTS_PER_PAGE PAS_DEFAULT_MIN_OBJECTS_PER_PAGE
+#define BMALLOC_SMALL_BITFIT_MIN_OBJECTS_PER_PAGE PAS_DEFAULT_MIN_OBJECTS_PER_PAGE
+#define BMALLOC_MEDIUM_BITFIT_MIN_OBJECTS_PER_PAGE PAS_DEFAULT_MIN_OBJECTS_PER_PAGE
+#define BMALLOC_MARGE_BITFIT_MIN_OBJECTS_PER_PAGE PAS_DEFAULT_MIN_OBJECTS_PER_PAGE
+
 PAS_API void bmalloc_heap_config_activate(void);
 
 #define BMALLOC_HEAP_CONFIG PAS_BASIC_HEAP_CONFIG( \
@@ -74,6 +80,11 @@ PAS_API void bmalloc_heap_config_activate(void);
     .use_marge_bitfit = true, \
     .marge_bitfit_min_align_shift = PAS_MIN_MARGE_ALIGN_SHIFT, \
     .marge_bitfit_page_size = PAS_MARGE_PAGE_DEFAULT_SIZE, \
+    .small_segregated_min_objects_per_page = BMALLOC_SMALL_SEGREGATED_MIN_OBJECTS_PER_PAGE, \
+    .medium_segregated_min_objects_per_page = BMALLOC_MEDIUM_SEGREGATED_MIN_OBJECTS_PER_PAGE, \
+    .small_bitfit_min_objects_per_page = BMALLOC_SMALL_BITFIT_MIN_OBJECTS_PER_PAGE, \
+    .medium_bitfit_min_objects_per_page = BMALLOC_MEDIUM_BITFIT_MIN_OBJECTS_PER_PAGE, \
+    .marge_bitfit_min_objects_per_page = BMALLOC_MARGE_BITFIT_MIN_OBJECTS_PER_PAGE, \
     .pgm_enabled = true, \
     .delegate_large_user_allocations = true, \
     .large_map_variant = pas_default_large_map_variant, \

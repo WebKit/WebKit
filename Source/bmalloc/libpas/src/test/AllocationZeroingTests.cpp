@@ -360,22 +360,47 @@ void runZeroingReuseFaultOrders(const std::vector<size_t>& sizes)
 // hard-coded, so the run keeps hitting the interesting boundaries if a config
 // changes. The subsystem for a given size is chosen by the runtime config, but
 // these ranges are representative: a size at a fraction of a page lands inside
-// that page's subsystem, and one near page/PAS_MIN_OBJECTS_PER_PAGE sits near
+// that page's subsystem, and one at the page config's max_object_size sits at
 // that subsystem's largest object. Segregated and bitfit pages both zero via
 // memset, the large heap zeroes via memset below the virtual-memory threshold,
 // and via the virtual-memory path at and above it.
+
+// The largest object each bmalloc page config actually serves, derived from the heap config so these ranges follow
+// any per-page-config min-objects-per-page tuning instead of assuming a global divisor. The heap rounds each page
+// config's max_object_size down to the config's min align (see max_object_size_for_page_config in
+// pas_segregated_heap.c) and rounds requested sizes up to it, so an unrounded max_object_size would spill into the
+// next subsystem up.
+size_t usableMaxObjectSize(const pas_page_base_config& config)
+{
+    return pas_round_down_to_power_of_2(config.max_object_size, pas_page_base_config_min_align(config));
+}
+
+size_t smallSegregatedMaxObjectSize()
+{
+    return usableMaxObjectSize(bmalloc_heap_config.small_segregated_config.base);
+}
+
+size_t mediumSegregatedMaxObjectSize()
+{
+    return usableMaxObjectSize(bmalloc_heap_config.medium_segregated_config.base);
+}
+
+size_t margeBitfitMaxObjectSize()
+{
+    return usableMaxObjectSize(bmalloc_heap_config.marge_bitfit_config.base);
+}
 
 std::vector<size_t> segregatedRegimeSizes()
 {
     // Small- and medium-segregated pages (memset), starting at the smallest
     // object the heap serves and climbing toward each subsystem's largest object
-    // at page/PAS_MIN_OBJECTS_PER_PAGE.
+    // (the page config's max_object_size).
     return {
         bmallocMinAlign,
         PAS_SMALL_PAGE_DEFAULT_SIZE / pageFractionDivisor + oddSizeDelta,
-        PAS_SMALL_PAGE_DEFAULT_SIZE / PAS_MIN_OBJECTS_PER_PAGE,
+        smallSegregatedMaxObjectSize(),
         PAS_MEDIUM_PAGE_DEFAULT_SIZE / pageFractionDivisor + oddSizeDelta,
-        PAS_MEDIUM_PAGE_DEFAULT_SIZE / PAS_MIN_OBJECTS_PER_PAGE,
+        mediumSegregatedMaxObjectSize(),
     };
 }
 
@@ -462,7 +487,7 @@ void testZeroingReuseWithScavengeLargeVirtualMemorySizes()
 }
 
 // Small objects are batched many-per-page: a segregated page holds at least
-// PAS_MIN_OBJECTS_PER_PAGE objects, so one page's backing serves many
+// at least the page config's min-objects-per-page objects, so one page's backing serves many
 // allocations and those objects are zeroed per object, not per page. Fill
 // several pages so that many objects are co-resident on shared pages, verifying
 // each is independently zero -- both when first carved from a page and when a
@@ -518,10 +543,10 @@ void testSmallZeroingPageBatching()
 {
     // Small sizes bracketing the batching density: the smallest object (the most
     // per page) and the largest small-segregated object (the fewest per page, but
-    // still at least PAS_MIN_OBJECTS_PER_PAGE).
-    static constexpr size_t sizes[] = {
+    // still at least the config's min-objects-per-page).
+    const size_t sizes[] = {
         bmallocMinAlign,
-        PAS_SMALL_PAGE_DEFAULT_SIZE / PAS_MIN_OBJECTS_PER_PAGE,
+        smallSegregatedMaxObjectSize(),
     };
     static constexpr HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Tagged };
     for (HeapVariant variant : variants) {
@@ -619,9 +644,9 @@ struct FragmentationRegime {
 
 std::vector<FragmentationRegime> fragmentationRegimes()
 {
-    size_t smallSegMax = PAS_SMALL_PAGE_DEFAULT_SIZE / PAS_MIN_OBJECTS_PER_PAGE;
-    size_t mediumSegMax = PAS_MEDIUM_PAGE_DEFAULT_SIZE / PAS_MIN_OBJECTS_PER_PAGE;
-    size_t bitfitMax = PAS_MARGE_PAGE_DEFAULT_SIZE / PAS_MIN_OBJECTS_PER_PAGE;
+    size_t smallSegMax = smallSegregatedMaxObjectSize();
+    size_t mediumSegMax = mediumSegregatedMaxObjectSize();
+    size_t bitfitMax = margeBitfitMaxObjectSize();
     return {
         { bmallocMinAlign, smallSegMax }, // small-segregated (memset)
         { smallSegMax + 1, mediumSegMax }, // medium-segregated (memset)

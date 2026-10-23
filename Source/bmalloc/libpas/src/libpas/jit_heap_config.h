@@ -159,7 +159,7 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
                 .min_align_shift = JIT_SMALL_SEGREGATED_MIN_ALIGN_SHIFT, \
                 .page_size = JIT_SMALL_PAGE_SIZE, \
                 .granule_size = JIT_SMALL_GRANULE_SIZE, \
-                .max_object_size = PAS_MAX_OBJECT_SIZE(JIT_SMALL_PAGE_SIZE), \
+                .max_object_size = PAS_MAX_OBJECT_SIZE_WITH_MIN_OBJECTS(JIT_SMALL_PAGE_SIZE, PAS_DEFAULT_MIN_OBJECTS_PER_PAGE), \
                 .page_header_for_boundary = jit_small_page_header_for_boundary, \
                 .boundary_for_page_header = jit_small_boundary_for_page_header, \
                 .page_header_for_boundary_remote = jit_page_header_for_boundary_remote, \

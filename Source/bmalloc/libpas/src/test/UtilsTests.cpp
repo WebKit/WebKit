@@ -24,7 +24,11 @@
  */
 
 #include "TestHarness.h"
+#include "bmalloc_heap_config.h"
+#include "pas_page_base_inlines.h"
+#include "pas_page_granule_use_count.h"
 #include "pas_utils.h"
+#include <vector>
 
 using namespace std;
 
@@ -37,10 +41,66 @@ void testIsDivisibleBy3(unsigned value)
                 !(value % 3));
 }
 
+// Commit-granule use counts on a medium segregated page, for objects whose size is at, just above, or just below the
+// commit granule. A medium segregated page config's largest object size is its page size divided by its
+// min-objects-per-page, so a smaller divisor can make objects as large as (or larger than) a granule. Objects are laid out
+// back to back from the start of the page, as the medium segregated payload starts at offset zero. The page's use counts
+// must always equal the number of live objects overlapping each granule, and freeing an object must report an empty
+// granule exactly when one of the granules it overlaps drops to zero.
+void testGranuleUseCountsForObjectSize(size_t objectSize)
+{
+    const pas_page_base_config& config = bmalloc_heap_config.medium_segregated_config.base;
+    size_t pageSize = config.page_size;
+    size_t granuleSize = config.granule_size;
+    size_t numGranules = pageSize / granuleSize;
+    size_t numObjects = pageSize / objectSize;
+
+    CHECK_EQUAL(pageSize % granuleSize, static_cast<size_t>(0));
+    CHECK_GREATER(numObjects, static_cast<size_t>(0));
+
+    std::vector<pas_page_granule_use_count> useCounts(numGranules, 0);
+    std::vector<unsigned> expected(numGranules, 0);
+
+    auto firstGranule = [&](size_t objectIndex) {
+        return objectIndex * objectSize / granuleSize;
+    };
+    auto lastGranule = [&](size_t objectIndex) {
+        return ((objectIndex + 1) * objectSize - 1) / granuleSize;
+    };
+    auto checkUseCounts = [&] {
+        for (size_t granule = 0; granule < numGranules; ++granule)
+            CHECK_EQUAL(static_cast<unsigned>(useCounts[granule]), expected[granule]);
+    };
+
+    for (size_t objectIndex = 0; objectIndex < numObjects; ++objectIndex) {
+        pas_page_granule_increment_uses_for_range(
+            useCounts.data(), objectIndex * objectSize, (objectIndex + 1) * objectSize, pageSize, granuleSize);
+        for (size_t granule = firstGranule(objectIndex); granule <= lastGranule(objectIndex); ++granule)
+            ++expected[granule];
+    }
+    checkUseCounts();
+
+    for (size_t objectIndex = 0; objectIndex < numObjects; ++objectIndex) {
+        bool shouldFindEmptyGranule = false;
+        for (size_t granule = firstGranule(objectIndex); granule <= lastGranule(objectIndex); ++granule) {
+            if (!--expected[granule])
+                shouldFindEmptyGranule = true;
+        }
+        bool didFindEmptyGranule = pas_page_base_free_granule_uses_in_range(
+            useCounts.data(), objectIndex * objectSize, (objectIndex + 1) * objectSize, config);
+        CHECK_EQUAL(didFindEmptyGranule, shouldFindEmptyGranule);
+        checkUseCounts();
+    }
+}
+
 } // anonymous namespace
 
 void addUtilsTests()
 {
+    ADD_TEST(testGranuleUseCountsForObjectSize(bmalloc_heap_config.medium_segregated_config.base.granule_size));
+    ADD_TEST(testGranuleUseCountsForObjectSize(bmalloc_heap_config.medium_segregated_config.base.granule_size + 512));
+    ADD_TEST(testGranuleUseCountsForObjectSize(bmalloc_heap_config.medium_segregated_config.base.granule_size - 512));
+    ADD_TEST(testGranuleUseCountsForObjectSize(bmalloc_heap_config.medium_segregated_config.base.max_object_size));
     ADD_TEST(testIsDivisibleBy3(0));
     ADD_TEST(testIsDivisibleBy3(1));
     ADD_TEST(testIsDivisibleBy3(2));

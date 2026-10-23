@@ -82,7 +82,7 @@
 
 #define PAS_MEDIUM_SHARING_SHIFT         3
 
-#define PAS_MIN_OBJECTS_PER_PAGE         11
+#define PAS_DEFAULT_MIN_OBJECTS_PER_PAGE 11
 
 #ifdef PAS_LIBMALLOC
 #define PAS_DEALLOCATION_LOG_SIZE        10
@@ -97,7 +97,8 @@
 
 #define PAS_NUM_FAST_FAST_MEGAPAGE_BITS  524288
 
-#define PAS_MAX_OBJECT_SIZE(payload_size) ((size_t)(payload_size) / (size_t)PAS_MIN_OBJECTS_PER_PAGE)
+#define PAS_MAX_OBJECT_SIZE_WITH_MIN_OBJECTS(payload_size, min_objects) \
+    ((size_t)(payload_size) / (size_t)(min_objects))
 #define PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE_SHIFT 15
 #define PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE ((size_t)1 << PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE_SHIFT)
 

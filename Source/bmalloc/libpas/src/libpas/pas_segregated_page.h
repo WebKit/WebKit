@@ -46,8 +46,9 @@ PAS_IGNORE_WARNINGS_BEGIN("cast-align")
 
 PAS_BEGIN_EXTERN_C;
 
-/* "Small pages" are pages that hold objects that are smaller than PAS_MAX_OBJECT_SIZE (i.e.
-   "small" objects). */
+/* "Small pages" are pages that hold objects that are no larger than the small segregated page config's
+   max_object_size (the page's payload divided by that config's min-objects-per-page; see
+   PAS_MAX_OBJECT_SIZE_WITH_MIN_OBJECTS), i.e. "small" objects. */
 
 struct pas_deferred_decommit_log;
 struct pas_segregated_heap;

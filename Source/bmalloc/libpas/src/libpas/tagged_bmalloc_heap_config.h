@@ -41,6 +41,12 @@ PAS_BEGIN_EXTERN_C;
 
 #define TAGGED_BMALLOC_SMALL_SHARING_SHIFT 4
 
+/* If you change this, make sure that at least one of the medium-segregated and
+   medium-bitfit pages has an object-size ceiling at 32k, and that neither has
+   a ceiling greater than that. Objects not allocated from those heaps will not
+   be tagged, which would violate our system-level tagging policy. */
+#define TAGGED_BMALLOC_PINNED_MIN_OBJECTS_PER_PAGE 11
+
 PAS_API void tagged_bmalloc_heap_config_activate(void);
 
 #define TAGGED_BMALLOC_HEAP_CONFIG PAS_BASIC_HEAP_CONFIG( \
@@ -72,6 +78,11 @@ PAS_API void tagged_bmalloc_heap_config_activate(void);
     .use_medium_bitfit = true, \
     .medium_bitfit_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
     .use_marge_bitfit = false, \
+    .small_segregated_min_objects_per_page = TAGGED_BMALLOC_PINNED_MIN_OBJECTS_PER_PAGE, \
+    .medium_segregated_min_objects_per_page = TAGGED_BMALLOC_PINNED_MIN_OBJECTS_PER_PAGE, \
+    .small_bitfit_min_objects_per_page = TAGGED_BMALLOC_PINNED_MIN_OBJECTS_PER_PAGE, \
+    .medium_bitfit_min_objects_per_page = TAGGED_BMALLOC_PINNED_MIN_OBJECTS_PER_PAGE, \
+    .marge_bitfit_min_objects_per_page = TAGGED_BMALLOC_PINNED_MIN_OBJECTS_PER_PAGE, \
     .pgm_enabled = true, \
     .delegate_large_user_allocations = false, \
     .large_map_variant = pas_default_large_map_variant, \

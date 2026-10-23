@@ -280,8 +280,9 @@ pas_mte_compute_valid_tags_under_adjacent_tag_exclusion(
         if (current_pageno != prior_pageno) {
             valid_tags = pas_mte_nonzero_even_tag;
             /* If an allocation were to somehow abut both the beginning and
-               the end of a page (e.g. by changing PAS_MIN_OBJECTS_PER_PAGE)
-               then it would not be possible to guarantee cross-page ATE. */
+               the end of a page (e.g. by lowering a page config's
+               min-objects-per-page) then it would not be possible to
+               guarantee cross-page ATE. */
             PAS_ASSERT(current_pageno == succeeding_pageno, current_pageno, prior_pageno, succeeding_pageno);
         } else if (current_pageno != succeeding_pageno)
             valid_tags = pas_mte_odd_tag;

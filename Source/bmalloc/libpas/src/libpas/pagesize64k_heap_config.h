@@ -75,6 +75,11 @@ PAS_API void pagesize64k_heap_config_activate(void);
     .use_medium_bitfit = true, \
     .medium_bitfit_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
     .use_marge_bitfit = false, \
+    .small_segregated_min_objects_per_page = PAS_DEFAULT_MIN_OBJECTS_PER_PAGE, \
+    .medium_segregated_min_objects_per_page = PAS_DEFAULT_MIN_OBJECTS_PER_PAGE, \
+    .small_bitfit_min_objects_per_page = PAS_DEFAULT_MIN_OBJECTS_PER_PAGE, \
+    .medium_bitfit_min_objects_per_page = PAS_DEFAULT_MIN_OBJECTS_PER_PAGE, \
+    .marge_bitfit_min_objects_per_page = PAS_DEFAULT_MIN_OBJECTS_PER_PAGE, \
     .pgm_enabled = false, \
     .delegate_large_user_allocations = true, \
     .large_map_variant = pas_default_large_map_variant)

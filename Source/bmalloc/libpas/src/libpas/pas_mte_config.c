@@ -273,6 +273,82 @@ static size_t max_object_size_for_page_config_sans_heap(const pas_page_base_conf
         pas_page_base_config_min_align(*page_config));
 }
 
+static void pas_report_page_config(const char* label,
+                                   const pas_page_base_config* base,
+                                   size_t payload_size,
+                                   const pas_segregated_page_config* segregated_config,
+                                   pas_heap_runtime_config* runtime_config)
+{
+    char min_objects[8];
+    char handicap[8];
+    char view_cache[16];
+
+    if (!base->is_enabled) {
+        fprintf(stderr, "\n\t\t%-18s disabled", label);
+        return;
+    }
+
+    /* The least number of objects of max_object_size that a page of this config can hold. */
+    snprintf(min_objects, sizeof(min_objects), "%zu", payload_size / max_object_size_for_page_config_sans_heap(base));
+
+    snprintf(handicap, sizeof(handicap), "n/a");
+    snprintf(view_cache, sizeof(view_cache), "n/a");
+    if (segregated_config) {
+        snprintf(handicap, sizeof(handicap), "%.2f", segregated_config->wasteage_handicap);
+        if (!segregated_config->enable_view_cache)
+            snprintf(view_cache, sizeof(view_cache), "off");
+        else if (runtime_config && runtime_config->view_cache_capacity_for_object_size)
+            snprintf(view_cache, sizeof(view_cache), "cap %zu", runtime_config->view_cache_capacity_for_object_size(0, segregated_config));
+    }
+
+    /* The widths here must be kept in sync with the headers printed in pas_report_heap_config */
+    fprintf(stderr, "\n\t\t%-18s %7zuB %7zuB %4zuB %8s %7zuB %8s %7zuB  %-10s %4u",
+            label, base->page_size, payload_size,
+            pas_page_base_config_min_align(*base), min_objects, max_object_size_for_page_config_sans_heap(base),
+            handicap, base->granule_size, view_cache, base->allow_mte_tagging);
+}
+
+static void pas_report_segregated_page_config(const char* label,
+                                              const pas_segregated_page_config* page_config,
+                                              pas_heap_runtime_config* runtime_config)
+{
+    pas_report_page_config(label, &page_config->base, page_config->exclusive_payload_size, page_config, runtime_config);
+}
+
+static void pas_report_bitfit_page_config(const char* label, const pas_bitfit_page_config* page_config)
+{
+    pas_report_page_config(label, &page_config->base, page_config->page_object_payload_size, NULL, NULL);
+}
+
+/* The runtime config is used for the view cache capacity of the segregated page configs, so it must be the config of
+   the heap that is normally used to allocate from this heap config (NULL if there is none). */
+static void pas_report_heap_config(const char* name, const pas_heap_config* config, pas_heap_runtime_config* runtime_config)
+{
+    fprintf(stderr, "\n\tHeap-Config %s:", name);
+    /* The widths here must be kept in sync with the per-row widths printed in pas_report_page_config */
+    fprintf(stderr, "\n\t\t%-18s %8s %8s %5s %8s %8s %8s %8s  %-10s %4s",
+            "Page Configs:", "page", "payload", "align", "min-objs", "max obj", "handicap", "granule", "view-cache", "+MTE");
+    pas_report_segregated_page_config("Small Segregated", &config->small_segregated_config, runtime_config);
+    pas_report_segregated_page_config("Medium Segregated", &config->medium_segregated_config, runtime_config);
+    pas_report_bitfit_page_config("Small Bitfit", &config->small_bitfit_config);
+    pas_report_bitfit_page_config("Medium Bitfit", &config->medium_bitfit_config);
+    pas_report_bitfit_page_config("Marge Bitfit", &config->marge_bitfit_config);
+}
+
+#if PAS_ENABLE_BMALLOC || PAS_ENABLE_JIT
+static void pas_report_runtime_config(const char* label, const pas_heap_runtime_config* runtime_config)
+{
+    fprintf(stderr, "\n\t\t\t%s: %uB, %uB, %uB, %uB", label,
+            runtime_config->max_segregated_object_size, runtime_config->max_bitfit_object_size,
+            runtime_config->directory_size_bound_for_baseline_allocators, runtime_config->directory_size_bound_for_no_view_cache);
+}
+
+static void pas_report_runtime_config_header(void)
+{
+    fprintf(stderr, "\n\t\tRuntime Heap Config Size-Maximums (Segregated, Bitfit, Baseline Dir, No-View-Cache Dir):");
+}
+#endif
+
 static void pas_report_config(void)
 {
     const char* progname = getprogname();
@@ -281,78 +357,40 @@ static void pas_report_config(void)
 
     const pas_runtime_config* config = PAS_RUNTIME_CONFIG_PTR;
 
-#define LOG_FMT_STR_FOR_HEAP_CONFIG(name) "\n\tHeap-Config " #name ":" \
-                                   "\n\t\tPage Configs (Enabled/MTE Taggable, Static Max Obj Size):" \
-                                   "\n\t\t\tSmall Segregated: %u/%u, %zuB"\
-                                   "\n\t\t\tMedium Segregated: %u/%u, %zuB"\
-                                   "\n\t\t\tSmall Bitfit: %u/%u, %zuB"\
-                                   "\n\t\t\tMedium Bitfit : %u/%u, %zuB"\
-                                   "\n\t\t\tMarge Bitfit : %u/%u, %zuB"
-#define LOG_FMT_VARS_FOR_HEAP_CONFIG(cfg) \
-    cfg.small_segregated_config.base.is_enabled, cfg.small_segregated_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.small_segregated_config.base), \
-    cfg.medium_segregated_config.base.is_enabled, cfg.medium_segregated_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.medium_segregated_config.base), \
-    cfg.small_bitfit_config.base.is_enabled, cfg.small_bitfit_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.small_bitfit_config.base), \
-    cfg.medium_bitfit_config.base.is_enabled, cfg.medium_bitfit_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.medium_bitfit_config.base), \
-    cfg.marge_bitfit_config.base.is_enabled, cfg.marge_bitfit_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.marge_bitfit_config.base)
-#define LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(rcfg) \
-    rcfg.base.max_segregated_object_size, rcfg.base.max_bitfit_object_size, rcfg.base.directory_size_bound_for_baseline_allocators, rcfg.base.directory_size_bound_for_no_view_cache
-#define LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(rcfg) \
-    rcfg.max_segregated_object_size, rcfg.max_bitfit_object_size, rcfg.directory_size_bound_for_baseline_allocators, rcfg.directory_size_bound_for_no_view_cache
-
     fprintf(stderr,
         "%s(%d,0x%x) malloc: libpas config:"
         "\n\tDeallocation Log (Max Entries, Max Bytes): %zu, %zuB"
         "\n\tScavenger (Period, Deep-Sleep Timeout, Epoch-Delta): %.2fms, %.2fms, %llu"
-        "\n\tMTE (Enabled/Lockdown/Hardened/ATE/RoS/ZTA): (%u, %u, %u, %u, %u, %u)"
-#if PAS_ENABLE_BMALLOC
-        "\n\tForwarding to System Heap: %u"
-        LOG_FMT_STR_FOR_HEAP_CONFIG(bmalloc)
-        "\n\t\tRuntime Heap Config Size-Maximums (Segregated, Bitfit, Baseline Dir, No-View-Cache Dir):"
-        "\n\t\t\tFlex: %uB, %uB, %uB, %uB"
-        "\n\t\t\tIntrinsic: %uB, %uB, %uB, %uB"
-        "\n\t\t\tTyped: %uB, %uB, %uB, %uB"
-        "\n\t\t\tPrimitive: %uB, %uB, %uB, %uB"
-        LOG_FMT_STR_FOR_HEAP_CONFIG(tagged_bmalloc)
-        "\n\t\tRuntime Heap Config Size-Maximums (Segregated, Bitfit, Baseline Dir, No-View-Cache Dir):"
-        "\n\t\t\tIntrinsic: %uB, %uB, %uB, %uB"
-        "\n\t\t\tPrimitive: %uB, %uB, %uB, %uB"
-#endif
-#if PAS_ENABLE_JIT
-        LOG_FMT_STR_FOR_HEAP_CONFIG(jit)
-        "\n\t\tRuntime Heap Config Size-Maximums (Segregated, Bitfit, Baseline Dir, No-View-Cache Dir):"
-        "\n\t\t\tFlex: %uB, %uB, %uB, %uB"
-#endif
-#if PAS_ENABLE_ISO
-        LOG_FMT_STR_FOR_HEAP_CONFIG(iso)
-#endif
-        LOG_FMT_STR_FOR_HEAP_CONFIG(utility)
-        "\n",
-
-        /* Begin the fmt vars */
+        "\n\tMTE (Enabled/Lockdown/Hardened/ATE/RoS/ZTA): (%u, %u, %u, %u, %u, %u)",
         progname, pid, (int)threadno,
         (size_t)PAS_DEALLOCATION_LOG_SIZE, (size_t)PAS_DEALLOCATION_LOG_MAX_BYTES,
         pas_scavenger_period_in_milliseconds, pas_scavenger_deep_sleep_timeout_in_milliseconds, pas_scavenger_max_epoch_delta,
         pas_mte_is_mte_enabled_unchecked(), config->is_lockdown_mode, config->is_hardened,
-        config->mode_bits.adjacent_tag_exclusion, config->mode_bits.retag_on_scavenge, config->mode_bits.zero_tag_all,
+        config->mode_bits.adjacent_tag_exclusion, config->mode_bits.retag_on_scavenge, config->mode_bits.zero_tag_all);
+
 #if PAS_ENABLE_BMALLOC
-        pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind_bmalloc),
-        LOG_FMT_VARS_FOR_HEAP_CONFIG(bmalloc_heap_config),
-        LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(bmalloc_flex_runtime_config),
-        LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(bmalloc_intrinsic_runtime_config),
-        LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(bmalloc_typed_runtime_config),
-        LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(bmalloc_primitive_runtime_config),
-        LOG_FMT_VARS_FOR_HEAP_CONFIG(tagged_bmalloc_heap_config),
-        LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(tagged_bmalloc_intrinsic_runtime_config),
-        LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(tagged_bmalloc_primitive_runtime_config),
+    fprintf(stderr, "\n\tForwarding to System Heap: %u", pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind_bmalloc));
+    pas_report_heap_config("bmalloc", &bmalloc_heap_config, &bmalloc_intrinsic_runtime_config.base);
+    pas_report_runtime_config_header();
+    pas_report_runtime_config("Flex", &bmalloc_flex_runtime_config.base);
+    pas_report_runtime_config("Intrinsic", &bmalloc_intrinsic_runtime_config.base);
+    pas_report_runtime_config("Typed", &bmalloc_typed_runtime_config.base);
+    pas_report_runtime_config("Primitive", &bmalloc_primitive_runtime_config.base);
+    pas_report_heap_config("tagged_bmalloc", &tagged_bmalloc_heap_config, &tagged_bmalloc_intrinsic_runtime_config.base);
+    pas_report_runtime_config_header();
+    pas_report_runtime_config("Intrinsic", &tagged_bmalloc_intrinsic_runtime_config.base);
+    pas_report_runtime_config("Primitive", &tagged_bmalloc_primitive_runtime_config.base);
 #endif
 #if PAS_ENABLE_JIT
-        LOG_FMT_VARS_FOR_HEAP_CONFIG(jit_heap_config),
-        LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(jit_heap_runtime_config),
+    pas_report_heap_config("jit", &jit_heap_config, NULL);
+    pas_report_runtime_config_header();
+    pas_report_runtime_config("Flex", &jit_heap_runtime_config);
 #endif
 #if PAS_ENABLE_ISO
-        LOG_FMT_VARS_FOR_HEAP_CONFIG(iso_heap_config),
+    pas_report_heap_config("iso", &iso_heap_config, NULL);
 #endif
-        LOG_FMT_VARS_FOR_HEAP_CONFIG(pas_utility_heap_config));
+    pas_report_heap_config("utility", &pas_utility_heap_config, NULL);
+    fprintf(stderr, "\n");
 }
 
 // rdar://164588924: We should refactor this to a more general mechanism
