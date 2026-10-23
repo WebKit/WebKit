@@ -175,6 +175,11 @@ inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject
 
 JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, ArgList args, double length, JSString* nameMayBeNull, const SourceCode& source)
 {
+    return create(vm, globalObject, targetFunction, boundThis, args, length, nameMayBeNull, source.provider()->sourceTaintedOrigin(SourceTaintKind::ScriptTrackingPrivacy));
+}
+
+JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, ArgList args, double length, JSString* nameMayBeNull, SourceTaintedOrigin taintedness)
+{
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (nameMayBeNull) {
@@ -200,19 +205,19 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, J
     }
 
     bool isJSFunction = getJSFunction(targetFunction);
-    NativeExecutable* executable = vm.getBoundFunction(isJSFunction, source.provider()->sourceTaintedOrigin(SourceTaintKind::ScriptTrackingPrivacy));
+    NativeExecutable* executable = vm.getBoundFunction(isJSFunction, taintedness);
     Structure* structure = getBoundFunctionStructure(vm, globalObject, targetFunction);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm)) JSBoundFunction(vm, executable, globalObject, structure, targetFunction, boundThis, args.size(), boundArgs[0], boundArgs[1], boundArgs[2], nameMayBeNull, length, source);
+    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm)) JSBoundFunction(vm, executable, globalObject, structure, targetFunction, boundThis, args.size(), boundArgs[0], boundArgs[1], boundArgs[2], nameMayBeNull, length, taintedness);
 
     function->finishCreation(vm);
     return function;
 }
 
-JSBoundFunction* JSBoundFunction::createRaw(VM& vm, JSGlobalObject* globalObject, JSFunction* targetFunction, unsigned boundArgsLength, JSValue boundThis, JSValue arg0, JSValue arg1, JSValue arg2, const SourceCode& source)
+JSBoundFunction* JSBoundFunction::createRaw(VM& vm, JSGlobalObject* globalObject, JSFunction* targetFunction, unsigned boundArgsLength, JSValue boundThis, JSValue arg0, JSValue arg1, JSValue arg2, SourceTaintedOrigin taintedness)
 {
-    NativeExecutable* executable = vm.getBoundFunction(/* isJSFunction */ true, source.provider()->sourceTaintedOrigin(SourceTaintKind::ScriptTrackingPrivacy));
-    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm)) JSBoundFunction(vm, executable, globalObject, globalObject->boundFunctionStructure(), targetFunction, boundThis, boundArgsLength, arg0, arg1, arg2, nullptr, PNaN, source);
+    NativeExecutable* executable = vm.getBoundFunction(/* isJSFunction */ true, taintedness);
+    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm)) JSBoundFunction(vm, executable, globalObject, globalObject->boundFunctionStructure(), targetFunction, boundThis, boundArgsLength, arg0, arg1, arg2, nullptr, PNaN, taintedness);
     function->finishCreation(vm);
     return function;
 }
@@ -222,14 +227,14 @@ bool JSBoundFunction::customHasInstance(JSObject* object, JSGlobalObject* global
     return uncheckedDowncast<JSBoundFunction>(object)->m_targetFunction->hasInstance(globalObject, value);
 }
 
-JSBoundFunction::JSBoundFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, unsigned boundArgsLength, JSValue arg0, JSValue arg1, JSValue arg2, JSString* nameMayBeNull, double length, const SourceCode& source)
+JSBoundFunction::JSBoundFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, unsigned boundArgsLength, JSValue arg0, JSValue arg1, JSValue arg2, JSString* nameMayBeNull, double length, SourceTaintedOrigin taintedness)
     : Base(vm, executable, globalObject, structure)
     , m_targetFunction(targetFunction, WriteBarrierEarlyInit)
     , m_boundThis(boundThis, WriteBarrierEarlyInit)
     , m_nameMayBeNull(nameMayBeNull, WriteBarrierEarlyInit)
     , m_length(length)
     , m_boundArgsLength(boundArgsLength)
-    , m_isTainted(source.provider()->sourceTaintedOrigin(SourceTaintKind::ScriptTrackingPrivacy) >= SourceTaintedOrigin::IndirectlyTainted)
+    , m_isTainted(taintedness >= SourceTaintedOrigin::IndirectlyTainted)
 {
     m_boundArgs[0].setWithoutWriteBarrier(arg0);
     m_boundArgs[1].setWithoutWriteBarrier(arg1);
