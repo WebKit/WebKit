@@ -51,6 +51,16 @@
     return self;
 }
 
+- (instancetype)initWithPasteboard:(NSPasteboard *)pasteboard
+{
+    if (self = [self initWithDragAndDropSimulator:nil]) {
+        self.draggingPasteboard = pasteboard;
+        self.draggingSourceOperationMask = NSDragOperationEvery;
+        self.numberOfValidItemsForDrop = pasteboard.pasteboardItems.count;
+    }
+    return self;
+}
+
 @synthesize draggingSourceOperationMask = _draggingSourceOperationMask;
 @synthesize draggingLocation = _draggingLocation;
 @synthesize draggingFormation = _draggingFormation;
