@@ -115,11 +115,25 @@ BufferResult BufferObjects::bind(BufferTarget target, BufferName name)
 {
     if (name && !find(name))
         return BufferResult::InvalidName;
-    if (m_backend.bind && !m_backend.bind(m_backend.context, target, name))
-        return BufferResult::BackendFailure;
     if (name && !m_backend.bind)
         return BufferResult::MissingBackend;
-    m_bindings[static_cast<uint8_t>(target)] = name;
+
+    const uint8_t targetKey = static_cast<uint8_t>(target);
+    auto previous = m_bindings.find(targetKey);
+    const BufferName previousName = previous == m_bindings.end() ? 0 : previous->second;
+
+    if (m_backend.bind && !m_backend.bind(m_backend.context, target, name))
+        return BufferResult::BackendFailure;
+
+    try {
+        m_bindings[targetKey] = name;
+    } catch (const std::bad_alloc&) {
+        // The native binding has already changed. Restore it if recording the
+        // logical binding fails, so the two views of GL state do not diverge.
+        if (m_backend.bind)
+            m_backend.bind(m_backend.context, target, previousName);
+        return BufferResult::OutOfMemory;
+    }
     return BufferResult::Ok;
 }
 
