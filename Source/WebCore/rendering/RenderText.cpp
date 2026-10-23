@@ -1011,7 +1011,7 @@ PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitT
         auto lineBox = run->lineBox();
         auto top = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(lineBox), lineBox.contentLogicalTop()) };
         if (logicalPoint.y() > top || (!blocksAreFlipped && logicalPoint.y() == top)) {
-            auto bottom = LayoutUnit { LineSelection::logicalBottom(lineBox) };
+            auto bottom = LayoutUnit { lineBox.contentLogicalBottomAdjustedForFollowingLineBox() };
             if (auto nextLineBox = lineBox.next())
                 bottom = std::min(bottom, LayoutUnit { nextLineBox->contentLogicalTop() });
 

@@ -4013,8 +4013,8 @@ PositionWithAffinity RenderBlockFlow::positionForPointWithInlineChildren(const L
         lastLineBoxWithChildren = lineBox;
 
         // check if this root line box is located at this y coordinate
-        auto selectionBottom = LineSelection::logicalBottom(*lineBox);
-        if (pointInLogicalContents.y() < selectionBottom || (blocksAreFlipped && pointInLogicalContents.y() == selectionBottom)) {
+        auto lineBottom = lineBox->contentLogicalBottomAdjustedForFollowingLineBox();
+        if (pointInLogicalContents.y() < lineBottom || (blocksAreFlipped && pointInLogicalContents.y() == lineBottom)) {
             if (linesAreFlipped) {
                 auto nextLineBoxWithChildren = lineBox->next();
                 while (nextLineBoxWithChildren && !nextLineBoxWithChildren->lineLeftmostLeafBox())

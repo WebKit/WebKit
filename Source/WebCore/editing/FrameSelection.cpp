@@ -68,7 +68,6 @@
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineRunAndOffset.h"
-#include "LineSelection.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
@@ -2038,7 +2037,7 @@ static bool inlineBackgroundCoversCaret(const RenderBoxModelObject& inlineBox, c
     auto caretMiddleAlongBlockAxis = logicalCaretRect.y() + logicalCaretRect.height() / 2;
 
     for (auto& box : InlineIterator::inlineBoxesFor(inlineBox)) {
-        auto lineRect = LayoutRect { LineSelection::logicalRect(box.lineBox()) };
+        auto lineRect = LayoutRect { box.lineBox().contentLogicalRectAdjustedForAdjacentLineBoxes() };
         lineRect.move(logicalOffset);
         if (caretMiddleAlongBlockAxis < lineRect.y())
             break;
