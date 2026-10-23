@@ -2796,6 +2796,22 @@ TEST(WTF_WeakPtr, WeakListHashSetPrependOrMoveToFirst)
     }
 }
 
+TEST(WTF_WeakPtr, WeakListHashSetConstIteratorAccess)
+{
+    WeakListHashSet<Base> weakListHashSet;
+    Base object;
+    weakListHashSet.add(object);
+
+    const auto& constSet = weakListHashSet;
+    const auto it = constSet.begin();
+    EXPECT_EQ(&object, it.get());
+    EXPECT_EQ(&object, &*it);
+    EXPECT_EQ(&object, it.operator->());
+
+    const auto foundIt = constSet.find(object);
+    EXPECT_EQ(&object, foundIt.get());
+}
+
 TEST(WTF_WeakPtr, WeakListHashSetInsertBefore)
 {
     {
