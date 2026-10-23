@@ -84,12 +84,12 @@ VertexArrayResult VertexArrays::destroy(VertexArrayName name)
     if (it == m_arrays.end())
         return VertexArrayResult::InvalidName;
     if (m_bound == name) {
-        // Keep the current VAO selected if the backend cannot clear its
-        // element-buffer binding. Commit the logical state change only after
-        // the native operation succeeds.
-        if (m_backend.setElementBuffer && !m_backend.setElementBuffer(m_backend.context, 0))
-            return VertexArrayResult::BackendFailure;
-        m_bound = 0;
+        // Switching to the default VAO must restore all global GX2 vertex
+        // descriptors as well as the element buffer. Clearing only the index
+        // buffer leaves deleted-VAO attributes active in the native backend.
+        VertexArrayResult result = bind(0);
+        if (result != VertexArrayResult::Ok)
+            return result;
     }
     m_arrays.erase(it);
     return VertexArrayResult::Ok;
