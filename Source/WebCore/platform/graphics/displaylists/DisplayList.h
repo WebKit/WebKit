@@ -43,7 +43,7 @@ namespace DisplayList {
 // Note: currently this class is not usable from multiple threads due to the underlying objects, such
 // Font instances, not being thread-safe.
 class DisplayList final : public ThreadSafeRefCounted<DisplayList>, public CanMakeThreadSafeCheckedPtr<DisplayList> {
-    WTF_MAKE_TZONE_ALLOCATED(DisplayList);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DisplayList, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(DisplayList);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DisplayList);
 public:

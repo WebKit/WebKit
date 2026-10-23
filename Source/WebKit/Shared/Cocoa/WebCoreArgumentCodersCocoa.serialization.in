@@ -467,6 +467,11 @@ UIColor wrapped by CoreIPCColor
 
 using CFTimeInterval = double
 using CGGlyph = uint16_t
+#if CGFLOAT_IS_DOUBLE
+using CGFloat = double
+#else
+using CGFloat = float
+#endif
 
 #if ENABLE(WRITING_TOOLS)
 using WebCore::WritingTools::TextSuggestion::ID = WTF::UUID

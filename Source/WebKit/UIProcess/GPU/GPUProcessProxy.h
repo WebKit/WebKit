@@ -154,6 +154,7 @@ public:
 
     void terminateForTesting();
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
+    void runDisplayListDataTestsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
 
 #if PLATFORM(COCOA)
     static void setEnableMetalDebugDeviceInNewGPUProcessesForTesting(bool enable) { s_enableMetalDebugDeviceInNewGPUProcessesForTesting = enable; }

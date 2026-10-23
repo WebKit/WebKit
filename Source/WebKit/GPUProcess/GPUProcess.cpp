@@ -31,6 +31,7 @@
 #include "ArgumentCoders.h"
 #include "Attachment.h"
 #include "AuxiliaryProcessMessages.h"
+#include "DisplayListDataTester.h"
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessCreationParameters.h"
@@ -1039,6 +1040,11 @@ WorkQueue& GPUProcess::libWebRTCCodecsQueue()
 void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     completionHandler(GPUConnectionToWebProcess::objectCountForTesting());
+}
+
+void GPUProcess::runDisplayListDataTestsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    completionHandler(testDisplayListData());
 }
 
 void GPUProcess::terminateWebProcess(WebCore::ProcessIdentifier identifier, IPC::MessageName invalidMessageName)
