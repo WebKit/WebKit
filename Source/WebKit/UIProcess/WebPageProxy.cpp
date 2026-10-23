@@ -4496,7 +4496,7 @@ void WebPageProxy::dragEntered(DragData& dragData, const String& dragStorageName
     WebPasteboardProxy::singleton().grantAccessToCurrentTypes(protect(m_legacyMainFrameProcess), dragStorageName);
 #endif
     launchInitialProcessIfNecessary();
-    performDragControllerAction(DragControllerAction::Entered, dragData);
+    performDragControllerAction(DragControllerAction::Entered, dragData, ++internals().lastDragEventNumber);
 }
 
 void WebPageProxy::dragUpdated(DragData& dragData, const String& dragStorageName)
@@ -4504,12 +4504,22 @@ void WebPageProxy::dragUpdated(DragData& dragData, const String& dragStorageName
 #if PLATFORM(COCOA)
     WebPasteboardProxy::singleton().grantAccessToCurrentTypes(protect(m_legacyMainFrameProcess), dragStorageName);
 #endif
-    performDragControllerAction(DragControllerAction::Updated, dragData);
+    performDragControllerAction(DragControllerAction::Updated, dragData, ++internals().lastDragEventNumber);
 }
 
 void WebPageProxy::dragExited(DragData& dragData)
 {
-    performDragControllerAction(DragControllerAction::Exited, dragData);
+    auto dragEventNumber = ++internals().lastDragEventNumber;
+    auto targets = std::exchange(internals().outdatedDragTargets, { });
+    if (auto lastTarget = std::exchange(internals().lastDragTarget, std::nullopt))
+        targets.append(*lastTarget);
+    internals().lastDragTargetEventNumber = dragEventNumber;
+
+    for (auto& target : targets) {
+        if (target.frameID)
+            sendDragExitedToFrame(target.frameID, target.clientPosition, dragData);
+    }
+    performDragControllerAction(DragControllerAction::Exited, dragData, dragEventNumber);
 }
 
 #if PLATFORM(COCOA)
@@ -4574,6 +4584,8 @@ void WebPageProxy::performDragOperation(DragData& dragData, const String& dragSt
     if (!hasRunningProcess())
         return;
 
+    ++internals().lastDragEventNumber;
+
     for (auto& fileName : dragData.fileNames())
         protect(legacyMainFrameProcess())->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileName));
 
@@ -4584,7 +4596,7 @@ void WebPageProxy::performDragOperation(DragData& dragData, const String& dragSt
     else if (!dragData.fileNames().isEmpty())
         protect(protect(websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(siteIsolatedProcess().coreProcessIdentifier(), dragData.fileNames()), [] { });
 
-    performDragControllerAction(DragControllerAction::PerformDragOperation, dragData);
+    performDragControllerAction(DragControllerAction::PerformDragOperation, dragData, internals().lastDragEventNumber);
 #elif PLATFORM(COCOA)
     grantAccessToCurrentPasteboardData(dragStorageName, [weakThis = WeakPtr { *this }, dragStorageName, dragData = WTF::move(dragData), sandboxExtensionHandle = WTF::move(sandboxExtensionHandle), sandboxExtensionsForUpload = WTF::move(sandboxExtensionsForUpload)] () mutable {
         RefPtr protectedThis = weakThis.get();
@@ -4620,21 +4632,23 @@ void WebPageProxy::performDragOperation(DragData& dragData, const String& dragSt
 #endif
 }
 
-void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData& dragData, const std::optional<WebCore::FrameIdentifier>& frameID)
+void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData& dragData, uint64_t dragEventNumber, const std::optional<WebCore::FrameIdentifier>& frameID)
 {
     if (!hasRunningProcess())
         return;
 
-    auto completionHandler = [this, protectedThis = Ref { *this }, action, dragData] (std::optional<WebCore::DragOperation> dragOperation, WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect, const IntRect& editableElementRect, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
+    auto completionHandler = [this, protectedThis = Ref { *this }, action, dragData, dragEventNumber, frameID](std::optional<WebCore::DragOperation> dragOperation, WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect, const IntRect& editableElementRect, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
         if (!m_pageClient)
             return;
 
         if (!remoteUserInputEventData) {
+            if (action == DragControllerAction::Entered || action == DragControllerAction::Updated)
+                dragWasHandledInFrame(dragEventNumber, frameID, dragData);
             didPerformDragControllerAction(dragOperation, dragHandlingMethod, mouseIsOverFileInput, numberOfItemsToBeAccepted, insertionRect, editableElementRect);
             return;
         }
         dragData.setClientPosition(roundedIntPoint(remoteUserInputEventData->transformedPoint));
-        performDragControllerAction(action, dragData, remoteUserInputEventData->targetFrameID);
+        performDragControllerAction(action, dragData, dragEventNumber, remoteUserInputEventData->targetFrameID);
     };
 #if PLATFORM(GTK) || PLATFORM(WPE)
     ASSERT(dragData.platformData());
@@ -4676,6 +4690,57 @@ void WebPageProxy::didPerformDragControllerAction(std::optional<WebCore::DragOpe
     setDragCaretRect(insertionRect);
     if (RefPtr pageClient = this->pageClient())
         pageClient->didPerformDragControllerAction();
+}
+
+void WebPageProxy::dragWasHandledInFrame(uint64_t dragEventNumber, const std::optional<FrameIdentifier>& frameID, const DragData& dragData)
+{
+    Internals::DragTarget target { frameID, dragData.clientPosition() };
+    Ref process = processContainingFrame(frameID);
+
+    // A forwarded event replies after more round trips, so replies can arrive out of order. Only the newest event's reply
+    // sets the target; a frame that handled an older one gets Exited once the target is known to be in another process.
+    if (dragEventNumber == internals().lastDragEventNumber) {
+        auto previousTargets = std::exchange(internals().outdatedDragTargets, { });
+        if (auto previousTarget = std::exchange(internals().lastDragTarget, WTF::move(target)))
+            previousTargets.append(*previousTarget);
+        internals().lastDragTargetEventNumber = dragEventNumber;
+
+        // FIXME: A frame the drag left in the same process doesn't get dragleave, but Exited would also reset the drag caret
+        // and file input state of the frame the drag is now over.
+        for (auto& previousTarget : previousTargets) {
+            if (processContainingFrame(previousTarget.frameID).ptr() != process.ptr())
+                sendDragExitedToFrame(previousTarget.frameID, previousTarget.clientPosition, dragData);
+        }
+        return;
+    }
+
+    auto& lastTarget = internals().lastDragTarget;
+    if (internals().lastDragTargetEventNumber == internals().lastDragEventNumber) {
+        if (frameID && (!lastTarget || processContainingFrame(lastTarget->frameID).ptr() != process.ptr()))
+            sendDragExitedToFrame(frameID, target.clientPosition, dragData);
+        return;
+    }
+
+    if (lastTarget && lastTarget->frameID == frameID)
+        return;
+    if (!internals().outdatedDragTargets.containsIf([&](auto& outdatedTarget) { return outdatedTarget.frameID == frameID; }))
+        internals().outdatedDragTargets.append(WTF::move(target));
+}
+
+void WebPageProxy::sendDragExitedToFrame(const std::optional<FrameIdentifier>& frameID, const IntPoint& clientPosition, const DragData& dragData)
+{
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(clientPosition);
+    UNUSED_PARAM(dragData);
+#else
+    if (frameID && !WebFrameProxy::webFrame(frameID))
+        return;
+
+    DragData exitedDragData { dragData };
+    exitedDragData.setClientPosition(clientPosition);
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragControllerAction(frameID, DragControllerAction::Exited, exitedDragData), [](std::optional<WebCore::DragOperation>, WebCore::DragHandlingMethod, bool, unsigned, const IntRect&, const IntRect&, std::optional<WebCore::RemoteUserInputEventData>) { });
+#endif
 }
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -4747,6 +4812,8 @@ void WebPageProxy::resetCurrentDragInformation()
     internals().currentDragHandlingMethod = DragHandlingMethod::None;
     m_currentDragIsOverFileInput = false;
     m_currentDragNumberOfFilesToBeAccepted = 0;
+    internals().lastDragTarget = std::nullopt;
+    internals().outdatedDragTargets.clear();
     setDragCaretRect({ });
 }
 
