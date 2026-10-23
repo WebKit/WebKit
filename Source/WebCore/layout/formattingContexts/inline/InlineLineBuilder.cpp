@@ -308,10 +308,11 @@ inline void LineCandidate::reset()
     inlineContent.reset();
 }
 
-LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList, TextSpacingContext textSpacingContext)
+LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList, TextSpacingContext textSpacingContext, std::span<const float> shapingAdjustments)
     : AbstractLineBuilder(inlineFormattingContext, inlineFormattingContext.root(), rootHorizontalConstraints, inlineItemList)
     , m_floatingContext(inlineFormattingContext.floatingContext())
     , m_textSpacingContext(WTF::move(textSpacingContext))
+    , m_shapingAdjustments(shapingAdjustments)
 {
 }
 
@@ -1117,6 +1118,9 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
             if (!currentLogicalRight) {
                 if (auto trimmableSpacing = m_textSpacingContext.trimmableTextSpacings.find(index); trimmableSpacing != m_textSpacingContext.trimmableTextSpacings.end())
                     logicalWidth -= trimmableSpacing->value;
+                // The kerning with the previous item's text does not apply at the start of a line.
+                if (index < m_shapingAdjustments.size())
+                    logicalWidth -= m_shapingAdjustments[index];
             }
             lineCandidate.inlineContent.appendInlineItem(*inlineTextItem, style, logicalWidth);
             // Word spacing does not make the run longer, but it produces an offset instead. See Line::appendTextContent as well.

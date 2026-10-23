@@ -37,7 +37,7 @@ struct LineCandidate;
 class LineBuilder final : public AbstractLineBuilder {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LineBuilder);
 public:
-    LineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&, TextSpacingContext = { });
+    LineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&, TextSpacingContext = { }, std::span<const float> shapingAdjustments = { });
     virtual ~LineBuilder() { };
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLineCandidate) final;
 
@@ -112,6 +112,7 @@ private:
     OptionSet<UsedFloat> m_lineIsConstrainedByFloat { };
     std::optional<InlineLayoutUnit> m_initialLetterClearGap;
     TextSpacingContext m_textSpacingContext { };
+    std::span<const float> m_shapingAdjustments;
     struct LineClamp {
         std::optional<BlockOverflowEllipsis> blockEllipsis;
         bool blockEllipsisContentOnly { false };

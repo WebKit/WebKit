@@ -59,6 +59,14 @@ static size_t LEGACY_NODELETE widthsBytes(const TextBreakingPositionCache::Entry
     return bytes;
 }
 
+static size_t LEGACY_NODELETE shapingAdjustmentsBytes(const TextBreakingPositionCache::Entry& entry)
+{
+    size_t bytes = 0;
+    for (auto& cascadeAdjustments : entry.shapingAdjustmentsByFontCascade)
+        bytes += sizeof(float) * cascadeAdjustments.adjustments.size() + sizeof(FontCascadeCacheKey);
+    return bytes;
+}
+
 bool TextBreakingPositionCache::clearWidthsIfGenerationChanged()
 {
     auto currentGeneration = FontCache::forCurrentThread().generation();
@@ -108,9 +116,46 @@ void TextBreakingPositionCache::addWidths(const Key& key, const FontCascadeCache
     m_cachedContentSize += widthsBytes(entry);
 }
 
+const TextBreakingPositionCache::WidthList* TextBreakingPositionCache::shapingAdjustments(const Entry& entry, const FontCascadeCacheKey& fontCascade) const
+{
+    // Kept apart from the widths, which are dropped on their own schedule; these are only valid for the fonts they were shaped with.
+    auto generation = FontCache::forCurrentThread().generation();
+    for (auto& cascadeAdjustments : entry.shapingAdjustmentsByFontCascade) {
+        if (cascadeAdjustments.fontCascade == fontCascade)
+            return cascadeAdjustments.fontCacheGeneration == generation ? &cascadeAdjustments.adjustments : nullptr;
+    }
+    return nullptr;
+}
+
+void TextBreakingPositionCache::addShapingAdjustments(const Key& key, const FontCascadeCacheKey& fontCascade, WidthList&& adjustments)
+{
+    auto iterator = m_breakingPositionMap.find(key);
+    if (iterator == m_breakingPositionMap.end())
+        return;
+    auto& entry = *iterator->value;
+
+    ASSERT(m_cachedContentSize >= shapingAdjustmentsBytes(entry));
+    m_cachedContentSize -= shapingAdjustmentsBytes(entry);
+
+    auto generation = FontCache::forCurrentThread().generation();
+    auto replaced = false;
+    for (auto& cascadeAdjustments : entry.shapingAdjustmentsByFontCascade) {
+        if (cascadeAdjustments.fontCascade == fontCascade) {
+            cascadeAdjustments.fontCacheGeneration = generation;
+            cascadeAdjustments.adjustments = WTF::move(adjustments);
+            replaced = true;
+            break;
+        }
+    }
+    if (!replaced)
+        entry.shapingAdjustmentsByFontCascade.append(Entry::FontCascadeShapingAdjustments { fontCascade, generation, WTF::move(adjustments) });
+
+    m_cachedContentSize += shapingAdjustmentsBytes(entry);
+}
+
 size_t TextBreakingPositionCache::approximateEntrySizeBytes(const String& text, const Entry& entry)
 {
-    return text.length() + sizeof(unsigned) * entry.breakingPositions.size() + widthsBytes(entry);
+    return text.length() + sizeof(unsigned) * entry.breakingPositions.size() + widthsBytes(entry) + shapingAdjustmentsBytes(entry);
 }
 
 void TextBreakingPositionCache::evict()
@@ -124,7 +169,7 @@ void TextBreakingPositionCache::evict()
     }
 }
 
-void TextBreakingPositionCache::set(const Key& key, List&& breakingPositionList)
+void TextBreakingPositionCache::set(const Key& key, List&& breakingPositionList, bool mayNeedShaping)
 {
     ASSERT(!m_breakingPositionMap.contains(key));
 
@@ -142,7 +187,7 @@ void TextBreakingPositionCache::set(const Key& key, List&& breakingPositionList)
     };
     evictIfNeeded();
 
-    auto entry = makeUnique<Entry>(WTF::move(breakingPositionList));
+    auto entry = makeUnique<Entry>(WTF::move(breakingPositionList), mayNeedShaping);
     m_cachedContentSize += approximateEntrySizeBytes(std::get<0>(key), *entry);
     m_breakingPositionMap.set(key, WTF::move(entry));
 }

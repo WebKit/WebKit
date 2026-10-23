@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Kerning inside a text run must be kept when an inline box or another text node follows it (CJK kerning)</title>
+<link rel="help" href="https://drafts.csswg.org/css-text/#boundary-shaping">
+<link rel="help" href="https://drafts.csswg.org/css-fonts/#font-kerning-prop">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+@font-face {
+  font-family: kana-test;
+  src: url(../../css-fonts/resources/NotoSansJP-kana_test-subset.otf);
+}
+.test {
+  font: 64px kana-test; /* this font kerns the pair "すペ" and no other pair */
+  font-kerning: normal;
+  margin: 0;
+  white-space: nowrap;
+}
+.nokern {
+  font-kerning: none;
+}
+.wrap {
+  white-space: normal;
+}
+.shrink {
+  display: inline-block;
+}
+.padded {
+  padding: 0 8px;
+}
+</style>
+</head>
+<body>
+<div class="test" id="split">すペす<span>す</span></div>
+<div class="test" id="joined">すペすす</div>
+<div class="test nokern" id="unkerned">すペすす</div>
+<div class="test"><span class="shrink" id="splitNodes"></span></div>
+<div class="test"><span class="shrink" id="joinedNodes">すペすす</span></div>
+<div class="test wrap"><span class="shrink" id="padded">すペす<span class="padded">す</span></span></div>
+<script>
+document.getElementById("splitNodes").append("すペす", "す");
+
+function charRects(element) {
+  const rects = [];
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const range = document.createRange();
+  let node;
+  while ((node = walker.nextNode())) {
+    for (let i = 0; i < node.length; i++) {
+      range.setStart(node, i);
+      range.setEnd(node, i + 1);
+      rects.push(range.getBoundingClientRect());
+    }
+  }
+  return rects;
+}
+
+function charLefts(element) {
+  return charRects(element).map(rect => rect.left);
+}
+
+function assertSameLefts(actual, expected) {
+  assert_equals(actual.length, expected.length);
+  for (let i = 0; i < expected.length; i++)
+    assert_approx_equals(actual[i], expected[i], 0.5, `position of character ${i}`);
+}
+
+promise_test(async () => {
+  await document.fonts.ready;
+  const joined = charLefts(document.getElementById("joined"));
+  const unkerned = charLefts(document.getElementById("unkerned"));
+  assert_greater_than(unkerned[1] - joined[1], 1, "kerning should move the second character");
+}, "The test font applies kerning to the pair \"すペ\"");
+
+promise_test(async () => {
+  await document.fonts.ready;
+  assertSameLefts(charLefts(document.getElementById("split")), charLefts(document.getElementById("joined")));
+}, "Kerning inside a text run is kept when an inline box follows it");
+
+promise_test(async () => {
+  await document.fonts.ready;
+  assertSameLefts(charLefts(document.getElementById("splitNodes")), charLefts(document.getElementById("joinedNodes")));
+}, "Kerning inside a text node is kept when another text node follows it in a shrink-to-fit box");
+
+promise_test(async () => {
+  await document.fonts.ready;
+  const tops = charRects(document.getElementById("padded")).map(rect => rect.top);
+  for (let i = 1; i < tops.length; i++)
+    assert_approx_equals(tops[i], tops[0], 0.5, `line of character ${i}`);
+}, "A shrink-to-fit box with kerned text and a padded inline box keeps its content on one line");
+</script>
+</body>
+</html>
