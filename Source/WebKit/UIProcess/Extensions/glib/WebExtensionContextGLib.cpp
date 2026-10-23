@@ -40,6 +40,8 @@ static constexpr auto backgroundContentEventListenersVersionKey = "BackgroundCon
 static constexpr auto lastSeenBaseURLStateKey = "LastSeenBaseURL"_s;
 static constexpr auto lastSeenDisplayNameStateKey = "LastSeenDisplayName"_s;
 
+static constexpr auto storageAccessLevelsKey = "StorageAccessLevels"_s;
+
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
 static constexpr auto currentBackgroundContentListenerStateVersion = 5;
 
@@ -564,6 +566,13 @@ bool WebExtensionContext::isNotRunningInTestRunner()
 #else
     return WTF::applicationID() != "org.webkit.app-TestWebKitGTK"_s;
 #endif
+}
+
+void WebExtensionContext::saveStorageAccessLevelsToStorage()
+{
+    for (auto [dataType, accessLevel] : m_storageAccessLevels)
+        g_key_file_set_string(m_state.get(), storageAccessLevelsKey, toAPIString(dataType).utf8().legacyCStringPointer(), toAPIString(accessLevel).utf8().legacyCStringPointer());
+    writeStateToStorage();
 }
 
 } // namespace WebKit

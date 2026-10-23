@@ -1980,6 +1980,19 @@ RefPtr<WebInspectorUIProxy> WebExtensionContext::inspector(const API::InspectorE
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
+void WebExtensionContext::setStorageAccessLevel(WebExtensionDataType dataType, WebExtensionStorageAccessLevel accessLevel)
+{
+    m_storageAccessLevels.set(dataType, accessLevel);
+
+    saveStorageAccessLevelsToStorage();
+
+    if (!isLoaded())
+        return;
+
+    if (RefPtr extensionController = this->extensionController())
+        extensionController->sendToAllProcesses(Messages::WebExtensionContextProxy::SetStorageAccessLevel(dataType, accessLevel), identifier());
+}
+
 size_t WebExtensionContext::quotaForStorageType(WebExtensionDataType storageType)
 {
     switch (storageType) {

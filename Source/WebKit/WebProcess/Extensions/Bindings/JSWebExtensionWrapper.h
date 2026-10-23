@@ -209,7 +209,7 @@ JSValueRef toJSValueRef(JSContextRef, URL, NullOrEmptyString = NullOrEmptyString
 JSValueRef toWindowObject(JSContextRef, WebFrame&);
 JSValueRef toWindowObject(JSContextRef, WebPage&);
 
-RefPtr<JSON::Value> fromJSValue(JSContextRef, JSValueRef);
+RefPtr<JSON::Value> fromJSValue(JSContextRef, JSValueRef, NullValuePolicy = NullValuePolicy::NotAllowed, ValuePolicy = ValuePolicy::Recursive);
 RefPtr<JSON::Value> toJSONValue(JSContextRef, JSValueRef, NullValuePolicy = NullValuePolicy::NotAllowed, ValuePolicy = ValuePolicy::Recursive);
 inline JSValueRef toJSValueRefOrJSNull(JSContextRef context, RefPtr<JSON::Object> value)
 {

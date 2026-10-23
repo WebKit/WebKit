@@ -31,9 +31,6 @@
 
 #import <Foundation/Foundation.h>
 
-static NSString * const accessLevelKey = @"accessLevel";
-static NSString * const accessLevelTrustedAndUntrustedContexts = @"TRUSTED_AND_UNTRUSTED_CONTEXTS";
-static NSString * const accessLevelTrustedContexts = @"TRUSTED_CONTEXTS";
 static NSString * const actionClickBehaviorKey = @"openPanelOnActionClick";
 static NSString * const actionCountDisplayActionCountAsBadgeTextKey = @"displayActionCountAsBadgeText";
 static NSString * const actionCountIncrementKey = @"increment";
@@ -258,6 +255,9 @@ static constexpr auto nameKey = "name"_s;
 
 #endif
 
+static constexpr auto accessLevelKey = "accessLevel"_s;
+static constexpr auto accessLevelTrustedAndUntrustedContexts = "TRUSTED_AND_UNTRUSTED_CONTEXTS"_s;
+static constexpr auto accessLevelTrustedContexts = "TRUSTED_CONTEXTS"_s;
 static constexpr auto delayInMinutesKey = "delayInMinutes"_s;
 static constexpr auto emptyAlarmName = ""_s;
 static constexpr auto periodInMinutesKey = "periodInMinutes"_s;

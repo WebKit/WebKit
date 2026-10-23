@@ -106,12 +106,25 @@ JSObjectRef toWebAPI(JSContextRef context, const Vector<T>& data)
     return array;
 }
 
+bool validateObject(RefPtr<JSON::Value> dictionary, const String& sourceKey, Vector<JSON::Value::Type> validationType, Vector<JSON::Value::Type> arrayValidationType, String& outExceptionString);
+
 bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey, Vector<String> requiredKeys, HashMap<String, JSON::Value::Type> keyTypes, String& outExceptionString);
 
 /// Returns a rejected Promise object that combines the provided information into a single, descriptive error message.
 JSObjectRef toJSRejectedPromise(JSContextRef, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString);
 
 void callAfterRandomDelay(Function<void()>&&);
+
+size_t storageMaximumBytesPerCall(bool inTestingMode);
+
+/// Returns the storage size of a string.
+size_t storageSizeOf(const String&);
+
+/// Returns the storage size of all of the key value pairs in a dictionary.
+size_t storageSizeOf(RefPtr<JSON::Object>);
+
+/// Returns true if the size of any item in the dictionary exceeds the given quota.
+bool anyItemsExceedQuota(RefPtr<JSON::Object>, size_t quota, String& outKeyWithError);
 
 #ifdef __OBJC__
 
@@ -136,15 +149,6 @@ bool validateDictionary(NSDictionary<NSString *, id> *, NSString *sourceKey, NSA
 bool validateObject(NSObject *, NSString *sourceKey, id valueTypes, NSString **outExceptionString);
 
 NSString *toWebAPI(NSLocale *);
-
-/// Returns the storage size of a string.
-size_t storageSizeOf(NSString *);
-
-/// Returns the storage size of all of the key value pairs in a dictionary.
-size_t storageSizeOf(NSDictionary<NSString *, NSString *> *);
-
-/// Returns true if the size of any item in the dictionary exceeds the given quota.
-bool anyItemsExceedQuota(NSDictionary *, size_t quota, NSString **outKeyWithError = nullptr);
 
 template<typename T>
 id toWebAPI(const std::optional<T>& result, UseNullValue useNull = UseNullValue::Yes)

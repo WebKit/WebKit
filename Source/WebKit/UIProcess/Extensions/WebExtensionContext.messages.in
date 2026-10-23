@@ -173,6 +173,7 @@ messages -> WebExtensionContext {
     [Validator=isSidebarMessageAllowed] SidebarSetActionClickBehavior(WebKit::WebExtensionActionClickBehavior actionClickBehavior) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isSidebarMessageAllowed] SidebarGetActionClickBehavior() -> (std::expected<WebKit::WebExtensionActionClickBehavior, WebKit::WebExtensionError> result)
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+#endif
 
     // Storage APIs
     [Validator=isStorageMessageAllowed] StorageGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (std::expected<Vector<String>, WebKit::WebExtensionError> result)
@@ -183,6 +184,7 @@ messages -> WebExtensionContext {
     [Validator=isStorageMessageAllowed] StorageClear(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isStorageMessageAllowed] StorageSetAccessLevel(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, WebKit::WebExtensionStorageAccessLevel accessLevel) -> (std::expected<void, WebKit::WebExtensionError> result)
 
+#if PLATFORM(COCOA)
     // Tabs APIs
     [Validator=isLoadedAndPrivilegedMessage] TabsCreate(std::optional<WebKit::WebPageProxyIdentifier> webPageProxyIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (std::expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsUpdate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionTabParameters updateParameters) -> (std::expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)

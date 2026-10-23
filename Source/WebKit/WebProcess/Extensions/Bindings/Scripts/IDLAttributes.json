@@ -119,6 +119,9 @@
         "JSONValue": {
             "contextsAllowed": ["argument", "attribute", "operation"]
         },
+        "JSONObject": {
+            "contextsAllowed": ["argument", "attribute", "operation"]
+        },
         "NSObject": {
             "contextsAllowed": ["argument", "attribute", "operation"]
         },

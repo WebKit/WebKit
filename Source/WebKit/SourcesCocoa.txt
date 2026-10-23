@@ -787,8 +787,6 @@ WebProcess/Extensions/API/Cocoa/WebExtensionAPIRuntimeCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIScriptingCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPISidebarActionCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPISidePanelCocoa.mm
-WebProcess/Extensions/API/Cocoa/WebExtensionAPIStorageAreaCocoa.mm
-WebProcess/Extensions/API/Cocoa/WebExtensionAPIStorageCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPITabsCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPITestCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebNavigationCocoa.mm

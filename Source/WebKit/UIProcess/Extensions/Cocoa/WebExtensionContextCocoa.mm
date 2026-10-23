@@ -3724,19 +3724,6 @@ void WebExtensionContext::saveStorageAccessLevelsToStorage()
     writeStateToStorage();
 }
 
-void WebExtensionContext::setStorageAccessLevel(WebExtensionDataType dataType, WebExtensionStorageAccessLevel accessLevel)
-{
-    m_storageAccessLevels.set(dataType, accessLevel);
-
-    saveStorageAccessLevelsToStorage();
-
-    if (!isLoaded())
-        return;
-
-    if (RefPtr extensionController = this->extensionController())
-        extensionController->sendToAllProcesses(Messages::WebExtensionContextProxy::SetStorageAccessLevel(dataType, accessLevel), identifier());
-}
-
 void WebExtensionContext::reloadBackgroundContentForTesting()
 {
     ASSERT(isLoaded() && inTestingMode());

@@ -100,7 +100,9 @@ public:
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
     WebExtensionAPIBookmarks& bookmarks();
 #endif
+#endif
     WebExtensionAPIStorage& storage();
+#if PLATFORM(COCOA)
     WebExtensionAPITabs& tabs();
 #endif
     WebExtensionAPITest& test();

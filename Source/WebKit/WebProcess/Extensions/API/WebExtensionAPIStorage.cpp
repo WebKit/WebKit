@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia, S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +24,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(objc_arc)
-#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
-#endif
-
-#import "config.h"
-#import "WebExtensionAPIStorage.h"
+#include "config.h"
+#include "WebExtensionAPIStorage.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "CocoaHelpers.h"
-#import "WebExtensionAPINamespace.h"
-#import "WebExtensionAPIStorageArea.h"
-#import "WebExtensionContextMessages.h"
-#import "WebExtensionContextProxy.h"
-#import "WebExtensionDataType.h"
-#import <wtf/Borrow.h>
+#include "WebExtensionAPINamespace.h"
+#include "WebExtensionAPIStorageArea.h"
+#include "WebExtensionContextMessages.h"
+#include "WebExtensionContextProxy.h"
+#include "WebExtensionDataType.h"
+#include <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -113,15 +109,26 @@ void WebExtensionContextProxy::dispatchStorageChangedEvent(const Vector<String>&
     if (!hasDOMWrapperWorld(contentWorldType))
         return;
 
-    auto *changes = [NSDictionary dictionary];
-    for (auto& json : borrow(changesJSON))
-        changes = mergeDictionaries(changes, dynamic_objc_cast<NSDictionary>(parseJSON(json.createNSString().get())));
+    RefPtr changes = JSON::Object::create();
 
-    RetainPtr areaName = toAPIString(dataType).createNSString();
+    for (auto& json : borrow(changesJSON)) {
+        RefPtr value = JSON::Value::parseJSON(json);
+        if (!value)
+            continue;
 
+        RefPtr object = value->asObject();
+        if (!object)
+            continue;
+
+        changes = mergeJSON(changes, object);
+    }
+
+    auto areaName = toAPIString(dataType);
+
+    auto changesArgument = changes->toJSONString();
     enumerateFramesAndNamespaceObjects([&](WebFrame&, auto& namespaceObject) {
-        protect(protect(namespaceObject.storage())->onChanged())->invokeListenersWithArgument(changes, areaName.get());
-        protect(protect(protect(namespaceObject.storage())->storageAreaForType(dataType))->onChanged())->invokeListenersWithArgument(changes, areaName.get());
+        protect(protect(namespaceObject.storage())->onChanged())->invokeListenersWithJSArgument({ changesArgument, true }, { areaName, false });
+        protect(protect(protect(namespaceObject.storage())->storageAreaForType(dataType))->onChanged())->invokeListenersWithJSArgument({ changesArgument, true }, { areaName, false });
     }, toDOMWrapperWorld(contentWorldType));
 }
 

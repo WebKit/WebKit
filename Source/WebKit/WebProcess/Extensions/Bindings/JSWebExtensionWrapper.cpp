@@ -650,7 +650,7 @@ static RefPtr<JSON::Value> toJSONArray(JSContextRef context, JSValueRef value)
     return result;
 }
 
-RefPtr<JSON::Value> fromJSValue(JSContextRef context, JSValueRef value)
+RefPtr<JSON::Value> fromJSValue(JSContextRef context, JSValueRef value, NullValuePolicy nullPolicy, ValuePolicy valuePolicy)
 {
     switch (JSValueGetType(context, value)) {
     case kJSTypeBoolean:
@@ -662,7 +662,7 @@ RefPtr<JSON::Value> fromJSValue(JSContextRef context, JSValueRef value)
     case kJSTypeObject:
         if (JSValueIsArray(context, value))
             return toJSONArray(context, value);
-        return toJSONValue(context, value);
+        return toJSONValue(context, value, nullPolicy, valuePolicy);
     case kJSTypeNull:
         return JSON::Value::null();
     case kJSTypeUndefined:

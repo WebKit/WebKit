@@ -86,6 +86,24 @@ void WebExtensionAPIEvent::invokeListenersWithJSONArgument(const String& argumen
     }
 }
 
+void WebExtensionAPIEvent::invokeListenersWithJSArgument(JSListenerArgument argument1, JSListenerArgument argument2)
+{
+    if (m_listeners.isEmpty())
+        return;
+
+    // Copy the listeners since call() can trigger a mutation of the listeners.
+    auto listenersCopy = m_listeners;
+
+    auto argument = [](JSContextRef context, JSListenerArgument argumentValue) {
+        if (argumentValue.convertToJSON)
+            return !argumentValue.argument.isEmpty() ? JSValueMakeFromJSONString(context, toJSString(argumentValue.argument).get()) : JSValueMakeUndefined(context);
+        return toJSValueRef(context, argumentValue.argument);
+    };
+
+    for (RefPtr listener : listenersCopy)
+        listener->call(argument(listener->globalContext(), argument1), argument(listener->globalContext(), argument2));
+}
+
 void WebExtensionAPIEvent::invokeListenersWithArgument(id argument1)
 {
     if (m_listeners.isEmpty())

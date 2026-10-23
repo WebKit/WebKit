@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,20 +41,19 @@ class WebExtensionAPIStorageArea : public WebExtensionAPIObject, public JSWebExt
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorageArea, storageArea, storageArea);
 
 public:
-#if PLATFORM(COCOA)
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
-    void get(WebPageProxyIdentifier, id items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getKeys(WebPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getBytesInUse(WebPageProxyIdentifier, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void set(WebPageProxyIdentifier, NSDictionary *items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void remove(WebPageProxyIdentifier, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void get(WebPageProxyIdentifier, RefPtr<JSON::Value> items, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void getKeys(WebPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void getBytesInUse(WebPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void set(WebPageProxyIdentifier, JSContextRef, JSValueRef items, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void remove(WebPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
     void clear(WebPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&&);
 
     double LEGACY_NODELETE quotaBytes();
 
     // Only exposed to trusted contexts.
-    void setAccessLevel(WebPageProxyIdentifier, NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void setAccessLevel(WebPageProxyIdentifier, RefPtr<JSON::Value>, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
 
     // Exposed only by storage.sync.
     double LEGACY_NODELETE quotaBytesPerItem();
@@ -73,7 +73,6 @@ private:
 
     WebExtensionDataType m_type { WebExtensionDataType::Local };
     const RefPtr<WebExtensionAPIEvent> m_onChanged;
-#endif
 };
 
 } // namespace WebKit

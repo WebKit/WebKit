@@ -36,16 +36,17 @@ dictionary WebExtensionStorageChange {
     Conditional=WK_WEB_EXTENSIONS,
     ReturnsPromiseWhenCallbackIsOmitted,
     NeedsPageIdentifierWithCallbackHandler,
+    UseCPPAPI
 ] interface WebExtensionAPIStorageArea {
 
-    [RaisesException] void get([Optional, NSObject=StopAtTopLevel, DOMString] any items, [Optional, CallbackHandler] function callback);
-    [RaisesException] void getKeys([Optional, CallbackHandler] function callback);
-    [RaisesException] void getBytesInUse([Optional, NSObject, DOMString] any keys, [Optional, CallbackHandler] function callback);
-    [RaisesException] void set([NSDictionary=StopAtTopLevel] any items, [Optional, CallbackHandler] function callback);
-    [RaisesException] void remove([NSObject] any keys, [Optional, CallbackHandler] function callback);
+    [RaisesStringException] void get([Optional, JSONObject=StopAtTopLevel, DOMString] any items, [Optional, CallbackHandler] function callback);
+    [RaisesStringException] void getKeys([Optional, CallbackHandler] function callback);
+    [RaisesStringException] void getBytesInUse([Optional, JSONObject, DOMString] any keys, [Optional, CallbackHandler] function callback);
+    [RaisesStringException, NeedsScriptContext] void set(any items, [Optional, CallbackHandler] function callback);
+    [RaisesStringException] void remove([JSONObject] any keys, [Optional, CallbackHandler] function callback);
     void clear([Optional, CallbackHandler] function callback);
 
-    [RaisesException, Dynamic] void setAccessLevel([NSDictionary] any accessOptions, [Optional, CallbackHandler] function callback);
+    [RaisesStringException, Dynamic] void setAccessLevel([JSONValue] any accessOptions, [Optional, CallbackHandler] function callback);
 
     readonly attribute WebExtensionAPIEvent onChanged;
 

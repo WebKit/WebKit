@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WebExtensionUtilities.h"
+
 #include "JSWebExtensionWrapper.h"
 #include "WebExtensionConstants.h"
 #include <wtf/Borrow.h>
@@ -145,6 +146,50 @@ size_t storageMaximumBytesPerCall(bool inTestingMode)
     return inTestingMode ? webExtensionStorageAreaMaximumBytesPerCallForTesting : webExtensionStorageAreaMaximumBytesPerCall;
 }
 
+size_t storageSizeOf(const String& keyOrValue)
+{
+    // The size of a key is the length of the key string.
+    // The size of a value is the length of the JSON representation of the value.
+    // If keyOrValue represents a value we assume that the string is the JSON representation.
+    return keyOrValue.utf8().length();
+}
+
+size_t storageSizeOf(RefPtr<JSON::Object> keysAndValues)
+{
+    if (!keysAndValues)
+        return 0;
+
+    double storageSize = 0;
+    for (const auto& item : *keysAndValues)
+        storageSize += storageSizeOf(item.key) + storageSizeOf(item.value->asString());
+
+    return storageSize;
+}
+
+bool anyItemsExceedQuota(RefPtr<JSON::Object> items, size_t quota, String& outKeyWithError)
+{
+    if (!items)
+        return false;
+
+    bool itemExceededQuota = false;
+    String keyWithError = nullString();
+
+    for (const auto& item : *items) {
+        size_t sizeOfCurrentItem = storageSizeOf(item.key) + storageSizeOf(item.value->asString());
+        if (sizeOfCurrentItem > quota) {
+            itemExceededQuota = true;
+            keyWithError = item.key;
+            break;
+        }
+    }
+
+    ASSERT(!itemExceededQuota || !keyWithError.isNull());
+
+    outKeyWithError = keyWithError;
+
+    return itemExceededQuota;
+}
+
 static inline String lowercaseFirst(const String& input)
 {
     return !input.isEmpty() ? makeString(input.left(1).convertToASCIILowercase(), input.substring(1, input.length())) : input;
@@ -187,31 +232,31 @@ JSObjectRef toJSError(JSContextRef context, const String& callingAPIName, const 
     return toJSError(context, toErrorString(callingAPIName, sourceKey, underlyingErrorString));
 }
 
-static String classToClassString(JSON::Value::Type classType)
+static String classToClassString(JSON::Value::Type classType, bool plural = false)
 {
     switch (classType) {
     case JSON::Value::Type::Integer:
     case JSON::Value::Type::Double:
-        return "a number"_s;
+        return plural ? "numbers"_s : "a number"_s;
     case JSON::Value::Type::Null:
-        return "null"_s;
+        return plural ? "null values"_s : "null"_s;
     case JSON::Value::Type::Boolean:
-        return "a boolean"_s;
+        return plural ? "booleans"_s : "a boolean"_s;
     case JSON::Value::Type::Object:
-        return "an object"_s;
+        return plural ? "objects"_s : "an object"_s;
     case JSON::Value::Type::String:
-        return "a string"_s;
+        return plural ? "strings"_s : "a string"_s;
     case JSON::Value::Type::Array:
-        return "an array"_s;
+        return plural ? "arrays"_s : "an array"_s;
     default:
-        return "a value"_s;
+        return plural ? "values"_s : "a value"_s;
     }
 
     ASSERT_NOT_REACHED();
     return "unknown"_s;
 }
 
-static String valueToTypeString(RefPtr<JSON::Value>& value)
+static String valueToTypeString(RefPtr<JSON::Value> value)
 {
     if (auto number = value->asDouble(); (value->type() == JSON::Value::Type::Double || value->type() == JSON::Value::Type::Integer)) {
         if (std::isnan(number.value_or(0)))
@@ -224,14 +269,19 @@ static String valueToTypeString(RefPtr<JSON::Value>& value)
     return classToClassString(value->type());
 }
 
-static String constructExpectedMessage(const String& key, const String& expected, const String& found)
+static String constructExpectedMessage(const String& key, const String& expected, const String& found, bool inArray = false)
 {
     ASSERT(expected);
     ASSERT(found);
 
+    if (inArray && !key.isEmpty())
+        return makeString("'"_s, key, "' is expected to be "_s, expected, " but "_s, found, " was provided in the array"_s);
+    if (inArray)
+        return makeString(expected, " is expected, but "_s, found, " was provided in the array"_s);
+
     if (!key.isEmpty())
         return makeString("'"_s, key, "' is expected to be "_s, expected, ", but "_s, found, " was provided"_s);
-    return makeString("'"_s, expected, "' is expected, but "_s, found, " was provided"_s);
+    return makeString(expected, " is expected, but "_s, found, " was provided"_s);
 }
 
 static bool validate(const String& key, RefPtr<JSON::Value> value, JSON::Value::Type expectedValueType, String& outExceptionString)
@@ -320,6 +370,83 @@ bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey,
     // all the required keys, but we stopped checking. We do know for sure that the type is wrong though.
     if (!remainingRequiredKeys.isEmpty() && errorString.isEmpty())
         errorString = makeString("it is missing required keys: "_s, formatList(remainingRequiredKeys));
+
+    if (!errorString.isEmpty())
+        outExceptionString = toErrorString(nullString(), sourceKey, errorString);
+
+    return errorString.isEmpty();
+}
+
+static bool validateArray(const String& sourceKey, RefPtr<JSON::Value> value, Vector<JSON::Value::Type> expectedArrayType, String& outExceptionString)
+{
+    ASSERT(expectedArrayType.size() == 1);
+
+    if (!value || !value->asArray()) {
+        outExceptionString = constructExpectedMessage(sourceKey, makeString("an array of "_s, classToClassString(expectedArrayType.first())), valueToTypeString(value));
+        return false;
+    }
+
+    RefPtr array = value->asArray();
+    for (auto& element : *array) {
+        String errorString;
+        if (!validate(emptyString(), element.get(), expectedArrayType.first(), errorString)) {
+            outExceptionString = constructExpectedMessage(sourceKey, makeString("an array of "_s, classToClassString(expectedArrayType.first())), valueToTypeString(element.get()), true);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static bool validateSet(const String& sourceKey, RefPtr<JSON::Value> value, Vector<JSON::Value::Type> expectedValueType, Vector<JSON::Value::Type> expectedArrayTypes, String& outExceptionString)
+{
+    if (expectedValueType.contains(value->type()) && (value->type() != JSON::Value::Type::Array))
+        return true;
+
+    StringBuilder expectedValuesString;
+
+    auto addExpectedValueString = [&](JSON::Value::Type expectedType, std::optional<JSON::Value::Type> expectedSubtype) {
+        if (expectedValuesString.length())
+            expectedValuesString.append(" or "_s);
+
+        expectedValuesString.append(classToClassString(expectedType));
+
+        if (!expectedSubtype)
+            return;
+
+        expectedValuesString.append(" of "_s);
+        expectedValuesString.append(classToClassString(expectedSubtype.value(), true));
+    };
+
+    bool arrayIsValid = false;
+    String exception;
+    for (auto type : expectedValueType) {
+        if (type == JSON::Value::Type::Array) {
+            arrayIsValid = true;
+            addExpectedValueString(JSON::Value::Type::Array, expectedArrayTypes.first());
+            if (validateArray(sourceKey, value, expectedArrayTypes, exception))
+                return true;
+            continue;
+        }
+
+        addExpectedValueString(type, { });
+
+        if (validate(sourceKey, value, type, exception))
+            return true;
+    }
+
+    auto foundString = arrayIsValid && value->asArray() ? "an array of other values"_s : valueToTypeString(value);
+    outExceptionString = constructExpectedMessage(sourceKey, expectedValuesString.toString(), foundString);
+
+    return false;
+}
+
+bool validateObject(RefPtr<JSON::Value> value, const String& sourceKey, Vector<JSON::Value::Type> expectedValueType, Vector<JSON::Value::Type> expectedArrayType, String& outExceptionString)
+{
+    ASSERT(!expectedValueType.isEmpty());
+
+    String errorString;
+    validateSet(nullString(), value, expectedValueType, expectedArrayType, errorString);
 
     if (!errorString.isEmpty())
         outExceptionString = toErrorString(nullString(), sourceKey, errorString);
