@@ -82,6 +82,10 @@ using LayerHostingContextID = uint32_t;
 - (void)updateFixedClippingView:(WebCore::FloatRect)fixedPositionRectForUI;
 - (CGRect)_fixedClippingViewBoundsForTesting;
 
+#if HAVE(UIVIEW_RESERVED_REGION)
+- (void)_setViewportFoldRectsForTesting:(NSArray<NSValue *> *)foldRects;
+#endif
+
 - (void)didFinishScrolling;
 - (void)didZoomToScale:(CGFloat)scale;
 - (void)willStartZoomOrScroll;

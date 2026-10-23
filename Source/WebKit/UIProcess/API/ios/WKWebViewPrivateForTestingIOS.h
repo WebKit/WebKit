@@ -88,6 +88,8 @@
 
 - (void)_setDeviceOrientationUserPermissionHandlerForTesting:(BOOL (^)(void))handler;
 
+- (void)_setViewportFoldRectsForTesting:(NSArray<NSValue *> *)foldRects;
+
 - (void)_resetObscuredInsetsForTesting;
 - (BOOL)_hasResizeAssertion;
 - (void)_simulateSelectionStart;
