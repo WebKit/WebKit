@@ -380,8 +380,7 @@ bool CSSNumericValue::equals(FixedVector<CSSNumberish>&& values)
 {
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-equals
     auto numericValues = WTF::map(WTF::move(values), rectifyNumberish);
-    // FIXME: Drop SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE once <rdar://150855062> is fixed.
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return std::ranges::all_of(numericValues, [&](auto& value) {
+    return std::ranges::all_of(numericValues, [&](auto& value) {
         return this->equals(value.get());
     });
 }
