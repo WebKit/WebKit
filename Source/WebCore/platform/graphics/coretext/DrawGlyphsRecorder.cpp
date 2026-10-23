@@ -36,12 +36,58 @@
 #include "GlyphBuffer.h"
 #include "GraphicsContextCG.h"
 #include "ImageBuffer.h"
+#include "NativeImage.h"
 #include "PathCG.h"
 
 #include <CoreText/CoreText.h>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class GlyphImageCache {
+public:
+    static GlyphImageCache& singleton()
+    {
+        static NeverDestroyed<GlyphImageCache> cache;
+        return cache;
+    }
+
+    Ref<NativeImage> nativeImage(CGImageRef glyphImage)
+    {
+        auto identifier = CGImageGetIdentifier(glyphImage);
+        if (!isMainThread() || !decltype(m_images)::isValidKey(identifier))
+            return NativeImage::create(glyphImage).releaseNonNull();
+
+        // Use CGImageCreateCopy (which wraps the same underlying data) to avoid keeping the CoreText CGImage alive, but register the
+        // deallocation callback on the original.
+        Locker locker { m_lock };
+        return m_images.ensure(identifier, [&] {
+            CGNotificationCenterAddCallback(CGImageNotificationCenter(), glyphImageWillDeallocate, nullptr, kCGImageWillDeallocate, glyphImage);
+            return NativeImage::create(adoptCF(CGImageCreateCopy(glyphImage))).releaseNonNull();
+        }).iterator->value;
+    }
+
+private:
+    static void glyphImageWillDeallocate(CGNotificationCenterRef, void*, CFStringRef, const void* glyphImage, CFDictionaryRef)
+    {
+        RefPtr<NativeImage> image;
+        {
+            auto& cache = singleton();
+            Locker locker { cache.m_lock };
+            image = cache.m_images.take(CGImageGetIdentifier(static_cast<CGImageRef>(const_cast<void*>(glyphImage))));
+        }
+        // NativeImage observers expect to be notified on the thread that used the image.
+        if (image)
+            ensureOnMainThread([image = WTF::move(image)] { });
+    }
+
+    Lock m_lock;
+    HashMap<unsigned, Ref<NativeImage>> m_images WTF_GUARDED_BY_LOCK(m_lock);
+};
 
 static CGContextDelegateRef beginLayer(CGContextDelegateRef delegate, CGRenderingStateRef rstate, CGGStateRef gstate, CGRect rect, CFDictionaryRef, CGContextDelegateRef)
 {
@@ -375,8 +421,8 @@ void DrawGlyphsRecorder::recordDrawImage(CGRenderingStateRef, CGGStateRef gstate
     m_owner.translate(0, rect.size.height + 2 * rect.origin.y);
     m_owner.scale(FloatSize(1, -1));
 
-    auto image = NativeImage::create(cgImage);
-    m_owner.drawNativeImage(*image, FloatRect(rect), FloatRect { { }, image->size() }, ImageDrawingOptions { ImageOrientation::Orientation::OriginTopLeft });
+    Ref image = GlyphImageCache::singleton().nativeImage(cgImage);
+    m_owner.drawNativeImage(image, FloatRect(rect), FloatRect { { }, image->size() }, ImageDrawingOptions { ImageOrientation::Orientation::OriginTopLeft });
 
     // Undo the above y-flip to restore the context.
     m_owner.scale(FloatSize(1, -1));

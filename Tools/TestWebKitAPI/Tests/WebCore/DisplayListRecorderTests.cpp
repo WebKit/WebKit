@@ -27,12 +27,20 @@
 
 #include "Helpers/Test.h"
 #include "Helpers/WebCoreTestUtilities.h"
+#include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListRecorderImpl.h>
+#include <WebCore/FontCascade.h>
+#include <WebCore/FontCascadeDescription.h>
+#include <WebCore/FontCascadeInlines.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/NativeImage.h>
+#include <WebCore/TextRun.h>
 #include <numbers>
+#include <wtf/HashSet.h>
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 
 #if PLATFORM(COCOA)
@@ -722,5 +730,36 @@ TYPED_TEST_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreser
 REGISTER_TYPED_TEST_SUITE_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreserved);
 
 INSTANTIATE_TYPED_TEST_SUITE_P(DisplayListRecorderTest, DisplayListRecorderResultStateTest, AllOperations);
+
+#if USE(CORE_TEXT)
+TEST(DisplayListRecorderTest, DeconstructedEmojiGlyphsShareNativeImages)
+{
+    JSC::initialize();
+    WTF::initializeMainThread();
+
+    WebCore::FontCascadeDescription description;
+    description.setOneFamily("Apple Color Emoji"_s);
+    description.setUsedSize(16);
+    WebCore::FontCascade font(WTF::move(description));
+    font.update();
+
+    HashSet<const WebCore::NativeImage*> images;
+    unsigned drawNativeImageCount = 0;
+    for (unsigned i = 0; i < 2; ++i) {
+        Ref recorder = WebCore::DisplayList::RecorderImpl::create({ }, { 0, 0, testContextWidth, testContextHeight }, { }, WebCore::ColorSpace::SRGB(), WebCore::DisplayList::Recorder::DrawGlyphsMode::Deconstruct);
+        font.drawText(recorder, WebCore::TextRun { String::fromUTF8("\u2B1B\u2B1C\u2B1B\u2B1C") }, { 0, 20 });
+        Ref displayList = recorder->takeDisplayList();
+        for (auto& item : displayList->items()) {
+            if (auto* drawNativeImage = std::get_if<WebCore::DisplayList::DrawNativeImage>(&item)) {
+                images.add(&drawNativeImage->nativeImage());
+                ++drawNativeImageCount;
+            }
+        }
+    }
+
+    EXPECT_EQ(drawNativeImageCount, 8u);
+    EXPECT_EQ(images.size(), 2u);
+}
+#endif
 
 }

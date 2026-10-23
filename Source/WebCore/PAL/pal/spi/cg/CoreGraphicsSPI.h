@@ -333,6 +333,9 @@ typedef struct CGRenderingState *CGRenderingStateRef;
 typedef struct CGGState *CGGStateRef;
 typedef struct CGStyle *CGStyleRef;
 
+typedef struct CGNotificationCenter *CGNotificationCenterRef;
+typedef void (*CGNotificationCallback)(CGNotificationCenterRef, void* info, CFStringRef name, const void* object, CFDictionaryRef auxInfo);
+
 #if ENABLE(UNIFIED_PDF)
 
 typedef CF_OPTIONS(uint32_t, CGPDFAreaOfInterest) {
@@ -401,6 +404,11 @@ WTF_EXTERN_C_BEGIN
 bool CGColorTransformConvertColorComponents(CGColorTransformRef, CGColorSpaceRef, CGColorRenderingIntent, const CGFloat srcComponents[], CGFloat dstComponents[]);
 CGColorRef CGColorTransformConvertColor(CGColorTransformRef, CGColorRef, CGColorRenderingIntent);
 CGColorTransformRef CGColorTransformCreate(CGColorSpaceRef, CFDictionaryRef attributes);
+
+extern const CFStringRef kCGImageWillDeallocate;
+unsigned CGImageGetIdentifier(CGImageRef);
+CGNotificationCenterRef CGImageNotificationCenter(void);
+void CGNotificationCenterAddCallback(CGNotificationCenterRef, CGNotificationCallback, void* info, CFStringRef name, const void*);
 
 CGAffineTransform CGContextGetBaseCTM(CGContextRef);
 CGCompositeOperation CGContextGetCompositeOperation(CGContextRef);
