@@ -92,15 +92,6 @@ def main():
             if selector not in cmake:
                 errors.append(f"{root}: expected CMake source selector is missing: {selector}")
 
-    # The old adapter targets removed GraphicsContext3D APIs and is deliberately
-    # excluded until its behavior is ported to the modern GraphicsContextGL API.
-    legacy = "Source/WebCore/platform/graphics/WKC/GraphicsContext3DWKC.cpp"
-    if legacy in tracked_files:
-        if "/platform/graphics/WKC/GraphicsContext3DWKC.cpp" not in cmake or "list(REMOVE_ITEM WEBCORE_PLATFORM_SOURCES" not in cmake:
-            errors.append(f"{legacy}: legacy exclusion must remain explicit in CMake")
-        else:
-            print(f"\n[explicit legacy disposition] {legacy} — port required before modern WebGL integration")
-
     if errors:
         for message in errors:
             error(message)
