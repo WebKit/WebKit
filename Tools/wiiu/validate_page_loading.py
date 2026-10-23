@@ -22,7 +22,7 @@ def find_repository_root():
     for start in (Path.cwd(), Path(__file__).resolve().parent):
         try:
             result = subprocess.run(
-                ["git", "rev-parse", "--show-toplevel"],
+                ["git", "-c", f"safe.directory={ROOT}", "rev-parse", "--show-toplevel"],
                 cwd=start,
                 check=True,
                 capture_output=True,
@@ -191,7 +191,7 @@ try:
     # produced by sparse checkout. This keeps the contract check tied to the
     # exact workflow revision that triggered the build.
     workflow = subprocess.run(
-        ['git', 'show', 'HEAD:.github/workflows/build.yml'],
+        ['git', '-c', f'safe.directory={ROOT}', 'show', 'HEAD:.github/workflows/build.yml'],
         cwd=ROOT,
         check=True,
         capture_output=True,
