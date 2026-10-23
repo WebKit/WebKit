@@ -971,8 +971,7 @@ Vector<Ref<ValidatedFormListedElement>> HTMLFormElement::copyValidatedListedElem
 
 HTMLFormElement* HTMLFormElement::findClosestFormAncestor(const Element& startElement)
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<HTMLFormElement*>(ancestorsOfType<HTMLFormElement>(startElement).first());
+    return const_cast<HTMLFormElement*>(ancestorsOfType<HTMLFormElement>(startElement).first());
 }
 
 const AtomString& HTMLFormElement::autocomplete() const

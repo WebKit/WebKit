@@ -1443,8 +1443,7 @@ size_t SourceBuffer::memoryCost() const
 
 WebCoreOpaqueRoot SourceBuffer::opaqueRoot() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return WebCoreOpaqueRoot { const_cast<SourceBuffer*>(this) };
+    return WebCoreOpaqueRoot { const_cast<SourceBuffer*>(this) };
 }
 
 void SourceBuffer::memoryPressure()

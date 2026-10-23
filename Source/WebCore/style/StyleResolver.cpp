@@ -627,8 +627,7 @@ static const Style::ComputedStyle* parentHighlightStyleIgnoringPendingUpdate(con
     if (!resolvedStyle)
         return nullptr;
 
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Style::ComputedStyle&>(*parentStyle).addPseudoElementStyle(WTF::move(resolvedStyle->style));
+    return const_cast<Style::ComputedStyle&>(*parentStyle).addPseudoElementStyle(WTF::move(resolvedStyle->style));
 }
 
 std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)

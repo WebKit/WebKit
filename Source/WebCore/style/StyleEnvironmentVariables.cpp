@@ -54,8 +54,7 @@ EnvironmentVariables::EnvironmentVariables(Document& document)
 const EnvironmentVariables::Values& EnvironmentVariables::userAgentDefinedValues() const
 {
     if (!m_values) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<EnvironmentVariables&>(*this).buildValues();
+        const_cast<EnvironmentVariables&>(*this).buildValues();
     }
     return *m_values;
 }

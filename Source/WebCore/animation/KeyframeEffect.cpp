@@ -1439,8 +1439,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const Style::ComputedS
 
         // Ensure resource loads for all the frames.
         for (auto& keyframe : blendingKeyframes) {
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST if (CheckedPtr style = const_cast<Style::ComputedStyle*>(keyframe.style()))
+            if (CheckedPtr style = const_cast<Style::ComputedStyle*>(keyframe.style()))
                 Style::loadPendingResources(*style, protect(*document()), m_target.get());
         }
     }

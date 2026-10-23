@@ -78,8 +78,7 @@ public:
 
     const GradientColorStops& sorted() const
     {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<GradientColorStops*>(this)->sort();
+        const_cast<GradientColorStops*>(this)->sort();
         return *this;
     }
 

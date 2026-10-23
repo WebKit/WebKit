@@ -324,8 +324,7 @@ bool LocalDOMWindow::dispatchAllPendingBeforeUnloadEvents()
 
 unsigned LocalDOMWindow::pendingUnloadEventListeners() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return windowsWithUnloadEventListeners().count(const_cast<LocalDOMWindow*>(this));
+    return windowsWithUnloadEventListeners().count(const_cast<LocalDOMWindow*>(this));
 }
 
 void LocalDOMWindow::dispatchAllPendingUnloadEvents()
@@ -673,8 +672,7 @@ CustomElementRegistry& LocalDOMWindow::ensureCustomElementRegistry()
         for (Ref shadowRoot : document()->inDocumentShadowRoots()) {
             if (shadowRoot->mode() == ShadowRootMode::UserAgent || shadowRoot->hasScopedCustomElementRegistry())
                 continue;
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST const_cast<ShadowRoot&>(shadowRoot.get()).setCustomElementRegistry(*m_customElementRegistry);
+            const_cast<ShadowRoot&>(shadowRoot.get()).setCustomElementRegistry(*m_customElementRegistry);
         }
         protect(document())->setCustomElementRegistry(*m_customElementRegistry);
     }

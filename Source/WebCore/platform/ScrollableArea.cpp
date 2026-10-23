@@ -78,8 +78,7 @@ ScrollableArea::~ScrollableArea() = default;
 ScrollAnimator& ScrollableArea::scrollAnimator() const
 {
     if (!m_scrollAnimator) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST m_scrollAnimator = ScrollAnimator::create(const_cast<ScrollableArea&>(*this));
+        m_scrollAnimator = ScrollAnimator::create(const_cast<ScrollableArea&>(*this));
     }
 
     return *m_scrollAnimator.get();
@@ -88,8 +87,7 @@ ScrollAnimator& ScrollableArea::scrollAnimator() const
 ScrollbarsController& ScrollableArea::scrollbarsController() const
 {
     if (!m_scrollbarsController) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<ScrollableArea&>(*this).internalCreateScrollbarsController();
+        const_cast<ScrollableArea&>(*this).internalCreateScrollbarsController();
     }
     RELEASE_ASSERT(m_scrollbarsController);
     return *m_scrollbarsController.get();
@@ -98,8 +96,7 @@ ScrollbarsController& ScrollableArea::scrollbarsController() const
 void ScrollableArea::internalCreateScrollbarsController()
 {
     if (mockScrollbarsControllerEnabled()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST auto mockController = makeUnique<ScrollbarsControllerMock>(const_cast<ScrollableArea&>(*this), [weakThis = WeakPtr { *this }](const String& message) {
+        auto mockController = makeUnique<ScrollbarsControllerMock>(const_cast<ScrollableArea&>(*this), [weakThis = WeakPtr { *this }](const String& message) {
             if (CheckedPtr protectedThis = weakThis)
                 protectedThis->logMockScrollbarsControllerMessage(message);
         });
@@ -110,8 +107,7 @@ void ScrollableArea::internalCreateScrollbarsController()
 
 void ScrollableArea::createScrollbarsController()
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto controller = ScrollbarsController::create(const_cast<ScrollableArea&>(*this));
+    auto controller = ScrollbarsController::create(const_cast<ScrollableArea&>(*this));
     setScrollbarsController(WTF::move(controller));
 }
 

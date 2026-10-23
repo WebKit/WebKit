@@ -732,8 +732,7 @@ void AXTextMarker::clampOffsetToLengthIfNeeded(unsigned length) const
     if (offset() <= length)
         return;
 
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST const_cast<AXTextMarker*>(this)->m_data.offset = length;
+    const_cast<AXTextMarker*>(this)->m_data.offset = length;
 }
 
 AXTextRunLineID AXTextMarker::lineID() const

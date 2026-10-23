@@ -486,8 +486,7 @@ int RenderLayerScrollableArea::scrollWidth() const
 {
     ASSERT(m_layer.renderBox());
     if (m_scrollDimensionsDirty) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<RenderLayerScrollableArea*>(this)->computeScrollDimensions();
+        const_cast<RenderLayerScrollableArea*>(this)->computeScrollDimensions();
     }
     // FIXME: This should use snappedIntSize() instead with absolute coordinates.
     return m_scrollWidth;
@@ -497,8 +496,7 @@ int RenderLayerScrollableArea::scrollHeight() const
 {
     ASSERT(m_layer.renderBox());
     if (m_scrollDimensionsDirty) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<RenderLayerScrollableArea*>(this)->computeScrollDimensions();
+        const_cast<RenderLayerScrollableArea*>(this)->computeScrollDimensions();
     }
     // FIXME: This should use snappedIntSize() instead with absolute coordinates.
     return m_scrollHeight;

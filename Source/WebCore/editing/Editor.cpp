@@ -5163,8 +5163,7 @@ RefPtr<Font> Editor::fontForSelection(bool& hasMultipleFonts)
         if (renderer->isBR()) {
             if (!lineBreakFont) {
                 Ref primaryFont = protect(renderer->style().fontCascade())->primaryFont();
-                // FIXME: Remove suppression once rdar://189998365 is fixed.
-                SUPPRESS_MEMORY_UNSAFE_CAST lineBreakFont = const_cast<Font*>(primaryFont.ptr());
+                lineBreakFont = const_cast<Font*>(primaryFont.ptr());
             }
             continue;
         }
@@ -5174,8 +5173,7 @@ RefPtr<Font> Editor::fontForSelection(bool& hasMultipleFonts)
             continue;
         Ref primaryFont = protect(renderer->style().fontCascade())->primaryFont();
         if (!font) {
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST font = const_cast<Font*>(primaryFont.ptr());
+            font = const_cast<Font*>(primaryFont.ptr());
         } else if (font != primaryFont.ptr()) {
             hasMultipleFonts = true;
             break;

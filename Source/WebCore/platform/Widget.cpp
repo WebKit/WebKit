@@ -62,8 +62,7 @@ FrameView* Widget::root() const
     while (top->parent())
         top = top->parent();
     if (auto* frameView = dynamicDowncast<FrameView>(top)) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<FrameView*>(frameView);
+        return const_cast<FrameView*>(frameView);
     }
     return nullptr;
 }

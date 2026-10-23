@@ -106,8 +106,7 @@ IDBObjectStoreInfo* IDBDatabaseInfo::getInfoForExistingObjectStore(const String&
 
 const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier) const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<IDBDatabaseInfo*>(this)->getInfoForExistingObjectStore(objectStoreIdentifier);
+    return const_cast<IDBDatabaseInfo*>(this)->getInfoForExistingObjectStore(objectStoreIdentifier);
 }
 
 IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier)
@@ -117,8 +116,7 @@ IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(IDBObjectStoreId
 
 const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const String& name) const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<IDBDatabaseInfo*>(this)->getInfoForExistingObjectStore(name);
+    return const_cast<IDBDatabaseInfo*>(this)->getInfoForExistingObjectStore(name);
 }
 
 IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const String& name)

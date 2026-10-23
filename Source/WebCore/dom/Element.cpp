@@ -824,13 +824,11 @@ void Element::setBooleanAttribute(const QualifiedName& name, bool value)
 
 NamedNodeMap& Element::attributesMap() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST ElementRareData& rareData = const_cast<Element*>(this)->ensureElementRareData();
+    ElementRareData& rareData = const_cast<Element*>(this)->ensureElementRareData();
     if (NamedNodeMap* attributeMap = rareData.attributeMap())
         return *attributeMap;
 
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST rareData.setAttributeMap(makeUniqueWithoutRefCountedCheck<NamedNodeMap>(const_cast<Element&>(*this)));
+    rareData.setAttributeMap(makeUniqueWithoutRefCountedCheck<NamedNodeMap>(const_cast<Element&>(*this)));
     return *rareData.attributeMap();
 }
 
@@ -851,8 +849,7 @@ void Element::synchronizeAllAttributes() const
         uncheckedDowncast<StyledElement>(*this).synchronizeStyleAttributeInternal();
 
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this)) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<SVGElement&>(*svgElement).synchronizeAllAttributes();
+        const_cast<SVGElement&>(*svgElement).synchronizeAllAttributes();
     }
 }
 
@@ -867,8 +864,7 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const QualifiedName& name) cons
     }
 
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this)) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<SVGElement&>(*svgElement).synchronizeAttribute(name);
+        const_cast<SVGElement&>(*svgElement).synchronizeAttribute(name);
     }
 }
 
@@ -892,8 +888,7 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const AtomString& localName) co
     }
 
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this)) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<SVGElement&>(*svgElement).synchronizeAttribute(QualifiedName(nullAtom(), localName, nullAtom()));
+        const_cast<SVGElement&>(*svgElement).synchronizeAttribute(QualifiedName(nullAtom(), localName, nullAtom()));
     }
 }
 
@@ -949,8 +944,7 @@ bool Element::hasFocusableStyle() const
         return isFocusableStyle(renderStyle());
 
     // Compute style in yet unstyled subtree without resolving full style.
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST CheckedPtr style = const_cast<Element&>(*this).resolveComputedStyle(ResolveComputedStyleMode::RenderedOnly);
+    CheckedPtr style = const_cast<Element&>(*this).resolveComputedStyle(ResolveComputedStyleMode::RenderedOnly);
     return isFocusableStyle(style.get());
 }
 
@@ -2609,8 +2603,7 @@ static RefPtr<Element> getElementByIdIncludingDisconnected(const Element& startE
     if (auto* root = startElement.rootElement()) {
         for (auto& element : descendantsOfType<Element>(*root)) {
             if (element.getIdAttribute() == id) {
-                // FIXME: Remove suppression once rdar://189998365 is fixed.
-                SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Element*>(&element);
+                return const_cast<Element*>(&element);
             }
         }
     }
@@ -3660,8 +3653,7 @@ RefPtr<ShadowRoot> Element::openOrClosedShadowRoot() const
 RefPtr<Element> Element::resolveReferenceTarget() const
 {
     if (!document().settings().shadowRootReferenceTargetEnabled()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Element*>(this);
+        return const_cast<Element*>(this);
     }
 
     RefPtr element = this;
@@ -3671,8 +3663,7 @@ RefPtr<Element> Element::resolveReferenceTarget() const
         element = shadow->referenceTargetElement();
         shadow = element ? element->shadowRoot() : nullptr;
     }
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Element*>(element.get());
+    return const_cast<Element*>(element.get());
 }
 
 RefPtr<Element> Element::retargetReferenceTargetForBindings(RefPtr<Element> element) const
@@ -5004,8 +4995,7 @@ const Style::ComputedStyle& Element::resolvePseudoElementStyle(const Style::Pseu
     }
 
     CheckedPtr computedStyle = style.get();
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST const_cast<Style::ComputedStyle*>(parentStyle.get())->addPseudoElementStyle(WTF::move(style));
+    const_cast<Style::ComputedStyle*>(parentStyle.get())->addPseudoElementStyle(WTF::move(style));
     ASSERT(parentStyle->pseudoElementStyle(pseudoElementIdentifier));
     return *computedStyle.unsafeGet();
 }
@@ -5167,8 +5157,7 @@ RefPtr<PseudoElement> Element::pseudoElementIfExists(Style::PseudoElementIdentif
 
 RefPtr<const PseudoElement> Element::pseudoElementIfExists(Style::PseudoElementIdentifier pseudoElementIdentifier) const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Element&>(*this).pseudoElementIfExists(pseudoElementIdentifier);
+    return const_cast<Element&>(*this).pseudoElementIfExists(pseudoElementIdentifier);
 }
 
 static void disconnectPseudoElement(PseudoElement* pseudoElement)
@@ -6697,8 +6686,7 @@ bool Element::hasCustomState(const AtomString& state) const
 
 CustomStateSet& Element::ensureCustomStateSet()
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto& rareData = const_cast<Element*>(this)->ensureElementRareData();
+    auto& rareData = const_cast<Element*>(this)->ensureElementRareData();
     if (!rareData.customStateSet())
         rareData.initializeCustomStateSet(CustomStateSet::create(*this));
     return *rareData.customStateSet();
@@ -6823,8 +6811,7 @@ RefPtr<HTMLElement> Element::topmostPopoverAncestor(TopLayerElementType topLayer
 
 double Element::lookupCSSRandomBaseValue(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const CSSCalc::RandomCachingKey& key) const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Element*>(this)->ensureElementRareData().ensureRandomCachingKeyMap(pseudoElementIdentifier)->lookupCSSRandomBaseValue(key);
+    return const_cast<Element*>(this)->ensureElementRareData().ensureRandomCachingKeyMap(pseudoElementIdentifier)->lookupCSSRandomBaseValue(key);
 }
 
 bool Element::hasRandomCachingKeyMap() const

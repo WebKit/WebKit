@@ -94,8 +94,7 @@ std::pair<LayoutUnit, LayoutUnit> IntegrationUtils::borderAndPaddingForGridItem(
 void IntegrationUtils::layoutGridItem(const ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize) const
 {
     ASSERT(box.isGridItem());
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST LayoutIntegration::layoutGridItemWithFormattingContext(box, overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, gridAreaInlineSize, const_cast<LayoutState&>(m_globalLayoutState.get()));
+    LayoutIntegration::layoutGridItemWithFormattingContext(box, overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, gridAreaInlineSize, const_cast<LayoutState&>(m_globalLayoutState.get()));
 }
 
 std::optional<LayoutUnit> IntegrationUtils::firstLineBaselineForGridItem(const ElementBox& box) const

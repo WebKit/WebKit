@@ -873,8 +873,7 @@ ResourceResponseBase::Source ResourceResponseBase::source() const
 
 void ResourceResponseBase::lazyInit(InitLevel initLevel) const
 {
-    // FIXME: Remove this suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST const_cast<ResourceResponse&>(downcast<ResourceResponse>(*this)).platformLazyInit(initLevel);
+    const_cast<ResourceResponse&>(downcast<ResourceResponse>(*this)).platformLazyInit(initLevel);
 }
 
 bool ResourceResponseBase::equalForWebKitLegacyChallengeComparison(const ResourceResponse& a, const ResourceResponse& b)

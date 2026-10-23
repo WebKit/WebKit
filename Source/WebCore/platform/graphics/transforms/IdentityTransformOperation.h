@@ -52,8 +52,7 @@ private:
 
     Ref<TransformOperation> blend(const TransformOperation*, const BlendingContext&, bool = false) const override
     {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<IdentityTransformOperation&>(*this);
+        return const_cast<IdentityTransformOperation&>(*this);
     }
 
     void dump(WTF::TextStream&) const final;

@@ -50,8 +50,7 @@ unsigned StaticNodeList::length() const
 Node* StaticNodeList::item(unsigned index) const
 {
     if (index < m_nodes.size()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Node*>(m_nodes[index].ptr());
+        return const_cast<Node*>(m_nodes[index].ptr());
     }
     return nullptr;
 }
@@ -74,8 +73,7 @@ unsigned StaticElementList::length() const
 Element* StaticElementList::item(unsigned index) const
 {
     if (index < m_elements.size()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Element*>(m_elements[index].ptr());
+        return const_cast<Element*>(m_elements[index].ptr());
     }
     return nullptr;
 }

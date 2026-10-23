@@ -3798,8 +3798,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
             auto blockLevelBox = lineBox->blockLevelBox();
             if (!blockLevelBox || blockLevelBox->selectionState() == RenderObject::HighlightState::None)
                 return { };
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST auto* blockContainer = dynamicDowncast<RenderBlock>(const_cast<RenderObject&>(blockLevelBox->renderer()));
+            auto* blockContainer = dynamicDowncast<RenderBlock>(const_cast<RenderObject&>(blockLevelBox->renderer()));
             if (!blockContainer || blockContainer->shouldPaintSelectionGaps() || blockContainer->canBeSelectionLeaf())
                 return { };
             return blockContainer;
@@ -3973,8 +3972,7 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
             if (localPoint.y() > *previousRootInlineBoxBottom && localPoint.y() < box.logicalTop()) {
                 if (auto closestBox = closestBoxForHorizontalPosition(box.lineBox(), localPoint.x())) {
                     if (auto* textRenderer = dynamicDowncast<RenderText>(closestBox->renderer())) {
-                        // FIXME: Remove suppression once rdar://189998365 is fixed.
-                        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderText*>(textRenderer);
+                        return const_cast<RenderText*>(textRenderer);
                     }
                 }
             }
@@ -4057,18 +4055,15 @@ PositionWithAffinity RenderBlockFlow::positionForPointWithInlineChildren(const L
         if (!isHorizontalWritingMode())
             point = point.transposedPoint();
         if (closestBox->renderer().isBlockLevelReplacedOrAtomicInline()) {
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST return positionForPointRespectingEditingBoundaries(*this, const_cast<RenderBox&>(downcast<RenderBox>(closestBox->renderer())), point, source);
+            return positionForPointRespectingEditingBoundaries(*this, const_cast<RenderBox&>(downcast<RenderBox>(closestBox->renderer())), point, source);
         }
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderObject&>(closestBox->renderer()).positionForPoint(point, source, nullptr);
+        return const_cast<RenderObject&>(closestBox->renderer()).positionForPoint(point, source, nullptr);
     }
 
     if (lastLineBoxWithChildren) {
         // We hit this case for Mac behavior when the Y coordinate is below the last box.
         if (auto blockBox = lastLineBoxWithChildren->blockLevelBox()) {
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST auto& childBlockRenderer = const_cast<RenderBox&>(downcast<RenderBox>(blockBox->renderer()));
+            auto& childBlockRenderer = const_cast<RenderBox&>(downcast<RenderBox>(blockBox->renderer()));
             return positionForPointRespectingEditingBoundaries(*this, childBlockRenderer, pointInLogicalContents, source);
         }
         ASSERT(moveCaretToBoundary);
@@ -5116,8 +5111,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeInlineIntrinsicLogical
 
     auto minLogicalWidth = LayoutUnit { };
     auto maxLogicalWidth = LayoutUnit { };
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST if (const_cast<RenderBlockFlow&>(*this).tryComputeIntrinsicLogicalWidthsUsingInlinePath(minLogicalWidth, maxLogicalWidth))
+    if (const_cast<RenderBlockFlow&>(*this).tryComputeIntrinsicLogicalWidthsUsingInlinePath(minLogicalWidth, maxLogicalWidth))
         return { minLogicalWidth, maxLogicalWidth };
 
     float inlineMax = 0.f;

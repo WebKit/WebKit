@@ -143,8 +143,7 @@ RefPtr<BitmapImage> FilterImage::resolvedImage(const RenderElement& renderElemen
     auto sourceImageRect = FloatRect { { }, size };
 
     auto renderingOptions(protect(renderer->settings())->showDebugBorders() ? std::make_optional(FilterRenderingOption::ShowDebugOverlay) : std::nullopt);
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto cssFilter = CSSFilterRenderer::create(const_cast<RenderElement&>(renderer.get()), m_filter, {
+    auto cssFilter = CSSFilterRenderer::create(const_cast<RenderElement&>(renderer.get()), m_filter, {
             .referenceBox = sourceImageRect,
             .filterRegion = sourceImageRect,
             .scale = { 1, 1 },

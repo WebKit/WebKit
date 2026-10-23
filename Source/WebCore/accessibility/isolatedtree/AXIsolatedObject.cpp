@@ -871,8 +871,7 @@ RefPtr<AXIsolatedObject> AXIsolatedObject::approximateHitTest(const IntPoint& po
         return nullptr;
     }
 
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST AXIsolatedObject* mutableThis = const_cast<AXIsolatedObject*>(this);
+    AXIsolatedObject* mutableThis = const_cast<AXIsolatedObject*>(this);
     auto children = mutableThis->unignoredChildren();
     for (int i = children.size() - 1; i >= 0; --i) {
         RefPtr child = downcast<AXIsolatedObject>(children[i].ptr());
@@ -1703,8 +1702,7 @@ FloatRect AXIsolatedObject::relativeFrame() const
         // If we are an exposable-to-accessibility table, we must have at least one valid row, so see if
         // our row(s) have cached geometry we can use. For tables, this will probably be more accurate
         // than the ancestor bounding-box fallback below.
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST for (const auto& child : const_cast<AXIsolatedObject*>(this)->unignoredChildren()) {
+        for (const auto& child : const_cast<AXIsolatedObject*>(this)->unignoredChildren()) {
             if (std::optional cachedFrame = downcast<AXIsolatedObject>(child).cachedRelativeFrame())
                 relativeFrame.unite(*cachedFrame);
         }
@@ -1785,8 +1783,7 @@ FloatRect AXIsolatedObject::relativeFrame() const
 FloatRect AXIsolatedObject::relativeFrameFromChildren() const
 {
     FloatRect rect;
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST for (const auto& child : const_cast<AXIsolatedObject*>(this)->unignoredChildren())
+    for (const auto& child : const_cast<AXIsolatedObject*>(this)->unignoredChildren())
         rect.unite(child->relativeFrame());
     return rect;
 }
@@ -2579,14 +2576,12 @@ AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::relatedObjects(AXRel
 
 String AXIsolatedObject::innerHTML() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXProperty::InnerHTML);
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXProperty::InnerHTML);
 }
 
 String AXIsolatedObject::outerHTML() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXProperty::OuterHTML);
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXProperty::OuterHTML);
 }
 
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::rowHeaders()

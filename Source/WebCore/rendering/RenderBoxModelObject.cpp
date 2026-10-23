@@ -136,8 +136,7 @@ static RenderObject* LEGACY_NODELETE firstContentfulChild(const RenderBoxModelOb
                 return nested;
             continue;
         }
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderObject*>(&current);
+        return const_cast<RenderObject*>(&current);
     }
     return { };
 }

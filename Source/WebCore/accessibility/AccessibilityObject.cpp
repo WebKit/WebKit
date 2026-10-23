@@ -706,8 +706,7 @@ AccessibilityObject* firstAccessibleObjectFromNode(const Node* node, NOESCAPE co
     if (!cache)
         return nullptr;
 
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST RefPtr accessibleObject = cache->getOrCreate(const_cast<Node&>(*axNode));
+    RefPtr accessibleObject = cache->getOrCreate(const_cast<Node&>(*axNode));
     while (accessibleObject && !isAccessible(*accessibleObject)) {
         axNode = NodeTraversal::next(*axNode);
 
@@ -717,8 +716,7 @@ AccessibilityObject* firstAccessibleObjectFromNode(const Node* node, NOESCAPE co
         if (!axNode)
             return nullptr;
 
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST accessibleObject = cache->getOrCreate(const_cast<Node&>(*axNode));
+        accessibleObject = cache->getOrCreate(const_cast<Node&>(*axNode));
     }
 
     return accessibleObject.unsafeGet();

@@ -54,8 +54,7 @@ void ControlPart::setOverrideControlFactory(RefPtr<ControlFactory>&& controlFact
 PlatformControl* ControlPart::platformControl() const
 {
     if (!m_platformControl) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST m_platformControl = const_cast<ControlPart&>(*this).createPlatformControl();
+        m_platformControl = const_cast<ControlPart&>(*this).createPlatformControl();
     }
     return m_platformControl.get();
 }

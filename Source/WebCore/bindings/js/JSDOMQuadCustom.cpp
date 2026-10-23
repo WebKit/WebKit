@@ -36,11 +36,10 @@ using namespace JSC;
 template<typename Visitor>
 void JSDOMQuad::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p1()));
-    SUPPRESS_MEMORY_UNSAFE_CAST addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p2()));
-    SUPPRESS_MEMORY_UNSAFE_CAST addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p3()));
-    SUPPRESS_MEMORY_UNSAFE_CAST addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p4()));
+    addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p1()));
+    addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p2()));
+    addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p3()));
+    addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p4()));
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSDOMQuad);

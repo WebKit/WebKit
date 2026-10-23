@@ -176,8 +176,7 @@ void BuilderState::adjustStyleForInterCharacterRuby()
 
 void BuilderState::updateFont()
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST Ref fontSelector = const_cast<Document&>(document()).fontSelector();
+    Ref fontSelector = const_cast<Document&>(document()).fontSelector();
 
     auto needsUpdate = [&] {
         return m_fontDirty || !m_style->fontCascade().fonts();

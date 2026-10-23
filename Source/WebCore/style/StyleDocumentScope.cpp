@@ -123,8 +123,7 @@ void DocumentScope::addViewTransitionKeyframes(Ref<StyleRuleKeyframes>&& rule)
 void DocumentScope::releaseMemory()
 {
     for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().releaseMemory();
+        const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().releaseMemory();
     }
 
     Scope::releaseMemory();
@@ -183,8 +182,7 @@ auto DocumentScope::collectResolverScopes() -> ResolverScopes
         resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { this });
 
     for (Ref shadowRoot : m_document->inDocumentShadowRoots()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST auto& scope = const_cast<ShadowRoot&>(shadowRoot.get()).styleScope();
+        auto& scope = const_cast<ShadowRoot&>(shadowRoot.get()).styleScope();
 
         if (RefPtr resolver = scope.resolverIfExists())
             resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { }).iterator->value.append(&scope);
@@ -230,8 +228,7 @@ void DocumentScope::didChangeStyleSheetEnvironment()
     m_sharedShadowTreeResolvers.clear();
 
     for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
+        const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
     }
 
     m_document->invalidateCachedCSSParserContext();
@@ -246,8 +243,7 @@ void DocumentScope::didChangeExtensionStyleSheets()
     // content extension processing. In this case we schedule an asyncronous full stylesheet update.
     // FIXME: We should defer all resource loading after style resolution completes.
     for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::FullForExtensionStyleSheets);
+        const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::FullForExtensionStyleSheets);
     }
 
     scheduleUpdate(UpdateType::FullForExtensionStyleSheets);

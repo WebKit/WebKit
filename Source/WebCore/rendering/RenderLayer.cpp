@@ -2474,8 +2474,7 @@ RenderLayer* RenderLayer::enclosingScrollableLayer(IncludeSelfOrNot includeSelf,
     };
 
     if (includeSelf == IncludeSelfOrNot::IncludeSelf && isConsideredScrollable(*this)) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderLayer*>(this);
+        return const_cast<RenderLayer*>(this);
     }
     
     for (auto* nextLayer = enclosingContainingBlockLayer(crossFrameBoundaries); nextLayer; nextLayer = nextLayer->enclosingContainingBlockLayer(crossFrameBoundaries)) {
@@ -2542,8 +2541,7 @@ bool compositedWithOwnBackingStore(const RenderLayer& layer)
 RenderLayer* RenderLayer::enclosingCompositingLayer(IncludeSelfOrNot includeSelf) const
 {
     if (includeSelf == IncludeSelf && isComposited()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderLayer*>(this);
+        return const_cast<RenderLayer*>(this);
     }
 
     for (const RenderLayer* curr = paintOrderParent(); curr; curr = curr->paintOrderParent()) {
@@ -2660,8 +2658,7 @@ bool RenderLayer::hasAncestorWithFilterOutsets() const
 RenderLayer* RenderLayer::clippingRootForPainting() const
 {
     if (isComposited()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderLayer*>(this);
+        return const_cast<RenderLayer*>(this);
     }
 
     if (paintsIntoProvidedBacking())
@@ -5909,8 +5906,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     // FIXME: should probably just pass 'flags' down to descendants.
     auto descendantFlags = (flags & PreserveAncestorFlags) ? flags : defaultCalculateLayerBoundsFlags() | (flags & ExcludeHiddenDescendants) | (flags & IncludeCompositedDescendants);
 
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST const_cast<RenderLayer*>(this)->updateLayerListsIfNeeded();
+    const_cast<RenderLayer*>(this)->updateLayerListsIfNeeded();
 
     if (RenderLayer* reflection = reflectionLayer()) {
         if (!reflection->isComposited()) {

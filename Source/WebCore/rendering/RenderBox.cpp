@@ -1535,8 +1535,7 @@ LayoutUnit RenderBox::minContentLogicalWidthContribution() const
     if (hasInvalidContentLogicalWidths()) {
         SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
         auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributions();
+        const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributions();
     }
     return m_minContentLogicalWidthContribution;
 }
@@ -1546,8 +1545,7 @@ LayoutUnit RenderBox::maxContentLogicalWidthContribution() const
     if (hasInvalidContentLogicalWidths()) {
         SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
         auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributions();
+        const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributions();
     }
     return m_maxContentLogicalWidthContribution;
 }
@@ -2603,13 +2601,11 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
         return true;
     };
     if (containingBlockHasIndefiniteHeight()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST view().addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+        view().addPercentHeightDescendant(const_cast<RenderBox&>(*this));
         return fillFallbackExtent;
     }
     LayoutUnit fillAvailableExtent = containingBlock->availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST view().addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+    view().addPercentHeightDescendant(const_cast<RenderBox&>(*this));
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=158286 We also need to perform the same percentHeightDescendant treatment to the element which dictates the return value for containingBlock()->availableLogicalHeight() above.
     return std::min(fillAvailableExtent, fillFallbackExtent);
 }
@@ -3958,8 +3954,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
         containingBlock = containingBlock->containingBlock();
     }
     if (updateDescendants == UpdatePercentageHeightDescendants::Yes) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST containingBlock->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+        containingBlock->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
     }
 
     if (is<RenderView>(containingBlock) && view().frameView().isAutoSizeEnabled()) {
@@ -5748,8 +5743,7 @@ bool RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHei
     auto* containingBlock = containingBlockForAutoHeightDetection(logicalHeight);
 
     if (updatePercentageDescendants == UpdatePercentageHeightDescendants::Yes && logicalHeight.isPercentOrCalculated() && containingBlock) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST containingBlock->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+        containingBlock->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
     }
 
     if (isFlexItem() && downcast<RenderFlexibleBox>(*parent()).canUseFlexItemForPercentageResolution(*this))

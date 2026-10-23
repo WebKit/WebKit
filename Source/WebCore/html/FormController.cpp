@@ -263,8 +263,7 @@ Vector<AtomString> FormController::formElementsState(const Document& document) c
         // FIXME: We should be saving the state of form controls in shadow trees, too.
         FormKeyGenerator keyGenerator;
         for (Ref element : descendantsOfType<Element>(document)) {
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST RefPtr control = const_cast<Element&>(element.get()).asValidatedFormListedElement();
+            RefPtr control = const_cast<Element&>(element.get()).asValidatedFormListedElement();
             if (!control || !control->isCandidateForSavingAndRestoringState())
                 continue;
 

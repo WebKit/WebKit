@@ -506,8 +506,7 @@ Ref<NodeList> Node::childNodes()
 
 Node* Node::lastDescendant() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST Node* node = const_cast<Node*>(this);
+    Node* node = const_cast<Node*>(this);
     while (auto* child = node->lastChild())
         node = child;
     return node;
@@ -515,8 +514,7 @@ Node* Node::lastDescendant() const
 
 Node* Node::firstDescendant() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST Node* node = const_cast<Node*>(this);
+    Node* node = const_cast<Node*>(this);
     while (auto* child = node->firstChild())
         node = child;
     return node;
@@ -900,8 +898,7 @@ Node::Editability Node::computeEditabilityWithStyle(const Style::ComputedStyle* 
         RefPtr element = dynamicDowncast<Element>(*this);
         if (!element)
             element = parentElementInComposedTree();
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return element ? const_cast<Element&>(*element).computedStyleForEditability() : nullptr;
+        return element ? const_cast<Element&>(*element).computedStyleForEditability() : nullptr;
     }();
 
     if (!style)
@@ -3187,8 +3184,7 @@ TextStream& operator<<(TextStream& ts, const Node& node)
 
 NodeIdentifier Node::nodeIdentifier() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return nodeIdentifiersMap().ensure(const_cast<Node&>(*this), [&] {
+    return nodeIdentifiersMap().ensure(const_cast<Node&>(*this), [&] {
         setStateFlag(StateFlag::HasNodeIdentifier);
         return NodeIdentifier::generate();
     }).iterator->value;

@@ -137,8 +137,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
     if (CheckedPtr renderer = dynamicDowncast<RenderBox>(box.layoutBox().rendererForIntegration()); renderer) {
         if (m_paintInfo.shouldPaintWithinRoot(*renderer)) {
             // FIXME: Painting should not require a non-const renderer.
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef paintRenderer = const_cast<RenderBox&>(*renderer);
+            CheckedRef paintRenderer = const_cast<RenderBox&>(*renderer);
             auto flippedOffset = flippedContentOffsetIfNeeded(*renderer);
             if (box.isBlockLevelBox()) {
                 // Blocks-in-inline.

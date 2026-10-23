@@ -54,8 +54,7 @@ inline PlatformMediaDecodingConfiguration toPlatform(MediaDecodingConfiguration&
 
 inline MediaDecodingConfiguration fromPlatform(PlatformMediaDecodingConfiguration&& value)
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return {
+    return {
         fromPlatform(static_cast<PlatformMediaConfiguration&&>(value)),
         fromPlatform(value.type),
     };

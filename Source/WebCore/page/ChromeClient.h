@@ -334,11 +334,10 @@ public:
 
     virtual bool shouldUseMouseEventForSelection(const PlatformMouseEvent&) { return true; }
 
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    virtual FloatSize screenSize() const { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<ChromeClient&>(*this).windowRect().size(); }
-    virtual FloatSize availableScreenSize() const { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<ChromeClient&>(*this).windowRect().size(); }
-    virtual FloatSize overrideScreenSize() const { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<ChromeClient&>(*this).windowRect().size(); }
-    virtual FloatSize overrideAvailableScreenSize() const { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<ChromeClient&>(*this).windowRect().size(); }
+    virtual FloatSize screenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
+    virtual FloatSize availableScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
+    virtual FloatSize overrideScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
+    virtual FloatSize overrideAvailableScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
 
     virtual void dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>&) const { }
     virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const { }

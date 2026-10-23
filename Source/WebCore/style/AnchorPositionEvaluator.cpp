@@ -803,8 +803,7 @@ CheckedPtr<RenderBoxModelObject> AnchorPositionEvaluator::findAnchorForAnchorFun
     if (!isValid())
         return { };
 
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST Styleable styleable { *const_cast<Element*>(builderState.element()), style.pseudoElementIdentifier() };
+    Styleable styleable { *const_cast<Element*>(builderState.element()), style.pseudoElementIdentifier() };
 
     // PseudoElement nodes are created on-demand by render tree builder so don't work as keys here.
     auto& anchorPositionedStates = *builderState.anchorPositionedStates();

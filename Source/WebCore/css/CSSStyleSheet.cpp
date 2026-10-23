@@ -484,8 +484,7 @@ bool CSSStyleSheet::isLoading() const
 MediaList* CSSStyleSheet::media() const 
 {
     if (!m_mediaCSSOMWrapper) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSStyleSheet*>(this));
+        m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSStyleSheet*>(this));
     }
     return m_mediaCSSOMWrapper.get();
 }
@@ -506,8 +505,7 @@ Ref<CSSStyleSheet> CSSStyleSheet::rootStyleSheet()
 
 Ref<const CSSStyleSheet> CSSStyleSheet::rootStyleSheet() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<CSSStyleSheet&>(*this).rootStyleSheet();
+    return const_cast<CSSStyleSheet&>(*this).rootStyleSheet();
 }
 
 Document* CSSStyleSheet::ownerDocument() const

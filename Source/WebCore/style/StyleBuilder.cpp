@@ -460,10 +460,9 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
 
     if (RefPtr paintImageValue = dynamicDowncast<CSSPaintImageValue>(valueToApply.get())) {
         auto& name = paintImageValue->name().value;
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST if (RefPtr paintWorklet = const_cast<Document&>(m_state->document()).paintWorkletGlobalScopeForName(name)) {
+        if (RefPtr paintWorklet = const_cast<Document&>(m_state->document()).paintWorkletGlobalScopeForName(name)) {
             Locker locker { paintWorklet->paintDefinitionLock() };
-            if (auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
+            if (SUPPRESS_UNCHECKED_LOCAL auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
                 for (auto& property : registration->inputProperties)
                     style.addCustomPaintWatchProperty(property);
             }

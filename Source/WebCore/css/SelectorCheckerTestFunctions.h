@@ -133,8 +133,7 @@ ALWAYS_INLINE bool isChecked(const Element& element)
     if (auto* inputElement = dynamicDowncast<HTMLInputElement>(element))
         return inputElement->matchesCheckedPseudoClass();
     if (auto* option = dynamicDowncast<HTMLOptionElement>(element)) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<HTMLOptionElement&>(*option).selected(AllowStyleInvalidation::No);
+        return const_cast<HTMLOptionElement&>(*option).selected(AllowStyleInvalidation::No);
     }
     return false;
 }

@@ -189,8 +189,7 @@ Element* editableRootForPosition(const Position& position, EditableType editable
     switch (editableType) {
     case HasEditableAXRole:
         if (CheckedPtr cache = protect(node->document())->existingAXObjectCache()) {
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Element*>(cache->rootAXEditableElement(node.get()));
+            return const_cast<Element*>(cache->rootAXEditableElement(node.get()));
         }
         [[fallthrough]];
     case ContentIsEditable:

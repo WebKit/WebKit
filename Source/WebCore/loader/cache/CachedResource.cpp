@@ -139,8 +139,7 @@ void CachedResource::deref() const
     // Invoke the inspector notification while the object is still fully intact
     // (i.e. before derived class destructors have run).
     if (hasOneRef()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST InspectorInstrumentation::willDestroyCachedResource(const_cast<CachedResource&>(*this));
+        InspectorInstrumentation::willDestroyCachedResource(const_cast<CachedResource&>(*this));
     }
     RefCountedAndCanMakeWeakPtr::deref();
 }
@@ -868,8 +867,7 @@ CachedResource::ResponseData::ResponseData(CachedResource& resource)
 CachedResource::ResponseData& CachedResource::mutableResponseData() const
 {
     if (!m_response) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST m_response = makeUnique<ResponseData>(*const_cast<CachedResource*>(this));
+        m_response = makeUnique<ResponseData>(*const_cast<CachedResource*>(this));
     }
     return *m_response;
 }

@@ -173,8 +173,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValueFor
         if (CSSProperty::isListValuedProperty(propertyID)) {
             if (auto* values = dynamicDowncast<CSSValueContainingVector>(*cssValue)) {
                 for (Ref value : *values) {
-                    // FIXME: Remove suppression once rdar://189998365 is fixed.
-                    SUPPRESS_MEMORY_UNSAFE_CAST cssValues.append(protect(const_cast<CSSValue&>(value.get())));
+                    cssValues.append(protect(const_cast<CSSValue&>(value.get())));
                 }
             }
         }

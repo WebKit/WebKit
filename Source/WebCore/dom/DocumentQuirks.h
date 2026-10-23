@@ -40,8 +40,7 @@ inline Quirks& Document::quirks()
 inline const Quirks& Document::quirks() const
 {
     if (!m_quirks) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Document&>(*this).ensureQuirks();
+        return const_cast<Document&>(*this).ensureQuirks();
     }
     return *m_quirks;
 }

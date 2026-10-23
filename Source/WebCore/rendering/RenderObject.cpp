@@ -491,14 +491,12 @@ RenderLayer* RenderObject::enclosingLayer() const
 
 RenderBox& RenderObject::enclosingBox() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return *lineageOfType<RenderBox>(const_cast<RenderObject&>(*this)).first();
+    return *lineageOfType<RenderBox>(const_cast<RenderObject&>(*this)).first();
 }
 
 RenderBoxModelObject& RenderObject::enclosingBoxModelObject() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return *lineageOfType<RenderBoxModelObject>(const_cast<RenderObject&>(*this)).first();
+    return *lineageOfType<RenderBoxModelObject>(const_cast<RenderObject&>(*this)).first();
 }
 
 RenderBox* RenderObject::enclosingScrollableContainer() const
@@ -731,8 +729,7 @@ void RenderObject::setLayerNeedsFullRepaintForOutOfFlowMovementLayout()
 
 RenderBlock* RenderElement::nearestNonAnonymousContainingBlockIncludingSelf() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto* renderer = const_cast<RenderElement*>(this);
+    auto* renderer = const_cast<RenderElement*>(this);
     while (renderer && (!is<RenderBlock>(*renderer) || renderer->isAnonymousBlock()))
         renderer = renderer->containingBlock();
     return downcast<RenderBlock>(renderer);

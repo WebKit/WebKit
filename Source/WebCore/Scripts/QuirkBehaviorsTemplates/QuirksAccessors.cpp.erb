@@ -64,8 +64,7 @@ bool QuirksAccessors::elementMatchesSelectorCondition(const String& selector, co
         return false;
     }
 
-    // FIXME: Remove this suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return query->matches(const_cast<Element&>(*element));
+    return query->matches(const_cast<Element&>(*element));
 }
 
 bool QuirksAccessors::behaviorAppliesToNode(QuirkBehaviorID id, const Node* node) const

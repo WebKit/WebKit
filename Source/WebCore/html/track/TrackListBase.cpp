@@ -70,8 +70,7 @@ WebCoreOpaqueRoot TrackListBase::opaqueRoot() const
 {
     SUPPRESS_UNCOUNTED_LOCAL if (RefPtr trackOpaqueRoot = m_trackOpaqueRoot)
         return trackOpaqueRoot->opaqueRoot();
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return WebCoreOpaqueRoot { const_cast<TrackListBase*>(this) };
+    return WebCoreOpaqueRoot { const_cast<TrackListBase*>(this) };
 }
 
 unsigned TrackListBase::length() const

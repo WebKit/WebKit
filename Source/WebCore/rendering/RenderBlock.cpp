@@ -2440,8 +2440,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
 
         // An orthogonal child contributes its block-axis size (its logical height) to our inline axis
         auto [childMinContentInParentInlineAxis, childMaxContentInParentInlineAxis] = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST auto& box = const_cast<RenderBox&>(childBox);
+            auto& box = const_cast<RenderBox&>(childBox);
             if (writingMode().isOrthogonal(box.writingMode())) {
                 auto intrinsicBlockSize = box.computeIntrinsicLogicalHeight();
                 return { intrinsicBlockSize, intrinsicBlockSize };
@@ -2690,14 +2689,12 @@ void RenderBlock::setCachedEnclosingFragmentedFlowNeedsUpdate()
 RenderFragmentedFlow* RenderBlock::updateCachedEnclosingFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) const
 {
     if (!fragmentedFlow) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST if (auto* rareData = const_cast<RenderBlock&>(*this).blockRareData())
+        if (auto* rareData = const_cast<RenderBlock&>(*this).blockRareData())
             rareData->m_enclosingFragmentedFlow = { };
         return { };
     }
 
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST const_cast<RenderBlock&>(*this).ensureBlockRareData().m_enclosingFragmentedFlow = fragmentedFlow;
+    const_cast<RenderBlock&>(*this).ensureBlockRareData().m_enclosingFragmentedFlow = fragmentedFlow;
     return fragmentedFlow;
 }
 
@@ -3290,8 +3287,7 @@ RenderBox* RenderBlock::findFieldsetLegend(FieldsetFindLegendOption option) cons
         if (option == FieldsetIgnoreFloatingOrOutOfFlow && legend.isFloatingOrOutOfFlowPositioned())
             continue;
         if (legend.isLegend()) {
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderBox*>(&legend);
+            return const_cast<RenderBox*>(&legend);
         }
     }
     return { };

@@ -85,8 +85,7 @@ RefPtr<HTMLElement> HTMLLabelElement::control() const
             }
 
             if (descendant->isLabelable()) {
-                // FIXME: Remove suppression once rdar://189998365 is fixed.
-                SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<HTMLElement*>(descendant.ptr());
+                return const_cast<HTMLElement*>(descendant.ptr());
             }
         }
         return nullptr;

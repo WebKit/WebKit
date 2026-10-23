@@ -341,12 +341,10 @@ void HTMLTextAreaElement::updateValue() const
 
     ASSERT(renderer());
     m_value = innerTextValue();
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST const_cast<HTMLTextAreaElement*>(this)->setFormControlValueMatchesRenderer(true);
+    const_cast<HTMLTextAreaElement*>(this)->setFormControlValueMatchesRenderer(true);
     m_isDirty = true;
     m_wasModifiedByUser = true;
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST const_cast<HTMLTextAreaElement*>(this)->updatePlaceholderVisibility();
+    const_cast<HTMLTextAreaElement*>(this)->updatePlaceholderVisibility();
 }
 
 ValueOrReference<String> HTMLTextAreaElement::value() const

@@ -1933,8 +1933,7 @@ public:
     TextAutoSizing& textAutoSizing();
 
     Logger& logger();
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    const Logger& logger() const { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Document&>(*this).logger(); }
+    const Logger& logger() const { return const_cast<Document&>(*this).logger(); }
     WEBCORE_EXPORT static const Logger& sharedLogger();
 
     void updateAnimationsAndSendEvents();

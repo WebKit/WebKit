@@ -1010,8 +1010,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, Lay
         // For the time being, just err on the side of passing in `Bindings`.
         CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer.get());
         auto localOffset = renderBox ? renderBox->locationOffset() : LayoutSize { };
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderObject&>(renderer.get()).visiblePositionForPoint(pointInLine - localOffset, HitTestSource::Script);
+        return const_cast<RenderObject&>(renderer.get()).visiblePositionForPoint(pointInLine - localOffset, HitTestSource::Script);
     }
 
     // Could not find a previous line. This means we must already be on the first line.
@@ -1075,8 +1074,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
         // For the time being, just err on the side of passing in `Bindings`.
         CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer.get());
         auto localOffset = renderBox ? renderBox->locationOffset() : LayoutSize { };
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderObject&>(renderer.get()).visiblePositionForPoint(pointInLine - localOffset, HitTestSource::Script, visiblePosition.allowUserSelectNone());
+        return const_cast<RenderObject&>(renderer.get()).visiblePositionForPoint(pointInLine - localOffset, HitTestSource::Script, visiblePosition.allowUserSelectNone());
     }
 
     // Could not find a next line. This means we must already be on the last line.

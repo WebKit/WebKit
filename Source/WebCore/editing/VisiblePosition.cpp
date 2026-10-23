@@ -670,8 +670,7 @@ auto VisiblePosition::localCaretRect() const -> LocalCaretRect
         return { };
 
     auto boxAndOffset = inlineBoxAndOffset();
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST CheckedPtr renderer = boxAndOffset.box ? const_cast<RenderObject*>(&boxAndOffset.box->renderer()) : node->renderer();
+    CheckedPtr renderer = boxAndOffset.box ? const_cast<RenderObject*>(&boxAndOffset.box->renderer()) : node->renderer();
     if (!renderer)
         return { };
 

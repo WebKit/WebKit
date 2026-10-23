@@ -325,8 +325,7 @@ static void cacheBaselineAlignedGridItems(const RenderGrid& grid, GridTrackSizin
         if (gridItem.isOutOfFlowPositioned() || gridItem.isLegend())
             continue;
 
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST callback(const_cast<RenderBox*>(&gridItem));
+        callback(const_cast<RenderBox*>(&gridItem));
 
         // We keep a cache of items with baseline as alignment values so that we only compute the baseline shims for
         // such items. This cache is needed for performance related reasons due to the cost of evaluating the item's
@@ -872,8 +871,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
     if (LayoutIntegration::canUseForGridLayout(*this)) {
         // const_cast is safe here: computeIntrinsicWidths() only reads grid properties
         // and does not mutate RenderGrid state, matching the legacy path pattern below.
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST auto gridLayout = LayoutIntegration::GridLayout { const_cast<RenderGrid&>(*this) };
+        auto gridLayout = LayoutIntegration::GridLayout { const_cast<RenderGrid&>(*this) };
         gridLayout.updateFormattingContextGeometries();
         auto [minLogicalWidth, maxLogicalWidth] = gridLayout.computeIntrinsicWidths();
 
@@ -889,8 +887,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
     GridTrackSizingAlgorithm algorithm(this, grid);
     // placeItemsOnGrid isn't const since it mutates our grid, but it's safe to do
     // so here since we've overridden m_currentGrid with a stack based temporary.
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST const_cast<RenderGrid&>(*this).placeItemsOnGrid(std::nullopt);
+    const_cast<RenderGrid&>(*this).placeItemsOnGrid(std::nullopt);
 
     performPreLayoutForGridItems(algorithm, ShouldUpdateGridAreaLogicalSize::No);
 
@@ -911,12 +908,10 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
         // has to be the one taken before either of them placed anything.
         auto fitTolerance = resolveFitTolerance(*this, Style::GridTrackSizingDirection::Columns);
 
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST auto minContentLayout = GridLanesLayout { const_cast<RenderGrid&>(*this), gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns };
+        auto minContentLayout = GridLanesLayout { const_cast<RenderGrid&>(*this), gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns };
         minLogicalWidth = minContentLayout.performGridLanesPlacement(algorithm, fitTolerance, GridLanesLayout::Phase::MinContent).gridContentSize();
 
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST auto maxContentLayout = GridLanesLayout { const_cast<RenderGrid&>(*this), gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns };
+        auto maxContentLayout = GridLanesLayout { const_cast<RenderGrid&>(*this), gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns };
         maxLogicalWidth = maxContentLayout.performGridLanesPlacement(algorithm, fitTolerance, GridLanesLayout::Phase::MaxContent).gridContentSize();
     }
 

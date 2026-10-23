@@ -124,8 +124,7 @@ static bool shouldInvalidateLineLayoutAfterChangeFor(const RenderBlockFlow& root
             auto hasStrongDirectionalityContent = textRenderer->hasStrongDirectionalityContent();
             if (!hasStrongDirectionalityContent) {
                 hasStrongDirectionalityContent = Layout::TextUtil::containsStrongDirectionalityText(textRenderer->text());
-                // FIXME: Remove suppression once rdar://189998365 is fixed.
-                SUPPRESS_MEMORY_UNSAFE_CAST const_cast<RenderText*>(textRenderer)->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
+                const_cast<RenderText*>(textRenderer)->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
             }
             return *hasStrongDirectionalityContent;
         }

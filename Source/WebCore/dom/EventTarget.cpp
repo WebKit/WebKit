@@ -86,8 +86,7 @@ EventTarget::~EventTarget()
 
 WebCoreOpaqueRoot EventTarget::opaqueRoot() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return WebCoreOpaqueRoot { const_cast<EventTarget*>(this) };
+    return WebCoreOpaqueRoot { const_cast<EventTarget*>(this) };
 }
 
 bool EventTarget::isPaymentRequest() const

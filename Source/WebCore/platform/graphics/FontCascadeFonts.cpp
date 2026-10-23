@@ -380,8 +380,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(char32_t character, const
         return GlyphData();
 
     if (systemFallbackShouldBeInvisible) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST systemFallbackFont = const_cast<Font*>(&systemFallbackFont->invisibleFont());
+        systemFallbackFont = const_cast<Font*>(&systemFallbackFont->invisibleFont());
     }
 
     if (systemFallbackFont->platformData().orientation() == FontOrientation::Vertical && !systemFallbackFont->hasVerticalGlyphs() && FontCascade::isCJKIdeographOrSymbol(character))

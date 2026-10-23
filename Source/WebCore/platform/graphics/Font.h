@@ -88,8 +88,7 @@ public:
             break;
         }
         ASSERT_NOT_REACHED();
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Font*>(this);
+        return const_cast<Font*>(this);
     }
 
     bool variantCapsSupportedForSynthesis(FontVariantCaps) const;

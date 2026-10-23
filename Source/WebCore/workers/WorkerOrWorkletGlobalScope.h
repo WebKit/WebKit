@@ -107,8 +107,7 @@ private:
     void setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement) final;
 
     // EventTarget.
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    ScriptExecutionContext* scriptExecutionContext() const final { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<WorkerOrWorkletGlobalScope*>(this); }
+    ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerOrWorkletGlobalScope*>(this); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

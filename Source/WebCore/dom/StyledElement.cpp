@@ -328,8 +328,7 @@ const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
     if (!elementData())
         return nullptr;
     if (elementData()->presentationalHintStyleIsDirty()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<StyledElement&>(*this).rebuildPresentationalHintStyle();
+        const_cast<StyledElement&>(*this).rebuildPresentationalHintStyle();
     }
     return elementData()->presentationalHintStyle();
 }

@@ -237,8 +237,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const UsedStyle& usedSty
     if (rect.isEmpty() && !paintsBorderImage(rect, style.borderImage()))
         return;
 
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto rectToClipOut = const_cast<RenderElement&>(m_renderer.get()).paintRectToClipOutFromBorder(rect);
+    auto rectToClipOut = const_cast<RenderElement&>(m_renderer.get()).paintRectToClipOutFromBorder(rect);
     bool appliedClipAlready = !rectToClipOut.isEmpty();
     GraphicsContextStateSaver stateSave(graphicsContext, appliedClipAlready);
     if (!rectToClipOut.isEmpty())

@@ -605,8 +605,7 @@ String AccessibilityRenderObject::stringValue() const
 
         // As fallback, gather the static text under this.
         String value;
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST Accessibility::enumerateUnignoredDescendants(*const_cast<AccessibilityRenderObject*>(this), false, [&value](const auto& object) {
+        Accessibility::enumerateUnignoredDescendants(*const_cast<AccessibilityRenderObject*>(this), false, [&value](const auto& object) {
             if (object.isStaticText())
                 value = makeString(value, object.stringValue());
         });
@@ -632,8 +631,7 @@ bool AccessibilityRenderObject::canHavePlainText() const
 // within the parent page, otherwise they are in relative coordinates only.
 void AccessibilityRenderObject::offsetBoundingBoxForRemoteSVGElement(LayoutRect& rect) const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST for (RefPtr<AccessibilityObject> parent = const_cast<AccessibilityRenderObject*>(this); parent; parent = parent->parentObject()) {
+    for (RefPtr<AccessibilityObject> parent = const_cast<AccessibilityRenderObject*>(this); parent; parent = parent->parentObject()) {
         if (parent->isAccessibilitySVGRoot()) {
             rect.moveBy(parent->parentObject()->boundingBoxRect().location());
             break;
@@ -2329,8 +2327,7 @@ RefPtr<AccessibilityObject> AccessibilityRenderObject::elementAccessibilityHitTe
             LayoutRect parentRect = boundingBoxRect();
 
             RefPtr<AccessibilityObject> listBoxOption;
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST const auto& children = const_cast<AccessibilityRenderObject*>(this)->unignoredChildren();
+            const auto& children = const_cast<AccessibilityRenderObject*>(this)->unignoredChildren();
             unsigned length = children.size();
             for (unsigned i = 0; i < length; ++i) {
                 LayoutRect rect = renderListBox->itemBoundingBoxRect(parentRect.location(), i);

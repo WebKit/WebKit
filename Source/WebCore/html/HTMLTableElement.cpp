@@ -72,8 +72,7 @@ Ref<HTMLTableElement> HTMLTableElement::create(const QualifiedName& tagName, Doc
 
 RefPtr<HTMLTableCaptionElement> HTMLTableElement::caption() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return childrenOfType<HTMLTableCaptionElement>(const_cast<HTMLTableElement&>(*this)).first();
+    return childrenOfType<HTMLTableCaptionElement>(const_cast<HTMLTableElement&>(*this)).first();
 }
 
 ExceptionOr<void> HTMLTableElement::setCaption(RefPtr<HTMLTableCaptionElement>&& newCaption)
@@ -86,8 +85,7 @@ ExceptionOr<void> HTMLTableElement::setCaption(RefPtr<HTMLTableCaptionElement>&&
 
 RefPtr<HTMLTableSectionElement> HTMLTableElement::tHead() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST for (auto& child : childrenOfType<HTMLTableSectionElement>(const_cast<HTMLTableElement&>(*this))) {
+    for (auto& child : childrenOfType<HTMLTableSectionElement>(const_cast<HTMLTableElement&>(*this))) {
         if (child.hasTagName(theadTag))
             return child;
     }
@@ -114,8 +112,7 @@ ExceptionOr<void> HTMLTableElement::setTHead(RefPtr<HTMLTableSectionElement>&& n
 
 RefPtr<HTMLTableSectionElement> HTMLTableElement::tFoot() const
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST for (auto& child : childrenOfType<HTMLTableSectionElement>(const_cast<HTMLTableElement&>(*this))) {
+    for (auto& child : childrenOfType<HTMLTableSectionElement>(const_cast<HTMLTableElement&>(*this))) {
         if (child.hasTagName(tfootTag))
             return child;
     }

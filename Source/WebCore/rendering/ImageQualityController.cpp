@@ -124,8 +124,7 @@ std::optional<InterpolationQuality> ImageQualityController::interpolationQuality
 InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, const RenderElement& renderer, const IntSize& imageSize, const void* layer, const LayoutSize& size)
 {
     if (CheckedPtr boxModelObject = dynamicDowncast<RenderBoxModelObject>(renderer)) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return boxModelObject->view().imageQualityController().chooseInterpolationQuality(context, const_cast<RenderBoxModelObject&>(*boxModelObject), imageSize, layer, size);
+        return boxModelObject->view().imageQualityController().chooseInterpolationQuality(context, const_cast<RenderBoxModelObject&>(*boxModelObject), imageSize, layer, size);
     }
 
     if (context.paintingDisabled())

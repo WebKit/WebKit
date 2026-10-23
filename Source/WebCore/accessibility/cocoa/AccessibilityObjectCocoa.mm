@@ -224,8 +224,7 @@ RetainPtr<CTFontRef> AccessibilityObject::font() const
 FontOrientation AccessibilityObject::fontOrientation() const
 {
     if (CheckedPtr style = this->style()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Style::ComputedStyle*>(style.get())->fontAndGlyphOrientation().first;
+        return const_cast<Style::ComputedStyle*>(style.get())->fontAndGlyphOrientation().first;
     }
     return FontOrientation::Horizontal;
 }

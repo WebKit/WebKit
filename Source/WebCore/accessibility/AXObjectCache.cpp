@@ -2197,11 +2197,9 @@ void AXObjectCache::childrenChanged(AccessibilityObject* object)
 
     // Adding or removing rows from a table can cause it to change from layout table to AX data table and vice versa, so queue up recomputation of that for the parent table.
     if (RefPtr tableElement = dynamicDowncast<HTMLTableElement>(object->element())) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST deferRecomputeTableIsExposed(const_cast<HTMLTableElement*>(tableElement.get()));
+        deferRecomputeTableIsExposed(const_cast<HTMLTableElement*>(tableElement.get()));
     } else if (RefPtr tableSectionElement = dynamicDowncast<HTMLTableSectionElement>(object->element())) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST deferRecomputeTableIsExposed(const_cast<HTMLTableElement*>(tableSectionElement->findParentTable().get()));
+        deferRecomputeTableIsExposed(const_cast<HTMLTableElement*>(tableSectionElement->findParentTable().get()));
     }
 
     if (!m_performCacheUpdateTimer.isActive())
@@ -4572,8 +4570,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
             // do a cheap dynamicDowncast check for an HTMLTablePartElement rather than calling AccessibilityNodeObject::parentTable().
             // (ARIA tables are inherently always exposed).
             if (auto* tablePartElement = dynamicDowncast<HTMLTablePartElement>(element)) {
-                // FIXME: Remove suppression once rdar://189998365 is fixed.
-                SUPPRESS_MEMORY_UNSAFE_CAST deferRecomputeTableIsExposed(const_cast<HTMLTableElement*>(tablePartElement->findParentTable().get()));
+                deferRecomputeTableIsExposed(const_cast<HTMLTableElement*>(tablePartElement->findParentTable().get()));
             }
         } else if (RefPtr object = getOrCreate(element); object && object->isTableCell()) {
             if (RefPtr parentTable = dynamicDowncast<AccessibilityNodeObject>(object->parentTable())) {
@@ -5690,8 +5687,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
         }
         AX_ASSERT(domOffset >= differenceBetweenDomAndRenderedOffsets);
         unsigned renderedOffset = domOffset - differenceBetweenDomAndRenderedOffsets;
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return createFromRendererAndOffset(const_cast<RenderText&>(*renderText), renderedOffset);
+        return createFromRendererAndOffset(const_cast<RenderText&>(*renderText), renderedOffset);
     }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
@@ -6133,8 +6129,7 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
 
     auto boxAndOffset = makeContainerOffsetPosition(range->start).inlineBoxAndOffset(Affinity::Downstream);
     if (boxAndOffset.box) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST renderer = const_cast<RenderObject*>(&boxAndOffset.box->renderer());
+        renderer = const_cast<RenderObject*>(&boxAndOffset.box->renderer());
     }
 
     if (CheckedPtr renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer); renderLineBreak && InlineIterator::boxFor(*renderLineBreak) != boxAndOffset.box)

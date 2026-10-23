@@ -60,8 +60,7 @@ String CSSImportRule::href() const
 MediaList& CSSImportRule::media() const
 {
     if (!m_mediaCSSOMWrapper) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSImportRule*>(this));
+        m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSImportRule*>(this));
     }
     return *m_mediaCSSOMWrapper;
 }
@@ -134,8 +133,7 @@ CSSStyleSheet* CSSImportRule::styleSheet() const
         isOriginClean = cachedSheet->isCORSSameOrigin();
 
     if (!m_styleSheetCSSOMWrapper) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST m_styleSheetCSSOMWrapper = CSSStyleSheet::create(*m_importRule.get().styleSheet(), const_cast<CSSImportRule*>(this), isOriginClean);
+        m_styleSheetCSSOMWrapper = CSSStyleSheet::create(*m_importRule.get().styleSheet(), const_cast<CSSImportRule*>(this), isOriginClean);
     }
     return m_styleSheetCSSOMWrapper.get(); 
 }

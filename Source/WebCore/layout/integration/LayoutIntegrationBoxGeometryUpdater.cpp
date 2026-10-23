@@ -593,15 +593,13 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
 
             return rootWritingMode.prefersCentralBaseline() && !isWritingModeRoot ? marginBoxLogicalHeight / 2 : marginBoxLogicalHeight;
         };
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<Layout::ElementBox&>(*renderBox.layoutBox()).setBaselineForIntegration(baselinePosition());
+        const_cast<Layout::ElementBox&>(*renderBox.layoutBox()).setBaselineForIntegration(baselinePosition());
     }
 }
 
 void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto& layoutBox = const_cast<Layout::ElementBox&>(*renderBox.layoutBox());
+    auto& layoutBox = const_cast<Layout::ElementBox&>(*renderBox.layoutBox());
     auto& boxGeometry = layoutState().ensureGeometryForBox(layoutBox);
     auto writingMode = renderBox.parent()->writingMode();
 

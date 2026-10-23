@@ -1154,8 +1154,7 @@ RenderTableCol* RenderTable::firstColumn() const
 {
     for (auto& child : childrenOfType<RenderObject>(*this)) {
         if (auto* column = dynamicDowncast<RenderTableCol>(child)) {
-            // FIXME: Remove suppression once rdar://189998365 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderTableCol*>(column);
+            return const_cast<RenderTableCol*>(column);
         }
     }
     return nullptr;

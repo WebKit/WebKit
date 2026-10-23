@@ -263,8 +263,7 @@ ListBoxInterpretation AXCoreObject::listBoxInterpretation() const
         return ListBoxInterpretation::NotListBox;
 
     Deque<Ref<AXCoreObject>, /* inlineCapacity */ 100> queue;
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST for (Ref child : const_cast<AXCoreObject*>(this)->childrenIncludingIgnored())
+    for (Ref child : const_cast<AXCoreObject*>(this)->childrenIncludingIgnored())
         queue.append(WTF::move(child));
 
     unsigned iterations = 0;
@@ -1536,8 +1535,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::revealableContainers()
 bool AXCoreObject::containsOnlyStaticText() const
 {
     bool hasText = false;
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST RefPtr nonTextDescendant = Accessibility::findUnignoredDescendant(const_cast<AXCoreObject&>(*this), /* includeSelf */ false, [&](auto& descendant) {
+    RefPtr nonTextDescendant = Accessibility::findUnignoredDescendant(const_cast<AXCoreObject&>(*this), /* includeSelf */ false, [&](auto& descendant) {
         if (descendant.isGroup()) {
             // Skip through groups to keep looking for text.
             return false;

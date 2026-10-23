@@ -310,8 +310,7 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
         return nullptr;
 
     if (m_fragmentList.computeSize() == 1 && extendLastFragment) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
+        return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
     }
 
     auto clamp = [clampBox](RenderFragmentContainer* fragment)  {
@@ -319,8 +318,7 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
     };
 
     if (offset <= 0) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.first()));
+        return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.first()));
     }
 
     FragmentSearchAdapter adapter(offset);
@@ -331,8 +329,7 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
     // If no fragment was found, the offset is in the flow thread overflow.
     // The last fragment will contain the offset if extendLastFragment is set or if the last fragment is a set.
     if (extendLastFragment || m_fragmentList.last().isRenderFragmentContainerSet()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.last()));
+        return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.last()));
     }
 
     return nullptr;
@@ -514,16 +511,14 @@ RenderFragmentContainer* RenderFragmentedFlow::firstFragment() const
 {
     if (!hasFragments())
         return nullptr;
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
+    return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
 }
 
 RenderFragmentContainer* RenderFragmentedFlow::lastFragment() const
 {
     if (!hasFragments())
         return nullptr;
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderFragmentContainer*>(&m_fragmentList.last());
+    return const_cast<RenderFragmentContainer*>(&m_fragmentList.last());
 }
 
 void RenderFragmentedFlow::clearRenderBoxFragmentInfoAndCustomStyle(const RenderBox& box,
@@ -596,8 +591,7 @@ bool RenderFragmentedFlow::getFragmentRangeForBox(const RenderBox& box, RenderFr
         return false;
 
     if (m_fragmentList.computeSize() == 1) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST startFragment = endFragment = const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
+        startFragment = endFragment = const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
         return true;
     }
 

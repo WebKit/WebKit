@@ -40,8 +40,7 @@ inline DocumentMarkerController& Document::markers()
 inline const DocumentMarkerController& Document::markers() const
 {
     if (!m_markers) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Document&>(*this).ensureMarkers();
+        return const_cast<Document&>(*this).ensureMarkers();
     }
     return *m_markers;
 }

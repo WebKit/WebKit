@@ -303,8 +303,7 @@ CSSRule* CSSStyleRule::item(unsigned index) const
 
     auto& rule = m_childRuleCSSOMWrappers[index];
     if (!rule) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST rule = protect(nestedRules()[index])->createCSSOMWrapper(const_cast<CSSStyleRule&>(*this));
+        rule = protect(nestedRules()[index])->createCSSOMWrapper(const_cast<CSSStyleRule&>(*this));
     }
 
     return rule.get();
@@ -313,8 +312,7 @@ CSSRule* CSSStyleRule::item(unsigned index) const
 CSSRuleList& CSSStyleRule::cssRules() const
 {
     if (!m_ruleListCSSOMWrapper) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST lazyInitialize(m_ruleListCSSOMWrapper, makeUniqueWithoutRefCountedCheck<LiveCSSRuleList<CSSStyleRule>>(const_cast<CSSStyleRule&>(*this)));
+        lazyInitialize(m_ruleListCSSOMWrapper, makeUniqueWithoutRefCountedCheck<LiveCSSRuleList<CSSStyleRule>>(const_cast<CSSStyleRule&>(*this)));
     }
 
     return *m_ruleListCSSOMWrapper;

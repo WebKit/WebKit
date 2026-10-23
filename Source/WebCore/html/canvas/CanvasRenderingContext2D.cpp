@@ -107,8 +107,7 @@ std::optional<Style::Filter> CanvasRenderingContext2D::setFilterStringWithoutUpd
         return std::nullopt;
 
     auto parserContext = CSSParserContext(strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
-    // FIXME: Remove suppression once rdar://189998365 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return CSSPropertyParserHelpers::parseFilterValueListOrNoneRaw(filterString, parserContext, document, const_cast<Style::ComputedStyle&>(*style));
+    return CSSPropertyParserHelpers::parseFilterValueListOrNoneRaw(filterString, parserContext, document, const_cast<Style::ComputedStyle&>(*style));
 }
 
 RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) const
