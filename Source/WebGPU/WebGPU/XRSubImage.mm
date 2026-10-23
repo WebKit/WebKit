@@ -117,10 +117,15 @@ void XRSubImage::update(const XRProjectionLayer& projectionLayer)
     } else
         texture->updateCompletionEvent(sharedEvent);
 
+    if (!targetDepthStencilFormat) {
+        m_depthTextures.remove(currentTextureIndex);
+        return;
+    }
+
     if (texture = this->depthTexture(); !texture || texture->texture() != depthTexture) {
         auto depthFormat = Texture::textureFormat(depthTexture.pixelFormat);
-        if (targetDepthStencilFormat && targetDepthStencilFormat != depthFormat) {
-            depthFormat = targetDepthStencilFormat;
+        if (*targetDepthStencilFormat != depthFormat) {
+            depthFormat = *targetDepthStencilFormat;
             depthTexture = [depthTexture newTextureViewWithPixelFormat:Texture::pixelFormat(*depthFormat)];
         }
         if (!depthFormat)

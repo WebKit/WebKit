@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR_LAYERS) && ENABLE(WEBGPU)
 
 #include "GPUTexture.h"
+#include "GPUTextureFormat.h"
 #include "GPUTextureViewDescriptor.h"
 #include "XRSubImage.h"
 #include <WebCore/WebGPUCppAPI.h>
@@ -45,9 +46,9 @@ class IntRect;
 class XRGPUSubImage : public XRSubImage {
     WTF_MAKE_TZONE_ALLOCATED(XRGPUSubImage);
 public:
-    static Ref<XRGPUSubImage> create(Ref<::WebGPU::XRSubImage>&& backing, ::WebGPU::XREye eye, std::array<uint16_t, 2>&& physicalSize, WebCore::IntRect&& viewport, GPUDevice& device)
+    static Ref<XRGPUSubImage> create(Ref<::WebGPU::XRSubImage>&& backing, ::WebGPU::XREye eye, std::array<uint16_t, 2>&& physicalSize, WebCore::IntRect&& viewport, GPUDevice& device, std::optional<GPUTextureFormat> depthStencilFormat)
     {
-        return adoptRef(*new XRGPUSubImage(WTF::move(backing), eye, WTF::move(physicalSize), WTF::move(viewport), device));
+        return adoptRef(*new XRGPUSubImage(WTF::move(backing), eye, WTF::move(physicalSize), WTF::move(viewport), device, depthStencilFormat));
     }
 
     const WebXRViewport& viewport() const final;
@@ -57,7 +58,7 @@ public:
 
     const GPUTextureViewDescriptor& getViewDescriptor() const;
 private:
-    XRGPUSubImage(Ref<::WebGPU::XRSubImage>&&, ::WebGPU::XREye, std::array<uint16_t, 2>&&, WebCore::IntRect&&, GPUDevice&);
+    XRGPUSubImage(Ref<::WebGPU::XRSubImage>&&, ::WebGPU::XREye, std::array<uint16_t, 2>&&, WebCore::IntRect&&, GPUDevice&, std::optional<GPUTextureFormat>);
 
     bool isXRGPUSubImage() const final { return true; }
 
@@ -67,6 +68,7 @@ private:
     const Ref<WebXRViewport> m_viewport;
     const unsigned m_width;
     const unsigned m_height;
+    const std::optional<GPUTextureFormat> m_depthStencilFormat;
 };
 
 } // namespace WebCore
