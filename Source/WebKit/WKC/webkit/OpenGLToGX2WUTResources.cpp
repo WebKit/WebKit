@@ -260,12 +260,13 @@ bool prepareWUTProgramForDraw(WUTBufferResources& resources)
         // assuming there must be at least one enabled GL attribute.
         if (!buildWUTAttributeStreams(resources, *resources.vertexShader,
                 bindings.data(), bindings.size(), streams)) {
-            if (!streams.empty())
+            // Only accept a failed build as an empty-input shader when the
+            // linked interface is genuinely empty. Otherwise a bad/missing
+            // linked input could be mistaken for a valid zero-stream fetch
+            // shader whenever no GL attribute arrays happen to be enabled.
+            if (!streams.empty() || !resources.linkedAttributes.empty()
+                || resources.vertexShader->attribVarCount)
                 return false;
-            for (const auto& entry : resources.attributes) {
-                if (entry.second.enabled)
-                    return false;
-            }
         }
 
         const auto fetchType = GX2_FETCH_SHADER_TESSELLATION_NONE;
