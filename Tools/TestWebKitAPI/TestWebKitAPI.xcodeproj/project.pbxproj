@@ -661,6 +661,7 @@
 				"cocoa/AppKit+Extras.swift",
 				"cocoa/Bundle+Extras.swift",
 				cocoa/CocoaTypes.swift,
+				cocoa/ExternalDrag.swift,
 				"cocoa/Foundation+Extras.swift",
 				cocoa/HTTPServer.mm,
 				cocoa/HTTPServer/HTTPServer.swift,

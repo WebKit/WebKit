@@ -743,6 +743,7 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/AppKit+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/Bundle+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/CocoaTypes.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/ExternalDrag.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/Foundation+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServer/HTTPSProxyFramer.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServer/HTTPServer.swift
