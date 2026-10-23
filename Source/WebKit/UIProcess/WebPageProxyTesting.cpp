@@ -281,6 +281,22 @@ void WebPageProxyTesting::resetStateBetweenTests()
     protect(page->browsingContextGroup())->clearBrowsingContextGroupForTesting();
 }
 
+CompletionHandler<void(NavigationResponseProcessSwapResult&&)> WebPageProxyTesting::holdNavigationResponseProcessSwapReply(CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&& completionHandler)
+{
+    if (!m_navigationResponseProcessSwapReplyHandler)
+        return WTF::move(completionHandler);
+
+    return [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NavigationResponseProcessSwapResult&& result) mutable {
+        bool swapsProcess = std::holds_alternative<ProcessIdentifier>(result);
+        // The reply is sent once nothing holds it, even if the handler drops it without calling sendReply.
+        Ref reply = CallbackAggregator::create([completionHandler = WTF::move(completionHandler), result = WTF::move(result)] mutable {
+            completionHandler(WTF::move(result));
+        });
+        if (protectedThis->m_navigationResponseProcessSwapReplyHandler)
+            protectedThis->m_navigationResponseProcessSwapReplyHandler(swapsProcess, [reply = WTF::move(reply)] { });
+    };
+}
+
 void WebPageProxyTesting::clearBackForwardList(CompletionHandler<void()>&& completionHandler)
 {
     Ref page = m_page.get();

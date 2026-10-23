@@ -59,6 +59,7 @@ public struct Route: Sendable {
         let statusCode: Int
         let headerFields: [String: String]
         let response: String
+        var behavior: HTTPResponseData.Behavior = .sendResponseNormally
     }
 
     fileprivate let children: [Storage]
@@ -67,8 +68,22 @@ public struct Route: Sendable {
         self.children = children
     }
 
-    fileprivate init(path: String, statusCode: Int, headerFields: [String: String], response: String) {
-        self.children = [Storage(pathComponents: [path], statusCode: statusCode, headerFields: headerFields, response: response)]
+    fileprivate init(
+        path: String,
+        statusCode: Int,
+        headerFields: [String: String],
+        response: String,
+        behavior: HTTPResponseData.Behavior = .sendResponseNormally
+    ) {
+        self.children = [
+            Storage(
+                pathComponents: [path],
+                statusCode: statusCode,
+                headerFields: headerFields,
+                response: response,
+                behavior: behavior
+            )
+        ]
     }
 
     /// Creates a Route from a group of child Routes.
@@ -83,7 +98,8 @@ public struct Route: Sendable {
                     pathComponents: [path] + $0.pathComponents,
                     statusCode: $0.statusCode,
                     headerFields: $0.headerFields,
-                    response: $0.response
+                    response: $0.response,
+                    behavior: $0.behavior
                 )
             }
     }
@@ -97,6 +113,11 @@ public struct Route: Sendable {
     ///   - response: The response to be used.
     public init(_ path: String, statusCode: Int = 200, headerFields: [String: String] = [:], _ response: () -> String) {
         self.init(path: path, statusCode: statusCode, headerFields: headerFields, response: response())
+    }
+
+    /// Creates a Route whose response never finishes.
+    public init(unfinished path: String, headerFields: [String: String] = [:], _ response: () -> String) {
+        self.init(path: path, statusCode: 200, headerFields: headerFields, response: response(), behavior: .neverFinishResponse)
     }
 }
 
@@ -183,10 +204,16 @@ public struct HTTPServer: ~Copyable {
         let responses = route().children
             .reduce(into: [String: HTTPResponseData]()) { result, child in
                 let path = child.pathComponents.joined()
+                precondition(
+                    child.behavior != .neverFinishResponse || !`protocol`.usesHTTPMessaging,
+                    "\(path) has an unfinished response, which \(`protocol`) does not support"
+                )
+
                 let response = HTTPResponseData(
                     statusCode: UInt(child.statusCode),
                     headerFields: child.headerFields.map { (name: $0.key, value: $0.value) },
-                    body: Data(child.response.utf8)
+                    body: Data(child.response.utf8),
+                    behavior: child.behavior
                 )
 
                 result[path] = response
@@ -205,7 +232,7 @@ public struct HTTPServer: ~Copyable {
         _ body: (Configuration) async throws -> sending Result
     ) async throws -> sending Result {
         try await storage.startListening()
-        let result = try await body(Configuration(port: Int(storage.port), scheme: `protocol`.scheme))
+        let result = try await body(Configuration(port: Int(storage.port), scheme: `protocol`.scheme, storage: storage))
 
         await storage.cancel()
         return result
@@ -240,6 +267,13 @@ extension HTTPServer.`Protocol` {
         case .http, .https, .httpsWithLegacyTLS, .http2Raw, .httpsProxy, .httpsProxyWithAuthentication: false
         }
     }
+
+    fileprivate var usesHTTPMessaging: Bool {
+        switch self {
+        case .http2, .http3, .http2Proxy: true
+        case .http, .https, .httpsWithLegacyTLS, .http2Raw, .httpsProxy, .httpsProxyWithAuthentication: false
+        }
+    }
 }
 
 extension HTTPServerCore.`Protocol` {
@@ -266,6 +300,14 @@ extension HTTPServer {
         public let port: Int
 
         fileprivate let scheme: String
+
+        fileprivate let storage: HTTPServerCore
+
+        /// The number of connections the client closed while the server was sending an unfinished response.
+        @MainActor
+        public var closedUnfinishedResponseCount: Int {
+            storage.closedUnfinishedResponseCount
+        }
 
         // swift-format-ignore: NeverForceUnwrap
         /// The URL of the server, addressed by IP.
