@@ -1,9 +1,11 @@
 main frame - has 1 onunload handler(s)
-CONSOLE MESSAGE: Visited fragment and waited.
-PASS
+main frame - has 1 onunload handler(s)
+Tests that a fragment navigation started while a history traversal is in flight does not cancel the traversal. Per https://html.spec.whatwg.org/multipage/browsing-the-web.html#example-sync-navigation-steps-queue-jumping-basic, the fragment navigation adds a new entry and the traversal then completes, so we should end up back on this page with the fragment entry as forward history.
+
+PASS: The fragment navigation did not cancel the traversal.
 
 ============== Back Forward List ==============
-        http://127.0.0.1:8000/history/back-with-fragment-change.py
+curr->  http://127.0.0.1:8000/history/back-with-fragment-change.py
         http://127.0.0.1:8000/history/resources/back-with-fragment-change-target.html
-curr->  http://127.0.0.1:8000/history/resources/back-with-fragment-change-target.html#foo
+        http://127.0.0.1:8000/history/resources/back-with-fragment-change-target.html#foo
 ===============================================

@@ -1,25 +1,25 @@
 <script>
 onload = function() {
     setTimeout(function() {
-        // Start to go back (runs asynchonously)
+        // Start to go back (runs asynchronously). back-with-fragment-change.py loads slowly, so the
+        // traversal is still in flight when the fragment navigation below runs.
         history.back();
-        // But immediately cancel that load of a history item and navigate to
-        // a fragment on the page instead. We should remain on this page and
-        // a history item should be added (with past ones not being affected)
+        // The fragment navigation adds a history entry, but must not cancel the traversal.
         setTimeout(function(){window.location = '#foo'}, 0);
     }, 0);
 }
-  
+
 onhashchange = function() {
-    setTimeout(done, 100);
+    // If the traversal completes, this document is unloaded before the timer fires. Wait well past
+    // the 2 second load of back-with-fragment-change.py before concluding that it was canceled.
+    setTimeout(fail, 4000);
 }
 
-function done() {
+function fail() {
     delete sessionStorage.didNavigate;
-    console.log('Visited fragment and waited.');
-    if (window.testRunner) {
+    document.getElementById('result').textContent = 'FAIL: The fragment navigation canceled the traversal.';
+    if (window.testRunner)
         testRunner.notifyDone();
-    }
 }
 </script>
-PASS
+<p id="result"></p>

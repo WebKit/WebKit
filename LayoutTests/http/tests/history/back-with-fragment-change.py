@@ -3,10 +3,9 @@
 import sys
 import time
 
-# We intentionally want the page to load slowly (every time, hence no caching), 
+# We intentionally want the page to load slowly (every time, hence no caching),
 # so that when back-with-fragment-change-target.html calls history.back(), the
-# load is provisional for a while (long enough for the window.location = '#foo'
-# script to run and stop that load).
+# traversal is still in flight when the window.location = '#foo' script runs.
 
 time.sleep(2)
 
@@ -25,8 +24,8 @@ if (window.testRunner) {
 
 onload = function() {
     if (sessionStorage.didNavigate) {
-        console.log('Should not have ended up back at the test start page');
         delete sessionStorage.didNavigate;
+        document.getElementById('result').textContent = 'PASS: The fragment navigation did not cancel the traversal.';
         if (window.testRunner)
             testRunner.notifyDone();
         return;
@@ -43,7 +42,8 @@ onload = function() {
 onunload = function() { };
 </script>
 <p>
-Tests that a history navigation that is aborted by a fragment change doesn't
-update the provisional history item. This test relies on
-<code>testRunner.dumpBackForwardList</code> to verify correctness
-and thus can only be run via DumpRenderTree.</p>''')
+Tests that a fragment navigation started while a history traversal is in flight does not cancel
+the traversal. Per https://html.spec.whatwg.org/multipage/browsing-the-web.html#example-sync-navigation-steps-queue-jumping-basic,
+the fragment navigation adds a new entry and the traversal then completes, so we should end up back
+on this page with the fragment entry as forward history.</p>
+<p id="result"></p>''')
