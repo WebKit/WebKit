@@ -1579,6 +1579,15 @@ void GraphicsContextGLWKC::refreshFramebufferTarget()
         auto& fallback = attachments.fallbackDepth;
         if (!fallback.allocated || fallback.width != targetWidth || fallback.height != targetHeight
             || !fallback.depthSurfaceCreated || !fallback.hasDepth || !fallback.hasStencil) {
+            // The old fallback depth surface may still be referenced by GX2.
+            // Drain queued draws and unbind it before allocateRenderbufferStorage
+            // releases/replaces that allocation.
+            if (fallback.allocated) {
+                GX2DrawDone();
+                m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+                m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+                WKC::GLGX2::bindWUTRenderTarget(m_native);
+            }
             if (!allocateRenderbufferStorage(fallback, GL_DEPTH_STENCIL_VALUE, targetWidth, targetHeight)) {
                 addError(GL_OUT_OF_MEMORY_VALUE);
                 return;
