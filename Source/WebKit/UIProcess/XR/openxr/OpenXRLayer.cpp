@@ -31,7 +31,6 @@
 
 #include "OpenXRGraphicsBinding.h"
 #include <openxr/openxr.h>
-#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -109,6 +108,11 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRLayerProjection::startFram
 Vector<XrCompositionLayerBaseHeader*> OpenXRLayerProjection::endFrame(OpenXRGraphicsBinding& graphicsBinding, const PlatformXR::DeviceLayer& layer, XrSpace space, const Vector<XrView>& frameViews)
 {
     ASSERT(m_swapchain->acquiredTexture());
+
+    if (!m_exportedTextures.contains(m_swapchain->acquiredTexture())) {
+        m_swapchain->releaseImage();
+        return { };
+    }
 
     graphicsBinding.commitFrame(m_swapchain->acquiredTexture(), m_swapchain, OpenXRGraphicsBinding::TextureType::Texture2D, { m_swapchain->acquiredTexture() });
     auto viewCount = frameViews.size();
@@ -207,6 +211,11 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRQuadLayer::startFrame(Open
 Vector<XrCompositionLayerBaseHeader*> OpenXRQuadLayer::endFrame(OpenXRGraphicsBinding& graphicsBinding, const PlatformXR::DeviceLayer& layer, XrSpace space, const Vector<XrView>& frameViews)
 {
     ASSERT(m_swapchain->acquiredTexture());
+
+    if (!m_exportedTextures.contains(m_swapchain->acquiredTexture())) {
+        m_swapchain->releaseImage();
+        return { };
+    }
 
     graphicsBinding.commitFrame(m_swapchain->acquiredTexture(), m_swapchain, OpenXRGraphicsBinding::TextureType::Texture2D, { m_swapchain->acquiredTexture() });
 
@@ -332,6 +341,11 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXREquirectLayer::startFrame(
 Vector<XrCompositionLayerBaseHeader*> OpenXREquirectLayer::endFrame(OpenXRGraphicsBinding& graphicsBinding, const PlatformXR::DeviceLayer& layer, XrSpace space, const Vector<XrView>& frameViews)
 {
     ASSERT(m_swapchain->acquiredTexture());
+
+    if (!m_exportedTextures.contains(m_swapchain->acquiredTexture())) {
+        m_swapchain->releaseImage();
+        return { };
+    }
 
     graphicsBinding.commitFrame(m_swapchain->acquiredTexture(), m_swapchain, OpenXRGraphicsBinding::TextureType::Texture2D, { m_swapchain->acquiredTexture() });
 
@@ -460,6 +474,11 @@ Vector<XrCompositionLayerBaseHeader*> OpenXRCylinderLayer::endFrame(OpenXRGraphi
 {
     ASSERT(m_swapchain->acquiredTexture());
 
+    if (!m_exportedTextures.contains(m_swapchain->acquiredTexture())) {
+        m_swapchain->releaseImage();
+        return { };
+    }
+
     graphicsBinding.commitFrame(m_swapchain->acquiredTexture(), m_swapchain, OpenXRGraphicsBinding::TextureType::Texture2D, { m_swapchain->acquiredTexture() });
 
     auto eyeVisibility = [](bool isLeftEye, bool isMonoPresentation) {
@@ -544,12 +563,6 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRCubeLayer::startFrame(Open
     if (!texture)
         return std::nullopt;
 
-    auto releaseSwapchainImagesOnError = makeScopeExit([&] {
-        m_swapchain->releaseImage();
-        if (m_rightSwapchain)
-            m_rightSwapchain->releaseImage();
-    });
-
     if (m_rightSwapchain && !m_rightSwapchain->acquireImage())
         return std::nullopt;
 
@@ -564,10 +577,8 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRCubeLayer::startFrame(Open
         .depthStencilBuffer = { },
     };
 
-    if (!needsExport) {
-        releaseSwapchainImagesOnError.release();
+    if (!needsExport)
         return layerData;
-    }
 
     // The cube faces are laid out side by side (cubeCount * faceCount squares) in a single 2D buffer.
     uint32_t faceSize = m_swapchain->width();
@@ -585,13 +596,19 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRCubeLayer::startFrame(Open
         .foveationRateMapDesc = { }
     };
 
-    releaseSwapchainImagesOnError.release();
     return layerData;
 }
 
 Vector<XrCompositionLayerBaseHeader*> OpenXRCubeLayer::endFrame(OpenXRGraphicsBinding& graphicsBinding, const PlatformXR::DeviceLayer& layer, XrSpace space, const Vector<XrView>&)
 {
     ASSERT(m_swapchain->acquiredTexture());
+
+    if (!m_exportedTextures.contains(m_swapchain->acquiredTexture())) {
+        m_swapchain->releaseImage();
+        if (m_rightSwapchain)
+            m_rightSwapchain->releaseImage();
+        return { };
+    }
 
     Vector<uint64_t> cubeImages;
     cubeImages.reserveCapacity(cubeCount());
