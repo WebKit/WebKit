@@ -1,5 +1,8 @@
 #include "OpenGLToGX2Driver.h"
 
+#include <algorithm>
+#include <cmath>
+
 namespace WKC {
 namespace GLGX2 {
 
@@ -288,14 +291,18 @@ Result Driver::setStencilWriteMask(Face face, uint32_t mask)
 
 Result Driver::setBlendColor(const Color& color)
 {
-    if (!(color.red >= 0.0f && color.red <= 1.0f)
-        || !(color.green >= 0.0f && color.green <= 1.0f)
-        || !(color.blue >= 0.0f && color.blue <= 1.0f)
-        || !(color.alpha >= 0.0f && color.alpha <= 1.0f))
+    if (!std::isfinite(color.red) || !std::isfinite(color.green)
+        || !std::isfinite(color.blue) || !std::isfinite(color.alpha))
         return Result::InvalidArgument;
     if (!m_backend.setBlendColor)
         return Result::MissingBackend;
-    return m_backend.setBlendColor(m_backend.context, color)
+    const Color clamped {
+        std::clamp(color.red, 0.0f, 1.0f),
+        std::clamp(color.green, 0.0f, 1.0f),
+        std::clamp(color.blue, 0.0f, 1.0f),
+        std::clamp(color.alpha, 0.0f, 1.0f)
+    };
+    return m_backend.setBlendColor(m_backend.context, clamped)
         ? Result::Ok : Result::Unsupported;
 }
 
@@ -309,24 +316,28 @@ Result Driver::setColorMask(const ColorMask& mask)
 
 Result Driver::setClearColor(const Color& color)
 {
-    if (!(color.red >= 0.0f && color.red <= 1.0f)
-        || !(color.green >= 0.0f && color.green <= 1.0f)
-        || !(color.blue >= 0.0f && color.blue <= 1.0f)
-        || !(color.alpha >= 0.0f && color.alpha <= 1.0f))
+    if (!std::isfinite(color.red) || !std::isfinite(color.green)
+        || !std::isfinite(color.blue) || !std::isfinite(color.alpha))
         return Result::InvalidArgument;
     if (!m_backend.setClearColor)
         return Result::MissingBackend;
-    return m_backend.setClearColor(m_backend.context, color)
+    const Color clamped {
+        std::clamp(color.red, 0.0f, 1.0f),
+        std::clamp(color.green, 0.0f, 1.0f),
+        std::clamp(color.blue, 0.0f, 1.0f),
+        std::clamp(color.alpha, 0.0f, 1.0f)
+    };
+    return m_backend.setClearColor(m_backend.context, clamped)
         ? Result::Ok : Result::Unsupported;
 }
 
 Result Driver::setClearDepth(float depth)
 {
-    if (!(depth >= 0.0f && depth <= 1.0f))
+    if (!std::isfinite(depth))
         return Result::InvalidArgument;
     if (!m_backend.setClearDepth)
         return Result::MissingBackend;
-    return m_backend.setClearDepth(m_backend.context, depth)
+    return m_backend.setClearDepth(m_backend.context, std::clamp(depth, 0.0f, 1.0f))
         ? Result::Ok : Result::Unsupported;
 }
 
