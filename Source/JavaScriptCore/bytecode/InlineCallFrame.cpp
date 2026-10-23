@@ -127,12 +127,6 @@ void printInternal(PrintStream& out, JSC::InlineCallFrame::Kind kind)
     case JSC::InlineCallFrame::ProxyObjectInCall:
         out.print("ProxyObjectInCall");
         return;
-    case JSC::InlineCallFrame::BoundFunctionCall:
-        out.print("BoundFunctionCall");
-        return;
-    case JSC::InlineCallFrame::BoundFunctionTailCall:
-        out.print("BoundFunctionTailCall");
-        return;
     case JSC::InlineCallFrame::ArraySortComparatorCall:
         out.print("ArraySortComparatorCall");
         return;

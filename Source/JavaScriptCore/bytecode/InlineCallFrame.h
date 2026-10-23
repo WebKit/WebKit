@@ -61,8 +61,6 @@ struct InlineCallFrame {
         ProxyObjectLoadCall,
         ProxyObjectStoreCall,
         ProxyObjectInCall,
-        BoundFunctionCall,
-        BoundFunctionTailCall,
         ArraySortComparatorCall,
     };
     static constexpr unsigned bitWidthOfKind = 4;
@@ -77,12 +75,10 @@ struct InlineCallFrame {
         case ProxyObjectLoadCall:
         case ProxyObjectStoreCall:
         case ProxyObjectInCall:
-        case BoundFunctionCall:
         case ArraySortComparatorCall:
             return CallMode::Regular;
         case TailCall:
         case TailCallVarargs:
-        case BoundFunctionTailCall:
             return CallMode::Tail;
         case Construct:
         case ConstructVarargs:
@@ -129,8 +125,6 @@ struct InlineCallFrame {
         case ProxyObjectLoadCall:
         case ProxyObjectStoreCall:
         case ProxyObjectInCall:
-        case BoundFunctionCall:
-        case BoundFunctionTailCall:
         case ArraySortComparatorCall:
             return CodeSpecializationKind::CodeForCall;
         case Construct:
@@ -157,7 +151,6 @@ struct InlineCallFrame {
         switch (kind) {
         case TailCall:
         case TailCallVarargs:
-        case BoundFunctionTailCall:
             return true;
         default:
             return false;
