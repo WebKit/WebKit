@@ -65,8 +65,13 @@ bool createBuffer(void* context, BufferName name, size_t size, BufferUsage)
     }
 
     try {
-        resources.buffers.emplace(name, buffer);
-    } catch (const std::bad_alloc&) {
+        const auto insertion = resources.buffers.emplace(name, buffer);
+        if (!insertion.second) {
+            GX2RDestroyBufferEx(buffer, buffer->flags);
+            delete buffer;
+            return false;
+        }
+    } catch (...) {
         GX2RDestroyBufferEx(buffer, buffer->flags);
         delete buffer;
         return false;
