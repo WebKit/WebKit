@@ -46,28 +46,4 @@ extension Task where Failure == Never {
     }
 }
 
-extension Result {
-    /// The standard library's `init(catching:)` for an asynchronous closure, which it doesn't provide.
-    ///
-    /// Like the synchronous one, this captures the value `body` returns as a success, or the error it throws as a
-    /// failure.
-    ///
-    /// A closure's thrown type is `any Error` unless it says otherwise, so to get a typed failure, state it:
-    ///
-    /// ```swift
-    /// let result = await Result { () async throws(SomeError) in
-    ///     try await somethingThatThrows()
-    /// }
-    /// ```
-    ///
-    /// - Parameter body: The closure to run, on the caller's isolation.
-    nonisolated(nonsending) init(catching body: nonisolated(nonsending) () async throws(Failure) -> Success) async {
-        do throws(Failure) {
-            self = .success(try await body())
-        } catch {
-            self = .failure(error)
-        }
-    }
-}
-
 #endif // compiler(>=6.2.3)

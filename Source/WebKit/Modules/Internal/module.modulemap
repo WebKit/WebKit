@@ -339,12 +339,6 @@ module WebKit_Internal [system] {
         requires objc
     }
 
-    module PhoneNumberPossessionTypes {
-        requires cplusplus20
-        header "../../UIProcess/PhoneNumberPossession/Cocoa/PhoneNumberPossessionTypes.h"
-        export *
-    }
-
     module UIWindowScene_Extras {
         header "../../UIProcess/Cocoa/UIWindowScene+Extras.h"
         export *
