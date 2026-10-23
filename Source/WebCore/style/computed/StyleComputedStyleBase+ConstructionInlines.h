@@ -80,6 +80,8 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.useTreeCountingFunctions = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
     m_nonInheritedFlags.disallowsFastPathInheritance = false;
+    m_nonInheritedFlags.hasZeroEffectiveBorderWidths = true;
+    m_nonInheritedFlags.hasZeroPadding = true;
     m_nonInheritedFlags.firstChildState = false;
     m_nonInheritedFlags.lastChildState = false;
     m_nonInheritedFlags.isLink = false;
@@ -131,6 +133,8 @@ inline void ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom(const Non
     useTreeCountingFunctions = other.useTreeCountingFunctions;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
     disallowsFastPathInheritance = other.disallowsFastPathInheritance;
+    hasZeroEffectiveBorderWidths = other.hasZeroEffectiveBorderWidths;
+    hasZeroPadding = other.hasZeroPadding;
 }
 
 } // namespace Style

@@ -138,6 +138,7 @@ inline TransformStyle3D ComputedStyle::usedTransformStyle3D() const
     return transformStyleForcedToFlat() ? TransformStyle3D::Flat : transformStyle3D();
 }
 
+// The setters of everything read here update ComputedStyle::hasZeroEffectiveBorderWidths().
 template<BoxSide side> struct UsedBorderWidthsAccessor {
     static Style::LineWidth get(const BorderData& data)
     {

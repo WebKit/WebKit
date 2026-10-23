@@ -344,6 +344,16 @@ inline bool ComputedStyleBase::useSVGZoomRulesForLength() const
     return m_nonInheritedFlags.useSVGZoomRulesForLength;
 }
 
+inline bool ComputedStyleBase::hasZeroEffectiveBorderWidths() const
+{
+    return m_nonInheritedFlags.hasZeroEffectiveBorderWidths;
+}
+
+inline bool ComputedStyleBase::hasZeroPadding() const
+{
+    return m_nonInheritedFlags.hasZeroPadding;
+}
+
 inline float ComputedStyleBase::usedZoom() const
 {
     return m_inheritedRareData->usedZoom;

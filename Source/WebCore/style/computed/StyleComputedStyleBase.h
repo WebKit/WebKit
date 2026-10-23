@@ -641,6 +641,11 @@ public:
     // MARK: - Zoom
 
     inline bool useSVGZoomRulesForLength() const;
+
+    // All effective border widths are zero, or all padding edges are known zeros. These hold for any zoom
+    // and device scale factor, so UsedStyle can skip evaluating them.
+    inline bool hasZeroEffectiveBorderWidths() const;
+    inline bool hasZeroPadding() const;
     inline void setUseSVGZoomRulesForLength(bool);
 
     inline float usedZoom() const;
@@ -804,6 +809,8 @@ public:
         PREFERRED_TYPE(bool) unsigned useTreeCountingFunctions : 1;
         PREFERRED_TYPE(bool) unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
         PREFERRED_TYPE(bool) unsigned disallowsFastPathInheritance : 1;
+        PREFERRED_TYPE(bool) unsigned hasZeroEffectiveBorderWidths : 1; // Maintained by the border setters.
+        PREFERRED_TYPE(bool) unsigned hasZeroPadding : 1; // Maintained by the padding setters.
 
         // Non-property related state bits. These do not get copied by copyNonInheritedFrom().
         PREFERRED_TYPE(bool) unsigned firstChildState : 1;
@@ -867,6 +874,9 @@ public:
     };
 
 protected:
+    void updateHasZeroEffectiveBorderWidths();
+    void updateHasZeroPadding();
+
     friend class Adjuster;
     friend class ChangedAnimatablePropertiesFunctions;
     friend class DifferenceFunctions;
