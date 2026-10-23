@@ -12,6 +12,11 @@
             "behaviors": [{ "id": "ShouldEnableLegacyGetUserMediaQuirk" }]
         },
         {
+            "bugs": ["rdar://190768633"],
+            "matches": ["*://*.affirm.com/*"],
+            "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
+        },
+        {
             "bugs": ["https://webkit.org/b/317375"],
             "matches": ["*://*.airindiaexpress.com/*"],
             "behaviors": [{ "id": "NeedsAirIndiaExpressLayeringQuirk" }]

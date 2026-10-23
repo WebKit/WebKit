@@ -10,6 +10,8 @@ https://www.365scores.com/
     ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting
 https://actesting.org/
     ShouldEnableLegacyGetUserMediaQuirk
+https://www.affirm.com/
+    (none)
 https://www.airindiaexpress.com/
     NeedsAirIndiaExpressLayeringQuirk
 https://www.amazon.com/
