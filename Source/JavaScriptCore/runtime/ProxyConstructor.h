@@ -49,4 +49,8 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ProxyConstructor, InternalFunction);
 
+JSC_DECLARE_HOST_FUNCTION(proxyRevoke);
+
+Structure* createProxyRevocableResultStructure(VM&, JSGlobalObject&);
+
 } // namespace JSC

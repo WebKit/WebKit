@@ -1039,7 +1039,6 @@ runtime/PropertySlot.cpp
 runtime/PropertyTable.cpp
 runtime/ProxyConstructor.cpp
 runtime/ProxyObject.cpp
-runtime/ProxyRevoke.cpp
 runtime/RandomizingFuzzerAgent.cpp
 runtime/ReflectObject.cpp
 runtime/RegExp.cpp

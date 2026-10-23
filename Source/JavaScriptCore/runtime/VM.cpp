@@ -117,6 +117,7 @@
 #include "ProgramExecutableInlines.h"
 #include "PropertyInlineCache.h"
 #include "PropertyTableInlines.h"
+#include "ProxyConstructor.h"
 #include "RandomizingFuzzerAgent.h"
 #include "RegExpCache.h"
 #include "RegExpInlines.h"
@@ -1758,6 +1759,14 @@ NativeExecutable* VM::promiseAnySlowRejectFunctionExecutableSlow()
     return executable;
 }
 
+NativeExecutable* VM::proxyRevokeExecutableSlow()
+{
+    ASSERT(!m_proxyRevokeExecutable);
+    auto* executable = getHostFunction(proxyRevoke, ImplementationVisibility::Public, callHostFunctionAsConstructor, 0, emptyString());
+    m_proxyRevokeExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
 bool VM::hasLanguageChange()
 {
     return m_intlCache->hasLanguageChange();
@@ -2007,6 +2016,7 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(m_promiseAllSettledSlowRejectFunctionExecutable);
     visitor.append(m_promiseAnyRejectFunctionExecutable);
     visitor.append(m_promiseAnySlowRejectFunctionExecutable);
+    visitor.append(m_proxyRevokeExecutable);
 }
 DEFINE_VISIT_AGGREGATE(VM);
 
