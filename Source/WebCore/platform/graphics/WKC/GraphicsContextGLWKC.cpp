@@ -1870,6 +1870,8 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
         for (uint32_t level = 0; level < texture.levels.size(); ++level) {
             if (!uploadTextureLevel(texture, level)) {
                 releaseTextureStorage(texture);
+                // Invalidate cached framebuffer views of the destroyed surface.
+                refreshFramebufferTextureViews();
                 return false;
             }
         }
