@@ -966,46 +966,6 @@ void HTMLSelectElement::updateListItemSelectedStates(AllowStyleInvalidation allo
         recalcListItems(true, allowStyleInvalidation);
 }
 
-CompletionHandlerCallingScope HTMLSelectElement::optionToSelectFromChildChangeScope(const ContainerNode::ChildChange& change)
-{
-    if (multiple())
-        return { };
-
-    auto getLastSelectedOption = [](HTMLOptGroupElement& optGroup) -> HTMLOptionElement* {
-        for (auto* option = Traversal<HTMLOptionElement>::lastChild(optGroup); option; option = Traversal<HTMLOptionElement>::previousSibling(*option)) {
-            if (option->selectedWithoutUpdate())
-                return option;
-        }
-        return nullptr;
-    };
-
-    RefPtr<HTMLOptionElement> optionToSelect;
-    if (change.type == ChildChange::Type::ElementInserted || change.type == ChildChange::Type::ElementAndTextInserted || change.type == ChildChange::Type::ElementMovedInto) {
-        auto handleInsertedElement = [&](Element& insertedElement) {
-            if (auto* option = dynamicDowncast<HTMLOptionElement>(insertedElement)) {
-                if (option->selectedWithoutUpdate())
-                    optionToSelect = option;
-            } else if (auto* optGroup = dynamicDowncast<HTMLOptGroupElement>(insertedElement))
-                optionToSelect = getLastSelectedOption(*optGroup);
-        };
-        if (RefPtr element = change.siblingChanged)
-            handleInsertedElement(*element);
-        else if (change.insertedChildren) {
-            for (auto& child : *change.insertedChildren) {
-                if (RefPtr element = dynamicDowncast<Element>(child))
-                    handleInsertedElement(*element);
-            }
-        }
-    }
-
-    return CompletionHandlerCallingScope { [optionToSelect = WTF::move(optionToSelect), isInsertion = change.isInsertion(), select = Ref { *this }] {
-        if (optionToSelect)
-            select->selectOption(optionToSelect->index(), SelectOptionFlag::SkipSelectedContentUpdate);
-        else if (isInsertion)
-            select->scrollToSelection();
-    } };
-}
-
 // FIXME: we should really make this disappear, but https://github.com/whatwg/html/issues/11825
 // needs to be resolved. It might not be possible without a risky behavioral change.
 void HTMLSelectElement::childrenChanged(const ChildChange& change)
@@ -1017,15 +977,25 @@ void HTMLSelectElement::childrenChanged(const ChildChange& change)
         return;
     }
 
-    auto selectOptionIfNecessaryScope = optionToSelectFromChildChangeScope(change);
-
     setRecalcListItems();
     updateValidity();
     m_lastOnChangeSelection.clear();
 
     HTMLFormControlElement::childrenChanged(change);
 
+    // Changes made while cloning skip descendantsChanged().
+    if (change.source == ChildChange::Source::Clone)
+        selectAddedOption();
+
     invalidateButtonText();
+
+    if (!multiple() && change.isInsertion())
+        scrollToSelection();
+}
+
+void HTMLSelectElement::descendantsChanged()
+{
+    selectAddedOption();
 }
 
 // Select the given option as the default if no option is explicitly selected.
@@ -1057,6 +1027,18 @@ void HTMLSelectElement::selectDefaultOptionIfNeeded(HTMLOptionElement& candidate
         if (!protect(*it)->isDisabledFormControl())
             return;
     }
+}
+
+void HTMLSelectElement::selectedOptionAdded(HTMLOptionElement& option)
+{
+    if (!m_multiple)
+        m_addedSelectedOption = option;
+}
+
+void HTMLSelectElement::selectAddedOption()
+{
+    if (RefPtr option = std::exchange(m_addedSelectedOption, nullptr); option && option->ownerSelectElement() == this)
+        selectOption(option->index(), SelectOptionFlag::SkipSelectedContentUpdate);
 }
 
 auto HTMLSelectElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> NeedsPostConnectionSteps

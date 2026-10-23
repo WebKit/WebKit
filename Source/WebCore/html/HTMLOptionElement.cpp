@@ -171,10 +171,12 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
             // default. This maintains m_isSelected incrementally so that
             // finishParsingChildren() can use selectedWithoutUpdate() (O(1))
             // instead of selected() which triggers O(n) recalcListItems().
-            // Only do this during parsing — for API insertions, the existing
-            // childrenChanged → optionToSelectFromChildChangeScope path handles it.
+            // Only do this during parsing — for API insertions, recalcListItems()
+            // handles it.
             if (!select->isFinishedParsingChildren() && !selectedWithoutUpdate() && !isDisabledFormControl())
                 select->selectDefaultOptionIfNeeded(*this);
+            if (selectedWithoutUpdate() && parentOfInsertedTree.isInclusiveDescendantOf(*select))
+                select->selectedOptionAdded(*this);
         }
     }
 
@@ -249,8 +251,11 @@ void HTMLOptionElement::movingSteps(MovingType movingType, ContainerNode& oldPar
         if (newSelect) {
             newSelect->setRecalcListItems();
             newSelect->invalidateButtonText();
-            if (newSelect->multiple() && oldParent.isInclusiveDescendantOf(*newSelect))
-                newSelect->queueSelectedContentUpdate(*this);
+            if (newSelect->multiple()) {
+                if (oldParent.isInclusiveDescendantOf(*newSelect))
+                    newSelect->queueSelectedContentUpdate(*this);
+            } else if (selectedWithoutUpdate() && oldParent.isInclusiveDescendantOf(*newSelect))
+                newSelect->selectedOptionAdded(*this);
         }
         return;
     }
@@ -266,6 +271,8 @@ void HTMLOptionElement::movingSteps(MovingType movingType, ContainerNode& oldPar
     if (newSelect) {
         newSelect->setRecalcListItems();
         newSelect->invalidateButtonText();
+        if (selectedWithoutUpdate())
+            newSelect->selectedOptionAdded(*this);
         newSelect->queueSelectedContentUpdate(*this);
     }
 
@@ -291,7 +298,7 @@ void HTMLOptionElement::finishParsingChildren()
     // instead of selected() to avoid triggering recalcListItems() for each
     // option, which would be O(n²). The selection state (m_isSelected) is
     // maintained incrementally at insertion time — see insertionSteps() and
-    // optionToSelectFromChildChangeScope().
+    // HTMLSelectElement::selectedOptionAdded().
     bool isSelected = select->isFinishedParsingChildren() ? selected() : selectedWithoutUpdate();
     if (!isSelected)
         return;
