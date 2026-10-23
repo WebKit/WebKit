@@ -836,9 +836,13 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncImportModule, (JSGlobalObject* globalObject, 
     return JSValue::encode(importPromise);
 }
 
-static bool LEGACY_NODELETE canPerformFastPropertyEnumerationForCopyDataProperties(Structure* structure)
+static bool LEGACY_NODELETE canPerformFastPropertyEnumerationForCopyDataProperties(VM& vm, JSObject* source)
 {
-    if (!structure->canPerformFastPropertyEnumerationCommon())
+    Structure* structure = source->structure();
+    if (auto* function = dynamicDowncast<JSFunction>(source)) {
+        if (!function->canPerformFastEnumerablePropertyEnumeration(vm))
+            return false;
+    } else if (!structure->canPerformFastPropertyEnumerationCommon())
         return false;
     // FIXME: Indexed properties can be handled.
     // https://bugs.webkit.org/show_bug.cgi?id=185358
@@ -908,8 +912,8 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
     }
 
     auto sourceStructure = source->structure();
-    if (canPerformFastPropertyEnumerationForCopyDataProperties(sourceStructure)) [[likely]] {
-        if ((!excludedSet || excludedSet->isEmpty()) && objectCloneFast(vm, target, source))
+    if (canPerformFastPropertyEnumerationForCopyDataProperties(vm, source)) [[likely]] {
+        if ((!excludedSet || excludedSet->isEmpty()) && sourceStructure->typeInfo().type() == FinalObjectType && objectCloneFast(vm, target, source))
             return JSValue::encode(target);
 
         EnsureStillAliveScope sourceStructureScope(sourceStructure);
@@ -1009,7 +1013,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCloneObject, (JSGlobalObject* globalObject, C
     JSObject* target = constructEmptyObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (canPerformFastPropertyEnumerationForCopyDataProperties(sourceStructure)) [[likely]] {
+    if (canPerformFastPropertyEnumerationForCopyDataProperties(vm, source)) [[likely]] {
         EnsureStillAliveScope sourceStructureScope(sourceStructure);
         Vector<UniquedStringImpl*, 8> properties; // sourceStructure ensures the lifetimes of these strings.
         MarkedArgumentBuffer values;

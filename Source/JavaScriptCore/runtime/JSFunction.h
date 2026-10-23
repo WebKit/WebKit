@@ -178,6 +178,8 @@ public:
 
     bool mayHaveNonReifiedPrototype();
 
+    bool canPerformFastEnumerablePropertyEnumeration(VM&);
+
     // This method may be called for host functions, in which case it
     // will return an arbitrary value. This should only be used for
     // optimized paths in which the return value does not matter for

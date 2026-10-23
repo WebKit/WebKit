@@ -229,6 +229,20 @@ inline bool JSFunction::mayHaveNonReifiedPrototype()
     return !isHostOrBuiltinFunction() && jsExecutable()->hasPrototypeProperty();
 }
 
+inline bool JSFunction::canPerformFastEnumerablePropertyEnumeration(VM& vm)
+{
+    if (!canAssumeNameAndLengthAreOriginal(vm))
+        return false;
+    Structure* structure = this->structure();
+    if (structure->hasAnyKindOfGetterSetterProperties())
+        return false;
+    if (structure->isUncacheableDictionary())
+        return false;
+    if (structure->hasUnderscoreProtoPropertyExcludingOriginalProto())
+        return false;
+    return true;
+}
+
 inline bool JSFunction::canUseAllocationProfiles()
 {
     if (isHostOrBuiltinFunction()) {
