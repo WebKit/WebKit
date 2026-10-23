@@ -96,10 +96,10 @@ std::pair<LayoutUnit, LayoutUnit> BlockLayout::computeIntrinsicInlineSizes(const
     return { sizes.minimum, sizes.maximum };
 }
 
-void BlockLayout::layoutOutOfFlowBoxes()
+void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock)
 {
     auto paintInvalidation = PaintInvalidation { };
-    layoutOutOfFlowBoxes(rootRenderer(), paintInvalidation);
+    layoutOutOfFlowBoxes(containingBlock, paintInvalidation);
 }
 
 // The static position the in-flow layout of its parent gave the box (RenderLayer::staticInlinePosition, staticBlockPosition), relative to the
