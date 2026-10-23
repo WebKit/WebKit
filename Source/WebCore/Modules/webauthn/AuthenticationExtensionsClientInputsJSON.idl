@@ -52,4 +52,5 @@
     boolean credProps;
     AuthenticationExtensionsLargeBlobInputsJSON largeBlob;
     AuthenticationExtensionsPRFInputsJSON prf;
+    [EnabledBySetting=WebAuthenticationCrossDeviceFallbackURLEnabled, ImplementedAs=crossDeviceFallbackURL] DOMString crossDeviceFallbackUrl;
 };

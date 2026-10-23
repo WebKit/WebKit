@@ -258,6 +258,7 @@ static ExceptionOr<AuthenticationExtensionsClientInputs> fromJSON(Authentication
         .credProps = WTF::move(credProps),
         .largeBlob = WTF::move(largeBlob),
         .prf = WTF::move(prf),
+        .crossDeviceFallbackURL = WTF::move(jsonInputs.crossDeviceFallbackURL),
     };
 }
 

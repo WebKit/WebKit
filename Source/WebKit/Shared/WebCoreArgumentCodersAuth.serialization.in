@@ -45,7 +45,11 @@
     RefPtr<JSC::ArrayBuffer> userHandle;
 };
 
-using WebCore::AuthenticatorResponseDataSerializableForm = Variant<std::nullptr_t, WebCore::AuthenticatorResponseBaseData, WebCore::AuthenticatorAttestationResponseData, WebCore::AuthenticatorAssertionResponseData>;
+[CustomHeader] struct WebCore::AuthenticatorOperationErrorData {
+    WebCore::WebAuthnOperationErrorCode operationError;
+};
+
+using WebCore::AuthenticatorResponseDataSerializableForm = Variant<std::nullptr_t, WebCore::AuthenticatorResponseBaseData, WebCore::AuthenticatorAttestationResponseData, WebCore::AuthenticatorAssertionResponseData, WebCore::AuthenticatorOperationErrorData>;
 
 struct WebCore::AuthenticatorResponseData {
     WebCore::AuthenticatorResponseDataSerializableForm getSerializableForm();
@@ -72,6 +76,7 @@ struct WebCore::AuthenticatorResponseData {
     std::optional<bool> credProps;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::PRFInputs> prf;
+    String crossDeviceFallbackURL;
 }
 
 struct WebCore::CredentialPropertiesOutput {
@@ -186,6 +191,10 @@ enum class WebCore::ResidentKeyRequirement : uint8_t {
 enum class WebCore::AuthenticatorAttachment : uint8_t {
     Platform,
     CrossPlatform
+};
+
+enum class WebCore::WebAuthnOperationErrorCode : uint8_t {
+    CrossDeviceFallback,
 };
 
 #endif // ENABLE(WEB_AUTHN)

@@ -48,6 +48,9 @@ std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClie
     it = decodedMap.find(cbor::CBORValue("credProps"));
     if (it != decodedMap.end() && it->second.isBool())
         clientInputs.credProps = it->second.getBool();
+    it = decodedMap.find(cbor::CBORValue("crossDeviceFallbackUrl"));
+    if (it != decodedMap.end() && it->second.isString())
+        clientInputs.crossDeviceFallbackURL = it->second.getString();
     it = decodedMap.find(cbor::CBORValue("largeBlob"));
     if (it != decodedMap.end() && it->second.isMap()) {
         const auto& largeBlobMap = it->second.getMap();
@@ -78,6 +81,8 @@ Vector<uint8_t> AuthenticationExtensionsClientInputs::toCBOR() const
         clientInputsMap[cbor::CBORValue("appid")] = cbor::CBORValue(appid);
     if (credProps)
         clientInputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(*credProps);
+    if (!crossDeviceFallbackURL.isEmpty())
+        clientInputsMap[cbor::CBORValue("crossDeviceFallbackUrl")] = cbor::CBORValue(crossDeviceFallbackURL);
     if (largeBlob) {
         cbor::CBORValue::MapValue largeBlobMap;
         if (!largeBlob->support.isNull())

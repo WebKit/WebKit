@@ -76,7 +76,7 @@ public:
 
     // The following methods implement static methods of PublicKeyCredential.
     void create(const Document&, CredentialCreationOptions&&, RefPtr<AbortSignal>&&, CredentialPromise&&);
-    void discoverFromExternalSource(const Document&, CredentialRequestOptions&&, CredentialPromise&&);
+    void discoverFromExternalSource(Document&, CredentialRequestOptions&&, CredentialPromise&&);
     void isUserVerifyingPlatformAuthenticatorAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&) const;
     void isConditionalMediationAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&) const;
 

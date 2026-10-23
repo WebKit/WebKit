@@ -71,6 +71,10 @@
 #include "JSOverconstrainedError.h"
 #endif
 
+#if ENABLE(WEB_AUTHN)
+#include "JSWebAuthnOperationException.h"
+#endif
+
 #if ENABLE(WEB_RTC)
 #include "JSRTCError.h"
 #endif
@@ -109,6 +113,9 @@ JSHeapData::JSHeapData(Heap& heap)
 #endif
     , m_heapCellTypeForJSGPUPipelineError(JSC::IsoHeapCellType::Args<JSGPUPipelineError>())
     , m_heapCellTypeForJSWebTransportError(JSC::IsoHeapCellType::Args<JSWebTransportError>())
+#if ENABLE(WEB_AUTHN)
+    , m_heapCellTypeForJSWebAuthnOperationException(JSC::IsoHeapCellType::Args<JSWebAuthnOperationException>())
+#endif
     , m_domBuiltinConstructorSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMBuiltinConstructorBase)
     , m_domConstructorSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMConstructorBase)
     , m_domNamespaceObjectSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMObject)

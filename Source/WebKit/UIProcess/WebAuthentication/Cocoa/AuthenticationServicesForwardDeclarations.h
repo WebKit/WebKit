@@ -442,6 +442,9 @@ typedef NS_ERROR_ENUM(ASAuthorizationErrorDomain, ASAuthorizationError) {
     ASAuthorizationErrorFailed = 1004,
     ASAuthorizationErrorNotInteractive = 1005,
     ASAuthorizationErrorMatchedExcludedCredential = 1006,
+#if HAVE(CROSS_DEVICE_FALLBACK_URL_API)
+    ASAuthorizationErrorCrossDeviceFallback = 1011,
+#endif
 };
 
 #if HAVE(WEB_AUTHN_PUBLIC_KEY_CREDENTIAL_MANAGER)
