@@ -220,10 +220,10 @@ void RemoteImageBufferSet::dynamicContentScalingDisplayList(CompletionHandler<vo
     completionHandler({ WTF::move(displayList) });
 }
 
-DynamicContentScalingResourceCache RemoteImageBufferSet::ensureDynamicContentScalingResourceCache()
+WebCore::DynamicContentScalingResourceCache RemoteImageBufferSet::ensureDynamicContentScalingResourceCache()
 {
     if (!m_dynamicContentScalingResourceCache)
-        m_dynamicContentScalingResourceCache = DynamicContentScalingResourceCache::create();
+        m_dynamicContentScalingResourceCache = WebCore::DynamicContentScalingResourceCache::create();
     return m_dynamicContentScalingResourceCache;
 }
 #endif
