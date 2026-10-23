@@ -443,6 +443,37 @@ TEST(WebKit, PromptRealityTopLevelNavigation)
     });
 }
 
+TEST(WebKit, NoPromptRealityTopLevelNavigationWithoutPresentingViewController)
+{
+    bool qlItemCreated = false;
+    bool alertPresented = false;
+
+    auto swizzledQLItemBlock = makeBlockPtr([&](id self, SEL _cmd, id dataProvider, id contentType, id previewTitle) {
+        qlItemCreated = true;
+        return nil;
+    });
+
+    InstanceMethodSwizzler qlItemSwizzler { PAL::getQLItemClassSingleton(), @selector(initWithDataProvider:contentType:previewTitle:), imp_implementationWithBlock(swizzledQLItemBlock.get()) };
+
+    auto swizzledPresentBlock = makeBlockPtr([&](id self, UIViewController *controllerToPresent, BOOL animated, void (^completion)()) {
+        alertPresented = true;
+    });
+
+    InstanceMethodSwizzler presentSwizzler { [UIViewController class], @selector(presentViewController:animated:completion:), imp_implementationWithBlock(swizzledPresentBlock.get()) };
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setSystemPreviewEnabled:YES];
+
+    // No UI delegate, so there is no presenting view controller to show the confirmation alert, as in a peek.
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+
+    RetainPtr realityURL = [NSBundle.test_resourcesBundle URLForResource:@"hab" withExtension:@"reality"];
+    [webView loadRequest:[NSURLRequest requestWithURL:realityURL.get()]];
+
+    TestWebKitAPI::Util::run(&qlItemCreated);
+    EXPECT_FALSE(alertPresented);
+}
+
 TEST(WebKit, PromptUSDZLinkWithoutRelAR)
 {
     testModelPreviewPrompt(^(TestWKWebView *webView) {
