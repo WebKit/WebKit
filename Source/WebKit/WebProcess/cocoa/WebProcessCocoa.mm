@@ -190,6 +190,11 @@
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
 #endif
 
+#if ENABLE(NOTIFY_BLOCKING)
+#import <notify.h>
+#endif
+
+
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
 #import <pal/spi/ios/DataDetectorsUISoftLink.h>
 #endif
