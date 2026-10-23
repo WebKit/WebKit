@@ -1526,6 +1526,44 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
         self.expect_outcome(result=FAILURE, state_string='Failed to compile WebKit')
         return self.run_step()
 
+    def test_success_cmake_mac(self):
+        self.setup_step(CompileWebKitWithoutChange())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('additionalArguments', ['-2', '-1'])
+        self.setProperty('parent_additionalArguments', ['--cmake'])
+        self.setProperty('builddir', 'BuildDir')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=3600,
+                        log_environ=False,
+                        env={'PATH': '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/CMake.app/Contents/bin/:BuildDir'},
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --debug --cmake 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Compiled WebKit')
+        return self.run_step()
+
+    def test_ignores_test_queue_arguments(self):
+        self.setup_step(CompileWebKitWithoutChange())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('additionalArguments', ['--cmake'])
+        self.setProperty('parent_additionalArguments', [])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=3600,
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES WK_ENABLE_SLOW_BUILD_VERIFICATION=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Compiled WebKit')
+        return self.run_step()
+
 
 class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -2473,6 +2511,24 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
         return self.run_step()
 
+    def test_cmake(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('additionalArguments', ['-2', '-1'])
+        self.setProperty('parent_additionalArguments', ['--cmake'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --debug --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests -2 -1 --cmake 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.run_step()
+
     @defer.inlineCallbacks
     def test_the_run_labels_the_build_wk2(self) -> None:
         # Nothing else sets `flavor`, and a query missing it is a partial configuration: it reads
@@ -2898,6 +2954,25 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         yield self.run_step()
 
         self.assertIsNone(self.getProperty('flavor'))
+
+    def test_cmake(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('additionalArguments', ['-2', '-1'])
+        self.setProperty('parent_additionalArguments', ['--cmake'])
+        self.setProperty('modified_tests', ['test1'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --debug -2 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --cmake --iterations 100 test1 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.run_step()
 
     def test_success(self):
         self.configureStep()
@@ -7066,6 +7141,21 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=FAILURE, state_string='Archived built product (failure)')
         return self.run_step()
 
+    def test_cmake(self):
+        self.setup_step(ArchiveBuiltProduct())
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('additionalArguments', ['--cmake'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['python3', 'Tools/CISupport/built-product-archive', '--platform=mac-tahoe', '--debug', '--cmake', 'archive'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Archived built product')
+        return self.run_step()
+
 
 class TestArchiveStaticAnalysis(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -7326,6 +7416,21 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             .exit(2),
         )
         self.expect_outcome(result=FAILURE, state_string='Extracted built product (failure)')
+        return self.run_step()
+
+    def test_cmake(self):
+        self.setup_step(ExtractBuiltProduct())
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('parent_additionalArguments', ['--cmake'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['python3', 'Tools/CISupport/built-product-archive', '--platform=mac-tahoe', '--debug', '--cmake', 'extract'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Extracted built product')
         return self.run_step()
 
 
@@ -7597,6 +7702,30 @@ worker/0 TestWTF.WTF_Variant.RefPtr Passed
 worker/0 TestWTF.WTF_Variant.RetainPtr Passed
 worker/0 TestWTF.WTF_Variant.VisitorUsingMakeVisitor Passed
 worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+Ran 1888 tests of 1888 with 1888 successful
+------------------------------
+All tests successfully passed!
+''')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='run-api-tests')
+        return self.run_step()
+
+    def test_success_mac_cmake(self):
+        self.setup_step(RunAPITests())
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('parent_additionalArguments', ['--cmake'])
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 --skip-failing-tests --cmake 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=20 * 60
+                        )
+            .log('stdio', stdout='''...
 Ran 1888 tests of 1888 with 1888 successful
 ------------------------------
 All tests successfully passed!
@@ -8402,6 +8531,32 @@ class TestRunAPITestsParallelSafety(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=20 * 60
+                        )
+            .log('stdio', stdout='''
+worker/0 TestWebKitAPI.TestName Passed
+Ran 1 tests of 1 with 1 successful
+------------------------------
+All tests successfully passed!
+''')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Passed parallel safety for 1 test(s)')
+        return self.run_step()
+
+    def test_success_mac_cmake(self):
+        self.setup_step(RunAPITestsParallelSafety())
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('parent_additionalArguments', ['--cmake'])
+        self.setProperty('modified_api_tests', ['TestWebKitAPI.TestName'])
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --cmake --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -13834,6 +13989,7 @@ class TestTrigger(BuildStepMixinAdditions, unittest.TestCase):
         self.assertIn('parent_buildnumber', props)
         self.assertIn('parent_builderid', props)
         self.assertIn('rebuild_without_change_on_builder', props)
+        self.assertIn('parent_additionalArguments', props)
         self.assertNotIn('github.number', props)
         self.assertNotIn('github.head.sha', props)
         self.assertNotIn('repository', props)
@@ -13846,6 +14002,7 @@ class TestTrigger(BuildStepMixinAdditions, unittest.TestCase):
         self.assertNotIn('os_version_builder', props)
         self.assertNotIn('xcode_version_builder', props)
         self.assertNotIn('deployment_target_builder', props)
+        self.assertNotIn('parent_additionalArguments', props)
 
     def test_pull_request_properties_included_when_enabled(self):
         step = Trigger(schedulerNames=['test-scheduler'], pull_request=True)

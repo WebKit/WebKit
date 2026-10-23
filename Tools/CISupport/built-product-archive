@@ -55,6 +55,8 @@ def main():
                       help="Create a minified archive by removing files that are not necessary for running applications against the built product, at the cost of complicating debugging.")
     parser.add_option("--cross-target", action="store", dest="cross_target", type="string", default=None,
                       help="Create the archive for a specific cross-build target (Linux ports only).")
+    parser.add_option("--cmake", action="store_true", dest="use_cmake", default=False,
+                      help="Use the CMake build tree (e.g. WebKitBuild/cmake-mac/<configuration>) (Apple ports only).")
 
     options, (action, ) = parser.parse_args()
     if not options.platform:
@@ -73,7 +75,7 @@ def main():
             options.cross_target = env_target
 
     genericPlatform = 'jsc-only' if options.platform.startswith('jsc') else options.platform.split('-', 1)[0]
-    determineWebKitBuildDirectories(genericPlatform, options.platform, options.configuration, options.cross_target)
+    determineWebKitBuildDirectories(genericPlatform, options.platform, options.configuration, options.cross_target, options.use_cmake)
     if not _topLevelBuildDirectory:
         print('Could not determine top-level build directory', file=sys.stderr)
         return 1
@@ -87,7 +89,7 @@ def main():
         return extractBuiltProduct(options.configuration, genericPlatform)
 
 
-def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform='', returnTopLevelDirectory=False, crossTarget=None):
+def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform='', returnTopLevelDirectory=False, crossTarget=None, useCMake=False):
     if 'simulator' in fullPlatform:
         platform = platform + '-simulator'
     elif platform in ['ios', 'tvos', 'visionos', 'watchos']:
@@ -99,17 +101,19 @@ def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, ful
         command += ['--configuration']
     if crossTarget:
         command += ['--cross-target=%s' % crossTarget]
+    if useCMake:
+        command += ['--cmake']
     return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip().decode('utf-8')
 
 
-def determineWebKitBuildDirectories(platform, fullPlatform, configuration, cross_target=None):
+def determineWebKitBuildDirectories(platform, fullPlatform, configuration, cross_target=None, use_cmake=False):
     global _configurationBuildDirectory
     global _topLevelBuildDirectory
     global _hostBuildDirectory
-    _configurationBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, crossTarget=cross_target)
-    _topLevelBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, returnTopLevelDirectory=True, crossTarget=cross_target)
+    _configurationBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, crossTarget=cross_target, useCMake=use_cmake)
+    _topLevelBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, returnTopLevelDirectory=True, crossTarget=cross_target, useCMake=use_cmake)
     if platform in ['ios', 'tvos', 'visionos', 'watchos']:
-        _hostBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, 'mac')
+        _hostBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, 'mac', useCMake=use_cmake)
     else:
         _hostBuildDirectory = _configurationBuildDirectory
     
@@ -293,7 +297,7 @@ CMAKE_EXCLUDED_PATTERNS = (
     '.ninja_deps', '.ninja_log',
     'compile_commands.json', 'build-webkit-options.txt',
     # Any stray intermediate data not captured by the above.
-    '*.cmake' '*.o', '*.tmp'
+    '*.cmake', '*.o', '*.tmp'
 )
 
 
@@ -412,7 +416,9 @@ def extractBuiltProduct(configuration, platform):
     removeDirectoryIfExists(_configurationBuildDirectory, platform)
     os.makedirs(_configurationBuildDirectory)
 
-    if platform in ('mac', 'ios', 'visionos', 'tvos', 'watchos'):
+    if platform == 'mac':
+        return unzipArchive(os.path.dirname(_configurationBuildDirectory), configuration)
+    elif platform in ('ios', 'visionos', 'tvos', 'watchos'):
         return unzipArchive(_topLevelBuildDirectory, configuration)
     elif platform in ('gtk', 'jsc-only', 'win', 'wpe'):
         print('Extracting: {}'.format(_configurationBuildDirectory))
