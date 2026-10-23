@@ -382,6 +382,15 @@ public:
     WebCore::DragHandlingMethod currentDragHandlingMethod { WebCore::DragHandlingMethod::None };
     // The frame that handled the most recent drag controller action, after it was forwarded to any remote frame.
     std::optional<WebCore::FrameIdentifier> currentDragTargetFrameID;
+
+    struct DragTarget {
+        std::optional<WebCore::FrameIdentifier> frameID;
+        WebCore::IntPoint clientPosition;
+    };
+    uint64_t lastDragEventNumber { 0 };
+    uint64_t lastResolvedDragEventNumber { 0 };
+    std::optional<DragTarget> lastDragTarget;
+    Vector<DragTarget> outdatedDragTargets;
 #endif
 
     RefPtr<WebColorPicker> colorPicker;
