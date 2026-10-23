@@ -2328,8 +2328,10 @@ static bool isHiddenOrNearlyTransparent(const RenderBox& box)
     return false;
 }
 
-std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerEdges(BoxSideSet sides) const
+std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerEdges(BoxSideSet sides, const Element* topContainerToResample, IgnoreOtherTopContainers ignoreOtherTopContainers) const
 {
+    ASSERT(ignoreOtherTopContainers == IgnoreOtherTopContainers::No || topContainerToResample);
+
     WeakElementEdges containers;
     FixedContainerEdges edges;
     if (sides.isEmpty())
@@ -2717,6 +2719,10 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         if (!result.container)
             continue;
 
+        // The top side is only being sampled to resample one container, so don't spend time on any other.
+        if (side == BoxSide::Top && ignoreOtherTopContainers == IgnoreOtherTopContainers::Yes && result.container.get() != topContainerToResample)
+            continue;
+
         containers.setAt(side, *result.container);
 
         if (result.foundBackdropFilter) {
@@ -2724,8 +2730,15 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
             continue;
         }
 
+        // The previous color is reused for overlays and for a container whose color can't be read from its style. Neither
+        // applies to the container being resampled, because its previous color is the one that is out of date. But a
+        // dimming layer, a sidebar or a translucent viewport-sized container never provides the color of the page, so
+        // those keep reusing the color that was sampled before they appeared.
+        bool isOverlay = result.isDimmingLayer || result.isSidebar || (result.isViewportSized && result.backgroundColor.isVisible() && !result.backgroundColor.isOpaque());
+        bool shouldResample = side == BoxSide::Top && topContainerToResample && result.container.get() == topContainerToResample && !isOverlay;
+
         bool preferExistingColor = result.isDimmingLayer || result.isViewportSized || result.isSidebar;
-        if (preferExistingColor && page->fixedContainerEdges().hasFixedEdge(side)) {
+        if (!shouldResample && preferExistingColor && page->fixedContainerEdges().hasFixedEdge(side)) {
             edges.colors.setAt(side, page->fixedContainerEdges().colors.at(side));
             continue;
         }
@@ -2739,7 +2752,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
             continue;
         }
 
-        if (page->lastFixedContainer(side) == result.container && page->fixedContainerEdges().hasFixedEdge(side)) {
+        if (!shouldResample && page->lastFixedContainer(side) == result.container && page->fixedContainerEdges().hasFixedEdge(side)) {
             edges.colors.setAt(side, page->fixedContainerEdges().colors.at(side));
             continue;
         }

@@ -1,0 +1,7 @@
+PASS topColor is "rgb(200, 0, 0)"
+PASS topColor is "rgb(0, 0, 200)"
+PASS topColor is "rgb(200, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
