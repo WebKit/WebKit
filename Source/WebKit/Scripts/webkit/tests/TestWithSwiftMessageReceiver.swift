@@ -86,7 +86,7 @@ final class TestWithSwiftWeakRef: @unchecked Sendable {
                         param: param
                     )
                 )
-                completionHandler.pointee(reply)
+                CompletionHandlers.TestWithSwift.complete(completionHandler, reply)
             } catch {
                 markMessageInvalid(error, on: connection)
                 CompletionHandlers.TestWithSwift.completeWithDefaultReply(completionHandler)
@@ -143,7 +143,7 @@ final class TestWithSwiftWeakRef: @unchecked Sendable {
                         param: param
                     )
                 )
-                completionHandler.pointee(reply)
+                CompletionHandlers.TestWithSwift.complete(completionHandler, reply)
             } catch {
                 markMessageInvalid(error, on: connection)
                 CompletionHandlers.TestWithSwift.completeWithDefaultReply(completionHandler)
@@ -250,7 +250,7 @@ final class TestWithSwiftWeakRef: @unchecked Sendable {
                         param: param
                     )
                 )
-                completionHandler.pointee(reply)
+                CompletionHandlers.TestWithSwift.complete(completionHandler, reply)
             } catch {
                 markMessageInvalid(error, on: connection)
                 CompletionHandlers.TestWithSwift.completeWithDefaultReply(completionHandler)

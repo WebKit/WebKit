@@ -89,6 +89,11 @@ void completeWithDefaultReply(SendStringSyncCompletionHandler& completionHandler
     IPC::Connection::cancelReply<Messages::TestWithStreamSwift::SendStringSync>(*completionHandler);
 }
 
+void complete(SendStringSyncCompletionHandler& completionHandler, int64_t reply)
+{
+    (*completionHandler)(reply);
+}
+
 } // namespace TestWithStreamSwift
 } // namespace CompletionHandlers
 

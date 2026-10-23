@@ -136,7 +136,7 @@ final class TestWithStreamSwiftWeakRef: @unchecked Sendable {
                         url: url
                     )
                 )
-                completionHandler.pointee(reply)
+                CompletionHandlers.TestWithStreamSwift.complete(completionHandler, reply)
             } catch {
                 markMessageInvalid(error, on: connection)
                 CompletionHandlers.TestWithStreamSwift.completeWithDefaultReply(completionHandler)

@@ -917,6 +917,32 @@ def message_to_complete_with_default_reply_definition(receiver, message):
     ])
 
 
+# The C++ type of a message's reply if it is a single primitive, which Swift passes through complete().
+def swift_primitive_reply_type(message):
+    reply_parameters = message.reply_parameters or []
+    if len(reply_parameters) != 1:
+        return None
+    cpp_type = _strip_cpp_type_decorations(reply_parameters[0].type)
+    return cpp_type if _swift_primitive_type_name(cpp_type) else None
+
+
+def messages_with_distinct_primitive_reply_types(receiver):
+    return [x for x in messages_with_distinct_reply_types(receiver) if swift_primitive_reply_type(x)]
+
+
+def message_to_complete_declaration(receiver, message):
+    return 'void complete(%sCompletionHandler&, %s);' % (message.name, swift_primitive_reply_type(message))
+
+
+def message_to_complete_definition(receiver, message):
+    return '\n'.join([
+        'void complete(%sCompletionHandler& completionHandler, %s reply)' % (message.name, swift_primitive_reply_type(message)),
+        '{',
+        '    (*completionHandler)(reply);',
+        '}',
+    ])
+
+
 def generate_messages_header(receiver):
     result = []
 
@@ -1020,6 +1046,8 @@ def generate_messages_header(receiver):
             result.append('\n')
             result.append('\n\n'.join([message_to_complete_with_default_reply_declaration(receiver, x) for x in messages_with_distinct_reply_types(receiver)]))
             result.append('\n')
+            for message in messages_with_distinct_primitive_reply_types(receiver):
+                result.append('\n%s\n' % message_to_complete_declaration(receiver, message))
         result.append('} // namespace %s\n} // namespace CompletionHandlers\n' % receiver.name)
         result.append('\n')
     if_swift_enabled(receiver, result, append_completion_handler_types_for_swift, None)
@@ -1132,18 +1160,20 @@ def swift_dispatch_target_and_function(receiver, message):
 
 
 # How a Swift handler's return value is handed to the C++ completion handler. C++ reply types are
-# moved into the handler; Swift primitives are passed by value.
-def swift_reply_completion_argument(message, reply_variable):
+# moved into the handler. A primitive reply goes through complete(), whose parameter is spelled with
+# the reply's typedef: Swift maps uint64_t to UInt64 by name, but the completion handler itself is a
+# template instantiation, whose parameter has the canonical type, and that is unsigned long (UInt)
+# on Linux but unsigned long long (UInt64) on Darwin.
+def swift_reply_completion_call(receiver, message, reply_variable):
     reply_parameters = message.reply_parameters or []
     if not reply_parameters:
-        return ''
+        return 'completionHandler.pointee()'
     if len(reply_parameters) > 1:
         raise UnmappableSwiftType("Cannot derive a Swift reply for '%s': multi-value replies would need "
                                   "a tuple return, which is not implemented." % message.name)
-    cpp_type = _strip_cpp_type_decorations(reply_parameters[0].type)
-    if _swift_primitive_type_name(cpp_type):
-        return reply_variable
-    return 'consuming: %s' % reply_variable
+    if swift_primitive_reply_type(message):
+        return 'CompletionHandlers.%s.complete(completionHandler, %s)' % (receiver.name, reply_variable)
+    return 'completionHandler.pointee(consuming: %s)' % reply_variable
 
 
 def generates_swift_trampoline(receiver, message):
@@ -2236,6 +2266,8 @@ def generate_message_handler(receiver):
         result.append('\n')
         result.append('namespace CompletionHandlers {\nnamespace %s {\n\n' % receiver.name)
         result.append('\n\n'.join([message_to_complete_with_default_reply_definition(receiver, x) for x in messages_with_distinct_reply_types(receiver)]))
+        for message in messages_with_distinct_primitive_reply_types(receiver):
+            result.append('\n\n%s' % message_to_complete_definition(receiver, message))
         result.append('\n\n')
         result.append('} // namespace %s\n} // namespace CompletionHandlers\n' % receiver.name)
     if_swift_enabled(receiver, result, append_complete_with_default_reply_definitions, None)
@@ -2417,7 +2449,7 @@ def generate_swift_message_handler(receiver):
             result.append('\n'.join(['%s    %s' % (base, part) for part in line.split('\n')]))
             result.append('\n')
         if completion_handler:
-            result.append('%s    completionHandler.pointee(%s)\n' % (base, swift_reply_completion_argument(message, 'reply')))
+            result.append('%s    %s\n' % (base, swift_reply_completion_call(receiver, message, 'reply')))
         result.append('%s} catch {\n' % base)
         result.append('%s    markMessageInvalid(error, on: connection)\n' % base)
         if completion_handler:

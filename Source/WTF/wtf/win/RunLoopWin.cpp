@@ -170,6 +170,38 @@ RunLoop::~RunLoop()
     ::DestroyWindow(m_runLoopMessageWindow);
 }
 
+static void (*dispatchMainQueueCallback)(void*);
+
+static void CALLBACK dispatchMainQueueSignaled(PVOID, BOOLEAN)
+{
+    RunLoop::mainSingleton().dispatch([] {
+        dispatchMainQueueCallback(nullptr);
+    });
+}
+
+void RunLoop::drainDispatchMainQueue()
+{
+    HMODULE dispatch = ::GetModuleHandleW(L"dispatch.dll");
+    if (!dispatch)
+        return;
+
+    // libdispatch's CoreFoundation SPI (private/private.h). The handle is an auto-reset event that
+    // libdispatch signals when the main queue becomes non-empty. The run loop's message pump may
+    // belong to the embedder, so wait on a thread pool thread and post the drain to this run loop.
+    auto getMainQueueHandle = reinterpret_cast<HANDLE (*)()>(::GetProcAddress(dispatch, "_dispatch_get_main_queue_handle_4CF"));
+    dispatchMainQueueCallback = reinterpret_cast<void (*)(void*)>(::GetProcAddress(dispatch, "_dispatch_main_queue_callback_4CF"));
+    if (!getMainQueueHandle || !dispatchMainQueueCallback)
+        return;
+
+    HANDLE event = getMainQueueHandle();
+    if (!event)
+        return;
+
+    HANDLE waitHandle;
+    bool registered = ::RegisterWaitForSingleObject(&waitHandle, event, dispatchMainQueueSignaled, nullptr, INFINITE, WT_EXECUTEINWAITTHREAD);
+    ASSERT_UNUSED(registered, registered);
+}
+
 void RunLoop::wakeUp()
 {
     // FIXME: No need to wake up the run loop if we've already called dispatch

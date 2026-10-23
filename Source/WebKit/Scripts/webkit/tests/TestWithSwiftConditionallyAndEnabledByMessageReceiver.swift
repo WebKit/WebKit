@@ -89,7 +89,7 @@ final class TestWithSwiftConditionallyAndEnabledByWeakRef: @unchecked Sendable {
                         param: param
                     )
                 )
-                completionHandler.pointee(reply)
+                CompletionHandlers.TestWithSwiftConditionallyAndEnabledBy.complete(completionHandler, reply)
             } catch {
                 markMessageInvalid(error, on: connection)
                 CompletionHandlers.TestWithSwiftConditionallyAndEnabledBy.completeWithDefaultReply(completionHandler)
@@ -146,7 +146,7 @@ final class TestWithSwiftConditionallyAndEnabledByWeakRef: @unchecked Sendable {
                         param: param
                     )
                 )
-                completionHandler.pointee(reply)
+                CompletionHandlers.TestWithSwiftConditionallyAndEnabledBy.complete(completionHandler, reply)
             } catch {
                 markMessageInvalid(error, on: connection)
                 CompletionHandlers.TestWithSwiftConditionallyAndEnabledBy.completeWithDefaultReply(completionHandler)

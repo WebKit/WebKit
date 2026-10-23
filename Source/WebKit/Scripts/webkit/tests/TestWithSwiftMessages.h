@@ -307,6 +307,8 @@ using TestMessageWithEmptyReplyCompletionHandler = WTF::RefCountable<Messages::T
 void completeWithDefaultReply(TestAsyncMessageCompletionHandler&);
 
 void completeWithDefaultReply(TestMessageWithEmptyReplyCompletionHandler&);
+
+void complete(TestAsyncMessageCompletionHandler&, uint8_t);
 } // namespace TestWithSwift
 } // namespace CompletionHandlers
 

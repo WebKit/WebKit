@@ -131,6 +131,11 @@ void completeWithDefaultReply(TestAsyncMessageCompletionHandler& completionHandl
     IPC::Connection::cancelReply<Messages::TestWithSwiftConditionally::TestAsyncMessage>(*completionHandler);
 }
 
+void complete(TestAsyncMessageCompletionHandler& completionHandler, uint8_t reply)
+{
+    (*completionHandler)(reply);
+}
+
 } // namespace TestWithSwiftConditionally
 } // namespace CompletionHandlers
 #endif // ENABLE(SWIFT_TEST_CONDITION)

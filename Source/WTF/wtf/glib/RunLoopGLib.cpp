@@ -35,6 +35,12 @@
 #include <wtf/SafeStrerror.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
+#if OS(LINUX) || OS(FREEBSD)
+#include <dlfcn.h>
+#include <glib-unix.h>
+#include <unistd.h>
+#endif
+
 #if HAVE(TIMERFD)
 #include <sys/timerfd.h>
 #include <time.h>
@@ -160,6 +166,43 @@ RunLoop::~RunLoop()
     g_source_destroy(m_source.get());
     m_shouldStop = true;
 }
+
+#if OS(LINUX) || OS(FREEBSD)
+static void (*dispatchMainQueueCallback)(void*);
+
+static gboolean dispatchMainQueueSignaled(int eventFD, GIOCondition, gpointer)
+{
+    uint64_t count;
+    while (read(eventFD, &count, sizeof(count)) == -1 && errno == EINTR) { }
+    dispatchMainQueueCallback(nullptr);
+    return G_SOURCE_CONTINUE;
+}
+
+void RunLoop::drainDispatchMainQueue()
+{
+    // libdispatch's CoreFoundation SPI (private/private.h). The handle is an eventfd that libdispatch
+    // signals when the main queue becomes non-empty; as in swift-corelibs-foundation's CFRunLoop, the
+    // run loop acknowledges it and then drains the queue.
+    auto getMainQueueHandle = reinterpret_cast<int (*)()>(dlsym(RTLD_DEFAULT, "_dispatch_get_main_queue_handle_4CF"));
+    dispatchMainQueueCallback = reinterpret_cast<void (*)(void*)>(dlsym(RTLD_DEFAULT, "_dispatch_main_queue_callback_4CF"));
+    if (!getMainQueueHandle || !dispatchMainQueueCallback)
+        return;
+
+    int eventFD = getMainQueueHandle();
+    if (eventFD < 0)
+        return;
+
+    GRefPtr<GSource> source = adoptGRef(g_unix_fd_source_new(eventFD, G_IO_IN));
+    g_source_set_priority(source.get(), RunLoopSourcePriority::RunLoopDispatcher);
+    g_source_set_name(source.get(), "[WebKit] libdispatch main queue");
+    g_source_set_callback(source.get(), G_SOURCE_FUNC(dispatchMainQueueSignaled), nullptr, nullptr);
+    g_source_attach(source.get(), m_mainContext.get());
+}
+#else
+void RunLoop::drainDispatchMainQueue()
+{
+}
+#endif
 
 void RunLoop::runGLibMainLoopIteration(MayBlock mayBlock)
 {

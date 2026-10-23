@@ -247,7 +247,7 @@ macro(WEBKIT_OPTION_BEGIN)
     WEBKIT_OPTION_DEFINE(ENABLE_INSPECTOR_TELEMETRY "Toggle inspector telemetry support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_IOS_GESTURE_EVENTS "Toggle iOS gesture events support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_IOS_TOUCH_EVENTS "Toggle iOS touch events support" PRIVATE OFF)
-    WEBKIT_OPTION_DEFINE(ENABLE_IPC_TESTING_SWIFT "Toggle Swift-based IPC testing support" PRIVATE OFF)
+    WEBKIT_OPTION_DEFINE(ENABLE_IPC_TESTING_SWIFT "Toggle Swift-based IPC testing support" PRIVATE ${ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT})
     WEBKIT_OPTION_DEFINE(ENABLE_JAVASCRIPT_SHELL "Toggle JavaScript shell and testing support" PRIVATE ON)
     WEBKIT_OPTION_DEFINE(ENABLE_JIT "Toggle JustInTime JavaScript support" PRIVATE ${ENABLE_JIT_DEFAULT})
     WEBKIT_OPTION_DEFINE(ENABLE_LAYOUT_TESTS "Toggle layout test support (DumpRenderTree/WebkitTestRunner)" PRIVATE OFF)
@@ -531,33 +531,33 @@ macro(WEBKIT_OPTION_END)
     # Swift-emitted C++ thunks rely on Clang ABI details), so refuse to configure
     # a Swift feature under a non-Clang compiler.
     if (NOT COMPILER_IS_CLANG)
-        if (ENABLE_BACK_FORWARD_LIST_SWIFT)
+        if (ENABLE_BACK_FORWARD_LIST_SWIFT OR ENABLE_IPC_TESTING_SWIFT)
             message(FATAL_ERROR
                 "Swift/C++ interop on the GLib ports requires Clang, but the "
                 "configured C++ compiler is ${CMAKE_CXX_COMPILER_ID}. Re-run "
                 "the configure step with CC=clang CXX=clang++, or pass "
-                "-DENABLE_BACK_FORWARD_LIST_SWIFT=OFF.")
+                "-DENABLE_BACK_FORWARD_LIST_SWIFT=OFF -DENABLE_IPC_TESTING_SWIFT=OFF.")
         endif ()
     endif ()
 
     # A Swift feature still on with a too-old toolchain was requested explicitly
     # (the default declines to auto-enable it), so fail loudly rather than drop it
     # silently. Apple is gated elsewhere; non-Clang is already rejected above.
-    if (NOT APPLE AND COMPILER_IS_CLANG AND ENABLE_BACK_FORWARD_LIST_SWIFT)
+    if (NOT APPLE AND COMPILER_IS_CLANG AND (ENABLE_BACK_FORWARD_LIST_SWIFT OR ENABLE_IPC_TESTING_SWIFT))
         _WEBKIT_DETECT_SWIFT_CXX_INTEROP_SUPPORT(_swift_interop_ok)
         if (NOT _swift_interop_ok)
             message(FATAL_ERROR
-                "ENABLE_BACK_FORWARD_LIST_SWIFT "
+                "ENABLE_BACK_FORWARD_LIST_SWIFT or ENABLE_IPC_TESTING_SWIFT "
                 "was requested, but the Swift toolchain is too old for WebKit's "
                 "Swift/C++ interop: it lacks the -emit-clang-header-min-access "
                 "frontend flag, first shipped in Swift 6.3 (6.2 and earlier do "
                 "not have it). Detected: ${SWIFT_DETECTED_VERSION}. Install Swift "
                 "6.3 or newer from swift.org and reconfigure, or pass "
-                "-DENABLE_BACK_FORWARD_LIST_SWIFT=OFF.")
+                "-DENABLE_BACK_FORWARD_LIST_SWIFT=OFF -DENABLE_IPC_TESTING_SWIFT=OFF.")
         endif ()
     endif ()
 
-    if (ENABLE_BACK_FORWARD_LIST_SWIFT)
+    if (ENABLE_BACK_FORWARD_LIST_SWIFT OR ENABLE_IPC_TESTING_SWIFT)
         set(SWIFT_REQUIRED ON)
     else ()
         set(SWIFT_REQUIRED OFF)

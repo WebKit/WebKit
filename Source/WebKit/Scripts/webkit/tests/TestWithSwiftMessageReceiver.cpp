@@ -128,6 +128,11 @@ void completeWithDefaultReply(TestMessageWithEmptyReplyCompletionHandler& comple
     IPC::Connection::cancelReply<Messages::TestWithSwift::TestMessageWithEmptyReply>(*completionHandler);
 }
 
+void complete(TestAsyncMessageCompletionHandler& completionHandler, uint8_t reply)
+{
+    (*completionHandler)(reply);
+}
+
 } // namespace TestWithSwift
 } // namespace CompletionHandlers
 

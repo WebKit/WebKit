@@ -135,6 +135,8 @@ namespace TestWithStreamSwift {
 using SendStringSyncCompletionHandler = WTF::RefCountable<Messages::TestWithStreamSwift::SendStringSync::Reply>;
 
 void completeWithDefaultReply(SendStringSyncCompletionHandler&);
+
+void complete(SendStringSyncCompletionHandler&, int64_t);
 } // namespace TestWithStreamSwift
 } // namespace CompletionHandlers
 

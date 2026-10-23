@@ -64,6 +64,9 @@ void RunLoop::initializeMain()
 {
     RELEASE_ASSERT(!s_mainRunLoop);
     s_mainRunLoop = &RunLoop::currentSingleton();
+#if USE(GLIB_EVENT_LOOP) || USE(WINDOWS_EVENT_LOOP)
+    s_mainRunLoop->drainDispatchMainQueue();
+#endif
 }
 
 auto RunLoop::runLoopHolder() -> ThreadSpecific<Holder>&

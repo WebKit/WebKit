@@ -312,6 +312,12 @@ private:
 
     void performWork();
 
+#if USE(GLIB_EVENT_LOOP) || USE(WINDOWS_EVENT_LOOP)
+    // If libdispatch is loaded, drains its main queue from this run loop, as CFRunLoop does on Cocoa.
+    // Swift concurrency enqueues main actor jobs there, so they never run otherwise.
+    void drainDispatchMainQueue();
+#endif
+
     void registerTimer(TimerBase&);
     void unregisterTimer(TimerBase&);
 
