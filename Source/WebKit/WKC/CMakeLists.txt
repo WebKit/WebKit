@@ -39,7 +39,7 @@ endif ()
 # convention headers still depend on JIT register types that are unavailable in
 # this port, so enabling the whole wasm/*.cpp glob breaks JSC and LLInt offset
 # generation. Enable it explicitly only after those sources are ported/filtered.
-set(_WKC_WEBASSEMBLY_DEFAULT OFF)
+set(_WKC_WEBASSEMBLY_DEFAULT ON)
 
 option(WKC_ENABLE_WEB_AUDIO "Compile Web Audio against the WKC audio backend" ${_WKC_WEB_AUDIO_DEFAULT})
 if (WKC_ENABLE_WEB_AUDIO)
