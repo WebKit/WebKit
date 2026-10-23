@@ -46,6 +46,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkFont.h>
 #include <skia/core/SkPathBuilder.h>
 #include <skia/core/SkRRect.h>
+#include <skia/core/SkRegion.h>
 #include <skia/effects/SkImageFilters.h>
 #include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/SkImageGanesh.h>
@@ -664,6 +665,26 @@ void SkiaCompositingLayer::clipRect(SkCanvas& canvas, const FloatRoundedRect& re
         canvas.clipPath(SkPath::Rect(SkRect(rect.rect())).makeTransform(matrix));
 }
 
+// Clip to the rect rounded to device pixels, so that what is drawn under
+// the clip is what is damaged. Ganesh can draw up to fractional edges,
+// which leaves a pixel on an edge to the GPU.
+void SkiaCompositingLayer::clipRectToDevicePixels(SkCanvas& canvas, const FloatRoundedRect& rect, const TransformationMatrix& transform)
+{
+    if (rect.hasNonZeroRadii()) {
+        clipRect(canvas, rect, transform);
+        return;
+    }
+
+    auto matrix = SkM44(transform).asM33();
+    const auto localToDevice = canvas.getLocalToDeviceAs3x3();
+    if (!matrix.rectStaysRect() || !localToDevice.rectStaysRect()) {
+        clipRect(canvas, rect, transform);
+        return;
+    }
+
+    canvas.clipRegion(SkRegion(localToDevice.mapRect(matrix.mapRect(SkRect(rect.rect()))).round()));
+}
+
 void SkiaCompositingLayer::paintSelf(SkCanvas& canvas, PaintContext& context)
 {
 #if ENABLE(DAMAGE_TRACKING)
@@ -1133,7 +1154,7 @@ void SkiaCompositingLayer::paintSelfAndChildren(SkCanvas& canvas, PaintContext& 
 
     ScopedFlush autoFlush(canvas, context.imageSetBatch, clippingRect.isEmpty() ? ScopedFlush::Mode::DoNothing : ScopedFlush::Mode::FlushBeforeAndAfter);
     if (!clippingRect.isEmpty())
-        clipRect(canvas, clippingRect, clipTransform);
+        clipRectToDevicePixels(canvas, clippingRect, clipTransform);
 
     for (auto& child : m_children)
         child->recursivePaint(canvas, context);

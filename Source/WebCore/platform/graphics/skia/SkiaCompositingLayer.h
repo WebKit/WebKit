@@ -279,6 +279,7 @@ private:
     void recursiveCleanUpAfterPaint();
 
     void clipRect(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix& = { });
+    void clipRectToDevicePixels(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix&);
 
     enum class IncludesReplica : bool { No, Yes };
     enum class IncludesFilterOutsets : bool { No, Yes };
