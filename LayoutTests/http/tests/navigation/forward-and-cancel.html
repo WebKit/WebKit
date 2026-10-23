@@ -2,7 +2,7 @@
 // Test steps:
 // 1. Start on a page with no frames (this page).
 // 2. Navigate to a page with a frame tree (Grandparent, Parent, Child, Uncle).
-// 3. Navigate child frame to a slowly loading URL.
+// 3. Navigate child frame to about:blank, then to a slowly loading URL.
 // 4. Go back to about:blank in child frame.
 //    Important to use about:blank, which can commit immediately while walking the tree.
 // 5. Go forward to slow URL, but stop before the navigation commits.
@@ -14,7 +14,8 @@ if (window.testRunner) {
     testRunner.dumpBackForwardList();
     testRunner.dumpAsText();
     testRunner.queueLoad("resources/forward-and-cancel-frames-container.html");
-    testRunner.queueLoadingScript("frames[0].clickLink();");
+    testRunner.queueLoadingScript("frames[0].clickLink('blank-link');");
+    testRunner.queueLoadingScript("frames[0].clickLink('slow-link');");
     testRunner.queueBackNavigation(1);
 
     // Go forward to slow URL in child frame, but stop right away.  This should

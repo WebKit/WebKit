@@ -3,6 +3,6 @@ PASS Navigating away from the initial about:blank Document to a different one, w
 PASS Navigating to a different document with location.href
 PASS Navigating to a different document with location.assign
 PASS Navigating to a different document with window.open
-FAIL Navigating to a different document with link click assert_equals: history.length must not change after normal navigation on initial empty document expected 2 but got 3
+PASS Navigating to a different document with link click
 PASS Navigating to a different document with form submission
 

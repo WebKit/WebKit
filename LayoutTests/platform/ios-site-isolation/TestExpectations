@@ -13,11 +13,11 @@ http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-reque
 http/tests/workers/service/resultingClientId.https.html [ Timeout ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Timeout ]
 webkit.org/b/328333 http/tests/history/back-with-fragment-change.py [ Failure Timeout ]
-webkit.org/b/328333 http/tests/navigation/forward-and-cancel.html [ Timeout ]
 
 ########################
 # Tests that Text fail #
 ########################
+webkit.org/b/328426 http/tests/navigation/forward-and-cancel.html [ Failure ]
 webkit.org/b/326717 imported/w3c/web-platform-tests/fetch/http-cache/status.any.sharedworker.html [ Pass Failure ]
 fast/forms/ios/focus-input-via-button-no-scaling.html [ Failure ]
 fast/viewport/ios/viewport-fit-auto.html [ Pass Failure ]

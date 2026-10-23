@@ -1,15 +1,16 @@
 <!-- Parent page -->
 <script>
-function clickLink() {
+function clickLink(id) {
   // Simulate a mouse click on a link targeting the child frame.
   var evt = document.createEvent("MouseEvents");
   evt.initMouseEvent("click", true, true, window,
       0, 0, 0, 0, 0, false, false, false, false, 0, null);
-  document.getElementById("link").dispatchEvent(evt);
+  document.getElementById(id).dispatchEvent(evt);
 }
 </script>
-<!-- Child iframe -->
-<iframe id="frame1" name="frame1" src="about:blank"></iframe>
+<!-- Child iframe. It starts on a real document because navigating away from the initial about:blank
+     document replaces its history entry instead of adding one. -->
+<iframe id="frame1" name="frame1" src="otherpage.html"></iframe>
 <br>
 <p>This test checks that the backForward list is not corrupted when a frame load is canceled.
-<p>If testing manually, <a id="link" href="slow-resource.pl?delay=250" target="frame1">click here</a> and then Back.  Then click Forward and quickly click Stop.  Ensure that Back and Forward still work.
+<p>If testing manually, <a id="blank-link" href="about:blank" target="frame1">click here</a>, then <a id="slow-link" href="slow-resource.pl?delay=250" target="frame1">click here</a> and then Back.  Then click Forward and quickly click Stop.  Ensure that Back and Forward still work.

@@ -1776,6 +1776,12 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         request.setHTTPReferrer(referrer);
 
     auto willOpenInNewWindow = !targetFrame && !effectiveFrameName.isEmpty() ? WillOpenInNewWindow::Yes : WillOpenInNewWindow::No;
+
+    if (willOpenInNewWindow == WillOpenInNewWindow::No && newLoadType == FrameLoadType::Standard && frame->tree().parent() && documentLoader() && documentLoader()->isInitialAboutBlank() == IsInitialAboutBlank::Yes) {
+        newLoadType = FrameLoadType::RedirectWithLockedBackForwardList;
+        frameLoadRequest.setLockBackForwardList(LockBackForwardList::Yes);
+    }
+
     updateRequestAndAddExtraFields(request, IsMainResource::Yes, newLoadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, willOpenInNewWindow, protect(frameLoadRequest.requester()).ptr());
 
     ASSERT(newLoadType != FrameLoadType::Same);
