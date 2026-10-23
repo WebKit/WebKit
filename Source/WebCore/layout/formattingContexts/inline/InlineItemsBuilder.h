@@ -47,7 +47,9 @@ public:
     InlineItemsBuilder(InlineContentCache&, const ElementBox& root, const SecurityOrigin&);
     void build(InlineItemPosition startPosition);
 
-    static void populateBreakingPositionCache(const InlineItemList&, const Document&, bool contentMayAdjustWidths);
+    static void populateBreakingPositionCache(const InlineItemList&, const Document&, bool contentMayAdjustWidths, std::optional<std::span<const float>> shapingAdjustments);
+    static bool shouldComputeShapingAdjustments(const ElementBox& root, bool contentMayAdjustWidths);
+    bool needsFullRebuild() const { return m_needsFullRebuild; }
 
 private:
     void collectInlineItems(InlineItemList&, InlineItemPosition startPosition);
@@ -56,6 +58,8 @@ private:
     LayoutQueue traverseUntilDamaged(const Box& firstDamagedLayoutBox);
     void breakAndComputeBidiLevels(InlineItemList&);
     void computeInlineTextItemWidthsAndTextSpacing(InlineItemList&);
+    void computeShapingAdjustments(InlineItemList&, InlineItemPosition startPosition);
+    void setShapingAdjustment(size_t index, float);
     void adjustInlineItemsForWhiteSpaceTrim(InlineItemList&);
 
     void handleTextContent(const InlineTextBox&, InlineItemList&, std::optional<size_t> partialContentOffset);
@@ -84,6 +88,12 @@ private:
     bool m_contentRequiresVisualReordering { false };
     bool m_hasTextAutospace { !root().style().textAutospace().isNoAutospace() };
     bool m_hasWhiteSpaceTrim { !root().style().whiteSpaceTrim().isNone() };
+    bool m_hasShapingAdjustments { false };
+    bool m_needsFullRebuild { false };
+    bool m_hasShapingAdjustmentsToCache { false };
+    Vector<float> m_shapingAdjustments;
+    // Text boxes whose items are measured one by one and may need the kerning between them.
+    HashSet<CheckedPtr<const InlineTextBox>> m_inlineTextBoxesToShape;
     std::optional<bool> m_textContentPopulatedFromCache { };
 };
 

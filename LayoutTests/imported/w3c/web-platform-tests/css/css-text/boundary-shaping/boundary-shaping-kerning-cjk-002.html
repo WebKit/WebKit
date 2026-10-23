@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>A right-aligned ruby with kerned base text and a wider annotation must end at the end edge of the line (CJK kerning)</title>
+<link rel="help" href="https://drafts.csswg.org/css-ruby/#ruby-layout">
+<link rel="help" href="https://drafts.csswg.org/css-fonts/#font-kerning-prop">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+@font-face {
+  font-family: kana-test;
+  src: url(../../css-fonts/resources/NotoSansJP-kana_test-subset.otf);
+}
+.test {
+  font: 64px kana-test; /* this font kerns the pair "すペ" and no other pair */
+  margin: 0;
+  white-space: nowrap;
+  width: 600px;
+  text-align: right;
+}
+</style>
+</head>
+<body>
+<div class="test" id="container"><ruby id="ruby">すペす<rt>すすすすすすすす</rt></ruby></div>
+<script>
+promise_test(async () => {
+  await document.fonts.ready;
+  const containerRight = document.getElementById("container").getBoundingClientRect().right;
+  const rubyRight = document.getElementById("ruby").getBoundingClientRect().right;
+  assert_approx_equals(rubyRight, containerRight, 0.5);
+}, "A right-aligned ruby with a kerned base and a wider annotation ends at the end edge of the line");
+</script>
+</body>
+</html>
