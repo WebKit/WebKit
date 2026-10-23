@@ -1189,7 +1189,7 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
     return newButterfly->arrayStorage();
 }
 
-void JSObject::enterDictionaryIndexingMode(VM& vm)
+ArrayStorage* JSObject::enterDictionaryIndexingMode(VM& vm)
 {
     switch (indexingType()) {
     case NonArray:
@@ -1200,7 +1200,7 @@ void JSObject::enterDictionaryIndexingMode(VM& vm)
         // allocated ArrayStorage, so do not skip for JSArray subclasses that
         // use NonArray indexing (e.g. $vm RuntimeArray with DerivedArrayType).
         if (!inherits<JSArray>()) [[likely]]
-            return;
+            return nullptr;
         [[fallthrough]];
     case ArrayClass:
     case ALL_UNDECIDED_INDEXING_TYPES:
@@ -1212,14 +1212,13 @@ void JSObject::enterDictionaryIndexingMode(VM& vm)
         // doesn't support traditional indexed properties. At the time of writing, this just affects
         // typed arrays.
         if (ArrayStorage* storage = ensureArrayStorageSlow(vm))
-            enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, storage);
-        break;
+            return enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, storage);
+        return nullptr;
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-        enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, this->butterfly()->arrayStorage());
-        break;
+        return enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, this->butterfly()->arrayStorage());
         
     default:
-        break;
+        return nullptr;
     }
 }
 
@@ -2879,7 +2878,8 @@ void JSObject::seal(VM& vm)
     if (isSealed(vm))
         return;
     materializeLazyOwnProperties(vm);
-    enterDictionaryIndexingMode(vm);
+    if (ArrayStorage* storage = enterDictionaryIndexingMode(vm))
+        storage->m_sparseMap->seal();
     {
         Structure* oldStructure = structure();
         DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
@@ -2892,7 +2892,14 @@ void JSObject::freeze(VM& vm)
     if (isFrozen(vm))
         return;
     materializeLazyOwnProperties(vm);
-    enterDictionaryIndexingMode(vm);
+    if (ArrayStorage* storage = enterDictionaryIndexingMode(vm)) {
+        SparseArrayValueMap* map = storage->m_sparseMap.get();
+        map->freeze();
+        if (indexingType() & IsArray)
+            map->setLengthIsReadOnly();
+        if (!map->isEmpty())
+            notifyPresenceOfIndexedAccessors(vm);
+    }
     {
         Structure* oldStructure = structure();
         DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
@@ -2902,9 +2909,24 @@ void JSObject::freeze(VM& vm)
     }
 }
 
+bool JSObject::isSealedWithArrayStorage(VM& vm)
+{
+    return structure()->isSealed(vm) && arrayStorage()->m_sparseMap->isSealed();
+}
+
+bool JSObject::isFrozenWithArrayStorage(VM& vm)
+{
+    if (!structure()->isFrozen(vm))
+        return false;
+    SparseArrayValueMap* map = arrayStorage()->m_sparseMap.get();
+    if ((indexingType() & IsArray) && !map->lengthIsReadOnly())
+        return false;
+    return map->isFrozen();
+}
+
 void JSObject::materializeLazyOwnProperties(VM& vm)
 {
-    if (!structure()->typeInfo().overridesGetOwnSpecialPropertyNames())
+    if (!structure()->typeInfo().overridesGetOwnSpecialPropertyNames() || isJSArray(this))
         return;
 
     // Force reifying lazy properties. Special properties (e.g. function "length" / "name",

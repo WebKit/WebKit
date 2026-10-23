@@ -327,7 +327,7 @@ public:
         }
     }
         
-    void enterDictionaryIndexingMode(VM&);
+    ArrayStorage* enterDictionaryIndexingMode(VM&);
 
     // putDirect is effectively an unchecked vesion of 'defineOwnProperty':
     //  - the prototype chain is not consulted
@@ -523,8 +523,8 @@ public:
     void materializeLazyOwnProperties(VM&);
     JS_EXPORT_PRIVATE static bool preventExtensions(JSObject*, JSGlobalObject*);
     JS_EXPORT_PRIVATE static bool LEGACY_NODELETE isExtensible(JSObject*, JSGlobalObject*);
-    bool isSealed(VM& vm) { return structure()->isSealed(vm); }
-    bool isFrozen(VM& vm) { return structure()->isFrozen(vm); }
+    bool isSealed(VM& vm) { return hasAnyArrayStorage(indexingType()) ? isSealedWithArrayStorage(vm) : structure()->isSealed(vm); }
+    bool isFrozen(VM& vm) { return hasAnyArrayStorage(indexingType()) ? isFrozenWithArrayStorage(vm) : structure()->isFrozen(vm); }
 
     JS_EXPORT_PRIVATE bool LEGACY_NODELETE anyObjectInChainMayInterceptIndexedAccesses() const;
     bool LEGACY_NODELETE needsSlowPutIndexing() const;
@@ -820,6 +820,9 @@ private:
         
     bool ensureLengthSlow(VM&, unsigned length);
         
+    JS_EXPORT_PRIVATE NEVER_INLINE bool isSealedWithArrayStorage(VM&);
+    JS_EXPORT_PRIVATE NEVER_INLINE bool isFrozenWithArrayStorage(VM&);
+
     ContiguousJSValues tryMakeWritableInt32Slow(VM&);
     ContiguousDoubles tryMakeWritableDoubleSlow(VM&);
     ContiguousJSValues tryMakeWritableContiguousSlow(VM&);

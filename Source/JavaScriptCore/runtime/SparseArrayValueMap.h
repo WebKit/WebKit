@@ -196,11 +196,16 @@ public:
 
     JSValue getConcurrently(unsigned index);
 
+    void seal();
+    void freeze();
+
     // These methods do not mutate the contents of the map.
     iterator notFound() { return m_set.end(); }
     bool isEmpty() const { return m_set.isEmpty(); }
     bool contains(unsigned i) const { return m_set.contains<SparseArrayEntryTranslator>(i); }
     size_t size() const { return m_set.size(); }
+    bool isSealed() const;
+    bool isFrozen() const;
     // Only allow const begin/end iteration.
     const_iterator begin() const { return m_set.begin(); }
     const_iterator end() const { return m_set.end(); }

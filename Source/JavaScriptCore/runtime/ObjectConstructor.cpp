@@ -1146,7 +1146,7 @@ JSObject* objectConstructorSeal(JSGlobalObject* globalObject, JSObject* object)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (is<JSFinalObject>(object) && !hasIndexedProperties(object->indexingType())) {
+    if (is<JSFinalObject>(*object) || isJSArray(object)) {
         object->seal(vm);
         return object;
     }
@@ -1179,7 +1179,7 @@ JSObject* objectConstructorFreeze(JSGlobalObject* globalObject, JSObject* object
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (is<JSFinalObject>(object) && !hasIndexedProperties(object->indexingType())) {
+    if (is<JSFinalObject>(*object) || isJSArray(object)) {
         object->freeze(vm);
         return object;
     }
@@ -1232,8 +1232,8 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorIsSealed, (JSGlobalObject* globalObjec
         return JSValue::encode(jsBoolean(true));
     JSObject* object = asObject(obj);
 
-    // Quick check for final objects.
-    if (is<JSFinalObject>(object) && !hasIndexedProperties(object->indexingType()))
+    // Quick check for final objects and arrays.
+    if (is<JSFinalObject>(*object) || isJSArray(object))
         return JSValue::encode(jsBoolean(object->isSealed(vm)));
 
     // 2. Return ? TestIntegrityLevel(O, "sealed").
@@ -1250,8 +1250,8 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorIsFrozen, (JSGlobalObject* globalObjec
         return JSValue::encode(jsBoolean(true));
     JSObject* object = asObject(obj);
 
-    // Quick check for final objects.
-    if (is<JSFinalObject>(object) && !hasIndexedProperties(object->indexingType()))
+    // Quick check for final objects and arrays.
+    if (is<JSFinalObject>(*object) || isJSArray(object))
         return JSValue::encode(jsBoolean(object->isFrozen(vm)));
 
     // 2. Return ? TestIntegrityLevel(O, "frozen").
