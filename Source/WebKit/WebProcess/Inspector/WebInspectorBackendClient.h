@@ -77,6 +77,9 @@ private:
 
     bool overridesShowPaintRects() const override { return true; }
     void setShowPaintRects(bool) override;
+    bool ownsEmulatedMedia() const override;
+    String emulatedMedia() const override;
+    void setEmulatedMedia(const String&, EmulatedMediaRelay) override;
     void showPaintRect(const WebCore::FloatRect&) override;
     void showPaintRect(WebCore::LocalFrame&, const WebCore::FloatRect&) override;
     void willDestroyFrameOverlays(WebCore::FrameIdentifier) override;

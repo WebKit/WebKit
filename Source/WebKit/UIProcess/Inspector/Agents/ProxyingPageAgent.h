@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InspectorBackendSyncState.h"
 #include "MessageReceiver.h"
 #include "Untrusted.h"
 #include "WebPageInspectorAgentBase.h"
@@ -68,6 +69,10 @@ public:
     void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     bool isEnabled() const { return m_enabled; }
+    const Inspector::EmulationOverrides& emulationOverrides() const { return m_syncState.overrides(); }
+    // The page target's Page.setEmulatedMedia, relayed from the main-frame process (the Print Styles
+    // toggle). Unlike the web-page target's command it is accepted while the Page domain is disabled.
+    void emulatedMediaChangedOnPageTarget(const String&);
     void enableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier);
     void disableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier);
 
@@ -137,6 +142,10 @@ private:
     // to any process that registers later (e.g. a cross-origin navigation spawns a new one).
     bool m_showPaintRects { false };
     String m_bootstrapScript;
+
+    // Source-side counterpart to the WebProcess EmulationManager sink; sends the typed overrides to
+    // late-joining processes at the shared join seam. See webkit.org/b/308898.
+    InspectorBackendSyncState m_syncState;
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed

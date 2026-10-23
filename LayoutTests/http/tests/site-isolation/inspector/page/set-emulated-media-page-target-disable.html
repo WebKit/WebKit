@@ -1,0 +1,162 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<style>
+body { color: blue; }
+@media print {
+    body { color: green; }
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/emulated-media-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function armMediaChange() {
+    matchMedia("print").addEventListener("change", () => { TestPage.dispatchEventToFrontend("MediaChanged"); }, { once: true });
+}
+
+function test() {
+    let target;
+
+    // The targets in WI.targets that have Page.setEmulatedMedia, like the Web Inspector Print Styles
+    // toggle. Under Site Isolation this is the main page target only.
+    function pageTargets() {
+        return WI.targets.filter((target) => target.hasCommand("Page.setEmulatedMedia"));
+    }
+
+    async function addIFrameAndGetTarget() {
+        let committedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await committedPromise;
+        let target = event.data.target;
+        if (!target.executionContext)
+            await target.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+        return target;
+    }
+
+    async function getComputedColorInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: "window.getComputedStyle(document.body).getPropertyValue('color')", objectGroup: "test", returnByValue: true});
+        return response.result.value;
+    }
+
+    async function armMediaChangeInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: `window.__mediaChanged = new Promise(r => matchMedia("print").addEventListener("change", r, { once: true }))`,
+            objectGroup: "test",
+        });
+    }
+
+    async function awaitMediaChangeInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "window.__mediaChanged",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+    }
+
+    async function runAndAwaitMediaChange(command) {
+        let mainMediaChanged = InspectorTest.awaitEvent("MediaChanged");
+        await InspectorTest.evaluateInPage("armMediaChange()");
+        await armMediaChangeInTarget(target);
+        await command();
+        await mainMediaChanged;
+        await awaitMediaChangeInTarget(target);
+    }
+
+    async function expectColors(expected, message) {
+        let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+        InspectorTest.expectEqual(mainPageColor, expected, `Main page should ${message}.`);
+        let iframeColor = await getComputedColorInTarget(target);
+        InspectorTest.expectEqual(iframeColor, expected, `Cross-origin iframe should ${message}.`);
+    }
+
+    async function setPrintOnPageTarget() {
+        InspectorTest.log("Setting emulated media to print on the page target...");
+        await runAndAwaitMediaChange(async () => {
+            for (let pageTarget of pageTargets())
+                await pageTarget.PageAgent.setEmulatedMedia("print");
+        });
+        await expectColors("rgb(0, 128, 0)", "switch to print styles (green)");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetEmulatedMediaPageTargetDisable");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaPageTargetDisable.DisableWebPageTarget",
+        description: "An override set on the page target should be cleared in every frame when the web-page target's Page domain is disabled.",
+        async test() {
+            target = await addIFrameAndGetTarget();
+            await expectColors("rgb(0, 0, 255)", "start with screen styles (blue)");
+
+            await setPrintOnPageTarget();
+
+            InspectorTest.log("Disabling the Page domain on the web-page target...");
+            await runAndAwaitMediaChange(() => WI.backendTarget.PageAgent.disable());
+            await expectColors("rgb(0, 0, 255)", "revert to screen styles (blue)");
+
+            await WI.backendTarget.PageAgent.enable();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaPageTargetDisable.DisablePageTarget",
+        description: "An override set on the page target should be cleared in every frame when the page target's Page domain is disabled.",
+        async test() {
+            await setPrintOnPageTarget();
+
+            InspectorTest.log("Disabling the Page domain on the page target...");
+            await runAndAwaitMediaChange(async () => {
+                for (let pageTarget of pageTargets())
+                    await pageTarget.PageAgent.disable();
+            });
+            await expectColors("rgb(0, 0, 255)", "revert to screen styles (blue)");
+
+            for (let pageTarget of pageTargets())
+                await pageTarget.PageAgent.enable();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaPageTargetDisable.SetWhileWebPageTargetDisabled",
+        description: "An override set on the page target while the web-page target's Page domain is disabled should reach every frame once it is enabled again, as an override set while the Page domain is disabled does without Site Isolation.",
+        async test() {
+            InspectorTest.log("Disabling the Page domain on the web-page target...");
+            await WI.backendTarget.PageAgent.disable();
+
+            InspectorTest.log("Setting emulated media to print on the page target...");
+            for (let pageTarget of pageTargets())
+                await pageTarget.PageAgent.setEmulatedMedia("print");
+
+            InspectorTest.log("Enabling the Page domain on the web-page target...");
+            await armMediaChangeInTarget(target);
+            await WI.backendTarget.PageAgent.enable();
+            await awaitMediaChangeInTarget(target);
+            await expectColors("rgb(0, 128, 0)", "have print styles (green)");
+
+            InspectorTest.log("Clearing emulated media on the page target...");
+            await runAndAwaitMediaChange(async () => {
+                for (let pageTarget of pageTargets())
+                    await pageTarget.PageAgent.setEmulatedMedia("");
+            });
+            await expectColors("rgb(0, 0, 255)", "return to screen styles (blue)");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under site isolation an emulated-media override set on the page target is cleared in the main page and a cross-origin iframe when either target's Page domain is disabled.</p>
+</body>

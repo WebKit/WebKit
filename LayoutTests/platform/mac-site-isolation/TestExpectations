@@ -27,7 +27,6 @@ webkit.org/b/318430 http/tests/inspector/network/clear-non-buffered-resource-dat
 http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Failure ]
 http/tests/media/media-stream/speech-recognition-iframe-allow-attribute.html [ Failure ]
 http/tests/site-isolation/inspector/page/override-setting-cross-origin-iframe.html [ Failure ]
-webkit.org/b/311836 http/tests/site-isolation/inspector/page/set-emulated-media-cross-origin-iframe.html [ Failure ]
 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Failure ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ]

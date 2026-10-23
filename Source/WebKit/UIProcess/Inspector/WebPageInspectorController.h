@@ -30,6 +30,7 @@
 #include "UIProcess/WebFrameProxy.h"
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
+#include <WebCore/EmulationOverrides.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -108,8 +109,10 @@ public:
 
     bool isNetworkInstrumentationEnabled() const;
     bool isPageInstrumentationEnabled() const;
+    Inspector::EmulationOverrides emulationOverrides() const;
 
     void setShowPaintRects(bool);
+    void setEmulatedMedia(const String&);
 
     void disconnectFrameTargetForTesting(WebCore::FrameIdentifier);
 

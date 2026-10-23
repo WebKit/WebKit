@@ -72,6 +72,14 @@ public:
 
     virtual bool overridesShowPaintRects() const { return false; }
     virtual void setShowPaintRects(bool) { }
+    // Under Site Isolation the client owns the page's Page.setEmulatedMedia override, so every process
+    // hosting a frame of the page reads a single copy and InspectorPageAgent keeps none of its own.
+    // setEmulatedMedia() stores the override and, with EmulatedMediaRelay::Yes, sends it to the other
+    // processes. An empty string clears it.
+    enum class EmulatedMediaRelay : bool { No, Yes };
+    virtual bool ownsEmulatedMedia() const { return false; }
+    virtual String emulatedMedia() const { return { }; }
+    virtual void setEmulatedMedia(const String&, EmulatedMediaRelay) { }
     virtual void showPaintRect(const FloatRect&) { }
     // Frame-aware variant: draw the paint rect scoped to a specific local root frame (Site Isolation
     // per-frame overlays). Defaults to the frame-less version for clients that don't distinguish frames.

@@ -783,6 +783,15 @@ void WebInspectorUIProxy::showPaintRectsChanged(bool show)
         inspectedPage->inspectorController().setShowPaintRects(show);
 }
 
+void WebInspectorUIProxy::emulatedMediaChanged(const String& media)
+{
+    // The main-frame process already stored the override in its own EmulationManager before relaying
+    // it here; hand it to the inspector controller so its ProxyingPageAgent fans it out to every
+    // instrumented process, including the cross-origin subframe processes.
+    if (RefPtr inspectedPage = m_inspectedPage)
+        inspectedPage->inspectorController().setEmulatedMedia(media);
+}
+
 void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     switch (developerPreference) {

@@ -757,6 +757,7 @@ public:
 
     WebInspectorBackend* inspector(LazyCreationPolicy = LazyCreationPolicy::CreateIfNeeded);
     WebInspectorUI* inspectorUI();
+
     RemoteWebInspectorUI* remoteInspectorUI();
     bool isInspectorPage() { return !!m_inspectorUI || !!m_remoteInspectorUI; }
 
