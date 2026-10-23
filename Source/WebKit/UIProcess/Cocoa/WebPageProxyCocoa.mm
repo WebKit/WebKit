@@ -2523,11 +2523,6 @@ WebCore::FloatRect WebPageProxy::computeLayoutViewportRect(const FloatRect& unob
     double minimumScale = pageClient->minimumZoomScale();
     bool isBelowMinimumScale = displayedContentScale < minimumScale && !WebKit::scalesAreEssentiallyEqual(displayedContentScale, minimumScale);
 
-#if PLATFORM(MAC)
-    if (delegatesScalingToUIProcess())
-        isBelowMinimumScale = false;
-#endif
-
     // Below the minimum scale the viewport's off-document edges get pulled back onto the document, so fixed
     // elements stay with the page as it shrinks inside the view.
     if (isBelowMinimumScale) {

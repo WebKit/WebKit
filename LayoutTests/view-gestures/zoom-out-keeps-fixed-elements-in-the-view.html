@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>A delegated zoom out keeps fixed elements where the view puts them</title>
+    <title>A delegated zoom out pulls fixed elements back onto the page</title>
     <style>
         html, body {
             margin: 0;
@@ -36,8 +36,6 @@
             top: 10px;
         }
 
-        /* Positioned in percentages of the viewport rather than against an edge, so it only lands in the middle of the
-           window if the viewport the web process laid it out against is the size of the view. */
         #centred-bar {
             left: calc(50% - 100px);
             top: calc(50% - 20px);
@@ -53,10 +51,10 @@
         // in the constraints, and layer-position-at-last-layout is (0,0) for all of them, so nothing else tells them
         // apart. Each bar's position is derived from a viewport by the same CSS the style block above declares.
         const bars = [
-            { name: 'top left bar    ', positionIn: viewport => ({ x: viewport.x + inset, y: viewport.y + inset }) },
-            { name: 'bottom left bar ', positionIn: viewport => ({ x: viewport.x + inset, y: viewport.y + viewport.height - inset - barHeight }) },
-            { name: 'top right bar   ', positionIn: viewport => ({ x: viewport.x + viewport.width - inset - barWidth, y: viewport.y + inset }) },
-            { name: 'centred bar     ', positionIn: viewport => ({ x: viewport.x + (viewport.width - barWidth) / 2, y: viewport.y + (viewport.height - barHeight) / 2 }) },
+            { name: 'top left bar    ', placedIn: viewportPulledOntoThePage, positionIn: viewport => ({ x: viewport.x + inset, y: viewport.y + inset }) },
+            { name: 'bottom left bar ', placedIn: viewportPulledOntoThePage, positionIn: viewport => ({ x: viewport.x + inset, y: viewport.y + viewport.height - inset - barHeight }) },
+            { name: 'top right bar   ', placedIn: viewportPulledOntoThePage, positionIn: viewport => ({ x: viewport.x + viewport.width - inset - barWidth, y: viewport.y + inset }) },
+            { name: 'centred bar     ', placedIn: partOfThePageInView, positionIn: viewport => ({ x: viewport.x + (viewport.width - barWidth) / 2, y: viewport.y + (viewport.height - barHeight) / 2 }) },
         ];
 
         if (window.testRunner) {
@@ -64,11 +62,8 @@
             testRunner.waitUntilDone();
         }
 
-        // The view, read before the gesture so nothing the zoom does can move it. This is the only reference that can
-        // say whether a fixed element is still where the window puts it: the scrolling tree places fixed layers from the
-        // layout viewport, so measuring them against that viewport answers 10px from the edge no matter where the
-        // viewport itself has wandered off to.
         let viewSize = null;
+        let pageSize = null;
 
         // Mid-gesture this all comes from the UI process. It owns the scale and the anchoring scroll position, and the
         // web process is still laid out at page scale 1, so the render tree can't answer this.
@@ -86,6 +81,20 @@
             // The scrolled contents layer puts that content point at the top left of the view and scales from there, so
             // the view covers viewSize / scale of content starting at it.
             return { scale, x: origin.x, y: origin.y, width: viewSize.width / scale, height: viewSize.height / scale };
+        }
+
+        function viewportPulledOntoThePage(view)
+        {
+            const x = Math.max(view.x, 0);
+            const y = Math.max(view.y, 0);
+            return { x, y, width: Math.min(x + view.width, pageSize.width) - x, height: Math.min(y + view.height, pageSize.height) - y };
+        }
+
+        function partOfThePageInView(view)
+        {
+            const x = Math.max(view.x, 0);
+            const y = Math.max(view.y, 0);
+            return { x, y, width: Math.min(view.x + view.width, pageSize.width) - x, height: Math.min(view.y + view.height, pageSize.height) - y };
         }
 
         function point(match, index)
@@ -112,8 +121,7 @@
             }));
         }
 
-        // How far the bar has ended up from where the view would put it, in screen pixels.
-        function offsetFromWhereTheViewPutsIt(bar, node, view)
+        function offsetFromWhereThePagePutsIt(bar, node, view)
         {
             // Where the bar was in content coordinates at the last layout, from its own CSS and the viewport it was laid
             // out against. The tree's layer positions are offsets from this.
@@ -126,19 +134,19 @@
                 y: laidOutAt.y + node.layerTopLeft.y - node.layerPositionAtLastLayout.y,
             };
 
-            const expected = bar.positionIn(view);
+            const expected = bar.positionIn(bar.placedIn(view));
             return { x: (content.x - expected.x) * view.scale, y: (content.y - expected.y) * view.scale };
         }
 
         function barResult(bar, node, view)
         {
-            const offset = offsetFromWhereTheViewPutsIt(bar, node, view);
+            const offset = offsetFromWhereThePagePutsIt(bar, node, view);
 
             // The anchoring scroll position is reported as an integer, so allow a pixel of slack.
             if (Math.abs(offset.x) <= 1 && Math.abs(offset.y) <= 1)
                 return `    ${bar.name}: PASS`;
 
-            return `    ${bar.name}: FAIL (${offset.x.toFixed(1)}px across and ${offset.y.toFixed(1)}px down from where the view puts it)`;
+            return `    ${bar.name}: FAIL (${offset.x.toFixed(1)}px across and ${offset.y.toFixed(1)}px down from where the page puts it)`;
         }
 
         async function barResults(description)
@@ -167,23 +175,17 @@
             // Both the page's own viewport and the one the UI process derives from the view leave that space out, so a
             // right-anchored bar sits 10px from the scrollbar, not 10px from the edge of the window.
             viewSize = { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight };
+            pageSize = { width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight };
 
-            const output = ['Fixed bars inset 10px from the edges of the view, and one centred in it:'];
+            const output = ['Fixed bars inset 10px from the edges of the viewport, and one centred in it:'];
 
             // At page scale 1 nothing is overridden, so this row is also a check that the view really is the size the
             // rows below measure against.
             output.push(await barResults('Before zooming'));
 
-            // Away from the top left, so anchoring the zoom out walks the scroll position off the document: below the
-            // minimum magnification no position on the document keeps the pinched content under the cursor, and
-            // clamping the layout viewport back onto the document is what used to leave the fixed layers behind with
-            // the page while the view shrank around them, walking the bottom bar off the bottom of the window and
-            // sliding the centred bar up and to the left.
-            //
             // Held rather than released, and continued rather than restarted, so one gesture carries the scale past
             // the point where the anchor leaves the document.
             await UIHelper.beginMagnifyGestureAt(600, 400, -0.9);
-            output.push(await barResults('Held zoom out'));
             await UIHelper.continueMagnifyGesture(-0.9);
             output.push(await barResults('Held zoom out'));
             await UIHelper.continueMagnifyGesture(-0.9);
