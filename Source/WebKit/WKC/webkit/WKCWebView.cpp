@@ -711,8 +711,15 @@ WKCWebViewPrivate::construct()
     s.setDefaultFontSize(14);
     s.setAuthorAndUserStylesEnabled(true);
     s.setAcceleratedCompositingEnabled(false);
-    // WebGL is off for bare-metal WiiU — no GPU command queue hooked up
+#if ENABLE(WEBGL)
+    // CMake enables WebGL only when the current GraphicsContextGLWKC backend
+    // and CafeGLSL runtime compiler are present. Keep the WebCore setting in
+    // sync with that compiled capability; disabling it here made the real GX2
+    // backend unreachable even in builds that had successfully compiled it.
+    s.setWebGLEnabled(true);
+#else
     s.setWebGLEnabled(false);
+#endif
     // setDNSPrefetchingEnabled / setWebAudioEnabled / setHyperlinkAuditingEnabled
     // were removed from modern WebCore::Settings.
     s.setLayoutFallbackWidth(1024);
