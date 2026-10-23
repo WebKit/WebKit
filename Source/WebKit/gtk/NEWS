@@ -1,4 +1,21 @@
 ================
+WebKitGTK 2.54.2
+================
+
+What's new in WebKitGTK 2.54.2?
+
+  - Fix performance when compositing layers with backdrop filters.
+  - Fix prewarmed web process leak when they are rejected due to sandboxing.
+  - Release suspended pages and idle processes on memory pressure.
+  - Bind /dev/dxg in the bubblewrap sandbox.
+  - Notify input method about cursor area or surrounding text after a re-focus.
+  - Clear input method composition underlines before adding new ones.
+  - Do not enable input method for read-only text fields.
+  - Update the input method state when readonly changes on the focused element.
+  - Add User-Agent quirk for OrangeTV.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.54.1
 ================
 
