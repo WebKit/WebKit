@@ -31,7 +31,12 @@ PRODUCT_BUNDLE_IDENTIFIER[sdk=appletv*] = $(PRODUCT_NAME);
 PRODUCT_BUNDLE_IDENTIFIER[sdk=xr*] = $(PRODUCT_NAME);
 
 INFOPLIST_FILE[sdk=embedded*] = GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-iOS.plist;
-INFOPLIST_FILE[sdk=macosx*] = GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist;
+// On macOS the RunningBoard keys are added by Scripts/update-info-plist-for-runningboard.sh, which writes a
+// copy of the source plist for ProcessInfoPlistFile to read.
+WK_SOURCE_INFOPLIST_FILE[sdk=embedded*] = $(INFOPLIST_FILE);
+WK_SOURCE_INFOPLIST_FILE[sdk=macosx*] = GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist;
+WK_DERIVED_INFOPLIST_FILE = $(DERIVED_FILE_DIR)/Info-OSX.plist;
+INFOPLIST_FILE[sdk=macosx*] = $(WK_DERIVED_INFOPLIST_FILE);
 
 CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = NO; // Disable PGO profile generation
 WK_CLANG_PGO_GEN_FLAGS = ; // Disable IR PGO profile generation
