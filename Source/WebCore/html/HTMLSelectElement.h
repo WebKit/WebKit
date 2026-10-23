@@ -198,7 +198,7 @@ public:
     void optionSelectionStateChanged(HTMLOptionElement&, bool optionIsSelected);
     bool allowsNonContiguousSelection() const { return m_allowsNonContiguousSelection; };
 
-    CompletionHandlerCallingScope optionToSelectFromChildChangeScope(const ChildChange&, HTMLOptGroupElement* parentOptGroup = nullptr);
+    CompletionHandlerCallingScope optionToSelectFromChildChangeScope(const ChildChange&);
 
     bool canContainRangeEndPoint() const override { return false; }
     bool shouldSaveAndRestoreFormControlState() const final { return true; }

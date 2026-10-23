@@ -29,7 +29,6 @@
 #include "CachedHTMLCollectionInlines.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
-#include "Settings.h"
 
 namespace WebCore {
 
@@ -94,8 +93,6 @@ bool GenericCachedHTMLCollection<type>::elementMatches(Element& element) const
         auto* optionElement = dynamicDowncast<HTMLOptionElement>(element);
         if (!optionElement)
             return false;
-        if (!element.document().settings().htmlEnhancedSelectParsingEnabled())
-            return optionElement->selected();
         return optionElement->selected() && optionElement->ownerSelectElement() == &this->ownerNode();
     }
     case CollectionType::DataListOptions:

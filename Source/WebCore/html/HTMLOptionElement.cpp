@@ -161,7 +161,7 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
     auto result = HTMLElement::insertionSteps(insertionType, parentOfInsertedTree);
 
     RefPtr<HTMLSelectElement> newOwnerSelect;
-    if (document().settings().htmlEnhancedSelectParsingEnabled() && !m_ownerSelect) {
+    if (!m_ownerSelect) {
         if (RefPtr select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::No)) {
             m_ownerSelect = select.get();
             newOwnerSelect = select;
@@ -223,7 +223,7 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
     if (removalType.disconnectedFromDocument && m_shadowTreeNeedsUpdate)
         protect(document())->removeElementWithPendingUserAgentShadowTreeUpdate(*this);
 
-    if (!document().settings().htmlEnhancedSelectParsingEnabled() || !m_ownerSelect)
+    if (!m_ownerSelect)
         return;
 
     if (auto* select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::No)) {
@@ -242,9 +242,6 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
 void HTMLOptionElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
 {
     HTMLElement::movingSteps(movingType, oldParent);
-
-    if (!document().settings().htmlEnhancedSelectParsingEnabled())
-        return;
 
     RefPtr oldSelect = m_ownerSelect;
     RefPtr newSelect = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::No);
@@ -282,8 +279,6 @@ void HTMLOptionElement::finishParsingChildren()
 
     if (document().settings().mutationEventsEnabled())
         return;
-
-    ASSERT(document().settings().htmlEnhancedSelectParsingEnabled());
 
     if (m_disabled)
         return;
@@ -592,16 +587,7 @@ void HTMLOptionElement::willResetComputedStyle()
 
 HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
 {
-    if (document().settings().htmlEnhancedSelectParsingEnabled())
-        return m_ownerSelect.get();
-
-    if (auto* parent = parentElement()) {
-        if (auto* select = dynamicDowncast<HTMLSelectElement>(*parent))
-            return select;
-        if (auto* optGroup = dynamicDowncast<HTMLOptGroupElement>(*parent))
-            return optGroup->ownerSelectElement();
-    }
-    return nullptr;
+    return m_ownerSelect.get();
 }
 
 // https://html.spec.whatwg.org/#option-base-appearance
@@ -637,12 +623,6 @@ String HTMLOptionElement::displayLabel() const
 
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
-    if (!document().settings().htmlEnhancedSelectParsingEnabled()) {
-        if (is<HTMLOptGroupElement>(parentNode()))
-            return makeString("    "_s, displayLabel());
-        return displayLabel();
-    }
-
     for (Ref ancestor : ancestorsOfType<HTMLElement>(*this)) {
         if (is<HTMLOptGroupElement>(ancestor))
             return makeString("    "_s, displayLabel());
@@ -657,11 +637,6 @@ bool HTMLOptionElement::isDisabledFormControl() const
 {
     if (ownElementDisabled())
         return true;
-
-    if (!document().settings().htmlEnhancedSelectParsingEnabled()) {
-        RefPtr parentOptGroup = dynamicDowncast<HTMLOptGroupElement>(parentNode());
-        return parentOptGroup && parentOptGroup->isDisabledFormControl();
-    }
 
     for (Ref ancestor : ancestorsOfType<HTMLElement>(*this)) {
         if (RefPtr optGroup = dynamicDowncast<HTMLOptGroupElement>(ancestor))
@@ -682,7 +657,6 @@ bool HTMLOptionElement::isActuallyDisabled() const
 
 void HTMLOptionElement::cloneIntoSelectedContent(HTMLSelectedContentElement& selectedContent)
 {
-    ASSERT(document().settings().htmlEnhancedSelectParsingEnabled());
     ASSERT(document().settings().htmlEnhancedSelectEnabled());
     ASSERT(!selectedContent.document().settings().mutationEventsEnabled());
 

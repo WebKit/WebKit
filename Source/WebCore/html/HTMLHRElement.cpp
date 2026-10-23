@@ -32,7 +32,6 @@
 #include "HTMLSelectElement.h"
 #include "MutableStyleProperties.h"
 #include "NodeName.h"
-#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -61,7 +60,7 @@ auto HTMLHRElement::insertionSteps(InsertionType insertionType, ContainerNode& p
 {
     auto result = HTMLElement::insertionSteps(insertionType, parentOfInsertedTree);
 
-    if (!document().settings().htmlEnhancedSelectParsingEnabled() || m_ownerSelect)
+    if (m_ownerSelect)
         return result;
 
     if (RefPtr select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
@@ -76,7 +75,7 @@ void HTMLHRElement::removingSteps(RemovalType removalType, ContainerNode& oldPar
 {
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
 
-    if (!document().settings().htmlEnhancedSelectParsingEnabled() || !m_ownerSelect)
+    if (!m_ownerSelect)
         return;
 
     if (auto* select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
@@ -91,9 +90,6 @@ void HTMLHRElement::removingSteps(RemovalType removalType, ContainerNode& oldPar
 void HTMLHRElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
 {
     HTMLElement::movingSteps(movingType, oldParent);
-
-    if (!document().settings().htmlEnhancedSelectParsingEnabled())
-        return;
 
     RefPtr oldSelect = m_ownerSelect;
     RefPtr newSelect = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::Yes);

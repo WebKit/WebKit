@@ -163,7 +163,6 @@ public:
     ContainerNode& currentNode() const { return m_openElements.topNode(); }
     ElementName currentElementName() const { return m_openElements.topElementName(); }
     HTMLStackItem& currentStackItem() const LIFETIME_BOUND { return m_openElements.topStackItem(); }
-    HTMLStackItem* oneBelowTop() const LIFETIME_BOUND { return m_openElements.oneBelowTop(); }
     TreeScope& treeScopeForCurrentNode();
     ContainerNode& containerForCurrentNode();
     Document& ownerDocumentForCurrentNode();

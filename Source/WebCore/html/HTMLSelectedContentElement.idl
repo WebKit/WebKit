@@ -25,7 +25,7 @@
 
 // https://html.spec.whatwg.org/#htmlselectedcontentelement
 [
-    EnabledBySetting=HTMLEnhancedSelectParsingEnabled&HTMLEnhancedSelectEnabled,
+    EnabledBySetting=HTMLEnhancedSelectEnabled,
     Exposed=Window
 ] interface HTMLSelectedContentElement : HTMLElement {
 };

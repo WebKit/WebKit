@@ -27,7 +27,6 @@
 #include "config.h"
 #include "HTMLElementStack.h"
 
-#include "Document.h"
 #include "DocumentFragment.h"
 #include "ElementInlines.h"
 #include "HTMLOptGroupElement.h"
@@ -35,8 +34,6 @@
 #include "HTMLTableElement.h"
 #include "HTMLTemplateElement.h"
 #include "MathMLNames.h"
-#include "NodeDocument.h"
-#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -60,6 +57,7 @@ inline bool LEGACY_NODELETE isScopeMarker(HTMLStackItem& item)
     case HTML::caption:
     case HTML::marquee:
     case HTML::object:
+    case HTML::select:
     case HTML::table:
     case HTML::td:
     case HTML::th:
@@ -74,8 +72,6 @@ inline bool LEGACY_NODELETE isScopeMarker(HTMLStackItem& item)
     case SVG::desc:
     case SVG::title:
         return true;
-    case HTML::select:
-        return item.node().document().settings().htmlEnhancedSelectParsingEnabled();
     default:
         break;
     }
@@ -123,12 +119,6 @@ inline bool LEGACY_NODELETE isButtonScopeMarker(HTMLStackItem& item)
 {
     return isScopeMarker(item)
         || item.elementName() == HTML::button;
-}
-
-inline bool LEGACY_NODELETE isSelectScopeMarker(HTMLStackItem& item)
-{
-    return item.elementName() != HTML::optgroup
-        && item.elementName() != HTML::option;
 }
 
 }
@@ -373,16 +363,6 @@ auto HTMLElementStack::topRecord() const -> ElementRecord&
     return *m_top;
 }
 
-HTMLStackItem* HTMLElementStack::oneBelowTop() const
-{
-    // We should never call this if there are fewer than 2 elements on the stack.
-    ASSERT(m_top);
-    ASSERT(m_top->next());
-    if (m_top->next()->stackItem().isElement())
-        return &m_top->next()->stackItem();
-    return nullptr;
-}
-
 void HTMLElementStack::removeHTMLHeadElement(Element& element)
 {
     ASSERT(m_headElement == &element);
@@ -503,11 +483,6 @@ bool HTMLElementStack::hasAnyInTableScope(std::initializer_list<ElementName> tar
 bool HTMLElementStack::inButtonScope(ElementName targetElement) const
 {
     return inScopeCommon<isButtonScopeMarker>(m_top.get(), targetElement);
-}
-
-bool HTMLElementStack::inSelectScope(ElementName targetElement) const
-{
-    return inScopeCommon<isSelectScopeMarker>(m_top.get(), targetElement);
 }
 
 bool HTMLElementStack::hasTemplateInHTMLScope() const

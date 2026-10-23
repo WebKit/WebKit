@@ -112,7 +112,7 @@ script constructorNeedsCreatedByParser
 search interfaceName=HTMLElement
 section interfaceName=HTMLElement
 select
-selectedcontent interfaceName=HTMLSelectedContentElement, settingsConditional=htmlEnhancedSelectParsingEnabled&htmlEnhancedSelectEnabled&!mutationEventsEnabled
+selectedcontent interfaceName=HTMLSelectedContentElement, settingsConditional=htmlEnhancedSelectEnabled&!mutationEventsEnabled
 slot
 small interfaceName=HTMLElement
 source

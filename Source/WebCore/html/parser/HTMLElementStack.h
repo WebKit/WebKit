@@ -85,7 +85,6 @@ public:
     ElementName topElementName() const { return m_top->elementName(); }
     HTMLStackItem& topStackItem() const LIFETIME_BOUND { return m_top->stackItem(); }
 
-    HTMLStackItem* LEGACY_NODELETE oneBelowTop() const LIFETIME_BOUND;
     ElementRecord& LEGACY_NODELETE topRecord() const LIFETIME_BOUND;
     ElementRecord* LEGACY_NODELETE find(Element&) const LIFETIME_BOUND;
     ElementRecord* LEGACY_NODELETE furthestBlockForFormattingElement(Element&) const LIFETIME_BOUND;
@@ -129,7 +128,6 @@ public:
     bool LEGACY_NODELETE inTableScope(ElementName) const;
     bool LEGACY_NODELETE hasAnyInTableScope(std::initializer_list<ElementName> targetElements) const;
     bool LEGACY_NODELETE inButtonScope(ElementName) const;
-    bool LEGACY_NODELETE inSelectScope(ElementName) const;
 
     bool LEGACY_NODELETE hasNumberedHeaderElementInScope() const;
 

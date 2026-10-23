@@ -58,7 +58,6 @@ auto HTMLSelectedContentElement::insertionSteps(InsertionType insertionType, Con
 {
     HTMLElement::insertionSteps(insertionType, parentOfInsertedTree);
 
-    ASSERT(document().settings().htmlEnhancedSelectParsingEnabled());
     ASSERT(document().settings().htmlEnhancedSelectEnabled());
     ASSERT(!document().settings().mutationEventsEnabled());
 

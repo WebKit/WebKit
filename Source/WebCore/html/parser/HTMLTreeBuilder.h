@@ -103,8 +103,6 @@ private:
         InTableBody,
         InRow,
         InCell,
-        InSelect,
-        InSelectInTable,
         AfterBody,
         InFrameset,
         AfterFrameset,
