@@ -1,0 +1,12 @@
+Tests that SharedArrayBuffer is not available to a page that is not cross-origin isolated in Enhanced Security.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS self.crossOriginIsolated is false
+PASS typeof SharedArrayBuffer is 'undefined'
+PASS new SharedArrayBuffer(8) threw exception ReferenceError: Can't find variable: SharedArrayBuffer.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
