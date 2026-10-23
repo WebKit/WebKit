@@ -6398,6 +6398,12 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason=%" PUBLIC_LOG_STRING, legacyMainFrameProcessID(), reason.characters());
             if (!provisionalFrameForNavigation)
                 frame->takeProvisionalFrame();
+            // This navigation supersedes any pending cross-site main frame load in a provisional page. Cancel it now so that
+            // the frame's provisional load process is its own process again and its DidStartProvisionalLoadForFrame isn't ignored.
+            if (RefPtr provisionalPage = m_provisionalPage; preferences->siteIsolationEnabled() && frame->isMainFrame() && provisionalPage && !provisionalPage->hasActiveLoadForNavigation(navigation)) {
+                provisionalPage->cancel();
+                m_provisionalPage = nullptr;
+            }
         }
 
         if (navigationChangesFrameProcess) {

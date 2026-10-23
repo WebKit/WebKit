@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+history.pushState({ }, "", "?pushed");
+history.replaceState({ }, "", "?replaced");
+
+document.write("PASS if the web process was not terminated. location.search is " + location.search);
+
+if (window.testRunner)
+    testRunner.notifyDone();
+</script>
+</body>
+</html>
