@@ -290,21 +290,48 @@ size_t NativeImage::sizeInBytes() const
 }
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-ImagePaintTimeTransformation NativeImage::paintTimeTransformation() const
+ImagePaintTimeTransformation NativeImage::paintTimeTransformation(std::optional<FloatRect> sourceRect) const
 {
+    static constexpr unsigned maximumSubimagePaintTimeTransformations = 64;
+
+    std::optional<IntRect> subimageRect;
     RetainPtr<CGImageRef> image;
     {
         Locker locker { m_lock };
-        if (m_paintTimeTransformation)
-            return *m_paintTimeTransformation;
+        if (sourceRect) {
+            IntRect imageRect { { }, IntSize(CGImageGetWidth(m_platformImage.get()), CGImageGetHeight(m_platformImage.get())) };
+            auto rect = intersection(enclosingIntRect(*sourceRect), imageRect);
+            if (rect.isEmpty())
+                return ImagePaintTimeTransformation::Unchanged;
+            if (rect != imageRect)
+                subimageRect = rect;
+        }
+
+        if (!subimageRect) {
+            if (m_paintTimeTransformation)
+                return *m_paintTimeTransformation;
+        } else {
+            auto iterator = m_subimagePaintTimeTransformations.find(*subimageRect);
+            if (iterator != m_subimagePaintTimeTransformations.end())
+                return iterator->value;
+        }
+
         image = m_platformImage;
     }
 
     // Classify without holding the lock; a racing duplicate classification yields the same result.
-    auto paintTimeTransformation = ImageInversionClassifier::classify(image.get());
+    auto paintTimeTransformation = [&] -> ImagePaintTimeTransformation {
+        if (!subimageRect)
+            return ImageInversionClassifier::classify(image.get());
+        RetainPtr subimage = adoptCF(CGImageCreateWithImageInRect(image.get(), *subimageRect));
+        return subimage ? ImageInversionClassifier::classify(subimage.get()) : ImagePaintTimeTransformation::Unchanged;
+    }();
 
     Locker locker { m_lock };
-    m_paintTimeTransformation = paintTimeTransformation;
+    if (!subimageRect)
+        m_paintTimeTransformation = paintTimeTransformation;
+    else if (m_subimagePaintTimeTransformations.size() < maximumSubimagePaintTimeTransformations)
+        m_subimagePaintTimeTransformations.add(*subimageRect, paintTimeTransformation);
     return paintTimeTransformation;
 }
 #endif
