@@ -377,7 +377,7 @@ std::partial_ordering operator<=>(const MediaTime& a, const MediaTime& b)
         return a.m_timeValue <=> b.m_timeValue;
 
     if (a.m_timeValue == b.m_timeValue)
-        return b.m_timeScale <=> a.m_timeScale;
+        return a.m_timeValue < 0 ? a.m_timeScale <=> b.m_timeScale : b.m_timeScale <=> a.m_timeScale;
 
     if (a.m_timeValue >= 0) {
         if (a.m_timeValue < b.m_timeValue && a.m_timeScale > b.m_timeScale)

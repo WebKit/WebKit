@@ -168,6 +168,12 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::negativeInfiniteTime(), MediaTime(std::numeric_limits<int64_t>::max(), 1) * -2);
     EXPECT_EQ(MediaTime::negativeInfiniteTime(), MediaTime(std::numeric_limits<int64_t>::min(), 1) * 2);
 
+    // Comparison with equal numerators and different scales
+    EXPECT_LT(MediaTime(1, 10), MediaTime(1, 5));
+    EXPECT_GT(MediaTime(1, 5), MediaTime(1, 10));
+    EXPECT_GT(MediaTime(-1, 10), MediaTime(-1, 5));
+    EXPECT_LT(MediaTime(-1, 5), MediaTime(-1, 10));
+
     // Constants
     EXPECT_EQ(MediaTime::zeroTime(), MediaTime(0, 1));
     EXPECT_EQ(MediaTime::invalidTime(), MediaTime(-1, 1, 0));
