@@ -73,6 +73,9 @@
 #ifdef __cplusplus
 
 #if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
+#import "Helpers/ios/IOSMouseEventTestHarness.h"
+#endif
 #import "UIKitSPIForTesting.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <wtf/SoftLinking.h>
@@ -1624,6 +1627,18 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     RetainPtr scrollView = [self scrollView];
     [self scrollViewWillBeginZooming:scrollView.get() withView:[self viewForZoomingInScrollView:scrollView.get()]];
     [scrollView setZoomScale:zoomScale];
+}
+
+- (void)sendClickAtPoint:(CGPoint)pointInView
+{
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
+    TestWebKitAPI::MouseEventTestHarness testHarness { self };
+    testHarness.mouseMove(pointInView.x, pointInView.y);
+    testHarness.mouseDown();
+    testHarness.mouseUp();
+#else
+    UNUSED_PARAM(pointInView);
+#endif
 }
 
 @end

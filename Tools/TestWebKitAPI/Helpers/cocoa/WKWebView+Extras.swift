@@ -24,10 +24,11 @@
 import CoreGraphics
 public import Foundation
 private import TestWebKitAPILibrary.Helpers.cocoa.TestNavigationDelegate
-private import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
+public import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
 public import WebKit
 public import WebKit_Private
 private import WebKit_Private.WKWebViewPrivate
+private import WebKit_Private.WKWebViewPrivateForTesting
 
 public import struct Foundation.URL
 public import struct Swift.String
@@ -104,6 +105,7 @@ extension WKWebView {
     ///   - frame: The frame to call the function body in, or `nil` for the main frame.
     ///   - contentWorld: The content world to call the function body in.
     ///   - arguments: The arguments to pass to the function body, available in it as local variables.
+    ///   - withUserGesture: Whether to evaluate the function body as if triggered by a user gesture.
     ///   - functionBody: A closure producing the JavaScript function body to call.
     /// - Returns: The value the function body returned.
     /// - Throws: ``UnexpectedJavaScriptResult`` if the function body returned a value of a
@@ -113,10 +115,22 @@ extension WKWebView {
         in frame: WKFrameInfo? = nil,
         contentWorld: WKContentWorld = .page,
         arguments: [String: Any] = [:],
+        withUserGesture: Bool = true,
         _ functionBody: () -> String
     ) async throws -> Result {
         let script = functionBody()
-        let result = try await __callAsyncJavaScript(script, arguments: arguments, inFrame: frame, in: contentWorld)
+        let result =
+            if withUserGesture {
+                try await __callAsyncJavaScript(script, arguments: arguments, inFrame: frame, in: contentWorld)
+            } else {
+                try await _callAsyncJavaScript(
+                    script,
+                    arguments: arguments,
+                    inFrame: frame,
+                    in: contentWorld,
+                    withUserGesture: false
+                )
+            }
 
         guard let value = result as? Result else {
             throw UnexpectedJavaScriptResult(
@@ -135,15 +149,35 @@ extension WKWebView {
     ///   - frame: The frame to call the function body in, or `nil` for the main frame.
     ///   - contentWorld: The content world to call the function body in.
     ///   - arguments: The arguments to pass to the function body, available in it as local variables.
+    ///   - withUserGesture: Whether to evaluate the function body as if triggered by a user gesture.
     ///   - functionBody: A closure producing the JavaScript function body to call.
     /// - Throws: Any error raised while running the function body.
     public func callJavaScript(
         in frame: WKFrameInfo? = nil,
         contentWorld: WKContentWorld = .page,
         arguments: [String: Any] = [:],
+        withUserGesture: Bool = true,
         _ functionBody: () -> String
     ) async throws {
-        _ = try await __callAsyncJavaScript(functionBody(), arguments: arguments, inFrame: frame, in: contentWorld)
+        if withUserGesture {
+            _ = try await __callAsyncJavaScript(functionBody(), arguments: arguments, inFrame: frame, in: contentWorld)
+        } else {
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+                _callAsyncJavaScript(
+                    functionBody(),
+                    arguments: arguments,
+                    inFrame: frame,
+                    in: contentWorld,
+                    withUserGesture: false
+                ) { _, error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
+        }
     }
 
     /// Creates a handle for the first element matching a selector.
@@ -193,6 +227,30 @@ extension WKWebView {
                 continuation.resume()
             })
         }
+    }
+
+    /// Waits until all pending mouse events have been processed.
+    public func pendingMouseEvents() async {
+        await withCheckedContinuation { continuation in
+            _do(afterProcessingAllPendingMouseEvents: {
+                continuation.resume()
+            })
+        }
+    }
+}
+
+extension TestWKWebView {
+    /// Simulates a mouse click at a point in view coordinates and waits for it to be processed.
+    ///
+    /// - Parameter point: The location to click at, in points from the top-left corner of the view.
+    public func click(at point: CGPoint) async {
+        #if WTF_PLATFORM_IOS_FAMILY
+        sendClick(at: point)
+        #else
+        sendClick(at: NSPoint(x: point.x, y: frame.height - point.y))
+        #endif
+        await pendingMouseEvents()
+        await nextPresentationUpdate()
     }
 }
 

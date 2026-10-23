@@ -2083,6 +2083,7 @@ void Page::didCommitLoad()
 #endif
 
     m_fixedContainerEdgesAndElements = std::make_pair(makeUniqueRef<FixedContainerEdges>(), WeakElementEdges { });
+    m_topFixedContainerRefresh = { };
 
     m_elementTargetingController->reset();
 
@@ -3985,6 +3986,7 @@ void Page::clearSampledPageTopColor()
 void Page::invalidateColorsSampledFromPaintedContent()
 {
     clearSampledPageTopColor();
+    refreshTopFixedContainerEdgeAfterColorSchemeChange();
     chrome().client().setNeedsFixedContainerEdgesUpdate();
 }
 #endif
@@ -4593,6 +4595,8 @@ void Page::appearanceDidChange()
     forEachDocument([] (auto& document) {
         document.appearanceDidChange();
     });
+
+    refreshTopFixedContainerEdgeAfterColorSchemeChange();
 }
 
 void Page::clearAXObjectCache()
@@ -5799,6 +5803,49 @@ void Page::setObscuredInsets(const FloatBoxExtent& insets)
 }
 #endif
 
+void Page::refreshTopFixedContainerEdgeAfterColorSchemeChange()
+{
+    // Once the user has scrolled or interacted with the page, the top edge is not sampled again (unless
+    // TopContentInsetBackgroundCanChangeAfterScrolling is enabled), so that menus, modals and fixed headers that
+    // show up later don't change the color extended into the top content inset; see updateFixedContainerEdges().
+    // A change of color scheme is different: the container that the top edge was sampled from is still there, but
+    // it may now have another color. Allow the top edge to be sampled again for a short time, but only accept the
+    // result if it comes from that same container.
+    RefPtr container = lastFixedContainer(BoxSide::Top);
+    if (!container)
+        return;
+
+    m_topFixedContainerRefresh = { container.get(), { }, false };
+    chrome().client().setNeedsFixedContainerEdgesUpdate();
+}
+
+void Page::refreshTopFixedContainerEdgeAfterColorSchemeChange(const Element& changedElement)
+{
+    // color-scheme is inherited, so when a page switches themes by changing it on the root, the body or some other
+    // ancestor, the style of the container itself changes as well.
+    if (&changedElement != lastFixedContainer(BoxSide::Top))
+        return;
+
+    if (RefPtr view = changedElement.document().view(); view && view->isUserScrollInProgress())
+        return;
+
+    refreshTopFixedContainerEdgeAfterColorSchemeChange();
+}
+
+RefPtr<Element> Page::topFixedContainerToRefresh()
+{
+    RefPtr container = m_topFixedContainerRefresh.container;
+    if (!container)
+        return nullptr;
+
+    if (m_topFixedContainerRefresh.deadline && MonotonicTime::now() > m_topFixedContainerRefresh.deadline) {
+        m_topFixedContainerRefresh = { };
+        return nullptr;
+    }
+
+    return container;
+}
+
 void Page::updateFixedContainerEdges(BoxSideSet sides)
 {
     RefPtr mainFrame = localMainFrame();
@@ -5813,17 +5860,18 @@ void Page::updateFixedContainerEdges(BoxSideSet sides)
     if (!frameView)
         return;
 
-    auto [edges, elements] = frameView->fixedContainerEdges([&] {
+    RefPtr topContainerToRefresh = topFixedContainerToRefresh();
+    bool canSampleTopEdge = settings().topContentInsetBackgroundCanChangeAfterScrolling()
+        || (!frameView->wasEverScrolledExplicitlyByUserBelowTopEdge() && !m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures)
+        || document->parsing();
+
+    auto sampledSides = [&] {
         auto sidesToSample = sides;
         auto scrollOffset = frameView->scrollOffset();
         auto minimumOffset = frameView->minimumScrollOffset();
         auto maximumOffset = frameView->maximumScrollOffset();
 
-        bool canSampleTopEdge = settings().topContentInsetBackgroundCanChangeAfterScrolling()
-            || (!frameView->wasEverScrolledExplicitlyByUserBelowTopEdge() && !m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures)
-            || document->parsing();
-
-        if (scrollOffset.y() < minimumOffset.y() || !canSampleTopEdge)
+        if (scrollOffset.y() < minimumOffset.y() || !(canSampleTopEdge || topContainerToRefresh))
             sidesToSample.remove(BoxSide::Top);
 
         if (scrollOffset.y() > maximumOffset.y())
@@ -5836,9 +5884,44 @@ void Page::updateFixedContainerEdges(BoxSideSet sides)
             sidesToSample.remove(BoxSide::Right);
 
         return sidesToSample;
-    }());
+    }();
+
+    bool willSampleTopEdge = sampledSides.contains(BoxSide::Top);
+    bool willSampleTopEdgeOnlyToRefresh = willSampleTopEdge && !canSampleTopEdge;
+    auto ignoreOtherTopContainers = willSampleTopEdgeOnlyToRefresh ? LocalFrameView::IgnoreOtherTopContainers::Yes : LocalFrameView::IgnoreOtherTopContainers::No;
+    auto [edges, elements] = frameView->fixedContainerEdges(sampledSides, topContainerToRefresh.get(), ignoreOtherTopContainers);
+
+    bool refreshedTopEdge = false;
+    if (willSampleTopEdge && topContainerToRefresh) {
+        // The container may be covered for a while, for example by the dialog that was used to change the color scheme,
+        // so wait for it to show up again. Once it has, only keep refreshing for as long as its color may still be
+        // settling, for example in a transition.
+        static constexpr Seconds waitForContainerDuration { 30_s };
+        static constexpr Seconds settlingDuration { 1_s };
+        auto now = MonotonicTime::now();
+        if (!m_topFixedContainerRefresh.deadline)
+            m_topFixedContainerRefresh.deadline = now + waitForContainerDuration;
+
+        refreshedTopEdge = elements.at(BoxSide::Top).get() == topContainerToRefresh.get();
+        if (refreshedTopEdge && !m_topFixedContainerRefresh.isSettling) {
+            m_topFixedContainerRefresh.isSettling = true;
+            m_topFixedContainerRefresh.deadline = now + settlingDuration;
+        }
+
+        ASSERT(!willSampleTopEdgeOnlyToRefresh || refreshedTopEdge || (!edges.hasFixedEdge(BoxSide::Top) && !elements.at(BoxSide::Top)));
+
+        // Nothing may change in the container itself when it comes back or settles, so look again at the next update:
+        // while only this container is being sampled for, or while its color may still be settling.
+        if (refreshedTopEdge || willSampleTopEdgeOnlyToRefresh)
+            chrome().client().setNeedsFixedContainerEdgesUpdate();
+    }
 
     for (auto side : sides) {
+        // The refreshed color replaces the previous one, even if no single color was found this time. A missing color
+        // is not taken at face value, because it is also what sampling returns when it fails.
+        if (side == BoxSide::Top && refreshedTopEdge && edges.hasFixedEdge(side))
+            continue;
+
         if (!edges.hasFixedEdge(side) || (!edges.predominantColor(side).isVisible() && fixedContainerEdges().predominantColor(side).isVisible())) {
             WeakPtr lastElement = m_fixedContainerEdgesAndElements.second.at(side);
             if (!lastElement)

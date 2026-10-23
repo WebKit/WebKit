@@ -1,0 +1,159 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=false pageTopColorSamplingEnabled=false useFlexibleViewport=true obscuredInset.top=50 ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+    color-scheme: light;
+}
+
+:root.dark {
+    color-scheme: dark;
+}
+
+body.dark {
+    color-scheme: dark;
+}
+
+.dark-section {
+    color-scheme: dark;
+}
+
+body, html {
+    font-family: system-ui;
+    margin: 0;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    z-index: 100;
+    background-color: rgb(255, 99, 71);
+}
+
+:root.dark header {
+    background-color: rgb(0, 128, 0);
+}
+
+body.dark header {
+    background-color: rgb(128, 0, 128);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root.follows-system header {
+        background-color: rgb(0, 0, 255);
+    }
+}
+
+.click-target {
+    position: absolute;
+    top: 150px;
+    left: 100px;
+    width: 100px;
+    height: 200px;
+    z-index: 2000;
+}
+
+.tall {
+    height: 2000px;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+// Once the user has interacted with the page, the top edge isn't sampled again, so that a new fixed element doesn't
+// change the color extended into the top content inset. This checks that the color of the header that was sampled is
+// still refreshed when the page switches its color scheme, or when the system appearance changes, and that it stays
+// frozen otherwise.
+jsTestIsAsync = true;
+
+// Longer than the time during which the top edge may be refreshed once the header has been found.
+const refreshWindow = 1200;
+
+async function interactWithPage()
+{
+    // On iOS, a tap only counts as user interaction if something on the page handles the click.
+    const target = document.querySelector(".click-target");
+    const clicked = new Promise(resolve => target.addEventListener("click", resolve, { once: true }));
+    await UIHelper.activateElement(target);
+    await clicked;
+}
+
+async function topEdgeColorAfterUpdate()
+{
+    await UIHelper.ensurePresentationUpdate();
+    return (await UIHelper.fixedContainerEdgeColors()).top;
+}
+
+addEventListener("load", async () => {
+    // The test runner does not re-apply the inset from the header option after an earlier test that sent mouse events.
+    await UIHelper.setObscuredInsets(50, 0, 0, 0);
+    const root = document.documentElement;
+    const header = document.querySelector("header");
+    const tall = document.querySelector(".tall");
+
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+
+    // A click stops the top edge from being sampled again: a plain style change keeps the old color.
+    await interactWithPage();
+    header.style.backgroundColor = "rgb(255, 255, 0)";
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+    header.style.removeProperty("background-color");
+    await UIHelper.ensurePresentationUpdate();
+
+    // The color scheme changes on an element that doesn't contain the header: the color is still frozen.
+    tall.classList.add("dark-section");
+    header.style.backgroundColor = "rgb(255, 255, 0)";
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+    header.style.removeProperty("background-color");
+    tall.classList.remove("dark-section");
+
+    // The page switches to its dark theme by changing color-scheme on the root.
+    root.classList.add("dark");
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(0, 128, 0)");
+
+    root.classList.remove("dark");
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+
+    // The same, but with color-scheme on the body, which doesn't have a layer. Wait for the previous refresh to be
+    // over first, so that this tests its own trigger.
+    await UIHelper.delayFor(refreshWindow);
+    document.body.classList.add("dark");
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(128, 0, 128)");
+
+    document.body.classList.remove("dark");
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+
+    // The system appearance changes, and the header follows prefers-color-scheme.
+    await UIHelper.delayFor(refreshWindow);
+    root.classList.add("follows-system");
+    window.internals?.settings.setUseDarkAppearance(true);
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(0, 0, 255)");
+
+    // Once the refresh is over, the color is frozen again.
+    await UIHelper.delayFor(refreshWindow);
+    header.style.backgroundColor = "rgb(255, 255, 0)";
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(0, 0, 255)");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<header></header>
+<div class="tall"></div>
+<div class="click-target"></div>
+</body>
+</html>
