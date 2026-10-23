@@ -1989,6 +1989,7 @@ inspector/InspectorInstrumentation.cpp @header:RenderStyleGetters
 inspector/InspectorInstrumentationPublic.cpp
 inspector/InspectorInstrumentationWebKit.cpp
 inspector/InspectorNetworkIntercept.cpp
+inspector/NetworkInterception.cpp
 inspector/InspectorNodeFinder.cpp
 inspector/InspectorOverlay.cpp @header:RenderStyleGetters
 inspector/InspectorOverlayConfigParser.cpp

@@ -1735,6 +1735,7 @@ public:
     void getImageBufferResourceLimits(ImageBufferResourceLimitsPromise&&);
 
     void setResourceCachingDisabledByWebInspector(bool);
+    bool isNetworkInterceptionConfiguredForTesting(const String& url);
     ExceptionOr<void> lowerAllFrameMemoryMonitorLimits();
 
 #if ENABLE(DAMAGE_TRACKING)

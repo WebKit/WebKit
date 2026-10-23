@@ -44,6 +44,7 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorResourceUtilities.h>
+#include <WebCore/NetworkInterception.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProcessQualified.h>
 #include <optional>
@@ -290,6 +291,12 @@ CommandResult<void> ProxyingNetworkAgent::enable()
 
 CommandResult<void> ProxyingNetworkAgent::disable()
 {
+    // Web Inspector's interception patterns go away with the domain. Other consumers keep theirs. This
+    // comes before the early return because the interception commands do not require Network.enable, so
+    // patterns can be in place while the domain is not enabled.
+    if (RefPtr inspectedPage = m_inspectedPage.get())
+        inspectedPage->clearInspectorNetworkInterception();
+
     if (!m_enabled)
         return { };
 
@@ -492,18 +499,54 @@ CommandResult<Ref<Protocol::Runtime::RemoteObject>> ProxyingNetworkAgent::resolv
 
 // FIXME: Forward interception to the WebContent processes. https://bugs.webkit.org/show_bug.cgi?id=324383
 
-CommandResult<void> ProxyingNetworkAgent::setInterceptionEnabled(bool)
+static NetworkInterceptionPhase toInterceptionPhase(Protocol::Network::NetworkStage stage)
 {
+    switch (stage) {
+    case Protocol::Network::NetworkStage::Request:
+        return NetworkInterceptionPhase::BeforeRequestSent;
+    case Protocol::Network::NetworkStage::Response:
+        return NetworkInterceptionPhase::ResponseStarted;
+    }
+    ASSERT_NOT_REACHED();
+    return NetworkInterceptionPhase::ResponseStarted;
+}
+
+static InterceptPattern toInterceptPattern(const String& url, Protocol::Network::NetworkStage stage, const std::optional<bool>& caseSensitive, const std::optional<bool>& isRegex)
+{
+    return InterceptPattern {
+        NetworkInterceptOwner::Inspector,
+        toInterceptionPhase(stage),
+        InspectorURLPattern { url, caseSensitive.value_or(true), isRegex.value_or(false) },
+    };
+}
+
+CommandResult<void> ProxyingNetworkAgent::setInterceptionEnabled(bool enabled)
+{
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return makeUnexpected("Page is no longer available"_s);
+
+    inspectedPage->setInspectorNetworkInterceptionEnabled(enabled);
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::addInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
+CommandResult<void> ProxyingNetworkAgent::addInterception(const String& url, Protocol::Network::NetworkStage stage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return makeUnexpected("Page is no longer available"_s);
+
+    inspectedPage->addInspectorNetworkInterceptPattern(toInterceptPattern(url, stage, caseSensitive, isRegex));
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::removeInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
+CommandResult<void> ProxyingNetworkAgent::removeInterception(const String& url, Protocol::Network::NetworkStage stage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return makeUnexpected("Page is no longer available"_s);
+
+    inspectedPage->removeInspectorNetworkInterceptPattern(toInterceptPattern(url, stage, caseSensitive, isRegex));
     return { };
 }
 

@@ -181,6 +181,10 @@ class FormDataReference;
 class SharedBufferReference;
 }
 
+namespace Inspector {
+struct NetworkInterception;
+}
+
 namespace WebCore {
 
 class AXIsolatedTree;
@@ -489,6 +493,7 @@ class WebFrame;
 class WebFullScreenManager;
 class WebGestureEvent;
 class WebImage;
+class NetworkInterceptionSink;
 class WebInspectorBackend;
 class WebInspectorBackendClient;
 class WebInspectorUI;
@@ -891,6 +896,10 @@ public:
     void updateTextIndicator(RefPtr<WebCore::TextIndicator>&&);
 
     WebFrame& mainWebFrame() const { return m_mainFrame; }
+
+    // Receives the page's network interception configuration from the UI process
+    // authority. Created on first use, since most pages are never inspected.
+    NetworkInterceptionSink& networkInterceptionSink();
     const URL& mainFrameOpenerURL() const { return m_mainFrameOpenerURL; }
 
     WebCore::Frame* LEGACY_NODELETE mainFrame() const;
@@ -1790,6 +1799,7 @@ public:
 
     bool LEGACY_NODELETE isControlledByAutomation() const;
     void LEGACY_NODELETE setControlledByAutomation(bool);
+    void setNetworkInterception(Inspector::NetworkInterception&&, CompletionHandler<void()>&&);
 
     void connectInspector(Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector();
@@ -2952,6 +2962,7 @@ private:
     RefPtr<WebPageTesting> m_webPageTesting;
 
     const Ref<WebFrame> m_mainFrame;
+    std::unique_ptr<NetworkInterceptionSink> m_networkInterceptionSink;
     std::optional<WebCore::FrameIdentifier> m_unresolvedMainFrameOpenerIdentifier;
     URL m_mainFrameOpenerURL;
 
