@@ -6099,21 +6099,40 @@ class ReRunAPITests(RunAPITests):
             yield self.report_to_results_db(results, flaky_type='BetweenStepsDirtyTree')
         defer.returnValue(failures)
 
+    def failures_with_change(self, run: str) -> set[str]:
+        failures = self.getProperty(f'api_{run}_run_failures_filtered', None)
+        if failures is None:
+            failures = self.getProperty(f'api_{run}_run_failures', [])
+        return set(failures)
+
     def failures_in_both_dirty_runs(self) -> set[str]:
         """
         The failures AnalyzeAPITestsResults would attribute to the change, before the clean-tree run
         subtracts its own from them.
         """
-        first_run_failures = self.getProperty('api_first_run_failures_filtered', None)
-        if first_run_failures is None:
-            first_run_failures = self.getProperty('api_first_run_failures', [])
-        second_run_failures = self.getProperty('api_second_run_failures_filtered', None)
-        if second_run_failures is None:
-            second_run_failures = self.getProperty('api_second_run_failures', [])
-        return set(first_run_failures) & set(second_run_failures)
+        return self.failures_with_change('first') & self.failures_with_change('second')
+
+    def no_failure_repeated_across_runs(self) -> bool:
+        if not self.getProperty('api_first_run_failures') or not self.getProperty('api_second_run_failures'):
+            return False
+        if self.getProperty('api_first_run_exceeded_failure_limit', False) or self.getProperty('api_second_run_exceeded_failure_limit', False):
+            return False
+        return not self.failures_in_both_dirty_runs()
 
     @defer.inlineCallbacks
     def doOnFailure(self) -> Generator[Any, Any, None]:
+        if self.no_failure_repeated_across_runs():
+            flaky_failures = sorted(self.failures_with_change('first') | self.failures_with_change('second'))
+            pluralSuffix = 's' if len(flaky_failures) > 1 else ''
+            message = f"Found flaky test{pluralSuffix}: {', '.join(flaky_failures[:self.NUM_FAILURES_TO_DISPLAY])}"
+            if len(flaky_failures) > self.NUM_FAILURES_TO_DISPLAY:
+                message += ' ...'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.setProperty('force_build_success', True)
+            self.setProperty('build_summary', message)
+            return
+
         is_main = self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH
         if is_main and (candidates := self.failures_in_both_dirty_runs()):
             # parse_and_set_failures has already reported this build's BetweenStepsDirtyTree
