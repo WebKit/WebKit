@@ -352,7 +352,7 @@ void PageClientImpl::preferencesDidChange()
         return;
 
     if (auto page = webView->_page) {
-        if (CheckedPtr scrollingCoordinator = page->scrollingCoordinatorProxy())
+        if (RefPtr scrollingCoordinator = page->scrollingCoordinatorProxy())
             scrollingCoordinator->overlayRegionsEnabledChanged();
     }
 #else

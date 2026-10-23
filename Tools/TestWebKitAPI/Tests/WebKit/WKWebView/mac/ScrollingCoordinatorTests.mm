@@ -33,6 +33,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
 @interface WKWebView (Internal)
@@ -192,6 +193,29 @@ TEST(ScrollingCoordinatorTests, LatchedWheelGestureIgnoresElementCoveringPointer
 
     EXPECT_WK_STREQ(@"innerContent", [webView stringByEvaluatingJavaScript:@"lastWheelEventTarget"]);
     EXPECT_EQ(0, [webView stringByEvaluatingJavaScript:@"document.getElementById('outer').scrollTop"].intValue);
+}
+
+TEST(ScrollingCoordinatorTests, MainFrameScrollUpdatesDuringRootNodeReplacement)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 500, 500)]);
+
+    CGPoint eventLocationInWindow = [webView convertPoint:CGPointMake(50, 50) toView:nil];
+
+    for (unsigned pass = 0; pass < 10; ++pass) {
+        [webView synchronouslyLoadTestPageNamed:@"simple-tall"];
+        [webView wheelEventAtPoint:eventLocationInWindow wheelDelta:CGSizeMake(0, -100)];
+    }
+
+    [webView synchronouslyLoadTestPageNamed:@"simple-tall"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr scrollingTree = [webView _scrollingTreeAsText];
+    EXPECT_TRUE([scrollingTree containsString:@"frame scrolling node"]);
+
+    [webView wheelEventAtPoint:eventLocationInWindow wheelDelta:CGSizeMake(0, -100)];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"window.scrollY"] floatValue] > 0;
+    }));
 }
 
 TEST(ScrollingCoordinatorTests, SetContentOffset)
