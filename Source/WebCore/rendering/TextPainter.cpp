@@ -250,7 +250,8 @@ void TextPainter::setGlyphDisplayListIfNeeded(const InlineDisplay::Box& box, con
         const_cast<InlineDisplay::Box&>(box).removeFromGlyphDisplayListCache();
         return;
     }
-    m_glyphDisplayList = GlyphDisplayListCache::singleton().get(box, m_font, m_context, textRun, paintInfo);
+    auto allowShapedTextCacheReuse = m_shadow.isNone() ? AllowShapedTextCacheReuse::Yes : AllowShapedTextCacheReuse::No;
+    m_glyphDisplayList = GlyphDisplayListCache::singleton().get(box, m_font, m_context, textRun, paintInfo, allowShapedTextCacheReuse);
 }
 
 bool TextPainter::shouldUseGlyphDisplayList(const PaintInfo& paintInfo, const Style::ComputedStyle& style)

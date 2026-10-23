@@ -97,7 +97,7 @@ public:
 
     static GlyphDisplayListCache& LEGACY_NODELETE singleton();
 
-    RefPtr<const DisplayList::DisplayList> get(const InlineDisplay::Box&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);
+    RefPtr<const DisplayList::DisplayList> get(const InlineDisplay::Box&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&, AllowShapedTextCacheReuse);
 
     RefPtr<const DisplayList::DisplayList> getIfExists(const InlineDisplay::Box&);
 
