@@ -130,6 +130,7 @@ interface AccessibilityUIElement {
     readonly attribute boolean isLastItemInSuggestion;
     readonly attribute boolean isRemoteFrame;
     readonly attribute boolean isRemotePlatformElement;
+    undefined readFrameDuringRemoteElementLookup();
     readonly attribute boolean isFrameGeometryInitialized;
 
     readonly attribute long pageX;

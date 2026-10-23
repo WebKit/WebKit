@@ -37,7 +37,10 @@ DECLARE_SYSTEM_HEADER
 
 @interface AXRemoteElement : NSObject
 
++ (NSArray<AXRemoteElement *> *)remoteElementsForBlock:(BOOL (^)(AXRemoteElement *element))matchBlock;
+
 - (id)initWithUUID:(NSString *)uuid andRemotePid:(pid_t)pid andContextId:(uint32_t)contextId;
+- (void)unregister;
 
 @property (nonatomic) BOOL onClientSide;
 @property (nonatomic, weak) id accessibilityContainer;
