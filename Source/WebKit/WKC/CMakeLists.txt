@@ -491,14 +491,6 @@ if (WKC_ENABLE_FULL_WEBCORE)
     endif ()
 endif ()
 
-# GraphicsContext3DWKC.cpp is a legacy WebKit 4.3 adapter. It includes the
-# removed GraphicsContext3D.h and cannot be used by this modern WebCore build.
-# Do not compile the obsolete adapter when WebGL is disabled; WebGL may only be
-# enabled by the separate current GraphicsContextGLWKC.cpp implementation.
-list(REMOVE_ITEM WEBCORE_PLATFORM_SOURCES
-    "${WEBCORE_DIR}/platform/graphics/WKC/GraphicsContext3DWKC.cpp"
-)
-
 file(GLOB_RECURSE WKC_WEBKIT_SOURCES CONFIGURE_DEPENDS
     ${WKC_DIR}/webkit/*.cpp
     ${WKC_DIR}/WebCoreSupport/*.cpp
