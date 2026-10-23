@@ -147,7 +147,7 @@ const parseSceneGraph = text => {
         if (entityMatch) {
             while (openEntities.length && openEntities.at(-1).depth >= depth)
                 openEntities.pop();
-            const entity = { name: entityMatch[1] ?? "", element: null, parent: openEntities.at(-1) ?? null, depth };
+            const entity = { name: entityMatch[1] ?? "", element: null, rotation: [0, 0, 0, 1], parent: openEntities.at(-1) ?? null, depth };
             entities.push(entity);
             openEntities.push(entity);
             continue;
@@ -156,6 +156,10 @@ const parseSceneGraph = text => {
         const elementMatch = /^\s*\(element (.+)\)$/.exec(line);
         if (elementMatch && openEntities.length)
             openEntities.at(-1).element = elementMatch[1];
+
+        const rotationMatch = /^\s*\(rotation (.+)\)$/.exec(line);
+        if (rotationMatch && openEntities.length)
+            openEntities.at(-1).rotation = rotationMatch[1].split(" ").map(Number);
     }
     return entities;
 };

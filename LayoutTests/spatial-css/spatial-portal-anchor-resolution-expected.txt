@@ -6,4 +6,5 @@ PASS an anchor declared after the anchored model still resolves
 PASS a chain of anchors resolves at every step
 PASS the last <model> in tree order wins when several declare the same anchor-name
 PASS a <model> anchored to an anchor-name it also declares resolves to the previous <model> with that name
+PASS a Y-up <model> anchored to a Z-up <model> stays upright
 

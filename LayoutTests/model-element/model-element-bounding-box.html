@@ -19,7 +19,7 @@ promise_test(async t => {
 promise_test(async t => {
     const [model, source] = createModelAndSource(t, "resources/2x2x2-at-100x50x200.usdz");
     await model.ready;
-    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(100, 50, 200));
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(100, 200, -50));
     assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly(2, 2, 2));
 }, `<model> gets the expected bounding box after model content with center way-out is ready.`);
 
@@ -33,7 +33,7 @@ promise_test(async t => {
 promise_test(async t => {
     const [model, source] = createModelAndSource(t, "resources/2x2x2-positive.usdz");
     await model.ready;
-    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(1, 1, 1));
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(1, 1, -1));
     assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly(2, 2, 2));
 }, `<model> gets the expected bounding box after model content with center at (1, 1, 1) is ready.`);
 
@@ -46,7 +46,7 @@ promise_test(async t => {
 promise_test(async t => {
     const [model, source] = createModelAndSource(t, "resources/2x2x2-at-100x50x200.usdz");
     await model.ready;
-    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(100, 50, 200));
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(100, 200, -50));
     assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly(2, 2, 2));
 
     source.src = "resources/2x2x2-center.usdz";

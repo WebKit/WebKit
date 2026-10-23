@@ -520,7 +520,6 @@ NS_SWIFT_SENDABLE
 - (double)currentTime;
 - (void)setCurrentTime:(double)newTime;
 - (double)duration;
-- (BOOL)treatZAsUpAxis;
 - (BOOL)loadModel:(NSData *)data mimeType:(NSString *)mimeType;
 - (nullable WKBridgeUpdateTexture *)loadEnvironmentMap:(NSData *)data;
 - (void)update:(double)deltaTime;

@@ -89,6 +89,9 @@ extension WKRKEntity {
     @nonobjc
     private var entity = Entity()
 
+    @nonobjc
+    private var upAxisCorrection = matrix_identity_float4x4
+
     weak var delegate: (any WKRKEntityDelegate)?
 
     @nonobjc
@@ -196,6 +199,8 @@ extension WKRKEntity {
         self.init()
         entity = rkEntity
         #endif
+        // RealityKit rotates the root entity of a Z-up asset to make it Y-up.
+        upAxisCorrection = Transform(rotation: rkEntity.transform.rotation).matrix
     }
 
     #if canImport(CoreRE)
@@ -228,20 +233,29 @@ extension WKRKEntity {
 
     @nonobjc
     private final var boundingBox: BoundingBox? {
-        entity.visualBounds(relativeTo: entity)
+        entity.visualBounds(relativeTo: entity).transformed(by: upAxisCorrection)
     }
 
     @objc(referenceEntity)
     weak var reference: WKRKEntity?
 
+    @nonobjc
+    private final var referenceUpAxisCorrection: simd_float4x4 {
+        reference?.upAxisCorrection ?? matrix_identity_float4x4
+    }
+
+    // WebKit works in upright, Y-up space: the transform leaves out this entity's up axis correction,
+    // and is relative to the reference's upright space rather than to its Z-up asset space.
     var transform: WKEntityTransform {
         get {
-            let transform = Transform(matrix: entity.transformMatrix(relativeTo: reference?.entity))
+            let entityMatrix = entity.transformMatrix(relativeTo: reference?.entity)
+            let transform = Transform(matrix: referenceUpAxisCorrection * entityMatrix * upAxisCorrection.inverse)
             return WKEntityTransform(scale: transform.scale, rotation: transform.rotation, translation: transform.translation)
         }
         set {
             let newTransform = Transform(scale: newValue.scale, rotation: newValue.rotation, translation: newValue.translation)
-            entity.setTransformMatrix(newTransform.matrix, relativeTo: reference?.entity)
+            let entityMatrix = referenceUpAxisCorrection.inverse * newTransform.matrix * upAxisCorrection
+            entity.setTransformMatrix(entityMatrix, relativeTo: reference?.entity)
         }
     }
 

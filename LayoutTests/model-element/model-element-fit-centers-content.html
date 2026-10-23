@@ -41,7 +41,7 @@ const fitUnderOrbit = async (test, asset, rotation) => {
 
 promise_test(async t => {
     const model = await fitUnderOrbit(t, "resources/2x2x2-positive.usdz");
-    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(1, 1, 1));
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(1, 1, -1));
     assert_fit_centers_content(model, "unrotated orbit fit");
 }, `<model> orbit fit centers content whose bounding box is off-center`);
 

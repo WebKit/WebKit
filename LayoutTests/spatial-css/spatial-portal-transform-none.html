@@ -40,7 +40,7 @@ promise_test(async t => {
     await model.ready;
     const transform = await waitForPortalTransform(portal, portalTransformIsResolved, "portal");
 
-    assert_3d_matrix_approx_equals(transform, new DOMMatrixReadOnly().translate(-100, -50, -201));
+    assert_3d_matrix_approx_equals(transform, new DOMMatrixReadOnly().translate(-100, -200, 49));
 }, `portal-transform: none still centers the portal's content`);
 
 promise_test(async t => {
@@ -54,7 +54,7 @@ promise_test(async t => {
     const applied = await waitForEntityTransform(model, transform => !transform.isIdentity, "child transform");
 
     assert_3d_matrix_approx_equals(applied, as3d(new DOMMatrixReadOnly().translate(200, 0, 0).scale3d(2)));
-    assert_3d_matrix_approx_equals(resolvedPortalTransform(portal), new DOMMatrixReadOnly().translate(-100, -50, -201));
+    assert_3d_matrix_approx_equals(resolvedPortalTransform(portal), new DOMMatrixReadOnly().translate(-100, -200, 49));
 }, `portal-transform: none keeps centering its content when a child is transformed`);
 
 promise_test(async t => {

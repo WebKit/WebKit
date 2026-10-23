@@ -1245,9 +1245,6 @@ std::pair<WebCore::FloatPoint3D, WebCore::FloatPoint3D> WebModelPlayer::bounding
         return { };
 
     auto [simdCenter, simdExtents] = *bounds;
-    CheckedPtr hosted = hostedModel(nodeID);
-    if (hosted && [hosted->loader treatZAsUpAxis])
-        return { WebCore::FloatPoint3D(simdCenter.x, -simdCenter.z, simdCenter.y), WebCore::FloatPoint3D(simdExtents.x, simdExtents.z, simdExtents.y) };
     return { WebCore::FloatPoint3D(simdCenter.x, simdCenter.y, simdCenter.z), WebCore::FloatPoint3D(simdExtents.x, simdExtents.y, simdExtents.z) };
 }
 
