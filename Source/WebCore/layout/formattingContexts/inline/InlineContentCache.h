@@ -48,6 +48,7 @@ public:
             bool hasTextAndLineBreakOnlyContent { false };
             bool hasTextAutospace { false };
             bool hasWhiteSpaceTrim { false };
+            bool hasShapingAdjustments { false };
             size_t inlineBoxCount { 0 };
         };
         enum class IsPopulatedFromCache : bool { No, Yes };
@@ -66,6 +67,7 @@ public:
         bool hasInlineBoxes() const { return !!inlineBoxCount(); }
         size_t inlineBoxCount() const { return m_contentAttributes.inlineBoxCount; }
         bool hasWhiteSpaceTrim() const { return m_contentAttributes.hasWhiteSpaceTrim; }
+        bool hasShapingAdjustments() const { return m_contentAttributes.hasShapingAdjustments; }
         bool isPopulatedFromCache() const { return m_isPopulatedFromCache; }
 
     private:
@@ -93,9 +95,14 @@ public:
 
     const TextSpacingContext& textSpacingContext() const LIFETIME_BOUND { return m_textSpacingContext; }
 
+    // Indexed like the inline items: the kerning with the previous item included in each item's width. Empty when there is none.
+    std::span<const float> shapingAdjustments() const LIFETIME_BOUND { return m_shapingAdjustments.span(); }
+    void setShapingAdjustments(Vector<float>&& adjustments) { m_shapingAdjustments = WTF::move(adjustments); }
+
 private:
     InlineItems m_inlineItems;
     TextSpacingContext m_textSpacingContext;
+    Vector<float> m_shapingAdjustments;
 
     std::optional<LineLayoutResult> m_maximumIntrinsicWidthLineContent { };
     std::optional<InlineLayoutUnit> m_minimumContentSize { };

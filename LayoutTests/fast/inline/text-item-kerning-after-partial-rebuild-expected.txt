@@ -1,0 +1,5 @@
+すすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすペすすペすすペすすペす
+すすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすすペすすペすすペすすペす
+
+PASS Kerning between text items is the same after a partial rebuild as when laying the content out from scratch
+

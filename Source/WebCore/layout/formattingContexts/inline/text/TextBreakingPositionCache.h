@@ -64,12 +64,22 @@ public:
             WidthList widths;
         };
         Vector<FontCascadeWidths> widthsByFontCascade;
+
+        struct FontCascadeShapingAdjustments {
+            FontCascadeCacheKey fontCascade;
+            unsigned short fontCacheGeneration { 0 };
+            // The kerning with the previous item, one per non-whitespace item. Empty when there is none.
+            WidthList adjustments;
+        };
+        Vector<FontCascadeShapingAdjustments> shapingAdjustmentsByFontCascade;
     };
 
     void set(const Key&, List&& breakingPositionList);
     const Entry* get(const Key&) const;
     const WidthList* widths(const Entry&, const FontCascadeCacheKey&);
     void addWidths(const Key&, const FontCascadeCacheKey&, WidthList&&);
+    const WidthList* shapingAdjustments(const Entry&, const FontCascadeCacheKey&) const;
+    void addShapingAdjustments(const Key&, const FontCascadeCacheKey&, WidthList&&);
 
     void clear();
 

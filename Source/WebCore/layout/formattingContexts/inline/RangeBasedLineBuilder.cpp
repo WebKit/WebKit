@@ -169,7 +169,7 @@ bool RangeBasedLineBuilder::isEligibleForRangeInlineLayout(const InlineFormattin
 
     if (!isEmptyContent) {
         // Check the nested text content.
-        if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.requiresVisualReordering() || !placedFloats.isEmpty() || inlineItems.hasTextAutospace())
+        if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.requiresVisualReordering() || !placedFloats.isEmpty() || inlineItems.hasTextAutospace() || inlineItems.hasShapingAdjustments())
             return false;
 
         CheckedRef rootStyle = inlineFormattingContext.root().style();
