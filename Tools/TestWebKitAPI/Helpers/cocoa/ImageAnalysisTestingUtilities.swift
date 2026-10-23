@@ -98,7 +98,7 @@ public nonisolated(nonsending) func withMockedImageAnalyzer<ResultFailure, BodyF
     response: Result<ImageAnalysisResult, ResultFailure>,
     failureType: ResultFailure.Type = ResultFailure.self,
     after delay: Duration? = nil,
-    perform body: () async throws(BodyFailure) -> sending Void
+    perform body: @concurrent () async throws(BodyFailure) -> sending Void
 ) async throws(BodyFailure) where ResultFailure: Error, BodyFailure: Error {
     typealias ObjCVKImageAnalysisRequestID = Int32
     typealias ObjCVKCImageAnalysis = AnyObject
@@ -113,7 +113,7 @@ public nonisolated(nonsending) func withMockedImageAnalyzer<ResultFailure, BodyF
     }
 
     let processRequest: ObjCImplementation = { _, _, _, completion in
-        Task.immediate {
+        Task.immediate { @concurrent in
             if let delay {
                 try? await Task.sleep(for: delay)
             }
@@ -151,7 +151,7 @@ public nonisolated(nonsending) func withMockedImageAnalyzer<ResultFailure, BodyF
 public nonisolated(nonsending) func withMockedImageAnalyzer<BodyFailure>(
     response: Result<ImageAnalysisResult, Never>,
     after delay: Duration? = nil,
-    perform body: () async throws(BodyFailure) -> sending Void
+    perform body: @concurrent () async throws(BodyFailure) -> sending Void
 ) async throws(BodyFailure) {
     try await withMockedImageAnalyzer(response: response, failureType: Never.self, after: delay, perform: body)
 }

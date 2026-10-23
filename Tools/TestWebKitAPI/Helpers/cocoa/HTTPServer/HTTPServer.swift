@@ -202,7 +202,7 @@ public struct HTTPServer: ~Copyable {
     /// - Returns: The return value, if any, of the `body` closure parameter.
     /// - Throws: Any error thrown by `body`.
     public mutating func run<Result: ~Copyable>(
-        _ body: (Configuration) async throws -> sending Result
+        _ body: @concurrent (Configuration) async throws -> sending Result
     ) async throws -> sending Result {
         try await storage.startListening()
         let result = try await body(Configuration(port: Int(storage.port), scheme: `protocol`.scheme))

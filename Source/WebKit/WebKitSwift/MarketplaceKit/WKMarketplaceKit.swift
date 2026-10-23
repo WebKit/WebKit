@@ -35,6 +35,7 @@ extension WKMarketplaceKit {
     @nonobjc
     private static let logger = Logger(subsystem: "com.apple.WebKit", category: "Loading")
 
+    @concurrent
     class func requestAppInstallation(withTopOrigin topOrigin: URL, url: URL) async throws {
         do {
             try await AppLibrary.current.requestAppInstallationFromBrowser(for: url, referrer: topOrigin)

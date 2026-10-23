@@ -35,9 +35,9 @@ class IntelligenceTextEffectChunk: PlatformIntelligenceTextEffectChunk {
     class Replacement: IntelligenceTextEffectChunk {
         let finished: Bool
         let characterDelta: Int
-        let replacement: (() async -> Void)
+        let replacement: (@concurrent () async -> Void)
 
-        init(range: Range<Int>, finished: Bool, characterDelta: Int, replacement: @escaping (() async -> Void)) {
+        init(range: Range<Int>, finished: Bool, characterDelta: Int, replacement: @escaping (@concurrent () async -> Void)) {
             self.finished = finished
             self.replacement = replacement
             self.characterDelta = characterDelta

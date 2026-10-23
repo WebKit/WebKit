@@ -154,6 +154,7 @@ private func findReceiveEvent(withInnerId innerId: Int, in captured: [String]) -
     return nil
 }
 
+@concurrent
 private func waitForCaptured(
     maxIterations: Int = 200,
     predicate: @MainActor () -> Bool

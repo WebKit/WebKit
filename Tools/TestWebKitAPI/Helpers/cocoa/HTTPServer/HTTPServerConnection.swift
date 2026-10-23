@@ -44,6 +44,7 @@ extension NWConnection.ContentContext {
 }
 
 extension NWConnection {
+    @concurrent
     func receiveBytes(minimumLength: Int = 1) async -> Data {
         await withCheckedContinuation { continuation in
             receive(minimumIncompleteLength: minimumLength, maximumLength: .max) { content, _, _, error in
@@ -53,6 +54,7 @@ extension NWConnection {
         }
     }
 
+    @concurrent
     func receiveHTTPRequest() async -> Data {
         let headerTerminator = Data("\r\n\r\n".utf8)
         var buffer = Data()
@@ -79,6 +81,7 @@ extension NWConnection {
         }
     }
 
+    @concurrent
     func receiveHTTPMessagingRequest() async -> (request: HTTPRequest, body: Data)? {
         var request: HTTPRequest? = nil
         var body = Data()
@@ -113,6 +116,7 @@ extension NWConnection {
         }
     }
 
+    @concurrent
     func send(_ data: some DataProtocol, contentContext: NWConnection.ContentContext = .defaultMessage) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
             send(
@@ -129,6 +133,7 @@ extension NWConnection {
         }
     }
 
+    @concurrent
     func sendHTTPMessagingResponse(_ response: HTTPResponseData) async throws {
         let fields = response.headerFields.reduce(into: HTTPFields()) { partialResult, entry in
             guard let name = HTTPField.Name(entry.name) else {
@@ -142,6 +147,7 @@ extension NWConnection {
         try await send(response.body, contentContext: .makeHTTPMessagingContext(response: httpResponse))
     }
 
+    @concurrent
     func terminate() async {
         await withCheckedContinuation { continuation in
             // Strong capture: the handler is stored on the connection itself, so a weak

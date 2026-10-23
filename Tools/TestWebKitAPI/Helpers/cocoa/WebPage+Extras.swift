@@ -233,7 +233,7 @@ extension WebPage {
     /// - Throws: Whatever `body` throws, without waiting for the scroll to come to rest.
     public func withWheelEventMonitoring<Failure: Error>(
         expectingMomentumEnd: Bool = false,
-        perform body: () async throws(Failure) -> Void
+        perform body: @concurrent () async throws(Failure) -> Void
     ) async throws(Failure) {
         await backingWebView._startMonitoringWheelEventsForTesting()
 
