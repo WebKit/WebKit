@@ -1135,6 +1135,19 @@ bool drawVertexArrayArrays(void* context, Primitive primitive, uint32_t first,
     if (!requiresAttributeExpansion && !requiresGenericAttributeStaging) {
         if (!prepareWUTProgramForDraw(resources))
             return false;
+
+        // Rebind every enabled stream for this draw. The fetch shader records
+        // stream slots, not the backing CPU/GX2 addresses, and another VAO or
+        // a prior staging draw may have changed those slot bindings.
+        for (const auto& entry : resources.attributes) {
+            const auto& attribute = entry.second;
+            if (!attribute.enabled || !hasLinkedInput(entry.first))
+                continue;
+            if (!bindVertexBuffer(&resources, entry.first, attribute.buffer,
+                    attribute.stride, attribute.offset))
+                return false;
+        }
+
         GX2DrawEx(mode, count, first, instances);
         return true;
     }
