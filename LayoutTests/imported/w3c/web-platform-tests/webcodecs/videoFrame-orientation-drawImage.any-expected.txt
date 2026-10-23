@@ -1,0 +1,8 @@
+
+PASS drawImage() of a 0 degrees rotated VideoFrame
+PASS drawImage() of a 90 degrees rotated VideoFrame
+PASS drawImage() of a 180 degrees rotated VideoFrame
+PASS drawImage() of a 270 degrees rotated VideoFrame
+PASS drawImage() scales a rotated VideoFrame to the destination rectangle
+PASS drawImage() of a VideoFrame wrapping a rotated VideoFrame combines the rotations
+

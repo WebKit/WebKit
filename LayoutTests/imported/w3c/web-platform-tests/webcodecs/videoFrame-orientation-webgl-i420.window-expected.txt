@@ -1,0 +1,6 @@
+
+PASS texImage2D() of a 0 degrees rotated I420 VideoFrame
+PASS texImage2D() of a 90 degrees rotated I420 VideoFrame
+PASS texImage2D() of a 180 degrees rotated I420 VideoFrame
+PASS texImage2D() of a 270 degrees rotated I420 VideoFrame
+
