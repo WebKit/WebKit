@@ -52,6 +52,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LazyLoadElementObserver.h"
+#include "LazyLoading.h"
 #include "LegacyRenderSVGImage.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -59,7 +60,6 @@
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
-#include "Settings.h"
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
@@ -237,8 +237,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     // (which re-runs this algorithm), matching the deferral of a lazily-loaded network request.
     if (StringView(attr).containsOnly<isASCIIWhitespace<char16_t>>()) {
         m_failedLoadURL = attr;
-        RefPtr lazyImageElement = dynamicDowncast<HTMLImageElement>(element);
-        if (lazyImageElement && lazyImageElement->isLazyLoadable() && document->settings().lazyImageLoadingEnabled() && !element->isConnected()) {
+        if (LazyLoading::isLazyLoadable(element) && !element->isConnected()) {
             loadEventSenderSingleton().cancelEvent(*this, eventNames().errorEvent);
             m_hasPendingErrorEvent = false;
         } else {
@@ -309,11 +308,9 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 #if !LOG_DISABLED
         auto oldState = m_lazyImageLoadState;
 #endif
-        if (m_lazyImageLoadState == LazyImageLoadState::None && imageElement) {
-            if (imageElement->isLazyLoadable() && document->settings().lazyImageLoadingEnabled() && !canReuseFromListOfAvailableImages(request, document)) {
-                m_lazyImageLoadState = LazyImageLoadState::Deferred;
-                request.setIgnoreForRequestCount(true);
-            }
+        if (m_lazyImageLoadState == LazyImageLoadState::None && LazyLoading::isLazyLoadable(element) && !canReuseFromListOfAvailableImages(request, document)) {
+            m_lazyImageLoadState = LazyImageLoadState::Deferred;
+            request.setIgnoreForRequestCount(true);
         }
         auto imageLoading = (m_lazyImageLoadState == LazyImageLoadState::Deferred) ? ImageLoading::DeferredUntilVisible : ImageLoading::Immediate;
         newImage = protect(document->cachedResourceLoader())->requestImage(WTF::move(request), imageLoading).value_or(nullptr);
@@ -472,7 +469,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
     m_pendingURL = { };
 
     if (isDeferred()) {
-        LazyLoadElementObserver::unobserve(protect(element()), protect(document()));
+        LazyLoadElementObserver::unobserveIfLazyLoadOnly(protect(element()), protect(document()));
         m_lazyImageLoadState = LazyImageLoadState::FullImage;
         LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " notifyFinished() for element " << element() << " setting lazy load state to " << m_lazyImageLoadState);
     }
@@ -497,7 +494,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
 
         if (hasPendingDecodePromises())
             rejectDecodePromises("Access control error."_s);
-        
+
         ASSERT(!m_hasPendingLoadEvent);
 
         // Only consider updating the protection ref-count of the Element immediately before returning
@@ -621,7 +618,7 @@ void ImageLoader::updatedHasPendingEvent()
     } else {
         ASSERT(!m_derefElementTimer.isActive());
         m_derefElementTimer.startOneShot(0_s);
-    }   
+    }
 }
 
 void ImageLoader::decode(Ref<DeferredPromise>&& promise)
@@ -654,7 +651,7 @@ void ImageLoader::decode()
 {
     if (!hasPendingDecodePromises())
         return;
-    
+
     if (!element().document().window()) {
         rejectDecodePromises("Inactive document."_s);
         return;
@@ -787,7 +784,7 @@ void ImageLoader::resetLazyImageLoading(Document& document)
     LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " resetLazyImageLoading - state is " << m_lazyImageLoadState);
 
     if (isDeferred())
-        LazyLoadElementObserver::unobserve(protect(element()), document);
+        LazyLoadElementObserver::unobserveIfLazyLoadOnly(protect(element()), document);
     m_lazyImageLoadState = LazyImageLoadState::None;
 }
 

@@ -1763,6 +1763,7 @@ html/InputType.cpp @header:RenderStyleGetters @cost:7
 html/InputTypeNames.cpp
 html/LabelsNodeList.cpp
 html/LazyLoadElementObserver.cpp
+html/LazyLoading.cpp
 html/LinkIconCollector.cpp
 html/LinkRelAttribute.cpp
 html/MediaController.cpp

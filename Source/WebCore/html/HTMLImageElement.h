@@ -158,9 +158,8 @@ public:
 
     enum LoadingValues { Lazy, Eager };
 
-    bool isLazyLoadable() const;
-    static bool hasLazyLoadableAttributeValue(StringView);
     bool hasAutoSizes() const;
+    bool allowsAutoSizes() const;
     static bool hasAutoSizesAttributeValue(StringView);
     void scheduleAutoSizesResolution();
 

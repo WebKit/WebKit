@@ -3583,6 +3583,14 @@ LazyImageLoadingEnabled:
     default: false
     WebKit: true
 
+LazyMediaLoadingEnabled:
+  type: bool
+  status: testable
+  category: html
+  humanReadableName: "Lazy media loading"
+  humanReadableDescription: "Enable lazy loading for audio and video elements via the loading attribute"
+  defaultValue: false
+
 LegacyEncryptedMediaAPIEnabled:
   type: bool
   status: embedder
