@@ -1,0 +1,16 @@
+A popup that its opener navigates to about:blank inherits the opener's origin, because the opener initiated the navigation. The opener can only modify the popup's DOM while the two are same-origin, so this checks that the about:blank still has the opener's origin after the popup goes back to it from a cross-site document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS popupHistoryLengthAfterAboutBlank is 2
+PASS openerCanModifyInheritedAboutBlank is true
+PASS popup.origin is window.origin
+PASS popupHistoryLengthAfterCrossSiteNavigation is 3
+PASS openerCanModifyCrossSitePopup is false
+PASS openerCanModifyAboutBlankRestoredFromHistory is true
+PASS popup.origin is window.origin
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

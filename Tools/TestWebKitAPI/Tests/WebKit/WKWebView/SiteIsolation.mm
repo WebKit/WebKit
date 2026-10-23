@@ -9060,6 +9060,68 @@ TEST(SiteIsolation, IntentionalAboutBlankIframeBackForwardNotSkipped)
     EXPECT_TRUE(childURLIs(@"about:blank"));
 }
 
+TEST(SiteIsolation, AboutBlankPopupGoBackReturnsToInitiatorProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/apple"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+    pid_t openerPID = [opener.webView mainFrame].info._processIdentifier;
+
+    // The opener initiates the navigation to about:blank, so the popup inherits the opener's origin and process.
+    [opener.webView evaluateJavaScript:@"w.location = 'about:blank'" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opened.webView mainFrame].info._processIdentifier, openerPID);
+
+    [opened.webView evaluateJavaScript:@"location = 'https://apple.com/apple'" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([opened.webView mainFrame].info._processIdentifier, openerPID);
+
+    // The apple.com document performs the traversal, but about:blank must return to the origin it inherited.
+    [opened.webView goBack];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opened.webView mainFrame].info._processIdentifier, openerPID);
+    EXPECT_WK_STREQ([opener.webView objectByEvaluatingJavaScript:@"w.location.href"], "about:blank");
+}
+
+TEST(SiteIsolation, SelfInitiatedAboutBlankPopupGoBackReturnsToInitiatorProcess)
+{
+    // The opener's iframe keeps a webkit.org process in the browsing context group for the popup to return to.
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/iframe'></iframe><script>onload = () => { w = window.open('https://webkit.org/webkit') }</script>"_s } },
+        { "/iframe"_s, { "hi"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/apple"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+    pid_t openerPID = [opener.webView mainFrame].info._processIdentifier;
+    pid_t webKitPID = [opener.webView mainFrame].childFrames.firstObject.info._processIdentifier;
+    EXPECT_NE(webKitPID, openerPID);
+    EXPECT_EQ([opened.webView mainFrame].info._processIdentifier, webKitPID);
+
+    // The popup initiates its own navigation to about:blank, so it inherits webkit.org, not its opener's origin.
+    [opened.webView evaluateJavaScript:@"location = 'about:blank'" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opened.webView mainFrame].info._processIdentifier, webKitPID);
+
+    [opened.webView evaluateJavaScript:@"location = 'https://apple.com/apple'" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    pid_t applePID = [opened.webView mainFrame].info._processIdentifier;
+    EXPECT_NE(applePID, webKitPID);
+    EXPECT_NE(applePID, openerPID);
+
+    // Neither the frame performing the traversal (apple.com) nor the opener (example.com) is the about:blank's initiator.
+    // This only checks the process. Document::initSecurityContext() derives an about:blank's origin from a local parent
+    // or opener, and the opener is remote in the webkit.org process, so the restored document's origin is still opaque.
+    [opened.webView goBack];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opened.webView mainFrame].info._processIdentifier, webKitPID);
+}
+
 TEST(SiteIsolation, RedirectToCSP)
 {
     HTTPServer server({

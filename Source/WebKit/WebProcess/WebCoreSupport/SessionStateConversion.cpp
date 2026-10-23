@@ -112,6 +112,7 @@ Ref<FrameState> toFrameState(const HistoryItem& historyItem)
     frameState->wasRestoredFromSession = historyItem.wasRestoredFromSession();
     frameState->isInitialAboutBlank = historyItem.isInitialAboutBlank();
     frameState->policyContainer = historyItem.policyContainer();
+    frameState->inheritedOrigin = historyItem.inheritedOrigin();
 
     static constexpr auto maxTitleLength = 1000u; // Closest power of 10 above the W3C recommendation for Title length.
     frameState->title = historyItem.title().left(maxTitleLength);
@@ -187,6 +188,7 @@ static void applyFrameState(HistoryItemClient& client, HistoryItem& historyItem,
     historyItem.setIsInitialAboutBlank(frameState.isInitialAboutBlank);
     if (auto policyContainer = frameState.policyContainer)
         historyItem.setPolicyContainer(*policyContainer);
+    historyItem.setInheritedOrigin(frameState.inheritedOrigin);
 
 #if PLATFORM(IOS_FAMILY)
     historyItem.setExposedContentRect(frameState.exposedContentRect);
