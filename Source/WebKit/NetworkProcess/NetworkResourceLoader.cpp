@@ -118,6 +118,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "NetworkDataTaskCocoa.h"
 #include "PathsBlockedForSandboxExtensions.h"
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
@@ -497,6 +498,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
         parameters.compressionDictionary = CompressionDictionaryParameters { destination, { } };
 
         // https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
+        // To be added with https://github.com/whatwg/fetch/pull/1854
         // 8. Let bestMatch be the result of finding the best matching dictionary in
         //    compressionDictionaryCache for request.
         // 9. If bestMatch is null, then return the result of running fallback.
@@ -510,8 +512,13 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 }
 
 // https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
+// To be added with https://github.com/whatwg/fetch/pull/1854
 bool NetworkResourceLoader::shouldFetchWithCompressionDictionary(const ResourceRequest& request) const
 {
+#if PLATFORM(COCOA)
+    if (!NetworkDataTaskCocoa::hasCompressionDictionarySupport())
+        return false;
+#endif
     if (!connectionToWebProcess().compressionDictionaryEnabled() || !canUseCache(request))
         return false;
 
@@ -1106,6 +1113,7 @@ static const String* stringBareItem(const RFC8941::ItemOrInnerList& value)
 }
 
 // https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch step 14-15.
+// To be added with https://github.com/whatwg/fetch/pull/1854
 static bool isCompressionDictionaryEncoded(const ResourceResponse& response)
 {
     auto contentEncoding = response.httpHeaderField(HTTPHeaderName::ContentEncoding);
@@ -1479,6 +1487,8 @@ void NetworkResourceLoader::continueDidReceiveResponseAfterLocalNetworkAccessChe
     }
 
     // https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
+    // To be added with https://github.com/whatwg/fetch/pull/1854
+    //
     // 15. If codings is null or does not contain `dcb` or `dcz`, then return response.
     // A load that was never eligible handed the network layer no dictionary, so it decoded nothing
     // and the codings have to be left alone for the consumer to reject.
