@@ -603,6 +603,7 @@
 				WebKit/WKWebView/SiteIsolationContentsOfAllFramesTests.swift,
 				WebKit/WKWebView/SiteIsolationCookieTests.swift,
 				WebKit/WKWebView/SiteIsolationDataDetectionTests.swift,
+				WebKit/WKWebView/SiteIsolationDragAndDropTests.swift,
 				WebKit/WKWebView/SiteIsolationEditableRegionTests.swift,
 				WebKit/WKWebView/SiteIsolationEditingTests.swift,
 				WebKit/WKWebView/SiteIsolationFullscreenTests.swift,
