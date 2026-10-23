@@ -2618,6 +2618,11 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
 
     pageLoadState->setPendingAPIRequest(transaction, { navigation.navigationID(), !baseURL.isEmpty() ? URL { baseURL } : aboutBlankURL() });
 
+    // WebPage::loadData() treats the base URL's scheme as handled by a scheme handler, which makes it potentially
+    // trustworthy, so the UI process has to as well to agree on secure contexts.
+    if (URL url { baseURL }; url.isValid() && !WebCore::LegacySchemeRegistry::isBuiltinScheme(url.protocol().toString()))
+        WebCore::LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(url.protocol().toString());
+
     LoadParameters loadParameters;
     loadParameters.sessionHistoryVisibility = sessionHistoryVisibility;
     loadParameters.navigationID = navigation.navigationID();

@@ -8886,37 +8886,25 @@ bool Document::isContextThread() const
     return isMainThread();
 }
 
-// https://w3c.github.io/webappsec-secure-contexts/#is-settings-object-contextually-secure step 5.3 and 5.4
-static inline bool isDocumentSecure(const Document& document)
-{
-    if (document.isSandboxed(SandboxFlag::Origin))
-        return isURLPotentiallyTrustworthy(document.url());
-    return protect(document.securityOrigin())->isPotentiallyTrustworthy();
-}
-
 void Document::setLoadSourceOriginOverrideForTesting(RefPtr<SecurityOrigin>&& origin)
 {
     m_loadSourceOriginOverrideForTesting = WTF::move(origin);
 }
 
-// https://w3c.github.io/webappsec-secure-contexts/#is-settings-object-contextually-secure
 bool Document::computeIsSecureContext() const
 {
     // A provisional frame is not in the frame tree yet.
     RefPtr parentFrame = m_frame->tree().parent();
     if (!parentFrame)
         parentFrame = m_frame->loader().client().provisionalParentFrame();
-    if (!parentFrame)
-        return !url().protocolIsData() && isDocumentSecure(*this);
 
-    auto parentSecurityPolicy = parentFrame->frameDocumentSecurityPolicy();
-    if (!parentSecurityPolicy || parentSecurityPolicy->isSecureContext == IsSecureContext::No)
-        return false;
+    std::optional<IsSecureContext> parentIsSecureContext;
+    if (parentFrame) {
+        auto parentSecurityPolicy = parentFrame->frameDocumentSecurityPolicy();
+        parentIsSecureContext = parentSecurityPolicy ? parentSecurityPolicy->isSecureContext : IsSecureContext::No;
+    }
 
-    if (url().protocolIsData())
-        return true;
-
-    return isDocumentSecure(*this);
+    return SecurityPolicy::secureContextForDocument(url(), protect(securityOrigin()), isSandboxed(SandboxFlag::Origin) ? IsSandboxedOrigin::Yes : IsSandboxedOrigin::No, parentIsSecureContext) == IsSecureContext::Yes;
 }
 
 bool Document::isSecureContext() const
