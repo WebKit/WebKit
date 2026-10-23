@@ -76,10 +76,14 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
         }
     }
 
+    // The JS API spec defines a page as the constant 65536 and gives MemoryDescriptor no way to ask
+    // for another size, so a memory built here is always 64 KiB-paged. A descriptor property naming
+    // a page size is ignored, as an unknown dictionary member is.
+    const uint8_t log2PageSize = Wasm::MemoryInformation::defaultLog2PageSize;
+
     // Page counts are declarative, so accept everything a module's own memory type may declare.
     // What can actually be allocated is bounded separately, and more tightly.
-    // A memory created through the JS API always has the default page size.
-    uint64_t maxDeclarablePageCount = Wasm::maxDeclarablePages(addressType, Wasm::MemoryInformation::defaultLog2PageSize);
+    uint64_t maxDeclarablePageCount = Wasm::maxDeclarablePages(addressType, log2PageSize);
 
     PageCount initialPageCount;
     {
@@ -103,7 +107,7 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
             throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory 'initial' page count is too large"_s));
             return { };
         }
-        initialPageCount = PageCount(size);
+        initialPageCount = PageCount(size, log2PageSize);
     }
 
     PageCount maximumPageCount;
@@ -120,7 +124,7 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
                 throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory 'maximum' page count is too large"_s));
                 return { };
             }
-            maximumPageCount = PageCount(size);
+            maximumPageCount = PageCount(size, log2PageSize);
 
             if (initialPageCount > maximumPageCount) {
                 throwException(globalObject, throwScope,
@@ -149,7 +153,7 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
 
     auto* jsMemory = JSWebAssemblyMemory::create(vm, webAssemblyMemoryStructure);
 
-    RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(vm, initialPageCount, maximumPageCount, sharingMode, addressType, Wasm::MemoryInformation::defaultLog2PageSize, desiredMemoryMode,
+    RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(vm, initialPageCount, maximumPageCount, sharingMode, addressType, log2PageSize, desiredMemoryMode,
         [&vm, jsMemory] (Wasm::Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); });
     if (!memory) {
         throwException(globalObject, throwScope, createOutOfMemoryError(globalObject));
