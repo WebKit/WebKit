@@ -321,25 +321,25 @@ layer at (0,0) size 785x734
             RenderText {#text} at (263,4) size 7x13
               text run at (263,4) width 7: "\x{A5}"
       RenderBlock {DIV} at (0,502) size 769x19
-        RenderInline {SPAN} at (0,5) size 292x11
+        RenderInline {SPAN} at (0,5) size 291x11
           RenderText {#text} at (0,5) size 280x11
             text run at (0,5) width 280: "Using font \"-webkit-mini-control\". expected: yen sign, actual: \x{A5}"
           RenderInline {SPAN} at (279,5) size 7x11
             RenderText {#text} at (279,5) size 7x11
               text run at (279,5) width 7: "\x{A5}"
-          RenderInline {SPAN} at (285,5) size 7x11
-            RenderText {#text} at (285,5) size 7x11
-              text run at (285,5) width 7: "\x{A5}"
+          RenderInline {SPAN} at (285,5) size 6x11
+            RenderText {#text} at (285,5) size 6x11
+              text run at (285,5) width 6: "\x{A5}"
       RenderBlock {DIV} at (0,520) size 769x19
-        RenderInline {SPAN} at (0,3) size 353x14
+        RenderInline {SPAN} at (0,3) size 352x14
           RenderText {#text} at (0,3) size 339x14
             text run at (0,3) width 339: "Using font \"-webkit-small-control\". expected: yen sign, actual: \x{A5}"
-          RenderInline {SPAN} at (338,3) size 8x14
+          RenderInline {SPAN} at (338,3) size 7x14
             RenderText {#text} at (338,3) size 8x14
               text run at (338,3) width 8: "\x{A5}"
-          RenderInline {SPAN} at (345,3) size 8x14
-            RenderText {#text} at (345,3) size 8x14
-              text run at (345,3) width 8: "\x{A5}"
+          RenderInline {SPAN} at (345,3) size 7x14
+            RenderText {#text} at (345,3) size 7x14
+              text run at (345,3) width 7: "\x{A5}"
       RenderBlock {DIV} at (0,538) size 769x19
         RenderInline {SPAN} at (0,1) size 369x16
           RenderText {#text} at (0,1) size 353x16

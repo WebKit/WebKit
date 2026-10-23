@@ -1,0 +1,12 @@
+すペすす
+すペすす
+すペすす
+すペすす
+すペすす
+すペすす
+
+PASS The test font applies kerning to the pair "すペ"
+PASS Kerning inside a text run is kept when an inline box follows it
+PASS Kerning inside a text node is kept when another text node follows it in a shrink-to-fit box
+PASS A shrink-to-fit box with kerned text and a padded inline box keeps its content on one line
+

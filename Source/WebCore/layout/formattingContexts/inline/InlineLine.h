@@ -85,6 +85,7 @@ public:
 
     enum class TrailingContentAction : uint8_t { Remove, Preserve };
     InlineLayoutUnit handleTrailingTrimmableContent(TrailingContentAction);
+    void remeasureTextRunsWithKerningOrLigatures();
     void handleTrailingHangingContent(std::optional<IntrinsicWidthMode>, InlineLayoutUnit horizontalAvailableSpace, bool isLastFormattedLine);
     void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
     const Box* LEGACY_NODELETE removeOverflowingOutOfFlowContent();
@@ -105,6 +106,7 @@ public:
     Result close(TrailingContentAction hangingTrailingWhitespace = TrailingContentAction::Preserve);
 
     static bool restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhitespaceWidth, RunList&, InlineItemRange, const InlineItemList&);
+    static InlineLayoutUnit remeasureTextRunsWithKerningOrLigatures(RunList&, const InlineFormattingContext&);
     static bool LEGACY_NODELETE hasTrailingForcedLineBreak(const RunList&);
 
 private:
