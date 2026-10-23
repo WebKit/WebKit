@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "EventTrackingRegions.h"
+#include <ranges>
 #include <wtf/text/TextStream.h>
 
 #include "EventNames.h"
@@ -167,8 +168,10 @@ TextStream& operator<<(TextStream& ts, const EventTrackingRegions& region)
 {
     if (!region.asynchronousDispatchRegion.isEmpty())
         ts << " asynchronousDispatchRegion: " << region.asynchronousDispatchRegion;
-    for (auto& slot : region.eventSpecificSynchronousDispatchRegions)
-        ts << "eventSpecificSynchronousDispatchRegions: eventName: " << EventTrackingRegions::eventName(slot.key) << " eventRect: " << slot.value;
+    auto eventTypes = copyToVector(region.eventSpecificSynchronousDispatchRegions.keys());
+    std::ranges::sort(eventTypes);
+    for (auto eventType : eventTypes)
+        ts << "eventSpecificSynchronousDispatchRegions: eventName: " << EventTrackingRegions::eventName(eventType) << " eventRect: " << region.eventSpecificSynchronousDispatchRegions.get(eventType);
     return ts;
 }
 

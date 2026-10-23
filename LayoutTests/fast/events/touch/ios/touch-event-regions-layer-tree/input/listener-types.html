@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!-- Legacy touch event rects equivalent: fast/events/touch/ios/touch-event-regions.html -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        .box {
+            position: absolute;
+            height: 100px;
+            width: 120px;
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        input {
+            display: block;
+            margin: 50px;
+            width: 400px;
+        }
+
+        .overflow div {
+            height: 500px;
+        }
+    </style>
+    <script src="../resources/touch-regions-helper.js"></script>
+    <script>
+        prepareForTest();
+        window.addEventListener('load', () => {
+            document.getElementById('passive').addEventListener('touchstart', () => { }, { 'passive': true });
+            dumpRegions();
+        }, false);
+    </script>
+</head>
+<body>
+
+<input type="range">
+
+<div class="box" style="left: 50px; top: 100px;" ontouchstart="(void)0">
+    touch start
+</div>
+
+<div class="box" style="left: 250px; top: 100px;" ontouchmove="(void)0">
+    touch move
+</div>
+
+<div class="box" style="left: 50px; top: 250px;" ontouchend="(void)0">
+    touch end
+</div>
+
+<div class="box" style="left: 250px; top: 250px;" ontouchforcechange="(void)0">
+    touch force change
+</div>
+
+<div id="passive" class="box" style="left: 50px; top: 400px;">
+    passive
+</div>
+
+<div id="passive" class="overflow box" style="left: 250px; top: 400px; overflow: scroll">
+    <div>
+        Overflowing
+    </div>
+</div>
+
+<pre id="results"></pre>
+
+</body>
+</html>

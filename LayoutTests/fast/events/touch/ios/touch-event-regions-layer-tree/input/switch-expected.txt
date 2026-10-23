@@ -4,7 +4,7 @@
         (rect (8,8) width=71 height=31)
         (rect (157,8) width=143 height=31)
         (rect (157,39) width=143 height=31)
-eventSpecificSynchronousDispatchRegions: eventName: touchmove eventRect:
+eventSpecificSynchronousDispatchRegions: eventName: touchend eventRect:
         (rect (8,8) width=71 height=31)
         (rect (157,8) width=143 height=31)
         (rect (157,39) width=143 height=31)
@@ -12,7 +12,7 @@ eventSpecificSynchronousDispatchRegions: eventName: touchforcechange eventRect:
         (rect (8,8) width=71 height=31)
         (rect (157,8) width=143 height=31)
         (rect (157,39) width=143 height=31)
-eventSpecificSynchronousDispatchRegions: eventName: touchend eventRect:
+eventSpecificSynchronousDispatchRegions: eventName: touchmove eventRect:
         (rect (8,8) width=71 height=31)
         (rect (157,8) width=143 height=31)
         (rect (157,39) width=143 height=31)
