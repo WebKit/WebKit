@@ -207,21 +207,30 @@ bool setWUTLinkedProgram(WUTBufferResources& resources, const GX2VertexShader& v
     if (vertexShader.attribVarCount && !vertexShader.attribVars)
         return false;
 
-    // Every compiler-visible GX2 vertex input must have an explicit GL-index
-    // mapping. Requiring a complete map avoids accidentally drawing with no
-    // streams just because GL locations differ from GX2's locations.
+    // Every compiler-visible GX2 vertex input must have exactly one explicit
+    // GL-index mapping, and every supplied mapping must resolve to a real shader
+    // input. Reject mismatches at link installation rather than accepting a
+    // program that can only fail later when its fetch shader is built.
     for (uint32_t i = 0; i < vertexShader.attribVarCount; ++i) {
         const char* inputName = vertexShader.attribVars[i].name;
         if (!inputName)
             return false;
-        bool found = false;
+        size_t matches = 0;
         for (const auto& binding : linked) {
-            if (binding.shaderInputName == inputName) {
-                found = true;
-                break;
-            }
+            if (binding.shaderInputName == inputName)
+                ++matches;
         }
-        if (!found)
+        if (matches != 1)
+            return false;
+    }
+    for (const auto& binding : linked) {
+        size_t matches = 0;
+        for (uint32_t i = 0; i < vertexShader.attribVarCount; ++i) {
+            const char* inputName = vertexShader.attribVars[i].name;
+            if (inputName && binding.shaderInputName == inputName)
+                ++matches;
+        }
+        if (matches != 1)
             return false;
     }
 
