@@ -34,11 +34,9 @@ else ()
     set(_WKC_GAMEPAD_DEFINE 0)
 endif ()
 
-# Keep WebAssembly opt-in on Wii U until the current upstream Wasm source set
-# builds cleanly with the PPC CLoop configuration. The current Wasm calling-
-# convention headers still depend on JIT register types that are unavailable in
-# this port, so enabling the whole wasm/*.cpp glob breaks JSC and LLInt offset
-# generation. Enable it explicitly only after those sources are ported/filtered.
+# WebAssembly uses the portable IPInt interpreter on Wii U. CLoop has no
+# machine-register allocator, so the Wasm calling convention uses stack-only
+# locations when ENABLE(ASSEMBLER) is off. JIT tiers remain disabled.
 set(_WKC_WEBASSEMBLY_DEFAULT ON)
 
 option(WKC_ENABLE_WEB_AUDIO "Compile Web Audio against the WKC audio backend" ${_WKC_WEB_AUDIO_DEFAULT})
