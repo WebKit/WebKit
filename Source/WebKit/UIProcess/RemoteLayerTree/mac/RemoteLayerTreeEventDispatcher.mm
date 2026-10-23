@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APIPageConfiguration.h"
+#import "AppKitSPI.h"
 #import "DisplayLink.h"
 #import "Logging.h"
 #import "NativeWebWheelEvent.h"
@@ -104,6 +105,15 @@ Ref<RemoteLayerTreeEventDispatcher> RemoteLayerTreeEventDispatcher::create(Remot
 }
 
 static constexpr Seconds wheelEventHysteresisDuration { 500_ms };
+
+bool RemoteLayerTreeEventDispatcher::mainThreadCommitsWaitForUpdateCycle()
+{
+#if HAVE(APPKIT_UPDATE_CYCLE)
+    return NSUpdateCycleEnabled();
+#else
+    return false;
+#endif
+}
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeEventDispatcher);
 
@@ -516,10 +526,12 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
 
         scrollingTree->displayDidRefresh(displayID);
 
-        needsUpdateLayerPositionsAndAnimations = m_state != SynchronizationState::Idle;
+        needsUpdateLayerPositionsAndAnimations = m_state != SynchronizationState::Idle || !m_shouldSynchronizeWithRenderingUpdates;
 
         switch (m_state) {
         case SynchronizationState::Idle: {
+            if (!m_shouldSynchronizeWithRenderingUpdates)
+                break;
             m_state = SynchronizationState::WaitingForRenderingUpdate;
             constexpr auto maxStartRenderingUpdateDelay = 1_ms;
             scheduleDelayedRenderingUpdateDetectionTimer(maxStartRenderingUpdateDelay);
@@ -647,7 +659,7 @@ bool RemoteLayerTreeEventDispatcher::haveLayersWithAnimations()
 
 void RemoteLayerTreeEventDispatcher::mainThreadDisplayDidRefresh(PlatformDisplayID)
 {
-    if (!scrollingTreeWasRecentlyActive())
+    if (!m_shouldSynchronizeWithRenderingUpdates || !scrollingTreeWasRecentlyActive())
         return;
 
     {

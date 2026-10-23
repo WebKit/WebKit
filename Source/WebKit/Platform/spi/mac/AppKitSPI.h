@@ -73,6 +73,10 @@ DECLARE_SYSTEM_HEADER
 #import <AppKit/NSCampoLightweightUIController.h>
 #endif
 
+#if HAVE(APPKIT_UPDATE_CYCLE)
+#import <AppKit/NSUpdateCycle_Private.h>
+#endif
+
 #if HAVE(NSREFRESHCONTROLLER)
 #import <AppKit/NSRefreshControl_Private.h>
 #import <AppKit/NSRefreshController_Private.h>
@@ -239,6 +243,10 @@ typedef NS_ENUM(NSInteger, _NSGlassEffectViewAdaptiveAppearance) {
 @property (nonatomic, readonly) BOOL isVisible;
 @end
 
+#endif
+
+#if HAVE(APPKIT_UPDATE_CYCLE)
+APPKIT_EXTERN BOOL NSUpdateCycleEnabled(void);
 #endif
 
 #endif

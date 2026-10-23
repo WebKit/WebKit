@@ -149,6 +149,8 @@ private:
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay);
     void delayedRenderingUpdateDetectionTimerFired();
 
+    static bool mainThreadCommitsWaitForUpdateCycle();
+
     bool scrollingThreadNeedsDisplayDidRefresh();
     bool scrollingTreeWasRecentlyActive();
     bool haveLayersWithAnimations();
@@ -207,6 +209,7 @@ private:
 
     SynchronizationState m_state WTF_GUARDED_BY_LOCK(m_scrollingTreeLock) { SynchronizationState::Idle };
     Condition m_stateCondition;
+    const bool m_shouldSynchronizeWithRenderingUpdates { !mainThreadCommitsWaitForUpdateCycle() };
 
     MonotonicTime m_lastDisplayDidRefreshTime WTF_GUARDED_BY_LOCK(m_scrollingTreeLock);
 
