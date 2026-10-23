@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: subframe-ready
+CONSOLE MESSAGE: main-frame-error
+CONSOLE MESSAGE: subframe-log
+CONSOLE MESSAGE: main-frame-error
+Under Site Isolation, a repeated message's level must be counted from its own target rather than the globally-last message's level.
+
+
+== Running test suite: SiteIsolation.Console.RepeatCountMessageLevel
+-- Running test case: SiteIsolation.Console.RepeatCountMessageLevel.InterleavedTargets
+PASS: Site Isolation should be enabled.
+PASS: The main frame should have a frame target.
+PASS: The subframe should have loaded and logged.
+PASS: The subframe should have its own target, distinct from the main frame's.
+PASS: The first console.error() should be counted.
+PASS: The repeat should be reported with count 2.
+PASS: The repeat should be attributed to the main frame's target.
+PASS: errorCount should count both console.error() calls.
+

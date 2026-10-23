@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: subframe-ready
+CONSOLE MESSAGE: main-frame-error
+CONSOLE MESSAGE: subframe-log
+CONSOLE MESSAGE: main-frame-error
+A repeated console message should be counted at its own level, even when another frame logged in between.
+
+
+== Running test suite: Console.RepeatCountAcrossFrames
+-- Running test case: Console.RepeatCountAcrossFrames.InterleavedFrames
+PASS: errorCount should count both console.error() calls.
+

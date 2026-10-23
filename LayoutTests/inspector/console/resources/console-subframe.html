@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<p>subframe</p>
+<script>
+// Logging from inside this frame is what attributes the message to its own console agent.
+window.addEventListener("message", (event) => {
+    switch (event.data) {
+    case "log":
+        console.log("subframe-log");
+        break;
+    case "error":
+        console.error("subframe-error");
+        break;
+    case "clear":
+        console.clear();
+        break;
+    }
+});
+
+window.addEventListener("load", () => {
+    console.log("subframe-ready");
+});
+</script>
