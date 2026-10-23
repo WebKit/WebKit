@@ -37,9 +37,26 @@ def main():
 
     result = subprocess.run(
         ["git", "ls-tree", "-r", "--name-only", "HEAD", "--", "Source"],
-        cwd=ROOT, check=True, capture_output=True, text=True, encoding="utf-8",
+        cwd=ROOT, check=False, capture_output=True, text=True, encoding="utf-8",
     )
+    if result.returncode:
+        # actions/checkout uses sparse checkout here. In partial clones Git may
+        # be unable to walk every tree object even though the complete tracked
+        # path index is available. Fall back to the index, not the worktree, so
+        # excluded WKC directories are still included in the inventory.
+        result = subprocess.run(
+            ["git", "ls-files", "--cached", "--full-name", "--", "Source"],
+            cwd=ROOT, check=False, capture_output=True, text=True, encoding="utf-8",
+        )
+        if result.returncode:
+            error("Cannot enumerate tracked Source files from either Git tree or index: "
+                + result.stderr.strip())
+            return 1
+        print("Git tree walk unavailable; using the complete tracked index for sparse-checkout inventory.")
     tracked_files = sorted(line for line in result.stdout.splitlines() if line)
+    if not tracked_files:
+        error("Tracked Source inventory is empty; refusing to treat the WKC audit as passed.")
+        return 1
     wkc_roots = set()
     for file_path in tracked_files:
         parts = file_path.split("/")
