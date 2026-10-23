@@ -52,6 +52,7 @@ from webkitpy.style.checker import ProcessorBase
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.checker import StyleProcessorConfiguration
 from webkitpy.style.checkers.basexcconfig import BaseXcconfigChecker
+from webkitpy.style.checkers.api_test_allowlist import APITestAllowlistChecker
 from webkitpy.style.checkers.changelog import ChangeLogChecker
 from webkitpy.style.checkers.cpp import CppChecker
 from webkitpy.style.checkers.deprecated_js_test_includes import DeprecatedJSTestIncludesChecker
@@ -469,6 +470,9 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def assert_checker_xml(self, file_path):
         """Assert that the dispatched checker is a XMLChecker."""
         self.assert_checker(file_path, XMLChecker)
+
+    def test_api_test_allowlist_paths(self):
+        self.assert_checker(os.path.join('Tools', 'Scripts', 'webkitpy', 'api_tests', 'allowlist.txt'), APITestAllowlistChecker)
 
     def test_basexcconfig_paths(self):
         """Test paths that should be checked as Base.xcconfig files."""
