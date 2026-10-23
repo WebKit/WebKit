@@ -641,8 +641,14 @@ bool setElementBuffer(void* context, BufferName name)
         return false;
 
     // Keep the active GL element-array binding visible to the direct driver
-    // draw entry point as well as to the VAO object's captured state.
-    resources.bindings[static_cast<uint8_t>(BufferTarget::ElementArray)] = name;
+    // draw entry point as well as to the VAO object's captured state. The map
+    // insertion can allocate, so keep allocation failures inside this backend
+    // callback instead of allowing a C++ exception to escape into GL code.
+    try {
+        resources.bindings[static_cast<uint8_t>(BufferTarget::ElementArray)] = name;
+    } catch (...) {
+        return false;
+    }
     return true;
 }
 
