@@ -1563,30 +1563,14 @@ static std::optional<bool> elementHasHiddenVisibility(StyledElement* styledEleme
 
 void WebPage::createTextIndicatorForElementWithID(const String& elementID, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&& completionHandler)
 {
-    RefPtr frame = corePage()->focusController().focusedOrMainFrame();
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        completionHandler(nil);
-        return;
-    }
-
-    RefPtr document = frame->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        completionHandler(nil);
-        return;
-    }
-
-    RefPtr element = document->getElementById(elementID);
-    if (!element) {
-        ASSERT_NOT_REACHED();
-        completionHandler(nil);
-        return;
-    }
+    RefPtr<Element> element;
+    protect(corePage())->forEachDocument([&](Document& document) {
+        if (!element)
+            element = document.getElementById(elementID);
+    });
 
     RefPtr styledElement = dynamicDowncast<StyledElement>(element.get());
     if (!styledElement) {
-        ASSERT_NOT_REACHED();
         completionHandler(nil);
         return;
     }
@@ -1611,10 +1595,6 @@ void WebPage::createTextIndicatorForElementWithID(const String& elementID, Compl
     };
 
     RefPtr textIndicator = WebCore::TextIndicator::createWithRange(elementRange, textIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, { });
-    if (!textIndicator) {
-        completionHandler(nil);
-        return;
-    }
 
     // If `initialVisibility` is an empty optional, this means there was no initial inline style.
     // Ensure the state is idempotent after by removing the inline style if this is the case.

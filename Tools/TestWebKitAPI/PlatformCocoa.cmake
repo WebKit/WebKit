@@ -813,6 +813,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/SiteIsolationServiceWorkerTests.swift
     Tests/WebKit/WKWebView/SiteIsolationSessionStateTests.swift
     Tests/WebKit/WKWebView/SiteIsolationTextFragmentTests.swift
+    Tests/WebKit/WKWebView/SiteIsolationTextPreviewTests.swift
     Tests/WebKit/WKWebView/SiteIsolationUIDelegateTests.swift
     Tests/WebKit/WKWebView/SiteIsolationUserAgentTests.swift
     Tests/WebKit/WKWebView/TextExtractionTests.swift
