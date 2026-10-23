@@ -3232,9 +3232,6 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
         addError(GL_INVALID_VALUE_VALUE);
         return;
     }
-    if (!width || !height)
-        return;
-
     TextureRecord* texture = is2D ? boundTexture2D() : boundTextureCubeMap();
     if (!texture) {
         addError(GL_INVALID_OPERATION_VALUE);
@@ -3280,6 +3277,11 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
                 ? GL_INVALID_ENUM_VALUE : GL_INVALID_VALUE_VALUE);
         return;
     }
+
+    // Zero-area updates are no-ops, but only after validating the bound
+    // texture, image level, offsets, bounds, and pixel format/type.
+    if (!width || !height)
+        return;
 
     auto& destination = isCubeFace ? (*faceLevels)[level] : texture->levels[level];
     const size_t updateRowBytes = static_cast<size_t>(width) * 4;
