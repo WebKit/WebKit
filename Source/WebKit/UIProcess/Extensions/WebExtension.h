@@ -54,6 +54,11 @@ OBJC_CLASS NSURL;
 OBJC_CLASS WKWebExtension;
 #endif // PLATFORM(COCOA)
 
+#if ENABLE(2022_GLIB_API)
+#include "WebKitWebExtension.h"
+#include <wtf/glib/GWeakPtr.h>
+#endif
+
 namespace WebKit {
 
 class WebExtension : public API::ObjectImpl<API::Object::Type::WebExtension>, public CanMakeWeakPtr<WebExtension> {
@@ -356,6 +361,16 @@ public:
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
     WKWebExtension *wrapper() const { return (WKWebExtension *)API::ObjectImpl<API::Object::Type::WebExtension>::wrapper(); }
+#elif ENABLE(2022_GLIB_API)
+    void setWrapper(WebKitWebExtension *extension)
+    {
+        m_wrapper = GWeakPtr(extension);
+    }
+
+    WebKitWebExtension *wrapper() const
+    {
+        return m_wrapper.get();
+    }
 #endif
 
 private:
@@ -407,6 +422,10 @@ private:
 #if PLATFORM(COCOA)
     const RetainPtr<NSBundle> m_bundle;
     mutable RetainPtr<SecStaticCodeRef> m_bundleStaticCode;
+#endif
+
+#if ENABLE(2022_GLIB_API)
+    GWeakPtr<WebKitWebExtension> m_wrapper;
 #endif
 
     URL m_resourceBaseURL;
