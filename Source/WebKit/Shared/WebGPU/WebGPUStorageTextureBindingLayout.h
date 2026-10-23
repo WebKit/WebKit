@@ -28,15 +28,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include <WebCore/WebGPUCppAPI.h>
-#include <optional>
 
 namespace WebKit::WebGPU {
 
-struct StorageTextureBindingLayout {
-    ::WebGPU::StorageTextureAccess access { ::WebGPU::StorageTextureAccess::WriteOnly };
-    ::WebGPU::TextureFormat format { ::WebGPU::TextureFormat::R8unorm };
-    ::WebGPU::TextureViewDimension viewDimension { ::WebGPU::TextureViewDimension::_2d };
-};
+using StorageTextureBindingLayout = ::WebGPU::StorageTextureBindingLayout;
 
 } // namespace WebKit::WebGPU
 

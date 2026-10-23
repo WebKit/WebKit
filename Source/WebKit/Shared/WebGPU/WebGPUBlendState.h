@@ -27,15 +27,11 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "WebGPUBlendComponent.h"
-#include <optional>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-struct BlendState {
-    BlendComponent color;
-    BlendComponent alpha;
-};
+using BlendState = ::WebGPU::BlendState;
 
 } // namespace WebKit::WebGPU
 

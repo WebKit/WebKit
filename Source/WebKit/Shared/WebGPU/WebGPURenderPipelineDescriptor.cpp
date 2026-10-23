@@ -44,20 +44,6 @@ std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBackin
     if (!vertex)
         return std::nullopt;
 
-    auto primitive = convertToBacking(renderPipelineDescriptor.primitive);
-    if (!primitive)
-        return std::nullopt;
-
-    std::optional<DepthStencilState> depthStencil;
-    if (renderPipelineDescriptor.depthStencil) {
-        depthStencil = convertToBacking(*renderPipelineDescriptor.depthStencil);
-        if (!depthStencil)
-            return std::nullopt;
-    }
-
-    auto multisample = convertToBacking(renderPipelineDescriptor.multisample);
-    if (!multisample)
-        return std::nullopt;
 
     std::optional<FragmentState> fragment;
     if (renderPipelineDescriptor.fragment) {
@@ -66,7 +52,7 @@ std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBackin
             return std::nullopt;
     }
 
-    return { { { { renderPipelineDescriptor.label }, layout }, WTF::move(*vertex), WTF::move(primitive), WTF::move(depthStencil), WTF::move(multisample), WTF::move(fragment) } };
+    return { { { { renderPipelineDescriptor.label }, layout }, WTF::move(*vertex), renderPipelineDescriptor.primitive, renderPipelineDescriptor.depthStencil, renderPipelineDescriptor.multisample, WTF::move(fragment) } };
 }
 
 std::optional<::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPipelineDescriptor& renderPipelineDescriptor, RenderPipelineDescriptorStorage& storage, bool allowMissingPipelineLayout)
@@ -79,28 +65,8 @@ std::optional<::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::con
     if (!vertex)
         return std::nullopt;
 
-    ::WebGPU::PrimitiveState primitive;
-    if (renderPipelineDescriptor.primitive) {
-        auto convertedPrimitive = convertFromBacking(*renderPipelineDescriptor.primitive);
-        if (!convertedPrimitive)
-            return std::nullopt;
-        primitive = *convertedPrimitive;
-    }
-
-    std::optional<::WebGPU::DepthStencilState> depthStencil;
-    if (renderPipelineDescriptor.depthStencil) {
-        depthStencil = convertFromBacking(*renderPipelineDescriptor.depthStencil);
-        if (!depthStencil)
-            return std::nullopt;
-    }
-
-    ::WebGPU::MultisampleState multisample;
-    if (renderPipelineDescriptor.multisample) {
-        auto convertedMultisample = convertFromBacking(*renderPipelineDescriptor.multisample);
-        if (!convertedMultisample)
-            return std::nullopt;
-        multisample = *convertedMultisample;
-    }
+    auto primitive = renderPipelineDescriptor.primitive.value_or(::WebGPU::PrimitiveState { });
+    auto multisample = renderPipelineDescriptor.multisample.value_or(::WebGPU::MultisampleState { });
 
     std::optional<::WebGPU::FragmentState> fragment;
     if (renderPipelineDescriptor.fragment) {
@@ -109,7 +75,7 @@ std::optional<::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::con
             return std::nullopt;
     }
 
-    return { { renderPipelineDescriptor.label, WTF::move(*layout), WTF::move(*vertex), primitive, WTF::move(depthStencil), multisample, WTF::move(fragment) } };
+    return { { renderPipelineDescriptor.label, WTF::move(*layout), WTF::move(*vertex), primitive, renderPipelineDescriptor.depthStencil, multisample, WTF::move(fragment) } };
 }
 
 std::optional<RefPtr<::WebGPU::PipelineLayout>> ConvertFromBackingContext::convertLayoutFromBacking(const PipelineDescriptorBase& pipelineDescriptorBase, bool allowMissingPipelineLayout)

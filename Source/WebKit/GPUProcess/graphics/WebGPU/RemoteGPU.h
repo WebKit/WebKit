@@ -36,6 +36,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUIdentifier.h"
 #include "WebGPUObjectHeap.h"
+#include "WebGPURequestAdapterOptions.h"
 #include "WebGPUSupportedFeatures.h"
 #include "WebGPUSupportedLimits.h"
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -76,7 +77,6 @@ class RemoteRenderingBackend;
 
 namespace WebGPU {
 class ObjectHeap;
-struct RequestAdapterOptions;
 }
 
 class RemoteGPU final : public CanMakeWeakPtr<RemoteGPU>, public IPC::StreamServerConnection::Client {

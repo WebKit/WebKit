@@ -21,7 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::SamplerBindingLayout {
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::SamplerBindingLayout {
     ::WebGPU::SamplerBindingType type;
 };
+
+header: "WebGPUSamplerBindingLayout.h"
+using WebKit::WebGPU::SamplerBindingLayout = ::WebGPU::SamplerBindingLayout;
 #endif

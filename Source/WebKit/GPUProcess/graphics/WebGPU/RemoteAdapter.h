@@ -30,6 +30,7 @@
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
+#include "WebGPUSupportedLimits.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
@@ -47,7 +48,6 @@ namespace WebGPU {
 struct DeviceDescriptor;
 class ObjectHeap;
 struct SupportedFeatures;
-struct SupportedLimits;
 }
 
 class RemoteAdapter final : public IPC::StreamMessageReceiver {
