@@ -39,6 +39,7 @@
 #include "WebErrors.h"
 #include "WebKitDirectoryInputStream.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/DNS.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -437,9 +438,35 @@ static ShouldStartHTTPRedirection shouldStartHTTPRedirection(const WebCore::Reso
     return ShouldStartHTTPRedirection::Yes;
 }
 
+static std::optional<IPAddress> remoteIPAddress(SoupMessage* message)
+{
+    auto* address = soup_message_get_remote_address(message);
+    if (!G_IS_INET_SOCKET_ADDRESS(address))
+        return std::nullopt;
+    auto* inetAddress = g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address));
+    switch (g_inet_address_get_family(inetAddress)) {
+    case G_SOCKET_FAMILY_IPV4: {
+        struct in_addr ipv4Address;
+        memcpySpan(asMutableByteSpan(ipv4Address), unsafeMakeSpan(g_inet_address_to_bytes(inetAddress), g_inet_address_get_native_size(inetAddress)));
+        return IPAddress(ipv4Address);
+    }
+    case G_SOCKET_FAMILY_IPV6: {
+        struct in6_addr ipv6Address;
+        memcpySpan(asMutableByteSpan(ipv6Address), unsafeMakeSpan(g_inet_address_to_bytes(inetAddress), g_inet_address_get_native_size(inetAddress)));
+        return IPAddress(ipv6Address);
+    }
+    case G_SOCKET_FAMILY_INVALID:
+    case G_SOCKET_FAMILY_UNIX:
+        break;
+    }
+    return std::nullopt;
+}
+
 void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
 {
     m_response = ResourceResponse(m_soupMessage.get(), m_sniffedContentType);
+    if (CheckedPtr session = networkSession())
+        m_response.setIPAddressSpace(session->classifyConnectionAddressSpace(remoteIPAddress(m_soupMessage.get()), m_response.url()));
 
     switch (shouldStartHTTPRedirection(m_response)) {
     case ShouldStartHTTPRedirection::Yes:

@@ -1,0 +1,11 @@
+
+FAIL LNA Service Worker Public to Loopback Fetch with permission assert_equals: unexpected error: TypeError: Load failed expected (undefined) undefined but got (string) "TypeError: Load failed"
+PASS LNA Service Worker Public to Loopback Fetch without permission
+FAIL LNA Service Worker Public to Loopback WebTransport with permission assert_equals: expected "open" but got "error"
+PASS LNA Service Worker Public to Loopback WebTransport without permission
+PASS LNA Service Worker Public to Loopback WebSocket with permission
+FAIL LNA Service Worker Public to Loopback WebSocket without permission assert_equals: expected "close: code 1006" but got "open"
+PASS LNA Service Worker Public navigate to Loopback main frame without permission
+PASS LNA Service Worker Public navigate to Loopback in iframe with permission
+PASS LNA Service Worker Public navigate to Loopback in iframe without permission
+

@@ -1,4 +1,0 @@
-
-PASS LNA Public to loopback navigate iframe from opener with permission
-FAIL LNA Public to loopback navigate iframe from opener without permission assert_equals: expected "timeout" but got "loaded"
-
