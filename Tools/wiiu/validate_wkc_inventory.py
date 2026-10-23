@@ -16,7 +16,7 @@ CMAKE = ROOT / "Source/WebKit/WKC/CMakeLists.txt"
 # CMake selectors currently used by the Wii U build. Extend this map only after
 # verifying how a tree is handled; do not blanket-compile old API implementations.
 SELECTORS = {
-    "Source/WebCore/platform/WKC": ("platform/WKC/*.cpp",),
+    # Reviewed legacy trees are intentionally excluded from the modern WebCore\n    # target; CMake documents their disposition and PORTING_STATUS.md tracks ports.\n    "Source/WebCore/html/shadow/WKC": (),\n    "Source/WebCore/loader/archive/mhtml/WKC": (),\n    "Source/WebCore/page/WKC": (),\n    "Source/WebCore/platform/WKC": ("platform/WKC/*.cpp",),
     "Source/WebCore/platform/graphics/WKC": ("platform/graphics/WKC/*.cpp",),
     "Source/WebCore/platform/sql/WKC": ("platform/sql/WKC/*.cpp",),
     "Source/WebCore/platform/text/WKC": ("platform/text/WKC/*.cpp",),
@@ -91,7 +91,7 @@ def main():
     # excluded until its behavior is ported to the modern GraphicsContextGL API.
     legacy = "Source/WebCore/platform/graphics/WKC/GraphicsContext3DWKC.cpp"
     if legacy in tracked_files:
-        if legacy not in cmake or "list(REMOVE_ITEM WEBCORE_PLATFORM_SOURCES" not in cmake:
+        if "/platform/graphics/WKC/GraphicsContext3DWKC.cpp" not in cmake or "list(REMOVE_ITEM WEBCORE_PLATFORM_SOURCES" not in cmake:
             errors.append(f"{legacy}: legacy exclusion must remain explicit in CMake")
         else:
             print(f"\n[explicit legacy disposition] {legacy} — port required before modern WebGL integration")
