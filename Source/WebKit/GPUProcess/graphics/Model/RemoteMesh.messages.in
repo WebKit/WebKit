@@ -31,12 +31,16 @@
 messages -> RemoteMesh Stream {
     void SetLabel(String label)
     void Destruct()
-    void Update(struct Vector<WebModel::UpdateMeshDescriptor> descriptor) -> (bool success)
+    void UpdateModel(WebCore::NodeIdentifier nodeIdentifier, struct Vector<WebModel::UpdateMeshDescriptor> descriptor)
+    void RemoveModel(WebCore::NodeIdentifier nodeIdentifier)
     void Render(uint32_t textureIndex) -> (bool success)
     void ProcessRemovals(struct Vector<WebModel::TypedResourceId> meshRemovals, struct Vector<WebModel::TypedResourceId> materialRemovals, struct Vector<WebModel::TypedResourceId> textureRemovals) -> (bool success)
     void UpdateTexture(struct Vector<WebModel::UpdateTextureDescriptor> descriptor) -> (bool success) NotStreamEncodable
     void UpdateMaterial(struct Vector<WebModel::UpdateMaterialDescriptor> descriptor) -> (bool success)
     void UpdateTransform(struct WebModel::Float4x4 transform)
+#if ENABLE(SPATIAL_PORTAL)
+    void UpdatePortalChildTransform(WebCore::NodeIdentifier nodeIdentifier, struct WebModel::Float4x4 transform)
+#endif
     void SetFOV(float fovY)
     void Play(bool playing)
     void SetEnvironmentMap(struct WebModel::UpdateTextureDescriptor imageAsset) NotStreamEncodable

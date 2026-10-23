@@ -30,6 +30,7 @@
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebModelIdentifier.h"
+#include <WebCore/NodeIdentifier.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -91,10 +92,14 @@ private:
     void destruct();
 
     void setLabel(String&&);
-    void update(Vector<WebModel::UpdateMeshDescriptor>&&, CompletionHandler<void(bool)>&&);
+    void updateModel(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&&);
+    void removeModel(WebCore::NodeIdentifier);
     void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&, CompletionHandler<void(bool)>&&);
     void updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&, CompletionHandler<void(bool)>&&);
     void updateTransform(const WebModel::Float4x4& transform);
+#if ENABLE(SPATIAL_PORTAL)
+    void updatePortalChildTransform(WebCore::NodeIdentifier, const WebModel::Float4x4&);
+#endif
     void setFOV(float fovY);
     void play(bool);
     void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&);

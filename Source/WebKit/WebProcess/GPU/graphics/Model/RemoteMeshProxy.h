@@ -108,12 +108,11 @@ private:
         return protect(root().streamClientConnection())->sendSync(std::forward<T>(message), backing());
     }
 
-    void update(Vector<WebModel::UpdateMeshDescriptor>&&) final;
+    void updateModel(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&&) final;
     void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&) final;
     void updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&) final;
 #if PLATFORM(COCOA)
     std::pair<simd_float4, simd_float4> mergedCenterAndExtents() const;
-    void updateModel(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&&) final;
     std::optional<std::pair<simd_float4, simd_float4>> centerAndExtents(WebCore::NodeIdentifier) const final;
     void removeModel(WebCore::NodeIdentifier) final;
     void sizeDidChange(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&&) final;
@@ -139,6 +138,7 @@ private:
 #endif
 #if ENABLE(SPATIAL_PORTAL) && PLATFORM(COCOA)
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
+    void setPortalChildTransform(WebCore::NodeIdentifier, const WebModel::Float4x4&) final;
     std::optional<WebModel::Float4x4> resolvedPortalTransform() const final;
 #endif
 #if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)

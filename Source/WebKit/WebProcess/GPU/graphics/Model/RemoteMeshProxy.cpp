@@ -182,13 +182,28 @@ RemoteMeshProxy::~RemoteMeshProxy()
 #endif
 }
 
-void RemoteMeshProxy::update(Vector<WebModel::UpdateMeshDescriptor>&& descriptorArray)
+void RemoteMeshProxy::updateModel(WebCore::NodeIdentifier nodeID, Vector<WebModel::UpdateMeshDescriptor>&& descriptorArray)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    auto sendResult = sendWithAsyncReply(Messages::RemoteMesh::Update(WTF::move(descriptorArray)), [](auto) mutable {
-    });
+    bool needBoundingBoxUpdate = false;
+
+    auto& bounds = m_modelBounds.add(nodeID, ModelBounds { }).iterator->value;
+    if (bounds.boundsAreEmpty()) {
+        for (auto& descriptor : descriptorArray) {
+            auto [minCorner, maxCorner] = computeMinAndMaxCorners(descriptor.parts, descriptor.instanceTransforms, descriptor.deformationData);
+            bounds.minCorner = simd_min(bounds.minCorner, minCorner);
+            bounds.maxCorner = simd_max(bounds.maxCorner, maxCorner);
+        }
+        needBoundingBoxUpdate = !bounds.boundsAreEmpty();
+    }
+
+    auto sendResult = send(Messages::RemoteMesh::UpdateModel(nodeID, WTF::move(descriptorArray)));
     UNUSED_VARIABLE(sendResult);
+
+    if (needBoundingBoxUpdate)
+        computeTransform();
 #else
+    UNUSED_PARAM(nodeID);
     UNUSED_PARAM(descriptorArray);
 #endif
 }
@@ -236,31 +251,6 @@ void RemoteMeshProxy::updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&
 }
 
 #if PLATFORM(COCOA)
-void RemoteMeshProxy::updateModel(WebCore::NodeIdentifier nodeID, Vector<WebModel::UpdateMeshDescriptor>&& descriptorArray)
-{
-#if ENABLE(GPU_PROCESS_MODEL)
-    bool needBoundingBoxUpdate = false;
-
-    auto& bounds = m_modelBounds.add(nodeID, ModelBounds { }).iterator->value;
-    if (bounds.boundsAreEmpty()) {
-        for (auto& descriptor : descriptorArray) {
-            auto [minCorner, maxCorner] = computeMinAndMaxCorners(descriptor.parts, descriptor.instanceTransforms, descriptor.deformationData);
-            bounds.minCorner = simd_min(bounds.minCorner, minCorner);
-            bounds.maxCorner = simd_max(bounds.maxCorner, maxCorner);
-        }
-        needBoundingBoxUpdate = !bounds.boundsAreEmpty();
-    }
-
-    update(WTF::move(descriptorArray));
-
-    if (needBoundingBoxUpdate)
-        computeTransform();
-#else
-    UNUSED_PARAM(nodeID);
-    UNUSED_PARAM(descriptorArray);
-#endif
-}
-
 static std::pair<simd_float4, simd_float4> makeCenterAndExtents(simd_float4 minCorner, simd_float4 maxCorner)
 {
     auto center = .5f * (minCorner + maxCorner);
@@ -293,6 +283,11 @@ std::optional<std::pair<simd_float4, simd_float4>> RemoteMeshProxy::centerAndExt
 
 void RemoteMeshProxy::removeModel(WebCore::NodeIdentifier nodeID)
 {
+#if ENABLE(GPU_PROCESS_MODEL)
+    auto sendResult = send(Messages::RemoteMesh::RemoveModel(nodeID));
+    UNUSED_VARIABLE(sendResult);
+#endif
+
     if (!m_modelBounds.remove(nodeID))
         return;
 
@@ -563,6 +558,20 @@ void RemoteMeshProxy::setPortalTransform(const WebCore::UsedPortalTransform& por
     computeTransform();
 #else
     UNUSED_PARAM(portalTransform);
+#endif
+}
+
+void RemoteMeshProxy::setPortalChildTransform(WebCore::NodeIdentifier nodeID, const WebModel::Float4x4& transform)
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    simd_float4x4 matrix = transform;
+    matrix.columns[3] = simd_make_float4(simd_make_float3(matrix.columns[3]) / kCSSPixelsPerMeter, 1.f);
+
+    auto sendResult = send(Messages::RemoteMesh::UpdatePortalChildTransform(nodeID, matrix));
+    UNUSED_VARIABLE(sendResult);
+#else
+    UNUSED_PARAM(nodeID);
+    UNUSED_PARAM(transform);
 #endif
 }
 

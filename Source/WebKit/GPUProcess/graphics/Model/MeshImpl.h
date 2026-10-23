@@ -68,15 +68,19 @@ private:
     bool isMeshImpl() const final { return true; }
 
     void setLabelInternal(const String&) final;
-    void update(Vector<WebModel::UpdateMeshDescriptor>&&) final;
+    void updateModel(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&&) final;
     void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&) final;
     void updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&) final;
     void setEntityTransform(const WebModel::Float4x4&) final;
+#if ENABLE(SPATIAL_PORTAL)
+    void setPortalChildTransform(WebCore::NodeIdentifier, const WebModel::Float4x4&) final;
+#endif
 #if PLATFORM(COCOA)
     std::optional<WebModel::Float4x4> entityTransform() const final;
 #if ENABLE(SPATIAL_PORTAL)
     std::optional<WebModel::Float4x4> resolvedPortalTransform() const final;
 #endif
+    void removeModel(WebCore::NodeIdentifier) final;
 #endif
     void setFOV(float) final;
     void play(bool) final;

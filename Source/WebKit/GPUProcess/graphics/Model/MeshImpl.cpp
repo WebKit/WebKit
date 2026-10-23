@@ -53,9 +53,9 @@ void MeshImpl::setLabelInternal(const String&)
     // FIXME: Implement this.
 }
 
-void MeshImpl::update(Vector<WebModel::UpdateMeshDescriptor>&& descriptor)
+void MeshImpl::updateModel(WebCore::NodeIdentifier nodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&& descriptor)
 {
-    m_backing->update(WTF::move(descriptor));
+    m_backing->updateMesh(nodeIdentifier, WTF::move(descriptor));
 }
 
 void MeshImpl::updateTexture(Vector<WebModel::UpdateTextureDescriptor>&& descriptor)
@@ -78,6 +78,13 @@ void MeshImpl::setEntityTransform(const WebModel::Float4x4& transform)
     m_backing->setTransform(transform);
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+void MeshImpl::setPortalChildTransform(WebCore::NodeIdentifier nodeIdentifier, const WebModel::Float4x4& transform)
+{
+    m_backing->setTransform(nodeIdentifier, transform);
+}
+#endif
+
 #if PLATFORM(COCOA)
 std::optional<WebModel::Float4x4> MeshImpl::entityTransform() const
 {
@@ -90,6 +97,11 @@ std::optional<WebModel::Float4x4> MeshImpl::resolvedPortalTransform() const
     return std::nullopt;
 }
 #endif
+
+void MeshImpl::removeModel(WebCore::NodeIdentifier nodeIdentifier)
+{
+    m_backing->removeNode(nodeIdentifier);
+}
 #endif
 
 void MeshImpl::setFOV(float fovY)

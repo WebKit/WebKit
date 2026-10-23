@@ -281,6 +281,11 @@ bool WebModelPlayer::ensureModelBacking(WebCore::LayoutSize size)
         return false;
     m_currentModel->setViewportSize(cssSize.width().toFloat(), cssSize.height().toFloat());
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_portalTransform)
+        protect(m_currentModel)->setPortalTransform(*m_portalTransform);
+#endif
+
     return true;
 }
 
@@ -413,7 +418,8 @@ void WebModelPlayer::loadHostedModel(WebCore::NodeIdentifier nodeID, WebCore::Mo
     setLoaderCallbacks(nodeID, hosted.loader.get());
 
 #if ENABLE(SPATIAL_PORTAL)
-    pushPortalStateToModel();
+    if (hosted.childTransform)
+        protect(m_currentModel)->setPortalChildTransform(nodeID, static_cast<simd_float4x4>(*hosted.childTransform));
 #endif
 
     hosted.retainedData = modelSource.data()->createNSData();
@@ -1027,8 +1033,17 @@ void WebModelPlayer::setCurrentTime(WebCore::NodeIdentifier nodeID, Seconds curr
     completion();
 }
 
-std::optional<WebCore::TransformationMatrix> WebModelPlayer::entityTransform(WebCore::NodeIdentifier) const
+std::optional<WebCore::TransformationMatrix> WebModelPlayer::entityTransform(WebCore::NodeIdentifier nodeID) const
 {
+#if ENABLE(SPATIAL_PORTAL)
+    if (isSpatialPortal()) {
+        CheckedPtr hosted = hostedModel(nodeID);
+        return hosted ? hosted->childTransform : std::nullopt;
+    }
+#else
+    UNUSED_PARAM(nodeID);
+#endif
+
 #if PLATFORM(COCOA)
     if (RefPtr model = m_currentModel) {
         if (auto transform = model->entityTransform())
@@ -1088,15 +1103,6 @@ void WebModelPlayer::setPortalAction(WebCore::PortalActionKind kind)
     }
 }
 
-void WebModelPlayer::pushPortalStateToModel()
-{
-    RefPtr model = m_currentModel;
-    if (!model || !m_portalTransform)
-        return;
-
-    model->setPortalTransform(*m_portalTransform);
-}
-
 void WebModelPlayer::notifyPortalTransformUpdated()
 {
     RefPtr model = m_currentModel;
@@ -1109,11 +1115,20 @@ void WebModelPlayer::notifyPortalTransformUpdated()
 }
 #endif
 
-void WebModelPlayer::setEntityTransform(WebCore::NodeIdentifier, WebCore::TransformationMatrix transform)
+void WebModelPlayer::setEntityTransform(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
 {
 #if ENABLE(SPATIAL_PORTAL)
-    if (isSpatialPortal())
+    if (isSpatialPortal()) {
+        ensureHostedModel(nodeID).childTransform = transform;
+
+        if (RefPtr model = m_currentModel) {
+            model->setPortalChildTransform(nodeID, static_cast<simd_float4x4>(transform));
+            startUpdateLoopIfNeeded();
+        }
         return;
+    }
+#else
+    UNUSED_PARAM(nodeID);
 #endif
 
     if (RefPtr model = m_currentModel) {

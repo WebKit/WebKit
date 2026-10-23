@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <WebCore/NodeIdentifier.h>
 #import <simd/simd.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
@@ -65,10 +66,12 @@ public:
 
     bool LEGACY_NODELETE isValid() const;
     void LEGACY_NODELETE render(uint32_t textureIndex, Function<void(bool)>&&) const;
-    void LEGACY_NODELETE update(Vector<WebModel::UpdateMeshDescriptor>&&);
+    void updateMesh(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&&);
+    void removeNode(WebCore::NodeIdentifier);
     void LEGACY_NODELETE updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&);
     void LEGACY_NODELETE updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&);
     void LEGACY_NODELETE setTransform(const simd_float4x4&);
+    void setTransform(WebCore::NodeIdentifier, const simd_float4x4&);
     void LEGACY_NODELETE setFOV(float);
     void LEGACY_NODELETE setEnvironmentMap(WebModel::UpdateTextureDescriptor&&);
     void LEGACY_NODELETE play(bool);

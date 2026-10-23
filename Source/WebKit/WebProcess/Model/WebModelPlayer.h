@@ -109,6 +109,9 @@ private:
         bool isLooping { false };
 
         std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore;
+#if ENABLE(SPATIAL_PORTAL)
+        std::optional<WebCore::TransformationMatrix> childTransform;
+#endif
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
         RefPtr<WebCore::Model> cachedModelSource;
 #endif
@@ -189,7 +192,6 @@ private:
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
     void setPortalAction(WebCore::PortalActionKind) final;
     bool isSpatialPortal() const { return !!m_portalTransform; }
-    void pushPortalStateToModel();
     void notifyPortalTransformUpdated();
 #endif
 

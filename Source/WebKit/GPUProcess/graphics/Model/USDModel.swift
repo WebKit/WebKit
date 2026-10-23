@@ -26,6 +26,8 @@ import OSLog
 import WebKit
 import simd
 
+typealias NodeIdentifier = UInt64
+
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
 import USDKit
 import DirectResource
@@ -607,6 +609,10 @@ extension WKBridgeReceiver {
     @nonobjc
     fileprivate var modelTransform: simd_float4x4 = matrix_identity_float4x4
     @nonobjc
+    fileprivate var nodeTransforms: [NodeIdentifier: simd_float4x4] = [:]
+    @nonobjc
+    fileprivate var meshNodes: [WKBridgeTypedResourceId: NodeIdentifier] = [:]
+    @nonobjc
     fileprivate var rotationAngle: Float = 0
 
     @nonobjc
@@ -738,14 +744,15 @@ extension WKBridgeReceiver {
 
     @objc(renderWithTexture:commandBuffer:)
     func render(with texture: any MTLTexture, commandBuffer: any MTLCommandBuffer) {
-        // Apply the latest model transform to every mesh instance, composed with
-        // each instance's original USD-space transform.
+        // Apply the latest model transform and the mesh's node transform to every
+        // mesh instance, composed with each instance's original USD-space transform.
         for (identifier, meshes) in meshToMeshInstances {
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
             // swift-format-ignore: NeverForceUnwrap
             let originalTransforms = meshTransforms[identifier]!
+            let nodeTransform = meshNodes[identifier].flatMap { nodeTransforms[$0] } ?? matrix_identity_float4x4
             for (index, meshInstance) in meshes.enumerated() {
-                meshInstance.transform = modelTransform * originalTransforms[index]
+                meshInstance.transform = modelTransform * nodeTransform * originalTransforms[index]
             }
         }
 
@@ -910,6 +917,7 @@ extension WKBridgeReceiver {
                     }
                 }
                 meshResources.removeValue(forKey: meshId)
+                meshNodes.removeValue(forKey: meshId)
                 meshResourceToMaterials.removeValue(forKey: meshId)
                 meshResourceToDeformationContext.removeValue(forKey: meshId)
             }
@@ -930,13 +938,14 @@ extension WKBridgeReceiver {
         return true
     }
 
-    @objc(updateMesh:)
-    func updateMesh(_ updates: [WKBridgeUpdateMesh]) {
+    @objc(updateMesh:forNode:)
+    func updateMesh(_ updates: [WKBridgeUpdateMesh], forNode node: NodeIdentifier) {
         do {
             var deferredMeshUpdates: [DeferredMeshUpdate] = []
 
             for meshData in updates {
                 let identifier = meshData.identifier
+                meshNodes[identifier] = node
 
                 let meshResource: LowLevelMeshResource
                 if meshData.updateType == .initial || meshData.descriptor != nil {
@@ -1090,6 +1099,16 @@ extension WKBridgeReceiver {
     @objc(setTransform:)
     func setTransform(_ transform: simd_float4x4) {
         modelTransform = transform
+    }
+
+    @objc(setTransform:forNode:)
+    func setTransform(_ transform: simd_float4x4, forNode node: NodeIdentifier) {
+        nodeTransforms[node] = transform
+    }
+
+    @objc(removeNode:)
+    func removeNode(_ node: NodeIdentifier) {
+        nodeTransforms.removeValue(forKey: node)
     }
 
     func setFOV(_ fovY: Float) {
@@ -2851,8 +2870,12 @@ extension WKBridgeReceiver {
     func updateMaterial(_ data: [WKBridgeUpdateMaterial]) {
     }
 
-    @objc(updateMesh:)
-    func updateMesh(_ data: [WKBridgeUpdateMesh]) {
+    @objc(updateMesh:forNode:)
+    func updateMesh(_ data: [WKBridgeUpdateMesh], forNode node: NodeIdentifier) {
+    }
+
+    @objc(removeNode:)
+    func removeNode(_ node: NodeIdentifier) {
     }
 
     @objc
@@ -2866,6 +2889,10 @@ extension WKBridgeReceiver {
 
     @objc(setTransform:)
     func setTransform(_ transform: simd_float4x4) {
+    }
+
+    @objc(setTransform:forNode:)
+    func setTransform(_ transform: simd_float4x4, forNode node: NodeIdentifier) {
     }
 
     func setFOV(_ fovY: Float) {
