@@ -998,8 +998,7 @@ imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-inherited-from-
 imported/w3c/web-platform-tests/html/browsers/sandboxing/window-open-blank-from-different-initiator.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/navigate-to-about-blank-while-initial-load-pending.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-resize.html [ Skip ]
-imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html [ Skip ]
-imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1252.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Pass Timeout ]
 # Below test can be progressed if we add `TabsToLinks` as 'true'.
 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-order.html [ Skip ]
 
@@ -1033,7 +1032,6 @@ imported/w3c/web-platform-tests/html/webappapis/user-prompts/cannot-show-simple-
 imported/w3c/web-platform-tests/workers/WorkerLocation-origin.sub.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16be.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16le.html [ Skip ]
-imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-8.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_2.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/base-url/document-base-url-changes-about-srcdoc-2.https.html [ Skip ] # one subtest passess other timeout
 imported/w3c/web-platform-tests/html/infrastructure/urls/terminology-0/nontraditional-about-srcdoc.html [ Skip ] # timeout
@@ -3169,10 +3167,8 @@ http/wpt/mediarecorder/pause-recording-2.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Slow ]
 imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-encodings.html [ Pass Failure ]
 imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationEffect.html [ Failure ]
 
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createOffer.html [ Failure Pass ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats-timestamp.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc-stats/getStats-remote-candidate-ufrag.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Failure ]
@@ -6035,7 +6031,6 @@ imported/w3c/web-platform-tests/workers/shared-worker-from-blob-url.window.html 
 
 # Some Trusted Types tests are flaky due to subtest ordering
 webkit.org/b/274089 imported/w3c/web-platform-tests/trusted-types/trusted-types-from-literal.tentative.html [ Pass Failure ]
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-navigation.html [ Pass Failure ]
 
 # WebKit doesn't support CSP violation reporting inside Workers
 imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting-for-DedicatedWorker-DedicatedWorker-constructor.html [ Skip ]
@@ -6407,7 +6402,6 @@ imported/w3c/web-platform-tests/uievents/mouse/mouse_buttons_back_forward.html [
 imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus-management-expectations.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
-imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceTransportPolicy.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onicecandidateerror.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-data-url.any.worker.html [ Skip ]
