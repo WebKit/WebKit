@@ -73,25 +73,25 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRLayerProjection::startFram
     if (!texture)
         return std::nullopt;
 
-    auto addResult = m_exportedTextures.add(*texture, m_nextReusableTextureIndex);
-    bool needsExport = addResult.isNewEntry;
+    auto existingIndex = m_exportedTextures.getOptional(*texture);
+    bool needsExport = !existingIndex;
 
     PlatformXR::FrameData::LayerData layerData;
     layerData.renderingFrameIndex = m_renderingFrameIndex++;
     layerData.textureData = {
-        .reusableTextureIndex = addResult.iterator->value,
+        .reusableTextureIndex = existingIndex.value_or(m_nextReusableTextureIndex),
         .colorTexture = { },
         .depthStencilBuffer = { },
     };
 
     if (!needsExport)
         return layerData;
-    m_nextReusableTextureIndex++;
 
     auto externalTexture = graphicsBinding.exportTexture(*texture, m_swapchain, OpenXRGraphicsBinding::TextureType::Texture2D, m_swapchain->width(), m_swapchain->height());
     if (!externalTexture)
         return std::nullopt;
 
+    m_exportedTextures.add(*texture, m_nextReusableTextureIndex++);
     layerData.textureData->colorTexture = WTF::move(externalTexture.value());
 
     auto halfWidth = m_swapchain->width() / 2;
@@ -174,25 +174,25 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRQuadLayer::startFrame(Open
     if (!texture)
         return std::nullopt;
 
-    auto addResult = m_exportedTextures.add(*texture, m_nextReusableTextureIndex);
-    bool needsExport = addResult.isNewEntry;
+    auto existingIndex = m_exportedTextures.getOptional(*texture);
+    bool needsExport = !existingIndex;
 
     PlatformXR::FrameData::LayerData layerData;
     layerData.renderingFrameIndex = m_renderingFrameIndex++;
     layerData.textureData = {
-        .reusableTextureIndex = addResult.iterator->value,
+        .reusableTextureIndex = existingIndex.value_or(m_nextReusableTextureIndex),
         .colorTexture = { },
         .depthStencilBuffer = { },
     };
 
     if (!needsExport)
         return layerData;
-    m_nextReusableTextureIndex++;
 
     auto externalTexture = graphicsBinding.exportTexture(*texture, m_swapchain, OpenXRGraphicsBinding::TextureType::Texture2D, m_swapchain->width(), m_swapchain->height());
     if (!externalTexture)
         return std::nullopt;
 
+    m_exportedTextures.add(*texture, m_nextReusableTextureIndex++);
     layerData.textureData->colorTexture = WTF::move(externalTexture.value());
 
     layerData.layerSetup = {
@@ -299,25 +299,25 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXREquirectLayer::startFrame(
     if (!texture)
         return std::nullopt;
 
-    auto addResult = m_exportedTextures.add(*texture, m_nextReusableTextureIndex);
-    bool needsExport = addResult.isNewEntry;
+    auto existingIndex = m_exportedTextures.getOptional(*texture);
+    bool needsExport = !existingIndex;
 
     PlatformXR::FrameData::LayerData layerData;
     layerData.renderingFrameIndex = m_renderingFrameIndex++;
     layerData.textureData = {
-        .reusableTextureIndex = addResult.iterator->value,
+        .reusableTextureIndex = existingIndex.value_or(m_nextReusableTextureIndex),
         .colorTexture = { },
         .depthStencilBuffer = { },
     };
 
     if (!needsExport)
         return layerData;
-    m_nextReusableTextureIndex++;
 
     auto externalTexture = graphicsBinding.exportTexture(*texture, m_swapchain, OpenXRGraphicsBinding::TextureType::Texture2D, m_swapchain->width(), m_swapchain->height());
     if (!externalTexture)
         return std::nullopt;
 
+    m_exportedTextures.add(*texture, m_nextReusableTextureIndex++);
     layerData.textureData->colorTexture = WTF::move(externalTexture.value());
 
     layerData.layerSetup = {
@@ -426,25 +426,25 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRCylinderLayer::startFrame(
     if (!texture)
         return std::nullopt;
 
-    auto addResult = m_exportedTextures.add(*texture, m_nextReusableTextureIndex);
-    bool needsExport = addResult.isNewEntry;
+    auto existingIndex = m_exportedTextures.getOptional(*texture);
+    bool needsExport = !existingIndex;
 
     PlatformXR::FrameData::LayerData layerData;
     layerData.renderingFrameIndex = m_renderingFrameIndex++;
     layerData.textureData = {
-        .reusableTextureIndex = addResult.iterator->value,
+        .reusableTextureIndex = existingIndex.value_or(m_nextReusableTextureIndex),
         .colorTexture = { },
         .depthStencilBuffer = { },
     };
 
     if (!needsExport)
         return layerData;
-    m_nextReusableTextureIndex++;
 
     auto externalTexture = graphicsBinding.exportTexture(*texture, m_swapchain, OpenXRGraphicsBinding::TextureType::Texture2D, m_swapchain->width(), m_swapchain->height());
     if (!externalTexture)
         return std::nullopt;
 
+    m_exportedTextures.add(*texture, m_nextReusableTextureIndex++);
     layerData.textureData->colorTexture = WTF::move(externalTexture.value());
 
     layerData.layerSetup = {
@@ -553,13 +553,13 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRCubeLayer::startFrame(Open
     if (m_rightSwapchain && !m_rightSwapchain->acquireImage())
         return std::nullopt;
 
-    auto addResult = m_exportedTextures.add(*texture, m_nextReusableTextureIndex);
-    bool needsExport = addResult.isNewEntry;
+    auto existingIndex = m_exportedTextures.getOptional(*texture);
+    bool needsExport = !existingIndex;
 
     PlatformXR::FrameData::LayerData layerData;
     layerData.renderingFrameIndex = m_renderingFrameIndex++;
     layerData.textureData = {
-        .reusableTextureIndex = addResult.iterator->value,
+        .reusableTextureIndex = existingIndex.value_or(m_nextReusableTextureIndex),
         .colorTexture = { },
         .depthStencilBuffer = { },
     };
@@ -568,7 +568,6 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRCubeLayer::startFrame(Open
         releaseSwapchainImagesOnError.release();
         return layerData;
     }
-    m_nextReusableTextureIndex++;
 
     // The cube faces are laid out side by side (cubeCount * faceCount squares) in a single 2D buffer.
     uint32_t faceSize = m_swapchain->width();
@@ -578,6 +577,7 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRCubeLayer::startFrame(Open
     if (!externalTexture)
         return std::nullopt;
 
+    m_exportedTextures.add(*texture, m_nextReusableTextureIndex++);
     layerData.textureData->colorTexture = WTF::move(externalTexture.value());
     layerData.layerSetup = {
         .physicalSize = { { { static_cast<uint16_t>(sideBySideWidth), static_cast<uint16_t>(faceSize) } } },
