@@ -34,6 +34,7 @@
 #include <WebCore/IOSurfacePool.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Threading.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
@@ -116,6 +117,83 @@ TEST(IOSurfacePoolTest, InUseSurfaceBecomesVolatileWhenNoLongerInUse)
     ASSERT_NE(taken, nullptr);
     EXPECT_EQ(taken->surface(), surfaceRef.get());
     EXPECT_FALSE(isVolatile(surfaceRef.get()));
+}
+
+// The last reference to a pool can be dropped on any thread. That must not wait for the main thread,
+// since the main thread may itself be waiting for the thread that drops the reference.
+TEST(IOSurfacePoolTest, DestroyingPoolOnWorkerThreadDoesNotWaitForMainThread)
+{
+    RefPtr<IOSurfacePool> pool = IOSurfacePool::create();
+    IntSize size { 5, 5 };
+
+    auto surface = IOSurface::create(pool.get(), size, ColorSpace::SRGB());
+    ASSERT_NE(surface, nullptr);
+    // An in-use surface makes the pool schedule its collection on the maintenance queue.
+    auto sendRight = surface->createSendRight();
+    EXPECT_TRUE(surface->isInUse());
+    IOSurface::moveToPool(WTF::move(surface), pool.get());
+
+    // Blocks the main thread until the worker has destroyed the pool.
+    Thread::create("IOSurfacePoolTest worker"_s, [pool = WTF::move(pool)] mutable {
+        pool = nullptr;
+    })->waitForCompletion();
+
+    // The collection scheduled by the destroyed pool must find the pool gone and do nothing.
+    Util::runFor(0.3_s);
+}
+
+// The pool can be created, used, and destroyed entirely on a thread other than the main thread.
+TEST(IOSurfacePoolTest, PoolCanBeUsedOnWorkerThread)
+{
+    Thread::create("IOSurfacePoolTest worker"_s, [] {
+        auto pool = IOSurfacePool::create();
+        IntSize size { 5, 5 };
+        auto colorSpace = ColorSpace::SRGB();
+
+        auto surface = IOSurface::create(pool.ptr(), size, colorSpace);
+        ASSERT_NE(surface, nullptr);
+        IOSurfaceRef expected = surface->surface();
+        pool->addSurface(WTF::move(surface));
+
+        auto taken = pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No);
+        ASSERT_NE(taken, nullptr);
+        EXPECT_EQ(taken->surface(), expected);
+
+        pool->addSurface(WTF::move(taken));
+        pool->discardAllSurfaces();
+        EXPECT_EQ(pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No), nullptr);
+    })->waitForCompletion();
+}
+
+// The collection of in-use surfaces does not need the main thread.
+TEST(IOSurfacePoolTest, InUseSurfaceBecomesVolatileOnWorkerThread)
+{
+    Thread::create("IOSurfacePoolTest worker"_s, [] {
+        auto pool = IOSurfacePool::create();
+        IntSize size { 5, 5 };
+        auto colorSpace = ColorSpace::SRGB();
+
+        auto surface = IOSurface::create(pool.ptr(), size, colorSpace);
+        ASSERT_NE(surface, nullptr);
+        RetainPtr<IOSurfaceRef> surfaceRef = surface->surface();
+        auto sendRight = surface->createSendRight();
+        EXPECT_TRUE(surface->isInUse());
+        pool->addSurface(WTF::move(surface));
+        EXPECT_FALSE(isVolatile(surfaceRef.get()));
+
+        sendRight = { };
+        // This thread has no run loop to spin, so poll for up to a second.
+        bool becameVolatile = false;
+        for (int i = 0; i < 100 && !becameVolatile; ++i) {
+            sleep(10_ms);
+            becameVolatile = isVolatile(surfaceRef.get());
+        }
+        EXPECT_TRUE(becameVolatile);
+
+        auto taken = pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No);
+        ASSERT_NE(taken, nullptr);
+        EXPECT_EQ(taken->surface(), surfaceRef.get());
+    })->waitForCompletion();
 }
 
 } // namespace TestWebKitAPI

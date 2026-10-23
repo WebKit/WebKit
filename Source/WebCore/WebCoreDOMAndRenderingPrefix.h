@@ -189,7 +189,6 @@
 #include "HTMLFrameOwnerElement.h"
 #if USE(CG)
 #include "IOSurfacePool.h"
-#include "IOSurfacePoolIdentifier.h"
 #endif
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"

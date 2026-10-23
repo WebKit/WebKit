@@ -235,7 +235,6 @@
 #include "IDBKeyPath.h"
 #if USE(CG)
 #include "IOSurfacePool.h"
-#include "IOSurfacePoolIdentifier.h"
 #endif
 #include "ImageBuffer.h"
 #include "ImageBufferAllocator.h"

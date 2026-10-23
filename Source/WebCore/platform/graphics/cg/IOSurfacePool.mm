@@ -23,24 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IOSurfacePool.h"
+#import "config.h"
+#import "IOSurfacePool.h"
 
 #if HAVE(IOSURFACE)
 
-#include "ColorSpace.h"
-#include "GraphicsContextCG.h"
-#include "ImageBufferBackend.h"
-#include <CoreGraphics/CoreGraphics.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/TextStream.h>
+#import "ColorSpace.h"
+#import "GraphicsContextCG.h"
+#import "ImageBufferBackend.h"
+#import <CoreGraphics/CoreGraphics.h>
+#import <QuartzCore/QuartzCore.h>
+#import <atomic>
+#import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <wtf/WorkQueue.h>
+#import <wtf/text/TextStream.h>
 
 static const Seconds inUseCollectionInterval { 100_ms };
 
 #define ENABLE_IOSURFACE_POOL_STATISTICS 0
 #if ENABLE_IOSURFACE_POOL_STATISTICS
-#define DUMP_POOL_STATISTICS(commands) do { ALWAYS_LOG_WITH_STREAM(commands); } while (0);
+#define DUMP_POOL_STATISTICS(commands) do { ALWAYS_LOG_WITH_STREAM(commands); } while (0); // NOLINT
 #else
 #define DUMP_POOL_STATISTICS(commands) ((void)0)
 #endif
@@ -49,18 +54,39 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IOSurfacePool);
 
-IOSurfacePool::IOSurfacePool()
-    : m_collectionTimer(RunLoop::mainSingleton(), "IOSurfacePool::CollectionTimer"_s, this, &IOSurfacePool::collectionTimerFired)
+static WorkQueue& maintenanceQueueSingleton()
 {
-    DUMP_POOL_STATISTICS(stream << "IOSurfacePool [" << m_poolIdentifier << "] constructor.");
+    static NeverDestroyed<Ref<WorkQueue>> queue = WorkQueue::create("IOSurfacePool maintenance queue"_s, WorkQueue::QOS::Utility);
+    return queue.get();
+}
+
+static void releaseLayerContents()
+{
+    if (isWebThread())
+        return;
+    if (!RunLoop::isMain()) {
+        RunLoop::mainSingleton().dispatch(releaseLayerContents);
+        return;
+    }
+    // We need to trigger a CA commit in the web process to trigger the release layer-related memory, since the WebProcess doesn't normally do CA commits.
+    [CATransaction begin];
+    [CATransaction commit];
+}
+
+IOSurfacePool::IOSurfacePool()
+{
+    DUMP_POOL_STATISTICS(stream << "IOSurfacePool [" << this << "] constructor.");
 }
 
 IOSurfacePool::~IOSurfacePool()
 {
-    DUMP_POOL_STATISTICS(stream << "IOSurfacePool [" << m_poolIdentifier << "] destructor.");
-    callOnMainRunLoopAndWait([&] {
-        discardAllSurfaces();
-    });
+    DUMP_POOL_STATISTICS(stream << "IOSurfacePool [" << this << "] destructor.");
+    if (m_cachedSurfaces.isEmpty() && m_inUseSurfaces.isEmpty())
+        return;
+    // FIXME: Consider destroying the surfaces on the maintenance queue.
+    m_cachedSurfaces.clear();
+    m_inUseSurfaces.clear();
+    releaseLayerContents();
 }
 
 IOSurfacePool& IOSurfacePool::sharedPoolSingleton()
@@ -139,7 +165,7 @@ std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, const ColorS
 
             auto purgeableState = surface->setVolatile(false);
 
-            DUMP_POOL_STATISTICS(stream << "IOSurfacePool::takeSurface [" << m_poolIdentifier << "] - taking surface " << surface.get() << " with size " << size << " color space " << colorSpace << " format " << format << " purgeable state " << purgeableState << "\n" << poolStatistics());
+            DUMP_POOL_STATISTICS(stream << "IOSurfacePool::takeSurface [" << this << "] - taking surface " << surface.get() << " with size " << size << " color space " << colorSpace << " format " << format << " purgeable state " << purgeableState << "\n" << poolStatistics());
             (void)purgeableState;
             return surface;
         }
@@ -151,18 +177,18 @@ std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, const ColorS
             continue;
         if (surfaceIter->get()->isInUse())
             continue;
-        
+
         auto surface = WTF::move(*surfaceIter);
         m_inUseSurfaces.remove(surfaceIter);
         didRemoveSurface(*surface, true);
 
         surface->setVolatile(false);
 
-        DUMP_POOL_STATISTICS(stream << "IOSurfacePool::takeSurface [" << m_poolIdentifier << "] - taking surface " << surface.get() << " with size " << size << " color space " << colorSpace << " format " << format << "\n" << poolStatistics());
+        DUMP_POOL_STATISTICS(stream << "IOSurfacePool::takeSurface [" << this << "] - taking surface " << surface.get() << " with size " << size << " color space " << colorSpace << " format " << format << "\n" << poolStatistics());
         return surface;
     }
 
-    DUMP_POOL_STATISTICS(stream << "IOSurfacePool::takeSurface [" << m_poolIdentifier << "] - failing\n" << poolStatistics());
+    DUMP_POOL_STATISTICS(stream << "IOSurfacePool::takeSurface [" << this << "] - failing\n" << poolStatistics());
     return nullptr;
 }
 
@@ -191,13 +217,13 @@ void IOSurfacePool::addSurface(std::unique_ptr<IOSurface>&& surface)
 
     if (surfaceIsInUse) {
         m_inUseSurfaces.prepend(WTF::move(surface));
-        scheduleCollectionTimer();
-        DUMP_POOL_STATISTICS(stream << "IOSurfacePool::addSurface [" << m_poolIdentifier << "] - in-use\n" << poolStatistics());
+        scheduleCollection();
+        DUMP_POOL_STATISTICS(stream << "IOSurfacePool::addSurface [" << this << "] - in-use\n" << poolStatistics());
         return;
     }
 
     insertSurfaceIntoPool(WTF::move(surface));
-    DUMP_POOL_STATISTICS(stream << "IOSurfacePool::addSurface [" << m_poolIdentifier << "]\n" << poolStatistics());
+    DUMP_POOL_STATISTICS(stream << "IOSurfacePool::addSurface [" << this << "]\n" << poolStatistics());
 }
 
 void IOSurfacePool::insertSurfaceIntoPool(std::unique_ptr<IOSurface> surface)
@@ -253,11 +279,11 @@ void IOSurfacePool::tryEvictOldestCachedSurface()
 
 void IOSurfacePool::evict(size_t additionalSize)
 {
-    DUMP_POOL_STATISTICS(stream << "IOSurfacePool::evict [" << m_poolIdentifier << "] - before evict\n" << poolStatistics());
+    DUMP_POOL_STATISTICS(stream << "IOSurfacePool::evict [" << this << "] - before evict\n" << poolStatistics());
 
     if (additionalSize >= m_maximumBytesCached) {
         discardAllSurfacesInternal();
-        DUMP_POOL_STATISTICS(stream << "IOSurfacePool::evict [" << m_poolIdentifier << "] - after evict all\n" << poolStatistics());
+        DUMP_POOL_STATISTICS(stream << "IOSurfacePool::evict [" << this << "] - after evict all\n" << poolStatistics());
         return;
     }
 
@@ -278,7 +304,7 @@ void IOSurfacePool::evict(size_t additionalSize)
     while (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
         tryEvictInUseSurface();
 
-    DUMP_POOL_STATISTICS(stream << "IOSurfacePool::evict [" << m_poolIdentifier << "] - after evict\n" << poolStatistics());
+    DUMP_POOL_STATISTICS(stream << "IOSurfacePool::evict [" << this << "] - after evict\n" << poolStatistics());
 }
 
 void IOSurfacePool::collectInUseSurfaces()
@@ -299,37 +325,33 @@ void IOSurfacePool::collectInUseSurfaces()
     m_inUseSurfaces = WTF::move(newInUseSurfaces);
 }
 
-void IOSurfacePool::collectionTimerFired()
+void IOSurfacePool::performCollection(uint64_t token)
 {
-    Locker locker { m_lock };
-    collectInUseSurfaces();
+    {
+        Locker locker { m_lock };
+        if (token != m_collectionToken)
+            return;
+        m_collectionToken = 0;
+        collectInUseSurfaces();
 
-    if (!m_inUseSurfaces.size())
-        m_collectionTimer.stop();
+        if (m_inUseSurfaces.size())
+            scheduleCollection();
 
-    platformGarbageCollectNow();
-    DUMP_POOL_STATISTICS(stream << "IOSurfacePool::collectionTimerFired [" << m_poolIdentifier << "]\n" << poolStatistics());
-}
-
-void IOSurfacePool::scheduleCollectionTimer()
-{
-    if (!m_collectionTimer.isActive())
-        m_collectionTimer.startRepeating(inUseCollectionInterval);
-}
-
-void IOSurfacePool::stopCollectionTimer()
-{
-    if (RunLoop::isMain()) {
-        m_collectionTimer.stop();
-        return;
+        DUMP_POOL_STATISTICS(stream << "IOSurfacePool::performCollection [" << this << "]\n" << poolStatistics());
     }
+    releaseLayerContents();
+}
 
-    // m_collectionTimer fires on the main run loop, so it must be stopped there to avoid racing an
-    // in-flight callback. The pool can be discarded from other threads (e.g. when an ImageBuffer
-    // backend is destroyed in the GPU process).
-    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
-        Locker locker { protectedThis->m_lock };
-        protectedThis->m_collectionTimer.stop();
+void IOSurfacePool::scheduleCollection()
+{
+    if (m_collectionToken)
+        return;
+    // Tokens are unique across pools, so a cancelled task can never match a later one.
+    static std::atomic<uint64_t> lastToken { 0 };
+    m_collectionToken = ++lastToken;
+    maintenanceQueueSingleton().dispatchAfter(inUseCollectionInterval, [weakThis = ThreadSafeWeakPtr { *this }, token = m_collectionToken] {
+        if (auto pool = weakThis.get())
+            pool->performCollection(token);
     });
 }
 
@@ -346,15 +368,15 @@ void IOSurfacePool::discardAllSurfacesInternal()
     m_cachedSurfaces.clear();
     m_inUseSurfaces.clear();
     m_sizesInPruneOrder.clear();
-    stopCollectionTimer();
-    platformGarbageCollectNow();
+    m_collectionToken = 0;
+    releaseLayerContents();
 }
 
 String IOSurfacePool::poolStatistics() const
 {
 #if ENABLE_IOSURFACE_POOL_STATISTICS
     TextStream stream;
-    stream << "Process " << getpid() << " IOSurfacePool [" << m_poolIdentifier << "] Statistics:\n";
+    stream << "Process " << getpid() << " IOSurfacePool [" << this << "] Statistics:\n";
 
     unsigned totalSurfaces = 0;
     size_t totalSize = 0;
