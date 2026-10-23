@@ -33,6 +33,20 @@
 
 #if USE(LIBWPE)
 #include <wpe/wpe.h>
+
+static uint32_t wkEventModifiersToLibWPE(WKEventModifiers wkModifiers)
+{
+    uint32_t modifiers = 0;
+    if (wkModifiers & kWKEventModifiersControlKey)
+        modifiers |= wpe_input_keyboard_modifier_control;
+    if (wkModifiers & kWKEventModifiersShiftKey)
+        modifiers |= wpe_input_keyboard_modifier_shift;
+    if (wkModifiers & kWKEventModifiersAltKey)
+        modifiers |= wpe_input_keyboard_modifier_alt;
+    if (wkModifiers & kWKEventModifiersMetaKey)
+        modifiers |= wpe_input_keyboard_modifier_meta;
+    return modifiers;
+}
 #endif
 
 #if ENABLE(WPE_PLATFORM)
@@ -74,7 +88,7 @@ void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
     wpeEvent.time = 0;
     wpeEvent.key_code = event.keyCode;
     wpeEvent.hardware_key_code = event.hardwareKeyCode;
-    wpeEvent.modifiers = event.modifiers;
+    wpeEvent.modifiers = wkEventModifiersToLibWPE(event.modifiers);
     switch (event.type) {
     case kWKEventKeyDown:
         wpeEvent.pressed = true;
@@ -176,7 +190,7 @@ void WKPageHandleMouseEvent(WKPageRef pageRef, WKMouseEvent event)
     wpeEvent.time = 0;
     wpeEvent.x = event.position.x;
     wpeEvent.y = event.position.y;
-    wpeEvent.modifiers = event.modifiers;
+    wpeEvent.modifiers = wkEventModifiersToLibWPE(event.modifiers);
 
     const float deviceScaleFactor = 1;
 
