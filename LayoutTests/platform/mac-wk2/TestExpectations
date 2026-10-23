@@ -2679,7 +2679,6 @@ webkit.org/b/324109 [ Tahoe+ Debug ] imported/w3c/web-platform-tests/css/filter-
 webkit.org/b/327445 [ Debug arm64 ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-path-ignored.window.html [ Pass Failure ]
 
 webkit.org/b/319930 [ Release ] media/video-webkit-playsinline.html [ Pass Timeout ]
-webkit.org/b/328134 [ Release ] accessibility/isolated-tree/datetime/time-input-meridiem.html [ Failure ]
 
 webkit.org/b/328264 [ Debug ] http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Failure ]
 webkit.org/b/328278 [ x86_64 ] imported/w3c/web-platform-tests/css/css-images/cross-fade-target-alpha.html [ ImageOnlyFailure ]
