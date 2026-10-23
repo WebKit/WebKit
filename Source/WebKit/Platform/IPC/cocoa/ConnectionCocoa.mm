@@ -46,6 +46,8 @@
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/HexNumber.h>
 #import <wtf/MachSendRight.h>
+#import <wtf/MmapSpan.h>
+#import <wtf/PageBlock.h>
 #import <wtf/RunLoop.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/MakeString.h>
@@ -56,8 +58,6 @@
 #endif
 
 namespace IPC {
-
-static const size_t inlineMessageMaxSize = 4096;
 
 // Arbitrary message IDs that do not collide with Mach notification messages (used my initials).
 constexpr mach_msg_id_t inlineBodyMessageID = 0xdba0dba;
@@ -329,17 +329,10 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     auto attachments = encoder->releaseAttachments();
     auto numberOfPortDescriptors = attachments.size();
 
-    bool messageBodyIsOOL = false;
-    auto messageSize = MachMessage::messageSize(encoder->span().size(), numberOfPortDescriptors, messageBodyIsOOL);
+    bool messageBodyIsOOL = encoder->hasOutOfLineBuffer();
+    auto messageSize = MachMessage::checkedMessageSize(messageBodyIsOOL ? 0 : encoder->span().size(), numberOfPortDescriptors, messageBodyIsOOL);
     if (messageSize.hasOverflowed()) [[unlikely]]
         return false;
-
-    if (messageSize > inlineMessageMaxSize) {
-        messageBodyIsOOL = true;
-        messageSize = MachMessage::messageSize(0, numberOfPortDescriptors, messageBodyIsOOL);
-        if (messageSize.hasOverflowed()) [[unlikely]]
-            return false;
-    }
 
     size_t safeMessageSize = messageSize;
     auto message = MachMessage::create(encoder->messageName(), safeMessageSize);
@@ -397,8 +390,16 @@ bool Connection::retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> f
     auto extractedPorts = extractPortDescriptorsFromMessage(*failedMessage);
     failedMessage.reset();
 
-    // Create a VM-copy memory entry directly from the encoder's data.
-    auto shmHandle = WebCore::SharedMemoryHandle::createVMCopy(encoder->span(), WebCore::SharedMemoryProtection::ReadOnly);
+    std::optional<WebCore::SharedMemoryHandle> shmHandle;
+    if (encoder->hasOutOfLineBuffer())
+        shmHandle = WebCore::SharedMemoryHandle::createVMCopy(encoder->span(), WebCore::SharedMemoryProtection::ReadOnly);
+    else {
+        auto body = encoder->span();
+        if (auto bodyCopy = MmapSpan<uint8_t>::tryAlloc(roundUpToMultipleOf(WTF::pageSize(), body.size()))) {
+            memcpySpan(bodyCopy.mutableSpan(), body);
+            shmHandle = WebCore::SharedMemoryHandle::createVMCopy(bodyCopy.span().first(body.size()), WebCore::SharedMemoryProtection::ReadOnly);
+        }
+    }
     if (!shmHandle) {
         RELEASE_LOG_ERROR(IPC, "retrySendMessageWithSharedMemory: Failed to create memory entry");
         CRASH_WITH_INFO(std::to_underlying(encoder->messageName()));
@@ -408,7 +409,7 @@ bool Connection::retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> f
 
     // Build the retry message: extractedPorts + shm port descriptor + uint64_t size inline.
     size_t newPortCount = extractedPorts.size() + 1;
-    auto newMessageSize = MachMessage::messageSize(sizeof(uint64_t), newPortCount, 0);
+    auto newMessageSize = MachMessage::checkedMessageSize(sizeof(uint64_t), newPortCount, 0);
     if (newMessageSize.hasOverflowed()) [[unlikely]]
         return false;
 
@@ -602,8 +603,13 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
     return Decoder::create(remaining.first(messageBodySize), WTF::move(attachments));
 }
 
-// The receive buffer size should always include the maximum trailer size.
-static const size_t receiveBufferSize = inlineMessageMaxSize + MAX_TRAILER_SIZE;
+// The receive buffer should fit the largest message that Encoder sends with an inline body plus a
+// typical number of port descriptors. Larger messages work, but require handling MACH_RCV_LARGE
+// to determine the necessary receive buffer size.
+static constexpr size_t typicalMaximumPortDescriptorCount = 16;
+static constexpr size_t receiveBufferSize = *MachMessage::messageSize(Encoder::maximumInlineBodySize, typicalMaximumPortDescriptorCount, 0) + MAX_TRAILER_SIZE;
+static_assert(receiveBufferSize <= 8192, "8 KB is a reasonable upper bound for a stack-allocated buffer");
+
 typedef Vector<uint8_t, receiveBufferSize> ReceiveBuffer;
 
 static mach_msg_header_t* readFromMachPort(mach_port_t machPort, ReceiveBuffer& buffer)
