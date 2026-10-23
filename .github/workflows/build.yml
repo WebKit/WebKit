@@ -685,26 +685,26 @@ jobs:
           skopeo copy docker://ghcr.io/exzap/cafeglsl-wiiu:latest \
             "docker-archive:$IMAGE_ARCHIVE:ghcr.io/exzap/cafeglsl-wiiu:latest"
 
+          # The devkitpro container's system Python may predate Python 3.12,
+          # when tarfile's built-in "data" extraction filter was introduced.
+          # Use the maintained backport rather than falling back to unsafe extraction.
+          python3 -m pip install --break-system-packages --disable-pip-version-check backports.tarfile
+
           python3 - "$IMAGE_ARCHIVE" "$ROOTFS" <<'PY'
           import json
           import pathlib
           import sys
-          import tarfile
+          from backports import tarfile
 
           archive_path = pathlib.Path(sys.argv[1])
           root = pathlib.Path(sys.argv[2])
 
           def extract_layer(layer_archive, destination):
-              # The data filter rejects path traversal and unsafe link targets.
-              # Keep extraction inside the temporary root before copying only
-              # the published /artifacts subtree into DEVKITPRO.
+              # The backport supplies Python 3.12's safe "data" filter on older
+              # interpreters. Extraction stays inside the temporary root before
+              # only the published /artifacts subtree is copied into DEVKITPRO.
               with tarfile.open(fileobj=layer_archive, mode="r:*") as layer:
-                  try:
-                      layer.extractall(destination, filter="data")
-                  except TypeError as error:
-                      raise SystemExit(
-                          "Python tarfile safety filters are required to unpack CafeGLSL layers."
-                      ) from error
+                  layer.extractall(destination, filter="data")
 
           with tarfile.open(archive_path, mode="r:*") as image:
               manifest_file = image.extractfile("manifest.json")
