@@ -33,10 +33,18 @@ bool requiredBytes(TextureFormat format, uint32_t width, uint32_t height, size_t
     const uint32_t bpp = bytesPerPixel(format);
     if (!bpp || !width || !height)
         return false;
-    const uint64_t bytes = static_cast<uint64_t>(width) * height * bpp;
-    if (bytes > std::numeric_limits<size_t>::max())
+
+    // Check each multiplication before performing it. On a 64-bit host,
+    // width * height fits in uint64_t but multiplying that result by bpp can
+    // overflow; on the Wii U, size_t is narrower and must also be respected.
+    const size_t max = std::numeric_limits<size_t>::max();
+    if (static_cast<size_t>(width) > max / static_cast<size_t>(height))
         return false;
-    result = static_cast<size_t>(bytes);
+    const size_t pixelCount = static_cast<size_t>(width) * height;
+    if (pixelCount > max / static_cast<size_t>(bpp))
+        return false;
+
+    result = pixelCount * static_cast<size_t>(bpp);
     return true;
 }
 
