@@ -69,12 +69,15 @@
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HitTestSource.h>
+#include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/JSElement.h>
+#include <WebCore/JSNode.h>
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/RenderElement.h>
 #include <WebCore/ScriptController.h>
+#include <WebCore/ShadowRoot.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
@@ -195,6 +198,26 @@ static JSValueRef isValidNodeIdentifier(JSContextRef context, JSObjectRef functi
 
     RefPtr nodeIdentifier = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
     return JSValueMakeBoolean(context, isValidNodeHandle(nodeIdentifier->string()));
+}
+
+static JSValueRef openOrClosedShadowRoot(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
+{
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
+    if (arguments.size() != 1 || !JSValueIsObject(context, arguments[0]))
+        return JSValueMakeNull(context);
+
+    JSObjectRef elementObject = JSValueToObject(context, arguments[0], nullptr);
+    auto elementWrapper = elementObject ? dynamicDowncast<WebCore::JSElement>(toJS(elementObject)) : nullptr;
+    if (!elementWrapper)
+        return JSValueMakeNull(context);
+
+    RefPtr shadowRoot = protect(elementWrapper->wrapped())->openOrClosedShadowRoot();
+    auto* globalObject = dynamicDowncast<WebCore::JSDOMGlobalObject>(toJS(context));
+    if (!shadowRoot || !globalObject)
+        return JSValueMakeNull(context);
+
+    JSC::JSLockHolder lock(globalObject);
+    return toRef(globalObject, toJS(globalObject, globalObject, *shadowRoot));
 }
 
 static std::optional<std::pair<WebCore::FrameIdentifier, String>> frameAndNodeIdentifierArguments(JSContextRef context, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
@@ -357,6 +380,49 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef evaluateBidiScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
+{
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
+
+    ASSERT(arguments.size() == 3);
+    if (arguments.size() != 3)
+        return JSValueMakeUndefined(context);
+
+    RefPtr automationSessionProxy = WebProcess::singleton().automationSessionProxy();
+    if (!automationSessionProxy)
+        return JSValueMakeUndefined(context);
+
+    auto rawFrameID = JSValueToNumber(context, arguments[0], exception);
+    if (!ObjectIdentifier<WebCore::FrameIdentifierType>::isValidIdentifier(rawFrameID))
+        return JSValueMakeUndefined(context);
+
+    WebCore::FrameIdentifier frameID(rawFrameID);
+    uint64_t rawCallbackID = JSValueToNumber(context, arguments[1], exception);
+    if (!WebAutomationSessionProxy::JSCallbackIdentifier::isValidIdentifier(rawCallbackID))
+        return JSValueMakeUndefined(context);
+    WebAutomationSessionProxy::JSCallbackIdentifier callbackID(rawCallbackID);
+
+    if (JSValueIsString(context, arguments[2])) {
+        RefPtr result = adoptRef(JSValueToStringCopy(context, arguments[2], exception));
+        automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result ? result->string() : String(), { });
+        return JSValueMakeUndefined(context);
+    }
+
+    String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
+    String errorMessage;
+    if (JSObjectRef error = JSValueIsObject(context, arguments[2]) ? JSValueToObject(context, arguments[2], nullptr) : nullptr) {
+        JSValueRef nameValue = JSObjectGetProperty(context, error, OpaqueJSString::tryCreate("name"_s).get(), nullptr);
+        if (RefPtr name = adoptRef(JSValueToStringCopy(context, nameValue, nullptr)))
+            errorType = STRING_FOR_PREDEFINED_ERROR_MESSAGE(name->string());
+        JSValueRef messageValue = JSObjectGetProperty(context, error, OpaqueJSString::tryCreate("message"_s).get(), nullptr);
+        if (RefPtr message = adoptRef(JSValueToStringCopy(context, messageValue, nullptr)))
+            errorMessage = message->string();
+    }
+
+    automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, errorMessage, errorType);
+    return JSValueMakeUndefined(context);
+}
+
 JSObjectRef WebAutomationSessionProxy::scriptObject(JSGlobalContextRef context)
 {
     JSC::JSGlobalObject* globalObject = toJS(context);
@@ -397,7 +463,8 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
     JSObjectRef isValidNodeIdentifierFunction = JSObjectMakeFunctionWithCallback(context, nullptr, isValidNodeIdentifier);
     JSObjectRef isKnownReferenceFunction = JSObjectMakeFunctionWithCallback(context, nullptr, isKnownReferenceCallback);
     JSObjectRef addKnownReferenceFunction = JSObjectMakeFunctionWithCallback(context, nullptr, addKnownReferenceCallback);
-    JSValueRef arguments[] = { sessionIdentifier, currentFrameIdentifier, evaluateFunction, createUUIDFunction, isValidNodeIdentifierFunction, isKnownReferenceFunction, addKnownReferenceFunction };
+    JSObjectRef openOrClosedShadowRootFunction = JSObjectMakeFunctionWithCallback(context, nullptr, openOrClosedShadowRoot);
+    JSValueRef arguments[] = { sessionIdentifier, currentFrameIdentifier, evaluateFunction, createUUIDFunction, isValidNodeIdentifierFunction, isKnownReferenceFunction, addKnownReferenceFunction, openOrClosedShadowRootFunction };
     JSObjectRef scriptObject = const_cast<JSObjectRef>(JSObjectCallAsFunction(context, scriptObjectFunction, nullptr, std::size(arguments), arguments, &exception));
     ASSERT(JSValueIsObject(context, scriptObject));
 
@@ -614,45 +681,48 @@ void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(WebCore::FrameIden
         callback(String(result), String(errorType));
 }
 
-void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+std::expected<Ref<WebFrame>, String> WebAutomationSessionProxy::frameForBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
     if (!page)
-        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
 
     RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
     RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
     RefPtr window = coreLocalFrame ? coreLocalFrame->window() : nullptr;
     if (!window || !window->frame())
-        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
 
     // No need to track the main frame, this is handled by didClearWindowObjectForFrame.
     if (!coreLocalFrame->isMainFrame())
         ensureObserverForFrame(*frame);
 
-    JSObjectRef scriptObject = scriptObjectForFrame(*frame);
+    return frame.releaseNonNull();
+}
+
+void WebAutomationSessionProxy::callBidiScriptFunction(WebFrame& frame, ASCIILiteral functionName, std::span<const JSValueRef> leadingArguments, bool userActivation, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+{
+    JSObjectRef scriptObject = scriptObjectForFrame(frame);
     ASSERT(scriptObject);
 
-    auto frameID = frame->frameID();
+    auto frameID = frame.frameID();
     JSValueRef exception = nullptr;
-    JSGlobalContextRef context = frame->jsContext();
+    JSGlobalContextRef context = frame.jsContext();
     auto callbackID = JSCallbackIdentifier::generate();
 
     auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>());
     result.iterator->value.set(callbackID, WTF::move(completionHandler));
 
-    JSValueRef functionArguments[] = {
-        toJSValue(context, expression),
-        JSValueMakeBoolean(context, awaitPromise),
-        JSValueMakeNumber(context, maxObjectDepth),
-        JSValueMakeNumber(context, frameID.toUInt64()),
-        JSValueMakeNumber(context, callbackID.toUInt64()),
-        JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
-        JSValueMakeNumber(context, callbackTimeout.value_or(-1))
-    };
+    Vector<JSValueRef, 9> functionArguments;
+    functionArguments.append(leadingArguments);
+    functionArguments.append(JSValueMakeNumber(context, frameID.toUInt64()));
+    functionArguments.append(JSValueMakeNumber(context, callbackID.toUInt64()));
+    functionArguments.append(JSObjectMakeFunctionWithCallback(context, nullptr, evaluateBidiScriptCallback));
+    functionArguments.append(JSValueMakeNumber(context, callbackTimeout.value_or(-1)));
 
-    WebCore::UserGestureIndicator gestureIndicator { std::nullopt, protect(frame->coreLocalFrame()->document()) };
-    callPropertyFunction(context, scriptObject, "evaluateBidiScript"_s, std::size(functionArguments), functionArguments, &exception);
+    auto isProcessingUserGesture = userActivation ? std::optional { WebCore::IsProcessingUserGesture::Yes } : std::nullopt;
+    WebCore::UserGestureIndicator gestureIndicator { isProcessingUserGesture, protect(frame.coreLocalFrame()->document()) };
+    callPropertyFunction(context, scriptObject, functionName, functionArguments.size(), functionArguments.span().data(), &exception);
 
     if (!exception)
         return;
@@ -666,6 +736,51 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
         exceptionMessage = adoptRef(JSValueToStringCopy(context, exception, nullptr))->string();
 
     didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
+}
+
+void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& expression, bool awaitPromise, const String& serializationOptions, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+{
+    auto frame = frameForBidiScript(pageID, optionalFrameID);
+    if (!frame)
+        return completionHandler({ }, WTF::move(frame.error()));
+
+    JSGlobalContextRef context = frame.value()->jsContext();
+    JSValueRef serializationOptionsValue = JSValueMakeFromJSONString(context, OpaqueJSString::tryCreate(serializationOptions).get());
+    if (!serializationOptionsValue || !JSValueIsObject(context, serializationOptionsValue))
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError));
+
+    JSValueRef leadingArguments[] = {
+        toJSValue(context, expression),
+        JSValueMakeBoolean(context, awaitPromise),
+        serializationOptionsValue
+    };
+    callBidiScriptFunction(frame.value().get(), "evaluateBidiScript"_s, leadingArguments, false, callbackTimeout, WTF::move(completionHandler));
+}
+
+void WebAutomationSessionProxy::callBidiFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& functionDeclaration, const String& serializedArguments, const String& serializedThis, bool awaitPromise, const String& serializationOptions, bool userActivation, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+{
+    auto frame = frameForBidiScript(pageID, optionalFrameID);
+    if (!frame)
+        return completionHandler({ }, WTF::move(frame.error()));
+
+    JSGlobalContextRef context = frame.value()->jsContext();
+    JSValueRef argumentsValue = JSValueMakeFromJSONString(context, OpaqueJSString::tryCreate(serializedArguments).get());
+    JSValueRef thisValue = serializedThis.isEmpty() ? JSValueMakeUndefined(context) : JSValueMakeFromJSONString(context, OpaqueJSString::tryCreate(serializedThis).get());
+    JSValueRef serializationOptionsValue = JSValueMakeFromJSONString(context, OpaqueJSString::tryCreate(serializationOptions).get());
+    bool hasValidArguments = argumentsValue && JSValueIsArray(context, argumentsValue);
+    bool hasValidThis = thisValue && (JSValueIsUndefined(context, thisValue) || JSValueIsObject(context, thisValue));
+    bool hasValidSerializationOptions = serializationOptionsValue && JSValueIsObject(context, serializationOptionsValue);
+    if (!hasValidArguments || !hasValidThis || !hasValidSerializationOptions)
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError));
+
+    JSValueRef leadingArguments[] = {
+        toJSValue(context, functionDeclaration),
+        argumentsValue,
+        thisValue,
+        JSValueMakeBoolean(context, awaitPromise),
+        serializationOptionsValue
+    };
+    callBidiScriptFunction(frame.value().get(), "callBidiFunction"_s, leadingArguments, userActivation, callbackTimeout, WTF::move(completionHandler));
 }
 
 void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, uint32_t ordinal, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&& completionHandler)

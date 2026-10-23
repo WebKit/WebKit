@@ -117,7 +117,7 @@ private:
     String generateRealmIdForBrowsingContext(const String& browsingContext);
     static String originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
 
-    void finishEvaluateBidiScriptResult(const String& realmID, const String& expression, Inspector::CommandResult<String>&&, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&);
+    void finishEvaluateBidiScriptResult(const String& realmID, ASCIILiteral commandName, Inspector::CommandResult<String>&&, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&);
 
     static std::optional<RealmIdentifier> parseRealmIdentifier(const String& realmID);
     std::optional<String> browsingContextForRealm(RealmIdentifier) const;
