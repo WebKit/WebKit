@@ -177,6 +177,10 @@ if (USE_ANGLE_EGL OR ENABLE_WEBGL)
     )
     target_compile_definitions(ANGLE PUBLIC ${ANGLE_DEFINITIONS})
     target_link_libraries(ANGLE PRIVATE ZLIB::ZLIB ${CMAKE_DL_LIBS})
+    if (ENABLE_WEBGL_WEBGPU)
+        # The default proc table of the wgpu backend (DawnNativeWebGPUFramework.cpp) is the one of WebGPU.framework.
+        target_link_libraries(ANGLE PRIVATE WebGPU)
+    endif ()
 
     target_compile_definitions(ANGLEFramework INTERFACE ${gl_prototypes})
 
@@ -261,6 +265,9 @@ if (USE_ANGLE_EGL OR ENABLE_WEBGL)
         )
         if (WEBKIT_SDK_IS_MACOS)
             list(APPEND _angle_shared_libraries "-framework IOKit")
+        endif ()
+        if (ENABLE_WEBGL_WEBGPU)
+            list(APPEND _angle_shared_libraries WebGPU)
         endif ()
         target_link_libraries(ANGLE-shared PRIVATE ${_angle_shared_libraries})
 

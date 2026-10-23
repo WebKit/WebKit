@@ -27,7 +27,7 @@
 PRODUCT_NAME = ANGLE-shared;
 EXECUTABLE_PREFIX = lib;
 
-ANGLE_OTHER_LDFLAGS = $(ANGLE_ALLOWABLE_CLIENTS) -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface -framework Metal $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME)) -Wl;
+ANGLE_OTHER_LDFLAGS = $(ANGLE_ALLOWABLE_CLIENTS) -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface -framework Metal $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME)) $(ANGLE_OTHER_LDFLAGS_WGPU_$(ENABLE_WEBGL_WEBGPU)) -Wl;
 ANGLE_OTHER_LDFLAGS_iphoneos = -lz;
 ANGLE_OTHER_LDFLAGS_iphonesimulator = $(ANGLE_OTHER_LDFLAGS_iphoneos);
 ANGLE_OTHER_LDFLAGS_watchos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
@@ -38,6 +38,11 @@ ANGLE_OTHER_LDFLAGS_xros = $(ANGLE_OTHER_LDFLAGS_iphoneos);
 ANGLE_OTHER_LDFLAGS_xrsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
 ANGLE_OTHER_LDFLAGS_maccatalyst = -framework IOKit -lz;
 ANGLE_OTHER_LDFLAGS_macosx = -framework IOKit -lz;
+
+// The default proc table of the wgpu backend (DawnNativeWebGPUFramework.cpp) is the one of WebGPU.framework.
+ANGLE_OTHER_LDFLAGS_WGPU_YES = -weak_framework WebGPU;
+SYSTEM_FRAMEWORK_SEARCH_PATHS = $(inherited) $(ANGLE_SYSTEM_FRAMEWORK_SEARCH_PATHS_WGPU_$(ENABLE_WEBGL_WEBGPU));
+ANGLE_SYSTEM_FRAMEWORK_SEARCH_PATHS_WGPU_YES = $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 
 // Allow fuzzers to link to libANGLE-shared.dylib.
 ANGLE_ALLOWABLE_CLIENTS = $(ANGLE_ALLOWABLE_CLIENTS_$(WK_NOT_$(ENABLE_LIBFUZZER)));
