@@ -254,6 +254,10 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 #endif
 
     Vector<RetainPtr<NSURL>> _temporaryURLsToDeleteWhenDeallocated;
+
+#if HAVE(UIVIEW_RESERVED_REGION)
+    RetainPtr<NSArray<NSValue *>> _viewportFoldRectsForTesting;
+#endif
 }
 
 - (instancetype)_commonInitializationWithProcessPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration
@@ -345,15 +349,27 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     [self _updateViewportSegments];
 }
 
+- (RetainPtr<NSArray<NSValue *>>)_viewportFoldRects
+{
+    if (_viewportFoldRectsForTesting)
+        return _viewportFoldRectsForTesting;
+
+    RetainPtr regions = [self reservedRegionsOfKind:[UIViewReservedRegionKind divisionRegionKind]];
+    RetainPtr<NSMutableArray<NSValue *>> foldRects = [NSMutableArray arrayWithCapacity:[regions count]];
+    for (UIViewReservedRegion *region in regions.get())
+        [foldRects addObject:[NSValue valueWithCGRect:UIEdgeInsetsInsetRect(region.frame, region.margins)]];
+    return foldRects;
+}
+
 - (void)_updateViewportSegments
 {
     RefPtr page = _page.get();
     if (!page || !protect(page->preferences())->viewportSegmentsAPIEnabled())
         return;
 
-    RetainPtr regions = [self reservedRegionsOfKind:[UIViewReservedRegionKind divisionRegionKind]];
+    RetainPtr foldRects = [self _viewportFoldRects];
 
-    if (![regions count]) {
+    if (![foldRects count]) {
         page->setViewportSegments(WebCore::ViewportSegments { });
         return;
     }
@@ -361,13 +377,13 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     RetainPtr<NSMutableArray<NSValue *>> verticalFolds = [NSMutableArray array];
     RetainPtr<NSMutableArray<NSValue *>> horizontalFolds = [NSMutableArray array];
 
-    for (UIViewReservedRegion *region in regions.get()) {
-        CGRect foldRect = UIEdgeInsetsInsetRect(region.frame, region.margins);
+    for (NSValue *foldRectValue in foldRects.get()) {
+        CGRect foldRect = foldRectValue.CGRectValue;
 
         if (foldRect.size.width < 1.0f)
-            [verticalFolds addObject:[NSValue valueWithCGRect:foldRect]];
+            [verticalFolds addObject:foldRectValue];
         else if (foldRect.size.height < 1.0f)
-            [horizontalFolds addObject:[NSValue valueWithCGRect:foldRect]];
+            [horizontalFolds addObject:foldRectValue];
     }
 
     [verticalFolds sortUsingComparator:^(NSValue *a, NSValue *b) {
@@ -421,6 +437,12 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     }
 
     page->setViewportSegments(segments);
+}
+
+- (void)_setViewportFoldRectsForTesting:(NSArray<NSValue *> *)foldRects
+{
+    _viewportFoldRectsForTesting = foldRects;
+    [self _updateViewportSegments];
 }
 
 #endif // HAVE(UIVIEW_RESERVED_REGION)
