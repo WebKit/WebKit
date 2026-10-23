@@ -54,6 +54,10 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import <WebCore/WAKAppKitStubs.h>
+#endif
+
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/ContactsSoftLink.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
