@@ -10,9 +10,11 @@ Driver::Driver(const Backend& backend)
 
 Result Driver::setViewport(const Viewport& viewport)
 {
+    // Negated range checks reject NaN as well as values outside [0, 1].
+    // Plain less-than/greater-than checks would let NaN depth values through.
     if (viewport.width < 0 || viewport.height < 0
-        || viewport.nearDepth < 0.0f || viewport.nearDepth > 1.0f
-        || viewport.farDepth < 0.0f || viewport.farDepth > 1.0f)
+        || !(viewport.nearDepth >= 0.0f && viewport.nearDepth <= 1.0f)
+        || !(viewport.farDepth >= 0.0f && viewport.farDepth <= 1.0f))
         return Result::InvalidArgument;
 
     if (!m_backend.setViewport)
