@@ -283,11 +283,10 @@ ShaderResult ShaderPrograms::use(ProgramName name)
     }
     if (!m_backend.useProgram)
         return ShaderResult::MissingBackend;
-    if (!m_backend.useProgram(m_backend.context, native))
-        return ShaderResult::BackendFailure;
 
-    // Uniform values set while this program was not current must be uploaded
-    // when it becomes active, matching GL's per-program uniform storage.
+    // Upload stored uniforms before switching the native program. If an upload
+    // fails, the previously active program remains active and m_current stays
+    // truthful; binding first would leave native and GL-side state divergent.
     if (name) {
         const ProgramObject& program = m_programs.find(name)->second;
         if (!program.values.empty() && !m_backend.setUniform)
@@ -299,6 +298,9 @@ ShaderResult ShaderPrograms::use(ProgramName name)
                 return ShaderResult::BackendFailure;
         }
     }
+
+    if (!m_backend.useProgram(m_backend.context, native))
+        return ShaderResult::BackendFailure;
     m_current = name;
     return ShaderResult::Ok;
 }
