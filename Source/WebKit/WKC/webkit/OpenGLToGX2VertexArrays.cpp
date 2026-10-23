@@ -232,6 +232,7 @@ VertexArrayResult VertexArrays::setAttribute(uint8_t index, const VertexAttribut
     };
 
     if (m_backend.setAttribute && !m_backend.setAttribute(m_backend.context, index, value)) {
+        restoreBackend();
         restoreLogical();
         return VertexArrayResult::BackendFailure;
     }
