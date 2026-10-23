@@ -157,7 +157,8 @@ public:
         return pendingDispatchNavigateEvent ? WTF::move(pendingDispatchNavigateEvent->dispatch) : nullptr;
     }
 
-    // Set when the navigate and beforeunload events ran ahead of the policy check; the identifier is null if the navigation had no navigate event to dispatch.
+    // Set when beforeunload already ran for this navigation, either ahead of the policy check or in this document before the
+    // navigation left this process. The identifier is that of a navigate event dispatched ahead of the policy check, if any.
     bool dispatchedEventsBeforeNavigationPolicy() const { return m_dispatchedEventsBeforeNavigationPolicy; }
     Markable<NavigateEventIdentifier> navigateEventDispatchedBeforeNavigationPolicy() const { return m_navigateEventDispatchedBeforeNavigationPolicy; }
     void setDispatchedEventsBeforeNavigationPolicy(Markable<NavigateEventIdentifier> navigateEventIdentifier)

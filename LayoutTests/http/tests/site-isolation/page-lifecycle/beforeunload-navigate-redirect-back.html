@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<title>Tests that beforeunload fires once when a navigation leaves the frame's process and a redirect brings it back</title>
+
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that beforeunload fires once when a navigation leaves the frame's process and a redirect brings it back.");
+jsTestIsAsync = true;
+
+const beforeUnloadCounts = { navigate: 0, location: 0 };
+let arrivedDestinations = 0;
+addEventListener("message", (event) => {
+    const [type, method] = event.data.split(" ");
+    if (type == "beforeunload")
+        beforeUnloadCounts[method]++;
+    else if (type == "destination" && ++arrivedDestinations == 2) {
+        shouldBe("beforeUnloadCounts.navigate", "1");
+        shouldBe("beforeUnloadCounts.location", "1");
+        finishJSTest();
+    }
+});
+</script>
+
+<iframe src="resources/beforeunload-navigate-redirect-back-frame.html?navigate"></iframe>
+<iframe src="resources/beforeunload-navigate-redirect-back-frame.html?location"></iframe>
