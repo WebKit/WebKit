@@ -473,7 +473,11 @@ bool setAttribute(void* context, uint8_t attribute, const VertexAttribute& value
     descriptor.indexType = value.divisor
         ? GX2_ATTRIB_INDEX_PER_INSTANCE : GX2_ATTRIB_INDEX_PER_VERTEX;
     descriptor.enabled = value.enabled;
-    resources.attributes[attribute] = descriptor;
+    try {
+        resources.attributes[attribute] = descriptor;
+    } catch (...) {
+        return false;
+    }
     resources.fetchShaderDirty = true;
     return true;
 }
