@@ -6327,13 +6327,23 @@ bool Internals::isMonitoringWirelessRoutes() const
     return false;
 }
 
-ExceptionOr<Ref<MockPageOverlay>> Internals::installMockPageOverlay(PageOverlayType type)
+ExceptionOr<Ref<MockPageOverlay>> Internals::installMockPageOverlay(PageOverlayType type, const MockPageOverlayOptions& options)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    return MockPageOverlayClient::singleton().installOverlay(protect(*document->page()), type == PageOverlayType::View ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
+    RefPtr<LocalFrame> rootFrame;
+    if (options.associateWithLocalRoot) {
+        if (type != PageOverlayType::Document)
+            return Exception { ExceptionCode::NotSupportedError };
+        RefPtr frame { document->frame() };
+        if (!frame)
+            return Exception { ExceptionCode::InvalidAccessError };
+        rootFrame = &frame->rootFrame();
+    }
+
+    return MockPageOverlayClient::singleton().installOverlay(protect(*document->page()), type == PageOverlayType::View ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document, rootFrame.get());
 }
 
 ExceptionOr<String> Internals::pageOverlayLayerTreeAsText(unsigned short flags) const
@@ -6342,9 +6352,13 @@ ExceptionOr<String> Internals::pageOverlayLayerTreeAsText(unsigned short flags) 
     if (!document || !document->page())
         return Exception { ExceptionCode::InvalidAccessError };
 
+    RefPtr frame { document->frame() };
+    if (!frame)
+        return Exception { ExceptionCode::InvalidAccessError };
+
     document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
-    return MockPageOverlayClient::singleton().layerTreeAsText(protect(*document->page()), toLayerTreeAsTextOptions(flags));
+    return MockPageOverlayClient::singleton().layerTreeAsText(protect(*document->page()), protect(frame->rootFrame()), toLayerTreeAsTextOptions(flags));
 }
 
 void Internals::setPageMuted(StringView statesString)

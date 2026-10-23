@@ -82,7 +82,9 @@ PageOverlayController* PageOverlay::controller() const
 
 void PageOverlay::setAssociatedFrame(LocalFrame* frame)
 {
+    ASSERT(!frame || m_overlayType == OverlayType::Document);
     m_associatedFrame = frame;
+    m_isScopedToFrame = !!frame;
 }
 
 LocalFrame* PageOverlay::associatedFrame() const
@@ -90,12 +92,12 @@ LocalFrame* PageOverlay::associatedFrame() const
     return m_associatedFrame.get();
 }
 
-// The associated frame if set (per-frame overlays under Site Isolation); otherwise the local main
+// The associated frame if scoped to one (per-frame overlays under Site Isolation), or null once it is gone; otherwise the local main
 // frame, preserving the legacy single-overlay geometry for page-level overlays.
 LocalFrame* PageOverlay::frameForGeometry() const
 {
-    if (LocalFrame* associatedFrame = m_associatedFrame.get())
-        return associatedFrame;
+    if (m_isScopedToFrame)
+        return m_associatedFrame.get();
     return protect(m_page)->localMainFrame();
 }
 
@@ -223,6 +225,9 @@ void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirt
     
 bool PageOverlay::mouseEvent(const PlatformMouseEvent& mouseEvent)
 {
+    if (m_isScopedToFrame && !m_associatedFrame)
+        return false;
+
     IntPoint mousePositionInOverlayCoordinates(flooredIntPoint(mouseEvent.position()));
 
     if (m_overlayType == PageOverlay::OverlayType::Document) {
