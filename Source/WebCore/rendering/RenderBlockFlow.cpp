@@ -555,9 +555,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
 {
     ASSERT(needsLayout());
 
-    // Simplified layout lays out the out-of-flow boxes through the render tree path, which the block formatting context does for the roots it
-    // covers: those are laid out in full.
-    if (relayoutChildren == RelayoutChildren::No && !LayoutIntegration::canUseForBlockLayoutWithOutOfFlowBoxes(*this) && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     auto isPaginated = [&] {
@@ -718,7 +716,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
 
         // The block formatting context lays out the out-of-flow boxes of a root whose content it laid out.
         if (contentLayout == ContentLayout::BlockFormattingContext)
-            LayoutIntegration::BlockLayout { *this }.layoutOutOfFlowBoxes();
+            LayoutIntegration::BlockLayout { *this }.layoutOutOfFlowBoxes(*this);
         else {
             if (isDocumentElementRenderer() || previousHeight != newHeight || alignContentShift)
                 layoutOutOfFlowBoxes(RelayoutChildren::Yes);

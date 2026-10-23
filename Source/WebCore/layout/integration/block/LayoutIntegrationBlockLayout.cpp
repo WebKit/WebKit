@@ -97,10 +97,10 @@ std::pair<LayoutUnit, LayoutUnit> BlockLayout::computeIntrinsicInlineSizes(const
     return { sizes.minimum, sizes.maximum };
 }
 
-void BlockLayout::layoutOutOfFlowBoxes()
+void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock)
 {
     auto paintInvalidation = PaintInvalidation { };
-    layoutOutOfFlowBoxes(rootRenderer(), paintInvalidation);
+    layoutOutOfFlowBoxes(containingBlock, paintInvalidation);
 }
 
 // The padding box of a block in the coordinates its children are positioned in (RenderBox::setLogicalLocation): from its left edge (top in
