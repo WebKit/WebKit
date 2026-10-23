@@ -292,6 +292,7 @@
 #include <WebCore/NotificationController.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageColorSampler.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PageInspectorController.h>
@@ -1511,6 +1512,84 @@ void WebPage::broadcastFrameGeometryUpdatesIfNeeded()
 
     if (!updates.isEmpty())
         send(Messages::WebPageProxy::HandleFrameGeometryUpdates(updates));
+}
+
+void WebPage::setFixedContainerEdgeSamplingSides(FrameIdentifier frameID, RectEdges<bool> sides)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    RefPtr coreFrame = webFrame ? webFrame->coreLocalFrame() : nullptr;
+    if (sides == RectEdges<bool> { } || !coreFrame || !coreFrame->isRootFrame() || coreFrame->isMainFrame() || webFrame->page() != this) {
+        m_fixedContainerEdgeSampling.remove(frameID);
+        return;
+    }
+
+    auto& sampling = m_fixedContainerEdgeSampling.add(frameID, FixedContainerEdgeSampling { }).iterator->value;
+    if (sampling.sides == sides)
+        return;
+
+    sampling.sides = sides;
+    sampling.lastSent = std::nullopt;
+    if (RefPtr drawingArea = this->drawingArea())
+        drawingArea->triggerRenderingUpdate();
+}
+
+static FloatRect fixedContainerEdgeSampleRect(LocalFrame& frame, BoxSide side)
+{
+    RefPtr view = frame.view();
+    RefPtr mainFrameView = protect(frame.mainFrame())->virtualView();
+    if (!view || !mainFrameView)
+        return { };
+
+    auto viewportRect = mainFrameView->layoutViewportRect();
+    viewportRect.contract({ PageColorSampler::fixedContainerSampleRectMargin });
+    FloatRect rect { PageColorSampler::fixedContainerSampleRect(viewportRect, side) };
+    rect.scale(protect(frame.mainFrame())->frameScaleFactor());
+    rect = view->rootViewToContentsAcrossIsolatedFrames(mainFrameView->contentsToRootView(rect));
+    rect.intersect(view->visibleContentRect());
+    return rect;
+}
+
+Vector<std::pair<FrameIdentifier, FixedContainerEdges>> WebPage::sampleFixedContainerEdges(const Vector<FrameIdentifier>& rootsWithLayerChanges)
+{
+    Vector<std::pair<FrameIdentifier, FixedContainerEdges>> results;
+    m_fixedContainerEdgeSampling.removeIf([&](auto& entry) {
+        RefPtr webFrame = WebProcess::singleton().webFrame(entry.key);
+        RefPtr frame = webFrame ? webFrame->coreLocalFrame() : nullptr;
+        if (!frame)
+            return true;
+
+        auto& sampling = entry.value;
+        if (sampling.lastSent && !rootsWithLayerChanges.contains(entry.key))
+            return false;
+
+        auto edges = sampling.lastSent.value_or(FixedContainerEdges { });
+        bool sampledAnySide = false;
+        Ref localFrame = *frame;
+        for (auto side : allBoxSides) {
+            if (!sampling.sides.at(side))
+                continue;
+
+            if (sampling.lastSent && sampling.lastSent->hasFixedEdge(side))
+                continue;
+
+            auto rect = fixedContainerEdgeSampleRect(*frame, side);
+            if (rect.isEmpty())
+                continue;
+
+            auto result = PageColorSampler::predominantColor(localFrame, LayoutRect { rect });
+            edges.colors.setAt(side, WTF::visit([](auto edge) -> FixedContainerEdge {
+                return edge;
+            }, result));
+            sampledAnySide = true;
+        }
+
+        if (sampledAnySide && sampling.lastSent != edges) {
+            sampling.lastSent = edges;
+            results.append({ entry.key, WTF::move(edges) });
+        }
+        return false;
+    });
+    return results;
 }
 
 void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreFrame)

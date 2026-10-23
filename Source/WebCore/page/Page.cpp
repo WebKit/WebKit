@@ -5842,7 +5842,7 @@ void Page::updateFixedContainerEdges(BoxSideSet sides)
     }());
 
     for (auto side : sides) {
-        if (!edges.hasFixedEdge(side) || (!edges.predominantColor(side).isVisible() && fixedContainerEdges().predominantColor(side).isVisible())) {
+        if (!edges.hasFixedEdge(side) || (!edges.predominantColor(side).isVisible() && !std::holds_alternative<FrameIdentifier>(edges.colors.at(side)) && fixedContainerEdges().predominantColor(side).isVisible())) {
             WeakPtr lastElement = m_fixedContainerEdgesAndElements.second.at(side);
             if (!lastElement)
                 continue;

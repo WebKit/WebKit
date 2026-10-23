@@ -577,7 +577,7 @@ public:
 
 #if PLATFORM(COCOA)
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&) = 0;
-    virtual void didCommitMainFrameData(const MainFrameData&) = 0;
+    virtual void didUpdateFixedContainerEdges(const WebCore::FixedContainerEdges&) = 0;
     virtual void layerTreeCommitComplete() { }
 
 #if HAVE(NSREFRESHCONTROLLER)

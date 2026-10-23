@@ -306,4 +306,5 @@ struct WebKit::RemoteLayerTreeCommitBundle {
     
     WebKit::TransactionID transactionID;
     MonotonicTime startTime;
+    Vector<std::pair<WebCore::FrameIdentifier, WebCore::FixedContainerEdges>> fixedContainerEdges;
 };

@@ -32,6 +32,7 @@
 #include "TransactionID.h"
 #include <WebCore/Color.h>
 #include <WebCore/FixedContainerEdges.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/LayoutUnit.h>
 #include <WebCore/ViewportArguments.h>
@@ -110,6 +111,8 @@ struct RemoteLayerTreeCommitBundle {
 
     TransactionID transactionID;
     MonotonicTime startTime;
+
+    Vector<std::pair<WebCore::FrameIdentifier, WebCore::FixedContainerEdges>> fixedContainerEdges;
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     String description() const;

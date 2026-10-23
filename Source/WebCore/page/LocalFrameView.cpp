@@ -95,6 +95,7 @@
 #include "PlatformRenderTheme.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"
+#include "RemoteFrame.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
@@ -2348,8 +2349,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
 
     TraceScope tracingScope { FixedContainerEdgeSamplingStart, FixedContainerEdgeSamplingEnd };
 
-    static constexpr auto sampleRectThickness = 2;
-    static constexpr auto sampleRectMargin = 4;
+    static constexpr auto sampleRectMargin = PageColorSampler::fixedContainerSampleRectMargin;
     static constexpr auto thinBorderWidth = 10;
 
     struct FixedContainerResult {
@@ -2360,6 +2360,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         bool isDimmingLayer : 1 { false };
         bool isSidebar : 1 { false };
         Color backgroundColor;
+        std::optional<FrameIdentifier> remoteFrameID { };
     };
 
     auto sizeForViewportUnits = LayoutSize { sizeForCSSDefaultViewportUnits() };
@@ -2429,22 +2430,6 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
             return { rect.maxX(), (rect.y() + rect.maxY()) / 2 };
         case BoxSide::Bottom:
             return { (rect.x() + rect.maxX()) / 2, rect.maxY() };
-        default:
-            ASSERT_NOT_REACHED();
-            return { };
-        }
-    };
-
-    auto computeSampleRectIgnoringBorderWidth = [](LayoutRect rect, BoxSide side) -> LayoutRect {
-        switch (side) {
-        case BoxSide::Top:
-            return { rect.minXMinYCorner(), LayoutPoint { rect.maxX(), rect.y() + sampleRectThickness } };
-        case BoxSide::Left:
-            return { rect.minXMinYCorner(), LayoutPoint { rect.x() + sampleRectThickness, rect.maxY() } };
-        case BoxSide::Right:
-            return { LayoutPoint { rect.maxX() - sampleRectThickness, rect.y() }, rect.maxXMaxYCorner() };
-        case BoxSide::Bottom:
-            return { LayoutPoint { rect.x(), rect.maxY() - sampleRectThickness }, rect.maxXMaxYCorner() };
         default:
             ASSERT_NOT_REACHED();
             return { };
@@ -2561,6 +2546,12 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         if (!renderer)
             return { };
 
+        std::optional<FrameIdentifier> remoteFrameID;
+        if (CheckedPtr widget = dynamicDowncast<RenderWidget>(*renderer); widget && result.isOverWidget()) {
+            if (RefPtr remoteFrame = widget->remoteFrame())
+                remoteFrameID = remoteFrame->frameID();
+        }
+
         auto containerResultFromBackdrop = [&] -> std::optional<FixedContainerResult> {
             RefPtr container = dynamicDowncast<Element>(*hitNode);
             if (!container)
@@ -2632,6 +2623,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
                     .isDimmingLayer = candidateType == IsDimmingLayer,
                     .isSidebar = candidateType == IsSidebar,
                     .backgroundColor = hasMultipleBackgroundColors ? Color { } : WTF::move(primaryBackgroundColor),
+                    .remoteFrameID = remoteFrameID,
                 };
             }
             }
@@ -2649,7 +2641,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
     };
 
     auto computeSamplingRect = [&](const Style::ComputedStyle* style, BoxSide side) -> LayoutRect {
-        auto samplingRect = computeSampleRectIgnoringBorderWidth(fixedRect, side);
+        auto samplingRect = PageColorSampler::fixedContainerSampleRect(fixedRect, side);
         if (!style)
             return samplingRect;
 
@@ -2699,15 +2691,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         return samplingRect;
     };
 
-    static constexpr auto minimumOpacityThresholdToClampToSolidColor = 0.75;
-
     auto pageBackgroundColor = page->pageExtendedBackgroundColor();
-    auto blendAgainstPageBackground = [&pageBackgroundColor](const Color& color) {
-        if (color.isOpaque())
-            return color;
-
-        return blendSourceOver(pageBackgroundColor, color);
-    };
 
     for (auto side : sides) {
         auto result = findFixedContainer(side, IgnoreCSSPointerEvents::Yes);
@@ -2731,11 +2715,12 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         }
 
         if (result.backgroundColor.isVisible()) {
-            edges.colors.setAt(side, [&] {
-                if (result.isDimmingLayer || result.backgroundColor.alphaAsFloat() < minimumOpacityThresholdToClampToSolidColor)
-                    return blendAgainstPageBackground(result.backgroundColor);
-                return result.backgroundColor.colorWithAlpha(1);
-            }());
+            edges.colors.setAt(side, PageColorSampler::finishedFixedContainerColor(result.backgroundColor, result.isDimmingLayer, pageBackgroundColor));
+            continue;
+        }
+
+        if (result.remoteFrameID) {
+            edges.colors.setAt(side, *result.remoteFrameID);
             continue;
         }
 
@@ -2745,15 +2730,11 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         }
 
         edges.colors.setAt(side, [&] -> FixedContainerEdge {
-            auto samplingResult = PageColorSampler::predominantColor(*page, computeSamplingRect(protect(protect(result.container)->renderStyle()), side));
+            auto samplingResult = PageColorSampler::predominantColor(m_frame.get(), computeSamplingRect(protect(protect(result.container)->renderStyle()), side));
             if (!std::holds_alternative<Color>(samplingResult))
-                return samplingResult;
+                return std::get<PredominantColorType>(samplingResult);
 
-            auto color = std::get<Color>(samplingResult);
-            if (result.isDimmingLayer || color.alphaAsFloat() < minimumOpacityThresholdToClampToSolidColor)
-                return blendAgainstPageBackground(color);
-
-            return color.colorWithAlpha(1);
+            return PageColorSampler::finishedFixedContainerColor(std::get<Color>(samplingResult), result.isDimmingLayer, pageBackgroundColor);
         }());
     }
 

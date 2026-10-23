@@ -7296,7 +7296,7 @@ enum class WebCore::PredominantColorType : uint8_t {
     Multiple
 };
 
-using WebCore::FixedContainerEdge = Variant<WebCore::PredominantColorType, WebCore::Color>;
+using WebCore::FixedContainerEdge = Variant<WebCore::PredominantColorType, WebCore::Color, WebCore::FrameIdentifier>;
 
 header: <WebCore/FixedContainerEdges.h>
 [Nested] class WebCore::RectEdges<WebCore::FixedContainerEdge> {
