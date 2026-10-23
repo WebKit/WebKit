@@ -65,6 +65,7 @@ class FrameCanvasAgent;
 class FrameDOMAgent;
 class FrameDOMStorageAgent;
 class FrameDebuggerAgent;
+class FrameLayerTreeAgent;
 class FrameRuntimeAgent;
 class PageCanvasAgent;
 class PageDOMDebuggerAgent;
@@ -96,6 +97,7 @@ class WebHeapAgent;
 #define DEFINE_INSPECTOR_AGENT_Heap_Page(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, PageHeapAgent, PageHeapAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_Inspector(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, Inspector::InspectorAgent, InspectorAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_LayerTree(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorLayerTreeAgent, LayerTreeAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_LayerTree_Frame(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, FrameLayerTreeAgent, FrameLayerTreeAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_Network(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorNetworkAgent, NetworkAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_NetworkProxy(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, Inspector::NetworkAgentInstrumentation, NetworkProxy, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_Page(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorPageAgent, PageAgent, Getter, Setter)
@@ -152,6 +154,7 @@ class WebHeapAgent;
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, DOMStorage_Frame) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Heap_Page) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, LayerTree) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, LayerTree_Frame) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Memory) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Network) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, NetworkProxy) \

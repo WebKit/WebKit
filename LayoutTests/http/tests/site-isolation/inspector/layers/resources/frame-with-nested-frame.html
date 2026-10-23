@@ -1,0 +1,21 @@
+<!doctype html>
+<style>
+    body {
+        margin: 0;
+    }
+
+    #outer-composited {
+        width: 100px;
+        height: 100px;
+        will-change: transform;
+    }
+
+    iframe {
+        display: block;
+        width: 300px;
+        height: 200px;
+        border: 0;
+    }
+</style>
+<div id="outer-composited"></div>
+<iframe src="frame-with-composited-layers.html"></iframe>

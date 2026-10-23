@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: LayerTreeManager lacks advanced multi-target support. (Layers per-target)
-
 WI.LayerTreeManager = class LayerTreeManager extends WI.Object
 {
     constructor()
@@ -39,8 +37,12 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
 
     initializeTarget(target)
     {
-        if (target.hasDomain("LayerTree"))
-            target.LayerTreeAgent.enable();
+        if (target.hasDomain("LayerTree")) {
+            if (target instanceof WI.FrameTarget)
+                this._enableLayerTreeForFrameTarget(target);
+            else
+                target.LayerTreeAgent.enable();
+        }
 
         if (target.hasDomain("Page")) {
             if (target.hasCommand("Page.setShowPaintRects") && this._showPaintRects)
@@ -184,23 +186,47 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
     {
         console.assert(this.supported);
 
-        let target = WI.assumingMainTarget();
-        target.LayerTreeAgent.layersForNode(node.id, (error, layers) => {
-            if (error) {
-                WI.reportInternalError(error);
-                callback([]);
-                return;
-            }
-            callback(layers.map(WI.Layer.fromPayload));
-        });
+        this._layersForNode(node).then(callback);
+    }
+
+    layersForNodeIncludingFrames(node, callback)
+    {
+        console.assert(this.supported);
+
+        let collectLayers = async (node, offset) => {
+            let layers = await this._layersForNode(node, offset);
+            let frameLayers = await Promise.all(layers.map((layer) => {
+                if (!layer.contentFrameRect)
+                    return [];
+
+                let ownerNode = WI.domManager.nodeForId(layer.nodeId);
+                if (!this.targetForFrameOwner(ownerNode))
+                    return [];
+
+                return collectLayers(ownerNode.contentDocument, {x: layer.contentFrameRect.x, y: layer.contentFrameRect.y});
+            }));
+            return layers.flatMap((layer, i) => [layer, ...frameLayers[i]]);
+        };
+
+        collectLayers(node, null).then(callback);
+    }
+
+    targetForFrameOwner(node)
+    {
+        // FIXME: <https://webkit.org/b/298980> This relies on DOMManager splicing a frame target's document
+        // into its owner element. Look the target up by frame identity once that is available.
+        let frameTarget = node?.contentDocument?.owningTarget;
+        if (!frameTarget || frameTarget === node.owningTarget || !frameTarget.hasDomain("LayerTree"))
+            return null;
+        return frameTarget;
     }
 
     reasonsForCompositingLayer(layer, callback)
     {
         console.assert(this.supported);
 
-        let target = WI.assumingMainTarget();
-        target.LayerTreeAgent.reasonsForCompositingLayer(layer.layerId, function(error, reasons) {
+        let target = layer.target || WI.assumingMainTarget();
+        target.LayerTreeAgent.reasonsForCompositingLayer(layer.backendLayerId, function(error, reasons) {
             callback(error ? 0 : reasons);
         });
     }
@@ -209,8 +235,8 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
     {
         console.assert(this.supported);
 
-        let target = WI.assumingMainTarget();
-        target.LayerTreeAgent.requestContent(layer.layerId, function(error, content) {
+        let target = layer.target || WI.assumingMainTarget();
+        target.LayerTreeAgent.requestContent(layer.backendLayerId, function(error, content) {
             if (error) {
                 WI.reportInternalError(error);
                 callback(null);
@@ -220,11 +246,58 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
         });
     }
 
+    // Private
+
+    async _enableLayerTreeForFrameTarget(target)
+    {
+        while (!target.executionContext) {
+            await target.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+            if (target.isDestroyed)
+                return;
+        }
+
+        while (!WI.networkManager.mainFrame) {
+            await WI.networkManager.awaitEvent(WI.NetworkManager.Event.MainFrameDidChange);
+            if (target.isDestroyed)
+                return;
+        }
+
+        if (WI.DOMManager.frameKeyForFrameIdentifier(target.executionContext.frameId) === WI.DOMManager.frameKeyForFrameIdentifier(WI.networkManager.mainFrame.id))
+            return;
+
+        target.LayerTreeAgent.enable();
+    }
+
+    async _layersForNode(node, offset)
+    {
+        let target = node.owningTarget || WI.assumingMainTarget();
+
+        // Commands to a destroyed target never settle.
+        let targetRemoved = Promise.withResolvers();
+        let handleTargetRemoved = (event) => {
+            if (event.data.target === target)
+                targetRemoved.resolve(null);
+        };
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetRemoved, this);
+
+        try {
+            let response = await Promise.race([target.LayerTreeAgent.layersForNode(node.backendNodeId), targetRemoved.promise]);
+            if (!response)
+                return [];
+            return response.layers.map((payload) => WI.Layer.fromPayload(payload, {target, offset}));
+        } catch (error) {
+            WI.reportInternalError(error);
+            return [];
+        } finally {
+            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetRemoved, this);
+        }
+    }
+
     // LayerTreeObserver
 
-    layerTreeDidChange()
+    layerTreeDidChange(target)
     {
-        this.dispatchEventToListeners(WI.LayerTreeManager.Event.LayerTreeDidChange);
+        this.dispatchEventToListeners(WI.LayerTreeManager.Event.LayerTreeDidChange, {target});
     }
 };
 

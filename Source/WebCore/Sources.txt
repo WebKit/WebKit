@@ -2023,6 +2023,7 @@ inspector/agents/InspectorNetworkAgent.cpp @header:RenderStyleGetters
 inspector/agents/InspectorPageAgent.cpp @header:RenderStyleGetters
 inspector/agents/InspectorTimelineAgent.cpp
 inspector/agents/InspectorWorkerAgent.cpp
+inspector/agents/LayerTreeInspectionState.cpp @header:RenderStyleGetters
 inspector/agents/WebConsoleAgent.cpp
 inspector/agents/WebDebuggerAgent.cpp
 inspector/agents/WebHeapAgent.cpp
@@ -2035,6 +2036,7 @@ inspector/agents/frame/FrameDOMDebuggerAgent.cpp
 inspector/agents/frame/FrameDOMStorageAgent.cpp
 inspector/agents/frame/FrameDebuggerAgent.cpp
 inspector/agents/frame/FrameIndexedDBAgent.cpp
+inspector/agents/frame/FrameLayerTreeAgent.cpp
 inspector/agents/frame/FrameWorkerAgent.cpp
 inspector/agents/page/PageAuditAgent.cpp
 inspector/agents/page/PageCanvasAgent.cpp

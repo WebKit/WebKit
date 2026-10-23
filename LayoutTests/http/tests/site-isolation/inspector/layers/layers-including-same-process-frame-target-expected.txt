@@ -1,0 +1,11 @@
+Test that the Layers tab includes the layers of a frame in the main frame's process once under site isolation.
+
+
+
+== Running test suite: SiteIsolation.LayerTree.LayersIncludingSameProcessFrame
+-- Running test case: SiteIsolation.LayerTree.LayersIncludingSameProcessFrame.IncludesFrameLayersOnce
+PASS: Should report the layer hosting the iframe.
+PASS: Layer hosting the iframe should not report a content box, since the frame's layers are included.
+PASS: Should only include layers reported by the page target.
+PASS: Should include the child frame's composited element exactly once.
+
