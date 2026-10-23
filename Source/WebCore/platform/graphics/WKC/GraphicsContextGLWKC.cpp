@@ -3264,7 +3264,10 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
         baseHeight = texture->cubeHeights[face];
         levelDefined = static_cast<size_t>(level) < faceDefined->size() && (*faceDefined)[level];
     } else
-        levelDefined = texture->storageCreated && static_cast<size_t>(level) < texture->definedLevels.size()
+        // Image definition is WebGL state, not a property of the most recent
+        // native GX2 allocation attempt. Keep CPU-shadow updates valid after
+        // an allocation failure so storage can be retried.
+        levelDefined = static_cast<size_t>(level) < texture->definedLevels.size()
             && texture->definedLevels[level];
 
     const size_t levelCount = isCubeFace ? faceLevels->size() : texture->levels.size();
@@ -3310,9 +3313,12 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
             updateRowBytes);
     }
 
-    if (texture->storageCreated && !uploadTextureLevel(*texture, static_cast<uint32_t>(level), face)) {
-        // Keep the CPU-side texture image consistent with GX2 storage when an
-        // upload cannot be completed (for example, if the surface lock fails).
+    const bool uploadSucceeded = texture->storageCreated
+        ? uploadTextureLevel(*texture, static_cast<uint32_t>(level), face)
+        : recreateTextureStorage(*texture);
+    if (!uploadSucceeded) {
+        // Keep the CPU-side texture image consistent when either a direct
+        // GX2 upload or a full storage recreation fails.
         for (GCGLsizei y = 0; y < height; ++y) {
             const size_t destinationOffset =
                 (static_cast<size_t>(yoffset + y) * levelWidth + static_cast<size_t>(xoffset)) * 4;
@@ -3320,7 +3326,7 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
             std::memcpy(destination.data() + destinationOffset, previousPixels.data() + sourceOffset,
                 updateRowBytes);
         }
-        addError(GL_INVALID_OPERATION_VALUE);
+        addError(texture->storageCreated ? GL_INVALID_OPERATION_VALUE : GL_OUT_OF_MEMORY_VALUE);
     }
 }
 
