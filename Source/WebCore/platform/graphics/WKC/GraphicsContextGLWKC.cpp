@@ -1843,6 +1843,8 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
         || !GX2RCreateSurface(&surface, textureSurfaceFlags)) {
         texture.native = {};
         texture.storageCreated = false;
+        // The framebuffer may still cache a view of the released surface.
+        refreshFramebufferTextureViews();
         return false;
     }
 
@@ -1858,6 +1860,8 @@ bool GraphicsContextGLWKC::recreateTextureStorage(TextureRecord& texture)
             for (uint32_t face = 0; face < 6; ++face) {
                 if (!uploadTextureLevel(texture, level, face)) {
                     releaseTextureStorage(texture);
+                    // Invalidate cached framebuffer views of the destroyed surface.
+                    refreshFramebufferTextureViews();
                     return false;
                 }
             }
