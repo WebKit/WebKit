@@ -1690,33 +1690,39 @@ bool GraphicsContextGLWKC::uploadTextureLevel(TextureRecord& texture, uint32_t l
         return false;
 
     uint8_t* facePixels = static_cast<uint8_t*>(locked);
-    uint32_t pitchPixels = std::max<uint32_t>(width, texture.native.surface.pitch >> level);
+    // GX2 aligns each mip level independently. Deriving a mip pitch by shifting
+    // the base-level pitch can understate the row stride for NPOT/small levels.
+    // Recalculate the exact 2D face/level layout for both 2D and cube textures.
+    GX2Surface levelSurface {};
+    levelSurface.dim = GX2_SURFACE_DIM_TEXTURE_2D;
+    levelSurface.width = width;
+    levelSurface.height = height;
+    levelSurface.depth = 1;
+    levelSurface.mipLevels = 1;
+    levelSurface.format = texture.native.surface.format;
+    levelSurface.aa = GX2_AA_MODE1X;
+    levelSurface.use = GX2_SURFACE_USE_TEXTURE;
+    levelSurface.tileMode = texture.native.surface.tileMode;
+    GX2CalcSurfaceSizeAndAlignment(&levelSurface);
+    if (!levelSurface.imageSize || !levelSurface.alignment || levelSurface.pitch < width) {
+        GX2RUnlockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
+            static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
+        return false;
+    }
+    uint32_t pitchPixels = levelSurface.pitch;
     if (cubeMap) {
-        // GX2 cube surfaces store six faces in each mip level. Calculate the
-        // padded size of one RGBA8 2D face using the same linear tile mode,
-        // then address the requested face within the locked mip-level slice.
-        GX2Surface faceSurface {};
-        faceSurface.dim = GX2_SURFACE_DIM_TEXTURE_2D;
-        faceSurface.width = width;
-        faceSurface.height = height;
-        faceSurface.depth = 1;
-        faceSurface.mipLevels = 1;
-        faceSurface.format = texture.native.surface.format;
-        faceSurface.aa = GX2_AA_MODE1X;
-        faceSurface.use = GX2_SURFACE_USE_TEXTURE;
-        faceSurface.tileMode = texture.native.surface.tileMode;
-        GX2CalcSurfaceSizeAndAlignment(&faceSurface);
-        const size_t faceStride = faceSurface.imageSize;
+        // GX2 cube surfaces store six faces in each mip level. Address the
+        // requested face within the locked mip-level slice using the padded
+        // size of one independently calculated 2D face.
+        const size_t faceStride = levelSurface.imageSize;
         const size_t faceOffset = static_cast<size_t>(face) * faceStride;
         const size_t allocatedBytes = level ? texture.native.surface.mipmapSize : texture.native.surface.imageSize;
-        if (!faceStride || faceSurface.pitch < width || faceOffset > allocatedBytes
-            || faceStride > allocatedBytes - faceOffset) {
+        if (faceOffset > allocatedBytes || faceStride > allocatedBytes - faceOffset) {
             GX2RUnlockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
                 static_cast<GX2RResourceFlags>(GX2R_RESOURCE_USAGE_CPU_WRITE));
             return false;
         }
         facePixels += faceOffset;
-        pitchPixels = faceSurface.pitch;
     }
     if (pitchPixels < width) {
         GX2RUnlockSurfaceEx(&texture.native.surface, static_cast<int32_t>(level),
