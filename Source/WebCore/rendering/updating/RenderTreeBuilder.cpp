@@ -90,7 +90,7 @@ RenderTreeBuilder* RenderTreeBuilder::s_current;
 static bool isRenderMarquee(const RenderObject& renderer)
 {
     if (auto* renderElement = dynamicDowncast<RenderElement>(renderer)) {
-        if (RefPtr marquee = dynamicDowncast<HTMLMarqueeElement>(renderElement->element()))
+        if (auto* marquee = dynamicDowncast<HTMLMarqueeElement>(renderElement->element()))
             return marquee->hasRenderMarquee();
     }
     return false;
@@ -1085,7 +1085,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     // and the code running here would force an untimely rebuilding, leaving |child| dangling.
     auto childToTake = parent.detachRendererInternal(child);
 
-    if (AXObjectCache* cache = protect(parent.document())->existingAXObjectCache())
+    if (AXObjectCache* cache = parent.document().existingAXObjectCache())
         cache->childrenChanged(parent);
 
     return childToTake;
@@ -1119,7 +1119,7 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
     if (isAnyOf<RenderHTMLCanvas, RenderEmbeddedObject>(child)) {
         // Actual size is not known yet, report the default intrinsic size for replaced elements.
         auto& replacedRenderer = downcast<RenderReplaced>(child);
-        protect(m_view.frameView())->incrementVisuallyNonEmptyPixelCount(roundedIntSize(replacedRenderer.intrinsicSize()));
+        m_view.frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(replacedRenderer.intrinsicSize()));
         return;
     }
     if (child.isRenderOrLegacyRenderSVGRoot()) {
@@ -1139,7 +1139,7 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
             candidateSize = *size;
 
         if (!candidateSize.isEmpty())
-            protect(m_view.frameView())->incrementVisuallyNonEmptyPixelCount(candidateSize);
+            m_view.frameView().incrementVisuallyNonEmptyPixelCount(candidateSize);
         return;
     }
 }

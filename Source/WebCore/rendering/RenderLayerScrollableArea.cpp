@@ -400,7 +400,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
         }
 
         // Update regions, scrolling may change the clip of a particular region.
-        protect(renderer.document())->invalidateRenderingDependentRegions();
+        renderer.document().invalidateRenderingDependentRegions();
         DebugPageOverlays::didLayout(protect(renderer.frame()));
     }
 
@@ -2029,7 +2029,7 @@ void RenderLayerScrollableArea::animatedScrollDidEnd()
 
 float RenderLayerScrollableArea::deviceScaleFactor() const
 {
-    return protect(m_layer.renderer().document())->deviceScaleFactor();
+    return m_layer.renderer().document().deviceScaleFactor();
 }
 
 void RenderLayerScrollableArea::updateAnchorPositionedAfterScroll()

@@ -130,7 +130,7 @@ bool RenderListOutsideMarker::isImage() const
 
 bool RenderListOutsideMarker::hasContentProperty() const
 {
-    return listMarkerHasContent(style(), protect(document()));
+    return listMarkerHasContent(style(), document());
 }
 
 RenderBlockFlow* RenderListOutsideMarker::contentContainer() const
@@ -477,7 +477,7 @@ ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerSt
             return ListMarkerTextContent { .textWithSuffix = identifier.value, .textWithoutSuffixLength = identifier.value.length() };
         },
         [&](const auto& counterStyle) {
-            auto counter = protect(listItem.document())->counterStyleRegistry().resolvedCounterStyle(counterStyle);
+            auto counter = listItem.document().counterStyleRegistry().resolvedCounterStyle(counterStyle);
             auto text = makeString(counter->prefix().text, counter->text(listItem.value(), markerStyle.writingMode()));
             return ListMarkerTextContent { .textWithSuffix = makeString(text, counter->suffix().text), .textWithoutSuffixLength = text.length() };
         }

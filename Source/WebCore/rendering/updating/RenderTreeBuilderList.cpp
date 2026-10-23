@@ -215,7 +215,7 @@ static RenderPtr<RenderText> createMarkerTextRenderer(Document& document, const 
 
 static CheckedRef<RenderBlock> parentForInlineMarker(RenderListItem& listItemRenderer, const RenderBoxModelObject& marker)
 {
-    if (CheckedPtr firstChild = dynamicDowncast<RenderBlock>(firstNonMarkerChild(listItemRenderer)); firstChild && !firstChild->isAnonymous())
+    if (auto* firstChild = dynamicDowncast<RenderBlock>(firstNonMarkerChild(listItemRenderer)); firstChild && !firstChild->isAnonymous())
         return listItemRenderer;
     auto firstFormattedLineRoot = RenderListItem::firstFormattedLineRootFor(listItemRenderer, marker);
     if (firstFormattedLineRoot.parent)

@@ -213,9 +213,9 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     auto advance = makeGlyphBufferAdvance(protect(mathVariantGlyph.font)->widthForGlyph(mathVariantGlyph.glyph));
     auto location = paintOffset + this->location() + LayoutPoint { borderLeft() + paddingLeft(), glyphAscent + borderAndPaddingBefore() };
     if (style().writingMode().isHorizontal())
-        location.setY(roundToDevicePixel(LayoutUnit { location.y() }, protect(document())->deviceScaleFactor()));
+        location.setY(roundToDevicePixel(LayoutUnit { location.y() }, document().deviceScaleFactor()));
     else
-        location.setX(roundToDevicePixel(LayoutUnit { location.x() }, protect(document())->deviceScaleFactor()));
+        location.setX(roundToDevicePixel(LayoutUnit { location.x() }, document().deviceScaleFactor()));
 
     info.context().drawGlyphs(protect(*mathVariantGlyph.font), singleElementSpan(mathVariantGlyph.glyph), singleElementSpan(advance), location, style().fontCascade().fontDescription().usedFontSmoothing());
 }

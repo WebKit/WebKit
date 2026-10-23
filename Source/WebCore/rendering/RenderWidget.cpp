@@ -109,7 +109,7 @@ RenderWidget::RenderWidget(Type type, HTMLFrameOwnerElement& element, Style::Com
 
 void RenderWidget::willBeDestroyed()
 {
-    if (CheckedPtr cache = protect(document())->existingAXObjectCache()) {
+    if (CheckedPtr cache = document().existingAXObjectCache()) {
         if (CheckedPtr parent = this->parent())
             cache->childrenChanged(*parent);
         cache->remove(*this);
@@ -228,13 +228,13 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
                 widget->show();
                 repaint();
             }
-            if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+            if (CheckedPtr cache = document().existingAXObjectCache())
                 cache->onWidgetVisibilityChanged(*this);
         }
         moveWidgetToParentSoon(*widget, &view().frameView());
     }
 
-    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->childrenChanged(*this);
 }
 
@@ -255,7 +255,7 @@ void RenderWidget::styleDidChange(Style::Difference diff, const Style::ComputedS
         else
             protect(m_widget)->show();
 
-        if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+        if (CheckedPtr cache = document().existingAXObjectCache())
             cache->onWidgetVisibilityChanged(*this);
     }
 
@@ -297,13 +297,13 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     auto contentPaintRect = replacedContentPaintRect();
 
     auto contentPaintOffset = paintOffset + location() + contentPaintRect.location();
-    auto snappedPaintOffset = roundPointToDevicePixels(contentPaintOffset, protect(document())->deviceScaleFactor());
+    auto snappedPaintOffset = roundPointToDevicePixels(contentPaintOffset, document().deviceScaleFactor());
 
     bool clip = !contentBoxRect.contains(contentPaintRect);
     GraphicsContextStateSaver stateSaver(paintInfo.context(), clip);
     if (clip) {
         contentBoxRect.moveBy(paintOffset + location());
-        paintInfo.context().clip(snapRectToDevicePixels(contentBoxRect, protect(document())->deviceScaleFactor()));
+        paintInfo.context().clip(snapRectToDevicePixels(contentBoxRect, document().deviceScaleFactor()));
     }
 
     // Tell the widget to paint now. This is the only time the widget is allowed
@@ -312,7 +312,7 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
 
     OptionSet<PaintBehavior> oldBehavior = PaintBehavior::Normal;
     if (paintInfo.paintBehavior & PaintBehavior::DefaultAsynchronousImageDecode) {
-        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget)) {
+        if (auto* frameView = dynamicDowncast<LocalFrameView>(m_widget)) {
             oldBehavior = frameView->paintBehavior();
             frameView->setPaintBehavior(oldBehavior | PaintBehavior::DefaultAsynchronousImageDecode);
         }
@@ -390,7 +390,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
         // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
         paintInfo.context().save();
-        clipToContentBoxShape(paintInfo.context(), adjustedPaintOffset, protect(document())->deviceScaleFactor());
+        clipToContentBoxShape(paintInfo.context(), adjustedPaintOffset, document().deviceScaleFactor());
     }
 
     if (m_widget && !isSkippedContentRoot(*this))
@@ -403,7 +403,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
     // Paint a partially transparent wash over selected widgets.
-    if (isSelected() && !protect(document())->printing()) {
+    if (isSelected() && !document().printing()) {
         LayoutRect rect = localSelectionRect();
         rect.moveBy(adjustedPaintOffset);
         paintInfo.context().fillRect(snappedIntRect(rect), selectionBackgroundColor());
@@ -543,7 +543,7 @@ RenderReplaced* RenderWidget::embeddedSVGRoot() const
 {
     if (!is<RenderEmbeddedObject>(this))
         return nullptr;
-    RefPtr frameView = dynamicDowncast<LocalFrameView>(widget());
+    auto* frameView = dynamicDowncast<LocalFrameView>(widget());
     return frameView ? frameView->embeddedSVGRoot() : nullptr;
 }
 

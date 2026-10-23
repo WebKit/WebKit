@@ -579,7 +579,7 @@ String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
 
     // css-lists-3 §3.3: with a non-normal `content` the marker says whatever its content renderers hold, unless the
     // author gave it alternative text (css-content-3 §1.2).
-    if (listMarkerHasContent(marker->style(), protect(document()))) {
+    if (listMarkerHasContent(marker->style(), document())) {
         if (auto altText = marker->style().content().altText(); !altText.isNull())
             return altText;
         StringBuilder text;
@@ -707,7 +707,7 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
             return { { }, fallbackParent };
         case MarkerSearchBoxType::InlineContent:
             // Neither an empty inline (e.g. <a id="anchor"></a>) nor collapsible whitespace produces a line.
-            if (CheckedPtr text = dynamicDowncast<RenderText>(child); text && text->containsOnlyCollapsibleWhitespace()) {
+            if (auto* text = dynamicDowncast<RenderText>(child); text && text->containsOnlyCollapsibleWhitespace()) {
                 fallbackParent = &blockContainer;
                 break;
             }
@@ -748,7 +748,7 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
 CheckedPtr<RenderListOutsideMarker> RenderListItem::excludedMarkerAnchoredTo(const RenderBlockFlow& firstFormattedLineRoot)
 {
     for (CheckedPtr<const RenderBlock> ancestor = &firstFormattedLineRoot; ancestor; ancestor = ancestor->containingBlock()) {
-        CheckedPtr listItem = dynamicDowncast<RenderListItem>(ancestor);
+        auto* listItem = dynamicDowncast<RenderListItem>(ancestor);
         CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
         if (!marker || !marker->isExcludedMarker())
             continue;

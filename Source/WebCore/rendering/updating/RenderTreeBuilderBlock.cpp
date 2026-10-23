@@ -91,7 +91,7 @@ struct ParentAndBeforeChild {
 
 static bool LEGACY_NODELETE isExcludedMarker(const RenderBlock& parent, const RenderObject& child)
 {
-    CheckedPtr marker = dynamicDowncast<RenderListOutsideMarker>(child);
+    auto* marker = dynamicDowncast<RenderListOutsideMarker>(child);
     if (!marker || !marker->document().settings().listMarkerPositionedPostLayoutEnabled())
         return false;
     return is<RenderListItem>(parent);

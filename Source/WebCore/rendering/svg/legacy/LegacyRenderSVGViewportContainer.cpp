@@ -100,7 +100,7 @@ bool LegacyRenderSVGViewportContainer::pointIsInsideViewportClip(const FloatPoin
 
 void LegacyRenderSVGViewportContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (protect(svgSVGElement())->viewBoxDisablesPainting())
+    if (svgSVGElement().viewBoxDisablesPainting())
         return;
 
     LegacyRenderSVGContainer::paint(paintInfo, paintOffset);

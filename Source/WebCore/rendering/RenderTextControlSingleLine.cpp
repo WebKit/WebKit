@@ -270,7 +270,7 @@ void RenderTextControlSingleLine::layout()
         if (neededLayout) {
             computeInFlowOverflow(flippedContentBoxRect());
             addOverflowFromOutOfFlowBoxes();
-        } else if (CheckedPtr placeholderLayer = placeholderBox->layer(); placeholderLayer && placeholderBox->location() != oldPlaceholderLocation)
+        } else if (auto* placeholderLayer = placeholderBox->layer(); placeholderLayer && placeholderBox->location() != oldPlaceholderLocation)
             placeholderLayer->setNeedsPositionUpdate();
     }
 

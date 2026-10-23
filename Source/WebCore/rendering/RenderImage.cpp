@@ -229,7 +229,7 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
 
     FloatSize imageSize;
     if (newImage->willPaintBrokenImage()) {
-        auto brokenImageAndImageScaleFactor = CachedImage::brokenImage(protect(document())->deviceScaleFactor());
+        auto brokenImageAndImageScaleFactor = CachedImage::brokenImage(document().deviceScaleFactor());
         imageSize = brokenImageAndImageScaleFactor.first->size();
         imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
     } else if (newImage->hasImage()) {
@@ -349,7 +349,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         imageSizeChange = setImageSizeForAltText(protect(cachedImage()));
     }
     repaintOrMarkForLayout(imageSizeChange, rect);
-    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(protect(element()));
 
     if (RefPtr image = cachedImage(); image && image->currentFrameIsComplete()) {
@@ -637,7 +637,7 @@ void RenderImage::paintIncompleteImageOutline(PaintInfo& paintInfo, LayoutPoint 
     context.setStrokeStyle(StrokeStyle::SolidStroke);
     context.setStrokeColor(Color::lightGray);
     context.setFillColor(Color::transparentBlack);
-    context.drawRect(snapRectToDevicePixels(LayoutRect({ paintOffset.x() + borderWidths.left() + padding.left(), paintOffset.y() + borderWidths.top() + padding.top() }, contentSize), protect(document())->deviceScaleFactor()), borderWidth);
+    context.drawRect(snapRectToDevicePixels(LayoutRect({ paintOffset.x() + borderWidths.left() + padding.left(), paintOffset.y() + borderWidths.top() + padding.top() }, contentSize), document().deviceScaleFactor()), borderWidth);
 }
 
 static bool LEGACY_NODELETE isDeferredImage(Element* element)
@@ -654,7 +654,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
     if (paintInfo.phase == PaintPhase::Foreground)
         protect(page())->addRelevantUnpaintedObject(*this, visualOverflowRect());
 
-    float deviceScaleFactor = protect(document())->deviceScaleFactor();
+    float deviceScaleFactor = document().deviceScaleFactor();
     LayoutUnit missingImageBorderWidth(1 / deviceScaleFactor);
 
     paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
@@ -726,7 +726,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
             return paintOffset + LayoutPoint { contentHorizontalOffset, contentVerticalOffset };
         };
         auto textOrigin = altTextLocation();
-        textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, protect(document())->deviceScaleFactor()));
+        textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, document().deviceScaleFactor()));
         context.drawBidiText(fontCascade, textRun, textOrigin);
     } else {
         // FIXME: TextBoxPainter has this logic already, maybe we should transition to some painter class.
@@ -739,13 +739,13 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
             visualLeft = borderBoxSize().width() - visualRight;
         visualLeft += adjustedPaintOffset.x();
 
-        visualLeft = roundToDevicePixel(visualLeft, protect(document())->deviceScaleFactor());
-        adjustedPaintOffset.setY(roundToDevicePixel(adjustedPaintOffset.y(), protect(document())->deviceScaleFactor()));
+        visualLeft = roundToDevicePixel(visualLeft, document().deviceScaleFactor());
+        adjustedPaintOffset.setY(roundToDevicePixel(adjustedPaintOffset.y(), document().deviceScaleFactor()));
 
         auto rotationRect = LayoutRect { visualLeft, adjustedPaintOffset.y(), textWidth, contentLogicalHeight };
         context.concatCTM(rotation(rotationRect, RotationDirection::Clockwise));
         auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade.metricsOfPrimaryFont().ascent() };
-        context.drawBidiText(fontCascade, textRun, roundPointToDevicePixels(textOrigin, protect(document())->deviceScaleFactor()));
+        context.drawBidiText(fontCascade, textRun, roundPointToDevicePixels(textOrigin, document().deviceScaleFactor()));
         context.concatCTM(rotation(rotationRect, RotationDirection::Counterclockwise));
     }
 }
@@ -762,7 +762,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     }
 
     auto contentBoxRect = this->contentBoxRect();
-    float deviceScaleFactor = protect(document())->deviceScaleFactor();
+    float deviceScaleFactor = document().deviceScaleFactor();
     LayoutUnit missingImageBorderWidth(1 / deviceScaleFactor);
 
     if (isDeferredImage(element()))
@@ -802,7 +802,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     auto paintRect = replacedContentPaintRect();
     paintRect.moveBy(paintOffset);
 
-    float snappingScaleFactor = protect(document())->pixelSnappingScaleFactor();
+    float snappingScaleFactor = document().pixelSnappingScaleFactor();
     bool clip = !contentBoxRect.contains(paintRect);
     GraphicsContextStateSaver stateSaver(context, clip);
     if (clip)
@@ -842,7 +842,7 @@ void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (protect(document())->printing() || !frame().selection().isFocusedAndActive())
+    if (document().printing() || !frame().selection().isFocusedAndActive())
         return;
     
     if (paintInfo.context().paintingDisabled() && !paintInfo.context().performingPaintInvalidation())

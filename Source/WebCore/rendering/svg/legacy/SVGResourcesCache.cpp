@@ -280,7 +280,7 @@ void SVGResourcesCache::resourceDestroyed(LegacyRenderSVGResourceContainer& reso
         if (it.value->resourceDestroyed(resource)) {
             // Mark users of destroyed resources as pending resolution based on the id of the old resource.
             Ref clientElement = *it.key->element();
-            protect(clientElement)->treeScopeForSVGReferences().addPendingSVGResource(resource.element().getIdAttribute(), downcast<SVGElement>(clientElement.get()));
+            clientElement->treeScopeForSVGReferences().addPendingSVGResource(resource.element().getIdAttribute(), downcast<SVGElement>(clientElement));
         }
     }
 }

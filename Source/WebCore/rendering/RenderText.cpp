@@ -577,7 +577,7 @@ void RenderText::styleDidChange(Style::Difference diff, const Style::ComputedSty
     if (needsLayoutBoxStyleUpdate)
         LayoutIntegration::LineLayout::updateStyle(*this);
 
-    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->onStyleChange(*this, diff, oldStyle, newStyle);
 
     setHorizontalWritingMode(newStyle.writingMode().isHorizontal());
@@ -1935,7 +1935,7 @@ void RenderText::setTextInternal(const String& text, bool force)
 
     updateRenderedText(text);
 
-    if (AXObjectCache* cache = protect(document())->existingAXObjectCache())
+    if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->deferTextChangedIfNeeded(protect(textNode()));
 }
 

@@ -75,7 +75,7 @@ RenderScrollbar::~RenderScrollbar() = default;
 
 RenderBox* RenderScrollbar::owningRenderer() const
 {
-    if (RefPtr frame = m_owningFrame.get())
+    if (auto* frame = m_owningFrame.get())
         return frame->ownerRenderer();
 
     ASSERT(m_ownerElement);

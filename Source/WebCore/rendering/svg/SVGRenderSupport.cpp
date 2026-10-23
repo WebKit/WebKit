@@ -431,7 +431,7 @@ bool SVGRenderSupport::filtersForceContainerLayout(const RenderElement& renderer
 FloatSize SVGRenderSupport::svgContentLocationOffset(const RenderObject& renderer)
 {
     // A <foreignObject> keeps its bounding boxes origin-relative, but paints its content at location().
-    if (CheckedPtr foreignObject = dynamicDowncast<LegacyRenderSVGForeignObject>(renderer))
+    if (auto* foreignObject = dynamicDowncast<LegacyRenderSVGForeignObject>(renderer))
         return toFloatSize(FloatPoint { foreignObject->location() });
     return { };
 }
@@ -582,7 +582,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
 
 void SVGRenderSupport::styleChanged(RenderElement& renderer, const Style::ComputedStyle* oldStyle)
 {
-    if (renderer.element() && renderer.element()->isSVGElement() && (!oldStyle || (protect(renderer.style())->usedBlendMode() != BlendMode::Normal) != (oldStyle->usedBlendMode() != BlendMode::Normal)))
+    if (renderer.element() && renderer.element()->isSVGElement() && (!oldStyle || (renderer.style().usedBlendMode() != BlendMode::Normal) != (oldStyle->usedBlendMode() != BlendMode::Normal)))
         SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(renderer);
 
     bool hadNonScalingStroke = oldStyle && oldStyle->vectorEffect() == VectorEffect::NonScalingStroke;
@@ -645,7 +645,7 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
         if (!style || !isolatesBlending(*style))
             continue;
         if (style->hasPositionedMask())
-            ancestor->setShouldIsolateBlending(protect(renderer.style())->usedBlendMode() != BlendMode::Normal);
+            ancestor->setShouldIsolateBlending(renderer.style().usedBlendMode() != BlendMode::Normal);
         return;
     }
 }

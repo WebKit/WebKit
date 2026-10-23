@@ -196,7 +196,7 @@ void RenderReplaced::intrinsicSizeChanged()
 
 bool RenderReplaced::shouldDrawSelectionTint() const
 {
-    return selectionState() != HighlightState::None && !protect(document())->printing();
+    return selectionState() != HighlightState::None && !document().printing();
 }
 
 inline static bool contentContainsReplacedElement(const Vector<WeakPtr<RenderedDocumentMarker>>& markers, const Element& element)
@@ -296,7 +296,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             auto contributeToInteractionRegions = (svgRootHasChildrenOrFilters && !isSkippedContentRoot(*this))
                 ? EventRegionContext::ContributeToInteractionRegions::No
                 : EventRegionContext::ContributeToInteractionRegions::Yes;
-            paintInfo.eventRegionContext()->unite(borderShape.deprecatedPixelSnappedRoundedRect(protect(document())->deviceScaleFactor()), *this, style(), false, contributeToInteractionRegions);
+            paintInfo.eventRegionContext()->unite(borderShape.deprecatedPixelSnappedRoundedRect(document().deviceScaleFactor()), *this, style(), false, contributeToInteractionRegions);
         }
 
         if (svgRootHasChildrenOrFilters && !isSkippedContentRoot(*this))
@@ -365,7 +365,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
     Color highlightColor;
-    if (!protect(document())->printing() && !paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection))
+    if (!document().printing() && !paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection))
         highlightColor = calculateHighlightColor();
 
     bool drawSelectionTint = shouldDrawSelectionTint();
@@ -381,7 +381,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (!completelyClippedOut) {
             // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
             paintInfo.context().save();
-            clipToContentBoxShape(paintInfo.context(), adjustedPaintOffset, protect(document())->pixelSnappingScaleFactor());
+            clipToContentBoxShape(paintInfo.context(), adjustedPaintOffset, document().pixelSnappingScaleFactor());
         }
     }
 
@@ -522,7 +522,7 @@ static FloatSize computeIntrinsicSizeForRenderer(const RenderReplaced& replacedR
         }();
 
         intrinsicSize.scale(replacedRenderer.style().usedZoom());
-        if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(replacedRenderer))
+        if (auto* renderImage = dynamicDowncast<RenderImage>(replacedRenderer))
             intrinsicSize = intrinsicSize / renderImage->currentPixelDensity();
         if (!replacedRenderer.isHorizontalWritingMode())
             intrinsicSize = intrinsicSize.transposedSize();

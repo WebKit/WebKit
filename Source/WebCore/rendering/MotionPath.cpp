@@ -52,7 +52,7 @@ static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& rende
             auto referenceBox = offsetPath.referenceBox();
             auto referenceRect = container.referenceBoxRect(referenceBox);
             auto borderShape = BorderShape::shapeForBorderRect(container.usedStyle(), LayoutRect(referenceRect));
-            return borderShape.deprecatedPixelSnappedRoundedRect(protect(container.document())->deviceScaleFactor());
+            return borderShape.deprecatedPixelSnappedRoundedRect(container.document().deviceScaleFactor());
         },
         [&](const auto& offsetPath) -> FloatRoundedRect {
             auto referenceBox = offsetPath.referenceBox();

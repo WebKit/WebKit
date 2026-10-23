@@ -218,7 +218,7 @@ AffineTransform SVGRenderingContext::calculateTransformationToOutermostCoordinat
 {
     AffineTransform absoluteTransform = currentContentTransformation();
 
-    float deviceScaleFactor = protect(renderer.document())->deviceScaleFactor();
+    float deviceScaleFactor = renderer.document().deviceScaleFactor();
     // Walk up the render tree, accumulating SVG transforms.
     const RenderObject* ancestor = &renderer;
     while (ancestor) {

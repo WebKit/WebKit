@@ -122,7 +122,7 @@ LayoutRect LegacyRenderSVGModelObject::outlineBoundsForRepaint(const RenderLayer
 
     // FIXME: Remove suppression once rdar://189998444 is fixed.
     SUPPRESS_MEMORY_UNSAFE_CAST FloatQuad containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
-    return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), protect(document())->deviceScaleFactor()));
+    return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), document().deviceScaleFactor()));
 }
 
 void LegacyRenderSVGModelObject::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const

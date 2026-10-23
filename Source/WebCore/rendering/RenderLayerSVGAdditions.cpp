@@ -156,7 +156,7 @@ bool RenderLayer::hasVisibleContentForPaintingForSVG() const
     // container for mask/clipPath/marker/pattern or the referenced content itself for feImage. Any
     // layer up the chain carrying the flag means we paint this resource subtree now, so it must
     // paint despite living in a hidden (<defs>) or resource container, regardless of visibility.
-    for (CheckedPtr ancestor = this; ancestor; ancestor = ancestor->parent()) {
+    for (auto* ancestor = this; ancestor; ancestor = ancestor->parent()) {
         if (ancestor->isPaintingResourceLayerForSVG())
             return true;
     }
@@ -241,10 +241,10 @@ void RenderLayer::paintNegativeZOrderChildrenForSVG(GraphicsContext& context, co
 static bool viewBoxDisablesPaintingForSVG(RenderLayerModelObject& renderer)
 {
     if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer))
-        return protect(svgRoot->svgSVGElement())->viewBoxDisablesPainting();
+        return svgRoot->svgSVGElement().viewBoxDisablesPainting();
 
     if (CheckedPtr viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(renderer))
-        return protect(viewportContainer->svgSVGElement())->viewBoxDisablesPainting();
+        return viewportContainer->svgSVGElement().viewBoxDisablesPainting();
 
     return false;
 }
@@ -1114,7 +1114,7 @@ RenderLayer::HitLayer RenderLayer::hitTestSubtreeWithinTransformScopeForSVG(Rend
             adjustedOffset.moveBy(childSvgModel->currentSVGLayoutLocation());
 
         if (childElement->isRenderSVGContainer()) {
-            if (CheckedPtr viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(*childElement)) {
+            if (auto* viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(*childElement)) {
                 if (SVGRenderSupport::isOverflowHidden(*viewportContainer) && !viewportContainer->viewport().contains(hitTestLocation.point()))
                     continue;
             }

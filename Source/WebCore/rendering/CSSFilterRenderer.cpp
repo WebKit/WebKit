@@ -244,7 +244,7 @@ void CSSFilterRenderer::expandFilterRegionForSVGReferences()
     setFilterScale(minScale);
 
     for (auto& function : m_functions) {
-        if (RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(function))
+        if (auto* svgFilter = dynamicDowncast<SVGFilterRenderer>(function))
             svgFilter->setFilterScale(minScale);
     }
 
@@ -256,7 +256,7 @@ void CSSFilterRenderer::computeEnclosingFilterRegion(OptionSet<FilterRenderingOp
 #if USE(CORE_IMAGE)
     auto enclosingFilterRegion = filterRegion();
     for (auto& function : m_functions) {
-        if (RefPtr filter = dynamicDowncast<Filter>(function))
+        if (auto* filter = dynamicDowncast<Filter>(function))
             enclosingFilterRegion.unite(filter->filterRegion());
     }
     setEnclosingFilterRegion(enclosingFilterRegion);
@@ -264,7 +264,7 @@ void CSSFilterRenderer::computeEnclosingFilterRegion(OptionSet<FilterRenderingOp
     if (renderingOptions.contains(FilterRenderingOption::ApplyToSVGRenderer)) {
         // Propagate to inner filters so CoreImage coordinate spaces stay consistent across the chain.
         for (auto& function : m_functions) {
-            if (RefPtr filter = dynamicDowncast<Filter>(function))
+            if (auto* filter = dynamicDowncast<Filter>(function))
                 filter->setEnclosingFilterRegion(enclosingFilterRegion);
         }
     }

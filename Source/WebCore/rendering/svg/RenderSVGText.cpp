@@ -463,7 +463,7 @@ void RenderSVGText::layout()
 
     // If our bounds changed, notify the parents.
     if (updateCachedBoundariesInParents) {
-        if (CheckedPtr parent = this->parent())
+        if (auto* parent = this->parent())
             parent->invalidateCachedBoundaries();
     }
 
@@ -484,7 +484,7 @@ bool RenderSVGText::layoutInlineChildrenWithoutLineLayout()
     if (!inlineLayout.layoutSVGText())
         return false;
 
-    CheckedPtr cache = protect(document())->existingAXObjectCache();
+    CheckedPtr cache = document().existingAXObjectCache();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
         ASSERT(renderer.isInlineBox() || is<RenderText>(renderer));
@@ -519,7 +519,7 @@ static size_t layoutCharactersInDisplayBoxes(const InlineDisplay::Boxes& boxes, 
 {
     CheckedRef inlineBox = boxes[inlineBoxIndex].layoutBox();
     auto isWithinInlineBox = [&](const InlineDisplay::Box& box) {
-        for (CheckedPtr ancestor = &box.layoutBox().parent();; ancestor = &ancestor->parent()) {
+        for (auto* ancestor = &box.layoutBox().parent();; ancestor = &ancestor->parent()) {
             if (ancestor == inlineBox.ptr())
                 return true;
             if (!ancestor->isInlineBox())
@@ -856,7 +856,7 @@ void RenderSVGText::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoint&
     if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection)
         return;
 
-    bool isPrinting = protect(document())->printing();
+    bool isPrinting = document().printing();
     bool hasSelection = !isPrinting && selectionState() != RenderObject::HighlightState::None;
     bool shouldPaintSelectionHighlight = !(paintInfo.paintBehavior.contains(PaintBehavior::SkipSelectionHighlight));
 
@@ -929,7 +929,7 @@ float RenderSVGText::strokeInflation(float strokeWidth) const
 
     // vector-effect is not inherited, so a run may or may not use a non scaling stroke. SVGTextBoxPainter
     // decides per run, using the style of the run's parent renderer: do the same, and keep the widest inflation.
-    auto zoomAndDeviceScale = style().usedZoom() * protect(document())->deviceScaleFactor();
+    auto zoomAndDeviceScale = style().usedZoom() * document().deviceScaleFactor();
     std::optional<float> inflation;
     for (const RenderObject* descendant = this; descendant; descendant = descendant->nextInPreOrder(this)) {
         CheckedPtr inlineText = dynamicDowncast<RenderSVGInlineText>(*descendant);

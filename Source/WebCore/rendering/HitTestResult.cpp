@@ -505,7 +505,7 @@ URL HitTestResult::absolutePDFURL() const
     if (!element)
         return URL();
 
-    auto url = protect(m_innerNonSharedNode)->document().encodingParseURL(element->url());
+    auto url = m_innerNonSharedNode->document().encodingParseURL(element->url());
     if (!url.isValid())
         return URL();
 

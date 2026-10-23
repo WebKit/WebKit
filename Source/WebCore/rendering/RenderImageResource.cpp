@@ -177,7 +177,7 @@ std::optional<FloatSize> RenderImageResource::usedImageSize(FloatSize containerS
 
 float RenderImageResource::density() const
 {
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(m_renderer))
+    if (auto* renderImage = dynamicDowncast<RenderImage>(m_renderer))
         return renderImage->currentPixelDensity();
     return 1;
 }

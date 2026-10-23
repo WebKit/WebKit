@@ -68,7 +68,7 @@ OutlinePainter::OutlinePainter(const PaintInfo& paintInfo)
 
 static float deviceScaleFactor(const RenderElement& renderer)
 {
-    return protect(renderer.document())->deviceScaleFactor();
+    return renderer.document().deviceScaleFactor();
 }
 
 static Color outlineColor(const RenderElement& renderer, const Style::ComputedStyle& style)

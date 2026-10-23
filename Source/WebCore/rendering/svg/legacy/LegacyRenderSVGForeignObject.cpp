@@ -157,7 +157,7 @@ void LegacyRenderSVGForeignObject::layout()
 
     // If our bounds changed, notify the parents.
     if (updateCachedBoundariesInParents) {
-        if (CheckedPtr parent = this->parent())
+        if (auto* parent = this->parent())
             parent->invalidateCachedBoundaries();
     }
 

@@ -82,7 +82,7 @@ void RenderMenuList::styleDidChange(Style::Difference diff, const Style::Compute
 
 static bool hasSelectedContent(ContainerNode& button)
 {
-    for (RefPtr<Node> node = button.firstChild(); node; node = NodeTraversal::next(*node, &button)) {
+    for (Node* node = button.firstChild(); node; node = NodeTraversal::next(*node, &button)) {
         if (is<HTMLSelectedContentElement>(*node))
             return true;
     }

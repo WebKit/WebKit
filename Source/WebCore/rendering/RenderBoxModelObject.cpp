@@ -865,7 +865,7 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
 
 bool RenderBoxModelObject::borderObscuresBackgroundEdge(const FloatSize& contextScale) const
 {
-    auto edges = borderEdges(usedStyle(), protect(document())->deviceScaleFactor());
+    auto edges = borderEdges(usedStyle(), document().deviceScaleFactor());
 
     for (auto side : allBoxSides) {
         auto& currEdge = edges.at(side);
@@ -887,7 +887,7 @@ bool RenderBoxModelObject::borderObscuresBackground() const
     if (!style().borderImageSource().isNone())
         return false;
 
-    auto edges = borderEdges(usedStyle(), protect(document())->deviceScaleFactor());
+    auto edges = borderEdges(usedStyle(), document().deviceScaleFactor());
 
     for (auto side : allBoxSides) {
         if (!edges.at(side).obscuresBackground())
@@ -1377,7 +1377,7 @@ auto RenderBoxModelObject::computeVisibleRectsInContainer(const RepaintRects& re
         // in the parent's coordinate space that encloses us.
         if (hasLayer() && layer()->isTransformed()) {
             state.hasPositionFixedDescendant = styleToUse.position() == PositionType::Fixed;
-            adjustedRects.transform(protect(layer())->currentTransform(), protect(document())->deviceScaleFactor());
+            adjustedRects.transform(protect(layer())->currentTransform(), document().deviceScaleFactor());
         } else if (styleToUse.position() == PositionType::Fixed)
             state.hasPositionFixedDescendant = true;
     }

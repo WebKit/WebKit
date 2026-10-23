@@ -127,7 +127,7 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     ImageBuffer::sizeNeedsClamping(filterData->sourceImageRect.size(), filterScale);
 
     auto preferredFilterModes = protect(renderer.page())->preferredFilterRenderingModes(*context);
-    auto renderingOptions(protect(renderer.settings())->showDebugBorders() ? std::make_optional(FilterRenderingOption::ShowDebugOverlay) : std::nullopt);
+    auto renderingOptions(renderer.settings().showDebugBorders() ? std::make_optional(FilterRenderingOption::ShowDebugOverlay) : std::nullopt);
 
     // Create the SVGFilterRenderer object.
     filterData->filter = SVGFilterRenderer::create(contextElement.get(), filterElement, {

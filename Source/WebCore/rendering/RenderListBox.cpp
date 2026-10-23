@@ -1177,7 +1177,7 @@ void RenderListBox::destroyScrollbar()
         return;
 
     if (!m_scrollbar->isCustomScrollbar())
-        ScrollableArea::willRemoveScrollbar(*protect(m_scrollbar), protect(m_scrollbar)->orientation());
+        ScrollableArea::willRemoveScrollbar(*protect(m_scrollbar), m_scrollbar->orientation());
     protect(m_scrollbar)->removeFromParent();
     m_scrollbar = nullptr;
 }

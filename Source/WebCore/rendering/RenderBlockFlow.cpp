@@ -368,7 +368,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeIntrinsicLogicalWidths
     auto resetMinimumWidthForMarqueeIfApplicable = [&] {
         if (style().textWrapMode() != TextWrapMode::NoWrap || !layer())
             return;
-        CheckedPtr scrollableArea = layer()->scrollableArea();
+        auto* scrollableArea = layer()->scrollableArea();
         if (!scrollableArea || !scrollableArea->marquee() || !scrollableArea->marquee()->isHorizontal())
             return;
         // A horizontal marquee has no minimum width.
@@ -411,7 +411,7 @@ void RenderBlockFlow::computeColumnCountAndWidth()
     LayoutUnit desiredColumnWidth = contentBoxLogicalWidth();
 
     // For now, we don't support multi-column layouts when printing, since we have to do a lot of work for proper pagination.
-    if (protect(document())->paginated() || (style().columnCount().isAuto() && style().columnWidth().isAuto()) || !style().hasInlineColumnAxis()) {
+    if (document().paginated() || (style().columnCount().isAuto() && style().columnWidth().isAuto()) || !style().hasInlineColumnAxis()) {
         setComputedColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
         return;
     }
@@ -875,7 +875,7 @@ static bool contentFitsWithinMaximumLines(const RenderBlockFlow& lineClampContai
     // The block ellipsis goes on the last formatted line of the block with the clamped line.
     CheckedPtr<const RenderBlockFlow> blockWithClampedLine;
     for (CheckedPtr<const RenderObject> descendant = &lineClampContainer; descendant; descendant = descendant->nextInPreOrder(&lineClampContainer)) {
-        CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant);
+        auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant);
         if (blockFlow && blockFlow->childrenInline() && blockFlow->inlineLayout() && blockFlow->inlineLayout()->hasEllipsisInBlockDirectionOnLastFormattedLine()) {
             blockWithClampedLine = blockFlow;
             break;
@@ -887,7 +887,7 @@ static bool contentFitsWithinMaximumLines(const RenderBlockFlow& lineClampContai
         CheckedPtr parent = renderer->parent();
         if (parent->isInlineBox())
             continue;
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*parent); blockFlow && blockFlow->childrenInline()) {
+        if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*parent); blockFlow && blockFlow->childrenInline()) {
             if (!blockFlow->inlineLayout() || !blockFlow->inlineLayout()->contentFitsWithinMaximumLines())
                 return false;
             continue;
@@ -4028,7 +4028,7 @@ PositionWithAffinity RenderBlockFlow::positionForPointWithInlineChildren(const L
         }
     }
 
-    bool moveCaretToBoundary = protect(protect(frame())->editor())->behavior().shouldMoveCaretToHorizontalBoundaryWhenPastTopOrBottom();
+    bool moveCaretToBoundary = protect(frame())->editor().behavior().shouldMoveCaretToHorizontalBoundaryWhenPastTopOrBottom();
 
     if (!moveCaretToBoundary && !closestBox && lastLineBoxWithChildren) {
         // y coordinate is below last root line box, pretend we hit it
@@ -4190,7 +4190,7 @@ void RenderBlockFlow::invalidateLineLayout(InvalidationReason invalidationReason
 
     switch (invalidationReason) {
     case InvalidationReason::InternalMove:
-        if (AXObjectCache* cache = protect(document())->existingAXObjectCache())
+        if (AXObjectCache* cache = document().existingAXObjectCache())
             cache->deferRecomputeIsIgnored(protect(element()).get());
         break;
     case InvalidationReason::ContentChange: {
@@ -4432,7 +4432,7 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
             renderer.clearNeedsLayout();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+        if (CheckedPtr cache = document().existingAXObjectCache())
             cache->onTextRunsChanged(renderer);
 #endif
 
@@ -4561,7 +4561,7 @@ void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, Lay
     setLogicalHeight(borderBoxLogicalHeight);
     updateRepaintTopAndBottomAfterLayout(relayoutChildren, partialRepaintRect, oldContentTopAndBottomIncludingInkOverflow, repaintLogicalTop, repaintLogicalBottom);
 
-    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->onLaidOutInlineContent(*this);
 }
 
@@ -4695,7 +4695,7 @@ void RenderBlockFlow::adjustFontSizes(float size, float visibleWidth)
             lineCount = NO_LINE;
         else {
             auto lineCountIgnoringBlockLevelBoxes = [](const RenderBlockFlow& blockContainer) -> size_t {
-                if (CheckedPtr inlineLayout = blockContainer.inlineLayout())
+                if (auto* inlineLayout = blockContainer.inlineLayout())
                     return inlineLayout->lineCountIgnoringBlockLevelBoxes();
                 return blockContainer.lineCount();
             };
@@ -4803,7 +4803,7 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(RelayoutChildren& re
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
     if (RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow()) {
         LayoutUnit newColumnHeight;
-        if (hasDefiniteLogicalHeight() || protect(view().frameView())->pagination().mode != Pagination::Mode::Unpaginated) {
+        if (hasDefiniteLogicalHeight() || view().frameView().pagination().mode != Pagination::Mode::Unpaginated) {
             auto computedValues = computeLogicalHeight(0_lu, logicalTop());
             newColumnHeight = std::max<LayoutUnit>(computedValues.extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), 0);
             if (fragmentedFlow->columnHeightAvailable() != newColumnHeight)

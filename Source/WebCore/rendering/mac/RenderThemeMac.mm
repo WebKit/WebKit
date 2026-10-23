@@ -1933,7 +1933,7 @@ static std::pair<RefPtr<BitmapImage>, float> createAttachmentPlaceholderImage(fl
 
 static void paintAttachmentIconPlaceholder(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
-    auto [placeholderImage, imageScale] = createAttachmentPlaceholderImage(protect(attachment.document())->deviceScaleFactor(), layout);
+    auto [placeholderImage, imageScale] = createAttachmentPlaceholderImage(attachment.document().deviceScaleFactor(), layout);
 
     // Center the placeholder image where the icon would usually be.
     FloatRect placeholderRect(0, 0, placeholderImage->width() / imageScale, placeholderImage->height() / imageScale);
@@ -1986,7 +1986,7 @@ static void paintAttachmentProgress(const RenderAttachment& attachment, Graphics
 
         FloatRect progressRect = progressBounds;
         progressRect.setWidth(progressRect.width() * progress);
-        progressRect = encloseRectToDevicePixels(progressRect, protect(attachment.document())->deviceScaleFactor());
+        progressRect = encloseRectToDevicePixels(progressRect, attachment.document().deviceScaleFactor());
 
         context.fillRect(progressRect, attachmentProgressBarFillColor);
     }
@@ -2041,7 +2041,7 @@ bool RenderThemeMac::paintAttachment(const RenderElement& renderer, const PaintI
     GraphicsContextStateSaver saver(context);
 
     context.translate(toFloatSize(paintRect.location()));
-    context.translate(floorSizeToDevicePixels({ LayoutUnit((paintRect.width() - attachmentIconBackgroundSize) / 2), 0 }, protect(renderer.document())->deviceScaleFactor()));
+    context.translate(floorSizeToDevicePixels({ LayoutUnit((paintRect.width() - attachmentIconBackgroundSize) / 2), 0 }, renderer.document().deviceScaleFactor()));
 
     bool usePlaceholder = validProgress && !progress;
 

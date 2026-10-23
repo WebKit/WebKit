@@ -168,7 +168,7 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const Style::Co
     paintStyle.fillColor = adjustColorForPunchedOutBackground(paintStyle.fillColor, renderer, lineStyle);
 
     bool forceBackgroundToWhite = false;
-    if (frame->document() && protect(frame->document())->printing()) {
+    if (frame->document() && frame->document()->printing()) {
         if (lineStyle.printColorAdjust() == PrintColorAdjust::Economy)
             forceBackgroundToWhite = true;
 

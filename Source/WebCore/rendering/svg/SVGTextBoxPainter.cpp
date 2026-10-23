@@ -53,7 +53,7 @@ SVGTextBoxPainter::SVGTextBoxPainter(const LayoutIntegration::InlineContent& inl
     , m_paintInfo(paintInfo)
     , m_selectableRange(m_textBox.selectableRange())
     , m_paintOffset(paintOffset)
-    , m_haveSelection(!protect(m_renderer)->document().printing() && m_renderer.view().selection().highlightStateForTextBox(m_renderer, m_selectableRange) != RenderObject::HighlightState::None)
+    , m_haveSelection(!m_renderer.document().printing() && m_renderer.view().selection().highlightStateForTextBox(m_renderer, m_selectableRange) != RenderObject::HighlightState::None)
 {
 }
 
@@ -80,7 +80,7 @@ FloatRect selectionRectForTextFragment(const RenderSVGInlineText& renderer, Text
     LayoutRect selectionRect { textOrigin, LayoutSize(0, LayoutUnit(fragment.height * scalingFactor)) };
     TextRun run = constructTextRun(renderer.text(), direction, style, fragment);
     scaledFont.adjustSelectionRectForText(renderer.canUseSimplifiedTextMeasuring().value_or(false), run, selectionRect, startPosition, endPosition);
-    FloatRect snappedSelectionRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, protect(renderer.document())->deviceScaleFactor(), run.ltr());
+    FloatRect snappedSelectionRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer.document().deviceScaleFactor(), run.ltr());
     if (scalingFactor == 1)
         return snappedSelectionRect;
 
@@ -160,7 +160,7 @@ void SVGTextBoxPainter::paint()
 
     bool paintSelectedTextOnly = m_paintInfo.phase == PaintPhase::Selection;
     bool shouldPaintSelectionHighlight = !(m_paintInfo.paintBehavior.contains(PaintBehavior::SkipSelectionHighlight));
-    bool hasSelection = !protect(parentRenderer)->document().printing() && m_haveSelection;
+    bool hasSelection = !parentRenderer.document().printing() && m_haveSelection;
     if (!hasSelection && paintSelectedTextOnly)
         return;
 
@@ -269,7 +269,7 @@ bool SVGTextBoxPainter::acquirePaintingResource(SVGPaintServerHandling& paintSer
             if (auto zoomFactor = renderer.style().usedZoom(); zoomFactor != 1.0)
                 scalingFactor *= zoomFactor;
 
-            if (auto deviceScaleFactor = protect(renderer.document())->deviceScaleFactor(); deviceScaleFactor != 1.0)
+            if (auto deviceScaleFactor = renderer.document().deviceScaleFactor(); deviceScaleFactor != 1.0)
                 scalingFactor *= deviceScaleFactor;
         }
 
@@ -335,7 +335,7 @@ bool SVGTextBoxPainter::acquireLegacyPaintingResource(GraphicsContext*& context,
             if (auto zoomFactor = renderer.style().usedZoom(); zoomFactor != 1.0)
                 scalingFactor *= zoomFactor;
 
-            if (auto deviceScaleFactor = protect(renderer.document())->deviceScaleFactor(); deviceScaleFactor != 1.0)
+            if (auto deviceScaleFactor = renderer.document().deviceScaleFactor(); deviceScaleFactor != 1.0)
                 scalingFactor *= deviceScaleFactor;
         }
 

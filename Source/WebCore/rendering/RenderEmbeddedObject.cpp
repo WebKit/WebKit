@@ -97,7 +97,7 @@ RenderEmbeddedObject::~RenderEmbeddedObject() = default;
 
 void RenderEmbeddedObject::willBeDestroyed()
 {
-    protect(view())->frameView().removeEmbeddedObjectToUpdate(*this);
+    protect(view().frameView())->removeEmbeddedObjectToUpdate(*this);
     RenderWidget::willBeDestroyed();
 }
 
@@ -114,15 +114,15 @@ bool RenderEmbeddedObject::requiresAcceleratedCompositing() const
 
 static RefPtr<SVGSVGElement> embeddedSVGElement(const RenderWidget& renderer)
 {
-    RefPtr frameView = dynamicDowncast<LocalFrameView>(renderer.widget());
+    auto* frameView = dynamicDowncast<LocalFrameView>(renderer.widget());
     if (!frameView)
         return nullptr;
-    CheckedPtr svgRoot = frameView->embeddedSVGRoot();
+    auto* svgRoot = frameView->embeddedSVGRoot();
     if (!svgRoot)
         return nullptr;
-    if (CheckedPtr modernRoot = dynamicDowncast<RenderSVGRoot>(svgRoot.get()))
+    if (auto* modernRoot = dynamicDowncast<RenderSVGRoot>(svgRoot))
         return &modernRoot->svgSVGElement();
-    if (CheckedPtr legacyRoot = dynamicDowncast<LegacyRenderSVGRoot>(svgRoot.get()))
+    if (auto* legacyRoot = dynamicDowncast<LegacyRenderSVGRoot>(svgRoot))
         return &legacyRoot->svgSVGElement();
     return nullptr;
 }
@@ -386,7 +386,7 @@ void RenderEmbeddedObject::layout()
     updateLayerTransform();
 
     if (!widget())
-        protect(view())->frameView().addEmbeddedObjectToUpdate(*this);
+        protect(view().frameView())->addEmbeddedObjectToUpdate(*this);
 
     clearNeedsLayout();
 

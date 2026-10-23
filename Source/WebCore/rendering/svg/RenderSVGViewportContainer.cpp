@@ -191,7 +191,7 @@ void RenderSVGViewportContainer::updateLayerTransform()
 
 void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (protect(svgSVGElement())->viewBoxDisablesPainting())
+    if (svgSVGElement().viewBoxDisablesPainting())
         return;
 
     RenderSVGContainer::paint(paintInfo, paintOffset);

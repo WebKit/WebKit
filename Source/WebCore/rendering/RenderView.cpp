@@ -177,7 +177,7 @@ bool RenderView::isChildAllowed(const RenderObject& child, const Style::Computed
 void RenderView::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
-    if (!protect(document())->paginated())
+    if (!document().paginated())
         m_pageLogicalSize = { };
 
     if (shouldUsePrintingLayout()) {
@@ -495,7 +495,7 @@ void RenderView::repaintRootContents()
     // If the root is not composited, repainting this RenderView should repaint it and
     // its background. But if it's composited, then the background doesn't get repainted
     // unless we explicitly repaint its layers.
-    if (RefPtr rootElement = protect(document())->documentElement()) {
+    if (RefPtr rootElement = document().documentElement()) {
         if (CheckedPtr rootRenderer = dynamicDowncast<RenderLayerModelObject>(rootElement->renderer())) {
             // Only repaint if its has its own backing. Otherwise, it paints into its
             // ancestor layer (this RenderView), which we're repainting anyway.
@@ -655,7 +655,7 @@ auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const
 
     // Apply our transform if we have one (because of full page zooming).
     if (!container && hasLayer() && layer()->transform())
-        adjustedRects.transform(*layer()->transform(), protect(document())->deviceScaleFactor());
+        adjustedRects.transform(*layer()->transform(), document().deviceScaleFactor());
 
     return adjustedRects;
 }

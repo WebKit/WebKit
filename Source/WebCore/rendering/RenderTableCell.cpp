@@ -1310,7 +1310,7 @@ LayoutUnit RenderTableCell::borderHalfStart(bool outer) const
 {
     CollapsedBorderValue border = collapsedStartBorder(DoNotIncludeBorderColor);
     if (border.exists())
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), protect(document())->deviceScaleFactor(), !(tableWritingMode().isInlineFlipped() ^ outer));
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), !(tableWritingMode().isInlineFlipped() ^ outer));
     return 0;
 }
     
@@ -1318,7 +1318,7 @@ LayoutUnit RenderTableCell::borderHalfEnd(bool outer) const
 {
     CollapsedBorderValue border = collapsedEndBorder(DoNotIncludeBorderColor);
     if (border.exists())
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), protect(document())->deviceScaleFactor(), tableWritingMode().isInlineFlipped() ^ outer);
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), tableWritingMode().isInlineFlipped() ^ outer);
     return 0;
 }
 
@@ -1326,7 +1326,7 @@ LayoutUnit RenderTableCell::borderHalfBefore(bool outer) const
 {
     CollapsedBorderValue border = collapsedBeforeBorder(DoNotIncludeBorderColor);
     if (border.exists())
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), protect(document())->deviceScaleFactor(), !(tableWritingMode().isBlockFlipped() ^ outer));
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), !(tableWritingMode().isBlockFlipped() ^ outer));
     return 0;
 }
 
@@ -1334,7 +1334,7 @@ LayoutUnit RenderTableCell::borderHalfAfter(bool outer) const
 {
     CollapsedBorderValue border = collapsedAfterBorder(DoNotIncludeBorderColor);
     if (border.exists())
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), protect(document())->deviceScaleFactor(), tableWritingMode().isBlockFlipped() ^ outer);
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), tableWritingMode().isBlockFlipped() ^ outer);
     return 0;
 }
 
@@ -1450,7 +1450,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     LayoutUnit leftWidth = leftVal.width();
     LayoutUnit rightWidth = rightVal.width();
 
-    float deviceScaleFactor = protect(document())->deviceScaleFactor();
+    float deviceScaleFactor = document().deviceScaleFactor();
     LayoutUnit leftHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(leftWidth , deviceScaleFactor, false);
     LayoutUnit topHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(topWidth, deviceScaleFactor, false);
     LayoutUnit rightHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(rightWidth, deviceScaleFactor, true);

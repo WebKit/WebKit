@@ -358,7 +358,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
     auto operatorTopLeft = paintOffset + location();
     operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
 
-    m_mathOperator.paint(usedStyle(), info, operatorTopLeft, protect(document())->deviceScaleFactor());
+    m_mathOperator.paint(usedStyle(), info, operatorTopLeft, document().deviceScaleFactor());
 }
 
 void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)

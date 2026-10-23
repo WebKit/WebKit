@@ -58,7 +58,7 @@ public:
 
     ~TransformPaintScope()
     {
-        if (CheckedPtr regionContext = m_transformedPaintingInfo.regionContext)
+        if (auto* regionContext = m_transformedPaintingInfo.regionContext.get())
             regionContext->popTransform();
 
         if (m_oldTransform)

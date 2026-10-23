@@ -66,7 +66,7 @@ CheckedPtr<RenderMathMLOperator> RenderMathMLRow::unembellishedOperator() const
     if (!child || child->nextInFlowSiblingBox())
         return nullptr;
 
-    if (CheckedPtr renderOperator = dynamicDowncast<RenderMathMLOperator>(*child))
+    if (auto* renderOperator = dynamicDowncast<RenderMathMLOperator>(*child))
         return renderOperator;
 
     CheckedPtr mathMLBlock = dynamicDowncast<RenderMathMLBlock>(*child);

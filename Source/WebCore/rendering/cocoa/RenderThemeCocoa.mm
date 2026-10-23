@@ -915,7 +915,7 @@ void RenderThemeCocoa::paintFileUploadIconDecorations(const RenderElement&, cons
 
 Seconds RenderThemeCocoa::animationRepeatIntervalForProgressBar(const RenderProgress& renderer) const
 {
-    return protect(renderer.page())->preferredRenderingUpdateInterval();
+    return renderer.page().preferredRenderingUpdateInterval();
 }
 
 #if ENABLE(APPLE_PAY)
@@ -1800,7 +1800,7 @@ static RoundedShape roundedShape(const FloatRect& rect, const float cornerRadius
 
 static bool nodeIsDateOrTimeRelatedInput(Node* node)
 {
-    if (RefPtr input = dynamicDowncast<HTMLInputElement>(node)) {
+    if (auto* input = dynamicDowncast<HTMLInputElement>(node)) {
         return input->isDateField()
         || input->isDateTimeLocalField()
         || input->isMonthField()
@@ -1879,8 +1879,8 @@ static bool LEGACY_NODELETE searchFieldCanBeCapsule(const RenderElement& box, co
     // capsule-shaped in a reasonable manner, or it may look especially strange with a
     // capsule shape. We check for these cases below.
 
-    CheckedRef style = box.style();
-    const auto isVertical = style->writingMode().isVertical();
+    auto& style = box.style();
+    const auto isVertical = style.writingMode().isVertical();
     const auto inlineLength = isVertical ? rect.height() : rect.width();
     const auto boxLength = isVertical ? rect.width() : rect.height();
     const auto borderRadius = boxLength / 2.f;
@@ -1891,7 +1891,7 @@ static bool LEGACY_NODELETE searchFieldCanBeCapsule(const RenderElement& box, co
         return false;
 
 #if PLATFORM(MAC)
-    const auto isInlineFlipped = style->writingMode().isInlineFlipped();
+    const auto isInlineFlipped = style.writingMode().isInlineFlipped();
     const auto sizeWithDropdown = isInlineFlipped ? searchFieldDecorationWithDropdownEmSizeRTL : searchFieldDecorationWithDropdownEmSizeLTR;
 
     const auto effectiveSearchFieldDecorationEmSize = supportsResults ? sizeWithDropdown : searchFieldDecorationEmSize;
@@ -1950,7 +1950,7 @@ static constexpr auto defaultCornerRadiusForTextBasedControls = 5.f;
 
 static RoundedShape shapeForSliderThumb(const RenderElement& box, const FloatRect& rect, ShouldComputePath computePath = ShouldComputePath::Yes)
 {
-    const auto deviceScaleFactor = protect(box.document())->deviceScaleFactor();
+    const auto deviceScaleFactor = box.document().deviceScaleFactor();
 
     const auto snappedRect = snapRectToDevicePixels(LayoutRect(rect), deviceScaleFactor);
     const auto cornerRadius = std::min(snappedRect.width(), snappedRect.height()) / 2.f;
@@ -1990,7 +1990,7 @@ bool RenderThemeCocoa::paintCheckboxForVectorBasedControls(const RenderElement& 
     GraphicsContextStateSaver stateSaver { context };
 
     auto controlStates = RenderTheme::singleton().extractControlStyleStatesForRenderer(box);
-    auto deviceScaleFactor = protect(box.document())->deviceScaleFactor();
+    auto deviceScaleFactor = box.document().deviceScaleFactor();
     auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
     auto usedZoom = box.style().usedZoom();
 
@@ -2108,7 +2108,7 @@ bool RenderThemeCocoa::paintRadioForVectorBasedControls(const RenderElement& box
     const auto paintRect = radioShape.boundingRect;
 
     const auto controlStates = RenderTheme::singleton().extractControlStyleStatesForRenderer(box);
-    const auto deviceScaleFactor = protect(box.document())->deviceScaleFactor();
+    const auto deviceScaleFactor = box.document().deviceScaleFactor();
     const auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
     const auto usedZoom = box.style().usedZoom();
 
@@ -3098,7 +3098,7 @@ static bool paintTextAreaOrTextField(const RenderElement& box, const PaintInfo& 
     Path path;
     path.addContinuousRoundedRect(rect, cornerRadius, cornerRadius);
 
-    const auto deviceScaleFactor = protect(box.document())->deviceScaleFactor();
+    const auto deviceScaleFactor = box.document().deviceScaleFactor();
     drawShapeWithBorder(context, deviceScaleFactor, path, rect, backgroundColor, borderThicknessForTextBasedControl * usedZoom, borderColor);
 
     if (controlIsFocusedWithOutlineStyleAutoForVectorBasedControls(box))
@@ -3309,7 +3309,7 @@ bool RenderThemeCocoa::adjustButtonStyleForVectorBasedControls(Style::ComputedSt
 #endif
 
     auto isEnabled = true;
-    if (RefPtr input = dynamicDowncast<HTMLFormControlElement>(element))
+    if (auto* input = dynamicDowncast<HTMLFormControlElement>(element))
         isEnabled = !input->isDisabledFormControl();
 
     const auto styleColorOptions = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::Rendering);
@@ -3663,8 +3663,8 @@ bool RenderThemeCocoa::paintListButtonForVectorBasedControls(const RenderElement
     if (!renderBox)
         return true;
 
-    if (RefPtr shadowHost = box.element()->shadowHost()) {
-        CheckedPtr hostStyle = shadowHost->existingComputedStyle();
+    if (auto* shadowHost = box.element()->shadowHost()) {
+        auto* hostStyle = shadowHost->existingComputedStyle();
         if (hostStyle->usedAppearance() == StyleAppearance::None)
             return false;
     }
@@ -3949,7 +3949,7 @@ static void paintSliderTicksForVectorBasedControls(const RenderElement& box, con
 
             // Snap the tick to device pixels along the sliding axis so that it lines up with the slider thumb,
             // but keep the width and height equal so that it remains a circle.
-            const auto deviceScaleFactor = protect(box.document())->deviceScaleFactor();
+            const auto deviceScaleFactor = box.document().deviceScaleFactor();
             tickRect = snapRectToDevicePixels(LayoutRect(tickRect), deviceScaleFactor);
 
             if (isHorizontal)
@@ -4343,7 +4343,7 @@ bool RenderThemeCocoa::paintSearchFieldCancelButtonForVectorBasedControls(const 
     glyphPath.transform(transform);
 
     auto isEnabled = true;
-    if (RefPtr input = dynamicDowncast<HTMLInputElement>(protect(box.element())->shadowHost()))
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(box.element()->shadowHost()))
         isEnabled = !input->isDisabledFormControl();
 
     const auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);

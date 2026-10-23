@@ -316,8 +316,8 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
     LayoutUnit barY = borderAndPaddingBefore() + fractionAscent() - mathAxisHeight() - thickness / 2;
     LayoutUnit barWidth = logicalWidth() - borderAndPaddingLogicalWidth();
 
-    auto barOrigin = roundPointToDevicePixels(paintOffset + location() + LayoutPoint(barX, barY), protect(document())->deviceScaleFactor());
-    auto barEnd = roundPointToDevicePixels(paintOffset + location() + LayoutPoint(barX + barWidth, barY + thickness), protect(document())->deviceScaleFactor());
+    auto barOrigin = roundPointToDevicePixels(paintOffset + location() + LayoutPoint(barX, barY), document().deviceScaleFactor());
+    auto barEnd = roundPointToDevicePixels(paintOffset + location() + LayoutPoint(barX + barWidth, barY + thickness), document().deviceScaleFactor());
 
     GraphicsContextStateSaver stateSaver(info.context());
 

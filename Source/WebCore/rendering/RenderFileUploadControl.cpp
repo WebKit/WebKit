@@ -192,7 +192,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
                     if (auto textBox = InlineIterator::lineLeftmostTextBoxFor(*buttonTextRenderer)) {
                         auto textVisualRect = textBox->visualRectIgnoringBlockDirection();
                         textVisualRect.setLocation(buttonTextRenderer->localToContainerPoint(textVisualRect.location(), this));
-                        textVisualRect.moveBy(roundPointToDevicePixels(paintOffset, protect(document())->deviceScaleFactor()));
+                        textVisualRect.moveBy(roundPointToDevicePixels(paintOffset, document().deviceScaleFactor()));
 
                         auto metrics = protect(textBox->style()->fontCascade())->metricsOfPrimaryFont();
 
@@ -211,7 +211,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
                 }
             }
             // File upload button is display: none (see ::file-selector-button).
-            return roundToDevicePixel(marginBoxLogicalHeight(containingBlock()->writingMode()), protect(document())->deviceScaleFactor());
+            return roundToDevicePixel(marginBoxLogicalHeight(containingBlock()->writingMode()), document().deviceScaleFactor());
         }();
 
         paintInfo.context().setFillColor(style->visitedDependentColorApplyingColorFilter());
@@ -225,7 +225,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
                 textLogicalTop += font->metricsOfPrimaryFont().ascent();
             }
 
-            auto textOrigin = roundPointToDevicePixels({ textLogicalLeft, textLogicalTop }, protect(document())->deviceScaleFactor());
+            auto textOrigin = roundPointToDevicePixels({ textLogicalLeft, textLogicalTop }, document().deviceScaleFactor());
             if (!isHorizontalWritingMode) {
                 textOrigin = textOrigin.transposedPoint();
 

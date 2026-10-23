@@ -105,7 +105,7 @@ void RenderModel::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting)) {
         LayoutRect snapshotRect { replacedContentRect() };
         snapshotRect.moveBy(paintOffset);
-        protect(modelElement())->paintCurrentFrameInContext(paintInfo.context(), snapRectToDevicePixels(snapshotRect, protect(document())->deviceScaleFactor()));
+        protect(modelElement())->paintCurrentFrameInContext(paintInfo.context(), snapRectToDevicePixels(snapshotRect, document().deviceScaleFactor()));
     }
 
 #if USE(SYSTEM_PREVIEW)

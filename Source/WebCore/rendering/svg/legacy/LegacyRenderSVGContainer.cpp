@@ -111,7 +111,7 @@ void LegacyRenderSVGContainer::layout()
         // New bounds can affect transforms, so recompute them here if needed.
         calculateLocalTransform();
 
-        if (CheckedPtr parent = this->parent())
+        if (auto* parent = this->parent())
             parent->invalidateCachedBoundaries();
     }
 

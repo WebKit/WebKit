@@ -439,7 +439,7 @@ void RenderFrameSet::layout()
         oldBounds = clippedOverflowRectForRepaint(repaintContainer.get());
     }
 
-    if (!parent()->isRenderFrameSet() && !protect(document())->printing()) {
+    if (!parent()->isRenderFrameSet() && !document().printing()) {
         CheckedRef view = this->view();
         setBorderBoxWidth(view->viewWidth());
         setBorderBoxHeight(view->viewHeight());

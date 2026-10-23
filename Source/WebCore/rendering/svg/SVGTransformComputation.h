@@ -53,7 +53,7 @@ public:
         // calling mapLocalToContainer() starting from the anonymous RenderSVGViewportContainer, and
         // not from its parent - RenderSVGRoot.
         CheckedPtr renderer = m_renderer.ptr();
-        if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
+        if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
             renderer = svgRoot->viewportContainer();
             if (trackingMode == TransformState::TrackSVGCTMMatrix)
                 ancestorContainer = svgRoot;
@@ -63,7 +63,7 @@ public:
             // Only ever walk up to the anonymous RenderSVGViewportContainer (the first and only child of RenderSVGRoot).
             // Proceeding up to RenderSVGRoot would include border/padding/margin information which shouldn't be included for getCTM() (unlike getScreenCTM()).
             if (!stopAtRenderer) {
-                if (CheckedPtr svgRoot = ancestorsOfType<RenderSVGRoot>(*renderer).first())
+                if (auto* svgRoot = ancestorsOfType<RenderSVGRoot>(*renderer).first())
                     ancestorContainer = svgRoot->viewportContainer();
             } else if (stopAtRendererTransform == StopAtRendererTransform::Include) {
                 if (const auto* enclosingLayerRenderer = ancestorsOfType<RenderLayerModelObject>(*stopAtRenderer).first())
@@ -153,7 +153,7 @@ public:
         // TrackSVGScreenCTMMatrix deliberately produces a zoom independent matrix (getScreenCTM() semantics),
         // whereas the scaling factor has to match the actual on-screen resolution -- re-apply the zoom.
         auto ctm = computeAccumulatedTransform(stopAtLayer ? &stopAtLayer->renderer() : nullptr, TransformState::TrackSVGScreenCTMMatrix);
-        ctm.scale(protect(m_renderer->document())->deviceScaleFactor());
+        ctm.scale(m_renderer->document().deviceScaleFactor());
         ctm.scale(m_renderer->style().usedZoom());
         return narrowPrecisionToFloat(std::hypot(ctm.xScale(), ctm.yScale()) / std::numbers::sqrt2);
     }

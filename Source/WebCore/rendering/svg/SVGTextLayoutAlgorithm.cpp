@@ -61,10 +61,10 @@ static RenderSVGInlineText* LEGACY_NODELETE svgInlineText(const Layout::InlineTe
 static const SVGTextContentElement* LEGACY_NODELETE textContentElement(const Layout::ElementBox& elementBox)
 {
     // Anonymous inline boxes, like the ones for display: contents, have no element.
-    CheckedPtr renderer = elementBox.rendererForIntegration();
+    auto* renderer = elementBox.rendererForIntegration();
     if (!renderer || renderer->isAnonymous())
         return nullptr;
-    return SVGTextContentElement::elementFromRenderer(renderer.get());
+    return SVGTextContentElement::elementFromRenderer(renderer);
 }
 
 static const RenderSVGTextPath* LEGACY_NODELETE svgTextPath(const Layout::ElementBox& elementBox)
@@ -342,7 +342,7 @@ void SVGTextLayoutAlgorithm::collectTextBoxes()
     auto collect = [&](auto& collect, size_t inlineBoxIndex, unsigned textPathIndex) -> size_t {
         CheckedRef inlineBox = m_displayBoxes[inlineBoxIndex].layoutBox();
         auto isWithinInlineBox = [&](const InlineDisplay::Box& displayBox) {
-            for (CheckedPtr ancestor = &displayBox.layoutBox().parent();; ancestor = &ancestor->parent()) {
+            for (auto* ancestor = &displayBox.layoutBox().parent();; ancestor = &ancestor->parent()) {
                 if (ancestor == inlineBox.ptr())
                     return true;
                 if (!ancestor->isInlineBox())
@@ -672,11 +672,11 @@ void SVGTextLayoutAlgorithm::applyTextLength()
 
 float SVGTextLayoutAlgorithm::anchorShift(std::span<const unsigned> chunk) const
 {
-    CheckedRef style = textStyle(m_textBoxes[m_characters[chunk.front()].textBoxIndex].inlineTextBox);
+    auto& style = textStyle(m_textBoxes[m_characters[chunk.front()].textBoxIndex].inlineTextBox);
     auto [start, end] = extent(chunk);
     auto length = end - start;
-    auto isRightToLeft = style->writingMode().isBidiRTL();
-    switch (style->textAnchor()) {
+    auto isRightToLeft = style.writingMode().isBidiRTL();
+    switch (style.textAnchor()) {
     case TextAnchor::Start:
         return isRightToLeft ? -length : 0;
     case TextAnchor::Middle:

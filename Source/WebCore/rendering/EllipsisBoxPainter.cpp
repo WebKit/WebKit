@@ -99,9 +99,9 @@ void EllipsisBoxPainter::paint()
     textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + ascent);
 
     if (rootStyle->writingMode().isHorizontal())
-        textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, protect(m_lineBox.formattingContextRoot().document())->deviceScaleFactor()));
+        textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, m_lineBox.formattingContextRoot().document().deviceScaleFactor()));
     else
-        textOrigin.setX(roundToDevicePixel(LayoutUnit { textOrigin.x() }, protect(m_lineBox.formattingContextRoot().document())->deviceScaleFactor()));
+        textOrigin.setX(roundToDevicePixel(LayoutUnit { textOrigin.x() }, m_lineBox.formattingContextRoot().document().deviceScaleFactor()));
 
     context.drawBidiText(rootStyle->fontCascade(), m_lineBox.ellipsisText(), textOrigin);
 
@@ -134,7 +134,7 @@ void EllipsisBoxPainter::paintSelection()
     auto ellipsisText = m_lineBox.ellipsisText();
     constexpr bool canUseSimplifiedTextMeasuring = false;
     style->fontCascade().adjustSelectionRectForText(canUseSimplifiedTextMeasuring, ellipsisText, visualRect);
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, protect(m_lineBox.formattingContextRoot().document())->deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, m_lineBox.formattingContextRoot().document().deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
 }
 
 }
