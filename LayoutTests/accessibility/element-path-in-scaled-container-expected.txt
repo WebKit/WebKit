@@ -1,0 +1,13 @@
+This test verifies that the paths of elements with border-radius or clip-path inside a container scaled with a CSS transform are scaled like the elements' frames are, and that the path of a rotated element is positioned like its frame is.
+
+PASS: accessibilityController.accessibleElementById('rounded-button').width === 100
+PASS: accessibilityController.accessibleElementById('rounded-button').height === 50
+PASS: pathMatchesFrame('rounded-button') === true
+PASS: pathMatchesFrame('rounded-div') === true
+PASS: pathMatchesFrame('clipped') === true
+PASS: pathCenterMatchesFrameCenter('rotated') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

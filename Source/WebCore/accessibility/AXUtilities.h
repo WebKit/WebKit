@@ -25,6 +25,7 @@
 #pragma once
 
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/AffineTransform.h>
 #include <WebCore/Element.h>
 #include <WebCore/Node.h>
 #include <WebCore/RenderImage.h>
@@ -91,6 +92,11 @@ bool LEGACY_NODELETE isVisibilityHidden(const RenderObject&);
 // For elements without a renderer, and for comparing styles.
 bool LEGACY_NODELETE isVisibilityHidden(const Style::ComputedStyle&);
 const Style::ComputedStyle* safeStyleFrom(Element&);
+
+// The part of the mapping from the renderer's local coordinates to absolute document coordinates that scales,
+// rotates or skews, without the translation. For example, for a renderer inside a container with transform:
+// scale(0.5), this scales by 0.5. Paths computed in local coordinates need this to match their bounding boxes.
+AffineTransform localToAbsoluteLinearTransform(const RenderObject&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, AXNotification);
 WTF::TextStream& operator<<(WTF::TextStream&, const AXNotificationWithData&);

@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+/* Elements with border-radius or clip-path inside a container scaled with a CSS transform. Their
+   paths must be scaled like their bounding boxes are, not keep the size of their untransformed layout. */
+#scaled {
+    transform: scale(0.5);
+    transform-origin: 0 0;
+}
+.rounded {
+    display: block;
+    width: 200px;
+    height: 100px;
+    border-radius: 15px;
+}
+#clipped {
+    width: 200px;
+    height: 200px;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+#rotated {
+    width: 200px;
+    height: 100px;
+    margin: 50px 0;
+    border-radius: 4px;
+    transform: rotate(45deg);
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<div id="scaled">
+    <button id="rounded-button" class="rounded">Pass</button>
+    <div id="rounded-div" class="rounded" role="button">Actions</div>
+    <div id="clipped" role="button">Diamond</div>
+    <div id="rotated" role="button">Rotated</div>
+</div>
+</div>
+
+<script>
+var output = "This test verifies that the paths of elements with border-radius or clip-path inside a container scaled with a CSS transform are scaled like the elements' frames are, and that the path of a rotated element is positioned like its frame is.\n\n";
+
+function pathMatchesFrame(id) {
+    const bounds = pathAsBoundsOfID(id);
+    const element = accessibilityController.accessibleElementById(id);
+    // The isolated tree inflates paths slightly, so allow the path to be a little larger than the frame.
+    const matches = (pathLength, frameLength) => pathLength > frameLength - 2 && pathLength < frameLength + 10;
+    return !!bounds && matches(bounds.width, element.width) && matches(bounds.height, element.height);
+}
+
+function pathCenterMatchesFrameCenter(id) {
+    const bounds = pathAsBoundsOfID(id);
+    const element = accessibilityController.accessibleElementById(id);
+    return !!bounds && Math.abs(bounds.x + bounds.width / 2 - (element.x + element.width / 2)) < 2 && Math.abs(bounds.y + bounds.height / 2 - (element.y + element.height / 2)) < 2;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    (async () => {
+        // Paths are cached during paint in the isolated tree, so wait for them to become available.
+        await waitUntilIDHasPathWith("rounded-button", 1, "Curve to");
+        await waitUntilIDHasPathWith("clipped", 3, "Line to");
+        await waitUntilIDHasPathWith("rotated", 1, "Curve to");
+
+        output += expect("accessibilityController.accessibleElementById('rounded-button').width", "100");
+        output += expect("accessibilityController.accessibleElementById('rounded-button').height", "50");
+        output += expect("pathMatchesFrame('rounded-button')", "true");
+        output += expect("pathMatchesFrame('rounded-div')", "true");
+        output += expect("pathMatchesFrame('clipped')", "true");
+        output += expect("pathCenterMatchesFrameCenter('rotated')", "true");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>

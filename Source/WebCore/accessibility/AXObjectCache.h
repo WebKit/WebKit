@@ -68,6 +68,7 @@ class AccessibilityNodeObject;
 class AccessibilityObject;
 class AccessibilityRenderObject;
 class AccessibilitySpinButton;
+class AffineTransform;
 class Document;
 class Event;
 class HTMLAreaElement;
@@ -595,11 +596,13 @@ public:
     Node* nodeForID(std::optional<AXID>) const;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    void onPaint(const RenderObject&, IntRect&&) const;
+    // localToPaintRect, when given, maps the renderer's local coordinates to those of paintRect,
+    // including any transforms, so that paths computed in local coordinates can be mapped exactly.
+    void onPaint(const RenderObject&, IntRect&& paintRect, const AffineTransform* localToPaintRect = nullptr) const;
     void onPaint(const Widget&, IntRect&&) const;
     void onPaint(const RenderText&, size_t lineIndex);
 #else
-    NO_RETURN_DUE_TO_ASSERT void onPaint(const RenderObject&, IntRect&&) const { ASSERT_NOT_REACHED(); }
+    NO_RETURN_DUE_TO_ASSERT void onPaint(const RenderObject&, IntRect&&, const AffineTransform* = nullptr) const { ASSERT_NOT_REACHED(); }
     NO_RETURN_DUE_TO_ASSERT void onPaint(const Widget&, IntRect&&) const { ASSERT_NOT_REACHED(); }
     NO_RETURN_DUE_TO_ASSERT void onPaint(const RenderText&, size_t) { ASSERT_NOT_REACHED(); }
 #endif

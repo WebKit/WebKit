@@ -1077,6 +1077,7 @@ accessibility/base-select-list-box-content.html [ Skip ]
 accessibility/base-select-search-predicate.html [ Skip ]
 # pathDescription is not implemented for this platform.
 accessibility/base-select-option-border-radius-path.html [ Skip ]
+accessibility/element-path-in-scaled-container.html [ Skip ]
 accessibility/element-path-with-css-transforms.html [ Skip ]
 
 # Failing because the mtable cannot be found as an accessible element.

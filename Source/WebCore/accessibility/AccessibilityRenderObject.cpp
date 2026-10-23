@@ -714,14 +714,23 @@ bool AccessibilityRenderObject::isNonLayerSVGObject() const
     return renderer ? is<RenderSVGInlineText>(renderer.get()) || is<LegacyRenderSVGModelObject>(renderer.get()) : false;
 }
 
+// Maps a path in the renderer's local coordinates to absolute document coordinates, including any transforms
+// of the renderer and its ancestors, so that, for example, the path of an element inside a scaled container is
+// scaled like its bounding box is.
+static void mapLocalPathToAbsolute(Path& path, const RenderObject& renderer)
+{
+    path.transform(localToAbsoluteLinearTransform(renderer));
+    auto absoluteOrigin = flooredLayoutPoint(renderer.localToAbsolute(FloatPoint(), MapCoordinatesMode::UseTransforms));
+    path.transform(AffineTransform().translate(absoluteOrigin.x(), absoluteOrigin.y()));
+}
+
 static Path computePathForRenderBox(const RenderBox& renderBox)
 {
     auto borderShape = BorderShape::shapeForBorderRect(renderBox.usedStyle(), renderBox.borderBoxRect());
     auto path = borderShape.pathForOuterShape(protect(renderBox.document())->deviceScaleFactor());
-    // borderBoxRect() is in local coordinates. Offset it to absolute document coordinates
+    // borderBoxRect() is in local coordinates. Map it to absolute document coordinates
     // to match the coordinate system used by SVG, RenderText, and inline box paths.
-    auto absoluteOrigin = flooredLayoutPoint(renderBox.localToAbsolute(FloatPoint(), MapCoordinatesMode::UseTransforms));
-    path.transform(AffineTransform().translate(absoluteOrigin.x(), absoluteOrigin.y()));
+    mapLocalPathToAbsolute(path, renderBox);
     return path;
 }
 
@@ -845,8 +854,7 @@ Path AccessibilityRenderObject::elementPath() const
                     // FIXME: Remove suppression once rdar://189998444 is fixed.
                     SUPPRESS_MEMORY_UNSAFE_CAST auto referenceBox = FloatRect(renderBox->borderBoxRect());
                     auto path = Style::path(clipPath.shape(), referenceBox, renderBox->style().usedZoomForLength());
-                    auto absoluteOrigin = flooredLayoutPoint(renderBox->localToAbsolute(FloatPoint(), MapCoordinatesMode::UseTransforms));
-                    path.transform(AffineTransform().translate(absoluteOrigin.x(), absoluteOrigin.y()));
+                    mapLocalPathToAbsolute(path, *renderBox);
                     clipPathResult = WTF::move(path);
                 },
                 [](const auto&) { }

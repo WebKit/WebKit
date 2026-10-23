@@ -62,7 +62,7 @@ public:
     void onPaint(const ScrollView&);
 
 private:
-    void takeBoundsInternal(const RenderBoxModelObject&, IntRect&& /* paintRect */);
+    void takeBoundsInternal(const RenderBoxModelObject&, IntRect&& /* paintRect */, AffineTransform* localToPaintRect = nullptr);
 
     // Maps the given rect using the current transform and clip stack.
     // Assumes `rect` is in page-absolute coordinate space (because the clips being applied are).

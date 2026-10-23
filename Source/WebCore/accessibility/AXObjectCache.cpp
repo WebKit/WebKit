@@ -7064,7 +7064,7 @@ void AXObjectCache::startUpdateTreeSnapshotTimer()
         m_updateTreeSnapshotTimer.startOneShot(updateTreeSnapshotTimerDuration);
 }
 
-void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) const
+void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect, const AffineTransform* localToPaintRect) const
 {
     if (std::optional axID = getAXID(const_cast<RenderObject&>(renderer))) {
         auto paintRectOrigin = paintRect.location();
@@ -7098,6 +7098,19 @@ void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) c
             // clip-path boxes. Multi-line inlines compute their path on-demand from
             // text runs (see AXIsolatedObject::elementPath).
             if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
+                // The path is computed in local coordinates. Map it like the box was painted, if we know how,
+                // which accounts for transforms (e.g. scale and rotation) without walking the box's ancestors.
+                // Otherwise, scale it like the box and position it at the paint rect's origin, which has
+                // already gone through contentsToRootView and matches the relativeFrame coordinate system.
+                auto mapPathToPaintRect = [&](Path& path) {
+                    if (localToPaintRect) {
+                        path.transform(*localToPaintRect);
+                        return;
+                    }
+                    path.transform(localToAbsoluteLinearTransform(*renderBox));
+                    path.transform(AffineTransform().translate(paintRectOrigin.x(), paintRectOrigin.y()));
+                };
+
                 if (renderBox->hasClipPath()) {
                     WTF::switchOn(renderBox->style().clipPath(),
                         [&](const Style::BasicShapePath& clipPath) {
@@ -7106,7 +7119,7 @@ void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) c
                             // FIXME: Remove suppression once rdar://189998444 is fixed.
                             SUPPRESS_MEMORY_UNSAFE_CAST auto referenceBox = FloatRect(WTF::move(borderRect));
                             auto path = Style::path(clipPath.shape(), referenceBox, renderBox->style().usedZoomForLength());
-                            path.transform(AffineTransform().translate(paintRectOrigin.x(), paintRectOrigin.y()));
+                            mapPathToPaintRect(path);
                             m_geometryManager->cachePathForID(*axID, WTF::makeUnique<Path>(WTF::move(path)));
                         },
                         [](const auto&) { }
@@ -7116,10 +7129,7 @@ void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) c
                     borderRect.inflate(shapePathInflationPx);
                     auto borderShape = BorderShape::shapeForBorderRect(renderBox->usedStyle(), WTF::move(borderRect));
                     auto path = borderShape.pathForOuterShape(renderer.document().deviceScaleFactor());
-                    // borderBoxRect() is in local coordinates starting at (0, 0). Use the paint
-                    // rect's origin to position the path, since it's already gone through
-                    // contentsToRootView and matches the relativeFrame coordinate system.
-                    path.transform(AffineTransform().translate(paintRectOrigin.x(), paintRectOrigin.y()));
+                    mapPathToPaintRect(path);
                     m_geometryManager->cachePathForID(*axID, WTF::makeUnique<Path>(WTF::move(path)));
                 }
             }

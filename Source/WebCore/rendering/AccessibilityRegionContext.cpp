@@ -72,7 +72,10 @@ void AccessibilityRegionContext::takeBounds(const RenderBox& renderBox, LayoutPo
         return;
     }
     auto mappedPaintRect = enclosingIntRect(mapRect(LayoutRect(paintOffset, renderBox.borderBoxSize())));
-    takeBoundsInternal(renderBox, WTF::move(mappedPaintRect));
+    // Map the box's local coordinates like its paint rect, so that its path can be mapped without walking its ancestors.
+    auto localToPaintRect = m_transformStack.isEmpty() ? AffineTransform() : m_transformStack.last();
+    localToPaintRect.translate(paintOffset.x(), paintOffset.y());
+    takeBoundsInternal(renderBox, WTF::move(mappedPaintRect), &localToPaintRect);
 }
 
 void AccessibilityRegionContext::takeBounds(const RenderView& renderView, LayoutPoint&& paintOffset)
@@ -106,18 +109,24 @@ void AccessibilityRegionContext::takeBounds(const RenderLineBreak* renderLineBre
     takeBoundsInternal(*renderLineBreak, WTF::move(mappedPaintRect));
 }
 
-void AccessibilityRegionContext::takeBoundsInternal(const RenderBoxModelObject& renderObject, IntRect&& paintRect)
+void AccessibilityRegionContext::takeBoundsInternal(const RenderBoxModelObject& renderObject, IntRect&& paintRect, AffineTransform* localToPaintRect)
 {
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     // We want to cache element rects without scroll applied (that's handled by AXFrameGeometry), so don't apply contentsToView.
     UNUSED_PARAM(renderObject);
 #else
-    if (RefPtr view = renderObject.document().view())
+    if (RefPtr view = renderObject.document().view()) {
+        auto contentsLocation = paintRect.location();
         paintRect = view->contentsToRootView(paintRect);
+        if (localToPaintRect) {
+            auto offset = paintRect.location() - contentsLocation;
+            *localToPaintRect = AffineTransform::makeTranslation(FloatSize(offset)) * *localToPaintRect;
+        }
+    }
 #endif
 
     if (CheckedPtr cache = protect(renderObject.document())->axObjectCache())
-        cache->onPaint(renderObject, WTF::move(paintRect));
+        cache->onPaint(renderObject, WTF::move(paintRect), localToPaintRect);
 }
 
 // Note that this function takes the bounds of a textbox that is associated with a RenderText, and not the RenderText itself.
