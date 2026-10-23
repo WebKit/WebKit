@@ -976,6 +976,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 
     TakeSnapshotForTargetedElement(WebCore::NodeIdentifier nodeID, WebCore::ScriptExecutionContextIdentifier documentID) -> (std::optional<WebCore::ShareableBitmapHandle> image)
+    [EnabledBy=RemoteSnapshottingEnabled] TakeRemoteSnapshotForTargetedElement(WebCore::NodeIdentifier nodeID, WebCore::ScriptExecutionContextIdentifier documentID, WebKit::RemoteSnapshotIdentifier snapshotIdentifier) -> (bool success)
     ResetVisibilityAdjustmentsForTargetedElements(Vector<std::pair<WebCore::NodeIdentifier, WebCore::ScriptExecutionContextIdentifier>> identifiers) -> (bool success)
     AdjustVisibilityForTargetedElements(Vector<WebCore::TargetedElementAdjustment> adjustments) -> (bool success)
     NumberOfVisibilityAdjustmentRects() -> (uint64_t count)
