@@ -148,7 +148,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::newConvertedVideoFrameBuffer(std:
     m_conversionSemaphore.signal();
 }
 
-RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(const WebCore::VideoFrame& videoFrame)
+RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(const WebCore::VideoFrame& videoFrame, ShouldApplyRotation shouldApplyRotation)
 {
     Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
 
@@ -161,7 +161,7 @@ RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(con
     if (!frame)
         return nullptr;
 
-    auto sendResult = connection->sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer { WTF::move(*frame) }, 0, GPUProcessConnection::defaultTimeout);
+    auto sendResult = connection->sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer { WTF::move(*frame), shouldApplyRotation == ShouldApplyRotation::Yes }, 0, GPUProcessConnection::defaultTimeout);
     if (!sendResult.succeeded()) {
         m_sharedVideoFrameWriter.disable();
         return nullptr;

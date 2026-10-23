@@ -110,25 +110,9 @@ async function validateImages(test, rotation)
 
     canvas2.width = width;
     canvas2.height = height;
-    if (rotation === 0) {
-       canvas2.getContext('2d').reset();
-       canvas2.getContext('2d').drawImage(videoFrame, 0, 0, 640, 480);
-    } else if (rotation === 90) {
-       canvas2.getContext('2d').reset();
-       canvas2.getContext('2d').translate(240, 320);
-       canvas2.getContext('2d').rotate(Math.PI / 2);
-       canvas2.getContext('2d').drawImage(videoFrame, -320, -240, 640, 480);
-    } else if (rotation === 180) {
-       canvas2.getContext('2d').reset();
-       canvas2.getContext('2d').translate(320, 240);
-       canvas2.getContext('2d').rotate(-Math.PI);
-       canvas2.getContext('2d').drawImage(videoFrame, -320, -240, 640, 480);
-    } else if (rotation === 270) {
-       canvas2.getContext('2d').reset();
-       canvas2.getContext('2d').translate(240, 320);
-       canvas2.getContext('2d').rotate(-Math.PI / 2);
-       canvas2.getContext('2d').drawImage(videoFrame, -320, -240, 640, 480);
-    }
+    // Drawing a VideoFrame applies its rotation.
+    canvas2.getContext('2d').reset();
+    canvas2.getContext('2d').drawImage(videoFrame, 0, 0, width, height);
 
     const data2 = canvas2.getContext('2d').getImageData(0, 0, width, height).data;
 

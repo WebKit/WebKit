@@ -681,21 +681,6 @@ void VideoFrameCV::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
     setOwnershipIdentityForCVPixelBuffer(buffer.get(), resourceOwner);
 }
 
-ImageOrientation VideoFrameCV::orientation() const
-{
-    // Sample transform first flips x-coordinates, then rotates.
-    switch (rotation()) {
-    case VideoFrame::Rotation::None:
-        return isMirrored() ? ImageOrientation::Orientation::OriginTopRight : ImageOrientation::Orientation::OriginTopLeft;
-    case VideoFrame::Rotation::Right:
-        return isMirrored() ? ImageOrientation::Orientation::OriginRightBottom : ImageOrientation::Orientation::OriginRightTop;
-    case VideoFrame::Rotation::UpsideDown:
-        return isMirrored() ? ImageOrientation::Orientation::OriginBottomLeft : ImageOrientation::Orientation::OriginBottomRight;
-    case VideoFrame::Rotation::Left:
-        return isMirrored() ? ImageOrientation::Orientation::OriginLeftTop : ImageOrientation::Orientation::OriginLeftBottom;
-    }
-}
-
 Ref<VideoFrame> VideoFrameCV::clone()
 {
     return adoptRef(*new VideoFrameCV(presentationTime(), isMirrored(), rotation(), pixelBuffer(), PlatformVideoColorSpace { colorSpace() }, shouldIgnoreAlpha() ? ShouldIgnoreAlpha::Yes : ShouldIgnoreAlpha::No));

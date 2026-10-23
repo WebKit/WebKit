@@ -457,9 +457,12 @@ void MediaRecorderPrivateEncoder::appendVideoFrame(MediaTime sampleTime, Ref<Vid
         m_firstVideoFrameProcessed = true;
 
         if (frame->rotation() != VideoFrame::Rotation::None || frame->isMirrored()) {
-            m_videoTransform = CGAffineTransformMakeRotation(static_cast<int>(frame->rotation()) * std::numbers::pi / 180);
+            // The frame is rotated first, then mirrored.
+            auto rotationAngle = static_cast<int>(frame->rotation()) * std::numbers::pi / 180;
             if (frame->isMirrored())
-                m_videoTransform = CGAffineTransformScale(*m_videoTransform, -1, 1);
+                m_videoTransform = CGAffineTransformRotate(CGAffineTransformMakeScale(-1, 1), rotationAngle);
+            else
+                m_videoTransform = CGAffineTransformMakeRotation(rotationAngle);
         }
         VideoEncoder::Config config { static_cast<uint64_t>(frame->presentationSize().width()), static_cast<uint64_t>(frame->presentationSize().height()), false, videoBitRate() };
 
