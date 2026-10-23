@@ -60,6 +60,7 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageAnimationTimeline.h"
 #include "ImageObserver.h"
 #include "InspectorInstrumentation.h"
 #include "LayerAncestorClippingStack.h"
@@ -3643,7 +3644,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(PaintedContents
 }
 
 // Only bitmap images are directly composited, so the layer shows the image's current frame at its natural size.
-static RefPtr<NativeImage> nativeImageForDirectlyCompositedImage(Image& image)
+static RefPtr<NativeImage> nativeImageForDirectlyCompositedImage(Image& image, ImageAnimationTimeline* timeline)
 {
     // Showing the image in a layer uses its decoded data, as drawing it would.
     if (RefPtr observer = image.imageObserver())
@@ -3653,7 +3654,7 @@ static RefPtr<NativeImage> nativeImageForDirectlyCompositedImage(Image& image)
     if (!bitmapImage)
         return nullptr;
 
-    return bitmapImage->currentNativeImage();
+    return bitmapImage->currentNativeImage(timeline);
 }
 
 void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContentsInfo& contentsInfo, bool& didUpdateContentsRect)
@@ -3684,7 +3685,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContents
     m_graphicsLayer->setContentsTilePhase(geometry.phase);
     m_graphicsLayer->setContentsRect(geometry.destinationRect);
     m_graphicsLayer->setContentsClippingRect(FloatRoundedRect(geometry.destinationRect));
-    if (RefPtr nativeImage = nativeImageForDirectlyCompositedImage(Ref { *backgroundLayer.image().tryStyleImage()->cachedImage()->image() }))
+    if (RefPtr nativeImage = nativeImageForDirectlyCompositedImage(Ref { *backgroundLayer.image().tryStyleImage()->cachedImage()->image() }, renderer().imageAnimationTimeline()))
         m_graphicsLayer->setContentsToNativeImage(nativeImage.get());
 
     didUpdateContentsRect = true;
@@ -4205,13 +4206,15 @@ void RenderLayerBacking::updateImageContents(PaintedContentsInfo& contentsInfo)
         if (!cachedImage->isLoaded())
             return;
 
-        if (RefPtr nativeImage = nativeImageForDirectlyCompositedImage(*image))
+        RefPtr timeline = imageRenderer.imageAnimationTimeline();
+        if (RefPtr nativeImage = nativeImageForDirectlyCompositedImage(*image, timeline.get()))
             m_graphicsLayer->setContentsToNativeImage(nativeImage.get());
 
         // Image animation is "lazy", in that it automatically stops unless someone is drawing
         // the image. So we have to kick the animation each time; this has the downside that the
         // image will keep animating, even if its layer is not visible.
-        image->startAnimation();
+        if (!timeline || timeline->mode() == ImageAnimationTimeline::Mode::Running)
+            image->startAnimation();
     }
 
     updateContentsRects();

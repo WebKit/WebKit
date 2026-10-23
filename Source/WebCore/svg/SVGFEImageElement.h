@@ -55,6 +55,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
 
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
+    void scheduleRenderingUpdateForImage(CachedImage&) final;
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const override;
 
     void postConnectionSteps() override;

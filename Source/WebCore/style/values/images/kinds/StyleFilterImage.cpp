@@ -246,8 +246,16 @@ void FilterImage::imageChanged(WebCore::CachedImage*, const IntRect*)
         return;
 
     for (auto entry : clients()) {
-        CheckedRef client = entry.key;
+        CheckedRef<RenderObject> client = entry.key;
         client->imageChanged(static_cast<WrappedImagePtr>(this));
+    }
+}
+
+void FilterImage::scheduleRenderingUpdateForImage(WebCore::CachedImage& cachedImage)
+{
+    for (auto entry : clients()) {
+        CheckedRef<RenderObject> client = entry.key;
+        client->scheduleRenderingUpdateForImage(cachedImage);
     }
 }
 

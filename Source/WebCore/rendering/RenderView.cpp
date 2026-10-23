@@ -1014,7 +1014,6 @@ void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
     });
 }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 static SVGSVGElement* LEGACY_NODELETE svgSvgElementFrom(RenderElement& renderElement)
 {
     if (auto* svgSvgElement = dynamicDowncast<SVGSVGElement>(renderElement.element()))
@@ -1040,20 +1039,10 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
 
             bool hasPausedAnimation = renderElement.hasPausedImageAnimations();
             RefPtr image = cachedImage->image();
-            if (RefPtr svgImage = dynamicDowncast<SVGImage>(image.get())) {
-                if (shouldAnimate && hasPausedAnimation) {
-                    svgImage->startAnimation();
-                    removeRendererWithPausedImageAnimations(renderElement, *cachedImage);
-                } else if (!hasPausedAnimation) {
-                    svgImage->stopAnimation();
-                    addRendererWithPausedImageAnimations(renderElement, *cachedImage);
-                }
-            } else if (image && image->isAnimated()) {
+            if (image && (image->isAnimated() || is<SVGImage>(*image))) {
                 // Override any individual animation play state that may have been set.
                 if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(renderElement.element()))
                     imageElement->setAllowsAnimation(std::nullopt);
-                else
-                    image->setAllowsAnimation(std::nullopt);
 
                 // Animations of this type require a repaint to be paused or resumed.
                 if (shouldAnimate && hasPausedAnimation) {
@@ -1087,7 +1076,6 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
         }
     }
 }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
 {

@@ -450,8 +450,16 @@ void CrossfadeImage::imageChanged(WebCore::CachedImage*, const IntRect*)
     if (!m_inputImagesAreReady)
         return;
     for (auto entry : clients()) {
-        CheckedRef client = entry.key;
+        CheckedRef<RenderObject> client = entry.key;
         client->imageChanged(static_cast<WrappedImagePtr>(this));
+    }
+}
+
+void CrossfadeImage::scheduleRenderingUpdateForImage(WebCore::CachedImage& cachedImage)
+{
+    for (auto entry : clients()) {
+        CheckedRef<RenderObject> client = entry.key;
+        client->scheduleRenderingUpdateForImage(cachedImage);
     }
 }
 

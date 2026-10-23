@@ -282,6 +282,7 @@ public:
     void setImageAnimationEnabled(bool);
     void resumeImageAnimation(HTMLImageElement&);
     void pauseImageAnimation(HTMLImageElement&);
+    double svgImageAnimationTime(HTMLImageElement&);
     void LEGACY_NODELETE setVideoAutoplayPreviewsEnabled(bool);
     unsigned LEGACY_NODELETE imagePendingDecodePromisesCountForTesting(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool enabled);

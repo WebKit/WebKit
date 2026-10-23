@@ -44,6 +44,7 @@
 #include "SVGMaskElement.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
+#include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+LinkParameters.h"
@@ -95,9 +96,9 @@ CachedImage::CachedImage(URL&& url, Ref<CSSImageValue>&& cssValue, float scaleFa
         m_isPending = false;
 }
 
-Vector<CSS::ParamFunction> CachedImage::urlLinkParameters(const CSSParserContext& context, StringView fragment) const
+Vector<CSS::ParamFunction> CachedImage::urlLinkParameters(const CSSParserContext& context, StringView fragmentDirective) const
 {
-    auto parameters = CSSPropertyParserHelpers::parseLinkParametersFromFragment(fragment, context);
+    auto parameters = CSSPropertyParserHelpers::parseLinkParametersFromFragmentDirective(fragmentDirective, context);
     for (auto& parameter : m_url.modifiers.linkParameters)
         parameters.append(parameter);
     return parameters;
@@ -276,7 +277,9 @@ NaturalDimensions CachedImage::naturalDimensions(const RenderElement& renderer, 
 
 ImageDrawingExtras CachedImage::drawingExtrasForRenderer(const RenderElement& renderer) const
 {
-    return { m_url.resolved, linkParametersForResource(renderer.style().linkParameters(), urlLinkParameters(protect(renderer.document())->cssParserContext(), m_url.resolved.fragmentIdentifier())) };
+    auto fragmentURL = m_url.resolved;
+    auto fragmentDirective = fragmentURL.consumeFragmentDirective();
+    return { WTF::move(fragmentURL), linkParametersForResource(renderer.style().linkParameters(), urlLinkParameters(protect(renderer.document())->cssParserContext(), fragmentDirective)), protect(renderer.page())->useDarkAppearance(), protect(renderer.page())->useElevatedUserInterfaceLevel(), &renderer.document().settings().imageEnvironmentSettings(), renderer.imageAnimationTimeline() };
 }
 
 void CachedImage::addClient(RenderElement& renderer)

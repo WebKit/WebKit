@@ -34,6 +34,7 @@
 #include "DocumentView.h"
 #include "FontCache.h"
 #include "FrameTree.h"
+#include "ImageEnvironmentSettings.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Page.h"
@@ -58,14 +59,16 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SettingsBase);
 
-static void invalidateAfterGenericFamilyChange(Page* page)
+void SettingsBase::invalidateAfterGenericFamilyChange()
 {
+    imageEnvironmentSettingsChanged();
+
     // No need to invalidate FontCascadeCaches in worker threads, since workers
     // do not respond to changes in Settings values.
     FontCascadeCache::forCurrentThread().invalidate();
     SystemFontDatabase::singleton().invalidate();
 
-    if (page)
+    if (RefPtr page = m_page.get())
         page->setNeedsRecalcStyleInAllFrames();
 }
 
@@ -110,7 +113,7 @@ void SettingsBase::setStandardFontFamily(const String& family, UScriptCode scrip
 {
     bool changes = fontGenericFamilies().setStandardFontFamily(family, script);
     if (changes)
-        invalidateAfterGenericFamilyChange(protect(m_page).get());
+        invalidateAfterGenericFamilyChange();
 }
 
 const String& SettingsBase::fixedFontFamily(UScriptCode script) const
@@ -122,7 +125,7 @@ void SettingsBase::setFixedFontFamily(const String& family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setFixedFontFamily(family, script);
     if (changes)
-        invalidateAfterGenericFamilyChange(protect(m_page).get());
+        invalidateAfterGenericFamilyChange();
 }
 
 const String& SettingsBase::serifFontFamily(UScriptCode script) const
@@ -134,7 +137,7 @@ void SettingsBase::setSerifFontFamily(const String& family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setSerifFontFamily(family, script);
     if (changes)
-        invalidateAfterGenericFamilyChange(protect(m_page).get());
+        invalidateAfterGenericFamilyChange();
 }
 
 const String& SettingsBase::sansSerifFontFamily(UScriptCode script) const
@@ -146,7 +149,7 @@ void SettingsBase::setSansSerifFontFamily(const String& family, UScriptCode scri
 {
     bool changes = fontGenericFamilies().setSansSerifFontFamily(family, script);
     if (changes)
-        invalidateAfterGenericFamilyChange(protect(m_page).get());
+        invalidateAfterGenericFamilyChange();
 }
 
 const String& SettingsBase::cursiveFontFamily(UScriptCode script) const
@@ -158,7 +161,7 @@ void SettingsBase::setCursiveFontFamily(const String& family, UScriptCode script
 {
     bool changes = fontGenericFamilies().setCursiveFontFamily(family, script);
     if (changes)
-        invalidateAfterGenericFamilyChange(protect(m_page).get());
+        invalidateAfterGenericFamilyChange();
 }
 
 const String& SettingsBase::fantasyFontFamily(UScriptCode script) const
@@ -170,7 +173,7 @@ void SettingsBase::setFantasyFontFamily(const String& family, UScriptCode script
 {
     bool changes = fontGenericFamilies().setFantasyFontFamily(family, script);
     if (changes)
-        invalidateAfterGenericFamilyChange(protect(m_page).get());
+        invalidateAfterGenericFamilyChange();
 }
 
 const String& SettingsBase::pictographFontFamily(UScriptCode script) const
@@ -182,7 +185,7 @@ void SettingsBase::setPictographFontFamily(const String& family, UScriptCode scr
 {
     bool changes = fontGenericFamilies().setPictographFontFamily(family, script);
     if (changes)
-        invalidateAfterGenericFamilyChange(protect(m_page).get());
+        invalidateAfterGenericFamilyChange();
 }
 
 const String& SettingsBase::mathFontFamily(UScriptCode script) const
@@ -194,7 +197,7 @@ void SettingsBase::setMathFontFamily(const String& family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setMathFontFamily(family, script);
     if (changes)
-        invalidateAfterGenericFamilyChange(protect(m_page).get());
+        invalidateAfterGenericFamilyChange();
 }
 
 void SettingsBase::setMinimumDOMTimerInterval(Seconds interval)
@@ -434,6 +437,8 @@ void SettingsBase::mockCaptureDevicesEnabledChanged()
 
 void SettingsBase::layerBasedSVGEngineEnabledChanged()
 {
+    imageEnvironmentSettingsChanged();
+
     if (!m_page)
         return;
 
@@ -531,7 +536,19 @@ void SettingsBase::useSystemAppearanceChanged()
 
 void SettingsBase::fontFallbackPrefersPictographsChanged()
 {
-    invalidateAfterGenericFamilyChange(protect(m_page).get());
+    invalidateAfterGenericFamilyChange();
+}
+
+const ImageEnvironmentSettings& SettingsBase::imageEnvironmentSettings() const
+{
+    if (!m_imageEnvironmentSettings)
+        m_imageEnvironmentSettings = ImageEnvironmentSettings::create(static_cast<const Settings&>(*this));
+    return *m_imageEnvironmentSettings;
+}
+
+void SettingsBase::imageEnvironmentSettingsChanged()
+{
+    m_imageEnvironmentSettings = nullptr;
 }
 
 } // namespace WebCore

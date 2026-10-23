@@ -24,7 +24,9 @@
 
 #pragma once
 
+#include <WebCore/ImageAnimationTimeline.h>
 #include <WebCore/ImageDrawingExtras.h>
+#include <WebCore/ImageEnvironmentSettings.h>
 #include <WebCore/StyleLinkParameters.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/URL.h>
@@ -34,15 +36,27 @@ namespace Style {
 
 class WEBCORE_EXPORT ImageDrawingExtras final : public WebCore::ImageDrawingExtras {
 public:
-    ImageDrawingExtras(WTF::URL fragmentURL = { }, LinkParameters linkParameters = { CSS::Keyword::None { } })
+    ImageDrawingExtras(WTF::URL fragmentURL = { }, LinkParameters linkParameters = { CSS::Keyword::None { } }, std::optional<bool> useDarkAppearance = std::nullopt, std::optional<bool> useElevatedUserInterfaceLevel = std::nullopt, RefPtr<const ImageEnvironmentSettings> environmentSettings = nullptr, RefPtr<ImageAnimationTimeline> animationTimeline = nullptr)
         : WebCore::ImageDrawingExtras(Type::Style)
         , m_fragmentURL(WTF::move(fragmentURL))
         , m_linkParameters(WTF::move(linkParameters))
+        , m_useDarkAppearance(useDarkAppearance)
+        , m_useElevatedUserInterfaceLevel(useElevatedUserInterfaceLevel)
+        , m_environmentSettings(WTF::move(environmentSettings))
+        , m_animationTimeline(WTF::move(animationTimeline))
     {
     }
 
     const WTF::URL& fragmentURL() const { return m_fragmentURL; }
     const LinkParameters& linkParameters() const { return m_linkParameters; }
+    std::optional<bool> useDarkAppearance() const { return m_useDarkAppearance; }
+    std::optional<bool> useElevatedUserInterfaceLevel() const { return m_useElevatedUserInterfaceLevel; }
+
+    const ImageEnvironmentSettings* environmentSettings() const { return m_environmentSettings.get(); }
+
+    ImageAnimationTimeline* animationTimeline() const final { return m_animationTimeline.get(); }
+
+    bool hasSameEnvironment(const ImageDrawingExtras&) const;
 
     std::unique_ptr<WebCore::ImageDrawingExtras> copy() const final;
 
@@ -51,6 +65,10 @@ private:
 
     WTF::URL m_fragmentURL;
     LinkParameters m_linkParameters;
+    std::optional<bool> m_useDarkAppearance;
+    std::optional<bool> m_useElevatedUserInterfaceLevel;
+    RefPtr<const ImageEnvironmentSettings> m_environmentSettings;
+    RefPtr<ImageAnimationTimeline> m_animationTimeline;
 };
 
 } // namespace Style

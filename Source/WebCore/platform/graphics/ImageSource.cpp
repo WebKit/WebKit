@@ -43,6 +43,11 @@ std::expected<Ref<NativeImage>, DecodingStatus> ImageSource::currentNativeImageF
     return primaryNativeImageForDrawing(subsamplingLevel, options);
 }
 
+std::expected<Ref<NativeImage>, DecodingStatus> ImageSource::nativeImageAtIndexForDrawing(unsigned, SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
+{
+    return primaryNativeImageForDrawing(subsamplingLevel, options);
+}
+
 void ImageSource::drawNativeImage(GraphicsContext& context, NativeImage& nativeImage, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options)
 {
     context.drawNativeImage(protect(nativeImage), destinationRect, sourceRect, options);

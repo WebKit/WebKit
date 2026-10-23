@@ -1930,6 +1930,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/GlobalWindowIdentifier.h
     page/HandleUserInputEventResult.h
     page/ImageAnalysisQueue.h
+    page/ImageEnvironmentSettings.h
     page/ImmediateActionStage.h
     page/InteractionRegion.h
     page/IntersectionObserverMarginBox.h
@@ -2505,6 +2506,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Icon.h
     platform/graphics/Image.h
     platform/graphics/ImageAdapter.h
+    platform/graphics/ImageAnimationTimeline.h
     platform/graphics/ImageBackingStore.h
     platform/graphics/ImageBuffer.h
     platform/graphics/ImageBufferAllocator.h

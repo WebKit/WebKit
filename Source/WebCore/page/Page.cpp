@@ -112,6 +112,7 @@
 #include "HistoryItem.h"
 #include "IDBConnectionToServer.h"
 #include "ImageAnalysisQueue.h"
+#include "ImageAnimationTimeline.h"
 #include "ImageOverlay.h"
 #include "ImageOverlayController.h"
 #include "InspectorBackendClient.h"
@@ -2319,6 +2320,12 @@ void Page::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps
     computeUnfulfilledRenderingSteps(requestedSteps);
 }
 
+void Page::scheduleRenderingUpdate(Image& image)
+{
+    m_imagesNeedingRenderingUpdate.add(image);
+    scheduleRenderingUpdate(RenderingUpdateStep::Images);
+}
+
 void Page::scheduleRenderingUpdateInternal()
 {
     if (!chrome().client().scheduleRenderingUpdate())
@@ -2609,12 +2616,9 @@ void Page::updateRendering()
         document.updateIntersectionObservers();
     });
 
-    runProcessingStep(RenderingUpdateStep::Images, [] (Document& document) {
-        for (auto& image : protect(document.cachedResourceLoader())->allCachedSVGImages()) {
-            if (RefPtr page = image->internalPage())
-                page->isolatedUpdateRendering();
-        }
-    });
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::Images);
+    for (Ref image : copyToVectorOf<Ref<Image>>(std::exchange(m_imagesNeedingRenderingUpdate, { })))
+        image->updateRendering();
 
     runProcessingStep(RenderingUpdateStep::UpdateValidationMessagePositions, [] (Document& document) {
         document.adjustValidationMessagePositions();
@@ -2971,16 +2975,18 @@ bool Page::shouldUpdateAccessibilityRegions() const
 }
 #endif
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::setImageAnimationEnabled(bool enabled)
 {
     // This method overrides any individually set animation play-states (so we need to do work even if `enabled` is
     // already equal to `m_imageAnimationEnabled` because there may be individually playing or paused images).
     m_imageAnimationEnabled = enabled;
+    if (enabled)
+        m_imageAnimationTimeline = nullptr;
+    else if (!m_imageAnimationTimeline)
+        m_imageAnimationTimeline = ImageAnimationTimeline::create(ImageAnimationTimeline::Mode::Paused);
     updatePlayStateForAllAnimations();
     chrome().client().isAnyAnimationAllowedToPlayDidChange(enabled);
 }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 #if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
 void Page::setVideoAutoplayPreviewsEnabled(bool enabled)
@@ -4687,13 +4693,6 @@ void Page::setUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInt
 
     appearanceDidChange();
 #endif
-
-    forEachRenderableDocument([useDarkAppearance, useElevatedUserInterfaceLevel] (Document& document) {
-        for (auto& image : protect(document.cachedResourceLoader())->allCachedSVGImages()) {
-            if (RefPtr page = image->internalPage())
-                page->setUseColorAppearance(useDarkAppearance, useElevatedUserInterfaceLevel);
-        }
-    });
 }
 
 bool Page::useDarkAppearance() const
@@ -5603,7 +5602,6 @@ void Page::forceRepaintAllFrames()
     }
 }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::updatePlayStateForAllAnimations()
 {
     for (auto& rootFrame : m_rootFrames) {
@@ -5632,7 +5630,6 @@ void Page::removeIndividuallyPlayingAnimationElement(HTMLImageElement& element)
     if (!m_individuallyPlayingAnimationElements.computeSize() && !m_imageAnimationEnabled)
         chrome().client().isAnyAnimationAllowedToPlayDidChange(false);
 }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 ScreenOrientationManager* Page::screenOrientationManager() const
 {

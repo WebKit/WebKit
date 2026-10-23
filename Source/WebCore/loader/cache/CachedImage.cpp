@@ -46,6 +46,7 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleImageDrawingExtras.h"
 #include "SubresourceLoader.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -94,12 +95,17 @@ CachedImage::~CachedImage()
 void CachedImage::load(CachedResourceLoader& loader)
 {
     m_skippingRevalidationDocument = loader.document();
-    m_settings = loader.document() ? &loader.document()->settings() : nullptr;
+    m_environmentSettings = loader.document() ? &loader.document()->settings().imageEnvironmentSettings() : nullptr;
 
     if (loader.shouldPerformImageLoad(url()))
         CachedResource::load(loader);
     else
         setLoading(false);
+}
+
+Style::ImageDrawingExtras CachedImage::dataExtras() const
+{
+    return { URL { }, CSS::Keyword::None { }, std::nullopt, std::nullopt, m_environmentSettings };
 }
 
 void CachedImage::setBodyDataFrom(const CachedResource& resource)
@@ -119,7 +125,8 @@ void CachedImage::didAddClient(CachedResourceClient& client)
 {
     if (m_data && !m_image && !errorOccurred()) {
         createImage();
-        protect(m_image)->setData(m_data.copyRef(), true);
+        auto extras = dataExtras();
+        protect(m_image)->setData(m_data.copyRef(), true, &extras);
     }
 
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
@@ -324,10 +331,10 @@ bool CachedImage::CachedImageObserver::canDestroyDecodedData(const Image& image)
     return true;
 }
 
-void CachedImage::CachedImageObserver::imageFrameAvailable(const Image& image, ImageAnimatingState animatingState, const IntRect* changeRect, DecodingStatus decodingStatus)
+void CachedImage::CachedImageObserver::imageFrameAvailable(const Image& image, ImageAnimatingState animatingState, const IntRect* changeRect, DecodingStatus decodingStatus, const ImageDrawingExtras* changedFor)
 {
     for (RefPtr cachedImage : m_cachedImages)
-        cachedImage->imageFrameAvailable(image, animatingState, changeRect, decodingStatus);
+        cachedImage->imageFrameAvailable(image, animatingState, changeRect, decodingStatus, changedFor);
 }
 
 void CachedImage::CachedImageObserver::changedInRect(const Image& image, const IntRect* rect)
@@ -346,20 +353,6 @@ void CachedImage::CachedImageObserver::scheduleRenderingUpdate(const Image& imag
 {
     for (RefPtr cachedImage : m_cachedImages)
         cachedImage->scheduleRenderingUpdate(image);
-}
-
-bool CachedImage::CachedImageObserver::allowsAnimation(const Image& image) const
-{
-    // *::allowsAnimation can only return false when systemAllowsAnimationControls == true,
-    // so this prevents unnecessary work by exiting early.
-    if (!Image::systemAllowsAnimationControls())
-        return true;
-
-    for (RefPtr cachedImage : m_cachedImages) {
-        if (cachedImage->allowsAnimation(image))
-            return true;
-    }
-    return false;
 }
 
 inline void CachedImage::clearImage()
@@ -447,7 +440,8 @@ EncodedDataStatus CachedImage::updateImageData(bool allDataReceived)
     RefPtr image = m_image;
     if (!image || !m_data)
         return EncodedDataStatus::Error;
-    EncodedDataStatus result = image->setData(m_data.copyRef(), allDataReceived);
+    auto extras = dataExtras();
+    EncodedDataStatus result = image->setData(m_data.copyRef(), allDataReceived, &extras);
     didUpdateImageData();
     return result;
 }
@@ -572,7 +566,7 @@ bool CachedImage::canDestroyDecodedData(const Image& image) const
     return true;
 }
 
-void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState animatingState, const IntRect* changeRect, DecodingStatus decodingStatus)
+void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState animatingState, const IntRect* changeRect, DecodingStatus decodingStatus, const ImageDrawingExtras* changedFor)
 {
     if (&image != m_image)
         return;
@@ -584,12 +578,12 @@ void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState an
         // All the clients of animated images have to be notified. The new frame has to be drawn in all of them.
         if (animatingState == ImageAnimatingState::No && !m_clientsWaitingForAsyncDecoding.contains(*client))
             continue;
-        if (client->imageFrameAvailable(*this, animatingState, changeRect) == VisibleInViewportState::Yes)
+        if (client->imageFrameAvailable(*this, animatingState, changeRect, changedFor) == VisibleInViewportState::Yes)
             visibleState = VisibleInViewportState::Yes;
     }
 
     if (visibleState == VisibleInViewportState::No && animatingState == ImageAnimatingState::Yes)
-        protect(m_image)->stopAnimation();
+        protect(m_image)->stopAnimation(changedFor);
 
     if (decodingStatus != DecodingStatus::Partial)
         m_clientsWaitingForAsyncDecoding.clear();
@@ -620,33 +614,6 @@ void CachedImage::scheduleRenderingUpdate(const Image& image)
     CachedResourceClientWalker<CachedImageClient> walker(*this);
     while (RefPtr client = walker.next())
         client->scheduleRenderingUpdateForImage(*this);
-}
-
-bool CachedImage::useSystemDarkAppearance() const
-{
-    CachedResourceClientWalker<CachedImageClient> walker(*this);
-    while (RefPtr client = walker.next()) {
-        if (client->useSystemDarkAppearance())
-            return true;
-    }
-
-    return false;
-}
-
-bool CachedImage::allowsAnimation(const Image& image) const
-{
-    if (&image != m_image)
-        return false;
-
-    if (!Image::systemAllowsAnimationControls())
-        return true;
-
-    CachedResourceClientWalker<CachedImageClient> walker(*this);
-    while (RefPtr client = walker.next()) {
-        if (!client->allowsAnimation())
-            return false;
-    }
-    return true;
 }
 
 bool CachedImage::currentFrameKnownToBeOpaque() const

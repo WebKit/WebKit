@@ -36,6 +36,7 @@ namespace WebCore {
 struct SizedImage {
     Ref<Image> image;
     ConcreteObjectSize concreteObjectSize;
+    const ImageDrawingExtras* extras { nullptr };
 };
 
 } // namespace WebCore

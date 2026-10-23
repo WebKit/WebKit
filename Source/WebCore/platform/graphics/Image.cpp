@@ -140,7 +140,7 @@ void Image::subresourcesAreFinished(Document*, CompletionHandler<void()>&& compl
     completionHandler();
 }
 
-EncodedDataStatus Image::setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived)
+EncodedDataStatus Image::setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived, const ImageDrawingExtras* extras)
 {
     m_encodedImageData = WTF::move(data);
 
@@ -148,7 +148,7 @@ EncodedDataStatus Image::setData(RefPtr<FragmentedSharedBuffer>&& data, bool all
     if (!m_encodedImageData.get() || !m_encodedImageData->size())
         return EncodedDataStatus::Complete;
 
-    return dataChanged(allDataReceived);
+    return dataChanged(allDataReceived, extras);
 }
 
 bool Image::tryReplaceData(Ref<FragmentedSharedBuffer>&& data)
@@ -283,13 +283,6 @@ TextStream& operator<<(TextStream& ts, const Image& image)
 bool Image::animationPending() const
 {
     return m_animationStartTimer && m_animationStartTimer->isActive();
-}
-
-bool Image::gSystemAllowsAnimationControls = false;
-
-void Image::setSystemAllowsAnimationControls(bool allowsControls)
-{
-    gSystemAllowsAnimationControls = allowsControls;
 }
 
 std::optional<Color> Image::singlePixelSolidColor() const

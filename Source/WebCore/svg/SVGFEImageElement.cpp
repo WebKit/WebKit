@@ -31,6 +31,7 @@
 #include "Image.h"
 #include "LegacyRenderSVGResource.h"
 #include "NativeImage.h"
+#include "Page.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerInlines.h"
@@ -170,6 +171,14 @@ void SVGFEImageElement::removingSteps(RemovalType removalType, ContainerNode& ol
     SVGFilterPrimitiveStandardAttributes::removingSteps(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
         clearResourceReferences();
+}
+
+void SVGFEImageElement::scheduleRenderingUpdateForImage(CachedImage& cachedImage)
+{
+    RefPtr page = document().page();
+    RefPtr image = cachedImage.image();
+    if (page && image)
+        page->scheduleRenderingUpdate(*image);
 }
 
 void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)

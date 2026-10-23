@@ -65,7 +65,7 @@ private:
 
     String filenameExtension() const override;
 
-    EncodedDataStatus dataChanged(bool allDataReceived) override;
+    EncodedDataStatus dataChanged(bool allDataReceived, const ImageDrawingExtras*) override;
 
     void destroyDecodedData(bool destroyAll = true) override;
 

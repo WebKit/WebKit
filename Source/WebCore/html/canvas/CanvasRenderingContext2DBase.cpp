@@ -41,6 +41,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
+#include "CSSPropertyParserConsumer+LinkParameters.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserState.h"
 #include "CSSSerializationContext.h"
@@ -100,6 +101,7 @@
 #include "Settings.h"
 #include "SizedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleImageDrawingExtras.h"
 #include "StyleLengthResolution.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -1916,7 +1918,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
 
     auto orientation = imageElement.orientationForSourceImage();
 
-    auto result = drawImage(protect(imageElement.document()).get(), *sourceImage, concreteObjectSize, srcRect, dstRect, op, blendMode, orientation);
+    auto result = drawImage(protect(imageElement.document()).get(), *sourceImage, concreteObjectSize, srcRect, dstRect, op, blendMode, orientation, imageElement.currentURL());
 
     if (!result.hasException())
         checkOrigin(&imageElement);
@@ -1945,7 +1947,8 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(SVGImageElement& image
 
     auto concreteObjectSize = size(imageElement, FloatSize { canvasBase().size() }, ApplyImageDevicePixelRatio::No);
 
-    auto result = drawImage(protect(imageElement.document()).get(), *sourceImage, concreteObjectSize, srcRect, dstRect, op, blendMode);
+    Ref document = imageElement.document();
+    auto result = drawImage(document.get(), *sourceImage, concreteObjectSize, srcRect, dstRect, op, blendMode, ImageOrientation::Orientation::FromImage, document->encodingParseURL(imageElement.href()));
 
     if (!result.hasException())
         checkOrigin(&imageElement);
@@ -2012,7 +2015,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
 }
 #endif
 
-ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Image& sourceImage, ConcreteObjectSize concreteObjectSize, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode, ImageOrientation orientation)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Image& sourceImage, ConcreteObjectSize concreteObjectSize, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode, ImageOrientation orientation, const URL& imageURL)
 {
     if (!std::isfinite(dstRect.x()) || !std::isfinite(dstRect.y()) || !std::isfinite(dstRect.width()) || !std::isfinite(dstRect.height())
         || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
@@ -2078,22 +2081,30 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
 #endif
     };
 
+    RefPtr page = document.page();
+    auto useDarkAppearance = page ? std::optional { page->useDarkAppearance() } : std::nullopt;
+    auto useElevatedUserInterfaceLevel = page ? std::optional { page->useElevatedUserInterfaceLevel() } : std::nullopt;
+    auto fragmentURL = imageURL;
+    auto fragmentDirective = fragmentURL.consumeFragmentDirective();
+    auto linkParameters = Style::linkParametersForResource(Style::LinkParameters { CSS::Keyword::None { } }, CSSPropertyParserHelpers::parseLinkParametersFromFragmentDirective(fragmentDirective, document.cssParserContext()));
+    auto extras = Style::ImageDrawingExtras { WTF::move(fragmentURL), WTF::move(linkParameters), useDarkAppearance, useElevatedUserInterfaceLevel, &document.settings().imageEnvironmentSettings() };
+
     auto willUpdateContentsOptions = shouldPostProcess ? defaultWillUpdateContentsOptions() : defaultWillUpdateContentsOptionsWithoutPostProcessing();
 
     if (rectContainsCanvas(normalizedDstRect)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
+        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options, &extras);
     } else if (isFullCanvasCompositeMode(op)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        auto sizedImage = SizedImage { *image, concreteObjectSize };
+        auto sizedImage = SizedImage { *image, concreteObjectSize, &extras };
         fullCanvasCompositedDrawImage(sizedImage, normalizedDstRect, normalizedSrcRect, op, options);
     } else if (op == CompositeOperator::Copy) {
         willUpdateEntireContents(willUpdateContentsOptions);
         clearCanvas();
-        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
+        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options, &extras);
     } else {
         willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, willUpdateContentsOptions);
-        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
+        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options, &extras);
     }
 
     return { };
@@ -2460,7 +2471,7 @@ void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const In
 
 static void drawImageToContext(const SizedImage& sizedImage, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImageDrawingOptions options)
 {
-    context.drawImage(sizedImage.image, sizedImage.concreteObjectSize, dest, src, options);
+    context.drawImage(sizedImage.image, sizedImage.concreteObjectSize, dest, src, options, sizedImage.extras);
 }
 
 static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImageDrawingOptions options)

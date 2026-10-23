@@ -58,6 +58,7 @@
 
 namespace WebCore {
 
+class ImageEnvironmentSettings;
 class Page;
 
 class SettingsBase : public AbstractRefCountedAndCanMakeWeakPtr<SettingsBase> {
@@ -136,11 +137,14 @@ public:
 
     WeakPtr<Page> page() const { return m_page; }
 
+    const ImageEnvironmentSettings& imageEnvironmentSettings() const LIFETIME_BOUND;
+
 protected:
     explicit SettingsBase(Page*);
     virtual ~SettingsBase();
 
     void initializeDefaultFontFamilies();
+    void invalidateAfterGenericFamilyChange();
 
     void imageLoadingSettingsTimerFired();
 
@@ -170,6 +174,7 @@ protected:
     void mockCaptureDevicesEnabledChanged();
 #endif
     void layerBasedSVGEngineEnabledChanged();
+    void imageEnvironmentSettingsChanged();
     void useSystemAppearanceChanged();
     void fontFallbackPrefersPictographsChanged();
     void updateDisplayEDRHeadroom();
@@ -177,6 +182,8 @@ protected:
     WeakPtr<Page> m_page;
 
     Seconds m_minimumDOMTimerInterval;
+
+    mutable RefPtr<const ImageEnvironmentSettings> m_imageEnvironmentSettings;
 
     Timer m_setImageLoadingSettingsTimer;
 

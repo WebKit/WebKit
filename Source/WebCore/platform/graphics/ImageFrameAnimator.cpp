@@ -90,17 +90,27 @@ void ImageFrameAnimator::timerFired()
 {
     clearTimer();
 
+    m_frameIsDue = true;
+    m_source.get()->scheduleRenderingUpdate();
+}
+
+void ImageFrameAnimator::updateRendering()
+{
+    if (!m_frameIsDue)
+        return;
+
     Ref source = m_source.get();
 
     // Don't advance to nextFrame if the next frame is being decoded.
     if (source->isPendingDecodingAtIndex(nextFrameIndex(), m_nextFrameSubsamplingLevel, m_nextFrameOptions))
         return;
 
+    m_frameIsDue = false;
     advanceAnimation();
     source->imageFrameAtIndexAvailable(m_currentFrameIndex, ImageAnimatingState::Yes, source->frameDecodingStatusAtIndex(m_currentFrameIndex));
 }
 
-bool ImageFrameAnimator::imageFrameDecodeAtIndexHasFinished(unsigned index, ImageAnimatingState animatingState, DecodingStatus decodingStatus)
+bool ImageFrameAnimator::imageFrameDecodeAtIndexHasFinished(unsigned index, ImageAnimatingState animatingState, DecodingStatus)
 {
     if (animatingState != ImageAnimatingState::Yes)
         return false;
@@ -112,11 +122,11 @@ bool ImageFrameAnimator::imageFrameDecodeAtIndexHasFinished(unsigned index, Imag
         return false;
 
     // Don't advance to nextFrame if the timer has not fired yet.
-    if (isAnimating())
+    if (m_frameTimer)
         return true;
 
-    advanceAnimation();
-    m_source.get()->imageFrameAtIndexAvailable(m_currentFrameIndex, animatingState, decodingStatus);
+    m_frameIsDue = true;
+    m_source.get()->scheduleRenderingUpdate();
     return true;
 }
 
@@ -125,11 +135,15 @@ bool ImageFrameAnimator::startAnimation(SubsamplingLevel subsamplingLevel, const
     if (m_frameTimer)
         return true;
 
-    Ref source = m_source.get();
+    if (m_frameIsDue) {
+        m_source.get()->scheduleRenderingUpdate();
+        return true;
+    }
 
-    // ImageObserver may disallow animation.
-    if (!source->isAnimationAllowed())
+    if (!isAnimationAllowed())
         return false;
+
+    Ref source = m_source.get();
 
     m_nextFrameSubsamplingLevel = subsamplingLevel;
     m_nextFrameOptions = options;
@@ -172,6 +186,7 @@ void ImageFrameAnimator::advanceAnimation()
 void ImageFrameAnimator::stopAnimation()
 {
     clearTimer();
+    m_frameIsDue = false;
 }
 
 void ImageFrameAnimator::resetAnimation()

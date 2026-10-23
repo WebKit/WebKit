@@ -2289,6 +2289,7 @@ page/FrameTree.cpp
 page/FrameView.cpp @header:RenderStyleGetters @cost:6
 page/History.cpp
 page/ImageAnalysisQueue.cpp
+page/ImageEnvironmentSettings.cpp
 page/ImageOverlayController.cpp @header:RenderStyleGetters @cost:6
 page/IntelligenceTextEffectsSupport.cpp
 page/InteractionRegion.cpp @header:RenderStyleGetters @cost:9
@@ -2720,6 +2721,7 @@ platform/graphics/HEVCUtilities.cpp
 platform/graphics/Icon.cpp
 platform/graphics/Image.cpp
 platform/graphics/ImageAdapter.cpp
+platform/graphics/ImageAnimationTimeline.cpp
 platform/graphics/ImageBuffer.cpp
 platform/graphics/ImageBufferAllocator.cpp
 platform/graphics/ImageBufferBackend.cpp
@@ -3749,6 +3751,8 @@ svg/animation/SMILTime.cpp
 svg/animation/SMILTimeContainer.cpp
 svg/animation/SVGSMILElement.cpp
 svg/graphics/SVGImage.cpp @header:RenderStyleGetters
+svg/graphics/SVGImageInstance.cpp @header:RenderStyleGetters
+svg/graphics/SVGImageInstanceCache.cpp
 svg/graphics/filters/SVGFilterPrimitiveGraph.cpp
 svg/graphics/filters/SVGFilterRenderer.cpp
 svg/properties/SVGAnimatedPropertyBase.cpp

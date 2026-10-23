@@ -78,6 +78,7 @@ private:
 
     // CachedImageClient.
     void imageChanged(WebCore::CachedImage*, const IntRect*) final;
+    void scheduleRenderingUpdateForImage(WebCore::CachedImage&) final;
 
     void drawCrossfade(GraphicsContext&, const RenderElement&, ConcreteObjectSize, bool isForFirstLine) const;
     void normalizePercentages();

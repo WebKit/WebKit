@@ -309,6 +309,22 @@ void BitmapImageSource::resetAnimation()
     m_frameAnimator->resetAnimation();
 }
 
+void BitmapImageSource::updateRendering()
+{
+    if (RefPtr frameAnimator = m_frameAnimator.get())
+        frameAnimator->updateRendering();
+}
+
+void BitmapImageSource::scheduleRenderingUpdate()
+{
+    RefPtr imageObserver = this->imageObserver();
+    if (!imageObserver) {
+        updateRendering();
+        return;
+    }
+    imageObserver->scheduleRenderingUpdate(protect(*m_bitmapImage));
+}
+
 bool BitmapImageSource::isAnimated() const
 {
     return frameCount() > 1 && repetitionCount() != RepetitionCountNone;
@@ -317,18 +333,6 @@ bool BitmapImageSource::isAnimated() const
 bool BitmapImageSource::isAnimating() const
 {
     return m_frameAnimator && m_frameAnimator->isAnimating();
-}
-
-bool BitmapImageSource::isAnimationAllowed() const
-{
-    if (m_frameAnimator && !m_frameAnimator->isAnimationAllowed())
-        return false;
-
-    // ImageObserver may disallow animation.
-    if (auto imageObserver = this->imageObserver())
-        return imageObserver->allowsAnimation(protect(*m_bitmapImage));
-
-    return true;
 }
 
 bool BitmapImageSource::hasEverAnimated() const

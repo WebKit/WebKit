@@ -53,7 +53,8 @@ public:
     void advanceAnimation();
     void stopAnimation();
     void resetAnimation();
-    bool isAnimating() const { return !!m_frameTimer; }
+    bool isAnimating() const { return m_frameTimer || m_frameIsDue; }
+    void updateRendering();
     bool LEGACY_NODELETE isAnimationAllowed() const;
 
     bool hasEverAnimated() const { return !!m_desiredFrameStartTime; }
@@ -77,6 +78,7 @@ private:
     RepetitionCount m_repetitionCount { RepetitionCountNone };
 
     std::unique_ptr<Timer> m_frameTimer;
+    bool m_frameIsDue { false };
     SubsamplingLevel m_nextFrameSubsamplingLevel { SubsamplingLevel::Default };
     DecodingOptions m_nextFrameOptions { DecodingMode::Asynchronous };
 

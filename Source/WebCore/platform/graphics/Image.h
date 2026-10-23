@@ -112,8 +112,8 @@ public:
     virtual bool usesConcreteObjectSizeAsViewport() const { return false; }
 
 public:
-    WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived);
-    virtual EncodedDataStatus dataChanged(bool /* allDataReceived */) { return EncodedDataStatus::Unknown; }
+    WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived, const ImageDrawingExtras* = nullptr);
+    virtual EncodedDataStatus dataChanged(bool /* allDataReceived */, const ImageDrawingExtras*) { return EncodedDataStatus::Unknown; }
 
     // Can be called after final setData() to replace encoded data with an identical copy of the
     // data (e.g. to replace a dirty copy of the data with a clean copy of the data).
@@ -135,14 +135,12 @@ public:
     // It will automatically pause once all observers no longer want to render the image anywhere.
     virtual void startAnimation() { }
     void startAnimationAsynchronously();
-    virtual void stopAnimation() {}
+    virtual void stopAnimation(const ImageDrawingExtras* = nullptr) { }
     virtual void resetAnimation() {}
     virtual bool isAnimating() const { return false; }
+
+    virtual void updateRendering() { }
     WEBCORE_EXPORT bool LEGACY_NODELETE animationPending() const;
-    std::optional<bool> allowsAnimation() const { return m_allowsAnimation; }
-    void setAllowsAnimation(std::optional<bool> allowsAnimation) { m_allowsAnimation = allowsAnimation; }
-    static bool systemAllowsAnimationControls() { return gSystemAllowsAnimationControls; }
-    WEBCORE_EXPORT static void LEGACY_NODELETE setSystemAllowsAnimationControls(bool allowsControls);
 
     // Typically the CachedImage that owns us.
     RefPtr<ImageObserver> LEGACY_NODELETE imageObserver() const;
@@ -204,11 +202,7 @@ private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;
     WeakPtr<ImageObserver> m_imageObserver;
     const std::unique_ptr<ImageAdapter> m_adapter;
-
-    // A value of true or false will override the default Page::imageAnimationEnabled state.
-    std::optional<bool> m_allowsAnimation { std::nullopt };
     const std::unique_ptr<Timer> m_animationStartTimer;
-    WEBCORE_EXPORT static bool gSystemAllowsAnimationControls;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Image&);

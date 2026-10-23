@@ -791,6 +791,14 @@ void ImageLoader::resetLazyImageLoading(Document& document)
     m_lazyImageLoadState = LazyImageLoadState::None;
 }
 
+void ImageLoader::scheduleRenderingUpdateForImage(CachedImage& cachedImage)
+{
+    RefPtr page = element().document().page();
+    RefPtr image = cachedImage.image();
+    if (page && image)
+        page->scheduleRenderingUpdate(*image);
+}
+
 VisibleInViewportState ImageLoader::imageVisibleInViewport(const Document& document) const
 {
     if (&element().document() != &document)

@@ -42,6 +42,7 @@ class HTMLFormElement;
 class HTMLImageLoader;
 class HTMLMapElement;
 class Image;
+class ImageAnimationTimeline;
 class LayoutSize;
 class SecurityOrigin;
 
@@ -181,9 +182,8 @@ public:
     bool LEGACY_NODELETE allowsOrientationOverride() const;
 
     bool allowsAnimation() const;
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     WEBCORE_EXPORT void setAllowsAnimation(std::optional<bool>);
-#endif
+    ImageAnimationTimeline* imageAnimationTimeline() const { return m_imageAnimationTimeline.get(); }
 
     String fetchPriorityForBindings() const;
     RequestPriority fetchPriority() const;
@@ -285,6 +285,8 @@ private:
 #endif
     bool m_hadNameBeforeAttributeChanged { false }; // FIXME: We only need this because parseAttribute() can't see the old value.
     bool m_isDroppedImagePlaceholder { false };
+    std::optional<bool> m_allowsAnimation;
+    RefPtr<ImageAnimationTimeline> m_imageAnimationTimeline;
 
     WeakPtr<HTMLPictureElement, WeakPtrImplWithEventTargetData> m_pictureElement;
     // The source element that was selected to provide the source URL.

@@ -80,6 +80,7 @@ private:
 
     // CachedImageClient.
     void imageChanged(WebCore::CachedImage*, const IntRect* = nullptr) final;
+    void scheduleRenderingUpdateForImage(WebCore::CachedImage&) final;
 
     RefPtr<BitmapImage> resolvedImage(const RenderElement&, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const;
 

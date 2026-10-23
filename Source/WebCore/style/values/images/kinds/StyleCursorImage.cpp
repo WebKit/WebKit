@@ -32,7 +32,10 @@
 #include "CachedImage.h"
 #include "DeprecatedCSSOMValue.h"
 #include "FloatSize.h"
+#include "Page.h"
 #include "RenderElement.h"
+#include "RenderObjectInlines.h"
+#include "Settings.h"
 #include "StyleBuilderState.h"
 #include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -115,7 +118,9 @@ ImageWithScale CursorImage::selectBestFitImage(const Document& document)
 
 ImageDrawingExtras CursorImage::drawingExtrasForRenderer(const RenderElement& renderer) const
 {
-    return { m_originalURL.resolved, renderer.style().linkParameters() };
+    auto fragmentURL = m_originalURL.resolved;
+    fragmentURL.consumeFragmentDirective();
+    return { WTF::move(fragmentURL), renderer.style().linkParameters(), protect(renderer.page())->useDarkAppearance(), protect(renderer.page())->useElevatedUserInterfaceLevel(), &renderer.document().settings().imageEnvironmentSettings(), renderer.imageAnimationTimeline() };
 }
 
 bool CursorImage::usesDataProtocol() const

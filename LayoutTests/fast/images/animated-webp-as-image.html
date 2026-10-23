@@ -19,15 +19,28 @@
         <canvas id="canvas-G"></canvas>
     </div>
     <script>
-        function drawFrame(image, canvasId) {
+        function waitForNextFrame(image) {
             return new Promise((resolve) => {
-                let canvas = document.getElementById("canvas-" + canvasId);
-                let context = canvas.getContext("2d");
-                context.drawImage(image, 0, 0, canvas.width, canvas.height);
-                setTimeout(() => {
-                    resolve(String.fromCharCode(canvasId.charCodeAt() + 1));
-                }, 30);
+                if (!window.internals) {
+                    setTimeout(resolve, 30);
+                    return;
+                }
+                let frameIndex = internals.imageFrameIndex(image);
+                (function check() {
+                    if (internals.imageFrameIndex(image) != frameIndex) {
+                        resolve();
+                        return;
+                    }
+                    setTimeout(check, 5);
+                })();
             });
+        }
+
+        function drawFrame(image, canvasId) {
+            let canvas = document.getElementById("canvas-" + canvasId);
+            let context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            return waitForNextFrame(image).then(() => String.fromCharCode(canvasId.charCodeAt() + 1));
         }
 
         function drawImage(image, canvasId, frameCount) {

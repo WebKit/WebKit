@@ -30,6 +30,7 @@ namespace WebCore {
 
 class CachedImage;
 class Document;
+class ImageDrawingExtras;
 class IntRect;
 
 enum class VisibleInViewportState { Unknown, Yes, No };
@@ -46,17 +47,14 @@ public:
     virtual void imageChanged(CachedImage*, const IntRect* = nullptr) { }
 
     virtual bool canDestroyDecodedData() const { return true; }
-    virtual bool useSystemDarkAppearance() const { return false; }
 
     // Called when a new decoded frame for a large image is available or when an animated image is ready to advance to the next frame.
-    WEBCORE_EXPORT virtual VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*);
+    WEBCORE_EXPORT virtual VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*, const ImageDrawingExtras* changedFor);
     virtual VisibleInViewportState imageVisibleInViewport(const Document&) const { return VisibleInViewportState::No; }
 
     virtual void didRemoveCachedImageClient(CachedImage&) { }
     virtual void imageContentChanged(CachedImage&) { }
     virtual void scheduleRenderingUpdateForImage(CachedImage&) { }
-
-    virtual bool allowsAnimation() const { return true; }
 
     virtual bool isRendererClient() const { return false; }
 

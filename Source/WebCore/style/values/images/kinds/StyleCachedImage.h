@@ -112,7 +112,7 @@ private:
     RefPtr<WebCore::Image> resolvedImage() const;
     ConcreteObjectSize concreteSizeToDrawAt(const WebCore::Image&, const RenderElement&, ConcreteObjectSize) const;
     NaturalDimensions tileNaturalDimensions(const WebCore::Image&) const;
-    Vector<CSS::ParamFunction> urlLinkParameters(const CSSParserContext&, StringView fragment) const;
+    Vector<CSS::ParamFunction> urlLinkParameters(const CSSParserContext&, StringView fragmentDirective) const;
 
     struct ReferencedSVGResource {
         SingleThreadWeakPtr<RenderSVGResourceContainer> resource;

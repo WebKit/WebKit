@@ -56,6 +56,7 @@ public:
     virtual void startAnimation() { }
     virtual void stopAnimation() { }
     virtual void resetAnimation() { }
+    virtual void updateRendering() { }
     virtual bool isAnimated() const { return false; }
     virtual bool isAnimating() const { return false; }
     virtual bool hasEverAnimated() const { return false; }
@@ -78,11 +79,13 @@ public:
     virtual RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation) { return currentNativeImage(); }
 
     virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned) { return primaryNativeImage(); }
+    virtual RefPtr<NativeImage> preTransformedNativeImageAtIndex(unsigned, ImageOrientation orientation) { return currentPreTransformedNativeImage(orientation); }
 
     virtual RefPtr<NativeImage> primaryNativeImageForUnpremultipliedPixels() { return nullptr; }
 
     virtual std::expected<Ref<NativeImage>, DecodingStatus> primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
     virtual std::expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
+    virtual std::expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexForDrawing(unsigned, SubsamplingLevel, const DecodingOptions&);
 
     // Overridden by BitmapImageSource to keep decoded-size accounting in step with the
     // platform-image replacement the GPU process performs while the image is drawn.
