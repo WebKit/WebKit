@@ -606,6 +606,7 @@
 				WebKit/WKWebView/SiteIsolationNavigationTests.swift,
 				WebKit/WKWebView/SiteIsolationServiceWorkerTests.swift,
 				WebKit/WKWebView/SiteIsolationSessionStateTests.swift,
+				WebKit/WKWebView/SiteIsolationTextExtractionTests.swift,
 				WebKit/WKWebView/SiteIsolationUIDelegateTests.swift,
 				WebKit/WKWebView/SiteIsolationUserAgentTests.swift,
 				WebKit/WKWebView/TextExtractionTests.swift,
