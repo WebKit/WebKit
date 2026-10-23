@@ -45,8 +45,8 @@ bool canUseForIntrinsicWidthComputation(const RenderBlockFlow& blockContainer)
 {
     for (auto walker = InlineWalker(blockContainer); !walker.atEnd(); walker.advance()) {
         CheckedRef renderer = *walker.current();
-        if (!renderer->isInFlow())
-            return false;
+        if (renderer->isFloatingOrOutOfFlowPositioned())
+            continue;
 
         auto isFullySupportedInFlowRenderer = isAnyOf<RenderText, RenderLineBreak, RenderListOutsideMarker>(renderer) || renderer->isInlineBox();
         if (isFullySupportedInFlowRenderer)
@@ -55,33 +55,12 @@ bool canUseForIntrinsicWidthComputation(const RenderBlockFlow& blockContainer)
         if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer.get()); renderBlock && renderBlock->isBlockLevelBox())
             continue;
 
-        if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer.get()); renderBlock && renderBlock->isAtomicInlineLevelBox() && !renderBlock->firstChild()) {
-            if (renderBlock->style().usedAppearance() != StyleAppearance::None || (renderBlock->element() && renderBlock->element()->firstChild())) {
-                // FIXME: Various widgets with or without appearance.
-                // Dynamic content change (e.g. adding/removing select options) needs to dirty inlineContentCache.
-                return false;
-            }
+        if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer); renderBlock && renderBlock->isAtomicInlineLevelBox() && !renderBlock->firstChild())
             continue;
-        }
 
-        CheckedRef unsupportedRenderElement = downcast<RenderElement>(renderer.get());
-        if (!unsupportedRenderElement->writingMode().isHorizontal() || !unsupportedRenderElement->style().logicalWidth().isFixed())
-            return false;
-
-        auto isNonSupportedFixedWidthContent = [&] {
-            // FIXME: Implement this image special in line builder.
-            auto allowImagesToBreak = !blockContainer.document().inQuirksMode() || !blockContainer.isRenderTableCell();
-            if (!allowImagesToBreak)
-                return true;
-            // FIXME: See RenderReplaced::computeIntrinsicLogicalWidthContributions where m_minContentLogicalWidthContribution is set to 0.
-            auto isReplacedWithSpecialIntrinsicWidth = [&] {
-                if (auto* renderReplaced = dynamicDowncast<RenderReplaced>(unsupportedRenderElement.get()))
-                    return renderReplaced->style().logicalMaxWidth().isPercentOrCalculated();
-                return false;
-            };
-            return isReplacedWithSpecialIntrinsicWidth();
-        };
-        if (isNonSupportedFixedWidthContent())
+        // FIXME: Implement this image special in line builder.
+        auto allowImagesToBreak = !blockContainer.document().inQuirksMode() || !blockContainer.isRenderTableCell();
+        if (!allowImagesToBreak)
             return false;
     }
     return true;

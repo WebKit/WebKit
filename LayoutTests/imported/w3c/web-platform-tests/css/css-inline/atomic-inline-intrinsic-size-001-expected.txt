@@ -1,0 +1,14 @@
+
+PASS An inline-block next to text (inlineBlock, min-content)
+PASS An inline-block next to text (inlineBlock, max-content)
+PASS An inline-flex box next to text (inlineFlex, min-content)
+PASS An inline-flex box next to text (inlineFlex, max-content)
+PASS An inline-block with min-width and max-width (inlineBlockWithMinAndMaxWidth, min-content)
+PASS An inline-block with min-width and max-width (inlineBlockWithMinAndMaxWidth, max-content)
+PASS An inline-block with width: min-content (inlineBlockWithMinContentWidth, min-content)
+PASS An inline-block with width: min-content (inlineBlockWithMinContentWidth, max-content)
+PASS A replaced box with a percentage max-width (replacedWithPercentageMaxWidth, min-content)
+PASS A replaced box with a percentage max-width (replacedWithPercentageMaxWidth, max-content)
+PASS An orthogonal inline-block contributes its block size and its left and right margins (orthogonalInlineBlock, min-content)
+PASS An orthogonal inline-block contributes its block size and its left and right margins (orthogonalInlineBlock, max-content)
+
