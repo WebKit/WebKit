@@ -38,6 +38,19 @@
 
 namespace JSC {
 
+#if !ENABLE(ASSEMBLER)
+// CLoop has no machine-register allocator. Keep the shared Wasm location
+// types available, but the CLoop calling convention never allocates registers.
+class JSValueRegs {
+public:
+    JSValueRegs() = default;
+    explicit JSValueRegs(GPRReg) { }
+    JSValueRegs(GPRReg, GPRReg) { }
+    GPRReg payloadGPR() const { return InvalidGPRReg; }
+    GPRReg tagGPR() const { return InvalidGPRReg; }
+};
+#endif
+
 namespace Wasm {
 
 class ValueLocation {
