@@ -36,7 +36,7 @@ def main():
         return 1
 
     result = subprocess.run(
-        ["git", "ls-tree", "-r", "--name-only", "HEAD", "--", "Source"],
+        ["git", "-c", f"safe.directory={ROOT}", "ls-tree", "-r", "--name-only", "HEAD", "--", "Source"],
         cwd=ROOT, check=False, capture_output=True, text=True, encoding="utf-8",
     )
     if result.returncode:
@@ -45,7 +45,7 @@ def main():
         # path index is available. Fall back to the index, not the worktree, so
         # excluded WKC directories are still included in the inventory.
         result = subprocess.run(
-            ["git", "ls-files", "--cached", "--full-name", "--", "Source"],
+            ["git", "-c", f"safe.directory={ROOT}", "ls-files", "--cached", "--full-name", "--", "Source"],
             cwd=ROOT, check=False, capture_output=True, text=True, encoding="utf-8",
         )
         if result.returncode:
