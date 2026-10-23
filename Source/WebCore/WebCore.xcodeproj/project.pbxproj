@@ -7510,6 +7510,10 @@
 		EFC21B040B76E5E705ECE268 /* AggregatorResponseData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3880493C91656A8729182D70 /* AggregatorResponseData.h */; };
 		68CE9AC93F8595E11D22A3A7 /* PhoneNumberPossessionCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5E23EE1515E7CBFCAF1C81 /* PhoneNumberPossessionCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B361F603AFEAC82C3843733 /* PhoneNumberPossessionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = F0112C63F1D28E3E5CB8AE34 /* PhoneNumberPossessionCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99F2014F9C7443B33E5557BE /* MockPhoneNumberPossessionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 18AD59F8849B6BFD04BDFD4E /* MockPhoneNumberPossessionConfiguration.h */; };
+		B1250E41A798D1BEA1E1825C /* MockPhoneNumberPossessionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 18AD59F8849B6BFD04BDFD4E /* MockPhoneNumberPossessionConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3AD99A5CA6285B5B7FE6354D /* JSMockPhoneNumberPossessionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CED03DF8BFA70D332EE08A20 /* JSMockPhoneNumberPossessionConfiguration.h */; };
+		F454A2E88A474BE3242ADC5B /* JSMockPhoneNumberPossessionConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20D77B0DB6FB320EAAA0445 /* JSMockPhoneNumberPossessionConfiguration.cpp */; };
 		4A3A479BAB413F796EF38438 /* PhoneNumberPossessionCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = F6EF1185B9BFEAED5D815C1E /* PhoneNumberPossessionCredential.h */; };
 		A4C507AADDFB428EA96A5E75 /* FrameIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D9D4D70C1F40D88DBFCA80 /* FrameIndexedDBAgent.h */; };
 		B1EA5351EAA94AFA936F8771 /* PageIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F630DF69544CEA9A7BE1E2 /* PageIndexedDBAgent.h */; };
@@ -24097,6 +24101,10 @@
 		9B5E23EE1515E7CBFCAF1C81 /* PhoneNumberPossessionCoordinatorClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhoneNumberPossessionCoordinatorClient.h; sourceTree = "<group>"; };
 		F0112C63F1D28E3E5CB8AE34 /* PhoneNumberPossessionCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhoneNumberPossessionCoordinator.h; sourceTree = "<group>"; };
 		84AD81E546C7B42E0F61A830 /* PhoneNumberPossessionCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PhoneNumberPossessionCoordinator.cpp; sourceTree = "<group>"; };
+		EA0829091CB13151F12F7574 /* MockPhoneNumberPossessionConfiguration.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockPhoneNumberPossessionConfiguration.idl; sourceTree = "<group>"; };
+		18AD59F8849B6BFD04BDFD4E /* MockPhoneNumberPossessionConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockPhoneNumberPossessionConfiguration.h; sourceTree = "<group>"; };
+		CED03DF8BFA70D332EE08A20 /* JSMockPhoneNumberPossessionConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSMockPhoneNumberPossessionConfiguration.h; sourceTree = "<group>"; };
+		B20D77B0DB6FB320EAAA0445 /* JSMockPhoneNumberPossessionConfiguration.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockPhoneNumberPossessionConfiguration.cpp; sourceTree = "<group>"; };
 		5730C2E5A2794FD7C14E0734 /* PhoneNumberPossessionCredential.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PhoneNumberPossessionCredential.cpp; sourceTree = "<group>"; };
 		542FC0C1FBF0776D292FF8D6 /* AggregatorResponseData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AggregatorResponseData.cpp; sourceTree = "<group>"; };
 		3880493C91656A8729182D70 /* AggregatorResponseData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AggregatorResponseData.h; sourceTree = "<group>"; };
@@ -27471,6 +27479,8 @@
 				A1BB85A62159B02C0067E07D /* MockPaymentError.h */,
 				A1BB85A82159B02C0067E07D /* MockPaymentError.idl */,
 				A1CBEF631F9F11290028DE7C /* MockPaymentMethod.h */,
+				18AD59F8849B6BFD04BDFD4E /* MockPhoneNumberPossessionConfiguration.h */,
+				EA0829091CB13151F12F7574 /* MockPhoneNumberPossessionConfiguration.idl */,
 				A14061891E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp */,
 				A140618A1E2ECA0A0032B34E /* MockPreviewLoaderClient.h */,
 				57156108234C1B31008FC7AB /* MockWebAuthenticationConfiguration.h */,
@@ -27548,6 +27558,8 @@
 				A146D3181F99BCBA00D29196 /* JSMockPaymentCoordinator.h */,
 				A1BB85B42159B3890067E07D /* JSMockPaymentError.cpp */,
 				A1BB85B52159B38A0067E07D /* JSMockPaymentError.h */,
+				B20D77B0DB6FB320EAAA0445 /* JSMockPhoneNumberPossessionConfiguration.cpp */,
+				CED03DF8BFA70D332EE08A20 /* JSMockPhoneNumberPossessionConfiguration.h */,
 				57156111234C7FBC008FC7AB /* JSMockWebAuthenticationConfiguration.cpp */,
 				57156110234C7FBC008FC7AB /* JSMockWebAuthenticationConfiguration.h */,
 				3CFE80DDA749005FD4E3712C /* JSRequestedGPU.cpp */,
@@ -44128,6 +44140,7 @@
 				A104EC5E220A3E4E00CBF67A /* JSMockPaymentContactFields.h in Headers */,
 				A146D31B1F99BCFB00D29196 /* JSMockPaymentCoordinator.h in Headers */,
 				A1BB85B92159B3AE0067E07D /* JSMockPaymentError.h in Headers */,
+				3AD99A5CA6285B5B7FE6354D /* JSMockPhoneNumberPossessionConfiguration.h in Headers */,
 				57156115234C7FDC008FC7AB /* JSMockWebAuthenticationConfiguration.h in Headers */,
 				427DA71E13735DFA007C57FB /* JSServiceWorkerInternals.h in Headers */,
 				EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */,
@@ -44144,6 +44157,7 @@
 				A104EC5A220A3DE000CBF67A /* MockPaymentContactFields.h in Headers */,
 				A1AFEDE61F8BFF6D0087013F /* MockPaymentCoordinator.h in Headers */,
 				A1CBEF641F9F11290028DE7C /* MockPaymentMethod.h in Headers */,
+				99F2014F9C7443B33E5557BE /* MockPhoneNumberPossessionConfiguration.h in Headers */,
 				A140618C1E2ECA0A0032B34E /* MockPreviewLoaderClient.h in Headers */,
 				5715610B234C1B49008FC7AB /* MockWebAuthenticationConfiguration.h in Headers */,
 				AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */,
@@ -47746,6 +47760,7 @@
 				CDF2B0151820540600F2B424 /* MockMediaSourcePrivate.h in Headers */,
 				E169FDA72F85C313005AD4C7 /* MockParentalControlsURLFilter.h in Headers */,
 				A1BB85A92159B02C0067E07D /* MockPaymentError.h in Headers */,
+				B1250E41A798D1BEA1E1825C /* MockPhoneNumberPossessionConfiguration.h in Headers */,
 				07D6A4F41BED5F8800174146 /* MockRealtimeAudioSource.h in Headers */,
 				4A0FFA9E1AAF5E7E0062803B /* MockRealtimeMediaSourceCenter.h in Headers */,
 				07EE76EC1BE96DB000F89133 /* MockRealtimeVideoSource.h in Headers */,
@@ -51020,6 +51035,7 @@
 				A104EC5D220A3E4B00CBF67A /* JSMockPaymentContactFields.cpp in Sources */,
 				A146D31A1F99BCF800D29196 /* JSMockPaymentCoordinator.cpp in Sources */,
 				A1BB85B82159B3A40067E07D /* JSMockPaymentError.cpp in Sources */,
+				F454A2E88A474BE3242ADC5B /* JSMockPhoneNumberPossessionConfiguration.cpp in Sources */,
 				57156114234C7FD6008FC7AB /* JSMockWebAuthenticationConfiguration.cpp in Sources */,
 				9DAE6B91E7F40B76A6883FF1 /* JSRequestedGPU.cpp in Sources */,
 				427DA71D13735DFA007C57FB /* JSServiceWorkerInternals.cpp in Sources */,

@@ -1486,6 +1486,7 @@ enum ContentsFormat {
     undefined addPrefetchLoadEventListener(HTMLLinkElement link, EventListener? callback);
 
     [Conditional=WEB_AUTHN] undefined setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration configuration);
+    [Conditional=PHONE_NUMBER_POSSESSION] undefined setMockPhoneNumberPossessionConfiguration(MockPhoneNumberPossessionConfiguration configuration);
 
     InternalsMapLike createInternalsMapLike();
     InternalsSetLike createInternalsSetLike();

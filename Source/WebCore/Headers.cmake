@@ -3561,6 +3561,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     testing/MockGamepad.h
     testing/MockGamepadProvider.h
     testing/MockParentalControlsURLFilter.h
+    testing/MockPhoneNumberPossessionConfiguration.h
     testing/MockWebAuthenticationConfiguration.h
     testing/js/WebCoreTestSupport.h
 

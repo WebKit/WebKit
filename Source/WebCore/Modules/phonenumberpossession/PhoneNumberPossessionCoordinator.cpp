@@ -190,6 +190,12 @@ void PhoneNumberPossessionCoordinator::isAvailable(const Document& document, DOM
     });
 }
 
+void PhoneNumberPossessionCoordinator::setMockConfigurationForTesting(const MockPhoneNumberPossessionConfiguration& configuration)
+{
+    if (m_client)
+        m_client->setMockConfigurationForTesting(configuration);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(PHONE_NUMBER_POSSESSION)

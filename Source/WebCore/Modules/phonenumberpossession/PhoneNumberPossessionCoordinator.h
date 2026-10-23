@@ -40,6 +40,7 @@ class Document;
 class Page;
 class PhoneNumberPossessionCoordinatorClient;
 enum class MediationRequirement : uint8_t;
+struct MockPhoneNumberPossessionConfiguration;
 struct PhoneNumberPossessionRequest;
 template<typename IDLType> class DOMPromiseDeferred;
 
@@ -57,6 +58,8 @@ public:
 
     void discoverFromExternalSource(const Document&, PhoneNumberPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);
     void isAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&);
+
+    WEBCORE_EXPORT void setMockConfigurationForTesting(const MockPhoneNumberPossessionConfiguration&);
 
 private:
     WeakRef<Page> m_page;
