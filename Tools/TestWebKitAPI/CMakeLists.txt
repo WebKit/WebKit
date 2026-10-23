@@ -156,6 +156,7 @@ set(TestWTF_SOURCES
     Tests/WTF/SparseBitVector.cpp
     Tests/WTF/StackTraceTest.cpp
     Tests/WTF/StdLibExtrasTests.cpp
+    Tests/WTF/Stopwatch.cpp
     Tests/WTF/StringBuilder.cpp
     Tests/WTF/StringCommon.cpp
     Tests/WTF/StringConcatenate.cpp

@@ -1399,6 +1399,7 @@
 				WTF/SparseBitVector.cpp,
 				WTF/StackTraceTest.cpp,
 				WTF/StdLibExtrasTests.cpp,
+				WTF/Stopwatch.cpp,
 				WTF/StringBuilder.cpp,
 				WTF/StringCommon.cpp,
 				WTF/StringConcatenate.cpp,
