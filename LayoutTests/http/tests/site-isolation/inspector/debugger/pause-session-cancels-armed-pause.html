@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseSessionCancelsArmedPause");
+
+    let mainTarget;
+    let frameATarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionCancelsArmedPause.Setup",
+        description: "Find the frame target of the cross-site iframe.",
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionCancelsArmedPause.HeldFrame",
+        description: "A pause that is armed in a frame when a session opens should be cancelled, so the frame does not pause at an arbitrary statement after the session closes.",
+        async test() {
+            await mainTarget.DebuggerAgent.pause();
+            await GlobalPause.pause(frameATarget);
+            await GlobalPause.resumeAll();
+
+            let result = await Promise.race([GlobalPause.evaluate(mainTarget, "1 + 1"), GlobalPause.sleep(2000).then(() => "timed out")]);
+            InspectorTest.expectEqual(result, 2, "Script should run in the main frame without pausing.");
+            InspectorTest.expectFalse(WI.debuggerManager.dataForTarget(mainTarget).paused, "The main frame should not be paused.");
+
+            if (WI.debuggerManager.dataForTarget(mainTarget).paused)
+                await mainTarget.DebuggerAgent.resume();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a pause armed in a frame when a pause session opens is cancelled, so the frame does not pause at an arbitrary statement after the session closes.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+</body>

@@ -27,6 +27,7 @@
 #include "WebPageInspectorController.h"
 
 #include "APIUIClient.h"
+#include "BrowsingContextGroup.h"
 #include "DebuggerPauseCoordinator.h"
 #include "FrameInspectorTarget.h"
 #include "FrameInspectorTargetProxy.h"
@@ -390,6 +391,20 @@ void WebPageInspectorController::frameDidContinueForDebugger(WebProcessProxy& pr
 {
     if (m_debuggerPauseCoordinator)
         CheckedPtr { m_debuggerPauseCoordinator }->frameDidContinue(process, frameID);
+}
+
+// The session of any page in the browsing context group may hold the added page.
+void WebPageInspectorController::pageWasAddedToProcess(BrowsingContextGroup& group, WebProcessProxy& process, WebCore::PageIdentifier pageID)
+{
+    group.forEachPage([&](WebPageProxy& page) {
+        page.inspectorController().browsingContextGroupPageWasAddedToProcess(process, pageID);
+    });
+}
+
+void WebPageInspectorController::browsingContextGroupPageWasAddedToProcess(WebProcessProxy& process, WebCore::PageIdentifier pageID)
+{
+    if (m_debuggerPauseCoordinator)
+        CheckedPtr { m_debuggerPauseCoordinator }->pageWasAdded(process, pageID);
 }
 
 void WebPageInspectorController::frameDidChangeProcess(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier newProcessID)

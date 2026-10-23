@@ -1,0 +1,99 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+addEventListener("message", (event) => { window.popupTickTimes = event.data; });
+
+window.otherGroupChannel = new BroadcastChannel("other-group");
+window.otherGroupChannel.onmessage = (event) => { window.otherGroupTickTimes = event.data; };
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsPagesOfBrowsingContextGroup");
+
+    let frameATarget;
+
+    async function fetchPopupTickTimes(minimumCount = 0) {
+        await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.popupTickTimes = null");
+        await waitForExpressionInTarget(InspectorTest.mainFrameTarget, `window.popupTickTimes?.length > ${minimumCount} || (window.popup.postMessage('report', '*'), false)`, 50);
+        return (await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.popupTickTimes")) || [];
+    }
+
+    async function fetchOtherGroupTickTimes(minimumCount = 0) {
+        await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.otherGroupTickTimes = null");
+        await waitForExpressionInTarget(InspectorTest.mainFrameTarget, `window.otherGroupTickTimes?.length > ${minimumCount} || (window.otherGroupChannel.postMessage('report'), false)`, 50);
+        return (await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.otherGroupTickTimes")) || [];
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsPagesOfBrowsingContextGroup.Setup",
+        description: "Find the cross-site iframe that will pause, and open a popup for a third site, which runs in a process that the paused page does not use.",
+        async test() {
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.popup = window.open('https://localhost:8443/site-isolation/inspector/debugger/resources/recording-page.html'), 0");
+            InspectorTest.expectThat((await fetchPopupTickTimes(2)).length > 2, "The popup's interval should be running.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsPagesOfBrowsingContextGroup.PopupInAnotherProcess",
+        description: "Pausing the cross-site iframe should hold a popup of the same browsing context group in another process.",
+        async test() {
+            await GlobalPause.pause(frameATarget);
+            let start = Date.now();
+            await GlobalPause.sleep(300);
+            let end = Date.now();
+            await GlobalPause.resumeAll();
+            await GlobalPause.sleep(200);
+
+            let tickTimes = await fetchPopupTickTimes();
+            InspectorTest.expectEqual(tickTimes.filter((time) => time > start + 100 && time < end).length, 0, "The popup's interval should not run while frame A is paused.");
+            InspectorTest.expectThat(tickTimes.some((time) => time > end), "The popup's interval should run after resuming.");
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.popup.close(), 0");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsPagesOfBrowsingContextGroup.PageOfAnotherGroupInSameProcess",
+        description: "A same-site page opened without an opener is in another browsing context group, but in the main frame's process. It should keep running while the cross-site iframe is paused.",
+        async test() {
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.open('resources/broadcasting-page.html?channel=other-group', '_blank', 'noopener'), 0");
+            InspectorTest.expectThat((await fetchOtherGroupTickTimes(2)).length > 2, "The page without an opener should be running.");
+
+            await GlobalPause.pause(frameATarget);
+            let start = Date.now();
+            await GlobalPause.sleep(300);
+            let end = Date.now();
+            await GlobalPause.resumeAll();
+
+            let tickTimes = await fetchOtherGroupTickTimes();
+            InspectorTest.expectThat(tickTimes.filter((time) => time > start + 100 && time < end).length > 2, "The page without an opener should keep running while frame A is paused.");
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.otherGroupChannel.postMessage('close'), 0");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsPagesOfBrowsingContextGroup.PopupOpenedDuringPause",
+        description: "A popup that a held page opens while the cross-site iframe is paused should be held too.",
+        async test() {
+            await GlobalPause.pause(frameATarget);
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.latePopup = window.open('resources/same-process-frame.html?late-popup'), 0");
+            InspectorTest.expectThat(await waitForExpressionInTarget(InspectorTest.mainFrameTarget, "window.latePopup.location.href.includes('late-popup')", 50), "The popup should load while frame A is paused.");
+            let before = await GlobalPause.expectHeld(InspectorTest.mainFrameTarget, "(window.latePopup.ticks || 0)", "The popup's interval", "while frame A is paused");
+
+            await GlobalPause.resumeAll();
+            await GlobalPause.expectRunning(InspectorTest.mainFrameTarget, "(window.latePopup.ticks || 0)", before, "The popup's interval after resuming");
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.latePopup.close(), 0");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a session holds the other pages of the paused page's browsing context group, including a popup in a process the paused page does not use and a popup opened during the pause, but not a page of another group in the same process.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+</body>

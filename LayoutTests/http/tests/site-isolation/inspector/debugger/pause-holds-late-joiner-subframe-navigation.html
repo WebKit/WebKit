@@ -1,0 +1,57 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsLateJoiner.SubframeNavigation");
+
+    let frameATarget;
+    let frameBTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsLateJoiner.SubframeNavigation.Setup",
+        description: "Find the frame targets of the cross-site iframe that will pause and of the same-site iframe that will navigate.",
+        async test() {
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            frameBTarget = await frameTargetForURLContaining("same-process-frame.html?B");
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+            InspectorTest.expectNotNull(frameBTarget, "Should find the frame target for frame B.");
+            InspectorTest.expectEqual(GlobalPause.processIdentifier(frameBTarget), GlobalPause.processIdentifier(InspectorTest.mainFrameTarget), "Frame B should be in the main frame's process.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsLateJoiner.SubframeNavigation.NavigateIntoNewProcess",
+        description: "A same-site iframe that navigates cross-site during the pause, into a new process, should hold its new document until the pause ends.",
+        async test() {
+            await GlobalPause.pause(frameATarget);
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "document.getElementById('frameB').src = 'https://127.0.0.1:8443/site-isolation/inspector/debugger/resources/same-process-frame.html?B2'");
+
+            let newBTarget = await GlobalPause.waitForFrameTarget("same-process-frame.html?B2", [GlobalPause.processIdentifier(InspectorTest.mainFrameTarget), GlobalPause.processIdentifier(frameATarget)]);
+            InspectorTest.expectNotNull(newBTarget, "Should find the frame target for frame B's new document.");
+            let newProcess = GlobalPause.processIdentifier(newBTarget);
+            InspectorTest.expectNotEqual(newProcess, GlobalPause.processIdentifier(frameATarget), "Frame B's new document should be in a new process, not frame A's.");
+            InspectorTest.expectNotEqual(newProcess, GlobalPause.processIdentifier(InspectorTest.mainFrameTarget), "Frame B's new document should be in a new process, not the main frame's.");
+
+            await GlobalPause.cancelPauseRequest(newBTarget);
+            let before = await GlobalPause.expectHeld(newBTarget, "(window.ticks || 0)", "Frame B's new interval", "while frame A is paused");
+            await GlobalPause.resumeAll();
+            await GlobalPause.expectRunning(newBTarget, "(window.ticks || 0)", before, "Frame B's new interval after resuming");
+            let mainBefore = await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.mainTicks");
+            await GlobalPause.expectRunning(InspectorTest.mainFrameTarget, "window.mainTicks", mainBefore, "The main frame's interval after resuming");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a same-site iframe that navigates cross-site while another frame is paused, into a process that is created for it, holds its new document until the pause ends.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+<iframe id="frameB" src="resources/same-process-frame.html?B"></iframe>
+</body>

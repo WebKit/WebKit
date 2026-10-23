@@ -1,0 +1,82 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+function pauseHere()
+{
+    debugger;
+    return "resumed";
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseSessionConcurrentStoppers");
+
+    let mainTarget;
+    let frameATarget;
+
+    function isPaused(target) {
+        return WI.debuggerManager.dataForTarget(target).paused;
+    }
+
+    async function resumeTarget(target) {
+        await target.DebuggerAgent.resume();
+        for (let i = 0; i < 50 && isPaused(target); ++i)
+            await GlobalPause.sleep(100);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionConcurrentStoppers.Setup",
+        description: "Find the frame targets of the main frame and of the cross-site iframe.",
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+            InspectorTest.expectNotEqual(GlobalPause.processIdentifier(frameATarget), GlobalPause.processIdentifier(mainTarget), "Frame A should be in a different process than the main frame.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionConcurrentStoppers.PauseBothFrames",
+        description: "A frame held by a pause in another process should still be able to pause itself, and the session should have one stopping frame per process.",
+        async test() {
+            await GlobalPause.pause(mainTarget);
+            await GlobalPause.pause(frameATarget);
+            InspectorTest.expectTrue(isPaused(frameATarget), "Frame A should be paused.");
+            InspectorTest.expectTrue(isPaused(mainTarget), "The main frame should be paused.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionConcurrentStoppers.ResumeOneFrame",
+        description: "Resuming the main frame while frame A is still paused should keep the main frame's process held.",
+        async test() {
+            await resumeTarget(mainTarget);
+            InspectorTest.expectFalse(isPaused(mainTarget), "The main frame should have resumed.");
+            InspectorTest.expectTrue(isPaused(frameATarget), "Frame A should still be paused.");
+            await GlobalPause.expectHeld(mainTarget, "window.mainTicks", "The main frame's interval", "while frame A is still paused");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionConcurrentStoppers.ResumeLastFrame",
+        description: "Resuming the last stopping frame should release every process.",
+        async test() {
+            let before = await GlobalPause.evaluate(mainTarget, "window.mainTicks");
+            await resumeTarget(frameATarget);
+            InspectorTest.expectFalse(WI.debuggerManager.paused, "Nothing should be paused.");
+            await GlobalPause.expectRunning(mainTarget, "window.mainTicks", before, "The main frame's interval after the last resume");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that two frames in different processes can be paused at once, and that the session holds every process until the last of them resumes.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+</body>

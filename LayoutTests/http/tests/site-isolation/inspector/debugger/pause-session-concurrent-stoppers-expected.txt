@@ -1,0 +1,22 @@
+Test that two frames in different processes can be paused at once, and that the session holds every process until the last of them resumes.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseSessionConcurrentStoppers
+-- Running test case: SiteIsolation.Debugger.PauseSessionConcurrentStoppers.Setup
+PASS: Should find the frame target for frame A.
+PASS: Frame A should be in a different process than the main frame.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionConcurrentStoppers.PauseBothFrames
+PASS: Frame A should be paused.
+PASS: The main frame should be paused.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionConcurrentStoppers.ResumeOneFrame
+PASS: The main frame should have resumed.
+PASS: Frame A should still be paused.
+PASS: The main frame's interval should not advance while frame A is still paused.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionConcurrentStoppers.ResumeLastFrame
+PASS: Nothing should be paused.
+PASS: The main frame's interval after the last resume should advance.
+

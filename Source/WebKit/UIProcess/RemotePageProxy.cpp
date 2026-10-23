@@ -51,6 +51,7 @@
 #include "WebBackForwardListMessages.h"
 #include "WebFrameProxy.h"
 #include "WebNotificationManagerMessageHandler.h"
+#include "WebPageInspectorController.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -242,6 +243,8 @@ void RemotePageProxy::injectPageIntoNewProcess()
 
     // frameTreeCreationParameters above contains the main frame's current frameViewportInfo.
     m_lastSentMainFrameViewportInfo = protect(page->mainFrame())->frameViewportInfo();
+
+    WebPageInspectorController::pageWasAddedToProcess(protect(page->browsingContextGroup()), m_process, m_webPageID);
 }
 
 void RemotePageProxy::processDidTerminate(WebProcessProxy& process, ProcessTerminationReason reason)
@@ -422,6 +425,8 @@ void RemotePageProxy::setDrawingArea(DrawingAreaProxy* drawingArea)
 
     // frameTreeCreationParameters above contains the main frame's current frameViewportInfo.
     m_lastSentMainFrameViewportInfo = mainFrame->frameViewportInfo();
+
+    WebPageInspectorController::pageWasAddedToProcess(protect(page->browsingContextGroup()), m_process, m_webPageID);
 }
 
 void RemotePageProxy::setCurrentOrientation(WebCore::ScreenOrientationType orientation)

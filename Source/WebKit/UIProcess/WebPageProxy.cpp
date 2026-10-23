@@ -1968,6 +1968,7 @@ void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags eff
     if (preferences->siteIsolationEnabled())
         browsingContextGroup->addPage(*this);
     process->send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(process, *protect(drawingArea()), m_mainFrame->frameID(), std::nullopt)), 0);
+    WebPageInspectorController::pageWasAddedToProcess(browsingContextGroup, process, m_webPageID);
     // The WebProcess drops ConnectInspector for a frame it hasn't created yet.
     m_inspectorController->didCreateFrame(protect(*m_mainFrame));
 

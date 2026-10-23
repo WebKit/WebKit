@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseSessionContinuationDeliversEvents");
+
+    let parentTarget;
+    let childTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionContinuationDeliversEvents.Setup",
+        description: "Find the frame targets of the cross-site iframe and of its same-process child.",
+        async test() {
+            parentTarget = await frameTargetForURLContaining("stepping-parent-frame.html");
+            childTarget = await frameTargetForURLContaining("same-process-frame.html?child");
+            InspectorTest.expectNotNull(parentTarget, "Should find the frame target for the cross-site frame.");
+            InspectorTest.expectNotNull(childTarget, "Should find the frame target for its child.");
+            InspectorTest.expectEqual(GlobalPause.processIdentifier(parentTarget), GlobalPause.processIdentifier(childTarget), "The child should be in the same process.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(childTarget, "window.ticks > 2"), "The child's interval should be running.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionContinuationDeliversEvents.StepOverDispatchEvent",
+        description: "Stepping over a dispatchEvent that targets the same-process child should reach its listener, and the child should stay held between steps.",
+        async test() {
+            await GlobalPause.pause(parentTarget, "pauseAndDispatch()");
+            await WI.debuggerManager.stepOver();
+            await WI.debuggerManager.stepOver();
+            let ticks = await GlobalPause.evaluate(childTarget, "window.ticks");
+            InspectorTest.expectEqual(await GlobalPause.evaluate(childTarget, "window.testEventCount"), 0, "The child should not have received the event before the step over dispatchEvent.");
+
+            await WI.debuggerManager.stepOver();
+            InspectorTest.expectEqual(await GlobalPause.evaluate(childTarget, "window.testEventCount"), 1, "The child's listener should receive the event dispatched by the step.");
+
+            await GlobalPause.sleep(300);
+            InspectorTest.expectEqual(await GlobalPause.evaluate(childTarget, "window.ticks"), ticks, "The child's interval should not advance between steps.");
+
+            await GlobalPause.resumeAll();
+            await GlobalPause.expectRunning(childTarget, "window.ticks", ticks, "The child's interval after resuming");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that stepping in a frame whose process holds a pause session lets the stepped code dispatch events into its own process, and that the process is held again between steps.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/stepping-parent-frame.html"></iframe>
+</body>

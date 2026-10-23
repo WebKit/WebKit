@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsLateJoiner.NewProcessFrame");
+
+    let frameATarget;
+    let mainProcess;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsLateJoiner.NewProcessFrame.Setup",
+        description: "Find the frame target of the cross-site iframe that will pause.",
+        async test() {
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            mainProcess = GlobalPause.processIdentifier(InspectorTest.mainFrameTarget);
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+            InspectorTest.expectNotEqual(GlobalPause.processIdentifier(frameATarget), GlobalPause.processIdentifier(InspectorTest.mainFrameTarget), "Frame A should be in a different process than the main frame.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsLateJoiner.NewProcessFrame.InsertedFrame",
+        description: "An iframe inserted during the pause, whose site gets a new process, should be held until the pause ends.",
+        async test() {
+            await GlobalPause.pause(frameATarget);
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, `(() => {
+                let iframe = document.createElement("iframe");
+                iframe.src = "https://127.0.0.1:8443/site-isolation/inspector/debugger/resources/same-process-frame.html?late";
+                document.body.appendChild(iframe);
+            })()`);
+
+            let lateTarget = await GlobalPause.waitForFrameTarget("same-process-frame.html?late", [mainProcess, GlobalPause.processIdentifier(frameATarget)]);
+            InspectorTest.expectNotNull(lateTarget, "Should find the frame target for the inserted frame.");
+            let lateProcess = GlobalPause.processIdentifier(lateTarget);
+            InspectorTest.expectNotEqual(lateProcess, GlobalPause.processIdentifier(frameATarget), "The inserted frame should be in a new process, not frame A's.");
+            InspectorTest.expectNotEqual(lateProcess, mainProcess, "The inserted frame should be in a new process, not the main frame's.");
+
+            await GlobalPause.cancelPauseRequest(lateTarget);
+            let before = await GlobalPause.expectHeld(lateTarget, "(window.ticks || 0)", "The inserted frame's interval", "while frame A is paused");
+            await GlobalPause.resumeAll();
+            await GlobalPause.expectRunning(lateTarget, "(window.ticks || 0)", before, "The inserted frame's interval after resuming");
+            let mainBefore = await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.mainTicks");
+            await GlobalPause.expectRunning(InspectorTest.mainFrameTarget, "window.mainTicks", mainBefore, "The main frame's interval after resuming");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that an iframe inserted while a frame is paused, in a site that has no process yet, is held until the pause ends.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+</body>

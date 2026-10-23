@@ -38,6 +38,7 @@
 #include "DebuggerSuspensionController.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameDebuggerAgent.h"
 #include "FrameInspectorController.h"
 #include "FrameTree.h"
 #include "GraphicsContext.h"
@@ -119,7 +120,13 @@ PageInspectorController::PageInspectorController(Page& page, std::unique_ptr<Ins
 
 void PageInspectorController::suspendForDebuggerSession(DebuggerPauseSessionIdentifier sessionID)
 {
-    CheckedRef { m_debuggerSuspensionController.get() }->addSessionHold(sessionID);
+    if (!CheckedRef { m_debuggerSuspensionController }->addSessionHold(sessionID))
+        return;
+
+    protect(m_page.get())->forEachLocalFrame([](LocalFrame& frame) {
+        if (CheckedPtr debuggerAgent = frame.inspectorController().instrumentingAgents().enabledFrameDebuggerAgent())
+            debuggerAgent->cancelPauseAtNextOpportunity();
+    });
 }
 
 void PageInspectorController::resumeFromDebuggerSession(DebuggerPauseSessionIdentifier sessionID)

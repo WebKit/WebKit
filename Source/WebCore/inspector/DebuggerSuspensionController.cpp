@@ -47,6 +47,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DebuggerSuspensionController);
 
 static bool s_isFrameDebuggerPaused;
+static bool s_isWaitingForIdleAfterContinue;
 
 // The paused frame may be detached by the time the pause ends, so remember its page and identifier for the end-of-pause notification.
 struct PausedFrame {
@@ -59,8 +60,6 @@ static std::optional<PausedFrame>& LEGACY_NODELETE pausedFrame()
     static NeverDestroyed<std::optional<PausedFrame>> frame;
     return frame;
 }
-
-static bool s_isWaitingForIdleToReportContinue;
 
 static void reportFrameDebuggerDidContinue(std::optional<PausedFrame>&& frame)
 {
@@ -104,25 +103,27 @@ void DebuggerSuspensionController::frameDebuggerDidContinue()
 {
     ASSERT(s_isFrameDebuggerPaused);
     s_isFrameDebuggerPaused = false;
+    bool wasWaitingForIdle = std::exchange(s_isWaitingForIdleAfterContinue, true);
     updateHeldDocumentsInAllPages();
-
-    if (!pausedFrame() || s_isWaitingForIdleToReportContinue)
+    if (wasWaitingForIdle)
         return;
 
+    // Session holds wait for VM idle, or they would drop the events that the continuing code dispatches.
     // A step pauses again before the VM goes idle.
-    s_isWaitingForIdleToReportContinue = true;
     commonVM().whenIdle([] {
         ASSERT(!s_isFrameDebuggerPaused);
-        s_isWaitingForIdleToReportContinue = false;
+        s_isWaitingForIdleAfterContinue = false;
+        updateHeldDocumentsInAllPages();
         reportFrameDebuggerDidContinue(std::exchange(pausedFrame(), std::nullopt));
     });
 }
 
-void DebuggerSuspensionController::addSessionHold(DebuggerPauseSessionIdentifier sessionID)
+bool DebuggerSuspensionController::addSessionHold(DebuggerPauseSessionIdentifier sessionID)
 {
     if (!m_sessionHolds.add(sessionID).isNewEntry)
-        return;
+        return false;
     updateHeldDocuments();
+    return true;
 }
 
 void DebuggerSuspensionController::removeSessionHold(DebuggerPauseSessionIdentifier sessionID)
@@ -147,7 +148,7 @@ void DebuggerSuspensionController::documentDidBecomeCurrent(Document& document)
 
 bool DebuggerSuspensionController::shouldHoldDocuments() const
 {
-    return s_isFrameDebuggerPaused || !m_sessionHolds.isEmpty();
+    return s_isFrameDebuggerPaused || (!m_sessionHolds.isEmpty() && !s_isWaitingForIdleAfterContinue);
 }
 
 void DebuggerSuspensionController::updateHeldDocuments()

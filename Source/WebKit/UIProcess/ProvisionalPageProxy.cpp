@@ -323,6 +323,8 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
     }
     process->send(Messages::WebProcess::CreateWebPage(m_webPageID, WTF::move(creationParameters)), 0);
     process->addVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());
+    // A navigation can move the page to another browsing context group, which the WebPageProxy joins only at commit.
+    WebPageInspectorController::pageWasAddedToProcess(m_browsingContextGroup, process, m_webPageID);
 
     if (page->isLayerTreeFrozenDueToSwipeAnimation())
         send(Messages::WebPage::SwipeAnimationDidStart());

@@ -1,0 +1,22 @@
+Test that a session holds the other pages of the paused page's browsing context group, including a popup in a process the paused page does not use and a popup opened during the pause, but not a page of another group in the same process.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsPagesOfBrowsingContextGroup
+-- Running test case: SiteIsolation.Debugger.PauseHoldsPagesOfBrowsingContextGroup.Setup
+PASS: Should find the frame target for frame A.
+PASS: The popup's interval should be running.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsPagesOfBrowsingContextGroup.PopupInAnotherProcess
+PASS: The popup's interval should not run while frame A is paused.
+PASS: The popup's interval should run after resuming.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsPagesOfBrowsingContextGroup.PageOfAnotherGroupInSameProcess
+PASS: The page without an opener should be running.
+PASS: The page without an opener should keep running while frame A is paused.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsPagesOfBrowsingContextGroup.PopupOpenedDuringPause
+PASS: The popup should load while frame A is paused.
+PASS: The popup's interval should not advance while frame A is paused.
+PASS: The popup's interval after resuming should advance.
+

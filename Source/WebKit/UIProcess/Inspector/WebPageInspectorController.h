@@ -49,6 +49,7 @@ class ProxyingPageAgent;
 
 namespace WebKit {
 
+class BrowsingContextGroup;
 class DebuggerPauseCoordinator;
 class InspectorBrowserAgent;
 class ProvisionalPageProxy;
@@ -69,6 +70,7 @@ public:
 
     void frameDidPauseForDebugger(WebProcessProxy&, WebCore::FrameIdentifier);
     void frameDidContinueForDebugger(WebProcessProxy&, WebCore::FrameIdentifier);
+    static void pageWasAddedToProcess(BrowsingContextGroup&, WebProcessProxy&, WebCore::PageIdentifier);
     void frameDidChangeProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier newProcessID);
     void processDidTerminate(WebProcessProxy&);
 
@@ -112,6 +114,8 @@ public:
     void disconnectFrameTargetForTesting(WebCore::FrameIdentifier);
 
 private:
+    void browsingContextGroupPageWasAddedToProcess(WebProcessProxy&, WebCore::PageIdentifier);
+
     WebPageAgentContext LEGACY_NODELETE webPageAgentContext();
     void createLazyAgents();
 

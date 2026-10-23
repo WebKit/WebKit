@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsSameProcessPagesOfSessionProcesses");
+
+    let frameATarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsSameProcessPagesOfSessionProcesses.Setup",
+        description: "Find the cross-site iframe that will pause, and open a same-origin popup, which is another page in the main frame's process.",
+        async test() {
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.popup = window.open('resources/same-process-frame.html?popup'), 0");
+            InspectorTest.expectThat(await waitForExpressionInTarget(InspectorTest.mainFrameTarget, "window.popup?.ticks > 2"), "The popup's interval should be running.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsSameProcessPagesOfSessionProcesses.Popup",
+        description: "Pausing the cross-site iframe should hold the popup, which shares the main frame's process but is not a page of the paused frame's page.",
+        async test() {
+            await GlobalPause.pause(frameATarget);
+            let before = await GlobalPause.expectHeld(InspectorTest.mainFrameTarget, "window.popup.ticks", "The popup's interval", "while frame A is paused");
+            await GlobalPause.resumeAll();
+            await GlobalPause.expectRunning(InspectorTest.mainFrameTarget, "window.popup.ticks", before, "The popup's interval after resuming");
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.popup.close(), 0");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a session that holds a process holds every page in it, including a popup, which is a different page.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+</body>

@@ -91,6 +91,7 @@ public:
     void removePage(WebPageProxy&, ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
     void closeRemotePagesForPage(WebPageProxy&, ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
     bool hasMultiplePages() const;
+    void forEachPage(NOESCAPE const Function<void(WebPageProxy&)>&);
     bool hasVisiblePage() const;
     void forEachRemotePage(const WebPageProxy&, NOESCAPE const Function<void(RemotePageProxy&)>&);
 

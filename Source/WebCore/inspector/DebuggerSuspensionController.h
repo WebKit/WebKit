@@ -53,7 +53,7 @@ public:
     static void frameDebuggerDidPause(LocalFrame&);
     static void frameDebuggerDidContinue();
 
-    void addSessionHold(DebuggerPauseSessionIdentifier);
+    bool addSessionHold(DebuggerPauseSessionIdentifier);
     void removeSessionHold(DebuggerPauseSessionIdentifier);
 
     void documentDidBecomeCurrent(Document&);
