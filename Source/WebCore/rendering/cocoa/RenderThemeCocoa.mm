@@ -898,7 +898,7 @@ void RenderThemeCocoa::paintFileUploadIconDecorations(const RenderElement&, cons
         thumbnailRect.contract(kMultipleThumbnailShrinkSize, kMultipleThumbnailShrinkSize);
 
         // Background picture frame and simple background icon with a gradient matching the button.
-        auto backgroundImageColor = protect(buttonRenderer.style())->visitedDependentUsedBackgroundColor();
+        auto backgroundImageColor = protect(buttonRenderer.style())->visitedDependentUsedBackgroundColor({ }, StyleColorOptionsPurpose::Rendering);
         paintInfo.context().fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor);
         paintInfo.context().fillRect(thumbnailRect, backgroundImageColor);
 
@@ -3081,7 +3081,7 @@ static bool paintTextAreaOrTextField(const RenderElement& box, const PaintInfo& 
 #endif
 
     const auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
-    auto backgroundColor = style->visitedDependentUsedBackgroundColor();
+    auto backgroundColor = style->visitedDependentUsedBackgroundColor({ }, StyleColorOptionsPurpose::Rendering);
 #if PLATFORM(MAC)
     const auto prefersContrast = Theme::singleton().userPreferredContrast() == InterfaceContrastPreference::MoreContrast;
     auto borderColor = prefersContrast ? highContrastOutlineColor(styleColorOptions) : RenderTheme::singleton().systemColor(CSSValueID::AppleSystemContainerBorder, styleColorOptions);
@@ -4230,7 +4230,7 @@ bool RenderThemeCocoa::paintSearchFieldForVectorBasedControls(const RenderElemen
 
     const auto& style = box.style();
     const auto borderThickness = style.usedZoom();
-    auto backgroundColor = style.usedBackgroundColorResolvingCurrentColor();
+    auto backgroundColor = style.usedBackgroundColorResolvingCurrentColor(StyleColorOptionsPurpose::Rendering);
 
     const auto states = RenderTheme::singleton().extractControlStyleStatesForRenderer(box);
     const auto isEnabled = states.contains(ControlStyle::State::Enabled);

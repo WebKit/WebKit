@@ -199,12 +199,8 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const Style::Co
         paintStyle.emphasisMarkColor = adjustColorForVisibilityOnBackground(paintStyle.emphasisMarkColor, Color::white);
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    if (!forceBackgroundToWhite && frame->settings().axCustomColorModeEnabled()) {
-        AXCustomColorModeController::adjustTextPaintStyle(renderer, paintStyle,
-            lineStyle.visitedDependentTextFillColor(paintInfo.paintBehavior),
-            lineStyle.usedStrokeColor(),
-            lineStyle.visitedDependentTextEmphasisColor());
-    }
+    if (!forceBackgroundToWhite && frame->settings().axCustomColorModeEnabled())
+        AXCustomColorModeController::adjustTextPaintStyle(renderer, paintStyle, lineStyle, paintInfo.paintBehavior);
 #endif
 
     return paintStyle;

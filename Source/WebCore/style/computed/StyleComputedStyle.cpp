@@ -445,9 +445,11 @@ float ComputedStyle::usedStrokeWidth(const IntSize& viewportSize) const
     );
 }
 
-WebCore::Color ComputedStyle::usedStrokeColor() const
+WebCore::Color ComputedStyle::usedStrokeColor(StyleColorOptionsPurpose purpose) const
 {
-    return hasExplicitlySetStrokeColor() ? visitedDependentStrokeColor() : visitedDependentTextStrokeColor();
+    auto strokeColor = strokeColorResolver().visitedDependentResolveColor({ }, purpose);
+    auto textStrokeColor = textStrokeColorResolver().visitedDependentResolveColor({ }, purpose);
+    return hasExplicitlySetStrokeColor() ? strokeColor : textStrokeColor;
 }
 
 WebCore::Color ComputedStyle::usedStrokeColorApplyingColorFilter() const
@@ -574,9 +576,9 @@ Color ComputedStyle::usedBackgroundColor() const
     return backgroundColor();
 }
 
-WebCore::Color ComputedStyle::usedBackgroundColorResolvingCurrentColor() const
+WebCore::Color ComputedStyle::usedBackgroundColorResolvingCurrentColor(StyleColorOptionsPurpose purpose) const
 {
-    return ColorResolver { *this }.colorResolvingCurrentColor(usedBackgroundColor());
+    return ColorResolver { *this }.resolveColor(usedBackgroundColor(), purpose);
 }
 
 WebCore::Color ComputedStyle::usedBackgroundColorResolvingCurrentColorApplyingColorFilter() const
@@ -584,15 +586,15 @@ WebCore::Color ComputedStyle::usedBackgroundColorResolvingCurrentColorApplyingCo
     return ColorResolver { *this }.colorResolvingCurrentColorApplyingColorFilter(usedBackgroundColor());
 }
 
-WebCore::Color ComputedStyle::visitedDependentUsedBackgroundColor(OptionSet<PaintBehavior> paintBehavior) const
+WebCore::Color ComputedStyle::visitedDependentUsedBackgroundColor(OptionSet<PaintBehavior> paintBehavior, StyleColorOptionsPurpose purpose) const
 {
     auto colorResolver = backgroundColorResolver();
-    auto unvisitedLinkColor = usedBackgroundColorResolvingCurrentColor();
+    auto unvisitedLinkColor = usedBackgroundColorResolvingCurrentColor(purpose);
 
     if (colorResolver.visitedDependentShouldReturnUnvisitedLinkColor(paintBehavior))
         return unvisitedLinkColor;
 
-    auto visitedLinkColor = visitedLinkBackgroundColorResolvingCurrentColor();
+    auto visitedLinkColor = colorResolver.resolveVisitedLinkColor(purpose);
     if (ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::BackgroundColor>>::excludesVisitedLinkColor(visitedLinkColor))
         return unvisitedLinkColor;
 

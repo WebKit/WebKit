@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <WebCore/DocumentEnums.h>
 #include <WebCore/StyleComputedStyleProperties.h>
 
 namespace WebCore {
@@ -148,7 +149,7 @@ public:
     WEBCORE_EXPORT float usedLineHeight() const;
     const WTF::String& hyphenString() const LIFETIME_BOUND;
     float usedStrokeWidth(const IntSize& viewportSize) const;
-    WebCore::Color usedStrokeColor() const;
+    WebCore::Color usedStrokeColor(StyleColorOptionsPurpose = StyleColorOptionsPurpose::ComputedStyle) const;
     WebCore::Color usedStrokeColorApplyingColorFilter() const;
     inline PointerEvents usedPointerEvents() const;
     inline UserModify usedUserModify() const;
@@ -163,9 +164,9 @@ public:
     // MARK: - Used background color
 
     Color usedBackgroundColor() const;
-    WEBCORE_EXPORT WebCore::Color usedBackgroundColorResolvingCurrentColor() const;
+    WEBCORE_EXPORT WebCore::Color usedBackgroundColorResolvingCurrentColor(StyleColorOptionsPurpose = StyleColorOptionsPurpose::ComputedStyle) const;
     WebCore::Color usedBackgroundColorResolvingCurrentColorApplyingColorFilter() const;
-    WebCore::Color visitedDependentUsedBackgroundColor(OptionSet<PaintBehavior> = { }) const;
+    WebCore::Color visitedDependentUsedBackgroundColor(OptionSet<PaintBehavior> = { }, StyleColorOptionsPurpose = StyleColorOptionsPurpose::ComputedStyle) const;
     WEBCORE_EXPORT WebCore::Color visitedDependentUsedBackgroundColorApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
 
     // MARK: - has*()

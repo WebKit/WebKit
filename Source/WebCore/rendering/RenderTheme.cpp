@@ -755,6 +755,16 @@ void RenderTheme::updateControlPartForRenderer(ControlPart& part, const RenderEl
 
 OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRendererInternal(const RenderElement& renderer) const
 {
+    auto useDarkAppearance = [](const RenderElement& renderer) {
+        if (renderer.useDarkAppearance())
+            return true;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        auto options = renderer.styleColorOptions(StyleColorOptionsPurpose::Rendering);
+        if (options.contains(StyleColorOptions::UseDarkAppearance))
+            return true;
+#endif
+        return false;
+    };
     OptionSet<ControlStyle::State> states;
     if (isHovered(renderer)) {
         states.add(ControlStyle::State::Hovered);
@@ -782,7 +792,7 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
         states.add(ControlStyle::State::Presenting);
     if (useFormSemanticContext())
         states.add(ControlStyle::State::FormSemanticContext);
-    if (renderer.useDarkAppearance())
+    if (useDarkAppearance(renderer))
         states.add(ControlStyle::State::DarkAppearance);
     if (renderer.writingMode().isInlineFlipped())
         states.add(ControlStyle::State::InlineFlippedWritingMode);
