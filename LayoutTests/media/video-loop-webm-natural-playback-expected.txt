@@ -1,0 +1,14 @@
+
+Test that a looping WebM video keeps looping while playing through its whole duration.
+
+++ seek to near the end once, then play without any further seek.
+RUN(video.currentTime = video.duration - 0.5)
+RUN(video.play())
+++ loop 1 completed.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.ended == 'false') OK
+++ loop 2 completed.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.ended == 'false') OK
+END OF TEST
+

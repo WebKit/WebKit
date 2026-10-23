@@ -183,6 +183,7 @@ private:
     void setHasAvailableVideoFrame(bool);
     bool hasAvailableVideoFrame() const final;
     void setDuration(MediaTime);
+    void durationReachedActionIfNeeded();
     void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
     void characteristicsChanged();

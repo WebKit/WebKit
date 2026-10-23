@@ -1,0 +1,28 @@
+This tests that toggling loop while a MediaSource video is playing is honored at the next end of media.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(audioSourceBuffer = source.addSourceBuffer(audioLoader.type()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.initSegment()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(0)))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(1)))
+RUN(source.endOfStream())
+-
+Loop once, then disable looping.
+RUN(video.play())
+++ loop 1 completed.
+EXPECTED (video.ended == 'false') OK
+RUN(video.loop = false)
+EVENT(ended)
+EXPECTED (video.ended == 'true') OK
+EXPECTED (video.currentTime == video.duration == 'true') OK
+-
+Enable looping again, seek near the end and play.
+RUN(video.loop = true)
+RUN(video.currentTime = video.duration - 0.5)
+RUN(video.play())
+++ loop 2 completed.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.ended == 'false') OK
+END OF TEST
+

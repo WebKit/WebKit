@@ -1,0 +1,13 @@
+
+Test that playback after repeated back-to-back seeks in a WebM video isn't stalled.
+
+++ seek back and forth, each seek starting when the previous one completed, then play to the end.
+++ seek 0 completed.
+++ seek 1 completed.
+++ seek 2 completed.
+++ seek 3 completed.
+++ seek 4 completed.
+RUN(video.play())
+++ ended.
+END OF TEST
+
