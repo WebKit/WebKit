@@ -34,7 +34,6 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
-#include <WebCore/SecurityOriginData.h>
 #include <wtf/ProcessID.h>
 
 namespace WebKit {
@@ -45,7 +44,6 @@ struct FrameInfoData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FrameInfoData);
 
     WebCore::ResourceRequest request;
-    WebCore::SecurityOriginData securityOrigin;
     String frameName;
     WebCore::FrameIdentifier frameID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;

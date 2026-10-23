@@ -1501,6 +1501,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 namespace WebKit {
 using namespace WebCore;
+
+static SecurityOriginData documentSecurityOriginData(const WebFrameProxy* frame)
+{
+    return frame ? frame->documentSecurityOriginData() : SecurityOriginData::createOpaque();
+}
     
 class RunBeforeUnloadConfirmPanelResultListener : public API::ObjectImpl<API::Object::Type::RunBeforeUnloadConfirmPanelResultListener> {
 public:
@@ -1830,13 +1835,13 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         {
             if (m_client.runJavaScriptAlert) {
                 RefPtr<RunJavaScriptAlertResultListener> listener = RunJavaScriptAlertResultListener::create(WTF::move(completionHandler));
-                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(frameInfo.securityOrigin);
+                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(documentSecurityOriginData(frame));
                 m_client.runJavaScriptAlert(toAPI(&page), toAPI(message), toAPI(frame), toAPI(securityOrigin.get()), toAPI(listener.get()), m_client.base.clientInfo);
                 return;
             }
 
             if (m_client.runJavaScriptAlert_deprecatedForUseWithV5) {
-                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(frameInfo.securityOrigin);
+                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(documentSecurityOriginData(frame));
                 m_client.runJavaScriptAlert_deprecatedForUseWithV5(toAPI(&page), toAPI(message), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo);
                 completionHandler();
                 return;
@@ -1856,13 +1861,13 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         {
             if (m_client.runJavaScriptConfirm) {
                 RefPtr<RunJavaScriptConfirmResultListener> listener = RunJavaScriptConfirmResultListener::create(WTF::move(completionHandler));
-                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(frameInfo.securityOrigin);
+                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(documentSecurityOriginData(frame));
                 m_client.runJavaScriptConfirm(toAPI(&page), toAPI(message), toAPI(frame), toAPI(securityOrigin.get()), toAPI(listener.get()), m_client.base.clientInfo);
                 return;
             }
 
             if (m_client.runJavaScriptConfirm_deprecatedForUseWithV5) {
-                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(frameInfo.securityOrigin);
+                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(documentSecurityOriginData(frame));
                 bool result = m_client.runJavaScriptConfirm_deprecatedForUseWithV5(toAPI(&page), toAPI(message), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo);
                 
                 completionHandler(result);
@@ -1883,13 +1888,13 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         {
             if (m_client.runJavaScriptPrompt) {
                 RefPtr<RunJavaScriptPromptResultListener> listener = RunJavaScriptPromptResultListener::create(WTF::move(completionHandler));
-                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(frameInfo.securityOrigin);
+                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(documentSecurityOriginData(frame));
                 m_client.runJavaScriptPrompt(toAPI(&page), toAPI(message), toAPI(defaultValue), toAPI(frame), toAPI(securityOrigin.get()), toAPI(listener.get()), m_client.base.clientInfo);
                 return;
             }
 
             if (m_client.runJavaScriptPrompt_deprecatedForUseWithV5) {
-                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(frameInfo.securityOrigin);
+                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(documentSecurityOriginData(frame));
                 RefPtr<API::String> string = adoptRef(toImpl(m_client.runJavaScriptPrompt_deprecatedForUseWithV5(toAPI(&page), toAPI(message), toAPI(defaultValue), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo)));
                 
                 if (string)
@@ -2043,7 +2048,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             if (!m_client.decidePolicyForGeolocationPermissionRequest)
                 return;
 
-            auto origin = API::SecurityOrigin::create(frameInfo.securityOrigin);
+            auto origin = API::SecurityOrigin::create(frame.documentSecurityOriginData());
             m_client.decidePolicyForGeolocationPermissionRequest(toAPI(&page), toAPI(&frame), toAPI(origin.ptr()), toAPI(GeolocationPermissionRequest::create(std::exchange(completionHandler, nullptr)).ptr()), m_client.base.clientInfo);
         }
 

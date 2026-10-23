@@ -700,13 +700,15 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(const std::optional<BackFo
 
     // Notify the UIProcess.
     auto frameInfo = frame->info();
+    std::optional<SecurityOriginData> webArchiveMainFrameOrigin;
+    if (frame->isMainFrame())
+        webArchiveMainFrameOrigin = backForwardCacheData ? backForwardCacheData->documentOrigin : SecurityOriginData::fromFrame(protect(m_localFrame));
     if (backForwardCacheData) {
         // A page enters the back/forward cache whole, so the restored document is the main frame's.
         ASSERT(frame->isMainFrame());
         frameInfo.documentID = backForwardCacheData->documentID;
-        frameInfo.securityOrigin = backForwardCacheData->documentOrigin;
     }
-    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(frame->frameID(), WTF::move(frameInfo), documentLoader->request(), documentLoader->navigationID(), documentLoader->response().mimeType(), m_frameHasCustomContentProvider, m_localFrame->loader().loadType(), !certificateInfo.isEmpty(), usedLegacyTLS, wasPrivateRelayed, documentLoader->response().proxyName(), documentLoader->response().source(), containsPluginDocument, hasInsecureContent, documentLoader->mouseEventPolicy(), WTF::move(documentSecurityPolicy), cspOriginsThatUpgradeInsecureNavigations, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), m_localFrame->loader().loadingFromCachedPage() ? RestoredFromBackForwardCache::Yes : RestoredFromBackForwardCache::No, WTF::move(redirectReplaceFrameState)));
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(frame->frameID(), WTF::move(frameInfo), WTF::move(webArchiveMainFrameOrigin), documentLoader->request(), documentLoader->navigationID(), documentLoader->response().mimeType(), m_frameHasCustomContentProvider, m_localFrame->loader().loadType(), !certificateInfo.isEmpty(), usedLegacyTLS, wasPrivateRelayed, documentLoader->response().proxyName(), documentLoader->response().source(), containsPluginDocument, hasInsecureContent, documentLoader->mouseEventPolicy(), WTF::move(documentSecurityPolicy), cspOriginsThatUpgradeInsecureNavigations, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), m_localFrame->loader().loadingFromCachedPage() ? RestoredFromBackForwardCache::Yes : RestoredFromBackForwardCache::No, WTF::move(redirectReplaceFrameState)));
     webPage->didCommitLoad(m_frame.ptr());
 }
 

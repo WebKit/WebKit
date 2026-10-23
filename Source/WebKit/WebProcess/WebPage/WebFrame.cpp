@@ -316,7 +316,6 @@ FrameInfoData WebFrame::info() const
     return {
         // FIXME: This should use the full request.
         ResourceRequest(url()),
-        coreFrame ? SecurityOriginData::fromFrame(*coreFrame) : SecurityOriginData { },
         coreFrame ? coreFrame->tree().specifiedName().string() : String(),
         frameID(),
         document ? std::optional { document->identifier() } : std::nullopt,

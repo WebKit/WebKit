@@ -170,8 +170,6 @@ public:
     void setOriginatingFrameInfo(const WebKit::FrameInfoData& frameInfo) { m_originatingFrameInfo = frameInfo; }
     const std::optional<WebKit::FrameInfoData>& originatingFrameInfo() const LIFETIME_BOUND { return m_originatingFrameInfo; }
 
-    void setDestinationFrameSecurityOrigin(const WebCore::SecurityOriginData& origin) { m_destinationFrameSecurityOrigin = origin; }
-    const WebCore::SecurityOriginData& destinationFrameSecurityOrigin() const LIFETIME_BOUND { return m_destinationFrameSecurityOrigin; }
 
     void setEffectiveContentMode(WebKit::WebContentMode mode) { m_effectiveContentMode = mode; }
     WebKit::WebContentMode effectiveContentMode() const { return m_effectiveContentMode; }
@@ -258,7 +256,6 @@ private:
     std::optional<WebKit::NavigationActionData> m_lastNavigationAction;
     RefPtr<JSHandle> m_lastNavigationActionHitTestJSHandle;
     std::optional<WebKit::FrameInfoData> m_originatingFrameInfo;
-    WebCore::SecurityOriginData m_destinationFrameSecurityOrigin;
     WebKit::WebContentMode m_effectiveContentMode { WebKit::WebContentMode::Recommended };
     Variant<std::monostate, Ref<WebKit::ProcessThrottler::TimedActivity>, Ref<WebKit::ProcessActivityGroup>> m_clientNavigationActivity;
     bool m_userContentExtensionsEnabled : 1 { true };

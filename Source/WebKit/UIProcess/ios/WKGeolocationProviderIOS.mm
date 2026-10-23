@@ -160,9 +160,9 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     return self;
 }
 
-- (void)decidePolicyForGeolocationRequestFromOrigin:(WebKit::FrameInfoData&&)frameInfo topOrigin:(const WebCore::SecurityOriginData&)topOrigin completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView *)contentView
+- (void)decidePolicyForGeolocationRequestFromOrigin:(WebKit::FrameInfoData&&)frameInfo frameOrigin:(const WebCore::SecurityOriginData&)frameOrigin topOrigin:(const WebCore::SecurityOriginData&)topOrigin completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView *)contentView
 {
-    WebCore::RegistrableDomain registrableDomain(frameInfo.securityOrigin);
+    WebCore::RegistrableDomain registrableDomain(frameOrigin);
     URL requestingURL = frameInfo.request.url();
     GeolocationRequestData geolocationRequestData { WTF::move(requestingURL), WTF::move(frameInfo), topOrigin, WTF::move(completionHandler), contentView };
     _requestsWaitingForCoreLocationAuthorization.append(WTF::move(geolocationRequestData));

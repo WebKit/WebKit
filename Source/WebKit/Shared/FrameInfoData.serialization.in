@@ -24,7 +24,6 @@ headers: "FrameInfoData.h"
 
 struct WebKit::FrameInfoData {
     WebCore::ResourceRequest request;
-    WebCore::SecurityOriginData securityOrigin;
     String frameName;
     WebCore::FrameIdentifier frameID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
