@@ -40,6 +40,7 @@
 #include "WebPreferences.h"
 #include <WebCore/Cursor.h>
 #include <WebCore/NativeImage.h>
+#include <WebCore/SkiaUtilities.h>
 #include <WebCore/SystemSettings.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -646,8 +647,25 @@ void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
     if (!nativeImage)
         return;
 
-    SkPixmap pixmap;
     auto platformImage = nativeImage->platformImage();
+
+    auto cursorScale = cursor.imageScaleFactor();
+    WebCore::IntPoint hotspot = cursor.hotSpot();
+    if (cursorScale != 1) {
+        auto* viewClass = WPE_VIEW_GET_CLASS(m_wpeView.get());
+        // If the view supports cursors but not scale, re-scale the cursor and set scale = 1.
+        if (viewClass->set_cursor_from_bytes && !viewClass->set_cursor_from_bytes_with_scale) {
+            auto scaledSize = expandedIntSize(WebCore::FloatSize(nativeImage->size()).scaled(1 / cursorScale));
+            platformImage = WebCore::SkiaUtilities::scaleImagePixels(platformImage, scaledSize);
+            if (!platformImage)
+                return;
+
+            hotspot.scale(1 / cursorScale);
+            cursorScale = 1.;
+        }
+    }
+
+    SkPixmap pixmap;
     if (!platformImage->peekPixels(&pixmap))
         return;
 
@@ -656,8 +674,7 @@ void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
         static_cast<SkImage*>(data)->unref();
     }, platformImage.get()));
 
-    WebCore::IntPoint hotspot = cursor.hotSpot();
-    wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), pixmap.width(), pixmap.height(), pixmap.rowBytes(), hotspot.x(), hotspot.y());
+    wpe_view_set_cursor_from_bytes_with_scale(m_wpeView.get(), bytes.get(), pixmap.width(), pixmap.height(), pixmap.rowBytes(), hotspot.x(), hotspot.y(), cursorScale);
 }
 
 #if ENABLE(POINTER_LOCK)

@@ -45,7 +45,7 @@ public:
     ~Cursor();
 
     void setFromName(UTF8CStringView, double);
-    void setFromBytes(GBytes*, uint32_t width, uint32_t height, uint32_t stride, uint32_t hotspotX, uint32_t hotspotY);
+    void setFromBytes(GBytes*, uint32_t width, uint32_t height, uint32_t stride, uint32_t hotspotX, uint32_t hotspotY, double scale);
     bool setPosition(uint32_t x, uint32_t y);
     uint32_t x() const { return m_position.x - m_hotspot.x; }
     uint32_t y() const { return m_position.y - m_hotspot.y; }
