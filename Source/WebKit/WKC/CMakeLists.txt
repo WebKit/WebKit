@@ -456,7 +456,7 @@ message(STATUS "JSC core: ${JSC_CORE_COUNT} source files selected (CLoop, no JIT
 # directories: they implement older class interfaces and in some cases duplicate
 # definitions now owned by modern WebCore. See PORTING_STATUS.md before porting
 # any of those files into this build.
-file(GLOB_RECURSE WEBCORE_PLATFORM_SOURCES
+file(GLOB_RECURSE WEBCORE_PLATFORM_SOURCES CONFIGURE_DEPENDS
     ${WEBCORE_DIR}/platform/WKC/*.cpp
     ${WEBCORE_DIR}/platform/network/curl/*.cpp
     ${WEBCORE_DIR}/platform/network/wkc/*.cpp
@@ -499,7 +499,7 @@ list(REMOVE_ITEM WEBCORE_PLATFORM_SOURCES
     "${WEBCORE_DIR}/platform/graphics/WKC/GraphicsContext3DWKC.cpp"
 )
 
-file(GLOB_RECURSE WKC_WEBKIT_SOURCES
+file(GLOB_RECURSE WKC_WEBKIT_SOURCES CONFIGURE_DEPENDS
     ${WKC_DIR}/webkit/*.cpp
     ${WKC_DIR}/WebCoreSupport/*.cpp
     ${WKC_DIR}/helpers/*.cpp
@@ -610,7 +610,7 @@ endif ()
 # and the unported libwebrtc tree into an otherwise unrelated browser build.
 # Re-enable these source groups only alongside their corresponding backend.
 if (WKC_ENABLE_FULL_WEBCORE AND WKC_ENABLE_WEB_AUDIO)
-    file(GLOB_RECURSE WEBCORE_AUDIO_WKC_SOURCES "${WEBCORE_DIR}/platform/audio/WKC/*.cpp")
+    file(GLOB_RECURSE WEBCORE_AUDIO_WKC_SOURCES CONFIGURE_DEPENDS "${WEBCORE_DIR}/platform/audio/WKC/*.cpp")
     file(GLOB WEBCORE_AUDIO_COMMON_SOURCES "${WEBCORE_DIR}/platform/audio/*.cpp")
     list(APPEND WEBCORE_PLATFORM_SOURCES
         ${WEBCORE_AUDIO_WKC_SOURCES}
@@ -618,7 +618,7 @@ if (WKC_ENABLE_FULL_WEBCORE AND WKC_ENABLE_WEB_AUDIO)
     )
 endif ()
 if (WKC_ENABLE_FULL_WEBCORE AND WKC_ENABLE_WEBRTC_API)
-    file(GLOB_RECURSE WEBCORE_MEDIASTREAM_WKC_SOURCES "${WEBCORE_DIR}/platform/mediastream/WKC/*.cpp")
+    file(GLOB_RECURSE WEBCORE_MEDIASTREAM_WKC_SOURCES CONFIGURE_DEPENDS "${WEBCORE_DIR}/platform/mediastream/WKC/*.cpp")
     file(GLOB WEBCORE_MEDIASTREAM_COMMON_SOURCES "${WEBCORE_DIR}/platform/mediastream/*.cpp")
     list(APPEND WEBCORE_PLATFORM_SOURCES
         ${WEBCORE_MEDIASTREAM_WKC_SOURCES}
