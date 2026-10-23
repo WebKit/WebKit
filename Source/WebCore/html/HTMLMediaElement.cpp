@@ -7581,7 +7581,7 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBeha
     if (behavior == EnqueueBehavior::OnlyWhenChanged && hasTargets == m_lastTargetAvailabilityEventState)
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "hasTargets = ", hasTargets);
+    HTMLMEDIAELEMENT_RELEASE_LOG(EnqueuePlaybackTargetAvailabilityChangedEvent, hasTargets);
     m_lastTargetAvailabilityEventState = hasTargets;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET_AVAILABILITY_API)
     Ref event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, hasTargets);
