@@ -731,12 +731,14 @@ WKCWebViewPrivate::construct()
     s.setShouldDisplayTextDescriptions(true);
 #endif
 
-    // IndexedDB — the old call here was
-    // WebCore::RuntimeEnabledFeatures::setWebkitIndexedDBEnabled(true).
-    // RuntimeEnabledFeatures is gone; IndexedDB is now a normal Settings.yaml
-    // entry ("IndexedDBAPIEnabled") generated into Settings.h the same way
-    // as everything else in this function.
+    // IndexedDB is available only when its SQLite-backed implementation was
+    // compiled into this WKC build. Keep the runtime setting aligned with the
+    // build-time feature gate instead of exposing an API with no backend.
+#if ENABLE(INDEXED_DATABASE)
     s.setIndexedDBAPIEnabled(true);
+#else
+    s.setIndexedDBAPIEnabled(false);
+#endif
 
     // MediaStream — the old call here was
     // WebCore::RuntimeEnabledFeatures::setMediaStreamEnabled(true).
