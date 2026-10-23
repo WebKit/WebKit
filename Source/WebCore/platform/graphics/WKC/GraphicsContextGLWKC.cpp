@@ -3282,16 +3282,30 @@ void GraphicsContextGLWKC::texSubImage2D(GCGLenum target, GCGLint level, GCGLint
     }
 
     auto& destination = isCubeFace ? (*faceLevels)[level] : texture->levels[level];
+    const size_t updateRowBytes = static_cast<size_t>(width) * 4;
+    std::vector<uint8_t> previousPixels(updateRowBytes * static_cast<size_t>(height));
     for (GCGLsizei y = 0; y < height; ++y) {
         const size_t destinationOffset =
             (static_cast<size_t>(yoffset + y) * levelWidth + static_cast<size_t>(xoffset)) * 4;
-        const size_t sourceOffset = static_cast<size_t>(y) * static_cast<size_t>(width) * 4;
+        const size_t sourceOffset = static_cast<size_t>(y) * updateRowBytes;
+        std::memcpy(previousPixels.data() + sourceOffset, destination.data() + destinationOffset,
+            updateRowBytes);
         std::memcpy(destination.data() + destinationOffset, converted.data() + sourceOffset,
-            static_cast<size_t>(width) * 4);
+            updateRowBytes);
     }
 
-    if (texture->storageCreated && !uploadTextureLevel(*texture, static_cast<uint32_t>(level), face))
+    if (texture->storageCreated && !uploadTextureLevel(*texture, static_cast<uint32_t>(level), face)) {
+        // Keep the CPU-side texture image consistent with GX2 storage when an
+        // upload cannot be completed (for example, if the surface lock fails).
+        for (GCGLsizei y = 0; y < height; ++y) {
+            const size_t destinationOffset =
+                (static_cast<size_t>(yoffset + y) * levelWidth + static_cast<size_t>(xoffset)) * 4;
+            const size_t sourceOffset = static_cast<size_t>(y) * updateRowBytes;
+            std::memcpy(destination.data() + destinationOffset, previousPixels.data() + sourceOffset,
+                updateRowBytes);
+        }
         addError(GL_INVALID_OPERATION_VALUE);
+    }
 }
 
 void GraphicsContextGLWKC::generateMipmap(GCGLenum target)
