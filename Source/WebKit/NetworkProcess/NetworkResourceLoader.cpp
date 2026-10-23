@@ -1015,20 +1015,9 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
     } else if (m_parameters.navigationRequester)
         clientFrameID = m_parameters.navigationRequester->frameID;
 
-    auto record = clientFrameID ? connection->localNetworkAccessFrameRecord(*clientFrameID, clientParentFrameID) : std::nullopt;
-    bool recordMatchesClient = record && record->origin == sourceOrigin;
-    if (!recordMatchesClient)
-        sourceOrigin = SecurityOriginData::createOpaque();
-    auto recordedAddressSpace = recordMatchesClient && record->addressSpace != IPAddressSpace::Unknown ? record->addressSpace : IPAddressSpace::Public;
-    if (isLessPublicThan(clientAddressSpace, recordedAddressSpace))
-        clientAddressSpace = recordedAddressSpace;
-
-    bool topOriginIsAllowed = !topOrigin.isOpaque() && NetworkProcess::singleton().allowsFirstPartyForCookies(connection->webProcessIdentifier(), RegistrableDomain::uncheckedCreateFromHost(topOrigin.host())) == NetworkProcess::AllowCookieAccess::Allow;
-    clientIsSecureContext = clientIsSecureContext && topOriginIsAllowed && shouldTreatAsPotentiallyTrustworthy(sourceOrigin.toURL());
-
-    auto clientOrigin = ClientOrigin { topOrigin, sourceOrigin };
-    auto requirement = WebCore::checkLocalNetworkAccess(request, currentURL, connectionAddressSpace, clientAddressSpace,
-        clientIsSecureContext, clientOrigin, localNetworkAllowedByPermissionsPolicy, loopbackNetworkAllowedByPermissionsPolicy);
+    auto client = connection->localNetworkAccessClient(clientFrameID, clientParentFrameID, { topOrigin, sourceOrigin }, clientAddressSpace, clientIsSecureContext);
+    auto requirement = WebCore::checkLocalNetworkAccess(request, currentURL, connectionAddressSpace, client.addressSpace,
+        client.isSecureContext, client.origin, localNetworkAllowedByPermissionsPolicy, loopbackNetworkAllowedByPermissionsPolicy);
 
     auto finish = [this, protectedThis = Ref { *this }, url = currentURL, completionHandler = WTF::move(completionHandler)](std::optional<ResourceError> error) mutable {
         // A rejected fetch surfaces as a bare TypeError, so the reason would otherwise be invisible.
@@ -1044,7 +1033,7 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
     if (*requirement == LocalNetworkAccessRequirement::None)
         return finish(std::nullopt);
 
-    networkSession->requestLocalNetworkAccessPermission(webPageProxyID(), clientOrigin, connectionAddressSpace, [finish = WTF::move(finish), url = request.url()](WebCore::PermissionState state) mutable {
+    networkSession->requestLocalNetworkAccessPermission(webPageProxyID(), client.origin, connectionAddressSpace, [finish = WTF::move(finish), url = request.url()](WebCore::PermissionState state) mutable {
         finish(localNetworkAccessPermissionError(url, state));
     });
 }

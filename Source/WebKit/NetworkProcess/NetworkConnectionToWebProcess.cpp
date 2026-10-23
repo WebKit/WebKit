@@ -92,6 +92,7 @@
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SameSiteInfo.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/SerializedScriptValue.h>
@@ -540,7 +541,7 @@ void NetworkConnectionToWebProcess::queryLocalNetworkAccessPermission(std::optio
     protect(NetworkProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::QueryLocalNetworkAccessPermission(sessionID(), webPageProxyID, origin, addressSpace), WTF::move(completion));
 }
 
-void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByWorker isInitiatedByWorker)
+void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByWorker isInitiatedByWorker, std::optional<FrameIdentifier> parentFrameID, WebCore::IPAddressSpace clientAddressSpace, bool clientIsSecureContext, bool localNetworkAllowedByPermissionsPolicy, bool loopbackNetworkAllowedByPermissionsPolicy)
 {
     MESSAGE_CHECK(request.url().isValid());
     MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()) != NetworkProcess::AllowCookieAccess::Terminate);
@@ -550,7 +551,7 @@ void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& r
     }
 
     ASSERT(!m_networkSocketChannels.contains(identifier));
-    if (RefPtr channel = NetworkSocketChannel::create(*this, m_sessionID, request, protocol, identifier, webPageProxyID, frameID, pageID, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy, isInitiatedByWorker))
+    if (RefPtr channel = NetworkSocketChannel::create(*this, m_sessionID, request, protocol, identifier, webPageProxyID, frameID, pageID, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy, isInitiatedByWorker, { parentFrameID, clientAddressSpace, clientIsSecureContext, localNetworkAllowedByPermissionsPolicy, loopbackNetworkAllowedByPermissionsPolicy }))
         m_networkSocketChannels.add(identifier, channel.releaseNonNull());
 }
 
@@ -776,6 +777,21 @@ auto NetworkConnectionToWebProcess::localNetworkAccessFrameRecord(FrameIdentifie
     if (auto iterator = m_localNetworkAccessFrameRecords.find(*parentFrameID); iterator != m_localNetworkAccessFrameRecords.end())
         return iterator->value;
     return std::nullopt;
+}
+
+auto NetworkConnectionToWebProcess::localNetworkAccessClient(std::optional<FrameIdentifier> frameID, std::optional<FrameIdentifier> parentFrameID, const ClientOrigin& claimedOrigin, IPAddressSpace claimedAddressSpace, bool claimedIsSecureContext) const -> LocalNetworkAccessClient
+{
+    auto record = frameID ? localNetworkAccessFrameRecord(*frameID, parentFrameID) : std::nullopt;
+    bool recordMatchesClient = record && record->origin == claimedOrigin.clientOrigin;
+    auto sourceOrigin = recordMatchesClient ? claimedOrigin.clientOrigin : SecurityOriginData::createOpaque();
+    auto recordedAddressSpace = recordMatchesClient && record->addressSpace != IPAddressSpace::Unknown ? record->addressSpace : IPAddressSpace::Public;
+    auto addressSpace = isLessPublicThan(claimedAddressSpace, recordedAddressSpace) ? recordedAddressSpace : claimedAddressSpace;
+
+    auto& topOrigin = claimedOrigin.topOrigin;
+    bool topOriginIsAllowed = !topOrigin.isOpaque() && NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, RegistrableDomain::uncheckedCreateFromHost(topOrigin.host())) == NetworkProcess::AllowCookieAccess::Allow;
+    bool isSecureContext = claimedIsSecureContext && topOriginIsAllowed && shouldTreatAsPotentiallyTrustworthy(sourceOrigin.toURL());
+
+    return { ClientOrigin { topOrigin, sourceOrigin }, addressSpace, isSecureContext };
 }
 
 void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)

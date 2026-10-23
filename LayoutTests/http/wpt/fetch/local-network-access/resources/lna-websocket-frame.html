@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/fetch/local-network-access/resources/support.sub.js"></script>
+<script>
+
+// Opens a WebSocket to a loopback handler that sends a message as soon as the connection is up, and
+// reports every event the page sees, in order. With ?literal the target is named by its address
+// instead of a hostname, which is what makes its space known before connecting.
+
+const events = [];
+const useAddressLiteral = new URLSearchParams(location.search).has('literal');
+const url = useAddressLiteral ? new URL(resolveUrl("/origin", Server.WS_LOOPBACK)) : new URL(resolveUrl("/origin", Server.WSS_LOOPBACK));
+if (useAddressLiteral)
+    url.hostname = '127.0.0.1';
+const socket = new WebSocket(url);
+socket.onopen = () => events.push('open');
+socket.onmessage = () => events.push('message');
+socket.onerror = () => events.push('error');
+socket.onclose = (event) => {
+    events.push(`close ${event.code}`);
+    parent.postMessage(events, '*');
+};
+socket.addEventListener('message', () => socket.close());
+
+</script>
+</body>
+</html>

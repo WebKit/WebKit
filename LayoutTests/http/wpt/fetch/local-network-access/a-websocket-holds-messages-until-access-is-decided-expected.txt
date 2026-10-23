@@ -1,0 +1,4 @@
+
+PASS a granted WebSocket reports open before the message the server sent while access was being decided
+PASS a refused WebSocket never reports open or the server's message
+

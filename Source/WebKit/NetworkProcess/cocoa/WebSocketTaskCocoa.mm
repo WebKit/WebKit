@@ -30,6 +30,8 @@
 #import "NetworkSocketChannel.h"
 #import <Foundation/NSURLSession.h>
 #import <WebCore/ClientOrigin.h>
+#import <WebCore/DNS.h>
+#import <WebCore/IPAddressSpace.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ThreadableWebSocketChannel.h>
@@ -151,8 +153,11 @@ void WebSocketTask::didConnect(const String& protocol)
         extensionsValue = [httpResponse valueForHTTPHeaderField:@"Sec-WebSocket-Extensions"];
 
     m_receivedDidConnect = true;
+    auto connectionAddressSpace = IPAddressSpace::Unknown;
+    if (CheckedPtr session = networkSession())
+        connectionAddressSpace = session->classifyConnectionAddressSpace(IPAddress::fromString(lastRemoteIPAddress(m_task.get())), [m_task currentRequest].URL);
     RefPtr channel = m_channel.get();
-    channel->didConnect(protocol, extensionsValue);
+    channel->didConnect(protocol, extensionsValue, connectionAddressSpace);
     channel->didReceiveHandshakeResponse(ResourceResponse { [m_task response] });
 }
 

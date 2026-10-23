@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LocalNetworkAccessEnabled=true ] -->
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+// A WebSocket whose URL names an address literal has a known address space before it connects, so it is
+// checked then and the socket is only opened once the permission is decided. The page must see the same
+// events either way: a granted connection opens, and a refused one reports an error and closes with
+// 1006 without ever opening.
+//
+// The frame is on port 9446, which the address-space overrides map to public, so its WebSocket to the
+// loopback WPT server needs permission. loopback-network is delegated to the frame because the feature's
+// default allowlist is 'self'.
+
+const PUBLIC_ORIGIN = 'https://web-platform.test:9446';
+
+function runPublicFrame(t)
+{
+    const frame = document.createElement('iframe');
+    frame.allow = 'loopback-network';
+    frame.src = new URL('resources/lna-websocket-frame.html?literal', location.href).href.replace(location.origin, PUBLIC_ORIGIN);
+    document.body.appendChild(frame);
+    t.add_cleanup(() => frame.remove());
+
+    return new Promise((resolve) => {
+        window.addEventListener('message', (event) => resolve(event.data), { once: true });
+    });
+}
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(true, true, PUBLIC_ORIGIN);
+
+    assert_array_equals(await runPublicFrame(t), ['open', 'message', 'close 1000']);
+}, 'a granted WebSocket to an address literal opens');
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(false, true, PUBLIC_ORIGIN);
+
+    assert_array_equals(await runPublicFrame(t), ['error', 'close 1006']);
+}, 'a refused WebSocket to an address literal never opens');
+
+</script>
+</body>
+</html>

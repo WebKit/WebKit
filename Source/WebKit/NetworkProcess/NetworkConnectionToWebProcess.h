@@ -43,6 +43,7 @@
 #include "WebResourceLoadObserver.h"
 #include "WebSWServerToContextConnection.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IPAddressSpace.h>
@@ -200,6 +201,12 @@ public:
     };
     void recordLocalNetworkAccessFrame(WebCore::FrameIdentifier, LocalNetworkAccessFrameRecord&&);
     std::optional<LocalNetworkAccessFrameRecord> localNetworkAccessFrameRecord(WebCore::FrameIdentifier, std::optional<WebCore::FrameIdentifier> parentFrameID) const;
+    struct LocalNetworkAccessClient {
+        WebCore::ClientOrigin origin;
+        WebCore::IPAddressSpace addressSpace;
+        bool isSecureContext;
+    };
+    LocalNetworkAccessClient localNetworkAccessClient(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::FrameIdentifier> parentFrameID, const WebCore::ClientOrigin& claimedOrigin, WebCore::IPAddressSpace claimedAddressSpace, bool claimedIsSecureContext) const;
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
     void transferKeptAliveLoad(NetworkResourceLoader&);
@@ -378,7 +385,7 @@ private:
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
 
-    void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker);
+    void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker, std::optional<WebCore::FrameIdentifier> parentFrameID, WebCore::IPAddressSpace clientAddressSpace, bool clientIsSecureContext, bool localNetworkAllowedByPermissionsPolicy, bool loopbackNetworkAllowedByPermissionsPolicy);
     void queryLocalNetworkAccessPermission(std::optional<WebPageProxyIdentifier>, WebCore::ClientOrigin&&, WebCore::IPAddressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
     void countWebSocketChannelsForTesting(CompletionHandler<void(uint32_t)>&&);
 
