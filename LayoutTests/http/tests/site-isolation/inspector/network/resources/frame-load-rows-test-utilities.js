@@ -67,6 +67,9 @@ window.FrameLoadRowRecorder = class FrameLoadRowRecorder
 // How long the helpers below wait for the frontend model to catch up before reporting a failure.
 window.awaitTimeout = 5000;
 
+// For waits that include a process launch or a navigation, which can be slow under load.
+window.awaitLaunchTimeout = 10000;
+
 window.pollUntil = async function(condition, timeout = awaitTimeout) {
     let deadline = Date.now() + timeout;
     while (true) {
@@ -91,8 +94,8 @@ window.awaitResourceSettled = function(resource, timeout = awaitTimeout) {
 };
 
 // WI.networkManager.frames also lists frames whose load has not committed yet.
-window.awaitChildFrame = function(predicate) {
-    return pollUntil(() => Array.from(WI.networkManager.mainFrame?.childFrameCollection || []).find(predicate));
+window.awaitChildFrame = function(predicate, timeout) {
+    return pollUntil(() => Array.from(WI.networkManager.mainFrame?.childFrameCollection || []).find(predicate), timeout);
 };
 
 window.awaitSubresource = function(frame, urlPart) {

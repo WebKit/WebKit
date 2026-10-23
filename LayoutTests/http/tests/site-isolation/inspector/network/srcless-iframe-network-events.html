@@ -1,0 +1,69 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function addSrclessIFrame() {
+    let iframe = document.createElement("iframe");
+    iframe.name = "dynamic-srcless-frame";
+    document.body.appendChild(iframe);
+}
+
+function fetchFromIFrame(name, token) {
+    frames[name].fetch(`/site-isolation/inspector/network/resources/data.json?srcless-${token}`);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.SrclessIFrame");
+
+    async function expectFetchBelongsToIFrame(name) {
+        // Unique per run, so repeated runs in one process never share a request.
+        let token = String(Math.random()).slice(2);
+        let origin = await InspectorTest.evaluateInPage("location.origin");
+        let url = `${origin}/site-isolation/inspector/network/resources/data.json?srcless-${token}`;
+        let recorder = new FrameLoadRowRecorder;
+
+        let iframeFrame = await awaitChildFrame((frame) => frame.name === name);
+        InspectorTest.expectThat(!!iframeFrame, "Srcless iframe should be a child frame of the main frame.");
+
+        InspectorTest.evaluateInPage(`fetchFromIFrame("${name}", "${token}")`);
+
+        let resource = await pollUntil(() => recorder.rowsForURL(url)[0]);
+        InspectorTest.expectThat(!!resource, "Fetch should be added.");
+        if (resource) {
+            InspectorTest.expectEqual(resource.parentFrame, iframeFrame, "Fetch should belong to the srcless iframe's frame.");
+            InspectorTest.expectEqual(await awaitResourceSettled(resource), "finished", "Fetch should finish loading.");
+            InspectorTest.expectEqual(recorder.rowsForURL(url).length, 1, "Fetch should be listed once.");
+        }
+        let iframeCount = await InspectorTest.evaluateInPage("document.querySelectorAll('iframe').length");
+        InspectorTest.expectEqual(WI.networkManager.mainFrame.childFrameCollection.size, iframeCount, "Main frame should have no extra child frames.");
+
+        recorder.stop();
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.SrclessIFrame.Static",
+        description: "A fetch from an iframe without src that was in the page when the inspector opened should belong to that iframe's frame.",
+        timeout: 20000,
+        async test() {
+            await expectFetchBelongsToIFrame("static-srcless-frame");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.SrclessIFrame.Dynamic",
+        description: "A fetch from an iframe without src that was added to the page later should belong to that iframe's frame.",
+        timeout: 20000,
+        async test() {
+            InspectorTest.evaluateInPage(`addSrclessIFrame()`);
+            await expectFetchBelongsToIFrame("dynamic-srcless-frame");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that requests made from iframes without a src list under the iframe's own frame, once, finished, under Site Isolation.</p>
+<iframe name="static-srcless-frame"></iframe>
+</body>
