@@ -1,4 +1,31 @@
 =================
+WPE WebKit 2.54.2
+=================
+
+What's new in WPE WebKit 2.54.2?
+
+  - Fix performance when compositing layers with backdrop filters.
+  - Fix prewarmed web process leak when they are rejected due to sandboxing.
+  - Release suspended pages and idle processes on memory pressure.
+  - Bind /dev/dxg in the bubblewrap sandbox.
+  - Notify input method about cursor area or surrounding text after a re-focus.
+  - Clear input method composition underlines before adding new ones.
+  - Do not enable input method for read-only text fields.
+  - Update the input method state when readonly changes on the focused element.
+  - Fix WebXR viewport scaling, both for regular content and layers content.
+  - Fix length reported by array argument to WPEClipboard.changed(), and document
+    the fact that the array must be null-terminated.
+  - Fix incorrect empty cursor images passed to wpe_view_set_cursor_to_bytes().
+  - Fix inverted aplication of the WPE_SETTING_DISABLE_ANIMATIONS setting.
+  - Fix the Wayland WPEPlatform implementation to correctly use pre-edit string
+    offsets as bytes for the text-input-v3 protocol.
+  - Fix screen sync observer leak in wpe_screen_get_sync_observer().
+  - Fix content rendered upside-down when using the WPEBackend-fdo DMA-BUF
+    buffer pool through libwpe.
+  - Add User-Agent quirk for OrangeTV.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.54.1
 =================
 
