@@ -94,6 +94,7 @@ struct CallInformation {
         , headerIncludingThisSizeInBytes(headerSize)
     { }
 
+#if ENABLE(ASSEMBLER)
     RegisterAtOffsetList computeResultsOffsetList()
     {
         RegisterSet usedResultRegisters;
@@ -110,6 +111,9 @@ struct CallInformation {
         RegisterAtOffsetList savedRegs(usedResultRegisters, RegisterAtOffsetList::ZeroBased);
         return savedRegs;
     }
+#else
+    RegisterAtOffsetList computeResultsOffsetList();
+#endif
 
     ArgumentLocation thisArgument { };
     Vector<ArgumentLocation, 8> params { };
@@ -123,12 +127,20 @@ class WasmCallingConvention {
 public:
     static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
 
+#if ENABLE(ASSEMBLER)
     WasmCallingConvention(Vector<JSValueRegs>&& jsrs, Vector<FPRReg>&& fprs, Vector<GPRReg>&& scratches, RegisterSet&& calleeSaves)
         : jsrArgs(WTF::move(jsrs))
         , fprArgs(WTF::move(fprs))
         , prologueScratchGPRs(WTF::move(scratches))
         , calleeSaveRegisters(calleeSaves)
     { }
+#else
+    WasmCallingConvention(Vector<JSValueRegs>&& jsrs, Vector<FPRReg>&& fprs, Vector<GPRReg>&& scratches)
+        : jsrArgs(WTF::move(jsrs))
+        , fprArgs(WTF::move(fprs))
+        , prologueScratchGPRs(WTF::move(scratches))
+    { }
+#endif
 
     WTF_MAKE_NONCOPYABLE(WasmCallingConvention);
 
@@ -219,23 +231,34 @@ public:
         return { thisArgument, WTF::move(params), WTF::move(results), totalFrameSize, headerSize };
     }
 
+#if ENABLE(ASSEMBLER)
     RegisterSet argumentGPRs() const { return RegisterSet::argumentGPRs(); }
+#endif
 
     const Vector<JSValueRegs> jsrArgs;
     const Vector<FPRReg> fprArgs;
     const Vector<GPRReg> prologueScratchGPRs;
+#if ENABLE(ASSEMBLER)
     const RegisterSet calleeSaveRegisters;
+#endif
 };
 
 class JSCallingConvention {
 public:
     static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
 
+#if ENABLE(ASSEMBLER)
     JSCallingConvention(Vector<JSValueRegs>&& gprs, Vector<FPRReg>&& fprs, RegisterSet&& calleeSaves)
         : jsrArgs(WTF::move(gprs))
         , fprArgs(WTF::move(fprs))
         , calleeSaveRegisters(calleeSaves)
     { }
+#else
+    JSCallingConvention(Vector<JSValueRegs>&& gprs, Vector<FPRReg>&& fprs)
+        : jsrArgs(WTF::move(gprs))
+        , fprArgs(WTF::move(fprs))
+    { }
+#endif
 
     WTF_MAKE_NONCOPYABLE(JSCallingConvention);
 private:
@@ -289,13 +312,20 @@ public:
             [&](unsigned index) {
                 return marshallLocation(role, signature.argumentType(index), gpArgumentCount, fpArgumentCount, stackOffset);
             });
+#if ENABLE(ASSEMBLER)
         Vector<ArgumentLocation, 1> results { ArgumentLocation { ValueLocation { JSRInfo::returnValueJSR }, Width64 } };
+#else
+        Vector<ArgumentLocation, 1> results { ArgumentLocation { ValueLocation::stackArgument(stackOffset), widthForBytes(sizeof(Register)) } };
+        stackOffset += sizeof(Register);
+#endif
         return { thisArgument, WTF::move(params), WTF::move(results), stackOffset, headerSize };
     }
 
     const Vector<JSValueRegs> jsrArgs;
     const Vector<FPRReg> fprArgs;
+#if ENABLE(ASSEMBLER)
     const RegisterSet calleeSaveRegisters;
+#endif
 };
 
 const JSCallingConvention& jsCallingConvention();
