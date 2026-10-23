@@ -5751,10 +5751,16 @@ void Document::processColorScheme(const String& colorSchemeString)
     if (colorScheme.isEmpty() && !allowsTransformations)
         colorScheme.add(ColorScheme::Light);
 
+    bool colorSchemeChanged = m_colorScheme != colorScheme;
     m_colorScheme = colorScheme;
 
-    if (RefPtr page = this->page())
+    if (RefPtr page = this->page()) {
         page->updateStyleAfterChangeInEnvironment();
+
+        // The color scheme from the meta tag applies to the whole document when the root doesn't set its own.
+        if (colorSchemeChanged && isTopDocument())
+            page->refreshTopFixedContainerEdgeAfterColorSchemeChange();
+    }
 }
 
 void Document::metaElementColorSchemeChanged()

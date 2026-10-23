@@ -379,7 +379,11 @@ public:
     // and adjusting for page scale.
     LayoutPoint scrollPositionForFixedPosition() const;
 
-    WEBCORE_EXPORT std::pair<FixedContainerEdges, WeakElementEdges> fixedContainerEdges(BoxSideSet) const;
+    // If `topContainerToResample` is the container found for the top side, its color is computed again instead of
+    // reusing the previous one, unless it looks like an overlay (dimming layer, sidebar, translucent viewport-sized
+    // container). With `IgnoreOtherTopContainers::Yes`, any other container found for the top side is ignored.
+    enum class IgnoreOtherTopContainers : bool { No, Yes };
+    WEBCORE_EXPORT std::pair<FixedContainerEdges, WeakElementEdges> fixedContainerEdges(BoxSideSet, const Element* topContainerToResample = nullptr, IgnoreOtherTopContainers = IgnoreOtherTopContainers::No) const;
     
     // Static function can be called from another thread.
     WEBCORE_EXPORT static LayoutPoint scrollPositionForFixedPosition(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, const LayoutPoint& scrollPosition, const LayoutPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements, int headerHeight, int footerHeight);
