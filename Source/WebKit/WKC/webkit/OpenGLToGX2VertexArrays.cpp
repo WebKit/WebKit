@@ -183,22 +183,64 @@ VertexArrayResult VertexArrays::setAttribute(uint8_t index, const VertexAttribut
             return VertexArrayResult::MissingBuffer;
         if (input.offset > info.size)
             return VertexArrayResult::BufferRangeError;
+        if (!m_backend.bindVertexBuffer)
+            return VertexArrayResult::MissingBackend;
     }
     State* state = currentState();
     if (!state)
         return VertexArrayResult::InvalidName;
+
     VertexAttribute value = input;
     auto old = state->attributes.find(index);
-    if (old != state->attributes.end())
-        value.enabled = old->second.enabled;
-    if (m_backend.setAttribute && !m_backend.setAttribute(m_backend.context, index, value))
+    const bool hadOld = old != state->attributes.end();
+    VertexAttribute previous;
+    if (hadOld) {
+        previous = old->second;
+        value.enabled = previous.enabled;
+    }
+
+    // Reserve the logical slot before changing native GX2 state so allocation
+    // failure cannot leave a descriptor installed without matching GL state.
+    if (!hadOld) {
+        try {
+            old = state->attributes.emplace(index, value).first;
+        } catch (...) {
+            return VertexArrayResult::BackendFailure;
+        }
+    } else
+        old->second = value;
+
+    auto restoreLogical = [&] {
+        if (hadOld)
+            state->attributes[index] = previous;
+        else
+            state->attributes.erase(index);
+    };
+    auto restoreBackend = [&] {
+        if (m_backend.setAttribute) {
+            VertexAttribute rollback;
+            if (hadOld)
+                rollback = previous;
+            m_backend.setAttribute(m_backend.context, index, rollback);
+        }
+        if (m_backend.bindVertexBuffer) {
+            const BufferName buffer = hadOld ? previous.buffer : 0;
+            const uint32_t stride = hadOld ? previous.stride : 0;
+            const size_t offset = hadOld ? previous.offset : 0;
+            m_backend.bindVertexBuffer(m_backend.context, index, buffer, stride, offset);
+        }
+    };
+
+    if (m_backend.setAttribute && !m_backend.setAttribute(m_backend.context, index, value)) {
+        restoreLogical();
         return VertexArrayResult::BackendFailure;
-    state->attributes[index] = value;
-    if (value.buffer && m_backend.bindVertexBuffer
-        && !m_backend.bindVertexBuffer(m_backend.context, index, value.buffer, value.stride, value.offset))
+    }
+    if (value.buffer && !m_backend.bindVertexBuffer(m_backend.context, index, value.buffer,
+            value.stride, value.offset)) {
+        restoreBackend();
+        restoreLogical();
         return VertexArrayResult::BackendFailure;
-    if (value.buffer && !m_backend.bindVertexBuffer)
-        return VertexArrayResult::MissingBackend;
+    }
     return VertexArrayResult::Ok;
 }
 
