@@ -35,6 +35,7 @@
 #include "WebBackForwardListCounts.h"
 #include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListSwiftUtilities.h"
+#include "WebFrameMessages.h"
 #include "WebFrameProxy.h"
 #include "WebInspectorUtilities.h"
 #include "WebPageProxy.h"
@@ -198,17 +199,18 @@ void WebBackForwardList::addItem(Ref<WebBackForwardListItem>&& newItem)
     page->didChangeBackForwardList(newItemPtr, WTF::move(removedItems));
 }
 
-void WebBackForwardList::addChildItem(FrameIdentifier parentFrameID, Ref<FrameState>&& frameState)
+std::optional<BackForwardItemIdentifier> WebBackForwardList::addChildItem(FrameIdentifier parentFrameID, Ref<FrameState>&& frameState)
 {
     RefPtr currentItem = this->currentItem();
     if (!currentItem)
-        return;
+        return std::nullopt;
 
     RefPtr parentItem = currentItem->mainFrameItem().childItemForFrameID(parentFrameID);
     if (!parentItem)
-        return;
+        return std::nullopt;
 
     parentItem->setChild(WTF::move(frameState));
+    return currentItem->identifier();
 }
 
 void WebBackForwardList::goToItem(WebBackForwardListItem& item)
@@ -813,8 +815,13 @@ void WebBackForwardList::backForwardAddItemShared(IPC::Connection& connection, R
         MESSAGE_CHECK(process, targetFrame->page() == m_page.get());
         if (targetFrame->isPendingInitialHistoryItem()) {
             targetFrame->setIsPendingInitialHistoryItem(false);
-            if (RefPtr parent = targetFrame->parentFrame())
-                addChildItem(parent->frameID(), WTF::move(navigatedFrameState));
+            if (RefPtr parent = targetFrame->parentFrame()) {
+                // The child now has the identifier of the item it was added to. Updates from the frame's process have to
+                // carry it to find the child.
+                auto frameItemID = navigatedFrameState->frameItemID;
+                if (auto itemID = addChildItem(parent->frameID(), WTF::move(navigatedFrameState)); itemID && frameItemID)
+                    process->send(Messages::WebFrame::DidAddHistoryItemToBackForwardItem(*frameItemID, *itemID), targetFrame->frameID());
+            }
             return;
         }
     } else
@@ -1206,6 +1213,12 @@ WebKit::FrameState* frameStateChildAtIndex(const WebKit::FrameState& frameState,
 unsigned maxFrameStateDepthForMessageCheck()
 {
     return WebCore::Page::maxFrameDepth;
+}
+
+void sendDidAddHistoryItemToBackForwardItem(WebKit::WebProcessProxy& process, WebCore::FrameIdentifier frameID, const WebKit::FrameState& frameState, const WebCore::BackForwardItemIdentifier& itemID)
+{
+    if (auto& frameItemID = frameState.frameItemID)
+        process.send(Messages::WebFrame::DidAddHistoryItemToBackForwardItem(*frameItemID, itemID), frameID);
 }
 
 #endif // ENABLE(BACK_FORWARD_LIST_SWIFT)
