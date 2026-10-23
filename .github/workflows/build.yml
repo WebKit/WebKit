@@ -765,13 +765,14 @@ jobs:
             -DWKC_ENABLE_GAMEPAD=ON \
             -DWKC_ENABLE_WEBRTC_API=ON \
             -DWKC_ENABLE_WEB_INSPECTOR=ON \
-            -DWKC_ENABLE_WEBGL=ON
+            -DWKC_ENABLE_WEBGL=OFF
           ccache --zero-stats || true
 
-      # Compile the GL-to-GX2 driver translation units independently of the
-      # later LLInt generator. This gives the hardware backend a direct Wii U
-      # cross-compile gate even when the optional interpreter-offset bootstrap
-      # fails before the whole-engine target can start.
+      # Compile the existing GL-to-GX2 driver translation units independently of
+      # the modern WebGL adapter. The adapter is a separate, required full-engine
+      # gate and must not be fabricated just to make this lower-level gate green.
+      # WebGL stays OFF in this bootstrap configure until GraphicsContextGLWKC.cpp
+      # exists; the full-engine configure below retains the real WebGL requirement.
       - name: Cross-compile OpenGL-to-GX2 driver sources
         shell: bash
         run: |
@@ -793,7 +794,6 @@ jobs:
               "Source/WebKit/WKC/webkit/OpenGLToGX2VertexArrays.cpp",
               "Source/WebKit/WKC/webkit/OpenGLToGX2WUTBackend.cpp",
               "Source/WebKit/WKC/webkit/OpenGLToGX2WUTResources.cpp",
-              "Source/WebCore/platform/graphics/WKC/GraphicsContextGLWKC.cpp",
           ]
           with open(workspace / "build/compile_commands.json", encoding="utf-8") as file:
               commands = json.load(file)
