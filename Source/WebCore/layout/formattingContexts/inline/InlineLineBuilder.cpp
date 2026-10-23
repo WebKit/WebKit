@@ -1280,7 +1280,7 @@ LineBuilder::RectAndFloatConstraints LineBuilder::adjustedLineRectWithCandidateI
 
 std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForInitialLetterIfApplicable(const Box& floatBox)
 {
-    auto drop = floatBox.style().initialLetter().drop();
+    auto drop = floatBox.style().usedInitialLetterDrop();
     auto isInitialLetter = floatBox.isFloatingPositioned() && floatBox.style().pseudoElementType() == PseudoElementType::FirstLetter && drop;
     if (!isInitialLetter)
         return { };
@@ -1295,17 +1295,14 @@ std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForI
 
     auto clearGapBeforeFirstLine = InlineLayoutUnit { };
     if (intrusiveBottom) {
-        // When intrusive initial letter is cleared, we introduce a clear gap. This is (with proper floats) normally computed before starting
-        // line layout but intrusive initial letters are cleared only when another initial letter shows up. Regular inline content
-        // does not need clearance.
-        auto intrusiveInitialLetterWidth = std::max(0.f, m_lineLogicalRect.left() - m_lineInitialLogicalRect.left());
-        m_lineLogicalRect.setLeft(m_lineInitialLogicalRect.left());
-        m_lineLogicalRect.expandHorizontally(intrusiveInitialLetterWidth);
+        // Unlike proper floats, an intrusive initial letter is cleared only once another initial
+        // letter appears, so the gap is computed here. The line must not widen: this block's own
+        // initial letter needs its horizontal inset on the first line.
         clearGapBeforeFirstLine = *intrusiveBottom;
     }
 
     auto sunkenBelowFirstLineOffset = LayoutUnit { };
-    auto letterHeight = floatBox.style().initialLetter().height();
+    auto letterHeight = floatBox.style().usedInitialLetterHeight();
     if (drop < letterHeight) {
         // Sunken/raised initial letter pushes contents of the first line down.
         auto numberOfSunkenLines = letterHeight - drop;
@@ -1376,6 +1373,8 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), mayOverConstrainLine))
         return false;
 
+    // Unlike regular floats, text-indent applies to the letter itself, not the text beside it.
+    auto isInitialLetter = floatBox.style().pseudoElementType() == PseudoElementType::FirstLetter && floatBox.style().usedInitialLetterDrop() > 0;
     auto lineMarginBoxLeft = std::max(0.f, m_lineLogicalRect.left() - m_lineMarginStart);
     auto computeFloatBoxPosition = [&] {
         // Set static position first.
@@ -1384,6 +1383,9 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
             staticPosition.setY(m_lineLogicalRect.top() + additionalOffsets->capHeightOffset);
             boxGeometry.setVerticalMargin({ boxGeometry.marginBefore() + additionalOffsets->sunkenBelowFirstLineOffset, boxGeometry.marginAfter() });
         }
+        // Modeled as a start margin so float positioning honors it in both directions.
+        if (isInitialLetter && m_lineMarginStart)
+            boxGeometry.setMarginStart(boxGeometry.marginStart() + LayoutUnit { 2 * m_lineMarginStart });
         staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
         boxGeometry.setTopLeft(staticPosition);
         // Compute float position by running float layout.
@@ -1432,7 +1434,9 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
             // This float is placed outside the line box. No need to shrink the current line.
             return;
         }
-        auto constraints = floatAvoidingRect(m_lineLogicalRect, m_lineMarginStart);
+        // The letter consumed the indent as its start margin; do not indent the text again.
+        auto lineMarginStart = isInitialLetter ? InlineLayoutUnit { } : m_lineMarginStart;
+        auto constraints = floatAvoidingRect(m_lineLogicalRect, lineMarginStart);
         m_lineLogicalRect = constraints.logicalRect;
         m_lineIsConstrainedByFloat.add(constraints.constrainedSideSet);
     };

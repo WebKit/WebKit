@@ -467,6 +467,16 @@ Style::Contain ComputedStyle::usedContain() const
     return result;
 }
 
+float ComputedStyle::usedInitialLetterHeight() const
+{
+    return initialLetter().height();
+}
+
+float ComputedStyle::usedInitialLetterDrop() const
+{
+    return initialLetter().drop();
+}
+
 UserSelect ComputedStyle::usedUserSelect() const
 {
     if (effectiveInert())

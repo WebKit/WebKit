@@ -242,18 +242,23 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
     auto clearPosition = [&]() -> std::optional<LayoutUnit> {
         if (!layoutBox.hasFloatClear())
             return { };
-        // The vertical position candidate needs to clear the existing floats in this context.
-        switch (clearInBlockFormattingContext(layoutBox)) {
-        case Clear::Left:
-            return placedFloats().lowestPositionOnBlockAxis(Clear::InlineStart);
-        case Clear::Right:
-            return placedFloats().lowestPositionOnBlockAxis(Clear::InlineEnd);
-        case Clear::Both:
-            return placedFloats().lowestPositionOnBlockAxis();
-        default:
-            ASSERT_NOT_REACHED();
+        // An initial letter is not subject to the clear property; only same-side floats clear it,
+        // handled separately below.
+        auto clear = clearInBlockFormattingContext(layoutBox);
+        auto lowestClearedPosition = std::optional<LayoutUnit> { };
+        for (auto& floatItem : placedFloats().list()) {
+            CheckedPtr floatItemBox = floatItem.layoutBox();
+            if (floatItemBox && floatItemBox->style().lineBoxContain().contains(Style::WebkitLineBoxContainValue::InitialLetter))
+                continue;
+            auto matchesClearSide = clear == Clear::Both
+                || (clear == Clear::Left && floatItem.isStartPositioned())
+                || (clear == Clear::Right && !floatItem.isStartPositioned());
+            if (!matchesClearSide)
+                continue;
+            auto floatBottom = floatItem.absoluteRectWithMargin().bottom();
+            lowestClearedPosition = std::max(lowestClearedPosition.value_or(floatBottom), floatBottom);
         }
-        return { };
+        return lowestClearedPosition;
     };
 
     auto absoluteCoordinates = this->absoluteCoordinates(layoutBox, borderBoxTopLeft);
@@ -261,15 +266,43 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
     auto blockStartCandidate = absoluteTopLeft.y();
     // Incoming float cannot be placed higher than existing floats (margin box of the last float).
     // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
+    // An initial letter stays cap-aligned at the block's top, avoiding earlier floats horizontally.
+    auto isInitialLetter = layoutBox.style().lineBoxContain().contains(Style::WebkitLineBoxContainValue::InitialLetter);
     auto lastFloatAbsoluteTop = placedFloats().last()->absoluteRectWithMargin().top();
     auto lastOrClearedFloatPosition = std::max(clearPosition().value_or(lastFloatAbsoluteTop), lastFloatAbsoluteTop);
-    if (blockStartCandidate - boxGeometry.marginBefore() < lastOrClearedFloatPosition)
+    if (!isInitialLetter && blockStartCandidate - boxGeometry.marginBefore() < lastOrClearedFloatPosition)
         blockStartCandidate = lastOrClearedFloatPosition + boxGeometry.marginBefore();
+
+    // Same-side floats clear an initial letter even without an explicit clear.
+    if (!isInitialLetter && isFloatingCandidateStartPositionedInBlockFormattingContext(layoutBox)) {
+        for (auto& floatItem : placedFloats().list()) {
+            CheckedPtr initialLetterFloatBox = floatItem.layoutBox();
+            if (initialLetterFloatBox && initialLetterFloatBox->style().lineBoxContain().contains(Style::WebkitLineBoxContainValue::InitialLetter))
+                blockStartCandidate = std::max(blockStartCandidate, floatItem.absoluteRectWithMargin().bottom() + boxGeometry.marginBefore());
+        }
+    }
 
     absoluteTopLeft.setY(blockStartCandidate);
     auto margins = BoxGeometry::Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
     auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, true, isFloatingCandidateStartPositionedInBlockFormattingContext(layoutBox) };
     findAvailablePosition(floatBox, placedFloats().list(), absoluteCoordinates.containingBlockContentBox);
+    if (isInitialLetter) {
+        // findAvailablePosition() only considers the letter's top band, the avoider being height-less,
+        // so align past the widest overlapping start float to clear its full extent.
+        auto letterMarginBoxStart = floatBox.blockStart();
+        auto letterMarginBoxEnd = letterMarginBoxStart + boxGeometry.marginBoxHeight();
+        auto requiredInlineStart = std::optional<LayoutUnit> { };
+        for (auto& floatItem : placedFloats().list()) {
+            if (!floatItem.isStartPositioned())
+                continue;
+            auto floatRect = floatItem.absoluteRectWithMargin();
+            if (floatRect.bottom() <= letterMarginBoxStart || floatRect.top() >= letterMarginBoxEnd)
+                continue;
+            requiredInlineStart = std::max(requiredInlineStart.value_or(floatRect.right()), floatRect.right());
+        }
+        if (requiredInlineStart && *requiredInlineStart > floatBox.inlineStart())
+            floatBox.setInlineStart(*requiredInlineStart);
+    }
     // Convert box coordinates from formatting root back to containing block.
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
     return { floatBox.inlineStart() + margins.horizontal.start - containingBlockTopLeft.x(), floatBox.blockStart() + margins.vertical.before - containingBlockTopLeft.y() };

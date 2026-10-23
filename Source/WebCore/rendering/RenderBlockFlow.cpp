@@ -2432,7 +2432,9 @@ LayoutUnit RenderBlockFlow::adjustForUnsplittableChild(RenderBox& child, LayoutU
         if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, childLogicalHeight))
             return logicalOffset;
         auto result = logicalOffset + remainingLogicalHeight;
-        bool isInitialLetter = child.isFloating() && child.style().pseudoElementType() == PseudoElementType::FirstLetter && child.style().initialLetter().drop() > 0;
+        auto& childStyle = child.style();
+        auto initialLetterDrop = childStyle.usedInitialLetterDrop();
+        bool isInitialLetter = child.isFloating() && childStyle.pseudoElementType() == PseudoElementType::FirstLetter && initialLetterDrop > 0;
         if (isInitialLetter) {
             // Increase our logical height to ensure that lines all get pushed along with the letter.
             setLogicalHeight(logicalOffset + remainingLogicalHeight);
@@ -2541,6 +2543,37 @@ LayoutUnit RenderBlockFlow::pageRemainingLogicalHeightForOffset(LayoutUnit offse
         remainingHeight = intMod(remainingHeight, pageLogicalHeight);
     }
     return remainingHeight;
+}
+
+// An initial letter is positioned against the text of the line it belongs to, which can place its
+// block-start edge before the fragmentainer that line ended up in. Report that slice so painting can
+// leave it out: it belongs to no fragmentainer, and the preceding one would draw it at its block-end.
+LayoutUnit RenderBlockFlow::fragmentainerBlockStartOverhangForFloat(LayoutUnit floatBlockStart, LayoutUnit lineBlockStart) const
+{
+    if (floatBlockStart >= lineBlockStart)
+        return { };
+
+    auto pageLogicalHeight = pageLogicalHeightForOffset(lineBlockStart);
+    if (!pageLogicalHeight)
+        return { };
+
+    auto fragmentainerBlockStart = lineBlockStart + pageRemainingLogicalHeightForOffset(lineBlockStart, ExcludePageBoundary) - pageLogicalHeight;
+    if (floatBlockStart >= fragmentainerBlockStart)
+        return { };
+
+    // A slice before the very first fragmentainer has no preceding fragmentainer to be drawn in, so it
+    // just renders ahead of the flow - which is what an unfragmented rendering shows as well.
+    if (fragmentainerBlockStart + offsetFromLogicalTopOfFirstPage() <= 0)
+        return { };
+
+    return fragmentainerBlockStart - floatBlockStart;
+}
+
+void RenderBlockFlow::setInitialLetterFragmentainerBlockStartOverhang(LayoutUnit overhang)
+{
+    if (!overhang && !hasRareBlockFlowData())
+        return;
+    ensureRareBlockFlowData().m_initialLetterFragmentainerBlockStartOverhang = overhang;
 }
 
 LayoutUnit RenderBlockFlow::logicalHeightForChildForFragmentation(const RenderBox& child) const
@@ -2771,6 +2804,8 @@ void RenderBlockFlow::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paint
     if (!m_floatingObjects)
         return;
 
+    auto initialLetterOverhang = initialLetterFragmentainerBlockStartOverhang();
+
     for (auto& floatingObject : m_floatingObjects->set()) {
         if (!floatingObject->renderer())
             continue;
@@ -2793,6 +2828,33 @@ void RenderBlockFlow::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paint
             paintInfo.context().clip(*clipRect);
         };
         clipBlockEndIfNeeded();
+
+        std::optional<GraphicsContextStateSaver> fragmentainerOverhangClip;
+        if (initialLetterOverhang > 0 && floatingObject->renderer()->style().pseudoElementType() == PseudoElementType::FirstLetter) {
+            // flipFloatForWritingModeForChild() pre-compensates for the flip RenderBox::paint() applies,
+            // so floatBoxLocation is not the box's physical origin. Build the physical rect the way
+            // clipOutFloatingBoxes() does instead.
+            auto offsetOfBorderBox = floatingObject->locationOffsetOfBorderBox();
+            auto floatBorderBox = LayoutRect { LayoutPoint { offsetOfBorderBox.width(), offsetOfBorderBox.height() }, floatingObject->renderer()->borderBoxSize() };
+            flipForWritingMode(floatBorderBox);
+            floatBorderBox.moveBy(paintOffset + floatingObject->translationOffsetToAncestor());
+
+            auto clipRect = paintInfo.rect;
+            auto writingMode = style().writingMode();
+            if (writingMode.isHorizontal()) {
+                if (writingMode.isBlockFlipped())
+                    clipRect.shiftMaxYEdgeTo(std::min(clipRect.maxY(), floatBorderBox.maxY() - initialLetterOverhang));
+                else
+                    clipRect.shiftYEdgeTo(std::max(clipRect.y(), floatBorderBox.y() + initialLetterOverhang));
+            } else {
+                if (writingMode.isBlockFlipped())
+                    clipRect.shiftMaxXEdgeTo(std::min(clipRect.maxX(), floatBorderBox.maxX() - initialLetterOverhang));
+                else
+                    clipRect.shiftXEdgeTo(std::max(clipRect.x(), floatBorderBox.x() + initialLetterOverhang));
+            }
+            fragmentainerOverhangClip.emplace(paintInfo.context());
+            paintInfo.context().clip(snappedIntRect(clipRect));
+        }
 
         if (preservePhase) {
             renderer.paint(paintInfo, floatBoxLocation);
@@ -2934,7 +2996,8 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
     LayoutUnit floatLogicalLeft;
 
     bool insideFragmentedFlow = enclosingFragmentedFlow();
-    bool isInitialLetter = childBox.style().pseudoElementType() == PseudoElementType::FirstLetter && childBox.style().initialLetter().drop() > 0;
+    auto initialLetterDrop = childBox.style().usedInitialLetterDrop();
+    bool isInitialLetter = childBox.style().pseudoElementType() == PseudoElementType::FirstLetter && initialLetterDrop > 0;
 
     if (isInitialLetter) {
         if (auto lowestInitialLetterLogicalBottom = this->lowestInitialLetterLogicalBottom()) {
@@ -3012,7 +3075,7 @@ void RenderBlockFlow::adjustInitialLetterPosition(RenderBox& childBox, LayoutUni
 
     // For sunken and raised caps, we have to make some adjustments. Test if we're sunken or raised (dropHeightDelta will be
     // positive for raised and negative for sunken).
-    int dropHeightDelta = childBox.style().initialLetter().height() - childBox.style().initialLetter().drop();
+    int dropHeightDelta = childBox.style().usedInitialLetterHeight() - childBox.style().usedInitialLetterDrop();
 
     // If we're sunken, the float needs to shift down but lines still need to avoid it. In order to do that we increase the float's margin.
     if (dropHeightDelta < 0)
@@ -3211,7 +3274,7 @@ std::optional<LayoutUnit> RenderBlockFlow::lowestInitialLetterLogicalBottom() co
     for (auto& floatingObject : m_floatingObjects->set()) {
         if (!floatingObject->renderer())
             continue;
-        if (floatingObject->isPlaced() && floatingObject->renderer()->style().pseudoElementType() == PseudoElementType::FirstLetter && floatingObject->renderer()->style().initialLetter().drop() > 0)
+        if (floatingObject->isPlaced() && floatingObject->renderer()->style().pseudoElementType() == PseudoElementType::FirstLetter && floatingObject->renderer()->style().usedInitialLetterDrop() > 0)
             lowestFloatBottom = std::max(lowestFloatBottom.value_or(0_lu), logicalBottomForFloat(*floatingObject));
     }
     return lowestFloatBottom;

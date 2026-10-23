@@ -29,8 +29,12 @@
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+IntegerDefinitions.h"
+#include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSValueKeywords.h"
+#include "CSSValueList.h"
 #include "CSSValuePair.h"
 
 namespace WebCore {
@@ -81,6 +85,35 @@ RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range, CSS::PropertyPar
     if (range.peek().id() == CSSValueID::Auto)
         return consumeIdent(range);
     return consumeTextEdge(range);
+}
+
+RefPtr<CSSValue> consumeInitialLetter(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <'initial-letter'> = normal | <number [1,∞]> <integer [1,∞]> | <number [1,∞]> && [ drop | raise ]?
+    // https://drafts.csswg.org/css-inline-3/#propdef-initial-letter
+
+    if (range.peek().id() == CSSValueID::Normal)
+        return consumeIdent(range);
+
+    if (auto keyword = consumeIdent<CSSValueID::Drop, CSSValueID::Raise>(range)) {
+        auto size = CSSPrimitiveValueResolver<CSS::Number<CSS::Positive>>::consumeAndResolve(range, state);
+        if (!size)
+            return nullptr;
+        return CSSValuePair::create(size.releaseNonNull(), keyword.releaseNonNull());
+    }
+
+    auto size = CSSPrimitiveValueResolver<CSS::Number<CSS::Positive>>::consumeAndResolve(range, state);
+    if (!size)
+        return nullptr;
+
+    if (auto keyword = consumeIdent<CSSValueID::Drop, CSSValueID::Raise>(range))
+        return CSSValuePair::create(size.releaseNonNull(), keyword.releaseNonNull());
+
+    // A list, not a pair, so the converter cannot mistake this for the legacy pair.
+    if (auto sink = CSSPrimitiveValueResolver<CSS::Integer<CSS::Positive>>::consumeAndResolve(range, state))
+        return CSSValueList::createSpaceSeparated(size.releaseNonNull(), sink.releaseNonNull());
+
+    return size;
 }
 
 } // namespace CSSPropertyParserHelpers

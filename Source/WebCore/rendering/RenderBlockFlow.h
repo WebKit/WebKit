@@ -112,6 +112,7 @@ public:
     MarginValues m_margins;
     int m_lineBreakToAvoidWidow;
     LayoutUnit m_alignContentShift; // Caches negative shifts for overflow calculation.
+    LayoutUnit m_initialLetterFragmentainerBlockStartOverhang;
 
     SingleThreadWeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
 
@@ -367,6 +368,12 @@ public:
     LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const;
     LayoutUnit pageLogicalHeightForOffset(LayoutUnit offset) const;
     LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule = IncludePageBoundary) const;
+    LayoutUnit fragmentainerBlockStartOverhangForFloat(LayoutUnit floatBlockStart, LayoutUnit lineBlockStart) const;
+
+    // A block has at most one initial letter, so the slice of it that precedes its fragmentainer is
+    // tracked here rather than on FloatingObject, which is kept small for the many ordinary floats.
+    LayoutUnit initialLetterFragmentainerBlockStartOverhang() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_initialLetterFragmentainerBlockStartOverhang : 0_lu; }
+    void setInitialLetterFragmentainerBlockStartOverhang(LayoutUnit);
     LayoutUnit LEGACY_NODELETE logicalHeightForChildForFragmentation(const RenderBox& child) const;
     bool hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
 

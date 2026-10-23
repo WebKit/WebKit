@@ -1,0 +1,3 @@
+
+PASS Property initial-letter value 'calc(sign(1rem - 1px) * 1.5)'
+
