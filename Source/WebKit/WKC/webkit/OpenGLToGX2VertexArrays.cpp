@@ -64,7 +64,11 @@ VertexArrayResult VertexArrays::create(VertexArrayName& output)
     if (!output)
         return VertexArrayResult::InvalidName;
     try {
-        m_arrays.emplace(output, State {});
+        const auto insertion = m_arrays.emplace(output, State {});
+        if (!insertion.second) {
+            output = 0;
+            return VertexArrayResult::InvalidName;
+        }
     } catch (...) {
         output = 0;
         return VertexArrayResult::InvalidName;
@@ -80,9 +84,12 @@ VertexArrayResult VertexArrays::destroy(VertexArrayName name)
     if (it == m_arrays.end())
         return VertexArrayResult::InvalidName;
     if (m_bound == name) {
-        m_bound = 0;
+        // Keep the current VAO selected if the backend cannot clear its
+        // element-buffer binding. Commit the logical state change only after
+        // the native operation succeeds.
         if (m_backend.setElementBuffer && !m_backend.setElementBuffer(m_backend.context, 0))
             return VertexArrayResult::BackendFailure;
+        m_bound = 0;
     }
     m_arrays.erase(it);
     return VertexArrayResult::Ok;
