@@ -203,10 +203,16 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                 return;
             }
 
+            bool isWebContent = serviceName.startsWith(webContentServiceName);
+#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>) && PLATFORM(IOS)
+            if (!isWebContent && !sandbox_check(getpid(), "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), "com.apple.analyticsd"))
+                register_for_dlsym_callbacks();
+#endif
+
             String uiProcessName = xpcDictionaryGetString(event, "ui-process-name"_s);
 
             CFStringRef entryPointFunctionName = nullptr;
-            if (serviceName.startsWith(webContentServiceName)) {
+            if (isWebContent) {
 #if ENABLE(CLOSE_WEBCONTENT_XPC_CONNECTION_POST_LAUNCH)
                 s_isWebProcess = true;
 #endif
