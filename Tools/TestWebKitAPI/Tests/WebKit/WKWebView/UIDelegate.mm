@@ -182,8 +182,8 @@ TEST(WebKit, WindowOpenWithoutUIDelegate)
 
 TEST(WebKit, GeolocationPermission)
 {
-    NSString *html = @"<script>navigator.geolocation.watchPosition("
-        "function(p) { alert('position ' + p.coords.latitude + ' ' + p.coords.longitude) },"
+    NSString *html = @"<script>const watchID = navigator.geolocation.watchPosition("
+        "function(p) { navigator.geolocation.clearWatch(watchID); alert('position ' + p.coords.latitude + ' ' + p.coords.longitude) },"
         "function(e) { alert('error ' + e.code + ' ' + e.message) })"
     "</script>";
 
