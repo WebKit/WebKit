@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021, 2026 Apple Inc. All rights reserved.
  * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -120,10 +120,10 @@ static SemaphoreState* mapSemaphoreState(int fd)
 static bool tryDecrement(SemaphoreState& state)
 {
     for (;;) {
-        uint32_t count = state.count.load(std::memory_order_acquire);
+        uint32_t count = state.count.load<MemoryOrder::Acquire>();
         if (!count)
             return false;
-        if (state.count.compareExchangeStrong(count, count - 1, std::memory_order_acq_rel, std::memory_order_acquire) == count)
+        if (state.count.compareExchangeStrong<MemoryOrder::AcquireRelease, MemoryOrder::Acquire>(count, count - 1) == count)
             return true;
     }
 }
@@ -140,18 +140,18 @@ bool Semaphore::waitImpl(Timeout timeout)
     // while the waiter is still awake. Keep polling while that keeps happening,
     // stop when it does not, and retry occasionally so that a semaphore which
     // becomes busy starts polling again.
-    unsigned waitCount = m_waitCount.exchangeAdd(1, std::memory_order_relaxed);
-    if (m_shouldPoll.load(std::memory_order_relaxed) || !(waitCount % semaphorePollRetryInterval)) {
+    unsigned waitCount = m_waitCount.exchangeAdd<MemoryOrder::Relaxed>(1);
+    if (m_shouldPoll.load<MemoryOrder::Relaxed>() || !(waitCount % semaphorePollRetryInterval)) {
         MonotonicTime pollDeadline = MonotonicTime::now() + semaphorePollDuration;
         do {
             for (unsigned i = 0; i < 64; ++i)
                 simde_mm_pause();
             if (tryDecrement(state)) {
-                m_shouldPoll.store(true, std::memory_order_relaxed);
+                m_shouldPoll.store<MemoryOrder::Relaxed>(true);
                 return true;
             }
         } while (MonotonicTime::now() < pollDeadline);
-        m_shouldPoll.store(false, std::memory_order_relaxed);
+        m_shouldPoll.store<MemoryOrder::Relaxed>(false);
     }
 
     // Polling did not find anything, so tell the peer that a system call is
@@ -251,7 +251,7 @@ void Semaphore::signal()
         return;
     auto& state = *static_cast<SemaphoreState*>(m_state);
     state.count.exchangeAdd(1);
-    if (state.parked.load(std::memory_order_seq_cst))
+    if (state.parked.load<MemoryOrder::SeqCst>())
         futexWakeOne(state.count);
 #endif
 }

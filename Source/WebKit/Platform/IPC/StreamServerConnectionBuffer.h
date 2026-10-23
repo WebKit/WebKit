@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,13 +67,13 @@ inline std::optional<StreamServerConnectionBuffer> StreamServerConnectionBuffer:
 
 inline std::optional<std::span<uint8_t>> StreamServerConnectionBuffer::tryAcquire()
 {
-    ServerLimit serverLimit = sharedServerLimit().load(std::memory_order_acquire);
+    ServerLimit serverLimit = sharedServerLimit().load<MemoryOrder::Acquire>();
     if (serverLimit == ServerLimit::serverIsSleepingTag)
         return std::nullopt;
 
     auto result = alignedMutableSpan(m_serverOffset, clampedLimit(serverLimit));
     if (result.size() < minimumMessageSize) {
-        serverLimit = sharedServerLimit().compareExchangeStrong(serverLimit, ServerLimit::serverIsSleepingTag, std::memory_order_acq_rel, std::memory_order_acquire);
+        serverLimit = sharedServerLimit().compareExchangeStrong<MemoryOrder::AcquireRelease, MemoryOrder::Acquire>(serverLimit, ServerLimit::serverIsSleepingTag);
         result = alignedMutableSpan(m_serverOffset, clampedLimit(serverLimit));
     }
 
@@ -94,7 +94,7 @@ inline StreamServerConnectionBuffer::WakeUpClient StreamServerConnectionBuffer::
     readSize = std::max(readSize, minimumMessageSize);
     ServerOffset serverOffset = static_cast<ServerOffset>(wrapOffset(alignOffset(m_serverOffset) + readSize));
 
-    ServerOffset oldServerOffset = sharedServerOffset().exchange(serverOffset, std::memory_order_acq_rel);
+    ServerOffset oldServerOffset = sharedServerOffset().exchange<MemoryOrder::AcquireRelease>(serverOffset);
     WakeUpClient wakeUpClient = WakeUpClient::No;
     // If the client wrote over serverOffset, it means the client is waiting.
     if (oldServerOffset == ServerOffset::clientIsWaitingTag)
@@ -108,8 +108,8 @@ inline StreamServerConnectionBuffer::WakeUpClient StreamServerConnectionBuffer::
 
 inline StreamServerConnectionBuffer::WakeUpClient StreamServerConnectionBuffer::releaseAll()
 {
-    sharedServerLimit().store(static_cast<ServerLimit>(0), std::memory_order_release);
-    ServerOffset oldServerOffset = sharedServerOffset().exchange(static_cast<ServerOffset>(0), std::memory_order_acq_rel);
+    sharedServerLimit().store<MemoryOrder::Release>(static_cast<ServerLimit>(0));
+    ServerOffset oldServerOffset = sharedServerOffset().exchange<MemoryOrder::AcquireRelease>(static_cast<ServerOffset>(0));
     WakeUpClient wakeUpClient = WakeUpClient::No;
     // If the client wrote over serverOffset, it means the client is waiting.
     if (oldServerOffset == ServerOffset::clientIsWaitingTag)

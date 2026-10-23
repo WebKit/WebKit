@@ -61,7 +61,7 @@ void ReadWriteLock::readLockSlow(uint32_t observedPhase)
 {
     unsigned spinCount = 0;
     for (;;) {
-        uint32_t readersIn = m_readersIn.load(std::memory_order_acquire);
+        uint32_t readersIn = m_readersIn.load<MemoryOrder::Acquire>();
         // Note: If we get to this line from unparking the s_phaseFieldMask bits will be different and we'll still
         // exit this loop and enter the critical section. Either there's no new incoming writer present so the phase id
         // is the same but s_writerPresentBit is different, or there is a new writer but the phase id will have flipped.
@@ -71,12 +71,12 @@ void ReadWriteLock::readLockSlow(uint32_t observedPhase)
         if (ReadWriteLockInternal::spinStep(spinCount, ReadWriteLockInternal::readerSpinLimit))
             continue;
 
-        m_readersIn.exchangeOr(s_hasParkedReadersBit, std::memory_order_relaxed);
+        m_readersIn.exchangeOr<MemoryOrder::Relaxed>(s_hasParkedReadersBit);
 
         ParkingLot::parkConditionally(
             readerParkingAddress(),
             [&]() -> bool {
-                uint32_t currentReadersIn = m_readersIn.load(std::memory_order_relaxed);
+                uint32_t currentReadersIn = m_readersIn.load<MemoryOrder::Relaxed>();
                 return (currentReadersIn & s_phaseFieldMask) == observedPhase && (currentReadersIn & s_hasParkedReadersBit);
             },
             []() { },
@@ -93,7 +93,7 @@ void ReadWriteLock::readUnlockSlow()
         [&](ParkingLot::UnparkResult) -> intptr_t {
             // Clear unconditionally: the draining writer waits for this bit to clear, and this is our
             // last access to the lock.
-            m_readersOut.exchangeAnd(~s_writerDrainParkedBit, std::memory_order_relaxed);
+            m_readersOut.exchangeAnd<MemoryOrder::Relaxed>(~s_writerDrainParkedBit);
             return 0;
         });
 }
@@ -103,7 +103,7 @@ void ReadWriteLock::writeLockSlow(uint32_t target)
     // We own the phase, so no more readers can enter the critical section; wait for the ones already counted to leave.
     unsigned spinCount = 0;
     for (;;) {
-        uint64_t readersOut = m_readersOut.load(std::memory_order_acquire);
+        uint64_t readersOut = m_readersOut.load<MemoryOrder::Acquire>();
         if (outCount(readersOut) == target)
             return;
 
@@ -111,7 +111,7 @@ void ReadWriteLock::writeLockSlow(uint32_t target)
             continue;
 
         uint64_t parked = (readersOut & s_outCountMask) | s_writerDrainParkedBit | target;
-        if (m_readersOut.compareExchangeStrong(readersOut, parked, std::memory_order_relaxed) != readersOut)
+        if (m_readersOut.compareExchangeStrong<MemoryOrder::Relaxed>(readersOut, parked) != readersOut)
             continue;
 
         // The reader that reaches target still accesses the lock after its count lands, so wait for it
@@ -129,7 +129,7 @@ void ReadWriteLock::writeLockSlow(uint32_t target)
         // NOTE: This acquire is what orders every reader's critical section before ours. The ParkingLot
         // only orders us after the last reader; the others are ordered through the release sequence
         // their exchangeAdds started on m_readersOut, which the clear we read here continues.
-        readersOut = m_readersOut.load(std::memory_order_acquire);
+        readersOut = m_readersOut.load<MemoryOrder::Acquire>();
         RELEASE_ASSERT(readersOut == ((static_cast<uint64_t>(target) << s_outCountShift) | target));
         return;
     }
@@ -144,7 +144,7 @@ void ReadWriteLock::writeUnlockSlow()
         [&](ParkingLot::UnparkResult) -> intptr_t {
             // We asked for every waiter at this address, so the queue is drained. mayHaveMoreThreads
             // is bucket-granular and would only leave the bit stale here.
-            m_readersIn.exchangeAnd(~s_hasParkedReadersBit, std::memory_order_relaxed);
+            m_readersIn.exchangeAnd<MemoryOrder::Relaxed>(~s_hasParkedReadersBit);
             return 0;
         });
 }

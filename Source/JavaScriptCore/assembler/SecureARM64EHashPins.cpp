@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,13 +51,13 @@ struct ValidateNonReentrancyScope {
     ALWAYS_INLINE ValidateNonReentrancyScope(SecureARM64EHashPins::Metadata* metadata)
         : m_metadata(metadata)
     {
-        uint32_t validateNonReentrancy = m_metadata->assertNotReentrant.exchange(1, std::memory_order_seq_cst);
+        uint32_t validateNonReentrancy = m_metadata->assertNotReentrant.exchange<MemoryOrder::SeqCst>(1);
         RELEASE_ASSERT(!validateNonReentrancy);
     }
 
     ALWAYS_INLINE ~ValidateNonReentrancyScope()
     {
-        uint32_t validateNonReentrancy = m_metadata->assertNotReentrant.exchange(0, std::memory_order_seq_cst);
+        uint32_t validateNonReentrancy = m_metadata->assertNotReentrant.exchange<MemoryOrder::SeqCst>(0);
         RELEASE_ASSERT(validateNonReentrancy == 1);
     }
     SecureARM64EHashPins::Metadata* m_metadata;
@@ -160,7 +160,7 @@ bool SecureARM64EHashPins::allocatePinForCurrentThreadImpl(const AbstractLocker&
         ValidateNonReentrancyScope validateNonReentrancy(metadata);
 
         RELEASE_ASSERT(isJITPC(metadata));
-        uint64_t nextPin = metadata->nextPin.exchangeAdd(1, std::memory_order_seq_cst);
+        uint64_t nextPin = metadata->nextPin.exchangeAdd<MemoryOrder::SeqCst>(1);
         RELEASE_ASSERT(nextPin);
 
         newEntryPage->setIsInUse(newEntryIndex);

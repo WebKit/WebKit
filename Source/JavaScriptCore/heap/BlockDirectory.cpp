@@ -71,15 +71,16 @@ void BlockDirectory::releaseAndNoteIfStealable(unsigned index)
     // Read while the block is still ours; once it is released these bits could be modified by whoever claims it next.
     bool stealable = isStealable(index);
     // Must stay the last bit written for this block; see the comment above m_bits.
-    releaseInUse(index);
-    if (!stealable)
+    if (!stealable) {
+        releaseInUse(index);
         return;
+    }
+    // Pairs with the FullyFenced watch() in findEmptyBlockToSteal(): either the stealer's scan sees our
+    // release, or our minimize() sees their watch and fails their publish.
+    releaseInUse<MemoryOrder::FullyFenced>(index);
     // The cursor normally only moves forward; rewind it so stealers can see this block.
-    // Pairs with the fence in findEmptyBlockToSteal(): either the stealer's scan sees our release, or our
-    // minimize() sees their watch and fails their publish.
-    WTF::storeLoadFence();
     // FIXME: If we move the allocation cursor into the directory we should reset it here too.
-    m_emptyCursor.minimize(index, std::memory_order_relaxed);
+    m_emptyCursor.minimize<MemoryOrder::Relaxed>(index);
     subspace()->alignedMemoryAllocator()->addDirectoryWithEmptyBlocks(this);
 }
 
@@ -89,18 +90,11 @@ MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
     // A block that becomes stealable behind us while we search rewinds the cursor, and publishing our
     // result over that would hide the block until prepareForAllocation(). Watching the cursor makes the
     // publish fail instead.
-    auto watched = m_emptyCursor.watch(std::memory_order_relaxed);
-    // Pairs with the fence in releaseAndNoteIfStealable(): either our scan sees a block released after the
-    // watch, or that releaser's minimize() sees the watch and fails our publish.
-    // FIXME: We could make this not have a storeLoadFence (on X86_64 and ARM64 with LSE) by having:
-    // 1) watch do a seq_cst load/exchangeOr
-    // 2) releaseAndNoteIfStealable do a seq_cst releaseInUse and minimize (including the transaction's load).
-    // This is probably faster on Apple Silicon.
-    WTF::storeLoadFence();
+    auto watched = m_emptyCursor.watch<MemoryOrder::FullyFenced>();
     for (unsigned cursor = watched.value;; ++cursor) {
         cursor = (stealableBits() & ~inUseBitsView()).findBit(cursor, true);
         if (cursor >= m_blocks.size()) {
-            m_emptyCursor.tryUpdateWatched(watched, cursor, std::memory_order_relaxed);
+            m_emptyCursor.tryUpdateWatched<MemoryOrder::Relaxed>(watched, cursor);
             return nullptr;
         }
         if (!claimInUse(cursor))
@@ -110,7 +104,7 @@ MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
         // Recheck under the claim; see claimInUse().
         if (isStealable(cursor)) [[likely]] {
             dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", cursor, " in use (findEmptyBlockToSteal) for ", *this);
-            m_emptyCursor.tryUpdateWatched(watched, cursor, std::memory_order_relaxed);
+            m_emptyCursor.tryUpdateWatched<MemoryOrder::Relaxed>(watched, cursor);
             return m_blocks[cursor].first;
         }
         releaseInUse(cursor);
@@ -254,8 +248,8 @@ void BlockDirectory::prepareForAllocation()
             allocator->prepareForAllocation();
         });
 
-    m_unsweptCursor.set(0, std::memory_order_relaxed);
-    m_emptyCursor.set(0, std::memory_order_relaxed);
+    m_unsweptCursor.set<MemoryOrder::Relaxed>(0);
+    m_emptyCursor.set<MemoryOrder::Relaxed>(0);
 
     assertWorldIsStopped();
     // endMarking recomputes the empty bits wholesale rather than block by block, so none of the blocks
