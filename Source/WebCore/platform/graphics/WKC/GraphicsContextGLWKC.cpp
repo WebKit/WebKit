@@ -2381,10 +2381,13 @@ bool GraphicsContextGLWKC::regenerateTextureMipmaps(TextureRecord& texture)
             for (uint32_t x = 0; x < destinationWidth; ++x) {
                 uint32_t sums[4] { 0, 0, 0, 0 };
                 uint32_t sampleCount = 0;
-                for (uint32_t dy = 0; dy < 2; ++dy) {
-                    const uint32_t sy = std::min(sourceHeight - 1, y * 2 + dy);
-                    for (uint32_t dx = 0; dx < 2; ++dx) {
-                        const uint32_t sx = std::min(sourceWidth - 1, x * 2 + dx);
+                // Cover the complete source footprint, including odd trailing rows/columns.
+                const uint32_t sourceYBegin = y * sourceHeight / destinationHeight;
+                const uint32_t sourceYEnd = (y + 1) * sourceHeight / destinationHeight;
+                const uint32_t sourceXBegin = x * sourceWidth / destinationWidth;
+                const uint32_t sourceXEnd = (x + 1) * sourceWidth / destinationWidth;
+                for (uint32_t sy = sourceYBegin; sy < sourceYEnd; ++sy) {
+                    for (uint32_t sx = sourceXBegin; sx < sourceXEnd; ++sx) {
                         const size_t offset = (static_cast<size_t>(sy) * sourceWidth + sx) * 4;
                         for (unsigned component = 0; component < 4; ++component)
                             sums[component] += source[offset + component];
@@ -2429,10 +2432,13 @@ bool GraphicsContextGLWKC::regenerateCubeMapMipmaps(TextureRecord& texture)
                 for (uint32_t x = 0; x < destinationWidth; ++x) {
                     uint32_t sums[4] { 0, 0, 0, 0 };
                     uint32_t sampleCount = 0;
-                    for (uint32_t dy = 0; dy < 2; ++dy) {
-                        const uint32_t sy = std::min(sourceHeight - 1, y * 2 + dy);
-                        for (uint32_t dx = 0; dx < 2; ++dx) {
-                            const uint32_t sx = std::min(sourceWidth - 1, x * 2 + dx);
+                    // Cover the complete source footprint, including odd trailing rows/columns.
+                    const uint32_t sourceYBegin = y * sourceHeight / destinationHeight;
+                    const uint32_t sourceYEnd = (y + 1) * sourceHeight / destinationHeight;
+                    const uint32_t sourceXBegin = x * sourceWidth / destinationWidth;
+                    const uint32_t sourceXEnd = (x + 1) * sourceWidth / destinationWidth;
+                    for (uint32_t sy = sourceYBegin; sy < sourceYEnd; ++sy) {
+                        for (uint32_t sx = sourceXBegin; sx < sourceXEnd; ++sx) {
                             const size_t offset = (static_cast<size_t>(sy) * sourceWidth + sx) * 4;
                             for (unsigned component = 0; component < 4; ++component)
                                 sums[component] += source[offset + component];
