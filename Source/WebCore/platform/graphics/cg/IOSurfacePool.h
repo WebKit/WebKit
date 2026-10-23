@@ -32,15 +32,14 @@
 #include <WebCore/IOSurfacePoolIdentifier.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/IntSizeHash.h>
-#include <WebCore/Timer.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -63,6 +62,9 @@ public:
     WEBCORE_EXPORT void discardAllSurfaces();
 
     WEBCORE_EXPORT void setPoolSize(size_t);
+    WEBCORE_EXPORT void setMaximumInUseBytes(size_t);
+
+    WEBCORE_EXPORT size_t surfaceCountForTesting();
 
 private:
     IOSurfacePool();
@@ -80,12 +82,12 @@ private:
     // limit caching in use surfaces so that we don't end up with a pool of surfaces we
     // can't readily recycle.
 #if PLATFORM(MAC)
-    static constexpr size_t maximumInUseBytes = 0.5 * defaultMaximumBytesCached;
+    static constexpr size_t defaultMaximumInUseBytes = 0.5 * defaultMaximumBytesCached;
 #else
     // 32 MB is chosen for iOS as it is approximately the size of a set of front and back buffer
     // for 4 page tiles of dimensions 1024x1024. This should provide a good trade off of soon to be
     // available surfaces without contributing too much non-volatile footprint during memory pressure situations.
-    static constexpr size_t maximumInUseBytes { 32 * MB };
+    static constexpr size_t defaultMaximumInUseBytes { 32 * MB };
 #endif
 
     bool LEGACY_NODELETE shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
@@ -100,19 +102,18 @@ private:
     void tryEvictInUseSurface() WTF_REQUIRES_LOCK(m_lock);
     void tryEvictOldestCachedSurface() WTF_REQUIRES_LOCK(m_lock);
 
-    void scheduleCollectionTimer() WTF_REQUIRES_LOCK(m_lock);
-    void stopCollectionTimer() WTF_REQUIRES_LOCK(m_lock);
-    void collectionTimerFired();
+    void scheduleCollection() WTF_REQUIRES_LOCK(m_lock);
+    void performCollection(uint64_t token);
     void collectInUseSurfaces() WTF_REQUIRES_LOCK(m_lock);
-
-    void platformGarbageCollectNow();
 
     void discardAllSurfacesInternal() WTF_REQUIRES_LOCK(m_lock);
 
     String LEGACY_NODELETE poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
-    RunLoop::Timer m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);
+    // The collection runs as a delayed task on a shared work queue. It holds only a weak reference, so the pool can be destroyed on any thread.
+    // Identifies the pending task, or 0 if there is none. A task whose token no longer matches was cancelled.
+    uint64_t m_collectionToken WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     CachedSurfaceMap m_cachedSurfaces WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceQueue m_inUseSurfaces WTF_GUARDED_BY_LOCK(m_lock);
     Vector<IntSize> m_sizesInPruneOrder WTF_GUARDED_BY_LOCK(m_lock);
@@ -120,6 +121,7 @@ private:
     size_t m_bytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_inUseBytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_maximumBytesCached WTF_GUARDED_BY_LOCK(m_lock) { defaultMaximumBytesCached };
+    size_t m_maximumInUseBytes WTF_GUARDED_BY_LOCK(m_lock) { defaultMaximumInUseBytes };
     const IOSurfacePoolIdentifier m_poolIdentifier { IOSurfacePoolIdentifier::generate() };
 };
 

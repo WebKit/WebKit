@@ -448,7 +448,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/GradientRendererCG.cpp
     platform/graphics/cg/GraphicsContextCG.cpp
     platform/graphics/cg/GraphicsContextGLCG.cpp
-    platform/graphics/cg/IOSurfacePool.cpp
+    platform/graphics/cg/IOSurfacePool.mm
     platform/graphics/cg/ImageBufferCGBackend.cpp
     platform/graphics/cg/ImageBufferCGBitmapBackend.cpp
     platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp
@@ -478,7 +478,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/GraphicsContextCocoa.mm
     platform/graphics/cocoa/GraphicsContextGLCocoa.mm
     platform/graphics/cocoa/IOSurface.mm
-    platform/graphics/cocoa/IOSurfacePoolCocoa.mm
     platform/graphics/cocoa/IntRectCocoa.mm
     platform/graphics/cocoa/MediaPlayerEnumsCocoa.mm
     platform/graphics/cocoa/TextTransformCocoa.cpp

@@ -34,6 +34,7 @@
 #include <WebCore/IOSurfacePool.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Threading.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
@@ -116,6 +117,29 @@ TEST(IOSurfacePoolTest, InUseSurfaceBecomesVolatileWhenNoLongerInUse)
     ASSERT_NE(taken, nullptr);
     EXPECT_EQ(taken->surface(), surfaceRef.get());
     EXPECT_FALSE(isVolatile(surfaceRef.get()));
+}
+
+// The last reference to a pool can be dropped on any thread. That must not wait for the main thread,
+// since the main thread may itself be waiting for the thread that drops the reference.
+TEST(IOSurfacePoolTest, DestroyingPoolOnWorkerThreadDoesNotWaitForMainThread)
+{
+    RefPtr<IOSurfacePool> pool = IOSurfacePool::create();
+    IntSize size { 5, 5 };
+
+    auto surface = IOSurface::create(pool.get(), size, ColorSpace::SRGB());
+    ASSERT_NE(surface, nullptr);
+    // An in-use surface makes the pool schedule its collection on the main run loop.
+    auto sendRight = surface->createSendRight();
+    EXPECT_TRUE(surface->isInUse());
+    IOSurface::moveToPool(WTF::move(surface), pool.get());
+
+    // Blocks the main thread until the worker has destroyed the pool.
+    Thread::create("IOSurfacePoolTest worker"_s, [pool = WTF::move(pool)] mutable {
+        pool = nullptr;
+    })->waitForCompletion();
+
+    // The collection scheduled by the destroyed pool must find the pool gone and do nothing.
+    Util::runFor(0.3_s);
 }
 
 } // namespace TestWebKitAPI
