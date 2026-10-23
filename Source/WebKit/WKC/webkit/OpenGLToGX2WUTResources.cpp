@@ -1108,8 +1108,9 @@ bool drawVertexArrayArrays(void* context, Primitive primitive, uint32_t first,
             || !vertexBuffer->second || !vertexBuffer->second->buffer)
             return false;
 
-        const size_t vertexCapacity = static_cast<size_t>(vertexBuffer->second->elemSize)
-            * vertexBuffer->second->elemCount;
+        size_t vertexCapacity = 0;
+        if (!getBufferCapacity(*vertexBuffer->second, vertexCapacity))
+            return false;
         const size_t scalarSize = attribute.sourceType == AttributeType::Byte
             || attribute.sourceType == AttributeType::UnsignedByte ? 1
             : attribute.sourceType == AttributeType::Short
