@@ -27,18 +27,11 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "WebGPUBlendState.h"
 #include <WebCore/WebGPUCppAPI.h>
-#include <optional>
 
 namespace WebKit::WebGPU {
 
-struct ColorTargetState {
-    ::WebGPU::TextureFormat format { ::WebGPU::TextureFormat::R8unorm };
-
-    std::optional<BlendState> blend;
-    uint32_t writeMask { OptionSet<::WebGPU::ColorWrite> { ::WebGPU::ColorWrite::Red, ::WebGPU::ColorWrite::Green, ::WebGPU::ColorWrite::Blue, ::WebGPU::ColorWrite::Alpha }.toRaw() };
-};
+using ColorTargetState = ::WebGPU::ColorTargetState;
 
 } // namespace WebKit::WebGPU
 

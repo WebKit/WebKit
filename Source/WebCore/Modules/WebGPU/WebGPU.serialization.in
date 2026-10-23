@@ -247,7 +247,7 @@ enum class ::WebGPU::LoadOp : uint8_t {
 };
 
 header: <WebGPU/WebGPUCpp.h>
-enum class ::WebGPU::ColorWrite : uint8_t {
+[OptionSet] enum class ::WebGPU::ColorWrite : uint8_t {
     Red,
     Green,
     Blue,

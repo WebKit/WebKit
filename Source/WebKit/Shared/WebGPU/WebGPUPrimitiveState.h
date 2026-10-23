@@ -28,19 +28,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include <WebCore/WebGPUCppAPI.h>
-#include <optional>
 
 namespace WebKit::WebGPU {
 
-struct PrimitiveState {
-    ::WebGPU::PrimitiveTopology topology { ::WebGPU::PrimitiveTopology::TriangleList };
-    std::optional<::WebGPU::IndexFormat> stripIndexFormat;
-    ::WebGPU::FrontFace frontFace { ::WebGPU::FrontFace::CCW };
-    ::WebGPU::CullMode cullMode { ::WebGPU::CullMode::None };
-
-    // Requires "depth-clip-control" feature.
-    bool unclippedDepth;
-};
+using PrimitiveState = ::WebGPU::PrimitiveState;
 
 } // namespace WebKit::WebGPU
 
