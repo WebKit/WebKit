@@ -143,7 +143,7 @@ bool applyPolygonOffsetState(WUTBackendContext& state)
     GX2SetPolygonControl(state.frontFace == Winding::Clockwise
         ? GX2_FRONT_FACE_CW : GX2_FRONT_FACE_CCW,
         GX2_POLYGON_MODE_TRIANGLE, GX2_POLYGON_MODE_TRIANGLE,
-        enabled, enabled, enabled);
+        enabled, enabled, FALSE);
     return true;
 }
 
