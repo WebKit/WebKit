@@ -713,8 +713,9 @@ public:
     using Arguments = std::tuple<ObjCHolderForTesting>;
     using ReplyArguments = std::tuple<ObjCHolderForTesting>;
 
-    // We can use any MessageName here
-    static IPC::MessageName name() { return IPC::MessageName::IPCTester_AsyncPing; }
+    // We can use any MessageName here that is not classified as async-with-reply (the
+    // WithoutUsingIPCConnection path does not encode an async reply ID header field).
+    static constexpr IPC::MessageName name() { return IPC::MessageName::IPCTester_EmptyMessage; }
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::IPCTester_AsyncPingReply; }
 
     static constexpr bool isSync = false;
@@ -738,8 +739,9 @@ public:
     using Arguments = std::tuple<CFHolderForTesting>;
     using ReplyArguments = std::tuple<CFHolderForTesting>;
 
-    // We can use any MessageName here
-    static IPC::MessageName name() { return IPC::MessageName::IPCTester_AsyncPing; }
+    // We can use any MessageName here that is not classified as async-with-reply (the
+    // WithoutUsingIPCConnection path does not encode an async reply ID header field).
+    static constexpr IPC::MessageName name() { return IPC::MessageName::IPCTester_EmptyMessage; }
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::IPCTester_AsyncPingReply; }
 
     static constexpr bool isSync = false;
@@ -2159,7 +2161,7 @@ TEST(IPCSerialization, NSURLCredentialKerberosFlags)
         @"flags": @{ @"name": @"value" },
     }]);
 
-    IPC::Encoder encoder(IPC::MessageName::IPCTester_AsyncPing, 0);
+    IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
     encoder << WebKit::CoreIPCNSURLCredential { credential.get() };
     auto decoder = IPC::Decoder::create(encoder.span(), encoder.releaseAttachments());
     auto decoded = decoder->decode<WebKit::CoreIPCNSURLCredentialData>();
@@ -2174,7 +2176,7 @@ TEST(IPCSerialization, NSURLCredentialAttributes)
         @"attributes": @{ @"name": @"value" },
     }]);
 
-    IPC::Encoder encoder(IPC::MessageName::IPCTester_AsyncPing, 0);
+    IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
     encoder << WebKit::CoreIPCNSURLCredential { credential.get() };
     auto decoder = IPC::Decoder::create(encoder.span(), encoder.releaseAttachments());
     auto decoded = decoder->decode<WebKit::CoreIPCNSURLCredentialData>();

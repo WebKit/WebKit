@@ -58,7 +58,7 @@ class AlwaysEnabled {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithDispatchedFromAndTo_AlwaysEnabled; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithDispatchedFromAndTo_AlwaysEnabled; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -84,7 +84,7 @@ class UntrustedOrigin {
 public:
     using Arguments = std::tuple<IPC::Untrusted<WebCore::SecurityOriginData>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithDispatchedFromAndTo_UntrustedOrigin; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithDispatchedFromAndTo_UntrustedOrigin; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

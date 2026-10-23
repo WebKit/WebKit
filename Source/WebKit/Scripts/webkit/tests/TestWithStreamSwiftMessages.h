@@ -73,7 +73,7 @@ class SendString {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStreamSwift_SendString; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStreamSwift_SendString; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -100,7 +100,7 @@ class SendStringSync {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStreamSwift_SendStringSync; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStreamSwift_SendStringSync; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

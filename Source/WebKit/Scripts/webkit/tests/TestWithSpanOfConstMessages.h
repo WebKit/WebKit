@@ -45,7 +45,7 @@ class TestSpanOfConstFloat {
 public:
     using Arguments = std::tuple<std::span<const float>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSpanOfConst_TestSpanOfConstFloat; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSpanOfConst_TestSpanOfConstFloat; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -70,7 +70,7 @@ class TestSpanOfConstFloatSegments {
 public:
     using Arguments = std::tuple<std::span<const WebCore::FloatSegment>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSpanOfConst_TestSpanOfConstFloatSegments; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSpanOfConst_TestSpanOfConstFloatSegments; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

@@ -45,7 +45,7 @@ class NoOptions {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_NoOptions; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_NoOptions; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -70,7 +70,7 @@ class NoIndices {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_NoIndices; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_NoIndices; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -99,7 +99,7 @@ class OneIndex {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_OneIndex; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_OneIndex; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -129,7 +129,7 @@ class MultipleIndices {
 public:
     using Arguments = std::tuple<String, int, int, int>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_MultipleIndices; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_MultipleIndices; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

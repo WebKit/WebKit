@@ -47,7 +47,7 @@ class SendStreamBuffer {
 public:
     using Arguments = std::tuple<IPC::StreamConnectionBuffer>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStreamBuffer_SendStreamBuffer; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStreamBuffer_SendStreamBuffer; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

@@ -110,6 +110,26 @@ struct MockStreamTestMessageWithAsyncReply1 {
     uint64_t contents;
 };
 
+struct MockStreamTestMessageWithAsyncReplyNotStreamEncodable {
+    static constexpr bool isSync = false;
+    static constexpr bool isStreamEncodable = false;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_AsyncPing; }
+    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::IPCStreamTester_AsyncPingReply; }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << contents;
+    }
+
+    using ReplyArguments = std::tuple<uint64_t>;
+    MockStreamTestMessageWithAsyncReplyNotStreamEncodable(uint64_t contents)
+        : contents(contents)
+    {
+    }
+    uint64_t contents;
+};
+
 class MockSyncMessage {
 public:
     using Arguments = std::tuple<uint32_t>;
@@ -452,13 +472,13 @@ public:
         m_mockServerReceiver->setAsyncMessageHandler([] (IPC::StreamServerConnection& connection, IPC::Decoder& decoder) {
             if (decoder.messageName() != MockStreamTestMessageWithAsyncReply1::name())
                 return false;
-            using AsyncReplyID = IPC::StreamServerConnection::AsyncReplyID;
             auto contents = decoder.decode<uint64_t>();
             ASSERT(contents);
-            auto asyncReplyID = decoder.decode<AsyncReplyID>();
-            ASSERT(asyncReplyID);
             ASSERT(decoder.isValid());
-            connection.sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(*asyncReplyID, *contents);
+            ASSERT(decoder.isAsyncWithReplyMessage());
+            auto asyncReplyID = decoder.asyncReplyID();
+            decoder.markHandled();
+            connection.sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(asyncReplyID, *contents);
             return true;
         });
         serverQueue().dispatch([this, serverConnection = WTF::move(serverConnection)] () mutable {
@@ -655,6 +675,42 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
         RunLoop::currentSingleton().cycle();
     for (uint64_t i = 100u; i < 155u; ++i)
         EXPECT_TRUE(replies.contains(i));
+}
+
+// Tests that unhandled async messages with reply are cancelled, both for messages sent through the stream
+// and for messages sent out of stream.
+TEST_P(StreamMessageTest, SendAsyncReplyNotHandledIsCancelled)
+{
+    auto cleanup = localReferenceBarrier();
+    m_mockServerReceiver->setAsyncMessageHandler([](IPC::StreamServerConnection& connection, IPC::Decoder& decoder) {
+        auto contents = decoder.decode<uint64_t>();
+        ASSERT(contents);
+        if (*contents % 2)
+            return true; // Unhandled message.
+        auto asyncReplyID = decoder.asyncReplyID();
+        decoder.markHandled();
+        connection.sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(asyncReplyID, *contents);
+        return true;
+    });
+    HashMap<uint64_t, uint64_t> replies;
+    for (uint64_t i = 100u; i < 160u; ++i) {
+        auto completionHandler = [&, i](uint64_t value) {
+            replies.add(i, value);
+        };
+        std::optional<IPC::StreamClientConnection::AsyncReplyID> result;
+        if (i % 4 < 2)
+            result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReply1 { i }, WTF::move(completionHandler), defaultDestinationID());
+        else
+            result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReplyNotStreamEncodable { i }, WTF::move(completionHandler), defaultDestinationID());
+        EXPECT_TRUE(!!result);
+    }
+    while (replies.size() < 60u)
+        RunLoop::currentSingleton().cycle();
+    for (uint64_t i = 100u; i < 160u; ++i) {
+        auto reply = replies.find(i);
+        ASSERT_NE(reply, replies.end());
+        EXPECT_EQ(reply->value, i % 2 ? uint64_t { 0 } : i); // Odd messages are cancelled.
+    }
 }
 
 TEST_P(StreamMessageTest, SendSyncMessage)

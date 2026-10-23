@@ -76,7 +76,7 @@ class TestAsyncMessage {
 public:
     using Arguments = std::tuple<uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -106,7 +106,7 @@ class TestSyncMessage {
 public:
     using Arguments = std::tuple<uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -134,7 +134,7 @@ class TestAsyncMessageReply {
 public:
     using Arguments = std::tuple<uint8_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

@@ -45,7 +45,7 @@ class TestMessage {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithWantsDispatchNoSyncMessages_TestMessage; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithWantsDispatchNoSyncMessages_TestMessage; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

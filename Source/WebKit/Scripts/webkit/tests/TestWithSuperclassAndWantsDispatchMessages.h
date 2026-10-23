@@ -45,7 +45,7 @@ class LoadURL {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclassAndWantsDispatch_LoadURL; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclassAndWantsDispatch_LoadURL; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -70,7 +70,7 @@ class TestSyncMessage {
 public:
     using Arguments = std::tuple<uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

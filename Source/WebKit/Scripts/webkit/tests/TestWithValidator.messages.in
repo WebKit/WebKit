@@ -23,7 +23,6 @@
 [
     ExceptionForDispatchedFrom,
     ExceptionForDispatchedTo,
-    WantsSendCancelReply,
     EnabledBy=SomeOtherFeature
 ]
 messages -> TestWithValidator {

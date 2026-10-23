@@ -340,7 +340,6 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveMessageWithReceiverName(IPC::Connection&, IPC::Decoder&);
-    static void sendCancelReply(IPC::Connection&, IPC::Decoder&);
     template<typename M, typename C> void sendWithAsyncReply(M&&, C&&);
     template<typename M> void send(M&&);
 

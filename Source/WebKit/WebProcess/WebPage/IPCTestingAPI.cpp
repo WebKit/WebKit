@@ -559,9 +559,6 @@ static JSValueRef jsSend(IPC::Connection& connection, uint64_t destinationID, IP
 
 static JSValueRef jsSendWithAsyncReply(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, JSContextRef context, const JSObjectRef callback, const JSValueRef messageArguments, JSValueRef* exception)
 {
-    auto encoder = makeUniqueRef<IPC::Encoder>(messageName, destinationID);
-    if (messageArguments && !encodeArgument(encoder.get(), context, messageArguments, exception))
-        return JSValueMakeUndefined(context);
     JSGlobalContextRetain(JSContextGetGlobalContext(context));
     JSValueProtect(context, callback);
     IPC::Connection::AsyncReplyHandler handler = {
@@ -588,6 +585,10 @@ static JSValueRef jsSendWithAsyncReply(IPC::Connection& connection, uint64_t des
         IPC::Connection::AsyncReplyID::generate()
     };
     auto asyncReplyID = *handler.replyID;
+    auto encoder = makeUniqueRef<IPC::Encoder>(messageName, destinationID);
+    encoder.get() << asyncReplyID;
+    if (messageArguments && !encodeArgument(encoder.get(), context, messageArguments, exception))
+        return JSValueMakeUndefined(context);
     auto result = connection.sendMessageWithAsyncReply(WTF::move(encoder), WTF::move(handler), IPC::SendOption::IPCTestingMessage);
     if (result != IPC::Error::NoError) {
         *exception = createErrorFromIPCError(context, result);
@@ -623,6 +624,8 @@ static JSValueRef jsWaitForMessage(IPC::Connection& connection, uint64_t destina
     JSC::JSLockHolder lock(globalObject->vm());
     auto decoderOrError = connection.waitForMessageForTesting(messageName, destinationID, timeout, { });
     if (decoderOrError.has_value()) {
+        if (decoderOrError.value()->messageName() == IPC::MessageName::CancelAsyncReply)
+            return JSValueMakeUndefined(context);
         auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject->vm());
         auto jsResult = jsValueForArguments(globalObject, messageName, decoderOrError.value().get());
         if (scope.exception()) {
@@ -646,6 +649,10 @@ static JSValueRef jsWaitForAsyncReplyAndDispatchImmediately(IPC::Connection& con
     if (!decoderOrError.has_value()) {
         *exception = createErrorFromIPCError(context, decoderOrError.error());
         handler(nullptr, nullptr);
+        return JSValueMakeUndefined(context);
+    }
+    if (decoderOrError.value()->messageName() == IPC::MessageName::CancelAsyncReply) {
+        handler(&connection, nullptr);
         return JSValueMakeUndefined(context);
     }
     handler(&connection, &decoderOrError.value().get());
@@ -3045,7 +3052,7 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
         dictionary->putDirect(vm, dispatchedToIdent, JSC::jsString(vm, String(dispatchedTo(name))));
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
-        dictionary->putDirect(vm, isAsyncReplyIdent, JSC::jsBoolean(isAsyncReply(name)));
+        dictionary->putDirect(vm, isAsyncReplyIdent, JSC::jsBoolean(messageIsReplyToAsyncWithReply(name)));
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
         messagesObject->putDirect(vm, JSC::Identifier::fromString(vm, description(name)), dictionary);
@@ -3182,11 +3189,10 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
-    if (!decoder.isSyncMessage() && messageReplyArgumentDescriptions(decoder.messageName())) {
-        if (auto asyncReplyID = decoder.decode<IPC::Connection::AsyncReplyID>()) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(asyncReplyID->toUInt64()));
-            RETURN_IF_EXCEPTION(scope, nullptr);
-        }
+    if (decoder.isAsyncWithReplyMessage()) {
+        // The reply ID is a header field (see Decoder and messageIsAsyncWithReply), already decoded.
+        jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(decoder.asyncReplyID().toUInt64()));
+        RETURN_IF_EXCEPTION(scope, nullptr);
     }
     return jsResult;
 }

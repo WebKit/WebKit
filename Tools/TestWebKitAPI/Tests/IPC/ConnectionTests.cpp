@@ -78,6 +78,17 @@ struct MockTestSyncMessageWithDataReply {
     template<typename Encoder> void encode(Encoder&) { }
 };
 
+struct MockTestMessageWithAsyncReplyCanDispatchOutOfOrder {
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = true;
+    static constexpr bool replyCanDispatchOutOfOrder = true;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_EmptyMessageWithReply; } // Needs to be async with reply.
+    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::IPCTester_EmptyMessageWithReplyReply; }
+    template<typename Encoder> void encode(Encoder&) { }
+
+    using ReplyArguments = std::tuple<uint64_t>;
+};
+
 namespace {
 class SimpleConnectionTest : public testing::Test {
 public:
@@ -561,8 +572,9 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsync)
 {
     ASSERT_TRUE(openA());
     aClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+        auto listenerID = decoder.asyncReplyID().toUInt64();
+        decoder.markHandled();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), listenerID);
         encoder.get() << decoder.destinationID();
         a()->sendSyncReply(WTF::move(encoder));
         return true;
@@ -782,8 +794,9 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsyncOnTarget)
 
         ASSERT_TRUE(openA());
         aClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
-            auto listenerID = decoder.decode<uint64_t>();
-            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+            auto listenerID = decoder.asyncReplyID().toUInt64();
+            decoder.markHandled();
+            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), listenerID);
             encoder.get() << decoder.destinationID();
             a()->sendSyncReply(WTF::move(encoder));
             return true;
@@ -816,8 +829,9 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
 {
     ASSERT_TRUE(openA());
     aClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+        auto listenerID = decoder.asyncReplyID().toUInt64();
+        decoder.markHandled();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), listenerID);
         encoder.get() << decoder.destinationID();
         a()->sendSyncReply(WTF::move(encoder));
         return true;
@@ -861,8 +875,9 @@ TEST_P(ConnectionRunLoopTest, SendWithConvertedPromisedReply)
 {
     ASSERT_TRUE(openA());
     aClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+        auto listenerID = decoder.asyncReplyID().toUInt64();
+        decoder.markHandled();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), listenerID);
         encoder.get() << decoder.destinationID();
         a()->sendSyncReply(WTF::move(encoder));
         return true;
@@ -895,8 +910,9 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOnMixAndMatchDispatche
         AutoWorkQueue awq;
         ASSERT_TRUE(openA());
         aClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
-            auto listenerID = decoder.decode<uint64_t>();
-            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+            auto listenerID = decoder.asyncReplyID().toUInt64();
+            decoder.markHandled();
+            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), listenerID);
             encoder.get() << decoder.destinationID();
             a()->sendSyncReply(WTF::move(encoder));
             return true;
@@ -943,8 +959,9 @@ TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidateOnDispatcher)
         BinarySemaphore semaphore;
         runLoop->dispatch([&] {
             bClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
-                auto listenerID = decoder.decode<uint64_t>();
-                auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+                auto listenerID = decoder.asyncReplyID().toUInt64();
+                decoder.markHandled();
+                auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), listenerID);
                 encoder.get() << decoder.destinationID();
                 b()->sendSyncReply(WTF::move(encoder));
                 messages.add(decoder.destinationID());
@@ -1033,8 +1050,9 @@ TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidate)
     BinarySemaphore semaphore;
     runLoop->dispatch([&] {
         bClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
-            auto listenerID = decoder.decode<uint64_t>();
-            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+            auto listenerID = decoder.asyncReplyID().toUInt64();
+            decoder.markHandled();
+            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), listenerID);
             encoder.get() << decoder.destinationID();
             b()->sendSyncReply(WTF::move(encoder));
             messages.add(decoder.destinationID());
@@ -1075,8 +1093,9 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOrder)
     ASSERT_TRUE(openA());
     uint64_t replyID = 0;
     aClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+        auto listenerID = decoder.asyncReplyID().toUInt64();
+        decoder.markHandled();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), listenerID);
         encoder.get() << replyID++;
         a()->sendSyncReply(WTF::move(encoder));
         return true;
@@ -1123,8 +1142,9 @@ TEST_P(ConnectionRunLoopTest, DISABLED_RunLoopSendAsyncOnAnotherRunLoopDispatche
 {
     ASSERT_TRUE(openA());
     aClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+        auto listenerID = decoder.asyncReplyID().toUInt64();
+        decoder.markHandled();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), listenerID);
         encoder.get() << decoder.destinationID();
         a()->sendSyncReply(WTF::move(encoder));
         return true;
@@ -1368,6 +1388,200 @@ TEST_P(ConnectionRunLoopTest, SyncMessageDecodeFailureIsCancelled)
 }
 #endif
 
+// Async message handler that replies with the destination ID, except for messages to destination 77 which it
+// leaves unhandled.
+static bool replyUnlessDestination77(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    if (decoder.destinationID() == 77)
+        return true; // Message destination was unknown, unhandled message.
+    if (decoder.destinationID() == 99) {
+        auto listenerID = decoder.asyncReplyID().toUInt64();
+        decoder.markHandled();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), listenerID);
+        encoder.get() << decoder.destinationID();
+        connection.sendSyncReply(WTF::move(encoder));
+        return true;
+    }
+    EXPECT_TRUE(false);
+    return false;
+}
+
+// Tests that unhandled async message with reply is cancelled. IPC::Connection receiving unhandled messages.
+TEST_P(ConnectionRunLoopTest, AsyncWithReplyNotHandledIsCancelled)
+{
+    constexpr size_t iterations = 10;
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler(replyUnlessDestination77);
+    Vector<std::pair<uint64_t, uint64_t>> replies;
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        auto send = [&](uint64_t destinationID) {
+            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, destinationID](uint64_t value) {
+                replies.append({ destinationID, value });
+            }, destinationID);
+        };
+        for (size_t i = 0; i < iterations; ++i) {
+            send(77);
+            send(99);
+        }
+        while (replies.size() < 2 * iterations)
+            RunLoop::currentSingleton().cycle();
+        b()->invalidate();
+    });
+
+    // Cancellations and replies are delivered in the send order.
+    ASSERT_EQ(replies.size(), 2 * iterations);
+    for (size_t i = 0; i < replies.size(); i += 2) {
+        EXPECT_EQ(replies[i], (std::pair<uint64_t, uint64_t> { 77, 0 })); // Cancelled.
+        EXPECT_EQ(replies[i + 1], (std::pair<uint64_t, uint64_t> { 99, 99 }));
+    }
+    localReferenceBarrier();
+}
+
+// Tests that unhandled async message with reply is cancelled when the reply handler is run on a dispatcher.
+TEST_P(ConnectionRunLoopTest, AsyncWithReplyOnDispatcherNotHandledIsCancelled)
+{
+    constexpr uint64_t iterations = 10;
+    std::atomic<uint64_t> cancelCount = 0;
+    std::atomic<uint64_t> replyCount = 0;
+    {
+        AutoWorkQueue awq;
+
+        ASSERT_TRUE(openA());
+        aClient().setAsyncMessageHandler(replyUnlessDestination77);
+
+        auto runLoop = createRunLoop(RUN_LOOP_NAME);
+        dispatchAndWait(runLoop, [&] {
+            ASSERT_TRUE(openB());
+            auto send = [&](uint64_t destinationID) {
+                b()->sendWithAsyncReplyOnDispatcher(MockTestMessageWithAsyncReply1 { }, awq.queue(), [&, destinationID, queue = awq.queue()](uint64_t value) {
+                    assertIsCurrent(queue);
+                    if (destinationID == 77) {
+                        EXPECT_EQ(value, 0u); // Cancelled.
+                        ++cancelCount;
+                    } else {
+                        EXPECT_EQ(value, 99u);
+                        ++replyCount;
+                    }
+                }, destinationID);
+            };
+            for (uint64_t i = 0; i < iterations; ++i) {
+                send(77);
+                send(99);
+            }
+            while (cancelCount < iterations || replyCount < iterations)
+                RunLoop::currentSingleton().cycle();
+            b()->invalidate();
+        });
+        awq.queue()->beginShutdown();
+    }
+    EXPECT_EQ(cancelCount, iterations);
+    EXPECT_EQ(replyCount, iterations);
+    localReferenceBarrier();
+}
+
+// Tests that unhandled async message with promised reply is rejected.
+TEST_P(ConnectionRunLoopTest, PromisedReplyNotHandledIsRejected)
+{
+    constexpr uint64_t iterations = 10;
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler(replyUnlessDestination77);
+    uint64_t rejectCount = 0;
+    uint64_t replyCount = 0;
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        auto send = [&](uint64_t destinationID) {
+            b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, destinationID)->whenSettled(runLoop, [&, destinationID](MockTestMessageWithAsyncReply1::Promise::Result result) {
+                if (destinationID == 77) {
+                    EXPECT_FALSE(result.has_value());
+                    if (!result.has_value())
+                        EXPECT_EQ(result.error(), IPC::Error::AsyncReplyCancelled);
+                    ++rejectCount;
+                } else {
+                    EXPECT_TRUE(result.has_value());
+                    if (result.has_value())
+                        EXPECT_EQ(*result, 99u);
+                    ++replyCount;
+                }
+            });
+        };
+        for (uint64_t i = 0; i < iterations; ++i) {
+            send(77);
+            send(99);
+        }
+        while (rejectCount < iterations || replyCount < iterations)
+            RunLoop::currentSingleton().cycle();
+        b()->invalidate();
+    });
+
+    EXPECT_EQ(rejectCount, iterations);
+    EXPECT_EQ(replyCount, iterations);
+    localReferenceBarrier();
+}
+
+// Tests that waiting for an async reply completes when the reply is cancelled.
+TEST_P(ConnectionRunLoopTest, WaitForAsyncReplyAndDispatchImmediatelyNotHandledIsCancelled)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler(replyUnlessDestination77);
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        for (uint64_t destinationID : std::array<uint64_t, 2> { 77, 99 }) {
+            std::optional<uint64_t> reply;
+            auto replyID = b()->sendWithAsyncReply(MockTestMessageWithAsyncReplyCanDispatchOutOfOrder { }, [&](uint64_t value) {
+                reply = value;
+            }, destinationID);
+            ASSERT_TRUE(replyID);
+            auto error = b()->waitForAsyncReplyAndDispatchImmediately<MockTestMessageWithAsyncReplyCanDispatchOutOfOrder>(*replyID, kDefaultWaitForTimeout);
+            if (destinationID == 77) {
+                EXPECT_EQ(error, IPC::Error::AsyncReplyCancelled);
+                EXPECT_EQ(reply.value_or(1), 0u); // Cancelled.
+            } else {
+                EXPECT_EQ(error, IPC::Error::NoError);
+                EXPECT_EQ(reply.value_or(1), 99u);
+            }
+        }
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+
+// Tests that unhandled async message with reply that is dispatched with waitForAndDispatchImmediately is cancelled.
+TEST_P(ConnectionRunLoopTest, WaitForAndDispatchImmediatelyAsyncWithReplyNotHandledIsCancelled)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler([](IPC::Connection&, IPC::Decoder&) {
+        return true; // Message destination was unknown, unhandled message.
+    });
+    uint64_t reply = 1;
+    std::atomic<bool> gotReply = false;
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    runLoop->dispatch([&] {
+        ASSERT_TRUE(openB());
+        b()->sendWithAsyncReply(MockTestMessageWithAsyncReplyCanDispatchOutOfOrder { }, [&](uint64_t value) {
+            reply = value;
+            gotReply = true;
+        }, 77);
+    });
+    auto error = a()->waitForAndDispatchImmediately<MockTestMessageWithAsyncReplyCanDispatchOutOfOrder>(77, kDefaultWaitForTimeout);
+    EXPECT_EQ(error, IPC::Error::NoError);
+    while (!gotReply)
+        RunLoop::currentSingleton().cycle();
+    EXPECT_EQ(reply, 0u); // Cancelled.
+
+    runLoop->dispatch([&] {
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+
 #undef RUN_LOOP_NAME
 #undef LOCAL_STRINGIFY
 
@@ -1405,6 +1619,71 @@ TEST_F(ConnectionTest, WorkQueueMessageReceiverMessageCheckIsReported)
     }
 
     server()->removeWorkQueueMessageReceiver(receiverName);
+}
+
+class MockIgnoringWorkQueueMessageReceiver final : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
+public:
+    static Ref<MockIgnoringWorkQueueMessageReceiver> create() { return adoptRef(*new MockIgnoringWorkQueueMessageReceiver); }
+
+private:
+    MockIgnoringWorkQueueMessageReceiver() = default;
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { }
+};
+
+// Tests that async message with reply that a work queue message receiver does not handle is cancelled.
+TEST_F(ConnectionTest, WorkQueueMessageReceiverAsyncWithReplyNotHandledIsCancelled)
+{
+    ASSERT_TRUE(openBoth());
+
+    auto receiverName = IPC::receiverName(MockTestMessageWithAsyncReply1::name());
+    Ref workQueue = WorkQueue::create("MockIgnoringWorkQueueMessageReceiver"_s);
+    Ref receiver = MockIgnoringWorkQueueMessageReceiver::create();
+    server()->addWorkQueueMessageReceiver(receiverName, workQueue, receiver);
+
+    HashMap<uint64_t, uint64_t> replies;
+    for (uint64_t i = 100u; i < 160u; ++i) {
+        client()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, i](uint64_t value) {
+            replies.add(i, value);
+        }, i);
+    }
+    while (replies.size() < 60u)
+        RunLoop::currentSingleton().cycle();
+
+    for (uint64_t i = 100u; i < 160u; ++i) {
+        auto reply = replies.find(i);
+        ASSERT_NE(reply, replies.end());
+        EXPECT_EQ(reply->value, 0u); // Cancelled.
+    }
+
+    server()->removeWorkQueueMessageReceiver(receiverName);
+}
+
+// Tests that CancelAsyncReply with an invalid async reply ID is an invalid message and that CancelAsyncReply
+// with an unknown async reply ID is ignored.
+TEST_F(ConnectionTest, CancelAsyncReplyWithInvalidDestinationIsInvalidMessage)
+{
+    ASSERT_TRUE(openBoth());
+
+    client()->sendSyncReply(makeUniqueRef<IPC::Encoder>(IPC::MessageName::CancelAsyncReply, 0));
+    EXPECT_EQ(serverClient().waitForInvalidMessage(kDefaultWaitForTimeout), IPC::MessageName::CancelAsyncReply);
+
+    client()->sendSyncReply(makeUniqueRef<IPC::Encoder>(IPC::MessageName::CancelAsyncReply, 1234567));
+
+    // The server records but does not handle the message, so the reply is cancelled. Receiving the
+    // cancellation proves that the server has processed the preceding CancelAsyncReply.
+    std::optional<uint64_t> reply;
+    client()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&](uint64_t value) {
+        reply = value;
+    }, 77);
+    while (!reply)
+        RunLoop::currentSingleton().cycle();
+    EXPECT_EQ(*reply, 0u);
+
+    auto message = serverClient().waitForMessage(0_s);
+    EXPECT_EQ(message.messageName, MockTestMessageWithAsyncReply1::name());
+    EXPECT_EQ(message.destinationID, 77u);
+    EXPECT_TRUE(serverClient().checkMessages());
 }
 
 class ConnectionDidReceiveInvalidMessageTest : public testing::TestWithParam<std::tuple<ConnectionTestDirection, InvalidMessageTestType>>, protected ConnectionTestBase {
@@ -1480,7 +1759,7 @@ TEST_P(ConnectionDidReceiveInvalidMessageTest, AsyncWithReply)
     ASSERT_TRUE(openBoth());
     HashMap<uint64_t, uint64_t> replies;
     for (uint64_t i = 100u; i < 160u; ++i) {
-        client()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&] (uint64_t value) {
+        client()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, i](uint64_t value) {
             replies.add(i, value);
         }, i);
     }
@@ -1490,23 +1769,15 @@ TEST_P(ConnectionDidReceiveInvalidMessageTest, AsyncWithReply)
         EXPECT_EQ(invalidMessage, MockTestMessageWithAsyncReply1::name());
     }
 
-    // FIXME: Currently the IPC::Connection semantics are incorrect: connection is not invalidated
-    // after receiving the first invalid message. Since invalid messages must be ignored, we cannot
-    // let the sender know that the async reply handlers should be cancelled.
-    // Invalidate the client connection explicitly to receive the cancellations.
-    // Once the semantics are fixed, e.g. the server closes the connection, something like
-    // below can be enabled.
-    if ((false)) {
-        while (replies.size() < 60u)
-            RunLoop::currentSingleton().cycle();
+    // The invalid messages are not handled, so the async replies are cancelled.
+    while (replies.size() < 60u)
+        RunLoop::currentSingleton().cycle();
 
-        for (uint64_t i = 100u; i < 160u; ++i) {
-            auto reply = replies.find(i);
-            ASSERT_NE(reply, replies.end());
-            EXPECT_EQ(reply->value, 0u); // Cancelled.
-        }
-    } else
-        client()->invalidate();
+    for (uint64_t i = 100u; i < 160u; ++i) {
+        auto reply = replies.find(i);
+        ASSERT_NE(reply, replies.end());
+        EXPECT_EQ(reply->value, 0u); // Cancelled.
+    }
 }
 
 TEST_P(ConnectionDidReceiveInvalidMessageTest, Sync)

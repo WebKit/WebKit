@@ -17,8 +17,8 @@ function fuzz() {
   video=document.createElement('video');
   video.src='resources/1080i60_SMPTE_8CH_audible.mov';
   document.body.appendChild(video);
-  IPC.sendMessage('UI',0,IPC.messages.WebFullScreenManagerProxy_ExitFullScreen.name,[]);
-  IPC.sendMessage('UI',0,IPC.messages.WebFullScreenManagerProxy_BeganExitFullScreen.name,[{type: 'uint32_t',value: 247},{type: 'uint32_t',value: 204},{type: 'uint32_t',value: 4787946},{type: 'uint32_t',value: 713},{type: 'uint32_t',value: 238},{type: 'uint32_t',value: 749},{type: 'uint32_t',value: 30},{type: 'uint32_t',value: 1008}]);
+  IPC.connectionForProcessTarget('UI').sendWithAsyncReply(0,IPC.messages.WebFullScreenManagerProxy_ExitFullScreen.name,[],()=>{});
+  IPC.connectionForProcessTarget('UI').sendWithAsyncReply(0,IPC.messages.WebFullScreenManagerProxy_BeganExitFullScreen.name,[{type: 'uint32_t',value: 247},{type: 'uint32_t',value: 204},{type: 'uint32_t',value: 4787946},{type: 'uint32_t',value: 713},{type: 'uint32_t',value: 238},{type: 'uint32_t',value: 749},{type: 'uint32_t',value: 30},{type: 'uint32_t',value: 1008}],()=>{});
   window.setTimeout(timeout1,1000);
 }
 
@@ -39,7 +39,7 @@ function timeout1() {
 }
 function timeout2() {
   video.play();
-  IPC.sendMessage('UI',0,IPC.messages.WebFullScreenManagerProxy_BeganEnterFullScreen.name,[{type: 'uint32_t',value: 1212623797},{type: 'uint32_t',value: 2099646},{type: 'uint32_t',value: 315},{type: 'uint32_t',value: 204},{type: 'uint32_t',value: 48},{type: 'uint32_t',value: 64},{type: 'uint32_t',value: 3},{type: 'uint32_t',value: 403}]);
+  IPC.connectionForProcessTarget('UI').sendWithAsyncReply(0,IPC.messages.WebFullScreenManagerProxy_BeganEnterFullScreen.name,[{type: 'uint32_t',value: 1212623797},{type: 'uint32_t',value: 2099646},{type: 'uint32_t',value: 315},{type: 'uint32_t',value: 204},{type: 'uint32_t',value: 48},{type: 'uint32_t',value: 64},{type: 'uint32_t',value: 3},{type: 'uint32_t',value: 403}],()=>{});
   window.setTimeout(timeout3, 10);
 }
 function timeout3() {

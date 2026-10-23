@@ -57,7 +57,7 @@ template<> void encodeObjectDirectly<PKPaymentMethod>(IPC::Encoder& encoder, PKP
     encoder << (instance ? std::optional(WebKit::CoreIPCPKPaymentMethod(instance)) : std::nullopt);
 }
 
-template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<PKPaymentMethod>(IPC::Decoder& decoder)
+template<> std::optional<RetainPtr<id>> decodeObjectDirectly<PKPaymentMethod>(IPC::Decoder& decoder)
 {
     auto result = decoder.decode<std::optional<WebKit::CoreIPCPKPaymentMethod>>();
     if (!result)
@@ -71,7 +71,7 @@ template<> void encodeObjectDirectly<NSNull>(IPC::Encoder& encoder, NSNull *inst
     encoder << (instance ? std::optional(WebKit::CoreIPCNull(instance)) : std::nullopt);
 }
 
-template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<NSNull>(IPC::Decoder& decoder)
+template<> std::optional<RetainPtr<id>> decodeObjectDirectly<NSNull>(IPC::Decoder& decoder)
 {
     auto result = decoder.decode<std::optional<WebKit::CoreIPCNull>>();
     if (!result)

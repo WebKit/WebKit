@@ -453,8 +453,11 @@ void Connection::dispatchMessageReceiverMessage(MessageReceiverType& messageRece
             std::unique_ptr remainingReplyEncoder = replyEncoder.moveToUniquePtr();
             if (remainingReplyEncoder)
                 sendMessageImpl(makeUniqueRef<Encoder>(MessageName::CancelSyncMessageReply, decoder->syncRequestID().toUInt64()), { });
-        } else
+        } else {
             messageReceiver.didReceiveMessage(*this, decoder.get());
+            if (decoder->isAsyncWithReplyMessage() && !decoder->wasHandled())
+                sendAsyncReplyCancel(decoder->asyncReplyID());
+        }
 
         didReceiveInvalidMessage = dispatchScope.didReceiveInvalidMessage() || !decoder->isValid();
     }
@@ -697,10 +700,10 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
 
 Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncReplyHandler replyHandler, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
+    ASSERT(messageIsAsyncWithReply(encoder->messageName()));
     ASSERT(replyHandler.replyID);
     ASSERT(replyHandler.completionHandler);
     auto replyID = *replyHandler.replyID;
-    encoder.get() << replyID;
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     if (signpostsEnabled()) [[unlikely]] {
@@ -733,10 +736,10 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
 
 Error Connection::sendMessageWithAsyncReplyWithDispatcher(UniqueRef<Encoder>&& encoder, AsyncReplyHandlerWithDispatcher&& replyHandler, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
+    ASSERT(messageIsAsyncWithReply(encoder->messageName()));
     ASSERT(replyHandler.replyID);
     ASSERT(replyHandler.completionHandler);
     auto replyID = *replyHandler.replyID;
-    encoder.get() << replyID;
     addAsyncReplyHandlerWithDispatcher(WTF::move(replyHandler));
     auto error = sendMessage(WTF::move(encoder), sendOptions, qos);
     if (error == Error::NoError)
@@ -752,9 +755,24 @@ Error Connection::sendSyncReply(UniqueRef<Encoder>&& encoder)
     return sendMessageImpl(WTF::move(encoder), { });
 }
 
+void Connection::sendAsyncReplyCancel(AsyncReplyID replyID)
+{
+    sendMessageImpl(makeUniqueRef<Encoder>(MessageName::CancelAsyncReply, replyID.toUInt64()), { });
+}
+
 Timeout Connection::timeoutRespectingIgnoreTimeoutsForTesting(Timeout timeout) const
 {
     return m_ignoreTimeoutsForTesting ? Timeout::infinity() : timeout;
+}
+
+// Waiting for an async reply completes also when the reply is cancelled.
+static bool isWaitedForMessage(MessageName messageName, uint64_t destinationID, const Decoder& message)
+{
+    if (message.destinationID() != destinationID)
+        return false;
+    if (message.messageName() == messageName)
+        return true;
+    return message.messageName() == MessageName::CancelAsyncReply && messageIsReplyToAsyncWithReply(messageName);
 }
 
 auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions) -> DecoderOrError
@@ -803,7 +821,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
             for (auto it = m_incomingMessages.begin(), end = m_incomingMessages.end(); it != end; ++it) {
                 UniqueRef<Decoder>& message = *it;
 
-                if (message->messageName() == messageName && message->destinationID() == destinationID) {
+                if (isWaitedForMessage(messageName, destinationID, message)) {
                     UniqueRef<Decoder> returnedMessage = WTF::move(message);
 
                     m_incomingMessages.remove(it);
@@ -1084,8 +1102,12 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
     if (!syncState)
         return;
 
-    if (message->isAsyncReplyMessage()) {
-        // Disallow async replies with invalid destinationIDs to be sent
+    // A CancelAsyncReply for a dispatcher-registered reply handler must be handled here so the
+    // cancellation runs on the registered dispatcher. Handlers registered without a dispatcher are
+    // cancelled later in dispatchMessage().
+    bool isAsyncReplyCancel = message->messageName() == MessageName::CancelAsyncReply;
+    if (message->isAsyncReplyMessage() || isAsyncReplyCancel) {
+        // Disallow async replies and async reply cancels with invalid destinationIDs to be sent
         if (!AtomicObjectIdentifier<AsyncReplyIDType>::isValidIdentifier(message->destinationID())) {
             // Drop our SyncMessageState reference while still holding m_incomingMessagesLock. Otherwise the
             // ~SyncMessageState triggered by this last deref would run without the lock and could race with
@@ -1109,10 +1131,14 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
             incomingMessagesLocker.unlockEarly();
             waitForMessagesLocker.unlockEarly();
 
-            replyHandlerWithDispatcher(this, message.moveToUniquePtr());
+            // Invoking with a null decoder runs the handler with the default ("cancelled") reply arguments.
+            if (isAsyncReplyCancel)
+                replyHandlerWithDispatcher(this, nullptr);
+            else
+                replyHandlerWithDispatcher(this, message.moveToUniquePtr());
             return;
         }
-        // Fallback to default case, error handling will be performed in sendMessage().
+        // Fallback to default case, error handling will be performed in dispatchMessage().
     }
 
     if (message->isSyncMessage()) {
@@ -1126,7 +1152,7 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
 
     // Check if we're waiting for this message, or if we need to interrupt waiting due to an incoming sync message.
     if (m_waitingForMessage && !m_waitingForMessage->decoder) {
-        if (m_waitingForMessage->messageName == message->messageName() && m_waitingForMessage->destinationID == message->destinationID()) {
+        if (isWaitedForMessage(m_waitingForMessage->messageName, m_waitingForMessage->destinationID, message)) {
             m_waitingForMessage->decoder = message.moveToUniquePtr();
             ASSERT(m_waitingForMessage->decoder);
             m_waitForMessageCondition.notifyOne();
@@ -1425,6 +1451,12 @@ void Connection::dispatchMessage(Decoder& decoder)
         return;
     }
 
+    if (decoder.messageName() == MessageName::CancelAsyncReply) {
+        if (auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoder.destinationID())))
+            handler(this, nullptr);
+        return;
+    }
+
 #if ENABLE(IPC_TESTING_API)
     if (isMainRunLoop()) {
         bool hasDeadObservers = false;
@@ -1440,6 +1472,9 @@ void Connection::dispatchMessage(Decoder& decoder)
 #endif
 
     client->didReceiveMessage(*this, decoder);
+
+    if (decoder.isAsyncWithReplyMessage() && !decoder.wasHandled())
+        sendAsyncReplyCancel(decoder.asyncReplyID());
 
 #if ENABLE(IPC_TESTING_API)
     // If we haven't registered an error yet, check whether we found one
@@ -1732,6 +1767,7 @@ ASCIILiteral errorAsString(Error error)
     case Error::AttemptingToWaitInsideSyncMessageHandling: return "AttemptingToWaitInsideSyncMessageHandling"_s;
     case Error::SyncMessageInterruptedWait: return "SyncMessageInterruptedWait"_s;
     case Error::SyncMessageCancelled: return "SyncMessageCancelled"_s;
+    case Error::AsyncReplyCancelled: return "AsyncReplyCancelled"_s;
     case Error::CantWaitForSyncReplies: return "CantWaitForSyncReplies"_s;
     case Error::FailedToEncodeMessageArguments: return "FailedToEncodeMessageArguments"_s;
     case Error::FailedToDecodeReplyArguments: return "FailedToDecodeReplyArguments"_s;

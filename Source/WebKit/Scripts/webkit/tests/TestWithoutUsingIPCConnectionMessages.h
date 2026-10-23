@@ -45,7 +45,7 @@ class MessageWithoutArgument {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgument; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgument; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -67,7 +67,7 @@ class MessageWithoutArgumentAndEmptyReply {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -94,7 +94,7 @@ class MessageWithoutArgumentAndReplyWithArgument {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -121,7 +121,7 @@ class MessageWithArgument {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgument; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgument; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -146,7 +146,7 @@ class MessageWithArgumentAndEmptyReply {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -176,7 +176,7 @@ class MessageWithArgumentAndReplyWithArgument {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -206,7 +206,7 @@ class MessageWithoutArgumentAndEmptyReplyReply {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -228,7 +228,7 @@ class MessageWithoutArgumentAndReplyWithArgumentReply {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -253,7 +253,7 @@ class MessageWithArgumentAndEmptyReplyReply {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -275,7 +275,7 @@ class MessageWithArgumentAndReplyWithArgumentReply {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

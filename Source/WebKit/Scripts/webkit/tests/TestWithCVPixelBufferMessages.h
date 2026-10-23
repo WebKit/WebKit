@@ -49,7 +49,7 @@ class SendCVPixelBuffer {
 public:
     using Arguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -76,7 +76,7 @@ class ReceiveCVPixelBuffer {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -105,7 +105,7 @@ class ReceiveCVPixelBufferReply {
 public:
     using Arguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

@@ -46,7 +46,7 @@ class LoadURL {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -73,7 +73,7 @@ class LoadURL {
 public:
     using Arguments = std::tuple<String, int64_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

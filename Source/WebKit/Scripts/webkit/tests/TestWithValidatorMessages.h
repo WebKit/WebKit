@@ -45,7 +45,7 @@ class AlwaysEnabled {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithValidator_AlwaysEnabled; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithValidator_AlwaysEnabled; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -70,7 +70,7 @@ class EnabledIfPassValidation {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithValidator_EnabledIfPassValidation; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithValidator_EnabledIfPassValidation; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -95,7 +95,7 @@ class EnabledIfSomeFeatureEnabledAndPassValidation {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithValidator_EnabledIfSomeFeatureEnabledAndPassValidation; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithValidator_EnabledIfSomeFeatureEnabledAndPassValidation; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -120,7 +120,7 @@ class MessageWithReply {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithValidator_MessageWithReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithValidator_MessageWithReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -150,7 +150,7 @@ class MessageWithReplyReply {
 public:
     using Arguments = std::tuple<String, double>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithValidator_MessageWithReplyReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithValidator_MessageWithReplyReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

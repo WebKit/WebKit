@@ -45,7 +45,7 @@ class SendSemaphore {
 public:
     using Arguments = std::tuple<IPC::Semaphore>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_SendSemaphore; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_SendSemaphore; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -70,7 +70,7 @@ class ReceiveSemaphore {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphore; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphore; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -97,7 +97,7 @@ class ReceiveSemaphoreReply {
 public:
     using Arguments = std::tuple<IPC::Semaphore>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

@@ -45,7 +45,7 @@ class SendImageData {
 public:
     using Arguments = std::tuple<RefPtr<WebCore::ImageData>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_SendImageData; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithImageData_SendImageData; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -70,7 +70,7 @@ class ReceiveImageData {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_ReceiveImageData; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithImageData_ReceiveImageData; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -97,7 +97,7 @@ class ReceiveImageDataReply {
 public:
     using Arguments = std::tuple<RefPtr<WebCore::ImageData>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_ReceiveImageDataReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithImageData_ReceiveImageDataReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

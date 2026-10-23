@@ -34,6 +34,7 @@ namespace IPC {
 template<typename MessageType> inline bool MessageSender::send(MessageType&& message, uint64_t destinationID, OptionSet<SendOption> options)
 {
     static_assert(!MessageType::isSync);
+    static_assert(!messageIsAsyncWithReply(MessageType::name()), "Message with reply must be sent with sendWithAsyncReply");
     auto encoder = makeUniqueRef<Encoder>(MessageType::name(), destinationID);
     message.encode(encoder.get());
     return sendMessage(WTF::move(encoder), options);
@@ -50,10 +51,12 @@ template<typename MessageType> inline auto MessageSender::sendSync(MessageType&&
 template<typename MessageType, typename C> inline std::optional<AsyncReplyID> MessageSender::sendWithAsyncReply(MessageType&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> options)
 {
     static_assert(!MessageType::isSync);
+    static_assert(messageIsAsyncWithReply(MessageType::name()), "Message with reply expected");
     auto encoder = makeUniqueRef<IPC::Encoder>(MessageType::name(), destinationID);
-    message.encode(encoder.get());
     auto asyncHandler = Connection::makeAsyncReplyHandler<MessageType>(std::forward<C>(completionHandler));
     auto replyID = asyncHandler.replyID;
+    encoder.get() << *replyID;
+    message.encode(encoder.get());
     if (sendMessageWithAsyncReply(WTF::move(encoder), WTF::move(asyncHandler), options))
         return replyID;
     return std::nullopt;
@@ -62,6 +65,7 @@ template<typename MessageType, typename C> inline std::optional<AsyncReplyID> Me
 template<typename MessageType> inline bool MessageSender::sendWithoutUsingIPCConnection(MessageType&& message) const
 {
     static_assert(!MessageType::isSync);
+    static_assert(!messageIsAsyncWithReply(MessageType::name()), "Messages not using IPC connection do not have the async reply header");
     SUPPRESS_FORWARD_DECL_ARG auto encoder = makeUniqueRef<IPC::Encoder>(MessageType::name(), messageSenderDestinationID());
     message.encode(encoder.get());
 
@@ -92,6 +96,7 @@ void callReplyWithoutUsingConnection(Decoder& decoder, C&& completionHandler)
 template<typename MessageType, typename C> inline bool MessageSender::sendWithAsyncReplyWithoutUsingIPCConnection(MessageType&& message, C&& completionHandler) const
 {
     static_assert(!MessageType::isSync);
+    static_assert(!messageIsAsyncWithReply(MessageType::name()), "Messages not using IPC connection do not have the async reply header");
     auto encoder = makeUniqueRef<IPC::Encoder>(MessageType::name(), messageSenderDestinationID());
     message.encode(encoder.get());
 

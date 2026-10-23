@@ -45,7 +45,7 @@ class SendStreamServerConnection {
 public:
     using Arguments = std::tuple<IPC::StreamServerConnectionHandle>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

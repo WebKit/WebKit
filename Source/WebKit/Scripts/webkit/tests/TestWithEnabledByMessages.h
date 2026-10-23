@@ -45,7 +45,7 @@ class AlwaysEnabled {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_AlwaysEnabled; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_AlwaysEnabled; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -70,7 +70,7 @@ class ConditionallyEnabled {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabled; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabled; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -95,7 +95,7 @@ class ConditionallyEnabledAnd {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabledAnd; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabledAnd; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -117,7 +117,7 @@ class ConditionallyEnabledOr {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabledOr; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabledOr; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

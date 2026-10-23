@@ -82,7 +82,7 @@ class TestAsyncMessage {
 public:
     using Arguments = std::tuple<uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestAsyncMessage; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestAsyncMessage; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -112,7 +112,7 @@ class TestSyncMessage {
 public:
     using Arguments = std::tuple<uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestSyncMessage; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestSyncMessage; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -140,7 +140,7 @@ class TestMessageWithAliasedParameter {
 public:
     using Arguments = std::tuple<Ref<WebKit::FrameState>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestMessageWithAliasedParameter; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestMessageWithAliasedParameter; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -165,7 +165,7 @@ class TestThrowingMessageWithReply {
 public:
     using Arguments = std::tuple<uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestThrowingMessageWithReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestThrowingMessageWithReply; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -193,7 +193,7 @@ class TestThrowingMessageWithoutReply {
 public:
     using Arguments = std::tuple<Ref<WebKit::FrameState>, WebCore::FrameIdentifier>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestThrowingMessageWithoutReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestThrowingMessageWithoutReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -221,7 +221,7 @@ class TestMessageWithEmptyReply {
 public:
     using Arguments = std::tuple<uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestMessageWithEmptyReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestMessageWithEmptyReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -251,7 +251,7 @@ class TestAsyncMessageReply {
 public:
     using Arguments = std::tuple<uint8_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestAsyncMessageReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestAsyncMessageReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -276,7 +276,7 @@ class TestMessageWithEmptyReplyReply {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestMessageWithEmptyReplyReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestMessageWithEmptyReplyReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

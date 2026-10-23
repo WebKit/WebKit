@@ -53,7 +53,7 @@ class LoadURL {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_LoadURL; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_LoadURL; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -79,7 +79,7 @@ class TestAsyncMessage {
 public:
     using Arguments = std::tuple<WebKit::TestTwoStateEnum>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessage; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessage; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -111,7 +111,7 @@ class TestAsyncMessageAnyThread {
 public:
     using Arguments = std::tuple<WebKit::TestTwoStateEnum>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageAnyThread; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageAnyThread; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -143,7 +143,7 @@ class TestAsyncMessageWithNoArguments {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -172,7 +172,7 @@ class TestAsyncMessageWithMultipleArguments {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -201,7 +201,7 @@ class TestAsyncMessageWithConnection {
 public:
     using Arguments = std::tuple<int>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnection; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnection; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -232,7 +232,7 @@ class TestSyncMessage {
 public:
     using Arguments = std::tuple<uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestSyncMessage; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestSyncMessage; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -260,7 +260,7 @@ class TestSynchronousMessage {
 public:
     using Arguments = std::tuple<bool>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestSynchronousMessage; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestSynchronousMessage; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -288,7 +288,7 @@ class TestMessageWithMessageName {
 public:
     using Arguments = std::tuple<IPC::MessageName>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestMessageWithMessageName; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestMessageWithMessageName; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -314,7 +314,7 @@ class TestAsyncMessageReply {
 public:
     using Arguments = std::tuple<uint64_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -341,7 +341,7 @@ class TestAsyncMessageAnyThreadReply {
 public:
     using Arguments = std::tuple<uint64_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageAnyThreadReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageAnyThreadReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -368,7 +368,7 @@ class TestAsyncMessageWithNoArgumentsReply {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -392,7 +392,7 @@ class TestAsyncMessageWithMultipleArgumentsReply {
 public:
     using Arguments = std::tuple<bool, uint64_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -422,7 +422,7 @@ class TestAsyncMessageWithConnectionReply {
 public:
     using Arguments = std::tuple<bool>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

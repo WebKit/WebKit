@@ -27,6 +27,7 @@
 #include "MessageSender.h"
 
 #include "Connection.h"
+#include "Encoder.h"
 
 namespace IPC {
 
@@ -47,6 +48,7 @@ bool MessageSender::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOpti
 
 bool MessageSender::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncReplyHandler replyHandler, OptionSet<SendOption> sendOptions)
 {
+    ASSERT(messageIsAsyncWithReply(encoder->messageName()));
     RefPtr connection = messageSenderConnection();
     if (!connection) [[unlikely]] {
         RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(replyHandler.completionHandler)]() mutable {

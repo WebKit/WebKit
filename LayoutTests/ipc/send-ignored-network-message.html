@@ -3,7 +3,7 @@
             testRunner.dumpAsText();
 function fuzz() {
     if (window.IPC)
-        IPC.sendMessage('Networking',0,IPC.messages.NetworkProcess_ClearBundleIdentifier.name,[]);
+        IPC.connectionForProcessTarget('Networking').sendWithAsyncReply(0,IPC.messages.NetworkProcess_ClearBundleIdentifier.name,[],()=>{});
 }
 </script>
 <body onload='fuzz()'></body>

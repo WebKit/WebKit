@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "AsyncReplyID.h"
 #include "ConnectionHandle.h"
 #include "Decoder.h"
 #include "MessageNames.h"
@@ -139,6 +140,7 @@ enum class Error : uint8_t {
     AttemptingToWaitInsideSyncMessageHandling,
     SyncMessageInterruptedWait,
     SyncMessageCancelled,
+    AsyncReplyCancelled,
     CantWaitForSyncReplies,
     FailedToEncodeMessageArguments,
     FailedToDecodeReplyArguments,
@@ -232,9 +234,6 @@ class Decoder;
 class MachMessage;
 class UnixMessage;
 class WorkQueueMessageReceiverBase;
-
-struct AsyncReplyIDType;
-using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 
 // Sync message sender is expected to hold this instance alive as long as the reply() is being
 // accessed. View type data types in replies, such as std::span, refer to data stored in
@@ -563,6 +562,9 @@ public:
     Error sendSyncReply(UniqueRef<Encoder>&&);
     template<typename T, typename... Arguments>
     void sendAsyncReply(AsyncReplyID, Arguments&&...);
+    // Sends a CancelAsyncReply control message so the peer's pending async reply handler for
+    // replyID is invoked with the default ("cancelled") reply arguments instead of being orphaned.
+    void sendAsyncReplyCancel(AsyncReplyID);
 
     void wakeUpRunLoop();
 
@@ -928,6 +930,7 @@ template<typename T>
 Error Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions, std::optional<ThreadQOS> qos)
 {
     static_assert(!T::isSync, "Async message expected");
+    static_assert(!messageIsAsyncWithReply(T::name()), "Message with reply must be sent with sendWithAsyncReply");
 
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     message.encode(encoder.get());
@@ -948,9 +951,11 @@ template<typename T, typename C>
 std::optional<Connection::AsyncReplyID> Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     static_assert(!T::isSync, "Async message expected");
+    static_assert(messageIsAsyncWithReply(T::name()), "Message with reply expected");
     auto handler = makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
     auto replyID = handler.replyID;
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
+    encoder.get() << *replyID;
     message.encode(encoder.get());
     if (sendMessageWithAsyncReply(WTF::move(encoder), WTF::move(handler), sendOptions) == Error::NoError)
         return replyID;
@@ -962,9 +967,11 @@ template<typename T, typename C>
 std::optional<Connection::AsyncReplyID> Connection::sendWithAsyncReplyOnDispatcher(T&& message, GuaranteedSerialFunctionDispatcher& dispatcher, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     static_assert(!T::isSync, "Async message expected");
+    static_assert(messageIsAsyncWithReply(T::name()), "Message with reply expected");
     auto handler = makeAsyncReplyHandlerWithDispatcher<T>(std::forward<C>(completionHandler), dispatcher);
     auto replyID = handler.replyID;
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
+    encoder.get() << *replyID;
     message.encode(encoder.get());
     if (sendMessageWithAsyncReplyWithDispatcher(WTF::move(encoder), WTF::move(handler), sendOptions) == Error::NoError)
         return replyID;
@@ -976,10 +983,12 @@ template<typename PC, typename T, typename Promise>
 Ref<Promise> Connection::sendWithPromisedReply(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     static_assert(!T::isSync, "Async message expected");
+    static_assert(messageIsAsyncWithReply(T::name()), "Message with reply expected");
     typename Promise::Producer producer;
     auto promise = producer.promise();
     auto handler = makeAsyncReplyHandlerWithDispatcher<PC, T, Promise>(WTF::move(producer));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
+    encoder.get() << *handler.replyID;
     message.encode(encoder.get());
     sendMessageWithAsyncReplyWithDispatcher(WTF::move(encoder), WTF::move(handler), sendOptions);
     // The promise will be rejected in the handler should an error occur.
@@ -1034,8 +1043,11 @@ template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t de
     if (!isValid())
         return Error::InvalidConnection;
 
-    ASSERT(decoderOrError.value()->destinationID() == destinationID);
-    protect(client())->didReceiveMessage(*this, decoderOrError.value());
+    auto& decoder = decoderOrError.value().get();
+    ASSERT(decoder.destinationID() == destinationID);
+    protect(client())->didReceiveMessage(*this, decoder);
+    if (decoder.isAsyncWithReplyMessage() && !decoder.wasHandled())
+        sendAsyncReplyCancel(decoder.asyncReplyID());
     return Error::NoError;
 }
 
@@ -1046,15 +1058,21 @@ template<typename T> Error Connection::waitForAsyncReplyAndDispatchImmediately(A
     if (!decoderOrError.has_value())
         return decoderOrError.error();
 
-    ASSERT(decoderOrError.value()->isAsyncReplyMessage());
-    ASSERT(decoderOrError.value()->destinationID() == replyID.toUInt64());
+    auto& decoder = decoderOrError.value().get();
+    bool isCancel = decoder.messageName() == MessageName::CancelAsyncReply;
+    ASSERT(decoder.isAsyncReplyMessage() || isCancel);
+    ASSERT(decoder.destinationID() == replyID.toUInt64());
     ASSERT(!isAsyncReplyHandlerWithDispatcher(replyID), "Not supported with AsyncReplyHandlerWithDispatcher");
-    auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoderOrError.value()->destinationID()));
+    auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoder.destinationID()));
     if (!handler) {
         ASSERT_NOT_REACHED();
         return Error::FailedToFindReplyHandler;
     }
-    handler(this, &decoderOrError.value().get());
+    if (isCancel) {
+        handler(this, nullptr);
+        return Error::AsyncReplyCancelled;
+    }
+    handler(this, &decoder);
     return Error::NoError;
 }
 
@@ -1074,7 +1092,8 @@ CompletionHandler<void(Connection*, Decoder*)> Connection::makeAsyncReplyComplet
                 ASSERT(connection);
                 callReply<T>(connection, *decoder, WTF::move(completionHandler));
             } else {
-                ASSERT(!connection);
+                // A connection without a decoder means the peer cancelled the reply.
+                ASSERT(!connection || !decoder);
                 cancelReply<T>(WTF::move(completionHandler));
             }
         }, callThread
@@ -1115,10 +1134,10 @@ Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWit
 {
     return {
         {
-            [producer = WTF::move(producer)](Connection*, std::unique_ptr<Decoder>&& decoder) mutable {
-                producer.settleWithFunction([decoder = WTF::move(decoder)]() mutable -> typename Promise::Result {
+            [producer = WTF::move(producer)](Connection* connection, std::unique_ptr<Decoder>&& decoder) mutable {
+                producer.settleWithFunction([isConnectionValid = !!connection, decoder = WTF::move(decoder)] mutable -> typename Promise::Result {
                     if (!decoder)
-                        return PC::convertError(Error::InvalidConnection);
+                        return PC::convertError(isConnectionValid ? Error::AsyncReplyCancelled : Error::InvalidConnection);
                     if (!decoder->isValid())
                         return PC::convertError(Error::FailedToDecodeReplyArguments);
                     if constexpr (!std::tuple_size_v<typename T::ReplyArguments>)

@@ -29,7 +29,6 @@ namespace IPC::Detail {
 
 const MessageDescriptionsArray messageDescriptions {
 #if USE(AVFOUNDATION)
-    MessageDescription { "TestWithCVPixelBuffer_ReceiveCVPixelBuffer"_s, ReceiverName::TestWithCVPixelBuffer, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithCVPixelBuffer_ReceiveCVPixelBufferReply"_s, ReceiverName::TestWithCVPixelBuffer, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithCVPixelBuffer_SendCVPixelBuffer"_s, ReceiverName::TestWithCVPixelBuffer, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
@@ -48,14 +47,12 @@ const MessageDescriptionsArray messageDescriptions {
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     MessageDescription { "TestWithIfMessage_LoadURL"_s, ReceiverName::TestWithIfMessage, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
-    MessageDescription { "TestWithImageData_ReceiveImageData"_s, ReceiverName::TestWithImageData, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithImageData_ReceiveImageDataReply"_s, ReceiverName::TestWithImageData, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithImageData_SendImageData"_s, ReceiverName::TestWithImageData, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     MessageDescription { "TestWithLegacyReceiver_AddEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
     MessageDescription { "TestWithLegacyReceiver_Close"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithLegacyReceiver_CreatePlugin"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_CreatePluginReply"_s, ReceiverName::TestWithLegacyReceiver, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
 #if ENABLE(DEPRECATED_FEATURE)
     MessageDescription { "TestWithLegacyReceiver_DeprecatedOperation"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
@@ -67,10 +64,8 @@ const MessageDescriptionsArray messageDescriptions {
 #if ENABLE(FEATURE_FOR_TESTING)
     MessageDescription { "TestWithLegacyReceiver_ExperimentalOperation"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
-    MessageDescription { "TestWithLegacyReceiver_GetPlugins"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_GetPluginsReply"_s, ReceiverName::TestWithLegacyReceiver, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
 #if PLATFORM(MAC)
-    MessageDescription { "TestWithLegacyReceiver_InterpretKeyEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_InterpretKeyEventReply"_s, ReceiverName::TestWithLegacyReceiver, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
 #endif
 #if ENABLE(TOUCH_EVENTS)
@@ -78,10 +73,8 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithLegacyReceiver_LoadSomethingElse"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
     MessageDescription { "TestWithLegacyReceiver_LoadURL"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithLegacyReceiver_OpaqueTypeSecurityAssertion"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_OpaqueTypeSecurityAssertionReply"_s, ReceiverName::TestWithLegacyReceiver, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_PreferencesDidChange"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithLegacyReceiver_RunJavaScriptAlert"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_RunJavaScriptAlertReply"_s, ReceiverName::TestWithLegacyReceiver, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_SendDoubleAndFloat"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_SendInts"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
@@ -93,7 +86,6 @@ const MessageDescriptionsArray messageDescriptions {
 #endif
     MessageDescription { "TestWithMultiLineExtendedAttributes_AlwaysEnabled"_s, ReceiverName::TestWithMultiLineExtendedAttributes, false, false, false, ProcessName::GPU, ProcessName::WebContent },
     MessageDescription { "TestWithMultipleDispatchedFrom_AlwaysEnabled"_s, ReceiverName::TestWithMultipleDispatchedFrom, false, false, false, ProcessName::Unknown, ProcessName::UI },
-    MessageDescription { "TestWithSemaphore_ReceiveSemaphore"_s, ReceiverName::TestWithSemaphore, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSemaphore_ReceiveSemaphoreReply"_s, ReceiverName::TestWithSemaphore, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSemaphore_SendSemaphore"_s, ReceiverName::TestWithSemaphore, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSpanOfConst_TestSpanOfConstFloat"_s, ReceiverName::TestWithSpanOfConst, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
@@ -103,44 +95,32 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithStreamServerConnectionHandle_SendStreamServerConnection"_s, ReceiverName::TestWithStreamServerConnectionHandle, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithStreamSwiftEnabledBy_SendString"_s, ReceiverName::TestWithStreamSwiftEnabledBy, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithStreamSwift_SendString"_s, ReceiverName::TestWithStreamSwift, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithStream_CallWithIdentifier"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithStream_CallWithIdentifierReply"_s, ReceiverName::TestWithStream, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
 #if PLATFORM(COCOA)
     MessageDescription { "TestWithStream_SendMachSendRight"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
     MessageDescription { "TestWithStream_SendString"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithStream_SendStringAsync"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithStream_SendStringAsyncReply"_s, ReceiverName::TestWithStream, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclassAndWantsAsyncDispatch_LoadURL"_s, ReceiverName::TestWithSuperclassAndWantsAsyncDispatch, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclassAndWantsDispatch_LoadURL"_s, ReceiverName::TestWithSuperclassAndWantsDispatch, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_LoadURL"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #if ENABLE(TEST_FEATURE)
-    MessageDescription { "TestWithSuperclass_TestAsyncMessage"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithSuperclass_TestAsyncMessageAnyThread"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_TestAsyncMessageAnyThreadReply"_s, ReceiverName::TestWithSuperclass, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_TestAsyncMessageReply"_s, ReceiverName::TestWithSuperclass, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithConnection"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_TestAsyncMessageWithConnectionReply"_s, ReceiverName::TestWithSuperclass, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithMultipleArguments"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply"_s, ReceiverName::TestWithSuperclass, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithNoArguments"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply"_s, ReceiverName::TestWithSuperclass, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
 #endif
     MessageDescription { "TestWithSuperclass_TestMessageWithMessageName"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage"_s, ReceiverName::TestWithSwiftConditionallyAndEnabledBy, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply"_s, ReceiverName::TestWithSwiftConditionallyAndEnabledBy, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithSwiftConditionally_TestAsyncMessage"_s, ReceiverName::TestWithSwiftConditionally, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwiftConditionally_TestAsyncMessageReply"_s, ReceiverName::TestWithSwiftConditionally, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithSwift_TestAsyncMessage"_s, ReceiverName::TestWithSwift, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwift_TestAsyncMessageReply"_s, ReceiverName::TestWithSwift, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwift_TestMessageWithAliasedParameter"_s, ReceiverName::TestWithSwift, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithSwift_TestMessageWithEmptyReply"_s, ReceiverName::TestWithSwift, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwift_TestMessageWithEmptyReplyReply"_s, ReceiverName::TestWithSwift, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwift_TestThrowingMessageWithoutReply"_s, ReceiverName::TestWithSwift, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithValidator_AlwaysEnabled"_s, ReceiverName::TestWithValidator, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithValidator_EnabledIfPassValidation"_s, ReceiverName::TestWithValidator, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithValidator_EnabledIfSomeFeatureEnabledAndPassValidation"_s, ReceiverName::TestWithValidator, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithValidator_MessageWithReply"_s, ReceiverName::TestWithValidator, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithValidator_MessageWithReplyReply"_s, ReceiverName::TestWithValidator, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithWantsAsyncDispatch_TestMessage"_s, ReceiverName::TestWithWantsAsyncDispatch, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithWantsDispatchNoSyncMessages_TestMessage"_s, ReceiverName::TestWithWantsDispatchNoSyncMessages, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
@@ -149,7 +129,6 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithoutAttributes_AddEvent"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
     MessageDescription { "TestWithoutAttributes_Close"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithoutAttributes_CreatePlugin"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_CreatePluginReply"_s, ReceiverName::TestWithoutAttributes, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
 #if ENABLE(DEPRECATED_FEATURE)
     MessageDescription { "TestWithoutAttributes_DeprecatedOperation"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
@@ -161,10 +140,8 @@ const MessageDescriptionsArray messageDescriptions {
 #if ENABLE(FEATURE_FOR_TESTING)
     MessageDescription { "TestWithoutAttributes_ExperimentalOperation"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
-    MessageDescription { "TestWithoutAttributes_GetPlugins"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_GetPluginsReply"_s, ReceiverName::TestWithoutAttributes, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
 #if PLATFORM(MAC)
-    MessageDescription { "TestWithoutAttributes_InterpretKeyEvent"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_InterpretKeyEventReply"_s, ReceiverName::TestWithoutAttributes, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
 #endif
 #if ENABLE(TOUCH_EVENTS)
@@ -172,10 +149,8 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithoutAttributes_LoadSomethingElse"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
     MessageDescription { "TestWithoutAttributes_LoadURL"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithoutAttributes_OpaqueTypeSecurityAssertion"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_OpaqueTypeSecurityAssertionReply"_s, ReceiverName::TestWithoutAttributes, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_PreferencesDidChange"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
-    MessageDescription { "TestWithoutAttributes_RunJavaScriptAlert"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_RunJavaScriptAlertReply"_s, ReceiverName::TestWithoutAttributes, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_SendDoubleAndFloat"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_SendInts"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
@@ -195,6 +170,7 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "CancelAsyncReply"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "CancelSyncMessageReply"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #if PLATFORM(COCOA)
     MessageDescription { "InitializeConnection"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
@@ -204,6 +180,39 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "ProcessOutOfStreamMessage"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "SetStreamDestinationID"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "SyncMessageReply"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+#if USE(AVFOUNDATION)
+    MessageDescription { "TestWithCVPixelBuffer_ReceiveCVPixelBuffer"_s, ReceiverName::TestWithCVPixelBuffer, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+#endif
+    MessageDescription { "TestWithImageData_ReceiveImageData"_s, ReceiverName::TestWithImageData, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithLegacyReceiver_CreatePlugin"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithLegacyReceiver_GetPlugins"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+#if PLATFORM(MAC)
+    MessageDescription { "TestWithLegacyReceiver_InterpretKeyEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+#endif
+    MessageDescription { "TestWithLegacyReceiver_OpaqueTypeSecurityAssertion"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithLegacyReceiver_RunJavaScriptAlert"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithSemaphore_ReceiveSemaphore"_s, ReceiverName::TestWithSemaphore, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithStream_CallWithIdentifier"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithStream_SendStringAsync"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
+#if ENABLE(TEST_FEATURE)
+    MessageDescription { "TestWithSuperclass_TestAsyncMessage"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageAnyThread"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithConnection"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithMultipleArguments"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithNoArguments"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+#endif
+    MessageDescription { "TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage"_s, ReceiverName::TestWithSwiftConditionallyAndEnabledBy, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithSwiftConditionally_TestAsyncMessage"_s, ReceiverName::TestWithSwiftConditionally, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithSwift_TestAsyncMessage"_s, ReceiverName::TestWithSwift, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithSwift_TestMessageWithEmptyReply"_s, ReceiverName::TestWithSwift, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithValidator_MessageWithReply"_s, ReceiverName::TestWithValidator, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithoutAttributes_CreatePlugin"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithoutAttributes_GetPlugins"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+#if PLATFORM(MAC)
+    MessageDescription { "TestWithoutAttributes_InterpretKeyEvent"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+#endif
+    MessageDescription { "TestWithoutAttributes_OpaqueTypeSecurityAssertion"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithoutAttributes_RunJavaScriptAlert"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_GetPluginProcessConnection"_s, ReceiverName::TestWithLegacyReceiver, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_TestMultipleAttributes"_s, ReceiverName::TestWithLegacyReceiver, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithStreamSwift_SendStringSync"_s, ReceiverName::TestWithStreamSwift, true, false, false, ProcessName::Unknown, ProcessName::Unknown },

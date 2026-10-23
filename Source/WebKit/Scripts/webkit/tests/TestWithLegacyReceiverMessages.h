@@ -67,7 +67,7 @@ class LoadURL {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadURL; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadURL; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -93,7 +93,7 @@ class LoadSomething {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadSomething; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadSomething; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -120,7 +120,7 @@ class TouchEvent {
 public:
     using Arguments = std::tuple<WebKit::WebTouchEvent>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TouchEvent; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TouchEvent; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -147,7 +147,7 @@ class AddEvent {
 public:
     using Arguments = std::tuple<WebKit::WebTouchEvent>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_AddEvent; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_AddEvent; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -174,7 +174,7 @@ class LoadSomethingElse {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadSomethingElse; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadSomethingElse; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -200,7 +200,7 @@ class DidReceivePolicyDecision {
 public:
     using Arguments = std::tuple<uint64_t, uint64_t, uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -231,7 +231,7 @@ class Close {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_Close; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_Close; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -253,7 +253,7 @@ class PreferencesDidChange {
 public:
     using Arguments = std::tuple<WebKit::WebPreferencesStore>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_PreferencesDidChange; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_PreferencesDidChange; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -278,7 +278,7 @@ class SendDoubleAndFloat {
 public:
     using Arguments = std::tuple<double, float>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_SendDoubleAndFloat; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_SendDoubleAndFloat; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -306,7 +306,7 @@ class SendInts {
 public:
     using Arguments = std::tuple<Vector<uint64_t>, Vector<Vector<uint64_t>>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_SendInts; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_SendInts; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -334,7 +334,7 @@ class CreatePlugin {
 public:
     using Arguments = std::tuple<uint64_t, WebKit::Plugin::Parameters>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_CreatePlugin; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_CreatePlugin; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -367,7 +367,7 @@ class RunJavaScriptAlert {
 public:
     using Arguments = std::tuple<uint64_t, String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlert; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlert; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -400,7 +400,7 @@ class GetPlugins {
 public:
     using Arguments = std::tuple<bool>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPlugins; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPlugins; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -430,7 +430,7 @@ class GetPluginProcessConnection {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPluginProcessConnection; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPluginProcessConnection; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -458,7 +458,7 @@ class TestMultipleAttributes {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TestMultipleAttributes; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TestMultipleAttributes; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -483,7 +483,7 @@ class TestParameterAttributes {
 public:
     using Arguments = std::tuple<uint64_t, double, double>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TestParameterAttributes; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TestParameterAttributes; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -514,7 +514,7 @@ class TemplateTest {
 public:
     using Arguments = std::tuple<HashMap<String, std::pair<String, uint64_t>>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TemplateTest; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TemplateTest; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -539,7 +539,7 @@ class SetVideoLayerID {
 public:
     using Arguments = std::tuple<WebCore::PlatformLayerIdentifier>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_SetVideoLayerID; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_SetVideoLayerID; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -564,7 +564,7 @@ class OpaqueTypeSecurityAssertion {
 public:
     using Arguments = std::tuple<NotDispatchableFromWebContent>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_OpaqueTypeSecurityAssertion; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_OpaqueTypeSecurityAssertion; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -596,7 +596,7 @@ class DidCreateWebProcessConnection {
 public:
     using Arguments = std::tuple<MachSendRight, OptionSet<WebKit::SelectionFlags>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -626,7 +626,7 @@ class InterpretKeyEvent {
 public:
     using Arguments = std::tuple<uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEvent; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEvent; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -658,7 +658,7 @@ class DeprecatedOperation {
 public:
     using Arguments = std::tuple<IPC::DummyType>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_DeprecatedOperation; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_DeprecatedOperation; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -685,7 +685,7 @@ class ExperimentalOperation {
 public:
     using Arguments = std::tuple<IPC::DummyType>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_ExperimentalOperation; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_ExperimentalOperation; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -711,7 +711,7 @@ class CreatePluginReply {
 public:
     using Arguments = std::tuple<bool>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_CreatePluginReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_CreatePluginReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -736,7 +736,7 @@ class RunJavaScriptAlertReply {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlertReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlertReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -758,7 +758,7 @@ class GetPluginsReply {
 public:
     using Arguments = std::tuple<Vector<WebCore::PluginInfo>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPluginsReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPluginsReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -783,7 +783,7 @@ class OpaqueTypeSecurityAssertionReply {
 public:
     using Arguments = std::tuple<NotDispatchableFromWebContent>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_OpaqueTypeSecurityAssertionReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_OpaqueTypeSecurityAssertionReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -810,7 +810,7 @@ class InterpretKeyEventReply {
 public:
     using Arguments = std::tuple<Vector<WebCore::KeypressCommand>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEventReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEventReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

@@ -46,7 +46,7 @@ class SendString {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendString; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendString; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -73,7 +73,7 @@ class SendStringAsync {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringAsync; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringAsync; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -106,7 +106,7 @@ class SendStringSync {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringSync; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringSync; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -137,7 +137,7 @@ class CallWithIdentifier {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_CallWithIdentifier; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_CallWithIdentifier; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -168,7 +168,7 @@ class SendMachSendRight {
 public:
     using Arguments = std::tuple<MachSendRight>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendMachSendRight; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendMachSendRight; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -197,7 +197,7 @@ class ReceiveMachSendRight {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_ReceiveMachSendRight; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_ReceiveMachSendRight; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -227,7 +227,7 @@ class SendAndReceiveMachSendRight {
 public:
     using Arguments = std::tuple<MachSendRight>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendAndReceiveMachSendRight; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendAndReceiveMachSendRight; }
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -259,7 +259,7 @@ class SendStringAsyncReply {
 public:
     using Arguments = std::tuple<int64_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringAsyncReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringAsyncReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -286,7 +286,7 @@ class CallWithIdentifierReply {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_CallWithIdentifierReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_CallWithIdentifierReply; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

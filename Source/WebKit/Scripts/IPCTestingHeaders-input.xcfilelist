@@ -8,6 +8,7 @@
 $(SRCROOT)/Platform/IPC/ArgumentCoders.h
 $(SRCROOT)/Shared/Cocoa/ArgumentCodersCocoa.h
 $(SRCROOT)/Platform/IPC/ArrayReferenceTuple.h
+$(SRCROOT)/Platform/IPC/AsyncReplyID.h
 $(SRCROOT)/Platform/IPC/Attachment.h
 $(SRCROOT)/Platform/IPC/Connection.h
 $(SRCROOT)/Platform/IPC/ConnectionHandle.h
