@@ -1998,22 +1998,21 @@ imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worke
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?av1_444_high [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?av1_444_high [ Pass ]
 
-http/tests/webcodecs/vp9-hdr.html [ Failure ]
-http/tests/webcodecs/av1-sdr.html [ Failure ]
-http/tests/webcodecs/hevc-hdr.html [ Failure ]
 http/wpt/webrtc/peer-connection-color-space.html [ Failure ]
 
 # Alpha support
 imported/w3c/web-platform-tests/webcodecs/videoFrame-alpha-discard.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-alpha-discard.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-alpha-discard.window.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo-rgbx.any.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo-rgbx.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage-rgbx.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage-rgbx.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-rgbx-imageBitmap.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-rgbx-imageBitmap.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-rgbx-webgl.window.html [ Failure ]
+
+# Missing RGBX/BGRX support in our implementation of VideoFrame::copyTo().
+imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo-rgbx.any.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo-rgbx.any.worker.html [ Failure ]
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo-rgb.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo-rgb.any.worker.html [ Failure ]
