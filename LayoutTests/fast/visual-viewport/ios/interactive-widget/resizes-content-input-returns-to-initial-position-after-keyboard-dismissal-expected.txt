@@ -1,0 +1,16 @@
+
+Keyboard not shown:
+PASS textField.offsetTop is content.offsetHeight
+
+Keyboard shown:
+PASS grid.offsetHeight < window.initialGridHeight is true
+PASS textField.offsetTop < window.initialInputTop is true
+
+Keyboard hidden:
+PASS window.innerHeight became window.innerHeightWithoutKeyboard
+PASS grid.offsetHeight is window.initialGridHeight
+PASS textField.offsetTop is window.initialInputTop
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

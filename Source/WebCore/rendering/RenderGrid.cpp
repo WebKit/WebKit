@@ -433,7 +433,7 @@ void RenderGrid::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
     repainter.repaintAfterLayout();
 }
 
-static void LEGACY_NODELETE clearGridItemOverridingSizesBeforeLayout(RenderGrid& renderGrid)
+static void clearGridItemOverridingSizesBeforeLayout(RenderGrid& renderGrid, RenderGridLayoutState& gridLayoutState)
 {
     // Grid's layout logic controls the grid item's override content size, hence we need to
     // clear any override set previously, so it doesn't interfere in current layout
@@ -441,6 +441,8 @@ static void LEGACY_NODELETE clearGridItemOverridingSizesBeforeLayout(RenderGrid&
     for (auto& gridItem : childrenOfType<RenderBox>(renderGrid)) {
         if (gridItem.isOutOfFlowPositioned() || gridItem.isLegend())
             continue;
+        if (gridItem.overridingBorderBoxLogicalHeight())
+            gridLayoutState.setLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::NeedsLayoutForIntrinsicLogicalHeight);
         gridItem.clearOverridingSize();
     }
 }
@@ -470,7 +472,7 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
         RenderGridLayoutState gridLayoutState;
 
         updateIntrinsicLogicalHeightsForRowSizingFirstPassCacheAvailability();
-        clearGridItemOverridingSizesBeforeLayout(*this);
+        clearGridItemOverridingSizesBeforeLayout(*this, gridLayoutState);
         computeLayoutRequirementsForItemsBeforeLayout(gridLayoutState);
 
         preparePaginationBeforeBlockLayout(relayoutChildren);
@@ -649,7 +651,7 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
         RenderGridLayoutState gridLayoutState;
 
-        clearGridItemOverridingSizesBeforeLayout(*this);
+        clearGridItemOverridingSizesBeforeLayout(*this, gridLayoutState);
 
         // We are committed to a full grid lanes layout; invalidate the resolved track list now so that a
         // stale read asserts if we fail to repopulate it below (see updateResolvedTrackListsAfterLayout).

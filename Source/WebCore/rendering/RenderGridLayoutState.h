@@ -35,6 +35,7 @@ namespace WebCore {
 enum class ItemLayoutRequirement : uint8_t {
     NeedsColumnAxisStretchAlignment = 1 << 0,
     MinContentContributionForSecondColumnPass = 1 << 1,
+    NeedsLayoutForIntrinsicLogicalHeight = 1 << 2,
 };
 using ItemsLayoutRequirements = SingleThreadWeakHashMap<RenderBox, OptionSet<ItemLayoutRequirement>>;
 
@@ -43,6 +44,7 @@ class RenderGridLayoutState {
 public:
     bool LEGACY_NODELETE containsLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement) const;
     void setLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement);
+    void clearLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement);
 
     bool needsSecondTrackSizingPass() const { return m_needsSecondTrackSizingPass; }
     void setNeedsSecondTrackSizingPass() { m_needsSecondTrackSizingPass = true; }

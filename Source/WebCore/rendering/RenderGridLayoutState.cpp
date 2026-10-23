@@ -47,4 +47,10 @@ void RenderGridLayoutState::setLayoutRequirementForGridItem(const RenderBox& gri
     }).iterator->value.add(layoutRequirement);
 }
 
+void RenderGridLayoutState::clearLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement layoutRequirement)
+{
+    if (auto itr = m_itemsLayoutRequirements.find(gridItem); itr != m_itemsLayoutRequirements.end())
+        itr->value.remove(layoutRequirement);
+}
+
 }

@@ -1066,6 +1066,13 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForGridItem(RenderBox&
             return *cachedLogicalHeight;
     }
 
+    auto intrinsicLogicalHeightRequirement = ItemLayoutRequirement::NeedsLayoutForIntrinsicLogicalHeight;
+    if (gridLayoutState.containsLayoutRequirementForGridItem(gridItem, intrinsicLogicalHeightRequirement)) {
+        gridLayoutState.clearLayoutRequirementForGridItem(gridItem, intrinsicLogicalHeightRequirement);
+        if (!gridItem.needsLayout())
+            gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    }
+
     // If |gridItem| has a relative logical height, we shouldn't let it override its intrinsic height, which is
     // what we are interested in here. Thus we need to set the block-axis override size to nullopt (no possible resolution).
     auto hasOverridingContainingBlockContentSizeForGridItem = [&] {
