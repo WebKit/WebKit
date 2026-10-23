@@ -66,7 +66,6 @@ JSValue jsStringFromRegisterArray(JSGlobalObject*, Register*, unsigned count);
 
 JSBigIntComparisonResult compareBigInt(JSValue, JSValue);
 JSBigIntComparisonResult compareBigIntToOtherPrimitive(JSGlobalObject*, JSBigInt*, JSValue);
-JSBigIntComparisonResult compareBigInt32ToOtherPrimitive(JSGlobalObject*, int32_t, JSValue);
 bool bigIntCompareResult(JSBigIntComparisonResult, JSBigIntComparisonMode);
 bool bigIntCompare(JSGlobalObject*, JSValue, JSValue, JSBigIntComparisonMode);
 bool toPrimitiveNumeric(JSGlobalObject*, JSValue, JSValue&, double&);

@@ -1144,7 +1144,6 @@ macro preOp(opcodeName, opcodeStruct, integerOperation)
         get(m_srcDst, t0)
         loadq [cfr, t0, 8], t1
         # srcDst in t1
-        # FIXME: the next line jumps to the slow path for BigInt32. We could instead have a dedicated path in here for them.
         bqb t1, numberTag, .slow
         integerOperation(t1, .slow)
         orq numberTag, t1
@@ -1543,27 +1542,6 @@ llintOpWithReturn(op_is_number, OpIsNumber, macro (size, get, dispatch, return)
     orq ValueFalse, t1
     return(t1)
 end)
-
-if BIGINT32
-    llintOpWithReturn(op_is_big_int, OpIsBigInt, macro(size, get, dispatch, return)
-        get(m_operand, t1)
-        loadConstantOrVariable(size, t1, t0)
-        btqnz t0, notCellMask, .notCellCase
-        cbeq JSCell::m_type[t0], HeapBigIntType, t1
-        orq ValueFalse, t1
-        return(t1)
-    .notCellCase:
-        andq MaskBigInt32, t0
-        cqeq t0, TagBigInt32, t0
-        orq ValueFalse, t0
-        return(t0)
-    end)
-else
-# if BIGINT32 is not supported we generate op_is_cell_with_type instead of op_is_big_int
-    llintOp(op_is_big_int, OpIsBigInt, macro(unused, unused, unused)
-        notSupported()
-    end)
-end
 
 llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, dispatch, return)
     getu(size, OpIsCellWithType, m_type, t0)

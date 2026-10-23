@@ -132,9 +132,6 @@ public:
     enum JSTrueTag { JSTrue };
     enum JSFalseTag { JSFalse };
     enum JSCellTag { JSCellType };
-#if USE(BIGINT32)
-    enum EncodeAsBigInt32Tag { EncodeAsBigInt32 };
-#endif
     enum EncodeAsDoubleTag { EncodeAsDouble };
 
     JSValue();
@@ -144,9 +141,6 @@ public:
     JSValue(JSFalseTag);
     JSValue(JSCell* ptr);
     JSValue(const JSCell* ptr);
-#if USE(BIGINT32)
-    JSValue(EncodeAsBigInt32Tag, int32_t);
-#endif
 
     // Numbers
     JSValue(EncodeAsDoubleTag, double);
@@ -181,9 +175,6 @@ public:
     double asDouble() const;
     bool asBoolean() const;
     double asNumber() const;
-#if USE(BIGINT32)
-    int32_t bigInt32AsInt32() const; // must only be called on a BigInt32
-#endif
     
     int32_t asInt32ForArithmetic() const; // Boolean becomes an int, but otherwise like asInt32().
 
@@ -205,7 +196,6 @@ public:
     inline bool isBigInt() const; // Defined in JSCJSValueCell.h
     inline bool isHeapBigInt() const; // Defined in JSCJSValueCell.h
     JS_EXPORT_PRIVATE bool isHeapBigIntSlow() const;
-    bool isBigInt32() const;
     inline bool isSymbol() const; // Defined in JSCJSValueCell.h
     inline bool isPrimitive() const; // Defined in JSCJSValueCell.h
     inline bool isGetterSetter() const; // Defined in JSCJSValueCell.h
@@ -372,15 +362,6 @@ public:
      *
      * No valid JSValue will have the bit pattern 0x0, this is used to represent array
      * holes, and as a C++ 'no value' result (e.g. JSValue() has an internal value of 0).
-     *
-     * When USE(BIGINT32), we have a special representation for BigInts that are small (32-bit at most):
-     *      0000:XXXX:XXXX:0012
-     * This representation works because of the following things:
-     * - It cannot be confused with a Double or Integer thanks to the top bits
-     * - It cannot be confused with a pointer to a Cell, thanks to bit 1 which is set to true
-     * - It cannot be confused with a pointer to wasm thanks to bit 0 which is set to false
-     * - It cannot be confused with true/false because bit 2 is set to false
-     * - It cannot be confused for null/undefined because bit 4 is set to true
      */
 
     // This value is 2^49, used to encode doubles such that the encoded value will begin
@@ -400,10 +381,6 @@ public:
     static constexpr int32_t OtherTag       = 0x2;
     static constexpr int32_t BoolTag        = 0x4;
     static constexpr int32_t UndefinedTag   = 0x8;
-#if USE(BIGINT32)
-    static constexpr int32_t BigInt32Tag    = 0x12;
-    static constexpr int64_t BigInt32Mask   = NumberTag | BigInt32Tag;
-#endif
     // Combined integer value for non-numeric immediates.
     static constexpr int32_t ValueFalse     = OtherTag | BoolTag | false;
     static constexpr int32_t ValueTrue      = OtherTag | BoolTag | true;
@@ -524,13 +501,6 @@ inline JSValue jsBoolean(bool b)
 {
     return b ? JSValue(JSValue::JSTrue) : JSValue(JSValue::JSFalse);
 }
-
-#if USE(BIGINT32)
-ALWAYS_INLINE JSValue jsBigInt32(int32_t intValue)
-{
-    return JSValue(JSValue::EncodeAsBigInt32, intValue);
-}
-#endif
 
 inline JSValue jsNaN()
 {
@@ -764,25 +734,6 @@ ALWAYS_INLINE JSCell* JSValue::asCell() const
 {
     ASSERT(isCell());
     return u.ptr;
-}
-
-
-#if USE(BIGINT32)
-inline JSValue::JSValue(EncodeAsBigInt32Tag, int32_t value)
-{
-    uint64_t shiftedValue = static_cast<uint64_t>(static_cast<uint32_t>(value)) << 16;
-    ASSERT(!(shiftedValue & NumberTag));
-    u.asInt64 = shiftedValue | BigInt32Tag;
-}
-#endif // USE(BIGINT32)
-
-inline bool JSValue::isBigInt32() const
-{
-#if USE(BIGINT32)
-    return (u.asInt64 & BigInt32Mask) == BigInt32Tag;
-#else
-    return false;
-#endif
 }
 
 ALWAYS_INLINE double JSValue::toNumber(JSGlobalObject* globalObject) const
@@ -1049,14 +1000,6 @@ ALWAYS_INLINE void clearEncodedJSValueConcurrent(EncodedJSValue& dest)
 {
     dest = JSValue::encode(JSValue());
 }
-
-#if USE(BIGINT32)
-inline int32_t JSValue::bigInt32AsInt32() const
-{
-    ASSERT(isBigInt32());
-    return static_cast<int32_t>(u.asInt64 >> 16);
-}
-#endif // USE(BIGINT32)
 
 ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const
 {

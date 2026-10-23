@@ -299,9 +299,6 @@ public:
     FPRReg fillSpeculateDouble(Edge);
     GPRReg fillSpeculateCell(Edge);
     GPRReg fillSpeculateBoolean(Edge);
-#if USE(BIGINT32)
-    GPRReg fillSpeculateBigInt32(Edge);
-#endif
     GeneratedOperandType checkGeneratedTypeForToInt32(Node*);
 
     void addSlowPathGenerator(std::unique_ptr<SlowPathGenerator>);
@@ -1237,9 +1234,6 @@ public:
     bool compilePeepHoleBranch(Node*, RelationalCondition, DoubleCondition, S_JITOperation_GJJ);
     void compilePeepHoleInt32Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
     void compilePeepHoleInt52Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
-#if USE(BIGINT32)
-    void compilePeepHoleBigInt32Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
-#endif
     void compilePeepHoleBooleanBranch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node*, Node* branchNode, JITCompiler::DoubleCondition);
     void compilePeepHoleObjectEquality(Node*, Node* branchNode);
@@ -1335,9 +1329,6 @@ public:
 
     void compileInt32Compare(Node*, RelationalCondition);
     void compileInt52Compare(Node*, RelationalCondition);
-#if USE(BIGINT32)
-    void compileBigInt32Compare(Node*, RelationalCondition);
-#endif
     void compileBooleanCompare(Node*, RelationalCondition);
     void compileDoubleCompare(Node*, DoubleCondition);
     void compileStringCompare(Node*, RelationalCondition);
@@ -1454,7 +1445,7 @@ public:
     void compileBitwiseNot(Node*);
 
     template<typename SnippetGenerator, J_JITOperation_GJJ slowPathFunction>
-    void emitUntypedOrAnyBigIntBitOp(Node*);
+    void emitUntypedBitOp(Node*);
     void compileBitwiseOp(Node*);
     void compileValueBitwiseOp(Node*);
 
@@ -1826,10 +1817,6 @@ public:
     void convertAnyInt(Edge, GPRReg resultGPR, bool canIgnoreNegativeZero);
     void speculateAnyInt(Edge);
     void speculateDoubleRepAnyInt(Edge);
-#if USE(BIGINT32)
-    void speculateBigInt32(Edge);
-    void speculateAnyBigInt(Edge);
-#endif // USE(BIGINT32)
     void speculateNumber(Edge);
     void speculateRealNumber(Edge);
     void speculateDoubleRepReal(Edge);
@@ -2735,56 +2722,6 @@ private:
     Edge m_edge;
     GPRReg m_gprOrInvalid;
 };
-
-#if USE(BIGINT32)
-class SpeculateBigInt32Operand {
-    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(SpeculateBigInt32Operand);
-public:
-    explicit SpeculateBigInt32Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
-        : m_jit(jit)
-        , m_edge(edge)
-        , m_gprOrInvalid(InvalidGPRReg)
-    {
-        ASSERT(m_jit);
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == BigInt32Use);
-        if (jit->isFilled(node()))
-            gpr();
-    }
-
-    ~SpeculateBigInt32Operand()
-    {
-        ASSERT(m_gprOrInvalid != InvalidGPRReg);
-        m_jit->unlock(m_gprOrInvalid);
-    }
-
-    Edge edge() const
-    {
-        return m_edge;
-    }
-
-    Node* node() const
-    {
-        return edge().node();
-    }
-
-    GPRReg gpr()
-    {
-        if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpeculateBigInt32(edge());
-        return m_gprOrInvalid;
-    }
-
-    void use()
-    {
-        m_jit->use(node());
-    }
-
-private:
-    SpeculativeJIT* m_jit;
-    Edge m_edge;
-    GPRReg m_gprOrInvalid;
-};
-#endif // USE(BIGINT32)
 
 #define DFG_TYPE_CHECK_WITH_EXIT_KIND(exitKind, source, edge, typesPassedThrough, jumpToFail) do { \
         JSValueSource _dtc_source = (source);                           \

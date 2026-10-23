@@ -319,13 +319,6 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
             isTop = false;
     }
 
-#if USE(BIGINT32)
-    if (value & SpecBigInt32)
-        strOut.print("BigInt32");
-    else
-        isTop = false;
-#endif
-
     if (value & SpecDoubleImpureNaN)
         strOut.print("DoubleImpureNaN");
     
@@ -654,8 +647,6 @@ static ALWAYS_INLINE SpeculatedType speculationFromValueImpl(JSValue value)
             return SpecAnyIntAsDouble;
         return SpecNonIntAsDouble;
     }
-    if (value.isBigInt32())
-        return SpecBigInt32;
     if (value.isCell())
         return speculationFromCellImpl<avoidStringDereference>(value.asCell());
     if (value.isBoolean())

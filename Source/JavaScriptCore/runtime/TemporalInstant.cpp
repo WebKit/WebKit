@@ -86,15 +86,6 @@ std::optional<ISO8601::ExactTime> bigIntValueToExactTime(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if USE(BIGINT32)
-    if (bigIntValue.isBigInt32()) {
-        // BigInt32 values (≤ 2^30) are always within the valid epoch-ns range.
-        ISO8601::ExactTime exactTime { Int128 { bigIntValue.bigInt32AsInt32() } };
-        ASSERT(exactTime.isValid());
-        return exactTime;
-    }
-#endif
-
     JSBigInt* bigint = asHeapBigInt(bigIntValue);
     bool bigIntTooLong = false;
     Int128 total;

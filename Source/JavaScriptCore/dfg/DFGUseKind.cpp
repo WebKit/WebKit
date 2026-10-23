@@ -155,14 +155,8 @@ void printInternal(PrintStream& out, UseKind useKind)
     case SymbolUse:
         out.print("Symbol");
         return;
-    case AnyBigIntUse:
-        out.print("AnyBigInt");
-        return;
     case HeapBigIntUse:
         out.print("HeapBigInt");
-        return;
-    case BigInt32Use:
-        out.print("BigInt32");
         return;
     case StringObjectUse:
         out.print("StringObject");

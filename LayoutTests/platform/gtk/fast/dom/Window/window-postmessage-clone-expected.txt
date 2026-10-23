@@ -149,7 +149,7 @@ PASS: String object properties not serialized
 PASS: Number object properties not serialized
 PASS: Boolean object properties not serialized
 PASS: BigInt object properties not serialized
-PASS: BigInt (BigInt32) object properties not serialized
+PASS: BigInt (small value) object properties not serialized
 PASS: Date values correct (0)
 PASS: Date values correct (1)
 FAIL: References to dates correct (0)

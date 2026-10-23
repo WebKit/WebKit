@@ -405,10 +405,6 @@ static void LEGACY_NODELETE updateArithProfileForUnaryArithOp(UnaryArithProfile&
 
     if (result.isHeapBigInt())
         profile.setObservedHeapBigInt();
-#if USE(BIGINT32)
-    else if (result.isBigInt32())
-        profile.setObservedBigInt32();
-#endif
     else {
         ASSERT(result.isNumber());
         if (!result.isInt32()) {
@@ -440,16 +436,6 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_negate)
     CHECK_EXCEPTION();
 
     auto& profile = codeBlock->unlinkedCodeBlock()->unaryArithProfile(bytecode.m_profileIndex);
-
-#if USE(BIGINT32)
-    if (primValue.isBigInt32()) {
-        JSValue result = JSBigInt::unaryMinus(globalObject, primValue.bigInt32AsInt32());
-        CHECK_EXCEPTION();
-        RETURN_WITH_PROFILING(result, {
-            updateArithProfileForUnaryArithOp(profile, result, operand);
-        });
-    }
-#endif
 
     if (primValue.isHeapBigInt()) {
         JSValue result = JSBigInt::unaryMinus(globalObject, primValue.asHeapBigInt());
@@ -488,10 +474,6 @@ static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeB
         }
     } else if (result.isHeapBigInt())
         profile.setObservedHeapBigInt();
-#if USE(BIGINT32)
-    else if (result.isBigInt32())
-        profile.setObservedBigInt32();
-#endif
     else 
         profile.setObservedNonNumeric();
 }

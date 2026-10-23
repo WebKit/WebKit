@@ -80,22 +80,12 @@ static ALWAYS_INLINE JSBigInt* toThisBigIntValue(JSGlobalObject* globalObject, J
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if USE(BIGINT32)
-    // FIXME: heap-allocating all big ints is inneficient, but re-implementing toString for small BigInts is enough work that I'm deferring it to a later patch.
-    if (thisValue.isBigInt32())
-        RELEASE_AND_RETURN(scope, JSBigInt::createFrom(globalObject, thisValue.bigInt32AsInt32()));
-#endif
-
     if (thisValue.isCell()) {
         if (JSBigInt* bigInt = dynamicDowncast<JSBigInt>(thisValue.asCell()))
             return bigInt;
 
         if (BigIntObject* bigIntObject = dynamicDowncast<BigIntObject>(thisValue.asCell())) {
             JSValue bigInt = bigIntObject->internalValue();
-#if USE(BIGINT32)
-            if (bigInt.isBigInt32())
-                RELEASE_AND_RETURN(scope, JSBigInt::createFrom(globalObject, bigInt.bigInt32AsInt32()));
-#endif
             return bigInt.asHeapBigInt();
         }
     }

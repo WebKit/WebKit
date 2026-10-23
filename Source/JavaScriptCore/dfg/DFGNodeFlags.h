@@ -52,11 +52,10 @@ namespace JSC { namespace DFG {
 #define NodeMayOverflowInt32InDFG        0x00100
 #define NodeMayNegZeroInBaseline         0x00200
 #define NodeMayNegZeroInDFG              0x00400
-#define NodeMayHaveBigInt32Result        0x00800
 #define NodeMayHaveHeapBigIntResult      0x01000
 #define NodeMayHaveNonNumericResult      0x02000
-#define NodeBehaviorMask                 (NodeMayHaveDoubleResult | NodeMayOverflowInt52 | NodeMayOverflowInt32InBaseline | NodeMayOverflowInt32InDFG | NodeMayNegZeroInBaseline | NodeMayNegZeroInDFG | NodeMayHaveBigInt32Result | NodeMayHaveHeapBigIntResult | NodeMayHaveNonNumericResult)
-#define NodeMayHaveNonIntResult          (NodeMayHaveDoubleResult | NodeMayHaveNonNumericResult | NodeMayHaveBigInt32Result | NodeMayHaveHeapBigIntResult)
+#define NodeBehaviorMask                 (NodeMayHaveDoubleResult | NodeMayOverflowInt52 | NodeMayOverflowInt32InBaseline | NodeMayOverflowInt32InDFG | NodeMayNegZeroInBaseline | NodeMayNegZeroInDFG | NodeMayHaveHeapBigIntResult | NodeMayHaveNonNumericResult)
+#define NodeMayHaveNonIntResult          (NodeMayHaveDoubleResult | NodeMayHaveNonNumericResult | NodeMayHaveHeapBigIntResult)
 
 #define NodeBytecodeUseBottom            0x00000
 #define NodeBytecodeUsesAsNumber         0x04000 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
@@ -163,19 +162,6 @@ static inline bool nodeCanSpeculateInt52(NodeFlags flags, RareCaseProfilingSourc
         return bytecodeCanIgnoreNegativeZero(flags);
     
     return true;
-}
-
-static inline bool nodeMayHaveHeapBigInt(NodeFlags flags, RareCaseProfilingSource)
-{
-    return !!(flags & NodeMayHaveHeapBigIntResult);
-}
-
-static inline bool nodeCanSpeculateBigInt32(NodeFlags flags, RareCaseProfilingSource source)
-{
-    // We always attempt to produce BigInt32 as much as possible. If we see HeapBigInt, we observed overflow.
-    // FIXME: Extend this information by tiered profiling (from Baseline, DFG etc.).
-    // https://bugs.webkit.org/show_bug.cgi?id=211039
-    return !nodeMayHaveHeapBigInt(flags, source);
 }
 
 // FIXME: Get rid of this.

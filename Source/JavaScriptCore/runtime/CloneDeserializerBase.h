@@ -360,9 +360,6 @@ protected:
             return JSValue();
 
         if (!numberOfUint64Elements) {
-#if USE(BIGINT32)
-            return jsBigInt32(0);
-#else
             JSBigInt* bigInt = JSBigInt::tryCreateZero(m_lexicalGlobalObject->vm());
             if (!bigInt) [[unlikely]] {
                 SERIALIZE_TRACE("FAIL deserialize");
@@ -370,32 +367,8 @@ protected:
                 return JSValue();
             }
             return bigInt;
-#endif
         }
 
-#if USE(BIGINT32)
-        static_assert(sizeof(JSBigInt::Digit) == sizeof(uint64_t));
-        if (numberOfUint64Elements == 1) {
-            uint64_t digit64 = 0;
-            if (!read(digit64))
-                return JSValue();
-            if (sign) {
-                if (digit64 <= static_cast<uint64_t>(-static_cast<int64_t>(INT32_MIN)))
-                    return jsBigInt32(static_cast<int32_t>(-static_cast<int64_t>(digit64)));
-            } else {
-                if (digit64 <= INT32_MAX)
-                    return jsBigInt32(static_cast<int32_t>(digit64));
-            }
-            ASSERT(digit64);
-            JSBigInt* bigInt = JSBigInt::tryCreateFrom(nullptr, m_lexicalGlobalObject->vm(), sign, std::span { &digit64, 1 });
-            if (!bigInt) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                return JSValue();
-            }
-            return tryConvertToBigInt32(bigInt);
-        }
-#endif
         Vector<JSBigInt::Digit, 16> digits;
         if constexpr (sizeof(JSBigInt::Digit) == sizeof(uint64_t)) {
             digits.reserveInitialCapacity(numberOfUint64Elements);
@@ -429,7 +402,7 @@ protected:
             fail();
             return JSValue();
         }
-        return tryConvertToBigInt32(bigInt);
+        return bigInt;
     }
 
     template<SerializationTag tag>

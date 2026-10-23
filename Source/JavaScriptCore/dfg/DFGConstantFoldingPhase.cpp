@@ -47,20 +47,12 @@ namespace JSC { namespace DFG {
 
 static bool isZeroBigInt(JSValue& value)
 {
-#if USE(BIGINT32)
-    if (value.isBigInt32())
-        return !value.bigInt32AsInt32();
-#endif
     ASSERT(value.isHeapBigInt());
     return value.asHeapBigInt()->isZero();
 }
 
 static bool isNegativeBigInt(JSValue& value)
 {
-#if USE(BIGINT32)
-    if (value.isBigInt32())
-        return value.bigInt32AsInt32() < 0;
-#endif
     ASSERT(value.isHeapBigInt());
     return value.asHeapBigInt()->sign();
 }
@@ -1896,7 +1888,7 @@ private:
             }
 
             case ValuePow: {
-                bool isBigIntBinaryUsedKind = node->isBinaryUseKind(HeapBigIntUse) || node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use);
+                bool isBigIntBinaryUsedKind = node->isBinaryUseKind(HeapBigIntUse);
                 if (node->mustGenerate() && isBigIntBinaryUsedKind) {
                     JSValue right = m_state.forNode(node->child2()).value();
                     if (right && right.isBigInt() && !isNegativeBigInt(right)) {
@@ -1909,7 +1901,7 @@ private:
 
             case ValueMod:
             case ValueDiv: {
-                bool isBigIntBinaryUsedKind = node->isBinaryUseKind(HeapBigIntUse) || node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use);
+                bool isBigIntBinaryUsedKind = node->isBinaryUseKind(HeapBigIntUse);
                 if (node->mustGenerate() && isBigIntBinaryUsedKind) {
                     JSValue right = m_state.forNode(node->child2()).value();
                     if (right && right.isBigInt() && !isZeroBigInt(right)) {

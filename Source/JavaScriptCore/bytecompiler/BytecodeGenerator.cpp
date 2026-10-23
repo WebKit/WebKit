@@ -1963,11 +1963,7 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
             }
             if (value == "bigint"_s) {
                 rewind();
-#if USE(BIGINT32)
-                OpIsBigInt::emit(this, dst, op.m_value);
-#else
                 OpIsCellWithType::emit(this, dst, op.m_value, HeapBigIntType);
-#endif
                 return true;
             }
             if (value == "object"_s) {

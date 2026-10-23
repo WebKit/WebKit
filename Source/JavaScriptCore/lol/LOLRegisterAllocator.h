@@ -268,7 +268,6 @@ using ReplayRegisterAllocator = RegisterAllocator<ReplayBackend>;
     macro(OpIsUndefinedOrNull, m_operand, 0) \
     macro(OpIsBoolean, m_operand, 0) \
     macro(OpIsNumber, m_operand, 0) \
-    macro(OpIsBigInt, m_operand, 0) \
     macro(OpIsObject, m_operand, 0) \
     macro(OpIsCellWithType, m_operand, 0) \
     macro(OpHasStructureWithFlags, m_operand, 0)

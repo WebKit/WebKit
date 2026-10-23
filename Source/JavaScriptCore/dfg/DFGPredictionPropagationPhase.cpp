@@ -236,10 +236,6 @@ private:
             if (prediction) {
                 if (isFullNumberOrBooleanSpeculationExpectingDefined(prediction))
                     changed |= mergePrediction(SpecInt32Only);
-#if USE(BIGINT32)
-                else if (m_graph.unaryArithShouldSpeculateBigInt32(node, m_pass))
-                    changed |= mergePrediction(SpecBigInt32);
-#endif
                 else if (m_graph.unaryArithShouldSpeculateHeapBigInt(node))
                     changed |= mergePrediction(SpecHeapBigInt);
                 else if (isBigIntSpeculation(prediction))
@@ -271,10 +267,6 @@ private:
                     // left or right is definitely something other than a number.
                     changed |= mergePrediction(SpecString);
                 }
-#if USE(BIGINT32)
-                else if (m_graph.binaryArithShouldSpeculateBigInt32(node, m_pass))
-                    changed |= mergePrediction(SpecBigInt32);
-#endif
                 else if (m_graph.binaryArithShouldSpeculateHeapBigInt(node))
                     changed |= mergePrediction(SpecHeapBigInt);
                 else if (isBigIntSpeculation(left) && isBigIntSpeculation(right))
@@ -346,10 +338,6 @@ private:
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
                 }
-#if USE(BIGINT32)
-                else if (m_graph.binaryArithShouldSpeculateBigInt32(node, m_pass))
-                    changed |= mergePrediction(SpecBigInt32);
-#endif
                 else if (m_graph.binaryArithShouldSpeculateHeapBigInt(node))
                     changed |= mergePrediction(SpecHeapBigInt);
                 else if (isBigIntSpeculation(left) && isBigIntSpeculation(right))
@@ -379,10 +367,6 @@ private:
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPrediction(prediction));
                 }
-#if USE(BIGINT32)
-                else if (m_graph.unaryArithShouldSpeculateBigInt32(node, m_pass))
-                    changed |= mergePrediction(SpecBigInt32);
-#endif
                 else if (m_graph.unaryArithShouldSpeculateHeapBigInt(node))
                     changed |= mergePrediction(SpecHeapBigInt);
                 else if (isBigIntSpeculation(prediction))
@@ -412,10 +396,6 @@ private:
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPrediction(prediction));
                 }
-#if USE(BIGINT32)
-                else if (node->op() == ToNumeric && m_graph.unaryArithShouldSpeculateBigInt32(node, m_pass))
-                    changed |= mergePrediction(SpecBigInt32);
-#endif
                 else if (node->op() == ToNumeric && m_graph.unaryArithShouldSpeculateHeapBigInt(node))
                     changed |= mergePrediction(SpecHeapBigInt);
                 else if (node->op() == ToNumeric && isBigIntSpeculation(prediction))
@@ -507,10 +487,6 @@ private:
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
                 }
-#if USE(BIGINT32)
-                else if (op == ValueMul && m_graph.binaryArithShouldSpeculateBigInt32(node, m_pass))
-                    changed |= mergePrediction(SpecBigInt32);
-#endif
                 else if (op == ValueMul && m_graph.binaryArithShouldSpeculateHeapBigInt(node))
                     changed |= mergePrediction(SpecHeapBigInt);
                 else if (op == ValueMul && isBigIntSpeculation(left) && isBigIntSpeculation(right))
@@ -693,13 +669,6 @@ private:
                     changed |= mergePrediction(SpecSymbol);
                     break;
                 }
-
-#if USE(BIGINT32)
-                if (node->child1()->shouldSpeculateBigInt32()) {
-                    changed |= mergePrediction(SpecBigInt32);
-                    break;
-                }
-#endif
 
                 if (node->child1()->shouldSpeculateHeapBigInt()) {
                     changed |= mergePrediction(SpecHeapBigInt);
@@ -1308,7 +1277,6 @@ private:
         case IsUndefinedOrNull:
         case IsBoolean:
         case IsNumber:
-        case IsBigInt:
         case NumberIsInteger:
         case GlobalIsNaN:
         case NumberIsNaN:

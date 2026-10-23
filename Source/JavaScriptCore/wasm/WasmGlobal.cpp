@@ -49,7 +49,7 @@ JSValue Global::get(JSGlobalObject* globalObject) const
     case TypeKind::I32:
         return jsNumber(std::bit_cast<int32_t>(static_cast<uint32_t>(m_value.m_primitive)));
     case TypeKind::I64:
-        RELEASE_AND_RETURN(throwScope, JSBigInt::makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(m_value.m_primitive)));
+        RELEASE_AND_RETURN(throwScope, JSBigInt::createFrom(globalObject, static_cast<int64_t>(m_value.m_primitive)));
     case TypeKind::F32:
         return jsNumber(purifyNaN(static_cast<double>(std::bit_cast<float>(static_cast<uint32_t>(m_value.m_primitive)))));
     case TypeKind::F64:

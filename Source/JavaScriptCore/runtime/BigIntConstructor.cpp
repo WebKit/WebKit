@@ -99,19 +99,14 @@ JSC_DEFINE_HOST_FUNCTION(callBigIntConstructor, (JSGlobalObject* globalObject, C
     JSValue primitive = value.toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    if (primitive.isInt32()) {
-#if USE(BIGINT32)
-        return JSValue::encode(jsBigInt32(primitive.asInt32()));
-#else
+    if (primitive.isInt32())
         RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::createFrom(globalObject, primitive.asInt32())));
-#endif
-    }
 
     if (primitive.isDouble()) {
         double number = primitive.asDouble();
         if (!isInteger(number))
             return throwVMError(globalObject, scope, createRangeError(globalObject, "Not an integer"_s));
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(globalObject, primitive.asDouble())));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::createFrom(globalObject, primitive.asDouble())));
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(primitive.toBigInt(globalObject)));
@@ -135,11 +130,6 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorFuncAsUintN, (JSGlobalObject* globalOb
     JSValue bigInt = callFrame->argument(1).toBigInt(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-#if USE(BIGINT32)
-    if (bigInt.isBigInt32())
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::asUintN(globalObject, numberOfBits, bigInt.bigInt32AsInt32())));
-#endif
-
     ASSERT(bigInt.isHeapBigInt());
     RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::asUintN(globalObject, numberOfBits, bigInt.asHeapBigInt())));
 }
@@ -154,11 +144,6 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorFuncAsIntN, (JSGlobalObject* globalObj
 
     JSValue bigInt = callFrame->argument(1).toBigInt(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-
-#if USE(BIGINT32)
-    if (bigInt.isBigInt32())
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::asIntN(globalObject, numberOfBits, bigInt.bigInt32AsInt32())));
-#endif
 
     ASSERT(bigInt.isHeapBigInt());
     RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::asIntN(globalObject, numberOfBits, bigInt.asHeapBigInt())));
@@ -175,11 +160,6 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorAbs, (JSGlobalObject* globalObject, Ca
         throwTypeError(globalObject, scope, "BigInt.abs requires the argument to be a BigInt"_s);
         return { };
     }
-
-#if USE(BIGINT32)
-    if (bigIntValue.isBigInt32())
-        return JSValue::encode(jsBigInt32(std::abs(bigIntValue.bigInt32AsInt32())));
-#endif
 
     JSBigInt* bigInt = bigIntValue.asHeapBigInt();
     if (bigInt->sign())
@@ -198,11 +178,6 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorCbrt, (JSGlobalObject* globalObject, C
         throwTypeError(globalObject, scope, "BigInt.cbrt requires the argument to be a BigInt"_s);
         return { };
     }
-
-#if USE(BIGINT32)
-    if (bigIntValue.isBigInt32())
-        return JSValue::encode(jsBigInt32(static_cast<int32_t>(std::cbrt(static_cast<double>(bigIntValue.bigInt32AsInt32())))));
-#endif
 
     RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::cbrt(globalObject, bigIntValue.asHeapBigInt())));
 }
@@ -292,19 +267,10 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorSign, (JSGlobalObject* globalObject, C
         return { };
     }
 
-#if USE(BIGINT32)
-    if (bigIntValue.isBigInt32()) {
-        int32_t value = bigIntValue.bigInt32AsInt32();
-        if (!value)
-            return JSValue::encode(bigIntValue);
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(value < 0 ? -1 : 1))));
-    }
-#endif
-
     JSBigInt* bigInt = bigIntValue.asHeapBigInt();
     if (bigInt->isZero())
         return JSValue::encode(bigIntValue);
-    RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(bigInt->sign() ? -1 : 1))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::createFrom(globalObject, static_cast<int64_t>(bigInt->sign() ? -1 : 1))));
 }
 
 // https://tc39.es/proposal-bigint-math/#sec-bigint.sqrt
@@ -318,17 +284,6 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorSqrt, (JSGlobalObject* globalObject, C
         throwTypeError(globalObject, scope, "BigInt.sqrt requires the argument to be a positive BigInt"_s);
         return { };
     }
-
-#if USE(BIGINT32)
-    if (bigIntValue.isBigInt32()) {
-        int32_t value = bigIntValue.bigInt32AsInt32();
-        if (value < 0) {
-            throwRangeError(globalObject, scope, "BigInt.sqrt requires the argument to be a positive BigInt"_s);
-            return { };
-        }
-        return JSValue::encode(jsBigInt32(static_cast<int32_t>(std::sqrt(static_cast<double>(value)))));
-    }
-#endif
 
     JSBigInt* bigInt = bigIntValue.asHeapBigInt();
     if (bigInt->sign()) {

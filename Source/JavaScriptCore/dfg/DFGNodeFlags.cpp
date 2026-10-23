@@ -89,9 +89,6 @@ void dumpNodeFlags(PrintStream& actualOut, NodeFlags flags)
     if (flags & NodeMayHaveDoubleResult)
         out.print(comma, "MayHaveDoubleResult"_s);
 
-    if (flags & NodeMayHaveBigInt32Result)
-        out.print(comma, "MayHaveBigInt32Result"_s);
-
     if (flags & NodeMayHaveHeapBigIntResult)
         out.print(comma, "MayHaveHeapBigIntResult"_s);
 

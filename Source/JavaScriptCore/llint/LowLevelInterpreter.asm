@@ -188,10 +188,6 @@ const ValueUndefined  = constexpr JSValue::ValueUndefined
 const ValueNull       = constexpr JSValue::ValueNull
 const TagNumber       = constexpr JSValue::NumberTag
 const NotCellMask     = constexpr JSValue::NotCellMask
-if BIGINT32
-    const TagBigInt32 = constexpr JSValue::BigInt32Tag
-    const MaskBigInt32 = constexpr JSValue::BigInt32Mask
-end
 const LowestOfHighBits = constexpr JSValue::LowestOfHighBits
 
 if LARGE_TYPED_ARRAYS

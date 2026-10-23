@@ -50,11 +50,8 @@ ALWAYS_INLINE bool areKeysEqual(JSGlobalObject* globalObject, JSValue a, JSValue
 // Keep in sync with the implementation of DFG and FTL normalization.
 ALWAYS_INLINE JSValue normalizeMapKey(JSValue key)
 {
-    if (!key.isNumber()) {
-        if (key.isHeapBigInt())
-            return tryConvertToBigInt32(key.asHeapBigInt());
+    if (!key.isNumber())
         return key;
-    }
 
     if (key.isInt32())
         return key;

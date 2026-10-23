@@ -90,7 +90,6 @@ namespace JSC::LOL {
     macro(op_is_undefined_or_null) \
     macro(op_is_boolean) \
     macro(op_is_number) \
-    macro(op_is_big_int) \
     macro(op_is_object) \
     macro(op_is_cell_with_type) \
     macro(op_has_structure_with_flags) \

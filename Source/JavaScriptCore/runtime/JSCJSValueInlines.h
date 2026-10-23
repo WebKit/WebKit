@@ -259,7 +259,7 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(JSGlobalObject* globalObject, JS
             std::swap(v1, v2);
         }
 
-        // This deals with Booleans, BigInt32, Objects, and is a shortcut for a few more types.
+        // This deals with Booleans, Objects, and is a shortcut for a few more types.
         // It has to come here and not before, because it is NOT true that NaN == NaN
         if (v1 == v2)
             return true;
@@ -323,9 +323,6 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(JSGlobalObject* globalObject, JS
                 RETURN_IF_EXCEPTION(scope, false);
                 if (!v2)
                     return false;
-                if (v1 == v2)
-                    return true; // For BigInt32
-                // We fallthrough to the generic code for comparing BigInts (which is only missing the BigInt32/BigInt32 case, hence the check above)
             } else {
                 ASSERT(v1.isNumber() || v1.isBoolean());
                 double d1 = v1.toNumber(globalObject);
@@ -350,23 +347,9 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(JSGlobalObject* globalObject, JS
             // We fallthrough to the BigInt/Number comparison below
         }
 
-#if USE(BIGINT32)
-        if (v1.isBigInt32()) {
-            if (v2.isInt32())
-                return v1.bigInt32AsInt32() == v2.asInt32();
-            if (v2.isDouble())
-                return static_cast<double>(v1.bigInt32AsInt32()) == v2.asDouble();
-            std::swap(v1, v2);
-        }
-#endif // USE(BIGINT32)
-
         if (v1.isHeapBigInt()) {
             if (v2.isHeapBigInt())
                 return JSBigInt::equals(v1.asHeapBigInt(), v2.asHeapBigInt());
-#if USE(BIGINT32)
-            if (v2.isBigInt32())
-                return v1.asHeapBigInt()->equalsToInt32(v2.bigInt32AsInt32());
-#endif // USE(BIGINT32)
             if (v2.isNumber())
                 return v1.asHeapBigInt()->equalsToNumber(v2);
         }
@@ -393,13 +376,6 @@ inline bool JSValue::strictEqual(JSGlobalObject* globalObject, JSValue v1, JSVal
     if (v1.isNumber() && v2.isNumber())
         return v1.asNumber() == v2.asNumber();
 
-#if USE(BIGINT32)
-    if (v1.isHeapBigInt() && v2.isBigInt32())
-        return v1.asHeapBigInt()->equalsToInt32(v2.bigInt32AsInt32());
-    if (v1.isBigInt32() && v2.isHeapBigInt())
-        return v2.asHeapBigInt()->equalsToInt32(v1.bigInt32AsInt32());
-#endif
-
     if (v1.isCell() && v2.isCell())
         return strictEqualForCells(globalObject, v1.asCell(), v2.asCell());
 
@@ -413,13 +389,6 @@ inline TriState JSValue::pureStrictEqual(JSValue v1, JSValue v2)
 
     if (v1.isNumber() && v2.isNumber())
         return triState(v1.asNumber() == v2.asNumber());
-
-#if USE(BIGINT32)
-    if (v1.isHeapBigInt() && v2.isBigInt32())
-        return triState(v1.asHeapBigInt()->equalsToInt32(v2.bigInt32AsInt32()));
-    if (v1.isBigInt32() && v2.isHeapBigInt())
-        return triState(v2.asHeapBigInt()->equalsToInt32(v1.bigInt32AsInt32()));
-#endif
 
     if (v1.isCell() && v2.isCell()) {
         if (v1.asCell()->isString() && v2.asCell()->isString()) {
@@ -444,10 +413,6 @@ inline TriState JSValue::pureToBoolean() const
         return isNotZeroAndOrdered(asDouble()) ? TriState::True : TriState::False; // false for NaN
     if (isCell())
         return asCell()->pureToBoolean();
-#if USE(BIGINT32)
-    if (isBigInt32())
-        return bigInt32AsInt32() ? TriState::True : TriState::False;
-#endif
     return isTrue() ? TriState::True : TriState::False;
 }
 

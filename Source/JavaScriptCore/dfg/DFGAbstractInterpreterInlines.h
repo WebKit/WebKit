@@ -577,20 +577,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
-        if (node->child1().useKind() == BigInt32Use) {
-#if USE(BIGINT32)
-            setTypeForNode(node, SpecBigInt32);
-#else
-            RELEASE_ASSERT_NOT_REACHED();
-#endif
-        } else if (node->child1().useKind() == HeapBigIntUse) {
+        if (node->child1().useKind() == HeapBigIntUse) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
             setTypeForNode(node, SpecBigInt);
-        } else if (node->child1().useKind() == AnyBigIntUse)
-            setTypeForNode(node, SpecBigInt);
-        else {
+        } else {
             clobberWorld();
             setTypeForNode(node, SpecInt32Only | SpecBigInt);
         }
@@ -636,37 +628,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (handleConstantBinaryBitwiseOp(node))
             break;
 
-        // FIXME: this use of binaryUseKind means that we cannot specialize to (for example) a HeapBigInt left-operand and a BigInt32 right-operand.
-        // https://bugs.webkit.org/show_bug.cgi?id=210977
-        if (node->binaryUseKind() == BigInt32Use) {
-#if USE(BIGINT32)
-            switch (node->op()) {
-            case ValueBitXor:
-            case ValueBitAnd:
-            case ValueBitOr:
-                setTypeForNode(node, SpecBigInt32);
-                break;
-
-            // FIXME: We should have inlined implementation that always returns BigInt32.
-            // https://bugs.webkit.org/show_bug.cgi?id=210847
-            case ValueBitRShift:
-            case ValueBitLShift:
-                setTypeForNode(node, SpecBigInt);
-                break;
-            default:
-                DFG_CRASH(m_graph, node, "Incorrect DFG op"_s);
-            }
-#else
-            DFG_CRASH(m_graph, node, "No BigInt32 support"_s);
-#endif
-        } else if (node->isBinaryUseKind(HeapBigIntUse)) {
+        if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
             setTypeForNode(node, SpecBigInt);
-        } else if (node->binaryUseKind() == AnyBigIntUse)
-            setTypeForNode(node, SpecBigInt);
-        else {
+        } else {
             auto& value1 = forNode(node->child1());
             auto& value2 = forNode(node->child2());
             if (value1.isType(SpecInt32Only) && value2.isType(SpecInt32Only)) {
@@ -917,11 +884,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
             setTypeForNode(node, SpecBigInt);
-        } else if (node->isBinaryUseKind(AnyBigIntUse))
-            setTypeForNode(node, SpecBigInt);
-        else if (node->isBinaryUseKind(BigInt32Use))
-            setTypeForNode(node, SpecBigInt32);
-        else {
+        } else {
             DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse);
             clobberWorld();
             if (node->op() == ValueAdd)
@@ -1162,10 +1125,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // https://bugs.webkit.org/show_bug.cgi?id=210982
             setTypeForNode(node, SpecBigInt);
             break;
-        case AnyBigIntUse:
-        case BigInt32Use:
-            setTypeForNode(node, SpecBigInt);
-            break;
         default:
             setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
             clobberWorld(); // Because of the call to ToNumeric()
@@ -1179,7 +1138,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue childY = forNode(node->child2()).value();
         if (childX && childY && childX.isNumber() && childY.isNumber()) {
             // We need to call `didFoldClobberWorld` here because this path is only possible
-            // when node->useKind is UntypedUse. In the case of AnyBigIntUse or friends, children will be
+            // when node->useKind is UntypedUse. In the case of HeapBigIntUse or friends, children will be
             // cleared by `AbstractInterpreter::executeEffects`.
             didFoldClobberWorld();
             // Our boxing scheme here matches what we do in operationValuePow.
@@ -1192,9 +1151,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
             setTypeForNode(node, SpecBigInt);
-        } else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
-            setTypeForNode(node, SpecBigInt);
-        else {
+        } else {
             clobberWorld();
             setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
         }
@@ -1208,11 +1165,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
             setTypeForNode(node, SpecBigInt);
-        } else if (node->isBinaryUseKind(AnyBigIntUse))
-            setTypeForNode(node, SpecBigInt);
-        else if (node->isBinaryUseKind(BigInt32Use))
-            setTypeForNode(node, SpecBigInt32);
-        else {
+        } else {
             clobberWorld();
             auto& value1 = forNode(node->child1());
             auto& value2 = forNode(node->child2());
@@ -1287,9 +1240,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
             setTypeForNode(node, SpecBigInt);
-        } else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
-            setTypeForNode(node, SpecBigInt);
-        else {
+        } else {
             clobberWorld();
             auto& value1 = forNode(node->child1());
             auto& value2 = forNode(node->child2());
@@ -1754,7 +1705,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
-    case IsBigInt:
     case NumberIsInteger:
     case IsObject:
     case IsCallable:
@@ -1797,9 +1747,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             case IsNumber:
                 setConstant(node, jsBoolean(child.value().isNumber()));
-                break;
-            case IsBigInt:
-                setConstant(node, jsBoolean(child.value().isBigInt()));
                 break;
             case NumberIsInteger:
                 setConstant(node, jsBoolean(NumberConstructor::isIntegerImpl(child.value())));
@@ -1969,22 +1916,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             
-            break;
-        case IsBigInt:
-            if (!(child.m_type & ~SpecBigInt)) {
-                setConstant(node, jsBoolean(true));
-                constantWasSet = true;
-                break;
-            }
-
-            if (!(child.m_type & SpecBigInt)) {
-                setConstant(node, jsBoolean(false));
-                constantWasSet = true;
-                break;
-            }
-
-            // FIXME: if the SpeculatedType informs us that we won't have a BigInt32 (or that we won't have a HeapBigInt), then we can transform this node into a IsCellWithType(HeapBigIntType) (or a hypothetical IsBigInt32 node).
-
             break;
         case NumberIsInteger:
             if (!(child.m_type & ~SpecInt32Only)) {
@@ -2448,9 +2379,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             auto& value = forNode(node->child1());
             if (node->isBinaryUseKind(Int32Use)
                 || node->isBinaryUseKind(Int52RepUse)
-                || node->isBinaryUseKind(BigInt32Use)
                 || node->isBinaryUseKind(HeapBigIntUse)
-                || node->isBinaryUseKind(AnyBigIntUse)
                 || node->isBinaryUseKind(StringUse)
                 || node->isBinaryUseKind(BooleanUse)
                 || node->isBinaryUseKind(SymbolUse)
@@ -2636,9 +2565,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 || node->isSymmetricBinaryUseKind(MiscUse, UntypedUse)
                 || node->isSymmetricBinaryUseKind(StringIdentUse, NotStringVarUse)
                 || node->isSymmetricBinaryUseKind(StringUse, UntypedUse)
-                || node->isBinaryUseKind(BigInt32Use)
                 || node->isBinaryUseKind(HeapBigIntUse)
-                || node->isBinaryUseKind(AnyBigIntUse)
                 || value.isType(SpecInt32Only)
                 || value.isType(SpecInt52Any)
                 || value.isType(SpecAnyIntAsDouble)
@@ -3644,27 +3571,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, childConst);
                 break;
             }
-#if USE(BIGINT32)
-            if (childConst.isBigInt32()) {
-                if (node->child1().useKind() == UntypedUse)
-                    didFoldClobberWorld();
-                setConstant(node, jsNumber(childConst.bigInt32AsInt32()));
-                break;
-            }
-#endif
         }
 
-        ASSERT(node->child1().useKind() == UntypedUse || node->child1().useKind() == BigInt32Use);
+        ASSERT(node->child1().useKind() == UntypedUse);
 
         if (!(forNode(node->child1()).m_type & ~SpecBytecodeNumber)) {
             if (node->child1().useKind() == UntypedUse)
                 didFoldClobberWorld();
             setForNode(node, forNode(node->child1()));
-            break;
-        }
-
-        if (node->child1().useKind() == BigInt32Use) {
-            setTypeForNode(node, SpecInt32Only);
             break;
         }
 

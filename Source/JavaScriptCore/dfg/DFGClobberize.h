@@ -260,7 +260,6 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
-    case IsBigInt:
     case NumberIsInteger:
     case IsObject:
     case CheckInBounds:
@@ -373,7 +372,7 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
         return;
 
     case ValueBitNot:
-        if (node->child1().useKind() == AnyBigIntUse || node->child1().useKind() == BigInt32Use || node->child1().useKind() == HeapBigIntUse) {
+        if (node->child1().useKind() == HeapBigIntUse) {
             def(PureValue(node));
             return;
         }
@@ -906,9 +905,6 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
 
     case CallNumberConstructor:
         switch (node->child1().useKind()) {
-        case BigInt32Use:
-            def(PureValue(node));
-            return;
         case UntypedUse:
             clobberTop();
             return;
@@ -922,9 +918,7 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
         case Int32Use:
         case Int52RepUse:
         case DoubleRepUse:
-        case BigInt32Use:
         case HeapBigIntUse:
-        case AnyBigIntUse:
             def(PureValue(node));
             return;
         case UntypedUse:
@@ -945,8 +939,7 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
     case ValuePow:
     case ValueBitLShift:
     case ValueBitRShift:
-        // FIXME: this use of single-argument isBinaryUseKind would prevent us from specializing (for example) for a HeapBigInt left-operand and a BigInt32 right-operand.
-        if (node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use) || node->isBinaryUseKind(HeapBigIntUse)) {
+        if (node->isBinaryUseKind(HeapBigIntUse)) {
             read(World);
             write(SideState);
             def(PureValue(node));

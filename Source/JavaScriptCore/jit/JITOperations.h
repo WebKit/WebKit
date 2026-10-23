@@ -326,7 +326,6 @@ JSC_DECLARE_JIT_OPERATION(operationCompareGreaterEq, size_t, (JSGlobalObject*, E
 JSC_DECLARE_JIT_OPERATION(operationCompareEq, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCompareStrictEq, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCompareStringEq, EncodedJSValue, (JSGlobalObject*, JSCell* left, JSCell* right));
-JSC_DECLARE_JIT_OPERATION(operationCompareEqHeapBigIntToInt32, size_t, (JSGlobalObject*, JSCell* heapBigInt, int32_t smallInt));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithProfile, EncodedJSValue, (JSGlobalObject*, ArrayAllocationProfile*, const JSValue* values, int32_t size));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSizeAndProfile, EncodedJSValue, (JSGlobalObject*, ArrayAllocationProfile*, EncodedJSValue size));
 JSC_DECLARE_JIT_OPERATION(operationCreateLexicalEnvironmentTDZ, EncodedJSValue, (JSGlobalObject*, JSScope*, SymbolTable*));

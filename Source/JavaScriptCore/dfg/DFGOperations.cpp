@@ -6356,7 +6356,7 @@ JSC_DEFINE_JIT_OPERATION(operationInt64ToBigInt, EncodedJSValue, (JSGlobalObject
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(globalObject, value)));
+    OPERATION_RETURN(scope, JSValue::encode(JSBigInt::createFrom(globalObject, value)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationUInt64ToBigInt, EncodedJSValue, (JSGlobalObject* globalObject, uint64_t value))
@@ -6365,7 +6365,7 @@ JSC_DEFINE_JIT_OPERATION(operationUInt64ToBigInt, EncodedJSValue, (JSGlobalObjec
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(globalObject, value)));
+    OPERATION_RETURN(scope, JSValue::encode(JSBigInt::createFrom(globalObject, value)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationThrowDFG, void, (JSGlobalObject* globalObject, EncodedJSValue valueToThrow))

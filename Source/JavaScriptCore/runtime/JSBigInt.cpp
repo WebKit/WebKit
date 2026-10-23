@@ -546,33 +546,13 @@ ALWAYS_INLINE JSBigInt::ImplResult::ImplResult(JSBigInt* heapBigInt)
     : payload(heapBigInt)
 { }
 
-#if USE(BIGINT32)
-ALWAYS_INLINE JSBigInt::ImplResult::ImplResult(Int32BigIntImpl& int32Impl)
-    : payload(jsBigInt32(int32Impl.m_value))
-{ }
-#endif
-
 ALWAYS_INLINE JSBigInt::ImplResult::ImplResult(JSValue value)
     : payload(value)
 { }
 
-static ALWAYS_INLINE JSValue LEGACY_NODELETE tryConvertToBigInt32(JSBigInt::ImplResult implResult)
-{
-    if (!implResult.payload)
-        return JSValue();
-    if (implResult.payload.isBigInt32())
-        return implResult.payload;
-    return tryConvertToBigInt32(implResult.payload.asHeapBigInt());
-}
-
 static ALWAYS_INLINE JSBigInt::ImplResult zeroImpl(VM& vm)
 {
-#if USE(BIGINT32)
-    UNUSED_PARAM(vm);
-    return jsBigInt32(0);
-#else
     return vm.heapBigIntConstantZero.get();
-#endif
 }
 
 template <typename BigIntImpl1, typename BigIntImpl2>
@@ -677,25 +657,8 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
 
 JSValue JSBigInt::exponentiate(JSGlobalObject* globalObject, JSBigInt* base, JSBigInt* exponent)
 {
-    return tryConvertToBigInt32(exponentiateImpl(globalObject, HeapBigIntImpl { base }, HeapBigIntImpl { exponent }));
+    return exponentiateImpl(globalObject, HeapBigIntImpl { base }, HeapBigIntImpl { exponent }).payload;
 }
-
-#if USE(BIGINT32)
-JSValue JSBigInt::exponentiate(JSGlobalObject* globalObject, JSBigInt* base, int32_t exponent)
-{
-    return tryConvertToBigInt32(exponentiateImpl(globalObject, HeapBigIntImpl { base }, Int32BigIntImpl { exponent }));
-}
-
-JSValue JSBigInt::exponentiate(JSGlobalObject* globalObject, int32_t base, JSBigInt* exponent)
-{
-    return tryConvertToBigInt32(exponentiateImpl(globalObject, Int32BigIntImpl { base }, HeapBigIntImpl { exponent }));
-}
-
-JSValue JSBigInt::exponentiate(JSGlobalObject* globalObject, int32_t base, int32_t exponent)
-{
-    return tryConvertToBigInt32(exponentiateImpl(globalObject, Int32BigIntImpl { base }, Int32BigIntImpl { exponent }));
-}
-#endif
 
 #if CPU(REGISTER64)
 using TwoDigit = UInt128;
@@ -2568,18 +2531,8 @@ JSBigInt::ImplResult JSBigInt::multiplyImpl(JSGlobalObject* globalObject, BigInt
 
 JSValue JSBigInt::multiply(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    return tryConvertToBigInt32(multiplyImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }));
+    return multiplyImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }).payload;
 }
-#if USE(BIGINT32)
-JSValue JSBigInt::multiply(JSGlobalObject* globalObject, int32_t x, JSBigInt* y)
-{
-    return tryConvertToBigInt32(multiplyImpl(globalObject, Int32BigIntImpl { x }, HeapBigIntImpl { y }));
-}
-JSValue JSBigInt::multiply(JSGlobalObject* globalObject, JSBigInt* x, int32_t y)
-{
-    return tryConvertToBigInt32(multiplyImpl(globalObject, HeapBigIntImpl { x }, Int32BigIntImpl { y }));
-}
-#endif
 
 // The algorithm is from "Division by Invariant Integers using Multiplication", Granlund and Montgomery, PLDI'94.
 // https://gmplib.org/~tege/divcnst-pldi94.pdf
@@ -3374,18 +3327,8 @@ JSBigInt::ImplResult JSBigInt::divideImpl(JSGlobalObject* globalObject, BigIntIm
 
 JSValue JSBigInt::divide(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    return tryConvertToBigInt32(divideImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }));
+    return divideImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }).payload;
 }
-#if USE(BIGINT32)
-JSValue JSBigInt::divide(JSGlobalObject* globalObject, JSBigInt* x, int32_t y)
-{
-    return tryConvertToBigInt32(divideImpl(globalObject, HeapBigIntImpl { x }, Int32BigIntImpl { y }));
-}
-JSValue JSBigInt::divide(JSGlobalObject* globalObject, int32_t x, JSBigInt* y)
-{
-    return tryConvertToBigInt32(divideImpl(globalObject, Int32BigIntImpl { x }, HeapBigIntImpl { y }));
-}
-#endif
 
 template <typename BigIntImpl>
 JSBigInt* JSBigInt::copy(JSGlobalObject* globalObject, BigIntImpl x)
@@ -3420,7 +3363,7 @@ JSBigInt::ImplResult JSBigInt::unaryMinusImpl(JSGlobalObject* globalObject, BigI
 
 JSValue JSBigInt::unaryMinus(JSGlobalObject* globalObject, JSBigInt* x)
 {
-    return tryConvertToBigInt32(unaryMinusImpl(globalObject, HeapBigIntImpl { x }));
+    return unaryMinusImpl(globalObject, HeapBigIntImpl { x }).payload;
 }
 
 JSBigInt::ComparisonResult JSBigInt::compareDigits(std::span<const Digit> x, std::span<const Digit> y)
@@ -3535,7 +3478,7 @@ JSValue JSBigInt::sqrt(JSGlobalObject* globalObject, JSBigInt* bigInt)
         result = spanCopy(resultStorage.mutableSpan(), next);
     }
 
-    RELEASE_AND_RETURN(scope, tryConvertToBigInt32(tryCreateFromImpl(globalObject, vm, false, result)));
+    RELEASE_AND_RETURN(scope, tryCreateFromImpl(globalObject, vm, false, result));
 }
 
 // https://tc39.es/proposal-bigint-math/#sec-bigint.cbrt
@@ -3576,7 +3519,7 @@ JSValue JSBigInt::cbrt(JSGlobalObject* globalObject, JSBigInt* bigInt)
         result = spanCopy(resultStorage.mutableSpan(), next);
     }
 
-    RELEASE_AND_RETURN(scope, tryConvertToBigInt32(tryCreateFromImpl(globalObject, vm, sign, result)));
+    RELEASE_AND_RETURN(scope, tryCreateFromImpl(globalObject, vm, sign, result));
 }
 
 // Compute the multiplicative inverse Inv, approximately floor(2^(2n*digitBits) / B), for cached
@@ -4143,18 +4086,8 @@ JSBigInt::ImplResult JSBigInt::remainderImpl(JSGlobalObject* globalObject, BigIn
 
 JSValue JSBigInt::remainder(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    return tryConvertToBigInt32(remainderImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }));
+    return remainderImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }).payload;
 }
-#if USE(BIGINT32)
-JSValue JSBigInt::remainder(JSGlobalObject* globalObject, JSBigInt* x, int32_t y)
-{
-    return tryConvertToBigInt32(remainderImpl(globalObject, HeapBigIntImpl { x }, Int32BigIntImpl { y }));
-}
-JSValue JSBigInt::remainder(JSGlobalObject* globalObject, int32_t x, JSBigInt* y)
-{
-    return tryConvertToBigInt32(remainderImpl(globalObject, Int32BigIntImpl { x }, HeapBigIntImpl { y }));
-}
-#endif
 
 JSBigInt::ImplResult JSBigInt::absoluteAddOne(JSGlobalObject* globalObject, std::span<const Digit> x, bool resultSign)
 {
@@ -4222,19 +4155,14 @@ JSBigInt::ImplResult JSBigInt::incImpl(JSGlobalObject* globalObject, BigIntImpl 
 
 JSValue JSBigInt::inc(JSGlobalObject* globalObject, JSBigInt* x)
 {
-    return tryConvertToBigInt32(incImpl(globalObject, HeapBigIntImpl { x }));
+    return incImpl(globalObject, HeapBigIntImpl { x }).payload;
 }
 
 template <typename BigIntImpl>
 JSBigInt::ImplResult JSBigInt::decImpl(JSGlobalObject* globalObject, BigIntImpl x)
 {
-    if (x.isZero()) {
-#if USE(BIGINT32)
-        return jsBigInt32(-1);
-#else
+    if (x.isZero())
         return createFrom(globalObject, -1);
-#endif
-    }
 
     auto xSpan = x.digits();
     if (!x.sign())
@@ -4244,7 +4172,7 @@ JSBigInt::ImplResult JSBigInt::decImpl(JSGlobalObject* globalObject, BigIntImpl 
 
 JSValue JSBigInt::dec(JSGlobalObject* globalObject, JSBigInt* x)
 {
-    return tryConvertToBigInt32(decImpl(globalObject, HeapBigIntImpl { x }));
+    return decImpl(globalObject, HeapBigIntImpl { x }).payload;
 }
 
 template <typename BigIntImpl1, typename BigIntImpl2>
@@ -4269,18 +4197,8 @@ JSBigInt::ImplResult JSBigInt::addImpl(JSGlobalObject* globalObject, BigIntImpl1
 }
 JSValue JSBigInt::add(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    return tryConvertToBigInt32(addImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }));
+    return addImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }).payload;
 }
-#if USE(BIGINT32)
-JSValue JSBigInt::add(JSGlobalObject* globalObject, JSBigInt* x, int32_t y)
-{
-    return tryConvertToBigInt32(addImpl(globalObject, HeapBigIntImpl { x }, Int32BigIntImpl { y }));
-}
-JSValue JSBigInt::add(JSGlobalObject* globalObject, int32_t x, JSBigInt* y)
-{
-    return tryConvertToBigInt32(addImpl(globalObject, Int32BigIntImpl { x }, HeapBigIntImpl { y }));
-}
-#endif
 
 template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::subImpl(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y)
@@ -4304,18 +4222,8 @@ JSBigInt::ImplResult JSBigInt::subImpl(JSGlobalObject* globalObject, BigIntImpl1
 
 JSValue JSBigInt::sub(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    return tryConvertToBigInt32(subImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }));
+    return subImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }).payload;
 }
-#if USE(BIGINT32)
-JSValue JSBigInt::sub(JSGlobalObject* globalObject, JSBigInt* x, int32_t y)
-{
-    return tryConvertToBigInt32(subImpl(globalObject, HeapBigIntImpl { x }, Int32BigIntImpl { y }));
-}
-JSValue JSBigInt::sub(JSGlobalObject* globalObject, int32_t x, JSBigInt* y)
-{
-    return tryConvertToBigInt32(subImpl(globalObject, Int32BigIntImpl { x }, HeapBigIntImpl { y }));
-}
-#endif
 
 template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::bitwiseAndImpl(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y)
@@ -4368,18 +4276,8 @@ JSBigInt::ImplResult JSBigInt::bitwiseAndImpl(JSGlobalObject* globalObject, BigI
 
 JSValue JSBigInt::bitwiseAnd(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    return tryConvertToBigInt32(bitwiseAndImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }));
+    return bitwiseAndImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }).payload;
 }
-#if USE(BIGINT32)
-JSValue JSBigInt::bitwiseAnd(JSGlobalObject* globalObject, JSBigInt* x, int32_t y)
-{
-    return tryConvertToBigInt32(bitwiseAndImpl(globalObject, HeapBigIntImpl { x }, Int32BigIntImpl { y }));
-}
-JSValue JSBigInt::bitwiseAnd(JSGlobalObject* globalObject, int32_t x, JSBigInt* y)
-{
-    return tryConvertToBigInt32(bitwiseAndImpl(globalObject, Int32BigIntImpl { x }, HeapBigIntImpl { y }));
-}
-#endif
 
 template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::bitwiseOrImpl(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y)
@@ -4440,18 +4338,8 @@ JSBigInt::ImplResult JSBigInt::bitwiseOrImpl(JSGlobalObject* globalObject, BigIn
 
 JSValue JSBigInt::bitwiseOr(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    return tryConvertToBigInt32(bitwiseOrImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }));
+    return bitwiseOrImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }).payload;
 }
-#if USE(BIGINT32)
-JSValue JSBigInt::bitwiseOr(JSGlobalObject* globalObject, JSBigInt* x, int32_t y)
-{
-    return tryConvertToBigInt32(bitwiseOrImpl(globalObject, HeapBigIntImpl { x }, Int32BigIntImpl { y }));
-}
-JSValue JSBigInt::bitwiseOr(JSGlobalObject* globalObject, int32_t x, JSBigInt* y)
-{
-    return tryConvertToBigInt32(bitwiseOrImpl(globalObject, Int32BigIntImpl { x }, HeapBigIntImpl { y }));
-}
-#endif
 
 template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::bitwiseXorImpl(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y)
@@ -4506,18 +4394,8 @@ JSBigInt::ImplResult JSBigInt::bitwiseXorImpl(JSGlobalObject* globalObject, BigI
 
 JSValue JSBigInt::bitwiseXor(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    return tryConvertToBigInt32(bitwiseXorImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }));
+    return bitwiseXorImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }).payload;
 }
-#if USE(BIGINT32)
-JSValue JSBigInt::bitwiseXor(JSGlobalObject* globalObject, JSBigInt* x, int32_t y)
-{
-    return tryConvertToBigInt32(bitwiseXorImpl(globalObject, HeapBigIntImpl { x }, Int32BigIntImpl { y }));
-}
-JSValue JSBigInt::bitwiseXor(JSGlobalObject* globalObject, int32_t x, JSBigInt* y)
-{
-    return tryConvertToBigInt32(bitwiseXorImpl(globalObject, Int32BigIntImpl { x }, HeapBigIntImpl { y }));
-}
-#endif
 
 template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::leftShiftImpl(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y)
@@ -4533,22 +4411,8 @@ JSBigInt::ImplResult JSBigInt::leftShiftImpl(JSGlobalObject* globalObject, BigIn
 
 JSValue JSBigInt::leftShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    return tryConvertToBigInt32(leftShiftImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }));
+    return leftShiftImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }).payload;
 }
-#if USE(BIGINT32)
-JSValue JSBigInt::leftShift(JSGlobalObject* globalObject, JSBigInt* x, int32_t y)
-{
-    return tryConvertToBigInt32(leftShiftImpl(globalObject, HeapBigIntImpl { x }, Int32BigIntImpl { y }));
-}
-JSValue JSBigInt::leftShift(JSGlobalObject* globalObject, int32_t x, JSBigInt* y)
-{
-    return tryConvertToBigInt32(leftShiftImpl(globalObject, Int32BigIntImpl { x }, HeapBigIntImpl { y }));
-}
-JSValue JSBigInt::leftShiftSlow(JSGlobalObject* globalObject, int32_t x, int32_t y)
-{
-    return tryConvertToBigInt32(leftShiftImpl(globalObject, Int32BigIntImpl { x }, Int32BigIntImpl { y }));
-}
-#endif
 
 template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::signedRightShiftImpl(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y)
@@ -4564,18 +4428,8 @@ JSBigInt::ImplResult JSBigInt::signedRightShiftImpl(JSGlobalObject* globalObject
 
 JSValue JSBigInt::signedRightShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    return tryConvertToBigInt32(signedRightShiftImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }));
+    return signedRightShiftImpl(globalObject, HeapBigIntImpl { x }, HeapBigIntImpl { y }).payload;
 }
-#if USE(BIGINT32)
-JSValue JSBigInt::signedRightShift(JSGlobalObject* globalObject, JSBigInt* x, int32_t y)
-{
-    return tryConvertToBigInt32(signedRightShiftImpl(globalObject, HeapBigIntImpl { x }, Int32BigIntImpl { y }));
-}
-JSValue JSBigInt::signedRightShift(JSGlobalObject* globalObject, int32_t x, JSBigInt* y)
-{
-    return tryConvertToBigInt32(signedRightShiftImpl(globalObject, Int32BigIntImpl { x }, HeapBigIntImpl { y }));
-}
-#endif
 
 template <typename BigIntImpl>
 JSBigInt::ImplResult JSBigInt::bitwiseNotImpl(JSGlobalObject* globalObject, BigIntImpl x)
@@ -4595,7 +4449,7 @@ JSBigInt::ImplResult JSBigInt::bitwiseNotImpl(JSGlobalObject* globalObject, BigI
 
 JSValue JSBigInt::bitwiseNot(JSGlobalObject* globalObject, JSBigInt* x)
 {
-    return tryConvertToBigInt32(bitwiseNotImpl(globalObject, HeapBigIntImpl { x }));
+    return bitwiseNotImpl(globalObject, HeapBigIntImpl { x }).payload;
 }
 
 // {carry} must point to an initialized Digit and will either be incremented
@@ -4865,10 +4719,6 @@ JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, int64_t y)
 JSBigInt::ComparisonResult JSBigInt::compare(JSValue x, int64_t y)
 {
     ASSERT(x.isBigInt());
-#if USE(BIGINT32)
-    if (x.isBigInt32())
-        return compareImpl(Int32BigIntImpl { x.bigInt32AsInt32() }, Int64BigIntImpl { y });
-#endif
     return compare(x.asHeapBigInt(), y);
 }
 
@@ -4880,31 +4730,12 @@ JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, uint64_t y)
 JSBigInt::ComparisonResult JSBigInt::compare(JSValue x, uint64_t y)
 {
     ASSERT(x.isBigInt());
-#if USE(BIGINT32)
-    if (x.isBigInt32())
-        return compareImpl(Int32BigIntImpl { x.bigInt32AsInt32() }, Int64BigIntImpl { y });
-#endif
     return compare(x.asHeapBigInt(), y);
 }
 
 JSBigInt::ComparisonResult JSBigInt::compare(JSValue x, JSValue y)
 {
     ASSERT(x.isBigInt() && y.isBigInt());
-#if USE(BIGINT32)
-    if (x.isBigInt32() && y.isBigInt32()) {
-        int32_t x1 = x.asBigInt32();
-        int32_t y1 = y.asBigInt32();
-        if (x1 == y1)
-            return JSBigInt::ComparisonResult::Equal;
-        if (x1 < y1)
-            return JSBigInt::ComparisonResult::LessThan;
-        return JSBigInt::ComparisonResult::GreaterThan;
-    }
-    if (x.isBigInt32())
-        return compare(x.bigInt32AsInt32(), y.asHeapBigInt());
-    if (y.isBigInt32())
-        return compare(x.asHeapBigInt(), y.bigInt32AsInt32());
-#endif
     return compare(x.asHeapBigInt(), y.asHeapBigInt());
 }
 
@@ -5715,56 +5546,15 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, std
     while (p < length && data[p] == '0')
         ++p;
 
-    if (p == length) {
-#if USE(BIGINT32)
-        return jsBigInt32(0);
-#else
+    if (p == length)
         return createZero(vm);
-#endif
-    }
 
-    unsigned lengthLimitForBigInt32;
-#if USE(BIGINT32)
-    static_assert(sizeof(Digit) >= sizeof(uint64_t));
-    // The idea is to pick the limit such that:
-    // radix ** lengthLimitForBigInt32 >= INT32_MAX
-    // radix ** (lengthLimitForBigInt32 - 1) <= INT32_MAX
-#if ASSERT_ENABLED
-    auto limitWorks = [&] {
-        double lengthLimit = lengthLimitForBigInt32;
-        double lowerLimit = pow(static_cast<double>(radix), lengthLimit - 1);
-        double upperLimit = pow(static_cast<double>(radix), lengthLimit);
-        double target = std::numeric_limits<int32_t>::max();
-        return lowerLimit <= target && target <= upperLimit && upperLimit <= std::numeric_limits<int64_t>::max();
-    };
-#endif
-    switch (radix) {
-    case 2:
-        lengthLimitForBigInt32 = 31;
-        ASSERT(limitWorks());
-        break;
-    case 8:
-        lengthLimitForBigInt32 = 11;
-        ASSERT(limitWorks());
-        break;
-    case 10:
-        lengthLimitForBigInt32 = 10;
-        ASSERT(limitWorks());
-        break;
-    case 16:
-        lengthLimitForBigInt32 = 8;
-        ASSERT(limitWorks());
-        break;
-    default:
-        lengthLimitForBigInt32 = 1;
-        break;
-    }
-#else
+    unsigned lengthLimitForInt32;
     // The idea is to pick the largest limit such that:
-    // radix ** lengthLimitForBigInt32 <= INT32_MAX
+    // radix ** lengthLimitForInt32 <= INT32_MAX
 #if ASSERT_ENABLED
     auto limitWorks = [&] {
-        double lengthLimit = lengthLimitForBigInt32;
+        double lengthLimit = lengthLimitForInt32;
         double valueLimit = pow(static_cast<double>(radix), lengthLimit);
         double overValueLimit = pow(static_cast<double>(radix), lengthLimit + 1);
         double target = std::numeric_limits<int32_t>::max();
@@ -5773,26 +5563,25 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, std
 #endif
     switch (radix) {
     case 2:
-        lengthLimitForBigInt32 = 30;
+        lengthLimitForInt32 = 30;
         ASSERT(limitWorks());
         break;
     case 8:
-        lengthLimitForBigInt32 = 10;
+        lengthLimitForInt32 = 10;
         ASSERT(limitWorks());
         break;
     case 10:
-        lengthLimitForBigInt32 = 9;
+        lengthLimitForInt32 = 9;
         ASSERT(limitWorks());
         break;
     case 16:
-        lengthLimitForBigInt32 = 7;
+        lengthLimitForInt32 = 7;
         ASSERT(limitWorks());
         break;
     default:
-        lengthLimitForBigInt32 = 1;
+        lengthLimitForInt32 = 1;
         break;
     }
-#endif // USE(BIGINT32)
 
     unsigned limit0 = '0' + (radix < 10 ? radix : 10);
     unsigned limita = 'a' + (static_cast<int32_t>(radix) - 10);
@@ -5804,7 +5593,7 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, std
     while (p < length) {
         Checked<uint64_t, CrashOnOverflow> digit = 0;
         Checked<uint64_t, CrashOnOverflow> multiplier = 1;
-        for (unsigned i = 0; i < lengthLimitForBigInt32 && p < length; ++i, ++p) {
+        for (unsigned i = 0; i < lengthLimitForInt32 && p < length; ++i, ++p) {
             digit *= radix;
             multiplier *= radix;
             if (data[p] >= '0' && data[p] < limit0)
@@ -5831,13 +5620,8 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, std
                 if (sign == ParseIntSign::Signed)
                     maybeResult *= -1;
 
-                if (static_cast<int64_t>(static_cast<int32_t>(maybeResult)) == maybeResult) {
-#if USE(BIGINT32)
-                    return jsBigInt32(static_cast<int32_t>(maybeResult));
-#else
+                if (static_cast<int64_t>(static_cast<int32_t>(maybeResult)) == maybeResult)
                     return JSBigInt::createFrom(nullOrGlobalObjectForOOM, vm, static_cast<int32_t>(maybeResult));
-#endif
-                }
             }
 
             auto computeLength = [](size_t bitsPerChar, unsigned charcount) -> std::optional<unsigned> {
@@ -6068,10 +5852,6 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(uint64_t x, double y)
 JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSValue x, double y)
 {
     ASSERT(x.isBigInt());
-#if USE(BIGINT32)
-    if (x.isBigInt32())
-        return compareToDouble(x.bigInt32AsInt32(), y);
-#endif
     return compareToDouble(x.asHeapBigInt(), y);
 }
 
@@ -6397,25 +6177,13 @@ JSBigInt::ImplResult JSBigInt::truncateAndSubFromPowerOfTwo(JSGlobalObject* glob
 
 JSValue JSBigInt::asIntN(JSGlobalObject* globalObject, uint64_t n, JSBigInt* bigInt)
 {
-    return tryConvertToBigInt32(asIntNImpl(globalObject, n, HeapBigIntImpl { bigInt }));
+    return asIntNImpl(globalObject, n, HeapBigIntImpl { bigInt }).payload;
 }
 
 JSValue JSBigInt::asUintN(JSGlobalObject* globalObject, uint64_t n, JSBigInt* bigInt)
 {
-    return tryConvertToBigInt32(asUintNImpl(globalObject, n, HeapBigIntImpl { bigInt }));
+    return asUintNImpl(globalObject, n, HeapBigIntImpl { bigInt }).payload;
 }
-
-#if USE(BIGINT32)
-JSValue JSBigInt::asIntN(JSGlobalObject* globalObject, uint64_t n, int32_t bigInt)
-{
-    return tryConvertToBigInt32(asIntNImpl(globalObject, n, Int32BigIntImpl { bigInt }));
-}
-
-JSValue JSBigInt::asUintN(JSGlobalObject* globalObject, uint64_t n, int32_t bigInt)
-{
-    return tryConvertToBigInt32(asUintNImpl(globalObject, n, Int32BigIntImpl { bigInt }));
-}
-#endif
 
 uint64_t JSBigInt::toBigUInt64Heap(JSBigInt* bigInt)
 {

@@ -176,13 +176,6 @@ ALWAYS_INLINE bool JSStringJoiner::appendWithoutSideEffects(JSGlobalObject* glob
         return true;
     }
 
-#if USE(BIGINT32)
-    if (value.isBigInt32()) {
-        appendNumber(globalObject->vm(), value.bigInt32AsInt32());
-        return true;
-    }
-#endif
-
     ASSERT(value.isUndefinedOrNull());
     appendEmptyString();
     return true;

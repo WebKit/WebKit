@@ -19,7 +19,7 @@ shouldBe(dec(1n), 0n);
 shouldBe(inc(-2n), -1n);
 shouldBe(dec(-1n), -2n);
 
-// BigInt32 boundaries (under USE(BIGINT32) these transition to/from heap BigInt).
+// Signed 32-bit boundaries.
 shouldBe(inc(2147483647n), 2147483648n);
 shouldBe(dec(2147483648n), 2147483647n);
 shouldBe(inc(-2147483649n), -2147483648n);

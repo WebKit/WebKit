@@ -113,26 +113,6 @@ public:
     unsigned length() const { return m_length; }
     unsigned bitLength() const;
 
-    ALWAYS_INLINE static JSValue makeHeapBigIntOrBigInt32(JSGlobalObject* globalObject, int64_t value)
-    {
-#if USE(BIGINT32)
-        if (value <= INT_MAX && value >= INT_MIN)
-            return jsBigInt32(static_cast<int32_t>(value));
-#endif
-        return JSBigInt::createFrom(globalObject, value);
-    }
-
-    ALWAYS_INLINE static JSValue makeHeapBigIntOrBigInt32(JSGlobalObject* globalObject, uint64_t value)
-    {
-#if USE(BIGINT32)
-        if (value <= INT_MAX)
-            return jsBigInt32(static_cast<int32_t>(value));
-#endif
-        return JSBigInt::createFrom(globalObject, value);
-    }
-
-    ALWAYS_INLINE static JSValue makeHeapBigIntOrBigInt32(JSGlobalObject* globalObject, double value);
-
     enum class ErrorParseMode {
         ThrowExceptions,
         IgnoreExceptions
@@ -210,9 +190,6 @@ public:
     struct ImplResult {
         ImplResult(HeapBigIntImpl&);
         ImplResult(JSBigInt*);
-#if USE(BIGINT32)
-        ImplResult(Int32BigIntImpl&);
-#endif
         ImplResult(JSValue);
         JSValue payload;
     };
@@ -269,186 +246,44 @@ private:
 
 public:
     static JSValue exponentiate(JSGlobalObject*, JSBigInt* base, JSBigInt* exponent);
-#if USE(BIGINT32)
-    static JSValue exponentiate(JSGlobalObject*, JSBigInt* base, int32_t exponent);
-    static JSValue exponentiate(JSGlobalObject*, int32_t base, JSBigInt* exponent);
-    static JSValue exponentiate(JSGlobalObject*, int32_t base, int32_t exponent);
-#endif
 
     // https://tc39.es/proposal-bigint-math/
     static JSValue sqrt(JSGlobalObject*, JSBigInt*);
     static JSValue cbrt(JSGlobalObject*, JSBigInt*);
 
     static JSValue multiply(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
-    static JSValue multiply(JSGlobalObject*, int32_t x, JSBigInt* y);
-    static JSValue multiply(JSGlobalObject*, JSBigInt* x, int32_t y);
-    static JSValue multiply(JSGlobalObject* globalObject, int32_t x, int32_t y)
-    {
-        int64_t result = static_cast<int64_t>(x) * static_cast<int64_t>(y); 
-        return makeHeapBigIntOrBigInt32(globalObject, result);
-    }
-#endif
     
     static JSValue inc(JSGlobalObject*, JSBigInt* x);
-#if USE(BIGINT32)
-    static JSValue inc(JSGlobalObject* globalObject, int32_t x)
-    {
-        return makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(x) + 1);
-    }
-#endif
 
     static JSValue dec(JSGlobalObject*, JSBigInt* x);
-#if USE(BIGINT32)
-    static JSValue dec(JSGlobalObject* globalObject, int32_t x)
-    {
-        return makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(x) - 1);
-    }
-#endif
 
     static JSValue add(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
-    static JSValue add(JSGlobalObject*, JSBigInt* x, int32_t y);
-    static JSValue add(JSGlobalObject*, int32_t x, JSBigInt* y);
-    static JSValue add(JSGlobalObject* globalObject, int32_t x, int32_t y)
-    {
-        return makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(x) + static_cast<int64_t>(y));
-    }
-#endif
 
     static JSValue sub(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
-    static JSValue sub(JSGlobalObject*, JSBigInt* x, int32_t y);
-    static JSValue sub(JSGlobalObject*, int32_t x, JSBigInt* y);
-    static JSValue sub(JSGlobalObject* globalObject, int32_t x, int32_t y)
-    {
-        return makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(x) - static_cast<int64_t>(y));
-    }
-#endif
 
     static JSValue divide(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
-    static JSValue divide(JSGlobalObject*, JSBigInt* x, int32_t y);
-    static JSValue divide(JSGlobalObject*, int32_t x, JSBigInt* y);
-    static JSValue divide(JSGlobalObject* globalObject, int32_t x, int32_t y)
-    {
-        if (!y) {
-            auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
-            throwRangeError(globalObject, scope, "0 is an invalid divisor value."_s);
-            return JSValue();
-        }
-        return makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(x) / static_cast<int64_t>(y));
-    }
-#endif
 
     static JSValue remainder(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
-    static JSValue remainder(JSGlobalObject*, JSBigInt* x, int32_t y);
-    static JSValue remainder(JSGlobalObject*, int32_t x, JSBigInt* y);
-    static JSValue remainder(JSGlobalObject* globalObject, int32_t x, int32_t y)
-    {
-        if (!y) {
-            auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
-            throwRangeError(globalObject, scope, "0 is an invalid divisor value."_s);
-            return JSValue();
-        }
-        return makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(x) % static_cast<int64_t>(y));
-    }
-#endif
 
     static JSValue unaryMinus(JSGlobalObject*, JSBigInt* x);
-#if USE(BIGINT32)
-    static JSValue unaryMinus(JSGlobalObject* globalObject, int32_t x)
-    {
-        return makeHeapBigIntOrBigInt32(globalObject, -static_cast<int64_t>(x));
-    }
-#endif
 
     static JSValue bitwiseAnd(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
-    static JSValue bitwiseAnd(JSGlobalObject*, JSBigInt* x, int32_t y);
-    static JSValue bitwiseAnd(JSGlobalObject*, int32_t x, JSBigInt* y);
-    static JSValue bitwiseAnd(JSGlobalObject* globalObject, int32_t x, int32_t y)
-    {
-        return makeHeapBigIntOrBigInt32(globalObject, x & y);
-    }
-#endif
 
     static JSValue bitwiseOr(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
-    static JSValue bitwiseOr(JSGlobalObject*, JSBigInt* x, int32_t y);
-    static JSValue bitwiseOr(JSGlobalObject*, int32_t x, JSBigInt* y);
-    static JSValue bitwiseOr(JSGlobalObject* globalObject, int32_t x, int32_t y)
-    {
-        return makeHeapBigIntOrBigInt32(globalObject, x | y);
-    }
-#endif
 
     static JSValue bitwiseXor(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
-    static JSValue bitwiseXor(JSGlobalObject*, JSBigInt* x, int32_t y);
-    static JSValue bitwiseXor(JSGlobalObject*, int32_t x, JSBigInt* y);
-    static JSValue bitwiseXor(JSGlobalObject* globalObject, int32_t x, int32_t y)
-    {
-        return makeHeapBigIntOrBigInt32(globalObject, x ^ y);
-    }
-#endif
 
     static JSValue bitwiseNot(JSGlobalObject*, JSBigInt* x);
-#if USE(BIGINT32)
-    static JSValue bitwiseNot(JSGlobalObject* globalObject, int32_t x)
-    {
-        return makeHeapBigIntOrBigInt32(globalObject, ~x);
-    }
-#endif
 
     static JSValue leftShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
-    static JSValue leftShift(JSGlobalObject*, JSBigInt* x, int32_t y);
-    static JSValue leftShift(JSGlobalObject*, int32_t x, JSBigInt* y);
-private:
-    static JSValue leftShiftSlow(JSGlobalObject*, int32_t x, int32_t y);
-public:
-    static JSValue leftShift(JSGlobalObject* globalObject, int32_t x, int32_t y)
-    {
-        if (y < 0) {
-            // Shifts one less than requested, but doesn't matter since lhs is int32
-            return signedRightShift(globalObject, x, y == INT32_MIN ? INT32_MAX : -y);
-        }
-
-        // Do some checks to detect overflow of left-shift. But this is much cheaper compared to allocating two JSBigInt and perform shift operations in JSBigInt.
-        if (!x)
-            return jsBigInt32(0);
-        if (y < 32)
-            return makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(x) << y);
-        return leftShiftSlow(globalObject, x, y);
-    }
-#endif
 
     static JSValue signedRightShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
-    static JSValue signedRightShift(JSGlobalObject*, JSBigInt* x, int32_t y);
-    static JSValue signedRightShift(JSGlobalObject*, int32_t x, JSBigInt* y);
-    static JSValue signedRightShift(JSGlobalObject* globalObject, int32_t x, int32_t y)
-    {
-        if (y < 0) {
-            // Shifts one less than requested, but doesn't matter since lhs is int32
-            return leftShift(globalObject, x, y == INT32_MIN ? INT32_MAX : -y);
-        }
-
-        return jsBigInt32(x >> std::min(y, 31));
-    }
-#endif
 
     static JSValue toNumberHeap(JSBigInt*);
     inline static JSValue toNumber(JSValue); // Defined in JSBigIntInlines.h
 
     static JSValue asIntN(JSGlobalObject*, uint64_t numberOfBits, JSBigInt*);
     static JSValue asUintN(JSGlobalObject*, uint64_t numberOfBits, JSBigInt*);
-#if USE(BIGINT32)
-    static JSValue asIntN(JSGlobalObject*, uint64_t numberOfBits, int32_t bigIntAsInt32);
-    static JSValue asUintN(JSGlobalObject*, uint64_t numberOfBits, int32_t bigIntAsInt32);
-#endif
 
     inline static uint64_t toBigUInt64(JSValue); // Defined in JSBigIntInlines.h
     inline static int64_t toBigInt64(JSValue); // Defined in JSBigIntInlines.h
@@ -733,31 +568,6 @@ ALWAYS_INLINE JSBigInt::ComparisonResult invertBigIntCompareResult(JSBigInt::Com
     default:
         return comparisonResult;
     }
-}
-
-ALWAYS_INLINE JSValue tryConvertToBigInt32(JSBigInt* bigInt)
-{
-#if USE(BIGINT32)
-    if (!bigInt) [[unlikely]]
-        return JSValue();
-
-    if (bigInt->length() <= 1) {
-        if (!bigInt->length())
-            return jsBigInt32(0);
-        JSBigInt::Digit digit = bigInt->digit(0);
-        if (bigInt->sign()) {
-            static constexpr uint64_t maxValue = -static_cast<int64_t>(std::numeric_limits<int32_t>::min());
-            if (digit <= maxValue)
-                return jsBigInt32(static_cast<int32_t>(-static_cast<int64_t>(digit)));
-        } else {
-            static constexpr uint64_t maxValue = static_cast<uint64_t>(std::numeric_limits<int32_t>::max());
-            if (digit <= maxValue)
-                return jsBigInt32(static_cast<int32_t>(digit));
-        }
-    }
-#endif
-
-    return bigInt;
 }
 
 } // namespace JSC

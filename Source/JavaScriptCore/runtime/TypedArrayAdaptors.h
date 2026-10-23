@@ -207,7 +207,7 @@ struct BigIntTypedArrayAdaptor {
     static JSValue toJSValue(JSGlobalObject* globalObject, Type value)
     {
         ASSERT(globalObject);
-        return JSBigInt::makeHeapBigIntOrBigInt32(globalObject, value);
+        return JSBigInt::createFrom(globalObject, value);
     }
 
     static Type toNativeFromInt32(int32_t value)

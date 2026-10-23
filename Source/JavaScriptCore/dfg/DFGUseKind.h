@@ -74,9 +74,7 @@ enum UseKind : uint8_t {
     KnownStringUse,
     KnownPrimitiveUse, // This bizarre type arises for op_strcat, which has a bytecode guarantee that it will only see primitives (i.e. not objects).
     SymbolUse,
-    AnyBigIntUse,
     HeapBigIntUse,
-    BigInt32Use,
     DateObjectUse,
     MapObjectUse,
     SetObjectUse,
@@ -171,12 +169,8 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecHeapTop & ~SpecObject;
     case SymbolUse:
         return SpecSymbol;
-    case AnyBigIntUse:
-        return SpecBigInt;
     case HeapBigIntUse:
         return SpecHeapBigInt;
-    case BigInt32Use:
-        return SpecBigInt32;
     case PromiseObjectUse:
         return SpecPromiseObject;
     case DateObjectUse:

@@ -403,7 +403,7 @@ JSValueRef JSBigIntCreateWithDouble(JSContextRef ctx, double value, JSValueRef* 
         return nullptr;
     }
 
-    JSValue result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, value);
+    JSValue result = JSBigInt::createFrom(globalObject, value);
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
 
@@ -422,7 +422,7 @@ JSValueRef JSBigIntCreateWithUInt64(JSContextRef ctx, uint64_t integer, JSValueR
     JSLockHolder locker(vm);
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
-    JSValue result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, integer);
+    JSValue result = JSBigInt::createFrom(globalObject, integer);
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
 
@@ -441,7 +441,7 @@ JSValueRef JSBigIntCreateWithInt64(JSContextRef ctx, int64_t integer, JSValueRef
     JSLockHolder locker(vm);
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
-    JSValue result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, integer);
+    JSValue result = JSBigInt::createFrom(globalObject, integer);
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
 

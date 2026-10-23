@@ -411,11 +411,6 @@ namespace JSC {
         void emit_op_is_undefined_or_null(const JSInstruction*);
         void emit_op_is_boolean(const JSInstruction*);
         void emit_op_is_number(const JSInstruction*);
-#if USE(BIGINT32)
-        void emit_op_is_big_int(const JSInstruction*);
-#else
-        [[noreturn]] void LEGACY_NODELETE emit_op_is_big_int(const JSInstruction*);
-#endif
         void emit_op_is_object(const JSInstruction*);
         void emit_op_is_cell_with_type(const JSInstruction*);
         void emit_op_has_structure_with_flags(const JSInstruction*);

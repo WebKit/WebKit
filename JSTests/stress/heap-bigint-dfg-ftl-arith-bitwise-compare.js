@@ -70,7 +70,7 @@ for (let i = 0; i < 100000; i++) {
         throw new Error("stricteq false case failed");
 }
 
-// Test with larger BigInts to exercise HeapBigInt path (not BigInt32)
+// Test with multi-digit BigInts.
 let big1 = 123456789012345678901234567890n;
 let big2 = 987654321098765432109876543210n;
 for (let i = 0; i < 100000; i++) {

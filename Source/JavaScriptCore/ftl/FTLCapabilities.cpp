@@ -322,7 +322,6 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
-    case IsBigInt:
     case NumberIsInteger:
     case GlobalIsNaN:
     case NumberIsNaN:
@@ -619,8 +618,6 @@ CapabilityLevel canCompile(Graph& graph)
                 case StringObjectUse:
                 case StringOrStringObjectUse:
                 case SymbolUse:
-                case AnyBigIntUse:
-                case BigInt32Use:
                 case HeapBigIntUse:
                 case DateObjectUse:
                 case MapObjectUse:

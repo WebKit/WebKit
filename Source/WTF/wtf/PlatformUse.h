@@ -136,10 +136,6 @@
 #define USE_LARGE_TYPED_ARRAYS 0
 #endif
 
-/* FIXME: Enable BIGINT32 optimization again after we ensure Speedometer2 and JetStream2 regressions are fixed. */
-/* https://bugs.webkit.org/show_bug.cgi?id=214777 */
-#define USE_BIGINT32 0
-
 #if OS(DARWIN) && CPU(ARM64) && HAVE(REMAP_JIT)
 #define USE_EXECUTE_ONLY_JIT_WRITE_FUNCTION 1
 #endif

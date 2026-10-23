@@ -44,7 +44,7 @@ inline bool JSValue::isString() const
 
 inline bool JSValue::isBigInt() const
 {
-    return isBigInt32() || isHeapBigInt();
+    return isHeapBigInt();
 }
 
 inline bool JSValue::isHeapBigInt() const
@@ -105,10 +105,6 @@ inline bool JSValue::toBoolean(JSGlobalObject* globalObject) const
         return asDouble() > 0.0 || asDouble() < 0.0; // false for NaN
     if (isCell())
         return asCell()->toBoolean(globalObject);
-#if USE(BIGINT32)
-    if (isBigInt32())
-        return !!bigInt32AsInt32();
-#endif
     return isTrue(); // false, null, and undefined all convert to false.
 }
 

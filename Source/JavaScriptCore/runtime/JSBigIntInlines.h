@@ -33,30 +33,18 @@ namespace JSC {
 inline JSValue JSBigInt::toNumber(JSValue bigInt)
 {
     ASSERT(bigInt.isBigInt());
-#if USE(BIGINT32)
-    if (bigInt.isBigInt32())
-        return jsNumber(bigInt.bigInt32AsInt32());
-#endif
     return toNumberHeap(uncheckedDowncast<JSBigInt>(bigInt));
 }
 
 uint64_t JSBigInt::toBigUInt64(JSValue bigInt)
 {
     ASSERT(bigInt.isBigInt());
-#if USE(BIGINT32)
-    if (bigInt.isBigInt32())
-        return static_cast<uint64_t>(static_cast<int64_t>(bigInt.bigInt32AsInt32()));
-#endif
     return toBigUInt64Heap(bigInt.asHeapBigInt());
 }
 
 inline int64_t JSBigInt::toBigInt64(JSValue bigInt)
 {
     ASSERT(bigInt.isBigInt());
-#if USE(BIGINT32)
-    if (bigInt.isBigInt32())
-        return static_cast<int64_t>(bigInt.bigInt32AsInt32());
-#endif
     return static_cast<int64_t>(toBigUInt64Heap(bigInt.asHeapBigInt()));
 }
 
@@ -68,25 +56,12 @@ ALWAYS_INLINE std::optional<double> JSBigInt::tryExtractDouble(JSValue value)
     if (!value.isBigInt())
         return std::nullopt;
 
-#if USE(BIGINT32)
-    if (value.isBigInt32())
-        return value.bigInt32AsInt32();
-#endif
-
     ASSERT(value.isHeapBigInt());
     JSBigInt* bigInt = value.asHeapBigInt();
     auto integer = bigInt->tryAbsoluteValueAsUInt64();
     if (!integer || *integer > maxSafeIntegerAsUInt64())
         return std::nullopt;
     return bigInt->sign() ? -static_cast<double>(*integer) : static_cast<double>(*integer);
-}
-
-ALWAYS_INLINE JSValue JSBigInt::makeHeapBigIntOrBigInt32(JSGlobalObject* globalObject, double value)
-{
-    ASSERT(isInteger(value));
-    if (std::abs(value) <= maxSafeInteger())
-        return makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(value));
-    return JSBigInt::createFrom(globalObject, value);
 }
 
 inline JSBigInt::ComparisonResult JSBigInt::compareToDouble(double x, int32_t y) { return flip(compareToDouble(y, x)); }

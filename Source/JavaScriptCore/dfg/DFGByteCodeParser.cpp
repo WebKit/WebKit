@@ -1404,9 +1404,7 @@ private:
                 node->mergeFlags(NodeMayHaveNonNumericResult);
             if (observed.didObserveInt32Overflow())
                 node->mergeFlags(NodeMayOverflowInt32InBaseline);
-            if (observed.didObserveBigInt32())
-                node->mergeFlags(NodeMayHaveBigInt32Result);
-            if (observed.didObserveHeapBigInt() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BigInt32Overflow))
+            if (observed.didObserveHeapBigInt())
                 node->mergeFlags(NodeMayHaveHeapBigIntResult);
             break;
         }
@@ -1443,9 +1441,7 @@ private:
                 node->mergeFlags(NodeMayHaveDoubleResult);
             if (arithProfile->didObserveNonNumeric())
                 node->mergeFlags(NodeMayHaveNonNumericResult);
-            if (arithProfile->didObserveBigInt32())
-                node->mergeFlags(NodeMayHaveBigInt32Result);
-            if (arithProfile->didObserveHeapBigInt() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BigInt32Overflow))
+            if (arithProfile->didObserveHeapBigInt())
                 node->mergeFlags(NodeMayHaveHeapBigIntResult);
             break;
         }
@@ -1468,9 +1464,7 @@ private:
                 node->mergeFlags(NodeMayOverflowInt32InBaseline);
             if (arithProfile->didObserveNonNumeric())
                 node->mergeFlags(NodeMayHaveNonNumericResult);
-            if (arithProfile->didObserveBigInt32())
-                node->mergeFlags(NodeMayHaveBigInt32Result);
-            if (arithProfile->didObserveHeapBigInt() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BigInt32Overflow))
+            if (arithProfile->didObserveHeapBigInt())
                 node->mergeFlags(NodeMayHaveHeapBigIntResult);
             break;
         }
@@ -1514,9 +1508,7 @@ private:
 
         BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex);
 
-        if (arithProfile->didObserveBigInt32())
-            node->mergeFlags(NodeMayHaveBigInt32Result);
-        if (arithProfile->didObserveHeapBigInt() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BigInt32Overflow))
+        if (arithProfile->didObserveHeapBigInt())
             node->mergeFlags(NodeMayHaveHeapBigIntResult);
 
         return node;
@@ -9164,17 +9156,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* value = get(bytecode.m_operand);
             set(bytecode.m_dst, addToGraph(IsNumber, value));
             NEXT_OPCODE(op_is_number);
-        }
-
-        case op_is_big_int: {
-#if USE(BIGINT32)
-            auto bytecode = currentInstruction->as<OpIsBigInt>();
-            Node* value = get(bytecode.m_operand);
-            set(bytecode.m_dst, addToGraph(IsBigInt, value));
-            NEXT_OPCODE(op_is_big_int);
-#else
-            RELEASE_ASSERT_NOT_REACHED();
-#endif
         }
 
         case op_is_cell_with_type: {

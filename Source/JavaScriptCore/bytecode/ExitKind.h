@@ -61,7 +61,6 @@ enum ExitKind : uint8_t {
     ExceptionCheck, // We exited because a direct exception check showed that we threw an exception from a C call.
     WillThrowOutOfMemoryError, // We exited because we would like to throw OutOfMemory error.
     GenericUnwind, // We exited because we arrived at this OSR exit from genericUnwind.
-    BigInt32Overflow, // We exited because of an BigInt32 overflow.
     UnexpectedResizableArrayBufferView, // We exited because we made an incorrect assumption about what type of ArrayBufferView we would see.
 };
 

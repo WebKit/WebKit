@@ -335,7 +335,7 @@ tryPostMessage(thunk(
         doPassFail(v[1].foo == undefined, "Number object properties not serialized");
         doPassFail(v[2].foo == undefined, "Boolean object properties not serialized");
         doPassFail(v[3].foo == undefined, "BigInt object properties not serialized");
-        doPassFail(v[4].foo == undefined, "BigInt (BigInt32) object properties not serialized");
+        doPassFail(v[4].foo == undefined, "BigInt (small value) object properties not serialized");
     });
 
 // Reference equality between dates must be maintained.

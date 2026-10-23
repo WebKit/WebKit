@@ -102,7 +102,6 @@ public:
 
     explicit operator bool() const { return m_kind != Kind::None; }
 
-    // The temporary register is only needed on 64-bits builds (for testing BigInt32).
     void emitReportValue(CCallHelpers&, CodeBlock* optimizedCodeBlock, GPRReg, GPRReg tempGPR, TagRegistersMode = HaveTagRegisters) const;
 
 private:

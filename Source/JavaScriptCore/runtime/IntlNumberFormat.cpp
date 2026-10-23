@@ -1449,11 +1449,6 @@ IntlMathematicalValue IntlMathematicalValue::parseString(JSGlobalObject* globalO
             if (!bigInt)
                 return IntlMathematicalValue { PNaN };
 
-#if USE(BIGINT32)
-            if (bigInt.isBigInt32())
-                return IntlMathematicalValue { value.bigInt32AsInt32() };
-#endif
-
             auto* heapBigInt = bigInt.asHeapBigInt();
             auto string = heapBigInt->toString(globalObject, 10);
             RETURN_IF_EXCEPTION(scope, { });

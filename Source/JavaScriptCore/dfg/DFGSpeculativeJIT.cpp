@@ -109,9 +109,6 @@ WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(SpeculateWhicheverInt52Operand);
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(SpeculateDoubleOperand);
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(SpeculateCellOperand);
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(SpeculateBooleanOperand);
-#if USE(BIGINT32)
-WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(SpeculateBigInt32Operand);
-#endif
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(SpeculativeJIT);
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(JSValueOperand);
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(StorageOperand);
@@ -1968,10 +1965,6 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, RelationalCondition condi
 
         if (node->isBinaryUseKind(Int32Use))
             compilePeepHoleInt32Branch(node, branchNode, condition);
-#if USE(BIGINT32)
-        else if (node->isBinaryUseKind(BigInt32Use))
-            compilePeepHoleBigInt32Branch(node, branchNode, condition);
-#endif
         else if (node->isBinaryUseKind(Int52RepUse))
             compilePeepHoleInt52Branch(node, branchNode, condition);
         else if (node->isBinaryUseKind(StringUse) || node->isBinaryUseKind(StringIdentUse)) {
@@ -2756,7 +2749,6 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(Node* node)
     case DataFormatJS:
     case DataFormatJSBoolean:
     case DataFormatJSDouble:
-    case DataFormatJSBigInt32:
         return GeneratedOperandJSValue;
 
     case DataFormatJSInt32:
@@ -2844,10 +2836,6 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                 
                 DFG_TYPE_CHECK(
                     JSValueSource(gpr), node->child1(), ~SpecCellCheck, branchIfCell(gpr));
-#if USE(BIGINT32)
-                DFG_TYPE_CHECK(
-                    JSValueSource(gpr), node->child1(), ~SpecCellCheck & ~SpecBigInt, branchIfBigInt32(gpr, resultGpr));
-#endif
                 
                 // It's not a cell: so true turns into 1 and all else turns into 0.
                 compare64(Equal, gpr, TrustedImm32(JSValue::ValueTrue), resultGpr);
@@ -3922,27 +3910,6 @@ void SpeculativeJIT::compileValueBitNot(Node* node)
 {
     Edge& child1 = node->child1();
 
-#if USE(BIGINT32)
-    if (child1.useKind() == BigInt32Use) {
-        SpeculateBigInt32Operand operand(this, child1);
-        GPRTemporary result(this);
-        GPRReg resultGPR = result.gpr();
-
-        // The following trick relies on details of the representation of BigInt32, and will have to be updated if we move bits around.
-        static_assert(JSValue::BigInt32Tag == 0x12);
-        static_assert(JSValue::BigInt32Mask == static_cast<int64_t>(0xfffe000000000012));
-        constexpr uint64_t maskForBigInt32Bits = 0x0000ffffffff0000;
-        static_assert(!(JSValue::BigInt32Mask & maskForBigInt32Bits));
-        move(TrustedImm64(maskForBigInt32Bits), resultGPR);
-        xor64(operand.gpr(), resultGPR);
-
-        jsValueResult(resultGPR, node);
-
-        return;
-    }
-    // FIXME: add support for mixed BigInt32 / HeapBigInt
-#endif
-
     if (child1.useKind() == HeapBigIntUse) {
         SpeculateCellOperand operand(this, child1);
         GPRReg operandGPR = operand.gpr();
@@ -3959,9 +3926,9 @@ void SpeculativeJIT::compileValueBitNot(Node* node)
         return;
     }
 
-    ASSERT(child1.useKind() == UntypedUse || child1.useKind() == AnyBigIntUse);
+    ASSERT(child1.useKind() == UntypedUse);
     JSValueOperand operand(this, child1, ManualOperandSpeculation);
-    speculate(node, child1); // Required for the AnyBigIntUse case
+    speculate(node, child1);
     GPRReg operandGPR = operand.gpr();
 
     flushRegisters();
@@ -3988,12 +3955,12 @@ void SpeculativeJIT::compileBitwiseNot(Node* node)
 }
 
 template<typename SnippetGenerator, J_JITOperation_GJJ snippetSlowPathFunction>
-void SpeculativeJIT::emitUntypedOrAnyBigIntBitOp(Node* node)
+void SpeculativeJIT::emitUntypedBitOp(Node* node)
 {
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    DFG_ASSERT(m_graph, node, node->isBinaryUseKind(UntypedUse) || node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use));
+    DFG_ASSERT(m_graph, node, node->isBinaryUseKind(UntypedUse));
 
     if (isKnownNotNumber(leftChild.node()) || isKnownNotNumber(rightChild.node())) {
         JSValueOperand left(this, leftChild, ManualOperandSpeculation);
@@ -4041,12 +4008,12 @@ void SpeculativeJIT::emitUntypedOrAnyBigIntBitOp(Node* node)
 
     if (!leftOperand.isConst()) {
         left.emplace(this, leftChild, ManualOperandSpeculation);
-        speculate(node, leftChild); // Required for AnyBigIntUse
+        speculate(node, leftChild);
         leftGPR = left->gpr();
     }
     if (!rightOperand.isConst()) {
         right.emplace(this, rightChild, ManualOperandSpeculation);
-        speculate(node, rightChild); // Required for AnyBigIntUse
+        speculate(node, rightChild);
         rightGPR = right->gpr();
     }
 
@@ -4083,39 +4050,6 @@ void SpeculativeJIT::compileValueBitwiseOp(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-#if USE(BIGINT32)
-    if (leftChild.useKind() == BigInt32Use && rightChild.useKind() == BigInt32Use) {
-        SpeculateBigInt32Operand left(this, leftChild);
-        SpeculateBigInt32Operand right(this, rightChild);
-        GPRTemporary result(this);
-        GPRReg resultGPR = result.gpr();
-
-        move(left.gpr(), resultGPR);
-
-        switch (op) {
-        case ValueBitAnd:
-            // No need to unbox/box: bitAnd does not interfere with the encoding of BigInt32
-            and64(right.gpr(), resultGPR);
-            break;
-        case ValueBitOr:
-            // No need to unbox/box: bitOr does not interfere with the encoding of BigInt32
-            or64(right.gpr(), resultGPR);
-            break;
-        case ValueBitXor:
-            // BitXor removes the tag, so we must add it back after doing the operation
-            xor64(right.gpr(), resultGPR);
-            or64(TrustedImm32(JSValue::BigInt32Tag), resultGPR);
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
-        jsValueResult(resultGPR, node);
-        return;
-    }
-    // FIXME: add support for mixed BigInt32 / HeapBigInt
-#endif
-
     if (node->isBinaryUseKind(HeapBigIntUse)) {
         SpeculateCellOperand left(this, node->child1());
         SpeculateCellOperand right(this, node->child2());
@@ -4149,13 +4083,13 @@ void SpeculativeJIT::compileValueBitwiseOp(Node* node)
 
     switch (op) {
     case ValueBitAnd:
-        emitUntypedOrAnyBigIntBitOp<JITBitAndGenerator, operationValueBitAnd>(node);
+        emitUntypedBitOp<JITBitAndGenerator, operationValueBitAnd>(node);
         return;
     case ValueBitXor:
-        emitUntypedOrAnyBigIntBitOp<JITBitXorGenerator, operationValueBitXor>(node);
+        emitUntypedBitOp<JITBitXorGenerator, operationValueBitXor>(node);
         return;
     case ValueBitOr:
-        emitUntypedOrAnyBigIntBitOp<JITBitOrGenerator, operationValueBitOr>(node);
+        emitUntypedBitOp<JITBitOrGenerator, operationValueBitOr>(node);
         return;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -4209,7 +4143,7 @@ void SpeculativeJIT::emitUntypedOrBigIntRightShiftBitOp(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    if (isKnownNotNumber(leftChild.node()) || isKnownNotNumber(rightChild.node()) || node->isBinaryUseKind(BigInt32Use) || node->isBinaryUseKind(AnyBigIntUse)) {
+    if (isKnownNotNumber(leftChild.node()) || isKnownNotNumber(rightChild.node())) {
         JSValueOperand left(this, leftChild, ManualOperandSpeculation);
         JSValueOperand right(this, rightChild, ManualOperandSpeculation);
         speculate(node, leftChild);
@@ -4289,7 +4223,6 @@ void SpeculativeJIT::compileValueLShiftOp(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    // FIXME: support BigInt32
     if (node->binaryUseKind() == HeapBigIntUse) {
         SpeculateCellOperand left(this, leftChild);
         SpeculateCellOperand right(this, rightChild);
@@ -4308,7 +4241,7 @@ void SpeculativeJIT::compileValueLShiftOp(Node* node)
         return;
     }
 
-    emitUntypedOrAnyBigIntBitOp<JITLeftShiftGenerator, operationValueBitLShift>(node);
+    emitUntypedBitOp<JITLeftShiftGenerator, operationValueBitLShift>(node);
 }
 
 void SpeculativeJIT::compileValueBitRShift(Node* node)
@@ -4316,7 +4249,6 @@ void SpeculativeJIT::compileValueBitRShift(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    // FIXME: support BigInt32
     if (node->isBinaryUseKind(HeapBigIntUse)) {
         SpeculateCellOperand left(this, leftChild);
         SpeculateCellOperand right(this, rightChild);
@@ -4381,54 +4313,6 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-#if USE(BIGINT32)
-    // FIXME: Introduce another BigInt32 code generation: binary use kinds are BigIntUse32, but result is SpecAnyInt and accepting overflow.
-    // Let's distinguish these modes based on result type information by introducing NodeResultBigInt32.
-    // https://bugs.webkit.org/show_bug.cgi?id=210957
-    // https://bugs.webkit.org/show_bug.cgi?id=211040
-    if (node->isBinaryUseKind(BigInt32Use)) {
-        SpeculateBigInt32Operand left(this, leftChild);
-        SpeculateBigInt32Operand right(this, rightChild);
-        GPRTemporary result(this);
-        GPRTemporary temp(this);
-
-        GPRReg leftGPR = left.gpr();
-        GPRReg rightGPR = right.gpr();
-        GPRReg resultGPR = result.gpr();
-        GPRReg tempGPR = temp.gpr();
-
-        unboxBigInt32(leftGPR, resultGPR);
-        unboxBigInt32(rightGPR, tempGPR);
-
-        Jump check = branchAdd32(Overflow, resultGPR, tempGPR, resultGPR);
-
-        speculationCheck(BigInt32Overflow, JSValueSource(), nullptr, check);
-
-        boxBigInt32(resultGPR);
-        jsValueResult(resultGPR, node);
-        return;
-    }
-
-    if (node->isBinaryUseKind(AnyBigIntUse)) {
-        JSValueOperand left(this, leftChild, ManualOperandSpeculation);
-        JSValueOperand right(this, rightChild, ManualOperandSpeculation);
-        speculate(node, leftChild);
-        speculate(node, rightChild);
-        GPRReg leftGPR = left.gpr();
-        GPRReg rightGPR = right.gpr();
-
-        flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        // FIXME: call a more specialized function
-        callOperation(operationValueAddNotNumber, resultGPR, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
-
-        jsValueResult(resultGPR, node);
-        return;
-    }
-    // FIXME: add support for mixed BigInt32/HeapBigInt
-#endif // USE(BIGINT32)
-
     if (node->isBinaryUseKind(HeapBigIntUse)) {
         SpeculateCellOperand left(this, leftChild);
         SpeculateCellOperand right(this, rightChild);
@@ -4476,54 +4360,6 @@ void SpeculativeJIT::compileValueSub(Node* node)
 {
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
-
-#if USE(BIGINT32)
-    // FIXME: Introduce another BigInt32 code generation: binary use kinds are BigIntUse32, but result is SpecAnyInt and accepting overflow.
-    // Let's distinguish these modes based on result type information by introducing NodeResultBigInt32.
-    // https://bugs.webkit.org/show_bug.cgi?id=210957
-    // https://bugs.webkit.org/show_bug.cgi?id=211040
-    if (node->binaryUseKind() == BigInt32Use) {
-        SpeculateBigInt32Operand left(this, node->child1());
-        SpeculateBigInt32Operand right(this, node->child2());
-        GPRTemporary result(this);
-        GPRTemporary temp(this);
-
-        GPRReg leftGPR = left.gpr();
-        GPRReg rightGPR = right.gpr();
-        GPRReg resultGPR = result.gpr();
-        GPRReg tempGPR = temp.gpr();
-
-        unboxBigInt32(leftGPR, resultGPR);
-        unboxBigInt32(rightGPR, tempGPR);
-
-        Jump check = branchSub32(Overflow, resultGPR, tempGPR, resultGPR);
-
-        speculationCheck(BigInt32Overflow, JSValueSource(), nullptr, check);
-
-        boxBigInt32(resultGPR);
-        jsValueResult(resultGPR, node);
-        return;
-    }
-    // FIXME: add support for mixed BigInt32/HeapBigInt
-
-    // FIXME: why do compileValueAdd/compileValueMul use isKnownNotNumber but not ValueSub?
-    if (node->binaryUseKind() == AnyBigIntUse) {
-        JSValueOperand left(this, leftChild, ManualOperandSpeculation);
-        JSValueOperand right(this, rightChild, ManualOperandSpeculation);
-        speculateAnyBigInt(leftChild);
-        speculateAnyBigInt(rightChild);
-        GPRReg leftGPR = left.gpr();
-        GPRReg rightGPR = right.gpr();
-
-        flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        callOperation(operationValueSub, resultGPR, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
-
-        jsValueResult(resultGPR, node);
-        return;
-    }
-#endif // USE(BIGINT32)
 
     if (node->binaryUseKind() == HeapBigIntUse) {
         SpeculateCellOperand left(this, node->child1());
@@ -5173,7 +5009,7 @@ void SpeculativeJIT::compileIncOrDec(Node* node)
 
 void SpeculativeJIT::compileValueNegate(Node* node)
 {
-    // FIXME: add a fast path, at least for BigInt32, but probably also for HeapBigInt here.
+    // FIXME: add a fast path for HeapBigInt here.
     CodeBlock* baselineCodeBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
     BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
     UnaryArithProfile* arithProfile = baselineCodeBlock->unaryArithProfileForBytecodeIndex(bytecodeIndex);
@@ -5336,37 +5172,6 @@ void SpeculativeJIT::compileValueMul(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-#if USE(BIGINT32)
-    // FIXME: Introduce another BigInt32 code generation: binary use kinds are BigIntUse32, but result is SpecAnyInt and accepting overflow.
-    // Let's distinguish these modes based on result type information by introducing NodeResultBigInt32.
-    // https://bugs.webkit.org/show_bug.cgi?id=210957
-    // https://bugs.webkit.org/show_bug.cgi?id=211040
-    if (node->binaryUseKind() == BigInt32Use) {
-        // FIXME: the code between compileValueAdd, compileValueSub and compileValueMul for BigInt32 is nearly identical, so try to get rid of the duplication.
-        SpeculateBigInt32Operand left(this, node->child1());
-        SpeculateBigInt32Operand right(this, node->child2());
-        GPRTemporary result(this);
-        GPRTemporary temp(this);
-
-        GPRReg leftGPR = left.gpr();
-        GPRReg rightGPR = right.gpr();
-        GPRReg resultGPR = result.gpr();
-        GPRReg tempGPR = temp.gpr();
-
-        unboxBigInt32(leftGPR, resultGPR);
-        unboxBigInt32(rightGPR, tempGPR);
-
-        Jump check = branchMul32(Overflow, resultGPR, tempGPR, resultGPR);
-
-        speculationCheck(BigInt32Overflow, JSValueSource(), nullptr, check);
-
-        boxBigInt32(resultGPR);
-        jsValueResult(resultGPR, node);
-        return;
-    }
-    // FIXME: add support for mixed BigInt32/HeapBigInt
-#endif
-
     if (leftChild.useKind() == HeapBigIntUse && rightChild.useKind() == HeapBigIntUse) {
         SpeculateCellOperand left(this, leftChild);
         SpeculateCellOperand right(this, rightChild);
@@ -5386,7 +5191,7 @@ void SpeculativeJIT::compileValueMul(Node* node)
         return;
     }
 
-    if (isKnownNotNumber(leftChild.node()) || isKnownNotNumber(rightChild.node()) || node->isBinaryUseKind(AnyBigIntUse)) {
+    if (isKnownNotNumber(leftChild.node()) || isKnownNotNumber(rightChild.node())) {
         JSValueOperand left(this, leftChild, ManualOperandSpeculation);
         JSValueOperand right(this, rightChild, ManualOperandSpeculation);
         speculate(node, leftChild);
@@ -5559,9 +5364,6 @@ void SpeculativeJIT::compileValueDiv(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    // FIXME: add a fast path for BigInt32. Currently we go through the slow path, because of how ugly the code for Div gets.
-    // https://bugs.webkit.org/show_bug.cgi?id=211041
-
     if (node->isBinaryUseKind(HeapBigIntUse)) {
         SpeculateCellOperand left(this, leftChild);
         SpeculateCellOperand right(this, rightChild);
@@ -5581,7 +5383,7 @@ void SpeculativeJIT::compileValueDiv(Node* node)
         return;
     }
 
-    if (isKnownNotNumber(leftChild.node()) || isKnownNotNumber(rightChild.node()) || node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use)) {
+    if (isKnownNotNumber(leftChild.node()) || isKnownNotNumber(rightChild.node())) {
         JSValueOperand left(this, leftChild, ManualOperandSpeculation);
         JSValueOperand right(this, rightChild, ManualOperandSpeculation);
         speculate(node, leftChild);
@@ -5853,8 +5655,6 @@ void SpeculativeJIT::compileValueMod(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    // FIXME: add a fast path for BigInt32. Currently we go through the slow path, because of how ugly the code for Mod gets.
-
     if (node->binaryUseKind() == HeapBigIntUse) {
         SpeculateCellOperand left(this, leftChild);
         SpeculateCellOperand right(this, rightChild);
@@ -5874,7 +5674,7 @@ void SpeculativeJIT::compileValueMod(Node* node)
         return;
     }
 
-    DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse || node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use, node->binaryUseKind());
+    DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse, node->binaryUseKind());
     JSValueOperand op1(this, leftChild, ManualOperandSpeculation);
     JSValueOperand op2(this, rightChild, ManualOperandSpeculation);
     speculate(node, leftChild);
@@ -6663,7 +6463,6 @@ void SpeculativeJIT::compileValuePow(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    // FIXME: do we want a fast path for BigInt32 for Pow? I expect it would overflow pretty often.
     if (node->binaryUseKind() == HeapBigIntUse) {
         SpeculateCellOperand left(this, leftChild);
         SpeculateCellOperand right(this, rightChild);
@@ -6683,7 +6482,7 @@ void SpeculativeJIT::compileValuePow(Node* node)
         return;
     }
 
-    DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse || node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use, node->binaryUseKind());
+    DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse, node->binaryUseKind());
 
     JSValueOperand left(this, leftChild, ManualOperandSpeculation);
     JSValueOperand right(this, rightChild, ManualOperandSpeculation);
@@ -6843,13 +6642,6 @@ bool SpeculativeJIT::compare(Node* node, RelationalCondition condition, DoubleCo
         compileInt32Compare(node, condition);
         return false;
     }
-    
-#if USE(BIGINT32)
-    if (node->isBinaryUseKind(BigInt32Use)) {
-        compileBigInt32Compare(node, condition);
-        return false;
-    }
-#endif
 
     if (node->isBinaryUseKind(Int52RepUse)) {
         compileInt52Compare(node, condition);
@@ -6963,23 +6755,6 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         compileInt32Compare(node, Equal);
         return false;
     }
-    
-#if USE(BIGINT32)
-    if (node->isBinaryUseKind(BigInt32Use)) {
-        unsigned branchIndexInBlock = detectPeepHoleBranch();
-        if (branchIndexInBlock != UINT_MAX) {
-            Node* branchNode = m_block->at(branchIndexInBlock);
-            compilePeepHoleBigInt32Branch(node, branchNode, Equal);
-            use(node->child1());
-            use(node->child2());
-            m_indexInBlock = branchIndexInBlock;
-            m_currentNode = branchNode;
-            return true;
-        }
-        compileBigInt32Compare(node, Equal);
-        return false;
-    }
-#endif
 
     if (node->isBinaryUseKind(Int52RepUse)) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
@@ -7026,7 +6801,6 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
 
-#if !USE(BIGINT32)
     if (node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse)) {
         Edge notDoubleChild = node->child1();
         Edge neitherDoubleNorHeapBigIntNorStringChild = node->child2();
@@ -7071,7 +6845,6 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(node, neitherDoubleNorHeapBigIntChild, notDoubleChild);
         return false;
     }
-#endif // !USE(BIGINT32)
 
     if (node->isBinaryUseKind(HeapBigIntUse)) {
         compileHeapBigIntEquality(node);
@@ -7172,7 +6945,7 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
 
-    ASSERT(node->isBinaryUseKind(UntypedUse) || node->isBinaryUseKind(AnyBigIntUse));
+    ASSERT(node->isBinaryUseKind(UntypedUse));
     return genericJSValueStrictEq(node);
 }
 
@@ -12417,21 +12190,7 @@ void SpeculativeJIT::speculateNotCell(Edge edge)
 
 void SpeculativeJIT::speculateNotCellNorBigInt(Edge edge)
 {
-#if USE(BIGINT32)
-    if (!needsTypeCheck(edge, ~SpecCellCheck & ~SpecBigInt))
-        return;
-
-    JSValueOperand operand(this, edge, ManualOperandSpeculation);
-    GPRTemporary temp(this);
-
-    GPRReg valueGPR = operand.gpr();
-    GPRReg tempGPR = temp.gpr();
-
-    DFG_TYPE_CHECK(JSValueSource(valueGPR), edge, ~SpecCellCheck, branchIfCell(valueGPR));
-    DFG_TYPE_CHECK(JSValueSource(valueGPR), edge, ~SpecCellCheck & ~SpecBigInt, branchIfBigInt32(valueGPR, tempGPR));
-#else
     speculateNotCell(edge);
-#endif
 }
 
 void SpeculativeJIT::speculateNotDouble(Edge edge, GPRReg valueGPR)
@@ -12673,14 +12432,6 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     case SymbolUse:
         speculateSymbol(edge);
         break;
-#if USE(BIGINT32)
-    case BigInt32Use:
-        speculateBigInt32(edge);
-        break;
-    case AnyBigIntUse:
-        speculateAnyBigInt(edge);
-        break;
-#endif
     case HeapBigIntUse:
         speculateHeapBigInt(edge);
         break;
@@ -16361,8 +16112,6 @@ void SpeculativeJIT::compileToNumeric(Node* node)
 
     GPRReg argumentGPR = argument.gpr();
     GPRReg resultGPR = result.gpr();
-    // FIXME: add a fast path for BigInt32 here.
-    // https://bugs.webkit.org/show_bug.cgi?id=211064
 
     JumpList slowCases;
 
@@ -16383,28 +16132,12 @@ void SpeculativeJIT::compileToNumeric(Node* node)
 
 void SpeculativeJIT::compileCallNumberConstructor(Node* node)
 {
-#if USE(BIGINT32)
-    if (node->child1().useKind() == BigInt32Use) {
-        SpeculateBigInt32Operand operand(this, node->child1());
-        GPRTemporary result(this);
-
-        GPRReg operandGPR = operand.gpr();
-        GPRReg resultGPR = result.gpr();
-
-        unboxBigInt32(operandGPR, resultGPR);
-        strictInt32Result(resultGPR, node);
-        return;
-    }
-#endif
-
     DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
     JSValueOperand argument(this, node->child1());
     GPRTemporary result(this);
 
     GPRReg argumentGPR = argument.gpr();
     GPRReg resultGPR = result.gpr();
-    // FIXME: add a fast path for BigInt32 here.
-    // https://bugs.webkit.org/show_bug.cgi?id=211064
 
     JumpList slowCases;
     slowCases.append(branchIfNotNumber(argumentGPR));
@@ -17211,7 +16944,7 @@ void SpeculativeJIT::compileProfileType(Node* node)
 
 void SpeculativeJIT::genericJSValueNonPeepholeCompare(Node* node, RelationalCondition cond, S_JITOperation_GJJ helperFunction)
 {
-    ASSERT(node->isBinaryUseKind(UntypedUse) || node->isBinaryUseKind(AnyBigIntUse));
+    ASSERT(node->isBinaryUseKind(UntypedUse));
     JSValueOperand arg1(this, node->child1(), ManualOperandSpeculation);
     JSValueOperand arg2(this, node->child2(), ManualOperandSpeculation);
     speculate(node, node->child1());

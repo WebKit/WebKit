@@ -58,10 +58,8 @@ function test() {
     shouldBe(sumApply.apply(null, new Uint8Array(0)), 0);
     shouldBe(collect(...new Float64Array(0)).length, 0);
 
-    // BigInt typed arrays go through the same path.
-    // BigInt typed arrays go through the same path. Include large values that require
-    // heap allocation (cannot be a BigInt32) and the .apply spelling, since boxing them
-    // needs a real globalObject.
+    // BigInt typed arrays go through the same path. Include the .apply spelling, since boxing
+    // BigInts needs a real globalObject.
     {
         const ta = new BigInt64Array(4);
         ta[0] = 10n; ta[1] = 20n; ta[2] = 9223372036854775807n; ta[3] = -9223372036854775808n;

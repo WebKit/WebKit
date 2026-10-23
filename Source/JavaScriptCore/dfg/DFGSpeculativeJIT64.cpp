@@ -140,8 +140,7 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
     case DataFormatJSInt32:
     case DataFormatJSDouble:
     case DataFormatJSCell:
-    case DataFormatJSBoolean:
-    case DataFormatJSBigInt32: {
+    case DataFormatJSBoolean: {
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
         return gpr;
@@ -437,7 +436,7 @@ void SpeculativeJIT::nonSpeculativePeepholeStrictEq(Node* node, Node* branchNode
         notTaken = tmp;
     }
     
-    ASSERT(node->isBinaryUseKind(UntypedUse) || node->isBinaryUseKind(AnyBigIntUse));
+    ASSERT(node->isBinaryUseKind(UntypedUse));
     JSValueOperand arg1(this, node->child1(), ManualOperandSpeculation);
     JSValueOperand arg2(this, node->child2(), ManualOperandSpeculation);
     speculate(node, node->child1());
@@ -487,20 +486,9 @@ void SpeculativeJIT::nonSpeculativePeepholeStrictEq(Node* node, Node* branchNode
 
         branch64(Equal, arg1GPR, arg2GPR, invert ? notTaken : taken);
         
-        // If we support BigInt32 we must go to a slow path if at least one operand is a cell (for HeapBigInt === BigInt32)
-        // If we don't support BigInt32, we only have to go to a slow path if both operands are cells (for HeapBigInt === HeapBigInt and String === String)
-        // Instead of doing two branches, we can do a single one, by observing that
-        // 1. (left is Cell && right is Cell) is the same as ((left | right) is Cell)
-        //      Both are "All high bits are 0"
-        // 2. Since we know that neither is a double, (left is Cell || right is Cell) is equivalent to ((left & right) is Cell)
-        //      If both are Int32, then the top bits will be set and the test will fail
-        //      If at least one is not Int32, then the top bits will be 0.
-        //      And if at least one is a cell, then the 'Other' tag will also be 0, making the test succeed
-#if USE(BIGINT32)
-        and64(arg1GPR, arg2GPR, resultGPR);
-#else
+        // Only cell pairs need the slow path (HeapBigInt === HeapBigInt and String === String), and
+        // (left is Cell && right is Cell) is the same as ((left | right) is Cell).
         or64(arg1GPR, arg2GPR, resultGPR);
-#endif
         slowPathCases.append(branchIfCell(resultGPR));
 
         jump(invert ? taken : notTaken, ForceJump);
@@ -576,20 +564,9 @@ void SpeculativeJIT::genericJSValueNonPeepholeStrictEq(Node* node, bool invert)
     compare64(Equal, arg1GPR, arg2GPR, resultGPR);
     Jump done = branchTest64(NonZero, resultGPR);
 
-    // If we support BigInt32 we must go to a slow path if at least one operand is a cell (for HeapBigInt === BigInt32)
-    // If we don't support BigInt32, we only have to go to a slow path if both operands are cells (for HeapBigInt === HeapBigInt and String === String)
-    // Instead of doing two branches, we can do a single one, by observing that
-    // 1. (left is Cell && right is Cell) is the same as ((left | right) is Cell)
-    //      Both are "All high bits are 0"
-    // 2. Since we know that neither is a double, (left is Cell || right is Cell) is equivalent to ((left & right) is Cell)
-    //      If both are Int32, then the top bits will be set and the test will fail
-    //      If at least one is not Int32, then the top bits will be 0.
-    //      And if at least one is a cell, then the 'Other' tag will also be 0, making the test succeed
-#if USE(BIGINT32)
-    and64(arg1GPR, arg2GPR, resultGPR);
-#else
+    // Only cell pairs need the slow path (HeapBigInt === HeapBigInt and String === String), and
+    // (left is Cell && right is Cell) is the same as ((left | right) is Cell).
     or64(arg1GPR, arg2GPR, resultGPR);
-#endif
     slowPathCases.append(branchIfCell(resultGPR));
 
     move(TrustedImm64(0), resultGPR);
@@ -1270,8 +1247,6 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     case DataFormatStorage:
     case DataFormatInt52:
     case DataFormatStrictInt52:
-    case DataFormatBigInt32:
-    case DataFormatJSBigInt32:
         DFG_CRASH(m_graph, m_currentNode, "Bad data format"_s);
         
     default:
@@ -1509,8 +1484,6 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     case DataFormatStorage:
     case DataFormatInt52:
     case DataFormatStrictInt52:
-    case DataFormatBigInt32:
-    case DataFormatJSBigInt32:
         DFG_CRASH(m_graph, m_currentNode, "Bad data format"_s);
         
     default:
@@ -1589,8 +1562,6 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
     case DataFormatStorage:
     case DataFormatInt52:
     case DataFormatStrictInt52:
-    case DataFormatBigInt32:
-    case DataFormatJSBigInt32:
         DFG_CRASH(m_graph, m_currentNode, "Bad data format"_s);
         
     default:
@@ -1598,126 +1569,6 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
         return InvalidGPRReg;
     }
 }
-
-#if USE(BIGINT32)
-void SpeculativeJIT::speculateBigInt32(Edge edge)
-{
-    if (!needsTypeCheck(edge, SpecBigInt32))
-        return;
-
-    (SpeculateBigInt32Operand(this, edge)).gpr();
-}
-
-void SpeculativeJIT::speculateAnyBigInt(Edge edge)
-{
-    if (!needsTypeCheck(edge, SpecBigInt))
-        return;
-
-    JSValueOperand value(this, edge, ManualOperandSpeculation);
-    GPRReg valueGPR = value.gpr();
-    GPRTemporary temp(this);
-    GPRReg tempGPR = temp.gpr();
-    Jump notCell = branchIfNotCell(valueGPR);
-    // I inlined speculateHeapBigInt because it would be incorrect to call it here if it did JSValueOperand / SpeculateXXXOperand,
-    // as it would confuse the DFG register allocator.
-    DFG_TYPE_CHECK(JSValueSource(valueGPR), edge, ~SpecCellCheck | SpecHeapBigInt, branchIfNotHeapBigInt(valueGPR));
-    auto done = jump();
-    notCell.link(this);
-    DFG_TYPE_CHECK(JSValueSource(valueGPR), edge, SpecCellCheck | SpecBigInt32, branchIfNotBigInt32(valueGPR, tempGPR));
-    done.link(this);
-}
-
-GPRReg SpeculativeJIT::fillSpeculateBigInt32(Edge edge)
-{
-    AbstractValue& value = m_state.forNode(edge);
-    SpeculatedType type = value.m_type;
-
-    m_interpreter.filter(value, SpecBigInt32);
-    if (value.isClear()) {
-        if (!type)
-            terminateUnreachableNode();
-        else if (mayHaveTypeCheck(edge.useKind()))
-            terminateSpeculativeExecution(Uncountable, JSValueSource(), nullptr);
-        return allocate();
-    }
-
-    VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-
-    switch (info.registerFormat()) {
-    case DataFormatNone: {
-        GPRReg gpr = allocate();
-
-        if (edge->hasConstant()) {
-            JSValue jsValue = edge->asJSValue();
-            m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            ASSERT(jsValue.isBigInt32());
-            move(TrustedImm64(JSValue::encode(jsValue)), gpr);
-            info.fillJSValue(m_stream, gpr, DataFormatJSBigInt32);
-            return gpr;
-        }
-
-        DataFormat spillFormat = info.spillFormat();
-        DFG_ASSERT(m_graph, m_currentNode, (spillFormat & DataFormatJS) || spillFormat == DataFormatBigInt32, spillFormat);
-
-        m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-
-        if (spillFormat == DataFormatBigInt32) {
-            // We have not yet implemented this
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        if (spillFormat == DataFormatJSBigInt32) {
-            load64(addressFor(virtualRegister), gpr);
-            info.fillJSValue(m_stream, gpr, DataFormatJSBigInt32);
-            return gpr;
-        }
-
-        load64(addressFor(virtualRegister), gpr);
-
-        info.fillJSValue(m_stream, gpr, DataFormatJS);
-        m_gprs.unlock(gpr);
-        [[fallthrough]];
-    }
-
-    case DataFormatJS: {
-        GPRReg gpr = info.gpr();
-        m_gprs.lock(gpr);
-        if (type & ~SpecBigInt32) {
-            JumpList failureCases;
-            GPRReg tempGPR = allocate();
-            failureCases.append(branchIfNotBigInt32(gpr, tempGPR));
-            speculationCheck(BadType, JSValueSource(gpr), edge, failureCases);
-            unlock(tempGPR);
-        }
-        info.fillJSValue(m_stream, gpr, DataFormatJSBigInt32);
-        return gpr;
-    }
-
-    case DataFormatJSBigInt32: {
-        GPRReg gpr = info.gpr();
-        m_gprs.lock(gpr);
-        return gpr;
-    }
-
-    case DataFormatJSBoolean:
-    case DataFormatJSInt32:
-    case DataFormatInt32:
-    case DataFormatJSDouble:
-    case DataFormatJSCell:
-    case DataFormatCell:
-    case DataFormatDouble:
-    case DataFormatStorage:
-    case DataFormatInt52:
-    case DataFormatStrictInt52:
-    case DataFormatBigInt32:
-        DFG_CRASH(m_graph, m_currentNode, "Bad data format"_s);
-
-    default:
-        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format"_s);
-        return InvalidGPRReg;
-    }
-}
-#endif // USE(BIGINT32)
 
 void SpeculativeJIT::compileRegExpStringIteratorNext(Node* node)
 {
@@ -2003,65 +1854,6 @@ void SpeculativeJIT::compilePeepHoleInt52Branch(Node* node, Node* branchNode, Re
     jump(notTaken);
 }
 
-#if USE(BIGINT32)
-void SpeculativeJIT::compileBigInt32Compare(Node* node, RelationalCondition condition)
-{
-    SpeculateBigInt32Operand op1(this, node->child1());
-    SpeculateBigInt32Operand op2(this, node->child2());
-    GPRTemporary result(this, Reuse, op1, op2);
-
-    GPRReg op1GPR = op1.gpr();
-    GPRReg op2GPR = op2.gpr();
-    GPRReg resultGPR = result.gpr();
-
-    if (condition == Equal || condition == NotEqual) {
-        // No need to unbox the operands, since the tag bits are identical
-        compare64(condition, op1GPR, op2GPR, resultGPR);
-    } else {
-        GPRTemporary temp(this);
-        GPRReg tempGPR = temp.gpr();
-
-        unboxBigInt32(op1GPR, tempGPR);
-        unboxBigInt32(op2GPR, resultGPR);
-        compare32(condition, tempGPR, resultGPR, resultGPR);
-    }
-    unblessedBooleanResult(resultGPR, node);
-}
-
-void SpeculativeJIT::compilePeepHoleBigInt32Branch(Node* node, Node* branchNode, RelationalCondition condition)
-{
-    BasicBlock* taken = branchNode->branchData()->taken.block;
-    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
-
-    // The branch instruction will branch to the taken block.
-    // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
-    if (taken == nextBlock()) {
-        condition = invert(condition);
-        std::swap(taken, notTaken);
-    }
-
-    SpeculateBigInt32Operand op1(this, node->child1());
-    SpeculateBigInt32Operand op2(this, node->child2());
-    GPRReg op1GPR = op1.gpr();
-    GPRReg op2GPR = op2.gpr();
-
-    if (condition == Equal || condition == NotEqual) {
-        branch64(condition, op1GPR, op2GPR, taken);
-        jump(notTaken);
-    } else {
-        GPRTemporary lhs(this, Reuse, op1);
-        GPRTemporary rhs(this, Reuse, op2);
-        GPRReg lhsGPR = lhs.gpr();
-        GPRReg rhsGPR = rhs.gpr();
-        unboxBigInt32(op1GPR, lhsGPR);
-        unboxBigInt32(op2GPR, rhsGPR);
-        branch32(condition, lhsGPR, rhsGPR, taken);
-        jump(notTaken);
-    }
-
-}
-#endif // USE(BIGINT32)
-
 void SpeculativeJIT::compileCompareEqPtr(Node* node)
 {
     JSValueOperand value(this, node->child1());
@@ -2308,8 +2100,6 @@ void SpeculativeJIT::emitUntypedBranch(Edge nodeUse, BasicBlock* taken, BasicBlo
     //     result = !!unboxInt32(value)
     // } else if (value is number) {
     //     result = !!unboxDouble(value)
-    // } else if (value is BigInt32) {
-    //     result = !!unboxBigInt32(value)
     // } else {
     //     result = false
     // }
@@ -2394,23 +2184,6 @@ void SpeculativeJIT::emitUntypedBranch(Edge nodeUse, BasicBlock* taken, BasicBlo
         if (!isDefinitelyDouble)
             skipDoubleCase.link(this);
     }
-
-#if USE(BIGINT32)
-    if (needsTypeCheck(nodeUse, ~SpecBigInt32)) {
-        bool isDefinitelyBigInt32 = !needsTypeCheck(nodeUse, SpecCell | SpecBoolean | SpecInt32Only | SpecFullDouble | SpecBigInt32);
-        Jump skipBigInt32Case;
-        if (!isDefinitelyBigInt32)
-            skipBigInt32Case = branchIfNotBigInt32(valueGPR, tempGPR);
-
-        move(valueGPR, tempGPR);
-        urshift64(TrustedImm32(16), tempGPR);
-        branchTest32(NonZero, tempGPR, taken);
-        // Here we fallthrough to the jump(notTaken) below and outside this branch.
-
-        if (!isDefinitelyBigInt32)
-            skipBigInt32Case.link(this);
-    }
-#endif // USE(BIGINT32)
 
     jump(notTaken);
 
@@ -2576,9 +2349,6 @@ void SpeculativeJIT::compileMapGetImpl(Node* node)
     JIT_COMMENT(*this, "Now the current entryKey is not a deleted value. Then check whether it matches the target key.");
     switch (node->child2().useKind()) {
     case BooleanUse:
-#if USE(BIGINT32)
-    case BigInt32Use:
-#endif
     case Int32Use:
     case SymbolUse:
     case ObjectUse: {
@@ -5524,31 +5294,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case IsBigInt: {
-#if USE(BIGINT32)
-        JSValueOperand value(this, node->child1());
-        GPRTemporary result(this);
-        GPRReg resultGPR = result.gpr();
-
-        Jump isCell = branchIfCell(value.gpr());
-
-        move(TrustedImm64(JSValue::BigInt32Mask), resultGPR);
-        and64(value.gpr(), result.gpr());
-        compare64(Equal, resultGPR, TrustedImm32(JSValue::BigInt32Tag), resultGPR);
-        Jump continuation = jump();
-
-        isCell.link(this);
-        GPRReg valueGPR = value.gpr();
-        compare8(Equal, Address(valueGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(HeapBigIntType), resultGPR);
-
-        continuation.link(this);
-        unblessedBooleanResult(resultGPR, node);
-#else
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
-        break;
-    }
-
     case NumberIsInteger: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value);
@@ -5612,9 +5357,6 @@ void SpeculativeJIT::compile(Node* node)
 
     case MapHash: {
         switch (node->child1().useKind()) {
-#if USE(BIGINT32)
-        case BigInt32Use:
-#endif
         case BooleanUse:
         case Int32Use:
         case SymbolUse:
@@ -6453,17 +6195,6 @@ void SpeculativeJIT::compile(Node* node)
                     isLittleEndian.link(this);
                 }
 
-#if USE(BIGINT32)
-                flushRegisters();
-                GPRFlushedCallResult result(this);
-                GPRReg resultGPR = result.gpr();
-                if (data.isSigned)
-                    callOperation(operationInt64ToBigInt, resultGPR, LinkableConstant::globalObject(*this, node), t2);
-                else
-                    callOperation(operationUInt64ToBigInt, resultGPR, LinkableConstant::globalObject(*this, node), t2);
-                exceptionCheck();
-                jsValueResult(resultGPR, node);
-#else
                 GPRTemporary result(this);
                 GPRTemporary scratch(this);
                 GPRReg resultGPR = result.gpr();
@@ -6478,7 +6209,6 @@ void SpeculativeJIT::compile(Node* node)
                     addSlowPathGenerator(slowPathCall(slowCases, this, operationUInt64ToBigInt, resultGPR, LinkableConstant::globalObject(*this, node), t2));
 
                 jsValueResult(resultGPR, node);
-#endif
                 break;
             }
             default:
