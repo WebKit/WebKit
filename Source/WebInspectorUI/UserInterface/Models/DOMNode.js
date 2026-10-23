@@ -959,10 +959,19 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         console.assert(WI.domManager.inspectedNode === this || !includeAncestors, this, includeAncestors);
 
-        let target = this.owningTarget || WI.assumingMainTarget();
+        // Listener ids are only unique per agent, so record the owning target (null for the page target) and the node.
+        let owningTarget = this.owningTarget;
+        let target = owningTarget || WI.assumingMainTarget();
         return target.DOMAgent.getEventListenersForNode.invoke({
             nodeId: this.backendNodeId,
             includeAncestors,
+        }).then((result) => {
+            for (let listener of result.listeners) {
+                listener.target = owningTarget;
+                if (listener.nodeId)
+                    listener.node = owningTarget ? WI.domManager.nodeForIdInFrameTarget(listener.nodeId, owningTarget) : WI.domManager.nodeForId(listener.nodeId);
+            }
+            return result;
         });
     }
 

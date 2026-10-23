@@ -30,6 +30,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         super();
 
         this._eventListener = eventListener;
+        this._supportsBreakpoint = WI.DOMManager.supportsEventListenerBreakpoints() && WI.DOMManager.supportsBreakpointForEventListener(eventListener);
 
         var rows = [];
         if (!options.hideType)
@@ -57,7 +58,8 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         this._updateDisabledToggle();
         this._eventListenerEnabledToggleElement.addEventListener("change", (event) => {
             this.isEventListenerDisabled = !this._eventListenerEnabledToggleElement.checked;
-            this.hasEventListenerBreakpoint = false;
+            if (this._supportsBreakpoint)
+                this.hasEventListenerBreakpoint = false;
         });
 
         let toggleLabel = document.createElement("span");
@@ -68,7 +70,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
 
         rows.push(new WI.DetailsSectionSimpleRow(toggleLabel, this._eventListenerEnabledToggleElement));
 
-        if (WI.DOMManager.supportsEventListenerBreakpoints()) {
+        if (this._supportsBreakpoint) {
             let toggleContainer = document.createElement("span");
 
             this._eventListenerBreakpointToggleElement = toggleContainer.appendChild(document.createElement("input"));
@@ -109,8 +111,6 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         let eventListenerTypes = new Map;
         for (let eventListener of eventListeners) {
             console.assert(eventListener.nodeId || eventListener.onWindow);
-            if (eventListener.nodeId)
-                eventListener.node = WI.domManager.nodeForId(eventListener.nodeId);
 
             let eventListenersForType = eventListenerTypes.get(eventListener.type);
             if (!eventListenersForType)
@@ -135,8 +135,6 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         let eventListenerTargets = new Map;
         for (let eventListener of eventListeners) {
             console.assert(eventListener.nodeId || eventListener.onWindow);
-            if (eventListener.nodeId)
-                eventListener.node = WI.domManager.nodeForId(eventListener.nodeId);
 
             let target = eventListener.onWindow ? windowTargetIdentifier : eventListener.node;
             let eventListenersForTarget = eventListenerTargets.get(target);
@@ -185,10 +183,11 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
                     group.isEventListenerDisabled = shouldDisable;
             });
 
-            if (WI.DOMManager.supportsEventListenerBreakpoints()) {
-                let shouldBreakpoint = groups.some((eventListener) => !eventListener.hasEventListenerBreakpoint);
+            let breakpointGroups = groups.filter((group) => group.supportsBreakpoint);
+            if (breakpointGroups.length) {
+                let shouldBreakpoint = breakpointGroups.some((group) => !group.hasEventListenerBreakpoint);
                 contextMenu.appendItem(shouldBreakpoint ? WI.UIString("Add Breakpoints") : WI.UIString("Delete Breakpoints"), () => {
-                    for (let group of groups)
+                    for (let group of breakpointGroups)
                         group.hasEventListenerBreakpoint = shouldBreakpoint;
                 });
             }
@@ -202,6 +201,8 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
     }
 
     // Public
+
+    get supportsBreakpoint() { return this._supportsBreakpoint; }
 
     get isEventListenerDisabled()
     {
