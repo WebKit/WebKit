@@ -5409,13 +5409,21 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(const Navig
             return false;
     }
 
+    // A provisional frame only has an initial empty document until it commits, so the document being
+    // navigated away from is in the frame it replaces.
+    Ref<Frame> frameWithTargetDocument = targetFrame;
+    if (auto* localTargetFrame = dynamicDowncast<LocalFrame>(targetFrame)) {
+        if (RefPtr frameBeingReplaced = localTargetFrame->frameBeingReplaced())
+            frameWithTargetDocument = frameBeingReplaced.releaseNonNull();
+    }
+
     // Only prevent navigations by third-party iframes or untrusted first-party iframes.
     bool isUntrustedIframe = requester.hasLoadedThirdPartyScript && requester.hasLoadedThirdPartyFrame;
-    if (canAccessAncestor(requester.securityOrigin, &targetFrame) && !isUntrustedIframe)
+    if (canAccessAncestor(requester.securityOrigin, frameWithTargetDocument.ptr()) && !isUntrustedIframe)
         return false;
 
     // Only prevent cross-site navigations.
-    RefPtr targetSecurityOrigin = targetFrame.frameDocumentSecurityOrigin();
+    RefPtr targetSecurityOrigin = frameWithTargetDocument->frameDocumentSecurityOrigin();
     if (!targetSecurityOrigin)
         return true;
 

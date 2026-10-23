@@ -30,7 +30,6 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-
 imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Failure ]
 media/audio-play-with-video-element-interrupted.html [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/same-origin-top-navigation-without-user-activation.window.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html?rest [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
 webaudio/MediaElementAudioSource/mediaelementaudiosourcenode-channel-count.html [ Pass Failure ]

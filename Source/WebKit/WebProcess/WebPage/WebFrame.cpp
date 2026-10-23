@@ -511,6 +511,7 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
     auto localFrame = parent ? LocalFrame::createProvisionalSubframe(*corePage, WTF::move(clientCreator), m_frameID, parameters.effectiveSandboxFlags, parameters.effectiveReferrerPolicy, parameters.scrollingMode, *parent, Ref { remoteFrame->frameTreeSyncData() }, parameters.pageZoomFactor, parameters.textZoomFactor) : LocalFrame::createMainFrame(*corePage, WTF::move(clientCreator), m_frameID, parameters.effectiveSandboxFlags, parameters.effectiveReferrerPolicy, nullptr, Ref { remoteFrame->frameTreeSyncData() }, parameters.pageZoomFactor, parameters.textZoomFactor);
     ASSERT(!m_provisionalFrame);
     m_provisionalFrame = localFrame.ptr();
+    localFrame->setFrameBeingReplaced(remoteFrame.get());
     m_frameIDBeforeProvisionalNavigation = parameters.frameIDBeforeProvisionalNavigation;
     localFrame->init();
     if (!localFrame->isMainFrame())
@@ -571,6 +572,8 @@ void WebFrame::commitProvisionalFrame()
     RefPtr localFrame = std::exchange(m_provisionalFrame, nullptr);
     if (!localFrame)
         return;
+
+    localFrame->setFrameBeingReplaced(nullptr);
 
     RefPtr remoteFrame = coreRemoteFrame();
     if (!remoteFrame) {

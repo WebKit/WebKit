@@ -35,7 +35,6 @@ imported/w3c/web-platform-tests/content-security-policy/inheritance/history-ifra
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_pause_noautoplay.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_play_noautoplay.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-pause-on-exit.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/same-origin-top-navigation-without-user-activation.window.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-with-navigation.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Failure ]
 imported/w3c/web-platform-tests/webmessaging/postMessage_cross_domain_image_transfer_2d.sub.htm [ Failure ]

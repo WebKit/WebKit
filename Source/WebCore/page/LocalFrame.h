@@ -188,6 +188,9 @@ public:
 
     bool documentIsBeingReplaced() const { return m_documentIsBeingReplaced; }
 
+    Frame* frameBeingReplaced() const { return m_frameBeingReplaced.get(); }
+    void setFrameBeingReplaced(Frame* frame) { m_frameBeingReplaced = frame; }
+
     bool hasHadUserInteraction() const { return m_hasHadUserInteraction; }
     void setHasHadUserInteraction() { m_hasHadUserInteraction = true; }
 
@@ -437,6 +440,7 @@ private:
     std::unique_ptr<OverrideScreenSize> m_overrideScreenSize;
 
     const WeakPtr<LocalFrame> m_rootFrame;
+    WeakPtr<Frame> m_frameBeingReplaced;
     SandboxFlags m_sandboxFlags;
     ReferrerPolicy m_parentFrameOrOpenerReferrerPolicy;
     const UniqueRef<EventHandler> m_eventHandler;
