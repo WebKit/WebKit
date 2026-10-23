@@ -135,7 +135,12 @@ promise_test(async (t) => {
             reportingEndpoint: '',
             reportOnlyReportingEndpoint: '',
         },
-        documentIsolationPolicy: 0,
+        documentIsolationPolicy: {
+            value: 0,
+            reportOnlyValue: 0,
+            reportingEndpoint: '',
+            reportOnlyReportingEndpoint: '',
+        },
         originalRequestHeaders: { commonHeaders: [], uncommonHeaders: [] },
         preflightPolicy: 0,
         shouldEnableCrossOriginResourcePolicy: false,

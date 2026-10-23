@@ -26,9 +26,15 @@
 #include "config.h"
 #include "DocumentIsolationPolicy.h"
 
+#include "CORPViolationReportBody.h"
+#include "FormData.h"
 #include "HTTPHeaderNames.h"
+#include "JSFetchRequestDestination.h"
 #include "RFC8941.h"
+#include "Report.h"
+#include "ReportingClient.h"
 #include "ResourceResponse.h"
+#include "ViolationReportType.h"
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -84,6 +90,29 @@ void DocumentIsolationPolicy::addPolicyHeadersTo(ResourceResponse& response) con
     };
     addHeader(HTTPHeaderName::DocumentIsolationPolicy, value, reportingEndpoint);
     addHeader(HTTPHeaderName::DocumentIsolationPolicyReportOnly, reportOnlyValue, reportOnlyReportingEndpoint);
+}
+
+void sendDocumentIsolationPolicyCORPViolation(ReportingClient& reportingClient, const URL& contextURL, const String& endpoint, COEPDisposition disposition, FetchOptions::Destination destination, const URL& blockedURL)
+{
+    // https://fetch.spec.whatwg.org/#serialize-a-response-url-for-reporting
+    URL serializedBlockedURL = blockedURL;
+    serializedBlockedURL.removeCredentials();
+    serializedBlockedURL.removeFragmentIdentifier();
+
+    Ref reportBody = CORPViolationReportBody::create(disposition, serializedBlockedURL, destination);
+    Ref report = Report::create("dip"_s, contextURL.string(), WTF::move(reportBody));
+    reportingClient.notifyReportObservers(WTF::move(report));
+
+    if (endpoint.isEmpty())
+        return;
+
+    Ref reportFormData = Report::createReportFormDataForViolation("dip"_s, contextURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
+        body.setString("type"_s, "corp"_s);
+        body.setString("blockedURL"_s, serializedBlockedURL.string());
+        body.setString("destination"_s, convertEnumerationToString(destination));
+        body.setString("disposition"_s, disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s);
+    });
+    reportingClient.sendReportToEndpoints(contextURL, { }, singleElementSpan(endpoint), WTF::move(reportFormData), ViolationReportType::CORPViolation);
 }
 
 } // namespace WebCore

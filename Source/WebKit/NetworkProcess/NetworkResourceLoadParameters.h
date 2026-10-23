@@ -91,7 +91,7 @@ struct NetworkResourceLoadParameters {
     URL frameURL { };
     WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy { };
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy { };
-    WebCore::DocumentIsolationPolicyValue documentIsolationPolicy { WebCore::DocumentIsolationPolicyValue::None };
+    WebCore::DocumentIsolationPolicy documentIsolationPolicy { };
     WebCore::HTTPHeaderMap originalRequestHeaders { };
     WebCore::PreflightPolicy preflightPolicy { WebCore::PreflightPolicy::Consider };
     bool shouldEnableCrossOriginResourcePolicy { false };

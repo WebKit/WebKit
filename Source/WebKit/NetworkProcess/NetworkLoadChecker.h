@@ -99,7 +99,7 @@ public:
     void setCSPResponseHeaders(WebCore::ContentSecurityPolicyResponseHeaders&& headers) { m_cspResponseHeaders = WTF::move(headers); }
     void setParentCrossOriginEmbedderPolicy(const WebCore::CrossOriginEmbedderPolicy& parentCrossOriginEmbedderPolicy) { m_parentCrossOriginEmbedderPolicy = parentCrossOriginEmbedderPolicy; }
     void setCrossOriginEmbedderPolicy(const WebCore::CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy) { m_crossOriginEmbedderPolicy = crossOriginEmbedderPolicy; }
-    void setDocumentIsolationPolicy(WebCore::DocumentIsolationPolicyValue documentIsolationPolicy) { m_documentIsolationPolicy = documentIsolationPolicy; }
+    void setDocumentIsolationPolicy(const WebCore::DocumentIsolationPolicy& documentIsolationPolicy) { m_documentIsolationPolicy = documentIsolationPolicy; }
 #if ENABLE(CONTENT_EXTENSIONS)
     void setContentExtensionController(URL&& mainDocumentURL, URL&& frameURL, std::optional<UserContentControllerIdentifier> identifier)
     {
@@ -185,7 +185,7 @@ private:
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> m_cspResponseHeaders;
     WebCore::CrossOriginEmbedderPolicy m_parentCrossOriginEmbedderPolicy;
     WebCore::CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
-    WebCore::DocumentIsolationPolicyValue m_documentIsolationPolicy { WebCore::DocumentIsolationPolicyValue::None };
+    WebCore::DocumentIsolationPolicy m_documentIsolationPolicy;
 #if ENABLE(CONTENT_EXTENSIONS)
     URL m_mainDocumentURL;
     URL m_frameURL;

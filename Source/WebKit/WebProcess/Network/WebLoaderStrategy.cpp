@@ -397,7 +397,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
 
     if (RefPtr document = frame->document()) {
         parameters.crossOriginEmbedderPolicy = document->crossOriginEmbedderPolicy();
-        parameters.documentIsolationPolicy = document->documentIsolationPolicy().value;
+        parameters.documentIsolationPolicy = document->documentIsolationPolicy();
         parameters.isClearSiteDataHeaderEnabled = document->settings().clearSiteDataHTTPHeaderEnabled();
         parameters.isClearSiteDataExecutionContextEnabled = document->settings().clearSiteDataExecutionContextsSupportEnabled();
         parameters.globalPrivacyControlEnabled = document->settings().globalPrivacyControlEnabled().value_or(false);

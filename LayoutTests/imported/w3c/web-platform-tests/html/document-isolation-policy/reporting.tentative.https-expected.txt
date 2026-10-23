@@ -1,0 +1,7 @@
+
+PASS Document-Isolation-Policy-Report-Only reports without blocking or isolating
+PASS Document-Isolation-Policy reports what it blocks without a report-only policy
+PASS ReportingObserver can observe dip reports by type
+PASS A response that Cross-Origin-Embedder-Policy and Document-Isolation-Policy both block gets a report for each
+PASS Document-Isolation-Policy reports go to the report-to endpoints
+

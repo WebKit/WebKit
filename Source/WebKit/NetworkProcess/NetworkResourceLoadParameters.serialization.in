@@ -64,7 +64,7 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
     URL frameURL;
     WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy;
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
-    WebCore::DocumentIsolationPolicyValue documentIsolationPolicy;
+    WebCore::DocumentIsolationPolicy documentIsolationPolicy;
     WebCore::HTTPHeaderMap originalRequestHeaders;
     
     WebCore::PreflightPolicy preflightPolicy;

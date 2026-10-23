@@ -37,6 +37,7 @@
 #include "ReportingScope.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/SortedArrayMap.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -46,14 +47,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ReportingObserver);
 
 static bool isVisibleToReportingObservers(const String& type)
 {
-    static NeverDestroyed<Vector<String>> visibleTypes(std::initializer_list<String> {
-        String { "csp-violation"_s },
-        String { "coep"_s },
-        String { "deprecation"_s },
-        String { "test"_s },
-        String { "integrity-violation"_s },
-    });
-    return visibleTypes->contains(type);
+    static constexpr SortedArraySet visibleTypes { WTF::toArray<ComparableASCIILiteral>({
+        "coep"_s,
+        "csp-violation"_s,
+        "deprecation"_s,
+        "dip"_s,
+        "integrity-violation"_s,
+        "test"_s,
+    }) };
+    return visibleTypes.contains(type);
 }
 
 Ref<ReportingObserver> ReportingObserver::create(ScriptExecutionContext& scriptExecutionContext, Ref<ReportingObserverCallback>&& callback, Options&& options)

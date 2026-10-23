@@ -211,8 +211,8 @@ static URL contextURLforCORPViolation(NetworkResourceLoader& loader)
     return url.isValid() ? url : aboutBlankURL();
 }
 
-// https://fetch.spec.whatwg.org/#cross-origin-resource-policy-check
-static std::optional<ResourceError> performCORPCheck(const CrossOriginEmbedderPolicy& embedderCOEP, DocumentIsolationPolicyValue documentIsolationPolicy, const SecurityOrigin& embedderOrigin, const URL& url, ResourceResponse& response, ForNavigation forNavigation, NetworkResourceLoader* loader, const WebCore::OriginAccessPatterns& patterns)
+// https://fetch.spec.whatwg.org/#cross-origin-resource-policy-check, as https://wicg.github.io/document-isolation-policy/#dip-corp modifies it.
+static std::optional<ResourceError> performCORPCheck(const CrossOriginEmbedderPolicy& embedderCOEP, const DocumentIsolationPolicy& documentIsolationPolicy, const SecurityOrigin& embedderOrigin, const URL& url, ResourceResponse& response, ForNavigation forNavigation, NetworkResourceLoader* loader, const WebCore::OriginAccessPatterns& patterns)
 {
     if (auto error = validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue::UnsafeNone, DocumentIsolationPolicyValue::None, embedderOrigin, url, response, forNavigation, patterns))
         return error;
@@ -222,20 +222,28 @@ static std::optional<ResourceError> performCORPCheck(const CrossOriginEmbedderPo
             sendCOEPCORPViolation(*loader, contextURLforCORPViolation(*loader), embedderCOEP.reportOnlyReportingEndpoint, COEPDisposition::Reporting, loader->parameters().options.destination, loader->firstResponseURL());
     }
 
-    if (embedderCOEP.value == CrossOriginEmbedderPolicyValue::RequireCORP) {
-        if (auto error = validateCrossOriginResourcePolicy(embedderCOEP.value, DocumentIsolationPolicyValue::None, embedderOrigin, url, response, forNavigation, patterns)) {
-            if (loader)
-                sendCOEPCORPViolation(*loader, contextURLforCORPViolation(*loader), embedderCOEP.reportingEndpoint, COEPDisposition::Enforce, loader->parameters().options.destination, loader->firstResponseURL());
-            return error;
-        }
+    if (documentIsolationPolicy.reportOnlyValue == DocumentIsolationPolicyValue::IsolateAndRequireCORP && loader) {
+        if (validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue::UnsafeNone, documentIsolationPolicy.reportOnlyValue, embedderOrigin, url, response, forNavigation, patterns))
+            sendDocumentIsolationPolicyCORPViolation(*loader, contextURLforCORPViolation(*loader), documentIsolationPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, loader->parameters().options.destination, loader->firstResponseURL());
     }
 
-    // FIXME: Queue document isolation policy CORP violation reports.
-    if (documentIsolationPolicy == DocumentIsolationPolicyValue::IsolateAndRequireCORP) {
-        if (auto error = validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue::UnsafeNone, documentIsolationPolicy, embedderOrigin, url, response, forNavigation, patterns))
-            return error;
+    // A load both policies block gets a report for each.
+    std::optional<ResourceError> error;
+    if (embedderCOEP.value == CrossOriginEmbedderPolicyValue::RequireCORP) {
+        error = validateCrossOriginResourcePolicy(embedderCOEP.value, DocumentIsolationPolicyValue::None, embedderOrigin, url, response, forNavigation, patterns);
+        if (error && loader)
+            sendCOEPCORPViolation(*loader, contextURLforCORPViolation(*loader), embedderCOEP.reportingEndpoint, COEPDisposition::Enforce, loader->parameters().options.destination, loader->firstResponseURL());
     }
-    return std::nullopt;
+
+    if (documentIsolationPolicy.value == DocumentIsolationPolicyValue::IsolateAndRequireCORP) {
+        if (auto documentIsolationPolicyError = validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue::UnsafeNone, documentIsolationPolicy.value, embedderOrigin, url, response, forNavigation, patterns)) {
+            if (loader)
+                sendDocumentIsolationPolicyCORPViolation(*loader, contextURLforCORPViolation(*loader), documentIsolationPolicy.reportingEndpoint, COEPDisposition::Enforce, loader->parameters().options.destination, loader->firstResponseURL());
+            if (!error)
+                error = WTF::move(documentIsolationPolicyError);
+        }
+    }
+    return error;
 }
 
 ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& request, ResourceResponse& response)
@@ -266,7 +274,7 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
 
     if (m_options.mode == FetchOptions::Mode::Navigate || m_isSameOriginRequest) {
         if (m_parentOrigin && m_options.mode == FetchOptions::Mode::Navigate) {
-            if (auto error = performCORPCheck(m_parentCrossOriginEmbedderPolicy, DocumentIsolationPolicyValue::None, *m_parentOrigin, m_url, response, ForNavigation::Yes, RefPtr { m_networkResourceLoader }.get(), originAccessPatterns()))
+            if (auto error = performCORPCheck(m_parentCrossOriginEmbedderPolicy, { }, *m_parentOrigin, m_url, response, ForNavigation::Yes, RefPtr { m_networkResourceLoader }.get(), originAccessPatterns()))
                 return WTF::move(*error);
         }
         response.setTainting(ResourceResponse::Tainting::Basic);
