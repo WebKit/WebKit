@@ -282,6 +282,84 @@ if (NOT USE_APPLE_INTERNAL_SDK)
     unset(_availability_overlay_yaml)
 endif ()
 
+# Layer WebKit's sparse additions SDK over the iOS family's public SDKs, as
+# Configurations/SDKAdditions.xcconfig does for the Xcode build.
+if (NOT USE_APPLE_INTERNAL_SDK AND WEBKIT_SDK_IS_IOS_FAMILY)
+    string(REGEX MATCH "^[0-9]+" _sdk_major_version "${WEBKIT_SDK_VERSION}")
+    set(WEBKIT_SDK_ADDITIONS_DIR "${CMAKE_SOURCE_DIR}/WebKitLibraries/SDKs/${WEBKIT_SDK_NAME}${_sdk_major_version}.0-additions.sdk")
+    if (NOT EXISTS "${WEBKIT_SDK_ADDITIONS_DIR}/SDKSettings.plist")
+        message(FATAL_ERROR "The public ${WEBKIT_SDK_NAME}${WEBKIT_SDK_VERSION} SDK needs ${WEBKIT_SDK_ADDITIONS_DIR}")
+    endif ()
+
+    # Let find_library() see the private framework stubs, since cross-compiles
+    # search only CMAKE_FIND_ROOT_PATH.
+    list(APPEND CMAKE_FIND_ROOT_PATH "${WEBKIT_SDK_ADDITIONS_DIR}")
+    list(APPEND CMAKE_FRAMEWORK_PATH "${WEBKIT_SDK_ADDITIONS_DIR}/System/Library/PrivateFrameworks")
+    list(APPEND CMAKE_LIBRARY_PATH "${WEBKIT_SDK_ADDITIONS_DIR}/System/Library/PrivateFrameworks/FontServices.framework")
+
+    # Symlink the other SDKs' headers that the base SDK lacks, as WTF's Xcode
+    # build phase does.
+    set(WEBKIT_DERIVED_SDK_HEADERS_DIR "${CMAKE_BINARY_DIR}/SDKAdditions")
+    foreach (_file_list IN ITEMS SymlinkedHeaders SymlinkedHeaders-output)
+        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${WEBKIT_SDK_ADDITIONS_DIR}/${_file_list}.xcfilelist")
+        file(READ "${WEBKIT_SDK_ADDITIONS_DIR}/${_file_list}.xcfilelist" _paths)
+        foreach (_sdk IN ITEMS macosx iphoneos)
+            if (_paths MATCHES "\\$\\((WK_)?SDK_DIR_${_sdk}\\)")
+                WEBKIT_XCRUN(_sdk_dir --sdk ${_sdk} --show-sdk-path)
+                if (NOT IS_DIRECTORY "${_sdk_dir}")
+                    message(FATAL_ERROR "${WEBKIT_SDK_ADDITIONS_DIR}/${_file_list}.xcfilelist needs the ${_sdk} SDK, which xcrun cannot find")
+                endif ()
+                string(REGEX REPLACE "\\$\\((WK_)?SDK_DIR_${_sdk}\\)" "${_sdk_dir}" _paths "${_paths}")
+            endif ()
+        endforeach ()
+        string(REPLACE "$(WK_DERIVED_SDK_HEADERS_DIR)" "${WEBKIT_DERIVED_SDK_HEADERS_DIR}" _paths "${_paths}")
+        if (_paths MATCHES "\\$\\(([A-Za-z0-9_]+)\\)")
+            message(FATAL_ERROR "${WEBKIT_SDK_ADDITIONS_DIR}/${_file_list}.xcfilelist uses unsupported build setting $(${CMAKE_MATCH_1})")
+        endif ()
+        file(WRITE "${CMAKE_BINARY_DIR}/${_file_list}.xcfilelist" "${_paths}")
+    endforeach ()
+
+    # Start from an empty directory so that symlinks the file lists no longer
+    # name cannot shadow SDK headers.
+    file(REMOVE_RECURSE "${WEBKIT_DERIVED_SDK_HEADERS_DIR}")
+
+    # Create the outputs' parent directories, as Xcode does before a script phase runs.
+    file(STRINGS "${CMAKE_BINARY_DIR}/SymlinkedHeaders-output.xcfilelist" _outputs)
+    foreach (_output IN LISTS _outputs)
+        get_filename_component(_output_dir "${_output}" DIRECTORY)
+        file(MAKE_DIRECTORY "${_output_dir}")
+    endforeach ()
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E env
+            "SCRIPT_INPUT_FILE_LIST_0=${CMAKE_BINARY_DIR}/SymlinkedHeaders.xcfilelist"
+            "SCRIPT_OUTPUT_FILE_LIST_0=${CMAKE_BINARY_DIR}/SymlinkedHeaders-output.xcfilelist"
+            "WK_DERIVED_SDK_HEADERS_DIR=${WEBKIT_DERIVED_SDK_HEADERS_DIR}"
+            "SDKROOT=${CMAKE_OSX_SYSROOT}"
+            "PLATFORM_NAME=${WEBKIT_SDK_NAME}"
+            "SDK_DIR_WebKitSDKAdditions_${WEBKIT_SDK_NAME}=${WEBKIT_SDK_ADDITIONS_DIR}"
+            ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Source/WTF/Scripts/symlink-public-sdk-headers-for-embedded-platforms"
+        OUTPUT_QUIET
+        COMMAND_ERROR_IS_FATAL ANY)
+
+    # Put the symlinks on the search paths that Xcode derives from the additions
+    # SDK's SYSTEM_HEADER_SEARCH_PATHS and SYSTEM_FRAMEWORK_SEARCH_PATHS.
+    add_compile_options(
+        "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-isystem${WEBKIT_DERIVED_SDK_HEADERS_DIR}/usr/include>"
+        "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${WEBKIT_DERIVED_SDK_HEADERS_DIR}/System/Library/Frameworks>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -isystem${WEBKIT_DERIVED_SDK_HEADERS_DIR}/usr/include>"
+        "$<$<COMPILE_LANGUAGE:Swift>:-F${WEBKIT_DERIVED_SDK_HEADERS_DIR}/System/Library/Frameworks>"
+    )
+
+    unset(_file_list)
+    unset(_output)
+    unset(_output_dir)
+    unset(_outputs)
+    unset(_paths)
+    unset(_sdk)
+    unset(_sdk_dir)
+    unset(_sdk_major_version)
+endif ()
+
 if (NOT USE_APPLE_INTERNAL_SDK AND EXISTS "/usr/local/include/WebKitAdditions" AND NOT EXISTS "/usr/local/include/AppleFeatures/AppleFeatures.h")
     set(_apple_features_stub "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures")
     file(MAKE_DIRECTORY "${_apple_features_stub}")
@@ -543,10 +621,14 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
     # its private frameworks via find_library(HINTS ...) so it doesn't need this.
     # The build directory comes first: WebKit, WebCore and friends are in the SDK
     # too, and its stubs export none of the SPI this build links against.
+    # Search the SDK additions' stubs last so they never shadow a real framework.
     if (CMAKE_OSX_SYSROOT)
         add_link_options("-F${CMAKE_BINARY_DIR}")
         add_link_options("-F${CMAKE_OSX_SYSROOT}/System/Library/Frameworks")
         add_link_options("-F${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
+        if (WEBKIT_SDK_ADDITIONS_DIR)
+            add_link_options("-F${WEBKIT_SDK_ADDITIONS_DIR}/System/Library/PrivateFrameworks")
+        endif ()
     endif ()
 endif ()
 

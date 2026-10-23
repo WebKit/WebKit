@@ -1233,10 +1233,15 @@ function(_webkit_platform_args_clang_prefix _outvar _depfile _mt_target _wtf_inc
         -include cmakeconfig.h
         -include wtf/Platform.h
     )
-    # Custom commands don't inherit add_compile_options; mirror the SDK stubs
-    # OptionsCocoa.cmake feeds C-family compiles, which Platform.h needs too.
+    # Custom commands don't inherit add_compile_options, so mirror the SDK stubs
+    # and headers OptionsCocoa.cmake feeds C-family compiles, which Platform.h
+    # needs too.
     if (WEBKIT_GENERATED_STUBS_INCLUDE_DIR)
         list(APPEND _cmd -isystem "${WEBKIT_GENERATED_STUBS_INCLUDE_DIR}")
+    endif ()
+    if (WEBKIT_DERIVED_SDK_HEADERS_DIR)
+        list(APPEND _cmd -isystem "${WEBKIT_DERIVED_SDK_HEADERS_DIR}/usr/include"
+            -iframework "${WEBKIT_DERIVED_SDK_HEADERS_DIR}/System/Library/Frameworks")
     endif ()
     set(${_outvar} ${_cmd} PARENT_SCOPE)
 endfunction()
