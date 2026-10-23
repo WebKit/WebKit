@@ -472,7 +472,7 @@ void CoordinatedPlatformLayer::setContentsRect(const FloatRect& contentsRect)
 
     m_contentsRect = contentsRect;
     m_pendingChanges.add(Change::ContentsRect);
-    damageWholeLayer();
+    damageWholeLayer(DamageGroup::Contents);
     notifyCompositionRequired();
 }
 
@@ -496,7 +496,7 @@ void CoordinatedPlatformLayer::setContentsClippingRect(const FloatRoundedRect& c
 
     m_contentsClippingRect = contentsClippingRect;
     m_pendingChanges.add(Change::ContentsClippingRect);
-    damageWholeLayer();
+    damageWholeLayer(DamageGroup::Contents);
     notifyCompositionRequired();
 }
 
@@ -508,7 +508,7 @@ void CoordinatedPlatformLayer::setContentsClipShapePath(const Path& path)
 
     m_contentsClipShapePath = path;
     m_pendingChanges.add(Change::ContentsClipShapePath);
-    damageWholeLayer();
+    damageWholeLayer(DamageGroup::Contents);
     notifyCompositionRequired();
 }
 
@@ -540,9 +540,9 @@ void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlat
     m_pendingChanges.add(Change::ContentsBuffer);
 #if ENABLE(DAMAGE_TRACKING)
     if (dirtyRegion)
-        addDamage(WTF::move(*dirtyRegion));
+        addDamage(WTF::move(*dirtyRegion), DamageGroup::ContentsBuffer);
     else
-        damageWholeLayer();
+        damageWholeLayer(DamageGroup::ContentsBuffer);
 #else
     UNUSED_PARAM(dirtyRegion);
 #endif
@@ -594,7 +594,7 @@ void CoordinatedPlatformLayer::setContentsImage(NativeImage* image)
         m_imageBackingStore.current = nullptr;
     }
     m_pendingChanges.add(Change::ContentsImage);
-    damageWholeLayer();
+    damageWholeLayer(DamageGroup::Contents);
     notifyCompositionRequired();
 }
 
@@ -649,18 +649,19 @@ void CoordinatedPlatformLayer::setDirtyRegion(Damage&& damage)
 }
 
 #if ENABLE(DAMAGE_TRACKING)
-void CoordinatedPlatformLayer::addDamage(Damage&& damage)
+void CoordinatedPlatformLayer::addDamage(Damage&& damage, DamageGroup group)
 {
     assertIsHeld(m_lock);
-    if (!m_damage)
-        m_damage = WTF::move(damage);
+    auto& groupDamage = m_damage[group];
+    if (!groupDamage)
+        groupDamage = WTF::move(damage);
     else
-        m_damage->add(damage);
+        groupDamage->add(damage);
     m_pendingChanges.add(Change::Damage);
 }
 #endif
 
-void CoordinatedPlatformLayer::damageWholeLayer()
+void CoordinatedPlatformLayer::damageWholeLayer(DamageGroup group)
 {
 #if ENABLE(DAMAGE_TRACKING)
     assertIsHeld(m_lock);
@@ -668,7 +669,9 @@ void CoordinatedPlatformLayer::damageWholeLayer()
     if (!m_damagePropagationEnabled || m_size.isEmpty())
         return;
 
-    addDamage(Damage { m_size, Damage::Mode::Full });
+    addDamage(Damage { m_size, Damage::Mode::Full }, group);
+#else
+    UNUSED_PARAM(group);
 #endif
 }
 
@@ -1220,8 +1223,10 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
 
 #if ENABLE(DAMAGE_TRACKING)
         if (m_pendingChanges.contains(Change::Damage)) {
-            ASSERT(m_damage.has_value());
-            layer.setDamage(*std::exchange(m_damage, std::nullopt));
+            for (auto& damage : m_damage) {
+                if (damage)
+                    layer.setDamage(*std::exchange(damage, std::nullopt));
+            }
             m_pendingChanges.remove(Change::Damage);
         }
 #endif
@@ -1341,6 +1346,8 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
             layer.setImageBackingStore(m_imageBackingStore.current);
             m_pendingChanges.remove(Change::ContentsImage);
         }
+
+        flushDamage(DamageGroup::Contents, layer);
     }
 
     if (reasons.contains(CompositionReason::RenderingUpdate)) {
@@ -1509,22 +1516,35 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
 
         if (m_backingStoreProxy)
             layer.updateBackingStore(m_backingStoreProxy->takePendingUpdate(), m_contentsScale);
+
+        flushDamage(DamageGroup::RenderingUpdate, layer);
     }
 
     if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::VideoFrame, CompositionReason::AsyncScrolling })) {
-#if ENABLE(DAMAGE_TRACKING)
-        if (m_pendingChanges.contains(Change::Damage)) {
-            ASSERT(m_damage.has_value());
-            layer.addDamage(*std::exchange(m_damage, std::nullopt));
-            m_pendingChanges.remove(Change::Damage);
-        }
-#endif
+        flushDamage(DamageGroup::ContentsBuffer, layer);
         if (m_pendingChanges.contains(Change::ContentsBuffer)) {
             m_contentsBuffer.hasCommitted = !!m_contentsBuffer.pending;
             layer.setContentsBuffer(WTF::move(m_contentsBuffer.pending));
             m_pendingChanges.remove(Change::ContentsBuffer);
         }
     }
+}
+
+void CoordinatedPlatformLayer::flushDamage(DamageGroup group, SkiaCompositingLayer& layer)
+{
+#if ENABLE(DAMAGE_TRACKING)
+    assertIsHeld(m_lock);
+    auto& damage = m_damage[group];
+    if (!damage)
+        return;
+
+    layer.addDamage(*std::exchange(damage, std::nullopt));
+    if (std::ranges::none_of(m_damage, [](const auto& groupDamage) { return groupDamage.has_value(); }))
+        m_pendingChanges.remove(Change::Damage);
+#else
+    UNUSED_PARAM(group);
+    UNUSED_PARAM(layer);
+#endif
 }
 #endif
 
