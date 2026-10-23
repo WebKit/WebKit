@@ -37,7 +37,11 @@ const JSCallingConvention& jsCallingConvention()
     static LazyNeverDestroyed<JSCallingConvention> staticJSCallingConvention;
     static std::once_flag staticJSCCallingConventionFlag;
     std::call_once(staticJSCCallingConventionFlag, [] () {
+#if ENABLE(ASSEMBLER)
         staticJSCallingConvention.construct(Vector<JSValueRegs>(), Vector<FPRReg>(), RegisterSet::calleeSaveRegisters());
+#else
+        staticJSCallingConvention.construct(Vector<JSValueRegs>(), Vector<FPRReg>());
+#endif
     });
 
     return staticJSCallingConvention;
@@ -48,6 +52,10 @@ const WasmCallingConvention& wasmCallingConvention()
     static LazyNeverDestroyed<WasmCallingConvention> staticWasmCallingConvention;
     static std::once_flag staticWasmCallingConventionFlag;
     std::call_once(staticWasmCallingConventionFlag, [] () {
+#if !ENABLE(ASSEMBLER)
+        // No physical argument registers exist in CLoop; marshal all values on stack.
+        staticWasmCallingConvention.construct(Vector<JSValueRegs>(), Vector<FPRReg>(), Vector<GPRReg>());
+#else
 #if USE(JSVALUE64) // One value per GPR
         constexpr unsigned numberOfArgumentJSRs = GPRInfo::numberOfArgumentRegisters;
 #elif USE(JSVALUE32_64) // One value per consecutive GPR pair
@@ -90,6 +98,7 @@ const WasmCallingConvention& wasmCallingConvention()
 #endif
 
         staticWasmCallingConvention.construct(WTF::move(jsrArgumentRegisters), WTF::move(fprArgumentRegisters), WTF::move(scratchGPRs), RegisterSet::calleeSaveRegisters());
+#endif // ENABLE(ASSEMBLER)
     });
 
     return staticWasmCallingConvention;
