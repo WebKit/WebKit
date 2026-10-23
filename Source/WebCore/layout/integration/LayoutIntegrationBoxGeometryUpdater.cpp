@@ -261,6 +261,14 @@ static LayoutUnit fontMetricsBasedBaseline(const RenderBox& renderBox)
     return LayoutUnit { fontMetrics.ascent() + (renderBox.lineHeight() - fontHeight) / 2 };
 }
 
+static bool usesLegacyScrollContainerBaseline(const RenderBlockFlow& blockFlow)
+{
+    // "However, for legacy reasons if its baseline-source is auto (the initial value) a block-level or inline-level block container
+    // that is a block-axis scroll container always has a last baseline set, whose baselines all correspond to its block-end margin edge."
+    // https://drafts.csswg.org/css-align-3/#baseline-export
+    return blockFlow.style().baselineSource() == BaselineSource::Auto;
+}
+
 static bool shouldUseMarginBoxAsBaseline(const RenderBox& renderBox)
 {
     if (is<RenderTable>(renderBox))
@@ -269,7 +277,7 @@ static bool shouldUseMarginBoxAsBaseline(const RenderBox& renderBox)
     if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderBox)) {
         // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or if its 'overflow'
         // property has a computed value other than 'visible'. see https://www.w3.org/TR/CSS22/visudet.html
-        if (blockFlow->style().display() == Style::DisplayType::InlineFlowRoot && !blockFlow->style().isOverflowVisible())
+        if (blockFlow->style().display() == Style::DisplayType::InlineFlowRoot && !blockFlow->style().isOverflowVisible() && usesLegacyScrollContainerBaseline(*blockFlow))
             return true;
 
         if (blockFlow->childrenInline() && !blockFlow->hasContentfulInlineOrBlockLine() && !blockFlow->hasLineIfEmpty())
@@ -284,6 +292,9 @@ static bool shouldUseMarginBoxAsBaseline(const RenderBox& renderBox)
         if (scrollableArea) {
             if (scrollableArea->marquee())
                 return true;
+
+            if (!usesLegacyScrollContainerBaseline(*blockFlow))
+                return false;
 
             if (blockFlow->containingBlock()->writingMode().isHorizontal())
                 return scrollableArea->verticalScrollbar() || scrollableArea->scrollOffset().y();
@@ -506,7 +517,7 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
     }
 
     if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderBox)) {
-        if (shouldUseMarginBoxAsBaseline(*blockFlow) || blockFlow->style().overflowY() != Overflow::Visible)
+        if (shouldUseMarginBoxAsBaseline(*blockFlow) || (blockFlow->style().overflowY() != Overflow::Visible && usesLegacyScrollContainerBaseline(*blockFlow)))
             return marginBoxBottom;
 
         // Note that here we only take the left and bottom into consideration. Our caller takes the right and top into consideration.
