@@ -1509,8 +1509,24 @@ void GraphicsContextGLWKC::refreshFramebufferTarget()
         return;
     }
 
-    if (framebufferStatus(m_boundFramebuffer) != GL_FRAMEBUFFER_COMPLETE_VALUE)
+    if (framebufferStatus(m_boundFramebuffer) != GL_FRAMEBUFFER_COMPLETE_VALUE) {
+        // Attachment changes can make the currently bound FBO incomplete.
+        // Never leave GX2 pointing at its now-invalid attachment view: switch
+        // native state back to the owned screen targets while draw validation
+        // continues to reject rendering to the incomplete WebGL framebuffer.
+        m_native.colorBuffer = m_native.hasColorSurface ? &m_native.ownedColorBuffer : nullptr;
+        m_native.depthBuffer = m_native.hasDepthSurface ? &m_native.ownedDepthBuffer : nullptr;
+        WKC::GLGX2::bindWUTRenderTarget(m_native);
+        if (m_requestedDepthTest)
+            m_driver.enable(WKC::GLGX2::Capability::DepthTest);
+        else
+            m_driver.disable(WKC::GLGX2::Capability::DepthTest);
+        if (m_requestedStencilTest)
+            m_driver.enable(WKC::GLGX2::Capability::StencilTest);
+        else
+            m_driver.disable(WKC::GLGX2::Capability::StencilTest);
         return;
+    }
     auto framebuffer = m_framebuffers.find(m_boundFramebuffer);
     if (framebuffer == m_framebuffers.end())
         return;
