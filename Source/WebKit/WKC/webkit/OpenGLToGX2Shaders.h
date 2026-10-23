@@ -60,6 +60,10 @@ struct ProgramInfo {
 class ShaderPrograms final {
 public:
     explicit ShaderPrograms(const ShaderBackend&);
+    ~ShaderPrograms();
+
+    ShaderPrograms(const ShaderPrograms&) = delete;
+    ShaderPrograms& operator=(const ShaderPrograms&) = delete;
 
     ShaderResult createShader(ShaderStage, ShaderName&);
     ShaderResult setSource(ShaderName, const char*, size_t);
