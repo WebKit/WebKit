@@ -15,6 +15,7 @@
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+import ctypes
 import errno
 import os
 import select
@@ -22,7 +23,7 @@ import socket
 import struct
 import subprocess
 import sys
-from signal import alarm, signal, SIGALRM
+from signal import alarm, signal, SIGALRM, SIGKILL
 from io import BytesIO
 
 
@@ -49,6 +50,17 @@ SHUTDOWN_FAILED_STR = 'afterAll'
 
 class TestTimeout(Exception):
     pass
+
+
+PR_SET_PDEATHSIG = 1
+
+
+def _die_with_runner():
+    ctypes.CDLL(None, use_errno=True).prctl(PR_SET_PDEATHSIG, SIGKILL)
+
+
+# Run test programs in their own session, dying with the runner (Linux only).
+ISOLATED_SESSION_ARGS = dict(start_new_session=True, preexec_fn=_die_with_runner) if sys.platform.startswith('linux') else {}
 
 
 class Message(object):
@@ -265,7 +277,7 @@ class GLibTestRunner(object):
         if not self._results:
             sys.stdout.write('TEST: %s...\n' % self._test_binary)
             sys.stdout.flush()
-        p = subprocess.Popen(command, stderr=subprocess.PIPE, env=env, pass_fds=[pipe_w])
+        p = subprocess.Popen(command, stderr=subprocess.PIPE, env=env, pass_fds=[pipe_w], **ISOLATED_SESSION_ARGS)
         self._stderr_fd = p.stderr.fileno()
         os.close(pipe_w)
 
