@@ -105,9 +105,9 @@ CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferences::captionDispla
 void CaptionUserPreferences::setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode mode)
 {
     m_displayMode = mode;
-    if (testingMode() && mode != CaptionDisplayMode::AlwaysOn) {
-        setUserPrefersCaptions(false);
-        setUserPrefersSubtitles(false);
+    if (testingMode()) {
+        setUserPrefersCaptions(mode == CaptionDisplayMode::AlwaysOn);
+        setUserPrefersSubtitles(mode == CaptionDisplayMode::AlwaysOn);
     }
     notify();
 }

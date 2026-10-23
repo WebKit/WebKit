@@ -890,7 +890,8 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
             },
             [&] (Ref<TextTrack>& selectedTextTrack) {
                 protectedThis->savePreviouslySelectedTextTrackIfNecessary();
-                if (selectedTextTrack.ptr() != &TextTrack::captionMenuOnItemSingleton()) {
+                if (selectedTextTrack.ptr() != &TextTrack::captionMenuOnItemSingleton()
+                    && selectedTextTrack.ptr() != &TextTrack::captionMenuOffItemSingleton()) {
                     for (auto& track : idMap.values()) {
                         if (auto* textTrack = std::get_if<Ref<TextTrack>>(&track))
                             (*textTrack)->setMode(TextTrack::Mode::Disabled);

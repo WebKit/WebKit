@@ -5806,7 +5806,7 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
             m_textTracks->scheduleChangeEvent();
     } else if (trackToSelect == &TextTrack::captionMenuOffItemSingleton()) {
         for (int i = 0, length = trackList->length(); i < length; ++i)
-            RefPtr { trackList->item(i) }->setMode(TextTrack::Mode::Disabled);
+            RefPtr { trackList->item(i) }->setMode(TextTrack::Mode::Disabled, TextTrack::ModeChangeType::AutomaticSelection);
 
         if (captionDisplayMode() != CaptionUserPreferences::CaptionDisplayMode::ForcedOnly && !trackList->isChangeEventScheduled())
             m_textTracks->scheduleChangeEvent();
@@ -5823,7 +5823,7 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
             if (RefPtr page = document().page()) {
                 Ref captionPreferences = protect(page->group())->ensureCaptionPreferences();
                 if (RefPtr trackToEnable = captionPreferences->bestTextTrackToEnable(*trackList))
-                    trackToEnable->setMode(TextTrack::Mode::Showing);
+                    trackToEnable->setMode(TextTrack::Mode::Showing, TextTrack::ModeChangeType::AutomaticSelection);
             }
         }
 
