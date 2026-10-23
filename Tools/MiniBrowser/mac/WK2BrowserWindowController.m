@@ -27,9 +27,14 @@
 
 #import "AppDelegate.h"
 #import "SettingsController.h"
+#if __has_include("MiniBrowser-Swift.h")
+#import "MiniBrowser-Swift.h"
+#define HAVE_WEBXR_IMMERSIVE_SPACE_HOST 1
+#endif
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 270000
 #import <AppKit/NSRefreshController.h>
 #endif
+#import <Metal/Metal.h>
 #import <PDFKit/PDFDocument.h>
 #import <QuartzCore/CATextLayer.h>
 #import <SecurityInterface/SFCertificateTrustPanel.h>
@@ -1660,6 +1665,44 @@ static const NSUInteger findMaxMatchCount = 1000;
 - (void)_webViewDidLosePointerLock:(WKWebView *)webView
 {
     [webView _setHeaderBannerLayer:nil];
+}
+
+#pragma mark WebXR
+
+- (void)_webView:(WKWebView *)webView supportedXRSessionFeatures:(_WKXRSessionFeatureFlags *)vrFeatures arFeatures:(_WKXRSessionFeatureFlags *)arFeatures
+{
+    *vrFeatures = _WKXRSessionFeatureFlagsReferenceSpaceTypeViewer
+        | _WKXRSessionFeatureFlagsReferenceSpaceTypeLocal
+        | _WKXRSessionFeatureFlagsReferenceSpaceTypeLocalFloor
+        | _WKXRSessionFeatureFlagsHandTracking
+        | _WKXRSessionFeatureFlagsWebGPU;
+
+    *arFeatures = _WKXRSessionFeatureFlagsNone;
+}
+
+- (void)_webView:(WKWebView *)webView requestPermissionForXRSessionOrigin:(NSString *)originString mode:(_WKXRSessionMode)mode grantedFeatures:(_WKXRSessionFeatureFlags)grantedFeatures consentRequiredFeatures:(_WKXRSessionFeatureFlags)consentRequiredFeatures consentOptionalFeatures:(_WKXRSessionFeatureFlags)consentOptionalFeatures requiredFeaturesRequested:(_WKXRSessionFeatureFlags)requiredFeaturesRequested optionalFeaturesRequested:(_WKXRSessionFeatureFlags)optionalFeaturesRequested completionHandler:(void (^)(_WKXRSessionFeatureFlags))completionHandler
+{
+    completionHandler(grantedFeatures | consentRequiredFeatures | consentOptionalFeatures);
+}
+
+- (void)_webView:(WKWebView *)webView startXRSessionWithFeatures:(_WKXRSessionFeatureFlags)features colorFormat:(MTLPixelFormat)pixelFormat depthFormat:(MTLPixelFormat)depthFormat completionHandler:(void (^)(id, NSViewController *, id))completionHandler
+{
+#if HAVE_WEBXR_IMMERSIVE_SPACE_HOST
+    if (@available(macOS 26.0, *)) {
+        [WebXRImmersiveSpaceHost startSessionWithColorFormat:pixelFormat depthFormat:depthFormat usesWebGPU:!!(features & _WKXRSessionFeatureFlagsWebGPU) completionHandler:completionHandler];
+        return;
+    }
+#endif
+
+    completionHandler(nil, nil, nil);
+}
+
+- (void)_webViewEndXRSession:(WKWebView *)webView withReason:(_WKXRSessionEndReason)endReason
+{
+#if HAVE_WEBXR_IMMERSIVE_SPACE_HOST
+    if (@available(macOS 26.0, *))
+        [WebXRImmersiveSpaceHost endSession];
+#endif
 }
 
 - (NSImage *)windowSnapshotInRect:(CGRect)rect

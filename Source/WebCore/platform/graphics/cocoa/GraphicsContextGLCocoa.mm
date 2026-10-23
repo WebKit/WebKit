@@ -809,7 +809,7 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
         "GL_ANGLE_variable_rasterization_rate_metal"_s,
 #endif
-#if PLATFORM(VISION)
+#if PLATFORM(VISION) || PLATFORM(MAC)
         "GL_WEBKIT_explicit_resolve_target"_s,
 #endif
         "GL_NV_framebuffer_blit"_s,

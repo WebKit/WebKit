@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(WEBXR) && USE(COMPOSITORXR)
+#if ENABLE(WEBXR) && USE(COMPOSITORXR) && PLATFORM(IOS_FAMILY)
 #import "WKSpatialGestureRecognizer.h"
 
 #import <Spatial/SPPose3D.h>
@@ -118,4 +118,4 @@
 
 @end
 
-#endif // ENABLE(WEBXR) && USE(COMPOSITORXR)
+#endif // ENABLE(WEBXR) && USE(COMPOSITORXR) && PLATFORM(IOS_FAMILY)

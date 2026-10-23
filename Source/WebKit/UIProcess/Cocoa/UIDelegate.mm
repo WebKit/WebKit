@@ -58,6 +58,9 @@
 #import "WebOpenPanelResultListenerProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#if ENABLE(WEBXR)
+#import "XRMetalPixelFormats.h"
+#endif
 #import "_WKContextMenuElementInfoInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
@@ -243,7 +246,7 @@ void UIDelegate::setDelegate(id<WKUIDelegate> delegate)
 
     m_delegateMethods.webViewSupportedXRSessionFeatures = [delegate respondsToSelector:@selector(_webView:supportedXRSessionFeatures:arFeatures:)];
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     if ([delegate respondsToSelector:@selector(_webView:startXRSessionWithFeatures:colorFormat:depthFormat:completionHandler:)])
         m_delegateMethods.webViewStartXRSessionWithCompletionHandler = true;
     else
@@ -2256,55 +2259,39 @@ void UIDelegate::UIClient::supportedXRSessionFeatures(PlatformXR::Device::Featur
     }
 }
 
-#if PLATFORM(IOS_FAMILY)
-static MTLPixelFormat toMetalFormat(::WebGPU::TextureFormat format)
-{
-    using namespace WebCore;
-    switch (format) {
-    case ::WebGPU::TextureFormat::Bgra8unorm:
-        return MTLPixelFormatBGRA8Unorm_sRGB;
-    case ::WebGPU::TextureFormat::Rgba8unorm:
-        return MTLPixelFormatRGBA8Unorm_sRGB;
-    case ::WebGPU::TextureFormat::Rgba16float:
-        return MTLPixelFormatRGBA16Float;
-    case ::WebGPU::TextureFormat::Depth32float:
-    case ::WebGPU::TextureFormat::Depth24plus:
-        return MTLPixelFormatDepth32Float;
-    case ::WebGPU::TextureFormat::Depth32floatStencil8:
-    case ::WebGPU::TextureFormat::Depth24plusStencil8:
-        return MTLPixelFormatDepth32Float_Stencil8;
-    default:
-        return MTLPixelFormatInvalid;
-    }
-}
+#if PLATFORM(COCOA)
 
-static MTLPixelFormat toMetalFormat(std::optional<::WebGPU::TextureFormat> optionalFormat)
-{
-    return optionalFormat ? toMetalFormat(*optionalFormat) : MTLPixelFormatInvalid;
-}
-
-void UIDelegate::UIClient::startXRSession(WebPageProxy&, const PlatformXR::Device::FeatureList& sessionFeatures, std::optional<WebCore::XRCanvasConfiguration>&& init, CompletionHandler<void(RetainPtr<id>, PlatformViewController *)>&& completionHandler)
+void UIDelegate::UIClient::startXRSession(WebPageProxy&, const PlatformXR::Device::FeatureList& sessionFeatures, std::optional<WebCore::XRCanvasConfiguration>&& init, CompletionHandler<void(RetainPtr<id>, PlatformViewController *, RetainPtr<id>)>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate || !uiDelegate->m_delegateMethods.webViewStartXRSessionWithCompletionHandler) {
-        completionHandler(nil, nil);
+        completionHandler(nil, nil, nil);
         return;
     }
 
     RetainPtr delegate = uiDelegatePrivate();
     if (!delegate) {
-        completionHandler(nil, nil);
+        completionHandler(nil, nil, nil);
         return;
     }
 
     if ([delegate respondsToSelector:@selector(_webView:startXRSessionWithFeatures:colorFormat:depthFormat:completionHandler:)]) {
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:startXRSessionWithFeatures:colorFormat:depthFormat:completionHandler:));
-        [delegate _webView:uiDelegate->m_webView.get().get() startXRSessionWithFeatures:toWKXRSessionFeatureFlags(sessionFeatures) colorFormat:(init ? toMetalFormat(init->colorFormat) : MTLPixelFormatInvalid) depthFormat:(init ? toMetalFormat(init->depthStencilFormat) : MTLPixelFormatInvalid) completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (id result, UIViewController *viewController) mutable {
+#if PLATFORM(MAC)
+        [delegate _webView:uiDelegate->m_webView.get().get() startXRSessionWithFeatures:toWKXRSessionFeatureFlags(sessionFeatures) colorFormat:(init ? toMTLPixelFormat(init->colorFormat) : MTLPixelFormatInvalid) depthFormat:(init ? toMTLPixelFormat(init->depthStencilFormat) : MTLPixelFormatInvalid) completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](id result, NSViewController *viewController, id remoteDevice) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
-            completionHandler(result, viewController);
+            completionHandler(result, viewController, remoteDevice);
         }).get()];
+#else
+        [delegate _webView:uiDelegate->m_webView.get().get() startXRSessionWithFeatures:toWKXRSessionFeatureFlags(sessionFeatures) colorFormat:(init ? toMTLPixelFormat(init->colorFormat) : MTLPixelFormatInvalid) depthFormat:(init ? toMTLPixelFormat(init->depthStencilFormat) : MTLPixelFormatInvalid) completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](id result, UIViewController *viewController) mutable {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            completionHandler(result, viewController, nil);
+        }).get()];
+#endif
         return;
     }
 
@@ -2313,7 +2300,7 @@ void UIDelegate::UIClient::startXRSession(WebPageProxy&, const PlatformXR::Devic
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
-        completionHandler(result, nil);
+        completionHandler(result, nil, nil);
     }).get()];
 }
 
@@ -2334,7 +2321,7 @@ void UIDelegate::UIClient::endXRSession(WebPageProxy&, PlatformXRSessionEndReaso
 
     [delegate _webViewEndXRSession:uiDelegate->m_webView.get().get()];
 }
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(COCOA)
 
 #endif // ENABLE(WEBXR)
 

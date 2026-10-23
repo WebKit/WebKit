@@ -53,12 +53,34 @@ CP_OBJECT_DECL(cp_swapchain_link);
 @property (nonatomic, readwrite, strong, nullable) NSArray<id<MTLTexture>> *depthTextures;
 @end
 
+#if PLATFORM(IOS_FAMILY)
 @interface UITouch (Compositor)
 - (SPPose3D)poseInLayer:(cp_layer_renderer_t)layer CF_SWIFT_NAME(pose(in:));
 - (SPRay3D)selectionRayInLayer:(cp_layer_renderer_t)layer CF_SWIFT_NAME(selectionRay(in:));
 @end
+#endif
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(CP_REMOTE_COMPOSITOR)
+
+#import <Network/Network.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <RemoteCompositorServices/CPRemoteCompositor.h>
+#else
+
+@interface CPRemoteCompositor : NSObject
+- (nullable instancetype)init;
+- (nullable instancetype)initWithLocalEndpoint:(nullable NSXPCListenerEndpoint *)endpoint;
+- (nullable cp_layer_renderer_t)createLayerWithConfiguration:(cp_layer_renderer_configuration_t)configuration;
+@property (readonly, nonatomic, nullable) nw_endpoint_t networkEndpoint;
+@property (readonly, nonatomic) BOOL isLocalEndpoint;
+@end
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // HAVE(CP_REMOTE_COMPOSITOR)
 #endif // HAVE(COMPOSITOR_SERVICES)
 
 #endif // !__has_feature(modules)

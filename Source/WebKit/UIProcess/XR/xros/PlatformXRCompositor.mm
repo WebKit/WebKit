@@ -12,11 +12,10 @@
 #import "APIPageConfiguration.h"
 #import "APIUIClient.h"
 #import "Logging.h"
-#import "UIKitSPI.h"
-#import "WKSpatialGestureRecognizer.h"
 #import "WKXRTrackingManager.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
+#import "XRMetalPixelFormats.h"
 #import <WebCore/IntRect.h>
 #import <WebCore/IntSize.h>
 #import <WebCore/PlatformXRPose.h>
@@ -26,12 +25,26 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SystemTracing.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
+#import "WKSpatialGestureRecognizer.h"
+#endif
+
 #if HAVE(SPATIAL_CONTROLLERS)
 #import "WKXRControllerManager.h"
 #endif
 
+#if HAVE(CP_REMOTE_COMPOSITOR)
+#import <wtf/SoftLinking.h>
+#endif
+
 #import <pal/cocoa/ARKitSoftLink.h>
 #import <pal/cocoa/CompositorServicesSoftLink.h>
+
+#if HAVE(CP_REMOTE_COMPOSITOR)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(RemoteCompositorServices)
+SOFT_LINK_CLASS_OPTIONAL(RemoteCompositorServices, CPRemoteCompositor)
+#endif
 
 namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CompositorCoordinator);
@@ -83,9 +96,92 @@ static ASCIILiteral layerRendererLayoutName(cp_layer_renderer_layout layout)
     return "unknown"_s;
 }
 
+#if PLATFORM(MAC)
+static cp_drawable_t queryDrawableWithTarget(cp_frame_t frame, cp_drawable_target target)
+{
+    cp_drawable_array_t drawables = cp_frame_query_drawables(frame);
+    if (!drawables)
+        return nullptr;
+
+    size_t drawableCount = cp_drawable_array_get_count(drawables);
+    for (size_t i = 0; i < drawableCount; ++i) {
+        cp_drawable_t drawable = cp_drawable_array_get_drawable(drawables, i);
+        if (drawable && cp_drawable_get_target(drawable) == target)
+            return drawable;
+    }
+    return nullptr;
+}
+#endif
+
+static cp_drawable_t queryBuiltInDrawable(cp_frame_t frame)
+{
+#if PLATFORM(MAC)
+    return queryDrawableWithTarget(frame, cp_drawable_target_built_in);
+#else
+    return cp_frame_query_drawable(frame);
+#endif
+}
+
 namespace WebKit {
 
 using namespace PAL;
+
+#if HAVE(CP_REMOTE_COMPOSITOR)
+static bool shouldUseRemoteCompositor()
+{
+    static bool shouldUse = [] {
+        if (!getCPRemoteCompositorClassSingleton()) {
+            RELEASE_LOG(XR, "CompositorCoordinator: CPRemoteCompositor is unavailable; using the UI client's immersive space");
+            return false;
+        }
+        if (id override = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitUseCPRemoteCompositor"]; [override isKindOfClass:NSNumber.class])
+            return !![(NSNumber *)override boolValue];
+        return true;
+    }();
+    return shouldUse;
+}
+
+static RetainPtr<cp_layer_renderer_configuration_t> makeLayerRendererConfiguration(const std::optional<WebCore::XRCanvasConfiguration>& init, bool enableFoveation = true)
+{
+    RetainPtr configuration = adoptNS(cp_layer_renderer_configuration_create());
+    if (!configuration)
+        return nullptr;
+
+    cp_layer_renderer_configuration_set_layout(configuration.get(), cp_layer_renderer_layout_layered);
+    cp_layer_renderer_configuration_set_foveation_enabled(configuration.get(), enableFoveation);
+    cp_layer_renderer_configuration_set_use_shared_events(configuration.get(), true);
+
+    if (init) {
+        if (auto colorFormat = toMTLPixelFormat(init->colorFormat); colorFormat != MTLPixelFormatInvalid)
+            cp_layer_renderer_configuration_set_color_format(configuration.get(), colorFormat);
+        if (auto depthFormat = toMTLPixelFormat(init->depthStencilFormat); depthFormat != MTLPixelFormatInvalid)
+            cp_layer_renderer_configuration_set_depth_format(configuration.get(), depthFormat);
+    } else
+        cp_layer_renderer_configuration_set_depth_format(configuration.get(), MTLPixelFormatDepth32Float_Stencil8);
+
+    cp_layer_renderer_configuration_set_depth_usage(configuration.get(), MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead | MTLTextureUsagePixelFormatView);
+
+    return configuration;
+}
+#endif // HAVE(CP_REMOTE_COMPOSITOR)
+
+static bool xrFoveationDisabledByDefaults()
+{
+    static bool disabled = [] {
+        id override = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitXRDisableFoveation"];
+        return [override isKindOfClass:NSNumber.class] && [(NSNumber *)override boolValue];
+    }();
+    return disabled;
+}
+
+#if HAVE(CP_REMOTE_COMPOSITOR)
+static bool shouldEnableFoveation(const PlatformXR::Device::FeatureList& requestedFeatures)
+{
+    if (xrFoveationDisabledByDefaults())
+        return false;
+    return !requestedFeatures.contains(PlatformXR::SessionFeature::WebGPU);
+}
+#endif // HAVE(CP_REMOTE_COMPOSITOR)
 
 bool CompositorCoordinator::isCompositorServicesAvailable()
 {
@@ -118,6 +214,46 @@ void CompositorCoordinator::getPrimaryDeviceInfo(WebPageProxy& page, DeviceInfoC
     if (!m_headsetIdentifier)
         m_headsetIdentifier = XRDeviceIdentifier::generate();
 
+#if HAVE(CP_REMOTE_COMPOSITOR)
+    if (shouldUseRemoteCompositor()) {
+        RetainPtr configuration = makeLayerRendererConfiguration(std::nullopt);
+        if (!configuration) {
+            RELEASE_LOG_ERROR(XR, "CompositorCoordinator: Cannot create a layer renderer configuration");
+            callback(std::nullopt);
+            return;
+        }
+
+        m_foveationEnabled = cp_layer_renderer_configuration_get_foveation_enabled(configuration.get()) && !xrFoveationDisabledByDefaults();
+        auto layout = cp_layer_renderer_configuration_get_layout(configuration.get());
+        RELEASE_LOG(XR, "CompositorCoordinator: requesting layer renderer layout %" PUBLIC_LOG_STRING " (%u), foveation %d", layerRendererLayoutName(layout).characters(), static_cast<unsigned>(layout), m_foveationEnabled);
+        m_layeredModeEnabled = layout;
+
+        auto depthRange = cp_layer_renderer_configuration_get_default_depth_range(configuration.get());
+        m_depthRange.near = std::min(depthRange.x, depthRange.y);
+        m_depthRange.far = std::max(depthRange.x, depthRange.y);
+        m_minimumDepth = m_depthRange.near;
+
+        CompositorCoordinator::getSupportedFeatures(page);
+        if (m_supportedVRFeatures.isEmpty() && m_supportedARFeatures.isEmpty()) {
+            RELEASE_LOG_ERROR(XR, "CompositorCoordinator: No supported XR features");
+            callback(std::nullopt);
+            return;
+        }
+
+        ASSERT(m_headsetIdentifier);
+        callback(XRDeviceInfo {
+            .identifier = m_headsetIdentifier.value(),
+            .supportsOrientationTracking = true,
+            .supportsStereoRendering = true,
+            .vrFeatures = m_supportedVRFeatures,
+            .arFeatures = m_supportedARFeatures,
+            .recommendedResolution = WebCore::IntSize { defaultWidth, defaultHeight },
+            .minimumNearClipPlane = m_minimumDepth
+        });
+        return;
+    }
+#endif // HAVE(CP_REMOTE_COMPOSITOR)
+
     CFErrorRef error = NULL;
     RetainPtr<cp_layer_renderer_configuration_t> defaultConfiguration = adoptNS(cp_layer_renderer_configuration_copy_system_default(&error));
     if (error) {
@@ -126,7 +262,7 @@ void CompositorCoordinator::getPrimaryDeviceInfo(WebPageProxy& page, DeviceInfoC
         return;
     }
 
-    m_foveationEnabled = cp_layer_renderer_configuration_get_foveation_enabled(defaultConfiguration.get());
+    m_foveationEnabled = cp_layer_renderer_configuration_get_foveation_enabled(defaultConfiguration.get()) && !xrFoveationDisabledByDefaults();
 
     // FIXME: rdar://183548202 - m_layeredModeEnabled cannot distinguish the shared layout from the
     // layered one, and the viewport packing in render() assumes the shared layout unconditionally.
@@ -260,7 +396,12 @@ void CompositorCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRC
 
     m_sessionEventClient = WTF::move(sessionEventClient);
 
-    page.uiClient().startXRSession(page, requestedFeatures, WTF::move(init), [this, weakPage = WeakPtr { page }, pageIdentifier, securityOriginData, requestedFeatures](RetainPtr<id> cpLayer, UIViewController *viewController) mutable {
+#if HAVE(CP_REMOTE_COMPOSITOR)
+    if (shouldUseRemoteCompositor() && startSessionUsingRemoteCompositor(page, pageIdentifier, securityOriginData, requestedFeatures, init))
+        return;
+#endif
+
+    page.uiClient().startXRSession(page, requestedFeatures, WTF::move(init), [this, weakPage = WeakPtr { page }, pageIdentifier, securityOriginData, requestedFeatures](RetainPtr<id> cpLayer, PlatformViewController *viewController, RetainPtr<id> remoteDevice) mutable {
         ASSERT(RunLoop::isMain());
         ASSERT(!cpLayer || [cpLayer.get() isKindOfClass:getCP_OBJECT_cp_layer_rendererClassSingleton()]);
         RefPtr strongPage = weakPage;
@@ -268,9 +409,62 @@ void CompositorCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRC
             return;
 
         m_cpLayer = cpLayer.get();
+#if PLATFORM(MAC)
+        m_remoteDevice = WTF::move(remoteDevice);
+        if (m_cpLayer && !m_remoteDevice)
+            RELEASE_LOG_ERROR(XR, "CompositorCoordinator: Immersive space started without a remote device; tracking will be unavailable");
+#else
+        UNUSED_PARAM(remoteDevice);
+#endif
         didCompleteSessionSetup(*strongPage, pageIdentifier, securityOriginData, requestedFeatures, viewController);
     });
 }
+
+#if HAVE(CP_REMOTE_COMPOSITOR)
+bool CompositorCoordinator::startSessionUsingRemoteCompositor(WebPageProxy& page, WebCore::PageIdentifier pageIdentifier, const WebCore::SecurityOriginData& securityOriginData, const PlatformXR::Device::FeatureList& requestedFeatures, const std::optional<WebCore::XRCanvasConfiguration>& init)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_remoteCompositor);
+
+    RetainPtr configuration = makeLayerRendererConfiguration(init, shouldEnableFoveation(requestedFeatures));
+    if (!configuration) {
+        RELEASE_LOG_ERROR(XR, "CompositorCoordinator: Cannot create a layer renderer configuration");
+        return false;
+    }
+
+    m_foveationEnabled = cp_layer_renderer_configuration_get_foveation_enabled(configuration.get());
+    RELEASE_LOG(XR, "CompositorCoordinator: creating a layer renderer with foveation %d", m_foveationEnabled);
+
+    RetainPtr remoteCompositor = adoptNS([allocCPRemoteCompositorInstance() init]);
+    if (!remoteCompositor) {
+        RELEASE_LOG_ERROR(XR, "CompositorCoordinator: CPRemoteCompositor could not connect; no headset is reachable and the local server is unavailable");
+        return false;
+    }
+
+    RetainPtr<cp_layer_renderer_t> layerRenderer = [remoteCompositor createLayerWithConfiguration:configuration.get()];
+    if (!layerRenderer) {
+        RELEASE_LOG_ERROR(XR, "CompositorCoordinator: CPRemoteCompositor could not create a layer renderer");
+        return false;
+    }
+
+    RetainPtr<id> remoteDevice;
+    if (nw_endpoint_t endpoint = [remoteCompositor networkEndpoint])
+        remoteDevice = adoptNS(ar_device_create_with_endpoint(endpoint));
+    if (!remoteDevice) {
+        RELEASE_LOG_ERROR(XR, "CompositorCoordinator: CPRemoteCompositor returned no network endpoint; tracking would never become valid");
+        return false;
+    }
+
+    RELEASE_LOG(XR, "CompositorCoordinator: started a session through CPRemoteCompositor (local endpoint: %d)", [remoteCompositor isLocalEndpoint]);
+
+    m_remoteCompositor = WTF::move(remoteCompositor);
+    m_cpLayer = WTF::move(layerRenderer);
+    m_remoteDevice = WTF::move(remoteDevice);
+
+    didCompleteSessionSetup(page, pageIdentifier, securityOriginData, requestedFeatures, nil);
+    return true;
+}
+#endif // HAVE(CP_REMOTE_COMPOSITOR)
 
 void CompositorCoordinator::endSessionIfExists(WebPageProxy& page)
 {
@@ -420,6 +614,8 @@ bool CompositorCoordinator::processEvent()
     return false;
 }
 
+enum class StallCheck : bool { KeepGoing, Stalled };
+
 void CompositorCoordinator::update()
 {
     constexpr size_t minSkippedFrameCountForStalledRendering = 450;
@@ -432,9 +628,22 @@ void CompositorCoordinator::update()
         if (m_terminationPending)
             break;
 
+        auto frameMadeNoProgress = [&](ASCIILiteral reason) {
+            if (skippedFrameCount >= minSkippedFrameCountForStalledRendering) {
+                RELEASE_LOG_ERROR(XR, "CompositorCoordinator: stall detected in render loop (%" PUBLIC_LOG_STRING "), terminating session...", reason.characters());
+                isRenderingStalled = true;
+                return StallCheck::Stalled;
+            }
+
+            skippedFrameCount++;
+            return StallCheck::KeepGoing;
+        };
+
         cp_frame_t frame;
         if (!(frame = cp_layer_renderer_query_next_frame(m_cpLayer.get()))) {
             RELEASE_LOG_INFO(XR, "CompositorCoordinator: next frame is unavailable");
+            if (frameMadeNoProgress("no next frame"_s) == StallCheck::Stalled)
+                break;
             continue;
         }
 
@@ -442,6 +651,9 @@ void CompositorCoordinator::update()
         cp_frame_timing_t timing = cp_frame_predict_timing(frame);
         if (!timing) {
             RELEASE_LOG_INFO(XR, "CompositorCoordinator: frame timing is unavailable");
+            cp_frame_skip_frame(frame);
+            if (frameMadeNoProgress("no frame timing"_s) == StallCheck::Stalled)
+                break;
             continue;
         }
 
@@ -449,8 +661,11 @@ void CompositorCoordinator::update()
         tracePoint(WebXRCPFrameWaitEnd);
 
         cp_drawable_t drawable;
-        if (!(drawable = cp_frame_query_drawable(frame))) {
+        if (!(drawable = queryBuiltInDrawable(frame))) {
             RELEASE_LOG_ERROR(XR, "CompositorCoordinator: Cannot query drawable from frame");
+            cp_frame_skip_frame(frame);
+            if (frameMadeNoProgress("no built-in drawable"_s) == StallCheck::Stalled)
+                break;
             continue;
         }
 
@@ -458,6 +673,9 @@ void CompositorCoordinator::update()
         bool isTrackingValid = [m_xrTrackingManager isValid];
         if (!isFrameScheduled || !isTrackingValid) {
             cp_frame_skip_frame(frame);
+
+            if (!skippedFrameCount)
+                RELEASE_LOG(XR, "CompositorCoordinator: no longer rendering; tracking valid: %d, frame scheduled: %d", isTrackingValid, isFrameScheduled);
 
             if (skippedFrameCount >= minSkippedFrameCountForStalledRendering) {
                 RELEASE_LOG_ERROR(XR, "CompositorCoordinator: stall detected in render loop; tracking valid: %d; frame scheduled: %d, terminating session...", isTrackingValid, isFrameScheduled);
@@ -469,16 +687,24 @@ void CompositorCoordinator::update()
             continue;
         }
 
-        skippedFrameCount = 0;
+        if (skippedFrameCount) {
+            RELEASE_LOG(XR, "CompositorCoordinator: rendering again after skipping %zu frames", skippedFrameCount);
+            skippedFrameCount = 0;
+        }
         NSTimeInterval presentationTime = cp_time_to_cf_time_interval(cp_frame_timing_get_presentation_time(timing));
         render(frame, drawable, presentationTime);
     }
 
     // FIXME: rdar://175742010
-    callOnMainRunLoop([this, isRenderingStalled]() {
-        if (!m_terminationPending && isRenderingStalled) {
+    callOnMainRunLoop([this, isRenderingStalled] {
+#if PLATFORM(MAC)
+        bool shouldNotifyUIClient = !m_terminationPending;
+#else
+        bool shouldNotifyUIClient = !m_terminationPending && isRenderingStalled;
+#endif
+        if (shouldNotifyUIClient) {
             if (RefPtr<WebPageProxy> page = m_sessionPage.get())
-                terminateSession(*page, PlatformXRSessionEndReason::NoFrameUpdateScheduled);
+                terminateSession(*page, isRenderingStalled ? PlatformXRSessionEndReason::NoFrameUpdateScheduled : PlatformXRSessionEndReason::NoError);
         }
 
         currentSessionHasEnded();
@@ -502,18 +728,27 @@ void CompositorCoordinator::render(cp_frame_t frame, cp_drawable_t drawable, NST
 
     @autoreleasepool {
         auto arDeviceAnchor = [m_xrTrackingManager deviceAnchorAtTime:presentationTime];
-        std::optional<PlatformXRPose> platformDevicePose;
         if (arDeviceAnchor)
-            platformDevicePose = PlatformXRPose(ar_anchor_get_origin_from_anchor_transform(arDeviceAnchor.get()));
-        else
-            platformDevicePose = PlatformXRPose(matrix_identity_float4x4);
+            m_lastKnownDeviceAnchor = arDeviceAnchor.get();
+
+        // The compositor invalidates the layer after about a second of frames presented without a
+        // device anchor, so keep feeding it the last one the provider gave us, and render from that
+        // same pose rather than snapping the content to the origin. The pose is stale, which
+        // isPositionValid reports, but it is the pose the frame was drawn with either way.
+        ar_device_anchor_t anchorForThisFrame = arDeviceAnchor.get();
+        if (!anchorForThisFrame)
+            anchorForThisFrame = m_lastKnownDeviceAnchor.get();
+
+        PlatformXRPose devicePose = anchorForThisFrame
+            ? PlatformXRPose(ar_anchor_get_origin_from_anchor_transform(anchorForThisFrame))
+            : PlatformXRPose(matrix_identity_float4x4);
 
         PlatformXR::FrameData frameData = { };
         frameData.predictedDisplayTime = presentationTime;
-        frameData.isTrackingValid = !!platformDevicePose;
-        frameData.isPositionValid = !!platformDevicePose;
-        if (platformDevicePose) {
-            frameData.origin = platformDevicePose->pose();
+        frameData.isTrackingValid = true;
+        frameData.isPositionValid = !!arDeviceAnchor;
+        frameData.origin = devicePose.pose();
+        if (anchorForThisFrame) {
             auto floorPose = [m_xrTrackingManager latestFloorPose];
             if (floorPose)
                 frameData.floorTransform = floorPose->verticalTransformPose().pose();
@@ -611,7 +846,7 @@ void CompositorCoordinator::render(cp_frame_t frame, cp_drawable_t drawable, NST
         RELEASE_ASSERT(colorTextureLeft.width <= layerSizeMax && colorTextureLeft.height <= layerSizeMax && physicalSizeLeft.width <= layerSizeMax && physicalSizeLeft.height <= layerSizeMax && physicalSizeRight.width <= layerSizeMax && physicalSizeRight.height <= layerSizeMax);
 
         PlatformXR::RateMapDescription foveationRateMapDesc;
-        if (m_foveationEnabled) {
+        if (rateMap && desc) {
             foveationRateMapDesc.screenSize = WebCore::IntSize(rateMap.screenSize.width, rateMap.screenSize.height);
             foveationRateMapDesc.horizontalSamplesLeft = std::span { desc.layers[leftIndex].horizontalSampleStorage, desc.layers[leftIndex].sampleCount.width };
             foveationRateMapDesc.horizontalSamplesRight = std::span { desc.layers[rightIndex].horizontalSampleStorage, desc.layers[rightIndex].sampleCount.width };
@@ -626,6 +861,7 @@ void CompositorCoordinator::render(cp_frame_t frame, cp_drawable_t drawable, NST
 
         auto leftActualSize = convertToLayerSetupSize(colorTextureLeft);
         auto rightActualSize = convertToLayerSetupSize(colorTextureRight);
+
         layerData.layerSetup = PlatformXR::FrameData::LayerSetupData {
             .physicalSize = { leftPhysicalSize, rightPhysicalSize },
             .actualSize = { leftActualSize, rightActualSize },
@@ -670,11 +906,15 @@ void CompositorCoordinator::render(cp_frame_t frame, cp_drawable_t drawable, NST
         if (skipFramePresentation)
             return;
 
-        if (arDeviceAnchor) {
+        if (anchorForThisFrame) {
             // Must use cp_drawable_set_device_anchor (not the simd version) for re-centering to work.
-            cp_drawable_set_device_anchor(drawable, arDeviceAnchor.get());
+            cp_drawable_set_device_anchor(drawable, anchorForThisFrame);
         } else if ([m_xrTrackingManager isWorldTrackingSupported])
             RELEASE_LOG_ERROR(XR, "Failed to set device anchor on current frame");
+
+#if PLATFORM(MAC)
+        mirrorToDebugWindow(colorTextureLeft, leftIndex, colorTextureRight, rightIndex, renderingFrameIndex);
+#endif
 
         cp_drawable_present(drawable);
 
@@ -683,6 +923,102 @@ void CompositorCoordinator::render(cp_frame_t frame, cp_drawable_t drawable, NST
         tracePoint(WebXRCPFrameEndSubmissionEnd);
     }
 }
+
+#if PLATFORM(MAC)
+static bool xrMirrorWindowEnabledByDefaults()
+{
+    static bool enabled = [] {
+        id override = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitXRMirrorWindow"];
+        if ([override isKindOfClass:NSNumber.class])
+            return !![(NSNumber *)override boolValue];
+        return true;
+    }();
+    return enabled;
+}
+
+void CompositorCoordinator::mirrorToDebugWindow(id<MTLTexture> leftTexture, uint32_t leftSlice, id<MTLTexture> rightTexture, uint32_t rightSlice, uint64_t completionEventValue)
+{
+    if (!xrMirrorWindowEnabledByDefaults() || !leftTexture)
+        return;
+
+    bool hasRightEye = rightTexture && (rightTexture != leftTexture || rightSlice != leftSlice);
+    NSUInteger mirrorWidth = leftTexture.width + (hasRightEye ? rightTexture.width : 0);
+    NSUInteger mirrorHeight = hasRightEye ? std::max(leftTexture.height, rightTexture.height) : leftTexture.height;
+
+    if (!m_mirrorLayerReady.load(std::memory_order_acquire)) {
+        if (m_mirrorWindowRequested)
+            return;
+        m_mirrorWindowRequested = true;
+
+        callOnMainRunLoop([this, mirrorWidth, mirrorHeight, hasRightEye, pixelFormat = leftTexture.pixelFormat, device = RetainPtr { leftTexture.device }] {
+            constexpr CGFloat maximumMirrorWidth = 1280;
+            CGFloat scale = std::min<CGFloat>(1, maximumMirrorWidth / mirrorWidth);
+            NSRect contentRect = NSMakeRect(0, 0, mirrorWidth * scale, mirrorHeight * scale);
+            RetainPtr window = adoptNS([[NSWindow alloc] initWithContentRect:contentRect styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable) backing:NSBackingStoreBuffered defer:NO]);
+            [window setTitle:hasRightEye ? @"WebXR mirror (left | right)" : @"WebXR mirror"];
+            [window setReleasedWhenClosed:NO];
+
+            RetainPtr layer = adoptNS([CAMetalLayer new]);
+            [layer setDevice:device.get()];
+            [layer setPixelFormat:pixelFormat];
+            [layer setFramebufferOnly:NO];
+            [layer setDrawableSize:CGSizeMake(mirrorWidth, mirrorHeight)];
+            [layer setContentsGravity:kCAGravityResizeAspect];
+
+            RetainPtr contentView = [window contentView];
+            [contentView setLayer:layer.get()];
+            [contentView setWantsLayer:YES];
+
+            [window center];
+            [window orderFront:nil];
+
+            m_mirrorWindow = WTF::move(window);
+            m_mirrorLayer = WTF::move(layer);
+            m_mirrorLayerReady.store(true, std::memory_order_release);
+        });
+        return;
+    }
+
+    RetainPtr<id<CAMetalDrawable>> drawable = [m_mirrorLayer nextDrawable];
+    if (!drawable)
+        return;
+
+    id<MTLTexture> destinationTexture = [drawable texture];
+    if (!destinationTexture || destinationTexture.pixelFormat != leftTexture.pixelFormat)
+        return;
+
+    if (!m_mirrorCommandQueue)
+        m_mirrorCommandQueue = adoptNS([leftTexture.device newCommandQueue]);
+    id<MTLCommandBuffer> commandBuffer = [m_mirrorCommandQueue commandBuffer];
+    if (!commandBuffer)
+        return;
+
+    if (id<MTLEvent> completionEvent = cp_layer_renderer_get_completion_event(m_cpLayer.get()))
+        [commandBuffer encodeWaitForEvent:completionEvent value:completionEventValue];
+
+    RetainPtr blitEncoder = [commandBuffer blitCommandEncoder];
+    auto blitEye = [&](id<MTLTexture> eyeTexture, uint32_t slice, NSUInteger destinationX) {
+        MTLSize copySize = MTLSizeMake(std::min(eyeTexture.width, destinationTexture.width - destinationX), std::min(eyeTexture.height, destinationTexture.height), 1);
+        [blitEncoder copyFromTexture:eyeTexture sourceSlice:slice sourceLevel:0 sourceOrigin:MTLOriginMake(0, 0, 0) sourceSize:copySize toTexture:destinationTexture destinationSlice:0 destinationLevel:0 destinationOrigin:MTLOriginMake(destinationX, 0, 0)];
+    };
+    blitEye(leftTexture, leftSlice, 0);
+    if (hasRightEye && leftTexture.width < destinationTexture.width)
+        blitEye(rightTexture, rightSlice, leftTexture.width);
+    [blitEncoder endEncoding];
+    [commandBuffer presentDrawable:drawable.get()];
+    [commandBuffer commit];
+}
+
+void CompositorCoordinator::closeDebugMirrorWindow()
+{
+    ASSERT(RunLoop::isMain());
+    m_mirrorLayerReady.store(false, std::memory_order_release);
+    m_mirrorWindowRequested = false;
+    [m_mirrorWindow close];
+    m_mirrorWindow = nil;
+    m_mirrorLayer = nil;
+}
+#endif // PLATFORM(MAC)
 
 void CompositorCoordinator::terminateSession(WebPageProxy& page, PlatformXRSessionEndReason endReason)
 {
@@ -714,9 +1050,20 @@ void CompositorCoordinator::currentSessionHasEnded()
         [[NSNotificationCenter defaultCenter] removeObserver:m_applicationDidBecomeActiveObserver.get()];
         m_applicationDidBecomeActiveObserver = nil;
     }
+#if PLATFORM(IOS_FAMILY)
     [[m_spatialGestureRecognizer view] removeGestureRecognizer:m_spatialGestureRecognizer.get()];
     m_spatialGestureRecognizer = nil;
+#endif
     m_xrTrackingManager = nil;
+    m_lastKnownDeviceAnchor = nullptr;
+#if HAVE(CP_REMOTE_COMPOSITOR)
+    m_remoteCompositor = nil;
+#endif
+#if PLATFORM(MAC)
+    m_remoteDevice = nil;
+    m_mirrorCommandQueue = nil;
+    closeDebugMirrorWindow();
+#endif
 #if ENABLE(WEBXR_HANDS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     m_lastSecurityOriginGrantedHandTracking = std::nullopt;
 #endif
@@ -744,7 +1091,7 @@ void CompositorCoordinator::currentSessionHasEnded()
     RELEASE_LOG(XR, "CompositorCoordinator: Ended immersive session");
 }
 
-void CompositorCoordinator::didCompleteSessionSetup(WebPageProxy& page, WebCore::PageIdentifier pageIdentifier, const WebCore::SecurityOriginData& securityOriginData, const PlatformXR::Device::FeatureList& requestedFeatures, UIViewController *viewController)
+void CompositorCoordinator::didCompleteSessionSetup(WebPageProxy& page, WebCore::PageIdentifier pageIdentifier, const WebCore::SecurityOriginData& securityOriginData, const PlatformXR::Device::FeatureList& requestedFeatures, PlatformViewController *viewController)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(page.webPageIDInMainFrameProcess() == pageIdentifier);
@@ -765,17 +1112,31 @@ void CompositorCoordinator::didCompleteSessionSetup(WebPageProxy& page, WebCore:
     ASSERT(m_sessionStartPendingPageIdentifier == pageIdentifier);
     RELEASE_LOG(XR, "CompositorCoordinator: started immersive session");
 
+    if (cp_layer_renderer_configuration_t configuration = cp_layer_renderer_get_configuration(m_cpLayer.get())) {
+        m_foveationEnabled = cp_layer_renderer_configuration_get_foveation_enabled(configuration) && !xrFoveationDisabledByDefaults();
+        m_layeredModeEnabled = cp_layer_renderer_configuration_get_layout(configuration) == cp_layer_renderer_layout_layered;
+    }
+
     m_sessionStartPendingPageIdentifier = std::nullopt;
     m_sessionPageIdentifier = pageIdentifier;
     m_sessionPage = page;
     m_paused = true;
     m_backgrounded = false;
     m_visibilityState = PlatformXR::VisibilityState::Visible;
-    m_applicationDidEnterBackgroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication] queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *) {
+#if PLATFORM(IOS_FAMILY)
+    auto *resignActiveName = UIApplicationWillResignActiveNotification;
+    auto *becomeActiveName = UIApplicationDidBecomeActiveNotification;
+    id applicationObject = [UIApplication sharedApplication];
+#else
+    auto *resignActiveName = NSApplicationWillResignActiveNotification;
+    auto *becomeActiveName = NSApplicationDidBecomeActiveNotification;
+    id applicationObject = [NSApplication sharedApplication];
+#endif
+    m_applicationDidEnterBackgroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:resignActiveName object:applicationObject queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *) {
         if (!m_terminationPending)
             setBackgrounded(true);
     }];
-    m_applicationDidBecomeActiveObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication] queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *) {
+    m_applicationDidBecomeActiveObserver = [[NSNotificationCenter defaultCenter] addObserverForName:becomeActiveName object:applicationObject queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *) {
         if (!m_terminationPending)
             setBackgrounded(false);
     }];
@@ -805,8 +1166,9 @@ void CompositorCoordinator::didCompleteSessionSetup(WebPageProxy& page, WebCore:
                 break;
             }
         }
-        if (initialWidth && initialHeight && initialArrayLength)
-            m_sessionEventClient->sessionDidInitializeRendering(m_headsetIdentifier.value(), initialWidth, initialHeight, initialArrayLength);
+        if (!initialWidth || !initialHeight || !initialArrayLength)
+            RELEASE_LOG_ERROR(XR, "CompositorCoordinator: No swapchain depth texture to derive initial rendering dimensions from");
+        m_sessionEventClient->sessionDidInitializeRendering(m_headsetIdentifier.value(), initialWidth, initialHeight, initialArrayLength);
     }
 
     BOOL handTrackingEnabled = NO;
@@ -822,13 +1184,20 @@ void CompositorCoordinator::didCompleteSessionSetup(WebPageProxy& page, WebCore:
         m_controllerManager = adoptNS([[WKXRControllerManager alloc] init]);
 #endif
     m_xrTrackingManager = adoptNS([[WKXRTrackingManager alloc] initWithHandTrackingEnabled:handTrackingEnabled layerRenderer:m_cpLayer.get()
+#if PLATFORM(MAC)
+    remoteDevice:(ar_device_t)m_remoteDevice.get()
+#endif
 #if HAVE(SPATIAL_CONTROLLERS)
     controllerManager:m_controllerManager
 #endif
     ]);
+#if PLATFORM(IOS_FAMILY)
     m_spatialGestureRecognizer = adoptNS([[WKSpatialGestureRecognizer alloc] init]);
     [m_spatialGestureRecognizer setSpatialGestureRecognizerDelegate:m_xrTrackingManager.get()];
     [viewController.view addGestureRecognizer:m_spatialGestureRecognizer.get()];
+#else
+    UNUSED_PARAM(viewController);
+#endif
     ASSERT(!m_renderSemaphore);
     m_renderSemaphore = makeUnique<BinarySemaphore>();
     m_updateThread = Thread::create("Compositor session renderer"_s, [this] {
