@@ -12,6 +12,28 @@ ShaderPrograms::ShaderPrograms(const ShaderBackend& backend)
 {
 }
 
+ShaderPrograms::~ShaderPrograms()
+{
+    // Stop using a native program before releasing any resources it references.
+    if (m_current && m_backend.useProgram)
+        m_backend.useProgram(m_backend.context, 0);
+    m_current = 0;
+
+    if (m_backend.destroyProgram) {
+        for (const auto& entry : m_programs) {
+            if (entry.second.native)
+                m_backend.destroyProgram(m_backend.context, entry.second.native);
+        }
+    }
+
+    if (m_backend.destroyShader) {
+        for (const auto& entry : m_shaders) {
+            if (entry.second.native)
+                m_backend.destroyShader(m_backend.context, entry.second.native);
+        }
+    }
+}
+
 ShaderName ShaderPrograms::nextShaderName()
 {
     for (uint64_t i = 0; i < std::numeric_limits<uint32_t>::max() - 1ULL; ++i) {
