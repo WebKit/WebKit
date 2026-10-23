@@ -501,7 +501,7 @@ LayoutRect ViewTransition::captureOverflowRect(RenderLayerModelObject& renderer)
         return containingBlockRect();
 
     CheckedPtr layer = renderer.layer();
-    auto bounds = layer->calculateLayerBounds(layer, LayoutSize(), { RenderLayer::IncludeFilterOutsets, RenderLayer::ExcludeHiddenDescendants, RenderLayer::IncludeCompositedDescendants, RenderLayer::PreserveAncestorFlags, RenderLayer::ExcludeViewTransitionCapturedDescendants });
+    auto bounds = layer->calculateLayerBounds(layer, LayoutSize(), { RenderLayer::IncludeFilterOutsets, RenderLayer::ExcludeHiddenDescendants, RenderLayer::IncludeCompositedDescendants, RenderLayer::PreserveAncestorFlags, RenderLayer::IncludeDescendantTransforms, RenderLayer::ExcludeViewTransitionCapturedDescendants });
     return LayoutRect(encloseRectToDevicePixels(bounds, renderer.document().deviceScaleFactor()));
 }
 

@@ -3671,7 +3671,7 @@ GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, 
     LayoutRect filterRepaintRect = paintingFilters->dirtySourceRect();
     filterRepaintRect.move(offsetFromRoot);
 
-    auto rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { });
+    auto rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { RenderLayer::PreserveAncestorFlags, RenderLayer::IncludeDescendantTransforms });
 
     // When the filter is applied via a transparency layer directly on the destination context (e.g. CG drop-shadow),
     // the switcher doesn't consult applyFilters's clipToRect path, so the ancestor border-radius clip would be lost.
@@ -5905,6 +5905,8 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
 
     // FIXME: should probably just pass 'flags' down to descendants.
     auto descendantFlags = (flags & PreserveAncestorFlags) ? flags : defaultCalculateLayerBoundsFlags() | (flags & ExcludeHiddenDescendants) | (flags & IncludeCompositedDescendants);
+    if (flags & IncludeDescendantTransforms)
+        descendantFlags.add(IncludeSelfTransform);
 
     const_cast<RenderLayer*>(this)->updateLayerListsIfNeeded();
 

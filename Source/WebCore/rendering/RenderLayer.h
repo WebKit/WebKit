@@ -798,6 +798,7 @@ public:
         UseLocalClipRectExcludingCompositingIfPossible = 1 << 11,
         ExcludeViewTransitionCapturedDescendants       = 1 << 12,
         ExcludeFilterOutsetsFromSelfBounds             = 1 << 13,
+        IncludeDescendantTransforms                    = 1 << 14,
     };
     static constexpr OptionSet<CalculateLayerBoundsFlag> defaultCalculateLayerBoundsFlags() { return { IncludeSelfTransform, UseLocalClipRectIfPossible, IncludePaintedFilterOutsets, UseFragmentBoxesExcludingCompositing }; }
 
