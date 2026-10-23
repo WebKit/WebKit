@@ -1,0 +1,144 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/intercept-fetch-iframe.html`;
+    document.body.appendChild(iframe);
+}
+
+function fetchInIFrame() {
+    iframe.contentWindow.postMessage({type: "Fetch", url: "intercepted-data.txt?" + Math.random()}, "*");
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data.type === "Ready")
+        TestPage.dispatchEventToFrontend("IFrameReady");
+    else if (event.data.type === "FetchResult")
+        TestPage.dispatchEventToFrontend("FetchResult", event.data);
+});
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptReleasePausedRequest");
+
+    const urlPattern = "intercepted-data\\.txt";
+    const interceptionParameters = {url: urlPattern, stage: "request", isRegex: true};
+
+    // Leave every intercepted request paused instead of letting the frontend resolve it, so each
+    // test case decides how the load is released.
+    let pausedRequestResolver = null;
+    WI.networkManager.requestIntercepted = function(target, requestId, request) {
+        InspectorTest.expectEqual(target, WI.backendTarget, "Network.requestIntercepted should be dispatched on the backend target.");
+        InspectorTest.expectThat(request.url.includes("/site-isolation/inspector/network/resources/intercepted-data.txt?"), "Paused request should be the cross-origin iframe's fetch.");
+        pausedRequestResolver?.(requestId);
+        pausedRequestResolver = null;
+    };
+
+    // Invoke the commands directly against the backend connection, which hosts the Network domain
+    // under Site Isolation.
+    function invokeNetworkCommand(name, parameters) {
+        return InspectorBackend.invokeCommand(`Network.${name}`, WI.TargetType.Page, WI.backendTarget.connection, parameters || {});
+    }
+
+    // Start a fetch in the cross-origin iframe and wait until its request is paused. Returns the
+    // paused request's id and a promise for the fetch result.
+    async function fetchAndAwaitPause() {
+        let fetchCompleted = false;
+        let fetchResultPromise = InspectorTest.awaitEvent("FetchResult").then((event) => {
+            fetchCompleted = true;
+            return event.data;
+        });
+        let pausedPromise = new Promise((resolve) => { pausedRequestResolver = resolve; });
+
+        InspectorTest.evaluateInPage("fetchInIFrame()");
+        let requestId = await pausedPromise;
+        InspectorTest.expectFalse(fetchCompleted, "Fetch should not complete while its request is paused.");
+        return {requestId, fetchResultPromise};
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptReleasePausedRequest.CrossOriginIFrameTargetExists",
+        description: "A separate-process cross-origin iframe should exist before interception is configured.",
+        async test() {
+            let [targetAddedEvent] = await Promise.all([
+                WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded),
+                InspectorTest.awaitEvent("IFrameReady"),
+                InspectorTest.evaluateInPage("addCrossOriginIFrame()"),
+            ]);
+            InspectorTest.expectThat(targetAddedEvent.data.target instanceof WI.FrameTarget, "Added target should be a FrameTarget, proving a separate-process OOPIF.");
+            InspectorTest.expectThat(WI.networkManager.enabledNetworkForSiteIsolation, "Network should be enabled on the backend target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptReleasePausedRequest.InterceptContinue",
+        description: "A request paused in the cross-origin iframe's process should load after Network.interceptContinue.",
+        async test() {
+            await invokeNetworkCommand("setInterceptionEnabled", {enabled: true});
+            await invokeNetworkCommand("addInterception", interceptionParameters);
+
+            let {requestId, fetchResultPromise} = await fetchAndAwaitPause();
+
+            InspectorTest.log("Continuing the paused request...");
+            await invokeNetworkCommand("interceptContinue", {requestId, stage: "request"});
+
+            let result = await fetchResultPromise;
+            InspectorTest.expectEqual(result.status, 200, "Status should be the original one.");
+            InspectorTest.expectEqual(result.text, "original content", "Content should be the original one.");
+
+            await invokeNetworkCommand("removeInterception", interceptionParameters);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptReleasePausedRequest.DisableInterception",
+        description: "A request paused in the cross-origin iframe's process should load once interception is disabled.",
+        async test() {
+            await invokeNetworkCommand("setInterceptionEnabled", {enabled: true});
+            await invokeNetworkCommand("addInterception", interceptionParameters);
+
+            let {fetchResultPromise} = await fetchAndAwaitPause();
+
+            InspectorTest.log("Disabling interception...");
+            await invokeNetworkCommand("setInterceptionEnabled", {enabled: false});
+
+            let result = await fetchResultPromise;
+            InspectorTest.expectEqual(result.status, 200, "Status should be the original one.");
+            InspectorTest.expectEqual(result.text, "original content", "Content should be the original one.");
+
+            await invokeNetworkCommand("removeInterception", interceptionParameters);
+            await invokeNetworkCommand("setInterceptionEnabled", {enabled: true});
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptReleasePausedRequest.DisableNetwork",
+        description: "A request paused in the cross-origin iframe's process should load once the Network domain is disabled.",
+        async test() {
+            await invokeNetworkCommand("setInterceptionEnabled", {enabled: true});
+            await invokeNetworkCommand("addInterception", interceptionParameters);
+
+            let {fetchResultPromise} = await fetchAndAwaitPause();
+
+            InspectorTest.log("Disabling the Network domain...");
+            await invokeNetworkCommand("disable");
+
+            let result = await fetchResultPromise;
+            InspectorTest.expectEqual(result.status, 200, "Status should be the original one.");
+            InspectorTest.expectEqual(result.text, "original content", "Content should be the original one.");
+
+            // Network.disable cleared the interception pattern and turned interception off.
+            await invokeNetworkCommand("enable");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a request paused by Web Inspector interception in a cross-origin iframe's process loads once it is released by Network.interceptContinue, by disabling interception, or by disabling the Network domain.</p>
+</body>

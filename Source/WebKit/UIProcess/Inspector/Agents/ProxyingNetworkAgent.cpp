@@ -44,6 +44,7 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorResourceUtilities.h>
+#include <WebCore/NetworkInterception.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProcessQualified.h>
 #include <optional>
@@ -51,6 +52,9 @@
 #include <utility>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
+#include <wtf/text/Base64.h>
 
 namespace Inspector {
 
@@ -238,8 +242,16 @@ void ProxyingNetworkAgent::disableInstrumentationForProcess(WebKit::WebProcessPr
             break;
         }
     }
-    if (!processStillHasRegistrations)
+    if (!processStillHasRegistrations) {
         m_pinnedInstrumentedProcesses.remove(processID);
+
+        // Its loads no longer report to us, so a paused one can't be resolved through this agent.
+        auto isInProcess = [processID](auto& entry) {
+            return entry.value.processIdentifier() == processID;
+        };
+        m_pendingInterceptRequests.removeIf(isInProcess);
+        m_pendingInterceptResponses.removeIf(isInProcess);
+    }
 }
 
 CommandResult<void> ProxyingNetworkAgent::enable()
@@ -290,6 +302,15 @@ CommandResult<void> ProxyingNetworkAgent::enable()
 
 CommandResult<void> ProxyingNetworkAgent::disable()
 {
+    // Web Inspector's interception patterns go away with the domain, and the loads it paused go on
+    // unchanged. Other consumers keep theirs. Mirrors InspectorNetworkAgent::disable(). This comes
+    // before the early return because the interception commands do not require Network.enable, so
+    // patterns can be in place while the domain is not enabled.
+    continuePendingInterceptions();
+    m_interceptionEnabled = false;
+    m_interceptPatterns.clear();
+    updateInterceptPatterns();
+
     if (!m_enabled)
         return { };
 
@@ -490,54 +511,255 @@ CommandResult<Ref<Protocol::Runtime::RemoteObject>> ProxyingNetworkAgent::resolv
     return makeUnexpected("Not yet implemented"_s);
 }
 
-// FIXME: Forward interception to the WebContent processes. https://bugs.webkit.org/show_bug.cgi?id=324383
+// Network interception under Site Isolation. Web Inspector is one consumer of the page's
+// interception authority (WebPageProxy::setNetworkInterceptPatterns, owner Inspector); WebDriver
+// BiDi is the other. A matching load pauses in the NetworkInterceptionSink of the WebContent
+// process that started it, FrameNetworkAgentProxy reports the pause here, and the Network.intercept*
+// commands resolve it in that process through WebPageProxy::resolveNetworkInterception. The
+// requestId of a paused load names the process (see IdentifierRegistry::protocolRequestId), so
+// the commands work for loads of every frame of the page, whichever process hosts it.
 
-CommandResult<void> ProxyingNetworkAgent::setInterceptionEnabled(bool)
+static NetworkInterceptionPhase toInterceptionPhase(Protocol::Network::NetworkStage stage)
 {
-    return { };
-}
-
-CommandResult<void> ProxyingNetworkAgent::addInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
-{
-    return { };
-}
-
-CommandResult<void> ProxyingNetworkAgent::removeInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
-{
-    return { };
-}
-
-CommandResult<void> ProxyingNetworkAgent::interceptContinue(const Protocol::Network::RequestId&, Protocol::Network::NetworkStage networkStage)
-{
-    switch (networkStage) {
+    switch (stage) {
     case Protocol::Network::NetworkStage::Request:
-        return makeUnexpected("Missing pending intercept request for given requestId"_s);
+        return NetworkInterceptionPhase::BeforeRequestSent;
     case Protocol::Network::NetworkStage::Response:
-        return makeUnexpected("Missing pending intercept response for given requestId"_s);
+        return NetworkInterceptionPhase::ResponseStarted;
+    }
+    ASSERT_NOT_REACHED();
+    return NetworkInterceptionPhase::ResponseStarted;
+}
+
+static InterceptPattern toInterceptPattern(const String& url, Protocol::Network::NetworkStage stage, const std::optional<bool>& caseSensitive, const std::optional<bool>& isRegex)
+{
+    return InterceptPattern {
+        NetworkInterceptOwner::Inspector,
+        toInterceptionPhase(stage),
+        InspectorURLPattern { url, caseSensitive.value_or(true), isRegex.value_or(false) },
+    };
+}
+
+static bool isSiteIsolationEnabled(WebKit::WebPageProxy* page)
+{
+    return page && protect(page->preferences())->siteIsolationEnabled();
+}
+
+void ProxyingNetworkAgent::updateInterceptPatterns(CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return completionHandler();
+
+    // Without Site Isolation the WebContent process's own Network agent intercepts; the authority
+    // must not hold Web Inspector's patterns twice.
+    Vector<InterceptPattern> patterns;
+    if (m_interceptionEnabled && isSiteIsolationEnabled(inspectedPage.get()))
+        patterns = m_interceptPatterns;
+    // The authority calls back once every process hosting a frame of the page has the patterns.
+    inspectedPage->setNetworkInterceptPatterns(NetworkInterceptOwner::Inspector, WTF::move(patterns), WTF::move(completionHandler));
+}
+
+void ProxyingNetworkAgent::continuePendingInterceptions()
+{
+    RefPtr inspectedPage = m_inspectedPage.get();
+    auto pendingRequests = std::exchange(m_pendingInterceptRequests, { });
+    auto pendingResponses = std::exchange(m_pendingInterceptResponses, { });
+    if (!inspectedPage)
+        return;
+
+    for (auto& resourceID : pendingRequests.values())
+        inspectedPage->resolveNetworkInterception(resourceID, NetworkInterceptOwner::Inspector, NetworkInterceptionPhase::BeforeRequestSent, { });
+    for (auto& resourceID : pendingResponses.values())
+        inspectedPage->resolveNetworkInterception(resourceID, NetworkInterceptOwner::Inspector, NetworkInterceptionPhase::ResponseStarted, { });
+}
+
+// Same errors as InspectorNetworkAgent, so the frontend and the tests see one behavior. The
+// configuration commands reply only once every WebContent process hosting a frame of the page has
+// the new patterns, so a load that starts after the reply sees them.
+
+void ProxyingNetworkAgent::setInterceptionEnabled(bool enabled, Ref<SetInterceptionEnabledCallback>&& callback)
+{
+    // Unlike InspectorNetworkAgent, setting the current state again is not an error: under Site
+    // Isolation the frontend enables interception on this target only once the first frame target
+    // appears (NetworkManager.initializeTarget), possibly after a client already enabled it.
+    if (m_interceptionEnabled == enabled) {
+        callback->sendSuccess();
+        return;
     }
 
-    ASSERT_NOT_REACHED();
+    m_interceptionEnabled = enabled;
+    updateInterceptPatterns([callback = WTF::move(callback)] {
+        callback->sendSuccess();
+    });
+
+    if (!m_interceptionEnabled)
+        continuePendingInterceptions();
+}
+
+void ProxyingNetworkAgent::addInterception(const String& url, Protocol::Network::NetworkStage stage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<AddInterceptionCallback>&& callback)
+{
+    if (!m_interceptPatterns.appendIfNotContains(toInterceptPattern(url, stage, caseSensitive, isRegex))) {
+        callback->sendFailure("Intercept for given url, given isRegex, and given stage already exists"_s);
+        return;
+    }
+
+    updateInterceptPatterns([callback = WTF::move(callback)] {
+        callback->sendSuccess();
+    });
+}
+
+void ProxyingNetworkAgent::removeInterception(const String& url, Protocol::Network::NetworkStage stage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<RemoveInterceptionCallback>&& callback)
+{
+    if (!m_interceptPatterns.removeAll(toInterceptPattern(url, stage, caseSensitive, isRegex))) {
+        callback->sendFailure("Missing intercept for given url, given isRegex, and given stage"_s);
+        return;
+    }
+
+    updateInterceptPatterns([callback = WTF::move(callback)] {
+        callback->sendSuccess();
+    });
+}
+
+static ASCIILiteral missingPendingInterceptError(NetworkInterceptionPhase phase)
+{
+    return phase == NetworkInterceptionPhase::BeforeRequestSent ? "Missing pending intercept request for given requestId"_s : "Missing pending intercept response for given requestId"_s;
+}
+
+CommandResult<void> ProxyingNetworkAgent::resolveInterception(const Protocol::Network::RequestId& requestId, NetworkInterceptionPhase phase, NetworkInterceptionResolution&& resolution)
+{
+    // Like InspectorNetworkAgent, a paused response can only go on or be replaced, never failed.
+    if (phase == NetworkInterceptionPhase::ResponseStarted && resolution.action == NetworkInterceptionAction::Fail)
+        return makeUnexpected("Unable to fail an intercepted response"_s);
+
+    auto& pendingInterceptions = phase == NetworkInterceptionPhase::BeforeRequestSent ? m_pendingInterceptRequests : m_pendingInterceptResponses;
+    auto iterator = pendingInterceptions.find(requestId);
+    if (iterator == pendingInterceptions.end())
+        return makeUnexpected(missingPendingInterceptError(phase));
+    auto resourceID = iterator->value;
+    pendingInterceptions.remove(iterator);
+
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return makeUnexpected("Inspected page is gone"_s);
+
+    // The process that paused the load applies the resolution. A load that went away in the
+    // meantime ignores it, like the single-process agent ignores a load in a terminal state.
+    inspectedPage->resolveNetworkInterception(resourceID, NetworkInterceptOwner::Inspector, phase, WTF::move(resolution));
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId&, const String&, const String&, RefPtr<JSON::Object>&&, const String&)
+static Vector<std::pair<String, String>> headerPairs(const JSON::Object& headers)
 {
-    return makeUnexpected("Missing pending intercept request for given requestId"_s);
+    Vector<std::pair<String, String>> pairs;
+    for (auto& [name, value] : headers) {
+        auto headerValue = protect(value)->asString();
+        if (!!headerValue)
+            pairs.append({ name, headerValue });
+    }
+    return pairs;
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, std::optional<int>&&, const String&, RefPtr<JSON::Object>&&)
+static std::optional<Vector<uint8_t>> decodeContent(const String& content, bool base64Encoded)
 {
-    return makeUnexpected("Missing pending intercept response for given requestId"_s);
+    if (base64Encoded)
+        return base64Decode(content);
+    auto utf8 = content.utf8();
+    return Vector<uint8_t> { byteCast<uint8_t>(utf8.span()) };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, int, const String&, Ref<JSON::Object>&&)
+CommandResult<void> ProxyingNetworkAgent::interceptContinue(const Protocol::Network::RequestId& requestId, Protocol::Network::NetworkStage networkStage)
 {
-    return makeUnexpected("Missing pending intercept request for given requestId"_s);
+    return resolveInterception(requestId, toInterceptionPhase(networkStage), { });
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptRequestWithError(const Protocol::Network::RequestId&, Protocol::Network::ResourceErrorType)
+CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId& requestId, const String& url, const String& method, RefPtr<JSON::Object>&& headers, const String& postData)
 {
-    return makeUnexpected("Missing pending intercept request for given requestId"_s);
+    if (!m_pendingInterceptRequests.contains(requestId))
+        return makeUnexpected(missingPendingInterceptError(NetworkInterceptionPhase::BeforeRequestSent));
+
+    NetworkInterceptionResolution resolution;
+    if (!!url)
+        resolution.url = URL({ }, url);
+    if (!!method)
+        resolution.method = method;
+    if (headers)
+        resolution.headers = headerPairs(*headers);
+    if (!!postData) {
+        auto body = base64Decode(postData);
+        if (!body)
+            return makeUnexpected("Unable to decode given postData"_s);
+        resolution.body = SharedBuffer::create(WTF::move(*body));
+    }
+
+    return resolveInterception(requestId, NetworkInterceptionPhase::BeforeRequestSent, WTF::move(resolution));
+}
+
+CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Object>&& headers)
+{
+    if (!m_pendingInterceptResponses.contains(requestId))
+        return makeUnexpected(missingPendingInterceptError(NetworkInterceptionPhase::ResponseStarted));
+
+    auto body = decodeContent(content, base64Encoded);
+    if (!body)
+        return makeUnexpected("Unable to decode given content"_s);
+
+    NetworkInterceptionResolution resolution;
+    resolution.action = NetworkInterceptionAction::Fulfill;
+    resolution.body = SharedBuffer::create(WTF::move(*body));
+    resolution.statusCode = status;
+    if (!!statusText)
+        resolution.reasonPhrase = statusText;
+    if (!!mimeType)
+        resolution.mimeType = mimeType;
+    if (headers)
+        resolution.headers = headerPairs(*headers);
+
+    return resolveInterception(requestId, NetworkInterceptionPhase::ResponseStarted, WTF::move(resolution));
+}
+
+CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Object>&& headers)
+{
+    if (!m_pendingInterceptRequests.contains(requestId))
+        return makeUnexpected(missingPendingInterceptError(NetworkInterceptionPhase::BeforeRequestSent));
+
+    auto body = decodeContent(content, base64Encoded);
+    if (!body)
+        return makeUnexpected("Unable to decode given content"_s);
+
+    NetworkInterceptionResolution resolution;
+    resolution.action = NetworkInterceptionAction::Fulfill;
+    resolution.body = SharedBuffer::create(WTF::move(*body));
+    resolution.statusCode = status;
+    resolution.reasonPhrase = statusText;
+    resolution.mimeType = mimeType;
+    resolution.headers = headerPairs(headers);
+
+    return resolveInterception(requestId, NetworkInterceptionPhase::BeforeRequestSent, WTF::move(resolution));
+}
+
+static NetworkInterceptionErrorType toInterceptionErrorType(Protocol::Network::ResourceErrorType errorType)
+{
+    switch (errorType) {
+    case Protocol::Network::ResourceErrorType::General:
+        return NetworkInterceptionErrorType::General;
+    case Protocol::Network::ResourceErrorType::AccessControl:
+        return NetworkInterceptionErrorType::AccessControl;
+    case Protocol::Network::ResourceErrorType::Cancellation:
+        return NetworkInterceptionErrorType::Cancellation;
+    case Protocol::Network::ResourceErrorType::Timeout:
+        return NetworkInterceptionErrorType::Timeout;
+    }
+    ASSERT_NOT_REACHED();
+    return NetworkInterceptionErrorType::General;
+}
+
+CommandResult<void> ProxyingNetworkAgent::interceptRequestWithError(const Protocol::Network::RequestId& requestId, Protocol::Network::ResourceErrorType errorType)
+{
+    NetworkInterceptionResolution resolution;
+    resolution.action = NetworkInterceptionAction::Fail;
+    resolution.errorType = toInterceptionErrorType(errorType);
+    return resolveInterception(requestId, NetworkInterceptionPhase::BeforeRequestSent, WTF::move(resolution));
 }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -616,6 +838,9 @@ void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
+    // A paused load that fails (for example, its frame went away) has nothing left to resolve.
+    m_pendingInterceptRequests.remove(requestId);
+    m_pendingInterceptResponses.remove(requestId);
     m_frontendDispatcher->loadingFailed(requestId, timestamp, errorText, canceled);
 }
 
@@ -640,6 +865,43 @@ void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, F
         cachedResourceObject->setSourceMapURL(sourceMapURL);
 
     m_frontendDispatcher->requestServedFromMemoryCache(requestId, frameIdString, loaderId, documentURL, timestamp, ResourceUtilities::buildInitiatorObject(initiator), WTF::move(cachedResourceObject));
+}
+
+void ProxyingNetworkAgent::requestIntercepted(IPC::Connection& connection, ResourceID resourceID, const ResourceRequest& request)
+{
+    // The resolution is routed to the process named by the resource id, so only the process that paused the load may name it.
+    MESSAGE_CHECK_BASE(resourceID.processIdentifier() == WebKit::WebProcessProxy::fromConnection(connection)->coreProcessIdentifier(), connection);
+
+    auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
+
+    // Nobody can resolve the pause once Web Inspector stopped intercepting; let the load go on.
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!m_enabled || !m_interceptionEnabled) {
+        if (inspectedPage)
+            inspectedPage->resolveNetworkInterception(resourceID, NetworkInterceptOwner::Inspector, NetworkInterceptionPhase::BeforeRequestSent, { });
+        return;
+    }
+
+    m_pendingInterceptRequests.set(requestId, resourceID);
+    m_frontendDispatcher->requestIntercepted(requestId, ResourceUtilities::buildObjectForResourceRequest(request, { }));
+}
+
+void ProxyingNetworkAgent::responseIntercepted(IPC::Connection& connection, ResourceID resourceID, const ResourceResponse& response)
+{
+    MESSAGE_CHECK_BASE(resourceID.processIdentifier() == WebKit::WebProcessProxy::fromConnection(connection)->coreProcessIdentifier(), connection);
+
+    auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
+
+    RefPtr inspectedPage = m_inspectedPage.get();
+    auto responseObject = buildObjectForResourceResponse(response, std::nullopt);
+    if (!m_enabled || !m_interceptionEnabled || !responseObject) {
+        if (inspectedPage)
+            inspectedPage->resolveNetworkInterception(resourceID, NetworkInterceptOwner::Inspector, NetworkInterceptionPhase::ResponseStarted, { });
+        return;
+    }
+
+    m_pendingInterceptResponses.set(requestId, resourceID);
+    m_frontendDispatcher->responseIntercepted(requestId, responseObject.releaseNonNull());
 }
 
 } // namespace Inspector

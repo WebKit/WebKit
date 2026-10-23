@@ -845,6 +845,7 @@ WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp
 
 WebProcess/Network/NetworkProcessConnection.cpp @cost:4
 WebProcess/Network/WebLoaderStrategy.cpp @cost:4
+WebProcess/Network/NetworkInterceptionSink.cpp
 WebProcess/Network/WebResourceInterceptController.cpp
 WebProcess/Network/WebResourceLoader.cpp
 WebProcess/Network/WebSocketChannel.cpp @no-unify-when(bundle<=8)

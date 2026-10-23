@@ -27,6 +27,7 @@
 #include "WebInspectorBackend.h"
 
 #include "FrameNetworkAgentProxy.h"
+#include "NetworkInterceptionSink.h"
 #include "PageAgentProxy.h"
 #include "WebFrame.h"
 #include "WebInspectorBackendMessages.h"
@@ -418,6 +419,10 @@ void WebInspectorBackend::disableNetworkInstrumentation()
         corePage->setResourceCachingDisabledByWebInspector(false);
         corePage->inspectorController().disconnectRemoteInstrumentation();
     }
+
+    // Loads that Web Inspector paused go on unchanged once nobody can resolve them.
+    if (RefPtr page = m_page)
+        page->networkInterceptionSink().continueInspectorPauses();
 }
 
 void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)

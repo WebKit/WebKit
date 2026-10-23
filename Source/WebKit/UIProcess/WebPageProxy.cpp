@@ -10003,6 +10003,64 @@ void WebPageProxy::forEachWebContentProcess(NOESCAPE const Function<void(WebProc
     function(protect(legacyMainFrameProcess()), webPageIDInMainFrameProcess());
 }
 
+const Inspector::NetworkInterception& WebPageProxy::networkInterception() const
+{
+    return internals().networkInterception;
+}
+
+void WebPageProxy::setNetworkInterceptPatterns(Inspector::NetworkInterceptOwner owner, Vector<Inspector::InterceptPattern>&& patterns, CompletionHandler<void()>&& completionHandler)
+{
+    switch (owner) {
+    case Inspector::NetworkInterceptOwner::Inspector:
+        internals().inspectorInterceptPatterns = WTF::move(patterns);
+        break;
+    case Inspector::NetworkInterceptOwner::Automation:
+        internals().automationInterceptPatterns = WTF::move(patterns);
+        break;
+    }
+    updateNetworkInterception(WTF::move(completionHandler));
+}
+
+void WebPageProxy::updateNetworkInterception(CompletionHandler<void()>&& completionHandler)
+{
+    // The configuration of a page is the union of the patterns of every consumer. A consumer that
+    // turns its interception off clears its own patterns; it does not gate other consumers.
+    Inspector::NetworkInterception interception;
+    interception.patterns.appendVector(internals().inspectorInterceptPatterns);
+    interception.patterns.appendVector(internals().automationInterceptPatterns);
+
+    if (interception == internals().networkInterception)
+        return completionHandler();
+
+    internals().networkInterception = WTF::move(interception);
+
+    // A process created later gets the configuration from its creation parameters, before its first load.
+    if (!hasRunningProcess())
+        return completionHandler();
+
+    // Reply once every process hosting a frame of the page has the new configuration.
+    Ref aggregator = CallbackAggregator::create(WTF::move(completionHandler));
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPage::SetNetworkInterception(internals().networkInterception), [aggregator] { }, pageID);
+    });
+    if (RefPtr provisionalPage = m_provisionalPage)
+        protect(provisionalPage->process())->sendWithAsyncReply(Messages::WebPage::SetNetworkInterception(internals().networkInterception), [aggregator] { }, provisionalPage->webPageID());
+}
+
+void WebPageProxy::resolveNetworkInterception(const WebCore::ScopedResourceLoaderIdentifier& loadID, Inspector::NetworkInterceptOwner owner, Inspector::NetworkInterceptionPhase phase, Inspector::NetworkInterceptionResolution&& resolution)
+{
+    // The load is paused in the process that started it, which may host any frame of the page.
+    RefPtr process = WebProcessProxy::processForIdentifier(loadID.processIdentifier());
+    if (!process)
+        return;
+
+    auto webPageID = webPageIDInProcess(*process);
+    if (!hasWebPageInProcess(*process, webPageID))
+        return;
+
+    process->send(Messages::WebPage::ResolveNetworkInterception(loadID.object(), owner, phase, WTF::move(resolution)), webPageID);
+}
+
 void WebPageProxy::observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame, const String& frameName)
 {
     if (!protect(preferences())->siteIsolationEnabled())
@@ -15940,6 +15998,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         parameters.scrollbarOverlayStyle = std::nullopt;
     parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
     parameters.controlledByAutomation = m_controlledByAutomation;
+    parameters.networkInterception = internals().networkInterception;
     parameters.isProcessSwap = isProcessSwap;
     parameters.useDarkAppearance = useDarkAppearance();
     parameters.useElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel();

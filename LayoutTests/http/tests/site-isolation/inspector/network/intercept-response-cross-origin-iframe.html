@@ -1,0 +1,162 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/intercept-fetch-iframe.html`;
+    document.body.appendChild(iframe);
+}
+
+function fetchInIFrame() {
+    iframe.contentWindow.postMessage({type: "Fetch", url: "intercepted-data.txt?" + Math.random()}, "*");
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data.type === "Ready")
+        TestPage.dispatchEventToFrontend("IFrameReady");
+    else if (event.data.type === "FetchResult")
+        TestPage.dispatchEventToFrontend("FetchResult", event.data);
+});
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptResponse");
+
+    const urlPattern = "intercepted-data\\.txt";
+
+    // Record which target each paused response is reported on. Under Site Isolation the Network
+    // domain lives on the multiplexing backend target, which intercepts the loads of every frame.
+    let originalResponseIntercepted = WI.NetworkManager.prototype.responseIntercepted;
+    WI.networkManager.responseIntercepted = function(target, requestId, response) {
+        InspectorTest.expectEqual(target, WI.backendTarget, "Network.responseIntercepted should be dispatched on the backend target.");
+        InspectorTest.expectEqual(response.status, 200, "Intercepted response should be the original response.");
+        return originalResponseIntercepted.apply(this, arguments);
+    };
+
+    async function fetchInIFrame() {
+        let [event] = await Promise.all([
+            InspectorTest.awaitEvent("FetchResult"),
+            InspectorTest.evaluateInPage("fetchInIFrame()"),
+        ]);
+        return event.data;
+    }
+
+    async function withLocalResourceOverride(localResourceOverride, callback) {
+        WI.networkManager.addLocalResourceOverride(localResourceOverride);
+        try {
+            await callback();
+        } finally {
+            WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+        }
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptResponse.CrossOriginIFrameTargetExists",
+        description: "A separate-process cross-origin iframe should exist before interception is configured.",
+        async test() {
+            let [targetAddedEvent] = await Promise.all([
+                WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded),
+                InspectorTest.awaitEvent("IFrameReady"),
+                InspectorTest.evaluateInPage("addCrossOriginIFrame()"),
+            ]);
+            InspectorTest.expectThat(targetAddedEvent.data.target instanceof WI.FrameTarget, "Added target should be a FrameTarget, proving a separate-process OOPIF.");
+            InspectorTest.expectThat(WI.networkManager.enabledNetworkForSiteIsolation, "Network should be enabled on the backend target.");
+            InspectorTest.expectThat(WI.backendTarget.hasCommand("Network.interceptWithResponse"), "Backend target should support Network.interceptWithResponse.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptResponse.WithResponse",
+        description: "A response paused in the cross-origin iframe's process should be replaced by Network.interceptWithResponse.",
+        async test() {
+            let localResourceOverride = WI.LocalResourceOverride.create(urlPattern, WI.LocalResourceOverride.InterceptType.Response, {
+                responseMIMEType: "text/plain",
+                responseContent: "overridden response",
+                responseBase64Encoded: false,
+                responseStatusCode: 202,
+                responseStatusText: "Accepted",
+                responseHeaders: {"X-Inspector-Override": "1"},
+                isRegex: true,
+            });
+
+            await withLocalResourceOverride(localResourceOverride, async () => {
+                let result = await fetchInIFrame();
+                InspectorTest.expectEqual(result.status, 202, "Status should come from the override.");
+                InspectorTest.expectEqual(result.statusText, "Accepted", "Status text should come from the override.");
+                InspectorTest.expectEqual(result.text, "overridden response", "Content should come from the override.");
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptResponse.Continue",
+        description: "A response paused in the cross-origin iframe's process should go on unchanged after Network.interceptContinue.",
+        async test() {
+            // Without a Local Override for the URL, the frontend continues the paused response.
+            await WI.backendTarget.NetworkAgent.addInterception.invoke({url: urlPattern, stage: "response", isRegex: true});
+
+            let result = await fetchInIFrame();
+            InspectorTest.expectEqual(result.status, 200, "Status should be the original one.");
+            InspectorTest.expectEqual(result.text, "original content", "Content should be the original one.");
+
+            await WI.backendTarget.NetworkAgent.removeInterception.invoke({url: urlPattern, stage: "response", isRegex: true});
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptResponse.FailIsRejected",
+        description: "A response paused in the cross-origin iframe's process cannot be failed, like in the single-process agent; it should still go on after Network.interceptContinue.",
+        async test() {
+            let interceptedResponseWrapper = WI.networkManager.responseIntercepted;
+            let pausedRequestIdPromise = new Promise((resolve) => {
+                WI.networkManager.responseIntercepted = function(target, requestId, response) {
+                    InspectorTest.expectEqual(target, WI.backendTarget, "Network.responseIntercepted should be dispatched on the backend target.");
+                    resolve(requestId);
+                };
+            });
+
+            await WI.backendTarget.NetworkAgent.addInterception.invoke({url: urlPattern, stage: "response", isRegex: true});
+
+            let fetchResultPromise = fetchInIFrame();
+            let requestId = await pausedRequestIdPromise;
+
+            await InspectorTest.expectException(async () => {
+                await WI.backendTarget.NetworkAgent.interceptRequestWithError.invoke({requestId, errorType: "General"});
+            });
+
+            await WI.backendTarget.NetworkAgent.interceptContinue.invoke({requestId, stage: "response"});
+
+            let result = await fetchResultPromise;
+            InspectorTest.expectEqual(result.status, 200, "Status should be the original one.");
+            InspectorTest.expectEqual(result.text, "original content", "Content should be the original one.");
+
+            await WI.backendTarget.NetworkAgent.removeInterception.invoke({url: urlPattern, stage: "response", isRegex: true});
+            WI.networkManager.responseIntercepted = interceptedResponseWrapper;
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptResponse.RemovedOverride",
+        description: "Once the override is removed, the cross-origin iframe's response should no longer pause.",
+        async test() {
+            WI.networkManager.responseIntercepted = function() {
+                InspectorTest.fail("No response should be intercepted.");
+                return originalResponseIntercepted.apply(this, arguments);
+            };
+
+            let result = await fetchInIFrame();
+            InspectorTest.expectEqual(result.text, "original content", "Fetch should load the original content.");
+
+            delete WI.networkManager.responseIntercepted;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Web Inspector response interception pauses and resolves a response received by a cross-origin iframe in another process.</p>
+</body>

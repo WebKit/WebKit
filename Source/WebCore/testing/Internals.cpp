@@ -9091,6 +9091,19 @@ void Internals::setResourceCachingDisabledByWebInspector(bool disabled)
     document->page()->setResourceCachingDisabledByWebInspector(disabled);
 }
 
+// Witnesses the network interception configuration active in THIS web content process.
+// Under Site Isolation each process hosting a frame of the page holds its own replica, so a
+// test can evaluate this inside a cross-origin subframe to confirm the configuration reached
+// that subframe's process.
+bool Internals::isNetworkInterceptionConfiguredForTesting(const String& url)
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return false;
+
+    return document->page()->networkInterception().isConfiguredForURL(URL { url });
+}
+
 ExceptionOr<void> Internals::lowerAllFrameMemoryMonitorLimits()
 {
     RefPtr document = contextDocument();

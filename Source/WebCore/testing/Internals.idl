@@ -827,6 +827,7 @@ enum ContentsFormat {
     boolean testProcessIncomingSyncMessagesWhenWaitingForSyncReply();
 
     undefined setResourceCachingDisabledByWebInspector(boolean disabled);
+    boolean isNetworkInterceptionConfiguredForTesting(DOMString url);
     undefined lowerAllFrameMemoryMonitorLimits();
 
     [Conditional=DAMAGE_TRACKING] sequence<FrameDamage> getFrameDamageHistory();
