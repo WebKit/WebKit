@@ -110,12 +110,11 @@ public:
     }
 
     MarginValues m_margins;
-    int m_lineBreakToAvoidWidow;
+    unsigned m_lineBreakToAvoidWidow : 31; // 0 means none, otherwise line number + 1.
+    unsigned m_didBreakAtLineToAvoidWidow : 1;
     LayoutUnit m_alignContentShift; // Caches negative shifts for overflow calculation.
 
     SingleThreadWeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
-
-    bool m_didBreakAtLineToAvoidWidow : 1;
 };
 
 class RenderBlockFlow : public RenderBlock {
@@ -277,9 +276,9 @@ public:
 
     bool childrenPreventSelfCollapsing() const final;
 
-    bool shouldBreakAtLineToAvoidWidow() const { return hasRareBlockFlowData() && rareBlockFlowData()->m_lineBreakToAvoidWidow >= 0; }
+    bool shouldBreakAtLineToAvoidWidow() const { return hasRareBlockFlowData() && rareBlockFlowData()->m_lineBreakToAvoidWidow > 0; }
     void LEGACY_NODELETE clearShouldBreakAtLineToAvoidWidow() const;
-    int lineBreakToAvoidWidow() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_lineBreakToAvoidWidow : -1; }
+    int lineBreakToAvoidWidow() const { return hasRareBlockFlowData() ? static_cast<int>(rareBlockFlowData()->m_lineBreakToAvoidWidow) - 1 : -1; }
     void setBreakAtLineToAvoidWidow(int);
     void LEGACY_NODELETE clearDidBreakAtLineToAvoidWidow();
     void LEGACY_NODELETE setDidBreakAtLineToAvoidWidow();
