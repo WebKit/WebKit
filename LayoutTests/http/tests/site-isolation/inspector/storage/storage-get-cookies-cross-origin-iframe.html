@@ -21,7 +21,7 @@ function test()
 
     suite.addTestCase({
         name: "SiteIsolation.Storage.getCookies.CrossOriginIframe",
-        description: "A cookie set by script inside a cross-origin iframe (a separate WebContent process under Site Isolation) must be visible via Storage.getCookies, which reads the authoritative NetworkProcess store, and must NOT be visible via the in-process Page.getCookies, which can only find cookies for URLs the inspected page's process already knows about.",
+        description: "A cookie set by script inside a cross-origin iframe (a separate WebContent process under Site Isolation) must be visible via Storage.getCookies, which asks the NetworkProcess for every cookie the page can access, and must NOT be visible via the in-process Page.getCookies, which can only find cookies for URLs the inspected page's process already knows about.",
         async test() {
             await WI.backendTarget.StorageAgent.enable();
             await InspectorTest.evaluateInPage(`if (window.testRunner) testRunner.setAlwaysAcceptCookies(true);`);

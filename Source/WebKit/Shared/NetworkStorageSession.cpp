@@ -198,6 +198,16 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     return shouldBlockCookies(thirdPartyCookieBlockingDecisionForRequest(firstPartyForCookies, resource, frameID, webPageProxyID, shouldRelaxThirdPartyCookieBlocking, isKnownCrossSiteTracker));
 }
 
+String NetworkStorageSession::partitionIdentifierForInspector(const URL& firstParty) const
+{
+#if PLATFORM(COCOA)
+    return cookiePartitionIdentifierIfEnabled(firstParty);
+#else
+    UNUSED_PARAM(firstParty);
+    return emptyString();
+#endif
+}
+
 bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, std::optional<FrameIdentifier> frameID, std::optional<WebPageProxyIdentifier> webPageProxyID, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
 {
     return shouldBlockCookies(request.firstPartyForCookies(), request.url(), frameID, webPageProxyID, shouldRelaxThirdPartyCookieBlocking, isKnownCrossSiteTracker);

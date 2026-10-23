@@ -1,0 +1,135 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true OptInPartitionedCookiesEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossSiteIframe() {
+    let crossSiteHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `https://${crossSiteHost}:8443/site-isolation/inspector/storage/resources/blank-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function setThirdPartyCookieBlocking(enabled, onlyUnpartitionedCookies) {
+    testRunner.setStatisticsShouldBlockThirdPartyCookies(enabled, () => {
+        TestPage.dispatchEventToFrontend("ThirdPartyCookieBlockingChanged");
+    }, false, onlyUnpartitionedCookies);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Storage.Cookies.PartitionScoping");
+
+    const crossSiteHost = "localhost";
+    const topSiteHost = "127.0.0.1";
+    // Cookie partitions are keyed by site (scheme + registrable domain), not origin.
+    const topPartition = "https://127.0.0.1";
+    const otherPartition = "https://localhost";
+
+    async function setThirdPartyCookieBlocking(enabled, onlyUnpartitionedCookies) {
+        await Promise.all([
+            InspectorTest.awaitEvent("ThirdPartyCookieBlockingChanged"),
+            InspectorTest.evaluateInPage(`setThirdPartyCookieBlocking(${enabled}, ${onlyUnpartitionedCookies})`),
+        ]);
+    }
+
+    async function getCookies() {
+        let {cookies} = await WI.backendTarget.StorageAgent.getCookies();
+        return cookies;
+    }
+
+    function hasCookie(cookies, name, partitionKey) {
+        return cookies.some((cookie) => cookie.name === name && (cookie.partitionKey || "") === partitionKey);
+    }
+
+    function secureCookie(name, value, domain, partitionKey) {
+        let cookie = {name, value, domain, path: "/", secure: true, sameSite: "None"};
+        if (partitionKey)
+            cookie.partitionKey = partitionKey;
+        return cookie;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.Cookies.PartitionScoping.Setup",
+        description: "Add a cross-site iframe and seed unpartitioned and partitioned cookies.",
+        async test() {
+            await WI.backendTarget.StorageAgent.enable();
+            await InspectorTest.evaluateInPage(`if (window.testRunner) testRunner.setAlwaysAcceptCookies(true);`);
+            await setThirdPartyCookieBlocking(false, false);
+
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossSiteIframe()");
+            let frameTarget = (await targetAddedPromise).data.target;
+            InspectorTest.expectThat(frameTarget instanceof WI.FrameTarget, "Cross-site iframe should be its own Frame Target (out-of-process).");
+            if (frameTarget.isProvisional)
+                await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+
+            await WI.backendTarget.StorageAgent.setCookie(secureCookie("CrossSiteUnpartitioned", "x", crossSiteHost));
+            await WI.backendTarget.StorageAgent.setCookie(secureCookie("CrossSiteCHIPS", "x", crossSiteHost, topPartition));
+            await WI.backendTarget.StorageAgent.setCookie(secureCookie("TopSiteInOtherPartition", "x", topSiteHost, otherPartition));
+            await WI.backendTarget.StorageAgent.setCookie(secureCookie("Twin", "unpartitioned", topSiteHost));
+            await WI.backendTarget.StorageAgent.setCookie(secureCookie("Twin", "partitioned", topSiteHost, topPartition));
+            InspectorTest.log("Seeded cookies.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.Cookies.PartitionScoping.NotBlocked",
+        description: "Unblocked: the iframe's unpartitioned and top-partition cookies are returned. Another top site's partition is never returned.",
+        async test() {
+            let cookies = await getCookies();
+            InspectorTest.expectThat(hasCookie(cookies, "CrossSiteUnpartitioned", ""), "Cross-site unpartitioned cookie should be returned.");
+            InspectorTest.expectThat(hasCookie(cookies, "CrossSiteCHIPS", topPartition), "Cross-site cookie in the top site's partition should be returned with its partitionKey.");
+            InspectorTest.expectFalse(hasCookie(cookies, "TopSiteInOtherPartition", otherPartition), "Cookie in another top site's partition should not be returned.");
+            InspectorTest.expectThat(hasCookie(cookies, "Twin", "") && hasCookie(cookies, "Twin", topPartition), "Both the unpartitioned and the partitioned 'Twin' should be returned.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.Cookies.PartitionScoping.BlockAllExceptPartitioned",
+        description: "AllExceptPartitioned: only the iframe's cookies in the top site's partition are returned.",
+        async test() {
+            await setThirdPartyCookieBlocking(true, true);
+
+            let cookies = await getCookies();
+            InspectorTest.expectFalse(hasCookie(cookies, "CrossSiteUnpartitioned", ""), "Cross-site unpartitioned cookie should not be returned.");
+            InspectorTest.expectThat(hasCookie(cookies, "CrossSiteCHIPS", topPartition), "Cross-site cookie in the top site's partition should be returned.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.Cookies.PartitionScoping.BlockAll",
+        description: "All: none of the iframe's cookies are returned, partitioned ones included.",
+        async test() {
+            await setThirdPartyCookieBlocking(true, false);
+
+            let cookies = await getCookies();
+            InspectorTest.expectFalse(hasCookie(cookies, "CrossSiteUnpartitioned", ""), "Cross-site unpartitioned cookie should not be returned.");
+            InspectorTest.expectFalse(hasCookie(cookies, "CrossSiteCHIPS", topPartition), "Cross-site cookie in the top site's partition should not be returned.");
+
+            await setThirdPartyCookieBlocking(false, false);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.Cookies.PartitionScoping.DeleteByPartitionKey",
+        description: "A partitionKey in the delete filter keeps an unpartitioned cookie and a partitioned cookie with the same name/domain/path apart.",
+        async test() {
+            await WI.backendTarget.StorageAgent.deleteCookies({name: "Twin", domain: topSiteHost, path: "/", partitionKey: ""});
+
+            let cookies = await getCookies();
+            InspectorTest.expectFalse(hasCookie(cookies, "Twin", ""), "Unpartitioned 'Twin' should be deleted.");
+            InspectorTest.expectThat(hasCookie(cookies, "Twin", topPartition), "Partitioned 'Twin' should survive.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that under Site Isolation Storage.getCookies applies third-party cookie blocking and partition scoping per site, and that Storage.deleteCookies honors partitionKey.</p>
+</body>
+</html>

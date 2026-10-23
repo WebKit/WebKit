@@ -1359,6 +1359,66 @@ void NetworkProcess::hasLocalStorage(PAL::SessionID sessionID, const Registrable
     });
 }
 
+static String stripLeadingDot(const String& domain)
+{
+    return domain.startsWith('.') ? domain.substring(1) : domain;
+}
+
+// Higher means more cookies are visible. The enum's declaration order is not permissiveness order.
+static int permissiveness(ThirdPartyCookieBlockingDecision decision)
+{
+    switch (decision) {
+    case ThirdPartyCookieBlockingDecision::All:
+        return 0;
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    case ThirdPartyCookieBlockingDecision::AllExceptPartitioned:
+        return 1;
+#endif
+    case ThirdPartyCookieBlockingDecision::None:
+        return 2;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+// Returns the cookies the inspected page can access. Mirrors NetworkStorageSession::getRawCookies (the path used without
+// Site Isolation), evaluated per site in the frame tree instead of per resource URL: a site's cookies are hidden when its
+// decision is All, its unpartitioned cookies are visible only when its decision is None, and partitioned cookies are visible
+// only from the top-level site's partition. URL path, SameSite and Secure matching are intentionally not applied.
+void NetworkProcess::getCookiesForInspectedPage(PAL::SessionID sessionID, WebPageProxyIdentifier pageID, URL&& mainFrameURL, Vector<std::pair<URL, FrameIdentifier>>&& frames, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
+{
+    CheckedPtr session = storageSession(sessionID);
+    if (!session || !mainFrameURL.isValid())
+        return completionHandler({ });
+
+    auto shouldRelaxThirdPartyCookieBlocking = shouldRelaxThirdPartyCookieBlockingForPage(pageID);
+    String topPartition = session->partitionIdentifierForInspector(mainFrameURL);
+
+    // Without Site Isolation each frame is queried separately and the results are unioned, so keep the most permissive
+    // decision across a site's frames (Storage Access can be granted to a single frame).
+    HashMap<RegistrableDomain, ThirdPartyCookieBlockingDecision> decisionForSite;
+    for (auto& [url, frameID] : frames) {
+        RegistrableDomain site { url };
+        if (site.isEmpty())
+            continue;
+        auto decision = session->thirdPartyCookieBlockingDecisionForRequest(mainFrameURL, url, frameID, pageID, shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker::No);
+        auto result = decisionForSite.add(WTF::move(site), decision);
+        if (!result.isNewEntry && permissiveness(decision) > permissiveness(result.iterator->value))
+            result.iterator->value = decision;
+    }
+
+    auto cookies = session->getAllCookies();
+    cookies.removeAllMatching([&](auto& cookie) {
+        auto decision = decisionForSite.getOptional(RegistrableDomain::uncheckedCreateFromHost(stripLeadingDot(cookie.domain)));
+        if (!decision || *decision == ThirdPartyCookieBlockingDecision::All)
+            return true;
+        if (cookie.partitionKey.isEmpty())
+            return *decision != ThirdPartyCookieBlockingDecision::None;
+        return cookie.partitionKey != topPartition;
+    });
+    completionHandler(WTF::move(cookies));
+}
+
 void NetworkProcess::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))

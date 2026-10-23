@@ -48,6 +48,8 @@ struct CookieFilter {
     String path;
     std::optional<bool> httpOnly;
     std::optional<bool> secure;
+    // Unset matches any partition; an empty string matches only unpartitioned cookies.
+    std::optional<String> partitionKey;
 };
 
 } // namespace WebKit

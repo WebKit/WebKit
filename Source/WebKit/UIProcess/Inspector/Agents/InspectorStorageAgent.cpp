@@ -28,6 +28,8 @@
 
 #include "APIHTTPCookieStore.h"
 #include "InspectorCookieStoreHelpers.h"
+#include "NetworkProcessProxy.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
@@ -155,8 +157,25 @@ Inspector::Protocol::ErrorStringOr<Ref<PartitionKey>> InspectorStorageAgent::mak
     return partitionKey;
 }
 
-// Not scoped to the inspected page's origins: under Site Isolation cookies span processes a single
-// web process can't reach, so per-origin grouping is the frontend's job. See the commit message.
+// Under Site Isolation a single web process can't reach every frame, so the UIProcess collects the whole frame tree
+// and the NetworkProcess, which owns the blocking and partitioning state, returns only the cookies the page can access.
+void InspectorStorageAgent::fetchCookiesAccessibleToInspectedPage(CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
+{
+    Ref page = m_inspectedPage;
+    RefPtr mainFrame = page->mainFrame();
+    if (!mainFrame) {
+        completionHandler({ });
+        return;
+    }
+
+    Vector<std::pair<URL, WebCore::FrameIdentifier>> frames;
+    for (RefPtr frame = mainFrame; frame; frame = frame->traverseNext().frame)
+        frames.append({ frame->url(), frame->frameID() });
+
+    Ref dataStore = page->websiteDataStore();
+    protect(dataStore->networkProcess())->getCookiesForInspectedPage(dataStore->sessionID(), page->identifier(), mainFrame->url(), WTF::move(frames), WTF::move(completionHandler));
+}
+
 void InspectorStorageAgent::getCookies(RefPtr<JSON::Object>&& filter, RefPtr<JSON::Object>&& partition, Ref<GetCookiesCallback>&& callback)
 {
     auto partitionKey = makePartitionKey(partition);
@@ -165,14 +184,7 @@ void InspectorStorageAgent::getCookies(RefPtr<JSON::Object>&& filter, RefPtr<JSO
         return;
     }
 
-    auto cookieStore = cookieStoreForPartition(partition);
-    if (!cookieStore) {
-        callback->sendFailure(cookieStore.error());
-        return;
-    }
-
-    Ref<API::HTTPCookieStore> store = cookieStore.value();
-    store->cookies([callback = WTF::move(callback), filter = CookieFilter::fromProtocol(filter), partitionKey = partitionKey.value()](Vector<WebCore::Cookie>&& cookiesList) mutable {
+    fetchCookiesAccessibleToInspectedPage([callback = WTF::move(callback), filter = CookieFilter::fromProtocol(filter), partitionKey = partitionKey.value()](Vector<WebCore::Cookie>&& cookiesList) mutable {
         Vector<WebCore::Cookie> matchingCookies;
         matchingCookies.reserveInitialCapacity(cookiesList.size());
         for (const auto& cookie : borrow(cookiesList)) {
@@ -274,8 +286,9 @@ void InspectorStorageAgent::deleteCookies(RefPtr<JSON::Object>&& filter, RefPtr<
         return;
     }
 
+    // Only cookies the page can access are candidates, so a delete never reaches a cookie the inspector didn't list.
     Ref<API::HTTPCookieStore> store = cookieStore.value();
-    store->cookies([store, callback = WTF::move(callback), filter = CookieFilter::fromProtocol(filter), partitionKey = partitionKey.value()](Vector<WebCore::Cookie>&& fetchedCookies) mutable {
+    fetchCookiesAccessibleToInspectedPage([store, callback = WTF::move(callback), filter = CookieFilter::fromProtocol(filter), partitionKey = partitionKey.value()](Vector<WebCore::Cookie>&& fetchedCookies) mutable {
         Vector<WebCore::Cookie> toDelete;
         toDelete.reserveInitialCapacity(fetchedCookies.size());
         for (auto& cookie : borrow(fetchedCookies)) {
