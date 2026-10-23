@@ -2087,14 +2087,17 @@ bool GraphicsContextGLWKC::readPixelsInto(IntRect rect, GCGLenum format, GCGLenu
     bool validFormat = bytesPerPixel != 0;
     if (validFormat) {
         for (size_t row = 0; row < height; ++row) {
-            const int32_t sourceY = static_cast<int32_t>(source.height) - 1 - (rect.y() + static_cast<int32_t>(row));
-            if (sourceY < 0 || sourceY >= static_cast<int32_t>(source.height))
+            // Rectangle coordinates may be near INT32 limits. Widen before
+            // adding the loop offset so clipping never relies on signed overflow.
+            const int64_t sourceY = static_cast<int64_t>(source.height) - 1
+                - (static_cast<int64_t>(rect.y()) + static_cast<int64_t>(row));
+            if (sourceY < 0 || sourceY >= static_cast<int64_t>(source.height))
                 continue;
             const size_t destinationRow = packReverseRowOrder ? height - 1 - row : row;
             uint8_t* destination = output.data() + destinationRow * rowStride;
             for (size_t column = 0; column < width; ++column) {
-                const int32_t sourceX = rect.x() + static_cast<int32_t>(column);
-                if (sourceX < 0 || sourceX >= static_cast<int32_t>(source.width))
+                const int64_t sourceX = static_cast<int64_t>(rect.x()) + static_cast<int64_t>(column);
+                if (sourceX < 0 || sourceX >= static_cast<int64_t>(source.width))
                     continue;
                 const size_t sourceOffset = (static_cast<size_t>(sourceY) * staging.pitch
                     + static_cast<size_t>(sourceX)) * bytesPerPixel;
