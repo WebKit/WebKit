@@ -123,7 +123,8 @@ void Connection::platformInvalidate()
         return;
     }
 
-    m_pendingOutgoingMachMessage = nullptr;
+    if (std::exchange(m_pendingOutgoingMachMessage, nullptr))
+        didFinishParkedOutgoingMessage();
     m_isConnected = false;
 
     ASSERT(m_receivePort);
@@ -246,7 +247,7 @@ Connection::SendMessageResult Connection::sendMessage(std::unique_ptr<MachMessag
     case MACH_SEND_TIMED_OUT:
         // We timed out, stash away the message for later.
         m_pendingOutgoingMachMessage = WTF::move(message);
-        return SendMessageResult::Failure;
+        return SendMessageResult::Parked;
 
     case MACH_SEND_INVALID_DEST:
         // The other end has destroyed the receive right to the port we are trying to send to.
@@ -322,7 +323,53 @@ static Vector<MachSendRight> extractPortDescriptorsFromMessage(MachMessage& mess
     return ports;
 }
 
-bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
+void Connection::sendOutgoingMessages()
+{
+    assertIsCurrent(m_connectionQueue.get());
+
+    if (!canSendOutgoingMessages())
+        return;
+
+    std::optional<SendMessageResult> previousResult;
+    while (true) {
+        std::unique_ptr<Encoder> message;
+
+        {
+            Locker locker { m_outgoingMessagesLock };
+
+            if (previousResult) {
+                ASSERT(m_outgoingMessageState == OutgoingMessageState::Sending);
+
+                switch (*previousResult) {
+                case SendMessageResult::Success:
+                case SendMessageResult::Failure:
+                    m_outgoingMessageState = OutgoingMessageState::Done;
+                    break;
+                case SendMessageResult::Parked:
+                    m_outgoingMessageState = OutgoingMessageState::Parked;
+                    break;
+                case SendMessageResult::MessageTooLarge:
+                    // sendOutgoingMessage() should retry a message that's too large before returning to us.
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            }
+
+            if (m_outgoingMessages.isEmpty() && !isInFlight(m_outgoingMessageState))
+                m_outgoingMessagesEmptyCondition.notifyAll();
+
+            if ((previousResult && *previousResult != SendMessageResult::Success) || m_outgoingMessages.isEmpty())
+                break;
+
+            message = m_outgoingMessages.takeFirst().moveToUniquePtr();
+            m_outgoingMessageState = OutgoingMessageState::Sending;
+        }
+        ASSERT(message);
+
+        previousResult = sendOutgoingMessage(makeUniqueRefFromNonNullUniquePtr(WTF::move(message)));
+    }
+}
+
+Connection::SendMessageResult Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
     ASSERT(canSendOutgoingMessages());
 
@@ -332,19 +379,19 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     bool messageBodyIsOOL = false;
     auto messageSize = MachMessage::messageSize(encoder->span().size(), numberOfPortDescriptors, messageBodyIsOOL);
     if (messageSize.hasOverflowed()) [[unlikely]]
-        return false;
+        return SendMessageResult::Failure;
 
     if (messageSize > inlineMessageMaxSize) {
         messageBodyIsOOL = true;
         messageSize = MachMessage::messageSize(0, numberOfPortDescriptors, messageBodyIsOOL);
         if (messageSize.hasOverflowed()) [[unlikely]]
-            return false;
+            return SendMessageResult::Failure;
     }
 
     size_t safeMessageSize = messageSize;
     auto message = MachMessage::create(encoder->messageName(), safeMessageSize);
     if (!message)
-        return false;
+        return SendMessageResult::Failure;
 
     auto messageSpan = message->span();
     auto& header = consumeAndReinterpretCastTo<mach_msg_header_t>(messageSpan);
@@ -382,7 +429,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     if (!s_forceUseSharedMemoryForSending) {
         auto result = sendMessage(message);
         if (result != SendMessageResult::MessageTooLarge)
-            return result == SendMessageResult::Success;
+            return result;
 
         RELEASE_LOG_ERROR(IPC, "sendOutgoingMessage: MACH_SEND_TOO_LARGE for message '%" PUBLIC_LOG_STRING "' (encoderBodySize=%zu, portDescriptors=%zu, sentOOL=%d), retrying with SharedMemory", description(encoder->messageName()).characters(), encoder->span().size(), numberOfPortDescriptors, messageBodyIsOOL);
     }
@@ -390,7 +437,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     return retrySendMessageWithSharedMemory(WTF::move(message), encoder);
 }
 
-bool Connection::retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> failedMessage, UniqueRef<Encoder>& encoder)
+Connection::SendMessageResult Connection::retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> failedMessage, UniqueRef<Encoder>& encoder)
 {
     // On MACH_SEND_TOO_LARGE the kernel rejects the send without consuming
     // any descriptors, so the ports in the MachMessage are still valid.
@@ -410,12 +457,12 @@ bool Connection::retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> f
     size_t newPortCount = extractedPorts.size() + 1;
     auto newMessageSize = MachMessage::messageSize(sizeof(uint64_t), newPortCount, 0);
     if (newMessageSize.hasOverflowed()) [[unlikely]]
-        return false;
+        return SendMessageResult::Failure;
 
     size_t safeNewMessageSize = newMessageSize;
     auto newMessage = MachMessage::create(encoder->messageName(), safeNewMessageSize);
     if (!newMessage)
-        return false;
+        return SendMessageResult::Failure;
 
     auto newMessageSpan = newMessage->span();
     auto& newHeader = consumeAndReinterpretCastTo<mach_msg_header_t>(newMessageSpan);
@@ -440,7 +487,7 @@ bool Connection::retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> f
 
     RELEASE_LOG_ERROR(IPC, "retrySendMessageWithSharedMemory: sending message '%" PUBLIC_LOG_STRING "' via SharedMemory (retryMessageSize=%zu, portDescriptors=%zu, shmSize=%llu)", description(newMessage->messageName()).characters(), safeNewMessageSize, newPortCount, shmSize);
 
-    return sendMessage(newMessage, IsRetryDueToLargeSize::Yes) == SendMessageResult::Success;
+    return sendMessage(newMessage, IsRetryDueToLargeSize::Yes);
 }
 
 void Connection::initializeSendSource()
@@ -488,8 +535,18 @@ void Connection::resumeSendSource()
             // expected to hit MACH_SEND_TOO_LARGE on retry. Drop the message.
             RELEASE_LOG_ERROR(IPC, "resumeSendSource: Unexpected MACH_SEND_TOO_LARGE for pending message");
         }
+        if (result != SendMessageResult::Parked)
+            didFinishParkedOutgoingMessage();
     }
     sendOutgoingMessages();
+}
+
+void Connection::didFinishParkedOutgoingMessage()
+{
+    Locker locker { m_outgoingMessagesLock };
+    ASSERT(m_outgoingMessageState == OutgoingMessageState::Parked);
+    m_outgoingMessageState = OutgoingMessageState::Done;
+    m_outgoingMessagesEmptyCondition.notifyAll();
 }
 
 static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, std::span<uint8_t> message)

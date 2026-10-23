@@ -517,8 +517,13 @@ Error Connection::flushSentMessages(Timeout timeout)
     do {
         if (!isValid())
             return Error::InvalidConnection;
+#if PLATFORM(COCOA)
+        if (m_outgoingMessages.isEmpty() && !isInFlight(m_outgoingMessageState))
+            return Error::NoError;
+#else
         if (m_outgoingMessages.isEmpty())
             return Error::NoError;
+#endif
         m_outgoingMessagesEmptyCondition.waitUntil(m_outgoingMessagesLock, timeout.deadline());
     } while (!timeout.didTimeOut());
     return Error::Timeout;
@@ -1289,6 +1294,7 @@ bool Connection::canSendOutgoingMessages() const
     return m_isConnected && platformCanSendOutgoingMessages();
 }
 
+#if !PLATFORM(COCOA)
 void Connection::sendOutgoingMessages()
 {
     if (!canSendOutgoingMessages())
@@ -1311,6 +1317,7 @@ void Connection::sendOutgoingMessages()
             break;
     }
 }
+#endif
 
 void Connection::dispatchSyncMessage(Decoder& decoder)
 {
