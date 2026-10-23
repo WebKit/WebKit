@@ -369,6 +369,7 @@ struct SystemPreviewInfo;
 struct TargetedElementAdjustment;
 struct TargetedElementInfo;
 struct TargetedElementRequest;
+struct TargetedTextSearchResult;
 struct TextAnimationData;
 struct TextCheckingResult;
 struct TextEffectData;
@@ -2900,6 +2901,7 @@ private:
     void requestAllTextAndRects(CompletionHandler<void(Vector<std::pair<String, WebCore::FloatRect>>&&)>&&);
 
     void requestTargetedElement(WebCore::TargetedElementRequest&&, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&&);
+    void requestTargetedElementsForText(WebCore::TargetedElementRequest&&, CompletionHandler<void(WebCore::TargetedTextSearchResult&&)>&&);
     void requestAllTargetableElements(float, CompletionHandler<void(Vector<Vector<WebCore::TargetedElementInfo>>&&)>&&);
 
     void hasTextExtractionFilterRules(CompletionHandler<void(bool)>&&);

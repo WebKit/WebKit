@@ -1698,6 +1698,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::TargetedElementAdjustment': ['<WebCore/ElementTargetingTypes.h>'],
         'WebCore::TargetedElementInfo': ['<WebCore/ElementTargetingTypes.h>'],
         'WebCore::TargetedElementRequest': ['<WebCore/ElementTargetingTypes.h>'],
+        'WebCore::TargetedTextSearchResult': ['<WebCore/ElementTargetingTypes.h>'],
         'WebCore::TextAnimationData': ['<WebCore/TextAnimationTypes.h>'],
         'WebCore::TextAnimationRunMode': ['<WebCore/TextAnimationTypes.h>'],
         'WebCore::TextAnimationType': ['<WebCore/TextAnimationTypes.h>'],
