@@ -28,15 +28,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include <WebCore/WebGPUCppAPI.h>
-#include <optional>
 
 namespace WebKit::WebGPU {
 
-struct ImageDataLayout {
-    uint64_t offset { 0 };
-    std::optional<uint32_t> bytesPerRow;
-    std::optional<uint32_t> rowsPerImage;
-};
+using ImageDataLayout = ::WebGPU::TexelCopyBufferLayout;
 
 } // namespace WebKit::WebGPU
 

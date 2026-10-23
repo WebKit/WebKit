@@ -74,7 +74,7 @@ void RemoteAdapterProxy::requestDevice(const ::WebGPU::DeviceDescriptor& descrip
         return;
     }
 
-    auto result = RemoteDeviceProxy::create(WTF::move(features), WebGPU::convertFromBacking(supportedLimits), *this, convertToBackingContext, identifier, queueIdentifier);
+    auto result = RemoteDeviceProxy::create(WTF::move(features), supportedLimits, *this, convertToBackingContext, identifier, queueIdentifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     callback(WTF::move(result));
 }

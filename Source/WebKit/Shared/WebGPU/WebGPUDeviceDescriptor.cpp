@@ -36,18 +36,12 @@ namespace WebKit::WebGPU {
 
 std::optional<DeviceDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::DeviceDescriptor& deviceDescriptor)
 {
-    std::optional<SupportedLimits> requiredLimits;
-    if (deviceDescriptor.requiredLimits)
-        requiredLimits = WebGPU::convertToBacking(*deviceDescriptor.requiredLimits);
-    return { { { deviceDescriptor.label }, Vector<::WebGPU::FeatureName> { deviceDescriptor.requiredFeatures }, WTF::move(requiredLimits) } };
+    return { { { deviceDescriptor.label }, Vector<::WebGPU::FeatureName> { deviceDescriptor.requiredFeatures }, deviceDescriptor.requiredLimits } };
 }
 
 std::optional<::WebGPU::DeviceDescriptor> ConvertFromBackingContext::convertFromBacking(const DeviceDescriptor& deviceDescriptor)
 {
-    std::optional<::WebGPU::Limits> requiredLimits;
-    if (deviceDescriptor.requiredLimits)
-        requiredLimits = WebGPU::convertFromBacking(*deviceDescriptor.requiredLimits);
-    return { { deviceDescriptor.label, deviceDescriptor.requiredFeatures.span(), WTF::move(requiredLimits) } };
+    return { { deviceDescriptor.label, deviceDescriptor.requiredFeatures.span(), deviceDescriptor.requiredLimits } };
 }
 
 } // namespace WebKit

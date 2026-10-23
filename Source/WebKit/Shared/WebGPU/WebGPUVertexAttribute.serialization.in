@@ -21,9 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::VertexAttribute {
-    ::WebGPU::VertexFormat format
-    uint64_t offset
-    uint32_t shaderLocation
-}
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::VertexAttribute {
+    ::WebGPU::VertexFormat format;
+    uint64_t offset;
+    uint32_t shaderLocation;
+};
+
+header: "WebGPUVertexAttribute.h"
+using WebKit::WebGPU::VertexAttribute = ::WebGPU::VertexAttribute;
 #endif

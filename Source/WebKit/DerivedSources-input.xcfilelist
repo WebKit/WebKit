@@ -474,12 +474,10 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUImageCopyExternalImage.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUImageCopyTexture.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUImageCopyTextureTagged.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUImageDataLayout.serialization.in
-$(PROJECT_DIR)/Shared/WebGPU/WebGPUInternalError.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUMultisampleState.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUObjectDescriptorBase.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUOrigin2D.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUOrigin3D.serialization.in
-$(PROJECT_DIR)/Shared/WebGPU/WebGPUOutOfMemoryError.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUPipelineDescriptorBase.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUPipelineLayoutDescriptor.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUPresentationConfiguration.serialization.in
@@ -502,14 +500,12 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUShaderModuleCompilationHint.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUShaderModuleDescriptor.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUStencilFaceState.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUStorageTextureBindingLayout.serialization.in
-$(PROJECT_DIR)/Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUSupportedLimits.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUSurfaceDescriptor.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUSwapChainDescriptor.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUTextureBindingLayout.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUTextureDescriptor.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUTextureViewDescriptor.serialization.in
-$(PROJECT_DIR)/Shared/WebGPU/WebGPUValidationError.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexAttribute.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexState.serialization.in

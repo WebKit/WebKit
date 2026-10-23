@@ -27,11 +27,11 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <optional>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-struct ExternalTextureBindingLayout { };
+using ExternalTextureBindingLayout = ::WebGPU::ExternalTextureBindingLayout;
 
 } // namespace WebKit::WebGPU
 

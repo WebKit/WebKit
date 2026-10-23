@@ -21,9 +21,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::StencilFaceState {
-    ::WebGPU::CompareFunction compare
-    ::WebGPU::StencilOperation failOp
-    ::WebGPU::StencilOperation depthFailOp
-    ::WebGPU::StencilOperation passOp
-}
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::StencilFaceState {
+    ::WebGPU::CompareFunction compare;
+    ::WebGPU::StencilOperation failOp;
+    ::WebGPU::StencilOperation depthFailOp;
+    ::WebGPU::StencilOperation passOp;
+};
+
+header: "WebGPUStencilFaceState.h"
+using WebKit::WebGPU::StencilFaceState = ::WebGPU::StencilFaceState;
+#endif

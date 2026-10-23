@@ -21,8 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::BufferBindingLayout {
-    ::WebGPU::BufferBindingType type
-    bool hasDynamicOffset
-    uint64_t minBindingSize
-}
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::BufferBindingLayout {
+    ::WebGPU::BufferBindingType type;
+    bool hasDynamicOffset;
+    uint64_t minBindingSize;
+};
+
+header: "WebGPUBufferBindingLayout.h"
+using WebKit::WebGPU::BufferBindingLayout = ::WebGPU::BufferBindingLayout;
+#endif

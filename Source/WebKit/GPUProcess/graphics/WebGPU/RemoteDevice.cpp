@@ -52,8 +52,6 @@
 #include "StreamServerConnection.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUObjectHeap.h"
-#include "WebGPUOutOfMemoryError.h"
-#include "WebGPUValidationError.h"
 #include <WebCore/VideoFrame.h>
 #include <WebCore/WebGPU.h>
 #include <WebCore/WebGPUComputePipelineDescriptor.h>
@@ -71,22 +69,6 @@
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDevice);
-
-static std::optional<WebGPU::Error> convertToBacking(std::optional<::WebGPU::Error>&& error)
-{
-    if (!error)
-        return std::nullopt;
-
-    switch (error->type) {
-    case ::WebGPU::ErrorType::OutOfMemory:
-        return { WebGPU::OutOfMemoryError { } };
-    case ::WebGPU::ErrorType::Validation:
-        return { WebGPU::ValidationError { WTF::move(error->message) } };
-    case ::WebGPU::ErrorType::Internal:
-        return { WebGPU::InternalError { WTF::move(error->message) } };
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
 
 RemoteDevice::RemoteDevice(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     : m_backing(device)
@@ -440,17 +422,17 @@ void RemoteDevice::pushErrorScope(::WebGPU::ErrorFilter errorFilter)
     m_backing->pushErrorScope(errorFilter);
 }
 
-void RemoteDevice::popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&& callback)
+void RemoteDevice::popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&& callback)
 {
     m_backing->popErrorScope([callback = WTF::move(callback)](bool success, std::optional<::WebGPU::Error>&& error) mutable {
-        callback(success, convertToBacking(WTF::move(error)));
+        callback(success, WTF::move(error));
     });
 }
 
-void RemoteDevice::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&& callback)
+void RemoteDevice::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&& callback)
 {
     m_backing->resolveUncapturedErrorEvent([callback = WTF::move(callback)](bool hasUncapturedError, std::optional<::WebGPU::Error>&& error) mutable {
-        callback(hasUncapturedError, convertToBacking(WTF::move(error)));
+        callback(hasUncapturedError, WTF::move(error));
     });
 }
 

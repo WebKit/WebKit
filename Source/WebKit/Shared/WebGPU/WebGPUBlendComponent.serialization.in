@@ -21,8 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::BlendComponent {
-    ::WebGPU::BlendOperation operation
-    ::WebGPU::BlendFactor srcFactor
-    ::WebGPU::BlendFactor dstFactor
-}
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::BlendComponent {
+    ::WebGPU::BlendOperation operation;
+    ::WebGPU::BlendFactor srcFactor;
+    ::WebGPU::BlendFactor dstFactor;
+};
+
+header: "WebGPUBlendComponent.h"
+using WebKit::WebGPU::BlendComponent = ::WebGPU::BlendComponent;
+#endif

@@ -21,7 +21,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::BlendState {
-    WebKit::WebGPU::BlendComponent color
-    WebKit::WebGPU::BlendComponent alpha
-}
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::BlendState {
+    ::WebGPU::BlendComponent color;
+    ::WebGPU::BlendComponent alpha;
+};
+
+header: "WebGPUBlendState.h"
+using WebKit::WebGPU::BlendState = ::WebGPU::BlendState;
+#endif

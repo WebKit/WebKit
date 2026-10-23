@@ -21,9 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ImageDataLayout {
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::TexelCopyBufferLayout {
     uint64_t offset;
     std::optional<uint32_t> bytesPerRow;
     std::optional<uint32_t> rowsPerImage;
 };
+
+header: "WebGPUImageDataLayout.h"
+using WebKit::WebGPU::ImageDataLayout = ::WebGPU::TexelCopyBufferLayout;
 #endif
