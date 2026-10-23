@@ -9646,7 +9646,7 @@ bool HTMLMediaElement::isSuspended() const
 
 void HTMLMediaElement::suspendPlayback()
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "paused = ", paused());
+    HTMLMEDIAELEMENT_RELEASE_LOG(SuspendPlayback, paused());
     if (!paused())
         pauseInternal();
 }

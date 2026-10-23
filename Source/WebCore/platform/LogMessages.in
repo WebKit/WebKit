@@ -137,6 +137,7 @@ HTMLMediaElementSetShouldDelayLoadEvent, "HTMLMediaElement::setShouldDelayLoadEv
 HTMLMediaElementSetShowPosterFlag, "HTMLMediaElement::setShowPosterFlag(%" PRIX64 ") %d", (uint64_t, int), DEFAULT, Media
 HTMLMediaElementSetVolume, "HTMLMediaElement::setVolume(%" PRIX64 ") %f", (uint64_t, double), DEFAULT, Media
 HTMLMediaElementStop, "HTMLMediaElement::stop(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementSuspendPlayback, "HTMLMediaElement::suspendPlayback(%" PRIX64 ") paused = %d", (uint64_t, int), DEFAULT, Media
 HTMLMediaElementUpdatePlayState, "HTMLMediaElement::updatePlayState(%" PRIX64 ") shouldBePlaying = %d, playerPaused = %d", (uint64_t, int, int), DEFAULT, Media
 HTMLMediaElementUpdateShouldPlay, "HTMLMediaElement::updateShouldPlay(%" PRIX64 ")", (uint64_t), DEFAULT, Media
 HTMLMediaElementUserDidInterfereWithAutoplay, "HTMLMediaElement::userDidInterfereWithAutoplay(%" PRIX64 ")", (uint64_t), DEFAULT, Media
