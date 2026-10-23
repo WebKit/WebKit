@@ -112,7 +112,6 @@ private:
     Page& page() const { return m_page; }
 
     WeakRef<Page> m_page;
-    Vector<WeakPtr<PageOverlay>> m_servicesOverlays;
 
     RefPtr<DataDetectorHighlight> m_activeHighlight;
     RefPtr<DataDetectorHighlight> m_nextActiveHighlight;

@@ -37,6 +37,7 @@
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestResourceLoadDelegate.h"
+#import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
@@ -90,6 +91,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/WebAVPlayerLayer.h>
 #import <WebKit/_WKHitTestResult.h>
+#import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 
@@ -2996,5 +2998,133 @@ TEST(SiteIsolation, CaptionDisplaySettingsPreviewInCrossSiteIframe)
 }
 
 #endif // PLATFORM(MAC) && ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
+#if PLATFORM(MAC)
+
+#if ENABLE(IPC_TESTING_API)
+
+TEST(SiteIsolation, ContextMenuRequestForFrameInAnotherProcessIsIgnored)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; font-size: 40px'><div>main frame text</div><iframe src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body>iframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration { server.httpsProxyConfiguration() };
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+    setFeatureEnabled(configuration.get(), @"IgnoreInvalidMessageWhenIPCTestingAPIEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    unsigned menuCount { 0 };
+    RetainPtr uiDelegate { adoptNS([TestUIDelegate new]) };
+    [uiDelegate setGetContextMenuFromProposedMenu:makeBlockPtr([&menuCount](NSMenu *, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        ++menuCount;
+        completion(nil);
+    }).get()];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr frame { [webView firstChildFrame] };
+    EXPECT_NE(frame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    [webView objectByEvaluatingJavaScript:@"window.capturedMessage = null;"
+        "IPC.addOutgoingMessageListener('UI', message => {"
+        "    if (!window.capturedMessage && message.name === IPC.messages.WebPageProxy_ShowContextMenuFromFrame.name)"
+        "        window.capturedMessage = new Uint8Array(message.buffer).slice(16);"
+        "}); true"];
+    [webView rightClickAtPoint:NSMakePoint(20, 600 - 20)];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return menuCount == 1 && [[webView objectByEvaluatingJavaScript:@"!!window.capturedMessage"] boolValue];
+    }));
+
+    RetainPtr<NSArray> bytes { [webView objectByEvaluatingJavaScript:@"Array.from(window.capturedMessage)"] };
+    RetainPtr bytesJSON { adoptNS([[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:bytes.get() options:0 error:nil] encoding:NSUTF8StringEncoding]) };
+    auto replay = [&](WKFrameInfo *sender) -> RetainPtr<NSString> {
+        return [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+            "IPC.sendMessage('UI', IPC.pageID, IPC.messages.WebPageProxy_ShowContextMenuFromFrame.name, new Uint8Array(%@));"
+            "const reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);"
+            "return reply && reply.arguments && reply.arguments[0] ? reply.arguments[0].value : '';"
+            "})()", bytesJSON.get()] inFrame:sender];
+    };
+
+    EXPECT_WK_STREQ(@"", replay(frame.get()).get());
+    EXPECT_EQ(menuCount, 1u);
+
+    EXPECT_WK_STREQ(@"", replay(nil).get());
+    EXPECT_TRUE(Util::waitFor([&] {
+        return menuCount >= 2;
+    }));
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(menuCount, 2u);
+}
+
+#endif // ENABLE(IPC_TESTING_API)
+
+TEST(SiteIsolation, ContextMenuItemIsDroppedAfterFrameMovesToAnotherProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<body style='margin: 0'><iframe id='frame' src='https://webkit.org/iframe' style='display: block; width: 300px; height: 150px; border: none'></iframe><input id='input'></body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0; font-size: 60px' onmousedown='event.preventDefault()'>subframe</body>"_s } },
+        { "/navigated"_s, { "<body style='margin: 0; font-size: 60px' onmousedown='event.preventDefault()'>navigated</body><script>onload = () => alert('navigated')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    __block bool didSpeak { false };
+    __block RetainPtr<NSString> spokenString;
+    InstanceMethodSwizzler speakStringSwizzler { NSApplication.class, @selector(speakString:), imp_implementationWithBlock(^(id, NSString *string) {
+        spokenString = string;
+        didSpeak = true;
+    }) };
+    __block bool didShowMenu { false };
+    InstanceMethodSwizzler popUpSwizzler { NSMenu.class, NSSelectorFromString(@"_popUpContextMenu:withEvent:forView:"), imp_implementationWithBlock(^(id, NSMenu *, NSEvent *, NSView *) {
+        didShowMenu = true;
+    }) };
+
+    auto [webView, delegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 400, 400));
+    [webView loadURL:[NSURL URLWithString:@"https://example.com/example"]];
+    [delegate waitForDidFinishNavigation];
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('input').focus()"];
+    pid_t initialProcess { [webView firstChildFrame]._processIdentifier };
+
+    auto selectStartSpeaking = [&] {
+        Function<NSMenuItem *(NSMenu *)> find = [&](NSMenu *menu) -> NSMenuItem * {
+            for (NSMenuItem *item in menu.itemArray) {
+                if ([item.title isEqualToString:@"Start Speaking"])
+                    return item;
+                if (NSMenuItem *found = item.hasSubmenu ? find(item.submenu) : nil)
+                    return found;
+            }
+            return nil;
+        };
+        NSMenuItem *item { find([webView _activeMenu]) };
+        ASSERT_NOT_NULL(item);
+        [item.menu performActionForItemAtIndex:[item.menu indexOfItem:item]];
+    };
+
+    [webView rightClickAtPoint:NSMakePoint(50, 350)];
+    Util::run(&didShowMenu);
+
+    [webView evaluateJavaScript:@"document.getElementById('frame').src = 'https://example.com/navigated'" completionHandler:nil];
+    EXPECT_WK_STREQ("navigated", [webView _test_waitForAlert]);
+    EXPECT_NE([webView firstChildFrame]._processIdentifier, initialProcess);
+
+    selectStartSpeaking();
+    if (HasFatalFailure())
+        return;
+    [webView objectByEvaluatingJavaScript:@"true" inFrame:[webView firstChildFrame]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE(didSpeak) << [spokenString UTF8String];
+
+    didShowMenu = false;
+    [webView rightClickAtPoint:NSMakePoint(50, 350)];
+    Util::run(&didShowMenu);
+    selectStartSpeaking();
+    if (HasFatalFailure())
+        return;
+    EXPECT_TRUE(Util::runFor(&didSpeak, 5_s));
+    EXPECT_WK_STREQ("navigated", spokenString.get());
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

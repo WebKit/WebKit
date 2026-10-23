@@ -49,6 +49,7 @@
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
 #import "TextChecker.h"
+#import "ValidationProcedures.h"
 #import "WKQuickLookPreviewController.h"
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuProxyMac.h"
@@ -95,6 +96,8 @@
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), connection)
+#define EXTRACT_WITH_MESSAGE_CHECK(connection, name, untrusted, ...) \
+    EXTRACT_WITH_MESSAGE_CHECK_BASE(connection, name, untrusted, (void)0, __VA_ARGS__)
 
 #define WEBPAGEPROXY_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), m_webPageID.toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 
@@ -815,8 +818,12 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint& point, const WebCore::IntRect& rect)
+void WebPageProxy::showTelephoneNumberMenu(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID, const String& telephoneNumber, const WebCore::IntPoint& point, const WebCore::IntRect& rect)
 {
+    Ref process { WebProcessProxy::fromConnection(connection) };
+    EXTRACT_WITH_MESSAGE_CHECK(connection, frameID, untrustedFrameID, ProcessHostsFrameInPage { process, *this });
+    UNUSED_VARIABLE(frameID);
+
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
         return;
@@ -1288,6 +1295,7 @@ void WebPageProxy::dispatchTrackedPointerEvent(std::optional<FrameIdentifier> fr
 
 #endif // PLATFORM(MAC)
 
+#undef EXTRACT_WITH_MESSAGE_CHECK
 #undef MESSAGE_CHECK_URL
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK
