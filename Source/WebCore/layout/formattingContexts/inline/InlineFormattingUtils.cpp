@@ -355,6 +355,15 @@ InlineLayoutUnit InlineFormattingUtils::inlineItemWidth(const InlineItem& inline
     return boxGeometry.marginBoxWidth();
 }
 
+InlineLayoutUnit InlineFormattingUtils::intrinsicMarginBoxWidth(const ElementBox& box, IntrinsicWidthMode intrinsicWidthMode) const
+{
+    // The box's content is the render tree's to lay out, so it is the render tree that knows the box's width under this constraint.
+    auto& integrationUtils = formattingContext().integrationUtils();
+    auto contribution = intrinsicWidthMode == IntrinsicWidthMode::Minimum ? integrationUtils.minContentLogicalWidthContribution(box) : integrationUtils.maxContentLogicalWidthContribution(box);
+    auto& boxGeometry = formattingContext().geometryForBox(box);
+    return contribution + boxGeometry.marginStart() + boxGeometry.marginEnd();
+}
+
 static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& previousInlineTextItem, const InlineTextItem& nextInlineTextItem)
 {
     ASSERT(!nextInlineTextItem.isWhitespace());

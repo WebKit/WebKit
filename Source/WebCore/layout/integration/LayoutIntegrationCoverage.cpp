@@ -45,8 +45,8 @@ bool canUseForIntrinsicWidthComputation(const RenderBlockFlow& blockContainer)
 {
     for (auto walker = InlineWalker(blockContainer); !walker.atEnd(); walker.advance()) {
         CheckedRef renderer = *walker.current();
-        if (!renderer->isInFlow())
-            return false;
+        if (renderer->isFloatingOrOutOfFlowPositioned())
+            continue;
 
         auto isFullySupportedInFlowRenderer = isAnyOf<RenderText, RenderLineBreak, RenderListOutsideMarker>(renderer) || renderer->isInlineBox();
         if (isFullySupportedInFlowRenderer)
@@ -64,24 +64,14 @@ bool canUseForIntrinsicWidthComputation(const RenderBlockFlow& blockContainer)
             continue;
         }
 
-        CheckedRef unsupportedRenderElement = downcast<RenderElement>(renderer.get());
-        if (!unsupportedRenderElement->writingMode().isHorizontal() || !unsupportedRenderElement->style().logicalWidth().isFixed())
+        if (CheckedRef atomicInlineLevelBox = downcast<RenderElement>(renderer); atomicInlineLevelBox->style().usedAppearance() != StyleAppearance::None && !atomicInlineLevelBox->style().logicalWidth().isFixed()) {
+            // FIXME: Widgets.
             return false;
+        }
 
-        auto isNonSupportedFixedWidthContent = [&] {
-            // FIXME: Implement this image special in line builder.
-            auto allowImagesToBreak = !blockContainer.document().inQuirksMode() || !blockContainer.isRenderTableCell();
-            if (!allowImagesToBreak)
-                return true;
-            // FIXME: See RenderReplaced::computeIntrinsicLogicalWidthContributions where m_minContentLogicalWidthContribution is set to 0.
-            auto isReplacedWithSpecialIntrinsicWidth = [&] {
-                if (auto* renderReplaced = dynamicDowncast<RenderReplaced>(unsupportedRenderElement.get()))
-                    return renderReplaced->style().logicalMaxWidth().isPercentOrCalculated();
-                return false;
-            };
-            return isReplacedWithSpecialIntrinsicWidth();
-        };
-        if (isNonSupportedFixedWidthContent())
+        // FIXME: Implement this image special in line builder.
+        auto allowImagesToBreak = !blockContainer.document().inQuirksMode() || !blockContainer.isRenderTableCell();
+        if (!allowImagesToBreak)
             return false;
     }
     return true;
