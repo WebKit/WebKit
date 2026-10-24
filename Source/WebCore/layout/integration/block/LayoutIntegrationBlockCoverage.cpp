@@ -216,6 +216,8 @@ static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& box)
     return false;
 }
 
+static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(const RenderBox& leaf, const RenderBlockFlow& rootContainer);
+
 // The inline formatting context lays out an atomic inline-level box through the render tree, with the containing block size the block
 // formatting context gives it (BlockIntegrationUtils::layoutInlineContent).
 static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
@@ -225,16 +227,7 @@ static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(c
         return BlockAvoidanceReason::ContentHasOrthogonalFlow;
     if (hasPercentageBlockSizeInQuirksMode(box))
         return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
-    // An out-of-flow box inside whose containing block is outside it, in the block formatting context, would be registered on a box the
-    // block formatting context has not committed yet.
-    for (CheckedRef descendant : descendantsOfType<RenderBox>(box)) {
-        if (!descendant->isOutOfFlowPositioned())
-            continue;
-        CheckedPtr containingBlock = descendant->containingBlock();
-        if (containingBlock != &box && !containingBlock->isDescendantOf(&box) && isLaidOutByBlockFormattingContext(descendant, rootContainer))
-            return BlockAvoidanceReason::ContentHasOutOfFlowBox;
-    }
-    return { };
+    return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
 }
 
 static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
@@ -353,6 +346,42 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     return { };
 }
 
+// The render tree lays out the content of a leaf (an atomic inline-level box or a box laid out through the render tree), and registers the
+// out-of-flow boxes it finds on their containing block (RenderBlock::addOutOfFlowBox). The block formatting context lays out the ones whose
+// containing block it lays out, outside the leaf, from the static position on their layer, which it moves out of the leaf through the boxes
+// in between (BlockLayout::layoutOutOfFlowBoxes): inline boxes, which add nothing to it, and in-flow boxes in a horizontal, unflipped writing
+// mode outside fragmented flows.
+static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(const RenderBox& leaf, const RenderBlockFlow& rootContainer)
+{
+    auto isSupportedBoxInBetween = [](const RenderElement& box) {
+        if (box.isInlineBox())
+            return true;
+        return is<RenderBox>(box) && !box.isOutOfFlowPositioned() && box.writingMode().isHorizontal() && !box.writingMode().isBlockFlipped() && !box.isRenderFragmentedFlow();
+    };
+    for (CheckedRef descendant : descendantsOfType<RenderBox>(leaf)) {
+        if (!descendant->isOutOfFlowPositioned())
+            continue;
+        CheckedPtr containingBlock = descendant->containingBlock();
+        if (containingBlock == &leaf || containingBlock->isDescendantOf(&leaf) || !isLaidOutByBlockFormattingContext(descendant, rootContainer))
+            continue;
+        if (auto reason = outOfFlowBoxAvoidanceReason(descendant))
+            return reason;
+        // Its static position comes from its block container (a flex or grid container would align it instead), and the block formatting
+        // context lays out its content too.
+        CheckedPtr staticPositionBlock = descendant->parent();
+        while (staticPositionBlock->isInlineBox())
+            staticPositionBlock = staticPositionBlock->parent();
+        CheckedPtr outOfFlowBlockContainer = dynamicDowncast<RenderBlockFlow>(descendant);
+        if (!is<RenderBlockFlow>(*staticPositionBlock) || (outOfFlowBlockContainer && !canUseForNestedBlockLayout(*outOfFlowBlockContainer)))
+            return BlockAvoidanceReason::ContentHasOutOfFlowBox;
+        for (CheckedPtr box = staticPositionBlock; box != containingBlock; box = box->parent()) {
+            if (!isSupportedBoxInBetween(*box))
+                return BlockAvoidanceReason::ContentHasOutOfFlowBox;
+        }
+    }
+    return { };
+}
+
 static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
 {
     if (box.isForceHiddenByLineClamp())
@@ -396,16 +425,7 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
         return BlockAvoidanceReason::ContentHasJustifySelf;
     if (!style->blockStepSize().isNone())
         return BlockAvoidanceReason::ContentHasBlockStepSize;
-    // An out-of-flow box inside whose containing block is outside it, in the block formatting context, would be registered on a box the
-    // block formatting context has not committed yet.
-    for (CheckedRef descendant : descendantsOfType<RenderBox>(box)) {
-        if (!descendant->isOutOfFlowPositioned())
-            continue;
-        CheckedPtr containingBlock = descendant->containingBlock();
-        if (containingBlock != &box && !containingBlock->isDescendantOf(&box) && isLaidOutByBlockFormattingContext(descendant, rootContainer))
-            return BlockAvoidanceReason::ContentHasOutOfFlowBox;
-    }
-    return { };
+    return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
 }
 
 static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
