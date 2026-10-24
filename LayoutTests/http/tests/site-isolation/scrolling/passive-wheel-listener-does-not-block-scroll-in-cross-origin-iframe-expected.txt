@@ -1,0 +1,12 @@
+Verifies that a passive wheel event listener in a cross-origin iframe does not block scrolling, and that the dispatched event is reported as non-cancelable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result.scrollY > 0 is true
+PASS result.lastEvent.cancelable is false
+PASS result.lastEvent.defaultPrevented is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

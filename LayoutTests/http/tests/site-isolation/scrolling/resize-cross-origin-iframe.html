@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+    <pre id="scrollingTree"></pre>
+</body>
+<script>
+description("Verifies that resizing a cross-origin iframe updates the scrollable area size recorded for it in the scrolling tree.");
+jsTestIsAsync = true;
+
+window.addEventListener('load', async () => {
+    if (!window.internals)
+        return
+
+    document.getElementById('frame').width = 150;
+    document.getElementById('frame').height = 120;
+
+    await UIHelper.waitForConditionAsync(async () => (await UIHelper.getScrollingTree()).includes("width=150 height=120"), 120);
+
+    document.getElementById('scrollingTree').innerText = await UIHelper.getScrollingTree();
+    finishJSTest();
+}, false);
+</script>
+<iframe id="frame" width="300" height="400" src="http://localhost:8000/site-isolation/scrolling/resources/empty-iframe.html"></iframe>
