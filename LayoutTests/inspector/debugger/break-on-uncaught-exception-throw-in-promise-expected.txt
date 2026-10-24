@@ -13,6 +13,13 @@ CONSOLE MESSAGE: in promise.then
 CONSOLE MESSAGE: throwing TestError
 CONSOLE MESSAGE: in promise.catch
 CONSOLE MESSAGE: DONE
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: testCatch
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: catch TestError
+CONSOLE MESSAGE: DONE
 CONSOLE MESSAGE: testThrowingInPromiseWithCatch
 CONSOLE MESSAGE: in promise
 CONSOLE MESSAGE: throwing TestError
@@ -23,6 +30,42 @@ CONSOLE MESSAGE: in promise
 CONSOLE MESSAGE: throwing TestError
 CONSOLE MESSAGE: in promise.catch
 CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
 Checking no pauses within Promises when pausing on uncaught exceptions.
 
 
@@ -31,14 +74,126 @@ Checking no pauses within Promises when pausing on uncaught exceptions.
 PASS: Should not pause, exception is 'caught' by Promise.
 
 -- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithoutCatch
-PASS: Should not pause, exception is 'caught' by Promise.
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
 
 -- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithRejectHandler
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithOwnRejectHandler
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithTryCatch
 PASS: Should not pause, exception is 'caught' by Promise.
 
 -- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseCatch
 PASS: Should not pause, exception is 'caught' by Promise.
 
 -- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseThenAndRethrownInCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.ChainWithoutCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.ChainWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.EmptyThenWithoutCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.BranchesWithUnhandledPath
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.BranchesWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.FinallyWithoutCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.FinallyWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.FinallyCallbackWithoutCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.FinallyCallbackWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.FinallyAwaitWithoutCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.FinallyAwaitWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.AllWithoutCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.AllWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.AllSettled
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.Any
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.AsyncAllWithoutCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.AsyncAllWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.RaceWithoutCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.RaceWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.RaceBranchWithoutCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.RaceBranchWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.RaceAlreadyFulfilled
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.RaceAlreadyRejected
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.AsyncRaceWithoutCatch
+PASS: Should pause for exception.
+PASS: Should pause at the original throw location.
+PASS: Should pause once.
+
+-- Running test case: BreakOnUncaughtException.Promise.AsyncRaceWithCatch
 PASS: Should not pause, exception is 'caught' by Promise.
 

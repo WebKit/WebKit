@@ -27,14 +27,20 @@
 #include "JSPromise.h"
 
 #include "BuiltinNames.h"
+#include "CodeBlock.h"
 #include "DeferredWorkTimer.h"
 #include "ErrorInstance.h"
 #include "ErrorInstanceInlines.h"
+#include "FunctionCodeBlock.h"
+#include "FunctionExecutable.h"
 #include "GlobalObjectMethodTable.h"
+#include "JSAsyncFunctionGenerator.h"
 #include "JSCInlines.h"
+#include "JSFunction.h"
 #include "JSFunctionWithFields.h"
 #include "JSMicrotask.h"
 #include "JSPromiseCombinatorsContext.h"
+#include "JSPromiseCombinatorsGlobalContext.h"
 #include "JSPromiseConstructor.h"
 #include "JSPromisePrototype.h"
 #include "JSPromiseReaction.h"
@@ -43,6 +49,8 @@
 #include "ObjectConstructor.h"
 #include "TopExceptionScope.h"
 #include "VMInlines.h"
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -325,6 +333,103 @@ JSValue JSPromise::asyncStackTraceContext() const
         return { };
     }
     return { };
+}
+
+bool JSPromise::hasUnhandledRejectionChain() const
+{
+    Vector<const JSPromise*, 8> promisesToVisit { this };
+    HashSet<const JSPromise*> visitedPromises;
+
+    auto visit = [&](InternalMicrotask task, JSValue target, JSValue context) {
+        if (task == InternalMicrotask::PromiseAllResolveJob) {
+            auto* globalContext = dynamicDowncast<JSPromiseCombinatorsGlobalContext>(target);
+            if (!globalContext)
+                return;
+            target = globalContext->promise();
+        } else if (task == InternalMicrotask::PromiseFinallyAwaitJob) {
+            auto* reaction = dynamicDowncast<JSSlimPromiseReaction>(context);
+            if (!reaction)
+                return;
+            target = reaction->promise();
+        }
+
+        if (task == InternalMicrotask::PromiseResolveWithoutHandlerJob || task == InternalMicrotask::PromiseFulfillWithoutHandlerJob || task == InternalMicrotask::PromiseRaceResolveJob || task == InternalMicrotask::PromiseAllResolveJob || task == InternalMicrotask::PromiseFinallyReactionJob || task == InternalMicrotask::PromiseFinallyAwaitJob) {
+            if (auto* resultPromise = dynamicDowncast<JSPromise>(target))
+                promisesToVisit.append(resultPromise);
+            return;
+        }
+
+        if (task != InternalMicrotask::AsyncFunctionResume)
+            return;
+
+        auto* generator = dynamicDowncast<JSAsyncFunctionGenerator>(context);
+        if (!generator)
+            return;
+
+        auto* function = dynamicDowncast<JSFunction>(generator->next());
+        if (!function || function->isHostOrBuiltinFunction())
+            return;
+
+        auto* codeBlock = function->jsExecutable()->baselineCodeBlockFor(CodeSpecializationKind::CodeForCall);
+        if (!codeBlock)
+            return;
+
+        auto bytecodeIndex = generator->suspendedBytecodeIndex(*codeBlock);
+        if (!bytecodeIndex || codeBlock->handlerForIndex(bytecodeIndex->offset(), RequiredHandler::CatchHandler))
+            return;
+
+        if (auto* resultPromise = dynamicDowncast<JSPromise>(generator->context()))
+            promisesToVisit.append(resultPromise);
+    };
+
+    while (!promisesToVisit.isEmpty()) {
+        const auto* promise = promisesToVisit.takeLast();
+        if (!visitedPromises.add(promise).isNewEntry)
+            continue;
+
+        if (promise->status() != Status::Pending)
+            continue;
+
+        if (!promise->isHandled())
+            return true;
+
+        switch (promise->inlineReactionKind()) {
+        case InlineReactionKind::FulfillHandler:
+            promisesToVisit.append(promise->inlineHandlerResultPromise());
+            break;
+
+        case InlineReactionKind::RejectHandler:
+            break;
+
+        case InlineReactionKind::InternalMicrotask:
+            visit(promise->inlineReactionMicrotask(), promise->payloadCell() ? JSValue(promise->payloadCell()) : jsUndefined(), promise->m_slot.get());
+            // FIXME: Handle custom Promise reactions.
+            break;
+
+        case InlineReactionKind::None:
+            for (auto* reaction = uncheckedDowncast<JSPromiseReaction>(promise->payloadCell()); reaction; reaction = reaction->next()) {
+                if (auto* fullReaction = dynamicDowncast<JSFullPromiseReaction>(reaction)) {
+                    if (fullReaction->onRejected().isCallable())
+                        continue;
+                } else {
+                    auto* slimReaction = uncheckedDowncast<JSSlimPromiseReaction>(reaction);
+                    auto task = slimReaction->internalMicrotask();
+                    if (task == InternalMicrotask::None) {
+                        if (!slimReaction->isFulfillHandler())
+                            continue;
+                    } else {
+                        visit(task, reaction->promise(), slimReaction->handlerOrContext());
+                        continue;
+                    }
+                }
+
+                if (auto* resultPromise = dynamicDowncast<JSPromise>(reaction->promise()))
+                    promisesToVisit.append(resultPromise);
+            }
+            break;
+        }
+    }
+    return false;
 }
 
 void JSPromise::performPromiseThen(VM& vm, JSGlobalObject* globalObject, JSValue onFulfilled, JSValue onRejected, JSValue promiseOrCapability)
