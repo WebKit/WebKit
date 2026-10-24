@@ -1,0 +1,11 @@
+Tests that restoring the state of a select element updates its fallback button text.
+
+PASS fallbackInForm.value is "Two"
+PASS fallbackWithoutForm.value is "Two"
+PASS fallbackButtonText(fallbackInForm) is "Two"
+PASS fallbackButtonText(fallbackWithoutForm) is "Two"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
