@@ -2809,6 +2809,8 @@ void RenderLayerBacking::updateClippingStackLayerGeometry(LayerAncestorClippingS
             entry.shapeMaskLayer->setPosition(FloatPoint());
             entry.shapeMaskLayer->setShapeLayerPath(shapePath);
             entry.shapeMaskLayer->setShapeLayerWindRule(WindRule::NonZero);
+        } else if (CheckedPtr clippingLayer = entry.clipData.clippingLayer.get(); clippingLayer && clippingLayer->renderer().style().border().hasNonRoundCornerShape()) {
+            entry.clippingLayer->setContentsClippingRect(contentsClippingRectForCornerShape(FloatRoundedRect(roundedClipRect), clippingLayer->renderer().style()));
         } else
             entry.clippingLayer->setContentsClippingRect(FloatRoundedRect(roundedClipRect));
         entry.clippingLayer->setContentsRectClipsDescendants(true);

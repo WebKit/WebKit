@@ -176,6 +176,7 @@ static TextStream& operator<<(TextStream& ts, const LayerAncestorClippingStack::
     ts.dumpProperty("clippingLayer"_s, entry.clipData.clippingLayer.get());
     ts.dumpProperty("clip"_s, entry.clipData.clipRect);
     ts.dumpProperty("isOverflowScroll"_s, entry.clipData.isOverflowScroll);
+    ts.dumpProperty("cornerCurvatures"_s, entry.clipData.cornerCurvatures);
     if (entry.overflowScrollProxyNodeID)
         ts.dumpProperty("overflowScrollProxyNodeID"_s, entry.overflowScrollProxyNodeID);
     if (entry.clippingLayer)
