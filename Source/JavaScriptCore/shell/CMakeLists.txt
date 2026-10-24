@@ -22,9 +22,7 @@ if (ENABLE_FUZZILLI)
   list(APPEND jsc_SOURCES ../fuzzilli/Fuzzilli.cpp)
 endif ()
 
-# mya analyzes process corpses through Mach task APIs, so it only builds on
-# Apple platforms. Its sources do not compile elsewhere.
-if (APPLE)
+if (ENABLE_LIB_JSC_TOOLS)
     set(mya_SOURCES ../mya/mya.cpp)
     set(mya_FRAMEWORKS
         JavaScriptCore
@@ -36,13 +34,15 @@ if (APPLE)
         $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
     )
 
-    # The corpse support mya uses lives in the tools static library.
-    set(mya_LIBRARIES JavaScriptCoreTools edit)
+    set(mya_LIBRARIES JavaScriptCoreTools)
+    if (APPLE)
+        list(APPEND mya_LIBRARIES edit)
+    endif ()
 endif ()
 
 WEBKIT_EXECUTABLE_DECLARE(jsc)
 
-if (APPLE)
+if (ENABLE_LIB_JSC_TOOLS)
     WEBKIT_EXECUTABLE_DECLARE(mya)
 endif ()
 
@@ -104,8 +104,7 @@ if (DEVELOPER_MODE)
     set(testdfg_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
     set(testdfg_FRAMEWORKS ${jsc_FRAMEWORKS})
 
-    # The tools library and its tests are only relevant for Apple platforms.
-    if (APPLE)
+    if (ENABLE_LIB_JSC_TOOLS)
         set(testLibJSCTools_SOURCES
             ../corpse/tests/CorpseAddressTest.cpp
             ../corpse/tests/CorpseByteParserTest.cpp
@@ -124,9 +123,16 @@ if (DEVELOPER_MODE)
             ${jsc_PRIVATE_INCLUDE_DIRECTORIES}
             ${JAVASCRIPTCORE_DIR}/corpse
         )
-        set(testLibJSCTools_FRAMEWORKS ${jsc_FRAMEWORKS})
         set(testLibJSCTools_LIBRARIES JavaScriptCoreTools)
+    elseif (APPLE)
+        # run-javascriptcore-tests expects testLibJSCTools to be present for Apple platforms
+        # even for simulator and MacCatalyst builds that don't ENABLE_LIB_JSC_TOOLS. We're
+        # just building a stub of testLibJSCTools here. This matches Xcode build behavior.
+        set(testLibJSCTools_SOURCES ../corpse/tests/testLibJSCTools.cpp)
+        set(testLibJSCTools_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS} ENABLE_LIB_JSC_TOOLS=0)
+        set(testLibJSCTools_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
     endif ()
+    set(testLibJSCTools_FRAMEWORKS ${jsc_FRAMEWORKS})
 
     set(testwasmdebugger_SOURCES
         ../wasm/debugger/testwasmdebugger.cpp
@@ -160,7 +166,7 @@ if (DEVELOPER_MODE)
     WEBKIT_EXECUTABLE_DECLARE(testdfg)
     WEBKIT_EXECUTABLE_DECLARE(testwasmdebugger)
 
-    if (APPLE)
+    if (ENABLE_LIB_JSC_TOOLS OR APPLE)
         WEBKIT_EXECUTABLE_DECLARE(testLibJSCTools)
     endif ()
 
@@ -171,6 +177,14 @@ if (DEVELOPER_MODE)
     endif ()
 endif ()
 
+add_custom_target(jsc-all DEPENDS jsc testapi testRegExp testmasm testb3 testair testdfg testwasmdebugger)
+if (ENABLE_LIB_JSC_TOOLS)
+    add_dependencies(jsc-all mya)
+endif ()
+if ((ENABLE_LIB_JSC_TOOLS OR APPLE) AND DEVELOPER_MODE)
+    add_dependencies(jsc-all testLibJSCTools)
+endif ()
+
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 WEBKIT_EXECUTABLE(jsc)
@@ -179,7 +193,7 @@ if (SHOULD_INSTALL_JS_SHELL)
     install(TARGETS jsc DESTINATION "${LIBEXEC_INSTALL_DIR}")
 endif ()
 
-if (APPLE)
+if (ENABLE_LIB_JSC_TOOLS)
     WEBKIT_EXECUTABLE(mya)
 
     if (SHOULD_INSTALL_JS_SHELL)
@@ -196,7 +210,7 @@ if (DEVELOPER_MODE)
     WEBKIT_EXECUTABLE(testdfg)
     WEBKIT_EXECUTABLE(testwasmdebugger)
 
-    if (APPLE)
+    if (ENABLE_LIB_JSC_TOOLS OR APPLE)
         WEBKIT_EXECUTABLE(testLibJSCTools)
     endif ()
 
