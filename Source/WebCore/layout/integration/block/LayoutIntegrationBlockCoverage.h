@@ -26,6 +26,8 @@
 #pragma once
 
 #include <wtf/CheckedPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
@@ -47,6 +49,12 @@ CheckedPtr<RenderBlockFlow> coveredBlockFormattingContextRoot(RenderBlock&);
 struct BlockLayoutCoverage {
     unsigned coveredBoxes { 0 };
     unsigned boxes { 0 };
+    // The boxes it does not lay out, by why the root of their block formatting context stays on the render tree path, most boxes first.
+    Vector<std::pair<ASCIILiteral, unsigned>> uncoveredBoxes;
+    // The area of the block formatting contexts it lays out: the border box of each root, without the ones of the roots of the block
+    // formatting contexts inside it.
+    double coveredArea { 0 };
+    double area { 0 };
 
     bool operator==(const BlockLayoutCoverage&) const = default;
 };
