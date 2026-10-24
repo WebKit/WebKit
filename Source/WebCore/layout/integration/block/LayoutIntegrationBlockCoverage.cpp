@@ -303,11 +303,16 @@ static bool isLaidOutByBlockFormattingContext(const RenderElement& outOfFlowBox,
 
 static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const RenderBox& outOfFlowBox)
 {
-    // Block containers, which establish a block formatting context for their content, and replaced elements, whose own formatting context
-    // sizes them (BlockFormattingContext::layoutOutOfFlowReplacedElement).
+    // Block containers, which establish a block formatting context for their content, and replaced elements and flex containers, whose own
+    // formatting context lays them out (BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext). Not a fieldset, whose legend sits
+    // in its border.
     auto isReplaced = outOfFlowBox.isRenderReplaced() || outOfFlowBox.isRenderOrLegacyRenderSVGRoot();
-    if (outOfFlowBox.type() != RenderObject::Type::BlockFlow && !isReplaced)
+    auto isFlexContainer = outOfFlowBox.type() == RenderObject::Type::FlexibleBox && !outOfFlowBox.isFieldset();
+    if (outOfFlowBox.type() != RenderObject::Type::BlockFlow && !isReplaced && !isFlexContainer)
         return BlockAvoidanceReason::ContentHasOutOfFlowNonBlockContainer;
+    // FIXME: An orthogonal flex container, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
+    if (isFlexContainer && outOfFlowBox.isWritingModeRoot())
+        return BlockAvoidanceReason::ContentHasOrthogonalFlow;
     CheckedRef style = outOfFlowBox.style();
     // FIXME: Anchor positioning, position-area and position-try fallbacks, and alignment other than normal (css-position-3 §4.5).
     if (Style::AnchorPositionEvaluator::isAnchorPositioned(style.get()) || !style->positionTryFallbacks().isNone())
@@ -321,6 +326,9 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     // A scroll container with a definite size is a layout boundary, which the render tree path lays out on its own (RenderObject::markContainingBlocksForLayout).
     if (outOfFlowBox.hasNonVisibleOverflow())
         return BlockAvoidanceReason::ContentHasOutOfFlowScrollContainer;
+    // So is a box with layout and size containment.
+    if (outOfFlowBox.shouldApplyLayoutContainment() && outOfFlowBox.shouldApplySizeContainment())
+        return BlockAvoidanceReason::ContentHasSizeContainment;
     // Its own formatting context sizes a replaced element, from its natural size and aspect ratio.
     if (isReplaced)
         return { };
@@ -334,7 +342,8 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
         return BlockAvoidanceReason::ContentHasSizingKeyword;
     // An auto inline size with an auto inset is the fit-content size (css-position-3 §4.3), from the inline sizes of the content.
     auto hasFitContentInlineSize = style->width().isAuto() && (style->left().isAuto() || style->right().isAuto());
-    if (hasFitContentInlineSize && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
+    // The render tree measures a flex container (BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes).
+    if (hasFitContentInlineSize && !isFlexContainer && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
     // FIXME: The automatic size a preferred aspect ratio gives in the other axis (css-sizing-4 §5.1).
     if (style->aspectRatio().hasRatio())
@@ -446,6 +455,9 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         // A replaced element has no block container checks to pass.
         if (renderer.isRenderReplaced() || renderer.isRenderOrLegacyRenderSVGRoot())
             return { };
+        // Nor does a flex container, whose content the render tree lays out like that of a leaf.
+        if (renderer.type() == RenderObject::Type::FlexibleBox)
+            return outOfFlowBoxesInLeafAvoidanceReason(downcast<RenderBox>(renderer), rootContainer);
     } else if (renderer.isInline())
         return inlineContentAvoidanceReason(renderer, rootContainer);
     // Block boxes only: not list items, replaced elements, tables, flex or grid containers or form controls.
@@ -546,9 +558,9 @@ static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const Rend
                 return reason;
         }
         auto isOutOfFlowBox = renderer && renderer->isOutOfFlowPositioned();
-        // The content of an atomic inline-level box is not part of it either.
-        auto skipsContent = (isOutOfFlowBox && !isLaidOutByBlockFormattingContext(*renderer, rootContainer)) || laidOutThroughRenderTree || isAtomicInlineLevelBox(*descendant)
-            || descendant->isRenderReplaced();
+        // The content of an atomic inline-level box or of an out-of-flow flex container is not part of it either.
+        auto skipsContent = (isOutOfFlowBox && (!isLaidOutByBlockFormattingContext(*renderer, rootContainer) || renderer->type() == RenderObject::Type::FlexibleBox))
+            || laidOutThroughRenderTree || isAtomicInlineLevelBox(*descendant) || descendant->isRenderReplaced();
         descendant = skipsContent ? descendant->nextInPreOrderAfterChildren(&rootContainer) : descendant->nextInPreOrder(&rootContainer);
     }
     return { };
@@ -645,7 +657,7 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
     case BlockAvoidanceReason::ContentHasOutOfFlowBox:
         return "out-of-flow box in inline or leaf content"_s;
     case BlockAvoidanceReason::ContentHasOutOfFlowNonBlockContainer:
-        return "out-of-flow flex, grid, table or replaced"_s;
+        return "out-of-flow grid, table or other renderer"_s;
     case BlockAvoidanceReason::ContentIsListItem:
         return "list item"_s;
     case BlockAvoidanceReason::ContentIsFormControl:

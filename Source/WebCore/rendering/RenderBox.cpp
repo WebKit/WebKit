@@ -2720,8 +2720,12 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
     computedValues.margins.end = marginEnd(writingMode());
 
     if (isOutOfFlowPositioned()) {
-        ASSERT(!overridingBorderBoxLogicalWidth());
         ASSERT(!overridingLogicalWidthForFlexBasisComputation());
+        // The new block formatting context sizes the out-of-flow flex containers it lays out through the render tree (css-position-3 §4.3).
+        if (auto logicalWidth = overridingBorderBoxLogicalWidth()) {
+            computedValues.extent = *logicalWidth;
+            return;
+        }
         // FIXME: This calculation is not patched for block-flow yet.
         // https://bugs.webkit.org/show_bug.cgi?id=46500
         computeOutOfFlowPositionedLogicalWidth(computedValues);
@@ -3360,6 +3364,11 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
     }
 
     if (isOutOfFlowPositioned()) {
+        // The new block formatting context also gives them their block size when it does not depend on their content.
+        if (auto logicalHeight = overridingBorderBoxLogicalHeight()) {
+            computedValues.extent = *logicalHeight;
+            return computedValues;
+        }
         computeOutOfFlowPositionedLogicalHeight(computedValues);
         return computedValues;
     }

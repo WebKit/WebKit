@@ -111,9 +111,13 @@ public:
     // laid out by its own formatting context through the render tree (RenderBox::layoutIfNeeded). Its position and margins are the block
     // formatting context's, which BlockLayout::updateRenderers writes.
     IndependentFormattingContextLayoutResult layoutIndependentFormattingContext(const RenderBox&, const Layout::ConstraintsForIndependentFormattingContext&);
-    // An out-of-flow replaced element, laid out by its own formatting context through the render tree once its containing block has its
-    // size: the border box size it gets. Its position and margins are the block formatting context's.
-    LayoutSize layoutOutOfFlowReplacedElement(const RenderBox&);
+    // An out-of-flow replaced element or flex container, laid out by its own formatting context through the render tree once its containing
+    // block has its size, at the border box size the block formatting context gives it: none for a replaced element, which sizes itself, and
+    // no block size when it comes from the content. The border box size it gets; its position and margins are the block formatting context's.
+    LayoutSize layoutOutOfFlowIndependentFormattingContext(const RenderBox&, std::optional<LayoutUnit> borderBoxInlineSize = { }, std::optional<LayoutUnit> borderBoxBlockSize = { });
+    // The min-content and max-content inline sizes of the content box of a box whose own formatting context measures it through the render
+    // tree (RenderBox::minContentLogicalWidthContribution).
+    static Layout::IntrinsicWidthConstraints independentFormattingContextIntrinsicInlineSizes(const RenderBox&, LayoutUnit borderAndPadding);
     // Whether the content box inline size, border or padding of a box differ from its last layout, which its renderer still has
     // (RenderBlock::recomputeLogicalWidth).
     static bool contentBoxInlineSizeChanged(const RenderBox&, LayoutUnit contentBoxInlineSize);
