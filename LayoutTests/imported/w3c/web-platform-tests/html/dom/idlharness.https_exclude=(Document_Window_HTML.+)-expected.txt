@@ -434,7 +434,7 @@ PASS CanvasRenderingContext2D interface: attribute miterLimit
 PASS CanvasRenderingContext2D interface: operation setLineDash(sequence<unrestricted double>)
 PASS CanvasRenderingContext2D interface: operation getLineDash()
 PASS CanvasRenderingContext2D interface: attribute lineDashOffset
-FAIL CanvasRenderingContext2D interface: attribute lang assert_true: The prototype object must have a property "lang" expected true got false
+PASS CanvasRenderingContext2D interface: attribute lang
 PASS CanvasRenderingContext2D interface: attribute font
 PASS CanvasRenderingContext2D interface: attribute textAlign
 PASS CanvasRenderingContext2D interface: attribute textBaseline
@@ -556,7 +556,7 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: calling setLineDash(sequence<unrestricted double>) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getLineDash()" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineDashOffset" with the proper type
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lang" with the proper type assert_inherits: property "lang" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lang" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "font" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textAlign" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textBaseline" with the proper type
@@ -723,7 +723,7 @@ PASS OffscreenCanvasRenderingContext2D interface: attribute miterLimit
 PASS OffscreenCanvasRenderingContext2D interface: operation setLineDash(sequence<unrestricted double>)
 PASS OffscreenCanvasRenderingContext2D interface: operation getLineDash()
 PASS OffscreenCanvasRenderingContext2D interface: attribute lineDashOffset
-FAIL OffscreenCanvasRenderingContext2D interface: attribute lang assert_true: The prototype object must have a property "lang" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: attribute lang
 PASS OffscreenCanvasRenderingContext2D interface: attribute font
 PASS OffscreenCanvasRenderingContext2D interface: attribute textAlign
 PASS OffscreenCanvasRenderingContext2D interface: attribute textBaseline

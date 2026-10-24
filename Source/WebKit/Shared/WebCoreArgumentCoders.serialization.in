@@ -6160,6 +6160,7 @@ header: <WebCore/OffscreenCanvas.h>
     WebCore::IntSize size();
     bool originClean();
     std::optional<WebCore::RemotePlaceholderRenderingContextIdentifier> placeholderIdentifier();
+    String inheritedLanguage();
 };
 #endif
 

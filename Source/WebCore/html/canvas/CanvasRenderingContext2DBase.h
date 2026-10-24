@@ -54,6 +54,7 @@
 #include "StyleFilter.h"
 #include "Timer.h"
 #include "TypedArrayPixelBuffer.h"
+#include <wtf/ScopedLambda.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -150,6 +151,9 @@ public:
 
     String wordSpacing() const { return state().wordSpacing; }
     void setWordSpacing(const String&);
+
+    String lang() const { return state().lang; }
+    void setLang(const String&);
 
     CanvasFontKerning fontKerning() const { return state().canvasFontKerning(); }
     void setFontKerning(CanvasFontKerning);
@@ -293,7 +297,7 @@ public:
         float wordSpacing() const { return m_font.wordSpacing(); }
         void setWordSpacing(float wordSpacing) { m_font.setWordSpacing(wordSpacing); }
 
-        void update(NOESCAPE const Invocable<void(FontCascadeDescription&)> auto&);
+        void update(NOESCAPE const ScopedLambda<void(FontCascadeDescription&)>&);
 
     private:
         void update(FontSelector&);
@@ -334,6 +338,7 @@ public:
 
         String letterSpacing;
         String wordSpacing;
+        String lang;
 
         String unparsedFont;
         FontProxy font;
@@ -366,6 +371,7 @@ protected:
     State& modifiableState() LIFETIME_BOUND { ASSERT(!m_unrealizedSaveCount || m_stateStack.size() >= MaxSaveCount); return m_stateStack.last(); }
 
     void carryOverKerningAndTextRendering(FontCascadeDescription&) const;
+    AtomString effectiveLanguage() const;
 
     GraphicsContext* drawingContext() const;
     GraphicsContext* effectiveDrawingContext() const;
@@ -527,6 +533,7 @@ private:
     // The relationship between FontCascade and CanvasRenderingContext2D::FontProxy must hold certain invariants.
     // Therefore, all font operations must pass through the proxy.
     virtual const FontProxy* fontProxy() { return nullptr; }
+    virtual AtomString inheritedLanguage() const { return nullAtom(); }
 
     FloatPoint textOffset(float width, TextDirection);
 

@@ -253,6 +253,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     // relative to the canvas.
     FontCascadeDescription resolutionDescription { fontDescription };
     carryOverKerningAndTextRendering(resolutionDescription);
+    resolutionDescription.setComputedLocale(effectiveLanguage());
     auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTF::move(resolutionDescription), document.get());
     if (!fontCascade)
         return;
@@ -297,6 +298,11 @@ CanvasDirection CanvasRenderingContext2D::direction() const
     return toTextDirection(state().direction) == TextDirection::RTL ? CanvasDirection::Rtl : CanvasDirection::Ltr;
 }
 
+AtomString CanvasRenderingContext2D::inheritedLanguage() const
+{
+    return protect(canvas())->effectiveLang();
+}
+
 void CanvasRenderingContext2D::fillText(const String& text, double x, double y, std::optional<double> maxWidth)
 {
     protect(canvasBase())->recordLastFillText(text);
@@ -338,6 +344,12 @@ auto CanvasRenderingContext2D::fontProxy() -> const FontProxy*
 
     if (!state().font.realized())
         setFontWithoutUpdatingStyle(state().unparsedFont);
+    else if (state().lang == "inherit"_s && state().font.fontDescription().computedLocale() != inheritedLanguage()) {
+        realizeSaves();
+        modifiableState().font.update([language = effectiveLanguage()](FontCascadeDescription& description) {
+            description.setComputedLocale(language);
+        });
+    }
     return &state().font;
 }
 

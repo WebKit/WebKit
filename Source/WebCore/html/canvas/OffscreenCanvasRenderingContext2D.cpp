@@ -118,6 +118,7 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     fontDescription.setComputedSize(DefaultFontSize);
     fontDescription.setUsedSize(DefaultFontSize);
     carryOverKerningAndTextRendering(fontDescription);
+    fontDescription.setComputedLocale(effectiveLanguage());
 
     if (auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTF::move(fontDescription), context)) {
         ASSERT(context->cssFontSelector());
@@ -149,6 +150,11 @@ RefPtr<ImageBuffer> OffscreenCanvasRenderingContext2D::transferToImageBuffer()
     willUpdateEntireContents();
     clearCanvas();
     return result;
+}
+
+AtomString OffscreenCanvasRenderingContext2D::inheritedLanguage() const
+{
+    return canvas().inheritedLanguage();
 }
 
 CanvasDirection OffscreenCanvasRenderingContext2D::direction() const

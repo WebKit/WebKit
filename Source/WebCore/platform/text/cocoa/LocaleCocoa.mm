@@ -38,6 +38,7 @@
 #import <wtf/DateMath.h>
 #import <wtf/HashMap.h>
 #import <wtf/Language.h>
+#import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -282,10 +283,27 @@ static LocaleCache& LEGACY_NODELETE localeCache()
     return localeCache.get();
 }
 
+static Lock nonMainThreadLocaleCacheLock;
+static HashMap<String, RetainPtr<CFStringRef>>& LEGACY_NODELETE nonMainThreadLocaleCache() WTF_REQUIRES_LOCK(nonMainThreadLocaleCacheLock)
+{
+    static NeverDestroyed<HashMap<String, RetainPtr<CFStringRef>>> cache;
+    return cache.get();
+}
+
 RetainPtr<CFStringRef> LocaleCocoa::canonicalLanguageIdentifierFromString(const AtomString& string)
 {
     if (string.isEmpty())
         return CFSTR("");
+
+    if (!isMainThread()) {
+        Locker locker { nonMainThreadLocaleCacheLock };
+        auto& cache = nonMainThreadLocaleCache();
+        if (auto iterator = cache.find(string.string()); iterator != cache.end())
+            return iterator->value;
+        auto result = bridge_cast([NSLocale canonicalLanguageIdentifierFromString:string.createNSString().get()]);
+        cache.add(string.string().isolatedCopy(), result);
+        return result;
+    }
 
     auto& cache = localeCache();
     if (cache.m_key == string)
@@ -304,6 +322,9 @@ void LocaleCocoa::releaseMemory()
     cache.m_key = { };
     cache.m_value = { };
     cache.m_map.clear();
+
+    Locker locker { nonMainThreadLocaleCacheLock };
+    nonMainThreadLocaleCache().clear();
 }
 
 void LocaleCocoa::initializeLocaleData()

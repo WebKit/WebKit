@@ -414,6 +414,7 @@ CanvasRenderingContext2DBase::State::State()
     , filter { CSS::Keyword::None { } }
     , letterSpacing("0px"_s)
     , wordSpacing("0px"_s)
+    , lang("inherit"_s)
     , unparsedFont(DefaultFont)
 {
 }
@@ -720,7 +721,7 @@ void CanvasRenderingContext2DBase::FontProxy::initialize(FontSelector& fontSelec
     protect(m_font.fontSelector())->registerForInvalidationCallbacks(*this);
 }
 
-void CanvasRenderingContext2DBase::FontProxy::update(NOESCAPE const Invocable<void(FontCascadeDescription&)> auto& function)
+void CanvasRenderingContext2DBase::FontProxy::update(NOESCAPE const ScopedLambda<void(FontCascadeDescription&)>& function)
 {
     ASSERT(realized());
     RefPtr fontSelector = m_font.fontSelector();
@@ -3809,6 +3810,24 @@ void CanvasRenderingContext2DBase::carryOverKerningAndTextRendering(FontCascadeD
 {
     description.setKerning(toKerning(state().canvasFontKerning()));
     description.setTextRenderingMode(toTextRenderingMode(state().canvasTextRendering()));
+}
+
+AtomString CanvasRenderingContext2DBase::effectiveLanguage() const
+{
+    return state().lang == "inherit"_s ? inheritedLanguage() : AtomString { state().lang };
+}
+
+void CanvasRenderingContext2DBase::setLang(const String& lang)
+{
+    if (state().lang == lang)
+        return;
+    realizeSaves();
+    modifiableState().lang = lang;
+    if (!state().font.realized())
+        return;
+    modifiableState().font.update([language = effectiveLanguage()](FontCascadeDescription& description) {
+        description.setComputedLocale(language);
+    });
 }
 
 void CanvasRenderingContext2DBase::setFontKerning(CanvasFontKerning fontKerning)

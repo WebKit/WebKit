@@ -57,6 +57,7 @@ private:
     CanvasRenderingContext2D(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
     const FontProxy* fontProxy() final;
+    AtomString inheritedLanguage() const final;
 
     std::optional<Style::Filter> setFilterStringWithoutUpdatingStyle(const String&) override;
     RefPtr<Filter> createFilter(const FloatRect& bounds) const override;
