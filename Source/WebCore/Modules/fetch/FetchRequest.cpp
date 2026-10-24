@@ -137,20 +137,15 @@ static bool methodCanHaveBody(const ResourceRequest& request)
     return request.httpMethod() != "GET"_s && request.httpMethod() != "HEAD"_s;
 }
 
-static IPAddressSpace updateTargetAddressSpaceIfNeeded(IPAddressSpace currentAddressSpace, const URL& url)
+static IPAddressSpace updateTargetAddressSpaceIfNeeded(IPAddressSpace declaredAddressSpace, const URL& url)
 {
-    auto host = url.host();
-    if (host.isEmpty())
-        return currentAddressSpace;
+    if (declaredAddressSpace != IPAddressSpace::Public)
+        return declaredAddressSpace;
 
-    auto addressSpace = WebCore::determineIPAddressSpace(url);
-    if (addressSpace != IPAddressSpace::Public)
-        return addressSpace;
+    if (url.host().isEmpty())
+        return declaredAddressSpace;
 
-    if (host.endsWithIgnoringASCIICase(".local"_s))
-        return IPAddressSpace::Local;
-
-    return currentAddressSpace;
+    return WebCore::determineIPAddressSpace(url);
 }
 
 inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
