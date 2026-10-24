@@ -205,8 +205,7 @@ private:
 {
     Vector<uint32_t> matchIndices;
     matchIndices.reserveInitialCapacity(matches.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id match in matches) {
+    for (id match in matches) {
         if ([match isKindOfClass:WKTextFinderMatch.class])
             matchIndices.append([(WKTextFinderMatch *)match index]);
     }

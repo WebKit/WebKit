@@ -93,8 +93,7 @@ CoreIPCDDSecureActionContext::CoreIPCDDSecureActionContext(DDSecureActionContext
     if (auto *allResults = dynamic_objc_cast<NSArray>([dictionary.get() objectForKey:@"allResults"])) {
         Vector<RetainPtr<DDScannerResult>> result;
         result.reserveInitialCapacity(allResults.count);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL id item in allResults) {
+        for (id item in allResults) {
             if ([item isKindOfClass:PAL::getDDScannerResultClassSingleton()])
                 result.append((DDScannerResult *)item);
         };
@@ -104,8 +103,7 @@ CoreIPCDDSecureActionContext::CoreIPCDDSecureActionContext(DDSecureActionContext
     if (auto *groupAllResults = dynamic_objc_cast<NSArray>([dictionary.get() objectForKey:@"groupAllResults"])) {
         Vector<RetainPtr<DDScannerResult>> result;
         result.reserveInitialCapacity(groupAllResults.count);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL id item in groupAllResults) {
+        for (id item in groupAllResults) {
             if ([item isKindOfClass:PAL::getDDScannerResultClassSingleton()])
                 result.append((DDScannerResult *)item);
         };

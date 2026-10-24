@@ -574,8 +574,7 @@ void WebAuthenticatorCoordinatorProxy::makeActiveConditionalAssertion()
 inline static Vector<AuthenticatorTransport> toTransports(NSArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport> *asTransports)
 {
     Vector<AuthenticatorTransport> transports;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport asTransport : asTransports) {
+    for (ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport asTransport : asTransports) {
         if (auto transport = convertStringToAuthenticatorTransport(asTransport))
             transports.append(*transport);
     }
@@ -1129,8 +1128,7 @@ static Vector<WebCore::AuthenticatorTransport> toAuthenticatorTransports(NSArray
 {
     Vector<WebCore::AuthenticatorTransport> transports;
     transports.reserveInitialCapacity(ascTransports.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *ascTransport : ascTransports) {
+    for (NSString *ascTransport : ascTransports) {
         if ([ascTransport isEqualToString:@"usb"])
             transports.append(WebCore::AuthenticatorTransport::Usb);
         else if ([ascTransport isEqualToString:@"nfc"])
@@ -1404,8 +1402,7 @@ void WebAuthenticatorCoordinatorProxy::getClientCapabilities(IPC::Connection& co
 
     [getASCWebKitSPISupportClassSingleton() getClientCapabilitiesForRelyingParty:originData.securityOrigin()->domain().createNSString().get() withCompletionHandler:makeBlockPtr([handler = WTF::move(handler)](NSDictionary<NSString *, NSNumber *> *result) mutable {
         Vector<KeyValuePair<String, bool>> capabilities;
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *key in result)
+        for (NSString *key in result)
             capabilities.append({ key, result[key].boolValue });
         setRelatedOriginsCapability(capabilities);
         std::ranges::sort(capabilities, codePointCompareLessThan, &KeyValuePair<String, bool>::key);

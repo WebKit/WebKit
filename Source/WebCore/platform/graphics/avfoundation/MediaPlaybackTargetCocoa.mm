@@ -51,8 +51,7 @@ String MediaPlaybackTargetCocoa::deviceName() const
         return [m_outputContext deviceName];
 
     auto outputDeviceNames = adoptNS([[NSMutableArray alloc] init]);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL AVOutputDevice *outputDevice in [m_outputContext outputDevices])
+    for (AVOutputDevice *outputDevice in [m_outputContext outputDevices])
         [outputDeviceNames addObject:retainPtr([outputDevice deviceName]).get()];
 
     return [outputDeviceNames componentsJoinedByString:@" + "];
@@ -66,8 +65,7 @@ String MediaPlaybackTargetCocoa::routeName() const
 bool MediaPlaybackTargetCocoa::hasActiveRoute() const
 {
     if ([m_outputContext supportsMultipleOutputDevices]) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
+        for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
             if (outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio))
                 return true;
         }
@@ -80,8 +78,7 @@ bool MediaPlaybackTargetCocoa::hasActiveRoute() const
 
 bool MediaPlaybackTargetCocoa::supportsRemoteVideoPlayback() const
 {
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
+    for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
         if (outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
             return true;
     }

@@ -585,8 +585,7 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
     if ([array[0] isKindOfClass:NSString.class]) {
         Vector<String> result;
         result.reserveInitialCapacity(arrayLength);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL id element in array) {
+        for (id element in array) {
             if (RetainPtr string = dynamic_objc_cast<NSString>(element))
                 result.append(string.get());
             else
@@ -597,8 +596,7 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
     if ([array[0] isKindOfClass:NSNumber.class]) {
         Vector<double> result;
         result.reserveInitialCapacity(arrayLength);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL id element in array) {
+        for (id element in array) {
             if ([element isKindOfClass:NSNumber.class])
                 result.append([(NSNumber *)element doubleValue]);
             else
@@ -679,8 +677,7 @@ inline static ParagraphStyle extractParagraphStyle(NSParagraphStyle *style, Tabl
     Vector<ParagraphStyleTextList> newTextLists;
     Vector<TextTab> newTextTabs;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSTextList *list in style.textLists) {
+    for (NSTextList *list in style.textLists) {
         if (![list isKindOfClass:PlatformNSTextList])
             return { };
 
@@ -699,8 +696,7 @@ inline static ParagraphStyle extractParagraphStyle(NSParagraphStyle *style, Tabl
         sentTextListIDs.append(listID);
     }
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSTextTableBlock* item in style.textBlocks) {
+    for (NSTextTableBlock* item in style.textBlocks) {
         if (![item isKindOfClass:PlatformNSTextTableBlock])
             return { };
 
@@ -804,8 +800,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     RetainPtr<NSArray<NSTextTab *>> tabStops = [style tabStops];
     newTextTabs.reserveInitialCapacity([tabStops count]);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSTextTab *textTab : tabStops.get()) {
+    for (NSTextTab *textTab : tabStops.get()) {
         newTextTabs.append(TextTab {
             [textTab location],
             extractParagraphStyleAlignment([textTab alignment])

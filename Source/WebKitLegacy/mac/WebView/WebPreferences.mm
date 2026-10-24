@@ -420,8 +420,7 @@ public:
         return nil;
 
     RetainPtr array = (NSArray *)value;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id object in array.get()) {
+    for (id object in array.get()) {
         if (![object isKindOfClass:[NSString class]])
             return nil;
     }

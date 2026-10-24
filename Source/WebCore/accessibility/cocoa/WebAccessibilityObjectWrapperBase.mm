@@ -662,8 +662,7 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
 
         auto content = backingObject->contentForRange(*lineRange, AXCoreObject::SpellCheck::Yes);
         auto text = adoptNS([[NSMutableAttributedString alloc] init]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL id item in content.get()) {
+        for (id item in content.get()) {
             if (RetainPtr attributedString = dynamic_objc_cast<NSAttributedString>(item))
                 [text appendAttributedString:attributedString];
             else if ([item isKindOfClass:WebAccessibilityObjectWrapper.class]) {
@@ -870,8 +869,7 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
         return nil;
     AX_ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
     auto mutableDictionary = adoptNS([dictionary mutableCopy]);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *key in dictionary) {
+    for (NSString *key in dictionary) {
         id value = [dictionary objectForKey:key];
         if (RetainPtr dictionaryValue = dynamic_objc_cast<NSDictionary>(value))
             [mutableDictionary setObject:protect(dictionaryRemovingNonSupportedTypes(dictionaryValue)) forKey:key];

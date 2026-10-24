@@ -204,8 +204,7 @@ void GameControllerGamepad::teardownElements()
         [profile setThumbstickUserIntentHandler:nil];
 
     // Clear all button handlers.
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL GCControllerButtonInput *button in [profile allButtons])
+    for (GCControllerButtonInput *button in [profile allButtons])
         button.valueChangedHandler = nil;
 
     // Clear axis handlers for thumbsticks.

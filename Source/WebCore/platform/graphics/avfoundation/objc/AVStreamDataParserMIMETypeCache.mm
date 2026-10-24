@@ -123,8 +123,7 @@ void AVStreamDataParserMIMETypeCache::initializeCache(HashSet<String>& cache)
     if (!isAvailable())
         return;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString* type in [PAL::getAVStreamDataParserClassSingleton() audiovisualMIMETypes])
+    for (NSString* type in [PAL::getAVStreamDataParserClassSingleton() audiovisualMIMETypes])
         cache.add(type);
 #endif
 }

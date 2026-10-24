@@ -1550,8 +1550,7 @@ static WKMediaPlaybackState LEGACY_NODELETE toWKMediaPlaybackState(WebKit::Media
         argumentsMap = Vector<std::pair<String, WebKit::JavaScriptEvaluationResult>> { };
     NSString *errorMessage = nil;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id key in arguments) {
+    for (id key in arguments) {
         RetainPtr keyString = dynamic_objc_cast<NSString>(key);
         if (!keyString) {
             errorMessage = @"Key value must be NSString";
@@ -2758,8 +2757,7 @@ std::optional<WebCore::JSHandleIdentifier> WebKit::jsHandleIdentifierInFrame(con
 
     Vector<WebCore::JSHandleIdentifier> preservedNodeIdentifiers;
     if (RefPtr mainFrame = _page->mainFrame()) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL _WKJSHandle *handle in _writingToolsPreservedNodes.get()) {
+        for (_WKJSHandle *handle in _writingToolsPreservedNodes.get()) {
             if (auto identifier = WebKit::jsHandleIdentifierInFrame(*mainFrame, handle))
                 preservedNodeIdentifiers.append(WTF::move(*identifier));
         }
@@ -2794,8 +2792,7 @@ std::optional<WebCore::JSHandleIdentifier> WebKit::jsHandleIdentifierInFrame(con
     }
 
     Vector<WebCore::WritingTools::Context> contextData;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WTContext *context in contexts) {
+    for (WTContext *context in contexts) {
         auto webContext = WebKit::convertToWebContext(context);
         if (!webContext) {
             ASSERT_NOT_REACHED();
@@ -2832,8 +2829,7 @@ std::optional<WebCore::JSHandleIdentifier> WebKit::jsHandleIdentifierInFrame(con
     }
 
     Vector<WebCore::WritingTools::TextSuggestion> replacementData;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WTTextSuggestion *suggestion in suggestions) {
+    for (WTTextSuggestion *suggestion in suggestions) {
         auto replacementDataItem = WebKit::convertToWebTextSuggestion(suggestion);
         if (!replacementDataItem) {
             ASSERT_NOT_REACHED();
@@ -4479,8 +4475,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     THROW_IF_SUSPENDED;
     HashSet<String> transformed;
     transformed.reserveInitialCapacity(extensionIDs.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *extensionID in extensionIDs)
+    for (NSString *extensionID in extensionIDs)
         transformed.addVoid(extensionID);
     _page->inspectorController().browserExtensionsDisabled(WTF::move(transformed));
 }
@@ -4695,8 +4690,7 @@ static CGRect webViewRectForMainFrameRect(WebKit::WebPageProxy& page, const std:
 
     Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules;
     if (configuration) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL _WKTextManipulationExclusionRule *wkRule in configuration.exclusionRules) {
+        for (_WKTextManipulationExclusionRule *wkRule in configuration.exclusionRules) {
             auto type = wkRule.isExclusion ? ExclusionRule::Type::Exclude : ExclusionRule::Type::Include;
             if (wkRule.attributeName)
                 exclusionRules.append({type, ExclusionRule::AttributeRule { wkRule.attributeName, wkRule.attributeValue } });
@@ -4800,8 +4794,7 @@ static WebCore::TextManipulationTokenIdentifier coreTextManipulationTokenIdentif
     }
 
     Vector<WebCore::TextManipulationToken> tokens;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL _WKTextManipulationToken *wkToken in item.tokens)
+    for (_WKTextManipulationToken *wkToken in item.tokens)
         tokens.append(WebCore::TextManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
 
     Vector<WebCore::TextManipulationItem> coreItems({ WebCore::TextManipulationItem { identifiers->frameID, false, false, identifiers->itemID, WTF::move(tokens) } });
@@ -4813,8 +4806,7 @@ static WebCore::TextManipulationTokenIdentifier coreTextManipulationTokenIdentif
 static RetainPtr<NSMutableArray> makeFailureSetForAllTextManipulationItems(NSArray<_WKTextManipulationItem *> *items)
 {
     RetainPtr<NSMutableArray> wkFailures = adoptNS([[NSMutableArray alloc] initWithCapacity:items.count]);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL _WKTextManipulationItem *item in items)
+    for (_WKTextManipulationItem *item in items)
         [wkFailures addObject:adoptNS([[NSError alloc] initWithDomain:_WKTextManipulationItemErrorDomain code:_WKTextManipulationItemErrorNotAvailable userInfo:@{_WKTextManipulationItemErrorItemKey: item}]).get()];
     return wkFailures;
 };
@@ -4864,8 +4856,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
     Vector<WebCore::TextManipulationItem> coreItems;
     coreItems.reserveInitialCapacity(items.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL _WKTextManipulationItem *wkItem in items) {
+    for (_WKTextManipulationItem *wkItem in items) {
         Vector<WebCore::TextManipulationToken> coreTokens(wkItem.tokens.count, [&](size_t i) {
             RetainPtr<_WKTextManipulationToken> wkToken = wkItem.tokens[i];
             return WebCore::TextManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.get().identifier), wkToken.get().content, std::nullopt };
@@ -5242,8 +5233,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #if ENABLE(APP_HIGHLIGHTS)
     Vector<Ref<WebCore::SharedMemory>> buffers;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSData *highlight in highlights)
+    for (NSData *highlight in highlights)
         convertAndAddHighlight(buffers, highlight);
     
     _page->restoreAppHighlightsAndScrollToIndex(buffers, std::nullopt);
@@ -5438,8 +5428,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 {
     Vector<unsigned> targetLengths;
     targetLengths.reserveInitialCapacity(lengths.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSNumber *length in lengths) {
+    for (NSNumber *length in lengths) {
         if (unsigned lengthValue = length.unsignedIntValue)
             targetLengths.append(lengthValue);
     }
@@ -6143,8 +6132,7 @@ static inline OptionSet<WebCore::LayoutMilestone> LEGACY_NODELETE layoutMileston
         [NSException raise:NSInvalidArgumentException format:@"Configuration cannot be nil"];
 
     Vector<WebCore::MarkupExclusionRule> markupExclusionRules;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL _WKArchiveExclusionRule *rule in configuration.exclusionRules) {
+    for (_WKArchiveExclusionRule *rule in configuration.exclusionRules) {
         if (!rule.elementLocalName && (!rule.attributeLocalNames || !rule.attributeLocalNames.count))
             continue;
         Vector<std::pair<AtomString, AtomString>> attibutes;
@@ -6230,8 +6218,7 @@ static inline OptionSet<WebCore::LayoutMilestone> LEGACY_NODELETE layoutMileston
     }
 
     HashSet<WebCore::FrameIdentifier> targetFrameIDs;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WKFrameInfo *frame in frames) {
+    for (WKFrameInfo *frame in frames) {
         if (!frame)
             continue;
 
@@ -7085,8 +7072,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 {
     Vector<Ref<API::TargetedElementInfo>> elements;
     elements.reserveInitialCapacity(wkElements.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL _WKTargetedElementInfo *element in wkElements)
+    for (_WKTargetedElementInfo *element in wkElements)
         elements.append(protect(*element->_info));
     return elements;
 }
@@ -7351,8 +7337,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     RetainPtr allItems = [[self _activePopupButtonCell] itemArray];
     Vector<String> itemTitles;
     itemTitles.reserveInitialCapacity([allItems count]);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSMenuItem *item in allItems.get()) {
+    for (NSMenuItem *item in allItems.get()) {
         if (!item.enabled)
             continue;
 

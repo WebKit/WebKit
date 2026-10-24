@@ -397,8 +397,7 @@ void RemoteLayerTreeHost::animationDidStart(std::optional<WebCore::PlatformLayer
         return;
 
     String animationKey;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *key in [layer animationKeys]) {
+    for (NSString *key in [layer animationKeys]) {
         if ([layer animationForKey:key] == animation) {
             animationKey = key;
             break;
@@ -419,8 +418,7 @@ void RemoteLayerTreeHost::animationDidEnd(std::optional<WebCore::PlatformLayerId
         return;
 
     String animationKey;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *key in [layer animationKeys]) {
+    for (NSString *key in [layer animationKeys]) {
         if ([layer animationForKey:key] == animation) {
             animationKey = key;
             break;

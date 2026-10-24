@@ -66,8 +66,7 @@ void TextDetectorImpl::detect(const NativeImage& image, CompletionHandler<void(V
     auto imageSize = image.size();
     Vector<DetectedText> results;
     results.reserveInitialCapacity(request.get().results.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL VNRecognizedTextObservation *observation in request.get().results) {
+    for (VNRecognizedTextObservation *observation in request.get().results) {
         results.append({
             convertRectFromVisionToWeb(imageSize, observation.boundingBox),
             [observation topCandidates:1][0].string,
