@@ -1,0 +1,16 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSWebkitLineClampAsLineClampEnabled=true ] -->
+<title>The computed display of a vertical -webkit-box with -webkit-line-clamp is flow-root</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<div id="target"></div>
+<script>
+const target = document.getElementById("target");
+function computedDisplay(style) {
+    target.style.cssText = style;
+    return getComputedStyle(target).display;
+}
+test(() => assert_equals(computedDisplay("display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2"), "flow-root"), "-webkit-box");
+test(() => assert_equals(computedDisplay("display: -webkit-inline-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2"), "inline-block"), "-webkit-inline-box");
+test(() => assert_equals(computedDisplay("display: -webkit-box; -webkit-box-orient: horizontal; -webkit-line-clamp: 2"), "-webkit-box"), "Horizontal -webkit-box");
+test(() => assert_equals(computedDisplay("display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: none"), "-webkit-box"), "-webkit-line-clamp: none");
+</script>
