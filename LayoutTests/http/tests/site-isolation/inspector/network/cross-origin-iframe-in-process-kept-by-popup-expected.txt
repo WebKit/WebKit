@@ -1,0 +1,27 @@
+Tests that an iframe which loads in a process kept alive by a popup, after this page's previous iframe there was removed, is reported by Network events under Site Isolation.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrameInProcessKeptByPopup
+-- Running test case: SiteIsolation.Network.CrossOriginIFrameInProcessKeptByPopup.SecondIFrame
+PASS: Popup's cross-origin iframe should load.
+PASS: Child frame should show the cross-origin document.
+PASS: Document and script should finish loading.
+PASS: Document should be listed once.
+PASS: Document should finish loading.
+PASS: Document should carry the request identifier of its load.
+PASS: Document should have a response.
+PASS: Script should be added to the child frame.
+PASS: Script should be listed once.
+PASS: Script should finish loading.
+PASS: First iframe should be reported as removed.
+PASS: Child frame should show the cross-origin document.
+PASS: Document and script should finish loading.
+PASS: Document should be listed once.
+PASS: Document should finish loading.
+PASS: Document should carry the request identifier of its load.
+PASS: Document should have a response.
+PASS: Script should be added to the child frame.
+PASS: Script should be listed once.
+PASS: Script should finish loading.
+PASS: Second iframe should load in the first iframe's process.
+
