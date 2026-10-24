@@ -853,6 +853,12 @@ if (NOT APPLE AND SWIFT_REQUIRED)
     file(WRITE "${WTF_HEADERS_DIR}/ios/WebCoreThread.h" "")
 endif ()
 
+if (NOT MSVC)
+    set_source_files_properties(FastMalloc.cpp PROPERTIES
+        COMPILE_OPTIONS $<$<CONFIG:Debug>:-O3>
+        SKIP_PRECOMPILE_HEADERS ON)
+endif ()
+
 WEBKIT_FRAMEWORK(WTF)
 
 # WTF is statically linked into JavaScriptCore, so it uses JSC's PGO profile.
