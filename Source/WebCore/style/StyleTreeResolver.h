@@ -175,7 +175,7 @@ private:
     const Style::ComputedStyle* LEGACY_NODELETE parentBoxStyleForPseudoElement(const ElementUpdate&) const LIFETIME_BOUND;
     const Style::ComputedStyle* LEGACY_NODELETE documentElementStyle() const;
 
-    LayoutInterleavingAction updateAnchorPositioningState(Element&, const Style::ComputedStyle*);
+    LayoutInterleavingAction updateAnchorPositioningState(Element&, const Style::ComputedStyle*, bool didResolveStyle);
 
     void generatePositionOptionsIfNeeded(const ResolvedStyle&, const Styleable&, const ResolutionContext&);
     std::unique_ptr<Style::ComputedStyle> generatePositionOption(const PositionTryFallback&, const ResolvedStyle&, const Styleable&, const ResolutionContext&);

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<title>Tests that an anchor-positioned element with position-visibility: anchors-visible is hidden when its anchor becomes hidden, after unrelated style changes</title>
+<style>
+  #container { visibility: visible; }
+  #anchor { anchor-name: --a1; width: 100px; height: 100px; background: orange; }
+  #target {
+    position: absolute;
+    position-anchor: --a1;
+    position-visibility: anchors-visible;
+    left: anchor(left);
+    top: anchor(bottom);
+    width: 100px;
+    height: 100px;
+    background: red;
+  }
+  #unrelated { position: absolute; left: 300px; top: 0; width: 50px; height: 50px; background-color: rgb(0, 128, 0); }
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<div id="container"><div id="anchor"></div></div>
+<div id="target"></div>
+<div id="unrelated"></div>
+<script>
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    if (testRunner.dontForceRepaint)
+      testRunner.dontForceRepaint();
+  }
+
+  async function doTest() {
+    await UIHelper.renderingUpdate();
+    // Style updates that do not touch the anchor or the anchor-positioned element.
+    for (let i = 0; i < 3; ++i) {
+      unrelated.style.backgroundColor = i % 2 ? "rgb(0, 128, 0)" : "rgb(0, 100, 0)";
+      await UIHelper.renderingUpdate();
+    }
+    unrelated.style.backgroundColor = "rgb(0, 128, 0)";
+    // Only the visibility of the anchor's container changes. No geometry changes.
+    container.style.visibility = "hidden";
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+  window.addEventListener("load", doTest, false);
+</script>

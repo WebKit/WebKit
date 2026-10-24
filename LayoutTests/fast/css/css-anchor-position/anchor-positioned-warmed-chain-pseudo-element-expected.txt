@@ -1,0 +1,21 @@
+Tests a warmed anchor chain ending in a pseudo-element after unrelated style changes, anchor movement, removal and reinsertion.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS second.getBoundingClientRect().left is 120
+PASS third.getBoundingClientRect().left is 140
+PASS parseFloat(getComputedStyle(host, '::before').left) is 160
+PASS second.getBoundingClientRect().left is 220
+PASS third.getBoundingClientRect().left is 240
+PASS parseFloat(getComputedStyle(host, '::before').left) is 260
+PASS second.getBoundingClientRect().left is 7
+PASS third.getBoundingClientRect().left is 27
+PASS parseFloat(getComputedStyle(host, '::before').left) is 47
+PASS second.getBoundingClientRect().left is 220
+PASS third.getBoundingClientRect().left is 240
+PASS parseFloat(getComputedStyle(host, '::before').left) is 260
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

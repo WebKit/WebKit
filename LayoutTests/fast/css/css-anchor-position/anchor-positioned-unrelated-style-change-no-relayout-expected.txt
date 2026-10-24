@@ -1,0 +1,30 @@
+Tests that a style change on an unrelated element does not trigger a layout because of an anchor-positioned element whose anchor did not change. https://bugs.webkit.org/show_bug.cgi?id=328203
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+No out-of-flow element.
+PASS layoutsForUnrelatedStyleChange() is 0
+
+Fixed-position element without anchor().
+PASS layoutsForUnrelatedStyleChange() is 0
+
+Fixed-position element positioned with anchor(), anchor unchanged.
+PASS anchored.getBoundingClientRect().left is anchor.getBoundingClientRect().left + 12
+PASS layoutsForUnrelatedStyleChange() is 0
+PASS layoutsForUnrelatedStyleChange() is 0
+PASS layoutsForUnrelatedStyleChange() is 0
+PASS anchored.getBoundingClientRect().left is anchor.getBoundingClientRect().left + 12
+
+Moving the anchor still repositions the anchor-positioned element.
+PASS anchor.getBoundingClientRect().left is 208
+PASS anchored.getBoundingClientRect().left is anchor.getBoundingClientRect().left + 12
+
+Renaming the anchor still updates the anchor-positioned element.
+PASS anchored.getBoundingClientRect().left is 8
+PASS anchored.getBoundingClientRect().left is anchor.getBoundingClientRect().left + 12
+PASS layoutsForUnrelatedStyleChange() is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
