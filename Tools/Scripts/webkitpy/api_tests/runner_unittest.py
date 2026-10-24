@@ -105,19 +105,19 @@ class RunnerRunTest(unittest.TestCase):
     def _calls(task_pool, function):
         return [call for call in task_pool.return_value.__enter__.return_value.do.call_args_list if call.args[0] is function]
 
-    def test_parallel_safety_runs_each_checked_test_in_one_task_with_background_on_repeat(self):
-        task_pool = self._run(['TestWebKitAPI.SiteIsolation.Target', 'TestWebKitAPI.WebKit.A'])
+    def test_parallel_safety_runs_each_checked_test_in_one_task_and_leaves_their_suites_out_of_the_background(self):
+        task_pool = self._run(['TestWebKitAPI.SiteIsolation.Target', 'TestWebKitAPI.System.Target'])
 
         self.assertEqual(task_pool.call_count, 1)
         checked_calls = self._calls(task_pool, run_parallel_safety_iterations)
-        self.assertEqual([call.args[1:] for call in checked_calls], [('TestWebKitAPI.SiteIsolation.Target', 3), ('TestWebKitAPI.WebKit.A', 3)])
+        self.assertEqual([call.args[1:] for call in checked_calls], [('TestWebKitAPI.SiteIsolation.Target', 3), ('TestWebKitAPI.System.Target', 3)])
         self.assertFalse(any(call.kwargs.get('repeat') for call in checked_calls))
 
         background_calls = self._calls(task_pool, run_background_load)
         self.assertTrue(all(call.kwargs['repeat'] for call in background_calls))
         self.assertEqual(sorted(call.kwargs['group'] for call in background_calls), sorted(task_pool.call_args.kwargs['mutually_exclusive_groups']))
         background_tests = sorted(test for call in background_calls for _, tests in call.args[1] for test in tests)
-        self.assertEqual(background_tests, ['TestWebKitAPI.SiteIsolation.Other', 'TestWebKitAPI.WebKit.B'])
+        self.assertEqual(background_tests, ['TestWebKitAPI.WebKit.A', 'TestWebKitAPI.WebKit.B'])
         self.assertEqual(task_pool.call_args.kwargs['workers'], 2 + len(background_calls))
 
     def test_parallel_safety_checks_a_test_outside_the_allowlist(self):
