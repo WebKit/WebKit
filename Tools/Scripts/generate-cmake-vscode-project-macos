@@ -226,7 +226,7 @@ def main():
 
     if not (build_dir / "CMakeCache.txt").exists():
         sys.exit(f"error: {build_dir}/CMakeCache.txt not found -- run "
-                 f"'cmake --preset mac-asan' first")
+                 f"'cmake --preset <preset>' (see 'cmake --list-presets') first")
 
     ninja_path = xc.find_ninja()
 

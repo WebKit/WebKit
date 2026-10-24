@@ -638,15 +638,50 @@ if (CMAKE_OSX_SYSROOT)
     add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:-F${CMAKE_BINARY_DIR};-F${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
 endif ()
 
-# Regenerate the Xcode debug wrapper on every (re)configure so its scheme paths
-# and lldbinit source-map track this binary directory. Runs at configure time
-# (not as a build target) to keep the no-op ninja build at zero actions.
-if (EXISTS ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project)
+# Generate WebKit.xcodeproj and its lldbinit, for the macOS SDK alone because
+# its schemes launch their product on the build machine. --configure-time is
+# needed because CMakeCache.txt does not exist until configure finishes.
+if (WEBKIT_SDK_NAME STREQUAL "macosx"
+        AND EXISTS ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project)
     execute_process(
         COMMAND ${Python_EXECUTABLE}
                 ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project
+                --configure-time
                 ${CMAKE_BINARY_DIR}
         OUTPUT_QUIET)
+
+    # Deferred: the executables it depends on, so that it runs after they are
+    # linked, are not defined where this file is included.
+    function(WEBKIT_ADD_XCODE_PROJECT_TARGET)
+        add_custom_target(xcode-project ALL
+            COMMAND ${Python_EXECUTABLE}
+                    ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project
+                    --quiet
+                    ${CMAKE_BINARY_DIR}
+            COMMENT "Generating ${CMAKE_BINARY_DIR}/WebKit.xcodeproj"
+            VERBATIM)
+
+        set(_directories ${CMAKE_SOURCE_DIR})
+        while (_directories)
+            list(POP_FRONT _directories _directory)
+            get_property(_subdirectories DIRECTORY ${_directory}
+                PROPERTY SUBDIRECTORIES)
+            list(APPEND _directories ${_subdirectories})
+            get_property(_targets DIRECTORY ${_directory}
+                PROPERTY BUILDSYSTEM_TARGETS)
+            foreach (_target IN LISTS _targets)
+                get_target_property(_type ${_target} TYPE)
+                # Depending on an EXCLUDE_FROM_ALL executable would add it to
+                # the default build.
+                get_target_property(_excluded ${_target} EXCLUDE_FROM_ALL)
+                if (_type STREQUAL "EXECUTABLE" AND NOT _excluded)
+                    add_dependencies(xcode-project ${_target})
+                endif ()
+            endforeach ()
+        endwhile ()
+    endfunction()
+
+    cmake_language(DEFER CALL WEBKIT_ADD_XCODE_PROJECT_TARGET)
 endif ()
 
 if (WEBKIT_ADDITIONS_INCLUDE_PATH AND EXISTS "${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/CMake/OptionsCocoa.cmake")
