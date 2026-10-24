@@ -285,6 +285,69 @@ void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(const Rend
     auto toDestroy = collapseAndDetachAnonymousNextSibling(willBeDestroyed.section(), willBeDestroyed.previousRow(), willBeDestroyed.nextRow());
 }
 
+template <typename Parent>
+void RenderTreeBuilder::Table::moveAllTableChildren(Parent& from, Parent& to)
+{
+    // Go through detach/attach (instead of an internal move) so that the table parts keep their bookkeeping up to date.
+    while (CheckedPtr child = from.RenderElement::firstChild()) {
+        auto childToMove = m_builder.detach(from, *child, WillBeDestroyed::No);
+        m_builder.attach(to, WTF::move(childToMove));
+    }
+}
+
+void RenderTreeBuilder::Table::mergeAdjacentAnonymousTables(RenderTable& previous, RenderTable& next)
+{
+    // https://drafts.csswg.org/css-tables/#fixup-algorithm
+    // Consecutive misparented table-internal boxes share a single anonymous table. Once whatever separated
+    // them is gone, fold the second table into the first and merge the anonymous parts that now touch.
+    auto isMergeable = [](const auto& box) {
+        return box && box->isAnonymous() && !box->isBeforeOrAfterContent();
+    };
+
+    CheckedPtr previousSection = dynamicDowncast<RenderTableSection>(previous.lastChild());
+    CheckedPtr previousRow = previousSection ? previousSection->lastRow() : nullptr;
+    CheckedPtr previousCell = previousRow ? previousRow->lastCell() : nullptr;
+    CheckedPtr nextSection = dynamicDowncast<RenderTableSection>(next.firstChild());
+    CheckedPtr nextRow = nextSection ? nextSection->firstRow() : nullptr;
+    CheckedPtr nextCell = nextRow ? nextRow->firstCell() : nullptr;
+
+    CheckedPtr parent = next.parent();
+    moveAllTableChildren(next, previous);
+    RenderPtr<RenderObject> tableToDestroy;
+    if (parent)
+        tableToDestroy = m_builder.detach(*parent, next, WillBeDestroyed::Yes);
+    tableToDestroy = nullptr;
+
+    // A CheckedPtr must not outlive the renderer it points to, so release them before destroying anything.
+    if (!isMergeable(previousSection) || !isMergeable(nextSection))
+        return;
+    moveAllTableChildren(*nextSection, *previousSection);
+    // The moved rows keep their cells, which the section's grid does not know about yet.
+    previousSection->setNeedsCellRecalc();
+
+    bool shouldMergeRows = isMergeable(previousRow) && isMergeable(nextRow);
+    if (shouldMergeRows) {
+        moveAllTableChildren(*nextRow, *previousRow);
+        auto& rowToDestroy = *nextRow;
+        nextRow = nullptr;
+        auto detachedRow = m_builder.detach(*previousSection, rowToDestroy, WillBeDestroyed::Yes);
+        detachedRow = nullptr;
+    }
+
+    auto& sectionToDestroy = *nextSection;
+    nextSection = nullptr;
+    auto detachedSection = m_builder.detach(previous, sectionToDestroy, WillBeDestroyed::Yes);
+    detachedSection = nullptr;
+
+    if (!shouldMergeRows)
+        return;
+
+    RenderPtr cellToDestroy = collapseAndDetachAnonymousNextSibling(previousRow.get(), previousCell.get(), nextCell.get());
+    nextCell = nullptr;
+    if (cellToDestroy)
+        downcast<RenderTableCell>(*cellToDestroy).invalidateLineLayout(RenderBlockFlow::InvalidationReason::InternalMove);
+}
+
 RenderPtr<RenderTable> RenderTreeBuilder::Table::createAnonymousTableWithStyle(Document& document, const Style::ComputedStyle& style)
 {
     auto table = createRenderer<RenderTable>(RenderObject::Type::Table, document, Style::ComputedStyle::createAnonymousStyleWithDisplay(style, style.display() == Style::DisplayType::InlineFlow ? Style::DisplayType::InlineTable : Style::DisplayType::BlockTable));
