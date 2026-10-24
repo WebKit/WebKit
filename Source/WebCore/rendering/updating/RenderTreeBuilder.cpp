@@ -977,6 +977,25 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     };
     collapseAndDestroyAnonymousSiblings();
 
+    // Anonymous tables that only got separated by the renderer we are about to destroy have to be merged back into one.
+    // White space only text between them does not keep them apart.
+    auto isCollapsibleWhitespaceText = [](const RenderObject& renderer) {
+        auto* text = dynamicDowncast<RenderText>(renderer);
+        return text && text->text().containsOnly<isASCIIWhitespace>();
+    };
+    auto adjacentAnonymousTable = [&](bool searchBackwards) -> SingleThreadWeakPtr<RenderTable> {
+        CheckedPtr sibling = searchBackwards ? destroyRoot->previousSibling() : destroyRoot->nextSibling();
+        while (sibling && isCollapsibleWhitespaceText(*sibling))
+            sibling = searchBackwards ? sibling->previousSibling() : sibling->nextSibling();
+        CheckedPtr table = dynamicDowncast<RenderTable>(sibling);
+        if (!table || !table->isAnonymous() || table->isBeforeOrAfterContent())
+            return nullptr;
+        return table.get();
+    };
+    SingleThreadWeakPtr tableBeforeDestroyRoot = adjacentAnonymousTable(true);
+    SingleThreadWeakPtr tableAfterDestroyRoot = adjacentAnonymousTable(false);
+    bool shouldMergeAdjacentTables = tableBeforeDestroyRoot && tableAfterDestroyRoot && tableBeforeDestroyRoot->style().display() == tableAfterDestroyRoot->style().display();
+
     // FIXME: Do not try to collapse/cleanup the anonymous wrappers inside destroy (see webkit.org/b/186746).
     WeakPtr destroyRootParent = destroyRoot->parent();
     if (&rendererToDestroy != destroyRoot.get()) {
@@ -992,6 +1011,9 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
 
     if (!destroyRootParent)
         return;
+
+    if (shouldMergeAdjacentTables && tableBeforeDestroyRoot && tableAfterDestroyRoot && tableBeforeDestroyRoot->parent() == tableAfterDestroyRoot->parent())
+        tableBuilder().mergeAdjacentAnonymousTables(*tableBeforeDestroyRoot, *tableAfterDestroyRoot);
 
     auto anonymousDestroyRoot = SetForScope { m_anonymousDestroyRoot, destroyRootParent };
     removeAnonymousWrappersForInlineChildrenIfNeeded(*destroyRootParent);

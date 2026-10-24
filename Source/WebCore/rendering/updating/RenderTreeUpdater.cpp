@@ -572,6 +572,26 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
     if (is<RenderText>(renderingParent.previousChildRenderer))
         return true;
     // This text node has nothing but white space. We may still need a renderer in some cases.
+    // White space between two inline-level siblings in a table, row or section ends up in the same anonymous cell
+    // as that content and must be preserved (https://drafts.csswg.org/css-tables/#fixup-algorithm).
+    if (parentRenderer.isRenderTable() || parentRenderer.isRenderTableRow() || parentRenderer.isRenderTableSection()) {
+        // Form controls with a table-internal display are adjusted to inline-level boxes, but must keep being treated like table parts here.
+        auto isInlineLevelSiblingInDirection = [&](bool forward) {
+            for (RefPtr sibling = forward ? textNode.nextSibling() : textNode.previousSibling(); sibling; sibling = forward ? sibling->nextSibling() : sibling->previousSibling()) {
+                if (is<Text>(*sibling))
+                    return true;
+                RefPtr element = dynamicDowncast<Element>(*sibling);
+                // The sibling may not have been updated yet, so prefer its pending style.
+                auto* style = element ? m_styleUpdate->elementStyle(*element) : nullptr;
+                if (!style || style->display() == Style::DisplayType::None || style->display() == Style::DisplayType::Contents)
+                    continue;
+                return style->display().isInlineType() && !style->originalDisplay().isInternalTableBox();
+            }
+            return false;
+        };
+        if (CheckedPtr previousRenderer = renderingParent.previousChildRenderer; previousRenderer && previousRenderer->isInline() && !previousRenderer->isBR() && isInlineLevelSiblingInDirection(false) && isInlineLevelSiblingInDirection(true))
+            return true;
+    }
     if (parentRenderer.isRenderTable() || parentRenderer.isRenderTableRow() || parentRenderer.isRenderTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isRenderFrameSet() || parentRenderer.isRenderGrid() || (parentRenderer.isRenderFlexibleBox() && !parentRenderer.isRenderButton()))
         return false;
     if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
