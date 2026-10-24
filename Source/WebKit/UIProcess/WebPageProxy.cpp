@@ -6084,8 +6084,11 @@ std::expected<WebPageProxy::DataStoreUpdateResult, WebCore::ResourceError> WebPa
 {
     RefPtr<WebsiteDataStore> updatedWebsiteDataStore;
     LoadedWebArchive loadedWebArchive { LoadedWebArchive::No };
-    if (!protect(preferences())->loadWebArchiveWithEphemeralStorageEnabled())
+    if (!protect(preferences())->loadWebArchiveWithEphemeralStorageEnabled()) {
+        if (policyAction == PolicyAction::Use && frame.isMainFrame() && webArchiveSourceForNavigation(navigation))
+            loadedWebArchive = LoadedWebArchive::Yes;
         return DataStoreUpdateResult { updatedWebsiteDataStore, loadedWebArchive };
+    }
 
     if (policyAction != PolicyAction::Use || navigationType == NavigationType::Reload)
         return DataStoreUpdateResult { updatedWebsiteDataStore, loadedWebArchive };
@@ -6285,8 +6288,8 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             return;
         }
         auto& [updatedWebsiteDataStore, updatedLoadedWebArchive] = result.value();
+        loadedWebArchive = updatedLoadedWebArchive;
         if (updatedWebsiteDataStore && updatedWebsiteDataStore.get() != websiteDataStore.ptr()) {
-            loadedWebArchive = updatedLoadedWebArchive;
             if (loadedWebArchive == LoadedWebArchive::Yes)
                 replacedDataStoreForWebArchiveLoad = websiteDataStore.ptr();
             websiteDataStore = *updatedWebsiteDataStore;
