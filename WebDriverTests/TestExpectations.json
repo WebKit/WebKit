@@ -5259,7 +5259,31 @@
             "test_params_user_context_invalid_type[foo]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_user_context_invalid_type[42]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_user_context_invalid_type[value3]": {"expected": {"all": {"status": ["PASS"]}}},
-            "test_subscribe_to_closed_tab": {"expected": {"all": {"status": ["PASS"]}}}
+            "test_params_user_context_empty": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/327240"}}
+            },
+            "test_params_user_context_value_invalid_type[None]": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/327240"}}
+            },
+            "test_params_user_context_value_invalid_type[True]": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/327240"}}
+            },
+            "test_params_user_context_value_invalid_type[42]": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/327240"}}
+            },
+            "test_params_user_context_value_invalid_type[value3]": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/327240"}}
+            },
+            "test_params_user_context_value_invalid_type[value4]": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/327240"}}
+            },
+            "test_params_user_context_value_invalid_value": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/327240"}}
+            },
+            "test_subscribe_to_closed_tab": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_subscribe_to_closed_user_context": {
+                "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/327240"}}
+            }
         }
     },
     "imported/w3c/webdriver/tests/bidi/session/subscribe/user_contexts.py": {

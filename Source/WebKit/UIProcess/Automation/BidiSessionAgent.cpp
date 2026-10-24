@@ -90,7 +90,20 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
         atomEventNames.add(AtomString { eventName });
     }
 
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(contexts && userContexts && (contexts->length() > 0) && (userContexts->length() > 0), InvalidParameter, "Contexts and user contexts cannot be used together."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(contexts && userContexts, InvalidParameter, "Contexts and user contexts cannot be used together."_s);
+
+    if (userContexts) {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!userContexts->length(), InvalidParameter, "At least one user context must be provided."_s);
+
+        RefPtr session = m_session;
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+
+        for (const auto& userContextValue : *userContexts) {
+            String userContext;
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!userContextValue->asString(userContext), InvalidParameter, "User context must be a valid string."_s);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->isValidUserContext(userContext), NoSuchUserContext);
+        }
+    }
 
     // FIXME: Support by-userContext subscriptions
     // https://webkit.org/b/309502
