@@ -36,6 +36,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/SetForScope.h>
 #import <wtf/text/MakeString.h>
 
@@ -659,10 +660,19 @@ static TestWebKitAPI::HTTPServer storageTestServer(NSString *frameScript, NSStri
     return server;
 }
 
+static WKWebsiteDataStore *persistentDataStore()
+{
+    static NeverDestroyed<RetainPtr<WKWebsiteDataStore>> dataStore = [] {
+        RetainPtr directory = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString] isDirectory:YES];
+        RetainPtr configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:directory.get()]);
+        return adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration.get()]);
+    }();
+    return dataStore.get().get();
+}
+
 static WKWebExtensionControllerConfiguration *controllerConfigurationWithPersistentDataStore()
 {
-    RetainPtr identifier = adoptNS([[NSUUID alloc] initWithUUIDString:@"3f2b8c1e-5a47-4d0e-9b6a-2c81e4f7d913"]);
-    auto *dataStore = [WKWebsiteDataStore dataStoreForIdentifier:identifier.get()];
+    auto *dataStore = persistentDataStore();
 
     __block bool removedData = false;
     [dataStore removeDataOfTypes:WKWebsiteDataStore.allWebsiteDataTypes modifiedSince:NSDate.distantPast completionHandler:^{
@@ -822,7 +832,7 @@ TEST(WKWebExtensionUnpartitionedStorage, SessionStorageIsUnpartitionedInHostPerm
     [manager.get().defaultTab changeWebViewIfNeededForURL:extensionPageURL forExtensionContext:manager.get().context];
 
     for (NSURLRequest *request in @[ server.requestWithLocalhost(), server.request() ]) {
-        auto firstPartyWebView = loadFirstPartyPage(manager.get(), request, @"sessionStorage.setItem('key', 'session-storage-value')");
+        auto firstPartyWebView = loadFirstPartyPage(manager.get(), request, @"sessionStorage.setItem('key', 'session-storage-value'); await navigator.storage.estimate()");
         copySessionStorage(firstPartyWebView.get(), manager.get().defaultTab.webView);
     }
 
