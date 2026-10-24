@@ -640,6 +640,7 @@ webkit.org/b/315030 media/media-source/media-source-webm-seek-singlekeyframe.htm
 
 # NOTIFICATION_EVENT tests
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
+http/tests/workers/service/shownotification-icon-from-worker.html [ Pass ]
 http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
 http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
 imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]

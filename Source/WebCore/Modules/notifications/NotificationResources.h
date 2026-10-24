@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include <WebCore/BitmapImage.h>
+#include <WebCore/NativeImage.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -36,24 +37,28 @@ public:
     {
         return adoptRef(*new NotificationResources());
     }
-    
-    static Ref<NotificationResources> create(RefPtr<BitmapImage>&& image)
+
+    static Ref<NotificationResources> createWithIconBitmap(RefPtr<ShareableBitmap>&& iconBitmap)
     {
-        return adoptRef(*new NotificationResources(WTF::move(image)));
+        Ref resources = create();
+        if (iconBitmap)
+            resources->setIcon(NativeImage::create(iconBitmap->createPlatformImage()));
+        return resources;
     }
 
-    void setIcon(RefPtr<BitmapImage>&& icon) { m_icon = WTF::move(icon); }
-    const RefPtr<BitmapImage>& icon() const { return m_icon; }
+    void setIcon(RefPtr<NativeImage>&& icon) { m_icon = WTF::move(icon); }
+    const RefPtr<NativeImage>& icon() const { return m_icon; }
+
+    RefPtr<ShareableBitmap> iconBitmap() const
+    {
+        RefPtr icon = m_icon;
+        return icon ? ShareableBitmap::createFromImageDraw(*icon, icon->colorSpace()) : nullptr;
+    }
 
 private:
-    NotificationResources(RefPtr<BitmapImage>&& image)
-        : m_icon(WTF::move(image))
-    {
-    }
-
     NotificationResources() = default;
 
-    RefPtr<BitmapImage> m_icon;
+    RefPtr<NativeImage> m_icon;
 };
 
 } // namespace WebCore

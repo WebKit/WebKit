@@ -1,0 +1,35 @@
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<script>
+description("Tests that a service worker can show a notification with an icon.");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.grantWebNotificationPermission(testURL);
+
+navigator.serviceWorker.addEventListener("message", event => {
+    if (event.data == "shown")
+        testPassed("Notification was shown");
+    else
+        testFailed(event.data);
+    finishJSTest();
+});
+
+async function start()
+{
+    const registration = await navigator.serviceWorker.register("resources/shownotification-icon-worker.js");
+    const worker = registration.active || registration.installing;
+    if (worker.state == "activated") {
+        worker.postMessage("show");
+        return;
+    }
+    worker.addEventListener("statechange", () => {
+        if (worker.state == "activated")
+            worker.postMessage("show");
+    });
+}
+</script>
+</head>
+<body onload="start()">
+</body>
