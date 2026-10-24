@@ -91,13 +91,17 @@ void RemoteVideoFrameObjectHeap::close()
     // TODO: add can happen after stopping.
 }
 
-RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::VideoFrame>&& frame)
+RemoteVideoFrameReference RemoteVideoFrameObjectHeap::add(Ref<WebCore::VideoFrame>&& frame)
 {
-    auto newFrameReference = RemoteVideoFrameReference::generateForAdd();
-    auto properties = RemoteVideoFrameProxy::properties(newFrameReference, frame);
-    auto success = m_heap.add(newFrameReference, WTF::move(frame));
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    add(reference, WTF::move(frame));
+    return reference;
+}
+
+void RemoteVideoFrameObjectHeap::add(RemoteVideoFrameReference reference, Ref<WebCore::VideoFrame>&& frame)
+{
+    auto success = m_heap.add(reference, WTF::move(frame));
     ASSERT_UNUSED(success, success);
-    return properties;
 }
 
 void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReference&& write)
@@ -196,9 +200,18 @@ void RemoteVideoFrameObjectHeap::setSharedVideoFrameMemory(SharedMemory::Handle&
     m_sharedVideoFrameReader.setSharedMemory(WTF::move(handle));
 }
 
+// Upper bound for waiting on an asynchronously-inserted frame in get(). The insertion is already
+// in flight when a reader waits, so this is only an outer safety cap, not a steady-state wait.
+static constexpr Seconds defaultTimeout = 10_s;
+
 RefPtr<WebCore::VideoFrame> RemoteVideoFrameObjectHeap::get(RemoteVideoFrameReadReference&& read)
 {
-    return m_heap.read(WTF::move(read), 0_s);
+    // A frame's heap insertion can complete asynchronously relative to a reader on another
+    // connection: the Web process can allocate the reference and pass it to a consumer (e.g.
+    // WebGL copyTextureFromVideoFrame on its own stream) before the message that adds the frame
+    // under that reference is handled here. Wait briefly for the insertion rather than failing
+    // immediately.
+    return m_heap.read(WTF::move(read), defaultTimeout);
 }
 
 #endif

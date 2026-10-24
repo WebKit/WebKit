@@ -34,6 +34,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/RuntimeApplicationChecks.h>
 
+#if ENABLE(GPU_PROCESS)
+#include "ObjectIdentifierDomains.h"
+#endif
+
 namespace WebKit {
 
 class AuxiliaryProcessMainCommon {
@@ -69,7 +73,10 @@ public:
 
         if (!parseCommandLine(argc, argv))
             return EXIT_FAILURE;
-
+#if ENABLE(GPU_PROCESS)
+        if (AuxiliaryProcessType::processType ==  WebCore::AuxiliaryProcessType::GPU)
+            WTF::initializeObjectIdentifierDomain(gpuProcessObjectIdentifierDomain);
+#endif
         InitializeWebKit2();
 
         initializeAuxiliaryProcess(WTF::move(m_parameters));

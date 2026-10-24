@@ -160,8 +160,9 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
             return;
         }
 
-        auto properties = videoFrameObjectHeap->add(WTF::move(videoFrame));
-        connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, timeStampNs, WTF::move(properties) }, 0);
+        auto properties = RemoteVideoFrameProxy::properties(videoFrame.get());
+        auto reference = videoFrameObjectHeap->add(WTF::move(videoFrame));
+        connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, timeStampNs, reference, WTF::move(properties) }, 0);
     };
 }
 
