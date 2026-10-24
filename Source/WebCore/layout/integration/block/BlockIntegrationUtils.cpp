@@ -29,6 +29,7 @@
 #include "BlockFormattingContext.h"
 #include "BlockFormattingUtils.h"
 #include "InlineFormattingConstraints.h"
+#include "InlineWalker.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBlockCoverage.h"
 #include "LayoutIntegrationLineLayout.h"
@@ -36,6 +37,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"
 
@@ -183,7 +185,18 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
 
     // Like RenderBlockFlow::layoutInlineContent, which lays the content out from scratch when the box's width changed (RenderBlock::recomputeLogicalWidth).
     auto invalidateChildren = inlineContentRoot.logicalWidth() != geometry.borderBoxWidth() || inlineContentRoot.hasBorderOrPaddingLogicalWidthChanged();
-    inlineContentRoot.markInlineContentDirtyForLayout(invalidateChildren ? RelayoutChildren::Yes : RelayoutChildren::No);
+    auto inlineContentStatus = inlineContentRoot.markInlineContentDirtyForLayout(invalidateChildren ? RelayoutChildren::Yes : RelayoutChildren::No);
+    if (inlineContentStatus.hasSimpleOutOfFlowContentOnly) {
+        // Like RenderBlockFlow::layoutInlineContent: content of out-of-flow boxes only has no lines, and the static position of the boxes is
+        // the start of the content box (RenderBlockFlow::setStaticPositionsForSimpleOutOfFlowContent).
+        inlineContentRoot.m_lineLayout = nullptr;
+        for (auto walker = InlineWalker(inlineContentRoot); !walker.atEnd(); walker.advance()) {
+            CheckedRef layer = *downcast<RenderBox>(*walker.current()).layer();
+            layer->setStaticInlinePosition(geometry.borderAndPaddingStart());
+            layer->setStaticBlockPosition(geometry.borderAndPaddingBefore());
+        }
+        return { };
+    }
     inlineContentRoot.computeAndSetLineLayoutPath();
     auto paintInvalidationScope = PaintInvalidation::InlineContentScope { paintInvalidation(), inlineContentRoot, invalidateChildren };
     inlineContentRoot.m_previousInlineLayoutContentTopAndBottomIncludingInkOverflow = { };

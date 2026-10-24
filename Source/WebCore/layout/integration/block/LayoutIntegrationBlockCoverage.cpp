@@ -340,8 +340,9 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     if (renderer.isFloating())
         return BlockAvoidanceReason::ContentHasFloat;
     if (renderer.isOutOfFlowPositioned()) {
-        // FIXME: An inline-level out-of-flow box gets its static position from the inline formatting context.
-        if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(renderer.parent()); !parent || parent->childrenInline())
+        // Its static position comes from the block formatting context its parent takes part in, or from the inline formatting context of the
+        // inline content it is in, which registers it on its containing block too (RenderBlockFlow::markInlineContentDirtyForLayout).
+        if (CheckedPtr parent = renderer.parent(); !is<RenderBlockFlow>(*parent) && !parent->isInlineBox())
             return BlockAvoidanceReason::ContentHasOutOfFlowBox;
         // A containing block outside the root lays it out through the render tree path.
         if (!isLaidOutByBlockFormattingContext(renderer, rootContainer))
@@ -357,7 +358,7 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     // Form controls and legends treat an auto width as fit-content (RenderBox::sizesLogicalWidthToFitContent).
     if (isAnyOf<HTMLButtonElement, HTMLInputElement, HTMLLegendElement, HTMLSelectElement, HTMLTextAreaElement>(blockContainer->element()))
         return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
-    if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(blockContainer->parent()); !parent || parent->childrenInline())
+    if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(blockContainer->parent()); !blockContainer->isOutOfFlowPositioned() && (!parent || parent->childrenInline()))
         return BlockAvoidanceReason::ContentHasBlockInInline;
     if (blockContainer->createsNewFormattingContext() && !isSupportedBlockFormattingContextRoot(*blockContainer))
         return BlockAvoidanceReason::ContentHasFormattingContextRoot;
