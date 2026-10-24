@@ -55,7 +55,7 @@ public:
 private:
     WebServiceWorkerFetchTaskClient(Ref<IPC::Connection>&&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, bool needsContinueDidReceiveResponseMessage);
 
-    void didReceiveResponse(WebCore::ResourceResponse&&) final;
+    void didReceiveResponse(WebCore::ResourceResponse&&, const URL& firstResponseURL) final;
     void didReceiveRedirection(const WebCore::ResourceResponse&) final;
     void didReceiveData(const WebCore::SharedBuffer&) final;
     void didReceiveFormDataAndFinish(Ref<WebCore::FormData>&&) final;

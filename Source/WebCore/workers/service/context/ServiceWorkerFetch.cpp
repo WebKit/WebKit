@@ -110,6 +110,8 @@ static void processResponse(Ref<Client>&& client, std::expected<Ref<FetchRespons
     // As per https://fetch.spec.whatwg.org/#main-fetch step 9, copy request's url list in response's url list if empty.
     if (resourceResponse.url().isNull())
         resourceResponse.setURL(URL { requestURL });
+    // FIXME: The Cache API only stores the last URL of a response's URL list, so a redirected response from it gets the request's URL.
+    auto& firstResponseURL = response->firstURL().isNull() ? requestURL : response->firstURL();
 
     if (resourceResponse.isRedirection() && resourceResponse.httpHeaderFields().contains(HTTPHeaderName::Location)) {
         client->didReceiveRedirection(resourceResponse);
@@ -128,7 +130,7 @@ static void processResponse(Ref<Client>&& client, std::expected<Ref<FetchRespons
             resourceResponse.setCertificateInfo(WTF::move(certificateInfo));
     }
 
-    client->didReceiveResponse(WTF::move(resourceResponse));
+    client->didReceiveResponse(WTF::move(resourceResponse), firstResponseURL);
 
     if (response->isBodyReceivedByChunk()) {
         client->setCancelledCallback([response = WeakPtr { response.get() }] {

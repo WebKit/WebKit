@@ -69,7 +69,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveRedirection(const WebCore::Resou
     cleanup();
 }
 
-void WebServiceWorkerFetchTaskClient::didReceiveResponse(ResourceResponse&& response)
+void WebServiceWorkerFetchTaskClient::didReceiveResponse(ResourceResponse&& response, const URL& firstResponseURL)
 {
     Locker lock(m_connectionLock);
 
@@ -81,7 +81,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveResponse(ResourceResponse&& resp
     if (m_needsContinueDidReceiveResponseMessage)
         m_waitingForContinueDidReceiveResponseMessage = true;
 
-    connection->send(Messages::ServiceWorkerFetchTask::DidReceiveResponse { WTF::move(response), m_needsContinueDidReceiveResponseMessage }, m_fetchIdentifier);
+    connection->send(Messages::ServiceWorkerFetchTask::DidReceiveResponse { WTF::move(response), firstResponseURL, m_needsContinueDidReceiveResponseMessage }, m_fetchIdentifier);
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveData(const SharedBuffer& buffer)
