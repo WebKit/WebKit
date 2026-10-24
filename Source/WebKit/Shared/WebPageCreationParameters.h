@@ -395,6 +395,9 @@ struct WebPageCreationParameters {
     bool shouldForceSiteIsolationAlwaysOnForTesting { false };
     bool shouldEnableNetworkInstrumentation { false };
     bool shouldEnablePageInstrumentation { false };
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    std::optional<bool> imageAnimationEnabledOverride { };
+#endif
 };
 
 } // namespace WebKit

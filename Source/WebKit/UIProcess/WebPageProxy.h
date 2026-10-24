@@ -2919,6 +2919,7 @@ public:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void pauseAllAnimations(CompletionHandler<void()>&&);
     void playAllAnimations(CompletionHandler<void()>&&);
+    void clearImageAnimationEnabledOverride() { m_imageAnimationEnabledOverride = std::nullopt; }
     bool allowsAnyAnimationToPlay() { return m_allowsAnyAnimationToPlay; }
     void isAnyAnimationAllowedToPlayDidChange(bool anyAnimationCanPlay) { m_allowsAnyAnimationToPlay = anyAnimationCanPlay; }
 #endif
@@ -4369,6 +4370,9 @@ private:
 
     // Assume animations are allowed to play by default. If this is not the case, we will be notified by the web process.
     bool m_allowsAnyAnimationToPlay { true };
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    std::optional<bool> m_imageAnimationEnabledOverride;
+#endif
 
     // To make sure capture indicators are visible long enough, m_reportedMediaCaptureState is the same as m_mediaState except that we might delay a bit transition from capturing to not-capturing.
     static constexpr Seconds DefaultMediaCaptureReportingDelay { 3_s };
