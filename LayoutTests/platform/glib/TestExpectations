@@ -5213,8 +5213,6 @@ webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/Send-before-open.
 
 webkit.org/b/324839 [ Debug ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Crash Pass ]
 
-webkit.org/b/316265 [ x86_64 ] imported/w3c/web-platform-tests/IndexedDB/get-databases.any.worker.html [ Crash Pass ]
-
 webkit.org/b/325932 [ Debug ] http/wpt/mediastream/mediastreamtrackprocessor-mediastreamtrackhandle.html [ Failure Pass ]
 
 webkit.org/b/325933 [ Release ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-none-block.html [ Failure Pass ]
@@ -5228,7 +5226,6 @@ webkit.org/b/326555 [ Debug ] http/wpt/webcodecs/webgl-texImage2D-videoFrame-I42
 webkit.org/b/326558 fast/canvas/webgl/texImage2D-mse-in-dom-flipY-false.html [ Failure Pass ]
 webkit.org/b/326561 [ x86_64 Release ] cssom/crash-font-family-invalid.html [ Pass Timeout ]
 webkit.org/b/322652 [ Debug ] workers/btoa-oom.html [ Pass Timeout ]
-webkit.org/b/325930 [ x86_64 Release ] imported/w3c/web-platform-tests/IndexedDB/transaction-inflight-worker-terminate.window.html [ Crash Pass ]
 
 # Gardening 2026-10-12
 webkit.org/b/325941 webrtc/video-update-often.html [ Pass Crash Timeout ]

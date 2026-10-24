@@ -44,6 +44,9 @@ public:
     template<typename T, typename... Parameters, typename... Arguments>
     inline void performCallbackOnOriginThread(T&, void (T::*)(Parameters...), Arguments&&...);
 
+    template<typename T, typename... Parameters, typename... Arguments>
+    inline void performCallbackOnOriginThread(Ref<T>&&, void (T::*)(Parameters...), Arguments&&...);
+
     inline void callFunctionOnOriginThread(Function<void()>&&);
 
 protected:
