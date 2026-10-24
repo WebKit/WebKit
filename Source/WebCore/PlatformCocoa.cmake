@@ -1195,6 +1195,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/cocoa/AudioSampleDataConverter.h
     platform/audio/cocoa/AudioSampleDataSource.h
     platform/audio/cocoa/AudioSessionCocoa.h
+    platform/audio/cocoa/AudioUnderrunDeclicker.h
     platform/audio/cocoa/AudioUtilitiesCocoa.h
     platform/audio/cocoa/CAAudioStreamDescription.h
     platform/audio/cocoa/CARingBuffer.h

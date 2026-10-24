@@ -32,7 +32,6 @@
 #include "GPUProcess.h"
 #include "Logging.h"
 #include <WebCore/AudioUtilities.h>
-#include <wtf/FixedVector.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -40,6 +39,7 @@
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
 #include <WebCore/AudioOutputUnitAdaptor.h>
+#include <WebCore/AudioUnderrunDeclicker.h>
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
@@ -70,13 +70,13 @@ public:
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
         , m_numOutputChannels(numberOfOutputChannels)
+        , m_declicker(numberOfOutputChannels)
 #endif
     {
         ASSERT(isMainRunLoop());
         ALWAYS_LOG(LOGIDENTIFIER);
 #if PLATFORM(COCOA)
         m_audioOutputUnitAdaptor.configure(hardwareSampleRate, numberOfOutputChannels);
-        m_lastRenderedSamples = FixedVector<float>(FillWith { }, m_numOutputChannels, 0.f);
 #endif
     }
 
@@ -193,13 +193,15 @@ private:
 
         if (m_ringBuffer->fetchIfHasEnoughData(ioData, numberOfFrames, m_startFrame)) {
             m_startFrame += numberOfFrames;
-            rememberLastRenderedSamples(ioData, numberOfFrames);
+            // m_startFrame holds during an underrun, so after one this resumes exactly
+            // where the output stopped; the declicker ramps the resumed signal in.
+            m_declicker.didRender(*ioData, numberOfFrames);
             status = noErr;
         } else {
             // Ring buffer underrun (common at stream start or under load). Rather than
             // leaving stale samples in the output buffer, fade out from the last rendered
             // samples down to silence to avoid an audible click, then output silence.
-            fadeOutToSilence(ioData, numberOfFrames);
+            m_declicker.fadeOutToSilence(*ioData, numberOfFrames);
         }
 
         incrementTotalFrameCount(numberOfFrames);
@@ -208,44 +210,6 @@ private:
         return status;
     }
 
-    // The audio buffers are deinterleaved Float32, so there is one buffer per channel.
-    void rememberLastRenderedSamples(AudioBufferList* ioData, UInt32 numberOfFrames)
-    {
-        if (!numberOfFrames)
-            return;
-
-        auto buffers = span(*ioData);
-        for (size_t channel = 0; channel < m_lastRenderedSamples.size(); ++channel) {
-            if (channel >= buffers.size())
-                break;
-            auto samples = mutableSpan<float>(buffers[channel]);
-            auto frameCount = std::min<size_t>(numberOfFrames, samples.size());
-            m_lastRenderedSamples[channel] = frameCount ? samples[frameCount - 1] : 0.f;
-        }
-    }
-
-    void fadeOutToSilence(AudioBufferList* ioData, UInt32 numberOfFrames)
-    {
-        auto buffers = span(*ioData);
-        for (size_t channel = 0; channel < buffers.size(); ++channel) {
-            auto samples = mutableSpan<float>(buffers[channel]);
-            auto frameCount = std::min<size_t>(numberOfFrames, samples.size());
-            float startSample = channel < m_lastRenderedSamples.size() ? m_lastRenderedSamples[channel] : 0.f;
-            if (startSample && frameCount) {
-                // Linear ramp from the last rendered sample down to zero to declick.
-                float step = startSample / frameCount;
-                float value = startSample;
-                for (size_t frame = 0; frame < frameCount; ++frame) {
-                    value -= step;
-                    samples[frame] = value;
-                }
-                zeroSpan(samples.subspan(frameCount));
-            } else
-                zeroSpan(samples);
-        }
-        // We are now silent, so any subsequent consecutive underrun outputs pure silence.
-        m_lastRenderedSamples.fill(0.f);
-    }
 #endif
 
     IPC::Semaphore m_renderSemaphore;
@@ -267,8 +231,7 @@ private:
     const uint32_t m_numOutputChannels;
     std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
     uint64_t m_startFrame { 0 };
-    // Last rendered sample per channel, used to fade out to silence on a ring buffer underrun.
-    FixedVector<float> m_lastRenderedSamples;
+    WebCore::AudioUnderrunDeclicker m_declicker;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

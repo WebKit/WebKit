@@ -3130,6 +3130,7 @@
 		7BC12B7D2C71C61B00A7BE80 /* CookieChangeSubscription.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC12B7C2C71C5E800A7BE80 /* CookieChangeSubscription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7BC9642C291E76BE00377DF1 /* AudioDestinationResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC9642A291E765D00377DF1 /* AudioDestinationResampler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7BC9642F291E827200377DF1 /* AudioUtilitiesCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC9642E291E770400377DF1 /* AudioUtilitiesCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		95B28E14F2E7B8C7938BD833 /* AudioUnderrunDeclicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 7096B438E957C0FF4180651D /* AudioUnderrunDeclicker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7BD9D6CE2A81A64A005B1935 /* CookieChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BD9D6CB2A81A64A005B1935 /* CookieChangeEvent.h */; };
 		7BD9D6D42A81AB69005B1935 /* CookieChangeEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BD9D6D12A81AB69005B1935 /* CookieChangeEventInit.h */; };
 		7BDB82542A8E037F008E54DC /* WebGLExtensionAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BDB82532A8E0379008E54DC /* WebGLExtensionAny.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14931,6 +14932,7 @@
 		7BC9642B291E765D00377DF1 /* AudioDestinationResampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDestinationResampler.cpp; sourceTree = "<group>"; };
 		7BC9642D291E770300377DF1 /* AudioUtilitiesCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioUtilitiesCocoa.cpp; sourceTree = "<group>"; };
 		7BC9642E291E770400377DF1 /* AudioUtilitiesCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioUtilitiesCocoa.h; sourceTree = "<group>"; };
+		7096B438E957C0FF4180651D /* AudioUnderrunDeclicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioUnderrunDeclicker.h; sourceTree = "<group>"; };
 		7BCBCD982EF559D0005B0ACE /* PlatformVideoColorSpace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformVideoColorSpace.cpp; sourceTree = "<group>"; };
 		7BCD42D8270599EF00EB2127 /* ANGLEUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEUtilities.cpp; sourceTree = "<group>"; };
 		7BCD42DA2705C94900EB2127 /* ANGLEUtilitiesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ANGLEUtilitiesCocoa.mm; sourceTree = "<group>"; };
@@ -40245,6 +40247,7 @@
 				073B87641E43859D0071C0EC /* AudioSampleDataSource.mm */,
 				CDE104F129E621F500CBAE11 /* AudioSessionCocoa.h */,
 				CDE104F229E621F500CBAE11 /* AudioSessionCocoa.mm */,
+				7096B438E957C0FF4180651D /* AudioUnderrunDeclicker.h */,
 				7BC9642D291E770300377DF1 /* AudioUtilitiesCocoa.cpp */,
 				7BC9642E291E770400377DF1 /* AudioUtilitiesCocoa.h */,
 				073B87571E40DCFD0071C0EC /* CAAudioStreamDescription.cpp */,
@@ -44440,6 +44443,7 @@
 				CD1F9B162702360F00617EB6 /* AudioTrackPrivateClient.h in Headers */,
 				CD54A763180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h in Headers */,
 				07D6A4F81BF2307D00174146 /* AudioTrackPrivateMediaStream.h in Headers */,
+				95B28E14F2E7B8C7938BD833 /* AudioUnderrunDeclicker.h in Headers */,
 				FD31608B12B026F700C1A359 /* AudioUtilities.h in Headers */,
 				7BC9642F291E827200377DF1 /* AudioUtilitiesCocoa.h in Headers */,
 				5128B7202E4B221B00975E0A /* AudioVideoRenderer.h in Headers */,
