@@ -1379,6 +1379,36 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
     }
 
+    _removeScriptTreeElementsForTarget(target)
+    {
+        const suppressOnDeselect = true;
+        const suppressSelectSibling = true;
+        let belongsToTarget = (treeElement) => treeElement instanceof WI.ScriptTreeElement && treeElement.representedObject.target === target;
+
+        for (let i = this._breakpointsTreeOutline.children.length - 1; i >= 0; --i) {
+            let treeElement = this._breakpointsTreeOutline.children[i];
+            if (belongsToTarget(treeElement))
+                this._breakpointsTreeOutline.removeChild(treeElement, suppressOnDeselect, suppressSelectSibling);
+        }
+
+        for (let folderTreeElement of [this._extensionScriptsFolderTreeElement, this._extraScriptsFolderTreeElement, this._anonymousScriptsFolderTreeElement]) {
+            if (!folderTreeElement)
+                continue;
+
+            for (let i = folderTreeElement.children.length - 1; i >= 0; --i) {
+                let treeElement = folderTreeElement.children[i];
+                if (!belongsToTarget(treeElement))
+                    continue;
+
+                folderTreeElement.representedObject.remove(treeElement.representedObject);
+                folderTreeElement.removeChild(treeElement, suppressOnDeselect, suppressSelectSibling);
+            }
+
+            if (!folderTreeElement.children.length && folderTreeElement.parent)
+                folderTreeElement.parent.removeChild(folderTreeElement, suppressOnDeselect, suppressSelectSibling);
+        }
+    }
+
     _addWorkerTargetWithMainResource(target)
     {
         console.assert(target.type === WI.TargetType.Worker);
@@ -2575,6 +2605,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         const suppressOnDeselect = true;
         const suppressSelectSibling = true;
 
+        // With Site Isolation, each frame target clears only its own scripts. Keep the rows of the other targets.
+        let {target} = event.data;
+        if (target instanceof WI.FrameTarget && WI.settings.resourceGroupingMode.value !== WI.Resource.GroupingMode.Path) {
+            this._removeScriptTreeElementsForTarget(target);
+            return;
+        }
+
         for (let i = this._breakpointsTreeOutline.children.length - 1; i >= 0; --i) {
             let treeElement = this._breakpointsTreeOutline.children[i];
             if (!(treeElement instanceof WI.ScriptTreeElement))
@@ -2909,8 +2946,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (workerTreeElement)
             workerTreeElement.parent.removeChild(workerTreeElement);
 
-        if (target instanceof WI.FrameTarget)
-            this._handleResourceGroupingModeChanged();
+        if (target instanceof WI.FrameTarget) {
+            if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path)
+                this._handleResourceGroupingModeChanged();
+            else
+                this._removeScriptTreeElementsForTarget(target);
+        }
 
         let callStackTreeElement = this._findCallStackTargetTreeElement(target);
         console.assert(callStackTreeElement);

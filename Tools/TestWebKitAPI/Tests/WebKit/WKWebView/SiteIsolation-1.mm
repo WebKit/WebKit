@@ -44,6 +44,7 @@
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKHitTestResult.h>
 #import <WebKit/WKJSHandle.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -90,6 +91,8 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/WebAVPlayerLayer.h>
 #import <WebKit/_WKHitTestResult.h>
+#import <WebKit/_WKInspector.h>
+#import <WebKit/_WKInspectorPrivateForTesting.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 
@@ -2996,5 +2999,334 @@ TEST(SiteIsolation, CaptionDisplaySettingsPreviewInCrossSiteIframe)
 }
 
 #endif // PLATFORM(MAC) && ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
+#if PLATFORM(MAC)
+// Runs in the Web Inspector frontend with the Sources tab showing. A new tree element for the main frame means
+// that the Sources sidebar rebuilt its tree. Returns false if the hooks cannot be installed.
+static NSString * const installSourcesSidebarCountersScript = @"(() => {"
+    "    let panel = WI.tabBrowser.selectedTabContentView.navigationSidebarPanel;"
+    "    let mainFrameTreeElement = panel.treeElementForRepresentedObject(WI.networkManager.mainFrame);"
+    "    let contentViewContainer = panel.contentBrowser?.contentViewContainer;"
+    "    if (!mainFrameTreeElement?.treeOutline || !WI.TreeOutline.Event.ElementAdded || typeof contentViewContainer?.closeAllContentViews !== 'function')"
+    "        return false;"
+    "    let counts = window.sourcesSidebarCounts = {mainFrameTreeElementsAdded: 0, mainFrameTreeElementsAddedForFrameTargetRemoval: 0, closeAllContentViewsCalls: 0, mainFrameChanges: 0, frameTargetsRemoved: 0};"
+    "    mainFrameTreeElement.treeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, (event) => {"
+    "        let representedObject = event.data.element.representedObject;"
+    "        if (representedObject instanceof WI.Frame && representedObject.isMainFrame())"
+    "            ++counts.mainFrameTreeElementsAdded;"
+    "    }, window);"
+    "    let closeAllContentViews = contentViewContainer.closeAllContentViews;"
+    "    contentViewContainer.closeAllContentViews = function(...args) {"
+    "        ++counts.closeAllContentViewsCalls;"
+    "        return closeAllContentViews.apply(this, args);"
+    "    };"
+    "    WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, (event) => {"
+    "        if (event.target.isMainFrame())"
+    "            ++counts.mainFrameChanges;"
+    "    }, window);"
+    "    WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, (event) => {"
+    "        if (event.data.frame.isMainFrame())"
+    "            ++counts.mainFrameChanges;"
+    "    }, window);"
+    "    let dispatchEventToListeners = WI.targetManager.dispatchEventToListeners;"
+    "    WI.targetManager.dispatchEventToListeners = function(eventType, eventData) {"
+    "        if (eventType !== WI.TargetManager.Event.TargetRemoved || !(eventData?.target instanceof WI.FrameTarget))"
+    "            return dispatchEventToListeners.call(this, eventType, eventData);"
+    "        let mainFrameTreeElementsAdded = counts.mainFrameTreeElementsAdded;"
+    "        let result = dispatchEventToListeners.call(this, eventType, eventData);"
+    "        ++counts.frameTargetsRemoved;"
+    "        counts.mainFrameTreeElementsAddedForFrameTargetRemoval += counts.mainFrameTreeElementsAdded - mainFrameTreeElementsAdded;"
+    "        return result;"
+    "    };"
+    "    return true;"
+    "})()";
+
+// Reloads a site-isolated page that has iframeCount iframes while the Sources tab uses the given resource grouping
+// mode. Returns the counts from installSourcesSidebarCountersScript, or nil.
+static RetainPtr<NSDictionary> sourcesSidebarCountsForReloadWithIframes(NSString *resourceGroupingMode, ASCIILiteral mainFrameHTML, unsigned iframeCount)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameHTML } },
+        { "/main.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, "function mainScript() { }"_s } },
+        { "/subframe"_s, { "<script>function subframeScript() { }</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().preferences._developerExtrasEnabled = YES;
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [[webView _inspector] show];
+    RetainPtr inspectorWebView = [[webView _inspector] inspectorWebView];
+    EXPECT_NOT_NULL(inspectorWebView.get());
+    if (!inspectorWebView)
+        return nil;
+
+    auto evaluate = [&](NSString *script) {
+        return [inspectorWebView objectByEvaluatingJavaScript:script];
+    };
+    auto waitForScript = [&](NSString *script, size_t maxTries) {
+        bool result = Util::waitFor([&] {
+            return [evaluate(script) boolValue];
+        }, maxTries);
+        EXPECT_TRUE(result) << script.UTF8String;
+        return result;
+    };
+
+    // The main frame and the iframes have frame targets. The unminified frontend of a Debug build takes a few seconds to load.
+    if (!waitForScript([NSString stringWithFormat:@"!!window.InspectorFrontendAPI?._loaded && WI.targetManager.targets.filter((target) => target instanceof WI.FrameTarget).length > %u", iframeCount], 150))
+        return nil;
+
+    evaluate([NSString stringWithFormat:@"WI.settings.resourceGroupingMode.value = %@; WI.showSourcesTab(); true", resourceGroupingMode]);
+    if (!waitForScript(@"WI.isShowingSourcesTab() && WI.tabBrowser.selectedTabContentView.navigationSidebarPanel.didInitialLayout && !WI._messagesToDispatch.length", 50))
+        return nil;
+
+    bool installed = [evaluate(installSourcesSidebarCountersScript) boolValue];
+    EXPECT_TRUE(installed);
+    if (!installed)
+        return nil;
+
+    [webView reload];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // The reload replaces the iframes, so their frame targets are removed.
+    waitForScript([NSString stringWithFormat:@"sourcesSidebarCounts.frameTargetsRemoved >= %u && !WI._messagesToDispatch.length", iframeCount], 50);
+
+    // Read all counts in one turn of the frontend's run loop.
+    RetainPtr<NSDictionary> counts = evaluate(@"({...sourcesSidebarCounts})");
+
+    evaluate(@"WI.settings.resourceGroupingMode.reset(); true");
+    [[webView _inspector] close];
+    return counts;
+}
+
+TEST(SiteIsolation, WebInspectorSourcesSidebarIsNotRebuiltForEachFrameTargetOnReload)
+{
+    RetainPtr counts = sourcesSidebarCountsForReloadWithIframes(@"WI.Resource.GroupingMode.Type", "<script src='/main.js'></script><iframe src='https://example.com/subframe'></iframe><iframe src='https://webkit.org/subframe'></iframe>"_s, 2);
+    ASSERT_NOT_NULL(counts.get());
+
+    EXPECT_GE([counts.get()[@"frameTargetsRemoved"] intValue], 2);
+
+    // Only a main frame change rebuilds the tree and closes the open content views. A frame target removal does not.
+    int mainFrameChanges = [counts.get()[@"mainFrameChanges"] intValue];
+    EXPECT_EQ([counts.get()[@"mainFrameTreeElementsAddedForFrameTargetRemoval"] intValue], 0);
+    EXPECT_EQ([counts.get()[@"mainFrameTreeElementsAdded"] intValue], mainFrameChanges);
+    EXPECT_EQ([counts.get()[@"closeAllContentViewsCalls"] intValue], mainFrameChanges);
+}
+
+TEST(SiteIsolation, WebInspectorSourcesSidebarGroupedByPathIsRebuiltForEachFrameTargetOnReload)
+{
+    RetainPtr counts = sourcesSidebarCountsForReloadWithIframes(@"WI.Resource.GroupingMode.Path", "<script src='/main.js'></script><iframe src='https://webkit.org/subframe'></iframe>"_s, 1);
+    ASSERT_NOT_NULL(counts.get());
+
+    // In Path mode, scripts of a frame are rows under origin tree elements, and only a rebuild removes those of a removed frame target.
+    int frameTargetsRemoved = [counts.get()[@"frameTargetsRemoved"] intValue];
+    EXPECT_GE(frameTargetsRemoved, 1);
+    EXPECT_EQ([counts.get()[@"mainFrameTreeElementsAddedForFrameTargetRemoval"] intValue], frameTargetsRemoved);
+}
+
+// A script that runs in a content world is an injected script, so the Sources sidebar lists it in the Extension Scripts
+// or Extra Scripts folder, even though it belongs to a frame. scriptsByURL maps a script URL to the scripts that the
+// frontend received, and hasFolderRow(url) tells whether the sidebar shows a row for one of them. Returns false if the
+// hooks cannot be installed.
+static NSString * const installSourcesSidebarFolderRowsScript = @"(() => {"
+    "    let panel = WI.tabBrowser.selectedTabContentView.navigationSidebarPanel;"
+    "    if (!WI.networkManager.mainFrame || !panel.treeElementForRepresentedObject(WI.networkManager.mainFrame)?.treeOutline)"
+    "        return false;"
+    "    let scripts = window.scriptsByURL = new Map;"
+    "    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {"
+    "        let script = event.data.script;"
+    "        let url = script.url || script.sourceURL;"
+    "        if (!scripts.has(url))"
+    "            scripts.set(url, []);"
+    "        scripts.get(url).push(script);"
+    "    }, window);"
+    "    window.hasFolderRow = (url) => {"
+    "        return !!scripts.get(url)?.some((script) => panel.contentTreeOutlines.some((treeOutline) => {"
+    "            let treeElement = treeOutline.getCachedTreeElement(script);"
+    "            return !!treeElement?.treeOutline && treeElement.parent instanceof WI.FolderTreeElement;"
+    "        }));"
+    "    };"
+    "    return true;"
+    "})()";
+
+static bool waitForInspectorScript(WKWebView *inspectorWebView, NSString *script, size_t maxTries)
+{
+    bool result = Util::waitFor([&] {
+        return [[inspectorWebView objectByEvaluatingJavaScript:script] boolValue];
+    }, maxTries);
+    EXPECT_TRUE(result) << script.UTF8String;
+    return result;
+}
+
+// Shows the real frontend with the Sources tab in Type mode, once the main frame and the iframes have frame targets,
+// and installs installSourcesSidebarFolderRowsScript. Returns the inspector web view, or nil.
+static RetainPtr<WKWebView> showSourcesTabWithFolderRowHooks(TestWKWebView *webView, unsigned frameTargetCount)
+{
+    [[webView _inspector] show];
+    RetainPtr inspectorWebView = [[webView _inspector] inspectorWebView];
+    EXPECT_NOT_NULL(inspectorWebView.get());
+    if (!inspectorWebView)
+        return nil;
+
+    // The unminified frontend of a Debug build takes a few seconds to load.
+    if (!waitForInspectorScript(inspectorWebView.get(), [NSString stringWithFormat:@"!!window.InspectorFrontendAPI?._loaded && !!WI.networkManager.mainFrame && WI.targetManager.targets.filter((target) => target instanceof WI.FrameTarget).length >= %u", frameTargetCount], 150))
+        return nil;
+
+    // Lay out the sidebar now, instead of waiting for an animation frame that an occluded inspector window does not get.
+    [inspectorWebView objectByEvaluatingJavaScript:@"WI.settings.resourceGroupingMode.value = WI.Resource.GroupingMode.Type; WI.showSourcesTab(); WI.tabBrowser.selectedTabContentView.navigationSidebarPanel.updateLayout(); true"];
+    if (!waitForInspectorScript(inspectorWebView.get(), @"WI.isShowingSourcesTab() && WI.tabBrowser.selectedTabContentView.navigationSidebarPanel.didInitialLayout && !WI._messagesToDispatch.length", 50))
+        return nil;
+
+    bool installed = [[inspectorWebView objectByEvaluatingJavaScript:installSourcesSidebarFolderRowsScript] boolValue];
+    EXPECT_TRUE(installed);
+    if (!installed)
+        return nil;
+    return inspectorWebView;
+}
+
+static bool hasFolderRow(WKWebView *inspectorWebView, NSString *url)
+{
+    return [[inspectorWebView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"hasFolderRow('%@')", url]] boolValue];
+}
+
+static void evaluateInContentWorldWithSourceURL(TestWKWebView *webView, WKFrameInfo *frame, NSString *sourceURL)
+{
+    __block bool done = false;
+    [webView _evaluateJavaScript:@"1" withSourceURL:[NSURL URLWithString:sourceURL] inFrame:frame inContentWorld:[WKContentWorld worldWithName:@"SourcesSidebar"] withUserGesture:NO completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+// A frame's debugger does not report a script that runs before the backend has enabled it, so evaluate the scripts
+// again every half second while their rows are missing.
+static bool evaluateInContentWorldUntilFolderRowsAreShown(TestWKWebView *webView, WKFrameInfo *frame, WKWebView *inspectorWebView, NSArray<NSString *> *sourceURLs)
+{
+    size_t tries = 0;
+    bool result = Util::waitFor([&] {
+        bool allRowsAreShown = true;
+        for (NSString *sourceURL in sourceURLs) {
+            if (hasFolderRow(inspectorWebView, sourceURL))
+                continue;
+            allRowsAreShown = false;
+            if (!(tries % 5))
+                evaluateInContentWorldWithSourceURL(webView, frame, sourceURL);
+        }
+        ++tries;
+        return allRowsAreShown;
+    }, 50);
+    EXPECT_TRUE(result) << sourceURLs.description.UTF8String;
+    return result;
+}
+
+TEST(SiteIsolation, WebInspectorSourcesSidebarKeepsInjectedScriptRowsWhenAnotherFrameTargetClears)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body></body>"_s } },
+        { "/subframe"_s, { "<script>function subframeScript() { }</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().preferences._developerExtrasEnabled = YES;
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr inspectorWebView = showSourcesTabWithFolderRowHooks(webView.get(), 1);
+    ASSERT_NOT_NULL(inspectorWebView.get());
+
+    // Both scripts belong to the frame target of the main frame.
+    NSString *extensionScriptURL = @"safari-web-extension://00000000-0000-0000-0000-000000000000/main-frame-script.js";
+    NSString *extraScriptURL = @"https://example.com/main-frame-script.js";
+    ASSERT_TRUE(evaluateInContentWorldUntilFolderRowsAreShown(webView.get(), nil, inspectorWebView.get(), @[ extensionScriptURL, extraScriptURL ]));
+
+    // After each ScriptsCleared event, record whether the event names a frame target other than the one of the scripts,
+    // and whether the rows are still there.
+    [inspectorWebView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+        "    let rowURLs = ['%@', '%@'];"
+        "    window.clearedTargets = [];"
+        "    window.scriptsCleared = [];"
+        "    let dispatchEventToListeners = WI.debuggerManager.dispatchEventToListeners;"
+        "    WI.debuggerManager.dispatchEventToListeners = function(eventType, eventData) {"
+        "        let result = dispatchEventToListeners.call(this, eventType, eventData);"
+        "        if (eventType === WI.DebuggerManager.Event.ScriptsCleared) {"
+        "            clearedTargets.push(eventData?.target);"
+        "            scriptsCleared.push({"
+        "                namesOtherFrameTarget: eventData?.target instanceof WI.FrameTarget && rowURLs.every((url) => scriptsByURL.get(url).every((script) => script.target !== eventData.target)),"
+        "                rowsShown: rowURLs.every(hasFolderRow),"
+        "            });"
+        "        }"
+        "        return result;"
+        "    };"
+        "    return true;"
+        "})()", extensionScriptURL, extraScriptURL]];
+
+    // A cross-site iframe gets a frame target of its own, and that target clears its scripts.
+    [webView objectByEvaluatingJavaScript:@"(() => { let iframe = document.createElement('iframe'); iframe.src = 'https://webkit.org/subframe'; document.body.appendChild(iframe); return true; })()"];
+    ASSERT_TRUE(waitForInspectorScript(inspectorWebView.get(), @"scriptsCleared.length > 0 && scriptsByURL.has('https://webkit.org/subframe')", 100));
+
+    RetainPtr<NSString> scriptsCleared = (NSString *)[inspectorWebView objectByEvaluatingJavaScript:@"JSON.stringify(scriptsCleared)"];
+    bool eventsAreAsExpected = [[inspectorWebView objectByEvaluatingJavaScript:@"scriptsCleared.every((event) => event.namesOtherFrameTarget && event.rowsShown)"] boolValue];
+    EXPECT_TRUE(eventsAreAsExpected) << scriptsCleared.get().UTF8String;
+    bool eventNamesIframeTarget = [[inspectorWebView objectByEvaluatingJavaScript:@"scriptsByURL.get('https://webkit.org/subframe').some((script) => clearedTargets.includes(script.target))"] boolValue];
+    EXPECT_TRUE(eventNamesIframeTarget);
+    EXPECT_TRUE(hasFolderRow(inspectorWebView.get(), extensionScriptURL));
+    EXPECT_TRUE(hasFolderRow(inspectorWebView.get(), extraScriptURL));
+
+    [[webView _inspector] close];
+}
+
+TEST(SiteIsolation, WebInspectorSourcesSidebarRemovesInjectedScriptRowsOfRemovedFrameTarget)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body></body>"_s } },
+        { "/subframe"_s, { "<script>function subframeScript() { }</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().preferences._developerExtrasEnabled = YES;
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr inspectorWebView = showSourcesTabWithFolderRowHooks(webView.get(), 1);
+    ASSERT_NOT_NULL(inspectorWebView.get());
+
+    NSString *mainFrameScriptURL = @"https://example.com/main-frame-script.js";
+    NSString *iframeExtensionScriptURL = @"safari-web-extension://00000000-0000-0000-0000-000000000000/iframe-script.js";
+    NSString *iframeExtraScriptURL = @"https://webkit.org/iframe-script.js";
+    ASSERT_TRUE(evaluateInContentWorldUntilFolderRowsAreShown(webView.get(), nil, inspectorWebView.get(), @[ mainFrameScriptURL ]));
+
+    // The iframe's own script shows that its frame target has a document and that its debugger reports scripts.
+    [webView objectByEvaluatingJavaScript:@"(() => { let iframe = document.createElement('iframe'); iframe.src = 'https://webkit.org/subframe'; document.body.appendChild(iframe); return true; })()"];
+    ASSERT_TRUE(waitForInspectorScript(inspectorWebView.get(), @"scriptsByURL.has('https://webkit.org/subframe')", 100));
+    RetainPtr<WKFrameInfo> iframe;
+    ASSERT_TRUE(Util::waitFor([&] {
+        iframe = [webView firstChildFrame];
+        return !!iframe;
+    }, 50));
+    ASSERT_TRUE(evaluateInContentWorldUntilFolderRowsAreShown(webView.get(), iframe.get(), inspectorWebView.get(), @[ iframeExtensionScriptURL, iframeExtraScriptURL ]));
+
+    // The iframe's scripts belong to the frame target of the iframe.
+    bool iframeTargetIsSeparate = [[inspectorWebView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+        "    window.iframeTarget = scriptsByURL.get('%@')[0].target;"
+        "    return iframeTarget instanceof WI.FrameTarget && scriptsByURL.get('%@').every((script) => script.target === iframeTarget) && scriptsByURL.get('%@').every((script) => script.target !== iframeTarget);"
+        "})()", iframeExtraScriptURL, iframeExtensionScriptURL, mainFrameScriptURL]] boolValue];
+    ASSERT_TRUE(iframeTargetIsSeparate);
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('iframe').remove(); true"];
+    ASSERT_TRUE(waitForInspectorScript(inspectorWebView.get(), @"!WI.targets.includes(iframeTarget)", 50));
+
+    EXPECT_FALSE(hasFolderRow(inspectorWebView.get(), iframeExtensionScriptURL));
+    EXPECT_FALSE(hasFolderRow(inspectorWebView.get(), iframeExtraScriptURL));
+    EXPECT_TRUE(hasFolderRow(inspectorWebView.get(), mainFrameScriptURL));
+
+    [[webView _inspector] close];
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI
