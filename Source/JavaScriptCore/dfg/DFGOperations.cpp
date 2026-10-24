@@ -1751,7 +1751,7 @@ static ALWAYS_INLINE JSString* arrayJoinWithStringSeparator(JSGlobalObject* glob
     unsigned length = array->length();
     if (!separator->length() && (array->indexingType() == ArrayWithContiguous || array->indexingType() == ArrayWithInt32)) {
         auto* butterfly = array->butterfly();
-        JSOnlyStringsAndInt32sJoiner joiner(StringView { });
+        JSExactLengthJoiner joiner(StringView { });
         auto* joined = joiner.tryJoin<ContiguousShape>(globalObject, butterfly->contiguous().data(), length);
         RETURN_IF_EXCEPTION(scope, { });
         if (joined)
