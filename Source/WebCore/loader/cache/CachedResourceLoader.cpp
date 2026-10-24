@@ -1603,7 +1603,8 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     ASSERT(!request.isConditional());
 
     // Do not load from cache if images are not enabled. The load for this image will be blocked in CachedImage::load.
-    if (imageLoading == ImageLoading::DeferredUntilVisible)
+    // A lazily loaded image still uses a matching preload, like an eager image does.
+    if (imageLoading == ImageLoading::DeferredUntilVisible && (!m_imagesEnabled || !existingResource->isPreloaded()))
         return Reload;
 
     // Don't reload resources while pasting or if cache mode allows stale resources.
