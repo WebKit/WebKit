@@ -20958,17 +20958,18 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/$(WK_SOURCE_INFOPLIST_FILE)",
+				"$(SRCROOT)/Scripts/update-info-plist-for-runningboard.sh",
 			);
 			name = "Update Info.plist for RunningBoard management";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/update-info-plist-for-runningboard.stamp",
+				"$(WK_DERIVED_INFOPLIST_FILE)",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/update-info-plist-for-runningboard.sh\ntouch \"${DERIVED_FILE_DIR}/update-info-plist-for-runningboard.stamp\"\n";
+			shellScript = "Scripts/update-info-plist-for-runningboard.sh\n";
 		};
 		3AB34B6428D4F092009DAAB6 /* Update Info.plist for RunningBoard management */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -20978,17 +20979,18 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/$(WK_SOURCE_INFOPLIST_FILE)",
+				"$(SRCROOT)/Scripts/update-info-plist-for-runningboard.sh",
 			);
 			name = "Update Info.plist for RunningBoard management";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/update-info-plist-for-runningboard.stamp",
+				"$(WK_DERIVED_INFOPLIST_FILE)",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/update-info-plist-for-runningboard.sh\ntouch \"${DERIVED_FILE_DIR}/update-info-plist-for-runningboard.stamp\"\n";
+			shellScript = "Scripts/update-info-plist-for-runningboard.sh\n";
 		};
 		3AB34B6528D4F098009DAAB6 /* Update Info.plist for RunningBoard management */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -20998,17 +21000,18 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/$(WK_SOURCE_INFOPLIST_FILE)",
+				"$(SRCROOT)/Scripts/update-info-plist-for-runningboard.sh",
 			);
 			name = "Update Info.plist for RunningBoard management";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/update-info-plist-for-runningboard.stamp",
+				"$(WK_DERIVED_INFOPLIST_FILE)",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/update-info-plist-for-runningboard.sh\ntouch \"${DERIVED_FILE_DIR}/update-info-plist-for-runningboard.stamp\"\n";
+			shellScript = "Scripts/update-info-plist-for-runningboard.sh\n";
 		};
 		3AFFC9A428D43977006D6076 /* Update Info.plist for RunningBoard management */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -21018,17 +21021,18 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/$(WK_SOURCE_INFOPLIST_FILE)",
+				"$(SRCROOT)/Scripts/update-info-plist-for-runningboard.sh",
 			);
 			name = "Update Info.plist for RunningBoard management";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/update-info-plist-for-runningboard.stamp",
+				"$(WK_DERIVED_INFOPLIST_FILE)",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/update-info-plist-for-runningboard.sh\ntouch \"${DERIVED_FILE_DIR}/update-info-plist-for-runningboard.stamp\"\n";
+			shellScript = "Scripts/update-info-plist-for-runningboard.sh\n";
 		};
 		4157853721279CC600DD3800 /* Copy Custom WebContent Resources to Framework Private Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -21196,17 +21200,18 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/$(WK_SOURCE_INFOPLIST_FILE)",
+				"$(SRCROOT)/Scripts/update-info-plist-for-runningboard.sh",
 			);
 			name = "Update Info.plist for RunningBoard management";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/update-info-plist-for-runningboard.stamp",
+				"$(WK_DERIVED_INFOPLIST_FILE)",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/update-info-plist-for-runningboard.sh\ntouch \"${DERIVED_FILE_DIR}/update-info-plist-for-runningboard.stamp\"\n";
+			shellScript = "Scripts/update-info-plist-for-runningboard.sh\n";
 		};
 		5C1578E6270E129400ED5280 /* Process adattributiond Entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
