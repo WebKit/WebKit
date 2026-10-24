@@ -93,6 +93,10 @@ public:
 #endif
     virtual void play(bool) = 0;
     virtual void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) = 0;
+#if ENABLE(SPATIAL_PORTAL)
+    virtual void setDefaultEnvironmentMap() = 0;
+    virtual void removeEnvironmentMap() = 0;
+#endif
     virtual void updateContentsHeadroom(float) = 0;
 
     virtual void render(uint32_t textureIndex, Function<void(bool)>&&) = 0;

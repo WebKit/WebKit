@@ -335,6 +335,24 @@ void RemoteMeshProxy::setEnvironmentMap(WebModel::UpdateTextureDescriptor&& imag
 #endif
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+void RemoteMeshProxy::setDefaultEnvironmentMap()
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    auto sendResult = send(Messages::RemoteMesh::SetDefaultEnvironmentMap());
+    UNUSED_PARAM(sendResult);
+#endif
+}
+
+void RemoteMeshProxy::removeEnvironmentMap()
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    auto sendResult = send(Messages::RemoteMesh::RemoveEnvironmentMap());
+    UNUSED_PARAM(sendResult);
+#endif
+}
+#endif
+
 void RemoteMeshProxy::updateContentsHeadroom(float headroom)
 {
 #if ENABLE(GPU_PROCESS_MODEL)

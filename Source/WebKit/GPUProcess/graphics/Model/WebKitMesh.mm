@@ -1093,6 +1093,20 @@ void WebMesh::setEnvironmentMap(WebModel::UpdateTextureDescriptor&& imageAsset)
 #endif
 }
 
+void WebMesh::setDefaultEnvironmentMap()
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    [m_receiver setDefaultEnvironmentMap];
+#endif
+}
+
+void WebMesh::removeEnvironmentMap()
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    [m_receiver removeEnvironmentMap];
+#endif
+}
+
 void WebMesh::play(bool play)
 {
 #if ENABLE(GPU_PROCESS_MODEL)

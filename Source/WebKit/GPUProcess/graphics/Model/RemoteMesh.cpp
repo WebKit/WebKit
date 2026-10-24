@@ -139,6 +139,18 @@ void RemoteMesh::setEnvironmentMap(WebModel::UpdateTextureDescriptor&& imageAsse
     m_backing->setEnvironmentMap(WTF::move(imageAsset));
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+void RemoteMesh::setDefaultEnvironmentMap()
+{
+    m_backing->setDefaultEnvironmentMap();
+}
+
+void RemoteMesh::removeEnvironmentMap()
+{
+    m_backing->removeEnvironmentMap();
+}
+#endif
+
 void RemoteMesh::updateContentsHeadroom(float headroom)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)

@@ -650,6 +650,13 @@ extension WKBridgeReceiver {
     @nonobjc
     fileprivate let fallbackTexture: LowLevelTextureResource
 
+    @nonobjc
+    fileprivate let defaultDiffuseTexture: LowLevelTextureResource
+    @nonobjc
+    fileprivate let defaultSpecularTexture: LowLevelTextureResource
+    @nonobjc
+    fileprivate let emptyEnvironmentTexture: LowLevelTextureResource?
+
     struct DeferredMeshUpdate {
         enum UpdateType {
             // First time mesh update, should add mesh instances to the scene
@@ -726,6 +733,14 @@ extension WKBridgeReceiver {
             textures: [
                 diffuseTexture, specularTexture,
             ]
+        )
+        self.defaultDiffuseTexture = diffuseTexture
+        self.defaultSpecularTexture = specularTexture
+        self.emptyEnvironmentTexture = makeEmptyEnvironmentTextureResource(
+            renderContext,
+            commandQueue: configuration.commandQueue,
+            device: configuration.device,
+            memoryOwner: configuration.appRenderer.memoryOwner
         )
 
         self.fallbackTexture = makeFallBackTextureResource(
@@ -1183,6 +1198,29 @@ extension WKBridgeReceiver {
             commandBuffer.commit()
         } catch {
             fatalError(error.localizedDescription)
+        }
+    }
+
+    func setDefaultEnvironmentMap() {
+        do {
+            try lightingArguments.setTexture(defaultDiffuseTexture, at: 0)
+            try lightingArguments.setTexture(defaultSpecularTexture, at: 1)
+        } catch {
+            logError("Could not restore the default environment map: \(error.localizedDescription)")
+        }
+    }
+
+    func removeEnvironmentMap() {
+        guard let emptyEnvironmentTexture else {
+            logError("Could not remove the environment map, no empty environment texture")
+            return
+        }
+
+        do {
+            try lightingArguments.setTexture(emptyEnvironmentTexture, at: 0)
+            try lightingArguments.setTexture(emptyEnvironmentTexture, at: 1)
+        } catch {
+            logError("Could not remove the environment map: \(error.localizedDescription)")
         }
     }
 }
@@ -2822,6 +2860,52 @@ private func makeFallBackTextureResource(
     return fallbackTexture
 }
 
+private func makeEmptyEnvironmentTextureResource(
+    _ renderContext: any LowLevelRenderContext,
+    commandQueue: any MTLCommandQueue,
+    device: any MTLDevice,
+    memoryOwner: task_id_token_t
+) -> LowLevelTextureResource? {
+    let cubeDescriptor = MTLTextureDescriptor.textureCubeDescriptor(
+        pixelFormat: .r8Unorm,
+        size: 1,
+        mipmapped: false
+    )
+    guard
+        let emptyTexture = try? renderContext.makeTextureResource(
+            descriptor: LowLevelTextureResource.Descriptor.from(cubeDescriptor)
+        ),
+        let commandBuffer = commandQueue.makeCommandBuffer(),
+        let blitEncoder = commandBuffer.makeBlitCommandEncoder()
+    else {
+        logError("could not create the empty environment texture")
+        return nil
+    }
+
+    let blackPixel: [UInt8] = [0]
+    let stagingBuffer = device.makeBuffer(fromSpan: blackPixel.span, length: blackPixel.count, memoryOwner: memoryOwner)
+
+    let emptyMTLTexture = emptyTexture.replace(commandBuffer: commandBuffer, memoryOwner: memoryOwner)
+    for slice in 0..<6 {
+        blitEncoder.copy(
+            from: stagingBuffer,
+            sourceOffset: 0,
+            sourceBytesPerRow: blackPixel.count,
+            sourceBytesPerImage: blackPixel.count,
+            sourceSize: MTLSize(width: 1, height: 1, depth: 1),
+            to: emptyMTLTexture,
+            destinationSlice: slice,
+            destinationLevel: 0,
+            destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0)
+        )
+    }
+    blitEncoder.endEncoding()
+
+    commandBuffer.commit()
+
+    return emptyTexture
+}
+
 #else
 @objc
 @implementation
@@ -2902,6 +2986,12 @@ extension WKBridgeReceiver {
     }
 
     func setEnvironmentMap(_ imageAsset: WKBridgeUpdateTexture) {
+    }
+
+    func setDefaultEnvironmentMap() {
+    }
+
+    func removeEnvironmentMap() {
     }
 }
 

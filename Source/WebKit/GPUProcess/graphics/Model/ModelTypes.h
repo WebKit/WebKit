@@ -508,6 +508,8 @@ NS_SWIFT_SENDABLE
 - (void)setFOV:(float)fovY;
 - (void)setPlaying:(BOOL)play;
 - (void)setEnvironmentMap:(WKBridgeUpdateTexture *)imageAsset;
+- (void)setDefaultEnvironmentMap;
+- (void)removeEnvironmentMap;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (nullable instancetype)initWithConfiguration:(WKBridgeUSDConfiguration *)configuration diffuseAsset:(WKBridgeImageAsset *)diffuseAsset specularAsset:(WKBridgeImageAsset *)specularAsset error:(NSError **)error NS_DESIGNATED_INITIALIZER;

@@ -85,6 +85,10 @@ private:
     void setFOV(float) final;
     void play(bool) final;
     void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) final;
+#if ENABLE(SPATIAL_PORTAL)
+    void setDefaultEnvironmentMap() final;
+    void removeEnvironmentMap() final;
+#endif
     void updateContentsHeadroom(float) final;
 
     void render(uint32_t textureIndex, Function<void(bool)>&&) final;

@@ -187,6 +187,12 @@ private:
     void setStageMode(WebCore::StageModeOperation) final;
     void notifyEntityTransformUpdated();
     void setEnvironmentMap(Ref<WebCore::SharedBuffer>&&, const URL&) final;
+#if ENABLE(SPATIAL_PORTAL)
+    void disableEnvironmentMap() final;
+    void enableSystemEnvironmentMap() final;
+#endif
+    String environmentMapForTesting() const final;
+    void pushEnvironmentMapToModel();
     WebCore::StageModeOperation effectiveStageMode() const;
 #if ENABLE(SPATIAL_PORTAL)
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
@@ -220,6 +226,9 @@ private:
     WebCore::IntSize m_currentPixelSize;
     std::optional<WebCore::LayoutPoint> m_initialPoint;
     std::optional<Ref<WebCore::SharedBuffer>> m_environmentMap;
+    URL m_environmentMapURL;
+    WebCore::EnvironmentMapKind m_environmentMapKind { WebCore::EnvironmentMapKind::Default };
+    bool m_environmentMapPushedToCurrentModel { false };
     const RetainPtr<WKStageModeOrbitSimulator> m_orbitSimulator;
     MonotonicTime m_lastUpdateTime;
 #if ENABLE(SPATIAL_PORTAL)

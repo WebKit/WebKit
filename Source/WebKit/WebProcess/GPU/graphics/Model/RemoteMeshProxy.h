@@ -145,6 +145,10 @@ private:
     std::pair<simd_float4, simd_float4> portalContentCenterAndExtents(const simd_float4x4& transformBeforeAuto) const;
 #endif
     void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) final;
+#if ENABLE(SPATIAL_PORTAL)
+    void setDefaultEnvironmentMap() final;
+    void removeEnvironmentMap() final;
+#endif
     void updateContentsHeadroom(float) final;
 
     const WebModelIdentifier m_backing;

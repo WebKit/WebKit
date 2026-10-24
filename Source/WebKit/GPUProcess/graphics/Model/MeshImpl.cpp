@@ -119,6 +119,18 @@ void MeshImpl::setEnvironmentMap(WebModel::UpdateTextureDescriptor&& imageAsset)
     m_backing->setEnvironmentMap(WTF::move(imageAsset));
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+void MeshImpl::setDefaultEnvironmentMap()
+{
+    m_backing->setDefaultEnvironmentMap();
+}
+
+void MeshImpl::removeEnvironmentMap()
+{
+    m_backing->removeEnvironmentMap();
+}
+#endif
+
 void MeshImpl::updateContentsHeadroom(float headroom)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY) && PLATFORM(COCOA)

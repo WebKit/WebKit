@@ -103,6 +103,10 @@ private:
     void setFOV(float fovY);
     void play(bool);
     void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&);
+#if ENABLE(SPATIAL_PORTAL)
+    void setDefaultEnvironmentMap();
+    void removeEnvironmentMap();
+#endif
     void updateContentsHeadroom(float);
     void updateRenderBuffers(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
     void paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex, CompletionHandler<void()>&&);

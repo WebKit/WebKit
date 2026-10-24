@@ -74,6 +74,8 @@ public:
     void setTransform(WebCore::NodeIdentifier, const simd_float4x4&);
     void LEGACY_NODELETE setFOV(float);
     void LEGACY_NODELETE setEnvironmentMap(WebModel::UpdateTextureDescriptor&&);
+    void LEGACY_NODELETE setDefaultEnvironmentMap();
+    void LEGACY_NODELETE removeEnvironmentMap();
     void LEGACY_NODELETE play(bool);
     void LEGACY_NODELETE updateRenderBuffers(const WebModel::ResizeMeshDescriptor&);
     void processRemovals(Vector<WebModel::TypedResourceId>&& meshRemovals, Vector<WebModel::TypedResourceId>&& materialRemovals, Vector<WebModel::TypedResourceId>&& textureRemovals, CompletionHandler<void(bool)>&&);
