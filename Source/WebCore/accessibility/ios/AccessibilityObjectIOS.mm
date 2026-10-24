@@ -41,14 +41,16 @@
 #import "StyleTextDecorationLine.h"
 #import "WAKView.h"
 #import "WebAccessibilityObjectWrapperIOS.h"
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/AXRuntimeSPI.h>
+#import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
+
+#import <pal/ios/UIKitSoftLink.h>
 
 #if !PLATFORM(MACCATALYST)
 SOFT_LINK_CLASS_OPTIONAL(AXRuntime, AXRemoteElement);
@@ -187,15 +189,23 @@ void AXRemoteFrame::initializePlatformElementWithRemoteToken(AccessibilityRemote
 #if !PLATFORM(MACCATALYST)
     m_processIdentifier = processIdentifier;
 
-    RetainPtr remoteElement = adoptNS([allocAXRemoteElementInstance() initWithUUID:[token.uuid.createNSUUID() UUIDString] andRemotePid:processIdentifier andContextId:0]);
-    remoteElement.get().onClientSide = YES;
-    RefPtr parent = parentObjectUnignored();
-    remoteElement.get().accessibilityContainer = parent ? protect(parent->wrapper()).get() : nil;
+    // It isn't safe to call -[AXRemoteElement initWithUUID:andRemotePid:andContextId:] if we're in the call stack of
+    // an accessibility API call from AXRuntime, so defer actually creating the AXRemoteElement.
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr<AXRemoteFrame> { *this }, uuid = token.uuid, processIdentifier] {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
 
-    m_remoteFramePlatformElement = WTF::move(remoteElement);
+        RetainPtr remoteElement = adoptNS([allocAXRemoteElementInstance() initWithUUID:[uuid.createNSUUID() UUIDString] andRemotePid:processIdentifier andContextId:0]);
+        remoteElement.get().onClientSide = YES;
+        RefPtr parent = protectedThis->parentObjectUnignored();
+        remoteElement.get().accessibilityContainer = parent ? protect(parent->wrapper()).get() : nil;
 
-    if (CheckedPtr cache = axObjectCache())
-        cache->onRemoteFrameInitialized(*this);
+        protectedThis->m_remoteFramePlatformElement = WTF::move(remoteElement);
+
+        if (CheckedPtr cache = protectedThis->axObjectCache())
+            cache->onRemoteFrameInitialized(*protectedThis);
+    });
 #else
     UNUSED_PARAM(token);
     UNUSED_PARAM(processIdentifier);
