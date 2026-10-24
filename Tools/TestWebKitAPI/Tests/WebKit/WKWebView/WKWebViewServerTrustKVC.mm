@@ -201,6 +201,9 @@ TEST(WKWebView, QualifiedServerTrustKVC)
     server.addResponse("/other-rel"_s, { { { "Link"_s, linkHeader("author"_s) } }, "hi"_s });
     server.addResponse("/many-links"_s, { { { "Link"_s, makeString("<https://webkit.org/author>; rel=\"author\", "_s, linkHeader("tls-certificate-binding"_s)) } }, "hi"_s });
     server.addResponse("/cross-origin-link"_s, { { { "Link"_s, "<https://example.com/2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_s });
+    server.addResponse("/relative-link"_s, { { { "Link"_s, "</2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_s });
+    server.addResponse("/scheme-relative-cross-origin-link"_s, { { { "Link"_s, "<//example.com/2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_s });
+    server.addResponse("/path/relative-link"_s, { { { "Link"_s, "<../2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_s });
 
     RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
     [storeConfiguration setQualifiedServerTrustDebugEnabledForTesting:YES];
@@ -240,6 +243,26 @@ TEST(WKWebView, QualifiedServerTrustKVC)
     [webView loadURL:[NSURL URLWithString:@"https://webkit.org/cross-origin-link"]];
     [delegate waitForDidFinishNavigation];
     Util::runFor(0.1_s);
+    EXPECT_NULL([webView qualifiedServerTrust]);
+
+    // ETSI TS 119 411-5 section 5.2(3)(a) requires the Link header to use a relative reference,
+    // which is resolved against the URL of the response.
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/relative-link"]];
+    [observer waitUntilQualifiedServerTrustChanged];
+    verifyCertificateAndPublicKey([webView qualifiedServerTrust]);
+
+    // A scheme-relative reference to another origin is still cross-origin, and is ignored.
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/scheme-relative-cross-origin-link"]];
+    [observer waitUntilQualifiedServerTrustChanged];
+    EXPECT_NULL([webView qualifiedServerTrust]);
+
+    // A path-relative reference is resolved against the directory of the response URL.
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/path/relative-link"]];
+    [observer waitUntilQualifiedServerTrustChanged];
+    verifyCertificateAndPublicKey([webView qualifiedServerTrust]);
+
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/no-link"]];
+    [observer waitUntilQualifiedServerTrustChanged];
     EXPECT_NULL([webView qualifiedServerTrust]);
 
     // Load a valid 2QWAC again to verify the checks above didn't just break the fetch entirely.
