@@ -2514,6 +2514,8 @@ void NetworkResourceLoader::continueDidRetrieveCacheEntryAfterLocalNetworkAccess
 {
     auto response = entry->response();
     recordLocalNetworkAccessFrame(protect(connectionToWebProcess()), response);
+    if (!m_firstResponseURL.isValid())
+        m_firstResponseURL = response.url();
 
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(response)) {
         LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Stopping load due to CSP Frame-Ancestors or X-Frame-Options");
@@ -2989,6 +2991,12 @@ WebCore::FrameIdentifier NetworkResourceLoader::frameIdentifierForReport() const
     if (isMainResource() && m_parameters.parentFrameID)
         return *m_parameters.parentFrameID;
     return frameID();
+}
+
+const URL& NetworkResourceLoader::contextURLForReport() const
+{
+    auto& url = isMainResource() ? m_parameters.parentFrameURL : m_parameters.frameURL;
+    return url.isValid() ? url : aboutBlankURL();
 }
 
 void NetworkResourceLoader::notifyReportObservers(Ref<Report>&& report)

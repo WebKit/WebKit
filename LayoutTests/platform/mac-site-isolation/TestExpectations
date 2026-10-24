@@ -91,6 +91,7 @@ imported/w3c/web-platform-tests/html/document-isolation-policy/no-secure-context
 imported/w3c/web-platform-tests/html/document-isolation-policy/no-secure-context.tentative.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/origin-agent-cluster.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/partial-deployment.tentative.https.html [ Pass ]
+imported/w3c/web-platform-tests/html/document-isolation-policy/reporting-cached-and-service-worker-responses.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/reporting.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/shared-array-buffer.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/window-reuse.tentative.https.html [ Pass ]

@@ -143,6 +143,7 @@ public:
     const NetworkResourceLoadParameters& parameters() const LIFETIME_BOUND { return m_parameters; }
     NetworkResourceLoadIdentifier identifier() const { return m_resourceLoadID; }
     const URL& firstResponseURL() const LIFETIME_BOUND { return m_firstResponseURL; }
+    const URL& contextURLForReport() const LIFETIME_BOUND;
 
     NetworkCache::GlobalFrameID globalFrameID() { return { webPageProxyID(), pageID(), frameID() }; }
 

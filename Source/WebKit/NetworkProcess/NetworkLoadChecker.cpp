@@ -205,45 +205,12 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
     });
 }
 
-static URL contextURLforCORPViolation(NetworkResourceLoader& loader)
-{
-    auto& url = loader.isMainResource() ? loader.parameters().parentFrameURL : loader.parameters().frameURL;
-    return url.isValid() ? url : aboutBlankURL();
-}
-
-// https://fetch.spec.whatwg.org/#cross-origin-resource-policy-check, as https://wicg.github.io/document-isolation-policy/#dip-corp modifies it.
 static std::optional<ResourceError> performCORPCheck(const CrossOriginEmbedderPolicy& embedderCOEP, const DocumentIsolationPolicy& documentIsolationPolicy, const SecurityOrigin& embedderOrigin, const URL& url, ResourceResponse& response, ForNavigation forNavigation, NetworkResourceLoader* loader, const WebCore::OriginAccessPatterns& patterns)
 {
-    if (auto error = validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue::UnsafeNone, DocumentIsolationPolicyValue::None, embedderOrigin, url, response, forNavigation, patterns))
-        return error;
-
-    if (embedderCOEP.reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP && loader) {
-        if (auto error = validateCrossOriginResourcePolicy(embedderCOEP.reportOnlyValue, DocumentIsolationPolicyValue::None, embedderOrigin, url, response, forNavigation, patterns))
-            sendCOEPCORPViolation(*loader, contextURLforCORPViolation(*loader), embedderCOEP.reportOnlyReportingEndpoint, COEPDisposition::Reporting, loader->parameters().options.destination, loader->firstResponseURL());
-    }
-
-    if (documentIsolationPolicy.reportOnlyValue == DocumentIsolationPolicyValue::IsolateAndRequireCORP && loader) {
-        if (validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue::UnsafeNone, documentIsolationPolicy.reportOnlyValue, embedderOrigin, url, response, forNavigation, patterns))
-            sendDocumentIsolationPolicyCORPViolation(*loader, contextURLforCORPViolation(*loader), documentIsolationPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, loader->parameters().options.destination, loader->firstResponseURL());
-    }
-
-    // A load both policies block gets a report for each.
-    std::optional<ResourceError> error;
-    if (embedderCOEP.value == CrossOriginEmbedderPolicyValue::RequireCORP) {
-        error = validateCrossOriginResourcePolicy(embedderCOEP.value, DocumentIsolationPolicyValue::None, embedderOrigin, url, response, forNavigation, patterns);
-        if (error && loader)
-            sendCOEPCORPViolation(*loader, contextURLforCORPViolation(*loader), embedderCOEP.reportingEndpoint, COEPDisposition::Enforce, loader->parameters().options.destination, loader->firstResponseURL());
-    }
-
-    if (documentIsolationPolicy.value == DocumentIsolationPolicyValue::IsolateAndRequireCORP) {
-        if (auto documentIsolationPolicyError = validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue::UnsafeNone, documentIsolationPolicy.value, embedderOrigin, url, response, forNavigation, patterns)) {
-            if (loader)
-                sendDocumentIsolationPolicyCORPViolation(*loader, contextURLforCORPViolation(*loader), documentIsolationPolicy.reportingEndpoint, COEPDisposition::Enforce, loader->parameters().options.destination, loader->firstResponseURL());
-            if (!error)
-                error = WTF::move(documentIsolationPolicyError);
-        }
-    }
-    return error;
+    if (!loader)
+        return performCrossOriginResourcePolicyCheck(embedderCOEP, documentIsolationPolicy, embedderOrigin, url, response, forNavigation, patterns, nullptr);
+    CORPViolationReportContext reportContext { *loader, loader->contextURLForReport(), loader->parameters().options.destination, loader->firstResponseURL() };
+    return performCrossOriginResourcePolicyCheck(embedderCOEP, documentIsolationPolicy, embedderOrigin, url, response, forNavigation, patterns, &reportContext);
 }
 
 ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& request, ResourceResponse& response)

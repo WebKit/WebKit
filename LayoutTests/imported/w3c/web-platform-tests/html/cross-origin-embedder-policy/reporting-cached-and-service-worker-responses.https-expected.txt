@@ -1,0 +1,12 @@
+
+PASS Cross-Origin-Embedder-Policy-Report-Only reports an image that another document loaded before
+PASS Cross-Origin-Embedder-Policy-Report-Only reports an image the document uses twice once
+PASS Cross-Origin-Embedder-Policy-Report-Only reports an image the document loaded with CORS before
+PASS Cross-Origin-Embedder-Policy-Report-Only reports an image the document is still loading with CORS once
+PASS Cross-Origin-Embedder-Policy-Report-Only reports an image without the fragment of its URL
+PASS Cross-Origin-Embedder-Policy reports an image that another document loaded before
+PASS Cross-Origin-Embedder-Policy reports an image that a document of another site loaded before
+PASS Cross-Origin-Embedder-Policy reports a cross-origin response a service worker responds with
+PASS Cross-Origin-Embedder-Policy reports a redirected response a service worker responds with by its first URL
+FAIL Cross-Origin-Embedder-Policy reports a response a service worker fetched from another URL by that URL assert_equals: body.blockedURL expected "https://www1.web-platform.test:9443/common/square.png" but got "https://web-platform.test:9443/common/blank.html?respond-with-fetch-of=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fcommon%2Fsquare.png"
+

@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/reporting-empty-frame-multiple-headers.html.asis
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/reporting-empty-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/reporting-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/respond-with-fetch-sw.js
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/shared-worker-fetch.js.py
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/shared-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/sw-store-to-cache-storage.js

@@ -66,6 +66,6 @@ WEBCORE_EXPORT DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL&,
 WEBCORE_EXPORT DocumentIsolationPolicy parseDocumentIsolationPolicy(const ResourceResponse&);
 
 // https://wicg.github.io/document-isolation-policy/#queue-a-document-isolation-policy-corp-violation-report
-WEBCORE_EXPORT void sendDocumentIsolationPolicyCORPViolation(ReportingClient&, const URL& contextURL, const String& endpoint, COEPDisposition, FetchOptionsDestination, const URL& blockedURL);
+void sendDocumentIsolationPolicyCORPViolation(ReportingClient&, const URL& contextURL, const String& endpoint, COEPDisposition, FetchOptionsDestination, const URL& blockedURL);
 
 } // namespace WebCore

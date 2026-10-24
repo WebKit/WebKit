@@ -146,7 +146,12 @@ void sendCOEPInheritenceViolation(ReportingClient& reportingClient, const URL& e
 // https://fetch.spec.whatwg.org/#queue-a-cross-origin-embedder-policy-corp-violation-report
 void sendCOEPCORPViolation(ReportingClient& reportingClient, const URL& embedderURL, const String& endpoint, COEPDisposition disposition, FetchOptions::Destination destination, const URL& blockedURL)
 {
-    Ref reportBody = CORPViolationReportBody::create(disposition, blockedURL, destination);
+    // https://fetch.spec.whatwg.org/#serialize-a-response-url-for-reporting
+    URL serializedBlockedURL = blockedURL;
+    serializedBlockedURL.removeCredentials();
+    serializedBlockedURL.removeFragmentIdentifier();
+
+    Ref reportBody = CORPViolationReportBody::create(disposition, serializedBlockedURL, destination);
     Ref report = Report::create("coep"_s, embedderURL.string(), WTF::move(reportBody));
     reportingClient.notifyReportObservers(WTF::move(report));
 
@@ -156,7 +161,7 @@ void sendCOEPCORPViolation(ReportingClient& reportingClient, const URL& embedder
     Ref reportFormData = Report::createReportFormDataForViolation("coep"_s, embedderURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
         body.setString("disposition"_s, disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s);
         body.setString("type"_s, "corp"_s);
-        body.setString("blockedURL"_s, PingLoader::sanitizeURLForReport(blockedURL));
+        body.setString("blockedURL"_s, serializedBlockedURL.string());
         body.setString("destination"_s, convertEnumerationToString(destination));
     });
     reportingClient.sendReportToEndpoints(embedderURL, { }, singleElementSpan(endpoint), WTF::move(reportFormData), ViolationReportType::CORPViolation);

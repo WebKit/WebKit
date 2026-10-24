@@ -45,6 +45,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/require-corp-sw-import-scripts.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/require-corp-sw.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/require-corp-sw.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/respond-with-fetch-sw.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/script-factory.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/shared-worker-fetch.js.py
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/shared-worker.js

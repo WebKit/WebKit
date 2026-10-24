@@ -318,7 +318,9 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
     }
     if (loader->parameters().options.mode == FetchOptions::Mode::NoCors) {
         Ref sourceOrigin = *loader->parameters().sourceOrigin;
-        if (auto error = validateCrossOriginResourcePolicy(loader->parameters().crossOriginEmbedderPolicy.value, loader->parameters().documentIsolationPolicy.value, sourceOrigin, m_currentRequest.url(), response, ForNavigation::No, loader->connectionToWebProcess().originAccessPatterns())) {
+        // FIXME: Use the first URL of the response's URL list, which differs when the service worker fetched another URL. The response only has its last URL.
+        CORPViolationReportContext reportContext { loader.get(), loader->contextURLForReport(), loader->parameters().options.destination, m_currentRequest.url() };
+        if (auto error = performCrossOriginResourcePolicyCheck(loader->parameters().crossOriginEmbedderPolicy, loader->parameters().documentIsolationPolicy, sourceOrigin, m_currentRequest.url(), response, ForNavigation::No, loader->connectionToWebProcess().originAccessPatterns(), &reportContext)) {
             didFail(*error);
             return;
         }

@@ -366,6 +366,41 @@ std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedd
     return validateCrossOriginResourcePolicy(coep, documentIsolationPolicy, origin, requestURL, isReponseNull, responseURL, crossOriginResourcePolicyHeaderValue, forNavigation, patterns);
 }
 
+std::optional<ResourceError> performCrossOriginResourcePolicyCheck(const CrossOriginEmbedderPolicy& embedderPolicy, const DocumentIsolationPolicy& documentIsolationPolicy, const SecurityOrigin& origin, const URL& requestURL, const ResourceResponse& response, ForNavigation forNavigation, const OriginAccessPatterns& patterns, const CORPViolationReportContext* reportContext)
+{
+    auto check = [&](CrossOriginEmbedderPolicyValue embedderPolicyValue, DocumentIsolationPolicyValue documentIsolationPolicyValue) {
+        return validateCrossOriginResourcePolicy(embedderPolicyValue, documentIsolationPolicyValue, origin, requestURL, response, forNavigation, patterns);
+    };
+
+    // A response that is blocked without either policy is not reported.
+    if (auto error = check(CrossOriginEmbedderPolicyValue::UnsafeNone, DocumentIsolationPolicyValue::None))
+        return error;
+
+    if (reportContext) {
+        if (embedderPolicy.reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP && check(embedderPolicy.reportOnlyValue, DocumentIsolationPolicyValue::None))
+            sendCOEPCORPViolation(reportContext->client, reportContext->contextURL, embedderPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, reportContext->destination, reportContext->blockedURL);
+        if (documentIsolationPolicy.reportOnlyValue == DocumentIsolationPolicyValue::IsolateAndRequireCORP && check(CrossOriginEmbedderPolicyValue::UnsafeNone, documentIsolationPolicy.reportOnlyValue))
+            sendDocumentIsolationPolicyCORPViolation(reportContext->client, reportContext->contextURL, documentIsolationPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, reportContext->destination, reportContext->blockedURL);
+    }
+
+    // A response that both policies block gets a report for each.
+    std::optional<ResourceError> error;
+    if (embedderPolicy.value == CrossOriginEmbedderPolicyValue::RequireCORP) {
+        error = check(embedderPolicy.value, DocumentIsolationPolicyValue::None);
+        if (error && reportContext)
+            sendCOEPCORPViolation(reportContext->client, reportContext->contextURL, embedderPolicy.reportingEndpoint, COEPDisposition::Enforce, reportContext->destination, reportContext->blockedURL);
+    }
+    if (documentIsolationPolicy.value == DocumentIsolationPolicyValue::IsolateAndRequireCORP) {
+        if (auto documentIsolationPolicyError = check(CrossOriginEmbedderPolicyValue::UnsafeNone, documentIsolationPolicy.value)) {
+            if (reportContext)
+                sendDocumentIsolationPolicyCORPViolation(reportContext->client, reportContext->contextURL, documentIsolationPolicy.reportingEndpoint, COEPDisposition::Enforce, reportContext->destination, reportContext->blockedURL);
+            if (!error)
+                error = WTF::move(documentIsolationPolicyError);
+        }
+    }
+    return error;
+}
+
 std::optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest& request, const ResourceResponse& response)
 {
     if (response.isRangeRequested() && isHttpRangeStatus(response.httpStatusCode()) && response.type() == ResourceResponse::Type::Opaque && !request.hasHTTPHeaderField(HTTPHeaderName::Range))

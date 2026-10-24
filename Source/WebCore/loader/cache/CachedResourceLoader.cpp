@@ -975,6 +975,14 @@ static inline bool LEGACY_NODELETE isResourceSuitableForDirectReuse(const Cached
     return true;
 }
 
+static bool LEGACY_NODELETE requiresCORP(const Document& document)
+{
+    auto& embedderPolicy = document.crossOriginEmbedderPolicy();
+    auto& documentIsolationPolicy = document.documentIsolationPolicy();
+    return embedderPolicy.value == CrossOriginEmbedderPolicyValue::RequireCORP || embedderPolicy.reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP
+        || documentIsolationPolicy.value == DocumentIsolationPolicyValue::IsolateAndRequireCORP || documentIsolationPolicy.reportOnlyValue == DocumentIsolationPolicyValue::IsolateAndRequireCORP;
+}
+
 Ref<CachedResource> CachedResourceLoader::updateCachedResourceWithCurrentRequest(const CachedResource& resource, CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar& cookieJar, const Settings& settings)
 {
     if (!isResourceSuitableForDirectReuse(resource, request)) {
@@ -1350,20 +1358,31 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
                     return makeUnexpected(WTF::move(*error));
             }
         }
+        bool shouldUpdate = shouldUpdateCachedResourceWithCurrentRequest(*resource, request);
         // Per the Fetch specification, the "cross-origin resource policy check" should only occur in the HTTP Fetch case (https://fetch.spec.whatwg.org/#concept-http-fetch).
         // However, per https://fetch.spec.whatwg.org/#main-fetch, if the request URL's protocol is "data:", then we should perform a scheme fetch which would end up
         // returning a response WITHOUT performing an HTTP fetch (and thus no CORP check).
-        if (request.options().mode == FetchOptions::Mode::NoCors && !url.protocolIsData()) {
-            auto coep = document ? document->crossOriginEmbedderPolicy().value : CrossOriginEmbedderPolicyValue::UnsafeNone;
-            auto documentIsolationPolicy = document ? document->documentIsolationPolicy().value : DocumentIsolationPolicyValue::None;
-            if (auto error = validateCrossOriginResourcePolicy(coep, documentIsolationPolicy, *protect(request.origin()), request.resourceRequest().url(), resource->response(), ForNavigation::No, OriginAccessPatternsForWebProcess::singleton()))
+        // If the request loads the resource again below, that load does the check.
+        if (request.options().mode == FetchOptions::Mode::NoCors && !url.protocolIsData() && (!shouldUpdate || isResourceSuitableForDirectReuse(*resource, request))) {
+            std::optional<ResourceError> error;
+            if (document && requiresCORP(*document)) {
+                CORPViolationReportContext reportContext { *document, document->url(), request.options().destination, request.resourceRequest().url() };
+                // The specification doesn't fetch again for an image the document already uses, or a preload it consumes, with the same mode and origin, so neither reports again.
+                bool alreadyReported = !shouldUpdate && m_documentResources.get(resource->url().string()).get() == resource.get()
+                    && (resource->type() == CachedResource::Type::ImageResource || (resource->isPreloaded() && resource->preloadResult() == CachedResource::PreloadResult::PreloadNotReferenced));
+                // FIXME: Report the violations of a worker's loads to the worker.
+                bool shouldReport = initiatorContext == InitiatorContext::Document && !alreadyReported;
+                error = performCrossOriginResourcePolicyCheck(document->crossOriginEmbedderPolicy(), document->documentIsolationPolicy(), *protect(request.origin()), request.resourceRequest().url(), resource->response(), ForNavigation::No, OriginAccessPatternsForWebProcess::singleton(), shouldReport ? &reportContext : nullptr);
+            } else
+                error = performCrossOriginResourcePolicyCheck({ }, { }, *protect(request.origin()), request.resourceRequest().url(), resource->response(), ForNavigation::No, OriginAccessPatternsForWebProcess::singleton(), nullptr);
+            if (error)
                 return makeUnexpected(WTF::move(*error));
         }
         if (request.options().mode == FetchOptions::Mode::NoCors) {
             if (auto error = validateRangeRequestedFlag(request.resourceRequest(), resource->response()))
                 return makeUnexpected(WTF::move(*error));
         }
-        if (shouldUpdateCachedResourceWithCurrentRequest(*resource, request)) {
+        if (shouldUpdate) {
             resource = updateCachedResourceWithCurrentRequest(*resource, WTF::move(request), page->sessionID(), cookieJar, page->settings());
             if (resource->status() != CachedResource::Status::Cached)
                 policy = Load;
