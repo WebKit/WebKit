@@ -22,8 +22,10 @@
 
 import logging
 import os
+import subprocess
 import sys
 import time
+from unittest.mock import patch
 
 from webkitcorepy import Editor, OutputCapture, testing, mocks as wkmocks
 from webkitcorepy.mocks import Terminal as MockTerminal
@@ -272,6 +274,49 @@ Fetched 2 remotes!
 Fetched 1 remote!
 ''',
         )
+
+    def test_credential_helper_relative_invocation(self):
+        if os.name != 'posix':
+            self.skipTest('Executing the credential helper requires a POSIX shell')
+
+        scripts = os.path.join(self.path, 'Tools', 'Scripts')
+        os.makedirs(scripts)
+        executable = os.path.join(scripts, 'git-webkit')
+        with open(executable, 'w') as file:
+            file.write("#!/bin/sh\nprintf 'helper-called\\n'\n")
+        os.chmod(executable, 0o755)
+
+        with OutputCapture(), mocks.remote.GitHub() as remote, \
+                mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
+                wkmocks.Environment(EMAIL_ADDRESS='', SVN_LOG_EDITOR=''), \
+                patch.object(program.Setup, 'github', return_value=0), \
+                patch.object(sys, 'argv', ['./git-webkit']):
+            self.assertEqual(0, program.main(
+                args=('setup', '--defaults'), path=self.path,
+            ))
+            helper = repo.config()['credential.https://github.example.com.helper']
+
+        moved_checkout = os.path.join(self.container, "moved checkout's directory")
+        os.rename(self.path, moved_checkout)
+        # Mock Git's root lookup because the test repository has no real Git metadata.
+        git_stub = (
+            'git() { '
+            '[ "$*" = "rev-parse --show-toplevel" ] || return 1; '
+            'printf "%s\\n" "$TEST_ROOT"; '
+            '}; '
+        )
+        self.assertTrue(helper.startswith('!'))
+        # Execute the helper in a shell to verify path resolution and quoting.
+        result = subprocess.run(
+            ['/bin/sh', '-c', git_stub + helper[1:] + ' get'],
+            cwd=moved_checkout,
+            env=dict(os.environ, TEST_ROOT=moved_checkout),
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual('helper-called\n', result.stdout)
 
     def test_commit_message(self):
         with OutputCapture(level=logging.INFO), MockTerminal.input('n'), mocks.local.Git(self.path) as git, mocks.local.Svn():

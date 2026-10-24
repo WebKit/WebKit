@@ -439,7 +439,7 @@ class Setup(Command):
             if username and password and not run([
                 repository.executable(), 'config',
                 'credential.{}.helper'.format('/'.join(rmt.url.split('/')[:3])),
-                '!f() {{ {} -C {} credentials; }}; f'.format(sys.argv[0], rmt.url),
+                '!f() {{ "$(git rev-parse --show-toplevel)/Tools/Scripts/git-webkit" -C {} credentials; }}; f'.format(rmt.url),
             ], capture_output=True, cwd=repository.root_path).returncode:
                 can_push = True
 
