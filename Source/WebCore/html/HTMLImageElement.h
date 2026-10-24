@@ -192,6 +192,11 @@ public:
 
     Image* image() const;
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    void requestImmersive(Ref<DeferredPromise>&&);
+    std::optional<Exception> immersiveImageError() const;
+#endif
+
 protected:
     HTMLImageElement(const QualifiedName&, Document&);
 

@@ -33,6 +33,9 @@
 #include "DocumentPage.h"
 #include "Event.h"
 #include "EventNames.h"
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+#include "HTMLImageElement.h"
+#endif
 #include "HTMLModelElement.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
@@ -72,6 +75,29 @@ static std::optional<String> immersiveAvailabilityError(const Document& document
     return std::nullopt;
 }
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+static std::optional<String> immersiveImageAvailabilityError(const Document& document)
+{
+    if (!document.settings().imageElementImmersiveEnabled())
+        return "Immersive API is disabled."_s;
+
+    RefPtr page = document.page();
+    if (!page)
+        return "Missing page."_s;
+
+    if (!page->chrome().client().supportsImmersiveElement())
+        return "Immersive environments are not supported."_s;
+
+    if (!document.isFullyActive())
+        return "Cannot request immersive on a document that is not fully active."_s;
+
+    if (!document.isTopDocument())
+        return "Immersive API is only available in a top-level frame."_s;
+
+    return std::nullopt;
+}
+#endif
+
 bool DocumentImmersive::immersiveEnabled(Document& document)
 {
     return !immersiveAvailabilityError(document);
@@ -82,13 +108,26 @@ Element* DocumentImmersive::immersiveElement(Document& document)
     RefPtr documentImmersive = document.immersiveIfExists();
     if (!documentImmersive)
         return nullptr;
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    return document.ancestorElementInThisScope(documentImmersive->presentedImmersiveElement());
+#else
     return document.ancestorElementInThisScope(documentImmersive->immersiveElement());
+#endif
 }
 
 HTMLModelElement* DocumentImmersive::immersiveElement() const
 {
     return m_immersiveElement.get();
 }
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+Element* DocumentImmersive::presentedImmersiveElement() const
+{
+    if (m_immersiveElement)
+        return m_immersiveElement.get();
+    return m_immersiveImageElement.get();
+}
+#endif
 
 void DocumentImmersive::exitImmersive(Document& document, Ref<DeferredPromise>&& promise)
 {
@@ -126,6 +165,9 @@ void DocumentImmersive::requestImmersive(HTMLModelElement* element, CompletionHa
             return completionHandler(Exception { ExceptionCode::AbortError });
 
         protectedThis->m_pendingImmersiveElement = protectedElement.get();
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+        protectedThis->m_pendingImmersiveImageElement = nullptr;
+#endif
 
         protect(protectedThis->document())->eventLoop().queueTask(TaskSource::ModelElement, [weakThis, weakElement, scope = CompletionHandlerScope(WTF::move(completionHandler))]() mutable {
             auto completionHandler = scope.release();
@@ -149,12 +191,61 @@ void DocumentImmersive::requestImmersive(HTMLModelElement* element, CompletionHa
     });
 }
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+void DocumentImmersive::requestImmersive(HTMLImageElement* element, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
+{
+    if (auto errorMessage = immersiveImageAvailabilityError(document()))
+        return handleImmersiveImageError(element, *errorMessage, document().isFullyActive() ? EmitErrorEvent::Yes : EmitErrorEvent::No, ExceptionCode::InvalidAccessError, WTF::move(completionHandler));
+
+    if (RefPtr window = document().window(); !window || !window->consumeTransientActivation())
+        return handleImmersiveImageError(element, "Cannot request immersive without transient activation."_s, EmitErrorEvent::Yes, ExceptionCode::NotAllowedError, WTF::move(completionHandler));
+
+    if (!element->isConnected() || &element->document() != &document())
+        return handleImmersiveImageError(element, "Element is not connected to the document."_s, EmitErrorEvent::No, ExceptionCode::AbortError, WTF::move(completionHandler));
+
+    if (m_immersiveImageElement == element && !m_pendingExitImmersive)
+        return completionHandler({ });
+
+    if (m_pendingImmersiveImageElement == element)
+        return completionHandler(Exception { ExceptionCode::AbortError, "Immersive request aborted by a pending immersive request."_s });
+
+    RefPtr protectedPage = document().page();
+    if (!protectedPage)
+        return handleImmersiveImageError(element, "Missing page."_s, EmitErrorEvent::Yes, ExceptionCode::AbortError, WTF::move(completionHandler));
+
+    cancelActiveRequest([] { });
+    m_pendingImmersiveElement = nullptr;
+    m_pendingImmersiveImageElement = element;
+
+    protectedPage->chrome().client().allowImmersiveElement([weakElement = WeakPtr { *element }, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool allowed) mutable {
+        RefPtr protectedThis = weakThis;
+        RefPtr protectedElement = weakElement;
+        if (!protectedThis || !protectedElement)
+            return completionHandler(Exception { ExceptionCode::AbortError });
+
+        if (auto error = protectedThis->imageRequestError(*protectedElement))
+            return protectedThis->handleImmersiveImageError(protectedElement.get(), error->message(), EmitErrorEvent::Yes, error->code(), WTF::move(completionHandler));
+
+        if (!allowed)
+            return protectedThis->handleImmersiveImageError(protectedElement.get(), "Immersive request was denied."_s, EmitErrorEvent::Yes, ExceptionCode::AbortError, WTF::move(completionHandler));
+
+        if (auto error = protectedElement->immersiveImageError())
+            return protectedThis->handleImmersiveImageError(protectedElement.get(), error->message(), EmitErrorEvent::Yes, error->code(), WTF::move(completionHandler));
+
+        protectedThis->presentImmersiveImageElement(protectedElement.releaseNonNull(), WTF::move(completionHandler));
+    });
+}
+#endif
+
 void DocumentImmersive::exitImmersive(CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
 {
     if (m_pendingExitImmersive) {
         // Invalidate and cancel any current immersive request
         cancelActiveRequest([] { });
         m_pendingImmersiveElement = nullptr;
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+        m_pendingImmersiveImageElement = nullptr;
+#endif
         releaseDeferredRequest();
 
         return completionHandler(Exception { ExceptionCode::AbortError, "Immersive exit aborted by a pending exit request."_s });
@@ -166,6 +257,33 @@ void DocumentImmersive::exitImmersive(CompletionHandler<void(ExceptionOr<void>)>
             return completionHandler(Exception { ExceptionCode::AbortError });
 
         protectedThis->m_pendingImmersiveElement = nullptr;
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+        protectedThis->m_pendingImmersiveImageElement = nullptr;
+
+        if (RefPtr imageElement = protectedThis->m_immersiveImageElement) {
+            protectedThis->m_pendingExitImmersive = true;
+            auto resetPendingExitScope = makeScopeExit([weakThis] {
+                if (RefPtr protectedThis = weakThis)
+                    protectedThis->m_pendingExitImmersive = false;
+            });
+
+            protectedThis->dismissClientImmersivePresentation([weakThis, weakImageElement = WeakPtr { *imageElement }, resetPendingExitScope = WTF::move(resetPendingExitScope), completionHandler = WTF::move(completionHandler)] mutable {
+                RefPtr protectedThis = weakThis;
+                RefPtr protectedImageElement = weakImageElement;
+                if (!protectedThis || !protectedImageElement)
+                    return completionHandler(Exception { ExceptionCode::AbortError });
+
+                if (protectedThis->m_immersiveImageElement == protectedImageElement.get())
+                    protectedThis->m_immersiveImageElement = nullptr;
+                protectedThis->notifyImmersiveImageElementChanged(*protectedImageElement);
+                protectedThis->m_pendingExitImmersive = false;
+                protectedThis->releaseDeferredRequest();
+                completionHandler({ });
+            });
+            return;
+        }
+#endif
 
         RefPtr exitingImmersiveElement = protectedThis->immersiveElement();
         if (!exitingImmersiveElement)
@@ -204,7 +322,11 @@ void DocumentImmersive::exitImmersive(CompletionHandler<void(ExceptionOr<void>)>
 
 void DocumentImmersive::exitImmersiveIfNeeded(CompletionHandler<void()>&& completionHandler)
 {
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    if (presentedImmersiveElement()) {
+#else
     if (immersiveElement()) {
+#endif
         exitImmersive([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](auto result) mutable {
             RefPtr protectedThis = weakThis.get();
             if (protectedThis && result.hasException())
@@ -267,6 +389,22 @@ void DocumentImmersive::handleImmersiveError(HTMLModelElement* element, const St
     completionHandler(Exception { code, message });
 }
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+void DocumentImmersive::handleImmersiveImageError(HTMLImageElement* element, const String& message, EmitErrorEvent emitErrorEvent, ExceptionCode code, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
+{
+    RELEASE_LOG_ERROR(Immersive, "%p - DocumentImmersive: %s", this, message.utf8());
+
+    if (m_pendingImmersiveImageElement == element)
+        m_pendingImmersiveImageElement = nullptr;
+
+    if (emitErrorEvent == EmitErrorEvent::Yes && element) {
+        queueImmersiveEventForElement(EventType::Error, *element);
+        protect(document())->scheduleRenderingUpdate(RenderingUpdateStep::Immersive);
+    }
+    completionHandler(Exception { code, message });
+}
+#endif
+
 std::optional<Exception> DocumentImmersive::isRequestOutdated(HTMLModelElement* element, ActiveRequest::Stage expectedStage)
 {
     if (m_activeRequest.stage != expectedStage || m_activeRequest.element != element || m_pendingImmersiveElement != element)
@@ -274,6 +412,22 @@ std::optional<Exception> DocumentImmersive::isRequestOutdated(HTMLModelElement* 
 
     return std::nullopt;
 }
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+std::optional<Exception> DocumentImmersive::imageRequestError(HTMLImageElement& element)
+{
+    if (m_pendingImmersiveImageElement != &element)
+        return Exception { ExceptionCode::AbortError, "Immersive request was superseded by another request."_s };
+
+    if (auto errorMessage = immersiveImageAvailabilityError(document()))
+        return Exception { ExceptionCode::InvalidAccessError, *errorMessage };
+
+    if (!element.isConnected() || &element.document() != &document())
+        return Exception { ExceptionCode::AbortError, "Element is not connected to the document."_s };
+
+    return std::nullopt;
+}
+#endif
 
 void DocumentImmersive::releaseDeferredRequest()
 {
@@ -399,6 +553,13 @@ void DocumentImmersive::presentImmersiveElement(Ref<HTMLModelElement>&& element,
             return protectedThis->handleImmersiveError(protectedElement.get(), "Failure to present the immersive element."_s, EmitErrorEvent::Yes, ExceptionCode::AbortError, WTF::move(completionHandler));
         }
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+        if (RefPtr imageElement = protectedThis->m_immersiveImageElement) {
+            protectedThis->m_immersiveImageElement = nullptr;
+            protectedThis->notifyImmersiveImageElementChanged(*imageElement);
+        }
+#endif
+
         if (protectedThis->isRequestOutdated(protectedElement.get(), ActiveRequest::Stage::Presentation))
             return completionHandler({ });
 
@@ -409,12 +570,78 @@ void DocumentImmersive::presentImmersiveElement(Ref<HTMLModelElement>&& element,
     });
 }
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+void DocumentImmersive::presentImmersiveImageElement(Ref<HTMLImageElement>&& element, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
+{
+    if (m_pendingExitImmersive) {
+        releaseDeferredRequest();
+
+        m_deferredRequestHandler = [weakElement = WeakPtr { element }, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] mutable {
+            RefPtr protectedThis = weakThis;
+            RefPtr protectedElement = weakElement;
+            if (!protectedThis || !protectedElement)
+                return completionHandler(Exception { ExceptionCode::AbortError });
+
+            if (auto error = protectedThis->imageRequestError(*protectedElement))
+                return protectedThis->handleImmersiveImageError(protectedElement.get(), error->message(), EmitErrorEvent::Yes, error->code(), WTF::move(completionHandler));
+
+            protectedThis->presentImmersiveImageElement(protectedElement.releaseNonNull(), WTF::move(completionHandler));
+        };
+        return;
+    }
+
+    RefPtr protectedPage = document().page();
+    if (!protectedPage)
+        return handleImmersiveImageError(element.ptr(), "Missing page."_s, EmitErrorEvent::Yes, ExceptionCode::AbortError, WTF::move(completionHandler));
+
+    m_pendingImmersiveImageElement = nullptr;
+    RefPtr oldElement = m_immersiveImageElement;
+    m_immersiveImageElement = element.get();
+
+    protectedPage->chrome().client().presentImmersiveImageElement(element.get(), [weakElement = WeakPtr { element }, weakOldElement = WeakPtr { oldElement }, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool success) mutable {
+        RefPtr protectedThis = weakThis;
+        RefPtr protectedElement = weakElement;
+
+        if (RefPtr protectedOldElement = weakOldElement; protectedThis && protectedOldElement && protectedOldElement != protectedElement)
+            protectedThis->notifyImmersiveImageElementChanged(*protectedOldElement);
+
+        if (!protectedThis || !protectedElement)
+            return completionHandler(Exception { ExceptionCode::AbortError });
+
+        if (!success) {
+            if (protectedThis->m_immersiveImageElement == protectedElement.get())
+                protectedThis->m_immersiveImageElement = nullptr;
+            return protectedThis->handleImmersiveImageError(protectedElement.get(), "Failure to present the immersive image."_s, EmitErrorEvent::Yes, ExceptionCode::AbortError, WTF::move(completionHandler));
+        }
+
+        if (protectedThis->m_immersiveImageElement != protectedElement.get())
+            return completionHandler({ });
+
+        if (RefPtr modelElement = protectedThis->m_immersiveElement) {
+            protectedThis->m_immersiveElement = nullptr;
+            modelElement->exitImmersivePresentation([] { });
+            protectedThis->updateElementIsImmersive(modelElement.get(), false);
+        }
+        protectedThis->notifyImmersiveImageElementChanged(*protectedElement);
+        completionHandler({ });
+    });
+}
+#endif
+
 void DocumentImmersive::updateElementIsImmersive(HTMLModelElement* element, bool isImmersive)
 {
     Style::PseudoClassChangeInvalidation styleInvalidation(*element, { { CSSSelector::PseudoClass::Immersive, isImmersive } });
     queueImmersiveEventForElement(DocumentImmersive::EventType::Change, *element);
     document().scheduleRenderingUpdate(RenderingUpdateStep::Immersive);
 }
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+void DocumentImmersive::notifyImmersiveImageElementChanged(HTMLImageElement& element)
+{
+    queueImmersiveEventForElement(EventType::Change, element);
+    document().scheduleRenderingUpdate(RenderingUpdateStep::Immersive);
+}
+#endif
 
 void DocumentImmersive::dismissClientImmersivePresentation(CompletionHandler<void()>&& completionHandler)
 {
@@ -462,6 +689,10 @@ void DocumentImmersive::clear()
 
     m_pendingImmersiveElement = nullptr;
     m_immersiveElement = nullptr;
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    m_immersiveImageElement = nullptr;
+    m_pendingImmersiveImageElement = nullptr;
+#endif
     m_pendingExitImmersive = false;
 
     releaseDeferredRequest();
@@ -472,6 +703,9 @@ void DocumentImmersive::didResumeFromBackForwardCache()
 {
     // The ImmersiveSpace was dismissed by the navigation, clean-up state.
     RefPtr previouslyImmersiveElement = m_immersiveElement;
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    RefPtr previouslyImmersiveImageElement = m_immersiveImageElement;
+#endif
 
     clear();
 
@@ -479,6 +713,11 @@ void DocumentImmersive::didResumeFromBackForwardCache()
         previouslyImmersiveElement->exitImmersivePresentation([] { });
         updateElementIsImmersive(previouslyImmersiveElement.get(), false);
     }
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    if (previouslyImmersiveImageElement)
+        notifyImmersiveImageElementChanged(*previouslyImmersiveImageElement);
+#endif
 }
 
 }

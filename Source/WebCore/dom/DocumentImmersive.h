@@ -37,6 +37,10 @@
 
 namespace WebCore {
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+class HTMLImageElement;
+#endif
+
 class DocumentImmersive final : public CanMakeWeakPtr<DocumentImmersive> {
     WTF_MAKE_TZONE_ALLOCATED(DocumentImmersive);
 public:
@@ -57,7 +61,14 @@ public:
 
     HTMLModelElement* immersiveElement() const;
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    Element* presentedImmersiveElement() const;
+#endif
+
     void requestImmersive(HTMLModelElement*, CompletionHandler<void(ExceptionOr<void>)>&&);
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    void requestImmersive(HTMLImageElement*, CompletionHandler<void(ExceptionOr<void>)>&&);
+#endif
     void exitImmersive(CompletionHandler<void(ExceptionOr<void>)>&&);
     WEBCORE_EXPORT void exitImmersiveIfNeeded(CompletionHandler<void()>&& = nullptr);
     void exitRemovedImmersiveElementIfNeeded(HTMLModelElement*, CompletionHandler<void()>&&);
@@ -101,6 +112,15 @@ private:
 
     enum class EmitErrorEvent : bool { No, Yes };
     void handleImmersiveError(HTMLModelElement*, const String& message, EmitErrorEvent, ExceptionCode, CompletionHandler<void(ExceptionOr<void>)>&&);
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData> m_immersiveImageElement;
+    WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData> m_pendingImmersiveImageElement;
+    std::optional<Exception> imageRequestError(HTMLImageElement&);
+    void handleImmersiveImageError(HTMLImageElement*, const String& message, EmitErrorEvent, ExceptionCode, CompletionHandler<void(ExceptionOr<void>)>&&);
+    void presentImmersiveImageElement(Ref<HTMLImageElement>&&, CompletionHandler<void(ExceptionOr<void>)>&&);
+    void notifyImmersiveImageElementChanged(HTMLImageElement&);
+#endif
 
     Deque<std::pair<EventType, GCReachableRef<Element>>> m_pendingEvents;
 };
