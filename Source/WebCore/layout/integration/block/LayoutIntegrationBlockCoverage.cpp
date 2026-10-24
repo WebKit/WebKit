@@ -56,7 +56,7 @@ enum class BlockAvoidanceReason : uint8_t {
     BlockFormattingContextIntegrationDisabled,
     NotABlockFormattingContextRoot,
     RootHasUnsupportedRenderer,
-    RootIsFlexOrGridItem,
+    RootIsAnonymousFlexOrGridItem,
     RootHasInlineContent,
     RootHasUnsupportedWritingMode,
     RootIsPaginated,
@@ -97,8 +97,9 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     // nor marquees, whose children fit their content (RenderBox::sizesLogicalWidthToFitContent).
     if (rootContainer.type() != RenderObject::Type::BlockFlow || rootContainer.isFieldset() || rootContainer.isHTMLMarquee())
         return BlockAvoidanceReason::RootHasUnsupportedRenderer;
-    if (rootContainer.isFlexItemIncludingDeprecated() || rootContainer.isGridItem())
-        return BlockAvoidanceReason::RootIsFlexOrGridItem;
+    // Percentage block sizes inside look through an anonymous block to the flex or grid container (RenderBox::skipContainingBlockForPercentHeightCalculation).
+    if ((rootContainer.isFlexItemIncludingDeprecated() || rootContainer.isGridItem()) && rootContainer.isAnonymous())
+        return BlockAvoidanceReason::RootIsAnonymousFlexOrGridItem;
     if (rootContainer.childrenInline())
         return BlockAvoidanceReason::RootHasInlineContent;
     // FIXME: Vertical writing modes, and horizontal-bt, whose inline content the inline formatting context places from the border and padding
