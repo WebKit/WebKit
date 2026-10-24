@@ -901,6 +901,14 @@ bool WebDriverService::findSessionOrCompleteWithError(JSON::Object& parameters, 
     return true;
 }
 
+void WebDriverService::discardSessionIfDisconnected()
+{
+    // The browser can go away without the session being deleted, for example when it crashes or
+    // when the user quits it. Such a session must not prevent creating a new one.
+    if (m_session && !m_session->isConnected())
+        m_session = nullptr;
+}
+
 RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object& capabilities) const
 {
     // §7.2 Processing Capabilities.
@@ -1143,6 +1151,7 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
     if (matchedCapabilitiesList.isEmpty())
         return;
 
+    discardSessionIfDisconnected();
     if (!m_session) {
         // Reverse the vector to always take last item.
         matchedCapabilitiesList.reverse();
@@ -1323,6 +1332,7 @@ void WebDriverService::status(RefPtr<JSON::Object>&&, Function<void (CommandResu
 {
     // §8.3 Status
     // https://w3c.github.io/webdriver/webdriver-spec.html#status
+    discardSessionIfDisconnected();
     auto body = JSON::Object::create();
     body->setBoolean("ready"_s, !m_session);
     body->setString("message"_s, m_session ? "A session already exists"_s : "No sessions"_s);
@@ -2877,6 +2887,7 @@ void WebDriverService::takeElementScreenshot(RefPtr<JSON::Object>&& parameters, 
 #if ENABLE(WEBDRIVER_BIDI)
 void WebDriverService::bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, Function<void(WebSocketMessageHandler::Message&&)>&& completionHandler)
 {
+    discardSessionIfDisconnected();
     auto result = JSON::Object::create();
     bool ready = !m_session;
     result->setBoolean("ready"_s, ready);
