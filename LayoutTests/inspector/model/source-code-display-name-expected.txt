@@ -1,0 +1,83 @@
+Tests for `WI.SourceCode.prototype.get displayName`.
+
+
+== Running test suite: SourceCode.DisplayName
+-- Running test case: SourceCode.DisplayName.UniqueNamesUnchanged
+"http://example.com/only.js" => "only.js"
+"http://example.com/other.js" => "other.js"
+"http://example.com/api.php?token=secret" => "api.php"
+
+-- Running test case: SourceCode.DisplayName.SameNameDifferentFolders
+"http://example.com/a/script.js" => "a/script.js"
+"http://example.com/b/script.js" => "b/script.js"
+"http://example.com/c/script.js" => "c/script.js"
+
+-- Running test case: SourceCode.DisplayName.SameGrandparentDirectory
+"http://example.com/a/c/x.txt" => "a/c/x.txt"
+"http://example.com/b/c/x.txt" => "b/c/x.txt"
+
+-- Running test case: SourceCode.DisplayName.ExtraDirectoryAfterSamePrefix
+"http://example.com/a/x.txt" => "a/x.txt"
+"http://example.com/a/b/x.txt" => "b/x.txt"
+"http://example.com/a/c/x.txt" => "c/x.txt"
+
+-- Running test case: SourceCode.DisplayName.DeeplyNestedCommonPathTrimmed
+"http://example.com/common/deep/a/file.js" => "a/file.js"
+"http://example.com/common/deep/b/file.js" => "b/file.js"
+
+-- Running test case: SourceCode.DisplayName.SameFolderDifferentQuery
+"http://example.com/runner.html" => "runner.html"
+"http://example.com/runner.html?id=1" => "runner.html?id=1"
+"http://example.com/runner.html?id=2" => "runner.html?id=2"
+
+-- Running test case: SourceCode.DisplayName.DifferentQueryNeedsNoFolder
+"http://example.com/a/index.js?v=1" => "index.js?v=1"
+"http://example.com/b/index.js?v=2" => "index.js?v=2"
+
+-- Running test case: SourceCode.DisplayName.DifferentHost
+"https://a.example.com/x/app.js" => "a.example.com/x/app.js"
+"https://b.example.com/x/app.js" => "b.example.com/x/app.js"
+
+-- Running test case: SourceCode.DisplayName.DifferentPort
+"http://localhost:8000/app.js" => "localhost:8000/app.js"
+"http://localhost:9000/app.js" => "localhost:9000/app.js"
+
+-- Running test case: SourceCode.DisplayName.OnlyCollidingNamesChange
+"http://example.com/a/shared.js" => "a/shared.js"
+"http://example.com/b/shared.js" => "b/shared.js"
+"http://example.com/unique.js" => "unique.js"
+
+-- Running test case: SourceCode.DisplayName.IdenticalURLsShareName
+"http://example.com/dir/dup.js" => "dir/dup.js"
+"http://example.com/dir/dup.js" => "dir/dup.js"
+"http://example.com/other/dup.js" => "other/dup.js"
+
+-- Running test case: SourceCode.DisplayName.EncodedSegmentsDecoded
+"http://example.com/a%20b/page.html" => "a b/page.html"
+"http://example.com/c/page.html" => "c/page.html"
+
+-- Running test case: SourceCode.DisplayName.TrailingSlashNotDuplicated
+"http://example.com/a/b/" => "a/b"
+"http://example.com/c/b/" => "c/b"
+
+-- Running test case: SourceCode.DisplayName.TrailingSlashWithQuery
+"http://example.com/a/b/?1" => "a/b?1"
+"http://example.com/c/b/?1" => "c/b?1"
+
+-- Running test case: SourceCode.DisplayName.DisplayNameChanged
+PASS: Should start bare while unique.
+PASS: The new source code should get an affix.
+PASS: DisplayNameChanged should fire on the existing source code when a colliding one appears.
+PASS: DisplayNameChanged should fire on the new source code when it collides with the existing source code.
+PASS: The existing source code should get an affix.
+PASS: DisplayNameChanged should not fire on the existing source code without a new collision.
+PASS: DisplayNameChanged should not fire on the new source code without a new collision.
+
+-- Running test case: SourceCode.DisplayName.Clear
+PASS: First source code should not have an affix before second source code.
+PASS: Second source code should have an affix after first source code.
+PASS: First source code should have an affix after second source code.
+PASS: First source code should not have an affix after clearing.
+PASS: Second source code should have an affix after clearing.
+PASS: First source code should have an affix after second source code.
+
