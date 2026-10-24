@@ -96,16 +96,8 @@ FloatRect FilterEffect::calculatePrimitiveSubregion(const Filter& filter, std::s
         primitiveSubregion = filter.filterRegion();
 
     // Clip the primitive subregion to the effect geometry.
-    if (geometry) {
-        if (auto x = geometry->x())
-            primitiveSubregion.setX(*x);
-        if (auto y = geometry->y())
-            primitiveSubregion.setY(*y);
-        if (auto width = geometry->width())
-            primitiveSubregion.setWidth(*width);
-        if (auto height = geometry->height())
-            primitiveSubregion.setHeight(*height);
-    }
+    if (geometry)
+        primitiveSubregion = geometry->primitiveSubregion(primitiveSubregion);
 
     return primitiveSubregion;
 }

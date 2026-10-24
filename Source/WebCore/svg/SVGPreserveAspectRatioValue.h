@@ -23,10 +23,6 @@
 #include <WebCore/SVGPropertyTraits.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace IPC {
-template<typename> struct ArgumentCoder;
-}
-
 namespace WebCore {
 
 class AffineTransform;
@@ -79,7 +75,6 @@ public:
     String valueAsString() const;
 
 private:
-    friend struct IPC::ArgumentCoder<SVGPreserveAspectRatioValue>;
     SVGPreserveAspectRatioType m_align { SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMIDYMID };
     SVGMeetOrSliceType m_meetOrSlice { SVGPreserveAspectRatioValue::SVG_MEETORSLICE_MEET };
 

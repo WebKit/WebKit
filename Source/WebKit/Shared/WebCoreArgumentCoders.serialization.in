@@ -2610,7 +2610,6 @@ header: <WebCore/FEComponentTransfer.h>
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEImage {
     WebCore::SourceImage sourceImage();
     WebCore::FloatRect sourceImageRect();
-    WebCore::SVGPreserveAspectRatioValue preserveAspectRatio();
 };
 
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEMerge {
@@ -2686,11 +2685,6 @@ header: <WebCore/SVGFilterExpression.h>
     unsigned index;
     unsigned level;
     std::optional<WebCore::FilterEffectGeometry> geometry;
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SVGPreserveAspectRatioValue {
-    WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioType m_align;
-    WebCore::SVGPreserveAspectRatioValue::SVGMeetOrSliceType m_meetOrSlice;
 };
 
 header: <WebCore/ModalContainerTypes.h>
@@ -6861,26 +6855,6 @@ using ProcessID = pid_t;
 
 using WebCore::IntDegrees = int32_t;
 using WebCore::PageOverlay::PageOverlayID = uint64_t
-
-[Nested] enum class WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioType : uint8_t {
-    SVG_PRESERVEASPECTRATIO_UNKNOWN,
-    SVG_PRESERVEASPECTRATIO_NONE,
-    SVG_PRESERVEASPECTRATIO_XMINYMIN,
-    SVG_PRESERVEASPECTRATIO_XMIDYMIN,
-    SVG_PRESERVEASPECTRATIO_XMAXYMIN,
-    SVG_PRESERVEASPECTRATIO_XMINYMID,
-    SVG_PRESERVEASPECTRATIO_XMIDYMID,
-    SVG_PRESERVEASPECTRATIO_XMAXYMID,
-    SVG_PRESERVEASPECTRATIO_XMINYMAX,
-    SVG_PRESERVEASPECTRATIO_XMIDYMAX,
-    SVG_PRESERVEASPECTRATIO_XMAXYMAX
-}
-
-[Nested] enum class WebCore::SVGPreserveAspectRatioValue::SVGMeetOrSliceType : uint8_t {
-    SVG_MEETORSLICE_UNKNOWN,
-    SVG_MEETORSLICE_MEET,
-    SVG_MEETORSLICE_SLICE
-}
 
 [WebKitPlatform] enum class WebCore::NotificationDirection : uint8_t {
     Auto,

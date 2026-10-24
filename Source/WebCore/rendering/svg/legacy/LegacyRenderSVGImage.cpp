@@ -48,10 +48,6 @@
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-#include <WebKitAdditions/AXCustomColorModeController.h>
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGImage);
@@ -190,33 +186,9 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
     auto destRect = placement.destination;
     auto srcRect = placement.source;
 
-    auto concreteObjectSize = ConcreteObjectSize::fixed(placement.imageRenderingRectangle.size());
-
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-    auto invertContent = [&] {
-        if (styleImage->drawsSVGImage())
-            return AXCustomColorModeController::shouldInvertSVGImage(*this, *styleImage);
-
-        return AXCustomColorModeController::shouldInvertContentImage(*this, destRect.size());
-    };
-#endif
-
-    ImageDrawingOptions options = {
-        imageOrientation(),
-        styleImage->interpolationQualityForImageDraw(paintInfo.context(), *this, concreteObjectSize, styleImage.get(), LayoutSize(destRect.size())),
-        settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-        invertContent() ? InvertContent::Yes : InvertContent::No,
-#endif
-        settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
-        IgnoreRootPreserveAspectRatio::Yes,
-        settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
-        paintInfo.paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
-        style().dynamicRangeLimit().toPlatformDynamicRangeLimit()
-    };
-
     auto& context = paintInfo.context();
-    styleImage->draw(context, *this, concreteObjectSize, destRect, srcRect, options);
+    auto options = calculateSVGImageDrawingOptions(*styleImage, *this, context, placement.imageRenderingRectangle.size(), destRect.size(), paintInfo.paintBehavior);
+    styleImage->draw(context, *this, ConcreteObjectSize::fixed(placement.imageRenderingRectangle.size()), destRect, srcRect, options);
 
     if (RefPtr cachedImage = imageResource().cachedImage(); cachedImage && !context.paintingDisabled())
         protect(document())->didPaintImage(imageElement(), cachedImage, destRect);

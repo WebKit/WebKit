@@ -35,6 +35,14 @@ namespace WebCore {
 class Filter;
 class FilterEffect;
 
+struct FilterEffectPlacement {
+    FloatRect primitiveSubregion;
+    FloatRect filterRegion;
+    FloatSize filterScale;
+
+    bool operator==(const FilterEffectPlacement&) const = default;
+};
+
 class SVGFilterPrimitiveStandardAttributes : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGFilterPrimitiveStandardAttributes);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFilterPrimitiveStandardAttributes);
@@ -60,7 +68,8 @@ public:
     // §16.3: this element's own configuration introduces taint (e.g. flood-color is currentColor).
     virtual bool taintsOrigin() const { return false; }
     virtual IntOutsets outsets(const FloatRect&, SVGUnitTypes::SVGUnitType) const { return { }; }
-    RefPtr<FilterEffect> filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext);
+    virtual bool effectDependsOnPlacement() const { return false; }
+    RefPtr<FilterEffect> filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext, const FilterEffectPlacement&);
 
     void primitiveAttributeChanged(const QualifiedName&);
     void markFilterEffectForRepaint();
@@ -80,6 +89,8 @@ protected:
     virtual bool setFilterEffectAttributeFromChild(FilterEffect&, const Element&, const QualifiedName&) { return false; }
     virtual RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const = 0;
 
+    const FilterEffectPlacement& effectPlacement() const LIFETIME_BOUND { return m_effectPlacement; }
+
     // §16.3: combine self-taint with input taint; also wires §16.4 in2-taint on FEDisplacementMap.
     void updateTaintsOrigin(FilterEffect&, const FilterEffectVector& inputs) const;
 
@@ -91,6 +102,7 @@ private:
     bool childShouldCreateRenderer(const Node&) const override { return false; }
 
     RefPtr<FilterEffect> m_effect;
+    FilterEffectPlacement m_effectPlacement;
 
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.

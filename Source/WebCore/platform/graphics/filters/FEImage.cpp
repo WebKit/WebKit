@@ -34,16 +34,15 @@
 
 namespace WebCore {
 
-Ref<FEImage> FEImage::create(SourceImage&& sourceImage, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue& preserveAspectRatio)
+Ref<FEImage> FEImage::create(SourceImage&& sourceImage, const FloatRect& sourceImageRect)
 {
-    return adoptRef(*new FEImage(WTF::move(sourceImage), sourceImageRect, preserveAspectRatio));
+    return adoptRef(*new FEImage(WTF::move(sourceImage), sourceImageRect));
 }
 
-FEImage::FEImage(SourceImage&& sourceImage, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue& preserveAspectRatio)
+FEImage::FEImage(SourceImage&& sourceImage, const FloatRect& sourceImageRect)
     : FilterEffect(Type::FEImage)
     , m_sourceImage(WTF::move(sourceImage))
     , m_sourceImageRect(sourceImageRect)
-    , m_preserveAspectRatio(preserveAspectRatio)
 {
 }
 
@@ -51,24 +50,12 @@ bool FEImage::operator==(const FEImage& other) const
 {
     return FilterEffect::operator==(other)
         && m_sourceImage == other.m_sourceImage
-        && m_sourceImageRect == other.m_sourceImageRect
-        && m_preserveAspectRatio == other.m_preserveAspectRatio;
+        && m_sourceImageRect == other.m_sourceImageRect;
 }
 
 FloatRect FEImage::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
-    if (m_sourceImage.nativeImageIfExists()) {
-        auto imageRect = primitiveSubregion;
-        auto srcRect = m_sourceImageRect;
-        m_preserveAspectRatio.transformRect(imageRect, srcRect);
-        return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
-    }
-
-    if (m_sourceImage.imageBufferIfExists())
-        return filter.maxEffectRect(primitiveSubregion);
-
-    ASSERT_NOT_REACHED();
-    return FloatRect();
+    return filter.maxEffectRect(primitiveSubregion);
 }
 
 OptionSet<FilterRenderingMode> FEImage::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
@@ -99,7 +86,9 @@ TextStream& FEImage::externalRepresentation(TextStream& ts, FilterRepresentation
     ts << indent << "[feImage"_s;
     FilterEffect::externalRepresentation(ts, representation);
 
-    ts << " image-size=\""_s << m_sourceImageRect.width() << 'x' << m_sourceImageRect.height() << '"';
+    if (!m_sourceImageRect.isEmpty())
+        ts << " image-size=\""_s << m_sourceImageRect.width() << 'x' << m_sourceImageRect.height() << '"';
+
     // FIXME: should this dump also object returned by FEImage::image() ?
 
     ts << "]\n"_s;

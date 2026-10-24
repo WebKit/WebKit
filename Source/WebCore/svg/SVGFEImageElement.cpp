@@ -28,16 +28,22 @@
 #include "ContainerNodeInlines.h"
 #include "DocumentResourceLoader.h"
 #include "FEImage.h"
+#include "GraphicsContext.h"
 #include "Image.h"
+#include "ImageBuffer.h"
 #include "LegacyRenderSVGResource.h"
+#include "LegacyRenderSVGResourceFEImage.h"
 #include "NativeImage.h"
 #include "RenderElementStyleInlines.h"
+#include "RenderImageResource.h"
 #include "RenderLayer.h"
 #include "RenderLayerInlines.h"
 #include "RenderLayerModelObject.h"
 #include "RenderObject.h"
+#include "RenderSVGResourceFEImage.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGImageIntrinsicSizing.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatioValue.h"
 #include "SVGRenderingContext.h"
@@ -85,6 +91,7 @@ void SVGFEImageElement::clearResourceReferences()
 {
     if (RefPtr cachedImage = std::exchange(m_cachedImage, nullptr))
         cachedImage->removeClient(*this);
+    updateImageResource();
 
     removeElementReference();
 }
@@ -100,6 +107,41 @@ void SVGFEImageElement::requestImageResource()
 
     if (RefPtr cachedImage = m_cachedImage)
         cachedImage->addClient(*this);
+    updateImageResource();
+}
+
+String SVGFEImageElement::imageSourceURL() const
+{
+    return href();
+}
+
+RenderPtr<RenderElement> SVGFEImageElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+{
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGResourceFEImage>(*this, WTF::move(style));
+
+    return createRenderer<LegacyRenderSVGResourceFEImage>(*this, WTF::move(style));
+}
+
+RenderImageResource* SVGFEImageElement::imageResource() const
+{
+    if (CheckedPtr renderer = dynamicDowncast<RenderSVGResourceFEImage>(this->renderer()))
+        return &renderer->imageResource();
+    if (CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGResourceFEImage>(this->renderer()))
+        return &renderer->imageResource();
+    return nullptr;
+}
+
+void SVGFEImageElement::updateImageResource()
+{
+    if (CheckedPtr imageResource = this->imageResource())
+        imageResource->setCachedImage(protect(m_cachedImage));
+}
+
+void SVGFEImageElement::didAttachRenderers()
+{
+    SVGFilterPrimitiveStandardAttributes::didAttachRenderers();
+    updateImageResource();
 }
 
 void SVGFEImageElement::buildPendingResource()
@@ -111,7 +153,10 @@ void SVGFEImageElement::buildPendingResource()
     Ref treeScopeForReferences = treeScopeForSVGReferences();
     auto target = SVGURIReference::targetElementFromIRIString(href(), treeScopeForReferences);
     if (!target.element) {
-        if (target.identifier.isEmpty())
+        // A fragment in another resource's URL, such as an SVG image's svgView(), does not name an element here.
+        Ref document = this->document();
+        bool referencesThisDocument = href().startsWith('#') || equalIgnoringFragmentIdentifier(document->encodingParseURL(href()), document->url());
+        if (target.identifier.isEmpty() || !referencesThisDocument)
             requestImageResource();
         else {
             treeScopeForReferences->addPendingSVGResource(target.identifier, *this);
@@ -137,6 +182,7 @@ void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
         InstanceInvalidationGuard guard(*this);
+        markFilterEffectForRebuild();
         updateSVGRendererForElementChange();
         return;
     }
@@ -262,26 +308,64 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     return { WTF::move(imageBuffer), imageRect };
 }
 
+RefPtr<FilterEffect> SVGFEImageElement::imageEffect(const GraphicsContext& destinationContext) const
+{
+    // With nothing of the image to show, the effect draws transparent black rather than failing the whole filter.
+    auto emptyEffect = [&] -> RefPtr<FilterEffect> {
+        RefPtr nothing = ImageBuffer::sinkIntoNativeImage(ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8));
+        if (!nothing)
+            return nullptr;
+        return FEImage::create({ nothing.releaseNonNull() }, { });
+    };
+
+    // An <feImage> without a renderer, such as one in a display: none subtree, has no image to show.
+    CheckedPtr renderer = this->renderer();
+    CheckedPtr imageResource = this->imageResource();
+    RefPtr styleImage = imageResource ? imageResource->styleImage() : nullptr;
+    if (!styleImage || !styleImage->canDraw(*renderer))
+        return emptyEffect();
+
+    auto& placement = effectPlacement();
+    auto& positioningRectangle = placement.primitiveSubregion;
+    auto imagePlacement = calculateSVGImagePlacement(*styleImage, *renderer, preserveAspectRatio(), positioningRectangle);
+
+    auto visibleRect = intersection(positioningRectangle, placement.filterRegion);
+    visibleRect.scale(placement.filterScale);
+    auto visiblePixels = enclosingIntRect(visibleRect);
+    if (visiblePixels.isEmpty())
+        return emptyEffect();
+
+    RefPtr imageBuffer = destinationContext.createImageBuffer(visiblePixels.size());
+    if (!imageBuffer)
+        return emptyEffect();
+
+    auto imageRenderingSize = imagePlacement.imageRenderingRectangle.size();
+    auto& context = imageBuffer->context();
+    context.translate(-toFloatSize(visiblePixels.location()));
+    context.scale(placement.filterScale);
+
+    auto options = calculateSVGImageDrawingOptions(*styleImage, *renderer, context, imageRenderingSize, imagePlacement.destination.size(), { });
+    styleImage->draw(context, *renderer, ConcreteObjectSize::fixed(imageRenderingSize), imagePlacement.destination, imagePlacement.source, options);
+
+    RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
+    if (!nativeImage)
+        return emptyEffect();
+
+    FloatRect imageRect { visiblePixels };
+    imageRect.scale(1 / placement.filterScale.width(), 1 / placement.filterScale.height());
+    return FEImage::create({ nativeImage.releaseNonNull() }, imageRect);
+}
+
 RefPtr<FilterEffect> SVGFEImageElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const
 {
-    if (RefPtr cachedImage = m_cachedImage) {
-        RefPtr image = cachedImage->image();
-        if (!image || !image->hasSomethingToDraw())
-            return nullptr;
-
-        RefPtr nativeImage = image->currentPreTransformedNativeImage(ConcreteObjectSize::fixed(image->size()));
-        if (!nativeImage)
-            return nullptr;
-
-        auto imageRect = FloatRect { { }, image->size() };
-        return FEImage::create({ nativeImage.releaseNonNull() }, imageRect, preserveAspectRatio());
-    }
+    if (m_cachedImage)
+        return imageEffect(destinationContext);
 
     auto [imageBuffer, imageRect] = imageBufferForEffect(destinationContext);
     if (!imageBuffer)
         return nullptr;
 
-    return FEImage::create({ imageBuffer.releaseNonNull() }, imageRect, preserveAspectRatio());
+    return FEImage::create({ imageBuffer.releaseNonNull() }, imageRect);
 }
 
 void SVGFEImageElement::addSubresourceAttributeURLs(OrderedHashSet<URL>& urls) const

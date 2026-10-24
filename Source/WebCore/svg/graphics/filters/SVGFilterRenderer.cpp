@@ -102,14 +102,22 @@ static std::optional<std::tuple<SVGFilterEffectGraph, FilterEffectGeometryMap>> 
         if (!inputs)
             return std::nullopt;
 
-        auto effect = effectElement->filterEffect(*inputs, destinationContext);
+        std::optional<FilterEffectGeometry> effectGeometry;
+        if (auto flags = effectElement->effectGeometryFlags())
+            effectGeometry = FilterEffectGeometry(SVGLengthContext::resolveRectangle(contextElement, effectElement.get(), filter.primitiveUnits(), filter.referenceBox()), flags);
+
+        FilterEffectPlacement placement;
+        if (effectElement->effectDependsOnPlacement()) {
+            ASSERT(inputs->isEmpty());
+            placement = { effectGeometry ? effectGeometry->primitiveSubregion(filter.filterRegion()) : filter.filterRegion(), filter.filterRegion(), filter.filterScale() };
+        }
+
+        auto effect = effectElement->filterEffect(*inputs, destinationContext, placement);
         if (!effect)
             return std::nullopt;
 
-        if (auto flags = effectElement->effectGeometryFlags()) {
-            auto effectBoundaries = SVGLengthContext::resolveRectangle(contextElement, effectElement.get(), filter.primitiveUnits(), filter.referenceBox());
-            effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
-        }
+        if (effectGeometry)
+            effectGeometryMap.add(*effect, *effectGeometry);
 
         if (effectElement->colorInterpolation() == ColorInterpolation::LinearRGB)
             effect->setOperatingColorSpace(ColorSpace::LinearSRGB());

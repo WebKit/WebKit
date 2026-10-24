@@ -3186,6 +3186,7 @@ rendering/svg/RenderSVGPath.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGRect.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGResourceClipper.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGResourceContainer.cpp @header:RenderStyleGetters
+rendering/svg/RenderSVGResourceFEImage.cpp
 rendering/svg/RenderSVGResourceFilter.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGResourceFilterPrimitive.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGResourceGradient.cpp @header:RenderStyleGetters
@@ -3232,6 +3233,7 @@ rendering/svg/legacy/LegacyRenderSVGRect.cpp @header:RenderStyleGetters
 rendering/svg/legacy/LegacyRenderSVGResource.cpp @header:RenderStyleGetters
 rendering/svg/legacy/LegacyRenderSVGResourceClipper.cpp @header:RenderStyleGetters
 rendering/svg/legacy/LegacyRenderSVGResourceContainer.cpp @header:RenderStyleGetters
+rendering/svg/legacy/LegacyRenderSVGResourceFEImage.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceFilter.cpp @header:RenderStyleGetters
 rendering/svg/legacy/LegacyRenderSVGResourceFilterPrimitive.cpp @header:RenderStyleGetters
 rendering/svg/legacy/LegacyRenderSVGResourceGradient.cpp @header:RenderStyleGetters

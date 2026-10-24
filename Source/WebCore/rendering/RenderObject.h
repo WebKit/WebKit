@@ -207,6 +207,7 @@ public:
         SVGPath,
         SVGRect,
         SVGResourceClipper,
+        SVGResourceFEImage,
         SVGResourceFilter,
         SVGResourceFilterPrimitive,
         SVGResourceLinearGradient,
@@ -227,6 +228,7 @@ public:
         LegacySVGPath,
         LegacySVGRect,
         LegacySVGResourceClipper,
+        LegacySVGResourceFEImage,
         LegacySVGResourceFilter,
         LegacySVGResourceFilterPrimitive,
         LegacySVGResourceLinearGradient,
@@ -586,8 +588,10 @@ public:
     bool isRenderSVGResourcePaintServer() const { return isRenderSVGResourceFilter() || isRenderSVGResourceGradient() || isRenderSVGResourcePattern(); }
     bool isRenderSVGResourcePattern() const { return type() == Type::SVGResourcePattern; }
     bool isRenderSVGResourceClipper() const { return type() == Type::SVGResourceClipper; }
-    bool isLegacyRenderSVGResourceFilterPrimitive() const { return type() == Type::LegacySVGResourceFilterPrimitive; }
-    bool isRenderSVGResourceFilterPrimitive() const { return type() == Type::SVGResourceFilterPrimitive; }
+    bool isLegacyRenderSVGResourceFEImage() const { return type() == Type::LegacySVGResourceFEImage; }
+    bool isRenderSVGResourceFEImage() const { return type() == Type::SVGResourceFEImage; }
+    bool isLegacyRenderSVGResourceFilterPrimitive() const { return type() == Type::LegacySVGResourceFilterPrimitive || type() == Type::LegacySVGResourceFEImage; }
+    bool isRenderSVGResourceFilterPrimitive() const { return type() == Type::SVGResourceFilterPrimitive || type() == Type::SVGResourceFEImage; }
     bool isRenderSVGResourceLinearGradient() const { return type() == Type::SVGResourceLinearGradient; }
     bool isRenderSVGResourceMarker() const { return type() == Type::SVGResourceMarker; }
     bool isRenderSVGResourceMasker() const { return type() == Type::SVGResourceMasker; }

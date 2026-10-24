@@ -50,20 +50,22 @@ bool FEImageCoreImageApplier::apply(const Filter& filter, std::span<const Ref<Fi
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
+    if (m_effect->sourceImageRect().isEmpty()) {
+        result.setCIImage([CIImage emptyImage]);
+        return true;
+    }
+
     auto& sourceImage = m_effect->sourceImage();
     auto primitiveSubregion = result.primitiveSubregion();
 
     RetainPtr<CIImage> image;
     if (RefPtr nativeImage = sourceImage.nativeImageIfExists()) {
-        auto imageRect = primitiveSubregion;
-        auto srcRect = m_effect->sourceImageRect();
-        m_effect->preserveAspectRatio().transformRect(imageRect, srcRect);
-        imageRect.scale(filter.filterScale());
+        auto imageRect = filter.scaledByFilterScale(m_effect->sourceImageRect());
 
         image = [CIImage imageWithCGImage:nativeImage->platformImage().get()];
-        image = [image imageByCroppingToRect:srcRect];
 
-        auto destRect = filter.flippedRectRelativeToAbsoluteEnclosingFilterRegion(imageRect);
+        FloatRect srcRect { { }, nativeImage->size() };
+        auto destRect = filter.flippedRectRelativeToAbsoluteEnclosingFilterRegion(roundedIntRect(imageRect));
 
         auto transform = makeMapBetweenRects(srcRect, destRect);
         image = [image imageByApplyingTransform:transform];

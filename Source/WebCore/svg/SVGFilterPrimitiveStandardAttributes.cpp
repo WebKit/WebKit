@@ -98,10 +98,12 @@ OptionSet<FilterEffectGeometry::Flags> SVGFilterPrimitiveStandardAttributes::eff
     return flags;
 }
 
-RefPtr<FilterEffect> SVGFilterPrimitiveStandardAttributes::filterEffect(const FilterEffectVector& inputs, const GraphicsContext& destinationContext)
+RefPtr<FilterEffect> SVGFilterPrimitiveStandardAttributes::filterEffect(const FilterEffectVector& inputs, const GraphicsContext& destinationContext, const FilterEffectPlacement& placement)
 {
-    if (!m_effect)
+    if (!m_effect || (effectDependsOnPlacement() && placement != m_effectPlacement)) {
+        m_effectPlacement = placement;
         m_effect = createFilterEffect(inputs, destinationContext);
+    }
     if (RefPtr effect = m_effect)
         updateTaintsOrigin(*effect, inputs);
     return m_effect;

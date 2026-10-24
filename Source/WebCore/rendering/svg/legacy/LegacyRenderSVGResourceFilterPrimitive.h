@@ -33,7 +33,7 @@ namespace WebCore {
 class FilterEffect;
 class SVGFilterPrimitiveStandardAttributes;
 
-class LegacyRenderSVGResourceFilterPrimitive final : public LegacyRenderSVGHiddenContainer {
+class LegacyRenderSVGResourceFilterPrimitive : public LegacyRenderSVGHiddenContainer {
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceFilterPrimitive);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilterPrimitive);
 public:
@@ -46,6 +46,9 @@ public:
 
     void markFilterEffectForRepaint(FilterEffect*);
     void markFilterEffectForRebuild();
+
+protected:
+    LegacyRenderSVGResourceFilterPrimitive(Type, SVGFilterPrimitiveStandardAttributes&, Style::ComputedStyle&&);
 
 private:
     void element() const = delete;

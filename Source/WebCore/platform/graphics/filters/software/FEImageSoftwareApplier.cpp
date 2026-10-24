@@ -42,17 +42,17 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, std::span<const Ref<Fil
     if (!resultImage)
         return false;
 
+    if (m_effect->sourceImageRect().isEmpty())
+        return true;
+
     auto& sourceImage = m_effect->sourceImage();
     auto primitiveSubregion = result.primitiveSubregion();
     auto& context = resultImage->context();
 
     if (RefPtr nativeImage = sourceImage.nativeImageIfExists()) {
-        auto imageRect = primitiveSubregion;
-        auto srcRect = m_effect->sourceImageRect();
-        m_effect->preserveAspectRatio().transformRect(imageRect, srcRect);
-        imageRect.scale(filter.filterScale());
-        imageRect = IntRect(imageRect) - result.absoluteImageRect().location();
-        context.drawNativeImage(*nativeImage, imageRect, srcRect);
+        auto imageRect = filter.scaledByFilterScale(m_effect->sourceImageRect());
+        imageRect.moveBy(-result.absoluteImageRect().location());
+        context.drawNativeImage(*nativeImage, roundedIntRect(imageRect), { { }, nativeImage->size() });
         return true;
     }
 

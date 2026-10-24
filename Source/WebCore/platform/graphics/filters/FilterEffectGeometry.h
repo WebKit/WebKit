@@ -79,6 +79,20 @@ public:
         return std::nullopt;
     }
 
+    // https://drafts.csswg.org/filter-effects/#FilterPrimitiveSubRegion
+    FloatRect primitiveSubregion(FloatRect defaultSubregion) const
+    {
+        if (auto x = this->x())
+            defaultSubregion.setX(*x);
+        if (auto y = this->y())
+            defaultSubregion.setY(*y);
+        if (auto width = this->width())
+            defaultSubregion.setWidth(*width);
+        if (auto height = this->height())
+            defaultSubregion.setHeight(*height);
+        return defaultSubregion;
+    }
+
 private:
     friend struct IPC::ArgumentCoder<FilterEffectGeometry>;
     FloatRect m_boundaries;

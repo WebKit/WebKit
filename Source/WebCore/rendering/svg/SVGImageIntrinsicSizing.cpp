@@ -21,14 +21,22 @@
 #include "SVGImageIntrinsicSizing.h"
 
 #include "CachedImage.h"
+#include "GraphicsContext.h"
 #include "Image.h"
+#include "ImageDrawingOptions.h"
 #include "RenderElement.h"
+#include "RenderObjectInlines.h"
 #include "SVGImageElement.h"
 #include "SVGImageElementSizing.h"
 #include "SVGLengthContext.h"
 #include "SVGPreserveAspectRatioValue.h"
+#include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleImage.h"
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
 
 namespace WebCore {
 
@@ -126,6 +134,32 @@ SVGImagePlacement calculateSVGImagePlacement(const Style::Image& styleImage, con
 
     auto destination = intersection(imageRenderingRectangle, positioningRectangle);
     return { imageRenderingRectangle, destination, { destination.location() - toFloatSize(imageRenderingRectangle.location()), destination.size() } };
+}
+
+ImageDrawingOptions calculateSVGImageDrawingOptions(const Style::Image& styleImage, RenderElement& renderer, GraphicsContext& context, const FloatSize& imageRenderingSize, const FloatSize& destinationSize, OptionSet<PaintBehavior> paintBehavior)
+{
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    auto invertContent = [&] {
+        if (styleImage.drawsSVGImage())
+            return AXCustomColorModeController::shouldInvertSVGImage(renderer, styleImage);
+        return AXCustomColorModeController::shouldInvertContentImage(renderer, destinationSize);
+    };
+#endif
+
+    Ref settings = renderer.settings();
+    return {
+        IgnoreRootPreserveAspectRatio::Yes,
+        renderer.imageOrientation(),
+        styleImage.interpolationQualityForImageDraw(context, renderer, ConcreteObjectSize::fixed(imageRenderingSize), &styleImage, LayoutSize(destinationSize)),
+        settings->imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
+        settings->showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
+        settings->hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
+        paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
+        renderer.style().dynamicRangeLimit().toPlatformDynamicRangeLimit(),
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        invertContent() ? InvertContent::Yes : InvertContent::No,
+#endif
+    };
 }
 
 } // namespace WebCore

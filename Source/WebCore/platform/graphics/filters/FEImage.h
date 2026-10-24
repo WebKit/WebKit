@@ -26,7 +26,6 @@
 #include <WebCore/FilterEffect.h>
 #include <WebCore/Image.h>
 #include <WebCore/ImageBuffer.h>
-#include <WebCore/SVGPreserveAspectRatioValue.h>
 #include <WebCore/SourceImage.h>
 
 namespace WebCore {
@@ -38,7 +37,7 @@ class FEImage final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEImage);
 public:
-    WEBCORE_EXPORT static Ref<FEImage> LEGACY_NODELETE create(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
+    WEBCORE_EXPORT static Ref<FEImage> LEGACY_NODELETE create(SourceImage&&, const FloatRect& sourceImageRect);
 
     bool operator==(const FEImage&) const;
 
@@ -46,10 +45,9 @@ public:
     void setImageSource(SourceImage&& sourceImage) { m_sourceImage = WTF::move(sourceImage); }
 
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
-    const SVGPreserveAspectRatioValue& preserveAspectRatio() const LIFETIME_BOUND { return m_preserveAspectRatio; }
 
 private:
-    FEImage(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
+    FEImage(SourceImage&&, const FloatRect& sourceImageRect);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEImage>(*this, other); }
 
@@ -68,7 +66,6 @@ private:
 
     SourceImage m_sourceImage;
     FloatRect m_sourceImageRect;
-    SVGPreserveAspectRatioValue m_preserveAspectRatio;
 };
 
 } // namespace WebCore

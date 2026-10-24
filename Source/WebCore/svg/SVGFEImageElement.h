@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class RenderImageResource;
+
 class SVGFEImageElement final : public SVGFilterPrimitiveStandardAttributes, public SVGURIReference, private CachedImageClient {
     WTF_MAKE_TZONE_ALLOCATED(SVGFEImageElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEImageElement);
@@ -60,12 +62,20 @@ private:
     void postConnectionSteps() override;
 
     std::tuple<RefPtr<ImageBuffer>, FloatRect> imageBufferForEffect(const GraphicsContext& destinationContext) const;
+    RefPtr<FilterEffect> imageEffect(const GraphicsContext& destinationContext) const;
 
     bool taintsOrigin() const final { return renderingTaintsOrigin(); }
+    bool effectDependsOnPlacement() const final { return !!m_cachedImage; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     void clearResourceReferences();
     void requestImageResource();
+
+    String imageSourceURL() const final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderImageResource* imageResource() const;
+    void updateImageResource();
+    void didAttachRenderers() final;
 
     void buildPendingResource() override;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
