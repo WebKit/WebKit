@@ -18,6 +18,7 @@ function mac_process_webcontent_entitlements()
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
         plistbuddy Add :com.apple.private.verified-jit bool YES
+        plistbuddy Add :com.apple.private.verified-jit-mode integer 1
         plistbuddy Add :com.apple.security.cs.single-jit bool YES
     fi
 
@@ -342,6 +343,7 @@ function maccatalyst_process_webcontent_entitlements()
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
 
     plistbuddy Add :com.apple.private.verified-jit bool YES
+    plistbuddy Add :com.apple.private.verified-jit-mode integer 1
     plistbuddy Add :com.apple.security.cs.single-jit bool YES
 
     maccatalyst_process_webcontent_shared_entitlements
