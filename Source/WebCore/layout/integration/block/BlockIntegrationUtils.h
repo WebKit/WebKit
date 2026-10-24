@@ -111,6 +111,9 @@ public:
     // laid out by its own formatting context through the render tree (RenderBox::layoutIfNeeded). Its position and margins are the block
     // formatting context's, which BlockLayout::updateRenderers writes.
     IndependentFormattingContextLayoutResult layoutIndependentFormattingContext(const RenderBox&, const Layout::ConstraintsForIndependentFormattingContext&);
+    // An out-of-flow replaced element, laid out by its own formatting context through the render tree once its containing block has its
+    // size: the border box size it gets. Its position and margins are the block formatting context's.
+    LayoutSize layoutOutOfFlowReplacedElement(const RenderBox&);
     // Whether the content box inline size, border or padding of a box differ from its last layout, which its renderer still has
     // (RenderBlock::recomputeLogicalWidth).
     static bool contentBoxInlineSizeChanged(const RenderBox&, LayoutUnit contentBoxInlineSize);
