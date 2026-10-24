@@ -241,6 +241,11 @@ MediaSource::~MediaSource()
 #endif
     detachFromElement();
 
+    m_activeSourceBuffers->replaceWith({ });
+    for (Ref sourceBuffer : m_sourceBuffers.get())
+        sourceBuffer->removedFromMediaSource();
+    m_sourceBuffers->replaceWith({ });
+
     ASSERT(isClosed());
 }
 
