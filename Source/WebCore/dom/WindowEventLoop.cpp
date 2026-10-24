@@ -128,40 +128,46 @@ MicrotaskQueue& WindowEventLoop::microtaskQueue()
 
 void WindowEventLoop::scheduleIdlePeriod()
 {
+    // The idle timer keeps rescheduling itself until all idle callbacks are serviced, so it only needs to be armed once.
+    if (m_isIdleTimerArmed)
+        return;
+    m_isIdleTimerArmed = true;
     m_idleTimer.startOneShot(0_s);
 }
 
-void WindowEventLoop::opportunisticallyRunIdleCallbacks(std::optional<MonotonicTime> deadline)
+void WindowEventLoop::opportunisticallyRunIdleCallbacks(std::optional<MonotonicTime> deadline, bool rescheduleIfStillPending)
 {
-    if (shouldEndIdlePeriod())
-        return; // No need to schedule m_idleTimer since there is a task. didReachTimeToRun() will call this function.
-
-    auto hasPendingIdleCallbacks = findMatchingAssociatedContext([&](ScriptExecutionContext& context) {
-        if (auto* document = dynamicDowncast<Document>(context))
-            return document->hasPendingIdleCallback();
-        return false;
-    });
-
-    if (!hasPendingIdleCallbacks)
+    if (!hasPendingIdleCallbacks()) {
+        m_idleTimer.stop();
+        m_isIdleTimerArmed = false;
         return;
+    }
+
+    if (shouldEndIdlePeriod()) {
+        if (rescheduleIfStillPending)
+            m_idleTimer.startOneShot(0_s);
+        return;
+    }
 
     auto now = MonotonicTime::now();
     if (auto scheduledWork = nextScheduledWorkTime()) {
         if (*scheduledWork < now + m_expectedIdleCallbackDuration) {
-            // No pending tasks. Schedule m_idleTimer after all DOM timers and rAF.
+            // No pending tasks. Reschedule after all DOM timers and rAF.
             auto timeToScheduledWork = *scheduledWork - now;
             if (timeToScheduledWork < 0_s) // Timer may have been scheduled to fire in the past.
                 timeToScheduledWork = 0_s;
             decayIdleCallbackDuration();
-            m_idleTimer.startOneShot(timeToScheduledWork + 1_ms);
+            if (rescheduleIfStillPending)
+                m_idleTimer.startOneShot(timeToScheduledWork + 1_ms);
             return;
         }
     }
 
     if (deadline && *deadline < now + m_expectedIdleCallbackDuration) {
-        // No pending tasks. Schedule m_idleTimer immediately.
+        // No pending tasks. Reschedule immediately.
         decayIdleCallbackDuration();
-        m_idleTimer.startOneShot(0_s);
+        if (rescheduleIfStillPending)
+            m_idleTimer.startOneShot(0_s);
         return;
     }
 
@@ -177,6 +183,25 @@ void WindowEventLoop::opportunisticallyRunIdleCallbacks(std::optional<MonotonicT
 
     auto duration = MonotonicTime::now() - m_lastIdlePeriodStartTime;
     m_expectedIdleCallbackDuration = (m_expectedIdleCallbackDuration + duration) / 2;
+
+    if (!hasPendingIdleCallbacks()) {
+        m_idleTimer.stop();
+        m_isIdleTimerArmed = false;
+        return;
+    }
+
+    // Callbacks that were requested during this idle period, or that it ran out of time for, run in a later one.
+    if (rescheduleIfStillPending)
+        m_idleTimer.startOneShot(0_s);
+}
+
+bool WindowEventLoop::hasPendingIdleCallbacks()
+{
+    return findMatchingAssociatedContext([](ScriptExecutionContext& context) {
+        if (auto* document = dynamicDowncast<Document>(context))
+            return document->hasPendingIdleCallback();
+        return false;
+    });
 }
 
 bool WindowEventLoop::shouldEndIdlePeriod()
@@ -253,15 +278,13 @@ std::optional<MonotonicTime> WindowEventLoop::nextRenderingTime() const
 void WindowEventLoop::didReachTimeToRun()
 {
     Ref protectedThis { *this }; // Executing tasks may remove the last reference to this WindowEventLoop.
-    auto deadline = ApproximateTime::now() + ThreadTimers::maxDurationOfFiringTimers;
-    run(commonVM(), deadline);
-    opportunisticallyRunIdleCallbacks(deadline.approximate<MonotonicTime>());
+    run(commonVM(), ApproximateTime::now() + ThreadTimers::maxDurationOfFiringTimers);
 }
 
 void WindowEventLoop::didFireIdleTimer()
 {
     Ref protectedThis { *this }; // Executing idle tasks may remove the last reference to this WindowEventLoop.
-    opportunisticallyRunIdleCallbacks();
+    opportunisticallyRunIdleCallbacks(std::nullopt, true);
 }
 
 void WindowEventLoop::queueMutationObserverCompoundMicrotask()
