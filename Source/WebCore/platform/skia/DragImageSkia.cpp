@@ -22,6 +22,7 @@
 #include "Element.h"
 #include "Image.h"
 #include "NativeImage.h"
+#include "SkiaUtilities.h"
 #include "TextFlags.h"
 #include "TextIndicator.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -58,18 +59,7 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     if (imageSize == scaledSize)
         return image;
 
-    auto imageInfo = SkImageInfo::Make(scaledSize.width(), scaledSize.height(), image->imageInfo().colorType(), image->imageInfo().alphaType());
-    SkBitmap bitmap;
-    bitmap.allocPixels(imageInfo);
-
-    SkPixmap pixmap;
-    if (!bitmap.peekPixels(&pixmap))
-        return nullptr;
-
-    if (!image->scalePixels(pixmap, SkSamplingOptions(SkCubicResampler::CatmullRom())))
-        return nullptr;
-
-    return SkImages::RasterFromBitmap(bitmap);
+    return SkiaUtilities::scaleImagePixels(image, scaledSize);
 }
 
 DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
