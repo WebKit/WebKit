@@ -125,6 +125,7 @@ void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDi
 {
     NSError *error = nil;
 #if PLATFORM(IOS) || PLATFORM(VISION)
+    stopTestDaemon(plist[@"Label"], [[plist[@"ProgramArguments"] firstObject] lastPathComponent]);
     auto xpcPlist = convertDictionaryToXPC(plist);
     xpc_dictionary_set_string(xpcPlist.get(), "_ManagedBy", "TestWebKitAPI");
     xpc_dictionary_set_bool(xpcPlist.get(), "RootedSimulatorPath", true);
@@ -142,6 +143,8 @@ void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDi
     EXPECT_FALSE(error);
 #endif
 }
+
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 static int pidOfFirstDaemonInstance(NSString *daemonExecutableName)
 {
@@ -176,7 +179,8 @@ static int pidOfFirstDaemonInstance(NSString *daemonExecutableName)
     return 0;
 }
 
-void killFirstInstanceOfDaemon(NSString *daemonExecutableName)
+// FIXME: <https://webkit.org/b/328547> Remove the job by label; in the simulator, ps lists host processes, so this can kill the host's daemon.
+static void killFirstInstanceOfDaemon(NSString *daemonExecutableName)
 {
     auto pid = pidOfFirstDaemonInstance(daemonExecutableName);
     if (!pid)
@@ -193,8 +197,6 @@ void killFirstInstanceOfDaemon(NSString *daemonExecutableName)
     [task waitUntilExit];
 }
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
-
 BOOL restartService(NSString *, NSString *daemonExecutableName)
 {
     killFirstInstanceOfDaemon(daemonExecutableName);
@@ -202,16 +204,37 @@ BOOL restartService(NSString *, NSString *daemonExecutableName)
     return YES;
 }
 
+BOOL stopTestDaemon(NSString *, NSString *daemonExecutableName)
+{
+    killFirstInstanceOfDaemon(daemonExecutableName);
+    return YES;
+}
+
 #else
 
-BOOL restartService(NSString *serviceName, NSString *)
+static BOOL runLaunchctl(NSArray<NSString *> *arguments)
 {
     RetainPtr task = adoptNS([[NSTask alloc] init]);
     [task setLaunchPath:@"/bin/launchctl"];
-    [task setArguments:@[@"kickstart", @"-k", @"-p", [NSString stringWithFormat:@"gui/%u/%@", geteuid(), serviceName]]];
+    [task setArguments:arguments];
     [task launch];
     [task waitUntilExit];
     return [task terminationStatus] == EXIT_SUCCESS;
+}
+
+static NSString *serviceTarget(NSString *serviceName)
+{
+    return [NSString stringWithFormat:@"gui/%u/%@", geteuid(), serviceName];
+}
+
+BOOL restartService(NSString *serviceName, NSString *)
+{
+    return runLaunchctl(@[@"kickstart", @"-k", @"-p", serviceTarget(serviceName)]);
+}
+
+BOOL stopTestDaemon(NSString *serviceName, NSString *)
+{
+    return runLaunchctl(@[@"bootout", serviceTarget(serviceName)]);
 }
 
 #endif
