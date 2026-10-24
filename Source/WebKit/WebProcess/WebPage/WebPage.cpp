@@ -11371,6 +11371,31 @@ void WebPage::takeSnapshotForTargetedElement(NodeIdentifier nodeID, ScriptExecut
     completion(bitmap->createHandle(SharedMemory::Protection::ReadOnly));
 }
 
+void WebPage::takeRemoteSnapshotForTargetedElement(NodeIdentifier nodeID, ScriptExecutionContextIdentifier documentID, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if ENABLE(GPU_PROCESS)
+    ASSERT(m_page->settings().remoteSnapshottingEnabled());
+    Ref callback = MainRunLoopSuccessCallbackAggregator::create(failRemoteSnapshotIfRootFails(snapshotIdentifier, WTF::move(completionHandler)));
+
+    bool painted = protect(m_page->elementTargetingController())->paintSnapshotIgnoringVisibilityAdjustment(nodeID, documentID, [&](LocalFrame& mainFrame, Element& element, const IntRect& elementRect) {
+        float scaleFactor = m_page->deviceScaleFactor() * (m_page->delegatesScaling() ? m_page->pageScaleFactor() : 1);
+        auto elementBitmapSize = calculateImageBufferBackendSize(elementRect.size(), scaleFactor);
+        recordRemoteSnapshot(snapshotIdentifier, mainFrame.frameID(), RemoteSnapshotRole::Root, RenderingMode::DisplayList, IntRect { { }, elementBitmapSize }, elementBitmapSize, callback.copyRef(), [&](GraphicsContext& context) {
+            context.applyDeviceScaleFactor(scaleFactor);
+            context.translate(-elementRect.location());
+            protect(mainFrame.view())->paintContentsForSnapshot(context, elementRect, &element, LocalFrameView::IncludeSelection, LocalFrameView::DocumentCoordinates);
+        });
+    });
+    if (!painted)
+        callback->failed();
+#else
+    UNUSED_PARAM(nodeID);
+    UNUSED_PARAM(documentID);
+    UNUSED_PARAM(snapshotIdentifier);
+    completionHandler(false);
+#endif
+}
+
 void WebPage::numberOfVisibilityAdjustmentRects(CompletionHandler<void(uint64_t)>&& completion)
 {
     RefPtr page = corePage();
