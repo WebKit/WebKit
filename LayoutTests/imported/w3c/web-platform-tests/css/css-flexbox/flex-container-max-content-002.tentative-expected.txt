@@ -77,11 +77,6 @@ PASS .flex 19
 PASS .flex 20
 PASS .flex 21
 PASS .flex 22
-FAIL .flex 23 assert_equals:
-<div class="flex min" style="flex-flow: column wrap" data-expected-width="180" data-expected-height="45">
-  <div data-expected-width="85" data-expected-height="35">X X</div>
-  <div data-expected-width="85" data-expected-height="35">X X</div>
-</div>
-width expected 180 but got 95
+PASS .flex 23
 PASS .flex 24
 

@@ -132,6 +132,10 @@ public:
     };
     static std::pair<LayoutUnit, LayoutUnit> minimumMaximumContentSize(const RenderFlexibleBox&, const Vector<IntrinsicWidthContribution>&);
 
+    using SizeList = Vector<LayoutUnit>;
+    // CSS Flexbox 9.9.2. Lays out the items.
+    LayoutUnit maximumContentSizeForMultilineColumn(FlexLayoutItems&, const SizeList& flexItemsMaxContentWidths);
+
 private:
     struct FlexBaseAndHypotheticalMainSize {
         LayoutUnit flexBase;
@@ -142,7 +146,6 @@ private:
     using FlexBaseAndHypotheticalMainSizeList = Vector<FlexBaseAndHypotheticalMainSize, 4>;
 
     using LineRanges = Vector<WTF::Range<size_t>>;
-    using SizeList = Vector<LayoutUnit>;
     using PositionList = Vector<LayoutPoint>;
     using LinesCrossSizeList = Vector<LayoutUnit>;
     using LinesCrossPositionList = Vector<LayoutUnit>;
