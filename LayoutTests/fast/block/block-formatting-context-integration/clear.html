@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 20px; }
+.box { height: 20px; margin: 10px 0; background: lightblue; }
+</style>
+<!-- Without floats, clear moves nothing and margins collapse as without it. -->
+<div class="root"><div class="box"></div><div class="box" style="clear: both"></div><div class="box" style="clear: left; margin-top: 30px"></div></div>
+<div class="root"><div style="margin-top: 20px"><div class="box" style="clear: right; margin-top: 15px"></div></div></div>
+<div class="root"><div class="box"></div><div style="clear: both; margin: 25px 0"></div><div class="box"></div></div>
+<div class="root"><div style="display: flow-root; clear: both; margin: 10px 0; background: lightblue">flow-root</div><div style="display: flex; clear: left; margin: 10px 0; background: lightblue"><div>flex</div></div></div>
+<div class="root">text<br clear="all">text</div>
+<div class="root"><div class="box"></div><div class="box" id="toggle"></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("toggle").style.clear = "both";
+</script>
