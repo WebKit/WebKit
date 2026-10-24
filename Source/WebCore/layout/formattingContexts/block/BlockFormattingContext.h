@@ -107,6 +107,7 @@ public:
 
 private:
     void handleBlockContainerStart(const RenderBox&);
+    void handleEmptyEditableContent(const RenderBox& blockContainer, ContainingBlockState&);
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
     void handleInlineContent(const RenderBox& blockContainer, ContainingBlockState& blockContainerState, const BlockLayoutState& inlineContentBlockLayoutState);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);

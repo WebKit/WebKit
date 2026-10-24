@@ -106,6 +106,20 @@ void BlockFormattingContext::handleBlockContainerStart(const RenderBox& blockCon
     if (blockContainerState.geometry.borderAndPaddingBefore())
         resolveBorderBoxLogicalTops(blockContainerState);
     m_blockLayoutState.containingBlockStates().append(WTF::move(blockContainerState));
+    if (!blockContainer.firstChild())
+        handleEmptyEditableContent(blockContainer, m_blockLayoutState.containingBlockStates().last());
+}
+
+// The content of an empty editable block container is as tall as a line, for the caret (RenderBlock::hasLineIfEmpty), and separates its margins
+// like a line box does (CSS 2.2 §8.3.1).
+void BlockFormattingContext::handleEmptyEditableContent(const RenderBox& blockContainer, ContainingBlockState& blockContainerState)
+{
+    auto contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(blockContainer);
+    if (!contentBlockSize)
+        return;
+    if (!blockContainerState.borderBoxLogicalTop)
+        resolveBorderBoxLogicalTops(blockContainerState);
+    m_blockLayoutState.marginCollapse().resetAdjoiningMargins(blockContainerState.contentBoxLogicalTop() + *contentBlockSize);
 }
 
 void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockContainer, BlockLayoutResult& result)
@@ -156,11 +170,12 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     auto blockLayoutState = BlockLayoutState { { } };
     if (!root || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*root))
         layoutIndependentFormattingContextThroughRenderTree(box, rootState);
+    else if (!root->firstChild())
+        handleEmptyEditableContent(box, rootState);
     else if (root->childrenInline()) {
         LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
         // A block container with only inline-level content establishes an inline formatting context for it (CSS Display 3).
-        if (root->firstChild())
-            handleInlineContent(box, rootState, blockLayoutState);
+        handleInlineContent(box, rootState, blockLayoutState);
     } else {
         LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
         auto horizontalConstraints = HorizontalConstraints { rootState.inlineRange.min(), rootState.inlineRange.size() };
@@ -286,7 +301,8 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
             result.boxes.appendVector(WTF::move(contentResult.boxes));
             result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
         }
-    }
+    } else if (auto contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(box))
+        intrinsicContentBlockSize = *contentBlockSize;
 
     auto blockAxis = outOfFlowGeometry.computeBlockAxisGeometry(intrinsicContentBlockSize);
     geometry.setContentBoxHeight(blockAxis.borderBoxSize - geometry.verticalBorderAndPadding());
