@@ -49,6 +49,8 @@ class HTTPRequestHandler
 #endif
 {
 public:
+    virtual ~HTTPRequestHandler() = default;
+
     struct Request {
         String method;
         String path;
