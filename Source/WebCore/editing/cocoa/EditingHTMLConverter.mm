@@ -135,25 +135,22 @@ static String preferredFilenameForElement(const HTMLImageElement& element)
 
 static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLImageElement& element)
 {
-    if (RefPtr cachedImage = element.cachedImage()) {
-        if (RefPtr sharedBuffer = cachedImage->resourceBuffer()) {
-            RetainPtr wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:sharedBuffer->makeContiguous()->createNSData().get()]);
-            [wrapper setPreferredFilename:preferredFilenameForElement(element).createNSString().get()];
-            return wrapper;
-        }
+    RefPtr cachedImage = element.cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred()) {
+        if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer()))
+            cachedImage = renderImage->cachedImage();
     }
 
-    CheckedPtr renderer = element.renderer();
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer)) {
-        RefPtr image = renderImage->cachedImage();
-        if (image && !image->errorOccurred()) {
-            RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(__bridge NSData *)protect(protect(image->image())->adapter().tiffRepresentation()).get()]);
-            [wrapper setPreferredFilename:@"image.tiff"];
-            return wrapper;
-        }
-    }
+    if (!cachedImage || cachedImage->errorOccurred())
+        return nil;
 
-    return nil;
+    RefPtr sharedBuffer = cachedImage->resourceBuffer();
+    if (!sharedBuffer)
+        return nil;
+
+    RetainPtr wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:sharedBuffer->makeContiguous()->createNSData().get()]);
+    [wrapper setPreferredFilename:preferredFilenameForElement(element).createNSString().get()];
+    return wrapper;
 }
 
 static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLAttachmentElement& element)

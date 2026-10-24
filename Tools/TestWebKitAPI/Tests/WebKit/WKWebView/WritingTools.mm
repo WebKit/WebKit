@@ -918,6 +918,33 @@ TEST(WritingTools, ProofreadingWithUntitledImageAttachment)
     EXPECT_WK_STREQ(@"sunset-in-cupertino-200px.png", [attachment fileWrapper].preferredFilename);
 }
 
+TEST(WritingTools, ProofreadingWithImageFromContentProperty)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    // The <img> has no image of its own, and shows one from its 'content' property.
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>Hello<img style='content: url(sunset-in-cupertino-200px.png)'></p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+    __block RetainPtr<NSAttributedString> attributedText;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+        attributedText = contexts.firstObject.attributedText;
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+
+    __block RetainPtr<NSData> attachmentData;
+    [attributedText enumerateAttribute:NSAttachmentAttributeName inRange:NSMakeRange(0, [attributedText length]) options:0 usingBlock:^(NSTextAttachment *attachment, NSRange, BOOL *) {
+        if (attachment)
+            attachmentData = attachment.fileWrapper.regularFileContents;
+    }];
+
+    RetainPtr pngData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"sunset-in-cupertino-200px" withExtension:@"png"]];
+    EXPECT_TRUE([attachmentData isEqualToData:pngData.get()]);
+}
+
 TEST(WritingTools, ProofreadingWithLinks)
 {
     RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
