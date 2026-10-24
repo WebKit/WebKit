@@ -226,6 +226,8 @@ public:
     static void forWebPagesWithOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, NOESCAPE const Function<void(WebPageProxy&)>&);
     void addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain&, LoadedWebArchive);
     const std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>& allowedFirstPartiesForCookiesData() const { return m_allowedFirstPartiesForCookies; }
+    bool hasCommittedWebArchive() const { return m_hasCommittedWebArchive; }
+    void setHasCommittedWebArchive() { m_hasCommittedWebArchive = true; }
 
     void initializeWebProcess(WebProcessCreationParameters&&);
 
@@ -970,6 +972,7 @@ private:
 
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_hasCommittedAnyMeaningfulProvisionalLoads { false }; // True if the process has committed a provisional load to a URL that was not about:*.
+    bool m_hasCommittedWebArchive { false };
     bool m_isPrewarmed;
     bool m_isPrintProcess { false };
     LockdownMode m_lockdownMode { LockdownMode::Disabled };

@@ -35,8 +35,10 @@
 #import "TestURLSchemeHandler.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/_WKArchiveConfiguration.h>
 #import <WebKit/_WKArchiveExclusionRule.h>
+#import <WebKit/_WKFeature.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -2357,6 +2359,62 @@ TEST(WebArchive, ArchiveWithConfigurationSavesOriginalURLs)
         if ([path hasPrefix:@"host_files/frame_"])
             EXPECT_WK_STREQ(originalURLs[path], "webarchivetest://host/frame/iframe.html");
     }
+}
+
+enum class LoadWithEphemeralStorage : bool { No, Yes };
+static void runReplaceStateAfterLoadRequestTest(LoadWithEphemeralStorage loadWithEphemeralStorage)
+{
+    NSDictionary *archive = @{
+        @"WebMainResource" : @{
+            @"WebResourceData" : [@"<script>history.replaceState(null, '', '?replaced')</script>" dataUsingEncoding:NSUTF8StringEncoding],
+            @"WebResourceFrameName" : @"",
+            @"WebResourceMIMEType" : @"text/html",
+            @"WebResourceTextEncodingName" : @"UTF-8",
+            @"WebResourceURL" : @"https://webkit.org/"
+        }
+    };
+    NSData *archiveData = [NSPropertyListSerialization dataWithPropertyList:archive format:NSPropertyListBinaryFormat_v1_0 options:0 error:nil];
+    // Use a unique path since tests may run in parallel.
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"ReplaceStateTest-%@.webarchive", NSUUID.UUID.UUIDString]];
+    EXPECT_TRUE([archiveData writeToFile:path atomically:YES]);
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        if ([feature.key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:loadWithEphemeralStorage == LoadWithEphemeralStorage::Yes forFeature:feature];
+    }
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    __block bool done = false;
+    __block bool webProcessTerminated = false;
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        done = true;
+    };
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        webProcessTerminated = true;
+        done = true;
+    };
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path isDirectory:NO]]];
+    Util::run(&done);
+    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+
+    EXPECT_FALSE(webProcessTerminated);
+    if (!webProcessTerminated)
+        EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"location.href"], "https://webkit.org/?replaced");
+}
+
+TEST(WebArchive, ReplaceStateAfterLoadRequest)
+{
+    runReplaceStateAfterLoadRequestTest(LoadWithEphemeralStorage::Yes);
+}
+
+// FIXME: Without ephemeral storage, the network process may terminate the web archive process when the archived
+// document asks whether cookies are enabled.
+TEST(WebArchive, DISABLED_ReplaceStateAfterLoadRequestWithoutEphemeralStorage)
+{
+    runReplaceStateAfterLoadRequestTest(LoadWithEphemeralStorage::No);
 }
 
 } // namespace TestWebKitAPI
