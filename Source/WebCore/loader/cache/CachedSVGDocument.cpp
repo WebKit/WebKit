@@ -31,7 +31,7 @@ namespace WebCore {
 
 CachedSVGDocument::CachedSVGDocument(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, const Settings& settings)
     : CachedResource(WTF::move(request), Type::SVGDocumentResource, sessionID, cookieJar)
-    , m_decoder(TextResourceDecoder::create("application/xml"_s))
+    , m_decoder(TextResourceDecoder::create(TextResourceDecoder::ContentType::XML))
     , m_settings(settings)
 {
 }
@@ -45,7 +45,7 @@ CachedSVGDocument::~CachedSVGDocument() = default;
 
 void CachedSVGDocument::setEncoding(const String& chs)
 {
-    m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    m_decoder->setEncoding(chs, TextResourceDecoder::EncodingSource::HTTPHeader);
 }
 
 ASCIILiteral CachedSVGDocument::encoding() const

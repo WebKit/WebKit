@@ -51,7 +51,7 @@ void InspectorThreadableLoaderClient::didReceiveResponse(ScriptExecutionContextI
         useDetector = true;
     }
 
-    m_decoder = TextResourceDecoder::create("text/plain"_s, textEncoding, useDetector);
+    m_decoder = TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, textEncoding, useDetector);
 }
 
 void InspectorThreadableLoaderClient::didReceiveData(const SharedBuffer& buffer)

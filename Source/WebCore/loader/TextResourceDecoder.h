@@ -34,21 +34,22 @@ class HTMLMetaCharsetParser;
 
 class TextResourceDecoder : public RefCounted<TextResourceDecoder> {
 public:
-    enum EncodingSource {
-        DefaultEncoding,
-        AutoDetectedEncoding,
-        EncodingFromXMLHeader,
-        EncodingFromMetaTag,
-        EncodingFromCSSCharset,
-        EncodingFromHTTPHeader,
-        UserChosenEncoding,
-        EncodingFromParentFrame
+    enum class EncodingSource : uint8_t {
+        Default,
+        AutoDetected,
+        XMLHeader,
+        MetaTag,
+        CSSCharset,
+        HTTPHeader,
+        UserChosen,
+        ParentFrame
     };
 
-    enum ContentType { PlainText, HTML, XML, CSS, JSON }; // PlainText and JSON only check for BOM.
+    enum class ContentType : uint8_t { PlainText, HTML, XML, CSS, JSON }; // PlainText and JSON only check for BOM.
 
-    WEBCORE_EXPORT static Ref<TextResourceDecoder> create(const String& mimeType, const PAL::TextEncoding& defaultEncoding = { }, bool usesEncodingDetector = false);
-    WEBCORE_EXPORT static Ref<TextResourceDecoder> LEGACY_NODELETE create(ContentType, const PAL::TextEncoding&, bool usesEncodingDetector);
+    WEBCORE_EXPORT static ContentType contentTypeForMIMEType(const String&);
+
+    WEBCORE_EXPORT static Ref<TextResourceDecoder> create(ContentType, const PAL::TextEncoding& defaultEncoding = { }, bool usesEncodingDetector = false);
     // https://encoding.spec.whatwg.org/#utf-8-decode
     static Ref<TextResourceDecoder> createUTF8();
     WEBCORE_EXPORT ~TextResourceDecoder();
@@ -77,7 +78,6 @@ private:
     TextResourceDecoder(ContentType, const PAL::TextEncoding&, bool usesEncodingDetector);
     TextResourceDecoder();
 
-    static ContentType determineContentType(const String& mimeType);
     static const PAL::TextEncoding& defaultEncoding(ContentType, const PAL::TextEncoding& defaultEncoding);
 
     size_t checkForBOM(std::span<const uint8_t>);
@@ -91,7 +91,7 @@ private:
     PAL::TextEncoding m_encoding;
     std::unique_ptr<PAL::TextCodec> m_codec;
     std::unique_ptr<HTMLMetaCharsetParser> m_charsetParser;
-    EncodingSource m_source { DefaultEncoding };
+    EncodingSource m_source { EncodingSource::Default };
     ASCIILiteral m_parentFrameAutoDetectedEncoding;
     Vector<uint8_t> m_buffer;
     bool m_checkedForBOM { false };
@@ -105,7 +105,7 @@ private:
 
 inline void TextResourceDecoder::setHintEncoding(const TextResourceDecoder* parentFrameDecoder)
 {
-    if (parentFrameDecoder && parentFrameDecoder->m_source == AutoDetectedEncoding)
+    if (parentFrameDecoder && parentFrameDecoder->m_source == EncodingSource::AutoDetected)
         m_parentFrameAutoDetectedEncoding = parentFrameDecoder->encoding().name();
 }
 

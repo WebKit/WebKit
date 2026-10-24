@@ -1044,23 +1044,23 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
 
     PAL::TextEncoding finalResponseCharset = this->finalResponseCharset();
     if (finalResponseCharset.isValid())
-        return TextResourceDecoder::create("text/plain"_s, finalResponseCharset);
+        return TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, finalResponseCharset);
 
     switch (responseType()) {
     case ResponseType::EmptyString:
         if (MIMETypeRegistry::isXMLMIMEType(responseMIMEType())) {
-            auto decoder = TextResourceDecoder::create("application/xml"_s);
+            auto decoder = TextResourceDecoder::create(TextResourceDecoder::ContentType::XML);
             // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.
             decoder->useLenientXMLDecoding();
             return decoder;
         }
         [[fallthrough]];
     case ResponseType::Text:
-        return TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding());
+        return TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, PAL::UTF8Encoding());
     case ResponseType::Document: {
         if (equalLettersIgnoringASCIICase(responseMIMEType(), "text/html"_s))
-            return TextResourceDecoder::create("text/html"_s, PAL::UTF8Encoding());
-        auto decoder = TextResourceDecoder::create("application/xml"_s);
+            return TextResourceDecoder::create(TextResourceDecoder::ContentType::HTML, PAL::UTF8Encoding());
+        auto decoder = TextResourceDecoder::create(TextResourceDecoder::ContentType::XML);
         // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.
         decoder->useLenientXMLDecoding();
         return decoder;
@@ -1071,7 +1071,7 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
         ASSERT_NOT_REACHED();
         break;
     }
-    return TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding());
+    return TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, PAL::UTF8Encoding());
 }
 
 void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)
