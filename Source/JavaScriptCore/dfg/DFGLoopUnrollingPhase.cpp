@@ -452,6 +452,8 @@ public:
                     if (node->op() != SetLocal || !data.isInductionVariable(node))
                         continue;
                     dataLogLnIf(Options::verboseLoopUnrolling(), "Induction variable ", data.inductionVariable->index(), " is updated at node ", node->index(), " at ", *body);
+                    if (node->child1().node() != data.update)
+                        return false;
                     ++updateCount;
                     // FIXME: Maybe we can extend this and do better here?
                     if (updateCount != 1)
