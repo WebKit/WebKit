@@ -176,6 +176,16 @@ macro(WEBKIT_OPTION_BEGIN)
         set(ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT ${_swift_features_default})
     endif ()
 
+    if (NOT DEFINED ENABLE_LIB_JSC_TOOLS_DEFAULT)
+        # Simulators and MacCatalyst is not supported for libJavaScriptCoreTools.
+        # FIXME: CMake does not currently support building for MacCatalyst. Exclude MacCatalyst too if support is added later.
+        if (APPLE AND NOT WEBKIT_SDK_IS_SIMULATOR)
+            set(ENABLE_LIB_JSC_TOOLS_DEFAULT ON)
+        else ()
+            set(ENABLE_LIB_JSC_TOOLS_DEFAULT OFF)
+        endif ()
+    endif ()
+
     # Annotating WTF's ref-counted base classes for Swift needs Swift 6.4 or newer;
     # older toolchains don't apply the annotation to derived classes. Cocoa ports
     # gate this in PlatformEnable.h on the SDK version instead.
@@ -253,6 +263,7 @@ macro(WEBKIT_OPTION_BEGIN)
     WEBKIT_OPTION_DEFINE(ENABLE_LAYOUT_TESTS "Toggle layout test support (DumpRenderTree/WebkitTestRunner)" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_LEGACY_CUSTOM_PROTOCOL_MANAGER "Toggle legacy protocol manager support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_LEGACY_ENCRYPTED_MEDIA "Toggle Legacy EME V2 support" PRIVATE OFF)
+    WEBKIT_OPTION_DEFINE(ENABLE_LIB_JSC_TOOLS "Toggle building JavaScriptCoreTools and the tools that use it (mya, testLibJSCTools)" PRIVATE ${ENABLE_LIB_JSC_TOOLS_DEFAULT})
     WEBKIT_OPTION_DEFINE(ENABLE_LLVM_PROFILE_GENERATION "Include LLVM's instrumentation to generate profiles for PGO" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_MALLOC_HEAP_BREAKDOWN "Whether to enable malloc heap breakdown." PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_MAC_GESTURE_EVENTS "Toggle macOS gesture events support" PRIVATE OFF)
