@@ -107,9 +107,9 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessSwapDisposition.h>
 #include <WebCore/ProcessWarming.h>
+#include <WebCore/QuirkTable.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RuntimeQuirkTable.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Site.h>
 #include <algorithm>

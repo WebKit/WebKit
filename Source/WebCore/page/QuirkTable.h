@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-struct RuntimeQuirk {
+struct Quirk {
     Vector<QuirkMatchPattern> matches;
     Vector<QuirkMatchPattern> embeddedMatches;
     Vector<QuirkMatchPattern> excludeMatches;
@@ -42,17 +42,17 @@ struct RuntimeQuirk {
     String fragmentContains;
     std::optional<URLEnvironment> environment;
 
-    Vector<RuntimeQuirkBehavior> behaviors;
+    Vector<QuirkBehavior> behaviors;
 
     WEBCORE_EXPORT bool appliesTo(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument) const;
     void apply(QuirksData&) const;
 
-    friend bool operator==(const RuntimeQuirk&, const RuntimeQuirk&) = default;
+    friend bool operator==(const Quirk&, const Quirk&) = default;
 };
 
 // The contents of QuirkTable.json, parsed at runtime; what quirkTable() and setQuirkTable() hold.
-struct RuntimeQuirkTable {
-    Vector<RuntimeQuirk> quirks;
+struct QuirkTable {
+    Vector<Quirk> quirks;
 };
 
 enum class QuirkTableParseErrorKind : uint8_t {
@@ -92,7 +92,7 @@ struct QuirkTableParseError {
 };
 
 struct QuirkTableParseResult {
-    RuntimeQuirkTable table;
+    QuirkTable table;
     Vector<QuirkTableParseError> errors;
 };
 
@@ -100,8 +100,8 @@ WEBCORE_EXPORT QuirkTableParseResult parseQuirkTable(StringView json);
 
 WEBCORE_EXPORT String loadQuirkTableJSON();
 
-WEBCORE_EXPORT const RuntimeQuirkTable& quirkTable();
+WEBCORE_EXPORT const QuirkTable& quirkTable();
 
-WEBCORE_EXPORT void setQuirkTable(RuntimeQuirkTable&&);
+WEBCORE_EXPORT void setQuirkTable(QuirkTable&&);
 
 } // namespace WebCore

@@ -28,16 +28,15 @@
 #include "config.h"
 #include "QuirkBehaviorDeclarations.h"
 
-#include "QuirkBehaviorDefinitions.h"
 #include <algorithm>
 #include <array>
 #include <ranges>
 
 namespace WebCore {
 
-static constexpr std::array<QuirkBehavior, static_cast<size_t>(QuirkBehaviorID::NumberOfIDs)> declarations { {
+static constexpr std::array<QuirkBehaviorDeclaration, static_cast<size_t>(QuirkBehaviorID::NumberOfIDs)> declarations { {
 <%- @behaviors.each do |behavior| -%>
-    QuirkBehaviors::<%= behavior.constantName %>,
+    <%= behavior.initializer %>,
 <%- end -%>
 } };
 
@@ -45,7 +44,7 @@ static_assert(std::ranges::all_of(std::views::iota(0uz, declarations.size()), []
     return static_cast<size_t>(declarations[index].id) == index;
 }), "declarations must be in QuirkBehaviorID order");
 
-const QuirkBehavior& quirkBehaviorDeclaration(QuirkBehaviorID id)
+const QuirkBehaviorDeclaration& quirkBehaviorDeclaration(QuirkBehaviorID id)
 {
     return declarations[static_cast<size_t>(id)];
 }

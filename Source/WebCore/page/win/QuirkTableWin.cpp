@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "RuntimeQuirkTable.h"
+#include "QuirkTable.h"
 
 #include "WebCoreBundleWin.h"
 #include <wtf/FileSystem.h>

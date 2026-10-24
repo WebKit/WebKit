@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "RuntimeQuirkTable.h"
+#include "QuirkTable.h"
 
 #include <gio/gio.h>
 #include <wtf/glib/GRefPtr.h>

@@ -3093,7 +3093,6 @@ list(APPEND WebCoreTestSupport_IDL_FILES ${WebCore_DERIVED_SOURCES_DIR}/Internal
 set(QUIRK_BEHAVIORS_TEMPLATES
     ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorDeclarations.cpp.erb
     ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorDeclarations.h.erb
-    ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorDefinitions.h.erb
     ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorID.h.erb
     ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorID.serialization.in.erb
     ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirksAccessors.cpp.erb
@@ -3101,7 +3100,6 @@ set(QUIRK_BEHAVIORS_TEMPLATES
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDeclarations.cpp
        ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDeclarations.h
-       ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDefinitions.h
        ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorID.h
        ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorID.serialization.in
        ${WebCore_DERIVED_SOURCES_DIR}/QuirksAccessors.cpp
@@ -3112,7 +3110,6 @@ add_custom_command(
     COMMAND_EXPAND_LISTS
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDeclarations.h)
-list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDefinitions.h)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorID.h)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/QuirksAccessors.h)
 

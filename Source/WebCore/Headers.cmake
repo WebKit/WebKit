@@ -1981,6 +1981,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/QuirkBehaviors.h
     page/QuirkMatchPattern.h
     page/QuirkSelectors.h
+    page/QuirkTable.h
     page/Quirks.h
     page/QuirksData.h
     page/RemoteDOMWindow.h
@@ -1990,7 +1991,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/RemoteFrameLayoutInfo.h
     page/RemoteFrameView.h
     page/RemoteUserInputEventData.h
-    page/RuntimeQuirkTable.h
     page/ScreenOrientationLockType.h
     page/ScreenOrientationType.h
     page/ScriptTrackingPrivacyCategory.h
@@ -3719,7 +3719,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/MathMLNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/Namespace.h
     ${WebCore_DERIVED_SOURCES_DIR}/NodeName.h
-    ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDefinitions.h
     ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorID.h
     ${WebCore_DERIVED_SOURCES_DIR}/QuirksAccessors.h
     ${WebCore_DERIVED_SOURCES_DIR}/SVGNames.h

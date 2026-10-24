@@ -32,7 +32,7 @@ from collections import Counter
 
 class QuirkTableValidator(object):
     """Validates a parsed QuirkTable.json against the files next to it.
-    This validator mirrors the runtime parser in RuntimeQuirkTable.cpp
+    This validator mirrors the runtime parser in QuirkTable.cpp
     """
 
     ROW_FIELDS = ('bugs', 'comment', 'matches', 'embeddedMatches', 'excludeMatches', 'queryContains', 'fragmentContains', 'environment', 'available', 'behaviors')

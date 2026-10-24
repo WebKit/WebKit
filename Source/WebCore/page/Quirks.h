@@ -201,14 +201,14 @@ private:
     mutable QuirkBitSet m_probedQuirks;
 
     template<typename Probe>
-    bool isBehaviorEnabledAfterProbing(const QuirkBehavior& quirk, NOESCAPE const Probe& probe) const
+    bool isBehaviorEnabledAfterProbing(QuirkBehaviorID id, NOESCAPE const Probe& probe) const
     {
-        auto index = static_cast<size_t>(quirk.id);
+        auto index = static_cast<size_t>(id);
         if (!m_probedQuirks.get(index)) {
             m_probedQuirks.set(index);
-            m_quirksData.setEnabled(quirk, probe());
+            m_quirksData.setEnabled(id, probe());
         }
-        return m_quirksData.isBehaviorEnabled(quirk.id);
+        return m_quirksData.isBehaviorEnabled(id);
     }
 
     bool m_needsConfigurableIndexedPropertiesQuirk { false };

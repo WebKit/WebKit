@@ -23,8 +23,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-# Generates QuirkBehaviorID, the build conditions, the QuirkBehaviors:: constants, their lookup by ID for the
-# runtime quirk table parser, and the QuirksAccessors base class of Quirks from QuirkBehaviors.yaml and
+# Generates QuirkBehaviorID, the build conditions, the declaration of each behavior (looked up by ID by the
+# quirk table parser), and the QuirksAccessors base class of Quirks from QuirkBehaviors.yaml and
 # QuirkBuildConditions.yaml.
 
 require "fileutils"

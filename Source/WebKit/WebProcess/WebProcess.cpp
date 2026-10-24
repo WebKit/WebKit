@@ -145,12 +145,12 @@
 #include <WebCore/PlatformMediaSession.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessWarming.h>
+#include <WebCore/QuirkTable.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/RemoteCommandListener.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/ResourceLoadStatistics.h>
-#include <WebCore/RuntimeQuirkTable.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>

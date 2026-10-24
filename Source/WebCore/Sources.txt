@@ -2362,7 +2362,7 @@ page/ResizeObservation.cpp @header:RenderStyleGetters @cost:5
 page/ResizeObserver.cpp
 page/ResourceUsageOverlay.cpp
 page/ResourceUsageThread.cpp
-page/RuntimeQuirkTable.cpp
+page/QuirkTable.cpp
 page/Screen.cpp
 page/ScreenOrientation.cpp
 page/ScriptTrackingPrivacyCategory.cpp

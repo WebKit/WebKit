@@ -7703,7 +7703,7 @@ header: <WebCore/ViewportSegments.h>
     Vector<WebCore::FloatRect> segmentRects;
 };
 
-webkit_platform_headers: <WebCore/QuirkMatchPattern.h> <WebCore/QuirksData.h> <WebCore/RuntimeQuirkTable.h>
+webkit_platform_headers: <WebCore/QuirkMatchPattern.h> <WebCore/QuirksData.h> <WebCore/QuirkTable.h>
 
 [WebKitPlatform] enum class WebCore::URLEnvironment : uint8_t {
     SmallScreen,
@@ -7716,7 +7716,7 @@ webkit_platform_headers: <WebCore/QuirkMatchPattern.h> <WebCore/QuirksData.h> <W
     [Validator='WebCore::QuirkMatchPattern::parse(*string)'] String string()
 };
 
-[CustomHeader, WebKitPlatform] struct WebCore::RuntimeQuirkBehavior {
+[CustomHeader, WebKitPlatform] struct WebCore::QuirkBehavior {
     [Validator='*id != WebCore::QuirkBehaviorID::NumberOfIDs'] WebCore::QuirkBehaviorID id;
     String script;
     String userAgent;
@@ -7727,16 +7727,16 @@ webkit_platform_headers: <WebCore/QuirkMatchPattern.h> <WebCore/QuirksData.h> <W
     Vector<WebCore::QuirkMatchPattern> secondaryURL;
 };
 
-[CustomHeader, WebKitPlatform] struct WebCore::RuntimeQuirk {
+[CustomHeader, WebKitPlatform] struct WebCore::Quirk {
     Vector<WebCore::QuirkMatchPattern> matches;
     Vector<WebCore::QuirkMatchPattern> embeddedMatches;
     Vector<WebCore::QuirkMatchPattern> excludeMatches;
     String queryContains;
     String fragmentContains;
     std::optional<WebCore::URLEnvironment> environment;
-    Vector<WebCore::RuntimeQuirkBehavior> behaviors;
+    Vector<WebCore::QuirkBehavior> behaviors;
 };
 
-[CustomHeader, WebKitPlatform] struct WebCore::RuntimeQuirkTable {
-    Vector<WebCore::RuntimeQuirk> quirks;
+[CustomHeader, WebKitPlatform] struct WebCore::QuirkTable {
+    Vector<WebCore::Quirk> quirks;
 };

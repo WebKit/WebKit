@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "RuntimeQuirkTable.h"
+#import "QuirkTable.h"
 
 #import <Foundation/Foundation.h>
 #import <wtf/NeverDestroyed.h>

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "RuntimeQuirkTable.h"
+#include "QuirkTable.h"
 
 #include "Logging.h"
 #include "QuirkBehaviorDeclarations.h"
@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-bool RuntimeQuirk::appliesTo(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument isTopDocument) const
+bool Quirk::appliesTo(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument isTopDocument) const
 {
     bool isEmbedded = !embeddedMatches.isEmpty();
     if (isEmbedded) {
@@ -66,7 +66,7 @@ bool RuntimeQuirk::appliesTo(const URLMatchContext& topContext, const URLMatchCo
     return !environment || evaluateURLEnvironment(*environment);
 }
 
-void RuntimeQuirk::apply(QuirksData& quirksData) const
+void Quirk::apply(QuirksData& quirksData) const
 {
     for (auto& behavior : behaviors)
         quirksData.addBehavior(behavior);
@@ -255,9 +255,9 @@ private:
 
     class Fields;
 
-    std::optional<RuntimeQuirk> parseRow(JSON::Value&, size_t index);
-    Vector<RuntimeQuirkBehavior> parseBehaviors(const JSON::Object& row, const ErrorLocation& rowLocation);
-    std::optional<RuntimeQuirkBehavior> parseBehavior(JSON::Value&, const ErrorLocation& rowLocation, size_t index);
+    std::optional<Quirk> parseRow(JSON::Value&, size_t index);
+    Vector<QuirkBehavior> parseBehaviors(const JSON::Object& row, const ErrorLocation& rowLocation);
+    std::optional<QuirkBehavior> parseBehavior(JSON::Value&, const ErrorLocation& rowLocation, size_t index);
 
     void reject(const ErrorLocation& location, QuirkTableParseErrorKind kind, String field = { }, String value = { })
     {
@@ -384,7 +384,7 @@ QuirkTableParseResult QuirkTableParser::parse(StringView json)
         return { { }, WTF::move(m_errors) };
     }
 
-    RuntimeQuirkTable table;
+    QuirkTable table;
     table.quirks.reserveInitialCapacity(rows->length());
     size_t index = 0;
     for (auto& row : *rows) {
@@ -395,7 +395,7 @@ QuirkTableParseResult QuirkTableParser::parse(StringView json)
     return { WTF::move(table), WTF::move(m_errors) };
 }
 
-std::optional<RuntimeQuirk> QuirkTableParser::parseRow(JSON::Value& value, size_t index)
+std::optional<Quirk> QuirkTableParser::parseRow(JSON::Value& value, size_t index)
 {
     ErrorLocation location;
     location.row = index;
@@ -417,7 +417,7 @@ std::optional<RuntimeQuirk> QuirkTableParser::parseRow(JSON::Value& value, size_
     fields.rejectUnknown(rowFields);
     fields.validateBugsAndComment();
 
-    RuntimeQuirk quirk;
+    Quirk quirk;
     quirk.matches = fields.patterns("matches"_s);
     quirk.embeddedMatches = fields.patterns("embeddedMatches"_s);
     quirk.excludeMatches = fields.patterns("excludeMatches"_s);
@@ -451,7 +451,7 @@ std::optional<RuntimeQuirk> QuirkTableParser::parseRow(JSON::Value& value, size_
     return quirk;
 }
 
-Vector<RuntimeQuirkBehavior> QuirkTableParser::parseBehaviors(const JSON::Object& row, const ErrorLocation& rowLocation)
+Vector<QuirkBehavior> QuirkTableParser::parseBehaviors(const JSON::Object& row, const ErrorLocation& rowLocation)
 {
     RefPtr values = row.getArray("behaviors"_s);
     if (!values || !values->length()) {
@@ -459,7 +459,7 @@ Vector<RuntimeQuirkBehavior> QuirkTableParser::parseBehaviors(const JSON::Object
         return { };
     }
 
-    Vector<RuntimeQuirkBehavior> behaviors;
+    Vector<QuirkBehavior> behaviors;
     behaviors.reserveInitialCapacity(values->length());
     QuirkBitSet seenIDs;
     for (auto [index, value] : WTF::indexedRange(*values)) {
@@ -480,7 +480,7 @@ Vector<RuntimeQuirkBehavior> QuirkTableParser::parseBehaviors(const JSON::Object
     return behaviors;
 }
 
-std::optional<RuntimeQuirkBehavior> QuirkTableParser::parseBehavior(JSON::Value& value, const ErrorLocation& rowLocation, size_t index)
+std::optional<QuirkBehavior> QuirkTableParser::parseBehavior(JSON::Value& value, const ErrorLocation& rowLocation, size_t index)
 {
     auto location = rowLocation;
     location.behavior = index;
@@ -518,7 +518,7 @@ std::optional<RuntimeQuirkBehavior> QuirkTableParser::parseBehavior(JSON::Value&
         fields.validatePresence(field, isSupported, isNeeded);
     }
 
-    RuntimeQuirkBehavior behavior {
+    QuirkBehavior behavior {
         .id = *id,
         .script = fields.string("script"_s),
         .userAgent = fields.string("userAgent"_s),
@@ -606,7 +606,7 @@ String QuirkTableParseError::description() const
     return builder.toString();
 }
 
-static RuntimeQuirkTable loadQuirkTable()
+static QuirkTable loadQuirkTable()
 {
     auto json = loadQuirkTableJSON();
     if (json.isNull()) {
@@ -631,14 +631,14 @@ public:
         return holder.get();
     }
 
-    const RuntimeQuirkTable& table()
+    const QuirkTable& table()
     {
         if (!m_table)
             m_table = loadQuirkTable();
         return *m_table;
     }
 
-    void install(RuntimeQuirkTable&& table)
+    void install(QuirkTable&& table)
     {
         m_table = WTF::move(table);
     }
@@ -648,15 +648,15 @@ private:
 
     QuirkTableHolder() = default;
 
-    std::optional<RuntimeQuirkTable> m_table;
+    std::optional<QuirkTable> m_table;
 };
 
-void setQuirkTable(RuntimeQuirkTable&& table)
+void setQuirkTable(QuirkTable&& table)
 {
     QuirkTableHolder::singleton().install(WTF::move(table));
 }
 
-const RuntimeQuirkTable& quirkTable()
+const QuirkTable& quirkTable()
 {
     return QuirkTableHolder::singleton().table();
 }

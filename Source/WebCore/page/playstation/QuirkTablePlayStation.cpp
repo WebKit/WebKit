@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
+#include "QuirkTable.h"
+
 #include "NotImplemented.h"
-#include "RuntimeQuirkTable.h"
 
 namespace WebCore {
 

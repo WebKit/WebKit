@@ -35,28 +35,6 @@
 
 namespace WebCore {
 
-struct RuntimeQuirkBehavior {
-    WEBCORE_EXPORT static RuntimeQuirkBehavior from(const QuirkBehavior&);
-
-    bool secondaryURLConditionMatches(const URLMatchContext& context) const
-    {
-        return secondaryURL.isEmpty() || anyPatternMatches(secondaryURL, context);
-    }
-
-    friend bool operator==(const RuntimeQuirkBehavior&, const RuntimeQuirkBehavior&) = default;
-
-    QuirkBehaviorID id;
-
-    String script;
-    String userAgent;
-    String chromeCompatibilityVersion;
-    Vector<String> cookieNames;
-
-    String elementSelector;
-    String documentSelector;
-    Vector<QuirkMatchPattern> secondaryURL;
-};
-
 class QuirksData {
 public:
     inline bool isBehaviorEnabled(const QuirkBehaviorID& id) const
@@ -74,14 +52,14 @@ public:
         return m_behaviorFlags == other.m_behaviorFlags;
     }
 
-    inline const Vector<RuntimeQuirkBehavior>& behaviors() const LIFETIME_BOUND
+    inline const Vector<QuirkBehavior>& behaviors() const LIFETIME_BOUND
     {
         return m_behaviors;
     }
 
-    inline Vector<RuntimeQuirkBehavior> behaviorsMatching(QuirkBehaviorID id) const
+    inline Vector<QuirkBehavior> behaviorsMatching(QuirkBehaviorID id) const
     {
-        return WTF::compactMap(m_behaviors, [&](const auto& behavior) -> std::optional<RuntimeQuirkBehavior> {
+        return WTF::compactMap(m_behaviors, [&](const auto& behavior) -> std::optional<QuirkBehavior> {
             if (behavior.id == id)
                 return behavior;
             return std::nullopt;
@@ -99,20 +77,15 @@ public:
         });
     }
 
-    inline void setEnabled(const QuirkBehavior& behavior, bool state)
+    inline void setEnabled(QuirkBehaviorID id, bool state)
     {
         if (state)
-            addBehavior(behavior);
+            addBehavior(QuirkBehavior { .id = id });
         else
-            removeBehaviorsMatching(behavior.id);
+            removeBehaviorsMatching(id);
     }
 
     inline void addBehavior(const QuirkBehavior& behavior)
-    {
-        addBehavior(RuntimeQuirkBehavior::from(behavior));
-    }
-
-    inline void addBehavior(const RuntimeQuirkBehavior& behavior)
     {
         m_behaviorFlags.set(static_cast<size_t>(behavior.id), true);
         if (!m_behaviors.contains(behavior))
@@ -133,7 +106,7 @@ public:
 
 private:
     QuirkBitSet m_behaviorFlags;
-    Vector<RuntimeQuirkBehavior> m_behaviors;
+    Vector<QuirkBehavior> m_behaviors;
 };
 
 } // namespace WebCore

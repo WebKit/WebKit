@@ -69,13 +69,12 @@
 #include "OrganizationStorageAccessPromptQuirk.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
-#include "QuirkBehaviorDefinitions.h"
+#include "QuirkTable.h"
 #include "QuirksData.h"
 #include "RegistrableDomain.h"
 #include "RenderView.h"
 #include "ResourceLoadObserver.h"
 #include "ResourceRequest.h"
-#include "RuntimeQuirkTable.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
 #include "SVGSVGElement.h"
@@ -120,38 +119,6 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Quirks);
-
-static Vector<QuirkMatchPattern> parseCompiledPatterns(URLPatternList patterns)
-{
-    auto literals = patterns.span();
-    return WTF::compactMap(literals, [](ASCIILiteral pattern) {
-        auto parsed = QuirkMatchPattern::parse(pattern);
-        ASSERT_WITH_MESSAGE(parsed, "Invalid pattern in a compiled quirk behavior: %s", pattern.characters());
-        return parsed;
-    });
-}
-
-RuntimeQuirkBehavior RuntimeQuirkBehavior::from(const QuirkBehavior& behavior)
-{
-    RuntimeQuirkBehavior result { };
-    result.id = behavior.id;
-    if (auto& parameters = behavior.parameters) {
-        result.script = parameters->script;
-        result.userAgent = parameters->userAgent;
-        result.chromeCompatibilityVersion = parameters->chromeCompatibilityVersion;
-        result.cookieNames = WTF::map(parameters->cookieNames, [](ASCIILiteral name) {
-            return String { name };
-        });
-    }
-
-    auto& conditions = behavior.conditions;
-    if (conditions.elementSelector)
-        result.elementSelector = *conditions.elementSelector;
-    if (conditions.documentSelector)
-        result.documentSelector = *conditions.documentSelector;
-    result.secondaryURL = parseCompiledPatterns(conditions.secondaryURL);
-    return result;
-}
 
 static QuirksData resolveSiteSpecificQuirks(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument documentIsTopDocument)
 {
@@ -210,9 +177,9 @@ static inline String LEGACY_NODELETE standardUserAgentWithApplicationNameIncludi
 #endif
 #endif
 
-static bool urlHasQuirk(const URL& url, const QuirkBehavior& quirk)
+static bool urlHasQuirk(const URL& url, QuirkBehaviorID id)
 {
-    return resolveTopURLQuirks(url).isBehaviorEnabled(quirk.id);
+    return resolveTopURLQuirks(url).isBehaviorEnabled(id);
 }
 
 Quirks::Quirks(Document& document)
@@ -752,7 +719,7 @@ bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView 
 {
     if (protocol != "msteams"_s)
         return false;
-    return urlHasQuirk(requesterOrigin.toURL(), QuirkBehaviors::shouldAllowMSTeamsProtocolWithoutUserGestureQuirk);
+    return urlHasQuirk(requesterOrigin.toURL(), QuirkBehaviorID::ShouldAllowMSTeamsProtocolWithoutUserGestureQuirk);
 }
 
 // play.hbomax.com https://bugs.webkit.org/show_bug.cgi?id=244737
@@ -834,7 +801,7 @@ bool Quirks::needsDisableDOMPasteAccessQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    return isBehaviorEnabledAfterProbing(QuirkBehaviors::needsDisableDOMPasteAccessQuirk, [&] {
+    return isBehaviorEnabledAfterProbing(QuirkBehaviorID::NeedsDisableDOMPasteAccessQuirk, [&] {
         RefPtr document = m_document.get();
         if (!document)
             return false;
@@ -888,7 +855,7 @@ bool Quirks::needsPartitionedCookies(const ResourceRequest& request)
 {
     if (request.isTopSite())
         return false;
-    return urlHasQuirk(request.url(), QuirkBehaviors::needsPartitionedCookiesQuirk);
+    return urlHasQuirk(request.url(), QuirkBehaviorID::NeedsPartitionedCookiesQuirk);
 }
 
 // m365.cloud.microsoft rdar://157794706
@@ -1315,20 +1282,20 @@ void Quirks::determineRelevantQuirks()
     static const bool needsResettingTransitionCancelsRunningTransitionQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ResettingTransitionCancelsRunningTransitionQuirk) && WTF::IOSApplication::isDOFUSTouch();
     static const bool shouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoMediaLayerTeardownOnPageVisibilityChangeQuirk) && WTF::IOSApplication::isMoonPlayer();
 
-    m_quirksData.setEnabled(QuirkBehaviors::shouldDisableLazyIframeLoadingQuirk, shouldDisableLazyIframeLoadingQuirk);
+    m_quirksData.setEnabled(QuirkBehaviorID::ShouldDisableLazyIframeLoadingQuirk, shouldDisableLazyIframeLoadingQuirk);
 
     // DOFUS Touch app (rdar://112679186)
-    m_quirksData.setEnabled(QuirkBehaviors::needsResettingTransitionCancelsRunningTransitionQuirk, needsResettingTransitionCancelsRunningTransitionQuirk);
+    m_quirksData.setEnabled(QuirkBehaviorID::NeedsResettingTransitionCancelsRunningTransitionQuirk, needsResettingTransitionCancelsRunningTransitionQuirk);
 
     // Moon Player app (rdar://162452658)
-    m_quirksData.setEnabled(QuirkBehaviors::shouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk, shouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk);
+    m_quirksData.setEnabled(QuirkBehaviorID::ShouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk, shouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk);
 #endif
 
 #if PLATFORM(MAC)
     static const bool shouldDisablePushStateFilePathRestrictions = WTF::MacApplication::isMimeoPhotoProject();
 
     // Push state file path restrictions break Mimeo Photo Plugin (rdar://112445672).
-    m_quirksData.setEnabled(QuirkBehaviors::shouldDisablePushStateFilePathRestrictions, shouldDisablePushStateFilePathRestrictions);
+    m_quirksData.setEnabled(QuirkBehaviorID::ShouldDisablePushStateFilePathRestrictions, shouldDisablePushStateFilePathRestrictions);
 #endif
 
     auto quirksURL = topDocumentURL();
@@ -1340,11 +1307,11 @@ void Quirks::determineRelevantQuirks()
 
 #if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
     // rdar://133423460
-    m_quirksData.setEnabled(QuirkBehaviors::shouldFlipScreenDimensionsQuirk, shouldFlipScreenDimensionsInternal(quirksURL));
+    m_quirksData.setEnabled(QuirkBehaviorID::ShouldFlipScreenDimensionsQuirk, shouldFlipScreenDimensionsInternal(quirksURL));
 #endif
 
     // rdar://133423460
-    m_quirksData.setEnabled(QuirkBehaviors::shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk, shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(quirksURL));
+    m_quirksData.setEnabled(QuirkBehaviorID::ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk, shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(quirksURL));
 
 #if PLATFORM(IOS)
     // Use the opt-in Document tracks while parsing and freezes afterwards, rather than the live
@@ -1356,7 +1323,7 @@ void Quirks::determineRelevantQuirks()
     // platform actually reports, so for a subframe this is a declaration of intent rather than a
     // description of the platform state.
     if (PAL::currentUserInterfaceIdiomIsSmallScreen())
-        m_quirksData.setEnabled(QuirkBehaviors::shouldDisableElementFullscreenQuirk, document->safeAreaInsetOptIn() == Document::SafeAreaInsetOptIn::NotOptedIn);
+        m_quirksData.setEnabled(QuirkBehaviorID::ShouldDisableElementFullscreenQuirk, document->safeAreaInsetOptIn() == Document::SafeAreaInsetOptIn::NotOptedIn);
 #endif
 }
 
