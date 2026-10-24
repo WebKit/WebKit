@@ -85,6 +85,7 @@ WEBCORE_EXPORT Vector<Ref<SharedBuffer>> getKeyIDs(CMFormatDescriptionRef);
 WEBCORE_EXPORT FourCC LEGACY_NODELETE computeBoxType(FourCC);
 
 WEBCORE_EXPORT std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLayoutTag(UInt32);
+WEBCORE_EXPORT std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLabels(std::span<const AudioChannelLabel>);
 // Retrieve channel layout name string for debugging.
 WEBCORE_EXPORT String channelLayoutDescription(UInt32);
 

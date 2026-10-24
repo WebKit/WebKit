@@ -27,6 +27,7 @@
 
 #if USE(AVFOUNDATION)
 
+#include "AudioUtilitiesCocoa.h"
 #include "CAAudioStreamDescription.h"
 #include "CMUtilities.h"
 #include "Logging.h"
@@ -265,6 +266,9 @@ OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescriptio
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter getting kAudioConverterCurrentOutputStreamDescription failed with %d", static_cast<int>(error));
         return error;
     }
+
+    if (isPCM() && m_options.useWebAudioChannelOrder && m_sourceFormat.mChannelsPerFrame == m_destinationFormat.mChannelsPerFrame)
+        setWebAudioChannelOrderIfNeeded(m_converter, audioFormatListItem->mChannelLayoutTag, m_destinationFormat.mChannelsPerFrame, ChannelReorderPolicy::All);
 
     if (!isPCM()) {
         bool shouldSetDefaultOutputBitRate = true;

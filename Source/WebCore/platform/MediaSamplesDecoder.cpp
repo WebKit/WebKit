@@ -89,7 +89,7 @@ static std::optional<AudioDecoderConfiguration> audioDecoderConfiguration(const 
     auto codecName = info.codecName();
 
     auto configuration = [&](String&& codec, Vector<uint8_t>&& description = { }) {
-        return AudioDecoderConfiguration { WTF::move(codec), { .description = WTF::move(description), .sampleRate = info.rate(), .numberOfChannels = info.channels() } };
+        return AudioDecoderConfiguration { WTF::move(codec), { .description = WTF::move(description), .sampleRate = info.rate(), .numberOfChannels = info.channels(), .useWebAudioChannelOrder = false } };
     };
 
     if (codecName == opusCodecName) {
