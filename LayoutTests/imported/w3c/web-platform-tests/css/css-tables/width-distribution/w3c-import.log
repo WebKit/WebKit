@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/WEB_FEATURES.yml
@@ -26,5 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/distribution-algo-min-content-percent-guess.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/distribution-algo-min-content-specified-guess.1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/distribution-algo-min-content-specified-guess.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/td-max-width-auto-layout.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/td-min-width-auto-layout.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/td-with-subpixel-padding-vertical-rl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/td-with-subpixel-padding.html
