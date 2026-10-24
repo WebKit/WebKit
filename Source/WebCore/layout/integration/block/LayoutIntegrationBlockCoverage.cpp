@@ -310,9 +310,14 @@ static bool isLaidOutByBlockFormattingContext(const RenderElement& outOfFlowBox,
 
 static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const RenderBox& outOfFlowBox)
 {
-    // Block containers only, which establish a block formatting context for their content.
-    if (outOfFlowBox.type() != RenderObject::Type::BlockFlow)
+    // Block containers, which establish a block formatting context for their content, and replaced elements, whose own formatting context
+    // sizes them (BlockFormattingContext::layoutOutOfFlowReplacedElement).
+    auto isReplaced = outOfFlowBox.isRenderReplaced() || outOfFlowBox.isRenderOrLegacyRenderSVGRoot();
+    if (outOfFlowBox.type() != RenderObject::Type::BlockFlow && !isReplaced)
         return BlockAvoidanceReason::ContentHasOutOfFlowNonBlockContainer;
+    // FIXME: An orthogonal replaced element, whose own formatting context gives its size in its writing mode, not in its containing block's.
+    if (CheckedPtr containingBlock = outOfFlowBox.containingBlock(); isReplaced && containingBlock && outOfFlowBox.writingMode().isOrthogonal(containingBlock->writingMode()))
+        return BlockAvoidanceReason::ContentHasOrthogonalFlow;
     CheckedRef style = outOfFlowBox.style();
     // FIXME: Anchor positioning, position-area and position-try fallbacks, and alignment other than normal (css-position-3 §4.5).
     if (Style::AnchorPositionEvaluator::isAnchorPositioned(style.get()) || !style->positionTryFallbacks().isNone())
@@ -326,6 +331,9 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     // A scroll container with a definite size is a layout boundary, which the render tree path lays out on its own (RenderObject::markContainingBlocksForLayout).
     if (outOfFlowBox.hasNonVisibleOverflow())
         return BlockAvoidanceReason::ContentHasOutOfFlowScrollContainer;
+    // Its own formatting context sizes a replaced element, from its natural size and aspect ratio.
+    if (isReplaced)
+        return { };
     // FIXME: The sizing keywords and calc-size() (css-sizing-3 §3.2); lengths, percentages and calc() otherwise.
     auto isSupportedSize = [](auto& size) {
         return size.isSpecified() && !size.isCalcSize();
@@ -419,6 +427,9 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
             return { };
         if (auto reason = outOfFlowBoxAvoidanceReason(downcast<RenderBox>(renderer)))
             return reason;
+        // A replaced element has no block container checks to pass.
+        if (renderer.isRenderReplaced() || renderer.isRenderOrLegacyRenderSVGRoot())
+            return { };
     } else if (renderer.isInline())
         return inlineContentAvoidanceReason(renderer, rootContainer);
     // Block boxes only: not list items, replaced elements, tables, flex or grid containers or form controls.
@@ -520,7 +531,8 @@ static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const Rend
         }
         auto isOutOfFlowBox = renderer && renderer->isOutOfFlowPositioned();
         // The content of an atomic inline-level box is not part of it either.
-        auto skipsContent = (isOutOfFlowBox && !isLaidOutByBlockFormattingContext(*renderer, rootContainer)) || laidOutThroughRenderTree || isAtomicInlineLevelBox(*descendant);
+        auto skipsContent = (isOutOfFlowBox && !isLaidOutByBlockFormattingContext(*renderer, rootContainer)) || laidOutThroughRenderTree || isAtomicInlineLevelBox(*descendant)
+            || descendant->isRenderReplaced();
         descendant = skipsContent ? descendant->nextInPreOrderAfterChildren(&rootContainer) : descendant->nextInPreOrder(&rootContainer);
     }
     return { };
