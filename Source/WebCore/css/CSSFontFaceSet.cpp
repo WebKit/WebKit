@@ -433,10 +433,11 @@ ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPrei
 
     HashSet<CSSFontFace*> resultConstituents;
     auto request = computeFontSelectionRequest(*font);
+    auto variantCaps = font->variantCaps == CSSValueID::SmallCaps ? FontVariantCaps::Small : FontVariantCaps::Normal;
     for (auto codePoint : codePointsFromString(string)) {
         bool found = false;
         for (auto& family : familyOrder) {
-            RefPtr faces = fontFace(request, family);
+            RefPtr faces = fontFace(request, variantCaps, family);
             if (!faces)
                 continue;
             for (auto& constituentFace : faces->constituentFaces()) {
@@ -472,14 +473,14 @@ ExceptionOr<bool> CSSFontFaceSet::check(ScriptExecutionContext& context, const S
     return true;
 }
 
-CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, const AtomString& family)
+CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, FontVariantCaps variantCaps, const AtomString& family)
 {
     auto iterator = m_facesLookupTable.find(family);
     if (iterator == m_facesLookupTable.end())
         return nullptr;
     auto& familyFontFaces = iterator->value;
 
-    auto& segmentedFontFaceCache = m_cache.add(family, FontSelectionHashMap()).iterator->value;
+    auto& segmentedFontFaceCache = m_cache.add(family, SegmentedFontFaceCaches { }).iterator->value.forVariantCaps(variantCaps);
 
     return segmentedFontFaceCache.ensure(request, [&] {
         Ref face = CSSSegmentedFontFace::create();
@@ -488,6 +489,8 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
         for (int i = familyFontFaces.size() - 1; i >= 0; --i) {
             Ref candidate = familyFontFaces[i];
             if (candidate->status() == CSSFontFace::Status::Failure)
+                continue;
+            if (!candidate->supportsSVGVariantCaps(variantCaps))
                 continue;
             candidateFontFaces.append(candidate);
         }
