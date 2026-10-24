@@ -1358,8 +1358,7 @@
                 { "id": "HasBrokenEncryptedMediaAPISupportQuirk", "bugs": ["https://webkit.org/b/195598"] },
                 { "id": "NeedsScrollbarWidthThinDisabledQuirk", "bugs": ["rdar://135886305"] },
                 { "id": "NeedsYouTubeCaptionQuirk" },
-                { "id": "ShouldSilenceResizeObservers", "bugs": ["rdar://110097836"] },
-                { "id": "ShouldDisableThreadedAnimationsQuirk", "bugs": ["https://webkit.org/b/325264"] }
+                { "id": "ShouldSilenceResizeObservers", "bugs": ["rdar://110097836"] }
             ]
         },
         {

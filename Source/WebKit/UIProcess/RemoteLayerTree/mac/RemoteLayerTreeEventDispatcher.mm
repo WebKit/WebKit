@@ -541,13 +541,15 @@ void RemoteLayerTreeEventDispatcher::updateLayerPositionsAndAnimations()
     if (auto scrollingTree = this->scrollingTree())
         scrollingTree->tryToApplyLayerPositions();
 
-    // Commit scroll position changes before updating animation effects, so the
-    // render server sees a consistent scroll position + presentation modifier values.
-    [CATransaction flush];
-
 #if ENABLE(THREADED_ANIMATIONS)
     updateAnimations();
 #endif
+
+    // Because we call -[CAPresentationModifier setUpdatesAsynchronously:NO] on the
+    // presentation modifier groups used for animations, they need to be explicitly
+    // flushed with the current transaction, so we must commit here to let the render
+    // server see scroll position changes and animated values together.
+    [CATransaction flush];
 }
 
 void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay)

@@ -63,7 +63,6 @@ https://www.cbssports.com/
 https://www.cnn.com/
     NeedsCNNCaptionQuirk
     NeedsFullscreenObjectFitQuirk
-    ShouldDisableThreadedAnimationsQuirk
 https://configurator.audi.com/
     ShouldRenderModelElementFallbackContentQuirk
 https://www.digitaltrends.com/
