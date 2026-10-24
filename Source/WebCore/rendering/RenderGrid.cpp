@@ -448,6 +448,20 @@ static void clearGridItemOverridingSizesBeforeLayout(RenderGrid& renderGrid, Ren
 }
 
 
+bool RenderGrid::intrinsicLogicalWidthsDependOnLogicalHeight() const
+{
+    // With auto-fill or auto-fit rows, the height decides how many rows a column-flow grid has, and so how many
+    // columns its items flow into.
+    if (!style().gridAutoFlow().isColumn() || style().gridTemplateRows().autoRepeatSizes.isEmpty())
+        return false;
+    return hasRelativeLogicalHeight() || ((isFlexItem() || isGridItem()) && hasStretchedLogicalHeight());
+}
+
+bool RenderGrid::shouldInvalidateContentWidths() const
+{
+    return RenderBlock::shouldInvalidateContentWidths() || intrinsicLogicalWidthsDependOnLogicalHeight();
+}
+
 bool RenderGrid::hasDefiniteLogicalHeight() const
 {
     // FIXME: We should use RenderBlock::hasDefiniteLogicalHeight() only but it does not work for out of flow content.

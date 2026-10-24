@@ -60,6 +60,7 @@
 #include "RenderElementStyleInlines.h"
 #include "FlexFormattingUtils.h"
 #include "RenderFlexibleBox.h"
+#include "RenderGrid.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
@@ -753,6 +754,8 @@ static bool formattingContextRootIntrinsicLogicalWidthsDependOnOwnHeight(const R
 {
     ASSERT(formattingContextRoot.createsNewFormattingContext());
 
+    if (auto* grid = dynamicDowncast<RenderGrid>(formattingContextRoot))
+        return grid->intrinsicLogicalWidthsDependOnLogicalHeight();
     if (auto* flexBox = dynamicDowncast<RenderFlexibleBox>(formattingContextRoot)) {
         // The flex cross-size override that drives this dependency is only applied to a flex item
         // when hasDefiniteCrossSizeForFlexItem(item) is true, which per
