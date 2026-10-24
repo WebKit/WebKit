@@ -668,6 +668,27 @@ bool JSObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject
 }
 #endif // ASSERT_ENABLED
 
+// The result holds only until user code runs. [[GetOwnProperty]] on it can add a trap to, or revoke, a skipped
+// proxy, so callers walk again afterwards and define through the original receiver if the walk ends elsewhere.
+static ALWAYS_INLINE JSObject* skipProxiesForwardingOwnPropertyDefinition(JSObject* receiver)
+{
+    while (receiver->type() == ProxyObjectType) {
+        auto* proxy = uncheckedDowncast<ProxyObject>(receiver);
+        if (!proxy->forwardsOwnPropertyDefinitionToTarget())
+            break;
+        receiver = proxy->target();
+    }
+    return receiver;
+}
+
+static ALWAYS_INLINE JSObject* receiverForDefinePropertyOnReceiver(JSObject* receiver)
+{
+    receiver = skipProxiesForwardingOwnPropertyDefinition(receiver);
+    if (receiver->type() == GlobalProxyType)
+        receiver = uncheckedDowncast<JSGlobalProxy>(receiver)->target();
+    return receiver;
+}
+
 // https://tc39.github.io/ecma262/#sec-ordinaryset
 bool ordinarySetSlow(JSGlobalObject* globalObject, JSObject* object, PropertyName propertyName, JSValue value, JSValue receiver, bool shouldThrow)
 {
@@ -745,10 +766,12 @@ bool ordinarySetWithOwnDescriptor(JSGlobalObject* globalObject, JSObject* object
         // So, we perform [[GetOwnProperty]] onto the receiver while we already perform [[GetOwnProperty]] onto the object.
 
         // 9.1.9.1-4-c Let existingDescriptor be ? Receiver.[[GetOwnProperty]](P).
-        JSObject* receiverObject = asObject(receiver);
+        JSObject* receiverObject = skipProxiesForwardingOwnPropertyDefinition(asObject(receiver));
         PropertyDescriptor existingDescriptor;
         bool existingDescriptorFound = receiverObject->getOwnPropertyDescriptor(globalObject, propertyName, existingDescriptor);
         RETURN_IF_EXCEPTION(scope, false);
+        if (skipProxiesForwardingOwnPropertyDefinition(asObject(receiver)) != receiverObject)
+            receiverObject = asObject(receiver);
 
         // 9.1.9.1-4-d If existingDescriptor is not undefined, then
         if (existingDescriptorFound) {
@@ -941,7 +964,7 @@ bool JSObject::mightBeSpecialProperty(VM& vm, JSType type, UniquedStringImpl* ui
     }
 }
 
-static NEVER_INLINE bool definePropertyOnReceiverSlow(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, JSObject* receiver, bool shouldThrow)
+static NEVER_INLINE bool definePropertyOnReceiverSlow(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, JSObject* originalReceiver, JSObject* receiver, bool shouldThrow)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -949,13 +972,14 @@ static NEVER_INLINE bool definePropertyOnReceiverSlow(JSGlobalObject* globalObje
     PropertySlot slot(receiver, PropertySlot::InternalMethodType::GetOwnProperty);
     bool hasProperty = receiver->methodTable()->getOwnPropertySlot(receiver, globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, false);
+    JSObject* definitionReceiver = receiverForDefinePropertyOnReceiver(originalReceiver) == receiver ? receiver : originalReceiver;
 
     if (hasProperty) {
         // FIXME: For an accessor with setter, the error message is misleading.
         if (slot.attributes() & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
             return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 
-        if (slot.attributes() & PropertyAttribute::CustomValue) {
+        if (definitionReceiver == receiver && (slot.attributes() & PropertyAttribute::CustomValue)) {
             PutValueFunc customSetter = slot.customSetter();
             if (customSetter)
                 RELEASE_AND_RETURN(scope, customSetter(receiver->realm(), JSValue::encode(receiver), JSValue::encode(value), propertyName));
@@ -963,10 +987,10 @@ static NEVER_INLINE bool definePropertyOnReceiverSlow(JSGlobalObject* globalObje
 
         PropertyDescriptor descriptor;
         descriptor.setValue(value);
-        RELEASE_AND_RETURN(scope, receiver->methodTable()->defineOwnProperty(receiver, globalObject, propertyName, descriptor, shouldThrow));
+        RELEASE_AND_RETURN(scope, definitionReceiver->methodTable()->defineOwnProperty(definitionReceiver, globalObject, propertyName, descriptor, shouldThrow));
     }
 
-    RELEASE_AND_RETURN(scope, receiver->createDataProperty(globalObject, propertyName, value, shouldThrow));
+    RELEASE_AND_RETURN(scope, definitionReceiver->createDataProperty(globalObject, propertyName, value, shouldThrow));
 }
 
 // https://tc39.es/ecma262/#sec-ordinaryset (step 3)
@@ -982,18 +1006,18 @@ bool JSObject::definePropertyOnReceiver(JSGlobalObject* globalObject, PropertyNa
     if (!receiver)
         return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     scope.release();
-    if (receiver->type() == GlobalProxyType)
-        receiver = uncheckedDowncast<JSGlobalProxy>(receiver)->target();
+    JSObject* originalReceiver = receiver;
+    receiver = receiverForDefinePropertyOnReceiver(receiver);
 
     if (slot.isTaintedByOpaqueObject() || receiver->methodTable()->defineOwnProperty != JSObject::defineOwnProperty) {
         if (mightBeSpecialProperty(vm, receiver->type(), propertyName.uid()))
-            return definePropertyOnReceiverSlow(globalObject, propertyName, value, receiver, slot.isStrictMode());
+            return definePropertyOnReceiverSlow(globalObject, propertyName, value, originalReceiver, receiver, slot.isStrictMode());
     }
 
     if (receiver->structure()->hasAnyKindOfGetterSetterProperties()) {
         unsigned attributes;
         if (receiver->getDirectOffset(vm, propertyName, attributes) != invalidOffset && (attributes & PropertyAttribute::CustomValue))
-            return definePropertyOnReceiverSlow(globalObject, propertyName, value, receiver, slot.isStrictMode());
+            return definePropertyOnReceiverSlow(globalObject, propertyName, value, originalReceiver, receiver, slot.isStrictMode());
     }
 
     if (receiver->hasNonReifiedStaticProperties()) [[unlikely]]
