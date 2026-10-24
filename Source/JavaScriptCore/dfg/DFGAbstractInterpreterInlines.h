@@ -4923,6 +4923,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case GetTypedArrayBuffer:
+        setTypeForNode(node, SpecObjectOther);
+        break;
+
     case GetWebAssemblyInstanceExports: {
 #if ENABLE(WEBASSEMBLY)
         AbstractValue& base = forNode(node->child1());

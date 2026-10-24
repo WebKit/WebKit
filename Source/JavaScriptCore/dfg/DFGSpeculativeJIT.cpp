@@ -7730,6 +7730,23 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     strictInt32Result(resultGPR, node);
 }
 
+void SpeculativeJIT::compileGetTypedArrayBuffer(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    GPRTemporary result(this);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    JumpList slowCases = loadTypedArrayBufferWrapper(baseGPR, resultGPR);
+
+    addSlowPathGenerator(
+        slowPathCall(
+            slowCases,
+            this, operationGetTypedArrayBuffer, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR));
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node, NOESCAPE const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix)
 {
     SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));

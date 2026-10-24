@@ -44,6 +44,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "SuperSampler.h"
 #include "ThunkGenerators.h"
 #include "UnlinkedCodeBlock.h"
+#include "WeakImpl.h"
 
 #if ENABLE(WEBASSEMBLY)
 #include "JSWebAssemblyInstance.h"
@@ -1804,6 +1805,21 @@ void AssemblyHelpers::getArityPadding(VM& vm, unsigned numberOfParameters, GPRRe
     lshiftPtr(TrustedImm32(3), scratchGPR0);
     subPtr(stackPointerRegister, scratchGPR0, scratchGPR1);
     stackOverflow.append(branchPtr(GreaterThan, AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR1));
+}
+
+AssemblyHelpers::JumpList AssemblyHelpers::loadTypedArrayBufferWrapper(GPRReg baseGPR, GPRReg resultGPR)
+{
+    JumpList slowCases;
+
+    slowCases.append(branchTest8(Zero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isWastefulTypedArrayMode)));
+    loadPtr(Address(baseGPR, JSObject::butterflyOffset()), resultGPR);
+    loadPtr(Address(resultGPR, Butterfly::offsetOfArrayBuffer()), resultGPR);
+    loadPtr(Address(resultGPR, ArrayBuffer::offsetOfWrapper()), resultGPR);
+    slowCases.append(branchTestPtr(Zero, resultGPR));
+    slowCases.append(branchTestPtr(NonZero, Address(resultGPR, WeakImpl::offsetOfWeakHandleOwner()), TrustedImm32(WeakImpl::StateMask)));
+    loadPtr(Address(resultGPR, WeakImpl::offsetOfJSValue()), resultGPR);
+
+    return slowCases;
 }
 
 AssemblyHelpers::JumpList AssemblyHelpers::branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(GPRReg baseGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType> typedArrayType)

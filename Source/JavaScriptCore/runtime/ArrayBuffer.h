@@ -309,6 +309,7 @@ public:
     static constexpr ptrdiff_t offsetOfSizeInBytes() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_sizeInBytes); }
     static constexpr ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_data); }
     static constexpr ptrdiff_t offsetOfShared() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_shared); }
+    static constexpr ptrdiff_t offsetOfWrapper() { return OBJECT_OFFSETOF(ArrayBuffer, m_wrapper); }
 
     JS_EXPORT_PRIVATE ~ArrayBuffer();
 

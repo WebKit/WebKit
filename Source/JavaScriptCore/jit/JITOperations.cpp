@@ -4382,6 +4382,15 @@ JSC_DEFINE_JIT_OPERATION(operationResolveRopeString, JSString*, (JSGlobalObject*
     OPERATION_RETURN(scope, string);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationGetTypedArrayBuffer, JSCell*, (JSGlobalObject* globalObject, JSArrayBufferView* view))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, view->possiblySharedJSBuffer(globalObject));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlobalObject* globalObject, EncodedJSValue encodedKey, size_t tableIndex))
 {
     VM& vm = globalObject->vm();
