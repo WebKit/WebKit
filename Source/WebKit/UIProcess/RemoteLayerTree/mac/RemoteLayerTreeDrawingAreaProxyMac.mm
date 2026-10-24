@@ -804,6 +804,13 @@ void RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate(double sca
 
     LOG_WITH_STREAM(VisibleRects, stream << "RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate " << visibleContentRectUpdateInfo.dump());
 
+    // The web process keeps only the latest pending update, so an unstable repeat would replace the stable one.
+    if (page->isRedundantUnstableVisibleContentRectUpdate(visibleContentRectUpdateInfo)) {
+        if (uiProcessOwnsScrolledContentsLayerPosition())
+            page->adjustLayersForLayoutViewport(page->unobscuredContentRect().location(), page->unconstrainedLayoutViewportRect(), page->displayedContentScale());
+        return;
+    }
+
     if (uiProcessOwnsScrolledContentsLayerPosition())
         page->updateVisibleContentRectsAndAdjustLayers(visibleContentRectUpdateInfo, isStableState == IsStableState::Yes);
     else
