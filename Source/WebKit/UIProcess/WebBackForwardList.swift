@@ -71,18 +71,6 @@ extension WebKit.WebBackForwardListItem {
 // but can't be put there as we are unable to use swift::Array and swift::String
 // rdar://161270632
 
-// Temporary partial WTF logging support from Swift
-// rdar://168139823 is the task of exposing WebKit logging properly in Swift
-private func backForwardLog(_ msgCreator: @autoclosure () -> String) {
-    // rdar://133777029 likely will allow us to avoid the performance penalty
-    // of creating the string if logging is disabled.
-    doLog(WTF.String(msgCreator()))
-}
-
-private func loadingReleaseLog(_ msgCreator: @autoclosure () -> String) {
-    doLoadingReleaseLog(WTF.String(msgCreator()))
-}
-
 // FIXME(rdar://130765784): We should be able use the built-in ===, but AnyObject currently excludes foreign reference types
 func === (_ lhs: WebKit.WebBackForwardListItem, _ rhs: WebKit.WebBackForwardListItem) -> Bool {
     // Safety: Swift represents all reference types, including foreign reference types, as raw pointers
@@ -123,11 +111,13 @@ final class WebBackForwardList {
     init(page: WebKit.WeakPtrWebPageProxy) {
         self.page = page
         self.messageForwarder = WebKit.WebBackForwardListMessageForwarder.create(target: self)
-        backForwardLog("(Back/Forward) Created WebBackForwardList \(ObjectIdentifier(self))")
+        WebKit.LogChannel.BackForward().debugLog
+            .log("(Back/Forward) Created WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public)")
     }
 
     deinit {
-        backForwardLog("(Back/Forward) Destroying WebBackForwardList \(ObjectIdentifier(self))")
+        WebKit.LogChannel.BackForward().debugLog
+            .log("(Back/Forward) Destroying WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public)")
         // A WebBackForwardList should never be destroyed unless it's associated page has been closed or is invalid.
         assert(page.get().map { !$0.hasRunningProcess() } ?? (currentIndex == nil))
     }
@@ -163,7 +153,10 @@ final class WebBackForwardList {
 
     @used
     func pageClosed() {
-        backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) had its page closed with current size \(entries.count)")
+        WebKit.LogChannel.BackForward().debugLog
+            .log(
+                "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) had its page closed with current size \(self.entries.count)"
+            )
 
         // We should have always started out with an m_page and we should never close the page twice
         #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
@@ -266,9 +259,10 @@ final class WebBackForwardList {
             }
         }
 
-        backForwardLog(
-            "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) added an item. Current size \(entries.count), current index \(unwrappedCurrentIndex), threw away \(removedItems.count) items"
-        )
+        WebKit.LogChannel.BackForward().debugLog
+            .log(
+                "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) added an item. Current size \(self.entries.count), current index \(unwrappedCurrentIndex), threw away \(removedItems.count) items"
+            )
         page.didChangeBackForwardList(newItem, consuming: WebKit.BackForwardListItemVector(array: removedItems))
     }
 
@@ -290,9 +284,10 @@ final class WebBackForwardList {
 
         // If the target item wasn't even in the list, there's nothing else to do.
         guard var targetIndex else {
-            backForwardLog(
-                "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) could not go to item \(item.identifier().toString()) \(item.url) because it was not found"
-            )
+            WebKit.LogChannel.BackForward().debugLog
+                .log(
+                    "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) could not go to item \(item.identifier().toString().description, privacy: .public) \(item.url.description) because it was not found"
+                )
             return
         }
 
@@ -325,9 +320,10 @@ final class WebBackForwardList {
 
         currentIndex = targetIndex
 
-        backForwardLog(
-            "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) going to item \(item.identifier().toString()), is now at index \(targetIndex)"
-        )
+        WebKit.LogChannel.BackForward().debugLog
+            .log(
+                "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) going to item \(item.identifier().toString().description, privacy: .public), is now at index \(targetIndex)"
+            )
         page.didChangeBackForwardList(Optional.none, consuming: WebKit.BackForwardListItemVector(array: removedItems))
     }
 
@@ -668,7 +664,10 @@ final class WebBackForwardList {
     func removeAllItems() {
         assertValidIndex()
 
-        backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) removeAllItems (has \(entries.count) of them)")
+        WebKit.LogChannel.BackForward().debugLog
+            .log(
+                "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) removeAllItems (has \(self.entries.count) of them)"
+            )
 
         guard let page = page.get() else {
             return
@@ -688,7 +687,10 @@ final class WebBackForwardList {
     func clear() {
         assertValidIndex()
 
-        backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) clear (has \(entries.count) of them)")
+        WebKit.LogChannel.BackForward().debugLog
+            .log(
+                "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) clear (has \(self.entries.count) of them)"
+            )
 
         let size = entries.count
         guard let page = page.get() else {
@@ -781,7 +783,10 @@ final class WebBackForwardList {
             entries.removeAll()
             currentIndex = nil
         }
-        backForwardLog("(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) restored from state (has \(entries.count) entries)")
+        WebKit.LogChannel.BackForward().debugLog
+            .log(
+                "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) restored from state (has \(self.entries.count) entries)"
+            )
     }
 
     @used
@@ -883,16 +888,18 @@ final class WebBackForwardList {
                 // If there are no more back items that ever had a user gesture, then we should not enable going back.
                 // This happens when e.g. a new window is created by JavaScript then client redirects occur that create
                 // a sequence of history items, each without user interaction.
-                loadingReleaseLog(
-                    "UI Navigation is disabling going back because no more WebBackForwardListItem items in the back list had user interaction"
-                )
+                WebKit.LogChannel.Loading().releaseLog
+                    .log(
+                        "UI Navigation is disabling going back because no more WebBackForwardListItem items in the back list had user interaction"
+                    )
                 return (nil, 0)
             }
             item = (thisItem, thisItemIndex)
 
-            loadingReleaseLog(
-                "UI Navigation is skipping a WebBackForwardListItem because it was added by JavaScript without user interaction"
-            )
+            WebKit.LogChannel.Loading().releaseLog
+                .log(
+                    "UI Navigation is skipping a WebBackForwardListItem because it was added by JavaScript without user interaction"
+                )
         }
 
         // We are now on the next item that has user interaction.
@@ -912,9 +919,10 @@ final class WebBackForwardList {
             }
             item = (thisItem, thisItemIndex)
 
-            loadingReleaseLog(
-                "UI Navigation is skipping a WebBackForwardListItem that has user interaction because we started on an item that didn't have interaction"
-            )
+            WebKit.LogChannel.Loading().releaseLog
+                .log(
+                    "UI Navigation is skipping a WebBackForwardListItem that has user interaction because we started on an item that didn't have interaction"
+                )
         } else {
             // If going forward and there are items that we created by JS without user interaction, move forward to the last
             // one in the series.
