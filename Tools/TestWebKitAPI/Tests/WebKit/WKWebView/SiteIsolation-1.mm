@@ -44,6 +44,7 @@
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKHitTestResult.h>
 #import <WebKit/WKJSHandle.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -90,6 +91,8 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/WebAVPlayerLayer.h>
 #import <WebKit/_WKHitTestResult.h>
+#import <WebKit/_WKInspector.h>
+#import <WebKit/_WKInspectorPrivateForTesting.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 
@@ -2996,5 +2999,133 @@ TEST(SiteIsolation, CaptionDisplaySettingsPreviewInCrossSiteIframe)
 }
 
 #endif // PLATFORM(MAC) && ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
+#if PLATFORM(MAC)
+// Runs in the Web Inspector frontend with the Sources tab showing. A new tree element for the main frame means
+// that the Sources sidebar rebuilt its tree. Returns false if the hooks cannot be installed.
+static NSString * const installSourcesSidebarCountersScript = @"(() => {"
+    "    let panel = WI.tabBrowser.selectedTabContentView.navigationSidebarPanel;"
+    "    let mainFrameTreeElement = panel.treeElementForRepresentedObject(WI.networkManager.mainFrame);"
+    "    let contentViewContainer = panel.contentBrowser?.contentViewContainer;"
+    "    if (!mainFrameTreeElement?.treeOutline || !WI.TreeOutline.Event.ElementAdded || typeof contentViewContainer?.closeAllContentViews !== 'function')"
+    "        return false;"
+    "    let counts = window.sourcesSidebarCounts = {mainFrameTreeElementsAdded: 0, mainFrameTreeElementsAddedForFrameTargetRemoval: 0, closeAllContentViewsCalls: 0, mainFrameChanges: 0, frameTargetsRemoved: 0};"
+    "    mainFrameTreeElement.treeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, (event) => {"
+    "        let representedObject = event.data.element.representedObject;"
+    "        if (representedObject instanceof WI.Frame && representedObject.isMainFrame())"
+    "            ++counts.mainFrameTreeElementsAdded;"
+    "    }, window);"
+    "    let closeAllContentViews = contentViewContainer.closeAllContentViews;"
+    "    contentViewContainer.closeAllContentViews = function(...args) {"
+    "        ++counts.closeAllContentViewsCalls;"
+    "        return closeAllContentViews.apply(this, args);"
+    "    };"
+    "    WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, (event) => {"
+    "        if (event.target.isMainFrame())"
+    "            ++counts.mainFrameChanges;"
+    "    }, window);"
+    "    WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, (event) => {"
+    "        if (event.data.frame.isMainFrame())"
+    "            ++counts.mainFrameChanges;"
+    "    }, window);"
+    "    let dispatchEventToListeners = WI.targetManager.dispatchEventToListeners;"
+    "    WI.targetManager.dispatchEventToListeners = function(eventType, eventData) {"
+    "        if (eventType !== WI.TargetManager.Event.TargetRemoved || !(eventData?.target instanceof WI.FrameTarget))"
+    "            return dispatchEventToListeners.call(this, eventType, eventData);"
+    "        let mainFrameTreeElementsAdded = counts.mainFrameTreeElementsAdded;"
+    "        let result = dispatchEventToListeners.call(this, eventType, eventData);"
+    "        ++counts.frameTargetsRemoved;"
+    "        counts.mainFrameTreeElementsAddedForFrameTargetRemoval += counts.mainFrameTreeElementsAdded - mainFrameTreeElementsAdded;"
+    "        return result;"
+    "    };"
+    "    return true;"
+    "})()";
+
+// Reloads a site-isolated page that has iframeCount iframes while the Sources tab uses the given resource grouping
+// mode. Returns the counts from installSourcesSidebarCountersScript, or nil.
+static RetainPtr<NSDictionary> sourcesSidebarCountsForReloadWithIframes(NSString *resourceGroupingMode, ASCIILiteral mainFrameHTML, unsigned iframeCount)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameHTML } },
+        { "/main.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, "function mainScript() { }"_s } },
+        { "/subframe"_s, { "<script>function subframeScript() { }</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().preferences._developerExtrasEnabled = YES;
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [[webView _inspector] show];
+    RetainPtr inspectorWebView = [[webView _inspector] inspectorWebView];
+    EXPECT_NOT_NULL(inspectorWebView.get());
+    if (!inspectorWebView)
+        return nil;
+
+    auto evaluate = [&](NSString *script) {
+        return [inspectorWebView objectByEvaluatingJavaScript:script];
+    };
+    auto waitForScript = [&](NSString *script, size_t maxTries) {
+        bool result = Util::waitFor([&] {
+            return [evaluate(script) boolValue];
+        }, maxTries);
+        EXPECT_TRUE(result) << script.UTF8String;
+        return result;
+    };
+
+    // The main frame and the iframes have frame targets. The unminified frontend of a Debug build takes a few seconds to load.
+    if (!waitForScript([NSString stringWithFormat:@"!!window.InspectorFrontendAPI?._loaded && WI.targetManager.targets.filter((target) => target instanceof WI.FrameTarget).length > %u", iframeCount], 150))
+        return nil;
+
+    evaluate([NSString stringWithFormat:@"WI.settings.resourceGroupingMode.value = %@; WI.showSourcesTab(); true", resourceGroupingMode]);
+    if (!waitForScript(@"WI.isShowingSourcesTab() && WI.tabBrowser.selectedTabContentView.navigationSidebarPanel.didInitialLayout && !WI._messagesToDispatch.length", 50))
+        return nil;
+
+    bool installed = [evaluate(installSourcesSidebarCountersScript) boolValue];
+    EXPECT_TRUE(installed);
+    if (!installed)
+        return nil;
+
+    [webView reload];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // The reload replaces the iframes, so their frame targets are removed.
+    waitForScript([NSString stringWithFormat:@"sourcesSidebarCounts.frameTargetsRemoved >= %u && !WI._messagesToDispatch.length", iframeCount], 50);
+
+    // Read all counts in one turn of the frontend's run loop.
+    RetainPtr<NSDictionary> counts = evaluate(@"({...sourcesSidebarCounts})");
+
+    evaluate(@"WI.settings.resourceGroupingMode.reset(); true");
+    [[webView _inspector] close];
+    return counts;
+}
+
+TEST(SiteIsolation, WebInspectorSourcesSidebarIsNotRebuiltForEachFrameTargetOnReload)
+{
+    RetainPtr counts = sourcesSidebarCountsForReloadWithIframes(@"WI.Resource.GroupingMode.Type", "<script src='/main.js'></script><iframe src='https://example.com/subframe'></iframe><iframe src='https://webkit.org/subframe'></iframe>"_s, 2);
+    ASSERT_NOT_NULL(counts.get());
+
+    EXPECT_GE([counts.get()[@"frameTargetsRemoved"] intValue], 2);
+
+    // Only a main frame change rebuilds the tree and closes the open content views. A frame target removal does not.
+    int mainFrameChanges = [counts.get()[@"mainFrameChanges"] intValue];
+    EXPECT_EQ([counts.get()[@"mainFrameTreeElementsAddedForFrameTargetRemoval"] intValue], 0);
+    EXPECT_EQ([counts.get()[@"mainFrameTreeElementsAdded"] intValue], mainFrameChanges);
+    EXPECT_EQ([counts.get()[@"closeAllContentViewsCalls"] intValue], mainFrameChanges);
+}
+
+TEST(SiteIsolation, WebInspectorSourcesSidebarGroupedByPathIsRebuiltForEachFrameTargetOnReload)
+{
+    RetainPtr counts = sourcesSidebarCountsForReloadWithIframes(@"WI.Resource.GroupingMode.Path", "<script src='/main.js'></script><iframe src='https://webkit.org/subframe'></iframe>"_s, 1);
+    ASSERT_NOT_NULL(counts.get());
+
+    // In Path mode, scripts of a frame are rows under origin tree elements, and only a rebuild removes those of a removed frame target.
+    int frameTargetsRemoved = [counts.get()[@"frameTargetsRemoved"] intValue];
+    EXPECT_GE(frameTargetsRemoved, 1);
+    EXPECT_EQ([counts.get()[@"mainFrameTreeElementsAddedForFrameTargetRemoval"] intValue], frameTargetsRemoved);
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI
