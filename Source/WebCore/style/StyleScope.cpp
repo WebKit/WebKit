@@ -802,8 +802,8 @@ void Scope::didChangeViewportSize()
     // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
     for (RefPtr element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
         bool styleableHasViewportUnitAnimation = Styleable::fromElement(*element).viewportSizeDidChange();
-        auto* renderer = element->renderer();
-        if (styleableHasViewportUnitAnimation || (renderer && usesViewportUnits(renderer->style())))
+        auto* style = element->renderOrDisplayContentsStyle();
+        if (styleableHasViewportUnitAnimation || (style && usesViewportUnits(*style)))
             element->invalidateStyle();
     }
 }

@@ -65,6 +65,7 @@ public:
 
     const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND;
     const Style::ComputedStyle* lazyPseudoElementStyle(const Style::PseudoElementIdentifier&, const Style::ComputedStyle* parentStyle = nullptr) const LIFETIME_BOUND;
+    const Style::ComputedStyle* highlightPseudoStyle(const AtomString&) const LIFETIME_BOUND;
 
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;

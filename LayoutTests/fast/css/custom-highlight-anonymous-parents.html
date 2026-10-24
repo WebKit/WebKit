@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Custom Highlight styles through anonymous render parents</title>
+<link rel="help" href="https://drafts.csswg.org/css-highlight-api-1/">
+<link rel="match" href="custom-highlight-anonymous-parents-expected.html">
+<link rel="issue" href="https://bugs.webkit.org/show_bug.cgi?id=307455">
+<style>
+@font-face { font-family: Ahem; src: url("../../resources/Ahem.ttf"); }
+body { font: 20px Ahem; color: black; background: white; }
+.row { margin: 10px 0; }
+math { font: inherit; }
+::highlight(probe) { background-color: yellow; color: blue; }
+.scoped::highlight(probe) { background-color: cyan; color: purple; }
+.child::highlight(probe) { background-color: lime; color: red; }
+</style>
+<div class="row" id="block">before TEXT after</div>
+<div class="row scoped" id="flex" style="display:flex">before TEXT after</div>
+<div class="row" id="inline-flex" style="display:inline-flex">before TEXT after</div>
+<div class="row scoped" id="grid" style="display:grid">before TEXT after</div>
+<div class="row" id="table" style="display:table">before TEXT after</div>
+<div class="row"><math><mtext id="math" class="scoped">TEXT</mtext></math></div>
+<div class="row scoped" style="display:flex"><span class="child" id="real-child">before TEXT after</span></div>
+<div class="row"><math><mtext><span id="contents" style="display:contents">TEXT</span></mtext></math></div>
+<script>
+const ranges = [...document.querySelectorAll('[id]')].map(element => {
+    const range = new Range();
+    range.setStart(element.firstChild, element.firstChild.length === 4 ? 0 : 7);
+    range.setEnd(element.firstChild, element.firstChild.length === 4 ? 4 : 11);
+    return range;
+});
+CSS.highlights.set('probe', new Highlight(...ranges));
+</script>
