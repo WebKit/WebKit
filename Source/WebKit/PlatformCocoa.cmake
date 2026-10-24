@@ -1048,30 +1048,14 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         set(PRODUCT_BUNDLE_IDENTIFIER ${_svc_BUNDLE_IDENTIFIER})
         set(EXECUTABLE_NAME ${_svc_EXECUTABLE_NAME})
         set(PRODUCT_NAME ${_svc_BUNDLE_IDENTIFIER})
-        # Processed outside the bundle and copied in only when it changes: the
-        # service has to relink, and so re-sign, whenever its Info.plist does.
-        set(_info_plist ${CMAKE_CURRENT_BINARY_DIR}/${_svc_BUNDLE_IDENTIFIER}-Info.plist)
-        configure_file(${_svc_ENTRY_POINT}/Info-${_info_plist_variant}.plist ${_info_plist})
-        if (WEBKIT_SDK_IS_MACOS)
-            execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_info_plist})
-            execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_SDK_NAME}" ${_info_plist})
-            execute_process(COMMAND plutil -insert LSMinimumSystemVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_info_plist})
-        else ()
-            # No XPC service target sets TARGETED_DEVICE_FAMILY.
-            WEBKIT_GET_DEVICE_FAMILY(_device_family)
-            WEBKIT_ADD_EMBEDDED_BUNDLE_PLIST_KEYS(${_info_plist} ${_device_family})
-        endif ()
         if (USE_RESTRICTED_ENTITLEMENTS AND NOT _svc_NO_RESTRICTED_ENTITLEMENTS)
-            # Matches Scripts/update-info-plist-for-runningboard.sh.
-            if (USE_APPLE_INTERNAL_SDK AND WEBKIT_SDK_IS_MACOS)
-                execute_process(COMMAND plutil -insert LSDoNotSetTaskPolicyAutomatically -bool YES ${_info_plist})
-                execute_process(COMMAND plutil -insert XPCService._AdditionalProperties -json "{\"RunningBoard\":{\"Managed\":true,\"Reported\":true}}" ${_info_plist})
-            endif ()
+            set(_info_plist_definitions WK_USE_RESTRICTED_ENTITLEMENTS_VAL)
         else ()
             # As in Xcode, services without restricted entitlements are signed ad hoc.
             set_target_properties(${_target} PROPERTIES CODE_SIGN_IDENTITY "-")
         endif ()
-        file(COPY_FILE ${_info_plist} ${_contents_dir}/Info.plist ONLY_IF_DIFFERENT)
+        WEBKIT_PROCESS_INFO_PLIST(${_svc_ENTRY_POINT}/Info-${_info_plist_variant}.plist
+            ${_contents_dir}/Info.plist PREPROCESS PREPROCESSOR_DEFINITIONS ${_info_plist_definitions})
         set_property(TARGET ${_target} APPEND PROPERTY LINK_DEPENDS ${_contents_dir}/Info.plist)
 
         if (NOT WEBKIT_SDK_IS_MACOS)
@@ -2195,13 +2179,11 @@ function(WEBKIT_DEFINE_PROCESS_EXTENSIONS)
         set(EXECUTABLE_NAME ${_executable_name})
         set(PRODUCT_BUNDLE_IDENTIFIER ${_bundle_id})
         set(PRODUCT_BUNDLE_NAME ${_name})
-        configure_file(${_info_plist} ${_appex_dir}/Info.plist)
-
-        # Add platform keys required by runningboardd/ExtensionKit validation.
-        # TARGETED_DEVICE_FAMILY from Configurations/BaseExtension.xcconfig, which
-        # the extension targets set for every SDK.
-        WEBKIT_GET_DEVICE_FAMILY(_device_family 1 2 7)
-        WEBKIT_ADD_EMBEDDED_BUNDLE_PLIST_KEYS(${_appex_dir}/Info.plist ${_device_family})
+        # The platform keys are required by runningboardd/ExtensionKit
+        # validation. TARGETED_DEVICE_FAMILY from Configurations/BaseExtension.xcconfig,
+        # which the extension targets set for every SDK.
+        WEBKIT_PROCESS_INFO_PLIST(${_info_plist} ${_appex_dir}/Info.plist
+            TARGETED_DEVICE_FAMILY 1 2 7)
 
         WEBKIT_EXECUTABLE_DECLARE(${_name})
         set(${_name}_SOURCES ${_swift_source})

@@ -359,11 +359,9 @@ set(PRODUCT_NAME WebKitTestRunnerApp)
 set(EXECUTABLE_NAME WebKitTestRunnerApp)
 set(PRODUCT_BUNDLE_IDENTIFIER ${_wktr_bundle_id})
 set(_wktr_app_plist "${CMAKE_CURRENT_BINARY_DIR}/WebKitTestRunnerApp-Info.plist")
-configure_file("${WebKitTestRunner_DIR}/WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist"
-               "${_wktr_app_plist}")
-
-WEBKIT_GET_DEVICE_FAMILY(_wktr_device_family 1 2 3 4 7)
-WEBKIT_ADD_EMBEDDED_BUNDLE_PLIST_KEYS(${_wktr_app_plist} ${_wktr_device_family})
+WEBKIT_PROCESS_INFO_PLIST("${WebKitTestRunner_DIR}/WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist"
+    "${_wktr_app_plist}"
+    TARGETED_DEVICE_FAMILY 1 2 3 4 7)
 
 # webkitpy and DefaultWebBrowserChecks.mm expect WebKitTestRunnerApp.app.
 set(WebKitTestRunner_OUTPUT_NAME WebKitTestRunnerApp)

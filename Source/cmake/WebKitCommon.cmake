@@ -346,6 +346,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     include(WebKitStaticAnalysis)
     include(WebKitFeatures)
     include(WebKitEntitlements)
+    include(WebKitInfoPlist)
 
     if (USE_APPLE_INTERNAL_SDK)
         list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../Internal/WebKit/WebKitAdditions/CMake")

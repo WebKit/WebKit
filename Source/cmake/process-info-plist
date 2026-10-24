@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+# The implementation of WEBKIT_PROCESS_INFO_PLIST (see WebKitInfoPlist.cmake,
+# which documents the behavior), run on a plist that already has its variables
+# substituted. Only WebKitInfoPlist.cmake calls this, so arguments aren't
+# validated beyond what argparse does. --device-family is only passed for the
+# iOS family, and selects its keys over macOS's.
+
+import argparse
+import os
+import plistlib
+import re
+import subprocess
+import sys
+from xml.parsers.expat import ExpatError
+
+
+def main(argv):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input')
+    parser.add_argument('output')
+    parser.add_argument('--platform')
+    parser.add_argument('--sdk')
+    parser.add_argument('--deployment-target')
+    parser.add_argument('--device-family', type=int, nargs='+')
+    parser.add_argument('--cpp')
+    parser.add_argument('-D', dest='definitions', action='append', default=[])
+    args = parser.parse_args(argv)
+
+    with open(args.input, 'rb') as file:
+        data = file.read()
+    if args.cpp:
+        definitions = [f'-D{definition}' for definition in args.definitions]
+        result = subprocess.run([args.cpp, '-E', '-P', '-x', 'c', '-traditional-cpp', '-Wno-trigraphs', *definitions, '-'],
+            input=data, stdout=subprocess.PIPE)
+        if result.returncode:
+            sys.exit(result.returncode)
+        data = result.stdout
+    # plistlib ignores text between elements, so a directive left in a plist that
+    # wasn't preprocessed would otherwise pass silently, with every conditional key kept.
+    elif directive := re.search(rb'^[ \t]*#.*', data, re.MULTILINE):
+        sys.exit(f'{args.input}: contains a preprocessor directive ({directive[0].strip().decode()}); '
+            'pass PREPROCESS to WEBKIT_PROCESS_INFO_PLIST')
+    try:
+        plist = plistlib.loads(data)
+    except (ValueError, ExpatError) as error:
+        sys.exit(f'{args.input}: not a valid property list: {error}')
+
+    plist.setdefault('CFBundleSupportedPlatforms', [args.platform])
+    plist.setdefault('DTPlatformName', args.sdk)
+    if args.device_family:
+        plist['MinimumOSVersion'] = args.deployment_target
+        plist['UIDeviceFamily'] = args.device_family
+    else:
+        plist.setdefault('LSMinimumSystemVersion', args.deployment_target)
+
+    contents = plistlib.dumps(plist)
+    try:
+        with open(args.output, 'rb') as file:
+            if file.read() == contents:
+                return
+    except FileNotFoundError:
+        os.makedirs(os.path.dirname(args.output), exist_ok=True)
+    with open(args.output, 'wb') as file:
+        file.write(contents)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])

@@ -211,16 +211,7 @@ function(WEBKIT_GET_DEVICE_FAMILY _result)
             endif ()
         endforeach ()
     endif ()
-    list(JOIN _narrowed ", " _joined)
-    set(${_result} "${_joined}" PARENT_SCOPE)
-endfunction()
-
-# The Info.plist keys Xcode fills in from build settings rather than from the plist itself.
-function(WEBKIT_ADD_EMBEDDED_BUNDLE_PLIST_KEYS _plist _device_family)
-    execute_process(COMMAND plutil -replace UIDeviceFamily -json "[${_device_family}]" ${_plist})
-    execute_process(COMMAND plutil -replace CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_plist})
-    execute_process(COMMAND plutil -replace MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_plist})
-    execute_process(COMMAND plutil -replace DTPlatformName -string "${WEBKIT_SDK_NAME}" ${_plist})
+    set(${_result} ${_narrowed} PARENT_SCOPE)
 endfunction()
 
 # Building for macOS defaults uses the host system's deployment target. Other
