@@ -104,7 +104,6 @@ public:
     // An out-of-flow box and its content, in its containing block that has its size (css-position-3 §4). The box establishes an independent
     // formatting context for its content.
     BlockLayoutResult layoutOutOfFlowBox(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&);
-    BlockLayoutResult layoutOutOfFlowReplacedElement(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&);
 
 private:
     void handleBlockContainerStart(const RenderBox&);
@@ -113,6 +112,7 @@ private:
     void handleInlineContent(const RenderBox& blockContainer, ContainingBlockState& blockContainerState, const BlockLayoutState& inlineContentBlockLayoutState);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
     void layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState);
+    BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&);
     void handleOutOfFlowBox(const RenderBox&, BlockLayoutResult&);
 
     ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&) const;
