@@ -113,7 +113,6 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = E1AC2E2B20F7B94C00B0897D /* Build configuration list for PBXAggregateTarget "Unlock Keychain" */;
 			buildPhases = (
-				E1AC2E2C20F7B95800B0897D /* Unlock Keychain */,
 			);
 			dependencies = (
 			);
@@ -20158,7 +20157,6 @@
 				2D56C1C128A367A00081BD25 /* Sources */,
 				2D56C1C428A367A00081BD25 /* Frameworks */,
 				2D56C1C728A367A00081BD25 /* Resources */,
-				2D56C1CA28A367A00081BD25 /* Unlock keychain */,
 				2D56C1CB28A367A00081BD25 /* Process Model entitlements */,
 				2D56C1CC28A367A00081BD25 /* Create Symlink to Cryptex Path */,
 			);
@@ -20180,7 +20178,6 @@
 				2D9FB21B237523830049F936 /* Sources */,
 				2D9FB21E237523830049F936 /* Frameworks */,
 				2D9FB221237523830049F936 /* Resources */,
-				2D9FB222237523830049F936 /* Unlock keychain */,
 				2D9FB223237523830049F936 /* Process GPU entitlements */,
 				6577FFBF2769C7550011AEC8 /* Create Symlink to Cryptex Path */,
 				3AB34B6528D4F098009DAAB6 /* Update Info.plist for RunningBoard management */,
@@ -20520,7 +20517,6 @@
 				BC8283AD16B4BF7700A278FE /* Sources */,
 				BC8283AE16B4BF7700A278FE /* Frameworks */,
 				BC8283AF16B4BF7700A278FE /* Resources */,
-				41D0FC8020E43B4500076AE8 /* Unlock keychain */,
 				41D0FC8120E43B7000076AE8 /* Process Network entitlements */,
 				6577FFBE2769C7370011AEC8 /* Create Symlink to Cryptex Path */,
 				3AB34B6428D4F092009DAAB6 /* Update Info.plist for RunningBoard management */,
@@ -20835,21 +20831,6 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ ${WK_PLATFORM_NAME} != \"iphoneos\" && ${WK_PLATFORM_NAME} != \"xros\" && ${WK_PLATFORM_NAME} != \"maccatalyst\" ]]; then\n    exit 0;\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${WK_ALTERNATE_FRAMEWORKS_DIR}${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\" ]]; then\n    mkdir -p \"${INSTALL_ROOT}/${WK_ALTERNATE_FRAMEWORKS_DIR}${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\"\nfi\n\nln -s -h -f ../Frameworks/WebKit.framework \"${INSTALL_ROOT}/${WK_ALTERNATE_FRAMEWORKS_DIR}${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\"\n";
 		};
-		2D56C1CA28A367A00081BD25 /* Unlock keychain */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Unlock keychain";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
-		};
 		2D56C1CB28A367A00081BD25 /* Process Model entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -20910,21 +20891,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/generate-unified-sources.sh\n";
-		};
-		2D9FB222237523830049F936 /* Unlock keychain */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Unlock keychain";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
 		};
 		2D9FB223237523830049F936 /* Process GPU entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -21084,21 +21050,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/copy-webcontent-resources-to-private-headers.sh\n";
-		};
-		41D0FC8020E43B4500076AE8 /* Unlock keychain */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Unlock keychain";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
 		};
 		41D0FC8120E43B7000076AE8 /* Process Network entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -21875,21 +21826,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "exec \"${SCRIPT_INPUT_FILE_0}\"\n";
-		};
-		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Unlock Keychain";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
 		};
 		E3067ED02B758FEA007C7A03 /* Create symlinks for extensions */ = {
 			isa = PBXShellScriptBuildPhase;

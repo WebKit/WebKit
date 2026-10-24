@@ -87,7 +87,6 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 14CFB10523035EF300F0048C /* Build configuration list for PBXAggregateTarget "Unlock Keychain" */;
 			buildPhases = (
-				E1AC2E2C20F7B95800B0897D /* Unlock Keychain */,
 			);
 			dependencies = (
 			);
@@ -14063,21 +14062,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "exec \"${SCRIPT_INPUT_FILE_0}\"\n";
-		};
-		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Unlock Keychain";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
 		};
 		E3D6F6ED25D78C0100C20EB4 /* Generate Entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
