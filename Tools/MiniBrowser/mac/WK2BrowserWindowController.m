@@ -330,7 +330,7 @@ static NSRect frameForWindowFeatures(WKWindowFeatures *features, NSWindow *windo
 
 - (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler
 {
-    NSDictionary *permissions = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"NotificationPermissions"];
+    NSDictionary *permissions = [MiniBrowserUserDefaults() dictionaryForKey:@"NotificationPermissions"];
     NSString *originString = [NSString stringWithFormat:@"%@://%@", securityOrigin.protocol, securityOrigin.host];
     id value = [permissions valueForKey:originString];
     if (value) {
@@ -347,11 +347,11 @@ static NSRect frameForWindowFeatures(WKWindowFeatures *features, NSWindow *windo
     [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
         BOOL granted = response == NSAlertSecondButtonReturn;
 
-        NSMutableDictionary *permissions = [[[NSUserDefaults standardUserDefaults] dictionaryForKey:@"NotificationPermissions"] mutableCopy];
+        NSMutableDictionary *permissions = [[MiniBrowserUserDefaults() dictionaryForKey:@"NotificationPermissions"] mutableCopy];
         if (!permissions)
             permissions = [NSMutableDictionary dictionaryWithCapacity:1];
         [permissions setValue:@(granted) forKey:originString];
-        [[NSUserDefaults standardUserDefaults] setObject:permissions forKey:@"NotificationPermissions"];
+        [MiniBrowserUserDefaults() setObject:permissions forKey:@"NotificationPermissions"];
 
         decisionHandler(granted);
     }];

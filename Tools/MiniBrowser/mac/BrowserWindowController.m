@@ -52,7 +52,7 @@
     // Enable tabbing - group regular windows together
     self.window.tabbingIdentifier = @"MiniBrowserMainWindow";
 
-    NSString *sizeString = [[NSUserDefaults standardUserDefaults] stringForKey:@"WindowSize"];
+    NSString *sizeString = [MiniBrowserUserDefaults() stringForKey:@"WindowSize"];
     if (sizeString) {
         NSSize size = NSSizeFromString(sizeString);
         if (size.width && size.height)

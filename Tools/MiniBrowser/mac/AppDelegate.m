@@ -111,10 +111,31 @@ enum {
     return self;
 }
 
+NSUserDefaults *MiniBrowserUserDefaults(void)
+{
+    static NSUserDefaults *defaults;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSArray *arguments = [[NSProcessInfo processInfo] arguments];
+        if ([arguments indexOfObject:kAutomationFileDescriptorArgumentString] == NSNotFound) {
+            defaults = NSUserDefaults.standardUserDefaults;
+            return;
+        }
+
+        // Under automation, settings start from their defaults, so that a WebDriver session doesn't
+        // depend on how MiniBrowser was set up by hand. They are kept apart from the user's settings,
+        // and cleared at launch. Settings passed on the command line still apply.
+        NSString *automationSuiteName = @"org.webkit.MiniBrowser.Automation";
+        defaults = [[NSUserDefaults alloc] initWithSuiteName:automationSuiteName];
+        [defaults removePersistentDomainForName:automationSuiteName];
+    });
+    return defaults;
+}
+
 static BOOL enabledForFeature(_WKFeature *feature)
 {
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:feature.key])
-        return [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
+    if ([MiniBrowserUserDefaults() objectForKey:feature.key])
+        return [MiniBrowserUserDefaults() boolForKey:feature.key];
     return [feature defaultValue];
 }
 
@@ -164,7 +185,7 @@ static BOOL enabledForFeature(_WKFeature *feature)
 
 - (NSDictionary<NSString *, NSNumber *> *)notificationPermissionsForWebsiteDataStore:(WKWebsiteDataStore *)dataStore
 {
-    return [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"NotificationPermissions"];
+    return [MiniBrowserUserDefaults() dictionaryForKey:@"NotificationPermissions"];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
