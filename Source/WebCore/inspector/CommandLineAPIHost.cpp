@@ -35,14 +35,18 @@
 #include "Document.h"
 #include "EventTarget.h"
 #include "FrameInspectorController.h"
+#include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "JSCommandLineAPIHost.h"
 #include "JSDOMGlobalObject.h"
 #include "JSEventListener.h"
+#include "NodeDocument.h"
+#include "PageInspectorController.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "Storage.h"
 #include "WebConsoleAgent.h"
+#include "WebInjectedScriptManager.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
 #include <JavaScriptCore/InjectedScriptBase.h>
@@ -99,18 +103,57 @@ static InstrumentingAgents* instrumentingAgentsForGlobalObject(JSC::JSGlobalObje
     return nullptr;
 }
 
+// Frame targets have no Inspector domain to carry Inspector.inspect, so a node in a frame that the page DOM agent
+// does not cover is selected through its frame's DOM agent, which sends DOM.inspect.
+static bool inspectNodeThroughFrameDOMAgent(CommandLineAPIHost& host, JSC::JSGlobalObject& lexicalGlobalObject, const JSON::Object& remoteObject)
+{
+    // FIXME: <https://webkit.org/b/328722> Objects that are not nodes are not routed, so they are dropped in a cross-origin frame.
+    if (remoteObject.getString("subtype"_s) != "node"_s)
+        return false;
+
+    auto* domGlobalObject = dynamicDowncast<JSDOMGlobalObject>(&lexicalGlobalObject);
+    RefPtr document = domGlobalObject ? dynamicDowncast<Document>(domGlobalObject->scriptExecutionContext()) : nullptr;
+    RefPtr frame = document ? document->frame() : nullptr;
+    if (!frame)
+        return false;
+
+    // The object ID was minted by the injected script that called this host; only its manager can resolve it.
+    Ref injectedScriptManager = frame->inspectorController().injectedScriptManager();
+    if (injectedScriptManager->commandLineAPIHost() != &host)
+        return false;
+
+    auto objectId = remoteObject.getString("objectId"_s);
+    auto injectedScript = injectedScriptManager->injectedScriptForObjectId(objectId);
+    if (injectedScript.hasNoValue())
+        return false;
+
+    RefPtr node = InspectorDOMAgent::scriptValueAsNode(injectedScript.findObjectById(objectId));
+    RefPtr nodeFrame = node ? node->document().frame() : nullptr;
+    // FIXME: <https://webkit.org/b/328721> Nodes of the main frame and of same-site frames still use Inspector.inspect, whose object ID the frontend resolves on the page target, which fails under Site Isolation.
+    if (!nodeFrame || PageInspectorController::isCoveredByPageDOMAgent(*nodeFrame))
+        return false;
+
+    // The frontend never receives this object ID, so it would never release it.
+    injectedScript.releaseObject(objectId);
+    nodeFrame->inspectorController().inspect(*node);
+    return true;
+}
+
 void CommandLineAPIHost::inspect(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue object, JSC::JSValue hints)
 {
     RefPtr agents = instrumentingAgentsForGlobalObject(lexicalGlobalObject);
     if (!agents)
         return;
 
-    CheckedPtr inspectorAgent = agents->persistentInspectorAgent();
-    if (!inspectorAgent)
-        return;
-
     auto objectValue = Inspector::toInspectorValue(&lexicalGlobalObject, object);
     if (!objectValue)
+        return;
+
+    if (RefPtr remoteObject = objectValue->asObject(); remoteObject && inspectNodeThroughFrameDOMAgent(*this, lexicalGlobalObject, *remoteObject))
+        return;
+
+    CheckedPtr inspectorAgent = agents->persistentInspectorAgent();
+    if (!inspectorAgent)
         return;
 
     auto hintsValue = Inspector::toInspectorValue(&lexicalGlobalObject, hints);
