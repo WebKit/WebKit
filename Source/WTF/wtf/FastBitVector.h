@@ -113,6 +113,7 @@ public:
     void setAll()
     {
         memsetSpan(words(), 255);
+        clearPaddingBits();
     }
     
     void clearAll()
@@ -135,6 +136,7 @@ public:
         if (arrayLength() != fastBitVectorArrayLength(numBits))
             resizeSlow(numBits);
         m_numBits = numBits;
+        clearPaddingBits();
     }
     
     uint32_t word(size_t index) const { return words()[index]; }
@@ -144,6 +146,14 @@ public:
     std::span<const uint32_t> words() const { return unsafeMakeSpan(m_words, arrayLength()); }
 
 private:
+    void clearPaddingBits()
+    {
+        size_t remainder = m_numBits & 31;
+        if (!remainder)
+            return;
+        words()[arrayLength() - 1] &= (1U << remainder) - 1;
+    }
+
     WTF_EXPORT_PRIVATE void setEqualsSlow(const FastBitVectorWordOwner& other);
     WTF_EXPORT_PRIVATE void resizeSlow(size_t numBits);
     
