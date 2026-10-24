@@ -456,9 +456,6 @@ def parse_args(args):
         options.experimental_feature.append('UseGPUProcessForDOMRenderingEnabled=0')
 
     if options.accessibility_isolated_tree:
-        host = Host()
-        host.initialize_scm()
-        options.additional_expectations.insert(0, host.filesystem.join(host.scm().checkout_root, 'LayoutTests/accessibility-isolated-tree/TestExpectations'))
         if options.result_report_flavor:
             raise RuntimeError('--accessibility-isolated-tree implicitly sets the result flavor, this should not be overridden')
         options.result_report_flavor = 'accessibility-isolated-tree'
@@ -478,6 +475,35 @@ def parse_args(args):
     return options, args
 
 
+def set_up_flavor_options(port, options, checkout_root=None):
+    """Adds the expectations and platform directories of options' flavor options, and site isolation's result flavor; checkout_root defaults to the current directory's checkout."""
+    flavors = []
+    if options.accessibility_isolated_tree:
+        flavors.append(('accessibility-isolated-tree', False, None))
+    if port.port_name == 'mac' and options.use_gpu_process and options.remote_layer_tree:
+        flavors.append(('platform/mac-gpup', True, None))
+    site_isolation_platform = 'mac' if port.port_name == 'mac' else 'ios' if port.port_name.startswith(('ios', 'iphone', 'ipad')) else None
+    if site_isolation_platform:
+        for option, enabled in (('--site-isolation', options.site_isolation), ('--site-isolation-enabled-by-default', options.site_isolation_enabled_by_default)):
+            if enabled:
+                flavors.append(('platform/{}-site-isolation'.format(site_isolation_platform), True, option))
+
+    if flavors and not checkout_root:
+        host = Host()
+        host.initialize_scm()
+        checkout_root = host.scm().checkout_root
+
+    for directory, is_platform_directory, site_isolation_option in flavors:
+        path = port.host.filesystem.join(checkout_root, 'LayoutTests', directory)
+        options.additional_expectations.insert(0, port.host.filesystem.join(path, 'TestExpectations'))
+        if is_platform_directory:
+            if not options.additional_platform_directory:
+                options.additional_platform_directory = []
+            options.additional_platform_directory.insert(0, path)
+        if site_isolation_option:
+            if options.result_report_flavor:
+                raise RuntimeError('{} implicitly sets the result flavor, this should not be overridden'.format(site_isolation_option))
+            options.result_report_flavor = 'site-isolation'
 
 
 def _set_up_derived_options(port, options):
@@ -499,60 +525,10 @@ def _set_up_derived_options(port, options):
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
 
-    if port.port_name == "mac" and options.use_gpu_process and options.remote_layer_tree:
-        host = Host()
-        host.initialize_scm()
-        options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup/TestExpectations'))
-        if not options.additional_platform_directory:
-            options.additional_platform_directory = []
-        options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup'))
-
     if options.load_in_cross_origin_iframe:
         options.additional_header = 'runInCrossOriginFrame=true'
 
-    if port.port_name == "mac" and options.site_isolation:
-        host = Host()
-        host.initialize_scm()
-        options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation/TestExpectations'))
-        if not options.additional_platform_directory:
-            options.additional_platform_directory = []
-        options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation'))
-        if options.result_report_flavor:
-            raise RuntimeError('--site-isolation implicitly sets the result flavor, this should not be overridden')
-        options.result_report_flavor = 'site-isolation'
-
-    if port.port_name.startswith(('ios', 'iphone', 'ipad')) and options.site_isolation:
-        host = Host()
-        host.initialize_scm()
-        options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/ios-site-isolation/TestExpectations'))
-        if not options.additional_platform_directory:
-            options.additional_platform_directory = []
-        options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/ios-site-isolation'))
-        if options.result_report_flavor:
-            raise RuntimeError('--site-isolation implicitly sets the result flavor, this should not be overridden')
-        options.result_report_flavor = 'site-isolation'
-
-    if port.port_name == "mac" and options.site_isolation_enabled_by_default:
-        host = Host()
-        host.initialize_scm()
-        options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation/TestExpectations'))
-        if not options.additional_platform_directory:
-            options.additional_platform_directory = []
-        options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation'))
-        if options.result_report_flavor:
-            raise RuntimeError('--site-isolation-enabled-by-default implicitly sets the result flavor, this should not be overridden')
-        options.result_report_flavor = 'site-isolation'
-
-    if port.port_name.startswith(('ios', 'iphone', 'ipad')) and options.site_isolation_enabled_by_default:
-        host = Host()
-        host.initialize_scm()
-        options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/ios-site-isolation/TestExpectations'))
-        if not options.additional_platform_directory:
-            options.additional_platform_directory = []
-        options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/ios-site-isolation'))
-        if options.result_report_flavor:
-            raise RuntimeError('--site-isolation-enabled-by-default implicitly sets the result flavor, this should not be overridden')
-        options.result_report_flavor = 'site-isolation'
+    set_up_flavor_options(port, options)
 
     if options.additional_platform_directory:
         additional_platform_directories = []
