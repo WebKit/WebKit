@@ -1144,7 +1144,8 @@ NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void WTFCrashWithInfo(int line, const char*
 #else
 
 inline void WTFCrashWithInfo(int, const char*, const char*)
-#if COMPILER(CLANG)
+// optnone prevents inlining so a breakpoint here sees the crash site in its arguments; it costs ~3.6 MB, so GTK/WPE production builds skip it.
+#if COMPILER(CLANG) && (ENABLE(DEVELOPER_MODE) || !(PLATFORM(GTK) || PLATFORM(WPE)))
     __attribute__((optnone))
 #endif
 {
