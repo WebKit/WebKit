@@ -1346,6 +1346,8 @@ public:
 
     bool canDoFastSpread(Node*, const AbstractValue&);
     bool canDoFastSpreadWithStructureCheck(Node*);
+    bool isContiguousCellButterfly(const AbstractValue&);
+    bool isLikelyArray(Edge, const AbstractValue&);
     static constexpr IndexingType originalArrayShapesForSpread[] = {
         CopyOnWriteArrayWithContiguous, ArrayWithContiguous,
         ArrayWithInt32, CopyOnWriteArrayWithInt32,

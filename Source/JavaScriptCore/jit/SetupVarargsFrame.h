@@ -39,6 +39,12 @@ void emitSetVarargsFrame(CCallHelpers&, GPRReg lengthGPR, bool lengthIncludesThi
 // the newly created frame plus the native header. scratchGPR2 may be the same as numUsedSlotsGPR.
 void emitSetupVarargsFrameFastCase(VM&, CCallHelpers&, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, InlineCallFrame*, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase);
 
+void emitLoadVarargsLengthFromArray(CCallHelpers&, GPRReg arrayGPR, GPRReg butterflyGPR, GPRReg indexingShapeGPR, GPRReg lengthGPR, CCallHelpers::JumpList& slowCase);
+void emitLoadVarargsFromArray(CCallHelpers&, GPRReg butterflyGPR, GPRReg indexingShapeGPR, GPRReg lengthGPR, FPRReg scratchFPR, unsigned firstVarArgOffset, CCallHelpers::Address destination, CCallHelpers::JumpList& slowCase);
+
+void emitSetupVarargsFrameFromCellButterfly(VM&, CCallHelpers&, GPRReg cellButterflyGPR, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase);
+void emitSetupVarargsFrameFromArray(VM&, CCallHelpers&, GPRReg arrayGPR, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, GPRReg scratchGPR4, FPRReg scratchFPR, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase);
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)
