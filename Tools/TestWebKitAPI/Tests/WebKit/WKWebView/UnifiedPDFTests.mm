@@ -222,25 +222,27 @@ UNIFIED_PDF_TEST(CopyEditingCommandOnEmptySelectionShouldNotCrash)
     [webView objectByEvaluatingJavaScript:@"internals.sendEditingCommandToPDFForTesting(document.querySelector('embed'), 'copy')"];
 }
 
-TEST_P(PrintWithJSExecutionOptionTests, PDFWithWindowPrintEmbeddedJS)
+class UnifiedPDFPrintWithJSExecutionOptionTests : public PrintWithJSExecutionOptionTests { };
+
+TEST_P(UnifiedPDFPrintWithJSExecutionOptionTests, PDFWithWindowPrintEmbeddedJS)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
     runTest(webView, pdfRequest());
 }
 
-TEST_P(PrintWithJSExecutionOptionTests, PDFWithOpenActionPrintEmbeddedJS)
+TEST_P(UnifiedPDFPrintWithJSExecutionOptionTests, PDFWithOpenActionPrintEmbeddedJS)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
     runTest(webView, openActionPDFRequest());
 }
 
-TEST_P(PrintWithJSExecutionOptionTests, PDFWithNonPrintingOpenActionDoesNotPrint)
+TEST_P(UnifiedPDFPrintWithJSExecutionOptionTests, PDFWithNonPrintingOpenActionDoesNotPrint)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
     runNonPrintingOpenActionTest(webView);
 }
 
-INSTANTIATE_TEST_SUITE_P(UnifiedPDF, PrintWithJSExecutionOptionTests, testing::Bool(), &PrintWithJSExecutionOptionTests::testNameGenerator);
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, UnifiedPDFPrintWithJSExecutionOptionTests, testing::Bool(), &PrintWithJSExecutionOptionTests::testNameGenerator);
 
 UNIFIED_PDF_TEST(DictionaryLookupDoesNotAssertOnEmptyRange)
 {

@@ -481,7 +481,7 @@ TestWebKitAPI.URLExtras
 TestWebKitAPI.URLParserTextEncodingTest
 TestWebKitAPI.UTIRegistry
 TestWebKitAPI.UTIUtilities
-TestWebKitAPI.UnifiedPDF/PrintWithJSExecutionOptionTests
+TestWebKitAPI.UnifiedPDF/UnifiedPDFPrintWithJSExecutionOptionTests
 TestWebKitAPI.UseSystemAppearance
 TestWebKitAPI.UserContentWorld
 TestWebKitAPI.UserInterfaceIdiomUpdate
