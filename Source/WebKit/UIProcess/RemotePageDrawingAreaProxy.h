@@ -28,6 +28,7 @@
 #include "DrawingAreaInfo.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
+#include <WebCore/PageIdentifier.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
@@ -38,7 +39,7 @@ class WebProcessProxy;
 class RemotePageDrawingAreaProxy : public IPC::MessageReceiver, public RefCounted<RemotePageDrawingAreaProxy> {
     WTF_MAKE_TZONE_ALLOCATED(RemotePageDrawingAreaProxy);
 public:
-    static Ref<RemotePageDrawingAreaProxy> create(DrawingAreaProxy&, WebProcessProxy&);
+    static Ref<RemotePageDrawingAreaProxy> create(DrawingAreaProxy&, WebProcessProxy&, WebCore::PageIdentifier);
 
     ~RemotePageDrawingAreaProxy();
 
@@ -47,9 +48,10 @@ public:
 
     WebProcessProxy& process() { return m_process; }
     DrawingAreaIdentifier identifier() const { return m_identifier; }
+    WebCore::PageIdentifier webPageID() const { return m_webPageID; }
 
 private:
-    RemotePageDrawingAreaProxy(DrawingAreaProxy&, WebProcessProxy&);
+    RemotePageDrawingAreaProxy(DrawingAreaProxy&, WebProcessProxy&, WebCore::PageIdentifier);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -57,6 +59,7 @@ private:
     DrawingAreaIdentifier m_identifier;
     std::span<IPC::ReceiverName> m_names;
     const Ref<WebProcessProxy> m_process;
+    const WebCore::PageIdentifier m_webPageID;
 };
 
 }
