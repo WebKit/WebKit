@@ -373,7 +373,7 @@ Tests/WebKit/WKWebView/WKNavigationResponse.mm @nonARC
 Tests/WebKit/WKWebView/WKObject.mm @nonARC
 Tests/WebKit/WKWebView/WKPageHasMediaStreamingActivity.mm @nonARC
 Tests/WebKit/WKWebView/WKPreferences.mm @nonARC
-Tests/WebKit/WKWebView/WKPrinting.mm @nonARC
+Tests/WebKit/WKWebView/WKPrinting.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/WKProcessPoolConfiguration.mm @nonARC
 Tests/WebKit/WKWebView/WKRequestActivatedElementInfo.mm @nonARC
 Tests/WebKit/WKWebView/WKScrollGeometryTests.mm @nonARC
