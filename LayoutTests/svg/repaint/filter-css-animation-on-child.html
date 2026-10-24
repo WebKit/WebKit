@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+  <title>SVG filter ancestor must repaint its full filter region when a child's CSS transform animates</title>
+  <script src="../../resources/ui-helper.js"></script>
+  <style>
+    body { margin: 0; background: white; }
+  </style>
+  <script>
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dontForceRepaint();
+    }
+
+window.addEventListener('load', async function() {
+  const child = document.getElementById('child');
+  let step = 0;
+  const totalSteps = 20;
+
+  function animate() {
+    if (step < totalSteps) {
+      const x = (step / totalSteps) * 100;
+      child.style.transform = 'translateX(' + x + 'px)';
+      step++;
+      requestAnimationFrame(animate);
+    } else {
+      child.style.transform = 'translateX(100px)';
+      finishTest();
+    }
+  }
+
+  async function finishTest() {
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    document.documentElement.classList.remove('reftest-wait');
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+
+  requestAnimationFrame(animate);
+});
+</script>
+</head>
+<body>
+  <svg width="300" height="100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="f" filterUnits="userSpaceOnUse" x="0" y="0" width="300" height="100">
+        <feGaussianBlur stdDeviation="2"/>
+      </filter>
+    </defs>
+    <g filter="url(#f)">
+      <rect id="child" width="50" height="50" fill="red"/>
+    </g>
+  </svg>
+</body>
+</html>
