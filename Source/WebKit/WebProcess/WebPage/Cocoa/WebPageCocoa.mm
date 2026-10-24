@@ -350,10 +350,10 @@ void WebPage::performDictionaryLookupAtLocation(FrameIdentifier frameID, const F
         return completionHandler(WTF::move(remoteUserInputEventData));
 
 #if ENABLE(PDF_PLUGIN)
-    if (RefPtr pluginView = result.isOverWidget() ? pluginViewForFrame(protect(result.innerNodeFrame()).get()) : nullptr) {
-        if (pluginView->performDictionaryLookupAtLocation(floatPoint))
-            return completionHandler(std::nullopt);
-    }
+    RefPtr pluginElement = result.isOverWidget() ? dynamicDowncast<HTMLPlugInElement>(result.targetElement()) : nullptr;
+    RefPtr pluginView = pluginElement ? dynamicDowncast<PluginView>(pluginElement->pluginWidget()) : nullptr;
+    if (pluginView && pluginView->performDictionaryLookupAtLocation(floatPoint))
+        return completionHandler(std::nullopt);
 #endif
 
     if (auto rangeResult = DictionaryLookup::rangeAtHitTestResult(result)) {
