@@ -145,7 +145,7 @@ public:
     WEBCORE_EXPORT void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
     WEBCORE_EXPORT void setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier, WallTime);
     WEBCORE_EXPORT void setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier, ServiceWorkerUpdateViaCache);
-    WEBCORE_EXPORT void removeFetch(ServiceWorkerIdentifier, SWServerConnectionIdentifier, FetchIdentifier, bool isNavigationFetch);
+    WEBCORE_EXPORT void removeFetch(ServiceWorkerIdentifier, SWServerConnectionIdentifier, FetchIdentifier, ServiceWorkerFetch::Client&, bool isNavigationFetch);
 
 private:
     SWContextManager() = default;

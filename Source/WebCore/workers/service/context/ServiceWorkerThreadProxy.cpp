@@ -289,12 +289,12 @@ void ServiceWorkerThreadProxy::navigationPreloadFailed(SWServerConnectionIdentif
     }, WorkerRunLoop::defaultMode());
 }
 
-void ServiceWorkerThreadProxy::removeFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
+void ServiceWorkerThreadProxy::removeFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, Ref<ServiceWorkerFetch::Client>&& client)
 {
     RELEASE_LOG_FORWARDABLE(ServiceWorker, ServiceWorkerThreadProxyRemoveFetch, fetchIdentifier.toUInt64());
 
-    postTaskForModeToWorkerOrWorkletGlobalScope([protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier] (auto& context) {
-        downcast<ServiceWorkerGlobalScope>(context).removeFetchTask({ connectionIdentifier, fetchIdentifier });
+    postTaskForModeToWorkerOrWorkletGlobalScope([protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier, client = WTF::move(client)](auto& context) {
+        downcast<ServiceWorkerGlobalScope>(context).removeFetchTask({ connectionIdentifier, fetchIdentifier }, client);
 
         if (!downcast<ServiceWorkerGlobalScope>(context).hasFetchTask()) {
             callOnMainRunLoop([protectedThis] {

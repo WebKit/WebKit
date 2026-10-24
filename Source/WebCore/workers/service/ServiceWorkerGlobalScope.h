@@ -120,7 +120,7 @@ public:
     void addFetchEvent(FetchKey, FetchEvent&);
     RefPtr<ServiceWorkerFetch::Client> LEGACY_NODELETE fetchTask(FetchKey);
     bool LEGACY_NODELETE hasFetchTask() const;
-    void removeFetchTask(FetchKey);
+    void removeFetchTask(FetchKey, ServiceWorkerFetch::Client&);
     RefPtr<ServiceWorkerFetch::Client> takeFetchTask(FetchKey);
     void navigationPreloadFailed(FetchKey, ResourceError&&);
     void navigationPreloadIsReady(FetchKey, ResourceResponse&&);
