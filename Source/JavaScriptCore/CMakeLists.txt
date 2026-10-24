@@ -1382,7 +1382,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/PrototypeKey.h
     runtime/ProxyConstructor.h
     runtime/ProxyObject.h
-    runtime/ProxyRevoke.h
     runtime/PureNaN.h
     runtime/PutDirectIndexMode.h
     runtime/PutPropertySlot.h

@@ -235,7 +235,6 @@
 #include "ProfilerSupport.h"
 #include "ProxyConstructorInlines.h"
 #include "ProxyObjectInlines.h"
-#include "ProxyRevokeInlines.h"
 #include "ReflectObjectInlines.h"
 #include "RegExpConstructorInlines.h"
 #include "RegExpGlobalDataInlines.h"
@@ -1301,9 +1300,9 @@ void JSGlobalObject::init(VM& vm)
             bool isCallable = true;
             init.set(ProxyObject::createStructure(init.vm, init.owner, jsNull(), isCallable));
         });
-    m_proxyRevokeStructure.initLater(
+    m_proxyRevocableResultStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            init.set(ProxyRevoke::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
+            init.set(createProxyRevocableResultStructure(init.vm, *init.owner));
         });
 
     m_parseIntFunction.initLater(
@@ -3051,7 +3050,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_moduleNamespaceObjectStructure.visit(visitor);
     thisObject->m_proxyObjectStructure.visit(visitor);
     thisObject->m_callableProxyObjectStructure.visit(visitor);
-    thisObject->m_proxyRevokeStructure.visit(visitor);
+    thisObject->m_proxyRevocableResultStructure.visit(visitor);
     thisObject->m_sharedArrayBufferStructure.visit(visitor);
     thisObject->m_disposableStackStructure.visit(visitor);
     thisObject->m_asyncDisposableStackStructure.visit(visitor);
