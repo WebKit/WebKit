@@ -81,6 +81,7 @@ public:
 
     Type type() const { return filteredResponse().type(); }
     const String& url() const;
+    const URL& firstURL() const LIFETIME_BOUND { return m_internalResponse.isRedirected() ? m_requestURL : m_internalResponse.url(); }
     bool redirected() const { return filteredResponse().isRedirected(); }
     int status() const { return filteredResponse().httpStatusCode(); }
     bool ok() const { return filteredResponse().isSuccessful(); }
@@ -198,6 +199,7 @@ private:
     RefPtr<Loader> m_loader;
     std::unique_ptr<FetchResponseBodyLoader> m_bodyLoader;
     mutable String m_responseURL;
+    URL m_requestURL;
     std::optional<ResourceLoaderIdentifier> m_resourceLoaderIdentifier;
     // Opaque responses will padd their body size when used with Cache API.
     uint64_t m_bodySizeWithPadding { 0 };

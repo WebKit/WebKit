@@ -108,7 +108,7 @@ private:
 
     enum class ShouldSetSource : bool { No, Yes };
     void didReceiveRedirectResponse(WebCore::ResourceResponse&&);
-    void didReceiveResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage);
+    void didReceiveResponse(WebCore::ResourceResponse&&, const URL& firstResponseURL, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::SharedBufferReference&);
     void didReceiveDataFromPreloader(const WebCore::FragmentedSharedBuffer&);
     void LEGACY_NODELETE didReceiveFormData(const IPC::FormDataReference&);
@@ -118,7 +118,7 @@ private:
     void usePreload();
 
     void processRedirectResponse(WebCore::ResourceResponse&&, ShouldSetSource);
-    void processResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage, ShouldSetSource);
+    void processResponse(WebCore::ResourceResponse&&, const URL& firstResponseURL, bool needsContinueDidReceiveResponseMessage, ShouldSetSource);
 
     void startFetch();
 
