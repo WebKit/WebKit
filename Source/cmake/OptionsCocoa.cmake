@@ -465,11 +465,7 @@ if (ENABLE_SANITIZERS)
     endif ()
 endif ()
 
-# FIXME: PCH codegen emits non-exported inline functions from JSC into WebCore,
-# so it's incompatible with dead stripping.
-if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug" OR USE_PCH_CODEGEN)
-    add_link_options("LINKER:-dead_strip")
-endif ()
+add_link_options("$<$<NOT:$<CONFIG:Debug>>:LINKER:-dead_strip>")
 add_link_options("LINKER:-dead_strip_dylibs")
 
 # Mirrors DYLIB_COMPATIBILITY_VERSION / DYLIB_CURRENT_VERSION in
