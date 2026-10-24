@@ -317,7 +317,7 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
         return BlockAvoidanceReason::ContentHasUnsupportedSize;
     // The block-step-size rounding of the margin box is the parent's job on the render tree path (RenderBlockFlow::performBlockStepSizing).
     CheckedRef parentStyle = box.parent()->style();
-    if (style->clear() != Clear::None || !style->justifySelf().resolve(parentStyle.ptr()).isNormalStretchOrLegacy() || !style->blockStepSize().isNone())
+    if (!style->justifySelf().resolve(parentStyle.ptr()).isNormalStretchOrLegacy() || !style->blockStepSize().isNone())
         return BlockAvoidanceReason::ContentHasUnsupportedStyle;
     // An out-of-flow box inside whose containing block is outside it, in the block formatting context, would be registered on a box the
     // block formatting context has not committed yet.
@@ -337,6 +337,7 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     // (RenderBlockFlow::layoutBlockChild, markInlineContentDirtyForLayout).
     if (renderer.isForceHiddenByLineClamp())
         return BlockAvoidanceReason::ContentIsHiddenByLineClamp;
+    // Without floats, clear introduces no clearance (CSS 2.2 §9.5.2), and floats outside the root stay out of its block formatting context.
     if (renderer.isFloating())
         return BlockAvoidanceReason::ContentHasFloat;
     if (renderer.isOutOfFlowPositioned()) {
@@ -420,7 +421,7 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
 
     // Empty editable boxes get a line (RenderBlock::hasLineIfEmpty). The layout state has no entry for the boxes inside the block
     // formatting context, which is where line-clamp, text-box-trim and line grids reach the inline content below them.
-    if (style->clear() != Clear::None || !style->marginTrim().isNone() || alignsBlockLevelChildren(style.get()) || blockContainer->hasLineIfEmpty()
+    if (!style->marginTrim().isNone() || alignsBlockLevelChildren(style.get()) || blockContainer->hasLineIfEmpty()
         || !style->maxLines().isAuto() || style->textBoxTrim() != TextBoxTrim::None || !style->lineGrid().isNone())
         return BlockAvoidanceReason::ContentHasUnsupportedStyle;
     CheckedRef parentStyle = blockContainer->parent()->style();
