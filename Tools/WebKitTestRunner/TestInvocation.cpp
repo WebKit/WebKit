@@ -1093,6 +1093,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsLinkDecorationFilteringData")) {
+        TestController::singleton().setStatisticsLinkDecorationFilteringData(stringValue(messageBody));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsTimeToLiveUserInteraction")) {
         TestController::singleton().setStatisticsTimeToLiveUserInteraction(doubleValue(messageBody));
         return nullptr;
