@@ -4512,6 +4512,7 @@ fast/text/international/thai-line-breaks.html [ Failure Pass ]
 
 # Doesn't support variable fonts
 fast/text/variations [ Skip ]
+fast/text/variations/font-weight-gpu-process.html [ Pass ]
 
 fast/images/image-alt-text-vertical.html [ ImageOnlyFailure ]
 
