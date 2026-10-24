@@ -2462,7 +2462,9 @@ void NetworkResourceLoader::checkForQualifiedServerTrust(const WebCore::Resource
         // header (as defined in IETF RFC 8288 [6]) with a rel value of tls-certificate-binding.
         if (!WebCore::LinkRelAttribute(nullptr, header.rel()).isTLSCertificateBinding)
             continue;
-        URL url { header.url() };
+        // Section 5.2(3)(a) of the same specification requires the Link header to use a relative
+        // reference to the binding, so resolve it against the URL of the response.
+        URL url { response.url(), header.url() };
         if (!url.isValid())
             continue;
         if (protocolHostAndPortAreEqual(response.url(), url))
