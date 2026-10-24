@@ -141,6 +141,7 @@ enum class HysteresisState : bool;
 }
 
 namespace WebCore {
+class BitmapImage;
 class ColorSpace;
 class IntPoint;
 struct DataDetectorElementInfo;
@@ -645,7 +646,7 @@ public:
     void startWindowDrag();
 
     void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&& image, const std::optional<WebCore::FrameIdentifier>& = std::nullopt);
-    void setPromisedDataForImage(Ref<WebCore::Image>&&, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, const String& pasteboardName, const String& pasteboardOrigin);
+    void setPromisedDataForImage(Ref<WebCore::BitmapImage>&&, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, const String& pasteboardName, const String& pasteboardOrigin);
     void writePromisedImageDragDataToPasteboard(NSPasteboard *);
     void pasteboardChangedOwner(NSPasteboard *);
     void provideDataForPasteboard(NSPasteboard *, NSString *type);
@@ -1162,7 +1163,7 @@ private:
     HashSet<pid_t> m_registeredRemoteAccessibilityPids;
 
     struct PromisedImageDragData {
-        Ref<WebCore::Image> image;
+        Ref<WebCore::BitmapImage> image;
         String filename;
         String extension;
         String title;
