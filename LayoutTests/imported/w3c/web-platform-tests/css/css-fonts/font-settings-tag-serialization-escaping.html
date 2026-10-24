@@ -1,0 +1,30 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS Test: font-feature-settings and font-variation-settings tag serialization escapes special characters</title>
+<link rel="help" href="https://drafts.csswg.org/css-fonts-4/#feature-tag-value">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-4/#font-variation-settings-def">
+<link rel="help" href="https://drafts.csswg.org/cssom/#serialize-a-string">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="target"></div>
+<script>
+const target = document.getElementById("target");
+
+const cases = [
+    { property: "font-feature-settings", input: '"a\\"bc"', expected: '"a\\"bc"' },
+    { property: "font-feature-settings", input: '"a\\\\bc"', expected: '"a\\\\bc"' },
+    { property: "font-feature-settings", input: '"a\\"bc" 2', expected: '"a\\"bc" 2' },
+    { property: "font-variation-settings", input: '"a\\"bc" 1', expected: '"a\\"bc" 1' },
+    { property: "font-variation-settings", input: '"a\\\\bc" 1', expected: '"a\\\\bc" 1' },
+];
+
+for (const { property, input, expected } of cases) {
+    test(() => {
+        target.style.cssText = "";
+        target.style.setProperty(property, input);
+        assert_equals(target.style.getPropertyValue(property), expected, "specified value");
+        assert_equals(getComputedStyle(target).getPropertyValue(property), expected, "computed value");
+        target.style.cssText = "";
+    }, `${property}: ${input} escapes the tag when serialized`);
+}
+</script>
