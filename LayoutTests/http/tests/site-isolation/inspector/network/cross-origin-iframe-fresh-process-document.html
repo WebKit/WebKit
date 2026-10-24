@@ -1,0 +1,150 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script src="resources/provisional-load-test-utilities.js"></script>
+<script>
+const crossOriginResources = `http://${location.hostname === "localhost" ? "127.0.0.1" : "localhost"}:8000/site-isolation/inspector/network/resources`;
+
+function addCrossOriginIFrame(id, path) {
+    let iframe = document.createElement("iframe");
+    iframe.id = id;
+    iframe.src = `${crossOriginResources}/${path}`;
+    document.body.appendChild(iframe);
+}
+
+function navigateIFrame(id, path) {
+    document.getElementById(id).src = `${crossOriginResources}/${path}`;
+}
+
+function removeIFrame(id) {
+    document.getElementById(id).remove();
+}
+
+function test() {
+    // Unique per load, so repeated runs in one process don't hit the memory cache.
+    function makeQuery(prefix) {
+        return `${prefix}-${String(Math.random()).slice(2)}`;
+    }
+
+    async function removeChildFrame(id, frame) {
+        let remaining = startPhase();
+        InspectorTest.evaluateInPage(`removeIFrame("${id}")`);
+        let removed = await pollUntil(() => !WI.networkManager.frameForIdentifier(frame.id), remaining());
+        InspectorTest.expectThat(!!removed, "Removed frame should be reported as removed.");
+        return !!removed;
+    }
+
+    // Holds the load of a new cross-origin iframe, then removes the iframe, so that its provisional frame is destroyed without committing.
+    async function addAndDiscardProvisionalCrossOriginIFrame() {
+        let provisionalTarget = await holdProvisionalLoad(`addCrossOriginIFrame("discarded", "iframe-with-script.html?${makeQuery("discarded")}")`);
+        if (!provisionalTarget)
+            return false;
+
+        let remaining = startPhase();
+        InspectorTest.evaluateInPage(`removeIFrame("discarded")`);
+        let destroyed = await pollUntil(() => provisionalTarget.isDestroyed, remaining());
+        InspectorTest.expectThat(!!destroyed, "Provisional frame target should be destroyed with its iframe.");
+        if (!destroyed)
+            provisionalTarget._resumeIfPaused();
+        return !!destroyed;
+    }
+
+    // The cross-origin frame each test case leaves for the next one.
+    let liveFrame = null;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.FreshProcessCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.FreshProcessCrossOriginIFrame.DocumentAndScriptRows",
+        description: "A cross-origin iframe whose document loads in a fresh process should list its document and script once each, finished, with the document request and response.",
+        async test() {
+            let query = makeQuery("fresh");
+            let recorder = new FrameLoadRowRecorder;
+            liveFrame = await loadAndExpectDocumentAndScriptRows(recorder, `addCrossOriginIFrame("live", "iframe-with-script.html?${query}")`, query);
+            expectNoAboutBlankRow(recorder);
+            recorder.stop();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.FreshProcessCrossOriginIFrame.DiscardedProvisionalLoadInSharedProcess",
+        description: "Discarding a provisional load in a process that hosts another frame should keep Network events flowing from that frame.",
+        async test() {
+            InspectorTest.assert(liveFrame, "Frame from the previous test case should be live.");
+            let frame = liveFrame;
+            liveFrame = null;
+            if (!frame || !await addAndDiscardProvisionalCrossOriginIFrame())
+                return;
+
+            // A same-site navigation stays in the process, so it does not register the process again.
+            let query = makeQuery("shared");
+            let recorder = new FrameLoadRowRecorder;
+            liveFrame = await loadAndExpectDocumentAndScriptRows(recorder, `navigateIFrame("live", "iframe-with-script.html?${query}")`, query);
+            recorder.stop();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.FreshProcessCrossOriginIFrame.DiscardedProvisionalLoadThenFreshProcess",
+        description: "After a provisional load in a fresh process is discarded, a later cross-origin iframe should still list its document request and response.",
+        async test() {
+            InspectorTest.assert(liveFrame, "Frame from the previous test case should be live.");
+            let frame = liveFrame;
+            liveFrame = null;
+
+            // Leave no frame in the cross-origin process, so the next load starts in a fresh one.
+            if (!frame || !await removeChildFrame("live", frame) || !await addAndDiscardProvisionalCrossOriginIFrame())
+                return;
+
+            let query = makeQuery("later");
+            let recorder = new FrameLoadRowRecorder;
+            liveFrame = await loadAndExpectDocumentAndScriptRows(recorder, `addCrossOriginIFrame("later", "iframe-with-script.html?${query}")`, query);
+            recorder.stop();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.FreshProcessCrossOriginIFrame.DiscardedStartedLoadLeavesNoFrame",
+        description: "A load that starts in a fresh process and is discarded without committing should not leave a frame for its document request.",
+        async test() {
+            InspectorTest.assert(liveFrame, "Frame from the previous test case should be live.");
+            let frame = liveFrame;
+            liveFrame = null;
+            if (!frame || !await removeChildFrame("later", frame))
+                return;
+
+            let query = makeQuery("no-content");
+            let framesForLoad = [];
+            let provisionalTargets = [];
+            let frameAdded = WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, (event) => {
+                if (event.data.frame.mainResource.url.endsWith(`?${query}`))
+                    framesForLoad.push(event.data.frame);
+            });
+            let targetAdded = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                if (event.data.target.type === WI.TargetType.Frame && event.data.target.isProvisional)
+                    provisionalTargets.push(event.data.target);
+            });
+
+            // A 204 response ends the load without a commit, after the document request and response were sent.
+            let remaining = startPhase();
+            InspectorTest.evaluateInPage(`addCrossOriginIFrame("no-content", "no-content.asis?${query}")`);
+            let destroyed = await pollUntil(() => provisionalTargets.find((target) => target.isDestroyed), remaining());
+            WI.networkManager.removeEventListener(WI.NetworkManager.Event.FrameWasAdded, frameAdded);
+            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, targetAdded);
+            InspectorTest.expectThat(!!destroyed, "Provisional frame target should be destroyed without committing.");
+            if (!destroyed)
+                return;
+
+            InspectorTest.expectEqual(framesForLoad.length, 1, "Document request should reach the frontend.");
+            let gone = await pollUntil(() => !WI.networkManager.frames.some((frame) => frame.mainResource.url.endsWith(`?${query}`)), remaining());
+            InspectorTest.expectThat(!!gone, "Discarded load should leave no frame.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a cross-origin iframe whose document loads in a fresh process lists its document request and response, also after a provisional load is discarded, under Site Isolation.</p>
+</body>

@@ -1,0 +1,89 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script src="resources/provisional-load-test-utilities.js"></script>
+<script>
+const crossOriginBase = "http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html";
+let popup = null;
+
+// The popup has an opener, so it joins this page's browsing context group. Its iframe starts the cross-origin process
+// after the inspector attached, and keeps it after this page's own iframe there is removed.
+function openPopupWithCrossOriginIFrame(query) {
+    popup = window.open("about:blank");
+    let iframe = popup.document.createElement("iframe");
+    iframe.onload = () => TestPage.dispatchEventToFrontend("PopupIFrameLoaded");
+    iframe.src = `${crossOriginBase}?${query}`;
+    popup.document.body.appendChild(iframe);
+}
+
+function closePopup() {
+    popup?.close();
+}
+
+function addIFrame(id, query) {
+    let iframe = document.createElement("iframe");
+    iframe.id = id;
+    iframe.src = `${crossOriginBase}?${query}`;
+    document.body.appendChild(iframe);
+}
+
+function removeIFrame(id) {
+    document.getElementById(id).remove();
+}
+
+function test() {
+    // Unique per run, so repeated runs in one process don't hit the memory cache.
+    const token = String(Math.random()).slice(2);
+
+    // Protocol frame identifiers start with the hosting process: "frame-<process>.<frame>".
+    function processOf(frame) {
+        return frame.id.split(".")[0];
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrameInProcessKeptByPopup");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrameInProcessKeptByPopup.SecondIFrame",
+        description: "An iframe that loads in a process where this page's previous iframe was removed, and which a popup keeps alive, should list its document request and response and its script.",
+        async test() {
+            try {
+                let remaining = startPhase();
+                let popupIFrameLoaded = InspectorTest.awaitEvent("PopupIFrameLoaded").then(() => true);
+                InspectorTest.evaluateInPage(`openPopupWithCrossOriginIFrame("popup-${token}")`);
+                let loaded = await Promise.race([popupIFrameLoaded, new Promise((resolve) => setTimeout(() => resolve(false), remaining()))]);
+                InspectorTest.expectThat(loaded, "Popup's cross-origin iframe should load.");
+                if (!loaded)
+                    return;
+
+                let recorder = new FrameLoadRowRecorder;
+                let first = await loadAndExpectDocumentAndScriptRows(recorder, `addIFrame("first", "first-${token}")`, `first-${token}`);
+                recorder.stop();
+                if (!first)
+                    return;
+
+                // This page's last frame in the process goes away, so the process stops reporting for this page.
+                remaining = startPhase();
+                InspectorTest.evaluateInPage(`removeIFrame("first")`);
+                let removed = await pollUntil(() => !WI.networkManager.frameForIdentifier(first.id), remaining());
+                InspectorTest.expectThat(!!removed, "First iframe should be reported as removed.");
+                if (!removed)
+                    return;
+
+                recorder = new FrameLoadRowRecorder;
+                let second = await loadAndExpectDocumentAndScriptRows(recorder, `addIFrame("second", "second-${token}")`, `second-${token}`);
+                recorder.stop();
+                if (second)
+                    InspectorTest.expectEqual(processOf(second), processOf(first), "Second iframe should load in the first iframe's process.");
+            } finally {
+                InspectorTest.evaluateInPage(`closePopup()`);
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that an iframe which loads in a process kept alive by a popup, after this page's previous iframe there was removed, is reported by Network events under Site Isolation.</p>
+</body>
