@@ -98,7 +98,7 @@ public:
 
     bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"_s; }
 
-    OptionSet<DragOperation> sourceOperationMask() const;
+    WEBCORE_EXPORT OptionSet<DragOperation> sourceOperationMask() const;
     OptionSet<DragOperation> destinationOperationMask() const;
     void setSourceOperationMask(OptionSet<DragOperation>);
     void setDestinationOperationMask(OptionSet<DragOperation>);

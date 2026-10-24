@@ -4698,6 +4698,24 @@ static NSDragOperation LEGACY_NODELETE kit(std::optional<WebCore::DragOperation>
     return NSDragOperationNone;
 }
 
+static NSDragOperation kit(OptionSet<WebCore::DragOperation> dragOperationMask)
+{
+    NSDragOperation result = NSDragOperationNone;
+    if (dragOperationMask.contains(WebCore::DragOperation::Copy))
+        result |= NSDragOperationCopy;
+    if (dragOperationMask.contains(WebCore::DragOperation::Link))
+        result |= NSDragOperationLink;
+    if (dragOperationMask.contains(WebCore::DragOperation::Generic))
+        result |= NSDragOperationGeneric;
+    if (dragOperationMask.contains(WebCore::DragOperation::Private))
+        result |= NSDragOperationPrivate;
+    if (dragOperationMask.contains(WebCore::DragOperation::Move))
+        result |= NSDragOperationMove;
+    if (dragOperationMask.contains(WebCore::DragOperation::Delete))
+        result |= NSDragOperationDelete;
+    return result;
+}
+
 NSDragOperation WebViewImpl::draggingUpdated(id<NSDraggingInfo> draggingInfo)
 {
     RetainPtr view = m_view.get();
@@ -4960,7 +4978,7 @@ void WebViewImpl::writeToURLForFilePromiseProvider(NSFilePromiseProvider *provid
 
 NSDragOperation WebViewImpl::dragSourceOperationMask(NSDraggingSession *, NSDraggingContext context)
 {
-    NSDragOperation defaultOperationMask = (context == NSDraggingContextOutsideApplication || m_page->currentDragIsOverFileInput()) ? NSDragOperationCopy : (NSDragOperationGeneric | NSDragOperationMove | NSDragOperationCopy);
+    NSDragOperation defaultOperationMask = (context == NSDraggingContextOutsideApplication || m_page->currentDragIsOverFileInput()) ? NSDragOperationCopy : kit(m_page->dragSourceOperationMask());
 #if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
     if (RetainPtr view = this->view())
         return [view _web_dragSourceOperationMaskForDraggingContext:context defaultMask:defaultOperationMask];
