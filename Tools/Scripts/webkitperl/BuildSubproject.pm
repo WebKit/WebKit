@@ -31,7 +31,7 @@ use strict;
 use warnings;
 use File::Basename;
 use FindBin;
-use Getopt::Long qw(:config pass_through);
+use Getopt::Long qw(:config pass_through no_auto_abbrev);
 use lib $FindBin::Bin;
 use webkitdirs;
 use webkitperl::FeatureList qw(getFeatureOptionList);
