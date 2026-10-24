@@ -58,6 +58,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0E527AEF888254BE1ED24498 /* InspectorObjectIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = DDB320A5233FB9CC6D07408D /* InspectorObjectIdentifier.h */; };
 		2E86B6A6E3E4C9B02D5AAD6D /* CSSValueKeywords.serialization.in in Headers */ = {isa = PBXBuildFile; fileRef = A41992C7F8B4034E8D8344E8 /* CSSValueKeywords.serialization.in */; settings = {ATTRIBUTES = (Private, ); }; };
 		4C1117D4C483A9BC36554D2F /* SVGImageElementSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 775ED9913673971DA280FD1E /* SVGImageElementSizing.h */; };
 		281A941CB72C48E5886C9BC1 /* ImageInputTypeSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 67E6257C27C4E92D1FA4CBD1 /* ImageInputTypeSizing.h */; };
@@ -7761,6 +7762,7 @@
 		A41992C7F8B4034E8D8344E8 /* CSSValueKeywords.serialization.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = CSSValueKeywords.serialization.in; sourceTree = "<group>"; };
 		AB7389AEF5F167553DB95801 /* RequestedGPU.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RequestedGPU.idl; sourceTree = "<group>"; };
 		D0A0F32FE69879582D4B079E /* JSSimulatedWebGLContextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSimulatedWebGLContextEvent.h; sourceTree = "<group>"; };
+		DDB320A5233FB9CC6D07408D /* InspectorObjectIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorObjectIdentifier.h; sourceTree = "<group>"; };
 		E096CAD4B82ABA7405F84633 /* WorkerInternals.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerInternals.idl; sourceTree = "<group>"; };
 		E1A913390A05F72D5FF13A0B /* JSWorkerInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerInternals.h; sourceTree = "<group>"; };
 		E4B7A2C10F63D5948A1E2B70 /* ReplacedElementIntrinsicSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReplacedElementIntrinsicSizing.h; sourceTree = "<group>"; };
@@ -26449,6 +26451,7 @@
 				9995243B2E8F0CA50093C3E0 /* InspectorNetworkIntercept.h */,
 				504AACCB1834455900E3D9BC /* InspectorNodeFinder.cpp */,
 				504AACCC1834455900E3D9BC /* InspectorNodeFinder.h */,
+				DDB320A5233FB9CC6D07408D /* InspectorObjectIdentifier.h */,
 				7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */,
 				7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */,
 				7C522D5015B477E8009B7C96 /* InspectorOverlayConfigParser.cpp */,
@@ -46433,6 +46436,7 @@
 				A5B81CB11FAA44620037D1E6 /* InspectorNetworkAgent.h in Headers */,
 				9995243E2E8F0CA50093C3E0 /* InspectorNetworkIntercept.h in Headers */,
 				504AACCE1834455900E3D9BC /* InspectorNodeFinder.h in Headers */,
+				0E527AEF888254BE1ED24498 /* InspectorObjectIdentifier.h in Headers */,
 				0F03C0751884805500A5F8CA /* InspectorOverlay.h in Headers */,
 				2EDDAF4427920EB4005D18E4 /* InspectorOverlayLabel.h in Headers */,
 				A5B81CB21FAA44620037D1E6 /* InspectorPageAgent.h in Headers */,

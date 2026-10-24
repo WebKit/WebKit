@@ -37,6 +37,7 @@
 #include "ImageBuffer.h"
 #include "ImageUtilities.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorObjectIdentifier.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "PixelFormat.h"
@@ -47,7 +48,6 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -386,7 +386,7 @@ String InspectorLayerTreeAgent::bind(const RenderLayer* layer)
     if (!layer)
         return emptyString();
     return m_documentLayerToIdMap.ensure(layer, [this, layer] {
-        auto identifier = IdentifiersFactory::createIdentifier();
+        auto identifier = generateInspectorObjectIdentifierString();
         m_idToLayer.set(identifier, InlineWeakPtr { layer });
         return identifier;
     }).iterator->value;
@@ -405,7 +405,7 @@ String InspectorLayerTreeAgent::bindPseudoElement(PseudoElement* pseudoElement)
     if (!pseudoElement)
         return emptyString();
     return m_pseudoElementToIdMap.ensure(*pseudoElement, [this, pseudoElement] {
-        auto identifier = IdentifiersFactory::createIdentifier();
+        auto identifier = generateInspectorObjectIdentifierString();
         m_idToPseudoElement.set(identifier, pseudoElement);
         return identifier;
     }).iterator->value;

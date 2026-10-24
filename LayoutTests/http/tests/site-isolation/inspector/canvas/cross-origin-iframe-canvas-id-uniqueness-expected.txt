@@ -1,0 +1,14 @@
+Test that canvases in a cross-origin iframe, which run in another web process under site isolation, do not reuse the main frame's canvas identifiers.
+
+
+
+== Running test suite: SiteIsolation.Canvas.CrossOriginIFrame.CanvasIdUniqueness
+-- Running test case: SiteIsolation.Canvas.CrossOriginIFrame.CanvasIdsAreUnique
+PASS: Should have canvases from both frames.
+PASS: Canvases should come from two frame targets.
+PASS: Canvas identifiers should be unique across the main frame and the cross-origin iframe.
+PASS: Canvas identifiers should have the form canvas:<process>.<object>.
+PASS: Main frame canvases should share one process part.
+PASS: Iframe canvases should share one process part.
+PASS: Main frame and iframe canvases should have different process parts.
+

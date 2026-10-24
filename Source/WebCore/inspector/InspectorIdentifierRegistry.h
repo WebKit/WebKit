@@ -184,8 +184,7 @@ private:
     HashMap<WebCore::DocumentLoader*, String> m_loaderToIdentifier;
 };
 
-// Default implementation using IdentifiersFactory sequential counters.
-// This is the pre-Site-Isolation behavior where IDs are opaque strings
+// Default implementation. IDs are opaque process-qualified strings
 // with no relationship to FrameIdentifier values.
 class LegacyIdentifierRegistry final : public IdentifierRegistry {
     WTF_MAKE_TZONE_ALLOCATED(LegacyIdentifierRegistry);

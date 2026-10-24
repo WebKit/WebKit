@@ -77,7 +77,6 @@
 #include <pal/text/TextEncoding.h>
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>

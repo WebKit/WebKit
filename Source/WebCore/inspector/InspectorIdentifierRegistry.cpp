@@ -29,11 +29,11 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FrameDestructionObserverInlines.h"
+#include "InspectorObjectIdentifier.h"
 #include "LocalFrameInlines.h"
 #include "NavigationIdentifier.h"
 #include "ProcessIdentifier.h"
 #include "RemoteFrame.h"
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
@@ -66,9 +66,9 @@ Protocol::Network::LoaderId IdentifierRegistry::loaderId(WebCore::DocumentLoader
         return makeString("loader-"_s, navigationID->processIdentifier().toUInt64(), '.', navigationID->object().toUInt64());
 
     // Fallback only when no navigationID exists yet (early instrumentation / non-navigation loads):
-    // keep a stable per-loader id. This produces a legacy-format ID.
+    // keep a stable per-loader id.
     return m_loaderToIdentifier.ensure(loader, [] {
-        return IdentifiersFactory::createIdentifier();
+        return WebCore::generateInspectorObjectIdentifierString();
     }).iterator->value;
 }
 
@@ -95,7 +95,7 @@ Protocol::Network::FrameId LegacyIdentifierRegistry::frameId(const WebCore::Fram
     if (!frame)
         return emptyString();
     return m_frameToIdentifier.ensure(*frame, [this, frame] {
-        auto identifier = IdentifiersFactory::createIdentifier();
+        auto identifier = WebCore::generateInspectorObjectIdentifierString();
         m_identifierToFrame.set(identifier, frame);
         return identifier;
     }).iterator->value;
