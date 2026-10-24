@@ -77,6 +77,10 @@ public:
     // The content box block size when it does not depend on the content, which percentages inside the box resolve against.
     std::optional<LayoutUnit> definiteContentBoxBlockSize() const;
     AxisGeometry computeBlockAxisGeometry(LayoutUnit intrinsicContentBlockSize) const;
+    // A replaced element's own formatting context decides its border box size, from its natural size and aspect ratio (CSS 2.2 §10.3.8,
+    // §10.6.5); this places that border box.
+    AxisGeometry computeReplacedInlineAxisGeometry(LayoutUnit borderBoxSize) const;
+    AxisGeometry computeReplacedBlockAxisGeometry(LayoutUnit borderBoxSize) const;
 
 private:
     enum class Axis : bool { Inline, Block };
