@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <new>
 #include <type_traits>
 #include <utility>
 #include <wtf/AlignedStorage.h>
@@ -78,18 +79,18 @@ public:
     NeverDestroyed(NeverDestroyed&& other)
     {
         AccessTraits::assertAccess();
-        new (storagePointer()) T(WTF::move(*other.storagePointer()));
+        new (storagePointer()) T(WTF::move(*other.objectPointer()));
     }
 
-    operator T&() { return *storagePointer(); }
-    T& get() { return *storagePointer(); }
+    operator T&() { return *objectPointer(); }
+    T& get() { return *objectPointer(); }
 
-    T* operator->() { return storagePointer(); }
+    T* operator->() { return objectPointer(); }
 
-    operator const T&() const { return *storagePointer(); }
-    const T& get() const { return *storagePointer(); }
+    operator const T&() const { return *objectPointer(); }
+    const T& get() const { return *objectPointer(); }
 
-    const T* operator->() const { return storagePointer(); }
+    const T* operator->() const { return objectPointer(); }
 
 private:
     using PointerType = typename std::remove_const<T>::type*;
@@ -99,6 +100,9 @@ private:
         AccessTraits::assertAccess();
         return const_cast<PointerType>(m_storage.get());
     }
+
+    // Only valid once T has been constructed in m_storage.
+    PointerType objectPointer() const { return std::launder(storagePointer()); }
 
     // FIXME: Investigate whether we should allocate a hunk of virtual memory
     // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
@@ -131,15 +135,15 @@ public:
         new (storagePointerWithoutAccessCheck()) T(std::forward<Args>(args)...);
     }
 
-    operator T&() { return *storagePointer(); }
-    T& get() { return *storagePointer(); }
+    operator T&() { return *objectPointer(); }
+    T& get() { return *objectPointer(); }
 
-    T* operator->() { return storagePointer(); }
+    T* operator->() { return objectPointer(); }
 
-    operator const T&() const { return *storagePointer(); }
-    const T& get() const { return *storagePointer(); }
+    operator const T&() const { return *objectPointer(); }
+    const T& get() const { return *objectPointer(); }
 
-    const T* operator->() const { return storagePointer(); }
+    const T* operator->() const { return objectPointer(); }
 
 #if ASSERT_ENABLED
     bool isConstructed() const { return m_isConstructed; }
@@ -159,6 +163,9 @@ private:
         AccessTraits::assertAccess();
         return storagePointerWithoutAccessCheck();
     }
+
+    // Only valid once T has been constructed in m_storage.
+    PointerType objectPointer() const { return std::launder(storagePointer()); }
 
 #if ASSERT_ENABLED
     // LazyNeverDestroyed objects are always static, so this variable is initialized to false.
