@@ -108,6 +108,11 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 - (void)_disableBackForwardSnapshotVolatilityForTesting;
 
+// Holds the next DidStartProvisionalLoadForFrame message from the page's web process, as if it arrived late,
+// and calls the handler once it has been held. The message is handled when the test resumes it.
+- (void)_delayNextDidStartProvisionalLoadForTesting:(void (^)(void))didDelayHandler;
+- (void)_resumeDelayedDidStartProvisionalLoadForTesting;
+
 - (void)_denyNextUserMediaRequest;
 @property (nonatomic, setter=_setMediaCaptureReportingDelayForTesting:) double _mediaCaptureReportingDelayForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic, readonly) BOOL _wirelessVideoPlaybackDisabled;
