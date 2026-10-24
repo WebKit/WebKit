@@ -788,7 +788,7 @@ void SVGTextLayoutAlgorithm::positionOnPaths()
         auto isReversed = textPathRenderer->isLayoutPathReversed();
 
         // Text-anchor and textLength use the anchored chunks of the path content as laid out on a line.
-        auto anchorShift = 0.f;
+        auto totalAnchorShift = 0.f;
         auto totalLength = 0.f;
         size_t chunkStart = 0;
         for (size_t i = 1; i <= range.size(); ++i) {
@@ -796,7 +796,7 @@ void SVGTextLayoutAlgorithm::positionOnPaths()
                 continue;
             auto chunk = range.subspan(chunkStart, i - chunkStart);
             chunkStart = i;
-            anchorShift += this->anchorShift(chunk);
+            totalAnchorShift += anchorShift(chunk);
             auto [start, end] = extent(chunk);
             totalLength += end - start;
         }
@@ -814,7 +814,7 @@ void SVGTextLayoutAlgorithm::positionOnPaths()
 
         // "Let offset be the value of the 'textPath' element's 'startOffset' attribute, adjusted due to any 'pathLength' attribute on
         // the referenced element."
-        auto startOffset = computeTextPathStartOffset(textPathRenderer, pathLength) + anchorShift;
+        auto startOffset = computeTextPathStartOffset(textPathRenderer, pathLength) + totalAnchorShift;
         auto currentOffset = startOffset;
         auto perpendicularShift = 0.f;
         auto textPositionAfterPath = std::optional<FloatPoint> { };
