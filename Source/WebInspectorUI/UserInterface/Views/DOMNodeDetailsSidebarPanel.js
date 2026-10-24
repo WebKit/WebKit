@@ -232,12 +232,12 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
             this._nodeRemoteObject = null;
         }
 
-        let target = WI.assumingMainTarget();
+        let domNode = this.domNode;
+        let target = domNode.owningTarget || WI.assumingMainTarget();
 
         const objectGroup = "dom-node-details-sidebar-properties-object-group";
         target.RuntimeAgent.releaseObjectGroup(objectGroup);
 
-        let domNode = this.domNode;
         WI.RemoteObject.resolveNode(domNode, objectGroup).then((object) => {
             // Bail if the DOM node changed while we were waiting for the async response.
             if (this.domNode !== domNode)

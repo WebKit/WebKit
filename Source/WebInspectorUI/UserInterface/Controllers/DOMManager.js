@@ -787,6 +787,13 @@ WI.DOMManager = class DOMManager extends WI.Object
         return InspectorBackend.hasCommand("DOM.setBreakpointForEventListener", "options");
     }
 
+    static supportsBreakpointForEventListener(eventListener)
+    {
+        // Listener ids are only unique per agent, and frame targets have no event listener breakpoints.
+        // FIXME: <https://webkit.org/b/298980> Add DOM support for FrameTarget.
+        return !eventListener.target;
+    }
+
     static supportsEditingUserAgentShadowTrees({frontendOnly, target} = {})
     {
         target = target || InspectorBackend;
@@ -1630,12 +1637,15 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     setEventListenerDisabled(eventListener, disabled)
     {
-        let target = WI.assumingMainTarget();
+        let target = eventListener.target || WI.assumingMainTarget();
         target.DOMAgent.setEventListenerDisabled(eventListener.eventListenerId, disabled);
     }
 
     setBreakpointForEventListener(eventListener)
     {
+        if (!DOMManager.supportsBreakpointForEventListener(eventListener))
+            return;
+
         let breakpoint = this._breakpointsForEventListeners.get(eventListener.eventListenerId);
         if (breakpoint) {
             console.assert(breakpoint.disabled);
@@ -1662,6 +1672,9 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     removeBreakpointForEventListener(eventListener)
     {
+        if (!DOMManager.supportsBreakpointForEventListener(eventListener))
+            return;
+
         let breakpoint = this._breakpointsForEventListeners.take(eventListener.eventListenerId);
         if (!breakpoint)
             return;

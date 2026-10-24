@@ -1,0 +1,46 @@
+Tests that the Event Listeners model and controller route a frame node's listeners to the frame target, even when a page listener has the same id.
+
+
+
+== Running test suite: SiteIsolation.DOM.EventListeners.Routing
+-- Running test case: Setup
+PASS: Should find the cross-origin frame target.
+PASS: Frame target should have a document.
+PASS: Page target should have a document.
+PASS: Should find #main-target in the page.
+PASS: The page node should not belong to a frame target.
+PASS: Should find #heading in the frame.
+PASS: The frame node should belong to the frame target.
+PASS: Should find the body in the frame.
+
+-- Running test case: ListenersAreStamped
+PASS: Page node should have one listener.
+PASS: Frame node should have one listener.
+PASS: Page listener should be the page handler.
+PASS: Frame listener should be the frame handler.
+PASS: The two listeners should have the same id.
+PASS: Page listener should have no frame target.
+PASS: Page listener should resolve to the page node.
+PASS: Frame listener should record the frame target.
+PASS: Frame listener should resolve to the frame node, not a page node with the same raw id.
+
+-- Running test case: DisableFrameListener
+PASS: Baseline: page handler should fire.
+PASS: Baseline: frame handler should fire.
+PASS: Frame handler should not fire after the frame listener is disabled.
+PASS: Page handler should still fire.
+PASS: Frame handler should fire after the frame listener is enabled again.
+PASS: Page handler should still fire.
+
+-- Running test case: DisablePageListener
+PASS: Page handler should not fire after the page listener is disabled.
+PASS: Frame handler should still fire.
+PASS: Page handler should fire after the page listener is enabled again.
+PASS: Frame handler should still fire.
+
+-- Running test case: FrameListenerBreakpoint
+PASS: Should not register a breakpoint for the frame listener.
+PASS: Should register a breakpoint for the page listener.
+PASS: Removing the frame listener's breakpoint should keep the page listener's breakpoint.
+PASS: Should remove the breakpoint of the page listener.
+
