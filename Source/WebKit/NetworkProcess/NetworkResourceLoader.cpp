@@ -916,12 +916,12 @@ bool NetworkResourceLoader::shouldInterruptWorkerLoadForCrossOriginEmbedderPolic
         // An owner can only require CORP in a secure context, which its worker inherits.
         auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, WebCore::IsSecureContext::Yes, nullptr);
         if (m_parameters.crossOriginEmbedderPolicy.reportOnlyValue == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP && responseCOEP.value == WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone)
-            sendCOEPInheritenceViolation(*this, m_parameters.frameURL.isValid() ? m_parameters.frameURL : aboutBlankURL(), m_parameters.crossOriginEmbedderPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, "worker initialization"_s, m_firstResponseURL);
+            sendCOEPInheritenceViolation(*this, contextURLForReport(), m_parameters.crossOriginEmbedderPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, "worker initialization"_s, m_firstResponseURL);
 
         if (m_parameters.crossOriginEmbedderPolicy.value == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP && responseCOEP.value == WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone) {
             String errorMessage = makeString("Refused to load '"_s, response.url().stringCenterEllipsizedToLength(), "' worker because of Cross-Origin-Embedder-Policy."_s);
             send(Messages::WebPage::AddConsoleMessage { frameID(),  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, pageID());
-            sendCOEPInheritenceViolation(*this, m_parameters.frameURL.isValid() ? m_parameters.frameURL : aboutBlankURL(), m_parameters.crossOriginEmbedderPolicy.reportingEndpoint, COEPDisposition::Enforce, "worker initialization"_s, m_firstResponseURL);
+            sendCOEPInheritenceViolation(*this, contextURLForReport(), m_parameters.crossOriginEmbedderPolicy.reportingEndpoint, COEPDisposition::Enforce, "worker initialization"_s, m_firstResponseURL);
             return true;
         }
     }
@@ -2995,12 +2995,18 @@ WebCore::FrameIdentifier NetworkResourceLoader::frameIdentifierForReport() const
 
 const URL& NetworkResourceLoader::contextURLForReport() const
 {
+    if (m_parameters.workerURL.isValid())
+        return m_parameters.workerURL;
     auto& url = isMainResource() ? m_parameters.parentFrameURL : m_parameters.frameURL;
     return url.isValid() ? url : aboutBlankURL();
 }
 
 void NetworkResourceLoader::notifyReportObservers(Ref<Report>&& report)
 {
+    if (auto& clientIdentifier = m_parameters.options.clientIdentifier; clientIdentifier && m_parameters.workerURL.isValid()) {
+        connectionToWebProcess().connection().send(Messages::NetworkProcessConnection::NotifyWorkerReportObservers { ScriptExecutionContextIdentifier { *clientIdentifier, connectionToWebProcess().webProcessIdentifier() }, report }, 0);
+        return;
+    }
     send(Messages::WebPage::NotifyReportObservers { frameIdentifierForReport(), report }, pageID());
 }
 
@@ -3020,6 +3026,7 @@ void NetworkResourceLoader::sendReportToEndpoints(const URL& baseURL, std::span<
             updatedEndpointTokens.append(token);
     }
 
+    // FIXME: A worker's reports should go to the worker's endpoints, but workers don't parse Reporting-Endpoints, so this uses its owner document's.
     auto [targetPageID, targetFrameID, targetConnection] = [&]() -> std::tuple<WebCore::PageIdentifier, WebCore::FrameIdentifier, Ref<NetworkConnectionToWebProcess>> {
         if (auto& requester = m_parameters.navigationRequester; requester && requester->pageID && requester->frameID && requester->processIdentifier) {
             if (RefPtr requesterConnection = protect(NetworkProcess::singleton())->webProcessConnection(*requester->processIdentifier))

@@ -804,6 +804,8 @@ String WorkerGlobalScope::endpointURIForToken(const String& token) const
 
 void WorkerGlobalScope::sendReportToEndpoints(const URL&, std::span<const String> /*endpointURIs*/, std::span<const String> /*endpointTokens*/, Ref<FormData>&&, ViolationReportType)
 {
+    // FIXME: Parse Reporting-Endpoints for workers. A policy a worker inherits, such as Document-Isolation-Policy, names its owner's endpoints,
+    // which might need specification changes.
     notImplemented();
 }
 

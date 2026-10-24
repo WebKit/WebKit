@@ -49,6 +49,7 @@ messages -> NetworkProcessConnection WantsDispatchMessage {
     DropNonSerializableInProcessCache(WebCore::NonSerializedDataIdentifier identifier)
 
     BroadcastConsoleMessage(enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message)
+    NotifyWorkerReportObservers(WebCore::ScriptExecutionContextIdentifier workerIdentifier, Ref<WebCore::Report> report)
     LoadCancelledDownloadRedirectRequestInFrame(WebCore::ResourceRequest request, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID)
 
     StorageAccessPermissionChanged(WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain subFrameDomain)
