@@ -31,6 +31,7 @@
 #include "PlatformGamepad.h"
 
 #include <libmanette.h>
+#include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
@@ -74,7 +75,8 @@ public:
     virtual ~ManetteGamepad();
 
     void absoluteAxisChanged(ManetteDevice*, StandardGamepadAxis, double value);
-    void buttonPressedOrReleased(ManetteDevice*, StandardGamepadButton, bool pressed);
+    void buttonPressedOrReleased(ManetteDevice*, StandardGamepadButton, double value);
+    StandardGamepadButton analogStandardGamepadButton(uint16_t hardwareIndex) const;
 
 private:
     const Vector<SharedGamepadValue>& axisValues() const LIFETIME_BOUND final { return m_axisValues; }
@@ -84,6 +86,7 @@ private:
     void effectDelayTimerFired();
     void effectDurationTimerFired();
     void startRumble(const GamepadEffectParameters&);
+    void parseAnalogButtons();
 
     GRefPtr<ManetteDevice> m_device;
 
@@ -93,6 +96,7 @@ private:
     RunLoop::Timer m_effectDurationTimer;
     CompletionHandler<void(bool)> m_effectCompletionHandler;
     GamepadEffectParameters m_pendingEffectParameters;
+    HashMap<uint16_t, StandardGamepadButton, IntHash<uint16_t>, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> m_analogButtons; // hardware index -> button
 };
 
 } // namespace WebCore
