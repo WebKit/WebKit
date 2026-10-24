@@ -213,20 +213,6 @@ static NSArray *writableTypesForImageWithArchive()
     
 }
 
-static RefPtr<WebCore::CachedImage> imageFromElement(DOMElement *domElement)
-{
-    RefPtr element = core(domElement);
-    if (!element)
-        return nullptr;
-    CheckedPtr renderer = element->renderer();
-    if (!is<WebCore::RenderImage>(renderer))
-        return nullptr;
-    RefPtr image = downcast<WebCore::RenderImage>(*renderer).cachedImage();
-    if (!image || image->errorOccurred())
-        return nullptr;
-    return image;
-}
-
 - (void)_web_writeImage:(NSImage *)image
                 element:(DOMElement *)element
                     URL:(NSURL *)URL 
@@ -243,9 +229,24 @@ static RefPtr<WebCore::CachedImage> imageFromElement(DOMElement *domElement)
     if ([types containsObject:WebCore::legacyTIFFPasteboardTypeSingleton()]) {
         if (image)
             [self setData:[image TIFFRepresentation] forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
-        else if (source && element)
-            [source setPromisedDragTIFFDataSource:imageFromElement(element).get()];
-        else if (element)
+        else if (source && element) {
+            auto result = [&] -> std::optional<std::pair<Ref<WebCore::CachedImage>, WebCore::ConcreteObjectSize>> {
+                RefPtr coreElement = core(element);
+                if (!coreElement)
+                    return std::nullopt;
+                CheckedPtr renderImage = dynamicDowncast<WebCore::RenderImage>(coreElement->renderer());
+                if (!renderImage)
+                    return std::nullopt;
+                RefPtr image = renderImage->cachedImage();
+                if (!image || image->errorOccurred())
+                    return std::nullopt;
+                return std::pair { image.releaseNonNull(), renderImage->concreteObjectSizeForPasteboard() };
+            }();
+            if (result)
+                [source setPromisedDragTIFFDataSource:result->first.ptr() concreteObjectSize:result->second];
+            else
+                [source clearPromisedDragTIFFDataSource];
+        } else if (element)
             [self setData:[element _imageTIFFRepresentation] forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
     }
     
@@ -284,7 +285,7 @@ static RefPtr<WebCore::CachedImage> imageFromElement(DOMElement *domElement)
     if (CheckedPtr renderer = coreElement->renderer()) {
         if (is<WebCore::RenderImage>(*renderer)) {
             if (RefPtr image = downcast<WebCore::RenderImage>(*renderer).cachedImage()) {
-                // FIXME: This doesn't check errorOccured the way imageFromElement does.
+                // FIXME: This doesn't check errorOccured the way _web_writeImage does.
                 extension = protect(image->image())->filenameExtension().createNSString();
                 if (![extension length])
                     return nullptr;

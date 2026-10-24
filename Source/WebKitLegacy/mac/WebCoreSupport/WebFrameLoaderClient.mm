@@ -2036,26 +2036,6 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
 #endif
 }
 
-#if !PLATFORM(IOS_FAMILY)
-static NSImage *webGetNSImage(WebCore::Image* image, NSSize size)
-{
-    ASSERT(size.width);
-    ASSERT(size.height);
-
-    // FIXME: We're doing the resize here for now because WebCore::Image doesn't yet support resizing/multiple representations
-    // This makes it so there's effectively only one size of a particular icon in the system at a time. We should move this
-    // to WebCore::Image at some point.
-    if (!image)
-        return nil;
-    RetainPtr nsImage = image->adapter().nsImage();
-    if (!nsImage)
-        return nil;
-    if (!NSEqualSizes([nsImage.get() size], size))
-        [nsImage.get() setSize:size];
-    return nsImage.autorelease();
-}
-#endif // !PLATFORM(IOS_FAMILY)
-
 void WebFrameLoaderClient::finishedLoadingIcon(WebCore::FragmentedSharedBuffer* iconData)
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -2066,13 +2046,18 @@ void WebFrameLoaderClient::finishedLoadingIcon(WebCore::FragmentedSharedBuffer* 
     if (!webView)
         return;
 
-    auto image = WebCore::BitmapImage::create();
+    Ref image = WebCore::BitmapImage::create();
     if (image->setData(iconData, true) < WebCore::EncodedDataStatus::SizeAvailable)
         return;
 
-    RetainPtr icon = webGetNSImage(image.ptr(), NSMakeSize(16, 16));
-    if (icon)
-        [webView.get() _setMainFrameIcon:icon.get()];
+    WebCore::FloatSize size { 16, 16 };
+    RetainPtr icon = image->adapter().nsImage(WebCore::ConcreteObjectSize::fixed(size));
+    if (!icon)
+        return;
+    if (!NSEqualSizes([icon size], size))
+        [icon setSize:size];
+
+    [webView.get() _setMainFrameIcon:icon.get()];
 #else
     UNUSED_PARAM(iconData);
 #endif

@@ -36,11 +36,13 @@
 #import "WebView.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/InitializeThreading.h>
+#import <WebCore/CachedImage.h>
 #import <WebCore/DragController.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
 #import <WebCore/ImageAdapter.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/RenderImage.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreMainThread.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -202,8 +204,16 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSImage *)_image
 {
-    RefPtr image = _result->image();
-    return image ? image->adapter().nsImage() : nil;
+    CheckedPtr renderImage = _result->renderImage();
+    if (!renderImage)
+        return nil;
+    RefPtr cachedImage = renderImage->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return nil;
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return nil;
+    return image->adapter().nsImage(renderImage->concreteObjectSizeForElementImage());
 }
 
 - (NSValue *)_imageRect

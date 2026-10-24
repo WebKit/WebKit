@@ -79,6 +79,7 @@
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/CompositionHighlight.h>
+#import <WebCore/ConcreteObjectSize.h>
 #import <WebCore/ContainerNodeInlines.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
@@ -1024,6 +1025,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 
 #if PLATFORM(MAC)
     NakedPtr<WebCore::CachedImage> promisedDragTIFFDataSource;
+    std::optional<WebCore::ConcreteObjectSize> promisedDragTIFFDataConcreteObjectSize;
 #endif
 
     SEL selectorForDoCommandBySelector;
@@ -1125,6 +1127,7 @@ static NSControlStateValue LEGACY_NODELETE kit(TriState state)
     dataSource = nil;
 #if PLATFORM(MAC)
     promisedDragTIFFDataSource = nullptr;
+    promisedDragTIFFDataConcreteObjectSize = std::nullopt;
 #endif
 
     layerHostingView = nil;
@@ -2003,7 +2006,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    [self setPromisedDragTIFFDataSource:nullptr];
+    [self clearPromisedDragTIFFDataSource];
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -2013,10 +2016,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([type isEqualToString:WebCore::legacyRTFDPasteboardTypeSingleton()] && [[pasteboard types] containsObject:WebArchivePboardType]) {
         auto archive = adoptNS([[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]]);
         [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:WebCore::legacyTIFFPasteboardTypeSingleton()]];
-    } else if ([type isEqualToString:WebCore::legacyTIFFPasteboardTypeSingleton()] && _private->promisedDragTIFFDataSource) {
+    } else if ([type isEqualToString:WebCore::legacyTIFFPasteboardTypeSingleton()] && _private->promisedDragTIFFDataSource && _private->promisedDragTIFFDataConcreteObjectSize) {
         if (RefPtr image = protect(_private->promisedDragTIFFDataSource.get())->image())
-            [pasteboard setData:protect((__bridge NSData *)image->adapter().tiffRepresentation()) forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
-        [self setPromisedDragTIFFDataSource:nullptr];
+            [pasteboard setData:protect((__bridge NSData *)image->adapter().tiffRepresentation(*_private->promisedDragTIFFDataConcreteObjectSize)) forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
+        [self clearPromisedDragTIFFDataSource];
     }
 }
 
@@ -6111,7 +6114,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if PLATFORM(MAC)
 
-- (void)setPromisedDragTIFFDataSource:(NakedPtr<WebCore::CachedImage>)source
+- (void)setPromisedDragTIFFDataSource:(NakedPtr<WebCore::CachedImage>)source concreteObjectSize:(WebCore::ConcreteObjectSize)concreteObjectSize
 {
     if (RefPtr cachedImage = source.get())
         cachedImage->addClient(promisedDataClientSingleton());
@@ -6119,6 +6122,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (RefPtr cachedImage = _private->promisedDragTIFFDataSource.get())
         cachedImage->removeClient(promisedDataClientSingleton());
     _private->promisedDragTIFFDataSource = source;
+    _private->promisedDragTIFFDataConcreteObjectSize = concreteObjectSize;
+}
+
+- (void)clearPromisedDragTIFFDataSource
+{
+    if (RefPtr cachedImage = _private->promisedDragTIFFDataSource.get())
+        cachedImage->removeClient(promisedDataClientSingleton());
+    _private->promisedDragTIFFDataSource = nullptr;
+    _private->promisedDragTIFFDataConcreteObjectSize = std::nullopt;
 }
 
 #endif

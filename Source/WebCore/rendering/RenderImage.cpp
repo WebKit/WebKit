@@ -420,6 +420,11 @@ ConcreteObjectSize RenderImage::concreteObjectSizeForPositionInformation() const
     return defaultConcreteObjectSize();
 }
 
+ConcreteObjectSize RenderImage::concreteObjectSizeForElementImage() const
+{
+    return defaultConcreteObjectSize();
+}
+
 ConcreteObjectSize RenderImage::defaultConcreteObjectSize() const
 {
     return defaultConcreteObjectSize(imageResource().naturalDimensions());

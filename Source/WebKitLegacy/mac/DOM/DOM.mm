@@ -637,13 +637,13 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 
 - (NSImage *)image
 {
-    CheckedPtr renderer = protect(core(self))->renderer();
-    if (!is<WebCore::RenderImage>(renderer))
+    CheckedPtr renderImage = dynamicDowncast<WebCore::RenderImage>(protect(core(self))->renderer());
+    if (!renderImage)
         return nil;
-    RefPtr cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
+    RefPtr cachedImage = renderImage->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return protect(cachedImage->image())->adapter().nsImage();
+    return protect(cachedImage->image())->adapter().nsImage(renderImage->concreteObjectSizeForElementImage());
 }
 
 #endif
@@ -665,13 +665,13 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 - (NSData *)_imageTIFFRepresentation
 {
     // FIXME: Could we move this function to WebCore::Element and autogenerate?
-    CheckedPtr renderer = protect(core(self))->renderer();
-    if (!is<WebCore::RenderImage>(renderer))
+    CheckedPtr renderImage = dynamicDowncast<WebCore::RenderImage>(protect(core(self))->renderer());
+    if (!renderImage)
         return nil;
-    RefPtr cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
+    RefPtr cachedImage = renderImage->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return (__bridge NSData *)protect(cachedImage->image())->adapter().tiffRepresentation();
+    return (__bridge NSData *)protect(cachedImage->image())->adapter().tiffRepresentation(renderImage->concreteObjectSizeForElementImage());
 }
 
 #endif

@@ -37,6 +37,7 @@
 
 namespace WebCore {
 class CachedImage;
+class ConcreteObjectSize;
 class KeyboardEvent;
 enum class ScrollbarWidth : uint8_t;
 }
@@ -69,7 +70,8 @@ enum class ScrollbarWidth : uint8_t;
 - (BOOL)isGrammarCheckingEnabled;
 - (void)setGrammarCheckingEnabled:(BOOL)flag;
 - (void)toggleGrammarChecking:(id)sender;
-- (void)setPromisedDragTIFFDataSource:(NakedPtr<WebCore::CachedImage>)source;
+- (void)setPromisedDragTIFFDataSource:(NakedPtr<WebCore::CachedImage>)source concreteObjectSize:(WebCore::ConcreteObjectSize)concreteObjectSize;
+- (void)clearPromisedDragTIFFDataSource;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

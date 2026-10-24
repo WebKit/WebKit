@@ -433,18 +433,26 @@ RefPtr<Node> HitTestResult::nodeForImageData() const
     return m_innerNonSharedNode;
 }
 
-Image* HitTestResult::image() const
+RenderImage* HitTestResult::renderImage() const
 {
     auto imageNode = nodeForImageData();
     if (!imageNode)
         return nullptr;
 
-    if (auto* image = dynamicDowncast<RenderImage>(imageNode->renderer())) {
-        if (image->cachedImage() && !image->cachedImage()->errorOccurred())
-            return protect(image->cachedImage())->image();
-    }
+    return dynamicDowncast<RenderImage>(imageNode->renderer());
+}
 
-    return nullptr;
+Image* HitTestResult::image() const
+{
+    CheckedPtr renderImage = this->renderImage();
+    if (!renderImage)
+        return nullptr;
+
+    RefPtr cachedImage = renderImage->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return nullptr;
+
+    return cachedImage->image();
 }
 
 IntRect HitTestResult::imageRect() const

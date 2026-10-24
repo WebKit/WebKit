@@ -40,17 +40,16 @@
 #import "WebSharingServicePickerController.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
-#import <WebCore/BitmapImage.h>
 #import <WebCore/ColorSpace.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
 #import <WebCore/GraphicsContext.h>
-#import <WebCore/ImageAdapter.h>
 #import <WebCore/ImageBuffer.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/NativeImage.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RenderObjectInlines.h>
@@ -227,11 +226,11 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     frameSelection->setSelection(oldSelection);
     frameView->setPaintBehavior(oldPaintBehavior);
 
-    auto image = WebCore::BitmapImage::create(WebCore::ImageBuffer::sinkIntoNativeImage(WTF::move(buffer)));
-    if (!image)
+    auto nativeImage = WebCore::ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
+    if (!nativeImage)
         return nil;
 
-    return image->adapter().snapshotNSImage();
+    return adoptNS([[NSImage alloc] initWithCGImage:nativeImage->platformImage().get() size:nativeImage->size()]);
 }
 
 #endif

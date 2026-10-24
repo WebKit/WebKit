@@ -39,6 +39,7 @@ class HTMLMediaElement;
 class Image;
 class LocalFrame;
 class Node;
+class RenderImage;
 class Scrollbar;
 
 enum class HitTestProgress { Stop, Continue };
@@ -117,6 +118,7 @@ public:
     WEBCORE_EXPORT String innerTextIfTruncated(TextDirection&) const;
     WEBCORE_EXPORT String altDisplayString() const;
     WEBCORE_EXPORT String titleDisplayString() const;
+    WEBCORE_EXPORT RenderImage* renderImage() const;
     WEBCORE_EXPORT Image* image() const;
     WEBCORE_EXPORT IntRect imageRect() const;
     WEBCORE_EXPORT bool hasEntireImage() const;

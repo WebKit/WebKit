@@ -103,11 +103,12 @@ public:
     // FIXME: Condense these into fewer concrete categories of sizing algorithms once we know all the different sizing rules needed.
     ConcreteObjectSize concreteObjectSizeForPainting() const;
     ConcreteObjectSize concreteObjectSizeForInteractionRegion() const;
-    ConcreteObjectSize concreteObjectSizeForPasteboard() const;
+    WEBCORE_EXPORT ConcreteObjectSize concreteObjectSizeForPasteboard() const;
     ConcreteObjectSize concreteObjectSizeForAccessibility() const;
     ConcreteObjectSize concreteObjectSizeForImageAnalysis() const;
     ConcreteObjectSize concreteObjectSizeForDragImageOriginalSizeComparison() const;
     WEBCORE_EXPORT ConcreteObjectSize concreteObjectSizeForPositionInformation() const;
+    WEBCORE_EXPORT ConcreteObjectSize concreteObjectSizeForElementImage() const;
 
     // FIXME: Condense these into fewer concrete categories of bitmap extraction once we know all the different behaviors needed.
     WEBCORE_EXPORT RefPtr<ShareableBitmap> createShareableBitmapForHitTestResult() const;
