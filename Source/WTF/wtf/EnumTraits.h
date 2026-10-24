@@ -87,40 +87,26 @@ public:
         for (auto value : { values... })
             c(value);
     }
-};
 
-template<typename T, typename E> struct EnumValueChecker;
-
-template<typename T, typename E, E e, E... es>
-struct EnumValueChecker<T, EnumValues<E, e, es...>> {
-    static constexpr bool isValidEnumForPersistence(T t)
+    template <typename T>
+    static constexpr bool contains(T t)
     {
-        return (static_cast<T>(e) == t) || EnumValueChecker<T, EnumValues<E, es...>>::isValidEnumForPersistence(t);
+        return ((static_cast<T>(values) == t) || ...);
     }
 };
 
-template<typename T, typename E>
-struct EnumValueChecker<T, EnumValues<E>> {
-    static constexpr bool isValidEnumForPersistence(T)
-    {
-        return false;
-    }
-};
+template<typename E> using UnderlyingTypeWithBoolPromotedToUint8t = std::conditional_t<std::is_same_v<std::underlying_type_t<E>, bool>, uint8_t, std::underlying_type_t<E>>;
 
-template<typename E> bool isValidEnum(std::underlying_type_t<E>);
+template<typename E> bool isValidEnum(UnderlyingTypeWithBoolPromotedToUint8t<E>);
 
-template<typename E>
-    requires (!std::same_as<std::underlying_type_t<E>, bool>)
-bool isValidEnumForPersistence(std::underlying_type_t<E> t)
+template<typename E, typename T>
+constexpr bool isValidEnumForPersistence(T t)
 {
-    return EnumValueChecker<std::underlying_type_t<E>, typename EnumTraitsForPersistence<E>::values>::isValidEnumForPersistence(t);
-}
-
-template<typename E>
-    requires (std::same_as<std::underlying_type_t<E>, bool>)
-constexpr bool isValidEnumForPersistence(bool t)
-{
-    return !t || t == 1;
+    static_assert(std::is_enum_v<E>, "isValidEnumForPersistence requires an enum type.");
+    if constexpr (std::is_same_v<std::underlying_type_t<E>, bool>)
+        return t == T(0) || t == T(1);
+    else
+        return EnumTraitsForPersistence<E>::values::contains(t);
 }
 
 template<typename T, typename E> struct ZeroBasedContiguousEnumChecker;

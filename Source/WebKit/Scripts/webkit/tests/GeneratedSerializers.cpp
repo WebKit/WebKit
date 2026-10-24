@@ -1671,9 +1671,9 @@ IGNORE_WARNINGS_END
 }
 
 #if ENABLE(BOOL_ENUM)
-template<> bool isValidEnum<EnumNamespace::BoolEnumType>(bool value)
+template<> bool isValidEnum<EnumNamespace::BoolEnumType>(uint8_t value)
 {
-    switch (static_cast<uint8_t>(value)) {
+    switch (value) {
     case 0:
     case 1:
         return true;
@@ -1827,9 +1827,9 @@ template<> bool isValidEnum<EnumNamespace::InnerEnumType>(uint8_t value)
 #endif
 
 #if (ENABLE(OUTER_CONDITION)) && (!(ENABLE(INNER_CONDITION)))
-template<> bool isValidEnum<EnumNamespace::InnerBoolType>(bool value)
+template<> bool isValidEnum<EnumNamespace::InnerBoolType>(uint8_t value)
 {
-    switch (static_cast<uint8_t>(value)) {
+    switch (value) {
     case 0:
     case 1:
         return true;
