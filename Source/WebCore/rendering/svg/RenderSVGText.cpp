@@ -71,6 +71,7 @@
 #include "StyleTransformResolver.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
+#include <algorithm>
 #include <tuple>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -190,28 +191,27 @@ void RenderSVGText::subtreeChildWasAdded(RenderObject* child)
     }
 
     // Compare m_layoutAttributes with newLayoutAttributes to figure out which attribute got added.
+    // Both lists are in tree order, so the added entry is the first one in newLayoutAttributes that doesn't line up with m_layoutAttributes.
     size_t size = newLayoutAttributes.size();
-    SVGTextLayoutAttributes* attributes = 0;
-    for (size_t i = 0; i < size; ++i) {
-        attributes = newLayoutAttributes[i];
-        if (m_layoutAttributes.find(attributes) == notFound) {
-            // Every time this is invoked, there's only a single new entry in the newLayoutAttributes list, compared to the old in m_layoutAttributes.
-            ASSERT_UNUSED(child, &attributes->context() == child);
-            auto [previous, next] = findPreviousAndNextAttributes(*this, attributes->context());
+    size_t addedIndex = std::ranges::mismatch(newLayoutAttributes, m_layoutAttributes).in1 - newLayoutAttributes.begin();
 
-            if (previous)
-                m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(previous->context());
-            m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(attributes->context());
-            if (next)
-                m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(next->context());
-            break;
-        }
+    if (addedIndex < size) {
+        SVGTextLayoutAttributes* attributes = newLayoutAttributes[addedIndex];
+        // Every time this is invoked, there's only a single new entry in the newLayoutAttributes list, compared to the old in m_layoutAttributes.
+        ASSERT_UNUSED(child, &attributes->context() == child);
+        auto [previous, next] = findPreviousAndNextAttributes(*this, attributes->context());
+
+        if (previous)
+            m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(previous->context());
+        m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(attributes->context());
+        if (next)
+            m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(next->context());
     }
 
 #ifndef NDEBUG
     // Verify that m_layoutAttributes only differs by a maximum of one entry.
-    for (size_t i = 0; i < size; ++i)
-        ASSERT(m_layoutAttributes.find(newLayoutAttributes[i]) != notFound || newLayoutAttributes[i] == attributes);
+    for (size_t i = addedIndex + 1; i < size; ++i)
+        ASSERT(i - 1 < m_layoutAttributes.size() && newLayoutAttributes[i] == m_layoutAttributes[i - 1]);
 #endif
 
     m_layoutAttributes = newLayoutAttributes;
