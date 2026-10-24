@@ -36,6 +36,7 @@ class BoxGeometry {
     WTF_MAKE_TZONE_ALLOCATED(BoxGeometry);
 public:
     BoxGeometry(const BoxGeometry&);
+    BoxGeometry& operator=(const BoxGeometry&) = default;
     BoxGeometry() = default;
     ~BoxGeometry();
 

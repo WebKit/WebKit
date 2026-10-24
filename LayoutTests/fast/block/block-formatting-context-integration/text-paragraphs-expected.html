@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; }
+.root p { background: rgba(0, 128, 0, 0.2); }
+</style>
+<div class="root">
+  <p>The quick brown fox jumps over the lazy dog, and then it jumps over the lazy dog again.</p>
+  <p style="margin: 5px 0 30px">Short.</p>
+  <p style="padding: 4px; border: 2px solid">Bordered paragraph with enough text to wrap onto a second line.</p>
+  <div><p style="margin-top: 25px">Nested paragraph whose margin collapses with its parent.</p></div>
+</div>
+<div class="root" style="font: 20px/30px serif">
+  <div style="margin-bottom: 15px">First<br>second<br><br>fourth</div>
+  <div style="text-align: center">centered text</div>
+  <div style="text-align: right; text-indent: 20px">right aligned text with an indent that wraps onto the next line</div>
+  <div style="text-align: justify">justified text that should wrap onto more than one line in this box</div>
+</div>
