@@ -151,9 +151,9 @@ function XScrollableCanvasProvider(props, exporter, ...childrenFunctions) {
         }
     });
     const scrollEventStream = scrollRef.fromEvent('scroll');
-    window.addEventListener('resize', () => {
+    const globalResizeAction = () => {
         presenterRef.setState({resize:true});
-    });
+    };
     const onDevicePixelRatioChange = () => presenterRef.setState({resize: true});
     let devicePixelRatioQuery = null;
     let queriedDevicePixelRatio = null;
@@ -191,10 +191,16 @@ function XScrollableCanvasProvider(props, exporter, ...childrenFunctions) {
             element.style.width = `${scrollableWidth}px`;
             resizeEventStream.add(scrollableWidth);
             watchDevicePixelRatio();
+            window.addEventListener('resize', globalResizeAction);
+            window.addEventListener('mouseup', globalMouseUpAction);
+            window.addEventListener('mousemove', globalMouseMoveAction);
         },
         onElementUnmount: (element) => {
             devicePixelRatioQuery.removeEventListener('change', onDevicePixelRatioChange);
             devicePixelRatioQuery = null;
+            window.removeEventListener('resize', globalResizeAction);
+            window.removeEventListener('mouseup', globalMouseUpAction);
+            window.removeEventListener('mousemove', globalMouseMoveAction);
         },
         onStateUpdate: (element, stateDiff, state) => {
             if (stateDiff.resize) {
@@ -322,11 +328,11 @@ function XScrollableCanvasProvider(props, exporter, ...childrenFunctions) {
             selectionBoxDoneEventStream.add(onSelectionDoneCallback, e);
     });
     clickSelectionDoneEventStream.action(onSelectionDoneCallback);
-    window.addEventListener('mouseup', e => {
+    const globalMouseUpAction = e => {
         drag = false;
         selectionBoxRef.setState({show: false});
-    });
-    window.addEventListener('mousemove', e => {
+    };
+    const globalMouseMoveAction = e => {
         if (!drag)
             return;
         const cursorPos = getMousePosInCanvas(e, containerRef.element);
@@ -338,7 +344,7 @@ function XScrollableCanvasProvider(props, exporter, ...childrenFunctions) {
         // notify with absolute pos
         selectionBoxChangeEventStream.add({left: x + containerBoundingRect.left, top: y + containerBoundingRect.top, width, height});
         selectionBoxRef.setState({x, y, width, height, show: true});
-    });
+    };
     // Provide parent functions/event to children to use
 
     return `<div class="content" ref="${scrollRef}">

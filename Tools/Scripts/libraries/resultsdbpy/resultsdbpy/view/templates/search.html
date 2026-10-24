@@ -137,7 +137,8 @@ class SearchView {
                                 window.history.pushState(queryString, '', splitURL[0] + '?' + queryString);
 
                                 const section = element.parentElement.parentElement.parentElement.parentElement;
-                                section.parentElement.removeChild(section);
+                                DOM.remove(section);
+                                child.timeline.teardown();
                             };
                         },
                     });
@@ -205,8 +206,7 @@ class SearchView {
                         didFind = true;
                         this.ref.state.children.splice(search, 1);
                         break;
-                    } else
-                        this.ref.state.children[search].timeline.teardown();
+                    }
                     needReRender = true;
                 }
                 if (!didFind) {
@@ -223,6 +223,8 @@ class SearchView {
                     });
                 }
             }
+
+            this.ref.state.children.forEach(child => child.timeline.teardown());
 
             if (needReRender)
                 this.ref.setState({children: newChildren});

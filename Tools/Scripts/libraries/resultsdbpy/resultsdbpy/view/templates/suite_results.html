@@ -54,7 +54,7 @@ class MainView {
             state: SUITES,
             onStateUpdate: (element, state) => {
                 if (!state)
-                    element.innerHTML = this.placeholder();
+                    DOM.inject(element, this.placeholder());
                 else if (state.error)
                     element.innerHTML = ErrorDisplay(state);
                 else if (state.length === 0)

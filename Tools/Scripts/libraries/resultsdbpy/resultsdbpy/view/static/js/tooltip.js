@@ -222,6 +222,7 @@ class _ToolTip {
         }
     }
     unset() {
+        this.onArrowClick = null;
         if (this.ref)
             this.ref.setState({content: null, points: null});
         if (this.arrow)
