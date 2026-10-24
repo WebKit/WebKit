@@ -223,9 +223,6 @@ static const int testFooterBannerHeight = 58;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     if (_findBarClickMonitor)
         [NSEvent removeMonitor:_findBarClickMonitor];
-    _webView._findDelegate = nil;
-    _textFinder.client = nil;
-    _textFinder.findBarContainer = nil;
     [_webView removeObserver:self forKeyPath:@"title"];
     [_webView removeObserver:self forKeyPath:@"URL"];
     [_webView removeObserver:self forKeyPath:@"hasOnlySecureContent"];
@@ -333,7 +330,7 @@ static NSRect frameForWindowFeatures(WKWindowFeatures *features, NSWindow *windo
 
 - (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler
 {
-    NSDictionary *permissions = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"NotificationPermissions"];
+    NSDictionary *permissions = [MiniBrowserUserDefaults() dictionaryForKey:@"NotificationPermissions"];
     NSString *originString = [NSString stringWithFormat:@"%@://%@", securityOrigin.protocol, securityOrigin.host];
     id value = [permissions valueForKey:originString];
     if (value) {
@@ -350,11 +347,11 @@ static NSRect frameForWindowFeatures(WKWindowFeatures *features, NSWindow *windo
     [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
         BOOL granted = response == NSAlertSecondButtonReturn;
 
-        NSMutableDictionary *permissions = [[[NSUserDefaults standardUserDefaults] dictionaryForKey:@"NotificationPermissions"] mutableCopy];
+        NSMutableDictionary *permissions = [[MiniBrowserUserDefaults() dictionaryForKey:@"NotificationPermissions"] mutableCopy];
         if (!permissions)
             permissions = [NSMutableDictionary dictionaryWithCapacity:1];
         [permissions setValue:@(granted) forKey:originString];
-        [[NSUserDefaults standardUserDefaults] setObject:permissions forKey:@"NotificationPermissions"];
+        [MiniBrowserUserDefaults() setObject:permissions forKey:@"NotificationPermissions"];
 
         decisionHandler(granted);
     }];
@@ -626,6 +623,15 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    // Close the web view now, rather than when it's deallocated, which can be much later, for
+    // example after the animation that closes a tab. Until then, its page would stay open, and
+    // WebDriver would still see it. Closing the web view replaces its find client, so detach the
+    // find clients first.
+    _webView._findDelegate = nil;
+    _textFinder.client = nil;
+    _textFinder.findBarContainer = nil;
+    [_webView _close];
+
     [[[NSApplication sharedApplication] browserAppDelegate] browserWindowWillClose:self.window];
 }
 
@@ -836,6 +842,16 @@ static BOOL areEssentiallyEqual(double a, double b)
     [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
 
     return controller->_webView;
+}
+
+- (void)webViewDidClose:(WKWebView *)webView
+{
+    // The page asked to close, for example with window.close() or WebDriver's Close Window. Closing
+    // the window closes the web view and its page, as with Cmd-W. WebKit calls this from inside the
+    // page's close request, so close the window afterwards, not while WebKit is still using the page.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.window close];
+    });
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler

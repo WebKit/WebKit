@@ -68,3 +68,7 @@
 - (BrowserAppDelegate *)browserAppDelegate;
 
 @end
+
+// MiniBrowser's own settings. Use this instead of [NSUserDefaults standardUserDefaults], except for
+// settings that WebKit or the system read themselves.
+NSUserDefaults *MiniBrowserUserDefaults(void);

@@ -35,7 +35,7 @@
 {
     self = [self initWithWindowNibName:@"ExtensionManagerWindowController"];
     if (self) {
-        NSArray *installedContentExtensions = [[NSUserDefaults standardUserDefaults] arrayForKey:@"InstalledContentExtensions"];
+        NSArray *installedContentExtensions = [MiniBrowserUserDefaults() arrayForKey:@"InstalledContentExtensions"];
         if (installedContentExtensions) {
             for (NSString *identifier in installedContentExtensions) {
                 [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:identifier completionHandler:^(WKContentRuleList *list, NSError *error) {
@@ -58,7 +58,7 @@
 {
     [super windowDidLoad];
 
-    NSArray *installedContentExtensions = [[NSUserDefaults standardUserDefaults] arrayForKey:@"InstalledContentExtensions"];
+    NSArray *installedContentExtensions = [MiniBrowserUserDefaults() arrayForKey:@"InstalledContentExtensions"];
     if (installedContentExtensions) {
         for (NSString *extension in installedContentExtensions)
             [arrayController addObject:extension];
@@ -86,7 +86,7 @@
                 return;
             }
 
-            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            NSUserDefaults *defaults = MiniBrowserUserDefaults();
 
             NSArray *installedContentExtensions = [defaults arrayForKey:@"InstalledContentExtensions"];
             NSMutableArray *mutableInstalledContentExtensions;
@@ -120,7 +120,7 @@
             return;
         }
 
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSUserDefaults *defaults = MiniBrowserUserDefaults();
 
         NSMutableArray *installedContentExtensions = [[defaults arrayForKey:@"InstalledContentExtensions"] mutableCopy];
         [installedContentExtensions removeObject:identifierToRemove];
