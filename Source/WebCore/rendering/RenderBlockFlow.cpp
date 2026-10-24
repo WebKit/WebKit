@@ -31,18 +31,23 @@
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "FloatingObjects.h"
+#include "FontCascadeInlines.h"
 #include "FrameSelection.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestLocation.h"
 #include "InlineContentCache.h"
+#include "InlineContentConstrainer.h"
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBoxInlines.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineWalker.h"
+#include "LayoutIntegrationBlockCoverage.h"
+#include "LayoutIntegrationBlockLayout.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LayoutIntegrationUtils.h"
 #include "LayoutRepainter.h"
 #include "LineClampUpdater.h"
 #include "LineSelection.h"
@@ -927,7 +932,10 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
         auto textBoxTrimmer = TextBoxTrimmer { *this };
         auto lineClampUpdater = LineClampUpdater { *this };
         auto layoutChildren = [&](RelayoutChildren relayoutChildren) {
-            childrenInline() ? layoutInlineChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom) : layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
+            if (childrenInline())
+                layoutInlineChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom);
+            else if (!layoutUsingBlockFormattingContext())
+                layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
         };
         // Content takes its lines off the line-clamp budget as it gets laid out, so content in this line-clamp container's formatting context can't be skipped over.
         auto* layoutState = view().frameView().layoutContext().layoutState();
@@ -1090,6 +1098,15 @@ void RenderBlockFlow::layoutBlockChildren(RelayoutChildren relayoutChildren, Lay
     // determining the correct collapsed bottom margin information.
     auto borderBoxLogicalHeight = handleAfterSideOfBlock(marginInfo, logicalHeight() - borderAndPaddingBefore());
     setLogicalHeight(borderBoxLogicalHeight);
+}
+
+bool RenderBlockFlow::layoutUsingBlockFormattingContext()
+{
+    if (!LayoutIntegration::canUseForBlockLayout(*this))
+        return false;
+
+    LayoutIntegration::BlockLayout { *this }.layout();
+    return true;
 }
 
 RenderBlockFlow::BlockPositionAndMargin RenderBlockFlow::layoutBlockChildFromInlineLayout(RenderBox& child, LayoutUnit contentHeight, MarginInfo marginInfo)
@@ -4512,6 +4529,84 @@ void RenderBlockFlow::updateRepaintTopAndBottomAfterLayout(RelayoutChildren rela
     repaintLogicalBottom = std::max(LayoutUnit::fromFloatCeil(damageBottomIncludingInkOverflow), logicalHeight());
 }
 
+static inline std::optional<Layout::BlockLayoutState::LineClamp> LEGACY_NODELETE lineClamp(const RenderBlockFlow& rootRenderer)
+{
+    auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
+    if (auto legacyLineClamp = layoutState.legacyLineClamp())
+        return Layout::BlockLayoutState::LineClamp { std::max(legacyLineClamp->maximumLineCount - legacyLineClamp->currentLineCount, static_cast<size_t>(0)), false, true };
+    if (auto lineClamp = layoutState.lineClamp())
+        return Layout::BlockLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, false, lineClamp->isStableTextWrap };
+    return { };
+}
+
+static inline Layout::BlockLayoutState::TextBoxTrim LEGACY_NODELETE textBoxTrim(const RenderBlockFlow& rootRenderer)
+{
+    auto textBoxTrim = rootRenderer.view().frameView().layoutContext().textBoxTrim();
+    if (!textBoxTrim)
+        return { };
+
+    auto textBoxTrimForIFC = Layout::BlockLayoutState::TextBoxTrim { };
+    auto isLineInverted = rootRenderer.writingMode().isLineInverted();
+    if (textBoxTrim->trimFirstFormattedLine)
+        textBoxTrimForIFC.add(isLineInverted ? Layout::BlockLayoutState::TextBoxTrimSide::End : Layout::BlockLayoutState::TextBoxTrimSide::Start);
+
+    if (textBoxTrim->lastFormattedLineRoot.get() == &rootRenderer)
+        textBoxTrimForIFC.add(isLineInverted ? Layout::BlockLayoutState::TextBoxTrimSide::Start : Layout::BlockLayoutState::TextBoxTrimSide::End);
+    return textBoxTrimForIFC;
+}
+
+static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const RenderBlockFlow& rootRenderer)
+{
+    auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
+    if (CheckedPtr lineGrid = layoutState.lineGrid()) {
+        if (lineGrid->writingMode().computedWritingMode() != rootRenderer.writingMode().computedWritingMode())
+            return { };
+
+        auto layoutOffset = layoutState.layoutOffset();
+        auto lineGridOffset = layoutState.lineGridOffset();
+        if (lineGrid->style().writingMode().isVertical()) {
+            layoutOffset = layoutOffset.transposedSize();
+            lineGridOffset = lineGridOffset.transposedSize();
+        }
+
+        auto columnWidth = lineGrid->style().fontCascade().primaryFont().maxCharWidth();
+        auto rowHeight = LayoutUnit::fromFloatCeil(lineGrid->style().usedLineHeight());
+        auto topRowOffset = lineGrid->borderAndPaddingBefore();
+
+        std::optional<LayoutSize> paginationOrigin;
+        auto pageLogicalTop = 0_lu;
+        if (layoutState.isPaginated()) {
+            paginationOrigin = layoutState.lineGridPaginationOrigin();
+            if (lineGrid->writingMode().isVertical())
+                paginationOrigin = paginationOrigin->transposedSize();
+            pageLogicalTop = rootRenderer.pageLogicalTopForOffset(0_lu);
+        }
+
+        return Layout::BlockLayoutState::LineGrid { layoutOffset, lineGridOffset, columnWidth, rowHeight, topRowOffset, lineGrid->style().fontCascade().primaryFont(), paginationOrigin, pageLogicalTop };
+    }
+
+    return { };
+}
+
+// What the block formatting context gives the inline formatting context of this block container: its margins so far, and the line-clamp,
+// text-box-trim, initial letter and line grid state the render tree layout state carries for it.
+static Layout::BlockLayoutState blockLayoutStateForInlineContent(const RenderBlockFlow& blockFlow, const RenderBlockFlow::MarginInfo& marginInfo, const LayoutIntegration::LineLayout& inlineLayout)
+{
+    auto intrusiveInitialLetterBottom = [&] -> std::optional<LayoutUnit> {
+        if (auto lowestInitialLetterLogicalBottom = blockFlow.lowestInitialLetterLogicalBottom())
+            return { *lowestInitialLetterLogicalBottom - inlineLayout.inlineContentConstraints()->logicalTop() };
+        return { };
+    };
+    return {
+        Layout::IntegrationUtils::toMarginState(marginInfo),
+        lineClamp(blockFlow),
+        textBoxTrim(blockFlow),
+        blockFlow.style().textBoxEdge(),
+        intrusiveInitialLetterBottom(),
+        lineGrid(blockFlow)
+    };
+}
+
 void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     auto inlineContentStatus = markInlineContentDirtyForLayout(relayoutChildren);
@@ -4544,9 +4639,17 @@ void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, Lay
     ASSERT(containingBlock() || is<RenderView>(*this));
     inlineLayout.updateFormattingContextGeometries(containingBlock() ? containingBlockLogicalWidthForContent() : LayoutUnit());
 
+    if (auto& renderTreeLayoutState = *view().frameView().layoutContext().layoutState(); renderTreeLayoutState.lineClamp() && renderTreeLayoutState.lineClamp()->isStableTextWrap && Layout::InlineContentConstrainer::constrainsContent(style())) {
+        auto lineClamp = renderTreeLayoutState.lineClamp();
+        lineClamp->hasConstrainedTextWrapContent = true;
+        renderTreeLayoutState.setLineClamp(lineClamp);
+    }
+
     auto marginInfo = MarginInfo { *this, MarginInfo::IgnoreScrollbarForAfterMargin::No };
     auto shouldForceFullLayout = relayoutChildren == RelayoutChildren::Yes || inlineContentStatus.hasDirtyInFlowBlockLevelElement ? LayoutIntegration::LineLayout::ForceFullLayout::Yes : LayoutIntegration::LineLayout::ForceFullLayout::No;
-    auto partialRepaintRect = inlineLayout.layout(marginInfo, shouldForceFullLayout);
+    auto layoutResult = inlineLayout.layout(blockLayoutStateForInlineContent(*this, marginInfo, inlineLayout), shouldForceFullLayout);
+    Layout::IntegrationUtils::updateMarginInfo(marginInfo, layoutResult.marginState);
+    auto partialRepaintRect = layoutResult.repaintRect;
 
     auto contentBoxHeight = [&]() -> LayoutUnit {
         if (auto clampedContentHeight = updateLineClampStateAndLogicalHeightAfterLayout())
