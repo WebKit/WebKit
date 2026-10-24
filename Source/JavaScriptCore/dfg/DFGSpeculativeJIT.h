@@ -1499,6 +1499,10 @@ public:
 #endif
     void compileGetByValOnIntTypedArray(Node*, TypedArrayType, NOESCAPE const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
     void compilePutByValForIntTypedArray(Node*, TypedArrayType);
+    void compileGetByValOnBigIntTypedArray(Node*, TypedArrayType, NOESCAPE const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
+    void compilePutByValForBigIntTypedArray(Node*, TypedArrayType);
+    void compileAtomicsOnBigIntTypedArray(Node*, TypedArrayType);
+    void boxInt64AsHeapBigInt(Node*, GPRReg bitsGPR, GPRReg resultGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, bool isSigned);
     void compileGetByValOnFloatTypedArray(Node*, TypedArrayType, NOESCAPE const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
     void compilePutByValForFloatTypedArray(Node*, TypedArrayType);
     void compileGetByValForObjectWithString(Node*, NOESCAPE const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
