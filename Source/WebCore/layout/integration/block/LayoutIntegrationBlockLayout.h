@@ -50,6 +50,10 @@ public:
     void layout(RelayoutChildren);
     // The min-content and max-content inline sizes of the root's content (css-sizing-3 §5.1), from the block formatting context that lays it out.
     static std::pair<LayoutUnit, LayoutUnit> computeIntrinsicInlineSizes(const RenderBlockFlow&);
+    // Whether a new definite block size of the root changes the layout of its content, like the one flex and grid layout give an item they stretch
+    // (css-flexbox-1 §9.4 step 11). The render tree path registers percentage height descendants for that; the block formatting context does not.
+    // False for a root the block formatting context does not lay out.
+    static bool contentDependsOnBlockSize(const RenderBlockFlow&);
     // The out-of-flow boxes registered on the root or on a block container inside it, once their containing block has its size
     // (RenderBlockFlow::layoutBlock, RenderBlock::simplifiedLayout).
     void layoutOutOfFlowBoxes(const RenderBlock& containingBlock);

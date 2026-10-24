@@ -33,6 +33,7 @@
 #include "GridLayoutFunctions.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "HitTestLocation.h"
+#include "LayoutIntegrationBlockLayout.h"
 #include "LayoutIntegrationGridCoverage.h"
 #include "LayoutIntegrationGridLayout.h"
 #include "LayoutRange.h"
@@ -1915,6 +1916,8 @@ void RenderGrid::stretchBlockSizeForGridItem(RenderBox& gridItem, LayoutUnit ali
         if (canSetColumnAxisStretchRequirementForItem(gridItem))
             return gridLayoutState.containsLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
 
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(gridItem); blockFlow && LayoutIntegration::BlockLayout::contentDependsOnBlockSize(*blockFlow))
+            return true;
         return is<RenderBlock>(gridItem) && downcast<RenderBlock>(gridItem).hasPercentHeightDescendants();
     }();
     // Checking the logical-height of a grid item isn't enough. Setting an override logical-height
