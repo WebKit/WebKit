@@ -28,7 +28,9 @@
 
 #include "AXObjectCache.h"
 #include "BlockFormattingContext.h"
+#include "BlockFormattingUtils.h"
 #include "BlockIntegrationUtils.h"
+#include "LayoutIntegrationBlockCoverage.h"
 #include "LayoutRepainter.h"
 #include "LocalFrameViewInlines.h"
 #include "LocalFrameViewLayoutContext.h"
@@ -37,6 +39,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderDescendantIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"
@@ -94,6 +97,25 @@ std::pair<LayoutUnit, LayoutUnit> BlockLayout::computeIntrinsicInlineSizes(const
         descendant->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
     }
     return { sizes.minimum, sizes.maximum };
+}
+
+bool BlockLayout::contentDependsOnBlockSize(const RenderBlockFlow& rootRenderer)
+{
+    auto writingMode = rootRenderer.writingMode();
+    // Percentage block sizes resolve against the content box of the root through inline boxes and anonymous block boxes (CSS 2.2 §9.2.1.1,
+    // §10.5). Any other box gives its content a block size of its own, which depends on the root's only when it is a percentage itself.
+    // Out-of-flow boxes resolve theirs against the padding box of their containing block, which is definite either way.
+    auto hasPercentageBlockSizeContent = [&] {
+        for (CheckedPtr<const RenderObject> descendant = rootRenderer.firstChild(); descendant;) {
+            CheckedPtr box = dynamicDowncast<RenderBox>(*descendant);
+            if (box && !box->isOutOfFlowPositioned() && Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, writingMode))
+                return true;
+            auto passesBlockSizeThrough = descendant->isInlineBox() || (box && box->isAnonymousBlock());
+            descendant = passesBlockSizeThrough ? descendant->nextInPreOrder(&rootRenderer) : descendant->nextInPreOrderAfterChildren(&rootRenderer);
+        }
+        return false;
+    };
+    return hasPercentageBlockSizeContent() && canUseForBlockLayout(rootRenderer);
 }
 
 void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock)
