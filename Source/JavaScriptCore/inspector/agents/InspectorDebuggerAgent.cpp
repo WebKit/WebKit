@@ -1412,6 +1412,23 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseOnMicrotasks(bool 
     return { };
 }
 
+Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseOnWatchedObject(bool enabled, RefPtr<JSON::Object>&& options)
+{
+    if (!enabled) {
+        m_watchedObjectBreakpoint = nullptr;
+        return { };
+    }
+
+    Protocol::ErrorString errorString;
+    auto breakpoint = debuggerBreakpointFromPayload(errorString, WTF::move(options));
+    if (!breakpoint)
+        return makeUnexpected(errorString);
+
+    m_watchedObjectBreakpoint = WTF::move(breakpoint);
+
+    return { };
+}
+
 Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> InspectorDebuggerAgent::evaluateOnCallFrame(const Protocol::Debugger::CallFrameId& callFrameId, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
 {
     auto injectedScript = injectedScriptManager().injectedScriptForObjectId(callFrameId);
@@ -1911,6 +1928,12 @@ void InspectorDebuggerAgent::willEnter(JSC::CallFrame* callFrame)
     schedulePauseForSpecialBreakpoint(*m_symbolicBreakpoints[index].specialBreakpoint, DebuggerFrontendDispatcher::Reason::FunctionCall, WTF::move(pauseData));
 }
 
+void InspectorDebuggerAgent::willModifyWatchedObject()
+{
+    if (breakpointsActive() && m_watchedObjectBreakpoint)
+        breakProgram(DebuggerFrontendDispatcher::Reason::WatchedObject, nullptr, m_watchedObjectBreakpoint.copyRef());
+}
+
 void InspectorDebuggerAgent::didQueueMicrotask(JSC::JSGlobalObject* globalObject, JSC::MicrotaskIdentifier identifier)
 {
     if (!breakpointsActive())
@@ -2116,6 +2139,8 @@ void InspectorDebuggerAgent::clearInspectorBreakpointState()
 
     m_pauseOnAssertionsBreakpoint = nullptr;
     m_pauseOnMicrotasksBreakpoint = nullptr;
+
+    m_watchedObjectBreakpoint = nullptr;
 
 #if ENABLE(JIT)
     {
