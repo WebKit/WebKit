@@ -1,0 +1,231 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script src="resources/dom-breakpoint-test-utilities.js"></script>
+<script>
+function modifyMainAttribute() { let node = document.getElementById("main-attribute-target"); node.dataset.count = Number(node.dataset.count || 0) + 1; return true; }
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.DOMBreakpoint");
+
+    addDOMBreakpointSetupTestCase(suite);
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.AttributeModified",
+        description: "An attribute-modified breakpoint on a node in a cross-origin iframe should pause.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("attribute-target", WI.DOMBreakpoint.Type.AttributeModified);
+            InspectorTest.expectThat(WI.domDebuggerManager.domBreakpointsForNode(breakpoint.domNode).includes(breakpoint), "Breakpoint should be listed for the node.");
+
+            await expectDOMBreakpointPause("modifyAttribute()", breakpoint, {functionName: "modifyAttribute"});
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.AttributeModified.Style",
+        description: "An attribute-modified breakpoint should pause when the inline style changes through CSSOM.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("attribute-target", WI.DOMBreakpoint.Type.AttributeModified);
+
+            await expectDOMBreakpointPause("modifyStyle()", breakpoint, {functionName: "modifyStyle"});
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.SubtreeModified.ChildAdded",
+        description: "A subtree-modified breakpoint should pause when a child is added.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("subtree-target", WI.DOMBreakpoint.Type.SubtreeModified);
+
+            await expectDOMBreakpointPause("addChild()", breakpoint, {functionName: "addChild", insertion: true});
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.SubtreeModified.ChildRemoved",
+        description: "A subtree-modified breakpoint should pause when a child is removed.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("subtree-target", WI.DOMBreakpoint.Type.SubtreeModified);
+            let childNode = await nodeForElementId("subtree-child");
+
+            await expectDOMBreakpointPause("removeChild()", breakpoint, {functionName: "removeChild", targetNode: childNode});
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.NodeRemoved",
+        description: "A node-removed breakpoint should pause when the node is removed.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("removal-target", WI.DOMBreakpoint.Type.NodeRemoved);
+
+            await expectDOMBreakpointPause("removeNode()", breakpoint, {functionName: "removeNode"});
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.NodeRemoved.Ancestor",
+        description: "A node-removed breakpoint should pause when an ancestor of the node is removed.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("removal-descendant", WI.DOMBreakpoint.Type.NodeRemoved);
+            let ancestorNode = await nodeForElementId("removal-ancestor");
+
+            await expectDOMBreakpointPause("removeAncestor()", breakpoint, {functionName: "removeAncestor", targetNode: ancestorNode});
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.Disabled",
+        description: "A disabled DOM breakpoint should not pause.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("attribute-target", WI.DOMBreakpoint.Type.AttributeModified);
+
+            InspectorTest.log("Disabling breakpoint...");
+            breakpoint.disabled = true;
+
+            await expectNoPause("modifyAttribute()", "Should not pause for a disabled breakpoint.");
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.Removed",
+        description: "A removed DOM breakpoint should not pause.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("attribute-target", WI.DOMBreakpoint.Type.AttributeModified);
+
+            InspectorTest.log("Removing breakpoint...");
+            removeDOMBreakpoint(breakpoint);
+
+            await expectNoPause("modifyAttribute()", "Should not pause for a removed breakpoint.");
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.Condition",
+        description: "Editing a DOM breakpoint's condition should replace it in the frame target.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("attribute-target", WI.DOMBreakpoint.Type.AttributeModified);
+
+            InspectorTest.log("Setting condition to 'false'...");
+            breakpoint.condition = "false";
+            await expectNoPause("modifyAttribute()", "Should not pause when the condition is false.");
+
+            InspectorTest.log("Setting condition to 'true'...");
+            breakpoint.condition = "true";
+            await expectDOMBreakpointPause("modifyAttribute()", breakpoint, {functionName: "modifyAttribute"});
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.BreakpointsInactive",
+        description: "DOM breakpoints should not pause while the frame's breakpoints are inactive.",
+        async test() {
+            await addDOMBreakpoint("attribute-target", WI.DOMBreakpoint.Type.AttributeModified);
+
+            InspectorTest.log("Deactivating breakpoints in the frame target...");
+            await crossOriginTarget.DebuggerAgent.setBreakpointsActive(false);
+
+            await expectNoPause("modifyAttribute()", "Should not pause while breakpoints are inactive.");
+
+            InspectorTest.log("Reactivating breakpoints in the frame target...");
+            await crossOriginTarget.DebuggerAgent.setBreakpointsActive(true);
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.NotSaved",
+        description: "DOM breakpoints on frame target nodes cannot be restored yet, so they should not be saved. Those on page nodes should still be saved.",
+        async test() {
+            let savedBreakpoints = new Set;
+            let objectStore = WI.objectStores.domBreakpoints;
+            objectStore.putObject = function(object, ...args) {
+                savedBreakpoints.add(object);
+                return WI.ObjectStore.prototype.putObject.call(this, object, ...args);
+            };
+
+            try {
+                let frameBreakpoint = await addDOMBreakpoint("attribute-target", WI.DOMBreakpoint.Type.AttributeModified);
+                frameBreakpoint.disabled = true;
+                frameBreakpoint.condition = "true";
+                InspectorTest.expectFalse(savedBreakpoints.has(frameBreakpoint), "Breakpoint on a frame target node should not be saved.");
+
+                InspectorTest.log(`Adding "attribute-modified" DOM Breakpoint on #main-attribute-target...`);
+                let pageBreakpoint = addDOMBreakpointForNode(await pageNodeForElementId("main-attribute-target"), WI.DOMBreakpoint.Type.AttributeModified);
+                InspectorTest.expectThat(savedBreakpoints.has(pageBreakpoint), "Breakpoint on a page node should be saved.");
+            } finally {
+                delete objectStore.putObject;
+            }
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.PageTree",
+        description: "A DOM breakpoint on a node of the page target's tree should pause exactly once, although the main frame has a frame target with its own DOMDebugger agent.",
+        async test() {
+            InspectorTest.log(`Adding "attribute-modified" DOM Breakpoint on #main-attribute-target...`);
+            let breakpoint = addDOMBreakpointForNode(await pageNodeForElementId("main-attribute-target"), WI.DOMBreakpoint.Type.AttributeModified);
+            await expectDOMBreakpointPause("modifyMainAttribute()", breakpoint, {functionName: "modifyMainAttribute", inPage: true});
+
+            InspectorTest.log("Removing breakpoint...");
+            removeDOMBreakpoint(breakpoint);
+            await expectNoPause("modifyMainAttribute()", "Should not pause for a removed breakpoint.", {inPage: true});
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.TemplateContent",
+        description: "Nodes of template contents have no frame, so their mutations never reach the frame's agent. A DOM breakpoint on them should be refused, not listed.",
+        async test() {
+            let node = await nodeForExpression(crossOriginTarget, `document.getElementById("template").content.firstElementChild`);
+            InspectorTest.expectThat(node?.owningTarget === crossOriginTarget, "Template content node should be in the cross-origin frame target's tree.");
+
+            InspectorTest.log(`Adding "attribute-modified" DOM Breakpoint on the template content node...`);
+            let breakpoint = new WI.DOMBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+            WI.domDebuggerManager.addDOMBreakpoint(breakpoint);
+            let listed = WI.domDebuggerManager.domBreakpointsForNode(node).includes(breakpoint);
+            InspectorTest.expectFalse(listed, "Breakpoint should not be listed for the node.");
+            if (listed)
+                trackDOMBreakpoint(breakpoint);
+
+            InspectorTest.log(`Setting a "subtree-modified" DOM Breakpoint on the template content node directly...`);
+            await InspectorTest.expectException(async () => {
+                await crossOriginTarget.DOMDebuggerAgent.setDOMBreakpoint.invoke({nodeId: node.backendNodeId, type: WI.DOMBreakpoint.Type.SubtreeModified});
+            });
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.FrameTargetWithoutDOMBreakpoints",
+        description: "When the frame target cannot set DOM breakpoints, as with older backends, a DOM breakpoint on its node should be refused, not listed.",
+        async test() {
+            let node = await nodeForElementId("attribute-target");
+            let hasCommand = crossOriginTarget.hasCommand;
+            crossOriginTarget.hasCommand = function(qualifiedName, ...rest) {
+                return qualifiedName !== "DOMDebugger.setDOMBreakpoint" && hasCommand.call(this, qualifiedName, ...rest);
+            };
+
+            try {
+                InspectorTest.expectFalse(WI.domDebuggerManager.supportsDOMBreakpointsForNode(node), "Frame target node should not support DOM breakpoints.");
+
+                InspectorTest.log(`Adding "attribute-modified" DOM Breakpoint on #attribute-target...`);
+                let breakpoint = new WI.DOMBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+                WI.domDebuggerManager.addDOMBreakpoint(breakpoint);
+                let listed = WI.domDebuggerManager.domBreakpointsForNode(node).includes(breakpoint);
+                InspectorTest.expectFalse(listed, "Breakpoint should not be listed for the node.");
+                if (listed)
+                    trackDOMBreakpoint(breakpoint);
+            } finally {
+                delete crossOriginTarget.hasCommand;
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that DOM breakpoints on nodes in a cross-origin iframe pause exactly once, in that iframe's frame target, that DOM breakpoints on the page's own nodes still pause exactly once, and that breakpoints the frame target cannot serve are refused.</p>
+<div id="main-attribute-target"></div>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/dom-breakpoint-frame.html"></iframe>
+</body>

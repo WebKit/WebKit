@@ -27,8 +27,15 @@
 
 #include "InspectorDOMDebuggerAgent.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakHashMap.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
+
+class Element;
+class LocalFrame;
+class Node;
+class WeakPtrImplWithEventTargetData;
 
 class FrameDOMDebuggerAgent final : public InspectorDOMDebuggerAgent {
     WTF_MAKE_TZONE_ALLOCATED(FrameDOMDebuggerAgent);
@@ -40,6 +47,29 @@ public:
     // DOMDebuggerBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> setDOMBreakpoint(Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOMDebugger::DOMBreakpointType, RefPtr<JSON::Object>&& options) final;
     Inspector::Protocol::ErrorStringOr<void> removeDOMBreakpoint(Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOMDebugger::DOMBreakpointType) final;
+
+    // InspectorInstrumentation
+    void frameDocumentUpdated();
+    void willInsertDOMNode(Node& parent);
+    void willRemoveDOMNode(Node&);
+    void didRemoveDOMNode(Node&);
+    void willModifyDOMAttr(Element&);
+
+private:
+    void enable() final;
+    void disable() final;
+
+    // Weak keys, since this agent is not told when a node is destroyed.
+    using DOMBreakpointMap = WeakHashMap<Node, Ref<JSC::Breakpoint>, WeakPtrImplWithEventTargetData>;
+    DOMBreakpointMap& domBreakpoints(Inspector::Protocol::DOMDebugger::DOMBreakpointType);
+    void clearDOMBreakpoints();
+    bool canPauseRunningScript();
+    void breakOnDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType, Node& breakpointOwner, Ref<JSC::Breakpoint>&&, Node* targetNode = nullptr, bool insertion = false);
+
+    WeakRef<LocalFrame> m_inspectedFrame;
+    DOMBreakpointMap m_subtreeModifiedBreakpoints;
+    DOMBreakpointMap m_attributeModifiedBreakpoints;
+    DOMBreakpointMap m_nodeRemovedBreakpoints;
 };
 
 } // namespace WebCore

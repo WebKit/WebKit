@@ -1,0 +1,73 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script src="resources/dom-breakpoint-test-utilities.js"></script>
+<script>
+function navigateFrame(url) { document.querySelector("iframe").src = url; return true; }
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.DOMBreakpoint.FrameNavigation");
+
+    addDOMBreakpointSetupTestCase(suite);
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.FrameNavigation.FrameReloaded",
+        description: "When the cross-origin iframe reloads in the same frame target, its DOM breakpoints should lose their nodes, since the nodes and the backend breakpoints are gone.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("attribute-target", WI.DOMBreakpoint.Type.AttributeModified);
+            InspectorTest.expectThat(WI.domDebuggerManager.domBreakpoints.includes(breakpoint), "Breakpoint should be listed.");
+
+            InspectorTest.log("Reloading the cross-origin iframe...");
+            let oldDocument = WI.domManager.frameTargetDocumentForTarget(crossOriginTarget);
+            await evaluateInFrameTarget(crossOriginTarget, "location.reload()");
+            let reloaded = await waitForExpressionInTarget(crossOriginTarget, `performance.getEntriesByType("navigation")[0]?.type === "reload" && document.readyState === "complete"`, 50);
+            InspectorTest.assert(reloaded, "Timed out waiting for the frame to reload.");
+            while (!WI.domManager.frameTargetDocumentForTarget(crossOriginTarget) || WI.domManager.frameTargetDocumentForTarget(crossOriginTarget) === oldDocument)
+                await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+
+            InspectorTest.expectNull(breakpoint.domNode, "Breakpoint should have no node.");
+            InspectorTest.expectFalse(WI.domDebuggerManager.domBreakpoints.includes(breakpoint), "Breakpoint should not be listed.");
+            await expectNoPause("modifyAttribute()", "Should not pause in the reloaded document.");
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.FrameNavigation.FrameTargetRemoved",
+        description: "When the cross-origin iframe navigates to the main frame's site, its frame target goes away, and its DOM breakpoints should lose their nodes.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("attribute-target", WI.DOMBreakpoint.Type.AttributeModified);
+            InspectorTest.expectThat(WI.domDebuggerManager.domBreakpoints.includes(breakpoint), "Breakpoint should be listed.");
+
+            InspectorTest.log("Navigating the iframe to the main frame's site...");
+            let oldTarget = crossOriginTarget;
+            let targetRemovedPromise = new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) => {
+                    if (event.data.target !== oldTarget)
+                        return;
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, listener);
+                    resolve();
+                });
+            });
+            // Unique per run, so repeated runs in one process do not load the frame from the memory cache.
+            await InspectorTest.evaluateInPage(`navigateFrame("http://127.0.0.1:8000/site-isolation/inspector/dom-debugger/resources/dom-breakpoint-frame.html?${Math.random()}")`);
+            await targetRemovedPromise;
+            crossOriginTarget = null;
+
+            InspectorTest.expectNull(breakpoint.domNode, "Breakpoint should have no node.");
+            InspectorTest.expectFalse(WI.domDebuggerManager.domBreakpoints.includes(breakpoint), "Breakpoint should not be listed.");
+
+            let loaded = await waitForExpressionInTarget(WI.assumingMainTarget(), `document.querySelector("iframe").contentDocument?.readyState === "complete" && !!document.querySelector("iframe").contentWindow.modifyAttribute`, 50);
+            InspectorTest.assert(loaded, "Timed out waiting for the frame to load.");
+            await expectNoPause(`document.querySelector("iframe").contentWindow.modifyAttribute()`, "Should not pause in the new document.", {inPage: true});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that DOM breakpoints on nodes in a cross-origin iframe lose their nodes when the iframe's document goes away.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/dom-breakpoint-frame.html"></iframe>
+</body>

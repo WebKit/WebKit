@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<script>
+function modifyAttribute() { let node = document.getElementById("attribute-target"); node.dataset.count = Number(node.dataset.count || 0) + 1; return true; }
+function setAttributeByMethod() { let node = document.getElementById("attribute-target"); node.setAttribute("data-method", Number(node.getAttribute("data-method") || 0) + 1); return true; }
+function modifyStyle() { let node = document.getElementById("attribute-target"); node.style.order = Number(node.style.order || 0) + 1; return true; }
+function addChild() { document.getElementById("subtree-target").appendChild(document.createElement("span")); return true; }
+function removeChild() { document.getElementById("subtree-child").remove(); return true; }
+function removeNode() { document.getElementById("removal-target").remove(); return true; }
+function removeAncestor() { document.getElementById("removal-ancestor").remove(); return true; }
+function nestedNode() { return document.getElementById("nested-frame").contentDocument.getElementById("nested-target"); }
+function modifyNestedAttribute() { let node = nestedNode(); node.dataset.count = Number(node.dataset.count || 0) + 1; return true; }
+function setNestedAttributeByMethod() { let node = nestedNode(); node.setAttribute("data-method", Number(node.getAttribute("data-method") || 0) + 1); return true; }
+</script>
+<body>
+<div id="attribute-target"></div>
+<div id="subtree-target"><span id="subtree-child"></span></div>
+<div id="removal-target"></div>
+<div id="removal-ancestor"><div id="removal-descendant"></div></div>
+<iframe id="nested-frame" srcdoc="<div id='nested-target'></div><script>
+function modifyOwnAttribute() { let node = document.getElementById('nested-target'); node.dataset.count = Number(node.dataset.count || 0) + 1; return true; }
+function setOwnAttributeByMethod() { let node = document.getElementById('nested-target'); node.setAttribute('data-method', Number(node.getAttribute('data-method') || 0) + 1); return true; }
+function modifyParentAttribute() { let node = parent.document.getElementById('attribute-target'); node.dataset.count = Number(node.dataset.count || 0) + 1; return true; }
+function setParentAttributeByMethod() { let node = parent.document.getElementById('attribute-target'); node.setAttribute('data-method', Number(node.getAttribute('data-method') || 0) + 1); return true; }
+function callParentFunction() { return parent.modifyAttribute(); }
+</script>"></iframe>
+<template id="template"><div id="template-target"></div></template>
+</body>
