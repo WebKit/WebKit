@@ -5858,7 +5858,7 @@ struct WebCore::DragItem {
     WebCore::IntPoint dragLocationInWindowCoordinates;
     String title;
     URL url;
-    WebCore::IntRect dragPreviewFrameInRootViewCoordinates;
+    WebCore::IntRect dragPreviewFrameInMainFrameViewCoordinates;
     bool containsSelection;
     WebCore::PromisedAttachmentInfo promisedAttachmentInfo;
 #if ENABLE(MODEL_PROCESS)
