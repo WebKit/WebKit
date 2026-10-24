@@ -1007,6 +1007,34 @@ private:
                     break;
                 }
 
+                case CallVarargsWithSpread:
+                case VarargsLengthWithSpread:
+                case LoadVarargsWithSpread: {
+                    // The children are [callee, thisValue, elem0, ...] for CallVarargsWithSpread,
+                    // [argumentCountIncludingThis, elem0, ...] for LoadVarargsWithSpread, and
+                    // [elem0, ...] for VarargsLengthWithSpread. bitVector()->get(i) marks elem i as
+                    // a spread. Only spread operands may be phantoms: the backends drain everything
+                    // else as a value, and arguments elimination only ever leaves an unescaped
+                    // Spread behind (as PhantomSpread), never a bare eliminated allocation.
+                    unsigned base = 0;
+                    if (node->op() == CallVarargsWithSpread)
+                        base = 2;
+                    else if (node->op() == LoadVarargsWithSpread)
+                        base = 1;
+                    VALIDATE((node), node->numChildren() > base);
+                    BitVector* bitVector = node->bitVector();
+                    for (unsigned i = 0; i < node->numChildren(); i++) {
+                        Node* child = m_graph.varArgChild(node, i).node();
+                        if (!child->isPhantomAllocation())
+                            continue;
+                        VALIDATE((node), i >= base);
+                        VALIDATE((node), bitVector->get(i - base));
+                        VALIDATE((node), m_graph.m_form == SSA);
+                        VALIDATE((node), child->op() == PhantomSpread);
+                    }
+                    break;
+                }
+
                 case Spread:
                     VALIDATE((node), !node->child1()->isPhantomAllocation() || node->child1()->op() == PhantomCreateRest || node->child1()->op() == PhantomNewArrayBuffer);
                     break;

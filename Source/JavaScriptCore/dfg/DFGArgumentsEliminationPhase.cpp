@@ -317,6 +317,29 @@ private:
             }
         };
 
+        // Each spread operand is decided on its own, so a call can mix eliminated and materialized
+        // spreads; the backends handle the mix. A candidacy revoked later in the pass just leaves that
+        // operand materialized, so no fixpoint is needed.
+        auto escapeSpreadOperands = [&](Node* node, unsigned base) {
+            for (unsigned i = 0; i < base; ++i)
+                escape(m_graph.varArgChild(node, i), node);
+
+            BitVector* bitVector = node->bitVector();
+            unsigned numElems = node->numChildren() - base;
+            for (unsigned i = 0; i < numElems; ++i) {
+                Edge child = m_graph.varArgChild(node, base + i);
+                bool dontEscape = false;
+                if (bitVector->get(i)) {
+                    Node* spread = child.node();
+                    dontEscape = spread->op() == Spread
+                        && (spread->child1()->op() == CreateRest || spread->child1()->op() == NewArrayBuffer)
+                        && m_candidates.contains(spread);
+                }
+                if (!dontEscape)
+                    escape(child, node);
+            }
+        };
+
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (Node* node : *block) {
                 switch (node->op()) {
@@ -384,7 +407,12 @@ private:
                     if (node->loadVarargsData()->offset && (node->argumentsChild()->op() == NewArrayWithSpread || node->argumentsChild()->op() == Spread || node->argumentsChild()->op() == NewArrayBuffer))
                         escape(node->argumentsChild(), node);
                     break;
-                    
+
+                case VarargsLengthWithSpread:
+                case LoadVarargsWithSpread:
+                    escapeSpreadOperands(node, node->op() == LoadVarargsWithSpread ? 1 : 0);
+                    break;
+
                 case CallVarargs:
                 case ConstructVarargs:
                 case TailCallVarargs:
@@ -393,6 +421,10 @@ private:
                     escape(node->child2(), node);
                     if (node->callVarargsData()->firstVarArgOffset && (node->child3()->op() == NewArrayWithSpread || node->child3()->op() == Spread || node->child3()->op() == NewArrayBuffer))
                         escape(node->child3(), node);
+                    break;
+
+                case CallVarargsWithSpread:
+                    escapeSpreadOperands(node, 2);
                     break;
 
                 case Check:
@@ -793,6 +825,25 @@ private:
                     return true;
                 };
 
+                // The operands of a *WithSpread node from base on, as an eliminated array that the cases for
+                // the plain varargs nodes know how to lower. Null unless every spread operand was eliminated.
+                auto phantomArrayForSpreadOperands = [&](unsigned base) -> Node* {
+                    BitVector* bitVector = node->bitVector();
+                    unsigned numElems = node->numChildren() - base;
+                    for (unsigned e = 0; e < numElems; ++e) {
+                        if (bitVector->get(e) && !isEliminatedAllocation(m_graph.varArgChild(node, base + e).node()))
+                            return nullptr;
+                    }
+                    unsigned firstChild = m_graph.m_varArgChildren.size();
+                    for (unsigned e = 0; e < numElems; ++e)
+                        m_graph.m_varArgChildren.append(m_graph.varArgChild(node, base + e));
+                    Node* phantomArray = insertionSet.insertNode(
+                        nodeIndex, SpecNone, Node::VarArg, PhantomNewArrayWithSpread,
+                        node->origin.withExitOK(true), OpInfo(bitVector), OpInfo(), firstChild, numElems);
+                    m_candidates.add(phantomArray, AvailabilityMap { });
+                    return phantomArray;
+                };
+
                 switch (node->op()) {
                 case CreateDirectArguments:
                     if (!m_candidates.contains(node))
@@ -952,6 +1003,18 @@ private:
 
                     node->convertToIdentityOn(emitCodeToGetArgumentsArrayLength(insertionSet, candidate, nodeIndex, origin, /* addThis = */ true));
                     break;
+                }
+
+                case LoadVarargsWithSpread: {
+                    Node* phantomArray = phantomArrayForSpreadOperands(1);
+                    if (!phantomArray)
+                        break;
+
+                    DFG_ASSERT(m_graph, node, node->origin.exitOK);
+                    Edge countEdge = m_graph.varArgChild(node, 0);
+                    node->setOpAndDefaultFlags(LoadVarargs);
+                    node->children = AdjacencyList(AdjacencyList::Fixed, countEdge, Edge(phantomArray));
+                    [[fallthrough]];
                 }
 
                 case LoadVarargs: {
@@ -1185,7 +1248,29 @@ private:
                     node->setOpAndDefaultFlags(ForwardVarargs);
                     break;
                 }
-                    
+
+                case VarargsLengthWithSpread: {
+                    Node* phantomArray = phantomArrayForSpreadOperands(0);
+                    if (!phantomArray)
+                        break;
+
+                    DFG_ASSERT(m_graph, node, node->origin.exitOK);
+                    node->convertToIdentityOn(emitCodeToGetArgumentsArrayLength(insertionSet, phantomArray, nodeIndex, node->origin.withExitOK(true), /* addThis */ true));
+                    break;
+                }
+
+                case CallVarargsWithSpread: {
+                    Node* phantomArray = phantomArrayForSpreadOperands(2);
+                    if (!phantomArray)
+                        break;
+
+                    Edge callee = m_graph.varArgChild(node, 0);
+                    Edge thisArgument = m_graph.varArgChild(node, 1);
+                    node->setOpAndDefaultFlags(CallVarargs);
+                    node->children = AdjacencyList(AdjacencyList::Fixed, callee, thisArgument, Edge(phantomArray));
+                    [[fallthrough]];
+                }
+
                 case CallVarargs:
                 case ConstructVarargs:
                 case TailCallVarargs:
@@ -1347,7 +1432,7 @@ private:
 
                     break;
                 }
-                    
+
                 case CheckArrayOrEmpty:
                 case CheckArray:
                 case GetButterfly:
