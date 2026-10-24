@@ -23,14 +23,11 @@
 import logging
 import os
 import json
-import queue
 import sys
-
-import multiprocessing as mp
-_mp_context = mp.get_context('fork')
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.webdriver_tests.test_process import TestProcess
 
 from mozlog import structuredlog
 
@@ -125,8 +122,6 @@ class WebKitDriverBrowser(WebDriverBrowser):
 
 
 class WebDriverW3CExecutor(WdspecExecutor):
-    RESULT_TIMEOUT_SECONDS = 300
-    TEARDOWN_TIMEOUT_SECONDS = 10
 
     def __init__(self, driver, server, env, timeout, expectations):
         WebKitDriverBrowser.test_env = env
@@ -144,77 +139,51 @@ class WebDriverW3CExecutor(WdspecExecutor):
 
         self._timeout = timeout
         self._expectations = expectations
-        self._test_queue = None
-        self._result_queue = None
-        self._process = None
+        self._test_process = None
 
     def setup(self):
         super(WebDriverW3CExecutor, self).setup(self.runner)
-        self._test_queue = _mp_context.Queue()
-        self._result_queue = _mp_context.Queue()
         self.browser.start(None)
-        args = (self._test_queue,
-                self._result_queue,
-                self.browser.host,
-                self.browser.port,
-                self.capabilities,
-                self.browser.webdriver_binary,
-                self.server_config,
-                self._timeout,
-                self._expectations)
-        self._process = _mp_context.Process(target=WebDriverW3CExecutor._runner, args=args)
-        self._process.start()
+        # When a subtest times out, the browser may be stuck too, for example showing a dialog.
+        self._test_process = TestProcess(self._run_file, self._timeout, restart=self._restart_driver)
+        self._test_process.start()
 
     def teardown(self):
+        if self._test_process is not None:
+            self._test_process.stop()
+            self._test_process = None
         self.protocol.teardown()
         self.browser.stop(force=True)
-        if self._process is not None:
-            self._test_queue.put('TEARDOWN')
-            self._process.join(self.TEARDOWN_TIMEOUT_SECONDS)
-            if self._process.is_alive():
-                self._process.terminate()
-                self._process.join(self.TEARDOWN_TIMEOUT_SECONDS)
-            self._process = None
-        self._test_queue = None
-        self._result_queue = None
 
-    @staticmethod
-    def _runner(test_queue, result_queue, host, port, capabilities, webdriver_binary, server_config, timeout, expectations):
+    def _restart_driver(self):
+        # Stopping the driver also stops the browser it launched.
+        self.browser.stop(force=True)
+        self.browser.start(None)
+
+    def _run_file(self, test, deselected, report):
+        # Runs in the test process.
         if pytest_runner is None:
             do_delayed_imports()
 
-        while True:
-            test = test_queue.get()
-            if test == 'TEARDOWN':
-                break
+        with pytest_runner.TemporaryDirectory() as cache_directory:
+            config_path = os.path.join(cache_directory, 'wd_config.json')
+            env = {'WDSPEC_CONFIG_FILE': config_path}
 
-            with pytest_runner.TemporaryDirectory() as cache_directory:
-                config_path = os.path.join(cache_directory, 'wd_config.json')
-                env = {'WDSPEC_CONFIG_FILE': config_path}
+            config = {'host': self.browser.host,
+                      'port': self.browser.port,
+                      'capabilities': self.capabilities,
+                      'webdriver': {'binary': self.browser.webdriver_binary},
+                      'wptserve': self.server_config,
+                      'timeout_multiplier': 10,
+                      'target_platform': sys.platform,
+                      }
+            with open(config_path, 'w') as f:
+                json.dump(config, f)
 
-                config = {'host': host,
-                          'port': port,
-                          'capabilities': capabilities,
-                          'webdriver': {'binary': webdriver_binary},
-                          'wptserve': server_config,
-                          'timeout_multiplier': 10,
-                          'target_platform': sys.platform,
-                          }
-                with open(config_path, 'w') as f:
-                    json.dump(config, f)
-
-                env.update(WebKitDriverBrowser.test_env)
-                args = ['--strict-markers', '-p', 'no:mozlog']
-                result_queue.put(pytest_runner.run(test, args, timeout, env, expectations))
+            env.update(WebKitDriverBrowser.test_env)
+            args = ['--strict-markers', '-p', 'no:mozlog']
+            harness_result, _ = pytest_runner.run(test, args, self._timeout, env, self._expectations, report=report, deselected=deselected)
+            return harness_result
 
     def run(self, test):
-        self._test_queue.put(test)
-        try:
-            return self._result_queue.get(timeout=self.RESULT_TIMEOUT_SECONDS)
-        except queue.Empty:
-            _log.error('No result for %s after %d seconds, terminating the test process'
-                       % (test, self.RESULT_TIMEOUT_SECONDS))
-            if self._process is not None:
-                self._process.terminate()
-                self._process.join(self.TEARDOWN_TIMEOUT_SECONDS)
-            return ('ERROR', 'no result after %d seconds' % self.RESULT_TIMEOUT_SECONDS), []
+        return self._test_process.run(test)
