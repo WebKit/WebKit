@@ -160,12 +160,8 @@ static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(c
     // past the containing block size the block formatting context gives it.
     if (box.document().inQuirksMode())
         return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
-    // Scrollbars that come or go in a scroll container lay its ancestors out again (RenderObject::markContainingBlocksForLayout).
-    CheckedRef style = box.style();
-    auto isScrollable = [](Overflow overflow) {
-        return overflow == Overflow::Auto || overflow == Overflow::Scroll;
-    };
-    if (box.isWritingModeRoot() || isScrollable(style->overflowX()) || isScrollable(style->overflowY()))
+    // FIXME: An orthogonal box, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
+    if (box.isWritingModeRoot())
         return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
     // An out-of-flow box inside whose containing block is outside it, in the block formatting context, would be registered on a box the
     // block formatting context has not committed yet.
@@ -296,8 +292,8 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     // past the containing block size the block formatting context gives it.
     if (box.document().inQuirksMode())
         return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
-    // Scrollbars that come or go in a scroll container lay its ancestors out again (RenderObject::markContainingBlocksForLayout).
-    if (box.isWritingModeRoot() || box.hasNonVisibleOverflow())
+    // FIXME: An orthogonal box, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
+    if (box.isWritingModeRoot())
         return BlockAvoidanceReason::ContentHasUnsupportedStyle;
     CheckedRef style = box.style();
     auto writingMode = box.writingMode();
