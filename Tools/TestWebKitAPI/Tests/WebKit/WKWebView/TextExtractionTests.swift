@@ -1443,84 +1443,104 @@ struct TextExtractionTests {
 
     @Test
     func replacementStringsForEmailAddresses() async throws {
-        func textAfterReplacing(
-            _ markup: String,
-            _ outputFormat: _WKTextExtractionOutputFormat,
-            _ replacementStrings: [String: String]?,
-            _ customizeConfiguration: ((_WKTextExtractionConfiguration) -> Void)? = nil
-        ) async throws -> String {
-            try await webView.load(html: markup)
-            let configuration = _WKTextExtractionConfiguration()
-            configuration.outputFormat = outputFormat
-            configuration.replacementStrings = replacementStrings
-            customizeConfiguration?(configuration)
-            return try await webView.debugText(configuration)
-        }
-
-        func expectAddressRedacted(
-            _ markup: String,
-            _ outputFormat: _WKTextExtractionOutputFormat,
-            _ customizeConfiguration: ((_WKTextExtractionConfiguration) -> Void)? = nil,
-            sourceLocation: SourceLocation = #_sourceLocation
-        ) async throws {
-            let format: Comment = "output format: \(outputFormat)"
-
-            let text = try await textAfterReplacing(markup, outputFormat, nil, customizeConfiguration)
-            #expect(text.contains("wenson@me.com"), format, sourceLocation: sourceLocation)
-
-            let redactedText = try await textAfterReplacing(
-                markup,
-                outputFormat,
-                ["wenson@me.com": "jane.doe@example.com"],
-                customizeConfiguration
-            )
-            #expect(redactedText.contains("jane.doe@example.com"), format, sourceLocation: sourceLocation)
-            #expect(redactedText.contains("wenson@me.com") == false, format, sourceLocation: sourceLocation)
-        }
-
-        do {
-            let text = try await textAfterReplacing(
-                "<p>Send a codewenson@me.com</p><p>codewenson@me.comnow</p>",
-                .textTree,
-                ["wenson@me.com": "jane.doe@example.com"]
-            )
-            #expect(text.contains("Send a codejane.doe@example.com"))
-            #expect(text.contains("codejane.doe@example.comnow"))
-            #expect(text.contains("wenson@me.com") == false)
-        }
-
-        for format in [_WKTextExtractionOutputFormat.textTree, .HTML, .JSON] {
-            try await expectAddressRedacted(
-                "<div aria-label='Send a code to wenson@me.com'><p>Choose a delivery method</p></div>",
-                format
-            )
-            try await expectAddressRedacted("<button title='Signed in as wenson@me.com'>Menu</button>", format)
-            try await expectAddressRedacted(
-                """
-                <input type='radio' id='otp-email' name='otpEmail'>\
-                <label for='otp-email'>Email me a verification code<span>wenson@me.com</span></label>
-                """,
-                format
-            )
-            try await expectAddressRedacted("<h1>Verify</h1><input type='radio' name='otpEmail' value='wenson@me.com'>", format)
-            try await expectAddressRedacted("<input type='email' placeholder='wenson@me.com'>", format)
-            try await expectAddressRedacted(
-                "<img src='https://example.com/avatar.png' alt='Profile photo for wenson@me.com'>",
-                format
-            )
-            try await expectAddressRedacted(
-                "<select><option value='primary'>wenson@me.com</option><option value='backup'>Other address</option></select>",
-                format
-            )
-            try await expectAddressRedacted("<select><option>wenson@me.com</option></select>", format) { configuration in
-                configuration.includeSelectOptions = false
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/avatar.png") {
+                ""
             }
         }
 
-        try await expectAddressRedacted(
-            "<img src='https://example.com/avatar.png' alt='Profile photo for wenson@me.com'>",
-            .markdown
-        )
+        try await server.run { serverConfiguration in
+            let storeConfiguration = _WKWebsiteDataStoreConfiguration(nonPersistentConfiguration: ())
+            storeConfiguration.httpsProxy = serverConfiguration.httpsProxy
+
+            let configuration = WKWebViewConfiguration()
+            configuration.websiteDataStore = WKWebsiteDataStore._store(with: storeConfiguration)
+            configuration.preferences._textExtractionEnabled = true
+
+            let webView = TestWKWebView(frame: CGRect(x: 0, y: 0, width: 800, height: 600), configuration: configuration)
+
+            @MainActor
+            func textAfterReplacing(
+                _ markup: String,
+                _ outputFormat: _WKTextExtractionOutputFormat,
+                _ replacementStrings: [String: String]?,
+                _ customizeConfiguration: ((_WKTextExtractionConfiguration) -> Void)? = nil
+            ) async throws -> String {
+                webView.loadHTMLString(markup, baseURL: Bundle.testResources.resourceURL)
+                try await webView._test_waitForDidFinishNavigationWhileIgnoringSSLErrors()
+                let configuration = _WKTextExtractionConfiguration()
+                configuration.outputFormat = outputFormat
+                configuration.replacementStrings = replacementStrings
+                customizeConfiguration?(configuration)
+                return try await webView.debugText(configuration)
+            }
+
+            @MainActor
+            func expectAddressRedacted(
+                _ markup: String,
+                _ outputFormat: _WKTextExtractionOutputFormat,
+                _ customizeConfiguration: ((_WKTextExtractionConfiguration) -> Void)? = nil,
+                sourceLocation: SourceLocation = #_sourceLocation
+            ) async throws {
+                let format: Comment = "output format: \(outputFormat)"
+
+                let text = try await textAfterReplacing(markup, outputFormat, nil, customizeConfiguration)
+                #expect(text.contains("wenson@me.com"), format, sourceLocation: sourceLocation)
+
+                let redactedText = try await textAfterReplacing(
+                    markup,
+                    outputFormat,
+                    ["wenson@me.com": "jane.doe@example.com"],
+                    customizeConfiguration
+                )
+                #expect(redactedText.contains("jane.doe@example.com"), format, sourceLocation: sourceLocation)
+                #expect(redactedText.contains("wenson@me.com") == false, format, sourceLocation: sourceLocation)
+            }
+
+            do {
+                let text = try await textAfterReplacing(
+                    "<p>Send a codewenson@me.com</p><p>codewenson@me.comnow</p>",
+                    .textTree,
+                    ["wenson@me.com": "jane.doe@example.com"]
+                )
+                #expect(text.contains("Send a codejane.doe@example.com"))
+                #expect(text.contains("codejane.doe@example.comnow"))
+                #expect(text.contains("wenson@me.com") == false)
+            }
+
+            for format in [_WKTextExtractionOutputFormat.textTree, .HTML, .JSON] {
+                try await expectAddressRedacted(
+                    "<div aria-label='Send a code to wenson@me.com'><p>Choose a delivery method</p></div>",
+                    format
+                )
+                try await expectAddressRedacted("<button title='Signed in as wenson@me.com'>Menu</button>", format)
+                try await expectAddressRedacted(
+                    """
+                    <input type='radio' id='otp-email' name='otpEmail'>\
+                    <label for='otp-email'>Email me a verification code<span>wenson@me.com</span></label>
+                    """,
+                    format
+                )
+                try await expectAddressRedacted("<h1>Verify</h1><input type='radio' name='otpEmail' value='wenson@me.com'>", format)
+                try await expectAddressRedacted("<input type='email' placeholder='wenson@me.com'>", format)
+                try await expectAddressRedacted(
+                    "<img src='https://example.com/avatar.png' alt='Profile photo for wenson@me.com'>",
+                    format
+                )
+                try await expectAddressRedacted(
+                    "<select><option value='primary'>wenson@me.com</option><option value='backup'>Other address</option></select>",
+                    format
+                )
+                try await expectAddressRedacted("<select><option>wenson@me.com</option></select>", format) { configuration in
+                    configuration.includeSelectOptions = false
+                }
+            }
+
+            try await expectAddressRedacted(
+                "<img src='https://example.com/avatar.png' alt='Profile photo for wenson@me.com'>",
+                .markdown
+            )
+        }
     }
 
     @Test
@@ -2318,8 +2338,26 @@ struct TextExtractionTests {
 
     @Test
     func invalidURLsAreSkipped() async throws {
-        try await webView.load(
-            html: """
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/valid.png") {
+                ""
+            }
+            Route("/broken.png") {
+                ""
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let storeConfiguration = _WKWebsiteDataStoreConfiguration(nonPersistentConfiguration: ())
+            storeConfiguration.httpsProxy = serverConfiguration.httpsProxy
+
+            let configuration = WKWebViewConfiguration()
+            configuration.websiteDataStore = WKWebsiteDataStore._store(with: storeConfiguration)
+            configuration.preferences._textExtractionEnabled = true
+
+            let webView = TestWKWebView(frame: CGRect(x: 0, y: 0, width: 800, height: 600), configuration: configuration)
+            webView.loadHTMLString(
+                """
                 <!DOCTYPE html>
                 <html>
                 <body>
@@ -2329,32 +2367,37 @@ struct TextExtractionTests {
                 .com/newline">Link with newline</a>
                     <a href="">Empty href</a>
                     <img src="https://example.com/valid.png" alt="Valid image">
-                    <img src="   not a valid src   " alt="Image with spaces">
+                    <img src="   https://not a valid src   " alt="Image with spaces">
                     <img src="https://example
                 .com/broken.png" alt="Image with newline">
                     <img src="" alt="Empty src">
                 </body>
                 </html>
-                """
-        )
+                """,
+                baseURL: Bundle.testResources.resourceURL
+            )
+            try await webView._test_waitForDidFinishNavigationWhileIgnoringSSLErrors()
 
-        for format in [_WKTextExtractionOutputFormat.textTree, .markdown] {
-            let configuration = _WKTextExtractionConfiguration()
-            configuration.includeURLs = true
-            configuration.shortenURLs = true
-            configuration.outputFormat = format
+            for shortenURLs in [true, false] {
+                for format in [_WKTextExtractionOutputFormat.textTree, .markdown] {
+                    let configuration = _WKTextExtractionConfiguration()
+                    configuration.includeURLs = true
+                    configuration.shortenURLs = shortenURLs
+                    configuration.outputFormat = format
 
-            let debugText = try await webView.debugText(configuration)
-            #expect(debugText.contains("Valid link"))
-            #expect(debugText.contains("example.com"))
-            #expect(debugText.contains("Valid image"))
+                    let debugText = try await webView.debugText(configuration)
+                    #expect(debugText.contains("Valid link"))
+                    #expect(debugText.contains("example.com"))
+                    #expect(debugText.contains("Valid image"))
 
-            #expect(debugText.contains("Link with spaces"))
-            #expect(debugText.contains("Link with newline"))
-            #expect(debugText.contains("Image with spaces"))
-            #expect(debugText.contains("Image with newline"))
+                    #expect(debugText.contains("Link with spaces"))
+                    #expect(debugText.contains("Link with newline"))
+                    #expect(debugText.contains("Image with spaces"))
+                    #expect(debugText.contains("Image with newline"))
 
-            #expect(debugText.contains("not a valid") == false)
+                    #expect(debugText.contains("not a valid") == false)
+                }
+            }
         }
     }
 
