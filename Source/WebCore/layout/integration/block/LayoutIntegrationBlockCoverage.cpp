@@ -40,6 +40,7 @@
 #include "LocalFrameViewLayoutContext.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBlockFlow.h"
+#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementStyleInlines.h"
@@ -152,6 +153,22 @@ static bool isAtomicInlineLevelBox(const RenderObject& renderer)
     return renderer.isInline() && is<RenderBox>(renderer) && !is<RenderLineBreak>(renderer);
 }
 
+// In quirks mode a percentage block size of the box or of a box in it looks through containing blocks with an auto height for one with a height
+// (RenderBox::computePercentageLogicalHeight), past the containing block size the block formatting context gives a box it lays out through the
+// render tree.
+static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& box)
+{
+    if (!box.document().inQuirksMode())
+        return false;
+    if (Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box.writingMode()))
+        return true;
+    for (CheckedRef descendant : descendantsOfType<RenderBox>(box)) {
+        if (Layout::BlockFormattingUtils::hasPercentageBlockSize(descendant, descendant->writingMode()))
+            return true;
+    }
+    return false;
+}
+
 // The inline formatting context lays out an atomic inline-level box through the render tree, with the containing block size the block
 // formatting context gives it (BlockIntegrationUtils::layoutInlineContent).
 static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
@@ -159,16 +176,11 @@ static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(c
     // FIXME: An orthogonal box, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
     if (box.isWritingModeRoot())
         return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
-    // In quirks mode a percentage block size of the box or of a box in it looks through containing blocks with an auto height for one with a
-    // height (RenderBox::computePercentageLogicalHeight), past the containing block size the block formatting context gives the box.
-    auto inQuirksMode = box.document().inQuirksMode();
-    if (inQuirksMode && Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box.writingMode()))
+    if (hasPercentageBlockSizeInQuirksMode(box))
         return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
+    // An out-of-flow box inside whose containing block is outside it, in the block formatting context, would be registered on a box the
+    // block formatting context has not committed yet.
     for (CheckedRef descendant : descendantsOfType<RenderBox>(box)) {
-        if (inQuirksMode && Layout::BlockFormattingUtils::hasPercentageBlockSize(descendant, descendant->writingMode()))
-            return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
-        // An out-of-flow box inside whose containing block is outside it, in the block formatting context, would be registered on a box the
-        // block formatting context has not committed yet.
         if (!descendant->isOutOfFlowPositioned())
             continue;
         CheckedPtr containingBlock = descendant->containingBlock();
@@ -291,10 +303,12 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
         return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
     if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(box.parent()); !parent || parent->childrenInline())
         return BlockAvoidanceReason::ContentHasBlockInInline;
-    // In quirks mode a percentage height inside it looks through it for an ancestor with a height (RenderBox::computePercentageLogicalHeight),
-    // past the containing block size the block formatting context gives it.
-    if (box.document().inQuirksMode())
+    if (hasPercentageBlockSizeInQuirksMode(box))
         return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
+    // Quirks mode: a body laid out through the render tree stretches to the viewport from the size of its renderer's ancestors
+    // (RenderBox::computeLogicalHeight), which the block formatting context has not committed yet.
+    if (box.stretchesToViewport())
+        return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
     // FIXME: An orthogonal box, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
     if (box.isWritingModeRoot())
         return BlockAvoidanceReason::ContentHasUnsupportedStyle;
