@@ -26,6 +26,8 @@
 #include "config.h"
 #include <wtf/BitSet.h>
 
+#include "Helpers/Test.h"
+
 namespace TestWebKitAPI {
 
 constexpr size_t size = 128;
@@ -1590,5 +1592,17 @@ TEST(WTF_BitSet, OperatorBitXorAssignment_uint64_t) { testBitSetOperatorBitXorAs
 TEST(WTF_BitSet, Hash_uint64_t) { testBitSetHash<uint64_t>(); }
 
 #endif // CPU(REGISTER64)
+
+TEST(WTF_BitSetDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(SetEachNthBitZero))
+{
+    WTF::BitSet<128> bitSet;
+    ASSERT_DEATH_IF_SUPPORTED(bitSet.setEachNthBit(0), "");
+}
+
+TEST(WTF_BitSetDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(ClearEachNthBitZero))
+{
+    WTF::BitSet<128> bitSet;
+    ASSERT_DEATH_IF_SUPPORTED(bitSet.clearEachNthBit(0), "");
+}
 
 } // namespace TestWebKitAPI

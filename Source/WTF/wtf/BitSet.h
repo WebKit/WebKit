@@ -447,6 +447,7 @@ inline constexpr void BitSet<bitSetSize, WordType>::setAndClear(BitSet& other)
 template<size_t bitSetSize, typename WordType>
 inline void BitSet<bitSetSize, WordType>::setEachNthBit(size_t n, size_t start, size_t end)
 {
+    ASSERT(n);
     ASSERT(start <= end);
     ASSERT(end <= bitSetSize);
 
@@ -482,6 +483,7 @@ inline void BitSet<bitSetSize, WordType>::setEachNthBit(size_t n, size_t start, 
 template<size_t bitSetSize, typename WordType>
 inline void BitSet<bitSetSize, WordType>::clearEachNthBit(size_t n, size_t start, size_t end)
 {
+    ASSERT(n);
     ASSERT(start <= end);
     ASSERT(end <= bitSetSize);
 
