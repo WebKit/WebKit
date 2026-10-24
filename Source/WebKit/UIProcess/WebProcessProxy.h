@@ -349,6 +349,8 @@ public:
 
     bool hasCommittedClientOrigin(const WebCore::ClientOrigin&) const;
     void didCommitLoadClientOrigin(WebCore::ClientOrigin&&);
+    void didCommitWebArchiveOrigin(const WebCore::SecurityOriginData&);
+    bool hasCommittedWebArchiveDomain(const WebCore::RegistrableDomain& domain) const { return m_committedWebArchiveDomains.contains(domain); }
     bool hasCommittedStorageClientOrigin(const WebCore::ClientOrigin&) const;
     void didCommitStorageClientOrigin(WebCore::ClientOrigin&&);
     void didBecomeRemoteWorkerHostForSite(const WebCore::Site&);
@@ -922,6 +924,7 @@ private:
 
     HashSet<WebCore::ClientOrigin> m_committedClientOrigins; // Only grows because WebProcess can navigate back to an old origin in a history item.
     HashSet<WebCore::ClientOrigin> m_committedStorageClientOrigins; // Storage keys of frames with unpartitioned storage access. Only grows, like m_committedClientOrigins.
+    HashSet<WebCore::RegistrableDomain> m_committedWebArchiveDomains; // Domains of the archived content this process committed. Only grows, like m_committedClientOrigins.
     HashSet<WebCore::RegistrableDomain> m_remoteWorkerDomains; // Only grows so that messages sent by a remote worker that is going away remain valid.
 
     // A single page can register with a store more than once for the same process, e.g. when a

@@ -403,9 +403,10 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
 
     // Record the origin reported by the WCP, to validate against later, only if we can
     // prove it's a load where a privileged process does not specify a precise origin.
-    if (loadedWebArchive == LoadedWebArchive::Yes)
+    if (loadedWebArchive == LoadedWebArchive::Yes) {
         m_committedOriginReportedByWebProcess = originReportedByWebProcess;
-    else if (documentSecurityOriginData().isOpaque() && originReportedByWebProcess.isOpaque())
+        protect(process())->didCommitWebArchiveOrigin(originReportedByWebProcess);
+    } else if (documentSecurityOriginData().isOpaque() && originReportedByWebProcess.isOpaque())
         m_committedOriginReportedByWebProcess = originReportedByWebProcess;
     else
         m_committedOriginReportedByWebProcess = std::nullopt;
