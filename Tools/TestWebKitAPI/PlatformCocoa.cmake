@@ -136,6 +136,7 @@ list(APPEND TestWTF_SOURCES
     Tests/WTF/cocoa/BlockPtr.mm
     Tests/WTF/cocoa/CStringCocoa.mm
     Tests/WTF/cocoa/ContextualizedNSString.mm
+    Tests/WTF/cocoa/FileSystemCocoa.mm
     Tests/WTF/cocoa/LoggerCocoa.mm
     Tests/WTF/cocoa/RetainPtr.mm
     Tests/WTF/cocoa/RetainPtrARC.mm
