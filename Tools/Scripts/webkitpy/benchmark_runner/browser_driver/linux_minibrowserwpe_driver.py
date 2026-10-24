@@ -31,7 +31,7 @@ class WPEMiniBrowserBaseDriver(LinuxBrowserDriver):
     process_search_list = ['Tools/Scripts/run-minibrowser', 'MiniBrowser']
 
     def _extra_wpe_minibrowser_args(self):
-        return []
+        return ['--features=LogsPageMessagesToSystemConsole']
 
     def launch_url(self, url, options, browser_build_path, browser_path):
         self._default_browser_arguments = []
@@ -52,7 +52,7 @@ class WPEMiniBrowserDriver(WPEMiniBrowserBaseDriver):
     browser_name = 'minibrowser-wpe'
 
     def _extra_wpe_minibrowser_args(self):
-        return ['--fullscreen']
+        return super()._extra_wpe_minibrowser_args() + ['--fullscreen']
 
 
 class WPEMiniBrowserSkiaCPUDriver(WPEMiniBrowserDriver):
@@ -67,4 +67,4 @@ class WPEMiniBrowserLegacyAPIDriver(WPEMiniBrowserBaseDriver):
     browser_name = 'minibrowser-wpe-legacy'
 
     def _extra_wpe_minibrowser_args(self):
-        return ['--use-legacy-api', '--fullscreen']
+        return super()._extra_wpe_minibrowser_args() + ['--use-legacy-api', '--fullscreen']
