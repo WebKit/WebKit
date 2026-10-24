@@ -41,7 +41,6 @@
 #include "InlineIteratorLineBoxInlines.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGRoot.h"
-#include "LineSelection.h"
 #include "LocalFrame.h"
 #include "PositionedLayoutConstraints.h"
 #include "PaintInfoInlines.h"
@@ -1089,7 +1088,7 @@ PositionWithAffinity RenderReplaced::positionForPoint(const LayoutPoint& point, 
         if (auto run = InlineIterator::boxFor(*this)) {
             auto lineBox = run->lineBox();
             auto lineContentTop = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(lineBox), lineBox.contentLogicalTop()) };
-            return std::make_pair(lineContentTop, LineSelection::logicalBottom(lineBox));
+            return std::make_pair(lineContentTop, lineBox.contentLogicalBottomAdjustedForFollowingLineBox());
         }
         return std::make_pair(logicalTop(), logicalBottom());
     }();

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that the selection on the first line covers its line box, centered on the text.</title>
+<style>
+  ::selection { background-color: green; }
+  body { margin: 0; font: 20px/60px Ahem; color: transparent; }
+  .container { width: 50px; }
+</style>
+</head>
+<body>
+<div class="container"><span id="target">xx</span> xx</div>
+<script>
+  var range = document.createRange();
+  range.selectNodeContents(document.getElementById("target"));
+  window.getSelection().addRange(range);
+</script>
+</body>
+</html>

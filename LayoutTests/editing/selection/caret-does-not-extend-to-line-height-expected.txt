@@ -1,0 +1,16 @@
+This test verifies that caret heights do not extend to match line height (or part of line height). To run the test manually, focus each of the editable elements and make sure that the caret roughly matches the font size in each editable element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Logical caret height in #horizontal did not extend to line height.
+PASS Logical caret height in #horizontal-empty did not extend to line height.
+PASS Logical caret height in #vertical did not extend to line height.
+PASS Logical caret height in #vertical-empty did not extend to line height.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+
+Bar
+
