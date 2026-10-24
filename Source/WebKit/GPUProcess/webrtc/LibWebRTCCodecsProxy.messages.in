@@ -29,7 +29,7 @@
     EnabledBy=WebCodecsVideoEnabled || PeerConnectionEnabled
 ]
 messages -> LibWebRTCCodecsProxy {
-    CreateDecoder(WebKit::VideoDecoderIdentifier id, enum:uint8_t WebCore::VideoCodecType codecType, String codecString, bool useRemoteFrames, bool enableAdditionalLogging, struct std::optional<WebCore::PlatformVideoColorSpace> colorSpaceOverride) -> (bool success);
+    CreateDecoder(WebKit::VideoDecoderIdentifier id, enum:uint8_t WebCore::VideoCodecType codecType, String codecString, bool useRemoteFrames, bool enableAdditionalLogging, struct std::optional<WebCore::PlatformVideoColorSpace> colorSpaceOverride, enum:uint16_t WebCore::VideoFrameRotation rotation, bool isMirrored) -> (bool success);
     ReleaseDecoder(WebKit::VideoDecoderIdentifier id)
     FlushDecoder(WebKit::VideoDecoderIdentifier id) -> ()
     // FIXME: We should remove description once we remove the libwebrtc decoders.

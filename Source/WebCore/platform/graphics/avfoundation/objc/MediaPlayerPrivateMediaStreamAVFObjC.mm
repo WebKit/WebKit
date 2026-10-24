@@ -1120,11 +1120,11 @@ static inline CGAffineTransform videoTransformationMatrix(VideoFrame& videoFrame
     if (!width || !height)
         return CGAffineTransformIdentity;
 
-    auto videoTransform = CGAffineTransformMakeRotation(static_cast<int>(videoFrame.rotation()) * std::numbers::pi / 180);
+    // The frame is rotated first, then mirrored.
+    auto rotationAngle = static_cast<int>(videoFrame.rotation()) * std::numbers::pi / 180;
     if (videoFrame.isMirrored())
-        videoTransform = CGAffineTransformScale(videoTransform, -1, 1);
-
-    return videoTransform;
+        return CGAffineTransformRotate(CGAffineTransformMakeScale(-1, 1), rotationAngle);
+    return CGAffineTransformMakeRotation(rotationAngle);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)

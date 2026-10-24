@@ -199,7 +199,7 @@ PASS VideoFrame interface: attribute codedHeight
 PASS VideoFrame interface: attribute codedRect
 PASS VideoFrame interface: attribute visibleRect
 PASS VideoFrame interface: attribute rotation
-FAIL VideoFrame interface: attribute flip assert_true: The prototype object must have a property "flip" expected true got false
+PASS VideoFrame interface: attribute flip
 PASS VideoFrame interface: attribute displayWidth
 PASS VideoFrame interface: attribute displayHeight
 PASS VideoFrame interface: attribute duration
@@ -218,7 +218,7 @@ PASS VideoFrame interface: new VideoFrame(makeImageBitmap(32, 16), {timestamp: 1
 PASS VideoFrame interface: new VideoFrame(makeImageBitmap(32, 16), {timestamp: 100, duration: 33}) must inherit property "codedRect" with the proper type
 PASS VideoFrame interface: new VideoFrame(makeImageBitmap(32, 16), {timestamp: 100, duration: 33}) must inherit property "visibleRect" with the proper type
 PASS VideoFrame interface: new VideoFrame(makeImageBitmap(32, 16), {timestamp: 100, duration: 33}) must inherit property "rotation" with the proper type
-FAIL VideoFrame interface: new VideoFrame(makeImageBitmap(32, 16), {timestamp: 100, duration: 33}) must inherit property "flip" with the proper type assert_inherits: property "flip" not found in prototype chain
+PASS VideoFrame interface: new VideoFrame(makeImageBitmap(32, 16), {timestamp: 100, duration: 33}) must inherit property "flip" with the proper type
 PASS VideoFrame interface: new VideoFrame(makeImageBitmap(32, 16), {timestamp: 100, duration: 33}) must inherit property "displayWidth" with the proper type
 PASS VideoFrame interface: new VideoFrame(makeImageBitmap(32, 16), {timestamp: 100, duration: 33}) must inherit property "displayHeight" with the proper type
 PASS VideoFrame interface: new VideoFrame(makeImageBitmap(32, 16), {timestamp: 100, duration: 33}) must inherit property "duration" with the proper type

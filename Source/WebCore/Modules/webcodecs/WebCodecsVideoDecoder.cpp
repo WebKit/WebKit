@@ -48,6 +48,7 @@
 #include "WebCodecsErrorCallback.h"
 #include "WebCodecsUtilities.h"
 #include "WebCodecsVideoFrame.h"
+#include "WebCodecsVideoFrameAlgorithms.h"
 #include "WebCodecsVideoFrameOutputCallback.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Scope.h>
@@ -153,7 +154,9 @@ static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoder
         .width = config.codedWidth.value_or(0),
         .height = config.codedHeight.value_or(0),
         .colorSpace = config.colorSpace,
-        .decoding = config.hardwareAcceleration == HardwareAcceleration::PreferSoftware ? VideoDecoder::HardwareAcceleration::No : VideoDecoder::HardwareAcceleration::Yes
+        .decoding = config.hardwareAcceleration == HardwareAcceleration::PreferSoftware ? VideoDecoder::HardwareAcceleration::No : VideoDecoder::HardwareAcceleration::Yes,
+        .rotation = parseVideoFrameRotation(config.rotation),
+        .isMirrored = config.flip
     };
 }
 
@@ -170,6 +173,8 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
 
     bool isSupportedCodec = isSupportedDecoderCodec(config.codec, context.settingsValues());
     queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, codec = config.codec, config = createVideoDecoderConfig(config), isSupportedCodec]() mutable {
+        auto rotation = config.rotation;
+        auto isMirrored = config.isMirrored;
         RefPtr context = scriptExecutionContext();
 
         auto identifier = context->identifier();
@@ -183,8 +188,8 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
             return WebCodecsControlMessageOutcome::Processed;
         }
 
-        Ref createDecoderPromise = VideoDecoder::create(codec, WTF::move(config), [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount] (auto&& result) {
-            postTaskToCodec<WebCodecsVideoDecoder>(identifier, weakThis, [result = WTF::move(result), decoderCount] (auto& decoder) mutable {
+        Ref createDecoderPromise = VideoDecoder::create(codec, WTF::move(config), [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount, rotation, isMirrored](auto&& result) {
+            postTaskToCodec<WebCodecsVideoDecoder>(identifier, weakThis, [result = WTF::move(result), decoderCount, rotation, isMirrored](auto& decoder) mutable {
                 if (decoder.state() != WebCodecsCodecState::Configured || decoder.m_decoderCount != decoderCount)
                     return;
 
@@ -194,13 +199,17 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
                 }
 
                 auto decodedResult = WTF::move(result).value();
-                Ref frame = WTF::move(decodedResult.frame);
+                // Decoders should create frames with the orientation of the configuration, we override for decoders that do not know about orientation.
+                Ref frame = decodedResult.frame->updateOrientation(rotation, isMirrored, VideoFrame::ShouldClone::No);
+                auto presentationSize = frame->presentationSize();
                 WebCodecsVideoFrame::BufferInit init {
                     .format = convertVideoFramePixelFormat(frame->pixelFormat()),
-                    .codedWidth = static_cast<size_t>(frame->presentationSize().width()),
-                    .codedHeight = static_cast<size_t>(frame->presentationSize().height()),
+                    .codedWidth = static_cast<size_t>(presentationSize.width()),
+                    .codedHeight = static_cast<size_t>(presentationSize.height()),
                     .timestamp = decodedResult.timestamp,
                     .duration = decodedResult.duration,
+                    .displayWidth = static_cast<size_t>(frame->rotatedSize().width()),
+                    .displayHeight = static_cast<size_t>(frame->rotatedSize().height()),
                     .colorSpace = frame->colorSpace()
                 };
 

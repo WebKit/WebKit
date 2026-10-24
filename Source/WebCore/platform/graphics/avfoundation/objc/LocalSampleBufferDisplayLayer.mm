@@ -412,11 +412,11 @@ static inline CGAffineTransform transformationMatrixForVideoFrame(VideoFrame& vi
 #else
     int rotationAngle = static_cast<int>(videoFrame.rotation());
 #endif
-    auto videoTransform = CGAffineTransformMakeRotation(rotationAngle * std::numbers::pi / 180);
+    // The frame is rotated first, then mirrored.
+    auto rotationRadians = rotationAngle * std::numbers::pi / 180;
     if (videoFrame.isMirrored())
-        videoTransform = CGAffineTransformScale(videoTransform, -1, 1);
-
-    return videoTransform;
+        return CGAffineTransformRotate(CGAffineTransformMakeScale(-1, 1), rotationRadians);
+    return CGAffineTransformMakeRotation(rotationRadians);
 }
 
 void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)

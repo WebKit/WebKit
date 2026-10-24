@@ -1,0 +1,10 @@
+
+PASS createImageBitmap() of a 0 degrees rotated VideoFrame
+PASS createImageBitmap() of a 90 degrees rotated VideoFrame
+PASS createImageBitmap() of a 180 degrees rotated VideoFrame
+PASS createImageBitmap() of a 270 degrees rotated VideoFrame
+PASS createImageBitmap() of a 0 degrees rotated and flipped VideoFrame
+PASS createImageBitmap() of a 90 degrees rotated and flipped VideoFrame
+PASS createImageBitmap() of a 180 degrees rotated and flipped VideoFrame
+PASS createImageBitmap() of a 270 degrees rotated and flipped VideoFrame
+

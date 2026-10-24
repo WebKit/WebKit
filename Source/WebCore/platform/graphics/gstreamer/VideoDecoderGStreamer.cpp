@@ -95,6 +95,8 @@ private:
     // Each chunk's own timestamp and duration, carried by a meta on its buffer to the frame it decodes to: a decoder
     // rewrites a PTS it judges out of order, as it does when chunks share a timestamp.
     const GRefPtr<GstCaps> m_chunkTimestampCaps { adoptGRef(gst_caps_new_empty_simple("timestamp/x-webkit-webcodecs-chunk")) };
+    const VideoFrame::Rotation m_rotation;
+    const bool m_isMirrored { false };
 };
 
 void GStreamerVideoDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
@@ -182,6 +184,8 @@ void GStreamerVideoDecoder::close()
 
 GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codecName, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
     : m_outputCallback(WTF::move(outputCallback))
+    , m_rotation(config.rotation)
+    , m_isMirrored(config.isMirrored)
 {
     GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
     configureVideoDecoderForHarnessing(element);
@@ -292,6 +296,8 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         VideoFrameGStreamer::CreateOptions options(IntSize(m_presentationSize), { *m_videoInfo });
         options.presentationTime = fromGstClockTime(timestamp);
         options.contentHint = VideoFrameContentHint::WebCodecs;
+        options.rotation = m_rotation;
+        options.isMirrored = m_isMirrored;
         auto videoFrame = VideoFrameGStreamer::create(WTF::move(outputSample), options);
         m_outputCallback(VideoDecoder::DecodedFrame { WTF::move(videoFrame), timestamp, duration });
     }, std::nullopt, WTF::move(allowedSinkCaps)));

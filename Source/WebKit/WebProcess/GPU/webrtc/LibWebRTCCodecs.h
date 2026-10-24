@@ -98,11 +98,13 @@ public:
             FramePromise::AutoRejectProducer producer;
         };
 
-        Decoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType type, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride)
+        Decoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType type, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation rotation, bool isMirrored)
             : identifier(identifier)
             , type(type)
             , codec(codec.isolatedCopy())
             , isAnnexB(isAnnexB)
+            , rotation(rotation)
+            , isMirrored(isMirrored)
             , colorSpaceOverride(WTF::move(colorSpaceOverride))
         { }
 
@@ -110,6 +112,8 @@ public:
         const WebCore::VideoCodecType type;
         const String codec;
         const bool isAnnexB { false };
+        const WebCore::VideoFrameRotation rotation;
+        const bool isMirrored { false };
         std::optional<WebCore::PlatformVideoColorSpace> colorSpaceOverride;
         void* decodedImageCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock) { nullptr };
         DecoderCallback decoderCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock);
@@ -120,7 +124,7 @@ public:
     };
 
     Decoder* createDecoder(WebCore::VideoCodecType, bool isAnnexB = false);
-    void createDecoderAndWaitUntilReady(WebCore::VideoCodecType, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, Function<void(Decoder*)>&&);
+    void createDecoderAndWaitUntilReady(WebCore::VideoCodecType, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation, bool isMirrored, Function<void(Decoder*)>&&);
 
     int32_t releaseDecoder(Decoder&);
     Ref<GenericPromise> flushDecoder(Decoder&);
@@ -256,7 +260,7 @@ private:
 
     template<typename Buffer> bool copySharedVideoFrame(LibWebRTCCodecs::Encoder&, IPC::Connection&, Buffer&&);
 
-    Decoder* createDecoderInternal(WebCore::VideoCodecType, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, Function<void(Decoder(*))>&&);
+    Decoder* createDecoderInternal(WebCore::VideoCodecType, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation, bool isMirrored, Function<void(Decoder(*))>&&);
     Encoder* createEncoderInternal(WebCore::VideoCodecType, const String& codec, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, Function<void(Encoder*)>&&);
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration);
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternalWithLock(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
