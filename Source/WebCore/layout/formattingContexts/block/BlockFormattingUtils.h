@@ -65,6 +65,9 @@ public:
     static std::optional<LayoutUnit> aspectRatioBorderBoxBlockSize(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, WritingMode);
     // Its block-size, min-block-size or max-block-size is a percentage of the containing block's block size.
     static bool hasPercentageBlockSize(const RenderBox&, WritingMode);
+    // The block size of the content of an empty editable block container: the line height of its first line, for the caret (RenderBlock::hasLineIfEmpty,
+    // RenderBox::lineHeight).
+    static std::optional<LayoutUnit> emptyEditableContentBlockSize(const RenderBox& blockContainer);
     // The min-content, max-content and fit-content block sizes of a block container are its automatic block size (css-sizing-3 §2.1, §3.2), and a
     // percentage block size behaves as auto when the block size of the containing block is not definite (CSS 2.2 §10.5).
     static bool blockSizeBehavesAsAuto(const Style::PreferredSize& blockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize);
