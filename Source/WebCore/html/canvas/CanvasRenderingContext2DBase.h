@@ -269,6 +269,7 @@ public:
     void setTextBaseline(CanvasTextBaseline);
 
     using Direction = CanvasDirection;
+    Direction direction() const { return state().direction; }
     void setDirection(Direction);
 
     class FontProxy final : public FontSelectorClient {
@@ -417,7 +418,6 @@ protected:
     void drawTextUnchecked(const TextRun&, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
 
     Ref<TextMetrics> measureTextInternal(const TextRun&);
-    Ref<TextMetrics> measureTextInternal(const String& text);
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
 

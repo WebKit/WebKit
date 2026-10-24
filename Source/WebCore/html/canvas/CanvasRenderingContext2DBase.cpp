@@ -3485,14 +3485,6 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     }
 }
 
-Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const String& text)
-{
-    String normalizedText = normalizeSpaces(text);
-    auto direction = (state().direction == Direction::Rtl) ? TextDirection::RTL : TextDirection::LTR;
-    TextRun textRun(normalizedText, 0, 0, ExpansionBehavior::allowRightOnly(), direction, false, true);
-    return measureTextInternal(textRun);
-}
-
 static std::pair<float, float> emHeightAscentAndDescent(const FontCascade& font)
 {
     auto& fontMetrics = font.metricsOfPrimaryFont();

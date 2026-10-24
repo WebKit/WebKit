@@ -1,0 +1,12 @@
+
+PASS canvas: initial values
+PASS canvas: lang keeps any value
+PASS canvas: save() and restore()
+PASS canvas: reset() restores the defaults
+PASS canvas: lang survives setting font
+PASS offscreen: initial values
+PASS offscreen: lang keeps any value
+PASS offscreen: save() and restore()
+PASS offscreen: reset() restores the defaults
+PASS offscreen: lang survives setting font
+

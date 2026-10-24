@@ -291,13 +291,6 @@ inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction directi
     return TextDirection::LTR;
 }
 
-CanvasDirection CanvasRenderingContext2D::direction() const
-{
-    if (state().direction == Direction::Inherit)
-        protect(canvas().document())->updateStyleIfNeeded();
-    return toTextDirection(state().direction) == TextDirection::RTL ? CanvasDirection::Rtl : CanvasDirection::Ltr;
-}
-
 AtomString CanvasRenderingContext2D::inheritedLanguage() const
 {
     return protect(canvas())->effectiveLang();

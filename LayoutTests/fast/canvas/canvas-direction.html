@@ -15,11 +15,11 @@
 <body>
 <span>Tests that canvas 2d context supports 'direction' attribute: <span id="supported"></span></span>
 <div>
-<span>Tests that context.direction is 'ltr' with parent element having unspecified direction: <span id="result1"></span></span><br>
+<span>Tests that context.direction is 'inherit' with parent element having unspecified direction: <span id="result1"></span></span><br>
 <canvas id="canvas1" width=400 height=20 style="border:1px solid black"></canvas>
 </div>
 <div dir="rtl">
-<span>Tests that context.direction is 'rtl' with parent element having direction as rtl: <span id="result2"></span></span><br>
+<span>Tests that context.direction is 'inherit' with parent element having direction as rtl: <span id="result2"></span></span><br>
 <canvas id="canvas2" width=400 height=20 style="border:1px solid black"></canvas>
 </div>
 <div>
@@ -39,19 +39,19 @@
 <canvas id="canvas6" width=400 height=20 style="border:1px solid black"></canvas>
 </div>
 <div>
-<span>Tests that context.reset sets the direction as ltr<span id="result7"></span></span><br>
+<span>Tests that context.reset sets the direction as inherit<span id="result7"></span></span><br>
 <canvas id="canvas7" width=400 height=20 style="border:1px solid black"></canvas>
 </div>
 <div dir="rtl">
-<span>Tests that context.reset sets the direction as rtl<span id="result8"></span></span><br>
+<span>Tests that context.reset sets the direction as inherit<span id="result8"></span></span><br>
 <canvas id="canvas8" width=400 height=20 style="border:1px solid black"></canvas>
 </div>
 <div>
-<span>Tests that change in element's dir attribute is reflected in context.direction as rtl: <span id="result9"></span></span><br>
+<span>Tests that context.direction stays 'inherit' when the parent element's dir attribute changes to rtl: <span id="result9"></span></span><br>
 <canvas id="canvas9" width=400 height=20 style="border:1px solid black"></canvas>
 </div>
 <div dir="rtl">
-<span>Tests that change in element's dir attribute is reflected in context.direction as ltr: <span id="result10"></span></span><br>
+<span>Tests that context.direction stays 'inherit' when the element's dir attribute changes to ltr: <span id="result10"></span></span><br>
 <canvas id="canvas10" width=400 height=20 style="border:1px solid black"></canvas>
 </div>
 <div>
@@ -147,8 +147,8 @@ function verifyDirectionAfterAttributeChange(canvasId, resultId, text, newDirect
         canvasElement.parentElement.dir = newDirection;
     else
         canvasElement.dir = newDirection;
-    resultElement.textContent = ctx.direction == newDirection ? 'PASS' : 'FAIL';
-    resultElement.className = ctx.direction == newDirection ? 'pass' : 'fail';
+    resultElement.textContent = ctx.direction == 'inherit' ? 'PASS' : 'FAIL';
+    resultElement.className = ctx.direction == 'inherit' ? 'pass' : 'fail';
     ctx.moveTo(width, 0);
     ctx.lineTo(width, height);
     ctx.stroke();
@@ -196,16 +196,16 @@ function verifyInvalidDirection(direction)
     appendResult(description, result);
 }
 
-verifyDrawText('canvas1', 'result1', 'Left-to-Right text', 'ltr');
-verifyDrawText('canvas2', 'result2', 'Right-to-Left text', 'rtl');
+verifyDrawText('canvas1', 'result1', 'Left-to-Right text', 'inherit');
+verifyDrawText('canvas2', 'result2', 'Right-to-Left text', 'inherit');
 
 verifyDrawTextWithSpecifiedDirection('canvas3', 'result3', 'Right-to-Left text', 'rtl', 'rtl');
 verifyDrawTextWithSpecifiedDirection('canvas4', 'result4', 'Left-to-Right text', 'ltr', 'ltr');
-verifyDrawTextWithSpecifiedDirection('canvas5', 'result5', 'Left-to-Right text', 'inherit', 'ltr');
-verifyDrawTextWithSpecifiedDirection('canvas6', 'result6', 'Right-to-Left text', 'inherit', 'rtl');
+verifyDrawTextWithSpecifiedDirection('canvas5', 'result5', 'Left-to-Right text', 'inherit', 'inherit');
+verifyDrawTextWithSpecifiedDirection('canvas6', 'result6', 'Right-to-Left text', 'inherit', 'inherit');
 
-verifyDirectionAfterReset('canvas7', 'Right-to-Left', 'rtl', 'ltr');
-verifyDirectionAfterReset('canvas8', 'Right-to-Left', 'ltr', 'rtl');
+verifyDirectionAfterReset('canvas7', 'Right-to-Left', 'rtl', 'inherit');
+verifyDirectionAfterReset('canvas8', 'Right-to-Left', 'ltr', 'inherit');
 
 verifyDirectionAfterAttributeChange('canvas9', 'result9', 'Right-to-Left text', 'rtl', true);
 verifyDirectionAfterAttributeChange('canvas10', 'result10', 'Left-to-Right text', 'ltr', false);

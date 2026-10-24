@@ -35,7 +35,7 @@ let frames = [
     function initialState() {
         context.drawImage(objects[1], 0, 0);
 
-        context.direction = "ltr";
+        context.direction = "inherit";
         context.fillStyle = "#000000";
         context.font = "10px sans-serif";
         context.globalAlpha = 1;
@@ -63,7 +63,7 @@ let frames = [
             context.setPath(objects[2]);
         context.save();
 
-        context.direction = "ltr";
+        context.direction = "inherit";
         context.fillStyle = "#000000";
         context.font = "10px sans-serif";
         context.globalAlpha = 1;
@@ -91,7 +91,7 @@ let frames = [
             context.setPath(objects[3]);
         context.save();
 
-        context.direction = "ltr";
+        context.direction = "inherit";
         context.fillStyle = "#000000";
         context.font = "10px sans-serif";
         context.globalAlpha = 1;
