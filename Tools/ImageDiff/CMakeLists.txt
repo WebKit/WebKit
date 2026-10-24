@@ -9,6 +9,11 @@ set(ImageDiff_PRIVATE_INCLUDE_DIRECTORIES
     ${IMAGE_DIFF_DIR}
 )
 
-WEBKIT_EXECUTABLE_DECLARE(ImageDiff)
+# The embedded platforms run ImageDiff on the host, so PlatformCocoa.cmake builds it itself.
+if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
+    WEBKIT_EXECUTABLE_DECLARE(ImageDiff)
+endif ()
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
-WEBKIT_EXECUTABLE(ImageDiff)
+if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
+    WEBKIT_EXECUTABLE(ImageDiff)
+endif ()
