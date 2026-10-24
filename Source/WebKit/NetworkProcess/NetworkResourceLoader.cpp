@@ -1015,7 +1015,13 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
     } else if (m_parameters.navigationRequester)
         clientFrameID = m_parameters.navigationRequester->frameID;
 
-    auto record = clientFrameID ? connection->localNetworkAccessFrameRecord(*clientFrameID, clientParentFrameID) : std::nullopt;
+    RefPtr<NetworkConnectionToWebProcess> clientConnection = connection.ptr();
+    if (isMainResource() && m_parameters.navigationRequester && m_parameters.navigationRequester->processIdentifier) {
+        auto requesterProcess = *m_parameters.navigationRequester->processIdentifier;
+        if (requesterProcess != connection->webProcessIdentifier() && NetworkProcess::singleton().allowsWebPageProxyIdentifier(requesterProcess, webPageProxyID()))
+            clientConnection = NetworkProcess::singleton().webProcessConnection(requesterProcess);
+    }
+    auto record = clientFrameID && clientConnection ? clientConnection->localNetworkAccessFrameRecord(*clientFrameID, clientParentFrameID) : std::nullopt;
     bool recordMatchesClient = record && record->origin == sourceOrigin;
     if (!recordMatchesClient)
         sourceOrigin = SecurityOriginData::createOpaque();
