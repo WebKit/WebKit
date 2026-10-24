@@ -43,6 +43,7 @@
 #include "AudioScheduledSourceNode.h"
 #include "AudioSession.h"
 #include "AudioWorklet.h"
+#include "AudioWorkletMessagingProxy.h"
 #include "BiquadFilterNode.h"
 #include "ChannelMergerNode.h"
 #include "ChannelMergerOptions.h"
@@ -294,6 +295,9 @@ void BaseAudioContext::stop()
 
     uninitialize();
     clear();
+
+    if (RefPtr proxy = audioWorklet().proxy())
+        proxy->stopThread();
 }
 
 Document* BaseAudioContext::document() const

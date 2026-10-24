@@ -73,6 +73,7 @@ public:
     MessagePort& port() { return m_port.get(); }
 
     void setProcessor(RefPtr<AudioWorkletProcessor>&&);
+    RefPtr<AudioWorkletProcessor> releaseProcessorForThreadShutdown();
     void initializeAudioParameters(const Vector<AudioParamDescriptor>&, const std::optional<Vector<KeyValuePair<String, double>>>& paramValues);
 
 private:

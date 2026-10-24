@@ -54,6 +54,9 @@ public:
 
     AudioWorkletThread& workletThread() { return m_workletThread.get(); }
 
+    enum class StopThread : bool { ReleaseProcessors, ThreadOnly };
+    void stopThread(StopThread = StopThread::ReleaseProcessors);
+
     void postTaskToAudioWorklet(Function<void(AudioWorklet&)>&&);
     ScriptExecutionContextIdentifier LEGACY_NODELETE loaderContextIdentifier() const final;
 
@@ -78,6 +81,7 @@ private:
     WeakPtr<AudioWorklet> m_worklet;
     const ScriptExecutionContextIdentifier m_documentIdentifier;
     const Ref<AudioWorkletThread> m_workletThread;
+    bool m_askedToTerminate { false };
 };
 
 } // namespace WebCore
