@@ -1239,7 +1239,7 @@ WI.Resource = class Resource extends WI.SourceCode
             // The Network domain (ProxyingNetworkAgent) lives on the backend target under Site
             // Isolation, not the resource's own (page) target; route there like requestContentFromBackend.
             let webPageTarget = this._target;
-            if (WI.networkManager.networkEnabledOnBackendTarget && WI.backendTarget && WI.backendTarget !== this._target && WI.backendTarget.hasDomain("Network"))
+            if (WI.networkManager.enabledNetworkForSiteIsolation && WI.backendTarget && WI.backendTarget !== this._target && WI.backendTarget.hasDomain("Network"))
                 webPageTarget = WI.backendTarget;
             let {serializedCertificate} = await webPageTarget.NetworkAgent.getSerializedCertificate(this._requestIdentifier);
             if (InspectorFrontendHost.showCertificate(serializedCertificate))
