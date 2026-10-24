@@ -39,6 +39,7 @@
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <algorithm>
+#include <cmath>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -58,6 +59,23 @@ SUPPRESS_NODELETE static double LEGACY_NODELETE timeToFractionalSampleFrame(doub
 {
     constexpr double oversampleFactor = 1024;
     return std::round(time * sampleRate * oversampleFactor) / oversampleFactor;
+}
+
+// duration is seconds of buffer content. pitch is buffer samples per output frame.
+// A non-positive pitch does not move the playhead toward the end of that content.
+static size_t framesBeforeSourceBudget(double elapsed, double budget, double pitch, size_t maxFrames)
+{
+    if (!(pitch > 0))
+        return maxFrames;
+    if (!(elapsed < budget))
+        return 0;
+
+    double ratio = (budget - elapsed) / pitch;
+    if (!(ratio > 0) || !std::isfinite(ratio))
+        return 0;
+    if (ratio >= static_cast<double>(maxFrames))
+        return maxFrames;
+    return static_cast<size_t>(std::ceil(ratio));
 }
 
 static float LEGACY_NODELETE computeSampleUsingLinearInterpolation(std::span<const float> source, unsigned readIndex, unsigned readIndex2, float interpolationFactor)
@@ -149,13 +167,35 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i)
         m_destinationChannels[i] = outputBus->channel(i)->mutableSpan();
 
-    // Render by reading directly from the buffer.
-    if (!renderFromBuffer(outputBus, quantumFrameOffset, bufferFramesToProcess, startFrameOffset)) {
-        outputBus->zero();
-        return;
+    size_t framesToRender = bufferFramesToProcess;
+    bool grainStopsPlayback = false;
+    double pitch = 0;
+    if (m_wasGrainDurationGiven && m_isLooping) {
+        pitch = totalPitchRate();
+        double budget = m_grainDuration * m_buffer->sampleRate();
+        framesToRender = framesBeforeSourceBudget(m_sourceFramesElapsed, budget, pitch, bufferFramesToProcess);
+        grainStopsPlayback = framesToRender < bufferFramesToProcess;
     }
 
-    outputBus->clearSilentFlag();
+    if (framesToRender) {
+        if (!renderFromBuffer(outputBus, quantumFrameOffset, framesToRender, startFrameOffset)) {
+            outputBus->zero();
+            return;
+        }
+        if (m_wasGrainDurationGiven && m_isLooping)
+            m_sourceFramesElapsed += static_cast<double>(framesToRender) * pitch;
+        outputBus->clearSilentFlag();
+    }
+
+    if (!grainStopsPlayback)
+        return;
+
+    size_t zeroStart = quantumFrameOffset + framesToRender;
+    size_t framesToZero = bufferFramesToProcess - framesToRender;
+    for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i)
+        zeroSpan(outputBus->channel(i)->mutableSpan().subspan(zeroStart, framesToZero));
+    if (!hasFinished())
+        finish();
 }
 
 // Returns true if we're finished.
@@ -228,9 +268,9 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
 
     // Avoid converting from time to sample-frames twice by computing
     // the grain end time first before computing the sample frame.
-    // When looping, playback is bounded by the loop points below (and stopped
-    // via m_endTime for a grain), so the grain duration must not clamp maxFrame
-    // here; otherwise a loopStart past the grain end collapses the loop range.
+    // When looping, the loop points bound the playhead. The grain duration must
+    // not clamp maxFrame here; otherwise a loopStart past the grain end collapses
+    // the loop range.
     unsigned maxFrame;
     if (m_isGrain && !m_isLooping)
         maxFrame = AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, bufferSampleRate);
@@ -610,6 +650,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
     m_grainOffset = grainOffset;
     m_grainDuration = grainDuration.value_or(0);
     m_wasGrainDurationGiven = !!grainDuration;
+    m_sourceFramesElapsed = 0;
 
     // If 0 is passed in for |when| or if the value is less than currentTime, then the sound will start playing immediately.
     // https://webaudio.github.io/web-audio-api/#dom-audiobuffersourcenode-start-when-offset-duration-when
@@ -642,15 +683,11 @@ void AudioBufferSourceNode::adjustGrainParameters()
     if (!m_wasGrainDurationGiven)
         m_grainDuration = bufferDuration - m_grainOffset;
 
-    if (m_wasGrainDurationGiven && m_isLooping) {
-        // We're looping a grain with a grain duration specified. Schedule the loop
-        // to stop after grainDuration seconds after starting, possibly running the
-        // loop multiple times if grainDuration is larger than the buffer duration.
-        // The net effect is as if the user called stop(when + grainDuration).
-        m_grainDuration = clampTo(m_grainDuration, 0.0, std::numeric_limits<double>::infinity());
-        m_endTime = m_startTime + m_grainDuration;
-    } else
-        m_grainDuration = clampTo(m_grainDuration, 0.0,  bufferDuration - m_grainOffset);
+    // A looping duration is seconds of buffer content, including later loop
+    // iterations, and is consumed by playbackRate during rendering. Clamping it
+    // to the buffer, or scheduling it as a context-time stop, plays the wrong length.
+    if (!(m_wasGrainDurationGiven && m_isLooping))
+        m_grainDuration = clampTo(m_grainDuration, 0.0, bufferDuration - m_grainOffset);
 
     // The playhead starts at offset, whatever the sign of the playback rate.
     // https://webaudio.github.io/web-audio-api/#playback-AudioBufferSourceNode
