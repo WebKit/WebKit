@@ -79,6 +79,7 @@ struct LoadParameters {
     UserData userData;
     WebCore::LockHistory lockHistory { WebCore::LockHistory::No };
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
+    RefPtr<FrameState> currentHistoryItemForReattach;
     WebCore::NavigationHistoryBehavior navigationHistoryBehavior { WebCore::NavigationHistoryBehavior::Auto };
     WebCore::ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded { WebCore::ReplaceIfNotCompletelyLoaded::No };
     WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility { WebCore::SubstituteData::SessionHistoryVisibility::Visible };

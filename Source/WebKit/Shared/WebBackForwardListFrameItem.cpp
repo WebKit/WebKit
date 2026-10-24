@@ -29,6 +29,7 @@
 #include "SessionState.h"
 #include "WebBackForwardListItem.h"
 #include "WebFrameProxy.h"
+#include <WebCore/SecurityOrigin.h>
 #include <wtf/Borrow.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -223,6 +224,20 @@ Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildren()
     Ref frameState = copyFrameState();
     for (auto& child : borrow(m_children))
         frameState->children.append(child->copyFrameStateWithChildren());
+    return frameState;
+}
+
+Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateForReplacingDocument(const URL& url)
+{
+    if (SecurityOrigin::create(URL { m_frameState->urlString })->isSameOriginAs(SecurityOrigin::create(url)))
+        return copyFrameState();
+    Ref frameState = FrameState::create();
+    frameState->itemID = m_frameState->itemID;
+    frameState->frameItemID = m_frameState->frameItemID;
+    frameState->frameID = m_frameState->frameID;
+    // These describe the entry rather than its document, so HistoryItem::reset() keeps them.
+    frameState->wasCreatedByJSWithoutUserInteraction = m_frameState->wasCreatedByJSWithoutUserInteraction;
+    frameState->wasRestoredFromSession = m_frameState->wasRestoredFromSession;
     return frameState;
 }
 

@@ -48,6 +48,7 @@ public:
 
     Ref<FrameState> copyFrameState();
     Ref<FrameState> copyFrameStateWithChildren();
+    Ref<FrameState> copyFrameStateForReplacingDocument(const URL&);
 
     std::optional<WebCore::FrameIdentifier> LEGACY_NODELETE frameID() const;
     WebCore::BackForwardFrameItemIdentifier identifier() const { return m_identifier; }
