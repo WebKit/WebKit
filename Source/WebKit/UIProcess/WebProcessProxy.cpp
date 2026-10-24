@@ -1892,8 +1892,12 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     for (auto& callback : borrow(isResponsiveCallbacks))
         callback(false);
 
+    Ref processPool = this->processPool();
+    if (auto& handler = processPool->webProcessTerminationHandlerForTesting())
+        handler(processID(), reason);
+
     if (isStandaloneServiceWorkerProcess())
-        protect(processPool())->serviceWorkerProcessCrashed(*this, reason);
+        processPool->serviceWorkerProcessCrashed(*this, reason);
 
     shutDown();
 
@@ -2746,6 +2750,20 @@ void WebProcessProxy::updateWebProcessSuspensionDelay()
         page->updateWebProcessSuspensionDelay();
 }
 
+#endif
+
+#if PLATFORM(COCOA)
+void WebProcessProxy::processIsReadyToExit()
+{
+    bool hasPages = !m_pageMap.isEmpty() || !m_provisionalPages.isEmptyIgnoringNullReferences() || !m_remotePages.isEmptyIgnoringNullReferences();
+    if (!isInProcessCache() && !isPrewarmed() && hasPages) {
+        WEBPROCESSPROXY_RELEASE_LOG(Process, "processIsReadyToExit: Not terminating WebProcess because it gained a page (pageCount=%u, provisionalPageCount=%u, remotePageCount=%u)", m_pageMap.size(), m_provisionalPages.computeSize(), m_remotePages.computeSize());
+        return;
+    }
+
+    WEBPROCESSPROXY_RELEASE_LOG(Process, "processIsReadyToExit: Terminating WebProcess because it is idle and under memory pressure");
+    requestTermination(ProcessTerminationReason::IdleExit);
+}
 #endif
 
 void WebProcessProxy::didExceedActiveMemoryLimit()

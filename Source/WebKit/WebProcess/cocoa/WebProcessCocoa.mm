@@ -1545,6 +1545,18 @@ void WebProcess::powerSourceDidChange(bool hasAC)
     setSystemHasAC(hasAC);
 }
 
+void WebProcess::simulateMemoryPressureForTesting(bool isCritical)
+{
+    // End each simulation right away so that the next event is not ignored.
+    if (isCritical) {
+        MemoryPressureHandler::singleton().beginSimulatedMemoryPressure();
+        MemoryPressureHandler::singleton().endSimulatedMemoryPressure();
+    } else {
+        MemoryPressureHandler::singleton().beginSimulatedMemoryWarning();
+        MemoryPressureHandler::singleton().endSimulatedMemoryWarning();
+    }
+}
+
 void WebProcess::willWriteToPasteboardAsynchronously(const String& pasteboardName)
 {
     m_pendingPasteboardWriteCounts.add(pasteboardName);
