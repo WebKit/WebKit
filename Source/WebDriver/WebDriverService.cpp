@@ -54,7 +54,6 @@
 #include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UUID.h>
-#include <wtf/glib/GTypedefs.h>
 #endif
 
 namespace WebDriver {
@@ -98,7 +97,9 @@ static void printUsageStatement(const char* programName)
     SAFE_PRINTF("  -h,          --help             Prints this help message\n");
     SAFE_PRINTF("  -p <port>,   --port=<port>      Port number the driver will use\n");
     SAFE_PRINTF("               --host=<host>      Host IP the driver will use, or either 'local' or 'all' (default: 'local')\n");
+#if !PLATFORM(COCOA)
     SAFE_PRINTF("  -t <ip:port> --target=<ip:port> Target IP and port\n");
+#endif
 #if ENABLE(WEBDRIVER_BIDI)
     SAFE_PRINTF("               --bidi-port=<port>        Port number to use for BiDi's WebSocket connections\n");
 #endif

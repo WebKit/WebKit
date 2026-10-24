@@ -43,6 +43,11 @@ typedef struct _GSubprocess GSubprocess;
 #if PLATFORM(WIN)
 #include <wtf/win/Win32Handle.h>
 #endif
+#elif PLATFORM(COCOA)
+#include <dispatch/dispatch.h>
+#include <wtf/OSObjectPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #endif
 
 namespace WebDriver {
@@ -61,6 +66,8 @@ class SessionHost final
     : public RefCounted<SessionHost>
 #if USE(INSPECTOR_SOCKET_SERVER)
     , public Inspector::RemoteInspectorConnectionClient
+#elif PLATFORM(COCOA)
+    , public CanMakeWeakPtr<SessionHost>
 #endif
 {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SessionHost);
@@ -148,6 +155,18 @@ private:
 
     std::optional<Vector<Target>> parseTargetList(const struct Event&);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
+#elif PLATFORM(COCOA)
+    std::optional<String> launchBrowser();
+    void startReading();
+    void didReceiveData(dispatch_data_t);
+    void sendEvent(const JSON::Object&);
+    void didReceiveEvent(const JSON::Object&);
+    void didReceiveStartAutomationSessionReturn(const String& message);
+    void didReceiveSetTargetList(uint64_t connectionID, const String& message);
+    void setTargetList(uint64_t connectionID, Vector<Target>&&);
+    void connectionDidClose();
+    void browserDidExit();
+    void terminateBrowser();
 #endif
 
     Capabilities m_capabilities;
@@ -177,6 +196,13 @@ private:
 #if PLATFORM(WIN)
     WTF::Win32Handle m_browserHandle;
 #endif
+#elif PLATFORM(COCOA)
+    Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
+    bool m_browserMatchesCapabilities { true };
+    pid_t m_browserProcessID { 0 };
+    OSObjectPtr<dispatch_io_t> m_channel;
+    OSObjectPtr<dispatch_source_t> m_browserExitSource;
+    Vector<uint8_t> m_receiveBuffer;
 #endif
 };
 
