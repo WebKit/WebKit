@@ -21,9 +21,13 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import queue
+import threading
 import time
 import sys
 import unittest
+
+from unittest import mock
 
 from webkitcorepy import OutputCapture, TaskPool, Timeout, log as logger
 
@@ -402,3 +406,34 @@ class TaskPoolUnittest(unittest.TestCase):
 
                     # Call wait() to properly clean up
                     pool.wait()
+
+        def test_repeat_task_delivered_after_stop_forked(self):
+            """Test that a grouped worker does not exit before its late-delivered repeat task is stopped."""
+            send = TaskPool.Queue.send
+            delayed = queue.Queue()
+
+            def deliver():
+                while True:
+                    item = delayed.get()
+                    if item is None:
+                        return
+                    time.sleep(0.5)
+                    send(*item)
+
+            def delayed_send(group_queue, message):
+                delayed.put((group_queue, message))
+
+            deliverer = threading.Thread(target=deliver)
+            deliverer.start()
+            self.addCleanup(deliverer.join)
+            self.addCleanup(delayed.put, None)
+
+            with OutputCapture(level=logging.INFO), mock.patch.object(TaskPool.Queue, 'send', delayed_send):
+                with TaskPool(workers=4, force_fork=True, mutually_exclusive_groups=['test_group']) as pool:
+                    pool.do(simple_repeat_task)
+                    pool.do(simple_repeat_task, repeat=True, group='test_group')
+
+                    with Timeout(5):
+                        pool.wait()
+
+                    self.assertEqual(pool.repeat_pending_count, 0)
