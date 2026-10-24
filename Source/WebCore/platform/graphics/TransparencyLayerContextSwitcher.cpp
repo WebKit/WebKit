@@ -61,9 +61,11 @@ void TransparencyLayerContextSwitcher::beginClipAndDrawSourceImage(GraphicsConte
         destinationContext.beginTransparencyLayer(1);
     }
 
+#if !HAVE(FIX_FOR_RADAR_190563103)
     // FIXME: Remove this workaround once the system framework rdar://190563103 is fixed.
     if (RefPtr filter = m_filter)
         destinationContext.clearRect(filter->filterRegion());
+#endif
 }
 
 void TransparencyLayerContextSwitcher::beginDrawSourceImage(GraphicsContext& destinationContext, float opacity)
@@ -78,9 +80,11 @@ void TransparencyLayerContextSwitcher::beginDrawSourceImage(GraphicsContext& des
         destinationContext.beginTransparencyLayer(1);
     }
 
+#if !HAVE(FIX_FOR_RADAR_190563103)
     // FIXME: Remove this workaround once the system framework rdar://190563103 is fixed.
     if (RefPtr filter = m_filter)
         destinationContext.clearRect(filter->filterRegion());
+#endif
 }
 
 void TransparencyLayerContextSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace&)
