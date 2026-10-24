@@ -954,7 +954,11 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearchThreeArgument
             bufferPos += substring.length();
 
             auto replacement = asString(slot)->value(globalObject);
-            StringView { replacement }.getCharacters8(buffer.subspan(bufferPos));
+            StringView replacementView { replacement };
+            if (replacementView.is8Bit()) [[likely]]
+                replacementView.getCharacters8(buffer.subspan(bufferPos));
+            else
+                replacementView.getCharacters16(buffer.subspan(bufferPos));
             bufferPos += replacement->length();
 
             ++index;
