@@ -70,9 +70,9 @@ void LegacyRenderSVGResourceContainer::willBeDestroyed()
     LegacyRenderSVGHiddenContainer::willBeDestroyed();
 }
 
-void LegacyRenderSVGResourceContainer::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void LegacyRenderSVGResourceContainer::insertedIntoTree()
 {
-    LegacyRenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
+    LegacyRenderSVGHiddenContainer::insertedIntoTree();
 
     if (!m_registered) {
         m_registered = true;

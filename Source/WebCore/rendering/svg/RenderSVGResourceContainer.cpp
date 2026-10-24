@@ -64,9 +64,9 @@ void RenderSVGResourceContainer::willBeDestroyed()
     RenderSVGHiddenContainer::willBeDestroyed();
 }
 
-void RenderSVGResourceContainer::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderSVGResourceContainer::insertedIntoTree()
 {
-    RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
+    RenderSVGHiddenContainer::insertedIntoTree();
 
     if (!m_registered) {
         m_registered = true;

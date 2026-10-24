@@ -79,6 +79,9 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
     if (m_clientRenderer->renderTreeBeingDestroyed())
         return;
 
+    // Resolving pending clients may notify this renderer, so it must have a parent.
+    ASSERT(m_clientRenderer->parent());
+
     if (is<SVGFilterElement>(element)) {
         if (auto* layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get())) {
             if (CheckedPtr layer = layerModelObject->layer())
