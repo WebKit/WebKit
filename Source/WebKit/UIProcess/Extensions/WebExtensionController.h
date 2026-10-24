@@ -129,7 +129,6 @@ public:
     void calculateStorageSize(WebExtensionStorageSQLiteStore&, WebExtensionDataType, CompletionHandler<void(std::expected<size_t, WebExtensionError>&&)>&&);
     void removeStorage(WebExtensionStorageSQLiteStore&, WebExtensionDataType, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
-    bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
     bool isFreshlyCreated() const { return m_freshlyCreated; }
 
     std::expected<bool, RefPtr<API::Error>> load(WebExtensionContext&);
@@ -211,7 +210,6 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    bool hasLoadedContexts(IPC::Decoder&) const { return hasLoadedContexts(); }
     bool inTestingMode(IPC::Decoder&) const { return inTestingMode(); }
 
     void initializePlatform();
