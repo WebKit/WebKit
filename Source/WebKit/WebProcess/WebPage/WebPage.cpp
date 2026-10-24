@@ -37,7 +37,6 @@
 #include "APIInjectedBundlePageResourceLoadClient.h"
 #include "APIInjectedBundlePageUIClient.h"
 #include "Connection.h"
-#include "ContentAsStringIncludesChildFrames.h"
 #include "ContentInversion.h"
 #include "DragControllerAction.h"
 #include "DragEventForwardingData.h"
@@ -5352,21 +5351,25 @@ void WebPage::clearContentWorld(ContentWorldIdentifier worldIdentifier, Completi
     completionHandler();
 }
 
-void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChildFrames, CompletionHandler<void(const String&)>&& callback)
+void WebPage::getContentsAsString(CompletionHandler<void(const String&)>&& callback)
 {
-    switch (includeChildFrames) {
-    case ContentAsStringIncludesChildFrames::No:
-        callback(m_mainFrame->contentsAsString());
-        break;
-    case ContentAsStringIncludesChildFrames::Yes:
-        StringBuilder builder;
-        for (RefPtr<Frame> frame = m_mainFrame->coreLocalFrame(); frame; frame = frame->tree().traverseNextRendered()) {
+    callback(m_mainFrame->contentsAsString());
+}
+
+void WebPage::getContentsOfAllFramesAsString(CompletionHandler<void(HashMap<FrameIdentifier, String>&&)>&& completionHandler)
+{
+    RefPtr page = corePage();
+    if (!page)
+        return completionHandler({ });
+
+    HashMap<FrameIdentifier, String> result;
+    for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(page->rootFrames())) {
+        for (RefPtr<Frame> frame = rootFrame.ptr(); frame; frame = frame->tree().traverseNextRendered(rootFrame.ptr())) {
             if (RefPtr webFrame = WebFrame::fromCoreFrame(*frame))
-                builder.append(builder.isEmpty() ? ""_s : "\n\n"_s, webFrame->contentsAsString());
+                result.add(frame->frameID(), webFrame->contentsAsString());
         }
-        callback(builder.toString());
-        break;
     }
+    completionHandler(WTF::move(result));
 }
 
 #if ENABLE(MHTML)

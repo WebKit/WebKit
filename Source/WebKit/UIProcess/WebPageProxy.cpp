@@ -71,6 +71,7 @@
 #include "CallbackID.h"
 #include "ColorControlSupportsAlpha.h"
 #include "Connection.h"
+#include "ContentAsStringIncludesChildFrames.h"
 #include "DidFilterKnownLinkDecoration.h"
 #include "DigitalCredentialsCoordinatorMessages.h"
 #include "DownloadManager.h"
@@ -338,6 +339,7 @@
 #include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/TextStream.h>
 
@@ -8449,7 +8451,31 @@ void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, CompletionHandler<voi
 
 void WebPageProxy::getContentsAsString(ContentAsStringIncludesChildFrames includesChildFrames, CompletionHandler<void(const String&)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebPage::GetContentsAsString(includesChildFrames), WTF::move(callback));
+    if (includesChildFrames == ContentAsStringIncludesChildFrames::No)
+        return sendWithAsyncReply(Messages::WebPage::GetContentsAsString(), WTF::move(callback));
+
+    auto frameContents = Box<HashMap<FrameIdentifier, String>>::create();
+    Ref aggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, frameContents, callback = WTF::move(callback)] mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return callback({ });
+
+        StringBuilder builder;
+        for (RefPtr frame = protectedThis->mainFrame(); frame; frame = frame->traverseNext().frame) {
+            if (auto it = frameContents->find(frame->frameID()); it != frameContents->end())
+                builder.append(builder.isEmpty() ? ""_s : "\n\n"_s, it->value);
+        }
+        callback(builder.toString());
+    });
+
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.sendWithAsyncReply(Messages::WebPage::GetContentsOfAllFramesAsString(), [process = Ref { process }, frameContents, aggregator](HashMap<FrameIdentifier, String>&& result) {
+            for (auto&& [frameID, contents] : WTF::move(result)) {
+                if (RefPtr frame = WebFrameProxy::webFrame(frameID); frame && &frame->process() == process.ptr())
+                    frameContents->set(frameID, WTF::move(contents));
+            }
+        }, pageID);
+    });
 }
 
 #if PLATFORM(COCOA)
