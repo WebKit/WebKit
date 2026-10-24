@@ -45,6 +45,8 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <algorithm>
+#include <cmath>
+#include <limits>
 #include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HexNumber.h>
@@ -62,6 +64,28 @@ using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
 static Ref<JSON::Value> deserializeLocalValue(const JSON::Value&);
 
+static Inspector::CommandResult<std::optional<int>> validateDepthParameter(const JSON::Object& options, ASCIILiteral key)
+{
+    if (auto json = options.getValue(key)) {
+        if (json->isNull())
+            return std::optional<int> { };
+        double value;
+        if (!json->asDouble(value))
+            return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
+        if (value < 0)
+            return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
+        if (!std::isfinite(value))
+            return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
+        if (std::floor(value) != value)
+            return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
+        if (value > std::numeric_limits<int>::max())
+            return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
+        return std::optional<int> { static_cast<int>(value) };
+    }
+
+    return std::optional<int> { };
+}
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiScriptAgent);
 
 BidiScriptAgent::BidiScriptAgent(WebAutomationSession& session, BackendDispatcher& backendDispatcher)
@@ -74,8 +98,6 @@ BidiScriptAgent::~BidiScriptAgent() = default;
 
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value* jsonValue)
 {
-    // FIXME: Implement full BiDi RemoteValue deserialization (array, object, map, set, etc.)
-    // https://bugs.webkit.org/show_bug.cgi?id=288060
     using RemoteValue = Inspector::Protocol::BidiScript::RemoteValue;
     using RemoteValueType = Inspector::Protocol::BidiScript::RemoteValueType;
 
@@ -85,75 +107,19 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
         return resultValue.setType(RemoteValueType::Undefined).release();
 
     String typeString = object->getString("type"_s);
+    auto parsedType = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<RemoteValueType>(typeString);
+    if (!parsedType)
+        return resultValue.setType(RemoteValueType::Undefined).release();
 
-    // Primitive types with values.
-    if (typeString == "string"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::String).release();
-        remoteValue->setValue(JSON::Value::create(object->getString("value"_s)));
-        return remoteValue;
-    }
-    if (typeString == "number"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::Number).release();
-        if (auto num = object->getDouble("value"_s))
-            remoteValue->setValue(JSON::Value::create(*num));
-        else
-            remoteValue->setValue(JSON::Value::create(object->getString("value"_s)));
-        return remoteValue;
-    }
-    if (typeString == "boolean"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::Boolean).release();
-        if (auto b = object->getBoolean("value"_s))
-            remoteValue->setValue(JSON::Value::create(*b));
-        return remoteValue;
-    }
-    if (typeString == "bigint"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::Bigint).release();
-        remoteValue->setValue(JSON::Value::create(object->getString("value"_s)));
-        return remoteValue;
-    }
+    auto remoteValue = resultValue.setType(*parsedType).release();
+    if (auto value = object->getValue("value"_s))
+        remoteValue->setValue(value.releaseNonNull());
+    if (auto handle = object->getString("handle"_s); !handle.isNull())
+        remoteValue->setHandle(handle);
+    if (auto internalId = object->getString("internalId"_s); !internalId.isNull())
+        remoteValue->setInternalId(internalId);
 
-    // Primitive types without values.
-    if (typeString == "null"_s)
-        return resultValue.setType(RemoteValueType::Null).release();
-    if (typeString == "symbol"_s)
-        return resultValue.setType(RemoteValueType::Symbol).release();
-    if (typeString == "function"_s)
-        return resultValue.setType(RemoteValueType::Function).release();
-
-    // Simple structured types.
-    if (typeString == "date"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::Date).release();
-        remoteValue->setValue(JSON::Value::create(object->getString("value"_s)));
-        return remoteValue;
-    }
-    if (typeString == "regexp"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::Regexp).release();
-        if (auto value = object->getValue("value"_s))
-            remoteValue->setValue(value.releaseNonNull());
-        return remoteValue;
-    }
-
-    // Other types that serialize without values.
-    if (typeString == "promise"_s)
-        return resultValue.setType(RemoteValueType::Promise).release();
-    if (typeString == "error"_s)
-        return resultValue.setType(RemoteValueType::Error).release();
-
-    // For unknown/unhandled types, pass through the original JSON structure.
-    // This allows complex types like iterators, objects, arrays, etc. to be preserved
-    // even if we don't explicitly deserialize them yet.
-    if (!typeString.isNull()) {
-        // Try to match known type strings to enum values.
-        if (typeString == "object"_s) {
-            auto remoteValue = resultValue.setType(RemoteValueType::Object).release();
-            if (auto value = object->getValue("value"_s))
-                remoteValue->setValue(value.releaseNonNull());
-            return remoteValue;
-        }
-        // For any other unknown types, default to undefined.
-    }
-
-    return resultValue.setType(RemoteValueType::Undefined).release();
+    return remoteValue;
 }
 
 static Ref<JSON::Value> deserializeLocalValue(const JSON::Value& jsonValue)
@@ -334,6 +300,8 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
         }
     }
 
+    // FIXME: Route script.callFunction through the BiDi evaluation path.
+    // https://bugs.webkit.org/show_bug.cgi?id=313658
     String realmID = generateRealmIdForBrowsingContext(*browsingContext);
     session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTF::move(callback), realmID](Inspector::CommandResult<String>&& stringResult) {
         // FIXME: Properly serialize RemoteValue types according to WebDriver BiDi spec.
@@ -344,25 +312,13 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
         if (!stringResult) {
             if (stringResult.error().startsWith("JavaScriptError"_s)) {
                 String errorMessage = stringResult.error().substring("JavaScriptError;"_s.length());
-                // Construct error object structure for RemoteValue.value per BiDi spec.
-                auto errorObject = JSON::Object::create();
-                errorObject->setString("message"_s, errorMessage);
                 auto exceptionValue = Inspector::Protocol::BidiScript::RemoteValue::create()
                     .setType(Inspector::Protocol::BidiScript::RemoteValueType::Error)
                     .release();
+                auto errorObject = JSON::Object::create();
+                errorObject->setString("message"_s, errorMessage);
                 exceptionValue->setValue(WTF::move(errorObject));
-                auto stackTrace = Inspector::Protocol::BidiScript::StackTrace::create()
-                    .setCallFrames(JSON::ArrayOf<Inspector::Protocol::BidiScript::StackFrame>::create())
-                    .release();
-                auto exceptionDetails = Inspector::Protocol::BidiScript::ExceptionDetails::create()
-                    .setText(errorMessage)
-                    .setLineNumber(0)
-                    .setColumnNumber(0)
-                    .setException(WTF::move(exceptionValue))
-                    .setStackTrace(WTF::move(stackTrace))
-                    .release();
-
-                callback({ { EvaluateResultType::Exception, realmID, nullptr, WTF::move(exceptionDetails) } });
+                callback({ { EvaluateResultType::Exception, realmID, nullptr, createExceptionDetails(errorMessage, WTF::move(exceptionValue)) } });
                 return;
             }
 
@@ -431,12 +387,12 @@ void BidiScriptAgent::disown(Ref<JSON::Array>&& handles, Ref<JSON::Object>&& tar
     ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 }
 
-void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<JSON::Object>&& target, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
+void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<JSON::Object>&& target, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions, std::optional<bool>&&, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    // FIXME: Add full parameter validation (resultOwnership, serializationOptions, sandbox, realm targets, etc.)
+    // FIXME: Add full parameter validation (resultOwnership, sandbox, realm targets, etc.)
     // https://bugs.webkit.org/show_bug.cgi?id=288060
     std::optional<BrowsingContext> browsingContext = target->getString("context"_s);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, InvalidParameter);
@@ -445,9 +401,31 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(*browsingContext), FrameNotFound);
 
+    std::optional<int> maxObjectDepth;
+    if (optionalSerializationOptions) {
+        auto& serializationOptions = *optionalSerializationOptions;
+
+        auto validatedDomDepth = validateDepthParameter(serializationOptions, "maxDomDepth"_s);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validatedDomDepth, InvalidParameter);
+        // FIXME: Propagate maxDomDepth and includeShadowTree once the WebProcess serializer supports
+        // DOM serialization options.
+        // https://bugs.webkit.org/show_bug.cgi?id=288060
+
+        auto validatedObjDepth = validateDepthParameter(serializationOptions, "maxObjectDepth"_s);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validatedObjDepth, InvalidParameter);
+        maxObjectDepth = *validatedObjDepth;
+
+        if (auto includeShadowTreeJSON = serializationOptions.getValue("includeShadowTree"_s)) {
+            String includeShadowTreeValue;
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!includeShadowTreeJSON->asString(includeShadowTreeValue), InvalidParameter);
+            auto includeShadowTree = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<Inspector::Protocol::BidiScript::SerializationOptions::IncludeShadowTree>(includeShadowTreeValue);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!includeShadowTree, InvalidParameter);
+        }
+    }
+
     String realmID = generateRealmIdForBrowsingContext(*browsingContext);
 
-    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, 1, std::nullopt,
+    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, maxObjectDepth, std::nullopt,
         [weakThis = WeakPtr { *this }, callback = WTF::move(callback), realmID = realmID.isolatedCopy(), expression = expression.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
             CheckedPtr protectedThis = weakThis.get();
             if (!protectedThis)
@@ -458,113 +436,35 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
 
 void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, const String& expression, Inspector::CommandResult<String>&& result, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
 {
-    // FIXME: Implement full BiDi exception details (stack traces, line/column numbers, exception type)
-    // https://bugs.webkit.org/show_bug.cgi?id=304548
     using namespace Inspector::Protocol;
 
-    if (!result.has_value()) {
-        // IPC or internal error - NOT a JavaScript exception.
-        // Include diagnostic information from the underlying error.
-        String errorText = makeString("Internal error: script evaluation failed"_s);
-        if (!result.error().isEmpty())
-            errorText = makeString("Internal error: "_s, result.error());
-
-        // Construct error object structure for RemoteValue.value per BiDi spec.
-        auto errorObject = JSON::Object::create();
-        errorObject->setString("message"_s, errorText);
-        auto exceptionRemote = BidiScript::RemoteValue::create()
-            .setType(BidiScript::RemoteValueType::Error)
-            .release();
-        exceptionRemote->setValue(WTF::move(errorObject));
-        // stackTrace is required by protocol, but empty for internal failures (no JS stack available).
-        auto stackTrace = BidiScript::StackTrace::create()
-            .setCallFrames(JSON::ArrayOf<BidiScript::StackFrame>::create())
-            .release();
-        auto exceptionDetails = BidiScript::ExceptionDetails::create()
-            .setText(errorText)
-            .setLineNumber(0)
-            .setColumnNumber(0)
-            .setException(WTF::move(exceptionRemote))
-            .setStackTrace(WTF::move(stackTrace))
-            .release();
-        callback({ { BidiScript::EvaluateResultType::Exception, realmID, nullptr, WTF::move(exceptionDetails) } });
-        return;
-    }
-
-    auto envelopePayload = JSON::Value::parseJSON(result.value());
-    auto envelopeObject = envelopePayload ? envelopePayload->asObject() : nullptr;
-
-    // Handle malformed envelope (internal error - failed to parse or not an object).
-    if (!envelopeObject) {
-        String errorText = makeString("Internal error: malformed envelope in call to script.evaluate"_s);
-        // Construct error object structure for RemoteValue.value per BiDi spec.
-        auto errorObject = JSON::Object::create();
-        errorObject->setString("message"_s, errorText);
-        auto exceptionAsRemoteValue = BidiScript::RemoteValue::create()
-            .setType(BidiScript::RemoteValueType::Error)
-            .release();
-        exceptionAsRemoteValue->setValue(WTF::move(errorObject));
-        // stackTrace is required by protocol, but empty for internal failures (no JS stack available).
-        auto stackTrace = BidiScript::StackTrace::create()
-            .setCallFrames(JSON::ArrayOf<BidiScript::StackFrame>::create())
-            .release();
-        auto exceptionDetails = BidiScript::ExceptionDetails::create()
-            .setText(errorText)
-            .setLineNumber(0)
-            .setColumnNumber(0)
-            .setException(WTF::move(exceptionAsRemoteValue))
-            .setStackTrace(WTF::move(stackTrace))
-            .release();
-        callback({ { BidiScript::EvaluateResultType::Exception, realmID, nullptr, WTF::move(exceptionDetails) } });
-        return;
-    }
-
-    // Handle JavaScript exception (success == false means user's JS code threw).
-    if (!envelopeObject->getBoolean("success"_s).value_or(false)) {
-        String errorMessage = "JavaScript exception"_s;
-        String errorName = "Error"_s;
-        String errorStack;
-
-        // Extract exception details from the envelope's "error" field.
-        if (auto errorValue = envelopeObject->getValue("error"_s)) {
-            if (auto errorObj = errorValue->asObject()) {
-                if (auto message = errorObj->getString("message"_s); !message.isNull())
-                    errorMessage = message;
-                if (auto name = errorObj->getString("name"_s); !name.isNull())
-                    errorName = name;
-                if (auto stack = errorObj->getString("stack"_s); !stack.isNull())
-                    errorStack = stack;
-            }
+    // JavaScript exceptions arrive on the value channel below; CommandResult failures remain BiDi command errors.
+    if (!result) {
+        if (result.error().isEmpty()) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+            return;
         }
+        callback(makeUnexpected(result.error()));
+        return;
+    }
 
-        // Construct a basic error object structure for RemoteValue.value.
-        auto errorObject = JSON::Object::create();
-        errorObject->setString("name"_s, errorName);
-        errorObject->setString("message"_s, errorMessage);
-        if (!errorStack.isNull())
-            errorObject->setString("stack"_s, errorStack);
+    auto parsedResult = JSON::Value::parseJSON(result.value());
+    auto resultObject = parsedResult ? parsedResult->asObject() : nullptr;
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!resultObject, InternalError, "Malformed script.evaluate result"_s);
 
-        auto exceptionRemote = BidiScript::RemoteValue::create()
-            .setType(BidiScript::RemoteValueType::Error)
-            .release();
-        exceptionRemote->setValue(WTF::move(errorObject));
+    auto success = resultObject->getBoolean("success"_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!success, InternalError, "Malformed script.evaluate result"_s);
 
-        // stackTrace is required by protocol - empty until full stack trace extraction is implemented (bug 304548).
-        auto stackTrace = BidiScript::StackTrace::create()
-            .setCallFrames(JSON::ArrayOf<BidiScript::StackFrame>::create())
-            .release();
-        auto exceptionDetails = BidiScript::ExceptionDetails::create()
-            .setText(errorMessage)
-            .setLineNumber(0)
-            .setColumnNumber(0)
-            .setException(WTF::move(exceptionRemote))
-            .setStackTrace(WTF::move(stackTrace))
-            .release();
+    if (!*success) {
+        auto exceptionObject = resultObject->getObject("error"_s);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!exceptionObject, InternalError, "Malformed script.evaluate result"_s);
+        auto exceptionDetails = buildExceptionDetailsFromExceptionObject(*exceptionObject);
         callback({ { BidiScript::EvaluateResultType::Exception, realmID, nullptr, WTF::move(exceptionDetails) } });
         return;
     }
 
-    auto resultValue = envelopeObject->getValue("result"_s);
+    auto resultValue = resultObject->getValue("result"_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!resultValue || !resultValue->asObject(), InternalError, "Malformed script.evaluate result"_s);
     auto remote = deserializeRemoteValue(resultValue.get());
     callback({ { BidiScript::EvaluateResultType::Success, realmID, WTF::move(remote), nullptr } });
 }
@@ -1033,6 +933,127 @@ std::optional<String> BidiScriptAgent::browsingContextForRealm(RealmIdentifier r
         return std::nullopt;
 
     return it->value.context;
+}
+
+BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String& stackTraceString)
+{
+    using namespace Inspector::Protocol;
+
+    auto callFrames = JSON::ArrayOf<BidiScript::StackFrame>::create();
+    ParsedStackTrace result { .callFrames = callFrames };
+    bool hasTopFrame = false;
+
+    struct ParsedLocation {
+        String url;
+        unsigned lineNumber;
+        unsigned columnNumber;
+    };
+
+    auto parseLocation = [](const String& location) -> std::optional<ParsedLocation> {
+        auto lastColon = location.reverseFind(':');
+        if (lastColon == notFound || !lastColon)
+            return std::nullopt;
+        auto secondLastColon = location.reverseFind(':', lastColon - 1);
+        if (secondLastColon == notFound)
+            return std::nullopt;
+        auto parsedLine = parseInteger<unsigned>(location.substring(secondLastColon + 1, lastColon - secondLastColon - 1));
+        auto parsedCol = parseInteger<unsigned>(location.substring(lastColon + 1));
+        if (!parsedLine || !parsedCol || !*parsedLine || !*parsedCol)
+            return std::nullopt;
+        return ParsedLocation { location.left(secondLastColon), *parsedLine - 1, *parsedCol - 1 };
+    };
+
+    auto lines = stackTraceString.split(u'\n');
+    for (auto& line : lines) {
+        String trimmed = line.trim(deprecatedIsSpaceOrNewline);
+        if (trimmed.isEmpty())
+            continue;
+
+        // JSC stack-frame format: "functionName@url:line:column"
+        auto atSign = trimmed.find('@');
+        if (atSign == notFound)
+            continue;
+
+        String functionName = trimmed.left(atSign).trim(deprecatedIsSpaceOrNewline);
+        auto parsedLocation = parseLocation(trimmed.substring(atSign + 1));
+        if (!parsedLocation)
+            continue;
+
+        auto stackFrame = BidiScript::StackFrame::create()
+            .setLineNumber(parsedLocation->lineNumber)
+            .setColumnNumber(parsedLocation->columnNumber)
+            .setFunctionName(functionName.isEmpty() ? emptyString() : functionName)
+            .setUrl(parsedLocation->url)
+            .release();
+        callFrames->addItem(WTF::move(stackFrame));
+
+        if (!hasTopFrame) {
+            result.topLineNumber = parsedLocation->lineNumber;
+            result.topColumnNumber = parsedLocation->columnNumber;
+            hasTopFrame = true;
+        }
+    }
+
+    return result;
+}
+
+Ref<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::buildExceptionDetailsFromExceptionObject(const JSON::Object& exceptionObject)
+{
+    using namespace Inspector::Protocol;
+
+    String exceptionMessage = "JavaScript exception occurred"_s;
+    ParsedStackTrace parsedStack { .callFrames = JSON::ArrayOf<BidiScript::StackFrame>::create() };
+
+    // FIXME: Use the serialized thrown JavaScript value instead of this temporary Error RemoteValue.
+    // https://bugs.webkit.org/show_bug.cgi?id=304548
+    Ref<BidiScript::RemoteValue> exceptionValue = BidiScript::RemoteValue::create()
+        .setType(BidiScript::RemoteValueType::Error)
+        .release();
+
+    String message = exceptionObject.getString("message"_s);
+    if (!message.isNull())
+        exceptionMessage = message;
+
+    String stack = exceptionObject.getString("stack"_s);
+    if (!stack.isNull())
+        parsedStack = parseStackTrace(stack);
+
+    auto errorObject = JSON::Object::create();
+    String name = exceptionObject.getString("name"_s);
+    errorObject->setString("name"_s, name.isNull() ? "Error"_s : name);
+    errorObject->setString("message"_s, exceptionMessage);
+    if (!stack.isNull())
+        errorObject->setString("stack"_s, stack);
+
+    exceptionValue->setValue(WTF::move(errorObject));
+
+    return BidiScript::ExceptionDetails::create()
+        .setLineNumber(parsedStack.topLineNumber)
+        .setColumnNumber(parsedStack.topColumnNumber)
+        .setText(exceptionMessage)
+        .setException(WTF::move(exceptionValue))
+        .setStackTrace(BidiScript::StackTrace::create()
+            .setCallFrames(WTF::move(parsedStack.callFrames))
+            .release())
+        .release();
+}
+
+Ref<Inspector::Protocol::BidiScript::StackTrace> BidiScriptAgent::createEmptyStackTrace()
+{
+    return Inspector::Protocol::BidiScript::StackTrace::create()
+        .setCallFrames(JSON::ArrayOf<Inspector::Protocol::BidiScript::StackFrame>::create())
+        .release();
+}
+
+Ref<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::createExceptionDetails(const String& text, Ref<Inspector::Protocol::BidiScript::RemoteValue>&& exceptionValue, unsigned lineNumber, unsigned columnNumber)
+{
+    return Inspector::Protocol::BidiScript::ExceptionDetails::create()
+        .setLineNumber(lineNumber)
+        .setColumnNumber(columnNumber)
+        .setText(text)
+        .setException(WTF::move(exceptionValue))
+        .setStackTrace(createEmptyStackTrace())
+        .release();
 }
 
 } // namespace WebKit
