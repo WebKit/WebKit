@@ -255,12 +255,14 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
 // BlockFormattingContext::computeIntrinsicInlineSizes measures inline content with the inline formatting context and the block-level boxes
 // between them itself, without percentage padding, which RenderBox resolves against the containing block's current inline size.
 // A block-level independent formatting context root the block formatting context lays out through the render tree
-// (BlockIntegrationUtils::layoutIndependentFormattingContext): a table, a flex or grid container, or a block formatting context root whose
-// content the block formatting context cannot lay out.
+// (BlockIntegrationUtils::layoutIndependentFormattingContext): a replaced element, a table, a flex or grid container, or a block formatting
+// context root whose content the block formatting context cannot lay out.
 static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
 {
     if (renderer.isInline() || renderer.isFloatingOrOutOfFlowPositioned())
         return false;
+    if (renderer.isRenderReplaced() || renderer.isRenderOrLegacyRenderSVGRoot())
+        return true;
     switch (renderer.type()) {
     case RenderObject::Type::Table:
     case RenderObject::Type::FlexibleBox:
@@ -364,6 +366,7 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     CheckedRef style = box.style();
     auto writingMode = box.writingMode();
     // The block formatting context decides the inline size from lengths, percentages and calc() (BlockFormattingUtils::inlineSizeAndMargins).
+    // A replaced element's own formatting context takes its aspect ratio into account (CSS 2.2 §10.3.4).
     // FIXME: The sizing keywords, calc-size(), the stretch block size, which reads the containing block's renderer, and a preferred aspect ratio.
     auto isSupportedInlineSize = [](auto& size) {
         return (size.isAuto() || size.isSpecified()) && !size.isCalcSize();
@@ -371,12 +374,13 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     auto isStretch = [](auto& size) {
         return size.isStretch();
     };
+    auto isReplaced = box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot();
     if (!isSupportedInlineSize(style->logicalWidth(writingMode)) || !isSupportedInlineSize(style->logicalMinWidth(writingMode))
         || !(style->logicalMaxWidth(writingMode).isNone() || (style->logicalMaxWidth(writingMode).isSpecified() && !style->logicalMaxWidth(writingMode).isCalcSize())))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
     if (isStretch(style->logicalHeight(writingMode)) || isStretch(style->logicalMinHeight(writingMode)) || isStretch(style->logicalMaxHeight(writingMode)))
         return BlockAvoidanceReason::ContentHasStretchBlockSize;
-    if (style->aspectRatio().hasRatio())
+    if (style->aspectRatio().hasRatio() && !isReplaced)
         return BlockAvoidanceReason::ContentHasAspectRatio;
     // The block-step-size rounding of the margin box is the parent's job on the render tree path (RenderBlockFlow::performBlockStepSizing).
     CheckedRef parentStyle = box.parent()->style();
