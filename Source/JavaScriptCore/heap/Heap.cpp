@@ -100,6 +100,7 @@
 #include "VM.h"
 #include "VerifierSlotVisitor.h"
 #include "WasmCallee.h"
+#include "WebAssemblyWrapperFunction.h"
 #include "WeakMapImplInlines.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
@@ -355,6 +356,7 @@ Heap::Heap(VM& vm, HeapType heapType)
 #if ENABLE(WEBASSEMBLY)
     , webAssemblyExceptionHeapCellType(IsoHeapCellType::Args<JSWebAssemblyException>())
     , webAssemblyFunctionHeapCellType(IsoHeapCellType::Args<WebAssemblyFunction>())
+    , webAssemblyWrapperFunctionHeapCellType(IsoHeapCellType::Args<WebAssemblyWrapperFunction>())
     , webAssemblyGlobalHeapCellType(IsoHeapCellType::Args<JSWebAssemblyGlobal>())
     , webAssemblyInstanceHeapCellType(IsoHeapCellType::Args<JSWebAssemblyInstance>())
     , webAssemblyMemoryHeapCellType(IsoHeapCellType::Args<JSWebAssemblyMemory>())
@@ -1114,6 +1116,12 @@ void Heap::deleteAllCodeBlocks(DeleteAllCodeEffort effort)
             m_webAssemblyInstanceSpace->forEachLiveCell([&] (HeapCell* cell, HeapCell::Kind kind) {
                 ASSERT_UNUSED(kind, kind == HeapCell::JSCell);
                 static_cast<JSWebAssemblyInstance*>(cell)->clearJSCallICs(vm);
+            });
+        }
+        if (m_webAssemblyWrapperFunctionSpace) {
+            m_webAssemblyWrapperFunctionSpace->forEachLiveCell([&] (HeapCell* cell, HeapCell::Kind kind) {
+                ASSERT_UNUSED(kind, kind == HeapCell::JSCell);
+                static_cast<WebAssemblyWrapperFunction*>(cell)->clearJSCallICs(vm);
             });
         }
     }
