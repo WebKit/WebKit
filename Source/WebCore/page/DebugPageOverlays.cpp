@@ -746,9 +746,13 @@ private:
 
     bool updateRegion() final;
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) final;
+    bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) final;
 
     LayoutIntegration::BlockLayoutCoverage m_coverage;
     FloatBoxExtent m_obscuredContentInsets;
+    // Hovering over the badge shows why the rest of the boxes stay on the render tree path.
+    FloatRect m_badgeRect;
+    bool m_showsUncoveredBoxes { false };
 };
 
 bool BlockLayoutCoverageOverlay::updateRegion()
@@ -770,8 +774,14 @@ void BlockLayoutCoverageOverlay::drawRect(PageOverlay& pageOverlay, GraphicsCont
 {
     context.clearRect(dirtyRect);
 
-    auto percentage = m_coverage.boxes ? 100 * m_coverage.coveredBoxes / m_coverage.boxes : 0;
-    auto textRun = TextRun(makeString(percentage, "% ("_s, m_coverage.coveredBoxes, '/', m_coverage.boxes, ')'));
+    auto percentage = [&](unsigned boxes) {
+        return m_coverage.boxes ? 100 * boxes / m_coverage.boxes : 0;
+    };
+    auto lines = Vector<TextRun> { TextRun(makeString(percentage(m_coverage.coveredBoxes), "% ("_s, m_coverage.coveredBoxes, '/', m_coverage.boxes, ')')) };
+    if (m_showsUncoveredBoxes) {
+        for (auto& [reason, boxes] : m_coverage.uncoveredBoxes)
+            lines.append(TextRun(makeString(percentage(boxes), "% "_s, reason, " ("_s, boxes, ')')));
+    }
 
     FontCascadeDescription fontDescription;
     fontDescription.setOneFamily("Helvetica"_s);
@@ -783,12 +793,36 @@ void BlockLayoutCoverageOverlay::drawRect(PageOverlay& pageOverlay, GraphicsCont
 
     constexpr float padding = 6;
     constexpr float margin = 10;
+    constexpr float lineSpacing = 2;
     auto& fontMetrics = font.metricsOfPrimaryFont();
-    auto badgeSize = FloatSize { font.width(textRun) + 2 * padding, fontMetrics.ascent() + fontMetrics.descent() + 2 * padding };
-    auto badgeRect = FloatRect { { pageOverlay.bounds().maxX() - m_obscuredContentInsets.right() - margin - badgeSize.width(), m_obscuredContentInsets.top() + margin }, badgeSize };
-    context.fillRoundedRect(FloatRoundedRect { badgeRect, CornerRadii { 6 } }, Color::black.colorWithAlphaByte(160));
+    auto lineHeight = fontMetrics.ascent() + fontMetrics.descent();
+    auto textWidth = 0.f;
+    for (auto& line : lines)
+        textWidth = std::max(textWidth, font.width(line));
+    auto badgeSize = FloatSize { textWidth + 2 * padding, lines.size() * lineHeight + (lines.size() - 1) * lineSpacing + 2 * padding };
+    m_badgeRect = FloatRect { { pageOverlay.bounds().maxX() - m_obscuredContentInsets.right() - margin - badgeSize.width(), m_obscuredContentInsets.top() + margin }, badgeSize };
+    context.fillRoundedRect(FloatRoundedRect { m_badgeRect, CornerRadii { 6 } }, Color::black.colorWithAlphaByte(160));
     context.setFillColor(Color::white);
-    context.drawText(font, textRun, badgeRect.location() + FloatSize { padding, padding + fontMetrics.ascent() });
+    auto lineTop = m_badgeRect.y() + padding;
+    for (auto& line : lines) {
+        context.drawText(font, line, { m_badgeRect.x() + padding, lineTop + fontMetrics.ascent() });
+        lineTop += lineHeight + lineSpacing;
+    }
+}
+
+bool BlockLayoutCoverageOverlay::mouseEvent(PageOverlay& pageOverlay, const PlatformMouseEvent& event)
+{
+    if (event.type() != PlatformEvent::Type::MouseMoved)
+        return false;
+    auto position = flooredIntPoint(event.position());
+    position.moveBy(-pageOverlay.frame().location());
+    auto showsUncoveredBoxes = m_badgeRect.contains(position);
+    if (showsUncoveredBoxes != m_showsUncoveredBoxes) {
+        m_showsUncoveredBoxes = showsUncoveredBoxes;
+        pageOverlay.setNeedsDisplay();
+    }
+    // The page gets the event too.
+    return false;
 }
 
 #if COMPILER(CLANG)
