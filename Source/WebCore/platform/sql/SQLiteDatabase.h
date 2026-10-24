@@ -122,7 +122,7 @@ public:
     // NORMAL - SQLite pauses at some critical moments when writing, but much less than FULL
     // OFF - Calls return immediately after the data has been passed to disk
     enum SynchronousPragma { SyncOff = 0, SyncNormal = 1, SyncFull = 2 };
-    void setSynchronous(SynchronousPragma);
+    WEBCORE_EXPORT void setSynchronous(SynchronousPragma);
     
     WEBCORE_EXPORT int lastError();
     WEBCORE_EXPORT const char* lastErrorMsg() LIFETIME_BOUND;
