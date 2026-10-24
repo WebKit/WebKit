@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -670,16 +670,16 @@ ALWAYS_INLINE void* memcpyAtomic(void* dst, const void* src, size_t n)
     ASSERT(isPowerOfTwo(n) && WTF::isAligned(WTF::opaque(dst), n));
     switch (n) {
     case 1:
-        WTF::atomicStore(std::bit_cast<uint8_t*>(dst), *std::bit_cast<const uint8_t*>(src), std::memory_order_relaxed);
+        WTF::atomicStore<MemoryOrder::Relaxed>(std::bit_cast<uint8_t*>(dst), *std::bit_cast<const uint8_t*>(src));
         return dst;
     case 2:
-        WTF::atomicStore(std::bit_cast<uint16_t*>(dst), *std::bit_cast<const uint16_t*>(src), std::memory_order_relaxed);
+        WTF::atomicStore<MemoryOrder::Relaxed>(std::bit_cast<uint16_t*>(dst), *std::bit_cast<const uint16_t*>(src));
         return dst;
     case 4:
-        WTF::atomicStore(std::bit_cast<uint32_t*>(dst), *std::bit_cast<const uint32_t*>(src), std::memory_order_relaxed);
+        WTF::atomicStore<MemoryOrder::Relaxed>(std::bit_cast<uint32_t*>(dst), *std::bit_cast<const uint32_t*>(src));
         return dst;
     case 8:
-        WTF::atomicStore(std::bit_cast<uint64_t*>(dst), *std::bit_cast<const uint64_t*>(src), std::memory_order_relaxed);
+        WTF::atomicStore<MemoryOrder::Relaxed>(std::bit_cast<uint64_t*>(dst), *std::bit_cast<const uint64_t*>(src));
         return dst;
     default:
         break;

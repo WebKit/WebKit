@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -323,14 +323,14 @@ public:
 
     void ref() const
     {
-        bool didRefStrongOnly = m_bits.transaction([&](uintptr_t& bits) {
+        bool didRefStrongOnly = m_bits.transaction<MemoryOrder::Relaxed>([&](uintptr_t& bits) {
             if (!isStrongOnly(bits))
                 return false;
             // FIXME: Add support for ref()/deref() during destruction like we support for other RefCounted types.
             ASSERT(!(bits & destructionStartedFlag));
             bits += refIncrement;
             return true;
-        }, std::memory_order_relaxed);
+        });
         if (didRefStrongOnly)
             return;
 
@@ -340,7 +340,7 @@ public:
     void deref() const
     {
         uintptr_t newStrongOnlyRefCount = 0;
-        bool didDerefStrongOnly = m_bits.transaction([&](uintptr_t& bits) {
+        bool didDerefStrongOnly = m_bits.transaction<MemoryOrder::Release>([&](uintptr_t& bits) {
             if (!isStrongOnly(bits))
                 return false;
             // FIXME: Add support for ref()/deref() during destruction like we support for other RefCounted types.
@@ -348,7 +348,7 @@ public:
             bits -= refIncrement;
             newStrongOnlyRefCount = bits;
             return true;
-        }, std::memory_order_release);
+        });
         if (didDerefStrongOnly) {
             if (newStrongOnlyRefCount == strongOnlyFlag) {
                 std::atomic_thread_fence(std::memory_order_acquire);
@@ -407,7 +407,7 @@ protected:
 
         auto* controlBlock = new ThreadSafeWeakPtrControlBlock(this);
 
-        bool didSetControlBlock = m_bits.transaction([&](uintptr_t& bits) {
+        bool didSetControlBlock = m_bits.transaction<MemoryOrder::Release>([&](uintptr_t& bits) {
             if (!isStrongOnly(bits))
                 return false;
 
@@ -420,7 +420,7 @@ protected:
             bits = std::bit_cast<uintptr_t>(controlBlock);
             ASSERT(!isStrongOnly(bits));
             return true;
-        }, std::memory_order_release); // We want memory_order_release here to make sure other threads see the right ref count / object.
+        });
         if (didSetControlBlock)
             return *controlBlock;
 
@@ -431,20 +431,11 @@ protected:
 private:
     static bool isStrongOnly(uintptr_t bits) { return bits & strongOnlyFlag; }
 
-    // Use memory_order_acquire under TSan to pair with the memory_order_release
-    // in controlBlock(). Without this, TSan reports a race between the
-    // non-atomic initialization of the control block's members and subsequent
-    // atomic operations on them (e.g., WordLock::lock()). ARM64 dependency
-    // ordering and x86 total store ordering make this benign in practice, but
-    // the C++ memory model requires acquire to formally synchronize with the
-    // release store.
     ALWAYS_INLINE uintptr_t bits() const
     {
-#if TSAN_ENABLED
-        return m_bits.load(std::memory_order_acquire);
-#else
-        return m_bits.loadRelaxed();
-#endif
+        uintptr_t bits;
+        Dependency dependency = m_bits.loadAndFence(bits);
+        return std::bit_cast<uintptr_t>(dependency.consume(std::bit_cast<char*>(bits)));
     }
 
     template<typename> friend class ThreadSafeWeakPtr;

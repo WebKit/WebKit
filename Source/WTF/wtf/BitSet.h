@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ *  Copyright (C) 2010-2023, 2026 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -173,7 +173,7 @@ template<size_t bitSetSize, typename WordType>
 ALWAYS_INLINE constexpr bool BitSet<bitSetSize, WordType>::concurrentGet(size_t n, Dependency dependency) const
 {
     const WordType* data = dependency.consume(&bits[n / wordSize]);
-    return !!(std::bit_cast<const Atomic<WordType>*>(data)->loadRelaxed() & (one << (n % wordSize)));
+    return !!(atomicLoad<MemoryOrder::Relaxed>(const_cast<WordType*>(data)) & (one << (n % wordSize)));
 }
 
 template<size_t bitSetSize, typename WordType>
@@ -217,7 +217,7 @@ ALWAYS_INLINE constexpr bool BitSet<bitSetSize, WordType>::concurrentTestAndSet(
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
     WordType* data = dependency.consume(&bits[index]);
-    return !!(std::bit_cast<Atomic<WordType>*>(data)->exchangeOr(mask, std::memory_order_relaxed) & mask);
+    return !!(atomicExchangeOr<MemoryOrder::Relaxed>(data, mask) & mask);
 }
 
 template<size_t bitSetSize, typename WordType>
@@ -226,7 +226,7 @@ ALWAYS_INLINE constexpr bool BitSet<bitSetSize, WordType>::concurrentTestAndClea
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
     WordType* data = dependency.consume(&bits[index]);
-    return !!(std::bit_cast<Atomic<WordType>*>(data)->exchangeAnd(static_cast<WordType>(~mask), std::memory_order_relaxed) & mask);
+    return !!(atomicExchangeAnd<MemoryOrder::Relaxed>(data, static_cast<WordType>(~mask)) & mask);
 }
 
 template<size_t bitSetSize, typename WordType>

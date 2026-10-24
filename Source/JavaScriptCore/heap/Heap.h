@@ -423,7 +423,7 @@ public:
 
     void completeAllJITPlans();
 
-    void reportBytesMarked(size_t bytes) { m_bytesMarkedThisCycle.exchangeAdd(bytes, std::memory_order_relaxed); }
+    void reportBytesMarked(size_t bytes) { m_bytesMarkedThisCycle.exchangeAdd<MemoryOrder::Relaxed>(bytes); }
 
     // Note that:
     // 1. Use this API to report non-GC memory referenced by GC objects. Be sure to

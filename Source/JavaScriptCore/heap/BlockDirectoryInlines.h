@@ -51,13 +51,12 @@ inline void BlockDirectory::forEachNotEmptyBlock(NOESCAPE const std::invocable<M
 
 inline MarkedBlock::Handle* BlockDirectory::findBlockToSweep()
 {
-    auto watched = m_unsweptCursor.watch(std::memory_order_relaxed);
-    // Order the watch before the scan, so a writer that rewinds the cursor after changing the bits either
-    // sees the watch or has its change seen by the scan; see VersionedField.
-    WTF::storeLoadFence();
+    // FullyFenced orders the watch before the scan, so a writer that rewinds the cursor after changing the bits
+    // either sees the watch or has its change seen by the scan; see VersionedField.
+    auto watched = m_unsweptCursor.watch<MemoryOrder::FullyFenced>();
     unsigned cursor = watched.value;
     MarkedBlock::Handle* block = findBlockToSweep(cursor);
-    m_unsweptCursor.tryUpdateWatched(watched, cursor, std::memory_order_relaxed);
+    m_unsweptCursor.tryUpdateWatched<MemoryOrder::Relaxed>(watched, cursor);
     return block;
 }
 

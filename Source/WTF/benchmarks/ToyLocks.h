@@ -75,23 +75,23 @@ class YieldSpinLock {
 public:
     YieldSpinLock()
     {
-        m_lock.store(0, std::memory_order_relaxed);
+        m_lock.store<MemoryOrder::Relaxed>(0);
     }
 
     void lock()
     {
-        while (!m_lock.compareExchangeWeak(0, 1, std::memory_order_acquire))
+        while (!m_lock.compareExchangeWeak<MemoryOrder::Acquire>(0, 1))
             Thread::yield();
     }
 
     void unlock()
     {
-        m_lock.store(0, std::memory_order_release);
+        m_lock.store<MemoryOrder::Release>(0);
     }
 
     bool isLocked() const
     {
-        return m_lock.load(std::memory_order_acquire);
+        return m_lock.load<MemoryOrder::Acquire>();
     }
 
 private:
@@ -102,23 +102,23 @@ class PauseSpinLock {
 public:
     PauseSpinLock()
     {
-        m_lock.store(0, std::memory_order_relaxed);
+        m_lock.store<MemoryOrder::Relaxed>(0);
     }
 
     void lock()
     {
-        while (!m_lock.compareExchangeWeak(0, 1, std::memory_order_acquire))
+        while (!m_lock.compareExchangeWeak<MemoryOrder::Acquire>(0, 1))
             spinLoopHint();
     }
 
     void unlock()
     {
-        m_lock.store(0, std::memory_order_release);
+        m_lock.store<MemoryOrder::Release>(0);
     }
 
     bool isLocked() const
     {
-        return m_lock.load(std::memory_order_acquire);
+        return m_lock.load<MemoryOrder::Acquire>();
     }
 
 private:
@@ -212,7 +212,7 @@ public:
     
     void lock()
     {
-        if (m_state.compareExchangeWeak(0, isLockedBit, std::memory_order_acquire)) [[likely]]
+        if (m_state.template compareExchangeWeak<MemoryOrder::Acquire>(0, isLockedBit)) [[likely]]
             return;
         
         lockSlow();
@@ -220,7 +220,7 @@ public:
     
     void unlock()
     {
-        if (m_state.compareExchangeWeak(isLockedBit, 0, std::memory_order_release)) [[likely]]
+        if (m_state.template compareExchangeWeak<MemoryOrder::Release>(isLockedBit, 0)) [[likely]]
             return;
         
         unlockSlow();
@@ -228,7 +228,7 @@ public:
     
     bool isLocked() const
     {
-        return m_state.load(std::memory_order_acquire) & isLockedBit;
+        return m_state.template load<MemoryOrder::Acquire>() & isLockedBit;
     }
     
 private:
@@ -289,7 +289,7 @@ public:
     
     void lock()
     {
-        if (m_state.compareExchangeWeak(Unlocked, Locked, std::memory_order_acquire)) [[likely]]
+        if (m_state.template compareExchangeWeak<MemoryOrder::Acquire>(Unlocked, Locked)) [[likely]]
             return;
         
         lockSlow();
@@ -297,7 +297,7 @@ public:
     
     void unlock()
     {
-        if (m_state.compareExchangeWeak(Locked, Unlocked, std::memory_order_release)) [[likely]]
+        if (m_state.template compareExchangeWeak<MemoryOrder::Release>(Locked, Unlocked)) [[likely]]
             return;
         
         unlockSlow();
@@ -305,7 +305,7 @@ public:
     
     bool isLocked() const
     {
-        return m_state.load(std::memory_order_acquire) != Unlocked;
+        return m_state.template load<MemoryOrder::Acquire>() != Unlocked;
     }
     
 private:
@@ -358,7 +358,7 @@ public:
     
     void lock()
     {
-        if (m_state.compareExchangeWeak(Unlocked, Locked, std::memory_order_acquire)) [[likely]]
+        if (m_state.template compareExchangeWeak<MemoryOrder::Acquire>(Unlocked, Locked)) [[likely]]
             return;
         
         lockSlow();
@@ -366,7 +366,7 @@ public:
     
     void unlock()
     {
-        if (m_state.compareExchangeWeak(Locked, Unlocked, std::memory_order_release)) [[likely]]
+        if (m_state.template compareExchangeWeak<MemoryOrder::Release>(Locked, Unlocked)) [[likely]]
             return;
         
         unlockSlow();
@@ -374,7 +374,7 @@ public:
     
     bool isLocked() const
     {
-        return m_state.load(std::memory_order_acquire) != Unlocked;
+        return m_state.template load<MemoryOrder::Acquire>() != Unlocked;
     }
     
 private:
@@ -428,7 +428,7 @@ public:
     
     void lock()
     {
-        if (m_state.compareExchangeWeak(0, isLockedBit, std::memory_order_acquire)) [[likely]]
+        if (m_state.compareExchangeWeak<MemoryOrder::Acquire>(0, isLockedBit)) [[likely]]
             return;
 
         lockSlow();
@@ -436,7 +436,7 @@ public:
 
     void unlock()
     {
-        if (m_state.compareExchangeWeak(isLockedBit, 0, std::memory_order_release)) [[likely]]
+        if (m_state.compareExchangeWeak<MemoryOrder::Release>(isLockedBit, 0)) [[likely]]
             return;
 
         unlockSlow();
@@ -444,7 +444,7 @@ public:
 
     bool isLocked() const
     {
-        return m_state.load(std::memory_order_acquire) & isLockedBit;
+        return m_state.load<MemoryOrder::Acquire>() & isLockedBit;
     }
     
 private:
@@ -519,43 +519,43 @@ public:
     void readLock()
     {
         // Take a reader ticket and read the current write phase.
-        size_t phase = m_rin.exchangeAdd(readerIncrement, std::memory_order_acquire) & writerMask;
+        size_t phase = m_rin.exchangeAdd<MemoryOrder::Acquire>(readerIncrement) & writerMask;
 
         // If a writer is present, wait for either the present bit or the phase bit to flip.
         // Writers queued behind that one cannot flip these bits, so this waits for one writer.
-        while (phase && phase == (m_rin.load(std::memory_order_acquire) & writerMask))
+        while (phase && phase == (m_rin.load<MemoryOrder::Acquire>() & writerMask))
             spinLoopHint();
     }
 
     void readUnlock()
     {
-        m_rout.exchangeAdd(readerIncrement, std::memory_order_release);
+        m_rout.exchangeAdd<MemoryOrder::Release>(readerIncrement);
     }
 
     void writeLock()
     {
         // Wait for our turn among writers.
-        size_t writerTicket = m_win.exchangeAdd(1, std::memory_order_relaxed);
-        while (writerTicket != m_wout.load(std::memory_order_acquire))
+        size_t writerTicket = m_win.exchangeAdd<MemoryOrder::Relaxed>(1);
+        while (writerTicket != m_wout.load<MemoryOrder::Acquire>())
             spinLoopHint();
 
         // Announce ourselves in rin, which stops readers arriving after this point, and learn
         // how many readers came before us.
         size_t phase = writerPresentBit | (writerTicket & phaseIdBit);
-        size_t readerTicket = m_rin.exchangeAdd(phase, std::memory_order_acquire);
+        size_t readerTicket = m_rin.exchangeAdd<MemoryOrder::Acquire>(phase);
 
         // Wait for exactly those readers to leave.
-        while (readerTicket != m_rout.load(std::memory_order_acquire))
+        while (readerTicket != m_rout.load<MemoryOrder::Acquire>())
             spinLoopHint();
     }
 
     void writeUnlock()
     {
         // Clear the phase bits, releasing the readers that queued behind us.
-        m_rin.exchangeAnd(phaseClearMask, std::memory_order_release);
+        m_rin.exchangeAnd<MemoryOrder::Release>(phaseClearMask);
 
         // Let the next writer take its turn. Only one writer is ever here.
-        m_wout.exchangeAdd(1, std::memory_order_release);
+        m_wout.exchangeAdd<MemoryOrder::Release>(1);
     }
 
 private:
@@ -594,7 +594,7 @@ class PFTParkingLock {
 public:
     void readLock()
     {
-        uint32_t phase = m_rin.exchangeAdd(readerUnit, std::memory_order_acquire) & phaseMask;
+        uint32_t phase = m_rin.exchangeAdd<MemoryOrder::Acquire>(readerUnit) & phaseMask;
         if (!phase)
             return;
         waitForPhaseChange(phase);
@@ -602,7 +602,7 @@ public:
 
     void readUnlock()
     {
-        uint32_t previous = m_rout.exchangeAdd(readerUnit, std::memory_order_acq_rel);
+        uint32_t previous = m_rout.exchangeAdd<MemoryOrder::AcquireRelease>(readerUnit);
 
         // The only thread that can be waiting on us is a writer draining readers, and its parked bit
         // lives in the word we just incremented, so an uncontended unlock is exactly one RMW with no
@@ -610,29 +610,29 @@ public:
         // actually reached: the original wakes it on every reader exit, which costs the writer a
         // park/unpark round trip per reader rather than one per acquisition.
         if (previous & writerDrainParkedBit) {
-            if (((previous + readerUnit) & readerCountMask) == m_drainTarget.load(std::memory_order_relaxed))
+            if (((previous + readerUnit) & readerCountMask) == m_drainTarget.load<MemoryOrder::Relaxed>())
                 wakeDrainingWriter();
         }
     }
 
     void writeLock()
     {
-        uint32_t ticket = m_ticket.exchangeAdd(ticketUnit, std::memory_order_relaxed);
+        uint32_t ticket = m_ticket.exchangeAdd<MemoryOrder::Relaxed>(ticketUnit);
         waitForTurn(ticket);
 
         // Announce the write phase, which blocks readers arriving from here on, and learn how many
         // readers got in before us. The phase id alternates per ticket so that a reader can tell one
         // writer's phase from the next.
         uint32_t phase = writerPresentBit | ((ticket / ticketUnit) & phaseIdBit);
-        uint32_t enteredReaders = m_rin.exchangeAdd(phase, std::memory_order_acquire);
+        uint32_t enteredReaders = m_rin.exchangeAdd<MemoryOrder::Acquire>(phase);
         waitForReaders(enteredReaders);
     }
 
     void writeUnlock()
     {
         // End our phase, which releases the readers that queued behind us, then advance the ticket.
-        uint32_t rin = m_rin.exchangeAnd(~phaseMask, std::memory_order_release);
-        uint32_t serving = m_serving.exchangeAdd(ticketUnit, std::memory_order_release);
+        uint32_t rin = m_rin.exchangeAnd<MemoryOrder::Release>(~phaseMask);
+        uint32_t serving = m_serving.exchangeAdd<MemoryOrder::Release>(ticketUnit);
 
         // Wake both queues. The original defers the writer wake, handing readers a whole phase and
         // leaving the last reader out to wake the writer queue; that needs the readers to check the
@@ -665,7 +665,7 @@ private:
     {
         unsigned spinCount = 0;
         for (;;) {
-            uint32_t rin = m_rin.load(std::memory_order_acquire);
+            uint32_t rin = m_rin.load<MemoryOrder::Acquire>();
             if ((rin & phaseMask) != phase)
                 return;
             if (spinCount < toyLockSpinLimit) {
@@ -674,11 +674,11 @@ private:
                 continue;
             }
             if (!(rin & readersParkedBit))
-                m_rin.exchangeOr(readersParkedBit, std::memory_order_relaxed);
+                m_rin.exchangeOr<MemoryOrder::Relaxed>(readersParkedBit);
             ParkingLot::parkConditionally(
                 &m_rin,
                 [&]() -> bool {
-                    uint32_t current = m_rin.load(std::memory_order_relaxed);
+                    uint32_t current = m_rin.load<MemoryOrder::Relaxed>();
                     return (current & phaseMask) == phase && (current & readersParkedBit);
                 },
                 []() { }, ParkingLot::Time::infinity());
@@ -689,7 +689,7 @@ private:
     {
         unsigned spinCount = 0;
         for (;;) {
-            uint32_t serving = m_serving.load(std::memory_order_acquire);
+            uint32_t serving = m_serving.load<MemoryOrder::Acquire>();
             if ((serving & ~writersParkedBit) == ticket)
                 return;
             if (spinCount < toyLockSpinLimit) {
@@ -698,11 +698,11 @@ private:
                 continue;
             }
             if (!(serving & writersParkedBit))
-                m_serving.exchangeOr(writersParkedBit, std::memory_order_relaxed);
+                m_serving.exchangeOr<MemoryOrder::Relaxed>(writersParkedBit);
             ParkingLot::parkConditionally(
                 &m_serving,
                 [&]() -> bool {
-                    uint32_t current = m_serving.load(std::memory_order_relaxed);
+                    uint32_t current = m_serving.load<MemoryOrder::Relaxed>();
                     return (current & ~writersParkedBit) != ticket && (current & writersParkedBit);
                 },
                 []() { }, ParkingLot::Time::infinity());
@@ -714,7 +714,7 @@ private:
         unsigned spinCount = 0;
         uint32_t target = enteredReaders & readerCountMask;
         for (;;) {
-            uint32_t rout = m_rout.load(std::memory_order_acquire);
+            uint32_t rout = m_rout.load<MemoryOrder::Acquire>();
             if ((rout & readerCountMask) == target)
                 return;
             if (spinCount < toyLockSpinLimit) {
@@ -727,13 +727,13 @@ private:
             // at a time, since the ticket serializes them, so this needs no other protection. Both this
             // and the reader's decrement are RMWs on m_rout, so either the reader sees the bit and
             // wakes us, or we see its decrement below and never park.
-            m_drainTarget.store(target, std::memory_order_relaxed);
-            m_rout.exchangeOr(writerDrainParkedBit, std::memory_order_release);
+            m_drainTarget.store<MemoryOrder::Relaxed>(target);
+            m_rout.exchangeOr<MemoryOrder::Release>(writerDrainParkedBit);
 
             ParkingLot::parkConditionally(
                 &m_rout,
                 [&]() -> bool {
-                    uint32_t current = m_rout.load(std::memory_order_relaxed);
+                    uint32_t current = m_rout.load<MemoryOrder::Relaxed>();
                     return (current & readerCountMask) != target && (current & writerDrainParkedBit);
                 },
                 []() { }, ParkingLot::Time::infinity());
@@ -745,7 +745,7 @@ private:
         ParkingLot::unparkOne(
             &m_rout,
             [&](ParkingLot::UnparkResult) -> intptr_t {
-                m_rout.exchangeAnd(~writerDrainParkedBit, std::memory_order_relaxed);
+                m_rout.exchangeAnd<MemoryOrder::Relaxed>(~writerDrainParkedBit);
                 return 0;
             });
     }
@@ -755,7 +755,7 @@ private:
         ParkingLot::unparkCount(
             &m_rin, UINT32_MAX,
             [&](ParkingLot::UnparkResult) -> intptr_t {
-                m_rin.exchangeAnd(~readersParkedBit, std::memory_order_relaxed);
+                m_rin.exchangeAnd<MemoryOrder::Relaxed>(~readersParkedBit);
                 return 0;
             });
     }
@@ -767,7 +767,7 @@ private:
         ParkingLot::unparkCount(
             &m_serving, UINT32_MAX,
             [&](ParkingLot::UnparkResult) -> intptr_t {
-                m_serving.exchangeAnd(~writersParkedBit, std::memory_order_relaxed);
+                m_serving.exchangeAnd<MemoryOrder::Relaxed>(~writersParkedBit);
                 return 0;
             });
     }
@@ -800,9 +800,9 @@ class CountedRWLock {
 public:
     void readLock()
     {
-        uint32_t state = m_state.load(std::memory_order_relaxed);
+        uint32_t state = m_state.load<MemoryOrder::Relaxed>();
         if (!(state & (writerHeldBit | writerWaitCountMask))) [[likely]] {
-            if (m_state.compareExchangeWeak(state, state + readerCountUnit, std::memory_order_acquire, std::memory_order_relaxed)) [[likely]]
+            if (m_state.compareExchangeWeak<MemoryOrder::Acquire, MemoryOrder::Relaxed>(state, state + readerCountUnit)) [[likely]]
                 return;
         }
         readLockSlow();
@@ -812,14 +812,14 @@ public:
     {
         // An unconditional decrement cannot fail against concurrent releases, and the value it hands
         // back says exactly whether we were the last reader out.
-        uint32_t state = m_state.exchangeAdd(0u - readerCountUnit, std::memory_order_release);
+        uint32_t state = m_state.exchangeAdd<MemoryOrder::Release>(0u - readerCountUnit);
         if ((state & readerCountMask) == readerCountUnit && (state & hasParkedMask)) [[unlikely]]
             readUnlockSlow();
     }
 
     void writeLock()
     {
-        if (m_state.compareExchangeWeak(0u, writerHeldBit, std::memory_order_acquire)) [[likely]]
+        if (m_state.compareExchangeWeak<MemoryOrder::Acquire>(0u, writerHeldBit)) [[likely]]
             return;
         writeLockSlow();
     }
@@ -828,7 +828,7 @@ public:
     {
         // Must require exactly writerHeldBit, so that a release never skips the slow path while
         // anyone is parked.
-        if (m_state.compareExchangeWeak(writerHeldBit, 0u, std::memory_order_release)) [[likely]]
+        if (m_state.compareExchangeWeak<MemoryOrder::Release>(writerHeldBit, 0u)) [[likely]]
             return;
         writeUnlockSlow();
     }
@@ -904,9 +904,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     {
         unsigned spinCount = 0;
         for (;;) {
-            uint32_t state = m_state.load(std::memory_order_relaxed);
+            uint32_t state = m_state.load<MemoryOrder::Relaxed>();
             if (!(state & (writerHeldBit | writerWaitCountMask))) {
-                uint32_t actual = m_state.compareExchangeStrong(state, state + readerCountUnit, std::memory_order_acquire);
+                uint32_t actual = m_state.compareExchangeStrong<MemoryOrder::Acquire>(state, state + readerCountUnit);
                 if (actual == state)
                     return;
                 continue;
@@ -923,7 +923,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 [&]() -> bool {
                     // Requiring the parked bit lets a releaser that found this queue empty clear it
                     // safely: either we observe the clear and do not park, or it observes our set.
-                    uint32_t current = m_state.load(std::memory_order_relaxed);
+                    uint32_t current = m_state.load<MemoryOrder::Relaxed>();
                     return (current & (writerHeldBit | writerWaitCountMask)) && (current & hasParkedReadersBit);
                 },
                 []() { }, ParkingLot::Time::infinity());
@@ -938,7 +938,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         // Our count is already gone, so this only wakes whoever is parked. A writer or a new reader
         // may have acquired since the decrement, in which case waking is their job on release.
         for (;;) {
-            uint32_t state = m_state.load(std::memory_order_relaxed);
+            uint32_t state = m_state.load<MemoryOrder::Relaxed>();
             if (state & (writerHeldBit | readerCountMask))
                 return;
 
@@ -949,14 +949,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     [&](ParkingLot::UnparkResult result) -> intptr_t {
                         didWake = result.unparkedCount;
                         if (!result.unparkedCount) {
-                            m_state.exchangeAnd(~hasParkedWritersBit, std::memory_order_relaxed);
+                            m_state.exchangeAnd<MemoryOrder::Relaxed>(~hasParkedWritersBit);
                             return BargingOpportunity;
                         }
 
                         if (result.timeToBeFair) {
                             // A handed-off writer returns without running its acquire, so its
                             // registration has to be retired here.
-                            bool handedOff = m_state.transaction([&](uint32_t& bits) -> bool {
+                            bool handedOff = m_state.transaction<MemoryOrder::Release>([&](uint32_t& bits) -> bool {
                                 if (bits & (writerHeldBit | readerCountMask))
                                     return false;
                                 bits -= writerWaitCountUnit;
@@ -964,11 +964,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                                 if (!result.mayHaveMoreThreads)
                                     bits &= ~hasParkedWritersBit;
                                 return true;
-                            }, std::memory_order_release);
+                            });
                             if (handedOff)
                                 return DirectHandoff;
                         } else if (!result.mayHaveMoreThreads)
-                            m_state.exchangeAnd(~hasParkedWritersBit, std::memory_order_relaxed);
+                            m_state.exchangeAnd<MemoryOrder::Relaxed>(~hasParkedWritersBit);
 
                         return BargingOpportunity;
                     });
@@ -984,11 +984,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     [&](ParkingLot::UnparkResult result) -> intptr_t {
                         didWake = result.unparkedCount;
                         if (!result.unparkedCount) {
-                            m_state.exchangeAnd(~hasParkedReadersBit, std::memory_order_relaxed);
+                            m_state.exchangeAnd<MemoryOrder::Relaxed>(~hasParkedReadersBit);
                             return BargingOpportunity;
                         }
 
-                        bool granted = m_state.transaction([&](uint32_t& bits) -> bool {
+                        bool granted = m_state.transaction<MemoryOrder::Release>([&](uint32_t& bits) -> bool {
                             if (bits & writerHeldBit)
                                 return false;
                             // We asked for every waiter, so the queue is drained. mayHaveMoreThreads is
@@ -996,7 +996,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                             bits &= ~hasParkedReadersBit;
                             bits += result.unparkedCount * readerCountUnit;
                             return true;
-                        }, std::memory_order_release);
+                        });
                         return granted ? DirectHandoff : BargingOpportunity;
                     });
                 if (didWake)
@@ -1014,14 +1014,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         // Every parked writer holds a registration, and only whoever grants a writer the lock retires
         // it, so a nonzero count always has a live writer behind it that will wake the readers it blocks.
         bool registered = false;
-        uint32_t state = m_state.load(std::memory_order_relaxed);
+        uint32_t state = m_state.load<MemoryOrder::Relaxed>();
 
         for (;;) {
             if (!(state & (readerCountMask | writerHeldBit))) {
                 uint32_t desired = state | writerHeldBit;
                 if (registered)
                     desired -= writerWaitCountUnit;
-                uint32_t actual = m_state.compareExchangeStrong(state, desired, std::memory_order_acquire, std::memory_order_relaxed);
+                uint32_t actual = m_state.compareExchangeStrong<MemoryOrder::Acquire, MemoryOrder::Relaxed>(state, desired);
                 if (actual == state)
                     return;
                 state = actual;
@@ -1029,7 +1029,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             }
 
             if (!registered && spinCount >= writerRegisterAfter) {
-                uint32_t previous = m_state.exchangeAdd(writerWaitCountUnit, std::memory_order_relaxed);
+                uint32_t previous = m_state.exchangeAdd<MemoryOrder::Relaxed>(writerWaitCountUnit);
                 RELEASE_ASSERT((previous & writerWaitCountMask) != writerWaitCountMask);
                 registered = true;
                 state = previous + writerWaitCountUnit;
@@ -1037,7 +1037,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             }
 
             if (spinStep<writerTuning>(spinCount)) {
-                state = m_state.load(std::memory_order_relaxed);
+                state = m_state.load<MemoryOrder::Relaxed>();
                 continue;
             }
 
@@ -1046,7 +1046,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             ParkingLot::ParkResult parkResult = ParkingLot::parkConditionally(
                 writerParkingAddress(),
                 [&]() -> bool {
-                    uint32_t current = m_state.load(std::memory_order_relaxed);
+                    uint32_t current = m_state.load<MemoryOrder::Relaxed>();
                     return (current & (readerCountMask | writerHeldBit)) && (current & hasParkedWritersBit);
                 },
                 []() { }, ParkingLot::Time::infinity());
@@ -1054,14 +1054,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             if (parkResult.wasUnparked && parkResult.token == DirectHandoff)
                 return;
 
-            state = m_state.load(std::memory_order_relaxed);
+            state = m_state.load<MemoryOrder::Relaxed>();
         }
     }
 
     NEVER_INLINE void writeUnlockSlow()
     {
         for (;;) {
-            uint32_t state = m_state.load(std::memory_order_relaxed);
+            uint32_t state = m_state.load<MemoryOrder::Relaxed>();
 
             // Readers first, so that a stream of writers cannot starve them.
             if (state & hasParkedReadersBit) {
@@ -1070,16 +1070,16 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     readerParkingAddress(), UINT32_MAX,
                     [&](ParkingLot::UnparkResult result) -> intptr_t {
                         if (!result.unparkedCount) {
-                            m_state.exchangeAnd(~hasParkedReadersBit, std::memory_order_relaxed);
+                            m_state.exchangeAnd<MemoryOrder::Relaxed>(~hasParkedReadersBit);
                             return BargingOpportunity;
                         }
 
                         didHandoffLock = true;
-                        m_state.transaction([&](uint32_t& bits) -> bool {
+                        m_state.transaction<MemoryOrder::Release>([&](uint32_t& bits) -> bool {
                             bits &= ~(writerHeldBit | hasParkedReadersBit);
                             bits += result.unparkedCount * readerCountUnit;
                             return true;
-                        }, std::memory_order_release);
+                        });
                         return DirectHandoff;
                     });
                 if (didHandoffLock)
@@ -1107,14 +1107,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                         // Our snapshot of hasParkedReadersBit predates this callback, and we hold the
                         // writer queue's bucket lock rather than the reader queue's, so decline if a
                         // reader parked meanwhile and go round again to wake it.
-                        done = m_state.transaction([&](uint32_t& bits) -> bool {
+                        done = m_state.transaction<MemoryOrder::Release>([&](uint32_t& bits) -> bool {
                             if (bits & hasParkedReadersBit)
                                 return false;
                             bits &= ~(writerHeldBit | hasParkedWritersBit);
                             if (result.mayHaveMoreThreads)
                                 bits |= hasParkedWritersBit;
                             return true;
-                        }, std::memory_order_release);
+                        });
                         return BargingOpportunity;
                     });
                 if (done)
@@ -1124,7 +1124,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
             // A CAS from the observed state rather than a blind clear, so that a thread that set a
             // parked bit since the load sends us back round to wake it.
-            if (m_state.compareExchangeWeak(state, state & ~writerHeldBit, std::memory_order_release))
+            if (m_state.compareExchangeWeak<MemoryOrder::Release>(state, state & ~writerHeldBit))
                 return;
         }
     }

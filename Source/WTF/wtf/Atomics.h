@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017, 2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,13 +36,103 @@ ALWAYS_INLINE bool hasFence(std::memory_order order)
 {
     return order != std::memory_order_relaxed;
 }
-    
+
+// Orders the surrounding memory accesses of the current thread relative to an atomic operation.
+// Every order guarantees the operation itself is atomic and that all threads agree on a single
+// modification order for that location.
+//
+// Unlike C++, WTF's atomics also expect multi-copy atomicity: a store, atomic or not, becomes visible to all
+// other threads at the same time (the storing thread may see it earlier). So once any thread observes a
+// store, ordering established with that thread carries it to every other thread. ARM64 and x86_64 provide
+// this in hardware; we don't use concurrency on CPUs that don't, such as ARMv7.
+enum class MemoryOrder : uint8_t {
+    // No ordering of other memory accesses.
+    Relaxed,
+    // Loads and read-modify-writes only. Later loads and stores can't move above it. If it reads the
+    // value written by a Release (or stronger) operation, everything before that operation in the
+    // writing thread is visible after this one. This matches C++'s std::memory_order::acquire.
+    Acquire,
+    // Stores and read-modify-writes only. Earlier loads and stores can't move below it.
+    Release,
+    // Read-modify-writes only. Both Acquire and Release.
+    AcquireRelease,
+    // Acquire for loads, Release for stores, AcquireRelease for read-modify-writes, plus a single total
+    // order of all SeqCst operations that every thread observes. Non-SeqCst accesses are ordered only by
+    // the Acquire/Release part; e.g. an earlier store can still move below a later SeqCst load. Use
+    // FullyFenced when nothing may move across an access.
+    SeqCst,
+    // Read-modify-writes only. No load or store, atomic or not, can move across it in either direction.
+    // Unlike SeqCst this also keeps an earlier store above a later load of a different location, which
+    // Dekker-style/storeLoadFence protocols need. A compare-exchange that fails is only Acquire.
+    FullyFenced,
+};
+
+ALWAYS_INLINE constexpr std::memory_order toStdMemoryOrder(MemoryOrder order)
+{
+    switch (order) {
+    case MemoryOrder::Relaxed:
+        return std::memory_order_relaxed;
+    case MemoryOrder::Acquire:
+        return std::memory_order_acquire;
+    case MemoryOrder::Release:
+        return std::memory_order_release;
+    case MemoryOrder::AcquireRelease:
+        return std::memory_order_acq_rel;
+    case MemoryOrder::SeqCst:
+    case MemoryOrder::FullyFenced:
+        return std::memory_order_seq_cst;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+constexpr bool isValidLoadOrder(MemoryOrder order)
+{
+    return order == MemoryOrder::Relaxed || order == MemoryOrder::Acquire || order == MemoryOrder::SeqCst;
+}
+
+constexpr bool isValidStoreOrder(MemoryOrder order)
+{
+    return order == MemoryOrder::Relaxed || order == MemoryOrder::Release || order == MemoryOrder::SeqCst;
+}
+
+constexpr MemoryOrder defaultCompareExchangeFailureOrder(MemoryOrder orderSuccess)
+{
+    switch (orderSuccess) {
+    case MemoryOrder::Relaxed:
+    case MemoryOrder::Release:
+        return MemoryOrder::Relaxed;
+    case MemoryOrder::Acquire:
+    case MemoryOrder::AcquireRelease:
+        return MemoryOrder::Acquire;
+    case MemoryOrder::SeqCst:
+    case MemoryOrder::FullyFenced:
+        return MemoryOrder::SeqCst;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+// A SeqCst read-modify-write is already a full fence on x86 (any lock-prefixed instruction) and on ARM64
+// with LSE (the acquire-release forms), but not when it's a load/store-exclusive loop.
+template<MemoryOrder order, typename T>
+ALWAYS_INLINE void fenceAfterReadModifyWrite()
+{
+    // A lock-based atomic isn't a full fence.
+    if constexpr (order == MemoryOrder::FullyFenced)
+        static_assert(std::atomic_ref<T>::is_always_lock_free);
+#if !(CPU(X86) || CPU(X86_64) || (CPU(ARM64) && defined(__ARM_FEATURE_ATOMICS)))
+    if constexpr (order == MemoryOrder::FullyFenced)
+        std::atomic_thread_fence(std::memory_order_seq_cst);
+#endif
+}
+
 // Atomic wraps around std::atomic with the sole purpose of making the compare_exchange
 // operations not alter the expected value. This is more in line with how we typically
 // use CAS in our code.
 //
 // Atomic is a struct without explicitly defined constructors so that it can be
 // initialized at compile time.
+
+class Dependency;
 
 template<typename T>
 struct Atomic {
@@ -52,89 +142,132 @@ struct Atomic {
     // what you are doing and have thought about it very hard. The cost of seq_cst
     // is usually not high enough to justify the risk.
 
-    ALWAYS_INLINE T load(std::memory_order order = std::memory_order_seq_cst) const { return value.load(order); }
-    
-    ALWAYS_INLINE T loadRelaxed() const { return load(std::memory_order_relaxed); }
-    
+    template<MemoryOrder order = MemoryOrder::SeqCst>
+    ALWAYS_INLINE T load() const
+    {
+        static_assert(isValidLoadOrder(order));
+        return value.load(toStdMemoryOrder(order));
+    }
+
+    // FIXME: Decide whether the named orders (loadRelaxed(), storeRelaxed(), compareExchangeWeakRelaxed(),
+    // transactionRelaxed(), loadFullyFenced(), storeFullyFenced()) should stay alongside the MemoryOrder
+    // template parameter or be replaced by it.
+    ALWAYS_INLINE T loadRelaxed() const { return load<MemoryOrder::Relaxed>(); }
+
+    Dependency loadAndFence(T& output) const;
+
     // This is a load that simultaneously does a full fence - neither loads nor stores will move
     // above or below it.
     ALWAYS_INLINE T loadFullyFenced() const
     {
-        Atomic<T>* ptr = const_cast<Atomic<T>*>(this);
-        return ptr->exchangeAdd(T());
+        return const_cast<Atomic*>(this)->template exchangeAdd<MemoryOrder::FullyFenced>(T());
     }
-    
-    ALWAYS_INLINE void store(T desired, std::memory_order order = std::memory_order_seq_cst) { value.store(desired, order); }
-    
-    ALWAYS_INLINE void storeRelaxed(T desired) { store(desired, std::memory_order_relaxed); }
+
+    template<MemoryOrder order = MemoryOrder::SeqCst>
+    ALWAYS_INLINE void store(T desired)
+    {
+        static_assert(isValidStoreOrder(order));
+        value.store(desired, toStdMemoryOrder(order));
+    }
+
+    ALWAYS_INLINE void storeRelaxed(T desired) { store<MemoryOrder::Relaxed>(desired); }
 
     // This is a store that simultaneously does a full fence - neither loads nor stores will move
     // above or below it.
     ALWAYS_INLINE void storeFullyFenced(T desired)
     {
-        exchange(desired);
+        exchange<MemoryOrder::FullyFenced>(desired);
     }
 
-    ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
+    template<MemoryOrder orderSuccess = MemoryOrder::SeqCst, MemoryOrder orderFailure = defaultCompareExchangeFailureOrder(orderSuccess)>
+    ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired)
     {
+        static_assert(isValidLoadOrder(orderFailure));
         T expectedOrActual = expected;
-        return value.compare_exchange_weak(expectedOrActual, desired, order);
+        bool result = value.compare_exchange_weak(expectedOrActual, desired, toStdMemoryOrder(orderSuccess), toStdMemoryOrder(orderFailure));
+        fenceAfterReadModifyWrite<orderSuccess, T>();
+        return result;
     }
 
     ALWAYS_INLINE bool compareExchangeWeakRelaxed(T expected, T desired)
     {
-        return compareExchangeWeak(expected, desired, std::memory_order_relaxed);
-    }
-
-    ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
-    {
-        T expectedOrActual = expected;
-        return value.compare_exchange_weak(expectedOrActual, desired, order_success, order_failure);
+        return compareExchangeWeak<MemoryOrder::Relaxed>(expected, desired);
     }
 
     // WARNING: This does not have strong fencing guarantees when it fails. For example, stores could
     // sink below it in that case.
-    ALWAYS_INLINE T compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
+    template<MemoryOrder orderSuccess = MemoryOrder::SeqCst, MemoryOrder orderFailure = defaultCompareExchangeFailureOrder(orderSuccess)>
+    ALWAYS_INLINE T compareExchangeStrong(T expected, T desired)
     {
+        static_assert(isValidLoadOrder(orderFailure));
         T expectedOrActual = expected;
-        value.compare_exchange_strong(expectedOrActual, desired, order);
+        value.compare_exchange_strong(expectedOrActual, desired, toStdMemoryOrder(orderSuccess), toStdMemoryOrder(orderFailure));
+        fenceAfterReadModifyWrite<orderSuccess, T>();
         return expectedOrActual;
     }
 
-    ALWAYS_INLINE T compareExchangeStrong(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
+    template<MemoryOrder order = MemoryOrder::SeqCst, typename U>
+    ALWAYS_INLINE T exchangeAdd(U operand)
     {
-        T expectedOrActual = expected;
-        value.compare_exchange_strong(expectedOrActual, desired, order_success, order_failure);
-        return expectedOrActual;
+        T result = value.fetch_add(operand, toStdMemoryOrder(order));
+        fenceAfterReadModifyWrite<order, T>();
+        return result;
     }
 
-    template<typename U>
-    ALWAYS_INLINE T exchangeAdd(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_add(operand, order); }
-    
-    template<typename U>
-    ALWAYS_INLINE T exchangeAnd(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_and(operand, order); }
-    
-    template<typename U>
-    ALWAYS_INLINE T exchangeOr(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_or(operand, order); }
-    
-    template<typename U>
-    ALWAYS_INLINE T exchangeSub(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_sub(operand, order); }
-    
-    template<typename U>
-    ALWAYS_INLINE T exchangeXor(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_xor(operand, order); }
-    
-    ALWAYS_INLINE T exchange(T newValue, std::memory_order order = std::memory_order_seq_cst) { return value.exchange(newValue, order); }
+    template<MemoryOrder order = MemoryOrder::SeqCst, typename U>
+    ALWAYS_INLINE T exchangeAnd(U operand)
+    {
+        T result = value.fetch_and(operand, toStdMemoryOrder(order));
+        fenceAfterReadModifyWrite<order, T>();
+        return result;
+    }
+
+    template<MemoryOrder order = MemoryOrder::SeqCst, typename U>
+    ALWAYS_INLINE T exchangeOr(U operand)
+    {
+        T result = value.fetch_or(operand, toStdMemoryOrder(order));
+        fenceAfterReadModifyWrite<order, T>();
+        return result;
+    }
+
+    template<MemoryOrder order = MemoryOrder::SeqCst, typename U>
+    ALWAYS_INLINE T exchangeSub(U operand)
+    {
+        T result = value.fetch_sub(operand, toStdMemoryOrder(order));
+        fenceAfterReadModifyWrite<order, T>();
+        return result;
+    }
+
+    template<MemoryOrder order = MemoryOrder::SeqCst, typename U>
+    ALWAYS_INLINE T exchangeXor(U operand)
+    {
+        T result = value.fetch_xor(operand, toStdMemoryOrder(order));
+        fenceAfterReadModifyWrite<order, T>();
+        return result;
+    }
+
+    template<MemoryOrder order = MemoryOrder::SeqCst>
+    ALWAYS_INLINE T exchange(T newValue)
+    {
+        T result = value.exchange(newValue, toStdMemoryOrder(order));
+        fenceAfterReadModifyWrite<order, T>();
+        return result;
+    }
 
     // func is supposed to return false if the value is already in the desired state.
     // Returns true if the value was changed. Else returns false.
-    ALWAYS_INLINE bool transaction(NOESCAPE const Invocable<bool(T&)> auto& func, std::memory_order order = std::memory_order_seq_cst)
+    template<MemoryOrder order = MemoryOrder::SeqCst>
+    ALWAYS_INLINE bool transaction(NOESCAPE const Invocable<bool(T&)> auto& func)
     {
+        // FIXME: Support FullyFenced once transaction can take separate success and failure orders. When func
+        // returns false we've only done a Relaxed load.
+        static_assert(order != MemoryOrder::FullyFenced);
         for (;;) {
-            T oldValue = load(std::memory_order_relaxed);
+            T oldValue = load<MemoryOrder::Relaxed>();
             T newValue = oldValue;
             if (!func(newValue))
                 return false;
-            if (compareExchangeWeak(oldValue, newValue, order))
+            if (compareExchangeWeak<order>(oldValue, newValue))
                 return true;
         }
     }
@@ -144,7 +277,7 @@ struct Atomic {
     template<typename Func>
     ALWAYS_INLINE bool transactionRelaxed(NOESCAPE const Func& func)
     {
-        return transaction(func, std::memory_order_relaxed);
+        return transaction<MemoryOrder::Relaxed>(func);
     }
 
     Atomic() = default;
@@ -156,85 +289,105 @@ struct Atomic {
     std::atomic<T> value;
 };
 
-template<typename T>
-inline T atomicLoad(T* location, std::memory_order order = std::memory_order_seq_cst)
+template<MemoryOrder order = MemoryOrder::SeqCst, typename T>
+inline T atomicLoad(T* location)
 {
-    return std::atomic_ref<T>(*location).load(order);
+    static_assert(isValidLoadOrder(order));
+    return std::atomic_ref<T>(*location).load(toStdMemoryOrder(order));
 }
 
 template<typename T>
 inline T atomicLoadFullyFenced(T* location)
 {
-    return std::atomic_ref<T>(*location).fetch_add(T());
+    T result = std::atomic_ref<T>(*location).fetch_add(T(), toStdMemoryOrder(MemoryOrder::FullyFenced));
+    fenceAfterReadModifyWrite<MemoryOrder::FullyFenced, T>();
+    return result;
 }
 
-template<typename T>
-inline void atomicStore(T* location, T newValue, std::memory_order order = std::memory_order_seq_cst)
+template<MemoryOrder order = MemoryOrder::SeqCst, typename T>
+inline void atomicStore(T* location, T newValue)
 {
-    std::atomic_ref<T>(*location).store(newValue, order);
+    static_assert(isValidStoreOrder(order));
+    std::atomic_ref<T>(*location).store(newValue, toStdMemoryOrder(order));
 }
 
 template<typename T>
 inline void atomicStoreFullyFenced(T* location, T newValue)
 {
-    std::atomic_ref<T>(*location).exchange(newValue);
+    std::atomic_ref<T>(*location).exchange(newValue, toStdMemoryOrder(MemoryOrder::FullyFenced));
+    fenceAfterReadModifyWrite<MemoryOrder::FullyFenced, T>();
 }
 
-template<typename T>
-inline bool atomicCompareExchangeWeak(T* location, T expected, T newValue, std::memory_order order = std::memory_order_seq_cst)
+template<MemoryOrder order = MemoryOrder::SeqCst, typename T>
+inline bool atomicCompareExchangeWeak(T* location, T expected, T newValue)
 {
     T expectedOrActual = expected;
-    return std::atomic_ref<T>(*location).compare_exchange_weak(expectedOrActual, newValue, order);
+    bool result = std::atomic_ref<T>(*location).compare_exchange_weak(expectedOrActual, newValue, toStdMemoryOrder(order));
+    fenceAfterReadModifyWrite<order, T>();
+    return result;
 }
 
 template<typename T>
 inline bool atomicCompareExchangeWeakRelaxed(T* location, T expected, T newValue)
 {
-    return atomicCompareExchangeWeak(location, expected, newValue, std::memory_order_relaxed);
+    return atomicCompareExchangeWeak<MemoryOrder::Relaxed>(location, expected, newValue);
 }
 
-template<typename T>
-inline T atomicCompareExchangeStrong(T* location, T expected, T newValue, std::memory_order order = std::memory_order_seq_cst)
+template<MemoryOrder order = MemoryOrder::SeqCst, typename T>
+inline T atomicCompareExchangeStrong(T* location, T expected, T newValue)
 {
     T expectedOrActual = expected;
-    std::atomic_ref<T>(*location).compare_exchange_strong(expectedOrActual, newValue, order);
+    std::atomic_ref<T>(*location).compare_exchange_strong(expectedOrActual, newValue, toStdMemoryOrder(order));
+    fenceAfterReadModifyWrite<order, T>();
     return expectedOrActual;
 }
 
-template<typename T, typename U>
-inline T atomicExchangeAdd(T* location, U operand, std::memory_order order = std::memory_order_seq_cst)
+template<MemoryOrder order = MemoryOrder::SeqCst, typename T, typename U>
+inline T atomicExchangeAdd(T* location, U operand)
 {
-    return std::atomic_ref<T>(*location).fetch_add(operand, order);
+    T result = std::atomic_ref<T>(*location).fetch_add(operand, toStdMemoryOrder(order));
+    fenceAfterReadModifyWrite<order, T>();
+    return result;
 }
 
-template<typename T, typename U>
-inline T atomicExchangeAnd(T* location, U operand, std::memory_order order = std::memory_order_seq_cst)
+template<MemoryOrder order = MemoryOrder::SeqCst, typename T, typename U>
+inline T atomicExchangeAnd(T* location, U operand)
 {
-    return std::atomic_ref<T>(*location).fetch_and(operand, order);
+    T result = std::atomic_ref<T>(*location).fetch_and(operand, toStdMemoryOrder(order));
+    fenceAfterReadModifyWrite<order, T>();
+    return result;
 }
 
-template<typename T, typename U>
-inline T atomicExchangeOr(T* location, U operand, std::memory_order order = std::memory_order_seq_cst)
+template<MemoryOrder order = MemoryOrder::SeqCst, typename T, typename U>
+inline T atomicExchangeOr(T* location, U operand)
 {
-    return std::atomic_ref<T>(*location).fetch_or(operand, order);
+    T result = std::atomic_ref<T>(*location).fetch_or(operand, toStdMemoryOrder(order));
+    fenceAfterReadModifyWrite<order, T>();
+    return result;
 }
 
-template<typename T, typename U>
-inline T atomicExchangeSub(T* location, U operand, std::memory_order order = std::memory_order_seq_cst)
+template<MemoryOrder order = MemoryOrder::SeqCst, typename T, typename U>
+inline T atomicExchangeSub(T* location, U operand)
 {
-    return std::atomic_ref<T>(*location).fetch_sub(operand, order);
+    T result = std::atomic_ref<T>(*location).fetch_sub(operand, toStdMemoryOrder(order));
+    fenceAfterReadModifyWrite<order, T>();
+    return result;
 }
 
-template<typename T, typename U>
-inline T atomicExchangeXor(T* location, U operand, std::memory_order order = std::memory_order_seq_cst)
+template<MemoryOrder order = MemoryOrder::SeqCst, typename T, typename U>
+inline T atomicExchangeXor(T* location, U operand)
 {
-    return std::atomic_ref<T>(*location).fetch_xor(operand, order);
+    T result = std::atomic_ref<T>(*location).fetch_xor(operand, toStdMemoryOrder(order));
+    fenceAfterReadModifyWrite<order, T>();
+    return result;
 }
 
-template<typename T>
-inline T atomicExchange(T* location, T newValue, std::memory_order order = std::memory_order_seq_cst)
+template<MemoryOrder order = MemoryOrder::SeqCst, typename T>
+inline T atomicExchange(T* location, T newValue)
 {
-    return std::atomic_ref<T>(*location).exchange(newValue, order);
+    T result = std::atomic_ref<T>(*location).exchange(newValue, toStdMemoryOrder(order));
+    fenceAfterReadModifyWrite<order, T>();
+    return result;
 }
 
 // Just a compiler fence. Has no effect on the hardware, but tells the compiler
@@ -482,6 +635,27 @@ private:
     InternalDependencyType m_value;
 };
 
+template<typename T>
+ALWAYS_INLINE Dependency Atomic<T>::loadAndFence(T& output) const
+{
+#if TSAN_ENABLED
+    // TSan doesn't model dependency ordering, so use an Acquire to avoid false races on data published
+    // with a Release.
+    output = load<MemoryOrder::Acquire>();
+    return Dependency();
+#elif CPU(ARM64) || CPU(ARM)
+    T value = opaque(this)->loadRelaxed();
+    Dependency dependency = Dependency::fence(value);
+    output = opaque(value);
+    return dependency;
+#else
+    T value = loadRelaxed();
+    Dependency dependency = Dependency::fence(value);
+    output = value;
+    return dependency;
+#endif
+}
+
 template<typename InputType, typename ValueType>
 struct InputAndValue {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(InputAndValue);
@@ -507,17 +681,15 @@ InputAndValue<InputType, ValueType> inputAndValue(InputType input, ValueType val
 template<typename T>
 ALWAYS_INLINE T& ensurePointer(Atomic<T*>& pointer, NOESCAPE const Invocable<T*()> auto& func)
 {
-    T* oldValue = pointer.load(std::memory_order_relaxed);
-    if (oldValue) {
-        // On all sensible CPUs, we get an implicit dependency-based load-load barrier when
-        // loading this.
-        return *oldValue;
-    }
+    T* oldValue;
+    Dependency dependency = pointer.loadAndFence(oldValue);
+    if (oldValue)
+        return *dependency.consume(oldValue);
     T* newValue = func();
-    if (T* actual = pointer.compareExchangeStrong(nullptr, newValue, std::memory_order_release, std::memory_order_relaxed)) {
-        // Someone beat us to it, memory_order_relaxed is fine in this case, we didn't publish newValue to any other thread.
+    if (T* actual = pointer.template compareExchangeStrong<MemoryOrder::Release, MemoryOrder::Relaxed>(nullptr, newValue)) {
+        // We never published newValue, so the failure order can be Relaxed.
         delete newValue;
-        return *actual;
+        return *Dependency::fence(actual).consume(actual);
     }
     return *newValue;
 }
@@ -528,5 +700,6 @@ using WTF::Atomic;
 using WTF::Dependency;
 using WTF::InputAndValue;
 using WTF::inputAndValue;
+using WTF::MemoryOrder;
 using WTF::ensurePointer;
 using WTF::opaqueMixture;
