@@ -1121,7 +1121,7 @@ void RenderImage::layout()
     // https://html.spec.whatwg.org/multipage/images.html#relevant-mutations
     // "If the element allows auto-sizes: ... its concrete object size width changes"
     if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element())) {
-        if (imageElement->hasAutoSizes() && imageElement->isLazyLoadable())
+        if (imageElement->allowsAutoSizes())
             imageElement->scheduleAutoSizesResolution();
     }
 }

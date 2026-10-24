@@ -44,9 +44,14 @@ public:
     ~LazyLoadElementObserver();
 
     static void observe(Element&);
+
+    // Detaches unconditionally; for callers that own the observation outright, such as element
+    // teardown or a document move.
     static void unobserve(Element&, Document&);
 
-    bool isObserved(Element&) const;
+    // Detaches only elements observed solely to trigger a one-shot lazy load, leaving those that
+    // track viewport intersection for their own purposes attached.
+    static void unobserveIfLazyLoadOnly(Element&, Document&);
 
 private:
     IntersectionObserver* intersectionObserver(Document&);

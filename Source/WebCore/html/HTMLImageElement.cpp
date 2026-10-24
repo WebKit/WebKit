@@ -52,6 +52,7 @@
 #include "ImageRequestState.h"
 #include "JSRequestPriority.h"
 #include "LazyLoadElementObserver.h"
+#include "LazyLoading.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
@@ -67,7 +68,6 @@
 #include "RenderImageResource.h"
 #include "RenderView.h"
 #include "RequestPriority.h"
-#include "ScriptController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SizesAttributeParser.h"
@@ -328,7 +328,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
 
         auto sourceSize = sizesParser.effectiveSize();
-        if (sizesParser.isAuto() && isLazyLoadable()) {
+        if (sizesParser.isAuto() && LazyLoading::isInLazyState(*this)) {
             if (auto layoutWidth = autoSizesLayoutWidth())
                 sourceSize = std::optional<float>(*layoutWidth);
         }
@@ -379,7 +379,7 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
     // If sizes=auto is active with loading=lazy but the layout width is not
     // yet available, defer source selection. didAttachRenderers() and
     // RenderImage::layout() will re-invoke this.
-    if (hasAutoSizes() && isLazyLoadable() && !autoSizesLayoutWidth() && usesSrcsetOrPicture())
+    if (allowsAutoSizes() && !autoSizesLayoutWidth() && usesSrcsetOrPicture())
         return;
 
     // First look for the best fit source from our <picture> parent if we have one.
@@ -399,7 +399,7 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
             SizesAttributeParser sizesParser(attributeWithoutSynchronization(sizesAttr).string(), document.get());
             m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
             auto sourceSize = sizesParser.effectiveSize();
-            if (sizesParser.isAuto() && isLazyLoadable()) {
+            if (sizesParser.isAuto() && LazyLoading::isInLazyState(*this)) {
                 if (auto layoutWidth = autoSizesLayoutWidth())
                     sourceSize = std::optional<float>(*layoutWidth);
             }
@@ -413,11 +413,6 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
 
     if (!m_dynamicMediaQueryResults.isEmpty())
         document->addDynamicMediaQueryDependentImage(*this);
-}
-
-bool HTMLImageElement::hasLazyLoadableAttributeValue(StringView attributeValue)
-{
-    return equalLettersIgnoringASCIICase(attributeValue, "lazy"_s);
 }
 
 bool HTMLImageElement::hasAutoSizesAttributeValue(StringView attributeValue)
@@ -473,7 +468,7 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
         break;
     }
     case AttributeNames::loadingAttr:
-        if (!hasLazyLoadableAttributeValue(newValue))
+        if (!LazyLoading::hasLazyAttributeValue(newValue))
             loadDeferredImage();
         else if (!isConnected() && !m_imageLoader->image()) {
             // An eager-to-lazy transition before the element is connected may need to defer a
@@ -606,7 +601,7 @@ void HTMLImageElement::didAttachRenderers()
 
     // https://html.spec.whatwg.org/multipage/images.html#relevant-mutations
     // "If the element allows auto-sizes: the element starts [...] being rendered"
-    if (hasAutoSizes() && isLazyLoadable())
+    if (allowsAutoSizes())
         scheduleAutoSizesResolution();
 }
 
@@ -1109,11 +1104,10 @@ bool HTMLImageElement::isDeferred() const
     return m_imageLoader->isDeferred();
 }
 
-bool HTMLImageElement::isLazyLoadable() const
+// https://html.spec.whatwg.org/multipage/embedded-content.html#allows-auto-sizes
+bool HTMLImageElement::allowsAutoSizes() const
 {
-    if (!document().frame() || !protect(document().frame()->script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
-        return false;
-    return hasLazyLoadableAttributeValue(attributeWithoutSynchronization(HTMLNames::loadingAttr));
+    return hasAutoSizes() && LazyLoading::isInLazyState(*this);
 }
 
 String HTMLImageElement::referrerPolicyForBindings() const

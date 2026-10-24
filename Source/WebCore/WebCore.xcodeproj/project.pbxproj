@@ -7804,6 +7804,8 @@
 		0318396A0000000000000003 /* PathCurveSubdivision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathCurveSubdivision.h; sourceTree = "<group>"; };
 		04A1ED5A2F56606E009A61E2 /* LazyLoadElementObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LazyLoadElementObserver.h; sourceTree = "<group>"; };
 		04A1ED5B2F56606E009A61E2 /* LazyLoadElementObserver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LazyLoadElementObserver.cpp; sourceTree = "<group>"; };
+		04A1ED5C2F56606E009A61E2 /* LazyLoading.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LazyLoading.h; sourceTree = "<group>"; };
+		04A1ED5D2F56606E009A61E2 /* LazyLoading.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LazyLoading.cpp; sourceTree = "<group>"; };
 		04CF8DB82E1A2436F374BC05 /* UnifiedSource46-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource46-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		054E3A33256C3BD90072C5B9 /* ShadowRootInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShadowRootInit.h; sourceTree = "<group>"; };
 		054E3A33256C3BD90072C5BF /* GetHTMLOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetHTMLOptions.h; sourceTree = "<group>"; };
@@ -33577,6 +33579,8 @@
 				A456FA2511AD4A830020B420 /* LabelsNodeList.h */,
 				04A1ED5B2F56606E009A61E2 /* LazyLoadElementObserver.cpp */,
 				04A1ED5A2F56606E009A61E2 /* LazyLoadElementObserver.h */,
+				04A1ED5D2F56606E009A61E2 /* LazyLoading.cpp */,
+				04A1ED5C2F56606E009A61E2 /* LazyLoading.h */,
 				1A4DA41F1CDD3A8300F4473C /* LinkIconCollector.cpp */,
 				1A4DA4201CDD3A8300F4473C /* LinkIconCollector.h */,
 				1A250E0C1CDD632000D0BE63 /* LinkIconType.h */,
