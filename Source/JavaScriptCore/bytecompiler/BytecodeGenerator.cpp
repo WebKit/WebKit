@@ -1564,13 +1564,13 @@ void BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label& target)
         } else if (m_lastOpcodeID == op_beloweq) {
             if (fuseCompareAndJump<OpBeloweq, OpJbeloweq>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_eq_null && target.isForward()) {
+        } else if (m_lastOpcodeID == op_eq_null) {
             if (fuseTestAndJmp<OpEqNull, OpJeqNull>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_neq_null && target.isForward()) {
+        } else if (m_lastOpcodeID == op_neq_null) {
             if (fuseTestAndJmp<OpNeqNull, OpJneqNull>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_is_undefined_or_null && target.isForward()) {
+        } else if (m_lastOpcodeID == op_is_undefined_or_null) {
             if (fuseTestAndJmp<OpIsUndefinedOrNull, OpJundefinedOrNull>(cond, target))
                 return;
         }
@@ -1582,46 +1582,46 @@ void BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label& target)
 void BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label& target)
 {
     if (canDoPeepholeOptimization()) {
-        if (m_lastOpcodeID == op_less && target.isForward()) {
+        if (m_lastOpcodeID == op_less) {
             if (fuseCompareAndJump<OpLess, OpJnless>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_lesseq && target.isForward()) {
+        } else if (m_lastOpcodeID == op_lesseq) {
             if (fuseCompareAndJump<OpLesseq, OpJnlesseq>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_greater && target.isForward()) {
+        } else if (m_lastOpcodeID == op_greater) {
             if (fuseCompareAndJump<OpGreater, OpJngreater>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_greatereq && target.isForward()) {
+        } else if (m_lastOpcodeID == op_greatereq) {
             if (fuseCompareAndJump<OpGreatereq, OpJngreatereq>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_eq && target.isForward()) {
+        } else if (m_lastOpcodeID == op_eq) {
             if (fuseCompareAndJump<OpEq, OpJneq>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_stricteq && target.isForward()) {
+        } else if (m_lastOpcodeID == op_stricteq) {
             if (fuseCompareAndJump<OpStricteq, OpJnstricteq>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_neq && target.isForward()) {
+        } else if (m_lastOpcodeID == op_neq) {
             if (fuseCompareAndJump<OpNeq, OpJeq>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_nstricteq && target.isForward()) {
+        } else if (m_lastOpcodeID == op_nstricteq) {
             if (fuseCompareAndJump<OpNstricteq, OpJstricteq>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_below && target.isForward()) {
+        } else if (m_lastOpcodeID == op_below) {
             if (fuseCompareAndJump<OpBelow, OpJbeloweq>(cond, target, true))
                 return;
-        } else if (m_lastOpcodeID == op_beloweq && target.isForward()) {
+        } else if (m_lastOpcodeID == op_beloweq) {
             if (fuseCompareAndJump<OpBeloweq, OpJbelow>(cond, target, true))
                 return;
         } else if (m_lastOpcodeID == op_not) {
             if (fuseTestAndJmp<OpNot, OpJtrue>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_eq_null && target.isForward()) {
+        } else if (m_lastOpcodeID == op_eq_null) {
             if (fuseTestAndJmp<OpEqNull, OpJneqNull>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_neq_null && target.isForward()) {
+        } else if (m_lastOpcodeID == op_neq_null) {
             if (fuseTestAndJmp<OpNeqNull, OpJeqNull>(cond, target))
                 return;
-        } else if (m_lastOpcodeID == op_is_undefined_or_null && target.isForward()) {
+        } else if (m_lastOpcodeID == op_is_undefined_or_null) {
             if (fuseTestAndJmp<OpIsUndefinedOrNull, OpJnundefinedOrNull>(cond, target))
                 return;
         }
