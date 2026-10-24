@@ -96,6 +96,33 @@ class DarwinTest(port_testcase.PortTestCase):
             self.assertFalse(port.is_test_allowlisted('TestIPC.MacOnly'))
             self.assertTrue(port.is_test_allowlisted('TestIPC.IOSOnly'))
 
+    def test_api_test_allowlist_entries(self):
+        port = self.make_port()
+        current_platform = port.api_test_current_configuration().get('platform')
+        if current_platform not in ('mac', 'ios'):
+            return
+
+        allowlist_path = os.path.join(os.path.dirname(darwin_module.__file__), '..', 'api_tests', 'allowlist.txt')
+        port._filesystem.write_text_file(allowlist_path, '\n'.join([
+            'TestIPC.SharedSuite',
+            '[ {} ] TestIPC.SharedSuite.GatedCase'.format(current_platform),
+            '[ {} ] TestIPC.Gated'.format(current_platform),
+            'TestIPC.Gated',
+            '',
+        ]))
+
+        entry = port.is_test_allowlisted('TestIPC.SharedSuite.Case')
+        self.assertEqual((entry.test_pattern, entry.configurations, entry.line_number), ('TestIPC.SharedSuite', frozenset(), 1))
+
+        entry = port.is_test_allowlisted('TestIPC.SharedSuite.GatedCase')
+        self.assertEqual((entry.test_pattern, entry.configurations, entry.line_number), ('TestIPC.SharedSuite.GatedCase', frozenset([current_platform]), 2))
+
+        entry = port.is_test_allowlisted('TestIPC.Gated')
+        self.assertEqual((entry.configurations, entry.line_number), (frozenset([current_platform]), 3))
+
+        self.assertIsNone(port.is_test_allowlisted('TestIPC.Unlisted'))
+        self.assertEqual(port.filter_api_tests_by_allowlist(['TestIPC.Gated', 'TestIPC.Unlisted']), (['TestIPC.Gated'], ['TestIPC.Unlisted']))
+
     def assert_name(self, port_name, os_version_string, expected):
         host = MockSystemHost(os_name=self.os_name, os_version=VersionNameMap.map().from_name(os_version_string)[1])
         port = self.make_port(host=host, port_name=port_name)
