@@ -2063,7 +2063,12 @@ layout/LayoutUnits.cpp
 layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp @header:RenderStyleGetters
 layout/floats/PlacedFloats.cpp @header:RenderStyleGetters
+layout/formattingContexts/OutOfFlowGeometry.cpp @header:RenderStyleGetters
+layout/formattingContexts/block/BlockFormattingContext.cpp @header:RenderStyleGetters
 layout/formattingContexts/block/BlockFormattingState.cpp
+layout/formattingContexts/block/BlockFormattingUtils.cpp
+layout/formattingContexts/block/BlockItemsBuilder.cpp
+layout/formattingContexts/block/BlockMarginCollapse.cpp
 layout/formattingContexts/flex/FlexFormattingContext.cpp @header:RenderStyleGetters @cost:4
 layout/formattingContexts/flex/FlexFormattingUtils.cpp @header:RenderStyleGetters @cost:4
 layout/formattingContexts/flex/FlexLineBreaker.cpp
@@ -2112,6 +2117,9 @@ layout/integration/LayoutIntegrationCoverage.cpp @header:RenderStyleGetters
 layout/integration/grid/LayoutIntegrationGridCoverage.cpp @header:RenderStyleGetters
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp @header:RenderStyleGetters
 layout/integration/LayoutIntegrationUtils.cpp
+layout/integration/block/BlockIntegrationUtils.cpp
+layout/integration/block/LayoutIntegrationBlockCoverage.cpp
+layout/integration/block/LayoutIntegrationBlockLayout.cpp @header:RenderStyleGetters
 layout/integration/flex/FlexIntegrationUtils.cpp @header:RenderStyleGetters
 layout/integration/flex/LayoutIntegrationFlexLayout.cpp @header:RenderStyleGetters
 layout/integration/grid/LayoutIntegrationGridLayout.cpp @header:RenderStyleGetters

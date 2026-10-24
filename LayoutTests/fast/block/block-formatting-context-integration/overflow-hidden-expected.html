@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; margin-bottom: 10px; }
+.clip { overflow: hidden; background: lightblue; margin: 10px 0; }
+.box { background: rgba(0, 128, 0, 0.5); margin: 10px 5%; padding: 4px; }
+.tall { height: 100px; background: linear-gradient(green, blue); }
+</style>
+<div class="root" id="root">
+  <div class="clip"><div class="box">margins do not collapse with the children</div><div class="box">auto height</div></div>
+  <div class="clip" style="height: 40px; padding: 5px"><div class="tall"></div></div>
+  <div class="clip" style="height: 60px"><div class="box" style="height: 50%">percentage of a definite height</div></div>
+  <div class="clip" style="width: 150px; white-space: nowrap; text-overflow: ellipsis">inline content that does not fit on its line</div>
+  <div class="clip" dir="rtl" style="width: 60%"><div class="box" style="width: 100px">right to left</div></div>
+  <div style="margin-top: 20px"><div class="clip" style="margin-top: 30px; border-top: 2px solid blue"><div class="clip" style="height: 20px; margin: -10px -20px 0"><div class="tall"></div></div></div></div>
+  <div class="box">after</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.width = "300px";
+document.body.offsetHeight;
+</script>
