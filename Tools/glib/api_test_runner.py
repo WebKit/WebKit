@@ -359,6 +359,14 @@ class TestRunner(object):
         sys.stderr.write("WARNING: %s doesn't seem to be a supported test program.\n" % test_program)
         return {}
 
+    def _run_test_repeatedly(self, test_program, subtests, skipped_test_cases):
+        results = {}
+        for _ in range(self._options.repeat_each):
+            for test_case, result in self._run_test(test_program, subtests, skipped_test_cases).items():
+                if test_case not in results or results[test_case] in self._expectations.get_expectation(os.path.basename(test_program), test_case):
+                    results[test_case] = result
+        return results
+
     def _has_gpu_available(self):
         return os.access("/dev/dri/card0", os.R_OK | os.W_OK) and os.access("/dev/dri/renderD128", os.R_OK | os.W_OK)
 
@@ -498,7 +506,7 @@ class TestRunner(object):
                 skipped_subtests = self._test_cases_to_skip(test)
                 number_of_skipped_tests += len(skipped_subtests)
                 number_of_total_tests += len(skipped_subtests if not subtests else set(skipped_subtests).intersection(subtests))
-                results = self._run_test(test, subtests, skipped_subtests)
+                results = self._run_test_repeatedly(test, subtests, skipped_subtests)
                 number_of_executed_subtests_for_test = len(results)
                 if number_of_executed_subtests_for_test > 0:
                     # When adding the subtests to the total, substract 1 because the maintest was initially counted as one subtest.
@@ -642,6 +650,8 @@ def create_option_parser():
                              help='List the tests (main tests) available to run.')
     option_parser.add_option('--json-output', action='store', default=None,
                              help='Save test results as JSON to file')
+    option_parser.add_option('--repeat-each', action='store', type='int', dest='repeat_each', default=1,
+                             help='Number of times to run the requested tests in a row, failing on any unexpected result')
     return option_parser
 
 
