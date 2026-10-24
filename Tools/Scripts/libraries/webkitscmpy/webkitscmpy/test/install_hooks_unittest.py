@@ -22,7 +22,6 @@
 
 import logging
 import os
-import sys
 
 from webkitcorepy import OutputCapture, Version, run, testing
 from webkitcorepy.mocks import Terminal as MockTerminal
@@ -128,7 +127,7 @@ class TestInstallHooks(testing.PathTestCase):
         with open(resolved_hook, 'r') as f:
             self.assertEqual(
                 f.read(),
-                "#!/usr/bin/env {}\nprint('Hello, world!\\n')\n".format(os.path.basename(sys.executable)),
+                "#!/usr/bin/env python3\nprint('Hello, world!\\n')\n",
             )
 
     def test_install_hook_alternate_hook_path_change(self):
@@ -167,7 +166,7 @@ class TestInstallHooks(testing.PathTestCase):
         with open(resolved_hook, 'r') as f:
             self.assertEqual(
                 f.read(),
-                "#!/usr/bin/env {}\nprint('Hello, world!\\n')\n".format(os.path.basename(sys.executable)),
+                "#!/usr/bin/env python3\nprint('Hello, world!\\n')\n",
             )
 
     def test_install_hook_alternate_hook_path_use(self):
@@ -206,7 +205,7 @@ class TestInstallHooks(testing.PathTestCase):
         with open(resolved_hook, 'r') as f:
             self.assertEqual(
                 f.read(),
-                "#!/usr/bin/env {}\nprint('Hello, world!\\n')\n".format(os.path.basename(sys.executable)),
+                "#!/usr/bin/env python3\nprint('Hello, world!\\n')\n",
             )
 
     def test_install_hook_alternate_hook_path_exit(self):
@@ -298,7 +297,7 @@ class TestInstallHooks(testing.PathTestCase):
 SECURITY_LEVELS = {{'example.org:webkit/project': 0,
  'example.org:webkit/project-security': 1}}
 print('Hello, world!\\n')
-'''.format(os.path.basename(sys.executable)),
+'''.format('python3'),
             )
 
     def test_security_level_addition(self):
@@ -338,7 +337,7 @@ SECURITY_LEVELS = {{'example.org:webkit/project': 0,
  'example.org:webkit/project-security': 1,
  'example.org:organization/project': 2}}
 print('Hello, world!\\n')
-'''.format(os.path.basename(sys.executable)),
+'''.format('python3'),
             )
 
     def test_security_level_override(self):
