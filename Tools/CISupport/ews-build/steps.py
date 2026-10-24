@@ -6544,12 +6544,6 @@ class FilterAPITestsForPlatform(shell.ShellCommand, AddToLogMixin):
         self.setProperty('modified_api_tests', selected_tests)
         defer.returnValue(SUCCESS if selected_tests else SKIPPED)
 
-    def doStepIf(self, step):
-        return bool(self.getProperty('modified_api_tests', []))
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
-
     def getResultSummary(self):
         modified_tests = self.getProperty('modified_api_tests', [])
         if self.results == SUCCESS and modified_tests:
