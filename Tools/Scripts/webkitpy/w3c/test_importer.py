@@ -197,7 +197,14 @@ class TestImporter(object):
 
     def do_import(self):
         finder = WebKitFinder(self.filesystem)
+        using_default_repository = not self.source_directory
         self.source_directory = self.source_directory or WPTPaths.ensure_wpt_repository(finder, self.source_directory)
+
+        if using_default_repository and self.source_directory and self.options.use_tip_of_tree and self.options.fetch:
+            repository = Git(self.source_directory)
+            _log.info('Fetching %s' % repository.default_branch)
+            repository.fetch(repository.default_branch)
+            repository.checkout('origin/{}'.format(repository.default_branch))
 
         directory = self._get_wpt_directory(self.source_directory)
         _log.debug(f"Using {directory!r} for {self.source_directory!r}")
