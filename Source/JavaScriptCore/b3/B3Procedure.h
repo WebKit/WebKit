@@ -319,6 +319,9 @@ public:
     void setIsWasm(bool flag) { m_isWasm = flag; }
     bool isWasm() const { return m_isWasm; }
 
+    void setPreservePinnedBoundsCheckingSizeRegister(bool flag = true) { m_preservePinnedBoundsCheckingSizeRegister = flag; }
+    bool preservePinnedBoundsCheckingSizeRegister() const { return m_preservePinnedBoundsCheckingSizeRegister; }
+
     void setUsesWasmGCStructAllocations(bool flag = true) { m_usesWasmGCStructAllocations = flag; }
     bool usesWasmGCStructAllocations() const { return m_usesWasmGCStructAllocations; }
     void setUsesWasmGCArrayAllocations(bool flag = true) { m_usesWasmGCArrayAllocations = flag; }
@@ -366,6 +369,7 @@ private:
     bool m_shouldDumpIR : 1 { false };
     bool m_usesSIMD : 1 { false };
     bool m_isWasm : 1 { false };
+    bool m_preservePinnedBoundsCheckingSizeRegister : 1 { false };
     bool m_usesWasmGCStructAllocations : 1 { false };
     bool m_usesWasmGCArrayAllocations : 1 { false };
     bool m_usesWasmGCAccesses : 1 { false };

@@ -30,6 +30,8 @@
 
 #include "AirCode.h"
 #include "AirInstInlines.h"
+#include "B3Procedure.h"
+#include "GPRInfo.h"
 #include "RegisterSet.h"
 
 namespace JSC { namespace B3 { namespace Air {
@@ -64,6 +66,10 @@ void handleCalleeSaves(Code& code, RegisterSet usedCalleeSaves)
     usedCalleeSaves.exclude(RegisterSet::stackRegisters()); // We don't need to save FP here.
 
     auto calleSavesToSave = usedCalleeSaves;
+    if constexpr (GPRInfo::wasmBoundsCheckingSizeRegister != InvalidGPRReg) {
+        if (code.proc().preservePinnedBoundsCheckingSizeRegister())
+            calleSavesToSave.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
+    }
 
     if (!calleSavesToSave.numberOfSetRegisters())
         return;
