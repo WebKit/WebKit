@@ -56,7 +56,10 @@ class RemoveBackgroundSwizzler {
 public:
     RemoveBackgroundSwizzler(CGImageRef, CGRect);
 
+    std::optional<CGSize> lastRequestImageSize() const { return m_lastRequestImageSize; }
+
 private:
+    std::optional<CGSize> m_lastRequestImageSize;
     InstanceMethodSwizzler m_removeBackgroundRequestSwizzler;
 };
 

@@ -525,6 +525,11 @@ RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForFullScreen() const
     return createShareableBitmap();
 }
 
+RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForImageServices() const
+{
+    return createShareableBitmap();
+}
+
 Ref<NativePromise<Ref<ShareableBitmap>, void>> RenderImage::createShareableBitmapAsyncForImageAnalysis(CreateShareableBitmapFromImageOptions::UseSnapshotForTransparentImages useSnapshotForTransparentImages) const
 {
     return createShareableBitmapAsync({ std::nullopt, CreateShareableBitmapFromImageOptions::AllowAnimatedImages::No, useSnapshotForTransparentImages });

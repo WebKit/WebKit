@@ -665,13 +665,8 @@ TEST(ImageAnalysisTests, DataDetectorMenuLocationInSubframe)
 
 #if ENABLE(SERVICE_CONTROLS)
 
-TEST(ImageAnalysisTests, RemoveBackgroundItemInServicesMenu)
+static void clickImageControlsAndWaitForRemoveBackgroundItem(TestWKWebView *webView)
 {
-    RemoveBackgroundSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
-
-    auto webView = createWebViewWithTextRecognitionEnhancements();
-    [webView _setEditable:YES];
-    [webView synchronouslyLoadTestPageNamed:@"image-controls"];
     [[webView window] orderFrontRegardless];
     [webView callAsyncJavaScript:@"waitForAndClickImageControls()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
         EXPECT_NULL(error);
@@ -691,6 +686,43 @@ TEST(ImageAnalysisTests, RemoveBackgroundItemInServicesMenu)
 
     [NSRunLoop.mainRunLoop addTimer:timer.get() forMode:NSEventTrackingRunLoopMode];
     Util::run(&foundRemoveBackgroundItem);
+    [timer invalidate];
+}
+
+TEST(ImageAnalysisTests, RemoveBackgroundItemInServicesMenu)
+{
+    RemoveBackgroundSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadTestPageNamed:@"image-controls"];
+    clickImageControlsAndWaitForRemoveBackgroundItem(webView.get());
+}
+
+TEST(ImageAnalysisTests, ServicesMenuImageForSVGWithoutNaturalSize)
+{
+    RemoveBackgroundSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<script>"
+        "addEventListener('load', () => HTMLAttachmentElement.getAttachmentIdentifier(document.querySelector('img')));"
+        "async function waitForAndClickImageControls() {"
+        "    let button = null;"
+        "    do {"
+        "        await new Promise(requestAnimationFrame);"
+        "        button = internals.shadowRoot(document.querySelector('img')).getElementById('image-controls-button');"
+        "    } while (!button);"
+        "    button.click();"
+        "}"
+        "</script>"
+        "<img style='width: 200px; height: 100px' src=\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 1'><rect width='2' height='1' fill='green'/></svg>\">"];
+    clickImageControlsAndWaitForRemoveBackgroundItem(webView.get());
+
+    auto size = swizzler.lastRequestImageSize();
+    ASSERT_TRUE(size.has_value());
+    EXPECT_EQ(size->width, 200);
+    EXPECT_EQ(size->height, 100);
 }
 
 #endif // ENABLE(SERVICE_CONTROLS)

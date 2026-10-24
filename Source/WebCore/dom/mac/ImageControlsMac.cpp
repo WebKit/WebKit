@@ -129,17 +129,6 @@ void createImageControls(HTMLElement& element)
         renderImage->setHasShadowControls(true);
 }
 
-static Image* imageFromImageElementNode(Node& node)
-{
-    CheckedPtr renderer = dynamicDowncast<RenderImage>(node.renderer());
-    if (!renderer)
-        return nullptr;
-    RefPtr image = renderer->cachedImage();
-    if (!image || image->errorOccurred())
-        return nullptr;
-    return image->image();
-}
-
 bool handleEvent(HTMLElement& element, Event& event)
 {
     if (!isAnyClick(event))
@@ -172,13 +161,14 @@ bool handleEvent(HTMLElement& element, Event& event)
 
         auto point = view->contentsToMainFrameView(renderer->absoluteBoundingBoxRect()).minXMaxYCorner();
 
-        if (RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(target->shadowHost())) {
-            RefPtr image = imageFromImageElementNode(*shadowHost);
-            if (!image)
-                return false;
-            page->chrome().client().handleImageServiceClick(frame->frameID(), point, *image, *shadowHost);
-        } else if (RefPtr shadowHost = dynamicDowncast<HTMLAttachmentElement>(target->shadowHost()))
-            page->chrome().client().handlePDFServiceClick(frame->frameID(), point, *shadowHost);
+        bool handled = false;
+        if (RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(target->shadowHost()))
+            handled = page->chrome().client().handleImageServiceClick(frame->frameID(), point, *shadowHost);
+        else if (RefPtr shadowHost = dynamicDowncast<HTMLAttachmentElement>(target->shadowHost()))
+            handled = page->chrome().client().handlePDFServiceClick(frame->frameID(), point, *shadowHost);
+
+        if (!handled)
+            return false;
 
         event.setDefaultHandled();
         return true;

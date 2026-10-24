@@ -276,16 +276,17 @@ RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef image, VKImageOrienta
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-IMP makeRequestHandler(CGImageRef image, CGRect cropRect)
+static IMP makeRequestHandler(CGImageRef image, CGRect cropRect, std::optional<CGSize>& lastRequestImageSize)
 {
-    return imp_implementationWithBlock([image = RetainPtr { image }, cropRect](VKCRemoveBackgroundRequestHandler *, VKCRemoveBackgroundRequest *, void (^completion)(VKCRemoveBackgroundResult *, NSError *)) {
+    return imp_implementationWithBlock([image = RetainPtr { image }, cropRect, &lastRequestImageSize](VKCRemoveBackgroundRequestHandler *, VKCRemoveBackgroundRequest *request, void (^completion)(VKCRemoveBackgroundResult *, NSError *)) {
+        lastRequestImageSize = CGSizeMake(CGImageGetWidth(request.CGImage), CGImageGetHeight(request.CGImage));
         RetainPtr result = adoptNS([[FakeRemoveBackgroundResult alloc] initWithImage:image.get() cropRect:cropRect]);
         completion(static_cast<VKCRemoveBackgroundResult *>(result.get()), nil);
     });
 }
 
 RemoveBackgroundSwizzler::RemoveBackgroundSwizzler(CGImageRef image, CGRect cropRect)
-    : m_removeBackgroundRequestSwizzler { PAL::getVKCRemoveBackgroundRequestHandlerClassSingleton(), @selector(performRequest:completion:), makeRequestHandler(image, cropRect) }
+    : m_removeBackgroundRequestSwizzler { PAL::getVKCRemoveBackgroundRequestHandlerClassSingleton(), @selector(performRequest:completion:), makeRequestHandler(image, cropRect, m_lastRequestImageSize) }
 {
 }
 

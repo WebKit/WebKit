@@ -65,6 +65,7 @@
 #import <WebCore/BackForwardController.h>
 #import <WebCore/BoundaryPointInlines.h>
 #import <WebCore/ColorMac.h>
+#import <WebCore/ContainerNodeInlines.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentPage.h>
@@ -104,6 +105,7 @@
 #import <WebCore/RemoteFrameView.h>
 #import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/RenderElement.h>
+#import <WebCore/RenderImage.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScrollView.h>
@@ -764,31 +766,39 @@ void WebPage::handleSelectionServiceClick(WebCore::FrameIdentifier frameID, Fram
     send(Messages::WebPageProxy::ShowContextMenuFromFrame(webFrame->info(), ContextMenuContextData(point, WTF::move(selectionString), phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
 
-void WebPage::handleImageServiceClick(WebCore::FrameIdentifier frameID, const IntPoint& point, Image& image, HTMLImageElement& element)
+bool WebPage::handleImageServiceClick(WebCore::FrameIdentifier frameID, const IntPoint& point, HTMLImageElement& element)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame)
-        return;
+        return false;
 
-    auto elementAbsoluteBox = protect(element.renderBox())->absoluteContentQuad().enclosingBoundingBox();
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer());
+    if (!renderImage)
+        return false;
+    RefPtr cachedImage = renderImage->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return false;
+
+    auto elementAbsoluteBox = renderImage->absoluteContentQuad().enclosingBoundingBox();
     auto elementBoxInMainFrameView = protect(protect(webFrame->coreFrame())->virtualView())->contentsToMainFrameView(elementAbsoluteBox);
 
     send(Messages::WebPageProxy::ShowContextMenuFromFrame(webFrame->info(), ContextMenuContextData {
         point,
-        image,
+        renderImage->createShareableBitmapForImageServices(),
         element.isContentEditable(),
         elementBoxInMainFrameView,
         HTMLAttachmentElement::getAttachmentIdentifier(element),
         contextForElement(element),
-        image.mimeType()
+        cachedImage->mimeType(),
     }, { }));
+    return true;
 }
 
-void WebPage::handlePDFServiceClick(WebCore::FrameIdentifier frameID, const IntPoint& point, HTMLAttachmentElement& element)
+bool WebPage::handlePDFServiceClick(WebCore::FrameIdentifier frameID, const IntPoint& point, HTMLAttachmentElement& element)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame)
-        return;
+        return false;
 
     auto elementAbsoluteBox = protect(element.renderBox())->absoluteContentQuad().enclosingBoundingBox();
     auto elementBoxInMainFrameView = protect(protect(webFrame->coreFrame())->virtualView())->contentsToMainFrameView(elementAbsoluteBox);
@@ -800,6 +810,7 @@ void WebPage::handlePDFServiceClick(WebCore::FrameIdentifier frameID, const IntP
         element.uniqueIdentifier(),
         "application/pdf"_s
     }, { }));
+    return true;
 }
 
 #endif
