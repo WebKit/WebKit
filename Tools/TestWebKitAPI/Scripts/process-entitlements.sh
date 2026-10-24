@@ -11,6 +11,10 @@ function plistbuddy_base()
 {
     if [[ "${WK_PLATFORM_NAME}" =~ .*simulator ]]
     then
+        # The CMake build omits this file, and achieves the same behavior by
+        # having all binaries default to `get-task-allow` in at-desk style builds.
+        # FIXME: Remove this from Xcode too, since it has the same semantics.
+        [[ -n "${WK_PROCESSED_SIMULATOR_XCENT_FILE:-}" ]] || return 0
         /usr/libexec/PlistBuddy -c "$*" "${WK_PROCESSED_SIMULATOR_XCENT_FILE}"
     else
         plistbuddy "$*"
