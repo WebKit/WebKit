@@ -330,7 +330,7 @@ static std::optional<float> preferredTextScaleFactor()
 #endif
     if (!contentSizeCategory)
         return std::nullopt;
-    return WebCore::textScaleFactorForContentSizeCategory(contentSizeCategory.get());
+    return WebCore::textScaleFactorForContentSizeCategory(contentSizeCategory);
 }
 #endif
 
@@ -1131,7 +1131,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_contentSizeCategoryObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_contentSizeCategoryObserver];
 #endif
     [[NSNotificationCenter defaultCenter] removeObserver:m_applicationLaunchObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_screenDidConnectObserver];

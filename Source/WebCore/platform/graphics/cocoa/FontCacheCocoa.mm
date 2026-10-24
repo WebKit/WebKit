@@ -85,7 +85,7 @@ static CGFloat bodyTextSizeForContentSizeCategory(CFStringRef contentSizeCategor
     return CTFontDescriptorGetTextStyleSize(kCTUIFontTextStyleBody, contentSizeCategory, kCTFontTextStylePlatformDefault, nullptr, nullptr);
 #else
     RetainPtr traitCollection = [PAL::getUITraitCollectionClassSingleton() traitCollectionWithPreferredContentSizeCategory:bridge_cast(contentSizeCategory)];
-    return [[PAL::getUIFontClassSingleton() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleBodySingleton() compatibleWithTraitCollection:traitCollection.get()] pointSize];
+    return [[PAL::getUIFontClassSingleton() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleBodySingleton() compatibleWithTraitCollection:traitCollection] pointSize];
 #endif
 }
 
