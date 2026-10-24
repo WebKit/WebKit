@@ -2544,8 +2544,9 @@ private:
         if (!read(keyData))
             return false;
 
-        result = CryptoKeyOKP::importRaw(algorithm, namedCurve, WTF::move(keyData), extractable, usages);
-        return true;
+        auto type = usages & (CryptoKeyUsageSign | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits) ? CryptoKeyType::Private : CryptoKeyType::Public;
+        result = CryptoKeyOKP::create(algorithm, namedCurve, type, WTF::move(keyData), extractable, usages);
+        return !!result;
     }
 
     bool readRawKey(CryptoKeyUsageBitmap usages, RefPtr<CryptoKey>& result)
