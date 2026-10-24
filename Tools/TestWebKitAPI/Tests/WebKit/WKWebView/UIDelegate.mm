@@ -935,9 +935,11 @@ TEST(WebKit, PrintFrame)
     [webView loadHTMLString:@"<head><title>test_title</title></head><body onload='setTimeout(function() { print() });'>hello world!</body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
     TestWebKitAPI::Util::run(&done);
 
-    NSPrintOperation *operation = [webView _printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]];
-    EXPECT_TRUE(operation.canSpawnSeparateThread);
-    EXPECT_STREQ(operation.jobTitle.UTF8String, "test_title");
+    RetainPtr letterPrintInfo = adoptNS([[NSPrintInfo sharedPrintInfo] copy]);
+    [letterPrintInfo setPaperName:@"Letter"];
+    RetainPtr operation = [webView _printOperationWithPrintInfo:letterPrintInfo];
+    EXPECT_TRUE([operation canSpawnSeparateThread]);
+    EXPECT_STREQ([operation jobTitle].UTF8String, "test_title");
 
     [operation runOperationModalForWindow:[webView hostWindow] delegate:nil didRunSelector:nil contextInfo:nil];
     TestWebKitAPI::Util::run(&headerHeightCalled);
