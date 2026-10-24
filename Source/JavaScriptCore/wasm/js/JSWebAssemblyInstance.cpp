@@ -314,7 +314,7 @@ size_t JSWebAssemblyInstance::allocationSize(const Wasm::ModuleInformation& info
 }
 
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* instanceStructure, JSGlobalObject* globalObject, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, CreationMode creationMode, RefPtr<SourceProvider>&& provider)
+JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* instanceStructure, JSGlobalObject* globalObject, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, CreationMode creationMode, RefPtr<SourceProvider>&& provider, WebAssemblyModuleRecord* existingModuleRecord)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
@@ -329,8 +329,11 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
     if (!globalObject->webAssemblyEnabled())
         return exception(createJSWebAssemblyCompileError(globalObject, vm, globalObject->webAssemblyDisabledErrorMessage()));
 
-    WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(globalObject, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
-    RETURN_IF_EXCEPTION(throwScope, nullptr);
+    WebAssemblyModuleRecord* moduleRecord = existingModuleRecord;
+    if (!moduleRecord) {
+        moduleRecord = WebAssemblyModuleRecord::create(globalObject, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
+    }
 
     // FIXME: These objects could be pretty big we should try to throw OOM here.
     void* cell = tryAllocateCell<JSWebAssemblyInstance>(vm, allocationSize(moduleInformation));
@@ -355,7 +358,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
     const bool fromModuleLoader = creationMode == CreationMode::FromModuleLoader;
 
     // For each import i in module.imports:
-    {
+    if (moduleRecord->importEntries().isEmpty()) {
         const auto importNames = jsModule->importNames(vm);
         IdentifierSet specifiers;
         for (size_t importIndex = 0; importIndex < moduleInformation.imports.size(); ++importIndex) {

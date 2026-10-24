@@ -58,7 +58,7 @@ private:
 
     VM& m_vm;
     JSModuleRecord* m_moduleRecord;
-    EnumeratedArray<AbstractModuleRecord::ModulePhase, UncheckedKeyHashSet<ModuleMapKey, ModuleMapHash>, AbstractModuleRecord::ModulePhase::Defer> m_requestedModules;
+    EnumeratedArray<AbstractModuleRecord::ModulePhase, UncheckedKeyHashSet<ModuleMapKey, ModuleMapHash>, AbstractModuleRecord::ModulePhase::Source> m_requestedModules;
     std::tuple<ErrorType, String> m_errorMessage;
 };
 

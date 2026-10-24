@@ -165,7 +165,7 @@ public:
     ExpressionType createLogicalNot(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createUnaryPlus(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createVoid(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
-    ExpressionType createImportExpr(const JSTokenLocation&, ExpressionType, ExpressionType, bool, int, int, int) { return ImportExpr; }
+    ExpressionType createImportExpr(const JSTokenLocation&, ExpressionType, ExpressionType, ImportCallPhase, int, int, int) { return ImportExpr; }
     ExpressionType createThisExpr(const JSTokenLocation&) { return ThisExpr; }
     ExpressionType createSuperExpr(const JSTokenLocation&) { return SuperExpr; }
     ExpressionType createNewTargetExpr(const JSTokenLocation&) { return NewTargetExpr; }
@@ -291,7 +291,7 @@ public:
     void appendImportSpecifier(ImportSpecifierList, ImportSpecifier) { }
     ImportAttributesList createImportAttributesList() { return ImportAttributesListResult; }
     void appendImportAssertion(ImportAttributesList, const Identifier&, const Identifier&) { }
-    int createImportDeclaration(const JSTokenLocation&, ImportSpecifierList, ModuleName, ImportAttributesList) { return StatementResult; }
+    int createImportDeclaration(const JSTokenLocation&, ImportCallPhase, ImportSpecifierList, ModuleName, ImportAttributesList) { return StatementResult; }
     int createExportAllDeclaration(const JSTokenLocation&, ModuleName, ImportAttributesList) { return StatementResult; }
     int createExportDefaultDeclaration(const JSTokenLocation&, int, const Identifier&) { return StatementResult; }
     int createExportLocalDeclaration(const JSTokenLocation&, int) { return StatementResult; }
