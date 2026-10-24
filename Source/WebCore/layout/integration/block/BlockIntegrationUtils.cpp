@@ -147,6 +147,20 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     };
 }
 
+LayoutSize BlockIntegrationUtils::layoutOutOfFlowReplacedElement(const RenderBox& replacedElement)
+{
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef box = const_cast<RenderBox&>(replacedElement);
+    // Its size may depend on the size of its containing block, which the block formatting context has just laid out.
+    box->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    {
+        // The layout state has the paint offset of the block formatting context root only, not of the boxes inside.
+        CheckedRef layoutContext = box->view().frameView().layoutContext();
+        auto layoutStateDisabler = LayoutStateDisabler { layoutContext.get() };
+        box->layoutIfNeeded();
+    }
+    return { box->logicalWidth(), box->logicalHeight() };
+}
+
 bool BlockIntegrationUtils::contentBoxInlineSizeChanged(const RenderBox& box, LayoutUnit contentBoxInlineSize)
 {
     if (box.contentBoxLogicalWidth() != contentBoxInlineSize)

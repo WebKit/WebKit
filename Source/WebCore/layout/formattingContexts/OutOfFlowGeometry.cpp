@@ -189,6 +189,16 @@ std::optional<LayoutUnit> OutOfFlowGeometry::definiteContentBoxBlockSize() const
     });
 }
 
+auto OutOfFlowGeometry::computeReplacedInlineAxisGeometry(LayoutUnit borderBoxSize) const -> AxisGeometry
+{
+    return computeAxisGeometry(Axis::Inline, inlineAxisValues(), borderBoxSize);
+}
+
+auto OutOfFlowGeometry::computeReplacedBlockAxisGeometry(LayoutUnit borderBoxSize) const -> AxisGeometry
+{
+    return computeAxisGeometry(Axis::Block, blockAxisValues(), borderBoxSize);
+}
+
 auto OutOfFlowGeometry::computeBlockAxisGeometry(LayoutUnit intrinsicContentBlockSize) const -> AxisGeometry
 {
     CheckedRef style = this->style();
