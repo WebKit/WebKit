@@ -908,7 +908,6 @@
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 
-#if PLATFORM(MAC)
 (define (notifyd-message-numbers) (message-number 1002 1010 1011 1012 1016 1017 1018 1021 1022 1025 1026 1028 1029 1030 1031 1032))
 (define (allow-notifyd)
     (allow ipc-posix-shm-read* (ipc-posix-name "apple.shm.notification_center"))
@@ -924,7 +923,6 @@
 #if !ENABLE(NOTIFY_BLOCKING) || !USE(APPLE_INTERNAL_SDK)
 (allow-notifyd)
 #endif
-#endif // PLATFORM(MAC)
 
 ;; <rdar://problem/63943836>
 (deny mach-lookup
@@ -1610,7 +1608,11 @@
 #define WK_NOTIFICATION_COMMENT(...)
 #define WK_NOTIFICATION(name) name
 #include "Resources/cocoa/NotificationAllowList/ForwardedNotifications.def"
+#if PLATFORM(MACCATALYST)
+#include "Resources/cocoa/NotificationAllowList/EmbeddedForwardedNotifications.def"
+#else
 #include "Resources/cocoa/NotificationAllowList/MacForwardedNotifications.def"
+#endif
 #include "Resources/cocoa/NotificationAllowList/NonForwardedNotifications.def"
 #undef WK_NOTIFICATION
 #undef WK_NOTIFICATION_COMMENT

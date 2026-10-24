@@ -334,6 +334,7 @@ function maccatalyst_process_webcontent_shared_entitlements()
 
     plistbuddy Add :com.apple.private.disable-log-mach-ports bool YES
 
+    notify_entitlements
     webcontent_sandbox_entitlements
 }
 
