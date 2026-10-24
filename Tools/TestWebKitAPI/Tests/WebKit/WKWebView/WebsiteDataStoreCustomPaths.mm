@@ -1761,8 +1761,11 @@ function log(message)
 function install()
 {
     navigator.serviceWorker.register('/migratetest/sw.js').then((registration) => {
-        const worker = registration.installing ? registration.installing : registration.active;
-        worker.postMessage('Hello');
+        const worker = registration.installing;
+        worker.addEventListener('statechange', () => {
+            if (worker.state == 'activated')
+                worker.postMessage('Hello');
+        });
     }).catch((error) => {
         log('register() failed with: ' + error);
     });
