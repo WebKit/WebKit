@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<p>Tests that restoring the state of a select element updates its fallback button text.</p>
+<div id="console"></div>
+
+<input id="emptyOnFirstVisit">
+<div id="parent">
+<form action="data:text/html,&lt;script>history.back()&lt;/script>" id="form">
+<select id="fallbackInForm" name="fallbackInForm">
+    <option>One</option>
+    <option>Two</option>
+</select>
+<!-- Selects in a form are restored at the end of the form. Render the fallback button text before that. -->
+<script>document.body.offsetWidth;</script>
+</form>
+
+<select id="fallbackWithoutForm" name="fallbackWithoutForm">
+    <option>One</option>
+    <option>Two</option>
+    <!-- Other selects are restored at their end. Render the fallback button text before that. -->
+    <script>document.body.offsetWidth;</script>
+</select>
+</div>
+
+<script>
+jsTestIsAsync = true;
+
+const selectIds = ["fallbackInForm", "fallbackWithoutForm"];
+
+function fallbackButtonText(select)
+{
+    return internals.shadowRoot(select).querySelector("slot[name=buttonSlot] + div").textContent.trim();
+}
+
+function runTest()
+{
+    const state = document.getElementById("emptyOnFirstVisit");
+    if (!state.value) {
+        // First visit.
+        setTimeout(() => {
+            state.value = "visited";
+            for (const id of selectIds)
+                document.getElementById(id).value = "Two";
+            document.getElementById("form").submit();
+        }, 0);
+        return;
+    }
+
+    // Went back to this page again, and form state should be restored.
+    document.body.offsetWidth;
+    for (const id of selectIds)
+        shouldBeEqualToString(id + ".value", "Two");
+    shouldBeEqualToString("fallbackButtonText(fallbackInForm)", "Two");
+    shouldBeEqualToString("fallbackButtonText(fallbackWithoutForm)", "Two");
+
+    document.getElementById("parent").innerHTML = "";
+    setTimeout(finishJSTest, 0);
+}
+
+window.onload = runTest;
+</script>
+</body>
+</html>

@@ -1873,6 +1873,8 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
     invalidateSelectedItems();
     setOptionsChangedOnRenderer();
     updateValidity();
+    invalidateButtonText();
+    updateSelectedContentIfEnabled();
 }
 
 void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
