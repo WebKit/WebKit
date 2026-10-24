@@ -584,6 +584,77 @@ function start()
 </script></body></html>
 )DOCDOCDOC"_s;
 
+#if PLATFORM(MAC)
+static constexpr auto sharedMicrophonePageMarkup = R"HTML(
+<script>
+let track;
+async function captureMicrophone(labelToAvoid)
+{
+    let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    if (labelToAvoid) {
+        // Labels are only exposed once capture is granted. Mock microphones 1 and 4 both use the shared unit.
+        stream.getTracks().forEach(track => track.stop());
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const device = devices.find(device => device.kind == 'audioinput' && ['Mock audio device 1', 'Mock audio device 4'].includes(device.label) && device.label != labelToAvoid);
+        stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: { exact: device.deviceId } } });
+    }
+    track = stream.getAudioTracks()[0];
+    return track.label;
+}
+</script>
+)HTML";
+
+TEST(WebKit, ResumedMicrophoneCaptureUsesItsOwnMicrophone)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    configuration.get()._allowTestOnlyIPC = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
+
+    RetainPtr delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    RetainPtr firstWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    RetainPtr secondWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    for (TestWKWebView *webView in @[ firstWebView.get(), secondWebView.get() ]) {
+        webView.UIDelegate = delegate.get();
+        [webView synchronouslyLoadHTMLString:@(sharedMicrophonePageMarkup) baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    }
+
+    NSString *firstLabel = [firstWebView objectByCallingAsyncFunction:@"return await captureMicrophone()" withArguments:nil];
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [firstWebView microphoneCaptureState] == WKMediaCaptureStateActive;
+    }));
+
+    // Capturing in the second page mutes the first, and moves the shared unit to the second microphone.
+    NSString *secondLabel = [secondWebView objectByCallingAsyncFunction:@"return await captureMicrophone(label)" withArguments:@{ @"label": firstLabel }];
+    EXPECT_FALSE([firstLabel isEqualToString:secondLabel]);
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [firstWebView microphoneCaptureState] == WKMediaCaptureStateMuted;
+    }));
+
+    RetainPtr<NSString> firstMicrophoneID = [firstWebView objectByEvaluatingJavaScript:@"internals.mediaStreamTrackPersistentId(track)"];
+    RetainPtr<NSString> secondMicrophoneID = [secondWebView objectByEvaluatingJavaScript:@"internals.mediaStreamTrackPersistentId(track)"];
+    auto sharedMicrophoneID = [&] {
+        return (NSString *)[secondWebView objectByCallingAsyncFunction:@"return await internals.sharedAudioCaptureDeviceInGPUProcess()" withArguments:nil];
+    };
+    EXPECT_WK_STREQ(secondMicrophoneID.get(), sharedMicrophoneID());
+
+    // Unmuting the first page from the application doesn't mute the second, so mute it explicitly.
+    [secondWebView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [secondWebView microphoneCaptureState] == WKMediaCaptureStateMuted;
+    }));
+    [firstWebView setMicrophoneCaptureState:WKMediaCaptureStateActive completionHandler:nil];
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [firstWebView microphoneCaptureState] == WKMediaCaptureStateActive;
+    }));
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [sharedMicrophoneID() isEqualToString:firstMicrophoneID.get()];
+    }));
+    EXPECT_WK_STREQ(firstMicrophoneID.get(), sharedMicrophoneID());
+}
+#endif // PLATFORM(MAC)
+
 TEST(WebKit, TransferTrackBetweenSameProcessPages)
 {
     TestWebKitAPI::HTTPServer server({

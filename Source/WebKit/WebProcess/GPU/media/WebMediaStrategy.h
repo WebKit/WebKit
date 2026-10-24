@@ -55,6 +55,7 @@ private:
     void isActiveNowPlayingSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&) final;
     void isRemoteCommandTargetSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&) final;
     bool postNowPlayingRemoteControlCommandToGPUProcessForTesting(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&) final;
+    void sharedAudioCaptureDeviceInGPUProcessForTesting(CompletionHandler<void(String&&)>&&) final;
     bool hasThreadSafeMediaSourceSupport() const final;
 #if ENABLE(MEDIA_SOURCE)
     void enableMockMediaSource() final;
