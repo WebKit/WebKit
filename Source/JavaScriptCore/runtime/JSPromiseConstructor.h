@@ -30,6 +30,7 @@
 namespace JSC {
 
 class JSPromise;
+class JSPromiseCombinatorsGlobalContext;
 class JSPromisePrototype;
 class GetterSetter;
 
@@ -57,10 +58,18 @@ JSC_DECLARE_HOST_FUNCTION(promiseAllSettledSlowFulfillFunction);
 JSC_DECLARE_HOST_FUNCTION(promiseAllSettledSlowRejectFunction);
 JSC_DECLARE_HOST_FUNCTION(promiseAnyRejectFunction);
 JSC_DECLARE_HOST_FUNCTION(promiseAnySlowRejectFunction);
+JSC_DECLARE_HOST_FUNCTION(promiseAllKeyedFulfillFunction);
+JSC_DECLARE_HOST_FUNCTION(promiseAllKeyedSlowFulfillFunction);
+JSC_DECLARE_HOST_FUNCTION(promiseAllSettledKeyedFulfillFunction);
+JSC_DECLARE_HOST_FUNCTION(promiseAllSettledKeyedRejectFunction);
+JSC_DECLARE_HOST_FUNCTION(promiseAllSettledKeyedSlowFulfillFunction);
+JSC_DECLARE_HOST_FUNCTION(promiseAllSettledKeyedSlowRejectFunction);
 
 Structure* createPromiseAllSettledFulfilledResultStructure(VM&, JSGlobalObject&);
 Structure* createPromiseAllSettledRejectedResultStructure(VM&, JSGlobalObject&);
 JSObject* createPromiseAllSettledFulfilledResult(JSGlobalObject*, JSValue);
 JSObject* createPromiseAllSettledRejectedResult(JSGlobalObject*, JSValue);
+
+void resolveKeyedPromiseCombinatorElement(JSGlobalObject*, JSPromiseCombinatorsGlobalContext*, uint64_t elementKey, JSValue);
 
 } // namespace JSC
