@@ -216,6 +216,7 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/cocoa/BifurcatedGraphicsContextTestsCG.cpp
     Tests/WebCore/cocoa/CaptionPreferencesTests.mm
     Tests/WebCore/cocoa/CoreMediaUtilities.mm
+    Tests/WebCore/cocoa/CryptoAlgorithmAESCBC.cpp
     Tests/WebCore/cocoa/DatabaseTrackerTest.mm
     Tests/WebCore/cocoa/DecodedMediaSamplesBlockTests.mm
     Tests/WebCore/cocoa/GraphicsContextCGTests.mm
