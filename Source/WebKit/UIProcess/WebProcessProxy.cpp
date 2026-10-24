@@ -1707,7 +1707,7 @@ void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&& connectionIdentifier)
 {
     bool anyPageHasModelProcessEnabled = false;
-    for (auto& page : m_pageMap.values())
+    for (Ref page : pages())
         anyPageHasModelProcessEnabled |= page->preferences().modelElementEnabled() && page->preferences().modelProcessEnabled();
     MESSAGE_CHECK(anyPageHasModelProcessEnabled);
 
