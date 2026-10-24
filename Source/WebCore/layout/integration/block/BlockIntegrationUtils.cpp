@@ -144,18 +144,32 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     };
 }
 
-LayoutSize BlockIntegrationUtils::layoutOutOfFlowReplacedElement(const RenderBox& replacedElement)
+LayoutSize BlockIntegrationUtils::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, std::optional<LayoutUnit> borderBoxInlineSize, std::optional<LayoutUnit> borderBoxBlockSize)
 {
-    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef box = const_cast<RenderBox&>(replacedElement);
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef box = const_cast<RenderBox&>(root);
     // Its size may depend on the size of its containing block, which the block formatting context has just laid out.
     box->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+    if (borderBoxInlineSize)
+        box->setOverridingBorderBoxLogicalWidth(*borderBoxInlineSize);
+    if (borderBoxBlockSize)
+        box->setOverridingBorderBoxLogicalHeight(*borderBoxBlockSize);
     {
         // The layout state has the paint offset of the block formatting context root only, not of the boxes inside.
         CheckedRef layoutContext = box->view().frameView().layoutContext();
         auto layoutStateDisabler = LayoutStateDisabler { layoutContext.get() };
         box->layoutIfNeeded();
     }
+    if (borderBoxInlineSize)
+        box->clearOverridingBorderBoxLogicalWidth();
+    if (borderBoxBlockSize)
+        box->clearOverridingBorderBoxLogicalHeight();
     return { box->logicalWidth(), box->logicalHeight() };
+}
+
+Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes(const RenderBox& box, LayoutUnit borderAndPadding)
+{
+    // Like RenderBox::computeOutOfFlowPositionedLogicalWidthUsing for a fit-content size.
+    return { box.minContentLogicalWidthContribution() - borderAndPadding, box.maxContentLogicalWidthContribution() - borderAndPadding };
 }
 
 bool BlockIntegrationUtils::contentBoxInlineSizeChanged(const RenderBox& box, LayoutUnit contentBoxInlineSize)
