@@ -44,6 +44,7 @@
 #include <WebCore/SharedWorkerIdentifier.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <wtf/HashSet.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -249,6 +250,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     Markable<FetchIdentifier> navigationPreloadIdentifier;
     String nonce;
     FetchingWorkerIdentifier workerIdentifier;
+    URL workerURL;
 };
 
 } // namespace WebCore

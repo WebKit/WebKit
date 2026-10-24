@@ -168,6 +168,8 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     }
     if (!optionsCopy->options.clientIdentifier)
         optionsCopy->options.clientIdentifier = globalScope.identifier().object();
+    if (is<DedicatedWorkerGlobalScope>(globalScope))
+        optionsCopy->options.workerURL = globalScope.url().isolatedCopy();
 
     if (RefPtr serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(globalScope)) {
         InspectorInstrumentation::willSendRequest(*serviceWorkerGlobalScope, m_workerRequestIdentifier, request);

@@ -51,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/partial-deployment.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting-cache-storage-corp.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting-cached-and-service-worker-responses.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting-dedicated-worker.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting-subresource-corp.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/service-worker-coep-credentialless-proxy.https.tentative.window.js

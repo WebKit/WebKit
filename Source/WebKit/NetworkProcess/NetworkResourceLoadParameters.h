@@ -89,6 +89,7 @@ struct NetworkResourceLoadParameters {
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders { };
     URL parentFrameURL { };
     URL frameURL { };
+    URL workerURL { };
     WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy { };
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy { };
     WebCore::DocumentIsolationPolicy documentIsolationPolicy { };
