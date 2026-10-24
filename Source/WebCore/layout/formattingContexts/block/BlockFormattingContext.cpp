@@ -260,8 +260,35 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
     result.outOfFlowBoxes.append({ box, staticInlinePosition(), staticBlockPosition });
 }
 
+// Its own formatting context sizes a replaced element, through the render tree; the block formatting context places it (CSS 2.2 §10.3.8, §10.6.5).
+BlockLayoutResult BlockFormattingContext::layoutOutOfFlowReplacedElement(const RenderBox& replacedElement, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition)
+{
+    auto geometry = computeBorderAndPadding(replacedElement, containingBlock.inlineSize);
+    auto borderBoxSize = integrationUtils().layoutOutOfFlowReplacedElement(replacedElement);
+    auto outOfFlowGeometry = OutOfFlowGeometry { replacedElement, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode() }, staticPosition, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
+    auto inlineAxis = outOfFlowGeometry.computeReplacedInlineAxisGeometry(borderBoxSize.width());
+    geometry.setContentBoxWidth(inlineAxis.borderBoxSize - geometry.horizontalBorderAndPadding());
+    geometry.setHorizontalMargin({ inlineAxis.marginStart, inlineAxis.marginEnd });
+    geometry.setLeft(containingBlock.paddingBoxInlineStart + inlineAxis.borderBoxStart);
+    auto blockAxis = outOfFlowGeometry.computeReplacedBlockAxisGeometry(borderBoxSize.height());
+    geometry.setContentBoxHeight(blockAxis.borderBoxSize - geometry.verticalBorderAndPadding());
+    geometry.setVerticalMargin({ blockAxis.marginStart, blockAxis.marginEnd });
+    geometry.setTop(containingBlock.paddingBoxBlockStart + blockAxis.borderBoxStart);
+
+    auto margins = [](LayoutUnit margin) {
+        auto adjoiningMargins = AdjoiningMargins { };
+        adjoiningMargins.add(margin);
+        return adjoiningMargins;
+    };
+    auto result = BlockLayoutResult { };
+    result.boxes.append({ replacedElement, geometry, geometry.contentBoxHeight(), margins(geometry.marginBefore()), margins(geometry.marginAfter()), false, false, true });
+    return result;
+}
+
 BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& outOfFlowBox, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition)
 {
+    if (outOfFlowBox.isRenderReplaced() || outOfFlowBox.isRenderOrLegacyRenderSVGRoot())
+        return layoutOutOfFlowReplacedElement(outOfFlowBox, containingBlock, staticPosition);
     auto result = BlockLayoutResult { };
     CheckedRef box = downcast<RenderBlockFlow>(outOfFlowBox);
     auto geometry = computeBorderAndPadding(box, containingBlock.inlineSize);
