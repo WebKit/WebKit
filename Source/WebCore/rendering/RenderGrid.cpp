@@ -33,6 +33,7 @@
 #include "GridLayoutFunctions.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "HitTestLocation.h"
+#include "LayoutIntegrationBlockLayout.h"
 #include "LayoutIntegrationGridCoverage.h"
 #include "LayoutIntegrationGridLayout.h"
 #include "LayoutRange.h"
@@ -1262,10 +1263,10 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
     for (CheckedRef gridItem : currentGrid().orderIterator().gridItems()) {
         // Grid items should use the grid area sizes instead of the containing block (grid container)
         // sizes, we initialize the overrides here if needed to ensure it.
-        if (!gridItem->gridAreaContentLogicalWidth())
-            gridItem->setGridAreaContentLogicalWidth(0_lu);
-        if (!gridItem->gridAreaContentLogicalHeight())
-            gridItem->setGridAreaContentLogicalHeight(std::nullopt);
+        if (!gridItem->overridingContainingBlockContentLogicalWidth())
+            gridItem->setOverridingContainingBlockContentLogicalWidth(0_lu);
+        if (!gridItem->overridingContainingBlockContentLogicalHeight())
+            gridItem->setOverridingContainingBlockContentLogicalHeight(std::nullopt);
 
         GridArea area = currentGrid().gridItemArea(gridItem);
         currentGrid().clampAreaToSubgridIfNeeded(area);
@@ -1622,12 +1623,12 @@ static const StyleContentAlignmentData& LEGACY_NODELETE contentAlignmentNormalBe
 static bool LEGACY_NODELETE overrideSizeChanged(const RenderBox& gridItem, Style::GridTrackSizingDirection direction, std::optional<LayoutUnit> width, std::optional<LayoutUnit> height)
 {
     if (direction == Style::GridTrackSizingDirection::Columns) {
-        if (auto gridAreaContentLogicalWidth = gridItem.gridAreaContentLogicalWidth())
-            return *gridAreaContentLogicalWidth != width;
+        if (auto overridingContainingBlockContentLogicalWidth = gridItem.overridingContainingBlockContentLogicalWidth())
+            return *overridingContainingBlockContentLogicalWidth != width;
         return true;
     }
-    if (auto gridAreaContentLogicalHeight = gridItem.gridAreaContentLogicalHeight())
-        return *gridAreaContentLogicalHeight != height;
+    if (auto overridingContainingBlockContentLogicalHeight = gridItem.overridingContainingBlockContentLogicalHeight())
+        return *overridingContainingBlockContentLogicalHeight != height;
     return true;
 }
 
@@ -1667,8 +1668,8 @@ void RenderGrid::updateGridAreaLogicalSize(RenderBox& gridItem, std::optional<La
     if (gridAreaWidthChanged || (gridAreaHeightChanged && hasRelativeBlockAxisSize(*this, gridItem)))
         gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
 
-    gridItem.setGridAreaContentLogicalWidth(width);
-    gridItem.setGridAreaContentLogicalHeight(height);
+    gridItem.setOverridingContainingBlockContentLogicalWidth(width);
+    gridItem.setOverridingContainingBlockContentLogicalHeight(height);
 }
 
 void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& autoGridItems, RenderGridLayoutState& gridLayoutState, GridLanesResultRef gridLanesResult)
@@ -1759,8 +1760,8 @@ void RenderGrid::layoutOutOfFlowBox(RenderBox& gridItem, RelayoutChildren relayo
     LayoutRange columnBreadth = gridAreaRangeForOutOfFlow(gridItem, Style::GridTrackSizingDirection::Columns);
     LayoutRange rowBreadth = gridAreaRangeForOutOfFlow(gridItem, Style::GridTrackSizingDirection::Rows);
 
-    gridItem.setGridAreaContentLogicalWidth(columnBreadth.size());
-    gridItem.setGridAreaContentLogicalHeight(rowBreadth.size());
+    gridItem.setOverridingContainingBlockContentLogicalWidth(columnBreadth.size());
+    gridItem.setOverridingContainingBlockContentLogicalHeight(rowBreadth.size());
 
     // Mark for layout as we're resetting the position before and we relay in generic layout logic
     // for positioned items in order to get the offsets properly resolved.
@@ -1901,6 +1902,8 @@ void RenderGrid::stretchBlockSizeForGridItem(RenderBox& gridItem, LayoutUnit ali
         if (canSetColumnAxisStretchRequirementForItem(gridItem))
             return gridLayoutState.containsLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
 
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(gridItem); blockFlow && LayoutIntegration::BlockLayout::contentDependsOnBlockSize(*blockFlow))
+            return true;
         return is<RenderBlock>(gridItem) && downcast<RenderBlock>(gridItem).hasPercentHeightDescendants();
     }();
     // Checking the logical-height of a grid item isn't enough. Setting an override logical-height
@@ -1925,8 +1928,8 @@ void RenderGrid::stretchInlineSizeForGridItem(RenderBox& gridItem, LayoutUnit al
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
 void RenderGrid::applyStretchAlignmentToGridItemIfNeeded(RenderBox& gridItem, RenderGridLayoutState& gridLayoutState)
 {
-    ASSERT(gridItem.gridAreaContentLogicalHeight());
-    ASSERT(gridItem.gridAreaContentLogicalWidth());
+    ASSERT(gridItem.overridingContainingBlockContentLogicalHeight());
+    ASSERT(gridItem.overridingContainingBlockContentLogicalWidth());
 
     // We clear height and width override values because we will decide now whether it's allowed or
     // not, evaluating the conditions which might have changed since the old values were set.
