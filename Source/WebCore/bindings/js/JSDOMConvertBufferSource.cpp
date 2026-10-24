@@ -65,4 +65,15 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return JSC::JSArrayBuffer::create(JSC::getVM(lexicalGlobalObject), globalObject->arrayBufferStructure(buffer.sharingMode()), &buffer);
 }
 
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSGlobalObject* globalObject, JSC::ArrayBufferView& view)
+{
+    if (auto* wrapper = view.m_wrapper.get(); wrapper && currentWorld(*lexicalGlobalObject).isNormal())
+        return wrapper;
+
+    auto* wrapper = view.wrap(lexicalGlobalObject, globalObject);
+    if (wrapper)
+        cacheArrayBufferViewWrapper(*lexicalGlobalObject, view, *wrapper);
+    return wrapper;
+}
+
 }
