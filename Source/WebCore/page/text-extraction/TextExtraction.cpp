@@ -57,6 +57,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLLIElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
@@ -2409,6 +2410,23 @@ static RefPtr<Element> frontmostHitTestedElementInSubtree(const LocalFrameView& 
     return nullptr;
 }
 
+static bool isImageCoveredByButtonOrLinkInSameListItem(Node& hitTestedNode, Element& target)
+{
+    if (!is<SVGSVGElement>(target) && !is<HTMLImageElement>(target))
+        return false;
+
+    RefPtr listItem = lineageOfType<HTMLLIElement>(target).first();
+    if (!listItem || listItem != lineageOfType<HTMLLIElement>(hitTestedNode).first())
+        return false;
+
+    for (Ref ancestor : lineageOfType<Element>(hitTestedNode)) {
+        if (ancestor->isLink() || is<HTMLButtonElement>(ancestor))
+            return true;
+    }
+
+    return false;
+}
+
 struct ResolvedMouseTarget {
     Ref<Element> element;
     Ref<LocalFrame> frame;
@@ -2497,7 +2515,7 @@ static void dispatchSimulatedClick(Node& targetNode, const String& searchText, C
         return completion(false, "Click target is disabled"_s);
 
     Ref document = element->document();
-    if (RefPtr target = findNodeAtRootViewLocation(view, document, centerInRootView); target && (target == element.ptr() || target->isShadowIncludingDescendantOf(element))) {
+    if (RefPtr target = findNodeAtRootViewLocation(view, document, centerInRootView); target && (target == element.ptr() || target->isShadowIncludingDescendantOf(element) || isImageCoveredByButtonOrLinkInSameListItem(*target, element))) {
         // Dispatch mouse events over the center of the element, if possible.
         return dispatchSimulatedClick(frame, centerInRootView, WTF::move(completion));
     }

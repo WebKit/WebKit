@@ -1,0 +1,222 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 300px;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .flex-row {
+            flex-direction: row;
+            gap: 16px;
+        }
+
+        .p-4 {
+            padding: 16px;
+        }
+
+        .contents {
+            display: contents;
+        }
+
+        .card {
+            position: relative;
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .card-button {
+            position: absolute;
+            inset: 0;
+            border: 1px solid gray;
+            padding: 4px;
+            background-color: transparent;
+        }
+
+        h2, p {
+            margin: 0;
+        }
+
+        .covered-list li {
+            position: relative;
+            width: 300px;
+            padding: 8px;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            border: none;
+            background: transparent;
+        }
+
+        #outside-button {
+            position: absolute;
+            margin: 0;
+            padding: 0;
+            border: none;
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+    <form id="challenge-form" method="post" class="flex-col flex">
+        <ul class="flex-col flex">
+            <li class="flex">
+                <article class="card">
+                    <button type="submit" class="card-button" value="200" id="200" name="validate" aria-labelledby="card_r_c_" aria-describedby="card_r_c_-desc"><span style="display: none;"></span><span class="truncate"></span><span style="display: none;"></span></button>
+                    <section class="flex-col flex p-4">
+                        <div class="flex-row flex">
+                            <div class="justify-center flex"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false" class="flex-none text-primary [&amp;_path]:fill-current"><circle cx="8" cy="8" r="6"></circle></svg></div>
+                            <div class="flex-1 flex-col justify-center flex">
+                                <h2 id="card_r_c_">Email</h2>
+                                <div id="card_r_c_-desc" class="contents"><p>Get a code at <span>w*****56@gmail.com</span></p></div>
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            </li>
+            <li class="flex">
+                <article class="card">
+                    <button type="submit" class="card-button" value="651" id="651" name="validate" aria-labelledby="card_r_i_" aria-describedby="card_r_i_-desc"><span style="display: none;"></span><span class="truncate"></span><span style="display: none;"></span></button>
+                    <section class="flex-col flex p-4">
+                        <div class="flex-row flex">
+                            <div class="justify-center flex"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false" class="flex-none text-primary [&amp;_path]:fill-current"><circle cx="8" cy="8" r="6"></circle></svg></div>
+                            <div class="flex-1 flex-col justify-center flex">
+                                <h2 id="card_r_i_">Text message</h2>
+                                <div id="card_r_i_-desc" class="contents"><p>Get a code on <span>(9**) ***-**43</span>. Message and data rates may apply.</p></div>
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            </li>
+            <li class="flex">
+                <article class="card">
+                    <button type="submit" class="card-button" value="702" id="702" name="validate" aria-labelledby="card_r_l_" aria-describedby="card_r_l_-desc"><span style="display: none;"></span><span class="truncate"></span><span style="display: none;"></span></button>
+                    <section class="flex-col flex p-4">
+                        <div class="flex-row flex">
+                            <div class="justify-center flex"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false" class="flex-none text-primary [&amp;_path]:fill-current"><circle cx="8" cy="8" r="6"></circle></svg></div>
+                            <div class="flex-1 flex-col justify-center flex">
+                                <h2 id="card_r_l_">WhatsApp</h2>
+                                <div id="card_r_l_-desc" class="contents"><p>Get a code on <span>(9**) ***-**43</span></p></div>
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            </li>
+        </ul>
+    </form>
+    <ul class="covered-list">
+        <li>
+            <div class="overlay" id="list-item-div"></div>
+            <section>
+                <svg class="div-covered-icon" aria-hidden="true" width="16" height="16"><circle cx="8" cy="8" r="6"></circle></svg>
+                <h2>Covered by a div</h2>
+            </section>
+        </li>
+        <li>
+            <section>
+                <svg class="outside-covered-icon" aria-hidden="true" width="16" height="16"><circle cx="8" cy="8" r="6"></circle></svg>
+                <h2>Covered from outside</h2>
+            </section>
+        </li>
+    </ul>
+    <button id="outside-button"></button>
+    <script>
+    jsTestIsAsync = true;
+
+    clickCounts = { };
+
+    function countClicks(id)
+    {
+        clickCounts[id] = 0;
+        document.getElementById(id).addEventListener("click", event => {
+            clickCounts[id]++;
+            event.preventDefault();
+        });
+    }
+
+    function imageNodeIdentifierAfter(debugText, searchTerm)
+    {
+        const lines = debugText.split("\n");
+        const index = lines.findIndex(line => line.includes(searchTerm));
+        for (const line of lines.slice(index + 1)) {
+            if (!line.includes("image"))
+                continue;
+
+            const match = line.match(/uid=(\d+)/);
+            if (match)
+                return match[1];
+        }
+        return null;
+    }
+
+    async function clickNode(nodeIdentifier)
+    {
+        return UIHelper.performTextExtractionInteraction("click", { nodeIdentifier });
+    }
+
+    addEventListener("load", async () => {
+        document.getElementById("challenge-form").addEventListener("submit", event => event.preventDefault());
+
+        for (const id of ["200", "651", "702", "list-item-div", "outside-button"])
+            countClicks(id);
+
+        const outsideButton = document.getElementById("outside-button");
+        const coveredRect = document.querySelector(".outside-covered-icon").getBoundingClientRect();
+        outsideButton.style.left = `${coveredRect.left + scrollX}px`;
+        outsideButton.style.top = `${coveredRect.top + scrollY}px`;
+        outsideButton.style.width = `${coveredRect.width}px`;
+        outsideButton.style.height = `${coveredRect.height}px`;
+
+        if (!window.testRunner)
+            return;
+
+        const debugText = await UIHelper.requestDebugText({
+            nodeIdentifierInclusion: "interactive",
+            includeAccessibilityAttributes: true,
+        });
+
+        clickError = await clickNode(imageNodeIdentifierAfter(debugText, "labelledby='Text message'"));
+        shouldBeEqualToString("clickError", "");
+        shouldBe("clickCounts['651']", "1");
+        shouldBe("clickCounts['200']", "0");
+        shouldBe("clickCounts['702']", "0");
+
+        await clickNode(UIHelper.nodeIdentifierFromDebugText(debugText, "div-covered-icon"));
+        shouldBe("clickCounts['list-item-div']", "0");
+
+        await clickNode(UIHelper.nodeIdentifierFromDebugText(debugText, "outside-covered-icon"));
+        shouldBe("clickCounts['outside-button']", "0");
+
+        document.body.querySelectorAll("form, ul, #outside-button").forEach(element => element.remove());
+        finishJSTest();
+    });
+    </script>
+</body>
+</html>
