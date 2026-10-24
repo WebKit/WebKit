@@ -34,16 +34,16 @@ select,
   box-sizing: border-box;
   border: 1px solid color-mix(currentColor 50%);
   border-radius: 4px;
-  padding-block: 0.4lh;
-  padding-inline: 1em 0.7em;
+  padding-block: 0.5rem;
+  padding-inline: 0.7rem;
   color: inherit;
   font: inherit;
   background-color: light-dark(transparent, color-mix(currentColor 4%));
   align-items: unsafe center;
   align-content: unsafe center;
   white-space: nowrap;
-  cursor: default;
-  gap: 0.65em;
+  cursor: pointer;
+  gap: 0.7rem;
   min-block-size: 24px;
   min-inline-size: 4em;
   overflow: clip;
@@ -59,9 +59,9 @@ select:not([popover]),
   display: inline-flex;
 }
 
-select:hover,
-.customizable-select-button.hover {
-  border-color: color-mix(currentColor 70%);
+select:is(:hover, :focus),
+.customizable-select-button:is(.hover, :focus) {
+  border-color: color-mix(currentColor 80%);
 }
 
 /* The shared reference sheet tints the button background on hover, but WebKit's
@@ -78,7 +78,7 @@ select:active,
 }
 
 select:user-invalid {
-  border-color: light-dark(#dc3545, oklch(from #db2a37 calc(l + 0.17) c h));
+  border-color: light-dark(oklch(56% 0.2 26), oklch(66% 0.17 24));
 }
 
 select:disabled,
@@ -101,6 +101,7 @@ select selectedcontent,
   overflow: clip;
   text-overflow: inherit;
   min-inline-size: 0;
+  flex: 1;
 }
 
 /* ---- Picker icon ---- */
@@ -111,8 +112,6 @@ select selectedcontent,
 select::picker-icon {
   font: 100% system-ui;
   text-orientation: sideways;
-  padding-inline: 0.15em;
-  margin-inline-start: auto;
 }
 
 /* The div-based reconstruction cannot name that glyph, so it approximates the drawing with a mask, and
@@ -132,7 +131,6 @@ select::picker-icon {
   content: "\2304";
   -webkit-text-fill-color: transparent;
   font: 100% system-ui;
-  padding-inline: 0.15em;
   margin-inline-start: auto;
   /* inline-block so the box sizes the same whether the button lays it out as a flex item or, as in the
      select-clipping reference, as an inline. min-inline-size pins the automatic minimum size a flex item
@@ -144,17 +142,17 @@ select::picker-icon {
   mask: no-repeat center / calc(0.5em + 1px) calc(0.375em + 1px) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 7" preserveAspectRatio="none"><path d="M0.5 2.5 4.5 6.5 8.5 2.5" fill="none" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>');
 }
 
-.customizable-select-button.vertical-rl::after {
-  rotate: 90deg;
-}
-
 .customizable-select-button.vertical-lr::after {
   rotate: -90deg;
 }
 
-select:open::picker-icon,
 .customizable-select-button.open::after {
-  transform: scale(-1);
+  mask: no-repeat center / calc(0.5em + 2px) calc(0.375em) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 7" preserveAspectRatio="none"><path d="M0.5 4.5 4.5 0.5 8.5 4.5" fill="none" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>');
+}
+
+.customizable-select-button.open.vertical-rl::after {
+  rotate: none;
+  mask: no-repeat calc(50% - 1px) calc(50% - 1px) / calc(0.375em + 1px) calc(0.5em + 1px) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7 9" preserveAspectRatio="none"><path d="M2.5 0.5 6.5 4.5 2.5 8.5" fill="none" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>');
 }
 
 /* ---- Picker popover ---- */
@@ -198,19 +196,20 @@ select option,
 .customizable-select-option {
   min-inline-size: 24px;
   min-block-size: max(24px, 1lh);
-  padding-block: 0.4lh;
-  padding-inline: 0.75em 1.1em;
+  padding-block: 0.5rem;
+  padding-inline: 0.7rem 1.4rem;
   display: flex;
   align-items: center;
-  gap: 0.5em;
+  gap: 0.5rem;
   white-space: nowrap;
   box-sizing: border-box;
   outline-offset: inset;
+  cursor: pointer;
 }
 
 select option:hover,
 select option:focus-visible {
-  background-color: color-mix(currentColor 10%);
+  background-color: color-mix(currentColor 6%);
 }
 
 select option:active {
@@ -242,6 +241,7 @@ optgroup,
   display: block;
   font-weight: bolder;
   box-sizing: border-box;
+  cursor: default;
 }
 
 select :is(optgroup, option) + optgroup,
@@ -260,45 +260,27 @@ select optgroup legend,
 .customizable-select-legend {
   box-sizing: border-box;
   padding-block: 0.6em 0.15em;
-  padding-inline: 0.75em;
+  padding-inline: 0.7rem;
   min-block-size: 1lh;
   font-size: 0.85em;
   font-weight: 400;
   color: color-mix(currentColor 70%);
-  cursor: default;
 }
 
 /* ---- Media adjustments ---- */
 
-@media (prefers-contrast) {
+@media (prefers-contrast: more) {
   select,
-  .customizable-select-button {
-    background-color: Canvas;
-    color: CanvasText;
-    border-color: CanvasText;
-  }
-  select:enabled:hover:hover,
-  select:open:enabled:hover:hover,
-  .customizable-select-button.hover {
-    background-color: Canvas;
-  }
-  select:enabled:active:active,
-  .customizable-select-button.active {
-    background-color: SelectedItem;
-    color: SelectedItemText;
-  }
-  select:disabled:disabled,
-  .customizable-select-button.disabled {
-    color: GrayText;
-    border-color: GrayText;
-    background-color: Canvas;
-  }
+  .customizable-select-button,
   select::picker(select),
   .customizable-select-popover {
-    background-color: Canvas;
-    color: CanvasText;
-    border-color: CanvasText;
-    box-shadow: none;
+    border-color: currentColor;
+  }
+  select:disabled,
+  .customizable-select-button.disabled {
+    border-color: color-mix(currentColor 40%);
+    color: color-mix(currentColor 60%);
+    background-color: color-mix(currentColor 10%);
   }
 }
 

@@ -1042,7 +1042,7 @@ select {
 
 select:-internal-uses-menulist {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    padding-inline: -internal-auto-base(0.4em, 1em 0.7em);
+    padding-inline: -internal-auto-base(0.4em, 0.7rem);
     color: -internal-auto-base(-apple-system-blue, inherit);
     font: -internal-auto-base(11px system-ui, inherit);
     border-color: -internal-auto-base(-webkit-control-background, color-mix(currentColor 50%));
@@ -1053,19 +1053,19 @@ select:-internal-uses-menulist {
     background-color: -internal-auto-base(-apple-system-opaque-secondary-fill, light-dark(transparent, color-mix(currentColor 4%)));
 #endif /* defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION */
 #else
-    padding-inline: -internal-auto-base(0, 1em 0.7em);
+    padding-inline: -internal-auto-base(0, 0.7rem);
     color: -internal-auto-base(CanvasText, inherit);
     border-color: -internal-auto-base(revert-rule, color-mix(currentColor 50%));
     border-radius: -internal-auto-base(5px, 4px);
     background-color: -internal-auto-base(Canvas, light-dark(transparent, color-mix(currentColor 4%)));
     font: -internal-auto-base(-webkit-small-control, inherit);
 #endif /* defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY */
-    padding-block: -internal-auto-base(0, 0.4lh);
+    padding-block: -internal-auto-base(0, 0.5rem);
     align-items: unsafe center;
     align-content: unsafe center;
     white-space: -internal-auto-base(pre, nowrap);
-    cursor: default;
-    gap: -internal-auto-base(initial, 0.65em);
+    cursor: -internal-auto-base(default, pointer);
+    gap: -internal-auto-base(initial, 0.7rem);
     min-block-size: -internal-auto-base(revert-rule, 24px);
     min-inline-size: -internal-auto-base(revert-rule, 4em);
     overflow: -internal-auto-base(revert-rule, clip);
@@ -1077,8 +1077,8 @@ select:-internal-uses-menulist {
     word-spacing: -internal-auto-base(normal, inherit);
 }
 
-select:-internal-uses-menulist:hover {
-    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 70%));
+select:-internal-uses-menulist:is(:hover, :focus) {
+    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 80%));
 }
 
 select:-internal-uses-menulist:active {
@@ -1086,7 +1086,7 @@ select:-internal-uses-menulist:active {
 }
 
 select:-internal-uses-menulist:user-invalid {
-    border-color: -internal-auto-base(revert-rule, light-dark(#dc3545, oklch(from #db2a37 calc(l + 0.17) c h)));
+    border-color: -internal-auto-base(revert-rule, light-dark(oklch(56% 0.2 26), oklch(66% 0.17 24)));
 }
 
 select:-internal-uses-menulist:disabled {
@@ -1137,7 +1137,6 @@ select::picker-icon {
     content: picker-down / "";
     font: 100% system-ui;
     text-orientation: sideways;
-    padding-inline: 0.15em;
     transition: transform 150ms ease-out;
 }
 
@@ -1178,22 +1177,23 @@ select:open::picker-icon {
 select:-internal-uses-menulist option {
     min-inline-size: -internal-auto-base(revert-rule, 24px);
     min-block-size: -internal-auto-base(revert-rule, max(24px, 1lh));
-    padding-block: -internal-auto-base(revert-rule, 0.4lh);
-    padding-inline: -internal-auto-base(revert-rule, 0.75em 1.1em);
+    padding-block: -internal-auto-base(revert-rule, 0.5rem);
+    padding-inline: -internal-auto-base(revert-rule, 0.7rem 1.4rem);
     display: -internal-auto-base(revert-rule, flex);
     align-items: center;
-    gap: -internal-auto-base(revert-rule, 0.5em);
+    gap: -internal-auto-base(revert-rule, 0.5rem);
 }
 
 select option {
     white-space: nowrap;
     box-sizing: border-box;
     outline-offset: -internal-auto-base(revert-rule, inset);
+    cursor: -internal-auto-base(revert-rule, pointer);
 }
 
 select option:hover,
 select option:focus-visible {
-    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 10%));
+    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 6%));
 }
 
 select option:active {
@@ -1219,6 +1219,7 @@ optgroup {
     display: block;
     font-weight: bolder;
     box-sizing: border-box;
+    cursor: -internal-auto-base(revert-rule, default);
 }
 
 select:-internal-uses-menulist :is(optgroup, option) + optgroup,
@@ -1238,29 +1239,22 @@ select optgroup legend,
 optgroup::-internal-optgroup-label {
     box-sizing: border-box;
     padding-block: 0.6em 0.15em;
-    padding-inline: 0.75em;
+    padding-inline: 0.7rem;
     min-block-size: 1lh;
     font-size: 0.85em;
     font-weight: 400;
     color: color-mix(currentColor 70%);
-    cursor: default;
 }
 
-@media (prefers-contrast) {
+@media (prefers-contrast: more) {
+    select:-internal-uses-menulist,
     :-internal-select-popover {
-        background-color: Canvas;
-        color: CanvasText;
-        border-color: CanvasText;
+        border-color: -internal-auto-base(revert-rule, currentColor);
     }
-
-    select option:is(:hover, :focus-visible, :active) {
-        background-color: SelectedItem;
-        color: SelectedItemText;
-    }
-    select option:disabled,
-    select optgroup legend,
-    optgroup::-internal-optgroup-label {
-        color: GrayText;
+    select:-internal-uses-menulist:disabled {
+        border-color: -internal-auto-base(revert-rule, color-mix(currentColor 40%));
+        color: -internal-auto-base(revert-rule, color-mix(currentColor 60%));
+        background-color: -internal-auto-base(revert-rule, color-mix(currentColor 10%));
     }
 }
 
