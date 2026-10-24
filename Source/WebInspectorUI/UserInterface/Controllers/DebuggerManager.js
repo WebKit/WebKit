@@ -1804,11 +1804,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     _mainResourceDidChange(event)
     {
         this._tryAssociateScripts(event.target.mainResource);
-
-        if (!event.target.isMainFrame())
-            return;
-
-        this._didResumeInternal(WI.mainTarget);
     }
 
     _handleResourceAdded(event)

@@ -1,0 +1,112 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    const url = "http://localhost:8000/inspector/target/resources/inline-debugger-statement.html?cross-site-navigation-pause-stays-paused";
+
+    function within(promise, description, timeout = 5000)
+    {
+        let timer;
+        let deadline = new Promise((resolve) => {
+            timer = setTimeout(() => {
+                InspectorTest.fail(`Timed out waiting for ${description}.`);
+                resolve(false);
+            }, timeout);
+        });
+        return Promise.race([promise.then(() => true), deadline]).finally(() => clearTimeout(timer));
+    }
+
+    // The harness holds its output until the new page has loaded. If none follows, print it into the current page.
+    async function flushDeferredOutput()
+    {
+        let canPrint = false;
+        await within(InspectorTest.evaluateInPage("!!(window.TestPage && document.body)").then((result) => canPrint = result), "the page to answer", 2000);
+        if (canPrint)
+            InspectorTest.testPageDidLoad();
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Target.PSON.PauseStaysPaused");
+
+    suite.addTestCase({
+        name: "PausedPageStaysPausedAfterResourceTreeReply",
+        description: "A page that pauses while its process swaps in must still show as paused once the frontend has processed its resource tree.",
+        timeout: 25000,
+        async test() {
+            let networkManager = WI.networkManager;
+            let heldReplyArguments = null;
+            let replyHeld;
+            let replyHeldPromise = new Promise((resolve) => replyHeld = resolve);
+
+            // Hold the resource tree reply of the new page target until the page has paused.
+            networkManager._processMainFrameResourceTreePayload = function(...args) {
+                heldReplyArguments = args;
+                replyHeld();
+            };
+
+            function releaseHeldReply()
+            {
+                delete networkManager._processMainFrameResourceTreePayload;
+                if (heldReplyArguments) {
+                    let args = heldReplyArguments;
+                    heldReplyArguments = null;
+                    networkManager._processMainFrameResourceTreePayload(...args);
+                }
+            }
+
+            let mainFrameResourceChanges = 0;
+            let mainResourceDidChangeListener = (event) => {
+                if (event.target.isMainFrame())
+                    ++mainFrameResourceChanges;
+            };
+            WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, mainResourceDidChangeListener);
+
+            let pageLoadedPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            let pageLoaded = false;
+
+            try {
+                let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+                InspectorTest.deferOutputUntilTestPageIsReloaded();
+                InspectorTest.evaluateInPage(`window.location.href = ${JSON.stringify(url)};`);
+
+                if (!await within(Promise.all([pausedPromise, replyHeldPromise]), "the new page to launch, pause and answer Page.getResourceTree", 10000))
+                    return;
+
+                InspectorTest.expectTrue(WI.debuggerManager.paused, "The debugger should be paused before the resource tree reply is processed.");
+
+                let mainFrameResourceChangesBeforeRelease = mainFrameResourceChanges;
+                releaseHeldReply();
+
+                InspectorTest.expectGreaterThan(mainFrameResourceChanges, mainFrameResourceChangesBeforeRelease, "Processing the reply should dispatch a main resource change for the new main frame.");
+                InspectorTest.expectTrue(WI.debuggerManager.paused, "The debugger should still be paused after the main resource change.");
+                InspectorTest.expectTrue(WI.debuggerManager.dataForTarget(WI.pageTarget).paused, "The new page target should still be paused.");
+
+                await within(WI.debuggerManager.resume(), "Resume to finish");
+                pageLoaded = await within(pageLoadedPromise, "the page to finish loading after Resume");
+                InspectorTest.expectFalse(WI.debuggerManager.paused, "The debugger should be resumed.");
+            } finally {
+                WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, mainResourceDidChangeListener);
+                releaseHeldReply();
+
+                if (!pageLoaded) {
+                    await WI.pageTarget.DebuggerAgent.resume().catch(() => {});
+                    pageLoaded = await within(pageLoadedPromise, "the page to finish loading after the cleanup resume");
+                }
+
+                if (!pageLoaded)
+                    await flushDeferredOutput();
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that a page which pauses while its process swaps in still shows as paused after the frontend processes its resource tree.</p>
+</body>
+</html>

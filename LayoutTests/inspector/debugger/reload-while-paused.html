@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function pauseSoon()
+{
+    setTimeout(() => { debugger; }, 0);
+}
+
+function test()
+{
+    function within(promise, description, timeout = 10000)
+    {
+        let timer;
+        let deadline = new Promise((resolve) => {
+            timer = setTimeout(() => {
+                InspectorTest.fail(`Timed out waiting for ${description}.`);
+                resolve(false);
+            }, timeout);
+        });
+        return Promise.race([promise.then(() => true), deadline]).finally(() => clearTimeout(timer));
+    }
+
+    // The harness holds its output until the page has reloaded. If none follows, print it into the current page.
+    async function flushDeferredOutput()
+    {
+        let canPrint = false;
+        await within(InspectorTest.evaluateInPage("!!(window.TestPage && document.body)").then((result) => canPrint = result), "the page to answer", 2000);
+        if (canPrint)
+            InspectorTest.testPageDidLoad();
+    }
+
+    let suite = InspectorTest.createAsyncSuite("ReloadWhilePaused");
+
+    suite.addTestCase({
+        name: "ReloadWhilePaused.BackendResumesOnReload",
+        description: "A paused page that reloads must be resumed by the backend, so the frontend ends up not paused.",
+        timeout: 25000,
+        async test() {
+            let sawDebuggerResumed = false;
+            let sawResumedEvent = false;
+            let resumedListener = () => { sawResumedEvent = true; };
+
+            let pageLoadedPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            let pageLoaded = false;
+            let reloadRequested = false;
+            let pausedTarget = null;
+
+            try {
+                let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+                InspectorTest.evaluateInPage("pauseSoon()");
+                if (!await within(pausedPromise, "the page to pause on the debugger statement"))
+                    return;
+
+                InspectorTest.expectTrue(WI.debuggerManager.paused, "The debugger should be paused before the reload.");
+                InspectorTest.expectNotNull(WI.debuggerManager.activeCallFrame, "There should be an active call frame before the reload.");
+                pausedTarget = WI.debuggerManager.activeCallFrame.target;
+
+                // Observe the protocol event itself, since a frontend-side resume would also dispatch Resumed.
+                WI.debuggerManager.debuggerDidResume = function(target) {
+                    sawDebuggerResumed = true;
+                    return WI.DebuggerManager.prototype.debuggerDidResume.call(this, target);
+                };
+                WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, resumedListener);
+
+                reloadRequested = true;
+                InspectorTest.reloadPage();
+                pageLoaded = await within(pageLoadedPromise, "the paused page to reload");
+
+                // Page.frameNavigated can reach the frontend before Debugger.resumed, so only check the end state.
+                InspectorTest.expectTrue(sawDebuggerResumed, "The backend should send Debugger.resumed when the page reloads.");
+                InspectorTest.expectTrue(sawResumedEvent, "The debugger manager should dispatch a Resumed event.");
+                InspectorTest.expectFalse(WI.debuggerManager.paused, "The debugger should not be paused after the reload.");
+                InspectorTest.expectNull(WI.debuggerManager.activeCallFrame, "There should be no active call frame after the reload.");
+            } finally {
+                delete WI.debuggerManager.debuggerDidResume;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Resumed, resumedListener);
+
+                if (!pageLoaded && pausedTarget) {
+                    await pausedTarget.DebuggerAgent.resume().catch(() => {});
+                    pageLoaded = await within(pageLoadedPromise, "the page to load after the cleanup resume", 5000);
+                }
+
+                if (reloadRequested && !pageLoaded)
+                    await flushDeferredOutput();
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that the backend resumes a paused page when it reloads, so the frontend is not left paused.</p>
+</body>
+</html>
