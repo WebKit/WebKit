@@ -9752,15 +9752,32 @@ void SpeculativeJIT::emitRegExpAnchoredFirstCharacterFilterGuards(const uint8_t*
 {
     ASSERT(noOverlap(argumentGPR, scratch1GPR, scratch2GPR, scratch3GPR));
 
-    // The string must be a resolved 8-bit string.
+    // The string must be an 8-bit resolved string or a substring rope of an 8-bit base (which is always resolved).
     loadPtr(Address(argumentGPR, JSString::offsetOfValue()), scratch1GPR);
-    slowCases.append(branchIfRopeStringImpl(scratch1GPR));
+    Jump isRope = branchIfRopeStringImpl(scratch1GPR);
     slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit())));
 
     // An anchored pattern that reaches here cannot match empty, so delegate an empty string.
     slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::lengthMemoryOffset())));
 
     loadPtr(Address(scratch1GPR, StringImpl::dataOffset()), scratch1GPR);
+    Jump haveCharacters = jump();
+
+    // Reading a substring rope in place avoids resolving it, matching what the operation would do.
+    isRope.link(this);
+    slowCases.append(branchTest64(Zero, scratch1GPR, TrustedImm64(JSRopeString::isSubstringInPointer)));
+    slowCases.append(branchTest32(Zero, Address(argumentGPR, JSRopeString::offsetOfLength())));
+    load64(Address(argumentGPR, JSRopeString::offsetOfFiber1Lower()), scratch1GPR);
+    and64(TrustedImm64(JSRopeString::CompactFibers::addressMask), scratch1GPR);
+    loadPtr(Address(scratch1GPR, JSString::offsetOfValue()), scratch1GPR);
+    // Take the width from the base's current impl, not the rope's cached is8BitInPointer: atomizing the base can
+    // swap in an existing atom of the other width after the rope was created.
+    slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit())));
+    loadPtr(Address(scratch1GPR, StringImpl::dataOffset()), scratch1GPR);
+    load32(Address(argumentGPR, JSRopeString::offsetOfFiber2Lower()), scratch2GPR);
+    addPtr(scratch2GPR, scratch1GPR);
+
+    haveCharacters.link(this);
     load8(Address(scratch1GPR), scratch2GPR);
     emitFirstCharacterBitmapMatch(bitmap, scratch2GPR, scratch1GPR, scratch3GPR, slowCases);
 }
