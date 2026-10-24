@@ -25,10 +25,16 @@
 
 #pragma once
 
-#if ENABLE(WEBXR_HIT_TEST)
+#if ENABLE(WEBXR_HIT_TEST) || ENABLE(WEBXR_PLANE_DETECTION)
 
 #include "DOMPointInit.h"
 #include <wtf/Vector.h>
+
+#if ENABLE(WEBXR_PLANE_DETECTION)
+#include "FakeXRRigidTransformInit.h"
+#include "XRPlaneOrientation.h"
+#include <wtf/text/WTFString.h>
+#endif
 
 namespace WebCore {
 
@@ -41,9 +47,24 @@ struct FakeXRWorldInit {
     struct TriangleInit {
         Vector<DOMPointInit> vertices;
     };
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    struct PlanePointInit {
+        float x;
+        float z;
+    };
+    struct PlaneInfoInit {
+        XRPlaneOrientation orientation;
+        FakeXRRigidTransformInit origin;
+        Vector<PlanePointInit> polygon;
+        String semanticLabel;
+    };
+#endif
     struct RegionInit {
         Vector<TriangleInit> faces;
         RegionType type;
+#if ENABLE(WEBXR_PLANE_DETECTION)
+        std::optional<PlaneInfoInit> planeInfo;
+#endif
     };
 
     Vector<RegionInit> hitTestRegions;
@@ -51,4 +72,4 @@ struct FakeXRWorldInit {
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBXR_HIT_TEST)
+#endif // ENABLE(WEBXR_HIT_TEST) || ENABLE(WEBXR_PLANE_DETECTION)

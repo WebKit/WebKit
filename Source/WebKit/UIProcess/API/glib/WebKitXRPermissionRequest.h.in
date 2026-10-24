@@ -71,11 +71,13 @@ typedef enum {
  * @WEBKIT_XR_SESSION_FEATURES_HAND_TRACKING: hand tracking feature.
  * @WEBKIT_XR_SESSION_FEATURES_HIT_TEST: hit test feature.
  * @WEBKIT_XR_SESSION_FEATURES_LAYERS: WebXR Layers feature.
+ * @WEBKIT_XR_SESSION_FEATURES_PLANE_DETECTION: plane detection feature. Since: 2.56
  *
  * Enum values representing the XR session features.
  *
  * See <https://immersive-web.github.io/webxr/#xrreferencespace-interface>.
  * And, see <https://immersive-web.github.io/webxr-hand-input/> for hand tracking.
+ * And, see <https://immersive-web.github.io/plane-detection/> for plane detection.
  *
  * Since: 2.52
  */
@@ -88,6 +90,7 @@ typedef enum {
     WEBKIT_XR_SESSION_FEATURES_HAND_TRACKING = 1 << 5,
     WEBKIT_XR_SESSION_FEATURES_HIT_TEST      = 1 << 6,
     WEBKIT_XR_SESSION_FEATURES_LAYERS        = 1 << 7,
+    WEBKIT_XR_SESSION_FEATURES_PLANE_DETECTION = 1 << 8,
 } WebKitXRSessionFeatures;
 
 WEBKIT_API WebKitSecurityOrigin *

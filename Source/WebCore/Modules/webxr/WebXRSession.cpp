@@ -45,6 +45,7 @@
 #include "WebXRBoundedReferenceSpace.h"
 #include "WebXRFrame.h"
 #include "WebXRHitTestSource.h"
+#include "WebXRPlane.h"
 #include "WebXRTransientInputHitTestSource.h"
 #include "XRFrameRequestCallback.h"
 #include "XRGPUProjectionLayerInit.h"
@@ -52,6 +53,7 @@
 #include "XRRenderStateInit.h"
 #include "XRSessionEvent.h"
 #include "XRTransientInputHitTestOptionsInit.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -417,6 +419,9 @@ void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
     m_sessionListeners.clear();
 
     m_inputSources->clear();
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    invalidateDetectedPlanes();
+#endif
 
     RefPtr device { m_device };
     if (initiatedBySystem == InitiatedBySystem::Yes) {
@@ -687,6 +692,71 @@ void WebXRSession::cleanupInactiveHitTestSources()
 
 #endif
 
+#if ENABLE(WEBXR_PLANE_DETECTION)
+
+// https://immersive-web.github.io/plane-detection/#update-planes
+void WebXRSession::updateDetectedPlanes(DOMHighResTimeStamp time)
+{
+    if (!m_requestedFeatures.contains(PlatformXR::SessionFeature::PlaneDetection))
+        return;
+
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document)
+        return;
+
+    if (!m_frameData.detectedPlanes)
+        return;
+
+    HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> currentIds;
+    for (auto& platformPlane : *m_frameData.detectedPlanes) {
+        currentIds.add(platformPlane.id);
+        auto it = m_detectedPlanes.find(platformPlane.id);
+        if (it != m_detectedPlanes.end())
+            it->value->update(platformPlane, time);
+        else
+            m_detectedPlanes.add(platformPlane.id, WebXRPlane::create(*document, *this, platformPlane, time));
+    }
+
+    m_detectedPlanes.removeIf([&](auto& entry) {
+        if (currentIds.contains(entry.key))
+            return false;
+        entry.value->invalidate();
+        return true;
+    });
+}
+
+void WebXRSession::invalidateDetectedPlanes()
+{
+    for (auto& plane : m_detectedPlanes.values())
+        plane->invalidate();
+    m_detectedPlanes.clear();
+}
+
+Vector<Ref<WebXRPlane>> WebXRSession::detectedPlanes() const
+{
+    return copyToVector(m_detectedPlanes.values());
+}
+
+// https://immersive-web.github.io/plane-detection/#dom-xrsession-initiateroomcapture
+void WebXRSession::initiateRoomCapture(EndPromise&& promise)
+{
+    if (m_ended || m_roomCaptureCompleted) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
+        return;
+    }
+    if (!m_requestedFeatures.contains(PlatformXR::SessionFeature::PlaneDetection)) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError });
+        return;
+    }
+
+    // FIXME: The only existing implementation (OpenXR), does not have the room capture concept, so complete immediately.
+    // Other implementations might do differently. Update accordingly.
+    m_roomCaptureCompleted = true;
+    promise.resolve();
+}
+
+#endif
+
 void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
 {
     ASSERT(isMainThread());
@@ -727,6 +797,10 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
 #if ENABLE(WEBXR_HIT_TEST)
         // Cancel hit test sources that are not referenced by the application.
         session.cleanupInactiveHitTestSources();
+#endif
+
+#if ENABLE(WEBXR_PLANE_DETECTION)
+        session.updateDetectedPlanes(now);
 #endif
 
         // 6. If the frame should be rendered for session:

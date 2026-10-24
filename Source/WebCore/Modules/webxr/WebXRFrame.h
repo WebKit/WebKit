@@ -55,6 +55,10 @@ class WebXRTransientInputHitTestResult;
 class WebXRTransientInputHitTestSource;
 #endif
 
+#if ENABLE(WEBXR_PLANE_DETECTION)
+class WebXRPlaneSet;
+#endif
+
 class WebXRFrame : public RefCounted<WebXRFrame> {
     WTF_MAKE_TZONE_ALLOCATED(WebXRFrame);
 public:
@@ -76,6 +80,10 @@ public:
 #if ENABLE(WEBXR_HIT_TEST)
     ExceptionOr<Vector<Ref<WebXRHitTestResult>>> getHitTestResults(const WebXRHitTestSource&);
     ExceptionOr<Vector<Ref<WebXRTransientInputHitTestResult>>> getHitTestResultsForTransientInput(const WebXRTransientInputHitTestSource&);
+#endif
+
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    ExceptionOr<Ref<WebXRPlaneSet>> detectedPlanes();
 #endif
 
     void setTime(DOMHighResTimeStamp time) { m_time = time; }
@@ -104,6 +112,9 @@ private:
     bool m_isAnimationFrame { false };
     DOMHighResTimeStamp m_time { 0 };
     const Ref<WebXRSession> m_session;
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    RefPtr<WebXRPlaneSet> m_detectedPlanes;
+#endif
 };
 
 } // namespace WebCore

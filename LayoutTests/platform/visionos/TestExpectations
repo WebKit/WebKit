@@ -133,6 +133,8 @@ imported/w3c/web-platform-tests/webxr/hand-input [ Skip ]
 imported/w3c/web-platform-tests/webxr/hit-test [ Skip ]
 imported/w3c/web-platform-tests/webxr/layers [ Skip ]
 imported/w3c/web-platform-tests/webxr/light-estimation [ Skip ]
+imported/w3c/web-platform-tests/webxr/plane-detection [ Skip ]
+http/wpt/webxr/xrPlane_in_place_update.https.html [ Skip ]
 
 # The Digital Credentials API is not supported on visionOS.
 http/tests/digital-credentials/ [ Skip ]

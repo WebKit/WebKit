@@ -1,0 +1,8 @@
+
+PASS initiateRoomCapture behavior - webgl
+PASS initiateRoomCapture behavior - webgl2
+PASS initiateRoomCapture throws NotSupportedError if feature not requested - webgl
+PASS initiateRoomCapture throws NotSupportedError if feature not requested - webgl2
+PASS initiateRoomCapture throws InvalidStateError if session ended - webgl
+PASS initiateRoomCapture throws InvalidStateError if session ended - webgl2
+

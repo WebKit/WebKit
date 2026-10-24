@@ -287,6 +287,9 @@ bool WebXRSystem::isFeaturePermitted(PlatformXR::SessionFeature feature) const
 #if ENABLE(WEBXR_HIT_TEST)
     case PlatformXR::SessionFeature::HitTest:
 #endif
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    case PlatformXR::SessionFeature::PlaneDetection:
+#endif
         RefPtr document = downcast<Document>(scriptExecutionContext());
         return document && PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::XRSpatialTracking, *document);
     }
@@ -316,6 +319,17 @@ bool WebXRSystem::isFeatureSupported(PlatformXR::SessionFeature feature, XRSessi
         RefPtr scriptExecutionContext = this->scriptExecutionContext();
         // FIXME: remove the testing check once the feature is stable.
         if (!scriptExecutionContext || (!scriptExecutionContext->settingsValues().webXRLayersAPIEnabled && !m_testingDevices))
+            return false;
+    }
+#endif
+
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    if (feature == PlatformXR::SessionFeature::PlaneDetection) {
+        if (!isImmersive(mode))
+            return false;
+
+        RefPtr scriptExecutionContext = this->scriptExecutionContext();
+        if (!scriptExecutionContext || !scriptExecutionContext->settingsValues().webXRPlaneDetectionModuleEnabled)
             return false;
     }
 #endif

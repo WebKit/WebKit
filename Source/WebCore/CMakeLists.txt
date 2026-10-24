@@ -1728,6 +1728,8 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/webxr/WebXRJointPose.idl
     Modules/webxr/WebXRJointSpace.idl
     Modules/webxr/WebXRLayer.idl
+    Modules/webxr/WebXRPlane.idl
+    Modules/webxr/WebXRPlaneSet.idl
     Modules/webxr/WebXRPose.idl
     Modules/webxr/WebXRRay.idl
     Modules/webxr/WebXRReferenceSpace.idl
@@ -1743,6 +1745,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/webxr/WebXRViewport.idl
     Modules/webxr/WebXRWebGLLayer.idl
     Modules/webxr/XRCompositionLayer.idl
+    Modules/webxr/XRPlaneOrientation.idl
     Modules/webxr/XRCubeLayer.idl
     Modules/webxr/XRCubeLayerInit.idl
     Modules/webxr/XRCylinderLayer.idl
@@ -2034,11 +2037,13 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     Modules/webxr/Navigator+WebXR.idl
     Modules/webxr/WebXRFrame+HandInput.idl
     Modules/webxr/WebXRFrame+HitTest.idl
+    Modules/webxr/WebXRFrame+PlaneDetection.idl
     Modules/webxr/WebXRInputSource+Gamepad.idl
     Modules/webxr/WebXRInputSource+HandInput.idl
     Modules/webxr/WebXRRenderState+Layers.idl
     Modules/webxr/WebXRSession+AR.idl
     Modules/webxr/WebXRSession+HitTest.idl
+    Modules/webxr/WebXRSession+PlaneDetection.idl
     Modules/webxr/WebXRSession+Layers.idl
 
     accessibility/AccessibilityRole.idl

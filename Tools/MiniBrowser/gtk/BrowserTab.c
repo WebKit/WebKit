@@ -355,6 +355,7 @@ static gchar *WebKitXRSessionFeaturesToString(WebKitXRSessionFeatures features)
     APPEND_FEATURE(WEBKIT_XR_SESSION_FEATURES_UNBOUNDED, "unbounded");
     APPEND_FEATURE(WEBKIT_XR_SESSION_FEATURES_HAND_TRACKING, "hand-tracking");
     APPEND_FEATURE(WEBKIT_XR_SESSION_FEATURES_HIT_TEST, "hit-test");
+    APPEND_FEATURE(WEBKIT_XR_SESSION_FEATURES_PLANE_DETECTION, "plane-detection");
 #undef APPEND_FEATURE
     gchar *result = str->str;
     g_string_free(str, FALSE);
