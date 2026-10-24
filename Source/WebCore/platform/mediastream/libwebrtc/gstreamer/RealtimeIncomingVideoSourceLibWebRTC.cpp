@@ -79,6 +79,17 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
 #endif
 
     auto sample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
+
+    // Leave the frame for the player to time by its arrival, as it does capture frames: a frame LibWebRTC decodes
+    // carries its render time, 0 for every frame under zero playout delay, and one a GStreamer decoder outputs its
+    // decoder's running time, which starts over when the codec changes. The player's QoS drops either as late.
+    GRefPtr buffer = gst_sample_get_buffer(sample.get());
+    sample = adoptGRef(gst_sample_make_writable(sample.leakRef()));
+    gst_sample_set_buffer(sample.get(), nullptr);
+    buffer = adoptGRef(gst_buffer_make_writable(buffer.leakRef()));
+    GST_BUFFER_DTS(buffer.get()) = GST_BUFFER_PTS(buffer.get()) = GST_CLOCK_TIME_NONE;
+    gst_sample_set_buffer(sample.get(), buffer.get());
+
     VideoFrameGStreamer::CreateOptions options;
     options.timeMetadata = std::make_optional(metadataFromVideoFrame(frame));
     options.presentationTime = MediaTime(frame.timestamp_us(), G_USEC_PER_SEC);
