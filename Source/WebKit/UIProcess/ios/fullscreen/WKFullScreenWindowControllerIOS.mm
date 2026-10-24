@@ -1942,7 +1942,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
     _inInteractiveDismiss = true;
-    [self requestExitFullScreen];
     [self _dismissFullscreenViewController:[] { }];
 }
 
