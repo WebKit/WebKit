@@ -20,7 +20,7 @@ bytecode/Repatch.cpp
 bytecode/SetPrivateBrandStatus.cpp
 bytecode/Watchpoint.cpp
 bytecompiler/BytecodeGenerator.cpp
-bytecompiler/BytecodeGeneratorBaseInlines.h
+bytecompiler/BytecodeGeneratorInlines.h
 bytecompiler/NodesCodegen.cpp
 bytecompiler/StaticPropertyAnalyzer.h
 debugger/Debugger.cpp

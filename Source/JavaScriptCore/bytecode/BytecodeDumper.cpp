@@ -55,8 +55,7 @@ void BytecodeDumperBase<InstructionStreamType>::dumpValue(VirtualRegister reg)
 }
 
 template<typename InstructionStreamType>
-template<typename Traits>
-void BytecodeDumperBase<InstructionStreamType>::dumpValue(GenericBoundLabel<Traits> label)
+void BytecodeDumperBase<InstructionStreamType>::dumpValue(BoundLabel label)
 {
     int target = label.target();
     if (!target)
@@ -64,8 +63,6 @@ void BytecodeDumperBase<InstructionStreamType>::dumpValue(GenericBoundLabel<Trai
     auto targetOffset = target + m_currentLocation;
     m_out.print(target, "(->", targetOffset, ")");
 }
-
-template void BytecodeDumperBase<JSInstructionStream>::dumpValue(GenericBoundLabel<JSGeneratorTraits>);
 
 template<class Block>
 UTF8CString BytecodeDumper<Block>::registerName(VirtualRegister r) const

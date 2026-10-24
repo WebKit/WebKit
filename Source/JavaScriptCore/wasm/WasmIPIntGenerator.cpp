@@ -29,11 +29,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "BytecodeGeneratorBaseInlines.h"
 #include "BytecodeStructs.h"
 #include "InstructionStream.h"
 #include "JSCJSValueInlines.h"
-#include "Label.h"
+#include "StackAlignment.h"
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"
 #include "WasmFunctionIPIntMetadataGenerator.h"

@@ -102,7 +102,6 @@
 		072F534E2E3C0B7100389E15 /* CachedCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F8690E0F9584A100558697 /* CachedCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		072F534F2E3C0BC200389E15 /* ProtoCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		072F53502E3C0F3300389E15 /* JITSubGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE98B5B61BB9AE110073E7A6 /* JITSubGenerator.h */; };
-		072F53512E3C3F8700389E15 /* BytecodeGeneratorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C5AD6522F1866C00F1FB83 /* BytecodeGeneratorBase.h */; };
 		072F53522E3C3FDA00389E15 /* ProfileTypeBytecodeFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BA7752211A8E5F008D0B05 /* ProfileTypeBytecodeFlag.h */; };
 		077B97302FD2BBE10042BC77 /* JavaScriptCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077B972F2FD2BBE10042BC77 /* JavaScriptCore.swift */; };
 		077BB36E2FD3AD620042BC77 /* SwiftTestingHarness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077BB36D2FD3AD620042BC77 /* SwiftTestingHarness.swift */; };
@@ -4173,8 +4172,7 @@
 		14BE7D3217135CF400D1807A /* WeakInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakInlines.h; sourceTree = "<group>"; };
 		14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMap.h; sourceTree = "<group>"; };
 		14C1F9CF22EA51FD0040B145 /* Wasm.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = Wasm.rb; sourceTree = "<group>"; };
-		14C5AD6522F1866C00F1FB83 /* BytecodeGeneratorBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BytecodeGeneratorBase.h; sourceTree = "<group>"; };
-		14C5AD6622F1866C00F1FB83 /* BytecodeGeneratorBaseInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BytecodeGeneratorBaseInlines.h; sourceTree = "<group>"; };
+		14C5AD6622F1866C00F1FB83 /* BytecodeGeneratorInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BytecodeGeneratorInlines.h; sourceTree = "<group>"; };
 		14CA958A16AB50DE00938A06 /* StaticPropertyAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticPropertyAnalyzer.h; sourceTree = "<group>"; };
 		14CA958C16AB50FA00938A06 /* ObjectAllocationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectAllocationProfile.h; sourceTree = "<group>"; };
 		14CC3BA12138A238002D58B6 /* InstructionStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InstructionStream.cpp; sourceTree = "<group>"; };
@@ -8761,8 +8759,7 @@
 			children = (
 				969A07200ED1CE3300F1F681 /* BytecodeGenerator.cpp */,
 				969A07210ED1CE3300F1F681 /* BytecodeGenerator.h */,
-				14C5AD6522F1866C00F1FB83 /* BytecodeGeneratorBase.h */,
-				14C5AD6622F1866C00F1FB83 /* BytecodeGeneratorBaseInlines.h */,
+				14C5AD6622F1866C00F1FB83 /* BytecodeGeneratorInlines.h */,
 				969A07270ED1CE6900F1F681 /* Label.h */,
 				960097A50EBABB58007A7297 /* LabelScope.h */,
 				655EB29A10CE2581001A990E /* NodesCodegen.cpp */,
@@ -11589,7 +11586,6 @@
 				0F21C27F14BEAA8200ADC64B /* BytecodeConventions.h in Headers */,
 				E3D877741E65C0A000BE945A /* BytecodeDumper.h in Headers */,
 				969A07230ED1CE3300F1F681 /* BytecodeGenerator.h in Headers */,
-				072F53512E3C3F8700389E15 /* BytecodeGeneratorBase.h in Headers */,
 				E328DAE81D38D005001A2529 /* BytecodeGeneratorification.h in Headers */,
 				E328DAE91D38D005001A2529 /* BytecodeGraph.h in Headers */,
 				53663FDA23562F96005EA68C /* BytecodeIndex.h in Headers */,

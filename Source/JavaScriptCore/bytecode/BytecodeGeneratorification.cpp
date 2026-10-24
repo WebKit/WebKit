@@ -28,7 +28,7 @@
 #include "BytecodeGeneratorification.h"
 
 #include "BytecodeDumper.h"
-#include "BytecodeGeneratorBaseInlines.h"
+#include "BytecodeGeneratorInlines.h"
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "BytecodeRewriter.h"
 #include "BytecodeStructs.h"

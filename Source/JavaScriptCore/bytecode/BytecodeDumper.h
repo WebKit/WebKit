@@ -27,11 +27,11 @@
 #pragma once
 
 #include "BytecodeBasicBlock.h"
-#include "BytecodeGeneratorBase.h"
 #include "CallLinkInfo.h"
 #include "ICStatusMap.h"
 #include "Instruction.h"
 #include "InstructionStream.h"
+#include "Label.h"
 #include "PropertyInlineCache.h"
 #include "WasmOps.h"
 
@@ -60,8 +60,7 @@ public:
 
     void dumpValue(VirtualRegister);
 
-    template<typename Traits>
-    void dumpValue(GenericBoundLabel<Traits>);
+    void dumpValue(BoundLabel);
 
     template<typename T>
     void dumpValue(T v) { m_out.print(v); }

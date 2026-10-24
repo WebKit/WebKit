@@ -352,8 +352,8 @@ struct Fits<OperandTypes, size> {
     }
 };
 
-template<OpcodeSize size, typename GeneratorTraits>
-struct Fits<GenericBoundLabel<GeneratorTraits>, size> : public Fits<int, size> {
+template<OpcodeSize size>
+struct Fits<BoundLabel, size> : public Fits<int, size> {
     // This is a bit hacky: we need to delay computing jump targets, since we
     // might have to emit `nop`s to align the instructions stream. Additionally,
     // we have to compute the target before we start writing to the instruction
@@ -362,19 +362,19 @@ struct Fits<GenericBoundLabel<GeneratorTraits>, size> : public Fits<int, size> {
     // later we use the saved target when we call convert.
 
     using Base = Fits<int, size>;
-    static bool check(GenericBoundLabel<GeneratorTraits>& label)
+    static bool check(BoundLabel& label)
     {
         return Base::check(label.saveTarget());
     }
 
-    static typename Base::TargetType convert(GenericBoundLabel<GeneratorTraits>& label)
+    static typename Base::TargetType convert(BoundLabel& label)
     {
         return Base::convert(label.commitTarget());
     }
 
-    static GenericBoundLabel<GeneratorTraits> convert(typename Base::TargetType target)
+    static BoundLabel convert(typename Base::TargetType target)
     {
-        return GenericBoundLabel<GeneratorTraits>(Base::convert(target));
+        return BoundLabel(Base::convert(target));
     }
 };
 
