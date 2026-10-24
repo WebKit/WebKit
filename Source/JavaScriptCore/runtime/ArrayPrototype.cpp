@@ -443,7 +443,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncJoin, (JSGlobalObject* globalObject, Call
             if (!separatorString->length() && (array->indexingType() == ArrayWithContiguous || array->indexingType() == ArrayWithInt32)) {
                 auto* butterfly = array->butterfly();
                 unsigned length = butterfly->publicLength();
-                JSOnlyStringsAndInt32sJoiner joiner(StringView { });
+                JSExactLengthJoiner joiner(StringView { });
                 auto* joined = joiner.tryJoin<ContiguousShape>(globalObject, butterfly->contiguous().data(), length);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (joined)
