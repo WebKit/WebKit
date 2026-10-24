@@ -15694,6 +15694,20 @@ IGNORE_CLANG_WARNINGS_END
 
             buildSwitch(m_node->switchData(), pointerType(), cell);
             return;
+        }
+
+        case SwitchStructure: {
+            LValue cell = lowCell(m_node->child1());
+            Vector<SwitchCase, 2> cases;
+            RegisteredStructureSet structures;
+            for (const DFG::SwitchCase& switchCase : data->cases) {
+                RegisteredStructure structure = m_graph.registerStructure(switchCase.value.value()->cast<Structure*>());
+                structures.add(structure);
+                cases.append(SwitchCase(weakStructureID(structure), lowBlock(switchCase.target.block), Weight(switchCase.target.count)));
+            }
+            bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(structures);
+            emitSwitchForMultiByOffset(cell, structuresChecked, cases, lowBlock(data->fallThrough.block));
+            return;
         } }
 
         DFG_CRASH(m_graph, m_node, "Bad switch kind"_s);

@@ -1910,6 +1910,9 @@ private:
                 // else it's fine for this to have UntypedUse; we will handle this by just making
                 // non-cells take the default case.
                 break;
+            case SwitchStructure:
+                fixEdge<CellUse>(node->child1());
+                break;
             }
             break;
         }
