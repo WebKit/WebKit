@@ -27,6 +27,7 @@
 [
     DispatchedFrom=WebContent,
     DispatchedTo=UI,
+    SharedPreferencesNeedsConnection,
     EnabledBy=WebAuthenticationEnabled
 ]
 messages -> WebAuthenticatorCoordinatorProxy {
