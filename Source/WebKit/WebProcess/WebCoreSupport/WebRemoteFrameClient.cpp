@@ -35,13 +35,18 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/Document.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/FocusControllerTypes.h>
+#include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameInlines.h>
 #include <WebCore/FrameLoadRequest.h>
+#include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/NodeDocument.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/PrivateClickMeasurement.h>
@@ -133,6 +138,11 @@ void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const Sec
 
 void WebRemoteFrameClient::changeLocation(FrameLoadRequest&& request, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
 {
+    if (RefPtr requesterFrame = protect(request.requester())->frame()) {
+        if (RefPtr documentLoader = requesterFrame->rootFrame().loader().documentLoader())
+            request.resourceRequest().setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
+    }
+
     NavigationAction action(request);
     // Private Click Measurement parsed in this process for a cross-process main-frame navigation
     // (e.g. <a target="_top"> in a cross-origin iframe) is passed in explicitly; attach it to the
