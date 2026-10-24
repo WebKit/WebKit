@@ -145,12 +145,10 @@ void WebLoaderStrategy::deref() const
 
 void WebLoaderStrategy::loadResource(LocalFrame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
 {
-    if (resource.type() != CachedResource::Type::MainResource || !frame.isMainFrame()) {
-        if (RefPtr localMainFrame = frame.localMainFrame()) {
-            if (RefPtr document = localMainFrame->document()) {
-                if (document && document->loader())
-                    request.setIsAppInitiated(document->loader()->lastNavigationWasAppInitiated());
-            }
+    if (resource.type() != CachedResource::Type::MainResource || !frame.isRootFrame()) {
+        if (RefPtr document = protect(frame.rootFrame())->document()) {
+            if (RefPtr documentLoader = document->loader())
+                request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
         }
     }
 
