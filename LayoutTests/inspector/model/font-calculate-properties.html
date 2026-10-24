@@ -39,7 +39,7 @@ function test()
 
                 let {propertiesMap, featuresMap, variationsMap} = new WI.FontStyles(cssStyles);
 
-                await propertyMapHandlers(propertiesMap, featuresMap, variationsMap);
+                await propertyMapHandlers(propertiesMap, featuresMap, variationsMap, cssStyles);
             },
         });
     }
@@ -90,6 +90,26 @@ function test()
             InspectorTest.expectEqual(propertiesMap.get("font-weight").value, '700', "Font size property value should be '700'.");
             InspectorTest.expectEqual(propertiesMap.get("font-stretch").value, '150%', "Font size property value should be '150%'.");
         }
+    });
+
+    addTestCase({
+        name: "WI.FontStyles.ComputedValuesTest",
+        selector: "#computed-font-values-test",
+        async propertyMapHandlers(propertiesMap, featuresMap, variationsMap, cssStyles) {
+            InspectorTest.expectEqual(propertiesMap.get("font-size").value, "16px", "A font size function should use its computed value.");
+            InspectorTest.expectEqual(propertiesMap.get("font-weight").value, "400", "A variable font weight should use its computed value.");
+            InspectorTest.expectEqual(propertiesMap.get("font-stretch").value, "100%", "Default width should be read from the canonical computed property.");
+            InspectorTest.expectEqual(cssStyles.effectivePropertyForName("font-weight").value, "var(--sample-weight)", "Reading the computed weight should preserve the authored variable.");
+
+            for (let keyword of WI.CSSKeywordCompletions.UniversalKeywords) {
+                await InspectorTest.evaluateInPage(`document.getElementById("computed-font-values-test").style.fontWeight = ${JSON.stringify(keyword)}`);
+                await cssStyles.refresh();
+
+                let fontStyles = new WI.FontStyles(cssStyles);
+                InspectorTest.expectEqual(fontStyles.propertiesMap.get("font-weight").value, cssStyles.computedStyle.propertyForName("font-weight").value, `Font weight set to ${keyword} should use its computed value.`);
+                InspectorTest.expectEqual(cssStyles.effectivePropertyForName("font-weight").value, keyword, `Reading the computed weight should preserve the authored ${keyword} keyword.`);
+            }
+        },
     });
 
     addTestCase({
@@ -230,6 +250,12 @@ function test()
     font-stretch: extra-expanded;
 }
 
+#computed-font-values-test {
+    --sample-weight: 400;
+    font-size: calc(8px + 8px);
+    font-weight: var(--sample-weight);
+}
+
 #feature-property-ligatures-test {
     font-variant-ligatures: no-common-ligatures;
     font-feature-settings: 'calt', 'dlig' on, 'hlig' 1;
@@ -276,6 +302,7 @@ function test()
 <p>Test for WI.FontStyles.</p>
 <div>
     <div id="basic-properties-test">Basic Properties Test</div>
+    <div id="computed-font-values-test"></div>
     <div id="feature-property-ligatures-test">Feature Property Ligatures Test</div>
     <div id="feature-property-position-test">Feature Property Position Test</div>
     <div id="feature-property-capitals-test">Feature Property Capitals Test</div>
