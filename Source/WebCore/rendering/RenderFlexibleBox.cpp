@@ -201,6 +201,16 @@ bool RenderFlexibleBox::willStretchItem(const RenderBox& item, LogicalBoxAxis co
     return FlexFormattingUtils::willStretchFlexItem(*this, item, containingAxis, mode);
 }
 
+bool RenderFlexibleBox::intrinsicLogicalWidthsDependOnLogicalHeight() const
+{
+    return FlexFormattingUtils::isColumnFlow(*this) && FlexFormattingUtils::isMultiline(*this) && hasRelativeLogicalHeight();
+}
+
+bool RenderFlexibleBox::shouldInvalidateContentWidths() const
+{
+    return RenderBlock::shouldInvalidateContentWidths() || intrinsicLogicalWidthsDependOnLogicalHeight();
+}
+
 RenderFlexibleBox::FlexItemBorderBoxRects RenderFlexibleBox::flexItemBorderBoxRects() const
 {
     FlexItemBorderBoxRects flexItemBorderBoxRects;
@@ -235,7 +245,9 @@ LayoutOptionalOutsets RenderFlexibleBox::allowedLayoutOverflow() const
 
 std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeIntrinsicLogicalWidths() const
 {
-    return m_flexLayout.computeIntrinsicLogicalWidths();
+    // Computing a multi-line column container's intrinsic widths lays out its items (see FlexLayout::maximumContentSizeForMultilineColumn).
+    SUPPRESS_MEMORY_UNSAFE_CAST auto& flexLayout = const_cast<LayoutIntegration::FlexLayout&>(m_flexLayout);
+    return flexLayout.computeIntrinsicLogicalWidths();
 }
 
 // This method is only called whenever a descendant of a flex item wants to resolve a percentage in its
