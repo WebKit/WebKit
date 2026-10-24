@@ -17,7 +17,6 @@
 #                                         (e.g. progressions in individual tests)
 
 # Filter issues
-svg/W3C-SVG-1.1/filters-morph-01-f.svg                                                 [ ImageOnlyFailure ]
 svg/batik/text/smallFonts.svg                                                          [ ImageOnlyFailure ]
 svg/batik/text/textFeatures.svg                                                        [ ImageOnlyFailure ]
 svg/crash-svg-filter-empty-viewport.svg                                                [ Failure ]
@@ -47,7 +46,6 @@ svg/filters/feImage-late-indirect-update.svg                                    
 svg/filters/feImage-reference-svg-primitive.svg                                        [ ImageOnlyFailure ]
 svg/filters/filter-on-root-tile-boundary.html                                          [ ImageOnlyFailure ]
 svg/filters/filter-on-tspan.svg                                                        [ ImageOnlyFailure ]
-svg/filters/filter-placement-issue.svg                                                 [ ImageOnlyFailure ]
 svg/filters/filter-source-position.svg                                                 [ ImageOnlyFailure ]
 
 # Precision differences

@@ -66,12 +66,27 @@ GraphicsContext* ImageBufferContextSwitcher::drawingContext(GraphicsContext& con
     return m_sourceImage ? &m_sourceImage->context() : &context;
 }
 
+static FloatRect enclosingDevicePixelRect(const GraphicsContext& context, const FloatRect& rect)
+{
+    auto transform = context.getCTM();
+    if (!transform.preservesAxisAlignment())
+        return rect;
+
+    auto inverseTransform = transform.inverse();
+    if (!inverseTransform)
+        return rect;
+
+    return inverseTransform->mapRect(FloatRect { enclosingIntRect(transform.mapRect(rect)) });
+}
+
 void ImageBufferContextSwitcher::beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect&, NOESCAPE const Function<void(GraphicsContext&)>&)
 {
     if (auto* context = drawingContext(destinationContext)) {
+        bool appliesToSVG = m_filter && m_filter->renderingOptions().contains(FilterRenderingOption::ApplyToSVGRenderer);
+        auto rect = m_sourceImage && appliesToSVG ? enclosingDevicePixelRect(*context, repaintRect) : repaintRect;
         context->save();
-        context->clearRect(repaintRect);
-        context->clip(repaintRect);
+        context->clearRect(rect);
+        context->clip(rect);
     }
 }
 
