@@ -994,7 +994,7 @@ static void moduleRegistryFetchSettled(JSGlobalObject* globalObject, VM& vm, Thr
     } else {
         JSValue errorValue = arguments[1];
         if (auto* error = dynamicDowncast<ErrorInstance>(errorValue))
-            JSModuleLoader::attachErrorInfo(globalObject, error, nullptr, entry->key(), entry->moduleType(), JSModuleLoader::ModuleFailure::Kind::Instantiation);
+            JSModuleLoader::attachErrorInfo(globalObject, error, nullptr, entry->key(), entry->moduleType(), JSModuleLoader::ModuleFailure::Kind::Fetch);
         entry->setFetchError(globalObject, errorValue);
         modulePromise->reject(vm, errorValue);
     }
@@ -1034,6 +1034,15 @@ static void moduleGraphLoadingError(JSGlobalObject* globalObject, VM& vm, ThrowS
         }
         state->promise()->reject(vm, errorValue);
     }
+}
+
+// A failed fetch is recorded only on the entry that failed, which the next load removes. Modules that
+// depend on it stay usable, so their next load fetches it again.
+// https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script step 13.1
+static bool isModuleFetchFailure(JSGlobalObject* globalObject, JSValue errorValue)
+{
+    auto* error = dynamicDowncast<ErrorInstance>(errorValue);
+    return error && JSModuleLoader::getErrorInfo(globalObject, error).m_kind == JSModuleLoader::ModuleFailure::Kind::Fetch;
 }
 
 static void moduleLoadStep(JSGlobalObject* globalObject, VM& vm, ThrowScope& scope, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
@@ -1083,10 +1092,14 @@ static void moduleLoadStep(JSGlobalObject* globalObject, VM& vm, ThrowScope& sco
                 loadPromise->fulfill(vm, entry->record());
             }
         } else {
-            // onRejected logic: store evaluation error on entry
+            // onRejected logic: store the error on the entry, unless a dependency failed to fetch.
             auto* entry = context->entry();
             JSValue errorValue = arguments[1];
-            entry->setEvaluationError(globalObject, errorValue);
+            if (isModuleFetchFailure(globalObject, errorValue)) {
+                if (entry->loadPromise() == loadPromise)
+                    entry->clearLoadPromise();
+            } else
+                entry->setEvaluationError(globalObject, errorValue);
             loadPromise->reject(vm, errorValue);
         }
         return;
@@ -1104,7 +1117,8 @@ static void moduleLoadStep(JSGlobalObject* globalObject, VM& vm, ThrowScope& sco
         } else {
             auto* entry = context->entry();
             JSValue errorValue = arguments[1];
-            entry->setEvaluationError(globalObject, errorValue);
+            if (!isModuleFetchFailure(globalObject, errorValue))
+                entry->setEvaluationError(globalObject, errorValue);
             loadPromise->reject(vm, errorValue);
         }
         return;
@@ -1216,7 +1230,8 @@ static void moduleLoadTopRejected(JSGlobalObject* globalObject, VM& vm, std::spa
         auto type = context->moduleRequest().type();
         // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script step 13.1
         // Only set an error if the entry already exists.
-        if (ModuleRegistryEntry* entry = globalObject->moduleLoader()->getRegisteredMayBeNull(specifier, type))
+        ModuleRegistryEntry* entry = globalObject->moduleLoader()->getRegisteredMayBeNull(specifier, type);
+        if (entry && !isModuleFetchFailure(globalObject, arguments[1]))
             entry->setEvaluationError(globalObject, arguments[1]);
         resultPromise->reject(vm, arguments[1]);
     }
@@ -1238,7 +1253,7 @@ static void moduleLoadSpecifierTransform(JSGlobalObject*, VM& vm, ThrowScope& sc
         transformedPromise->reject(vm, arguments[1]);
 }
 
-static void moduleLoadCombinedLoadSettled(JSGlobalObject*, VM& vm, ThrowScope& scope, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
+static void moduleLoadCombinedLoadSettled(JSGlobalObject* globalObject, VM& vm, ThrowScope& scope, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
 {
     // Combined promise: load side settled
     // arguments[0] = combinedPromise
@@ -1248,6 +1263,14 @@ static void moduleLoadCombinedLoadSettled(JSGlobalObject*, VM& vm, ThrowScope& s
     auto* combinedCell = arguments[2].asCell();
     ASSERT(isModuleLoaderHostDefinedPayload(combinedCell));
     auto status = static_cast<JSPromise::Status>(payload);
+    JSValue result = arguments[1];
+    if (status == JSPromise::Status::Rejected && combinedPromise->status() == JSPromise::Status::Pending) {
+        // Concurrent loads of a module share its load promise, but each import must reject with its own fetch error.
+        if (isModuleFetchFailure(globalObject, result)) {
+            result = JSModuleLoader::duplicateError(globalObject, uncheckedDowncast<ErrorInstance>(result));
+            RETURN_IF_EXCEPTION(scope, void());
+        }
+    }
     scope.release();
     bool fullySettled;
     if (auto* state = dynamicDowncast<ModuleGraphLoadingState>(combinedCell))
@@ -1267,7 +1290,7 @@ static void moduleLoadCombinedLoadSettled(JSGlobalObject*, VM& vm, ThrowScope& s
             ASSERT(fulfillmentValue);
             combinedPromise->fulfill(vm, fulfillmentValue);
         } else
-            combinedPromise->reject(vm, arguments[1]);
+            combinedPromise->reject(vm, result);
         return;
     }
     default:
@@ -1376,6 +1399,8 @@ static void moduleLoadStoreError(JSGlobalObject* globalObject, std::span<const J
             return;
         if (auto* error = dynamicDowncast<ErrorInstance>(errorValue)) {
             auto failure = JSModuleLoader::getErrorInfo(globalObject, error);
+            if (failure.m_kind == JSModuleLoader::ModuleFailure::Kind::Fetch)
+                return;
             if (failure.isEvaluationError(specifier, type))
                 entry->setEvaluationError(globalObject, error);
             else if (JSModuleLoader::isFetchError(globalObject, error))
