@@ -1,0 +1,10 @@
+Tests that Page events reach the frontend from the process of a popup that existed before the inspector attached, when an iframe is added to that process under Site Isolation.
+
+
+== Running test suite: SiteIsolation.Page.PopupProcessKeepsInstrumentation
+-- Running test case: SiteIsolation.Page.PopupProcessKeepsInstrumentation.IFrameInPopupProcess
+PASS: The popup should report its process identifier.
+PASS: The iframe should be in the process of the popup.
+PASS: The iframe should be in the frame model.
+PASS: The iframe's navigation should be committed in the frame model.
+
