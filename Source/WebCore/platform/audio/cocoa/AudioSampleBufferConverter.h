@@ -64,6 +64,7 @@ public:
         std::optional<unsigned> packetlossperc { };
         std::optional<bool> useinbandfec { };
         std::optional<bool> usedtx { };
+        bool useWebAudioChannelOrder { false };
     };
     static RefPtr<AudioSampleBufferConverter> create(Function<void()>&&, const Options&);
     ~AudioSampleBufferConverter();

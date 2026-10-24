@@ -55,6 +55,11 @@ inline std::span<const AudioBuffer> span(const AudioBufferList& list)
     return unsafeMakeSpan(list.mBuffers, list.mNumberBuffers);
 }
 
+inline std::span<const AudioChannelDescription> span(const AudioChannelLayout& layout)
+{
+    return unsafeMakeSpan(layout.mChannelDescriptions, layout.mNumberChannelDescriptions);
+}
+
 inline size_t allocationSize(const AudioBufferList& list)
 {
     return offsetof(AudioBufferList, mBuffers) + sizeof(AudioBuffer) * std::max<uint32_t>(1U, list.mNumberBuffers);

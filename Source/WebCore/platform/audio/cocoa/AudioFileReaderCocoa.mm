@@ -36,6 +36,7 @@
 #import "AudioFileReader.h"
 #import "AudioSampleDataSource.h"
 #import "AudioTrackPrivateWebM.h"
+#import "AudioUtilitiesCocoa.h"
 #import "CMUtilities.h"
 #import "FloatConversion.h"
 #import "InbandTextTrackPrivate.h"
@@ -594,35 +595,6 @@ static OSStatus passthroughInputDataCallback(AudioConverterRef, UInt32* numDataP
     return noErr;
 }
 
-static UInt32 LEGACY_NODELETE SMPTEEquivalentLayout(UInt32 layout)
-{
-    // https://webaudio.github.io/web-audio-api/#ChannelOrdering
-    // WebAudio API requires SMPTE channel ordering. However webkit has been returning
-    // incorrectly ordered channels for as long as WebAudio has been supported and sites
-    // have adopted workaround it.
-    // To avoid breaking existing behaviour, we leave all other layouts unchanged.
-    // There are no system constants matching SMPTE, so we use the equivalent for a given channels count.
-    switch (layout) {
-    case kAudioChannelLayoutTag_Mono:
-    case kAudioChannelLayoutTag_Stereo:
-        return layout;
-    case kAudioChannelLayoutTag_Ogg_3_0:
-        return kAudioChannelLayoutTag_WAVE_3_0; // L R C
-    case kAudioChannelLayoutTag_Ogg_4_0:
-        return kAudioChannelLayoutTag_WAVE_4_0_B; // L R Rls Rrs
-    case kAudioChannelLayoutTag_Ogg_5_0:
-        return kAudioChannelLayoutTag_WAVE_5_0_B; // L R C LFE Rls Rrs
-    case kAudioChannelLayoutTag_Ogg_5_1:
-        return kAudioChannelLayoutTag_WAVE_5_1_B;
-    case kAudioChannelLayoutTag_Ogg_6_1:
-        return kAudioChannelLayoutTag_MPEG_6_1_A; // L R C LFE Ls Rs Cs
-    case kAudioChannelLayoutTag_Ogg_7_1:
-        return kAudioChannelLayoutTag_MPEG_7_1_C; // L R C LFE Ls Rs Rls Rrs
-    default:
-        return layout;
-    }
-}
-
 std::optional<size_t> AudioFileReader::decodeData(AudioBufferList& bufferList, size_t numberOfFrames, const AudioStreamBasicDescription& inFormat, const AudioStreamBasicDescription& outFormat) const
 {
     AudioConverterRef converter;
@@ -644,21 +616,8 @@ std::optional<size_t> AudioFileReader::decodeData(AudioBufferList& bufferList, s
     if (magicCookie && magicCookieSize)
         PAL::AudioConverterSetProperty(converter, kAudioConverterDecompressionMagicCookie, magicCookieSize, magicCookie);
 
-    auto setChannelLayoutIfNeeded = [&] {
-        auto* formatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription.get());
-        if (!formatListItem)
-            return;
-        auto outputLayoutTag = SMPTEEquivalentLayout(formatListItem->mChannelLayoutTag);
-        if (outputLayoutTag == formatListItem->mChannelLayoutTag)
-            return;
-        auto inputLayout = channelLayoutFromChannelLayoutTag(formatListItem->mChannelLayoutTag);
-        auto outputLayout = channelLayoutFromChannelLayoutTag(outputLayoutTag);
-        if (!inputLayout.first || !outputLayout.first)
-            return;
-        PAL::AudioConverterSetProperty(converter, kAudioConverterInputChannelLayout, inputLayout.second, inputLayout.first.get());
-        PAL::AudioConverterSetProperty(converter, kAudioConverterOutputChannelLayout, outputLayout.second, outputLayout.first.get());
-    };
-    setChannelLayoutIfNeeded();
+    if (auto* formatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription.get()))
+        setWebAudioChannelOrderIfNeeded(converter, formatListItem->mChannelLayoutTag, outFormat.mChannelsPerFrame, ChannelReorderPolicy::OggLayoutsOnly);
 
     AudioBufferListHolder decodedBufferList(inFormat.mChannelsPerFrame);
     if (!decodedBufferList) {

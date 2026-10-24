@@ -25,15 +25,20 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUDIO)
-
+#include <CoreAudio/CoreAudioTypes.h>
 #include <WebCore/AudioStreamDescription.h>
+
+typedef struct OpaqueAudioConverter* AudioConverterRef;
 
 namespace WebCore {
 class AudioBus;
 
 WEBCORE_EXPORT AudioStreamBasicDescription audioStreamBasicDescriptionForAudioBus(AudioBus&);
 WEBCORE_EXPORT Vector<uint8_t> createESDescriptor(std::span<const uint8_t> audioSpecificConfig);
-}
 
-#endif
+enum class ChannelReorderPolicy : bool { OggLayoutsOnly, All };
+// Configures the converter so that its output channels follow https://webaudio.github.io/web-audio-api/#ChannelOrdering.
+// Does nothing if the channels are already in that order, or if a channel has no defined position.
+WEBCORE_EXPORT void setWebAudioChannelOrderIfNeeded(AudioConverterRef, AudioChannelLayoutTag, uint32_t numberOfChannels, ChannelReorderPolicy);
+
+}

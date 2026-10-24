@@ -1627,6 +1627,17 @@ std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout
     return { WTF::move(channelLayout), channelLayoutSize };
 }
 
+std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLabels(std::span<const AudioChannelLabel> channelLabels)
+{
+    auto channelLayout = PAL::createAudioChannelLayout(static_cast<uint32_t>(channelLabels.size()), PAL::ShouldZeroMemory::Yes);
+    channelLayout->mChannelLayoutTag = kAudioChannelLayoutTag_UseChannelDescriptions;
+    auto descriptions = unsafeMakeSpan(channelLayout->mChannelDescriptions, channelLayout->mNumberChannelDescriptions);
+    for (size_t index = 0; index < channelLabels.size(); ++index)
+        descriptions[index].mChannelLabel = channelLabels[index];
+    auto channelLayoutSize = PAL::allocationSize(*channelLayout);
+    return { WTF::move(channelLayout), channelLayoutSize };
+}
+
 String channelLayoutDescription(UInt32 channelLayoutTag)
 {
     auto channelLayout = channelLayoutFromChannelLayoutTag(channelLayoutTag);

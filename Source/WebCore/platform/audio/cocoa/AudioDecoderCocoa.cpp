@@ -304,7 +304,8 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
         .format = kAudioFormatLinearPCM,
         .description = m_outputDescription->streamDescription(),
         .generateTimestamp = false,
-        .preSkip = preSkip
+        .preSkip = preSkip,
+        .useWebAudioChannelOrder = config.useWebAudioChannelOrder
     };
 
     m_converter = AudioSampleBufferConverter::create([weakThis = ThreadSafeWeakPtr { *this }] {
