@@ -435,20 +435,18 @@ public:
 
         Ref historyItem = entry->associatedHistoryItem();
 
-        if (localFrame.isMainFrame())
-            return historyItem;
-
-        // FIXME: heuristic to fix disambigaute-* tests, we should find something more exact.
         bool backwards = entry->index() < protect(protect(protect(localFrame.window())->navigation())->currentEntry())->index();
 
         RefPtr page { localFrame.page() };
         auto items = protect(page->backForward())->allItems();
         for (size_t i = 0 ; i < items.size(); i++) {
             Ref item = items[backwards ? items.size() - 1 - i: i];
-            auto index = item->children().findIf([&historyItem](const auto& child) {
-                return child->itemSequenceNumber() == historyItem->itemSequenceNumber();
-            });
-            if (index != notFound) {
+            bool matches = localFrame.isMainFrame()
+                ? item->itemSequenceNumber() == historyItem->itemSequenceNumber()
+                : item->children().findIf([&historyItem](const auto& child) {
+                    return child->itemSequenceNumber() == historyItem->itemSequenceNumber();
+                }) != notFound;
+            if (matches) {
                 historyItem = item;
                 break;
             }
@@ -507,24 +505,13 @@ public:
         if (!localFrame)
             return false;
 
-        RefPtr page { localFrame->page() };
-        if (!page)
+        // Only the URL matters here, so the entry's own item is enough. Avoid findBackForwardItemByKey(),
+        // which needs a synchronous allItems() IPC and is reached on every token via locationChangePending().
+        RefPtr entry = findEntry(*localFrame);
+        if (!entry)
             return false;
-
-        if (page->settings().useUIProcessForBackForwardItemLoading()) {
-            RefPtr entry = findEntry(*localFrame);
-            if (!entry)
-                return false;
-            Ref historyItem = entry->associatedHistoryItem();
-            return equalIgnoringFragmentIdentifier(protect(localFrame->document())->url(), historyItem->url());
-        }
-
-        auto historyItem = findBackForwardItemByKey(*localFrame);
-        if (!historyItem)
-            return false;
-
-        URL url { protect(*historyItem)->url() };
-        return equalIgnoringFragmentIdentifier(protect(localFrame->document())->url(), url);
+        Ref historyItem = entry->associatedHistoryItem();
+        return equalIgnoringFragmentIdentifier(protect(localFrame->document())->url(), historyItem->url());
     }
 
 private:
