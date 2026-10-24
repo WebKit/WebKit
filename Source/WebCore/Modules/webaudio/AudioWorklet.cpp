@@ -36,6 +36,7 @@
 #include "AudioWorkletNode.h"
 #include "AudioWorkletProcessor.h"
 #include "BaseAudioContext.h"
+#include "MessageChannel.h"
 #include "WorkerRunLoop.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -51,9 +52,22 @@ Ref<AudioWorklet> AudioWorklet::create(BaseAudioContext& audioContext)
 }
 
 AudioWorklet::AudioWorklet(BaseAudioContext& audioContext)
+    : AudioWorklet(audioContext, MessageChannel::create(*protect(audioContext.document())))
+{
+}
+
+AudioWorklet::AudioWorklet(BaseAudioContext& audioContext, Ref<MessageChannel>&& channel)
     : Worklet(protect(*audioContext.document()))
     , m_audioContext(audioContext)
+    , m_port(channel->port1())
+    , m_globalScopePort(channel->port2())
 {
+}
+
+TransferredMessagePort AudioWorklet::takeGlobalScopePort()
+{
+    ASSERT(m_globalScopePort);
+    return m_globalScopePort.releaseNonNull()->lenientDisentangle();
 }
 
 Vector<Ref<WorkletGlobalScopeProxy>> AudioWorklet::createGlobalScopes()

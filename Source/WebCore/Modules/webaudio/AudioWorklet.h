@@ -38,6 +38,7 @@ namespace WebCore {
 class AudioWorkletNode;
 class BaseAudioContext;
 class AudioWorkletMessagingProxy;
+class MessageChannel;
 
 class AudioWorklet final : public Worklet {
     WTF_MAKE_TZONE_ALLOCATED(AudioWorklet);
@@ -46,18 +47,25 @@ public:
 
     AudioWorkletMessagingProxy* LEGACY_NODELETE proxy() const;
     BaseAudioContext* LEGACY_NODELETE audioContext() const;
+    MessagePort& port() LIFETIME_BOUND { return m_port.get(); }
 
     void createProcessor(const String& name, TransferredMessagePort, Ref<SerializedScriptValue>&&, AudioWorkletNode&);
 
 private:
     explicit AudioWorklet(BaseAudioContext&);
+    AudioWorklet(BaseAudioContext&, Ref<MessageChannel>&&);
 
     bool isAudioWorklet() const final { return true; }
 
     // Worklet.
     Vector<Ref<WorkletGlobalScopeProxy>> createGlobalScopes() final;
 
+    friend class AudioWorkletMessagingProxy;
+    TransferredMessagePort takeGlobalScopePort();
+
     WeakPtr<BaseAudioContext, WeakPtrImplWithEventTargetData> m_audioContext;
+    const Ref<MessagePort> m_port;
+    RefPtr<MessagePort> m_globalScopePort;
 };
 
 } // namespace WebCore
