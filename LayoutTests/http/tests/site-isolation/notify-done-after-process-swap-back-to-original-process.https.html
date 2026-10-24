@@ -1,0 +1,9 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+location.href = "http://127.0.0.1:8000/resources/redirect.py?url=https://127.0.0.1:8443/site-isolation/resources/notify-done-while-parsing.html";
+</script>

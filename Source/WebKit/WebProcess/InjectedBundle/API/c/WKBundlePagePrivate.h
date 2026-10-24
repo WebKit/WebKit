@@ -100,6 +100,7 @@ WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef,
 WK_EXPORT void WKBundlePageInsertNewlineInQuotedContent(WKBundlePageRef page);
 
 WK_EXPORT bool WKBundlePageIsSuspended(WKBundlePageRef page);
+WK_EXPORT uint64_t WKBundlePageGetWebPageProxyIdentifierForTesting(WKBundlePageRef page);
 
 // UserContent API (compatible with Modern API, for WKTR)
 WK_EXPORT void WKBundlePageAddUserScript(WKBundlePageRef page, WKStringRef source, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames);

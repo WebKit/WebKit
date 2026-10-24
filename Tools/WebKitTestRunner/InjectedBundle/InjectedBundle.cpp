@@ -163,6 +163,7 @@ InjectedBundlePage* InjectedBundle::page() const
 {
     // With site isolation, the process may contain RemotePages whose main frames are remote.
     // Prefer pages with a local main frame, as those are the actual test pages.
+    InjectedBundlePage* result = nullptr;
     for (auto& page : m_pages) {
         if (WKBundlePageIsSuspended(page->page()))
             continue;
@@ -177,8 +178,18 @@ InjectedBundlePage* InjectedBundle::page() const
         if (isPageRemote)
             continue;
 
-        return page.get();
+        if (!result) {
+            result = page.get();
+            continue;
+        }
+
+        bool isSameWebPageProxy = WKBundlePageGetWebPageProxyIdentifierForTesting(page->page()) == WKBundlePageGetWebPageProxyIdentifierForTesting(result->page());
+        bool committedMoreRecently = page->mainFrameCommitOrder() > result->mainFrameCommitOrder();
+        if (isSameWebPageProxy && committedMoreRecently)
+            result = page.get();
     }
+    if (result)
+        return result;
     return m_pages[0].get();
 }
 

@@ -40,6 +40,7 @@ public:
     ~InjectedBundlePage();
 
     WKBundlePageRef page() const { return m_page; }
+    uint64_t mainFrameCommitOrder() const { return m_mainFrameCommitOrder; }
 
     WKBundleFrameRef topLoadingFrame() { return m_topLoadingFrame; }
     void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
@@ -128,6 +129,7 @@ private:
     WKBundleFrameRef m_topLoadingFrame { nullptr };
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
     bool m_didCommitMainFrameLoad { false };
+    uint64_t m_mainFrameCommitOrder { 0 };
 };
 
 } // namespace WTR

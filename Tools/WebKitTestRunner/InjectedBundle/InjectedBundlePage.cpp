@@ -432,6 +432,11 @@ void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRe
 
 void InjectedBundlePage::didCommitLoadForFrame(WKBundleFrameRef frame)
 {
+    if (WKBundleFrameIsMainFrame(frame)) {
+        static uint64_t mainFrameCommitCount;
+        m_mainFrameCommitOrder = ++mainFrameCommitCount;
+    }
+
     RefPtr testRunner = InjectedBundle::singleton().testRunner();
     if (!testRunner)
         return;

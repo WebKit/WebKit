@@ -681,6 +681,11 @@ bool WKBundlePageIsSuspended(WKBundlePageRef pageRef)
     return WebKit::toImpl(pageRef)->isSuspended();
 }
 
+uint64_t WKBundlePageGetWebPageProxyIdentifierForTesting(WKBundlePageRef pageRef)
+{
+    return WebKit::toImpl(pageRef)->webPageProxyIdentifier().toUInt64();
+}
+
 void WKBundlePageAddUserScript(WKBundlePageRef pageRef, WKStringRef source, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames)
 {
     protect(WebKit::toImpl(pageRef))->addUserScript(WebKit::toWTFString(source), WebKit::InjectedBundleScriptWorld::normalWorldSingleton(), WebKit::toUserContentInjectedFrames(injectedFrames), WebKit::toUserScriptInjectionTime(injectionTime));

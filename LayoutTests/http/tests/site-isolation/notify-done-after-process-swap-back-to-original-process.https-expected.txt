@@ -1,0 +1,1 @@
+PASS if notifyDone() was not lost.
