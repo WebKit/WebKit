@@ -138,6 +138,23 @@ class GLibAPITestRunnerTest(unittest.TestCase):
             self._google_test: ["WTF_GUniquePtr.Basic"],
         }))
 
+    def test_results_use_uploaded_test_names_and_omit_actual_for_passes(self):
+        runner = StubTestRunner(self._base_directory)
+
+        self.assertEqual({
+            "TestDownloads:/webkit/Downloads/download": {"actual": "FAIL", "expected": "PASS"},
+            "TestDownloads:/webkit/Downloads/flaky": {"actual": "TIMEOUT", "expected": "PASS TIMEOUT"},
+            "TestWebKitWebView:/webkit/WebKitWebView/title": {"expected": "PASS"},
+            "TestWTF.WTF_GUniquePtr.Basic": {"actual": "CRASH"},
+        }, runner._results_for_upload({
+            self._glib_test: [
+                ("/webkit/Downloads/download", "FAIL", ["PASS"]),
+                ("/webkit/Downloads/flaky", "TIMEOUT", ["PASS", "TIMEOUT"]),
+            ],
+            self._gtk_test: [("/webkit/WebKitWebView/title", None, ["PASS"])],
+            self._google_test: [("WTF_GUniquePtr.Basic", "CRASH", [])],
+        }))
+
 
 if __name__ == "__main__":
     unittest.main()

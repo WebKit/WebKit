@@ -390,6 +390,14 @@ class TestRunner(object):
                 test_list.append({"name": self._get_test_name_for_upload(test, test_case), "output": None})
         return test_list
 
+    def _results_for_upload(self, tests_to_upload):
+        results = {}
+        for test, test_cases in tests_to_upload.items():
+            for test_case, actual, expected in test_cases:
+                name = self._get_test_name_for_upload(test, test_case)
+                results[name] = Upload.create_test_result(actual=actual, expected=' '.join(expected) if expected else None)
+        return results
+
     def _binary_and_subtest(self, test_name):
         # Accept both the "<binary>:<subtest>" (GLib) and "<binary>.<case>"
         # (Google Test) forms. Split the dotted form only when the bare name is
@@ -546,22 +554,19 @@ class TestRunner(object):
         report(timed_out_tests, "timeouts", self._test_programs_base_dir())
         report(passed_tests, "passes", self._test_programs_base_dir())
 
+        results = self._results_for_upload(tests_to_upload)
+
         if self._options.json_output:
             result_dictionary = {}
             result_dictionary['Failed'] = self._generate_test_list_for_json_output(failed_tests)
             result_dictionary['Crashed'] = self._generate_test_list_for_json_output(crashed_tests)
             result_dictionary['Timedout'] = self._generate_test_list_for_json_output(timed_out_tests)
+            result_dictionary['results'] = {name: result for name, result in results.items() if result.get('actual')}
             self._port.host.filesystem.write_text_file(self._options.json_output, json.dumps(result_dictionary, indent=4))
 
         if self._options.report_urls:
             sys.stderr.write("\n")
             sys.stderr.write("Preparing upload data ...\n")
-
-            results = {}
-            for test, test_cases in tests_to_upload.items():
-                for test_case in test_cases:
-                    name = self._get_test_name_for_upload(test, test_case[0])
-                    results[name] = Upload.create_test_result(actual=test_case[1], expected=' '.join(test_case[2]) if test_case[2] else None)
 
             upload = Upload(
                 suite=self._options.suite or 'api-tests',
