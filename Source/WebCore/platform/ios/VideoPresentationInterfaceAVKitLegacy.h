@@ -68,6 +68,12 @@ public:
     // VideoFullscreenCaptions:
     WEBCORE_EXPORT void setupCaptionsLayer(CALayer *parent, const WebCore::FloatSize&) final;
 
+#if HAVE(PIP_CALL_TO_ACTION)
+    WEBCORE_EXPORT void callToActionChanged(std::optional<CallToActionLabel>) final;
+
+    void didTapCallToAction();
+#endif
+
 private:
     WEBCORE_EXPORT VideoPresentationInterfaceAVKitLegacy(PlaybackSessionInterfaceCocoa&);
 
@@ -89,6 +95,9 @@ private:
 
     const RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
     RetainPtr<WebAVPlayerViewController> m_playerViewController;
+#if HAVE(PIP_CALL_TO_ACTION)
+    std::optional<CallToActionLabel> m_callToActionLabel;
+#endif
 };
 
 } // namespace WebCore

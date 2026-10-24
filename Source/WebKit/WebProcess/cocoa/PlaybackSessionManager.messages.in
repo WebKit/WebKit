@@ -35,6 +35,9 @@ messages -> PlaybackSessionManager {
 #if HAVE(PIP_SKIP_PREROLL)
     SkipAd(WebCore::MediaPlayerClientIdentifier contextId)
 #endif
+#if HAVE(PIP_CALL_TO_ACTION)
+    TriggerCallToAction(WebCore::MediaPlayerClientIdentifier contextId)
+#endif
     SeekToTime(WebCore::MediaPlayerClientIdentifier contextId, double time, double toleranceBefore, double toleranceAfter)
     FastSeek(WebCore::MediaPlayerClientIdentifier contextId, double time)
     BeginScanningForward(WebCore::MediaPlayerClientIdentifier contextId)

@@ -137,6 +137,7 @@ static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, P
         command = PlatformMediaSession::RemoteControlCommandType::NextTrackCommand;
         break;
     case MediaSessionAction::Settrack:
+    case MediaSessionAction::CallToAction:
     case MediaSessionAction::Hangup:
     case MediaSessionAction::Enterpictureinpicture:
         // Not supported at present.
@@ -295,7 +296,7 @@ void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
     notifyPlaybackStateObservers();
 }
 
-ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessionActionHandler>&& handler)
+ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessionActionHandler>&& handler, MediaSessionActionHandlerOptions&& options)
 {
     RefPtr document = this->document();
 #if ENABLE(MEDIA_STREAM)
@@ -314,11 +315,23 @@ ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefP
     if (document && !document->settings().mediaSessionExtendedActionsEnabled() && (action == MediaSessionAction::Hangup || action == MediaSessionAction::Previousslide || action == MediaSessionAction::Nextslide || action == MediaSessionAction::Enterpictureinpicture))
         return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
 
+#if HAVE(PIP_CALL_TO_ACTION)
+    if (document && !document->settings().mediaSessionCallToActionEnabled() && action == MediaSessionAction::CallToAction)
+        return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+#else
+    if (action == MediaSessionAction::CallToAction)
+        return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+#endif
+
     RefPtr sessionManager = this->sessionManager();
     if (!sessionManager)
         ERROR_LOG(LOGIDENTIFIER, "NULL session manager");
     if (handler) {
         ALWAYS_LOG(LOGIDENTIFIER, "adding ", action);
+        if (action == MediaSessionAction::CallToAction) {
+            m_callToActionLabel = options.label;
+            ALWAYS_LOG(LOGIDENTIFIER, "call to action label ", m_callToActionLabel);
+        }
         {
             Locker lock { m_actionHandlersLock };
             m_actionHandlers.set(action, handler.releaseNonNull());

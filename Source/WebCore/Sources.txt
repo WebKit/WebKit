@@ -4003,6 +4003,7 @@ JSBroadcastChannel.cpp
 JSBufferedChangeEvent.cpp
 JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
+JSCallToActionLabel.cpp
 JSCOEPInheritenceViolationReportBody.cpp
 JSCORPViolationReportBody.cpp
 JSCSPViolationReportBody.cpp
@@ -4720,6 +4721,7 @@ JSMediaSession.cpp
 JSMediaSessionAction.cpp
 JSMediaSessionActionDetails.cpp
 JSMediaSessionActionHandler.cpp
+JSMediaSessionActionHandlerOptions.cpp
 JSMediaSessionCaptionTrack.cpp
 JSMediaSessionCoordinator.cpp
 JSMediaSessionCoordinatorState.cpp
