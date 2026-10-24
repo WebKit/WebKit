@@ -367,8 +367,9 @@ LayoutUnit FlexIntegrationUtils::flexItemContentLogicalHeight(const FlexLayoutIt
 LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
     CheckedRef renderer = flexLayoutItem.renderer;
-    // Reuse the size cached in a previous layout while the item stays clean.
-    if (!renderer->needsLayout()) {
+    // Reuse the size cached in a previous layout while the item stays clean. Computing the container's intrinsic widths
+    // lays the item out at another width, so it leaves the cache alone.
+    if (!renderer->needsLayout() && !isComputingIntrinsicLogicalWidths()) {
         if (auto cachedBlockAxisContentSize = m_flexItemContentCache.blockAxisSize(renderer))
             return *cachedBlockAxisContentSize;
     }
@@ -389,7 +390,8 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
     }();
 
     // Cache it so a later layout can skip re-laying-out this item while it stays clean, and record that we laid it out this iteration.
-    m_flexItemContentCache.setBlockAxisSize(renderer, blockAxisContentSize);
+    if (!isComputingIntrinsicLogicalWidths())
+        m_flexItemContentCache.setBlockAxisSize(renderer, blockAxisContentSize);
     return blockAxisContentSize;
 }
 
@@ -655,6 +657,11 @@ template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogica
 std::optional<bool> FlexIntegrationUtils::isFlexBoxBlockSizeDefiniteForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
     return isFlexBoxBlockSizeDefiniteForFlexItem(flexLayoutItem.renderer.get(), &m_flexLayoutState);
+}
+
+bool FlexIntegrationUtils::isComputingIntrinsicLogicalWidths() const
+{
+    return flexBox().layoutContext().isComputingIntrinsicLogicalWidthFor(flexBox());
 }
 
 template<typename SizeType> std::optional<LayoutUnit> FlexIntegrationUtils::computeLogicalHeightUsingForFlexItem(const FlexLayoutItem& flexLayoutItem, const SizeType& size) const
