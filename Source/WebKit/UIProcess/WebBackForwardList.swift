@@ -21,8 +21,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if compiler(>=6.2.3)
-
 #if ENABLE_BACK_FORWARD_LIST_SWIFT
 
 import WebCore_Private
@@ -1428,5 +1426,3 @@ final class WebBackForwardList {
 }
 
 #endif // ENABLE_BACK_FORWARD_LIST_SWIFT
-
-#endif // compiler(>=6.2.3)

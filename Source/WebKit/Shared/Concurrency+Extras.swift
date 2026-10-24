@@ -21,8 +21,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if compiler(>=6.2.3)
-
 #if WTF_PLATFORM_COCOA && !HAVE_SWIFT_STDLIB_6_2
 #if USE_APPLE_INTERNAL_SDK
 @_spi(MainActorUtilities) import _Concurrency
@@ -45,5 +43,3 @@ extension Task where Failure == Never {
         #endif
     }
 }
-
-#endif // compiler(>=6.2.3)
