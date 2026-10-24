@@ -1452,6 +1452,7 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
         void emitBytecodeInConditionContext(BytecodeGenerator&, Label& trueTarget, Label& falseTarget, FallThroughMode) final;
 
+        bool isPrivateLocation() const final { return m_expr->isPrivateLocation(); }
         bool isOptionalChain() const final { return true; }
 
         ExpressionNode* m_expr;
