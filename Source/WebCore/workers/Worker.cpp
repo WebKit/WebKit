@@ -36,6 +36,7 @@
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
 #include "PlatformStrategies.h"
+#include "ProcessIdentifier.h"
 #if ENABLE(WEB_RTC)
 #include "RTCRtpScriptTransform.h"
 #include "RTCRtpScriptTransformer.h"
@@ -83,7 +84,8 @@ void Worker::networkStateChanged(bool isOnline)
 Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, WorkerOptions&& options)
     : ActiveDOMObject(&context)
     , m_options(WTF::move(options))
-    , m_identifier(makeString("worker:"_s, Inspector::IdentifiersFactory::createIdentifier()))
+    // Unique across processes, since Web Inspector aggregates workers from every process hosting the page's frames.
+    , m_identifier(makeString("worker:"_s, Process::identifier().toUInt64(), '.', Inspector::IdentifiersFactory::createIdentifier()))
     , m_contextProxy(WorkerGlobalScopeProxy::create(*this))
     , m_runtimeFlags(runtimeFlags)
     , m_clientIdentifier(ScriptExecutionContextIdentifier::generate())
