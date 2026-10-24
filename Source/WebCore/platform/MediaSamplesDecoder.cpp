@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MediaSamplesDecoder.h"
 
+#include "AV1Utilities.h"
 #include "AudioDecoder.h"
 #include "AudioSampleFormat.h"
 #include "AudioUtilities.h"
@@ -33,8 +34,19 @@
 #include "SharedBuffer.h"
 #include "SharedMemory.h"
 #include "TrackInfo.h"
+#include "VP9Utilities.h"
+#include "VideoDecoder.h"
+#include "VideoFrame.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#if PLATFORM(COCOA) && ENABLE(AV1)
+#include "AV1UtilitiesCocoa.h"
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(VP9)
+#include "VP9UtilitiesCocoa.h"
+#endif
 
 namespace WebCore {
 
@@ -52,6 +64,18 @@ static constexpr FourCC aacCodecName { "aac " };
 static constexpr FourCC heAACCodecName { "aach" };
 static constexpr FourCC heAACv2CodecName { "aacp" };
 static constexpr FourCC lpcmCodecName { "lpcm" };
+static constexpr FourCC avc1CodecName { "avc1" };
+static constexpr FourCC avc3CodecName { "avc3" };
+static constexpr FourCC i420CodecName { "I420" };
+static constexpr FourCC vpcCAtomType { "vpcC" };
+#if ENABLE(VP9)
+static constexpr FourCC vp8CodecName { "vp08" };
+static constexpr FourCC vp9CodecName { "vp09" };
+#endif
+#if ENABLE(AV1)
+static constexpr FourCC av1CodecName { "av01" };
+static constexpr FourCC av1CAtomType { "av1C" };
+#endif
 
 struct AudioDecoderConfiguration {
     String codec;
@@ -144,8 +168,8 @@ static bool isProtected(const TrackInfo& info)
 #endif
 }
 
-// FIXME: only in-process software decoding of audio is supported.
-// Video, the GPU process, hardware decoding and non-Cocoa platforms are not supported yet.
+// FIXME: only in-process software decoding is supported.
+// The GPU process, hardware decoding and non-Cocoa platforms are not supported yet.
 static bool canUseInProcessDecoder(const TrackInfo& info, MediaSamplesDecoder::Filters filters)
 {
 #if PLATFORM(COCOA)
@@ -169,6 +193,175 @@ static std::optional<AudioDecoderConfiguration> decoderConfiguration(const Audio
     return configuration;
 }
 
+static RefPtr<SharedBuffer> extensionAtom(const VideoInfo& info, FourCC atomType)
+{
+    for (auto& [type, data] : info.extensionAtoms()) {
+        if (type == atomType)
+            return RefPtr<SharedBuffer> { data.ptr() };
+    }
+    return nullptr;
+}
+
+#if ENABLE(VP9)
+static std::optional<uint8_t> vp9Profile(const VideoInfo& info)
+{
+    if (RefPtr atom = extensionAtom(info, vpcCAtomType)) {
+        if (auto record = createVPCodecConfigurationRecordFromVPCC(atom->span()))
+            return record->profile;
+    }
+    if (auto record = parseVPCodecParametersIgnoringColorFields(info.codecString()))
+        return record->profile;
+    return { };
+}
+#endif
+
+#if ENABLE(AV1)
+// The software AV1 decoder only outputs 8-bit 4:2:0, which is the Main profile without monochrome.
+static bool isSoftwareDecodableAV1(const VideoInfo& info)
+{
+    auto record = [&] -> std::optional<AV1CodecConfigurationRecord> {
+        if (RefPtr atom = extensionAtom(info, av1CAtomType)) {
+            if (auto record = parseAV1DecoderConfigurationRecord(atom->span()))
+                return record;
+        }
+        return parseAV1CodecParameters(info.codecString());
+    }();
+    return record && record->profile == AV1ConfigurationProfile::Main && !record->monochrome;
+}
+#endif
+
+// FIXME: ask the GPU process which codecs it decodes in hardware instead of using a static list.
+static bool isHardwareDecodable(const VideoInfo& info)
+{
+    auto codecName = info.codecName();
+    if (codecName == avc1CodecName || codecName == avc3CodecName)
+        return true;
+#if PLATFORM(COCOA) && ENABLE(VP9)
+    if (codecName == vp9CodecName)
+        return vp9Profile(info) == 0u && vp9HardwareDecoderAvailable();
+#endif
+#if PLATFORM(COCOA) && ENABLE(AV1)
+    if (codecName == av1CodecName)
+        return av1HardwareDecoderAvailable();
+#endif
+    return false;
+}
+
+struct VideoDecoderConfiguration {
+    String codec;
+    VideoDecoder::Config config;
+};
+
+#if ENABLE(VP9) || ENABLE(AV1)
+static VideoDecoderConfiguration videoDecoderConfiguration(const VideoInfo& info, String&& codec, FourCC atomType)
+{
+    RefPtr atom = extensionAtom(info, atomType);
+    return { WTF::move(codec), {
+        .description = atom ? Vector<uint8_t>(atom->span()) : Vector<uint8_t> { },
+        .colorSpace = info.colorSpace(),
+        .noOutputAsError = VideoDecoder::TreatNoOutputAsError::No
+    } };
+}
+#endif
+
+static std::optional<VideoDecoderConfiguration> videoDecoderConfiguration(const VideoInfo& info)
+{
+    auto codecName = info.codecName();
+
+#if ENABLE(VP9)
+    if (codecName == vp8CodecName)
+        return videoDecoderConfiguration(info, "vp8"_s, vpcCAtomType);
+    if (codecName == vp9CodecName && vp9Profile(info) == 0u)
+        return videoDecoderConfiguration(info, "vp09.00"_s, vpcCAtomType);
+#endif
+#if ENABLE(AV1)
+    if (codecName == av1CodecName && isSoftwareDecodableAV1(info))
+        return videoDecoderConfiguration(info, "av01."_s, av1CAtomType);
+#endif
+
+    UNUSED_VARIABLE(codecName);
+    return { };
+}
+
+static std::optional<VideoDecoderConfiguration> decoderConfiguration(const VideoInfo& info, MediaSamplesDecoder::Filters filters)
+{
+    if (!canUseInProcessDecoder(info, filters))
+        return { };
+
+    // FIXME: bit depths above 8 need VideoFrame::copyTo to produce 10 and 12-bit planar output.
+    if (info.isDecoded() || info.size().isEmpty() || info.bitDepth() != 8)
+        return { };
+
+    auto configuration = videoDecoderConfiguration(info);
+    if (!configuration || !VideoDecoder::isVPXSupported() || isHardwareDecodable(info))
+        return { };
+    return configuration;
+}
+
+static Ref<VideoInfo> outputVideoInfo(const VideoInfo& inputInfo, FloatSize size)
+{
+    return VideoInfo::create({
+        {
+            .codecName = i420CodecName,
+            .trackID = inputInfo.trackID()
+        }, {
+            .size = size,
+            .displaySize = inputInfo.displaySize(),
+            .bitDepth = 8,
+            .colorSpace = inputInfo.colorSpace(),
+            .pixelFormat = VideoPixelFormat::I420
+        }
+    });
+}
+
+static std::optional<uint64_t> durationInMicroseconds(const MediaSamplesBlock::MediaSampleItem& item)
+{
+    if (item.duration.isValid() && item.duration > MediaTime::zeroTime())
+        return static_cast<uint64_t>(item.duration.toMicroseconds());
+    return std::nullopt;
+}
+
+static std::expected<Ref<SharedBuffer>, PlatformMediaError> copyToI420Buffer(VideoFrame& frame, bool useSharedMemory)
+{
+    auto size = frame.presentationSize();
+    size_t width = size.width();
+    size_t height = size.height();
+    ASSERT(width && height);
+
+    size_t chromaWidth = (width + 1) / 2;
+    size_t chromaHeight = (height + 1) / 2;
+    size_t lumaSize = width * height;
+    size_t chromaSize = chromaWidth * chromaHeight;
+    size_t byteSize = lumaSize + 2 * chromaSize;
+
+    // VideoFrame::copyTo on Cocoa calls back before returning.
+    auto copy = [&](std::span<uint8_t> destination) {
+        Vector<ComputedPlaneLayout> layouts {
+            { .destinationOffset = 0, .destinationStride = width, .sourceHeight = height, .sourceWidthBytes = width },
+            { .destinationOffset = lumaSize, .destinationStride = chromaWidth, .sourceHeight = chromaHeight, .sourceWidthBytes = chromaWidth },
+            { .destinationOffset = lumaSize + chromaSize, .destinationStride = chromaWidth, .sourceHeight = chromaHeight, .sourceWidthBytes = chromaWidth }
+        };
+        bool succeeded = false;
+        frame.copyTo(destination, VideoPixelFormat::I420, ColorSpace::SRGB(), WTF::move(layouts), [&](std::optional<Vector<PlaneLayout>>&& planeLayouts) {
+            succeeded = planeLayouts && !planeLayouts->isEmpty();
+        });
+        return succeeded;
+    };
+
+    if (useSharedMemory) {
+        RefPtr memory = SharedMemory::allocate(byteSize);
+        if (!memory)
+            return makeUnexpected(PlatformMediaError::MemoryError);
+        if (!copy(memory->mutableSpan()))
+            return makeUnexpected(PlatformMediaError::VideoDecodingError);
+        return memory->createSharedBuffer(byteSize);
+    }
+    Vector<uint8_t> bytes(byteSize);
+    if (!copy(bytes.mutableSpan()))
+        return makeUnexpected(PlatformMediaError::VideoDecodingError);
+    return SharedBuffer::create(WTF::move(bytes));
+}
+
 MediaSamplesDecoder::MediaSamplesDecoder(Ref<const TrackInfo>&& inputInfo, Ref<const TrackInfo>&& outputInfo, Filters filters)
     : m_queue(WorkQueue::create("MediaSamplesDecoder queue"_s))
     , m_inputInfo(WTF::move(inputInfo))
@@ -181,12 +374,16 @@ MediaSamplesDecoder::~MediaSamplesDecoder() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     if (RefPtr audioDecoder = std::exchange(m_audioDecoder, { }))
         audioDecoder->close();
+    if (RefPtr videoDecoder = std::exchange(m_videoDecoder, { }))
+        videoDecoder->close();
 }
 
 bool MediaSamplesDecoder::canDecode(const TrackInfo& info, Filters filters)
 {
     if (RefPtr audioInfo = dynamicDowncast<AudioInfo>(info))
         return !!decoderConfiguration(*audioInfo, filters);
+    if (RefPtr videoInfo = dynamicDowncast<VideoInfo>(info))
+        return !!decoderConfiguration(*videoInfo, filters);
     return false;
 }
 
@@ -194,6 +391,8 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::create(const TrackI
 {
     if (RefPtr audioInfo = dynamicDowncast<AudioInfo>(info))
         return createAudio(*audioInfo, filters);
+    if (RefPtr videoInfo = dynamicDowncast<VideoInfo>(info))
+        return createVideo(*videoInfo, filters);
     return CreatePromise::createAndReject(isProtected(info) ? PlatformMediaError::ProtectedContent : PlatformMediaError::NotSupportedError);
 }
 
@@ -240,8 +439,59 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createAudio(const A
     });
 }
 
+Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createVideo(const VideoInfo& videoInfo, Filters filters)
+{
+    auto configuration = decoderConfiguration(videoInfo, filters);
+    if (!configuration)
+        return CreatePromise::createAndReject(isProtected(videoInfo) ? PlatformMediaError::ProtectedContent : PlatformMediaError::NotSupportedError);
+
+    Ref decoder = adoptRef(*new MediaSamplesDecoder(Ref<const TrackInfo> { videoInfo }, outputVideoInfo(videoInfo, videoInfo.size()), filters));
+
+    auto outputCallback = [weakDecoder = ThreadSafeWeakPtr { decoder.get() }](std::expected<VideoDecoder::DecodedFrame, String>&& result) {
+        RefPtr protectedDecoder = weakDecoder;
+        if (!protectedDecoder)
+            return;
+        protectedDecoder->m_queue->dispatch([protectedDecoder, result = WTF::move(result)] mutable {
+            if (!result) {
+                protectedDecoder->didFailDecoding();
+                return;
+            }
+            protectedDecoder->didDecodeVideo(WTF::move(result->frame), result->timestamp);
+        });
+    };
+
+    CreatePromise::Producer producer;
+    Ref promise = producer.promise();
+    VideoDecoder::createLocalDecoder(configuration->codec, configuration->config, [decoder, producer = WTF::move(producer)](VideoDecoder::CreateResult&& result) mutable {
+        if (!result) {
+            producer.reject(PlatformMediaError::DecoderCreationError);
+            return;
+        }
+        decoder->m_queue->dispatch([decoder, videoDecoder = WTF::move(*result), producer = WTF::move(producer)] mutable {
+            assertIsCurrent(decoder->m_queue.get());
+            decoder->m_videoDecoder = WTF::move(videoDecoder);
+            producer.resolve(WTF::move(decoder));
+        });
+    }, WTF::move(outputCallback));
+    return promise;
+}
+
 bool MediaSamplesDecoder::canContinueWith(const TrackInfo& info) const
 {
+    if (RefPtr videoInfo = dynamicDowncast<VideoInfo>(info)) {
+        RefPtr currentInfo = dynamicDowncast<VideoInfo>(m_inputInfo);
+        if (!currentInfo)
+            return false;
+
+        return videoInfo->codecName() == currentInfo->codecName()
+            && videoInfo->codecString() == currentInfo->codecString()
+            && videoInfo->size() == currentInfo->size()
+            && videoInfo->displaySize() == currentInfo->displaySize()
+            && videoInfo->bitDepth() == currentInfo->bitDepth()
+            && videoInfo->colorSpace() == currentInfo->colorSpace()
+            && arePointingToEqualData(extensionAtom(*videoInfo, vpcCAtomType), extensionAtom(*currentInfo, vpcCAtomType));
+    }
+
     RefPtr audioInfo = dynamicDowncast<AudioInfo>(info);
     RefPtr currentInfo = dynamicDowncast<AudioInfo>(m_inputInfo);
     if (!audioInfo || !currentInfo)
@@ -313,7 +563,7 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::decodeOnQueue(Media
     if (m_error)
         return DecodePromise::createAndReject(*m_error);
 
-    if (!m_audioDecoder || !block.info() || !canContinueWith(*protect(block.info())))
+    if ((!m_audioDecoder && !m_videoDecoder) || !block.info() || !canContinueWith(*protect(block.info())))
         return DecodePromise::createAndReject(PlatformMediaError::InvalidState);
 
     if (std::ranges::any_of(block, [](auto& item) { return !item.data; }))
@@ -329,6 +579,27 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::decodeOnQueue(Media
 
     if (block.discontinuity().value_or(false))
         m_discontinuity = true;
+
+    if (RefPtr videoDecoder = m_videoDecoder) {
+        int64_t firstSequence = m_nextSequence;
+        Vector<Ref<VideoDecoder::DecodePromise>> promises;
+        promises.reserveInitialCapacity(block.size());
+        for (auto& item : block) {
+            int64_t sequence = m_nextSequence++;
+            auto metadata = item;
+            metadata.data = nullptr;
+            metadata.flags = MediaSample::IsSync | (item.flags & MediaSample::IsNonDisplaying);
+            m_inFlight.add(sequence, InFlightFrame { WTF::move(metadata), firstSequence });
+            promises.append(videoDecoder->decode({ protect(item.data)->makeContiguous(), item.isSync(), sequence, durationInMicroseconds(item) }));
+        }
+
+        return VideoDecoder::DecodePromise::all(promises)->whenSettled(m_queue.get(), [protectedThis = Ref { *this }, generation = m_generation, firstSequence, endSequence = m_nextSequence](auto&& result) {
+            assertIsCurrent(protectedThis->m_queue.get());
+            for (int64_t sequence = firstSequence; sequence < endSequence; ++sequence)
+                protectedThis->m_inFlight.remove(sequence);
+            return protectedThis->settleWithPendingOutput(!!result, generation);
+        });
+    }
 
     RefPtr audioDecoder = m_audioDecoder;
     Vector<Ref<AudioDecoder::DecodePromise>> promises;
@@ -361,11 +632,11 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::drainOnQueue()
     if (m_error)
         return DecodePromise::createAndReject(*m_error);
 
-    if (!m_audioDecoder)
+    if (!m_audioDecoder && !m_videoDecoder)
         return DecodePromise::createAndReject(PlatformMediaError::InvalidState);
 
     m_needsSyncSample = true;
-    return protect(m_audioDecoder)->flush()->whenSettled(m_queue.get(), [protectedThis = Ref { *this }, generation = m_generation](auto&& result) {
+    return (m_videoDecoder ? protect(m_videoDecoder)->flush() : protect(m_audioDecoder)->flush())->whenSettled(m_queue.get(), [protectedThis = Ref { *this }, generation = m_generation](auto&& result) {
         assertIsCurrent(protectedThis->m_queue.get());
         if (generation == protectedThis->m_generation)
             protectedThis->m_trimmedRanges.clear();
@@ -378,16 +649,17 @@ Ref<MediaPromise> MediaSamplesDecoder::flushOnQueue()
     assertIsCurrent(m_queue.get());
 
     ++m_generation;
+    m_inFlight.clear();
 
     if (m_error)
         return MediaPromise::createAndReject(*m_error);
 
     m_needsSyncSample = true;
 
-    if (!m_audioDecoder)
+    if (!m_audioDecoder && !m_videoDecoder)
         return MediaPromise::createAndResolve();
 
-    return protect(m_audioDecoder)->flush()->whenSettled(m_queue.get(), [protectedThis = Ref { *this }](auto&& result) {
+    return (m_videoDecoder ? protect(m_videoDecoder)->flush() : protect(m_audioDecoder)->flush())->whenSettled(m_queue.get(), [protectedThis = Ref { *this }](auto&& result) {
         return protectedThis->finishFlush(!!result);
     });
 }
@@ -396,11 +668,13 @@ Ref<MediaPromise> MediaSamplesDecoder::finishFlush(bool succeeded)
 {
     assertIsCurrent(m_queue.get());
 
+    m_completedOutput.clear();
+    m_lastOutputBlockSequence.reset();
     m_pendingOutput.clear();
     m_trimmedRanges.clear();
     m_discontinuity = std::nullopt;
     if (!succeeded && !m_error)
-        m_error = PlatformMediaError::AudioDecodingError;
+        m_error = decodingError();
     if (m_error)
         return MediaPromise::createAndReject(*m_error);
     return MediaPromise::createAndResolve();
@@ -414,19 +688,24 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::settleWithPendingOu
         return DecodePromise::createAndReject(PlatformMediaError::Cancelled);
 
     if (!succeeded && !m_error)
-        m_error = PlatformMediaError::AudioDecodingError;
+        m_error = decodingError();
     if (m_error)
         return DecodePromise::createAndReject(*m_error);
 
-    Vector<MediaSamplesBlock> blocks;
-    if (m_pendingOutput.isEmpty())
-        return DecodePromise::createAndResolve(WTF::move(blocks));
-
-    MediaSamplesBlock output { m_outputInfo.ptr(), std::exchange(m_pendingOutput, { }) };
-    if (m_discontinuity)
-        output.setDiscontinuity(*std::exchange(m_discontinuity, std::nullopt));
-    blocks.append(WTF::move(output));
+    auto blocks = std::exchange(m_completedOutput, { });
+    m_lastOutputBlockSequence.reset();
+    if (!m_pendingOutput.isEmpty())
+        blocks.append({ m_outputInfo.ptr(), std::exchange(m_pendingOutput, { }) });
+    if (m_discontinuity && !blocks.isEmpty())
+        blocks.first().setDiscontinuity(*std::exchange(m_discontinuity, std::nullopt));
     return DecodePromise::createAndResolve(WTF::move(blocks));
+}
+
+PlatformMediaError MediaSamplesDecoder::decodingError() const
+{
+    assertIsCurrent(m_queue.get());
+
+    return m_videoDecoder ? PlatformMediaError::VideoDecodingError : PlatformMediaError::AudioDecodingError;
 }
 
 void MediaSamplesDecoder::didFailDecoding()
@@ -434,7 +713,7 @@ void MediaSamplesDecoder::didFailDecoding()
     assertIsCurrent(m_queue.get());
 
     if (!m_error)
-        m_error = PlatformMediaError::AudioDecodingError;
+        m_error = decodingError();
 }
 
 void MediaSamplesDecoder::didDecodeAudio(Ref<PlatformRawAudioData>&& data)
@@ -499,6 +778,47 @@ void MediaSamplesDecoder::didDecodeAudio(Ref<PlatformRawAudioData>&& data)
             .flags = MediaSample::IsSync
         });
     }
+}
+
+void MediaSamplesDecoder::didDecodeVideo(Ref<VideoFrame>&& frame, int64_t sequence)
+{
+    assertIsCurrent(m_queue.get());
+
+    auto iterator = m_inFlight.find(sequence);
+    if (iterator == m_inFlight.end())
+        return;
+    auto [metadata, blockSequence] = WTF::move(iterator->value);
+    m_inFlight.remove(iterator);
+
+    if (metadata.flags & MediaSample::IsNonDisplaying)
+        return;
+
+    auto size = frame->presentationSize();
+    if (!size.width() || !size.height()) {
+        didFailDecoding();
+        return;
+    }
+
+    if (FloatSize { size } != downcast<VideoInfo>(m_outputInfo).size())
+        m_outputInfo = outputVideoInfo(downcast<VideoInfo>(m_inputInfo), size);
+
+    auto buffer = copyToI420Buffer(frame, m_filters.contains(Filter::UseSharedMemory));
+    if (!buffer) {
+        if (!m_error)
+            m_error = buffer.error();
+        return;
+    }
+
+    metadata.data = WTF::move(*buffer);
+    MediaSamplesBlock::SamplesVector items;
+    items.append(WTF::move(metadata));
+    MediaSamplesBlock output { m_outputInfo.ptr(), WTF::move(items) };
+    // A frame is immediately replaced by the next one decoded from the same block.
+    if (m_lastOutputBlockSequence == blockSequence)
+        m_completedOutput.last() = WTF::move(output);
+    else
+        m_completedOutput.append(WTF::move(output));
+    m_lastOutputBlockSequence = blockSequence;
 }
 
 } // namespace WebCore

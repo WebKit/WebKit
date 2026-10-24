@@ -955,7 +955,7 @@ file(CONFIGURE OUTPUT ${_resources_info_plist} CONTENT [[
 
 set(_resources_dst_files)
 function(_testwebkitapi_stage_resources source_root skip_pattern)
-    file(GLOB_RECURSE _entries RELATIVE "${source_root}" "${source_root}/*")
+    file(GLOB_RECURSE _entries CONFIGURE_DEPENDS RELATIVE "${source_root}" "${source_root}/*")
     foreach (_rel IN LISTS _entries)
         if (skip_pattern AND _rel MATCHES "${skip_pattern}")
             continue ()

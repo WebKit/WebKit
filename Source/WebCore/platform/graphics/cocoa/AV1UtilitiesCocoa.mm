@@ -31,8 +31,12 @@
 #import "AV1Utilities.h"
 #import "BitReader.h"
 #import "CMUtilities.h"
+#import "Logging.h"
+#import "MediaStrategy.h"
 #import "PlatformMediaCapabilitiesInfo.h"
 #import "PlatformMediaCapabilitiesVideoConfiguration.h"
+#import "PlatformStrategies.h"
+#import <wtf/Lock.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -176,29 +180,56 @@ std::optional<PlatformMediaCapabilitiesInfo> validateAV1Parameters(const AV1Code
     return info;
 }
 
-static std::optional<bool> s_av1HardwareDecoderAvailable = { };
+static Lock s_av1HardwareDecoderAvailabilityLock;
+static std::optional<bool> s_av1HardwareDecoderAvailable WTF_GUARDED_BY_LOCK(s_av1HardwareDecoderAvailabilityLock) = { };
+static std::optional<bool> s_av1HardwareDecoderAvailableInProcess WTF_GUARDED_BY_LOCK(s_av1HardwareDecoderAvailabilityLock) = { };
+static std::optional<bool> s_av1HardwareDecoderAvailableOverride WTF_GUARDED_BY_LOCK(s_av1HardwareDecoderAvailabilityLock) = { };
+
 void setAV1HardwareDecoderAvailable(bool value)
 {
-    ASSERT(isMainThread());
-
+    Locker locker { s_av1HardwareDecoderAvailabilityLock };
     ASSERT(!s_av1HardwareDecoderAvailable || *s_av1HardwareDecoderAvailable == value);
     s_av1HardwareDecoderAvailable = value;
 }
 
+void setAV1HardwareDecoderAvailableOverrideForTesting(std::optional<bool> value)
+{
+    Locker locker { s_av1HardwareDecoderAvailabilityLock };
+    s_av1HardwareDecoderAvailableOverride = value;
+}
+
+static std::optional<bool> av1HardwareDecoderAvailableOverride()
+{
+    Locker locker { s_av1HardwareDecoderAvailabilityLock };
+    return s_av1HardwareDecoderAvailableOverride;
+}
+
+static std::optional<bool> deliveredAV1HardwareDecoderAvailable()
+{
+    Locker locker { s_av1HardwareDecoderAvailabilityLock };
+    return s_av1HardwareDecoderAvailable;
+}
+
 bool av1HardwareDecoderAvailable()
 {
-    ASSERT(isMainThread() || !!s_av1HardwareDecoderAvailable);
+    if (auto overridden = av1HardwareDecoderAvailableOverride())
+        return *overridden;
 
-    if (s_av1HardwareDecoderAvailable)
-        return *s_av1HardwareDecoderAvailable;
+    auto delivered = deliveredAV1HardwareDecoderAvailable();
+    if (!delivered && hasPlatformStrategies()) {
+        RELEASE_LOG_ERROR(Media, "AV1 hardware decoder availability unknown, ensuring codecs support is initialized");
+        platformStrategies()->mediaStrategy()->ensureCodecsSupportChecksInitialized();
+        delivered = deliveredAV1HardwareDecoderAvailable();
+    }
+
+    if (delivered)
+        return *delivered;
     return av1HardwareDecoderAvailableInProcess();
 }
 
-static std::optional<bool> s_av1HardwareDecoderAvailableInProcess = { };
 bool av1HardwareDecoderAvailableInProcess()
 {
-    ASSERT(isMainThread() || !!s_av1HardwareDecoderAvailableInProcess);
-
+    Locker locker { s_av1HardwareDecoderAvailabilityLock };
     if (!s_av1HardwareDecoderAvailableInProcess)
         s_av1HardwareDecoderAvailableInProcess = canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported('av01');
     return *s_av1HardwareDecoderAvailableInProcess;
