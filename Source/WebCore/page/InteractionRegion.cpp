@@ -60,6 +60,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
+#include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderImageResource.h"
@@ -343,6 +344,39 @@ static bool isGuardContainer(const Element& element)
     return hasTransparentContainerStyle(protect(renderer->style()));
 }
 
+static bool fillsContainer(const RenderBox& box, const RenderBox& container)
+{
+    return box.borderBoxRectInContainer() == container.borderBoxRect() && box.container() == &container;
+}
+
+static CheckedPtr<const RenderBox> backgroundPaintedBySibling(const RenderElement& renderer)
+{
+    CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
+    if (!box)
+        return nullptr;
+
+    CheckedPtr parent = dynamicDowncast<RenderBox>(box->parent());
+    if (!parent || !fillsContainer(*box, *parent))
+        return nullptr;
+
+    for (CheckedRef sibling : childrenOfType<RenderBox>(*parent)) {
+        if (sibling.ptr() == box.get())
+            continue;
+
+        CheckedPtr<const RenderBox> container = parent;
+        for (CheckedPtr candidate = sibling.ptr(); candidate && fillsContainer(*candidate, *container); candidate = childrenOfType<RenderBox>(*candidate).first()) {
+            if (candidate->hasVisibleBoxDecorations()
+                && candidate->usedPointerEvents() == PointerEvents::None
+                && candidate->usedStyle().visibility() == UsedVisibility::Visible
+                && !candidate->style().isEffectivelyTransparent())
+                return candidate;
+            container = candidate;
+        }
+    }
+
+    return nullptr;
+}
+
 static FloatSize boundingSize(const RenderObject& renderer, const std::optional<AffineTransform>& transform)
 {
     Vector<LayoutRect> rects;
@@ -587,6 +621,11 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
 
     bool matchedElementIsGuardContainer = isGuardContainer(*matchedElement);
 
+    // A guard container lets its child shape the region, unless a sibling already paints its background.
+    CheckedPtr siblingBackground = matchedElementIsGuardContainer ? backgroundPaintedBySibling(renderer.get()) : nullptr;
+    if (siblingBackground)
+        matchedElementIsGuardContainer = false;
+
     if (isOriginalMatch && matchedElementIsGuardContainer) {
         return RenderedInteractionRegion { {
             InteractionRegion::Type::Guard,
@@ -617,7 +656,8 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
     std::optional<Path> clipPath;
     bool shapeIsInset = false;
 
-    CheckedRef style = regionRenderer.style();
+    CheckedPtr<const RenderBox> backgroundBox = isOriginalMatch ? siblingBackground.get() : nullptr;
+    CheckedRef style = backgroundBox ? backgroundBox->style() : regionRenderer.style();
     CheckedPtr<const RenderBox> regionRendererBox;
 
     if (auto basicShapePath = style->clipPath().tryBasicShape(); !hasRotationOrShear && originalElement && basicShapePath) {
@@ -678,7 +718,8 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
 
         clipPath = path;
     } else if ((regionRendererBox = dynamicDowncast<RenderBox>(regionRenderer))) {
-        auto borderShape = BorderShape::shapeForBorderRect(regionRendererBox->usedStyle(), regionRendererBox->borderBoxRect());
+        CheckedRef shapeBox = backgroundBox ? *backgroundBox : *regionRendererBox;
+        auto borderShape = BorderShape::shapeForBorderRect(shapeBox->usedStyle(), shapeBox->borderBoxRect());
         auto borderRadii = borderShape.radii();
         auto minRadius = borderRadii.minimumRadius();
         auto maxRadius = borderRadii.maximumRadius();
@@ -782,7 +823,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
         interactionRegionTextContentForNode(*regionRenderer.node())
 #endif
-    }, shapeIsInset };
+    }, shapeIsInset, !!backgroundBox };
 }
 
 TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegion)

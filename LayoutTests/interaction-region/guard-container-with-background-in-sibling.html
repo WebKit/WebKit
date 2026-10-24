@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { margin: 0; }
+    .item {
+        position: absolute;
+        left: 20px;
+        width: fit-content;
+    }
+    #sibling-background { top: 20px; }
+    #inset-background { top: 100px; }
+    #hit-testable-background { top: 180px; }
+    #card-with-nested-button { top: 260px; }
+    #percentage-sized-background {
+        top: 360px;
+        display: flex;
+    }
+
+    .background-layer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+    #hit-testable-background .background-layer {
+        pointer-events: auto;
+    }
+    .background {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: 28px;
+        background-color: lightgray;
+    }
+    #inset-background .background {
+        inset: 4px;
+    }
+    #percentage-sized-background .background-layer {
+        inset: auto;
+        width: 100%;
+        height: 100%;
+    }
+
+    button {
+        display: flex;
+        align-items: center;
+        height: 56px;
+        margin: 0;
+        padding: 0 32px 0 16px;
+        border: 0;
+        background: none;
+        cursor: pointer;
+    }
+    #percentage-sized-background button {
+        box-sizing: border-box;
+        width: 200px;
+    }
+    .label {
+        display: block;
+        width: 100px;
+        height: 24px;
+    }
+
+    .card {
+        position: relative;
+        display: block;
+        width: 200px;
+        height: 80px;
+    }
+    .close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border-radius: 12px;
+        background-color: gray;
+    }
+</style>
+</head>
+<body>
+<!--
+    A transparent button whose only child is a label is a guard container: the label glows and the
+    button gets a Guard. Here the button's background is painted by a pointer-events: none layer next
+    to it that fills the same parent, so the button gets a single region with that background's shape.
+    The button stays a guard container when the background doesn't match its box, or when the layer
+    takes hits. A link painted the same way keeps its region when it contains another control, as it
+    would if it painted its own background. The last case sizes the layer with percentages in a flex container.
+-->
+<div id="test">
+    <div id="sibling-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="inset-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="hit-testable-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="card-with-nested-button" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <a class="card" href="#"><div><button class="close"></button></div></a>
+    </div>
+    <div id="percentage-sized-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+</div>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById("test").remove();
+};
+</script>
+</body>
+</html>
