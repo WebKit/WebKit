@@ -6207,14 +6207,6 @@ uint64_t JSBigInt::toBigUInt64Heap(JSBigInt* bigInt)
 std::optional<uint64_t> JSBigInt::tryToBigUInt64(JSValue bigInt)
 {
     ASSERT(bigInt.isBigInt());
-#if USE(BIGINT32)
-    if (bigInt.isBigInt32()) {
-        int32_t value = bigInt.bigInt32AsInt32();
-        if (value < 0)
-            return std::nullopt;
-        return static_cast<uint64_t>(value);
-    }
-#endif
     JSBigInt* heapBigInt = bigInt.asHeapBigInt();
     if (heapBigInt->sign())
         return std::nullopt;
@@ -6224,10 +6216,6 @@ std::optional<uint64_t> JSBigInt::tryToBigUInt64(JSValue bigInt)
 std::optional<int64_t> JSBigInt::tryToBigInt64(JSValue bigInt)
 {
     ASSERT(bigInt.isBigInt());
-#if USE(BIGINT32)
-    if (bigInt.isBigInt32())
-        return static_cast<int64_t>(bigInt.bigInt32AsInt32());
-#endif
     JSBigInt* heapBigInt = bigInt.asHeapBigInt();
     auto magnitude = heapBigInt->tryAbsoluteValueAsUInt64();
     if (!magnitude)
