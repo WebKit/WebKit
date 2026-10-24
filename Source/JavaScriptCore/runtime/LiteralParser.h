@@ -218,7 +218,6 @@ private:
         TokenType nextMaybeIdentifier();
         TokenType nextAfterValue();
         bool consumeColon();
-        void skipWhitespaceBeforeKey();
         CharType peek() const { return m_ptr < m_end ? *m_ptr : CharType { }; }
         TokenType nextString();
         TokenType nextNumber();
@@ -270,6 +269,12 @@ private:
 
         const CharType* ptr() const { return m_ptr; }
         const CharType* start() const { return m_start; }
+        const CharType* end() const { return m_end; }
+        void setPtr(const CharType* ptr)
+        {
+            ASSERT(m_start <= ptr && ptr <= m_end);
+            m_ptr = ptr;
+        }
         inline const CharType* LEGACY_NODELETE currentTokenStart() const;
         inline const CharType* LEGACY_NODELETE currentTokenEnd() const;
         

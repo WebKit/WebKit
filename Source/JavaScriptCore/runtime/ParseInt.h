@@ -37,6 +37,9 @@ namespace JSC {
 
 static constexpr double mantissaOverflowLowerBound = 9007199254740992.0;
 
+// The numbers from -999999999 to 999999999 are always in range of Int32.
+static constexpr unsigned numberOfDigitsForSafeInt32 = 9;
+
 ALWAYS_INLINE static int parseDigit(unsigned short c, int radix)
 {
     int digit = -1;
@@ -134,8 +137,6 @@ template <typename CharType>
 ALWAYS_INLINE
 static double parseInt(std::span<const CharType> data, int radix)
 {
-    static constexpr size_t numberOfDigitsForSafeInt32 = 9;
-
     size_t length = data.size();
 
     if ((radix == 10 || !radix) && length && length <= numberOfDigitsForSafeInt32) {
