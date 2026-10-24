@@ -83,8 +83,8 @@ AllowedSPI*.toml @emw-apple
 # JavaScriptCore
 
 /Source/JavaScriptCore @WebKit/jsc-reviewers
-/Source/JavaScriptCore/debugger @dcrousso @patrickangle
-/Source/JavaScriptCore/inspector @dcrousso @patrickangle @burg
+/Source/JavaScriptCore/debugger @patrickangle
+/Source/JavaScriptCore/inspector @patrickangle @burg
 /JSTests @WebKit/jsc-reviewers
 /LayoutTests/js @WebKit/jsc-reviewers
 /Tools/TestWebKitAPI/Tests/JavaScriptCore @WebKit/jsc-reviewers
@@ -92,11 +92,11 @@ AllowedSPI*.toml @emw-apple
 # ================================================================================
 # Web Inspector
 
-/Source/WebInspectorUI @dcrousso @patrickangle @burg
-/Tools/Scripts/webkitpy/inspector @dcrousso @patrickangle @burg
-/LayoutTests/http/tests/inspector @dcrousso @patrickangle @burg
-/LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle @burg
-/LayoutTests/inspector @dcrousso @patrickangle @burg
+/Source/WebInspectorUI @patrickangle @burg
+/Tools/Scripts/webkitpy/inspector @patrickangle @burg
+/LayoutTests/http/tests/inspector @patrickangle @burg
+/LayoutTests/http/tests/websocket/tests/hybi/inspector @patrickangle @burg
+/LayoutTests/inspector @patrickangle @burg
 
 # ================================================================================
 # WebCore
@@ -130,7 +130,7 @@ AllowedSPI*.toml @emw-apple
 /Source/WebCore/bindings @cdumez
 /Source/WebCore/html @cdumez @rniwa
 /Source/WebCore/html/UserActivation.* @marcoscaceres
-/Source/WebCore/inspector @dcrousso @patrickangle @burg
+/Source/WebCore/inspector @patrickangle @burg
 /Source/WebCore/loader @cdumez
 /Source/WebCore/page/Quirks.cpp @brentfulgham @karlcow
 /Source/WebCore/workers @cdumez
@@ -175,7 +175,7 @@ AllowedSPI*.toml @emw-apple
 /Source/WebKit/Shared/Sandbox @brentfulgham @pvollan
 /Source/WebKit/UIProcess @cdumez
 /Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon
-/Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle @burg
+/Source/WebKit/UIProcess/Inspector @patrickangle @burg
 /Source/WebKit/WebKitSwift @rr-codes
 /Source/WebKit/UIProcess/DigitalCredentials @marcoscaceres
 /Source/WebKit/UIProcess/WebsiteData/Cocoa/ScreenTimeWebsiteDataSupport.* @jesxilin
@@ -183,7 +183,7 @@ AllowedSPI*.toml @emw-apple
 /Source/WebKit/WebProcess/DigitalCredentials @marcoscaceres
 /Source/WebKit/WebKitSwift/IdentityDocumentServices @marcoscaceres
 /Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
-/Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle @burg
+/Source/WebKit/WebProcess/Inspector @patrickangle @burg
 /Source/WebKit/WebProcess/com.apple.WebProcess.sb.in  @brentfulgham @pvollan
 /Source/WebKit/Scripts/webkit/opaque_ipc_types.* @sheeparegreat
 

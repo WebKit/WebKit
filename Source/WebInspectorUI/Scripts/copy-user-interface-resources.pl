@@ -128,7 +128,7 @@ my $inspectorLicense = <<'EOF';
  * Copyright (C) 2014-2015 Saam Barati <saambarati1@gmail.com>
  * Copyright (C) 2014 Antoine Quint
  * Copyright (C) 2015 Tobias Reiss <tobi+webkit@basecode.de>
- * Copyright (C) 2015-2017 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ * Copyright (C) 2015-2026 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  * Copyright (C) 2017 The Chromium Authors
  * Copyright (C) 2017-2018 Sony Interactive Entertainment Inc.
  *
