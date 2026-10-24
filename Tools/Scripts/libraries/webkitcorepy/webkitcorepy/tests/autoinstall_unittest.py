@@ -126,6 +126,87 @@ class IsCachedTest(unittest.TestCase):
         self.assertTrue(package.is_cached())
 
 
+class RemoveMetadataOfOtherVersionsTest(unittest.TestCase):
+    def setUp(self):
+        self.temp_directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp_directory.cleanup)
+
+        self.directory_patch = patch.object(AutoInstall, 'directory', self.temp_directory.name)
+        self.manifest_patch = patch.object(AutoInstall, 'manifest', {})
+
+        self.directory_patch.start()
+        self.manifest_patch.start()
+
+        self.addCleanup(self.directory_patch.stop)
+        self.addCleanup(self.manifest_patch.stop)
+
+    def create(self, *entries):
+        for entry in entries:
+            path = os.path.join(self.temp_directory.name, entry)
+            if entry.endswith('/'):
+                os.makedirs(path)
+            else:
+                with open(path, 'w'):
+                    pass
+
+    def entries(self):
+        return sorted(os.listdir(self.temp_directory.name))
+
+    def install(self, package, version):
+        AutoInstall.manifest[package.name] = {'index': AutoInstall.index, 'version': version}
+
+    def test_is_cached_removes_metadata_of_other_versions(self):
+        self.create('pyfakefs/', 'pyfakefs-5.7.3.dist-info/', 'pyfakefs-5.10.2.dist-info/')
+        package = Package('pyfakefs', Version(5, 10, 2))
+        self.install(package, '5.10.2')
+        with OutputCapture():
+            self.assertTrue(package.is_cached())
+        self.assertEqual(self.entries(), ['pyfakefs', 'pyfakefs-5.10.2.dist-info'])
+
+    def test_normalized_distribution_names(self):
+        self.create(
+            'pytest_asyncio-0.18.0.dist-info/', 'pytest_asyncio-0.19.0.dist-info/',
+            'PyYAML-5.4.dist-info/', 'pyyaml-6.0.dist-info/',
+            'pytest_asyncio_extra-0.18.0.dist-info/',
+        )
+        with OutputCapture():
+            Package('pytest_asyncio', Version(0, 19, 0), pypi_name='pytest-asyncio').remove_metadata_of_other_versions('0.19.0')
+            Package('yaml', Version(6, 0), pypi_name='PyYAML').remove_metadata_of_other_versions('6.0')
+        self.assertEqual(self.entries(), ['pytest_asyncio-0.19.0.dist-info', 'pytest_asyncio_extra-0.18.0.dist-info', 'pyyaml-6.0.dist-info'])
+
+    def test_keeps_metadata_without_metadata_of_installed_version(self):
+        self.create('example-1.0.dist-info/', 'example-2.0.dist-info/')
+        Package('example', Version(3, 0)).remove_metadata_of_other_versions('3.0')
+        self.assertEqual(self.entries(), ['example-1.0.dist-info', 'example-2.0.dist-info'])
+
+    def test_keeps_metadata_of_versions_that_cannot_be_compared(self):
+        self.create('example-1.0.dist-info/', 'example-2.0rc1.dist-info/')
+        Package('example', Version(1, 0)).remove_metadata_of_other_versions('1.0')
+        self.assertEqual(self.entries(), ['example-1.0.dist-info', 'example-2.0rc1.dist-info'])
+
+    def test_versions_are_compared_as_versions(self):
+        # The manifest has versions without trailing zeros.
+        self.create('example-1.0.0.dist-info/', 'example-0.9.dist-info/')
+        with OutputCapture():
+            Package('example', Version(1, 0)).remove_metadata_of_other_versions('1')
+        self.assertEqual(self.entries(), ['example-1.0.0.dist-info'])
+
+    def test_egg_info(self):
+        self.create('example-1.0-py3.9.egg-info/', 'example-2.0-py3.9.egg-info/', 'example-0.5.egg-info')
+        with OutputCapture():
+            Package('example', Version(2, 0)).remove_metadata_of_other_versions('2.0')
+        self.assertEqual(self.entries(), ['example-2.0-py3.9.egg-info'])
+
+    def test_is_cached_checks_once(self):
+        package = Package('example', Version(2, 0))
+        self.install(package, '2.0')
+        self.create('example-2.0.dist-info/')
+        self.assertTrue(package.is_cached())
+        self.create('example-1.0.dist-info/')
+        self.assertTrue(package.is_cached())
+        self.assertEqual(self.entries(), ['example-1.0.dist-info', 'example-2.0.dist-info'])
+
+
 class MergeMoveTest(unittest.TestCase):
     # Package._merge_move is what lets multiple distributions contribute to a
     # shared namespace package (e.g. 'backports') without clobbering each other.
