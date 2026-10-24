@@ -156,16 +156,19 @@ static bool isAtomicInlineLevelBox(const RenderObject& renderer)
 // formatting context gives it (BlockIntegrationUtils::layoutInlineContent).
 static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
 {
-    // In quirks mode a percentage height inside it looks through it for an ancestor with a height (RenderBox::computePercentageLogicalHeight),
-    // past the containing block size the block formatting context gives it.
-    if (box.document().inQuirksMode())
-        return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
     // FIXME: An orthogonal box, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
     if (box.isWritingModeRoot())
         return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
-    // An out-of-flow box inside whose containing block is outside it, in the block formatting context, would be registered on a box the
-    // block formatting context has not committed yet.
+    // In quirks mode a percentage block size of the box or of a box in it looks through containing blocks with an auto height for one with a
+    // height (RenderBox::computePercentageLogicalHeight), past the containing block size the block formatting context gives the box.
+    auto inQuirksMode = box.document().inQuirksMode();
+    if (inQuirksMode && Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box.writingMode()))
+        return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
     for (CheckedRef descendant : descendantsOfType<RenderBox>(box)) {
+        if (inQuirksMode && Layout::BlockFormattingUtils::hasPercentageBlockSize(descendant, descendant->writingMode()))
+            return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
+        // An out-of-flow box inside whose containing block is outside it, in the block formatting context, would be registered on a box the
+        // block formatting context has not committed yet.
         if (!descendant->isOutOfFlowPositioned())
             continue;
         CheckedPtr containingBlock = descendant->containingBlock();
