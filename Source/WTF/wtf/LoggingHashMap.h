@@ -54,7 +54,7 @@ public:
     typedef typename HashMap::AddResult AddResult;
 
 private:
-    typedef typename HashMap::MappedTraits::PeekType MappedPeekType;
+    typedef typename MappedTraitsArg::PeekType MappedPeekType;
 
 public:
 
@@ -75,7 +75,7 @@ public:
     }
     
     LoggingHashMap(LoggingHashMap&& other)
-        : m_map(other.m_map)
+        : m_map(WTF::move(other.m_map))
     {
         dataLog("auto* ", m_id, " = new HashMap(WTF::move(*", other.m_id, "));");
     }
@@ -84,12 +84,14 @@ public:
     {
         dataLog("*", m_id, " = *", other.m_id, ";\n");
         m_map = other.m_map;
+        return *this;
     }
     
     LoggingHashMap& operator=(LoggingHashMap&& other)
     {
         dataLog("*", m_id, " = WTF::move(*", other.m_id, ");\n");
         m_map = WTF::move(other.m_map);
+        return *this;
     }
     
     void swap(LoggingHashMap& other)
@@ -177,7 +179,7 @@ public:
         LoggingValueTraits::print(string, passedValue);
         string.print(");\n");
         dataLog(string.toUTF8CString());
-        return set(key, std::forward<PassedType>(passedValue));
+        return m_map.set(key, std::forward<PassedType>(passedValue));
     }
     
     template<typename PassedType>
@@ -190,7 +192,7 @@ public:
         LoggingValueTraits::print(string, passedValue);
         string.print(");\n");
         dataLog(string.toUTF8CString());
-        return set(WTF::move(key), std::forward<PassedType>(passedValue));
+        return m_map.set(WTF::move(key), std::forward<PassedType>(passedValue));
     }
     
     template<typename PassedType>
@@ -203,7 +205,7 @@ public:
         LoggingValueTraits::print(string, passedValue);
         string.print(");\n");
         dataLog(string.toUTF8CString());
-        return add(key, std::forward<PassedType>(passedValue));
+        return m_map.add(key, std::forward<PassedType>(passedValue));
     }
     
     template<typename PassedType>
@@ -216,7 +218,7 @@ public:
         LoggingValueTraits::print(string, passedValue);
         string.print(");\n");
         dataLog(string.toUTF8CString());
-        return add(WTF::move(key), std::forward<PassedType>(passedValue));
+        return m_map.add(WTF::move(key), std::forward<PassedType>(passedValue));
     }
     
     template<typename PassedType>
