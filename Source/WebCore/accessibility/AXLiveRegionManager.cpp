@@ -299,7 +299,7 @@ LiveRegionSnapshot AXLiveRegionManager::buildLiveRegionSnapshot(AccessibilityObj
     snapshot.liveRegionRelevant = stringToLiveRegionRelevant(object.liveRegionRelevant());
 
     size_t objectsVisited = 0;
-    std::function<void(AccessibilityObject&)> buildObjectList = [protectedThis = CheckedRef { *this }, &buildObjectList, &snapshot, &objectsVisited] (AccessibilityObject& object) {
+    auto buildObjectList = [protectedThis = CheckedRef { *this }, &snapshot, &objectsVisited](this auto& buildObjectList, AccessibilityObject& object) -> void {
         if (objectsVisited >= maximumSnapshotObjects) {
             snapshot.isTruncated = true;
             return;
@@ -311,7 +311,7 @@ LiveRegionSnapshot AXLiveRegionManager::buildLiveRegionSnapshot(AccessibilityObj
             HashSet<AXID> descendants;
 
             // Collect all atomic-region descendants to detect when nodes are added/removed within the atomic region.
-            std::function<void(AccessibilityObject&)> collectDescendants = [&collectDescendants, &descendants, &objectsVisited, &snapshot] (AccessibilityObject& descendant) {
+            auto collectDescendants = [&descendants, &objectsVisited, &snapshot](this auto& collectDescendants, AccessibilityObject& descendant) -> void {
                 if (objectsVisited >= maximumSnapshotObjects) {
                     snapshot.isTruncated = true;
                     return;
