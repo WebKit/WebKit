@@ -118,6 +118,17 @@ class TestFind(testing.PathTestCase):
             ))
         self.assertEqual(captured.stdout.getvalue(), '2@main | fff83bb2d917 | 2nd commit\n')
 
+    def test_identifier_git_remote_ahead(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), MockTime:
+            # Local checkout is one commit behind the remote-tracking branch
+            repo.commits['main'] = repo.commits['main'][:-1]
+            repo.head = repo.commits['main'][-1]
+            self.assertEqual(0, program.main(
+                args=('find', '5@main', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '5@main | d8bce26fa65c | Patch Series\n')
+
     def test_identifier_git_svn(self):
         with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(

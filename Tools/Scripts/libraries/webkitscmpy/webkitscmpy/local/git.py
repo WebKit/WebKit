@@ -911,10 +911,23 @@ class Git(Scm):
                         self._commit_count('{}/{}..{}'.format(self.default_remote, default_branch, baseline)),
                     )
 
+                if identifier > base_count and is_default:
+                    # The local checkout can be behind the remote-tracking
+                    # branch, which may still know the requested identifier
+                    remote_baseline = '{}/{}'.format(self.default_remote, default_branch)
+                    try:
+                        remote_count = self._commit_count(remote_baseline)
+                    except self.Exception:
+                        remote_count = 0
+                    if identifier <= remote_count:
+                        baseline = remote_baseline
+                        base_count = remote_count
+
                 if identifier > base_count:
                     raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout. Latest identifier on this branch is {}'.format(identifier, base_count))
+                difference = base_count - identifier
                 log = run(
-                    [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier)] + log_format + ['--'],
+                    [self.executable(), 'log', baseline if not difference else '{}~{}'.format(baseline, difference)] + log_format + ['--'],
                     cwd=self.root_path,
                     capture_output=True,
                     encoding='utf-8',
