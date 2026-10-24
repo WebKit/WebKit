@@ -1,0 +1,22 @@
+Test that global pause can be turned off for a page, so that frames in other processes keep running while a frame is paused, and turned on again.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseSessionOptOut
+-- Running test case: SiteIsolation.Debugger.PauseSessionOptOut.Setup
+PASS: Should find the frame target for frame A.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionOptOut.Disabled
+PASS: The main frame's interval while frame A is paused should advance.
+PASS: No session event should be reported.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionOptOut.Enabled
+PASS: The main frame's interval should not advance while frame A is paused.
+PASS: The main frame's interval after resuming should advance.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionOptOut.ToggledWhileStopped
+PASS: The main frame's interval with global pause off should advance.
+PASS: The session should open again with frame A stopped.
+PASS: The main frame's interval should not advance with global pause on again.
+PASS: The main frame's interval after resuming should advance.
+

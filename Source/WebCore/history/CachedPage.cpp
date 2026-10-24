@@ -27,6 +27,7 @@
 #include "CachedPage.h"
 
 #include "BackForwardController.h"
+#include "DebuggerSuspensionController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentView.h"
@@ -44,6 +45,7 @@
 #include "NavigationNavigationType.h"
 #include "Node.h"
 #include "Page.h"
+#include "PageInspectorController.h"
 #include "PageTransitionEvent.h"
 #include "ScriptDisallowedScope.h"
 #include "SelectionRestorationMode.h"
@@ -197,6 +199,8 @@ void CachedPage::restore(Page& page)
         if (localMainFrame)
             localMainFrame->loader().client().didLoadFromRegistrableDomain(WTF::move(domain));
     }
+
+    CheckedRef { page.inspectorController().debuggerSuspensionController() }->pageDidRestoreFromBackForwardCache();
 
     clear();
 }

@@ -123,15 +123,30 @@ void PageInspectorController::suspendForDebuggerSession(DebuggerPauseSessionIden
     if (!CheckedRef { m_debuggerSuspensionController }->addSessionHold(sessionID))
         return;
 
-    protect(m_page.get())->forEachLocalFrame([](LocalFrame& frame) {
-        if (CheckedPtr debuggerAgent = frame.inspectorController().instrumentingAgents().enabledFrameDebuggerAgent())
-            debuggerAgent->cancelPauseAtNextOpportunity();
+    forEachEnabledFrameDebuggerAgent([](FrameDebuggerAgent& debuggerAgent) {
+        debuggerAgent.cancelPauseAtNextOpportunity();
     });
 }
 
 void PageInspectorController::resumeFromDebuggerSession(DebuggerPauseSessionIdentifier sessionID)
 {
     CheckedRef { m_debuggerSuspensionController.get() }->removeSessionHold(sessionID);
+}
+
+void PageInspectorController::resumeStoppedFrames()
+{
+    forEachEnabledFrameDebuggerAgent([](FrameDebuggerAgent& debuggerAgent) {
+        if (debuggerAgent.isPaused())
+            std::ignore = debuggerAgent.resume();
+    });
+}
+
+void PageInspectorController::forEachEnabledFrameDebuggerAgent(NOESCAPE const Function<void(FrameDebuggerAgent&)>& function)
+{
+    protect(m_page.get())->forEachLocalFrame([&](LocalFrame& frame) {
+        if (CheckedPtr debuggerAgent = frame.inspectorController().instrumentingAgents().enabledFrameDebuggerAgent())
+            function(*debuggerAgent);
+    });
 }
 
 PageInspectorController::~PageInspectorController()

@@ -1,0 +1,18 @@
+Test that resuming the pause session resumes the frames that are stopped in every process and releases the frames it holds.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseSessionResumeCommand
+-- Running test case: SiteIsolation.Debugger.PauseSessionResumeCommand.Setup
+PASS: Should find the frame target for frame A.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionResumeCommand.ResumeStoppedFrames
+PASS: The main frame should be paused.
+PASS: Frame A should be paused.
+PASS: The main frame should have resumed.
+PASS: Frame A should have resumed.
+PASS: The main frame's interval after resuming the session should advance.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionResumeCommand.NoSession
+PASS: Nothing should be paused.
+

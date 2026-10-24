@@ -718,6 +718,12 @@ void WebInspectorBackend::resumeFromDebugger(WebCore::DebuggerPauseSessionIdenti
         corePage->inspectorController().resumeFromDebuggerSession(sessionID);
 }
 
+void WebInspectorBackend::resumeStoppedFramesForDebugger()
+{
+    if (RefPtr corePage = m_page ? m_page->corePage() : nullptr)
+        corePage->inspectorController().resumeStoppedFrames();
+}
+
 void WebInspectorBackend::enablePageInstrumentation()
 {
     if (!m_page || !m_page->corePage())

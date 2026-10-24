@@ -57,6 +57,7 @@ namespace WebCore {
 
 class DOMWrapperWorld;
 class DebuggerSuspensionController;
+class FrameDebuggerAgent;
 class GraphicsContext;
 class InspectorDOMAgent;
 class InspectorInstrumentation;
@@ -142,6 +143,7 @@ public:
     DebuggerSuspensionController& debuggerSuspensionController() const { return m_debuggerSuspensionController.get(); }
     WEBCORE_EXPORT void suspendForDebuggerSession(DebuggerPauseSessionIdentifier);
     WEBCORE_EXPORT void resumeFromDebuggerSession(DebuggerPauseSessionIdentifier);
+    WEBCORE_EXPORT void resumeStoppedFrames();
 
     Inspector::InspectorAgent& ensureInspectorAgent();
     InspectorDOMAgent& ensureDOMAgent();
@@ -166,6 +168,7 @@ private:
 
     PageAgentContext pageAgentContext();
     void createLazyAgents();
+    void forEachEnabledFrameDebuggerAgent(NOESCAPE const Function<void(FrameDebuggerAgent&)>&);
 
     WeakRef<Page> m_page;
     const Ref<InstrumentingAgents> m_instrumentingAgents;
