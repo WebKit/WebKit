@@ -1,0 +1,131 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function test() {
+    const resourcesPath = "/site-isolation/inspector/network/resources/";
+
+    // Every step of a phase races one shared deadline, and a case stops at its first phase that
+    // misses it, so a hang prints a FAIL line well before the harness timeout.
+    const phaseTimeout = 5000;
+    const timedOut = Symbol("timed out");
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.HiddenLoadsNotListed");
+
+    // The page agent skips every hook after willSendRequest for a request that is hidden from the
+    // inspector (FileReader reads, Network.loadResource). A load that lands in the frontend as a
+    // resource therefore shows the proxy let one of those hooks through.
+    const fileReadsExpression = `Promise.all(["readAsArrayBuffer", "readAsBinaryString", "readAsDataURL", "readAsText"].map((method) => new Promise((resolve) => {
+        let reader = new FileReader;
+        reader.addEventListener("loadend", () => resolve(reader.error ? "error" : "ok"));
+        reader[method](new Blob(["test"]));
+    }))).then((outcomes) => outcomes.join())`;
+
+    function uniqueToken(prefix) {
+        return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e9)}`;
+    }
+
+    async function runPhase(label, description, promises) {
+        let timer;
+        let deadline = new Promise((resolve) => { timer = setTimeout(() => resolve(timedOut), phaseTimeout); });
+        let results;
+        try {
+            results = await Promise.race([Promise.all(promises), deadline]);
+        } finally {
+            clearTimeout(timer);
+        }
+        if (results === timedOut)
+            InspectorTest.fail(`${label}: ${description} did not finish in time.`);
+        return results;
+    }
+
+    // Runtime.evaluate has no awaitPromise option, so await the returned promise with Runtime.awaitPromise.
+    async function evaluateAwaitingPromise(target, expression) {
+        let evaluated = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        if (evaluated.wasThrown)
+            return "threw";
+        let settled = await target.RuntimeAgent.awaitPromise.invoke({promiseObjectId: evaluated.result.objectId, returnByValue: true});
+        return settled.wasThrown ? "threw" : settled.result.value;
+    }
+
+    async function runHiddenLoads(target, frame, label) {
+        let recorder = new FrameLoadRowRecorder;
+        try {
+            let origin = frame.securityOrigin;
+            let loadResourceToken = uniqueToken("hidden-load-resource");
+            let redirectToken = uniqueToken("hidden-load-redirect-source");
+            let controlToken = uniqueToken("control-fetch");
+            let loadResource = (path) => WI.backendTarget.NetworkAgent.loadResource(frame.id, `${origin}${resourcesPath}${path}`);
+
+            let hiddenLoads = await runPhase(label, "the hidden loads", [
+                evaluateAwaitingPromise(target, fileReadsExpression),
+                loadResource(`data.json?${loadResourceToken}`),
+                loadResource(`hidden-load-redirect.asis?${redirectToken}`),
+            ]);
+            if (hiddenLoads === timedOut)
+                return;
+            let [fileReads, plainLoad, redirectedLoad] = hiddenLoads;
+            InspectorTest.expectEqual(fileReads, "ok,ok,ok,ok", `${label}: all four FileReader reads should complete.`);
+            InspectorTest.expectEqual(plainLoad.status, 200, `${label}: Network.loadResource should load the resource.`);
+            InspectorTest.expectEqual(redirectedLoad.content.trim(), "redirect-target-content", `${label}: Network.loadResource should follow a redirect.`);
+
+            // The hooks of the loads above all ran in the frame's process before this fetch starts, and
+            // that process sends its messages in order, so any leaked row is listed once the control is.
+            let control = await runPhase(label, "the control fetch", [
+                evaluateAwaitingPromise(target, `fetch("${resourcesPath}data.json?${controlToken}").then((response) => response.status)`),
+                pollUntil(() => recorder.rowsForURLPart(controlToken)[0], phaseTimeout),
+            ]);
+            if (control === timedOut)
+                return;
+            let [controlStatus, controlRow] = control;
+            InspectorTest.expectEqual(controlStatus, 200, `${label}: control fetch should complete.`);
+            InspectorTest.expectThat(!!controlRow, `${label}: control fetch should be listed.`);
+
+            InspectorTest.expectEqual(recorder.rowsForURLPart("blob:").length, 0, `${label}: FileReader reads should not be listed.`);
+            InspectorTest.expectEqual(recorder.rowsForURLPart(loadResourceToken).length, 0, `${label}: Network.loadResource should not be listed.`);
+            InspectorTest.expectEqual(recorder.rowsForURLPart("hidden-load-redirect").length, 0, `${label}: a redirected Network.loadResource should not be listed.`);
+        } finally {
+            recorder.stop();
+        }
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.HiddenLoadsNotListed.MainFrame",
+        description: "FileReader reads and Network.loadResource in the main frame should not be listed.",
+        async test() {
+            let found = await runPhase("Main frame", "finding the frame target", [waitForFrameTargetForURLContaining("hidden-loads-not-listed.html", 25)]);
+            let target = found === timedOut ? null : found[0];
+            if (!target) {
+                InspectorTest.fail("Main frame: frame target should exist.");
+                return;
+            }
+            await runHiddenLoads(target, WI.networkManager.mainFrame, "Main frame");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.HiddenLoadsNotListed.CrossOriginIFrame",
+        description: "FileReader reads and Network.loadResource in a cross-origin iframe should not be listed.",
+        async test() {
+            let found = await runPhase("Cross-origin iframe", "finding the frame target and frame", [
+                waitForFrameTargetForURLContaining("iframe-with-fetch.html", 25),
+                awaitChildFrame((frame) => frame.mainResource.url.includes("iframe-with-fetch.html")),
+            ]);
+            let [target, frame] = found === timedOut ? [] : found;
+            if (!target || !frame) {
+                InspectorTest.fail("Cross-origin iframe: frame target and frame should exist.");
+                return;
+            }
+            await runHiddenLoads(target, frame, "Cross-origin iframe");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that FileReader reads and Network.loadResource, including one that follows a redirect, are not listed as network resources under Site Isolation, in the main frame and in a cross-origin iframe.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html"></iframe>
+</body>
