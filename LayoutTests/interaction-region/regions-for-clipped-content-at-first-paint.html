@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    #clip {
+        overflow: hidden;
+        width: 600px;
+        height: 200px;
+    }
+    #inner {
+        will-change: transform;
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+    }
+    #inner a {
+        display: block;
+        width: 150px;
+        height: 100px;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<div id="clip">
+    <div id="inner">
+        <a href="#1"></a>
+        <a href="#2"></a>
+    </div>
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function regionLayerCount(element)
+{
+    const tree = await UIHelper.getCALayerTreeForCompositedElement(element);
+    return (tree.match(/\(type 0\)/g) || []).length;
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    const inner = document.getElementById("inner");
+
+    // No scrolling: the clipped links are on screen from the first paint.
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+    const count = await regionLayerCount(inner);
+    const line = `${count == 2 ? "PASS" : "FAIL"}: after the page loads, each of the 2 clipped links has a region layer (found ${count}).`;
+
+    document.body.innerHTML = "";
+    const pre = document.createElement("pre");
+    pre.textContent = line;
+    document.body.appendChild(pre);
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    .spacer { height: 3000px; }
+    #clip {
+        overflow: hidden;
+        width: 600px;
+    }
+    #track {
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        transform: translate3d(0, 0, 0);
+    }
+    #track a {
+        display: block;
+        flex: none;
+        width: 150px;
+        height: 100px;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<div class="spacer"></div>
+<div id="clip">
+    <div id="track">
+        <a href="#1"></a>
+        <a href="#2"></a>
+        <a href="#3"></a>
+    </div>
+</div>
+<div class="spacer"></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function regionLayerCount(element)
+{
+    const tree = await UIHelper.getCALayerTreeForCompositedElement(element);
+    return (tree.match(/\(type 0\)/g) || []).length;
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    const results = document.createElement("pre");
+    document.body.appendChild(results);
+    const log = line => results.textContent += line + "\n";
+    const track = document.getElementById("track");
+
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+    const countBefore = await regionLayerCount(track);
+    log(`${countBefore == 0 ? "PASS" : "FAIL"}: before scrolling, the clipped cards are off screen and have no region layers (found ${countBefore}).`);
+
+    // An animated scroll, during which visionOS hides gaze glow.
+    await UIHelper.scrollTo(0, document.getElementById("clip").offsetTop - 100);
+    // The update sent at the end of an animated scroll still reports the view as unstable, so wait for a plain presentation update.
+    await UIHelper.ensurePresentationUpdate();
+    const countAfter = await regionLayerCount(track);
+    log(`${countAfter == 3 ? "PASS" : "FAIL"}: after the scroll ends, each of the 3 clipped cards has a region layer (found ${countAfter}).`);
+
+    for (const element of Array.from(document.body.children)) {
+        if (element != results && element.tagName != "SCRIPT")
+            element.remove();
+    }
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

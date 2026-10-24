@@ -61,6 +61,10 @@
 #import "WKWebViewIOS.h"
 #endif
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+#import "UIKitUtilities.h"
+#endif
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingCoordinatorProxyIOS);
@@ -105,6 +109,24 @@ UIScrollView *RemoteScrollingCoordinatorProxyIOS::scrollViewForScrollingNodeID(s
 
     return nil;
 }
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+bool RemoteScrollingCoordinatorProxyIOS::scrollViewHidesInteractionRegions(UIScrollView *scrollView)
+{
+    return [scrollView isDragging] || [scrollView _wk_isScrollAnimating] || [scrollView isDecelerating];
+}
+
+Vector<RetainPtr<UIScrollView>> RemoteScrollingCoordinatorProxyIOS::scrollViewsHidingInteractionRegions() const
+{
+    Vector<RetainPtr<UIScrollView>> scrollViews;
+    for (auto nodeID : m_uiState.nodesWithActiveUserScrolls()) {
+        RetainPtr scrollView = scrollViewForScrollingNodeID(nodeID);
+        if (scrollView && scrollViewHidesInteractionRegions(scrollView.get()))
+            scrollViews.append(WTF::move(scrollView));
+    }
+    return scrollViews;
+}
+#endif
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
@@ -640,6 +662,10 @@ void RemoteScrollingCoordinatorProxyIOS::scrollingTreeNodeDidEndScroll(Scrolling
 
     m_uiState.removeNodeWithActiveUserScroll(nodeID);
     sendUIStateChangedIfNecessary();
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    protect(drawingAreaIOS())->updateDeferredInteractionRegions();
+#endif
 }
 
 static bool shouldSnapForMainFrameScrolling(ScrollingTreeScrollingNode& node, ScrollEventAxis axis)

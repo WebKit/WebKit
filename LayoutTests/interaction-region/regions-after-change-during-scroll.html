@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    .spacer { height: 4000px; }
+    #panel {
+        position: fixed;
+        top: 100px;
+        left: 20px;
+        width: 300px;
+        height: 400px;
+        overflow: hidden;
+        will-change: transform;
+    }
+    #list {
+        will-change: transform;
+        padding: 10px;
+    }
+    #list a {
+        display: block;
+        width: 260px;
+        height: 40px;
+        margin-bottom: 10px;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<div id="panel">
+    <div id="list">
+        <a href="#1"></a>
+        <a href="#2"></a>
+        <a href="#3"></a>
+        <a href="#4"></a>
+        <a href="#5"></a>
+        <a href="#6"></a>
+    </div>
+</div>
+<div class="spacer"></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function regionLayerCount(element)
+{
+    const tree = await UIHelper.getCALayerTreeForCompositedElement(element);
+    return (tree.match(/\(type 0\)/g) || []).length;
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    const results = document.createElement("pre");
+    document.body.appendChild(results);
+    const log = line => results.textContent += line + "\n";
+    const list = document.getElementById("list");
+    const targetScrollY = 2000;
+
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+    // Change the links once while the view is stable, so their regions are rebuilt before the scroll starts.
+    for (const link of list.children)
+        link.style.width = "256px";
+    await UIHelper.ensureStablePresentationUpdate();
+    const countBefore = await regionLayerCount(list);
+    log(`${countBefore == 6 ? "PASS" : "FAIL"}: before scrolling, each of the 6 links has a region layer (found ${countBefore}).`);
+
+    // Remove 5 of the 6 links as soon as the page starts moving, while the animated scroll is still running.
+    let scrollYWhenChanged;
+    window.addEventListener("scroll", () => {
+        if (scrollYWhenChanged !== undefined)
+            return;
+        scrollYWhenChanged = window.scrollY;
+        while (list.children.length > 1)
+            list.lastElementChild.remove();
+    });
+
+    await UIHelper.scrollTo(0, targetScrollY);
+    // The update sent at the end of an animated scroll still reports the view as unstable, so wait for a plain presentation update.
+    await UIHelper.ensurePresentationUpdate();
+    log(`${scrollYWhenChanged !== undefined && scrollYWhenChanged < targetScrollY ? "PASS" : "FAIL"}: the links were removed while the page was still scrolling.`);
+
+    const countAfter = await regionLayerCount(list);
+    log(`${countAfter == 1 ? "PASS" : "FAIL"}: after the scroll ends, only the remaining link has a region layer (found ${countAfter}).`);
+
+    for (const element of Array.from(document.body.children)) {
+        if (element != results && element.tagName != "SCRIPT")
+            element.remove();
+    }
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

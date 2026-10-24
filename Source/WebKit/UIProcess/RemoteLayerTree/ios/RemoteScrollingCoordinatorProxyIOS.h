@@ -53,6 +53,11 @@ public:
 
     UIScrollView *scrollViewForScrollingNodeID(std::optional<WebCore::ScrollingNodeID>) const;
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    static bool scrollViewHidesInteractionRegions(UIScrollView *);
+    Vector<RetainPtr<UIScrollView>> scrollViewsHidingInteractionRegions() const;
+#endif
+
     OptionSet<WebCore::TouchAction> activeTouchActionsForTouchIdentifier(unsigned touchIdentifier) const;
     void setTouchActionsForTouchIdentifier(OptionSet<WebCore::TouchAction>, unsigned);
     void clearTouchActionsForTouchIdentifier(unsigned);
