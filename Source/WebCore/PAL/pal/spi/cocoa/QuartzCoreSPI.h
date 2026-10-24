@@ -124,6 +124,7 @@ typedef struct _CARenderContext CARenderContext;
 + (instancetype)groupWithCapacity:(NSUInteger)capacity;
 - (void)flush;
 - (void)flushWithTransaction;
+@property (nonatomic) BOOL updatesAsynchronously;
 @end
 
 @interface CAPresentationModifier : NSObject
