@@ -1583,6 +1583,40 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mac/WebCoreFullScreenWindow.h
     platform/mac/WebCoreNSFontManagerExtras.h
     platform/mac/WebCoreView.h
+
+    page/mac/CorrectionIndicator.h
+
+    page/scrolling/mac/ScrollerMac.h
+    page/scrolling/mac/ScrollerPairMac.h
+    page/scrolling/mac/ScrollingCoordinatorMac.h
+    page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h
+    page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h
+    page/scrolling/mac/ScrollingTreePluginScrollingNodeMac.h
+    page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h
+
+    platform/audio/cocoa/PitchShiftAudioUnit.h
+
+    platform/audio/mac/SharedRoutingArbitrator.h
+
+    platform/gamepad/mac/HIDGamepad.h
+    platform/gamepad/mac/HIDGamepadElement.h
+
+    platform/graphics/avfoundation/FormatDescriptionUtilities.h
+
+    platform/graphics/mac/AppKitControlSystemImage.h
+    platform/graphics/mac/GraphicsChecksMac.h
+    platform/graphics/mac/ScrollbarTrackCornerSystemImageMac.h
+
+    platform/mac/DataDetectorHighlight.h
+    platform/mac/HIDDevice.h
+    platform/mac/HIDElement.h
+    platform/mac/LocalDefaultSystemAppearance.h
+    platform/mac/PowerObserverMac.h
+    platform/mac/RevealUtilities.h
+    platform/mac/WebCoreFullScreenPlaceholderView.h
+    platform/mac/WebPlaybackControlsManager.h
+
+    rendering/mac/RenderThemeMac.h
 )
 
 # Used to substitute placeholders in Info.plist.
@@ -1760,42 +1794,6 @@ add_compile_options(
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/html/shadow/mac/imageControlsMac.css
-)
-
-list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-    page/mac/CorrectionIndicator.h
-
-    page/scrolling/mac/ScrollerMac.h
-    page/scrolling/mac/ScrollerPairMac.h
-    page/scrolling/mac/ScrollingCoordinatorMac.h
-    page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h
-    page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h
-    page/scrolling/mac/ScrollingTreePluginScrollingNodeMac.h
-    page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h
-
-    platform/audio/cocoa/PitchShiftAudioUnit.h
-
-    platform/audio/mac/SharedRoutingArbitrator.h
-
-    platform/gamepad/mac/HIDGamepad.h
-    platform/gamepad/mac/HIDGamepadElement.h
-
-    platform/graphics/avfoundation/FormatDescriptionUtilities.h
-
-    platform/graphics/mac/AppKitControlSystemImage.h
-    platform/graphics/mac/GraphicsChecksMac.h
-    platform/graphics/mac/ScrollbarTrackCornerSystemImageMac.h
-
-    platform/mac/DataDetectorHighlight.h
-    platform/mac/HIDDevice.h
-    platform/mac/HIDElement.h
-    platform/mac/LocalDefaultSystemAppearance.h
-    platform/mac/PowerObserverMac.h
-    platform/mac/RevealUtilities.h
-    platform/mac/WebCoreFullScreenPlaceholderView.h
-    platform/mac/WebPlaybackControlsManager.h
-
-    rendering/mac/RenderThemeMac.h
 )
 
 # CSS codegen scripts only see command-line defines, not PlatformHave.h.
