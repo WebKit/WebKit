@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FlexIntegrationUtils.h"
 
+#include "LayoutIntegrationBlockLayout.h"
 #include "LocalFrameView.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
@@ -309,6 +310,9 @@ bool FlexIntegrationUtils::flexItemHasPercentHeightDescendants(const RenderBox& 
     CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer);
     if (!renderBlock)
         return false;
+
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*renderBlock); blockFlow && BlockLayout::contentDependsOnBlockSize(*blockFlow))
+        return true;
 
     // FlexibleBoxImpl's like RenderButton might wrap their children in anonymous blocks. Those anonymous blocks are
     // skipped for percentage height calculations in RenderBox::computePercentageLogicalHeight() and thus
