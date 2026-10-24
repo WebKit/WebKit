@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "BytecodeGeneratorBase.h"
+#include "BytecodeGenerator.h"
 
 #include "Fits.h"
 #include "RegisterID.h"
@@ -40,15 +40,7 @@ static inline void shrinkToFit(T& segmentedVector)
         segmentedVector.removeLast();
 }
 
-template<typename Traits>
-BytecodeGeneratorBase<Traits>::BytecodeGeneratorBase(typename Traits::CodeBlock codeBlock, uint32_t virtualRegisterCountForCalleeSaves)
-    : m_codeBlock(WTF::move(codeBlock))
-{
-    allocateCalleeSaveSpace(virtualRegisterCountForCalleeSaves);
-}
-
-template<typename Traits>
-Ref<GenericLabel<Traits>> BytecodeGeneratorBase<Traits>::newLabel()
+inline Ref<Label> BytecodeGenerator::newLabel()
 {
     shrinkToFit(m_labels);
 
@@ -57,61 +49,53 @@ Ref<GenericLabel<Traits>> BytecodeGeneratorBase<Traits>::newLabel()
     return m_labels.last();
 }
 
-template<typename Traits>
-Ref<GenericLabel<Traits>> BytecodeGeneratorBase<Traits>::newEmittedLabel()
+inline Ref<Label> BytecodeGenerator::newEmittedLabel()
 {
     auto label = newLabel();
     emitLabel(label.get());
     return label;
 }
 
-template<typename Traits>
-void BytecodeGeneratorBase<Traits>::reclaimFreeRegisters()
+inline void BytecodeGenerator::reclaimFreeRegisters()
 {
     shrinkToFit(m_calleeLocals);
 }
 
-template<typename Traits>
-void BytecodeGeneratorBase<Traits>::emitLabel(GenericLabel<Traits>& label)
+inline void BytecodeGenerator::emitLabel(Label& label)
 {
     label.setLocation(*this, m_writer.position());
-    m_lastOpcodeID = Traits::opcodeForDisablingOptimizations;
+    m_lastOpcodeID = op_debug;
 }
 
-template<typename Traits>
-void BytecodeGeneratorBase<Traits>::recordOpcode(typename Traits::OpcodeID opcodeID)
+inline void BytecodeGenerator::recordOpcode(OpcodeID opcodeID)
 {
-    ASSERT(m_lastOpcodeID == Traits::opcodeForDisablingOptimizations || (m_lastOpcodeID == m_lastInstruction->opcodeID() && m_writer.position() == m_lastInstruction.offset() + m_lastInstruction->size()));
+    ASSERT(m_lastOpcodeID == op_debug || (m_lastOpcodeID == m_lastInstruction->opcodeID() && m_writer.position() == m_lastInstruction.offset() + m_lastInstruction->size()));
     m_lastInstruction = m_writer.ref();
     m_lastOpcodeID = opcodeID;
 }
 
-template<typename Traits>
 template<OpcodeSize size, typename... Ops>
-void BytecodeGeneratorBase<Traits>::writeOpcode(typename Traits::OpcodeTraits::OpcodeID opcodeID, Ops... ops)
+void BytecodeGenerator::writeOpcode(OpcodeID opcodeID, Ops... ops)
 {
-    using OpcodeTraits = typename Traits::OpcodeTraits;
-    using OpcodeIDType = typename OpcodeTraits::OpcodeID;
-    constexpr auto opcodeIDSize = OpcodeIDWidthBySize<OpcodeTraits, size>::opcodeIDSize;
+    constexpr auto opcodeIDSize = OpcodeIDWidthBySize<JSOpcodeTraits, size>::opcodeIDSize;
     if constexpr (size == OpcodeSize::Wide16) {
         m_writer.write(
-            Fits<OpcodeIDType, OpcodeSize::Narrow>::convert(OpcodeTraits::wide16),
-            Fits<OpcodeIDType, opcodeIDSize>::convert(opcodeID),
+            Fits<OpcodeID, OpcodeSize::Narrow>::convert(op_wide16),
+            Fits<OpcodeID, opcodeIDSize>::convert(opcodeID),
             Fits<Ops, size>::convert(ops)...);
     } else if constexpr (size == OpcodeSize::Wide32) {
         m_writer.write(
-            Fits<OpcodeIDType, OpcodeSize::Narrow>::convert(OpcodeTraits::wide32),
-            Fits<OpcodeIDType, opcodeIDSize>::convert(opcodeID),
+            Fits<OpcodeID, OpcodeSize::Narrow>::convert(op_wide32),
+            Fits<OpcodeID, opcodeIDSize>::convert(opcodeID),
             Fits<Ops, size>::convert(ops)...);
     } else {
         m_writer.write(
-            Fits<OpcodeIDType, opcodeIDSize>::convert(opcodeID),
+            Fits<OpcodeID, opcodeIDSize>::convert(opcodeID),
             Fits<Ops, size>::convert(ops)...);
     }
 }
 
-template<typename Traits>
-RegisterID* BytecodeGeneratorBase<Traits>::newRegister()
+inline RegisterID* BytecodeGenerator::newRegister()
 {
     m_calleeLocals.append(virtualRegisterForLocal(m_calleeLocals.size()));
     size_t numCalleeLocals = std::max<size_t>(m_codeBlock->numCalleeLocals(), m_calleeLocals.size());
@@ -121,8 +105,7 @@ RegisterID* BytecodeGeneratorBase<Traits>::newRegister()
     return &m_calleeLocals.last();
 }
 
-template<typename Traits>
-RegisterID* BytecodeGeneratorBase<Traits>::newTemporary()
+inline RegisterID* BytecodeGenerator::newTemporary()
 {
     reclaimFreeRegisters();
 
@@ -131,9 +114,8 @@ RegisterID* BytecodeGeneratorBase<Traits>::newTemporary()
     return result;
 }
 
-template<typename Traits>
 template<typename Functor>
-void BytecodeGeneratorBase<Traits>::newTemporaries(size_t count, NOESCAPE const Functor& func)
+void BytecodeGenerator::newTemporaries(size_t count, NOESCAPE const Functor& func)
 {
     reclaimFreeRegisters();
     for (size_t index = 0; index < count; ++index) {
@@ -144,8 +126,7 @@ void BytecodeGeneratorBase<Traits>::newTemporaries(size_t count, NOESCAPE const 
 }
 
 // Adds an anonymous local var slot. To give this slot a name, add it to symbolTable().
-template<typename Traits>
-RegisterID* BytecodeGeneratorBase<Traits>::addVar()
+inline RegisterID* BytecodeGenerator::addVar()
 {
     int numVars = m_codeBlock->numVars();
     m_codeBlock->setNumVars(numVars + 1);
@@ -153,13 +134,6 @@ RegisterID* BytecodeGeneratorBase<Traits>::addVar()
     ASSERT(VirtualRegister(result->index()).toLocal() == numVars);
     result->ref(); // We should never free this slot.
     return result;
-}
-
-template<typename Traits>
-void BytecodeGeneratorBase<Traits>::allocateCalleeSaveSpace(uint32_t virtualRegisterCountForCalleeSaves)
-{
-    for (size_t i = 0; i < virtualRegisterCountForCalleeSaves; i++)
-        addVar();
 }
 
 } // namespace JSC

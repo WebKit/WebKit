@@ -52,13 +52,9 @@ namespace JSC {
 
 class JITCode;
 
-template <typename Traits>
-class BytecodeGeneratorBase;
-
 namespace Wasm {
 
 class IPIntCallee;
-struct IPIntGeneratorTraits;
 struct JumpTableEntry;
 
 #define WRITE_TO_METADATA(dst, src, type) \

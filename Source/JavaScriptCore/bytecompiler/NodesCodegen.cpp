@@ -31,7 +31,7 @@
 #include "AbstractModuleRecord.h"
 #include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
-#include "BytecodeGeneratorBaseInlines.h"
+#include "BytecodeGeneratorInlines.h"
 #include "IndexingTypeInlines.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncDisposableStack.h"
