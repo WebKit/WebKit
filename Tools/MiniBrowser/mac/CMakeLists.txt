@@ -9,6 +9,7 @@ add_definitions("-include MiniBrowser_Prefix.pch -DWEBCORE_EXPORT=")
 
 set(MiniBrowser_SOURCES
     ${MINIBROWSER_DIR}/AppDelegate.m
+    ${MINIBROWSER_DIR}/AutomationConnection.m
     ${MINIBROWSER_DIR}/BrowserWindowController.m
     ${MINIBROWSER_DIR}/ExtensionManagerWindowController.m
     ${MINIBROWSER_DIR}/HistoryButton.m
