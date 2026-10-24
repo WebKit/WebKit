@@ -33,6 +33,9 @@
 #import "Helpers/cocoa/PrivateFindSPITester.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <CoreGraphics/CGGeometry.h>
+#import <WebKit/WKPreferencesRefPrivate.h>
+#import <WebKit/WKRetainPtr.h>
+#import <WebKit/WKString.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFrameTreeNode.h>
 
@@ -289,9 +292,9 @@ TEST_P(FindPrivateSPI, CountInCrossOriginPDF)
     ASSERT_EQ(childFrames.count, 1u);
     EXPECT_WK_STREQ("application/pdf", [page.webView() objectByEvaluatingJavaScript:@"document.contentType" inFrame:childFrames.firstObject.info]);
 
-    // FIXME(326398): FindController only searches a PDF plugin in the main frame.
-    // Elsewhere, a subframe PDF in a subframe is shown as an image rather than in the PDF plugin, so it has no text to find.
-    EXPECT_EQ(find.countStringMatches(@"555", _WKFindOptionsCaseInsensitive), 0u);
+    auto key = adoptWK(WKStringCreateWithUTF8CString("UseImageDocumentForSubframePDF"));
+    bool subframePDFIsImage = WKPreferencesGetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[[page.webView() configuration] preferences], key.get());
+    EXPECT_EQ(find.countStringMatches(@"555", _WKFindOptionsCaseInsensitive), subframePDFIsImage ? 0u : 2u);
 }
 
 #endif // ENABLE(UNIFIED_PDF)

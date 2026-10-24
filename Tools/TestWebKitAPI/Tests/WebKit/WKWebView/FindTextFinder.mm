@@ -271,8 +271,7 @@ TEST_P(FindTextFinder, FindAllInPDF)
     FindTestPage page { "/test.pdf"_s, GetParam(), configurationForWebViewTestingUnifiedPDF(), FindTestFixtures::pdfResources() };
     TextFinderTester find { page.webView() };
 
-    // FIXME(326398): findStringMatches only searches DOM text, never a PDF plugin.
-    EXPECT_EQ([find.findMatches(@"555", caseInsensitive).matches count], 0u);
+    EXPECT_EQ([find.findMatches(@"555", caseInsensitive).matches count], 2u);
 }
 
 #endif // ENABLE(UNIFIED_PDF)
