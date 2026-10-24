@@ -58,6 +58,9 @@ public:
     // number of frames to be rendered by the source. (i.e. WebAudio graph)
     WEBCORE_EXPORT size_t pull(AudioBus& outputBus, size_t framesRequested);
 
+    // Drops buffered samples. The caller serializes this with push and pull.
+    WEBCORE_EXPORT void reset();
+
     size_t framesAvailable() const { return m_framesAvailable; }
     size_t length() const { return m_fifoLength; }
     unsigned LEGACY_NODELETE numberOfChannels() const;
