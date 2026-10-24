@@ -1319,10 +1319,8 @@ void WebPage::constructFrameTree(WebFrame& parent, const FrameTreeCreationParame
 void WebPage::createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, const String& newChildFrameName, WebCore::ProcessIdentifier hostingProcessID, Ref<WebCore::FrameTreeSyncData>&& frameTreeSyncData)
 {
     RefPtr parentFrame = WebProcess::singleton().webFrame(parentID);
-    if (!parentFrame) {
-        ASSERT_NOT_REACHED();
+    if (!parentFrame || parentFrame->page() != this)
         return;
-    }
     WebFrame::createRemoteSubframe(*this, *parentFrame, newChildID, newChildFrameName, std::nullopt, hostingProcessID, WTF::move(frameTreeSyncData));
 }
 
