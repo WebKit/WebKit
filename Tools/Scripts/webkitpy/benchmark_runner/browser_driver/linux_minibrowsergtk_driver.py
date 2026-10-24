@@ -35,7 +35,7 @@ class GTKMiniBrowserDriver(LinuxBrowserDriver):
         self._default_browser_arguments = []
         if self.process_name.endswith('run-minibrowser'):
             self._default_browser_arguments.extend(['--gtk', '--'])
-        self._default_browser_arguments.append('--full-screen')
+        self._default_browser_arguments.extend(['--features=LogsPageMessagesToSystemConsole', '--full-screen'])
         if self.browser_args:
             self._default_browser_arguments.extend(self.browser_args)
             self.browser_args = []
