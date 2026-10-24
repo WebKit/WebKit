@@ -762,17 +762,15 @@ void SVGTextLayoutAlgorithm::positionOnPaths()
     for (unsigned textPathIndex = 0; textPathIndex < m_textPaths.size(); ++textPathIndex) {
         auto& textPath = m_textPaths[textPathIndex];
 
-        auto rangeStart = notFound;
-        size_t rangeEnd = 0;
-        for (size_t i = 0; i < m_displayOrder.size(); ++i) {
-            if (m_textBoxes[m_characters[m_displayOrder[i]].textBoxIndex].textPathIndex != textPathIndex)
-                continue;
-            if (rangeStart == notFound)
-                rangeStart = i;
-            rangeEnd = i + 1;
-        }
-        if (rangeStart == notFound)
+        auto isOnTextPath = [&](unsigned index) {
+            return m_textBoxes[m_characters[index].textBoxIndex].textPathIndex == textPathIndex;
+        };
+        auto first = std::ranges::find_if(m_displayOrder, isOnTextPath);
+        if (first == m_displayOrder.end())
             continue;
+        auto last = std::ranges::find_if(m_displayOrder | std::views::reverse, isOnTextPath);
+        auto rangeStart = first - m_displayOrder.begin();
+        auto rangeEnd = last.base() - m_displayOrder.begin();
         auto range = m_displayOrder.subspan(rangeStart, rangeEnd - rangeStart);
 
         CheckedRef textPathRenderer = *svgTextPath(textPath.elementBox);
