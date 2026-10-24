@@ -135,6 +135,8 @@ public:
 
     bool isDetached() const { return m_isDetached; }
     RefPtr<VideoFrame> internalFrame() const { return m_data.internalFrame; }
+    // Returns the frame to render, without its rotation if WebCodecsVideoFrameRotationEnabled is off.
+    RefPtr<VideoFrame> internalFrameForRendering(ScriptExecutionContext&) const;
 
     void LEGACY_NODELETE setDisplaySize(size_t, size_t);
     void LEGACY_NODELETE setVisibleRect(const DOMRectInit&);

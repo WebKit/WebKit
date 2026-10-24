@@ -613,6 +613,14 @@ DOMRectReadOnly* WebCodecsVideoFrame::visibleRect() const
     return m_visibleRect.get();
 }
 
+RefPtr<VideoFrame> WebCodecsVideoFrame::internalFrameForRendering(ScriptExecutionContext& context) const
+{
+    RefPtr frame = m_data.internalFrame;
+    if (!frame || context.settingsValues().webCodecsVideoFrameRotationEnabled)
+        return frame;
+    return frame->updateRotation(VideoFrameRotation::None, VideoFrame::ShouldClone::Yes);
+}
+
 double WebCodecsVideoFrame::rotation() const
 {
     return m_data.internalFrame ? static_cast<double>(m_data.internalFrame->rotation()) : 0;

@@ -634,11 +634,11 @@ void GraphicsContextGL::didChangeMemoryCost()
 #if ENABLE(VIDEO)
 RefPtr<NativeImage> GraphicsContextGL::videoFrameToNativeImage(VideoFrame& frame)
 {
-    IntSize size { static_cast<int>(frame.presentationSize().width()), static_cast<int>(frame.presentationSize().height()) };
+    auto size = frame.rotatedSize();
     auto imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return { };
-    imageBuffer->context().drawVideoFrame(frame, { { }, size }, ShouldDiscardAlpha::Yes);
+    imageBuffer->context().drawVideoFrame(frame, { { }, size }, ShouldDiscardAlpha::Yes, { frame.orientation() });
     return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
 }
 #endif

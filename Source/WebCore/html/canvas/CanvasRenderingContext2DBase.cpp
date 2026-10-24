@@ -1989,7 +1989,11 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     if (!context)
         return { };
 
-    auto internalFrame = frame.internalFrame();
+    RefPtr scriptContext = protect(canvasBase())->scriptExecutionContext();
+    if (!scriptContext)
+        return { };
+
+    RefPtr internalFrame = frame.internalFrameForRendering(*scriptContext);
     if (!internalFrame)
         return { };
 
@@ -2001,6 +2005,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
         willUpdateContents(normalizedDstRect);
 
     ImageDrawingOptions options = {
+        internalFrame->orientation(),
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         (isHDR() && usesITUR2100TF(internalFrame->colorSpace())) ? DrawsHDRContent::Yes : DrawsHDRContent::No
 #endif
