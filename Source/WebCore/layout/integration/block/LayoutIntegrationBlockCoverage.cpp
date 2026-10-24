@@ -418,9 +418,9 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         }
     }
 
-    // Empty editable boxes get a line (RenderBlock::hasLineIfEmpty). The layout state has no entry for the boxes inside the block
-    // formatting context, which is where line-clamp, text-box-trim and line grids reach the inline content below them.
-    if (!style->marginTrim().isNone() || alignsBlockLevelChildren(style.get()) || blockContainer->hasLineIfEmpty()
+    // The layout state has no entry for the boxes inside the block formatting context, which is where line-clamp, text-box-trim and line
+    // grids reach the inline content below them.
+    if (!style->marginTrim().isNone() || alignsBlockLevelChildren(style.get())
         || !style->maxLines().isAuto() || style->textBoxTrim() != TextBoxTrim::None || !style->lineGrid().isNone())
         return BlockAvoidanceReason::ContentHasUnsupportedStyle;
     CheckedRef parentStyle = blockContainer->parent()->style();

@@ -27,7 +27,7 @@
 #include "BlockFormattingUtils.h"
 
 #include "LayoutBoxGeometry.h"
-#include "RenderBox.h"
+#include "RenderBlock.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -81,6 +81,14 @@ bool BlockFormattingUtils::hasPercentageBlockSize(const RenderBox& box, WritingM
 {
     CheckedRef style = box.style();
     return style->logicalHeight(writingMode).isPercentOrCalculated() || style->logicalMinHeight(writingMode).isPercentOrCalculated() || style->logicalMaxHeight(writingMode).isPercentOrCalculated();
+}
+
+std::optional<LayoutUnit> BlockFormattingUtils::emptyEditableContentBlockSize(const RenderBox& blockContainer)
+{
+    CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(blockContainer);
+    if (!renderBlock || !renderBlock->hasLineIfEmpty())
+        return { };
+    return LayoutUnit::fromFloatCeil(blockContainer.firstLineStyle().usedLineHeight());
 }
 
 bool BlockFormattingUtils::blockSizeBehavesAsAuto(const Style::PreferredSize& blockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize)

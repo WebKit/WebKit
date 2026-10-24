@@ -78,6 +78,11 @@ BlockIntegrationUtils::BlockIntegrationUtils(PaintInvalidation& paintInvalidatio
 
 static BlockIntegrationUtils::InlineContentLayoutResult inlineContentLayoutResult(const LineLayout& lineLayout)
 {
+    // Like RenderBlockFlow::layoutInlineContent: inline content without a contentful line in an editable block container is as tall as an empty one.
+    if (!lineLayout.hasContentfulInlineOrBlockLine()) {
+        if (auto contentBlockSize = Layout::BlockFormattingUtils::emptyEditableContentBlockSize(lineLayout.flow()))
+            return { *contentBlockSize, true };
+    }
     if (lineLayout.isSelfCollapsingContent())
         return { { }, false };
     return { lineLayout.hasContentfulInlineOrBlockLine() ? lineLayout.contentLogicalHeight() : 0_lu, true };
