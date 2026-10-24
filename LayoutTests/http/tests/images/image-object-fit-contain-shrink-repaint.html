@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>&lt;img&gt; with object-fit: contain should not leave stale pixels when src changes to a smaller image</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+    .container {
+        width: 200px;
+        height: 120px;
+        background: white;
+    }
+    .image {
+        object-fit: contain;
+    }
+</style>
+</head>
+<body>
+<p>You should see a green square centered on white, with no blue on either side of it.</p>
+<div class="container">
+    <img id="image" class="image" width="200" height="120">
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dontForceRepaint();
+}
+
+function loadImage(url)
+{
+    return new Promise(resolve => {
+        image.addEventListener("load", resolve, { once: true });
+        image.src = url;
+    });
+}
+
+// Serves the image only after a one second stall. A new URL each time, so that the image goes
+// through the loader rather than coming out of the memory cache.
+function stalledImageURL(name)
+{
+    return "http://127.0.0.1:8000/resources/load-and-stall.py"
+        + "?name=../images/resources/" + name
+        + "&mimeType=image%2Fpng"
+        + "&stallAt=0"
+        + "&stallFor=1"
+        + "&rand=" + Math.random();
+}
+
+window.addEventListener("load", async () => {
+    // A 4:3 image fills the height of the 200x120 box, painting 160x120 at x=20.
+    await loadImage("resources/blue-320x240.png");
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    // A 1:1 image paints 120x120 at x=40, strictly inside the previous area. The box has fixed
+    // dimensions, so no layout happens, and the strips on either side are only repainted if the
+    // image's repaint accounts for the area the previous image painted into.
+    const loaded = loadImage(stalledImageURL("green-100x100.png"));
+    // The renderer keeps showing the blue image until the green one has loaded, and the source
+    // change repaints the box with it. Let that frame be painted before the green image arrives;
+    // with a quick load, that repaint and the one for the new image would land in the same frame,
+    // and the area the blue image covered would never be left stale.
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    await loaded;
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+});
+</script>
+</body>
+</html>
