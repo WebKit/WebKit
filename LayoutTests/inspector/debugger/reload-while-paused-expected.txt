@@ -1,0 +1,12 @@
+Test that the backend resumes a paused page when it reloads, so the frontend is not left paused.
+
+
+== Running test suite: ReloadWhilePaused
+-- Running test case: ReloadWhilePaused.BackendResumesOnReload
+PASS: The debugger should be paused before the reload.
+PASS: There should be an active call frame before the reload.
+PASS: The backend should send Debugger.resumed when the page reloads.
+PASS: The debugger manager should dispatch a Resumed event.
+PASS: The debugger should not be paused after the reload.
+PASS: There should be no active call frame after the reload.
+
