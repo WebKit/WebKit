@@ -495,6 +495,11 @@ void WebExtensionContext::performTasksAfterBackgroundContentLoads()
     scheduleBackgroundContentToUnload();
 }
 
+bool WebExtensionContext::isBackgroundPage(WebPageProxyIdentifier pageProxyIdentifier) const
+{
+    return m_backgroundWebView && webkitWebViewGetPage(m_backgroundWebView.get()).identifier() == pageProxyIdentifier;
+}
+
 bool WebExtensionContext::decidePolicyForNavigationAction(WebKitWebView *webView, WebKitNavigationPolicyDecision *navigationPolicy)
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)

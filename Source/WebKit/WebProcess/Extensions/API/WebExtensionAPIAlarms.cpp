@@ -173,7 +173,7 @@ void WebExtensionContextProxy::dispatchAlarmsEvent(const WebExtensionAlarmParame
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/onAlarm
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
-        namespaceObject.alarms().onAlarm().invokeListenersWithParametersArgument(alarm);
+        protect(protect(namespaceObject.alarms())->onAlarm())->invokeListenersWithParametersArgument(alarm);
     });
 }
 
