@@ -67,6 +67,8 @@
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
 #include "LayoutScope.h"
+#include "LocalFrameView.h"
+#include "LocalFrameViewLayoutContext.h"
 #include "Logging.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -934,6 +936,9 @@ void RenderLayerScrollableArea::setHasHorizontalScrollbar(bool hasScrollbar)
     if (hasScrollbar == hasHorizontalScrollbar())
         return;
 
+    // The space available to the content changes, so measurements taken during this layout may be stale.
+    m_layer.renderer().view().frameView().layoutContext().invalidateLayoutMeasurementCaches();
+
     if (hasScrollbar) {
         m_hBar = createScrollbar(ScrollbarOrientation::Horizontal);
 #if HAVE(RUBBER_BANDING)
@@ -959,6 +964,9 @@ void RenderLayerScrollableArea::setHasVerticalScrollbar(bool hasScrollbar)
 {
     if (hasScrollbar == hasVerticalScrollbar())
         return;
+
+    // The space available to the content changes, so measurements taken during this layout may be stale.
+    m_layer.renderer().view().frameView().layoutContext().invalidateLayoutMeasurementCaches();
 
     if (hasScrollbar) {
         m_vBar = createScrollbar(ScrollbarOrientation::Vertical);
