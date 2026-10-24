@@ -167,6 +167,7 @@ class Package(object):
         self.wheel = wheel
         self.aliases = aliases or []
         self.implicit_deps = implicit_deps or []
+        self._checked_metadata = False
 
     def __repr__(self) -> str:
         return ("Package("
@@ -287,7 +288,59 @@ class Package(object):
             return False
         if not all(pkg.is_cached() for dep in self.implicit_deps for pkg in AutoInstall.packages[dep]):
             return False
+        # Packages installed before metadata of other versions was removed on install may still have it.
+        if not self._checked_metadata:
+            self._checked_metadata = True
+            self.remove_metadata_of_other_versions(version)
         return True
+
+    @staticmethod
+    def _normalized_distribution_name(name: str) -> str:
+        # How wheels and setuptools spell distribution names in .dist-info and .egg-info directory names.
+        return re.sub(r'[-_.]+', '_', name).lower()
+
+    def remove_metadata_of_other_versions(self, version: str) -> None:
+        # Installing a package doesn't replace the .dist-info or .egg-info of the version it replaces. The old metadata
+        # still declares entry points, so for example pytest would load the same plugin twice, under two names, and fail.
+        # Only remove metadata when the installed version has its own, and only of versions that can be compared.
+        if not AutoInstall.directory:
+            return
+        try:
+            installed_version = Version.from_string(version)
+        except (ValueError, TypeError):
+            return
+
+        distribution_name = self._normalized_distribution_name(self.pypi_name)
+        has_installed_version = False
+        other_versions = []
+        for entry in os.listdir(AutoInstall.directory):
+            suffix = next((suffix for suffix in ('.dist-info', '.egg-info') if entry.endswith(suffix)), None)
+            if not suffix:
+                continue
+            name, separator, rest = entry[:-len(suffix)].partition('-')
+            if not separator or self._normalized_distribution_name(name) != distribution_name:
+                continue
+            try:
+                entry_version = Version.from_string(rest.split('-')[0])
+            except (ValueError, TypeError):
+                continue
+            if entry_version == installed_version:
+                has_installed_version = True
+            else:
+                other_versions.append(entry)
+
+        if not has_installed_version:
+            return
+        for entry in other_versions:
+            AutoInstall.log('Removing {}, left over from another version of {}'.format(entry, self.pypi_name), level=logging.INFO)
+            path = os.path.join(AutoInstall.directory, entry)
+            try:
+                if os.path.isdir(path):
+                    shutil.rmtree(path)
+                else:
+                    os.remove(path)
+            except OSError as error:
+                AutoInstall.log('Failed to remove {}: {}'.format(path, error))
 
     @staticmethod
     def _merge_move(source: str, target: str) -> None:
@@ -445,6 +498,8 @@ class Package(object):
                     'index': AutoInstall.index,
                     'version': str(archive.version),
                 }
+                self.remove_metadata_of_other_versions(str(archive.version))
+                self._checked_metadata = True
 
                 AutoInstall.log('Installed {}!'.format(archive))
             except Exception:
