@@ -129,7 +129,7 @@ WI.DOMTreeUpdater.prototype = {
                 return;
 
             let parentNode = value.parent;
-            if (parentNode.nodeType() === Node.DOCUMENT_NODE) {
+            if (parentNode === this._treeOutline.rootDOMNode && parentNode.nodeType() === Node.DOCUMENT_NODE) {
                 documentNeedsUpdated = true;
                 return;
             }
