@@ -29,6 +29,7 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/Utilities.h"
 #import "Helpers/cocoa/TestNSBundleExtras.h"
 #import <AVFoundation/AVFoundation.h>
 #import <WebCore/AudioSampleFormat.h>
@@ -38,6 +39,7 @@
 #import <WebCore/MediaSamplesBlock.h>
 #import <WebCore/MediaSamplesDecoder.h>
 #import <WebCore/MediaSourceConfiguration.h>
+#import <WebCore/PacedMediaSamplesDecoder.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SourceBufferParser.h>
 #import <WebCore/TrackInfo.h>
@@ -49,7 +51,11 @@
 #import <WebCore/AV1UtilitiesCocoa.h>
 #endif
 #import <cmath>
+#import <memory>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <unistd.h>
+#import <wtf/Lock.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/cf/TypeCastsCF.h>
@@ -1063,6 +1069,576 @@ TEST(MediaSamplesDecoder, CanContinueWithRejectsChangedVideoSize)
     });
     EXPECT_FALSE(decoder->canContinueWith(differentDisplaySize));
     EXPECT_FALSE(decoder->canContinueWith(makeAudioInfo(FourCC { "opus" })));
+}
+
+static constexpr double videoDecodeWindow = 0.166;
+static constexpr double settleTime = 0.3;
+
+// The parser can hand back one block holding many samples; one sample per block makes decoding progress observable.
+static Vector<UniqueRef<MediaSamplesBlock>> splitIntoSingleItemBlocks(Vector<UniqueRef<MediaSamplesBlock>>&& blocks)
+{
+    Vector<UniqueRef<MediaSamplesBlock>> result;
+    for (auto& block : blocks) {
+        const TrackInfo* info = block->info();
+        auto items = block->takeSamples();
+        for (auto& item : items) {
+            MediaSamplesBlock::SamplesVector single;
+            single.append(WTF::move(item));
+            result.append(makeUniqueRef<MediaSamplesBlock>(info, WTF::move(single)));
+        }
+    }
+    return result;
+}
+
+static Vector<UniqueRef<MediaSamplesBlock>> groupIntoBlocks(Vector<UniqueRef<MediaSamplesBlock>>&& blocks, size_t itemsPerBlock)
+{
+    Vector<UniqueRef<MediaSamplesBlock>> result;
+    for (auto& block : blocks) {
+        if (result.isEmpty() || result.last()->size() >= itemsPerBlock)
+            result.append(makeUniqueRef<MediaSamplesBlock>(block->info(), MediaSamplesBlock::SamplesVector { }));
+        result.last()->append(WTF::move(block.get()));
+    }
+    return result;
+}
+
+static bool waitUntil(const Function<bool()>& condition)
+{
+    auto deadline = MonotonicTime::now() + 10_s;
+    while (!condition() && MonotonicTime::now() < deadline) {
+        Util::spinRunLoop();
+        usleep(1000);
+    }
+    return condition();
+}
+
+static void sleepWhilePumping(double seconds)
+{
+    auto deadline = MonotonicTime::now() + Seconds { seconds };
+    while (MonotonicTime::now() < deadline) {
+        Util::spinRunLoop();
+        usleep(1000);
+    }
+}
+
+class TestClock : public ThreadSafeRefCounted<TestClock> {
+public:
+    static Ref<TestClock> create() { return adoptRef(*new TestClock); }
+
+    PacedMediaSamplesDecoder::PlaybackPosition position() const
+    {
+        Locker locker { m_lock };
+        return { currentTime(), m_rate };
+    }
+
+    void set(const MediaTime& time)
+    {
+        Locker locker { m_lock };
+        m_time = time;
+        m_anchor = MonotonicTime::now();
+    }
+
+    // The time advances with the wall clock at this rate from the moment it is set.
+    void setRate(double rate)
+    {
+        Locker locker { m_lock };
+        m_time = currentTime();
+        m_anchor = MonotonicTime::now();
+        m_rate = rate;
+    }
+
+private:
+    TestClock() = default;
+
+    MediaTime currentTime() const WTF_REQUIRES_LOCK(m_lock)
+    {
+        return m_time + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_anchor).seconds());
+    }
+
+    mutable Lock m_lock;
+    MediaTime m_time WTF_GUARDED_BY_LOCK(m_lock) { MediaTime::zeroTime() };
+    MonotonicTime m_anchor WTF_GUARDED_BY_LOCK(m_lock) { MonotonicTime::now() };
+    double m_rate WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+};
+
+static Ref<PacedMediaSamplesDecoder> createPaced(const TrackInfo& info, TestClock& clock)
+{
+    auto promise = PacedMediaSamplesDecoder::create(info, allowedFilters, RunLoop::mainSingleton(), [clock = Ref { clock }] {
+        return clock->position();
+    });
+    auto result = settle(promise.get());
+    RELEASE_ASSERT(result);
+    return WTF::move(*result);
+}
+
+struct Collected {
+    size_t settled { 0 };
+    size_t rejected { 0 };
+    size_t items { 0 };
+    size_t frames { 0 };
+    uint32_t sampleRate { 0 };
+    Vector<PlatformMediaError> errors;
+    MediaTime lastOutputTime { MediaTime::invalidTime() };
+};
+
+static void collect(Ref<PacedMediaSamplesDecoder::DecodePromise>&& promise, const std::shared_ptr<Collected>& collected)
+{
+    promise->whenSettled(RunLoop::mainSingleton(), [collected](PacedMediaSamplesDecoder::DecodePromise::Result&& result) {
+        ++collected->settled;
+        if (!result) {
+            ++collected->rejected;
+            collected->errors.append(result.error());
+            return;
+        }
+        for (auto& output : *result) {
+            for (auto& item : output) {
+                ++collected->items;
+                if (collected->sampleRate)
+                    collected->frames += static_cast<size_t>(std::llround(item.duration.toDouble() * collected->sampleRate));
+                if (!collected->lastOutputTime.isValid() || item.presentationTime > collected->lastOutputTime)
+                    collected->lastOutputTime = item.presentationTime;
+            }
+        }
+    });
+}
+
+static double lastOutputSeconds(const Collected& collected)
+{
+    return collected.lastOutputTime.isValid() ? collected.lastOutputTime.toDouble() : -1;
+}
+
+TEST(PacedMediaSamplesDecoder, CreateRejectsUnsupportedTrack)
+{
+    Ref clock = TestClock::create();
+    auto promise = PacedMediaSamplesDecoder::create(makeVideoInfo(FourCC { "avc1" }, "avc1.64001f"_s), allowedFilters, RunLoop::mainSingleton(), [clock] {
+        return clock->position();
+    });
+    auto result = settle(promise.get());
+    ASSERT_FALSE(result);
+    EXPECT_EQ(result.error(), PlatformMediaError::NotSupportedError);
+}
+
+TEST(PacedMediaSamplesDecoder, AudioIsDecodedOneSecondAhead)
+{
+    auto blocks = splitIntoSingleItemBlocks(parseWebMAudioFile(@"test-mse-audio"));
+    ASSERT_FALSE(blocks.isEmpty());
+    ASSERT_TRUE(blocks[0]->info());
+    double endSeconds = blocks.last()->presentationEndTime().toDouble();
+    ASSERT_GT(endSeconds, 1.5);
+
+    Ref clock = TestClock::create();
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+    EXPECT_TRUE(decoder->canContinueWith(*blocks[0]->info()));
+
+    auto collected = std::make_shared<Collected>();
+    collected->sampleRate = 48000;
+    size_t blockCount = blocks.size();
+    for (auto& block : blocks)
+        collect(decoder->decode(WTF::move(block.get())), collected);
+
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled > 0;
+    }));
+    sleepWhilePumping(settleTime);
+    EXPECT_LT(collected->settled, blockCount);
+    EXPECT_LT(lastOutputSeconds(*collected), 1.1);
+
+    clock->set(MediaTime(6, 10));
+    decoder->currentTimeDidChange();
+    ASSERT_TRUE(waitUntil([&] {
+        return lastOutputSeconds(*collected) >= 1.5;
+    }));
+    sleepWhilePumping(settleTime);
+    EXPECT_LT(lastOutputSeconds(*collected), 1.7);
+    EXPECT_LT(collected->settled, blockCount);
+
+    clock->set(MediaTime::createWithDouble(endSeconds + 1));
+    decoder->currentTimeDidChange();
+    collect(decoder->drain(), collected);
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled == blockCount + 1;
+    }));
+    EXPECT_EQ(collected->rejected, 0u);
+    EXPECT_EQ(collected->frames, decodedFrameCount(parseWebMAudioFile(@"test-mse-audio")));
+}
+
+TEST(PacedMediaSamplesDecoder, AudioBlocksAreDecodedWholeUntilOneSecondIsDecoded)
+{
+    auto blocks = groupIntoBlocks(splitIntoSingleItemBlocks(parseWebMAudioFile(@"test-mse-audio")), 30);
+    ASSERT_GE(blocks.size(), 4u);
+    ASSERT_TRUE(blocks[0]->info());
+    ASSERT_LT(blocks[1]->presentationTime().toDouble(), 0.9);
+    ASSERT_GT(blocks[2]->presentationTime().toDouble(), 1.1);
+    ASSERT_GT(blocks[3]->presentationTime().toDouble(), 1.6);
+    MediaTime secondBlockEndTime = blocks[1]->presentationEndTime();
+
+    Ref clock = TestClock::create();
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+
+    auto collected = std::make_shared<Collected>();
+    for (auto& block : blocks)
+        collect(decoder->decode(WTF::move(block.get())), collected);
+
+    // The second block takes the decoded audio past one second ahead, so the third waits.
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled >= 2;
+    }));
+    sleepWhilePumping(settleTime);
+    EXPECT_EQ(collected->settled, 2u);
+
+    clock->set(secondBlockEndTime - MediaTime(1, 2) + MediaTime(1, 100));
+    decoder->currentTimeDidChange();
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled >= 3;
+    }));
+    sleepWhilePumping(settleTime);
+    EXPECT_EQ(collected->settled, 3u);
+    EXPECT_EQ(collected->rejected, 0u);
+}
+
+TEST(PacedMediaSamplesDecoder, AudioWakesUpAsTheClockAdvances)
+{
+    auto blocks = groupIntoBlocks(splitIntoSingleItemBlocks(parseWebMAudioFile(@"test-mse-audio")), 30);
+    ASSERT_GE(blocks.size(), 4u);
+    ASSERT_TRUE(blocks[0]->info());
+    ASSERT_GT(blocks[2]->presentationTime().toDouble(), 1.1);
+    ASSERT_GT(blocks[3]->presentationTime().toDouble(), 1.6);
+
+    Ref clock = TestClock::create();
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+
+    auto collected = std::make_shared<Collected>();
+    for (auto& block : blocks)
+        collect(decoder->decode(WTF::move(block.get())), collected);
+
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled >= 2;
+    }));
+    sleepWhilePumping(settleTime);
+    EXPECT_EQ(collected->settled, 2u);
+
+    // With the clock running, no further notification is needed: the decoder wakes when each block comes into the window.
+    clock->setRate(1);
+    decoder->currentTimeDidChange();
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled >= 3;
+    }));
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled >= 4;
+    }));
+    EXPECT_EQ(collected->rejected, 0u);
+}
+
+TEST(PacedMediaSamplesDecoder, DrainWaitsForPendingInput)
+{
+    auto blocks = splitIntoSingleItemBlocks(parseWebMAudioFile(@"test-mse-audio"));
+    ASSERT_FALSE(blocks.isEmpty());
+    double endSeconds = blocks.last()->presentationEndTime().toDouble();
+    ASSERT_GT(endSeconds, 1.5);
+
+    Ref clock = TestClock::create();
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+
+    auto collected = std::make_shared<Collected>();
+    for (auto& block : blocks)
+        collect(decoder->decode(WTF::move(block.get())), collected);
+    auto drained = std::make_shared<Collected>();
+    collect(decoder->drain(), drained);
+
+    sleepWhilePumping(settleTime);
+    EXPECT_EQ(drained->settled, 0u);
+
+    clock->set(MediaTime::createWithDouble(endSeconds + 1));
+    decoder->currentTimeDidChange();
+    ASSERT_TRUE(waitUntil([&] {
+        return drained->settled == 1;
+    }));
+    EXPECT_EQ(drained->rejected, 0u);
+    EXPECT_EQ(collected->settled, blocks.size());
+    EXPECT_EQ(collected->rejected, 0u);
+}
+
+TEST(PacedMediaSamplesDecoder, VideoIsDecodedWithinTheDecodeWindow)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_GT(blocks.size(), 10u);
+    ASSERT_TRUE(blocks[0]->info());
+
+    MediaTime firstTime = blocks[0]->presentationTime();
+    MediaTime lastTime = blocks.last()->presentationTime();
+    double frameDuration = (blocks[1]->presentationTime() - firstTime).toDouble();
+    double span = (lastTime - firstTime).toDouble();
+    ASSERT_GT(span, 4 * videoDecodeWindow);
+
+    Ref clock = TestClock::create();
+    clock->set(firstTime);
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+
+    auto collected = std::make_shared<Collected>();
+    size_t blockCount = blocks.size();
+    for (auto& block : blocks)
+        collect(decoder->decode(WTF::move(block.get())), collected);
+
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled > 0;
+    }));
+    sleepWhilePumping(settleTime);
+    EXPECT_LT(collected->settled, blockCount);
+    EXPECT_LE(lastOutputSeconds(*collected), firstTime.toDouble() + videoDecodeWindow + frameDuration + 0.001);
+
+    MediaTime middle = firstTime + MediaTime::createWithDouble(span / 2);
+    clock->set(middle);
+    decoder->currentTimeDidChange();
+    ASSERT_TRUE(waitUntil([&] {
+        return lastOutputSeconds(*collected) >= middle.toDouble();
+    }));
+    sleepWhilePumping(settleTime);
+    EXPECT_LT(collected->settled, blockCount);
+    EXPECT_LE(lastOutputSeconds(*collected), middle.toDouble() + videoDecodeWindow + frameDuration + 0.001);
+
+    clock->set(lastTime + MediaTime(1, 1));
+    decoder->currentTimeDidChange();
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled == blockCount;
+    }));
+    EXPECT_EQ(collected->rejected, 0u);
+    EXPECT_EQ(collected->items, blockCount);
+}
+
+TEST(PacedMediaSamplesDecoder, VideoFlushCancelsPendingInputAndRequiresSyncSample)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_GT(blocks.size(), 10u);
+    auto more = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_GE(more.size(), 2u);
+    ASSERT_FALSE(more[1]->isSync());
+
+    Ref clock = TestClock::create();
+    clock->set(blocks[0]->presentationTime());
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+
+    auto collected = std::make_shared<Collected>();
+    size_t blockCount = blocks.size();
+    for (auto& block : blocks)
+        collect(decoder->decode(WTF::move(block.get())), collected);
+
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled > 0;
+    }));
+    sleepWhilePumping(settleTime);
+    ASSERT_LT(collected->settled, blockCount);
+
+    auto flushPromise = decoder->flush();
+    EXPECT_TRUE(settle(flushPromise.get()));
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled == blockCount;
+    }));
+    EXPECT_GT(collected->rejected, 0u);
+    for (auto error : collected->errors)
+        EXPECT_EQ(error, PlatformMediaError::Cancelled);
+
+    auto deltaPromise = decoder->decode(WTF::move(more[1].get()));
+    auto deltaResult = settle(deltaPromise.get());
+    ASSERT_FALSE(deltaResult);
+    EXPECT_EQ(deltaResult.error(), PlatformMediaError::InvalidState);
+
+    // The error is fatal: everything after it is rejected with it.
+    ASSERT_TRUE(more[0]->isSync());
+    auto syncPromise = decoder->decode(WTF::move(more[0].get()));
+    auto syncResult = settle(syncPromise.get());
+    ASSERT_FALSE(syncResult);
+    EXPECT_EQ(syncResult.error(), PlatformMediaError::InvalidState);
+
+    auto drainPromise = decoder->drain();
+    auto drainResult = settle(drainPromise.get());
+    ASSERT_FALSE(drainResult);
+    EXPECT_EQ(drainResult.error(), PlatformMediaError::InvalidState);
+}
+
+TEST(PacedMediaSamplesDecoder, VideoReadinessFollowsTheQueuedBlockCount)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_GT(blocks.size(), 45u);
+    MediaTime lastTime = blocks.last()->presentationTime();
+
+    Ref clock = TestClock::create();
+    clock->set(blocks[0]->presentationTime());
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+    EXPECT_TRUE(decoder->isReadyForMoreMediaData());
+
+    // The first block goes straight to the decoder; readiness turns false once 31 are waiting.
+    auto collected = std::make_shared<Collected>();
+    size_t blockCount = blocks.size();
+    size_t fed = 0;
+    while (fed < blockCount && decoder->isReadyForMoreMediaData())
+        collect(decoder->decode(WTF::move(blocks[fed++].get())), collected);
+    EXPECT_FALSE(decoder->isReadyForMoreMediaData());
+    EXPECT_EQ(fed, 32u);
+
+    // Blocks given while not ready are queued, not decoded.
+    while (fed < blockCount)
+        collect(decoder->decode(WTF::move(blocks[fed++].get())), collected);
+    sleepWhilePumping(settleTime);
+    EXPECT_FALSE(decoder->isReadyForMoreMediaData());
+    EXPECT_LT(collected->settled, blockCount);
+
+    auto stoppedPromise = decoder->requestMediaDataWhenReady();
+    decoder->stopRequestingMediaData();
+    EXPECT_FALSE(settle(stoppedPromise.get()));
+
+    auto requestPromise = decoder->requestMediaDataWhenReady();
+    clock->set(lastTime + MediaTime(1, 1));
+    decoder->currentTimeDidChange();
+    EXPECT_TRUE(settle(requestPromise.get()));
+    EXPECT_TRUE(decoder->isReadyForMoreMediaData());
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled == blockCount;
+    }));
+    EXPECT_EQ(collected->rejected, 0u);
+}
+
+TEST(PacedMediaSamplesDecoder, AudioReadinessFollowsTheQueuedBlockCount)
+{
+    auto blocks = splitIntoSingleItemBlocks(parseWebMAudioFile(@"test-mse-audio"));
+    ASSERT_GT(blocks.size(), 40u);
+    ASSERT_LT(blocks[17]->presentationTime().toDouble(), 1.0);
+
+    Ref clock = TestClock::create();
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+    EXPECT_TRUE(decoder->isReadyForMoreMediaData());
+
+    auto collected = std::make_shared<Collected>();
+    size_t fed = 0;
+    while (fed < blocks.size() && decoder->isReadyForMoreMediaData())
+        collect(decoder->decode(WTF::move(blocks[fed++].get())), collected);
+    EXPECT_FALSE(decoder->isReadyForMoreMediaData());
+    EXPECT_EQ(fed, 32u);
+
+    // Decoding up to one second ahead of the stopped clock leaves 15 blocks or fewer waiting.
+    auto requestPromise = decoder->requestMediaDataWhenReady();
+    EXPECT_TRUE(settle(requestPromise.get()));
+    EXPECT_TRUE(decoder->isReadyForMoreMediaData());
+    EXPECT_LT(lastOutputSeconds(*collected), 1.1);
+}
+
+TEST(PacedMediaSamplesDecoder, VideoUnknownMinimumUpcomingTimeDecodesBeyondTheWindow)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_GT(blocks.size(), 10u);
+
+    Ref clock = TestClock::create();
+    clock->set(blocks[0]->presentationTime());
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+
+    auto collected = std::make_shared<Collected>();
+    size_t blockCount = blocks.size();
+    for (auto& block : blocks)
+        collect(decoder->decode(WTF::move(block.get()), MediaTime::indefiniteTime()), collected);
+
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled == blockCount;
+    }));
+    EXPECT_EQ(collected->rejected, 0u);
+}
+
+TEST(PacedMediaSamplesDecoder, VideoOutOfOrderFramesAreDecodedRegardlessOfTheWindow)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_GT(blocks.size(), 10u);
+    MediaTime firstTime = blocks[0]->presentationTime();
+
+    Ref clock = TestClock::create();
+    clock->set(firstTime);
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+
+    // Each frame announces one presented at the start, before everything already decoded.
+    auto collected = std::make_shared<Collected>();
+    size_t blockCount = blocks.size();
+    for (auto& block : blocks)
+        collect(decoder->decode(WTF::move(block.get()), firstTime), collected);
+
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled == blockCount;
+    }));
+    EXPECT_EQ(collected->rejected, 0u);
+}
+
+TEST(PacedMediaSamplesDecoder, VideoBlockIsDecodedWhole)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_FALSE(blocks.isEmpty());
+    ASSERT_TRUE(blocks[0]->isSync());
+    RefPtr info = blocks[0]->info();
+    ASSERT_TRUE(info);
+
+    // Two frames sharing a block, as the WebM parser groups frames with the same timestamp.
+    auto first = blocks[0]->first();
+    auto second = first;
+    second.presentationTime = first.presentationTime + MediaTime(1, 1000000);
+    second.decodeTime = second.presentationTime;
+    MediaTime lastTime = second.presentationTime;
+    MediaSamplesBlock::SamplesVector items;
+    items.append(WTF::move(first));
+    items.append(WTF::move(second));
+
+    Ref clock = TestClock::create();
+    clock->set(blocks[0]->presentationTime());
+    Ref decoder = createPaced(*info, clock);
+    auto promise = decoder->decode(MediaSamplesBlock { info.get(), WTF::move(items) });
+    auto result = settle(promise.get());
+    ASSERT_TRUE(result);
+    ASSERT_EQ(result->size(), 1u);
+    ASSERT_EQ(result->first().size(), 1u);
+    EXPECT_EQ(result->first().first().presentationTime, lastTime);
+}
+
+TEST(PacedMediaSamplesDecoder, DecodeRejectsChangedFormat)
+{
+    auto blocks = parseWebMAudioFile(@"test-mse-audio");
+    ASSERT_FALSE(blocks.isEmpty());
+    ASSERT_TRUE(blocks[0]->info());
+
+    Ref clock = TestClock::create();
+    Ref decoder = createPaced(*blocks[0]->info(), clock);
+
+    Ref otherInfo = AudioInfo::create({
+        {
+            .codecName = FourCC { "opus" }
+        }, {
+            .rate = 44100,
+            .channels = 1
+        }
+    });
+    EXPECT_FALSE(decoder->canContinueWith(otherInfo.get()));
+
+    MediaSamplesBlock::SamplesVector items;
+    items.append({
+        .presentationTime = MediaTime::zeroTime(),
+        .duration = MediaTime(1, 50),
+        .data = SharedBuffer::create(Vector<uint8_t> { 1, 2, 3 }),
+        .flags = MediaSample::IsSync
+    });
+    auto promise = decoder->decode(MediaSamplesBlock { otherInfo.ptr(), WTF::move(items) });
+    auto result = settle(promise.get());
+    ASSERT_FALSE(result);
+    EXPECT_EQ(result.error(), PlatformMediaError::InvalidState);
 }
 
 } // namespace TestWebKitAPI

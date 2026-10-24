@@ -2486,6 +2486,7 @@ platform/MediaSamplesDecoder.cpp
 platform/MediaStrategy.cpp
 platform/NotImplemented.cpp
 platform/NowPlayingManager.cpp
+platform/PacedMediaSamplesDecoder.cpp
 platform/Pasteboard.cpp
 platform/PasteboardCustomData.cpp
 platform/PasteboardWriterData.cpp

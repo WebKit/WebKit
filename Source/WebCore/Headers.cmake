@@ -2180,6 +2180,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/PODInterval.h
     platform/PODIntervalTree.h
     platform/PODRedBlackTree.h
+    platform/PacedMediaSamplesDecoder.h
     platform/PageIdentifier.h
     platform/Pasteboard.h
     platform/PasteboardContext.h
