@@ -147,6 +147,7 @@
 #import "_WKHitTestResultInternal.h"
 #import "_WKInputDelegate.h"
 #import "_WKInspectorInternal.h"
+#import "_WKMediaCapturePermissionPromptConfigurationInternal.h"
 #import "_WKPageLoadTimingInternal.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
@@ -5907,6 +5908,22 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 - (void)_showSafeBrowsingWarningWithURL:(NSURL *)url title:(NSString *)title warning:(NSString *)warning detailsWithLinks:(NSAttributedString *)details completionHandler:(void(^)(BOOL, NSURL *))completionHandler
 {
     [self _showWarningViewWithURL:url title:title warning:warning detailsWithLinks:details completionHandler:completionHandler];
+}
+
+- (void)_showMediaCapturePermissionPromptWithConfiguration:(_WKMediaCapturePermissionPromptConfiguration *)configuration completionHandler:(void (^)(_WKMediaCapturePermissionPromptResult *))completionHandler
+{
+    THROW_IF_SUSPENDED;
+#if ENABLE(MEDIA_STREAM)
+    protect(*_page)->showMediaCapturePermissionPrompt(WebKit::customizationFromConfiguration(configuration), [completionHandler = makeBlockPtr(completionHandler)](WebKit::MediaPermissionPromptResult&& promptResult) {
+        auto outcome = !promptResult.wasAnswered ? _WKMediaCapturePermissionPromptOutcomeDismissed : promptResult.granted ? _WKMediaCapturePermissionPromptOutcomeAllowed : _WKMediaCapturePermissionPromptOutcomeDenied;
+        RetainPtr chosenAction = WTF::move(promptResult.chosenAction);
+        RetainPtr result = adoptNS([[_WKMediaCapturePermissionPromptResult alloc] _initWithOutcome:outcome chosenAction:chosenAction.get()]);
+        completionHandler(result.get());
+    });
+#else
+    UNUSED_PARAM(configuration);
+    completionHandler(adoptNS([[_WKMediaCapturePermissionPromptResult alloc] _initWithOutcome:_WKMediaCapturePermissionPromptOutcomeDismissed chosenAction:nil]).get());
+#endif
 }
 
 + (NSURL *)_confirmMalwareSentinel

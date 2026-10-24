@@ -27,7 +27,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -36,13 +35,17 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKMediaCapturePermissionPromptConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 using PermissionDecisionHandler = void (^)(WKPermissionDecision);
 
+using DisplayCaptureDecisionHandler = void (^)(WKDisplayCapturePermissionDecision);
+
 @interface MediaCapturePermissionPromptUIDelegate : NSObject <WKUIDelegatePrivate>
 @property (nonatomic, copy) void (^requestHandler)(WKWebView *, PermissionDecisionHandler);
+@property (nonatomic, copy) void (^displayCaptureRequestHandler)(WKWebView *, DisplayCaptureDecisionHandler);
 @property (nonatomic) NSUInteger numberOfRequests;
 @end
 
@@ -51,6 +54,7 @@ using PermissionDecisionHandler = void (^)(WKPermissionDecision);
 - (void)dealloc
 {
     [_requestHandler release];
+    [_displayCaptureRequestHandler release];
     [super dealloc];
 }
 
@@ -58,6 +62,11 @@ using PermissionDecisionHandler = void (^)(WKPermissionDecision);
 {
     ++_numberOfRequests;
     _requestHandler(webView, decisionHandler);
+}
+
+- (void)_webView:(WKWebView *)webView requestDisplayCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame withSystemAudio:(BOOL)withSystemAudio decisionHandler:(DisplayCaptureDecisionHandler)decisionHandler
+{
+    _displayCaptureRequestHandler(webView, decisionHandler);
 }
 
 - (void)_webView:(WKWebView *)webView requestSpeechRecognitionPermissionForOrigin:(WKSecurityOrigin *)origin decisionHandler:(void (^)(BOOL))decisionHandler
@@ -93,6 +102,7 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<MediaCapturePermissionPromp
     preferences.get()._mediaCaptureRequiresSecureConnection = NO;
     preferences.get()._mockCaptureDevicesEnabled = YES;
     preferences.get()._getUserMediaRequiresFocus = NO;
+    preferences.get()._screenCaptureEnabled = YES;
     preferences.get()._speechRecognitionEnabled = YES;
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() addToWindow:YES]);
@@ -121,12 +131,45 @@ static NSString *captureWithoutUserGesture(TestWKWebView *webView, NSDictionary 
     return result.autorelease();
 }
 
-static void startCapture(TestWKWebView *webView, NSString *constraints)
+TEST(MediaCapturePermissionPrompt, CustomizedTextAndButtons)
 {
-    [webView evaluateJavaScript:[NSString stringWithFormat:@"capture(%@)", constraints] completionHandler:nil];
+    auto [webView, delegate] = createWebView();
+
+    __block RetainPtr<_WKMediaCapturePermissionPromptForTesting> shownPrompt;
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        shownPrompt = prompt;
+        [prompt respondWithButtonIndex:prompt.buttonTitles.count - 1];
+    }];
+
+    __block RetainPtr<_WKMediaCapturePermissionPromptResult> promptResult;
+    [delegate setRequestHandler:^(WKWebView *requestingWebView, PermissionDecisionHandler decisionHandler) {
+        RetainPtr configuration = adoptNS([[_WKMediaCapturePermissionPromptConfiguration alloc] init]);
+        [configuration setMessageText:@"Use your camera?"];
+        [configuration setInformativeText:@"Choose a camera below."];
+        [configuration setAllowButtonTitle:@"Share"];
+        [configuration setDenyButtonTitle:@"Not Now"];
+        [configuration setAdditionalActions:@[
+            [_WKMediaCapturePermissionAction actionWithTitle:@"Never for This Website" decision:_WKMediaCapturePermissionActionDecisionDeny],
+            [_WKMediaCapturePermissionAction actionWithTitle:@"Allow Once" decision:_WKMediaCapturePermissionActionDecisionAllow],
+        ]];
+        [requestingWebView _showMediaCapturePermissionPromptWithConfiguration:configuration.get() completionHandler:^(_WKMediaCapturePermissionPromptResult *result) {
+            promptResult = result;
+            decisionHandler(WKPermissionDecisionDeny);
+        }];
+    }];
+
+    EXPECT_WK_STREQ("NotAllowedError", capture(webView.get(), @{ @"video": @YES }));
+
+    EXPECT_WK_STREQ("Use your camera?", [shownPrompt title]);
+    EXPECT_WK_STREQ("Choose a camera below.", [shownPrompt informativeText]);
+    NSArray *expectedTitles = @[ @"Share", @"Never for This Website", @"Allow Once", @"Not Now" ];
+    EXPECT_TRUE([[shownPrompt buttonTitles] isEqualToArray:expectedTitles]);
+
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeDenied, [promptResult outcome]);
+    EXPECT_NULL([promptResult chosenAction]);
 }
 
-TEST(MediaCapturePermissionPrompt, AllowGrantsCapture)
+TEST(MediaCapturePermissionPrompt, DefaultTextWithoutCustomization)
 {
     auto [webView, delegate] = createWebView();
 
@@ -136,13 +179,171 @@ TEST(MediaCapturePermissionPrompt, AllowGrantsCapture)
         [prompt respondWithButtonIndex:0];
     }];
 
-    [delegate setRequestHandler:^(WKWebView *, PermissionDecisionHandler decisionHandler) {
-        decisionHandler(WKPermissionDecisionPrompt);
+    __block RetainPtr<_WKMediaCapturePermissionPromptResult> promptResult;
+    [delegate setRequestHandler:^(WKWebView *requestingWebView, PermissionDecisionHandler decisionHandler) {
+        [requestingWebView _showMediaCapturePermissionPromptWithConfiguration:nil completionHandler:^(_WKMediaCapturePermissionPromptResult *result) {
+            promptResult = result;
+            decisionHandler(WKPermissionDecisionGrant);
+        }];
     }];
 
-    EXPECT_TRUE([capture(webView.get(), @{ @"audio": @YES }) hasPrefix:@"audio:"]);
+    capture(webView.get(), @{ @"audio": @YES });
+
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeAllowed, [promptResult outcome]);
     EXPECT_TRUE([[shownPrompt title] containsString:@"webkit.org"]);
+    EXPECT_NULL([shownPrompt informativeText]);
     EXPECT_EQ(2U, [shownPrompt buttonTitles].count);
+}
+
+TEST(MediaCapturePermissionPrompt, ActionsPastTheCapAreDropped)
+{
+    auto [webView, delegate] = createWebView();
+
+    __block RetainPtr<NSArray> shownButtonTitles;
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        shownButtonTitles = prompt.buttonTitles;
+        [prompt dismissWithoutAnswer];
+    }];
+
+    [delegate setRequestHandler:^(WKWebView *requestingWebView, PermissionDecisionHandler decisionHandler) {
+        RetainPtr configuration = adoptNS([[_WKMediaCapturePermissionPromptConfiguration alloc] init]);
+        [configuration setAdditionalActions:@[
+            [_WKMediaCapturePermissionAction actionWithTitle:@"First" decision:_WKMediaCapturePermissionActionDecisionDeny],
+            [_WKMediaCapturePermissionAction actionWithTitle:@"Second" decision:_WKMediaCapturePermissionActionDecisionDeny],
+            [_WKMediaCapturePermissionAction actionWithTitle:@"Third" decision:_WKMediaCapturePermissionActionDecisionDeny],
+        ]];
+        [requestingWebView _showMediaCapturePermissionPromptWithConfiguration:configuration.get() completionHandler:^(_WKMediaCapturePermissionPromptResult *) {
+            decisionHandler(WKPermissionDecisionDeny);
+        }];
+    }];
+
+    capture(webView.get(), @{ @"video": @YES });
+
+    EXPECT_EQ(2U, _WKMediaCapturePermissionPromptMaximumAdditionalActions);
+    EXPECT_EQ(_WKMediaCapturePermissionPromptMaximumAdditionalActions + 2, [shownButtonTitles count]);
+    EXPECT_FALSE([shownButtonTitles containsObject:@"Third"]);
+}
+
+TEST(MediaCapturePermissionPrompt, ChosenActionIsTheApplicationsObject)
+{
+    auto [webView, delegate] = createWebView();
+
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        [prompt respondWithButtonIndex:1];
+    }];
+
+    RetainPtr neverAllow = [_WKMediaCapturePermissionAction actionWithTitle:@"Never for This Website" decision:_WKMediaCapturePermissionActionDecisionDeny];
+    __block RetainPtr<_WKMediaCapturePermissionPromptResult> promptResult;
+    [delegate setRequestHandler:^(WKWebView *requestingWebView, PermissionDecisionHandler decisionHandler) {
+        RetainPtr configuration = adoptNS([[_WKMediaCapturePermissionPromptConfiguration alloc] init]);
+        [configuration setAdditionalActions:@[ neverAllow.get() ]];
+        [requestingWebView _showMediaCapturePermissionPromptWithConfiguration:configuration.get() completionHandler:^(_WKMediaCapturePermissionPromptResult *result) {
+            promptResult = result;
+            decisionHandler(WKPermissionDecisionDeny);
+        }];
+    }];
+
+    EXPECT_WK_STREQ("NotAllowedError", capture(webView.get(), @{ @"video": @YES }));
+
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeDenied, [promptResult outcome]);
+    EXPECT_EQ(neverAllow.get(), [promptResult chosenAction]);
+}
+
+TEST(MediaCapturePermissionPrompt, ApplicationHasTheFinalSay)
+{
+    auto [webView, delegate] = createWebView();
+
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        [prompt respondWithButtonIndex:prompt.buttonTitles.count - 1];
+    }];
+
+    __block RetainPtr<_WKMediaCapturePermissionPromptResult> promptResult;
+    [delegate setRequestHandler:^(WKWebView *requestingWebView, PermissionDecisionHandler decisionHandler) {
+        [requestingWebView _showMediaCapturePermissionPromptWithConfiguration:nil completionHandler:^(_WKMediaCapturePermissionPromptResult *result) {
+            promptResult = result;
+            decisionHandler(WKPermissionDecisionGrant);
+        }];
+    }];
+
+    NSString *captured = capture(webView.get(), @{ @"video": @YES });
+
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeDenied, [promptResult outcome]);
+    EXPECT_TRUE([captured hasPrefix:@"video:"]);
+}
+
+TEST(MediaCapturePermissionPrompt, NoRequestBeingDecided)
+{
+    auto [webView, delegate] = createWebView();
+
+    __block bool wasShown = false;
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        wasShown = true;
+        [prompt respondWithButtonIndex:0];
+    }];
+
+    __block RetainPtr<_WKMediaCapturePermissionPromptResult> promptResult;
+    [webView _showMediaCapturePermissionPromptWithConfiguration:nil completionHandler:^(_WKMediaCapturePermissionPromptResult *result) {
+        promptResult = result;
+    }];
+
+    EXPECT_NOT_NULL(promptResult.get());
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeDismissed, [promptResult outcome]);
+    EXPECT_FALSE(wasShown);
+}
+
+TEST(MediaCapturePermissionPrompt, SecondCallForTheSameRequestIsRefused)
+{
+    auto [webView, delegate] = createWebView();
+
+    __block NSUInteger numberOfPromptsShown = 0;
+    __block RetainPtr<_WKMediaCapturePermissionPromptResult> secondResult;
+    __block TestWKWebView *promptingWebView = webView.get();
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        ++numberOfPromptsShown;
+        [promptingWebView _showMediaCapturePermissionPromptWithConfiguration:nil completionHandler:^(_WKMediaCapturePermissionPromptResult *result) {
+            secondResult = result;
+        }];
+        [prompt respondWithButtonIndex:prompt.buttonTitles.count - 1];
+    }];
+
+    [delegate setRequestHandler:^(WKWebView *requestingWebView, PermissionDecisionHandler decisionHandler) {
+        [requestingWebView _showMediaCapturePermissionPromptWithConfiguration:nil completionHandler:^(_WKMediaCapturePermissionPromptResult *) {
+            decisionHandler(WKPermissionDecisionDeny);
+        }];
+    }];
+
+    EXPECT_WK_STREQ("NotAllowedError", capture(webView.get(), @{ @"video": @YES }));
+
+    EXPECT_EQ(1U, numberOfPromptsShown);
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeDismissed, [secondResult outcome]);
+}
+
+TEST(MediaCapturePermissionPrompt, GrantWhilePromptIsUpReportsDismissed)
+{
+    auto [webView, delegate] = createWebView();
+
+    __block RetainPtr<_WKMediaCapturePermissionPromptForTesting> pendingPrompt;
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        pendingPrompt = prompt;
+    }];
+
+    __block RetainPtr<_WKMediaCapturePermissionPromptResult> promptResult;
+    [delegate setRequestHandler:^(WKWebView *requestingWebView, PermissionDecisionHandler decisionHandler) {
+        [requestingWebView _showMediaCapturePermissionPromptWithConfiguration:nil completionHandler:^(_WKMediaCapturePermissionPromptResult *result) {
+            promptResult = result;
+        }];
+        decisionHandler(WKPermissionDecisionGrant);
+    }];
+
+    NSString *captured = capture(webView.get(), @{ @"video": @YES });
+
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeDismissed, [promptResult outcome]);
+    EXPECT_NULL([promptResult chosenAction]);
+    EXPECT_TRUE([captured hasPrefix:@"video:"]);
+
+    // The prompt has already closed, so a late answer changes nothing.
+    [pendingPrompt respondWithButtonIndex:0];
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeDismissed, [promptResult outcome]);
 }
 
 TEST(MediaCapturePermissionPrompt, AnsweredDenialIsRemembered)
@@ -187,19 +388,104 @@ TEST(MediaCapturePermissionPrompt, UnansweredPromptIsNotRememberedAsDenial)
     EXPECT_EQ(2U, [delegate numberOfRequests]);
 }
 
+static void startCapture(TestWKWebView *webView, NSString *constraints)
+{
+    [webView evaluateJavaScript:[NSString stringWithFormat:@"capture(%@)", constraints] completionHandler:nil];
+}
+
+static void testPromptClosedByThePage(NOESCAPE const Function<void(TestWKWebView *)>& closePrompt)
+{
+    auto [webView, delegate] = createWebView();
+
+    __block bool wasShown = false;
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        wasShown = true;
+    }];
+
+    __block bool done = false;
+    __block RetainPtr<_WKMediaCapturePermissionPromptResult> promptResult;
+    [delegate setRequestHandler:^(WKWebView *requestingWebView, PermissionDecisionHandler decisionHandler) {
+        [requestingWebView _showMediaCapturePermissionPromptWithConfiguration:nil completionHandler:^(_WKMediaCapturePermissionPromptResult *result) {
+            promptResult = result;
+            decisionHandler(WKPermissionDecisionDeny);
+            done = true;
+        }];
+    }];
+
+    startCapture(webView.get(), @"{ video: true }");
+    Util::run(&wasShown);
+    closePrompt(webView.get());
+    Util::run(&done);
+
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeDismissed, [promptResult outcome]);
+    EXPECT_NULL([promptResult chosenAction]);
+}
+
+TEST(MediaCapturePermissionPrompt, NavigationClosesThePrompt)
+{
+    testPromptClosedByThePage([](TestWKWebView *webView) {
+        [webView synchronouslyLoadHTMLString:@"<p>Another document</p>" baseURL:[NSURL URLWithString:@"https://webkit.org/other"]];
+    });
+}
+
+TEST(MediaCapturePermissionPrompt, ClosingTheWebViewClosesThePrompt)
+{
+    testPromptClosedByThePage([](TestWKWebView *webView) {
+        [webView _close];
+    });
+}
+
+TEST(MediaCapturePermissionPrompt, ScreenCaptureRequestIsRefused)
+{
+    auto [webView, delegate] = createWebView();
+
+    __block bool wasShown = false;
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        wasShown = true;
+        [prompt respondWithButtonIndex:0];
+    }];
+
+    __block RetainPtr<_WKMediaCapturePermissionPromptResult> promptResult;
+    [delegate setDisplayCaptureRequestHandler:^(WKWebView *requestingWebView, DisplayCaptureDecisionHandler decisionHandler) {
+        [requestingWebView _showMediaCapturePermissionPromptWithConfiguration:nil completionHandler:^(_WKMediaCapturePermissionPromptResult *result) {
+            promptResult = result;
+            decisionHandler(WKDisplayCapturePermissionDecisionDeny);
+        }];
+    }];
+
+    NSString *captured = [webView objectByCallingAsyncFunction:@"try { await navigator.mediaDevices.getDisplayMedia({ video: true }); return 'granted'; } catch (error) { return error.name; }" withArguments:nil];
+
+    EXPECT_WK_STREQ("NotAllowedError", captured);
+    EXPECT_NOT_NULL(promptResult.get());
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeDismissed, [promptResult outcome]);
+    EXPECT_FALSE(wasShown);
+}
+
 TEST(MediaCapturePermissionPrompt, SpeechRecognitionWaitsForTheCaptureDecision)
 {
     auto [webView, delegate] = createWebView();
 
+    __block RetainPtr<_WKMediaCapturePermissionPromptForTesting> shownPrompt;
+    [webView _setMediaCapturePermissionPromptHandlerForTesting:^(_WKMediaCapturePermissionPromptForTesting *prompt) {
+        shownPrompt = prompt;
+        [prompt respondWithButtonIndex:prompt.buttonTitles.count - 1];
+    }];
+
     __block BlockPtr<void(WKPermissionDecision)> pendingCaptureDecision;
     __block bool captureRequested = false;
-    [delegate setRequestHandler:^(WKWebView *, PermissionDecisionHandler decisionHandler) {
+    __block bool speechPromptDone = false;
+    __block RetainPtr<_WKMediaCapturePermissionPromptResult> speechPromptResult;
+    [delegate setRequestHandler:^(WKWebView *requestingWebView, PermissionDecisionHandler decisionHandler) {
         if (!pendingCaptureDecision) {
             pendingCaptureDecision = makeBlockPtr(decisionHandler);
             captureRequested = true;
             return;
         }
-        decisionHandler(WKPermissionDecisionDeny);
+        [requestingWebView _showMediaCapturePermissionPromptWithConfiguration:nil completionHandler:^(_WKMediaCapturePermissionPromptResult *result) {
+            speechPromptResult = result;
+            decisionHandler(WKPermissionDecisionDeny);
+            speechPromptDone = true;
+        }];
     }];
 
     startCapture(webView.get(), @"{ video: true }");
@@ -208,11 +494,14 @@ TEST(MediaCapturePermissionPrompt, SpeechRecognitionWaitsForTheCaptureDecision)
     [webView evaluateJavaScript:@"window.recognition = new webkitSpeechRecognition(); recognition.start();" completionHandler:nil];
     Util::runFor(500_ms);
     EXPECT_EQ(1U, [delegate numberOfRequests]);
+    EXPECT_NULL(shownPrompt.get());
 
     pendingCaptureDecision(WKPermissionDecisionDeny);
-    EXPECT_TRUE(Util::waitFor([&] {
-        return [delegate numberOfRequests] == 2U;
-    }));
+    Util::run(&speechPromptDone);
+
+    EXPECT_EQ(2U, [delegate numberOfRequests]);
+    EXPECT_TRUE([[shownPrompt title] containsString:@"speech recognition"]);
+    EXPECT_EQ(_WKMediaCapturePermissionPromptOutcomeDenied, [speechPromptResult outcome]);
 }
 
 } // namespace TestWebKitAPI

@@ -31,7 +31,7 @@
 #import "EndowmentStateTracker.h"
 #import "GPUProcessProxy.h"
 #import "LogStream.h"
-#import "MediaPermissionUtilities.h"
+#import "MediaPermissionPromptCustomization.h"
 #import "MediaSessionCoordinatorProxyPrivate.h"
 #import "NetworkProcessProxy.h"
 #import "PendingSnapshotDrawing.h"
@@ -138,6 +138,15 @@
     return _prompt->title().createNSString().autorelease();
 #else
     return @"";
+#endif
+}
+
+- (NSString *)informativeText
+{
+#if ENABLE(MEDIA_STREAM)
+    return nsStringNilIfNull(_prompt->informativeText()).autorelease();
+#else
+    return nil;
 #endif
 }
 

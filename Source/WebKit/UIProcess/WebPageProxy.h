@@ -682,6 +682,8 @@ struct JSHandleInfo;
 struct KeyEventInterpretationContext;
 struct LoadParameters;
 struct MainFrameData;
+struct MediaPermissionPromptCustomization;
+struct MediaPermissionPromptResult;
 struct PageData;
 struct NavigationActionData;
 struct NetworkResourceLoadIdentifierType;
@@ -2560,6 +2562,7 @@ public:
     void LEGACY_NODELETE rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
     void microphoneMuteStatusChanged(bool isMuting);
 #if PLATFORM(COCOA)
+    void showMediaCapturePermissionPrompt(MediaPermissionPromptCustomization&&, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
     using MediaPermissionPromptHandlerForTesting = Function<void(Ref<MediaPermissionPromptForTesting>&&)>;
     const MediaPermissionPromptHandlerForTesting& mediaPermissionPromptHandlerForTesting() const LIFETIME_BOUND { return m_mediaPermissionPromptHandlerForTesting; }
     void setMediaPermissionPromptHandlerForTesting(MediaPermissionPromptHandlerForTesting&& handler) { m_mediaPermissionPromptHandlerForTesting = WTF::move(handler); }

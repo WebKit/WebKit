@@ -405,6 +405,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKJSHandle.h
     UIProcess/API/Cocoa/_WKLayoutMode.h
     UIProcess/API/Cocoa/_WKLinkIconParameters.h
+    UIProcess/API/Cocoa/_WKMediaCapturePermissionPromptConfiguration.h
     UIProcess/API/Cocoa/_WKModalContainerInfo.h
     UIProcess/API/Cocoa/_WKNSStringExtras.h
     UIProcess/API/Cocoa/_WKNSURLExtras.h

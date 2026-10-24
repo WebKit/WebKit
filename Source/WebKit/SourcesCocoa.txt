@@ -309,6 +309,7 @@ UIProcess/API/Cocoa/_WKInspectorTesting.mm @nonARC
 UIProcess/API/Cocoa/_WKInspectorWindow.mm @nonARC
 UIProcess/API/Cocoa/_WKInternalDebugFeature.mm @nonARC
 UIProcess/API/Cocoa/_WKLinkIconParameters.mm @nonARC
+UIProcess/API/Cocoa/_WKMediaCapturePermissionPromptConfiguration.mm @nonARC
 UIProcess/API/Cocoa/_WKModalContainerInfo.mm @nonARC
 UIProcess/API/Cocoa/_WKNotificationData.mm @nonARC
 UIProcess/API/Cocoa/_WKNSStringExtras.mm @nonARC

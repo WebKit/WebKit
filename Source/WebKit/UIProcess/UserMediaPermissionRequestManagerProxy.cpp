@@ -810,6 +810,27 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
     });
 }
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+void UserMediaPermissionRequestManagerProxy::showMediaCapturePermissionPrompt(MediaPermissionPromptCustomization&& customization, UserMediaPermissionRequestProxy::PromptResultHandler&& completionHandler)
+{
+    // Only one delegate decision is outstanding at a time, so this is the request the application is answering.
+    RefPtr currentUserMediaRequest = m_requestAwaitingDelegateDecision;
+    if (!currentUserMediaRequest || !currentUserMediaRequest->isPending()) {
+        // Report a dismissal rather than never calling back.
+        RELEASE_LOG_ERROR(WebRTC, "UserMediaPermissionRequestManagerProxy::showMediaCapturePermissionPrompt: no request is being decided");
+        return completionHandler({ });
+    }
+
+    // The prompt only offers cameras and microphones for now, so it would ask about the wrong thing.
+    if (currentUserMediaRequest->requiresDisplayCapture()) {
+        RELEASE_LOG_ERROR(WebRTC, "UserMediaPermissionRequestManagerProxy::showMediaCapturePermissionPrompt: the request being decided is for display capture");
+        return completionHandler({ });
+    }
+
+    currentUserMediaRequest->showCapturePromptWithoutDeciding(WTF::move(customization), WTF::move(completionHandler));
+}
+#endif
+
 void UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionRequest()
 {
     RefPtr currentUserMediaRequest = m_currentUserMediaRequest;
@@ -875,7 +896,7 @@ void UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRe
 
     // We use no UserMediaRequestIdentifier because this does not correspond to a UserMediaPermissionRequest in web process.
     // We create the RequestProxy only to check the media permission for speech.
-    Ref request = UserMediaPermissionRequestProxy::create(*this, std::nullopt, mainFrameIdentifier, WTF::move(frameInfo), requestingOrigin.isolatedCopy(), topOrigin.isolatedCopy(), Vector<WebCore::CaptureDevice> { device }, { }, { }, WTF::move(completionHandler));
+    Ref request = UserMediaPermissionRequestProxy::create(*this, std::nullopt, mainFrameIdentifier, WTF::move(frameInfo), requestingOrigin.isolatedCopy(), topOrigin.isolatedCopy(), Vector<WebCore::CaptureDevice> { device }, { }, { }, WTF::move(completionHandler), UserMediaPermissionRequestProxy::Kind::SpeechRecognition);
 
     // FIXME: Use switch on action.
     auto action = getRequestAction(request.get());

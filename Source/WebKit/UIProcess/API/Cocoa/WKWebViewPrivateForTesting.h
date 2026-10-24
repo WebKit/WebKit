@@ -66,6 +66,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 + (instancetype)new NS_UNAVAILABLE;
 
 @property (nonatomic, readonly, copy) NSString *title;
+@property (nonatomic, readonly, copy, nullable) NSString *informativeText;
 @property (nonatomic, readonly, copy) NSArray<NSString *> *buttonTitles;
 
 - (void)respondWithButtonIndex:(NSUInteger)index;

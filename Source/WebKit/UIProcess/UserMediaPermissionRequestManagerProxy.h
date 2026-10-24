@@ -114,6 +114,10 @@ public:
     void clearCachedState();
     void captureDevicesChanged();
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    void showMediaCapturePermissionPrompt(MediaPermissionPromptCustomization&&, UserMediaPermissionRequestProxy::PromptResultHandler&&);
+#endif
+
     void captureStateChanged(WebCore::MediaProducerMediaStateFlags oldState, WebCore::MediaProducerMediaStateFlags newState);
     void syncWithWebCorePrefs() const;
 

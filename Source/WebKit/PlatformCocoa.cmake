@@ -1803,6 +1803,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKInternalDebugFeature.h
     UIProcess/API/Cocoa/_WKLayoutMode.h
     UIProcess/API/Cocoa/_WKLinkIconParameters.h
+    UIProcess/API/Cocoa/_WKMediaCapturePermissionPromptConfiguration.h
     UIProcess/API/Cocoa/_WKOverlayScrollbarStyle.h
     UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h
     UIProcess/API/Cocoa/_WKPublicKeyCredentialCreationOptions.h

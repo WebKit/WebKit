@@ -2780,6 +2780,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKMediaCapturePermissionPromptConfiguration {
+    header "_WKMediaCapturePermissionPromptConfiguration.h"
+    export *
+  }
+
   explicit module _WKModalContainerInfo {
     header "_WKModalContainerInfo.h"
     export *

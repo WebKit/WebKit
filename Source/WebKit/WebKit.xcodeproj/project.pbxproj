@@ -136,6 +136,9 @@
 		0269BED42C8FDDEA00DC2FEC /* WebProcessActivityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0269BED32C8FDDCB00DC2FEC /* WebProcessActivityState.h */; };
 		028648C62C3F5A3A00E474D4 /* WebExtensionAPISidePanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 028648C52C3F5A2E00E474D4 /* WebExtensionAPISidePanel.h */; };
 		028D30772C616E8A004F4FC6 /* WebExtensionSidebar.h in Headers */ = {isa = PBXBuildFile; fileRef = 028D30762C616E8A004F4FC6 /* WebExtensionSidebar.h */; };
+		CAFE0C0E2E8B1D0100A1B2C3 /* MediaPermissionPromptCustomization.h in Headers */ = {isa = PBXBuildFile; fileRef = CAFE0C0A2E8B1D0100A1B2C3 /* MediaPermissionPromptCustomization.h */; };
+		CAFE0C0F2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CAFE0C0B2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CAFE0C102E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = CAFE0C0D2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfigurationInternal.h */; };
 		028D30882C63DEE1004F4FC6 /* _WKWebExtensionSidebar.h in Headers */ = {isa = PBXBuildFile; fileRef = 028D30862C62FA8A004F4FC6 /* _WKWebExtensionSidebar.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		028D308E2C63E764004F4FC6 /* _WKWebExtensionSidebarInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 028D308D2C63E3B3004F4FC6 /* _WKWebExtensionSidebarInternal.h */; };
 		029D6BAC2C40609D0068CF99 /* WebExtensionAPISidebarAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 029D6BAB2C4060920068CF99 /* WebExtensionAPISidebarAction.h */; };
@@ -3465,6 +3468,10 @@
 		02789F0528D44ED800F77E40 /* WebGPUVertexBufferLayout.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUVertexBufferLayout.serialization.in; sourceTree = "<group>"; };
 		028648C52C3F5A2E00E474D4 /* WebExtensionAPISidePanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPISidePanel.h; sourceTree = "<group>"; };
 		028D30762C616E8A004F4FC6 /* WebExtensionSidebar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionSidebar.h; sourceTree = "<group>"; };
+		CAFE0C0A2E8B1D0100A1B2C3 /* MediaPermissionPromptCustomization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaPermissionPromptCustomization.h; sourceTree = "<group>"; };
+		CAFE0C0B2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKMediaCapturePermissionPromptConfiguration.h; sourceTree = "<group>"; };
+		CAFE0C0C2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKMediaCapturePermissionPromptConfiguration.mm; sourceTree = "<group>"; };
+		CAFE0C0D2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfigurationInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKMediaCapturePermissionPromptConfigurationInternal.h; sourceTree = "<group>"; };
 		028D30862C62FA8A004F4FC6 /* _WKWebExtensionSidebar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionSidebar.h; sourceTree = "<group>"; };
 		028D30892C63E14B004F4FC6 /* _WKWebExtensionSidebar.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionSidebar.mm; sourceTree = "<group>"; };
 		028D308B2C63E214004F4FC6 /* WebExtensionSidebarCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionSidebarCocoa.mm; sourceTree = "<group>"; };
@@ -13087,6 +13094,9 @@
 				51C0C9791DDD78540032CAD3 /* _WKLinkIconParameters.h */,
 				51C0C97A1DDD78540032CAD3 /* _WKLinkIconParameters.mm */,
 				51C0C97B1DDD78540032CAD3 /* _WKLinkIconParametersInternal.h */,
+				CAFE0C0B2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.h */,
+				CAFE0C0C2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.mm */,
+				CAFE0C0D2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfigurationInternal.h */,
 				F4DBC0BC276AA6A70001D169 /* _WKModalContainerInfo.h */,
 				F4DBC0BD276AA6A70001D169 /* _WKModalContainerInfo.mm */,
 				F4DBC0C0276AA6CA0001D169 /* _WKModalContainerInfoInternal.h */,
@@ -16394,6 +16404,7 @@
 				9ACC07B225C815F300DC6386 /* MediaKeySystemPermissionRequestManagerProxy.h */,
 				0F9FA7DB26CEFADA00872684 /* MediaKeySystemPermissionRequestProxy.cpp */,
 				9ACC07B425C8160B00DC6386 /* MediaKeySystemPermissionRequestProxy.h */,
+				CAFE0C0A2E8B1D0100A1B2C3 /* MediaPermissionPromptCustomization.h */,
 				93425898255B534B0059EEDD /* MediaPermissionUtilities.h */,
 				5E55104200000000000C0001 /* MemoryFootprintMonitor.cpp */,
 				5E55104200000000000C0002 /* MemoryFootprintMonitor.h */,
@@ -18189,6 +18200,8 @@
 				FA8B4F7C2E4A5F7C00E419CD /* _WKJSHandle.h in Headers */,
 				2D790A9D1AD7050D00AB90B3 /* _WKLayoutMode.h in Headers */,
 				510F59111DDE297000412FF5 /* _WKLinkIconParameters.h in Headers */,
+				CAFE0C0F2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.h in Headers */,
+				CAFE0C102E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfigurationInternal.h in Headers */,
 				511FD1142C51AF4F00BD8163 /* _WKMockUserNotificationCenter.h in Headers */,
 				F4DBC0BE276AA6A70001D169 /* _WKModalContainerInfo.h in Headers */,
 				F4DBC0C1276AA6CA0001D169 /* _WKModalContainerInfoInternal.h in Headers */,
@@ -18762,6 +18775,7 @@
 				9ACC07AD25C8132D00DC6386 /* MediaKeySystemPermissionRequestManager.h in Headers */,
 				9ACC07B325C815F300DC6386 /* MediaKeySystemPermissionRequestManagerProxy.h in Headers */,
 				9ACC07B525C8160C00DC6386 /* MediaKeySystemPermissionRequestProxy.h in Headers */,
+				CAFE0C0E2E8B1D0100A1B2C3 /* MediaPermissionPromptCustomization.h in Headers */,
 				9342589A255B535A0059EEDD /* MediaPermissionUtilities.h in Headers */,
 				07E19EFC23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessages.h in Headers */,
 				075A9CF326169BAB006DFA3A /* MediaSessionCoordinatorProxyPrivate.h in Headers */,

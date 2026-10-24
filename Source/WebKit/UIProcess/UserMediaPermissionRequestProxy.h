@@ -31,6 +31,10 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#include "MediaPermissionUtilities.h"
+#endif
+
 namespace WebCore {
 class SecurityOrigin;
 }
@@ -41,13 +45,22 @@ class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest>, public CanMakeWeakPtr<UserMediaPermissionRequestProxy> {
 public:
-    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&&, Ref<WebCore::SecurityOrigin>&&, Vector<WebCore::CaptureDevice>&&, Vector<WebCore::CaptureDevice>&&, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&& = { });
+    enum class Kind : uint8_t { UserMedia, SpeechRecognition };
+
+    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&&, Ref<WebCore::SecurityOrigin>&&, Vector<WebCore::CaptureDevice>&&, Vector<WebCore::CaptureDevice>&&, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&& = { }, Kind = Kind::UserMedia);
 
     ~UserMediaPermissionRequestProxy();
 
     void allow(const String& audioDeviceUID, const String& videoDeviceUID);
     void allow();
     void promptForGetUserMedia();
+
+    Kind kind() const { return m_kind; }
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    using PromptResultHandler = CompletionHandler<void(MediaPermissionPromptResult&&)>;
+    void showCapturePromptWithoutDeciding(MediaPermissionPromptCustomization&&, PromptResultHandler&&);
+#endif
 
     enum class UserMediaDisplayCapturePromptType { Window, Screen, UserChoose };
     virtual void promptForGetDisplayMedia(UserMediaDisplayCapturePromptType);
@@ -106,11 +119,15 @@ public:
     Function<void()> beforeStartingCaptureCallback() { return std::exchange(m_beforeStartingCaptureCallback, { }); }
 
 protected:
-    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier mainFrameID, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&);
+    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier mainFrameID, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&, Kind);
 
     UserMediaPermissionRequestManagerProxy* LEGACY_NODELETE manager() const;
 
 private:
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    void showCapturePrompt(MediaPermissionPromptCustomization&&, PromptResultHandler&&);
+#endif
+
     WeakPtr<UserMediaPermissionRequestManagerProxy> m_manager;
     Markable<WebCore::UserMediaRequestIdentifier> m_userMediaID;
     WebCore::FrameIdentifier m_mainFrameID;
@@ -124,6 +141,11 @@ private:
     WebCore::MediaDeviceHashSalts m_deviceIdentifierHashSalts;
     CompletionHandler<void(bool)> m_decisionCompletionHandler;
     Function<void()> m_beforeStartingCaptureCallback;
+    const Kind m_kind;
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    MediaPermissionPromptDismisser m_promptDismisser;
+    bool m_isShowingPrompt { false };
+#endif
 };
 
 String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason);

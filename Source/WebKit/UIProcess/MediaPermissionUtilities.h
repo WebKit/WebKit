@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include "MediaPermissionPromptCustomization.h"
 #include <WebCore/SecurityOriginData.h>
-#include <optional>
 #include <wtf/CompletionHandler.h>
-#include <wtf/RefCounted.h>
+#include <wtf/Function.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
@@ -75,11 +75,7 @@ RetainPtr<NSString> applicationVisibleName();
 struct PermissionPromptRequest {
     MediaPermissionReason reason;
     WebCore::SecurityOriginData origin;
-};
-
-struct MediaPermissionPromptResult {
-    bool granted { false };
-    bool wasAnswered { false };
+    MediaPermissionPromptCustomization customization;
 };
 
 void alertForPermission(WebPageProxy&, PermissionPromptRequest&&, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
@@ -90,26 +86,8 @@ MediaPermissionResult checkAVCaptureAccessForType(MediaPermissionType);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-// Lets an API test answer the capture permission prompt.
-class MediaPermissionPromptForTesting : public RefCounted<MediaPermissionPromptForTesting> {
-public:
-    static Ref<MediaPermissionPromptForTesting> create(String&& title, Vector<String>&& buttonTitles, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
-
-    const String& title() const LIFETIME_BOUND { return m_title; }
-    const Vector<String>& buttonTitles() const LIFETIME_BOUND { return m_buttonTitles; }
-
-    // No button means the prompt closed without an answer.
-    void respond(std::optional<size_t> buttonIndex);
-
-private:
-    MediaPermissionPromptForTesting(String&& title, Vector<String>&& buttonTitles, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
-
-    String m_title;
-    Vector<String> m_buttonTitles;
-    CompletionHandler<void(MediaPermissionPromptResult&&)> m_completionHandler;
-};
-
-void alertForPermissionForTesting(WebPageProxy&, PermissionPromptRequest&&, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
+using MediaPermissionPromptDismisser = Function<void()>;
+MediaPermissionPromptDismisser alertForPermissionForTesting(WebPageProxy&, PermissionPromptRequest&&, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
 #endif
 
 #if HAVE(SPEECHRECOGNIZER)

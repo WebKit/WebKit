@@ -34,13 +34,13 @@ namespace WebKit {
 using namespace WebCore;
 
 #if !PLATFORM(COCOA)
-Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestProxy::create(UserMediaPermissionRequestManagerProxy& manager, std::optional<WebCore::UserMediaRequestIdentifier> userMediaID, WebCore::FrameIdentifier mainFrameID, FrameInfoData&& frameInfo, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
+Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestProxy::create(UserMediaPermissionRequestManagerProxy& manager, std::optional<WebCore::UserMediaRequestIdentifier> userMediaID, WebCore::FrameIdentifier mainFrameID, FrameInfoData&& frameInfo, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler, Kind kind)
 {
-    return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, WTF::move(frameInfo), WTF::move(userMediaDocumentOrigin), WTF::move(topLevelDocumentOrigin), WTF::move(audioDevices), WTF::move(videoDevices), WTF::move(request), WTF::move(decisionCompletionHandler)));
+    return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, WTF::move(frameInfo), WTF::move(userMediaDocumentOrigin), WTF::move(topLevelDocumentOrigin), WTF::move(audioDevices), WTF::move(videoDevices), WTF::move(request), WTF::move(decisionCompletionHandler), kind));
 }
 #endif
 
-UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, std::optional<UserMediaRequestIdentifier> userMediaID, FrameIdentifier mainFrameID, FrameInfoData&& frameInfo, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
+UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, std::optional<UserMediaRequestIdentifier> userMediaID, FrameIdentifier mainFrameID, FrameInfoData&& frameInfo, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler, Kind kind)
     : m_manager(manager)
     , m_userMediaID(userMediaID)
     , m_mainFrameID(mainFrameID)
@@ -51,6 +51,7 @@ UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermis
     , m_eligibleAudioDevices(WTF::move(audioDevices))
     , m_request(WTF::move(request))
     , m_decisionCompletionHandler(WTF::move(decisionCompletionHandler))
+    , m_kind(kind)
 {
 }
 
@@ -119,6 +120,11 @@ void UserMediaPermissionRequestProxy::allow()
     if (!manager)
         return;
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    if (auto dismissPrompt = std::exchange(m_promptDismisser, nullptr))
+        dismissPrompt();
+#endif
+
     manager->grantRequest(*this);
     invalidate();
 }
@@ -135,6 +141,11 @@ void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
 
 void UserMediaPermissionRequestProxy::invalidate()
 {
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    if (auto dismissPrompt = std::exchange(m_promptDismisser, nullptr))
+        dismissPrompt();
+#endif
+
     RefPtr manager = std::exchange(m_manager, nullptr);
 #if ENABLE(MEDIA_STREAM)
     if (manager)
@@ -207,32 +218,67 @@ void UserMediaPermissionRequestProxy::promptForGetDisplayMedia(UserMediaDisplayC
 void UserMediaPermissionRequestProxy::promptForGetUserMedia()
 {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    RefPtr manager = m_manager.get();
-    ASSERT(manager);
-    if (!manager || !manager->page()) {
+    if (m_isShowingPrompt) {
+        RELEASE_LOG_ERROR(WebRTC, "UserMediaPermissionRequestProxy::promptForGetUserMedia: a prompt is already showing for this request");
+        ASSERT_NOT_REACHED();
         deny(UserMediaAccessDenialReason::OtherFailure);
         return;
     }
 
-    MediaPermissionReason reason = MediaPermissionReason::Camera;
-    if (requiresAudioCapture())
-        reason = requiresVideoCapture() ? MediaPermissionReason::CameraAndMicrophone : MediaPermissionReason::Microphone;
-
-    CompletionHandler<void(MediaPermissionPromptResult&&)> completionHandler = [this, protectedThis = Ref { *this }](MediaPermissionPromptResult&& result) {
+    showCapturePrompt({ }, [this, protectedThis = Ref { *this }](MediaPermissionPromptResult&& result) {
         if (!result.granted)
             deny(result.wasAnswered ? UserMediaAccessDenialReason::PermissionDenied : UserMediaAccessDenialReason::OtherFailure);
         else
             allow();
-    };
-
-    Ref page = *manager->page();
-    PermissionPromptRequest request { .reason = reason, .origin = topLevelDocumentSecurityOrigin().data() };
-    if (page->mediaPermissionPromptHandlerForTesting())
-        alertForPermissionForTesting(page, WTF::move(request), WTF::move(completionHandler));
-    else
-        alertForPermission(page, WTF::move(request), WTF::move(completionHandler));
+    });
 #endif
 }
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+
+void UserMediaPermissionRequestProxy::showCapturePromptWithoutDeciding(MediaPermissionPromptCustomization&& customization, PromptResultHandler&& completionHandler)
+{
+    showCapturePrompt(WTF::move(customization), WTF::move(completionHandler));
+}
+
+void UserMediaPermissionRequestProxy::showCapturePrompt(MediaPermissionPromptCustomization&& customization, PromptResultHandler&& completionHandler)
+{
+    RefPtr manager = m_manager;
+    if (!manager || !manager->page())
+        return completionHandler({ });
+
+    MediaPermissionReason reason = MediaPermissionReason::Camera;
+    if (m_kind == Kind::SpeechRecognition)
+        reason = MediaPermissionReason::SpeechRecognition;
+    else if (requiresAudioCapture())
+        reason = requiresVideoCapture() ? MediaPermissionReason::CameraAndMicrophone : MediaPermissionReason::Microphone;
+
+    Ref page = *manager->page();
+
+    if (m_isShowingPrompt) {
+        RELEASE_LOG_ERROR(WebRTC, "UserMediaPermissionRequestProxy::showCapturePrompt: a prompt is already showing for this request");
+        return completionHandler({ });
+    }
+    m_isShowingPrompt = true;
+
+    PermissionPromptRequest request { .reason = reason, .origin = topLevelDocumentSecurityOrigin().data(), .customization = WTF::move(customization) };
+    CompletionHandler<void(MediaPermissionPromptResult&&)> promptCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](MediaPermissionPromptResult&& result) mutable {
+        m_isShowingPrompt = false;
+        m_promptDismisser = nullptr;
+        completionHandler(WTF::move(result));
+    };
+
+    if (page->mediaPermissionPromptHandlerForTesting()) {
+        auto dismissPrompt = alertForPermissionForTesting(page, WTF::move(request), WTF::move(promptCompletionHandler));
+        if (m_isShowingPrompt)
+            m_promptDismisser = WTF::move(dismissPrompt);
+        return;
+    }
+
+    alertForPermission(page, WTF::move(request), WTF::move(promptCompletionHandler));
+}
+
+#endif
 
 void UserMediaPermissionRequestProxy::doDefaultAction()
 {
