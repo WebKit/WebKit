@@ -47,6 +47,7 @@
 #import "WebFrameInternal.h"
 #import <WebCore/BackForwardCache.h>
 #import <WebCore/CachedImage.h>
+#import <WebCore/DefaultSizing.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/WebCoreThreadRun.h>
 #endif
@@ -158,7 +159,7 @@
         return nullptr;
     
     Ref image = *cachedImage->image();
-    auto nativeImage = image->nativeImage(WebCore::ConcreteObjectSize::fixed(image->size()));
+    auto nativeImage = image->nativeImage(WebCore::DefaultSizing { }.resolve(image->naturalDimensions()));
     if (!nativeImage)
         return nullptr;
 

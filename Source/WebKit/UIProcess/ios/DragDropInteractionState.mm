@@ -29,9 +29,9 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
 
 #import "Logging.h"
+#import <WebCore/BitmapImage.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/DragItem.h>
-#import <WebCore/Image.h>
 #import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/NativeImage.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -111,7 +111,7 @@ static RetainPtr<UITargetedDragPreview> createTargetedDragPreview(UIImage *image
     return adoptNS([[UITargetedDragPreview alloc] initWithView:imageView.get() parameters:parameters.get() target:target.get()]);
 }
 
-static RetainPtr<UIImage> uiImageForImage(Image* image)
+static RetainPtr<UIImage> uiImageForImage(BitmapImage* image)
 {
     if (!image)
         return nullptr;
