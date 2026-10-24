@@ -69,7 +69,7 @@ public:
     void strongRef() const
     {
         Locker locker { m_lock };
-        ASSERT_WITH_SECURITY_IMPLICATION(m_object);
+        // This is allowed during destruction (m_object is null) as long as the ref is balanced by a deref before the destructor returns.
         ++m_strongReferenceCount;
     }
 
@@ -79,10 +79,13 @@ public:
         SUPPRESS_UNCOUNTED_LOCAL T* object;
         {
             Locker locker { m_lock };
-            ASSERT_WITH_SECURITY_IMPLICATION(m_object);
             if (--m_strongReferenceCount) [[likely]]
                 return;
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_object);
             object = static_cast<T*>(std::exchange(m_object, nullptr));
+            // Like RefCounted, keep the strong count at 1 during destruction so that a balanced ref()/deref()
+            // in the destructor doesn't hit the zero transition again. deleteObject resets it to 0.
+            m_strongReferenceCount = 1;
             // We need to take a weak ref so `this` survives until the `delete object` below.
             // This comes up when destructors try to eagerly remove themselves from WeakHashSets.
             // e.g.
@@ -100,6 +103,8 @@ public:
             {
                 // We retained ourselves above.
                 Locker locker { m_lock };
+                RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_strongReferenceCount == 1);
+                m_strongReferenceCount = 0;
                 hasOtherWeakRefs = --m_weakReferenceCount;
                 // release the lock here so we don't do it in Locker's destructor after we've already called delete.
             }
@@ -326,8 +331,6 @@ public:
         bool didRefStrongOnly = m_bits.transaction([&](uintptr_t& bits) {
             if (!isStrongOnly(bits))
                 return false;
-            // FIXME: Add support for ref()/deref() during destruction like we support for other RefCounted types.
-            ASSERT(!(bits & destructionStartedFlag));
             bits += refIncrement;
             return true;
         }, std::memory_order_relaxed);
@@ -339,20 +342,23 @@ public:
 
     void deref() const
     {
-        uintptr_t newStrongOnlyRefCount = 0;
+        bool shouldDelete = false;
         bool didDerefStrongOnly = m_bits.transaction([&](uintptr_t& bits) {
             if (!isStrongOnly(bits))
                 return false;
-            // FIXME: Add support for ref()/deref() during destruction like we support for other RefCounted types.
-            ASSERT(!(bits & destructionStartedFlag));
+            if ((bits & ~(destructionStartedFlag | strongOnlyFlag)) == refIncrement && !(bits & destructionStartedFlag)) {
+                // Like RefCounted, keep the count at 1 during destruction so that a balanced ref()/deref()
+                // in the destructor doesn't hit the zero transition again.
+                bits |= destructionStartedFlag;
+                shouldDelete = true;
+                return true;
+            }
             bits -= refIncrement;
-            newStrongOnlyRefCount = bits;
             return true;
         }, std::memory_order_release);
         if (didDerefStrongOnly) {
-            if (newStrongOnlyRefCount == strongOnlyFlag) {
+            if (shouldDelete) {
                 std::atomic_thread_fence(std::memory_order_acquire);
-                ASSERT(m_bits.exchangeOr(destructionStartedFlag) == newStrongOnlyRefCount);
                 SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE auto deleteObject = [this] {
                     delete static_cast<const T*>(this);
                 };
@@ -378,10 +384,7 @@ public:
     {
         uintptr_t bits = this->bits();
         if (isStrongOnly(bits)) {
-            // FIXME: Add support for ref()/deref() during destruction like we support for other RefCounted types.
-            ASSERT(!(bits & destructionStartedFlag));
-            // Technically, this bit-and isn't needed but it's included for clarity since the compiler will elide it anyway.
-            return (bits & ~strongOnlyFlag) / refIncrement;
+            return (bits & ~(strongOnlyFlag | destructionStartedFlag)) / refIncrement;
         }
 
         return std::bit_cast<ThreadSafeWeakPtrControlBlock*>(bits)->refCount();
