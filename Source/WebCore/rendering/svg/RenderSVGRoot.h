@@ -54,7 +54,6 @@ public:
     bool hasIntrinsicAspectRatio() const final;
 
     bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
-    bool didTransformToRootUpdate() const { return m_didTransformToRootUpdate; }
     bool isInLayout() const { return m_inLayout; }
 
     IntSize containerSize() const { return m_containerSize; }
@@ -133,7 +132,6 @@ private:
     bool canHaveChildren() const final { return true; }
 
     bool m_inLayout { false };
-    bool m_didTransformToRootUpdate { false };
     bool m_isLayoutSizeChanged { false };
     mutable bool m_transformDependentBoundingBoxesDirty { false };
 

@@ -39,7 +39,6 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"
-#include "RenderSVGTransformableContainer.h"
 #include "RenderSVGViewportContainer.h"
 #include "SVGRenderSupport.h"
 
@@ -56,7 +55,6 @@ SVGContainerLayout::SVGContainerLayout(RenderLayerModelObject& container)
 void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
 {
     bool layoutSizeChanged = layoutSizeOfNearestViewportChanged();
-    bool transformChanged = transformToRootChanged(m_container.ptr());
 
     m_positionedChildren.clear();
     for (CheckedRef child : childrenOfType<RenderObject>(m_container)) {
@@ -65,13 +63,6 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
 
         bool needsLayout = containerNeedsLayout;
         bool childEverHadLayout = child->everHadLayout();
-
-        if (transformChanged) {
-            // If the transform changed we need to update the text metrics (note: this also happens for layoutSizeChanged=true).
-            if (auto* text = dynamicDowncast<RenderSVGText>(child))
-                text->setNeedsTextMetricsUpdate();
-            needsLayout = true;
-        }
 
         if (layoutSizeChanged) {
             if (child->isAnonymous()) {
@@ -231,23 +222,6 @@ bool SVGContainerLayout::layoutSizeOfNearestViewportChanged() const
 
     if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(ancestor))
         return svgRoot->isLayoutSizeChanged();
-
-    return false;
-}
-
-bool SVGContainerLayout::transformToRootChanged(const RenderObject* ancestor)
-{
-    while (ancestor) {
-        if (auto* container = dynamicDowncast<RenderSVGTransformableContainer>(*ancestor))
-            return container->didTransformToRootUpdate();
-
-        if (auto* container = dynamicDowncast<RenderSVGViewportContainer>(*ancestor))
-            return container->didTransformToRootUpdate();
-
-        if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(*ancestor))
-            return svgRoot->didTransformToRootUpdate();
-        ancestor = ancestor->parent();
-    }
 
     return false;
 }

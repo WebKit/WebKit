@@ -76,9 +76,7 @@ void RenderSVGContainer::layout()
         ASSERT(!m_isLayoutSizeChanged);
         SetForScope trackLayoutSizeChanges(m_isLayoutSizeChanged, updateLayoutSizeIfNeeded());
 
-        ASSERT(!m_didTransformToRootUpdate);
         SVGTransformLayoutScope transformScope(*this);
-        SetForScope trackTransformChanges(m_didTransformToRootUpdate, transformScope.layerTransformChanged() || SVGContainerLayout::transformToRootChanged(parent()));
         layoutChildren();
     }
 
