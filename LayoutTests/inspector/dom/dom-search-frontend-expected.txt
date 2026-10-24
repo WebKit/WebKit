@@ -1,5 +1,6 @@
 Tests that WI.DOMManager.performSearch reports each DOM match once, with and without site isolation.
 
+This text mentions .order-needle before the element that matches it as a selector.
 
 
 == Running test suite: DOM.Search.Frontend
@@ -14,6 +15,22 @@ PASS: Case-insensitive search should find both matches.
 
 -- Running test case: DOM.Search.Frontend.NoResults
 PASS: Should find nothing.
+
+-- Running test case: DOM.Search.Frontend.Root
+PASS: Should find one match per document.
+PASS: Every match should be under the root.
+dom-search-frontend.html owningTarget=none
+dom-search-frontend-iframe.html owningTarget=none
+
+-- Running test case: DOM.Search.Frontend.RootKeepsPageTargetOrder
+PASS: Should find the element and the text node.
+element span
+text node
+
+-- Running test case: DOM.Search.Frontend.IndependentOwners
+PASS: The replaced search should resolve to null.
+PASS: The search of the other owner should find both matches.
+PASS: The newer search should find both matches.
 
 -- Running test case: DOM.Search.Frontend.Superseded
 PASS: The replaced search should resolve to null.

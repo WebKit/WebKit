@@ -44,6 +44,7 @@
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKHitTestResult.h>
 #import <WebKit/WKJSHandle.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -90,6 +91,8 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/WebAVPlayerLayer.h>
 #import <WebKit/_WKHitTestResult.h>
+#import <WebKit/_WKInspector.h>
+#import <WebKit/_WKInspectorPrivateForTesting.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 
@@ -2941,6 +2944,147 @@ TEST(SiteIsolation, TextSearchInSameSiteIframeNestedInCrossOriginIframeTargetsIf
     ASSERT_EQ(1UL, [iframeTargets count]);
     EXPECT_TRUE([[targetsFromText firstObject] isSameElement:[iframeTargets firstObject]]);
 }
+
+#if PLATFORM(MAC)
+
+// The scripts below run in the Web Inspector frontend with the Elements tab showing. They go through the ContentBrowser
+// methods that the find banner calls.
+
+// Starts a find in the DOM tree and stores the number of results once the view reports it.
+static NSString * const startElementsTabFindScript = @"(() => {"
+    "    let contentBrowser = WI.tabBrowser.selectedTabContentView.contentBrowser;"
+    "    let view = contentBrowser.currentContentView;"
+    "    if (!(view instanceof WI.DOMTreeContentView))"
+    "        return false;"
+    "    window.elementsTabFindCount = null;"
+    "    view.awaitEvent(WI.ContentView.Event.NumberOfSearchResultsDidChange, window).then(() => {"
+    "        window.elementsTabFindCount = view.numberOfSearchResults;"
+    "    });"
+    "    contentBrowser.findBannerPerformSearch(null, ['elements', 'find', 'needle'].join('-'));"
+    "    return true;"
+    "})()";
+
+// Presses Next once per result, then Previous twice, which wraps from the first result to the last. Describes the
+// selected tree element after each press.
+static NSString * const stepThroughElementsTabFindResultsScript = @"(() => {"
+    "    let contentBrowser = WI.tabBrowser.selectedTabContentView.contentBrowser;"
+    "    let view = contentBrowser.currentContentView;"
+    "    let findBanner = {showing: true};"
+    "    let describeSelection = () => {"
+    "        let treeElement = view.domTreeOutline.selectedTreeElement;"
+    "        let node = treeElement?.representedObject;"
+    "        let description = node?.getAttribute?.('id') || 'no element';"
+    "        if (node?.owningTarget)"
+    "            description += ' in frame target';"
+    "        if (treeElement?.title?.querySelector?.('.' + WI.DOMTreeElement.SearchHighlightStyleClassName))"
+    "            description += ', highlighted';"
+    "        return description;"
+    "    };"
+    "    let steps = [];"
+    "    for (let i = 0; i < view.numberOfSearchResults; ++i) {"
+    "        contentBrowser.findBannerRevealNextResult(findBanner);"
+    "        steps.push(describeSelection());"
+    "    }"
+    "    for (let i = 0; i < 2; ++i) {"
+    "        contentBrowser.findBannerRevealPreviousResult(findBanner);"
+    "        steps.push('previous: ' + describeSelection());"
+    "    }"
+    "    return steps.join('; ');"
+    "})()";
+
+// Clears the find. Returns whether the count, the highlights and the search in WI.DOMManager are all gone.
+static NSString * const clearElementsTabFindScript = @"(() => {"
+    "    let contentBrowser = WI.tabBrowser.selectedTabContentView.contentBrowser;"
+    "    let view = contentBrowser.currentContentView;"
+    "    contentBrowser.findBannerSearchCleared(null);"
+    "    return view.numberOfSearchResults === null"
+    "        && !view.domTreeOutline.element.querySelector('.' + WI.DOMTreeElement.SearchHighlightStyleClassName)"
+    "        && !WI.domManager._activeSearches.has(view);"
+    "})()";
+
+// Loads a page with a match in the main frame and one in a cross-origin iframe, then runs the Elements tab's find.
+static RetainPtr<NSDictionary> elementsTabFindResults(bool siteIsolationEnabled)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<div id='main' data-find='elements-find-needle'></div><div><div><iframe src='https://webkit.org/subframe'></iframe></div></div>"_s } },
+        { "/subframe"_s, { "<p id='frame' data-find='elements-find-needle'></p>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().preferences._developerExtrasEnabled = YES;
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600), siteIsolationEnabled);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [[webView _inspector] show];
+    RetainPtr inspectorWebView = [[webView _inspector] inspectorWebView];
+    EXPECT_NOT_NULL(inspectorWebView.get());
+    if (!inspectorWebView)
+        return nil;
+
+    auto evaluate = [&](NSString *script) {
+        return [inspectorWebView objectByEvaluatingJavaScript:script];
+    };
+    auto waitForScript = [&](NSString *script, size_t maxTries) {
+        bool result = Util::waitFor([&] {
+            return [evaluate(script) boolValue];
+        }, maxTries);
+        EXPECT_TRUE(result) << script.UTF8String;
+        return result;
+    };
+
+    RetainPtr results = adoptNS([NSMutableDictionary new]);
+    auto findAndStep = [&] {
+        // The unminified frontend of a Debug build takes a few seconds to load. With Site Isolation, the iframe's
+        // document comes from its own frame target.
+        NSString *frontendReadyScript = siteIsolationEnabled
+            ? @"!!window.InspectorFrontendAPI?._loaded && WI.targets.some((target) => target instanceof WI.FrameTarget && WI.domManager.frameTargetDocumentForTarget(target)?.documentURL?.includes('webkit.org'))"
+            : @"!!window.InspectorFrontendAPI?._loaded";
+        if (!waitForScript(frontendReadyScript, 150))
+            return;
+
+        evaluate(@"WI.showElementsTab(); true");
+        if (!waitForScript(@"!!WI.tabBrowser.selectedTabContentView?.contentBrowser?.currentContentView?.domTreeOutline?.rootDOMNode && !WI._messagesToDispatch.length", 50))
+            return;
+
+        // The DOM tree has not loaded the elements around the iframe, so with Site Isolation the iframe's document
+        // is not in the page's tree yet.
+        results.get()[@"frameDocumentInPageTreeBeforeSearch"] = evaluate(@"WI.targets.some((target) => target instanceof WI.FrameTarget && !!WI.domManager.frameTargetDocumentForTarget(target)?.parentNode)");
+
+        if (![evaluate(startElementsTabFindScript) boolValue] || !waitForScript(@"window.elementsTabFindCount !== null", 50))
+            return;
+
+        results.get()[@"count"] = evaluate(@"window.elementsTabFindCount");
+        results.get()[@"steps"] = evaluate(stepThroughElementsTabFindResultsScript);
+        results.get()[@"cleared"] = evaluate(clearElementsTabFindScript);
+    };
+    findAndStep();
+
+    // The Elements tab saves the selected node's path and selects it again in the next run.
+    evaluate(@"if (window.WI?.Setting) new WI.Setting('last-selected-node-path', null).reset(); true");
+    [[webView _inspector] close];
+    return results;
+}
+
+TEST(SiteIsolation, WebInspectorElementsTabFindSearchesCrossOriginIframe)
+{
+    RetainPtr results = elementsTabFindResults(true);
+    EXPECT_FALSE([results.get()[@"frameDocumentInPageTreeBeforeSearch"] boolValue]);
+    EXPECT_EQ([results.get()[@"count"] intValue], 2);
+    EXPECT_WK_STREQ("main, highlighted; frame in frame target, highlighted; previous: main, highlighted; previous: frame in frame target, highlighted", (NSString *)results.get()[@"steps"] ?: @"");
+    EXPECT_TRUE([results.get()[@"cleared"] boolValue]);
+}
+
+TEST(SiteIsolation, WebInspectorElementsTabFindWithSiteIsolationDisabled)
+{
+    // The iframe is in the page's process, so the page target finds both matches.
+    RetainPtr results = elementsTabFindResults(false);
+    EXPECT_EQ([results.get()[@"count"] intValue], 2);
+    EXPECT_WK_STREQ("main, highlighted; frame, highlighted; previous: main, highlighted; previous: frame, highlighted", (NSString *)results.get()[@"steps"] ?: @"");
+    EXPECT_TRUE([results.get()[@"cleared"] boolValue]);
+}
+
+#endif // PLATFORM(MAC)
 
 #if PLATFORM(MAC) && ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
