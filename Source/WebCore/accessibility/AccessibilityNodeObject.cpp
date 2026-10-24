@@ -114,7 +114,6 @@
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
-#include "RenderListBox.h"
 #include "RenderListItem.h"
 #include "RenderListOutsideMarker.h"
 #include "RenderObjectInlines.h"
@@ -969,15 +968,6 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::visibleChildr
 {
     // Only listboxes are asked for their visible children.
     AccessibilityChildrenVector result;
-    if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(renderer())) {
-        const auto& children = unignoredChildren();
-        for (size_t i = 0; i < children.size(); i++) {
-            if (renderListBox->listIndexIsVisible(i))
-                result.append(children[i]);
-        }
-        return result;
-    }
-
     if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && !selectElement->isDropdownBox()) {
         CheckedPtr selectBox = dynamicDowncast<RenderBox>(renderer());
         if (!selectBox)
@@ -1195,7 +1185,8 @@ RefPtr<HTMLOptGroupElement> AccessibilityNodeObject::optGroupForLabel() const
     RefPtr element = this->element();
     RefPtr optGroup = element ? HTMLOptGroupElement::optGroupForLabel(*element) : nullptr;
     RefPtr select = optGroup ? optGroup->ownerSelectElement() : nullptr;
-    if (!select || !select->optionsAreRenderedWithBaseAppearance())
+    // The label is rendered wherever the options are: in a list box, or in a picker with base appearance.
+    if (!select || (select->isDropdownBox() && !select->usesBaseAppearancePicker()))
         return nullptr;
     return optGroup;
 }

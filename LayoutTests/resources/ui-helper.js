@@ -1048,7 +1048,7 @@ window.UIHelper = class UIHelper {
         if (!this.isWebKit2())
             return Promise.resolve();
 
-        if (internals.isUsingUISideCompositing() && (!scroller || scroller.nodeName != "SELECT")) {
+        if (internals.isUsingUISideCompositing()) {
             var scrollingNodeID = internalFunctions.scrollingNodeIDForNode(scroller);
             return new Promise(resolve => {
                 testRunner.runUIScript(`(function() {

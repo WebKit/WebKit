@@ -87,8 +87,8 @@ if (window.accessibilityController) {
         window.axCherryLabel = axLabelled.ariaLabelledByElementAtIndex(0);
         output += expect("axCherryLabel?.domIdentifier", "'cherry-label'");
         document.getElementById("labelling").classList.remove("base");
-        await waitFor(() => !axLabelled.ariaLabelledByElementAtIndex(0)?.isEqual(axCherryLabel));
-        output += expect("axLabelled.ariaLabelledByElementAtIndex(0)?.domIdentifier", "'cherry-label'");
+        // The content of the options is rendered with either appearance, so the relation does not need to be rebuilt.
+        output += await expectAsync("axLabelled.ariaLabelledByElementAtIndex(0)?.domIdentifier", "'cherry-label'");
 
         document.getElementById("content").style.display = "none";
         debug(output);

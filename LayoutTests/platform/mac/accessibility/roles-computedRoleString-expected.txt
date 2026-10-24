@@ -60,7 +60,6 @@ PASS section[aria-labelledby] -> region.
 PASS select:not([multiple]) -> button.
 PASS select[multiple] -> listbox.
 PASS option -> option.
-PASS optgroup -> option.
 PASS option -> option.
 PASS option -> option.
 PASS sub -> subscript.

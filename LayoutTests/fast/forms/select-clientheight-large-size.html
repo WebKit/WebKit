@@ -12,8 +12,9 @@
         return getElemById(elemId).clientHeight;
     }
 
+    // Each row, the last one included, is as tall as the others.
     function multipleOfElement(elemId, multiple) {
-        return clientHeight(elemId) * multiple + (multiple - 1);
+        return clientHeight(elemId) * multiple;
     }
 
     function addSelect(id, numOptions)

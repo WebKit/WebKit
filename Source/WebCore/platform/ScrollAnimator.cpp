@@ -178,62 +178,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (processWheelEventForScrollSnap(wheelEvent))
         return false;
 
-    if (protect(scrollableArea())->hasSteppedScrolling())
-        return handleSteppedScrolling(wheelEvent);
-
     return m_scrollController.handleWheelEvent(wheelEvent);
-}
-
-// "Stepped scrolling" is only used by RenderListBox. It's special in that it has no rubberbanding, and scroll deltas respect Scrollbar::pixelStep().
-bool ScrollAnimator::handleSteppedScrolling(const PlatformWheelEvent& wheelEvent)
-{
-    CheckedRef scrollableArea = m_scrollableArea;
-#if ENABLE(KINETIC_SCROLLING)
-    if ((wheelEvent.phase() == PlatformWheelEventPhase::Ended && wheelEvent.momentumPhase() == PlatformWheelEventPhase::None) || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended) {
-        scrollableArea->scrollDidEnd();
-        return true;
-    }
-#endif
-
-    RefPtr horizontalScrollbar = scrollableArea->horizontalScrollbar();
-    RefPtr verticalScrollbar = scrollableArea->verticalScrollbar();
-
-    // Accept the event if we have a scrollbar in that direction and can still
-    // scroll any further.
-    float deltaX = horizontalScrollbar ? wheelEvent.deltaX() : 0;
-    float deltaY = verticalScrollbar ? wheelEvent.deltaY() : 0;
-
-    bool handled = false;
-
-    IntSize maxForwardScrollDelta = scrollableArea->maximumScrollPosition() - scrollableArea->scrollPosition();
-    IntSize maxBackwardScrollDelta = scrollableArea->scrollPosition() - scrollableArea->minimumScrollPosition();
-    if ((deltaX < 0 && maxForwardScrollDelta.width() > 0)
-        || (deltaX > 0 && maxBackwardScrollDelta.width() > 0)
-        || (deltaY < 0 && maxForwardScrollDelta.height() > 0)
-        || (deltaY > 0 && maxBackwardScrollDelta.height() > 0)) {
-        handled = true;
-
-        EnumSet<ScrollBehavior> behavior = { ScrollBehavior::RespectScrollSnap };
-        if (wheelEvent.hasPreciseScrollingDeltas())
-            behavior.add(ScrollBehavior::NeverAnimate);
-
-        if (deltaY) {
-            if (wheelEvent.granularity() == PlatformWheelEventGranularity::ScrollByPageWheelEvent)
-                deltaY = std::copysign(Scrollbar::pageStepDelta(scrollableArea->visibleHeight()), deltaY);
-
-            auto scrollDelta = verticalScrollbar->pixelStep() * -deltaY; // Wheel deltas are reversed from scrolling direction.
-            singleAxisScroll(ScrollEventAxis::Vertical, scrollDelta, behavior);
-        }
-
-        if (deltaX) {
-            if (wheelEvent.granularity() == PlatformWheelEventGranularity::ScrollByPageWheelEvent)
-                deltaX = std::copysign(Scrollbar::pageStepDelta(scrollableArea->visibleWidth()), deltaX);
-
-            auto scrollDelta = horizontalScrollbar->pixelStep() * -deltaX; // Wheel deltas are reversed from scrolling direction.
-            singleAxisScroll(ScrollEventAxis::Horizontal, scrollDelta, behavior);
-        }
-    }
-    return handled;
 }
 
 void ScrollAnimator::stopKeyboardScrollAnimation()

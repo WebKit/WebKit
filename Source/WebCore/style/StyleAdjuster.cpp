@@ -47,6 +47,7 @@
 #include "HTMLLabelElement.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
+#include "HTMLSelectElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
@@ -622,6 +623,15 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
         if (is<HTMLTextAreaElement>(*element)) {
             style.setOverflowX(style.overflowX() == Overflow::Visible ? Overflow::Auto : style.overflowX());
             style.setOverflowY(style.overflowY() == Overflow::Visible ? Overflow::Auto : style.overflowY());
+        }
+
+        // The user agent style sheet makes a list box scroll vertically, because overflow-block does not
+        // apply from there. In a vertical writing mode the block axis is horizontal, so swap the axes.
+        if (RefPtr select = dynamicDowncast<HTMLSelectElement>(*element); select && !style.writingMode().isHorizontal()
+            && !select->isDropdownBox(&style) && !select->isBaseListBox(&style)
+            && style.overflowX() == Overflow::Hidden && style.overflowY() == Overflow::Scroll) {
+            style.setOverflowX(Overflow::Scroll);
+            style.setOverflowY(Overflow::Hidden);
         }
 
         if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element); input && input->isPasswordField())

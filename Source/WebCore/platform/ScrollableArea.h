@@ -79,7 +79,6 @@ class ScrollableArea : public CanMakeWeakPtr<ScrollableArea>, public AbstractCan
 public:
     virtual bool isScrollView() const { return false; }
     virtual bool isRenderLayer() const { return false; }
-    virtual bool isListBox() const { return false; }
 
     WEBCORE_EXPORT void beginKeyboardScroll(const KeyboardScroll& scrollData);
     WEBCORE_EXPORT void endKeyboardScroll(bool);
@@ -130,9 +129,6 @@ public:
     virtual void didUpdateScroll() { }
 #endif
     
-    // "Stepped scrolling" is used by RenderListBox; it implies that scrollbar->pixelStep() is not 1 and never has rubberbanding.
-    virtual bool hasSteppedScrolling() const { return false; }
-
     ScrollClamping scrollClamping() const { return m_scrollClamping; }
     void setScrollClamping(ScrollClamping clamping) { m_scrollClamping = clamping; }
 

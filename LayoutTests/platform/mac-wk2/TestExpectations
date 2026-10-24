@@ -2061,7 +2061,7 @@ webkit.org/b/297860 http/tests/site-isolation/edge-sampling-viewport-constrained
 
 webkit.org/b/297006 [ Debug ] http/tests/media/media-element-frame-destroyed-crash.html [ Skip ]
 
-webkit.org/b/267778 [ Release ] fast/forms/listbox-padding-clip-selected.html [ Pass ImageOnlyFailure ]
+webkit.org/b/267778 fast/forms/listbox-padding-clip-selected.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/298269 imported/w3c/web-platform-tests/html/anonymous-iframe/session-storage.tentative.https.window.html [ Pass Failure ]
 

@@ -30,8 +30,10 @@
                 
                 listbox = document.getElementById('listbox');
                 scroller = document.getElementById('scroller');
-                shouldBeCloseTo('scroller.scrollTop', 790, 10);
-                shouldBeCloseTo('listbox.scrollTop', 52, 2);
+                // Like any element, the option is aligned with the start of each scroll container: the list box can only scroll
+                // to its end, which leaves the option 3 rows down, and the scroller then brings that position to its top.
+                shouldBeCloseTo('scroller.scrollTop', 581, 10);
+                shouldBeCloseTo('listbox.scrollTop', 260, 2);
 
                 finishJSTest();
             }, 0);

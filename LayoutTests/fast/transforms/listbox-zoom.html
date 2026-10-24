@@ -5,17 +5,18 @@
 		testRunner.dumpAsText()
 
 	    function runTest() {
+		// The width is in CSS pixels, which the zoom scales, so it stays about the same. It changes a little
+		// because the scrollbar is not zoomed, and the text of the options does not scale exactly.
+		var widthWithoutZoom = window.getComputedStyle(document.getElementById("toZoom")).getPropertyCSSValue('width').getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		document.getElementById('toZoom').style.zoom = 2;
 
-		// Comparing the result to the expectation.
-		var expectedWidth = 55;
 		var realWidth = window.getComputedStyle(document.getElementById("toZoom")).getPropertyCSSValue('width').getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		var result = "";
-		if (Math.abs(expectedWidth - realWidth) > 10)
+		if (Math.abs(widthWithoutZoom - realWidth) > 15)
 		    result = "FAIL";
 		else
 		    result = "PASS";
-		result += " expected width: " + expectedWidth + " width +/-10 allowance.";
+		result += " width with the zoom is the width without it +/-15.";
 		document.getElementById('result').innerHTML = result;
 	    }
 	</script>
