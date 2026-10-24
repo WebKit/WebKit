@@ -1414,8 +1414,8 @@ bool RenderReplaced::replacedMinMaxLogicalHeightComputesAsNone(const auto& logic
         return true;
 
     if (isGridItem() && logicalHeight.isPercentOrCalculated()) {
-        if (auto gridAreaContentLogicalHeight = this->gridAreaContentLogicalHeight())
-            return !*gridAreaContentLogicalHeight;
+        if (auto overridingContainingBlockContentLogicalHeight = this->overridingContainingBlockContentLogicalHeight())
+            return !*overridingContainingBlockContentLogicalHeight;
     }
 
     // stretch with an indefinite containing block behaves as the initial
@@ -1513,7 +1513,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
         if (isOutOfFlowPositioned()) {
             PositionedLayoutConstraints constraints(*this, LogicalBoxAxis::Block);
             availableHeight = constraints.containingSize();
-        } else if (auto gridAreaLogicalHeight = isGridItem() ? this->gridAreaContentLogicalHeight() : std::nullopt; gridAreaLogicalHeight && *gridAreaLogicalHeight)
+        } else if (auto gridAreaLogicalHeight = isGridItem() ? this->overridingContainingBlockContentLogicalHeight() : std::nullopt; gridAreaLogicalHeight && *gridAreaLogicalHeight)
             availableHeight = gridAreaLogicalHeight->value();
         else if (stretchedHeight)
             availableHeight = stretchedHeight.value();
