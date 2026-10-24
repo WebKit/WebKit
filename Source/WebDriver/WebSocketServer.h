@@ -84,6 +84,7 @@ private:
 
 class WebSocketMessageHandler {
 public:
+    virtual ~WebSocketMessageHandler() = default;
 
 #if USE(SOUP)
     using Connection = GRefPtr<SoupWebsocketConnection>;
