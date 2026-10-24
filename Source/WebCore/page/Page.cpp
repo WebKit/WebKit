@@ -1038,6 +1038,21 @@ void Page::setHasInjectedUserScript()
         documentSyncClient().broadcastHasInjectedUserScriptToOtherProcesses(true);
 }
 
+void Page::setTopDocumentLastNavigationWasAppInitiated(bool lastNavigationWasAppInitiated)
+{
+    if (m_topDocumentSyncData->lastNavigationWasAppInitiated == lastNavigationWasAppInitiated)
+        return;
+
+    m_topDocumentSyncData->lastNavigationWasAppInitiated = lastNavigationWasAppInitiated;
+    if (settings().siteIsolationEnabled())
+        documentSyncClient().broadcastLastNavigationWasAppInitiatedToOtherProcesses(lastNavigationWasAppInitiated);
+}
+
+bool Page::topDocumentLastNavigationWasAppInitiated() const
+{
+    return m_topDocumentSyncData->lastNavigationWasAppInitiated;
+}
+
 void Page::updateTopDocumentSyncData(const DocumentSyncSerializationData& data)
 {
     switch (static_cast<DocumentSyncDataType>(data.value.index())) {
@@ -1047,6 +1062,7 @@ void Page::updateTopDocumentSyncData(const DocumentSyncSerializationData& data)
     case DocumentSyncDataType::HasInjectedUserScript:
     case DocumentSyncDataType::IsAutofocusProcessed:
     case DocumentSyncDataType::IsClosing:
+    case DocumentSyncDataType::LastNavigationWasAppInitiated:
     case DocumentSyncDataType::UserDidInteractWithPage:
         protect(m_topDocumentSyncData)->update(data);
         break;

@@ -57,6 +57,7 @@ class SyncedData(object):
     def __init__(self, name, underlying_type_namespace, underlying_type, options):
         self.conditional = None
         self.headers = None
+        self.default_value = None
         self.variant_index = None
 
         if options is not None:
@@ -66,6 +67,8 @@ class SyncedData(object):
                     self.conditional = option[12:]
                 elif option.startswith('Headers='):
                     self.headers = option[8:].split(",")
+                elif option.startswith('Default='):
+                    self.default_value = option[8:]
                 else:
                     raise Exception("Invalid option argument '%s' found" % option)
 
@@ -313,7 +316,8 @@ def generate_synched_data_header(prefix, variant_sorted_synched_datas, sync_data
         if data.conditional is not None:
             result.append('#if %s' % data.conditional)
         name = data.name[0].lower() + data.name[1:]
-        result.append('    %s %s { };' % (data.fully_qualified_type, name))
+        default_value = ' %s ' % data.default_value if data.default_value is not None else ' '
+        result.append('    %s %s {%s};' % (data.fully_qualified_type, name, default_value))
         if data.conditional is not None:
             result.append('#endif')
 

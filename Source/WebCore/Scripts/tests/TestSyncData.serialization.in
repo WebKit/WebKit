@@ -29,6 +29,7 @@ header: <WebCore/TestSyncData.h>
     URL mainFrameURLChange;
     bool isAutofocusProcessed;
     bool userDidInteractWithPage;
+    bool defaultsToTrue;
     StringifyThis anotherOne;
 #if ENABLE(DOM_AUDIO_SESSION)
     WebCore::DOMAudioSessionType audioSessionType;
@@ -40,7 +41,7 @@ header: <WebCore/TestSyncData.h>
 using WebCore::DOMAudioSessionType = bool;
 #endif
 
-using WebCore::TestSyncDataVariant = Variant<WebCore::DOMAudioSessionType, URL, bool, bool, StringifyThis, HashSet<URL>>;
+using WebCore::TestSyncDataVariant = Variant<WebCore::DOMAudioSessionType, URL, bool, bool, bool, StringifyThis, HashSet<URL>>;
 
 [CustomHeader] struct WebCore::TestSyncSerializationData {
     WebCore::TestSyncDataVariant value;

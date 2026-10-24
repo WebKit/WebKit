@@ -801,6 +801,13 @@ void Document::populateDocumentSyncDataForNewlyConstructedDocument(DocumentSyncD
         m_syncData->audioSessionState = DOMAudioSession::State::Inactive;
         break;
 #endif
+    case DocumentSyncDataType::LastNavigationWasAppInitiated:
+        // The frame's document loader is the one committing this document.
+        if (RefPtr frame = m_frame) {
+            if (RefPtr documentLoader = frame->loader().documentLoader())
+                m_syncData->lastNavigationWasAppInitiated = documentLoader->lastNavigationWasAppInitiated();
+        }
+        break;
     // The following either have default values that match a newly constructed document
     // or are populated other ways even on newly constructed documents.
     case DocumentSyncDataType::DocumentSecurityOrigin:

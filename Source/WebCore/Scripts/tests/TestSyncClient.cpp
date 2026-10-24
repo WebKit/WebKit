@@ -74,6 +74,16 @@ void TestSyncClient::broadcastUserDidInteractWithPageToOtherProcesses(bool&& dat
     broadcastTestSyncDataToOtherProcesses({ TestSyncDataVariant { WTF::InPlaceIndex<std::to_underlying(TestSyncDataType::UserDidInteractWithPage)>, WTF::move(data) } });
 }
 
+void TestSyncClient::broadcastDefaultsToTrueToOtherProcesses(const bool& data)
+{
+    broadcastTestSyncDataToOtherProcesses({ TestSyncDataVariant { WTF::InPlaceIndex<std::to_underlying(TestSyncDataType::DefaultsToTrue)>, data } });
+}
+
+void TestSyncClient::broadcastDefaultsToTrueToOtherProcesses(bool&& data)
+{
+    broadcastTestSyncDataToOtherProcesses({ TestSyncDataVariant { WTF::InPlaceIndex<std::to_underlying(TestSyncDataType::DefaultsToTrue)>, WTF::move(data) } });
+}
+
 void TestSyncClient::broadcastAnotherOneToOtherProcesses(const StringifyThis& data)
 {
     broadcastTestSyncDataToOtherProcesses({ TestSyncDataVariant { WTF::InPlaceIndex<std::to_underlying(TestSyncDataType::AnotherOne)>, data } });

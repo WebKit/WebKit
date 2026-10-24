@@ -55,6 +55,8 @@ public:
     WEBCORE_EXPORT void broadcastIsAutofocusProcessedToOtherProcesses(bool&&);
     WEBCORE_EXPORT void broadcastUserDidInteractWithPageToOtherProcesses(const bool&);
     WEBCORE_EXPORT void broadcastUserDidInteractWithPageToOtherProcesses(bool&&);
+    WEBCORE_EXPORT void broadcastDefaultsToTrueToOtherProcesses(const bool&);
+    WEBCORE_EXPORT void broadcastDefaultsToTrueToOtherProcesses(bool&&);
     WEBCORE_EXPORT void broadcastAnotherOneToOtherProcesses(const StringifyThis&);
     WEBCORE_EXPORT void broadcastAnotherOneToOtherProcesses(StringifyThis&&);
     WEBCORE_EXPORT void broadcastMultipleHeadersToOtherProcesses(const HashSet<URL>&);

@@ -66,6 +66,7 @@
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/NodeDocument.h>
+#include <WebCore/Page.h>
 #include <WebCore/PendingStreamState.h>
 #include <WebCore/PermissionsPolicy.h>
 #include <WebCore/PlatformStrategies.h>
@@ -146,12 +147,8 @@ void WebLoaderStrategy::deref() const
 void WebLoaderStrategy::loadResource(LocalFrame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
 {
     if (resource.type() != CachedResource::Type::MainResource || !frame.isMainFrame()) {
-        if (RefPtr localMainFrame = frame.localMainFrame()) {
-            if (RefPtr document = localMainFrame->document()) {
-                if (document && document->loader())
-                    request.setIsAppInitiated(document->loader()->lastNavigationWasAppInitiated());
-            }
-        }
+        if (RefPtr page = frame.page())
+            request.setIsAppInitiated(page->topDocumentLastNavigationWasAppInitiated());
     }
 
     SubresourceLoader::create(frame, resource, WTF::move(request), options, [this, protectedThis = Ref { *this }, referrerPolicy = options.referrerPolicy, completionHandler = WTF::move(completionHandler), resource = Ref { resource }, frame = Ref { frame }] (RefPtr<SubresourceLoader>&& loader) mutable {

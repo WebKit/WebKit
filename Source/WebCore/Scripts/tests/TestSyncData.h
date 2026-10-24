@@ -55,6 +55,7 @@ public:
     URL mainFrameURLChange { };
     bool isAutofocusProcessed { };
     bool userDidInteractWithPage { };
+    bool defaultsToTrue { true };
     StringifyThis anotherOne { };
 #if ENABLE(DOM_AUDIO_SESSION)
     WebCore::DOMAudioSessionType audioSessionType { };
@@ -65,6 +66,7 @@ private:
     TestSyncData() = default;
     WEBCORE_EXPORT TestSyncData(
         URL
+      , bool
       , bool
       , bool
       , StringifyThis
@@ -82,14 +84,16 @@ enum class TestSyncDataType : uint8_t {
     MainFrameURLChange = 1,
     IsAutofocusProcessed = 2,
     UserDidInteractWithPage = 3,
-    AnotherOne = 4,
-    MultipleHeaders = 5,
+    DefaultsToTrue = 4,
+    AnotherOne = 5,
+    MultipleHeaders = 6,
 };
 
 static const TestSyncDataType allTestSyncDataTypes[] = {
     TestSyncDataType::MainFrameURLChange
     , TestSyncDataType::IsAutofocusProcessed
     , TestSyncDataType::UserDidInteractWithPage
+    , TestSyncDataType::DefaultsToTrue
     , TestSyncDataType::AnotherOne
 #if ENABLE(DOM_AUDIO_SESSION)
     , TestSyncDataType::AudioSessionType
@@ -104,6 +108,7 @@ using DOMAudioSessionType = bool;
 using TestSyncDataVariant = Variant<
     WebCore::DOMAudioSessionType,
     URL,
+    bool,
     bool,
     bool,
     StringifyThis,

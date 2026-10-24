@@ -495,7 +495,7 @@ public:
     std::optional<ScriptExecutionContextIdentifier> resultingClientId() const { return m_resultingClientId; }
 
     bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
-    void setLastNavigationWasAppInitiated(bool lastNavigationWasAppInitiated) { m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated; }
+    WEBCORE_EXPORT void setLastNavigationWasAppInitiated(bool);
 
     ContentSecurityPolicy* contentSecurityPolicy() const { return m_contentSecurityPolicy.get(); }
     const std::optional<CrossOriginOpenerPolicy>& crossOriginOpenerPolicy() const LIFETIME_BOUND { return m_responseCOOP; }

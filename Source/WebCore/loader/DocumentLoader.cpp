@@ -1653,6 +1653,19 @@ void DocumentLoader::setNavigationID(NavigationIdentifier navigationID)
     m_navigationID = navigationID;
 }
 
+void DocumentLoader::setLastNavigationWasAppInitiated(bool lastNavigationWasAppInitiated)
+{
+    m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated;
+
+    // Keep the top document's synced state current so frames in other processes see the change.
+    RefPtr frame = m_frame;
+    if (!frame || !frame->isMainFrame() || frame->loader().documentLoader() != this)
+        return;
+
+    if (RefPtr page = frame->page())
+        page->setTopDocumentLastNavigationWasAppInitiated(lastNavigationWasAppInitiated);
+}
+
 void DocumentLoader::clearMainResourceLoader()
 {
     m_loadingMainResource = false;

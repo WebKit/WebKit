@@ -43,6 +43,9 @@ void TestSyncData::update(const TestSyncSerializationData& data)
     case TestSyncDataType::UserDidInteractWithPage:
         userDidInteractWithPage = std::get<std::to_underlying(TestSyncDataType::UserDidInteractWithPage)>(data.value);
         break;
+    case TestSyncDataType::DefaultsToTrue:
+        defaultsToTrue = std::get<std::to_underlying(TestSyncDataType::DefaultsToTrue)>(data.value);
+        break;
     case TestSyncDataType::AnotherOne:
         anotherOne = std::get<std::to_underlying(TestSyncDataType::AnotherOne)>(data.value);
         break;
@@ -63,6 +66,7 @@ TestSyncData::TestSyncData(
       URL mainFrameURLChange
     , bool isAutofocusProcessed
     , bool userDidInteractWithPage
+    , bool defaultsToTrue
     , StringifyThis anotherOne
 #if ENABLE(DOM_AUDIO_SESSION)
     , WebCore::DOMAudioSessionType audioSessionType
@@ -72,6 +76,7 @@ TestSyncData::TestSyncData(
     : mainFrameURLChange(mainFrameURLChange)
     , isAutofocusProcessed(isAutofocusProcessed)
     , userDidInteractWithPage(userDidInteractWithPage)
+    , defaultsToTrue(defaultsToTrue)
     , anotherOne(anotherOne)
 #if ENABLE(DOM_AUDIO_SESSION)
     , audioSessionType(audioSessionType)
@@ -87,6 +92,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const TestSyncData& data)
     ts.dumpProperty("mainFrameURLChange"_s, ValueOrEllipsis(data.mainFrameURLChange));
     ts.dumpProperty("isAutofocusProcessed"_s, ValueOrEllipsis(data.isAutofocusProcessed));
     ts.dumpProperty("userDidInteractWithPage"_s, ValueOrEllipsis(data.userDidInteractWithPage));
+    ts.dumpProperty("defaultsToTrue"_s, ValueOrEllipsis(data.defaultsToTrue));
     ts.dumpProperty("anotherOne"_s, ValueOrEllipsis(data.anotherOne));
 #if ENABLE(DOM_AUDIO_SESSION)
     ts.dumpProperty("audioSessionType"_s, ValueOrEllipsis(data.audioSessionType));
@@ -108,6 +114,9 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const TestSyncSerializationData
         break;
     case TestSyncDataType::UserDidInteractWithPage:
         ts.dumpProperty("userDidInteractWithPage"_s, ValueOrEllipsis(std::get<std::to_underlying(TestSyncDataType::UserDidInteractWithPage)>(data.value)));
+        break;
+    case TestSyncDataType::DefaultsToTrue:
+        ts.dumpProperty("defaultsToTrue"_s, ValueOrEllipsis(std::get<std::to_underlying(TestSyncDataType::DefaultsToTrue)>(data.value)));
         break;
     case TestSyncDataType::AnotherOne:
         ts.dumpProperty("anotherOne"_s, ValueOrEllipsis(std::get<std::to_underlying(TestSyncDataType::AnotherOne)>(data.value)));
