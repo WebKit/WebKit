@@ -16,6 +16,10 @@ overlay-region/full-page-scrolling.html [ Failure ]
 overlay-region/overlay-element.html [ Failure ]
 overlay-region/sticky.html [ Failure ]
 
+# Multichannel (>2 ch) Opus decoding requires visionOS 27.
+webkit.org/b/328460 http/wpt/webcodecs/audio-decoder-opus-multichannels.html [ Failure ]
+webkit.org/b/328460 webaudio/decode-audio-data-webm-opus-5.1.html [ Failure ]
+
 # -- The above has different, expected behavior on visionOS 27 than visionOS 26 --
 # -- New failure expectations below this point only!! --
 

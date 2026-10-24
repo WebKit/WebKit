@@ -2482,3 +2482,7 @@ webkit.org/b/285186 [ Sequoia Tahoe ] fast/webgpu/copy-external-image-image-bitm
 
 # Accelerated radial gradients produce premultiplied pixels with color greater than alpha.
 webkit.org/b/327400 fast/canvas/canvas-gradient-premultiplied-color-not-exceeding-alpha.html [ Failure ]
+
+# Multichannel (>2 ch) Opus decoding requires macOS 27.
+webkit.org/b/328460 [ Sequoia Tahoe ] http/wpt/webcodecs/audio-decoder-opus-multichannels.html [ Failure ]
+webkit.org/b/328460 [ Sequoia Tahoe ] webaudio/decode-audio-data-webm-opus-5.1.html [ Failure ]

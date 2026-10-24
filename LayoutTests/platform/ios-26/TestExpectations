@@ -10,6 +10,10 @@ platform/ios/media/media-element-does-not-eagerly-create-media-session-helper.ht
 # -- The below has different, expected behavior on iOS 27 than iOS 26 --
 # -- Please put new failure expectations at the bottom of the file. --
 
+# Multichannel (>2 ch) Opus decoding requires iOS 27.
+webkit.org/b/328460 http/wpt/webcodecs/audio-decoder-opus-multichannels.html [ Failure ]
+webkit.org/b/328460 webaudio/decode-audio-data-webm-opus-5.1.html [ Failure ]
+
 # -- The above has different, expected behavior on iOS 27 than iOS 26 --
 # -- New failure expectations below this point only!! --
 

@@ -1,0 +1,11 @@
+Test that decoding a 5.1 opus webm file succeeds
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Successfully decoded content
+PASS Decoding returned 6 channels.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

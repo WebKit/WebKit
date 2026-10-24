@@ -1427,6 +1427,13 @@
 #define HAVE_AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED 1
 #endif
 
+// Multichannel (>2 ch) Opus decoding in AudioToolbox's Opus decoder.
+// Compiled in by default starting with the 27 releases (AudioCodecs OPUS_DECODE_MULTICHANNEL=1).
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 270000) \
+    || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 270000)
+#define HAVE_OPUS_DECODE_MULTICHANNEL 1
+#endif
+
 #if PLATFORM(MAC) \
     || PLATFORM(MACCATALYST) || PLATFORM(IOS) || PLATFORM(VISION)
 #define HAVE_AVASSETWRITER_WITH_OPUS_SUPPORTED 1

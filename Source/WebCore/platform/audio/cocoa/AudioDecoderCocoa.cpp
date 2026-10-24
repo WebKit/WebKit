@@ -246,8 +246,13 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
     unsigned preSkip = 0;
     auto [codec, format] = *result;
     if (!format) {
+#if HAVE(OPUS_DECODE_MULTICHANNEL)
+        if (codec == kAudioFormatOpus && config.numberOfChannels > 2 && config.description.isEmpty())
+            return "Opus with more than 2 channels requires config description"_s;
+#else
         if (codec == kAudioFormatOpus && config.numberOfChannels > 2)
             return "Opus with more than 2 channels isn't supported"_s;
+#endif
 
         if (codec == kAudioFormatFLAC && config.description.isEmpty())
             return "Decoder config description for flac codec is mandatory"_s;
