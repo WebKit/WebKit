@@ -4,6 +4,9 @@ PASS idl_test validation
 PASS Partial interface XRRenderState: original interface defined
 PASS Partial interface XRRenderState: valid exposure set
 PASS Partial interface XRRenderState: member names are unique
+PASS Partial interface XRSession: original interface defined
+PASS Partial interface XRSession: valid exposure set
+PASS Partial interface XRSession: member names are unique
 PASS XRCompositionLayer interface: existence and properties of interface object
 PASS XRCompositionLayer interface object length
 PASS XRCompositionLayer interface object name
@@ -96,8 +99,6 @@ PASS XRWebGLSubImage interface: attribute colorTextureWidth
 PASS XRWebGLSubImage interface: attribute colorTextureHeight
 PASS XRWebGLSubImage interface: attribute depthStencilTextureWidth
 PASS XRWebGLSubImage interface: attribute depthStencilTextureHeight
-PASS XRWebGLSubImage interface: attribute motionVectorTextureWidth
-PASS XRWebGLSubImage interface: attribute motionVectorTextureHeight
 PASS XRWebGLBinding interface: existence and properties of interface object
 PASS XRWebGLBinding interface object length
 PASS XRWebGLBinding interface object name
@@ -130,5 +131,6 @@ PASS XRLayerEvent interface: existence and properties of interface prototype obj
 PASS XRLayerEvent interface: existence and properties of interface prototype object's "constructor" property
 PASS XRLayerEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS XRLayerEvent interface: attribute layer
+PASS XRSession interface: attribute maxRenderLayers
 PASS XRRenderState interface: attribute layers
 

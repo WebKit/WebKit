@@ -109,7 +109,8 @@ PASS Window interface: calling postMessage(any, optional WindowPostMessageOption
 PASS Window interface: window must inherit property "captureEvents()" with the proper type
 PASS Window interface: window must inherit property "releaseEvents()" with the proper type
 FAIL Window interface: window must inherit property "external" with the proper type assert_own_property: expected property "external" missing
-PASS Document interface: operation parseHTMLUnsafe((TrustedHTML or DOMString))
+PASS Document interface: operation parseHTMLUnsafe((TrustedHTML or DOMString), optional (ParseHTMLUnsafeOptions or TrustedHTMLParserOptions))
+FAIL Document interface: operation parseHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface object missing static operation expected property "parseHTML" missing
 PASS Document interface: attribute domain
 PASS Document interface: attribute referrer
 PASS Document interface: attribute cookie
@@ -145,8 +146,10 @@ PASS Document interface: attribute hidden
 PASS Document interface: attribute visibilityState
 PASS Document interface: attribute onreadystatechange
 PASS Document interface: attribute onvisibilitychange
-PASS Document interface: iframe.contentDocument must inherit property "parseHTMLUnsafe((TrustedHTML or DOMString))" with the proper type
-FAIL Document interface: calling parseHTMLUnsafe((TrustedHTML or DOMString)) on iframe.contentDocument with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parseHTMLUnsafe" missing
+PASS Document interface: iframe.contentDocument must inherit property "parseHTMLUnsafe((TrustedHTML or DOMString), optional (ParseHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+FAIL Document interface: calling parseHTMLUnsafe((TrustedHTML or DOMString), optional (ParseHTMLUnsafeOptions or TrustedHTMLParserOptions)) on iframe.contentDocument with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parseHTMLUnsafe" missing
+PASS Document interface: iframe.contentDocument must inherit property "parseHTML(DOMString, optional SetHTMLOptions)" with the proper type
+FAIL Document interface: calling parseHTML(DOMString, optional SetHTMLOptions) on iframe.contentDocument with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parseHTML" missing
 PASS Document interface: iframe.contentDocument must have own property "location"
 PASS Document interface: iframe.contentDocument must inherit property "domain" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "referrer" with the proper type
@@ -194,8 +197,10 @@ PASS Document interface: iframe.contentDocument must inherit property "hidden" w
 PASS Document interface: iframe.contentDocument must inherit property "visibilityState" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onreadystatechange" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onvisibilitychange" with the proper type
-PASS Document interface: new Document() must inherit property "parseHTMLUnsafe((TrustedHTML or DOMString))" with the proper type
-PASS Document interface: calling parseHTMLUnsafe((TrustedHTML or DOMString)) on new Document() with too few arguments must throw TypeError
+PASS Document interface: new Document() must inherit property "parseHTMLUnsafe((TrustedHTML or DOMString), optional (ParseHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Document interface: calling parseHTMLUnsafe((TrustedHTML or DOMString), optional (ParseHTMLUnsafeOptions or TrustedHTMLParserOptions)) on new Document() with too few arguments must throw TypeError
+PASS Document interface: new Document() must inherit property "parseHTML(DOMString, optional SetHTMLOptions)" with the proper type
+FAIL Document interface: calling parseHTML(DOMString, optional SetHTMLOptions) on new Document() with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parseHTML" missing
 PASS Document interface: new Document() must have own property "location"
 PASS Document interface: new Document() must inherit property "domain" with the proper type
 PASS Document interface: new Document() must inherit property "referrer" with the proper type
@@ -243,8 +248,10 @@ PASS Document interface: new Document() must inherit property "hidden" with the 
 PASS Document interface: new Document() must inherit property "visibilityState" with the proper type
 PASS Document interface: new Document() must inherit property "onreadystatechange" with the proper type
 PASS Document interface: new Document() must inherit property "onvisibilitychange" with the proper type
-PASS Document interface: documentWithHandlers must inherit property "parseHTMLUnsafe((TrustedHTML or DOMString))" with the proper type
-PASS Document interface: calling parseHTMLUnsafe((TrustedHTML or DOMString)) on documentWithHandlers with too few arguments must throw TypeError
+PASS Document interface: documentWithHandlers must inherit property "parseHTMLUnsafe((TrustedHTML or DOMString), optional (ParseHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Document interface: calling parseHTMLUnsafe((TrustedHTML or DOMString), optional (ParseHTMLUnsafeOptions or TrustedHTMLParserOptions)) on documentWithHandlers with too few arguments must throw TypeError
+PASS Document interface: documentWithHandlers must inherit property "parseHTML(DOMString, optional SetHTMLOptions)" with the proper type
+FAIL Document interface: calling parseHTML(DOMString, optional SetHTMLOptions) on documentWithHandlers with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parseHTML" missing
 PASS Document interface: documentWithHandlers must have own property "location"
 PASS Document interface: documentWithHandlers must inherit property "domain" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "referrer" with the proper type
