@@ -52,12 +52,14 @@
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 OBJC_CLASS WKWebInspectorUIProxyObjCAdapter;
+OBJC_CLASS WKInspectorAttachmentContainerView;
 OBJC_CLASS WKInspectorViewController;
 #elif PLATFORM(WIN)
 #include "WebView.h"
@@ -354,6 +356,8 @@ private:
     RetainPtr<WKInspectorViewController> m_inspectorViewController;
     RetainPtr<NSWindow> m_inspectorWindow;
     RetainPtr<WKWebInspectorUIProxyObjCAdapter> m_objCAdapter;
+    // The container is owned by the view hierarchy, and it retains the inspected view.
+    WeakObjCPtr<WKInspectorAttachmentContainerView> m_attachmentContainerView;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     RunLoop::Timer m_closeFrontendAfterInactivityTimer;
     String m_urlString;
