@@ -416,14 +416,14 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
         return BlockAvoidanceReason::ContentHasOrthogonalFlow;
     CheckedRef style = box.style();
     auto writingMode = box.writingMode();
-    // The block formatting context decides the inline size from lengths, percentages and calc() (BlockFormattingUtils::inlineSizeAndMargins);
-    // the box's own formatting context resolves the min-content, max-content and fit-content keywords with its intrinsic sizes. A replaced
-    // element's own formatting context takes its aspect ratio into account (CSS 2.2 §10.3.4).
+    // The block formatting context decides the inline size from lengths, percentages, calc() and stretch, the stretch-fit inline size
+    // (BlockFormattingUtils::inlineSizeAndMargins); the box's own formatting context resolves the min-content, max-content and fit-content
+    // keywords with its intrinsic sizes. A replaced element's own formatting context takes its aspect ratio into account (CSS 2.2 §10.3.4).
     // FIXME: The other sizing keywords, the keywords of a replaced element, calc-size(), the stretch block size, which reads the containing
     // block's renderer, and a preferred aspect ratio.
     auto isReplaced = box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot();
     auto isSupportedInlineSize = [&](auto& size) {
-        return (size.isSpecified() || (size.isIntrinsic() && !isReplaced)) && !size.isCalcSize();
+        return (size.isSpecified() || (size.isIntrinsicOrStretch() && !isReplaced)) && !size.isCalcSize();
     };
     auto isStretch = [](auto& size) {
         return size.isStretch();
@@ -498,15 +498,17 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     auto isAuto = [](auto& size) {
         return size.isAuto() && !size.isCalcSize();
     };
-    // Block sizes may also be min-content, max-content or fit-content, which are the automatic block size (css-sizing-3 §3.2). Min and max
-    // block sizes resolve those to the content's block size, which only an automatic block size reaches.
+    // Block sizes may also be min-content, max-content or fit-content, which are the automatic block size (css-sizing-3 §3.2), and stretch
+    // (css-sizing-4 §6.1). Min and max block sizes resolve the others to the content's block size, which only an automatic block size reaches.
+    // FIXME: -webkit-fill-available, which the render tree path resolves against the first definite block size up the containing block chain.
     auto isSupportedBlockSize = [&](auto& size, bool resolvesToContentBlockSize) {
-        return isSupportedSize(size) || (size.isIntrinsic() && !size.isCalcSize() && resolvesToContentBlockSize);
+        return isSupportedSize(size) || (size.isStretch() && !size.isFillAvailable() && !size.isCalcSize()) || (size.isIntrinsic() && !size.isCalcSize() && resolvesToContentBlockSize);
     };
     auto blockSizeIsAutomatic = isAuto(style->logicalHeight()) || (style->logicalHeight().isIntrinsic() && !style->logicalHeight().isCalcSize());
-    // Inline sizes may also be min-content, max-content or fit-content, from the inline sizes of the content (css-sizing-3 §3.2).
+    // Inline sizes may also be min-content, max-content or fit-content, from the inline sizes of the content (css-sizing-3 §3.2), and stretch
+    // or -webkit-fill-available, the stretch-fit inline size.
     auto isSupportedInlineSize = [&](auto& size) {
-        return isSupportedSize(size) || (size.isIntrinsic() && !size.isCalcSize());
+        return isSupportedSize(size) || (size.isIntrinsicOrStretch() && !size.isCalcSize());
     };
     if ((!isAuto(style->logicalWidth()) && !isSupportedInlineSize(style->logicalWidth()))
         || (!isAuto(style->logicalMinWidth()) && !isSupportedInlineSize(style->logicalMinWidth()))
