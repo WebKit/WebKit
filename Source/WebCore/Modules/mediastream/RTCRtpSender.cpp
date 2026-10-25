@@ -172,7 +172,9 @@ void RTCRtpSender::setParameters(RTCRtpSendParameters&& parameters, DOMPromiseDe
         }
     } else {
         for (auto& encoding : parameters.encodings) {
-            if (encoding.scaleResolutionDownBy && encoding.scaleResolutionDownBy < 1) {
+            if (!encoding.scaleResolutionDownBy)
+                encoding.scaleResolutionDownBy = 1;
+            else if (encoding.scaleResolutionDownBy < 1) {
                 promise.reject(Exception { ExceptionCode::RangeError });
                 return;
             }

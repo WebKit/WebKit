@@ -16,7 +16,7 @@ PASS sender.setParameters() with reordered encodings should reject with InvalidM
 PASS sender.setParameters() with encodings unset should reject with TypeError
 PASS setParameters() with modified encoding.rid field should reject with InvalidModificationError
 PASS setParameters() with encoding.scaleResolutionDownBy field set to less than 1.0 should reject with RangeError
-FAIL setParameters() with missing encoding.scaleResolutionDownBy field should succeed, and set the value back to 1 assert_equals: expected (number) 1 but got (undefined) undefined
+PASS setParameters() with missing encoding.scaleResolutionDownBy field should succeed, and set the value back to 1
 PASS setParameters() with encoding.scaleResolutionDownBy field set to greater than 1.0 should succeed
 PASS setParameters() with encoding.active false->true should succeed (video) with RTCRtpTransceiverInit
 PASS setParameters() with encoding.active false->true should succeed (video) without RTCRtpTransceiverInit
