@@ -1,5 +1,3 @@
 
-FAIL SVG root with border-radius hit test assert_equals: outside top-left expected Element node <body><svg width="200" height="200"></svg>
-<script>
-  tes... but got Element node <svg width="200" height="200"></svg>
+PASS SVG root with border-radius hit test
 
