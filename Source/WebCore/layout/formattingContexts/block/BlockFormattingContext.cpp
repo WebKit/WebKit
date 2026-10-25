@@ -196,10 +196,18 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     placeInContainingBlock(box, WTF::move(rootState), result);
 }
 
+// The inline size of a box laid out through the render tree that its own formatting context decides: of a table (CSS 2.2 §17.5.2), of a
+// replaced element (§10.3.4), and of a box that fits its content, like a button (RenderBox::sizesLogicalWidthToFitContent), or that has a
+// sizing keyword inline size, which it resolves with its own intrinsic sizes (css-sizing-3 §5.1).
+static bool decidesItsOwnInlineSize(const RenderBox& box, WritingMode writingMode)
+{
+    return is<RenderTable>(box) || box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot() || box.sizesLogicalWidthToFitContent() || BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode);
+}
+
 // Everything that belongs to the block formatting context is computed here: the margins, the position, the containing block and, for a box
 // whose inline size its own formatting context does not decide, the stretch-fit inline size. The rest comes back from the box's own formatting
-// context, laid out through the render tree, which lays out its content: the inline size of a table (CSS 2.2 §17.5.2), of a replaced element
-// (§10.3.4) or of a box that fits its content, like a button (RenderBox::sizesLogicalWidthToFitContent), the block size, border and padding.
+// context, laid out through the render tree, which lays out its content: the inline size it decides (decidesItsOwnInlineSize), the block size,
+// border and padding.
 void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree(const RenderBox& box, ContainingBlockState& boxState)
 {
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
@@ -209,7 +217,7 @@ void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree
         .containingBlockInlineSize = containingBlockInlineSize,
         .containingBlockBlockSize = containingBlockState.contentBoxBlockSize,
         .relayoutChildren = containingBlockState.relayoutChildren,
-        .borderBoxInlineSize = is<RenderTable>(box) || box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot() || box.sizesLogicalWidthToFitContent() ? std::nullopt : std::optional { geometry.borderBoxWidth() }
+        .borderBoxInlineSize = decidesItsOwnInlineSize(box, root().writingMode()) ? std::nullopt : std::optional { geometry.borderBoxWidth() }
     };
     auto layoutResult = integrationUtils().layoutIndependentFormattingContext(box, constraints);
 
@@ -432,11 +440,16 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
         return marginEdge.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(marginEdge, containingBlockInlineSize, style->usedZoomForLength());
     };
     geometry.setVerticalMargin({ blockDirectionMargin(style->marginBefore(writingMode)), blockDirectionMargin(style->marginAfter(writingMode)) });
+    // The inline size and margins come once its own formatting context has decided the inline size (layoutIndependentFormattingContextThroughRenderTree).
+    CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
+    auto isLaidOutThroughRenderTree = !blockContainer || (blockContainer->createsNewFormattingContext() && LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*blockContainer));
+    if (isLaidOutThroughRenderTree && decidesItsOwnInlineSize(box, writingMode))
+        return;
 
     auto contentInlineSizes = [&] -> std::optional<IntrinsicWidthConstraints> {
         if (!BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode))
             return { };
-        return computeIntrinsicInlineSizes(downcast<RenderBlockFlow>(box));
+        return computeIntrinsicInlineSizes(*blockContainer);
     }();
     CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
     auto [borderBoxInlineSize, marginStart, marginEnd] = BlockFormattingUtils::inlineSizeAndMargins(box, geometry.horizontalBorderAndPadding(), containingBlockInlineSize, containingBlockStyle, contentInlineSizes);
