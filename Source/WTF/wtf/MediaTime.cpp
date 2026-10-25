@@ -100,7 +100,7 @@ MediaTime MediaTime::createWithFloat(float floatTime, uint32_t timeScale)
     if (!timeScale)
         return std::signbit(floatTime) ? negativeInfiniteTime() : positiveInfiniteTime();
 
-    while (floatTime * timeScale >= maxPlusOne<int64_t>)
+    while (floatTime * timeScale >= maxPlusOne<int64_t> || floatTime * timeScale < std::numeric_limits<int64_t>::min())
         timeScale /= 2;
     return MediaTime(static_cast<int64_t>(floatTime * timeScale), timeScale, Valid);
 }
@@ -130,7 +130,7 @@ MediaTime MediaTime::createWithDouble(double doubleTime, uint32_t timeScale)
     if (!timeScale)
         return std::signbit(doubleTime) ? negativeInfiniteTime() : positiveInfiniteTime();
 
-    while (doubleTime * timeScale >= maxPlusOne<int64_t>)
+    while (doubleTime * timeScale >= maxPlusOne<int64_t> || doubleTime * timeScale < std::numeric_limits<int64_t>::min())
         timeScale /= 2;
     return MediaTime(static_cast<int64_t>(std::round(doubleTime * timeScale)), timeScale, Valid);
 }
@@ -164,13 +164,19 @@ double MediaTime::toDouble() const
 int64_t MediaTime::toMicroseconds() const
 {
     if (isInvalid() || isIndefinite())
-        return std::numeric_limits<int64_t>::quiet_NaN();
+        return 0;
     if (isPositiveInfinite())
         return std::numeric_limits<int64_t>::max();
     if (isNegativeInfinite())
         return std::numeric_limits<int64_t>::min();
-    if (hasDoubleValue())
-        return m_timeValueAsDouble * 1000000.0;
+    if (hasDoubleValue()) {
+        double microseconds = m_timeValueAsDouble * 1000000.0;
+        if (microseconds >= maxPlusOne<int64_t>)
+            return std::numeric_limits<int64_t>::max();
+        if (microseconds < std::numeric_limits<int64_t>::min())
+            return std::numeric_limits<int64_t>::min();
+        return static_cast<int64_t>(microseconds);
+    }
     auto result = CheckedInt64(m_timeValue / m_timeScale) * 1000000LL + CheckedInt64(m_timeValue % static_cast<int64_t>(m_timeScale) * 1000000LL) / static_cast<int64_t>(m_timeScale);
     if (result.hasOverflowed())
         return m_timeValue < 0 ? std::numeric_limits<int64_t>::min() : std::numeric_limits<int64_t>::max();

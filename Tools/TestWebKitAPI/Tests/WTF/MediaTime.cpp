@@ -236,12 +236,18 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::createWithFloat(-pow(2.0f, 64.0f)).toFloat(), -pow(2.0f, 64.0f));
     EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 63.0f), 2).timeScale(), 1U);
     EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 63.0f), 3).timeScale(), 1U);
+    EXPECT_EQ(MediaTime::createWithFloat(-pow(2.0f, 63.0f), 2).timeScale(), 1U);
+    EXPECT_EQ(MediaTime::createWithFloat(-pow(2.0f, 62.0f), 3).timeScale(), 1U);
     EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 64.0), 1U), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime::createWithDouble(-pow(2.0, 64.0), 1U), MediaTime::negativeInfiniteTime());
     EXPECT_EQ(MediaTime::createWithDouble(pow(2.0f, 64.0f)).toDouble(), pow(2.0f, 64.0f));
     EXPECT_EQ(MediaTime::createWithDouble(-pow(2.0f, 64.0f)).toDouble(), -pow(2.0f, 64.0f));
     EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 63.0), 2).timeScale(), 1U);
     EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 63.0), 3).timeScale(), 1U);
+    EXPECT_EQ(MediaTime::createWithDouble(-pow(2.0, 63.0), 2).timeScale(), 1U);
+    EXPECT_EQ(MediaTime::createWithDouble(-pow(2.0, 63.0), 2), MediaTime(std::numeric_limits<int64_t>::min(), 1));
+    EXPECT_EQ(MediaTime::createWithDouble(-pow(2.0, 62.0), 3).timeScale(), 1U);
+    EXPECT_EQ(MediaTime::createWithDouble(-1e15, 90000).toMicroseconds(), std::numeric_limits<int64_t>::min());
     EXPECT_EQ((MediaTime(std::numeric_limits<int64_t>::max(), 2) + MediaTime(std::numeric_limits<int64_t>::max(), 2)).timeScale(), 1U);
     EXPECT_EQ((MediaTime(std::numeric_limits<int64_t>::min(), 2) - MediaTime(std::numeric_limits<int64_t>::max(), 2)).timeScale(), 1U);
     EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::max(), 1) + MediaTime(std::numeric_limits<int64_t>::max(), 1), MediaTime::positiveInfiniteTime());
@@ -348,6 +354,12 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(2048, 48000).toMicroseconds(), 42666);
     EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::max(), 1).toMicroseconds(), std::numeric_limits<int64_t>::max());
     EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::min(), 1).toMicroseconds(), std::numeric_limits<int64_t>::min());
+    EXPECT_EQ(MediaTime::invalidTime().toMicroseconds(), 0);
+    EXPECT_EQ(MediaTime::indefiniteTime().toMicroseconds(), 0);
+    EXPECT_EQ(MediaTime::createWithDouble(1e300).toMicroseconds(), std::numeric_limits<int64_t>::max());
+    EXPECT_EQ(MediaTime::createWithDouble(-1e300).toMicroseconds(), std::numeric_limits<int64_t>::min());
+    EXPECT_EQ(MediaTime::createWithDouble(1e13).toMicroseconds(), std::numeric_limits<int64_t>::max());
+    EXPECT_EQ(MediaTime::createWithDouble(-1e13).toMicroseconds(), std::numeric_limits<int64_t>::min());
     // Ensure there's no overflow during conversion with least amount of precision loss.
     // (2^63 / 48000 * 1000000 = 2^63 / 20.83 is the highest microseconds value that can fit in a int64_t.
     EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::max() / 21, 48000).toMicroseconds(), 9150170671482912500LL);
