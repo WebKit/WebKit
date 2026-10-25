@@ -146,7 +146,7 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
             if (viewportStretchedBorderBoxBlockSize(blockContainerState.margins.collapsedMarginsBefore().collapsedValue(), margins.collapsedValue()) > 0)
                 return false;
         }
-        return BlockMarginCollapse::marginsCollapseThrough(blockContainer, blockContainerState.geometry, containingBlockState.contentBoxBlockSize, root().writingMode());
+        return BlockMarginCollapse::marginsCollapseThrough(blockContainer, blockContainerState.geometry, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(blockContainerState.geometry, containingBlockState), root().writingMode());
     };
     if (!blockContainerState.borderBoxLogicalTop && !marginsCollapseThrough())
         resolveBorderBoxLogicalTops(blockContainerState);
@@ -399,7 +399,7 @@ ContainingBlockState BlockFormattingContext::containingBlockStateFor(const Rende
         .inlineRange = { geometry.borderAndPaddingStart(), geometry.contentBoxWidth() },
         .borderBoxLogicalTop = { },
         .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
-        .contentBoxBlockSize = BlockFormattingUtils::definiteContentBoxBlockSize(blockContainer, geometry, parentState.contentBoxBlockSize, root().writingMode()),
+        .contentBoxBlockSize = BlockFormattingUtils::definiteContentBoxBlockSize(blockContainer, geometry, parentState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(geometry, parentState), root().writingMode()),
         .margins = { },
         .isLaidOutThroughRenderTree = false,
         .relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(blockContainer, geometry.contentBoxWidth())
@@ -552,10 +552,29 @@ void BlockFormattingContext::computeLogicalLeft(const RenderBox& box, const Cont
     geometry.setLeft(containingBlockState.inlineRange.min() + geometry.marginStart() + justifySelfOffset);
 }
 
+// The containing block's definite content box block size less the margins, where a margin that collapses with the containing block's, which has no
+// border or padding on that side and is not a block formatting context root, counts as zero (css-sizing-4 §6.1).
+std::optional<LayoutUnit> BlockFormattingContext::stretchFitBorderBoxBlockSize(const BoxGeometry& geometry, const ContainingBlockState& containingBlockState) const
+{
+    if (!containingBlockState.contentBoxBlockSize)
+        return { };
+    auto marginBefore = geometry.marginBefore();
+    auto marginAfter = geometry.marginAfter();
+    CheckedPtr containingBlock = dynamicDowncast<RenderBlockFlow>(containingBlockState.blockContainer);
+    if (containingBlock && !containingBlock->createsNewFormattingContext()) {
+        auto& containingBlockGeometry = containingBlockState.geometry;
+        if (!containingBlockGeometry.borderAndPaddingBefore())
+            marginBefore = { };
+        if (!containingBlockGeometry.borderAndPaddingAfter())
+            marginAfter = { };
+    }
+    return std::max(0_lu, *containingBlockState.contentBoxBlockSize - marginBefore - marginAfter);
+}
+
 void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState& containingBlockState, BoxGeometry& geometry) const
 {
     auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
-    auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize, containingBlockState.contentBoxBlockSize, root().writingMode());
+    auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(geometry, containingBlockState), root().writingMode());
     if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, root().writingMode())) {
         blockSize = *aspectRatioBlockSize;
         // The automatic minimum block size of a box that is not a scroll container is its content's (css-sizing-4 §5.1).
