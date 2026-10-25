@@ -5255,8 +5255,7 @@ webkit.org/b/328474 http/tests/media/media-seeking-no-ranges-server.html [ Failu
 webkit.org/b/328474 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/non-standard-pseudo-elements.html [ Pass Timeout ]
 webkit.org/b/328311 [ Debug ] media/media-source/media-source-dropped-iframe.html [ Crash Pass ]
 
-# Gardening 2026-10-23
-webkit.org/b/312871 media/media-source/media-source-seek-to-zero-then-play.html [ Pass Timeout ]
+webkit.org/b/328833 media/media-source/media-source-seek-to-zero-then-play.html [ Pass Timeout ]
 
 # End: Common failures between GTK and WPE.
 
