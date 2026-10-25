@@ -187,6 +187,7 @@ private:
     bool LEGACY_NODELETE useDecompressionSessionForProtectedFallback() const;
     bool LEGACY_NODELETE useDecompressionSessionForProtectedContent() const;
     bool LEGACY_NODELETE useStereoDecoding() const;
+    bool requiresHardwareDecoder() const;
 
     // WebAVSampleBufferListenerClient
     void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;

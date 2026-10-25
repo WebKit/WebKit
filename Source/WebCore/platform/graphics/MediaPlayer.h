@@ -715,6 +715,7 @@ public:
     bool shouldDisableSleep() const;
 
     const ContentType& contentType() const LIFETIME_BOUND { return m_loadOptions.contentType; }
+    VideoRendererPreferences videoRendererPreferences() const;
     String contentMIMEType() const;
     String contentTypeCodecs() const;
     bool LEGACY_NODELETE contentMIMETypeWasInferredFromExtension() const;

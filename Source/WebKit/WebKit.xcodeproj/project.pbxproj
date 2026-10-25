@@ -6219,6 +6219,7 @@
 		518405282A9E861F00630A12 /* com.apple.webkit.webpushd.relocatable.mac.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.apple.webkit.webpushd.relocatable.mac.plist; sourceTree = "<group>"; };
 		5185FA5D2FFDF84500C98F45 /* WKUserContentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKUserContentController.swift; sourceTree = "<group>"; };
 		51867B652E74623700F956CB /* RemoteAudioVideoRendererProxyManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioVideoRendererProxyManager.messages.in; sourceTree = "<group>"; };
+		10BC90CAF72E4C7CA1BEA949 /* RemoteAudioVideoRendererDecodingPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioVideoRendererDecodingPolicy.h; sourceTree = "<group>"; };
 		51867B692E759FE600F956CB /* RemoteAudioVideoRendererIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioVideoRendererIdentifier.h; sourceTree = "<group>"; };
 		51871B59127CB89D00F76232 /* WebContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenu.cpp; sourceTree = "<group>"; };
 		51871B5A127CB89D00F76232 /* WebContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenu.h; sourceTree = "<group>"; };
@@ -9922,6 +9923,7 @@
 				412FF92725382D85001DF036 /* RemoteAudioSourceProviderProxy.h */,
 				071BC57E23CA5DB100680D7C /* RemoteAudioTrackProxy.cpp */,
 				071BC57F23CA5DB100680D7C /* RemoteAudioTrackProxy.h */,
+				10BC90CAF72E4C7CA1BEA949 /* RemoteAudioVideoRendererDecodingPolicy.h */,
 				51867B692E759FE600F956CB /* RemoteAudioVideoRendererIdentifier.h */,
 				51A1AF682E743C7300F12E38 /* RemoteAudioVideoRendererProxyManager.cpp */,
 				51A1AF672E743C7300F12E38 /* RemoteAudioVideoRendererProxyManager.h */,

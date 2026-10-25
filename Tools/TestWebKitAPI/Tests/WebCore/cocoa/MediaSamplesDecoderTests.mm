@@ -861,6 +861,18 @@ TEST(MediaSamplesDecoder, CanDecodeVP9WithoutHardwareDecoder)
         EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp09" }, "vp09.00.10.08"_s), allowedFilters));
     }
 }
+
+TEST(MediaSamplesDecoder, CanDecodeVP9WhenHardwareDecoderIsUnavailable)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    ScopedVP9HardwareDecoder hardwareDecoder { true };
+    auto filters = allowedFilters | MediaSamplesDecoder::Filter::ForceSoftware;
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp09" }, "vp09.00.10.08"_s), filters));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "vp09" }, "vp09.02.10.10"_s, 10), filters));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeVideoInfo(FourCC { "avc1" }, "avc1.640028"_s), filters));
+}
 #endif
 
 #if ENABLE(AV1)

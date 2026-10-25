@@ -60,7 +60,7 @@ public:
     virtual Ref<AudioDestination> createAudioDestination(const AudioDestinationCreationOptions&) = 0;
 #endif
 #if ENABLE(VIDEO)
-    virtual RefPtr<AudioVideoRenderer> createAudioVideoRenderer(WTF::LoggerHelper*, HTMLMediaElementIdentifier, MediaPlayerIdentifier) const;
+    virtual RefPtr<AudioVideoRenderer> createAudioVideoRenderer(WTF::LoggerHelper*, HTMLMediaElementIdentifier, MediaPlayerIdentifier, VideoRendererPreferences) const;
 #endif
     virtual std::unique_ptr<NowPlayingManager> createNowPlayingManager() const;
 
