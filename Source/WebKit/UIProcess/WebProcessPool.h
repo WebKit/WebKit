@@ -337,7 +337,7 @@ public:
 
     Ref<WebProcessProxy> processForSite(WebsiteDataStore&, WebProcessProxy::IsolatedProcessType, const std::optional<WebCore::Site>&, const std::optional<WebCore::Site>& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&, WebCore::ProcessSwapDisposition, ProcessCrossOriginIsolation, const std::optional<WebCore::SecurityOriginData>& coopOrigin = std::nullopt, WebProcessProxy* reusableProvisionalProcess = nullptr, const std::optional<WebCore::SecurityOriginData>& cachedCOOPProcessOrigin = std::nullopt); // Will return an existing one if limit is met or due to caching.
 
-    void prewarmProcess();
+    void prewarmProcess(WebsiteDataStore* = nullptr);
 
     bool LEGACY_NODELETE shouldTerminate(WebProcessProxy&);
 
@@ -496,7 +496,7 @@ public:
 
     void processForNavigation(WebPageProxy&, WebFrameProxy&, const API::Navigation&, const URL& sourceURL, BrowsingContextGroup&, WebProcessProxy::IsolatedProcessType, const WebCore::Site& mainFrameSite, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, EnhancedSecurity, LoadedWebArchive, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&);
 
-    void didReachGoodTimeToPrewarm();
+    void didReachGoodTimeToPrewarm(WebsiteDataStore*);
 
     void didCollectPrewarmInformation(const WebCore::RegistrableDomain&, const WebCore::PrewarmInformation&);
 
@@ -664,6 +664,7 @@ private:
     Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::LockdownMode, EnhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, JSCOptionsForWebProcess = { });
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&, ProcessCrossOriginIsolation);
+    void shutDownPrewarmedProcessesForWebsiteDataStore(WebsiteDataStore&);
 
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, JSCOptionsForWebProcess = { });
 

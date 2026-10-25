@@ -1289,7 +1289,7 @@ bool WebPageProxy::hasRunningProcess() const
 
 void WebPageProxy::notifyProcessPoolToPrewarm()
 {
-    protect(m_configuration->processPool())->didReachGoodTimeToPrewarm();
+    protect(m_configuration->processPool())->didReachGoodTimeToPrewarm(m_websiteDataStore.ptr());
 }
 
 void WebPageProxy::setPreferences(WebPreferences& preferences)
