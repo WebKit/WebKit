@@ -37,7 +37,7 @@
 namespace WebCore {
 namespace Layout {
 
-bool BlockMarginCollapse::marginsCollapseThrough(const RenderBox& box, const BoxGeometry& geometry, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, WritingMode writingMode)
+bool BlockMarginCollapse::marginsCollapseThrough(const RenderBox& box, const BoxGeometry& geometry, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode writingMode)
 {
     if (geometry.borderAndPaddingAfter())
         return false;
@@ -46,6 +46,12 @@ bool BlockMarginCollapse::marginsCollapseThrough(const RenderBox& box, const Box
     auto& minimumBlockSize = style->logicalMinHeight(writingMode);
     if (minimumBlockSize.isKnownPositive() || minimumBlockSize.isCalculated())
         return false;
+    // Stretch is the stretch-fit block size, when there is one (css-sizing-4 §6.1): margins collapse through a box whose used block size is zero.
+    auto stretchFitSizeIsPositive = stretchFitBorderBoxBlockSize && *stretchFitBorderBoxBlockSize > 0;
+    if (minimumBlockSize.isStretch() && stretchFitSizeIsPositive)
+        return false;
+    if (style->logicalHeight(writingMode).isStretch() && stretchFitBorderBoxBlockSize)
+        return !stretchFitSizeIsPositive;
     // Like RenderBlock::isSelfCollapsingBlock, which checks the height the box has.
     if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), writingMode); aspectRatioBlockSize && *aspectRatioBlockSize > 0)
         return false;
