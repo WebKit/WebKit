@@ -228,7 +228,7 @@ void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree
     CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
     auto [marginStart, marginEnd] = BlockFormattingUtils::inlineMargins(box, layoutResult.borderBoxInlineSize, containingBlockInlineSize, containingBlockStyle);
     geometry.setHorizontalMargin({ marginStart, marginEnd });
-    computeLogicalLeft(containingBlockState, geometry);
+    computeLogicalLeft(box, containingBlockState, geometry);
     boxState.borderAndPaddingBefore = geometry.borderAndPaddingBefore();
     boxState.isLaidOutThroughRenderTree = true;
     m_blockLayoutState.marginCollapse().resetAdjoiningMargins(boxState.contentBoxLogicalTop() + geometry.contentBoxHeight());
@@ -446,12 +446,13 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     if (isLaidOutThroughRenderTree && decidesItsOwnInlineSize(box, writingMode))
         return;
 
+    CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
     auto contentInlineSizes = [&] -> std::optional<IntrinsicWidthConstraints> {
-        if (!BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode))
+        auto fitsContent = style->logicalWidth(writingMode).isAuto() && BlockFormattingUtils::isAlignedByJustifySelf(box, containingBlockStyle);
+        if (!BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode) && !fitsContent)
             return { };
         return computeIntrinsicInlineSizes(*blockContainer);
     }();
-    CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
     auto [borderBoxInlineSize, marginStart, marginEnd] = BlockFormattingUtils::inlineSizeAndMargins(box, geometry.horizontalBorderAndPadding(), containingBlockInlineSize, containingBlockStyle, contentInlineSizes);
     geometry.setContentBoxWidth(borderBoxInlineSize - geometry.horizontalBorderAndPadding());
     // Unlike border and padding, start and end margins follow the direction of the containing block.
@@ -542,10 +543,13 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
     return sizes;
 }
 
-void BlockFormattingContext::computeLogicalLeft(const ContainingBlockState& containingBlockState, BoxGeometry& geometry) const
+void BlockFormattingContext::computeLogicalLeft(const RenderBox& box, const ContainingBlockState& containingBlockState, BoxGeometry& geometry) const
 {
-    // The box is placed from the inline start of its containing block, so an over-constrained box ignores its end margin (CSS 2.2 §10.3.3).
-    geometry.setLeft(containingBlockState.inlineRange.min() + geometry.marginStart());
+    // The box is placed from the inline start of its containing block, so an over-constrained box ignores its end margin (CSS 2.2 §10.3.3),
+    // and justify-self moves it in the space its margin box leaves.
+    CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
+    auto justifySelfOffset = BlockFormattingUtils::justifySelfOffset(box, geometry.borderBoxWidth(), geometry.marginStart(), geometry.marginEnd(), containingBlockState.inlineRange.size(), containingBlockStyle);
+    geometry.setLeft(containingBlockState.inlineRange.min() + geometry.marginStart() + justifySelfOffset);
 }
 
 void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState& containingBlockState, BoxGeometry& geometry) const
@@ -582,7 +586,7 @@ ContainingBlockState BlockFormattingContext::computeContainingBlockStateAtBlockS
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
     auto geometry = computeBorderAndPadding(box, containingBlockState.inlineRange.size());
     computeInlineSizeAndMargins(box, containingBlockState, geometry);
-    computeLogicalLeft(containingBlockState, geometry);
+    computeLogicalLeft(box, containingBlockState, geometry);
     // FIXME: Clearance separates the block-start margin from the margins before it (CSS 2.2 §9.5.2).
     auto blockContainerState = containingBlockStateFor(box, geometry, containingBlockState);
     m_blockLayoutState.marginCollapse().startBlockContainer(blockContainerState, containingBlockState, geometry.marginBefore());

@@ -101,7 +101,6 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasLineClamp,
     ContentHasTextBoxTrim,
     ContentHasLineGrid,
-    ContentHasJustifySelf,
     ContentHasBlockStepSize
 };
 
@@ -318,6 +317,9 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
         return BlockAvoidanceReason::ContentHasAnchorPositioning;
     if (!(style->justifySelf().isAuto() || style->justifySelf().isNormal()) || !(style->alignSelf().isAuto() || style->alignSelf().isNormal()))
         return BlockAvoidanceReason::ContentHasOutOfFlowSelfAlignment;
+    // Nor the justify-items of its parent, which an auto justify-self takes to align its static position (PositionedLayoutConstraints::shouldAlignStaticPositionInInlineAxis).
+    if (CheckedPtr parent = outOfFlowBox.parent(); parent && !style->justifySelf().resolve(&parent->style()).isNormalStretchOrLegacy())
+        return BlockAvoidanceReason::ContentHasOutOfFlowSelfAlignment;
     // FIXME: A flipped block flow direction (horizontal-bt), where the block-start inset is the physical bottom one and the render tree
     // stores flipped block positions.
     if (outOfFlowBox.writingMode().isBlockFlipped())
@@ -439,9 +441,6 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     if (style->aspectRatio().hasRatio() && !isReplaced)
         return BlockAvoidanceReason::ContentHasAspectRatio;
     // The block-step-size rounding of the margin box is the parent's job on the render tree path (RenderBlockFlow::performBlockStepSizing).
-    CheckedRef parentStyle = box.parent()->style();
-    if (!style->justifySelf().resolve(parentStyle.ptr()).isNormalStretchOrLegacy())
-        return BlockAvoidanceReason::ContentHasJustifySelf;
     if (!style->blockStepSize().isNone())
         return BlockAvoidanceReason::ContentHasBlockStepSize;
     return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
@@ -516,7 +515,10 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         || (!isAuto(style->logicalMinHeight()) && !isSupportedBlockSize(style->logicalMinHeight(), blockSizeIsAutomatic))
         || (!style->logicalMaxHeight().isNone() && !isSupportedBlockSize(style->logicalMaxHeight(), blockSizeIsAutomatic)))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
-    if (Layout::BlockFormattingUtils::hasIntrinsicInlineSize(*blockContainer, blockContainer->writingMode()) && !canComputeContentInlineSizes(*blockContainer))
+    // So do an auto inline size that justify-self makes fit the content (BlockFormattingUtils::inlineSizeAndMargins).
+    CheckedRef parentStyle = blockContainer->parent()->style();
+    auto fitsContent = style->logicalWidth().isAuto() && Layout::BlockFormattingUtils::isAlignedByJustifySelf(*blockContainer, parentStyle);
+    if ((Layout::BlockFormattingUtils::hasIntrinsicInlineSize(*blockContainer, blockContainer->writingMode()) || fitsContent) && !canComputeContentInlineSizes(*blockContainer))
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
     if (blockContainer->shouldApplySizeContainment())
         return BlockAvoidanceReason::ContentHasSizeContainment;
@@ -552,9 +554,6 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         return BlockAvoidanceReason::ContentHasTextBoxTrim;
     if (!style->lineGrid().isNone())
         return BlockAvoidanceReason::ContentHasLineGrid;
-    CheckedRef parentStyle = blockContainer->parent()->style();
-    if (!style->justifySelf().resolve(parentStyle.ptr()).isNormalStretchOrLegacy())
-        return BlockAvoidanceReason::ContentHasJustifySelf;
     return { };
 }
 
@@ -714,8 +713,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "text-box-trim"_s;
     case BlockAvoidanceReason::ContentHasLineGrid:
         return "line grid"_s;
-    case BlockAvoidanceReason::ContentHasJustifySelf:
-        return "justify-self"_s;
     case BlockAvoidanceReason::ContentHasBlockStepSize:
         return "block-step-size"_s;
     }

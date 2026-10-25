@@ -120,7 +120,7 @@ private:
 
     BoxGeometry computeBorderAndPadding(const RenderBox&, LayoutUnit containingBlockInlineSize) const;
     void computeInlineSizeAndMargins(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
-    void computeLogicalLeft(const ContainingBlockState&, BoxGeometry&) const;
+    void computeLogicalLeft(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
     ConstraintsForInlineContent constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const;
     ContainingBlockState computeContainingBlockStateAtBlockStart(const RenderBox&);
     void computeBlockSize(const RenderBox&, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState&, BoxGeometry&) const;
