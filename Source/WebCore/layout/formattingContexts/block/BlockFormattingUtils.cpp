@@ -174,13 +174,24 @@ std::pair<LayoutUnit, LayoutUnit> BlockFormattingUtils::inlineMargins(const Rend
     };
     auto marginStart = usedMargin(marginStartLength);
     auto marginEnd = usedMargin(marginEndLength);
-    if (borderBoxInlineSize < containingBlockInlineSize) {
+    // The legacy -webkit-center, -webkit-left and -webkit-right values of text-align align a box without auto margins in the containing block
+    // the way auto margins would (RenderBox::computeInlineDirectionMargins). -webkit-center centers the margin box, without moving it past the
+    // start of the containing block.
+    auto textAlign = containingBlockStyle.textAlign();
+    auto isLeftToRight = containingBlockWritingMode.isBidiLTR();
+    auto hasAutoMargin = marginStartLength.isAuto() || marginEndLength.isAuto();
+    if (!hasAutoMargin && textAlign == Style::TextAlign::WebKitCenter) {
+        auto centeredMarginBoxStart = std::max(0_lu, (containingBlockInlineSize - borderBoxInlineSize - marginStart - marginEnd) / 2);
+        marginEnd = containingBlockInlineSize - borderBoxInlineSize - centeredMarginBoxStart - marginStart + marginEnd;
+        marginStart += centeredMarginBoxStart;
+    } else if (borderBoxInlineSize < containingBlockInlineSize) {
+        auto pushesToEnd = !marginEndLength.isAuto() && (isLeftToRight ? textAlign == Style::TextAlign::WebKitRight : textAlign == Style::TextAlign::WebKitLeft);
         if (marginStartLength.isAuto() && marginEndLength.isAuto()) {
             marginStart = std::max(0_lu, (containingBlockInlineSize - borderBoxInlineSize) / 2);
             marginEnd = containingBlockInlineSize - borderBoxInlineSize - marginStart;
         } else if (marginEndLength.isAuto())
             marginEnd = containingBlockInlineSize - borderBoxInlineSize - marginStart;
-        else if (marginStartLength.isAuto())
+        else if (marginStartLength.isAuto() || pushesToEnd)
             marginStart = containingBlockInlineSize - borderBoxInlineSize - marginEnd;
     }
     // An over-constrained box ignores its end margin, which takes what makes the equality true. Like RenderBox::computeLogicalWidth,
