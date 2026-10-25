@@ -106,7 +106,7 @@ public:
     struct IndependentFormattingContextLayoutResult {
         LayoutUnit borderBoxInlineSize;
         LayoutUnit borderBoxBlockSize;
-        // In the root's writing mode, which coverage keeps the block formatting context's.
+        // In the writing mode of the containing block, the block formatting context's.
         Layout::BoxGeometry::Edges border;
         Layout::BoxGeometry::Edges padding;
     };
