@@ -123,6 +123,7 @@ private:
     void computeLogicalLeft(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
     ConstraintsForInlineContent constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const;
     ContainingBlockState computeContainingBlockStateAtBlockStart(const RenderBox&);
+    std::optional<LayoutUnit> stretchFitBorderBoxBlockSize(const BoxGeometry&, const ContainingBlockState&) const;
     void computeBlockSize(const RenderBox&, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState&, BoxGeometry&) const;
     LayoutUnit viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const;
     void placeInContainingBlock(const RenderBox&, ContainingBlockState&& blockContainerState, BlockLayoutResult&);

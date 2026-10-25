@@ -54,7 +54,7 @@ class BlockMarginCollapse {
 public:
     // The box's block-start and block-end margins are adjoining (CSS 2.2 §8.3.1), given that its content did not separate them: it has no
     // block-start border or padding (its top is still unknown) and its in-flow children all collapse through.
-    static bool marginsCollapseThrough(const RenderBox&, const BoxGeometry&, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, WritingMode);
+    static bool marginsCollapseThrough(const RenderBox&, const BoxGeometry&, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
 
     class BlockContainer {
     public:
