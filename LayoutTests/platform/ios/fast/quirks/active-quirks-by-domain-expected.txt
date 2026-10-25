@@ -403,7 +403,6 @@ https://www.youtube.com/
     NeedsYouTubeCaptionQuirk
     NeedsYouTubeMouseOutQuirk
     NeedsYouTubeOverflowScrollQuirk
-    ShouldDisableThreadedAnimationsQuirk
     ShouldSilenceResizeObservers
 https://www.youtube-nocookie.com/
     (none)

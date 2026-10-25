@@ -149,6 +149,12 @@ void RemoteAnimationStack::initEffectsFromMainThread(PlatformLayer *layer)
 
     m_presentationModifierGroup = [CAPresentationModifierGroup groupWithCapacity:numberOfPresentationModifiers];
 
+    // By default the render server continuously monitors a presentation group for flushed changes.
+    // We disable this behavior putting us in charge of calling -flushWithTransaction to explicitly
+    // inform the render server a change happened. This helps with performance when a layer is covered
+    // by another opaque layer.
+    [m_presentationModifierGroup setUpdatesAsynchronously:NO];
+
     if (canonicalFilters) {
         WebCore::PlatformCAFilters::presentationModifiers(computedValues.filter, canonicalFilters, m_filterPresentationModifiers, m_presentationModifierGroup);
         for (auto& filterPresentationModifier : borrow(m_filterPresentationModifiers))
@@ -196,10 +202,7 @@ void RemoteAnimationStack::applyEffects() const
         [m_transformPresentationModifier setValue:transform.get()];
     }
 
-    if (isMainRunLoop())
-        [m_presentationModifierGroup flushWithTransaction];
-    else
-        [m_presentationModifierGroup flush];
+    [m_presentationModifierGroup flushWithTransaction];
 }
 #endif
 

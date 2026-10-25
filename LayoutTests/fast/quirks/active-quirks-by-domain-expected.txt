@@ -366,7 +366,6 @@ https://www.youtube.com/
     NeedsScrollbarWidthThinDisabledQuirk
     NeedsYouTubeCaptionQuirk
     NeedsYouTubeMouseOutQuirk
-    ShouldDisableThreadedAnimationsQuirk
 https://www.youtube-nocookie.com/
     (none)
 https://www.zillow.com/
