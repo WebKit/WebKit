@@ -1241,6 +1241,10 @@ std::optional<LayoutUnit> LineLayout::lastLineBaseline() const
         if (auto* blockLevelBox = m_inlineContent->blockLevelBoxForLine(line)) {
             // For block-in-inline look for the baseline of the child box.
             CheckedRef blockRenderer = downcast<RenderBox>(*blockLevelBox->layoutBox().rendererForIntegration());
+            // CSS Align §9.1: for legacy reasons a block container that is a block-axis scroll container has its last baseline at its block-end margin edge.
+            auto isBlockAxisScrollContainer = is<RenderBlockFlow>(blockRenderer) && !blockRenderer->isWritingModeRoot() && (blockRenderer->isHorizontalWritingMode() ? blockRenderer->isScrollContainerY() : blockRenderer->isScrollContainerX());
+            if (isBlockAxisScrollContainer)
+                return blockRenderer->logicalTop() + blockRenderer->logicalHeight() + blockRenderer->marginAfter(flow().writingMode());
             if (auto baseline = blockRenderer->lastLineBaseline())
                 return blockRenderer->logicalTop() + *baseline;
             return { };
