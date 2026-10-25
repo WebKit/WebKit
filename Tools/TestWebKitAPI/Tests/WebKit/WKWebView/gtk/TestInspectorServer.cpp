@@ -28,9 +28,14 @@
 #include "WebViewTest.h"
 #include <signal.h>
 #include <sys/eventfd.h>
+#include <sys/wait.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
+
+#if OS(LINUX)
+#include <sys/prctl.h>
+#endif
 
 static GPid gActiveServerPid;
 static const unsigned gMaxConnectionTries = 10;
@@ -58,7 +63,7 @@ public:
         }
 
         GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
-        g_socket_client_connect_to_host_async(socketClient.get(), "127.0.0.1:2999", 0, nullptr, [](GObject* client, GAsyncResult* result, gpointer userData) {
+        g_socket_client_connect_to_host_async(socketClient.get(), m_serverAddress.get(), 0, nullptr, [](GObject* client, GAsyncResult* result, gpointer userData) {
             auto* test = static_cast<InspectorServerTest*>(userData);
             GUniqueOutPtr<GError> error;
             GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, &error.outPtr()));
@@ -92,9 +97,15 @@ public:
         testServerArgv[1] = eventFDString.get();
         testServerArgv[2] = nullptr;
 
-        GUniquePtr<char*> testServerEnvp(g_environ_setenv(g_get_environ(), shouldStartHTTPServer ? "WEBKIT_INSPECTOR_HTTP_SERVER" : "WEBKIT_INSPECTOR_SERVER", "127.0.0.1:2999", TRUE));
+        m_serverAddress.reset(g_strdup_printf("127.0.0.1:%u", availablePort()));
+        GUniquePtr<char*> testServerEnvp(g_environ_setenv(g_get_environ(), shouldStartHTTPServer ? "WEBKIT_INSPECTOR_HTTP_SERVER" : "WEBKIT_INSPECTOR_SERVER", m_serverAddress.get(), TRUE));
 
-        g_assert_true(g_spawn_async(nullptr, testServerArgv, testServerEnvp.get(), G_SPAWN_LEAVE_DESCRIPTORS_OPEN, nullptr, nullptr, &m_serverPid, nullptr));
+        auto childSetup = [](gpointer) {
+#if OS(LINUX)
+            prctl(PR_SET_PDEATHSIG, SIGTERM);
+#endif
+        };
+        g_assert_true(g_spawn_async(nullptr, testServerArgv, testServerEnvp.get(), static_cast<GSpawnFlags>(G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_DO_NOT_REAP_CHILD), childSetup, nullptr, &m_serverPid, nullptr));
 
         gActiveServerPid = m_serverPid;
 
@@ -117,15 +128,17 @@ public:
         if (!m_serverPid)
             return;
 
-        g_spawn_close_pid(m_serverPid);
         kill(m_serverPid, SIGTERM);
+        waitpid(m_serverPid, nullptr, 0);
+        g_spawn_close_pid(m_serverPid);
         m_serverPid = 0;
         gActiveServerPid = 0;
     }
 
     bool loadTargetListPageAndWaitUntilFinished()
     {
-        loadURI(shouldStartHTTPServer ? "http://127.0.0.1:2999/" : "inspector://127.0.0.1:2999");
+        GUniquePtr<char> uri(g_strdup_printf(shouldStartHTTPServer ? "http://%s/" : "inspector://%s", m_serverAddress.get()));
+        loadURI(uri.get());
         waitUntilLoadFinished();
 
         for (unsigned i = 0; i < 5; ++i) {
@@ -145,7 +158,18 @@ public:
         return false;
     }
 
+    static unsigned availablePort()
+    {
+        GRefPtr<GSocket> socket = adoptGRef(g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_TCP, nullptr));
+        GRefPtr<GInetAddress> loopback = adoptGRef(g_inet_address_new_loopback(G_SOCKET_FAMILY_IPV4));
+        GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new(loopback.get(), 0));
+        g_assert_true(g_socket_bind(socket.get(), address.get(), FALSE, nullptr));
+        GRefPtr<GSocketAddress> boundAddress = adoptGRef(g_socket_get_local_address(socket.get(), nullptr));
+        return g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(boundAddress.get()));
+    }
+
     GPid m_serverPid { 0 };
+    GUniquePtr<char> m_serverAddress;
     unsigned m_connectionTryCount { 0 };
     static bool shouldStartHTTPServer;
 };
@@ -225,7 +249,8 @@ void beforeAll()
 {
     // Terminate the server process if any test fails.
     signal(SIGABRT, +[](int) {
-        kill(gActiveServerPid, SIGTERM);
+        if (gActiveServerPid > 0)
+            kill(gActiveServerPid, SIGTERM);
     });
 
     InspectorServerTest::add("WebKitWebInspectorServer", "test-page-list", testInspectorServerPageList);
