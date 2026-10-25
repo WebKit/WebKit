@@ -63,12 +63,13 @@ public:
     static LayoutUnit justifySelfOffset(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit marginStart, LayoutUnit marginEnd, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
     // Its inline size, min inline size or max inline size is min-content, max-content or fit-content.
     static bool hasIntrinsicInlineSize(const RenderBox&, WritingMode);
-    // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7).
-    static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, LayoutUnit intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, WritingMode);
+    // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7), and the stretch-fit block size for
+    // stretch (css-sizing-4 §6.1).
+    static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, LayoutUnit intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
     // The border box block size a preferred aspect ratio gives an auto block size, from the inline size (css-sizing-4 §5.1, like
     // RenderBox::blockSizeFromAspectRatio). None without a ratio or with a block size.
     static std::optional<LayoutUnit> aspectRatioBorderBoxBlockSize(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, WritingMode);
-    // Its block-size, min-block-size or max-block-size is a percentage of the containing block's block size.
+    // Its block-size, min-block-size or max-block-size is a percentage of the containing block's block size, or stretches to it.
     static bool hasPercentageBlockSize(const RenderBox&, WritingMode);
     // The block size of the content of an empty editable block container: the line height of its first line, for the caret (RenderBlock::hasLineIfEmpty,
     // RenderBox::lineHeight).
@@ -76,7 +77,7 @@ public:
     // The min-content, max-content and fit-content block sizes of a block container are its automatic block size (css-sizing-3 §2.1, §3.2), and a
     // percentage block size behaves as auto when the block size of the containing block is not definite (CSS 2.2 §10.5).
     static bool blockSizeBehavesAsAuto(const Style::PreferredSize& blockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize);
-    static std::optional<LayoutUnit> definiteContentBoxBlockSize(const RenderBox&, const BoxGeometry&, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, WritingMode);
+    static std::optional<LayoutUnit> definiteContentBoxBlockSize(const RenderBox&, const BoxGeometry&, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
 };
 
 }
