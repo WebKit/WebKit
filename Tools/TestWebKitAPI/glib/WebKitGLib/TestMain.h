@@ -207,6 +207,7 @@ public:
     }
 
 #if PLATFORM(WPE) && USE(LIBWPE)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     static WebKitWebViewBackend* createWebViewBackend()
     {
         // Don't make warnings fatal when creating the backend, since atk produces warnings when a11y bus is not running.
@@ -219,6 +220,7 @@ public:
             delete static_cast<WPEToolingBackends::HeadlessViewBackend*>(userData);
         }, headlessBackend);
     }
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     void addWebViewConstructParameters(GPtrArray* propertyNames, GArray* propertyValues, bool setWebContext, bool setNetworkSession, bool hasRelatedView)
@@ -255,11 +257,13 @@ public:
         }
 #endif
 #if USE(LIBWPE)
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         g_ptr_array_add(propertyNames, g_strdup("backend"));
         g_array_set_size(propertyValues, propertyNames->len);
         GValue* value = &g_array_index(propertyValues, GValue, propertyValues->len - 1);
         g_value_init(value, WEBKIT_TYPE_WEB_VIEW_BACKEND);
         g_value_set_boxed(value, createWebViewBackend());
+        ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #endif
     }

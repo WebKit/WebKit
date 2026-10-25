@@ -35,6 +35,8 @@
  * and it should be passed to a WebKitWebView constructor that will take the ownership.
  *
  * Since: 2.20
+ *
+ * Deprecated: 2.56: Use WPE Platform API instead.
  */
 
 struct _WebKitWebViewBackend {
@@ -92,6 +94,8 @@ void webkitWebViewBackendUnref(WebKitWebViewBackend* viewBackend)
  * Returns: a newly created #WebKitWebViewBackend
  *
  * Since: 2.20
+ *
+ * Deprecated: 2.56: Use WPE Platform API instead.
  */
 WebKitWebViewBackend* webkit_web_view_backend_new(struct wpe_view_backend* backend, GDestroyNotify notify, gpointer userData)
 {
@@ -111,6 +115,8 @@ WebKitWebViewBackend* webkit_web_view_backend_new(struct wpe_view_backend* backe
  * Returns: (transfer none): the #wpe_view_backend
  *
  * Since: 2.20
+ *
+ * Deprecated: 2.56: Use WPE Platform API instead.
  */
 struct wpe_view_backend* webkit_web_view_backend_get_wpe_backend(WebKitWebViewBackend* viewBackend)
 {

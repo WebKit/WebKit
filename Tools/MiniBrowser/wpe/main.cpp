@@ -350,6 +350,7 @@ static void webViewClose(WebKitWebView* webView, gpointer user_data)
 static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationAction*, gpointer user_data)
 {
 #if defined(USE_LIBWPE) && USE_LIBWPE
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto backend = createViewBackend(defaultWindowWidthLegacyAPI, defaultWindowHeightLegacyAPI);
     WebKitWebViewBackend* viewBackend = nullptr;
     if (backend) {
@@ -362,6 +363,7 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
                 delete static_cast<WPEToolingBackends::ViewBackend*>(data);
             }, backend.release());
     }
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     auto* newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
@@ -612,9 +614,11 @@ static void activate(GApplication* application, gpointer)
     }
 
 #if defined(USE_LIBWPE) && USE_LIBWPE
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto* viewBackend = backend ? webkit_web_view_backend_new(backend->backend(), [](gpointer data) {
         delete static_cast<WPEToolingBackends::ViewBackend*>(data);
     }, backend) : nullptr;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE_WPE_PLATFORM_HEADLESS
