@@ -62,6 +62,16 @@ bool deviceClassIsVision()
 #endif
 }
 
+bool deviceClassIsHomeView()
+{
+#if PLATFORM(APPLETV)
+    static auto deviceClass = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
+    return deviceClass == MGDeviceClassHomeAccessory;
+#else
+    return false;
+#endif
+}
+
 String deviceName()
 {
 #if ENABLE(MOBILE_GESTALT_DEVICE_NAME)
