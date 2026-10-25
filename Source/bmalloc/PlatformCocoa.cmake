@@ -11,5 +11,4 @@ list(APPEND bmalloc_SOURCES
 find_library(FOUNDATION_LIBRARY Foundation)
 list(APPEND bmalloc_LIBRARIES ${FOUNDATION_LIBRARY})
 
-# Optimize bmalloc even in Debug builds.
-target_compile_options(bmalloc PRIVATE -O3 -fno-threadsafe-statics)
+target_compile_options(bmalloc PRIVATE -fno-threadsafe-statics)

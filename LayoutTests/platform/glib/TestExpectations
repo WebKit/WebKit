@@ -1669,7 +1669,6 @@ editing/input/compositionend-data-after-aborting-composition.html [ Failure ]
 webkit.org/b/286128 [ Release ] editing/inserting/insert-list-user-select-none-crash.html [ Crash Pass Timeout ]
 
 webkit.org/b/179261 editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
-[ Debug ] editing/execCommand/delete-non-editable-range-crash.html [ Timeout Pass ]
 
 webkit.org/b/312533 editing/selection/first-letter-selection-painting.html [ ImageOnlyFailure Pass ]
 

@@ -673,6 +673,10 @@ set(bmalloc_COMPILE_OPTIONS
     -Wno-missing-field-initializers
 )
 
+if (NOT MSVC)
+    list(APPEND bmalloc_COMPILE_OPTIONS $<$<CONFIG:Debug>:-O3>)
+endif ()
+
 set(bmalloc_INTERFACE_LIBRARIES bmalloc)
 set(bmalloc_INTERFACE_INCLUDE_DIRECTORIES ${bmalloc_FRAMEWORK_HEADERS_DIR})
 set(bmalloc_INTERFACE_DEPENDENCIES bmalloc_CopyHeaders)
