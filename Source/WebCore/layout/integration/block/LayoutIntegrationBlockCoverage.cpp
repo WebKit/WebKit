@@ -64,7 +64,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootIsMarquee,
     RootHasUnsupportedRenderer,
     RootIsAnonymousFlexOrGridItem,
-    RootHasInlineContent,
     RootHasUnsupportedWritingMode,
     RootIsPaginated,
     RootIsInLineClampContext,
@@ -140,8 +139,6 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     // Percentage block sizes inside look through an anonymous block to the flex or grid container (RenderBox::skipContainingBlockForPercentHeightCalculation).
     if ((rootContainer.isFlexItemIncludingDeprecated() || rootContainer.isGridItem()) && rootContainer.isAnonymous())
         return BlockAvoidanceReason::RootIsAnonymousFlexOrGridItem;
-    if (rootContainer.childrenInline())
-        return BlockAvoidanceReason::RootHasInlineContent;
     // FIXME: Vertical writing modes, and horizontal-bt, whose inline content the inline formatting context places from the border and padding
     // at the top, its block-end side (BoxGeometryUpdater::formattingContextConstraints).
     if (!rootContainer.writingMode().isHorizontal() || rootContainer.writingMode().isBlockFlipped())
@@ -636,8 +633,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: other renderer"_s;
     case BlockAvoidanceReason::RootIsAnonymousFlexOrGridItem:
         return "root: anonymous flex or grid item"_s;
-    case BlockAvoidanceReason::RootHasInlineContent:
-        return "root: inline content only"_s;
     case BlockAvoidanceReason::RootHasUnsupportedWritingMode:
         return "root: vertical or horizontal-bt writing mode"_s;
     case BlockAvoidanceReason::RootIsPaginated:
