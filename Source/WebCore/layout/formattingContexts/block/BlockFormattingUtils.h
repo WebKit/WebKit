@@ -56,6 +56,11 @@ public:
     static InlineSizeAndMargins inlineSizeAndMargins(const RenderBox&, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<IntrinsicWidthConstraints> contentInlineSizes);
     // The start and end margins of a box whose border box inline size is already known, from the same §10.3.3 equation.
     static std::pair<LayoutUnit, LayoutUnit> inlineMargins(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
+    // A block-level box with a justify-self other than normal, stretch or legacy is aligned in the inline axis of its containing block, which
+    // sizes an auto inline size to fit its content and keeps its margins as they are (css-align-3 §6.1).
+    static bool isAlignedByJustifySelf(const RenderBox&, const Style::ComputedStyle& containingBlockStyle);
+    // How far justify-self moves the margin box from the inline start of the containing block, unless an auto margin aligns it.
+    static LayoutUnit justifySelfOffset(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit marginStart, LayoutUnit marginEnd, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
     // Its inline size, min inline size or max inline size is min-content, max-content or fit-content.
     static bool hasIntrinsicInlineSize(const RenderBox&, WritingMode);
     // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7).
