@@ -8326,6 +8326,43 @@ class WebKitStyleTest(CppStyleTestBase):
                                             '{\n'
                                             '}\n', 'test.cpp', parameter_error_rules))
 
+    def test_parameter_names_multiline_statements(self):
+        # A line that continues a multi-line expression (the previous line ends
+        # with ',' or '(') is not a function declaration, so parameters must not
+        # be parsed from it. See https://bugs.webkit.org/show_bug.cgi?id=270703
+        parameter_error_rules = ('-',
+                                 '+readability/parameter_name')
+
+        # An argument of a multi-line Objective-C call used to be mistaken for a
+        # function declaration whose parameter "minX" duplicated part of its type.
+        lint_result = self.perform_lint('- (void)method\n'
+                                        '{\n'
+                                        '    [overlay setFrame:CGRectMake(\n'
+                                        '        minX,\n'
+                                        '        std::max<CGFloat>(CGRectGetMinX(contentViewFrame) - minX, 0),\n'
+                                        '        std::max<CGFloat>(CGRectGetMaxY(contentViewFrame) - minY, 0))];\n'
+                                        '}\n', 'test.mm', parameter_error_rules)
+        self.assertEqual('', lint_result)
+
+        # The same false positive occurred when the argument directly followed
+        # the open parenthesis of the multi-line call.
+        lint_result = self.perform_lint('- (void)method\n'
+                                        '{\n'
+                                        '    [overlay setFrame:CGRectMake(\n'
+                                        '        std::max<CGFloat>(CGRectGetMinX(contentViewFrame) - minX, 0),\n'
+                                        '        0)];\n'
+                                        '}\n', 'test.mm', parameter_error_rules)
+        self.assertEqual('', lint_result)
+
+        # Genuine declarations are still flagged when they do not continue an
+        # expression.
+        lint_result = self.perform_lint('void f()\n'
+                                        '{\n'
+                                        '}\n'
+                                        'void funct(ExceptionCode ec);', 'test.cpp', parameter_error_rules)
+        self.assertEqual('The parameter name "ec" adds no information, so it should be removed.  [readability/parameter_name] [5]',
+                         lint_result)
+
     def test_split_identifier_into_words(self):
         self.assertEqual([], _split_identifier_into_words(''))
         self.assertEqual(['a'], _split_identifier_into_words('a'))
