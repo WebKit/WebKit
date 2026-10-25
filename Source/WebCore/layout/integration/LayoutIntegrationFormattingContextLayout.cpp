@@ -303,14 +303,25 @@ LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& bo
         return containingBlock && containingBlock->writingMode().isOrthogonal(renderer->writingMode());
     };
 
+    auto intrinsicBlockSizeOfOrthogonalBox = [&] {
+        // Laying the box out for its block size lays out its content too, where the box is the root and gets its geometry set in its
+        // own writing mode (one BoxGeometry per box, see BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout).
+        // Put back the geometry the formatting context asking for this width has for the box, e.g. its margins along the line.
+        auto& boxGeometry = renderer->view().layoutState().ensureGeometryForBox(box);
+        auto boxGeometryInParentFormattingContext = Layout::BoxGeometry { boxGeometry };
+        auto intrinsicBlockSize = renderer->computeIntrinsicLogicalHeight();
+        boxGeometry = boxGeometryInParentFormattingContext;
+        return intrinsicBlockSize;
+    };
+
     switch (logicalWidthType) {
     case LogicalWidthType::MaxContentContribution:
         if (isOrthogonalBlockLevelBox())
-            return renderer->computeIntrinsicLogicalHeight();
+            return intrinsicBlockSizeOfOrthogonalBox();
         return renderer->maxContentLogicalWidthContribution();
     case LogicalWidthType::MinContentContribution:
         if (isOrthogonalBlockLevelBox())
-            return renderer->computeIntrinsicLogicalHeight();
+            return intrinsicBlockSizeOfOrthogonalBox();
         return renderer->minContentLogicalWidthContribution();
     case LogicalWidthType::MaxContent:
     case LogicalWidthType::MinContent: {
