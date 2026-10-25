@@ -202,9 +202,9 @@ void LayerTreeHost::flushLayers()
         return it.value->hasOneRef();
     });
 
-    if (m_waitUntilPaintingComplete) {
-        m_sceneState->waitUntilPaintingComplete();
-        m_waitUntilPaintingComplete = false;
+    if (m_waitUntilPaintingFinished) {
+        m_sceneState->waitUntilPaintingFinished();
+        m_waitUntilPaintingFinished = false;
     }
 }
 
@@ -289,10 +289,10 @@ void LayerTreeHost::updateRenderingWithForcedRepaint()
     m_webPage.corePage()->forceRepaintAllFrames();
     m_forceFrameSync = true;
 
-    // Make sure `m_sceneState->waitUntilPaintingComplete()` is invoked at the
+    // Make sure `m_sceneState->waitUntilPaintingFinished()` is invoked at the
     // end of the currently running layer flush, or after the next one if there
     // is none ongoing at present.
-    m_waitUntilPaintingComplete = true;
+    m_waitUntilPaintingFinished = true;
 
     // If updateRenderingWithForcedRepaint() is invoked via JS through e.g. a rAF() callback, a call
     // to `page->updateRendering()` _during_ a layer flush is responsible for that.
