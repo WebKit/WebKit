@@ -109,6 +109,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#include <pal/system/ios/Device.h>
 #include <pal/system/ios/UserInterfaceIdiom.h>
 #endif
 
@@ -167,7 +168,6 @@ static HashMap<RegistrableDomain, String>& LEGACY_NODELETE updatableStorageAcces
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/QuirksAdditions.cpp>
 #else
-static inline bool LEGACY_NODELETE needsDesktopUserAgentInternal(const URL&) { return false; }
 static inline bool LEGACY_NODELETE shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(const URL&) { return false; }
 static inline bool LEGACY_NODELETE shouldNotAutoUpgradeToHTTPSNavigationInternal(const URL&) { return false; }
 static inline bool LEGACY_NODELETE shouldDisableBlobFileAccessEnforcementInternal() { return false; }
@@ -848,7 +848,21 @@ std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const
 
 bool Quirks::needsDesktopUserAgent(const URL& url)
 {
-    return needsDesktopUserAgentInternal(url);
+#if PLATFORM(APPLETV)
+    if (!PAL::deviceClassIsHomeView())
+        return false;
+
+    auto domain = RegistrableDomain(url).string();
+    if (domain == "messenger.com"_s || domain == "netflix.com"_s || domain == "webex.com"_s || domain == "hulu.com"_s || domain.startsWith("zoom."_s)
+        || domain == "tiktok.com"_s || domain == "disneyplus.com"_s || domain == "max.com"_s)
+        return true;
+
+    if (url.host() == "meet.google.com"_s || (url.host() == "apps.google.com"_s && url.path().endsWith("/meet/"_s)))
+        return true;
+#else
+    UNUSED_PARAM(url);
+#endif
+    return false;
 }
 
 bool Quirks::needsPartitionedCookies(const ResourceRequest& request)

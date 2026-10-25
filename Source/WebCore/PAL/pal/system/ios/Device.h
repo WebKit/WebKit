@@ -42,6 +42,8 @@ PAL_EXPORT bool deviceClassIsSmallScreen();
 
 PAL_EXPORT bool deviceClassIsVision();
 
+PAL_EXPORT bool deviceClassIsHomeView();
+
 // FIXME: How does this differ from !deviceClassIsSmallScreen()?
 PAL_EXPORT bool deviceHasIPadCapability();
 

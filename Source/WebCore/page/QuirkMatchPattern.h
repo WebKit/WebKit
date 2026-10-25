@@ -52,6 +52,7 @@ enum class URLEnvironment : uint8_t {
     TubularApp,
     LensApp,
     SafariWebApp,
+    HomeView,
 };
 
 WEBCORE_EXPORT bool evaluateURLEnvironment(URLEnvironment);

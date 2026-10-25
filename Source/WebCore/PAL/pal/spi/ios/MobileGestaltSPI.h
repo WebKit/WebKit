@@ -66,6 +66,7 @@ typedef enum {
     MGDeviceClassWatch         = 6,
     MGDeviceClassMac           = 9,
     MGDeviceClassRealityDevice = 11,
+    MGDeviceClassHomeAccessory = 13,
 } MGDeviceClass;
 
 typedef enum {
