@@ -44,6 +44,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDTMFSender);
 static const size_t minToneDurationMs = 40;
 static const size_t maxToneDurationMs = 6000;
 static const size_t minInterToneGapMs = 30;
+static const size_t maxInterToneGapMs = 6000;
 
 Ref<RTCDTMFSender> RTCDTMFSender::create(ScriptExecutionContext& context, RTCRtpSender& sender, std::unique_ptr<RTCDTMFSenderBackend>&& backend)
 {
@@ -54,7 +55,6 @@ Ref<RTCDTMFSender> RTCDTMFSender::create(ScriptExecutionContext& context, RTCRtp
 
 RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RTCRtpSender& sender, std::unique_ptr<RTCDTMFSenderBackend>&& backend)
     : ActiveDOMObject(&context)
-    , m_toneTimer(*this, &RTCDTMFSender::toneTimerFired)
     , m_sender(sender)
     , m_backend(WTF::move(backend))
 {
@@ -104,8 +104,8 @@ ExceptionOr<void> RTCDTMFSender::insertDTMF(const String& tones, size_t duration
         return Exception { ExceptionCode::InvalidCharacterError, "Tones are not valid"_s };
 
     m_tones = WTF::move(normalizedTones);
-    m_duration = clampTo(duration, minToneDurationMs, maxToneDurationMs);
-    m_interToneGap = std::max(interToneGap, minInterToneGapMs);
+    m_duration = std::clamp(duration, minToneDurationMs, maxToneDurationMs);
+    m_interToneGap = std::clamp(interToneGap, minInterToneGapMs, maxInterToneGapMs);
 
     if (m_tones.isEmpty() || m_isPendingPlayoutTask)
         return { };
@@ -144,11 +144,6 @@ void RTCDTMFSender::playNextTone()
 
 void RTCDTMFSender::onTonePlayed()
 {
-    m_toneTimer.startOneShot(1_ms * m_interToneGap);
-}
-
-void RTCDTMFSender::toneTimerFired()
-{
     playNextTone();
 }
 
@@ -156,7 +151,6 @@ void RTCDTMFSender::stop()
 {
     m_isPendingPlayoutTask = false;
     m_backend = nullptr;
-    m_toneTimer.stop();
 }
 
 } // namespace WebCore
