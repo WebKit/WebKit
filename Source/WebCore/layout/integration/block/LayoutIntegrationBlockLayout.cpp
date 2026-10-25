@@ -58,11 +58,14 @@ static Layout::ConstraintsForBlockContent constraintsForBlockContent(const Rende
 {
     // The root lives in its parent's formatting context, which has already decided its size.
     auto contentBoxLogicalLeft = rootRenderer.borderAndPaddingStart();
-    // The vertical scrollbar sits between the border and the padding, on the inline start side when it is on the left of a left-to-right
-    // box or on the right of a right-to-left one (like RenderBlockFlow::determineLogicalLeftPositionForChild, it is clamped to the space it has).
-    // In vertical writing modes, it is in the block axis.
-    if (rootRenderer.isHorizontalWritingMode() && rootRenderer.shouldPlaceVerticalScrollbarOnLeft() == rootRenderer.writingMode().isLogicalLeftInlineStart())
-        contentBoxLogicalLeft += std::min<LayoutUnit>(rootRenderer.verticalScrollbarWidth(), std::max(0_lu, rootRenderer.logicalWidth() - rootRenderer.borderAndPaddingLogicalWidth()));
+    // The scrollbar in the inline axis sits between the border and the padding: the vertical one, on the left or on the right, in horizontal
+    // writing modes and the horizontal one, at the bottom, in vertical writing modes. The block formatting context measures from the inline
+    // start, so it counts when it is on that side, like RenderBlockFlow::determineLogicalLeftPositionForChild, which measures from the logical
+    // left (top in vertical writing modes) and clamps it to the space it has.
+    auto writingMode = rootRenderer.writingMode();
+    auto scrollbarIsOnLogicalLeft = writingMode.isHorizontal() && rootRenderer.shouldPlaceVerticalScrollbarOnLeft();
+    if (scrollbarIsOnLogicalLeft == writingMode.isLogicalLeftInlineStart())
+        contentBoxLogicalLeft += std::min<LayoutUnit>(rootRenderer.scrollbarLogicalWidth(), std::max(0_lu, rootRenderer.logicalWidth() - rootRenderer.borderAndPaddingLogicalWidth()));
     auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLogicalLeft, rootRenderer.contentBoxLogicalWidth() };
     return { { horizontalConstraints, rootRenderer.borderAndPaddingBefore() }, rootRenderer.availableLogicalHeightForPercentageComputation(), relayoutChildren == RelayoutChildren::Yes };
 }
@@ -170,7 +173,7 @@ static Layout::OutOfFlowGeometry::StaticPosition staticPosition(const RenderBox&
     }
     auto paddingBox = logicalPaddingBoxRect(containingBlock);
     auto inlinePosition = containingBlock.writingMode().isLogicalLeftInlineStart() ? position.x() - paddingBox.x() : paddingBox.maxX() - position.x();
-    return { inlinePosition, position.y() - paddingBox.y(), blockContainer->writingMode().isBidiLTR() != containingBlock.writingMode().isBidiLTR() };
+    return { inlinePosition, position.y() - paddingBox.y(), blockContainer->writingMode().isLogicalLeftInlineStart() != containingBlock.writingMode().isLogicalLeftInlineStart() };
 }
 
 // Like RenderBlock::layoutOutOfFlowBoxes once the containing block has its size: the out-of-flow boxes BlockLayout::updateRenderers registered
