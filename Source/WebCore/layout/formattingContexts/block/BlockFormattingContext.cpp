@@ -58,14 +58,22 @@ BlockFormattingContext::BlockFormattingContext(const RenderBlockFlow& root, Layo
 BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockContent& constraints)
 {
     ASSERT(m_blockLayoutState.containingBlockStates().isEmpty());
-    // FIXME: Keep the block items across layouts and invalidate them on tree and formatting context participation changes.
-    auto blockItems = BlockItemsBuilder { root() }.build();
-
     auto result = BlockLayoutResult { };
     m_blockLayoutState.containingBlockStates().append(containingBlockStateForRoot(constraints));
     m_blockLayoutState.marginCollapse().startBlockFormattingContextRoot(m_blockLayoutState.containingBlockStates().last());
     // The margins of a box that establishes a block formatting context do not collapse with its children's (CSS 2.2 §8.3.1).
     m_blockLayoutState.marginCollapse().resetAdjoiningMargins(m_blockLayoutState.containingBlockStates().last().contentBoxLogicalTop());
+
+    // FIXME: Keep the block items across layouts and invalidate them on tree and formatting context participation changes.
+    auto blockItems = BlockItemList { };
+    if (root().childrenInline()) {
+        // A root with only inline-level content establishes an inline formatting context for it (CSS Display 3), in the geometry its parent
+        // formatting context gave it.
+        auto& rootState = m_blockLayoutState.containingBlockStates().last();
+        rootState.geometry = LayoutIntegration::BlockIntegrationUtils::rootGeometry(root());
+        handleInlineContent(root(), rootState, m_blockLayoutState);
+    } else
+        blockItems = BlockItemsBuilder { root() }.build();
 
     for (auto& blockItem : blockItems) {
         CheckedRef box = blockItem.renderer();
@@ -150,7 +158,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
     ASSERT(blockContainerState.blockContainer.ptr() == &blockContainer);
     // FIXME: Floats need the block container's top before the inline content is laid out; decide whether it has line boxes from its
     // inline items then.
-    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), blockContainerState.geometry, blockContainerState.contentBoxBlockSize, inlineContentBlockLayoutState);
+    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), blockContainerState.geometry, blockContainerState.contentBoxBlockSize, blockContainerState.relayoutChildren, inlineContentBlockLayoutState);
     if (!inlineContentLayoutResult.hasLineBoxes)
         return;
     // The first line box separates the block-start margin from what follows (CSS 2.2 §8.3.1).
@@ -332,7 +340,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
         // Its content is in a block formatting context of its own, with a block layout state of its own.
         auto blockLayoutState = BlockLayoutState { { } };
         if (box->childrenInline()) {
-            auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(box.get(), constraintsForInlineContent(box, boxState), geometry, boxState.contentBoxBlockSize, blockLayoutState);
+            auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(box.get(), constraintsForInlineContent(box, boxState), geometry, boxState.contentBoxBlockSize, boxState.relayoutChildren, blockLayoutState);
             if (inlineContentLayoutResult.hasLineBoxes)
                 intrinsicContentBlockSize = inlineContentLayoutResult.contentBlockSize;
         } else {
@@ -546,6 +554,10 @@ ConstraintsForInlineContent BlockFormattingContext::constraintsForInlineContent(
     auto& geometry = blockContainerState.geometry;
     auto horizontalConstraints = HorizontalConstraints { blockContainerState.inlineRange.min(), blockContainerState.inlineRange.size() };
     auto visualLeft = blockContainer.writingMode().isLogicalLeftInlineStart() ? geometry.borderAndPaddingStart() : geometry.borderAndPaddingEnd();
+    // The vertical scrollbar of a root sits between its left border and padding (LayoutIntegration::BoxGeometryUpdater::formattingContextConstraints),
+    // which is in the block axis in vertical writing modes.
+    if (blockContainer.shouldPlaceVerticalScrollbarOnLeft() && blockContainer.writingMode().isHorizontal())
+        visualLeft += geometry.horizontalSpaceForScrollbar();
     // The physical size of the border box, of which the inline formatting context only needs the inline size (InlineDisplayLineBuilder's
     // mapLineRectLogicalToVisual).
     auto borderBoxSize = blockContainer.writingMode().isHorizontal() ? LayoutSize { geometry.borderBoxWidth(), 0_lu } : LayoutSize { 0_lu, geometry.borderBoxWidth() };
