@@ -118,6 +118,7 @@
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <UniformTypeIdentifiers/UTCoreTypes.h>
 #import <WebCore/AppHighlight.h>
+#import <WebCore/BitmapImage.h>
 #import <WebCore/CharacterRange.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
@@ -11707,7 +11708,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #if USE(UICONTEXTMENU)
 
-static RetainPtr<UIImage> uiImageForImage(WebCore::Image* image)
+static RetainPtr<UIImage> uiImageForImage(WebCore::BitmapImage* image)
 {
     if (!image)
         return nil;
