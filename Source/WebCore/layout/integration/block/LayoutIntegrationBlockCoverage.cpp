@@ -244,8 +244,8 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
 // BlockFormattingContext::computeIntrinsicInlineSizes measures inline content with the inline formatting context and the block-level boxes
 // between them itself, without percentage padding, which RenderBox resolves against the containing block's current inline size.
 // A block-level independent formatting context root the block formatting context lays out through the render tree
-// (BlockIntegrationUtils::layoutIndependentFormattingContext): a replaced element, a table, a flex (-webkit-box included) or grid container,
-// or a block formatting context root whose content the block formatting context cannot lay out.
+// (BlockIntegrationUtils::layoutIndependentFormattingContext): a replaced element, a table, a button, a flex (-webkit-box included) or grid
+// container, or a block formatting context root whose content the block formatting context cannot lay out.
 static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
 {
     if (renderer.isInline() || renderer.isFloatingOrOutOfFlowPositioned())
@@ -253,6 +253,7 @@ static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
     if (renderer.isRenderReplaced() || renderer.isRenderOrLegacyRenderSVGRoot())
         return true;
     switch (renderer.type()) {
+    case RenderObject::Type::Button:
     case RenderObject::Type::Table:
     case RenderObject::Type::FlexibleBox:
     case RenderObject::Type::DeprecatedFlexibleBox:
@@ -396,8 +397,8 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
 {
     if (box.isForceHiddenByLineClamp())
         return BlockAvoidanceReason::ContentIsHiddenByLineClamp;
-    // Form controls are flex containers with content of their own.
-    if (isAnyOf<HTMLButtonElement, HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement>(box.element()))
+    // Buttons fit their content (RenderBox::sizesLogicalWidthToFitContent); other form controls are flex containers with content of their own.
+    if (isAnyOf<HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement>(box.element()) && !box.isRenderButton())
         return BlockAvoidanceReason::ContentIsFormControl;
     if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(box.parent()); !parent || parent->childrenInline())
         return BlockAvoidanceReason::ContentHasBlockInInline;

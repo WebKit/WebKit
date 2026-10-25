@@ -198,8 +198,8 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
 
 // Everything that belongs to the block formatting context is computed here: the margins, the position, the containing block and, for a box
 // whose inline size its own formatting context does not decide, the stretch-fit inline size. The rest comes back from the box's own formatting
-// context, laid out through the render tree, which lays out its content: the inline size of a table (CSS 2.2 §17.5.2) or of a replaced element
-// (§10.3.4), the block size, border and padding.
+// context, laid out through the render tree, which lays out its content: the inline size of a table (CSS 2.2 §17.5.2), of a replaced element
+// (§10.3.4) or of a box that fits its content, like a button (RenderBox::sizesLogicalWidthToFitContent), the block size, border and padding.
 void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree(const RenderBox& box, ContainingBlockState& boxState)
 {
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
@@ -209,7 +209,7 @@ void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree
         .containingBlockInlineSize = containingBlockInlineSize,
         .containingBlockBlockSize = containingBlockState.contentBoxBlockSize,
         .relayoutChildren = containingBlockState.relayoutChildren,
-        .borderBoxInlineSize = is<RenderTable>(box) || box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot() ? std::nullopt : std::optional { geometry.borderBoxWidth() }
+        .borderBoxInlineSize = is<RenderTable>(box) || box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot() || box.sizesLogicalWidthToFitContent() ? std::nullopt : std::optional { geometry.borderBoxWidth() }
     };
     auto layoutResult = integrationUtils().layoutIndependentFormattingContext(box, constraints);
 

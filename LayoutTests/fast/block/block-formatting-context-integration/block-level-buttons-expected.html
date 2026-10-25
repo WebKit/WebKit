@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 8px; }
+button, input { display: block; margin: 4px 0; }
+</style>
+<div class="root" id="resized">
+  <button id="text">x</button>
+  <button style="margin: 6px auto">centered</button>
+  <button style="width: 50%">half the width</button>
+  <input type="submit" value="submit">
+  <button style="display: flex; justify-content: space-between; width: 120px"><span>flex</span><span>button</span></button>
+  <div style="margin-top: 10px"><button style="margin-top: 20px">collapsing margins</button></div>
+</div>
+<div class="root" dir="rtl"><button>right to left</button><button style="margin-right: 20px">margin</button></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "200px";
+document.getElementById("text").firstChild.data = "a button whose text got longer";
+</script>
