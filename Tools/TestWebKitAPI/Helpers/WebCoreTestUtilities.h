@@ -34,6 +34,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSegment.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/IntRect.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/TextStream.h>
 
