@@ -211,12 +211,29 @@ static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& box)
 
 static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(const RenderBox& leaf, const RenderBlockFlow& rootContainer);
 
+// The render tree sizes an orthogonal box in its inline axis with the block size of its containing block, its available inline space
+// (css-writing-modes-4 §7.3, RenderBox::perpendicularContainingBlockLogicalHeight), which the block formatting context writes once all of it
+// is laid out. That comes from style when it is fixed, or when it is auto without a maximum, where the size of the viewport stands in for it
+// outside quirks mode.
+// FIXME: The other block sizes of the containing block, which the block formatting context knows.
+static bool hasAvailableInlineSpaceFromStyle(const RenderBox& box)
+{
+    CheckedPtr containingBlock = box.containingBlock();
+    if (!containingBlock || !box.writingMode().isOrthogonal(containingBlock->writingMode()))
+        return true;
+    CheckedRef style = containingBlock->style();
+    auto& blockSize = style->logicalHeight();
+    if (blockSize.isFixed())
+        return true;
+    auto& maximumBlockSize = style->logicalMaxHeight();
+    return blockSize.isAuto() && (maximumBlockSize.isNone() || maximumBlockSize.isMaxContent()) && !box.document().inQuirksMode() && !containingBlock->shouldComputeLogicalHeightFromAspectRatio();
+}
+
 // The inline formatting context lays out an atomic inline-level box through the render tree, with the containing block size the block
 // formatting context gives it (BlockIntegrationUtils::layoutInlineContent).
 static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
 {
-    // FIXME: An orthogonal box, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
-    if (box.isWritingModeRoot())
+    if (!hasAvailableInlineSpaceFromStyle(box))
         return BlockAvoidanceReason::ContentHasOrthogonalFlow;
     if (hasPercentageBlockSizeInQuirksMode(box))
         return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
@@ -406,8 +423,7 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     // (RenderBox::computeLogicalHeight), which the block formatting context has not committed yet.
     if (box.stretchesToViewport())
         return BlockAvoidanceReason::ContentHasStretchedQuirksModeBody;
-    // FIXME: An orthogonal box, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
-    if (box.isWritingModeRoot())
+    if (!hasAvailableInlineSpaceFromStyle(box))
         return BlockAvoidanceReason::ContentHasOrthogonalFlow;
     CheckedRef style = box.style();
     auto writingMode = box.writingMode();
