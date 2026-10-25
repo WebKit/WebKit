@@ -67,7 +67,7 @@ static Layout::ConstraintsForBlockContent constraintsForBlockContent(const Rende
     return { { horizontalConstraints, rootRenderer.borderAndPaddingBefore() }, rootRenderer.availableLogicalHeightForPercentageComputation(), relayoutChildren == RelayoutChildren::Yes };
 }
 
-void BlockLayout::layout(RelayoutChildren relayoutChildren)
+void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     auto paintInvalidation = PaintInvalidation { };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
@@ -78,6 +78,13 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren)
     updateRenderers(result, paintInvalidation);
     // RenderBlockFlow::layoutBlock resolves the used block size of the root from this.
     rootRenderer().setLogicalHeight(rootRenderer().borderAndPaddingLogicalHeight() + rootRenderer().scrollbarLogicalHeight() + result.intrinsicContentBlockSize);
+    // Like RenderBlockFlow::layoutInlineContent for the inline content of the root.
+    if (auto damagedInlineContent = paintInvalidation.damagedInlineContentLogicalTopAndBottom(rootRenderer(), rootRenderer().logicalHeight())) {
+        repaintLogicalTop = damagedInlineContent->logicalTop;
+        repaintLogicalBottom = damagedInlineContent->logicalBottom;
+        if (CheckedPtr cache = protect(rootRenderer().document())->existingAXObjectCache())
+            cache->onLaidOutInlineContent(rootRenderer());
+    }
 }
 
 std::pair<LayoutUnit, LayoutUnit> BlockLayout::computeIntrinsicInlineSizes(const RenderBlockFlow& rootRenderer)
