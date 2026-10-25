@@ -1,0 +1,11 @@
+Adding an active touch listener in an idle cross-origin iframe should update its event region, so that the next touch is dispatched synchronously.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS hadRenderingUpdate is true
+PASS eventsReceived is "cancelable touchstart"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

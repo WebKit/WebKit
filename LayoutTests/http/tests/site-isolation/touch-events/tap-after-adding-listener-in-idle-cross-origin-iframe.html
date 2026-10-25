@@ -1,0 +1,57 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Adding an active touch listener in an idle cross-origin iframe should update its event region, so that the next touch is dispatched synchronously.");
+jsTestIsAsync = true;
+
+let iframe;
+let hadRenderingUpdate;
+let eventsReceived;
+
+function sendToFrame(message)
+{
+    return new Promise(resolve => {
+        addEventListener("message", event => resolve(event.data), { once: true });
+        iframe.contentWindow.postMessage(message, "*");
+    });
+}
+
+// testRunner.runUIScript() (and so UIHelper.tapAt()) waits for a presentation update before running the
+// script, which would hide a missing rendering update. Run the tap immediately instead.
+function tapImmediately(x, y)
+{
+    return new Promise(resolve => testRunner.runUIScriptImmediately(`
+        uiController.singleTapAtPoint(${x}, ${y}, () => uiController.uiScriptComplete());`, resolve));
+}
+
+async function runTest()
+{
+    iframe = document.querySelector("iframe");
+
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.delayFor(100);
+
+    hadRenderingUpdate = await sendToFrame("addActiveTouchStartListener");
+    shouldBeTrue("hadRenderingUpdate");
+
+    // Make sure the UI process has received the iframe's commit.
+    if (hadRenderingUpdate)
+        await UIHelper.ensurePresentationUpdate();
+
+    await tapImmediately(250, 250);
+    await UIHelper.ensurePresentationUpdate();
+
+    eventsReceived = await sendToFrame("getEventsReceived");
+    shouldBeEqualToString("eventsReceived", "cancelable touchstart");
+    finishJSTest();
+}
+</script>
+</head>
+<body style="margin: 0;">
+<iframe onload="runTest()" style="position: absolute; left: 150px; top: 150px; width: 200px; height: 200px; border: none;" src="http://localhost:8000/site-isolation/touch-events/resources/add-touch-listener-on-message.html"></iframe>
+</body>
+</html>

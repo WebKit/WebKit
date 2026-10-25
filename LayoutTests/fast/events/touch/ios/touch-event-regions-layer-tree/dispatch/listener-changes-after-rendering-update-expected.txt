@@ -1,0 +1,14 @@
+Add an active listener to an element without any listeners, then tap it (event should be cancelable):
+Had rendering update: true
+Listener noListeners received cancelable event touchstart targeting noListeners
+
+Remove an active listener that has a passive sibling, then tap it (event should not be cancelable):
+Had rendering update: true
+Listener removedActiveListener (passive) received event touchstart targeting removedActiveListener
+
+Add an active listener that prevents default under a passive document listener, then drag it (touchstart should be cancelable and the page should not scroll):
+Had rendering update: true
+Listener passiveDocumentListener received cancelable event touchstart targeting passiveDocumentListener
+Listener document received cancelable event touchstart targeting passiveDocumentListener
+scrollY: 0
+

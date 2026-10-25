@@ -1,0 +1,54 @@
+Tap on Target1 (green)
+
+(event region
+        (rect (0,0) width=800 height=600)
+        (touch-action
+          (manipulation
+            (rect (0,0) width=800 height=118)
+          )
+        )
+      (touch event listener region: asynchronousDispatchRegion:
+        (rect (0,0) width=300 height=100)
+eventSpecificSynchronousDispatchRegions: eventName: touchend eventRect:
+        (rect (0,0) width=300 height=100)
+
+      )
+    )
+Listener target1 received cancelable event touchend targetting eventTarget1
+Done
+Tap on Target2 (red)
+
+(event region
+        (rect (0,0) width=800 height=600)
+        (touch-action
+          (manipulation
+            (rect (0,0) width=800 height=118)
+          )
+        )
+      (touch event listener region: asynchronousDispatchRegion:
+        (rect (0,0) width=300 height=100)
+eventSpecificSynchronousDispatchRegions: eventName: touchend eventRect:
+        (rect (0,0) width=300 height=100)
+
+      )
+    )
+Listener target1 received cancelable event touchend targetting eventTarget2
+Done
+Tap on Target3 (blue)
+
+(event region
+        (rect (0,0) width=800 height=600)
+        (touch-action
+          (manipulation
+            (rect (0,0) width=800 height=118)
+          )
+        )
+      (touch event listener region: asynchronousDispatchRegion:
+        (rect (0,0) width=300 height=100)
+eventSpecificSynchronousDispatchRegions: eventName: touchend eventRect:
+        (rect (0,0) width=300 height=100)
+
+      )
+    )
+Listener target1 received cancelable event touchend targetting eventTarget3
+
