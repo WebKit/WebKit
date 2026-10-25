@@ -101,10 +101,8 @@ static ALWAYS_INLINE bool tryGrowAndShiftButterflyRight(JSObject* object, VM& vm
 
 const ClassInfo JSArray::s_info = { "Array"_s, &JSNonFinalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArray) };
 
-JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& scope, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
+Butterfly* JSArray::tryCreateUninitializedRestrictedButterfly(VM& vm, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
 {
-    VM& vm = scope.vm();
-
     if (initialLength > MAX_STORAGE_VECTOR_LENGTH) [[unlikely]]
         return nullptr;
 
@@ -128,13 +126,7 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
         butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(initialLength);
-        if (hasDouble(indexingType)) {
-            for (unsigned i = initialLength; i < vectorLength; ++i)
-                butterfly->contiguousDouble().atUnsafe(i) = PNaN;
-        } else {
-            for (unsigned i = initialLength; i < vectorLength; ++i)
-                butterfly->contiguous().atUnsafe(i).clear();
-        }
+        Butterfly::clearRange(indexingType, butterfly, initialLength, vectorLength);
     } else {
         ASSERT(
             indexingType == ArrayWithSlowPutArrayStorage
@@ -156,6 +148,17 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
         for (unsigned i = initialLength; i < vectorLength; ++i)
             storage->m_vector[i].clear();
     }
+
+    return butterfly;
+}
+
+JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& scope, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
+{
+    VM& vm = scope.vm();
+
+    Butterfly* butterfly = tryCreateUninitializedRestrictedButterfly(vm, deferralContext, structure, initialLength);
+    if (!butterfly) [[unlikely]]
+        return nullptr;
 
     JSArray* result = createWithButterfly(vm, deferralContext, structure, butterfly);
 

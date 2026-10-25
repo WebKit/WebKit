@@ -89,6 +89,11 @@ public:
         return tryCreateUninitializedRestricted(scope, nullptr, structure, initialLength);
     }
 
+    // The butterfly half of tryCreateUninitializedRestricted, for clients that must fill the
+    // out-of-line property storage before the array cell exists. Pass the result to
+    // createWithButterfly() and then notify the ObjectInitializationScope.
+    static Butterfly* tryCreateUninitializedRestrictedButterfly(VM&, GCDeferralContext*, Structure*, unsigned initialLength);
+
     static void LEGACY_NODELETE eagerlyInitializeButterfly(ObjectInitializationScope&, JSArray*, unsigned initialLength);
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool throwException);
