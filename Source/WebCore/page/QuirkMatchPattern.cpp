@@ -31,6 +31,7 @@
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
+#include <pal/system/ios/Device.h>
 #include <pal/system/ios/UserInterfaceIdiom.h>
 #endif
 
@@ -80,6 +81,12 @@ bool evaluateURLEnvironment(URLEnvironment environment)
         return WTF::MacApplication::isSafariWebApp();
 #elif PLATFORM(IOS_FAMILY)
         return WTF::IOSApplication::isAppleWebApp();
+#else
+        return false;
+#endif
+    case URLEnvironment::HomeView:
+#if PLATFORM(IOS_FAMILY)
+        return PAL::deviceClassIsHomeView();
 #else
         return false;
 #endif

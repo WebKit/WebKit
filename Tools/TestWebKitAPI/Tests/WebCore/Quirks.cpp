@@ -44,6 +44,10 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(APPLETV)
+#include <pal/system/ios/Device.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -1540,5 +1544,68 @@ TEST_F(QuirksTest, SameDocumentNavigationReresolvesQuirks)
     document->updateURLForPushOrReplaceState(URL { "https://www.apple.com/"_s });
     EXPECT_FALSE(hasActiveQuirk(document, "ShouldDisableScrollAnchoringQuirk"_s));
 }
+
+#if PLATFORM(APPLETV)
+
+class ScopedHomeViewOverride {
+public:
+    explicit ScopedHomeViewOverride(bool isHomeView)
+    {
+        PAL::setDeviceClassIsHomeViewForTesting(isHomeView);
+    }
+
+    ~ScopedHomeViewOverride()
+    {
+        PAL::setDeviceClassIsHomeViewForTesting(std::nullopt);
+    }
+};
+
+static bool hasBehavior(ASCIILiteral urlString, WebCore::QuirkBehaviorID id)
+{
+    return resolveQuirksForTopURL(urlString).isBehaviorEnabled(id);
+}
+
+TEST_F(QuirksTest, HomeViewTableQuirksApplyOnlyOnHomeView)
+{
+    using enum WebCore::QuirkBehaviorID;
+
+    {
+        ScopedHomeViewOverride homeView { true };
+        EXPECT_TRUE(hasBehavior("https://play.hbomax.com/"_s, NeedsZeroMaxTouchPointsQuirk));
+        EXPECT_TRUE(hasBehavior("https://play.hbomax.com/"_s, ShouldSupportHoverMediaQueriesQuirk));
+        EXPECT_TRUE(hasBehavior("https://disneyplus.com/"_s, NeedsZeroMaxTouchPointsQuirk));
+        EXPECT_TRUE(hasBehavior("https://www.disneyplus.com/"_s, NeedsZeroMaxTouchPointsQuirk));
+        EXPECT_TRUE(hasBehavior("https://webex.com/"_s, NeedsWebExScrollabilityQuirk));
+        EXPECT_TRUE(hasBehavior("https://www.webex.com/"_s, NeedsWebExScrollabilityQuirk));
+        EXPECT_TRUE(hasBehavior("https://bing.com/"_s, ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk));
+        EXPECT_TRUE(hasBehavior("https://www.bing.com/"_s, ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk));
+        EXPECT_TRUE(hasBehavior("https://facebook.com/"_s, ShouldFlipScreenDimensionsQuirk));
+        EXPECT_TRUE(hasBehavior("https://www.facebook.com/"_s, ShouldFlipScreenDimensionsQuirk));
+    }
+
+    {
+        ScopedHomeViewOverride notHomeView { false };
+        EXPECT_FALSE(hasBehavior("https://play.hbomax.com/"_s, NeedsZeroMaxTouchPointsQuirk));
+        EXPECT_FALSE(hasBehavior("https://play.hbomax.com/"_s, ShouldSupportHoverMediaQueriesQuirk));
+        EXPECT_FALSE(hasBehavior("https://www.disneyplus.com/"_s, NeedsZeroMaxTouchPointsQuirk));
+        EXPECT_FALSE(hasBehavior("https://www.webex.com/"_s, NeedsWebExScrollabilityQuirk));
+        EXPECT_FALSE(hasBehavior("https://www.bing.com/"_s, ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk));
+        EXPECT_FALSE(hasBehavior("https://www.facebook.com/"_s, ShouldFlipScreenDimensionsQuirk));
+    }
+}
+
+TEST_F(QuirksTest, HomeViewTableQuirksDoNotLeakOntoOtherSites)
+{
+    using enum WebCore::QuirkBehaviorID;
+
+    ScopedHomeViewOverride homeView { true };
+    EXPECT_FALSE(hasBehavior("https://www.example.com/"_s, NeedsZeroMaxTouchPointsQuirk));
+    EXPECT_FALSE(hasBehavior("https://www.example.com/"_s, ShouldSupportHoverMediaQueriesQuirk));
+    EXPECT_FALSE(hasBehavior("https://www.example.com/"_s, NeedsWebExScrollabilityQuirk));
+    EXPECT_FALSE(hasBehavior("https://www.example.com/"_s, ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk));
+    EXPECT_FALSE(hasBehavior("https://www.example.com/"_s, ShouldFlipScreenDimensionsQuirk));
+}
+
+#endif // PLATFORM(APPLETV)
 
 } // namespace TestWebKitAPI

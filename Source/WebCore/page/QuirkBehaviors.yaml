@@ -588,7 +588,7 @@ ShouldExposeShowModalDialog:
 
 # rdar://133423460
 ShouldFlipScreenDimensionsQuirk:
-  available: flipScreenDimensionsQuirks
+  available: iOSFamily
   accessor: shouldFlipScreenDimensions
 
 # disneyplus: rdar://137613110
@@ -717,11 +717,11 @@ ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk:
 
 # webex.com rdar://143715630
 NeedsWebExScrollabilityQuirk:
-  available: "iOSFamily && desktopContentModeQuirks"
+  available: appleTV
 
 # rdar://138806698
 ShouldSupportHoverMediaQueriesQuirk:
-  available: desktopContentModeQuirks
+  available: appleTV
   accessor: shouldSupportHoverMediaQueries
 
 # cbssports.com <rdar://139478801>.

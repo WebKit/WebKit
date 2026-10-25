@@ -327,9 +327,10 @@ https://open.spotify.com/
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldBlockAudiblePlaybackWhileAudioIsPlaying
     ShouldDeferIntersectionObserversDuringResize
+    ShouldFlipScreenDimensionsQuirk
     ShouldLimitHLSPlaybackRate
 https://www.spotify.com/
-    (none)
+    ShouldFlipScreenDimensionsQuirk
 https://ceac.state.gov/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://sub.ceac.state.gov/
