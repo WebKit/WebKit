@@ -30,6 +30,7 @@ import json
 import logging
 import os
 import unittest
+from unittest import mock
 
 from webkitcorepy import OutputCapture
 
@@ -169,6 +170,55 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
         self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
         self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/t/test.html'))
+
+    def test_tip_of_tree_fetches_and_checks_out_default_repository(self):
+        FAKE_FILES = {}
+        FAKE_FILES.update(FAKE_RESOURCES)
+        FAKE_FILES.update({
+            f'{FAKE_WPT_DIR}/dir-to-import/test.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
+{
+"web-platform-tests/dir-to-import": "import"
+}''',
+        })
+
+        with mock.patch('webkitpy.w3c.test_importer.Git') as mock_git:
+            mock_git.return_value.default_branch = 'main'
+            fs = self.import_downloaded_tests(['-t', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
+            mock_git.return_value.fetch.assert_called_once_with('main')
+            mock_git.return_value.checkout.assert_called_once_with('origin/main')
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-import/test.html'))
+
+    def test_no_tip_of_tree_does_not_fetch(self):
+        FAKE_FILES = {}
+        FAKE_FILES.update(FAKE_RESOURCES)
+        FAKE_FILES.update({
+            f'{FAKE_WPT_DIR}/dir-to-import/test.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
+{
+"web-platform-tests/dir-to-import": "import"
+}''',
+        })
+
+        with mock.patch('webkitpy.w3c.test_importer.Git') as mock_git:
+            fs = self.import_downloaded_tests(['--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
+            mock_git.return_value.fetch.assert_not_called()
+            mock_git.return_value.checkout.assert_not_called()
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-import/test.html'))
+
+    def test_tip_of_tree_with_no_fetch_does_not_fetch(self):
+        FAKE_FILES = {}
+        FAKE_FILES.update(FAKE_RESOURCES)
+        FAKE_FILES.update({
+            f'{FAKE_WPT_DIR}/dir-to-import/test.html': MINIMAL_TESTHARNESS,
+        })
+
+        with mock.patch('webkitpy.w3c.test_importer.Git') as mock_git:
+            self.import_downloaded_tests(['-t', '--no-fetch', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
+            mock_git.return_value.fetch.assert_not_called()
+            mock_git.return_value.checkout.assert_not_called()
 
     def test_skip_test_import_download(self):
         FAKE_FILES = {}
