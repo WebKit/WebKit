@@ -266,10 +266,6 @@ std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicLogicalWidths() co
         if (flexItem->isOutOfFlowPositioned() || flexItem->isExcludedFromNormalLayout())
             continue;
 
-        // Pre-layout orthogonal children in order to get a valid value for the preferred width.
-        if (flexBox().writingMode().isOrthogonal(flexItem->writingMode()))
-            flexItem->layoutIfNeeded();
-
         LayoutUnit margin = flexBox().marginIntrinsicLogicalWidthForChild(*flexItem);
 
         auto [minContentInParentInlineAxis, maxContentInParentInlineAxis] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
