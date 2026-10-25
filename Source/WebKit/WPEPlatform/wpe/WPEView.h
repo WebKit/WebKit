@@ -52,32 +52,40 @@ struct _WPEViewClass
 {
     GObjectClass parent_class;
 
-    void               (* buffers_changed)       (WPEView            *view,
-                                                  WPEBuffer         **buffers,
-                                                  guint               n_buffers);
-    gboolean           (* render_buffer)         (WPEView            *view,
-                                                  WPEBuffer          *buffer,
-                                                  const WPERectangle *damage_rects,
-                                                  guint               n_damage_rects,
-                                                  GError            **error);
-    gboolean           (* lock_pointer)          (WPEView            *view);
-    gboolean           (* unlock_pointer)        (WPEView            *view);
-    void               (* set_cursor_from_name)  (WPEView            *view,
-                                                  const char         *name);
-    void               (* set_cursor_from_bytes) (WPEView            *view,
-                                                  GBytes             *bytes,
-                                                  guint               width,
-                                                  guint               height,
-                                                  guint               stride,
-                                                  guint               hotspot_x,
-                                                  guint               hotspot_y);
-    void               (* set_opaque_rectangles) (WPEView            *view,
-                                                  WPERectangle       *rects,
-                                                  guint               n_rects);
-    gboolean           (* can_be_mapped)         (WPEView            *view);
-    WPEViewAccessible *(* get_accessible)        (WPEView            *view);
+    void               (* buffers_changed)                  (WPEView            *view,
+                                                             WPEBuffer         **buffers,
+                                                             guint               n_buffers);
+    gboolean           (* render_buffer)                    (WPEView            *view,
+                                                             WPEBuffer          *buffer,
+                                                             const WPERectangle *damage_rects,
+                                                             guint               n_damage_rects,
+                                                             GError            **error);
+    gboolean           (* lock_pointer)                     (WPEView            *view);
+    gboolean           (* unlock_pointer)                   (WPEView            *view);
+    void               (* set_cursor_from_name)             (WPEView            *view,
+                                                             const char         *name);
+    void               (* set_cursor_from_bytes)            (WPEView            *view,
+                                                             GBytes             *bytes,
+                                                             guint               width,
+                                                             guint               height,
+                                                             guint               stride,
+                                                             guint               hotspot_x,
+                                                             guint               hotspot_y);
+    void               (* set_opaque_rectangles)            (WPEView            *view,
+                                                             WPERectangle       *rects,
+                                                             guint               n_rects);
+    gboolean           (* can_be_mapped)                    (WPEView            *view);
+    WPEViewAccessible *(* get_accessible)                   (WPEView            *view);
+    void               (* set_cursor_from_bytes_with_scale) (WPEView            *view,
+                                                             GBytes             *bytes,
+                                                             guint               width,
+                                                             guint               height,
+                                                             guint               stride,
+                                                             guint               hotspot_x,
+                                                             guint               hotspot_y,
+                                                             double              scale);
 
-    gpointer padding[32];
+    gpointer padding[31];
 };
 
 #define WPE_VIEW_ERROR (wpe_view_error_quark())
@@ -123,6 +131,14 @@ WPE_API void                  wpe_view_set_cursor_from_bytes        (WPEView    
                                                                      guint               stride,
                                                                      guint               hotspot_x,
                                                                      guint               hotspot_y);
+WPE_API void                  wpe_view_set_cursor_from_bytes_with_scale (WPEView        *view,
+                                                                     GBytes             *bytes,
+                                                                     guint               width,
+                                                                     guint               height,
+                                                                     guint               stride,
+                                                                     guint               hotspot_x,
+                                                                     guint               hotspot_y,
+                                                                     double              scale);
 WPE_API WPEToplevelState      wpe_view_get_toplevel_state           (WPEView            *view);
 WPE_API WPEScreen            *wpe_view_get_screen                   (WPEView            *view);
 WPE_API void                  wpe_view_buffers_changed              (WPEView            *view,

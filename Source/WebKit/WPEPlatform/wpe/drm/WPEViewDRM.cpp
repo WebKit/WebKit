@@ -499,10 +499,10 @@ static void wpeViewDRMSetCursorFromName(WPEView* view, const char* name)
         cursor->setFromName(UTF8CStringView::unsafeFromUTF8(name), wpe_view_get_scale(view));
 }
 
-static void wpeViewDRMSetCursorFromBytes(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY)
+static void wpeViewDRMSetCursorFromBytesWithScale(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY, double scale)
 {
     if (auto* cursor = wpeDisplayDRMGetCursor(WPE_DISPLAY_DRM(wpe_view_get_display(view))))
-        cursor->setFromBytes(bytes, width, height, stride, hotspotX, hotspotY);
+        cursor->setFromBytes(bytes, width, height, stride, hotspotX, hotspotY, wpe_view_get_scale(view) / scale);
 }
 
 static void wpeViewDRMScheduleCursorUpdate(WPEViewDRM* view)
@@ -583,5 +583,5 @@ static void wpe_view_drm_class_init(WPEViewDRMClass* viewDRMClass)
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewDRMClass);
     viewClass->render_buffer = wpeViewDRMRenderBuffer;
     viewClass->set_cursor_from_name = wpeViewDRMSetCursorFromName;
-    viewClass->set_cursor_from_bytes = wpeViewDRMSetCursorFromBytes;
+    viewClass->set_cursor_from_bytes_with_scale = wpeViewDRMSetCursorFromBytesWithScale;
 }

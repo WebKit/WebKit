@@ -35,6 +35,7 @@ set(WPEPlatformDRM_SYSTEM_INCLUDE_DIRECTORIES
 set(WPEPlatformDRM_LIBRARIES
     GLib::GioUnix
     LibInput::LibInput
+    Skia::Skia
     Udev::Udev
 )
 

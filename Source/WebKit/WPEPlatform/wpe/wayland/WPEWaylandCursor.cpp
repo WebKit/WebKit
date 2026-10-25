@@ -86,15 +86,22 @@ void WaylandCursor::setFromName(UTF8CStringView name, double scale)
     wl_surface_commit(m_surface);
 }
 
-void WaylandCursor::setFromBuffer(struct wl_buffer* buffer, uint32_t width, uint32_t height, uint32_t hotspotX, uint32_t hotspotY)
+void WaylandCursor::setFromBuffer(struct wl_buffer* buffer, uint32_t width, uint32_t height, uint32_t hotspotX, uint32_t hotspotY, double scale)
 {
+    // FIXME: use wp_viewport for fractional scales and sizes that aren't a multiple of the scale.
+    int32_t bufferScale = 1;
+    if (std::trunc(scale) == scale && !(width % static_cast<uint32_t>(scale)) && !(height % static_cast<uint32_t>(scale)))
+        bufferScale = scale;
+
     m_name = { };
-    m_hotspot.x = hotspotX;
-    m_hotspot.y = hotspotY;
+    m_hotspot.x = hotspotX / bufferScale;
+    m_hotspot.y = hotspotY / bufferScale;
     m_cursorChanged = true;
     update();
 
     wl_surface_attach(m_surface, buffer, 0, 0);
+    if (wl_surface_get_version(m_surface) >= WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
+        wl_surface_set_buffer_scale(m_surface, bufferScale);
     wl_surface_damage(m_surface, 0, 0, width, height);
     wl_surface_commit(m_surface);
 }

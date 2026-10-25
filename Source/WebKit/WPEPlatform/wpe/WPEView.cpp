@@ -895,10 +895,35 @@ void wpe_view_set_cursor_from_name(WPEView* view, const char* name)
  */
 void wpe_view_set_cursor_from_bytes(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY)
 {
+    wpe_view_set_cursor_from_bytes_with_scale(view, bytes, width, height, stride, hotspotX, hotspotY, 1.);
+}
+
+/**
+ * wpe_view_set_cursor_from_bytes_with_scale:
+ * @view: a #WPEView
+ * @bytes: the cursor image data
+ * @width: the cursor width
+ * @height: the cursor height
+ * @stride: the cursor image data stride
+ * @hotspot_x: the cursor hotspot x coordinate
+ * @hotspot_y: the cursor hotspot y coordinate
+ * @scale: the number of pixels of @bytes per logical pixel
+ *
+ * Set the @view cursor from the given @bytes. Pixel format must be %WPE_PIXEL_FORMAT_ARGB8888.
+ *
+ * Since: 2.56
+ */
+void wpe_view_set_cursor_from_bytes_with_scale(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY, double scale)
+{
     g_return_if_fail(WPE_IS_VIEW(view));
     g_return_if_fail(bytes);
 
     auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    if (viewClass->set_cursor_from_bytes_with_scale) {
+        viewClass->set_cursor_from_bytes_with_scale(view, bytes, width, height, stride, hotspotX, hotspotY, scale);
+        return;
+    }
+
     if (viewClass->set_cursor_from_bytes)
         viewClass->set_cursor_from_bytes(view, bytes, width, height, stride, hotspotX, hotspotY);
 }
