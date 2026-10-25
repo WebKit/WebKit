@@ -213,11 +213,12 @@ std::pair<LayoutUnit, LayoutUnit> BlockFormattingUtils::inlineMargins(const Rend
             marginStart = containingBlockInlineSize - borderBoxInlineSize - marginEnd;
     }
     // An over-constrained box ignores its end margin, which takes what makes the equality true. Like RenderBox::computeLogicalWidth,
-    // the end margin keeps its value in a scroll container, where it adds to the scrollable overflow.
+    // the end margin keeps its value in a scroll container, where it adds to the scrollable overflow, and for an orthogonal box.
     auto isScrollContainer = [&](Overflow overflow) {
         return overflow != Overflow::Visible && overflow != Overflow::Clip;
     };
-    if (containingBlockInlineSize && !isAlignedByJustifySelf && !isScrollContainer(containingBlockStyle.overflowX()) && !isScrollContainer(containingBlockStyle.overflowY()))
+    auto isOrthogonal = style->writingMode().isOrthogonal(containingBlockWritingMode);
+    if (containingBlockInlineSize && !isAlignedByJustifySelf && !isOrthogonal && !isScrollContainer(containingBlockStyle.overflowX()) && !isScrollContainer(containingBlockStyle.overflowY()))
         marginEnd = containingBlockInlineSize - borderBoxInlineSize - marginStart;
     return { marginStart, marginEnd };
 }
