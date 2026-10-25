@@ -400,6 +400,9 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     // Buttons fit their content (RenderBox::sizesLogicalWidthToFitContent); other form controls are flex containers with content of their own.
     if (isAnyOf<HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement>(box.element()) && !box.isRenderButton())
         return BlockAvoidanceReason::ContentIsFormControl;
+    // A fieldset's legend sits in its border, which makes the border before the legend's block size (RenderBlock::intrinsicBorderForFieldset).
+    if (box.isFieldset())
+        return BlockAvoidanceReason::ContentIsFormControl;
     if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(box.parent()); !parent || parent->childrenInline())
         return BlockAvoidanceReason::ContentHasBlockInInline;
     if (hasPercentageBlockSizeInQuirksMode(box))
@@ -413,18 +416,25 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
         return BlockAvoidanceReason::ContentHasOrthogonalFlow;
     CheckedRef style = box.style();
     auto writingMode = box.writingMode();
-    // The block formatting context decides the inline size from lengths, percentages and calc() (BlockFormattingUtils::inlineSizeAndMargins).
-    // A replaced element's own formatting context takes its aspect ratio into account (CSS 2.2 §10.3.4).
-    // FIXME: The sizing keywords, calc-size(), the stretch block size, which reads the containing block's renderer, and a preferred aspect ratio.
-    auto isSupportedInlineSize = [](auto& size) {
-        return (size.isAuto() || size.isSpecified()) && !size.isCalcSize();
+    // The block formatting context decides the inline size from lengths, percentages and calc() (BlockFormattingUtils::inlineSizeAndMargins);
+    // the box's own formatting context resolves the min-content, max-content and fit-content keywords with its intrinsic sizes. A replaced
+    // element's own formatting context takes its aspect ratio into account (CSS 2.2 §10.3.4).
+    // FIXME: The other sizing keywords, the keywords of a replaced element, calc-size(), the stretch block size, which reads the containing
+    // block's renderer, and a preferred aspect ratio.
+    auto isReplaced = box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot();
+    auto isSupportedInlineSize = [&](auto& size) {
+        return (size.isSpecified() || (size.isIntrinsic() && !isReplaced)) && !size.isCalcSize();
     };
     auto isStretch = [](auto& size) {
         return size.isStretch();
     };
-    auto isReplaced = box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot();
-    if (!isSupportedInlineSize(style->logicalWidth(writingMode)) || !isSupportedInlineSize(style->logicalMinWidth(writingMode))
-        || !(style->logicalMaxWidth(writingMode).isNone() || (style->logicalMaxWidth(writingMode).isSpecified() && !style->logicalMaxWidth(writingMode).isCalcSize())))
+    // A calc-size() answers to the keyword of its basis, auto included.
+    auto isAuto = [](auto& size) {
+        return size.isAuto() && !size.isCalcSize();
+    };
+    if (!(isAuto(style->logicalWidth(writingMode)) || isSupportedInlineSize(style->logicalWidth(writingMode)))
+        || !(isAuto(style->logicalMinWidth(writingMode)) || isSupportedInlineSize(style->logicalMinWidth(writingMode)))
+        || !(style->logicalMaxWidth(writingMode).isNone() || isSupportedInlineSize(style->logicalMaxWidth(writingMode))))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
     if (isStretch(style->logicalHeight(writingMode)) || isStretch(style->logicalMinHeight(writingMode)) || isStretch(style->logicalMaxHeight(writingMode)))
         return BlockAvoidanceReason::ContentHasStretchBlockSize;
