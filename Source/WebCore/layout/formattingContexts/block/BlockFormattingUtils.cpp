@@ -151,6 +151,11 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
         auto& inlineSize = style->logicalWidth(containingBlockWritingMode);
         if (inlineSize.isSpecified() || inlineSize.isIntrinsic())
             return borderBoxInlineSizeFor(inlineSize);
+        // An auto inline size fits the content of a box justify-self aligns.
+        if (isAlignedByJustifySelf(box, containingBlockStyle)) {
+            ASSERT(contentInlineSizes);
+            return std::min(std::max(contentInlineSizes->minimum + borderAndPaddingInlineSize, stretchFitInlineSize), contentInlineSizes->maximum + borderAndPaddingInlineSize);
+        }
         // FIXME: The stretch keyword is kept out by coverage.
         return stretchFitInlineSize;
     }();
@@ -177,7 +182,9 @@ std::pair<LayoutUnit, LayoutUnit> BlockFormattingUtils::inlineMargins(const Rend
     // The legacy -webkit-center, -webkit-left and -webkit-right values of text-align align a box without auto margins in the containing block
     // the way auto margins would (RenderBox::computeInlineDirectionMargins). -webkit-center centers the margin box, without moving it past the
     // start of the containing block.
-    auto textAlign = containingBlockStyle.textAlign();
+    // justify-self takes over from them, and from the over-constrained end margin.
+    auto isAlignedByJustifySelf = BlockFormattingUtils::isAlignedByJustifySelf(box, containingBlockStyle);
+    auto textAlign = isAlignedByJustifySelf ? Style::TextAlign::Start : containingBlockStyle.textAlign();
     auto isLeftToRight = containingBlockWritingMode.isBidiLTR();
     auto hasAutoMargin = marginStartLength.isAuto() || marginEndLength.isAuto();
     if (!hasAutoMargin && textAlign == Style::TextAlign::WebKitCenter) {
@@ -199,9 +206,28 @@ std::pair<LayoutUnit, LayoutUnit> BlockFormattingUtils::inlineMargins(const Rend
     auto isScrollContainer = [&](Overflow overflow) {
         return overflow != Overflow::Visible && overflow != Overflow::Clip;
     };
-    if (containingBlockInlineSize && !isScrollContainer(containingBlockStyle.overflowX()) && !isScrollContainer(containingBlockStyle.overflowY()))
+    if (containingBlockInlineSize && !isAlignedByJustifySelf && !isScrollContainer(containingBlockStyle.overflowX()) && !isScrollContainer(containingBlockStyle.overflowY()))
         marginEnd = containingBlockInlineSize - borderBoxInlineSize - marginStart;
     return { marginStart, marginEnd };
+}
+
+bool BlockFormattingUtils::isAlignedByJustifySelf(const RenderBox& box, const Style::ComputedStyle& containingBlockStyle)
+{
+    CheckedRef style = box.style();
+    return !box.isAnonymous() && !style->justifySelf().resolve(&containingBlockStyle).isNormalStretchOrLegacy();
+}
+
+LayoutUnit BlockFormattingUtils::justifySelfOffset(const RenderBox& box, LayoutUnit borderBoxInlineSize, LayoutUnit marginStart, LayoutUnit marginEnd, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle)
+{
+    auto containingBlockWritingMode = containingBlockStyle.writingMode();
+    CheckedRef style = box.style();
+    if (!isAlignedByJustifySelf(box, containingBlockStyle) || style->marginStart(containingBlockWritingMode).isAuto() || style->marginEnd(containingBlockWritingMode).isAuto())
+        return { };
+    auto justifySelf = style->justifySelf().resolve(&containingBlockStyle);
+    auto freeSpace = containingBlockInlineSize - borderBoxInlineSize - marginStart - marginEnd;
+    if (justifySelf.overflow() == OverflowAlignment::Safe)
+        freeSpace = std::max(0_lu, freeSpace);
+    return StyleSelfAlignmentData::adjustmentFromStartEdge(freeSpace, justifySelf.position(), LogicalBoxAxis::Inline, containingBlockWritingMode, box.writingMode());
 }
 
 }
