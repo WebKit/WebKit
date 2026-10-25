@@ -27,6 +27,7 @@
 #include "WebKitWebExtensionContextPrivate.h"
 #include "WebKitWebExtensionPrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include <WebCore/NotImplemented.h>
 #include <glib.h>
 #include <wtf/glib/Application.h>
 
@@ -573,6 +574,12 @@ void WebExtensionContext::saveStorageAccessLevelsToStorage()
     for (auto [dataType, accessLevel] : m_storageAccessLevels)
         g_key_file_set_string(m_state.get(), storageAccessLevelsKey, toAPIString(dataType).utf8().legacyCStringPointer(), toAPIString(accessLevel).utf8().legacyCStringPointer());
     writeStateToStorage();
+}
+
+void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler(false);
 }
 
 } // namespace WebKit
