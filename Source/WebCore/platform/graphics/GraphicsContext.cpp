@@ -347,6 +347,16 @@ RefPtr<ImageBuffer> GraphicsContext::createAlignedImageBuffer(const FloatRect& r
     return createScaledImageBuffer(rect, scaleFactor(), colorSpace, renderingModeForCompatibleBuffer(), renderingMethod);
 }
 
+void GraphicsContext::drawNativeImage(const NativeImage& image, FloatPoint destination, ImageDrawingOptions options)
+{
+    drawNativeImage(image, FloatRect(destination, image.size()), FloatRect({ }, image.size()), options);
+}
+
+void GraphicsContext::drawNativeImage(const NativeImage& image, const FloatRect& destination, ImageDrawingOptions options)
+{
+    drawNativeImage(image, destination, FloatRect({ }, image.size()), options);
+}
+
 void GraphicsContext::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
 {
     systemImage.draw(*this, destinationRect);

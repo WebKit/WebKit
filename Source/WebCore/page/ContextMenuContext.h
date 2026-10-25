@@ -28,9 +28,9 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include <WebCore/BitmapImage.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/NativeImage.h>
 
 namespace WebCore {
 
@@ -70,11 +70,11 @@ public:
     bool allowsFollowingImageURL() const { return m_allowsFollowingImageURL; }
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    void setPotentialQRCodeNodeSnapshotImage(BitmapImage* image) { m_potentialQRCodeNodeSnapshotImage = image; }
-    BitmapImage* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
+    void setPotentialQRCodeNodeSnapshotImage(NativeImage* image) { m_potentialQRCodeNodeSnapshotImage = image; }
+    NativeImage* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
 
-    void setPotentialQRCodeViewportSnapshotImage(BitmapImage* image) { m_potentialQRCodeViewportSnapshotImage = image; }
-    BitmapImage* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
+    void setPotentialQRCodeViewportSnapshotImage(NativeImage* image) { m_potentialQRCodeViewportSnapshotImage = image; }
+    NativeImage* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
@@ -92,8 +92,8 @@ private:
     bool m_allowsFollowingImageURL { false };
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    RefPtr<BitmapImage> m_potentialQRCodeNodeSnapshotImage;
-    RefPtr<BitmapImage> m_potentialQRCodeViewportSnapshotImage;
+    RefPtr<NativeImage> m_potentialQRCodeNodeSnapshotImage;
+    RefPtr<NativeImage> m_potentialQRCodeViewportSnapshotImage;
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

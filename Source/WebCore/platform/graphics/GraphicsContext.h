@@ -258,7 +258,9 @@ public:
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatSize&, const ColorSpace& = ColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatRect&, const ColorSpace& = ColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
 
-    WEBCORE_EXPORT virtual void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImageDrawingOptions = { }) = 0;
+    WEBCORE_EXPORT void drawNativeImage(const NativeImage&, FloatPoint destination = { }, ImageDrawingOptions = { });
+    WEBCORE_EXPORT void drawNativeImage(const NativeImage&, const FloatRect& destination, ImageDrawingOptions = { });
+    WEBCORE_EXPORT virtual void drawNativeImage(const NativeImage&, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions = { }) = 0;
 
     WEBCORE_EXPORT virtual void drawSystemImage(SystemImage&, const FloatRect&);
 

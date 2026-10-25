@@ -24,7 +24,6 @@
 #if PLATFORM(MAC)
 
 #import "AttachmentLayout.h"
-#import "BitmapImage.h"
 #import "CSSPropertyNames.h"
 #import "CSSValueKeywords.h"
 #import "CSSValueList.h"
@@ -55,6 +54,7 @@
 #import "LocalFrameView.h"
 #import "LocalizedStrings.h"
 #import "Logging.h"
+#import "NativeImage.h"
 #import "PaintInfo.h"
 #import "PathOperation.h"
 #import "PathUtilities.h"
@@ -1919,7 +1919,7 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     context.drawBitmapImage(*icon, layout.iconRect);
 }
 
-static std::pair<RefPtr<BitmapImage>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout& layout)
+static std::pair<RefPtr<NativeImage>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout& layout)
 {
     RetainPtr configuration = [NSImageSymbolConfiguration configurationWithPointSize:32 weight:NSFontWeightRegular scale:NSImageSymbolScaleMedium];
     RetainPtr image = [[NSImage imageWithSystemSymbolName:@"arrow.down.circle" accessibilityDescription:nil] imageWithSymbolConfiguration:configuration.get()];
@@ -1928,7 +1928,7 @@ static std::pair<RefPtr<BitmapImage>, float> createAttachmentPlaceholderImage(fl
     imageSize.scale(std::min(imageSizeScales.width(), imageSizeScales.height()));
     auto imageRect = NSMakeRect(0, 0, imageSize.width(), imageSize.height());
     RetainPtr cgImage = [image CGImageForProposedRect:&imageRect context:nil hints:nil];
-    return { BitmapImage::create(cgImage.get()), deviceScaleFactor };
+    return { NativeImage::create(WTF::move(cgImage)), deviceScaleFactor };
 }
 
 static void paintAttachmentIconPlaceholder(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
@@ -1936,11 +1936,11 @@ static void paintAttachmentIconPlaceholder(const RenderAttachment& attachment, G
     auto [placeholderImage, imageScale] = createAttachmentPlaceholderImage(attachment.document().deviceScaleFactor(), layout);
 
     // Center the placeholder image where the icon would usually be.
-    FloatRect placeholderRect(0, 0, placeholderImage->width() / imageScale, placeholderImage->height() / imageScale);
+    FloatRect placeholderRect(0, 0, placeholderImage->size().width() / imageScale, placeholderImage->size().height() / imageScale);
     placeholderRect.setX(layout.iconRect.x() + (layout.iconRect.width() - placeholderRect.width()) / 2);
     placeholderRect.setY(layout.iconRect.y() + (layout.iconRect.height() - placeholderRect.height()) / 2);
 
-    context.drawBitmapImage(*placeholderImage, placeholderRect);
+    context.drawNativeImage(*placeholderImage, placeholderRect);
 }
 
 static void paintAttachmentTitleBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)

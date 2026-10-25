@@ -63,7 +63,7 @@ static Color imageBufferPixelAt(const ImageBuffer& imageBuffer, FloatPoint point
     RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, ColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
     if (!buffer)
         return ::testing::AssertionFailure() << "failed to allocate temp buffer";
-    buffer->context().drawNativeImage(image, { 0, 0, 1, 1 }, { point, FloatSize { 1, 1 } });
+    buffer->context().drawNativeImage(image, FloatRect { 0, 0, 1, 1 }, FloatRect { point, FloatSize { 1, 1 } });
     return imageBufferPixelIs(expected, *buffer, { 0, 0 }, tolerance);
 }
 

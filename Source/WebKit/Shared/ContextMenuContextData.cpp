@@ -103,20 +103,20 @@ std::optional<ShareableBitmap::Handle> ContextMenuContextData::createControlledI
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
 
-void ContextMenuContextData::setPotentialQRCodeNodeSnapshotImage(WebCore::BitmapImage& image)
+void ContextMenuContextData::setPotentialQRCodeNodeSnapshotImage(WebCore::NativeImage& image)
 {
     RefPtr potentialQRCodeNodeSnapshotImage = ShareableBitmap::create({ IntSize(image.size()) });
     m_potentialQRCodeNodeSnapshotImage = potentialQRCodeNodeSnapshotImage;
     if (auto graphicsContext = potentialQRCodeNodeSnapshotImage->createGraphicsContext())
-        graphicsContext->drawBitmapImage(image, IntPoint());
+        graphicsContext->drawNativeImage(image);
 }
 
-void ContextMenuContextData::setPotentialQRCodeViewportSnapshotImage(WebCore::BitmapImage& image)
+void ContextMenuContextData::setPotentialQRCodeViewportSnapshotImage(WebCore::NativeImage& image)
 {
     RefPtr potentialQRCodeViewportSnapshotImage = ShareableBitmap::create({ IntSize(image.size()) });
     m_potentialQRCodeViewportSnapshotImage = potentialQRCodeViewportSnapshotImage;
     if (auto graphicsContext = potentialQRCodeViewportSnapshotImage->createGraphicsContext())
-        graphicsContext->drawBitmapImage(image, IntPoint());
+        graphicsContext->drawNativeImage(image);
 }
 
 std::optional<ShareableBitmap::Handle> ContextMenuContextData::createPotentialQRCodeNodeSnapshotImageReadOnlyHandle() const

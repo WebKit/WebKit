@@ -11365,7 +11365,7 @@ void WebPage::takeSnapshotForTargetedElement(NodeIdentifier nodeID, ScriptExecut
     if (!context)
         return completion({ });
 
-    context->drawBitmapImage(*image, FloatPoint::zero());
+    context->drawNativeImage(*image);
     completion(bitmap->createHandle(SharedMemory::Protection::ReadOnly));
 }
 

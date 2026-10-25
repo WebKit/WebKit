@@ -52,7 +52,7 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, std::span<const Ref<Fil
     if (RefPtr nativeImage = sourceImage.nativeImageIfExists()) {
         auto imageRect = filter.scaledByFilterScale(m_effect->sourceImageRect());
         imageRect.moveBy(-result.absoluteImageRect().location());
-        context.drawNativeImage(*nativeImage, roundedIntRect(imageRect), { { }, nativeImage->size() });
+        context.drawNativeImage(*nativeImage, roundedIntRect(imageRect), FloatRect { { }, nativeImage->size() });
         return true;
     }
 

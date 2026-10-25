@@ -34,7 +34,7 @@
 
 #include <WebCore/ContextMenuContext.h>
 #include <WebCore/ContextMenuItem.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 

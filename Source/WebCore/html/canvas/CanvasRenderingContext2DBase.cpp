@@ -2146,7 +2146,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
         copy = createCompatibleImageBuffer(*c, normalizedSrcRect.size());
         if (!copy)
             return { };
-        copy->context().drawNativeImage(*image, { -normalizedSrcRect.location(), FloatSize { image->size() } }, { { }, FloatSize { image->size() } });
+        copy->context().drawNativeImage(*image, FloatRect { -normalizedSrcRect.location(), FloatSize { image->size() } }, FloatRect { { }, FloatSize { image->size() } });
         image = copy->copyNativeImage();
         if (!image)
             return { };

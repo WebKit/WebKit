@@ -28,7 +28,6 @@
 
 #include "AccessibilityObject.h"
 #include "Attr.h"
-#include "BitmapImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
@@ -57,6 +56,7 @@
 #include "LocalFrameView.h"
 #include "LocalNameWithNamespace.h"
 #include "NamedNodeMap.h"
+#include "NativeImage.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
@@ -2144,7 +2144,7 @@ void ElementTargetingController::selectorBasedVisibilityAdjustmentTimerFired()
     applyVisibilityAdjustmentFromSelectors();
 }
 
-RefPtr<BitmapImage> ElementTargetingController::snapshotIgnoringVisibilityAdjustment(NodeIdentifier nodeID, ScriptExecutionContextIdentifier documentID)
+RefPtr<NativeImage> ElementTargetingController::snapshotIgnoringVisibilityAdjustment(NodeIdentifier nodeID, ScriptExecutionContextIdentifier documentID)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -2186,7 +2186,7 @@ RefPtr<BitmapImage> ElementTargetingController::snapshotIgnoringVisibilityAdjust
         return { };
 
     auto buffer = snapshotFrameRect(*mainFrame, snapshotRect, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }, element.get());
-    return BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(buffer)));
+    return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
 }
 
 } // namespace WebCore

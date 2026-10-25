@@ -505,8 +505,7 @@ RefPtr<ImageBuffer> ImageBitmap::unpremultipliedImageBuffer(ScriptExecutionConte
         auto buffer = createBuffer();
         if (!buffer)
             return nullptr;
-        Ref channelBitmap = BitmapImage::create(channelImage.releaseNonNull());
-        buffer->context().drawBitmapImage(channelBitmap.get(), FloatRect { FloatPoint(), outputSize }, sourceRectangle, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
+        buffer->context().drawNativeImage(*channelImage, FloatRect { { }, outputSize }, sourceRectangle, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
 
         // Buffer is opaque so unpremultiplied is free
         return buffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, decoded.format, colorSpace }, { { }, outputIntSize });
@@ -945,14 +944,14 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    RefPtr imageForRender = BitmapImage::create(protect(existingImageBitmap->buffer())->copyNativeImage());
+    RefPtr imageForRender = protect(existingImageBitmap->buffer())->copyNativeImage();
     if (!imageForRender) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, existingImageBitmap->originClean()));
         return;
     }
 
     FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawBitmapImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+    bitmapData->context().drawNativeImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     const bool originClean = existingImageBitmap->originClean();
     bool forciblyPremultiplyAlpha = false;
