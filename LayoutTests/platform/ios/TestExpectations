@@ -10496,3 +10496,5 @@ webkit.org/b/328390 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure 
 
 # New test in the css/css-page import. Fails on iOS, passes on macOS.
 webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-background-003-print.html [ ImageOnlyFailure ]
+# The render tree path lays out right-to-left inline content of a scroll container as if its vertical scrollbar was on the left, which it is not on iOS.
+webkit.org/b/328816 fast/block/block-formatting-context-integration/root-inline-content-rtl-scroll-container.html [ ImageOnlyFailure ]
