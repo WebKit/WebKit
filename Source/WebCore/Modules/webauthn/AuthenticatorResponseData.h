@@ -30,6 +30,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <WebCore/AuthenticationExtensionsClientOutputs.h>
 #include <WebCore/AuthenticatorTransport.h>
+#include <WebCore/WebAuthnOperationErrorCode.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -58,7 +59,11 @@ struct AuthenticatorAssertionResponseData {
     RefPtr<ArrayBuffer> userHandle;
 };
 
-using AuthenticatorResponseDataSerializableForm = Variant<std::nullptr_t, AuthenticatorResponseBaseData, AuthenticatorAttestationResponseData, AuthenticatorAssertionResponseData>;
+struct AuthenticatorOperationErrorData {
+    WebAuthnOperationErrorCode operationError;
+};
+
+using AuthenticatorResponseDataSerializableForm = Variant<std::nullptr_t, AuthenticatorResponseBaseData, AuthenticatorAttestationResponseData, AuthenticatorAssertionResponseData, AuthenticatorOperationErrorData>;
 
 struct AuthenticatorResponseData {
     AuthenticatorResponseData() = default;
@@ -82,6 +87,8 @@ struct AuthenticatorResponseData {
             authenticatorData = v.authenticatorData;
             signature = v.signature;
             userHandle = v.userHandle;
+        }, [&](const AuthenticatorOperationErrorData& v) {
+            operationError = v.operationError;
         });
     }
 
@@ -105,8 +112,14 @@ struct AuthenticatorResponseData {
 
     Vector<WebCore::AuthenticatorTransport> transports;
 
+    // Set instead of a response when the ceremony ended with a WebAuthnOperationException.
+    std::optional<WebAuthnOperationErrorCode> operationError;
+
     AuthenticatorResponseDataSerializableForm getSerializableForm() const
     {
+        if (operationError)
+            return AuthenticatorOperationErrorData { *operationError };
+
         if (!rawId)
             return nullptr;
 

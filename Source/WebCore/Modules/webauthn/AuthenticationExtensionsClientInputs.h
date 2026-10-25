@@ -55,6 +55,7 @@ struct AuthenticationExtensionsClientInputs {
     std::optional<bool> credProps;
     std::optional<AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
     std::optional<AuthenticationExtensionsClientInputs::PRFInputs> prf;
+    String crossDeviceFallbackURL;
 
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
     WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(std::span<const uint8_t>);

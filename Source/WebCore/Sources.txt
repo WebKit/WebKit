@@ -499,6 +499,7 @@ Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/AuthenticatorResponse.cpp
 Modules/webauthn/PublicKeyCredential.cpp
 Modules/webauthn/WebAuthenticationUtils.cpp
+Modules/webauthn/WebAuthnOperationException.cpp
 Modules/webauthn/WellKnownOriginList.cpp
 Modules/webauthn/apdu/ApduCommand.cpp
 Modules/webauthn/apdu/ApduResponse.cpp
@@ -5193,6 +5194,8 @@ JSStorage.cpp
 JSStorageEvent.cpp
 JSStorageManager.cpp
 JSStreamPipeOptions.cpp
+JSWebAuthnOperationErrorCode.cpp
+JSWebAuthnOperationException.cpp
 JSWebKitBuffer.cpp
 JSWebKitBufferNamespace.cpp
 JSStringCallback.cpp

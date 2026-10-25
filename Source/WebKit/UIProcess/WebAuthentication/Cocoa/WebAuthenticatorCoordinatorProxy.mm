@@ -65,6 +65,13 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebAuthenticatorCoordinatorProxyAdditions.h>)
+#import <WebKitAdditions/WebAuthenticatorCoordinatorProxyAdditions.h>
+#else
+#define AUTHENTICATOR_COORDINATOR_ADDITIONS
+#endif
+
 #import "AuthenticationServicesCoreSoftLink.h"
 #if HAVE(WEB_AUTHN_AS_MODERN)
 #import "AuthenticationServicesSoftLink.h"
@@ -464,6 +471,8 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
         if (!allowHybrid)
             request.get().shouldShowHybridTransport = false;
 
+        AUTHENTICATOR_COORDINATOR_ADDITIONS
+
 #if HAVE(WEB_AUTHN_PRF_API)
         if (options.extensions && options.extensions->prf) {
             auto prf = options.extensions->prf;
@@ -617,15 +626,41 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
     }
 
     auto callerOrigin = requestData.frameInfo->securityOrigin;
-    if (relyingPartyIdentifier.isEmpty() || callerOrigin.securityOrigin()->isMatchingRegistrableDomainSuffix(relyingPartyIdentifier)) {
+
+    std::optional<SecurityOriginData> fallbackOrigin;
+    if (auto* requestOptions = std::get_if<PublicKeyCredentialRequestOptions>(&requestData.options)) {
+        if (requestOptions->extensions && !requestOptions->extensions->crossDeviceFallbackURL.isNull()) {
+            if (!protect(webPageProxy->preferences())->webAuthenticationCrossDeviceFallbackURLEnabled())
+                requestOptions->extensions->crossDeviceFallbackURL = nullString();
+            else {
+                URL fallbackURL { requestOptions->extensions->crossDeviceFallbackURL };
+                if (auto error = WebCore::validateCrossDeviceFallbackURL(fallbackURL)) {
+                    RELEASE_LOG_ERROR(WebAuthn, "%" PUBLIC_LOG_STRING, error->characters());
+                    handler({ }, AuthenticatorAttachment::Platform, ExceptionData { ExceptionCode::SecurityError, String { *error } });
+                    return;
+                }
+                fallbackOrigin = SecurityOriginData::fromURL(fallbackURL);
+            }
+        }
+    }
+
+    Vector<SecurityOriginData> originsToValidate;
+    if (!relyingPartyIdentifier.isEmpty() && !callerOrigin.securityOrigin()->isMatchingRegistrableDomainSuffix(relyingPartyIdentifier))
+        originsToValidate.append(callerOrigin);
+    if (fallbackOrigin && !fallbackOrigin->securityOrigin()->isMatchingRegistrableDomainSuffix(relyingPartyIdentifier))
+        originsToValidate.append(*fallbackOrigin);
+
+    if (originsToValidate.isEmpty()) {
         performRequestWithValidatedRelyingPartyIdentifier(WTF::move(requestData), WTF::move(handler));
         return;
     }
 
-    RelatedOriginsValidation::validate(*webPageProxy, callerOrigin, relyingPartyIdentifier, [weakThis = WeakPtr { *this }, requestData = WTF::move(requestData), handler = WTF::move(handler)](RelatedOriginsValidation::Result&& result) mutable {
+    bool isValidatingFallbackOrigin = !!fallbackOrigin;
+    RelatedOriginsValidation::validate(*webPageProxy, WTF::move(originsToValidate), relyingPartyIdentifier, [weakThis = WeakPtr { *this }, requestData = WTF::move(requestData), handler = WTF::move(handler), isValidatingFallbackOrigin](RelatedOriginsValidation::Result&& result) mutable {
         if (!result.isRelated) {
-            RELEASE_LOG_ERROR(WebAuthn, "The origin of the document is not authorized for the provided RP ID.");
-            handler({ }, AuthenticatorAttachment::Platform, ExceptionData { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s });
+            auto message = isValidatingFallbackOrigin ? "The origin of the document and the cross-device fallback URL must both be authorized for the provided RP ID."_s : "The origin of the document is not authorized for the provided RP ID."_s;
+            RELEASE_LOG_ERROR(WebAuthn, "%" PUBLIC_LOG_STRING, message.characters());
+            handler({ }, AuthenticatorAttachment::Platform, ExceptionData { ExceptionCode::SecurityError, message });
             return;
         }
 
@@ -698,6 +733,12 @@ void WebAuthenticatorCoordinatorProxy::performRequestWithValidatedRelyingPartyId
                 case ASAuthorizationErrorMatchedExcludedCredential:
                     exceptionData = { ExceptionCode::InvalidStateError, @"" };
                     break;
+#if HAVE(CROSS_DEVICE_FALLBACK_URL_API)
+                case ASAuthorizationErrorCrossDeviceFallback:
+                    response.operationError = WebAuthnOperationErrorCode::CrossDeviceFallback;
+                    exceptionData = { ExceptionCode::NotAllowedError, @"" };
+                    break;
+#endif
                 case ASAuthorizationErrorCanceled:
                     exceptionData = { ExceptionCode::NotAllowedError, @"" };
                     break;

@@ -62,7 +62,7 @@ public:
     static ASCIILiteral name(ExceptionCode ec) { return description(ec).name; }
     static ASCIILiteral message(ExceptionCode ec) { return description(ec).message; }
 
-    enum class Type : uint8_t { Default, WebTransportError, GPUPipelineError, RTCError, OverconstrainedError, QuotaExceededError };
+    enum class Type : uint8_t { Default, WebTransportError, GPUPipelineError, RTCError, OverconstrainedError, QuotaExceededError, WebAuthnOperationException };
     Type type() const { return m_type; }
 
 protected:

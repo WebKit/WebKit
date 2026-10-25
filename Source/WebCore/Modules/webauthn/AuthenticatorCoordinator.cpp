@@ -34,6 +34,7 @@
 #include "AuthenticatorAttestationResponse.h"
 #include "AuthenticatorCoordinatorClient.h"
 #include "AuthenticatorResponseData.h"
+#include "ContentSecurityPolicy.h"
 #include "CurrentUserDetailsOptions.h"
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
@@ -50,6 +51,7 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSValueInWrappedObjectInlines.h"
+#include "JSWebAuthnOperationException.h"
 #include "LoginStatus.h"
 #include "Page.h"
 #include "PermissionsPolicy.h"
@@ -61,6 +63,7 @@
 #include "UnknownCredentialOptions.h"
 #include "WebAuthenticationConstants.h"
 #include "WebAuthenticationUtils.h"
+#include "WebAuthnOperationException.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -213,7 +216,8 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
         nullString(),
         false,
         std::nullopt,
-        std::nullopt
+        std::nullopt,
+        nullString()
     };
 
     if (auto extensions = options.extensions) {
@@ -281,7 +285,7 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     m_client->makeCredential(*frame, options, createOptions.mediation, WTF::move(callback));
 }
 
-void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, CredentialPromise&& promise)
+void AuthenticatorCoordinator::discoverFromExternalSource(Document& document, CredentialRequestOptions&& requestOptions, CredentialPromise&& promise)
 {
     using namespace AuthenticatorCoordinatorInternal;
 
@@ -338,6 +342,20 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         options.extensions->appid = appid;
     }
 
+    if (options.extensions && !options.extensions->crossDeviceFallbackURL.isNull()) {
+        URL fallbackURL { options.extensions->crossDeviceFallbackURL };
+        if (auto error = validateCrossDeviceFallbackURL(fallbackURL)) {
+            promise.reject(Exception { ExceptionCode::SecurityError, String { *error } });
+            return;
+        }
+
+        // The request the spec constructs for the fallback URL has an empty destination, which CSP governs with connect-src.
+        if (!document.shouldBypassMainWorldContentSecurityPolicy() && !protect(document.contentSecurityPolicy())->allowConnectToSource(fallbackURL, document.currentParserSourcePosition())) {
+            promise.reject(Exception { ExceptionCode::SecurityError, "The cross-device fallback URL is blocked by the Content Security Policy."_s });
+            return;
+        }
+    }
+
     if (options.extensions && options.extensions->largeBlob) {
         if (!options.extensions->largeBlob->support.isEmpty()) {
             promise.reject(Exception { ExceptionCode::NotAllowedError, "Support should not be present in largeBlob for assertion."_s });
@@ -373,6 +391,11 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     auto callback = [weakThis = WeakPtr { *this }, promise = WTF::move(promise), abortSignal = WTF::move(requestOptions.signal), weakPage = WeakPtr { document.page() }] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.rejectType<IDLAny>(abortSignal->reason().getValue());
+            return;
+        }
+
+        if (data.operationError) {
+            promise.rejectType<IDLInterface<WebAuthnOperationException>>(WebAuthnOperationException::create(*data.operationError, exception.message));
             return;
         }
 

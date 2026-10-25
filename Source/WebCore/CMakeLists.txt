@@ -856,6 +856,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/ResidentKeyRequirement.idl
     Modules/webauthn/UnknownCredentialOptions.idl
     Modules/webauthn/UserVerificationRequirement.idl
+    Modules/webauthn/WebAuthnOperationErrorCode.idl
+    Modules/webauthn/WebAuthnOperationException.idl
 
     Modules/webcodecs/AacEncoderConfig.idl
     Modules/webcodecs/AudioSampleFormat.idl

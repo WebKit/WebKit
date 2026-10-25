@@ -106,6 +106,9 @@ public:
 #endif
     JSC::IsoHeapCellType m_heapCellTypeForJSGPUPipelineError;
     JSC::IsoHeapCellType m_heapCellTypeForJSWebTransportError;
+#if ENABLE(WEB_AUTHN)
+    JSC::IsoHeapCellType m_heapCellTypeForJSWebAuthnOperationException;
+#endif
 
 private:
     JSC::IsoSubspace m_domBuiltinConstructorSpace;

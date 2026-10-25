@@ -7495,6 +7495,8 @@
 		FE699872192087E7006936BD /* FloatingPointEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = FE699870192087E7006936BD /* FloatingPointEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7CF1A5010000000000E002 /* QuotaExceededError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7CF1A5010000000000E001 /* QuotaExceededError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7CF1A5010000000000E006 /* QuotaExceededErrorOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7CF1A5010000000000E005 /* QuotaExceededErrorOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE7CF1A6010000000000E005 /* WebAuthnOperationErrorCode.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7CF1A6010000000000E000 /* WebAuthnOperationErrorCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE7CF1A6010000000000E006 /* WebAuthnOperationException.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7CF1A6010000000000E002 /* WebAuthnOperationException.h */; };
 		FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA600E9C4703000D6F75 /* JSGeolocation.h */; };
 		FE8A674816CDD19E00930BF8 /* SQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8A674616CDD19E00930BF8 /* SQLStatement.h */; };
 		FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9E89FA16E2DC0400A908F8 /* OriginLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -24048,6 +24050,11 @@
 		FE7CF1A5010000000000E003 /* QuotaExceededError.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = QuotaExceededError.idl; sourceTree = "<group>"; };
 		FE7CF1A5010000000000E004 /* QuotaExceededErrorOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = QuotaExceededErrorOptions.idl; sourceTree = "<group>"; };
 		FE7CF1A5010000000000E005 /* QuotaExceededErrorOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuotaExceededErrorOptions.h; sourceTree = "<group>"; };
+		FE7CF1A6010000000000E000 /* WebAuthnOperationErrorCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthnOperationErrorCode.h; sourceTree = "<group>"; };
+		FE7CF1A6010000000000E001 /* WebAuthnOperationErrorCode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthnOperationErrorCode.idl; sourceTree = "<group>"; };
+		FE7CF1A6010000000000E002 /* WebAuthnOperationException.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthnOperationException.h; sourceTree = "<group>"; };
+		FE7CF1A6010000000000E003 /* WebAuthnOperationException.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthnOperationException.idl; sourceTree = "<group>"; };
+		FE7CF1A6010000000000E004 /* WebAuthnOperationException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthnOperationException.cpp; sourceTree = "<group>"; };
 		FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGeolocation.cpp; sourceTree = "<group>"; };
 		FE80DA600E9C4703000D6F75 /* JSGeolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeolocation.h; sourceTree = "<group>"; };
 		FE824821D37F631F1A942B28 /* UnifiedSource29-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource29-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
@@ -30194,6 +30201,11 @@
 				574F55DC204F3732002948C6 /* WebAuthenticationConstants.h */,
 				57152B7F21DDA581000C37CA /* WebAuthenticationUtils.cpp */,
 				57152B7E21DDA581000C37CA /* WebAuthenticationUtils.h */,
+				FE7CF1A6010000000000E000 /* WebAuthnOperationErrorCode.h */,
+				FE7CF1A6010000000000E001 /* WebAuthnOperationErrorCode.idl */,
+				FE7CF1A6010000000000E004 /* WebAuthnOperationException.cpp */,
+				FE7CF1A6010000000000E002 /* WebAuthnOperationException.h */,
+				FE7CF1A6010000000000E003 /* WebAuthnOperationException.idl */,
 				A11E0D032F0B0003000B0003 /* WellKnownOriginList.cpp */,
 				A11E0D022F0B0002000B0002 /* WellKnownOriginList.h */,
 			);
@@ -50138,6 +50150,8 @@
 				07D637401BB0B11300256CE9 /* WebAudioSourceProviderCocoa.h in Headers */,
 				574F55E1204F3B23002948C6 /* WebAuthenticationConstants.h in Headers */,
 				57152B8021DDA581000C37CA /* WebAuthenticationUtils.h in Headers */,
+				FE7CF1A6010000000000E005 /* WebAuthnOperationErrorCode.h in Headers */,
+				FE7CF1A6010000000000E006 /* WebAuthnOperationException.h in Headers */,
 				A1038D592AB22DFC00F57BA4 /* WebAVContentKeyGroup.h in Headers */,
 				CDB6354923F6023A00C0F9DE /* WebAVPlayerController.h in Headers */,
 				511D6703286C1DA7008C2AED /* WebAVPlayerLayer.h in Headers */,

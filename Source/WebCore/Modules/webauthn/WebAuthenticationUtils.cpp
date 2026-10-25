@@ -35,6 +35,7 @@
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
@@ -238,6 +239,15 @@ std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(cons
         return AuthenticatorTransport::Hybrid;
     if (transport == authenticatorTransportSmartCard)
         return AuthenticatorTransport::SmartCard;
+    return std::nullopt;
+}
+
+std::optional<ASCIILiteral> validateCrossDeviceFallbackURL(const URL& url)
+{
+    if (!url.isValid() || !url.protocolIs("https"_s))
+        return "The cross-device fallback URL is not a valid https URL."_s;
+    if (url.host().isEmpty() || URL::hostIsIPAddress(url.host()))
+        return "The effective domain of the cross-device fallback URL is not a valid domain."_s;
     return std::nullopt;
 }
 
