@@ -94,8 +94,11 @@ public:
         // Only line boxes separate margins: content whose line boxes are all phantom does not (CSS 2.2 §8.3.1, css-inline-3).
         bool hasLineBoxes { false };
     };
-    // The content box block size is the percentage basis of the atomic inline-level boxes in it.
-    InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, const Layout::BlockLayoutState&);
+    // The content box block size is the percentage basis of the atomic inline-level boxes in it. Relayout children lays the lines out from
+    // scratch, like when the inline size, border or padding of the block container changed.
+    InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, bool relayoutChildren, const Layout::BlockLayoutState&);
+    // The geometry its parent formatting context gave a block formatting context root, which its renderer has before its content is laid out.
+    static Layout::BoxGeometry rootGeometry(const RenderBlockFlow&);
     // The min-content and max-content inline sizes of the inline content of a block container (css-sizing-3 §5.1), from the inline formatting
     // context's own layout (LineLayout::computeIntrinsicWidthConstraints).
     static Layout::IntrinsicWidthConstraints inlineContentIntrinsicInlineSizes(const RenderBlockFlow&);
