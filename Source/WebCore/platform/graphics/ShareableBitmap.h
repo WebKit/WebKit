@@ -51,7 +51,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-class BitmapImage;
 class GraphicsContext;
 class NativeImage;
 
@@ -199,16 +198,16 @@ public:
     WEBCORE_EXPORT void paint(GraphicsContext&, const IntPoint& destination, const IntRect& source);
     WEBCORE_EXPORT void paint(GraphicsContext&, float scaleFactor, const IntPoint& destination, const IntRect& source);
 
-    // This creates a bitmap image that directly references the shared bitmap data.
+    // This creates a native image that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
-    WEBCORE_EXPORT RefPtr<BitmapImage> createImage();
+    WEBCORE_EXPORT RefPtr<NativeImage> createNativeImage();
 
     WEBCORE_EXPORT PlatformImagePtr createBasePlatformImage(BackingStoreCopy = CopyBackingStore, ShouldInterpolate = ShouldInterpolate::No);
 
     WEBCORE_EXPORT PlatformImagePtr createPlatformImage(BackingStoreCopy = CopyBackingStore, ShouldInterpolate = ShouldInterpolate::No);
 
 #if USE(CAIRO)
-    // This creates a BitmapImage that directly references the shared bitmap data.
+    // This creates a surface that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createPersistentCairoSurface();
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();

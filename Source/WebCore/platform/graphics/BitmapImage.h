@@ -36,6 +36,7 @@ namespace WebCore {
 class ImageObserver;
 class ImageSource;
 class NativeImage;
+class ShareableSpatialImage;
 
 class BitmapImage final : public Image {
     friend class GraphicsContext;
@@ -45,6 +46,8 @@ public:
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(RefPtr<NativeImage>&&);
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(PlatformImagePtr&&);
     WEBCORE_EXPORT static std::optional<Ref<BitmapImage>> create(RefPtr<ShareableBitmap>&&); // Uses `std::optional<Ref<...>>` to conform to the interface needed by IPC infrastructure.
+    // The image directly references the shared bitmap data, so the bitmap's contents must not change.
+    WEBCORE_EXPORT static RefPtr<BitmapImage> create(ShareableBitmap&);
 
     WEBCORE_EXPORT static BitmapImage& nullImage();
 
@@ -97,7 +100,7 @@ public:
     Seconds frameDurationAtIndex(unsigned index) const { return m_source->frameDurationAtIndex(index); }
 
     // NativeImage
-    RefPtr<NativeImage> nativeImageAtIndex(unsigned index) { return m_source->nativeImageAtIndex(index); }
+    RefPtr<NativeImage> nativeImageAtIndex(unsigned index) const { return m_source->nativeImageAtIndex(index); }
     RefPtr<NativeImage> nativeImageAtIndex(unsigned index, ConcreteObjectSize, const ImageDrawingExtras* = nullptr) final { return nativeImageAtIndex(index); }
 
     // Testing support.
@@ -116,6 +119,7 @@ public:
     std::optional<unsigned> spatialLeftEyeFrameIndex() const { return m_source->spatialLeftEyeFrameIndex(); }
     std::optional<unsigned> spatialRightEyeFrameIndex() const { return m_source->spatialRightEyeFrameIndex(); }
     std::optional<SpatialImageEyeProperties> spatialEyePropertiesAtIndex(unsigned index) const { return m_source->spatialEyePropertiesAtIndex(index); }
+    WEBCORE_EXPORT std::optional<ShareableSpatialImage> createShareableSpatialImage() const;
 #endif
 
 private:

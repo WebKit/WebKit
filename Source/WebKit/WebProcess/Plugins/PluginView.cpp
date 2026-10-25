@@ -553,7 +553,7 @@ void PluginView::paint(GraphicsContext& context, const IntRect& dirtyRect, Widge
 
     if (RefPtr transientPaintingSnapshot = m_transientPaintingSnapshot) {
         if (!context.hasPlatformContext()) {
-            RefPtr image = transientPaintingSnapshot->createImage();
+            RefPtr image = BitmapImage::create(*transientPaintingSnapshot);
             if (!image)
                 return;
             context.drawBitmapImage(*image, frameRect());

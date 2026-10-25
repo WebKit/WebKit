@@ -48,7 +48,7 @@ TEST(ShareableSpatialImageTests, SpatialImageRoundTrip)
     ASSERT_TRUE(image->isSpatial());
     ASSERT_EQ(image->frameCount(), 2u);
 
-    auto spatialImage = WebCore::ShareableSpatialImage::create(*image);
+    auto spatialImage = image->createShareableSpatialImage();
     EXPECT_TRUE(spatialImage);
 
     auto heicData = spatialImage->createHEICData();

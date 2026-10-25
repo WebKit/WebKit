@@ -9793,7 +9793,7 @@ void WebPage::updateAttachmentIcon(const String& identifier, std::optional<Share
                     return;
                 }
             } else {
-                attachment->updateIconForNarrowLayout(icon->createImage(), size);
+                attachment->updateIconForNarrowLayout(BitmapImage::create(*icon), size);
                 return;
             }
         }

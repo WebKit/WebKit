@@ -113,40 +113,6 @@ ShareableSpatialImage::ShareableSpatialImage(ShareableBitmap::Handle&& leftHandl
 {
 }
 
-std::optional<ShareableSpatialImage> ShareableSpatialImage::create(BitmapImage& image)
-{
-    if (!image.isSpatial())
-        return std::nullopt;
-
-    auto leftIndex = image.spatialLeftEyeFrameIndex();
-    auto rightIndex = image.spatialRightEyeFrameIndex();
-
-    if (!leftIndex || !rightIndex || leftIndex == rightIndex)
-        return std::nullopt;
-
-    auto leftMetadata = image.spatialEyePropertiesAtIndex(*leftIndex);
-    auto rightMetadata = image.spatialEyePropertiesAtIndex(*rightIndex);
-    if (!leftMetadata || !rightMetadata)
-        return std::nullopt;
-
-    RefPtr leftImage = image.nativeImageAtIndex(*leftIndex);
-    RefPtr rightImage = image.nativeImageAtIndex(*rightIndex);
-    if (!leftImage || !rightImage)
-        return std::nullopt;
-
-    RefPtr leftShareableBitmap = ShareableBitmap::createFromImagePixels(*leftImage);
-    RefPtr rightShareableBitmap = ShareableBitmap::createFromImagePixels(*rightImage);
-    if (!leftShareableBitmap || !rightShareableBitmap)
-        return std::nullopt;
-
-    auto leftHandle = leftShareableBitmap->createReadOnlyHandle();
-    auto rightHandle = rightShareableBitmap->createReadOnlyHandle();
-    if (!leftHandle || !rightHandle)
-        return std::nullopt;
-
-    return ShareableSpatialImage(WTF::move(*leftHandle), WTF::move(*rightHandle), *leftMetadata, *rightMetadata);
-}
-
 RetainPtr<CFDataRef> ShareableSpatialImage::createHEICData() const
 {
     RefPtr leftBitmap = ShareableBitmap::create(ShareableBitmap::Handle(m_leftHandle), SharedMemory::Protection::ReadOnly);

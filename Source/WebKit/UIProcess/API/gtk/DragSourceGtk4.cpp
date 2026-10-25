@@ -30,7 +30,6 @@
 
 #include "GtkUtilities.h"
 #include "WebKitWebViewBasePrivate.h"
-#include <WebCore/Image.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
@@ -56,11 +55,7 @@ static GRefPtr<GdkTexture> dragIconTexture(RefPtr<ShareableBitmap>&& iconImage)
     if (!iconImage)
         return nullptr;
 
-    RefPtr image = iconImage->createImage();
-    if (!image)
-        return nullptr;
-
-    RefPtr nativeImage = image->currentNativeImage();
+    RefPtr nativeImage = iconImage->createNativeImage();
     if (!nativeImage)
         return nullptr;
 

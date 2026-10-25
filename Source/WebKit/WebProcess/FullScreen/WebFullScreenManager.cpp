@@ -275,7 +275,7 @@ FullScreenMediaDetails WebFullScreenManager::getImageMediaDetails(CheckedPtr<Ren
     if (image->isSpatial()) {
         RefPtr bitmapImage = dynamicDowncast<BitmapImage>(cachedImage->image());
         if (bitmapImage) {
-            if (auto spatialImage = ShareableSpatialImage::create(*bitmapImage)) {
+            if (auto spatialImage = bitmapImage->createShareableSpatialImage()) {
                 mediaDetails.mediaDimensions = bitmapImage->size();
                 mediaDetails.imageData = WTF::move(*spatialImage);
                 m_willUseQuickLookForFullscreen = true;

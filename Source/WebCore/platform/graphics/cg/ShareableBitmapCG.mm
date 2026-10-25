@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
-#include "BitmapImage.h"
 #include "GraphicsContextCG.h"
 #include "IOSurface.h"
 #include "ImageUtilities.h"
@@ -298,11 +297,9 @@ void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typel
     bitmap->deref(); // Balanced by ref in createGraphicsContext.
 }
 
-RefPtr<BitmapImage> ShareableBitmap::createImage()
+RefPtr<NativeImage> ShareableBitmap::createNativeImage()
 {
-    if (RetainPtr platformImage = createPlatformImage(DontCopyBackingStore))
-        return BitmapImage::create(WTF::move(platformImage));
-    return nullptr;
+    return NativeImage::create(createPlatformImage(DontCopyBackingStore));
 }
 
 void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity& identity)

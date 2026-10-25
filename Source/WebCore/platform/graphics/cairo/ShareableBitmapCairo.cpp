@@ -28,10 +28,10 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
-#include "BitmapImage.h"
 #include "CairoOperations.h"
 #include "CairoUtilities.h"
 #include "GraphicsContextCairo.h"
+#include "NativeImage.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -128,13 +128,9 @@ void ShareableBitmap::releaseSurfaceData(void* typelessBitmap)
     static_cast<ShareableBitmap*>(typelessBitmap)->deref(); // Balanced by ref in createCairoSurface.
 }
 
-RefPtr<BitmapImage> ShareableBitmap::createImage()
+RefPtr<NativeImage> ShareableBitmap::createNativeImage()
 {
-    RefPtr<cairo_surface_t> surface = createCairoSurface();
-    if (!surface)
-        return nullptr;
-
-    return BitmapImage::create(WTF::move(surface));
+    return NativeImage::create(createCairoSurface());
 }
 
 void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity&)

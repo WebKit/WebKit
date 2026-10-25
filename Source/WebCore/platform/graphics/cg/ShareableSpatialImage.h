@@ -27,7 +27,6 @@
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
 
-#include <WebCore/BitmapImage.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SpatialImageTypes.h>
 
@@ -38,8 +37,6 @@ namespace WebCore {
 class ShareableSpatialImage {
 public:
     WEBCORE_EXPORT ShareableSpatialImage(ShareableBitmap::Handle&&, ShareableBitmap::Handle&&, const SpatialImageEyeProperties&, const SpatialImageEyeProperties&);
-
-    WEBCORE_EXPORT static std::optional<ShareableSpatialImage> create(BitmapImage&);
 
     WEBCORE_EXPORT RetainPtr<CFDataRef> createHEICData() const;
 

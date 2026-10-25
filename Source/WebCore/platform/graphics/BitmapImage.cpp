@@ -35,6 +35,10 @@
 #include "NativeImageSource.h"
 #include "ShareableBitmap.h"
 
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+#include "ShareableSpatialImage.h"
+#endif
+
 namespace WebCore {
 
 Ref<BitmapImage> BitmapImage::create(ImageObserver* observer, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
@@ -58,10 +62,15 @@ std::optional<Ref<BitmapImage>> BitmapImage::create(RefPtr<ShareableBitmap>&& bi
 {
     if (!bitmap)
         return std::nullopt;
-    RefPtr image = bitmap->createImage();
+    RefPtr image = create(*bitmap);
     if (!image)
         return std::nullopt;
     return image.releaseNonNull();
+}
+
+RefPtr<BitmapImage> BitmapImage::create(ShareableBitmap& bitmap)
+{
+    return create(bitmap.createNativeImage());
 }
 
 RefPtr<BitmapImage> BitmapImage::create(PlatformImagePtr&& platformImage)
@@ -223,5 +232,41 @@ void BitmapImage::dump(TextStream& ts) const
     Image::dump(ts);
     m_source->dump(ts);
 }
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+std::optional<ShareableSpatialImage> BitmapImage::createShareableSpatialImage() const
+{
+    if (!isSpatial())
+        return std::nullopt;
+
+    auto leftIndex = spatialLeftEyeFrameIndex();
+    auto rightIndex = spatialRightEyeFrameIndex();
+
+    if (!leftIndex || !rightIndex || leftIndex == rightIndex)
+        return std::nullopt;
+
+    auto leftMetadata = spatialEyePropertiesAtIndex(*leftIndex);
+    auto rightMetadata = spatialEyePropertiesAtIndex(*rightIndex);
+    if (!leftMetadata || !rightMetadata)
+        return std::nullopt;
+
+    RefPtr leftImage = nativeImageAtIndex(*leftIndex);
+    RefPtr rightImage = nativeImageAtIndex(*rightIndex);
+    if (!leftImage || !rightImage)
+        return std::nullopt;
+
+    RefPtr leftShareableBitmap = ShareableBitmap::createFromImagePixels(*leftImage);
+    RefPtr rightShareableBitmap = ShareableBitmap::createFromImagePixels(*rightImage);
+    if (!leftShareableBitmap || !rightShareableBitmap)
+        return std::nullopt;
+
+    auto leftHandle = leftShareableBitmap->createReadOnlyHandle();
+    auto rightHandle = rightShareableBitmap->createReadOnlyHandle();
+    if (!leftHandle || !rightHandle)
+        return std::nullopt;
+
+    return ShareableSpatialImage(WTF::move(*leftHandle), WTF::move(*rightHandle), *leftMetadata, *rightMetadata);
+}
+#endif
 
 } // namespace WebCore
