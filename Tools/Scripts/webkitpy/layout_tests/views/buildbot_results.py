@@ -116,6 +116,13 @@ class BuildBotPrinter(object):
                     add_to_dict_of_lists(passes, 'Expected to fail, but passed', test)
             elif enabled_pixel_tests_in_retry and (actual == ['TEXT', 'IMAGE+TEXT'] or actual == ['TEXT', 'MISSING']):
                 add_to_dict_of_lists(regressions, actual[0], test)
+            elif results.get('report') == 'FLAKY':
+                # We group flaky tests by the first actual result we got.
+                add_to_dict_of_lists(flaky, actual[0], test)
+            elif results.get('report') == 'REGRESSION':
+                # A test failing in both the initial and retry runs is a
+                # regression, even when the result types differ between runs.
+                add_to_dict_of_lists(regressions, actual[0], test)
             elif len(actual) > 1:
                 # We group flaky tests by the first actual result we got.
                 add_to_dict_of_lists(flaky, actual[0], test)
