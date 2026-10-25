@@ -167,7 +167,9 @@ Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(VideoE
     m_hasUnsupportedOutput = false;
     auto error = m_internalDecoder->Decode(image, false, 0);
 
-    if (error && (error != WEBRTC_VIDEO_CODEC_NO_OUTPUT || m_treatNoOutputAsError))
+    // A VP8 frame with show_frame unset (RFC 6386, section 9.1), such as an alternate reference frame, is decoded but not output.
+    bool isHiddenVP8Frame = m_type == LibWebRTCVPXVideoDecoder::Type::VP8 && !data.empty() && !(data[0] & 0x10);
+    if (error && (error != WEBRTC_VIDEO_CODEC_NO_OUTPUT || (m_treatNoOutputAsError && !isHiddenVP8Frame)))
         return VideoDecoder::DecodePromise::createAndReject(makeString("VPx decoding failed with error "_s, error));
 
     if (m_hasUnsupportedOutput)
