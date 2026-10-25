@@ -177,17 +177,22 @@ Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingCo
 Layout::BoxGeometry BlockIntegrationUtils::rootGeometry(const RenderBlockFlow& root)
 {
     // In the root's writing mode, which is its content's. An atomic inline-level root shares its geometry with the inline formatting context it
-    // is in, so like LayoutIntegration::BoxGeometryUpdater::setFormattingContextRootGeometry, this has the margins that one gave it: from style,
-    // before the root's own layout computes its block-direction ones.
+    // is in, which places it with its margins, so these are the ones LayoutIntegration::BoxGeometryUpdater::setFormattingContextRootGeometry
+    // gives it: from style, before the root's own layout computes its block-direction ones, and line-relative in the block axis, from the
+    // line-over side (BoxGeometryUpdater::verticalLogicalMargin).
     CheckedRef style = root.style();
     auto writingMode = root.writingMode();
     auto containingBlockInlineSize = root.containingBlockLogicalWidthForContent();
     auto margin = [&](auto& margin) {
         return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, containingBlockInlineSize, style->usedZoomForLength());
     };
+    auto marginLineOver = margin(style->marginBefore(writingMode));
+    auto marginLineUnder = margin(style->marginAfter(writingMode));
+    if (writingMode.isLineInverted())
+        std::swap(marginLineOver, marginLineUnder);
     auto geometry = Layout::BoxGeometry { };
     geometry.setHorizontalMargin({ margin(style->marginStart(writingMode)), margin(style->marginEnd(writingMode)) });
-    geometry.setVerticalMargin({ margin(style->marginBefore(writingMode)), margin(style->marginAfter(writingMode)) });
+    geometry.setVerticalMargin({ marginLineOver, marginLineUnder });
     geometry.setBorder({ { root.borderStart(), root.borderEnd() }, { root.borderBefore(), root.borderAfter() } });
     geometry.setPadding({ { root.paddingStart(), root.paddingEnd() }, { root.paddingBefore(), root.paddingAfter() } });
     geometry.setContentBoxWidth(root.contentBoxLogicalWidth());
