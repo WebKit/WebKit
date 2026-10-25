@@ -4943,6 +4943,89 @@ class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.Test
         self.assertEqual(self.results_db_reports, [between_steps_report])
 
 
+class TestReRunAPITestsSkipsCleanTreeWithoutRepeatedFailures(BuildStepMixinAdditions, unittest.TestCase):
+    """A test that fails in only one of the two runs with the change is flaky, so there is no need
+    to rebuild without the change and run the clean tree."""
+
+    LADDER = TestReRunAPITestsExcusesKnownFlakes.LADDER
+
+    def setUp(self) -> defer.Deferred:
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self) -> defer.Deferred:
+        return self.tear_down_test_build_step()
+
+    configureStep = TestReRunAPITestsExcusesKnownFlakes.configureStep
+
+    @defer.inlineCallbacks
+    def test_disjoint_failures_skip_the_revert_and_the_clean_tree_run(self) -> Generator[Any, Any, None]:
+        queried = []
+        step = self.configureStep(['suite.first'], ['suite.second'])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts({}, queried))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(queried, [])
+        self.assertEqual(step.steps_to_add, [])
+        self.assertEqual(step.build.results, SUCCESS)
+        self.assertEqual(self.getProperty('build_summary'), 'Found flaky tests: suite.first, suite.second')
+        self.assertEqual(self.getProperty('force_build_success'), True)
+        self.assertEqual(step.descriptionDone, 'Found flaky tests: suite.first, suite.second')
+
+    @defer.inlineCallbacks
+    def test_a_pull_request_against_a_branch_also_skips_the_clean_tree_run(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.first'], ['suite.second'])
+        self.setProperty('github.base.ref', 'safari-7620-branch')
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, [])
+        self.assertEqual(self.getProperty('build_summary'), 'Found flaky tests: suite.first, suite.second')
+
+    @defer.inlineCallbacks
+    def test_a_failure_excused_in_one_run_does_not_count_as_repeated(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.flaky', 'suite.pre_existing'], ['suite.pre_existing', 'suite.other'], filtered=False)
+        self.setProperty('api_first_run_failures_filtered', ['suite.flaky'])
+        self.setProperty('api_second_run_failures_filtered', ['suite.other'])
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, [])
+        self.assertEqual(self.getProperty('build_summary'), 'Found flaky tests: suite.flaky, suite.other')
+
+    @defer.inlineCallbacks
+    def test_the_summary_lists_at_most_ten_tests(self) -> Generator[Any, Any, None]:
+        first_run = [f'suite.first{index:02}' for index in range(6)]
+        second_run = [f'suite.second{index:02}' for index in range(6)]
+        step = self.configureStep(first_run, second_run)
+
+        yield step.doOnFailure()
+
+        self.assertEqual(self.getProperty('build_summary'), f"Found flaky tests: {', '.join((first_run + second_run)[:10])} ...")
+
+    @defer.inlineCallbacks
+    def test_a_run_that_exceeded_the_failure_limit_queues_the_ladder(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.first'], ['suite.second'])
+        self.setProperty('api_second_run_exceeded_failure_limit', True)
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts({}))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, self.LADDER)
+        self.assertIsNone(self.getProperty('build_summary'))
+
+    @defer.inlineCallbacks
+    def test_a_run_without_parsed_failures_queues_the_ladder(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.first'], [], filtered=False)
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts({}))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, self.LADDER)
+        self.assertIsNone(self.getProperty('build_summary'))
+
+
 class TestAPITestStepsReportAsTheyRun(BuildStepMixinAdditions, unittest.TestCase):
     """Every exit of AnalyzeAPITestsResults ends the build, so a step queued after it never runs."""
 
