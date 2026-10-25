@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!-- Legacy touch event rects equivalent: fast/events/touch/ios/block-without-overflow-scroll-scrolling-state.html -->
+<!-- Legacy touch event rects equivalent: fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-block-scrolling-state.html -->
+<!-- Legacy touch event rects equivalent: http/tests/fast/events/touch/ios/block-without-overflow-scroll-scrolling-state.html -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+        }
+        .scroller {
+            overflow: scroll;
+            width: 300px;
+            height: 200px;
+            margin: 10px;
+        }
+        .contents {
+            height: 3000px;
+        }
+    </style>
+    <script src="../resources/touch-regions-helper.js"></script>
+    <script>
+        prepareForTest();
+
+        function touchEventHandler(event) { throw "This is not supposed to happen!"; }
+
+        window.addEventListener('load', () => {
+            let passiveListeners = document.getElementById("passiveListeners");
+            passiveListeners.addEventListener('touchstart', touchEventHandler, { 'passive': true });
+            passiveListeners.addEventListener('touchmove', touchEventHandler, { 'passive': true });
+            passiveListeners.addEventListener('touchend', touchEventHandler, { 'passive': true });
+            passiveListeners.addEventListener('touchcancel', touchEventHandler, { 'passive': true });
+
+            setTimeout(() => {
+                for (let scroller of document.querySelectorAll(".scroller")) {
+                    scroller.scrollTop = 5;
+                    scroller.scrollTop = 0;
+                }
+                dumpRegions();
+            }, 15);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="noListeners" class="scroller">
+        <div class="contents"></div>
+    </div>
+    <div id="passiveListeners" class="scroller">
+        <div class="contents"></div>
+    </div>
+</body>
+</html>

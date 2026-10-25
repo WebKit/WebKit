@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1">
+<script src="../../../../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    height: 5000px;
+}
+.target {
+    position: absolute;
+    top: 0;
+    width: 100px;
+    height: 100px;
+}
+#noListeners {
+    left: 0;
+    background-color: green;
+}
+#passiveDocumentListener {
+    left: 100px;
+    background-color: blue;
+}
+#removedActiveListener {
+    left: 200px;
+    background-color: orange;
+}
+#output {
+    margin-top: 150px;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let output = "";
+
+function log(message)
+{
+    // Don't touch the DOM until the end of the test, since that would schedule a rendering update.
+    output += message + "\n";
+}
+
+function logEvent(listener, shouldPreventDefault = false)
+{
+    return event => {
+        log(`Listener ${listener} received${event.cancelable ? " cancelable" : ""} event ${event.type} targeting ${event.target.id}`);
+        if (shouldPreventDefault)
+            event.preventDefault();
+    };
+}
+
+async function changeListenersWhileIdle(changeListeners)
+{
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.delayFor(100);
+
+    internals.startTrackingRenderingUpdates();
+    changeListeners();
+
+    // Changing listeners should schedule a rendering update by itself, so wait for one without forcing it
+    // (requestAnimationFrame() and UIHelper.ensurePresentationUpdate() would both schedule one).
+    for (let i = 0; i < 25 && !internals.renderingUpdateCount(); ++i)
+        await UIHelper.delayFor(20);
+
+    let hadRenderingUpdate = internals.renderingUpdateCount() > 0;
+    log(`Had rendering update: ${hadRenderingUpdate}`);
+
+    // Make sure the UI process has received the resulting commit.
+    if (hadRenderingUpdate)
+        await UIHelper.ensurePresentationUpdate();
+}
+
+// testRunner.runUIScript() (and so UIHelper.tapAt()) waits for a presentation update before running the
+// script, which would hide a missing rendering update. Run the gestures immediately instead.
+function runUIScriptImmediately(script)
+{
+    return new Promise(resolve => testRunner.runUIScriptImmediately(`(() => { ${script} })();`, resolve));
+}
+
+function tapImmediately(x, y)
+{
+    return runUIScriptImmediately(`uiController.singleTapAtPoint(${x}, ${y}, () => uiController.uiScriptComplete());`);
+}
+
+function dragImmediately(fromX, fromY, toX, toY, duration)
+{
+    return runUIScriptImmediately(`uiController.dragFromPointToPoint(${fromX}, ${fromY}, ${toX}, ${toY}, ${duration}, () => uiController.uiScriptComplete());`);
+}
+
+async function runTest()
+{
+    if (!window.testRunner || !testRunner.runUIScriptImmediately)
+        return;
+
+    log("Add an active listener to an element without any listeners, then tap it (event should be cancelable):");
+    let noListeners = document.getElementById("noListeners");
+    await changeListenersWhileIdle(() => {
+        noListeners.addEventListener("touchstart", logEvent("noListeners"));
+    });
+    await tapImmediately(50, 50);
+    await UIHelper.ensurePresentationUpdate();
+
+    log("\nRemove an active listener that has a passive sibling, then tap it (event should not be cancelable):");
+    let removedActiveListener = document.getElementById("removedActiveListener");
+    let activeListener = logEvent("removedActiveListener (active)");
+    removedActiveListener.addEventListener("touchstart", activeListener, { passive: false });
+    removedActiveListener.addEventListener("touchstart", logEvent("removedActiveListener (passive)"), { passive: true });
+    await changeListenersWhileIdle(() => {
+        removedActiveListener.removeEventListener("touchstart", activeListener);
+    });
+    await tapImmediately(250, 50);
+    await UIHelper.ensurePresentationUpdate();
+
+    log("\nAdd an active listener that prevents default under a passive document listener, then drag it (touchstart should be cancelable and the page should not scroll):");
+    document.addEventListener("touchstart", logEvent("document"), { passive: true });
+    let passiveDocumentListener = document.getElementById("passiveDocumentListener");
+    await changeListenersWhileIdle(() => {
+        passiveDocumentListener.addEventListener("touchstart", logEvent("passiveDocumentListener", true), { passive: false });
+    });
+    await dragImmediately(150, 80, 150, 20, 0.15);
+    await UIHelper.ensurePresentationUpdate();
+    log(`scrollY: ${window.scrollY}`);
+
+    document.getElementById("output").textContent = output;
+    testRunner.notifyDone();
+}
+
+addEventListener("load", runTest);
+</script>
+</head>
+<body>
+<div class="target" id="noListeners"></div>
+<div class="target" id="passiveDocumentListener"></div>
+<div class="target" id="removedActiveListener"></div>
+<pre id="output">This test requires UIScriptController to run.</pre>
+</body>
+</html>

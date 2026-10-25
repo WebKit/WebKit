@@ -334,6 +334,7 @@ http/tests/eventloop/idle-callback-not-affected-by-timers-in-cross-origin.html [
 fast/events/touch/ios/touch-event-regions-layer-tree [ Pass ]
 fast/events/touch/ios/touch-event-regions-layer-tree/input [ Skip ]
 fast/events/touch/ios/touch-event-regions-layer-tree/scrolling [ Skip ]
+fast/events/touch/ios/touch-event-regions-layer-tree/dispatch [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
