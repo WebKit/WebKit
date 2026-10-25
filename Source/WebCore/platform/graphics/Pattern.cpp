@@ -27,7 +27,6 @@
 #include "config.h"
 #include "Pattern.h"
 
-#include "Image.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 

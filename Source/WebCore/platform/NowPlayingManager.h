@@ -34,7 +34,6 @@
 
 namespace WebCore {
 
-class Image;
 struct NowPlayingInfo;
 
 class NowPlayingManagerClient : public AbstractRefCountedAndCanMakeWeakPtr<NowPlayingManagerClient> {

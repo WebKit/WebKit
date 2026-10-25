@@ -35,7 +35,6 @@
 #include <WebCore/GraphicsContextGLEnums.h>
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <WebCore/GraphicsTypesGL.h>
-#include <WebCore/Image.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <array>
@@ -70,7 +69,9 @@ template<typename... Types>
 struct GCGLSpanTuple;
 
 namespace WebCore {
+class GraphicsContext;
 class ImageBuffer;
+class NativeImage;
 class PixelBuffer;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)

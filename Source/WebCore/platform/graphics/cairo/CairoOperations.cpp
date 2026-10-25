@@ -43,7 +43,6 @@
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextCairo.h"
-#include "Image.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include "Path.h"

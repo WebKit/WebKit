@@ -30,7 +30,6 @@
 #include "BitmapImage.h"
 #include "BitmapInfo.h"
 #include "HWndDC.h"
-#include "Image.h"
 #include "ImageAdapter.h"
 #include "IntPoint.h"
 #include <wtf/win/GDIObject.h>

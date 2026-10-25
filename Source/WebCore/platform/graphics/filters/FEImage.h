@@ -24,13 +24,11 @@
 #pragma once
 
 #include <WebCore/FilterEffect.h>
-#include <WebCore/Image.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/SourceImage.h>
 
 namespace WebCore {
 
-class Image;
 class ImageBuffer;
 
 class FEImage final : public FilterEffect {

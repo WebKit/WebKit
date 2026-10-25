@@ -24,7 +24,6 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "BitmapImage.h"
 #include "GLContext.h"
 #include "GStreamerCommon.h"
 #include "GStreamerVideoFrameConverter.h"

@@ -28,7 +28,6 @@
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/Image.h> // For Image::TileRule.
 #include <WebCore/TextFlags.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -44,7 +43,6 @@ class FloatRect;
 class Font;
 class GlyphBuffer;
 class Gradient;
-class Image;
 class SourceImage;
 class VideoFrame;
 

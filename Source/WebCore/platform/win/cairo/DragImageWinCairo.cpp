@@ -35,7 +35,6 @@
 #include "FontSelector.h"
 #include "GraphicsContextCairo.h"
 #include "HWndDC.h"
-#include "Image.h"
 #include "NativeImage.h"
 #include "StringTruncator.h"
 #include "TextIndicator.h"

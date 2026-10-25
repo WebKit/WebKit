@@ -30,7 +30,6 @@
 #include "config.h"
 #include "ImageBufferCairoBackend.h"
 
-#include "BitmapImage.h"
 #include "CairoOperations.h"
 #include "Color.h"
 #include "ColorTransferFunctions.h"

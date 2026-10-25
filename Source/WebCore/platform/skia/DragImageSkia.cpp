@@ -20,7 +20,6 @@
 #include "DragImage.h"
 
 #include "Element.h"
-#include "Image.h"
 #include "NativeImage.h"
 #include "SkiaUtilities.h"
 #include "TextFlags.h"

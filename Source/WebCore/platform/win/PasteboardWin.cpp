@@ -42,7 +42,6 @@
 #include "HWndDC.h"
 #include "HitTestResult.h"
 #include "Image.h"
-#include "ImageAdapter.h"
 #include "LocalFrameInlines.h"
 #include "NotImplemented.h"
 #include "PasteboardStrategy.h"

@@ -52,7 +52,6 @@ class FrameProcessIndicators;
 class GraphicsLayerAnimationValue;
 class GraphicsLayerKeyframeValueList;
 class HTMLVideoElement;
-class Image;
 class NativeImage;
 class TransformState;
 

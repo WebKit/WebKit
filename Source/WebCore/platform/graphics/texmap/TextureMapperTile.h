@@ -20,7 +20,6 @@
 #pragma once
 
 #include "FloatRect.h"
-#include "Image.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 

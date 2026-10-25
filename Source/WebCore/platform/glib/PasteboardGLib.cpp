@@ -25,7 +25,6 @@
 #include "Color.h"
 #include "CommonAtomStrings.h"
 #include "DragData.h"
-#include "Image.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "PasteboardStrategy.h"

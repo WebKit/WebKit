@@ -30,8 +30,6 @@
 
 #import "CommonAtomStrings.h"
 #import "DragData.h"
-#import "Image.h"
-#import "ImageAdapter.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "LoaderNSURLExtras.h"
 #import "MIMETypeRegistry.h"

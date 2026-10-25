@@ -78,7 +78,6 @@ class GraphicsLayerContentsDisplayDelegate;
 class GraphicsLayerFactory;
 class GraphicsLayerKeyframeValueList;
 class HTMLVideoElement;
-class Image;
 class ImageBuffer;
 class NativeImage;
 class MediaPlayer;

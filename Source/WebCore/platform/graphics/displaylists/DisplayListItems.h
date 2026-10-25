@@ -35,7 +35,6 @@
 #include <WebCore/GlyphBuffer.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/Image.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SystemImage.h>

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DrawGlyphsRecorder.h"
 
-#include "BitmapImage.h"
 #include "Color.h"
 #include "FloatPoint.h"
 #include "Font.h"

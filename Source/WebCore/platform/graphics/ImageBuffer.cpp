@@ -28,7 +28,6 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#include "BitmapImage.h"
 #include "Filter.h"
 #include "FilterImage.h"
 #include "FilterResults.h"

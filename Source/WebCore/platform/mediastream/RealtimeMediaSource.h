@@ -37,7 +37,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include <WebCore/CaptureDevice.h>
-#include <WebCore/Image.h>
+#include <WebCore/IntSize.h>
 #include <WebCore/MediaAccessDenialReason.h>
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MediaDeviceHashSalts.h>

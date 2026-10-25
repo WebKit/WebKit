@@ -30,7 +30,6 @@
 
 #import "ColorCocoa.h"
 #import "CommonAtomStrings.h"
-#import "Image.h"
 #import "NSURLUtilities.h"
 #import "Pasteboard.h"
 #import "SharedBuffer.h"

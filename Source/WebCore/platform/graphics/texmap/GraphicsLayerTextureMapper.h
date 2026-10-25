@@ -24,7 +24,6 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
-#include "Image.h"
 #include "NativeImage.h"
 #include "TextureMapperAnimation.h"
 #include "TextureMapperLayer.h"

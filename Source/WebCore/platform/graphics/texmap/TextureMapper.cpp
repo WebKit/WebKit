@@ -33,7 +33,6 @@
 #include "GLContext.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypesGL.h"
-#include "Image.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperShaderProgram.h"
 #include <wtf/HashMap.h>

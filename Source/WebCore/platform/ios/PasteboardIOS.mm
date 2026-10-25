@@ -30,7 +30,6 @@
 #import "CommonAtomStrings.h"
 #import "DeprecatedGlobalSettings.h"
 #import "DragData.h"
-#import "Image.h"
 #import "NotImplemented.h"
 #import "PasteboardStrategy.h"
 #import "PlatformPasteboard.h"

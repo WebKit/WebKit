@@ -66,7 +66,6 @@ class GraphicsContextGL;
 #if HAVE(IOSURFACE)
 class IOSurfacePool;
 #endif
-class Image;
 class NativeImage;
 class PixelBuffer;
 class PixelBufferSourceView;

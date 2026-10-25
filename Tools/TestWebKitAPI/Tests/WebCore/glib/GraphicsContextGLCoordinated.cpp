@@ -32,6 +32,7 @@
 #include "Helpers/WebCoreTestUtilities.h"
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContextGLCoordinated.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/ProcessIdentity.h>
 #include <atomic>
 #include <limits>

@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBGL)
 
+#include "NativeImage.h"
+
 namespace WebCore {
 
 // Returns whether uploading an image in format reads the alpha of the image.

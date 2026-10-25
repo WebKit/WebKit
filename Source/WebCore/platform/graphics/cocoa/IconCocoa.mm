@@ -28,7 +28,6 @@
 
 #if PLATFORM(COCOA)
 
-#import "BitmapImage.h"
 #import "GraphicsContext.h"
 #import <pal/ios/UIKitSoftLink.h>
 

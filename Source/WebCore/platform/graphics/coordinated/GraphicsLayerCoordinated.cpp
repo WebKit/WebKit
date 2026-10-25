@@ -42,7 +42,6 @@
 #include "GraphicsLayerFactory.h"
 #include "GraphicsLayerFilterAnimationValue.h"
 #include "GraphicsLayerKeyframeValueList.h"
-#include "Image.h"
 #include "MediaPlayer.h"
 #include "NativeImage.h"
 #include <wtf/Locker.h>
