@@ -55,7 +55,7 @@ TEST(WebCore, BitmapImageEmptyFrameTest)
     int bits[256];
     auto bitmap = adoptGDIObject(CreateBitmap(sz.width(), sz.height(), 1, 32, bits));
 
-    bitmapImageTest->adapter().getHBITMAPOfSize(bitmap.get(), &sz);
+    bitmapImageTest->adapter().getHBITMAPOfSize(bitmap.get(), &sz, ConcreteObjectSize::fixed(sz));
 }
 
 } // namespace TestWebKitAPI

@@ -93,9 +93,7 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT bool getHBITMAP(HBITMAP);
     WEBCORE_EXPORT bool getHBITMAP(HBITMAP, ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
-    WEBCORE_EXPORT bool getHBITMAPOfSize(HBITMAP, const IntSize*);
     WEBCORE_EXPORT bool getHBITMAPOfSize(HBITMAP, const IntSize*, ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
 #endif
     void invalidate();
