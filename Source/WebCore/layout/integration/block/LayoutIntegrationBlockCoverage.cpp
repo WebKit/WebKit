@@ -128,8 +128,16 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootIsMarquee;
     if (rootContainer.type() != RenderObject::Type::BlockFlow)
         return BlockAvoidanceReason::RootHasUnsupportedRenderer;
-    // Percentage block sizes inside look through an anonymous block to the flex or grid container (RenderBox::skipContainingBlockForPercentHeightCalculation).
-    if ((rootContainer.isFlexItemIncludingDeprecated() || rootContainer.isGridItem()) && rootContainer.isAnonymous())
+    // Percentage block sizes inside look through an anonymous block to the flex or grid container (RenderBox::skipContainingBlockForPercentHeightCalculation),
+    // which the block formatting context does not give its content. A button's label has none.
+    auto hasPercentageBlockSizeContent = [&] {
+        for (CheckedRef descendant : descendantsOfType<RenderBox>(rootContainer)) {
+            if (!descendant->isOutOfFlowPositioned() && Layout::BlockFormattingUtils::hasPercentageBlockSize(descendant, descendant->writingMode()))
+                return true;
+        }
+        return false;
+    };
+    if ((rootContainer.isFlexItemIncludingDeprecated() || rootContainer.isGridItem()) && rootContainer.isAnonymous() && hasPercentageBlockSizeContent())
         return BlockAvoidanceReason::RootIsAnonymousFlexOrGridItem;
     // FIXME: Vertical writing modes, and horizontal-bt, whose inline content the inline formatting context places from the border and padding
     // at the top, its block-end side (BoxGeometryUpdater::formattingContextConstraints).
@@ -631,7 +639,7 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
     case BlockAvoidanceReason::RootHasUnsupportedRenderer:
         return "root: other renderer"_s;
     case BlockAvoidanceReason::RootIsAnonymousFlexOrGridItem:
-        return "root: anonymous flex or grid item"_s;
+        return "root: anonymous flex or grid item with percentage heights"_s;
     case BlockAvoidanceReason::RootHasUnsupportedWritingMode:
         return "root: vertical or horizontal-bt writing mode"_s;
     case BlockAvoidanceReason::RootIsPaginated:
