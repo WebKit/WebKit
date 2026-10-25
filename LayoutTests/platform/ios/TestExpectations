@@ -10492,3 +10492,6 @@ webkit.org/b/329531 imported/w3c/web-platform-tests/html/canvas/element/manual/d
 webkit.org/b/329531 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/shadow-dom-slotted.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/329531 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/svg-foreign-object.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/329531 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/svg-rect.tentative.html [ ImageOnlyFailure ]
+
+# The render tree path lays out right-to-left inline content of a scroll container as if its vertical scrollbar was on the left, which it is not on iOS.
+webkit.org/b/328816 fast/block/block-formatting-context-integration/root-inline-content-rtl-scroll-container.html [ ImageOnlyFailure ]
