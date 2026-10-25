@@ -585,6 +585,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCIceTcpCandidateType.idl
     Modules/mediastream/RTCIceTransport.idl
     Modules/mediastream/RTCIceTransportState.idl
+    Modules/mediastream/RTCLocalIceCandidateInit.idl
     Modules/mediastream/RTCLocalSessionDescriptionInit.idl
     Modules/mediastream/RTCOfferAnswerOptions.idl
     Modules/mediastream/RTCOfferOptions.idl

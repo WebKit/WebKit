@@ -10879,6 +10879,8 @@
 		410F565724FCF7C700A2E50C /* RTCIceCandidateInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceCandidateInit.idl; sourceTree = "<group>"; };
 		410F565824FCF85400A2E50C /* RTCSdpType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCSdpType.idl; sourceTree = "<group>"; };
 		410F565924FCF95700A2E50C /* RTCIceCandidateInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceCandidateInit.h; sourceTree = "<group>"; };
+		5A1C0DE02F9A000100A1B2C3 /* RTCLocalIceCandidateInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCLocalIceCandidateInit.h; sourceTree = "<group>"; };
+		5A1C0DE02F9A000200A1B2C3 /* RTCLocalIceCandidateInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCLocalIceCandidateInit.idl; sourceTree = "<group>"; };
 		410F565A24FCF9E600A2E50C /* RTCSessionDescriptionInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCSessionDescriptionInit.h; sourceTree = "<group>"; };
 		41100C7E23F73982001BC33B /* WebSocketChannelInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketChannelInspector.h; sourceTree = "<group>"; };
 		41100C7F23F73A56001BC33B /* WebSocketChannelInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketChannelInspector.cpp; sourceTree = "<group>"; };
@@ -24324,6 +24326,8 @@
 				316DCB891E7A6996001B5F87 /* RTCIceTransport.idl */,
 				414516E026CC042100AAABE0 /* RTCIceTransportBackend.h */,
 				316DCB8E1E7A6C79001B5F87 /* RTCIceTransportState.idl */,
+				5A1C0DE02F9A000100A1B2C3 /* RTCLocalIceCandidateInit.h */,
+				5A1C0DE02F9A000200A1B2C3 /* RTCLocalIceCandidateInit.idl */,
 				410BCF5326F0CD8B0040B124 /* RTCLocalSessionDescriptionInit.h */,
 				410BCF5526F0CD8C0040B124 /* RTCLocalSessionDescriptionInit.idl */,
 				41C14BC426DE6DE800685BF5 /* RTCNetworkManager.h */,

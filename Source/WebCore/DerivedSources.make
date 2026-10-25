@@ -519,6 +519,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCIceTcpCandidateType.idl \
     $(WebCore)/Modules/mediastream/RTCIceTransport.idl \
     $(WebCore)/Modules/mediastream/RTCIceTransportState.idl \
+    $(WebCore)/Modules/mediastream/RTCLocalIceCandidateInit.idl \
     $(WebCore)/Modules/mediastream/RTCLocalSessionDescriptionInit.idl \
     $(WebCore)/Modules/mediastream/RTCOfferAnswerOptions.idl \
     $(WebCore)/Modules/mediastream/RTCOfferOptions.idl \
