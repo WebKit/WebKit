@@ -30,6 +30,7 @@
 #include "LibWebRTCProvider.h"
 #include "LibWebRTCUtils.h"
 #include "RTCIceCandidate.h"
+#include "RTCIceRole.h"
 #include <wtf/TZoneMallocInlines.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -79,6 +80,24 @@ static inline RTCIceGatheringState LEGACY_NODELETE toRTCIceGatheringState(webrtc
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static inline RTCIceRole toRTCIceRole(int role)
+{
+    // cricket::IceRole is an enum with values:
+    // ICEROLE_CONTROLLING = 0
+    // ICEROLE_CONTROLLED = 1
+    // ICEROLE_UNKNOWN = 2
+    switch (role) {
+    case 0: // ICEROLE_CONTROLLING
+        return RTCIceRole::Controlling;
+    case 1: // ICEROLE_CONTROLLED
+        return RTCIceRole::Controlled;
+    case 2: // ICEROLE_UNKNOWN
+        return RTCIceRole::Unknown;
+    default:
+        return RTCIceRole::Unknown;
+    }
+}
+
 class LibWebRTCIceTransportBackendObserver final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<LibWebRTCIceTransportBackendObserver> {
 public:
     static Ref<LibWebRTCIceTransportBackendObserver> create(RTCIceTransportBackendClient& client, Ref<webrtc::IceTransportInterface> backend) { return adoptRef(*new LibWebRTCIceTransportBackendObserver(client, WTF::move(backend))); }
@@ -92,6 +111,7 @@ private:
     void onIceTransportStateChanged(webrtc::IceTransportInternal*);
     void onGatheringStateChanged(webrtc::IceTransportInternal*);
     void onNetworkRouteChanged(std::optional<webrtc::NetworkRoute>);
+    void onRoleMayHaveChanged(webrtc::IceTransportInternal*);
 
     void processSelectedCandidatePairChanged(const webrtc::Candidate&, const webrtc::Candidate&);
 
@@ -116,6 +136,11 @@ void LibWebRTCIceTransportBackendObserver::start()
                 protectedThis->onIceTransportStateChanged(transport);
         });
 
+        internal->SubscribeRoleConflict(this, [weakThis = ThreadSafeWeakPtr { * this }](auto* transport) {
+            if (RefPtr protectedThis { weakThis })
+                protectedThis->onRoleMayHaveChanged(transport);
+        });
+
         internal->AddGatheringStateCallback(this, [weakThis = ThreadSafeWeakPtr { * this }](auto* transport) {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->onGatheringStateChanged(transport);
@@ -134,12 +159,17 @@ void LibWebRTCIceTransportBackendObserver::start()
                     client->onStateChanged(RTCIceTransportState::Checking);
             });
         }
-        callOnMainThread([protectedThis = Ref { *this }, transportState, gatheringState = internal->gathering_state()] {
+
+        // Get initial role
+        auto iceRole = internal->GetIceRole();
+
+        callOnMainThread([protectedThis = Ref { *this }, transportState, gatheringState = internal->gathering_state(), iceRole] {
             RefPtr client = protectedThis->m_client.get();
             if (!client)
                 return;
             client->onStateChanged(toRTCIceTransportState(transportState));
             client->onGatheringStateChanged(toRTCIceGatheringState(gatheringState));
+            client->onRoleChanged(toRTCIceRole(iceRole));
         });
 
         if (auto candidatePair = internal->GetSelectedCandidatePair())
@@ -159,8 +189,19 @@ void LibWebRTCIceTransportBackendObserver::stop()
     });
 }
 
+void LibWebRTCIceTransportBackendObserver::onRoleMayHaveChanged(webrtc::IceTransportInternal* internal)
+{
+    // libwebrtc does not signal when SetIceRole() is called, so the role is sampled whenever
+    // the transport reports activity. RTCIceTransport ignores updates that do not change the role.
+    callOnMainThread([protectedThis = Ref { *this }, role = toRTCIceRole(internal->GetIceRole())] {
+        if (RefPtr client { protectedThis->m_client })
+            client->onRoleChanged(role);
+    });
+}
+
 void LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged(webrtc::IceTransportInternal* internal)
 {
+    onRoleMayHaveChanged(internal);
     callOnMainThread([protectedThis = Ref { *this }, state = internal->GetIceTransportState()] {
         if (RefPtr client = protectedThis->m_client.get())
             client->onStateChanged(toRTCIceTransportState(state));
@@ -169,6 +210,7 @@ void LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged(webrtc::Ic
 
 void LibWebRTCIceTransportBackendObserver::onGatheringStateChanged(webrtc::IceTransportInternal* internal)
 {
+    onRoleMayHaveChanged(internal);
     callOnMainThread([protectedThis = Ref { *this }, state = internal->gathering_state()] {
         if (RefPtr client = protectedThis->m_client.get())
             client->onGatheringStateChanged(toRTCIceGatheringState(state));
@@ -177,6 +219,7 @@ void LibWebRTCIceTransportBackendObserver::onGatheringStateChanged(webrtc::IceTr
 
 void LibWebRTCIceTransportBackendObserver::onNetworkRouteChanged(std::optional<webrtc::NetworkRoute>)
 {
+    onRoleMayHaveChanged(m_backend->internal());
     if (auto selectedPair = m_backend->internal()->GetSelectedCandidatePair())
         processSelectedCandidatePairChanged(selectedPair->local_candidate(), selectedPair->remote_candidate());
 }
@@ -214,6 +257,12 @@ void LibWebRTCIceTransportBackend::unregisterClient()
 {
     ASSERT(m_observer);
     m_observer->stop();
+}
+
+RTCIceRole LibWebRTCIceTransportBackend::role() const
+{
+    // Return Unknown for now since the actual role will be set via observer callbacks.
+    return RTCIceRole::Unknown;
 }
 
 } // namespace WebCore

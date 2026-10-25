@@ -46,6 +46,7 @@ private:
     const void* backend() const final { return m_backend.ptr(); }
     void registerClient(RTCIceTransportBackendClient&) final;
     void unregisterClient() final;
+    RTCIceRole role() const final;
 
     const Ref<webrtc::IceTransportInterface> m_backend;
     const RefPtr<LibWebRTCIceTransportBackendObserver> m_observer;
