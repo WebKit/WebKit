@@ -73,7 +73,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootHasAlignContent,
     RootHasMarginTrim,
     RootHasStableBothEdgesScrollbarGutter,
-    RootHasWebKitTextAlign,
     ContentHasFloat,
     ContentIsHiddenByLineClamp,
     ContentHasOutOfFlowBox,
@@ -99,7 +98,6 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasFlippedBlockWritingMode,
     ContentHasOutOfFlowScrollContainer,
     ContentHasMarginTrim,
-    ContentHasWebKitTextAlign,
     ContentHasLineClamp,
     ContentHasTextBoxTrim,
     ContentHasLineGrid,
@@ -108,12 +106,6 @@ enum class BlockAvoidanceReason : uint8_t {
 };
 
 // The -webkit-left, -webkit-right and -webkit-center values of text-align move block-level children too (RenderBox::computeInlineDirectionMargins).
-static bool alignsBlockLevelChildren(const Style::ComputedStyle& style)
-{
-    auto textAlign = style.textAlign();
-    return textAlign == Style::TextAlign::WebKitLeft || textAlign == Style::TextAlign::WebKitRight || textAlign == Style::TextAlign::WebKitCenter;
-}
-
 static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlockFlow& rootContainer)
 {
     if (!rootContainer.document().settings().blockFormattingContextIntegrationEnabled())
@@ -169,8 +161,6 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootHasMarginTrim;
     if (style->scrollbarGutter().isStableBothEdges())
         return BlockAvoidanceReason::RootHasStableBothEdgesScrollbarGutter;
-    if (alignsBlockLevelChildren(style.get()))
-        return BlockAvoidanceReason::RootHasWebKitTextAlign;
     return { };
 }
 
@@ -548,8 +538,6 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     // grids reach the inline content below them.
     if (!style->marginTrim().isNone())
         return BlockAvoidanceReason::ContentHasMarginTrim;
-    if (alignsBlockLevelChildren(style.get()))
-        return BlockAvoidanceReason::ContentHasWebKitTextAlign;
     if (!style->maxLines().isAuto())
         return BlockAvoidanceReason::ContentHasLineClamp;
     if (style->textBoxTrim() != TextBoxTrim::None)
@@ -662,8 +650,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: margin-trim"_s;
     case BlockAvoidanceReason::RootHasStableBothEdgesScrollbarGutter:
         return "root: scrollbar-gutter both-edges"_s;
-    case BlockAvoidanceReason::RootHasWebKitTextAlign:
-        return "root: -webkit- text-align"_s;
     case BlockAvoidanceReason::ContentHasFloat:
         return "float"_s;
     case BlockAvoidanceReason::ContentIsHiddenByLineClamp:
@@ -714,8 +700,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "out-of-flow scroll container"_s;
     case BlockAvoidanceReason::ContentHasMarginTrim:
         return "margin-trim"_s;
-    case BlockAvoidanceReason::ContentHasWebKitTextAlign:
-        return "-webkit- text-align"_s;
     case BlockAvoidanceReason::ContentHasLineClamp:
         return "line-clamp"_s;
     case BlockAvoidanceReason::ContentHasTextBoxTrim:
