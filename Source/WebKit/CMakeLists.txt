@@ -1016,6 +1016,7 @@ if (SWIFT_REQUIRED)
             UIProcess/mac/AppKitGestures/WKAppKitGestureController.mm
         )
     endif ()
+    webkit_target_add_swift_options(WebKit "-I ${CMAKE_BINARY_DIR}/Source/WTF/wtf")
     foreach (_f IN LISTS WebKit_SWIFT_INTEROP_SOURCES)
         cmake_path(GET _f FILENAME _fn)
         list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "(^|[/\\\\])${_fn}( |$)")
