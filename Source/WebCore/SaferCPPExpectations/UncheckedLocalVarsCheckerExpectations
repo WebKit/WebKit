@@ -1,5 +1,3 @@
-dom/Document.cpp
-dom/Position.cpp
 [ iOS ] editing/cocoa/NodeHTMLConverter.mm
 layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp

@@ -1,17 +1,10 @@
 StyleBuilderGenerated.cpp
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-css/CSSStyleProperties.cpp
 dom/Attr.cpp
-dom/ComposedTreeIterator.h
 dom/Document.cpp
 dom/Element.cpp
-dom/EventLoop.cpp
-dom/InlineStyleSheetOwner.cpp
-dom/MutationObserver.cpp
 dom/PendingScript.cpp
-dom/Range.cpp
 dom/ShadowRoot.cpp
-dom/ViewTransition.cpp
 layout/floats/PlacedFloats.cpp
 layout/formattingContexts/inline/InlineContentAligner.cpp
 layout/formattingContexts/inline/InlineContentBreaker.cpp
@@ -29,7 +22,6 @@ layout/formattingContexts/inline/RangeBasedLineBuilder.cpp
 layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayLineBuilder.cpp
-layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp

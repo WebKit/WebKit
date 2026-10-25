@@ -1,17 +1,11 @@
 StyleChangedAnimatablePropertiesGenerated.cpp
 [ iOS ] bindings/js/ScriptController.cpp
-css/CSSStyleProperties.cpp
 dom/Attr.cpp
-dom/ComposedTreeIterator.h
-dom/ContainerNode.cpp
 dom/Document.cpp
 dom/Element.cpp
-dom/EventPath.cpp
-dom/InlineStyleSheetOwner.cpp
-dom/MutationObserver.cpp
+[ iOS ] dom/EventPath.cpp
 [ iOS ] dom/Node.cpp
 dom/ShadowRoot.cpp
-dom/ViewTransition.cpp
 [ iOS ] loader/ios/LegacyPreviewLoader.mm
 [ iOS ] page/Quirks.cpp
 [ iOS ] page/WebKitNamespace.cpp

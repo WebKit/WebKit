@@ -21,5 +21,3 @@ style/StyleScope.h
 style/StyleScopeRuleSets.h
 style/StyleTreeResolver.h
 style/Styleable.h
-xml/XPathGrammar.cpp
-xml/XPathGrammar.h
