@@ -32,7 +32,6 @@
 #include "CachedImage.h"
 #include "DeprecatedCSSOMValue.h"
 #include "FloatSize.h"
-#include "RenderElement.h"
 #include "StyleBuilderState.h"
 #include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -111,11 +110,6 @@ ImageWithScale CursorImage::selectBestFitImage(const Document& document)
         return imageSet->selectBestFitImage(document);
 
     return { m_image.ptr(), 1_css_dppx, std::nullopt };
-}
-
-ImageDrawingExtras CursorImage::drawingExtrasForRenderer(const RenderElement& renderer) const
-{
-    return { m_originalURL.resolved, renderer.style().linkParameters() };
 }
 
 bool CursorImage::usesDataProtocol() const

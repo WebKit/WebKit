@@ -930,6 +930,9 @@ public:
     void fill(const T& val) { fill(val, size()); }
 
     template<typename Iterator> void appendRange(Iterator start, Iterator end);
+    template<typename Range>
+        requires std::ranges::sized_range<Range> && std::convertible_to<std::ranges::range_value_t<Range>, T>
+    void appendRange(Range&&);
     template<typename ContainerType, typename MapFunction> void appendContainerWithMapping(ContainerType&&, NOESCAPE const MapFunction&);
 
     MallocSpan<T, Malloc> releaseBuffer();
@@ -1265,6 +1268,20 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendRang
             unsafeAppendWithoutCapacityCheck(*it);
         else
             append(*it);
+    }
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<typename Range>
+    requires std::ranges::sized_range<Range> && std::convertible_to<std::ranges::range_value_t<Range>, T>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendRange(Range&& range)
+{
+    reserveCapacity(size() + std::ranges::size(range));
+    for (auto&& item : range) {
+        if constexpr (std::is_rvalue_reference_v<Range&&>)
+            unsafeAppendWithoutCapacityCheck(WTF::move(item));
+        else
+            unsafeAppendWithoutCapacityCheck(item);
     }
 }
 
