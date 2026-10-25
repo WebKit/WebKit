@@ -1,0 +1,3 @@
+
+FAIL An inline opacity change preserves baseline-source overridden by vertical-align assert_equals: expected "auto" but got "first"
+

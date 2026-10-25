@@ -1,0 +1,32 @@
+
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: href] (0): origin assert_equals: Getter mismatch for property 'origin' under mode 'href' expected (string) "http://google.com:1234" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: href] (1): protocol assert_equals: Getter mismatch for property 'protocol' under mode 'href' expected (string) "http:" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: href] (2): username assert_equals: Getter mismatch for property 'username' under mode 'href' expected (string) "anonymous" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: href] (3): password assert_equals: Getter mismatch for property 'password' under mode 'href' expected (string) "flabada" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: href] (4): host assert_equals: Getter mismatch for property 'host' under mode 'href' expected (string) "google.com:1234" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: href] (5): hostname assert_equals: Getter mismatch for property 'hostname' under mode 'href' expected (string) "google.com" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: href] (6): port assert_equals: Getter mismatch for property 'port' under mode 'href' expected (string) "1234" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: href] (7): pathname assert_equals: Getter mismatch for property 'pathname' under mode 'href' expected (string) "/somedir/someotherdir/index.html" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: href] (8): search assert_equals: Getter mismatch for property 'search' under mode 'href' expected (string) "?hi" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: href] (9): hash assert_equals: Getter mismatch for property 'hash' under mode 'href' expected (string) "#somehash" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: xlink] (0): origin assert_equals: Getter mismatch for property 'origin' under mode 'xlink' expected (string) "http://google.com:1234" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: xlink] (1): protocol assert_equals: Getter mismatch for property 'protocol' under mode 'xlink' expected (string) "http:" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: xlink] (2): username assert_equals: Getter mismatch for property 'username' under mode 'xlink' expected (string) "anonymous" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: xlink] (3): password assert_equals: Getter mismatch for property 'password' under mode 'xlink' expected (string) "flabada" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: xlink] (4): host assert_equals: Getter mismatch for property 'host' under mode 'xlink' expected (string) "google.com:1234" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: xlink] (5): hostname assert_equals: Getter mismatch for property 'hostname' under mode 'xlink' expected (string) "google.com" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: xlink] (6): port assert_equals: Getter mismatch for property 'port' under mode 'xlink' expected (string) "1234" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: xlink] (7): pathname assert_equals: Getter mismatch for property 'pathname' under mode 'xlink' expected (string) "/somedir/someotherdir/index.html" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: xlink] (8): search assert_equals: Getter mismatch for property 'search' under mode 'xlink' expected (string) "?hi" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: xlink] (9): hash assert_equals: Getter mismatch for property 'hash' under mode 'xlink' expected (string) "#somehash" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: both] (0): origin assert_equals: Getter mismatch for property 'origin' under mode 'both' expected (string) "http://google.com:1234" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: both] (1): protocol assert_equals: Getter mismatch for property 'protocol' under mode 'both' expected (string) "http:" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: both] (2): username assert_equals: Getter mismatch for property 'username' under mode 'both' expected (string) "anonymous" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: both] (3): password assert_equals: Getter mismatch for property 'password' under mode 'both' expected (string) "flabada" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: both] (4): host assert_equals: Getter mismatch for property 'host' under mode 'both' expected (string) "google.com:1234" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: both] (5): hostname assert_equals: Getter mismatch for property 'hostname' under mode 'both' expected (string) "google.com" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: both] (6): port assert_equals: Getter mismatch for property 'port' under mode 'both' expected (string) "1234" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: both] (7): pathname assert_equals: Getter mismatch for property 'pathname' under mode 'both' expected (string) "/somedir/someotherdir/index.html" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: both] (8): search assert_equals: Getter mismatch for property 'search' under mode 'both' expected (string) "?hi" but got (undefined) undefined
+FAIL SVGAElement HyperlinkElementUtils getter [Mode: both] (9): hash assert_equals: Getter mismatch for property 'hash' under mode 'both' expected (string) "#somehash" but got (undefined) undefined
+
