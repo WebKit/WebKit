@@ -54,7 +54,6 @@
 #include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UUID.h>
-#include <wtf/glib/GTypedefs.h>
 #endif
 
 namespace WebDriver {

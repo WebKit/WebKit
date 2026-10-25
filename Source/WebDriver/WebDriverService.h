@@ -174,7 +174,7 @@ private:
 
     typedef void (WebDriverService::*BidiCommandHandler)(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
     struct BidiCommand {
-        String method;
+        ASCIILiteral method;
         BidiCommandHandler handler;
     };
     static const BidiCommand s_bidiCommands[];
