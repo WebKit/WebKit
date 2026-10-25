@@ -5541,7 +5541,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeInlineIntrinsicLogical
 
 bool RenderBlockFlow::tryComputeIntrinsicLogicalWidthsUsingInlinePath(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth)
 {
-    if (!firstInFlowChild())
+    if (!firstChild())
         return false;
 
     computeAndSetLineLayoutPath();
