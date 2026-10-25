@@ -40,6 +40,8 @@
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -172,6 +174,33 @@ Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingCo
     return { box.minContentLogicalWidthContribution() - borderAndPadding, box.maxContentLogicalWidthContribution() - borderAndPadding };
 }
 
+Layout::BoxGeometry BlockIntegrationUtils::rootGeometry(const RenderBlockFlow& root)
+{
+    // In the root's writing mode, which is its content's. An atomic inline-level root shares its geometry with the inline formatting context it
+    // is in, so like LayoutIntegration::BoxGeometryUpdater::setFormattingContextRootGeometry, this has the margins that one gave it: from style,
+    // before the root's own layout computes its block-direction ones.
+    CheckedRef style = root.style();
+    auto writingMode = root.writingMode();
+    auto containingBlockInlineSize = root.containingBlockLogicalWidthForContent();
+    auto margin = [&](auto& margin) {
+        return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, containingBlockInlineSize, style->usedZoomForLength());
+    };
+    auto geometry = Layout::BoxGeometry { };
+    geometry.setHorizontalMargin({ margin(style->marginStart(writingMode)), margin(style->marginEnd(writingMode)) });
+    geometry.setVerticalMargin({ margin(style->marginBefore(writingMode)), margin(style->marginAfter(writingMode)) });
+    geometry.setBorder({ { root.borderStart(), root.borderEnd() }, { root.borderBefore(), root.borderAfter() } });
+    geometry.setPadding({ { root.paddingStart(), root.paddingEnd() }, { root.paddingBefore(), root.paddingAfter() } });
+    geometry.setContentBoxWidth(root.contentBoxLogicalWidth());
+    // Scrollbars take the space they need from the padding box, up to all of it (LayoutIntegration::BoxGeometryUpdater's scrollbarLogicalSize).
+    auto paddingBoxIncludingScrollbar = root.paddingBoxRectIncludingScrollbar();
+    auto spaceForScrollbar = LayoutSize { std::max(0_lu, paddingBoxIncludingScrollbar.width() - root.paddingBoxWidth()), std::max(0_lu, paddingBoxIncludingScrollbar.height() - root.paddingBoxHeight()) };
+    if (!writingMode.isHorizontal())
+        spaceForScrollbar = spaceForScrollbar.transposedSize();
+    geometry.setHorizontalSpaceForScrollbar(spaceForScrollbar.width());
+    geometry.setVerticalSpaceForScrollbar(spaceForScrollbar.height());
+    return geometry;
+}
+
 bool BlockIntegrationUtils::contentBoxInlineSizeChanged(const RenderBox& box, LayoutUnit contentBoxInlineSize)
 {
     if (box.contentBoxLogicalWidth() != contentBoxInlineSize)
@@ -201,7 +230,7 @@ bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
     return !blockContainer || !canUseForNestedBlockLayout(*blockContainer);
 }
 
-BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, const Layout::BlockLayoutState& blockLayoutState)
+BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState)
 {
     // Only the line layout of this block container and its inline content are written here, and nothing else in the block formatting
     // context reads them.
@@ -218,7 +247,8 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
     }
 
     // Like RenderBlockFlow::layoutInlineContent, which lays the content out from scratch when the box's width changed (RenderBlock::recomputeLogicalWidth).
-    auto invalidateChildren = inlineContentRoot.logicalWidth() != geometry.borderBoxWidth() || inlineContentRoot.hasBorderOrPaddingLogicalWidthChanged();
+    // The renderer of the root has its new geometry already, and RenderBlock::recomputeLogicalWidth told its layout about the change.
+    auto invalidateChildren = relayoutChildren || inlineContentRoot.logicalWidth() != geometry.borderBoxWidth() || inlineContentRoot.hasBorderOrPaddingLogicalWidthChanged();
     auto inlineContentStatus = inlineContentRoot.markInlineContentDirtyForLayout(invalidateChildren ? RelayoutChildren::Yes : RelayoutChildren::No);
     if (inlineContentStatus.hasSimpleOutOfFlowContentOnly) {
         // Like RenderBlockFlow::layoutInlineContent: content of out-of-flow boxes only has no lines, and the static position of the boxes is

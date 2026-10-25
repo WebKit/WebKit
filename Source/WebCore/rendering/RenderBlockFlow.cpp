@@ -1007,10 +1007,10 @@ auto RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
         auto lineClampUpdater = LineClampUpdater { *this };
         auto layoutChildren = [&](RelayoutChildren relayoutChildren) {
             contentLayout = ContentLayout::RenderTree;
-            if (childrenInline())
-                layoutInlineChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom);
-            else if (layoutUsingBlockFormattingContext(relayoutChildren))
+            if (layoutUsingBlockFormattingContext(relayoutChildren, repaintLogicalTop, repaintLogicalBottom))
                 contentLayout = ContentLayout::BlockFormattingContext;
+            else if (childrenInline())
+                layoutInlineChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom);
             else
                 layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
         };
@@ -1178,12 +1178,12 @@ void RenderBlockFlow::layoutBlockChildren(RelayoutChildren relayoutChildren, Lay
     setLogicalHeight(borderBoxLogicalHeight);
 }
 
-bool RenderBlockFlow::layoutUsingBlockFormattingContext(RelayoutChildren relayoutChildren)
+bool RenderBlockFlow::layoutUsingBlockFormattingContext(RelayoutChildren relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     if (!LayoutIntegration::canUseForBlockLayout(*this))
         return false;
 
-    LayoutIntegration::BlockLayout { *this }.layout(relayoutChildren);
+    LayoutIntegration::BlockLayout { *this }.layout(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
     return true;
 }
 
