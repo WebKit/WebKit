@@ -47,7 +47,9 @@ class BlockLayout {
 public:
     explicit BlockLayout(RenderBlockFlow&);
 
-    void layout(RelayoutChildren);
+    // The root's inline content that changed, between repaintLogicalTop and repaintLogicalBottom, is invalidated once the root has its
+    // overflow (RenderBlockFlow::layoutBlock, repaintInlineContentAfterLayout).
+    void layout(RelayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     // The min-content and max-content inline sizes of the root's content (css-sizing-3 §5.1), from the block formatting context that lays it out.
     static std::pair<LayoutUnit, LayoutUnit> computeIntrinsicInlineSizes(const RenderBlockFlow&);
     // Whether a new definite block size of the root changes the layout of its content, like the one flex and grid layout give an item they stretch
