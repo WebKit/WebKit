@@ -244,11 +244,13 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
         renderer->setMarginEnd(geometry.marginEnd(), containingBlockWritingMode);
         renderer->setMarginBefore(geometry.marginBefore(), containingBlockWritingMode);
         renderer->setMarginAfter(geometry.marginAfter(), containingBlockWritingMode);
-        renderer->setLogicalWidth(geometry.borderBoxWidth());
-        renderer->setLogicalHeight(geometry.borderBoxHeight());
+        // Sizes and positions are in the writing mode of the containing block, which an orthogonal box does not share.
+        auto borderBoxSize = LayoutSize { geometry.borderBoxWidth(), geometry.borderBoxHeight() };
+        renderer->setBorderBoxSize(containingBlockWritingMode.isHorizontal() ? borderBoxSize : borderBoxSize.transposedSize());
         // What RenderBlockFlow::layoutBlock leaves for the parent to collapse with, when the parent is laid out by the render tree path
-        // and this box is not laid out again.
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
+        // and this box is not laid out again. A box laid out through the render tree has them from its own layout, in its own writing
+        // mode, which an orthogonal box does not share with the block formatting context.
+        if (CheckedPtr blockFlow = box.isLaidOutThroughRenderTree ? nullptr : dynamicDowncast<RenderBlockFlow>(renderer)) {
             blockFlow->setMaxMarginBeforeValues(box.collapsedMarginsBefore.positive, box.collapsedMarginsBefore.negative);
             blockFlow->setMaxMarginAfterValues(box.collapsedMarginsAfter.positive, box.collapsedMarginsAfter.negative);
             blockFlow->setHasMarginBeforeQuirk(box.marginBeforeIsQuirky);
@@ -265,7 +267,8 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
         auto logicalLeft = Layout::BoxGeometry::borderBoxLeft(geometry);
         if (!containingBlock->writingMode().isLogicalLeftInlineStart())
             logicalLeft = containingBlock->logicalWidth() - logicalLeft - geometry.borderBoxWidth();
-        renderer->setLogicalLocation({ logicalLeft, Layout::BoxGeometry::borderBoxTop(geometry) });
+        auto location = LayoutPoint { logicalLeft, Layout::BoxGeometry::borderBoxTop(geometry) };
+        renderer->setLocation(containingBlock->writingMode().isHorizontal() ? location : location.transposedPoint());
     }
 
     // What RenderBlockFlow::adjustOutOfFlowBlock and layoutBlockChildren do for an out-of-flow child: its layer keeps the static position, and its
