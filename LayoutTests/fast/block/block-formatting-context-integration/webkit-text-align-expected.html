@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 8px; }
+.box { width: 100px; height: 10px; background: green; margin-top: 2px; }
+</style>
+<div class="root" id="resized" style="text-align: -webkit-center">
+  text
+  <div class="box"></div>
+  <div class="box" style="margin-left: 40px; margin-right: 10px"></div>
+  <div class="box" style="margin-left: auto; margin-right: 0"></div>
+  <div style="width: 200px; background: lightblue"><div class="box" style="width: 50px">nested</div></div>
+  <div class="box" style="width: 400px"></div>
+  <table style="background: orange"><tr><td>table</td></tr></table>
+  <div style="display: flex; width: 80px; background: blue; height: 10px"></div>
+</div>
+<div class="root" style="text-align: -webkit-right"><div class="box"></div><div class="box" style="margin-right: 20px"></div><div style="text-align: left"><div class="box"></div></div></div>
+<div class="root" style="text-align: -webkit-left" dir="rtl"><div class="box"></div><div class="box" style="margin-left: 20px"></div></div>
+<div class="root" style="text-align: -webkit-left"><div class="box"></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "250px";
+</script>
