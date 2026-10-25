@@ -33,6 +33,7 @@
 #import "Helpers/cocoa/TestNSBundleExtras.h"
 #import <AVFoundation/AVFoundation.h>
 #import <WebCore/AudioSampleFormat.h>
+#import <WebCore/AudioUtilities.h>
 #import <WebCore/CMUtilities.h>
 #import <WebCore/ContentType.h>
 #import <WebCore/MediaSampleAVFObjC.h>
@@ -128,6 +129,26 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     if ([assetReader status] == AVAssetReaderStatusFailed)
         return { };
+    return blocks;
+}
+
+// Replaces the 'dfLa' magic cookie AVFoundation provides with the WebCodecs flac description.
+static Vector<UniqueRef<MediaSamplesBlock>> parseFLACFile(NSString *resourceName)
+{
+    auto blocks = parseAVFAudioFile(resourceName, @"flac", @"audio/flac");
+    if (blocks.isEmpty() || !blocks[0]->info())
+        return blocks;
+
+    auto data = downcast<AudioInfo>(*blocks[0]->info()).toAudioInfoData();
+    if (!data.second.cookieData)
+        return { };
+    auto description = AudioUtilities::flacDescriptionFromFLACMagicCookie(data.second.cookieData->span());
+    if (description.isEmpty())
+        return { };
+    data.second.cookieData = SharedBuffer::create(WTF::move(description));
+    Ref info = AudioInfo::create(WTF::move(data));
+    for (auto& block : blocks)
+        block->setInfo(info.copyRef());
     return blocks;
 }
 
@@ -652,7 +673,7 @@ TEST(MediaSamplesDecoder, CanContinueWithRejectsChangedFormat)
 // The expected frame counts are those checked by LayoutTests/webaudio/decode-audio-data-*.html, at the file's sample rate.
 TEST(MediaSamplesDecoder, FrameCountMatchesWebAudioFLAC)
 {
-    EXPECT_EQ(decodedFrameCount(parseAVFAudioFile(@"flac", @"flac", @"audio/flac")), 47688u);
+    EXPECT_EQ(decodedFrameCount(parseFLACFile(@"flac")), 47688u);
 }
 
 TEST(MediaSamplesDecoder, FrameCountMatchesWebAudioMP3)

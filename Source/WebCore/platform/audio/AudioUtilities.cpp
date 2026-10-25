@@ -25,6 +25,7 @@
 #include "config.h"
 #include "AudioUtilities.h"
 #include "BitReader.h"
+#include <array>
 #include <random>
 #include <wtf/HashFunctions.h>
 #include <wtf/MathExtras.h>
@@ -162,6 +163,63 @@ Vector<uint8_t> opusHeadWithoutPreSkip(std::span<const uint8_t> cookie)
     if (spanHasPrefix(cookie, "OpusHead"_span8) && result.size() >= preSkipOffset + sizeof(uint16_t))
         zeroSpan(result.mutableSpan().subspan(preSkipOffset, sizeof(uint16_t)));
     return result;
+}
+
+// Converts a WebCodecs flac description, the "fLaC" stream marker followed by the metadata blocks
+// (https://www.w3.org/TR/webcodecs-flac-codec-registration/#audiodecoderconfig-description), into the
+// magic cookie AudioToolbox expects: a 'dfLa' box holding the STREAMINFO block alone.
+Vector<uint8_t> createFLACMagicCookie(std::span<const uint8_t> description)
+{
+    static constexpr size_t markerSize = 4;
+    static constexpr size_t blockHeaderSize = 4;
+    static constexpr uint8_t streamInfoSize = 34;
+    static constexpr uint8_t streamInfoType = 0;
+    static constexpr uint8_t lastMetadataBlockFlag = 0x80;
+
+    BitReader reader(description);
+
+    // Stream marker, then the STREAMINFO block, which is always the first metadata block.
+    // Its header is the last-metadata-block flag (1 bit), the block type (7 bits) and the block length (24 bits).
+    if (!equalSpans(reader.readSpan(markerSize), "fLaC"_span8))
+        return { };
+    reader.consumeBits(1); // last-metadata-block flag
+    if (reader.readBits(7) != streamInfoType || reader.readBits(24) != streamInfoSize)
+        return { };
+    auto streamInfo = reader.readSpan(streamInfoSize);
+    if (!reader.ok())
+        return { };
+
+    static constexpr uint8_t boxSize = 4 + 4 + 4 + blockHeaderSize + streamInfoSize; // size + type + version and flags + STREAMINFO block
+    static constexpr std::array<uint8_t, boxSize - streamInfoSize> header {
+        0, 0, 0, boxSize, // size
+        'd', 'f', 'L', 'a', // type
+        0, 0, 0, 0, // version and flags
+        lastMetadataBlockFlag | streamInfoType, 0, 0, streamInfoSize // STREAMINFO block header
+    };
+    Vector<uint8_t> cookie;
+    cookie.reserveInitialCapacity(boxSize);
+    cookie.append(std::span { header });
+    cookie.append(streamInfo);
+    return cookie;
+}
+
+// Converts a 'dfLa' box (https://github.com/xiph/flac/blob/master/doc/isoflac.txt) into a WebCodecs flac
+// description: the "fLaC" stream marker followed by the box's metadata blocks.
+Vector<uint8_t> flacDescriptionFromFLACMagicCookie(std::span<const uint8_t> cookie)
+{
+    static constexpr size_t boxHeaderSize = 4 + 4 + 4; // size + type + version and flags
+
+    BitReader reader(cookie);
+    size_t boxSize = reader.readBits(32);
+    if (!equalSpans(reader.readSpan(4), "dfLa"_span8) || !reader.ok() || boxSize <= boxHeaderSize || boxSize > cookie.size())
+        return { };
+
+    auto metadataBlocks = cookie.subspan(boxHeaderSize, boxSize - boxHeaderSize);
+    Vector<uint8_t> description;
+    description.reserveInitialCapacity(4 + metadataBlocks.size());
+    description.append("fLaC"_span8);
+    description.append(metadataBlocks);
+    return description;
 }
 
 } // AudioUtilites

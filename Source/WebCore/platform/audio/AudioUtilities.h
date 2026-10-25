@@ -73,6 +73,12 @@ WEBCORE_EXPORT Vector<uint8_t> extractAudioSpecificConfigFromESDescriptor(std::s
 // Returns a copy of an OpusHead with its pre-skip set to 0.
 Vector<uint8_t> opusHeadWithoutPreSkip(std::span<const uint8_t>);
 
+// Returns the 'dfLa' magic cookie for a WebCodecs flac description, or an empty vector if the description is invalid.
+Vector<uint8_t> createFLACMagicCookie(std::span<const uint8_t> description);
+
+// Returns the WebCodecs flac description for a 'dfLa' magic cookie, or an empty vector if the cookie is invalid.
+WEBCORE_EXPORT Vector<uint8_t> flacDescriptionFromFLACMagicCookie(std::span<const uint8_t> cookie);
+
 } // AudioUtilites
 
 } // WebCore

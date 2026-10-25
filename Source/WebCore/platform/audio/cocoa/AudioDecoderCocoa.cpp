@@ -30,6 +30,7 @@
 
 #include "AudioSampleBufferConverter.h"
 #include "AudioSampleFormat.h"
+#include "AudioUtilities.h"
 #include "AudioUtilitiesCocoa.h"
 #include "CAAudioStreamDescription.h"
 #include "Logging.h"
@@ -272,6 +273,11 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
             // for CoreMedia tools to properly handle it
             if (mIsAAC) {
                 codecDescription = createESDescriptor(description);
+                description = codecDescription.span();
+            } else if (codec == kAudioFormatFLAC) {
+                codecDescription = AudioUtilities::createFLACMagicCookie(description);
+                if (codecDescription.isEmpty())
+                    return "Invalid flac description"_s;
                 description = codecDescription.span();
             }
 
