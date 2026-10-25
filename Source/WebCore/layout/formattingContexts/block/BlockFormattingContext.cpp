@@ -197,11 +197,13 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
 }
 
 // The inline size of a box laid out through the render tree that its own formatting context decides: of a table (CSS 2.2 §17.5.2), of a
-// replaced element (§10.3.4), and of a box that fits its content, like a button (RenderBox::sizesLogicalWidthToFitContent), or that has a
-// sizing keyword inline size, which it resolves with its own intrinsic sizes (css-sizing-3 §5.1).
+// replaced element (§10.3.4), of a box that fits its content, like a button (RenderBox::sizesLogicalWidthToFitContent), or that has a
+// sizing keyword inline size, which it resolves with its own intrinsic sizes (css-sizing-3 §5.1), and of an orthogonal box, for which it is
+// the block size (css-writing-modes-4 §7.3).
 static bool decidesItsOwnInlineSize(const RenderBox& box, WritingMode writingMode)
 {
-    return is<RenderTable>(box) || box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot() || box.sizesLogicalWidthToFitContent() || BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode);
+    return is<RenderTable>(box) || box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot() || box.sizesLogicalWidthToFitContent() || BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode)
+        || box.writingMode().isOrthogonal(writingMode);
 }
 
 // Everything that belongs to the block formatting context is computed here: the margins, the position, the containing block and, for a box

@@ -132,9 +132,13 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     }
     // The block formatting context writes the geometry of the containing block once all of it is laid out. The render tree takes a containing
     // block block size, definite or not, as the box's own (RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight), so only a box with a
-    // percentage block size, which resolves against it, gets one.
+    // percentage block size, which resolves against it, gets one. An orthogonal box resolves that against the inline size of the containing
+    // block instead (RenderBox::computePercentageLogicalHeight), and takes its available inline space from the containing block's style
+    // (RenderBox::perpendicularContainingBlockLogicalHeight, coverage).
+    auto containingBlockWritingMode = containingBlock->writingMode();
+    auto isOrthogonal = box->writingMode().isOrthogonal(containingBlockWritingMode);
     box->setOverridingContainingBlockContentLogicalWidth(constraints.containingBlockInlineSize);
-    if (Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box->writingMode()))
+    if (!isOrthogonal && Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box->writingMode()))
         box->setOverridingContainingBlockContentLogicalHeight(constraints.containingBlockBlockSize);
     CheckedPtr drawableContent = drawableContentBlock(box);
     if (drawableContent)
@@ -151,11 +155,14 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     if (constraints.borderBoxInlineSize)
         box->clearOverridingBorderBoxLogicalWidth();
 
+    auto borderBoxSize = containingBlockWritingMode.isHorizontal() ? box->borderBoxSize() : box->borderBoxSize().transposedSize();
+    auto border = box->borderWidths();
+    auto padding = box->padding();
     return {
-        box->logicalWidth(),
-        box->logicalHeight(),
-        { { box->borderStart(), box->borderEnd() }, { box->borderBefore(), box->borderAfter() } },
-        { { box->paddingStart(), box->paddingEnd() }, { box->paddingBefore(), box->paddingAfter() } }
+        borderBoxSize.width(),
+        borderBoxSize.height(),
+        { { border.start(containingBlockWritingMode), border.end(containingBlockWritingMode) }, { border.before(containingBlockWritingMode), border.after(containingBlockWritingMode) } },
+        { { padding.start(containingBlockWritingMode), padding.end(containingBlockWritingMode) }, { padding.before(containingBlockWritingMode), padding.after(containingBlockWritingMode) } }
     };
 }
 
@@ -298,7 +305,7 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
             continue;
         }
         box->setOverridingContainingBlockContentLogicalWidth(constraints.horizontal().logicalWidth);
-        if (Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
+        if (!box->writingMode().isOrthogonal(inlineContentRoot.writingMode()) && Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
             box->setOverridingContainingBlockContentLogicalHeight(contentBoxBlockSize);
         atomicInlineLevelBoxes.append(*box);
         if (CheckedPtr drawableContent = drawableContentBlock(*box))
