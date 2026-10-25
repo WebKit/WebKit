@@ -23,6 +23,7 @@
 
 """Unit tests for Tools/glib/api_test_runner.py."""
 
+import optparse
 import os
 import sys
 import tempfile
@@ -45,6 +46,27 @@ class StubTestRunner(TestRunner):
 
     def is_google_test(self, test_program):
         return os.path.basename(test_program) == "TestWTF"
+
+
+class StubExpectations(object):
+    def __init__(self, expectations):
+        self._expectations = expectations
+
+    def get_expectation(self, test, subtest):
+        return self._expectations.get(subtest, ['PASS'])
+
+
+class RepeatingStubTestRunner(StubTestRunner):
+    def __init__(self, base_directory, runs, expectations={}):
+        super().__init__(base_directory)
+        self._options = optparse.Values({'repeat_each': len(runs)})
+        self._expectations = StubExpectations(expectations)
+        self._runs = iter(runs)
+        self.requested_subtests = []
+
+    def _run_test(self, test_program, subtests, skipped_test_cases):
+        self.requested_subtests.append(subtests)
+        return next(self._runs)
 
 
 class GLibAPITestRunnerTest(unittest.TestCase):
@@ -154,6 +176,22 @@ class GLibAPITestRunnerTest(unittest.TestCase):
             self._gtk_test: [("/webkit/WebKitWebView/title", None, ["PASS"])],
             self._google_test: [("WTF_GUniquePtr.Basic", "CRASH", [])],
         }))
+
+    def test_repeat_each_runs_the_requested_tests_every_time(self):
+        runner = RepeatingStubTestRunner(self._base_directory, [{"/first": "PASS"}] * 3)
+
+        self.assertEqual({"/first": "PASS"}, runner._run_test_repeatedly(self._glib_test, ["/first"], []))
+        self.assertEqual([["/first"]] * 3, runner.requested_subtests)
+
+    def test_repeat_each_keeps_the_first_unexpected_result(self):
+        runner = RepeatingStubTestRunner(self._base_directory, [
+            {"/first": "PASS", "/second": "PASS", "/third": "FAIL"},
+            {"/first": "FAIL", "/second": "PASS", "/third": "FAIL"},
+            {"/first": "CRASH", "/second": "TIMEOUT", "/third": "PASS"},
+        ], expectations={"/third": ["FAIL"]})
+
+        self.assertEqual({"/first": "FAIL", "/second": "TIMEOUT", "/third": "PASS"},
+                         runner._run_test_repeatedly(self._glib_test, [], []))
 
 
 if __name__ == "__main__":
