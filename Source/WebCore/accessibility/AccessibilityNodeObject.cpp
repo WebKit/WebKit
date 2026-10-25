@@ -2559,7 +2559,7 @@ unsigned AccessibilityNodeObject::computeCellSlots()
     auto needsToDescend = [&processedRows] (AXCoreObject& axObject) {
         return !axObject.isTableRow() && !processedRows.contains(&downcast<AccessibilityObject>(axObject));
     };
-    std::function<void(AXCoreObject&)> processRowDescendingIfNeeded = [&] (AXCoreObject& axObject) {
+    auto processRowDescendingIfNeeded = [&](this auto& processRowDescendingIfNeeded, AXCoreObject& axObject) -> void {
         // Descend past anonymous renderers and non-rows.
         if (needsToDescend(axObject)) {
             for (const auto& child : axObject.unignoredChildren())
@@ -2618,7 +2618,7 @@ unsigned AccessibilityNodeObject::computeCellSlots()
         return 0;
 
     bool withinImplicitRowGroup = false;
-    std::function<void(Node*)> processTableDescendant = [&] (Node* node) {
+    auto processTableDescendant = [&](this auto& processTableDescendant, Node* node) -> void {
         auto* element = dynamicDowncast<Element>(node);
         // Step 8: While the current element is not one of the following elements, advance the
         // current element to the next child of the table.

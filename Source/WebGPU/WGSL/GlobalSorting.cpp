@@ -284,8 +284,7 @@ static std::optional<FailedCheck> reorder(AST::Declaration::List& list)
     list.clear();
     Deque<Graph::Node> queue;
 
-    std::function<void(Graph::Node&, unsigned)> processNode;
-    processNode = [&](Graph::Node& node, unsigned currentIndex) {
+    auto processNode = [&](this auto& processNode, Graph::Node& node, unsigned currentIndex) -> void {
         if constexpr (shouldLogGlobalSorting)
             dataLogLn("Process: ", nameForDeclaration(node.astNode()));
         list.append(node.astNode());

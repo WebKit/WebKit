@@ -305,7 +305,7 @@ void RemoteScrollingCoordinatorProxyIOS::updateOverlayRegionLayers()
         return targetScrollViewAncestors;
     };
 
-    std::function<void(RefPtr<RemoteLayerTreeNode>, RetainPtr<WKBaseScrollView>)> traverseAndAddRects = [&](RefPtr<RemoteLayerTreeNode> node, RetainPtr<WKBaseScrollView> enclosingScrollView) {
+    auto traverseAndAddRects = [&](this auto& traverseAndAddRects, RefPtr<RemoteLayerTreeNode> node, RetainPtr<WKBaseScrollView> enclosingScrollView) -> void {
         if (!node)
             return;
 

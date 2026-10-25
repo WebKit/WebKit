@@ -113,7 +113,7 @@ void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, NOESCAPE c
             perDFGNodeCallback(node);
 
             UncheckedKeyHashSet<DFG::Node*> localPrintedNodes;
-            WTF::Function<void(DFG::Node*)> printNodeRecursive = [&] (DFG::Node* node) {
+            auto printNodeRecursive = [&](this auto& printNodeRecursive, DFG::Node* node) -> void {
                 if (printedNodes.contains(node) || localPrintedNodes.contains(node))
                     return;
 

@@ -423,7 +423,7 @@ void ProxyingPageAgent::getResourceTree(Ref<GetResourceTreeCallback>&& callback)
     };
     HashMap<WebCore::ProcessIdentifier, ProcessFrames> framesByProcess;
 
-    Function<void(const WebFrameProxy&)> collectFrame = [&](const WebFrameProxy& frame) {
+    auto collectFrame = [&](this auto& collectFrame, const WebFrameProxy& frame) -> void {
         Ref process = frame.process();
         // Only frames with a page identifier in their hosting process can be queried.
         if (frame.webPageIDInCurrentProcess()) {
@@ -681,7 +681,7 @@ void ProxyingPageAgent::searchInResources(const String& text, std::optional<bool
     };
     HashMap<WebCore::ProcessIdentifier, ProcessFrames> framesByProcess;
 
-    Function<void(const WebKit::WebFrameProxy&)> collectFrame = [&](const WebKit::WebFrameProxy& frame) {
+    auto collectFrame = [&](this auto& collectFrame, const WebKit::WebFrameProxy& frame) -> void {
         Ref process = frame.process();
         if (frame.webPageIDInCurrentProcess()) {
             auto& entry = framesByProcess.ensure(process->coreProcessIdentifier(), [&] {
