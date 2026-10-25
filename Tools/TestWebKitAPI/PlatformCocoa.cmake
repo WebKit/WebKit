@@ -722,6 +722,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WebPage/WebPageScrollbarTests.swift
     Tests/WebKit/WebPage/WebPageTests.swift
     Tests/WebKit/WebPage/WebPageTransferableTests.swift
+    Tests/WebKit/WebPage/WebViewInspectorAttachmentTests.swift
     Tests/WebKit/WebPage/WebViewTests.swift
 )
 

@@ -67,4 +67,14 @@ static NSString *JavaScriptSnippetToFetchURL(NSURL *url)
     }
 }
 
+- (void)_attachRightForTesting
+{
+    protect(*_inspector)->attachRight();
+}
+
+- (void)_attachLeftForTesting
+{
+    protect(*_inspector)->attachLeft();
+}
+
 @end

@@ -29,4 +29,6 @@
 - (void)_fetchURLForTesting:(NSURL *)url;
 - (void)_openURLExternallyForTesting:(NSURL *)url useFrontendAPI:(BOOL)useFrontendAPI;
 - (WKWebView *)inspectorWebView;
+- (void)_attachRightForTesting;
+- (void)_attachLeftForTesting;
 @end
