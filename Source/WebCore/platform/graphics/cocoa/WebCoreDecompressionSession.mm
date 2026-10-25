@@ -33,6 +33,7 @@
 #import "MediaSampleAVFObjC.h"
 #import "PixelBufferConformerCV.h"
 #import "SharedBuffer.h"
+#import "VP9Utilities.h"
 #import "VideoDecoder.h"
 #import "VideoDecoderVTBSession.h"
 #import "VideoFrame.h"
@@ -248,7 +249,34 @@ static RetainPtr<CMTaggedBufferGroupRef> createTaggedBufferGroupWithRequiredVide
     return adoptCF(refinedTaggedBufferGroup);
 }
 
-std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> WebCoreDecompressionSession::ensureDecoderForSample(CMSampleBufferRef cmSample)
+// Matches the formats MediaSamplesDecoder decodes in the content process.
+static bool contentProcessCanDecodeInSoftware(CMFormatDescriptionRef description)
+{
+    switch (PAL::CMFormatDescriptionGetMediaSubType(description)) {
+    case 'vp08':
+    case kCMVideoCodecType_AV1:
+        return true;
+    case kCMVideoCodecType_VP9: {
+        RetainPtr extensionAtoms = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+        if (!extensionAtoms)
+            return false;
+        RetainPtr configurationRecord = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(extensionAtoms.get(), CFSTR("vpcC")));
+        if (!configurationRecord)
+            return false;
+        auto record = createVPCodecConfigurationRecordFromVPCC(span(configurationRecord.get()));
+        return record && !record->profile && record->bitDepth == 8;
+    }
+    default:
+        return false;
+    }
+}
+
+static bool requiresHardwareDecoder(CMFormatDescriptionRef description, WebCoreDecompressionSession::DecodingFlags flags)
+{
+    return flags.contains(WebCoreDecompressionSession::DecodingFlag::HardwareOnly) && contentProcessCanDecodeInSoftware(description);
+}
+
+std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> WebCoreDecompressionSession::ensureDecoderForSample(CMSampleBufferRef cmSample, DecodingFlags flags)
 {
     if (m_waitingForKeyframe) {
         if (!isCMSampleBufferRandomAccess(cmSample))
@@ -287,7 +315,8 @@ std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> WebCoreDecompressionSess
     m_lastFormatDescription = videoFormatDescription;
 
     if (!m_videoDecoderVTB) {
-        m_videoDecoderVTB = VideoDecoderVTBSession::create(videoFormatDescription.get(), (__bridge CFDictionaryRef)m_pixelBufferAttributes.get());
+        bool requiresHardware = requiresHardwareDecoder(videoFormatDescription.get(), flags);
+        m_videoDecoderVTB = VideoDecoderVTBSession::create(videoFormatDescription.get(), (__bridge CFDictionaryRef)m_pixelBufferAttributes.get(), requiresHardware ? VideoDecoderVTBSession::HardwareDecoder::Required : VideoDecoderVTBSession::HardwareDecoder::Enabled);
         if (m_dispatcher->isCurrent()) {
             assertIsCurrent(m_dispatcher.get());
 
@@ -423,13 +452,18 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
     m_lastDecodedSamples = { };
     m_lastDecodedSamples.reserveInitialCapacity(numberOfSamples);
 
-    auto result = ensureDecoderForSample(sample);
+    auto result = ensureDecoderForSample(sample, flags);
     if (!result)
         return DecodingPromise::createAndReject(result.error());
     RefPtr videoDecoderVTB = WTF::move(*result);
 
     if (m_waitingForKeyframe)
         return DecodingPromise::createAndResolve(Vector<RetainPtr<CMSampleBufferRef>> { });
+
+    if (!videoDecoderVTB && requiresHardwareDecoder(RetainPtr { PAL::CMSampleBufferGetFormatDescription(sample) }.get(), flags)) {
+        RELEASE_LOG_ERROR(Media, "Couldn't create a hardware VTDecompressionSession");
+        return DecodingPromise::createAndReject(kVTCouldNotFindVideoDecoderErr);
+    }
 
     if (!videoDecoderVTB && !m_videoDecoderCreationFailed) {
         RefPtr<MediaPromise> initPromise;
@@ -576,7 +610,7 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
 
 RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::decodeSampleSync(CMSampleBufferRef sample)
 {
-    auto result = ensureDecoderForSample(sample);
+    auto result = ensureDecoderForSample(sample, { });
     if (!result || !*result)
         return nullptr;
 

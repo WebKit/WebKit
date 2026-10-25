@@ -171,6 +171,7 @@ enum class VideoRendererPreference : uint8_t {
 #if PLATFORM(IOS_FAMILY)
     CanShowWhileLocked = 1 << 4,
 #endif
+    DecoderInContentProcess = 1 << 5,
 };
 using VideoRendererPreferences = OptionSet<VideoRendererPreference>;
 

@@ -47,7 +47,7 @@ private:
     Ref<WebCore::AudioDestination> createAudioDestination(const WebCore::AudioDestinationCreationOptions&) override;
 #endif
 #if ENABLE(VIDEO) && ENABLE(GPU_PROCESS)
-    RefPtr<WebCore::AudioVideoRenderer> createAudioVideoRenderer(LoggerHelper*, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier) const final;
+    RefPtr<WebCore::AudioVideoRenderer> createAudioVideoRenderer(LoggerHelper*, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, WebCore::VideoRendererPreferences) const final;
     bool canDecodeExtendedType(WebCore::PlatformMediaDecodingType, const WebCore::ContentType&) final;
     void ensureCodecsSupportChecksInitialized() final;
 #endif

@@ -1947,6 +1947,11 @@ bool MediaPlayer::shouldDisableSleep() const
     return protect(client())->mediaPlayerShouldDisableSleep();
 }
 
+VideoRendererPreferences MediaPlayer::videoRendererPreferences() const
+{
+    return m_loadOptions.videoRendererPreferences;
+}
+
 String MediaPlayer::contentMIMEType() const
 {
     return contentType().containerType();

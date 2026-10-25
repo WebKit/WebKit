@@ -69,6 +69,8 @@ public:
         NonDisplaying = 1 << 0,
         RealTime = 1 << 1,
         EnableStereo = 1 << 2,
+        // Fail instead of decoding in software (H.264 and HEVC excepted).
+        HardwareOnly = 1 << 3,
     };
     using DecodingFlags = OptionSet<DecodingFlag>;
 
@@ -82,7 +84,7 @@ private:
     WEBCORE_EXPORT WebCoreDecompressionSession(NSDictionary *, GuaranteedSerialFunctionDispatcher*);
     static NSDictionary *defaultPixelBufferAttributes();
 
-    std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> ensureDecoderForSample(CMSampleBufferRef);
+    std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> ensureDecoderForSample(CMSampleBufferRef, DecodingFlags);
 
     Ref<DecodingPromise> decodeSampleInternal(CMSampleBufferRef, DecodingFlags);
     void assignResourceOwner(CVImageBufferRef);
