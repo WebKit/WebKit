@@ -536,6 +536,10 @@ void HTMLLinkElement::removingSteps(RemovalType removalType, ContainerNode& oldP
         m_styleScope = nullptr;
     }
 
+    // The observer is registered with the tree scope we are being removed from, so it must not
+    // outlive this removal: a shadow tree scope can be destroyed while this element is still alive.
+    m_expectIdTargetObserver = nullptr;
+
     processInternalResourceLink();
     unblockRendering();
 }
