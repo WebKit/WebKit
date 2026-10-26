@@ -3760,7 +3760,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
                     return { };
                 if (isOrthogonal(*this, containingBlock))
                     return containingBlockLogicalWidthForContent();
-                return containingBlock->availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
+                return containingBlockLogicalHeightForContent(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
             }();
             if (!availableSpace)
                 return { };
@@ -5359,6 +5359,13 @@ bool RenderBox::isBlockSizeResolvableForStretch() const
     // Orthogonal children's block axis maps to the parent's inline axis, which is always definite.
     if (isOrthogonal(*this, *containingBlock))
         return true;
+
+    // The block formatting context gives a box it lays out through the render tree the block size of its containing block, when that is
+    // definite (LayoutIntegration::BlockIntegrationUtils::layoutIndependentFormattingContext).
+    if (!isGridItem()) {
+        if (auto containingBlockContentLogicalHeight = overridingContainingBlockContentLogicalHeight())
+            return !!*containingBlockContentLogicalHeight;
+    }
 
     // The containing block has a directly resolvable height (fixed, percentage, etc.)
     if (containingBlock->hasDefiniteLogicalHeight() || containingBlock->stretchesToViewport())
