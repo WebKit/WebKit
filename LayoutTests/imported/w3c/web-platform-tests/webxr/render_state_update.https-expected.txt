@@ -9,4 +9,6 @@ PASS updateRenderState handles appropriately XRRenderStateInit with no params - 
 PASS updateRenderState handles appropriately XRRenderStateInit with no params - webgl2
 FAIL updateRenderState clamps appropriately near/far clipping planes - webgl assert_equals: expected 0 but got 0.1
 FAIL updateRenderState clamps appropriately near/far clipping planes - webgl2 assert_equals: expected 0 but got 0.1
+PASS updateRenderState is applied after the frame callbacks - webgl
+PASS updateRenderState is applied after the frame callbacks - webgl2
 
