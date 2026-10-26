@@ -48,11 +48,16 @@ bool BlockMarginCollapse::marginsCollapseThrough(const RenderBox& box, const Box
     auto& minimumBlockSize = style->logicalMinHeight(writingMode);
     if (minimumBlockSize.isKnownPositive() || minimumBlockSize.isCalculated())
         return false;
+    // A calc-size() has the size it resolves to without content, which the box has when nothing separates its margins (like
+    // RenderBlock::isSelfCollapsingBlock, which checks the height the box has). Otherwise it acts like its basis.
+    auto& blockSize = style->logicalHeight(writingMode);
+    if ((blockSize.isCalcSize() || minimumBlockSize.isCalcSize()) && BlockFormattingUtils::borderBoxBlockSize(box, geometry.verticalBorderAndPadding(), 0_lu, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode) > 0)
+        return false;
     // Stretch is the stretch-fit block size, when there is one (css-sizing-4 §6.1): margins collapse through a box whose used block size is zero.
     auto stretchFitSizeIsPositive = stretchFitBorderBoxBlockSize && *stretchFitBorderBoxBlockSize > 0;
-    if (minimumBlockSize.isStretch() && stretchFitSizeIsPositive)
+    if (minimumBlockSize.isStretch() && !minimumBlockSize.isCalcSize() && stretchFitSizeIsPositive)
         return false;
-    if (style->logicalHeight(writingMode).isStretch() && stretchFitBorderBoxBlockSize)
+    if (blockSize.isStretch() && !blockSize.isCalcSize() && stretchFitBorderBoxBlockSize)
         return !stretchFitSizeIsPositive;
     // Like RenderBlock::isSelfCollapsingBlock, which checks the height the box has: the one a preferred aspect ratio or size containment gives it.
     if (box.shouldApplySizeContainment() && box.explicitIntrinsicInnerLogicalHeight().value_or(0_lu) > 0)
@@ -60,7 +65,6 @@ bool BlockMarginCollapse::marginsCollapseThrough(const RenderBox& box, const Box
     if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode); aspectRatioBlockSize && *aspectRatioBlockSize > 0)
         return false;
     // A zero or auto computed height (CSS 2.2 §8.3.1): not the sizing keywords, whose used size is the automatic one (like RenderBlock::isSelfCollapsingBlock).
-    auto& blockSize = style->logicalHeight(writingMode);
     return blockSize.isKnownZero() || (!blockSize.isIntrinsic() && BlockFormattingUtils::blockSizeBehavesAsAuto(blockSize, containingBlockContentBoxBlockSize));
 }
 
