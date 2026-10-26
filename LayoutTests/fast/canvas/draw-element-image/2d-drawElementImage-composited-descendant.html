@@ -12,14 +12,16 @@
     if (window.testRunner)
         testRunner.waitUntilDone();
 
-    function runTest() {
-        document.getElementById('canvas').getContext('2d').drawElementImage(document.getElementById('box'), 0, 0);
+    const canvas = document.getElementById('canvas');
+    const box = document.getElementById('box');
+    const ctx = canvas.getContext('2d');
+
+    canvas.onpaint = () => {
+        ctx.reset();
+        ctx.drawElementImage(box, 0, 0);
         if (window.testRunner)
             testRunner.notifyDone();
-    }
-
-    canvas.onpaint = runTest;
-    canvas.requestPaint();
+    };
 </script>
 </body>
 </html>

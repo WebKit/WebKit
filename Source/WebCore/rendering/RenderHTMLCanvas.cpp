@@ -38,9 +38,11 @@
 #include "NaturalDimensions.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
+#include "RenderDescendantIterator.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -98,8 +100,15 @@ void RenderHTMLCanvas::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     RenderReplaced::layout();
 
-    if (CheckedPtr innerRenderer = this->innerRenderer())
+    if (CheckedPtr innerRenderer = this->innerRenderer()) {
+        for (CheckedRef renderer : descendantsOfType<RenderElement>(*innerRenderer)) {
+            if (renderer->everHadLayout() || !renderer->isCanvasDrawable() || renderer->drawableCanvas() != this)
+                continue;
+            if (RefPtr drawableElement = renderer->element())
+                protect(canvasElement())->drawableElementDidChange(*drawableElement);
+        }
         innerRenderer->layoutIfNeeded();
+    }
 
     m_canvasDrawableRecorderMap.clear();
 }
@@ -168,6 +177,26 @@ std::optional<CanvasElementSnapshot> RenderHTMLCanvas::canvasDrawableSnapshot(Re
         return { { snapshotRecorder->copyDisplayList(), snapshotRecorder->initialClip().size() } };
 
     return std::nullopt;
+}
+
+void RenderHTMLCanvas::requestPaintEventIfNeeded(const RenderElement& repaintedRenderer) const
+{
+    ASSERT(repaintedRenderer.isDescendantOf(this));
+
+    if (!hasDrawableContent())
+        return;
+
+    for (CheckedRef renderer : lineageOfType<RenderElement>(repaintedRenderer)) {
+        if (renderer.ptr() == this)
+            return;
+
+        if (!renderer->isCanvasDrawable())
+            continue;
+
+        if (RefPtr drawableElement = renderer->element())
+            protect(canvasElement())->drawableElementDidChange(*drawableElement);
+        return;
+    }
 }
 
 bool RenderHTMLCanvas::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

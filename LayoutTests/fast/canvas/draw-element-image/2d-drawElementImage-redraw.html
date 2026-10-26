@@ -9,10 +9,7 @@
         testRunner.waitUntilDone();
 
     function nextPaint() {
-        return new Promise(resolve => {
-            canvas.addEventListener('paint', resolve, { once: true });
-            canvas.requestPaint();
-        });
+        return new Promise(resolve => canvas.addEventListener('paint', resolve, { once: true }));
     }
 
     const canvas = document.getElementById('canvas');
