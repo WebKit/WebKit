@@ -176,7 +176,9 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
     auto zoomFactor = canvasStyle ? canvasStyle->usedZoom() : 1.f;
     willUpdateEntireContents();
     Ref document = element.document();
-    context->drawFocusRing(path, 1, RenderTheme::singleton().focusRingColor(document->styleColorOptions(canvasStyle, StyleColorOptionsPurpose::Rendering)), zoomFactor);
+    // FIXME: <rdar://190977456> If AXCustomColorMode is forcing a dark appearance due to dark active custom colors,
+    // this focus ring will still be light.
+    context->drawFocusRing(path, 1, RenderTheme::singleton().focusRingColor(document->styleColorOptions(canvasStyle, StyleColorOptionsPurpose::ComputedStyle)), zoomFactor);
 
     if (CheckedPtr cache = document->existingAXObjectCache()) {
         auto pathBounds = path.boundingRect();
