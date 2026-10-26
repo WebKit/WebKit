@@ -94,6 +94,9 @@ public:
     bool hasDefiniteLogicalHeight() const;
     const std::optional<LayoutUnit> availableLogicalHeightForContentBox() const;
 
+    bool intrinsicLogicalWidthsDependOnLogicalHeight() const;
+    bool shouldInvalidateContentWidths() const final;
+
     void setNeedsItemPlacement(SubgridDidChange descendantSubgridsNeedItemPlacement = SubgridDidChange::No);
     const Vector<LayoutUnit>& LEGACY_NODELETE trackSizesForComputedStyle(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
 
