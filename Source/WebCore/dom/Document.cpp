@@ -387,6 +387,7 @@
 #include <JavaScriptCore/WeakInlines.h>
 #include <algorithm>
 #include <ctime>
+#include <mutex>
 #include <ranges>
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
@@ -423,6 +424,7 @@
 
 #if PLATFORM(COCOA)
 #include "FontCacheCoreText.h"
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -8270,6 +8272,14 @@ void Document::logXSLTDeprecationWarningIfNeeded()
         return;
     m_hasLoggedXSLTDeprecationWarning = true;
     addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "XSLT is deprecated and will be removed in a future version of WebKit."_s);
+
+#if PLATFORM(COCOA)
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        if (WTF::CocoaApplication::shouldOSFaultLogForAppleApplication())
+            RELEASE_LOG_FAULT_WITH_PAYLOAD(Loading, "XSLT used by %s", applicationBundleIdentifier().utf8());
+    });
+#endif
 }
 
 void Document::applyPendingXSLTransformsTimerFired()
