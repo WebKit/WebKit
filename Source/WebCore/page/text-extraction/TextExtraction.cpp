@@ -559,11 +559,15 @@ static inline bool paintsVisibleContent(const RenderObject& renderer)
     if (renderer.usedStyle().visibility() != UsedVisibility::Visible)
         return false;
 
+    // Opacity isn't inherited. Text reads it from its parent.
+    if (CheckedPtr text = dynamicDowncast<RenderText>(renderer)) {
+        if (text->parent()->style().opacity() < minOpacityToConsiderVisible)
+            return false;
+        return text->hasRenderedText();
+    }
+
     if (style->opacity() < minOpacityToConsiderVisible)
         return false;
-
-    if (CheckedPtr text = dynamicDowncast<RenderText>(renderer))
-        return text->hasRenderedText();
 
     return renderer.isRenderReplaced() || hasVisuallyDistinctStyling(protect(style));
 }
@@ -1995,7 +1999,9 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
         if (descendant->usedStyle().visibility() == UsedVisibility::Hidden)
             continue;
 
-        if (descendant->style().opacity() < minOpacityToConsiderVisible)
+        // Opacity isn't inherited. Text reads it from its parent.
+        CheckedRef opacityRenderer = is<RenderText>(descendant) ? *descendant->parent() : descendant.get();
+        if (opacityRenderer->style().opacity() < minOpacityToConsiderVisible)
             continue;
 
         if (RefPtr node = descendant->node(); node && ImageOverlay::isInsideOverlay(*node))
