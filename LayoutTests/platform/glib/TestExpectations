@@ -3737,6 +3737,9 @@ imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-d
 # Animation callbacks are outside GLib rendering frame records.
 inspector/timeline/timeline-event-RenderingFrame.html [ Skip ]
 
+# Passes with Site Isolation, where the UI process coordinates back/forward navigation.
+webkit.org/b/328406 http/tests/history/back-with-fragment-change.py [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////
