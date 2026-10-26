@@ -433,9 +433,6 @@ class _Process(object):
                             result_msg = _Result(value=None, id=stopped_task.id, repeat=True)
                             result_msg.stopped = True
                             queue.send(result_msg)
-                        # Only grouped workers exit here; regular workers continue to wait for None
-                        if group_queues:
-                            break
                         continue
 
                     # For repeat tasks, check stop condition

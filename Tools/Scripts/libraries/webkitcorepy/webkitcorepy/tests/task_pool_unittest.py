@@ -21,9 +21,12 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import threading
 import time
 import sys
 import unittest
+
+from unittest import mock
 
 from webkitcorepy import OutputCapture, TaskPool, Timeout, log as logger
 
@@ -402,3 +405,46 @@ class TaskPoolUnittest(unittest.TestCase):
 
                     # Call wait() to properly clean up
                     pool.wait()
+
+        def test_repeat_task_delivered_after_stop_forked(self):
+            """Test that a grouped worker does not exit before its late-delivered repeat task is stopped."""
+            send = TaskPool.Queue.send
+            process_state = TaskPool.State.__call__
+            lock = threading.Lock()
+            held = []
+            released = threading.Event()
+            worker_stopped = threading.Event()
+
+            def hold(group_queue, message):
+                with lock:
+                    if not released.is_set():
+                        held.append((group_queue, message))
+                        return None
+                return send(group_queue, message)
+
+            def release():
+                worker_stopped.wait(timeout=1)
+                with lock:
+                    released.set()
+                    for group_queue, message in held:
+                        send(group_queue, message)
+
+            def note_stopping(state, caller):
+                if state.state == TaskPool.State.STOPPING:
+                    worker_stopped.set()
+                return process_state(state, caller)
+
+            releaser = threading.Thread(target=release)
+            self.addCleanup(releaser.join)
+            self.addCleanup(worker_stopped.set)
+
+            with OutputCapture(level=logging.INFO), mock.patch.object(TaskPool.Queue, 'send', hold), mock.patch.object(TaskPool.State, '__call__', note_stopping):
+                with TaskPool(workers=1, force_fork=True, mutually_exclusive_groups=['test_group']) as pool:
+                    pool.do(simple_repeat_task)
+                    pool.do(simple_repeat_task, repeat=True, group='test_group')
+                    releaser.start()
+
+                    with Timeout(10):
+                        pool.wait()
+
+                    self.assertEqual(pool.repeat_pending_count, 0)
