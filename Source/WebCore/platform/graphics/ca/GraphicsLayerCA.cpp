@@ -115,6 +115,9 @@ static const unsigned cMaxTotalBackdropFilterArea = 1242 * 2208 * 10;
 // Don't let a single tiled layer use more than 156MB of memory. On a 3x display with RGB10A8 surfaces, this is about 12 tiles.
 static const unsigned cMaxScaledTiledLayerMemorySize = 1024 * 1024 * 156;
 
+// Extension used to size the top overflow clip layer. This number is arbitrary.
+static constexpr float topOverflowClipExtension = 100000.0f;
+
 // If we send a duration of 0 to CA, then it will use the default duration
 // of 250ms. So send a very small value instead.
 static const float cAnimationAlmostZeroDuration = 1e-3f;
@@ -749,6 +752,15 @@ void GraphicsLayerCA::setMasksToBounds(bool masksToBounds)
 
     GraphicsLayer::setMasksToBounds(masksToBounds);
     noteLayerPropertyChanged(MasksToBoundsChanged | DebugIndicatorsChanged);
+}
+
+void GraphicsLayerCA::setMasksTopOverflow(bool masksTopOverflow)
+{
+    if (masksTopOverflow == m_masksTopOverflow)
+        return;
+
+    GraphicsLayer::setMasksTopOverflow(masksTopOverflow);
+    noteLayerPropertyChanged(TopOverflowClipChanged);
 }
 
 void GraphicsLayerCA::setDrawsContent(bool drawsContent)
@@ -1866,6 +1878,16 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
 #endif
         } else
             state.reset(clipRectForSelf);
+    } else if (masksTopOverflow()) {
+        ASSERT(accumulation == TransformState::FlattenTransform);
+        auto topClipped = clipRectForSelf;
+        topClipped.shiftMaxYEdgeTo(std::max(clipRectForSelf.maxY(), clipRectFromParent.maxY()));
+        topClipped.shiftXEdgeTo(std::min(clipRectForSelf.x(), clipRectFromParent.x()));
+        topClipped.shiftMaxXEdgeTo(std::max(clipRectForSelf.maxX(), clipRectFromParent.maxX()));
+        if (state.isMappingSecondaryQuad())
+            state.reset(topClipped, topClipped);
+        else
+            state.reset(topClipped);
     }
 
     // A pixel-moving filter reads pixels beyond the visible rects of this layer, so descendents need backing store there too.
@@ -2431,6 +2453,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ShadowPathChanged)
         updateShadowPath();
 
+    if (m_uncommittedChanges & TopOverflowClipChanged)
+        updateTopOverflowClipLayer();
+
     if (m_uncommittedChanges & ChildrenChanged) {
         updateSublayerList();
         // Sublayers may set this flag again, so clear it to avoid always updating sublayers in commitLayerChangesAfterSublayers().
@@ -2547,6 +2572,8 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
 
     bool clippingLayerHostsChildren = m_contentsRectClipsDescendants && m_contentsClippingLayer;
     bool structuralLayerHostsChildren = !clippingLayerHostsChildren && m_structuralLayer && structuralLayerPurpose() != StructuralLayerPurpose::StructuralLayerForBackdrop;
+    bool topOverflowClipHostsChildren = !clippingLayerHostsChildren && !structuralLayerHostsChildren && m_topOverflowClipLayer;
+
     if (RefPtr contentsClippingLayer = m_contentsClippingLayer) {
         PlatformCALayerList clippingChildren;
         appendContentsLayer(clippingChildren);
@@ -2565,7 +2592,15 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
         structuralLayer->setSublayers(layerList);
     }
 
-    if (!clippingLayerHostsChildren && !structuralLayerHostsChildren)
+    if (RefPtr topOverflowClipLayer = m_topOverflowClipLayer) {
+        PlatformCALayerList clipChildren;
+        if (topOverflowClipHostsChildren)
+            buildChildLayerList(clipChildren);
+        topOverflowClipLayer->setSublayers(clipChildren);
+        primaryLayerChildren.append(topOverflowClipLayer);
+    }
+
+    if (!clippingLayerHostsChildren && !structuralLayerHostsChildren && !topOverflowClipHostsChildren)
         buildChildLayerList(primaryLayerChildren);
 
     layer->setSublayers(primaryLayerChildren);
@@ -2644,6 +2679,29 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
             cloneLayer->setBounds(adjustedBounds);
             cloneLayer->setAnchorPoint(scaledAnchorPoint);
         }
+    }
+
+    if (RefPtr topOverflowClipLayer = m_topOverflowClipLayer) {
+        topOverflowClipLayer->setPosition(FloatPoint(m_boundsOrigin.x() - topOverflowClipExtension, m_boundsOrigin.y()));
+        topOverflowClipLayer->setBounds(FloatRect(m_boundsOrigin.x() - topOverflowClipExtension, m_boundsOrigin.y(), m_size.width() + 2 * topOverflowClipExtension, m_size.height() + topOverflowClipExtension));
+    }
+}
+
+void GraphicsLayerCA::updateTopOverflowClipLayer()
+{
+    if (m_masksTopOverflow && !m_topOverflowClipLayer) {
+        m_topOverflowClipLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
+        m_topOverflowClipLayer->setAnchorPoint(FloatPoint3D());
+        m_topOverflowClipLayer->setMasksToBounds(true);
+        m_topOverflowClipLayer->setName(MAKE_STATIC_STRING_IMPL("top overflow clip"));
+        m_topOverflowClipLayer->setPosition(FloatPoint(m_boundsOrigin.x() - topOverflowClipExtension, m_boundsOrigin.y()));
+        m_topOverflowClipLayer->setBounds(FloatRect(m_boundsOrigin.x() - topOverflowClipExtension, m_boundsOrigin.y(), m_size.width() + 2 * topOverflowClipExtension, m_size.height() + topOverflowClipExtension));
+        noteLayerPropertyChanged(ChildrenChanged);
+    } else if (!m_masksTopOverflow && m_topOverflowClipLayer) {
+        m_topOverflowClipLayer->removeFromSuperlayer();
+        m_topOverflowClipLayer->setOwner(nullptr);
+        m_topOverflowClipLayer = nullptr;
+        noteLayerPropertyChanged(ChildrenChanged);
     }
 }
 
@@ -4420,6 +4478,9 @@ PlatformCALayer* GraphicsLayerCA::hostLayerForSublayers() const
     if (m_structuralLayer)
         return m_structuralLayer.get();
 
+    if (m_topOverflowClipLayer)
+        return m_topOverflowClipLayer.get();
+
     return m_layer.get();
 }
 
@@ -4855,6 +4916,7 @@ ASCIILiteral GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
     case LayerChange::TonemappingEnabledChanged: return "TonemappingEnabledChanged"_s;
 #endif
     case LayerChange::ShadowPathChanged: return "ShadowPathChanged"_s;
+    case LayerChange::TopOverflowClipChanged: return "TopOverflowClipChanged"_s;
     }
     ASSERT_NOT_REACHED();
     return ""_s;
@@ -5148,6 +5210,7 @@ void GraphicsLayerCA::removeCloneLayers()
     clearClones(m_layerClones->shapeMaskLayerClones);
     clearClones(m_layerClones->backdropLayerClones);
     clearClones(m_layerClones->backdropClippingLayerClones);
+    clearClones(m_layerClones->topOverflowClipLayerClones);
     
     m_layerClones = nullptr;
 }
