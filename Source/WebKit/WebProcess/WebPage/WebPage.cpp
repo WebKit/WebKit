@@ -7969,6 +7969,20 @@ void WebPage::cancelComposition(const String& compositionString)
         protect(targetFrame->editor())->confirmComposition(compositionString);
 }
 
+enum class SurrogatePairDirection : bool { Backward, Forward };
+
+// A boundary resolved by resolveCharacterRange() can split a surrogate pair, since input methods count UTF-16 code units.
+static BoundaryPoint moveOutOfSurrogatePair(const BoundaryPoint& point, SurrogatePairDirection direction)
+{
+    RefPtr text = dynamicDowncast<Text>(point.container);
+    if (!text || !point.offset || point.offset >= text->length())
+        return point;
+    auto& data = text->data();
+    if (!U16_IS_LEAD(data[point.offset - 1]) || !U16_IS_TRAIL(data[point.offset]))
+        return point;
+    return { point.container.copyRef(), direction == SurrogatePairDirection::Backward ? point.offset - 1 : point.offset + 1 };
+}
+
 void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
 {
     RefPtr targetFrame = targetFrameForEditing(*this);
@@ -7991,11 +8005,25 @@ void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
         return;
 
     auto characterRange = WebCore::CharacterRange(cursorPosition + offset, characterCount);
-    auto selectionRange = resolveCharacterRange(*surroundingRange, characterRange);
+    auto deletionRange = resolveCharacterRange(*surroundingRange, characterRange);
 
+    CheckedRef frameSelection = targetFrame->selection();
     targetFrame->editor().setIgnoreSelectionChanges(true);
-    protect(targetFrame->selection())->setSelection(VisibleSelection(selectionRange));
-    targetFrame->editor().deleteSelectionWithSmartDelete(false);
+    if (deletionRange.collapsed()) {
+        auto caret = moveOutOfSurrogatePair(deletionRange.start, SurrogatePairDirection::Forward);
+        frameSelection->setSelection(VisibleSelection(VisiblePosition(makeDeprecatedLegacyPosition(caret))));
+    } else {
+        // Delete exactly the requested range. An input method can delete a part of a grapheme cluster, like a combining
+        // mark, which a validated selection would extend to the end of the cluster.
+        VisibleSelection selectionToDelete;
+        selectionToDelete.setWithoutValidation(makeDeprecatedLegacyPosition(moveOutOfSurrogatePair(deletionRange.start, SurrogatePairDirection::Backward)),
+            makeDeprecatedLegacyPosition(moveOutOfSurrogatePair(deletionRange.end, SurrogatePairDirection::Forward)));
+        frameSelection->setSelection(selectionToDelete);
+        targetFrame->editor().deleteSelectionWithSmartDelete(false);
+        // Don't leave the range selected when nothing could be deleted.
+        if (!frameSelection->selection().isCaret())
+            frameSelection->setSelection(VisibleSelection(frameSelection->selection().visibleStart()));
+    }
     targetFrame->editor().setIgnoreSelectionChanges(false);
     sendEditorStateUpdate();
 }

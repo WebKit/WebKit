@@ -1278,6 +1278,106 @@ static void testWebKitInputMethodContextDeleteSurroundingMoveCursor(InputMethodT
     g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
 }
 
+static void testWebKitInputMethodContextDeleteSurroundingSurrogatePair(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    // A range that splits a surrogate pair is extended to the whole pair.
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'a😀b'; getSelection().collapse(editable.firstChild, 4)", nullptr);
+    test->deleteSurrounding(-2, 2);
+    auto textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "a");
+    auto* jsResult = test->runJavaScriptAndWaitUntilFinished("getSelection().isCollapsed && getSelection().focusOffset === 1", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+
+    // A caret move never ends between the two halves of a surrogate pair.
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'a😀b'; getSelection().collapse(editable.firstChild, 4)", nullptr);
+    test->deleteSurrounding(-2, 0);
+    textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "a😀b");
+    jsResult = test->runJavaScriptAndWaitUntilFinished("getSelection().isCollapsed && getSelection().focusOffset === 3", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+}
+
+static void testWebKitInputMethodContextDeleteSurroundingSurrogatePairPassword(InputMethodTest* test, gconstpointer)
+{
+    // Password fields allow a caret between the two halves of a surrogate pair, so a split range is not adjusted by the editing code.
+    test->loadHtml("<html><body><input id='editable' type='password'></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    test->runJavaScriptAndWaitUntilFinished("editable.value = 'a😀'; editable.setSelectionRange(3, 3)", nullptr);
+    test->deleteSurrounding(-1, 1);
+    // Compare in JavaScript, since an unpaired surrogate would be lost in the conversion to UTF-8.
+    auto* jsResult = test->runJavaScriptAndWaitUntilFinished("editable.value === 'a'", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+
+    test->runJavaScriptAndWaitUntilFinished("editable.value = 'a😀b'; editable.setSelectionRange(4, 4)", nullptr);
+    test->deleteSurrounding(-2, 0);
+    jsResult = test->runJavaScriptAndWaitUntilFinished("editable.selectionStart === 3 && editable.selectionEnd === 3", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+}
+
+static void testWebKitInputMethodContextDeleteSurroundingGraphemeCluster(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    // An input method can delete a part of a grapheme cluster, like a combining mark.
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'e\\u0301'; getSelection().collapse(editable.firstChild, 2)", nullptr);
+    test->deleteSurrounding(-1, 1);
+    auto textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "e");
+    auto* jsResult = test->runJavaScriptAndWaitUntilFinished("getSelection().isCollapsed && getSelection().focusOffset === 1", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+
+    // A Thai tone mark.
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = '\\u0E01\\u0E48'; getSelection().collapse(editable.firstChild, 2)", nullptr);
+    test->deleteSurrounding(-1, 1);
+    textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "\u0E01");
+    jsResult = test->runJavaScriptAndWaitUntilFinished("getSelection().isCollapsed && getSelection().focusOffset === 1", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+
+    // A range that starts inside a grapheme cluster.
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'e\\u0301x'; getSelection().collapse(editable.firstChild, 3)", nullptr);
+    test->deleteSurrounding(-2, 2);
+    textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "e");
+    jsResult = test->runJavaScriptAndWaitUntilFinished("getSelection().isCollapsed && getSelection().focusOffset === 1", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+
+    // The last emoji of a ZWJ sequence.
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = '👨\\u200D👦'; getSelection().collapse(editable.firstChild, 5)", nullptr);
+    test->deleteSurrounding(-2, 2);
+    textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "👨\u200D");
+    jsResult = test->runJavaScriptAndWaitUntilFinished("getSelection().isCollapsed && getSelection().focusOffset === 3", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+}
+
+static void testWebKitInputMethodContextDeleteSurroundingPrevented(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    // When nothing is deleted, the range is not left selected and the caret moves to its start.
+    test->runJavaScriptAndWaitUntilFinished("editable.addEventListener('beforeinput', event => event.preventDefault()); editable.textContent = 'abc'; getSelection().collapse(editable.firstChild, 3)", nullptr);
+    test->deleteSurrounding(-2, 1);
+    auto textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "abc");
+    auto* jsResult = test->runJavaScriptAndWaitUntilFinished("getSelection().isCollapsed && getSelection().focusOffset === 1", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+}
+
 static void testWebKitInputMethodContextReset(InputMethodTest* test, gconstpointer)
 {
     test->loadHtml(testHTML, nullptr);
@@ -2171,6 +2271,10 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-utf16", testWebKitInputMethodContextDeleteSurroundingUTF16);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-selection", testWebKitInputMethodContextDeleteSurroundingSelection);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-move-cursor", testWebKitInputMethodContextDeleteSurroundingMoveCursor);
+    InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-surrogate-pair", testWebKitInputMethodContextDeleteSurroundingSurrogatePair);
+    InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-surrogate-pair-password", testWebKitInputMethodContextDeleteSurroundingSurrogatePairPassword);
+    InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-grapheme-cluster", testWebKitInputMethodContextDeleteSurroundingGraphemeCluster);
+    InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-prevented", testWebKitInputMethodContextDeleteSurroundingPrevented);
     InputMethodTest::add("WebKitInputMethodContext", "reset", testWebKitInputMethodContextReset);
     InputMethodTest::add("WebKitInputMethodContext", "cursor-area", testWebKitInputMethodContextCursorArea);
     InputMethodTest::add("WebKitInputMethodContext", "preedit-cursor", testWebKitInputMethodContextPreeditCursor);
