@@ -167,6 +167,22 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     } else if (codecName == "opus"_s) {
         int channelMappingFamily = config.numberOfChannels <= 2 ? 0 : 1;
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-opus", "channel-mapping-family", G_TYPE_INT, channelMappingFamily, nullptr));
+        if (config.numberOfChannels > 2) {
+            GValue channelMapping = G_VALUE_INIT;
+            gst_value_array_init(&channelMapping, config.numberOfChannels);
+            for (unsigned i = 0; i < config.numberOfChannels; i++) {
+                GValue val = G_VALUE_INIT;
+                g_value_init(&val, G_TYPE_INT);
+                // TODO: We should use proper channel ordering, see also: https://bugs.webkit.org/show_bug.cgi?id=328606
+                g_value_set_int(&val, static_cast<int>(i));
+                gst_value_array_append_and_take_value(&channelMapping, &val);
+            }
+            // opusparse expects stream-count and coupled-count in caps. These are not specified in
+            // the decoder config, so use some fixed values.
+            gst_caps_set_simple(m_inputCaps.get(), "channels", G_TYPE_INT, config.numberOfChannels, "stream-count", G_TYPE_INT, config.numberOfChannels, "coupled-count", G_TYPE_INT, 1, nullptr);
+            gst_structure_set_value(gst_caps_get_structure(m_inputCaps.get(), 0), "channel-mapping", &channelMapping);
+            g_value_unset(&channelMapping);
+        }
         m_header = wrapSpanData(config.description);
         if (m_header)
             parser = "opusparse"_s;
