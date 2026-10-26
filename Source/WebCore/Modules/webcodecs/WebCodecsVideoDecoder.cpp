@@ -242,7 +242,9 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
     queueCodecControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, data = chunk->encodedData()] mutable {
         incrementCodecOperationCount();
         Ref internalDecoder = *m_internalDecoder;
-        protect(scriptExecutionContext())->enqueueTaskWhenSettled(internalDecoder->decode(WTF::move(data)), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { * this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
+        // An empty chunk is a decoding error, see https://github.com/w3c/webcodecs/issues/983.
+        auto decodePromise = data.data->isEmpty() ? VideoDecoder::DecodePromise::createAndReject("Empty chunk"_s) : internalDecoder->decode(WTF::move(data));
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(WTF::move(decodePromise), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this)](auto&& result) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;

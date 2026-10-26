@@ -161,8 +161,7 @@ static VideoDecoderConfiguration videoDecoderConfiguration(const VideoInfo& info
     RefPtr atom = extensionAtom(info, atomType);
     return { WTF::move(codec), {
         .description = atom ? Vector<uint8_t>(atom->span()) : Vector<uint8_t> { },
-        .colorSpace = info.colorSpace(),
-        .noOutputAsError = VideoDecoder::TreatNoOutputAsError::No
+        .colorSpace = info.colorSpace()
     } };
 }
 #endif

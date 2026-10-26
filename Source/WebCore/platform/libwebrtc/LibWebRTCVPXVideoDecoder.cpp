@@ -100,7 +100,6 @@ private:
     OSType m_pixelBufferPoolType WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
     const UniqueRef<webrtc::VideoDecoder> m_internalDecoder WTF_GUARDED_BY_CAPABILITY(vpxDecoderQueueSingleton());
     const bool m_useIOSurface { false };
-    const bool m_treatNoOutputAsError { true };
     const std::optional<PlatformVideoColorSpace> m_colorSpace;
     const ProcessIdentity m_resourceOwner;
 };
@@ -167,7 +166,8 @@ Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(VideoE
     m_hasUnsupportedOutput = false;
     auto error = m_internalDecoder->Decode(image, false, 0);
 
-    if (error && (error != WEBRTC_VIDEO_CODEC_NO_OUTPUT || m_treatNoOutputAsError))
+    // WEBRTC_VIDEO_CODEC_NO_OUTPUT is returned for frames that are decoded but not shown, such as VP8 alternate reference frames.
+    if (error && error != WEBRTC_VIDEO_CODEC_NO_OUTPUT)
         return VideoDecoder::DecodePromise::createAndReject(makeString("VPx decoding failed with error "_s, error));
 
     if (m_hasUnsupportedOutput)
@@ -208,7 +208,6 @@ LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXV
     , m_videoInfo(createVideoInfo(type, config))
     , m_internalDecoder(createInternalDecoder(type))
     , m_useIOSurface(config.pixelBuffer == VideoDecoder::HardwareBuffer::Yes)
-    , m_treatNoOutputAsError(config.noOutputAsError == VideoDecoder::TreatNoOutputAsError::Yes)
     , m_colorSpace(config.colorSpace)
     , m_resourceOwner(config.resourceOwner)
 {

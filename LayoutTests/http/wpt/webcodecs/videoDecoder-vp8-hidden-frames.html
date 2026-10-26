@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebCodecs VideoDecoder with VP8 alternate reference frames</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+// resources/test-vp8-hiddenframes.webm is a copy of media/content/test-vp8-hiddenframes.webm; see
+// media/media-vp8-hiddenframes.html for how it was generated. Frames marked hidden are alternate
+// reference frames with show_frame unset: they update the reference buffers and produce no output.
+// FRAMES was generated with:
+// $ paste -d, <(ffprobe -v error -select_streams v:0 -show_entries packet=pts,size,pos -of csv=p=0 test-vp8-hiddenframes.webm) \
+//     <(ffmpeg -v trace -i test-vp8-hiddenframes.webm -map 0:v -c copy -bsf:v trace_headers -f null - 2>&1 | grep -o "show_frame .* = [01]$" | grep -o "[01]$") \
+//     | awk -F, '{ printf "    {offset: %d, size: %d, timestamp: %d%s},\n", $3 + 4, $2, $1 * 1000, $4 ? "" : ", hidden: true" }'
+// ffprobe reports the position of the SimpleBlock payload; the frame starts after its 4-byte header
+// (track number, timecode and flags). Timestamps are in milliseconds in the file.
+const CONFIG = { codec: "vp8", codedWidth: 320, codedHeight: 180 };
+const FRAMES = [
+    {offset: 526, size: 10150, timestamp: 0},
+    {offset: 10683, size: 6494, timestamp: 38000, hidden: true},
+    {offset: 17184, size: 806, timestamp: 38000},
+    {offset: 17997, size: 1009, timestamp: 76000},
+    {offset: 19013, size: 952, timestamp: 115000},
+    {offset: 19972, size: 1211, timestamp: 153000},
+    {offset: 21190, size: 1183, timestamp: 191000},
+    {offset: 22380, size: 1363, timestamp: 229000},
+    {offset: 23750, size: 1428, timestamp: 267000},
+    {offset: 25185, size: 1487, timestamp: 305000},
+    {offset: 26679, size: 1376, timestamp: 344000},
+    {offset: 28062, size: 1228, timestamp: 382000},
+    {offset: 29296, size: 28, timestamp: 420000},
+    {offset: 29331, size: 6385, timestamp: 458000, hidden: true},
+    {offset: 35723, size: 1347, timestamp: 458000},
+    {offset: 37077, size: 1216, timestamp: 496000},
+    {offset: 38300, size: 1108, timestamp: 534000},
+    {offset: 39415, size: 1055, timestamp: 573000},
+    {offset: 40477, size: 969, timestamp: 611000},
+    {offset: 41453, size: 913, timestamp: 649000},
+    {offset: 42373, size: 743, timestamp: 687000},
+    {offset: 43123, size: 796, timestamp: 725000},
+    {offset: 43926, size: 734, timestamp: 763000},
+    {offset: 44667, size: 720, timestamp: 802000},
+    {offset: 45394, size: 614, timestamp: 840000},
+    {offset: 46015, size: 578, timestamp: 878000},
+    {offset: 46600, size: 423, timestamp: 916000},
+    {offset: 47030, size: 359, timestamp: 954000},
+    {offset: 47395, size: 28, timestamp: 992000},
+    {offset: 47430, size: 5787, timestamp: 1031000, hidden: true},
+    {offset: 53224, size: 327, timestamp: 1031000},
+    {offset: 53558, size: 610, timestamp: 1069000},
+    {offset: 54175, size: 537, timestamp: 1107000},
+    {offset: 54719, size: 627, timestamp: 1145000},
+    {offset: 55353, size: 339, timestamp: 1183000},
+    {offset: 55699, size: 642, timestamp: 1221000},
+    {offset: 56348, size: 319, timestamp: 1260000},
+    {offset: 56674, size: 537, timestamp: 1298000},
+    {offset: 57218, size: 558, timestamp: 1336000},
+    {offset: 57783, size: 574, timestamp: 1374000},
+    {offset: 58364, size: 421, timestamp: 1412000},
+    {offset: 58792, size: 473, timestamp: 1450000},
+    {offset: 59272, size: 469, timestamp: 1489000},
+    {offset: 59748, size: 564, timestamp: 1527000},
+    {offset: 60318, size: 31, timestamp: 1565000},
+    {offset: 60356, size: 3490, timestamp: 1603000, hidden: true},
+    {offset: 63853, size: 571, timestamp: 1603000},
+    {offset: 64431, size: 750, timestamp: 1641000},
+    {offset: 65188, size: 930, timestamp: 1679000},
+    {offset: 66125, size: 867, timestamp: 1718000},
+    {offset: 66999, size: 643, timestamp: 1756000},
+    {offset: 67648, size: 30, timestamp: 1794000},
+    {offset: 67685, size: 5060, timestamp: 1832000, hidden: true},
+    {offset: 72752, size: 668, timestamp: 1832000},
+    {offset: 73427, size: 977, timestamp: 1870000},
+    {offset: 74411, size: 819, timestamp: 1908000},
+    {offset: 75237, size: 944, timestamp: 1947000},
+    {offset: 76188, size: 634, timestamp: 1985000},
+    {offset: 76829, size: 607, timestamp: 2023000},
+    {offset: 77443, size: 624, timestamp: 2061000},
+    {offset: 78074, size: 567, timestamp: 2099000},
+    {offset: 78648, size: 514, timestamp: 2137000},
+    {offset: 79169, size: 621, timestamp: 2176000},
+    {offset: 79797, size: 481, timestamp: 2214000},
+    {offset: 80285, size: 601, timestamp: 2252000},
+    {offset: 80893, size: 505, timestamp: 2290000},
+    {offset: 81405, size: 409, timestamp: 2328000},
+    {offset: 81820, size: 25, timestamp: 2366000},
+    {offset: 81852, size: 352, timestamp: 2405000},
+    {offset: 82211, size: 458, timestamp: 2443000},
+    {offset: 82676, size: 484, timestamp: 2481000},
+    {offset: 83167, size: 474, timestamp: 2519000},
+    {offset: 83648, size: 386, timestamp: 2557000},
+    {offset: 84041, size: 576, timestamp: 2595000},
+    {offset: 84624, size: 481, timestamp: 2634000},
+    {offset: 85112, size: 433, timestamp: 2672000},
+];
+
+promise_test(async () => {
+    const support = await VideoDecoder.isConfigSupported(CONFIG);
+    assert_true(support.supported, "VP8 is supported");
+
+    const buffer = await (await fetch("resources/test-vp8-hiddenframes.webm")).arrayBuffer();
+    const shownTimestamps = FRAMES.filter(frame => !frame.hidden).map(frame => frame.timestamp);
+
+    const outputTimestamps = [];
+    let decodeError = null;
+    const decoder = new VideoDecoder({
+        output: frame => {
+            outputTimestamps.push(frame.timestamp);
+            frame.close();
+        },
+        error: e => decodeError = e,
+    });
+    decoder.configure(CONFIG);
+    FRAMES.forEach((frame, index) => {
+        decoder.decode(new EncodedVideoChunk({
+            type: index ? "delta" : "key",
+            timestamp: frame.timestamp,
+            data: new Uint8Array(buffer, frame.offset, frame.size)
+        }));
+    });
+    await decoder.flush().catch(() => { });
+
+    assert_equals(decodeError?.message, undefined, "no decode error");
+    assert_equals(decoder.state, "configured", "decoder state");
+    assert_array_equals(outputTimestamps, shownTimestamps, "one output per shown frame");
+    decoder.close();
+}, "VP8 frames with show_frame unset produce no output and are not a decoding error");
+</script>
+</head>
+<body>
+</body>
+</html>

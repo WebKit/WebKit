@@ -41,7 +41,6 @@ public:
 
     enum class HardwareAcceleration : bool { No, Yes };
     enum class HardwareBuffer : bool { No, Yes };
-    enum class TreatNoOutputAsError : bool { No, Yes };
     struct Config {
         Vector<uint8_t> description;
         uint64_t width { 0 };
@@ -49,7 +48,6 @@ public:
         std::optional<PlatformVideoColorSpace> colorSpace;
         HardwareAcceleration decoding { HardwareAcceleration::No };
         HardwareBuffer pixelBuffer { HardwareBuffer::No };
-        TreatNoOutputAsError noOutputAsError { TreatNoOutputAsError::Yes };
         ProcessIdentity resourceOwner { };
     };
 

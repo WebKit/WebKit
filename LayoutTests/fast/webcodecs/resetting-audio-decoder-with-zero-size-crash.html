@@ -18,7 +18,8 @@ window.addEventListener("load", async _ => {
     data: new Uint8Array(0)
   });
   decoder.decode(chunk);
-  await decoder.flush();
+  // An empty chunk is a decoding error, so flush() rejects.
+  await decoder.flush().catch(_ => {});
   window.testRunner?.notifyDone();
 });
 </script>

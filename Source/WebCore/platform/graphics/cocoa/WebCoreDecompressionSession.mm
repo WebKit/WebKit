@@ -609,8 +609,7 @@ Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCo
         .description = description,
         .colorSpace = colorSpace,
         .decoding = VideoDecoder::HardwareAcceleration::Yes,
-        .pixelBuffer = VideoDecoder::HardwareBuffer::Yes,
-        .noOutputAsError = VideoDecoder::TreatNoOutputAsError::No
+        .pixelBuffer = VideoDecoder::HardwareBuffer::Yes
     };
     MediaPromise::Producer producer;
     auto promise = producer.promise();

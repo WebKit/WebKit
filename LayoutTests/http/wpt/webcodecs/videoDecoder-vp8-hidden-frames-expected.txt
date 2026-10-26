@@ -1,0 +1,3 @@
+
+PASS VP8 frames with show_frame unset produce no output and are not a decoding error
+
