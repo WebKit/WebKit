@@ -14,7 +14,7 @@ PASS in-body: paddingLeft
 PASS in-body: overflow
 PASS in-body: height
 PASS in-body: box-sizing
-FAIL in-body: width assert_not_equals: got disallowed value "0px"
+PASS in-body: width
 PASS rendered-legend: display
 PASS rendered-legend: unicodeBidi
 PASS rendered-legend: marginTop
@@ -42,7 +42,7 @@ PASS in-fieldset-second-child: paddingLeft
 PASS in-fieldset-second-child: overflow
 PASS in-fieldset-second-child: height
 PASS in-fieldset-second-child: box-sizing
-FAIL in-fieldset-second-child: width assert_not_equals: got disallowed value "0px"
+PASS in-fieldset-second-child: width
 PASS in-fieldset-descendant: display
 PASS in-fieldset-descendant: unicodeBidi
 PASS in-fieldset-descendant: marginTop
@@ -56,5 +56,5 @@ PASS in-fieldset-descendant: paddingLeft
 PASS in-fieldset-descendant: overflow
 PASS in-fieldset-descendant: height
 PASS in-fieldset-descendant: box-sizing
-FAIL in-fieldset-descendant: width assert_not_equals: got disallowed value "0px"
+PASS in-fieldset-descendant: width
 
