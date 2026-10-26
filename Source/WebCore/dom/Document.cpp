@@ -8340,6 +8340,14 @@ void Document::logXMLExternalEntityDeprecationWarningIfNeeded()
         return;
     document->m_hasLoggedXMLExternalEntityDeprecationWarning = true;
     document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "XML external entities are deprecated and will be removed in a future version of WebKit."_s);
+
+#if PLATFORM(COCOA)
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        if (WTF::CocoaApplication::shouldOSFaultLogForAppleApplication())
+            RELEASE_LOG_FAULT_WITH_PAYLOAD(Loading, "XML external entity used by %s", applicationBundleIdentifier().utf8());
+    });
+#endif
 }
 
 String Document::designMode() const
