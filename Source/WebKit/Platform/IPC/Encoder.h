@@ -35,10 +35,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
-#if OS(DARWIN)
+#if PLATFORM(COCOA)
 #include <wtf/MmapSpan.h>
-#else
-#include <wtf/MallocSpan.h>
 #endif
 
 namespace IPC {
@@ -91,20 +89,29 @@ public:
         return *this;
     }
 
-    std::span<uint8_t> mutableSpan() LIFETIME_BOUND { return capacityBuffer().first(m_bufferSize); }
-    std::span<const uint8_t> span() const LIFETIME_BOUND { return capacityBuffer().first(m_bufferSize); }
+    std::span<uint8_t> mutableSpan() LIFETIME_BOUND { return bodyBuffer().first(m_bufferSize); }
+    std::span<const uint8_t> span() const LIFETIME_BOUND { return bodyBuffer().first(m_bufferSize); }
 
     void addAttachment(Attachment&&);
     Vector<Attachment> releaseAttachments();
     void reserve(size_t);
+
+#if PLATFORM(COCOA)
+    // Bodies up to this size are kept in m_buffer and sent inline in the Mach message. Larger
+    // bodies are kept in m_outOfLineBuffer and sent OOL (see Connection::sendOutgoingMessage).
+    static constexpr size_t maximumInlineBodySize = 4096;
+
+    bool hasOutOfLineBuffer() const { return !!m_outOfLineBuffer; }
+#endif
 
     static constexpr bool isIPCEncoder = true;
 
 private:
     std::span<uint8_t> grow(size_t alignment, size_t);
 
-    std::span<uint8_t> LEGACY_NODELETE capacityBuffer();
-    std::span<const uint8_t> LEGACY_NODELETE capacityBuffer() const;
+    std::span<uint8_t> LEGACY_NODELETE bodyBuffer();
+    std::span<const uint8_t> LEGACY_NODELETE bodyBuffer() const;
+    size_t LEGACY_NODELETE capacity() const;
 
     bool LEGACY_NODELETE hasAttachments() const;
 
@@ -117,17 +124,16 @@ private:
     MessageName m_messageName;
     uint64_t m_destinationID;
 
-#if OS(DARWIN)
-    using OutOfLineBufferSpan = MmapSpan<uint8_t>;
-#else
-    using OutOfLineBufferSpan = MallocSpan<uint8_t>;
-#endif
-    OutOfLineBufferSpan m_outOfLineBuffer;
-    std::array<uint8_t, 512> m_inlineBuffer;
+    Vector<Attachment> m_attachments;
 
     size_t m_bufferSize { 0 };
+#if PLATFORM(COCOA)
+    MmapSpan<uint8_t> m_outOfLineBuffer;
+#endif
+    Vector<uint8_t, 512> m_buffer;
 
-    Vector<Attachment> m_attachments;
+    // Don't add members after m_buffer. Put them before m_buffer so we pack live data closer together
+    // in the case that m_buffer only holds a small amount of data in its inline storage.
 };
 
 template<typename T, size_t Extent>

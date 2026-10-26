@@ -30,6 +30,7 @@
 #include "MessageNames.h"
 #include <mach/message.h>
 #include <memory>
+#include <optional>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -42,7 +43,33 @@ public:
     static std::unique_ptr<MachMessage> create(MessageName, size_t);
     ~MachMessage();
 
-    static CheckedSize LEGACY_NODELETE messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
+    // Returns std::nullopt if the size overflows. CheckedArithmetic operators aren't constexpr,
+    // so we use builtin overflow operators instead.
+    static constexpr std::optional<size_t> messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount)
+    {
+        size_t size = sizeof(mach_msg_header_t);
+        if (__builtin_add_overflow(size, bodySize, &size))
+            return std::nullopt;
+
+        if (portDescriptorCount || memoryDescriptorCount) {
+            size_t portDescriptorsSize = 0;
+            size_t memoryDescriptorsSize = 0;
+            if (__builtin_mul_overflow(portDescriptorCount, sizeof(mach_msg_port_descriptor_t), &portDescriptorsSize)
+                || __builtin_mul_overflow(memoryDescriptorCount, sizeof(mach_msg_ool_descriptor_t), &memoryDescriptorsSize)
+                || __builtin_add_overflow(size, sizeof(mach_msg_body_t), &size)
+                || __builtin_add_overflow(size, portDescriptorsSize, &size)
+                || __builtin_add_overflow(size, memoryDescriptorsSize, &size))
+                return std::nullopt;
+        }
+
+        // round_msg() with overflow checks.
+        constexpr size_t alignment = sizeof(natural_t);
+        if (__builtin_add_overflow(size, alignment - 1, &size))
+            return std::nullopt;
+        return size / alignment * alignment;
+    }
+
+    static CheckedSize LEGACY_NODELETE checkedMessageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
 
     size_t size() const { return m_size; }
     mach_msg_header_t* header() LIFETIME_BOUND { return m_messageHeader; }

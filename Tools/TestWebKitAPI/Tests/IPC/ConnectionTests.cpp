@@ -31,6 +31,10 @@
 #include <wtf/Threading.h>
 #include <wtf/threads/BinarySemaphore.h>
 
+#if PLATFORM(COCOA)
+#include <mach/mach.h>
+#endif
+
 
 namespace TestWebKitAPI {
 
@@ -267,6 +271,108 @@ TEST_P(ConnectionTestABBA, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
     a()->invalidate();
     deleteA();
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
+}
+
+struct MockTestMessageWithDataAndAttachments {
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_EmptyMessage; }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << data;
+        encoder << static_cast<uint64_t>(attachments.size());
+        for (auto& attachment : attachments)
+            encoder << WTF::move(attachment);
+    }
+
+    std::span<const uint8_t> data;
+    Vector<IPC::Attachment> attachments;
+};
+
+static Vector<uint8_t> testDataOfSize(size_t size)
+{
+    return Vector<uint8_t>(size, [size](size_t i) {
+        return static_cast<uint8_t>(i * 31 + size);
+    });
+}
+
+// Sends message bodies around the sizes where the encoder's buffer changes: the inline buffer (512 bytes), the heap
+// buffer steps (1024, 2048 and 4096 bytes; bodies of up to 4096 bytes are sent inline) and the page-aligned buffer
+// (larger bodies are sent out of line). The body is a 24 byte prefix (message header and data length), the data and
+// an 8 byte attachment count, so data sizes of 488, 1000, 2024 and 4064 put the count just across a buffer boundary.
+// Attachment counts of 17 or more do not fit the receive buffer together with a 4096 byte body, so the receiver has
+// to retry with a larger buffer. Then sends the same messages through shared memory.
+TEST_P(ConnectionTestABBA, SendMessagesAroundEncoderBufferSizes)
+{
+    ASSERT_TRUE(openBoth());
+
+    mach_port_t port = MACH_PORT_NULL;
+    ASSERT_EQ(mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port), KERN_SUCCESS);
+    auto sendRight = MachSendRight::createFromReceiveRight(port);
+    ASSERT_TRUE(!!sendRight);
+
+    struct TestCase {
+        size_t dataSize;
+        size_t attachmentCount;
+    };
+    Vector<size_t> dataSizes { 0, 400, 470, 480, 488, 490, 992, 1000, 2016, 2024, 3000, 4065, 4095, 4096, 4097, 8000, 16000, 16384, 16500, 40000 };
+    for (size_t dataSize = 3980; dataSize <= 4080; dataSize += 4)
+        dataSizes.append(dataSize);
+    Vector<TestCase> testCases;
+    for (auto dataSize : dataSizes) {
+        for (size_t attachmentCount : { 0u, 1u, 5u, 16u, 17u, 40u })
+            testCases.append({ dataSize, attachmentCount });
+    }
+
+    bClient().setAsyncMessageHandler([&](IPC::Connection&, IPC::Decoder& decoder) -> bool {
+        auto index = decoder.destinationID();
+        if (index >= testCases.size())
+            return false;
+        auto& testCase = testCases[index];
+        SCOPED_TRACE(testCase.dataSize);
+        SCOPED_TRACE(testCase.attachmentCount);
+
+        auto data = decoder.decode<std::span<const uint8_t>>();
+        auto attachmentCount = decoder.decode<uint64_t>();
+        EXPECT_TRUE(data && attachmentCount);
+        if (!data || !attachmentCount)
+            return false;
+        EXPECT_TRUE(equalSpans(*data, testDataOfSize(testCase.dataSize).span()));
+        EXPECT_EQ(*attachmentCount, testCase.attachmentCount);
+        for (uint64_t i = 0; i < *attachmentCount; ++i) {
+            auto attachment = decoder.decode<IPC::Attachment>();
+            EXPECT_TRUE(attachment && attachment->sendRight() == port);
+        }
+        return false; // Record the message.
+    });
+
+    auto sendAndReceiveAll = [&] {
+        for (size_t i = 0; i < testCases.size(); ++i) {
+            auto data = testDataOfSize(testCases[i].dataSize);
+            Vector<IPC::Attachment> attachments(testCases[i].attachmentCount, [&](size_t) {
+                return MachSendRight { sendRight };
+            });
+            auto result = a()->send(MockTestMessageWithDataAndAttachments { data.span(), WTF::move(attachments) }, i);
+            EXPECT_TRUE(result == IPC::Error::NoError);
+        }
+        for (size_t i = 0; i < testCases.size(); ++i) {
+            auto message = bClient().waitForMessage(kDefaultWaitForTimeout);
+            EXPECT_EQ(message.messageName, MockTestMessageWithDataAndAttachments::name());
+            EXPECT_EQ(message.destinationID, i);
+        }
+    };
+
+    sendAndReceiveAll();
+
+    IPC::Connection::setForceUseSharedMemoryForSendingForTesting(true);
+    sendAndReceiveAll();
+    IPC::Connection::setForceUseSharedMemoryForSendingForTesting(false);
+
+    sendRight = { };
+    mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
 }
 
 #endif // PLATFORM(COCOA)

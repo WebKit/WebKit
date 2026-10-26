@@ -29,14 +29,16 @@
 #include "ArgumentCoders.h"
 #include "MessageFlags.h"
 #include <algorithm>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OptionSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
-#if OS(DARWIN)
+#if PLATFORM(COCOA)
 #include <wtf/MmapSpan.h>
+#include <wtf/PageBlock.h>
 #endif
 
 namespace IPC {
@@ -102,19 +104,34 @@ void Encoder::wrapForTesting(UniqueRef<Encoder>&& original)
 
 void Encoder::reserve(size_t size)
 {
-    auto oldCapacityBufferSize = capacityBuffer().size();
-    if (size <= oldCapacityBufferSize)
+    auto oldCapacity = capacity();
+    if (size <= oldCapacity)
         return;
 
-    size_t newCapacity = roundUpToMultipleOf<4096>(oldCapacityBufferSize * 2);
-    while (newCapacity < size)
-        newCapacity *= 2;
+    CheckedSize checkedNewCapacity = CheckedSize { oldCapacity } * 2u;
+#if !PLATFORM(COCOA)
+    checkedNewCapacity = roundUpToMultipleOf<4096>(checkedNewCapacity.value());
+#endif
+    while (checkedNewCapacity < size)
+        checkedNewCapacity *= 2u;
+    size_t newCapacity = checkedNewCapacity;
 
-    auto newBuffer = OutOfLineBufferSpan::tryAlloc(newCapacity);
-    RELEASE_ASSERT(newBuffer);
-    memcpySpan(newBuffer.mutableSpan(), span());
+#if PLATFORM(COCOA)
+    if (newCapacity > maximumInlineBodySize) {
+        // OOL buffer sizes are page-aligned.
+        newCapacity = roundUpToMultipleOf(WTF::pageSize(), newCapacity);
 
-    m_outOfLineBuffer = WTF::move(newBuffer);
+        auto newBuffer = MmapSpan<uint8_t>::tryAlloc(newCapacity);
+        RELEASE_ASSERT(newBuffer);
+        memcpySpan(newBuffer.mutableSpan(), span());
+
+        m_outOfLineBuffer = WTF::move(newBuffer);
+        m_buffer.clear();
+        return;
+    }
+#endif
+
+    m_buffer.reserveCapacity(newCapacity);
 }
 
 void Encoder::encodeHeader()
@@ -128,39 +145,60 @@ OptionSet<MessageFlags>& Encoder::messageFlags()
 {
     // FIXME: We should probably pass an OptionSet<MessageFlags> into the Encoder constructor instead of encoding defaultMessageFlags then using this to change it later.
     static_assert(sizeof(OptionSet<MessageFlags>::StorageType) == 1, "Encoder uses the first byte of the buffer for message flags.");
-    return reinterpretCastSpanStartTo<OptionSet<MessageFlags>>(capacityBuffer());
+    return reinterpretCastSpanStartTo<OptionSet<MessageFlags>>(bodyBuffer());
 }
 
 const OptionSet<MessageFlags>& Encoder::messageFlags() const
 {
-    return reinterpretCastSpanStartTo<OptionSet<MessageFlags>>(capacityBuffer());
+    return reinterpretCastSpanStartTo<OptionSet<MessageFlags>>(bodyBuffer());
 }
 
 std::span<uint8_t> Encoder::grow(size_t alignment, size_t size)
 {
     size_t alignedSize = roundUpToMultipleOf(alignment, m_bufferSize);
-    reserve(alignedSize + size);
+    size_t newBufferSize = CheckedSize { alignedSize } + size; // Crashes on overflow.
+    reserve(newBufferSize);
 
-    auto capacityBuffer = this->capacityBuffer();
-    zeroSpan(capacityBuffer.subspan(m_bufferSize, alignedSize - m_bufferSize));
+#if PLATFORM(COCOA)
+    if (!m_outOfLineBuffer)
+        m_buffer.grow(newBufferSize);
+#else
+    m_buffer.grow(newBufferSize);
+#endif
 
-    m_bufferSize = alignedSize + size;
+    auto buffer = bodyBuffer();
+    zeroSpan(buffer.subspan(m_bufferSize, alignedSize - m_bufferSize));
 
-    return capacityBuffer.subspan(alignedSize);
+    m_bufferSize = newBufferSize;
+
+    return buffer.subspan(alignedSize);
 }
 
-std::span<uint8_t> Encoder::capacityBuffer()
+std::span<uint8_t> Encoder::bodyBuffer()
 {
+#if PLATFORM(COCOA)
     if (m_outOfLineBuffer)
         return m_outOfLineBuffer.mutableSpan();
-    return m_inlineBuffer;
+#endif
+    return m_buffer.mutableSpan();
 }
 
-std::span<const uint8_t> Encoder::capacityBuffer() const
+std::span<const uint8_t> Encoder::bodyBuffer() const
 {
+#if PLATFORM(COCOA)
     if (m_outOfLineBuffer)
         return m_outOfLineBuffer.span();
-    return m_inlineBuffer;
+#endif
+    return m_buffer.span();
+}
+
+size_t Encoder::capacity() const
+{
+#if PLATFORM(COCOA)
+    if (m_outOfLineBuffer)
+        return m_outOfLineBuffer.sizeInBytes();
+#endif
+    return m_buffer.capacity();
 }
 
 void Encoder::addAttachment(Attachment&& attachment)
