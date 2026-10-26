@@ -614,7 +614,7 @@ export class ArgumentSerializer {
             if (typeof argument != 'number' && typeof argument != 'bigint') {
                 throw new SerializationError(`Identifier of type ${ argumentDefinition.type } is not a number`);
             }
-            if (argument < MIN_INT64 || argument > MAX_INT64) {
+            if (argument < MIN_UINT || argument > MAX_UINT64) {
                 throw new SerializationError(`Identifier value (${ argumentDefinition.name }) of type ${ argumentDefinition.type } is out-of-bounds.`);
             }
             // magic object identifier for WebGL hotpatches
