@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="resources/style-sheet-injection.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (!window.internals)
+    document.body.textContent = "FAIL: this test requires window.internals.";
+else {
+    StyleSheetQuirkHelpers.installQuirk("*://127.0.0.1/*");
+    location.href = "resources/style-sheet-injection-target.html";
+}
+</script>
+</body>
+</html>
