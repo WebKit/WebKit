@@ -103,7 +103,7 @@ WebExtensionCallbackHandler::~WebExtensionCallbackHandler()
 JSValueRef WebExtensionCallbackHandler::callbackFunction() const
 {
     if (!m_globalContext || !m_callbackFunction)
-        return nil;
+        return nullptr;
 
     return m_callbackFunction;
 }

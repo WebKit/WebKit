@@ -264,6 +264,8 @@ WebExtensionAPIPermissions& WebExtensionAPINamespace::permissions()
     return *m_permissions;
 }
 
+#endif // PLATFORM(COCOA)
+
 WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime
@@ -276,6 +278,7 @@ WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
     return *m_runtime;
 }
 
+#if PLATFORM(COCOA)
 WebExtensionAPIScripting& WebExtensionAPINamespace::scripting()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting
@@ -320,6 +323,8 @@ WebExtensionAPIBookmarks& WebExtensionAPINamespace::bookmarks()
 }
 #endif
 
+#endif // PLATFORM(COCOA)
+
 WebExtensionAPIStorage& WebExtensionAPINamespace::storage()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage
@@ -330,6 +335,7 @@ WebExtensionAPIStorage& WebExtensionAPINamespace::storage()
     return *m_storage;
 }
 
+#if PLATFORM(COCOA)
 WebExtensionAPITabs& WebExtensionAPINamespace::tabs()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs
@@ -381,7 +387,7 @@ WebExtensionAPIWebRequest& WebExtensionAPINamespace::webRequest()
 
     return *m_webRequest;
 }
-#endif
+#endif // PLATFORM(COCOA)
 
 } // namespace WebKit
 

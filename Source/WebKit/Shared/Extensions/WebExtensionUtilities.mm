@@ -37,9 +37,6 @@
 #import "Logging.h"
 #import "WebExtensionAPITabs.h"
 #import "WebExtensionMessageSenderParameters.h"
-#import "WebFrame.h"
-#import <WebCore/Document.h>
-#import <WebCore/LocalFrameInlines.h>
 #import <objc/runtime.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -339,15 +336,6 @@ NSString *toWebAPI(NSLocale *locale)
     if (locale.countryCode.length)
         [result appendFormat:@"-%@", locale.countryCode];
     return [result copy];
-}
-
-Markable<WTF::UUID> toDocumentIdentifier(WebFrame& frame)
-{
-    auto* coreFrame = frame.coreLocalFrame();
-    auto* document = coreFrame ? coreFrame->document() : nullptr;
-    if (!document)
-        return { };
-    return document->identifier().object();
 }
 
 Vector<double> availableScreenScales()

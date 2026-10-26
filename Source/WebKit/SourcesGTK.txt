@@ -82,6 +82,7 @@ Shared/API/glib/WebKitURIRequest.cpp @no-unify
 Shared/API/glib/WebKitURIResponse.cpp @no-unify
 Shared/API/glib/WebKitUserMessage.cpp @no-unify
 
+Shared/Extensions/glib/WebExtensionUtilitiesGLib.cpp
 Shared/Extensions/gtk/WebExtensionUtilitiesGtk.cpp
 
 Shared/glib/ArgumentCodersGLib.cpp
@@ -243,6 +244,10 @@ UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
 UIProcess/Extensions/glib/WebExtensionGLib.cpp
 UIProcess/Extensions/glib/WebExtensionContextGLib.cpp
+UIProcess/Extensions/glib/WebExtensionControllerConfigurationGLib.cpp
+UIProcess/Extensions/glib/WebExtensionControllerGLib.cpp
+UIProcess/Extensions/glib/WebExtensionDeclarativeNetRequestSQLiteStoreGLib.cpp
+UIProcess/Extensions/glib/WebExtensionURLSchemeHandlerGLib.cpp
 
 UIProcess/Extensions/gtk/WebExtensionGTK.cpp
 
@@ -329,6 +334,14 @@ UIProcess/XR/openxr/OpenXRLayer.cpp
 UIProcess/XR/openxr/OpenXRSwapchain.cpp
 UIProcess/XR/openxr/PlatformXROpenXR.cpp
 UIProcess/XR/openxr/PlatformXRSystemOpenXR.cpp
+
+WebProcess/Extensions/API/glib/WebExtensionAPIEventGLib.cpp
+WebProcess/Extensions/API/glib/WebExtensionAPIPortGLib.cpp
+WebProcess/Extensions/API/glib/WebExtensionAPITestGLib.cpp
+
+WebProcess/Extensions/Bindings/glib/JSWebExtensionWrapperGLib.cpp
+
+WebProcess/Extensions/glib/WebExtensionContextProxyGLib.cpp
 
 WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp
 

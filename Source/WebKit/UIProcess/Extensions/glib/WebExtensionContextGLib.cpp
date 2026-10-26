@@ -582,6 +582,93 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
     completionHandler(false);
 }
 
+std::expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionController&, String)
+{
+    notImplemented();
+    return makeUnexpected(createError(Error::Unknown));
+}
+
+std::expected<bool, RefPtr<API::Error>> WebExtensionContext::unload()
+{
+    notImplemented();
+    return makeUnexpected(createError(Error::Unknown));
+}
+
+void WebExtensionContext::permissionsDidChange(PermissionNotification, const PermissionsSet&)
+{
+    notImplemented();
+}
+
+void WebExtensionContext::permissionsDidChange(PermissionNotification, const MatchPatternSet&)
+{
+    notImplemented();
+}
+
+void WebExtensionContext::removePage(WebPageProxy&)
+{
+    notImplemented();
+}
+
+void WebExtensionContext::didStartProvisionalLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime)
+{
+    notImplemented();
+}
+
+void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime)
+{
+    notImplemented();
+}
+
+void WebExtensionContext::didFinishLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime)
+{
+    notImplemented();
+}
+
+void WebExtensionContext::didFailLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime)
+{
+    notImplemented();
+}
+
+std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier(WebProcessProxy&) const
+{
+    notImplemented();
+    return std::nullopt;
+}
+
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageIdentifiers(WebProcessProxy&) const
+{
+    notImplemented();
+    return { };
+}
+
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIdentifiers(WebProcessProxy&) const
+{
+    notImplemented();
+    return { };
+}
+
+void WebExtensionContext::cookiesDidChange(API::HTTPCookieStore&)
+{
+    notImplemented();
+}
+
+bool WebExtensionContext::isBackgroundPage(WebPageProxyIdentifier) const
+{
+    notImplemented();
+    return false;
+}
+
+String WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
+{
+    notImplemented();
+    return { };
+}
+
+void WebExtensionContext::incrementActionCountForTab(WebExtensionTab&, ssize_t)
+{
+    notImplemented();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(2022_GLIB_API)

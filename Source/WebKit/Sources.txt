@@ -691,6 +691,8 @@ WebProcess/Extensions/API/WebExtensionAPIStorageArea.cpp
 WebProcess/Extensions/API/WebExtensionAPITest.cpp
 WebProcess/Extensions/API/WebExtensionAPIWebPageNamespace.cpp
 
+WebProcess/Extensions/Bindings/JSWebExtensionWrapper.cpp
+
 WebProcess/FileAPI/BlobRegistryProxy.cpp
 
 WebProcess/FullScreen/WebFullScreenManager.cpp @cost:8

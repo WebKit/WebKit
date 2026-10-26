@@ -28,6 +28,9 @@
 
 #include "JSWebExtensionWrapper.h"
 #include "WebExtensionConstants.h"
+#include "WebFrame.h"
+#include <WebCore/Document.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
@@ -461,6 +464,15 @@ void callAfterRandomDelay(Function<void()>&& callback)
     RunLoop::mainSingleton().dispatchAfter(delay, [callback = WTF::move(callback)]() {
         callback();
     });
+}
+
+Markable<WTF::UUID> toDocumentIdentifier(WebFrame& frame)
+{
+    auto* coreFrame = frame.coreLocalFrame();
+    auto* document = coreFrame ? coreFrame->document() : nullptr;
+    if (!document)
+        return { };
+    return document->identifier().object();
 }
 
 } // namespace WebKit
