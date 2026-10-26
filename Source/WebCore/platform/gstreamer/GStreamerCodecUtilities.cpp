@@ -337,7 +337,10 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> av1CapsFromCodecString(cons
     auto yuvFormat = "I420"_s;
     switch (static_cast<AV1ConfigurationChromaSubsampling>(configurationRecord->chromaSubsampling)) {
     case AV1ConfigurationChromaSubsampling::Subsampling_422:
-        yuvFormat = "I422"_s;
+        if (configurationRecord->bitDepth == 8)
+            yuvFormat = "Y42B"_s;
+        else
+            yuvFormat = "I422"_s;
         chromaFormat = "4:2:2"_s;
         break;
     case AV1ConfigurationChromaSubsampling::Subsampling_444:
