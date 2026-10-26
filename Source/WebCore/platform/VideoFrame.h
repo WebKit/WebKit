@@ -31,6 +31,8 @@
 #include <JavaScriptCore/TypedArrays.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/ImageOrientation.h>
+#include <WebCore/IntSize.h>
 #include <WebCore/PlaneLayout.h>
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/VideoPixelFormat.h>
@@ -97,6 +99,7 @@ public:
     MediaTime presentationTime() const { return m_presentationTime; }
     Rotation rotation() const { return m_rotation; }
     bool isMirrored() const { return m_isMirrored; }
+    ImageOrientation orientation() const;
 
 #if PLATFORM(COCOA) && USE(AVFOUNDATION)
     WEBCORE_EXPORT RefPtr<VideoFrameCV> asVideoFrameCV();
@@ -134,6 +137,7 @@ public:
 
     bool hasNoTransformation() const { return m_rotation == VideoFrameRotation::None && !m_isMirrored; }
     bool has90DegreeRotation() const { return is90DegreeRotation(m_rotation); }
+    IntSize rotatedSize() const { return has90DegreeRotation() ? presentationSize().transposedSize() : presentationSize(); }
 
     // Whether the alpha component, if any, must be ignored, the frame being then fully opaque.
     virtual bool shouldIgnoreAlpha() const { return false; }

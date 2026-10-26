@@ -78,6 +78,22 @@ Ref<VideoFrame> VideoFrame::updateRotation(Rotation rotation, ShouldClone should
     return updatedVideoFrame;
 }
 
+ImageOrientation VideoFrame::orientation() const
+{
+    switch (m_rotation) {
+    case Rotation::None:
+        return m_isMirrored ? ImageOrientation::Orientation::OriginTopRight : ImageOrientation::Orientation::OriginTopLeft;
+    case Rotation::Right:
+        return m_isMirrored ? ImageOrientation::Orientation::OriginRightBottom : ImageOrientation::Orientation::OriginRightTop;
+    case Rotation::UpsideDown:
+        return m_isMirrored ? ImageOrientation::Orientation::OriginBottomLeft : ImageOrientation::Orientation::OriginBottomRight;
+    case Rotation::Left:
+        return m_isMirrored ? ImageOrientation::Orientation::OriginLeftTop : ImageOrientation::Orientation::OriginLeftBottom;
+    }
+    ASSERT_NOT_REACHED();
+    return ImageOrientation::Orientation::OriginTopLeft;
+}
+
 Ref<VideoFrame> VideoFrame::updateShouldIgnoreAlpha(bool shouldIgnore, ShouldClone shouldCloneIfUpdating)
 {
     if (shouldIgnoreAlpha() == shouldIgnore)

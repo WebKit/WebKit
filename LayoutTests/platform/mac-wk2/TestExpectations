@@ -1216,6 +1216,7 @@ webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.ht
 webkit.org/b/325612 [ x86_64 ] http/wpt/webcodecs/webgl-texImage2D-videoFrame-I420.html [ Failure ]
 # The expected file records the incorrect drawImage() conversion, which rounds differently on Intel.
 [ x86_64 ] http/wpt/webcodecs/2d-drawImage-videoFrame-I420-SMPTE240M.html [ Failure ]
+[ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-orientation-webgl-i420.window.html [ Failure ]
 
 webkit.org/b/259464 fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]
 

@@ -152,10 +152,7 @@ void VideoTrackGenerator::Source::writeVideoFrame(VideoFrame& frame, VideoFrameT
 {
     ASSERT(!isMainThread());
 
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto frameSize = IntSize(frame.presentationSize());
-    if (frame.rotation() == VideoFrame::Rotation::Left || frame.rotation() == VideoFrame::Rotation::Right)
-        frameSize = frameSize.transposedSize();
+    auto frameSize = frame.rotatedSize();
 
     if (m_videoFrameSize != frameSize) {
         m_videoFrameSize = frameSize;

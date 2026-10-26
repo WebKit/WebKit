@@ -50,7 +50,7 @@ public:
 
 #if PLATFORM(COCOA)
     void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, bool canUseIOSurface, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, canUseIOSurface, WTF::move(callback)); }
-    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame) { return m_processor->getNativeImage(frame); }
+    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame, ShouldApplyRotation shouldApplyRotation = ShouldApplyRotation::No) { return m_processor->getNativeImage(frame, shouldApplyRotation); }
 #endif
 
 private:
