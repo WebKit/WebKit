@@ -7199,6 +7199,16 @@ FloatSize LocalFrameView::sizeForCSSLargeViewportUnits() const
     return calculateSizeForCSSViewportUnitsOverride(m_largeViewportSizeOverride);
 }
 
+static bool hasDelegatedPageScale(const LocalFrameView& view)
+{
+    Ref frame = view.frame();
+    if (!frame->isMainFrame())
+        return false;
+
+    RefPtr page = frame->page();
+    return page && page->delegatesScaling();
+}
+
 FloatSize LocalFrameView::calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize> override) const
 {
     OverrideViewportSize viewportSize;
@@ -7223,7 +7233,7 @@ FloatSize LocalFrameView::calculateSizeForCSSViewportUnitsOverride(std::optional
 
     // Viewport units must not shrink as the page is zoomed, and visibleContentRectIncludingScrollbars() is
     // the zoomed rect when scaling is delegated. The two are the same otherwise.
-    auto visibleContentSizeIncludingScrollbars = visibleContentScaleFactor() == 1
+    auto visibleContentSizeIncludingScrollbars = !hasDelegatedPageScale(*this)
         ? visibleContentRectIncludingScrollbars().size()
         : sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars::Yes);
     viewportSize.width = viewportSize.width.value_or(visibleContentSizeIncludingScrollbars.width());
@@ -7241,7 +7251,7 @@ FloatSize LocalFrameView::sizeForCSSDynamicViewportUnits() const
 
     if (m_frame->settings().visualViewportEnabled()) {
         // As in calculateSizeForCSSViewportUnitsOverride(), the unobscured rect is zoomed and viewport units are not.
-        if (visibleContentScaleFactor() != 1)
+        if (hasDelegatedPageScale(*this))
             return sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars::Yes);
         return unobscuredContentRectIncludingScrollbars().size();
     }
