@@ -129,7 +129,7 @@ void DrawingAreaCoordinatedGraphics::updatePreferences(const WebPreferencesStore
 #if ENABLE(DEVELOPER_MODE)
     if (m_supportsAsyncScrolling) {
         auto disableAsyncScrolling = StringView::fromLatin1(getenv("WEBKIT_DISABLE_ASYNC_SCROLLING"));
-        if (!disableAsyncScrolling.isEmpty() && disableAsyncScrolling == "0"_s)
+        if (!disableAsyncScrolling.isEmpty() && disableAsyncScrolling != "0"_s)
             m_supportsAsyncScrolling = false;
     }
 #endif
