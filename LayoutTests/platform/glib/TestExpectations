@@ -2001,7 +2001,6 @@ imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?
 http/tests/webcodecs/vp9-hdr.html [ Failure ]
 http/tests/webcodecs/av1-sdr.html [ Failure ]
 http/tests/webcodecs/hevc-hdr.html [ Failure ]
-http/wpt/webrtc/peer-connection-color-space.html [ Failure ]
 
 # Alpha support
 imported/w3c/web-platform-tests/webcodecs/videoFrame-alpha-discard.any.html [ Failure ]
@@ -2950,6 +2949,7 @@ imported/w3c/web-platform-tests/webrtc/protocol/h265-level-id.https.html [ Skip 
 # Missing support for AV1 in current libwebrtc backend.
 webkit.org/b/302254 webrtc/video-av1.html [ Skip ]
 webkit.org/b/302254 imported/w3c/web-platform-tests/webrtc/protocol/av1-profile-asymmetry.https.html [ Skip ]
+# NOTE: http/wpt/webrtc/peer-connection-color-space.html will need rebaseline when fixing this.
 
 # Lack of mDNS support. Currently we expect to communicate with Avahi on host (not guest) but
 # apparently it is not running on current infra.

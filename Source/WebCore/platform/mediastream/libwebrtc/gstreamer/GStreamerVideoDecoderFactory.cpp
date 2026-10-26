@@ -255,6 +255,8 @@ public:
         }
         GST_TRACE_OBJECT(pipeline(), "Pulled video frame with RTP timestamp %u from %" GST_PTR_FORMAT, rtpTimestamp, pulledBuffer);
         auto frame = convertGStreamerSampleToLibWebRTCVideoFrame(WTF::move(pulledSample), rtpTimestamp);
+        if (const auto colorSpace = inputImage.ColorSpace())
+            frame.set_color_space(*colorSpace);
 
         m_imageReadyCb->Decoded(frame);
         return WEBRTC_VIDEO_CODEC_OK;
