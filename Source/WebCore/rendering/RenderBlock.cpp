@@ -2100,6 +2100,13 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         // If we have clipping, then we can't have any spillout.
         bool useClip = (hasControlClip() || hasNonVisibleOverflow());
         bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize)));
+
+        // Painting clips children to the curved padding edge, so the corners the curve cuts off must not reach them.
+        if (checkChildren && hasNonVisibleOverflow() && !hasControlClip() && style().border().hasBorderRadius()) {
+            auto borderShape = BorderShape::shapeForBorderRect(usedStyle(), LayoutRect { adjustedLocation, borderBoxSize() });
+            checkChildren = borderShape.innerShapeIntersectsHitTestLocation(locationInContainer, style().deviceScaleFactor());
+        }
+
         if (checkChildren && hitTestChildren(request, result, locationInContainer, adjustedLocation, hitTestAction))
             return true;
 

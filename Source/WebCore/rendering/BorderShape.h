@@ -92,6 +92,8 @@ public:
     bool LEGACY_NODELETE outerShapeContains(const LayoutRect&) const;
 
     bool shapeIntersectsHitTestLocation(const HitTestLocation&, float deviceScaleFactor) const;
+    // Same as above for the padding edge, which is what overflow clips to.
+    bool innerShapeIntersectsHitTestLocation(const HitTestLocation&, float deviceScaleFactor) const;
 
     static std::optional<Path> pathForShapedRect(const FloatRoundedRect&, const RectCorners<float>& cornerCurvatures);
 

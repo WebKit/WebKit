@@ -4895,6 +4895,8 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
             // Test the enclosing clip now.
             if (!clipRect.intersects(hitTestLocation))
                 return { };
+            if (clipRect.affectedByRadius() && !hitTestLocationIsInsideAncestorBorderRadiusClips(rootLayer, hitTestLocation))
+                return { };
         }
 
         return hitTestLayerByApplyingTransform(rootLayer, containerLayer, request, result, hitTestRect, hitTestLocation, transformState, zOffset);
@@ -4951,6 +4953,10 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     LayerFragments layerFragments;
     collectFragments(layerFragments, rootLayer, hitTestRect, IncludeCompositedPaginatedLayers, RootRelativeClipRects, { ClipRectsOption::RespectOverflowClip }, offsetFromRoot);
 
+    // The clip rects above are rectangles, but painting clips this layer to the curved padding edge of ancestors with overflow and border-radius.
+    bool hitIsInsideAncestorBorderRadiusClips = !layerFragments.containsIf([](auto& fragment) { return fragment.dirtyBackgroundRect().affectedByRadius() || fragment.dirtyForegroundRect().affectedByRadius(); })
+        || hitTestLocationIsInsideAncestorBorderRadiusClips(rootLayer, hitTestLocation);
+
     // The resize control is painted on top of all content, so hit-test it first.
     LayoutPoint localPoint;
     if (canResize() && m_scrollableArea && m_scrollableArea->hitTestResizerInFragments(layerFragments, hitTestLocation, localPoint)) {
@@ -4977,7 +4983,7 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
 
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer. Check
     // every fragment in reverse order.
-    if (isSelfPaintingLayer()) {
+    if (isSelfPaintingLayer() && hitIsInsideAncestorBorderRadiusClips) {
         // Hit test with a temporary HitTestResult, because we only want to commit to 'result' if we know we're frontmost.
         HitTestResult tempResult(result.hitTestLocation());
         bool insideFragmentForegroundRect = false;
@@ -5013,7 +5019,7 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     if (candidateLayer.layer && !depthSortDescendants)
         return candidateLayer;
 
-    if (isSelfPaintingLayer()) {
+    if (isSelfPaintingLayer() && hitIsInsideAncestorBorderRadiusClips) {
         HitTestResult tempResult(result.hitTestLocation());
         bool insideFragmentBackgroundRect = false;
         if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestFilter::Self, insideFragmentBackgroundRect) && isHitCandidate()) {
@@ -5033,6 +5039,23 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     }
 
     return candidateLayer;
+}
+
+// The hit-testing twin of applyAncestorClippingForBorderRadius().
+bool RenderLayer::hitTestLocationIsInsideAncestorBorderRadiusClips(const RenderLayer* rootLayer, const HitTestLocation& hitTestLocation) const
+{
+    for (RenderLayer* layer = parent(); layer; layer = layer->parent()) {
+        if (layer->renderer().hasNonVisibleOverflow() && layer->renderer().style().border().hasBorderRadius() && ancestorLayerIsInContainingBlockChain(*layer)) {
+            auto borderRect = LayoutRect { LayoutPoint { layer->offsetFromAncestor(rootLayer, AdjustForColumns) }, layer->rendererBorderBoxRect().size() };
+            auto borderShape = BorderShape::shapeForBorderRect(layer->renderer().usedStyle(), borderRect);
+            if (!borderShape.innerShapeIntersectsHitTestLocation(hitTestLocation, layer->renderer().style().deviceScaleFactor()))
+                return false;
+        }
+
+        if (layer == rootLayer)
+            break;
+    }
+    return true;
 }
 
 bool RenderLayer::hitTestContentsForFragments(const LayerFragments& layerFragments, const HitTestRequest& request, HitTestResult& result,
