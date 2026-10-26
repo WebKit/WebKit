@@ -683,12 +683,10 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUImageCopyTexture.serialization.in
     Shared/WebGPU/WebGPUImageCopyTextureTagged.serialization.in
     Shared/WebGPU/WebGPUImageDataLayout.serialization.in
-    Shared/WebGPU/WebGPUInternalError.serialization.in
     Shared/WebGPU/WebGPUMultisampleState.serialization.in
     Shared/WebGPU/WebGPUObjectDescriptorBase.serialization.in
     Shared/WebGPU/WebGPUOrigin2D.serialization.in
     Shared/WebGPU/WebGPUOrigin3D.serialization.in
-    Shared/WebGPU/WebGPUOutOfMemoryError.serialization.in
     Shared/WebGPU/WebGPUPipelineDescriptorBase.serialization.in
     Shared/WebGPU/WebGPUPipelineLayoutDescriptor.serialization.in
     Shared/WebGPU/WebGPUPresentationContextDescriptor.serialization.in
@@ -710,12 +708,10 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUShaderModuleDescriptor.serialization.in
     Shared/WebGPU/WebGPUStencilFaceState.serialization.in
     Shared/WebGPU/WebGPUStorageTextureBindingLayout.serialization.in
-    Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
     Shared/WebGPU/WebGPUSupportedLimits.serialization.in
     Shared/WebGPU/WebGPUTextureBindingLayout.serialization.in
     Shared/WebGPU/WebGPUTextureDescriptor.serialization.in
     Shared/WebGPU/WebGPUTextureViewDescriptor.serialization.in
-    Shared/WebGPU/WebGPUValidationError.serialization.in
     Shared/WebGPU/WebGPUVertexAttribute.serialization.in
     Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
     Shared/WebGPU/WebGPUVertexState.serialization.in

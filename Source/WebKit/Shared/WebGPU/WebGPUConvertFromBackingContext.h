@@ -31,7 +31,6 @@
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUCompilationMessage.h"
 #include "WebGPUComputePassTimestampWrites.h"
-#include "WebGPUError.h"
 #include "WebGPUExtent3D.h"
 #include "WebGPUIdentifier.h"
 #include "WebGPUOrigin2D.h"
@@ -83,9 +82,7 @@ struct ImageCopyExternalImageVideoSource;
 #endif
 struct ImageCopyTexture;
 struct ImageCopyTextureTagged;
-struct InternalError;
 struct ObjectDescriptorBase;
-struct OutOfMemoryError;
 struct PipelineDescriptorBase;
 struct PipelineLayoutDescriptor;
 struct CanvasConfiguration;
@@ -99,9 +96,7 @@ struct RenderPassLayout;
 struct RenderPipelineDescriptor;
 struct ShaderModuleCompilationHint;
 struct ShaderModuleDescriptor;
-struct SupportedFeatures;
 struct TextureDescriptor;
-struct ValidationError;
 struct VertexBufferLayout;
 struct VertexState;
 

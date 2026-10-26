@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "WebGPUSupportedFeatures.h"
 #include "WebGPUSupportedLimits.h"
 #include <WebCore/WebGPUCppAPI.h>
 

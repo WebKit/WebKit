@@ -34,7 +34,6 @@
 #include "StreamMessageReceiver.h"
 #include "WebGPUBufferDescriptor.h"
 #include "WebGPUCommandEncoderDescriptor.h"
-#include "WebGPUError.h"
 #include "WebGPUIdentifier.h"
 #include "WebGPUQuerySetDescriptor.h"
 #include "WebGPUSamplerDescriptor.h"
@@ -144,8 +143,8 @@ private:
     void createQuerySet(const WebGPU::QuerySetDescriptor&, WebGPUIdentifier);
 
     void pushErrorScope(::WebGPU::ErrorFilter);
-    void popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&);
-    void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&);
+    void popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&);
+    void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&);
     void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason)>&&);
 
     void setLabel(String&&);
