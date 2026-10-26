@@ -6396,6 +6396,22 @@ void Document::noteUserInteractionWithMediaElement()
     updateIsPlayingMedia();
 }
 
+void Document::noteUserDidEnableMediaElementAudio(const Document& unmutingDocument)
+{
+    RefPtr page = this->page();
+    if (!page || !page->userDidInteractWithPage())
+        return;
+
+    if (!quirks().allowsAutoplayToCarryForwardAcrossNavigation())
+        return;
+
+    auto origin = securityOrigin().data();
+    if (unmutingDocument.securityOrigin().data() != origin)
+        return;
+
+    page->noteMediaUserInteractionToCarryForwardAcrossNavigation(origin);
+}
+
 bool Document::isCapturing() const
 {
     return MediaProducer::isCapturing(m_mediaState);
