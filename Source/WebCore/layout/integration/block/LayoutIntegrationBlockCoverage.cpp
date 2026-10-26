@@ -455,21 +455,22 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     // The block formatting context decides the inline size from lengths, percentages, calc() and stretch, the stretch-fit inline size
     // (BlockFormattingUtils::inlineSizeAndMargins); the box's own formatting context resolves the min-content, max-content and fit-content
     // keywords with its intrinsic sizes. A calc-size() goes with its basis. A replaced element's own formatting context takes its aspect ratio
-    // into account (CSS 2.2 §10.3.4).
-    // FIXME: The other sizing keywords, the keywords of a replaced element, the stretch block size, which reads the containing block's
-    // renderer, and a preferred aspect ratio.
+    // into account (CSS 2.2 §10.3.4). It resolves a stretch block size against the block size of the containing block the block formatting
+    // context gives it (RenderBox::isBlockSizeResolvableForStretch).
+    // FIXME: The other sizing keywords, the keywords of a replaced element, the -webkit-fill-available block sizes, which read the containing
+    // block's renderer, and a preferred aspect ratio.
     auto isReplaced = box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot();
     auto isSupportedInlineSize = [&](auto& size) {
         return size.isSpecified() || (size.isIntrinsicOrStretch() && !isReplaced);
     };
-    auto isStretch = [](auto& size) {
-        return size.isStretch();
+    auto isFillAvailable = [](auto& size) {
+        return size.isFillAvailable();
     };
     if (!(style->logicalWidth(writingMode).isAuto() || isSupportedInlineSize(style->logicalWidth(writingMode)))
         || !(style->logicalMinWidth(writingMode).isAuto() || isSupportedInlineSize(style->logicalMinWidth(writingMode)))
         || !(style->logicalMaxWidth(writingMode).isNone() || isSupportedInlineSize(style->logicalMaxWidth(writingMode))))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
-    if (isStretch(style->logicalHeight(writingMode)) || isStretch(style->logicalMinHeight(writingMode)) || isStretch(style->logicalMaxHeight(writingMode)))
+    if (isFillAvailable(style->logicalHeight(writingMode)) || isFillAvailable(style->logicalMinHeight(writingMode)) || isFillAvailable(style->logicalMaxHeight(writingMode)))
         return BlockAvoidanceReason::ContentHasStretchBlockSize;
     if (style->aspectRatio().hasRatio() && !isReplaced)
         return BlockAvoidanceReason::ContentHasAspectRatio;
