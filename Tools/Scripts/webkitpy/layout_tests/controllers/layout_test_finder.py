@@ -617,14 +617,15 @@ class LayoutTestFinder(object):
     def is_wpt_crash_test(self, name):
         # This shouldn't exist, we should be reading the WPT manifest instead.
         if IMPORTED_WPT_DIR + "/" in name:
-            base_dir = self.fs.join(self.layout_tests_base_dir, *IMPORTED_WPT_DIR.split('/'))
+            wpt_dir = IMPORTED_WPT_DIR
             url_base = "/"
         elif LOCAL_WPT_PATH + "/" in name:
-            base_dir = self.fs.join(self.layout_tests_base_dir, *LOCAL_WPT_PATH.split('/'))
+            wpt_dir = LOCAL_WPT_PATH
             url_base = "/WebKit/"
         else:
             return False
 
-        sourcefile = SourceFile(base_dir, self.fs.relpath(name, base_dir), url_base)
+        base_dir = self.fs.join(self.layout_tests_base_dir, *wpt_dir.split('/'))
+        sourcefile = SourceFile(base_dir, name.split(wpt_dir + "/", 1)[1], url_base)
 
         return sourcefile.name_is_crashtest
