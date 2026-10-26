@@ -331,6 +331,23 @@ void WebInspectorBackend::updateDockingAvailability()
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::AttachAvailabilityChanged(canAttachWindow), m_page->identifier());
 }
 
+static void forEachLocalOrProvisionalFrame(Page& page, NOESCAPE const Function<void(LocalFrame&)>& function)
+{
+    Vector<Ref<LocalFrame>> frames;
+    for (RefPtr frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
+        if (!localFrame) {
+            if (RefPtr webFrame = WebFrame::fromCoreFrame(*frame))
+                localFrame = webFrame->provisionalFrame();
+        }
+        if (localFrame)
+            frames.append(localFrame.releaseNonNull());
+    }
+
+    for (auto& frame : frames)
+        function(frame);
+}
+
 void WebInspectorBackend::ensureInstrumentationForFrame(LocalFrame& frame)
 {
     ensureNetworkInstrumentationForFrame(frame);
@@ -392,7 +409,7 @@ void WebInspectorBackend::enableNetworkInstrumentation()
         CheckedRef { m_resourceDataStore.get() }->setSupportsShowingCertificate(corePage->settings().inspectorSupportsShowingCertificate());
     }
 
-    corePage->forEachLocalFrame([&](LocalFrame& frame) {
+    forEachLocalOrProvisionalFrame(*corePage, [&](LocalFrame& frame) {
         ensureNetworkInstrumentationForFrame(frame);
     });
 }
@@ -731,7 +748,7 @@ void WebInspectorBackend::enablePageInstrumentation()
     RefPtr corePage = m_page->corePage();
     corePage->settings().setDeveloperExtrasEnabled(true);
 
-    corePage->forEachLocalFrame([&](LocalFrame& frame) {
+    forEachLocalOrProvisionalFrame(*corePage, [&](LocalFrame& frame) {
         ensurePageInstrumentationForFrame(frame);
     });
 }
