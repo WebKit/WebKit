@@ -287,11 +287,7 @@ static InlineLayoutUnit lineLogicalWidthWithFloats(const InlineFormattingContext
         return lineContentLogicalWidth;
 
     auto floatMarginBoxWidth = [&](const ElementBox& floatBox) {
-        // The float's content is the render tree's to lay out, so it is the render tree that knows its width under this constraint (see LineBuilder::handleBlockContent).
-        auto& integrationUtils = formattingContext.integrationUtils();
-        auto contribution = intrinsicWidthMode == IntrinsicWidthMode::Minimum ? integrationUtils.minContentLogicalWidthContribution(floatBox) : integrationUtils.maxContentLogicalWidthContribution(floatBox);
-        auto& boxGeometry = formattingContext.geometryForBox(floatBox);
-        return std::max(InlineLayoutUnit { }, InlineLayoutUnit { contribution + boxGeometry.marginStart() + boxGeometry.marginEnd() });
+        return std::max(InlineLayoutUnit { }, formattingContext.formattingUtils().intrinsicMarginBoxWidth(floatBox, intrinsicWidthMode));
     };
 
     if (intrinsicWidthMode == IntrinsicWidthMode::Minimum) {
@@ -414,8 +410,12 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox&
             }
             continue;
         }
-        if (child->isAtomicInlineBox() || child->isReplacedBox()) {
+        if (child->isListMarkerBox()) {
             maximumWidth = std::max<InlineLayoutUnit>(maximumWidth, formattingContext().geometryForBox(*child).marginBoxWidth());
+            continue;
+        }
+        if (child->isAtomicInlineBox() || child->isReplacedBox()) {
+            maximumWidth = std::max(maximumWidth, formattingContext().formattingUtils().intrinsicMarginBoxWidth(downcast<ElementBox>(*child), IntrinsicWidthMode::Minimum));
             continue;
         }
         auto isInlineBoxWithInlineContent = child->isInlineBox() && !child->isLineBreakBox();
