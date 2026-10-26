@@ -1658,6 +1658,12 @@
     "imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-interpolation.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-page/monolithic-overflow-024-print.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-page/monolithic-overflow-025-print.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-pseudo/idlharness.html": [
         "slow"
     ],
