@@ -7,6 +7,8 @@ PASS A left and a right float on the same line as text (leftAndRightFloats, min-
 PASS A left and a right float on the same line as text (leftAndRightFloats, max-content)
 PASS A container with nothing but floats (floatsOnly, min-content)
 PASS A container with nothing but floats (floatsOnly, max-content)
+PASS A container with text-indent and nothing but floats (floatsOnlyWithTextIndent, min-content)
+PASS A container with text-indent and nothing but floats (floatsOnlyWithTextIndent, max-content)
 PASS A float that clears the float before it goes below it (clearingFloatsOnly, min-content)
 PASS A float that clears the float before it goes below it (clearingFloatsOnly, max-content)
 PASS Text sits next to the floats that come before the clearing float (textNextToFirstFloat, min-content)

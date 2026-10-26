@@ -348,6 +348,10 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
     while (true) {
         auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, { 0.f, 0.f, availableWidth, 0.f } }, previousLine, isFirstFormattedLineCandidate);
         auto lineContentLogicalWidth = [&] {
+            if (!lineLayoutResult.hasContentfulInFlowContent()) {
+                // Nothing on this line is indented by text-indent: floats sit at the start of the line and out-of-flow boxes take no room on it.
+                return InlineLayoutUnit { };
+            }
             auto contentWidth = lineLayoutResult.lineGeometry.logicalTopLeft.x() + lineLayoutResult.contentGeometry.logicalWidth;
             if (lineLayoutResult.runs.isEmpty())
                 return contentWidth;
@@ -391,7 +395,7 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox&
 {
     auto maximumWidth = InlineLayoutUnit { };
 
-    for (auto* child = root.firstChild(); child; child = child->nextInFlowSibling()) {
+    for (auto* child = root.firstInFlowChild(); child; child = child->nextInFlowSibling()) {
         if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(*child)) {
             ASSERT(inlineTextBox->style().whiteSpaceCollapse() != WhiteSpaceCollapse::Preserve);
             auto& fontCascade = inlineTextBox->style().fontCascade();
