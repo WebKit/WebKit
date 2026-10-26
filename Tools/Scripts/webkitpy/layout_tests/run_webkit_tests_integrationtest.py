@@ -1106,6 +1106,24 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['--no-ref-tests', '--no-pixel-tests', 'passes/reftest.html'])
         self.assertEqual([], tests_run)
 
+    def test_reftest_results_are_unchanged_by_reference_hashes_from_earlier_runs(self):
+        host = MockHost()
+        tests = ['passes/reftest.html', 'passes/mismatch.html', 'passes/svgreftest.svg', 'failures/expected/reftest.html', 'failures/expected/mismatch.html']
+        for args in ([], [], ['--no-cache-references']):
+            self.assertTrue(passing_run(args + tests, tests_included=True, host=host, shared_port=False), args)
+        for _ in range(2):
+            details, _, _ = logging_run(['failures/unexpected/reftest.html', 'failures/unexpected/mismatch.html'], tests_included=True, host=host, shared_port=False)
+            self.assertEqual(details.exit_code, 2)
+
+    def test_reference_hashes_are_kept_between_runs(self):
+        host = MockHost()
+        passing_run(['--no-cache-references', 'passes/reftest.html'], tests_included=True, host=host, shared_port=False)
+        self.assertFalse([path for path in host.filesystem.files if 'reference-hashes/' in path])
+        passing_run(['passes/reftest.html'], tests_included=True, host=host, shared_port=False)
+        written = [path for path in host.filesystem.files if 'reference-hashes/' in path and path.endswith('.json') and host.filesystem.exists(path)]
+        self.assertEqual(len(written), 1)
+        self.assertEqual(len(json.loads(host.filesystem.read_text_file(written[0]))), 1)
+
     def test_reftest_expected_html_should_be_ignored(self):
         tests_run = get_tests_run(['passes/reftest-expected.html'])
         self.assertEqual([], tests_run)

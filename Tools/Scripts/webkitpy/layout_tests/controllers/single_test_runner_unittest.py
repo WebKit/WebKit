@@ -24,6 +24,7 @@ import os
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.layout_tests.controllers.reference_cache import ReferenceCache
 from webkitpy.layout_tests.controllers.single_test_runner import SingleTestRunner
 from webkitpy.layout_tests.models.test_input import Test, TestInput
 from webkitpy.port.driver import DriverOutput
@@ -42,6 +43,27 @@ class TestDriver:
 
     def stop(self):
         """do nothing"""
+
+
+class HashMatchingDriver(TestDriver):
+    def __init__(self, timeout=False):
+        self.inputs = []
+        self.stopped = False
+        self.timeout = timeout
+
+    def run_test(self, driver_input, stop_when_done):
+        self.inputs.append(driver_input)
+        return DriverOutput('', b'image', 'hash', None, timeout=self.timeout)
+
+    def stop(self):
+        self.stopped = True
+
+
+class MismatchingDriver(TestDriver):
+    def run_test(self, driver_input, stop_when_done):
+        if driver_input.test_name.endswith('-expected.html'):
+            return DriverOutput('', b'reference', 'reference-hash', None)
+        return DriverOutput('', b'test', 'test-hash', None)
 
 
 class SingleTestRunnerTest(unittest.TestCase):
@@ -205,3 +227,60 @@ class SingleTestRunnerTest(unittest.TestCase):
             'worse-match-ref.html': [[15, 15], [30, 30]]
         }
         self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+
+    def _reftest_port(self):
+        port = TestPort(MockHost())
+        for name, value in dict(site_isolation=False, reset_results=False, new_baseline=False, additional_header=None).items():
+            setattr(port._options, name, value)
+        return port
+
+    def _run_reftests_sharing_a_reference(self, use_cache):
+        port = self._reftest_port()
+        self._add_file(port, 'cache/first-expected.html', b'<p>same</p>')
+        self._add_file(port, 'cache/second-expected.html', b'<p>same</p>')
+        driver = HashMatchingDriver()
+        reference_cache = ReferenceCache(port, port.create_driver(0)) if use_cache else None
+        results = []
+        for name in ('cache/first.html', 'cache/second.html'):
+            reference = port.host.filesystem.join(port.layout_tests_dir(), name.replace('.html', '-expected.html'))
+            test_input = TestInput(Test(name, reference_files=[('==', reference)]), timeout='1000', should_run_pixel_test=True)
+            results.append(SingleTestRunner(port, port._options, 'layout-test-results', '', driver, test_input, False, reference_cache).run())
+        return driver.inputs, results
+
+    def test_cached_reference_is_not_rendered_again(self):
+        inputs, results = self._run_reftests_sharing_a_reference(use_cache=True)
+        self.assertEqual([driver_input.test_name for driver_input in inputs], ['cache/first.html', 'cache/first-expected.html', 'cache/second.html'])
+        self.assertEqual([result.failures for result in results], [[], []])
+
+    def test_driver_is_never_given_a_hash_for_a_reftest(self):
+        inputs, _ = self._run_reftests_sharing_a_reference(use_cache=True)
+        self.assertEqual([driver_input.image_hash for driver_input in inputs], [None, None, None])
+
+    def test_every_reference_is_rendered_without_the_cache(self):
+        inputs, results = self._run_reftests_sharing_a_reference(use_cache=False)
+        self.assertEqual([driver_input.test_name for driver_input in inputs], ['cache/first.html', 'cache/first-expected.html', 'cache/second.html', 'cache/second-expected.html'])
+        self.assertEqual([result.failures for result in results], [[], []])
+
+    def test_timeout_matching_a_cached_hash_reports_only_the_timeout(self):
+        port = self._reftest_port()
+        self._add_file(port, 'cache/first-expected.html', b'<p>same</p>')
+        reference = port.host.filesystem.join(port.layout_tests_dir(), 'cache/first-expected.html')
+        reference_cache = ReferenceCache(port, port.create_driver(0))
+        reference_cache.remember(reference_cache.key(reference), 'hash')
+        driver = HashMatchingDriver(timeout=True)
+        test_input = TestInput(Test('cache/first.html', reference_files=[('==', reference)]), timeout='1000', should_run_pixel_test=True)
+        result = SingleTestRunner(port, port._options, 'layout-test-results', '', driver, test_input, False, reference_cache).run()
+        self.assertEqual([type(failure).__name__ for failure in result.failures], ['FailureTimeout'])
+        self.assertFalse(driver.stopped)
+
+    def test_failed_comparison_forgets_the_reference_hash(self):
+        port = self._reftest_port()
+        self._add_file(port, 'cache/first.html', b'<p>test</p>')
+        self._add_file(port, 'cache/first-expected.html', b'<p>same</p>')
+        reference = port.host.filesystem.join(port.layout_tests_dir(), 'cache/first-expected.html')
+        reference_cache = ReferenceCache(port, port.create_driver(0))
+        reference_cache.remember(reference_cache.key(reference), 'stale-hash')
+        test_input = TestInput(Test('cache/first.html', reference_files=[('==', reference)]), timeout='1000', should_run_pixel_test=True)
+        result = SingleTestRunner(port, port._options, 'layout-test-results', '', MismatchingDriver(), test_input, False, reference_cache).run()
+        self.assertTrue(result.failures)
+        self.assertIsNone(reference_cache.image_hash(reference_cache.key(reference)))
