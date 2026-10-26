@@ -163,6 +163,31 @@ class TestBugzilla(unittest.TestCase):
             self.assertEqual(tracker.issue(1).title, 'Example issue 1')
             self.assertEqual(str(tracker.issue(1)), 'https://bugs.example.com/show_bug.cgi?id=1 Example issue 1')
 
+    def test_populate_malformed_success_response(self):
+        for text in ('', '<html>Unavailable</html>', '[]', 'null'):
+            with self.subTest(text=text), OutputCapture() as captured:
+                tracker = bugzilla.Tracker(self.URL)
+                response = wkmocks.Response(url=self.URL, status_code=200, text=text)
+                with patch.object(tracker.session, 'get', return_value=response):
+                    self.assertIsNone(tracker.issue(1).title)
+                self.assertIn("Failed to fetch 'https://bugs.example.com/show_bug.cgi?id=1'", captured.stderr.getvalue())
+
+    def test_populate_comments_malformed_success_response(self):
+        with OutputCapture() as captured:
+            tracker = bugzilla.Tracker(self.URL)
+            response = wkmocks.Response(url=self.URL, status_code=200, text='<html>Unavailable</html>')
+            with patch.object(tracker.session, 'get', return_value=response):
+                self.assertEqual(tracker.issue(1).comments, [])
+            self.assertIn("Failed to fetch comments for 'https://bugs.example.com/show_bug.cgi?id=1'", captured.stderr.getvalue())
+
+    def test_populate_attachments_malformed_success_response(self):
+        with OutputCapture() as captured:
+            tracker = bugzilla.Tracker(self.URL)
+            response = wkmocks.Response(url=self.URL, status_code=200, text='<html>Unavailable</html>')
+            with patch.object(tracker.session, 'get', return_value=response):
+                self.assertEqual(tracker.issue(1).attachments, [])
+            self.assertIn("Failed to fetch attachments for 'https://bugs.example.com/show_bug.cgi?id=1'", captured.stderr.getvalue())
+
     def test_timestamp(self):
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
             self.assertEqual(bugzilla.Tracker(self.URL).issue(1).timestamp, 1639510960)

@@ -284,11 +284,15 @@ class Tracker(GenericTracker):
         )
 
     @staticmethod
-    def _error_code(response: Any) -> Any:
+    def _response_json(response: Any) -> Any:
         try:
-            body = response.json()
+            return response.json()
         except ValueError:
             return None
+
+    @staticmethod
+    def _error_code(response: Any) -> Any:
+        body = Tracker._response_json(response)
         return body.get('code') if isinstance(body, dict) else None
 
     def _count_failed_login(self, response: Any) -> None:
@@ -320,7 +324,8 @@ class Tracker(GenericTracker):
             if response.status_code // 100 == 4 and self._error_code(response) == 101:
                 sys.stderr.write("{}\n".format(response.json().get('message')))
                 return None
-            response = response.json().get('bugs', []) if response.status_code == 200 else None
+            body = self._response_json(response) if response.status_code == 200 else None
+            response = body.get('bugs', []) if isinstance(body, dict) else None
             if response:
                 response = response[0]
                 issue._title = response['summary']
@@ -369,10 +374,8 @@ class Tracker(GenericTracker):
                 timeout=self.timeout,
             )
             self._count_failed_login(response)
-            if response.status_code == 200:
-                response = response.json().get('bugs', {}).get(str(issue.id), {}).get('comments', None)
-            else:
-                response = None
+            body = self._response_json(response) if response.status_code == 200 else None
+            response = body.get('bugs', {}).get(str(issue.id), {}).get('comments', None) if isinstance(body, dict) else None
 
             if response:
                 issue._description = response[0].get('text')
@@ -411,7 +414,8 @@ class Tracker(GenericTracker):
                 ), timeout=self.timeout,
             )
             self._count_failed_login(response)
-            response = response.json().get('bugs', []) if response.status_code == 200 else None
+            body = self._response_json(response) if response.status_code == 200 else None
+            response = body.get('bugs', []) if isinstance(body, dict) else None
             if response:
                 for link in response[0].get('see_also', []):
                     issue._related_links.append(link)
@@ -448,7 +452,8 @@ class Tracker(GenericTracker):
                 ), timeout=self.timeout,
             )
             self._count_failed_login(response)
-            attachments = response.json().get('bugs', {}).get(str(issue.id)) if response.status_code == 200 else None
+            body = self._response_json(response) if response.status_code == 200 else None
+            attachments = body.get('bugs', {}).get(str(issue.id)) if isinstance(body, dict) else None
             if attachments is None:
                 sys.stderr.write("Failed to fetch attachments for '{}'\n".format(issue.link))
             else:
