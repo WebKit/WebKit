@@ -517,7 +517,7 @@ Error Connection::flushSentMessages(Timeout timeout)
     do {
         if (!isValid())
             return Error::InvalidConnection;
-        if (m_outgoingMessages.isEmpty())
+        if (!m_hasOutgoingMessages)
             return Error::NoError;
         m_outgoingMessagesEmptyCondition.waitUntil(m_outgoingMessagesLock, timeout.deadline());
     } while (!timeout.didTimeOut());
@@ -656,6 +656,7 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
         Locker locker { m_outgoingMessagesLock };
         shouldDispatchMessageSend = m_outgoingMessages.isEmpty();
         m_outgoingMessages.append(WTF::move(encoder));
+        m_hasOutgoingMessages = true;
         outgoingMessagesCount = m_outgoingMessages.size();
         shouldNotifyOfQueueGrowingLarge = m_outgoingMessageQueueIsGrowingLargeCallback && outgoingMessagesCount > largeOutgoingMessageQueueCountThreshold && (MonotonicTime::now() - m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime) >= largeOutgoingMessageQueueTimeThreshold;
         if (shouldNotifyOfQueueGrowingLarge) {
@@ -1275,6 +1276,7 @@ void Connection::connectionDidClose()
     {
         Locker locker { m_outgoingMessagesLock };
         m_outgoingMessages.clear();
+        m_hasOutgoingMessages = false;
         m_outgoingMessagesEmptyCondition.notifyAll();
     }
 
@@ -1284,14 +1286,11 @@ void Connection::connectionDidClose()
     dispatchDidCloseAndInvalidate();
 }
 
-bool Connection::canSendOutgoingMessages() const
-{
-    return m_isConnected && platformCanSendOutgoingMessages();
-}
-
 void Connection::sendOutgoingMessages()
 {
-    if (!canSendOutgoingMessages())
+    assertIsCurrent(m_connectionQueue.get());
+
+    if (!m_isConnected)
         return;
 
     while (true) {
@@ -1299,17 +1298,34 @@ void Connection::sendOutgoingMessages()
 
         {
             Locker locker { m_outgoingMessagesLock };
+            if (hasPendingOutgoingMessage())
+                return;
             if (m_outgoingMessages.isEmpty()) {
+                m_hasOutgoingMessages = false;
                 m_outgoingMessagesEmptyCondition.notifyAll();
-                break;
+                return;
             }
             message = m_outgoingMessages.takeFirst().moveToUniquePtr();
+            // Note: Even when this maknes  m_outgoingMessages empty,  m_hasOutgoingMessages == true guards
+            // that the flush waiter know that flush is not done. We can remove m_hasOutgoingMessages when we are
+            // able to unpack m_outgoingMessages to future, MachMessage/UnixMessage/WinMessage m_pendingOutgoingMessage.
         }
-        ASSERT(message);
 
-        if (!sendOutgoingMessage(makeUniqueRefFromNonNullUniquePtr(WTF::move(message))))
-            break;
+        if (!sendOutgoingMessage(makeUniqueRefFromNonNullUniquePtr(WTF::move(message)))) {
+            didFinishSendingOutgoingMessage();
+            return;
+        }
     }
+}
+
+void Connection::didFinishSendingOutgoingMessage()
+{
+    assertIsCurrent(m_connectionQueue.get());
+
+    Locker locker { m_outgoingMessagesLock };
+    m_hasOutgoingMessages = !m_outgoingMessages.isEmpty() || hasPendingOutgoingMessage();
+    if (!m_hasOutgoingMessages)
+        m_outgoingMessagesEmptyCondition.notifyAll();
 }
 
 void Connection::dispatchSyncMessage(Decoder& decoder)

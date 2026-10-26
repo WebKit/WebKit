@@ -267,12 +267,12 @@ void Connection::platformOpen()
     invokeReadEventHandler();
 }
 
-bool Connection::platformCanSendOutgoingMessages() const
+bool Connection::hasPendingOutgoingMessage() const
 {
     // We only allow sending one asynchronous message at a time. If we wanted to send more than one
     // at once, we'd have to use multiple OVERLAPPED structures and hold onto multiple pending
     // MessageEncoders (one of each for each simultaneous asynchronous message).
-    return !m_pendingWriteEncoder;
+    return !!m_pendingWriteEncoder;
 }
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
@@ -311,7 +311,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     // before the write completes.
     m_pendingWriteEncoder = encoder.moveToUniquePtr();
 
-    // We can only send one asynchronous message at a time (see comment in platformCanSendOutgoingMessages).
+    // We can only send one asynchronous message at a time (see comment in hasPendingOutgoingMessage).
     return false;
 }
 

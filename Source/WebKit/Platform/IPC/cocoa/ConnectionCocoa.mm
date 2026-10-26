@@ -95,6 +95,8 @@ static void clearNoSenderNotifications(mach_port_t port)
 
 void Connection::platformInvalidate()
 {
+    assertIsCurrent(m_connectionQueue.get());
+
     if (!m_isConnected) {
         if (MACH_PORT_VALID(m_sendPort)) {
             ASSERT(!m_isServer);
@@ -123,7 +125,8 @@ void Connection::platformInvalidate()
         return;
     }
 
-    m_pendingOutgoingMachMessage = nullptr;
+    if (std::exchange(m_pendingOutgoingMachMessage, nullptr))
+        didFinishSendingOutgoingMessage();
     m_isConnected = false;
 
     ASSERT(m_receivePort);
@@ -232,6 +235,7 @@ void Connection::platformOpen()
 
 Connection::SendMessageResult Connection::sendMessage(std::unique_ptr<MachMessage>& message, IsRetryDueToLargeSize isRetryDueToLargeSize)
 {
+    assertIsCurrent(m_connectionQueue.get());
     ASSERT(message);
     ASSERT(!m_pendingOutgoingMachMessage);
     // Send the message.
@@ -282,9 +286,9 @@ Connection::SendMessageResult Connection::sendMessage(std::unique_ptr<MachMessag
     }
 }
 
-bool Connection::platformCanSendOutgoingMessages() const
+bool Connection::hasPendingOutgoingMessage() const
 {
-    return !m_pendingOutgoingMachMessage && MACH_PORT_VALID(m_sendPort);
+    return m_pendingOutgoingMachMessage || !MACH_PORT_VALID(m_sendPort);
 }
 
 template<typename descriptorType>
@@ -324,7 +328,7 @@ static Vector<MachSendRight> extractPortDescriptorsFromMessage(MachMessage& mess
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
-    ASSERT(canSendOutgoingMessages());
+    ASSERT(m_isConnected);
 
     auto attachments = encoder->releaseAttachments();
     auto numberOfPortDescriptors = attachments.size();
@@ -480,8 +484,9 @@ void Connection::initializeSendSource()
 
 void Connection::resumeSendSource()
 {
-    if (m_pendingOutgoingMachMessage) {
-        auto message = std::exchange(m_pendingOutgoingMachMessage, nullptr);
+    assertIsCurrent(m_connectionQueue.get());
+
+    if (auto message = std::exchange(m_pendingOutgoingMachMessage, nullptr)) {
         auto result = sendMessage(message);
         if (result == SendMessageResult::MessageTooLarge) {
             // m_pendingOutgoingMachMessage originates from MACH_SEND_TIMED_OUT, not

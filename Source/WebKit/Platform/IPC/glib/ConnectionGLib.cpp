@@ -374,12 +374,12 @@ void Connection::platformOpen()
     });
 }
 
-bool Connection::platformCanSendOutgoingMessages() const
+bool Connection::hasPendingOutgoingMessage() const
 {
 #if OS(ANDROID)
-    return !m_hasPendingOutputMessage && m_outgoingHardwareBuffers.isEmpty();
+    return m_hasPendingOutputMessage || !m_outgoingHardwareBuffers.isEmpty();
 #else
-    return !m_hasPendingOutputMessage;
+    return m_hasPendingOutputMessage;
 #endif
 }
 

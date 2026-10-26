@@ -362,9 +362,9 @@ void Connection::platformOpen()
     });
 }
 
-bool Connection::platformCanSendOutgoingMessages() const
+bool Connection::hasPendingOutgoingMessage() const
 {
-    return true;
+    return false;
 }
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)

@@ -256,6 +256,42 @@ TEST_P(ConnectionTestABBA, AAndBInvalidateDoesNotDeliverDidClose)
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
 }
 
+// A flush with nothing left to send returns NoError without waiting, so a zero timeout is enough.
+TEST_P(ConnectionTestABBA, FlushSentMessagesWithNothingToSendIsNoOp)
+{
+    EXPECT_EQ(a()->flushSentMessages(0_s), IPC::Error::NoError);
+    EXPECT_EQ(b()->flushSentMessages(0_s), IPC::Error::NoError);
+
+    ASSERT_TRUE(openBoth());
+
+    // Opening the client side may send a message, so the first flush may have to wait.
+    EXPECT_EQ(a()->flushSentMessages(kDefaultWaitForTimeout), IPC::Error::NoError);
+    EXPECT_EQ(b()->flushSentMessages(kDefaultWaitForTimeout), IPC::Error::NoError);
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_EQ(a()->flushSentMessages(0_s), IPC::Error::NoError);
+        EXPECT_EQ(b()->flushSentMessages(0_s), IPC::Error::NoError);
+    }
+
+    for (uint64_t i = 0u; i < 55u; ++i)
+        a()->send(MockTestMessage1 { }, i);
+    EXPECT_EQ(a()->flushSentMessages(kDefaultWaitForTimeout), IPC::Error::NoError);
+    for (int i = 0; i < 3; ++i)
+        EXPECT_EQ(a()->flushSentMessages(0_s), IPC::Error::NoError);
+
+    for (uint64_t i = 0u; i < 55u; ++i) {
+        auto message = bClient().waitForMessage(kDefaultWaitForTimeout);
+        EXPECT_EQ(message.messageName, MockTestMessage1::name());
+        EXPECT_EQ(message.destinationID, i);
+    }
+    EXPECT_EQ(a()->flushSentMessages(0_s), IPC::Error::NoError);
+    EXPECT_EQ(b()->flushSentMessages(0_s), IPC::Error::NoError);
+
+    a()->invalidate();
+    b()->invalidate();
+    EXPECT_EQ(a()->flushSentMessages(0_s), IPC::Error::InvalidConnection);
+    EXPECT_EQ(b()->flushSentMessages(0_s), IPC::Error::InvalidConnection);
+}
+
 #if PLATFORM(COCOA)
 
 // Invalidating an unopened connection closes its socket, so a peer using Unix domain sockets sees
@@ -267,6 +303,70 @@ TEST_P(ConnectionTestABBA, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
     a()->invalidate();
     deleteA();
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
+}
+
+// Sends one message at a time while B doesn't receive, until a message can't be sent because B's port is full. That
+// message is parked while the outgoing queue is empty. flushSentMessages() must keep waiting until it has been sent.
+TEST_P(ConnectionTestABBA, FlushSentMessagesWaitsForParkedMessage)
+{
+    ASSERT_TRUE(openBoth());
+
+    // Make sure A can send before B stops receiving.
+    a()->send(MockTestMessage1 { }, 0);
+    EXPECT_EQ(bClient().waitForMessage(kDefaultWaitForTimeout).destinationID, 0u);
+
+    BinarySemaphore unblockB;
+    b()->dispatchOnReceiveQueueForTesting([&] {
+        unblockB.wait();
+    });
+
+    uint64_t nextDestinationID = 1;
+    bool flushTimedOut = false;
+    while (!flushTimedOut && nextDestinationID < 1000) {
+        a()->send(MockTestMessage1 { }, nextDestinationID++);
+        flushTimedOut = a()->flushSentMessages(200_ms) == IPC::Error::Timeout;
+    }
+    EXPECT_TRUE(flushTimedOut);
+    // B's port holds 128 messages.
+    EXPECT_GT(nextDestinationID, 100u);
+    // A message is parked now. Before flushSentMessages() checked for parked messages, this flush returned NoError
+    // as soon as the outgoing queue was empty.
+    EXPECT_EQ(a()->flushSentMessages(50_ms), IPC::Error::Timeout);
+
+    unblockB.signal();
+    EXPECT_EQ(a()->flushSentMessages(kDefaultWaitForTimeout), IPC::Error::NoError);
+    for (uint64_t i = 1; i < nextDestinationID; ++i)
+        EXPECT_EQ(bClient().waitForMessage(kDefaultWaitForTimeout).destinationID, i);
+}
+
+// A message sent after B is gone fails with MACH_SEND_INVALID_DEST and is dropped. A can't send anything after that,
+// so flushSentMessages() keeps waiting until A handles the close instead of returning NoError for the dropped message.
+TEST_P(ConnectionTestABBA, FlushSentMessagesAfterPeerIsGoneWaitsForClose)
+{
+    ASSERT_TRUE(openBoth());
+
+    // Make sure A can send before B goes away.
+    a()->send(MockTestMessage1 { }, 0);
+    EXPECT_EQ(bClient().waitForMessage(kDefaultWaitForTimeout).destinationID, 0u);
+    EXPECT_EQ(a()->flushSentMessages(kDefaultWaitForTimeout), IPC::Error::NoError);
+
+    // Hold A's connection queue while B goes away, so that the next message fails to send. Then hold it again, so that
+    // A handles the close only after the flush below has had a chance to return early.
+    BinarySemaphore holdA;
+    a()->dispatchOnReceiveQueueForTesting([&] {
+        holdA.waitFor(kWaitForAbsenceTimeout);
+    });
+    a()->send(MockTestMessage1 { }, 1);
+    BinarySemaphore releaseA;
+    a()->dispatchOnReceiveQueueForTesting([&] {
+        releaseA.waitFor(10_s);
+    });
+    b()->invalidate();
+
+    EXPECT_EQ(a()->flushSentMessages(kDefaultWaitForTimeout), IPC::Error::Timeout);
+    releaseA.signal();
+    EXPECT_EQ(a()->flushSentMessages(kDefaultWaitForTimeout), IPC::Error::InvalidConnection);
+    EXPECT_TRUE(aClient().waitForDidClose(kDefaultWaitForTimeout));
 }
 
 #endif // PLATFORM(COCOA)

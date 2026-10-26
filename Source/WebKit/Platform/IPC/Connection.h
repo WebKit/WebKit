@@ -684,9 +684,9 @@ private:
     void processIncomingMessage(UniqueRef<Decoder>);
     void processIncomingSyncReply(UniqueRef<Decoder>);
 
-    bool canSendOutgoingMessages() const;
-    bool LEGACY_NODELETE platformCanSendOutgoingMessages() const;
+    bool LEGACY_NODELETE hasPendingOutgoingMessage() const WTF_REQUIRES_CAPABILITY(m_connectionQueue.get());
     void sendOutgoingMessages();
+    void didFinishSendingOutgoingMessage() WTF_EXCLUDES_LOCK(m_outgoingMessagesLock);
     bool sendOutgoingMessage(UniqueRef<Encoder>&&);
     void connectionDidClose();
 
@@ -794,6 +794,9 @@ private:
     Lock m_outgoingMessagesLock;
     Deque<UniqueRef<Encoder>> m_outgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
     Condition m_outgoingMessagesEmptyCondition WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
+    // m_hasOutgoingMessages == !m_outgoingMessages.isEmpty() + possible current message
+    // being manipulated for send + possible platform pending messages.
+    bool m_hasOutgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock) { false };
 
     Condition m_waitForMessageCondition;
     Lock m_waitForMessageLock;
@@ -884,7 +887,7 @@ private:
     mach_port_t m_receivePort { MACH_PORT_NULL };
     OSObjectPtr<dispatch_source_t> m_receiveSource;
 
-    std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage;
+    std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage WTF_GUARDED_BY_CAPABILITY(m_connectionQueue.get());
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     std::atomic<bool> m_didRequestProcessTermination { false };
