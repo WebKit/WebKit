@@ -31,6 +31,8 @@
 #include "Document.h"
 #include "LayoutBoxGeometry.h"
 #include "RenderBlockFlow.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
@@ -52,7 +54,9 @@ bool BlockMarginCollapse::marginsCollapseThrough(const RenderBox& box, const Box
         return false;
     if (style->logicalHeight(writingMode).isStretch() && stretchFitBorderBoxBlockSize)
         return !stretchFitSizeIsPositive;
-    // Like RenderBlock::isSelfCollapsingBlock, which checks the height the box has.
+    // Like RenderBlock::isSelfCollapsingBlock, which checks the height the box has: the one a preferred aspect ratio or size containment gives it.
+    if (box.shouldApplySizeContainment() && box.explicitIntrinsicInnerLogicalHeight().value_or(0_lu) > 0)
+        return false;
     if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode); aspectRatioBlockSize && *aspectRatioBlockSize > 0)
         return false;
     // A zero or auto computed height (CSS 2.2 §8.3.1): not the sizing keywords, whose used size is the automatic one (like RenderBlock::isSelfCollapsingBlock).
