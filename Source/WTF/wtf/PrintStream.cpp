@@ -147,6 +147,11 @@ void printInternal(PrintStream& out, const String& string)
     printExpectedCStringHelper(out, "String", string.tryGetUTF8());
 }
 
+void printInternal(PrintStream& out, String& string)
+{
+    printInternal(out, static_cast<const String&>(string));
+}
+
 void printInternal(PrintStream& out, const AtomString& string)
 {
     printExpectedCStringHelper(out, "String", string.string().tryGetUTF8());
