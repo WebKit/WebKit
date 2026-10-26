@@ -40,8 +40,10 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
+#include "RenderFlexibleBox.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
+#include "RenderTableCell.h"
 #include "RenderView.h"
 #include "ScrollbarUpdateScope.h"
 #include <wtf/text/TextStream.h>
@@ -52,6 +54,40 @@ namespace LayoutIntegration {
 BlockLayout::BlockLayout(RenderBlockFlow& rootRenderer)
     : m_rootRenderer(rootRenderer)
 {
+}
+
+// The block size the percentage block sizes of the children of the root resolve against (RenderBox::computePercentageLogicalHeight). In
+// quirks mode that is past the containing blocks with an auto block size, without the margins, borders and padding of the body and the
+// root element (quirks §3.5).
+static std::optional<LayoutUnit> contentBoxBlockSizeForPercentages(const RenderBlockFlow& rootRenderer)
+{
+    auto isPerpendicular = [&](const RenderBlock& containingBlock) {
+        return rootRenderer.isHorizontalWritingMode() != containingBlock.isHorizontalWritingMode();
+    };
+    if (!rootRenderer.skipContainingBlockForPercentHeightCalculation(rootRenderer, false))
+        return rootRenderer.availableLogicalHeightForPercentageComputation();
+    CheckedPtr<const RenderBox> containingBlockChild = &rootRenderer;
+    CheckedPtr<const RenderBlock> containingBlock = &rootRenderer;
+    auto skippedMarginsBordersAndPadding = 0_lu;
+    while (containingBlock && !is<RenderView>(*containingBlock) && rootRenderer.skipContainingBlockForPercentHeightCalculation(*containingBlock, isPerpendicular(*containingBlock))) {
+        if (containingBlock->isBody() || containingBlock->isDocumentElementRenderer()) {
+            auto writingMode = containingBlock->writingMode();
+            skippedMarginsBordersAndPadding += containingBlock->marginBefore(writingMode) + containingBlock->marginAfter(writingMode) + containingBlock->borderAndPaddingLogicalHeight();
+        }
+        containingBlockChild = containingBlock;
+        containingBlock = containingBlock->containingBlock();
+    }
+    if (!containingBlock || is<RenderTableCell>(*containingBlock))
+        return { };
+    if (is<RenderView>(*containingBlock) && rootRenderer.view().frameView().isAutoSizeEnabled())
+        return { };
+    auto blockSize = isPerpendicular(*containingBlock) ? std::optional { containingBlockChild->containingBlockLogicalWidthForContent() } : containingBlock->availableLogicalHeightForPercentageComputation();
+    // A flex container stretching its items knows its block size before it has one (RenderFlexibleBox::isInCrossAxisStretchLayout).
+    if (CheckedPtr flexContainer = dynamicDowncast<RenderFlexibleBox>(*containingBlock); !blockSize && flexContainer && flexContainer->isInCrossAxisStretchLayout())
+        blockSize = flexContainer->contentBoxLogicalHeight();
+    return blockSize.transform([&](auto blockSize) {
+        return std::max(0_lu, blockSize - skippedMarginsBordersAndPadding);
+    });
 }
 
 static Layout::ConstraintsForBlockContent constraintsForBlockContent(const RenderBlockFlow& rootRenderer, RelayoutChildren relayoutChildren)
@@ -67,7 +103,7 @@ static Layout::ConstraintsForBlockContent constraintsForBlockContent(const Rende
     if (scrollbarIsOnLogicalLeft == writingMode.isLogicalLeftInlineStart())
         contentBoxLogicalLeft += std::min<LayoutUnit>(rootRenderer.scrollbarLogicalWidth(), std::max(0_lu, rootRenderer.logicalWidth() - rootRenderer.borderAndPaddingLogicalWidth()));
     auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLogicalLeft, rootRenderer.contentBoxLogicalWidth() };
-    return { { horizontalConstraints, rootRenderer.borderAndPaddingBefore() }, rootRenderer.availableLogicalHeightForPercentageComputation(), relayoutChildren == RelayoutChildren::Yes };
+    return { { horizontalConstraints, rootRenderer.borderAndPaddingBefore() }, contentBoxBlockSizeForPercentages(rootRenderer), relayoutChildren == RelayoutChildren::Yes };
 }
 
 void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
