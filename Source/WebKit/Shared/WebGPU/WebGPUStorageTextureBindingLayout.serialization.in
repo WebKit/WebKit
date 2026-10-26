@@ -23,8 +23,13 @@
 header: "WebGPUStorageTextureBindingLayout.h"
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::StorageTextureBindingLayout {
-    ::WebGPU::StorageTextureAccess access
-    ::WebGPU::TextureFormat format
-    ::WebGPU::TextureViewDimension viewDimension
-}
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::StorageTextureBindingLayout {
+    ::WebGPU::StorageTextureAccess access;
+    ::WebGPU::TextureFormat format;
+    ::WebGPU::TextureViewDimension viewDimension;
+};
+
+header: "WebGPUStorageTextureBindingLayout.h"
+using WebKit::WebGPU::StorageTextureBindingLayout = ::WebGPU::StorageTextureBindingLayout;
+#endif

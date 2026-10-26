@@ -21,6 +21,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ExternalTextureBindingLayout {
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::ExternalTextureBindingLayout {
 };
+
+header: "WebGPUExternalTextureBindingLayout.h"
+using WebKit::WebGPU::ExternalTextureBindingLayout = ::WebGPU::ExternalTextureBindingLayout;
 #endif

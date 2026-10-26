@@ -21,14 +21,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::BindGroupLayoutEntry {
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::BindGroupLayoutEntry {
     uint32_t binding;
     OptionSet<::WebGPU::ShaderStage> visibility;
-
-    std::optional<WebKit::WebGPU::BufferBindingLayout> buffer;
-    std::optional<WebKit::WebGPU::SamplerBindingLayout> sampler;
-    std::optional<WebKit::WebGPU::TextureBindingLayout> texture;
-    std::optional<WebKit::WebGPU::StorageTextureBindingLayout> storageTexture;
-    std::optional<WebKit::WebGPU::ExternalTextureBindingLayout> externalTexture;
+    std::optional<::WebGPU::BufferBindingLayout> buffer;
+    std::optional<::WebGPU::SamplerBindingLayout> sampler;
+    std::optional<::WebGPU::TextureBindingLayout> texture;
+    std::optional<::WebGPU::StorageTextureBindingLayout> storageTexture;
+    std::optional<::WebGPU::ExternalTextureBindingLayout> externalTexture;
 };
+
+header: "WebGPUBindGroupLayoutEntry.h"
+using WebKit::WebGPU::BindGroupLayoutEntry = ::WebGPU::BindGroupLayoutEntry;
 #endif
