@@ -192,6 +192,9 @@ public:
     void setBackForwardTraversalWasDispatched(bool value) { m_backForwardTraversalWasDispatched = value; }
     bool backForwardTraversalWasDispatched() const { return m_backForwardTraversalWasDispatched; }
 
+    void setBackForwardTraversalDidCommitInAnyFrame() { m_backForwardTraversalDidCommitInAnyFrame = true; }
+    bool backForwardTraversalDidCommitInAnyFrame() const { return m_backForwardTraversalDidCommitInAnyFrame; }
+
     void setWebsitePolicies(RefPtr<API::WebsitePolicies>&& policies) { m_websitePolicies = WTF::move(policies); }
     API::WebsitePolicies* websitePolicies() { return m_websitePolicies.get(); }
 
@@ -264,6 +267,7 @@ private:
     bool m_userContentExtensionsEnabled : 1 { true };
     bool m_isLoadedWithNavigationShared : 1 { false };
     bool m_backForwardTraversalWasDispatched : 1 { false };
+    bool m_backForwardTraversalDidCommitInAnyFrame : 1 { false };
     bool m_requestIsFromClientInput : 1 { false };
     bool m_isFromLoadData : 1 { false };
     bool m_hadSafeBrowsingWarning : 1 { false };
