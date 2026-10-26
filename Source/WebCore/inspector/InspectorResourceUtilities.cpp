@@ -409,18 +409,18 @@ bool shouldTreatAsText(const String& mimeType)
 Ref<TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName)
 {
     if (!textEncodingName.isEmpty())
-        return TextResourceDecoder::create("text/plain"_s, textEncodingName);
+        return TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, textEncodingName);
 
     if (MIMETypeRegistry::isTextMIMEType(mimeType))
-        return TextResourceDecoder::create(mimeType, "UTF-8"_s);
+        return TextResourceDecoder::create(TextResourceDecoder::contentTypeForMIMEType(mimeType), PAL::UTF8Encoding());
 
     if (MIMETypeRegistry::isXMLMIMEType(mimeType)) {
-        auto decoder = TextResourceDecoder::create("application/xml"_s);
+        Ref decoder = TextResourceDecoder::create(TextResourceDecoder::ContentType::XML);
         decoder->useLenientXMLDecoding();
         return decoder;
     }
 
-    return TextResourceDecoder::create("text/plain"_s, "UTF-8"_s);
+    return TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, PAL::UTF8Encoding());
 }
 
 std::optional<String> textContentForCachedResource(CachedResource& cachedResource)

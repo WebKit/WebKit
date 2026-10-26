@@ -41,7 +41,7 @@ namespace WebCore {
 CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, ScriptTrackingPrivacyProtectionsEnabled requiresPrivacyProtections)
     : CachedResource(WTF::move(request), request.options().destination == FetchOptionsDestination::Json ? Type::JSON : request.options().destination == FetchOptionsDestination::Text ? Type::Text : Type::Script, sessionID, cookieJar)
     , m_requiresPrivacyProtections(requiresPrivacyProtections == ScriptTrackingPrivacyProtectionsEnabled::Yes)
-    , m_decoder(TextResourceDecoder::create("text/javascript"_s, request.charset()))
+    , m_decoder(TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, request.charset()))
 {
 }
 
@@ -50,7 +50,7 @@ CachedScript::~CachedScript() = default;
 void CachedScript::setEncoding(const String& chs)
 {
     assertIsOwnerThread();
-    protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingSource::HTTPHeader);
 }
 
 ASCIILiteral CachedScript::encoding() const
@@ -160,7 +160,7 @@ void CachedScript::withScriptConcurrently(ShouldDecodeAsUTF8Only shouldDecodeAsU
     if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes)
         result = TextResourceDecoder::textFromUTF8(contiguousData->span());
     else {
-        auto decoder = TextResourceDecoder::create(m_decoder->contentType(), m_decoder->encoding(), m_decoder->usesEncodingDetector());
+        Ref decoder = TextResourceDecoder::create(m_decoder->contentType(), m_decoder->encoding(), m_decoder->usesEncodingDetector());
         result = decoder->decodeAndFlush(contiguousData->span());
     }
     function(result);

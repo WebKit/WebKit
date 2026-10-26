@@ -211,7 +211,7 @@ RefPtr<API::Data> WebExtensionContext::localizedResourceData(const RefPtr<API::D
     if (!equalLettersIgnoringASCIICase(mimeType, "text/css"_s) || !resourceData)
         return resourceData;
 
-    RefPtr decoder = WebCore::TextResourceDecoder::create(mimeType, PAL::UTF8Encoding());
+    RefPtr decoder = WebCore::TextResourceDecoder::create(WebCore::TextResourceDecoder::contentTypeForMIMEType(mimeType), PAL::UTF8Encoding());
     auto stylesheetContents = decoder->decode(resourceData->span());
 
     auto localizedString = localizedResourceString(stylesheetContents, mimeType);

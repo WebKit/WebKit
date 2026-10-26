@@ -3193,7 +3193,7 @@ const String& Page::userStyleSheet() const
     if (!data)
         return m_userStyleSheet;
 
-    m_userStyleSheet = TextResourceDecoder::create(cssContentTypeAtom())->decodeAndFlush(data->span());
+    m_userStyleSheet = TextResourceDecoder::create(TextResourceDecoder::ContentType::CSS)->decodeAndFlush(data->span());
 
     return m_userStyleSheet;
 }

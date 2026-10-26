@@ -600,7 +600,7 @@ std::expected<String, RefPtr<API::Error>> WebExtension::resourceStringForPath(co
         return emptyString();
 
     auto mimeType = MIMETypeRegistry::mimeTypeForPath(path);
-    RefPtr decoder = TextResourceDecoder::create(mimeType, PAL::UTF8Encoding());
+    RefPtr decoder = TextResourceDecoder::create(TextResourceDecoder::contentTypeForMIMEType(mimeType), PAL::UTF8Encoding());
 
     auto result = decoder->decode(data->span());
     if (cacheResult == CacheResult::Yes)

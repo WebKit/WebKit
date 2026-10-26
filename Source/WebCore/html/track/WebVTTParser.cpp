@@ -98,7 +98,7 @@ bool WebVTTParser::parseFloatPercentageValuePair(VTTScanner& valueScanner, char 
 
 WebVTTParser::WebVTTParser(WebVTTParserClient& client, Document& document)
     : m_document(document)
-    , m_decoder(TextResourceDecoder::create(textPlainContentTypeAtom(), PAL::UTF8Encoding()))
+    , m_decoder(TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, PAL::UTF8Encoding()))
     , m_client(client)
 {
 }

@@ -283,7 +283,7 @@ TextResourceDecoder& DocumentWriter::decoder()
 {
     if (!m_decoder) {
         Ref frame = *m_frame;
-        Ref decoder = TextResourceDecoder::create(m_mimeType, frame->settings().defaultTextEncodingName(), frame->settings().usesEncodingDetector());
+        Ref decoder = TextResourceDecoder::create(TextResourceDecoder::contentTypeForMIMEType(m_mimeType), frame->settings().defaultTextEncodingName(), frame->settings().usesEncodingDetector());
         m_decoder = decoder.copyRef();
         RefPtr parentFrame = dynamicDowncast<LocalFrame>(frame->tree().parent());
         // Set the hint encoding to the parent frame encoding only if
@@ -299,11 +299,11 @@ TextResourceDecoder& DocumentWriter::decoder()
             decoder->setHintEncoding(parentFrame->document()->decoder());
         if (m_encoding.isEmpty()) {
             // Don't let a non-UTF-8 parent frame override JSON's UTF-8 default (RFC 8259).
-            if (canReferToParentFrameEncoding(frame.ptr(), parentFrame) && decoder->contentType() != TextResourceDecoder::JSON)
-                decoder->setEncoding(protect(parentFrame->document())->textEncoding(), TextResourceDecoder::EncodingFromParentFrame);
+            if (canReferToParentFrameEncoding(frame.ptr(), parentFrame) && decoder->contentType() != TextResourceDecoder::ContentType::JSON)
+                decoder->setEncoding(protect(parentFrame->document())->textEncoding(), TextResourceDecoder::EncodingSource::ParentFrame);
         } else {
             decoder->setEncoding(m_encoding,
-                m_encodingWasChosenByUser ? TextResourceDecoder::UserChosenEncoding : TextResourceDecoder::EncodingFromHTTPHeader);
+                m_encodingWasChosenByUser ? TextResourceDecoder::EncodingSource::UserChosen : TextResourceDecoder::EncodingSource::HTTPHeader);
         }
         protect(frame->document())->setDecoder(WTF::move(decoder));
     }
