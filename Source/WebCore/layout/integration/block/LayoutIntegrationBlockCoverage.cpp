@@ -318,7 +318,7 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
         if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant); blockContainer && !blockContainer->isInline()) {
             CheckedRef style = blockContainer->style();
             auto writingMode = blockContainer->writingMode();
-            if (style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated() || blockContainer->shouldApplyInlineSizeContainment())
+            if (style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
                 return false;
             // A preferred aspect ratio gives an inline size from the block size and transfers the min and max block sizes, which can be
             // percentages of the block size of the containing block.
@@ -575,8 +575,6 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     auto fitsContent = style->logicalWidth().isAuto() && Layout::BlockFormattingUtils::isAlignedByJustifySelf(*blockContainer, parentStyle);
     if ((Layout::BlockFormattingUtils::hasIntrinsicInlineSize(*blockContainer, blockContainer->writingMode()) || fitsContent) && !canComputeContentInlineSizes(*blockContainer))
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
-    if (blockContainer->shouldApplySizeContainment())
-        return BlockAvoidanceReason::ContentHasSizeContainment;
     // A preferred aspect ratio gives an auto block size from the inline size (BlockFormattingUtils::aspectRatioBorderBoxBlockSize), and an
     // auto inline size from a definite block size (BlockFormattingUtils::aspectRatioBorderBoxInlineSize), whose automatic minimum is the
     // min-content size.
