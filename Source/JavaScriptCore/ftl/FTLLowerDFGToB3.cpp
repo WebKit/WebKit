@@ -19351,6 +19351,26 @@ IGNORE_CLANG_WARNINGS_END
         setJSValue(result);
     }
 
+    // For a JSRopeString known to be a substring rope: the current StringImpl of its base (which is always resolved)
+    // and the substring's offset into it. Callers must check that impl's width rather than the rope's cached
+    // is8BitInPointer, since atomizing the base can swap in an existing atom of the other width after the rope was
+    // created. For an 8-bit impl, the first character is at StringImpl_data + offset.
+    std::pair<LValue, LValue> substringRopeBaseImplAndOffset(LValue rope)
+    {
+        LValue packedLengthAndBaseLower = m_out.load64(rope, m_heaps.JSRopeString_fiber1);
+        LValue packedBaseUpperAndOffset = m_out.load64(rope, m_heaps.JSRopeString_fiber2);
+        LValue substringBase = m_out.bitOr(
+            m_out.lShr(packedLengthAndBaseLower, m_out.constInt32(32)),
+            m_out.shl(m_out.bitAnd(packedBaseUpperAndOffset, m_out.constInt64(0xffff)), m_out.constInt32(32)));
+        LValue substringOffset = m_out.lShr(packedBaseUpperAndOffset, m_out.constInt32(16));
+        return { m_out.loadPtr(substringBase, m_heaps.JSString_value), substringOffset };
+    }
+
+    LValue isNot8BitStringImpl(LValue stringImpl)
+    {
+        return m_out.testIsZero32(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit()));
+    }
+
     // Nonzero iff `character` (0..255) might begin a match per the first-character `bitmap`.
     LValue firstCharacterBitmapContains(LValue character, const uint8_t* bitmap)
     {
@@ -19378,12 +19398,17 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock isStringCase = knownString ? nullptr : m_out.newBlock();
         LBasicBlock check8Bit = m_out.newBlock();
         LBasicBlock checkLength = m_out.newBlock();
+        LBasicBlock resolvedCase = m_out.newBlock();
+        LBasicBlock ropeCase = m_out.newBlock();
+        LBasicBlock substringCheck8Bit = m_out.newBlock();
+        LBasicBlock substringCheckLength = m_out.newBlock();
+        LBasicBlock substringCase = m_out.newBlock();
         LBasicBlock filterCase = m_out.newBlock();
 
         if (!knownString)
             emitFirstCharacterGuardStringCheck(argument, argumentEdge, isCellCase, isStringCase, check8Bit, operationCase);
 
-        m_out.branch(isRopeString(argument, argumentEdge), rarely(operationCase), usually(check8Bit));
+        m_out.branch(isRopeString(argument, argumentEdge), rarely(ropeCase), usually(check8Bit));
 
         m_out.appendTo(check8Bit, checkLength);
         LValue stringImpl = m_out.loadPtr(argument, m_heaps.JSString_value);
@@ -19394,12 +19419,36 @@ IGNORE_CLANG_WARNINGS_END
             rarely(operationCase), usually(checkLength));
 
         // An anchored pattern that reaches here cannot match empty, so delegate an empty string.
-        m_out.appendTo(checkLength, filterCase);
-        m_out.branch(m_out.equal(m_out.load32(stringImpl, m_heaps.StringImpl_length), m_out.int32Zero), rarely(operationCase), usually(filterCase));
+        m_out.appendTo(checkLength, resolvedCase);
+        m_out.branch(m_out.equal(m_out.load32(stringImpl, m_heaps.StringImpl_length), m_out.int32Zero), rarely(operationCase), usually(resolvedCase));
+
+        m_out.appendTo(resolvedCase, ropeCase);
+        LValue stringData = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
+        ValueFromBlock resolvedCharacter = m_out.anchor(m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, stringData, m_out.constIntPtr(0))));
+        m_out.jump(filterCase);
+
+        // A substring rope (what slice() and substring() produce) is readable in place through its base, just
+        // as the operation would read it, so there is no need to delegate it. Other ropes still are.
+        m_out.appendTo(ropeCase, substringCheck8Bit);
+        LValue fiber0 = m_out.loadPtr(argument, m_heaps.JSRopeString_fiber0);
+        m_out.branch(
+            m_out.testIsZeroPtr(fiber0, m_out.constIntPtr(JSRopeString::isSubstringInPointer)),
+            unsure(operationCase), unsure(substringCheck8Bit));
+
+        m_out.appendTo(substringCheck8Bit, substringCheckLength);
+        auto [baseImpl, substringOffset] = substringRopeBaseImplAndOffset(argument);
+        m_out.branch(isNot8BitStringImpl(baseImpl), unsure(operationCase), unsure(substringCheckLength));
+
+        m_out.appendTo(substringCheckLength, substringCase);
+        m_out.branch(m_out.equal(m_out.load32NonNegative(argument, m_heaps.JSRopeString_length), m_out.int32Zero), rarely(operationCase), usually(substringCase));
+
+        m_out.appendTo(substringCase, filterCase);
+        LValue substringCharacters = m_out.add(m_out.loadPtr(baseImpl, m_heaps.StringImpl_data), substringOffset);
+        ValueFromBlock substringCharacter = m_out.anchor(m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, substringCharacters, m_out.constIntPtr(0))));
+        m_out.jump(filterCase);
 
         m_out.appendTo(filterCase, noMatchCase);
-        LValue stringData = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
-        LValue character = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, stringData, m_out.constIntPtr(0)));
+        LValue character = m_out.phi(Int32, resolvedCharacter, substringCharacter);
         m_out.branch(firstCharacterBitmapContains(character, bitmap), unsure(operationCase), unsure(noMatchCase));
     }
 
@@ -24229,20 +24278,11 @@ IGNORE_CLANG_WARNINGS_END
             unsure(concatRopeBlock), unsure(isSubstringBlock));
 
         m_out.appendTo(isSubstringBlock, substringBlock);
-        m_out.branch(
-            m_out.testIsZeroPtr(fiber0, m_out.constIntPtr(JSRopeString::is8BitInPointer)),
-            unsure(concatRopeBlock), unsure(substringBlock));
+        auto [baseImpl, substringOffset] = substringRopeBaseImplAndOffset(string);
+        m_out.branch(isNot8BitStringImpl(baseImpl), unsure(concatRopeBlock), unsure(substringBlock));
 
         m_out.appendTo(substringBlock, concatRopeBlock);
-        LValue packedLengthAndBaseLower = m_out.load64(string, m_heaps.JSRopeString_fiber1);
-        LValue packedBaseUpperAndOffset = m_out.load64(string, m_heaps.JSRopeString_fiber2);
-        LValue substringBase = m_out.bitOr(
-            m_out.lShr(packedLengthAndBaseLower, m_out.constInt32(32)),
-            m_out.shl(m_out.bitAnd(packedBaseUpperAndOffset, m_out.constInt64(0xffff)), m_out.constInt32(32)));
-        LValue substringOffset = m_out.lShr(packedBaseUpperAndOffset, m_out.constInt32(16));
-        LValue baseImpl = m_out.loadPtr(substringBase, m_heaps.JSString_value);
-        ValueFromBlock substringBuffer = m_out.anchor(
-            m_out.add(m_out.loadPtr(baseImpl, m_heaps.StringImpl_data), substringOffset));
+        ValueFromBlock substringBuffer = m_out.anchor(m_out.add(m_out.loadPtr(baseImpl, m_heaps.StringImpl_data), substringOffset));
         ValueFromBlock substringLength = m_out.anchor(m_out.load32NonNegative(string, m_heaps.JSRopeString_length));
         m_out.jump(binarySwitchBlock);
 
