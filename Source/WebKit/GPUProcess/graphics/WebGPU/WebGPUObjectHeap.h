@@ -37,6 +37,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakHashSet.h>
 
 namespace WebCore {
 class WebGPUCompositorIntegration;
@@ -117,6 +118,8 @@ public:
 
     void clear();
 
+    Vector<Ref<::WebGPU::Device>> devices() const;
+
     RefPtr<::WebGPU::Adapter> convertAdapterFromBacking(WebGPUIdentifier) final;
     RefPtr<::WebGPU::BindGroup> convertBindGroupFromBacking(WebGPUIdentifier) final;
     RefPtr<::WebGPU::BindGroupLayout> convertBindGroupLayoutFromBacking(WebGPUIdentifier) final;
@@ -185,6 +188,8 @@ private:
     >;
 
     HashMap<WebGPUIdentifier, Object> m_objects;
+    // Every device added that is still alive: work in flight can keep a device alive after its object is removed.
+    ThreadSafeWeakHashSet<::WebGPU::Device> m_devices;
 };
 
 } // namespace WebKit::WebGPU

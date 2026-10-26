@@ -43,6 +43,8 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
@@ -115,9 +117,14 @@ private:
     RemoteGPU& operator=(const RemoteGPU&) = delete;
     RemoteGPU& operator=(RemoteGPU&&) = delete;
 
+    enum class WorkQueueState : uint8_t { Running, Stopping, Stopped };
+
     void initialize();
     void workQueueInitialize();
     void workQueueUninitialize();
+    void scheduleWork(Function<void()>&&);
+    void performWorkScheduledWhileStopping(WorkQueueState stateWhenDone);
+    void clearObjectHeaps();
 
     template<typename T>
     IPC::Error send(T&& message) const
@@ -148,6 +155,10 @@ private:
     const Ref<ModelObjectHeap> m_modelObjectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
     const WebGPUIdentifier m_identifier;
     const Ref<RemoteRenderingBackend> m_renderingBackend;
+    Lock m_scheduledWorkLock;
+    WorkQueueState m_workQueueState WTF_GUARDED_BY_LOCK(m_scheduledWorkLock) { WorkQueueState::Running };
+    // A stopping work queue drops the work dispatched to it, so the work scheduled meanwhile waits here to run before it stops.
+    Deque<Function<void()>> m_workScheduledWhileStopping WTF_GUARDED_BY_LOCK(m_scheduledWorkLock);
 };
 
 } // namespace WebKit
