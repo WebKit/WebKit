@@ -1418,6 +1418,23 @@ bool Internals::is10bitsVideoFrame(const WebCodecsVideoFrame& frame) const
     RefPtr videoFrame = frame.internalFrame();
     return videoFrame && videoFrame->is10bits();
 }
+
+RefPtr<WebCodecsVideoFrame> Internals::mirroredVideoFrame(const WebCodecsVideoFrame& frame) const
+{
+    RefPtr document = contextDocument();
+    RefPtr videoFrame = frame.internalFrame();
+    if (!document || !videoFrame)
+        return nullptr;
+
+    WebCodecsVideoFrame::BufferInit init;
+    init.format = frame.format();
+    init.codedWidth = frame.codedWidth();
+    init.codedHeight = frame.codedHeight();
+    init.timestamp = frame.timestamp();
+    init.displayWidth = frame.displayWidth();
+    init.displayHeight = frame.displayHeight();
+    return WebCodecsVideoFrame::create(*document, videoFrame->updateOrientation(videoFrame->rotation(), true, VideoFrame::ShouldClone::Yes), WTF::move(init));
+}
 #endif
 
 void Internals::setGridMaxTracksLimit(unsigned maxTrackLimit)

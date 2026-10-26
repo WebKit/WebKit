@@ -42,6 +42,7 @@
 
 #if PLATFORM(COCOA)
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
+typedef struct CGAffineTransform CGAffineTransform;
 #endif
 
 namespace WebCore {
@@ -101,14 +102,21 @@ public:
     bool isMirrored() const { return m_isMirrored; }
     ImageOrientation orientation() const;
 
+#if PLATFORM(COCOA)
+    // The direction of the rotation depends on the coordinate system of the consumer of the transform.
+    enum class RotationDirection : bool { Clockwise, CounterClockwise };
+    // The transform to apply to the frame so that it is rendered properly: the frame is rotated, then mirrored.
+    CGAffineTransform affineTransform(RotationDirection = RotationDirection::Clockwise) const;
+#endif
+
 #if PLATFORM(COCOA) && USE(AVFOUNDATION)
     WEBCORE_EXPORT RefPtr<VideoFrameCV> asVideoFrameCV();
 #endif
 
     enum class ShouldClone : bool { No, Yes };
-    // updateTimestamp, updateRotation and updateShouldIgnoreAlpha should be called before being used by VideoFrame consumers.
+    // updateTimestamp, updateOrientation and updateShouldIgnoreAlpha should be called before being used by VideoFrame consumers.
     Ref<VideoFrame> updateTimestamp(MediaTime, ShouldClone);
-    Ref<VideoFrame> updateRotation(Rotation, ShouldClone);
+    WEBCORE_EXPORT Ref<VideoFrame> updateOrientation(Rotation, bool isMirrored, ShouldClone);
     Ref<VideoFrame> updateShouldIgnoreAlpha(bool, ShouldClone);
 
     using CopyCallback = CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>;

@@ -38,7 +38,6 @@
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
 #import <cmath>
-#import <numbers>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/MainThread.h>
@@ -408,15 +407,10 @@ static inline CGAffineTransform transformationMatrixForVideoFrame(VideoFrame& vi
         return CGAffineTransformIdentity;
 
 #if PLATFORM(MAC)
-    int rotationAngle = -static_cast<int>(videoFrame.rotation());
+    return videoFrame.affineTransform(VideoFrame::RotationDirection::CounterClockwise);
 #else
-    int rotationAngle = static_cast<int>(videoFrame.rotation());
+    return videoFrame.affineTransform();
 #endif
-    auto videoTransform = CGAffineTransformMakeRotation(rotationAngle * std::numbers::pi / 180);
-    if (videoFrame.isMirrored())
-        videoTransform = CGAffineTransformScale(videoTransform, -1, 1);
-
-    return videoTransform;
 }
 
 void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)

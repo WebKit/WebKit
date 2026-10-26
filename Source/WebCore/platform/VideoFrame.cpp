@@ -37,6 +37,9 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include <CoreGraphics/CGAffineTransform.h>
+#include <numbers>
+
 #include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
 #endif
@@ -68,31 +71,49 @@ Ref<VideoFrame> VideoFrame::updateTimestamp(MediaTime mediaTime, ShouldClone sho
     return updatedVideoFrame;
 }
 
-Ref<VideoFrame> VideoFrame::updateRotation(Rotation rotation, ShouldClone shouldCloneIfUpdating)
+Ref<VideoFrame> VideoFrame::updateOrientation(Rotation rotation, bool isMirrored, ShouldClone shouldCloneIfUpdating)
 {
-    if (m_rotation == rotation)
+    if (m_rotation == rotation && m_isMirrored == isMirrored)
         return *this;
 
     Ref updatedVideoFrame = shouldCloneIfUpdating == ShouldClone::Yes ? clone() : Ref { *this };
     const_cast<Rotation&>(updatedVideoFrame->m_rotation) = rotation;
+    const_cast<bool&>(updatedVideoFrame->m_isMirrored) = isMirrored;
     return updatedVideoFrame;
 }
 
 ImageOrientation VideoFrame::orientation() const
 {
+    // The frame is rotated clockwise, then mirrored horizontally.
     switch (m_rotation) {
     case Rotation::None:
         return m_isMirrored ? ImageOrientation::Orientation::OriginTopRight : ImageOrientation::Orientation::OriginTopLeft;
     case Rotation::Right:
-        return m_isMirrored ? ImageOrientation::Orientation::OriginRightBottom : ImageOrientation::Orientation::OriginRightTop;
+        return m_isMirrored ? ImageOrientation::Orientation::OriginLeftTop : ImageOrientation::Orientation::OriginRightTop;
     case Rotation::UpsideDown:
         return m_isMirrored ? ImageOrientation::Orientation::OriginBottomLeft : ImageOrientation::Orientation::OriginBottomRight;
     case Rotation::Left:
-        return m_isMirrored ? ImageOrientation::Orientation::OriginLeftTop : ImageOrientation::Orientation::OriginLeftBottom;
+        return m_isMirrored ? ImageOrientation::Orientation::OriginRightBottom : ImageOrientation::Orientation::OriginLeftBottom;
     }
     ASSERT_NOT_REACHED();
     return ImageOrientation::Orientation::OriginTopLeft;
 }
+
+#if PLATFORM(COCOA)
+CGAffineTransform VideoFrame::affineTransform(RotationDirection direction) const
+{
+    if (hasNoTransformation())
+        return CGAffineTransformIdentity;
+
+    // The frame is rotated first, then mirrored.
+    double rotationRadians = static_cast<int>(m_rotation) * std::numbers::pi / 180;
+    if (direction == RotationDirection::CounterClockwise)
+        rotationRadians = -rotationRadians;
+    if (m_isMirrored)
+        return CGAffineTransformRotate(CGAffineTransformMakeScale(-1, 1), rotationRadians);
+    return CGAffineTransformMakeRotation(rotationRadians);
+}
+#endif
 
 Ref<VideoFrame> VideoFrame::updateShouldIgnoreAlpha(bool shouldIgnore, ShouldClone shouldCloneIfUpdating)
 {
