@@ -86,7 +86,9 @@ WI.CSSManager = class CSSManager extends WI.Object
                 return;
 
             let propertyNamesForCodeMirror = {};
-            let valueKeywordsForCodeMirror = {"inherit": true, "initial": true, "unset": true, "revert": true, "revert-layer": true, "var": true, "env": true};
+            let valueKeywordsForCodeMirror = {"inherit": true, "var": true, "env": true};
+            for (let keyword of WI.CSSKeywordCompletions.UniversalKeywords)
+                valueKeywordsForCodeMirror[keyword] = true;
             let colorKeywordsForCodeMirror = {};
 
             function nameForCodeMirror(name) {
