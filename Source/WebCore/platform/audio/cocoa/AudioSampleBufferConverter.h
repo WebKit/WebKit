@@ -40,6 +40,27 @@ namespace WebCore {
 
 class WebAudioBufferList;
 
+class UniqueAudioConverter {
+public:
+    UniqueAudioConverter() = default;
+    explicit UniqueAudioConverter(AudioConverterRef converter)
+        : m_converter(converter)
+    {
+    }
+    UniqueAudioConverter(UniqueAudioConverter&&) = default;
+    UniqueAudioConverter& operator=(UniqueAudioConverter&&) = default;
+
+    operator AudioConverterRef() const LIFETIME_BOUND { return m_converter.get(); }
+    explicit operator bool() const { return !!m_converter; }
+    bool operator!() const { return !m_converter; }
+
+private:
+    struct Deleter {
+        void operator()(AudioConverterRef) const;
+    };
+    std::unique_ptr<OpaqueAudioConverter, Deleter> m_converter;
+};
+
 class AudioSampleBufferConverter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSampleBufferConverter> {
 public:
 
@@ -66,6 +87,8 @@ public:
         std::optional<bool> usedtx { };
     };
     static RefPtr<AudioSampleBufferConverter> create(Function<void()>&&, const Options&);
+    // Whether a converter created with these options can convert content described by the CMFormatDescription.
+    static bool canConvert(CMFormatDescriptionRef, const Options&);
     ~AudioSampleBufferConverter();
 
     bool isEmpty() const;
@@ -111,7 +134,7 @@ private:
 
     const Function<void()> m_outputCallback;
 
-    AudioConverterRef m_converter WTF_GUARDED_BY_CAPABILITY(queue()) { nullptr };
+    UniqueAudioConverter m_converter WTF_GUARDED_BY_CAPABILITY(queue());
     AudioStreamBasicDescription m_sourceFormat WTF_GUARDED_BY_CAPABILITY(queue());
     AudioStreamBasicDescription m_destinationFormat WTF_GUARDED_BY_CAPABILITY(queue());
     RetainPtr<CMFormatDescriptionRef> m_destinationFormatDescription WTF_GUARDED_BY_CAPABILITY(queue());

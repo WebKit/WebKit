@@ -33,7 +33,6 @@
 #import "Helpers/cocoa/TestNSBundleExtras.h"
 #import <AVFoundation/AVFoundation.h>
 #import <WebCore/AudioSampleFormat.h>
-#import <WebCore/AudioUtilities.h>
 #import <WebCore/CMUtilities.h>
 #import <WebCore/ContentType.h>
 #import <WebCore/MediaSampleAVFObjC.h>
@@ -129,26 +128,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     if ([assetReader status] == AVAssetReaderStatusFailed)
         return { };
-    return blocks;
-}
-
-// Replaces the 'dfLa' magic cookie AVFoundation provides with the WebCodecs flac description.
-static Vector<UniqueRef<MediaSamplesBlock>> parseFLACFile(NSString *resourceName)
-{
-    auto blocks = parseAVFAudioFile(resourceName, @"flac", @"audio/flac");
-    if (blocks.isEmpty() || !blocks[0]->info())
-        return blocks;
-
-    auto data = downcast<AudioInfo>(*blocks[0]->info()).toAudioInfoData();
-    if (!data.second.cookieData)
-        return { };
-    auto description = AudioUtilities::flacDescriptionFromFLACMagicCookie(data.second.cookieData->span());
-    if (description.isEmpty())
-        return { };
-    data.second.cookieData = SharedBuffer::create(WTF::move(description));
-    Ref info = AudioInfo::create(WTF::move(data));
-    for (auto& block : blocks)
-        block->setInfo(info.copyRef());
     return blocks;
 }
 
@@ -282,45 +261,71 @@ static Ref<MediaSamplesDecoder> createDecoder(const TrackInfo& info)
     return WTF::move(*result);
 }
 
-// ES_Descriptor wrapping the AudioSpecificConfig { 0x12, 0x10 } (AAC-LC, 44.1 kHz, stereo).
-static Vector<uint8_t> wrappedAACCookie()
+// The magic cookie of content/test-flac.mp4: a 'dfLa' box with a STREAMINFO block (4608 frames per block, 48 kHz, stereo, 16-bit).
+static Vector<uint8_t> flacCookie()
 {
     return {
-        0x03, 0x19, 0x00, 0x01, 0x00,
-        0x04, 0x11, 0x40, 0x15, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x05, 0x02, 0x12, 0x10,
-        0x06, 0x01, 0x02
+        0x00, 0x00, 0x00, 0x32, 0x64, 0x66, 0x4C, 0x61, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x22,
+        0x12, 0x00, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4A, 0x58, 0x0B, 0xB8, 0x02, 0xF0, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00
     };
+}
+
+static RefPtr<const TrackInfo> firstTrackInfo(Vector<UniqueRef<MediaSamplesBlock>>&& blocks)
+{
+    if (blocks.isEmpty())
+        return nullptr;
+    return blocks[0]->info();
 }
 
 TEST(MediaSamplesDecoder, CanDecodeFilters)
 {
-    Ref opus = makeAudioInfo(FourCC { "opus" });
+    RefPtr opus = firstTrackInfo(parseWebMAudioFile(@"opus"));
+    ASSERT_TRUE(opus);
 
-    EXPECT_TRUE(MediaSamplesDecoder::canDecode(opus, allowedFilters));
-    EXPECT_TRUE(MediaSamplesDecoder::canDecode(opus, allowedFilters | MediaSamplesDecoder::Filter::UseSharedMemory));
-    EXPECT_TRUE(MediaSamplesDecoder::canDecode(opus, allowedFilters | MediaSamplesDecoder::Filter::HardwareAllowed));
-    EXPECT_FALSE(MediaSamplesDecoder::canDecode(opus, { MediaSamplesDecoder::Filter::InProcess }));
-    EXPECT_FALSE(MediaSamplesDecoder::canDecode(opus, { MediaSamplesDecoder::Filter::SoftwareAllowed }));
-    EXPECT_FALSE(MediaSamplesDecoder::canDecode(opus, { }));
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(*opus, allowedFilters));
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(*opus, allowedFilters | MediaSamplesDecoder::Filter::UseSharedMemory));
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(*opus, allowedFilters | MediaSamplesDecoder::Filter::HardwareAllowed));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(*opus, { MediaSamplesDecoder::Filter::InProcess }));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(*opus, { MediaSamplesDecoder::Filter::SoftwareAllowed }));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(*opus, { }));
 }
 
 TEST(MediaSamplesDecoder, CanDecodeSupportedCodecs)
 {
-    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "vorb" }), allowedFilters));
-    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "flac" }), allowedFilters));
+#if PLATFORM(MAC)
+    RefPtr vorbis = firstTrackInfo(parseAVFAudioFile(@"vbr-96kbps-44khz", @"ogg", @"audio/ogg"));
+    ASSERT_TRUE(vorbis);
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(*vorbis, allowedFilters));
+#endif
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "flac" }, flacCookie()), allowedFilters));
     EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { ".mp3" }, { }), allowedFilters));
     EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "alaw" }, { }, 8), allowedFilters));
     EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "ulaw" }, { }, 8), allowedFilters));
     for (uint8_t bitDepth : { 8, 16, 24, 32 })
         EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "lpcm" }, { }, bitDepth), allowedFilters));
 
-    for (auto codec : { FourCC { "aac " }, FourCC { "aach" }, FourCC { "aacp" } }) {
-        EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(codec, { }), allowedFilters));
-        EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(codec, { 0x12, 0x10 }), allowedFilters));
-        EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(codec, wrappedAACCookie()), allowedFilters));
+    // AAC-LC, AAC-LD and AAC-ELD.
+    for (NSString *name : { @"silence-long", @"aac-ld", @"aac-eld" }) {
+        RefPtr aac = firstTrackInfo(parseAVFAudioFile(name, @"m4a", @"audio/mp4"));
+        ASSERT_TRUE(aac) << name.UTF8String;
+        EXPECT_TRUE(MediaSamplesDecoder::canDecode(*aac, allowedFilters)) << name.UTF8String;
     }
+
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "ac-3" }, { }), allowedFilters));
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "ec-3" }, { }), allowedFilters));
 }
+
+#if HAVE(OPUS_DECODE_MULTICHANNEL)
+TEST(MediaSamplesDecoder, CanDecodeMultichannelOpus)
+{
+    RefPtr opus = firstTrackInfo(parseWebMAudioFile(@"opus-5.1"));
+    ASSERT_TRUE(opus);
+    EXPECT_EQ(downcast<AudioInfo>(*opus).channels(), 6u);
+    EXPECT_TRUE(MediaSamplesDecoder::canDecode(*opus, allowedFilters));
+}
+#endif
 
 TEST(MediaSamplesDecoder, CanDecodeRejectsUnsupportedTracks)
 {
@@ -329,8 +334,8 @@ TEST(MediaSamplesDecoder, CanDecodeRejectsUnsupportedTracks)
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "opus" }, { 1, 2, 3, 4 }, 16, 2, AudioSampleFormat::F32), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "vorb" }, { }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "flac" }, { }), allowedFilters));
+    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "flac" }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "lpcm" }, { }, 12), allowedFilters));
-    EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "aacl" }, { }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "aac " }, { 0x03, 0xFF }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "aac " }, { 0x00, 0x00, 0x00, 0x0C, 'f', 'r', 'm', 'a', 'm', 'p', '4', 'a' }), allowedFilters));
     EXPECT_FALSE(MediaSamplesDecoder::canDecode(makeAudioInfo(FourCC { "mp4a" }), allowedFilters));
@@ -673,7 +678,7 @@ TEST(MediaSamplesDecoder, CanContinueWithRejectsChangedFormat)
 // The expected frame counts are those checked by LayoutTests/webaudio/decode-audio-data-*.html, at the file's sample rate.
 TEST(MediaSamplesDecoder, FrameCountMatchesWebAudioFLAC)
 {
-    EXPECT_EQ(decodedFrameCount(parseFLACFile(@"flac")), 47688u);
+    EXPECT_EQ(decodedFrameCount(parseAVFAudioFile(@"flac", @"flac", @"audio/flac")), 47688u);
 }
 
 TEST(MediaSamplesDecoder, FrameCountMatchesWebAudioMP3)

@@ -29,7 +29,6 @@
 #include "AV1Utilities.h"
 #include "AudioDecoder.h"
 #include "AudioSampleFormat.h"
-#include "AudioUtilities.h"
 #include "PlatformRawAudioData.h"
 #include "SharedBuffer.h"
 #include "SharedMemory.h"
@@ -54,15 +53,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSamplesDecoder);
 
 static constexpr uint32_t microsecondsTimeScale = 1000000;
 
-static constexpr FourCC opusCodecName { "opus" };
-static constexpr FourCC vorbisCodecName { "vorb" };
-static constexpr FourCC flacCodecName { "flac" };
-static constexpr FourCC mp3CodecName { ".mp3" };
-static constexpr FourCC alawCodecName { "alaw" };
-static constexpr FourCC ulawCodecName { "ulaw" };
-static constexpr FourCC aacCodecName { "aac " };
-static constexpr FourCC heAACCodecName { "aach" };
-static constexpr FourCC heAACv2CodecName { "aacp" };
 static constexpr FourCC lpcmCodecName { "lpcm" };
 static constexpr FourCC avc1CodecName { "avc1" };
 static constexpr FourCC avc3CodecName { "avc3" };
@@ -76,87 +66,6 @@ static constexpr FourCC vp9CodecName { "vp09" };
 static constexpr FourCC av1CodecName { "av01" };
 static constexpr FourCC av1CAtomType { "av1C" };
 #endif
-
-struct AudioDecoderConfiguration {
-    String codec;
-    AudioDecoder::Config config;
-};
-
-static std::optional<AudioDecoderConfiguration> audioDecoderConfiguration(const AudioInfo& info)
-{
-    RefPtr cookieData = info.cookieData();
-    auto cookie = cookieData ? cookieData->span() : std::span<const uint8_t> { };
-    auto codecName = info.codecName();
-
-    auto configuration = [&](String&& codec, Vector<uint8_t>&& description = { }) {
-        return AudioDecoderConfiguration { WTF::move(codec), { .description = WTF::move(description), .sampleRate = info.rate(), .numberOfChannels = info.channels() } };
-    };
-
-    if (codecName == opusCodecName) {
-        if (cookie.empty() || info.channels() > 2)
-            return { };
-        // The pre-skip is applied through the samples' trimInterval, so the decoder must not apply it too.
-        return configuration("opus"_s, AudioUtilities::opusHeadWithoutPreSkip(cookie));
-    }
-    if (codecName == vorbisCodecName) {
-        if (cookie.empty())
-            return { };
-        return configuration("vorbis"_s, Vector<uint8_t>(cookie));
-    }
-    if (codecName == flacCodecName) {
-        if (cookie.empty())
-            return { };
-        return configuration("flac"_s, Vector<uint8_t>(cookie));
-    }
-    if (codecName == mp3CodecName)
-        return configuration("mp3"_s);
-    if (codecName == alawCodecName)
-        return configuration("alaw"_s);
-    if (codecName == ulawCodecName)
-        return configuration("ulaw"_s);
-
-    // FIXME: AAC-LD and AAC-ELD ('aacl', 'aace') are not accepted by AudioDecoder::isCodecSupported.
-    String aacCodec;
-    if (codecName == aacCodecName)
-        aacCodec = "mp4a.40.2"_s;
-    else if (codecName == heAACCodecName)
-        aacCodec = "mp4a.40.5"_s;
-    else if (codecName == heAACv2CodecName)
-        aacCodec = "mp4a.40.29"_s;
-    if (!aacCodec.isNull()) {
-        // AudioDecoder falls back to the track's sample rate and channel count when it has no AudioSpecificConfig.
-        if (cookie.empty())
-            return configuration(WTF::move(aacCodec));
-
-        // An AudioSpecificConfig never starts with a byte below 0x08 (its audio object type would be 0); anything else is an ES_Descriptor.
-        Vector<uint8_t> audioSpecificConfig;
-        if (cookie[0] >= 0x08)
-            audioSpecificConfig = Vector<uint8_t>(cookie);
-        else
-            audioSpecificConfig = AudioUtilities::extractAudioSpecificConfigFromESDescriptor(cookie);
-        if (audioSpecificConfig.isEmpty())
-            return { };
-        return configuration(WTF::move(aacCodec), WTF::move(audioSpecificConfig));
-    }
-
-    // FIXME: only 32-bit floating point is recognised for 32-bit PCM (the only producer is the WebM parser), and PCM is assumed little-endian.
-    if (codecName == lpcmCodecName) {
-        switch (info.bitDepth()) {
-        case 8:
-            return configuration("pcm-u8"_s);
-        case 16:
-            return configuration("pcm-s16"_s);
-        case 24:
-            return configuration("pcm-s24"_s);
-        case 32:
-            return configuration("pcm-f32"_s);
-        default:
-            return { };
-        }
-    }
-
-    return { };
-}
 
 static bool isProtected(const TrackInfo& info)
 {
@@ -182,15 +91,9 @@ static bool canUseInProcessDecoder(const TrackInfo& info, MediaSamplesDecoder::F
 #endif
 }
 
-static std::optional<AudioDecoderConfiguration> decoderConfiguration(const AudioInfo& info, MediaSamplesDecoder::Filters filters)
+static bool canDecodeAudio(const AudioInfo& info, MediaSamplesDecoder::Filters filters)
 {
-    if (!canUseInProcessDecoder(info, filters) || info.isDecoded() || !info.rate() || !info.channels())
-        return { };
-
-    auto configuration = audioDecoderConfiguration(info);
-    if (!configuration || !AudioDecoder::isCodecSupported(configuration->codec))
-        return { };
-    return configuration;
+    return canUseInProcessDecoder(info, filters) && AudioDecoder::canDecode(info);
 }
 
 static RefPtr<SharedBuffer> extensionAtom(const VideoInfo& info, FourCC atomType)
@@ -370,7 +273,7 @@ MediaSamplesDecoder::MediaSamplesDecoder(Ref<const TrackInfo>&& inputInfo, Ref<c
 {
 }
 
-MediaSamplesDecoder::~MediaSamplesDecoder() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+MediaSamplesDecoder::~MediaSamplesDecoder()
 {
     if (RefPtr audioDecoder = std::exchange(m_audioDecoder, { }))
         audioDecoder->close();
@@ -381,7 +284,7 @@ MediaSamplesDecoder::~MediaSamplesDecoder() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 bool MediaSamplesDecoder::canDecode(const TrackInfo& info, Filters filters)
 {
     if (RefPtr audioInfo = dynamicDowncast<AudioInfo>(info))
-        return !!decoderConfiguration(*audioInfo, filters);
+        return canDecodeAudio(*audioInfo, filters);
     if (RefPtr videoInfo = dynamicDowncast<VideoInfo>(info))
         return !!decoderConfiguration(*videoInfo, filters);
     return false;
@@ -398,8 +301,7 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::create(const TrackI
 
 Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createAudio(const AudioInfo& audioInfo, Filters filters)
 {
-    auto configuration = decoderConfiguration(audioInfo, filters);
-    if (!configuration)
+    if (!canDecodeAudio(audioInfo, filters))
         return CreatePromise::createAndReject(isProtected(audioInfo) ? PlatformMediaError::ProtectedContent : PlatformMediaError::NotSupportedError);
 
     Ref outputInfo = AudioInfo::create({
@@ -430,7 +332,7 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createAudio(const A
         });
     };
 
-    return AudioDecoder::create(configuration->codec, configuration->config, WTF::move(outputCallback))->whenSettled(decoder->m_queue.get(), [decoder](auto&& result) -> Ref<CreatePromise> {
+    return AudioDecoder::create(audioInfo, WTF::move(outputCallback))->whenSettled(decoder->m_queue.get(), [decoder](auto&& result) -> Ref<CreatePromise> {
         if (!result)
             return CreatePromise::createAndReject(PlatformMediaError::DecoderCreationError);
         assertIsCurrent(decoder->m_queue.get());

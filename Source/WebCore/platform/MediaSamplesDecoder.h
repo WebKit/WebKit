@@ -64,7 +64,7 @@ public:
 
     WEBCORE_EXPORT static bool canDecode(const TrackInfo&, Filters);
     WEBCORE_EXPORT static Ref<CreatePromise> create(const TrackInfo&, Filters);
-    WEBCORE_EXPORT ~MediaSamplesDecoder();
+    WEBCORE_EXPORT ~MediaSamplesDecoder() WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
 
     WEBCORE_EXPORT bool canContinueWith(const TrackInfo&) const;
 

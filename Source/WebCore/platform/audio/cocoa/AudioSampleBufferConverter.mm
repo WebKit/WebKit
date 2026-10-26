@@ -40,7 +40,6 @@
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/cf/CoreAudioExtras.h>
 #include <wtf/NativePromise.h>
-#include <wtf/Scope.h>
 #include <wtf/ZippedRange.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
@@ -76,11 +75,11 @@ AudioSampleBufferConverter::~AudioSampleBufferConverter()
 {
     if (m_outputBufferQueue)
         PAL::CMBufferQueueRemoveTrigger(m_outputBufferQueue.get(), m_triggerToken);
+}
 
-    if (m_converter) {
-        PAL::AudioConverterDispose(m_converter);
-        m_converter = nullptr;
-    }
+void UniqueAudioConverter::Deleter::operator()(AudioConverterRef converter) const
+{
+    PAL::AudioConverterDispose(converter);
 }
 
 void AudioSampleBufferConverter::converterOutputBufferCallback(void* object, CMBufferQueueTriggerToken)
@@ -189,14 +188,74 @@ static OSStatus computeSampleRate(auto& destinationFormat)
     return noErr;
 }
 
+static std::expected<UniqueAudioConverter, OSStatus> createAudioConverter(CMFormatDescriptionRef formatDescription, AudioFormatID outputFormatID, AudioStreamBasicDescription& sourceFormat, AudioStreamBasicDescription& destinationFormat)
+{
+    const auto *audioFormatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription);
+    if (!audioFormatListItem)
+        return std::unexpected(kCMSampleBufferError_InvalidMediaFormat);
+    sourceFormat = audioFormatListItem->mASBD;
+
+    if (!destinationFormat.mFormatID || !destinationFormat.mSampleRate) {
+        destinationFormat.mFormatID = outputFormatID;
+        destinationFormat.mChannelsPerFrame = sourceFormat.mChannelsPerFrame;
+        destinationFormat.mSampleRate = sourceFormat.mSampleRate;
+    }
+
+    if (auto error = computeSampleRate(destinationFormat))
+        return std::unexpected(error);
+
+    AudioConverterRef rawConverter = nullptr;
+    auto error = PAL::AudioConverterNew(&sourceFormat, &destinationFormat, &rawConverter);
+    if (error == kAudioConverterErr_FormatNotSupported) {
+        destinationFormat.mSampleRate = 48000;
+        error = PAL::AudioConverterNew(&sourceFormat, &destinationFormat, &rawConverter);
+    }
+    if (error) {
+        RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter AudioConverterNew failed with %d", static_cast<int>(error));
+        return std::unexpected(error);
+    }
+    UniqueAudioConverter converter { rawConverter };
+
+    size_t cookieSize = 0;
+    const void *cookie = PAL::CMAudioFormatDescriptionGetMagicCookie(formatDescription, &cookieSize);
+    if (cookieSize) {
+        if (auto error = PAL::AudioConverterSetProperty(converter, kAudioConverterDecompressionMagicCookie, (UInt32)cookieSize, cookie)) {
+            RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter setting kAudioConverterDecompressionMagicCookie failed with %d", static_cast<int>(error));
+            return std::unexpected(error);
+        }
+    }
+
+    UInt32 size = sizeof(sourceFormat);
+    if (auto error = PAL::AudioConverterGetProperty(converter, kAudioConverterCurrentInputStreamDescription, &size, &sourceFormat)) {
+        RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter getting kAudioConverterCurrentInputStreamDescription failed with %d", static_cast<int>(error));
+        return std::unexpected(error);
+    }
+
+    size = sizeof(destinationFormat);
+    if (auto error = PAL::AudioConverterGetProperty(converter, kAudioConverterCurrentOutputStreamDescription, &size, &destinationFormat)) {
+        RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter getting kAudioConverterCurrentOutputStreamDescription failed with %d", static_cast<int>(error));
+        return std::unexpected(error);
+    }
+
+    return converter;
+}
+
+bool AudioSampleBufferConverter::canConvert(CMFormatDescriptionRef formatDescription, const Options& options)
+{
+    AudioStreamBasicDescription sourceFormat { };
+    auto destinationFormat = options.description ? *options.description : AudioStreamBasicDescription { };
+    return !!createAudioConverter(formatDescription, options.format, sourceFormat, destinationFormat);
+}
+
 OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescription(CMFormatDescriptionRef formatDescription, AudioFormatID outputFormatID)
 {
     assertIsCurrent(queue());
 
-    const auto *audioFormatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription);
-    if (!audioFormatListItem)
-        return kCMSampleBufferError_InvalidMediaFormat;
-    m_sourceFormat = audioFormatListItem->mASBD;
+    auto converterOrError = createAudioConverter(formatDescription, outputFormatID, m_sourceFormat, m_destinationFormat);
+    if (!converterOrError)
+        return converterOrError.error();
+    auto converter = WTF::move(*converterOrError);
+
     m_skipEmptyBlock = [](AudioFormatID format) {
         switch (format) {
         case kAudioFormatLinearPCM:
@@ -217,66 +276,17 @@ OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescriptio
         }
     }(m_sourceFormat.mFormatID);
 
-    if (!m_destinationFormat.mFormatID || !m_destinationFormat.mSampleRate) {
-        m_destinationFormat.mFormatID = outputFormatID;
-        m_destinationFormat.mChannelsPerFrame = m_sourceFormat.mChannelsPerFrame;
-        m_destinationFormat.mSampleRate = m_sourceFormat.mSampleRate;
-    }
-
-    if (auto error = computeSampleRate(m_destinationFormat))
-        return error;
-
-    AudioConverterRef converter;
-    auto error = PAL::AudioConverterNew(&m_sourceFormat, &m_destinationFormat, &converter);
-    if (error == kAudioConverterErr_FormatNotSupported) {
-        m_destinationFormat.mSampleRate = 48000;
-        error = PAL::AudioConverterNew(&m_sourceFormat, &m_destinationFormat, &converter);
-    }
-    if (error) {
-        RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter AudioConverterNew failed with %d", static_cast<int>(error));
-        return error;
-    }
-    m_converter = converter;
-
-    auto cleanupInCaseOfError = makeScopeExit([this, protectedThis = Ref { *this }] {
-        assertIsCurrent(queue());
-
-        PAL::AudioConverterDispose(m_converter);
-        m_converter = nullptr;
-    });
-
-    size_t cookieSize = 0;
-    const void *cookie = PAL::CMAudioFormatDescriptionGetMagicCookie(formatDescription, &cookieSize);
-    if (cookieSize) {
-        if (auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterDecompressionMagicCookie, (UInt32)cookieSize, cookie)) {
-            RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter setting kAudioConverterDecompressionMagicCookie failed with %d", static_cast<int>(error));
-            return error;
-        }
-    }
-
-    UInt32 size = sizeof(m_sourceFormat);
-    if (auto error = PAL::AudioConverterGetProperty(m_converter, kAudioConverterCurrentInputStreamDescription, &size, &m_sourceFormat)) {
-        RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter getting kAudioConverterCurrentInputStreamDescription failed with %d", static_cast<int>(error));
-        return error;
-    }
-
-    size = sizeof(m_destinationFormat);
-    if (auto error = PAL::AudioConverterGetProperty(m_converter, kAudioConverterCurrentOutputStreamDescription, &size, &m_destinationFormat)) {
-        RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter getting kAudioConverterCurrentOutputStreamDescription failed with %d", static_cast<int>(error));
-        return error;
-    }
-
     if (!isPCM()) {
         bool shouldSetDefaultOutputBitRate = true;
         if (m_options.outputBitRate) {
-            if (auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, sizeof(*m_options.outputBitRate), &*m_options.outputBitRate))
+            if (auto error = PAL::AudioConverterSetProperty(converter, kAudioConverterEncodeBitRate, sizeof(*m_options.outputBitRate), &*m_options.outputBitRate))
                 RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter setting kAudioConverterEncodeBitRate failed with %d", static_cast<int>(error));
             else
                 shouldSetDefaultOutputBitRate = false;
         }
         if (shouldSetDefaultOutputBitRate) {
             auto outputBitRate = defaultOutputBitRate(m_destinationFormat);
-            if (auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, sizeof(outputBitRate), &outputBitRate))
+            if (auto error = PAL::AudioConverterSetProperty(converter, kAudioConverterEncodeBitRate, sizeof(outputBitRate), &outputBitRate))
                 RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter setting default kAudioConverterEncodeBitRate failed with %d", static_cast<int>(error));
             else
                 m_defaultBitRate = outputBitRate;
@@ -292,7 +302,7 @@ OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescriptio
     if (!isPCM()) {
         AudioConverterPrimeInfo primeInfo { 0, 0 };
         UInt32 size = sizeof(primeInfo);
-        if (auto error = PAL::AudioConverterGetProperty(m_converter, kAudioConverterPrimeInfo, &size, &primeInfo))
+        if (auto error = PAL::AudioConverterGetProperty(converter, kAudioConverterPrimeInfo, &size, &primeInfo))
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter getting kAudioConverterPrimeInfo failed with %d", static_cast<int>(error));
         else
             m_preSkip = primeInfo.leadingFrames;
@@ -300,37 +310,37 @@ OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescriptio
 
         if (m_options.bitrateMode) {
             UInt32 bitrateMode = *m_options.bitrateMode == BitrateMode::Variable ? kAudioCodecBitRateControlMode_Variable : kAudioCodecBitRateControlMode_Constant;
-            if (auto error = PAL::AudioConverterSetProperty(m_converter, kAudioCodecPropertyBitRateControlMode, sizeof(bitrateMode), &bitrateMode))
+            if (auto error = PAL::AudioConverterSetProperty(converter, kAudioCodecPropertyBitRateControlMode, sizeof(bitrateMode), &bitrateMode))
                 RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter setting kAudioCodecPropertyBitRateControlMode failed with %d", static_cast<int>(error));
         }
         if (m_options.complexity) {
-            if (auto error = PAL::AudioConverterSetProperty(m_converter, kAudioCodecPropertyQualitySetting, sizeof(*m_options.complexity), &m_options.complexity.value()))
+            if (auto error = PAL::AudioConverterSetProperty(converter, kAudioCodecPropertyQualitySetting, sizeof(*m_options.complexity), &m_options.complexity.value()))
                 RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter setting kAudioCodecPropertyQualitySetting failed with %d", static_cast<int>(error));
         }
 
         // Only operational with Opus encoder.
         if (m_options.packetlossperc) {
-            if (auto error = PAL::AudioConverterSetProperty(m_converter, 'plsp', sizeof(*m_options.packetlossperc), &m_options.packetlossperc.value()))
+            if (auto error = PAL::AudioConverterSetProperty(converter, 'plsp', sizeof(*m_options.packetlossperc), &m_options.packetlossperc.value()))
                 RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter setting packetlossperc failed with %d", static_cast<int>(error));
         }
         if (m_options.useinbandfec) {
-            if (auto error = PAL::AudioConverterSetProperty(m_converter, 'pfec', sizeof(*m_options.useinbandfec), &m_options.useinbandfec.value()))
+            if (auto error = PAL::AudioConverterSetProperty(converter, 'pfec', sizeof(*m_options.useinbandfec), &m_options.useinbandfec.value()))
                 RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter setting useinbandfec failed with %d", static_cast<int>(error));
         }
     }
 
     if (!m_destinationFormat.mBytesPerPacket) {
         // If the destination format is VBR, we need to get max size per packet from the converter.
-        size = sizeof(m_maxOutputPacketSize);
+        UInt32 size = sizeof(m_maxOutputPacketSize);
 
-        if (auto error = PAL::AudioConverterGetProperty(m_converter, kAudioConverterPropertyMaximumOutputPacketSize, &size, &m_maxOutputPacketSize)) {
+        if (auto error = PAL::AudioConverterGetProperty(converter, kAudioConverterPropertyMaximumOutputPacketSize, &size, &m_maxOutputPacketSize)) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter getting kAudioConverterPropertyMaximumOutputPacketSize failed with %d", static_cast<int>(error));
             return error;
         }
     } else
         m_maxOutputPacketSize = m_destinationFormat.mBytesPerPacket;
 
-    cleanupInCaseOfError.release();
+    m_converter = WTF::move(converter);
 
     size_t sizeNeededForDestination = CAAudioStreamDescription(m_destinationFormat).numberOfChannelStreams() * m_maxOutputPacketSize;
     if (m_destinationBuffer.size() < sizeNeededForDestination)

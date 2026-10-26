@@ -36,10 +36,103 @@
 #include "GStreamerRegistryScanner.h"
 #endif
 
+#include "AudioUtilities.h"
+#include "SharedBuffer.h"
+#include "TrackInfo.h"
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+#if !USE(AVFOUNDATION)
+static constexpr FourCC opusCodecName { "opus" };
+static constexpr FourCC vorbisCodecName { "vorb" };
+static constexpr FourCC flacCodecName { "flac" };
+static constexpr FourCC mp3CodecName { ".mp3" };
+static constexpr FourCC alawCodecName { "alaw" };
+static constexpr FourCC ulawCodecName { "ulaw" };
+static constexpr FourCC aacCodecName { "aac " };
+static constexpr FourCC heAACCodecName { "aach" };
+static constexpr FourCC heAACv2CodecName { "aacp" };
+static constexpr FourCC lpcmCodecName { "lpcm" };
+
+struct AudioDecoderConfiguration {
+    String codec;
+    AudioDecoder::Config config;
+};
+
+static std::optional<AudioDecoderConfiguration> audioDecoderConfiguration(const AudioInfo& info)
+{
+    RefPtr cookieData = info.cookieData();
+    auto cookie = cookieData ? cookieData->span() : std::span<const uint8_t> { };
+    auto codecName = info.codecName();
+
+    auto configuration = [&](String&& codec, Vector<uint8_t>&& description = { }) {
+        return AudioDecoderConfiguration { WTF::move(codec), { .description = WTF::move(description), .sampleRate = info.rate(), .numberOfChannels = info.channels() } };
+    };
+
+    if (codecName == opusCodecName) {
+        if (cookie.empty())
+            return { };
+        // The pre-skip is applied through the samples' trimInterval, so the decoder must not apply it too.
+        return configuration("opus"_s, AudioUtilities::opusHeadWithoutPreSkip(cookie));
+    }
+    if (codecName == vorbisCodecName) {
+        if (cookie.empty())
+            return { };
+        return configuration("vorbis"_s, Vector<uint8_t>(cookie));
+    }
+    if (codecName == flacCodecName) {
+        if (cookie.empty())
+            return { };
+        return configuration("flac"_s, Vector<uint8_t>(cookie));
+    }
+    if (codecName == mp3CodecName)
+        return configuration("mp3"_s);
+    if (codecName == alawCodecName)
+        return configuration("alaw"_s);
+    if (codecName == ulawCodecName)
+        return configuration("ulaw"_s);
+
+    // FIXME: AAC-LD and AAC-ELD ('aacl', 'aace') are not accepted by AudioDecoder::isCodecSupported.
+    String aacCodec;
+    if (codecName == aacCodecName)
+        aacCodec = "mp4a.40.2"_s;
+    else if (codecName == heAACCodecName)
+        aacCodec = "mp4a.40.5"_s;
+    else if (codecName == heAACv2CodecName)
+        aacCodec = "mp4a.40.29"_s;
+    if (!aacCodec.isNull()) {
+        // AudioDecoder falls back to the track's sample rate and channel count when it has no AudioSpecificConfig.
+        if (cookie.empty())
+            return configuration(WTF::move(aacCodec));
+
+        // An MPEG-4 audio cookie is an ES_Descriptor.
+        auto audioSpecificConfig = AudioUtilities::extractAudioSpecificConfigFromESDescriptor(cookie);
+        if (audioSpecificConfig.isEmpty())
+            return { };
+        return configuration(WTF::move(aacCodec), WTF::move(audioSpecificConfig));
+    }
+
+    // FIXME: only 32-bit floating point is recognised for 32-bit PCM, and PCM is assumed little-endian.
+    if (codecName == lpcmCodecName) {
+        switch (info.bitDepth()) {
+        case 8:
+            return configuration("pcm-u8"_s);
+        case 16:
+            return configuration("pcm-s16"_s);
+        case 24:
+            return configuration("pcm-s24"_s);
+        case 32:
+            return configuration("pcm-f32"_s);
+        default:
+            return { };
+        }
+    }
+
+    return { };
+}
+#endif
 
 bool AudioDecoder::isCodecSupported(const StringView& codec)
 {
@@ -81,6 +174,31 @@ Ref<AudioDecoder::CreatePromise> AudioDecoder::create(const String& codecName, c
     UNUSED_PARAM(outputCallback);
 
     return CreatePromise::createAndReject("Not supported"_s);
+#endif
+}
+
+bool AudioDecoder::canDecode(const AudioInfo& info)
+{
+    if (info.isDecoded() || !info.rate() || !info.channels())
+        return false;
+
+#if USE(AVFOUNDATION)
+    return AudioDecoderCocoa::canDecode(info);
+#else
+    auto configuration = audioDecoderConfiguration(info);
+    return configuration && isCodecSupported(configuration->codec);
+#endif
+}
+
+Ref<AudioDecoder::CreatePromise> AudioDecoder::create(const AudioInfo& info, OutputCallback&& outputCallback)
+{
+#if USE(AVFOUNDATION)
+    return AudioDecoderCocoa::create(info, WTF::move(outputCallback));
+#else
+    auto configuration = audioDecoderConfiguration(info);
+    if (!configuration)
+        return CreatePromise::createAndReject("Not supported"_s);
+    return create(configuration->codec, configuration->config, WTF::move(outputCallback));
 #endif
 }
 
