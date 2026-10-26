@@ -19,17 +19,14 @@
 #include "config.h"
 #include "DragImage.h"
 
-#include "Element.h"
 #include "NativeImage.h"
 #include "SkiaUtilities.h"
 #include "TextFlags.h"
-#include "TextIndicator.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkBitmap.h>
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkImageInfo.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -91,11 +88,6 @@ DragImageRef createDragImageFromImage(NativeImage& image, GraphicsClient*, float
 DragImageRef createDragImageIconForCachedImageFilename(const String&)
 {
     return nullptr;
-}
-
-DragImageData createDragImageForLink(Element&, URL&, const String&, float)
-{
-    return { nullptr, nullptr };
 }
 
 DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path&)

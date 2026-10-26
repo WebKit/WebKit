@@ -37,6 +37,7 @@
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
 #include "DocumentView.h"
+#include "DragController.h"
 #include "DragData.h"
 #include "Editor.h"
 #include "FileList.h"
@@ -668,7 +669,7 @@ DragImageRef DataTransfer::createDragImage(const Document* document, IntPoint& l
 
         IntRect imageRect;
         IntRect elementRect;
-        DragImageRef result = createDragImageForImage(*frame, dragImageElement().releaseNonNull(), imageRect, elementRect);
+        DragImageRef result = DragController::dragImageForImage(*frame, dragImageElement().releaseNonNull(), imageRect, elementRect);
         location = platformAdjustDragImageHotSpot(m_dragLocation + (elementRect.location() - imageRect.location()), imageRect.size());
         return result;
     }

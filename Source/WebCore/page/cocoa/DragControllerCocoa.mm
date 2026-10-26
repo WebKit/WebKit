@@ -48,10 +48,27 @@
 #import "PasteboardStrategy.h"
 #import "PlatformStrategies.h"
 #import "Range.h"
+#import "TextIndicator.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
+#if PLATFORM(MAC)
+#import "ColorMac.h"
+#import "LocalDefaultSystemAppearance.h"
+#import "WebKitNSImageExtras.h"
+#import <pal/spi/cf/CoreTextSPI.h>
+#import <pal/spi/cocoa/URLFormattingSPI.h>
+#import <wtf/SoftLinking.h>
+
+#if !HAVE(URL_FORMATTING)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
+#endif
+#endif
+
 #if PLATFORM(IOS_FAMILY)
+#import "GraphicsContextCG.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UIKit/UIGraphicsImageRenderer.h>
+#import <pal/ios/UIKitSoftLink.h>
 #endif
 
 namespace WebCore {
@@ -158,6 +175,243 @@ void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Elemen
 {
     client().declareAndWriteDragImage(dataTransfer.pasteboard().name(), element, url, label, protect(protect(element.document())->frame()));
 }
+
+#if PLATFORM(MAC)
+
+constexpr CGFloat linkImagePadding = 10;
+constexpr CGFloat linkImageDomainBaselineToTitleBaseline = 18;
+constexpr CGFloat linkImageCornerRadius = 5;
+constexpr CGFloat linkImageMaximumWidth = 400;
+constexpr CGFloat linkImageFontSize = 11;
+constexpr CFIndex linkImageTitleMaximumLineCount = 2;
+
+struct LinkImageLayout {
+    LinkImageLayout(URL&, const String& title);
+
+    struct Label {
+        FloatPoint origin;
+        RetainPtr<CTFrameRef> frame;
+    };
+    Vector<Label> labels;
+
+    FloatRect boundingRect;
+};
+
+LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
+{
+    RetainPtr title = nsStringNilIfEmpty(titleString);
+    RetainPtr nsURL = url.createNSURL();
+    NSString *absoluteURLString = [nsURL absoluteString];
+
+    RetainPtr domain = absoluteURLString;
+#if HAVE(URL_FORMATTING)
+    domain = [nsURL _lp_simplifiedDisplayString];
+#else
+    if (LinkPresentationLibrary())
+        domain = [nsURL _lp_simplifiedDisplayString];
+#endif
+
+    if ([title isEqualToString:absoluteURLString])
+        title = nil;
+
+    NSFont *titleFont = [NSFont boldSystemFontOfSize:linkImageFontSize];
+    NSFont *domainFont = [NSFont systemFontOfSize:linkImageFontSize];
+
+    NSColor *titleColor = [NSColor labelColor];
+    NSColor *domainColor = [NSColor secondaryLabelColor];
+
+    CGFloat maximumAvailableWidth = linkImageMaximumWidth - linkImagePadding * 2;
+
+    CGFloat currentY = linkImagePadding;
+    CGFloat maximumUsedTextWidth = 0;
+
+    auto buildLines = [this, maximumAvailableWidth, &maximumUsedTextWidth, &currentY](NSString *text, NSColor *color, NSFont *font, CFIndex maximumLines, CTLineBreakMode lineBreakMode) {
+        CTParagraphStyleSetting paragraphStyleSettings;
+        paragraphStyleSettings.spec = kCTParagraphStyleSpecifierLineBreakMode;
+        paragraphStyleSettings.valueSize = sizeof(CTLineBreakMode);
+        paragraphStyleSettings.value = &lineBreakMode;
+        RetainPtr<CTParagraphStyleRef> paragraphStyle = adoptCF(CTParagraphStyleCreate(&paragraphStyleSettings, 1));
+
+        NSDictionary *textAttributes = @{
+            (id)kCTFontAttributeName: font,
+            (id)kCTForegroundColorAttributeName: color,
+            (id)kCTParagraphStyleAttributeName: (id)paragraphStyle.get()
+        };
+        NSDictionary *frameAttributes = @{
+            (id)kCTFrameMaximumNumberOfLinesAttributeName: @(maximumLines)
+        };
+
+        RetainPtr<NSAttributedString> attributedText = adoptNS([[NSAttributedString alloc] initWithString:text attributes:textAttributes]);
+        RetainPtr<CTFramesetterRef> textFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedText.get()));
+
+        CFRange fitRange;
+        CGSize textSize = CTFramesetterSuggestFrameSizeWithConstraints(textFramesetter.get(), CFRangeMake(0, 0), (CFDictionaryRef)frameAttributes, CGSizeMake(maximumAvailableWidth, CGFLOAT_MAX), &fitRange);
+
+        RetainPtr<CGPathRef> textPath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, textSize.width, textSize.height), nullptr));
+        RetainPtr<CTFrameRef> textFrame = adoptCF(CTFramesetterCreateFrame(textFramesetter.get(), fitRange, textPath.get(), (CFDictionaryRef)frameAttributes));
+
+        RetainPtr ctLines = CTFrameGetLines(textFrame.get());
+        CFIndex lineCount = CFArrayGetCount(ctLines);
+        if (!lineCount)
+            return;
+
+        Vector<CGPoint> origins(lineCount);
+        CGRect lineBounds;
+        CGFloat height = 0;
+        CTFrameGetLineOrigins(textFrame.get(), CFRangeMake(0, 0), origins.mutableSpan().data());
+        for (CFIndex lineIndex = 0; lineIndex < lineCount; ++lineIndex) {
+            RetainPtr line = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
+
+            lineBounds = CTLineGetBoundsWithOptions(line, 0);
+            CGFloat trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
+            CGFloat lineWidthIgnoringTrailingWhitespace = lineBounds.size.width - trailingWhitespaceWidth;
+            maximumUsedTextWidth = std::max(maximumUsedTextWidth, lineWidthIgnoringTrailingWhitespace);
+
+            if (lineIndex)
+                height += origins[lineIndex - 1].y - origins[lineIndex].y;
+        }
+
+        LinkImageLayout::Label label;
+        label.frame = textFrame;
+        label.origin = FloatPoint(linkImagePadding, currentY + origins[0].y);
+        labels.append(label);
+
+        currentY += height + lineBounds.size.height;
+    };
+
+    if (title)
+        buildLines(title.get(), titleColor, titleFont, linkImageTitleMaximumLineCount, kCTLineBreakByTruncatingTail);
+
+    if (title && domain)
+        currentY += linkImageDomainBaselineToTitleBaseline - (domainFont.ascender - domainFont.descender);
+
+    if (domain)
+        buildLines(domain, domainColor, domainFont, 1, kCTLineBreakByTruncatingMiddle);
+
+    currentY += linkImagePadding;
+
+    boundingRect = FloatRect(0, 0, maximumUsedTextWidth + linkImagePadding * 2, currentY);
+
+    // To work around blurry drag images on 1x displays, make the width and height a multiple of 2.
+    // FIXME: remove this workaround when <rdar://problem/33059739> is fixed.
+    boundingRect.setWidth((static_cast<int>(boundingRect.width()) / 2) * 2);
+    boundingRect.setHeight((static_cast<int>(boundingRect.height() / 2) * 2));
+}
+
+std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element& element, URL& url, const String& title, float deviceScaleFactor)
+{
+    LinkImageLayout layout(url, title);
+
+    LocalDefaultSystemAppearance localAppearance(protect(element.document())->useDarkAppearance(protect(element.computedStyle())));
+
+    auto imageSize = layout.boundingRect.size();
+    RetainPtr<NSImage> dragImage = adoptNS([[NSImage alloc] initWithSize:imageSize]);
+    [dragImage _web_lockFocusWithDeviceScaleFactor:deviceScaleFactor];
+
+    RetainPtr<CGContextRef> cgContext = [NSGraphicsContext currentContext].CGContext;
+
+    RetainPtr backgroundPath = adoptCF(CGPathCreateWithRoundedRect(layout.boundingRect, linkImageCornerRadius, linkImageCornerRadius, nullptr));
+    CGContextSetFillColorWithColor(cgContext.get(), cachedCGColor(colorFromCocoaColor([NSColor controlBackgroundColor])).get());
+    CGContextAddPath(cgContext.get(), backgroundPath.get());
+    CGContextFillPath(cgContext.get());
+    CGContextSetTextMatrix(cgContext.get(), CGAffineTransformIdentity);
+
+    for (const auto& label : layout.labels) {
+        CGContextSaveGState(cgContext.get());
+        CGContextTranslateCTM(cgContext.get(), label.origin.x(), layout.boundingRect.height() - label.origin.y() - linkImagePadding);
+        CTFrameDraw(label.frame.get(), cgContext.get());
+        CGContextRestoreGState(cgContext.get());
+    }
+
+    [dragImage unlockFocus];
+
+    return  { dragImage, nullptr };
+}
+
+#endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS_FAMILY)
+
+static RetainPtr<CGImageRef> cgImageFromTextIndicator(const TextIndicator& textIndicator)
+{
+    RefPtr image = textIndicator.contentImage();
+    if (!image)
+        return { };
+
+    RefPtr nativeImage = image->nativeImage();
+    if (!nativeImage)
+        return { };
+
+    return nativeImage->platformImage();
+}
+
+std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element& linkElement, URL&, const String&, float)
+{
+    constexpr OptionSet<TextIndicatorOption> defaultLinkIndicatorOptions {
+        TextIndicatorOption::TightlyFitContent,
+        TextIndicatorOption::RespectTextColor,
+        TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges,
+        TextIndicatorOption::ExpandClipBeyondVisibleRect,
+        TextIndicatorOption::ComputeEstimatedBackgroundColor
+    };
+
+    RefPtr textIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(linkElement), defaultLinkIndicatorOptions, TextIndicatorPresentationTransition::None, { });
+    if (!textIndicator)
+        return  { nullptr, nullptr };
+
+    return  { cgImageFromTextIndicator(*textIndicator).autorelease(), textIndicator };
+}
+
+constexpr OptionSet<TextIndicatorOption> defaultSelectionDragImageTextIndicatorOptions {
+    TextIndicatorOption::ExpandClipBeyondVisibleRect,
+    TextIndicatorOption::PaintAllContent,
+    TextIndicatorOption::UseSelectionRectForSizing,
+    TextIndicatorOption::ComputeEstimatedBackgroundColor
+};
+
+std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForSelection(LocalFrame& frame, bool forceBlackText)
+{
+    if (RefPtr document = frame.document())
+        document->updateLayout();
+
+    auto options = defaultSelectionDragImageTextIndicatorOptions;
+    if (!forceBlackText)
+        options.add(TextIndicatorOption::RespectTextColor);
+
+    RefPtr textIndicator = TextIndicator::createWithSelectionInFrame(frame, options, TextIndicatorPresentationTransition::None, FloatSize());
+    if (!textIndicator)
+        return { nullptr, nullptr };
+
+    return { cgImageFromTextIndicator(*textIndicator).autorelease(), textIndicator };
+}
+
+DragImageRef DragController::dragImageForRange(LocalFrame& frame, const SimpleRange& range, bool forceBlackText)
+{
+    if (RefPtr document = frame.document())
+        document->updateLayout();
+
+    if (range.collapsed())
+        return nil;
+
+    auto options = defaultSelectionDragImageTextIndicatorOptions;
+    if (!forceBlackText)
+        options.add(TextIndicatorOption::RespectTextColor);
+
+    auto textIndicator = TextIndicator::createWithRange(range, options, TextIndicatorPresentationTransition::None);
+    if (!textIndicator || !textIndicator->contentImage())
+        return nil;
+
+    Ref image = *textIndicator->contentImage();
+    RetainPtr render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image->size()]);
+    RetainPtr finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
+        GraphicsContextCG context(protect(rendererContext.CGContext).get());
+        context.drawBitmapImage(image, FloatPoint());
+    }];
+
+    return [finalImage CGImage];
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebCore
 

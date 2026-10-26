@@ -26,9 +26,19 @@
 #include "config.h"
 #include "DragController.h"
 
+#include "FrameSnapshotting.h"
 #include "HTMLAnchorElement.h"
+#include "ImageBuffer.h"
+#include "LocalFrameInlines.h"
+#include "LocalFrameView.h"
+#include "NativeImage.h"
+#include "Position.h"
+#include "RenderElement.h"
+#include "RenderSelection.h"
+#include "RenderView.h"
 #include "SVGAElement.h"
 #include "SVGElementTypeHelpers.h"
+#include "TextIndicator.h"
 
 #if ENABLE(DRAG_SUPPORT)
 #include "BoundaryPointInlines.h"
@@ -76,8 +86,6 @@
 #include "Image.h"
 #include "ImageOrientation.h"
 #include "ImageOverlay.h"
-#include "LocalFrameInlines.h"
-#include "LocalFrameView.h"
 #include "Model.h"
 #include "MoveSelectionCommand.h"
 #include "MutableStyleProperties.h"
@@ -95,7 +103,6 @@
 #include "RenderAttachment.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
-#include "RenderView.h"
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
@@ -1098,7 +1105,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         }
         client().willPerformDragSourceAction(DragSourceAction::Selection, dragOrigin, dataTransfer);
         if (!dragImage) {
-            auto [dragImageRef, textIndicator] = createDragImageForSelection(src);
+            auto [dragImageRef, textIndicator] = dragImageAndTextIndicatorForSelection(src);
             dragImage = DragImage { dissolveDragImageToFraction(dragImageRef, DragImageAlpha) };
             if (textIndicator && textIndicator->contentImage())
                 dragImage.setTextIndicator(textIndicator);
@@ -1203,7 +1210,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
 
         client().willPerformDragSourceAction(DragSourceAction::Link, dragOrigin, dataTransfer);
         if (!dragImage) {
-            auto [dragImageRef, textIndicator] = createDragImageForLink(element, linkURL, textContentWithSimplifiedWhiteSpace, m_page->deviceScaleFactor());
+            auto [dragImageRef, textIndicator] = dragImageAndTextIndicatorForLink(element, linkURL, textContentWithSimplifiedWhiteSpace, m_page->deviceScaleFactor());
             dragImage = DragImage { dragImageRef };
             if (dragImage) {
                 m_dragOffset = dragOffsetForLinkDragImage(dragImage.get());
@@ -1247,7 +1254,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
             CheckedPtr attachmentRenderer = dynamicDowncast<RenderAttachment>(attachment->renderer());
             if (attachmentRenderer)
                 attachmentRenderer->setShouldDrawBorder(false);
-            auto [dragImageRef, textIndicator] = createDragImageForSelection(src);
+            auto [dragImageRef, textIndicator] = dragImageAndTextIndicatorForSelection(src);
             dragImage = DragImage { dissolveDragImageToFraction(dragImageRef, DragImageAlpha) };
             if (attachmentRenderer)
                 attachmentRenderer->setShouldDrawBorder(true);
@@ -1300,7 +1307,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
 
 #if ENABLE(MODEL_ELEMENT) && !ENABLE(GPU_PROCESS_MODEL)
     if (RefPtr modelElement = dynamicDowncast<HTMLModelElement>(state.source); modelElement && m_dragSourceAction.contains(DragSourceAction::Model)) {
-        dragImage = DragImage { createDragImageForNode(src, *modelElement) };
+        dragImage = DragImage { dragImageForNode(src, *modelElement) };
 
         PasteboardImage pasteboardImage;
 #if PLATFORM(IOS_FAMILY)
@@ -1634,5 +1641,157 @@ bool DragController::shouldUseFileIconForDragImage(const RenderImage& renderImag
 }
 
 #endif // ENABLE(DRAG_SUPPORT)
+
+struct ScopedNodeDragEnabler {
+    ScopedNodeDragEnabler(LocalFrame& frame, Node& node)
+        : element(dynamicDowncast<Element>(node))
+    {
+        if (element)
+            protect(element)->setBeingDragged(true);
+        protect(frame.document())->updateLayout();
+    }
+
+    ~ScopedNodeDragEnabler()
+    {
+        if (element)
+            protect(element)->setBeingDragged(false);
+    }
+
+    RefPtr<Element> element;
+};
+
+static DragImageRef createDragImageFromSnapshot(RefPtr<ImageBuffer> snapshot, Node* node)
+{
+    if (!snapshot)
+        return nullptr;
+
+    if (node && !is<RenderElement>(node->renderer()))
+        return nullptr;
+
+    RefPtr image = ImageBuffer::sinkIntoNativeImage(WTF::move(snapshot));
+    if (!image)
+        return nullptr;
+    return createDragImageFromImage(*image);
+}
+
+DragImageRef DragController::dragImageForNode(LocalFrame& frame, Node& node)
+{
+    ScopedNodeDragEnabler enableDrag(frame, node);
+
+    SnapshotOptions options { { SnapshotFlags::DraggableElement }, PixelFormat::BGRA8, ColorSpace::SRGB() };
+
+    return createDragImageFromSnapshot(snapshotNode(frame, node, WTF::move(options)), &node);
+}
+
+#if !PLATFORM(IOS_FAMILY) || !ENABLE(DRAG_SUPPORT)
+
+std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForSelection(LocalFrame& frame, bool forceBlackText)
+{
+    SnapshotOptions options { { }, PixelFormat::BGRA8, ColorSpace::SRGB() };
+    if (forceBlackText)
+        options.flags.add(SnapshotFlags::ForceBlackText);
+    return { createDragImageFromSnapshot(snapshotSelection(frame, WTF::move(options)), nullptr), nullptr };
+}
+
+#endif
+
+struct ScopedFrameSelectionState {
+    ScopedFrameSelectionState(LocalFrame& frame)
+        : frame(frame)
+    {
+        if (CheckedPtr renderView = frame.contentRenderer())
+            selection = renderView->selection().get();
+    }
+
+    ~ScopedFrameSelectionState()
+    {
+        if (CheckedPtr renderView = frame->contentRenderer()) {
+            ASSERT(selection);
+            renderView->selection().set(selection.value(), RenderSelection::RepaintMode::Nothing);
+        }
+    }
+
+    const WeakRef<LocalFrame> frame;
+    std::optional<RenderRange> selection;
+};
+
+#if !PLATFORM(IOS_FAMILY)
+
+DragImageRef DragController::dragImageForRange(LocalFrame& frame, const SimpleRange& range, bool forceBlackText)
+{
+    protect(frame.document())->updateLayout();
+    CheckedPtr view = frame.contentRenderer();
+    if (!view)
+        return nullptr;
+
+    // To snapshot the range, temporarily select it and take selection snapshot.
+    Position start = makeDeprecatedLegacyPosition(range.start);
+    Position candidate = start.downstream();
+    if (candidate.deprecatedNode() && candidate.deprecatedNode()->renderer())
+        start = candidate;
+
+    Position end = makeDeprecatedLegacyPosition(range.end);
+    candidate = end.upstream();
+    if (candidate.deprecatedNode() && candidate.deprecatedNode()->renderer())
+        end = candidate;
+
+    if (start.isNull() || end.isNull() || start == end)
+        return nullptr;
+
+    const ScopedFrameSelectionState selectionState(frame);
+
+    CheckedPtr startRenderer = start.deprecatedNode()->renderer();
+    CheckedPtr endRenderer = end.deprecatedNode()->renderer();
+    if (!startRenderer || !endRenderer)
+        return nullptr;
+
+    SnapshotOptions options { { SnapshotFlags::PaintSelectionOnly }, PixelFormat::BGRA8, ColorSpace::SRGB() };
+    if (forceBlackText)
+        options.flags.add(SnapshotFlags::ForceBlackText);
+
+    int startOffset = start.deprecatedEditingOffset();
+    int endOffset = end.deprecatedEditingOffset();
+    ASSERT(startOffset >= 0 && endOffset >= 0);
+    view->selection().set({ startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset) }, RenderSelection::RepaintMode::Nothing);
+    // We capture using snapshotFrameRect() because we fake up the selection using
+    // FrameView but snapshotSelection() uses the selection from the Frame itself.
+    return createDragImageFromSnapshot(snapshotFrameRect(frame, view->selection().boundsClippedToVisibleContent(), WTF::move(options)), nullptr);
+}
+
+#endif
+
+#if PLATFORM(IOS_FAMILY) && !ENABLE(DRAG_SUPPORT)
+
+DragImageRef DragController::dragImageForRange(LocalFrame&, const SimpleRange&, bool)
+{
+    return nullptr;
+}
+
+#endif
+
+DragImageRef DragController::dragImageForImage(LocalFrame& frame, Node& node, IntRect& imageRect, IntRect& elementRect)
+{
+    ScopedNodeDragEnabler enableDrag(frame, node);
+
+    if (!node.renderer())
+        return nullptr;
+
+    SnapshotOptions options { { SnapshotFlags::DraggableElement }, PixelFormat::BGRA8, ColorSpace::SRGB() };
+
+    RefPtr snapshot = snapshotNode(frame, node, WTF::move(options), &imageRect, &elementRect);
+    if (imageRect.isEmpty())
+        return nullptr;
+
+    return createDragImageFromSnapshot(WTF::move(snapshot), &node);
+}
+
+#if !PLATFORM(COCOA) && !(PLATFORM(WIN) && USE(CAIRO))
+
+std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element&, URL&, const String&, float)
+{
+    return { nullptr, nullptr };
+}
+
+#endif
 
 } // namespace WebCore

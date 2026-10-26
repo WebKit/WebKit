@@ -109,6 +109,12 @@ public:
     void prepareForDragStart(LocalFrame& sourceFrame, OptionSet<DragSourceAction>, Element& sourceElement, DataTransfer&, const IntPoint& dragOrigin) const;
     bool startDrag(LocalFrame& src, const DragState&, OptionSet<DragOperation>, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData, const std::optional<FrameIdentifier>& rootFrameID);
 
+    WEBCORE_EXPORT static DragImageRef dragImageForNode(LocalFrame&, Node&);
+    WEBCORE_EXPORT static std::pair<DragImageRef, RefPtr<TextIndicator>> dragImageAndTextIndicatorForSelection(LocalFrame&, bool forceBlackText = false);
+    WEBCORE_EXPORT static DragImageRef dragImageForRange(LocalFrame&, const SimpleRange&, bool forceBlackText = false);
+    static DragImageRef dragImageForImage(LocalFrame&, Node&, IntRect& imageRect, IntRect& elementRect);
+    static std::pair<DragImageRef, RefPtr<TextIndicator>> dragImageAndTextIndicatorForLink(Element&, URL&, const String& label, float deviceScaleFactor);
+
     static const IntSize& LEGACY_NODELETE maxDragImageSize();
     static const int MaxOriginalImageArea;
     static const int DragIconRightInset;

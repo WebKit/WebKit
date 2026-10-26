@@ -28,8 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "Document.h"
-#import "Element.h"
 #import "FloatRoundedRect.h"
 #import "FontCascade.h"
 #import "FontPlatformData.h"
@@ -39,14 +37,9 @@
 #import "GraphicsContextCG.h"
 #import "Image.h"
 #import "ImageBuffer.h"
-#import "LocalFrameInlines.h"
 #import "NativeImage.h"
 #import "NotImplemented.h"
-#import "Page.h"
-#import "Range.h"
-#import "SimpleRange.h"
 #import "StringTruncator.h"
-#import "TextIndicator.h"
 #import "TextRun.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreText/CoreText.h>
@@ -107,36 +100,6 @@ void deleteDragImage(DragImageRef)
 {
 }
 
-static RetainPtr<CGImageRef> cgImageFromTextIndicator(const TextIndicator& textIndicator)
-{
-    RefPtr image = textIndicator.contentImage();
-    if (!image)
-        return { };
-
-    RefPtr nativeImage = image->nativeImage();
-    if (!nativeImage)
-        return { };
-
-    return nativeImage->platformImage();
-}
-
-DragImageData createDragImageForLink(Element& linkElement, URL&, const String&, float)
-{
-    constexpr OptionSet<TextIndicatorOption> defaultLinkIndicatorOptions {
-        TextIndicatorOption::TightlyFitContent,
-        TextIndicatorOption::RespectTextColor,
-        TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges,
-        TextIndicatorOption::ExpandClipBeyondVisibleRect,
-        TextIndicatorOption::ComputeEstimatedBackgroundColor
-    };
-
-    RefPtr textIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(linkElement), defaultLinkIndicatorOptions, TextIndicatorPresentationTransition::None, { });
-    if (!textIndicator)
-        return  { nullptr, nullptr };
-
-    return  { cgImageFromTextIndicator(*textIndicator).autorelease(), textIndicator };
-}
-
 DragImageRef createDragImageIconForCachedImageFilename(const String&)
 {
     notImplemented();
@@ -149,59 +112,10 @@ DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef image, flo
     return image;
 }
 
-constexpr OptionSet<TextIndicatorOption> defaultSelectionDragImageTextIndicatorOptions {
-    TextIndicatorOption::ExpandClipBeyondVisibleRect,
-    TextIndicatorOption::PaintAllContent,
-    TextIndicatorOption::UseSelectionRectForSizing,
-    TextIndicatorOption::ComputeEstimatedBackgroundColor
-};
-
-DragImageData createDragImageForSelection(LocalFrame& frame, bool forceBlackText)
-{
-    if (RefPtr document = frame.document())
-        document->updateLayout();
-
-    auto options = defaultSelectionDragImageTextIndicatorOptions;
-    if (!forceBlackText)
-        options.add(TextIndicatorOption::RespectTextColor);
-
-    RefPtr textIndicator = TextIndicator::createWithSelectionInFrame(frame, options, TextIndicatorPresentationTransition::None, FloatSize());
-    if (!textIndicator)
-        return { nullptr, nullptr };
-
-    return { cgImageFromTextIndicator(*textIndicator).autorelease(), textIndicator };
-}
-
 DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
 {
     notImplemented();
     return image;
-}
-
-DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range, bool forceBlackText)
-{
-    if (RefPtr document = frame.document())
-        document->updateLayout();
-
-    if (range.collapsed())
-        return nil;
-
-    auto options = defaultSelectionDragImageTextIndicatorOptions;
-    if (!forceBlackText)
-        options.add(TextIndicatorOption::RespectTextColor);
-
-    auto textIndicator = TextIndicator::createWithRange(range, options, TextIndicatorPresentationTransition::None);
-    if (!textIndicator || !textIndicator->contentImage())
-        return nil;
-
-    Ref image = *textIndicator->contentImage();
-    RetainPtr render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image->size()]);
-    RetainPtr finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
-        GraphicsContextCG context(rendererContext.CGContext);
-        context.drawBitmapImage(image, FloatPoint());
-    }];
-
-    return [finalImage CGImage];
 }
 
 DragImageRef createDragImageForColor(const Color& color, const FloatRect& elementRect, float pageScaleFactor, Path& visiblePath)
@@ -241,11 +155,6 @@ RetainPtr<CGImageRef> scaleDragImage(RetainPtr<CGImageRef>, FloatSize)
 }
 
 RetainPtr<CGImageRef> createDragImageFromImage(NativeImage&, GraphicsClient*, float)
-{
-    return nullptr;
-}
-
-DragImageRef createDragImageForRange(LocalFrame&, const SimpleRange&, bool)
 {
     return nullptr;
 }

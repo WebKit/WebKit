@@ -43,6 +43,7 @@
 #import <WebCore/ContainerNodeInlines.h>
 #import <WebCore/DocumentPage.h>
 #import <WebCore/DocumentView.h>
+#import <WebCore/DragController.h>
 #import <WebCore/DragImage.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FocusController.h>
@@ -501,7 +502,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     RefPtr frame = node->document().frame();
     if (!frame)
         return nil;
-    return createDragImageForNode(*frame, node).autorelease();
+    return WebCore::DragController::dragImageForNode(*frame, node).autorelease();
 }
 
 #endif
@@ -601,7 +602,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     if (!frame)
         return nil;
 
-    auto renderedImage = createDragImageForRange(*frame, range, forceBlackText);
+    auto renderedImage = WebCore::DragController::dragImageForRange(*frame, range, forceBlackText);
 
 #if PLATFORM(MAC)
     // iOS uses CGImageRef for drag images, which doesn't support separate logical/physical sizes.

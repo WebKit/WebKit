@@ -42,7 +42,9 @@ typedef struct CGImage *CGImageRef;
 OBJC_CLASS NSImage;
 #elif USE(CAIRO)
 #if PLATFORM(WIN)
+#include <wtf/win/GDIObject.h>
 typedef struct HBITMAP__* HBITMAP;
+typedef struct HDC__* HDC;
 #endif
 #include "RefPtrCairo.h"
 #elif USE(SKIA)
@@ -51,12 +53,8 @@ typedef struct HBITMAP__* HBITMAP;
 
 namespace WebCore {
 
-class Element;
 class GraphicsClient;
-class IntRect;
-class LocalFrame;
 class NativeImage;
-class Node;
 
 #if PLATFORM(IOS_FAMILY)
 typedef RetainPtr<CGImageRef> DragImageRef;
@@ -70,6 +68,13 @@ typedef RefPtr<cairo_surface_t> DragImageRef;
 typedef sk_sp<SkImage> DragImageRef;
 #else
 typedef void* DragImageRef;
+#endif
+
+#if PLATFORM(WIN) && USE(CAIRO)
+class GraphicsContextCairo;
+
+GDIObject<HBITMAP> allocImage(HDC, IntSize, GraphicsContextCairo** targetRef);
+void deallocContext(GraphicsContextCairo*);
 #endif
 
 #if PLATFORM(COCOA)
@@ -94,18 +99,8 @@ DragImageRef dissolveDragImageToFraction(DragImageRef, float delta);
 DragImageRef createDragImageFromImage(NativeImage&, GraphicsClient* = nullptr, float deviceScaleFactor = 1);
 DragImageRef createDragImageIconForCachedImageFilename(const String&);
 
-struct DragImageData {
-    DragImageRef dragImageRef;
-    RefPtr<TextIndicator> textIndicator;
-};
-// FIXME: These platform helpers should be refactored to avoid using `LocalFrame` and `Node`.
-WEBCORE_EXPORT DragImageRef createDragImageForNode(LocalFrame&, Node&);
-WEBCORE_EXPORT DragImageData createDragImageForSelection(LocalFrame&, bool forceBlackText = false);
-WEBCORE_EXPORT DragImageRef createDragImageForRange(LocalFrame&, const SimpleRange&, bool forceBlackText = false);
 DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path&);
-DragImageRef createDragImageForImage(LocalFrame&, Node&, IntRect& imageRect, IntRect& elementRect);
 
-DragImageData createDragImageForLink(Element&, URL&, const String& label, float deviceScaleFactor);
 void deleteDragImage(DragImageRef);
 
 class DragImage final {
