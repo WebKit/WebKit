@@ -1,0 +1,43 @@
+Tests that the `All` layout context type changed mode survives a main-frame navigation on the page target.
+
+
+== Running test suite: CSS.LayoutContextTypeChangedMode.MainFrameNavigation
+-- Running test case: CSS.LayoutContextTypeChangedMode.MainFrameNavigation.BeforeNavigation
+Changing `layoutContextTypeChangedMode` to `All`...
+PASS: #present-grid should be sent.
+Known layout context nodes: [present-grid]
+Changing #late-grid to `display: grid`...
+PASS: #late-grid should be sent live.
+Known layout context nodes: [present-grid, late-grid]
+
+-- Running test case: CSS.LayoutContextTypeChangedMode.MainFrameNavigation.AfterReload
+Reloading the page...
+PASS: #present-grid of the new document should be sent.
+Known layout context nodes: [present-grid]
+Changing #late-grid to `display: grid`...
+PASS: #late-grid made after the reload should be sent live.
+Known layout context nodes: [present-grid, late-grid]
+Control: changing `layoutContextTypeChangedMode` to `All` again...
+PASS: #present-grid should be sent after the mode is set again.
+Known layout context nodes: [present-grid, late-grid]
+PASS: #late-grid should be sent after the mode is set again.
+Known layout context nodes: [present-grid, late-grid]
+Changing #later-grid to `display: grid`...
+PASS: #later-grid made after the mode is set again should be sent live.
+Known layout context nodes: [present-grid, late-grid, later-grid]
+
+-- Running test case: CSS.LayoutContextTypeChangedMode.MainFrameNavigation.AfterNavigation
+Navigating to a new URL...
+PASS: The main frame should have navigated.
+PASS: #present-grid of the new document should be sent.
+Known layout context nodes: [present-grid]
+Changing #late-grid to `display: grid`...
+PASS: #late-grid made after the navigation should be sent live.
+Known layout context nodes: [present-grid, late-grid]
+Control: changing `layoutContextTypeChangedMode` to `All` again...
+PASS: #present-grid should be sent after the mode is set again.
+Known layout context nodes: [present-grid, late-grid]
+PASS: #late-grid should be sent after the mode is set again.
+Known layout context nodes: [present-grid, late-grid]
+-- Running test teardown.
+

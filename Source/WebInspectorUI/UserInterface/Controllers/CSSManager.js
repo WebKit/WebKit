@@ -39,6 +39,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         WI.DOMNode.addEventListener(WI.DOMNode.Event.EnabledPseudoClassesChanged, this._nodePseudoClassesDidChange, this);
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.DocumentUpdated, this._handleDocumentUpdated, this);
 
         this._colorFormatSetting = new WI.Setting("default-color-format", WI.Color.Format.Original);
 
@@ -59,7 +60,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (target.hasDomain("CSS")) {
             target.CSSAgent.enable();
 
-            // Page targets request their document later, and InspectorCSSAgent does not push nodes once it arrives.
+            // Page targets get the mode once their document arrives, in `_handleDocumentUpdated`.
             if (target instanceof WI.FrameTarget && this._layoutContextTypeChangedMode !== WI.CSSManager.LayoutContextTypeChangedMode.Observed)
                 this._setLayoutContextTypeChangedModeForTarget(target, this._layoutContextTypeChangedMode);
         }
@@ -643,6 +644,15 @@ WI.CSSManager = class CSSManager extends WI.Object
         // COMPATIBILITY (iOS 14.5): CSS.setLayoutContextTypeChangedMode did not exist.
         if (target.hasCommand("CSS.setLayoutContextTypeChangedMode"))
             target.CSSAgent.setLayoutContextTypeChangedMode(mode);
+    }
+
+    _handleDocumentUpdated(event)
+    {
+        // A main-frame load resets the mode in InspectorCSSAgent, which can push nodes only after the frontend has the new document.
+        if (!event.data.document || this._layoutContextTypeChangedMode === WI.CSSManager.LayoutContextTypeChangedMode.Observed)
+            return;
+
+        this._setLayoutContextTypeChangedModeForTarget(WI.pageTarget, this._layoutContextTypeChangedMode);
     }
 
     _handleTargetRemoved(event)
