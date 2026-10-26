@@ -92,7 +92,6 @@ fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-shape-circle-004.svg [ Pass ]
 
 webanimations/simultaneous-animations-removed-separately.html [ Pass ]
-webanimations/transform-accelerated-animation-finishes-before-removal.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-content/quotes-033.html [ ImageOnlyFailure ]
 
@@ -1309,3 +1308,7 @@ webkit.org/b/328195 [ Debug ] inspector/unit-tests/debouncer.html [ Failure Pass
 webkit.org/b/328195 [ Debug ] inspector/unit-tests/throttler.html [ Failure Pass ]
 webkit.org/b/328195 inspector/worker/debugger-pause.html [ Failure Pass ]
 webkit.org/b/309202 webaudio/audiomix-bufferingpolicy.html [ Pass Timeout ]
+
+# Gardening 2026-10-26
+webkit.org/b/328888 [ arm64 ] fast/harness/internals-object-property-access-on-window-without-frame-crash.html [ Crash Pass ]
+webkit.org/b/328890 [ arm64 ] imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Failure Pass ]
