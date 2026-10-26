@@ -8625,21 +8625,28 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
         assert(tree_node.kind == 'opaque')
         assert(not tree_node.children)
 
-        to.write(f"static void {function_name}(const auto&, const auto&, CSSPropertiesBitSet& changingProperties)")
+        animatable_properties = set()
+        non_animatable_properties = set()
+
+        for property in itertools.chain(tree_node.properties, tree_node.visited_link_properties):
+            if not property.is_animatable:
+                non_animatable_properties.add(property)
+            else:
+                animatable_properties.add(property)
+
+        settings_parameter = "const Settings& settings" if any(property.codegen_properties.settings_flag for property in animatable_properties) else "const Settings&"
+
+        to.write(f"static void {function_name}(const auto&, const auto&, CSSPropertiesBitSet& changingProperties, {settings_parameter})")
         to.write(f"{{")
 
         with to.indent():
-            animatable_properties = set()
-            non_animatable_properties = set()
-
-            for property in itertools.chain(tree_node.properties, tree_node.visited_link_properties):
-                if not property.is_animatable:
-                    non_animatable_properties.add(property)
-                else:
-                    animatable_properties.add(property)
-
             for property in sorted(animatable_properties, key=lambda x: x.id):
-                to.write(f"changingProperties.m_properties.set(std::to_underlying({property.id}));")
+                if property.codegen_properties.settings_flag:
+                    to.write(f"if (settings.{property.codegen_properties.settings_flag}())")
+                    with to.indent():
+                        to.write(f"changingProperties.m_properties.set(std::to_underlying({property.id}));")
+                else:
+                    to.write(f"changingProperties.m_properties.set(std::to_underlying({property.id}));")
 
             if non_animatable_properties:
                 to.newline()
@@ -8661,7 +8668,15 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
             )
             return
 
-        to.write(f"static void {function_name}(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties)")
+        animatable_properties = [property for property in sorted(tree_node.properties, key=lambda x: x.id) if property.is_animatable]
+        non_animatable_properties = [property for property in sorted(tree_node.properties, key=lambda x: x.id) if not property.is_animatable]
+        animatable_visited_link_properties = [property for property in sorted(tree_node.visited_link_properties, key=lambda x: x.id) if property.is_animatable]
+        non_animatable_visited_link_properties = [property for property in sorted(tree_node.visited_link_properties, key=lambda x: x.id) if not property.is_animatable]
+
+        uses_settings = generated_children or any(property.codegen_properties.settings_flag for property in itertools.chain(animatable_properties, animatable_visited_link_properties))
+        settings_parameter = "const Settings& settings" if uses_settings else "const Settings&"
+
+        to.write(f"static void {function_name}(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties, {settings_parameter})")
         to.write(f"{{")
 
         with to.indent():
@@ -8679,24 +8694,6 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
                 else:
                     struct_children.append(child)
 
-            animatable_properties = []
-            non_animatable_properties = []
-
-            for property in sorted(tree_node.properties, key=lambda x: x.id):
-                if not property.is_animatable:
-                    non_animatable_properties.append(property)
-                else:
-                    animatable_properties.append(property)
-
-            animatable_visited_link_properties = []
-            non_animatable_visited_link_properties = []
-
-            for property in sorted(tree_node.visited_link_properties, key=lambda x: x.id):
-                if not property.is_animatable:
-                    non_animatable_visited_link_properties.append(property)
-                else:
-                    animatable_visited_link_properties.append(property)
-
             # Generate the "data" children, which require an additional check.
             for child in data_children:
                 child_function_name = Name(f"{function_name}_{child.name}").id_without_prefix_with_lowercase_first_letter
@@ -8705,7 +8702,7 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
                 # For "data" nodes, first check if both point to the same object.
                 to.write(f"if (a.{child_value_getter}.ptr() != b.{child_value_getter}.ptr())")
                 with to.indent():
-                    to.write(f"{child_function_name}(*a.{child_value_getter}, *b.{child_value_getter}, changingProperties);")
+                    to.write(f"{child_function_name}(*a.{child_value_getter}, *b.{child_value_getter}, changingProperties, settings);")
 
             if data_children and opaque_children:
                 to.newline()
@@ -8717,7 +8714,7 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
 
                 to.write(f"if (a.{child_value_getter} != b.{child_value_getter})")
                 with to.indent():
-                    to.write(f"{child_function_name}(a.{child_value_getter}, b.{child_value_getter}, changingProperties);")
+                    to.write(f"{child_function_name}(a.{child_value_getter}, b.{child_value_getter}, changingProperties, settings);")
 
             if (data_children or opaque_children) and struct_children:
                 to.newline()
@@ -8727,7 +8724,7 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
                 child_function_name = Name(f"{function_name}_{child.name}").id_without_prefix_with_lowercase_first_letter
                 child_value_getter =  f"{child.name}"
 
-                to.write(f"{child_function_name}(a.{child_value_getter}, b.{child_value_getter}, changingProperties);")
+                to.write(f"{child_function_name}(a.{child_value_getter}, b.{child_value_getter}, changingProperties, settings);")
 
             if (data_children or opaque_children or struct_children) and animatable_properties:
                 to.newline()
@@ -8735,7 +8732,12 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
             # Generate the animatable property children.
             for property in animatable_properties:
                 if property.codegen_properties.computed_style_changed_for_animation_custom:
-                    to.write(f"ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesFor{property.id_without_prefix}(a, b, changingProperties);")
+                    if property.codegen_properties.settings_flag:
+                        to.write(f"if (settings.{property.codegen_properties.settings_flag}())")
+                        with to.indent():
+                            to.write(f"ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesFor{property.id_without_prefix}(a, b, changingProperties);")
+                    else:
+                        to.write(f"ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesFor{property.id_without_prefix}(a, b, changingProperties);")
                     continue
 
                 if tree_node.kind == 'data':
@@ -8745,7 +8747,10 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
                 elif tree_node.kind == 'physical-group':
                     expression = f"{Name(property.codegen_properties.logical_property_group.resolver).id_without_prefix_with_lowercase_first_letter}()"
 
-                to.write(f"if (a.{expression} != b.{expression})")
+                if property.codegen_properties.settings_flag:
+                    to.write(f"if (settings.{property.codegen_properties.settings_flag}() && a.{expression} != b.{expression})")
+                else:
+                    to.write(f"if (a.{expression} != b.{expression})")
                 with to.indent():
                     to.write(f"changingProperties.m_properties.set(std::to_underlying({property.id}));")
 
@@ -8755,7 +8760,12 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
             # Generate the animatable visited link property children.
             for property in animatable_visited_link_properties:
                 if property.codegen_properties.computed_style_changed_for_animation_custom:
-                    to.write(f"ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesForVisitedLink{property.id_without_prefix}(a, b, changingProperties);")
+                    if property.codegen_properties.settings_flag:
+                        to.write(f"if (settings.{property.codegen_properties.settings_flag}())")
+                        with to.indent():
+                            to.write(f"ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesForVisitedLink{property.id_without_prefix}(a, b, changingProperties);")
+                    else:
+                        to.write(f"ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesForVisitedLink{property.id_without_prefix}(a, b, changingProperties);")
                     continue
 
                 if tree_node.kind == 'data':
@@ -8765,7 +8775,10 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
                 elif tree_node.kind == 'physical-group':
                     expression = f"{Name(property.codegen_properties.logical_property_group.resolver).id_without_prefix_with_lowercase_first_letter}()"
 
-                to.write(f"if (a.{expression} != b.{expression})")
+                if property.codegen_properties.settings_flag:
+                    to.write(f"if (settings.{property.codegen_properties.settings_flag}() && a.{expression} != b.{expression})")
+                else:
+                    to.write(f"if (a.{expression} != b.{expression})")
                 with to.indent():
                     to.write(f"changingProperties.m_properties.set(std::to_underlying({property.id}));")
 
@@ -8832,11 +8845,11 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
         to.write(f"}};")
         to.newline()
 
-        to.write(f"void ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(const ComputedStyle& a, const ComputedStyle& b, CSSPropertiesBitSet& changingProperties)")
+        to.write(f"void ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(const ComputedStyle& a, const ComputedStyle& b, CSSPropertiesBitSet& changingProperties, const Settings& settings)")
         to.write(f"{{")
 
         with to.indent():
-            to.write(f"ChangedAnimatablePropertiesFunctions::collect(a, b, changingProperties);")
+            to.write(f"ChangedAnimatablePropertiesFunctions::collect(a, b, changingProperties, settings);")
 
         to.write(f"}}")
         to.newline()
@@ -8857,6 +8870,7 @@ class GenerateStyleChangedAnimatablePropertiesGenerated:
             self.generation_context.generate_includes(
                 to=writer,
                 headers=[
+                    "Settings.h",
                     "StyleChangedAnimatablePropertiesCustom.h",
                 ]
             )

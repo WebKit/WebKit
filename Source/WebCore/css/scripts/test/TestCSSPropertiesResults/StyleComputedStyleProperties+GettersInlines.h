@@ -96,6 +96,11 @@ inline const Style::Number<>& ComputedStyleProperties::testRenderStyleStorageOne
     return level1->testRenderStyleStorageOneLevelReference;
 }
 
+inline Style::Number<> ComputedStyleProperties::testRenderStyleStorageOneLevelSettingsFlag() const
+{
+    return level1->testRenderStyleStorageOneLevelSettingsFlag;
+}
+
 inline Style::Number<> ComputedStyleProperties::testRenderStyleStorageOneLevelValue() const
 {
     return level1->testRenderStyleStorageOneLevelValue;

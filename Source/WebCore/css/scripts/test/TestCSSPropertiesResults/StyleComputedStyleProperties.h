@@ -94,6 +94,12 @@ public:
     inline void setTestRenderStyleStorageOneLevelReference(Style::Number<>&&);
     static inline Style::Number<> initialTestRenderStyleStorageOneLevelReference();
 
+    // 'test-render-style-storage-one-level-settings-flag'
+    inline Style::Number<> LEGACY_NODELETE testRenderStyleStorageOneLevelSettingsFlag() const;
+    Style::Number<> LEGACY_NODELETE testRenderStyleStorageOneLevelSettingsFlagOutOfLine() const;
+    inline void setTestRenderStyleStorageOneLevelSettingsFlag(Style::Number<>);
+    static inline Style::Number<> initialTestRenderStyleStorageOneLevelSettingsFlag();
+
     // 'test-render-style-storage-one-level-value'
     inline Style::Number<> LEGACY_NODELETE testRenderStyleStorageOneLevelValue() const;
     WEBCORE_EXPORT Style::Number<> LEGACY_NODELETE testRenderStyleStorageOneLevelValueOutOfLine() const;

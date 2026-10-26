@@ -27,8 +27,8 @@
 
 namespace WebCore {
 
-struct CSSPropertiesBitSet;
 class Settings;
+struct CSSPropertiesBitSet;
 
 namespace Style {
 

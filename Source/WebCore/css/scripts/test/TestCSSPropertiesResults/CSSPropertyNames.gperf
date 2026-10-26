@@ -27,8 +27,9 @@ namespace WebCore {
 
 static_assert(cssPropertyIDEnumValueCount <= (std::numeric_limits<uint16_t>::max() + 1), "CSSPropertyID should fit into uint16_t.");
 
-const std::array<CSSPropertyID, 23> computedPropertyIDs {
+const std::array<CSSPropertyID, 25> computedPropertyIDs {
     CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete,
+    CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag,
     CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo,
     CSSPropertyID::TestAnimationWrapper,
     CSSPropertyID::TestAnimationWrapperAccelerationAlways,
@@ -45,6 +46,7 @@ const std::array<CSSPropertyID, 23> computedPropertyIDs {
     CSSPropertyID::TestRenderStyleStorageOneLevelEnum,
     CSSPropertyID::TestRenderStyleStorageOneLevelRaw,
     CSSPropertyID::TestRenderStyleStorageOneLevelReference,
+    CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag,
     CSSPropertyID::TestRenderStyleStorageOneLevelValue,
     CSSPropertyID::TestRenderStyleStorageTwoLevelEnum,
     CSSPropertyID::TestRenderStyleStorageTwoLevelRaw,
@@ -53,11 +55,12 @@ const std::array<CSSPropertyID, 23> computedPropertyIDs {
     CSSPropertyID::TestSettingsOne,
 };
 
-static constexpr std::array<StringImpl::StaticStringImpl, 119> propertyNameData = {{
+static constexpr std::array<StringImpl::StaticStringImpl, 121> propertyNameData = {{
     StringImpl::StaticStringImpl("test-top-priority", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-high-priority", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-medium-priority", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("background-coordinated-value-list-property-test-discrete", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("background-coordinated-value-list-property-test-settings-flag", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("background-coordinated-value-list-property-test-two", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("first-test-descriptor-for-first-descriptor", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("first-test-descriptor-for-second-descriptor", StringImpl::StringAtom),
@@ -145,6 +148,7 @@ static constexpr std::array<StringImpl::StaticStringImpl, 119> propertyNameData 
     StringImpl::StaticStringImpl("test-render-style-storage-one-level-enum", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-render-style-storage-one-level-raw", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-render-style-storage-one-level-reference", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-render-style-storage-one-level-settings-flag", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-render-style-storage-one-level-value", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-render-style-storage-two-level-enum", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-render-style-storage-two-level-raw", StringImpl::StringAtom),
@@ -192,6 +196,7 @@ struct CSSPropertyHashTableEntry {
 %%
 all, CSSPropertyID::All
 background-coordinated-value-list-property-test-discrete, CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete
+background-coordinated-value-list-property-test-settings-flag, CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag
 background-coordinated-value-list-property-test-two, CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo
 first-test-descriptor-for-first-descriptor, CSSPropertyID::FirstTestDescriptorForFirstDescriptor
 first-test-descriptor-for-second-descriptor, CSSPropertyID::FirstTestDescriptorForSecondDescriptor
@@ -286,6 +291,7 @@ test-render-style-has-explicitly-set-policy-value-only, CSSPropertyID::TestRende
 test-render-style-storage-one-level-enum, CSSPropertyID::TestRenderStyleStorageOneLevelEnum
 test-render-style-storage-one-level-raw, CSSPropertyID::TestRenderStyleStorageOneLevelRaw
 test-render-style-storage-one-level-reference, CSSPropertyID::TestRenderStyleStorageOneLevelReference
+test-render-style-storage-one-level-settings-flag, CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag
 test-render-style-storage-one-level-value, CSSPropertyID::TestRenderStyleStorageOneLevelValue
 test-render-style-storage-two-level-enum, CSSPropertyID::TestRenderStyleStorageTwoLevelEnum
 test-render-style-storage-two-level-raw, CSSPropertyID::TestRenderStyleStorageTwoLevelRaw
@@ -376,8 +382,12 @@ bool isInternal(CSSPropertyID id)
 static bool isExposedNotInvalidAndNotInternal(CSSPropertyID id, const CSSPropertySettings& settings)
 {
     switch (id) {
+    case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag:
+        return settings.cssSettingsCoordinatedValueListEnabled;
     case CSSPropertyID::FirstTestDescriptorForFirstDescriptor:
         return settings.cssDescriptorEnabled;
+    case CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag:
+        return settings.cssSettingsRenderStyleStorageEnabled;
     case CSSPropertyID::TestSettingsOne:
         return settings.cssSettingsOneEnabled;
     case CSSPropertyID::TestShorthandTwo:
@@ -390,8 +400,12 @@ static bool isExposedNotInvalidAndNotInternal(CSSPropertyID id, const CSSPropert
 static bool isExposedNotInvalidAndNotInternal(CSSPropertyID id, const Settings& settings)
 {
     switch (id) {
+    case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag:
+        return settings.cssSettingsCoordinatedValueListEnabled();
     case CSSPropertyID::FirstTestDescriptorForFirstDescriptor:
         return settings.cssDescriptorEnabled();
+    case CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag:
+        return settings.cssSettingsRenderStyleStorageEnabled();
     case CSSPropertyID::TestSettingsOne:
         return settings.cssSettingsOneEnabled();
     case CSSPropertyID::TestShorthandTwo:
@@ -440,6 +454,7 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::TestHighPriority
     false, // CSSPropertyID::TestMediumPriority
     false, // CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete
+    false, // CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag
     false, // CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo
     false, // CSSPropertyID::FirstTestDescriptorForFirstDescriptor
     false, // CSSPropertyID::FirstTestDescriptorForSecondDescriptor
@@ -527,6 +542,7 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::TestRenderStyleStorageOneLevelEnum
     false, // CSSPropertyID::TestRenderStyleStorageOneLevelRaw
     false, // CSSPropertyID::TestRenderStyleStorageOneLevelReference
+    false, // CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag
     false, // CSSPropertyID::TestRenderStyleStorageOneLevelValue
     false, // CSSPropertyID::TestRenderStyleStorageTwoLevelEnum
     false, // CSSPropertyID::TestRenderStyleStorageTwoLevelRaw
@@ -611,6 +627,7 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::TestHighPriority:
     case CSSPropertyID::TestMediumPriority:
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete:
+    case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag:
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo:
     case CSSPropertyID::TestAnimationWrapper:
     case CSSPropertyID::TestAnimationWrapperAccelerationAlways:
@@ -653,6 +670,7 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
     case CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyValueOnly:
     case CSSPropertyID::TestRenderStyleStorageOneLevelReference:
+    case CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag:
     case CSSPropertyID::TestRenderStyleStorageOneLevelValue:
     case CSSPropertyID::TestRenderStyleStorageTwoLevelReference:
     case CSSPropertyID::TestRenderStyleStorageTwoLevelValue:
@@ -858,7 +876,9 @@ std::span<const CSSPropertyID> CSSProperty::allAcceleratedAnimationProperties([[
 
 CSSPropertySettings::CSSPropertySettings(const Settings& settings)
     : cssDescriptorEnabled { settings.cssDescriptorEnabled() }
+    , cssSettingsCoordinatedValueListEnabled { settings.cssSettingsCoordinatedValueListEnabled() }
     , cssSettingsOneEnabled { settings.cssSettingsOneEnabled() }
+    , cssSettingsRenderStyleStorageEnabled { settings.cssSettingsRenderStyleStorageEnabled() }
     , cssSettingsShorthandEnabled { settings.cssSettingsShorthandEnabled() }
 {
 }
@@ -866,7 +886,9 @@ CSSPropertySettings::CSSPropertySettings(const Settings& settings)
 bool operator==(const CSSPropertySettings& a, const CSSPropertySettings& b)
 {
     return a.cssDescriptorEnabled == b.cssDescriptorEnabled
+        && a.cssSettingsCoordinatedValueListEnabled == b.cssSettingsCoordinatedValueListEnabled
         && a.cssSettingsOneEnabled == b.cssSettingsOneEnabled
+        && a.cssSettingsRenderStyleStorageEnabled == b.cssSettingsRenderStyleStorageEnabled
         && a.cssSettingsShorthandEnabled == b.cssSettingsShorthandEnabled;
 }
 
@@ -874,7 +896,9 @@ void add(Hasher& hasher, const CSSPropertySettings& settings)
 {
     add(hasher, WTF::packBools(
         settings.cssDescriptorEnabled,
+        settings.cssSettingsCoordinatedValueListEnabled,
         settings.cssSettingsOneEnabled,
+        settings.cssSettingsRenderStyleStorageEnabled,
         settings.cssSettingsShorthandEnabled
     ));
 }
