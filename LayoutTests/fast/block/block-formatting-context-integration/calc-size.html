@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; height: 380px; background: lightgray; font-family: monospace; font-size: 10px; }
+.box { background: rgba(0, 128, 0, 0.5); margin: 4px 0; }
+.content { height: 10px; width: 50px; background: blue; }
+</style>
+<div class="roots">
+<div class="root">
+  <div class="box" style="width: calc-size(auto, size - 60px); height: 10px"></div>
+  <div class="box" style="width: calc-size(fit-content, size + 20px)">fits its text</div>
+  <div class="box" style="width: calc-size(min-content, size * 2); padding: 0 5px; border: 2px solid black">min content</div>
+  <div class="box" style="width: calc-size(max-content, size + 10%); box-sizing: border-box; padding: 0 5px">max content</div>
+  <div class="box" style="width: calc-size(stretch, size / 2 - 10%); margin-left: 20px; height: 10px"></div>
+  <div class="box" style="max-width: calc-size(max-content, size / 2)">text that is clamped to half of its max-content size</div>
+  <div class="box" style="min-width: calc-size(min-content, size + 100px); width: 10px; height: 10px">min</div>
+  <div class="box" style="height: calc-size(auto, size + 20px)"><div class="content"></div></div>
+  <div class="box" style="height: calc-size(auto, size + 20px); box-sizing: border-box; padding: 4px; border: 2px solid black"><div class="content"></div></div>
+  <div class="box" style="height: calc-size(30%, size / 3)"></div>
+  <div class="box" style="height: calc-size(auto, 5%)"></div>
+  <div class="box" style="height: calc-size(stretch, size / 10)"></div>
+  <div class="box" style="min-height: calc-size(min-content, size + 15px)"><div class="content"></div></div>
+  <div class="box" style="height: 60px; max-height: calc-size(fit-content, size * 2)"><div class="content"></div></div>
+  <div class="box" style="height: calc-size(auto, size * 0); margin: 10px 0"></div>
+  <div class="box" style="height: calc-size(auto, size + 5px); margin: 10px 0"></div>
+</div>
+<div class="root">
+  <div class="box" style="width: fit-content"><div style="width: calc-size(auto, size + 40px); background: orange">grows by 40px</div></div>
+  <div class="box" style="width: fit-content"><div style="width: calc-size(min-content, size + 10px); background: orange">min content plus 10px</div></div>
+  <div class="box" style="width: fit-content"><div style="width: calc-size(any, 120px); background: orange">fixed</div></div>
+  <div class="box" style="aspect-ratio: 2 / 1; width: 100px; height: calc-size(auto, size + 20px)"></div>
+  <div class="box" style="aspect-ratio: 1 / 2; height: 60px; width: calc-size(auto, size + 50px)"></div>
+  <div class="box" style="aspect-ratio: 2 / 1; width: 100px; min-height: calc-size(auto, size - 20px)"><div style="height: 80px"></div></div>
+  <div class="box" style="aspect-ratio: 1 / 2; height: 40px; min-width: calc-size(auto, size - 20px)"><div style="width: 120px; height: 10px"></div></div>
+</div>
+<div class="root" id="dynamic">
+  <div class="box" style="height: calc-size(auto, size + 10px); width: calc-size(fit-content, size + 10px)"><span id="text">x</span></div>
+</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "text that got longer and wraps onto more than one line in its box";
+</script>
