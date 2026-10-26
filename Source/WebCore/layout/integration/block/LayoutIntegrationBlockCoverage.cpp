@@ -322,11 +322,7 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
                 return false;
             // A preferred aspect ratio gives an inline size from the block size and transfers the min and max block sizes, which can be
             // percentages of the block size of the containing block.
-            auto isRelativeToContainingBlock = [](auto& size) {
-                return size.isPercentOrCalculated() || size.isStretch();
-            };
-            if (style->aspectRatio().hasRatio() && (isRelativeToContainingBlock(style->logicalHeight(writingMode)) || isRelativeToContainingBlock(style->logicalMinHeight(writingMode))
-                || isRelativeToContainingBlock(style->logicalMaxHeight(writingMode))))
+            if (style->aspectRatio().hasRatio() && Layout::BlockFormattingUtils::hasPercentageBlockSize(*blockContainer, writingMode))
                 return false;
         }
         descendant = descendant->nextInPreOrder(&box);
@@ -458,22 +454,19 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     auto writingMode = box.writingMode();
     // The block formatting context decides the inline size from lengths, percentages, calc() and stretch, the stretch-fit inline size
     // (BlockFormattingUtils::inlineSizeAndMargins); the box's own formatting context resolves the min-content, max-content and fit-content
-    // keywords with its intrinsic sizes. A replaced element's own formatting context takes its aspect ratio into account (CSS 2.2 §10.3.4).
-    // FIXME: The other sizing keywords, the keywords of a replaced element, calc-size(), the stretch block size, which reads the containing
-    // block's renderer, and a preferred aspect ratio.
+    // keywords with its intrinsic sizes. A calc-size() goes with its basis. A replaced element's own formatting context takes its aspect ratio
+    // into account (CSS 2.2 §10.3.4).
+    // FIXME: The other sizing keywords, the keywords of a replaced element, the stretch block size, which reads the containing block's
+    // renderer, and a preferred aspect ratio.
     auto isReplaced = box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot();
     auto isSupportedInlineSize = [&](auto& size) {
-        return (size.isSpecified() || (size.isIntrinsicOrStretch() && !isReplaced)) && !size.isCalcSize();
+        return size.isSpecified() || (size.isIntrinsicOrStretch() && !isReplaced);
     };
     auto isStretch = [](auto& size) {
         return size.isStretch();
     };
-    // A calc-size() answers to the keyword of its basis, auto included.
-    auto isAuto = [](auto& size) {
-        return size.isAuto() && !size.isCalcSize();
-    };
-    if (!(isAuto(style->logicalWidth(writingMode)) || isSupportedInlineSize(style->logicalWidth(writingMode)))
-        || !(isAuto(style->logicalMinWidth(writingMode)) || isSupportedInlineSize(style->logicalMinWidth(writingMode)))
+    if (!(style->logicalWidth(writingMode).isAuto() || isSupportedInlineSize(style->logicalWidth(writingMode)))
+        || !(style->logicalMinWidth(writingMode).isAuto() || isSupportedInlineSize(style->logicalMinWidth(writingMode)))
         || !(style->logicalMaxWidth(writingMode).isNone() || isSupportedInlineSize(style->logicalMaxWidth(writingMode))))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
     if (isStretch(style->logicalHeight(writingMode)) || isStretch(style->logicalMinHeight(writingMode)) || isStretch(style->logicalMaxHeight(writingMode)))
@@ -530,30 +523,19 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     // (CSS 2.2 §9.4.3, css-position-3 §3.4), and BlockLayout::updateRenderers updates its transform.
 
     CheckedRef style = blockContainer->style();
-    // Lengths, percentages and calc(); not the sizing keywords or calc-size().
+    // Lengths, percentages and calc(); min-content, max-content and fit-content, from the inline sizes of the content in the inline axis and
+    // the block size of the content in the block axis (css-sizing-3 §3.2); stretch (css-sizing-4 §6.1) and -webkit-fill-available, the
+    // available block size up the containing block chain in the block axis (BlockFormattingUtils::fillAvailableBlockSize); and calc-size()
+    // with any of these as its basis (css-values-5 §11). Not the intrinsic and min-intrinsic keywords.
     auto isSupportedSize = [](auto& size) {
-        return size.isSpecified() && !size.isCalcSize();
+        return size.isSpecified() || size.isIntrinsicOrStretch();
     };
-    // A calc-size() answers to the keyword of its basis, auto included.
-    auto isAuto = [](auto& size) {
-        return size.isAuto() && !size.isCalcSize();
-    };
-    // Block sizes may also be min-content, max-content or fit-content, the block size of the content (css-sizing-3 §3.2), stretch
-    // (css-sizing-4 §6.1) and -webkit-fill-available, the available block size up the containing block chain (BlockFormattingUtils::fillAvailableBlockSize).
-    auto isSupportedBlockSize = [&](auto& size) {
-        return isSupportedSize(size) || (size.isStretch() && !size.isCalcSize()) || (size.isIntrinsic() && !size.isCalcSize());
-    };
-    // Inline sizes may also be min-content, max-content or fit-content, from the inline sizes of the content (css-sizing-3 §3.2), and stretch
-    // or -webkit-fill-available, the stretch-fit inline size.
-    auto isSupportedInlineSize = [&](auto& size) {
-        return isSupportedSize(size) || (size.isIntrinsicOrStretch() && !size.isCalcSize());
-    };
-    if ((!isAuto(style->logicalWidth()) && !isSupportedInlineSize(style->logicalWidth()))
-        || (!isAuto(style->logicalMinWidth()) && !isSupportedInlineSize(style->logicalMinWidth()))
-        || (!style->logicalMaxWidth().isNone() && !isSupportedInlineSize(style->logicalMaxWidth()))
-        || (!isAuto(style->logicalHeight()) && !isSupportedBlockSize(style->logicalHeight()))
-        || (!isAuto(style->logicalMinHeight()) && !isSupportedBlockSize(style->logicalMinHeight()))
-        || (!style->logicalMaxHeight().isNone() && !isSupportedBlockSize(style->logicalMaxHeight())))
+    if ((!style->logicalWidth().isAuto() && !isSupportedSize(style->logicalWidth()))
+        || (!style->logicalMinWidth().isAuto() && !isSupportedSize(style->logicalMinWidth()))
+        || (!style->logicalMaxWidth().isNone() && !isSupportedSize(style->logicalMaxWidth()))
+        || (!style->logicalHeight().isAuto() && !isSupportedSize(style->logicalHeight()))
+        || (!style->logicalMinHeight().isAuto() && !isSupportedSize(style->logicalMinHeight()))
+        || (!style->logicalMaxHeight().isNone() && !isSupportedSize(style->logicalMaxHeight())))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
     // A box resolves both stretch and -webkit-fill-available block sizes with one size (BlockFormattingContext::stretchFitBorderBoxBlockSize).
     // FIXME: -webkit-fill-available inside an out-of-flow box, whose available block size comes from its insets.
