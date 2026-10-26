@@ -27,12 +27,15 @@
 
 #include "IPCUtilities.h"
 #include "ObjectIdentifierReferenceTracker.h"
+#include "StreamConnectionWorkQueue.h"
+#include "StreamServerConnection.h"
 #include "Timeout.h"
 #include <optional>
 #include <wtf/Condition.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadAssertions.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace IPC {
 
@@ -43,6 +46,8 @@ namespace IPC {
 // Pending reads may block new writes. Alternatively new writes can skip ahead of the reads,
 // for example in copy-on-write scenarios.
 // Pending writes block reads.
+// Stream message handlers do not block their work queue: they use the get() and read() variants that take the
+// StreamServerConnection, and defer the message until the object is added.
 // HeldType must be copyable because read() may or may not give out the last instance.
 template<typename Identifier, typename HeldType>
 class ThreadSafeObjectHeap {
@@ -67,6 +72,15 @@ public:
     // from the object returned by get() and then only retire the read reference via read().
     TakeType read(ReadReference&&, Timeout);
 
+    // For stream message handlers. If the object has been added, returns it like get() and read(). Otherwise,
+    // if the message can wait (StreamServerConnection::canCurrentlyDispatchedMessageWait()), arranges the
+    // work queue of `connection` to be woken up when the object is added and returns std::nullopt. The
+    // handler should then call StreamServerConnection::markCurrentlyDispatchedMessageAsDeferred() to have the
+    // message dispatched again. If the message cannot wait, returns the empty value. read() retires the read
+    // only if it returns the object.
+    std::optional<PeekType> get(StreamServerConnection&, const ReadReference&);
+    std::optional<TakeType> read(StreamServerConnection&, ReadReference&&);
+
     // Waits until write is possible and removes the object or times out.
     // To re-add after modification, the new reference can be obtained with
     // WriteReference::retiredReference().
@@ -80,6 +94,9 @@ public:
     size_t sizeForTesting() const;
 
 private:
+    std::optional<TakeType> readIfAdded(const ReadReference&) WTF_REQUIRES_LOCK(m_objectsLock);
+    bool waitForAdd(StreamServerConnection&, const Reference&) WTF_REQUIRES_LOCK(m_objectsLock);
+
     mutable Lock m_objectsLock;
     mutable Condition m_objectsCondition;
     struct ReferenceState {
@@ -98,27 +115,39 @@ private:
         }
     };
     HashMap<Reference, ReferenceState> m_objects WTF_GUARDED_BY_LOCK(m_objectsLock);
+    // The work queues of the stream connections whose messages wait for the objects to be added. Weak, so that
+    // the heap does not keep the work queue of a torn down connection alive.
+    using StreamWaiters = Vector<ThreadSafeWeakPtr<StreamConnectionWorkQueue>, 1>;
+    HashMap<Reference, StreamWaiters> m_streamWaiters WTF_GUARDED_BY_LOCK(m_objectsLock);
 };
 
 template<typename Identifier, typename HeldType>
 bool ThreadSafeObjectHeap<Identifier, HeldType>::add(const Reference& ref, HeldType object)
 {
-    Locker locker { m_objectsLock };
-    auto addResult = m_objects.ensure(ref, [&] {
-        return ReferenceState { WTF::move(object) };
-    });
-    if (!addResult.isNewEntry) {
-        auto& state = addResult.iterator->value;
-        if (state.finalRead && !*(state.finalRead)) {
-            // `object` will be destroyed without the lock later.
-            m_objects.remove(addResult.iterator);
-            return true; // Reference was already removed, so nobody is waiting. No need to notify.
+    StreamWaiters streamWaiters;
+    {
+        Locker locker { m_objectsLock };
+        auto addResult = m_objects.ensure(ref, [&] {
+            return ReferenceState { WTF::move(object) };
+        });
+        if (!addResult.isNewEntry) {
+            auto& state = addResult.iterator->value;
+            if (state.finalRead && !*(state.finalRead)) {
+                // `object` will be destroyed without the lock later.
+                m_objects.remove(addResult.iterator);
+                return true; // Reference was already removed, so nobody is waiting. No need to notify.
+            }
+            if (state.object)
+                return false;
+            state.object = WTF::move(object);
         }
-        if (state.object)
-            return false;
-        state.object = WTF::move(object);
+        m_objectsCondition.notifyAll();
+        streamWaiters = m_streamWaiters.take(ref);
     }
-    m_objectsCondition.notifyAll();
+    for (auto& weakWorkQueue : streamWaiters) {
+        if (RefPtr workQueue = weakWorkQueue)
+            workQueue->wakeUp();
+    }
     return true;
 }
 
@@ -144,23 +173,76 @@ auto ThreadSafeObjectHeap<Identifier, HeldType>::read(ReadReference&& read, Time
 {
     Locker locker { m_objectsLock };
     do {
-        auto it = m_objects.find(read.reference());
-        if (it != m_objects.end()) {
-            auto& state = it->value;
-            if (state.object) {
-                TakeType result = MappedTraits::peek(*state.object); // Assume PeekType is convertible to TakeType, e.g. the type is copyable.
-                state.retiredReads++;
-                if (state.finalRead) {
-                    ASSERT(state.finalRead >= state.retiredReads); // Trusted assert because this is ensured on `finalRead` assignment.
-                    if (state.finalRead == state.retiredReads)
-                        m_objects.remove(it);
-                }
-                m_objectsCondition.notifyAll();
-                return result;
-            }
-        }
+        if (auto result = readIfAdded(read))
+            return WTF::move(*result);
     } while (m_objectsCondition.waitUntil(m_objectsLock, timeout.deadline()));
     return MappedTraits::peek(MappedTraits::emptyValue());
+}
+
+template<typename Identifier, typename HeldType>
+auto ThreadSafeObjectHeap<Identifier, HeldType>::readIfAdded(const ReadReference& read) -> std::optional<TakeType>
+{
+    auto it = m_objects.find(read.reference());
+    if (it == m_objects.end() || !it->value.object)
+        return std::nullopt;
+    auto& state = it->value;
+    TakeType result = MappedTraits::peek(*state.object); // Assume PeekType is convertible to TakeType, e.g. the type is copyable.
+    state.retiredReads++;
+    if (state.finalRead) {
+        ASSERT(state.finalRead >= state.retiredReads); // Trusted assert because this is ensured on `finalRead` assignment.
+        if (state.finalRead == state.retiredReads)
+            m_objects.remove(it);
+    }
+    m_objectsCondition.notifyAll();
+    return result;
+}
+
+template<typename Identifier, typename HeldType>
+auto ThreadSafeObjectHeap<Identifier, HeldType>::get(StreamServerConnection& connection, const ReadReference& read) -> std::optional<PeekType>
+{
+    Locker locker { m_objectsLock };
+    auto it = m_objects.find(read.reference());
+    if (it != m_objects.end() && it->value.object)
+        return MappedTraits::peek(*it->value.object);
+    if (waitForAdd(connection, read.reference()))
+        return std::nullopt;
+    return MappedTraits::peek(MappedTraits::emptyValue());
+}
+
+template<typename Identifier, typename HeldType>
+auto ThreadSafeObjectHeap<Identifier, HeldType>::read(StreamServerConnection& connection, ReadReference&& read) -> std::optional<TakeType>
+{
+    Locker locker { m_objectsLock };
+    if (auto result = readIfAdded(read))
+        return result;
+    if (waitForAdd(connection, read.reference()))
+        return std::nullopt;
+    return MappedTraits::peek(MappedTraits::emptyValue());
+}
+
+// Returns true if the currently dispatched message of `connection` waits for the object of `reference` to
+// be added. The work queue of the connection is then woken up when the object is added.
+template<typename Identifier, typename HeldType>
+bool ThreadSafeObjectHeap<Identifier, HeldType>::waitForAdd(StreamServerConnection& connection, const Reference& reference)
+{
+    RefPtr workQueue = connection.workQueue();
+    if (!workQueue)
+        return false;
+    if (!connection.canCurrentlyDispatchedMessageWait())
+        return false;
+    auto& waiters = m_streamWaiters.ensure(reference, [] {
+        return StreamWaiters { };
+    }).iterator->value;
+    // One entry per work queue: one wake up runs all the connections of the queue. Drop the destroyed work queues.
+    bool isWaiting = false;
+    waiters.removeAllMatching([&](auto& waiter) {
+        RefPtr waiterWorkQueue = waiter;
+        isWaiting |= waiterWorkQueue == workQueue;
+        return !waiterWorkQueue;
+    });
+    if (!isWaiting)
+        waiters.append(*workQueue);
+    return true;
 }
 
 template<typename Identifier, typename HeldType>
@@ -215,8 +297,19 @@ bool ThreadSafeObjectHeap<Identifier, HeldType>::remove(WriteReference&& write)
 template<typename Identifier, typename HeldType>
 void ThreadSafeObjectHeap<Identifier, HeldType>::clear()
 {
-    Locker locker { m_objectsLock };
-    m_objects.clear();
+    HashMap<Reference, StreamWaiters> streamWaiters;
+    {
+        Locker locker { m_objectsLock };
+        m_objects.clear();
+        streamWaiters = std::exchange(m_streamWaiters, { });
+    }
+    // The waiting messages check again. They keep waiting, since the objects are not added any more.
+    for (auto& waiters : streamWaiters.values()) {
+        for (auto& weakWorkQueue : waiters) {
+            if (RefPtr workQueue = weakWorkQueue)
+                workQueue->wakeUp();
+        }
+    }
 }
 
 template<typename Identifier, typename HeldType>

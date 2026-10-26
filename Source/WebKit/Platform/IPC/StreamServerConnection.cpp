@@ -170,7 +170,14 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
             continue;
         }
         if (decoder.messageName() == MessageName::ProcessOutOfStreamMessage) {
-            if (!processOutOfStreamMessage(decoder))
+            auto result = processOutOfStreamMessage(decoder);
+            if (result == ProcessResult::Deferred) {
+                // The marker stays in the stream and the message at the front of the out-of-stream messages.
+                if (didDispatchMessage)
+                    CheckedPtr { m_client }->didRunOutOfMessages();
+                return DispatchResult::HasNoMessages;
+            }
+            if (result == ProcessResult::Invalid)
                 return DispatchResult::HasNoMessages;
             didDispatchMessage = true;
             continue;
@@ -199,7 +206,15 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
             ASSERT(m_receivers.isEmpty());
             return DispatchResult::HasNoMessages;
         }
-        if (!processStreamMessage(decoder, *currentReceiver))
+        auto result = processStreamMessage(decoder, *currentReceiver);
+        if (result == ProcessResult::Deferred) {
+            // The message stays in the stream and holds back the messages after it. The work queue goes on with
+            // the other connections, and dispatches this one again when woken up.
+            if (didDispatchMessage)
+                CheckedPtr { m_client }->didRunOutOfMessages();
+            return DispatchResult::HasNoMessages;
+        }
+        if (result == ProcessResult::Invalid)
             return DispatchResult::HasNoMessages;
         didDispatchMessage = true;
     }
@@ -228,14 +243,16 @@ bool StreamServerConnection::processSetStreamDestinationID(Decoder& decoder, Ref
     return true;
 }
 
-bool StreamServerConnection::processStreamMessage(Decoder& decoder, StreamMessageReceiver& receiver)
+auto StreamServerConnection::processStreamMessage(Decoder& decoder, StreamMessageReceiver& receiver) -> ProcessResult
 {
     ASSERT(!m_isProcessingStreamMessage);
     m_isProcessingStreamMessage = true;
-    bool didSucceed = dispatchStreamMessage(decoder, receiver);
+    auto processResult = dispatchDeferrableStreamMessage(decoder, receiver);
     m_isProcessingStreamMessage = false;
-    if (!didSucceed)
-        return false;
+    if (processResult != ProcessResult::Processed) {
+        // A deferred message is not released: it is dispatched again from the same place in the stream.
+        return processResult;
+    }
     WakeUpClient result = WakeUpClient::No;
     if (decoder.isSyncMessage()) {
         result = m_buffer.releaseAll();
@@ -247,7 +264,7 @@ bool StreamServerConnection::processStreamMessage(Decoder& decoder, StreamMessag
     }
     if (result == WakeUpClient::Yes)
         m_clientWaitSignal.signal();
-    return true;
+    return ProcessResult::Processed;
 }
 
 void StreamServerConnection::sendAsyncReplyCancelIfNeeded(const Decoder& decoder)
@@ -257,13 +274,28 @@ void StreamServerConnection::sendAsyncReplyCancelIfNeeded(const Decoder& decoder
     protect(connection())->sendAsyncReplyCancel(decoder.asyncReplyID());
 }
 
-bool StreamServerConnection::processOutOfStreamMessage(Decoder& decoder)
+auto StreamServerConnection::dispatchDeferrableStreamMessage(Decoder& decoder, StreamMessageReceiver& receiver) -> ProcessResult
+{
+    // The handler of a message with a reply takes the reply completion handler, so it cannot defer the message.
+    // A deferred message is decoded again, which the attachments that its arguments take prevent.
+    m_canCurrentlyDispatchedMessageWait = !decoder.isSyncMessage() && !decoder.isAsyncWithReplyMessage() && !decoder.hasAttachments();
+    bool didSucceed = dispatchStreamMessage(decoder, receiver);
+    m_canCurrentlyDispatchedMessageWait = false;
+    bool isDeferred = std::exchange(m_isCurrentlyDispatchedMessageDeferred, false);
+    if (!didSucceed)
+        return ProcessResult::Invalid;
+    if (isDeferred)
+        return ProcessResult::Deferred;
+    return ProcessResult::Processed;
+}
+
+auto StreamServerConnection::processOutOfStreamMessage(Decoder& decoder) -> ProcessResult
 {
     std::unique_ptr<Decoder> message;
     {
         Locker locker { m_outOfStreamMessagesLock };
         if (m_outOfStreamMessages.isEmpty())
-            return false;
+            return ProcessResult::Invalid;
         message = m_outOfStreamMessages.takeFirst().moveToUniquePtr();
     }
 
@@ -274,7 +306,7 @@ bool StreamServerConnection::processOutOfStreamMessage(Decoder& decoder)
         //  is not supported here because it is likely we don't have a id to reply to. No clients for this.
         sendAsyncReplyCancelIfNeeded(*message);
         dispatchDidReceiveInvalidMessage(*message);
-        return false;
+        return ProcessResult::Invalid;
     }
 
     RefPtr<StreamMessageReceiver> receiver;
@@ -283,8 +315,16 @@ bool StreamServerConnection::processOutOfStreamMessage(Decoder& decoder)
         receiver = m_receivers.get(key);
     }
     if (receiver) {
-        if (!dispatchStreamMessage(*message, *receiver))
-            return false;
+        auto processResult = dispatchDeferrableStreamMessage(*message, *receiver);
+        if (processResult == ProcessResult::Invalid)
+            return ProcessResult::Invalid;
+        if (processResult == ProcessResult::Deferred) {
+            // Neither the marker nor the message is released: the message is dispatched again when the marker is.
+            message->rewindToArguments();
+            Locker locker { m_outOfStreamMessagesLock };
+            m_outOfStreamMessages.prepend(makeUniqueRefFromNonNullUniquePtr(WTF::move(message)));
+            return ProcessResult::Deferred;
+        }
     }
 
     // If the receiver does not exist it has been removed but messages are still pending to be
@@ -294,7 +334,7 @@ bool StreamServerConnection::processOutOfStreamMessage(Decoder& decoder)
     auto result = m_buffer.release(decoder.currentBufferOffset());
     if (result == WakeUpClient::Yes)
         m_clientWaitSignal.signal();
-    return true;
+    return ProcessResult::Processed;
 }
 
 bool StreamServerConnection::dispatchStreamMessage(Decoder& message, StreamMessageReceiver& receiver)
@@ -345,6 +385,13 @@ void StreamServerConnection::markCurrentlyDispatchedMessageAsInvalid(ASCIILitera
 void StreamServerConnection::markCurrentlyDispatchedMessageAsInvalid(const String&)
 {
     markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral { });
+}
+
+void StreamServerConnection::markCurrentlyDispatchedMessageAsDeferred()
+{
+    ASSERT(m_isDispatchingMessage);
+    ASSERT(m_canCurrentlyDispatchedMessageWait);
+    m_isCurrentlyDispatchedMessageDeferred = m_canCurrentlyDispatchedMessageWait;
 }
 
 }

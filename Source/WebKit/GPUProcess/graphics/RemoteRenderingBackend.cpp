@@ -506,9 +506,14 @@ void RemoteRenderingBackend::cacheNativeImageFromSharedNativeImage(RemoteNativeI
 {
     assertIsCurrent(workQueue());
     auto identifier = reference.identifier();
-    RefPtr image = m_sharedResourceCache->readNativeImage(WTF::move(reference), defaultRemoteSharedResourceCacheTimeout);
-    MESSAGE_CHECK(image, "Shared NativeImage not found.");
-    bool success = m_remoteResourceCache.cacheNativeImage(identifier, image.releaseNonNull());
+    // Another stream connection publishes the image, possibly on this work queue. Wait without blocking the queue.
+    auto image = m_sharedResourceCache->readNativeImage(m_streamConnection, WTF::move(reference));
+    if (!image) {
+        m_streamConnection->markCurrentlyDispatchedMessageAsDeferred();
+        return;
+    }
+    MESSAGE_CHECK(*image, "Shared NativeImage not found.");
+    bool success = m_remoteResourceCache.cacheNativeImage(identifier, image->releaseNonNull());
     MESSAGE_CHECK(success, "NativeImage already cached.");
 }
 
