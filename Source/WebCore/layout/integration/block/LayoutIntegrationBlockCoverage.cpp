@@ -567,9 +567,10 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
                 return BlockAvoidanceReason::ContentHasAspectRatio;
         }
     }
-    // In quirks mode a percentage height resolves against the nearest ancestor with a height (RenderBox::computePercentageLogicalHeight).
-    if (blockContainer->document().inQuirksMode() && (style->logicalHeight().isPercentOrCalculated() || style->logicalMinHeight().isPercentOrCalculated() || style->logicalMaxHeight().isPercentOrCalculated()))
-        return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
+    // In quirks mode a percentage block size looks past the containing blocks with an auto block size (BlockFormattingUtils::definiteContentBoxBlockSize).
+    // FIXME: The stretch block sizes in quirks mode.
+    if (blockContainer->document().inQuirksMode() && (style->logicalHeight().isStretch() || style->logicalMinHeight().isStretch() || style->logicalMaxHeight().isStretch()))
+        return BlockAvoidanceReason::ContentHasStretchBlockSize;
     // Quirks mode: every body element is a quirk container (RenderBlockFlow::MarginInfo), but the block formatting context keeps track of only one.
     if (Layout::BlockMarginCollapse::isQuirkContainer(*blockContainer)) {
         for (CheckedRef ancestor : ancestorsOfType<RenderBlockFlow>(*blockContainer)) {
