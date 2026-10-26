@@ -117,6 +117,11 @@ static bool urlRequiresFirefoxBrowser(StringView domain, StringView baseDomain)
         return true;
 #endif
 
+    // GeForceNow currently requires a Firefox UA because its keyboard-lock implementation matches
+    // with ours.
+    if (domain == "play.geforcenow.com"_s)
+        return true;
+
     return false;
 }
 
