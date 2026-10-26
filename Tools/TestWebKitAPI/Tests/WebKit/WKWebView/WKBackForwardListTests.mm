@@ -1352,8 +1352,6 @@ static void runGoBackAfterNavigatingSameSiteIframe(ShouldEnablePageCache shouldE
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
-    const bool backForwardCacheEnabled = isUsingBackForwardCache(webView.get());
     webView.get().navigationDelegate = navigationDelegate.get();
     static bool didCommitLoadForAllFrames = false;
     static unsigned expectedCommittedFrameSize = 2;
@@ -1401,7 +1399,7 @@ static void runGoBackAfterNavigatingSameSiteIframe(ShouldEnablePageCache shouldE
 
     // Navigate main frame back.
     // For page cache case, iframe is not reloaded, so there is only one commit.
-    expectedCommittedFrameSize = backForwardCacheEnabled ? 1 : 2;
+    expectedCommittedFrameSize = shouldEnablePageCache == ShouldEnablePageCache::Yes ? 1 : 2;
     [webView goBack];
 
     TestWebKitAPI::Util::run(&didCommitLoadForAllFrames);
@@ -1749,8 +1747,6 @@ static void runGoBackAfterNavigatingSameSiteIframe2(ShouldEnablePageCache should
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
-    const bool backForwardCacheEnabled = isUsingBackForwardCache(webView.get());
     webView.get().navigationDelegate = navigationDelegate.get();
     static bool didCommitLoadForAllFrames = false;
     static unsigned expectedCommittedFrameSize = 2;
@@ -1798,7 +1794,7 @@ static void runGoBackAfterNavigatingSameSiteIframe2(ShouldEnablePageCache should
 
     // Navigate main frame back.
     // For page cache case, iframe is not reloaded, so there is only one commit.
-    expectedCommittedFrameSize = backForwardCacheEnabled ? 1 : 2;
+    expectedCommittedFrameSize = shouldEnablePageCache == ShouldEnablePageCache::Yes ? 1 : 2;
     [webView goBack];
 
     TestWebKitAPI::Util::run(&didCommitLoadForAllFrames);

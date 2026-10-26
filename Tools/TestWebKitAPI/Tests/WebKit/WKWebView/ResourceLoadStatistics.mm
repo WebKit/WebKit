@@ -1169,9 +1169,7 @@ TEST(ResourceLoadStatistics, DataSummaryWithCachedProcess)
         [delegate waitForDidFinishNavigation];
 
         EXPECT_EQ(i + 1, [processPool _webProcessCount]);
-        // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
-        if (isUsingBackForwardCache(webView))
-            EXPECT_EQ(i + 1, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+        EXPECT_EQ(i + 1, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
         EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
     }
     
@@ -1253,10 +1251,7 @@ TEST(ResourceLoadStatistics, BackForwardPerPageData)
 
     // Go back, check for the cached third party example1.com.
     [webView goBack];
-    if (isUsingBackForwardCache(webView.get()))
-        [delegate waitForDidFinishNavigation];
-    else
-        [delegate waitForDidFinishNavigationAndLoadInSubframe];
+    [delegate waitForDidFinishNavigation];
 
     doneFlag = false;
     [dataStore _loadedSubresourceDomainsFor:webView.get() completionHandler:^(NSArray<NSString *> *domains) {
@@ -1273,10 +1268,7 @@ TEST(ResourceLoadStatistics, BackForwardPerPageData)
 
     // Go forward, check for the cached third party example2.com.
     [webView goForward];
-    if (isUsingBackForwardCache(webView.get()))
-        [delegate waitForDidFinishNavigation];
-    else
-        [delegate waitForDidFinishNavigationAndLoadInSubframe];
+    [delegate waitForDidFinishNavigation];
 
     doneFlag = false;
     [dataStore _loadedSubresourceDomainsFor:webView.get() completionHandler:^(NSArray<NSString *> *domains) {

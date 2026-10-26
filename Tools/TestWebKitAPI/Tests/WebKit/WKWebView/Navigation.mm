@@ -854,8 +854,7 @@ static bool navigationTestComplete;
     EXPECT_STREQ(item.URL.absoluteString.UTF8String, expectedURL);
     EXPECT_TRUE(item.title == nil);
     EXPECT_STREQ(item.initialURL.absoluteString.UTF8String, expectedURL);
-    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
-    EXPECT_EQ(inPageCache, isUsingBackForwardCache(webView));
+    EXPECT_TRUE(inPageCache);
     isDone = true;
 }
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
@@ -894,8 +893,7 @@ static bool didRejectNavigation = false;
 {
     EXPECT_EQ(item, _targetItem);
     EXPECT_TRUE(item.title == nil);
-    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
-    EXPECT_EQ(willUseInstantBack, isUsingBackForwardCache(webView));
+    EXPECT_TRUE(willUseInstantBack);
 
     completionHandler(_allowNavigation);
     if (!_allowNavigation)
@@ -928,8 +926,7 @@ static bool didRejectNavigation = false;
 {
     EXPECT_EQ(item, _targetItem);
     EXPECT_TRUE(item.title == nil);
-    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
-    EXPECT_EQ(inPageCache, isUsingBackForwardCache(webView));
+    EXPECT_TRUE(inPageCache);
 
     completionHandler(_allowNavigation);
     if (!_allowNavigation)

@@ -977,12 +977,6 @@ TEST(WebTransport, BackForwardCache)
     [delegate allowAnyTLSCertificate];
     [webView setNavigationDelegate:delegate.get()];
 
-    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
-    if (!isUsingBackForwardCache(webView.get())) {
-        NSLog(@"WebTransport.BackForwardCache: Test is skipped as back-forward cache is disabled");
-        return;
-    }
-
     [webView loadRequest:loadingServer.request()];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc");
     [webView loadRequest:loadingServer.request("/other"_s)];

@@ -81,12 +81,5 @@ TEST(IndexedDB, IndexedDBInPageCache)
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     RetainPtr<NSString> string3 = (NSString *)[lastScriptMessage body];
-
-    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
-    if (isUsingBackForwardCache(webView.get()))
-        EXPECT_WK_STREQ(@"First Database Connection Closed, Second Database Connection Not Failed, Third Database Connection Opened", string3.get());
-    else {
-        // If page is not in cache, a new connection will be opened.
-        EXPECT_WK_STREQ(@"First Database Connection Opened", string3.get());
-    }
+    EXPECT_WK_STREQ(@"First Database Connection Closed, Second Database Connection Not Failed, Third Database Connection Opened", string3.get());
 }
