@@ -30,6 +30,10 @@
 #include "StyleChangedAnimatablePropertiesGenerated.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 namespace Style {
 
@@ -66,6 +70,13 @@ void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle
         if (Style::effectiveBorderWidths(a).left() == Style::effectiveBorderWidths(b).left())
             changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::BorderLeftWidth));
     }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    // A filter set by AX Custom Color Mode is not web-authored and must not be observable
+    // as a CSS transition; drop it unless the change involves an author-specified filter.
+    if (AXCustomColorModeController::isEngineAppliedColorFilterChange(a, b))
+        changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::AppleColorFilter));
+#endif
 }
 
 } // namespace Style
