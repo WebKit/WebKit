@@ -49,14 +49,14 @@ TEST(TextScaleMeta, FollowsContentSizeCategory)
     [defaults setObject:@"UICTContentSizeCategoryXXXL" forKey:contentSizeCategoryKey];
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [configuration setProcessPool:adoptNS([[WKProcessPool alloc] init])];
     [configuration preferences]._contentSizeCategoryTextScaleEnabled = YES;
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CSSTextScaleMetaEnabled"])
             [[configuration preferences] _setEnabled:YES forFeature:feature];
     }
 
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
     [webView synchronouslyLoadHTMLString:@"<meta name='text-scale' content='scale'>"];
     auto rootFontSize = [&] {
         return [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.documentElement).fontSize"];

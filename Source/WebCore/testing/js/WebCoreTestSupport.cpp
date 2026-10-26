@@ -349,7 +349,7 @@ void populateDisassemblyLabels()
 #if HAVE(TEXT_SCALE_FACTOR)
 double textScaleFactorForContentSizeCategory(const String& contentSizeCategory)
 {
-    return WebCore::textScaleFactorForContentSizeCategory(contentSizeCategory.createCFString().get());
+    return WebCore::textScaleFactorForContentSizeCategory(contentSizeCategory.createCFString());
 }
 #endif
 
