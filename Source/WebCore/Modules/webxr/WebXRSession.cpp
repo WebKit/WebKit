@@ -720,7 +720,7 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
         // FIXME: implement.
 
         // FIXME: I moved step 7 before 6 because of https://github.com/immersive-web/webxr/issues/1164
-        // 7.If session’s pending render state is not null, apply the pending render state.
+        // Render state updates requested while a frame is running are applied at the end of it, so only updates requested between frames are still pending here.
         if (session.m_pendingRenderState)
             session.applyPendingRenderState();
 
@@ -795,6 +795,9 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
             if (RefPtr device = session.m_device)
                 device->submitFrame(WTF::move(frameLayers));
         }
+
+        if (session.m_pendingRenderState)
+            session.applyPendingRenderState();
 
         session.requestFrameIfNeeded();
     });
