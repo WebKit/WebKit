@@ -181,6 +181,21 @@ Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingCo
     return { box.minContentLogicalWidthContribution() - borderAndPadding, box.maxContentLogicalWidthContribution() - borderAndPadding };
 }
 
+Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizeContributions(const RenderBox& box)
+{
+    // Like RenderBlock::computeChildIntrinsicLogicalWidths: a min-content or max-content inline size of a block makes both contributions
+    // that size (css-sizing-3 §5.2.1).
+    auto contributions = Layout::IntrinsicWidthConstraints { box.minContentLogicalWidthContribution(), box.maxContentLogicalWidthContribution() };
+    if (is<RenderBlock>(box)) {
+        auto& inlineSize = box.style().logicalWidth();
+        if (inlineSize.isMaxContent())
+            contributions.minimum = contributions.maximum;
+        else if (inlineSize.isMinContent())
+            contributions.maximum = contributions.minimum;
+    }
+    return contributions;
+}
+
 Layout::BoxGeometry BlockIntegrationUtils::rootGeometry(const RenderBlockFlow& root)
 {
     // In the root's writing mode, which is its content's. An atomic inline-level root shares its geometry with the inline formatting context it
