@@ -1911,7 +1911,6 @@ imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intri
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-percentage-size-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/gap-collapse.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-dynamic.html [ ImageOnlyFailure ]
 
 # grid layout tests
 webkit.org/b/191508 fast/css-grid-layout/crash-large-positions.html [ Skip ]

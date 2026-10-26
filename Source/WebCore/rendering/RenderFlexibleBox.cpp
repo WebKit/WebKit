@@ -201,6 +201,16 @@ bool RenderFlexibleBox::willStretchItem(const RenderBox& item, LogicalBoxAxis co
     return FlexFormattingUtils::willStretchFlexItem(*this, item, containingAxis, mode);
 }
 
+bool RenderFlexibleBox::intrinsicLogicalWidthsDependOnLogicalHeight() const
+{
+    return FlexFormattingUtils::isColumnFlow(*this) && FlexFormattingUtils::isMultiline(*this) && hasRelativeLogicalHeight();
+}
+
+bool RenderFlexibleBox::shouldInvalidateContentWidths() const
+{
+    return RenderBlock::shouldInvalidateContentWidths() || intrinsicLogicalWidthsDependOnLogicalHeight();
+}
+
 RenderFlexibleBox::FlexItemBorderBoxRects RenderFlexibleBox::flexItemBorderBoxRects() const
 {
     FlexItemBorderBoxRects flexItemBorderBoxRects;

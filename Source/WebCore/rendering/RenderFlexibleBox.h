@@ -65,6 +65,9 @@ public:
 
     bool willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal) const override;
 
+    bool intrinsicLogicalWidthsDependOnLogicalHeight() const;
+    bool shouldInvalidateContentWidths() const override;
+
     LayoutOptionalOutsets allowedLayoutOverflow() const override;
 
     virtual bool isFlexibleBoxImpl() const { return false; };
