@@ -313,6 +313,28 @@ static gboolean decidePermissionRequest(WebKitWebView *, WebKitPermissionRequest
     return TRUE;
 }
 
+static void webProcessTerminated(WebKitWebView* webView, WebKitWebProcessTerminationReason reason, gpointer)
+{
+    const char* message;
+    switch (reason) {
+    case WEBKIT_WEB_PROCESS_CRASHED:
+        g_warning("WebProcess CRASHED");
+        message = "The web process crashed";
+        break;
+    case WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT:
+        g_warning("WebProcess exceeded memory limit");
+        message = "The web process exceeded the memory limit";
+        break;
+    default:
+        return;
+    }
+
+    const char* uri = webkit_web_view_get_uri(webView);
+    g_autofree char* escapedURI = g_markup_escape_text(uri ? uri : "", -1);
+    g_autofree char* html = g_strdup_printf("<html><head><title>%s</title></head><body><h1>%s</h1><p>%s</p></body></html>", message, message, escapedURI);
+    webkit_web_view_load_alternate_html(webView, html, uri, nullptr);
+}
+
 #if defined(USE_LIBWPE) && USE_LIBWPE
 static std::unique_ptr<WPEToolingBackends::ViewBackend> createViewBackend(uint32_t width, uint32_t height)
 {
@@ -385,6 +407,7 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
 
     g_signal_connect(newWebView, "create", G_CALLBACK(createWebView), user_data);
     g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), user_data);
+    g_signal_connect(newWebView, "web-process-terminated", G_CALLBACK(webProcessTerminated), nullptr);
 
     g_hash_table_add(openViews, newWebView);
 
@@ -428,6 +451,7 @@ static WebKitWebView* createWebViewForAutomationCallback(WebKitAutomationSession
     auto* application = g_application_get_default();
     g_signal_connect(newWebView, "create", G_CALLBACK(createWebView), application);
     g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), application);
+    g_signal_connect(newWebView, "web-process-terminated", G_CALLBACK(webProcessTerminated), nullptr);
     webkit_web_view_load_uri(newWebView, "about:blank");
 
     g_hash_table_add(openViews, newWebView);
@@ -707,6 +731,7 @@ static void activate(GApplication* application, gpointer)
     g_signal_connect(webView, "permission-request", G_CALLBACK(decidePermissionRequest), nullptr);
     g_signal_connect(webView, "create", G_CALLBACK(createWebView), application);
     g_signal_connect(webView, "close", G_CALLBACK(webViewClose), application);
+    g_signal_connect(webView, "web-process-terminated", G_CALLBACK(webProcessTerminated), nullptr);
     g_hash_table_add(openViews, webView);
 
     WebKitColor color;
