@@ -12023,6 +12023,13 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=300,
                 log_environ=False,
                 env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq 1'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
                 command=['git', 'branch', '-f', 'main', 'eng/pull-request-branch'],
             ).exit(0),
             ExpectShell(
@@ -12087,6 +12094,13 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=300,
                 log_environ=False,
                 env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq 4'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
                 command=['git', 'branch', '-f', 'main', 'eng/pull-request-branch'],
             ).exit(0),
             ExpectShell(
@@ -12144,6 +12158,13 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 log_environ=False,
                 env=self.ENV,
                 command=['git', 'pull', 'security', 'safari-000-branch', '--rebase'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq 1'],
             ).exit(0),
             ExpectShell(
                 workdir='wkdir',
@@ -12250,6 +12271,13 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=300,
                 log_environ=False,
                 env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq 1'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
                 command=['git', 'branch', '-f', 'main', 'eng/pull-request-branch'],
             ).exit(0),
             ExpectShell(
@@ -12268,6 +12296,42 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
             ).exit(1),
         )
         self.expect_outcome(result=FAILURE, state_string='Failed to canonicalize commit')
+        return self.run_step()
+
+    def test_failure_changes_already_landed(self):
+        self.setup_step(Canonicalize())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'origin')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm .git/identifiers.json || true'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'pull', 'origin', 'main', '--rebase'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq 1'],
+            ).exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Changes already landed on main')
+        self.expect_property('build_finish_summary', 'Changes already landed on main')
+        self.expect_property('comment_text', 'Commits in PR #1234 were dropped when rebasing onto main because their changes have already landed, blocking PR #1234. Update the pull request to contain only unlanded changes, or close it.')
         return self.run_step()
 
 
