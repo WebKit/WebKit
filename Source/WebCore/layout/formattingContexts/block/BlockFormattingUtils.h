@@ -74,7 +74,7 @@ public:
     static bool hasIntrinsicInlineSize(const RenderBox&, WritingMode);
     // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7), and the stretch-fit block size for
     // stretch (css-sizing-4 §6.1).
-    static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, LayoutUnit intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
+    static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, std::optional<LayoutUnit> intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
     // The border box block size a preferred aspect ratio gives an auto block size, from the inline size and within the min and max block sizes
     // (css-sizing-4 §5.1, like RenderBox::blockSizeFromAspectRatio), which is definite. With the block size of the content, an auto min block
     // size is the automatic minimum block size: the content's, capped by the max block size, unless the box is a scroll container. None without
