@@ -192,14 +192,18 @@ void pas_designated_intrinsic_heap_initialize(pas_segregated_heap* heap,
         set_up_range(&data,  4,  4, 64);
         set_up_range(&data,  5,  5, 80);
         set_up_range(&data,  6,  6, 96);
-        set_up_range(&data,  7,  8, 128);
-        set_up_range(&data,  9, 10, 160);
+        set_up_range(&data,  7,  7, 112);
+        set_up_range(&data,  8,  8, 128);
+        set_up_range(&data,  9,  9, 144);
+        set_up_range(&data, 10, 10, 160);
         set_up_range(&data, 11, 12, 192);
         set_up_range(&data, 13, 14, 224);
         set_up_range(&data, 15, 16, 256);
-        set_up_range(&data, 17, 19, 304);
+        set_up_range(&data, 17, 17, 272);
+        set_up_range(&data, 18, 19, 304);
         set_up_range(&data, 20, 22, 352);
-        set_up_range(&data, 23, 26, 416);
+        set_up_range(&data, 23, 24, 384);
+        set_up_range(&data, 25, 26, 416);
         break;
 
     case 32:
