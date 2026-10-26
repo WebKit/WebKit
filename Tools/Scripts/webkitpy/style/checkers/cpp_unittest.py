@@ -6244,6 +6244,43 @@ class WebKitStyleTest(CppStyleTestBase):
             '',
             'foo.cpp')
 
+    def test_likelihood_attribute_placement(self):
+        message = "[[unlikely]] after '{' applies to the first statement in the block, not to the branch. Put it before the '{', e.g. 'if (condition) [[unlikely]] {'.  [readability/braces] [4]"
+        # The existing whitespace checks also complain about this form, so only look for the new error.
+        self.assertIn(message, self.perform_multi_line_lint(
+            '''void f()
+{
+    if (x) { [[unlikely]]
+        g();
+        h();
+    }
+}
+''', 'h'))
+        self.assert_multi_line_lint(
+            '''void f()
+{
+    if (x) {
+        [[unlikely]]
+        g();
+        h();
+    }
+}
+''',
+            message)
+        # Inside a macro definition, where every line ends with a backslash.
+        self.assertIn(message, self.perform_multi_line_lint(
+            '''#define CHECK_THING(x) \\
+    do { \\
+        if (!(x)) { [[unlikely]] \\
+            handleFailure(); \\
+            return; \\
+        } \\
+    } while (0)
+''', 'h'))
+        self.assert_lint('if (x) [[unlikely]] {', '', 'foo.cpp')
+        self.assert_lint('else [[likely]] {', '', 'foo.cpp')
+        self.assert_lint('case 1: [[likely]] {', '', 'foo.cpp')
+
     def test_wtf_make_unique(self):
         self.assert_lint(
              'std::unique_ptr<Foo> foo = WTF::makeUnique<Foo>();',

@@ -3196,6 +3196,34 @@ def check_adopt_of_dynamic_cast(clean_lines, line_number, file_state, error):
         error(line_number, 'runtime/adopt_dynamic_cast', 4, "Adopt the value before casting, e.g. '%s<>(%s(...))', otherwise the value leaks on type mismatch." % (cast_func, adopt_func))
 
 
+def check_likelihood_attribute_placement(clean_lines, line_number, file_state, error):
+    """Looks for '[[likely]]' / '[[unlikely]]' placed just after the opening brace of a block.
+
+    An attribute at the start of a statement applies to that statement. After
+    'if (condition) {' it applies to the first statement inside the block, not
+    to the branch, and Clang ignores it there. It belongs on the substatement:
+    'if (condition) [[unlikely]] {'.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+    attribute = r'\[\[\s*(likely|unlikely)\s*\]\]'
+
+    matched = search(r'\{\s*' + attribute, line)
+    if not matched and line_number > 0 and match(r'\s*' + attribute, line):
+        matched = search(r'\{\s*$', clean_lines.elided[line_number - 1])
+    if matched:
+        attribute_name = search(attribute, line).group(1)
+        error(line_number, 'readability/braces', 4,
+              "[[%s]] after '{' applies to the first statement in the block, not to the branch. Put it before the '{', e.g. 'if (condition) [[%s]] {'." % (attribute_name, attribute_name))
+
+
 def check_lock_guard(clean_lines, line_number, file_state, error):
     """Looks for use of 'std::lock_guard<>' which should be replaced with 'WTF::Locker'.
 
@@ -4025,6 +4053,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error)
     check_auto_with_adopt(clean_lines, line_number, file_state, error)
     check_adopt_of_dynamic_cast(clean_lines, line_number, file_state, error)
+    check_likelihood_attribute_placement(clean_lines, line_number, file_state, error)
     check_lock_guard(clean_lines, line_number, file_state, error)
     check_log(clean_lines, line_number, file_state, error)
     check_ctype_functions(clean_lines, line_number, file_state, error)
