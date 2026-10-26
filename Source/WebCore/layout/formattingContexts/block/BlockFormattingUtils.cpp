@@ -97,6 +97,27 @@ std::optional<LayoutUnit> BlockFormattingUtils::aspectRatioBorderBoxBlockSize(co
     return borderBoxBlockSize;
 }
 
+bool BlockFormattingUtils::hasFillAvailableBlockSize(const RenderBox& box, WritingMode writingMode)
+{
+    CheckedRef style = box.style();
+    return style->logicalHeight(writingMode).isFillAvailable() || style->logicalMinHeight(writingMode).isFillAvailable() || style->logicalMaxHeight(writingMode).isFillAvailable();
+}
+
+LayoutUnit BlockFormattingUtils::fillAvailableBlockSize(const RenderBox& blockContainer, const BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, LayoutUnit containingBlockFillAvailableBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode writingMode)
+{
+    CheckedRef style = blockContainer.style();
+    auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
+    // An anonymous block box or one with an auto block size passes the percentages through, but not this.
+    if (contentBoxBlockSize && !blockContainer.isAnonymous() && !style->logicalHeight(writingMode).isAuto())
+        return *contentBoxBlockSize;
+    auto blockSize = containingBlockFillAvailableBlockSize - geometry.marginBefore() - geometry.marginAfter() - borderAndPaddingBlockSize;
+    if (auto maximumBlockSize = borderBoxBlockSizeFor(style->logicalMaxHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize))
+        blockSize = std::min(blockSize, *maximumBlockSize - borderAndPaddingBlockSize);
+    if (auto minimumBlockSize = borderBoxBlockSizeFor(style->logicalMinHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize))
+        blockSize = std::max(blockSize, *minimumBlockSize - borderAndPaddingBlockSize);
+    return blockSize;
+}
+
 bool BlockFormattingUtils::hasPercentageBlockSize(const RenderBox& box, WritingMode writingMode)
 {
     CheckedRef style = box.style();
