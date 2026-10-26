@@ -57,6 +57,8 @@
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/threads-spec-tests
   cmd: runWebAssemblyThreadsSpecTest :normal
+- path: wasm/custom-page-sizes-spec-tests
+  cmd: runWebAssemblyCustomPageSizesSpecTest :normal
 
 - path: wasm/modules/run-from-wasm.wasm
   cmd: runWebAssembly

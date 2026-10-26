@@ -2065,6 +2065,11 @@ def runWebAssemblyThreadsSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "threads-spec-harness", nil)
 end
 
+# The custom-page-sizes proposal is off by default, so the whole collection carries the flag.
+def runWebAssemblyCustomPageSizesSpecTest(mode)
+    runWebAssemblySpecTestBase(mode, "threads-spec-harness", nil, "--useWasmCustomPageSizes=1")
+end
+
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
     return unless $isWasmPlatform
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
