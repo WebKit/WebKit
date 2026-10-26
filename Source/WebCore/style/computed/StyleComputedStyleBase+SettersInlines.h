@@ -363,6 +363,7 @@ inline void ComputedStyleBase::setMaskBorder(MaskBorder&& image)
 inline void ComputedStyleBase::setBorderImage(BorderImage&& image)
 {
     SET_DOUBLY_NESTED(m_nonInheritedData, surroundData, border.borderImage, borderImage, WTF::move(image));
+    updateHasZeroEffectiveBorderWidths();
 }
 
 inline void ComputedStyleBase::setPerspectiveOrigin(PerspectiveOrigin&& origin)
@@ -388,6 +389,7 @@ inline void ComputedStyleBase::setMarginBox(MarginBox&& box)
 inline void ComputedStyleBase::setPaddingBox(PaddingBox&& box)
 {
     SET_NESTED(m_nonInheritedData, surroundData, padding, WTF::move(box));
+    updateHasZeroPadding();
 }
 
 inline void ComputedStyleBase::setBorderRadius(BorderRadiusValue&& size)
@@ -401,21 +403,25 @@ inline void ComputedStyleBase::setBorderRadius(BorderRadiusValue&& size)
 void ComputedStyleBase::setBorderTop(BorderValue&& value)
 {
     SET_NESTED(m_nonInheritedData, surroundData, border.edges.top(), WTF::move(value));
+    updateHasZeroEffectiveBorderWidths();
 }
 
 void ComputedStyleBase::setBorderRight(BorderValue&& value)
 {
     SET_NESTED(m_nonInheritedData, surroundData, border.edges.right(), WTF::move(value));
+    updateHasZeroEffectiveBorderWidths();
 }
 
 void ComputedStyleBase::setBorderBottom(BorderValue&& value)
 {
     SET_NESTED(m_nonInheritedData, surroundData, border.edges.bottom(), WTF::move(value));
+    updateHasZeroEffectiveBorderWidths();
 }
 
 void ComputedStyleBase::setBorderLeft(BorderValue&& value)
 {
     SET_NESTED(m_nonInheritedData, surroundData, border.edges.left(), WTF::move(value));
+    updateHasZeroEffectiveBorderWidths();
 }
 
 // MARK: - Properties/descriptors that are not yet generated

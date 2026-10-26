@@ -3028,6 +3028,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroEffectiveBorderWidths",
                 "logical-property-group": {
                     "name": "border-style",
                     "resolver": "bottom"
@@ -3053,6 +3054,7 @@
                 "thick"
             ],
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroEffectiveBorderWidths",
                 "used-style": "custom",
                 "logical-property-group": {
                     "name": "border-width",
@@ -3256,6 +3258,7 @@
                 "auto"
             ],
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroEffectiveBorderWidths",
                 "style-extractor-custom": true,
                 "disables-native-appearance": true,
                 "computed-style-storage-path": ["m_nonInheritedData", "surroundData", "border.borderImage", "borderImage"],
@@ -3626,6 +3629,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroEffectiveBorderWidths",
                 "logical-property-group": {
                     "name": "border-style",
                     "resolver": "left"
@@ -3651,6 +3655,7 @@
                 "thick"
             ],
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroEffectiveBorderWidths",
                 "used-style": "custom",
                 "logical-property-group": {
                     "name": "border-width",
@@ -3758,6 +3763,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroEffectiveBorderWidths",
                 "logical-property-group": {
                     "name": "border-style",
                     "resolver": "right"
@@ -3783,6 +3789,7 @@
                 "thick"
             ],
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroEffectiveBorderWidths",
                 "used-style": "custom",
                 "logical-property-group": {
                     "name": "border-width",
@@ -3995,6 +4002,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroEffectiveBorderWidths",
                 "logical-property-group": {
                     "name": "border-style",
                     "resolver": "top"
@@ -4020,6 +4028,7 @@
                 "thick"
             ],
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroEffectiveBorderWidths",
                 "used-style": "custom",
                 "logical-property-group": {
                     "name": "border-width",
@@ -8121,6 +8130,7 @@
             "animation-type": "by computed value",
             "initial": "0px",
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroPadding",
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "bottom"
@@ -8198,6 +8208,7 @@
             "animation-type": "by computed value",
             "initial": "0px",
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroPadding",
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "left"
@@ -8222,6 +8233,7 @@
             "animation-type": "by computed value",
             "initial": "0px",
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroPadding",
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "right"
@@ -8246,6 +8258,7 @@
             "animation-type": "by computed value",
             "initial": "0px",
             "codegen-properties": {
+                "computed-style-setter-did-set-function": "updateHasZeroPadding",
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "top"
