@@ -2631,6 +2631,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/MockMediaDeviceRouteController.idl
     testing/MockMediaDeviceRouteURLCallback.idl
     testing/MockPageOverlay.idl
+    testing/MockPhoneNumberPossessionConfiguration.idl
     testing/MockWebAuthenticationConfiguration.idl
     testing/RequestedGPU.idl
     testing/ServiceWorkerInternals.idl

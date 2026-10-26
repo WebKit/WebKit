@@ -193,6 +193,7 @@
 #include "PageInspectorController.h"
 #include "PageOverlay.h"
 #include "PathUtilities.h"
+#include "PhoneNumberPossessionCoordinator.h"
 #include "PictureInPictureSupport.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMediaEngineConfigurationFactory.h"
@@ -8235,6 +8236,19 @@ void Internals::setMockWebAuthenticationConfiguration(const MockWebAuthenticatio
     if (!page)
         return;
     page->chrome().client().setMockWebAuthenticationConfiguration(configuration);
+}
+#endif
+
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+void Internals::setMockPhoneNumberPossessionConfiguration(const MockPhoneNumberPossessionConfiguration& configuration)
+{
+    RefPtr document = contextDocument();
+    if (!document)
+        return;
+    RefPtr page = document->page();
+    if (!page)
+        return;
+    page->phoneNumberPossessionCoordinator().setMockConfigurationForTesting(configuration);
 }
 #endif
 

@@ -202,6 +202,7 @@ class WebCodecsVideoDecoder;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
+struct MockPhoneNumberPossessionConfiguration;
 struct MockWebAuthenticationConfiguration;
 
 class Internals final
@@ -1549,6 +1550,10 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     void setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration&);
+#endif
+
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    void setMockPhoneNumberPossessionConfiguration(const MockPhoneNumberPossessionConfiguration&);
 #endif
 
     int processIdentifier() const;
