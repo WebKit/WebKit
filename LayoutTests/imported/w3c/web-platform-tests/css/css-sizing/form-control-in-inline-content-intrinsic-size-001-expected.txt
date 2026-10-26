@@ -1,0 +1,20 @@
+ xxx
+ xxx
+ xxx
+ xxx
+xxxxxxxxxxxx xxx
+ xxx
+ xxx
+ xxx
+ xxx
+
+PASS The container of a form control is as wide as the control and the text next to it (selectWithAddedOption)
+PASS The container of a form control is as wide as the control and the text next to it (selectWithRemovedOption)
+PASS The container of a form control is as wide as the control and the text next to it (selectWithChangedOptionText)
+PASS The container of a form control is as wide as the control and the text next to it (listBoxWithAddedOption)
+PASS The container of a form control is as wide as the control and the text next to it (buttonWithChangedText)
+PASS The container of a form control is as wide as the control and the text next to it (textareaWithChangedCols)
+PASS The container of a form control is as wide as the control and the text next to it (inputWithChangedSize)
+PASS The container of a form control is as wide as the control and the text next to it (inputWithChangedType)
+PASS The container of a form control is as wide as the control and the text next to it (checkbox)
+
