@@ -788,7 +788,11 @@
 #define ENABLE_PDFKIT_PAINTED_SELECTIONS 1
 #endif
 
-#if !defined(ENABLE_PHONE_NUMBER_POSSESSION) && (PLATFORM(MAC) || PLATFORM(IOS))
+// The UI process side is Swift that uses C++ interop from Swift 6.4, which comes with the 27.0 SDKs.
+// It also uses Task.immediate, which needs the OS 26 Swift runtime.
+#if !defined(ENABLE_PHONE_NUMBER_POSSESSION) && HAVE(SWIFT_STDLIB_6_2) \
+    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 270000) \
+    || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 270000))
 #define ENABLE_PHONE_NUMBER_POSSESSION 1
 #endif
 
