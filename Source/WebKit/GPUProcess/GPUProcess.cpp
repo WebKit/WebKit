@@ -1042,9 +1042,9 @@ void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint
     completionHandler(GPUConnectionToWebProcess::objectCountForTesting());
 }
 
-void GPUProcess::runDisplayListDataTestsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void GPUProcess::runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<String>>&&)>&& completionHandler)
 {
-    completionHandler(testDisplayListData());
+    completionHandler(testDisplayListData(webFonts));
 }
 
 void GPUProcess::terminateWebProcess(WebCore::ProcessIdentifier identifier, IPC::MessageName invalidMessageName)

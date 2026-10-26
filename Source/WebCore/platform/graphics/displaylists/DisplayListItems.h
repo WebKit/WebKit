@@ -503,6 +503,7 @@ public:
     {
     }
 
+    const FontBase& font() const LIFETIME_BOUND { return m_font; }
     const Vector<GlyphBufferGlyph>& glyphs() const LIFETIME_BOUND { return m_glyphs; }
     const Vector<GlyphBufferAdvance>& advances() const LIFETIME_BOUND { return m_advances; }
     size_t length() const { return m_glyphs.size(); }
@@ -1032,7 +1033,7 @@ public:
     WEBCORE_EXPORT FillRectWithGradient(FloatRect&&, Ref<Gradient>&&);
 
     const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
-    const Gradient& gradient() const { return m_gradient; }
+    const Ref<Gradient>& gradient() const LIFETIME_BOUND { return m_gradient; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -1050,7 +1051,7 @@ public:
     WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(FloatRect&&, Ref<Gradient>&&, AffineTransform&&, GraphicsContext::RequiresClipToRect);
 
     const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
-    const Gradient& gradient() const { return m_gradient; }
+    const Ref<Gradient>& gradient() const LIFETIME_BOUND { return m_gradient; }
     const AffineTransform& gradientSpaceTransform() const LIFETIME_BOUND { return m_gradientSpaceTransform; }
     GraphicsContext::RequiresClipToRect requiresClipToRect() const { return m_requiresClipToRect; }
 

@@ -78,6 +78,13 @@ using WebCore::DashArray = FixedVector<float>
     WebCore::AffineTransform transform();
 }
 
+[CustomHeader] class WebCore::DisplayList::DrawControlPart {
+    WebCore::ControlPart part();
+    WebCore::FloatRoundedRect borderRect();
+    float deviceScaleFactor();
+    WebCore::ControlStyle style();
+}
+
 [CustomHeader] class WebCore::DisplayList::DrawDotsForDocumentMarker {
     WebCore::FloatRect rect();
     WebCore::DocumentMarkerLineStyle style();
@@ -124,6 +131,11 @@ using WebCore::DashArray = FixedVector<float>
     float borderThickness();
 }
 
+[CustomHeader] class WebCore::DisplayList::DrawSystemImage {
+    WebCore::SystemImage systemImage();
+    WebCore::FloatRect destinationRect();
+}
+
 [CustomHeader] class WebCore::DisplayList::EndTransparencyLayer {
 }
 
@@ -150,6 +162,18 @@ using WebCore::DashArray = FixedVector<float>
 [CustomHeader] class WebCore::DisplayList::FillRectWithColor {
     WebCore::FloatRect rect();
     WebCore::Color color();
+}
+
+[CustomHeader] class WebCore::DisplayList::FillRectWithGradient {
+    WebCore::FloatRect rect();
+    Ref<WebCore::Gradient> gradient();
+}
+
+[CustomHeader] class WebCore::DisplayList::FillRectWithGradientAndSpaceTransform {
+    WebCore::FloatRect rect();
+    Ref<WebCore::Gradient> gradient();
+    WebCore::AffineTransform gradientSpaceTransform();
+    WebCore::RequiresClipToRect requiresClipToRect();
 }
 
 [CustomHeader] class WebCore::DisplayList::FillRectWithRoundedHole {
@@ -249,9 +273,77 @@ using WebCore::DashArray = FixedVector<float>
     WebCore::FloatRect destRect();
 }
 
+header: <WebCore/SourceBrushLogicalGradient.h>
+[CustomHeader] struct WebCore::SourceBrushLogicalGradient {
+    Ref<WebCore::Gradient> gradient;
+    WebCore::AffineTransform spaceTransform;
+}
+
+header: <WebCore/GraphicsContextState.h>
+[Nested, OptionSet] enum class WebCore::GraphicsContextState::Change : uint32_t {
+    FillBrush,
+    FillRule,
+    StrokeBrush,
+    StrokeThickness,
+    StrokeStyle,
+    CompositeMode,
+    DropShadow,
+    Style,
+    Alpha,
+    TextDrawingMode,
+    ImageInterpolationQuality,
+    ShouldAntialias,
+    ShouldSmoothFonts,
+    ShouldSubpixelQuantizeFonts,
+    ShadowsIgnoreTransforms,
+}
+
 header: "DisplayListData.h"
+[CustomHeader] struct WebKit::DisplayListDataFont {
+    WebCore::FontInternalAttributes attributes;
+    WebCore::FontPlatformDataAttributes platformData;
+    std::optional<uint64_t> customFontIndex;
+}
+
 [CustomHeader] struct WebKit::DrawDisplayListAtIndex {
     uint64_t index;
+}
+
+[CustomHeader] struct WebKit::DrawGlyphsWithFontAtIndex {
+    uint64_t fontIndex;
+    Vector<WebCore::GlyphBufferGlyph> glyphs;
+    Vector<WebCore::FloatSize> advances;
+    WebCore::FloatPoint localAnchor;
+    WebCore::FontSmoothingMode fontSmoothingMode;
+}
+
+[CustomHeader] struct WebKit::DrawFilteredImageBuffer {
+    WebCore::FloatRect sourceImageRect;
+    Ref<WebCore::Filter> filter;
+}
+
+[CustomHeader] struct WebKit::SourceBrushData {
+    WebCore::Color color;
+    Variant<std::monostate, WebCore::SourceBrushLogicalGradient> patternGradient;
+}
+
+[CustomHeader] struct WebKit::SetStateData {
+    OptionSet<WebCore::GraphicsContextState::Change> changes;
+    WebKit::SourceBrushData fillBrush;
+    WebCore::WindRule fillRule;
+    WebKit::SourceBrushData strokeBrush;
+    float strokeThickness;
+    WebCore::StrokeStyle strokeStyle;
+    WebCore::CompositeMode compositeMode;
+    std::optional<WebCore::GraphicsDropShadow> dropShadow;
+    std::optional<WebCore::GraphicsStyle> style;
+    float alpha;
+    WebCore::InterpolationQuality imageInterpolationQuality;
+    OptionSet<WebCore::TextDrawingMode> textDrawingMode;
+    bool shouldAntialias;
+    bool shouldSmoothFonts;
+    bool shouldSubpixelQuantizeFonts;
+    bool shadowsIgnoreTransforms;
 }
 
 using WebKit::DisplayListDataItem = Variant<
@@ -266,21 +358,27 @@ using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::ClipOutToPath,
     WebCore::DisplayList::ClipPath,
     WebCore::DisplayList::ConcatenateCTM,
+    WebCore::DisplayList::DrawControlPart,
     WebCore::DisplayList::DrawDotsForDocumentMarker,
     WebCore::DisplayList::DrawEllipse,
+    WebKit::DrawFilteredImageBuffer,
     WebCore::DisplayList::DrawFocusRingPath,
     WebCore::DisplayList::DrawFocusRingRects,
+    WebKit::DrawGlyphsWithFontAtIndex,
     WebKit::DrawDisplayListAtIndex,
     WebCore::DisplayList::DrawLine,
     WebCore::DisplayList::DrawLinesForText,
     WebCore::DisplayList::DrawPath,
     WebCore::DisplayList::DrawRect,
+    WebCore::DisplayList::DrawSystemImage,
     WebCore::DisplayList::EndTransparencyLayer,
     WebCore::DisplayList::FillCompositedRect,
     WebCore::DisplayList::FillEllipse,
     WebCore::DisplayList::FillPath,
     WebCore::DisplayList::FillRect,
     WebCore::DisplayList::FillRectWithColor,
+    WebCore::DisplayList::FillRectWithGradient,
+    WebCore::DisplayList::FillRectWithGradientAndSpaceTransform,
     WebCore::DisplayList::FillRectWithRoundedHole,
     WebCore::DisplayList::FillRoundedRect,
     WebCore::DisplayList::ResetClip,
@@ -295,6 +393,7 @@ using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::SetLineDash,
     WebCore::DisplayList::SetLineJoin,
     WebCore::DisplayList::SetMiterLimit,
+    WebKit::SetStateData,
     WebCore::DisplayList::StrokeEllipse,
     WebCore::DisplayList::StrokePath,
     WebCore::DisplayList::StrokeRect,
@@ -309,6 +408,8 @@ using WebKit::DisplayListDataItem = Variant<
 >;
 
 class WebKit::DisplayListData {
+    Vector<WebCore::FontCustomPlatformSerializedData> customFonts();
+    Vector<WebKit::DisplayListDataFont> fonts();
     Vector<Vector<WebKit::DisplayListDataItem>> displayLists();
 }
 

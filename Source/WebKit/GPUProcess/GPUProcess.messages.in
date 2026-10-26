@@ -97,7 +97,7 @@ messages -> GPUProcess : AuxiliaryProcess {
     UserPreferredLanguagesChanged(Vector<String> languages)
 
     WebProcessConnectionCountForTesting() -> (uint64_t count)
-    RunDisplayListDataTestsForTesting() -> (Vector<String> failures)
+    RunDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>> webFonts) -> (std::optional<Vector<String>> failures)
 
 #if USE(EXTENSIONKIT)
     ResolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData)

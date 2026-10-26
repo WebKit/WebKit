@@ -164,7 +164,7 @@ public:
     const String& applicationVisibleName() const LIFETIME_BOUND { return m_applicationVisibleName; }
 
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
-    void runDisplayListDataTestsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
+    void runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<String>>&&)>&&);
 
 #if USE(EXTENSIONKIT)
     void resolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData);
