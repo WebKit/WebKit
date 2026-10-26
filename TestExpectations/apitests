@@ -405,7 +405,7 @@ webkit.org/b/326416 [ GoldenGate ] TestWebKitAPI.TextExtractionTests/targetNodeA
 webkit.org/b/326696 [ iOS27 ] TestWebKitAPI.TextExtractionTests/targetNodeAndClientAttributes() [ Skip ]
 webkit.org/b/326416 [ GoldenGate ] TestWebKitAPI.TextExtractionTests/targetNodeWithSameOriginSubframe() [ Skip ]
 webkit.org/b/326696 [ iOS27 ] TestWebKitAPI.TextExtractionTests/targetNodeWithSameOriginSubframe() [ Skip ]
-webkit.org/b/319130 [ ios ] TestWebKitAPI.TextManipulation.CompleteTextManipulationAvoidExtractingManipulatedTextAfterManipulation [ Pass Timeout ]
+webkit.org/b/319130 [ ios ] TestWebKitAPI.TextManipulationTests/completeTextManipulationAvoidExtractingManipulatedTextAfterManipulation() [ Pass Timeout ]
 rdar://168769459 [ mac Sequoia- ] TestWebKitAPI.UnifiedPDF.PrintSize [ Skip ]
 webkit.org/b/287473 [ ios ] TestWebKitAPI.UnifiedPDF.RespectsPageFragment [ Skip ]
 webkit.org/b/314757 [ mac ] TestWebKitAPI.UnifiedPDF.SelectAllTextInEmbedHostedPDF [ Skip ]
