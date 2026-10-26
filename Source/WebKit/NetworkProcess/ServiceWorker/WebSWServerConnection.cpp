@@ -37,6 +37,7 @@
 #include "NetworkSession.h"
 #include "NetworkStorageManager.h"
 #include "RemoteWorkerType.h"
+#include "ServiceWorkerOriginAuthority.h"
 #include "SharedBufferReference.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "WebFrameProxyFromNetworkProcessMessages.h"
@@ -523,7 +524,10 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
 
 void WebSWServerConnection::matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
 {
-    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto topOriginValidated = WTF::move(untrustedTopOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
+    if (!topOriginValidated)
+        return;
+    auto topOrigin = WTF::move(*topOriginValidated);
 
     if (!checkTopOrigin(topOrigin))
         return;
@@ -533,7 +537,10 @@ void WebSWServerConnection::matchRegistration(IPC::Untrusted<WebCore::SecurityOr
 
 void WebSWServerConnection::whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&& callback)
 {
-    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto topOriginValidated = WTF::move(untrustedTopOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
+    if (!topOriginValidated)
+        return;
+    auto topOrigin = WTF::move(*topOriginValidated);
 
     if (!checkTopOrigin(topOrigin))
         return;
@@ -543,7 +550,10 @@ void WebSWServerConnection::whenRegistrationReady(IPC::Untrusted<WebCore::Securi
 
 void WebSWServerConnection::getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, const URL& clientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
 {
-    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto topOriginValidated = WTF::move(untrustedTopOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
+    if (!topOriginValidated)
+        return;
+    auto topOrigin = WTF::move(*topOriginValidated);
 
     if (!checkTopOrigin(topOrigin))
         return;
@@ -559,7 +569,10 @@ void WebSWServerConnection::getRegistrations(IPC::Untrusted<WebCore::SecurityOri
 
 void WebSWServerConnection::registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
 {
-    auto clientOrigin = WTF::move(untrustedClientOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto clientOriginValidated = WTF::move(untrustedClientOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
+    if (!clientOriginValidated)
+        return;
+    auto clientOrigin = WTF::move(*clientOriginValidated);
 
     MESSAGE_CHECK(data.identifier.processIdentifier() == identifier());
     if (!checkTopOrigin(clientOrigin.topOrigin))
