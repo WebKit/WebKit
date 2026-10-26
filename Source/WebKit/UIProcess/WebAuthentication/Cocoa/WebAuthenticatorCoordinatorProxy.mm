@@ -66,7 +66,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebAuthenticatorCoordinatorProxyAdditions.h>)
+#if USE(APPLE_INTERNAL_SDK) && HAVE(CROSS_DEVICE_FALLBACK_URL_API) && __has_include(<WebKitAdditions/WebAuthenticatorCoordinatorProxyAdditions.h>)
 #import <WebKitAdditions/WebAuthenticatorCoordinatorProxyAdditions.h>
 #else
 #define AUTHENTICATOR_COORDINATOR_ADDITIONS
