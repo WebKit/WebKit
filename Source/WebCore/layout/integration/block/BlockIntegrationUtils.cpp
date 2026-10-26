@@ -124,7 +124,7 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     }
     // The block formatting context writes the geometry of the containing block once all of it is laid out. The render tree takes a containing
     // block block size, definite or not, as the box's own (RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight), so only a box with a
-    // percentage block size, which resolves against it, gets one. An orthogonal box resolves that against the inline size of the containing
+    // percentage or stretch block size, which resolves against it, gets one. An orthogonal box resolves that against the inline size of the containing
     // block instead (RenderBox::computePercentageLogicalHeight), and takes its available inline space from the containing block's style
     // (RenderBox::perpendicularContainingBlockLogicalHeight, coverage).
     auto containingBlockWritingMode = containingBlock->writingMode();
