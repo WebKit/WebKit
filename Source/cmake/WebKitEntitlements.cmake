@@ -59,6 +59,7 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
             # Checked by JSC's script, no longer set by the project.
             SKIP_ROSETTA_BREAKING_ENTITLEMENTS=${_skip_rosetta_breaking_entitlements}
             TARGET_MAC_OS_X_VERSION_MAJOR=${_target_version_major}
+            WK_IS_COCOA_TOUCH=$<IF:$<BOOL:${WEBKIT_SDK_IS_IOS_FAMILY}>,YES,NO>
             WK_PLATFORM_NAME=${WEBKIT_SDK_NAME}
             WK_PROCESSED_XCENT_FILE=${_arg_OUTPUT}
             WK_RELOCATABLE_WEBPUSHD=$<IF:$<BOOL:${USE_RELOCATABLE_WEBPUSHD}>,YES,NO>
