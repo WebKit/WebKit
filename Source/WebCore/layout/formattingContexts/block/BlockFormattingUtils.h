@@ -53,7 +53,13 @@ public:
     // CSS 2.2 §10.3.3 (block-level, non-replaced elements in normal flow) with min/max-width (§10.4). Auto margins resolve the
     // way RenderBox::computeInlineDirectionMargins resolves them.
     // The min-content, max-content and fit-content inline sizes resolve against the inline sizes of the content (css-sizing-3 §3.2).
-    static InlineSizeAndMargins inlineSizeAndMargins(const RenderBox&, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<IntrinsicWidthConstraints> contentInlineSizes, std::optional<std::pair<LayoutUnit, LayoutUnit>> aspectRatioInlineSizeLimits = { });
+    static InlineSizeAndMargins inlineSizeAndMargins(const RenderBox&, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<IntrinsicWidthConstraints> contentInlineSizes, std::optional<std::pair<LayoutUnit, LayoutUnit>> aspectRatioInlineSizeLimits = { }, std::optional<LayoutUnit> aspectRatioBorderBoxInlineSize = { });
+    // The border box inline size a preferred aspect ratio gives an auto inline size, from a definite block size within the min and max block
+    // sizes (css-sizing-4 §5.1, like RenderBox::computeLogicalWidthFromAspectRatio). None without a ratio or a definite block size.
+    static std::optional<LayoutUnit> aspectRatioBorderBoxInlineSize(const RenderBox&, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
+    // The automatic minimum inline size of a box whose preferred aspect ratio gives its inline size is its min-content size, capped by its
+    // max inline size, unless it is a scroll container (css-sizing-4 §5.1, like RenderBox::constrainLogicalWidthByMinMax).
+    static bool hasAspectRatioAutomaticMinimumInlineSize(const RenderBox&, std::optional<LayoutUnit> aspectRatioBorderBoxInlineSize, WritingMode);
     // The min and max border box inline sizes a preferred aspect ratio transfers from the min and max block sizes (css-sizing-4 §5.1, like
     // RenderBox::computeMinMaxLogicalWidthFromAspectRatio). None without a ratio.
     static std::optional<std::pair<LayoutUnit, LayoutUnit>> aspectRatioInlineSizeLimits(const RenderBox&, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
