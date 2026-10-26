@@ -53,7 +53,10 @@ public:
     // CSS 2.2 §10.3.3 (block-level, non-replaced elements in normal flow) with min/max-width (§10.4). Auto margins resolve the
     // way RenderBox::computeInlineDirectionMargins resolves them.
     // The min-content, max-content and fit-content inline sizes resolve against the inline sizes of the content (css-sizing-3 §3.2).
-    static InlineSizeAndMargins inlineSizeAndMargins(const RenderBox&, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<IntrinsicWidthConstraints> contentInlineSizes);
+    static InlineSizeAndMargins inlineSizeAndMargins(const RenderBox&, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<IntrinsicWidthConstraints> contentInlineSizes, std::optional<std::pair<LayoutUnit, LayoutUnit>> aspectRatioInlineSizeLimits = { });
+    // The min and max border box inline sizes a preferred aspect ratio transfers from the min and max block sizes (css-sizing-4 §5.1, like
+    // RenderBox::computeMinMaxLogicalWidthFromAspectRatio). None without a ratio.
+    static std::optional<std::pair<LayoutUnit, LayoutUnit>> aspectRatioInlineSizeLimits(const RenderBox&, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
     // The start and end margins of a box whose border box inline size is already known, from the same §10.3.3 equation.
     static std::pair<LayoutUnit, LayoutUnit> inlineMargins(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
     // A block-level box with a justify-self other than normal, stretch or legacy is aligned in the inline axis of its containing block, which
@@ -66,9 +69,11 @@ public:
     // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7), and the stretch-fit block size for
     // stretch (css-sizing-4 §6.1).
     static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, LayoutUnit intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
-    // The border box block size a preferred aspect ratio gives an auto block size, from the inline size (css-sizing-4 §5.1, like
-    // RenderBox::blockSizeFromAspectRatio). None without a ratio or with a block size.
-    static std::optional<LayoutUnit> aspectRatioBorderBoxBlockSize(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, WritingMode);
+    // The border box block size a preferred aspect ratio gives an auto block size, from the inline size and within the min and max block sizes
+    // (css-sizing-4 §5.1, like RenderBox::blockSizeFromAspectRatio), which is definite. With the block size of the content, an auto min block
+    // size is the automatic minimum block size: the content's, capped by the max block size, unless the box is a scroll container. None without
+    // a ratio or with a block size.
+    static std::optional<LayoutUnit> aspectRatioBorderBoxBlockSize(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode, std::optional<LayoutUnit> intrinsicContentBlockSize = { });
     // Its block-size, min-block-size or max-block-size is a percentage of the containing block's block size, or stretches to it.
     static bool hasPercentageBlockSize(const RenderBox&, WritingMode);
     // The block size of the content of an empty editable block container: the line height of its first line, for the caret (RenderBlock::hasLineIfEmpty,
