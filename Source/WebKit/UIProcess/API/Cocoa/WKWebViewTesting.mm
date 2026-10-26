@@ -441,7 +441,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (NSString *)_scrollingTreeAsText
 {
-    RefPtr coordinator = _page->scrollingCoordinatorProxy();
+    CheckedPtr coordinator = _page->scrollingCoordinatorProxy();
     if (!coordinator)
         return @"";
 
@@ -450,7 +450,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (NSString *)_scrollingTreeIncludingNodeIDsAsText
 {
-    RefPtr coordinator = _page->scrollingCoordinatorProxy();
+    CheckedPtr coordinator = _page->scrollingCoordinatorProxy();
     if (!coordinator)
         return @"";
 
@@ -459,7 +459,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (double)_rubberbandHyperbolicCoefficientForTesting
 {
-    if (RefPtr coordinator = _page->scrollingCoordinatorProxy())
+    if (CheckedPtr coordinator = _page->scrollingCoordinatorProxy())
         return coordinator->rubberbandHyperbolicCoefficientForTesting();
 
     return 0;
@@ -1618,7 +1618,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
             if (RefPtr nodeStack = drawingAreaProxy->animationStackForNodeWithIDForTesting(platformLayerID))
                 return nodeStack->toJSONForTesting()->toJSONString();
         }
-        if (RefPtr scrollingCoordinator = _page->scrollingCoordinatorProxy())
+        if (CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy())
             return scrollingCoordinator->animationStackJSONForNodeWithIDForTesting(platformLayerID);
         return emptyString();
     }();
@@ -1632,7 +1632,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
             || !ObjectIdentifier<WebCore::ScrollingNodeIDType>::isValidIdentifier(scrollingNodeID))
             return { };
 
-        RefPtr scrollingCoordinator = _page->scrollingCoordinatorProxy();
+        CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy();
         if (!scrollingCoordinator)
             return { };
 
@@ -1657,7 +1657,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID))
             return { };
 
-        RefPtr scrollingCoordinator = _page->scrollingCoordinatorProxy();
+        CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy();
         if (!scrollingCoordinator)
             return { };
 

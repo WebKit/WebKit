@@ -1886,8 +1886,7 @@ void WebPageProxy::setDrawingArea(RefPtr<DrawingAreaProxy>&& newDrawingArea)
     RELEASE_ASSERT(m_drawingArea != newDrawingArea);
 #if PLATFORM(COCOA)
     // The scrolling coordinator needs to do cleanup before the drawing area goes away.
-    if (RefPtr scrollingCoordinatorProxy = std::exchange(m_scrollingCoordinatorProxy, nullptr))
-        scrollingCoordinatorProxy->invalidate();
+    m_scrollingCoordinatorProxy = nullptr;
 #endif
 
     Ref legacyMainFrameProcess = m_legacyMainFrameProcess;
@@ -5239,7 +5238,7 @@ void WebPageProxy::handleWheelEvent(Ref<WebWheelEvent>&& wheelEvent)
     }
 
 #if PLATFORM(MAC)
-    if (RefPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy) {
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get()) {
         auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe(wheelEvent);
         auto rubberBandingBehavior = resolvedRubberBandingBehaviorEdges(rubberBandableEdges, alwaysBounceVertical(), alwaysBounceHorizontal());
 
@@ -5332,7 +5331,7 @@ void WebPageProxy::handleWheelEventReply(IPC::Connection* connection, const WebW
     MESSAGE_CHECK_BASE(wheelEventCoalescer().hasEventsBeingProcessed(), connection);
 
 #if PLATFORM(MAC)
-    if (RefPtr scrollingCoordinatorProxy = this->scrollingCoordinatorProxy()) {
+    if (CheckedPtr scrollingCoordinatorProxy = this->scrollingCoordinatorProxy()) {
         scrollingCoordinatorProxy->wheelEventHandlingCompleted(platform(event), nodeID, gestureState, wasHandledForScrolling || wasHandledByWebProcess);
         return;
     }
@@ -5375,7 +5374,7 @@ void WebPageProxy::wheelEventHandlingCompleted(bool wasHandled)
 void WebPageProxy::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& nativeWheelEvent)
 {
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    if (RefPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy) {
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get()) {
         scrollingCoordinatorProxy->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
         return;
     }
@@ -15812,7 +15811,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 #endif
 
 #if PLATFORM(COCOA)
-    if (RefPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy)
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
         scrollingCoordinatorProxy->resetStateAfterProcessExited();
 #endif
 
@@ -17262,7 +17261,7 @@ RectEdges<bool> WebPageProxy::pinnedState() const
 RectEdges<bool> WebPageProxy::pinnedStateIncludingAncestorsAtPoint(FloatPoint point)
 {
 #if PLATFORM(COCOA)
-    if (RefPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy)
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
         return scrollingCoordinatorProxy->pinnedStateIncludingAncestorsAtPoint(point);
 #endif
     return { };
@@ -20745,7 +20744,7 @@ void WebPageProxy::stickyScrollingTreeNodeBeganSticking()
 void WebPageProxy::adjustLayersForLayoutViewport(const FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale)
 {
 #if PLATFORM(COCOA)
-    if (RefPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy)
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
         scrollingCoordinatorProxy->viewportChangedViaDelegatedScrolling(scrollPosition, layoutViewport, scale);
 #endif
 }
@@ -20753,7 +20752,7 @@ void WebPageProxy::adjustLayersForLayoutViewport(const FloatPoint& scrollPositio
 String WebPageProxy::scrollbarStateForScrollingNodeID(std::optional<ScrollingNodeID> nodeID, bool isVertical)
 {
 #if PLATFORM(COCOA)
-    if (RefPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy)
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
         return scrollingCoordinatorProxy->scrollbarStateForScrollingNodeID(nodeID, isVertical);
 #endif
     return ""_s;
@@ -21509,7 +21508,7 @@ void WebPageProxy::addConsoleMessage(FrameIdentifier frameID, MessageSource mess
 #if PLATFORM(COCOA)
 void WebPageProxy::sendScrollUpdateForNode(std::optional<WebCore::FrameIdentifier> frameID, WebCore::ScrollUpdate update, bool isLastUpdate)
 {
-    RefPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy;
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
     if (!scrollingCoordinatorProxy)
         return;
 
@@ -21927,7 +21926,7 @@ bool WebPageProxy::isAlwaysOnLoggingAllowed() const
 
 FloatPoint WebPageProxy::mainFrameScrollPosition() const
 {
-    if (RefPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy)
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
         return scrollingCoordinatorProxy->currentMainFrameScrollPosition();
 
     return { };

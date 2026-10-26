@@ -407,7 +407,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
 
             bool useAdaptiveDecelerationTracking = false;
 #if HAVE(UISCROLLVIEW_DECELERATION_TRACKING_BEHAVIOR)
-            if (RefPtr scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy())
+            if (CheckedPtr scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy())
                 useAdaptiveDecelerationTracking = protect(protect(scrollingCoordinatorProxy->webPageProxy())->preferences())->scrollViewAdaptiveDecelerationTrackingEnabled();
 
             if (useAdaptiveDecelerationTracking) [[unlikely]] {
@@ -537,7 +537,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::stopAnimatedScroll(EnumSet<AnimatedS
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 void ScrollingTreeScrollingNodeDelegateIOS::handleAsynchronousCancelableScrollEvent(WKBaseScrollView *scrollView, WKBEScrollViewScrollUpdate *update, void (^completion)(BOOL handled))
 {
-    RefPtr scrollingCoordinatorProxy = downcast<WebKit::RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
+    CheckedPtr scrollingCoordinatorProxy = downcast<WebKit::RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
     if (scrollingCoordinatorProxy) {
         if (RefPtr pageClient = protect(scrollingCoordinatorProxy->webPageProxy())->pageClient())
             pageClient->handleAsynchronousCancelableScrollEvent(scrollView, update, completion);
@@ -609,7 +609,7 @@ UIScrollView *ScrollingTreeScrollingNodeDelegateIOS::findActingScrollParent(UISc
 {
     ASSERT(scrollView == this->scrollView());
 
-    RefPtr scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
+    CheckedPtr scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
     if (!scrollingCoordinatorProxy)
         return nil;
 
@@ -634,7 +634,7 @@ bool ScrollingTreeScrollingNodeDelegateIOS::shouldAllowPanGestureRecognizerToRec
 
 void ScrollingTreeScrollingNodeDelegateIOS::computeActiveTouchActionsForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
 {
-    RefPtr scrollingCoordinatorProxy = dynamicDowncast<RemoteScrollingCoordinatorProxyIOS>(downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy());
+    CheckedPtr scrollingCoordinatorProxy = dynamicDowncast<RemoteScrollingCoordinatorProxyIOS>(downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy());
     if (!scrollingCoordinatorProxy)
         return;
 
@@ -648,7 +648,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::computeActiveTouchActionsForGestureR
 
 void ScrollingTreeScrollingNodeDelegateIOS::cancelPointersForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
 {
-    RefPtr scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
+    CheckedPtr scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
     if (!scrollingCoordinatorProxy)
         return;
 

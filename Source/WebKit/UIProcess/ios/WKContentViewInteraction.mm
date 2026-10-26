@@ -9426,7 +9426,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (UIScrollView *)_scrollViewForScrollingNodeID:(std::optional<WebCore::ScrollingNodeID>)scrollingNodeID
 {
-    if (RefPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy()))
+    if (WeakPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy()))
         return coordinator->scrollViewForScrollingNodeID(scrollingNodeID);
 
     return nil;

@@ -129,7 +129,7 @@ public:
     const RemoteLayerTreeHost& remoteLayerTreeHost() const LIFETIME_BOUND { return *m_remoteLayerTreeHost; }
     std::unique_ptr<RemoteLayerTreeHost> detachRemoteLayerTreeHost();
 
-    virtual Ref<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const = 0;
+    virtual std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const = 0;
 
     void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key);

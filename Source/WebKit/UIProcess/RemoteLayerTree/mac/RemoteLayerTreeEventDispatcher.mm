@@ -304,7 +304,7 @@ void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWh
 void RemoteLayerTreeEventDispatcher::continueWheelEventHandling(WheelEventHandlingResult handlingResult)
 {
     ASSERT(isMainRunLoop());
-    RefPtr scrollingCoordinator = m_scrollingCoordinator;
+    CheckedPtr scrollingCoordinator = m_scrollingCoordinator.get();
     if (!scrollingCoordinator)
         return;
 
@@ -358,7 +358,7 @@ void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformW
 
         auto result = scrollingTree->handleWheelEventAfterDefaultHandling(wheelEvent, scrollingNodeID, gestureState);
         RunLoop::mainSingleton().dispatch([protectedThis, wasHandled, result]() {
-            if (RefPtr scrollingCoordinator = protectedThis->m_scrollingCoordinator)
+            if (CheckedPtr scrollingCoordinator = protectedThis->m_scrollingCoordinator.get())
                 protect(scrollingCoordinator->webPageProxy())->wheelEventHandlingCompleted(wasHandled || result.wasHandled);
         });
 
@@ -922,7 +922,7 @@ void RemoteLayerTreeEventDispatcher::stopDisplayDidRefreshCallbacks(PlatformDisp
 void RemoteLayerTreeEventDispatcher::didEndSyntheticMomentumScrolling()
 {
     RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
-        if (RefPtr scrollingCoordinator = protectedThis->m_scrollingCoordinator)
+        if (CheckedPtr scrollingCoordinator = protectedThis->m_scrollingCoordinator.get())
             protect(scrollingCoordinator->webPageProxy())->didEndSyntheticMomentumScrolling();
     });
 }

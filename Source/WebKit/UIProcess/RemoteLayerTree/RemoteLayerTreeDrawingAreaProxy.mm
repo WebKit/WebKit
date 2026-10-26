@@ -158,7 +158,7 @@ void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
     RefPtr page = this->page();
     if (!page || !page->hasRunningProcess())
         return;
-    if (RefPtr scrollingCoordinator = page->scrollingCoordinatorProxy())
+    if (CheckedPtr scrollingCoordinator = page->scrollingCoordinatorProxy())
         scrollingCoordinator->viewSizeDidChange();
 
     if (m_isWaitingForDidUpdateGeometry)
@@ -187,7 +187,7 @@ void RemoteLayerTreeDrawingAreaProxy::remotePageProcessDidTerminate(WebCore::Pro
 
     m_remoteLayerTreeHost->removeDisplayOnlyImagesForProcess(processIdentifier);
 
-    if (RefPtr scrollingCoordinator = page() ? page()->scrollingCoordinatorProxy() : nullptr) {
+    if (CheckedPtr scrollingCoordinator = page() ? page()->scrollingCoordinatorProxy() : nullptr) {
         scrollingCoordinator->willCommitLayerAndScrollingTrees();
 #if ENABLE(THREADED_ANIMATIONS)
         scrollingCoordinator->removeTimelines(processIdentifier);
@@ -199,13 +199,13 @@ void RemoteLayerTreeDrawingAreaProxy::remotePageProcessDidTerminate(WebCore::Pro
 
 void RemoteLayerTreeDrawingAreaProxy::viewWillStartLiveResize()
 {
-    if (RefPtr scrollingCoordinator = page() ? page()->scrollingCoordinatorProxy() : nullptr)
+    if (CheckedPtr scrollingCoordinator = page() ? page()->scrollingCoordinatorProxy() : nullptr)
         scrollingCoordinator->viewWillStartLiveResize();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::viewWillEndLiveResize()
 {
-    if (RefPtr scrollingCoordinator = page() ? page()->scrollingCoordinatorProxy() : nullptr)
+    if (CheckedPtr scrollingCoordinator = page() ? page()->scrollingCoordinatorProxy() : nullptr)
         scrollingCoordinator->viewWillEndLiveResize();
 }
 
@@ -335,10 +335,8 @@ void RemoteLayerTreeDrawingAreaProxy::notifyPendingCommitLayerTree(IPC::Connecti
         maybePauseDisplayRefreshCallbacks();
 
 #if ENABLE(ASYNC_SCROLLING)
-        if (RefPtr page = this->page()) {
-            if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-                scrollingCoordinatorProxy->applyScrollingTreeLayerPositionsAfterCommit();
-        }
+        if (RefPtr page = this->page())
+            protect(page->scrollingCoordinatorProxy())->applyScrollingTreeLayerPositionsAfterCommit();
 #endif
     }
 }
@@ -450,7 +448,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
             return;
     }
 
-    if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
+    if (CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
         scrollingCoordinatorProxy->establishLayerTreeScrollingRelations(connection);
 
     for (auto& callbackID : borrowedCallbackIDs) {
@@ -519,7 +517,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     if (!page)
         return;
 
-    if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy()) {
+    if (CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy()) {
         ScrollRequestData requestedScroll;
 
         auto commitLayerAndScrollingTrees = [&] {
@@ -880,10 +878,8 @@ IPC::Error RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(ProcessState& stat
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay new state " << state.pendingCommits);
 
     if (&state == &m_webPageProxyProcessState) {
-        if (RefPtr page = this->page()) {
-            if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-                scrollingCoordinatorProxy->sendScrollingTreeNodeUpdate();
-        }
+        if (RefPtr page = this->page())
+            protect(page->scrollingCoordinatorProxy())->sendScrollingTreeNodeUpdate();
     }
 
     // Waiting for CA to commit is insufficient, because the render server can still be
@@ -1010,34 +1006,26 @@ void RemoteLayerTreeDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange(
 #if ENABLE(THREADED_ANIMATIONS)
 void RemoteLayerTreeDrawingAreaProxy::animationsWereAddedToNode(RemoteLayerTreeNode& node)
 {
-    if (RefPtr page = this->page()) {
-        if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-            scrollingCoordinatorProxy->animationsWereAddedToNode(node);
-    }
+    if (RefPtr page = this->page())
+        protect(page->scrollingCoordinatorProxy())->animationsWereAddedToNode(node);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
 {
-    if (RefPtr page = this->page()) {
-        if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-            scrollingCoordinatorProxy->animationsWereRemovedFromNode(node);
-    }
+    if (RefPtr page = this->page())
+        protect(page->scrollingCoordinatorProxy())->animationsWereRemovedFromNode(node);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::updateTimelinesRegistration(WebCore::ProcessIdentifier processIdentifier, const WebCore::AcceleratedTimelinesUpdate& timelinesUpdate, MonotonicTime now)
 {
-    if (RefPtr page = this->page()) {
-        if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-            scrollingCoordinatorProxy->updateTimelinesRegistration(processIdentifier, timelinesUpdate, now);
-    }
+    if (RefPtr page = this->page())
+        protect(page->scrollingCoordinatorProxy())->updateTimelinesRegistration(processIdentifier, timelinesUpdate, now);
 }
 
 RefPtr<const RemoteAnimationTimeline> RemoteLayerTreeDrawingAreaProxy::timeline(const TimelineID& timelineID) const
 {
-    if (RefPtr page = this->page()) {
-        if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-            return scrollingCoordinatorProxy->timeline(timelineID);
-    }
+    if (RefPtr page = this->page())
+        return protect(page->scrollingCoordinatorProxy())->timeline(timelineID);
     return nullptr;
 }
 

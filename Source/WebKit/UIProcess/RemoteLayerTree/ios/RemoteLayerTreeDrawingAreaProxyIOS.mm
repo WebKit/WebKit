@@ -400,9 +400,9 @@ RemoteLayerTreeDrawingAreaProxyIOS::~RemoteLayerTreeDrawingAreaProxyIOS()
     [m_displayLinkHandler invalidate];
 }
 
-Ref<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxyIOS::createScrollingCoordinatorProxy() const
+std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxyIOS::createScrollingCoordinatorProxy() const
 {
-    return adoptRef(*new RemoteScrollingCoordinatorProxyIOS(*protect(page())));
+    return makeUnique<RemoteScrollingCoordinatorProxyIOS>(*protect(page()));
 }
 
 DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyIOS::delegatedScrollingMode() const
@@ -437,10 +437,8 @@ void RemoteLayerTreeDrawingAreaProxyIOS::didRefreshDisplay()
         RefPtr page = this->page();
         if (!page)
             return;
-        if (auto displayID = page->displayID()) {
-            if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-                scrollingCoordinatorProxy->displayDidRefresh(*displayID);
-        }
+        if (auto displayID = page->displayID())
+            protect(page->scrollingCoordinatorProxy())->displayDidRefresh(*displayID);
     }
 }
 
@@ -465,10 +463,8 @@ void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayRefreshCallbacksForMonot
 {
     m_needsDisplayRefreshCallbacksForMonotonicAnimations = true;
     if (!m_hasHighImpactMonotonicAnimations) {
-        if (RefPtr page = this->page()) {
-            if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-                m_hasHighImpactMonotonicAnimations = scrollingCoordinatorProxy->hasHighImpactMonotonicAnimations();
-        }
+        if (RefPtr page = this->page())
+            m_hasHighImpactMonotonicAnimations = protect(page->scrollingCoordinatorProxy())->hasHighImpactMonotonicAnimations();
     }
     scheduleDisplayLinkAndSetFrameRate();
 }
@@ -478,10 +474,8 @@ void RemoteLayerTreeDrawingAreaProxyIOS::highImpactMonotonicAnimationsWereRemove
     if (!m_hasHighImpactMonotonicAnimations)
         return;
 
-    if (RefPtr page = this->page()) {
-        if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-            m_hasHighImpactMonotonicAnimations = scrollingCoordinatorProxy->hasHighImpactMonotonicAnimations();
-    }
+    if (RefPtr page = this->page())
+        m_hasHighImpactMonotonicAnimations = protect(page->scrollingCoordinatorProxy())->hasHighImpactMonotonicAnimations();
 }
 
 void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacksForMonotonicAnimations()
@@ -546,7 +540,7 @@ void RemoteLayerTreeDrawingAreaProxyIOS::didCommitLayerTree(IPC::Connection&, co
     if (!page)
         return;
 
-    Ref scrollingCoordinatorProxy = *page->scrollingCoordinatorProxy();
+    CheckedRef scrollingCoordinatorProxy = *page->scrollingCoordinatorProxy();
     page->setScrollPerformanceDataCollectionEnabled(scrollingCoordinatorProxy->scrollingPerformanceTestingEnabled());
 
     if (transaction.createdLayers().size() > 0) {

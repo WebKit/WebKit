@@ -56,7 +56,7 @@ private:
 
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
 
-    Ref<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
+    std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
 
     void setPreferredFramesPerSecond(IPC::Connection&, WebCore::FramesPerSecond) override;
     void scheduleDisplayRefreshCallbacks() override;
