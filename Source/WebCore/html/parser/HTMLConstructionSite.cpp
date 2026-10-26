@@ -35,6 +35,7 @@
 #include "DocumentType.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "HTMLBodyElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
@@ -152,9 +153,11 @@ static inline void insert(HTMLConstructionSiteTask& task)
     resolveFosterSite(task);
 
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(task.parent)) [[unlikely]] {
-        task.parent = templateElement->fragmentForInsertion();
-        task.nextChild = nullptr;
-    } else if (RefPtr document = dynamicDowncast<Document>(task.parent)) [[unlikely]] {
+        task.parent = templateElement->insertionTarget();
+        task.nextChild = templateElement->insertionNextChild();
+    }
+
+    if (RefPtr document = dynamicDowncast<Document>(task.parent)) [[unlikely]] {
         if (!document->canAcceptChild(*task.child, task.nextChild, AcceptChildOperation::InsertOrAdd))
             return;
     }
@@ -521,13 +524,13 @@ void HTMLConstructionSite::insertDoctype(AtomHTMLToken&& token)
 void HTMLConstructionSite::insertProcessingInstruction(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Type::ProcessingInstruction);
-    attachLater(protect(currentNode()), ProcessingInstruction::create(protect(ownerDocumentForCurrentNode()), token.processingInstructionTarget(), token.processingInstructionData()));
+    attachLater(protect(currentNode()), ProcessingInstruction::createWithoutValidation(protect(ownerDocumentForCurrentNode()), token.processingInstructionTarget(), token.processingInstructionData()));
 }
 
 void HTMLConstructionSite::insertProcessingInstructionOnDocument(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Type::ProcessingInstruction);
-    attachLater(protect(m_attachmentRoot), ProcessingInstruction::create(protect(m_document), token.processingInstructionTarget(), token.processingInstructionData()));
+    attachLater(protect(m_attachmentRoot), ProcessingInstruction::createWithoutValidation(protect(m_document), token.processingInstructionTarget(), token.processingInstructionData()));
 }
 
 void HTMLConstructionSite::insertProcessingInstructionOnHTMLHtmlElement(AtomHTMLToken&& token)
@@ -535,7 +538,7 @@ void HTMLConstructionSite::insertProcessingInstructionOnHTMLHtmlElement(AtomHTML
     ASSERT(token.type() == HTMLToken::Type::ProcessingInstruction);
     Ref root = m_openElements.rootNode();
     Ref rootDocument = root->document();
-    attachLater(WTF::move(root), ProcessingInstruction::create(rootDocument, token.processingInstructionTarget(), token.processingInstructionData()));
+    attachLater(WTF::move(root), ProcessingInstruction::createWithoutValidation(rootDocument, token.processingInstructionTarget(), token.processingInstructionData()));
 }
 
 void HTMLConstructionSite::insertComment(AtomHTMLToken&& token)
@@ -594,6 +597,49 @@ void HTMLConstructionSite::insertHTMLElement(AtomHTMLToken&& token)
 
 void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
 {
+    // A declarative shadow root takes precedence over `for`, so look for a valid
+    // shadowrootmode first and leave this token to the block below if there is one.
+    if (document().settings().htmlTemplateForEnabled()) {
+        bool hasValidShadowRootMode = false;
+        if (m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowRoots)) {
+            for (auto& attribute : token.attributes()) {
+                if (attribute.name() == HTMLNames::shadowrootmodeAttr) {
+                    hasValidShadowRootMode = !!parseShadowRootMode(attribute.value());
+                    break;
+                }
+            }
+        }
+
+        if (!hasValidShadowRootMode) {
+            auto element = downcast<HTMLTemplateElement>(createHTMLElement(token));
+            if (element->hasAttributeWithoutSynchronization(forAttr)) {
+                HTMLConstructionSiteTask insertionLocation(HTMLConstructionSiteTask::Insert);
+                insertionLocation.parent = currentNode();
+                if (shouldFosterParent()) {
+                    recordFosterSite(insertionLocation);
+                    resolveFosterSite(insertionLocation);
+                }
+
+                Ref scope = insertionLocation.parent.releaseNonNull();
+                if (RefPtr parentTemplate = dynamicDowncast<HTMLTemplateElement>(scope))
+                    scope = parentTemplate->insertionTarget();
+                else if (scope.ptr() == document().body()) {
+                    if (RefPtr parent = scope->parentNode())
+                        scope = parent.releaseNonNull();
+                }
+
+                if (element->prepareContentPatching(scope)) {
+                    element->beginParsingChildren();
+                    m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
+                    return;
+                }
+            }
+            attachLater(protect(currentNode()), element.copyRef());
+            m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
+            return;
+        }
+    }
+
     if (m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowRoots)) {
         std::optional<ShadowRootMode> mode;
         auto delegatesFocus = ShadowRootDelegatesFocus::No;

@@ -39,6 +39,7 @@ public:
     bool usePreHTML5ParserQuirks;
     bool enhancedSelectQuirk;
     bool processingInstruction;
+    bool templateFor;
     unsigned maximumDOMTreeDepth;
 };
 

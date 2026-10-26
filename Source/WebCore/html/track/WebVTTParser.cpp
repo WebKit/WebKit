@@ -760,7 +760,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
     case WebVTTTokenTypes::TimestampTag: {
         MediaTime parsedTimeStamp;
         if (WebVTTParser::collectTimeStamp(m_token.characters(), parsedTimeStamp))
-            protect(m_currentNode)->parserAppendChild(ProcessingInstruction::create(document, "timestamp"_s, serializeTimestamp(parsedTimeStamp.toDouble())));
+            protect(m_currentNode)->parserAppendChild(ProcessingInstruction::createWithoutValidation(document, "timestamp"_s, serializeTimestamp(parsedTimeStamp.toDouble())));
         break;
     }
     default:

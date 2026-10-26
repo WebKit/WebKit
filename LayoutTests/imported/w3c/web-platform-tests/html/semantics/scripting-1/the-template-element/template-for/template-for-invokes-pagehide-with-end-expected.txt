@@ -1,4 +1,3 @@
 
-
-FAIL Patching only removes elements that were present when patching is prepared (with <?end>) assert_equals: expected "inserted-in-pagehide" but got "before-iframe"
+PASS Patching only removes elements that were present when patching is prepared (with <?end>)
 
