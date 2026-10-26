@@ -242,12 +242,11 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
                 // We only apply this quirk if we're already on Google or youtube.com;
                 // otherwise, we would've already bailed at the top of this method, due to
                 // the request being third party.
-                auto hostName = requestURL.host();
-                if (hostName == "accounts.google.com"_s)
+                if (firstPartyRegistrableDomainName == "google.com"_s)
                     return true;
 
                 return (firstPartyRegistrableDomainName.startsWith("google."_s) || firstPartyRegistrableDomainName == "youtube.com"_s)
-                    && hostName == makeString("consent."_s, firstPartyRegistrableDomainName);
+                    && requestURL.host() == makeString("consent."_s, firstPartyRegistrableDomainName);
             };
 
             if (shouldCapCookieExpiryForThirdPartyIPAddress(*remoteAddress, *firstPartyAddress) && !needsThirdPartyIPAddressQuirk(requestURL, firstPartyRegistrableDomainName)) {
