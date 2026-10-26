@@ -22,8 +22,7 @@
 
                 parent.postMessage(result, "*");
                 
-                let parentPage = document.referrer.split('/').pop();
-                if (parentPage != "enumerate-devices-source-id.html")
+                if (parent !== top)
                     return;
 
                 let iframe = document.createElement('iframe');

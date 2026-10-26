@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta name="referrer" content="unsafe-url">
         <style>
             iframe { border: 1px solid black; }
         </style>
         <script src="../../../../resources/js-test-pre.js"></script>
         <script>
             window.jsTestIsAsync = true;
-
-            if (internals)
-                internals.setTrackingPreventionEnabled(false);
 
             if (window.testRunner)
                 testRunner.setUserMediaPermission(true);
