@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<p id="paragraph">Hello world</p>
+<p id="paragraph2">This <b>is a</b> test</p>
+<ul id="list">
+    <li id="item1">One</li>
+    <li id="item2">Two</li>
+    <li id="item3">Three</li>
+</ul>
+<div id="editable" contenteditable="true">Edit me</div>
+<div><input id="input" type="text" value="Field"></div>
+<div><textarea id="textarea">Area</textarea></div>
+</div>
+
+<script>
+var output = "Tests that AXTextMarkerForRelativeIndex and AXRelativeIndexForTextMarker round-trip. For each element, converts a relative index to a text marker and back.\n\n";
+
+function roundTrip(element, index) {
+    return element.relativeIndexForTextMarker(element.textMarkerForRelativeIndex(index));
+}
+
+function indexOnOtherElement(fromElement, index, toElement) {
+    return toElement.relativeIndexForTextMarker(fromElement.textMarkerForRelativeIndex(index));
+}
+
+if (window.accessibilityController) {
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+    var paragraph2 = accessibilityController.accessibleElementById("paragraph2");
+    var list = accessibilityController.accessibleElementById("list");
+    var item1 = accessibilityController.accessibleElementById("item1");
+    var item2 = accessibilityController.accessibleElementById("item2");
+    var item3 = accessibilityController.accessibleElementById("item3");
+    var editable = accessibilityController.accessibleElementById("editable");
+    var input = accessibilityController.accessibleElementById("input");
+    var textarea = accessibilityController.accessibleElementById("textarea");
+
+    output += "Paragraph:\n";
+    output += expect("roundTrip(paragraph, 0)", "0");
+    output += expect("roundTrip(paragraph, 6)", "6");
+    output += expect("roundTrip(paragraph, 10)", "10");
+    output += expect("roundTrip(paragraph, 11)", "11");
+    output += expect("roundTrip(paragraph, 13)", "13");
+
+    output += "\nSecond paragraph:\n";
+    output += expect("roundTrip(paragraph2, 0)", "0");
+    output += expect("roundTrip(paragraph2, 4)", "4");
+    output += expect("roundTrip(paragraph2, 5)", "5");
+    output += expect("roundTrip(paragraph2, 7)", "7");
+    output += expect("roundTrip(paragraph2, 9)", "9");
+    output += expect("roundTrip(paragraph2, 10)", "10");
+    output += expect("roundTrip(paragraph2, 13)", "13");
+    output += expect("roundTrip(paragraph2, 14)", "14");
+    output += expect("roundTrip(paragraph2, 16)", "16");
+
+    output += "\nList:\n";
+    output += expect("roundTrip(list, 0)", "0");
+    output += expect("roundTrip(list, 2)", "2");
+    output += expect("roundTrip(list, 3)", "3");
+    output += expect("roundTrip(list, 4)", "4");
+    output += expect("roundTrip(list, 8)", "8");
+    output += expect("roundTrip(list, 12)", "12");
+    output += expect("roundTrip(list, 13)", "13");
+
+    output += "\nFirst list item:\n";
+    output += expect("roundTrip(item1, 0)", "0");
+    output += expect("roundTrip(item1, 1)", "1");
+    output += expect("roundTrip(item1, 2)", "2");
+    output += expect("roundTrip(item1, 3)", "3");
+    output += expect("roundTrip(item1, 4)", "4");
+
+    output += "\nSecond list item:\n";
+    output += expect("roundTrip(item2, 0)", "0");
+    output += expect("roundTrip(item2, 2)", "2");
+    output += expect("roundTrip(item2, 3)", "3");
+    output += expect("roundTrip(item2, 4)", "4");
+
+    output += "\nThird list item:\n";
+    output += expect("roundTrip(item3, 0)", "0");
+    output += expect("roundTrip(item3, 4)", "4");
+    output += expect("roundTrip(item3, 5)", "5");
+    output += expect("roundTrip(item3, 6)", "6");
+
+    output += "\nContenteditable:\n";
+    output += expect("roundTrip(editable, 0)", "0");
+    output += expect("roundTrip(editable, 4)", "4");
+    output += expect("roundTrip(editable, 6)", "6");
+    output += expect("roundTrip(editable, 7)", "7");
+
+    output += "\nInput:\n";
+    output += expect("roundTrip(input, 0)", "0");
+    output += expect("roundTrip(input, 2)", "2");
+    output += expect("roundTrip(input, 4)", "4");
+    output += expect("roundTrip(input, 5)", "5");
+
+    output += "\nTextarea:\n";
+    output += expect("roundTrip(textarea, 0)", "0");
+    output += expect("roundTrip(textarea, 3)", "3");
+    output += expect("roundTrip(textarea, 4)", "4");
+
+    output += "\nFrom the first paragraph into the elements below it:\n";
+    output += expect("roundTrip(paragraph, 18)", "18");
+    output += expect("roundTrip(paragraph, 22)", "22");
+    output += expect("roundTrip(paragraph, 26)", "26");
+    output += expect("roundTrip(paragraph, 27)", "27");
+    output += expect("roundTrip(paragraph, 29)", "29");
+    output += expect("roundTrip(paragraph, 32)", "32");
+    output += expect("roundTrip(paragraph, 33)", "33");
+    output += expect("roundTrip(paragraph, 37)", "37");
+    output += expect("roundTrip(paragraph, 41)", "41");
+    output += expect("roundTrip(paragraph, 42)", "42");
+    output += expect("roundTrip(paragraph, 43)", "43");
+    output += expect("roundTrip(paragraph, 49)", "49");
+    output += expect("roundTrip(paragraph, 50)", "50");
+
+    output += "\nBetween the two newlines after a paragraph, which snaps back to the end of the paragraph's text:\n";
+    output += expect("roundTrip(paragraph, 12)", "11");
+    output += expect("roundTrip(paragraph, 28)", "27");
+    output += expect("roundTrip(paragraph2, 15)", "14");
+
+    output += "\nA marker from one element's relative index, read back as another element's relative index:\n";
+    output += expect("indexOnOtherElement(paragraph, 13, paragraph2)", "0");
+    output += expect("indexOnOtherElement(paragraph, 18, paragraph2)", "5");
+    output += expect("indexOnOtherElement(paragraph, 22, paragraph2)", "9");
+    output += expect("indexOnOtherElement(paragraph, 29, list)", "0");
+    output += expect("indexOnOtherElement(paragraph, 29, item1)", "0");
+    output += expect("indexOnOtherElement(paragraph, 33, item2)", "0");
+    output += expect("indexOnOtherElement(item1, 4, item2)", "0");
+    output += expect("indexOnOtherElement(list, 12, item3)", "4");
+    output += expect("indexOnOtherElement(paragraph, 43, editable)", "0");
+    output += expect("indexOnOtherElement(paragraph, 49, editable)", "6");
+
+    document.getElementById("content").style.display = "none";
+    debug(output);
+}
+</script>
+</body>
+</html>

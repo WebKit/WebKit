@@ -1,13 +1,15 @@
-Tests AXRelativeIndexForTextMarker. The attribute returns the receiver-local character offset of a text marker, 0..numberOfCharacters, or NSNotFound when the marker does not lie within the receiver's range.
+Tests AXRelativeIndexForTextMarker. The attribute returns the receiver-local character offset of a text marker, or NSNotFound when the marker lies before the receiver's range.
 
 Markers within target's range:
 PASS: target.relativeIndexForTextMarker(targetStart) === 0
 PASS: target.relativeIndexForTextMarker(targetEnd) === 11
 PASS: target.relativeIndexForTextMarker(targetSpaceMarker) === 6
 
-Markers outside target's range (expect NSNotFound, surfaced as -1 by the test bindings' int truncation):
+Markers before target's range (expect NSNotFound, surfaced as -1 by the test bindings' int truncation):
 PASS: target.relativeIndexForTextMarker(preambleStart) === -1
-PASS: target.relativeIndexForTextMarker(trailStart) === -1
+
+Markers after target's range:
+PASS: target.relativeIndexForTextMarker(trailStart) === 13
 
 Receiver-relative (preambleStart on preamble vs target):
 PASS: preamble.relativeIndexForTextMarker(preambleStart) === 0

@@ -306,6 +306,7 @@ public:
     bool isTextMarkerRangeValid(AccessibilityTextMarkerRange*) override;
     bool isTextMarkerNull(AccessibilityTextMarker*) override;
     RefPtr<AccessibilityTextMarker> textMarkerForIndex(int) override;
+    RefPtr<AccessibilityTextMarker> textMarkerForRelativeIndex(int) override;
     RefPtr<AccessibilityTextMarker> startTextMarker() override;
     RefPtr<AccessibilityTextMarker> endTextMarker() override;
     bool setSelectedTextMarkerRange(AccessibilityTextMarkerRange*) override;

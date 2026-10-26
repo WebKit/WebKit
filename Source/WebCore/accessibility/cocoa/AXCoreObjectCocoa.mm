@@ -541,51 +541,41 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameSortedDescenda
     return results;
 }
 
-// Walk from the AX tree root to `marker`, counting characters. Works on
-// either the main thread (via SimpleRange) or the secondary AX thread (via
-// the isolated tree's character walk).
-static unsigned offsetFromRootForMarker(const AXTextMarker& marker)
-{
-    if (!marker.isValid())
-        return 0;
-
-    if (!isMainThread())
-        return marker.offsetFromRoot();
-    return makeNSRange(AXTextMarkerRange { marker, marker }.simpleRange()).location;
-}
-
 std::optional<unsigned> AXCoreObject::relativeIndexForTextMarker(const AXTextMarker& target)
 {
-    if (!target.isValid())
-        return std::nullopt;
-
-    auto range = textMarkerRange();
-    if (!range)
+    auto textTarget = target.toTextRunMarker();
+    if (!textTarget.isValid())
         return std::nullopt;
 
     // Fast path: when `target` is anchored to this object and this object
     // carries text runs, the marker's own offset is already relative to this.
     // O(1) — no walk.
-    if (target.objectID() == objectID() && target.treeID() == treeID() && hasTextRuns())
-        return target.offset();
+    if (textTarget.objectID() == objectID() && textTarget.treeID() == treeID() && hasTextRuns())
+        return textTarget.offset();
 
-    // Fallback: subtract this object's range start offset from target's offset.
-    // Both are computed relative to the AX tree root, so the result is the
-    // object's relative offset. Each offsetFromRoot is O(document length).
-    // Defer the range.end() walk until we know target is at or after
-    // range.start(), and skip it altogether if target precedes this.
-    unsigned startFromRoot = offsetFromRootForMarker(range.start());
-    unsigned targetFromRoot = offsetFromRootForMarker(target);
-    if (targetFromRoot < startFromRoot)
+    auto start = textMarkerRange().start();
+    if (!start.isValid())
         return std::nullopt;
 
-    // FIXME: walking from range.start() to range.end() instead of from root
-    // would make the upper-bound check O(receiver length) rather than
-    // O(document length). Change once we have a cross-thread primitive for it.
-    unsigned endFromRoot = offsetFromRootForMarker(range.end());
-    if (targetFromRoot > endFromRoot)
+    if (!(start <= textTarget))
         return std::nullopt;
-    return targetFromRoot - startFromRoot;
+
+    if (!isMainThread()) {
+        // With two text marker we could use AXTextMarkerRange::length, however
+        // unlike AXIndexForTextMarker, it doesn't consider the value from text
+        // controls in its result. Therefore, we use offsetFromTextMarker instead,
+        // which is what AXIndexForTextMarker uses (on the AX thread) internally.
+        return textTarget.offsetFromTextMarker(start);
+    }
+
+    std::optional<BoundaryPoint> startPoint = start.boundaryPoint();
+    std::optional<BoundaryPoint> targetPoint = target.boundaryPoint();
+    if (!startPoint || !targetPoint)
+        return std::nullopt;
+
+    // AXIndexForTextMarker directly uses characterCount to compute the offset
+    // therefore, using it here to match the returned count.
+    return characterCount({ *startPoint, *targetPoint });
 }
 
 namespace Accessibility {
