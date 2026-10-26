@@ -123,6 +123,7 @@ public:
     bool isCollapsed() const override;
     bool isIgnored() const override;
     bool isRemotePlatformElement() const override;
+    void readFrameDuringRemoteElementLookup() override;
     bool isSingleLine() const override;
     bool isMultiLine() const override;
     bool hasPopup() const override;

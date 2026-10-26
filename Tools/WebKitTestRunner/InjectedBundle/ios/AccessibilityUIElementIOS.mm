@@ -35,7 +35,9 @@
 #import <UIKit/UIKit.h>
 #import <WebCore/TextGranularity.h>
 #import <WebKit/WKBundleFrame.h>
+#import <pal/spi/ios/AXRuntimeSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -170,7 +172,13 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)accessibilityDOMIdentifier;
 - (CGPathRef)_accessibilityPath;
 - (CGPoint)_accessibilityPageRelativeLocation;
+- (CGRect)accessibilityElementRect;
 @end
+
+#if !PLATFORM(MACCATALYST)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(AXRuntime)
+SOFT_LINK_CLASS_OPTIONAL(AXRuntime, AXRemoteElement)
+#endif
 
 namespace WTR {
 
@@ -898,6 +906,29 @@ bool AccessibilityUIElementIOS::isRemotePlatformElement() const
     // placeholder (the iOS analog of NSAccessibilityRemoteUIElement on macOS). The class is soft-linked
     // by WebCore, so it is only present in the process once such a placeholder has been created.
     return [m_element isKindOfClass:NSClassFromString(@"AXRemoteElement")];
+}
+
+void AccessibilityUIElementIOS::readFrameDuringRemoteElementLookup()
+{
+#if !PLATFORM(MACCATALYST)
+    // This mirrors the application element callback that WebProcess.axbundle installs in AXRuntime, which
+    // runs every time AXRuntime vends an element (e.g. for each element of an XCTest snapshot) and reads the
+    // root's frame for each registered remote element. In a real web process the registry always contains the
+    // element that connects the page to the UI process, so register a stand-in for it.
+    RetainPtr pageRemoteElement = adoptNS([allocAXRemoteElementInstance() initWithUUID:[NSUUID UUID].UUIDString andRemotePid:getpid() andContextId:0]);
+
+    __block bool didReadFrame = false;
+    RetainPtr<id> element = m_element.get();
+    [getAXRemoteElementClassSingleton() remoteElementsForBlock:^BOOL(AXRemoteElement *) {
+        if (!didReadFrame) {
+            [element accessibilityElementRect];
+            didReadFrame = true;
+        }
+        return NO;
+    }];
+
+    [pageRemoteElement unregister];
+#endif
 }
 
 unsigned AccessibilityUIElementIOS::uiElementCountForSearchPredicate(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
