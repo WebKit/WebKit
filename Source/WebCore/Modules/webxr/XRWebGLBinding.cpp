@@ -233,7 +233,7 @@ ExceptionOr<Ref<XRProjectionLayer>> XRWebGLBinding::createProjectionLayer(Script
             Ref layer = XRProjectionLayer::create(scriptExecutionContext, m_session, WTF::move(backing), init);
             initializeCompositionLayer(layer.get());
             layer->setIsStatic(false);
-            layer->setIgnoreDepthValues(!!init.depthFormat);
+            layer->setIgnoreDepthValues(!init.depthFormat);
             layer->setFixedFoveation(0);
 
             auto layoutResult = determineLayout(init.textureType, XRLayerLayout::Default);

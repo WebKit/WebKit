@@ -3093,6 +3093,10 @@ imported/w3c/web-platform-tests/webxr/hit-test [ Pass ]
 
 imported/w3c/web-platform-tests/webxr/layers [ Pass ]
 
+# ENABLE_WEBGPU is off for the GLIB ports, so XRGPUBinding is unavailable.
+webkit.org/b/327533 imported/w3c/web-platform-tests/webxr/layers/xrGPUProjectionLayer_ignoreDepthValues.https.html [ Skip ]
+webkit.org/b/327533 imported/w3c/web-platform-tests/webxr/layers/xrProjectionLayer_ignoreDepthValues.https.html [ Skip ]
+
 http/wpt/webxr [ Pass ]
 webxr [ Pass ]
 
