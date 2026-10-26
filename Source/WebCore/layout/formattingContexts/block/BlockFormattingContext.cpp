@@ -472,6 +472,13 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
     // The outer size: the inline size, clamped by the min and max inline sizes, plus border, padding and margins, where auto margins and
     // percentages, which are cyclic here, count as zero and percentage inline sizes as auto (§5.2.1). Coverage keeps out percentage padding,
     // which the render tree path resolves against the containing block's current inline size.
+    auto inlineMargins = [&](const RenderBox& box) {
+        CheckedRef style = box.style();
+        auto margin = [&](auto& margin) {
+            return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, 0_lu, style->usedZoomForLength());
+        };
+        return margin(style->marginStart(writingMode)) + margin(style->marginEnd(writingMode));
+    };
     auto outerInlineSizes = [&](const RenderBox& box, IntrinsicWidthConstraints contentSizes) -> IntrinsicWidthConstraints {
         CheckedRef style = box.style();
         auto zoom = style->usedZoomForLength();
@@ -502,10 +509,7 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
             minimum = std::max(minimum, sizes->minimum);
             maximum = std::max(maximum, sizes->maximum);
         }
-        auto margin = [&](auto& margin) {
-            return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, 0_lu, zoom);
-        };
-        auto outerSpace = borderAndPadding + margin(style->marginStart(writingMode)) + margin(style->marginEnd(writingMode));
+        auto outerSpace = borderAndPadding + inlineMargins(box);
         return { minimum + outerSpace, maximum + outerSpace };
     };
     auto addContribution = [](IntrinsicWidthConstraints& containerSizes, IntrinsicWidthConstraints contribution) {
@@ -530,7 +534,14 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
             break;
         }
         case BlockItem::Type::IndependentFormattingContextRoot:
-            // Coverage keeps out the boxes laid out through the render tree (canComputeContentInlineSizes).
+            if (LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(box)) {
+                // Its own formatting context measures a box it lays out, against the size of the containing block only where coverage keeps
+                // it out (canComputeContentInlineSizes).
+                auto contributions = LayoutIntegration::BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizeContributions(box);
+                auto margins = inlineMargins(box);
+                addContribution(blockContainerSizes.last(), { contributions.minimum + margins, contributions.maximum + margins });
+                break;
+            }
             addContribution(blockContainerSizes.last(), outerInlineSizes(box, computeIntrinsicInlineSizes(downcast<RenderBlockFlow>(box))));
             break;
         case BlockItem::Type::OutOfFlowBox:
