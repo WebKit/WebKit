@@ -33,9 +33,9 @@
 #import "WKSLinearMediaTypes.h"
 #import <WebCore/ExceptionOr.h>
 #import <WebCore/Image.h>
-#import <WebCore/ImageAdapter.h>
 #import <WebCore/ImmersiveVideoMetadata.h>
 #import <WebCore/MediaSelectionOption.h>
+#import <WebCore/NativeImageCocoa.h>
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/PlaybackSessionModel.h>
 #import <WebCore/TimeRanges.h>
@@ -449,7 +449,7 @@ static RetainPtr<NSData> artworkData(const WebCore::NowPlayingMetadata& metadata
     if (!image)
         return nil;
 
-    return bridge_cast(WebCore::ImageAdapter::tiffRepresentation({ *image }));
+    return bridge_cast(WebCore::tiffRepresentation(*image));
 }
 
 void PlaybackSessionInterfaceLMK::nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata& metadata)

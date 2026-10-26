@@ -481,6 +481,7 @@ platform/graphics/cocoa/IntRectCocoa.mm @nonARC
 platform/graphics/cocoa/ImageAdapterCocoa.mm @nonARC
 platform/graphics/cocoa/MediaPlayerCocoa.mm @nonARC
 platform/graphics/cocoa/MediaPlayerPrivateWebM.mm @nonARC @no-unify-when(bundle<=8) @cost:7
+platform/graphics/cocoa/NativeImageCocoa.mm @nonARC
 platform/graphics/cocoa/PeriodicSharedTimer.mm @nonARC
 platform/graphics/cocoa/PlatformMediaEngineConfigurationFactoryCocoa.cpp
 platform/graphics/cocoa/PlatformTimeRangesCocoa.mm @nonARC @no-unify-when(bundle<=8)

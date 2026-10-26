@@ -30,10 +30,10 @@
 
 #import "AudioUtilities.h"
 #import "DeprecatedGlobalSettings.h"
-#import "ImageAdapter.h"
 #import "Logging.h"
 #import "MediaPlayer.h"
 #import "MediaStrategy.h"
+#import "NativeImageCocoa.h"
 #import "NowPlayingInfo.h"
 #import "Page.h"
 #import "PlatformMediaSession.h"
@@ -462,7 +462,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoElapsedTime, cfCurrentTime.get());
     }
     RefPtr artworkImage = nowPlayingInfo.metadata.artwork ? nowPlayingInfo.metadata.artwork->image : nullptr;
-    RetainPtr tiffImage = artworkImage ? ImageAdapter::tiffRepresentation({ *artworkImage }) : nullptr;
+    RetainPtr tiffImage = artworkImage ? tiffRepresentation(*artworkImage) : nullptr;
     if (tiffImage) {
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkData, tiffImage.get());
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkMIMEType, @"image/tiff");

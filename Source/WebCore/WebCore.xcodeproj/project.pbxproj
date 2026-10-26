@@ -7511,6 +7511,7 @@
 		A4C507AADDFB428EA96A5E75 /* FrameIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D9D4D70C1F40D88DBFCA80 /* FrameIndexedDBAgent.h */; };
 		B1EA5351EAA94AFA936F8771 /* PageIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F630DF69544CEA9A7BE1E2 /* PageIndexedDBAgent.h */; };
 		63CF7B735BFB48D09CC3FA61 /* DebuggerPauseSessionIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 8673CA88C6A741C6B689B59A /* DebuggerPauseSessionIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8388CA7C42BEE5A116A9DF69 /* NativeImageCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 0266086DEAF2F2D10EC0FF0F /* NativeImageCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -24102,6 +24103,8 @@
 		E3F630DF69544CEA9A7BE1E2 /* PageIndexedDBAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageIndexedDBAgent.h; sourceTree = "<group>"; };
 		9E05DE2045A04C30A1A879F9 /* PageIndexedDBAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageIndexedDBAgent.cpp; sourceTree = "<group>"; };
 		8673CA88C6A741C6B689B59A /* DebuggerPauseSessionIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPauseSessionIdentifier.h; sourceTree = "<group>"; };
+		0266086DEAF2F2D10EC0FF0F /* NativeImageCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeImageCocoa.h; sourceTree = "<group>"; };
+		AFA81AFC192B3B83C4D127ED /* NativeImageCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeImageCocoa.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37237,6 +37240,8 @@
 				5AEBAD8B283583AE0069741F /* MediaPlayerPrivateWebM.h */,
 				5AEBAD8A283583AE0069741F /* MediaPlayerPrivateWebM.mm */,
 				E59A1DCE2B7FEAE8007D9F0D /* MultiRepresentationHEICMetrics.h */,
+				0266086DEAF2F2D10EC0FF0F /* NativeImageCocoa.h */,
+				AFA81AFC192B3B83C4D127ED /* NativeImageCocoa.mm */,
 				CDC522422A4F6E7900155FAE /* NullPlaybackSessionInterface.h */,
 				CDC522442A4F705F00155FAE /* NullVideoPresentationInterface.h */,
 				FED1234567890ABCDEF12345 /* PeriodicSharedTimer.h */,
@@ -47795,6 +47800,7 @@
 				3227A93128BD744C00BC2697 /* Namespace.h in Headers */,
 				5CC59425C83340698819A8EE /* NameValidation.h in Headers */,
 				726D56E3253AE3660002EF90 /* NativeImage.h in Headers */,
+				8388CA7C42BEE5A116A9DF69 /* NativeImageCocoa.h in Headers */,
 				72854E692B6987B700E0181A /* NativeImageSource.h in Headers */,
 				83B2D1751B8BCD6A00A02E47 /* NativeNodeFilter.h in Headers */,
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,

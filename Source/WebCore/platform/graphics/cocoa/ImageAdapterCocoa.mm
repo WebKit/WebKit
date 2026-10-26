@@ -29,6 +29,7 @@
 #import "BitmapImage.h"
 #import "FloatRect.h"
 #import "GraphicsContext.h"
+#import "NativeImageCocoa.h"
 #import "SharedBuffer.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <wtf/PointerComparison.h>
@@ -75,27 +76,6 @@ Ref<BitmapImage> ImageAdapter::loadPlatformResource(const char *name)
     // See rdar://5607381
     ASSERT_NOT_REACHED();
     return BitmapImage::nullImage();
-}
-
-RetainPtr<CFDataRef> ImageAdapter::tiffRepresentation(const Vector<Ref<NativeImage>>& nativeImages)
-{
-    // If nativeImages.size() is zero, we know for certain this image doesn't have valid data
-    // Even though the call to CGImageDestinationCreateWithData will fail and we'll handle it gracefully,
-    // in certain circumstances that call will spam the console with an error message
-    if (!nativeImages.size())
-        return nullptr;
-
-    RetainPtr<CFMutableDataRef> data = adoptCF(CFDataCreateMutable(0, 0));
-
-    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(data.get(), bridge_cast(UTTypeTIFF.identifier), nativeImages.size(), 0));
-    if (!destination)
-        return nullptr;
-
-    for (const auto& nativeImage : nativeImages)
-        CGImageDestinationAddImage(destination.get(), nativeImage->platformImage().get(), 0);
-
-    CGImageDestinationFinalize(destination.get());
-    return data;
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -182,7 +162,7 @@ CFDataRef ImageAdapter::tiffRepresentation(ConcreteObjectSize concreteObjectSize
     if (m_tiffRep && m_tiffRepKey && m_tiffRepKey->matches(concreteObjectSize, extras))
         return m_tiffRep.get();
 
-    auto data = tiffRepresentation(allNativeImages(concreteObjectSize, extras));
+    auto data = WebCore::tiffRepresentation(allNativeImages(concreteObjectSize, extras));
     if (!data)
         return nullptr;
 
@@ -222,7 +202,7 @@ RetainPtr<NSImage> ImageAdapter::snapshotNSImage(ConcreteObjectSize concreteObje
     if (!nativeImage)
         return nullptr;
 
-    auto data = tiffRepresentation({ nativeImage.releaseNonNull() });
+    auto data = WebCore::tiffRepresentation(*nativeImage);
     if (!data)
         return nullptr;
 

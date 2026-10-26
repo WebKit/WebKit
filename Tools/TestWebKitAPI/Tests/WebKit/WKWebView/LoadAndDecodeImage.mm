@@ -33,8 +33,8 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/Image.h>
-#import <WebCore/ImageAdapter.h>
 #import <WebCore/NativeImage.h>
+#import <WebCore/NativeImageCocoa.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -348,8 +348,7 @@ RetainPtr<NSData> tiffRepresentation(CocoaImage *image)
     if (!nativeImage)
         return nullptr;
 
-    Ref nativeImageRef { nativeImage.releaseNonNull() };
-    return bridge_cast(WebCore::ImageAdapter::tiffRepresentation({ nativeImageRef }));
+    return bridge_cast(WebCore::tiffRepresentation(*nativeImage));
 #endif
 }
 
