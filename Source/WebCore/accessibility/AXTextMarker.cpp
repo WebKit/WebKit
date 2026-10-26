@@ -553,8 +553,9 @@ String listMarkerTextOnSameLine(const AXTextMarker& marker)
         if (RefPtr listMarker = findUnignoredDescendant(*listItemAncestor, /* includeSelf */ false, [] (const auto& descendant) {
             return descendant.role() == AccessibilityRole::ListMarker;
         })) {
-            auto lineID = AXTextMarker { *listItemAncestor, 0 }.toTextRunMarker().lineID();
-            if (lineID && lineID == marker.lineID())
+            // Only the list item's first text position is adjacent to the marker. A zero offset alone isn't enough:
+            // in <li>Hello <b>World</b></li>, "World" also starts at offset 0 of its own object, on the marker's line.
+            if (AXTextMarker { *listItemAncestor, 0 }.toTextRunMarker().hasSameObjectAndOffset(marker))
                 return listMarker->listMarkerText();
         }
     }
