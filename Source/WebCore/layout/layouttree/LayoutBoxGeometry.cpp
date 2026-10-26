@@ -56,6 +56,8 @@ BoxGeometry::BoxGeometry(const BoxGeometry& other)
 {
 }
 
+BoxGeometry& BoxGeometry::operator=(const BoxGeometry&) = default;
+
 BoxGeometry::~BoxGeometry() = default;
 
 Rect BoxGeometry::marginBox() const

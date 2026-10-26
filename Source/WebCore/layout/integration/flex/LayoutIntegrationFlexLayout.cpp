@@ -356,7 +356,7 @@ FlexLayout::FlexItemsAtMaxContentWidthScope::~FlexItemsAtMaxContentWidthScope()
 
     // Computing a box's intrinsic widths may not mark it for layout, but the items were just laid out at their max-content widths.
     // Its layout usually follows anyway; grid and flex parents can ask a laid-out container again.
-    auto allowSetNeedsLayout = RenderObject::SetLayoutNeededForbiddenScope { m_flexLayout.flexBox(), false };
+    RenderObject::SetLayoutNeededForbiddenScope allowSetNeedsLayout(m_flexLayout.flexBox(), false);
     m_flexLayout.flexBox().setChildNeedsLayout();
 }
 
