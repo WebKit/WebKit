@@ -255,7 +255,12 @@ CoreAudioCaptureSource::~CoreAudioCaptureSource()
 void CoreAudioCaptureSource::startProducingData()
 {
     m_canResumeAfterInterruption = true;
-    initializeToStartProducingData();
+    if (m_shouldInitializeAudioUnit)
+        initializeToStartProducingData();
+    else {
+        // Another source may have moved the shared unit to its own device while this one was stopped.
+        protect(m_unit)->setCaptureDevice(String { persistentID() }, m_captureDeviceID, captureDevice().isDefault());
+    }
     protect(m_unit)->startProducingData();
     m_currentSettings = { };
 }

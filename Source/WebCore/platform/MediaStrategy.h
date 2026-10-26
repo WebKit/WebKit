@@ -67,6 +67,7 @@ public:
     virtual void isActiveNowPlayingSessionInGPUProcessForTesting(MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
     virtual void isRemoteCommandTargetSessionInGPUProcessForTesting(MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
     virtual bool postNowPlayingRemoteControlCommandToGPUProcessForTesting(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&);
+    virtual void sharedAudioCaptureDeviceInGPUProcessForTesting(CompletionHandler<void(String&&)>&&);
     void resetMediaEngines();
     virtual bool hasThreadSafeMediaSourceSupport() const;
 #if ENABLE(MEDIA_SOURCE)
