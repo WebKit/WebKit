@@ -30,6 +30,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestProtocol.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -2265,6 +2266,48 @@ TEST(GetUserMedia, OriginAndWebArchivePermission)
     EXPECT_EQ([delegate numberOfPrompts], 1);
     [webView removeObserver:observer.get() forKeyPath:@"microphoneCaptureState"];
     [webView removeObserver:observer.get() forKeyPath:@"cameraCaptureState"];
+}
+
+TEST(GetUserMedia, WebArchiveCrossOriginSubframe)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    initializeMediaCaptureConfiguration(configuration.get());
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    RetainPtr delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    NSDictionary *archive = @{
+        @"WebMainResource" : @{
+            @"WebResourceData" : [@"<iframe src='https://webkit.org/frame' allow='camera'></iframe>" dataUsingEncoding:NSUTF8StringEncoding],
+            @"WebResourceFrameName" : @"",
+            @"WebResourceMIMEType" : @"text/html",
+            @"WebResourceTextEncodingName" : @"UTF-8",
+            @"WebResourceURL" : @"https://example.com/"
+        },
+        @"WebSubframeArchives" : @[ @{
+            @"WebMainResource" : @{
+                @"WebResourceData" : [@"frame" dataUsingEncoding:NSUTF8StringEncoding],
+                @"WebResourceFrameName" : @"<!--frame1-->",
+                @"WebResourceMIMEType" : @"text/html",
+                @"WebResourceTextEncodingName" : @"UTF-8",
+                @"WebResourceURL" : @"https://webkit.org/frame"
+            }
+        } ],
+    };
+    RetainPtr archiveURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"WebArchiveCrossOriginSubframe.webarchive"]];
+    [[NSPropertyListSerialization dataWithPropertyList:archive format:NSPropertyListBinaryFormat_v1_0 options:0 error:nil] writeToURL:archiveURL.get() atomically:YES];
+    [webView loadFileURL:archiveURL.get() allowingReadAccessToURL:archiveURL.get()];
+    [webView _test_waitForDidFinishNavigation];
+    [[NSFileManager defaultManager] removeItemAtURL:archiveURL.get() error:nil];
+
+    __block bool doneEvaluatingJavaScript { false };
+    [webView callAsyncJavaScript:@"try { await navigator.mediaDevices.getUserMedia({ audio: false, video: true }); return null; } catch (err) { return err.name; }" arguments:nil inFrame:[webView firstChildFrame] inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
 }
 #endif
 
