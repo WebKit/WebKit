@@ -73,7 +73,6 @@ struct ImageCopyExternalImageVideoSource;
 #endif
 struct ImageCopyTexture;
 struct ImageCopyTextureTagged;
-struct ImageDataLayout;
 struct InternalError;
 struct ObjectDescriptorBase;
 struct OutOfMemoryError;
@@ -89,11 +88,9 @@ struct RenderPassDepthStencilAttachment;
 struct RenderPassDescriptor;
 struct RenderPassLayout;
 struct RenderPipelineDescriptor;
-struct RequestAdapterOptions;
 struct ShaderModuleCompilationHint;
 struct ShaderModuleDescriptor;
 struct SupportedFeatures;
-struct SupportedLimits;
 struct TextureDescriptor;
 struct ValidationError;
 struct VertexBufferLayout;
@@ -120,7 +117,6 @@ public:
 #endif
     std::optional<ImageCopyTexture> convertToBacking(const ::WebGPU::TexelCopyTextureInfo&);
     std::optional<ImageCopyTextureTagged> convertToBacking(const WebCore::WebGPUImageCopyTextureTagged&);
-    std::optional<ImageDataLayout> LEGACY_NODELETE convertToBacking(const ::WebGPU::TexelCopyBufferLayout&);
     std::optional<ObjectDescriptorBase> LEGACY_NODELETE convertToBacking(const WebCore::WebGPUObjectDescriptorBase&);
     std::optional<PipelineLayoutDescriptor> convertToBacking(const ::WebGPU::PipelineLayoutDescriptor&);
     std::optional<PresentationContextDescriptor> convertToBacking(const WebCore::WebGPUPresentationContextDescriptor&);
@@ -131,7 +127,6 @@ public:
     std::optional<RenderPassDescriptor> convertToBacking(const ::WebGPU::RenderPassDescriptor&);
     std::optional<RenderPassTimestampWrites> convertToBacking(const ::WebGPU::PassTimestampWrites&);
     std::optional<RenderPipelineDescriptor> convertToBacking(const ::WebGPU::RenderPipelineDescriptor&);
-    std::optional<RequestAdapterOptions> LEGACY_NODELETE convertToBacking(const ::WebGPU::RequestAdapterOptions&);
     std::optional<ShaderModuleDescriptor> convertToBacking(const ::WebGPU::ShaderModuleDescriptor&);
     std::optional<TextureDescriptor> convertToBacking(const ::WebGPU::TextureDescriptor&);
     std::optional<VertexBufferLayout> convertToBacking(const ::WebGPU::VertexBufferLayout&);

@@ -21,9 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::RequestAdapterOptions {
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::RequestAdapterOptions {
     std::optional<::WebGPU::PowerPreference> powerPreference;
     bool forceFallbackAdapter;
     bool xrCompatible;
 };
+
+header: "WebGPURequestAdapterOptions.h"
+using WebKit::WebGPU::RequestAdapterOptions = ::WebGPU::RequestAdapterOptions;
 #endif

@@ -36,23 +36,18 @@ namespace WebKit::WebGPU {
 
 std::optional<ImageCopyBuffer> ConvertToBackingContext::convertToBacking(const ::WebGPU::TexelCopyBufferInfo& imageCopyBuffer)
 {
-    auto base = convertToBacking(imageCopyBuffer.layout);
     auto buffer = convertToBacking(protect(imageCopyBuffer.buffer).get());
 
-    return { { WTF::move(*base), buffer } };
+    return { { imageCopyBuffer.layout, buffer } };
 }
 
 std::optional<::WebGPU::TexelCopyBufferInfo> ConvertFromBackingContext::convertFromBacking(const ImageCopyBuffer& imageCopyBuffer)
 {
-    auto base = convertFromBacking(static_cast<const ImageDataLayout&>(imageCopyBuffer));
-    if (!base)
-        return std::nullopt;
-
     RefPtr buffer = convertBufferFromBacking(imageCopyBuffer.buffer);
     if (!buffer)
         return std::nullopt;
 
-    return { { WTF::move(*base), buffer.releaseNonNull() } };
+    return { { imageCopyBuffer, buffer.releaseNonNull() } };
 }
 
 } // namespace WebKit

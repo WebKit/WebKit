@@ -32,6 +32,7 @@
 #include "StreamMessageReceiver.h"
 #include "WebGPUExtent3D.h"
 #include "WebGPUIdentifier.h"
+#include "WebGPUImageDataLayout.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 #include <wtf/CompletionHandler.h>
@@ -61,7 +62,6 @@ struct ImageCopyExternalImageVideoSource;
 #endif
 struct ImageCopyTexture;
 struct ImageCopyTextureTagged;
-struct ImageDataLayout;
 class ObjectHeap;
 }
 

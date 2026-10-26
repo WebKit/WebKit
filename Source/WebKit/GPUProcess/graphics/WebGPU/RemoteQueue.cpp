@@ -155,15 +155,13 @@ void RemoteQueue::writeTexture(
     Ref objectHeap = m_objectHeap.get();
     auto convertedDestination = objectHeap->convertFromBacking(destination);
     ASSERT(convertedDestination);
-    auto convertedDataLayout = objectHeap->convertFromBacking(dataLayout);
-    ASSERT(convertedDataLayout);
-    if (!convertedDestination || !convertedDataLayout || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
+    if (!convertedDestination || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
         completionHandler(false);
         return;
     }
 
     Ref backing = protect(m_backing);
-    backing->writeTexture(*convertedDestination, data->span(), *convertedDataLayout, size);
+    backing->writeTexture(*convertedDestination, data->span(), dataLayout, size);
     keepAliveUntilSubmittedWorkDone(backing, WTF::move(data));
     completionHandler(true);
 }
@@ -177,12 +175,10 @@ void RemoteQueue::writeTextureWithCopy(
     Ref objectHeap = m_objectHeap.get();
     auto convertedDestination = objectHeap->convertFromBacking(destination);
     ASSERT(convertedDestination);
-    auto convertedDataLayout = objectHeap->convertFromBacking(dataLayout);
-    ASSERT(convertedDataLayout);
-    if (!convertedDestination || !convertedDataLayout)
+    if (!convertedDestination)
         return;
 
-    protect(m_backing)->writeTexture(*convertedDestination, data.span(), *convertedDataLayout, size);
+    protect(m_backing)->writeTexture(*convertedDestination, data.span(), dataLayout, size);
 }
 
 void RemoteQueue::copyExternalImageToTexture(
