@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>A clip edge on pixel centres draws the clip rounded to whole pixels, the same pixels the damage covers.</title>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      /* Translated by half a pixel, the clip spans x = 10.5 to 60.5 and y = 10.5 to 60.5. Rounded to
+         whole pixels, as the damage takes it, it covers x = 11 to 61 and y = 11 to 61. */
+      .clip { position: absolute; left: 10px; top: 10px; width: 50px; height: 50px; overflow: hidden; transform: translate(0.5px, 0.5px); will-change: transform; }
+      .inner { position: absolute; left: -20px; top: -20px; width: 100px; height: 100px; background-color: green; will-change: transform; }
+    </style>
+  </head>
+  <body>
+    <div class="clip"><div class="inner"></div></div>
+  </body>
+</html>
