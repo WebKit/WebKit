@@ -121,6 +121,9 @@ public:
     // The min-content and max-content inline sizes of the content box of a box whose own formatting context measures it through the render
     // tree (RenderBox::minContentLogicalWidthContribution).
     static Layout::IntrinsicWidthConstraints independentFormattingContextIntrinsicInlineSizes(const RenderBox&, LayoutUnit borderAndPadding);
+    // The min-content and max-content contributions of the border box of such a box to the inline size of its containing block, its size
+    // properties included.
+    static Layout::IntrinsicWidthConstraints independentFormattingContextIntrinsicInlineSizeContributions(const RenderBox&);
     // Whether the content box inline size, border or padding of a box differ from its last layout, which its renderer still has
     // (RenderBlock::recomputeLogicalWidth).
     static bool contentBoxInlineSizeChanged(const RenderBox&, LayoutUnit contentBoxInlineSize);
