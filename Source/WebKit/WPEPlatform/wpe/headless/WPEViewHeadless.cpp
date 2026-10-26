@@ -46,6 +46,7 @@ struct _WPEViewHeadlessPrivate {
     GRefPtr<WPEBuffer> committedBuffer;
     GRefPtr<GSource> frameSource;
     gint64 lastFrameTime;
+    GRefPtr<GSource> focusSource;
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEViewHeadless, wpe_view_headless, WPE_TYPE_VIEW, WPEView)
 
@@ -71,8 +72,14 @@ static void wpeViewHeadlessConstructed(GObject* object)
 
     auto* view = WPE_VIEW(object);
     g_signal_connect(view, "notify::toplevel", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer) {
+        auto* priv = WPE_VIEW_HEADLESS(view)->priv;
         auto* toplevel = wpe_view_get_toplevel(view);
         if (!toplevel) {
+            if (priv->focusSource) {
+                g_source_destroy(priv->focusSource.get());
+                priv->focusSource = nullptr;
+            }
+            wpe_view_focus_out(view);
             wpe_view_unmap(view);
             return;
         }
@@ -84,6 +91,24 @@ static void wpeViewHeadlessConstructed(GObject* object)
             wpe_view_resized(view, width, height);
 
         wpe_view_map(view);
+
+        // There's no seat to deliver the keyboard focus, so the view gets it right after being added
+        // to the toplevel. Doing it now would make WebKit create the page already focused, and no
+        // focus event would be dispatched, so do it in the next main loop iteration instead.
+        if (priv->focusSource)
+            return;
+
+        priv->focusSource = adoptGRef(g_idle_source_new());
+        g_source_set_priority(priv->focusSource.get(), RunLoopSourcePriority::RunLoopDispatcher);
+        g_source_set_name(priv->focusSource.get(), "WPE headless view focus");
+        g_source_set_callback(priv->focusSource.get(), [](gpointer userData) -> gboolean {
+            auto* view = WPE_VIEW(userData);
+            WPE_VIEW_HEADLESS(view)->priv->focusSource = nullptr;
+            if (wpe_view_get_mapped(view))
+                wpe_view_focus_in(view);
+            return G_SOURCE_REMOVE;
+        }, view, nullptr);
+        g_source_attach(priv->focusSource.get(), g_main_context_get_thread_default());
     }), nullptr);
 
     auto* priv = WPE_VIEW_HEADLESS(view)->priv;
@@ -113,6 +138,11 @@ static void wpeViewHeadlessDispose(GObject* object)
     if (priv->frameSource) {
         g_source_destroy(priv->frameSource.get());
         priv->frameSource = nullptr;
+    }
+
+    if (priv->focusSource) {
+        g_source_destroy(priv->focusSource.get());
+        priv->focusSource = nullptr;
     }
 
     G_OBJECT_CLASS(wpe_view_headless_parent_class)->dispose(object);
