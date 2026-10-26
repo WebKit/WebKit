@@ -57,6 +57,8 @@ struct ContainingBlockState {
     LayoutUnit borderAndPaddingBefore;
     // Percentage block sizes of the children resolve against this, and behave as auto without it (CSS 2.2 §10.5).
     std::optional<LayoutUnit> contentBoxBlockSize;
+    // -webkit-fill-available block sizes of the children resolve to this (RenderBox::availableLogicalHeight).
+    LayoutUnit fillAvailableBlockSize;
     BlockMarginCollapse::BlockContainer margins;
     // Its own formatting context lays it out through the render tree and gives it its block size.
     bool isLaidOutThroughRenderTree { false };
