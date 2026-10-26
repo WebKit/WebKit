@@ -5947,9 +5947,12 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
             message = 'Passed API tests'
             if self.name == ReRunAPITests.name:
                 first_results_failing_tests = self.getProperty('api_first_run_failures', [])
-                flaky_failures_string = ', '.join(first_results_failing_tests)
-                pluralSuffix = 's' if len(first_results_failing_tests) > 1 else ''
-                message = f'Found flaky test{pluralSuffix}: {flaky_failures_string}'
+                if first_results_failing_tests:
+                    flaky_failures_string = ', '.join(first_results_failing_tests)
+                    pluralSuffix = 's' if len(first_results_failing_tests) > 1 else ''
+                    message = f'Found flaky test{pluralSuffix}: {flaky_failures_string}'
+                else:
+                    message = 'Passed API tests on re-run, the first run produced no results'
 
             self.descriptionDone = message
             if self.name != RunAPITestsWithoutChange.name:
@@ -6121,6 +6124,13 @@ class ReRunAPITests(RunAPITests):
 
     @defer.inlineCallbacks
     def doOnFailure(self) -> Generator[Any, Any, None]:
+        if not self.getProperty('api_first_run_failures') or not self.getProperty('api_second_run_failures'):
+            message = 'Unable to parse API test results'
+            yield self._addToLog('stderr', message)
+            self.descriptionDone = message
+            self.build.buildFinished([message], RETRY)
+            return
+
         if self.no_failure_repeated_across_runs():
             flaky_failures = sorted(self.failures_with_change('first') | self.failures_with_change('second'))
             pluralSuffix = 's' if len(flaky_failures) > 1 else ''
