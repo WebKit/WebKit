@@ -238,10 +238,13 @@ public:
 
         m_rtpTimestamps.add(frame.render_time_ms(), frame.rtp_timestamp());
 
+        auto sample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
+        if (!sample)
+            return WEBRTC_VIDEO_CODEC_ENCODER_FAILURE;
+
         auto options = VideoFrameGStreamer::CreateOptions();
         options.rotation = videoRotationFromLibWebRTCVideoFrame(frame);
         auto colorSpace = colorSpaceFromLibWebRTCVideoFrame(frame);
-        auto sample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
 
         if (auto size = getVideoResolutionFromCaps(gst_sample_get_caps(sample.get()))) [[likely]]
             options.presentationSize = roundedIntSize(*size);
