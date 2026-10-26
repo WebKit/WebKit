@@ -29,27 +29,41 @@
 
 #include "Helpers/WTFTestUtilities.h"
 
+#include <wtf/ApproximateTime.h>
 #include <wtf/Seconds.h>
 
 namespace TestWebKitAPI::Util {
 
+static constexpr Seconds runLoopWaitInterval = 1_ms;
+
+// Runs one platform runloop iteration, waits up to runLoopWaitInterval for an event if none is pending.
+void cycleRunLoop();
+
 // Runs a platform runloop until the 'done' flag is true.
-void run(bool* done);
+inline void run(bool* done)
+{
+    while (!*done)
+        cycleRunLoop();
+}
 
 // Runs a platform runloop until the 'done' flag is true, or until the amount of seconds has passed.
 // Returns true if exiting due to the 'done' flag becoming true, or false if exiting due to a timeout.
-bool runFor(bool* done, Seconds duration);
+inline bool runFor(bool* done, Seconds duration)
+{
+    ApproximateTime start = ApproximateTime::now();
+    while (!*done) {
+        if (ApproximateTime::now() - start > duration)
+            return false;
+        cycleRunLoop();
+    }
+    return true;
+}
 
 // Runs a platform runloop until the amount of seconds has passed.
 void runFor(Seconds duration);
 
 // Runs a platform runloop `count` number of spins.
 void spinRunLoop(uint64_t count = 1);
-
-#if PLATFORM(COCOA)
-// Runs one platform runloop iteration, waits up to 1ms for an event if none is pending.
-void cycleRunLoop();
-#endif
 
 // Waits for 'c' to return true by repeatedly running the platform runloop for 100ms, up to 'maxTries'.
 template <typename Callable>

@@ -63,10 +63,9 @@ void RunLoop::wakeUp()
     CFRunLoopWakeUp(m_runLoop.get());
 }
 
-RunLoop::CycleResult RunLoop::cycle(RunLoopMode mode)
+RunLoop::CycleResult RunLoop::cycle(RunLoopMode mode, Seconds maximumWait)
 {
-    CFTimeInterval timeInterval = 0.05;
-    CFRunLoopRunInMode(mode, timeInterval, true);
+    CFRunLoopRunInMode(mode, maximumWait.seconds(), true);
     return CycleResult::Continue;
 }
 

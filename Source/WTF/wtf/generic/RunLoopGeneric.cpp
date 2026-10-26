@@ -136,14 +136,14 @@ RunLoop::~RunLoop()
         m_stopCondition.wait(m_loopLock);
 }
 
-inline bool RunLoop::populateTasks(RunMode runMode, Status& statusOfThisLoop, Deque<Ref<TimerBase::ScheduledTask>>& firedTimers)
+inline bool RunLoop::populateTasks(RunMode runMode, Seconds maximumWait, Status& statusOfThisLoop, Deque<Ref<TimerBase::ScheduledTask>>& firedTimers)
 {
     Locker locker { m_loopLock };
 
-    if (runMode == RunMode::Drain) {
-        MonotonicTime sleepUntil = MonotonicTime::infinity();
+    if (runMode == RunMode::Drain || maximumWait > 0_s) {
+        MonotonicTime sleepUntil = runMode == RunMode::Drain ? MonotonicTime::infinity() : MonotonicTime::now() + maximumWait;
         if (!m_schedules.isEmpty())
-            sleepUntil = m_schedules.first()->scheduledTimePoint();
+            sleepUntil = std::min(sleepUntil, m_schedules.first()->scheduledTimePoint());
 
         m_readyToRun.waitUntil(m_loopLock, sleepUntil, [&] {
             return m_shutdown || m_pendingTasks || statusOfThisLoop == Status::Stopping;
@@ -173,7 +173,7 @@ inline bool RunLoop::populateTasks(RunMode runMode, Status& statusOfThisLoop, De
     return true;
 }
 
-void RunLoop::runImpl(RunMode runMode)
+void RunLoop::runImpl(RunMode runMode, Seconds maximumWait)
 {
     ASSERT(this == &RunLoop::currentSingleton());
 
@@ -211,7 +211,7 @@ void RunLoop::runImpl(RunMode runMode)
 
     Deque<Ref<TimerBase::ScheduledTask>> firedTimers;
     while (true) {
-        if (!populateTasks(runMode, statusOfThisLoop, firedTimers))
+        if (!populateTasks(runMode, maximumWait, statusOfThisLoop, firedTimers))
             return;
 
         // Dispatch scheduled timers.
@@ -274,9 +274,9 @@ void RunLoop::wakeUp()
     wakeUpWithLock();
 }
 
-RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
+RunLoop::CycleResult RunLoop::cycle(RunLoopMode, Seconds maximumWait)
 {
-    RunLoop::currentSingleton().runImpl(RunMode::Iterate);
+    RunLoop::currentSingleton().runImpl(RunMode::Iterate, maximumWait);
     return CycleResult::Continue;
 }
 
