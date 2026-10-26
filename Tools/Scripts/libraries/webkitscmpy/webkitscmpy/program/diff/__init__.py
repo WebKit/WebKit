@@ -20,7 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import sys
+from typing import TYPE_CHECKING, Any
 
 from webkitcorepy import arguments, Terminal, Timeout
 from webkitscmpy import local
@@ -32,16 +35,20 @@ from .html_diff import HTMLDiff
 
 from ..command import Command
 
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+
 
 class Diff(Command):
     DEFAULT_VIEWER = HTMLDiff
 
     name = 'diff'
     help = "Filter 'git diff' output through the user's prefered diff viewer"
-    _formats = {}
+    _formats: dict[str, type[DiffBase]] = {}
 
     @classmethod
-    def viewers(cls):
+    def viewers(cls) -> dict[str, type[DiffBase]]:
         if not cls._formats:
             cls._formats = {
                 viewer.name: viewer for viewer in [
@@ -54,7 +61,7 @@ class Diff(Command):
         return cls._formats
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '-b', '--block', '--no-block',
             dest='block', default=None,
@@ -81,16 +88,16 @@ class Diff(Command):
         )
 
     @classmethod
-    def default_viewer(cls, repository):
-        viewer = repository.config().get('webkitscmpy.diff-viewer', None)
-        if viewer not in cls.viewers():
+    def default_viewer(cls, repository: local.Git | None) -> type[DiffBase]:
+        viewer = repository.config().get('webkitscmpy.diff-viewer', None) if repository else None
+        if viewer is None or viewer not in cls.viewers():
             if viewer:
                 print(f"'{viewer}' is not a recognized diff viewer on this machine, falling back to '{cls.DEFAULT_VIEWER.name}'")
             return cls.DEFAULT_VIEWER
         return cls.viewers()[viewer]
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | None, **kwargs: Any) -> int:
         if not args.viewer:
             args.viewer = cls.default_viewer(repository)
         if args.block and Terminal.isatty(sys.stdout):
@@ -126,8 +133,10 @@ class Diff(Command):
                 ))
             return 0
 
+        # Only the stdin path above works without a repository.
+        assert repository is not None
         head = args.argument
-        base = None
+        base: str | None = None
         if '..' in args.argument:
             if '...' in args.argument:
                 print("'diff' sub-command only supports '..' notation", file=sys.stderr)

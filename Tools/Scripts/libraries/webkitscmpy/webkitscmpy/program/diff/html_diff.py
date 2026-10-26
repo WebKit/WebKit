@@ -20,11 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import re
 import sys
 import tempfile
 import threading
+from typing import IO, Any
 
 if sys.version_info >= (3, 2):
     from html import escape
@@ -223,7 +226,7 @@ pre, .text {
         CONFLICT_THEIRS = 5
 
         @classmethod
-        def from_header(cls, string):
+        def from_header(cls, string: str) -> HTMLDiff.Section | None:
             match = cls.SECTION_RE.match(string)
             if not match:
                 return None
@@ -233,12 +236,12 @@ pre, .text {
                 edited_position=match.group(2),
             )
 
-        def __init__(self, title, original_position, edited_position):
+        def __init__(self, title: str, original_position: int | str, edited_position: int | str) -> None:
             self.title = title
             self.original_position = int(original_position)
             self.edited_position = int(edited_position)
 
-        def header(self):
+        def header(self) -> list[str]:
             return [
                 '<div class="section-header context">',
                 '    <span class="original context">@</span>',
@@ -247,17 +250,19 @@ pre, .text {
                 '</div>',
             ]
 
-        def line(self, line, type=None):
-            type_class = {
+        def line(self, line: str, type: int | None = None) -> list[str]:
+            type_classes: dict[int | None, str] = {
                 self.EDITED: ' add',
                 self.ORIGINAL: ' remove',
                 self.CONFLICT: ' conflict',
                 self.CONFLICT_OURS: ' conflict-ours',
                 self.CONFLICT_THEIRS: ' conflict-theirs',
-            }.get(type, '')
-            line_class = {
+            }
+            type_class = type_classes.get(type, '')
+            line_classes: dict[int | None, str] = {
                 self.CONFLICT: ' context',
-            }.get(type, '')
+            }
+            line_class = line_classes.get(type, '')
 
             orig = self.original_position if type in (None, self.ORIGINAL, self.CONFLICT_OURS) else None
             edit = self.edited_position if type in (None, self.EDITED, self.CONFLICT_THEIRS) else None
@@ -275,8 +280,8 @@ pre, .text {
             return result
 
     @classmethod
-    def title_for(cls, *files):
-        files = list(files)
+    def title_for(cls, *paths: str) -> str | None:
+        files = list(paths)
         prefix = ['a/', 'b/']
         for index in range(len(prefix)):
             if not files or len(files) <= index:
@@ -297,7 +302,7 @@ pre, .text {
             return files[0]
         return '{} -> {}'.format(*files)
 
-    def commit_message_line(self, line, context=None):
+    def commit_message_line(self, line: str, context: str | None = None) -> list[str]:
         if context:
             return [
                 '<div class="section-header context">',
@@ -314,35 +319,37 @@ pre, .text {
         self._position += 1
         return result
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super(HTMLDiff, self).__init__(**kwargs)
 
         if self.block is None:
             self.block = False
         self.accepted = True
 
-        self._file_handle = None
-        self._div = []
-        self._section = None
-        self._current_title = None
-        self._files = []
-        self._conflict_side = None
+        self._file_handle: IO[str] | None = None
+        self._div: list[str | None] = []
+        self._section: HTMLDiff.Section | None = None
+        self._current_title: str | None = None
+        self._files: list[str] = []
+        self._conflict_side: str | None = None
         self._in_commit_message = False
         self._position = 1
 
         self.file = os.path.join(tempfile.gettempdir(), 'diff.html')
 
-    def _start_div(self, klass=None):
+    def _start_div(self, klass: str | None = None) -> None:
+        assert self._file_handle is not None
         self._file_handle.write("{}<div class='{}'>\n".format(len(self._div) * self.INDENT, klass))
         self._div.append(klass)
 
-    def _end_div(self, klass=None):
+    def _end_div(self, klass: str | None = None) -> None:
         if not self._div or self._div[-1] != klass:
             return
+        assert self._file_handle is not None
         self._div.pop()
         self._file_handle.write("{}</div>\n".format(len(self._div) * self.INDENT))
 
-    def add_line(self, line):
+    def add_line(self, line: str | None) -> str:
         line = super(HTMLDiff, self).add_line(line)
         splitline = line.rstrip().split(maxsplit=1)
         if len(splitline) == 2 and splitline[0] in ('rename', 'new', 'deleted'):
@@ -362,6 +369,7 @@ pre, .text {
                 output_lines = self.commit_message_line(splitline[1], context='Date')
             else:
                 output_lines = self.commit_message_line(line or ' ')
+            assert self._file_handle is not None
             for output_line in output_lines:
                 self._file_handle.write('{}{}\n'.format(len(self._div) * self.INDENT, output_line))
             return line
@@ -371,6 +379,7 @@ pre, .text {
             self._end_div(klass='section')
             self._end_div(klass='file')
             self._start_div(klass='file')
+            assert self._file_handle is not None
             self._file_handle.write('{}<h1>{}</h1>\n'.format(len(self._div) * self.INDENT, splitline[1] if len(splitline) > 1 else '?'))
             self._start_div(klass='section')
             self._position = 1
@@ -395,12 +404,14 @@ pre, .text {
             if title != self._current_title:
                 self._end_div(klass='file')
                 self._start_div(klass='file')
+                assert self._file_handle is not None
                 self._file_handle.write('{}<h1>{}</h1>\n'.format(len(self._div) * self.INDENT, title))
             self._current_title = title
             return line
 
         new_section = self.Section.from_header(line)
         if new_section:
+            assert self._file_handle is not None
             if self._section:
                 self._end_div(klass='section')
                 self._file_handle.write('{}<br>\n'.format(len(self._div) * self.INDENT))
@@ -424,7 +435,8 @@ pre, .text {
             sys.stderr.write(line)
             return line
 
-        typ = None
+        assert self._file_handle is not None
+        typ: int | None = None
         if line.startswith('+<<<'):
             self._conflict_side = 'ours'
             typ = self._section.CONFLICT
@@ -448,7 +460,7 @@ pre, .text {
 
         return line
 
-    def __enter__(self):
+    def __enter__(self) -> HTMLDiff:
         self._file_handle = open(self.file, 'w')
         self._div = []
         self._section = None
@@ -459,7 +471,7 @@ pre, .text {
 
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         if not self._file_handle:
             return
 
@@ -475,7 +487,7 @@ pre, .text {
             diff_file = self.file
 
             class _Handler(BaseHTTPRequestHandler):
-                def do_GET(self):
+                def do_GET(self) -> None:
                     try:
                         with open(diff_file, 'rb') as f:
                             content = f.read()
@@ -492,13 +504,13 @@ pre, .text {
                     except Exception:
                         self.send_error(500)
 
-                def do_POST(self):
+                def do_POST(self) -> None:
                     self.send_response(204)
                     self.end_headers()
                     if self.path == '/done':
                         finished.set()
 
-                def log_message(self, *args, **kwargs):
+                def log_message(self, *args: Any, **kwargs: Any) -> None:
                     pass
 
             server = HTTPServer(('127.0.0.1', 0), _Handler)
@@ -507,7 +519,7 @@ pre, .text {
             server_thread.daemon = True
             server_thread.start()
 
-            def _wait_for_enter():
+            def _wait_for_enter() -> None:
                 try:
                     if sys.stdin.readline().strip().lower() in ('n', 'no'):
                         self.accepted = False

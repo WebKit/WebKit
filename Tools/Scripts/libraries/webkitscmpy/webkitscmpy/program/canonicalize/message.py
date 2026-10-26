@@ -22,6 +22,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import sys
 from typing import IO
@@ -31,7 +33,7 @@ from webkitscmpy import Commit
 from webkitscmpy.program.canonicalize import IdentifierTrailer
 
 
-def main(inputfile, identifier_trailer):
+def main(inputfile: IO[str], identifier_trailer: IdentifierTrailer) -> int:
     REPOSITORY_PATH = os.environ.get('OLDPWD')
     GIT_COMMIT = os.environ.get('GIT_COMMIT')
 
@@ -52,6 +54,7 @@ def main(inputfile, identifier_trailer):
         return -1
 
     rewrite_message(inputfile, sys.stdout, commit, identifier_trailer)
+    return 0
 
 
 def rewrite_message(inputfile: IO[str], outputfile: IO[str], commit: Commit, identifier_trailer: IdentifierTrailer) -> None:

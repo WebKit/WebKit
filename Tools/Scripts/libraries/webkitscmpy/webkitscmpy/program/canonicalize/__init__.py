@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import logging
 import os
@@ -27,10 +29,16 @@ import tempfile
 import subprocess
 import sys
 from dataclasses import asdict, dataclass
+from typing import TYPE_CHECKING, Any
 
 from webkitcorepy import arguments, run, string_utils
-from webkitscmpy import log
+from webkitscmpy import local, log
 from ..command import Command
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy.local import Git, Svn
 
 
 @dataclass(frozen=True)
@@ -40,19 +48,19 @@ class IdentifierTrailer:
     aliases: tuple[str, ...] = ()
 
     @classmethod
-    def from_template(cls, template):
+    def from_template(cls, template: str) -> IdentifierTrailer:
         name, value = template.split(':', 1)
         return cls(name=name, value_template=value.lstrip())
 
     @classmethod
-    def from_json(cls, s):
+    def from_json(cls, s: str) -> IdentifierTrailer:
         if s is None:
             return None
         data = json.loads(s)
         data['aliases'] = tuple(data['aliases'])
         return cls(**data)
 
-    def to_json(self):
+    def to_json(self) -> str:
         return json.dumps(asdict(self))
 
 
@@ -62,7 +70,7 @@ class Canonicalize(Command):
            'committers with existing contributor mapping and add identifiers to commit messages'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '--identifier', '--no-identifier',
             help='Add in the identifier to commit messages, true by default',
@@ -84,7 +92,7 @@ class Canonicalize(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, identifier_template=None, **kwargs):
+    def main(cls, args: Namespace, repository: Svn | Git | None, identifier_template: IdentifierTrailer | None = None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -94,6 +102,7 @@ class Canonicalize(Command):
         if not repository.is_git:
             sys.stderr.write('Commits can only be canonicalized on a Git repository\n')
             return 1
+        assert isinstance(repository, local.Git)  # Only Git repositories are is_git
 
         branch = repository.branch
         if not branch:

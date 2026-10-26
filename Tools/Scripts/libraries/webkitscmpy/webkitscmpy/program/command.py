@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import platform
 import re
@@ -27,18 +29,24 @@ import shutil
 import subprocess
 import sys
 import time
+from typing import TYPE_CHECKING, Any, Callable
 
 from webkitcorepy import Terminal, run
 from webkitscmpy import local, Commit
 
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+
 
 class Command(object):
-    name = None
-    aliases = []
-    help = None
+    name: str | None = None
+    aliases: list[str] = []
+    # Either a string, or a function returning one, which may take a 'classifier' argument.
+    help: str | Callable[..., str] | None = None
 
     @classmethod
-    def write_branch_variables(cls, repository, branch, **variables):
+    def write_branch_variables(cls, repository: local.Git, branch: str, **variables: Any) -> bool:
         if not isinstance(repository, local.Git):
             return False
         result = True
@@ -56,14 +64,16 @@ class Command(object):
         return result
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         if cls.name is None:
             raise NotImplementedError('Command does not have a name')
         if cls.help is None:
             raise NotImplementedError("'{}' does not have a help message")
 
+    # program.main() passes whichever repository it found (local, remote or None) as 'repository', so
+    # it's typed as Any here. Subclasses declare the kinds of repository they support.
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: Any, **kwargs: Any) -> int:
         sys.stderr.write('No command specified\n')
         return -1
 
@@ -87,7 +97,7 @@ class FilteredCommand(Command):
     HEADER_MODE = 2
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'args', nargs='*',
             type=str, default=None,
@@ -122,7 +132,7 @@ class FilteredCommand(Command):
         )
 
     @classmethod
-    def pager(cls, args, repository, file=None, **kwargs):
+    def pager(cls, args: Namespace | list[str], repository: local.Svn | local.Git | None, file: str | None = None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -130,8 +140,9 @@ class FilteredCommand(Command):
             sys.stderr.write("Cannot run '{}' on remote repository\n".format(cls.name))
             return 1
 
-        if not getattr(repository, 'cache', None) and getattr(repository, 'Cache', None):
-            repository.cache = repository.Cache(repository)
+        cache_type = getattr(repository, 'Cache', None)
+        if not getattr(repository, 'cache', None) and cache_type:
+            repository.cache = cache_type(repository)
 
         # If we're a terminal, rely on 'more' to display output
         if Terminal.isatty(sys.stdin) and not isinstance(args, list) and file:
@@ -145,7 +156,7 @@ class FilteredCommand(Command):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            more = subprocess.Popen([shutil.which('more')] + (['-F', '-R'] if platform.system() == 'Darwin' else []), stdin=child.stdout)
+            more = subprocess.Popen([shutil.which('more') or 'more'] + (['-F', '-R'] if platform.system() == 'Darwin' else []), stdin=child.stdout)
 
             try:
                 while more.poll() is None and not child.poll():
@@ -155,28 +166,35 @@ class FilteredCommand(Command):
                     child.kill()
                 if more.returncode is None:
                     more.kill()
+                assert child.stderr is not None  # stderr=subprocess.PIPE
                 child_error = child.stderr.read()
                 if child_error:
                     sys.stderr.buffer.write(b'\n' + child_error)
             return child.returncode
 
-        with Terminal.override_atty(sys.stdout, isatty=kwargs.get('isatty')), Terminal.override_atty(sys.stderr, isatty=kwargs.get('isatty')):
+        isatty = bool(kwargs.get('isatty'))
+        with Terminal.override_atty(sys.stdout, isatty=isatty), Terminal.override_atty(sys.stderr, isatty=isatty):
             return FilteredCommand.main(args, repository, command=cls.name, **kwargs)
 
     @classmethod
-    def replace(cls, arg, repository):
+    def replace(cls, arg: str, repository: local.Svn | local.Git) -> str | None:
         parsed = Commit.parse(arg, do_assert=False)
         if not parsed:
             return None
+        assert repository.cache is not None  # main() checks for a cache
         replacement = None
         if repository.is_svn:
-            replacement = repository.cache.to_revision(hash=parsed.hash, identifier=str(parsed) if parsed.identifier else None)
+            revision = repository.cache.to_revision(hash=parsed.hash, identifier=str(parsed) if parsed.identifier else None)
+            replacement = str(revision) if revision else None
         if repository.is_git:
             replacement = repository.cache.to_hash(revision=parsed.revision, identifier=str(parsed) if parsed.identifier else None)
         return replacement
 
     @classmethod
-    def main(cls, args, repository, command=None, representation=None, **kwargs):
+    def main(
+        cls, args: Namespace | list[str], repository: local.Svn | local.Git, command: str | None = None,
+        representation: str | None = None, **kwargs: Any,
+    ) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -189,48 +207,53 @@ class FilteredCommand(Command):
             sys.stderr.write('No cache available, cannot performantly map commit references\n')
             return 1
 
+        native_args: list[str]
         if not isinstance(args, list):
             representation = representation or args.representation
-            args = args.args
+            native_args = args.args
         else:
+            native_args = args
             representation = representation or cls.IDENTIFIER
 
         if representation not in (cls.IDENTIFIER, cls.HASH, cls.REVISION):
             sys.stderr.write("'{}' is not a valid commit representation\n".format(representation))
             return 1
 
-        for index in range(len(args)):
-            replacement = cls.replace(args[index], repository)
+        assert repository.root_path is not None  # A local repository always has a root path
+        for index in range(len(native_args)):
+            replacement = cls.replace(native_args[index], repository)
             if replacement:
-                args[index] = replacement
+                native_args[index] = replacement
                 continue
-            split = args[index].split('...')
+            split = native_args[index].split('...')
             if len(split) > 1:
-                args[index] = '...'.join([
+                native_args[index] = '...'.join([
                     cls.replace(component, repository) or component for component in split
                 ])
                 continue
 
             for candidate in [
-                os.path.abspath(os.path.join(os.getcwd(), args[index])),
-                os.path.abspath(os.path.join(repository.root_path, args[index])),
+                os.path.abspath(os.path.join(os.getcwd(), native_args[index])),
+                os.path.abspath(os.path.join(repository.root_path, native_args[index])),
             ]:
                 if not candidate.startswith(repository.root_path):
                     continue
                 if os.path.exists(candidate):
-                    args[index] = candidate
+                    native_args[index] = candidate
                     break
 
+        assert command is not None  # pager() passes the command's name
         log_output = subprocess.Popen(
-            [repository.executable(), command] + args,
+            [repository.executable(), command] + native_args,
             cwd=repository.root_path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             encoding='utf-8',
         )
         log_output.poll()
+        assert log_output.stdout is not None and log_output.stderr is not None  # stdout and stderr are subprocess.PIPE
 
-        def replace_line(match, mode=cls.APPEND_MODE, **kwargs):
+        def replace_line(match: re.Match[str], mode: int = cls.APPEND_MODE, **kwargs: Any) -> str:
             reference = kwargs.get(representation)
             if not reference:
                 reference = getattr(cache, 'to_{}'.format(representation), lambda **kwargs: None)(**kwargs)
@@ -278,28 +301,28 @@ class FilteredCommand(Command):
                 )
                 if header != line:
                     index = 2 if header.startswith('commit') else 1
-                    header = header.split(' ')
+                    words = header.split(' ')
                     with Terminal.Style(color=Terminal.Text.yellow, style=Terminal.Text.bold).apply(sys.stdout):
-                        sys.stdout.write(' '.join(header[:index]))
+                        sys.stdout.write(' '.join(words[:index]))
 
-                    if index < len(header):
+                    if index < len(words):
                         sys.stdout.write(' ')
                     in_red = index
-                    while in_red < len(header):
-                        if len(header[in_red]) < 2:
+                    while in_red < len(words):
+                        if len(words[in_red]) < 2:
                             break
-                        if header[in_red][-1] == ',':
+                        if words[in_red][-1] == ',':
                             in_red += 1
                             continue
-                        if header[in_red][-1] == ')' or header[in_red][-2] == ')':
+                        if words[in_red][-1] == ')' or words[in_red][-2] == ')':
                             in_red += 1
                         break
                     with Terminal.Style(color=Terminal.Text.red).apply(sys.stdout):
-                        sys.stdout.write(' '.join(header[index:in_red]))
+                        sys.stdout.write(' '.join(words[index:in_red]))
 
-                    if in_red < len(header):
+                    if in_red < len(words):
                         sys.stdout.write(' ')
-                    sys.stdout.write(' '.join(header[in_red:]))
+                    sys.stdout.write(' '.join(words[in_red:]))
 
                     line = log_output.stdout.readline()
                     continue
