@@ -82,6 +82,12 @@ public:
     static std::optional<LayoutUnit> aspectRatioBorderBoxBlockSize(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode, std::optional<LayoutUnit> intrinsicContentBlockSize = { });
     // Its block-size, min-block-size or max-block-size is a percentage of the containing block's block size, or stretches to it.
     static bool hasPercentageBlockSize(const RenderBox&, WritingMode);
+    // Its block-size, min-block-size or max-block-size is -webkit-fill-available.
+    static bool hasFillAvailableBlockSize(const RenderBox&, WritingMode);
+    // The block size -webkit-fill-available block sizes of the children of a block container resolve to (RenderBox::availableLogicalHeight):
+    // its definite content box block size, or else the one of its containing block without its margins, border and padding, within its min
+    // and max block sizes.
+    static LayoutUnit fillAvailableBlockSize(const RenderBox& blockContainer, const BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, LayoutUnit containingBlockFillAvailableBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
     // The block size of the content of an empty editable block container: the line height of its first line, for the caret (RenderBlock::hasLineIfEmpty,
     // RenderBox::lineHeight).
     static std::optional<LayoutUnit> emptyEditableContentBlockSize(const RenderBox& blockContainer);
