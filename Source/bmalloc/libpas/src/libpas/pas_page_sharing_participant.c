@@ -38,7 +38,14 @@
 #include "pas_segregated_page_config_kind.h"
 #include "pas_segregated_size_directory.h"
 
-uint64_t pas_segregated_participant_epoch_offsets[PAS_NUM_SEGREGATED_PAGE_CONFIG_VARIANTS];
+uint64_t pas_segregated_participant_epoch_offsets[PAS_NUM_SEGREGATED_PAGE_CONFIG_VARIANTS] = {
+    /* Small segregated pages are especially sensitive to decommit */
+#if PAS_PLATFORM(MAC)
+    [pas_small_segregated_page_config_variant] = 900ull * 1000ull * 1000ull,
+#else
+    [pas_small_segregated_page_config_variant] = 450ull * 1000ull * 1000ull,
+#endif
+};
 uint64_t pas_bitfit_participant_epoch_offsets[PAS_NUM_BITFIT_PAGE_CONFIG_VARIANTS];
 uint64_t pas_page_sharing_participant_large_sharing_pool_epoch_offset;
 
