@@ -39,7 +39,24 @@ static constexpr PropertyOffset RegExpMatchesIndicesGroupsPropertyOffset = first
 JSArray* createRegExpMatchesArrayWithGroupsOrIndices(VM&, JSGlobalObject*, JSString* input, RegExp*, const MatchResult&, std::span<const int> subpatternResults, unsigned numSubpatterns, bool hasNamedCaptures, bool createIndices);
 JSArray* createRegExpMatchesArrayForPlainRegExpHavingABadTime(VM&, JSGlobalObject*, JSString*, const MatchResult&, std::span<const int> subpatternResults, unsigned numSubpatterns);
 
-ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializationScope& scope, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
+// properties[i] goes to offset firstOutOfLineOffset + i. The butterfly must not be attached to a
+// cell yet, so no concurrent marker can see these stores and they need no barrier.
+ALWAYS_INLINE void initializeRegExpMatchesArrayOutOfLineProperties(Butterfly* butterfly, Structure* structure, std::span<const JSValue> properties)
+{
+    unsigned outOfLineSize = properties.size();
+    unsigned outOfLineCapacity = Structure::outOfLineCapacity(firstOutOfLineOffset + outOfLineSize - 1);
+    ASSERT_UNUSED(structure, outOfLineSize == structure->outOfLineSize());
+    ASSERT(outOfLineCapacity == structure->outOfLineCapacity());
+    ASSERT(!butterfly->preCapacity(structure));
+
+    // Out-of-line storage grows downward: offset firstOutOfLineOffset + i is at storage[capacity - 1 - i].
+    auto storage = unsafeMakeSpan(static_cast<PropertyStorage>(butterfly->base(0, outOfLineCapacity)), outOfLineCapacity);
+    for (unsigned i = 0; i < outOfLineSize; ++i)
+        storage[outOfLineCapacity - 1 - i].setWithoutWriteBarrier(properties[i]);
+    zeroSpan(storage.first(outOfLineCapacity - outOfLineSize));
+}
+
+ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializationScope& scope, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength, std::span<const JSValue> outOfLineProperties)
 {
     VM& vm = scope.vm();
     unsigned vectorLength = initialLength;
@@ -47,15 +64,17 @@ ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializa
         return nullptr;
 
     const bool hasIndexingHeader = true;
-    Butterfly* butterfly = Butterfly::tryCreateUninitialized(vm, nullptr, 0, structure->outOfLineCapacity(), hasIndexingHeader, vectorLength * sizeof(EncodedJSValue), deferralContext);
+    unsigned outOfLineCapacity = Structure::outOfLineCapacity(firstOutOfLineOffset + outOfLineProperties.size() - 1);
+    Butterfly* butterfly = Butterfly::tryCreateUninitialized(vm, nullptr, 0, outOfLineCapacity, hasIndexingHeader, vectorLength * sizeof(EncodedJSValue), deferralContext);
     if (!butterfly) [[unlikely]]
         return nullptr;
 
     butterfly->setVectorLength(vectorLength);
     butterfly->setPublicLength(initialLength);
 
-    for (unsigned i = initialLength; i < vectorLength; ++i)
-        butterfly->contiguous().atUnsafe(i).clear();
+    Butterfly::clearRange(structure->indexingType(), butterfly, initialLength, vectorLength);
+
+    initializeRegExpMatchesArrayOutOfLineProperties(butterfly, structure, outOfLineProperties);
 
     JSArray* result = JSArray::createWithButterfly(vm, deferralContext, structure, butterfly);
 
@@ -72,18 +91,9 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArrayForPlainRegExp(VM& vm, JSGlobalOb
 
     // FIXME: This should handle array allocation errors gracefully.
     // https://bugs.webkit.org/show_bug.cgi?id=155144
-    JSArray* array = tryCreateUninitializedRegExpMatchesArray(matchesArrayScope, &deferralContext, matchStructure, numSubpatterns + 1);
+    const std::array<JSValue, 3> outOfLineProperties { jsNumber(result.start), input, jsUndefined() };
+    JSArray* array = tryCreateUninitializedRegExpMatchesArray(matchesArrayScope, &deferralContext, matchStructure, numSubpatterns + 1, outOfLineProperties);
     RELEASE_ASSERT(array);
-
-    array->putDirectOffset(vm, RegExpMatchesArrayIndexPropertyOffset, jsNumber(result.start));
-    array->putDirectOffset(vm, RegExpMatchesArrayInputPropertyOffset, input);
-    array->putDirectOffset(vm, RegExpMatchesArrayGroupsPropertyOffset, jsUndefined());
-
-    ASSERT(!array->butterfly()->preCapacity(matchStructure));
-    auto capacity = matchStructure->outOfLineCapacity();
-    auto size = matchStructure->outOfLineSize();
-    if (capacity > size) [[unlikely]]
-        gcSafeZeroMemory(static_cast<JSValue*>(array->butterfly()->base(0, capacity)), (capacity - size) * sizeof(JSValue));
 
     array->initializeIndexWithoutBarrier(matchesArrayScope, 0, jsSubstringOfResolved(vm, &deferralContext, input, result.start, result.end - result.start), ArrayWithContiguous);
     for (unsigned i = 1; i <= numSubpatterns; ++i) {
@@ -127,6 +137,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(VM& vm, JSGlobalObject* globalOb
     return createRegExpMatchesArrayWithGroupsOrIndices(vm, globalObject, input, regExp, result, subpatternResults, numSubpatterns, hasNamedCaptures, createIndices);
 }
 
+JSArray* tryCreateUninitializedRegExpMatchesArrayHavingABadTime(ObjectInitializationScope&, GCDeferralContext*, Structure*, unsigned initialLength, std::span<const JSValue> outOfLineProperties);
 JSArray* createEmptyRegExpMatchesArray(JSGlobalObject*, JSString*, RegExp*);
 Structure* createRegExpMatchesArrayStructure(VM&, JSGlobalObject*);
 Structure* createRegExpMatchesArrayWithIndicesStructure(VM&, JSGlobalObject*);
