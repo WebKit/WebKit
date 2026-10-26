@@ -320,9 +320,13 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
             auto writingMode = blockContainer->writingMode();
             if (style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated() || blockContainer->shouldApplyInlineSizeContainment())
                 return false;
-            // A preferred aspect ratio transfers the min and max block sizes, which can be percentages of the block size of the containing block.
-            if (style->aspectRatio().hasRatio() && (style->logicalMinHeight(writingMode).isPercentOrCalculated() || style->logicalMinHeight(writingMode).isStretch()
-                || style->logicalMaxHeight(writingMode).isPercentOrCalculated() || style->logicalMaxHeight(writingMode).isStretch()))
+            // A preferred aspect ratio gives an inline size from the block size and transfers the min and max block sizes, which can be
+            // percentages of the block size of the containing block.
+            auto isRelativeToContainingBlock = [](auto& size) {
+                return size.isPercentOrCalculated() || size.isStretch();
+            };
+            if (style->aspectRatio().hasRatio() && (isRelativeToContainingBlock(style->logicalHeight(writingMode)) || isRelativeToContainingBlock(style->logicalMinHeight(writingMode))
+                || isRelativeToContainingBlock(style->logicalMaxHeight(writingMode))))
                 return false;
         }
         descendant = descendant->nextInPreOrder(&box);
@@ -560,10 +564,11 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
     if (blockContainer->shouldApplySizeContainment())
         return BlockAvoidanceReason::ContentHasSizeContainment;
-    // A preferred aspect ratio gives an auto block size from the inline size (BlockFormattingUtils::aspectRatioBorderBoxBlockSize).
-    // FIXME: An inline size from a definite block size (css-sizing-4 §5.1).
-    if (style->aspectRatio().hasRatio() && !style->logicalHeight().isAuto())
-        return BlockAvoidanceReason::ContentHasAspectRatio;
+    // A preferred aspect ratio gives an auto block size from the inline size (BlockFormattingUtils::aspectRatioBorderBoxBlockSize), and an
+    // auto inline size from a definite block size (BlockFormattingUtils::aspectRatioBorderBoxInlineSize), whose automatic minimum is the
+    // min-content size.
+    if (style->aspectRatio().hasRatio() && !style->logicalHeight().isAuto() && style->logicalWidth().isAuto() && style->logicalMinWidth().isAuto() && !canComputeContentInlineSizes(*blockContainer))
+        return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
     // In quirks mode a percentage block size looks past the containing blocks with an auto block size (BlockFormattingUtils::definiteContentBoxBlockSize).
     // FIXME: The stretch block sizes in quirks mode.
     if (blockContainer->document().inQuirksMode() && (style->logicalHeight().isStretch() || style->logicalMinHeight().isStretch() || style->logicalMaxHeight().isStretch()))
