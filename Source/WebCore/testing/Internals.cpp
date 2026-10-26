@@ -8948,6 +8948,132 @@ String Internals::getComputedRole(Element& element) const
     return axObject ? axObject->computedRoleString() : ""_s;
 }
 
+static void performDeferredAccessibilityCacheUpdates(Page& page)
+{
+    for (RefPtr frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
+        RefPtr document = localFrame ? localFrame->document() : nullptr;
+        if (CheckedPtr cache = document ? document->axObjectCache() : nullptr)
+            cache->performDeferredCacheUpdate(ForceLayout::No);
+    }
+}
+
+static String accessibilityIdForObject(AXCoreObject& axObject)
+{
+    RefPtr document = axObject.document();
+    RefPtr frame = document ? document->frame() : nullptr;
+    if (!frame)
+        return { };
+
+    return makeString("axnode-"_s, Process::identifier().toUInt64(), '.', frame->frameID().toUInt64(), '.', axObject.objectID().toUInt64());
+}
+
+static std::optional<std::pair<FrameIdentifier, AXID>> parseAccessibilityId(StringView accessibilityId)
+{
+    static constexpr auto prefix = "axnode-"_s;
+    if (!accessibilityId.startsWith(prefix))
+        return std::nullopt;
+
+    auto identifiers = accessibilityId.substring(prefix.length());
+    auto firstDot = identifiers.find('.');
+    auto secondDot = firstDot == notFound ? notFound : identifiers.find('.', firstDot + 1);
+    if (secondDot == notFound)
+        return std::nullopt;
+
+    auto processValue = parseInteger<uint64_t>(identifiers.left(firstDot));
+    auto frameValue = parseInteger<uint64_t>(identifiers.substring(firstDot + 1, secondDot - firstDot - 1));
+    auto axValue = parseInteger<uint64_t>(identifiers.substring(secondDot + 1));
+    if (processValue != Process::identifier().toUInt64() || !frameValue || !FrameIdentifier::isValidIdentifier(*frameValue) || !axValue || !AXID::isValidIdentifier(*axValue))
+        return std::nullopt;
+
+    return std::pair { FrameIdentifier(*frameValue), AXID(*axValue) };
+}
+
+static String stringForButtonState(AccessibilityButtonState state)
+{
+    switch (state) {
+    case AccessibilityButtonState::Off:
+        return "false"_s;
+    case AccessibilityButtonState::On:
+        return "true"_s;
+    case AccessibilityButtonState::Mixed:
+        return "mixed"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "false"_s;
+}
+
+static Internals::AccessibilityProperties accessibilityPropertiesForObject(AccessibilityObject& axObject)
+{
+    Internals::AccessibilityProperties properties;
+    properties.accessibilityId = accessibilityIdForObject(axObject);
+    properties.role = axObject.computedRoleString();
+    properties.label = axObject.computedLabel();
+
+    if (axObject.isToggleButton())
+        properties.pressed = stringForButtonState(axObject.checkboxOrRadioValue());
+    else if (axObject.supportsCheckedState())
+        properties.checked = stringForButtonState(axObject.checkboxOrRadioValue());
+
+    if (RefPtr parent = axObject.crossFrameParentObjectUnignored())
+        properties.parent = accessibilityIdForObject(*parent);
+
+    for (auto& child : axObject.crossFrameUnignoredChildren()) {
+        if (auto childId = accessibilityIdForObject(child.get()); !childId.isNull())
+            properties.children.append(WTF::move(childId));
+    }
+
+    return properties;
+}
+
+ExceptionOr<Internals::AccessibilityProperties> Internals::getAccessibilityPropertiesForElement(Element& element) const
+{
+    RefPtr document = contextDocument();
+    RefPtr page = document ? document->page() : nullptr;
+    if (!page)
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    updateLayoutAndStyleForAllFrames();
+
+    RefPtr axObject = axObjectForElement(element);
+    if (!axObject)
+        return Exception { ExceptionCode::NotFoundError, "The element has no accessibility node."_s };
+
+    performDeferredAccessibilityCacheUpdates(*page);
+    return accessibilityPropertiesForObject(*axObject);
+}
+
+ExceptionOr<Internals::AccessibilityProperties> Internals::getAccessibilityPropertiesForAccessibilityNode(const String& accessibilityId) const
+{
+    RefPtr document = contextDocument();
+    RefPtr page = document ? document->page() : nullptr;
+    if (!page)
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    auto identifiers = parseAccessibilityId(accessibilityId);
+    if (!identifiers)
+        return Exception { ExceptionCode::NotFoundError, "No accessibility node has this ID."_s };
+    auto [frameID, axID] = *identifiers;
+
+    updateLayoutAndStyleForAllFrames();
+    AXObjectCache::enableAccessibility();
+    performDeferredAccessibilityCacheUpdates(*page);
+
+    for (RefPtr frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (frame->frameID() != frameID)
+            continue;
+
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
+        RefPtr frameDocument = localFrame ? localFrame->document() : nullptr;
+        CheckedPtr cache = frameDocument ? frameDocument->axObjectCache() : nullptr;
+        if (RefPtr axObject = cache ? cache->objectForID(axID) : nullptr; axObject && axObject->document() == frameDocument)
+            return accessibilityPropertiesForObject(*axObject);
+        break;
+    }
+
+    return Exception { ExceptionCode::NotFoundError, "No accessibility node has this ID."_s };
+}
+
 void Internals::setHistoryTotalStateObjectPayloadLimitOverride(uint32_t limit)
 {
     RefPtr window = contextDocument() ? contextDocument()->window() : nullptr;
