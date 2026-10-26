@@ -365,7 +365,8 @@ void GraphicsContextCG::drawNativeImage(const NativeImage& nativeImage, const Fl
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE) && HAVE(CGSTYLE_COLORMATRIX_BLUR)
     if (options.invertContent() == InvertContent::Yes) {
-        if (auto colorMatrix = AXCustomColorModeController::colorMatrixForImageInversion(nativeImage.paintTimeTransformation())) {
+        auto sourceRect = options.orientation() == ImageOrientation::Orientation::None ? std::optional { normalizeRect(srcRect) } : std::nullopt;
+        if (auto colorMatrix = AXCustomColorModeController::colorMatrixForImageInversion(nativeImage.paintTimeTransformation(sourceRect))) {
             GraphicsContextStateSaver stateSaver(*this);
             clip(normalizeRect(destRect));
             setStyle(*colorMatrix);
