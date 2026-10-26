@@ -989,6 +989,7 @@ WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
     -Wno-nontrivial-memcall
     -Wno-undef
     -Wno-uninitialized
+    -Wno-unused-but-set-variable
     -Wno-unused-parameter
 )
 
