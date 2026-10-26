@@ -1823,6 +1823,14 @@ def detect_functions(clean_lines, line_number, function_state, error):
     if raw_line.endswith('\\'):
         return
 
+    # If the previous line ends with a comma or an open parenthesis, this
+    # line continues a multi-line expression (such as an argument list), so
+    # it cannot be the start of a function declaration or definition.
+    if line_number > 0:
+        previous_line = clean_lines.elided[line_number - 1].rstrip()
+        if previous_line.endswith((',', '(')):
+            return
+
     regexp = r'\s*(\w(\w|::|\*|\&|\s|<|>|,|~|(operator\s*(/|-|=|!|\+)+))*)\('  # decls * & space::name( ...
     match_result = match(regexp, line)
     if not match_result:
