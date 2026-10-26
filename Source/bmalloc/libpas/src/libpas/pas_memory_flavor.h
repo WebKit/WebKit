@@ -113,18 +113,14 @@ static PAS_ALWAYS_INLINE bool pas_memory_flavor_is_executable(pas_memory_flavor 
     return false;
 }
 
-/* Does (re)mapping this memory require asking the VM for MTE tag storage (when MTE is enabled)? */
+/* Does (re)mapping this memory require asking the VM for MTE tag storage (when MTE is enabled)? This is
+   a macro so that it is a constant expression when flavor is, for use in static initializers (e.g. of
+   heap configs); otherwise use pas_memory_flavor_needs_mte_tag_storage. */
+#define PAS_MEMORY_FLAVOR_NEEDS_MTE_TAG_STORAGE(flavor) ((flavor) == pas_memory_flavor_mte)
+
 static PAS_ALWAYS_INLINE bool pas_memory_flavor_needs_mte_tag_storage(pas_memory_flavor flavor)
 {
-    switch (flavor) {
-    case pas_memory_flavor_plain:
-    case pas_memory_flavor_rwx:
-        return false;
-    case pas_memory_flavor_mte:
-        return true;
-    }
-    PAS_ASSERT_NOT_REACHED();
-    return false;
+    return PAS_MEMORY_FLAVOR_NEEDS_MTE_TAG_STORAGE(flavor);
 }
 
 static inline const char* pas_memory_flavor_get_string(pas_memory_flavor flavor)

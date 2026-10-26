@@ -106,7 +106,7 @@ pas_try_allocate_intrinsic_impl_casual_case(
         return pas_allocation_result_create_failure();
 
     if (PAS_UNLIKELY(pas_system_heap_should_supplant_bmalloc(config.kind)))
-        return result_filter(pas_system_heap_allocate(size, alignment, config.allow_mte_tagging));
+        return result_filter(pas_system_heap_allocate(size, alignment, pas_heap_config_allows_mte_tagging(config)));
 
     if (verbose)
         pas_log("not doing system heap in impl_casual_case for %s\n", pas_heap_config_kind_get_string(config.kind));
