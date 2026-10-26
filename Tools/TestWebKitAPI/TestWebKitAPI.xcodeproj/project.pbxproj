@@ -1355,6 +1355,7 @@
 				WTF/ListHashSet.cpp,
 				WTF/Lock.cpp,
 				WTF/Logger.cpp,
+				WTF/LoggingHashMap.cpp,
 				WTF/Markable.cpp,
 				WTF/MathExtras.cpp,
 				WTF/MediaTime.cpp,
