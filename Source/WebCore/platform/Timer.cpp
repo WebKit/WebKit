@@ -303,17 +303,6 @@ void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
     setNextFireTime(MonotonicTime::now() + nextFireInterval);
 }
 
-void TimerBase::startOneShotBeforeDueTimers()
-{
-    ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
-    ASSERT(!m_alignment);
-
-    static constexpr auto fireTimeBeforeDueTimers = MonotonicTime::fromRawSeconds(std::numeric_limits<double>::min());
-
-    m_repeatInterval = 0_s;
-    setNextFireTime(fireTimeBeforeDueTimers);
-}
-
 void TimerBase::stopSlowCase()
 {
     ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
