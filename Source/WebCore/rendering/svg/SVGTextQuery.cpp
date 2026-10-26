@@ -174,8 +174,7 @@ bool SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates(Data* queryData, 
 
 void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, const SVGTextFragment& fragment, unsigned& startPosition, unsigned& endPosition) const
 {
-    const SVGTextLayoutAttributes* layoutAttributes = queryData->textRenderer->layoutAttributes();
-    const Vector<SVGTextMetrics>& textMetricsValues = layoutAttributes->textMetricsValues();
+    auto& textMetrics = queryData->textRenderer->textMetrics();
 
     unsigned textMetricsOffset = fragment.metricsListOffset;
 
@@ -185,7 +184,7 @@ void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, c
     unsigned fragmentEndInBox = fragmentOffsetInBox + fragment.length;
     // Find the text metrics cell that start at or contain the character startPosition.
     while (fragmentOffsetInBox < fragmentEndInBox) {
-        auto& metrics = textMetricsValues[textMetricsOffset];
+        auto& metrics = textMetrics[textMetricsOffset];
         unsigned glyphEnd = fragmentOffsetInBox + metrics.length();
         if (startPosition < glyphEnd)
             break;
@@ -196,7 +195,7 @@ void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, c
 
     // Find the text metrics cell that contain or ends at the character endPosition.
     while (fragmentOffsetInBox < fragmentEndInBox) {
-        auto& metrics = textMetricsValues[textMetricsOffset];
+        auto& metrics = textMetrics[textMetricsOffset];
         fragmentOffsetInBox += metrics.length();
         if (fragmentOffsetInBox >= endPosition)
             break;
@@ -581,7 +580,7 @@ bool SVGTextQuery::characterNumberAtPositionCallback(Data* queryData, const SVGT
     // Iterate through the glyphs in this fragment, and check if their extents
     // contain the query point.
     FloatRect extent;
-    auto& textMetrics = queryData->textRenderer->layoutAttributes()->textMetricsValues();
+    auto& textMetrics = queryData->textRenderer->textMetrics();
     unsigned textMetricsOffset = fragment.metricsListOffset;
     unsigned fragmentOffset = 0;
     while (fragmentOffset < fragment.length) {

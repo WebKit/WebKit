@@ -61,7 +61,7 @@ struct SVGTextFragment {
     float baselineShift { 0 };
 
     // Includes rotation/glyph-orientation-(horizontal|vertical) transforms, as well as orientation related shifts
-    // (see SVGTextLayoutEngine, which builds this transformation).
+    // (see SVGTextLayoutAlgorithm, which builds this transformation).
     AffineTransform transform;
 
     // Contains lengthAdjust related transformations.

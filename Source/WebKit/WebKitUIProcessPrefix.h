@@ -156,7 +156,6 @@
 #include <WebCore/RenderSVGInlineText.h>
 #include <WebCore/RenderText.h>
 #include <WebCore/RotationDirection.h>
-#include <WebCore/SVGTextLayoutAttributes.h>
 #include <WebCore/SVGTextMetrics.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/SelectionGeometry.h>

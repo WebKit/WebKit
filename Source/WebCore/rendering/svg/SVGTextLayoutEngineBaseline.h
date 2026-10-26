@@ -32,7 +32,7 @@ namespace Style {
 class ComputedStyle;
 }
 
-// Helper class used by SVGTextLayoutEngine to handle 'alignment-baseline' / 'dominant-baseline' and 'baseline-shift'.
+// Helper class used by SVGTextLayoutAlgorithm to handle 'alignment-baseline' / 'dominant-baseline' and 'baseline-shift'.
 class SVGTextLayoutEngineBaseline {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutEngineBaseline);
 public:

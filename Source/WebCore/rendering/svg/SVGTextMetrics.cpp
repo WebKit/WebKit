@@ -63,15 +63,4 @@ SVGTextMetrics SVGTextMetrics::measureCharacterRange(const RenderSVGInlineText& 
     return SVGTextMetrics(text, constructTextRun(text, position, length));
 }
 
-SVGTextMetrics::SVGTextMetrics(const RenderSVGInlineText& text, unsigned length, float width)
-{
-    float scalingFactor = text.scalingFactor();
-    ASSERT(scalingFactor);
-
-    m_width = width / scalingFactor;
-    m_height = text.scaledFont().metricsOfPrimaryFont().height() / scalingFactor;
-
-    m_length = length;
-}
-
 }

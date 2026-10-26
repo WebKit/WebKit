@@ -79,7 +79,6 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
 RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
     : RenderText(Type::SVGInlineText, textNode, applySVGWhitespaceRules(string, false))
     , m_scalingFactor(1)
-    , m_layoutAttributes(*this)
 {
     ASSERT(isRenderSVGInlineText());
 }
@@ -97,8 +96,8 @@ void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
     m_hasValidTextMetrics = false;
     if (!force)
         setRenderedText(newText);
-    if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
-        textAncestor->subtreeTextDidChange(this);
+    if (CheckedPtr textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
+        textAncestor->setNeedsLayout();
 }
 
 void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
@@ -140,22 +139,6 @@ FloatRect RenderSVGInlineText::floatLinesBoundingBox() const
 IntRect RenderSVGInlineText::linesBoundingBox() const
 {
     return enclosingIntRect(floatLinesBoundingBox());
-}
-
-bool RenderSVGInlineText::characterStartsNewTextChunk(int position) const
-{
-    ASSERT(position >= 0);
-    ASSERT(position < static_cast<int>(text().length()));
-
-    // Each <textPath> element starts a new text chunk, regardless of any x/y values.
-    if (!position && parent()->isRenderSVGTextPath() && !previousSibling())
-        return true;
-
-    const SVGCharacterDataMap::const_iterator it = m_layoutAttributes.characterDataMap().find(static_cast<unsigned>(position + 1));
-    if (it == m_layoutAttributes.characterDataMap().end())
-        return false;
-
-    return !SVGTextLayoutAttributes::isEmptyValue(it->value.x) || !SVGTextLayoutAttributes::isEmptyValue(it->value.y);
 }
 
 static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox, const SVGTextFragment& fragment, float position)

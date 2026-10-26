@@ -3213,16 +3213,10 @@ rendering/svg/SVGRenderSupport.cpp @header:RenderStyleGetters
 rendering/svg/SVGRenderTreeAsText.cpp @header:RenderStyleGetters
 rendering/svg/SVGRenderingContext.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextBoxPainter.cpp @header:RenderStyleGetters
-rendering/svg/SVGTextChunk.cpp @header:RenderStyleGetters
-rendering/svg/SVGTextChunkBuilder.cpp
 rendering/svg/SVGTextLayoutAlgorithm.cpp @header:RenderStyleGetters
-rendering/svg/SVGTextLayoutAttributes.cpp
-rendering/svg/SVGTextLayoutAttributesBuilder.cpp @header:RenderStyleGetters
-rendering/svg/SVGTextLayoutEngine.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextLayoutEngineBaseline.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextLayoutEngineSpacing.cpp
 rendering/svg/SVGTextMetrics.cpp @header:RenderStyleGetters
-rendering/svg/SVGTextMetricsBuilder.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextQuery.cpp @header:RenderStyleGetters
 rendering/svg/legacy/LegacyRenderSVGContainer.cpp @header:RenderStyleGetters
 rendering/svg/legacy/LegacyRenderSVGEllipse.cpp @header:RenderStyleGetters

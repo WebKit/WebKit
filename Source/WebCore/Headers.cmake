@@ -3065,7 +3065,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/svg/RenderSVGModelObject.h
     rendering/svg/SVGBoundingBoxComputation.h
     rendering/svg/SVGRenderSupport.h
-    rendering/svg/SVGTextLayoutAttributes.h
     rendering/svg/SVGTextMetrics.h
 
     rendering/svg/legacy/LegacyRenderSVGModelObject.h

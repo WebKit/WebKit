@@ -24,18 +24,11 @@
 namespace WebCore {
 
 class RenderSVGInlineText;
-class SVGTextLayoutAttributes;
 class TextRun;
 
 class SVGTextMetrics {
 public:
-    enum class MetricsType : uint8_t { SkippedSpaceMetrics };
-
     SVGTextMetrics() = default;
-    explicit SVGTextMetrics(MetricsType)
-        : m_length(1)
-    { }
-    SVGTextMetrics(const RenderSVGInlineText&, unsigned length, float width);
     SVGTextMetrics(unsigned length, float scaledWidth, float scaledHeight)
         : m_width(scaledWidth)
         , m_height(scaledHeight)
@@ -45,11 +38,7 @@ public:
     static SVGTextMetrics measureCharacterRange(const RenderSVGInlineText&, unsigned position, unsigned length);
     static TextRun constructTextRun(const RenderSVGInlineText&, unsigned position = 0, unsigned length = std::numeric_limits<unsigned>::max());
 
-    bool isEmpty() const { return !m_width && !m_height && m_length == 1; }
-
     float width() const { return m_width; }
-    void setWidth(float width) { m_width = width; }
-
     float height() const { return m_height; }
     unsigned length() const { return m_length; }
 

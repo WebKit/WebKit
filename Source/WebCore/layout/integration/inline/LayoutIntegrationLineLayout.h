@@ -157,7 +157,7 @@ public:
         const InlineDisplay::Boxes& boxes;
         Vector<Vector<SVGTextFragment>>& fragments;
     };
-    // Empties the per box SVG text fragments for SVGTextLayoutEngine to fill in.
+    // Empties the per box SVG text fragments for SVGTextLayoutAlgorithm to fill in.
     SVGTextFragmentsForBoxes resetSVGTextFragments() LIFETIME_BOUND;
     // Sets the box rects from the SVG text fragments.
     FloatRect applySVGTextFragments();

@@ -24,7 +24,7 @@
 #include <WebCore/FontCascade.h>
 #include <WebCore/RenderObjectNode.h>
 #include <WebCore/RenderText.h>
-#include <WebCore/SVGTextLayoutAttributes.h>
+#include <WebCore/SVGTextMetrics.h>
 #include <WebCore/Text.h>
 
 namespace WebCore {
@@ -38,11 +38,9 @@ public:
 
     Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 
-    bool characterStartsNewTextChunk(int position) const;
-    SVGTextLayoutAttributes* layoutAttributes() LIFETIME_BOUND { return &m_layoutAttributes; }
-    const SVGTextLayoutAttributes* layoutAttributes() const LIFETIME_BOUND { return &m_layoutAttributes; }
-
     // Used by SVGTextLayoutAlgorithm, which measures only when the text or the font changes.
+    Vector<SVGTextMetrics>& textMetrics() LIFETIME_BOUND { return m_textMetrics; }
+    const Vector<SVGTextMetrics>& textMetrics() const LIFETIME_BOUND { return m_textMetrics; }
     bool hasValidTextMetrics() const { return m_hasValidTextMetrics; }
     void setHasValidTextMetrics(bool value) { m_hasValidTextMetrics = value; }
 
@@ -74,7 +72,7 @@ private:
 
     float m_scalingFactor;
     FontCascade m_scaledFont;
-    SVGTextLayoutAttributes m_layoutAttributes;
+    Vector<SVGTextMetrics> m_textMetrics;
     bool m_hasValidTextMetrics { false };
 };
 
