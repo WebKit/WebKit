@@ -210,6 +210,20 @@ PluginView* FindController::mainFramePlugIn()
 
 #endif
 
+#if ENABLE(PDF_PLUGIN)
+static unsigned countPDFMatchesInSubframes(Page& page, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
+{
+    unsigned matchCount = 0;
+    for (RefPtr frame = page.mainFrame().tree().traverseNext(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr pluginView = WebPage::pluginViewForFrame(dynamicDowncast<LocalFrame>(frame));
+        if (!pluginView)
+            continue;
+        matchCount += pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
+    }
+    return matchCount;
+}
+#endif
+
 void FindController::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
     if (maxMatchCount == std::numeric_limits<unsigned>::max())
@@ -235,6 +249,9 @@ void FindController::countStringMatches(const String& string, OptionSet<FindOpti
         }
 #if ENABLE(VIDEO)
         matchCount += protect(webPage->corePage())->findCueMatches(string, core(options)).size();
+#endif
+#if ENABLE(PDF_PLUGIN)
+        matchCount += countPDFMatchesInSubframes(*protect(webPage->corePage()), string, options, maxMatchCount);
 #endif
 
         updateFindPageOverlay(shouldShowOverlay);
@@ -709,6 +726,24 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 void FindController::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Vector<Vector<WebCore::IntRect>>>>&&, std::optional<WebCore::FindSelectionInFrame>)>&& completionHandler)
 {
     RefPtr webPage { m_webPage.get() };
+
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = mainFramePlugIn(); pluginView && pluginView->frame()) {
+        // The PDF plugin draws its own find UI and has no DOM ranges, so report one empty rect list per match.
+        // FIXME: Report the real match rects, and stop encoding the match count as the number of (empty) rect lists.
+        m_findMatches.clear();
+        auto pdfMatches = pluginView->findTextMatches(string, core(options));
+        if (maxMatchCount && pdfMatches.size() > maxMatchCount)
+            pdfMatches.shrink(maxMatchCount);
+
+        Vector<std::pair<FrameIdentifier, Vector<Vector<IntRect>>>> pdfMatchRects;
+        if (!pdfMatches.isEmpty())
+            pdfMatchRects.append({ pluginView->frame()->frameID(), Vector<Vector<IntRect>>(pdfMatches.size()) });
+        completionHandler(WTF::move(pdfMatchRects), std::nullopt);
+        return;
+    }
+#endif
+
     auto result = protect(webPage->corePage())->findTextMatches(string, core(options), maxMatchCount);
     m_findMatches = WTF::move(result.ranges);
 
