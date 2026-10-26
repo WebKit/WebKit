@@ -104,7 +104,16 @@ if (LD_USAGE MATCHES "allow-multiple-definition")
 endif ()
 set(LD_SUPPORTS_PACK_RELATIVE_RELOCS FALSE)
 if (LD_USAGE MATCHES "pack-relative-relocs" OR LD_USAGE MATCHES "--pack-dyn-relocs=[^ ]*relr")
-    set(LD_SUPPORTS_PACK_RELATIVE_RELOCS TRUE)
+    check_c_source_compiles("
+        #include <features.h>
+        #if !__GLIBC_PREREQ(2, 36)
+        #error DT_RELR needs glibc 2.36
+        #endif
+        int main() { return 0; }
+    " LIBC_SUPPORTS_DT_RELR)
+    if (LIBC_SUPPORTS_DT_RELR)
+        set(LD_SUPPORTS_PACK_RELATIVE_RELOCS TRUE)
+    endif ()
 endif ()
 unset(LD_USAGE)
 
