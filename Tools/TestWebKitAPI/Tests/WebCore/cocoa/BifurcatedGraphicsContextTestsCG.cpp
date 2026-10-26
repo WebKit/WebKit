@@ -178,7 +178,7 @@ TEST(BifurcatedGraphicsContextTests, DrawImage)
     auto redImage = createRedImage();
     ASSERT_TRUE(redImage);
 
-    ctx.drawImage(*redImage, WebCore::ConcreteObjectSize::fixed(FloatSize { 1, 1 }), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 });
+    redImage->draw(ctx, WebCore::ConcreteObjectSize::fixed(FloatSize { 1, 1 }), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 });
 
     // The primary context should be red.
     CGContextFlush(primaryCGContext.get());

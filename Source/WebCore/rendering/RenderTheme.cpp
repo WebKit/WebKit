@@ -1672,14 +1672,14 @@ void RenderTheme::paintPlatformResizer(const RenderLayerModelObject& renderer, G
         context.translate(resizerCornerRect.x() + cornerResizerSize.width(), resizerCornerRect.y() + resizerCornerRect.height() - cornerResizerSize.height());
         context.scale(FloatSize(-1.0, 1.0));
         if (resizeCornerImage)
-            context.drawBitmapImage(*resizeCornerImage, FloatRect { FloatPoint { }, cornerResizerSize });
+            resizeCornerImage->draw(context, FloatRect { { }, cornerResizerSize });
         return;
     }
 
     if (!resizeCornerImage)
         return;
     FloatRect imageRect = snapRectToDevicePixels(LayoutRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize), document->deviceScaleFactor());
-    context.drawBitmapImage(*resizeCornerImage, imageRect);
+    resizeCornerImage->draw(context, imageRect);
 }
 
 void RenderTheme::paintPlatformResizerFrame(const RenderLayerModelObject&, GraphicsContext& context, const LayoutRect& resizerAbsRect)

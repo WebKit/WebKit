@@ -295,7 +295,7 @@ static RefPtr<NativeImage> createNativeImageFromSVGImage(SVGImage& image, const 
     if (!buffer)
         return nullptr;
 
-    buffer->context().drawImage(image, ConcreteObjectSize::fixed(size), FloatPoint::zero());
+    image.draw(buffer->context(), ConcreteObjectSize::fixed(size));
 
     return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
 }

@@ -389,7 +389,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                                 snapshot = ImageBuffer::create(concreteObjectSize.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
                                 if (!snapshot)
                                     return;
-                                snapshot->context().drawImage(*image, concreteObjectSize, FloatPoint(0, 0));
+                                image->draw(snapshot->context(), concreteObjectSize);
                             }
                         }
                     };

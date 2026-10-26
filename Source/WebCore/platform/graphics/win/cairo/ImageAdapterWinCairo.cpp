@@ -29,6 +29,7 @@
 #if PLATFORM(WIN) && USE(CAIRO)
 
 #include "GraphicsContextCairo.h"
+#include "Image.h"
 #include <cairo-win32.h>
 
 namespace WebCore {
@@ -78,7 +79,7 @@ bool ImageAdapter::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size, ConcreteOb
     }
 
     auto sourceRect = FloatRect { { }, concreteObjectSize.size() };
-    gc.drawImage(image(), concreteObjectSize, destinationRect, sourceRect, { CompositeOperator::Copy }, extras);
+    image().draw(gc, concreteObjectSize, destinationRect, sourceRect, { CompositeOperator::Copy }, extras);
     return true;
 }
 

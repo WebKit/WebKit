@@ -306,7 +306,7 @@ RefPtr<NativeImage> Image::nativeImage(const RenderElement& renderer, ConcreteOb
 ImageDrawResult Image::drawResolved(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options) const
 {
     auto extras = drawingExtrasForRenderer(renderer);
-    return context.drawImage(image, concreteObjectSize, destination, source, options, &extras);
+    return image.draw(context, concreteObjectSize, destination, source, options, &extras);
 }
 
 ImageDrawResult Image::drawResolvedAsPattern(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options) const
@@ -325,7 +325,7 @@ ImageDrawResult Image::drawResolvedTiled(GraphicsContext& context, const RenderE
 
     auto extras = drawingExtrasForRenderer(renderer);
     return drawTiledUsing(context, tileNaturalDimensions, [&](GraphicsContext& context, ConcreteObjectSize tileConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
-        return context.drawImage(image, tileConcreteObjectSize, destination, source, options, &extras);
+        return image.draw(context, tileConcreteObjectSize, destination, source, options, &extras);
     }, [&](GraphicsContext& context, ConcreteObjectSize tileConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
         return drawImageAsPattern(context, image, tileConcreteObjectSize, destination, tile, patternTransform, phase, spacing, options, &extras);
     }, concreteObjectSize, destination, phase, tileSize, spacing, options);
@@ -353,7 +353,7 @@ ImageDrawResult Image::drawResolvedNinePiece(GraphicsContext& context, const Ren
 
     auto extras = drawingExtrasForRenderer(renderer);
     return drawNinePieceUsing(context, [&](GraphicsContext& context, ConcreteObjectSize pieceConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
-        return context.drawImage(image, pieceConcreteObjectSize, destination, source, options, &extras);
+        return image.draw(context, pieceConcreteObjectSize, destination, source, options, &extras);
     }, [&](GraphicsContext& context, ConcreteObjectSize pieceConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
         if (singlePixelSolidColor) {
             WebCore::Image::fillWithSolidColor(context, destination, *singlePixelSolidColor, options.compositeOperator());

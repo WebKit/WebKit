@@ -125,7 +125,22 @@ NaturalDimensions BitmapImage::unorientedNaturalDimensions() const
     return NaturalDimensions::fixed(size);
 }
 
-ImageDrawResult BitmapImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options, const ImageDrawingExtras*)
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, FloatPoint destination, ImageDrawingOptions options)
+{
+    return draw(context, FloatRect(destination, size()), FloatRect({ }, size()), options);
+}
+
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destination, ImageDrawingOptions options)
+{
+    return draw(context, destination, FloatRect({ }, size(options.orientation())), options);
+}
+
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options)
+{
+    return draw(context, ConcreteObjectSize::fixed(size()), destination, source, options);
+}
+
+ImageDrawResult BitmapImage::drawImage(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options, const ImageDrawingExtras*)
 {
     if (destinationRect.isEmpty() || sourceRect.isEmpty())
         return ImageDrawResult::DidNothing;

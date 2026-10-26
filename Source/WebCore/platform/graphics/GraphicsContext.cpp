@@ -26,7 +26,6 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#include "BitmapImage.h"
 #include "DisplayList.h"
 #include "Filter.h"
 #include "FilterImage.h"
@@ -360,37 +359,6 @@ void GraphicsContext::drawNativeImage(const NativeImage& image, const FloatRect&
 void GraphicsContext::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
 {
     systemImage.draw(*this, destinationRect);
-}
-
-ImageDrawResult GraphicsContext::drawImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatPoint& destination, ImageDrawingOptions options, const ImageDrawingExtras* extras)
-{
-    return drawImage(image, concreteObjectSize, FloatRect(destination, concreteObjectSize.size()), FloatRect({ }, concreteObjectSize.size()), options, extras);
-}
-
-ImageDrawResult GraphicsContext::drawImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, ImageDrawingOptions options, const ImageDrawingExtras* extras)
-{
-    return drawImage(image, concreteObjectSize, destination, FloatRect({ }, concreteObjectSize.size()), options, extras);
-}
-
-ImageDrawResult GraphicsContext::drawImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, const ImageDrawingExtras* extras)
-{
-    return image.draw(*this, concreteObjectSize, destination, source, options, extras);
-}
-
-ImageDrawResult GraphicsContext::drawBitmapImage(BitmapImage& image, const FloatPoint& destination, ImageDrawingOptions imageDrawingOptions)
-{
-    return drawBitmapImage(image, FloatRect(destination, image.size()), FloatRect(FloatPoint(), image.size()), imageDrawingOptions);
-}
-
-ImageDrawResult GraphicsContext::drawBitmapImage(BitmapImage& image, const FloatRect& destination, ImageDrawingOptions imageDrawingOptions)
-{
-    FloatRect source(FloatPoint(), image.size(imageDrawingOptions.orientation()));
-    return drawBitmapImage(image, destination, source, imageDrawingOptions);
-}
-
-ImageDrawResult GraphicsContext::drawBitmapImage(BitmapImage& image, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions imageDrawingOptions)
-{
-    return image.draw(*this, ConcreteObjectSize::fixed(image.size()), destination, source, imageDrawingOptions);
 }
 
 RefPtr<NativeImage> GraphicsContext::nativeImageForDrawing(ImageBuffer& imageBuffer)

@@ -1916,7 +1916,7 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     if (!icon)
         return;
 
-    context.drawBitmapImage(*icon, layout.iconRect);
+    icon->draw(context, layout.iconRect);
 }
 
 static std::pair<RefPtr<NativeImage>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout& layout)

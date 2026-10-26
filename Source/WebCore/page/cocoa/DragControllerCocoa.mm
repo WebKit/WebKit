@@ -405,7 +405,7 @@ DragImageRef DragController::dragImageForRange(LocalFrame& frame, const SimpleRa
     RetainPtr render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image->size()]);
     RetainPtr finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context(protect(rendererContext.CGContext).get());
-        context.drawBitmapImage(image, FloatPoint());
+        image->draw(context);
     }];
 
     return [finalImage CGImage];

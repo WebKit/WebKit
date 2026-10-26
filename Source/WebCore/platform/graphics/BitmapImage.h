@@ -39,7 +39,6 @@ class NativeImage;
 class ShareableSpatialImage;
 
 class BitmapImage final : public Image {
-    friend class GraphicsContext;
 public:
     WEBCORE_EXPORT static Ref<BitmapImage> LEGACY_NODELETE create(ImageObserver* = nullptr, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
     WEBCORE_EXPORT static Ref<BitmapImage> LEGACY_NODELETE create(Ref<NativeImage>&&);
@@ -50,6 +49,11 @@ public:
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(ShareableBitmap&);
 
     WEBCORE_EXPORT static BitmapImage& nullImage();
+
+    using Image::draw;
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, FloatPoint destination = { }, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage });
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage });
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage });
 
     // Animation
     void startAnimation() final { m_source->startAnimation(); }
@@ -161,7 +165,7 @@ private:
 
     bool hasHDRContentForTesting() const { return m_source->hasHDRContentForTesting(); }
 
-    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
+    ImageDrawResult drawImage(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions, const ImageDrawingExtras*) final;
     void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
     void drawLuminanceMaskPattern(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions);
 

@@ -177,7 +177,7 @@ RefPtr<WebImage> InjectedBundleHitTestResult::image() const
 
     // FIXME: need to handle EXIF rotation.
     auto& graphicsContext = *webImage->context();
-    graphicsContext.drawBitmapImage(*bitmapImage, { { }, size });
+    bitmapImage->draw(graphicsContext, { { }, size });
 
     return webImage;
 }

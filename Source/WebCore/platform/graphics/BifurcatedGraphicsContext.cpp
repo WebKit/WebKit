@@ -417,16 +417,6 @@ void BifurcatedGraphicsContext::drawPattern(const NativeImage& nativeImage, cons
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-ImageDrawResult BifurcatedGraphicsContext::drawImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, const ImageDrawingExtras* extras)
-{
-    auto result = m_primaryContext.drawImage(image, concreteObjectSize, destination, source, options, extras);
-    m_secondaryContext.drawImage(image, concreteObjectSize, destination, source, options, extras);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-
-    return result;
-}
-
 #if ENABLE(VIDEO)
 void BifurcatedGraphicsContext::drawVideoFrame(const VideoFrame& videoFrame, const FloatRect& destination, ShouldDiscardAlpha shouldDiscardAlpha, ImageDrawingOptions options)
 {

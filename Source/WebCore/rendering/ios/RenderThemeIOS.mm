@@ -1350,7 +1350,7 @@ static void paintAttachmentIcon(GraphicsContext& context, AttachmentLayout& info
     else if (info.icon)
         iconImage = info.icon;
     
-    context.drawBitmapImage(*iconImage, info.iconRect, FloatRect { { }, iconImage->size() });
+    iconImage->draw(context, info.iconRect, FloatRect { { }, iconImage->size() });
 }
 
 static void paintAttachmentProgress(GraphicsContext& context, AttachmentLayout& info)

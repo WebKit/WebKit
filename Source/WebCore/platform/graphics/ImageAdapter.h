@@ -45,6 +45,8 @@ typedef struct HBITMAP__ *HBITMAP;
 #endif
 
 #include <WebCore/ImageDrawingExtras.h>
+#include <WebCore/ImageDrawingOptions.h>
+#include <WebCore/ImageTypes.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/ObjectSizeNegotiation.h>
 #include <wtf/Ref.h>
@@ -60,6 +62,9 @@ typedef struct HBITMAP__ *HBITMAP;
 namespace WebCore {
 
 class BitmapImage;
+class FloatRect;
+class Font;
+class GraphicsContext;
 class Image;
 class IntSize;
 
@@ -90,6 +95,7 @@ public:
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     NSAdaptiveImageGlyph *multiRepresentationHEIC();
+    ImageDrawResult drawMultiRepresentationHEIC(GraphicsContext&, const Font&, const FloatRect& destination, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage });
 #endif
 
 #if PLATFORM(WIN)

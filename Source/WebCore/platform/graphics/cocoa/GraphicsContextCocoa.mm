@@ -30,7 +30,6 @@
 #import "Font.h"
 #import "GraphicsContextCG.h"
 #import "IOSurface.h"
-#import "ImageAdapter.h"
 #import "IntRect.h"
 #import <CoreText/CoreText.h>
 #import <numeric>
@@ -39,10 +38,6 @@
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
-
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-#import "MultiRepresentationHEICMetrics.h"
-#endif
 
 #if USE(APPKIT)
 #import <AppKit/AppKit.h>
@@ -65,40 +60,6 @@ namespace WebCore {
 
 // NSColor, NSBezierPath, and NSGraphicsContext calls do not raise exceptions
 // so we don't block exceptions.
-
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-
-ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image& image, const Font& font, const FloatRect& destination, ImageDrawingOptions options)
-{
-    RetainPtr multiRepresentationHEIC = image.adapter().multiRepresentationHEIC();
-    if (!multiRepresentationHEIC)
-        return ImageDrawResult::DidNothing;
-
-    RefPtr imageBuffer = createScaledImageBuffer(destination.size(), scaleFactor(), ColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
-    if (!imageBuffer)
-        return ImageDrawResult::DidNothing;
-
-    RetainPtr cgContext = imageBuffer->context().platformContext();
-
-    CGContextScaleCTM(cgContext, 1, -1);
-    CGContextTranslateCTM(cgContext, 0, -destination.height());
-
-    // FIXME (rdar://123044459): This needs to account for vertical writing modes.
-    CGContextSetTextMatrix(cgContext, CGAffineTransformIdentity);
-    CGContextSetTextPosition(cgContext, 0, font.metricsForMultiRepresentationHEIC().descent);
-
-    CTFontDrawImageFromAdaptiveImageProviderAtPoint(protect(font.ctFont()), multiRepresentationHEIC.get(), CGContextGetTextPosition(cgContext), cgContext);
-
-    auto orientation = options.orientation();
-    if (orientation == ImageOrientation::Orientation::FromImage)
-        orientation = image.orientation();
-
-    drawImageBuffer(*imageBuffer, destination, { options, orientation });
-
-    return ImageDrawResult::DidDraw;
-}
-
-#endif
 
 void GraphicsContextCG::drawFocusRing(const Path& path, float, const Color& color, float zoomFactor)
 {

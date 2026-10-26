@@ -1555,7 +1555,7 @@ void ScrollView::paintPanScrollIcon(GraphicsContext& context)
     IntPoint iconGCPoint = m_panScrollIconPoint;
     if (parent())
         iconGCPoint = protect(parent())->windowToContents(iconGCPoint);
-    context.drawBitmapImage(panScrollIcon.get(), iconGCPoint);
+    protect(panScrollIcon.get())->draw(context, iconGCPoint);
 }
 
 void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOriginPaintPolicy securityOriginPaintPolicy, RegionContext* regionContext)

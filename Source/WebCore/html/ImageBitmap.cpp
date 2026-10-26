@@ -713,7 +713,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         drawingOptions = { drawingOptions, InvertContent::No };
 #endif
-        bitmapData->context().drawImage(*sourceImage, concreteSize, destRect, sourceRect, drawingOptions);
+        sourceImage->draw(bitmapData->context(), concreteSize, destRect, sourceRect, drawingOptions);
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);
@@ -1136,7 +1136,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
             return;
         }
         FloatRect destRect(FloatPoint(), outputSize);
-        bitmapData->context().drawBitmapImage(image, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
+        image->draw(bitmapData->context(), destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);

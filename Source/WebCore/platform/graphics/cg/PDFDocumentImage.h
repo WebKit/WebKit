@@ -81,7 +81,7 @@ private:
 
     ImageDrawResult drawPDFDocument(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions);
     ImageDrawResult drawFromCachedSubimage(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions);
-    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) override;
+    ImageDrawResult drawImage(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions, const ImageDrawingExtras*) override;
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const override { return false; }

@@ -2088,7 +2088,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
 
     if (rectContainsCanvas(normalizedDstRect)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
+        image->draw(*c, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
     } else if (isFullCanvasCompositeMode(op)) {
         willUpdateEntireContents(willUpdateContentsOptions);
         auto sizedImage = SizedImage { *image, concreteObjectSize };
@@ -2096,10 +2096,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
     } else if (op == CompositeOperator::Copy) {
         willUpdateEntireContents(willUpdateContentsOptions);
         clearCanvas();
-        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
+        image->draw(*c, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
     } else {
         willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, willUpdateContentsOptions);
-        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
+        image->draw(*c, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
     }
 
     return { };
@@ -2466,7 +2466,7 @@ void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const In
 
 static void drawImageToContext(const SizedImage& sizedImage, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImageDrawingOptions options)
 {
-    context.drawImage(sizedImage.image, sizedImage.concreteObjectSize, dest, src, options);
+    protect(sizedImage.image)->draw(context, sizedImage.concreteObjectSize, dest, src, options);
 }
 
 static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImageDrawingOptions options)

@@ -300,7 +300,7 @@ RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const ColorSpac
 
     ImageObserverDisableScope imageObserverDisabler(*this);
 
-    imageBuffer->context().drawImage(*this, ConcreteObjectSize::fixed(size), FloatPoint(), options, extras);
+    draw(imageBuffer->context(), ConcreteObjectSize::fixed(size), FloatPoint { }, options, extras);
 
     return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
 }
@@ -353,7 +353,7 @@ void SVGImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concrete
     context.drawPattern(*buffer, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
-ImageDrawResult SVGImage::draw(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+ImageDrawResult SVGImage::drawImage(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;

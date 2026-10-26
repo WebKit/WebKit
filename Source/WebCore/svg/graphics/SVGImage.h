@@ -110,7 +110,7 @@ private:
 
     void startAnimationTimerFired();
 
-    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
+    ImageDrawResult drawImage(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions, const ImageDrawingExtras*) final;
     void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
 
     // FIXME: This should also hold the variable state dataChanged() sets on the Page and its Settings.

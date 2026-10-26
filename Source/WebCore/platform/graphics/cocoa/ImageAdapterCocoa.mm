@@ -37,7 +37,11 @@
 #import <wtf/text/WTFString.h>
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
+#import "Font.h"
+#import "ImageBuffer.h"
+#import "MultiRepresentationHEICMetrics.h"
 #import "PlatformNSAdaptiveImageGlyph.h"
+#import <CoreText/CoreText.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -110,6 +114,36 @@ NSAdaptiveImageGlyph *ImageAdapter::multiRepresentationHEIC()
     m_multiRepHEIC = adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:nsData.get()]);
 
     return m_multiRepHEIC.get();
+}
+
+ImageDrawResult ImageAdapter::drawMultiRepresentationHEIC(GraphicsContext& context, const Font& font, const FloatRect& destination, ImageDrawingOptions options)
+{
+    RetainPtr multiRepresentationHEIC = this->multiRepresentationHEIC();
+    if (!multiRepresentationHEIC)
+        return ImageDrawResult::DidNothing;
+
+    RefPtr imageBuffer = context.createScaledImageBuffer(destination.size(), context.scaleFactor(), ColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
+    if (!imageBuffer)
+        return ImageDrawResult::DidNothing;
+
+    RetainPtr cgContext = imageBuffer->context().platformContext();
+
+    CGContextScaleCTM(cgContext, 1, -1);
+    CGContextTranslateCTM(cgContext, 0, -destination.height());
+
+    // FIXME (rdar://123044459): This needs to account for vertical writing modes.
+    CGContextSetTextMatrix(cgContext, CGAffineTransformIdentity);
+    CGContextSetTextPosition(cgContext, 0, font.metricsForMultiRepresentationHEIC().descent);
+
+    CTFontDrawImageFromAdaptiveImageProviderAtPoint(protect(font.ctFont()), multiRepresentationHEIC.get(), CGContextGetTextPosition(cgContext), cgContext);
+
+    auto orientation = options.orientation();
+    if (orientation == ImageOrientation::Orientation::FromImage)
+        orientation = image().orientation();
+
+    context.drawImageBuffer(*imageBuffer, destination, { options, orientation });
+
+    return ImageDrawResult::DidDraw;
 }
 #endif
 

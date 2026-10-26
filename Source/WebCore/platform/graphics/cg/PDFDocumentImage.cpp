@@ -197,14 +197,14 @@ ImageDrawResult PDFDocumentImage::drawFromCachedSubimage(GraphicsContext& contex
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, const ImageDrawingExtras*)
+ImageDrawResult PDFDocumentImage::drawImage(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, const ImageDrawingExtras*)
 {
     auto result = drawFromCachedSubimage(context, destination, source, options);
     if (result != ImageDrawResult::DidNothing)
         return result;
 
     if (mustDrawFromCachedSubimage(context)) {
-        LOG_ERROR("ERROR ImageDrawResult GraphicsContext::drawImage() cached subimage could not been drawn");
+        LOG_ERROR("ERROR ImageDrawResult PDFDocumentImage::drawImage() cached subimage could not been drawn");
         return ImageDrawResult::DidNothing;
     }
 

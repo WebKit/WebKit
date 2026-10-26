@@ -118,8 +118,6 @@ private:
 
     void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final { }
 
-    ImageDrawResult drawImage(Image&, ConcreteObjectSize, const FloatRect&, const FloatRect&, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr) final { return ImageDrawResult::DidNothing; }
-
     void drawFocusRing(const Path&, float, const Color&, float) final { }
     void drawFocusRing(const Vector<FloatRect>&, float, const Color&, float) final { }
 

@@ -66,6 +66,7 @@ namespace WebCore {
 
 class CanvasLayerContextSwitcher;
 class CanvasGradient;
+class ConcreteObjectSize;
 class DOMMatrix;
 class FloatRect;
 class GraphicsContext;

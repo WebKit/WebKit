@@ -179,6 +179,23 @@ long long Image::expectedContentLength() const
     return imageObserver() ? imageObserver()->expectedContentLength() : 0;
 }
 
+ImageDrawResult Image::draw(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, FloatPoint destination, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+{
+    return draw(context, concreteObjectSize, FloatRect(destination, concreteObjectSize.size()), FloatRect({ }, concreteObjectSize.size()), options, extras);
+}
+
+ImageDrawResult Image::draw(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+{
+    return draw(context, concreteObjectSize, destination, FloatRect({ }, concreteObjectSize.size()), options, extras);
+}
+
+ImageDrawResult Image::draw(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+{
+    if (context.paintingDisabled())
+        return ImageDrawResult::DidNothing;
+    return drawImage(context, concreteObjectSize, destination, source, options, extras);
+}
+
 void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, const Color& color, CompositeOperator op)
 {
     if (!color.isVisible())
@@ -250,7 +267,7 @@ RefPtr<ShareableBitmap> Image::toShareableBitmap(ConcreteObjectSize concreteObje
     if (!graphicsContext)
         return nullptr;
 
-    graphicsContext->drawImage(const_cast<Image&>(*this), concreteObjectSize, IntPoint());
+    const_cast<Image&>(*this).draw(*graphicsContext, concreteObjectSize);
     return bitmap;
 }
 
