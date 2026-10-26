@@ -146,7 +146,7 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
             if (viewportStretchedBorderBoxBlockSize(blockContainerState.margins.collapsedMarginsBefore().collapsedValue(), margins.collapsedValue()) > 0)
                 return false;
         }
-        return BlockMarginCollapse::marginsCollapseThrough(blockContainer, blockContainerState.geometry, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(blockContainerState.geometry, containingBlockState), root().writingMode());
+        return BlockMarginCollapse::marginsCollapseThrough(blockContainer, blockContainerState.geometry, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(blockContainer, blockContainerState.geometry, containingBlockState), root().writingMode());
     };
     if (!blockContainerState.borderBoxLogicalTop && !marginsCollapseThrough())
         resolveBorderBoxLogicalTops(blockContainerState);
@@ -187,7 +187,7 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     } else {
         LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
         auto horizontalConstraints = HorizontalConstraints { rootState.inlineRange.min(), rootState.inlineRange.size() };
-        auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.relayoutChildren });
+        auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.fillAvailableBlockSize, rootState.relayoutChildren });
         result.boxes.appendVector(WTF::move(rootResult.boxes));
         m_blockLayoutState.marginCollapse().resetAdjoiningMargins(rootState.contentBoxLogicalTop() + rootResult.intrinsicContentBlockSize);
         result.outOfFlowBoxes.appendVector(WTF::move(rootResult.outOfFlowBoxes));
@@ -341,6 +341,8 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
         .borderBoxLogicalTop = 0_lu,
         .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
         .contentBoxBlockSize = contentBoxBlockSize,
+        // Coverage keeps out the -webkit-fill-available block sizes inside.
+        .fillAvailableBlockSize = contentBoxBlockSize.value_or(0_lu),
         .margins = { },
         .isLaidOutThroughRenderTree = false,
         .relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(box, geometry.contentBoxWidth())
@@ -355,7 +357,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
                 intrinsicContentBlockSize = inlineContentLayoutResult.contentBlockSize;
         } else {
             auto horizontalConstraints = HorizontalConstraints { boxState.inlineRange.min(), boxState.inlineRange.size() };
-            auto contentResult = BlockFormattingContext { box, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, boxState.borderAndPaddingBefore }, contentBoxBlockSize, boxState.relayoutChildren });
+            auto contentResult = BlockFormattingContext { box, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, boxState.borderAndPaddingBefore }, contentBoxBlockSize, boxState.fillAvailableBlockSize, boxState.relayoutChildren });
             intrinsicContentBlockSize = contentResult.intrinsicContentBlockSize;
             result.boxes.appendVector(WTF::move(contentResult.boxes));
             result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
@@ -387,6 +389,7 @@ ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const C
         .borderBoxLogicalTop = 0_lu,
         .borderAndPaddingBefore = constraints.logicalTop(),
         .contentBoxBlockSize = constraints.contentBoxBlockSize(),
+        .fillAvailableBlockSize = constraints.fillAvailableBlockSize(),
         .margins = { },
         .isLaidOutThroughRenderTree = false,
         .relayoutChildren = constraints.relayoutChildren()
@@ -395,13 +398,15 @@ ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const C
 
 ContainingBlockState BlockFormattingContext::containingBlockStateFor(const RenderBox& blockContainer, const BoxGeometry& geometry, const ContainingBlockState& parentState) const
 {
+    auto contentBoxBlockSize = BlockFormattingUtils::definiteContentBoxBlockSize(blockContainer, geometry, parentState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(blockContainer, geometry, parentState), root().writingMode());
     return {
         .blockContainer = blockContainer,
         .geometry = geometry,
         .inlineRange = { geometry.borderAndPaddingStart(), geometry.contentBoxWidth() },
         .borderBoxLogicalTop = { },
         .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
-        .contentBoxBlockSize = BlockFormattingUtils::definiteContentBoxBlockSize(blockContainer, geometry, parentState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(geometry, parentState), root().writingMode()),
+        .contentBoxBlockSize = contentBoxBlockSize,
+        .fillAvailableBlockSize = BlockFormattingUtils::fillAvailableBlockSize(blockContainer, geometry, contentBoxBlockSize, parentState.contentBoxBlockSize, parentState.fillAvailableBlockSize, stretchFitBorderBoxBlockSize(blockContainer, geometry, parentState), root().writingMode()),
         .margins = { },
         .isLaidOutThroughRenderTree = false,
         .relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(blockContainer, geometry.contentBoxWidth())
@@ -452,7 +457,7 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     // A preferred aspect ratio gives an auto inline size from a definite block size, and the min-content and max-content sizes of the box,
     // floored by those of its content when its min inline size is auto (RenderBox::computeIntrinsicKeywordLogicalWidths).
     auto horizontalBorderAndPadding = geometry.horizontalBorderAndPadding();
-    auto aspectRatioBorderBoxInlineSize = BlockFormattingUtils::aspectRatioBorderBoxInlineSize(box, horizontalBorderAndPadding, geometry.verticalBorderAndPadding(), containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(geometry, containingBlockState), writingMode);
+    auto aspectRatioBorderBoxInlineSize = BlockFormattingUtils::aspectRatioBorderBoxInlineSize(box, horizontalBorderAndPadding, geometry.verticalBorderAndPadding(), containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), writingMode);
     auto contentInlineSizes = [&] -> std::optional<IntrinsicWidthConstraints> {
         auto fitsContent = style->logicalWidth(writingMode).isAuto() && BlockFormattingUtils::isAlignedByJustifySelf(box, containingBlockStyle);
         if (!BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode) && !fitsContent && !BlockFormattingUtils::hasAspectRatioAutomaticMinimumInlineSize(box, aspectRatioBorderBoxInlineSize, writingMode))
@@ -468,7 +473,7 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     // They apply to an inline size that is not a length or a percentage.
     auto aspectRatioInlineSizeLimits = std::optional<std::pair<LayoutUnit, LayoutUnit>> { };
     if (!style->logicalWidth(writingMode).isSpecified())
-        aspectRatioInlineSizeLimits = BlockFormattingUtils::aspectRatioInlineSizeLimits(box, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(geometry, containingBlockState), writingMode);
+        aspectRatioInlineSizeLimits = BlockFormattingUtils::aspectRatioInlineSizeLimits(box, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), writingMode);
     auto [borderBoxInlineSize, marginStart, marginEnd] = BlockFormattingUtils::inlineSizeAndMargins(box, geometry.horizontalBorderAndPadding(), containingBlockInlineSize, containingBlockStyle, contentInlineSizes, aspectRatioInlineSizeLimits, aspectRatioBorderBoxInlineSize);
     geometry.setContentBoxWidth(borderBoxInlineSize - geometry.horizontalBorderAndPadding());
     // Unlike border and padding, start and end margins follow the direction of the containing block.
@@ -610,8 +615,11 @@ void BlockFormattingContext::computeLogicalLeft(const RenderBox& box, const Cont
 
 // The containing block's definite content box block size less the margins, where a margin that collapses with the containing block's, which has no
 // border or padding on that side and is not a block formatting context root, counts as zero (css-sizing-4 §6.1).
-std::optional<LayoutUnit> BlockFormattingContext::stretchFitBorderBoxBlockSize(const BoxGeometry& geometry, const ContainingBlockState& containingBlockState) const
+std::optional<LayoutUnit> BlockFormattingContext::stretchFitBorderBoxBlockSize(const RenderBox& box, const BoxGeometry& geometry, const ContainingBlockState& containingBlockState) const
 {
+    // -webkit-fill-available resolves to what it did before the stretch keyword: the available block size, margins included (RenderBox::computeSizingKeywordLogicalContentHeightUsing).
+    if (BlockFormattingUtils::hasFillAvailableBlockSize(box, root().writingMode()))
+        return containingBlockState.fillAvailableBlockSize;
     if (!containingBlockState.contentBoxBlockSize)
         return { };
     auto marginBefore = geometry.marginBefore();
@@ -630,8 +638,8 @@ std::optional<LayoutUnit> BlockFormattingContext::stretchFitBorderBoxBlockSize(c
 void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState& containingBlockState, BoxGeometry& geometry) const
 {
     auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
-    auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(geometry, containingBlockState), root().writingMode());
-    if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(geometry, containingBlockState), root().writingMode(), intrinsicContentBlockSize))
+    auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), root().writingMode());
+    if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), root().writingMode(), intrinsicContentBlockSize))
         blockSize = *aspectRatioBlockSize;
     geometry.setContentBoxHeight(blockSize - borderAndPaddingBlockSize);
 }
