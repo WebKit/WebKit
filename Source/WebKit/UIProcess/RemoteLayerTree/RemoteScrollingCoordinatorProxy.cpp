@@ -66,6 +66,12 @@ RemoteScrollingCoordinatorProxy::~RemoteScrollingCoordinatorProxy()
     m_scrollingTree->invalidate();
 }
 
+void RemoteScrollingCoordinatorProxy::invalidate()
+{
+    m_isInvalidated = true;
+    m_scrollingTree->invalidate();
+}
+
 WebPageProxy& RemoteScrollingCoordinatorProxy::webPageProxy() const
 {
     return m_webPageProxy.get();
@@ -73,11 +79,16 @@ WebPageProxy& RemoteScrollingCoordinatorProxy::webPageProxy() const
 
 std::optional<ScrollingNodeID> RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
 {
-    // FIXME: Locking
-    if (!m_scrollingTree->rootNode())
+    // FIXME: Locking.
+    // The scrolling thread replaces the root in commitTreeState(), so read it once. Calling
+    // rootNode() twice can see a node on the first read and nothing on the second. Taking
+    // the tree lock here isn't an option, since scrollingTreeNodeRequestsScroll() calls
+    // this with it already held.
+    RefPtr rootNode = m_scrollingTree->rootNode();
+    if (!rootNode)
         return std::nullopt;
 
-    return m_scrollingTree->rootNode()->scrollingNodeID();
+    return rootNode->scrollingNodeID();
 }
 
 const RemoteLayerTreeHost* RemoteScrollingCoordinatorProxy::layerTreeHost() const
@@ -294,6 +305,9 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeUpdate()
     if (webPageProxy->scrollingUpdatesDisabledForTesting())
         return;
 
+    if (m_isInvalidated)
+        return;
+
     bool mainFrameScrollPositionChanged = false;
     auto rootNodeID = rootScrollingNodeID();
 
@@ -358,8 +372,8 @@ void RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeUpdateReply()
         return;
 
     RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }]() {
-        if (CheckedPtr checkedThis = weakThis)
-            checkedThis->sendScrollingTreeNodeUpdate();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->sendScrollingTreeNodeUpdate();
     });
 }
 

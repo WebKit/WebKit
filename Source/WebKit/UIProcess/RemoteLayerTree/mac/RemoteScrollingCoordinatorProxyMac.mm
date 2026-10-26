@@ -63,7 +63,17 @@ RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPagePr
 
 RemoteScrollingCoordinatorProxyMac::~RemoteScrollingCoordinatorProxyMac()
 {
+    if (!m_isInvalidated)
+        m_eventDispatcher->invalidate();
+}
+
+void RemoteScrollingCoordinatorProxyMac::invalidate()
+{
+    if (m_isInvalidated)
+        return;
+
     m_eventDispatcher->invalidate();
+    RemoteScrollingCoordinatorProxy::invalidate();
 }
 
 void RemoteScrollingCoordinatorProxyMac::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& nativeWheelEvent)

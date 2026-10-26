@@ -1566,7 +1566,7 @@ void WebViewImpl::didRelaunchProcess()
 void WebViewImpl::scrollingCoordinatorWasCreated()
 {
 #if HAVE(NSREFRESHCONTROLLER)
-    if (CheckedPtr scrollingCoordinator = m_page->scrollingCoordinatorProxy()) {
+    if (RefPtr scrollingCoordinator = m_page->scrollingCoordinatorProxy()) {
         scrollingCoordinator->setHasRefreshController(!!m_refreshController);
         scrollingCoordinator->setRefreshControllerSnappingThreshold(refreshControllerSnappingThreshold());
     }
@@ -1924,7 +1924,7 @@ bool WebViewImpl::isPointOnPDFHUD(WebCore::FloatPoint locationInView)
 
 bool WebViewImpl::isPointInScrollbar(CGPoint locationInView)
 {
-    CheckedPtr scrollingCoordinatorProxy = m_page->scrollingCoordinatorProxy();
+    RefPtr scrollingCoordinatorProxy = m_page->scrollingCoordinatorProxy();
     if (!scrollingCoordinatorProxy)
         return false;
 
@@ -8474,7 +8474,7 @@ void WebViewImpl::setRefreshController(NSRefreshController *refreshController)
 #endif
     }
 
-    if (CheckedPtr scrollingCoordinator = m_page->scrollingCoordinatorProxy()) {
+    if (RefPtr scrollingCoordinator = m_page->scrollingCoordinatorProxy()) {
         scrollingCoordinator->setHasRefreshController(!!m_refreshController);
         scrollingCoordinator->setRefreshControllerSnappingThreshold(refreshControllerSnappingThreshold());
     }
@@ -8491,7 +8491,7 @@ void WebViewImpl::applyRefreshControllerHeight(CGFloat height, bool animated)
     if (!height && m_cachedTopScrollStretch > 0)
         m_suppressRefreshControllerUpdates = true;
 
-    if (CheckedPtr scrollingCoordinator = m_page->scrollingCoordinatorProxy())
+    if (RefPtr scrollingCoordinator = m_page->scrollingCoordinatorProxy())
         scrollingCoordinator->setTopScrollStretchForRefreshController(height);
 }
 
@@ -8540,7 +8540,7 @@ void WebViewImpl::updateRefreshControllerFrame()
     if (!m_suppressRefreshControllerUpdates)
         [[m_refreshController refreshControl] update];
 
-    if (CheckedPtr scrollingCoordinator = m_page->scrollingCoordinatorProxy())
+    if (RefPtr scrollingCoordinator = m_page->scrollingCoordinatorProxy())
         scrollingCoordinator->setRefreshControllerSnappingThreshold(refreshControllerSnappingThreshold());
 }
 

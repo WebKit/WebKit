@@ -59,7 +59,7 @@ void RemoteScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNo
 
 #if ENABLE(THREADED_ANIMATIONS)
     updateProgressBasedTimelinesForNode(node);
-    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
+    if (RefPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy)
         scrollingCoordinatorProxy->progressBasedTimelinesWereUpdatedForNode(node);
 #endif
 

@@ -36,6 +36,7 @@
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -66,12 +67,13 @@ class RemoteAnimationStack;
 class RemoteAnimationTimeline;
 #endif
 
-class RemoteScrollingCoordinatorProxy : public CanMakeWeakPtr<RemoteScrollingCoordinatorProxy>, public CanMakeCheckedPtr<RemoteScrollingCoordinatorProxy> {
+class RemoteScrollingCoordinatorProxy : public RefCounted<RemoteScrollingCoordinatorProxy>, public CanMakeWeakPtr<RemoteScrollingCoordinatorProxy> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinatorProxy);
     WTF_MAKE_NONCOPYABLE(RemoteScrollingCoordinatorProxy);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteScrollingCoordinatorProxy);
 public:
     virtual ~RemoteScrollingCoordinatorProxy();
+
+    virtual void invalidate();
     
     constexpr bool isRemoteScrollingCoordinatorProxyIOS() const
     {
@@ -116,7 +118,7 @@ public:
 
     virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }
 
-    std::optional<WebCore::ScrollingNodeID> LEGACY_NODELETE rootScrollingNodeID() const;
+    std::optional<WebCore::ScrollingNodeID> rootScrollingNodeID() const;
 
     const RemoteLayerTreeHost* LEGACY_NODELETE layerTreeHost() const;
     WebPageProxy& LEGACY_NODELETE webPageProxy() const;
@@ -249,6 +251,7 @@ protected:
     WebCore::ScrollRequestData m_scrollRequestData;
     RemoteScrollingUIState m_uiState;
     bool m_waitingForDidScrollReply { false };
+    bool m_isInvalidated { false };
     HashSet<WebCore::PlatformLayerIdentifier> m_layersWithScrollingRelations;
 };
 
