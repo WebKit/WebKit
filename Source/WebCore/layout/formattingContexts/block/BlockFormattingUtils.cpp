@@ -114,6 +114,15 @@ std::optional<LayoutUnit> BlockFormattingUtils::definiteContentBoxBlockSize(cons
         return containingBlockContentBoxBlockSize;
     auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
     CheckedRef style = box.style();
+    // In quirks mode so are the ones with an auto block size, and those of the body and the root element take their margins, borders and
+    // padding with them (quirks §3.5, RenderBox::skipContainingBlockForPercentHeightCalculation).
+    if (box.document().inQuirksMode() && !box.isOutOfFlowPositioned() && style->logicalHeight(writingMode).isAuto()) {
+        if (!box.isBody() && !box.isDocumentElementRenderer())
+            return containingBlockContentBoxBlockSize;
+        return containingBlockContentBoxBlockSize.transform([&](auto blockSize) {
+            return std::max(0_lu, blockSize - geometry.marginBefore() - geometry.marginAfter() - borderAndPaddingBlockSize);
+        });
+    }
     if (!borderBoxBlockSizeFor(style->logicalHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize))
         return { };
     return borderBoxBlockSize(box, borderAndPaddingBlockSize, { }, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode) - borderAndPaddingBlockSize;
