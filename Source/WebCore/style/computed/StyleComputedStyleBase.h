@@ -874,7 +874,7 @@ public:
     };
 
 protected:
-    bool computeHasZeroEffectiveBorderWidths() const;
+    WEBCORE_EXPORT bool computeHasZeroEffectiveBorderWidths() const;
     bool computeHasZeroPadding() const;
     void updateHasZeroEffectiveBorderWidths();
     void updateHasZeroPadding();
