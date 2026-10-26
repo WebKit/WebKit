@@ -61,12 +61,14 @@ https://bungalow.com/
 https://www.capitalgroup.com/
     ShouldDelayReloadWhenRegisteringServiceWorker
 https://www.cbssports.com/
+    AllowsAutoplayToCarryForwardAcrossNavigationQuirk
     ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk
 https://chatgpt.com/
     ShouldUseLayoutViewportForClientRectsQuirk
 https://www.cnn.com/
     NeedsCNNCaptionQuirk
     NeedsFullscreenObjectFitQuirk
+    RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk
     ShouldDisableThreadedAnimationsQuirk
 https://configurator.audi.com/
     ShouldRenderModelElementFallbackContentQuirk
@@ -239,13 +241,14 @@ https://invideo.io/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
     NeedsUserAgentStringOverrideQuirk
 https://www.linkedin.com/
-    (none)
+    ShouldAllowNativeTapsOnMediaElementsQuirk
 https://outlook.live.com/
     MayNeedToIgnoreContentObservation
     NeedsMozillaFileTypeForDataTransferQuirk
     NeedsUserAgentStringOverrideQuirk
     ShouldAllowTouchMoveToChangeSelectionQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldPreventTouchMoveDispatchQuirk
 https://outlook.office.com/
     (none)
 https://outlook.office365.com/
@@ -294,6 +297,7 @@ https://www.netflix.com/
     NeedsNetflixVolumeSliderQuirk
     NeedsPerDocumentAutoplayBehaviorQuirk
     NeedsSeekingSupportDisabledQuirk
+    ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick
 https://www.nba.com/
     NeedsPerDocumentAutoplayBehaviorQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
@@ -334,7 +338,7 @@ https://soundcloud.com/
     ShouldDispatchSimulatedMouseEventsQuirk
     ShouldExposeShowModalDialog
 https://soylent.com/
-    (none)
+    ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick
 https://open.spotify.com/
     NeedsBodyScrollbarWidthNoneDisabledQuirk
     NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk
@@ -409,6 +413,7 @@ https://twitter.com/
 https://www.yahoo.com/
     NeedsYahooVolumeSliderQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+    ShouldPreventTouchEndDispatchQuirk
 https://news.ycombinator.com/
     ShouldIgnoreTextAutoSizingQuirk
 https://ycombinator.com/
@@ -419,7 +424,6 @@ https://www.youtube.com/
     NeedsYouTubeCaptionQuirk
     NeedsYouTubeMouseOutQuirk
     NeedsYouTubeOverflowScrollQuirk
-    ShouldDisableThreadedAnimationsQuirk
     ShouldSilenceResizeObservers
 https://www.youtube-nocookie.com/
     (none)

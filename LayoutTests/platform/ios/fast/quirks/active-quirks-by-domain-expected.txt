@@ -61,6 +61,7 @@ https://bungalow.com/
 https://www.capitalgroup.com/
     ShouldDelayReloadWhenRegisteringServiceWorker
 https://www.cbssports.com/
+    AllowsAutoplayToCarryForwardAcrossNavigationQuirk
     ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk
 https://chatgpt.com/
     ShouldUseLayoutViewportForClientRectsQuirk

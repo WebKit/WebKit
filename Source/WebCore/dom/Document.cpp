@@ -504,6 +504,7 @@ using namespace WTF::Unicode;
 static const unsigned cMaxWriteRecursionDepth = 21;
 bool Document::hasEverCreatedAnAXObjectCache = false;
 static const Seconds maxIntervalForUserGestureForwardingAfterMediaFinishesPlaying { 1_s };
+static constexpr MediaProducerMediaStateFlags isPlayingMediaMask { MediaProducerMediaState::IsPlayingAudio, MediaProducerMediaState::IsPlayingVideo };
 
 // Defined here to avoid including GCReachableRef.h in Document.h
 struct Document::PendingScrollEventTargetList {
@@ -3838,6 +3839,8 @@ void Document::willBeRemovedFromFrame()
     protect(cachedResourceLoader())->stopUnusedPreloadsTimer();
 
     if (page() && !m_mediaState.isEmpty()) {
+        if (m_mediaState.containsAny(isPlayingMediaMask))
+            protect(page())->notePlaybackOfMediaUserInteractedWith();
         m_mediaState = MediaProducer::IsNotPlaying;
         protect(page())->updateIsPlayingMedia();
     }
@@ -6381,6 +6384,18 @@ void Document::noteUserInteractionWithMediaElement()
     updateIsPlayingMedia();
 }
 
+void Document::noteUserDidEnableMediaElementAudio()
+{
+    RefPtr page = this->page();
+    if (!page || !page->userDidInteractWithPage())
+        return;
+
+    if (!quirks().allowsAutoplayToCarryForwardAcrossNavigation())
+        return;
+
+    page->noteMediaUserInteractionToCarryForwardAcrossNavigation(securityOrigin().data());
+}
+
 bool Document::isCapturing() const
 {
     return MediaProducer::isCapturing(m_mediaState);
@@ -6421,6 +6436,8 @@ void Document::updateIsPlayingMedia()
     if (state == m_mediaState)
         return;
 
+    bool mediaWasOrIsPlaying = m_mediaState.containsAny(isPlayingMediaMask) || state.containsAny(isPlayingMediaMask);
+
 #if ENABLE(MEDIA_STREAM)
     bool captureStateChanged = MediaProducer::isCapturing(m_mediaState) != MediaProducer::isCapturing(state);
     bool microphoneMutedStateChanged = m_mediaState.containsAny(MediaProducer::IsCapturingAudioMask) != state.containsAny(MediaProducer::IsCapturingAudioMask);
@@ -6428,8 +6445,11 @@ void Document::updateIsPlayingMedia()
 
     m_mediaState = state;
 
-    if (RefPtr page = this->page())
+    if (RefPtr page = this->page()) {
+        if (mediaWasOrIsPlaying)
+            page->notePlaybackOfMediaUserInteractedWith();
         page->updateIsPlayingMedia();
+    }
 
 #if ENABLE(MEDIA_STREAM)
     if (captureStateChanged)
