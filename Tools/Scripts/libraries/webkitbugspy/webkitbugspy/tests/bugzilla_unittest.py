@@ -1131,6 +1131,40 @@ What component in 'WebKit' should the bug be associated with?:
                 self.assertEqual(issue.references[0].link, 'rdar://1')
                 self.assertEqual(issue.references[0].title, 'Example issue 1')
 
+    def test_cc_radar_after_create_waits_for_next_second(self):
+        with OutputCapture(level=logging.INFO), mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS), mocks.Radar(
+            users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS,
+        ), wkmocks.Time:
+            radar_tracker = radar.Tracker()
+            bugzilla_tracker = bugzilla.Tracker(self.URL, radar_importer=mocks.USERS['Radar WebKit Bug Importer'])
+
+            with patch('webkitbugspy.Tracker._trackers', [radar_tracker, bugzilla_tracker]):
+                issue = bugzilla_tracker.create('New bug', 'Creating new bug', project='WebKit', component='Tables', version='Other')
+                start = time.time()
+                issue.cc_radar()
+                self.assertGreater(time.time() - start, 1)
+                self.assertIn(mocks.USERS['Radar WebKit Bug Importer'], bugzilla.Tracker(self.URL).issue(issue.id).watchers)
+
+    def test_cc_radar_existing_bug_does_not_wait(self):
+        with OutputCapture(level=logging.INFO), mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS), mocks.Radar(
+            users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS,
+        ), wkmocks.Time:
+            radar_tracker = radar.Tracker()
+            bugzilla_tracker = bugzilla.Tracker(self.URL, radar_importer=mocks.USERS['Radar WebKit Bug Importer'])
+
+            with patch('webkitbugspy.Tracker._trackers', [radar_tracker, bugzilla_tracker]):
+                issue = bugzilla_tracker.issue(1)
+                start = time.time()
+                issue.cc_radar()
+                self.assertEqual(time.time() - start, 0)
+                self.assertIn(mocks.USERS['Radar WebKit Bug Importer'], bugzilla.Tracker(self.URL).issue(1).watchers)
+
     def test_cc_radar_importer_already_cced_with_explicit_radar(self):
         """When the importer is already CC'd (e.g. auto-CC on Security product) and
         an explicit radar is provided, cc_radar should add InRadar + comment without

@@ -57,6 +57,9 @@ class Tracker(GenericTracker):
     FAILED_LOGIN_CODES = (300, 301)
     # FIXME: We should make this class project agnostic by specifying this in trackers.json.
     DEFAULT_VERSION = 'WebKit Nightly Build'
+    # Bugzilla only mails changes newer than the bug's whole-second lastdiffed, so a change made
+    # in the same second a bug was created is recorded but never mailed.
+    BUGMAIL_SECOND_DELAY = 1.1
 
     # Security keywords to detect in title/description.
     # These trigger a prompt to use Security product.
@@ -190,6 +193,7 @@ class Tracker(GenericTracker):
 
         self._logins_left = login_attempts + 1 if login_attempts else 1
         self._projects: dict[str, dict[str, Any]] | None = None
+        self._created_at: dict[int, float] = {}
         self.session = requests.Session()
         match = self.ROOT_RE.match(url)
         if not match:
@@ -830,7 +834,17 @@ class Tracker(GenericTracker):
                 response.json().get('message', '?') if response is not None else 'Login attempts exhausted'),
             )
             return None
-        return self.issue(response.json()['id'])
+        issue_id = response.json()['id']
+        self._created_at[issue_id] = time.time()
+        return self.issue(issue_id)
+
+    def _wait_for_bugmail_after_create(self, issue: Issue) -> None:
+        created_at = self._created_at.get(issue.id)
+        if created_at is None:
+            return
+        remaining = created_at + self.BUGMAIL_SECOND_DELAY - time.time()
+        if remaining > 0:
+            time.sleep(remaining)
 
     def cc_radar(self, issue: Issue, block: bool = False, timeout: float | None = None, radar: Issue | None = None) -> Issue | None:
         if not self.radar_importer:
@@ -899,6 +913,7 @@ class Tracker(GenericTracker):
                     data['comment'] = dict(body=comment_to_make)
                 if keyword_to_add:
                     data['keywords'] = dict(add=[keyword_to_add])
+                self._wait_for_bugmail_after_create(issue)
                 response = self.session.put(
                     '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=True)),
                     json=data,

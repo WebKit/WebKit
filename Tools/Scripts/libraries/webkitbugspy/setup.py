@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='webkitbugspy',
-    version='0.15.11',
+    version='0.15.12',
     description='Library containing a shared API for various bug trackers.',
     long_description=readme(),
     long_description_content_type='text/markdown',
