@@ -6932,6 +6932,19 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     LOG_WITH_STREAM(Loading, stream << "Continuing navigation "_s << navigation.navigationID().object().toUInt64() << " '"_s << navigation.loggingString() << "' in a new web process"_s);
     RELEASE_ASSERT(!newProcess->isInProcessCache());
     ASSERT(shouldTreatAsContinuingLoad != ShouldTreatAsContinuingLoad::No);
+
+    // A process may host only one WebPage per WebPageProxy, so a provisional page navigation that comes back
+    // to the committed page's process continues in the committed page instead of creating a second WebPage.
+    if (RefPtr committedMainFrame = m_mainFrame; committedMainFrame && committedMainFrame != &frame && frame.isMainFrame() && !suspendedPage
+        && protect(m_preferences)->siteIsolationEnabled()
+        && m_provisionalPage && m_provisionalPage->mainFrame() == &frame
+        && newProcess->coreProcessIdentifier() == committedMainFrame->process().coreProcessIdentifier()
+        && &browsingContextGroup == m_browsingContextGroup.ptr()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "continueNavigationInNewProcess: Continuing navigation in the committed page because it came back to the committed page's process");
+        frame.transferNavigationCallbackToFrame(*committedMainFrame);
+        continueNavigationInNewProcess(navigation, *committedMainFrame, nullptr, browsingContextGroup, WTF::move(newProcess), processSwapRequestedByClient, shouldTreatAsContinuingLoad, existingNetworkResourceLoadIdentifierToResume, loadedWebArchive, navigationUpgradeToHTTPSBehavior, processSwapDisposition, replacedDataStoreForWebArchiveLoad, originalNavigationStartTime);
+        return;
+    }
     navigation.setProcessID(newProcess->coreProcessIdentifier());
     updateAgentClusterAssignmentForContinuingLoad(navigation, browsingContextGroup, frame.isMainFrame());
 

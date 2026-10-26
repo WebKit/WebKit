@@ -8273,6 +8273,40 @@ TEST(SiteIsolation, MainFrameRedirectBetweenExistingProcesses)
     EXPECT_EQ([webView _webProcessIdentifier], pidBefore);
 }
 
+TEST(SiteIsolation, MainFrameRedirectBackToCommittedProcessKeepsBackForwardCache)
+{
+    auto firstPageHTML = "<script>"
+        "  window.__pageshowPersisted = null;"
+        "  window.addEventListener('pageshow', (event) => { window.__pageshowPersisted = event.persisted });"
+        "</script>"_s;
+    HTTPServer server({
+        { "/first"_s, { firstPageHTML } },
+        { "/redirect"_s, { 302, { { "Location"_s, "https://example.com/second"_s } }, "redirecting..."_s } },
+        { "/second"_s, { "second"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/first"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView objectByEvaluatingJavaScript:@"window.__marker = true"];
+    auto examplePID = [webView _webProcessIdentifier];
+
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/redirect'" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView URL].absoluteString, "https://example.com/second");
+    EXPECT_EQ([webView _webProcessIdentifier], examplePID);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return countWebPages(webView) == 1u;
+    }));
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView URL].absoluteString, "https://example.com/first");
+    EXPECT_EQ([webView _webProcessIdentifier], examplePID);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__marker === true"] boolValue]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__pageshowPersisted === true"] boolValue]);
+}
+
 TEST(SiteIsolation, URLSchemeTask)
 {
     HTTPServer server({
