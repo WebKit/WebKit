@@ -33,29 +33,60 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
+#include "StyleUnevaluatedCalcSize.h"
 
 namespace WebCore {
 namespace Layout {
 
+LayoutUnit BlockFormattingUtils::calcSizeBorderBoxSize(const Style::UnevaluatedCalcSize& calcSize, const Style::ComputedStyle& style, LayoutUnit basisBorderBoxSize, LayoutUnit borderAndPadding, LayoutUnit percentageBasis)
+{
+    auto zoom = style.usedZoomForLength();
+    if (style.boxSizing() == BoxSizing::BorderBox)
+        return std::max(borderAndPadding, LayoutUnit::fromFloatRound(calcSize.evaluate(percentageBasis, zoom, basisBorderBoxSize)));
+    return LayoutUnit::fromFloatRound(calcSize.evaluate(percentageBasis, zoom, std::max(0_lu, basisBorderBoxSize - borderAndPadding))) + borderAndPadding;
+}
+
+// A percentage of the block size of the containing block, which behaves as auto when that is indefinite (CSS 2.2 §10.5). Of a calc-size(), only
+// percentages in the basis do; those in the calculation resolve against zero then (css-values-5 §11.1).
+template<typename SizeType>
+static bool isPercentageOfContainingBlock(const SizeType& size)
+{
+    if (size.isCalcSize())
+        return size.isSpecified() && size.calcSize().basisHasPercentage();
+    return size.isPercentOrCalculated();
+}
+
 template<typename SizeType>
 static std::optional<LayoutUnit> borderBoxBlockSizeFor(const SizeType& size, const Style::ComputedStyle& style, LayoutUnit borderAndPaddingBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, std::optional<LayoutUnit> intrinsicContentBlockSize = { })
 {
-    // Without a definite stretch-fit block size, stretch behaves as the initial value (css-sizing-4 §6.1).
-    if (size.isStretch()) {
-        return stretchFitBorderBoxBlockSize.transform([&](auto stretchFitSize) {
-            return std::max(stretchFitSize, borderAndPaddingBlockSize);
-        });
-    }
-    // The intrinsic sizing keywords are the block size of the content, once it is laid out (css-sizing-3 §3.2).
-    if (size.isIntrinsic() && !size.isCalcSize()) {
+    auto keywordBorderBoxBlockSize = [&] -> std::optional<LayoutUnit> {
+        // Without a definite stretch-fit block size, stretch behaves as the initial value (css-sizing-4 §6.1).
+        if (size.isStretch()) {
+            return stretchFitBorderBoxBlockSize.transform([&](auto stretchFitSize) {
+                return std::max(stretchFitSize, borderAndPaddingBlockSize);
+            });
+        }
+        // The intrinsic sizing keywords are the block size of the content, once it is laid out (css-sizing-3 §3.2), and so is auto, but for
+        // the min block size, where it is zero.
+        if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
+            if (size.isAuto())
+                return borderAndPaddingBlockSize;
+        }
         return intrinsicContentBlockSize.transform([&](auto contentBlockSize) {
             return contentBlockSize + borderAndPaddingBlockSize;
         });
+    };
+    // A calc-size() with a keyword basis resolves its calculation with the size of the keyword (css-values-5 §11.1).
+    if (size.isCalcSize() && !size.isSpecified()) {
+        return keywordBorderBoxBlockSize().transform([&](auto basisBlockSize) {
+            return BlockFormattingUtils::calcSizeBorderBoxSize(size.calcSize(), style, basisBlockSize, borderAndPaddingBlockSize, containingBlockContentBoxBlockSize.value_or(0_lu));
+        });
     }
+    if (size.isStretch() || size.isIntrinsic())
+        return keywordBorderBoxBlockSize();
     if (!size.isSpecified())
         return { };
-    // A percentage of an indefinite height behaves as auto (CSS 2.2 §10.5).
-    if (size.isPercentOrCalculated() && !containingBlockContentBoxBlockSize)
+    if (isPercentageOfContainingBlock(size) && !containingBlockContentBoxBlockSize)
         return { };
     auto value = Style::evaluate<LayoutUnit>(size, containingBlockContentBoxBlockSize.value_or(0_lu), style.usedZoomForLength());
     if (style.boxSizing() == BoxSizing::BorderBox)
@@ -79,7 +110,7 @@ std::optional<LayoutUnit> BlockFormattingUtils::aspectRatioBorderBoxBlockSize(co
     CheckedRef style = box.style();
     // The intrinsic sizing keywords in the block axis are the automatic size (css-sizing-3 §3.2).
     auto& blockSize = style->logicalHeight(writingMode);
-    if (!style->aspectRatio().hasRatio() || !(blockSize.isAuto() || blockSize.isIntrinsic()) || blockSize.isCalcSize())
+    if (!style->aspectRatio().hasRatio() || !(blockSize.isAuto() || blockSize.isIntrinsic()))
         return { };
     auto ratio = style->logicalAspectRatio();
     if (!ratio || std::isnan(ratio))
@@ -90,11 +121,21 @@ std::optional<LayoutUnit> BlockFormattingUtils::aspectRatioBorderBoxBlockSize(co
             return std::max(verticalBorderAndPadding, LayoutUnit(borderBoxInlineSize / ratio));
         return LayoutUnit((borderBoxInlineSize - horizontalBorderAndPadding) / ratio) + verticalBorderAndPadding;
     }();
+    // The size the ratio gives is the basis of a calc-size().
+    if (blockSize.isCalcSize())
+        borderBoxBlockSize = calcSizeBorderBoxSize(blockSize.calcSize(), style.get(), borderBoxBlockSize, verticalBorderAndPadding, containingBlockContentBoxBlockSize.value_or(0_lu));
     // The intrinsic sizing keywords are the size the ratio gives (RenderBox::computeIntrinsicKeywordLogicalWidths), which they do not change.
     auto maximumBlockSize = borderBoxBlockSizeFor(style->logicalMaxHeight(writingMode), style.get(), verticalBorderAndPadding, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize);
-    auto minimumBlockSize = borderBoxBlockSizeFor(style->logicalMinHeight(writingMode), style.get(), verticalBorderAndPadding, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize);
-    if (!minimumBlockSize && intrinsicContentBlockSize && style->logicalMinHeight(writingMode).isAuto() && box.effectiveOverflowBlockDirection() == Overflow::Visible)
-        minimumBlockSize = std::min(*intrinsicContentBlockSize + verticalBorderAndPadding, maximumBlockSize.value_or(LayoutUnit::max()));
+    auto& minimumSize = style->logicalMinHeight(writingMode);
+    auto minimumBlockSize = [&] -> std::optional<LayoutUnit> {
+        if (!intrinsicContentBlockSize || !minimumSize.isAuto() || box.effectiveOverflowBlockDirection() != Overflow::Visible)
+            return borderBoxBlockSizeFor(minimumSize, style.get(), verticalBorderAndPadding, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize);
+        // The automatic minimum block size, which is also the basis of a calc-size().
+        auto automaticMinimumBlockSize = std::min(*intrinsicContentBlockSize + verticalBorderAndPadding, maximumBlockSize.value_or(LayoutUnit::max()));
+        if (!minimumSize.isCalcSize())
+            return automaticMinimumBlockSize;
+        return calcSizeBorderBoxSize(minimumSize.calcSize(), style.get(), automaticMinimumBlockSize, verticalBorderAndPadding, containingBlockContentBoxBlockSize.value_or(0_lu));
+    }();
     if (maximumBlockSize)
         borderBoxBlockSize = std::min(borderBoxBlockSize, *maximumBlockSize);
     if (minimumBlockSize)
@@ -128,7 +169,7 @@ bool BlockFormattingUtils::hasPercentageBlockSize(const RenderBox& box, WritingM
     CheckedRef style = box.style();
     // Stretch behaves like 100% (css-sizing-4 §6.7).
     auto dependsOnContainingBlock = [](auto& size) {
-        return size.isPercentOrCalculated() || size.isStretch();
+        return size.isPercentOrCalculated() || size.isStretch() || (size.isCalcSize() && size.calcSize().hasPercentage());
     };
     return dependsOnContainingBlock(style->logicalHeight(writingMode)) || dependsOnContainingBlock(style->logicalMinHeight(writingMode)) || dependsOnContainingBlock(style->logicalMaxHeight(writingMode));
 }
@@ -144,7 +185,7 @@ std::optional<LayoutUnit> BlockFormattingUtils::emptyEditableContentBlockSize(co
 
 bool BlockFormattingUtils::blockSizeBehavesAsAuto(const Style::PreferredSize& blockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize)
 {
-    return blockSize.isAuto() || blockSize.isIntrinsic() || ((blockSize.isPercentOrCalculated() || blockSize.isStretch()) && !containingBlockContentBoxBlockSize);
+    return blockSize.isAuto() || blockSize.isIntrinsic() || ((isPercentageOfContainingBlock(blockSize) || blockSize.isStretch()) && !containingBlockContentBoxBlockSize);
 }
 
 std::optional<LayoutUnit> BlockFormattingUtils::definiteContentBoxBlockSize(const RenderBox& box, const BoxGeometry& geometry, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode writingMode)
@@ -244,20 +285,26 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
     auto marginEnd = usedMargin(marginEndLength);
     // The stretch-fit inline size, auto margins as zero (css-sizing-3 §5.1).
     auto stretchFitInlineSize = std::max(borderAndPaddingInlineSize, containingBlockInlineSize - marginStart - marginEnd);
-    auto borderBoxInlineSizeFor = [&](auto& size) {
+    auto keywordBorderBoxInlineSizeFor = [&](auto& size) {
         if (size.isStretch())
             return stretchFitInlineSize;
-        if (size.isIntrinsic()) {
-            ASSERT(contentInlineSizes);
-            auto minContentSize = contentInlineSizes->minimum + borderAndPaddingInlineSize;
-            auto maxContentSize = contentInlineSizes->maximum + borderAndPaddingInlineSize;
-            if (size.isMinContent())
-                return minContentSize;
-            if (size.isMaxContent())
-                return maxContentSize;
-            // The fit-content size: the stretch-fit size, floored by the min-content size and capped by the max-content size.
-            return std::min(std::max(minContentSize, stretchFitInlineSize), maxContentSize);
-        }
+        ASSERT(contentInlineSizes);
+        auto minContentSize = contentInlineSizes->minimum + borderAndPaddingInlineSize;
+        auto maxContentSize = contentInlineSizes->maximum + borderAndPaddingInlineSize;
+        if (size.isMinContent())
+            return minContentSize;
+        if (size.isMaxContent())
+            return maxContentSize;
+        // The fit-content size: the stretch-fit size, floored by the min-content size and capped by the max-content size.
+        return std::min(std::max(minContentSize, stretchFitInlineSize), maxContentSize);
+    };
+    // A calc-size() with a keyword basis resolves its calculation with the size of the keyword (css-values-5 §11.1).
+    auto calcSizeBorderBoxInlineSizeFor = [&](auto& size, LayoutUnit basisInlineSize) {
+        return size.isCalcSize() ? calcSizeBorderBoxSize(size.calcSize(), style.get(), basisInlineSize, borderAndPaddingInlineSize, containingBlockInlineSize) : basisInlineSize;
+    };
+    auto borderBoxInlineSizeFor = [&](auto& size) {
+        if (size.isIntrinsicOrStretch())
+            return calcSizeBorderBoxInlineSizeFor(size, keywordBorderBoxInlineSizeFor(size));
         auto value = Style::evaluate<LayoutUnit>(size, containingBlockInlineSize, zoom);
         if (style->boxSizing() == BoxSizing::BorderBox)
             return std::max(value, borderAndPaddingInlineSize);
@@ -268,23 +315,32 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
         auto& inlineSize = style->logicalWidth(containingBlockWritingMode);
         if (inlineSize.isSpecified() || inlineSize.isIntrinsicOrStretch())
             return borderBoxInlineSizeFor(inlineSize);
-        if (aspectRatioBorderBoxInlineSize)
-            return *aspectRatioBorderBoxInlineSize;
-        // An auto inline size fits the content of a box justify-self aligns.
-        if (isAlignedByJustifySelf(box, containingBlockStyle)) {
-            ASSERT(contentInlineSizes);
-            return std::min(std::max(contentInlineSizes->minimum + borderAndPaddingInlineSize, stretchFitInlineSize), contentInlineSizes->maximum + borderAndPaddingInlineSize);
-        }
-        return stretchFitInlineSize;
+        auto autoInlineSize = [&] {
+            if (aspectRatioBorderBoxInlineSize)
+                return *aspectRatioBorderBoxInlineSize;
+            // An auto inline size fits the content of a box justify-self aligns.
+            if (isAlignedByJustifySelf(box, containingBlockStyle)) {
+                ASSERT(contentInlineSizes);
+                return std::min(std::max(contentInlineSizes->minimum + borderAndPaddingInlineSize, stretchFitInlineSize), contentInlineSizes->maximum + borderAndPaddingInlineSize);
+            }
+            return stretchFitInlineSize;
+        }();
+        return calcSizeBorderBoxInlineSizeFor(inlineSize, autoInlineSize);
     }();
     auto& maximumWidth = style->logicalMaxWidth(containingBlockWritingMode);
     auto& minimumWidth = style->logicalMinWidth(containingBlockWritingMode);
     auto maximum = maximumWidth.isSpecified() || maximumWidth.isIntrinsicOrStretch() ? borderBoxInlineSizeFor(maximumWidth) : LayoutUnit::max();
-    auto minimum = minimumWidth.isSpecified() || minimumWidth.isIntrinsicOrStretch() ? borderBoxInlineSizeFor(minimumWidth) : 0_lu;
-    if (hasAspectRatioAutomaticMinimumInlineSize(box, aspectRatioBorderBoxInlineSize, containingBlockWritingMode)) {
-        ASSERT(contentInlineSizes);
-        minimum = std::min(contentInlineSizes->minimum + borderAndPaddingInlineSize, maximum);
-    }
+    auto minimum = [&] {
+        if (minimumWidth.isSpecified() || minimumWidth.isIntrinsicOrStretch())
+            return borderBoxInlineSizeFor(minimumWidth);
+        // The automatic minimum inline size is zero, unless a preferred aspect ratio gives the inline size, where the content sizes already
+        // went through a calc-size() (BlockFormattingContext::computeInlineSizeAndMargins).
+        if (hasAspectRatioAutomaticMinimumInlineSize(box, aspectRatioBorderBoxInlineSize, containingBlockWritingMode)) {
+            ASSERT(contentInlineSizes);
+            return std::min(contentInlineSizes->minimum + borderAndPaddingInlineSize, maximum);
+        }
+        return calcSizeBorderBoxInlineSizeFor(minimumWidth, borderAndPaddingInlineSize);
+    }();
     // The limits a preferred aspect ratio transfers apply where the box has no min or max length or percentage of its own, within the one it
     // has (like RenderBox::constrainLogicalMinMaxSizesByAspectRatio).
     if (aspectRatioInlineSizeLimits) {

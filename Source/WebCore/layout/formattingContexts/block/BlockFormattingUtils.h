@@ -36,6 +36,7 @@ class RenderBox;
 
 namespace Style {
 class ComputedStyle;
+class UnevaluatedCalcSize;
 struct PreferredSize;
 }
 
@@ -72,6 +73,10 @@ public:
     static LayoutUnit justifySelfOffset(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit marginStart, LayoutUnit marginEnd, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
     // Its inline size, min inline size or max inline size is min-content, max-content or fit-content.
     static bool hasIntrinsicInlineSize(const RenderBox&, WritingMode);
+    // The border box size of a calc-size(): its calculation, with the size of its basis standing for `size` and percentages resolving against
+    // percentageBasis (css-values-5 §11.1, like RenderBox::resolveCalcSizeContentSize). Box-sizing decides whether `size` and the result
+    // are border box or content box sizes.
+    static LayoutUnit calcSizeBorderBoxSize(const Style::UnevaluatedCalcSize&, const Style::ComputedStyle&, LayoutUnit basisBorderBoxSize, LayoutUnit borderAndPadding, LayoutUnit percentageBasis);
     // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7), and the stretch-fit block size for
     // stretch (css-sizing-4 §6.1).
     static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, std::optional<LayoutUnit> intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
@@ -80,7 +85,8 @@ public:
     // size is the automatic minimum block size: the content's, capped by the max block size, unless the box is a scroll container. None without
     // a ratio or with a block size.
     static std::optional<LayoutUnit> aspectRatioBorderBoxBlockSize(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode, std::optional<LayoutUnit> intrinsicContentBlockSize = { });
-    // Its block-size, min-block-size or max-block-size is a percentage of the containing block's block size, or stretches to it.
+    // Its block-size, min-block-size or max-block-size is a percentage of the containing block's block size, has one in a calc-size(), or
+    // stretches to it.
     static bool hasPercentageBlockSize(const RenderBox&, WritingMode);
     // Its block-size, min-block-size or max-block-size is -webkit-fill-available.
     static bool hasFillAvailableBlockSize(const RenderBox&, WritingMode);
