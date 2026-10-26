@@ -1,4 +1,0 @@
-
-PASS Test copyTo on different contexts
-FAIL copyTo with RGBA works on VideoFrame with null format promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
-
