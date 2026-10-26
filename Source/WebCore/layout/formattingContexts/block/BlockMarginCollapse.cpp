@@ -53,7 +53,7 @@ bool BlockMarginCollapse::marginsCollapseThrough(const RenderBox& box, const Box
     if (style->logicalHeight(writingMode).isStretch() && stretchFitBorderBoxBlockSize)
         return !stretchFitSizeIsPositive;
     // Like RenderBlock::isSelfCollapsingBlock, which checks the height the box has.
-    if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), writingMode); aspectRatioBlockSize && *aspectRatioBlockSize > 0)
+    if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode); aspectRatioBlockSize && *aspectRatioBlockSize > 0)
         return false;
     // A zero or auto computed height (CSS 2.2 §8.3.1): not the sizing keywords, whose used size is the automatic one (like RenderBlock::isSelfCollapsingBlock).
     auto& blockSize = style->logicalHeight(writingMode);

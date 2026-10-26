@@ -455,7 +455,11 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
             return { };
         return computeIntrinsicInlineSizes(*blockContainer);
     }();
-    auto [borderBoxInlineSize, marginStart, marginEnd] = BlockFormattingUtils::inlineSizeAndMargins(box, geometry.horizontalBorderAndPadding(), containingBlockInlineSize, containingBlockStyle, contentInlineSizes);
+    // They apply to an inline size that is not a length or a percentage.
+    auto aspectRatioInlineSizeLimits = std::optional<std::pair<LayoutUnit, LayoutUnit>> { };
+    if (!style->logicalWidth(writingMode).isSpecified())
+        aspectRatioInlineSizeLimits = BlockFormattingUtils::aspectRatioInlineSizeLimits(box, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(geometry, containingBlockState), writingMode);
+    auto [borderBoxInlineSize, marginStart, marginEnd] = BlockFormattingUtils::inlineSizeAndMargins(box, geometry.horizontalBorderAndPadding(), containingBlockInlineSize, containingBlockStyle, contentInlineSizes, aspectRatioInlineSizeLimits);
     geometry.setContentBoxWidth(borderBoxInlineSize - geometry.horizontalBorderAndPadding());
     // Unlike border and padding, start and end margins follow the direction of the containing block.
     geometry.setHorizontalMargin({ marginStart, marginEnd });
@@ -483,29 +487,43 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
         CheckedRef style = box.style();
         auto zoom = style->usedZoomForLength();
         auto borderAndPadding = computeBorderAndPadding(box, 0_lu).horizontalBorderAndPadding();
-        // A size under a min-content and under a max-content constraint: a fixed size, or the content's for the sizing keywords.
-        auto contentBoxSizes = [&](auto& size) -> std::optional<IntrinsicWidthConstraints> {
+        // A size under a min-content and under a max-content constraint: a fixed size, or the box's own for the sizing keywords.
+        auto contentBoxSizes = [&](auto& size, IntrinsicWidthConstraints ownSizes) -> std::optional<IntrinsicWidthConstraints> {
             if (size.isFixed()) {
                 auto value = Style::evaluate<LayoutUnit>(size, 0_lu, zoom);
                 value = std::max(0_lu, style->boxSizing() == BoxSizing::BorderBox ? value - borderAndPadding : value);
                 return IntrinsicWidthConstraints { value, value };
             }
             if (size.isMinContent())
-                return IntrinsicWidthConstraints { contentSizes.minimum, contentSizes.minimum };
+                return IntrinsicWidthConstraints { ownSizes.minimum, ownSizes.minimum };
             if (size.isMaxContent())
-                return IntrinsicWidthConstraints { contentSizes.maximum, contentSizes.maximum };
+                return IntrinsicWidthConstraints { ownSizes.maximum, ownSizes.maximum };
             if (size.isFitContent())
-                return contentSizes;
+                return ownSizes;
             return { };
         };
         auto [minimum, maximum] = contentSizes;
-        if (auto sizes = contentBoxSizes(style->logicalWidth(writingMode)))
+        if (auto sizes = contentBoxSizes(style->logicalWidth(writingMode), contentSizes))
             std::tie(minimum, maximum) = std::pair { sizes->minimum, sizes->maximum };
-        if (auto sizes = contentBoxSizes(style->logicalMaxWidth(writingMode))) {
+        // A preferred aspect ratio that gives the auto block size transfers the fixed min and max block sizes (RenderBox::applyTransferredMinMaxSizesFromAspectRatio);
+        // coverage keeps out the others, which resolve against the containing block. The sizing keywords of the min and max inline sizes are the
+        // box's own sizes with them, which an indefinite maximum does not cap (css-sizing-4 §5.3, RenderBox::constrainIntrinsicLogicalWidthsByMinMax).
+        auto keywordSizes = contentSizes;
+        if (!style->logicalWidth(writingMode).isFixed() && style->logicalHeight(writingMode).isAuto()) {
+            auto verticalBorderAndPadding = computeBorderAndPadding(box, 0_lu).verticalBorderAndPadding();
+            if (auto limits = BlockFormattingUtils::aspectRatioInlineSizeLimits(box, borderAndPadding, verticalBorderAndPadding, { }, { }, writingMode)) {
+                auto transferredMinimum = std::max(0_lu, limits->first - borderAndPadding);
+                auto transferredMaximum = limits->second == LayoutUnit::max() ? LayoutUnit::max() : std::max(0_lu, limits->second - borderAndPadding);
+                minimum = std::clamp(minimum, transferredMinimum, transferredMaximum);
+                maximum = std::clamp(maximum, transferredMinimum, transferredMaximum);
+                keywordSizes = { std::clamp(contentSizes.minimum, transferredMinimum, transferredMaximum), std::clamp(contentSizes.maximum, transferredMinimum, transferredMaximum) };
+            }
+        }
+        if (auto sizes = contentBoxSizes(style->logicalMaxWidth(writingMode), keywordSizes)) {
             minimum = std::min(minimum, sizes->minimum);
             maximum = std::min(maximum, sizes->maximum);
         }
-        if (auto sizes = contentBoxSizes(style->logicalMinWidth(writingMode))) {
+        if (auto sizes = contentBoxSizes(style->logicalMinWidth(writingMode), keywordSizes)) {
             minimum = std::max(minimum, sizes->minimum);
             maximum = std::max(maximum, sizes->maximum);
         }
@@ -588,12 +606,8 @@ void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit i
 {
     auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
     auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(geometry, containingBlockState), root().writingMode());
-    if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, root().writingMode())) {
+    if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(geometry, containingBlockState), root().writingMode(), intrinsicContentBlockSize))
         blockSize = *aspectRatioBlockSize;
-        // The automatic minimum block size of a box that is not a scroll container is its content's (css-sizing-4 §5.1).
-        if (box.effectiveOverflowBlockDirection() == Overflow::Visible)
-            blockSize = std::max(blockSize, borderAndPaddingBlockSize + intrinsicContentBlockSize);
-    }
     geometry.setContentBoxHeight(blockSize - borderAndPaddingBlockSize);
 }
 
