@@ -21,6 +21,7 @@
 #pragma once
 
 #include <WebCore/BoxExtents.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/FrameDestructionObserver.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -33,7 +34,6 @@ namespace WebCore {
 class Document;
 class Element;
 class FloatRect;
-class FloatSize;
 class GraphicsContext;
 class IntRect;
 class LocalFrame;
@@ -89,7 +89,11 @@ public:
     // The height of the graphics context should be
     // (pageSizeInPixels.height() + 1) * number-of-pages - 1
     WEBCORE_EXPORT static void spoolAllPagesWithBoundaries(LocalFrame&, GraphicsContext&, const FloatSize& pageSizeInPixels);
-    
+
+    // Lays out to page area size without shrink-to-fit as WPT demands.
+    WEBCORE_EXPORT static FloatSize printedPageBoxesSize(LocalFrame&, const FloatSize& defaultPageBoxSizeInPixels, const FloatBoxExtent& defaultPageMarginInPixels);
+    WEBCORE_EXPORT static void spoolAllPageBoxes(LocalFrame&, GraphicsContext&, const FloatSize& defaultPageBoxSizeInPixels, const FloatBoxExtent& defaultPageMarginInPixels);
+
     // By imaging to a width a little wider than the available pixels,
     // thin pages will be scaled down a little, matching the way they
     // print in IE and Camino. This lets them use fewer sheets than they
@@ -108,6 +112,11 @@ private:
 
     void computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling);
     bool beginAndComputePageRectsWithPageSize(LocalFrame&, const FloatSize& pageSizeInPixels);
+    struct PageBox {
+        FloatSize size;
+        FloatBoxExtent margin;
+    };
+    std::optional<PageBox> beginWithPageBoxSize(const FloatSize& defaultPageBoxSizeInPixels, const FloatBoxExtent& defaultPageMarginInPixels);
     void collectLinkedDestinations(Document&);
     void outputLinkedDestinations(GraphicsContext&, Document&, const IntRect& pageRect);
 

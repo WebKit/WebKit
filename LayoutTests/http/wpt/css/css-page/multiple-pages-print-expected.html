@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<style>
+@page { margin: 0; }
+body { margin: 0; }
+.page { box-sizing: border-box; height: 288px; padding: 48px; }
+.page + .page { break-before: page; }
+.page > div { height: 192px; background: green; }
+.page + .page > div { background: blue; }
+</style>
+<div class="page"><div></div></div>
+<div class="page"><div></div></div>
