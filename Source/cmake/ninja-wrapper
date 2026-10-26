@@ -4,7 +4,19 @@ use warnings;
 use Cwd qw(getcwd);
 use File::Path qw(make_path);
 
-chomp(my $ninja = `which ninja 2>/dev/null` || `xcrun -f ninja`);
+my $ninja = $ENV{WK_NINJA};
+if (!$ninja) {
+    chomp($ninja = `which ninja 2>/dev/null` || `xcrun -f ninja 2>/dev/null`);
+}
+$ENV{WK_NINJA} = $ninja;
+
+# CMake runs us from wherever it was invoked, not from the build directory, so
+# a -C argument says where the build is.
+my $buildDir;
+for my $i (0 .. $#ARGV) {
+    $buildDir = $ARGV[$i + 1], last if $ARGV[$i] eq '-C';
+    $buildDir = $1, last if $ARGV[$i] =~ /^-C(.+)$/;
+}
 
 # CMake configuration
 if (grep({ /^-t/ || /^--version$/ } @ARGV)) {
@@ -15,14 +27,7 @@ if (grep({ /^-t/ || /^--version$/ } @ARGV)) {
     my ($toolIndex) = grep({ $ARGV[$_] eq '-t' } 0 .. $#ARGV);
     my $isRestat = defined($toolIndex) && ($ARGV[$toolIndex + 1] // '') eq 'restat';
 
-    # CMake runs us from wherever it was invoked, not from the build directory, so
-    # cleandead has to be told where to look. try_compile scratch builds get their
-    # own restat; skip those, they are disposable.
-    my $buildDir;
-    for my $i (0 .. $#ARGV) {
-        $buildDir = $ARGV[$i + 1], last if $ARGV[$i] eq '-C';
-        $buildDir = $1, last if $ARGV[$i] =~ /^-C(.+)$/;
-    }
+    # try_compile scratch builds get their own restat; skip those, they are disposable.
     my $isScratch = getcwd() =~ m{/CMakeFiles/} || ($buildDir // '') =~ m{/CMakeFiles/};
 
     if ($isRestat && !$isScratch && !$ENV{WK_DISABLE_CLEANDEAD} && !grep({ /^-f/ } @ARGV)) {
@@ -66,11 +71,12 @@ if (!defined($bundlePolicy)) {
     # Only dirty unified-source bundles matter: links, code signing, Swift and copy steps that
     # follow any edit used to push a one-file change past the threshold (a WebKit .cpp edit is
     # 9 commands, a JavaScriptCore one 30), so NoBundle never kicked in for the big frameworks.
-    my $dirtyBundles = () = $dryRun =~ m{^\[\d+/\d+\] Building \S+ object \S*/unified-sources/UnifiedSource}mg;
+    my $dirtyBundles = () = $dryRun =~ m{^\[\d+/\d+\] Building \S+ object \S*/unified-sources/[A-Za-z]*UnifiedSource}mg;
+    my $threshold = $ENV{WK_UNIFIED_SOURCES_NOBUNDLE_THRESHOLD} // 8;
 
     if ($dryRun =~ /\bRe-running CMake\b/) {
         $bundlePolicy = "Bundle";
-    } elsif ($dirtyBundles > 8) {
+    } elsif ($dirtyBundles > $threshold) {
         $bundlePolicy = "Bundle";
     } else {
         $bundlePolicy = "NoBundle";
@@ -78,7 +84,7 @@ if (!defined($bundlePolicy)) {
         # instead of letting each one default to all cores.
         $ENV{WK_UNIFIED_SOURCES_DIRTY_BUNDLES} = $dirtyBundles;
         if ($dirtyBundles > 0 && !defined($ENV{WK_UNIFIED_SOURCES_MEMBER_JOBS})) {
-            chomp(my $cores = `sysctl -n hw.activecpu 2>/dev/null` || 8);
+            chomp(my $cores = `nproc 2>/dev/null` || `sysctl -n hw.activecpu 2>/dev/null` || 8);
             my $jobs = int($cores / $dirtyBundles);
             $ENV{WK_UNIFIED_SOURCES_MEMBER_JOBS} = $jobs < 2 ? 2 : $jobs;
         }
@@ -88,11 +94,13 @@ if (!defined($bundlePolicy)) {
 }
 
 # Record the bundle policy for inspection; nothing reads this file.
-make_path("DerivedSources");
-if (open(my $fh, '>', "DerivedSources/unified-sources-bundle-policy")) {
+my $derivedSources = defined($buildDir) ? "$buildDir/DerivedSources" : "DerivedSources";
+make_path($derivedSources);
+if (open(my $fh, '>', "$derivedSources/unified-sources-bundle-policy")) {
     print($fh $bundlePolicy);
     close($fh);
 }
 
 print('ninja: Entering directory `' . getcwd() . "'\n");
-exec('/usr/bin/caffeinate', '-i', $ninja, @ARGV);
+my @caffeinate = -x '/usr/bin/caffeinate' ? ('/usr/bin/caffeinate', '-i') : ();
+exec(@caffeinate, $ninja, @ARGV);

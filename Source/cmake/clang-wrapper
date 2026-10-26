@@ -1,13 +1,13 @@
 #!/bin/bash
 #
-# clang-wrapper <compile-command...>
+# clang-wrapper [--wk-merge-flags=<flags>] <compile-command...>
 #
 # When WK_UNIFIED_SOURCES_BUNDLE_POLICY is "Bundle", or when compiling
 # a non-unified-source file, this script is a simple pass-through.
 #
 # Otherwise, this script makes N copies of <compile-command...>, one for each
-# unified source bundle member, and uses ninja + clang + libtool to compile
-# each one and then merge the results into a unified .o and .d file.
+# unified source bundle member, and uses ninja + the compiler driver to compile
+# each one and then merge the results (ld -r) into a unified .o and .d file.
 #
 # The end result is as-if we built the unified bundle, but with the performance
 # of building indivdiual member files with individual dependency tracking.
@@ -18,19 +18,36 @@
 #
 # Bundling is purely an optimization decision. Either policy is always valid.
 #
+# Options that start with --wk- are consumed by this wrapper; CMake uses them
+# to pass toolchain-specific flags for the merge step (WebKitCCache.cmake).
+#
 # The pass-through path is bash to minimize startup cost. The NoBundle path
 # re-execs this same file under perl -x, which skips ahead to the perl
 # shebang below.
 
 if [[ "$WK_UNIFIED_SOURCES_BUNDLE_POLICY" != NoBundle ]]; then
+    while [[ "$1" == --wk-* ]]; do
+        shift
+    done
     exec "$@"
 fi
 
-exec /usr/bin/perl -x "$0" "$@"
+exec perl -x "$0" "$@"
 
 #!/usr/bin/perl
 use strict;
 use warnings;
+
+# Wrapper options come first.
+my $mergeFlags = '';
+while (@ARGV && $ARGV[0] =~ /^--wk-/) {
+    my $option = shift(@ARGV);
+    if ($option =~ /^--wk-merge-flags=(.*)$/) {
+        $mergeFlags = $1;
+    } else {
+        die("clang-wrapper: unknown option $option\n");
+    }
+}
 
 # Extract the flags that describe our input and output, and preserve the rest
 # for reuse in our ninja commands.
@@ -60,7 +77,7 @@ for (my $i = 0; $i < scalar(@ARGV); ++$i) {
 }
 
 # Pass through non-unified sources.
-if ($sourceFile !~ m{/unified-sources/UnifiedSource}) {
+if (!defined($sourceFile) || $sourceFile !~ m{/unified-sources/[A-Za-z]*UnifiedSource}) {
     exec(@ARGV);
 }
 
@@ -101,6 +118,8 @@ my $memberObjectList = join(' ', @memberObjects);
 my $memberDepList = join(' ', map { "$_.d" } @memberObjects);
 
 # Rule bodies are literal: $cc_prefix, $in, $out, etc. are all ninja variables.
+# "ld -r" keeps every symbol of its inputs on ELF; Mach-O additionally needs
+# -keep_private_externs, which CMake passes through --wk-merge-flags.
 my $rules = <<'END_OF_RULES';
 rule cc
   command = $cc_prefix -MD -MT $out -MF $out.d -o $out -c $in
@@ -108,7 +127,7 @@ rule cc
   description = member $in
 
 rule merge
-  command = $cc_prefix -Qunused-arguments -r -nostdlib -Wl,-keep_private_externs -o $out $in && cat $member_deps > $bundle_dep
+  command = $cc_prefix $merge_flags -r -nostdlib -o $out $in && cat $member_deps > $bundle_dep
   description = merge $out
 END_OF_RULES
 
@@ -116,6 +135,7 @@ my $buildNinja = <<"END_OF_NINJA";
 ninja_required_version = 1.3
 builddir = $membersFolder
 cc_prefix = $ccPrefix
+merge_flags = $mergeFlags
 bundle_dep = $quotedDepFile
 member_deps = $memberDepList
 $rules
@@ -126,7 +146,10 @@ END_OF_NINJA
 
 writeFileIfChanged("$membersFolder/build.ninja", $buildNinja);
 
-chomp(my $ninja = `which ninja 2>/dev/null` || `xcrun -f ninja`);
+my $ninja = $ENV{WK_NINJA};
+if (!$ninja) {
+    chomp($ninja = `which ninja 2>/dev/null` || `xcrun -f ninja 2>/dev/null`);
+}
 my @jobs = $ENV{WK_UNIFIED_SOURCES_MEMBER_JOBS} ? ('-j', $ENV{WK_UNIFIED_SOURCES_MEMBER_JOBS}) : ();
 exec($ninja, '--quiet', @jobs, '-f', "$membersFolder/build.ninja");
 die("exec ninja: $!\n");

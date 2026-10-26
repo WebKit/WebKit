@@ -88,6 +88,15 @@ endif ()
 
 if (APPLE AND CMAKE_GENERATOR STREQUAL "Ninja")
     set(_clang_wrapper "${CMAKE_SOURCE_DIR}/Source/cmake/clang-wrapper")
-    list(INSERT CMAKE_CXX_COMPILER_LAUNCHER 0 "${_clang_wrapper}")
-    list(INSERT CMAKE_OBJCXX_COMPILER_LAUNCHER 0 "${_clang_wrapper}")
+    # Flags for the member merge step, which reuses the compile flags as a link
+    # command line. Only clang complains about compile-only flags when linking.
+    set(_merge_flags "")
+    if (COMPILER_IS_CLANG)
+        set(_merge_flags "-Qunused-arguments")
+    endif ()
+    if (APPLE)
+        string(APPEND _merge_flags " -Wl,-keep_private_externs")
+    endif ()
+    list(INSERT CMAKE_CXX_COMPILER_LAUNCHER 0 "${_clang_wrapper}" "--wk-merge-flags=${_merge_flags}")
+    list(INSERT CMAKE_OBJCXX_COMPILER_LAUNCHER 0 "${_clang_wrapper}" "--wk-merge-flags=${_merge_flags}")
 endif ()
