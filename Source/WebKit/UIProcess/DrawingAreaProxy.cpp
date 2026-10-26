@@ -163,4 +163,20 @@ void DrawingAreaProxy::removeOutstandingPresentationUpdateCallback(IPC::Connecti
     m_outstandingPresentationUpdateCallbacks.remove({ connection.uniqueID(), callbackID });
 }
 
+void DrawingAreaProxy::flushOutstandingPresentationUpdateCallbacks(IPC::Connection& connection)
+{
+    Vector<AsyncReplyID> callbackIDs;
+    m_outstandingPresentationUpdateCallbacks.removeIf([&](auto& entry) {
+        if (entry.first != connection.uniqueID())
+            return false;
+        callbackIDs.append(entry.second);
+        return true;
+    });
+
+    for (auto callbackID : callbackIDs) {
+        if (auto callback = connection.takeAsyncReplyHandler(callbackID))
+            callback(nullptr, nullptr);
+    }
+}
+
 } // namespace WebKit

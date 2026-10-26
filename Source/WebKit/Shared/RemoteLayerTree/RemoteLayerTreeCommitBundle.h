@@ -34,6 +34,7 @@
 #include <WebCore/FixedContainerEdges.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/LayoutUnit.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/ViewportArguments.h>
 #include <optional>
 #include <wtf/Vector.h>
@@ -109,6 +110,7 @@ struct RemoteLayerTreeCommitBundle {
     std::optional<EditorState> editorState;
 
     TransactionID transactionID;
+    WebCore::PageIdentifier webPageID;
     MonotonicTime startTime;
 
 #if !defined(NDEBUG) || !LOG_DISABLED

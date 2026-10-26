@@ -165,6 +165,8 @@ protected:
 
     void removeOutstandingPresentationUpdateCallback(IPC::Connection&, AsyncReplyID);
 
+    void flushOutstandingPresentationUpdateCallbacks(IPC::Connection&);
+
 private:
     virtual void sizeDidChange() = 0;
 
