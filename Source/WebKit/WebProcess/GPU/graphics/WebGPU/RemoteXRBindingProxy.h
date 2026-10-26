@@ -34,10 +34,6 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <WebCore/WebGPUDevice.h>
 
-namespace WebCore {
-class WebXRFrame;
-}
-
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;

@@ -32,7 +32,6 @@
 #include "RemoteTextureProxy.h"
 #include "RemoteXRSubImageMessages.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/ImageBuffer.h>
 #include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {

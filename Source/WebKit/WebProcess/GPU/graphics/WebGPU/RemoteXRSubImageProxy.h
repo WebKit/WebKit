@@ -32,11 +32,6 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <WebCore/WebGPUDevice.h>
 
-namespace WebCore {
-class ImageBuffer;
-class NativeImage;
-}
-
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
