@@ -33,6 +33,7 @@
 #include "OutOfFlowGeometry.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderTable.h"
 #include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -482,8 +483,20 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
 
 // Goes through the block items of the block container's content the way layout does, collecting the outer min-content and max-content
 // contributions of the boxes in it (§5.2).
+// A box with inline size containment measures as if it had no content, by contain-intrinsic-inline-size (css-contain-2 §3.3,
+// RenderBlockFlow::computeIntrinsicLogicalWidths).
+static std::optional<IntrinsicWidthConstraints> containedIntrinsicInlineSizes(const RenderBox& box)
+{
+    if (!box.shouldApplySizeOrInlineSizeContainment())
+        return { };
+    auto inlineSize = box.explicitIntrinsicInnerLogicalWidth().value_or(0_lu);
+    return IntrinsicWidthConstraints { inlineSize, inlineSize };
+}
+
 IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const
 {
+    if (auto sizes = containedIntrinsicInlineSizes(blockContainer))
+        return *sizes;
     if (blockContainer.childrenInline())
         return blockContainer.firstChild() ? LayoutIntegration::BlockIntegrationUtils::inlineContentIntrinsicInlineSizes(blockContainer) : IntrinsicWidthConstraints { };
 
@@ -578,6 +591,8 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
             break;
         case BlockItem::Type::BlockContainerEnd: {
             auto contentSizes = blockContainerSizes.takeLast();
+            if (auto sizes = containedIntrinsicInlineSizes(box))
+                contentSizes = *sizes;
             addContribution(blockContainerSizes.last(), outerInlineSizes(box, contentSizes));
             break;
         }
@@ -637,6 +652,10 @@ std::optional<LayoutUnit> BlockFormattingContext::stretchFitBorderBoxBlockSize(c
 
 void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState& containingBlockState, BoxGeometry& geometry) const
 {
+    // A box with size containment is sized as if it had no content, by contain-intrinsic-block-size (css-contain-2 §3.2,
+    // RenderBox::overrideLogicalHeightForSizeContainment).
+    if (box.shouldApplySizeContainment())
+        intrinsicContentBlockSize = box.explicitIntrinsicInnerLogicalHeight().value_or(0_lu);
     auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
     auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), root().writingMode());
     if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), root().writingMode(), intrinsicContentBlockSize))
