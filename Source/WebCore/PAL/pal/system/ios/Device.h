@@ -27,7 +27,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#include <optional>
 #include <wtf/Forward.h>
 
 namespace PAL {
@@ -42,9 +41,6 @@ PAL_EXPORT bool deviceClassIsDesktop();
 PAL_EXPORT bool deviceClassIsSmallScreen();
 
 PAL_EXPORT bool deviceClassIsVision();
-
-PAL_EXPORT bool deviceClassIsHomeView();
-PAL_EXPORT void setDeviceClassIsHomeViewForTesting(std::optional<bool>);
 
 // FIXME: How does this differ from !deviceClassIsSmallScreen()?
 PAL_EXPORT bool deviceHasIPadCapability();

@@ -152,13 +152,6 @@
             ]
         },
         {
-            "bugs": ["rdar://133423460"],
-            "matches": ["*://*.bing.com/*"],
-            "available": "appleTV",
-            "environment": "HomeView",
-            "behaviors": [{ "id": "ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk" }]
-        },
-        {
             "bugs": ["rdar://187475153"],
             "matches": ["*://*.box.com/*"],
             "behaviors": [{ "id": "NeedsBoxAnnotationQuirk", "elementSelector": ".ba-RegionCreation-creator" }]
@@ -335,8 +328,7 @@
         {
             "bugs": ["rdar://151715964"],
             "matches": ["*://*.disneyplus.com/*"],
-            "available": "appleTV",
-            "environment": "HomeView",
+            "available": "iOSFamily && desktopContentModeQuirks",
             "behaviors": [{ "id": "NeedsZeroMaxTouchPointsQuirk" }]
         },
         {
@@ -405,12 +397,6 @@
                     "elementSelector": ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"
                 }
             ]
-        },
-        {
-            "matches": ["*://*.facebook.com/*"],
-            "available": "appleTV",
-            "environment": "HomeView",
-            "behaviors": [{ "id": "ShouldFlipScreenDimensionsQuirk", "bugs": ["rdar://133768147"] }]
         },
         {
             "matches": ["*://*.facebook.com/*"],
@@ -598,16 +584,16 @@
         },
         {
             "matches": ["*://play.hbomax.com/*"],
-            "behaviors": [{ "id": "ShouldDisableAdSkippingInPip", "bugs": ["rdar://158430821"] }]
-        },
-        {
-            "matches": ["*://play.hbomax.com/*"],
-            "available": "appleTV",
-            "environment": "HomeView",
             "behaviors": [
-                { "id": "NeedsZeroMaxTouchPointsQuirk", "bugs": ["rdar://138424489"] },
+                { "id": "ShouldDisableAdSkippingInPip", "bugs": ["rdar://158430821"] },
                 { "id": "ShouldSupportHoverMediaQueriesQuirk", "bugs": ["rdar://138806698"] }
             ]
+        },
+        {
+            "bugs": ["rdar://138424489"],
+            "matches": ["*://play.hbomax.com/*"],
+            "available": "desktopContentModeQuirks",
+            "behaviors": [{ "id": "NeedsZeroMaxTouchPointsQuirk" }]
         },
         {
             "bugs": ["rdar://61788722"],
@@ -1062,10 +1048,6 @@
             ]
         },
         {
-            "matches": ["*://*.spotify.com/*"],
-            "behaviors": [{ "id": "ShouldFlipScreenDimensionsQuirk", "bugs": ["rdar://133423460"] }]
-        },
-        {
             "bugs": ["rdar://142573562"],
             "matches": ["*://*.steampowered.com/*"],
             "behaviors": [{ "id": "ShouldTreatAddingMouseOutEventListenerAsContentChange" }]
@@ -1267,8 +1249,7 @@
         },
         {
             "matches": ["*://*.webex.com/*"],
-            "available": "appleTV",
-            "environment": "HomeView",
+            "available": "iOSFamily && desktopContentModeQuirks",
             "behaviors": [
                 {
                     "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",

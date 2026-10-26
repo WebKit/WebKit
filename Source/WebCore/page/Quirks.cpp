@@ -109,7 +109,6 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include <pal/system/ios/Device.h>
 #include <pal/system/ios/UserInterfaceIdiom.h>
 #endif
 
@@ -168,6 +167,8 @@ static HashMap<RegistrableDomain, String>& LEGACY_NODELETE updatableStorageAcces
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/QuirksAdditions.cpp>
 #else
+static inline bool LEGACY_NODELETE needsDesktopUserAgentInternal(const URL&) { return false; }
+static inline bool LEGACY_NODELETE shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(const URL&) { return false; }
 static inline bool LEGACY_NODELETE shouldNotAutoUpgradeToHTTPSNavigationInternal(const URL&) { return false; }
 static inline bool LEGACY_NODELETE shouldDisableBlobFileAccessEnforcementInternal() { return false; }
 static inline bool LEGACY_NODELETE needsConsistentQueryParameterFilteringInternal(const URL&) { return false; }
@@ -847,21 +848,7 @@ std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const
 
 bool Quirks::needsDesktopUserAgent(const URL& url)
 {
-#if PLATFORM(APPLETV)
-    if (!PAL::deviceClassIsHomeView())
-        return false;
-
-    auto domain = RegistrableDomain(url).string();
-    if (domain == "messenger.com"_s || domain == "netflix.com"_s || domain == "webex.com"_s || domain == "hulu.com"_s || domain.startsWith("zoom."_s)
-        || domain == "tiktok.com"_s || domain == "disneyplus.com"_s || domain == "max.com"_s)
-        return true;
-
-    if (url.host() == "meet.google.com"_s || (url.host() == "apps.google.com"_s && url.path().endsWith("/meet/"_s)))
-        return true;
-#else
-    UNUSED_PARAM(url);
-#endif
-    return false;
+    return needsDesktopUserAgentInternal(url);
 }
 
 bool Quirks::needsPartitionedCookies(const ResourceRequest& request)
@@ -946,33 +933,12 @@ String Quirks::standardUserAgentWithApplicationNameIncludingCompatOverrides(cons
 
 std::optional<TargetedElementSelectors> Quirks::defaultVisibilityAdjustmentSelectors(const URL& requestURL)
 {
-#if PLATFORM(APPLETV)
-    if (!PAL::deviceClassIsHomeView())
-        return { };
-
-    // FIXME: Remove this quirk when rdar://133550268 is addressed.
-    if (equalIgnoringASCIICase(requestURL.host(), "accounts.google.com"_s) && requestURL.path().endsWithIgnoringASCIICase("/signin/identifier"_s))
-        return { { { "div[data-tag*='passkey_first_auth_factor_error'] iframe"_s } } };
-
-    auto domain = RegistrableDomain(requestURL).string();
-    // FIXME: Remove this quirk when rdar://133550051 is addressed.
-    if (equalIgnoringASCIICase(domain, "goal.com"_s))
-        return { { { "div.modal_modal___IHnY.component-modal.modal_fade-in__PHe0E"_s } } };
-
-    // FIXME: Remove this quirk when rdar://133564017 is addressed.
-    if (equalIgnoringASCIICase(domain, "latimes.com"_s)) {
-        return { {
-            { "modality-custom-element[name^=metering]"_s },
-            { "DIV.modality-content"_s },
-        } };
-    }
-
-    if (equalIgnoringASCIICase(domain, "loveandlemons.com"_s))
-        return { { { "div#subscribe-popup"_s } } };
+#if ENABLE(VISIBILITY_ADJUSTMENT_QUIRKS)
+    return defaultVisibilityAdjustmentSelectorsInternal(requestURL);
 #else
     UNUSED_PARAM(requestURL);
-#endif
     return { };
+#endif
 }
 
 Vector<String, 1> Quirks::scriptsToEvaluateBeforeRunningScriptFromURL(const URL& scriptURL)
@@ -1338,6 +1304,14 @@ void Quirks::determineRelevantQuirks()
 
     Ref document = *protect(m_document);
     m_quirksData.merge(resolveSiteSpecificQuirks(quirksURL, documentURL(), document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No));
+
+#if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
+    // rdar://133423460
+    m_quirksData.setEnabled(QuirkBehaviorID::ShouldFlipScreenDimensionsQuirk, shouldFlipScreenDimensionsInternal(quirksURL));
+#endif
+
+    // rdar://133423460
+    m_quirksData.setEnabled(QuirkBehaviorID::ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk, shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(quirksURL));
 
 #if PLATFORM(IOS)
     // Use the opt-in Document tracks while parsing and freezes afterwards, rather than the live

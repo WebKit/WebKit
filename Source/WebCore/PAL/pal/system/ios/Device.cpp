@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include <mutex>
-#include <optional>
 #include <pal/spi/ios/MobileGestaltSPI.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
@@ -58,26 +57,6 @@ bool deviceClassIsVision()
 #if PLATFORM(VISION)
     static auto deviceClass = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
     return deviceClass == MGDeviceClassRealityDevice;
-#else
-    return false;
-#endif
-}
-
-static std::optional<bool> s_deviceClassIsHomeViewForTesting;
-
-void setDeviceClassIsHomeViewForTesting(std::optional<bool> value)
-{
-    s_deviceClassIsHomeViewForTesting = value;
-}
-
-bool deviceClassIsHomeView()
-{
-    if (s_deviceClassIsHomeViewForTesting)
-        return *s_deviceClassIsHomeViewForTesting;
-
-#if PLATFORM(APPLETV)
-    static auto deviceClass = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
-    return deviceClass == MGDeviceClassHomeAccessory;
 #else
     return false;
 #endif
