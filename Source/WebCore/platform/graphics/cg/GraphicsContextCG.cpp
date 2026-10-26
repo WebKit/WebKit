@@ -200,6 +200,75 @@ static void setCGContextPath(CGContextRef context, const Path& path)
     addToCGContextPath(context, path);
 }
 
+static FloatRect strokedPathBoundingBox(CGContextRef context, NOESCAPE const Invocable<void()> auto& addPathAndStrokeStyle)
+{
+    CGContextStateSaver stateSaver(context);
+    addPathAndStrokeStyle();
+    CGContextReplacePathWithStrokedPath(context);
+    FloatRect bounds = CGContextGetPathBoundingBox(context);
+    CGContextBeginPath(context);
+    return bounds;
+}
+
+#if !HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
+// Older transparency layers are bounded by the clip, so content outside of it would lose its shadow.
+void GraphicsContextCG::paintGradientInCGLayer(Gradient& gradient, const AffineTransform& gradientSpaceTransform, const FloatRect& contentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip)
+{
+    FloatRect layerBounds = enclosingIntRect(contentBounds);
+    if (layerBounds.isEmpty())
+        return;
+
+    const RetainPtr<CGContextRef>& context = contextForDraw();
+    FloatSize layerSize = getCTM().mapSize(layerBounds.size());
+    RetainPtr layer = adoptCF(CGLayerCreateWithContext(context.get(), layerSize, 0));
+    RetainPtr layerContext = CGLayerGetContext(layer.get());
+
+    CGContextScaleCTM(layerContext.get(), layerSize.width() / layerBounds.width(), layerSize.height() / layerBounds.height());
+    CGContextTranslateCTM(layerContext.get(), -layerBounds.x(), -layerBounds.y());
+    clip(layerContext.get());
+    CGContextConcatCTM(layerContext.get(), gradientSpaceTransform);
+    gradient.paint(layerContext.get());
+    CGContextDrawLayerInRect(context.get(), layerBounds, layer.get());
+}
+#endif
+
+void GraphicsContextCG::paintGradientInClip(Gradient& gradient, const AffineTransform& gradientSpaceTransform, NOESCAPE const Invocable<FloatRect()> auto& computeContentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip)
+{
+    bool hasDropShadow = this->hasDropShadow();
+#if !HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
+    if (hasDropShadow) {
+        paintGradientInCGLayer(gradient, gradientSpaceTransform, computeContentBounds(), clip);
+        return;
+    }
+#endif
+
+    const RetainPtr<CGContextRef>& context = contextForDraw();
+
+    // The clip has to be applied inside the transparency layer, otherwise it would also clip away the shadow.
+    // Passing the content bounds to CGContextBeginTransparencyLayerWithRect() would lose the shadow of content
+    // outside the clip (rdar://190563103), so bound the layer with a clip covering the content and its shadow.
+    if (hasDropShadow) {
+        auto layerBounds = boundsIncludingDropShadow(computeContentBounds());
+        CGContextSaveGState(context.get());
+        CGContextClipToRect(context.get(), layerBounds);
+        CGContextBeginTransparencyLayer(context.get(), nullptr);
+#if !HAVE(FIX_FOR_RADAR_190563103)
+        // FIXME: Remove this workaround once the system framework rdar://190563103 is fixed.
+        CGContextClearRect(context.get(), layerBounds);
+#endif
+    }
+    {
+        CGContextStateSaver stateSaver(context.get());
+        clip(context.get());
+        CGContextConcatCTM(context.get(), gradientSpaceTransform);
+        gradient.paint(*this);
+    }
+    if (hasDropShadow) {
+        CGContextEndTransparencyLayer(context.get());
+        CGContextRestoreGState(context.get());
+    }
+}
+
 static void drawPathWithCGContext(CGContextRef context, CGPathDrawingMode drawingMode, const Path& path)
 {
     CGContextDrawPathDirect(context, drawingMode, protect(path.platformPath()), nullptr);
@@ -775,37 +844,15 @@ void GraphicsContextCG::fillPath(const Path& path)
     const RetainPtr<CGContextRef>& context = contextForDraw();
 
     if (RefPtr fillGradient = this->fillGradient()) {
-        if (hasDropShadow()) {
-            FloatRect rect = path.fastBoundingRect();
-            FloatSize layerSize = getCTM().mapSize(rect.size());
-
-            auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
-            RetainPtr layerContext = CGLayerGetContext(layer.get());
-
-            CGContextScaleCTM(layerContext, layerSize.width() / rect.width(), layerSize.height() / rect.height());
-            CGContextTranslateCTM(layerContext, -rect.x(), -rect.y());
-            setCGContextPath(layerContext, path);
-            CGContextConcatCTM(layerContext, fillGradientSpaceTransform());
-
+        paintGradientInClip(*fillGradient, fillGradientSpaceTransform(), [&] {
+            return path.fastBoundingRect();
+        }, [&](CGContextRef clipContext) {
+            setCGContextPath(clipContext, path);
             if (fillRule() == WindRule::EvenOdd)
-                CGContextEOClip(layerContext);
+                CGContextEOClip(clipContext);
             else
-                CGContextClip(layerContext);
-
-            fillGradient->paint(layerContext);
-            CGContextDrawLayerInRect(context, rect, layer.get());
-        } else {
-            setCGContextPath(context, path);
-            CGContextStateSaver stateSaver(context);
-            CGContextConcatCTM(context, fillGradientSpaceTransform());
-
-            if (fillRule() == WindRule::EvenOdd)
-                CGContextEOClip(context);
-            else
-                CGContextClip(context);
-
-            fillGradient->paint(*this);
-        }
+                CGContextClip(clipContext);
+        });
 
         return;
     }
@@ -824,44 +871,16 @@ void GraphicsContextCG::strokePath(const Path& path)
     const RetainPtr<CGContextRef>& context = contextForDraw();
 
     if (RefPtr strokeGradient = this->strokeGradient()) {
-        if (hasDropShadow()) {
-            FloatRect rect = path.fastBoundingRect();
-            float lineWidth = strokeThickness();
-            float doubleLineWidth = lineWidth * 2;
-            float adjustedWidth = ceilf(rect.width() + doubleLineWidth);
-            float adjustedHeight = ceilf(rect.height() + doubleLineWidth);
-
-            FloatSize layerSize = getCTM().mapSize(FloatSize(adjustedWidth, adjustedHeight));
-
-            auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
-            RetainPtr layerContext = CGLayerGetContext(layer.get());
-            CGContextSetLineWidth(layerContext, lineWidth);
-
-            // Compensate for the line width, otherwise the layer's top-left corner would be
-            // aligned with the rect's top-left corner. This would result in leaving pixels out of
-            // the layer on the left and top sides.
-            float translationX = lineWidth - rect.x();
-            float translationY = lineWidth - rect.y();
-            CGContextScaleCTM(layerContext, layerSize.width() / adjustedWidth, layerSize.height() / adjustedHeight);
-            CGContextTranslateCTM(layerContext, translationX, translationY);
-
-            setCGContextPath(layerContext, path);
-            CGContextReplacePathWithStrokedPath(layerContext);
-            CGContextClip(layerContext);
-            CGContextConcatCTM(layerContext, strokeGradientSpaceTransform());
-            strokeGradient->paint(layerContext);
-
-            float destinationX = roundf(rect.x() - lineWidth);
-            float destinationY = roundf(rect.y() - lineWidth);
-            CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer.get());
-        } else {
-            CGContextStateSaver stateSaver(context);
-            setCGContextPath(context, path);
-            CGContextReplacePathWithStrokedPath(context);
-            CGContextClip(context);
-            CGContextConcatCTM(context, strokeGradientSpaceTransform());
-            strokeGradient->paint(*this);
-        }
+        paintGradientInClip(*strokeGradient, strokeGradientSpaceTransform(), [&] {
+            return strokedPathBoundingBox(context.get(), [&] {
+                setCGContextPath(context.get(), path);
+            });
+        }, [&](CGContextRef clipContext) {
+            CGContextSetLineWidth(clipContext, strokeThickness());
+            setCGContextPath(clipContext, path);
+            CGContextReplacePathWithStrokedPath(clipContext);
+            CGContextClip(clipContext);
+        });
         return;
     }
 
@@ -906,30 +925,12 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, RequiresClipToRect requi
 
 void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
-    const RetainPtr<CGContextRef>& context = contextForDraw();
-
-    CGContextStateSaver stateSaver(context);
-    if (hasDropShadow()) {
-        FloatSize layerSize = getCTM().mapSize(rect.size());
-
-        auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
-        RetainPtr layerContext = CGLayerGetContext(layer.get());
-
-        CGContextScaleCTM(layerContext, layerSize.width() / rect.width(), layerSize.height() / rect.height());
-        CGContextTranslateCTM(layerContext, -rect.x(), -rect.y());
-        CGContextAddRect(layerContext, rect);
-        CGContextClip(layerContext);
-
-        CGContextConcatCTM(layerContext, gradientSpaceTransform);
-        gradient.paint(layerContext);
-        CGContextDrawLayerInRect(context, rect, layer.get());
-    } else {
-        if (requiresClipToRect == RequiresClipToRect::Yes)
-            CGContextClipToRect(context, rect);
-
-        CGContextConcatCTM(context, gradientSpaceTransform);
-        gradient.paint(*this);
-    }
+    paintGradientInClip(gradient, gradientSpaceTransform, [&] {
+        return rect;
+    }, [&](CGContextRef clipContext) {
+        if (requiresClipToRect == RequiresClipToRect::Yes || hasDropShadow())
+            CGContextClipToRect(clipContext, rect);
+    });
 }
 
 void GraphicsContextCG::fillRect(const FloatRect& rect, const Color& color)
@@ -1149,6 +1150,19 @@ static CGFloat scaledBlurRadius(CGFloat blurRadius, const CGAffineTransform& use
     return std::min(blurRadius, narrowPrecisionToCGFloat(1000.0));
 }
 
+struct BaseSpaceDropShadow {
+    CGSize offset;
+    CGFloat blurRadius;
+};
+
+static BaseSpaceDropShadow baseSpaceDropShadow(const GraphicsDropShadow& shadow, const CGAffineTransform& userToBaseCTM, bool shadowsIgnoreTransforms)
+{
+    CGSize offset = shadow.offset;
+    if (!shadowsIgnoreTransforms)
+        offset = CGSizeApplyAffineTransform(offset, userToBaseCTM);
+    return { offset, scaledBlurRadius(shadow.radius, userToBaseCTM, shadowsIgnoreTransforms) };
+}
+
 void GraphicsContextCG::setCGDropShadow(const std::optional<GraphicsDropShadow>& shadow, bool shadowsIgnoreTransforms)
 {
     if (!shadow || !shadow->color.isValid() || (shadow->offset.isZero() && !shadow->radius)) {
@@ -1157,17 +1171,33 @@ void GraphicsContextCG::setCGDropShadow(const std::optional<GraphicsDropShadow>&
     }
 
     const RetainPtr<CGContextRef>& context = contextForDraw();
-    CGAffineTransform userToBaseCTM = getUserToBaseCTM(context);
-    CGFloat blurRadius = scaledBlurRadius(shadow->radius, userToBaseCTM, shadowsIgnoreTransforms);
-
-    CGSize offset = shadow->offset;
-    if (!shadowsIgnoreTransforms)
-        offset = CGSizeApplyAffineTransform(offset, userToBaseCTM);
+    auto [offset, blurRadius] = baseSpaceDropShadow(*shadow, getUserToBaseCTM(context), shadowsIgnoreTransforms);
 
     CGContextSetAlpha(context, shadow->opacity);
 
     auto style = adoptCF(CGStyleCreateShadow2(offset, blurRadius, cachedCGColorInDestinationStandardRange(shadow->color, colorSpace()).get()));
     CGContextSetStyle(context, style.get());
+}
+
+FloatRect GraphicsContextCG::boundsIncludingDropShadow(const FloatRect& bounds)
+{
+    auto shadow = dropShadow();
+    ASSERT(shadow);
+
+    AffineTransform userToBaseCTM = getUserToBaseCTM(contextForDraw());
+    auto baseToUserCTM = userToBaseCTM.inverse();
+    if (!baseToUserCTM)
+        return bounds;
+
+    auto [offset, blurRadius] = baseSpaceDropShadow(*shadow, userToBaseCTM, shadowsIgnoreTransforms());
+
+    // CG blurs shadows with a standard deviation of half the blur radius, and bounds the
+    // result at 2.8 standard deviations plus a pixel.
+    FloatRect baseSpaceBounds = userToBaseCTM.mapRect(bounds);
+    FloatRect shadowBounds = baseSpaceBounds;
+    shadowBounds.move(FloatSize(offset));
+    shadowBounds.inflate(1.4 * blurRadius + 1);
+    return baseToUserCTM->mapRect(unionRect(baseSpaceBounds, shadowBounds));
 }
 
 void GraphicsContextCG::clearCGDropShadow()
@@ -1320,43 +1350,17 @@ void GraphicsContextCG::strokeRect(const FloatRect& rect, float lineWidth)
     const RetainPtr<CGContextRef>& context = contextForDraw();
 
     if (RefPtr strokeGradient = this->strokeGradient()) {
-        if (hasDropShadow()) {
-            const float doubleLineWidth = lineWidth * 2;
-            float adjustedWidth = ceilf(rect.width() + doubleLineWidth);
-            float adjustedHeight = ceilf(rect.height() + doubleLineWidth);
-            FloatSize layerSize = getCTM().mapSize(FloatSize(adjustedWidth, adjustedHeight));
-
-            auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
-
-            RetainPtr layerContext = CGLayerGetContext(layer.get());
-            CGContextSetLineWidth(layerContext, lineWidth);
-
-            // Compensate for the line width, otherwise the layer's top-left corner would be
-            // aligned with the rect's top-left corner. This would result in leaving pixels out of
-            // the layer on the left and top sides.
-            const float translationX = lineWidth - rect.x();
-            const float translationY = lineWidth - rect.y();
-            CGContextScaleCTM(layerContext, layerSize.width() / adjustedWidth, layerSize.height() / adjustedHeight);
-            CGContextTranslateCTM(layerContext, translationX, translationY);
-
-            CGContextAddRect(layerContext, rect);
-            CGContextReplacePathWithStrokedPath(layerContext);
-            CGContextClip(layerContext);
-            CGContextConcatCTM(layerContext, strokeGradientSpaceTransform());
-            strokeGradient->paint(layerContext);
-
-            const float destinationX = roundf(rect.x() - lineWidth);
-            const float destinationY = roundf(rect.y() - lineWidth);
-            CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer.get());
-        } else {
-            CGContextStateSaver stateSaver(context);
-            CGContextSetLineWidth(context, std::max(lineWidth, 0.f));
-            CGContextAddRect(context, rect);
-            CGContextReplacePathWithStrokedPath(context);
-            CGContextClip(context);
-            CGContextConcatCTM(context, strokeGradientSpaceTransform());
-            strokeGradient->paint(*this);
-        }
+        paintGradientInClip(*strokeGradient, strokeGradientSpaceTransform(), [&] {
+            return strokedPathBoundingBox(context.get(), [&] {
+                CGContextSetLineWidth(context.get(), std::max(lineWidth, 0.f));
+                CGContextAddRect(context.get(), rect);
+            });
+        }, [&](CGContextRef clipContext) {
+            CGContextSetLineWidth(clipContext, std::max(lineWidth, 0.f));
+            CGContextAddRect(clipContext, rect);
+            CGContextReplacePathWithStrokedPath(clipContext);
+            CGContextClip(clipContext);
+        });
         return;
     }
 
