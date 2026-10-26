@@ -106,6 +106,7 @@
 #import <WebCore/AXObjectTypes.h>
 #import <WebCore/ActivityState.h>
 #import <WebCore/AttributedString.h>
+#import <WebCore/BitmapImage.h>
 #import <WebCore/CGWindowUtilities.h>
 #import <WebCore/CaretRectComputation.h>
 #import <WebCore/CharacterRange.h>
@@ -5181,7 +5182,7 @@ static bool matchesExtensionOrEquivalent(const String& filename, const String& e
         || (equalLettersIgnoringASCIICase(extension, "jpeg"_s) && filename.endsWithIgnoringASCIICase(".jpg"_s));
 }
 
-void WebViewImpl::setPromisedDataForImage(Ref<WebCore::Image>&& image, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, const String&, const String& originIdentifier)
+void WebViewImpl::setPromisedDataForImage(Ref<WebCore::BitmapImage>&& image, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, const String&, const String& originIdentifier)
 {
     String filenameWithExtension = filename;
     if (!matchesExtensionOrEquivalent(filename, extension))
@@ -5230,7 +5231,7 @@ void WebViewImpl::writePromisedImageDragDataToPasteboard(NSPasteboard *pasteboar
             [pasteboard setData:imageData.get() forType:data.imageUTI.createNSString().get()];
     }
 
-    if (RetainPtr tiffData = image->adapter().tiffRepresentation())
+    if (RetainPtr tiffData = image->adapter().tiffRepresentation(WebCore::ConcreteObjectSize::fixed(image->size())))
         [pasteboard setData:bridge_cast(WTF::move(tiffData)) forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
 
     if (RefPtr archiveBuffer = data.archiveBuffer) {
@@ -5264,7 +5265,7 @@ void WebViewImpl::provideDataForPasteboard(NSPasteboard *pasteboard, NSString *t
 
     // FIXME: Need to support NSRTFDPboardType.
     if ([type isEqual:WebCore::legacyTIFFPasteboardTypeSingleton()])
-        [pasteboard setData:(__bridge NSData *)RetainPtr { promisedImage->adapter().tiffRepresentation() }.get() forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
+        [pasteboard setData:(__bridge NSData *)RetainPtr { promisedImage->adapter().tiffRepresentation(WebCore::ConcreteObjectSize::fixed(promisedImage->size())) }.get() forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
 }
 
 static BOOL fileExists(NSString *path)
