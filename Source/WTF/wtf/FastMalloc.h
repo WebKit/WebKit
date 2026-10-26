@@ -427,15 +427,15 @@ using __thisIsAlsoHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 template<typename T>
 inline constexpr bool allowCompactPointers()
 {
-    if constexpr (WTF::IsTypeComplete<std::remove_pointer_t<T>>)
+    // We want to support compact pointers to incomplete types too, so AllowCompactPointers can be
+    // specialized on their pointer type. This is mostly accomplished using the above
+    // WTF_ALLOW_COMPACT_POINTERS_TO_INCOMPLETE_TYPE macro, which must precede any compact pointer to the type.
+    if constexpr (AllowCompactPointers<std::remove_cv_t<std::remove_pointer_t<T>>*>::value)
+        return true;
+    else if constexpr (WTF::IsTypeComplete<std::remove_pointer_t<T>>)
         return std::remove_pointer_t<T>::allowCompactPointers;
-    else {
-        // We want to support compact pointers to incomplete types too, so we have this fallback:
-        // if a type is incomplete, AllowCompactPointers can be specialized on its pointer type,
-        // in which case we'll return its value. This is mostly accomplished using the below
-        // WTF_ALLOW_COMPACT_POINTERS_TO_INCOMPLETE_TYPE macro.
-        return AllowCompactPointers<std::remove_const_t<std::remove_pointer_t<T>>*>::value;
-    }
+    else
+        return false;
 }
 
 using WTF::FastAlignedMalloc;

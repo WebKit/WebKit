@@ -38,10 +38,8 @@
 #include <wtf/VectorTraits.h>
 
 namespace JSC {
-class JSCell;
 class JSMicrotaskDispatcher;
 }
-WTF_ALLOW_COMPACT_POINTERS_TO_INCOMPLETE_TYPE(JSC::JSCell);
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

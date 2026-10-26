@@ -36,12 +36,16 @@
 #include <wtf/TriState.h>
 
 namespace JSC {
+class JSCell;
+}
+WTF_ALLOW_COMPACT_POINTERS_TO_INCOMPLETE_TYPE(JSC::JSCell);
+
+namespace JSC {
 
 class AssemblyHelpers;
 class DeletePropertySlot;
 class JSBigInt;
 class CallFrame;
-class JSCell;
 class JSValueSource;
 class VM;
 class JSGlobalObject;
