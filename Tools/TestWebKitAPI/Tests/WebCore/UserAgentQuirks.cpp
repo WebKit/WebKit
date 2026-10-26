@@ -134,6 +134,8 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://play.hbomax.com/");
 #endif
 
+    assertUserAgentForURLHasFirefoxBrowserQuirk("http://play.geforcenow.com/");
+
 #if ENABLE(WEBXR) && PLATFORM(WPE)
     assertUserAgentForURLHasAndroidQuirk("https://www.ikea.com/");
 #endif
