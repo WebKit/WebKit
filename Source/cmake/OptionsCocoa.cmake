@@ -658,14 +658,7 @@ if (WEBKIT_SDK_NAME STREQUAL "macosx"
     # Deferred: the executables it depends on, so that it runs after they are
     # linked, are not defined where this file is included.
     function(WEBKIT_ADD_XCODE_PROJECT_TARGET)
-        add_custom_target(xcode-project ALL
-            COMMAND ${Python_EXECUTABLE}
-                    ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project
-                    --quiet
-                    ${CMAKE_BINARY_DIR}
-            COMMENT "Generating ${CMAKE_BINARY_DIR}/WebKit.xcodeproj"
-            VERBATIM)
-
+        set(_executables)
         set(_directories ${CMAKE_SOURCE_DIR})
         while (_directories)
             list(POP_FRONT _directories _directory)
@@ -680,10 +673,25 @@ if (WEBKIT_SDK_NAME STREQUAL "macosx"
                 # the default build.
                 get_target_property(_excluded ${_target} EXCLUDE_FROM_ALL)
                 if (_type STREQUAL "EXECUTABLE" AND NOT _excluded)
-                    add_dependencies(xcode-project ${_target})
+                    list(APPEND _executables ${_target})
                 endif ()
             endforeach ()
         endwhile ()
+
+        # A target with no output is always out of date; the stamp lets a no-op
+        # build stay at zero actions.
+        set(_stamp ${CMAKE_BINARY_DIR}/CMakeFiles/generate-cmake-xcode-project.stamp)
+        add_custom_command(OUTPUT ${_stamp}
+            COMMAND ${Python_EXECUTABLE}
+                    ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project
+                    --quiet
+                    ${CMAKE_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E touch ${_stamp}
+            DEPENDS ${_executables}
+                    ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project
+            COMMENT "Generating ${CMAKE_BINARY_DIR}/WebKit.xcodeproj"
+            VERBATIM)
+        add_custom_target(xcode-project ALL DEPENDS ${_stamp})
     endfunction()
 
     cmake_language(DEFER CALL WEBKIT_ADD_XCODE_PROJECT_TARGET)
