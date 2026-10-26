@@ -31,22 +31,26 @@ namespace WebCore {
 namespace Layout {
 
 struct ConstraintsForBlockContent : public ConstraintsForInFlowContent {
-    ConstraintsForBlockContent(const ConstraintsForInFlowContent&, std::optional<LayoutUnit> contentBoxBlockSize, bool relayoutChildren = false);
+    ConstraintsForBlockContent(const ConstraintsForInFlowContent&, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, bool relayoutChildren = false);
 
     // The root's content box block size when it is definite. Percentage block sizes of in-flow boxes resolve against it,
     // and behave as auto when there is none (CSS 2.2 §10.5).
     std::optional<LayoutUnit> contentBoxBlockSize() const { return m_contentBoxBlockSize; }
+    // The block size -webkit-fill-available block sizes of in-flow boxes resolve to, which is always there (RenderBox::availableLogicalHeight).
+    LayoutUnit fillAvailableBlockSize() const { return m_fillAvailableBlockSize; }
     // The parent formatting context lays the root's children out again, like when the root's inline size changed (RenderBlockFlow::layoutBlock).
     bool relayoutChildren() const { return m_relayoutChildren; }
 
 private:
     std::optional<LayoutUnit> m_contentBoxBlockSize;
+    LayoutUnit m_fillAvailableBlockSize;
     bool m_relayoutChildren { false };
 };
 
-inline ConstraintsForBlockContent::ConstraintsForBlockContent(const ConstraintsForInFlowContent& genericConstraints, std::optional<LayoutUnit> contentBoxBlockSize, bool relayoutChildren)
+inline ConstraintsForBlockContent::ConstraintsForBlockContent(const ConstraintsForInFlowContent& genericConstraints, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, bool relayoutChildren)
     : ConstraintsForInFlowContent(genericConstraints.horizontal(), genericConstraints.logicalTop(), BlockContent)
     , m_contentBoxBlockSize(contentBoxBlockSize)
+    , m_fillAvailableBlockSize(fillAvailableBlockSize)
     , m_relayoutChildren(relayoutChildren)
 {
 }
