@@ -258,7 +258,7 @@ void Pasteboard::clear(const String& type)
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void Pasteboard::setDragImage(DragImage, const IntPoint&)
+void Pasteboard::setDragImage(DragImage&&, const IntPoint&)
 {
 }
 #endif

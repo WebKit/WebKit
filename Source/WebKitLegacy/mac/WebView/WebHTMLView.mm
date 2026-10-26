@@ -2182,10 +2182,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!coreFrame)
         return nil;
 
-    auto [dragImageRef, textIndicator] = WebCore::DragController::dragImageAndTextIndicatorForSelection(*coreFrame);
-    [dragImageRef _web_dissolveToFraction:WebDragImageAlpha];
+    RetainPtr dragImage = WebCore::DragController::dragImageAndTextIndicatorForSelection(*coreFrame).first.takePlatformImage();
+    [dragImage _web_dissolveToFraction:WebDragImageAlpha];
 
-    return dragImageRef.autorelease();
+    return dragImage.autorelease();
 }
 
 - (NSRect)_selectionDraggingRect
@@ -6987,8 +6987,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
 #if PLATFORM(IOS_FAMILY)
     return selectionImage(coreFrame.get(), forceBlackText);
 #else
-    auto [dragImageRef, textIndicator] = WebCore::DragController::dragImageAndTextIndicatorForSelection(*coreFrame, forceBlackText);
-    return dragImageRef.autorelease();
+    return WebCore::DragController::dragImageAndTextIndicatorForSelection(*coreFrame, forceBlackText).first.takePlatformImage().autorelease();
 #endif
 }
 

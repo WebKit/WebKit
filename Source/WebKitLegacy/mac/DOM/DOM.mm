@@ -502,7 +502,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     RefPtr frame = node->document().frame();
     if (!frame)
         return nil;
-    return WebCore::DragController::dragImageForNode(*frame, node).autorelease();
+    return WebCore::DragController::dragImageForNode(*frame, node).takePlatformImage().autorelease();
 }
 
 #endif
@@ -602,7 +602,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     if (!frame)
         return nil;
 
-    auto renderedImage = WebCore::DragController::dragImageForRange(*frame, range, forceBlackText);
+    auto renderedImage = WebCore::DragController::dragImageForRange(*frame, range, forceBlackText).takePlatformImage();
 
 #if PLATFORM(MAC)
     // iOS uses CGImageRef for drag images, which doesn't support separate logical/physical sizes.

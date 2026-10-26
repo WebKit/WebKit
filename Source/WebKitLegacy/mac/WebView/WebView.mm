@@ -1970,8 +1970,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (void)_startDrag:(const WebCore::DragItem&)dragItem
 {
     auto& dragImage = dragItem.image;
-    RetainPtr image = dragImage.get();
-    RefPtr<WebCore::TextIndicator> textIndicator = dragImage.textIndicator();
+    RetainPtr image = dragImage.platformImage();
+    RefPtr textIndicator = dragItem.textIndicator;
 
     if (textIndicator)
         _private->textIndicatorData = adoptNS([[WebUITextIndicatorData alloc] initWithImage:image textIndicator:WTF::move(textIndicator) scale:_private->page->deviceScaleFactor()]);

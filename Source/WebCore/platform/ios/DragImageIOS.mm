@@ -54,21 +54,31 @@ namespace WebCore {
 
 #if ENABLE(DRAG_SUPPORT)
 
-IntSize dragImageSize(DragImageRef image)
+static IntSize dragImageSize(PlatformDragImage image)
 {
     return IntSize(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
 }
 
-DragImageRef scaleDragImage(DragImageRef image, FloatSize)
+IntSize DragImage::size() const
+{
+    return dragImageSize(m_platformImage);
+}
+
+static PlatformDragImage scaleDragImage(PlatformDragImage image, FloatSize)
 {
     // It's unnecessary to apply additional scaling to the drag image on iOS, since the drag image will always perform lift and cancel animations
     // using targeted previews which will scale to fit the bounds of the dragged element anyways.
     return image;
 }
 
+void DragImage::scale(FloatSize scale)
+{
+    m_platformImage = scaleDragImage(takePlatformImage(), scale);
+}
+
 static float maximumAllowedDragImageArea = 600 * 1024;
 
-DragImageRef createDragImageFromImage(NativeImage& image, GraphicsClient* client, float scale)
+static PlatformDragImage createDragImageFromImage(NativeImage& image, GraphicsClient* client, float scale)
 {
     auto imageSize = FloatSize(image.size());
     if (imageSize.isEmpty())
@@ -96,29 +106,54 @@ DragImageRef createDragImageFromImage(NativeImage& image, GraphicsClient* client
     return RetainPtr { nativeImage->platformImage() }.autorelease();
 }
 
-void deleteDragImage(DragImageRef)
+DragImage DragImage::create(NativeImage& image, GraphicsClient* client, float deviceScaleFactor)
+{
+    return DragImage { createDragImageFromImage(image, client, deviceScaleFactor) };
+}
+
+static void deleteDragImage(PlatformDragImage)
 {
 }
 
-DragImageRef createDragImageIconForCachedImageFilename(const String&)
+void DragImage::deletePlatformImage(PlatformDragImage image)
+{
+    deleteDragImage(WTF::move(image));
+}
+
+static PlatformDragImage createDragImageIconForCachedImageFilename(const String&)
 {
     notImplemented();
     return nullptr;
 }
 
-DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef image, float)
+DragImage DragImage::createIconForCachedImageFilename(const String& filename)
+{
+    return DragImage { createDragImageIconForCachedImageFilename(filename) };
+}
+
+static PlatformDragImage platformAdjustDragImageForDeviceScaleFactor(PlatformDragImage image, float)
 {
     // On iOS, we just create the drag image at the right device scale factor, so we don't need to scale it by 1 / deviceScaleFactor later.
     return image;
 }
 
-DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
+void DragImage::adjustForDeviceScaleFactor(float deviceScaleFactor)
+{
+    m_platformImage = platformAdjustDragImageForDeviceScaleFactor(takePlatformImage(), deviceScaleFactor);
+}
+
+static PlatformDragImage dissolveDragImageToFraction(PlatformDragImage image, float)
 {
     notImplemented();
     return image;
 }
 
-DragImageRef createDragImageForColor(const Color& color, const FloatRect& elementRect, float pageScaleFactor, Path& visiblePath)
+void DragImage::dissolveToFraction(float delta)
+{
+    m_platformImage = dissolveDragImageToFraction(takePlatformImage(), delta);
+}
+
+static PlatformDragImage createDragImageForColor(const Color& color, const FloatRect& elementRect, float pageScaleFactor, Path& visiblePath)
 {
     FloatRect imageRect { 0, 0, elementRect.width() * pageScaleFactor, elementRect.height() * pageScaleFactor };
     FloatRoundedRect swatch { imageRect, CornerRadii(ColorSwatchCornerRadius * pageScaleFactor) };
@@ -135,28 +170,53 @@ DragImageRef createDragImageForColor(const Color& color, const FloatRect& elemen
     return [image CGImage];
 }
 
+DragImage DragImage::createForColor(const Color& color, const FloatRect& elementRect, float pageScaleFactor, Path& visiblePath)
+{
+    return DragImage { createDragImageForColor(color, elementRect, pageScaleFactor, visiblePath) };
+}
+
 #else
 
-void deleteDragImage(RetainPtr<CGImageRef>)
+static void deleteDragImage(RetainPtr<CGImageRef>)
 {
     // Since this is a RetainPtr, there's nothing additional we need to do to
     // delete it. It will be released when it falls out of scope.
 }
 
+void DragImage::deletePlatformImage(PlatformDragImage image)
+{
+    deleteDragImage(WTF::move(image));
+}
+
 // FIXME: fix signature of dragImageSize() to avoid copying the argument.
-IntSize dragImageSize(RetainPtr<CGImageRef> image)
+static IntSize dragImageSize(RetainPtr<CGImageRef> image)
 {
     return IntSize(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
 }
 
-RetainPtr<CGImageRef> scaleDragImage(RetainPtr<CGImageRef>, FloatSize)
+IntSize DragImage::size() const
+{
+    return dragImageSize(m_platformImage);
+}
+
+static RetainPtr<CGImageRef> scaleDragImage(RetainPtr<CGImageRef>, FloatSize)
 {
     return nullptr;
 }
 
-RetainPtr<CGImageRef> createDragImageFromImage(NativeImage&, GraphicsClient*, float)
+void DragImage::scale(FloatSize scale)
+{
+    m_platformImage = scaleDragImage(takePlatformImage(), scale);
+}
+
+static RetainPtr<CGImageRef> createDragImageFromImage(NativeImage&, GraphicsClient*, float)
 {
     return nullptr;
+}
+
+DragImage DragImage::create(NativeImage& image, GraphicsClient* client, float deviceScaleFactor)
+{
+    return DragImage { createDragImageFromImage(image, client, deviceScaleFactor) };
 }
 
 #endif

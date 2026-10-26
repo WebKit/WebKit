@@ -94,11 +94,11 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame, co
     auto& image = dragItem.image;
 
 #if USE(APPKIT)
-    IntSize bitmapSize([image.get() size]);
+    IntSize bitmapSize([image.platformImage() size]);
 #else
-    IntSize bitmapSize(CGImageGetWidth(image.get().get()), CGImageGetHeight(image.get().get()));
+    IntSize bitmapSize(CGImageGetWidth(image.platformImage().get()), CGImageGetHeight(image.platformImage().get()));
 #endif
-    auto bitmap = convertDragImageToBitmap(image.get().get(), bitmapSize, frame);
+    auto bitmap = convertDragImageToBitmap(image.platformImage().get(), bitmapSize, frame);
     if (!bitmap)
         return;
     auto handle = bitmap->createHandle();

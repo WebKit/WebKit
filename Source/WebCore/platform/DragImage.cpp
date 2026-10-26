@@ -32,12 +32,31 @@
 
 namespace WebCore {
 
-DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& layoutSize, const IntSize& maxSize)
+DragImage::DragImage(DragImage&& other)
+    : m_platformImage(other.takePlatformImage())
+{
+}
+
+DragImage& DragImage::operator=(DragImage&& other)
+{
+    if (m_platformImage)
+        deletePlatformImage(takePlatformImage());
+    m_platformImage = other.takePlatformImage();
+    return *this;
+}
+
+DragImage::~DragImage()
+{
+    if (m_platformImage)
+        deletePlatformImage(takePlatformImage());
+}
+
+void DragImage::fitToMaxSize(const IntSize& layoutSize, const IntSize& maxSize)
 {
     float heightResizeRatio = 0.0f;
     float widthResizeRatio = 0.0f;
     float resizeRatio = -1.0f;
-    IntSize originalSize = dragImageSize(image);
+    IntSize originalSize = size();
 
     if (layoutSize.width() > maxSize.width()) {
         widthResizeRatio = maxSize.width() / (float)layoutSize.width();
@@ -50,8 +69,11 @@ DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& layoutSize
             resizeRatio = heightResizeRatio;
     }
 
-    if (layoutSize == originalSize)
-        return resizeRatio > 0.0f ? scaleDragImage(image, FloatSize(resizeRatio, resizeRatio)) : image;
+    if (layoutSize == originalSize) {
+        if (resizeRatio > 0.0f)
+            scale(FloatSize(resizeRatio, resizeRatio));
+        return;
+    }
 
     // The image was scaled in the webpage so at minimum we must account for that scaling.
     float scaleX = layoutSize.width() / (float)originalSize.width();
@@ -61,119 +83,82 @@ DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& layoutSize
         scaleY *= resizeRatio;
     }
 
-    return scaleDragImage(image, FloatSize(scaleX, scaleY));
+    scale(FloatSize(scaleX, scaleY));
 }
 
 #if !PLATFORM(IOS_FAMILY) || !ENABLE(DRAG_SUPPORT)
-DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef image, float deviceScaleFactor)
+void DragImage::adjustForDeviceScaleFactor(float deviceScaleFactor)
 {
-    // Later code expects the drag image to be scaled by device's scale factor.
-    return scaleDragImage(image, { deviceScaleFactor, deviceScaleFactor });
+    scale({ deviceScaleFactor, deviceScaleFactor });
 }
 #endif
 
 #if !PLATFORM(MAC)
 
-const int linkDragBorderInset = 2;
+constexpr int linkDragBorderInset = 2;
 
-IntPoint dragOffsetForLinkDragImage(DragImageRef dragImage)
+IntPoint DragImage::dragOffsetForLink() const
 {
-    IntSize size = dragImageSize(dragImage);
+    IntSize size = this->size();
     return { -size.width() / 2, -linkDragBorderInset };
 }
 
-FloatPoint anchorPointForLinkDragImage(DragImageRef dragImage)
+FloatPoint DragImage::anchorPointForLink() const
 {
-    IntSize size = dragImageSize(dragImage);
+    IntSize size = this->size();
     return { 0.5, static_cast<float>((size.height() - linkDragBorderInset) / size.height()) };
 }
 
-IntPoint platformAdjustDragImageHotSpot(const IntPoint& hotSpot, const IntSize&)
+IntPoint DragImage::platformAdjustDragImageHotSpot(const IntPoint& hotSpot, const IntSize&)
 {
     return hotSpot;
 }
 
 #endif
 
-DragImage::DragImage()
-    : m_dragImageRef { nullptr }
-{
-}
-
-DragImage::DragImage(DragImageRef dragImageRef)
-    : m_dragImageRef { dragImageRef }
-{
-}
-
-DragImage::DragImage(DragImage&& other)
-    : m_dragImageRef { std::exchange(other.m_dragImageRef, nullptr) }
-    , m_textIndicator { WTF::move(other.m_textIndicator) }
-    , m_visiblePath { WTF::move(other.m_visiblePath) }
-{
-}
-
-DragImage& DragImage::operator=(DragImage&& other)
-{
-    if (m_dragImageRef)
-        deleteDragImage(m_dragImageRef);
-
-    m_dragImageRef = std::exchange(other.m_dragImageRef, nullptr);
-    m_textIndicator = WTF::move(other.m_textIndicator);
-    m_visiblePath = WTF::move(other.m_visiblePath);
-
-    return *this;
-}
-
-DragImage::~DragImage()
-{
-    if (m_dragImageRef)
-        deleteDragImage(m_dragImageRef);
-}
-
 #if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN) && !(PLATFORM(WPE) && ENABLE(DRAG_SUPPORT))
 
-IntSize dragImageSize(DragImageRef)
+IntSize DragImage::size() const
 {
     notImplemented();
     return { 0, 0 };
 }
 
-void deleteDragImage(DragImageRef)
+void DragImage::deletePlatformImage(PlatformDragImage)
 {
     notImplemented();
 }
 
-DragImageRef scaleDragImage(DragImageRef, FloatSize)
+void DragImage::scale(FloatSize)
 {
     notImplemented();
-    return nullptr;
+    *this = { };
 }
 
-DragImageRef dissolveDragImageToFraction(DragImageRef, float)
+void DragImage::dissolveToFraction(float)
 {
     notImplemented();
-    return nullptr;
+    *this = { };
 }
 
-DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path&)
+DragImage DragImage::createForColor(const Color&, const FloatRect&, float, Path&)
 {
     notImplemented();
-    return nullptr;
+    return { };
 }
 
-DragImageRef createDragImageFromImage(NativeImage&, GraphicsClient*, float)
+DragImage DragImage::create(NativeImage&, GraphicsClient*, float)
 {
     notImplemented();
-    return nullptr;
+    return { };
 }
 
-DragImageRef createDragImageIconForCachedImageFilename(const String&)
+DragImage DragImage::createIconForCachedImageFilename(const String&)
 {
     notImplemented();
-    return nullptr;
+    return { };
 }
 
 #endif
 
 } // namespace WebCore
-

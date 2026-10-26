@@ -62,7 +62,7 @@ Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const Strin
 
 #if ENABLE(DRAG_SUPPORT)
 
-void Pasteboard::setDragImage(DragImage, const IntPoint&)
+void Pasteboard::setDragImage(DragImage&&, const IntPoint&)
 {
     notImplemented();
 }

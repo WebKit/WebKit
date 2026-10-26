@@ -104,7 +104,7 @@ public:
     void setDestinationOperationMask(OptionSet<DragOperation>);
 
     void setDragHasStarted() { m_shouldUpdateDragImage = true; }
-    DragImageRef createDragImage(const Document*, IntPoint& dragLocation) const;
+    std::pair<DragImage, IntPoint> createDragImage(const Document*) const;
     void updateDragImage(const Document*);
     RefPtr<Element> LEGACY_NODELETE dragImageElement() const;
 

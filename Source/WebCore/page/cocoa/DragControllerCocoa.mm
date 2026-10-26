@@ -298,7 +298,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     boundingRect.setHeight((static_cast<int>(boundingRect.height() / 2) * 2));
 }
 
-std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element& element, URL& url, const String& title, float deviceScaleFactor)
+std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element& element, URL& url, const String& title, float deviceScaleFactor)
 {
     LinkImageLayout layout(url, title);
 
@@ -325,7 +325,7 @@ std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextI
 
     [dragImage unlockFocus];
 
-    return  { dragImage, nullptr };
+    return { DragImage { WTF::move(dragImage) }, nullptr };
 }
 
 #endif // PLATFORM(MAC)
@@ -345,7 +345,7 @@ static RetainPtr<CGImageRef> cgImageFromTextIndicator(const TextIndicator& textI
     return nativeImage->platformImage();
 }
 
-std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element& linkElement, URL&, const String&, float)
+std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element& linkElement, URL&, const String&, float)
 {
     constexpr OptionSet<TextIndicatorOption> defaultLinkIndicatorOptions {
         TextIndicatorOption::TightlyFitContent,
@@ -357,9 +357,9 @@ std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextI
 
     RefPtr textIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(linkElement), defaultLinkIndicatorOptions, TextIndicatorPresentationTransition::None, { });
     if (!textIndicator)
-        return  { nullptr, nullptr };
+        return { };
 
-    return  { cgImageFromTextIndicator(*textIndicator).autorelease(), textIndicator };
+    return { DragImage { cgImageFromTextIndicator(*textIndicator) }, textIndicator };
 }
 
 constexpr OptionSet<TextIndicatorOption> defaultSelectionDragImageTextIndicatorOptions {
@@ -369,7 +369,7 @@ constexpr OptionSet<TextIndicatorOption> defaultSelectionDragImageTextIndicatorO
     TextIndicatorOption::ComputeEstimatedBackgroundColor
 };
 
-std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForSelection(LocalFrame& frame, bool forceBlackText)
+std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForSelection(LocalFrame& frame, bool forceBlackText)
 {
     if (RefPtr document = frame.document())
         document->updateLayout();
@@ -380,18 +380,18 @@ std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextI
 
     RefPtr textIndicator = TextIndicator::createWithSelectionInFrame(frame, options, TextIndicatorPresentationTransition::None, FloatSize());
     if (!textIndicator)
-        return { nullptr, nullptr };
+        return { };
 
-    return { cgImageFromTextIndicator(*textIndicator).autorelease(), textIndicator };
+    return { DragImage { cgImageFromTextIndicator(*textIndicator) }, textIndicator };
 }
 
-DragImageRef DragController::dragImageForRange(LocalFrame& frame, const SimpleRange& range, bool forceBlackText)
+DragImage DragController::dragImageForRange(LocalFrame& frame, const SimpleRange& range, bool forceBlackText)
 {
     if (RefPtr document = frame.document())
         document->updateLayout();
 
     if (range.collapsed())
-        return nil;
+        return { };
 
     auto options = defaultSelectionDragImageTextIndicatorOptions;
     if (!forceBlackText)
@@ -399,7 +399,7 @@ DragImageRef DragController::dragImageForRange(LocalFrame& frame, const SimpleRa
 
     auto textIndicator = TextIndicator::createWithRange(range, options, TextIndicatorPresentationTransition::None);
     if (!textIndicator || !textIndicator->contentImage())
-        return nil;
+        return { };
 
     Ref image = *textIndicator->contentImage();
     RetainPtr render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image->size()]);
@@ -408,7 +408,7 @@ DragImageRef DragController::dragImageForRange(LocalFrame& frame, const SimpleRa
         image->draw(context);
     }];
 
-    return [finalImage CGImage];
+    return DragImage { RetainPtr { [finalImage CGImage] } };
 }
 
 #endif // PLATFORM(IOS_FAMILY)

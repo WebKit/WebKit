@@ -803,7 +803,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(error == kCGErrorSuccess);
 }
 
-void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
+void Pasteboard::setDragImage(DragImage&& image, const IntPoint& location)
 {
     // Don't allow setting the drag image if someone kept a pasteboard and is trying to set the image too late.
     if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName, context()))
@@ -813,7 +813,7 @@ void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
     // Instead we must drop down to the CoreGraphics API.
 
     // FIXME: Do we still need this now Dashboard is gone?
-    setDragImageImpl(image.get().get(), location);
+    setDragImageImpl(image.platformImage().get(), location);
 
     // Hack: We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
     // up the stack from us because the CoreFoundation drag manager does not use the run loop by itself.

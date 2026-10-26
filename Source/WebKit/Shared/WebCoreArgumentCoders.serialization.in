@@ -5842,13 +5842,9 @@ class WebCore::ContentSecurityPolicyResponseHeaders {
     int httpStatusCode();
 };
 
-class WebCore::DragImage {
-    RefPtr<WebCore::TextIndicator> textIndicator();
-    std::optional<WebCore::Path> visiblePath();
-};
-
 struct WebCore::DragItem {
-    WebCore::DragImage image;
+    RefPtr<WebCore::TextIndicator> textIndicator;
+    std::optional<WebCore::Path> visiblePath;
     WebCore::FloatPoint imageAnchorPoint;
     std::optional<WebCore::DragSourceAction> sourceAction;
     std::optional<WebCore::FrameIdentifier> rootFrameID;
@@ -5865,6 +5861,7 @@ struct WebCore::DragItem {
     Markable<WebCore::PlatformLayerIdentifier> modelLayerID;
 #endif
     [NotSerialized] WebCore::PasteboardWriterData data;
+    [NotSerialized] WebCore::DragImage image;
 };
 
 #if PLATFORM(COCOA)

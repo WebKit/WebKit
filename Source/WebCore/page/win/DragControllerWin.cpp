@@ -123,7 +123,7 @@ static FontCascade dragLabelFont(int size, bool bold)
     return result;
 }
 
-std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element&, URL& url, const String& inLabel, float)
+std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element&, URL& url, const String& inLabel, float)
 {
     static const FontCascade labelFont = dragLabelFont(DragLinkLabelFontsize, true);
     static const FontCascade urlFont = dragLabelFont(DragLinkURLFontSize, false);
@@ -201,7 +201,7 @@ std::pair<DragImageRef, RefPtr<TextIndicator>> DragController::dragImageAndTextI
     WebCoreDrawDoubledTextAtPoint(context, label, textPos, labelFont, topColor, bottomColor);
 
     deallocContext(contextRef);
-    return { image.leak(), nullptr };
+    return { DragImage { image.leak() }, nullptr };
 }
 
 #endif // USE(CAIRO)

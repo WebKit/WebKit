@@ -33,24 +33,34 @@
 
 namespace WebCore {
 
-IntSize dragImageSize(RetainPtr<NSImage> image)
+static IntSize dragImageSize(RetainPtr<NSImage> image)
 {
     return (IntSize)[image size];
 }
 
-void deleteDragImage(RetainPtr<NSImage>)
+IntSize DragImage::size() const
+{
+    return dragImageSize(m_platformImage);
+}
+
+static void deleteDragImage(RetainPtr<NSImage>)
 {
     // Since this is a RetainPtr, there's nothing additional we need to do to
     // delete it. It will be released when it falls out of scope.
 }
 
-IntPoint platformAdjustDragImageHotSpot(const IntPoint& hotSpot, const IntSize& dragImageSize)
+void DragImage::deletePlatformImage(PlatformDragImage image)
+{
+    deleteDragImage(WTF::move(image));
+}
+
+IntPoint DragImage::platformAdjustDragImageHotSpot(const IntPoint& hotSpot, const IntSize& dragImageSize)
 {
     // The hot spot is relative to the image's lower-left corner.
     return { hotSpot.x(), dragImageSize.height() - hotSpot.y() };
 }
 
-RetainPtr<NSImage> scaleDragImage(RetainPtr<NSImage> image, FloatSize scale)
+static RetainPtr<NSImage> scaleDragImage(RetainPtr<NSImage> image, FloatSize scale)
 {
     NSSize originalSize = [image size];
     NSSize newSize = NSMakeSize((originalSize.width * scale.width()), (originalSize.height * scale.height()));
@@ -59,8 +69,13 @@ RetainPtr<NSImage> scaleDragImage(RetainPtr<NSImage> image, FloatSize scale)
     [image setSize:newSize];
     return image;
 }
+
+void DragImage::scale(FloatSize scale)
+{
+    m_platformImage = scaleDragImage(takePlatformImage(), scale);
+}
     
-RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float delta)
+static RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float delta)
 {
     if (!image)
         return nil;
@@ -74,7 +89,12 @@ RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float d
     return dissolvedImage;
 }
 
-RetainPtr<NSImage> createDragImageFromImage(NativeImage& image, GraphicsClient*, float)
+void DragImage::dissolveToFraction(float delta)
+{
+    m_platformImage = dissolveDragImageToFraction(takePlatformImage(), delta);
+}
+
+static RetainPtr<NSImage> createDragImageFromImage(NativeImage& image, GraphicsClient*, float)
 {
     // An NSBitmapImageRep, unlike the representation -[NSImage initWithCGImage:size:] makes, reports the image's own pixel size.
     RetainPtr imageRep = adoptNS([[NSBitmapImageRep alloc] initWithCGImage:image.platformImage().get()]);
@@ -82,8 +102,13 @@ RetainPtr<NSImage> createDragImageFromImage(NativeImage& image, GraphicsClient*,
     [dragImage addRepresentation:imageRep.get()];
     return dragImage;
 }
+
+DragImage DragImage::create(NativeImage& image, GraphicsClient* client, float deviceScaleFactor)
+{
+    return DragImage { createDragImageFromImage(image, client, deviceScaleFactor) };
+}
     
-RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filename)
+static RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filename)
 {
     RetainPtr<NSString> extension;
     size_t dotIndex = filename.reverseFind('.');
@@ -100,24 +125,39 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
+DragImage DragImage::createIconForCachedImageFilename(const String& filename)
+{
+    return DragImage { createDragImageIconForCachedImageFilename(filename) };
+}
+
 const int linkImageShadowRadius = 0;
 const int linkImageShadowOffsetY = 0;
 const int linkImageDragCornerOutsetX = 6 - linkImageShadowRadius;
 const int linkImageDragCornerOutsetY = 10 - linkImageShadowRadius + linkImageShadowOffsetY;
 
-IntPoint dragOffsetForLinkDragImage(DragImageRef dragImage)
+static IntPoint dragOffsetForLinkDragImage(PlatformDragImage dragImage)
 {
     IntSize size = dragImageSize(dragImage);
     return { linkImageDragCornerOutsetX, size.height() + linkImageDragCornerOutsetY };
 }
 
-FloatPoint anchorPointForLinkDragImage(DragImageRef dragImage)
+IntPoint DragImage::dragOffsetForLink() const
+{
+    return dragOffsetForLinkDragImage(m_platformImage);
+}
+
+static FloatPoint anchorPointForLinkDragImage(PlatformDragImage dragImage)
 {
     IntSize size = dragImageSize(dragImage);
     return { -static_cast<float>(linkImageDragCornerOutsetX) / size.width(), -static_cast<float>(linkImageDragCornerOutsetY) / size.height() };
 }
 
-DragImageRef createDragImageForColor(const Color& color, const FloatRect&, float, Path&)
+FloatPoint DragImage::anchorPointForLink() const
+{
+    return anchorPointForLinkDragImage(m_platformImage);
+}
+
+static PlatformDragImage createDragImageForColor(const Color& color, const FloatRect&, float, Path&)
 {
     auto dragImage = adoptNS([[NSImage alloc] initWithSize:NSMakeSize(ColorSwatchWidth, ColorSwatchWidth)]);
 
@@ -135,6 +175,11 @@ DragImageRef createDragImageForColor(const Color& color, const FloatRect&, float
     [dragImage unlockFocus];
 
     return dragImage;
+}
+
+DragImage DragImage::createForColor(const Color& color, const FloatRect& elementRect, float pageScaleFactor, Path& visiblePath)
+{
+    return DragImage { createDragImageForColor(color, elementRect, pageScaleFactor, visiblePath) };
 }
 
 } // namespace WebCore

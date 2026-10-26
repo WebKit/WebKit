@@ -32,13 +32,17 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PasteboardWriterData.h>
+#include <WebCore/Path.h>
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/PromisedAttachmentInfo.h>
+#include <WebCore/TextIndicator.h>
+#include <optional>
 
 namespace WebCore {
 
 struct DragItem final {
-    DragImage image;
+    RefPtr<TextIndicator> textIndicator;
+    std::optional<Path> visiblePath;
 
     // Where the image should be positioned relative to the cursor.
     FloatPoint imageAnchorPoint;
@@ -62,6 +66,8 @@ struct DragItem final {
 #endif
 
     PasteboardWriterData data { };
+
+    DragImage image { };
 };
 
 }

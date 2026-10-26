@@ -99,7 +99,9 @@ static cairo_surface_t* createCairoContextFromBitmap(HBITMAP bitmap)
         info.bmWidthBytes);
 }
 
-DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
+static IntSize dragImageSize(PlatformDragImage);
+
+static PlatformDragImage scaleDragImage(PlatformDragImage imageRef, FloatSize scale)
 {
     // FIXME: due to the way drag images are done on windows we need
     // to preprocess the alpha channel <rdar://problem/5015946>
@@ -140,7 +142,12 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
     return hbmp.leak();
 }
 
-DragImageRef createDragImageFromImage(NativeImage& image, GraphicsClient*, float)
+void DragImage::scale(FloatSize scale)
+{
+    m_platformImage = scaleDragImage(takePlatformImage(), scale);
+}
+
+static PlatformDragImage createDragImageFromImage(NativeImage& image, GraphicsClient*, float)
 {
     HWndDC dc(0);
     auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
@@ -166,7 +173,12 @@ DragImageRef createDragImageFromImage(NativeImage& image, GraphicsClient*, float
     return hbmp.leak();
 }
 
-IntSize dragImageSize(DragImageRef image)
+DragImage DragImage::create(NativeImage& image, GraphicsClient* client, float deviceScaleFactor)
+{
+    return DragImage { createDragImageFromImage(image, client, deviceScaleFactor) };
+}
+
+static IntSize dragImageSize(PlatformDragImage image)
 {
     if (!image)
         return IntSize();
@@ -175,19 +187,34 @@ IntSize dragImageSize(DragImageRef image)
     return IntSize(b.bmWidth, b.bmHeight);
 }
 
-void deleteDragImage(DragImageRef image)
+IntSize DragImage::size() const
+{
+    return dragImageSize(m_platformImage);
+}
+
+static void deleteDragImage(PlatformDragImage image)
 {
     if (image)
         ::DeleteObject(image);
 }
 
-DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
+void DragImage::deletePlatformImage(PlatformDragImage image)
+{
+    deleteDragImage(WTF::move(image));
+}
+
+static PlatformDragImage dissolveDragImageToFraction(PlatformDragImage image, float)
 {
     // We don't do this on windows as the dragimage is blended by the OS
     return image;
 }
 
-DragImageRef createDragImageIconForCachedImageFilename(const String& filename)
+void DragImage::dissolveToFraction(float delta)
+{
+    m_platformImage = dissolveDragImageToFraction(takePlatformImage(), delta);
+}
+
+static PlatformDragImage createDragImageIconForCachedImageFilename(const String& filename)
 {
     SHFILEINFO shfi { };
     auto fname = filename.wideCharacters();
@@ -206,9 +233,19 @@ DragImageRef createDragImageIconForCachedImageFilename(const String& filename)
     return iconInfo.hbmColor;
 }
 
-DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path&)
+DragImage DragImage::createIconForCachedImageFilename(const String& filename)
+{
+    return DragImage { createDragImageIconForCachedImageFilename(filename) };
+}
+
+static PlatformDragImage createDragImageForColor(const Color&, const FloatRect&, float, Path&)
 {
     return nullptr;
+}
+
+DragImage DragImage::createForColor(const Color& color, const FloatRect& elementRect, float pageScaleFactor, Path& visiblePath)
+{
+    return DragImage { createDragImageForColor(color, elementRect, pageScaleFactor, visiblePath) };
 }
 
 }

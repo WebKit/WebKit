@@ -72,7 +72,7 @@ public:
     bool canSmartReplace() final { return false; }
 
 #if ENABLE(DRAG_SUPPORT)
-    void setDragImage(DragImage, const IntPoint&) final { }
+    void setDragImage(DragImage&&, const IntPoint&) final { }
 #endif
 
 private:
