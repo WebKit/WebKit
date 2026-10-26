@@ -32,6 +32,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/CGImagePixelReader.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
@@ -41,6 +42,7 @@
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebCore/Color.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKHitTestResult.h>
 #import <WebKit/WKJSHandle.h>
@@ -2879,6 +2881,18 @@ static NSArray<_WKTargetedElementInfo *> *synchronouslyRequestTargetedElementInf
     return synchronouslyRequestTargetedElementInfo(webView, request.get());
 }
 
+static RetainPtr<CGImageRef> synchronouslyTakeSnapshot(_WKTargetedElementInfo *info)
+{
+    __block RetainPtr<CGImageRef> result;
+    __block bool done = false;
+    [info takeSnapshotWithCompletionHandler:^(CGImageRef image) {
+        result = image;
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
 // Element targeting only reports top-document elements; content inside an iframe is represented by its
 // <iframe> element. These check that the <iframe> element behaves the same when its content is in
 // another process. The <p> sibling keeps the <iframe> from being rejected as the page's only content.
@@ -2940,6 +2954,33 @@ TEST(SiteIsolation, TextSearchInSameSiteIframeNestedInCrossOriginIframeTargetsIf
     RetainPtr iframeTargets = synchronouslyRequestTargetedElementInfoWithSelectors(webView.get(), @[ [NSSet setWithObject:@"#frame"] ]);
     ASSERT_EQ(1UL, [iframeTargets count]);
     EXPECT_TRUE([[targetsFromText firstObject] isSameElement:[iframeTargets firstObject]]);
+}
+
+TEST(SiteIsolation, TakeSnapshotOfCrossOriginIframeElement)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<meta name='viewport' content='width=device-width, initial-scale=1'><p>main frame text</p>"
+            "<iframe id='frame' style='width: 301px; height: 201px; border: none;' src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body style='background: rgb(0, 255, 0);'>iframe content</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    [webView _setOverrideDeviceScaleFactor:1.5];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    waitForIframeText(webView.get(), @"iframe content");
+
+    RetainPtr targets = synchronouslyRequestTargetedElementInfoWithSelectors(webView.get(), @[ [NSSet setWithObject:@"#frame"] ]);
+    ASSERT_EQ(1UL, [targets count]);
+
+    RetainPtr snapshot = synchronouslyTakeSnapshot([targets firstObject]);
+    ASSERT_NOT_NULL(snapshot.get());
+    EXPECT_EQ(CGImageGetWidth(snapshot.get()), 452U);
+    EXPECT_EQ(CGImageGetHeight(snapshot.get()), 302U);
+    CGImagePixelReader reader { snapshot.get() };
+    EXPECT_EQ(reader.at(reader.width() / 2, reader.height() / 2), WebCore::Color::green);
 }
 
 #if PLATFORM(MAC) && ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

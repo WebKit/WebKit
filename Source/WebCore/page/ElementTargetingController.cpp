@@ -2144,36 +2144,39 @@ void ElementTargetingController::selectorBasedVisibilityAdjustmentTimerFired()
     applyVisibilityAdjustmentFromSelectors();
 }
 
-RefPtr<NativeImage> ElementTargetingController::snapshotIgnoringVisibilityAdjustment(NodeIdentifier nodeID, ScriptExecutionContextIdentifier documentID)
+bool ElementTargetingController::paintSnapshotIgnoringVisibilityAdjustment(NodeIdentifier nodeID, ScriptExecutionContextIdentifier documentID, NOESCAPE const Function<void(LocalFrame&, Element&, const IntRect&)>& paintSnapshot)
 {
     RefPtr page = m_page.get();
     if (!page)
-        return { };
+        return false;
 
     RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
     if (!mainFrame)
-        return { };
+        return false;
 
     RefPtr element = dynamicDowncast<Element>(Node::fromIdentifier(nodeID));
     if (!element)
-        return { };
+        return false;
 
     RefPtr frameView = mainFrame->view();
     if (!frameView)
-        return { };
+        return false;
+
+    if (!protect(element->document())->isTopDocument())
+        return false;
 
     if (element->document().identifier() != documentID)
-        return { };
+        return false;
 
     ClearVisibilityAdjustmentForScope clearAdjustmentScope { *element };
     protect(element->document())->updateLayoutIgnorePendingStylesheets();
 
     CheckedPtr renderer = element->renderer();
     if (!renderer)
-        return { };
+        return false;
 
     if (!renderer->isRenderReplaced() && !renderer->firstChild() && !Style::hasImageInAnyLayer(renderer->style().backgroundLayers()))
-        return { };
+        return false;
 
     auto backgroundColor = frameView->baseBackgroundColor();
     frameView->setBaseBackgroundColor(Color::transparentBlack);
@@ -2183,10 +2186,20 @@ RefPtr<NativeImage> ElementTargetingController::snapshotIgnoringVisibilityAdjust
 
     auto snapshotRect = renderer->absoluteBoundingBoxRect();
     if (snapshotRect.isEmpty())
-        return { };
+        return false;
 
-    auto buffer = snapshotFrameRect(*mainFrame, snapshotRect, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }, element.get());
-    return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
+    paintSnapshot(*mainFrame, *element, snapshotRect);
+    return true;
+}
+
+RefPtr<NativeImage> ElementTargetingController::snapshotIgnoringVisibilityAdjustment(NodeIdentifier nodeID, ScriptExecutionContextIdentifier documentID)
+{
+    RefPtr<NativeImage> image;
+    paintSnapshotIgnoringVisibilityAdjustment(nodeID, documentID, [&](LocalFrame& mainFrame, Element& element, const IntRect& snapshotRect) {
+        auto buffer = snapshotFrameRect(mainFrame, snapshotRect, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }, &element);
+        image = ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
+    });
+    return image;
 }
 
 } // namespace WebCore
