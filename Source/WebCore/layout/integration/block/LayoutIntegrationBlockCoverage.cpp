@@ -538,11 +538,11 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     auto isAuto = [](auto& size) {
         return size.isAuto() && !size.isCalcSize();
     };
-    // Block sizes may also be min-content, max-content or fit-content, which are the automatic block size (css-sizing-3 §3.2), and stretch
-    // (css-sizing-4 §6.1). Min and max block sizes resolve the others to the content's block size, which only an automatic block size reaches.
-    // FIXME: -webkit-fill-available, which the render tree path resolves against the first definite block size up the containing block chain.
+    // Block sizes may also be min-content, max-content or fit-content, which are the automatic block size (css-sizing-3 §3.2), stretch
+    // (css-sizing-4 §6.1) and -webkit-fill-available, the available block size up the containing block chain (BlockFormattingUtils::fillAvailableBlockSize).
+    // Min and max block sizes resolve the others to the content's block size, which only an automatic block size reaches.
     auto isSupportedBlockSize = [&](auto& size, bool resolvesToContentBlockSize) {
-        return isSupportedSize(size) || (size.isStretch() && !size.isFillAvailable() && !size.isCalcSize()) || (size.isIntrinsic() && !size.isCalcSize() && resolvesToContentBlockSize);
+        return isSupportedSize(size) || (size.isStretch() && !size.isCalcSize()) || (size.isIntrinsic() && !size.isCalcSize() && resolvesToContentBlockSize);
     };
     auto blockSizeIsAutomatic = isAuto(style->logicalHeight()) || (style->logicalHeight().isIntrinsic() && !style->logicalHeight().isCalcSize());
     // Inline sizes may also be min-content, max-content or fit-content, from the inline sizes of the content (css-sizing-3 §3.2), and stretch
@@ -557,6 +557,19 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         || (!isAuto(style->logicalMinHeight()) && !isSupportedBlockSize(style->logicalMinHeight(), blockSizeIsAutomatic))
         || (!style->logicalMaxHeight().isNone() && !isSupportedBlockSize(style->logicalMaxHeight(), blockSizeIsAutomatic)))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
+    // A box resolves both stretch and -webkit-fill-available block sizes with one size (BlockFormattingContext::stretchFitBorderBoxBlockSize).
+    // FIXME: -webkit-fill-available inside an out-of-flow box, whose available block size comes from its insets.
+    auto isStretch = [&](auto& size) {
+        return size.isStretch() && !size.isFillAvailable();
+    };
+    if (Layout::BlockFormattingUtils::hasFillAvailableBlockSize(*blockContainer, blockContainer->writingMode())) {
+        if (isStretch(style->logicalHeight()) || isStretch(style->logicalMinHeight()) || isStretch(style->logicalMaxHeight()))
+            return BlockAvoidanceReason::ContentHasSizingKeyword;
+        for (CheckedPtr ancestor = blockContainer->parent(); ancestor && ancestor != &rootContainer; ancestor = ancestor->parent()) {
+            if (ancestor->isOutOfFlowPositioned())
+                return BlockAvoidanceReason::ContentHasSizingKeyword;
+        }
+    }
     // So do an auto inline size that justify-self makes fit the content (BlockFormattingUtils::inlineSizeAndMargins).
     CheckedRef parentStyle = blockContainer->parent()->style();
     auto fitsContent = style->logicalWidth().isAuto() && Layout::BlockFormattingUtils::isAlignedByJustifySelf(*blockContainer, parentStyle);
