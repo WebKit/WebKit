@@ -99,6 +99,11 @@ inline constexpr std::array siteIsolationParams {
     SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = true },
 };
 
+inline constexpr std::array crossOriginWithSiteIsolationParams {
+    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = false },
+    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = true },
+};
+
 // Some main frame text and a 400x300 cross-origin iframe with id 'iframe', loaded from https://webkit.org/iframe.
 static constexpr auto mainFrameTextWithCrossOriginIframe = "<body style='margin: 0'>main frame text<iframe id='iframe' style='width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s;
 

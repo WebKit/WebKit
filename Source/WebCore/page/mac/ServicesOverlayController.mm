@@ -81,14 +81,8 @@ void ServicesOverlayController::deref() const
     m_page->deref();
 }
 
-void ServicesOverlayController::willMoveToPage(PageOverlay& overlay, Page* page)
+void ServicesOverlayController::willMoveToPage(PageOverlay&, Page*)
 {
-    if (page)
-        return;
-
-    m_servicesOverlays.removeFirstMatching([&](auto& servicesOverlay) {
-        return servicesOverlay.get() == &overlay;
-    });
 }
 
 void ServicesOverlayController::didMoveToPage(PageOverlay&, Page*)
@@ -97,8 +91,7 @@ void ServicesOverlayController::didMoveToPage(PageOverlay&, Page*)
 
 static RefPtr<LocalFrame> rootFrameForHighlight(const DataDetectorHighlight& highlight)
 {
-    RefPtr frame { highlight.range().start.document().frame() };
-    return frame ? &frame->rootFrame() : nullptr;
+    return highlight.range().start.document().rootFrame();
 }
 
 static const uint8_t AlignmentNone = 0;
@@ -504,28 +497,26 @@ void ServicesOverlayController::updateServicesOverlays()
         }
     }
 
-    // Uninstalling re-enters willMoveToPage(), so take the overlays out first.
+    // Uninstalling removes the overlay from pageOverlays(), so collect first.
     Vector<Ref<PageOverlay>> overlaysToUninstall;
-    m_servicesOverlays.removeAllMatching([&](auto& weakOverlay) {
-        RefPtr overlay { weakOverlay };
-        if (!overlay)
-            return true;
+    for (auto& overlay : page->pageOverlayController().pageOverlays()) {
+        if (&overlay->client() != this)
+            continue;
 
         RefPtr rootFrame { overlay->associatedFrame() };
         if (rootFrame && rootFramesWithPotentialHighlights.containsIf([&](auto& frame) { return frame.ptr() == rootFrame; }))
-            return false;
+            continue;
 
-        overlaysToUninstall.append(overlay.releaseNonNull());
-        return true;
-    });
+        overlaysToUninstall.append(overlay);
+    }
+
+    for (auto& overlay : overlaysToUninstall)
+        page->pageOverlayController().uninstallPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
 
     if (RefPtr activeHighlight { m_activeHighlight }; activeHighlight && !servicesOverlayForRootFrame(rootFrameForHighlight(*activeHighlight).get())) {
         clearActiveHighlight();
         activeHighlight->dismissImmediately();
     }
-
-    for (auto& overlay : overlaysToUninstall)
-        page->pageOverlayController().uninstallPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
 
     for (auto& rootFrame : rootFramesNeedingOverlay) {
         if (servicesOverlayForRootFrame(rootFrame.ptr()))
@@ -533,7 +524,6 @@ void ServicesOverlayController::updateServicesOverlays()
 
         Ref overlay { PageOverlay::create(*this, PageOverlay::OverlayType::Document) };
         overlay->setAssociatedFrame(rootFrame.ptr());
-        m_servicesOverlays.append(overlay.get());
         page->pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
     }
 }
@@ -543,11 +533,7 @@ RefPtr<PageOverlay> ServicesOverlayController::servicesOverlayForRootFrame(const
     if (!rootFrame)
         return nullptr;
 
-    for (auto& weakOverlay : m_servicesOverlays) {
-        if (RefPtr overlay { weakOverlay }; overlay && overlay->associatedFrame() == rootFrame)
-            return overlay;
-    }
-    return nullptr;
+    return m_page->pageOverlayController().documentOverlayForRootFrame(*this, *rootFrame);
 }
 
 DataDetectorHighlight* ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight(DataDetectorHighlight& selectionHighlight)
@@ -788,7 +774,7 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPointInMainFram
         if (!rangeFrameView)
             return;
 
-        page->chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), clickPointInMainFrameView, rangeFrameView->contentsToMainFrameView(protect(rangeFrame->editor())->firstRectForRange(highlight.range())));
+        page->chrome().client().handleTelephoneNumberClick(rangeFrame->frameID(), plainText(highlight.range()), clickPointInMainFrameView, rangeFrameView->contentsToMainFrameView(protect(rangeFrame->editor())->firstRectForRange(highlight.range())));
     }
 }
 

@@ -461,11 +461,11 @@ private:
     void updateTextIndicator(RefPtr<WebCore::TextIndicator>&&) const final;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
-    void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&, const WebCore::IntRect&) final;
+    void handleTelephoneNumberClick(WebCore::FrameIdentifier, const String& number, const WebCore::IntPoint&, const WebCore::IntRect&) final;
 #endif
 
 #if ENABLE(DATA_DETECTION)
-    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&) final;
+    void handleClickForDataDetectionResult(WebCore::FrameIdentifier, const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&) final;
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)

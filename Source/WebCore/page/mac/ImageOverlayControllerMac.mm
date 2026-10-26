@@ -83,8 +83,9 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
     if (dataDetectorResultElementsWithHighlights == dataDetectorResultElements)
         return;
 
-    RefPtr mainFrameView = protect(m_page->mainFrame())->virtualView();
-    if (!mainFrameView)
+    RefPtr rootFrame { overlayHost.document().rootFrame() };
+    RefPtr rootView { rootFrame ? rootFrame->view() : nullptr };
+    if (!rootView)
         return;
 
     RefPtr frameView = overlayHost.document().view();
@@ -94,23 +95,24 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
     m_activeDataDetectorHighlight = nullptr;
     m_dataDetectorContainersAndHighlights = WTF::map(dataDetectorResultElements, [&](auto& element) {
         CGRect elementBounds = protect(element->renderer())->absoluteBoundingBoxRect();
-        elementBounds.origin = mainFrameView->windowToContents(frameView->contentsToWindow(roundedIntPoint(elementBounds.origin)));
+        elementBounds.origin = rootView->windowToContents(frameView->contentsToWindow(roundedIntPoint(elementBounds.origin)));
 
         // FIXME: We should teach DataDetectorHighlight to render quads instead of always falling back to axis-aligned bounding rects.
-        auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES, 0));
+        RetainPtr highlight { adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &elementBounds, 1, DataDetection::visibleContentRectForHighlights(*rootView), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES, 0)) };
         return ContainerAndHighlight { element, DataDetectorHighlight::createForImageOverlay(*this, WTF::move(highlight), *makeRangeSelectingNode(element.get())) };
     });
 }
 
-bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& event)
+bool ImageOverlayController::platformHandleMouseEvent(PageOverlay& overlay, const PlatformMouseEvent& event)
 {
-    RefPtr mainFrameView = protect(m_page->mainFrame())->virtualView();
-    if (!mainFrameView)
+    RefPtr rootFrame { overlay.associatedFrame() };
+    RefPtr rootView { rootFrame ? rootFrame->view() : nullptr };
+    if (!rootView || rootFrame != rootFrameForHost(m_hostElementForDataDetectors))
         return false;
 
     RefPtr<HTMLElement> activeDataDetectorElement;
     auto previousActiveHighlight = std::exchange(m_activeDataDetectorHighlight, nullptr);
-    auto mousePositionInContents = mainFrameView->windowToContents(event.position());
+    auto mousePositionInContents = rootView->windowToContents(event.position());
     bool mouseIsOverActiveDataDetectorHighlightButton = false;
 
     for (auto& [element, highlight] : m_dataDetectorContainersAndHighlights) {
@@ -132,7 +134,7 @@ bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& 
             previousActiveHighlight->fadeOut();
 
         if (RefPtr activeDataDetectorHighlight = m_activeDataDetectorHighlight) {
-            protect(protect(m_overlay)->layer())->addChild(activeDataDetectorHighlight->layer());
+            protect(overlay.layer())->addChild(activeDataDetectorHighlight->layer());
             activeDataDetectorHighlight->fadeIn();
         }
     }
@@ -171,7 +173,7 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
     if (!renderer)
         return false;
 
-    m_page->chrome().client().handleClickForDataDetectionResult({ WTF::move(dataDetectionResult), frameView->contentsToMainFrameView(renderer->absoluteBoundingBoxRect()) }, frameView->contentsToMainFrameView(frameView->windowToContents(locationInWindow)));
+    m_page->chrome().client().handleClickForDataDetectionResult(frame->frameID(), { WTF::move(dataDetectionResult), frameView->contentsToMainFrameView(renderer->absoluteBoundingBoxRect()) }, frameView->contentsToMainFrameView(frameView->windowToContents(locationInWindow)));
     return true;
 }
 
@@ -188,7 +190,7 @@ void ImageOverlayController::textRecognitionResultsChanged(HTMLElement& element)
         return;
 
     clearDataDetectorHighlights();
-    uninstallPageOverlayIfNeeded();
+    updateOverlays();
 }
 
 bool LEGACY_NODELETE ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
@@ -198,15 +200,21 @@ bool LEGACY_NODELETE ImageOverlayController::hasActiveDataDetectorHighlightForTe
 
 void ImageOverlayController::elementUnderMouseDidChange(LocalFrame& frame, Element* elementUnderMouse)
 {
-    if (m_activeDataDetectorHighlight)
+    Ref rootFrame { frame.rootFrame() };
+    RefPtr hostRootFrame { rootFrameForHost(m_hostElementForDataDetectors) };
+
+    if (m_activeDataDetectorHighlight && hostRootFrame && rootFrame->tree().isDescendantOf(hostRootFrame.get()))
         return;
 
     if (!elementUnderMouse && m_hostElementForDataDetectors && frame.document() != &m_hostElementForDataDetectors->document())
         return;
 
     if (!elementUnderMouse || !ImageOverlay::isInsideOverlay(*elementUnderMouse)) {
+        if (hostRootFrame && hostRootFrame != rootFrame.ptr() && hostRootFrame->tree().isDescendantOf(rootFrame.ptr()))
+            return;
+
         m_hostElementForDataDetectors = nullptr;
-        uninstallPageOverlayIfNeeded();
+        updateOverlays();
         return;
     }
 
@@ -214,14 +222,14 @@ void ImageOverlayController::elementUnderMouseDidChange(LocalFrame& frame, Eleme
     if (!imageOverlayHost) {
         ASSERT_NOT_REACHED();
         m_hostElementForDataDetectors = nullptr;
-        uninstallPageOverlayIfNeeded();
+        updateOverlays();
         return;
     }
 
     if (!ImageOverlay::hasOverlay(*imageOverlayHost)) {
         ASSERT_NOT_REACHED();
         m_hostElementForDataDetectors = nullptr;
-        uninstallPageOverlayIfNeeded();
+        updateOverlays();
         return;
     }
 
@@ -232,12 +240,21 @@ void ImageOverlayController::elementUnderMouseDidChange(LocalFrame& frame, Eleme
 
     if (m_dataDetectorContainersAndHighlights.isEmpty()) {
         m_hostElementForDataDetectors = nullptr;
-        uninstallPageOverlayIfNeeded();
+        updateOverlays();
         return;
     }
 
     m_hostElementForDataDetectors = imageOverlayHost.releaseNonNull();
-    installPageOverlayIfNeeded();
+    updateOverlays();
+}
+
+void ImageOverlayController::mouseDidLeaveLocalRoot(LocalFrame& rootFrame)
+{
+    if (rootFrameForHost(m_hostElementForDataDetectors) != &rootFrame)
+        return;
+
+    clearDataDetectorHighlights();
+    updateOverlays();
 }
 
 #pragma mark - DataDetectorHighlightClient

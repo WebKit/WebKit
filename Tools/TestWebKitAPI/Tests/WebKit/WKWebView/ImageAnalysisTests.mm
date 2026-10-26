@@ -43,17 +43,22 @@
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKFeature.h>
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
+#import <wtf/MonotonicTime.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #if PLATFORM(MAC)
-#import <pal/mac/DataDetectorsSoftLink.h>
+#import "Helpers/mac/DataDetectorHighlightTestUtilities.h"
 #endif
+
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 
 static unsigned gImageAnalysisDidProcessRequestCount = 0;
 
@@ -594,23 +599,6 @@ TEST(ImageAnalysisTests, CopyImageOverlayTextWithoutAttributedString)
 
 #if PLATFORM(MAC) && ENABLE(DATA_DETECTION) && ENABLE(REVEAL)
 
-static CGPoint dataDetectorHighlightButtonLocation(CGRect highlightRect, CGRect visibleRect)
-{
-    // Mirrors the highlight that ImageOverlayController creates, so we can click its button.
-    RetainPtr highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &highlightRect, 1, visibleRect, static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES, 0));
-    auto bounds = CGRectIntegral(PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(highlight.get()));
-    auto buttonRect = CGRectNull;
-    for (auto y = CGRectGetMinY(bounds); y < CGRectGetMaxY(bounds); ++y) {
-        for (auto x = CGRectGetMinX(bounds); x < CGRectGetMaxX(bounds); ++x) {
-            Boolean isOverButton = NO;
-            if (PAL::softLink_DataDetectors_DDHighlightPointIsOnHighlight(highlight.get(), CGPointMake(x, y), &isOverButton) && isOverButton)
-                buttonRect = CGRectUnion(buttonRect, CGRectMake(x, y, 1, 1));
-        }
-    }
-    EXPECT_FALSE(CGRectIsNull(buttonRect));
-    return CGPointMake(std::floor(CGRectGetMidX(buttonRect)), std::floor(CGRectGetMidY(buttonRect)));
-}
-
 TEST(ImageAnalysisTests, DataDetectorMenuLocationInSubframe)
 {
     __block bool didShowMenu = false;
@@ -650,7 +638,7 @@ TEST(ImageAnalysisTests, DataDetectorMenuLocationInSubframe)
         return [[webView objectByEvaluatingJavaScript:@"internals.hasActiveDataDetectorHighlight"] boolValue];
     }));
 
-    auto buttonLocation = dataDetectorHighlightButtonLocation(expectedElementBounds, [webView bounds]);
+    auto buttonLocation = dataDetectorHighlightGeometry(expectedElementBounds, [webView bounds]).buttonCenter;
     moveMouse(buttonLocation);
     [webView sendClickAtPoint:[webView convertPoint:buttonLocation toView:nil]];
     EXPECT_TRUE(Util::runFor(&didShowMenu, 5_s));
@@ -660,6 +648,362 @@ TEST(ImageAnalysisTests, DataDetectorMenuLocationInSubframe)
     EXPECT_NEAR(menuLocation.x, buttonLocation.x, 1);
     EXPECT_NEAR(menuLocation.y, buttonLocation.y, 1);
 }
+
+static constexpr CGFloat liveTextDataDetectorRectTolerance = 2;
+
+class LiveTextDataDetectorInSubframe : public DataDetectorInSubframeTest {
+public:
+    static constexpr int nestedFrameWidth = 340;
+    static constexpr int nestedFrameHeight = 200;
+    static constexpr NSRect nestedFrameContentBox { nestedFrameContentOrigin, { nestedFrameWidth, nestedFrameHeight } };
+    static constexpr size_t fiveSecondsOfTries { 50 };
+
+    void SetUp() override
+    {
+        static constexpr auto imageHTML { "<body style='margin:0'><img style='display:block; margin:40px 0 0 30px; width:300px; height:100px' src='large-red-square.png'>"_s };
+        static constexpr auto mainFrameImageHTML { "<img style='position:absolute; left:560px; top:120px; width:300px; height:100px' src='large-red-square.png'>"_s };
+        String secondIframeOrigin { GetParam().crossOrigin ? "https://apple.com"_s : "https://example.com"_s };
+        setUpWebView({
+            { "/main"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/image.html"_s)))) },
+            { "/main-with-scrollable-iframe"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/tall-image.html"_s)))) },
+            { "/main-with-two-iframes"_s, html(mainHTML(makeString(iframe(iframeLeft, GetParam().subframeURL("/image.html"_s)), iframe(secondIframeLeft, makeString(secondIframeOrigin, "/text.html"_s))))) },
+            { "/main-with-two-image-iframes"_s, html(mainHTML(makeString(iframe(iframeLeft, GetParam().subframeURL("/image.html"_s)), iframe(secondIframeLeft, makeString(secondIframeOrigin, "/image.html"_s))))) },
+            { "/main-with-nested-frame"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/nested.html"_s)))) },
+            { "/main-with-nested-main-site-frame"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/nested-main-site.html"_s)))) },
+            { "/main-with-nested-main-site-frame-and-image"_s, html(mainHTML(makeString(iframe(iframeLeft, GetParam().subframeURL("/nested-main-site.html"_s)), mainFrameImageHTML))) },
+            { "/nested.html"_s, html(nestedFrameHTML("image.html"_s, nestedFrameWidth, nestedFrameHeight)) },
+            { "/nested-main-site.html"_s, html(nestedFrameHTML("https://example.com/image.html"_s, nestedFrameWidth, nestedFrameHeight)) },
+            { "/image.html"_s, html(makeString(imageHTML, "</body>"_s)) },
+            { "/tall-image.html"_s, html(makeString(imageHTML, "<div style='height:1000px'></div></body>"_s)) },
+            { "/text.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:40px'>No image here</p></body>"_s) },
+            { "/large-red-square.png"_s, HTTPResponse { [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"]] } },
+        }, [](WKWebViewConfiguration *) { });
+    }
+
+    CGRect imageOverlayElementRect(WKFrameInfo *frame, CGPoint frameContentOrigin, NSString *elementScript)
+    {
+        RetainPtr rect { dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+            "  const overlay = internals.shadowRoot(document.images[0]);"
+            "  const rect = %@.getBoundingClientRect();"
+            "  return [rect.x, rect.y, rect.width, rect.height];"
+            "})()", elementScript] inFrame:frame]) };
+        return rectInWebView(rect.get(), frameContentOrigin);
+    }
+
+    CGRect installImageOverlayWithDataDetector(WKFrameInfo *frame, CGPoint frameContentOrigin)
+    {
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [[webView objectByEvaluatingJavaScript:@"document.images[0].complete" inFrame:frame] boolValue];
+        }));
+        [webView objectByEvaluatingJavaScript:@"(() => {"
+            "  const quad = (x1, y1, x2, y2) => ({ topLeft: new DOMPointReadOnly(x1, y1), topRight: new DOMPointReadOnly(x2, y1), bottomRight: new DOMPointReadOnly(x2, y2), bottomLeft: new DOMPointReadOnly(x1, y2) });"
+            "  const dataDetector = quad(0, 0.5, 0.5, 1);"
+            "  const otherLine = quad(0.6, 0, 1, 0.4);"
+            "  internals.installImageOverlay(document.images[0], ["
+            "    { ...dataDetector, children: [{ text: 'webkit.org', ...dataDetector }] },"
+            "    { ...otherLine, children: [{ text: 'other', ...otherLine }] },"
+            "  ], [], [dataDetector]);"
+            "  return true;"
+            "})()" inFrame:frame];
+        [webView waitForNextPresentationUpdate];
+        return imageOverlayElementRect(frame, frameContentOrigin, @"overlay.querySelector('.image-overlay-data-detector-result')");
+    }
+
+    CGRect otherLineRect(WKFrameInfo *frame, CGPoint frameContentOrigin)
+    {
+        return imageOverlayElementRect(frame, frameContentOrigin, @"overlay.querySelectorAll('.image-overlay-line')[1]");
+    }
+
+    bool hasActiveHighlight(WKFrameInfo *frame)
+    {
+        return [[webView objectByEvaluatingJavaScript:@"internals.hasActiveDataDetectorHighlight" inFrame:frame] boolValue];
+    }
+
+    bool hasVisibleHighlightLayer(CGRect highlightBoundingRect)
+    {
+        return static_cast<bool>(hasVisibleLayerNear([webView layer], highlightBoundingRect, liveTextDataDetectorRectTolerance));
+    }
+
+    testing::AssertionResult hoverUntilHighlightIsActive(WKFrameInfo *frame, CGRect dataDetectorRect, CGRect highlightBoundingRect)
+    {
+        auto isShown { hoverUntilHighlightIsShown(webView.get(), dataDetectorRect, highlightBoundingRect, liveTextDataDetectorRectTolerance) };
+        if (!isShown)
+            return isShown;
+        if (!hasActiveHighlight(frame))
+            return testing::AssertionFailure() << "The highlight's layer is visible, but the image's process has no active highlight.";
+        return testing::AssertionSuccess();
+    }
+
+    bool moveAwayUntilHighlightIsHidden(WKFrameInfo *frame, CGPoint point, CGRect highlightBoundingRect)
+    {
+        moveMouse(point);
+        return Util::waitFor([&] {
+            [webView waitForNextPresentationUpdate];
+            return !hasVisibleHighlightLayer(highlightBoundingRect) && !hasActiveHighlight(frame);
+        });
+    }
+
+    bool hoveringShowsHighlight(WKFrameInfo *frame, CGPoint point, CGRect highlightBoundingRect)
+    {
+        auto isShown = [&] {
+            [webView waitForNextPresentationUpdate];
+            return hasVisibleHighlightLayer(highlightBoundingRect) || hasActiveHighlight(frame);
+        };
+        for (unsigned i = 0; i < 5; ++i) {
+            moveMouse(CGPointMake(point.x + (i % 2), point.y));
+            if (isShown())
+                return true;
+        }
+        Util::runFor(500_ms);
+        return isShown();
+    }
+
+    bool twoMovesShowHighlight(WKFrameInfo *frame, CGRect dataDetectorRect, CGRect highlightBoundingRect)
+    {
+        moveMouse(center(dataDetectorRect));
+        moveMouse(CGPointMake(CGRectGetMidX(dataDetectorRect) + 1, CGRectGetMidY(dataDetectorRect)));
+        return Util::waitFor([&] {
+            [webView waitForNextPresentationUpdate];
+            return hasVisibleHighlightLayer(highlightBoundingRect) && hasActiveHighlight(frame);
+        }, fiveSecondsOfTries);
+    }
+
+    struct Menu {
+        CGRect elementBounds { CGRectNull };
+        CGPoint location { CGPointZero };
+    };
+
+    std::optional<Menu> presentedMenu(NOESCAPE const Function<void()>& trigger, Seconds timeout)
+    {
+        __block bool didShowMenu { false };
+        __block Menu menu;
+        InstanceMethodSwizzler showContextMenuSwizzler {
+            NSClassFromString(@"WKRevealItemPresenter"),
+            NSSelectorFromString(@"showContextMenu"),
+            imp_implementationWithBlock(^(NSObject *presenter) {
+                menu.elementBounds = [checked_objc_cast<NSValue>([presenter valueForKey:@"frameInView"]) rectValue];
+                menu.location = [checked_objc_cast<NSValue>([presenter valueForKey:@"menuLocationInView"]) pointValue];
+                didShowMenu = true;
+            })
+        };
+
+        trigger();
+        if (!didShowMenu && timeout)
+            Util::runFor(&didShowMenu, timeout);
+        if (!didShowMenu)
+            return std::nullopt;
+        return menu;
+    }
+
+    std::optional<Menu> click(CGPoint pointInWebView, Seconds timeout = 5_s)
+    {
+        return presentedMenu([&] {
+            [webView sendClickAtPoint:[webView convertPoint:pointInWebView toView:nil]];
+        }, timeout);
+    }
+
+    void showHighlightAndMenu(WKFrameInfo *frame, CGRect dataDetectorRect, CGRect visibleRect)
+    {
+        auto highlight { dataDetectorHighlightGeometry(dataDetectorRect, visibleRect) };
+        ASSERT_TRUE(hoverUntilHighlightIsActive(frame, dataDetectorRect, highlight.boundingRect));
+
+        moveMouse(highlight.buttonCenter);
+        auto menu { click(highlight.buttonCenter) };
+        ASSERT_TRUE(menu.has_value());
+
+        EXPECT_TRUE(rectsAreNear(menu->elementBounds, dataDetectorRect, liveTextDataDetectorRectTolerance)) << "Expected " << NSStringFromRect(dataDetectorRect).UTF8String << ", got " << NSStringFromRect(menu->elementBounds).UTF8String;
+        EXPECT_NEAR(menu->location.x, highlight.buttonCenter.x, 1);
+        EXPECT_NEAR(menu->location.y, highlight.buttonCenter.y, 1);
+    }
+};
+
+TEST_P(LiveTextDataDetectorInSubframe, HighlightAndMenuAreAtTheDataDetector)
+{
+    load(@"/main");
+    RetainPtr frame { [webView firstChildFrame] };
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), iframeContentBox.origin) };
+    showHighlightAndMenu(frame.get(), rect, rootVisibleRect(iframeContentBox));
+}
+
+TEST_P(LiveTextDataDetectorInSubframe, HighlightAndMenuAccountForMainFrameScroll)
+{
+    load(@"/main");
+
+    static constexpr int scrollOffset = 40;
+    EXPECT_TRUE(scrollTo(nil, scrollOffset));
+
+    RetainPtr frame { [webView firstChildFrame] };
+    CGRect contentBox { NSOffsetRect(iframeContentBox, 0, -scrollOffset) };
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), contentBox.origin) };
+    showHighlightAndMenu(frame.get(), rect, rootVisibleRect(contentBox));
+}
+
+TEST_P(LiveTextDataDetectorInSubframe, HighlightAndMenuAccountForSubframeScroll)
+{
+    load(@"/main-with-scrollable-iframe");
+    RetainPtr frame { [webView firstChildFrame] };
+
+    static constexpr int scrollOffset = 30;
+    EXPECT_TRUE(scrollTo(frame.get(), scrollOffset));
+
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), iframeContentBox.origin) };
+    showHighlightAndMenu(frame.get(), rect, rootVisibleRect(iframeContentBox));
+}
+
+TEST_P(LiveTextDataDetectorInSubframe, HighlightAndMenuAreAtTheDataDetectorInNestedFrame)
+{
+    load(@"/main-with-nested-frame");
+    RetainPtr frame { nestedFrame() };
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), nestedFrameContentBox.origin) };
+    showHighlightAndMenu(frame.get(), rect, rootVisibleRect(iframeContentBox));
+}
+
+TEST_P(LiveTextDataDetectorInSubframe, HighlightAndMenuInFrameNestedUnderCrossSiteFrame)
+{
+    load(@"/main-with-nested-main-site-frame");
+    RetainPtr frame { nestedFrame() };
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), nestedFrameContentBox.origin) };
+
+    showHighlightAndMenu(frame.get(), rect, rootVisibleRect(nestedFrameContentBox));
+    if (HasFatalFailure())
+        return;
+
+    auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(nestedFrameContentBox)) };
+    EXPECT_TRUE(moveAwayUntilHighlightIsHidden(frame.get(), center(otherLineRect(frame.get(), nestedFrameContentBox.origin)), highlight.boundingRect));
+
+    CGPoint nestedFrameOrigin { nestedFrameContentBox.origin };
+    CGRect highlightRelativeToMainFrame { CGRectOffset(highlight.boundingRect, -nestedFrameOrigin.x, -nestedFrameOrigin.y) };
+    EXPECT_FALSE(hoveringShowsHighlight(frame.get(), CGPointMake(CGRectGetMidX(rect) - nestedFrameOrigin.x, CGRectGetMidY(rect) - nestedFrameOrigin.y), highlight.boundingRect));
+    EXPECT_FALSE(hasVisibleHighlightLayer(highlightRelativeToMainFrame));
+
+    ASSERT_TRUE(hoverUntilHighlightIsActive(frame.get(), rect, highlight.boundingRect));
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('iframe').remove()"];
+    ASSERT_EQ([[webView objectByEvaluatingJavaScript:@"document.querySelectorAll('iframe').length"] intValue], 0);
+    moveMouse(CGPointMake(50, 50));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !hasActiveHighlight(nil);
+    }, fiveSecondsOfTries));
+    bool wasShown { false };
+    auto removalTime { MonotonicTime::now() };
+    while (MonotonicTime::now() - removalTime < 500_ms) {
+        [webView waitForNextPresentationUpdate];
+        wasShown |= hasVisibleHighlightLayer(highlight.boundingRect) || hasVisibleHighlightLayer(highlightRelativeToMainFrame);
+    }
+    EXPECT_FALSE(wasShown);
+}
+
+TEST_P(LiveTextDataDetectorInSubframe, MouseOverAnotherFrameDoesNotShowHighlight)
+{
+    load(@"/main-with-two-iframes");
+    RetainPtr frame { [webView firstChildFrame] };
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), iframeContentBox.origin) };
+    auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(iframeContentBox)) };
+    ASSERT_TRUE(hoverUntilHighlightIsActive(frame.get(), rect, highlight.boundingRect));
+    EXPECT_TRUE(moveAwayUntilHighlightIsHidden(frame.get(), center(otherLineRect(frame.get(), iframeContentBox.origin)), highlight.boundingRect));
+
+    EXPECT_FALSE(click(pointInSecondFrame(highlight.buttonCenter), 1_s).has_value());
+    EXPECT_FALSE(hoveringShowsHighlight(frame.get(), pointInSecondFrame(center(rect)), highlight.boundingRect));
+}
+
+TEST_P(LiveTextDataDetectorInSubframe, HighlightGoesAwayWhenMouseMovesIntoMainFrame)
+{
+    load(@"/main");
+    RetainPtr frame { [webView firstChildFrame] };
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), iframeContentBox.origin) };
+    auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(iframeContentBox)) };
+    ASSERT_TRUE(hoverUntilHighlightIsActive(frame.get(), rect, highlight.boundingRect));
+
+    EXPECT_TRUE(moveAwayUntilHighlightIsHidden(frame.get(), CGPointMake(50, CGRectGetMidY(rect)), highlight.boundingRect));
+
+    showHighlightAndMenu(frame.get(), rect, rootVisibleRect(iframeContentBox));
+}
+
+TEST_P(LiveTextDataDetectorInSubframe, HighlightShowsWhenMouseMovesFromHighlightIntoAnotherFrame)
+{
+    load(@"/main-with-two-image-iframes");
+    RetainPtr frame { [webView firstChildFrame] };
+    RetainPtr secondFrame { [webView secondChildFrame] };
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), iframeContentBox.origin) };
+    CGRect secondRect { installImageOverlayWithDataDetector(secondFrame.get(), secondIframeContentBox.origin) };
+    auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(iframeContentBox)) };
+    ASSERT_TRUE(hoverUntilHighlightIsActive(frame.get(), rect, highlight.boundingRect));
+
+    auto secondHighlight { dataDetectorHighlightGeometry(secondRect, rootVisibleRect(secondIframeContentBox)) };
+    EXPECT_TRUE(twoMovesShowHighlight(secondFrame.get(), secondRect, secondHighlight.boundingRect));
+}
+
+TEST_P(LiveTextDataDetectorInSubframe, HighlightShowsWhenMouseMovesFromHighlightIntoMainFrame)
+{
+    load(@"/main-with-nested-main-site-frame-and-image");
+    RetainPtr frame { nestedFrame() };
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), nestedFrameContentBox.origin) };
+    CGRect mainFrameRect { installImageOverlayWithDataDetector(nil, CGPointZero) };
+    auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(nestedFrameContentBox)) };
+    ASSERT_TRUE(hoverUntilHighlightIsActive(frame.get(), rect, highlight.boundingRect));
+
+    auto mainFrameHighlight { dataDetectorHighlightGeometry(mainFrameRect, [webView bounds]) };
+    EXPECT_TRUE(twoMovesShowHighlight(nil, mainFrameRect, mainFrameHighlight.boundingRect));
+}
+
+INSTANTIATE_TEST_SUITE_P(ImageAnalysisTests, LiveTextDataDetectorInSubframe, testing::ValuesIn(siteIsolationParams), &LiveTextDataDetectorInSubframe::testNameGenerator);
+
+#if ENABLE(IPC_TESTING_API)
+
+class LiveTextDataDetectorMenuRequestFromSubframe : public LiveTextDataDetectorInSubframe {
+public:
+    void adjustConfiguration(WKWebViewConfiguration *configuration) override
+    {
+        setFeatureEnabled(configuration, @"IPCTestingAPIEnabled", true);
+        setFeatureEnabled(configuration, @"IgnoreInvalidMessageWhenIPCTestingAPIEnabled", true);
+    }
+};
+
+TEST_P(LiveTextDataDetectorMenuRequestFromSubframe, ReplayShowsMenuOnlyFromTheImageFrameProcess)
+{
+    load(@"/main");
+    RetainPtr frame { [webView firstChildFrame] };
+    ASSERT_NE(frame.get()._processIdentifier, [webView _webProcessIdentifier]);
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), iframeContentBox.origin) };
+
+    [webView objectByEvaluatingJavaScript:@"window.capturedRequest = null;"
+        "IPC.addOutgoingMessageListener('UI', message => {"
+        "  if (!window.capturedRequest && message.name === IPC.messages.WebPageProxy_HandleClickForDataDetectionResult.name)"
+        "    window.capturedRequest = new Uint8Array(message.buffer).slice(16);"
+        "}); true" inFrame:frame.get()];
+    showHighlightAndMenu(frame.get(), rect, rootVisibleRect(iframeContentBox));
+    if (HasFatalFailure())
+        return;
+    ASSERT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"!!window.capturedRequest" inFrame:frame.get()] boolValue];
+    }));
+
+    RetainPtr<NSArray> bytes { [webView objectByEvaluatingJavaScript:@"Array.from(window.capturedRequest)" inFrame:frame.get()] };
+    RetainPtr bytesJSON { adoptNS([[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:bytes.get() options:0 error:nil] encoding:NSUTF8StringEncoding]) };
+    auto replay = [&](WKFrameInfo *sender) -> RetainPtr<NSString> {
+        return [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+            "  IPC.sendMessage('UI', IPC.pageID, IPC.messages.WebPageProxy_HandleClickForDataDetectionResult.name, new Uint8Array(%@));"
+            "  const reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);"
+            "  return reply ? (reply.arguments && reply.arguments[0] ? reply.arguments[0].value : '') : '<no reply>';"
+            "})()", bytesJSON.get()] inFrame:sender];
+    };
+
+    RetainPtr<NSString> invalidMessage;
+    EXPECT_FALSE(presentedMenu([&] {
+        invalidMessage = replay(nil);
+    }, 0_s).has_value());
+    EXPECT_WK_STREQ(@"", invalidMessage.get());
+
+    auto menu { presentedMenu([&] {
+        invalidMessage = replay(frame.get());
+    }, 0_s) };
+    ASSERT_TRUE(menu.has_value());
+    EXPECT_WK_STREQ(@"", invalidMessage.get());
+    EXPECT_TRUE(rectsAreNear(menu->elementBounds, rect, liveTextDataDetectorRectTolerance)) << NSStringFromRect(menu->elementBounds).UTF8String;
+}
+
+INSTANTIATE_TEST_SUITE_P(ImageAnalysisTests, LiveTextDataDetectorMenuRequestFromSubframe, testing::ValuesIn(crossOriginWithSiteIsolationParams), &LiveTextDataDetectorMenuRequestFromSubframe::testNameGenerator);
+
+#endif // ENABLE(IPC_TESTING_API)
 
 #endif // PLATFORM(MAC) && ENABLE(DATA_DETECTION) && ENABLE(REVEAL)
 

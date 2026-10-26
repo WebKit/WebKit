@@ -29,7 +29,11 @@
 #if PLATFORM(MAC) && ENABLE(DATA_DETECTION)
 
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <WebKit/_WKFrameTreeNode.h>
 #import <wtf/Function.h>
+#import <wtf/text/MakeString.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 namespace TestWebKitAPI {
@@ -139,6 +143,105 @@ testing::AssertionResult waitUntilWindowClipRectWidthIs(TestWKWebView *webView, 
     }))
         return testing::AssertionSuccess();
     return testing::AssertionFailure() << "The frame's window clip rect is " << lastWidth << "px wide, not " << width << "px.";
+}
+
+String DataDetectorInSubframeTest::iframe(int left, const String& url)
+{
+    return makeString("<iframe style='position:absolute; left:"_s, left, "px; top:"_s, iframeTop, "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight,
+        "px; border:"_s, iframeBorder, "px solid black; padding:"_s, iframePadding, "px' src='"_s, url, "'></iframe>"_s);
+}
+
+String DataDetectorInSubframeTest::mainHTML(const String& iframes)
+{
+    return makeString("<body style='margin:0'>"_s, iframes, "<div style='height:2000px'></div></body>"_s);
+}
+
+String DataDetectorInSubframeTest::nestedFrameHTML(const String& url, int width, int height)
+{
+    return makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, nestedFrameLeft, "px; top:"_s, nestedFrameTop, "px; width:"_s, width,
+        "px; height:"_s, height, "px; border:0' src='"_s, url, "'></iframe></body>"_s);
+}
+
+HTTPResponse DataDetectorInSubframeTest::html(const String& body)
+{
+    return HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, body };
+}
+
+void DataDetectorInSubframeTest::setUpWebView(std::initializer_list<std::pair<String, HTTPResponse>> routes, NOESCAPE const Function<void(WKWebViewConfiguration *)>& configure)
+{
+    server = makeUnique<HTTPServer>(routes, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration { [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES] };
+    [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
+    configure(configuration.get());
+    GetParam().applyTo(configuration.get());
+    adjustConfiguration(configuration.get());
+
+    navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 600) configuration:configuration.get() addToWindow:YES]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [[webView window] makeKeyAndOrderFront:nil];
+    [[webView window] orderFrontRegardless];
+}
+
+void DataDetectorInSubframeTest::load(NSString *path)
+{
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[@"https://example.com" stringByAppendingString:path]]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+}
+
+RetainPtr<WKFrameInfo> DataDetectorInSubframeTest::nestedFrame()
+{
+    RetainPtr<WKFrameInfo> frame;
+    EXPECT_TRUE(Util::waitFor([&] {
+        frame = [webView mainFrame].childFrames.firstObject.childFrames.firstObject.info;
+        return !!frame;
+    }));
+    return frame;
+}
+
+CGRect DataDetectorInSubframeTest::rectInWebView(NSArray *rectInFrame, CGPoint frameContentOrigin)
+{
+    return CGRectMake(frameContentOrigin.x + [[rectInFrame objectAtIndex:0] doubleValue], frameContentOrigin.y + [[rectInFrame objectAtIndex:1] doubleValue],
+        [[rectInFrame objectAtIndex:2] doubleValue], [[rectInFrame objectAtIndex:3] doubleValue]);
+}
+
+CGPoint DataDetectorInSubframeTest::pointInSecondFrame(CGPoint pointInFirstFrame)
+{
+    return CGPointMake(pointInFirstFrame.x - CGRectGetMinX(iframeContentBox) + CGRectGetMinX(secondIframeContentBox), pointInFirstFrame.y);
+}
+
+CGPoint DataDetectorInSubframeTest::center(CGRect rect)
+{
+    return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+}
+
+CGRect DataDetectorInSubframeTest::rootVisibleRect(CGRect contentBoxIfRoot)
+{
+    return GetParam().isCrossOriginWithSiteIsolation() ? CGRectIntersection(contentBoxIfRoot, [webView bounds]) : [webView bounds];
+}
+
+void DataDetectorInSubframeTest::moveMouse(CGPoint pointInWebView)
+{
+    [webView mouseMoveToPoint:[webView convertPoint:pointInWebView toView:nil] withFlags:0];
+    [webView waitForPendingMouseEvents];
+}
+
+bool DataDetectorInSubframeTest::scrollTo(WKFrameInfo *frame, int scrollY)
+{
+    bool scrolled { Util::waitFor([&] {
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.scrollTo(0, %d)", scrollY] inFrame:frame];
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:frame] intValue] == scrollY;
+    }) };
+    [webView waitForNextPresentationUpdate];
+    return scrolled;
+}
+
+std::string DataDetectorInSubframeTest::testNameGenerator(testing::TestParamInfo<SiteIsolationParams> info)
+{
+    return info.param.testName();
 }
 
 } // namespace TestWebKitAPI

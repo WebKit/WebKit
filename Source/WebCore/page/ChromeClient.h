@@ -686,11 +686,11 @@ public:
     virtual void handleAutoplayEvent(AutoplayEvent, OptionSet<AutoplayEventFlags>) { }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
-    virtual void handleTelephoneNumberClick(const String&, const IntPoint&, const IntRect&) { }
+    virtual void handleTelephoneNumberClick(FrameIdentifier, const String&, const IntPoint&, const IntRect&) { }
 #endif
 
 #if ENABLE(DATA_DETECTION)
-    virtual void handleClickForDataDetectionResult(const DataDetectorElementInfo&, const IntPoint&) { }
+    virtual void handleClickForDataDetectionResult(FrameIdentifier, const DataDetectorElementInfo&, const IntPoint&) { }
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)

@@ -765,6 +765,7 @@ public:
     inline LocalFrameView* view() const; // Defined in DocumentView.h.
     inline Page* LEGACY_NODELETE page() const; // Defined in DocumentPage.h.
     WEBCORE_EXPORT RefPtr<LocalFrame> LEGACY_NODELETE localMainFrame() const;
+    WEBCORE_EXPORT RefPtr<LocalFrame> LEGACY_NODELETE rootFrame() const;
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior LEGACY_NODELETE editingBehavior() const;
 

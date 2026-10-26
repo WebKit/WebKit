@@ -10489,8 +10489,7 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
         return;
     }
 
-    RefPtr frame = htmlElementToUpdate->document().frame();
-    RefPtr localRoot = frame ? &frame->rootFrame() : nullptr;
+    RefPtr localRoot { htmlElementToUpdate->document().rootFrame() };
     RefPtr localRootView = localRoot ? localRoot->view() : nullptr;
     if (!localRootView) {
         completionHandler(TextRecognitionUpdateResult::NoText);
