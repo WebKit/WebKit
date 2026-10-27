@@ -7,17 +7,10 @@
 <body>
 <script>
 
-function configureEncoder(width, height)
+async function configureEncoder(width, height)
 {
-    let resolve;
-    const promise = new Promise(r => resolve = r);
-    const encoder = new VideoEncoder({
-        output: () => { },
-        error: (e) => { resolve(false);}
-    });
-    encoder.configure({ codec: "vp09.00.10.08", width, height, bitrate: 1, framerate: 1 });
-    setTimeout(() => resolve(true), 0);
-    return promise;
+    let result = await VideoEncoder.isConfigSupported({ codec: "vp09.00.10.08", width, height, bitrate: 1, framerate: 1 });
+    return result.supported;
 }
 
 promise_test(async t => {

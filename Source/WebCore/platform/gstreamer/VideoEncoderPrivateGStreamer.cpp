@@ -48,8 +48,9 @@ GST_DEBUG_CATEGORY(video_encoder_debug);
 // FIXME: Make this configurable at runtime?
 #define NUMBER_OF_THREADS 4
 
-#define MAX_WIDTH 4096
-#define MAX_HEIGHT 4096
+// See https://commits.webkit.org/320737@main
+#define MAX_WIDTH 32767
+#define MAX_HEIGHT 32767
 
 static GstStaticPadTemplate encoderSinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-raw(ANY)"));
 static GstStaticPadTemplate encoderSrcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264;video/x-vp8;video/x-vp9;video/x-h265;video/x-av1"));

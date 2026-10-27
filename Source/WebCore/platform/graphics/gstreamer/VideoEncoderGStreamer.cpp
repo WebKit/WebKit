@@ -306,6 +306,12 @@ String GStreamerInternalVideoEncoder::initialize(const String& codecName)
 {
     GST_DEBUG_OBJECT(m_harness->element(), "Initializing encoder for codec %s", codecName.ascii().data());
     IntSize size { static_cast<int>(m_config.width), static_cast<int>(m_config.height) };
+
+    if ((codecName == "vp8"_s || codecName == "vp08"_s) && (size.width() >= 30000 || size.height() >= 30000)) {
+        GST_WARNING_OBJECT(m_harness->element(), "Rejecting too strenuous VP8 encoding parameters");
+        return "Too strenuous VP8 encoding parameters"_s;
+    }
+
     if (!videoEncoderSetCodec(WEBKIT_VIDEO_ENCODER(m_harness->element()), { codecName, m_config.useAnnexB }, size, { }, true))
         return "Unable to set encoder format"_s;
 
