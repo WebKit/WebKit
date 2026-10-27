@@ -2600,7 +2600,9 @@ void wgpuCommandEncoderRelease(WGPUCommandEncoder commandEncoder)
 WGPUComputePassEncoder wgpuCommandEncoderBeginComputePass(WGPUCommandEncoder commandEncoder, const WGPUComputePassDescriptor* descriptor)
 {
     Ref protectedCommandEncoder = WebGPU::Metal::fromAPI(commandEncoder);
-    auto apiDescriptor = WebGPU::Metal::fromAPI(*descriptor);
+    // A null descriptor is the default one.
+    WGPUComputePassDescriptor defaultDescriptor = WGPU_COMPUTE_PASS_DESCRIPTOR_INIT;
+    auto apiDescriptor = WebGPU::Metal::fromAPI(descriptor ? *descriptor : defaultDescriptor);
     if (!apiDescriptor)
         return WebGPU::Metal::releaseToAPI(WebGPU::Metal::ComputePassEncoder::createInvalid(protectedCommandEncoder, protectedCommandEncoder->device(), @"GPUComputePassDescriptor has timestamp writes without a query set"));
     return WebGPU::Metal::releaseToAPI(protectedCommandEncoder->beginComputePass(*apiDescriptor));
