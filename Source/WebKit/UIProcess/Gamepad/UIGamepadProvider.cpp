@@ -61,6 +61,26 @@ UIGamepadProvider::~UIGamepadProvider()
         GamepadProvider::singleton().stopMonitoringGamepads(*this);
 }
 
+void UIGamepadProvider::setGamepadProviderForAutomation(GamepadProvider& provider)
+{
+    m_gamepadSyncTimer.stop();
+    bool wasMonitoring = m_isMonitoringGamepads;
+    if (wasMonitoring)
+        GamepadProvider::singleton().stopMonitoringGamepads(*this);
+    m_isMonitoringGamepads = false;
+    for (auto& gamepad : m_gamepads) {
+        if (!gamepad)
+            continue;
+        for (Ref pool : m_processPoolsUsingGamepads)
+            pool->gamepadDisconnected(*gamepad);
+    }
+    m_gamepads.clear();
+    m_shouldMakeGamepadsVisibleOnSync = false;
+    GamepadProvider::setSharedProvider(provider);
+    if (wasMonitoring)
+        startMonitoringGamepads();
+}
+
 void UIGamepadProvider::gamepadSyncTimerFired()
 {
     RefPtr webPageProxy = platformWebPageProxyForGamepadInput();

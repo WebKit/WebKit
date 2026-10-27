@@ -153,6 +153,8 @@ public:
     void deleteCookie(const String& name, Function<void(CommandResult&&)>&&);
     void deleteAllCookies(Function<void(CommandResult&&)>&&);
     void performActions(Vector<Vector<Action>>&&, Function<void(CommandResult&&)>&&);
+    void connectGamepad(Ref<JSON::Object>&&, Function<void(CommandResult&&)>&&);
+    void disconnectGamepad(const String&, Function<void(CommandResult&&)>&&);
     void releaseActions(Function<void(CommandResult&&)>&&);
     void dismissAlert(Function<void(CommandResult&&)>&&);
     void acceptAlert(Function<void(CommandResult&&)>&&);

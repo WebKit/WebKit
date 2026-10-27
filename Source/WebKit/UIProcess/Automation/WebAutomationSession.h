@@ -72,6 +72,7 @@ class FrontendRouter;
 namespace WebCore {
 class IntPoint;
 class IntRect;
+class GamepadProvider;
 
 struct Cookie;
 }
@@ -241,10 +242,13 @@ public:
     void simulateWheelInteraction(WebPageProxy&, const WebCore::IntPoint& locationInView, const WebCore::IntSize& delta, AutomationCompletionHandler&&) override;
 #endif
     void viewportInViewCenterPointOfElement(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, const Inspector::Protocol::Automation::NodeHandle&, Function<void(std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&) override;
+    std::optional<AutomationCommandError> simulateGamepadInputFrame(WebPageProxy&, const SimulatedInputKeyFrame&) override;
 
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
     // Inspector::AutomationBackendDispatcherHandler API
+    void connectGamepad(const String&, Ref<JSON::Object>&&, Inspector::CommandCallback<String>&&) override;
+    void disconnectGamepad(const String&, Inspector::CommandCallback<void>&&) override;
     // NOTE: the set of declarations included in this interface depend on the "platform" property in Automation.json
     // and the --platform argument passed to the protocol bindings generator.
 
@@ -359,6 +363,17 @@ public:
 #endif
 
 private:
+    void clearVirtualGamepads();
+#if ENABLE(GAMEPAD) && PLATFORM(GTK)
+    struct VirtualGamepad {
+        unsigned index;
+        unsigned axisCount;
+        unsigned buttonCount;
+        String browsingContextHandle;
+    };
+    HashMap<String, VirtualGamepad> m_virtualGamepads;
+    WebCore::GamepadProvider* m_previousGamepadProvider { nullptr };
+#endif
     Ref<Inspector::Protocol::Automation::BrowsingContext> buildBrowsingContextForPage(WebPageProxy&, WebCore::FloatRect windowFrame);
     void getNextContext(Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&&);
 

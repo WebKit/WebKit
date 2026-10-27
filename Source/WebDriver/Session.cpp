@@ -2956,6 +2956,8 @@ static ASCIILiteral automationSourceType(const InputSource& inputSource)
         return "Keyboard"_s;
     case InputSource::Type::Wheel:
         return "Wheel"_s;
+    case InputSource::Type::Gamepad:
+        return "Gamepad"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -2971,6 +2973,38 @@ static ASCIILiteral automationOriginType(PointerOrigin::Type type)
         return "Element"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void Session::connectGamepad(Ref<JSON::Object>&& options, Function<void(CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext || !m_currentBrowsingContext || !m_currentBrowsingContext->isEmpty()) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnsupportedOperation, "Virtual gamepads require the current top-level browsing context"_s));
+        return;
+    }
+    auto parameters = JSON::Object::create();
+    parameters->setString("browsingContextHandle"_s, uncheckedTopLevelBrowsingContext());
+    parameters->setObject("options"_s, WTF::move(options));
+    m_host->sendCommandToBackend("connectGamepad"_s, WTF::move(parameters), [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (response.isError)
+            completionHandler(CommandResult::fail(WTF::move(response.responseObject)));
+        else
+            completionHandler(CommandResult::success(WTF::move(response.responseObject)));
+    });
+}
+
+void Session::disconnectGamepad(const String& name, Function<void(CommandResult&&)>&& completionHandler)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("name"_s, name);
+    m_host->sendCommandToBackend("disconnectGamepad"_s, WTF::move(parameters), [this, protectedThis = Ref { *this }, name, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (response.isError) {
+            completionHandler(CommandResult::fail(WTF::move(response.responseObject)));
+            return;
+        }
+        m_activeInputSources.remove(name);
+        m_inputStateTable.remove(name);
+        completionHandler(CommandResult::success());
+    });
 }
 
 void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<void(CommandResult&&)>&& completionHandler)
@@ -3010,6 +3044,16 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                 auto& currentState = inputSourceState(action.id);
                 state->setString("sourceId"_s, action.id);
                 switch (action.type) {
+                case Action::Type::Gamepad:
+                    if (action.subtype == Action::Subtype::Pause) {
+                        if (action.duration)
+                            state->setDouble("duration"_s, *action.duration);
+                    } else {
+                        state->setInteger("gamepadIndex"_s, *action.gamepadIndex);
+                        state->setDouble("gamepadValue"_s, *action.gamepadValue);
+                        state->setBoolean("gamepadButton"_s, action.subtype == Action::Subtype::GamepadButton);
+                    }
+                    break;
                 case Action::Type::None:
                     if (action.duration)
                         state->setDouble("duration"_s, action.duration.value());
@@ -3047,6 +3091,8 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     case Action::Subtype::KeyUp:
                     case Action::Subtype::KeyDown:
                     case Action::Subtype::Scroll:
+                    case Action::Subtype::GamepadAxis:
+                    case Action::Subtype::GamepadButton:
                         ASSERT_NOT_REACHED();
                     }
                     if (currentState.pressedButton)
@@ -3084,6 +3130,8 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     case Action::Subtype::PointerMove:
                     case Action::Subtype::PointerCancel:
                     case Action::Subtype::Scroll:
+                    case Action::Subtype::GamepadAxis:
+                    case Action::Subtype::GamepadButton:
                         ASSERT_NOT_REACHED();
                     }
                     if (!currentState.pressedKeys.isEmpty()) {
@@ -3136,6 +3184,8 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     case Action::Subtype::PointerCancel:
                     case Action::Subtype::KeyUp:
                     case Action::Subtype::KeyDown:
+                    case Action::Subtype::GamepadAxis:
+                    case Action::Subtype::GamepadButton:
                         ASSERT_NOT_REACHED();
                     }
                 }

@@ -318,6 +318,8 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Delete, "/session/$sessionId/cookie", &WebDriverService::deleteAllCookies },
 
     { HTTPMethod::Post, "/session/$sessionId/actions", &WebDriverService::performActions },
+    { HTTPMethod::Post, "/session/$sessionId/webkit/gamepad/connect", &WebDriverService::connectGamepad },
+    { HTTPMethod::Post, "/session/$sessionId/webkit/gamepad/disconnect", &WebDriverService::disconnectGamepad },
     { HTTPMethod::Delete, "/session/$sessionId/actions", &WebDriverService::releaseActions },
 
     { HTTPMethod::Post, "/session/$sessionId/alert/dismiss", &WebDriverService::dismissAlert },
@@ -2402,6 +2404,8 @@ static std::optional<Action> processKeyAction(const String& id, JSON::Object& ac
     case Action::Subtype::PointerMove:
     case Action::Subtype::PointerCancel:
     case Action::Subtype::Scroll:
+    case Action::Subtype::GamepadAxis:
+    case Action::Subtype::GamepadButton:
         ASSERT_NOT_REACHED();
     }
 
@@ -2537,6 +2541,8 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
     case Action::Subtype::KeyUp:
     case Action::Subtype::KeyDown:
     case Action::Subtype::Scroll:
+    case Action::Subtype::GamepadAxis:
+    case Action::Subtype::GamepadButton:
         ASSERT_NOT_REACHED();
     }
 
@@ -2597,6 +2603,8 @@ static std::optional<Action> processWheelAction(const String& id, JSON::Object& 
     case Action::Subtype::PointerDown:
     case Action::Subtype::PointerMove:
     case Action::Subtype::PointerCancel:
+    case Action::Subtype::GamepadAxis:
+    case Action::Subtype::GamepadButton:
         ASSERT_NOT_REACHED();
     }
 
@@ -2635,6 +2643,59 @@ static std::optional<PointerParameters> processPointerParameters(JSON::Object& a
     return parameters;
 }
 
+void WebDriverService::connectGamepad(RefPtr<JSON::Object>&& parameters, Function<void(CommandResult&&)>&& completionHandler)
+{
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+    parameters->remove("sessionId"_s);
+    m_session->connectGamepad(parameters.releaseNonNull(), WTF::move(completionHandler));
+}
+
+void WebDriverService::disconnectGamepad(RefPtr<JSON::Object>&& parameters, Function<void(CommandResult&&)>&& completionHandler)
+{
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+    auto name = parameters->getString("name"_s);
+    if (name.isEmpty()) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "A gamepad name is required"_s));
+        return;
+    }
+    m_session->disconnectGamepad(name, WTF::move(completionHandler));
+}
+
+static std::optional<Action> processGamepadAction(const String& id, JSON::Object& actionItem, std::optional<String>& errorMessage)
+{
+    auto type = actionItem.getString("type"_s);
+    Action action(id, Action::Type::Gamepad, Action::Subtype::Pause);
+    if (type == "pause"_s) {
+        if (!processPauseAction(actionItem, action, errorMessage))
+            return std::nullopt;
+        return action;
+    }
+    bool isButton = type == "gamepadButtonInput"_s;
+    if (!isButton && type != "gamepadAxisInput"_s) {
+        errorMessage = "Unknown gamepad action type"_s;
+        return std::nullopt;
+    }
+    // Independent sensors require a richer platform/IPC button representation.
+    if ((actionItem.getValue("pressed"_s) && !actionItem.getValue("pressed"_s)->isNull()) || (actionItem.getValue("touched"_s) && !actionItem.getValue("touched"_s)->isNull())) {
+        errorMessage = "Independent gamepad button sensors are not supported by this prototype"_s;
+        return std::nullopt;
+    }
+    auto indexValue = actionItem.getValue(isButton ? "buttonIndex"_s : "axisIndex"_s);
+    auto index = indexValue ? indexValue->asDouble() : std::nullopt;
+    auto inputValue = actionItem.getValue("value"_s);
+    auto value = inputValue ? inputValue->asDouble() : std::nullopt;
+    if (!index || !std::isfinite(*index) || *index < 0 || *index > 255 || *index != std::floor(*index) || !value || !std::isfinite(*value) || *value > 1 || *value < (isButton ? 0 : -1)) {
+        errorMessage = "Invalid gamepad control index or normalized value"_s;
+        return std::nullopt;
+    }
+    action.subtype = isButton ? Action::Subtype::GamepadButton : Action::Subtype::GamepadAxis;
+    action.gamepadIndex = static_cast<unsigned>(*index);
+    action.gamepadValue = *value;
+    return action;
+}
+
 static std::optional<Vector<Action>> processInputActionSequence(Session& session, JSON::Value& actionSequenceValue, std::optional<String>& errorMessage)
 {
     auto actionSequence = actionSequenceValue.asObject();
@@ -2653,6 +2714,8 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
         inputSourceType = InputSource::Type::Wheel;
     else if (type == "none"_s)
         inputSourceType = InputSource::Type::None;
+    else if (type == "gamepad"_s)
+        inputSourceType = InputSource::Type::Gamepad;
     else {
         errorMessage = String("The 'type' parameter in the action sequence is invalid or missing"_s);
         return std::nullopt;
@@ -2709,6 +2772,8 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
             action = processPointerAction(id, parameters.value(), *actionItem, errorMessage);
         else if (inputSourceType == InputSource::Type::Wheel)
             action = processWheelAction(id, *actionItem, errorMessage);
+        else if (inputSourceType == InputSource::Type::Gamepad)
+            action = processGamepadAction(id, *actionItem, errorMessage);
         if (!action)
             return std::nullopt;
 

@@ -55,7 +55,13 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/PointerEventTypeNames.h>
 #include <algorithm>
+#include <array>
 #include <cmath>
+
+#if ENABLE(GAMEPAD) && PLATFORM(GTK)
+#include "AutomationGamepadProvider.h"
+#include "UIGamepadProvider.h"
+#endif
 #include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/FileSystem.h>
@@ -178,6 +184,7 @@ WebAutomationSession::WebAutomationSession(bool siteIsolationEnabled)
 
 WebAutomationSession::~WebAutomationSession()
 {
+    clearVirtualGamepads();
 #if ENABLE(REMOTE_INSPECTOR)
     disconnectAllInspectorPassthroughChannels();
 #endif
@@ -287,6 +294,7 @@ void WebAutomationSession::sendInspectorMessageToClient(const String& browsingCo
 
 void WebAutomationSession::terminate()
 {
+    clearVirtualGamepads();
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     for (auto& identifier : copyToVector(m_pendingKeyboardEventsFlushedCallbacksPerPage.keys())) {
         auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(identifier);
@@ -2808,7 +2816,146 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 }
 
+void WebAutomationSession::clearVirtualGamepads()
+{
+#if ENABLE(GAMEPAD) && PLATFORM(GTK)
+    if (!m_previousGamepadProvider)
+        return;
+    auto& provider = AutomationGamepadProvider::singleton();
+    for (auto& gamepad : m_virtualGamepads.values())
+        provider.disconnectAutomationGamepad(gamepad.index);
+    m_virtualGamepads.clear();
+    UIGamepadProvider::singleton().setGamepadProviderForAutomation(*std::exchange(m_previousGamepadProvider, nullptr));
+    provider.clearGamepadsForTesting();
+#endif
+}
+
+void WebAutomationSession::connectGamepad(const String& browsingContextHandle, Ref<JSON::Object>&& options, CommandCallback<String>&& callback)
+{
+#if !ENABLE(GAMEPAD) || !PLATFORM(GTK)
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
+#else
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page->isControlledByAutomation(), InvalidParameter);
+    // This prototype is deliberately restricted to a single top-level context.
+    for (auto& gamepad : m_virtualGamepads.values())
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(gamepad.browsingContextHandle != browsingContextHandle, NotImplemented, "Virtual gamepads currently support one top-level context per session."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(m_virtualGamepads.size() >= 16, InvalidParameter, "At most 16 virtual gamepads may be connected."_s);
+
+    static constexpr std::array allowedOptions { "id"_s, "mapping"_s, "context"_s, "axes"_s, "buttons"_s, "surfaces"_s, "vibration"_s };
+    for (auto& option : options.get())
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!std::ranges::contains(allowedOptions, option.key), InvalidParameter, "Unknown virtual gamepad option."_s);
+    auto id = options->getString("id"_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(options->getValue("id"_s) && !id, InvalidParameter);
+    if (!id)
+        id = "WPT virtual gamepad"_s;
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(id.length() > 1024, InvalidParameter);
+    auto mapping = options->getString("mapping"_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(options->getValue("mapping"_s) && !mapping, InvalidParameter);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(mapping != ""_s && mapping != "standard"_s, NotImplemented, "Only empty and standard gamepad mappings are supported."_s);
+    if (options->getValue("context"_s))
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(options->getString("context"_s) != browsingContextHandle, NotImplemented, "Only the current top-level context is supported."_s);
+
+    for (auto key : { "surfaces"_s, "vibration"_s }) {
+        if (!options->getValue(key))
+            continue;
+        auto values = options->getArray(key);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!values, InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(values->length(), NotImplemented, "Touch surfaces and haptics are not implemented."_s);
+    }
+    unsigned axisCount = 0;
+    unsigned buttonCount = 0;
+    for (bool isButton : { false, true }) {
+        auto key = isButton ? "buttons"_s : "axes"_s;
+        if (!options->getValue(key))
+            continue;
+        auto controls = options->getArray(key);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!controls || controls->length() > 256, InvalidParameter);
+        for (auto& value : *controls) {
+            auto control = value->asObject();
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!control, InvalidParameter);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(control->getValue("type"_s), NotImplemented, "Button type is not implemented."_s);
+            for (auto& property : *control)
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(property.key != "minimum"_s && property.key != "maximum"_s, InvalidParameter);
+            auto minimumValue = control->getValue("minimum"_s);
+            auto maximumValue = control->getValue("maximum"_s);
+            auto minimum = minimumValue ? minimumValue->asDouble() : std::nullopt;
+            auto maximum = maximumValue ? maximumValue->asDouble() : std::nullopt;
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!minimum || !maximum || !std::isfinite(*minimum) || !std::isfinite(*maximum) || *minimum >= *maximum, InvalidParameter);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(*minimum != (isButton ? 0 : -1) || *maximum != 1, NotImplemented, "Only normalized axis [-1,1] and button [0,1] bounds are supported."_s);
+        }
+        (isButton ? buttonCount : axisCount) = controls->length();
+    }
+
+    auto& uiProvider = UIGamepadProvider::singleton();
+    auto& provider = AutomationGamepadProvider::singleton();
+    if (!m_previousGamepadProvider) {
+        auto& previous = WebCore::GamepadProvider::singleton();
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(previous.isMockGamepadProvider(), NotImplemented, "The mock gamepad provider is already owned by another client."_s);
+        m_previousGamepadProvider = &previous;
+        provider.clearGamepadsForTesting();
+        uiProvider.setGamepadProviderForAutomation(provider);
+    }
+    unsigned index = 0;
+    while (std::ranges::any_of(m_virtualGamepads.values(), [index](auto& gamepad) { return gamepad.index == index; }))
+        ++index;
+    String name = makeString("webkit-gamepad-"_s, createVersion4UUIDString());
+    provider.setAutomationGamepadDetails(index, id, mapping.isNull() ? emptyString() : mapping, axisCount, buttonCount, false, true);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!provider.connectAutomationGamepad(index), InternalError);
+    m_virtualGamepads.add(name, VirtualGamepad { index, axisCount, buttonCount, browsingContextHandle });
+    callback(WTF::move(name));
+#endif
+}
+
+void WebAutomationSession::disconnectGamepad(const String& name, CommandCallback<void>&& callback)
+{
+#if !ENABLE(GAMEPAD) || !PLATFORM(GTK)
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
+#else
+    auto gamepad = m_virtualGamepads.find(name);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(gamepad == m_virtualGamepads.end(), InvalidParameter, "Unknown or disconnected virtual gamepad name."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!AutomationGamepadProvider::singleton().disconnectAutomationGamepad(gamepad->value.index), InternalError);
+    m_virtualGamepads.remove(gamepad);
 #if ENABLE(WEBDRIVER_ACTIONS_API)
+    m_inputSources.remove(name);
+#endif
+    callback({ });
+#endif
+}
+
+#if ENABLE(WEBDRIVER_ACTIONS_API)
+std::optional<AutomationCommandError> WebAutomationSession::simulateGamepadInputFrame(WebPageProxy& page, const SimulatedInputKeyFrame& frame)
+{
+#if ENABLE(GAMEPAD) && PLATFORM(GTK)
+    Vector<AutomationGamepadInput> inputs;
+#endif
+    for (auto& [source, state] : frame.states) {
+        if (source.type != SimulatedInputSourceType::Gamepad)
+            continue;
+#if !ENABLE(GAMEPAD) || !PLATFORM(GTK)
+        return AUTOMATION_COMMAND_ERROR_WITH_NAME(NotImplemented);
+#else
+        auto it = m_virtualGamepads.find(source.gamepadName);
+        if (it == m_virtualGamepads.end() || webPageProxyForHandle(it->value.browsingContextHandle) != &page)
+            return AUTOMATION_COMMAND_ERROR_WITH_NAME(InvalidParameter);
+        auto& gamepad = it->value;
+        if (frame.isResetKeyFrame == SimulatedInputKeyFrame::IsResetKeyFrame::Yes) {
+            for (unsigned index = 0; index < gamepad.axisCount; ++index)
+                inputs.append({ gamepad.index, index, 0, false });
+            for (unsigned index = 0; index < gamepad.buttonCount; ++index)
+                inputs.append({ gamepad.index, index, 0, true });
+        } else if (state.gamepadIndex)
+            inputs.append({ gamepad.index, *state.gamepadIndex, *state.gamepadValue, state.gamepadButton });
+#endif
+    }
+#if ENABLE(GAMEPAD) && PLATFORM(GTK)
+    if (!inputs.isEmpty() && !AutomationGamepadProvider::singleton().applyInputFrame(inputs))
+        return AUTOMATION_COMMAND_ERROR_WITH_NAME(InvalidParameter);
+#endif
+    return std::nullopt;
+}
+
 static SimulatedInputSourceType LEGACY_NODELETE simulatedInputSourceTypeFromProtocolSourceType(Inspector::Protocol::Automation::InputSourceType protocolType)
 {
     switch (protocolType) {
@@ -2824,6 +2971,8 @@ static SimulatedInputSourceType LEGACY_NODELETE simulatedInputSourceTypeFromProt
         return SimulatedInputSourceType::Wheel;
     case Inspector::Protocol::Automation::InputSourceType::Pen:
         return SimulatedInputSourceType::Pen;
+    case Inspector::Protocol::Automation::InputSourceType::Gamepad:
+        return SimulatedInputSourceType::Gamepad;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -2891,9 +3040,21 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(sourceIdSet.contains(sourceId), InvalidParameter, "Two input sources with the same sourceId were specified."_s);
 
         sourceIdSet.add(sourceId);
-        m_inputSources.ensure(sourceId, [inputSourceType] {
-            return SimulatedInputSource::create(inputSourceType);
-        });
+        auto& source = m_inputSources.ensure(sourceId, [inputSourceType, sourceId] {
+            Ref source = SimulatedInputSource::create(inputSourceType);
+            if (inputSourceType == SimulatedInputSourceType::Gamepad)
+                source->gamepadName = sourceId;
+            return source;
+        }).iterator->value;
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(source->type != inputSourceType, InvalidParameter);
+        if (inputSourceType == SimulatedInputSourceType::Gamepad) {
+#if ENABLE(GAMEPAD) && PLATFORM(GTK)
+            auto gamepad = m_virtualGamepads.find(sourceId);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(gamepad == m_virtualGamepads.end() || gamepad->value.browsingContextHandle != handle || !frameHandle.isEmpty(), InvalidParameter);
+#else
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
+#endif
+        }
     }
 
     Vector<SimulatedInputKeyFrame> keyFrames;
@@ -2921,6 +3082,25 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
 
             Ref inputSource = *m_inputSources.get(sourceId);
             SimulatedInputSourceState sourceState { };
+
+            if (inputSource->type == SimulatedInputSourceType::Gamepad) {
+                auto indexValue = stateObject->getValue("gamepadIndex"_s);
+                auto value = stateObject->getValue("gamepadValue"_s);
+                auto buttonValue = stateObject->getValue("gamepadButton"_s);
+                if (indexValue || value || buttonValue) {
+                    auto index = indexValue ? indexValue->asDouble() : std::nullopt;
+                    auto number = value ? value->asDouble() : std::nullopt;
+                    auto button = buttonValue ? buttonValue->asBoolean() : std::nullopt;
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!index || !number || !button || !std::isfinite(*index) || *index < 0 || *index > 255 || *index != std::floor(*index) || !std::isfinite(*number) || *number > 1 || *number < (*button ? 0 : -1), InvalidParameter);
+                    sourceState.gamepadIndex = static_cast<unsigned>(*index);
+                    sourceState.gamepadValue = *number;
+                    sourceState.gamepadButton = *button;
+#if ENABLE(GAMEPAD) && PLATFORM(GTK)
+                    auto& gamepad = m_virtualGamepads.find(sourceId)->value;
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*sourceState.gamepadIndex >= (*button ? gamepad.buttonCount : gamepad.axisCount), InvalidParameter);
+#endif
+                }
+            }
 
             // 'pressedCharKey' is the deprecated singular form of 'pressedCharKeys'; prefer the plural
             // form when a client sends both.

@@ -84,6 +84,7 @@ enum class SimulatedInputSourceType {
     Touch,
     Wheel,
     Pen,
+    Gamepad,
 };
 
 enum class TouchInteraction {
@@ -93,6 +94,9 @@ enum class TouchInteraction {
 };
 
 struct SimulatedInputSourceState {
+    std::optional<unsigned> gamepadIndex;
+    std::optional<double> gamepadValue;
+    bool gamepadButton { false };
     CharKeySet pressedCharKeys;
     VirtualKeyMap pressedVirtualKeys;
     std::optional<MouseButton> pressedMouseButton;
@@ -109,6 +113,7 @@ struct SimulatedInputSourceState {
 struct SimulatedInputSource : public RefCounted<SimulatedInputSource> {
 public:
     SimulatedInputSourceType type;
+    String gamepadName;
 
     // The last state associated with this input source.
     SimulatedInputSourceState state;
@@ -149,6 +154,7 @@ public:
     class Client {
     public:
         virtual ~Client() { }
+        virtual std::optional<AutomationCommandError> simulateGamepadInputFrame(WebPageProxy&, const SimulatedInputKeyFrame&) = 0;
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
         virtual void simulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, const String& pointerType, AutomationCompletionHandler&&) = 0;
         virtual void clearDoubleClicks() = 0;
