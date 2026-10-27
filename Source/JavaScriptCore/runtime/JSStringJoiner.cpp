@@ -200,9 +200,8 @@ static inline String joinStrings(JSGlobalObject* globalObject, const WriteBarrie
         if constexpr (indexingShape == ContiguousShape) {
             if (value.isString()) {
                 JSString* string = asString(value);
-                auto view = string->tryGetView();
-                if (!view.data.isNull()) [[likely]] {
-                    appendStringToData(data, view);
+                if (!string->isNonSubstringRope()) [[likely]] {
+                    appendStringToData(data, string->tryGetView());
                     return;
                 }
                 unsigned length = string->length();
