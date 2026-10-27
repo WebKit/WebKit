@@ -167,6 +167,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/WKStorageAccessAlert.mm
     UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
+    ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/MockPhoneNumberPossessionManager.swift
     ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/PhoneNumberPossessionController.swift
     ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/PhoneNumberPossessionManaging.swift
 
