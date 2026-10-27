@@ -20,13 +20,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import asyncio
 import contextlib
 import errno
 import os
-import selectors
 import shutil
-import signal
 import sys
 import tempfile
 
@@ -95,8 +92,9 @@ class HarnessResultRecorder(object):
 
 class SubtestResultRecorder(object):
 
-    def __init__(self):
+    def __init__(self, report=None):
         self.results = []
+        self._report = report
 
     def pytest_runtest_logreport(self, report):
         if report.passed and report.when == 'call':
@@ -153,22 +151,27 @@ class SubtestResultRecorder(object):
             stack = str(stack)
         new_result = (test, status, message, stack)
         self.results.append(new_result)
+        if self._report:
+            self._report(('result', new_result))
 
 
 class TestExpectationsMarker(object):
 
-    def __init__(self, expectations, timeout, ignore_param):
+    def __init__(self, expectations, timeout, ignore_param, use_pytest_timeout=True):
         self._expectations = expectations
         self._timeout = timeout
         self._ignore_param = ignore_param
+        self._use_pytest_timeout = use_pytest_timeout
         self._base_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests')
 
     def pytest_collection_modifyitems(self, session, config, items):
         for item in items:
             test = os.path.relpath(str(item.fspath), self._base_dir)
             item_name = get_item_name(item, self._ignore_param)
-            if self._expectations.is_slow(test, item_name):
-                item.add_marker(pytest.mark.timeout(self._timeout * 5))
+            timeout = self._timeout * 5 if self._expectations.is_slow(test, item_name) else self._timeout
+            if self._use_pytest_timeout and timeout != self._timeout:
+                item.add_marker(pytest.mark.timeout(timeout))
+            item.user_properties.append(("timeout", timeout))
             expected = self._expectations.get_expectation(test, item_name)
             if 'FAIL' in expected:
                 # Adding a "flaky" reason would overwrite the actual reason the test failed,
@@ -182,44 +185,48 @@ class TestExpectationsMarker(object):
             item.user_properties.append(("expectations", expected))
 
 
-class TimeoutSignalHandler(object):
-    """Keep pytest-timeout's SIGALRM from firing inside asyncio's scheduler.
+class SubtestReporter(object):
+    """Reports the progress of each subtest, so that the process that runs the tests can enforce a deadline for it."""
 
-    pytest-timeout raises from the signal handler wherever the alarm lands. Inside the
-    event loop's own scheduling code (e.g. while Future.set_result() is queueing the
-    wake-up of the awaiting task) that leaves the future done but the task never resumed,
-    and the loop runs forever. Defer the alarm until the loop is idle in the selector, from
-    where the exception propagates cleanly out of run_until_complete().
-    """
-
-    RETRY_INTERVAL = 0.005
+    def __init__(self, report):
+        self._report = report
 
     @pytest.hookimpl(wrapper=True)
-    def pytest_timeout_set_timer(self, item, settings):
-        result = yield
-        if settings.method != 'signal':
-            return result
-        handler = signal.getsignal(signal.SIGALRM)
-        if callable(handler):
-            def deferring_handler(signum, frame):
-                __tracebackhide__ = True
-                if self._should_defer_timeout(frame):
-                    signal.setitimer(signal.ITIMER_REAL, self.RETRY_INTERVAL)
-                else:
-                    handler(signum, frame)
-            signal.signal(signal.SIGALRM, deferring_handler)
-        return result
-
-    @staticmethod
-    def _should_defer_timeout(frame):
-        # Raising timeout exceptions while the loop is running outside selector wait might
-        # corrupt internal state updates, leaving tasks hanging.
+    def pytest_runtest_protocol(self, item, nextitem):
+        properties = dict(item.user_properties)
+        self._report(('start', item.nodeid, properties['timeout'], properties.get('expectations', ['PASS'])))
         try:
-            asyncio.get_running_loop()
-        except RuntimeError:
-            return False
-        code = frame.f_code
-        return not (code.co_filename == selectors.__file__ and code.co_name == 'select')
+            return (yield)
+        finally:
+            self._report(('finish', item.nodeid))
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_runtest_setup(self, item):
+        self._report(('phase', 'setup'))
+        return (yield)
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_runtest_call(self, item):
+        self._report(('phase', 'call'))
+        return (yield)
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_runtest_teardown(self, item, nextitem):
+        self._report(('phase', 'teardown'))
+        return (yield)
+
+
+class SubtestDeselector(object):
+    """Leaves out the given subtests, to resume a test file after a subtest timed out."""
+
+    def __init__(self, nodeids):
+        self._nodeids = set(nodeids)
+
+    def pytest_collection_modifyitems(self, session, config, items):
+        deselected = [item for item in items if item.nodeid in self._nodeids]
+        if deselected:
+            items[:] = [item for item in items if item.nodeid not in self._nodeids]
+            config.hook.pytest_deselected(items=deselected)
 
 
 def collect(directory, args, ignore_param=None):
@@ -235,10 +242,16 @@ def collect(directory, args, ignore_param=None):
     return collect_recorder.tests
 
 
-def run(path, args, timeout, env, expectations, ignore_param=None, extra_plugins=None):
+# With report, the test process that calls this has to enforce timeouts itself (see TestProcess): subtests
+# report their progress to it, and deselected lists the ones to leave out. Without report, pytest-timeout
+# enforces them.
+def run(path, args, timeout, env, expectations, ignore_param=None, extra_plugins=None, report=None, deselected=()):
     harness_recorder = HarnessResultRecorder()
-    subtests_recorder = SubtestResultRecorder()
-    expectations_marker = TestExpectationsMarker(expectations, timeout, ignore_param)
+    subtests_recorder = SubtestResultRecorder(report)
+    expectations_marker = TestExpectationsMarker(expectations, timeout, ignore_param, use_pytest_timeout=report is None)
+    plugins = [harness_recorder, subtests_recorder, expectations_marker]
+    if report:
+        plugins += [SubtestReporter(report), SubtestDeselector(deselected)]
     _environ = dict(os.environ)
     os.environ.clear()
     os.environ.update(env)
@@ -249,11 +262,16 @@ def run(path, args, timeout, env, expectations, ignore_param=None, extra_plugins
                    '--capture', 'no',
                    '--basetemp', cache_directory,
                    '--showlocals',
-                   '--timeout', str(timeout),
                    '-p', 'no:cacheprovider']
+            if not report:
+                # FIXME: The Selenium tests still rely on pytest-timeout, which raises an exception from a signal handler
+                # wherever the test is. That's only safe while no asyncio event loop runs: the async Selenium tests
+                # (bidi_tests.py) are skipped. Also, once a test times out, its teardown runs without a timeout. Run the
+                # Selenium tests in a TestProcess, as the W3C tests are.
+                cmd += ['--timeout', str(timeout)]
             cmd.extend(args)
             cmd.append(path)
-            result = pytest.main(cmd, plugins=[harness_recorder, subtests_recorder, expectations_marker, TimeoutSignalHandler(), *(extra_plugins or [])])
+            result = pytest.main(cmd, plugins=plugins + list(extra_plugins or []))
 
             if result == ExitCode.INTERNAL_ERROR:
                 harness_recorder.outcome = ('ERROR', None)
