@@ -32,5 +32,8 @@ GI_INTROSPECT(JavaScriptCore ${WEBKITGTK_API_VERSION} jsc/jsc.h
     PACKAGE javascriptcoregtk
     SYMBOL_PREFIX jsc
     DEPENDENCIES GObject-2.0
+    SOURCES
+        ${JavaScriptCore_INSTALLED_HEADERS}
+        ${JavaScriptCore_SOURCES}
 )
 GI_DOCGEN(JavaScriptCore API/glib/docs/jsc.toml.in)

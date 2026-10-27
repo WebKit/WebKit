@@ -164,8 +164,7 @@ define_property(TARGET
                   [IDENTIFIER_PREFIX <string>]
                   [PACKAGE <pkgname>]
                   [DEPENDENCIES <dependency>...]
-                  [SOURCES <file>...
-                  [NO_IMPLICIT_SOURCES])
+                  SOURCES <file>...)
 
   Enables generating introspection data for a library ``<target>``, which
   will make the introspected API available in the ``<namespace>-<nsversion>``
@@ -202,10 +201,8 @@ define_property(TARGET
     will add its ``.gir`` as an uninstalled dependency and ensure that
     dependencies are built beforehand.
 
-  By default the sources scanned for introspection documentation comments
-  are those used to build the ``<target>`` library, plus those specified
-  with ``SOURCES``. Adding the ``NO_IMPLICIT_SOURCES`` flag uses only the
-  latter.
+  ``SOURCES`` specifies which sources to scan for introspection
+  documentation comments.
 
   The command creates a target named ``gir-<namespace>`` to build the
   ``.gir`` file, with two properties: ``GI_GIR_PATH`` contains the path
@@ -222,7 +219,7 @@ define_property(TARGET
 
 function(GI_INTROSPECT namespace nsversion header)
     cmake_parse_arguments(PARSE_ARGV 2 opt
-        "NO_IMPLICIT_SOURCES"
+        ""
         "IDENTIFIER_PREFIX;PACKAGE;SYMBOL_PREFIX;TARGET"
         "DEPENDENCIES;SOURCES;OPTIONS"
     )
@@ -317,15 +314,6 @@ function(GI_INTROSPECT namespace nsversion header)
             list(APPEND gir_srcs "${src}")
         endif ()
     endforeach ()
-
-    if (NOT opt_NO_IMPLICIT_SOURCES)
-        foreach (src IN LISTS ${opt_TARGET}_INSTALLED_HEADERS ${opt_TARGET}_SOURCES)
-            if (NOT IS_ABSOLUTE "${src}")
-                get_filename_component(src "${src}" REALPATH BASE_DIR "${target_srcdir}")
-            endif ()
-            list(APPEND gir_srcs "${src}")
-        endforeach ()
-    endif ()
 
     if (NOT gir_srcs)
         message(FATAL_ERROR "No sources to scan specified")

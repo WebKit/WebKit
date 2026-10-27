@@ -625,7 +625,6 @@ GI_INTROSPECT(WebKit${WEBKITGTK_API_INFIX} ${WEBKITGTK_API_VERSION} webkit${WEBK
         ${WEBKITGTK_SOURCES_FOR_INTROSPECTION}
         Shared/API/glib
         UIProcess/API/glib
-    NO_IMPLICIT_SOURCES
 )
 
 GI_DOCGEN(WebKit${WEBKITGTK_API_INFIX} gtk/gtk${GTK_API_VERSION}-webkitgtk.toml.in
@@ -673,7 +672,6 @@ GI_INTROSPECT(${WEBKITGTK_WEB_PROCESS_EXTENSION_API_NAME} ${WEBKITGTK_API_VERSIO
         Shared/API/glib/WebKitURIRequest.cpp
         Shared/API/glib/WebKitURIResponse.cpp
         WebProcess/InjectedBundle/API/glib
-    NO_IMPLICIT_SOURCES
 )
 
 GI_DOCGEN(${WEBKITGTK_WEB_PROCESS_EXTENSION_API_NAME} gtk/webkitgtk-web-process-extension.toml.in

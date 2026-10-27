@@ -190,7 +190,6 @@ GI_INTROSPECT(WPEPlatform ${WPE_API_VERSION} wpe/wpe-platform.h
     SOURCES
         ${WPEPlatform_INSTALLED_HEADERS}
         ${WPEPlatform_SOURCES}
-    NO_IMPLICIT_SOURCES
 )
 
 GI_DOCGEN(WPEPlatform docs/wpeplatform.toml.in)
@@ -208,7 +207,6 @@ if (ENABLE_WPE_PLATFORM_DRM)
             -I${WPEPlatform_DERIVED_SOURCES_DIR}
         SOURCES
             ${WPEPlatformDRM_SOURCES_FOR_INTROSPECTION}
-        NO_IMPLICIT_SOURCES
     )
 
     GI_DOCGEN(WPEPlatformDRM docs/wpeplatform-drm.toml.in)
@@ -227,7 +225,6 @@ if (ENABLE_WPE_PLATFORM_HEADLESS)
             -I${WPEPlatform_DERIVED_SOURCES_DIR}
         SOURCES
             ${WPEPlatformHeadless_SOURCES_FOR_INTROSPECTION}
-        NO_IMPLICIT_SOURCES
     )
 
     GI_DOCGEN(WPEPlatformHeadless docs/wpeplatform-headless.toml.in)
@@ -246,7 +243,6 @@ if (ENABLE_WPE_PLATFORM_WAYLAND)
             -I${WPEPlatform_DERIVED_SOURCES_DIR}
         SOURCES
             ${WPEPlatformWayland_SOURCES_FOR_INTROSPECTION}
-        NO_IMPLICIT_SOURCES
     )
 
     GI_DOCGEN(WPEPlatformWayland docs/wpeplatform-wayland.toml.in)

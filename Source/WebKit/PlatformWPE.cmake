@@ -680,7 +680,6 @@ GI_INTROSPECT(WPEJavaScriptCore ${WPE_API_VERSION} jsc/jsc.h
         ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCWeakValue.h
         ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/jsc.h
         ${JAVASCRIPTCORE_DIR}/API/glib
-    NO_IMPLICIT_SOURCES
 )
 GI_DOCGEN(WPEJavaScriptCore "${JAVASCRIPTCORE_DIR}/API/glib/docs/jsc.toml.in")
 
@@ -731,7 +730,6 @@ GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
         Shared/API/glib
         UIProcess/API/glib
         UIProcess/API/wpe/WebKitImageWPE.cpp
-    NO_IMPLICIT_SOURCES
 )
 GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in
     CONTENT_TEMPLATES
@@ -769,6 +767,5 @@ GI_INTROSPECT(WPEWebProcessExtension ${WPE_API_VERSION} wpe/webkit-web-process-e
         Shared/API/glib/WebKitURIRequest.cpp
         Shared/API/glib/WebKitURIResponse.cpp
         WebProcess/InjectedBundle/API/glib
-    NO_IMPLICIT_SOURCES
 )
 GI_DOCGEN(WPEWebProcessExtension wpe/wpe-web-process-extension.toml.in)
