@@ -1531,6 +1531,12 @@
 /* WKErrorWebContentProcessTerminated description */
 "The Web Content process was terminated" = "The Web Content process was terminated";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for action in manifest version 2 */
+"The `action` manifest entry requires manifest version 3 or higher." = "The `action` manifest entry requires manifest version 3 or higher.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for browser_action or page_action in manifest version 3 */
+"The `browser_action` and `page_action` manifest entries require manifest version 2 or lower." = "The `browser_action` and `page_action` manifest entries require manifest version 2 or lower.";
+
 /* WKWebExtensionContextErrorBackgroundContentFailedToLoad description */
 "The background content failed to load due to an error." = "The background content failed to load due to an error.";
 

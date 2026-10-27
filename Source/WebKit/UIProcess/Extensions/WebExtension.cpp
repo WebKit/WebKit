@@ -1879,8 +1879,15 @@ void WebExtension::populateActionPropertiesIfNeeded()
             actionObject = manifestObject->getObject(pageActionManifestKey);
     }
 
-    if (!actionObject)
+    if (!actionObject) {
+        if (supportsManifestVersion(3)) {
+            if (manifestObject->getValue(browserActionManifestKey) || manifestObject->getValue(pageActionManifestKey))
+                recordError(createError(Error::InvalidAction, WEB_UI_STRING("The `browser_action` and `page_action` manifest entries require manifest version 2 or lower.", "WKWebExtensionErrorInvalidManifestEntry description for browser_action or page_action in manifest version 3")));
+        } else if (manifestObject->getValue(actionManifestKey))
+            recordError(createError(Error::InvalidAction, WEB_UI_STRING("The `action` manifest entry requires manifest version 3 or higher.", "WKWebExtensionErrorInvalidManifestEntry description for action in manifest version 2")));
+
         return;
+    }
 
     // Look for the "default_icon" as a string, which is useful for SVG icons. Only supported by Firefox currently.
     if (auto defaultIconPath = actionObject->getString(defaultIconManifestKey); !defaultIconPath.isEmpty()) {
