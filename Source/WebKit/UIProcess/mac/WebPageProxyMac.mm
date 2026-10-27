@@ -224,13 +224,15 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
         if (!hasRunningProcess())
             return;
 
-        protect(legacyMainFrameProcess())->sendWithAsyncReply(
-            Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates),
-            [this, protectedThis, viewFrameInWindowCoordinates]() {
-                updateMouseEventTargetAfterWindowAndViewFramesChanged(viewFrameInWindowCoordinates);
-            },
-            webPageIDInMainFrameProcess()
-        );
+        forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            if (&webProcess == &legacyMainFrameProcess()) {
+                webProcess.sendWithAsyncReply(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates), [this, protectedThis, viewFrameInWindowCoordinates] {
+                    updateMouseEventTargetAfterWindowAndViewFramesChanged(viewFrameInWindowCoordinates);
+                }, pageID);
+                return;
+            }
+            webProcess.sendWithAsyncReply(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates), [] { }, pageID);
+        });
     });
 }
 
