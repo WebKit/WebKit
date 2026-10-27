@@ -1,0 +1,19 @@
+Verifies CSS scroll-axis-lock property affects whether viewport scroll can be axis-locked.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scrollElement.scrollTop is 0
+PASS scrollElement.scrollLeft is 0
+PASS getComputedStyle(scrollElement).scrollAxisLock is "none"
+PASS scrollElement.scrollTop is > 0
+PASS scrollElement.scrollLeft is > 0
+PASS scrollElement.scrollTop is 0
+PASS scrollElement.scrollLeft is 0
+PASS getComputedStyle(scrollElement).scrollAxisLock is "auto"
+PASS scrollElement.scrollTop is > 0
+PASS scrollElement.scrollLeft is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
