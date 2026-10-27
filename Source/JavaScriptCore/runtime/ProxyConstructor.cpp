@@ -27,9 +27,10 @@
 #include "ProxyConstructor.h"
 
 #include "JSCInlines.h"
+#include "JSFunctionWithFields.h"
 #include "ObjectConstructor.h"
 #include "ProxyObject.h"
-#include "ProxyRevoke.h"
+#include "VMInlines.h"
 
 namespace JSC {
 
@@ -53,6 +54,35 @@ ProxyConstructor::ProxyConstructor(VM& vm, Structure* structure)
 {
 }
 
+static constexpr PropertyOffset proxyRevocableResultProxyPropertyOffset = 0;
+static constexpr PropertyOffset proxyRevocableResultRevokePropertyOffset = 1;
+
+Structure* createProxyRevocableResultStructure(VM& vm, JSGlobalObject& globalObject)
+{
+    constexpr unsigned inlineCapacity = 2;
+    Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), inlineCapacity);
+    PropertyOffset offset;
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->proxy, 0, offset);
+    RELEASE_ASSERT(offset == proxyRevocableResultProxyPropertyOffset);
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->revoke, 0, offset);
+    RELEASE_ASSERT(offset == proxyRevocableResultRevokePropertyOffset);
+    return structure;
+}
+
+JSC_DEFINE_HOST_FUNCTION(proxyRevoke, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    auto* callee = uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee());
+    JSValue proxyValue = callee->getField(JSFunctionWithFields::Field::RevocableProxy);
+    if (proxyValue.isNull())
+        return JSValue::encode(jsUndefined());
+
+    ProxyObject* proxy = uncheckedDowncast<ProxyObject>(proxyValue);
+    VM& vm = globalObject->vm();
+    proxy->revoke(vm);
+    callee->setField(vm, JSFunctionWithFields::Field::RevocableProxy, jsNull());
+    return JSValue::encode(jsUndefined());
+}
+
 JSC_DEFINE_HOST_FUNCTION(makeRevocableProxy, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -64,12 +94,12 @@ JSC_DEFINE_HOST_FUNCTION(makeRevocableProxy, (JSGlobalObject* globalObject, Call
     JSValue handler = callFrame->argument(1);
     ProxyObject* proxy = ProxyObject::create(globalObject, target, handler);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    ProxyRevoke* revoke = ProxyRevoke::create(vm, globalObject->proxyRevokeStructure(), proxy);
-    scope.assertNoException();
+    auto* revoke = JSFunctionWithFields::create(vm, globalObject, vm.proxyRevokeExecutable());
+    revoke->setField(vm, JSFunctionWithFields::Field::RevocableProxy, proxy);
 
-    JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, makeIdentifier(vm, "proxy"_s), proxy, static_cast<unsigned>(PropertyAttribute::None));
-    result->putDirect(vm, makeIdentifier(vm, "revoke"_s), revoke, static_cast<unsigned>(PropertyAttribute::None));
+    JSObject* result = constructEmptyObject(vm, globalObject->proxyRevocableResultStructure());
+    result->putDirectOffset(vm, proxyRevocableResultProxyPropertyOffset, proxy);
+    result->putDirectOffset(vm, proxyRevocableResultRevokePropertyOffset, revoke);
 
     return JSValue::encode(result);
 }

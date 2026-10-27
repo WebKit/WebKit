@@ -268,7 +268,6 @@ class Heap;
     v(moduleNamespaceObjectSpace, moduleNamespaceObjectHeapCellType, JSModuleNamespaceObject) \
     v(nativeStdFunctionSpace, nativeStdFunctionHeapCellType, JSNativeStdFunction) \
     v(proxyObjectSpace, cellHeapCellType, ProxyObject) \
-    v(proxyRevokeSpace, cellHeapCellType, ProxyRevoke) \
     v(rawJSONObjectSpace, cellHeapCellType, JSRawJSONObject) \
     v(scopedArgumentsTableSpace, destructibleCellHeapCellType, ScopedArgumentsTable) \
     v(setIteratorSpace, cellHeapCellType, JSSetIterator) \

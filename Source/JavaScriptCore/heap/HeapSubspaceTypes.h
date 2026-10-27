@@ -106,7 +106,6 @@
 #include "NativeExecutable.h"
 #include "ProgramExecutable.h"
 #include "PropertyTable.h"
-#include "ProxyRevoke.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "StrictEvalActivation.h"

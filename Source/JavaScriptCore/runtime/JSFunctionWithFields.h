@@ -60,6 +60,8 @@ public:
         PromiseAnyContext = 0,
         PromiseAnyReject = 1,
 
+        RevocableProxy = 0,
+
 #if ENABLE(WEBASSEMBLY)
         WebAssemblySuspendingWrappedCallable = 0,
         WebAssemblyPromisingWrappedFunction = 0,

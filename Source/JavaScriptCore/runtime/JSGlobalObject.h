@@ -428,7 +428,7 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_moduleNamespaceObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_proxyObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_callableProxyObjectStructure;
-    LazyProperty<JSGlobalObject, Structure> m_proxyRevokeStructure;
+    LazyProperty<JSGlobalObject, Structure> m_proxyRevocableResultStructure;
     LazyClassStructure m_sharedArrayBufferStructure;
     LazyClassStructure m_disposableStackStructure;
     LazyClassStructure m_asyncDisposableStackStructure;
@@ -989,7 +989,7 @@ public:
     Structure* moduleNamespaceObjectStructure() const { return m_moduleNamespaceObjectStructure.get(this); }
     Structure* proxyObjectStructure() const { return m_proxyObjectStructure.get(this); }
     Structure* callableProxyObjectStructure() const { return m_callableProxyObjectStructure.get(this); }
-    Structure* proxyRevokeStructure() const { return m_proxyRevokeStructure.get(this); }
+    Structure* proxyRevocableResultStructure() const { return m_proxyRevocableResultStructure.get(this); }
     Structure* disposableStackStructure() const { return m_disposableStackStructure.get(this); }
     Structure* asyncDisposableStackStructure() const { return m_asyncDisposableStackStructure.get(this); }
     Structure* restParameterStructure() const { return arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous); }
