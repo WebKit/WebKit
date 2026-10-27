@@ -2042,8 +2042,6 @@ fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas-
 webkit.org/b/298925 [ x86_64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Pass Timeout ]
 webkit.org/b/298925 [ arm64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Pass ]
 
-webkit.org/b/264665 http/wpt/webcodecs/videoFrame-webglCanvasImageSource.html [ Failure ]
-
 # This test doesn't look right. Encoding 6 frames, each at different framerates should only produce
 # key-frames. The test asserts because it expects at least one delta frame.
 http/wpt/webcodecs/encode-bitrate-change.html [ Failure ]
@@ -2907,8 +2905,6 @@ webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ 
 webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Skip ]
 
 fast/mediastream/video-rotation2.html [ Failure ]
-
-http/wpt/mediastream/webrtc-vp9-colorspace.html [ Failure ]
 
 webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Pass Failure ]
 
@@ -4380,6 +4376,7 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/align_left_right_with_and_without_snap_to_lines.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/align_start.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/basic.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_u2028_u05D0.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u0041_first.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u06E9_no_strong_dir.html [ Skip ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/disable_controls_reposition.html [ Pass ]
@@ -5227,14 +5224,12 @@ webkit.org/b/327264 imported/w3c/web-platform-tests/css/css-view-transitions/nav
 # Spatial video support is not currently implemented
 media/modern-media-controls/spatial-video-support [ Skip ]
 
-# Gardening 2026-10-20
 webkit.org/b/309894 [ Release ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Timeout Crash ]
 webkit.org/b/320214 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Failure Timeout ]
 webkit.org/b/328192 fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html [ ImageOnlyFailure Pass ]
 webkit.org/b/328194 inspector/timeline/timeline-event-EventDispatch.html [ Failure Pass Timeout ]
 webkit.org/b/328194 inspector/timeline/timeline-event-TimerRemove.html [ Failure Pass Timeout ]
 
-# Gardening 2026-10-22
 webkit.org/b/328432 [ Debug ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/mixed-content-cors.https.sub.html [ Failure Pass ]
 
 webkit.org/b/328474 media/track/track-paint-on-captions.html [ Pass Timeout ]
@@ -5246,11 +5241,13 @@ webkit.org/b/328311 [ Debug ] media/media-source/media-source-dropped-iframe.htm
 
 webkit.org/b/328833 media/media-source/media-source-seek-to-zero-then-play.html [ Pass Timeout ]
 
-# Gardening 2026-10-26
-webkit.org/b/328406 http/tests/history/back-with-fragment-change.py [ Failure ]
 webkit.org/b/327181 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/event-order/after-load-hash-twice.html [ Crash Pass ]
 webkit.org/b/327181 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/cross-origin-video.html [ Crash Pass ]
 webkit.org/b/328889 [ Release ] http/tests/workers/service/permissions-query-cross-scheme-same-domain.html [ Pass Timeout ]
+
+webkit.org/b/320053 [ Debug ] fast/dom/move-embedded-during-update.html [ Failure Pass ]
+webkit.org/b/316419 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_object_blob.html [ Failure Pass ]
+webkit.org/b/329158 http/tests/media/video-redirect.html [ Pass Timeout ]
 
 # End: Common failures between GTK and WPE.
 

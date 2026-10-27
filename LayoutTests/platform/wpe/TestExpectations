@@ -1144,7 +1144,6 @@ webkit.org/b/314811 imported/w3c/web-platform-tests/css/mediaqueries/test_media_
 webkit.org/b/315825 [ Release arm64 ] editing/spelling/spelling-marker-includes-hyphen.html [ ImageOnlyFailure ]
 
 webkit.org/b/316418 imported/w3c/web-platform-tests/html/semantics/popovers/popover-events.html [ Pass Failure ]
-webkit.org/b/316419 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_object_blob.html [ Pass Failure ]
 webkit.org/b/316422 css3/text-decoration/text-decoration-line-spelling-error-2.html [ Pass ImageOnlyFailure ]
 webkit.org/b/316426 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_loadstart.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-source-media-env-change.html [ Pass Failure ]
@@ -1196,8 +1195,6 @@ webkit.org/b/319071 [ arm64 ] fast/parser/entities-in-attributes.xhtml [ Pass Ti
 webkit.org/b/319313 [ arm64 ] storage/indexeddb/modern/leak-1.html [ Crash Failure Pass Timeout ]
 webkit.org/b/319317 [ Debug ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-transfer.html [ Crash Pass Failure ]
 webkit.org/b/319320 [ arm64 ] compositing/reflections/animation-inside-reflection.html [ Failure Pass ]
-
-webkit.org/b/320053 [ Debug ] fast/dom/move-embedded-during-update.html [ Failure Pass ]
 
 compositing/clipping/cached-cliprect-with-compositing-boundary.html [ ImageOnlyFailure ]
 
@@ -1288,8 +1285,6 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-button-after-option.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-button-after-span.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-disabled-option.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-font-inheriting.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-hover.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-switching-invalidation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-open-invalidation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-option-images.html [ ImageOnlyFailure ]
@@ -1309,6 +1304,7 @@ webkit.org/b/328195 [ Debug ] inspector/unit-tests/throttler.html [ Failure Pass
 webkit.org/b/328195 inspector/worker/debugger-pause.html [ Failure Pass ]
 webkit.org/b/309202 webaudio/audiomix-bufferingpolicy.html [ Pass Timeout ]
 
-# Gardening 2026-10-26
 webkit.org/b/328888 [ arm64 ] fast/harness/internals-object-property-access-on-window-without-frame-crash.html [ Crash Pass ]
 webkit.org/b/328890 [ arm64 ] imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Failure Pass ]
+
+webkit.org/b/329157 [ arm64 ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt/001.html [ Crash Pass ]

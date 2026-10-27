@@ -1272,6 +1272,9 @@ webkit.org/b/327259 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 webkit.org/b/327677 media/video-page-visibility-restriction.html [ Pass Timeout ]
 
+webkit.org/b/329155 http/tests/IndexedDB/transaction-stop-during-request-dispatch.html [ Failure Pass ]
+webkit.org/b/329156 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-sendKeyFrameRequest.https.html [ Failure Pass ]
+
 # Remaining failures after unskipping directories in platform/glib.
 fast/layoutformattingcontext/table-fixed-width-colspans.html [ Failure ]
 fast/layoutformattingcontext/table-flex-width-border-collapse.html [ Failure ]
