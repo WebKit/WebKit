@@ -5003,6 +5003,39 @@ class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.Test
         self.assertEqual(step.steps_to_add, self.LADDER)
         self.assertEqual(self.results_db_reports, [between_steps_report])
 
+    @defer.inlineCallbacks
+    def test_a_cap_hit_run_queues_the_whole_ladder(self) -> Generator[Any, Any, None]:
+        # A cap-truncated run produces a nondeterministic subset of the real failures, so the
+        # intersection of the two dirty runs cannot be trusted as a "consistent failures" signal.
+        # Mirror the layout-tests guard at ReRunWebKitTests.evaluateCommand.
+        step = self.configureStep(['suite.flaky'], ['suite.flaky'])
+        self.setProperty('api_first_run_exceeded_failure_limit', True)
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, self.LADDER)
+        self.assertIsNone(self.getProperty('build_summary'))
+        self.assertIsNone(self.getProperty('force_build_success'))
+
+    @defer.inlineCallbacks
+    def test_more_than_ten_disagreeing_tests_queues_the_whole_ladder(self) -> Generator[Any, Any, None]:
+        # 11 tests in the symmetric difference means the two runs disagree too much to be a
+        # trustworthy flakiness signal, even sub-cap. Mirror the num_flaky_failures <= 10 guard
+        # at ReRunWebKitTests.evaluateCommand:4560.
+        first_only = [f'suite.only_first_{i}' for i in range(6)]
+        second_only = [f'suite.only_second_{i}' for i in range(5)]
+        step = self.configureStep(['suite.flaky'] + first_only, ['suite.flaky'] + second_only)
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, self.LADDER)
+        self.assertIsNone(self.getProperty('build_summary'))
+        self.assertIsNone(self.getProperty('force_build_success'))
+
 
 class TestReRunAPITestsSkipsCleanTreeWithoutRepeatedFailures(BuildStepMixinAdditions, unittest.TestCase):
     """A test that fails in only one of the two runs with the change is flaky, so there is no need
@@ -5193,6 +5226,21 @@ class TestAPITestStepsReportAsTheyRun(BuildStepMixinAdditions, unittest.TestCase
 
         # suite.both failed both runs, so it is a consistent failure rather than flakiness.
         self.assertEqual(self.reported(), [('BetweenStepsDirtyTree', ['suite.a', 'suite.b'], 'api-tests')])
+
+    @defer.inlineCallbacks
+    def test_the_rerun_skips_the_between_steps_report_when_a_run_hit_the_cap(self):
+        # A cap-truncated run makes the two runs non-comparable, so writing the symmetric
+        # difference as flake evidence would poison results-db. Mirror the layout-tests guard at
+        # ReRunWebKitTests.runCommand:4627-4633.
+        step = self.configureStep(ReRunAPITests)
+        step.log_observer_json = TestLayoutTestStepsReportAsTheyRun.FakeLogObserver(self.SECOND_RUN_JSON)
+        self.setProperty('api_first_run_failures', ['suite.a', 'suite.both'])
+        self.setProperty('api_first_run_results', {'suite.a': dict(actual='FAIL'), 'suite.both': dict(actual='FAIL')})
+        self.setProperty('api_first_run_exceeded_failure_limit', True)
+
+        yield step.parse_and_set_failures()
+
+        self.assertEqual(self.reported(), [])
 
     @defer.inlineCallbacks
     def test_the_analyze_step_reports_the_failures_it_attributes_to_the_change(self):
