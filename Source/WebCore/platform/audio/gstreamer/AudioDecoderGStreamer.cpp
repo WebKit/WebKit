@@ -197,7 +197,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
             return;
         }
         parser = "flacparse"_s;
-        m_inputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-flac"));
+        m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-flac", "channels", G_TYPE_INT, config.numberOfChannels, nullptr));
     } else if (codecName == "vorbis"_s) {
         m_header = wrapSpanData(config.description);
         if (!m_header) {
