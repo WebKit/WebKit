@@ -38,11 +38,11 @@ import os
 ///
 /// On Cocoa both are an `os.Logger` for the channel's os_log handle, so call sites get os_log's compile-time
 /// handling. `debugLog` discards everything unless the channel is enabled. Where LOG is compiled out, it is a
-/// `NullLogger`, so that neither the messages nor the calls remain in the binary. Use only the `privacy:`
-/// interpolation option so that code also builds against `PortableLogger` and `NullLogger`.
+/// `NullLogger`, which never evaluates its messages. They and the calls stay in the binary until the module is
+/// built with whole-module optimization. Use only the `privacy:` interpolation option so that code also builds
+/// against `PortableLogger` and `NullLogger`.
 extension WTFLogChannel {
-    // Swift cannot see LOG_DISABLED, so this relies on the static_assert in wtf/Logging.h that it matches ASSERT_ENABLED.
-    #if ASSERT_ENABLED
+    #if !LOG_DISABLED
     #if canImport(os)
     @inline(always)
     var debugLog: os.Logger {
@@ -112,7 +112,8 @@ struct PortableLogMessage: ExpressibleByStringInterpolation {
 
 /// What `debugLog` is where LOG is compiled out.
 ///
-/// Unlike `os.Logger(.disabled)`, it is visibly a no-op, so the optimizer removes each call along with its message.
+/// Unlike `os.Logger(.disabled)`, it is visibly a no-op, so whole-module optimization removes each call along with
+/// its message. Until the module is built that way, both stay in the binary.
 struct NullLogger {
     @inline(always)
     func log(_ message: @autoclosure () -> PortableLogMessage) {}

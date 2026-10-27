@@ -77,31 +77,7 @@
 #define _XSTRINGIFY(line) #line
 #define _STRINGIFY(line) _XSTRINGIFY(line)
 
-/* ASSERT_ENABLED is defined in PlatformEnable.h. */
-
-#ifndef BACKTRACE_DISABLED
-#define BACKTRACE_DISABLED !ASSERT_ENABLED
-#endif
-
-#ifndef ASSERT_MSG_DISABLED
-#define ASSERT_MSG_DISABLED !ASSERT_ENABLED
-#endif
-
-#ifndef ASSERT_ARG_DISABLED
-#define ASSERT_ARG_DISABLED !ASSERT_ENABLED
-#endif
-
-#ifndef FATAL_DISABLED
-#define FATAL_DISABLED !ASSERT_ENABLED
-#endif
-
-#ifndef ERROR_DISABLED
-#define ERROR_DISABLED !ASSERT_ENABLED
-#endif
-
-#ifndef LOG_DISABLED
-#define LOG_DISABLED !ASSERT_ENABLED
-#endif
+/* ASSERT_ENABLED and the *_DISABLED macros derived from it are defined in PlatformEnable.h. */
 
 #if ENABLE(RELEASE_LOG)
 #define RELEASE_LOG_DISABLED 0

@@ -27,17 +27,18 @@ import sys
 #   define names to --output (or stdout) for the generators' --defines-file.
 
 DEFINE_RE = re.compile(r'^#define (\w+) (.+)', re.MULTILINE)
-PLATFORM_PREFIX_RE = re.compile(r'^(HAVE_|USE_|ENABLE_|WTF_PLATFORM|ASSERT_)')
+PLATFORM_PREFIX_RE = re.compile(r'^(HAVE_|USE_|ENABLE_|WTF_PLATFORM|ASSERT_|LOG_)')
+NEGATION_RE = re.compile(r'^!\s*(\w+)$')
 STL_FEATURE_MACRO_RE = re.compile(r'^#define (__cpp_lib_\w+) (.+)', re.MULTILINE)
 
 
 def platform_defines_from_dM(stdout):
     """Parse `clang -E -dM` output and return the names of the truthy
-    HAVE_/USE_/ENABLE_/WTF_PLATFORM_/ASSERT_ macros. Resolves simple macro
-    indirection: clang -dM emits macros alphabetically rather than
-    topologically, so a macro may reference another we have not yet seen;
-    iterate to a fixed point with a bound to avoid recursive definitions
-    looping forever."""
+    HAVE_/USE_/ENABLE_/WTF_PLATFORM_/ASSERT_/LOG_ macros. Resolves simple
+    macro indirection and negation (`!NAME`): clang -dM emits macros
+    alphabetically rather than topologically, so a macro may reference
+    another we have not yet seen; iterate to a fixed point with a bound to
+    avoid recursive definitions looping forever."""
     definitions = {}
     for m in re.finditer(DEFINE_RE, stdout):
         name = m.group(1)
@@ -51,8 +52,15 @@ def platform_defines_from_dM(stdout):
     for _ in range(10):
         changed = False
         for name, value in definitions.items():
-            if type(value) == str and value in definitions:
+            if type(value) != str:
+                continue
+            if value in definitions:
                 definitions[name] = definitions[value]
+                changed = True
+                continue
+            negation = NEGATION_RE.match(value)
+            if negation and type(definitions.get(negation.group(1))) == int:
+                definitions[name] = int(not definitions[negation.group(1)])
                 changed = True
         if not changed:
             break

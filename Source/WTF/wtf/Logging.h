@@ -30,9 +30,6 @@
 
 namespace WTF {
 
-// Swift cannot see LOG_DISABLED, so it decides whether LOG is compiled in from ASSERT_ENABLED.
-static_assert(!LOG_DISABLED == !!ASSERT_ENABLED, "Swift's debugLog assumes that LOG is compiled in exactly when ASSERT_ENABLED is");
-
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #ifndef LOG_CHANNEL_PREFIX
