@@ -778,13 +778,17 @@ class YarrGenerator final : public YarrJITInfo {
 
     // Frame slots are copied to/from the ParenContext save area by unrolling (small
     // counts) or by walking a pointer (large counts, to bound generated code size).
+#if CPU(ARM64)
     static constexpr unsigned directCopySlotThreshold = 5;
 
-#if CPU(ARM64)
     // Walking copies 16-byte ldp/stp pairs, emitting a runtime loop only once there are
     // enough pairs to amortize its setup; smaller counts are unrolled.
     static constexpr unsigned pairsPerLoopIteration = 4;
     static constexpr unsigned minLoopIterations = 2;
+#else
+    static constexpr unsigned directCopySlotThreshold = 16;
+    static constexpr unsigned slotsPerLoopIteration = 8;
+    static_assert(directCopySlotThreshold >= slotsPerLoopIteration);
 #endif
 
     enum class FrameSlotTransfer : bool { Save, Restore };
@@ -806,16 +810,20 @@ class YarrGenerator final : public YarrJITInfo {
         unsigned count = lastSlot - firstSlot;
         const ptrdiff_t contextSaveAreaOffset = ParenContext::savedFrameOffset(m_parenContextSizes);
 
-        // Copy each slot directly if count is less than the threshold.
-        if (count < directCopySlotThreshold) {
-            for (unsigned index = 0; index < count; ++index) {
-                MacroAssembler::Address frameSlot = frameAddress().withOffset((firstSlot + index) * sizeof(uintptr_t));
-                MacroAssembler::Address contextSlot(contextGPR, contextSaveAreaOffset + index * sizeof(uintptr_t));
+        auto emitUnrolledCopy = [&](MacroAssembler::Address frame, MacroAssembler::Address context, unsigned slots) {
+            for (unsigned index = 0; index < slots; ++index) {
+                MacroAssembler::Address frameSlot = frame.withOffset(index * sizeof(uintptr_t));
+                MacroAssembler::Address contextSlot = context.withOffset(index * sizeof(uintptr_t));
                 if (isSave)
                     m_jit.transferPtr(frameSlot, contextSlot);
                 else
                     m_jit.transferPtr(contextSlot, frameSlot);
             }
+        };
+
+        // Copy each slot directly if count is less than the threshold.
+        if (count < directCopySlotThreshold) {
+            emitUnrolledCopy(frameAddress().withOffset(firstSlot * sizeof(uintptr_t)), MacroAssembler::Address(contextGPR, contextSaveAreaOffset), count);
             return;
         }
 
@@ -826,6 +834,7 @@ class YarrGenerator final : public YarrJITInfo {
 
         m_jit.addPtr(MacroAssembler::TrustedImmPtr(framePointerBias), GPRInfo::callFrameRegister, framePointerGPR);
         m_jit.addPtr(MacroAssembler::TrustedImmPtr(contextPointerBias), contextGPR);
+        unsigned walkedSlots = count;
 
 #if CPU(ARM64)
         auto emitCopy = [&](unsigned slots) {
@@ -861,19 +870,19 @@ class YarrGenerator final : public YarrJITInfo {
         if (hasOddSlot)
             emitCopy(1);
 #else
-        m_jit.move(MacroAssembler::TrustedImm32(count), scratchGPR);
+        unsigned tailSlots = count % slotsPerLoopIteration;
+        m_jit.move(MacroAssembler::TrustedImm32(count / slotsPerLoopIteration), scratchGPR);
         MacroAssembler::Label loopHead(&m_jit);
-        if (isSave)
-            m_jit.transferPtr(MacroAssembler::Address(framePointerGPR), MacroAssembler::Address(contextGPR));
-        else
-            m_jit.transferPtr(MacroAssembler::Address(contextGPR), MacroAssembler::Address(framePointerGPR));
-        m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(uintptr_t)), framePointerGPR);
-        m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(uintptr_t)), contextGPR);
+        emitUnrolledCopy(MacroAssembler::Address(framePointerGPR), MacroAssembler::Address(contextGPR), slotsPerLoopIteration);
+        m_jit.addPtr(MacroAssembler::TrustedImm32(slotsPerLoopIteration * sizeof(uintptr_t)), framePointerGPR);
+        m_jit.addPtr(MacroAssembler::TrustedImm32(slotsPerLoopIteration * sizeof(uintptr_t)), contextGPR);
         m_jit.branchSub32(MacroAssembler::NonZero, MacroAssembler::TrustedImm32(1), scratchGPR).linkTo(loopHead, &m_jit);
+        emitUnrolledCopy(MacroAssembler::Address(framePointerGPR), MacroAssembler::Address(contextGPR), tailSlots);
+        walkedSlots -= tailSlots;
 #endif
 
         // Wind contextGPR back to its incoming value.
-        m_jit.subPtr(MacroAssembler::TrustedImmPtr(contextPointerBias + static_cast<intptr_t>(count) * static_cast<intptr_t>(sizeof(uintptr_t))), contextGPR);
+        m_jit.subPtr(MacroAssembler::TrustedImmPtr(contextPointerBias + static_cast<intptr_t>(walkedSlots) * static_cast<intptr_t>(sizeof(uintptr_t))), contextGPR);
     }
 
     // On return matchAmountGPR holds the pre-iteration matchAmount for the caller to increment.
