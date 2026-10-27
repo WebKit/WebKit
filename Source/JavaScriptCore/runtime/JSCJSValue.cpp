@@ -33,6 +33,7 @@
 #include "NumberPrototype.h"
 #include "ParseInt.h"
 #include "TypeError.h"
+#include "ValueRecovery.h"
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
@@ -238,7 +239,7 @@ void JSValue::dump(PrintStream& out) const
 void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     dumpInContextAssumingStructure(
-        out, context, (!!*this && isCell()) ? asCell()->structure() : nullptr);
+        out, context, (!!*this && isCell() && JSValue::encode(*this) != poisonedDeadOSRExitValue) ? asCell()->structure() : nullptr);
 }
 
 void JSValue::dumpInContextAssumingStructure(
@@ -246,6 +247,8 @@ void JSValue::dumpInContextAssumingStructure(
 {
     if (!*this)
         out.print("<JSValue()>");
+    else if (JSValue::encode(*this) == poisonedDeadOSRExitValue)
+        out.print("<DeadOSRExitValue>");
     else if (isInt32())
         out.printf("Int32: %d", asInt32());
     else if (isDouble()) {
@@ -306,6 +309,8 @@ void JSValue::dumpForBacktrace(PrintStream& out) const
 {
     if (!*this)
         out.print("<JSValue()>");
+    else if (JSValue::encode(*this) == poisonedDeadOSRExitValue)
+        out.print("<DeadOSRExitValue>");
     else if (isInt32())
         out.printf("%d", asInt32());
     else if (isDouble())
