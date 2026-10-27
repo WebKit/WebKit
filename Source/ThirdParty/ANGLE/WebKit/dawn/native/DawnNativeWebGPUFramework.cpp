@@ -194,8 +194,15 @@ const DawnProcTable &GetProcs()
         procs.shaderModuleSetLabel = wgpuShaderModuleSetLabel;
         procs.shaderModuleAddRef = wgpuShaderModuleAddRef;
         procs.shaderModuleRelease = wgpuShaderModuleRelease;
+        procs.surfaceConfigure = wgpuSurfaceConfigure;
+        procs.surfaceGetCapabilities = wgpuSurfaceGetCapabilities;
+        procs.surfaceGetCurrentTexture = wgpuSurfaceGetCurrentTexture;
+        procs.surfacePresent = wgpuSurfacePresent;
+        procs.surfaceSetLabel = wgpuSurfaceSetLabel;
+        procs.surfaceUnconfigure = wgpuSurfaceUnconfigure;
         procs.surfaceAddRef = wgpuSurfaceAddRef;
         procs.surfaceRelease = wgpuSurfaceRelease;
+        procs.surfaceCapabilitiesFreeMembers = wgpuSurfaceCapabilitiesFreeMembers;
         procs.textureCreateView = wgpuTextureCreateView;
         procs.textureDestroy = wgpuTextureDestroy;
         procs.textureGetDepthOrArrayLayers = wgpuTextureGetDepthOrArrayLayers;

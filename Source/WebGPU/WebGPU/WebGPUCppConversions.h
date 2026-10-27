@@ -81,6 +81,10 @@ template<> struct ChainedStructSType<WGPUTextureComponentSwizzleDescriptor> {
     static constexpr WGPUSType value = WGPUSType_TextureComponentSwizzleDescriptor;
 };
 
+template<> struct ChainedStructSType<WGPUSurfaceSourceMetalLayer> {
+    static constexpr WGPUSType value = WGPUSType_SurfaceSourceMetalLayer;
+};
+
 template<> struct ChainedStructSType<WGPURenderPassMaxDrawCount> {
     static constexpr WGPUSType value = WGPUSType_RenderPassMaxDrawCount;
 };

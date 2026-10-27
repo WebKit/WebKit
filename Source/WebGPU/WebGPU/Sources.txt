@@ -37,6 +37,7 @@ Instance.mm
 Pipeline.mm
 PipelineLayout.mm
 PresentationContext.mm
+PresentationContextCoreAnimation.mm
 PresentationContextIOSurface.mm
 QuerySet.mm
 Queue.mm

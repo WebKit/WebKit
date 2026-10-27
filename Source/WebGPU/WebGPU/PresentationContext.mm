@@ -89,3 +89,94 @@ void wgpuSurfaceRelease(WGPUSurface surface)
 {
     WebGPU::Metal::fromAPI(surface).deref();
 }
+
+// The capabilities of the surfaces that present into a CAMetalLayer. The arrays are static, so
+// wgpuSurfaceCapabilitiesFreeMembers() has nothing to free.
+WGPUStatus wgpuSurfaceGetCapabilities(WGPUSurface, WGPUAdapter, WGPUSurfaceCapabilities* capabilities)
+{
+    @autoreleasepool {
+        static constexpr WGPUTextureFormat formats[] = { WGPUTextureFormat_BGRA8Unorm, WGPUTextureFormat_BGRA8UnormSrgb, WGPUTextureFormat_RGBA16Float };
+        static constexpr WGPUPresentMode presentModes[] = { WGPUPresentMode_Fifo };
+        static constexpr WGPUCompositeAlphaMode alphaModes[] = { WGPUCompositeAlphaMode_Opaque, WGPUCompositeAlphaMode_Premultiplied };
+        capabilities->usages = WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_CopySrc | WGPUTextureUsage_CopyDst | WGPUTextureUsage_TextureBinding;
+        capabilities->formatCount = std::size(formats);
+        capabilities->formats = formats;
+        capabilities->presentModeCount = std::size(presentModes);
+        capabilities->presentModes = presentModes;
+        capabilities->alphaModeCount = std::size(alphaModes);
+        capabilities->alphaModes = alphaModes;
+        return WGPUStatus_Success;
+    }
+}
+
+void wgpuSurfaceCapabilitiesFreeMembers(WGPUSurfaceCapabilities)
+{
+}
+
+// A configuration that does not convert unconfigures the surface. WGPUCompositeAlphaMode_Auto is
+// opaque, and the present mode is always FIFO.
+void wgpuSurfaceConfigure(WGPUSurface surface, const WGPUSurfaceConfiguration* configuration)
+{
+    @autoreleasepool {
+        Ref presentationContext = WebGPU::Metal::fromAPI(surface);
+        auto format = WebGPU::Metal::fromAPI(configuration->format);
+        auto usage = WebGPU::Metal::textureUsageFromAPI(configuration->usage);
+        Vector<WebGPU::TextureFormat> viewFormats;
+        for (auto viewFormat : unsafeMakeSpan(configuration->viewFormats, configuration->viewFormatCount)) {
+            auto apiViewFormat = WebGPU::Metal::fromAPI(viewFormat);
+            if (!apiViewFormat) {
+                format = std::nullopt;
+                break;
+            }
+            viewFormats.append(*apiViewFormat);
+        }
+        if (!configuration->device || !format || !usage) {
+            presentationContext->unconfigure();
+            return;
+        }
+        presentationContext->configure({
+            .device = WebGPU::fromAPI(configuration->device),
+            .format = *format,
+            .usage = *usage,
+            .viewFormats = viewFormats.span(),
+            .compositingAlphaMode = configuration->alphaMode == WGPUCompositeAlphaMode_Premultiplied ? WebGPU::CanvasAlphaMode::Premultiplied : WebGPU::CanvasAlphaMode::Opaque,
+            .width = configuration->width,
+            .height = configuration->height,
+        });
+    }
+}
+
+void wgpuSurfaceUnconfigure(WGPUSurface surface)
+{
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(surface))->unconfigure();
+    }
+}
+
+// The caller owns the reference to the texture.
+void wgpuSurfaceGetCurrentTexture(WGPUSurface surface, WGPUSurfaceTexture* surfaceTexture)
+{
+    @autoreleasepool {
+        RefPtr texture = protect(WebGPU::Metal::fromAPI(surface))->getCurrentTexture(0);
+        surfaceTexture->status = texture ? WGPUSurfaceGetCurrentTextureStatus_SuccessOptimal : WGPUSurfaceGetCurrentTextureStatus_Error;
+        surfaceTexture->texture = WebGPU::Metal::releaseToAPI(WTF::move(texture));
+    }
+}
+
+WGPUStatus wgpuSurfacePresent(WGPUSurface surface)
+{
+    @autoreleasepool {
+        Ref presentationContext = WebGPU::Metal::fromAPI(surface);
+        if (!presentationContext->isValid())
+            return WGPUStatus_Error;
+        presentationContext->present(0);
+        return WGPUStatus_Success;
+    }
+}
+
+void wgpuSurfaceSetLabel(WGPUSurface surface, WGPUStringView label)
+{
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(surface))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
+}

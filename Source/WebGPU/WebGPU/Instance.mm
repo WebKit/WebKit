@@ -31,6 +31,7 @@
 #import "CommandBuffer.h"
 #import "HardwareCapabilities.h"
 #import "PresentationContext.h"
+#import "PresentationContextCoreAnimation.h"
 #import <cstring>
 #import <dlfcn.h>
 #import <wtf/BlockPtr.h>
@@ -310,9 +311,14 @@ WGPUProc LEGACY_NODELETE wgpuGetProcAddress(WGPUStringView)
     return nullptr;
 }
 
-// The surface sources of the descriptor are not supported: the surface presents nowhere.
-WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor*)
+// A surface presents into the CAMetalLayer of its WGPUSurfaceSourceMetalLayer. The other surface
+// sources are not supported: the surface presents nowhere.
+WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
 {
+    if (auto* metalLayerSource = descriptor ? WebGPU::Metal::findChainedStruct<WGPUSurfaceSourceMetalLayer>(descriptor->nextInChain) : nullptr) {
+        if (CAMetalLayer *layer = (__bridge CAMetalLayer *)metalLayerSource->layer)
+            return WebGPU::Metal::releaseToAPI(WebGPU::Metal::PresentationContextCoreAnimation::create(layer));
+    }
     return WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::PresentationContext>(protect(WebGPU::Metal::fromAPI(instance))->createPresentationContext({ }));
 }
 

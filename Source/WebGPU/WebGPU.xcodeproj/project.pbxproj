@@ -23,6 +23,7 @@
 		07D291782EC9CEFC00A32120 /* PipelineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACADA273A4E710095F8D5 /* PipelineLayout.h */; };
 		07D291792EC9CEFF00A32120 /* PresentationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C9F7CDE29762F51006B5BE9 /* PresentationContext.h */; };
 		07D2917A2EC9CF0400A32120 /* PresentationContextIOSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CBD2E942977DAC900BBF52C /* PresentationContextIOSurface.h */; };
+		7FA322FCB3925E9804B60429 /* PresentationContextCoreAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2E1926E3067FF865B423AE /* PresentationContextCoreAnimation.h */; };
 		07D2917B2EC9CF0A00A32120 /* RenderBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACADB273A4EB80095F8D5 /* RenderBundle.h */; };
 		07D2917C2EC9CF0E00A32120 /* RenderBundleEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACAA6273A426D0095F8D5 /* RenderBundleEncoder.h */; };
 		07D2917D2EC9CF1100A32120 /* RenderPassEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACA9A273A426D0095F8D5 /* RenderPassEncoder.h */; };
@@ -77,6 +78,7 @@
 		1CA5B5002A6F2A5E00E5F297 /* libwgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD7F22716B2CC00A5254D /* libwgsl.a */; };
 		1CBAB0922718CCA0006080BB /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */; };
 		1CBD2E992977DAC900BBF52C /* PresentationContextIOSurface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CBD2E952977DAC900BBF52C /* PresentationContextIOSurface.mm */; };
+		6D3D311C148A05F444361152 /* PresentationContextCoreAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CAE2F03DFDACC7D53EBE42B1 /* PresentationContextCoreAnimation.mm */; };
 		1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEBD7E62716AFBA00A5254D /* WebGPU.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CEBD7F82716B34400A5254D /* WGSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEBD7F72716B34400A5254D /* WGSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CEBD8022716BF8200A5254D /* WGSL.cpp */; };
@@ -418,6 +420,8 @@
 		1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBD2E942977DAC900BBF52C /* PresentationContextIOSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresentationContextIOSurface.h; sourceTree = "<group>"; };
 		1CBD2E952977DAC900BBF52C /* PresentationContextIOSurface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PresentationContextIOSurface.mm; sourceTree = "<group>"; };
+		1E2E1926E3067FF865B423AE /* PresentationContextCoreAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresentationContextCoreAnimation.h; sourceTree = "<group>"; };
+		CAE2F03DFDACC7D53EBE42B1 /* PresentationContextCoreAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PresentationContextCoreAnimation.mm; sourceTree = "<group>"; };
 		1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = WebGPU.modulemap; sourceTree = "<group>"; };
 		1CEBD7E32716AFBA00A5254D /* WebGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CEBD7E62716AFBA00A5254D /* WebGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPU.h; sourceTree = "<group>"; };
@@ -724,6 +728,8 @@
 				1C5ACAE4273A55DD0095F8D5 /* PipelineLayout.mm */,
 				1C9F7CDE29762F51006B5BE9 /* PresentationContext.h */,
 				1C9F7CDD29762F51006B5BE9 /* PresentationContext.mm */,
+				1E2E1926E3067FF865B423AE /* PresentationContextCoreAnimation.h */,
+				CAE2F03DFDACC7D53EBE42B1 /* PresentationContextCoreAnimation.mm */,
 				1CBD2E942977DAC900BBF52C /* PresentationContextIOSurface.h */,
 				1CBD2E952977DAC900BBF52C /* PresentationContextIOSurface.mm */,
 				1C5ACAAC273A426D0095F8D5 /* QuerySet.h */,
@@ -1042,6 +1048,7 @@
 				973F784729C8A78200166C66 /* Pipeline.h in Headers */,
 				07D291782EC9CEFC00A32120 /* PipelineLayout.h in Headers */,
 				07D291792EC9CEFF00A32120 /* PresentationContext.h in Headers */,
+				7FA322FCB3925E9804B60429 /* PresentationContextCoreAnimation.h in Headers */,
 				07D2917A2EC9CF0400A32120 /* PresentationContextIOSurface.h in Headers */,
 				941C2CF32CBDB0E700B5DB48 /* QuerySet.h in Headers */,
 				941C1EE62CA33255004D4220 /* Queue.h in Headers */,
@@ -1420,6 +1427,7 @@
 				973F784829C8A78200166C66 /* Pipeline.mm in Sources */,
 				1C5ACAE5273A55DD0095F8D5 /* PipelineLayout.mm in Sources */,
 				1C9F7CDF29762F51006B5BE9 /* PresentationContext.mm in Sources */,
+				6D3D311C148A05F444361152 /* PresentationContextCoreAnimation.mm in Sources */,
 				1CBD2E992977DAC900BBF52C /* PresentationContextIOSurface.mm in Sources */,
 				1C5ACABD273A426D0095F8D5 /* QuerySet.mm in Sources */,
 				1C5ACACB273A426E0095F8D5 /* Queue.mm in Sources */,
