@@ -118,7 +118,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const UnevaluatedCalculationBase&)
 } // namespace WebCore
 
 namespace WTF {
-template<WebCore::Style::Calc T> struct IsSmartPtr<T> {
+template<WebCore::CSS::Numeric CSSType> struct IsSmartPtr<WebCore::Style::UnevaluatedCalculation<CSSType>> {
     static constexpr bool value = true;
 };
 
