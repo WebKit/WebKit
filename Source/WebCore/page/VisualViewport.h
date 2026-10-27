@@ -36,6 +36,7 @@ class VisualViewport final : public RefCounted<VisualViewport>, public EventTarg
     WTF_MAKE_TZONE_ALLOCATED(VisualViewport);
 public:
     static Ref<VisualViewport> create(LocalDOMWindow& window) { return adoptRef(*new VisualViewport(window)); }
+    ~VisualViewport();
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final;

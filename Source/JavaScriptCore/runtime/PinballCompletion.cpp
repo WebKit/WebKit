@@ -143,12 +143,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     in offlineasm.
 */
 
-extern "C" void SYSV_ABI pinballHandlerInitContextForFulfill(JSGlobalObject*, CallFrame*, PinballHandlerContext*);
-extern "C" void SYSV_ABI pinballHandlerInitContextForReject(JSGlobalObject*, CallFrame*, PinballHandlerContext*);
-extern "C" void SYSV_ABI pinballHandlerImplantSlice(PinballHandlerContext*, Register*, CallFrame*, CallerFrameAndPC*);
-extern "C" UCPURegister SYSV_ABI pinballHandlerFulfillFunctionContinue(PinballHandlerContext*);
-extern "C" void SYSV_ABI pinballHandlerFinishReject(PinballHandlerContext*);
-extern "C" void SYSV_ABI pinballHandlerRejectWithStackOverflow(PinballHandlerContext*);
+extern "C" void SYSV_ABI pinballHandlerInitContextForFulfill(JSGlobalObject*, CallFrame*, PinballHandlerContext*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" void SYSV_ABI pinballHandlerInitContextForReject(JSGlobalObject*, CallFrame*, PinballHandlerContext*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" void SYSV_ABI pinballHandlerImplantSlice(PinballHandlerContext*, Register*, CallFrame*, CallerFrameAndPC*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UCPURegister SYSV_ABI pinballHandlerFulfillFunctionContinue(PinballHandlerContext*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" void SYSV_ABI pinballHandlerFinishReject(PinballHandlerContext*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" void SYSV_ABI pinballHandlerRejectWithStackOverflow(PinballHandlerContext*) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 void pinballHandlerInitContextForFulfill(JSGlobalObject* globalObject, CallFrame* callFrame, PinballHandlerContext* context)
 {

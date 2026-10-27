@@ -61,6 +61,7 @@ public:
     {
         return adoptRef(*new AudioParam(context, name, defaultValue, minValue, maxValue, automationRate, automationRateMode));
     }
+    ~AudioParam();
 
     // AudioSummingJunction
     bool canUpdateState() override { return true; }

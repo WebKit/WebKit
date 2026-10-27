@@ -50,6 +50,7 @@ public:
     static ExceptionOr<Ref<CloseWatcher>> create(ScriptExecutionContext&, const Options&);
 
     explicit CloseWatcher(Document&);
+    ~CloseWatcher();
 
     bool isActive() const { return m_active; }
 

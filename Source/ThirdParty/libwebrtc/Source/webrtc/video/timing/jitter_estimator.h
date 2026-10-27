@@ -115,6 +115,14 @@ class JitterEstimator {
     std::optional<TimeDelta> nack_count_timeout = std::nullopt;
   };
 
+#if defined(WEBRTC_WEBKIT_BUILD) && defined(__GNUC__) && !defined(__clang__) && \
+    (__GNUC__ < 13 || (__GNUC__ == 13 && __GNUC_MINOR__ < 5) ||               \
+     (__GNUC__ == 14 && __GNUC_MINOR__ < 4) ||                                \
+     (__GNUC__ == 15 && __GNUC_MINOR__ < 3))
+  // GCC crashes (ICE) building with LTO when this constructor is inlined into its callers,
+  // because of https://gcc.gnu.org/PR122620 which is fixed in GCC 13.5, 14.4, 15.3 and >=16
+  __attribute__((noipa))
+#endif
   JitterEstimator(Clock* clock, const FieldTrialsView& field_trials);
   JitterEstimator(const JitterEstimator&) = delete;
   JitterEstimator& operator=(const JitterEstimator&) = delete;

@@ -32,7 +32,6 @@ namespace WebCore {
 
 class SVGNumberList final : public SVGValuePropertyList<SVGNumber> {
     using Base = SVGValuePropertyList<SVGNumber>;
-    using Base::Base;
 
 public:
     static Ref<SVGNumberList> create()
@@ -50,8 +49,15 @@ public:
         return adoptRef(*new SVGNumberList(other, access));
     }
 
+    ~SVGNumberList();
+
     bool parse(StringView);
     String valueAsString() const override;
+
+private:
+    SVGNumberList();
+    SVGNumberList(SVGPropertyOwner*, SVGPropertyAccess);
+    SVGNumberList(const SVGNumberList&, SVGPropertyAccess);
 };
 
 } // namespace WebCore

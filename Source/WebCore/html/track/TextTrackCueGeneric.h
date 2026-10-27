@@ -39,6 +39,7 @@ class TextTrackCueGeneric final : public VTTCue {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCueGeneric);
 public:
     WEBCORE_EXPORT static Ref<TextTrackCueGeneric> create(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
+    ~TextTrackCueGeneric();
 
     ExceptionOr<void> setPosition(const LineAndPositionSetting&) final;
 

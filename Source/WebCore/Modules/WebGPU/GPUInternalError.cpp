@@ -28,6 +28,18 @@
 
 namespace WebCore {
 
+GPUInternalError::GPUInternalError(String&& message)
+    : m_message(WTF::move(message))
+{
+}
+
+GPUInternalError::GPUInternalError(Ref<WebGPUInternalError>&& backing)
+    : m_backing(WTF::move(backing))
+{
+}
+
+GPUInternalError::~GPUInternalError() = default;
+
 const String& GPUInternalError::message() const
 {
     if (m_backing)

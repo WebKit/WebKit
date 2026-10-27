@@ -46,7 +46,7 @@ namespace IPInt {
 
 extern "C" [[noreturn]] void SYSV_ABI wasm_log_crash(CallFrame*, JSWebAssemblyInstance* instance) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI slow_path_wasm_throw_exception(CallFrame*, JSWebAssemblyInstance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UCPURegister SYSV_ABI slow_path_wasm_unwind_exception(CallFrame* callFrame, JSWebAssemblyInstance* instance);
+extern "C" UCPURegister SYSV_ABI slow_path_wasm_unwind_exception(CallFrame* callFrame, JSWebAssemblyInstance* instance) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI LEGACY_NODELETE slow_path_wasm_popcount(const void* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI LEGACY_NODELETE slow_path_wasm_popcountll(const void* pc, uint64_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 
@@ -139,7 +139,7 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait64, IPIntStackEntry*);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_notify, IPIntStackEntry*);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(check_stack_and_vm_traps, void* candidateNewStackPointer, Wasm::IPIntCallee*, CallFrame*);
-WASM_IPINT_EXTERN_CPP_DECL(handle_debugger_trap_if_needed, CallFrame*, Register*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(handle_debugger_trap_if_needed, CallFrame*, Register*);
 
 
 class FrameAccess {

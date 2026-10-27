@@ -287,7 +287,7 @@ WasmToJSCallee& WasmToJSCallee::singleton()
     return callee.get().get();
 }
 
-EncodedJSValue g_restoreFrameCalleeBoxed { };
+REFERENCED_FROM_ASM EncodedJSValue g_restoreFrameCalleeBoxed { };
 
 RestoreFrameCallee::RestoreFrameCallee()
     : Callee(Wasm::CompilationMode::RestoreFrameMode)

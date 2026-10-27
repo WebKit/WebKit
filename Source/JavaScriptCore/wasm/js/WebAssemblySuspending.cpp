@@ -86,7 +86,7 @@ struct SlicerDriver {
     }
 };
 
-extern "C" void* SYSV_ABI runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* callFrame, CPURegister* originalCalleeSaves);
+extern "C" void* SYSV_ABI runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* callFrame, CPURegister* originalCalleeSaves) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 // Executes when a function produced by the expression 'new WebAssembly.Suspending(wrappedFunction)'
 // is called. The initial entry point is the offlineasm function

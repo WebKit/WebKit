@@ -72,6 +72,8 @@ AudioParam::AudioParam(BaseAudioContext& context, const String& name, float defa
     ALWAYS_LOG(LOGIDENTIFIER, "name = ", m_name, ", value = ", m_value, ", default = ", m_defaultValue, ", min = ", m_minValue, ", max = ", m_maxValue);
 }
 
+AudioParam::~AudioParam() = default;
+
 float AudioParam::value()
 {
     // Update value for timeline.
