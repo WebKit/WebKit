@@ -3856,7 +3856,7 @@ bool WebGLRenderingContextBase::validateReadPixelsDimensions(GCGLint width, GCGL
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels"_s, "invalid pack parameters"_s);
         return false;
     }
-    auto skipAndWidth = Checked<GCGLint> { m_packParameters.skipPixels } + width;
+    auto skipAndWidth = Checked<GCGLint, RecordOverflow> { m_packParameters.skipPixels } + width;
     if (skipAndWidth.hasOverflowed() || skipAndWidth > dataStoreWidth) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels"_s, "invalid pack parameters"_s);
         return false;

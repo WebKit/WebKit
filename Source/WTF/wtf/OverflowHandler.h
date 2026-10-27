@@ -39,7 +39,7 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    void clearOverflow() { }
+    constexpr void clearOverflow() { }
 
     SUPPRESS_NODELETE static NO_RETURN_DUE_TO_CRASH void LEGACY_NODELETE crash()
     {
@@ -59,7 +59,7 @@ public:
         crash();
     }
 
-    void clearOverflow() { }
+    constexpr void clearOverflow() { }
 
     SUPPRESS_NODELETE static NO_RETURN_DUE_TO_CRASH void LEGACY_NODELETE crash()
     {
@@ -67,17 +67,17 @@ public:
     }
 
 public:
-    SUPPRESS_NODELETE bool LEGACY_NODELETE hasOverflowed() const { return false; }
+    SUPPRESS_NODELETE constexpr bool LEGACY_NODELETE hasOverflowed() const { return false; }
 };
 
 class RecordOverflow {
 protected:
-    RecordOverflow()
+    constexpr RecordOverflow()
         : m_overflowed(false)
     {
     }
 
-    void clearOverflow()
+    constexpr void clearOverflow()
     {
         m_overflowed = false;
     }
@@ -90,8 +90,8 @@ protected:
 public:
     static constexpr OverflowPolicy policy = OverflowPolicy::RecordOverflow;
 
-    SUPPRESS_NODELETE bool LEGACY_NODELETE hasOverflowed() const { return m_overflowed; }
-    void overflowed() { m_overflowed = true; }
+    SUPPRESS_NODELETE constexpr bool LEGACY_NODELETE hasOverflowed() const { return m_overflowed; }
+    constexpr void overflowed() { m_overflowed = true; }
 
 private:
     unsigned char m_overflowed;

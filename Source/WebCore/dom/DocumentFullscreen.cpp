@@ -159,8 +159,8 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
             if (!renderer)
                 continue;
 
-            auto area = renderer->videoBox().area();
-            if (!area || area.hasOverflowed())
+            auto area = renderer->videoBox().area<RecordOverflow>();
+            if (area.hasOverflowed() || !area)
                 continue;
 
             video->webkitRequestFullscreen();

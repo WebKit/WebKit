@@ -586,7 +586,7 @@ static bool LEGACY_NODELETE matchesFormat(const ShaderModule::VertexStageIn& sta
 static MTLVertexDescriptor *createVertexDescriptor(const WebGPU::VertexState& vertexState, const Limits& limits, const ShaderModule::VertexStageIn& stageIn, RenderPipeline::RequiredBufferIndicesContainer& requiredBufferIndices, NSString** error, ShaderModule::VertexStageIn& outShaderLocations)
 {
     MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor new];
-    Checked<uint32_t> totalAttributeCount = 0;
+    CheckedUint32 totalAttributeCount = 0;
     ASSERT(error);
 
     if (vertexState.buffers.size() > limits.maxVertexBuffers) {

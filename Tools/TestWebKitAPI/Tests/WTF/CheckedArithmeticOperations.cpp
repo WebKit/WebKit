@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/Int128.h>
 
 namespace TestWebKitAPI {
 
@@ -589,6 +590,138 @@ TEST(CheckedArithmeticTest, MixedSignDivisionShouldOverflowWhenResultIsNegative)
         EXPECT_FALSE(result.hasOverflowed());
         EXPECT_EQ(0U, result.value());
     }
+}
+
+template<typename T, typename OverflowHandler>
+static constexpr Checked<T, OverflowHandler> compoundAssignments(T initial)
+{
+    Checked<T, OverflowHandler> value = initial;
+    value += static_cast<T>(7);
+    value -= static_cast<T>(2);
+    value *= static_cast<T>(3);
+    value /= static_cast<T>(5);
+    value |= static_cast<T>(8);
+    value &= static_cast<T>(13);
+    ++value;
+    value++;
+    --value;
+    value--;
+    return value;
+}
+
+template<typename T>
+static constexpr Checked<T, RecordOverflow> maxChecked()
+{
+    return std::numeric_limits<T>::max();
+}
+
+TEST(CheckedArithmeticTest, Constexpr)
+{
+    // Construction and conversion.
+    static_assert(!Checked<int, RecordOverflow>().value());
+    static_assert(Checked<int, RecordOverflow>(WTF::ResultOverflowed).hasOverflowed());
+    static_assert(Checked<uint8_t, RecordOverflow>(255).value() == 255);
+    static_assert(Checked<uint8_t, RecordOverflow>(256).hasOverflowed());
+    static_assert(Checked<uint8_t, RecordOverflow>(-1).hasOverflowed());
+    static_assert(Checked<int8_t, RecordOverflow>(Checked<int, RecordOverflow>(-128)).value() == -128);
+    static_assert(Checked<int8_t, RecordOverflow>(Checked<int, RecordOverflow>(128)).hasOverflowed());
+    static_assert(Checked<int8_t, RecordOverflow>(Checked<int, CrashOnOverflow>(128)).hasOverflowed());
+    static_assert(static_cast<int>(Checked<int>(42)) == 42);
+    static_assert(Checked<int>(1) && !Checked<int>(0));
+    static_assert(!!Checked<int>(1));
+
+    // Compound assignment, increment and decrement, for each overflow handler.
+    static_assert(compoundAssignments<int, RecordOverflow>(3).value() == 12);
+    static_assert(compoundAssignments<int, CrashOnOverflow>(3).value() == 12);
+    static_assert(compoundAssignments<int, AssertNoOverflow>(3).value() == 12);
+    static_assert(compoundAssignments<unsigned, RecordOverflow>(3).value() == 12);
+    static_assert(compoundAssignments<size_t, CrashOnOverflow>(3).value() == 12);
+
+    // Overflow is recorded by each mutating operation.
+    static_assert((maxChecked<int>() += 1).hasOverflowed());
+    static_assert((maxChecked<int>() -= -1).hasOverflowed());
+    static_assert((maxChecked<int>() *= 2).hasOverflowed());
+    static_assert((maxChecked<int>() /= 0).hasOverflowed());
+    static_assert((maxChecked<int>() += Checked<int, RecordOverflow>(WTF::ResultOverflowed)).hasOverflowed());
+    static_assert((maxChecked<unsigned>() += 1u).hasOverflowed());
+    static_assert((maxChecked<unsigned>() *= 2u).hasOverflowed());
+    static_assert((++maxChecked<unsigned>()).hasOverflowed());
+    static_assert([] {
+        auto value = maxChecked<unsigned>();
+        value++;
+        return value.hasOverflowed();
+    }());
+    static_assert(!(maxChecked<int>() -= 1).hasOverflowed());
+    static_assert(!(maxChecked<int>() /= 2).hasOverflowed());
+    static_assert(!(maxChecked<unsigned>() &= 1u).hasOverflowed());
+
+    // Assignment clears the overflow.
+    static_assert([] {
+        Checked<int, RecordOverflow> value = std::numeric_limits<int>::max();
+        value += 1;
+        bool overflowed = value.hasOverflowed();
+        value = 5;
+        return overflowed && !value.hasOverflowed() && value.value() == 5;
+    }());
+
+    // Binary operators.
+    static_assert((Checked<int, RecordOverflow>(6) + Checked<int, RecordOverflow>(7)).value() == 13);
+    static_assert((Checked<int, RecordOverflow>(6) - 7).value() == -1);
+    static_assert((6 * Checked<int, RecordOverflow>(7)).value() == 42);
+    static_assert((Checked<int, RecordOverflow>(42) / 6).value() == 7);
+    static_assert((Checked<size_t>(4) * 5u + 1u).value() == 21);
+    static_assert((Checked<int, RecordOverflow>(std::numeric_limits<int>::max()) + 1).hasOverflowed());
+    static_assert((Checked<int, RecordOverflow>(std::numeric_limits<int>::min()) - 1).hasOverflowed());
+    static_assert((Checked<int, RecordOverflow>(std::numeric_limits<int>::min()) / -1).hasOverflowed());
+    static_assert((Checked<uint32_t, RecordOverflow>(1u << 20) * (1u << 12)).hasOverflowed());
+    static_assert((Checked<uint32_t, RecordOverflow>(0u) - 1u).hasOverflowed());
+    static_assert((Checked<int, RecordOverflow>(WTF::ResultOverflowed) + 1).hasOverflowed());
+
+    // Mixed signedness.
+    static_assert(Checked<int, RecordOverflow>(-1) + 2u == 1u);
+    static_assert(Checked<unsigned, RecordOverflow>(3u) - 1 == 2u);
+    static_assert((Checked<int, RecordOverflow>(-3) * 2u).hasOverflowed());
+    static_assert((Checked<int, RecordOverflow>(-10) / Checked<unsigned, RecordOverflow>(3u)).hasOverflowed());
+    static_assert((Checked<int, RecordOverflow>(10) / Checked<unsigned, RecordOverflow>(3u)).value() == 3u);
+
+    // 64-bit and 128-bit.
+    static_assert((Checked<int64_t, RecordOverflow>(std::numeric_limits<int64_t>::max()) * 2).hasOverflowed());
+    static_assert((Checked<uint64_t, RecordOverflow>(1ull << 32) * (1ull << 31)).value() == 1ull << 63);
+#if HAVE(INT128_T)
+    static_assert((Checked<Int128, RecordOverflow>(5) * 7).value() == 35);
+    static_assert(!productOverflows<UInt128>(static_cast<UInt128>(1) << 64, 2u));
+    static_assert(productOverflows<UInt128>(static_cast<UInt128>(1) << 64, static_cast<UInt128>(1) << 64));
+#endif
+
+    // Comparisons.
+    static_assert(Checked<int, RecordOverflow>(3) == Checked<int, CrashOnOverflow>(3));
+    static_assert(Checked<int>(3) == 3u);
+    static_assert(Checked<int>(-1) != 0xffffffffu);
+    static_assert(Checked<uint8_t>(3) == Checked<int>(3));
+    static_assert(Checked<int, RecordOverflow>(3) < Checked<int, CrashOnOverflow>(4));
+
+    // Helpers.
+    static_assert(checkedSum<size_t>(1, 2, 3).value() == 6);
+    static_assert(checkedSum<uint8_t>(200, 100).hasOverflowed());
+    static_assert(checkedDifference<int>(3, 5).value() == -2);
+    static_assert(checkedDifference<unsigned>(3, 5).hasOverflowed());
+    static_assert(checkedProduct<size_t>(2, 3, 4).value() == 24);
+    static_assert(sumOverflows<int8_t>(100, 100));
+    static_assert(!sumOverflows<int16_t>(100, 100));
+    static_assert(differenceOverflows<uint8_t>(0, 1));
+    static_assert(productOverflows<uint32_t>(1u << 20, 1u << 12));
+    static_assert(!productOverflows<uint64_t>(1u << 20, 1u << 12));
+    static_assert(WTF::sumIfNoOverflowOrFirstValue<uint8_t>(200, 100) == 200);
+    static_assert(WTF::sumIfNoOverflowOrFirstValue<uint8_t>(100, 100) == 200);
+    static_assert(isSumSmallerThanOrEqual<uint32_t>(1, 2, 3));
+    static_assert(!isSumSmallerThanOrEqual<uint32_t>(std::numeric_limits<uint32_t>::max(), 1, std::numeric_limits<uint32_t>::max()));
+    static_assert(safeCast<uint8_t>(200) == 200);
+
+    constexpr auto product = CheckedSize(1000) * 1000u;
+    EXPECT_FALSE(product.hasOverflowed());
+    EXPECT_EQ(1000000u, product.value());
+    constexpr auto overflowedProduct = Checked<uint16_t, RecordOverflow>(1000) * static_cast<uint16_t>(1000);
+    EXPECT_TRUE(overflowedProduct.hasOverflowed());
 }
 
 } // namespace TestWebKitAPI

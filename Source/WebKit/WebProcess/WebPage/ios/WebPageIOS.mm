@@ -1965,7 +1965,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
         return;
     }
 
-    auto unobscuredContentArea = RefPtr(localMainFrame->view())->unobscuredContentRect().area();
+    auto unobscuredContentArea = RefPtr(localMainFrame->view())->unobscuredContentRect().area<RecordOverflow>();
     if (unobscuredContentArea.hasOverflowed()) {
         reply({ });
         return;
