@@ -18910,6 +18910,89 @@ TEST(SiteIsolation, CrossProcessHistoryTraversalSameFrameBackTwice)
     EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)2);
 }
 
+TEST(SiteIsolation, SameDocumentHistoryTraversalsInSeparateTasksAreNotCoalesced)
+{
+    HTTPServer server({
+        { "/page"_s, { "<script>"
+            "let states = [];"
+            "let timer;"
+            "onpopstate = (event) => {"
+            "    states.push(event.state);"
+            "    if (states.length == 1) {"
+            "        timer = setTimeout(() => alert(JSON.stringify(states)), 1000);"
+            "        return;"
+            "    }"
+            "    clearTimeout(timer);"
+            "    alert(JSON.stringify(states));"
+            "};"
+            "</script><iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "child"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/page"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    [webView objectByEvaluatingJavaScript:@"history.pushState('a', '', '/a'); history.pushState('b', '', '/b')"];
+
+    auto childFrames = [webView mainFrame].childFrames;
+    EXPECT_EQ(childFrames.count, 1u);
+    EXPECT_NE(childFrames[0].info._processIdentifier, [[webView mainFrame] info]._processIdentifier);
+
+    __block bool didEvaluateJavaScript = false;
+    [webView evaluateJavaScript:@"setTimeout(() => { history.back(); setTimeout(() => history.back(), 0) }, 0)" inFrame:childFrames[0].info completionHandler:^(id, NSError *) {
+        sleep(0.5_s);
+        didEvaluateJavaScript = true;
+    }];
+    Util::run(&didEvaluateJavaScript);
+    EXPECT_WK_STREQ("[\"a\",null]", [webView _test_waitForAlert]);
+}
+
+TEST(SiteIsolation, HistoryTraversalSupersedesUncommittedCrossDocumentTraversal)
+{
+    unsigned requestsForB = 0;
+    std::optional<Connection> heldConnectionForB;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            if (HTTPServer::parsePath(request) == "/b"_s && ++requestsForB > 1) {
+                heldConnectionForB = connection;
+                continue;
+            }
+            co_await connection.awaitableSend(HTTPResponse({ { "Cache-Control"_s, "no-store"_s } }, "x"_s).serialize());
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration setProcessPool:processPoolWithBackForwardCacheDisabled().get()];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    for (NSString *url in @[ @"https://example.com/a", @"https://example.com/b", @"https://example.com/c" ]) {
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+        [navigationDelegate waitForDidFinishNavigation];
+    }
+
+    unsigned didFinishCount = 0;
+    navigationDelegate.get().didFinishNavigation = makeBlockPtr([&](WKWebView *, WKNavigation *) {
+        ++didFinishCount;
+    }).get();
+
+    [webView evaluateJavaScript:@"history.back()" completionHandler:nil];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !!heldConnectionForB;
+    }));
+
+    [webView evaluateJavaScript:@"history.back()" completionHandler:nil];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !!didFinishCount;
+    }));
+
+    EXPECT_EQ(didFinishCount, 1u);
+    EXPECT_WK_STREQ(@"https://example.com/a", [[webView URL] absoluteString]);
+    EXPECT_EQ([webView backForwardList].backList.count, 0u);
+    EXPECT_EQ([webView backForwardList].forwardList.count, 2u);
+    navigationDelegate.get().didFinishNavigation = nil;
+}
+
 TEST(SiteIsolation, CrossProcessSameDocumentHistoryTraversalDoesNotStall)
 {
     HTTPServer server({

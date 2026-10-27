@@ -188,7 +188,7 @@ public:
     bool isLoadedWithNavigationShared() const { return m_isLoadedWithNavigationShared; }
 
     // True when goToBackForwardItem actually sent a traversal message to a web process; a per-frame
-    // walk can resolve an item yet send nothing, and the traversal-coalescing queue gates on this.
+    // walk can resolve an item yet send nothing, and the traversal queue gates on this.
     void setBackForwardTraversalWasDispatched(bool value) { m_backForwardTraversalWasDispatched = value; }
     bool backForwardTraversalWasDispatched() const { return m_backForwardTraversalWasDispatched; }
 

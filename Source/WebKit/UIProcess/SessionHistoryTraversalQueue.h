@@ -31,6 +31,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Markable.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -42,6 +43,7 @@ class Navigation;
 
 namespace WebKit {
 
+class WebBackForwardListItem;
 class WebPageProxy;
 
 enum class FrameTraversalResult : uint8_t;
@@ -58,7 +60,7 @@ public:
     void cancel();
 
     void frameDidHandleTraversal(WebCore::NavigationIdentifier, FrameTraversalResult, bool isMainFrame);
-    void mainFrameLoadDidFinish();
+    void mainFrameLoadDidFinish(std::optional<WebCore::NavigationIdentifier>);
     void navigationWasDestroyed(WebCore::NavigationIdentifier);
 
     // -1 for a back traversal, +1 for forward, and 0 when no traversal is in flight.
@@ -67,6 +69,7 @@ public:
 private:
     void scheduleFlush();
     void flush();
+    bool canBeSuperseded() const;
     CompletionHandler<void()> startTraversal(int8_t direction, CompletionHandler<void(bool didTakeTraversal)>&& = { });
     void traversalWasDispatched(API::Navigation*);
     void finishTraversalIfDone();
@@ -80,6 +83,8 @@ private:
         uint64_t identifier { 0 };
         int8_t direction { 0 };
         Markable<WebCore::NavigationIdentifier> navigationID;
+        RefPtr<WebBackForwardListItem> targetItem;
+        RefPtr<WebBackForwardListItem> committedItem;
         bool isWaitingForFrames { true };
         bool isWaitingForMainFrameLoad { false };
         bool didAnyFrameTakeTraversal { false };

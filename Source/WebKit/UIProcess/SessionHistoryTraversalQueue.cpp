@@ -54,9 +54,9 @@ static RefPtr<WebBackForwardListFrameItem> frameItemInBackForwardList(WebBackFor
 }
 
 // A frame's session history entry is part of every back/forward item made while it was current. Like the
-// disambiguate-* WPTs expect, a traversal to it goes to the nearest of those items, and to none when the current item
-// holds it.
-static std::optional<int32_t> deltaToNearestItemContaining(WebBackForwardListWrapper& backForwardList, WebCore::BackForwardFrameItemIdentifier frameItemID)
+// disambiguate-* WPTs expect, a traversal to it goes to the nearest of those items, and to none when the item at
+// baseDelta holds it.
+static std::optional<int32_t> deltaToNearestItemContaining(WebBackForwardListWrapper& backForwardList, WebCore::BackForwardFrameItemIdentifier frameItemID, int32_t baseDelta)
 {
     RefPtr frameItem = frameItemInBackForwardList(backForwardList, frameItemID);
     if (!frameItem)
@@ -64,8 +64,19 @@ static std::optional<int32_t> deltaToNearestItemContaining(WebBackForwardListWra
 
     auto itemSequenceNumber = frameItem->frameState().itemSequenceNumber;
     for (int32_t direction : { -1, 1 }) {
-        for (int32_t delta = direction < 0 ? 0 : 1; RefPtr item = backForwardList.itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No); delta += direction) {
+        for (int32_t delta = direction < 0 ? baseDelta : baseDelta + 1; RefPtr item = backForwardList.itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No); delta += direction) {
             if (protect(item->mainFrameItem())->containsItemSequenceNumber(itemSequenceNumber))
+                return delta;
+        }
+    }
+    return std::nullopt;
+}
+
+static std::optional<int32_t> deltaToItem(WebBackForwardListWrapper& backForwardList, WebBackForwardListItem& targetItem)
+{
+    for (int32_t direction : { -1, 1 }) {
+        for (int32_t delta = direction < 0 ? 0 : 1; RefPtr item = backForwardList.itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No); delta += direction) {
+            if (item == &targetItem)
                 return delta;
         }
     }
@@ -85,19 +96,6 @@ SessionHistoryTraversalQueue::~SessionHistoryTraversalQueue()
 
 void SessionHistoryTraversalQueue::enqueueDelta(int32_t delta)
 {
-    if (!m_pendingTraversals.isEmpty()) {
-        if (auto* pendingDelta = std::get_if<int32_t>(&m_pendingTraversals.last())) {
-            auto sum = WTF::CheckedInt32 { *pendingDelta } + delta;
-            if (sum.hasOverflowed()) {
-                m_pendingTraversals.removeLast();
-                return;
-            }
-            *pendingDelta = sum.value();
-            scheduleFlush();
-            return;
-        }
-    }
-
     m_pendingTraversals.append(delta);
     scheduleFlush();
 }
@@ -133,9 +131,12 @@ void SessionHistoryTraversalQueue::frameDidHandleTraversal(WebCore::NavigationId
         m_inFlightTraversal->isWaitingForMainFrameLoad = true;
 }
 
-void SessionHistoryTraversalQueue::mainFrameLoadDidFinish()
+void SessionHistoryTraversalQueue::mainFrameLoadDidFinish(std::optional<WebCore::NavigationIdentifier> navigationID)
 {
     if (!m_inFlightTraversal || !m_inFlightTraversal->isWaitingForMainFrameLoad)
+        return;
+
+    if (navigationID && m_inFlightTraversal->navigationID && *navigationID != *m_inFlightTraversal->navigationID)
         return;
 
     m_inFlightTraversal->isWaitingForMainFrameLoad = false;
@@ -145,37 +146,62 @@ void SessionHistoryTraversalQueue::mainFrameLoadDidFinish()
 void SessionHistoryTraversalQueue::navigationWasDestroyed(WebCore::NavigationIdentifier navigationID)
 {
     if (m_inFlightTraversal && m_inFlightTraversal->navigationID == navigationID)
-        mainFrameLoadDidFinish();
+        mainFrameLoadDidFinish(navigationID);
+}
+
+bool SessionHistoryTraversalQueue::canBeSuperseded() const
+{
+    return m_inFlightTraversal && !m_inFlightTraversal->isWaitingForFrames && m_inFlightTraversal->isWaitingForMainFrameLoad && m_inFlightTraversal->targetItem && m_inFlightTraversal->committedItem;
 }
 
 void SessionHistoryTraversalQueue::scheduleFlush()
 {
-    // While a traversal is in flight the back/forward list's current index has not advanced, so a delta resolved now
-    // would recompute against the stale index, and a later traversal must not overtake it; hold both until it finishes.
-    if (!m_inFlightTraversal && !m_pendingTraversals.isEmpty())
+    if ((!m_inFlightTraversal || canBeSuperseded()) && !m_pendingTraversals.isEmpty())
         m_flushTimer.startOneShot(0_s);
 }
 
 void SessionHistoryTraversalQueue::flush()
 {
     Ref pageProxy = m_pageProxy;
-    while (!m_inFlightTraversal && !m_pendingTraversals.isEmpty()) {
-        auto traversal = m_pendingTraversals.takeFirst();
-        WTF::switchOn(traversal, [&](int32_t delta) {
-            if (!delta)
+    Ref backForwardList = pageProxy->backForwardListWrapper();
+    while (!m_pendingTraversals.isEmpty()) {
+        int32_t baseDelta = 0;
+        RefPtr<WebBackForwardListItem> committedItem;
+        if (m_inFlightTraversal) {
+            if (!canBeSuperseded())
                 return;
-            auto framesDidHandleTraversal = startTraversal(delta < 0 ? -1 : 1);
-            traversalWasDispatched(pageProxy->goToBackForwardItemAtIndexForTraversal(delta, WTF::move(framesDidHandleTraversal)).get());
+            auto deltaToTarget = deltaToItem(backForwardList, Ref { *m_inFlightTraversal->targetItem });
+            if (!deltaToTarget)
+                return;
+            baseDelta = *deltaToTarget;
+            committedItem = m_inFlightTraversal->committedItem;
+        }
+
+        std::optional<int32_t> delta;
+        WTF::switchOn(m_pendingTraversals.first(), [&](int32_t pendingDelta) {
+            auto sum = WTF::CheckedInt32 { baseDelta } + pendingDelta;
+            if (pendingDelta && !sum.hasOverflowed())
+                delta = sum.value();
         }, [&](ItemTraversal& itemTraversal) {
             // Not a message check: the entry may have left the back/forward list since the web process looked it up.
-            auto delta = deltaToNearestItemContaining(pageProxy->backForwardListWrapper(), itemTraversal.frameItemID);
-            if (!delta || !*delta) {
-                itemTraversal.completionHandler(false);
-                return;
-            }
-            auto framesDidHandleTraversal = startTraversal(*delta < 0 ? -1 : 1, WTF::move(itemTraversal.completionHandler));
-            traversalWasDispatched(pageProxy->goToBackForwardItemAtIndexForTraversal(*delta, WTF::move(framesDidHandleTraversal)).get());
+            delta = deltaToNearestItemContaining(backForwardList, itemTraversal.frameItemID, baseDelta);
+            if (delta && *delta == baseDelta)
+                delta = std::nullopt;
         });
+
+        if (delta && committedItem && backForwardList->itemAtDeltaFromCurrentIndex(*delta, AllowSkippingBackForwardItems::No) == committedItem)
+            return;
+
+        auto traversal = m_pendingTraversals.takeFirst();
+        auto* itemTraversal = std::get_if<ItemTraversal>(&traversal);
+        if (!delta || !*delta) {
+            if (itemTraversal)
+                itemTraversal->completionHandler(false);
+            continue;
+        }
+
+        auto framesDidHandleTraversal = startTraversal(*delta < 0 ? -1 : 1, itemTraversal ? WTF::move(itemTraversal->completionHandler) : CompletionHandler<void(bool)> { });
+        traversalWasDispatched(pageProxy->goToBackForwardItemAtIndexForTraversal(*delta, WTF::move(framesDidHandleTraversal), committedItem.get()).get());
     }
 }
 
@@ -186,6 +212,8 @@ CompletionHandler<void()> SessionHistoryTraversalQueue::startTraversal(int8_t di
         .identifier = identifier,
         .direction = direction,
         .navigationID = { },
+        .targetItem = nullptr,
+        .committedItem = nullptr,
         .isWaitingForFrames = true,
         .isWaitingForMainFrameLoad = false,
         .didAnyFrameTakeTraversal = false,
@@ -208,14 +236,19 @@ CompletionHandler<void()> SessionHistoryTraversalQueue::startTraversal(int8_t di
 void SessionHistoryTraversalQueue::traversalWasDispatched(API::Navigation* navigation)
 {
     // The frames may already have handled a traversal that reached none of them, which ends it before this point.
-    if (navigation && m_inFlightTraversal)
+    if (navigation && m_inFlightTraversal) {
         m_inFlightTraversal->navigationID = navigation->navigationID();
+        m_inFlightTraversal->targetItem = navigation->targetItem();
+        m_inFlightTraversal->committedItem = navigation->fromItem();
+    }
 }
 
 void SessionHistoryTraversalQueue::finishTraversalIfDone()
 {
-    if (m_inFlightTraversal->isWaitingForFrames || m_inFlightTraversal->isWaitingForMainFrameLoad)
+    if (m_inFlightTraversal->isWaitingForFrames || m_inFlightTraversal->isWaitingForMainFrameLoad) {
+        scheduleFlush();
         return;
+    }
 
     m_inFlightTraversal = std::nullopt;
     scheduleFlush();

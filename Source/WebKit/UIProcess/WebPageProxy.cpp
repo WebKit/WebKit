@@ -2935,7 +2935,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
     return goToBackForwardItem(protect(item.mainFrameItem()), FrameLoadType::IndexedBackForward, isSessionRestore);
 }
 
-RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFrameItem& frameItem, FrameLoadType frameLoadType, IsSessionRestoreNavigation isSessionRestore, CompletionHandler<void()>&& framesDidHandleTraversal)
+RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFrameItem& frameItem, FrameLoadType frameLoadType, IsSessionRestoreNavigation isSessionRestore, CompletionHandler<void()>&& framesDidHandleTraversal, WebBackForwardListItem* committedItem)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "goToBackForwardItem:");
 
@@ -3030,7 +3030,10 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
         }
     }
 
-    Ref navigation = m_navigationState->createBackForwardNavigation(process->coreProcessIdentifier(), frameItem, backForwardList().currentItem(), frameLoadType);
+    RefPtr<WebBackForwardListItem> fromItem = committedItem;
+    if (!fromItem)
+        fromItem = backForwardList().currentItem();
+    Ref navigation = m_navigationState->createBackForwardNavigation(process->coreProcessIdentifier(), frameItem, RefPtr { fromItem }, frameLoadType);
     if (takenBackForwardCacheMainFrameProcessIdentifier)
         navigation->setBackForwardCacheMainFrameProcessIdentifier(*takenBackForwardCacheMainFrameProcessIdentifier);
     if (pendingIframeRestore)
@@ -3044,9 +3047,9 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
     if (preferences->shouldUseUIProcessForBackForwardItemLoading()) {
         Ref framesDidHandleTraversalAggregator = CallbackAggregator::create(WTF::move(framesDidHandleTraversal));
         bool anySent = false;
-        if (RefPtr currentItem = backForwardList().currentItem())
-            anySent = dispatchPerFrameTraversals(protect(currentItem->mainFrameItem()), protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix, framesDidHandleTraversalAggregator);
-        if (!anySent && (!backForwardList().currentItem() || isSessionRestore == IsSessionRestoreNavigation::Yes))
+        if (fromItem)
+            anySent = dispatchPerFrameTraversals(protect(fromItem->mainFrameItem()), protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix, framesDidHandleTraversalAggregator);
+        if (!anySent && (!fromItem || isSessionRestore == IsSessionRestoreNavigation::Yes))
             anySent = sendGoToBackForwardItemForFrame(protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix, framesDidHandleTraversalAggregator);
         if (!anySent)
             WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "goToBackForwardItem: walk dispatched no GoToBackForwardItem messages — back/forward action will be silently dropped");
@@ -3344,7 +3347,7 @@ void WebPageProxy::goToBackForwardItemAtIndex(int32_t steps)
     goToBackForwardItemAtIndexForTraversal(steps, [] { });
 }
 
-RefPtr<API::Navigation> WebPageProxy::goToBackForwardItemAtIndexForTraversal(int32_t steps, CompletionHandler<void()>&& framesDidHandleTraversal)
+RefPtr<API::Navigation> WebPageProxy::goToBackForwardItemAtIndexForTraversal(int32_t steps, CompletionHandler<void()>&& framesDidHandleTraversal, WebBackForwardListItem* committedItem)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "goToBackForwardItemAtIndex: steps=%d", steps);
 
@@ -3354,7 +3357,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItemAtIndexForTraversal(int
         return nullptr;
     }
 
-    return goToBackForwardItem(frameItemForLegacyTraversalRouting(*item, "goToBackForwardItemAtIndex"_s), FrameLoadType::IndexedBackForward, IsSessionRestoreNavigation::No, WTF::move(framesDidHandleTraversal));
+    return goToBackForwardItem(frameItemForLegacyTraversalRouting(*item, "goToBackForwardItemAtIndex"_s), FrameLoadType::IndexedBackForward, IsSessionRestoreNavigation::No, WTF::move(framesDidHandleTraversal), committedItem);
 }
 
 void WebPageProxy::enqueueHistoryTraversalDelta(int32_t delta)
@@ -9578,7 +9581,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
 
     // A failed main-frame provisional load also ends the traversal queue's wait for the main-frame load (nothing committed).
     if (frame.isMainFrame())
-        m_sessionHistoryTraversalQueue->mainFrameLoadDidFinish();
+        m_sessionHistoryTraversalQueue->mainFrameLoadDidFinish(navigationID);
 
     RefPtr protectedPageClient { pageClient() };
 
@@ -9788,7 +9791,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     // BackForwardGoToItem is sent on the same connection ahead of this commit, so the current index has already advanced
     // and the traversal queue can stop waiting for the main-frame load; no-op unless it is waiting.
     if (frame->isMainFrame()) {
-        m_sessionHistoryTraversalQueue->mainFrameLoadDidFinish();
+        m_sessionHistoryTraversalQueue->mainFrameLoadDidFinish(navigationID);
         recordFirstPartyVisit(request.url());
         m_usingOverrideHardwareConcurrency = shouldUseOverrideHardwareConcurrency(request.url());
 
@@ -15488,9 +15491,10 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
 void WebPageProxy::provisionalProcessDidTerminate()
 {
     ASSERT(m_provisionalPage);
+    auto navigationID = m_provisionalPage->navigationID();
     m_provisionalPage = nullptr;
     // The main-frame load that the provisional page carried will neither commit nor fail.
-    m_sessionHistoryTraversalQueue->mainFrameLoadDidFinish();
+    m_sessionHistoryTraversalQueue->mainFrameLoadDidFinish(navigationID);
 }
 
 static bool LEGACY_NODELETE shouldReloadAfterProcessTermination(ProcessTerminationReason reason)
