@@ -232,7 +232,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
 {
     Function<void()> function;
     {
-        // Ref is already incremented by Thread::create.
+        // Ref is already incremented by Thread::tryCreate.
         Ref context = adoptRef(*newThreadContext);
         // Block until our creating thread has completed any extra setup work, including establishing ThreadIdentifier.
         MutexLocker locker(context->mutex);
@@ -263,6 +263,13 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
 
 Ref<Thread> Thread::create(ASCIILiteral name, Function<void()>&& entryPoint, ThreadType threadType, QOS qos, SchedulingPolicy schedulingPolicy, StackAllocationSpecification stackSpec)
 {
+    RefPtr thread = tryCreate(name, WTF::move(entryPoint), threadType, qos, schedulingPolicy, stackSpec);
+    RELEASE_ASSERT(thread);
+    return thread.releaseNonNull();
+}
+
+RefPtr<Thread> Thread::tryCreate(ASCIILiteral name, Function<void()>&& entryPoint, ThreadType threadType, QOS qos, SchedulingPolicy schedulingPolicy, StackAllocationSpecification stackSpec)
+{
     WTF::initialize();
 
     Ref thread = adoptRef(*new Thread(qos, schedulingPolicy, Thread::IsMain::No));
@@ -277,7 +284,10 @@ Ref<Thread> Thread::create(ASCIILiteral name, Function<void()>&& entryPoint, Thr
                 stackSpec = StackAllocationSpecification::RequestSize(maybeSize.value());
         }
         bool success = thread->establishHandle(context.get(), stackSpec, qos, schedulingPolicy);
-        RELEASE_ASSERT(success);
+        if (!success) {
+            context->deref();
+            return nullptr;
+        }
 
 #if HAVE(STACK_BOUNDS_FOR_NEW_THREAD)
         thread->m_stack = StackBounds::newThreadStackBounds(thread->m_handle);
