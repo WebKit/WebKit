@@ -207,6 +207,7 @@ public:
     void updateSelectedContent(HTMLOptionElement* = nullptr);
     void updateSelectedContent(HTMLSelectedContentElement&);
     void updateSelectedContentIfEnabled(HTMLOptionElement* = nullptr);
+    void queueSelectedContentUpdate();
     void queueSelectedContentUpdate(const HTMLOptionElement&);
     RefPtr<HTMLOptionElement> selectedOptionForSelectedContent() const;
     void resetSelectedness(HTMLOptionElement* oldSelectedOption);

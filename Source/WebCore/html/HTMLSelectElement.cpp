@@ -2823,13 +2823,18 @@ void HTMLSelectElement::resetSelectedness(HTMLOptionElement* oldSelectedOption)
         updateSelectedContentIfEnabled(selectedOption.get());
 }
 
-// https://html.spec.whatwg.org/#queue-an-update-of-a-select's-descendant-selectedcontent-elements
 void HTMLSelectElement::queueSelectedContentUpdate(const HTMLOptionElement& option)
 {
-    if (m_hasQueuedSelectedContentUpdate || !m_selectedContentDescendantCount || !updatesSelectedContent())
+    if (!m_multiple && !option.selectedWithoutUpdate() && (m_selectedContentShowsOption || m_size > 1))
         return;
 
-    if (!m_multiple && !option.selectedWithoutUpdate() && (m_selectedContentShowsOption || m_size > 1))
+    queueSelectedContentUpdate();
+}
+
+// https://html.spec.whatwg.org/#queue-an-update-of-a-select's-descendant-selectedcontent-elements
+void HTMLSelectElement::queueSelectedContentUpdate()
+{
+    if (m_hasQueuedSelectedContentUpdate || !m_selectedContentDescendantCount || !updatesSelectedContent())
         return;
 
     m_hasQueuedSelectedContentUpdate = true;

@@ -29,7 +29,6 @@
 #include "Document.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
-#include "EventLoop.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
@@ -70,10 +69,11 @@ auto HTMLSelectedContentElement::insertionSteps(InsertionType insertionType, Con
 
 void HTMLSelectedContentElement::postConnectionSteps()
 {
-    if (RefPtr select = m_owningSelect; select && select->hasPendingSelectedContentUpdate())
+    RefPtr select = m_owningSelect;
+    if (m_isDisabled || !select || !select->updatesSelectedContent() || select->hasPendingSelectedContentUpdate())
         return;
 
-    updateFromSelect();
+    select->updateSelectedContent(*this);
 }
 
 void HTMLSelectedContentElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -96,33 +96,11 @@ void HTMLSelectedContentElement::movingSteps(MovingType movingType, ContainerNod
     if (!wasDisabled && select == oldSelect)
         return;
 
-    if (m_hasPendingUpdate)
-        return;
-
-    m_hasPendingUpdate = true;
-    Ref document = this->document();
-    protect(document->eventLoop())->queueMicrotask(document->vm(), [weakThis = WeakPtr<HTMLSelectedContentElement, WeakPtrImplWithEventTargetData> { *this }] {
-        if (RefPtr selectedContent = weakThis; selectedContent && selectedContent->m_hasPendingUpdate)
-            selectedContent->updateFromSelect();
-    });
-}
-
-// https://html.spec.whatwg.org/#update-a-selectedcontent
-void HTMLSelectedContentElement::updateFromSelect()
-{
-    m_hasPendingUpdate = false;
-
-    RefPtr select = m_owningSelect;
-    if (m_isDisabled || !select || !select->updatesSelectedContent())
-        return;
-
-    select->updateSelectedContent(*this);
+    select->queueSelectedContentUpdate();
 }
 
 void HTMLSelectedContentElement::updateFromOption(HTMLOptionElement* option)
 {
-    m_hasPendingUpdate = false;
-
     if (option)
         option->cloneIntoSelectedContent(*this);
     else
@@ -132,8 +110,6 @@ void HTMLSelectedContentElement::updateFromOption(HTMLOptionElement* option)
 void HTMLSelectedContentElement::updateFromOptions(const Vector<Ref<HTMLOptionElement>>& options)
 {
     ASSERT(document().settings().htmlEnhancedSelectMultipleSelectedContentEnabled());
-
-    m_hasPendingUpdate = false;
 
     NodeVector clones;
     for (auto& option : options)

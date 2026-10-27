@@ -7,4 +7,6 @@ PASS Moving a selectedcontent element twice queues a single update.
 PASS A queued update of a moved selectedcontent element does nothing if it was updated in the meantime.
 PASS Inserting selectedcontent while an update of its select's selectedcontent elements is queued leaves it to that update.
 PASS Removing an unselected option from a list box without a selected option does not update selectedcontent.
+PASS Moving a selectedcontent element and removing the selected option queues a single update.
+PASS Moving a selectedcontent element into a select updates all of its selectedcontent elements.
 
