@@ -98,6 +98,19 @@ TEST_F(GStreamerTest, gstStructureGetters)
     ASSERT_EQ(structList.size(), 2);
 }
 
+TEST_F(GStreamerTest, findInnermostSink)
+{
+    GRefPtr<GstElement> outerBin = gst_bin_new(nullptr);
+    GstElement* innerBin = gst_bin_new(nullptr);
+    GstElement* sink = gst_element_factory_make("fakesink", nullptr);
+    gst_bin_add(GST_BIN_CAST(innerBin), sink);
+    gst_bin_add(GST_BIN_CAST(outerBin.get()), innerBin);
+    ASSERT_EQ(gstElementFindInnermostSink(outerBin.get()).get(), sink);
+
+    GRefPtr<GstElement> emptyBin = gst_bin_new(nullptr);
+    ASSERT_EQ(gstElementFindInnermostSink(emptyBin.get()).get(), emptyBin.get());
+}
+
 TEST_F(GStreamerTest, gstStructureJSONSerializing)
 {
     GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, 5, "str-val", G_TYPE_STRING, "foo", "bool-val", G_TYPE_BOOLEAN, TRUE, "uint64-val", G_TYPE_UINT64, static_cast<guint64>(18014398509481982), "uint-val", G_TYPE_UINT, 2147483648, "int64-val", G_TYPE_INT64, static_cast<gint64>(666), nullptr));

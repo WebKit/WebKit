@@ -4568,22 +4568,14 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
         if (!m_videoSink || isMediaStreamPlayer())
             return;
 
-        GstElement* sink = m_videoSink.get();
-        while (GST_IS_BIN(sink)) {
-            GUniquePtr<GstIterator> iter(gst_bin_iterate_sinks(GST_BIN_CAST(sink)));
-            GValue value = G_VALUE_INIT;
-            auto result = gst_iterator_next(iter.get(), &value);
-            ASSERT_UNUSED(result, result == GST_ITERATOR_OK);
-            sink = GST_ELEMENT_CAST(g_value_get_object(&value));
-            g_value_unset(&value);
-        }
+        auto sink = gstElementFindInnermostSink(m_videoSink.get());
 
-        if (gstObjectHasProperty(sink, "qos")) [[likely]]
-            g_object_set(sink, "qos", TRUE, nullptr);
+        if (gstObjectHasProperty(sink.get(), "qos")) [[likely]]
+            g_object_set(sink.get(), "qos", TRUE, nullptr);
 
-        if (gstObjectHasProperty(sink, "max-lateness"_s)) {
+        if (gstObjectHasProperty(sink.get(), "max-lateness"_s)) {
             uint64_t maxLateness = 100 * GST_MSECOND;
-            g_object_set(sink, "max-lateness", maxLateness, nullptr);
+            g_object_set(sink.get(), "max-lateness", maxLateness, nullptr);
         } else {
             GST_WARNING_OBJECT(pipeline(), "video sink does not have max-lateness property. This could result in A/V "
                 "desynchronization if it does not discard buffers that are arriving late (for example quality changes "

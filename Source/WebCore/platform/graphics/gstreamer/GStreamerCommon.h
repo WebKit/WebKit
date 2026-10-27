@@ -386,6 +386,9 @@ bool gstObjectHasProperty(GstPad*, ASCIILiteral name);
 
 bool gstElementMatchesFactoryAndHasProperty(GstElement*, ASCIILiteral factoryNamePattern, ASCIILiteral propertyName);
 
+// Descends into nested bins and returns the sink found there, or the innermost bin when it has no sink.
+GRefPtr<GstElement> gstElementFindInnermostSink(GstElement*);
+
 GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>&);
 GRefPtr<GstBuffer> wrapSharedBuffer(Ref<SharedBuffer>&&);
 

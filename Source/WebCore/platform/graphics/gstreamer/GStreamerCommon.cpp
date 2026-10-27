@@ -1954,6 +1954,27 @@ bool gstElementMatchesFactoryAndHasProperty(GstElement* element, ASCIILiteral fa
     return gstObjectHasProperty(element, propertyName);
 }
 
+GRefPtr<GstElement> gstElementFindInnermostSink(GstElement* element)
+{
+    GRefPtr<GstElement> sink = element;
+    while (GST_IS_BIN(sink.get())) {
+        GUniquePtr<GstIterator> iterator(gst_bin_iterate_sinks(GST_BIN_CAST(sink.get())));
+        GValue value = G_VALUE_INIT;
+        auto result = gst_iterator_next(iterator.get(), &value);
+        while (result == GST_ITERATOR_RESYNC) {
+            gst_iterator_resync(iterator.get());
+            result = gst_iterator_next(iterator.get(), &value);
+        }
+        if (result != GST_ITERATOR_OK) {
+            g_value_unset(&value);
+            return sink;
+        }
+        sink = GST_ELEMENT_CAST(g_value_get_object(&value));
+        g_value_unset(&value);
+    }
+    return sink;
+}
+
 GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>& span)
 {
     if (span.empty())
