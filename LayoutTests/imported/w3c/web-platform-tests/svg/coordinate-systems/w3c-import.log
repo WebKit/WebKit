@@ -45,6 +45,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-synthesized-in-img-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-synthesized-in-img-001.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-synthesized-in-img-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-synthesized-in-img-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-synthesized-in-img-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-synthesized-in-img-002.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-001.svg
