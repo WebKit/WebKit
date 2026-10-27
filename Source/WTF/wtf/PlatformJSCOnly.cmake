@@ -128,6 +128,7 @@ endif ()
 if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     list(APPEND WTF_PUBLIC_HEADERS
         glib/FilePathWatcher.h
+        glib/GMallocString.h
         glib/GRefPtr.h
         glib/GSpanExtras.h
         glib/GTypedefs.h
