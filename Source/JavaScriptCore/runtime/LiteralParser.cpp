@@ -1643,7 +1643,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
 
     // Dispatching on the first character skips the generic token dispatch that
     // parsePrimitiveValue would otherwise repeat on the token type.
-    auto parseValue = [&](bool lookUpCachedStrings) ALWAYS_INLINE_LAMBDA -> JSValue {
+    auto parseValue = [&, &vm = vm](bool lookUpCachedStrings) ALWAYS_INLINE_LAMBDA -> JSValue {
         UNUSED_PARAM(lookUpCachedStrings);
         switch (m_lexer.peek()) {
         case '"': {
@@ -1686,7 +1686,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
 
     // Objects from JSON are JSFinalObjects that rarely have duplicate keys and usually share an existing
     // Structure, so adding a property is a store plus a StructureID swap with no generic put machinery.
-    auto putWithTransition = [&](StructureID originalStructureID, StructureID newStructureID, PropertyOffset offset, JSValue value) ALWAYS_INLINE_LAMBDA {
+    auto putWithTransition = [&, &vm = vm](StructureID originalStructureID, StructureID newStructureID, PropertyOffset offset, JSValue value) ALWAYS_INLINE_LAMBDA {
         ASSERT(object->structureID() == originalStructureID);
         Structure* originalStructure = originalStructureID.decode();
         Structure* newStructure = newStructureID.decode();
@@ -1860,7 +1860,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
 
         ASSERT(object->structure() == structure);
         auto* originalStructure = structure;
-        auto property = [&] ALWAYS_INLINE_LAMBDA -> Variant<ExistingProperty, Identifier> {
+        auto property = [&, &vm = vm] ALWAYS_INLINE_LAMBDA -> Variant<ExistingProperty, Identifier> {
             if (consumedProperty)
                 return *consumedProperty;
             if (Structure* transition = originalStructure->trySingleTransition()) {
