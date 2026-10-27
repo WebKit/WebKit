@@ -100,6 +100,7 @@ SpatialRenderTest.createRenderer = function(projection, { width = 256, height = 
 
     support._projection = projection;
     support._fovDegrees = fovDegrees;
+    support._cameraFieldOfView = 80;
     support._enable();
     if (!support._active)
         return null;

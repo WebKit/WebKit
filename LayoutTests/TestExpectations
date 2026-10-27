@@ -8266,8 +8266,3 @@ accessibility/line-clamp-text.html [ Skip ]
 accessibility/isolated-tree/line-clamp-text.html [ Skip ]
 
 webkit.org/b/327137 imported/w3c/web-platform-tests/resource-timing/resource-timing-failed-fetch.html [ Failure Pass ]
-
-# webkit.org/b/328236 NEW TEST(323881@main): 3x media/modern-media-controls/spatial-video-support/* (layout-tests) are constant text failures.
-media/modern-media-controls/spatial-video-support/spatial-video-support-render-cubemap.html [ Failure ]
-media/modern-media-controls/spatial-video-support/spatial-video-support-render-equirect.html [ Failure ]
-media/modern-media-controls/spatial-video-support/spatial-video-support-render-fisheye.html [ Failure ]
