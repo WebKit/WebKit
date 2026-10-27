@@ -31,7 +31,7 @@ results directory), provides comparisons of expected and actual results (both
 images and text) and allows one-click rebaselining of tests."""
 
 from webkitpy.common.host import Host
-from webkitpy.common.net.resultsjsonparser import JSONTestResult, for_each_test
+from webkitpy.common.net.resultsjsonparser import JSONTestResult
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.tool.commands.abstractlocalservercommand import AbstractLocalServerCommand
 from webkitpy.tool.servers.rebaselineserver import (
@@ -73,7 +73,8 @@ class RebaselineServer(AbstractLocalServerCommand):
             result_dict['baselines'] = get_test_baselines(test_name, self._test_config)
             new_tests_subtree[test_name] = result_dict
 
-        for_each_test(results_json['tests'], gather_baselines_for_test)
+        for test_name, result_dict in json_results_generator.convert_trie_to_flat_paths(results_json['tests']).items():
+            gather_baselines_for_test(test_name, result_dict)
         results_json['tests'] = new_tests_subtree
 
     def _prepare_config(self, options, args, tool):

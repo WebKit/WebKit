@@ -29,6 +29,7 @@
 
 from webkitpy.common.net import resultsjsonparser
 from webkitpy.common.iteration_compatibility import iteritems
+from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations
 
 
@@ -122,7 +123,8 @@ class BuildBotPrinter(object):
             else:
                 add_to_dict_of_lists(regressions, results['actual'], test)
 
-        resultsjsonparser.for_each_test(summarized_results['tests'], add_result)
+        for test, results in json_results_generator.convert_trie_to_flat_paths(summarized_results['tests']).items():
+            add_result(test, results)
 
         if len(passes) or len(flaky) or len(regressions):
             self._print("")
