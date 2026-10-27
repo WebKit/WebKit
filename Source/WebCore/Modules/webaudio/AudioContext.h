@@ -56,7 +56,7 @@ public:
 
     // Create an AudioContext for rendering to the audio hardware.
     static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&&);
-    virtual ~AudioContext();
+    WEBCORE_EXPORT virtual ~AudioContext();
 
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
