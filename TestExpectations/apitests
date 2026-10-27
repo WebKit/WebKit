@@ -117,7 +117,6 @@ webkit.org/b/318586 [ X86_64 Tahoe ] TestIPC.IPCSerialization.SecTrustRef [ Fail
 rdar://129011312 [ ios ] TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground [ Skip ]
 webkit.org/b/195785 TestWebKitAPI._WKDownload.DownloadMonitorSurvive [ Skip ]
 webkit.org/b/190897 [ ios ] TestWebKitAPI.ActionSheetTests.DismissingActionSheetShouldNotDismissPresentingViewController [ Skip ]
-webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.AdvancedPrivacyProtections.DoNotHideReferrerInPopupWindow [ Pass Failure ]
 webkit.org/b/327333 [ mac x86_64 ] TestWebKitAPI.AdvancedPrivacyProtections.LinkPreconnectUsesEnhancedPrivacy [ Failure ]
 webkit.org/b/311210 [ ios release ] TestWebKitAPI.AdvancedPrivacyProtections.VerifyPixelsFromNoisyCanvas2DAPI [ Skip ]
 webkit.org/b/242233 [ ios ] TestWebKitAPI.AnimatedResize.ResizeWithHiddenContentDoesNotHang [ Skip ]

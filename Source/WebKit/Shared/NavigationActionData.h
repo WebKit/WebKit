@@ -42,6 +42,7 @@
 #include <WebCore/PendingNavigateEventIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/ReferrerPolicy.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SandboxFlags.h>
@@ -72,6 +73,7 @@ struct NavigationActionData {
     bool isInitialFrameSrcLoad { false };
     bool isContentRuleListRedirect { false };
     String openedMainFrameName;
+    WebCore::RegistrableDomain openedByScriptDomain;
     std::optional<WebCore::BackForwardItemIdentifier> targetBackForwardItemIdentifier;
     std::optional<WebCore::BackForwardItemIdentifier> sourceBackForwardItemIdentifier;
     WebCore::LockHistory lockHistory { WebCore::LockHistory::No };

@@ -82,6 +82,7 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 false, /* isInitialFrameSrcLoad */
                 false, /* isContentExtensionRedirect */
                 { }, /* openedMainFrameName */
+                { }, /* openedByScriptDomain */
                 std::nullopt, /* targetBackForwardItemIdentifier */
                 std::nullopt, /* sourceBackForwardItemIdentifier */
                 WebCore::LockHistory::No, /* lockHistory */

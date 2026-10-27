@@ -36,6 +36,7 @@
 #include "Untrusted.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/UserGestureTokenIdentifier.h>
 #include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
 #include <wtf/ApproximateTime.h>
@@ -4065,6 +4066,7 @@ private:
     String m_customTextEncodingName;
     String m_overrideContentSecurityPolicy;
     String m_openedMainFrameName;
+    WebCore::RegistrableDomain m_openedByScriptDomain;
 
     const RefPtr<WebInspectorUIProxy> m_inspector;
 

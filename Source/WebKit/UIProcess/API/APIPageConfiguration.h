@@ -33,6 +33,7 @@
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ReferrerPolicy.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/Site.h>
@@ -139,6 +140,9 @@ public:
 
     const WTF::String& LEGACY_NODELETE openedMainFrameName() const;
     void setOpenedMainFrameName(const WTF::String&);
+
+    const WebCore::RegistrableDomain& LEGACY_NODELETE openedByScriptDomain() const;
+    void setOpenedByScriptDomain(WebCore::RegistrableDomain&&);
 
     WebCore::SandboxFlags initialSandboxFlags() const { return m_data.initialSandboxFlags; }
     void LEGACY_NODELETE setInitialSandboxFlags(WebCore::SandboxFlags);
@@ -551,6 +555,7 @@ private:
         WebCore::Site openedSite;
         bool processInheritedFromOpener { false };
         WTF::String openedMainFrameName;
+        WebCore::RegistrableDomain openedByScriptDomain;
         std::optional<WebCore::WindowFeatures> windowFeatures;
         WebCore::SandboxFlags initialSandboxFlags;
         WebCore::ReferrerPolicy initialReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };

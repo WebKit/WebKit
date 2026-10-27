@@ -1105,6 +1105,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     if (parameters.openedByDOM)
         page->setOpenedByDOM();
+    if (!parameters.openedByScriptDomain.isEmpty())
+        page->setOpenedByScriptDomain(WTF::move(parameters.openedByScriptDomain));
 
     page->setGroupName(m_pageGroup->identifier());
     page->setUserInterfaceLayoutDirection(m_userInterfaceLayoutDirection);

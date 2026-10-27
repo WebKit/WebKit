@@ -58,6 +58,7 @@
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/Pagination.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
@@ -343,6 +344,7 @@ struct WebPageCreationParameters {
     std::optional<ProvisionalFrameCreationParameters> provisionalFrameCreationParameters { };
     WebCore::FrameIdentifier mainFrameIdentifier;
     String openedMainFrameName;
+    WebCore::RegistrableDomain openedByScriptDomain;
     std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier { };
     URL mainFrameOpenerURL;
     WebCore::SandboxFlags initialSandboxFlags;

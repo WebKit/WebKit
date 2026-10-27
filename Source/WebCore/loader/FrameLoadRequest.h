@@ -31,6 +31,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/NavigationHistoryBehavior.h>
 #include <WebCore/ReferrerPolicy.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SubstituteData.h>
@@ -57,6 +58,9 @@ public:
 
     NewFrameOpenerPolicy newFrameOpenerPolicy() const { return m_newFrameOpenerPolicy; }
     void setNewFrameOpenerPolicy(NewFrameOpenerPolicy newFrameOpenerPolicy) { m_newFrameOpenerPolicy = newFrameOpenerPolicy; }
+
+    const RegistrableDomain& openedByScriptDomain() const LIFETIME_BOUND { return m_openedByScriptDomain; }
+    void setOpenedByScriptDomain(RegistrableDomain&& domain) { m_openedByScriptDomain = WTF::move(domain); }
 
     // The shouldReplaceDocumentIfJavaScriptURL parameter will go away when the FIXME to eliminate the
     // corresponding parameter from ScriptController::executeIfJavaScriptURL() is addressed.
@@ -107,6 +111,7 @@ private:
     LockBackForwardList m_lockBackForwardList { LockBackForwardList::No };
     ReplaceIfNotCompletelyLoaded m_replaceIfNotCompletelyLoaded { ReplaceIfNotCompletelyLoaded::No };
     NewFrameOpenerPolicy m_newFrameOpenerPolicy { NewFrameOpenerPolicy::Allow };
+    RegistrableDomain m_openedByScriptDomain;
     ShouldReplaceDocumentIfJavaScriptURL m_shouldReplaceDocumentIfJavaScriptURL { ReplaceDocumentIfJavaScriptURL };
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     AtomString m_downloadAttribute;

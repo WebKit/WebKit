@@ -2977,6 +2977,8 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
         resourceRequest.setIsAppInitiated(openerDocumentLoader->lastNavigationWasAppInitiated());
     FrameLoadRequest frameLoadRequest { *activeDocument, protect(activeDocument->securityOrigin()), WTF::move(resourceRequest), frameName, initiatedByMainFrame };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(activeDocument->shouldOpenExternalURLsPolicyToPropagate());
+    RegistrableDomain openedByScriptDomain { protect(openerFrame.document())->currentSourceURL(ScriptExecutionContext::CallStackPosition::TopMost) };
+    frameLoadRequest.setOpenedByScriptDomain(RegistrableDomain { openedByScriptDomain });
 
     // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
     if (protect(openerFrame.document())->shouldForceNoOpenerBasedOnCOOP()) {
@@ -3013,7 +3015,7 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
         if (RefPtr page = newFrame->page()) {
             page->setOpenedByDOM();
             if (openerDocument)
-                page->setOpenedByScriptDomain(RegistrableDomain { openerDocument->currentSourceURL(ScriptExecutionContext::CallStackPosition::TopMost) });
+                page->setOpenedByScriptDomain(WTF::move(openedByScriptDomain));
         }
     }
 
