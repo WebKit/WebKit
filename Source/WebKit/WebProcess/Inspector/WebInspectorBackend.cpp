@@ -50,6 +50,7 @@
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorPageAgent.h>
 #include <WebCore/InspectorResourceUtilities.h>
+#include <WebCore/InstrumentingAgents.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
@@ -437,8 +438,9 @@ void WebInspectorBackend::disableNetworkInstrumentation()
     }
 }
 
-void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)
+void WebInspectorBackend::removeInstrumentationForFrame(LocalFrame& frame)
 {
+    auto frameID = frame.frameID();
     m_frameNetworkAgentProxies.remove(frameID);
     m_framePageAgentProxies.remove(frameID);
 
@@ -446,8 +448,22 @@ void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)
     // overlay controller, so it wouldn't be released just by the proxy above going away.
     if (RefPtr corePage = m_page ? m_page->corePage() : nullptr) {
         if (auto* client = corePage->inspectorController().inspectorBackendClient())
-            client->willDestroyFrameOverlays(frameID);
+            client->willDestroyFrameOverlays(frame);
     }
+}
+
+void WebInspectorBackend::removeInstrumentationForDestroyedFrame(LocalFrame& frame)
+{
+    // A proxy unregisters from the frame's InstrumentingAgents when destroyed, so it must go while they are alive.
+    // A FrameIdentifier names the logical frame, not this LocalFrame, so only remove a proxy registered on this frame's agents.
+    Ref agents = frame.inspectorController().instrumentingAgents();
+    auto frameID = frame.frameID();
+
+    if (auto it = m_frameNetworkAgentProxies.find(frameID); it != m_frameNetworkAgentProxies.end() && agents->enabledNetworkProxy() == it->value.get())
+        m_frameNetworkAgentProxies.remove(it);
+
+    if (auto it = m_framePageAgentProxies.find(frameID); it != m_framePageAgentProxies.end() && agents->enabledPageProxy() == it->value.get())
+        m_framePageAgentProxies.remove(it);
 }
 
 void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, CompletionHandler<void(std::expected<std::pair<String, bool>, String>&&)>&& completionHandler)

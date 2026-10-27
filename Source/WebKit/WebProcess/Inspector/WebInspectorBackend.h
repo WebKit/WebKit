@@ -129,7 +129,8 @@ public:
     // don't need to know which agents are frame-scoped; each helper no-ops unless its
     // domain is enabled.
     void ensureInstrumentationForFrame(WebCore::LocalFrame&);
-    void removeInstrumentationForFrame(WebCore::FrameIdentifier);
+    void removeInstrumentationForFrame(WebCore::LocalFrame&);
+    void removeInstrumentationForDestroyedFrame(WebCore::LocalFrame&);
 
     void setFrontendConnection(IPC::Connection::Handle&&);
 

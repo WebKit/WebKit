@@ -233,7 +233,7 @@ LocalFrame::~LocalFrame()
 {
     setView(nullptr);
 
-    m_inspectorController->inspectedFrameDestroyed();
+    m_inspectorController->inspectedFrameDestroyed(*this);
 
     // Clear prefetched resources before the FrameLoader is torn down. In-flight
     // prefetch loads trigger a cancel chain (allClientsRemoved -> cancelLoad ->

@@ -645,16 +645,18 @@ void WebFrame::removeFromTree()
     if (RefPtr client = localFrameLoaderClient())
         client->removeStorageAccess();
 
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*coreFrame))
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*coreFrame)) {
         localFrame->loader().closeURL();
 
-    // Instrumentation is added in createSubframe()/createProvisionalFrame() and normally removed in
-    // detachedFromParent2(). This removal path (a remote ancestor removing the frame ->
-    // frameWasRemovedInAnotherProcess -> removeFromTree) skips detachedFromParent2(), so tear the
-    // instrumentation (incl. the paint-rect overlay) down here too; removeInstrumentationForFrame() is
-    // idempotent, so the two removal paths never double-free.
-    if (RefPtr backend = webPage->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
-        backend->removeInstrumentationForFrame(frameID());
+        // Instrumentation is added in createSubframe()/createProvisionalFrame() and normally removed in
+        // detachedFromParent2(). This removal path (a remote ancestor removing the frame ->
+        // frameWasRemovedInAnotherProcess -> removeFromTree) skips detachedFromParent2(), so tear the
+        // instrumentation (incl. the paint-rect overlay) down here too; removeInstrumentationForFrame() is
+        // idempotent, so the two removal paths never double-free. For a remote frame, the only local frame
+        // with instrumentation is the provisional one, which destroyProvisionalFrame() below detaches.
+        if (RefPtr backend = webPage->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
+            backend->removeInstrumentationForFrame(*localFrame);
+    }
 
     if (is<RemoteFrame>(*coreFrame))
         coreFrame->disconnectOwnerElement();

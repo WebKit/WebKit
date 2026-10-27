@@ -44,6 +44,7 @@
 #include "FrameInlines.h"
 #include "FrameRuntimeAgent.h"
 #include "FrameWorkerAgent.h"
+#include "InspectorBackendClient.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
@@ -260,9 +261,13 @@ void FrameInspectorController::disconnectFrontend(Inspector::FrontendChannel& fr
     }
 }
 
-void FrameInspectorController::inspectedFrameDestroyed()
+void FrameInspectorController::inspectedFrameDestroyed(LocalFrame& frame)
 {
     m_pendingNodeToInspect = nullptr;
+
+    // Runs even without frontends: the page-level backend can have proxies registered on our InstrumentingAgents.
+    if (auto* client = overlayOwnerBackendClient())
+        client->inspectedFrameDestroyed(frame);
 
     if (!m_frontendRouter->hasFrontends())
         return;

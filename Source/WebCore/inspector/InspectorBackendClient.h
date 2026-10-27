@@ -78,7 +78,10 @@ public:
     virtual void showPaintRect(LocalFrame&, const FloatRect& rect) { showPaintRect(rect); }
     // Tear down any per-frame paint-rect overlay owned by a local root frame that is going away, so
     // it isn't retained past the frame's lifetime. No-op for clients without per-frame overlays.
-    virtual void willDestroyFrameOverlays(FrameIdentifier) { }
+    virtual void willDestroyFrameOverlays(LocalFrame&) { }
+    // Called from ~LocalFrame while the frame's InstrumentingAgents are still alive, so a client can
+    // release state registered on them.
+    virtual void inspectedFrameDestroyed(LocalFrame&) { }
 
     virtual void frameDebuggerDidPause(FrameIdentifier) { }
     virtual void frameDebuggerDidContinue(FrameIdentifier) { }

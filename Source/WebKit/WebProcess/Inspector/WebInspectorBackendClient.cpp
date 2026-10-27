@@ -421,61 +421,53 @@ void WebInspectorBackendClient::frameDebuggerDidContinue(WebCore::FrameIdentifie
         page->send(Messages::WebPageProxy::FrameDidContinueForDebugger(frameID));
 }
 
-void WebInspectorBackendClient::willDestroyFrameOverlays(WebCore::FrameIdentifier frameID)
+void WebInspectorBackendClient::willDestroyFrameOverlays(LocalFrame& frame)
 {
+    // The overlay maps are keyed by LocalFrame, so look this frame up directly. Don't ref it: this also
+    // runs from ~LocalFrame.
     RefPtr page = m_page.get();
     RefPtr corePage = page ? page->corePage() : nullptr;
 
-    // Tear highlight overlays down too, or a stale one re-parents under the main frame.
-    // Collect and erase first: uninstalling re-enters willMoveToPage(), which mutates this map.
-    const Vector detachedHighlights = [&] {
-        Vector<std::pair<Ref<LocalFrame>, RefPtr<PageOverlay>>> detachedHighlights;
-        m_frameHighlightOverlays.removeIf([&](auto& entry) {
-            Ref frame = entry.key;
-            if (frame->frameID() != frameID)
-                return false;
-
-            detachedHighlights.append({ WTF::move(frame), entry.value });
-            return true;
-        });
-        return detachedHighlights;
-    }();
-
-    for (auto& [frame, overlay] : detachedHighlights) {
-        if (!corePage)
-            break;
-
-        if (overlay)
+    // Tear the highlight overlay down too, or a stale one re-parents under the main frame.
+    // Erase it first: uninstalling re-enters willMoveToPage(), which mutates this map.
+    if (auto highlightOverlay = m_frameHighlightOverlays.takeOptional(frame); highlightOverlay && corePage) {
+        if (RefPtr overlay = *highlightOverlay)
             corePage->pageOverlayController().uninstallPageOverlay(*overlay, PageOverlay::FadeMode::DoNotFade);
 
-        // Shared with the paint-rect overlay; the pass below releases the container otherwise.
-        if (!m_paintRectOverlays.contains(frame.get()))
-            corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(frame.get());
+        // Shared with the paint-rect overlay; the step below releases the container otherwise.
+        if (!m_paintRectOverlays.contains(frame))
+            corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(frame);
     }
 
-    // Buckets are keyed by local root frame; a detaching frame owns a bucket only if it is that root.
-    // Find it by identity, uninstall its overlay, detach its layers, and drop the controller's
-    // per-frame container. Unconditional release is safe only after the highlight pass above; keep
-    // these two passes in this order.
-    m_paintRectOverlays.removeIf([frameID, corePage](auto& entry) {
-        Ref frame = entry.key;
-        if (frame->frameID() != frameID)
-            return false;
+    // Buckets are keyed by local root frame; a frame owns a bucket only if it is that root. Uninstall
+    // its overlay, detach its layers, and drop the controller's per-frame container. Unconditional
+    // release is safe only after the highlight step above; keep these two steps in this order.
+    auto bucket = m_paintRectOverlays.takeOptional(frame);
+    if (!bucket)
+        return;
 
-        auto& bucket = entry.value;
-        for (auto& paintLayer : bucket.layers)
-            paintLayer->removeFromParent();
-        bucket.layers.clear();
+    for (auto& paintLayer : bucket->layers)
+        paintLayer->removeFromParent();
+    bucket->layers.clear();
 
-        if (corePage) {
-            if (RefPtr overlay = bucket.overlay) {
-                Ref protectedOverlay = overlay.releaseNonNull();
-                corePage->pageOverlayController().uninstallPageOverlay(protectedOverlay, PageOverlay::FadeMode::DoNotFade);
-            }
-            corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(frame.get());
+    if (corePage) {
+        if (RefPtr overlay = bucket->overlay) {
+            Ref protectedOverlay = overlay.releaseNonNull();
+            corePage->pageOverlayController().uninstallPageOverlay(protectedOverlay, PageOverlay::FadeMode::DoNotFade);
         }
-        return true;
-    });
+        corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(frame);
+    }
+}
+
+void WebInspectorBackendClient::inspectedFrameDestroyed(LocalFrame& destroyedFrame)
+{
+    // Covers a frame destroyed without detachedFromParent2(), such as one destroyed with a remote ancestor. See webkit.org/b/327608.
+    if (RefPtr page = m_page) {
+        if (RefPtr backend = page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
+            backend->removeInstrumentationForDestroyedFrame(destroyedFrame);
+    }
+
+    willDestroyFrameOverlays(destroyedFrame);
 }
 
 #if PLATFORM(IOS_FAMILY)
