@@ -7707,6 +7707,7 @@ webkit_platform_headers: <WebCore/QuirkMatchPattern.h> <WebCore/QuirksData.h> <W
     TubularApp,
     LensApp,
     SafariWebApp,
+    HomeView,
 };
 
 [CustomHeader, WebKitPlatform] class WebCore::QuirkMatchPattern {
