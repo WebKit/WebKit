@@ -372,7 +372,7 @@ class Manager(object):
         return True
 
     def run(self, args):
-        num_failed_uploads = 0
+        failed_upload_urls = []
 
         if self._options.test_list:
             for list_path in self._options.test_list:
@@ -565,7 +565,7 @@ class Manager(object):
                     for hostname in self._options.report_urls:
                         self._printer.write_update('Uploading to {} ...'.format(hostname))
                         if not upload.upload(hostname, log_line_func=self._printer.writeln):
-                            num_failed_uploads += 1
+                            failed_upload_urls.append(hostname)
                         else:
                             all_uploads.append(upload)
                     self._printer.writeln('Uploads completed!')
@@ -633,9 +633,12 @@ class Manager(object):
                     for hostname in self._options.report_urls:
                         self._printer.write_update('Uploading archive to {} ...'.format(hostname))
                         if not upload.upload_archive(hostname, self._filesystem.open_binary_file_for_reading(archive + '.zip'), log_line_func=self._printer.writeln):
-                            num_failed_uploads += 1
+                            failed_upload_urls.append(hostname)
 
-        if num_failed_uploads:
+        if failed_upload_urls:
+            _log.error('{} to {} failed, exiting with status -1'.format(
+                pluralize(len(failed_upload_urls), 'upload'), ', '.join(sorted(set(failed_upload_urls)))))
+            result.failed_uploads = failed_upload_urls
             result.exit_code = -1
         return result
 

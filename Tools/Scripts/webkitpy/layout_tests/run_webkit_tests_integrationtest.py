@@ -37,12 +37,13 @@ from webkitcorepy import StringIO, OutputCapture
 
 from webkitpy.common.system import path
 from webkitpy.common.system.crashlogs_unittest import make_mock_crash_report_darwin
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers.manager import Manager
-from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
+from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS, RunDetails
 from webkitpy.layout_tests.views import printing
 from webkitpy.port import test
 from webkitpy.port.image_diff import ImageDiffResult
@@ -1442,6 +1443,7 @@ class MainTest(unittest.TestCase):
 
             class FakeRunDetails(object):
                 exit_code = -1
+                failed_uploads = []
 
             return FakeRunDetails()
 
@@ -1464,3 +1466,63 @@ class MainTest(unittest.TestCase):
             self.assertEqual(res, run_webkit_tests.EXCEPTIONAL_EXIT_STATUS)
         finally:
             run_webkit_tests.run = orig_run_fn
+
+    def test_results_printed_when_upload_fails(self):
+        stdout = StringIO()
+        stderr = StringIO()
+        with OutputCapture(), \
+             patch.object(Upload, 'upload', return_value=False), \
+             patch.object(Upload, 'upload_archive', return_value=True):
+            res = run_webkit_tests.main(['--platform', 'test', '--child-processes', '1', '--debug-rwt-logging', '--report', 'http://example.invalid/', 'passes/text.html'], stdout, stderr)
+
+        # A failed upload still fails the run, but the results and the reason (that Tools/CISupport looks for) are printed.
+        self.assertEqual(res, -1)
+        self.assertIn('=> Results: 1/1 tests passed', stdout.getvalue())
+        self.assertIn('Failed to upload test results to http://example.invalid/ (1 failed), exiting with status -1.', stdout.getvalue())
+        self.assertIn('1 upload to http://example.invalid/ failed, exiting with status -1', stderr.getvalue())
+
+    def test_only_failed_upload_urls_are_reported(self):
+        stdout = StringIO()
+        stderr = StringIO()
+
+        def upload_only_to_good_server(upload, hostname, log_line_func=None):
+            return hostname == 'http://good.invalid/'
+
+        # The upload to the good server succeeds, so the test archive is created, fake it since shutil can't write into the mock filesystem.
+        open_binary_file_for_reading = MockFileSystem.open_binary_file_for_reading
+
+        def open_test_archive(filesystem, path):
+            if path.endswith('test-archive.zip'):
+                return StringIO()
+            return open_binary_file_for_reading(filesystem, path)
+
+        with OutputCapture(), \
+             patch.object(Upload, 'upload', autospec=True, side_effect=upload_only_to_good_server), \
+             patch.object(Upload, 'upload_archive', return_value=True), \
+             patch('shutil.make_archive'), \
+             patch.object(MockFileSystem, 'open_binary_file_for_reading', autospec=True, side_effect=open_test_archive):
+            res = run_webkit_tests.main(['--platform', 'test', '--child-processes', '1', '--debug-rwt-logging', '--report', 'http://good.invalid/', '--report', 'http://bad.invalid/', 'passes/text.html'], stdout, stderr)
+
+        self.assertEqual(res, -1)
+        self.assertIn('=> Results: 1/1 tests passed', stdout.getvalue())
+        self.assertIn('Failed to upload test results to http://bad.invalid/ (1 failed), exiting with status -1.', stdout.getvalue())
+        self.assertNotIn('good.invalid', stdout.getvalue().split('=> Results')[-1])
+
+    def test_failed_upload_without_results(self):
+        orig_run_fn = run_webkit_tests.run
+
+        def run_without_results(port, options, args, stderr):
+            return RunDetails(exit_code=-1, failed_uploads=['http://example.invalid/'])
+
+        stdout = StringIO()
+        stderr = StringIO()
+        try:
+            run_webkit_tests.run = run_without_results
+            res = run_webkit_tests.main(['--platform', 'test', '--report', 'http://example.invalid/'], stdout, stderr)
+        finally:
+            run_webkit_tests.run = orig_run_fn
+
+        # With no results there is nothing to print, but the failed upload is still reported.
+        self.assertEqual(res, -1)
+        self.assertNotIn('=> Results', stdout.getvalue())
+        self.assertIn('Failed to upload test results to http://example.invalid/ (1 failed), exiting with status -1.', stdout.getvalue())

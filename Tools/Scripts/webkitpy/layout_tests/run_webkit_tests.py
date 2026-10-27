@@ -102,9 +102,16 @@ def main(argv, stdout, stderr):
         options.additional_env_var.append('__XPC_JSC_useRecursiveJSONParse=0')
         run_details = run(port, options, args, stderr)
 
-        if run_details.exit_code != -1 and not run_details.skipped_all_tests and not run_details.initial_results.keyboard_interrupted:
+        # A failed upload to the results server sets the exit code to -1, but the tests did run, so still print their results.
+        has_results = (run_details.exit_code != -1 or run_details.failed_uploads) and run_details.initial_results is not None
+        if has_results and not run_details.skipped_all_tests and not run_details.initial_results.keyboard_interrupted:
             bot_printer = buildbot_results.BuildBotPrinter(stdout, options.debug_rwt_logging)
             bot_printer.print_results(run_details)
+
+        if run_details.failed_uploads:
+            # The layout tests steps of the bots look for this message, please keep it in sync with FAILED_RESULTS_UPLOAD_MESSAGE in Tools/CISupport/Shared/steps.py.
+            print('\nFailed to upload test results to {} ({} failed), exiting with status -1.'.format(
+                ', '.join(sorted(set(run_details.failed_uploads))), len(run_details.failed_uploads)), file=stdout)
 
         return run_details.exit_code
 
