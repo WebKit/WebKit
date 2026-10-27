@@ -57,6 +57,68 @@
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
 }
+
+.condensed-view {
+    --selectedColor: var(--blue);
+    padding-bottom: var(--tinySize);
+}
+
+.condensed-view .strip {
+    padding: var(--colPaddingSize) 0;
+    border-bottom: 1px solid var(--borderColorInlineElement);
+    isolation: isolate;
+}
+
+.condensed-view .dot {
+    margin: 1px;
+}
+
+.condensed-view .dot, .condensed-view .dot>* {
+    cursor: pointer;
+}
+
+.condensed-view .dot.selected::before, .condensed-view .dot.highlighted::before, .condensed-view .dot.line-before::before, .condensed-view .dot.line-after::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    background: var(--blueHighLight);
+    pointer-events: none;
+}
+
+.condensed-view .dot.selected::before {
+    background: var(--selectedColor);
+}
+
+.condensed-view .dot.line-before {
+    margin-left: 7px;
+}
+
+.condensed-view .dot.line-after {
+    margin-right: 7px;
+}
+
+.condensed-view .dot.line-before::before, .condensed-view .dot.line-after::before {
+    inset: -3px auto -3px -6px;
+    width: 4px;
+    background: var(--selectedColor);
+}
+
+.condensed-view .dot.line-after::before {
+    left: calc(100% + 2px);
+}
+
+.condensed-view .input {
+    max-width: 300px;
+}
+
+.condensed-view .input>input[type="range"] {
+    height: var(--tinySize);
+    background:
+        linear-gradient(var(--inverseColor), var(--inverseColor)) center / 100% 2px no-repeat,
+        linear-gradient(to right, var(--inverseColor) 1px, transparent 1px) calc(var(--tinySize) / 2) center / calc((100% - var(--tinySize)) / (var(--notches) - 1)) calc(var(--tinySize) / 2) repeat-x;
+}
+
 .table>thead>tr>th {
     padding: 0px;
 }
@@ -67,5 +129,8 @@
 @media (prefers-color-scheme: dark) {
     .next-regress-bar button{
         background-color: var(--blurBackgroundColorDark);
+    }
+    .condensed-view {
+        --selectedColor: rgb(51, 160, 255);
     }
 }

@@ -24,7 +24,7 @@
 import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js';
-import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams, linkify, escapeEndpoint} from '/assets/js/common.js';
+import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams, linkify, escapeEndpoint, QueryModifier} from '/assets/js/common.js';
 import {Dashboard} from '/assets/js/dashboard.js';
 import {Expectations} from '/assets/js/expectations.js';
 import {InvestigateDrawer} from '/assets/js/investigate.js';
@@ -35,11 +35,19 @@ import {DOM, EventStream, REF, FP} from '/library/js/Ref.js';
 
 
 const DEFAULT_LIMIT = 100;
+const MAX_CONDENSED_RUN_COUNT = 1000;
+const CONDENSED_TOOLTIP_DELAY = 200;
+const CONDENSED_TOOLTIP_STOP_RADIUS = 4;
+const CONDENSED_DOT_MARGIN = 1;
+const CONDENSED_CLICKED_COMMIT_GAP = 6;
+const CONDENSED_REFIT_DELAY = 150;
 
 let willFilterExpected = false;
 let showTestTimes = false;
 let showTestFlakiness = false;
 let showNumberOfFlakyTests = false;
+let showCondensedView = false;
+const condensedViewQuery = new QueryModifier('condensed');
 
 const BUG_TRACKER_COLORS = {
     radar: 'var(--purple)',
@@ -377,6 +385,8 @@ class TimelineFromEndpoint {
         this.xaxisUpdates = [];
         this.timelineUpdate = null;
         this.notifyRerender = () => {};
+        this.applyCondensedViewSwitch = () => {};
+        this.condensedViewSettings = null;
         this.repositories = [];
         this.viewport = viewport;
 
@@ -419,6 +429,9 @@ class TimelineFromEndpoint {
         this.forgetUnrenderedRef();
     }
     update() {
+        this.applyCondensedViewSwitch();
+        if (showCondensedView || !this.timelineUpdate)
+            return;
         if (this.selectedDotsButtonGroupRef)
             this.selectedDotsButtonGroupRef.setState({show: false});
         const params = queryToParams(document.URL.split('?')[1]);
@@ -447,10 +460,12 @@ class TimelineFromEndpoint {
         this.xaxisUpdates.forEach(func => {func(this.scale);});
     }
     rerender() {
+        this.applyCondensedViewSwitch = () => {};
         const params = queryToParams(document.URL.split('?')[1]);
         this.ref.setState(params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT);
     }
     reload() {
+        this.applyCondensedViewSwitch = () => {};
         let myDispatch = Date.now();
         this.latestDispatch = Math.max(this.latestDispatch, myDispatch);
         this.ref.setState(-1);
@@ -463,6 +478,7 @@ class TimelineFromEndpoint {
         delete sharedParams.suite;
         delete sharedParams.test;
         delete sharedParams.repository_id;
+        delete sharedParams.condensed;
 
         let newConfigs = Configuration.fromQuery();
         if (!deepCompare(newConfigs, this.configurations)) {
@@ -872,7 +888,7 @@ class TimelineFromEndpoint {
         this.scale = scaleForCommits(commits);
         this.repositories = repositoriesForCommits(commits);
 
-        this.selectedDotsButtonGroupRef = REF.createRef({
+        this.selectedDotsButtonGroupRef = showCondensedView ? null : REF.createRef({
             state: {
                 show: false,
                 top: 0,
@@ -1009,6 +1025,19 @@ class TimelineFromEndpoint {
             }
         }
 
+        function commitLinksFor(uuid) {
+            return CommitBank.commitsDuring(uuid).map((commit) => {
+                let params = {
+                    branch: commit.branch ? [commit.branch] : branch,
+                    uuid: [commit.uuid],
+                }
+                if (!params.branch)
+                    delete params.branch;
+                const query = paramsToQuery(params);
+                return `<a href="/commit/info?${query}" target="_blank">${commit.label()}</a>`;
+            }).join(', ');
+        }
+
         function onDotEnterFactory(configuration) {
             return (data, event, canvas) => {
                 let partialConfiguration = {};
@@ -1053,16 +1082,7 @@ class TimelineFromEndpoint {
                     `<div class="content">
                         ${data.start_time ? `<a href="/urls/build?${paramsToQuery(buildParams)}" target="_blank">${typ.runDescription}</a> @ ${new Date(data.start_time * 1000).toLocaleString()}<br>` : ''}
                         ${data.start_time && ArchiveRouter.hasArchive(self.suite, data.actual) ? `<a href="/archive/${ArchiveRouter.pathFor(self.suite, data.actual, self.test)}?${paramsToQuery(buildParams)}" target="_blank">${ArchiveRouter.labelFor(self.suite, data.actual)}</a><br>` : ''}
-                        Commits: ${CommitBank.commitsDuring(data.uuid).map((commit) => {
-                            let params = {
-                                branch: commit.branch ? [commit.branch] : branch,
-                                uuid: [commit.uuid],
-                            }
-                            if (!params.branch)
-                                delete params.branch;
-                            const query = paramsToQuery(params);
-                            return `<a href="/commit/info?${query}" target="_blank">${commit.label()}</a>`;
-                        }).join(', ')}
+                        Commits: ${commitLinksFor(data.uuid)}
                         <br>
                         ${partialConfiguration}
                         <br>
@@ -1093,6 +1113,7 @@ class TimelineFromEndpoint {
 
         let children = [];
         let allConfigResults = [];
+        let condensedRows = [];
         this.configurations.forEach(configuration => {
             if (!this.results[configuration.toKey()] || Object.keys(this.results[configuration.toKey()]).length === 0)
                 return;
@@ -1126,15 +1147,19 @@ class TimelineFromEndpoint {
                 childrenConfigsBySDK[config.toKey()].forEach(sdkConfig => {
                     resultsForConfig = combineResults(resultsForConfig, resultsByKey[sdkConfig.toKey()]);
                 });
-                allResults = combineResults(allResults, resultsForConfig);
 
                 let queueParams = config.toParams();
                 queueParams['suite'] = [this.suite];
                 if (branch)
                     queueParams['branch'] = branch;
+                const queueLink = `<a href="/urls/queue?${paramsToQuery(queueParams)}" target="_blank">${config}</a>`;
+                condensedRows.push({configuration: config, label: queueLink, results: resultsForConfig});
+                if (showCondensedView)
+                    return;
+                allResults = combineResults(allResults, resultsForConfig);
                 const uuidsInThisSeries = new Set(resultsForConfig.map(r => r.uuid));
                 let myTimeline = Timeline.SeriesWithHeaderComponent(
-                    `${childrenConfigsBySDK[config.toKey()].length > 1 ? ' | ' : ''}<a href="/urls/queue?${paramsToQuery(queueParams)}" target="_blank">${config}</a>`,
+                    `${childrenConfigsBySDK[config.toKey()].length > 1 ? ' | ' : ''}${queueLink}`,
                     Timeline.CanvasSeriesComponent(resultsForConfig, this.scale, {
                         getScaleFunc: options.getScaleFunc,
                         compareFunc: options.compareFunc,
@@ -1224,6 +1249,69 @@ class TimelineFromEndpoint {
                 ...collapsedTimelines
             ));
         });
+
+        const minimumUuid = minimumUuidForResults(this.results, limit);
+        const condensedRunWidth = () => parseInt(getComputedStyle(document.body).getPropertyValue('--smallSize')) + 2 * CONDENSED_DOT_MARGIN;
+        const condensedRunsPerLine = element => Math.max(1, Math.floor((element.getBoundingClientRect().width - CONDENSED_CLICKED_COMMIT_GAP) / condensedRunWidth()));
+        let drawnRunsPerLine = null;
+        const condensedViewSettings = this.condensedViewSettings;
+        this.condensedViewSettings = null;
+        const condensedViewRef = REF.createRef({
+            state: {show: showCondensedView, runCount: null, lineCount: null, expanded: false, clickedRun: null, ...condensedViewSettings},
+            onStateUpdate: (element, stateDiff, state) => {
+                const show = 'show' in stateDiff ? stateDiff.show : state.show;
+                if (!element.isConnected || (!show && !state.show))
+                    return;
+                const runWidth = condensedRunWidth();
+                const runsPerLine = condensedRunsPerLine(element);
+                const view = {...state, ...stateDiff, runsPerLine, lineWidth: runsPerLine * runWidth + CONDENSED_CLICKED_COMMIT_GAP};
+                drawnRunsPerLine = view.show ? runsPerLine : null;
+                DOM.inject(element, view.show ? CondensedView(condensedRows, minimumUuid, view, {
+                    failureTypeFor: (result) => this.getTestResultStatus(result, willFilterExpected).failureType,
+                    commitLinksFor,
+                    handlersFor: (configuration) => ({onDotEnter: onDotEnterFactory(configuration)}),
+                    setView: (viewDiff) => condensedViewRef.setState(viewDiff),
+                }) : '');
+            },
+            onElementMount: (element) => {
+                let refitTimer = null;
+                const needsRefit = () => drawnRunsPerLine && condensedRunsPerLine(element) !== drawnRunsPerLine;
+                const resizeObserver = new ResizeObserver(() => {
+                    if (!element.isConnected) {
+                        resizeObserver.disconnect();
+                        clearTimeout(refitTimer);
+                        return;
+                    }
+                    if (!needsRefit())
+                        return;
+                    if (!refitTimer)
+                        condensedViewRef.setState({});
+                    clearTimeout(refitTimer);
+                    refitTimer = setTimeout(() => {
+                        refitTimer = null;
+                        if (element.isConnected && needsRefit())
+                            condensedViewRef.setState({});
+                    }, CONDENSED_REFIT_DELAY);
+                });
+                resizeObserver.observe(element);
+            },
+        });
+        if (showCondensedView) {
+            this.xaxisUpdates = [];
+            this.timelineUpdate = null;
+            this.notifyRerender = () => {};
+            this.searchScale = () => {};
+            this.applyCondensedViewSwitch = () => {
+                if (showCondensedView)
+                    condensedViewRef.setState({show: true});
+                else if (condensedViewRef.element?.isConnected) {
+                    const {runCount, lineCount, expanded} = condensedViewRef.state;
+                    this.condensedViewSettings = {runCount, lineCount, expanded};
+                    this.rerender();
+                }
+            };
+            return `<div ref="${condensedViewRef}"></div>`;
+        }
 
         let top = true;
         self.xaxisUpdates = [];
@@ -1457,6 +1545,16 @@ class TimelineFromEndpoint {
             searchBarRef.element.style.width = `${containnerRef.element.getBoundingClientRect().width}px`;
         };
         const containnerRef = REF.createRef({
+            state: {show: true},
+            onStateUpdate: (element, stateDiff, state) => {
+                if (stateDiff.show === state.show)
+                    return;
+                element.style.display = stateDiff.show ? 'block' : 'none';
+                if (stateDiff.show) {
+                    onResizeAction();
+                    this.notifyRerender();
+                }
+            },
             onElementMount: (element) => {
                 window.addEventListener("scroll", onScrollAction);
                 window.addEventListener("resize", onResizeAction);
@@ -1467,7 +1565,12 @@ class TimelineFromEndpoint {
                 window.removeEventListener("resize", onResizeAction);
             }
         });
-        return `<div ref="${containnerRef}" style="position: relative">
+        this.applyCondensedViewSwitch = () => {
+            condensedViewRef.setState({show: showCondensedView});
+            containnerRef.setState({show: !showCondensedView});
+        };
+        return `<div ref="${condensedViewRef}"></div>
+        <div ref="${containnerRef}" style="position: relative">
             <div ref="${searchBarRef}" class="next-regress-bar">
                 <button class="button" ref="${findRegressButtonRef}">
                     Find Regression Point
@@ -1504,6 +1607,175 @@ class TimelineFromEndpoint {
     }
 }
 
+let toolTipDot = null;
+let waitingDot = null;
+let waitStartPoint = null;
+let openWaitingToolTip = null;
+let toolTipTimer = null;
+
+function startToolTipWait(point) {
+    waitStartPoint = point;
+    clearTimeout(toolTipTimer);
+    toolTipTimer = setTimeout(finishToolTipWait, CONDENSED_TOOLTIP_DELAY);
+}
+
+function cancelToolTipWait() {
+    clearTimeout(toolTipTimer);
+    waitingDot = null;
+    waitStartPoint = null;
+    openWaitingToolTip = null;
+}
+
+function finishToolTipWait() {
+    if (waitingDot.isConnected) {
+        toolTipDot = waitingDot;
+        openWaitingToolTip();
+    }
+    cancelToolTipWait();
+}
+
+function closeToolTip() {
+    cancelToolTipWait();
+    ToolTip.unset();
+    toolTipDot = null;
+}
+
+function updateToolTipForCursor(event) {
+    const point = {x: event.clientX, y: event.clientY};
+    const dot = event.target.closest('.condensed-view .dot');
+    if (waitingDot && dot !== waitingDot)
+        cancelToolTipWait();
+    else if (waitingDot && Math.hypot(point.x - waitStartPoint.x, point.y - waitStartPoint.y) > CONDENSED_TOOLTIP_STOP_RADIUS)
+        startToolTipWait(point);
+    if (toolTipDot && !dot && !event.target.closest('.tooltip, .tooltip-content') && !ToolTip.isIn(point)) {
+        const dotBox = toolTipDot.getBoundingClientRect();
+        const isInDotBox = point.x >= dotBox.left && point.x <= dotBox.right && point.y >= dotBox.top && point.y <= dotBox.bottom;
+        if (!isInDotBox)
+            closeToolTip();
+    }
+    if (!waitingDot && !toolTipDot)
+        document.removeEventListener('mousemove', updateToolTipForCursor);
+}
+
+function isUnderToolTipArrow(dot) {
+    const dotBox = dot.getBoundingClientRect();
+    const elementOverDotCenter = document.elementFromPoint(dotBox.left + dotBox.width / 2, dotBox.top + dotBox.height / 2);
+    return !!(elementOverDotCenter && elementOverDotCenter.closest('.tooltip'));
+}
+
+function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor, handlersFor, setView}) {
+    const maxLines = Math.floor(MAX_CONDENSED_RUN_COUNT / view.runsPerLine);
+    const runCount = view.runCount || Math.min(view.lineCount || 1, maxLines) * view.runsPerLine;
+    const strips = rows.map(row => {
+        const runs = row.results.filter(result => result.uuid >= minimumUuid).slice(0, runCount);
+        return {row, runs, types: runs.map(result => failureTypeFor(result) || 'success')};
+    });
+    const stripsWithFailures = strips.filter(strip => strip.types.some(type => type !== 'success'));
+    const stripsWithoutFailures = strips.filter(strip => !stripsWithFailures.includes(strip));
+    const unexpectedly = willFilterExpected ? ' unexpectedly' : '';
+
+    const runCountNumberRef = REF.createRef({
+        onElementMount: (element) => {
+            element.onchange = () => {
+                const typedCount = parseInt(element.value, 10);
+                if (typedCount > 0)
+                    setView({runCount: Math.min(typedCount, MAX_CONDENSED_RUN_COUNT), lineCount: null});
+                else
+                    element.value = runCount;
+            };
+        },
+    });
+    const runCountSliderRef = REF.createRef({
+        onElementMount: (element) => {
+            element.oninput = () => {
+                runCountNumberRef.element.value = element.value;
+            };
+            element.onchange = () => setView({runCount: null, lineCount: Math.round(parseInt(element.value, 10) / view.runsPerLine)});
+        },
+    });
+    const highlightClassFor = (row, runs, index) => {
+        const clickedRun = view.clickedRun;
+        if (!clickedRun)
+            return '';
+        const isOlderThanClickedRun = run => run.uuid < clickedRun.uuid;
+        const run = runs[index];
+        const nextOlderRun = runs[index + 1];
+        if (run.uuid === clickedRun.uuid)
+            return row === clickedRun.row ? ' selected' : ' highlighted';
+        if (isOlderThanClickedRun(run))
+            return index ? '' : ' line-before';
+        return nextOlderRun && !isOlderThanClickedRun(nextOlderRun) ? '' : ' line-after';
+    };
+    const Strip = ({row, runs, types}) => {
+        const {onDotEnter} = handlersFor(row.configuration);
+        const runsRef = REF.createRef({
+            onElementMount: (element) => {
+                [...element.children].forEach((dot, index) => {
+                    dot.onmouseenter = (event) => {
+                        if (toolTipDot) {
+                            if (dot === toolTipDot || isUnderToolTipArrow(dot))
+                                return;
+                            closeToolTip();
+                        }
+                        waitingDot = dot;
+                        openWaitingToolTip = () => {
+                            const dotCenterX = dot.offsetWidth / 2;
+                            const arrowHalfDiagonal = parseFloat(getComputedStyle(document.body).getPropertyValue('--largeSize')) * Math.SQRT1_2;
+                            onDotEnter({...runs[index], tipPoints: [{x: dotCenterX, y: -arrowHalfDiagonal}, {x: dotCenterX, y: arrowHalfDiagonal}]}, event, dot.getBoundingClientRect());
+                        };
+                        startToolTipWait({x: event.clientX, y: event.clientY});
+                        document.addEventListener('mousemove', updateToolTipForCursor);
+                    };
+                    dot.onclick = () => {
+                        closeToolTip();
+                        setView({clickedRun: {row, uuid: runs[index].uuid}});
+                    };
+                });
+            },
+        });
+        const failures = types.filter(type => type !== 'success').length;
+        const failuresText = runs.length ? `${failures} of ${runs.length} run${runs.length === 1 ? '' : 's'} failed${unexpectedly}` : 'no runs in range';
+        const clickedRunCommitLinks = row === view.clickedRun?.row ? commitLinksFor(view.clickedRun.uuid) : '';
+        return `<div class="strip">
+                <div class="text tiny">${row.label} (${failuresText})${clickedRunCommitLinks ? ` · ${clickedRunCommitLinks}` : ''}</div>
+                <div ref="${runsRef}" style="max-width: ${view.lineWidth}px">${types.map((type, index) => `<div class="dot small ${type}${highlightClassFor(row, runs, index)}"><div class="text">${Expectations.symbolMap[type]}</div></div>`).join('')}</div>
+            </div>`;
+    };
+    const StripsWithoutFailures = () => {
+        const expanderRef = REF.createRef({
+            onElementMount: (element) => {
+                element.onclick = () => setView({expanded: !view.expanded});
+            },
+        });
+        const stripsWithoutRuns = stripsWithoutFailures.filter(strip => !strip.runs.length);
+        const ranCount = stripsWithoutFailures.length - stripsWithoutRuns.length;
+        const configurations = count => `${count} configuration${count === 1 ? '' : 's'}`;
+        let foldText = ranCount ? `${configurations(ranCount)} with no${unexpectedly ? ' unexpected' : ''} failures` : `${configurations(stripsWithoutRuns.length)} with no runs in range`;
+        if (ranCount && stripsWithoutRuns.length)
+            foldText += `, ${stripsWithoutRuns.length} with no runs in range`;
+        return `<div class="text tiny">
+                <a class="link-button" href="javascript:void(0)" ref="${expanderRef}">${view.expanded ? '-' : '+'}</a>
+                ${foldText}
+            </div>
+            ${view.expanded ? stripsWithoutFailures.map(Strip).join('') : ''}`;
+    };
+
+    return `<div class="condensed-view">
+            <div class="text tiny">Up to ${runCount} run${runCount === 1 ? '' : 's'} per configuration, newest first. Click a run to mark its commit on every strip.</div>
+            <div class="input text tiny">
+                <label>Runs:</label>
+                <input type="range" min="${view.runsPerLine}" max="${maxLines * view.runsPerLine}" step="${view.runsPerLine}" value="${runCount}" ref="${runCountSliderRef}" style="--notches: ${maxLines}">
+                <input type="number" min="1" max="${MAX_CONDENSED_RUN_COUNT}" value="${runCount}" ref="${runCountNumberRef}">
+            </div>
+            ${stripsWithFailures.map(Strip).join('')}
+            ${stripsWithoutFailures.length ? StripsWithoutFailures() : ''}
+        </div>`;
+}
+
+function isCondensedViewInAddress() {
+    const current = condensedViewQuery.current();
+    return ['true', 'TRUE', 'yes', 'YES', '1'].includes(current[current.length - 1]);
+}
 
 function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
     let ref = REF.createRef({
@@ -1517,9 +1789,11 @@ function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
     return `<div class="label" style="font-size: var(--smallSize)" ref="${ref}"></div>`;
 } 
 
-function Legend(callback=null, plural=false, defaultWillFilterExpected=false, flakinessSwitch=false, numberOfFlakySwitch=false) {
+function Legend(callback=null, plural=false, defaultWillFilterExpected=false, flakinessSwitch=false, numberOfFlakySwitch=false, condensedViewSwitch=false) {
     willFilterExpected = defaultWillFilterExpected;
     InvestigateDrawer.willFilterExpected = willFilterExpected;
+    if (condensedViewSwitch)
+        showCondensedView = isCondensedViewInAddress();
     let updateLabelEvents = new EventStream();
     const legendDetails = {
         success: {
@@ -1625,6 +1899,35 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                 };
             },
         });
+        let onCondensedViewPopState = null;
+        const showCondensedViewSwitch = REF.createRef({
+            onElementMount: (element) => {
+                element.onchange = () => {
+                    if (element.checked) {
+                        showCondensedView = true;
+                        condensedViewQuery.replace(true);
+                        InvestigateDrawer.collapse();
+                    } else {
+                        showCondensedView = false;
+                        condensedViewQuery.remove();
+                    }
+                    callback();
+                };
+                onCondensedViewPopState = () => {
+                    if (isCondensedViewInAddress() === showCondensedView)
+                        return;
+                    showCondensedView = !showCondensedView;
+                    element.checked = showCondensedView;
+                    if (showCondensedView)
+                        InvestigateDrawer.collapse();
+                    callback();
+                };
+                window.addEventListener('popstate', onCondensedViewPopState);
+            },
+            onElementUnmount: () => {
+                window.removeEventListener('popstate', onCondensedViewPopState);
+            },
+        });
         result += `<div class="input">
             <label>Filter expected results</label>
             <label class="switch">
@@ -1653,6 +1956,14 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                 <label>Number of flakes</label>
                 <label class="switch">
                     <input type="checkbox"${showNumberOfFlakyTests ? ' checked': ''} ref="${showNumberOfFlakyTestsSwitch}">
+                    <span class="slider"></span>
+                </label>
+            </div>`;
+        if (condensedViewSwitch)
+            result += `<div class="input">
+                <label>Show condensed view</label>
+                <label class="switch">
+                    <input type="checkbox"${showCondensedView ? ' checked': ''} ref="${showCondensedViewSwitch}">
                     <span class="slider"></span>
                 </label>
             </div>`;

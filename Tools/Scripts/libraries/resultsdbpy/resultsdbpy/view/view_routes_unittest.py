@@ -101,6 +101,12 @@ class WebSiteUnittest(WebSiteTestCase):
         self.assertIsNotNone(content)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_main_with_condensed_view(self, client, **kwargs):
+        response = client.get(f'{self.URL}/?suite=layout-tests&test=fast/css/acid2.html&condensed=true')
+        self.assertEqual(response.status_code, 200)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @WebSiteTestCase.decorator()
     def test_commit_link(self, driver, **kwargs):
         driver.get(self.URL)

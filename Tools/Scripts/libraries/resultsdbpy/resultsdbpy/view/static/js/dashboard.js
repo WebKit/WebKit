@@ -199,6 +199,7 @@ class Dashboard {
         let result = queryToParams(document.URL.split('?')[1]);
         delete result.suite;
         delete result.test;
+        delete result.condensed;
         return result;
     }
     canEnable() {
