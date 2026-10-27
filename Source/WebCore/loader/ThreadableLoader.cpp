@@ -103,6 +103,8 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     copy.navigationPreloadIdentifier = this->navigationPreloadIdentifier;
     copy.fetchPriority = this->fetchPriority;
     copy.shouldEnableContentExtensionsCheck = this->shouldEnableContentExtensionsCheck;
+    copy.workerIdentifier = this->workerIdentifier;
+    copy.workerURL = this->workerURL.isolatedCopy();
 
     // ThreadableLoaderOptions
     copy.contentSecurityPolicyEnforcement = this->contentSecurityPolicyEnforcement;

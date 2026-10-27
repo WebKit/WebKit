@@ -40,6 +40,7 @@
 
 namespace WebCore {
 class RegistrableDomain;
+class Report;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -125,6 +126,7 @@ private:
 #endif
 
     void broadcastConsoleMessage(MessageSource, MessageLevel, const String& message);
+    void notifyWorkerReportObservers(WebCore::ScriptExecutionContextIdentifier, Ref<WebCore::Report>&&);
 
     void storageAccessPermissionChanged(const WebCore::RegistrableDomain& topFrameDomain, const WebCore::RegistrableDomain& subFrameDomain);
 

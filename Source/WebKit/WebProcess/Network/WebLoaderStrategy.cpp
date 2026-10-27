@@ -510,6 +510,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     if (resourceLoader.options().crossOriginEmbedderPolicy)
         loadParameters.crossOriginEmbedderPolicy = *resourceLoader.options().crossOriginEmbedderPolicy;
+    loadParameters.workerURL = resourceLoader.options().workerURL;
     
     auto* webFrameLoaderClient = frame ? dynamicDowncast<WebLocalFrameLoaderClient>(frame->loader().client()) : nullptr;
     RefPtr webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;

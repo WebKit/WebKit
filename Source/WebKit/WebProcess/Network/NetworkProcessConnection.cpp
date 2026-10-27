@@ -73,7 +73,10 @@
 #include <WebCore/NavigationScheduler.h>
 #include <WebCore/Page.h>
 #include <WebCore/PermissionController.h>
+#include <WebCore/Report.h>
+#include <WebCore/ReportingScope.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/WorkerGlobalScope.h>
 #include <pal/SessionID.h>
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
@@ -329,6 +332,14 @@ void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, Mes
     Page::forEachPage([&] (auto& page) {
         if (RefPtr localTopDocument = page.localTopDocument())
             localTopDocument->addConsoleMessage(source, level, message);
+    });
+}
+
+void NetworkProcessConnection::notifyWorkerReportObservers(ScriptExecutionContextIdentifier workerIdentifier, Ref<Report>&& report)
+{
+    ScriptExecutionContext::postTaskTo(workerIdentifier, [report = WTF::move(report)](ScriptExecutionContext& context) mutable {
+        if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(context))
+            protect(worker->reportingScope())->notifyReportObservers(WTF::move(report));
     });
 }
 
