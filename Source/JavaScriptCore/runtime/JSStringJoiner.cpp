@@ -196,10 +196,15 @@ static inline String joinStrings(JSGlobalObject* globalObject, const WriteBarrie
         return { };
     }
 
-    auto appendValue = [&](JSValue value) {
+    auto appendValue = [&](JSValue value) ALWAYS_INLINE_LAMBDA {
         if constexpr (indexingShape == ContiguousShape) {
             if (value.isString()) {
                 JSString* string = asString(value);
+                auto view = string->tryGetView();
+                if (!view.data.isNull()) [[likely]] {
+                    appendStringToData(data, view);
+                    return;
+                }
                 unsigned length = string->length();
                 string->resolveToBuffer(data.first(length));
                 data = data.subspan(length);
