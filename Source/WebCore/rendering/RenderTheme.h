@@ -46,12 +46,12 @@ class HTMLInputElement;
 class HTMLMediaElement;
 class HTMLMeterElement;
 class Icon;
-class Image;
+class NativeImage;
 class Page;
 class RenderAttachment;
 class RenderBox;
-class RenderMeter;
 class RenderElement;
+class RenderMeter;
 class RenderProgress;
 class Settings;
 
@@ -274,7 +274,7 @@ public:
     virtual InnerSpinButtonLayout innerSpinButtonLayout(const RenderElement&) const { return InnerSpinButtonLayout::Vertical; }
 
 #if USE(SYSTEM_PREVIEW)
-    virtual void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&);
+    virtual void paintSystemPreviewBadge(RefPtr<NativeImage>&&, const PaintInfo&, const FloatRect&);
     virtual void paintSystemPreviewBadge(const PaintInfo&, const FloatRect&);
 #endif
     virtual Seconds switchAnimationVisuallyOnDuration() const { return 0_s; }

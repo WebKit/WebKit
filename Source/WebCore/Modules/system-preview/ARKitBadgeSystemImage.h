@@ -40,8 +40,6 @@ OBJC_CLASS CIContext;
 
 namespace WebCore {
 
-class Image;
-
 class ARKitBadgeSystemImage final : public SystemImage {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ARKitBadgeSystemImage, WEBCORE_EXPORT);
 public:
@@ -53,7 +51,6 @@ public:
         static constexpr int minimumSizeForLarge = 240;
     };
 
-    static Ref<ARKitBadgeSystemImage> create(Image&);
     static Ref<ARKitBadgeSystemImage> createWithoutImage();
     WEBCORE_EXPORT static Ref<ARKitBadgeSystemImage> create(RefPtr<NativeImage>&&);
 

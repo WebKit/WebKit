@@ -1441,9 +1441,9 @@ String RenderThemeIOS::extraDefaultStyleSheet()
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::paintSystemPreviewBadge(RefPtr<NativeImage>&& image, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    paintInfo.context().drawSystemImage(ARKitBadgeSystemImage::create(image), rect);
+    paintInfo.context().drawSystemImage(ARKitBadgeSystemImage::create(WTF::move(image)), rect);
 }
 
 void RenderThemeIOS::paintSystemPreviewBadge(const PaintInfo& paintInfo, const FloatRect& rect)

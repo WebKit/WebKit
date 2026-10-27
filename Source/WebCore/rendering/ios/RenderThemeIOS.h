@@ -50,7 +50,7 @@ public:
     static void adjustRoundBorderRadius(Style::ComputedStyle&, RenderBox&);
 
 #if USE(SYSTEM_PREVIEW)
-    void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&) final;
+    void paintSystemPreviewBadge(RefPtr<NativeImage>&&, const PaintInfo&, const FloatRect&) final;
     void paintSystemPreviewBadge(const PaintInfo&, const FloatRect&) final;
 #endif
 

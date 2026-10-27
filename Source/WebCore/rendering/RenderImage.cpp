@@ -986,7 +986,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
 #if USE(SYSTEM_PREVIEW)
     RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
     if (RefPtr cachedImage = this->cachedImage(); cachedImage && imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw && imageElement->document().settings().systemPreviewEnabled())
-        theme().paintSystemPreviewBadge(*protect(cachedImage->image()), paintInfo, rect);
+        theme().paintSystemPreviewBadge(protect(cachedImage->image())->nativeImage(concreteObjectSize), paintInfo, rect);
 #endif
 
     if (drawResult != ImageDrawResult::DidNothing && element() && !paintInfo.context().paintingDisabled())

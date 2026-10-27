@@ -2205,7 +2205,7 @@ String RenderTheme::fileListNameForWidth(const FileList* fileList, const FontCas
 }
 
 #if USE(SYSTEM_PREVIEW)
-void RenderTheme::paintSystemPreviewBadge(Image&, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderTheme::paintSystemPreviewBadge(RefPtr<NativeImage>&&, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     paintSystemPreviewBadge(paintInfo, rect);
 }

@@ -77,11 +77,6 @@ static RetainPtr<CGPDFPageRef> systemPreviewLogo()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ARKitBadgeSystemImage);
 
-Ref<ARKitBadgeSystemImage> ARKitBadgeSystemImage::create(Image& image)
-{
-    return create(image.nativeImage(ConcreteObjectSize::fixed(image.size())));
-}
-
 Ref<ARKitBadgeSystemImage> ARKitBadgeSystemImage::createWithoutImage()
 {
     return adoptRef(*new ARKitBadgeSystemImage(nullptr));
