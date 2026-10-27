@@ -41,6 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Adapter);
 Adapter::Adapter(id<MTLDevice> device, Instance& instance, bool xrCompatible, HardwareCapabilities&& capabilities)
     : m_device(device)
     , m_instance(&instance)
+    , m_workScheduler(instance.workScheduler())
     , m_capabilities(WTF::move(capabilities))
     , m_xrCompatible(xrCompatible)
 {
@@ -48,6 +49,7 @@ Adapter::Adapter(id<MTLDevice> device, Instance& instance, bool xrCompatible, Ha
 
 Adapter::Adapter(Instance& instance)
     : m_instance(&instance)
+    , m_workScheduler(instance.workScheduler())
 {
 }
 

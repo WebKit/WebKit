@@ -56,10 +56,30 @@ constexpr bool skipMemoryAttribution = true;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Queue);
 
+void CommittedCommandBuffers::add(id<MTLCommandBuffer> commandBuffer)
+{
+    Locker locker { m_lock };
+    [m_commandBuffers addObject:commandBuffer];
+}
+
+void CommittedCommandBuffers::remove(id<MTLCommandBuffer> commandBuffer)
+{
+    Locker locker { m_lock };
+    [m_commandBuffers removeObject:commandBuffer];
+}
+
+id<MTLCommandBuffer> CommittedCommandBuffers::first()
+{
+    Locker locker { m_lock };
+    return m_commandBuffers.firstObject;
+}
+
 Queue::Queue(id<MTLCommandQueue> commandQueue, Adapter& adapter, Device& device)
     : m_commandQueue(commandQueue)
     , m_device(device)
+    , m_committedNotCompletedBuffers(CommittedCommandBuffers::create())
     , m_instance(adapter.weakInstance())
+    , m_workScheduler(adapter.workScheduler())
 {
     m_createdNotCommittedBuffers = [NSMutableOrderedSet orderedSet];
     m_openCommandEncoders = [NSMapTable strongToStrongObjectsMapTable];
@@ -68,7 +88,9 @@ Queue::Queue(id<MTLCommandQueue> commandQueue, Adapter& adapter, Device& device)
 
 Queue::Queue(Adapter& adapter, Device& device)
     : m_device(device)
+    , m_committedNotCompletedBuffers(CommittedCommandBuffers::create())
     , m_instance(adapter.weakInstance())
+    , m_workScheduler(adapter.workScheduler())
 {
 }
 
@@ -392,10 +414,7 @@ void Queue::waitForAllCommitedWorkToComplete()
 {
     id<MTLCommandBuffer> commandBuffer = nil;
     do {
-        {
-            Locker locker { m_committedNotCompletedBuffersLock };
-            commandBuffer = m_committedNotCompletedBuffers.firstObject;
-        }
+        commandBuffer = m_committedNotCompletedBuffers->first();
         [commandBuffer waitUntilCompleted];
     } while (commandBuffer);
 }
@@ -425,15 +444,21 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
     }
 
     ASSERT(commandBuffer.commandQueue == m_commandQueue);
-    [commandBuffer addScheduledHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer>) {
-        protectedThis->scheduleWork([protectedThis = protectedThis.copyRef()]() {
+    // Metal runs these handlers on its own threads. They don't reference the queue strongly, lest
+    // they destroy it there. The instance keeps the device, and so the queue, alive as long as the
+    // Metal command buffer, which the work they schedule therefore keeps alive.
+    [commandBuffer addScheduledHandler:[weakThis = ThreadSafeWeakPtr { *this }, workScheduler = m_workScheduler](id<MTLCommandBuffer> mtlCommandBuffer) {
+        workScheduler->scheduleWork([weakThis, mtlCommandBuffer = RetainPtr { mtlCommandBuffer }] {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
+                return;
             ++(protectedThis->m_scheduledCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkScheduledCallbacks.take(protectedThis->m_scheduledCommandBufferCount))
                 callback();
         });
     }];
     auto didComplete = Box<std::atomic<bool>>::create(false);
-    [commandBuffer addCompletedHandler:[protectedThis = protect(*this), didComplete](id<MTLCommandBuffer> mtlCommandBuffer) {
+    [commandBuffer addCompletedHandler:[weakThis = ThreadSafeWeakPtr { *this }, workScheduler = m_workScheduler, committedNotCompletedBuffers = m_committedNotCompletedBuffers, didComplete](id<MTLCommandBuffer> mtlCommandBuffer) {
         didComplete->store(true, std::memory_order_relaxed);
         MTLCommandBufferStatus status = mtlCommandBuffer.status;
         bool loseTheDevice = false;
@@ -444,8 +469,9 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
                 if (underlyingError.code == 0x10a || underlyingError.code == 0x5)
                     loseTheDevice = false;
                 else {
-                    RefPtr device = protectedThis->m_device.get();
-#define makeCase(N) case N: crashGPUProcess<N>(device, error, underlyingError);
+                    // The queue and the device are referenced strongly only on the way to crashing,
+                    // so the handler doesn't release the last reference to them here.
+#define makeCase(N) case N: { RefPtr protectedThis = weakThis; crashGPUProcess<N>(protectedThis ? protectedThis->m_device.get() : nullptr, error, underlyingError); }
                     switch (underlyingError.code) {
                         makeCase(9); // kIOGPUCommandBufferCallbackErrorInvalidResource = 9,
                         makeCase(10); // kIOGPUCommandBufferCallbackErrorInvalidInput = 10,
@@ -462,12 +488,12 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
             }
         }
 
-        {
-            Locker locker { protectedThis->m_committedNotCompletedBuffersLock };
-            [protectedThis->m_committedNotCompletedBuffers removeObject:mtlCommandBuffer];
-        }
+        committedNotCompletedBuffers->remove(mtlCommandBuffer);
 
-        protectedThis->scheduleWork([loseTheDevice, protectedThis = protectedThis.copyRef()]() {
+        workScheduler->scheduleWork([loseTheDevice, weakThis, mtlCommandBuffer = RetainPtr { mtlCommandBuffer }] {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
+                return;
             ++(protectedThis->m_completedCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
                 callback(true);
@@ -480,10 +506,7 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
     }];
 
     [commandBuffer commit];
-    {
-        Locker locker { m_committedNotCompletedBuffersLock };
-        [m_committedNotCompletedBuffers addObject:commandBuffer];
-    }
+    m_committedNotCompletedBuffers->add(commandBuffer);
     removeMTLCommandBufferInternal(commandBuffer);
     ++m_submittedCommandBufferCount;
 
@@ -2272,8 +2295,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
 
 void Queue::scheduleWork(Instance::WorkItem&& workItem)
 {
-    if (auto instance = m_instance.get())
-        instance->scheduleWork(WTF::move(workItem));
+    m_workScheduler->scheduleWork(WTF::move(workItem));
 }
 
 void Queue::clearTextureViewIfNeeded(TextureView& textureView)

@@ -149,7 +149,9 @@ void RemoteGPU::workQueueUninitialize()
     for (Ref device : m_objectHeap->devices())
         device->destroy();
     clearObjectHeaps();
-    m_backing = nullptr;
+    // Destroying the instance releases the objects that it keeps alive here, on the work queue.
+    if (RefPtr backing = std::exchange(m_backing, nullptr))
+        backing->destroy();
 }
 
 void RemoteGPU::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName messageName, const Vector<uint32_t>&)

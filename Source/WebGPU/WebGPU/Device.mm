@@ -294,22 +294,21 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     , m_capabilities(WTF::move(capabilities))
     , m_adapter(adapter)
     , m_instance(adapter.weakInstance())
+    , m_workScheduler(adapter.workScheduler())
     , m_appleGPUFamily(computeAppleGPUFamily(device))
     , m_maxVerticesPerDrawCall(computeMaxCountForDevice(device))
 {
 #if PLATFORM(MAC)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = ThreadSafeWeakPtr { *this }](id<MTLDevice> device, MTLDeviceNotificationName) {
-        RefPtr<Device> protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-        if (auto instance = protectedThis->instance(); instance.get()) {
-            instance->scheduleWork([protectedThis = WTF::move(protectedThis), device = device]() {
-                if (![protectedThis->m_device isEqual:device])
-                    return;
-                protectedThis->loseTheDevice(WebGPU::DeviceLostReason::Unknown);
-            });
-        }
+    // The observer runs on its own thread, so it doesn't reference the device strongly, lest it
+    // destroys the device there.
+    auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = ThreadSafeWeakPtr { *this }, workScheduler = m_workScheduler](id<MTLDevice> device, MTLDeviceNotificationName) {
+        workScheduler->scheduleWork([weakThis, device = device] {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis || ![protectedThis->m_device isEqual:device])
+                return;
+            protectedThis->loseTheDevice(WebGPU::DeviceLostReason::Unknown);
+        });
     });
     ALLOW_DEPRECATED_DECLARATIONS_END
 
@@ -365,6 +364,7 @@ Device::Device(Adapter& adapter)
     : m_defaultQueue(Queue::createInvalid(adapter, *this))
     , m_adapter(adapter)
     , m_instance(adapter.weakInstance())
+    , m_workScheduler(adapter.workScheduler())
 {
     if (!m_adapter->isValid())
         makeInvalid();
@@ -458,6 +458,12 @@ void Device::destroy()
     }
 
     loseTheDevice(WebGPU::DeviceLostReason::Destroyed);
+
+    // The compiles that Metal completes from now on complete nothing. Their pipelines are invalid,
+    // as the pipelines created on a destroyed device are. The device is lost, so the compiles that
+    // these start complete right away.
+    for (Ref compile : std::exchange(m_pendingAsyncCompiles, { }))
+        compile->cancel();
 }
 
 void Device::addTexture(const Texture& texture)
