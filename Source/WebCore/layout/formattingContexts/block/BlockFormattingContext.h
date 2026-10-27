@@ -47,6 +47,8 @@ class BlockIntegrationUtils;
 
 namespace Layout {
 
+class BlockItem;
+
 struct BlockLayoutResult {
     struct Box {
         CheckedRef<const RenderBox> renderer;
@@ -91,6 +93,17 @@ struct OutOfFlowContainingBlock {
     LayoutUnit blockSize;
 };
 
+// A block-level box in the inline content of a block container (CSS 2.2 §9.2.1.1), which the block formatting context lays out when the
+// inline formatting context reaches it.
+struct BlockLevelBoxInInlineContent {
+    // Relative to the border box of the block container.
+    BoxGeometry geometry;
+    // Where the content after the box starts, above the margins that are still open, from the top of the block container's border box.
+    LayoutUnit logicalBottom;
+    // The margins still open, which move the next line down unless they collapse with the block container's block-start margin.
+    BlockLayoutState::MarginState marginState;
+};
+
 // Context only: what it changes as it lays out its content is in the block layout state, so the context can be built again from the root,
 // the integration utils and that state.
 class BlockFormattingContext {
@@ -99,6 +112,9 @@ public:
     BlockFormattingContext(const RenderBlockFlow& root, LayoutIntegration::BlockIntegrationUtils&, BlockLayoutState&);
 
     BlockLayoutResult layout(const ConstraintsForBlockContent&);
+    // A block-level box in the inline content of the innermost block container being laid out, on the line the inline formatting context
+    // reached it on, below lineCount lines with content. It and its content join the result.
+    BlockLevelBoxInInlineContent layoutBlockLevelBoxInInlineContent(const RenderBox&, LayoutUnit lineLogicalTop, size_t lineCount, BlockLayoutResult&);
     // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1).
     IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
     // An out-of-flow box and its content, in its containing block that has its size (css-position-3 §4). The box establishes an independent
@@ -106,10 +122,11 @@ public:
     BlockLayoutResult layoutOutOfFlowBox(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&);
 
 private:
+    void layoutBlockItems(const Vector<BlockItem>&, BlockLayoutResult&);
     void handleBlockContainerStart(const RenderBox&);
     void handleEmptyEditableContent(const RenderBox& blockContainer, ContainingBlockState&);
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
-    void handleInlineContent(const RenderBox& blockContainer, ContainingBlockState& blockContainerState, const BlockLayoutState& inlineContentBlockLayoutState);
+    void handleInlineContent(const RenderBox& blockContainer, ContainingBlockState& blockContainerState, const BlockLayoutState& inlineContentBlockLayoutState, BlockLayoutResult&);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
     void layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState);
     BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&);

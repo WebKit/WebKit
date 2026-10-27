@@ -40,8 +40,13 @@ public:
     explicit BlockItemsBuilder(const RenderBlockFlow& root);
 
     BlockItemList build();
+    // The items of a block-level box in the inline content of a block container (CSS 2.2 §9.2.1.1), for when the inline formatting context
+    // reaches it.
+    BlockItemList buildForBlockLevelBoxInInlineContent(const RenderBox&);
 
 private:
+    // From the first box to the end of the content of the root, or of the only box.
+    BlockItemList build(const RenderBox& firstBox, const RenderBox* onlyBox);
     const RenderBlockFlow& root() const { return m_root; }
 
     const CheckedRef<const RenderBlockFlow> m_root;
