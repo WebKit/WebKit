@@ -1483,6 +1483,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::BackForwardItemIdentifierID': ['"GeneratedSerializers.h"'],
         'WebCore::BackForwardItemIdentifier': ['<WebCore/ProcessQualified.h>', '<WebCore/BackForwardItemIdentifier.h>', '<wtf/ObjectIdentifier.h>'],
         'WebCore::BlendMode': ['<WebCore/GraphicsTypes.h>'],
+        'WebCore::BlockPresentationIntent': ['<WebCore/FontAttributes.h>'],
         'WebCore::BrowsingContextGroupSwitchDecision': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::NavigationResponseProcessSwapReason': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::CaptionUserPreferencesDisplayMode': ['<WebCore/CaptionUserPreferences.h>'],

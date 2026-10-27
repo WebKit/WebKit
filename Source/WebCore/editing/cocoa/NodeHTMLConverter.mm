@@ -1870,6 +1870,43 @@ RetainPtr<NSPresentationIntent> HTMLConverter::_createPresentationIntentForEleme
     return nil;
 }
 
+static std::optional<BlockPresentationIntent> blockPresentationIntentForElement(const Element& element)
+{
+    using Kind = BlockPresentationIntent::Kind;
+
+    auto kind = presentationIntentKindForElement(element);
+    if (!kind)
+        return std::nullopt;
+
+    switch (*kind) {
+    case NSPresentationIntentKindParagraph:
+        return BlockPresentationIntent { Kind::Paragraph };
+    case NSPresentationIntentKindHeader:
+        return BlockPresentationIntent { Kind::Header, static_cast<uint8_t>(headerLevelForElement(element)) };
+    case NSPresentationIntentKindOrderedList:
+        return BlockPresentationIntent { Kind::OrderedList };
+    case NSPresentationIntentKindUnorderedList:
+        return BlockPresentationIntent { Kind::UnorderedList };
+    case NSPresentationIntentKindListItem:
+        return BlockPresentationIntent { Kind::ListItem, 0, static_cast<int>(listItemOrdinalForElement(element)) };
+    case NSPresentationIntentKindCodeBlock:
+        return BlockPresentationIntent { Kind::CodeBlock, 0, 0, languageHintForCodeBlockElement(element) };
+    case NSPresentationIntentKindBlockQuote:
+        return BlockPresentationIntent { Kind::BlockQuote };
+    case NSPresentationIntentKindThematicBreak:
+        return BlockPresentationIntent { Kind::ThematicBreak };
+    case NSPresentationIntentKindTable:
+    case NSPresentationIntentKindTableHeaderRow:
+    case NSPresentationIntentKindTableRow:
+    case NSPresentationIntentKindTableCell:
+        // presentationIntentKindForElement() does not return table kinds.
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
 // An element's intent is its own intent nested inside its parent's, or its parent's if the element has none.
 RetainPtr<NSPresentationIntent> HTMLConverter::_presentationIntentForElement(Element& element)
 {
@@ -2728,6 +2765,31 @@ AttributedString attributedString(const SimpleRange& range, IgnoreUserSelectNone
 void setPresentationIntentHTMLInterchangeEnabledForTesting(std::optional<bool> enabled)
 {
     presentationIntentHTMLInterchangeEnabledForTesting = enabled;
+}
+
+Vector<BlockPresentationIntent> blockPresentationIntentsAtPosition(const Position& position)
+{
+    if (!presentationIntentHTMLInterchangeEnabled())
+        return { };
+
+    RefPtr container = position.containerNode();
+    if (!container)
+        return { };
+
+    // The editable root and the blocks around it hold the content being edited rather than being part of it, and
+    // setting a block intent cannot change them, so even <h1 contenteditable> reports no intent of its own.
+    RefPtr editableRoot = highestEditableRoot(position);
+    RefPtr element = dynamicDowncast<Element>(*container);
+    if (!element)
+        element = container->parentElementInComposedTree();
+
+    Vector<BlockPresentationIntent> intents;
+    for (; element && element != editableRoot; element = element->parentElementInComposedTree()) {
+        if (auto intent = blockPresentationIntentForElement(*element))
+            intents.append(WTF::move(*intent));
+    }
+    intents.reverse();
+    return intents;
 }
 
 }
