@@ -317,8 +317,8 @@ ALWAYS_INLINE JSString* fastArrayJoin(JSGlobalObject* globalObject, JSObject* th
             break;
         auto data = butterfly.contiguous().data();
 
-        JSOnlyStringsAndInt32sJoiner onlyInt32sJoiner(separator);
-        if (auto joined = onlyInt32sJoiner.tryJoin<Int32Shape>(globalObject, data, length))
+        JSExactLengthJoiner exactLengthJoiner(separator);
+        if (auto joined = exactLengthJoiner.tryJoin<Int32Shape>(globalObject, data, length))
             RELEASE_AND_RETURN(scope, joined);
         RETURN_IF_EXCEPTION(scope, { });
 
@@ -349,8 +349,8 @@ ALWAYS_INLINE JSString* fastArrayJoin(JSGlobalObject* globalObject, JSObject* th
         auto data = butterfly.contiguous().data();
         bool holesKnownToBeOK = false;
 
-        JSOnlyStringsAndInt32sJoiner onlyStringsJoiner(separator);
-        if (auto joined = onlyStringsJoiner.tryJoin<ContiguousShape>(globalObject, data, length))
+        JSExactLengthJoiner exactLengthJoiner(separator);
+        if (auto joined = exactLengthJoiner.tryJoin<ContiguousShape>(globalObject, data, length))
             RELEASE_AND_RETURN(scope, joined);
         RETURN_IF_EXCEPTION(scope, { });
 

@@ -48,7 +48,7 @@ for (var i = 0; i < testLoopCount; ++i)
     shouldBe(joinHolePunch(), "13");
 
 // 5. ToString replaces an Int32 element with a non-string/non-int32 value
-//    (object). The empty-separator JSOnlyStringsAndInt32sJoiner must bail out
+//    (object). The empty-separator JSExactLengthJoiner must bail out
 //    of its fast path and the slow path must still produce spec-correct output.
 function joinNonStringElement() {
     var arr = [1, 2, 3];

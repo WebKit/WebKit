@@ -205,6 +205,12 @@ static inline String joinStrings(JSGlobalObject* globalObject, const WriteBarrie
                 data = data.subspan(length);
                 return;
             }
+            if (value.isBoolean()) {
+                appendStringToData(data, StringView(value.isTrue() ? "true"_s : "false"_s));
+                return;
+            }
+            if (value.isUndefinedOrNull())
+                return;
         }
         ASSERT(value.isInt32());
         appendStringToData(data, value.asInt32());
@@ -284,7 +290,7 @@ JSString* JSStringJoiner::joinImpl(JSGlobalObject* globalObject)
 }
 
 template<IndexingType indexingShape>
-JSString* JSOnlyStringsAndInt32sJoiner::joinImpl(JSGlobalObject* globalObject, const WriteBarrier<Unknown>* data, unsigned length)
+JSString* JSExactLengthJoiner::joinImpl(JSGlobalObject* globalObject, const WriteBarrier<Unknown>* data, unsigned length)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -315,8 +321,8 @@ JSString* JSOnlyStringsAndInt32sJoiner::joinImpl(JSGlobalObject* globalObject, c
     return jsString(vm, WTF::move(result));
 }
 
-template JSString* JSOnlyStringsAndInt32sJoiner::joinImpl<Int32Shape>(JSGlobalObject*, const WriteBarrier<Unknown>*, unsigned);
-template JSString* JSOnlyStringsAndInt32sJoiner::joinImpl<ContiguousShape>(JSGlobalObject*, const WriteBarrier<Unknown>*, unsigned);
+template JSString* JSExactLengthJoiner::joinImpl<Int32Shape>(JSGlobalObject*, const WriteBarrier<Unknown>*, unsigned);
+template JSString* JSExactLengthJoiner::joinImpl<ContiguousShape>(JSGlobalObject*, const WriteBarrier<Unknown>*, unsigned);
 
 } // namespace JSC
 
