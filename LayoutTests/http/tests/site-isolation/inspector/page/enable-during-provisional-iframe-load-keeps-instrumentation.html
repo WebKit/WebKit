@@ -9,7 +9,7 @@ function navigateFrame(id, url) {
 
 function test() {
     const crossOriginBase = "http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html";
-    const token = Math.random().toString(36).slice(2);
+    const token = Math.random();
 
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.EnableDuringProvisionalIFrameLoadKeepsInstrumentation");
 
@@ -39,6 +39,16 @@ function test() {
             provisionalTarget._resumeIfPaused();
             let committed = await pollUntil(() => !provisionalTarget.isProvisional);
             InspectorTest.expectThat(!!committed, "Provisional load should commit.");
+
+            // The frame was provisional when Page was enabled again, so it is not in the frame tree its process instruments on enable.
+            let navigatingFrame = await awaitChildFrame((frame) => frame.mainResource.url.includes(`?navigating-${token}`));
+            InspectorTest.expectThat(!!navigatingFrame, "Committed frame should be attached to the main frame.");
+            if (navigatingFrame) {
+                let url = `${crossOriginBase}?navigating-again-${token}`;
+                InspectorTest.evaluateInPage(`navigateFrame("navigating", "${url}")`);
+                let navigatedAgain = await pollUntil(() => navigatingFrame.mainResource.url === url);
+                InspectorTest.expectThat(!!navigatedAgain, "Committed frame's next navigation should be committed in the frame model.");
+            }
 
             InspectorTest.evaluateInPage(`document.getElementById("navigating").remove()`);
             let removed = await pollUntil(() => provisionalTarget.isDestroyed);

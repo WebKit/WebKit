@@ -43,9 +43,11 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentPage.h>
 #include <WebCore/DocumentView.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameInspectorController.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/FrameTree.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorPageAgent.h>
@@ -64,6 +66,7 @@
 #include <wtf/Borrow.h>
 #include <wtf/HashSet.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
 static const float minimumAttachedHeight = 250;
@@ -331,6 +334,20 @@ void WebInspectorBackend::updateDockingAvailability()
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::AttachAvailabilityChanged(canAttachWindow), m_page->identifier());
 }
 
+static Vector<Ref<LocalFrame>> localFramesIncludingProvisional(Page& page)
+{
+    Vector<Ref<LocalFrame>> frames;
+    for (RefPtr frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame))
+            frames.append(localFrame.releaseNonNull());
+        if (RefPtr webFrame = WebFrame::fromCoreFrame(*frame)) {
+            if (RefPtr provisionalFrame = webFrame->provisionalFrame())
+                frames.append(provisionalFrame.releaseNonNull());
+        }
+    }
+    return frames;
+}
+
 void WebInspectorBackend::ensureInstrumentationForFrame(LocalFrame& frame)
 {
     ensureNetworkInstrumentationForFrame(frame);
@@ -392,9 +409,8 @@ void WebInspectorBackend::enableNetworkInstrumentation()
         CheckedRef { m_resourceDataStore.get() }->setSupportsShowingCertificate(corePage->settings().inspectorSupportsShowingCertificate());
     }
 
-    corePage->forEachLocalFrame([&](LocalFrame& frame) {
+    for (auto& frame : localFramesIncludingProvisional(*corePage))
         ensureNetworkInstrumentationForFrame(frame);
-    });
 }
 
 void WebInspectorBackend::disableNetworkInstrumentation()
@@ -731,9 +747,8 @@ void WebInspectorBackend::enablePageInstrumentation()
     RefPtr corePage = m_page->corePage();
     corePage->settings().setDeveloperExtrasEnabled(true);
 
-    corePage->forEachLocalFrame([&](LocalFrame& frame) {
+    for (auto& frame : localFramesIncludingProvisional(*corePage))
         ensurePageInstrumentationForFrame(frame);
-    });
 }
 
 void WebInspectorBackend::disablePageInstrumentation()

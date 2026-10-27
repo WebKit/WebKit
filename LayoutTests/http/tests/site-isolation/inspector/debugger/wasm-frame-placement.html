@@ -114,6 +114,10 @@ function test()
 
             let frameAddedEvent = await frameAddedPromise;
             frame = frameAddedEvent.data.frame;
+
+            // The frame is added by its document request, before its name is known.
+            if (frame.name !== "wasm-frame")
+                await frame.awaitEvent(WI.Frame.Event.NameDidChange);
             InspectorTest.expectEqual(frame.name, "wasm-frame", "Should create the named child frame.");
 
             target = await awaitFrameTargetForFrame(frame);

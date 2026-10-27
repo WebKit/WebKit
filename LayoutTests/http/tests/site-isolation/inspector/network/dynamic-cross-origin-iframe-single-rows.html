@@ -10,28 +10,53 @@ function addCrossOriginIFrame(token) {
     document.body.appendChild(iframe);
 }
 
+function removeAllIFrames() {
+    for (let iframe of document.querySelectorAll("iframe"))
+        iframe.remove();
+}
+
 function test() {
+    async function addCrossOriginIFrameAndExpectSingleFinishedRows() {
+        // Unique per run, so repeated runs in one process don't hit the memory cache.
+        let token = Math.random();
+        let recorder = new FrameLoadRowRecorder;
+
+        InspectorTest.evaluateInPage(`addCrossOriginIFrame("${token}")`);
+
+        let frame = await awaitChildFrame((frame) => frame.mainResource.url.includes(`?dynamic-${token}`));
+        InspectorTest.expectThat(!!frame, "Child frame should be attached to the main frame.");
+        if (frame) {
+            await expectSingleFinishedDocument(recorder, frame, "Document");
+            await expectSingleFinishedSubresource(recorder, frame, `iframe-script.js?dynamic-${token}`, "Script");
+        }
+        expectNoAboutBlankRow(recorder);
+
+        recorder.stop();
+    }
+
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.DynamicCrossOriginIFrameRows");
 
     suite.addTestCase({
         name: "SiteIsolation.Network.DynamicCrossOriginIFrameRows.SameSiteAsExistingFrame",
         description: "A cross-origin iframe added next to a same-site iframe should list its document and script once each, finished.",
         async test() {
-            // Unique per run, so repeated runs in one process don't hit the memory cache.
-            let token = String(Math.random()).slice(2);
-            let recorder = new FrameLoadRowRecorder;
+            await addCrossOriginIFrameAndExpectSingleFinishedRows();
+        }
+    });
 
-            InspectorTest.evaluateInPage(`addCrossOriginIFrame("${token}")`);
+    // Removes every iframe, including the static one SameSiteAsExistingFrame relies on, so it must stay the last test case.
+    suite.addTestCase({
+        name: "SiteIsolation.Network.DynamicCrossOriginIFrameRows.NoOtherFrameOfSameSite",
+        description: "A cross-origin iframe added when no other frame of its site exists should list its document and script once each, finished.",
+        async test() {
+            // Without a sibling frame keeping its process instrumented, the document request is only
+            // reported if the provisional frame's process is instrumented.
+            let childFrames = Array.from(WI.networkManager.mainFrame.childFrameCollection);
+            InspectorTest.evaluateInPage(`removeAllIFrames()`);
+            let removed = await pollUntil(() => childFrames.every((frame) => !WI.networkManager.frameForIdentifier(frame.id)));
+            InspectorTest.expectThat(!!removed, "Existing iframes should be reported as removed.");
 
-            let frame = await awaitChildFrame((frame) => frame.mainResource.url.includes(`?dynamic-${token}`));
-            InspectorTest.expectThat(!!frame, "Child frame should be attached to the main frame.");
-            if (frame) {
-                await expectSingleFinishedDocument(recorder, frame, "Document");
-                await expectSingleFinishedSubresource(recorder, frame, `iframe-script.js?dynamic-${token}`, "Script");
-            }
-            expectNoAboutBlankRow(recorder);
-
-            recorder.stop();
+            await addCrossOriginIFrameAndExpectSingleFinishedRows();
         }
     });
 

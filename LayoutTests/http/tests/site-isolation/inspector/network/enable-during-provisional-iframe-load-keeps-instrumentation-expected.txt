@@ -1,0 +1,21 @@
+Tests that enabling Network while an iframe's load is provisional in another process reports that load and keeps Network events flowing from that process under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.EnableDuringProvisionalIFrameLoadKeepsInstrumentation
+-- Running test case: SiteIsolation.Network.EnableDuringProvisionalIFrameLoadKeepsInstrumentation.Commit
+PASS: Provisional frame target should be paused.
+PASS: Navigating frame should be attached to the main frame.
+PASS: Navigating frame's document should be listed once.
+PASS: Navigating frame's document should finish loading.
+PASS: Navigating frame's document should carry the request identifier of its load.
+PASS: Navigating frame's document should have a response.
+PASS: Navigating frame's script should be added to the child frame.
+PASS: Navigating frame's script should be listed once.
+PASS: Navigating frame's script should finish loading.
+PASS: Navigating frame should be reported as removed.
+PASS: Cross-origin frame's navigation should be committed in the frame model.
+PASS: Cross-origin frame's script should be added to the child frame.
+PASS: Cross-origin frame's script should be listed once.
+PASS: Cross-origin frame's script should finish loading.
+

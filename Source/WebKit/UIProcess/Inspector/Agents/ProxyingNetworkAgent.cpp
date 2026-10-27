@@ -49,7 +49,6 @@
 #include <optional>
 #include <tuple>
 #include <utility>
-#include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
 
 namespace Inspector {
@@ -257,29 +256,27 @@ CommandResult<void> ProxyingNetworkAgent::enable()
     m_enabled = true;
 
     // Register once per frame, not once per process: WebPageInspectorController releases one registration per
-    // frame, so a process registered once would be released while it still hosts other frames. A provisional
-    // frame is not registered here; didCommitProvisionalFrame registers its process when it commits.
-    HashSet<std::pair<ProcessIdentifier, PageIdentifier>> provisionalProcessKeys;
+    // frame, so a process registered once would be released while it still hosts other frames.
     for (RefPtr frame = inspectedPage->mainFrame(); frame; frame = frame->traverseNext().frame) {
         if (auto pageID = frame->webPageIDInCurrentProcess()) {
             Ref process = frame->process();
             enableInstrumentationForProcess(process, *pageID);
         }
 
+        // Its document request is sent before it commits. Released by willDestroyProvisionalFrame,
+        // or kept for the committed frame by didCommitProvisionalFrame.
         if (RefPtr provisionalFrame = frame->provisionalFrame()) {
             Ref process = provisionalFrame->process();
-            provisionalProcessKeys.add(std::make_pair(process->coreProcessIdentifier(), inspectedPage->webPageIDInProcess(process)));
+            enableInstrumentationForProcess(process, inspectedPage->webPageIDInProcess(process));
         }
     }
 
     // Processes that host this page's WebPage but no frame (e.g. the process of a popup in the same browsing context group,
     // which holds only a remote page). They were instrumented when enable() registered every process once, so keep doing that.
     // Nothing releases these per frame, so they are held on purpose until disable(): a process that later hosts a frame and
-    // loses it goes 1->2->1 and stays registered. A provisional frame's process is listed here too, but is skipped:
-    // willDestroyProvisionalFrame does not release the Network agent, so a registration made here would leak if the load is discarded.
+    // loses it goes 1->2->1 and stays registered.
     inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        auto key = std::make_pair(webProcess.coreProcessIdentifier(), pageID);
-        if (m_instrumentedProcessPageCounts.contains(key) || provisionalProcessKeys.contains(key))
+        if (m_instrumentedProcessPageCounts.contains(std::make_pair(webProcess.coreProcessIdentifier(), pageID)))
             return;
         Ref protectedWebProcess { webProcess };
         enableInstrumentationForProcess(protectedWebProcess, pageID);

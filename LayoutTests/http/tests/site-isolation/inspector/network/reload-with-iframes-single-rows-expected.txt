@@ -1,4 +1,4 @@
-Tests that reloading a page with two srcdoc iframes and a cross-origin iframe lists each document and script once, and finishes the main document, under Site Isolation.
+Tests that reloading a page with two srcdoc iframes and a cross-origin iframe lists each document and script once, and finishes the main document and the cross-origin document with a response, under Site Isolation.
 
 
 
@@ -15,6 +15,9 @@ PASS: Second srcdoc frame should be attached after the reload.
 PASS: Cross-origin frame should be attached after the reload.
 PASS: Cross-origin script should be added after the reload.
 PASS: Cross-origin script should finish loading.
+PASS: Cross-origin document should finish loading.
+PASS: Cross-origin document should carry the request identifier of its load.
+PASS: Cross-origin document should have a response.
 PASS: Main document should be listed once.
 PASS: Main document row from before the reload should be gone.
 PASS: Main frame's current document should be listed.

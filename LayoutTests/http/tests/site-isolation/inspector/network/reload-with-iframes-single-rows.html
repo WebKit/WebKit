@@ -55,6 +55,14 @@ function test() {
             if (script)
                 InspectorTest.expectEqual(await awaitResourceSettled(script), "finished", "Cross-origin script should finish loading.");
 
+            // The reload removes the only frame in the cross-origin process before the new iframe's document is requested.
+            let crossOriginDocument = crossOriginFrame?.mainResource;
+            if (crossOriginDocument) {
+                InspectorTest.expectEqual(await awaitResourceSettled(crossOriginDocument), "finished", "Cross-origin document should finish loading.");
+                InspectorTest.expectThat(!!crossOriginDocument.requestIdentifier, "Cross-origin document should carry the request identifier of its load.");
+                InspectorTest.expectThat(!isNaN(crossOriginDocument.statusCode), "Cross-origin document should have a response.");
+            }
+
             let mainRows = recorder.rowsForURL(mainResourceBeforeReload.url);
             InspectorTest.expectEqual(mainRows.length, 1, "Main document should be listed once.");
             InspectorTest.expectThat(!mainRows.includes(mainResourceBeforeReload), "Main document row from before the reload should be gone.");
@@ -73,7 +81,7 @@ function test() {
 }
 </script>
 <body onload="runTest()">
-<p>Tests that reloading a page with two srcdoc iframes and a cross-origin iframe lists each document and script once, and finishes the main document, under Site Isolation.</p>
+<p>Tests that reloading a page with two srcdoc iframes and a cross-origin iframe lists each document and script once, and finishes the main document and the cross-origin document with a response, under Site Isolation.</p>
 <iframe name="static-frame" srcdoc="<p>srcdoc-frame-marker</p>"></iframe>
 <iframe name="static-frame-2" srcdoc="<p>srcdoc-frame-2-marker</p>"></iframe>
 <script>
