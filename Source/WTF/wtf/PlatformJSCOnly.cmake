@@ -101,6 +101,9 @@ elseif (APPLE)
         ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
     )
 elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    list(APPEND WTF_PUBLIC_HEADERS
+        linux/HighPriorityThreads.h
+    )
     list(APPEND WTF_SOURCES
         linux/CurrentProcessMemoryStatus.cpp
         linux/HighPriorityThreads.cpp
