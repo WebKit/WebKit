@@ -5,16 +5,14 @@ PASS Test that VideoEncoder.isConfigSupported() rejects invalid config: Width is
 PASS Test that VideoEncoder.isConfigSupported() rejects invalid config: Height is 0
 PASS Test that VideoEncoder.isConfigSupported() rejects invalid config: displayWidth is 0
 PASS Test that VideoEncoder.isConfigSupported() rejects invalid config: displayHeight is 0
-FAIL Test that VideoEncoder.isConfigSupported() rejects invalid config: bitrate is present but zero assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Test that VideoEncoder.isConfigSupported() rejects invalid config: bitrate is present but zero
 PASS Test that VideoEncoder.configure() rejects invalid config: Missing codec
 PASS Test that VideoEncoder.configure() rejects invalid config: Empty codec
 PASS Test that VideoEncoder.configure() rejects invalid config: Width is 0
 PASS Test that VideoEncoder.configure() rejects invalid config: Height is 0
 PASS Test that VideoEncoder.configure() rejects invalid config: displayWidth is 0
 PASS Test that VideoEncoder.configure() rejects invalid config: displayHeight is 0
-FAIL Test that VideoEncoder.configure() rejects invalid config: bitrate is present but zero assert_throws_js: function "() => {
-          codec.configure(entry.config);
-        }" did not throw
+PASS Test that VideoEncoder.configure() rejects invalid config: bitrate is present but zero
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Invalid scalability mode
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Unrecognized codec
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: VP8 codec string not accepted by Web Codecs

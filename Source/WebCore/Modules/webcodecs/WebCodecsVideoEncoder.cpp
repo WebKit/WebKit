@@ -120,6 +120,9 @@ static bool isValidEncoderConfig(const WebCodecsVideoEncoderConfig& config)
     if (!config.displayWidth.value_or(config.width) || !config.displayHeight.value_or(config.height))
         return false;
 
+    if (config.bitrate && !*config.bitrate)
+        return false;
+
     return true;
 }
 
