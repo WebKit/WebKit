@@ -89,7 +89,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
-        WI.FrameTarget.addEventListener(WI.FrameTarget.Event.ExecutionContextAdded, this._frameTargetExecutionContextAdded, this);
+        WI.Frame.addEventListener(WI.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextChanged, this);
     }
 
     disable()
@@ -105,7 +105,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.removeEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
-        WI.FrameTarget.removeEventListener(WI.FrameTarget.Event.ExecutionContextAdded, this._frameTargetExecutionContextAdded, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextChanged, this);
 
         this._reset();
     }
@@ -266,14 +266,14 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         this._addDOMStorageIfNeeded(event.target);
     }
 
-    _frameTargetExecutionContextAdded(event)
+    _framePageExecutionContextChanged(event)
     {
         if (!this._enabled)
             return;
 
-        let target = event.target;
-        let frame = target.executionContext?.frame;
-        if (!frame || !frame.securityOrigin)
+        let frame = event.target;
+        let target = frame.pageExecutionContext?.target;
+        if (!(target instanceof WI.FrameTarget) || !frame.securityOrigin)
             return;
 
         this._setTargetForOrigin(frame.securityOrigin, target);
