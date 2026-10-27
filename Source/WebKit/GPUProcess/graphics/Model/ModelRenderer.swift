@@ -203,8 +203,8 @@ final class Renderer {
         let projection = LowLevelRenderer.Camera.Projection.perspective(
             fovYRadians: fovY,
             aspectRatio: aspect,
-            nearZ: d * 0.01,
-            farZ: d * 100,
+            nearZ: Renderer.cameraDistance,
+            farZ: max(100.0, d * 100),
             reverseZ: true
         )
 
