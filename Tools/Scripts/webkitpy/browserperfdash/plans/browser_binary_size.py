@@ -22,6 +22,8 @@
 
 import json
 import os
+import re
+import shlex
 import subprocess
 import tempfile
 from webkitpy.common.host import Host
@@ -85,9 +87,67 @@ def get_browser_relevant_objects_glib(browser_driver):
     return browser_relevant_objects
 
 
+def is_elf(path):
+    with open(path, "rb") as executable:
+        return executable.read(4) == b"\x7fELF"
+
+
+def find_servo_binary(launcher):
+    if is_elf(launcher):
+        return os.path.realpath(launcher)
+
+    with open(launcher, "rb") as script:
+        shebang = script.readline().decode("utf-8", errors="replace")
+
+    if not shebang.startswith("#!"):
+        raise ValueError(f"{launcher} is neither ELF nor a shell script")
+
+    interpreter = shlex.split(shebang[2:])
+    if interpreter and os.path.basename(interpreter[0]) == "env":
+        interpreter = interpreter[1:]
+
+    shell_names = {"sh", "bash", "dash", "ash", "ksh", "zsh"}
+    if not interpreter or os.path.basename(interpreter[0]) not in shell_names:
+        raise ValueError(f"{launcher} does not have a recognized shell shebang")
+
+    with open(launcher, encoding="utf-8") as script:
+        script_text = script.read()
+
+    expected_exec = r'^[ \t]*exec[ \t]+"\$\{SERVO_PATH\}/servoshell"(?:[ \t]|$)'
+    if not re.search(expected_exec, script_text, flags=re.MULTILINE):
+        raise ValueError(f"{launcher} does not contain the expected exec command")
+
+    servo_directory = os.environ.get("SERVO_PATH")
+    if not servo_directory:
+        raise ValueError("SERVO_PATH is unset or empty")
+
+    binary = os.path.abspath(os.path.join(servo_directory, "servoshell"))
+    if not os.path.isfile(binary):
+        raise FileNotFoundError(f"servoshell is not a regular file: {binary}")
+    if not is_elf(binary):
+        raise ValueError(f"servoshell is not an ELF binary: {binary}")
+    if not os.access(binary, os.X_OK):
+        raise PermissionError(f"servoshell is not executable: {binary}")
+
+    return binary
+
+
+def get_browser_relevant_objects_servo(browser_driver):
+    browser_path = find_servo_binary(browser_driver.process_name)
+    browser_dir = os.path.dirname(browser_path)
+    browser_relevant_objects = [browser_path]
+    libraries, interpreter = SharedObjectResolver('ldd', os.environ.copy()).get_libs_and_interpreter(browser_path)
+    for library in sorted(libraries):
+        if library.startswith(browser_dir) or os.path.realpath(library).startswith(browser_dir):
+            browser_relevant_objects.append(library)
+    return browser_relevant_objects
+
+
 def run(browser_driver, results_file):
     if browser_driver.platform == "linux" and (browser_driver.browser_name.startswith('minibrowser-wpe') or browser_driver.browser_name == 'minibrowser-gtk'):
         browser_relevant_objects = get_browser_relevant_objects_glib(browser_driver)
+    elif browser_driver.platform == "linux" and browser_driver.browser_name == 'servo':
+        browser_relevant_objects = get_browser_relevant_objects_servo(browser_driver)
     else:
         raise NotImplementedError(f'Getting the browser size data for browser "{browser_driver.browser_name}" and platform "{browser_driver.platform}" is not implemented')
 
