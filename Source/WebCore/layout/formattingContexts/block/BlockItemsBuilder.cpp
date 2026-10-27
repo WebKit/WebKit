@@ -59,8 +59,19 @@ static bool hasInlineContent(const RenderBox& box)
 
 BlockItemList BlockItemsBuilder::build()
 {
+    CheckedPtr firstChild = root().firstChildBox();
+    return firstChild ? build(*firstChild, nullptr) : BlockItemList { };
+}
+
+BlockItemList BlockItemsBuilder::buildForBlockLevelBoxInInlineContent(const RenderBox& box)
+{
+    return build(box, &box);
+}
+
+BlockItemList BlockItemsBuilder::build(const RenderBox& firstBox, const RenderBox* onlyBox)
+{
     auto blockItems = BlockItemList { };
-    CheckedPtr<const RenderBox> box = root().firstChildBox();
+    CheckedPtr<const RenderBox> box = &firstBox;
     while (box) {
         // FIXME: Floats are kept out by coverage.
         auto isSingleItem = box->isOutOfFlowPositioned() || establishesIndependentFormattingContext(*box);
@@ -71,7 +82,8 @@ BlockItemList BlockItemsBuilder::build()
         else {
             ASSERT(contentTakesPartInBlockFormattingContext(*box) || hasInlineContent(*box) || !box->firstChild());
             blockItems.append({ *box, BlockItem::Type::BlockContainerStart });
-            // FIXME: Block-level boxes inside the inline content split it into more ranges (block-in-inline is kept out by coverage).
+            // FIXME: Block-level boxes inside the inline content split it into more ranges. Until then the inline formatting context hands them
+            // back when it reaches them (BlockFormattingContext::layoutBlockLevelBoxInInlineContent).
             if (hasInlineContent(*box))
                 blockItems.append({ *box, BlockItem::Type::InlineContent });
             else if (CheckedPtr firstChild = box->firstChildBox(); firstChild && contentTakesPartInBlockFormattingContext(*box)) {
@@ -83,6 +95,8 @@ BlockItemList BlockItemsBuilder::build()
         for (auto closesBox = !isSingleItem; box; closesBox = true) {
             if (closesBox)
                 blockItems.append({ *box, BlockItem::Type::BlockContainerEnd });
+            if (box == onlyBox)
+                return blockItems;
             if (CheckedPtr nextSibling = box->nextSiblingBox()) {
                 box = WTF::move(nextSibling);
                 break;

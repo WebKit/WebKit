@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.c { background: silver; }
+.b { height: 12px; background: rgba(0, 128, 0, 0.6); }
+span { background: rgba(0, 0, 255, 0.2); }
+</style>
+<div class="roots">
+<div class="root">
+  <div class="c"><span>text before<div class="b" id="height" style="margin: 10px 0"></div><span id="text">x</span></span></div>
+  <div class="c"><span>a<div class="b" id="margin"></div>b</span></div>
+  <div class="b" id="sibling" style="margin-top: 10px"></div>
+  <div class="c"><span id="inserted">start<div class="b"></div>end</span></div>
+  <div class="c"><span>front<div class="b" id="removed"></div>back</span></div>
+</div>
+<div class="root" id="resized">
+  <div class="b" id="before-kept"></div>
+  <div class="c" style="margin-top: 5px"><span><div class="b" style="margin-top: 25px"></div>kept after</span></div>
+  <div class="c"><span>kept before<div class="b" style="margin-bottom: 25px"></div></span></div>
+  <div class="b" style="margin-top: 10px"></div>
+  <div class="c"><span>text that wraps once the root gets narrower<div class="b" style="width: 50%"></div>tail</span></div>
+</div>
+</div>
+<div id="scroller" style="width: 250px; height: 60px; overflow: auto; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px"><span>scrolled<div class="c" id="grows" style="width: 100px; height: 24px">x</div>end</span></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("height").style.height = "30px";
+document.getElementById("text").firstChild.data = "changed text after the block that is now longer than a line";
+document.getElementById("margin").style.marginTop = "25px";
+document.getElementById("sibling").style.marginTop = "30px";
+var block = document.createElement("div");
+block.className = "b";
+block.style.margin = "5px 0";
+document.getElementById("inserted").appendChild(block);
+document.getElementById("removed").remove();
+document.getElementById("resized").style.width = "180px";
+// The root's scrollable overflow follows the overflow of the block-level box in its inline content.
+document.getElementById("grows").firstChild.data = "text that got longer and grows the box so that the root it is in scrolls down to it";
+document.body.offsetHeight;
+document.getElementById("scroller").scrollTop = 1000;
+// The block containers after this one are clean, and keep their lines and the block-level boxes in them.
+document.getElementById("before-kept").style.height = "30px";
+</script>

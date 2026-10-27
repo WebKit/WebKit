@@ -31,6 +31,7 @@
 #include "BlockFormattingUtils.h"
 #include "BlockIntegrationUtils.h"
 #include "LayoutIntegrationBlockCoverage.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
 #include "LocalFrameViewInlines.h"
 #include "LocalFrameViewLayoutContext.h"
@@ -115,6 +116,10 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
     LOG_WITH_STREAM(Layout, stream << "BlockLayout for root (" << &rootRenderer() << "): " << result);
 
     updateRenderers(result, paintInvalidation);
+    // Like updateRenderers for the block containers in the root: the inline formatting context took the overflow of the block-level boxes in
+    // the root's inline content from their renderers, before they had their new geometry.
+    if (CheckedPtr lineLayout = rootRenderer().inlineLayout(); lineLayout && lineLayout->hasBlocks())
+        lineLayout->updateOverflow();
     // RenderBlockFlow::layoutBlock resolves the used block size of the root from this.
     rootRenderer().setLogicalHeight(rootRenderer().borderAndPaddingLogicalHeight() + rootRenderer().scrollbarLogicalHeight() + result.intrinsicContentBlockSize);
     // Like RenderBlockFlow::layoutInlineContent for the inline content of the root.
@@ -249,9 +254,9 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
         return mutableRenderer;
     };
 
-    // The containing block of an in-flow block-level box is its parent.
+    // The containing block of an in-flow block-level box is its parent, or the block container whose inline content it is in.
     auto containingBlockOf = [](const RenderBox& box) -> const RenderBox& {
-        if (box.isOutOfFlowPositioned())
+        if (box.isOutOfFlowPositioned() || box.parent()->isInlineBox())
             return *box.containingBlock();
         return downcast<RenderBox>(*box.parent());
     };
@@ -364,6 +369,10 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
                 contentArea.shiftMaxXEdgeTo(contentBlockEnd);
             // The transforms of the children that depend on the size of their containing block (offset-path), before the overflow they extend.
             blockFlow->updateInFlowDescendantTransformsAfterLayout();
+            // The inline formatting context took the overflow of the block-level boxes in the inline content from their renderers, before they
+            // had their new geometry.
+            if (CheckedPtr lineLayout = blockFlow->inlineLayout(); lineLayout && lineLayout->hasBlocks())
+                lineLayout->updateOverflow();
             blockFlow->computeInFlowOverflow(contentArea, isHorizontalWritingMode ? RenderBox::ComputeOverflowOptions::MarginsExtendContentAreaX : RenderBox::ComputeOverflowOptions::MarginsExtendContentAreaY);
             // Like RenderBlockFlow::layoutBlock, once the box has its size and its in-flow overflow.
             invalidateWithLayoutDelta(locationChanges[boxIndex], [&] {
