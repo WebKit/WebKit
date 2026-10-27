@@ -1591,6 +1591,7 @@ editing/RenderedPosition.cpp @header:RenderStyleGetters
 editing/ReplaceNodeWithSpanCommand.cpp
 editing/ReplaceRangeWithTextCommand.cpp
 editing/ReplaceSelectionCommand.cpp @header:RenderStyleGetters
+editing/SetBlockPresentationIntentCommand.cpp
 editing/SetNodeAttributeCommand.cpp
 editing/SetSelectionCommand.cpp
 editing/SimplifyMarkupCommand.cpp @cost:5

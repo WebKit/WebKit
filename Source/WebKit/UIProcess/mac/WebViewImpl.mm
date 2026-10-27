@@ -3371,6 +3371,17 @@ void WebViewImpl::changeFontAttributesFromSender(id sender)
     if (!editorState.isContentEditable || editorState.selectionType == WebCore::SelectionType::None)
         return;
 
+    // A formatting style can carry a block intent, as in -[NSTextView changeAttributes:]. Its other attributes then
+    // describe how the block looks, which the page's style sheet decides, so they are not applied inline.
+    if ([sender respondsToSelector:@selector(convertAttributes:)]) {
+        RetainPtr<NSDictionary> convertedAttributes = [sender convertAttributes:@{ }];
+        RetainPtr intent = dynamic_objc_cast<NSPresentationIntent>([convertedAttributes objectForKey:NSPresentationIntentAttributeName]);
+        if (auto blockIntent = WebCore::BlockPresentationIntent::fromPresentationIntent(intent.get())) {
+            m_page->setBlockPresentationIntent(*blockIntent);
+            return;
+        }
+    }
+
     m_page->changeFontAttributes(WebCore::computedFontAttributeChanges(NSFontManager.sharedFontManager, sender));
 }
 
