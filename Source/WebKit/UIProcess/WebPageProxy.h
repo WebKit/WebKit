@@ -1262,6 +1262,9 @@ public:
 #if ENABLE(UI_SIDE_COMPOSITING)
     void updateVisibleContentRects(const VisibleContentRectUpdateInfo&, bool sendEvenIfUnchanged);
     void updateVisibleContentRectsLocally(const VisibleContentRectUpdateInfo&);
+#if PLATFORM(MAC)
+    bool isRedundantUnstableVisibleContentRectUpdate(const VisibleContentRectUpdateInfo&) const;
+#endif
 
     WebCore::FloatRect updateVisibleContentRectsAndAdjustLayers(const VisibleContentRectUpdateInfo&, bool sendEvenIfUnchanged);
 #endif

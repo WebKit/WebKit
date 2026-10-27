@@ -804,6 +804,15 @@ void RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate(double sca
 
     LOG_WITH_STREAM(VisibleRects, stream << "RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate " << visibleContentRectUpdateInfo.dump());
 
+    // The web process keeps only the newest pending update and refreshes plugin transforms only on a stable one,
+    // so an unstable repeat of the last stable update is not sent. Layers are still adjusted.
+    if (page->isRedundantUnstableVisibleContentRectUpdate(visibleContentRectUpdateInfo)) {
+        LOG_WITH_STREAM(VisibleRects, stream << "RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate skipping unstable update equal to the last stable update");
+        if (uiProcessOwnsScrolledContentsLayerPosition())
+            page->adjustLayersForLayoutViewport(page->unobscuredContentRect().location(), page->unconstrainedLayoutViewportRect(), page->displayedContentScale());
+        return;
+    }
+
     if (uiProcessOwnsScrolledContentsLayerPosition())
         page->updateVisibleContentRectsAndAdjustLayers(visibleContentRectUpdateInfo, isStableState == IsStableState::Yes);
     else
