@@ -831,14 +831,12 @@ add_library(TestWebKitAPIWebProcessPlugIn MODULE
 
     # Also in TestWebKit via SourcesCocoa.txt; WEBKIT_COMPUTE_SOURCES marks the
     # originals HEADER_FILE_ONLY, so build them here via #include shims.
-    ${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-ClickAutoFillButton.mm
     ${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-InjectedBundleNodeHandleIsSelectElement.mm
     ${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-InjectedBundleNodeHandleIsTextField.mm
     ${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-TestAwakener.mm
 )
 
 foreach (_dual_src
-    ClickAutoFillButton
     InjectedBundleNodeHandleIsSelectElement
     InjectedBundleNodeHandleIsTextField
     TestAwakener

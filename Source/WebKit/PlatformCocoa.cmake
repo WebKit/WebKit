@@ -1858,7 +1858,6 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h
-    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandlePrivate.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPrivate.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.h

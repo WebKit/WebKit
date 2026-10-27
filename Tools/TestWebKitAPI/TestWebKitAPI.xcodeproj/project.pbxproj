@@ -1571,7 +1571,6 @@
 				WebKit/WKWebView/BundleRetainPagePlugIn.mm,
 				WebKit/WKWebView/CancelFontSubresourcePlugIn.mm,
 				WebKit/WKWebView/ClearWrappersNavigatePlugIn.mm,
-				WebKit/WKWebView/ClickAutoFillButton.mm,
 				WebKit/WKWebView/ContentFilteringPlugIn.mm,
 				WebKit/WKWebView/ContentWorldPlugIn.mm,
 				WebKit/WKWebView/GetComputedStyleAfterIframeRemovalPlugIn.mm,
