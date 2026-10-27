@@ -3,6 +3,14 @@ PASS drawImage() of a 0 degrees rotated VideoFrame
 PASS drawImage() of a 90 degrees rotated VideoFrame
 PASS drawImage() of a 180 degrees rotated VideoFrame
 PASS drawImage() of a 270 degrees rotated VideoFrame
+PASS drawImage() of a 0 degrees rotated and flipped VideoFrame
+PASS drawImage() of a 90 degrees rotated and flipped VideoFrame
+PASS drawImage() of a 180 degrees rotated and flipped VideoFrame
+PASS drawImage() of a 270 degrees rotated and flipped VideoFrame
 PASS drawImage() scales a rotated VideoFrame to the destination rectangle
 PASS drawImage() of a VideoFrame wrapping a rotated VideoFrame combines the rotations
+PASS drawImage() of a VideoFrame wrapping a flipped VideoFrame with an init rotation of 90 rotates the flipped image
+PASS drawImage() of a VideoFrame wrapping a VideoFrame rotated by 90 with an init flip flips the rotated image
+PASS drawImage() of a VideoFrame wrapping a flipped VideoFrame with an init rotation of 270 rotates the flipped image
+PASS drawImage() of a VideoFrame wrapping a VideoFrame rotated by 270 with an init flip flips the rotated image
 

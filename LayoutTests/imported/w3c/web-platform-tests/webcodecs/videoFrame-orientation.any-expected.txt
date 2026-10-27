@@ -1,5 +1,10 @@
 
-FAIL Test oriented VideoFrame from ArrayBuffer assert_equals: flip expected (boolean) true but got (undefined) undefined
-FAIL Test combinations of rotation and flip assert_equals: flip expected (boolean) false but got (undefined) undefined
-FAIL Test orientation of wrapped VideoFrame assert_equals: flip expected (boolean) true but got (undefined) undefined
+PASS Test oriented VideoFrame from ArrayBuffer
+PASS Test combinations of rotation and flip
+PASS Test orientation of wrapped VideoFrame
+PASS A VideoFrame is not rotated and not flipped by default
+PASS A rotation of the init is applied before the flip of the base frame
+PASS Cloning an oriented VideoFrame keeps its orientation, and deriving from the clone does not change it
+PASS A closed VideoFrame has no rotation and no flip
+PASS copyTo() of an oriented VideoFrame is not affected by its rotation and flip
 
