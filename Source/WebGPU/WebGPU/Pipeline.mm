@@ -193,22 +193,56 @@ id<MTLLibrary> compileLibrary(id<MTLDevice> device, const LibraryCompileRequest&
 }
 
 template<typename Result>
-static CompletionHandler<void(Result, NSError *)> callOnWebGPUThread(Instance& instance, CompletionHandler<void(Result, NSError *)>&& callback)
-{
+class PendingAsyncCompileWithResult final : public PendingAsyncCompile {
+public:
     using Callback = CompletionHandler<void(Result, NSError *)>;
+    static Ref<PendingAsyncCompileWithResult> create(Device& device, Callback&& callback)
+    {
+        return adoptRef(*new PendingAsyncCompileWithResult(device, WTF::move(callback)));
+    }
 
-    auto* callbackToHopBack = new Callback(WTF::move(callback));
+    void complete(Result result, NSError *error)
+    {
+        if (RefPtr device = m_device)
+            device->removePendingAsyncCompile(*this);
+        if (auto callback = WTF::move(m_callback))
+            callback(result, error);
+    }
+
+    void cancel() final
+    {
+        if (auto callback = WTF::move(m_callback))
+            callback(nil, nil);
+    }
+
+private:
+    PendingAsyncCompileWithResult(Device& device, Callback&& callback)
+        : m_device(device)
+        , m_callback(WTF::move(callback))
+    {
+    }
+
+    const ThreadSafeWeakPtr<Device> m_device;
+    Callback m_callback;
+};
+
+template<typename Result>
+static CompletionHandler<void(Result, NSError *)> callOnWebGPUThread(Device& device, CompletionHandler<void(Result, NSError *)>&& callback)
+{
+    Ref compile = PendingAsyncCompileWithResult<Result>::create(device, WTF::move(callback));
+    device.addPendingAsyncCompile(compile);
     // Metal runs its completion handlers on its own queues, so the returned handler is called on an
     // arbitrary thread. It is the hop below which returns to the thread `callback` was created on.
-    return Callback { [protectedInstance = Ref { instance }, callbackToHopBack](Result result, NSError *error) mutable {
-        protectedInstance->scheduleWork([callbackToHopBack, result, error]() mutable {
-            std::unique_ptr<Callback> callback(callbackToHopBack);
-            (*callback)(result, error);
+    // Neither references anything that has to be destroyed on that thread.
+    return CompletionHandler<void(Result, NSError *)> { [workScheduler = Ref { device.workScheduler() }, weakCompile = ThreadSafeWeakPtr { compile.get() }](Result result, NSError *error) mutable {
+        workScheduler->scheduleWork([weakCompile = WTF::move(weakCompile), result, error] {
+            if (RefPtr compile = weakCompile)
+                compile->complete(result, error);
         });
     }, CompletionHandlerCallThread::AnyThread };
 }
 
-void compileLibraryAsync(id<MTLDevice> device, Instance& instance, const LibraryCompileRequest& request, CompletionHandler<void(id<MTLLibrary>, NSError *)>&& callback)
+void compileLibraryAsync(Device& device, const LibraryCompileRequest& request, CompletionHandler<void(id<MTLLibrary>, NSError *)>&& callback)
 {
     // A library which was already compiled needs no hop: this is still running on the WebGPU thread.
     if (request.cachedLibrary) {
@@ -217,36 +251,39 @@ void compileLibraryAsync(id<MTLDevice> device, Instance& instance, const Library
     }
 
     // nil device here means the device is either lost or destroyed, all which report no error
-    if (!device) {
+    id<MTLDevice> mtlDevice = device.device();
+    if (!mtlDevice) {
         callback(nil, nil);
         return;
     }
 
-    ShaderModule::createLibraryAsync(device, request.msl, request.label, request.deviceState, callOnWebGPUThread<id<MTLLibrary>>(instance, WTF::move(callback)));
+    ShaderModule::createLibraryAsync(mtlDevice, request.msl, request.label, request.deviceState, callOnWebGPUThread<id<MTLLibrary>>(device, WTF::move(callback)));
 }
 
-void createComputePipelineStateAsync(id<MTLDevice> device, Instance& instance, MTLComputePipelineDescriptor *descriptor, CompletionHandler<void(id<MTLComputePipelineState>, NSError *)>&& callback)
+void createComputePipelineStateAsync(Device& device, MTLComputePipelineDescriptor *descriptor, CompletionHandler<void(id<MTLComputePipelineState>, NSError *)>&& callback)
 {
     // See the comment in compileLibraryAsync(): a lost device is nil and would never call back.
-    if (!device) {
+    id<MTLDevice> mtlDevice = device.device();
+    if (!mtlDevice) {
         callback(nil, nil);
         return;
     }
 
-    [device newComputePipelineStateWithDescriptor:descriptor options:MTLPipelineOptionNone completionHandler:makeBlockPtr([hopBack = callOnWebGPUThread<id<MTLComputePipelineState>>(instance, WTF::move(callback))](id<MTLComputePipelineState> computePipelineState, MTLComputePipelineReflection *, NSError *error) mutable {
+    [mtlDevice newComputePipelineStateWithDescriptor:descriptor options:MTLPipelineOptionNone completionHandler:makeBlockPtr([hopBack = callOnWebGPUThread<id<MTLComputePipelineState>>(device, WTF::move(callback))](id<MTLComputePipelineState> computePipelineState, MTLComputePipelineReflection *, NSError *error) mutable {
         hopBack(computePipelineState, error);
     }).get()];
 }
 
-void createRenderPipelineStateAsync(id<MTLDevice> device, Instance& instance, MTLRenderPipelineDescriptor *descriptor, CompletionHandler<void(id<MTLRenderPipelineState>, NSError *)>&& callback)
+void createRenderPipelineStateAsync(Device& device, MTLRenderPipelineDescriptor *descriptor, CompletionHandler<void(id<MTLRenderPipelineState>, NSError *)>&& callback)
 {
     // See the comment in compileLibraryAsync(): a lost device is nil and would never call back.
-    if (!device) {
+    id<MTLDevice> mtlDevice = device.device();
+    if (!mtlDevice) {
         callback(nil, nil);
         return;
     }
 
-    [device newRenderPipelineStateWithDescriptor:descriptor completionHandler:makeBlockPtr([hopBack = callOnWebGPUThread<id<MTLRenderPipelineState>>(instance, WTF::move(callback))](id<MTLRenderPipelineState> renderPipelineState, NSError *error) mutable {
+    [mtlDevice newRenderPipelineStateWithDescriptor:descriptor completionHandler:makeBlockPtr([hopBack = callOnWebGPUThread<id<MTLRenderPipelineState>>(device, WTF::move(callback))](id<MTLRenderPipelineState> renderPipelineState, NSError *error) mutable {
         hopBack(renderPipelineState, error);
     }).get()];
 }
@@ -271,8 +308,8 @@ Device::LibraryCompilation Device::asynchronousIfPossible()
 void Device::compileLibrary(const LibraryCompileRequest& request, LibraryCompilation libraryCompilation, CompletionHandler<void(id<MTLLibrary>, NSError *)>&& callback)
 {
     if (libraryCompilation == LibraryCompilation::Asynchronous) {
-        if (RefPtr protectedInstance = instance()) {
-            compileLibraryAsync(m_device, *protectedInstance, request, WTF::move(callback));
+        if (instance()) {
+            compileLibraryAsync(*this, request, WTF::move(callback));
             return;
         }
     }
@@ -290,8 +327,8 @@ void Device::createComputePipelineState(MTLComputePipelineDescriptor *descriptor
     };
 
     if (libraryCompilation == LibraryCompilation::Asynchronous) {
-        if (RefPtr protectedInstance = instance()) {
-            createComputePipelineStateAsync(m_device, *protectedInstance, descriptor, [reportError, callback = WTF::move(callback)](id<MTLComputePipelineState> computePipelineState, NSError *error) mutable {
+        if (instance()) {
+            createComputePipelineStateAsync(*this, descriptor, [reportError, callback = WTF::move(callback)](id<MTLComputePipelineState> computePipelineState, NSError *error) mutable {
                 reportError(error);
                 callback(computePipelineState);
             });

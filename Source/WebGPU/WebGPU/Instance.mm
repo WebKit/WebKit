@@ -59,18 +59,50 @@ Ref<Instance> Instance::create(WebGPU::InstanceDescriptor&& descriptor)
     return adoptRef(*new Instance(WTF::move(descriptor.scheduleWork), descriptor.webProcessResourceOwner ? &*descriptor.webProcessResourceOwner : nullptr));
 }
 
+void WorkScheduler::scheduleWork(WorkItem&& workItem)
+{
+    Locker locker { m_lock };
+    if (m_scheduleWork)
+        m_scheduleWork(WTF::move(workItem));
+}
+
+void WorkScheduler::close()
+{
+    Function<void(WorkItem&&)> scheduleWork;
+    {
+        Locker locker { m_lock };
+        scheduleWork = std::exchange(m_scheduleWork, nullptr);
+    }
+}
+
 Instance::Instance(Function<void(WorkItem&&)>&& scheduleWork, const MachSendRight* webProcessResourceOwner)
     : m_webProcessID(webProcessResourceOwner ? std::optional<MachSendRight>(*webProcessResourceOwner) : std::nullopt)
-    , m_scheduleWork(WTF::move(scheduleWork))
+    , m_workScheduler(WorkScheduler::create(scheduleWork ? WTF::move(scheduleWork) : [this](WorkItem&& workItem) {
+        defaultScheduleWork(WTF::move(workItem));
+    }))
 {
 }
 
 Instance::Instance()
-    : m_isValid(false)
+    : m_workScheduler(WorkScheduler::create(nullptr))
+    , m_isValid(false)
 {
 }
 
-Instance::~Instance() = default;
+Instance::~Instance()
+{
+    // The default schedule function uses the instance.
+    m_workScheduler->close();
+}
+
+void Instance::destroy()
+{
+    // The instance keeps the devices and the command buffers alive while their Metal command
+    // buffers are in flight. Release them on this thread, rather than on whichever thread happens
+    // to release the instance last.
+    auto retainedCommandBuffers = std::exchange(m_retainedCommandBufferInstances, { });
+    auto retainedDevices = std::exchange(retainedDeviceInstances, { });
+}
 
 void Instance::waitForCommandBufferCompletions()
 {
@@ -95,11 +127,7 @@ RefPtr<WebGPU::PresentationContext> Instance::createPresentationContext(const We
 
 void Instance::scheduleWork(WorkItem&& workItem)
 {
-    if (!m_scheduleWork) {
-        defaultScheduleWork(WTF::move(workItem));
-        return;
-    }
-    m_scheduleWork(WTF::move(workItem));
+    m_workScheduler->scheduleWork(WTF::move(workItem));
 }
 
 const std::optional<const MachSendRight>& Instance::webProcessID() const

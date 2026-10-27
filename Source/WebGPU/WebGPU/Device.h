@@ -42,6 +42,7 @@
 #import <wtf/Function.h>
 #import <wtf/HashIterators.h>
 #import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
 #import <wtf/HashTable.h>
 #import <wtf/KeyValuePair.h>
 #import <wtf/Ref.h>
@@ -99,6 +100,15 @@ struct WebKitMTLDrawPrimitivesIndirectArguments { \
     unsigned lostOrOOBRead;                                 \
 };
 WEBKIT_DRAW_INDIRECT_STRUCT_TYPE
+
+// An asynchronous compile that Metal has not completed yet. The device keeps it, and the Metal
+// completion handler only references it weakly, so that destroying the device can complete it.
+class PendingAsyncCompile : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PendingAsyncCompile> {
+public:
+    virtual ~PendingAsyncCompile() = default;
+    // Completes the compile without a result.
+    virtual void cancel() = 0;
+};
 
 // https://gpuweb.github.io/gpuweb/#gpudevice
 class Device final : public WebGPU::Device {
@@ -166,7 +176,10 @@ public:
     void generateAnInternalError(String&& message);
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
+    WorkScheduler& workScheduler() const { return m_workScheduler; }
     Adapter& adapter() const { return m_adapter; }
+    void addPendingAsyncCompile(PendingAsyncCompile& compile) { m_pendingAsyncCompiles.add(compile); }
+    void removePendingAsyncCompile(PendingAsyncCompile& compile) { m_pendingAsyncCompiles.remove(compile); }
 #if CPU(X86_64)
     bool hasUnifiedMemory() const { return false; }
 #else
@@ -364,6 +377,8 @@ private:
 
     const Ref<Adapter> m_adapter;
     const ThreadSafeWeakPtr<Instance> m_instance;
+    const Ref<WorkScheduler> m_workScheduler;
+    HashSet<Ref<PendingAsyncCompile>> m_pendingAsyncCompiles;
 #if HAVE(COREVIDEO_METAL_SUPPORT)
     RetainPtr<CVMetalTextureCacheRef> m_coreVideoTextureCache;
 #endif
