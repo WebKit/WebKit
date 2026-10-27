@@ -3474,6 +3474,8 @@
 		CAFE0C0B2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKMediaCapturePermissionPromptConfiguration.h; sourceTree = "<group>"; };
 		CAFE0C0C2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKMediaCapturePermissionPromptConfiguration.mm; sourceTree = "<group>"; };
 		CAFE0C0D2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfigurationInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKMediaCapturePermissionPromptConfigurationInternal.h; sourceTree = "<group>"; };
+		CAFE0C402E8B1D0100A1B2C0 /* RotationMonitoringReason.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RotationMonitoringReason.h; sourceTree = "<group>"; };
+		CAFE0C412E8B1D0100A1B2C1 /* RotationMonitoringReason.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RotationMonitoringReason.serialization.in; sourceTree = "<group>"; };
 		028D30862C62FA8A004F4FC6 /* _WKWebExtensionSidebar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionSidebar.h; sourceTree = "<group>"; };
 		028D30892C63E14B004F4FC6 /* _WKWebExtensionSidebar.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionSidebar.mm; sourceTree = "<group>"; };
 		028D308B2C63E214004F4FC6 /* WebExtensionSidebarCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionSidebarCocoa.mm; sourceTree = "<group>"; };
@@ -5762,6 +5764,8 @@
 		41AC86811E042E5300303074 /* WebRTCResolver.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; name = WebRTCResolver.messages.in; path = Network/webrtc/WebRTCResolver.messages.in; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = "<none>"; };
 		41B28B081F83AD3E00FB52AC /* RTCPacketOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPacketOptions.h; sourceTree = "<group>"; };
 		41B28B091F83AD3E00FB52AC /* RTCPacketOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPacketOptions.cpp; sourceTree = "<group>"; };
+		41B7E9A02E7B41C700D5A1F2 /* CapturePreviewManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CapturePreviewManager.h; sourceTree = "<group>"; };
+		41B7E9A12E7B41C700D5A1F2 /* CapturePreviewManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CapturePreviewManager.mm; sourceTree = "<group>"; };
 		41B7ED6C20681DCE0087D853 /* WebMDNSRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMDNSRegister.h; path = Network/webrtc/WebMDNSRegister.h; sourceTree = "<group>"; };
 		41B7ED6E20681DCF0087D853 /* WebMDNSRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebMDNSRegister.cpp; path = Network/webrtc/WebMDNSRegister.cpp; sourceTree = "<group>"; };
 		41B7ED6F206965900087D853 /* NetworkMDNSRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkMDNSRegister.cpp; sourceTree = "<group>"; };
@@ -10655,6 +10659,8 @@
 				8623B1282ACE1DE4002BA9EA /* ResourceLoadInfo.serialization.in */,
 				5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */,
 				516BF1D42AE5FF3F009A0204 /* ResourceLoadStatisticsParameters.serialization.in */,
+				CAFE0C402E8B1D0100A1B2C0 /* RotationMonitoringReason.h */,
+				CAFE0C412E8B1D0100A1B2C1 /* RotationMonitoringReason.serialization.in */,
 				410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */,
 				410482CC1DDD2FB500F006D0 /* RTCNetwork.h */,
 				5CDFAD9C2ACFA9480040A8D8 /* RTCNetwork.serialization.in */,
@@ -14171,6 +14177,8 @@
 		4172198E23B633CA00AE5686 /* webrtc */ = {
 			isa = PBXGroup;
 			children = (
+				41B7E9A02E7B41C700D5A1F2 /* CapturePreviewManager.h */,
+				41B7E9A12E7B41C700D5A1F2 /* CapturePreviewManager.mm */,
 				41E0A7C623B6397800561060 /* LibWebRTCCodecsProxy.h */,
 				41E0A7C723B6397900561060 /* LibWebRTCCodecsProxy.messages.in */,
 				41E0A7C823B6397900561060 /* LibWebRTCCodecsProxy.mm */,

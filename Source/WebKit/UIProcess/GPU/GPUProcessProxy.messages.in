@@ -28,7 +28,6 @@
     ExceptionForEnabledBy
 ]
 messages -> GPUProcessProxy {
-
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     DidCreateContextForVisibilityPropagation(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, WebKit::LayerHostingContextID contextID)
 #endif
@@ -40,9 +39,12 @@ messages -> GPUProcessProxy {
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA)
+    CapturePreviewAudioLevelChanged(WebCore::PageIdentifier pageIdentifier, float level)
+#endif
     VoiceActivityDetected()
-    StartMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageID, String devicePersistentId);
-    StopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageID, String devicePersistentId)
+    StartMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageID, String devicePersistentId, enum:uint8_t WebKit::RotationMonitoringReason reason);
+    StopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageID, String devicePersistentId, enum:uint8_t WebKit::RotationMonitoringReason reason)
     MicrophoneMuteStatusChanged(bool isMuting)
 #if PLATFORM(IOS_FAMILY)
     StatusBarWasTapped() -> () Async

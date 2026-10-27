@@ -28,87 +28,16 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#import "Logging.h"
-#import "MediaPermissionUtilities.h"
-#import <WebCore/LocalizedStrings.h>
-#import <WebCore/RealtimeMediaSourceCenter.h>
-#import <WebCore/RegistrableDomain.h>
 #import <WebCore/SecurityOrigin.h>
-#import <pal/spi/cocoa/LaunchServicesSPI.h>
-#import <wtf/OSObjectPtr.h>
-
-#if HAVE(SYSTEM_STATUS)
-#import "SystemStatusSPI.h"
-#import <pal/ios/SystemStatusSoftLink.h>
-#endif
-
-#import "TCCSoftLink.h"
 
 namespace WebKit {
 
 #if ENABLE(MEDIA_STREAM)
 bool GPUConnectionToWebProcess::setCaptureAttributionString()
 {
-#if HAVE(SYSTEM_STATUS)
-    if (![PAL::getSTDynamicActivityAttributionPublisherClassSingleton() respondsToSelector:@selector(setCurrentAttributionStringWithFormat:auditToken:)]
-        && ![PAL::getSTDynamicActivityAttributionPublisherClassSingleton() respondsToSelector:@selector(setCurrentAttributionWebsiteString:auditToken:)]) {
-        return true;
-    }
-
-    auto auditToken = gpuProcess().parentProcessConnection()->getAuditToken();
-    if (!auditToken)
-        return false;
-
-    RetainPtr visibleName = applicationVisibleNameFromOrigin(m_captureOrigin->data());
-    if (!visibleName)
-        visibleName = gpuProcess().applicationVisibleName().createNSString();
-
-    if ([PAL::getSTDynamicActivityAttributionPublisherClassSingleton() respondsToSelector:@selector(setCurrentAttributionWebsiteString:auditToken:)])
-        [PAL::getSTDynamicActivityAttributionPublisherClassSingleton() setCurrentAttributionWebsiteString:visibleName.get() auditToken:auditToken.value()];
-    else {
-        SUPPRESS_UNRETAINED_ARG RetainPtr formatString = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ in %%@", "The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only)."), visibleName.get()]);
-        [PAL::getSTDynamicActivityAttributionPublisherClassSingleton() setCurrentAttributionStringWithFormat:formatString.get() auditToken:auditToken.value()];
-    }
+    return gpuProcess().setCaptureAttributionString(m_captureOrigin->data());
+}
 #endif
-
-    return true;
-}
-#endif // ENABLE(MEDIA_STREAM)
-
-#if ENABLE(APP_PRIVACY_REPORT)
-void GPUConnectionToWebProcess::setTCCIdentity()
-{
-#if !PLATFORM(MACCATALYST)
-    auto auditToken = protect(gpuProcess().parentProcessConnection())->getAuditToken();
-    if (!auditToken) {
-        RELEASE_LOG_ERROR(WebRTC, "getAuditToken returned null");
-        return;
-    }
-
-    NSError *error = nil;
-    auto bundleProxy = [LSBundleProxy bundleProxyWithAuditToken:*auditToken error:&error];
-    RELEASE_LOG_ERROR_IF(error, WebRTC, "-[LSBundleProxy bundleProxyWithAuditToken:error:] failed with error %s", [[error localizedDescription] UTF8String]);
-
-    String bundleIdentifier = bundleProxy.bundleIdentifier;
-    if (bundleIdentifier.isNull())
-        bundleIdentifier = m_applicationBundleIdentifier;
-
-    if (bundleIdentifier.isNull()) {
-        RELEASE_LOG_ERROR(WebRTC, "Unable to get the bundle identifier");
-        return;
-    }
-
-    // FIXME: Adopting is needed here but static analysis is not able to tell.
-    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, bundleIdentifier.utf8().legacyCStringPointer()));
-    if (!identity) {
-        RELEASE_LOG_ERROR(WebRTC, "tcc_identity_create returned null");
-        return;
-    }
-
-    WebCore::RealtimeMediaSourceCenter::singleton().setIdentity(WTF::move(identity));
-#endif // !PLATFORM(MACCATALYST)
-}
-#endif // ENABLE(APP_PRIVACY_REPORT)
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 String GPUConnectionToWebProcess::mediaPlaybackEnvironment(WebCore::PageIdentifier pageIdentifier)

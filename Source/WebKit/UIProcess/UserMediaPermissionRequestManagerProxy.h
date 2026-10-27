@@ -65,6 +65,7 @@ class WebFrameProxy;
 class WebPageProxy;
 
 enum class MediaDevicePermissionRequestIdentifierType { };
+enum class RotationMonitoringReason : uint8_t;
 using MediaDevicePermissionRequestIdentifier = ObjectIdentifier<MediaDevicePermissionRequestIdentifierType>;
 
 class UserMediaPermissionRequestManagerProxy final
@@ -86,8 +87,9 @@ public:
     static void forEach(NOESCAPE const WTF::Function<void(UserMediaPermissionRequestManagerProxy&)>&);
 #if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
     bool isMonitoringCaptureDeviceRotation(const String&);
-    void startMonitoringCaptureDeviceRotation(const String&);
-    void stopMonitoringCaptureDeviceRotation(const String&);
+    void startMonitoringCaptureDeviceRotation(const String&, RotationMonitoringReason);
+    void stopMonitoringCaptureDeviceRotation(const String&, RotationMonitoringReason);
+    void stopMonitoringCaptureDeviceRotationForCapturePreview();
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
 #endif // HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
 #endif

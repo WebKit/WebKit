@@ -59,6 +59,11 @@ messages -> GPUProcess : AuxiliaryProcess {
     TriggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay)
     SetShouldListenToVoiceActivity(bool shouldListen)
     EnableMicrophoneMuteStatusAPI()
+
+#if PLATFORM(COCOA)
+    StartCapturePreview(std::optional<WebCore::CaptureDevice> videoDevice, std::optional<WebCore::CaptureDevice> audioDevice, WebCore::PageIdentifier pageIdentifier, WebCore::IntSize previewSize, WebCore::IntDegrees orientation, Vector<WebKit::SandboxExtensionHandle> sandboxExtensions, String applicationBundleIdentifier, WebCore::SecurityOriginData origin) -> (struct WebCore::HostingContext hostingContext)
+    StopCapturePreview(WebCore::PageIdentifier pageIdentifier) -> ()
+#endif
 #endif
 #if PLATFORM(MAC)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)

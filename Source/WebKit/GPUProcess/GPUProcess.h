@@ -38,6 +38,7 @@
 #include "SecurityFlags.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/HostingContext.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -49,6 +50,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
+#include <wtf/Markable.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/NativePromise.h>
@@ -89,6 +91,7 @@ enum class VideoFrameRotation : uint16_t;
 
 namespace WebKit {
 
+class CapturePreviewManager;
 class GPUConnectionToWebProcess;
 class RemoteAudioSessionProxyManager;
 class RemoteSnapshot;
@@ -149,6 +152,11 @@ public:
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     WorkQueue& videoMediaStreamTrackRendererQueue();
     void ensureAVCaptureServerConnection();
+    void didApplyCaptureEnvironment(WebCore::ProcessIdentifier, WebCore::PageIdentifier);
+    bool setCaptureAttributionString(const WebCore::SecurityOriginData&);
+#if ENABLE(APP_PRIVACY_REPORT) && !PLATFORM(MACCATALYST)
+    bool setCaptureTCCIdentity(const String& fallbackBundleIdentifier);
+#endif
 #endif
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
@@ -223,6 +231,11 @@ public:
     void releaseTransferredImageBuffers(Vector<WebCore::ImageBufferTransferIdentifier>&&);
 
 private:
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    bool setUpCapturePreviewEnvironment(WebCore::PageIdentifier, const WebCore::SecurityOriginData&, bool hasCamera);
+    void stopCapturePreviewManager();
+#endif
+
     GPUProcess();
 
     void lowMemoryHandler(Critical, Synchronous);
@@ -265,6 +278,10 @@ private:
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
+#if PLATFORM(COCOA)
+    void startCapturePreview(std::optional<WebCore::CaptureDevice>&& videoDevice, std::optional<WebCore::CaptureDevice>&& audioDevice, WebCore::PageIdentifier, WebCore::IntSize previewSize, WebCore::IntDegrees orientation, Vector<SandboxExtension::Handle>&&, String&& applicationBundleIdentifier, WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::HostingContext)>&&);
+    void stopCapturePreview(WebCore::PageIdentifier, CompletionHandler<void()>&&);
+#endif
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();
     void removeMockMediaDevice(const String&);
@@ -333,6 +350,10 @@ private:
     };
     HashMap<WebCore::ProcessIdentifier, MediaCaptureAccess> m_mediaCaptureAccessMap;
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    RefPtr<CapturePreviewManager> m_capturePreviewManager;
+    Markable<WebCore::PageIdentifier> m_capturePreviewPage;
+    std::optional<std::pair<WebCore::ProcessIdentifier, WebCore::PageIdentifier>> m_lastCaptureEnvironment;
+    Vector<Ref<SandboxExtension>> m_capturePreviewSandboxExtensions;
     const RefPtr<WorkQueue> m_videoMediaStreamTrackRendererQueue;
 #endif
     WebCore::IntDegrees m_orientation { 0 };

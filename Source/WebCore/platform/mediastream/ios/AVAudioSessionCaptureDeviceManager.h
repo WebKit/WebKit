@@ -60,7 +60,7 @@ public:
     void enableAllDevicesQuery();
     void disableAllDevicesQuery();
 
-    void setPreferredMicrophoneID(const String&);
+    WEBCORE_EXPORT void setPreferredMicrophoneID(const String&);
     const String& preferredMicrophoneID() const LIFETIME_BOUND { return m_preferredMicrophoneID; }
     void configurePreferredMicrophone();
 

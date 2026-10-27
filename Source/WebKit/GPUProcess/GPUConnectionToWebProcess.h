@@ -204,6 +204,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void setOrientationForMediaCapture(WebCore::IntDegrees);
+    void reapplyCaptureEnvironment(WebCore::PageIdentifier);
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
     void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
     void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
@@ -221,10 +222,6 @@ public:
     void startCapturingAudio();
     void processIsStartingToCaptureAudio(GPUConnectionToWebProcess&);
     bool isLastToCaptureAudio() const { return m_isLastToCaptureAudio; }
-#endif
-
-#if ENABLE(APP_PRIVACY_REPORT)
-    void setTCCIdentity();
 #endif
 
     const WebCore::ProcessIdentity& webProcessIdentity() const LIFETIME_BOUND { return m_webProcessIdentity; }

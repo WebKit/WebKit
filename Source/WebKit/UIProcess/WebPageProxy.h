@@ -759,6 +759,7 @@ enum class ProcessTerminationReason : uint8_t;
 enum class ProcessThrottlerActivityType : bool;
 enum class QuickLookPreviewActivity : uint8_t;
 enum class RespectSelectionAnchor : bool;
+enum class RotationMonitoringReason : uint8_t;
 enum class SOAuthorizationLoadPolicy : bool;
 enum class SameDocumentNavigationType : uint8_t;
 enum class SelectionExtentAnchor : bool;
@@ -2561,8 +2562,9 @@ public:
 #if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabledOverride(std::optional<bool>);
     void willStartCapture(UserMediaPermissionRequestProxy&, CompletionHandler<void()>&&);
-    void LEGACY_NODELETE startMonitoringCaptureDeviceRotation(const String&);
-    void LEGACY_NODELETE stopMonitoringCaptureDeviceRotation(const String&);
+    void LEGACY_NODELETE startMonitoringCaptureDeviceRotation(const String&, RotationMonitoringReason);
+    void LEGACY_NODELETE stopMonitoringCaptureDeviceRotation(const String&, RotationMonitoringReason);
+    void stopMonitoringCaptureDeviceRotationForCapturePreview();
     void LEGACY_NODELETE rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
     void microphoneMuteStatusChanged(bool isMuting);
 #if PLATFORM(COCOA)

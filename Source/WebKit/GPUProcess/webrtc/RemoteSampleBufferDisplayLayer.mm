@@ -30,6 +30,7 @@
 
 #import "GPUConnectionToWebProcess.h"
 #import "IPCUtilities.h"
+#import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "RemoteVideoFrameObjectHeap.h"
 #import "SampleBufferDisplayLayerMessages.h"

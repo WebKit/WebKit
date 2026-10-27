@@ -27,6 +27,7 @@
 #import "UserMediaPermissionRequestManagerProxy.h"
 
 #import "MediaPermissionUtilities.h"
+#import "RotationMonitoringReason.h"
 #import "SandboxUtilities.h"
 #import "WKWebView.h"
 #import "WebPageProxy.h"
@@ -65,13 +66,16 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
 @interface WKRotationCoordinatorObserver : NSObject {
     WeakPtr<WebKit::UserMediaPermissionRequestManagerProxy> _managerProxy;
     HashMap<String, RetainPtr<AVCaptureDeviceRotationCoordinator>> m_coordinators;
+    HashSet<String> m_monitoredForCapture;
+    HashSet<String> m_monitoredForCapturePreview;
 }
 
 -(id)initWithRequestManagerProxy:(WeakPtr<WebKit::UserMediaPermissionRequestManagerProxy>&&)managerProxy;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context;
 -(bool)isMonitoringCaptureDeviceRotation:(const String&)persistentId;
--(std::optional<WebCore::VideoFrameRotation>)start:(const String&)persistentId layer:(CALayer*)layer;
--(void)stop:(const String&)persistentId;
+-(std::optional<WebCore::VideoFrameRotation>)start:(const String&)persistentId layer:(CALayer*)layer reason:(WebKit::RotationMonitoringReason)reason;
+-(void)stop:(const String&)persistentId reason:(WebKit::RotationMonitoringReason)reason;
+-(void)stopAllForCapturePreview;
 @end
 
 @implementation WKRotationCoordinatorObserver
@@ -106,7 +110,7 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
     return m_coordinators.contains(persistentId);
 }
 
--(std::optional<WebCore::VideoFrameRotation>)start:(const String&)persistentId layer:(CALayer*)layer {
+-(std::optional<WebCore::VideoFrameRotation>)start:(const String&)persistentId layer:(CALayer*)layer reason:(WebKit::RotationMonitoringReason)reason {
     auto iterator = m_coordinators.add(persistentId, RetainPtr<AVCaptureDeviceRotationCoordinator> { }).iterator;
     if (!iterator->value) {
         if (!PAL::getAVCaptureDeviceRotationCoordinatorClassSingleton())
@@ -122,12 +126,22 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
         iterator->value = WTF::move(coordinator);
     }
 
+    (reason == WebKit::RotationMonitoringReason::CapturePreview ? m_monitoredForCapturePreview : m_monitoredForCapture).add(persistentId);
     return computeVideoFrameRotation((clampTo<int>([iterator->value videoRotationAngleForHorizonLevelPreview])));
 }
 
--(void)stop:(const String&)persistentId {
+-(void)stop:(const String&)persistentId reason:(WebKit::RotationMonitoringReason)reason {
+    (reason == WebKit::RotationMonitoringReason::CapturePreview ? m_monitoredForCapturePreview : m_monitoredForCapture).remove(persistentId);
+    if (m_monitoredForCapture.contains(persistentId) || m_monitoredForCapturePreview.contains(persistentId))
+        return;
+
     if (auto coordinator = m_coordinators.take(persistentId))
         [coordinator removeObserver:self forKeyPath:@"videoRotationAngleForHorizonLevelPreview"];
+}
+
+-(void)stopAllForCapturePreview {
+    for (auto& persistentId : copyToVector(m_monitoredForCapturePreview))
+        [self stop:persistentId reason:WebKit::RotationMonitoringReason::CapturePreview];
 }
 
 @end
@@ -203,7 +217,7 @@ bool UserMediaPermissionRequestManagerProxy::isMonitoringCaptureDeviceRotation(c
     return [m_objcObserver isMonitoringCaptureDeviceRotation:persistentId];
 }
 
-void UserMediaPermissionRequestManagerProxy::startMonitoringCaptureDeviceRotation(const String& persistentId)
+void UserMediaPermissionRequestManagerProxy::startMonitoringCaptureDeviceRotation(const String& persistentId, RotationMonitoringReason reason)
 {
     RefPtr page = this->page();
     if (!page)
@@ -219,13 +233,18 @@ void UserMediaPermissionRequestManagerProxy::startMonitoringCaptureDeviceRotatio
     if (!m_objcObserver)
         lazyInitialize(m_objcObserver, adoptNS([[WKRotationCoordinatorObserver alloc] initWithRequestManagerProxy:*this]));
 
-    if (auto currentRotation = [m_objcObserver start:persistentId layer:layer])
+    if (auto currentRotation = [m_objcObserver start:persistentId layer:layer reason:reason])
         rotationAngleForCaptureDeviceChanged(persistentId, *currentRotation);
 }
 
-void UserMediaPermissionRequestManagerProxy::stopMonitoringCaptureDeviceRotation(const String& persistentId)
+void UserMediaPermissionRequestManagerProxy::stopMonitoringCaptureDeviceRotation(const String& persistentId, RotationMonitoringReason reason)
 {
-    [m_objcObserver stop:persistentId];
+    [m_objcObserver stop:persistentId reason:reason];
+}
+
+void UserMediaPermissionRequestManagerProxy::stopMonitoringCaptureDeviceRotationForCapturePreview()
+{
+    [m_objcObserver stopAllForCapturePreview];
 }
 
 void UserMediaPermissionRequestManagerProxy::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)

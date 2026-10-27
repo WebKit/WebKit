@@ -57,6 +57,7 @@ namespace WebCore {
 class CaptureDevice;
 class SecurityOriginData;
 
+struct HostingContext;
 struct MockMediaDevice;
 struct ScreenProperties;
 
@@ -72,6 +73,7 @@ void enableMetalShaderValidationInNextGPUProcessForTesting();
 #endif
 
 enum class ProcessTerminationReason : uint8_t;
+enum class RotationMonitoringReason : uint8_t;
 
 class SandboxExtensionHandle;
 class WebPageProxy;
@@ -108,8 +110,14 @@ public:
     void enableMicrophoneMuteStatusAPI();
     void setOrientationForMediaCapture(WebCore::IntDegrees);
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
-    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
-    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
+#if PLATFORM(COCOA)
+    void startCapturePreview(std::optional<WebCore::CaptureDevice>&&, std::optional<WebCore::CaptureDevice>&&, WebCore::PageIdentifier, WebCore::IntSize previewSize, WebCore::IntDegrees orientation, const WebCore::SecurityOriginData&, CompletionHandler<void(WebCore::HostingContext)>&&);
+    void stopCapturePreview(WebCore::PageIdentifier, CompletionHandler<void()>&&);
+    void setCapturePreviewAudioLevelHandler(WebCore::PageIdentifier pageIdentifier, Function<void(float)>&& handler) { m_capturePreviewAudioLevelHandlers.set(pageIdentifier, WTF::move(handler)); }
+    void capturePreviewAudioLevelChanged(WebCore::PageIdentifier, float);
+#endif
+    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&, RotationMonitoringReason);
+    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&, RotationMonitoringReason);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation, WebCore::ProcessIdentifier, WebPageProxyIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
@@ -277,6 +285,18 @@ private:
 #endif
 #if PLATFORM(COCOA)
     bool m_hasSentTCCDSandboxExtension { false };
+
+#if ENABLE(MEDIA_STREAM)
+    HashMap<WebCore::PageIdentifier, Function<void(float)>> m_capturePreviewAudioLevelHandlers;
+
+    struct CapturePreviewSandboxAccess {
+        WebCore::PageIdentifier page;
+        bool camera { false };
+        bool microphone { false };
+        bool tccd { false };
+    };
+    std::optional<CapturePreviewSandboxAccess> m_capturePreviewSandboxAccess;
+#endif
     bool m_hasSentCameraSandboxExtension { false };
     bool m_hasSentMicrophoneSandboxExtension { false };
     bool m_hasSentDisplayCaptureSandboxExtension { false };

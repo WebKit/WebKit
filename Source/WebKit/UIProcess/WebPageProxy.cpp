@@ -16980,24 +16980,31 @@ void WebPageProxy::voiceActivityDetected()
     send(Messages::WebPage::VoiceActivityDetected { });
 }
 
-void WebPageProxy::startMonitoringCaptureDeviceRotation(const String& persistentId)
+void WebPageProxy::startMonitoringCaptureDeviceRotation(const String& persistentId, RotationMonitoringReason reason)
 {
 #if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
     if (!m_preferences->useAVCaptureDeviceRotationCoordinatorAPI())
         return;
 
-    userMediaPermissionRequestManager().startMonitoringCaptureDeviceRotation(persistentId);
+    userMediaPermissionRequestManager().startMonitoringCaptureDeviceRotation(persistentId, reason);
 #endif // HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
 }
 
-void WebPageProxy::stopMonitoringCaptureDeviceRotation(const String& persistentId)
+void WebPageProxy::stopMonitoringCaptureDeviceRotation(const String& persistentId, RotationMonitoringReason reason)
 {
 #if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
     if (!m_preferences->useAVCaptureDeviceRotationCoordinatorAPI())
         return;
 
-    userMediaPermissionRequestManager().stopMonitoringCaptureDeviceRotation(persistentId);
+    userMediaPermissionRequestManager().stopMonitoringCaptureDeviceRotation(persistentId, reason);
 #endif // HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+}
+
+void WebPageProxy::stopMonitoringCaptureDeviceRotationForCapturePreview()
+{
+#if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+    userMediaPermissionRequestManager().stopMonitoringCaptureDeviceRotationForCapturePreview();
+#endif
 }
 
 void WebPageProxy::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)

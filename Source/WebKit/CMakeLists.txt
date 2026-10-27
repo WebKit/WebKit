@@ -551,6 +551,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/RemoteWorkerType.serialization.in
     Shared/ResourceLoadInfo.serialization.in
     Shared/ResourceLoadStatisticsParameters.serialization.in
+    Shared/RotationMonitoringReason.serialization.in
     Shared/RunJavaScriptParameters.serialization.in
     Shared/SameDocumentNavigationType.serialization.in
     Shared/SandboxExtension.serialization.in
