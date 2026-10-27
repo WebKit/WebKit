@@ -2785,6 +2785,37 @@ No pre-PR checks to run""")
         self.assertNotIn('myuser', captured.stderr.getvalue())
         self.assertNotIn('mysecret', captured.stderr.getvalue())
 
+    def test_unresponsive_server(self):
+        timeout = bugzilla.requests.exceptions.ReadTimeout(
+            "HTTPSConnectionPool(host='bugs.example.com', port=443): Read timed out. (read timeout=30)",
+            request=bugzilla.requests.Request('GET', 'https://bugs.example.com/rest/bug/1?login=myuser&password=mysecret').prepare(),
+        )
+        with OutputCapture(level=logging.INFO) as captured, \
+             mocks.local.Git(self.path), \
+             patch('webkitbugspy.Tracker._trackers', []), \
+             patch('webkitscmpy.program.pull_request.PullRequest.main', side_effect=timeout):
+            self.assertEqual(-1, program.main(
+                args=('pull-request',),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "Network request to 'bugs.example.com' failed: timed out waiting for a response\n"
+            'The server may be unresponsive or unreachable, please try again later.\n',
+        )
+        self.assertNotIn('Traceback', captured.root.log.getvalue())
+
+        with OutputCapture(level=logging.INFO) as captured, \
+             mocks.local.Git(self.path), \
+             patch('webkitbugspy.Tracker._trackers', []), \
+             patch('webkitscmpy.program.pull_request.PullRequest.main', side_effect=timeout):
+            self.assertEqual(-1, program.main(
+                args=('pull-request', '-v'),
+                path=self.path,
+            ))
+        self.assertIn('Traceback', captured.root.log.getvalue())
+        self.assertNotIn('mysecret', captured.root.log.getvalue())
+
 class TestNetworkPullRequestGitHub(unittest.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
 

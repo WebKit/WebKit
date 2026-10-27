@@ -109,6 +109,34 @@ class TestBugzilla(unittest.TestCase):
             self.assertTrue(request.call_args_list)
             self.assertEqual({call.kwargs.get('timeout') for call in request.call_args_list}, {5})
 
+    def test_references_timeout(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES) as mock, OutputCapture() as captured:
+            def request(method, url, *args, **kwargs):
+                if 'include_fields=see_also' in url:
+                    raise bugzilla.requests.exceptions.ReadTimeout('Read timed out. (read timeout=30)')
+                return mocks.Bugzilla.request(mock, method, url, *args, **kwargs)
+
+            with patch.object(mock, 'request', side_effect=request):
+                tracker = bugzilla.Tracker(self.URL)
+                self.assertEqual(tracker.issue(1).references, [])
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "Request to 'https://bugs.example.com' failed: timed out waiting for a response\n"
+            "Failed to fetch related issues for 'https://bugs.example.com/show_bug.cgi?id=1'\n",
+        )
+
+    def test_title_unreachable(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES) as mock, OutputCapture() as captured:
+            with patch.object(mock, 'request', side_effect=bugzilla.requests.exceptions.ConnectionError('Max retries exceeded')):
+                self.assertIsNone(bugzilla.Tracker(self.URL).issue(1).title)
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "Request to 'https://bugs.example.com' failed: could not connect\n"
+            "Failed to fetch 'https://bugs.example.com/show_bug.cgi?id=1'\n",
+        )
+
     def test_no_users(self):
         with mocks.Bugzilla(self.URL.split('://')[1]):
             self.assertEqual(
