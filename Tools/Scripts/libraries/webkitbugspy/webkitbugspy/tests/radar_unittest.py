@@ -706,6 +706,18 @@ What version of 'WebKit Text' should the bug be associated with?:
                     'Repo2, merged, 604395a516c13cff80d4b0400e43a4c322dbb32f',
                 ])
 
+    def test_source_changes_same_issue(self):
+        with mocks.Radar(issues=mocks.ISSUES):
+            issue = radar.Tracker().issue(1)
+            self.assertIsNotNone(issue.add_source_change('Repo1, merge, a4daad5b9fbd26d557088037f54dc0935a437182'))
+            self.assertIsNotNone(issue.add_source_change('Repo1, merge, 604395a516c13cff80d4b0400e43a4c322dbb32f'))
+
+            self.assertEqual(
+                radar.Tracker().issue(1).source_changes, [
+                    'Repo1, merge, a4daad5b9fbd26d557088037f54dc0935a437182',
+                    'Repo1, merge, 604395a516c13cff80d4b0400e43a4c322dbb32f',
+                ])
+
     def test_related_links(self):
         with OutputCapture() as captured, mocks.Radar(issues=mocks.ISSUES):
             tracker = radar.Tracker()

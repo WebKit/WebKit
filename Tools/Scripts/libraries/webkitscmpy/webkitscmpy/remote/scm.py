@@ -148,3 +148,6 @@ class Scm(ScmBase):
 
     def checkout_url(self, ssh: bool = False, http: bool = False) -> str:
         raise NotImplementedError()
+
+    def commit_url(self, hash: str) -> str | None:
+        return None

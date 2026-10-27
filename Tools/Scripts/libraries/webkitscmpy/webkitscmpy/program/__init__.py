@@ -53,6 +53,7 @@ from .install_git_lfs import InstallGitLFS
 from .install_hooks import InstallHooks
 from .land import Land
 from .log import Log
+from .mark_fixed import MarkFixed
 from .pull import Pull
 from .pull_request import PullRequest
 from .revert import Revert
@@ -115,7 +116,7 @@ def main(
 
     programs = [
         Apply, Blame, Branch, Canonicalize, Checkout,
-        Clean, Clone, Conflict, CreateBug, Diff, Find, Info, Land, Log, Pull,
+        Clean, Clone, Conflict, CreateBug, Diff, Find, Info, Land, Log, MarkFixed, Pull,
         PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, TrackerMetadata, Show, Publish,
