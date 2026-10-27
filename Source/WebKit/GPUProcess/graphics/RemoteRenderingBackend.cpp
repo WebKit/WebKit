@@ -140,9 +140,12 @@ void RemoteRenderingBackend::startListeningForIPC()
 
 void RemoteRenderingBackend::stopListeningForIPC()
 {
-    m_workQueue->stopAndWaitForCompletion([protectedThis = Ref { *this }] {
+    // The stream connection is invalidated before the work queue stops, so that its connection
+    // dispatches nothing to the stopped work queue when the web process closes it.
+    dispatch([protectedThis = Ref { *this }] {
         protectedThis->workQueueUninitialize();
     });
+    m_workQueue->stopAndWaitForCompletion();
 }
 
 std::optional<SharedPreferencesForWebProcess> RemoteRenderingBackend::sharedPreferencesForWebProcess() const

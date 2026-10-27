@@ -97,6 +97,9 @@ Instance::~Instance()
 
 void Instance::destroy()
 {
+    // The work scheduled from now on is dropped. This also releases the schedule function, which
+    // can hold the owner of the instance.
+    m_workScheduler->close();
     // The instance keeps the devices and the command buffers alive while their Metal command
     // buffers are in flight. Release them on this thread, rather than on whichever thread happens
     // to release the instance last.

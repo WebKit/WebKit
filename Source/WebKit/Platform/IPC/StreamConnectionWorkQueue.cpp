@@ -48,10 +48,12 @@ void StreamConnectionWorkQueue::dispatch(WTF::Function<void()>&& function)
 {
     {
         Locker locker { m_lock };
-        // Work dispatched while the work queue is stopping still runs. Work dispatched after it
-        // has stopped is dropped.
-        if (m_isStopped)
+        // Work dispatched while the work queue is stopping still runs. Work must not be dispatched
+        // after it has stopped, including by the cleanup function.
+        if (m_isStopped) {
+            ASSERT_NOT_REACHED();
             return;
+        }
         m_functions.append(WTF::move(function));
         if (!m_processingThread) {
             startProcessingThread();

@@ -1500,7 +1500,7 @@ public:
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
     // Called on the thread that the instance calls back on, once every device has been destroyed.
-    // The instance releases the objects it keeps alive.
+    // The instance schedules no more work, and releases the objects it keeps alive.
     virtual void destroy() = 0;
 
 protected:
