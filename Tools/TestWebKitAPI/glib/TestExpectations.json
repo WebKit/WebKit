@@ -469,7 +469,7 @@
     },
     "TestMultiprocess": {
         "subtests": {
-            "/webkit/WebKitWebContext/sandbox-rejected-prewarmed-process": {
+            "/webkit/WebKitWebContext/sandboxed-prewarmed-process": {
                 "expected": {"all": {"slow": true}}
             },
             "/webkit/WebKitWebContext/process-per-web-view": {

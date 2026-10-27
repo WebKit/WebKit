@@ -254,6 +254,7 @@ public:
     void disableRemoteWorkers(OptionSet<RemoteWorkerType>);
 
     WebsiteDataStore* websiteDataStore() const { ASSERT(m_websiteDataStore); return m_websiteDataStore.get(); }
+    bool hasWebsiteDataStore() const { return !!m_websiteDataStore; }
     void setWebsiteDataStore(WebsiteDataStore&);
     
     PAL::SessionID NODELETE sessionID() const;

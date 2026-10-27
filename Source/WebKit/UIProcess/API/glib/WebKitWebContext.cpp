@@ -2029,9 +2029,9 @@ void webkitWebContextSetSandboxEnabledForTesting(WebKitWebContext* context, bool
     pool->setSandboxEnabledForTesting(enabled);
 }
 
-void webkitWebContextPrewarmProcessForTesting(WebKitWebContext* context)
+void webkitWebContextPrewarmProcessForTesting(WebKitWebContext* context, WebKitWebView* webView)
 {
-    context->priv->processPool->prewarmProcess();
+    context->priv->processPool->prewarmProcess(&webkitWebViewGetPage(webView).websiteDataStore());
 }
 
 unsigned webkitWebContextGetPrewarmedProcessCountForTesting(WebKitWebContext* context)

@@ -333,7 +333,7 @@ public:
     Ref<WebProcessProxy> processForSite(WebsiteDataStore&, WebProcessProxy::IsolatedProcessType, const std::optional<WebCore::Site>&, const std::optional<WebCore::Site>& mainFrameSite, const HashSet<WebCore::RegistrableDomain>& isolatedDomains,
         WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&, WebCore::ProcessSwapDisposition); // Will return an existing one if limit is met or due to caching.
 
-    void prewarmProcess();
+    void prewarmProcess(WebsiteDataStore* = nullptr);
 
     bool NODELETE shouldTerminate(WebProcessProxy&);
 
@@ -484,7 +484,7 @@ public:
 
     void processForNavigation(WebPageProxy&, WebFrameProxy&, const API::Navigation&, const URL& sourceURL, BrowsingContextGroup&, WebProcessProxy::IsolatedProcessType, const WebCore::Site& mainFrameSite, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, EnhancedSecurity, LoadedWebArchive, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&);
 
-    void didReachGoodTimeToPrewarm();
+    void didReachGoodTimeToPrewarm(WebsiteDataStore*);
 
     void didCollectPrewarmInformation(const WebCore::RegistrableDomain&, const WebCore::PrewarmInformation&);
 
@@ -648,6 +648,7 @@ private:
     void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, WebProcessProxy::IsolatedProcessType, const WebCore::Site&, const WebCore::Site& mainFrameSite, const API::Navigation&, WebProcessProxy::LockdownMode, EnhancedSecurity, LoadedWebArchive, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
+    void shutDownPrewarmedProcessesForWebsiteDataStore(WebsiteDataStore&);
 
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, JSCOptionsForWebProcess = { });
 
