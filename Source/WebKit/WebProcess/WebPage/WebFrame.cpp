@@ -1885,8 +1885,10 @@ void WebFrame::takeSnapshotOfNode(JSHandleIdentifier identifier, CompletionHandl
         return completion({ });
 
     RefPtr<ShareableBitmap> bitmap;
-    if (RefPtr node = nodeFromJSHandleIdentifier(identifier))
+    if (RefPtr node = nodeFromJSHandleIdentifier(identifier)) {
+        protect(node->document())->updateLayoutIgnorePendingStylesheets();
         bitmap = page->shareableBitmapForNodeIncludingOffscreen(*node);
+    }
 #if ENABLE(OFFSCREEN_CANVAS)
     else if (RefPtr offscreenCanvas = offscreenCanvasFromJSHandleIdentifier(identifier))
         bitmap = shareableBitmapFromOffscreenCanvas(*offscreenCanvas);

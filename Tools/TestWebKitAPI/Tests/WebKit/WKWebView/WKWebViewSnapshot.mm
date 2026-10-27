@@ -29,6 +29,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebCore/Color.h>
@@ -890,6 +891,42 @@ TEST(WKWebView, SnapshotNodeIncludingOffscreen)
         EXPECT_TRUE(reader.isTransparentBlack(2, 2));
         EXPECT_FALSE(reader.isTransparentBlack(reader.width() / 2, reader.height() / 2));
     }
+}
+
+TEST(WKWebView, SnapshotNodeWithPendingStylesheet)
+{
+    HTTPServer server { {
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<link rel='stylesheet' href='/stalled.css'><div id='box' style='width: 50px; height: 50px; background-color: rgb(255, 0, 0)'></div>"_s } },
+        { "/stalled.css"_s, { HTTPResponse::Behavior::NeverSendResponse } },
+    } };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    __block bool didCommit = false;
+    [navigationDelegate setDidCommitNavigation:^(WKWebView *, WKNavigation *) {
+        didCommit = true;
+    }];
+
+    [webView loadRequest:server.request()];
+    Util::run(&didCommit);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"document.getElementById('box') ? 'found' : 'missing'"] isEqualToString:@"found"];
+    }));
+
+    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+    [worldConfiguration setAllowJSHandleCreation:YES];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+    RetainPtr handle = [webView querySelector:@"#box" frame:nil world:world.get()];
+
+    auto [image, error] = [webView takeSnapshotOfNode:handle.get()];
+    EXPECT_NULL(error);
+    ASSERT_NOT_NULL(image.get());
+    EXPECT_EQ(50, image.get().size.width);
+    EXPECT_EQ(50, image.get().size.height);
 }
 
 TEST(WKWebView, SnapshotNodeWithTransform)
