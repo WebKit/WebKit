@@ -5818,6 +5818,7 @@ bool Document::shouldUseTextScaleFactor() const
 #if HAVE(TEXT_SCALE_FACTOR)
     return textScaleMeta() == TextScaleMeta::Scale
         && settings().contentSizeCategoryTextScaleEnabled()
+        && !advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections)
         && WebCore::textScaleFactor().has_value();
 #else
     return false;
