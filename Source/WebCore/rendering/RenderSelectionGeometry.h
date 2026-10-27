@@ -60,10 +60,12 @@ public:
     void repaint();
     const Vector<FloatQuad>& collectedSelectionQuads() const LIFETIME_BOUND { return m_collectedSelectionQuads; }
     LayoutRect rect() const { return m_rect; }
+    LayoutRect repaintRect() const { return m_repaintRect; }
 
 private:
     Vector<FloatQuad> m_collectedSelectionQuads; // relative to repaint container
     LayoutRect m_rect; // relative to repaint container
+    LayoutRect m_repaintRect; // relative to repaint container; covers everything painted, which can be larger than m_rect
 };
 
 

@@ -57,6 +57,9 @@ public:
     float contentLogicalTopAdjustedForPrecedingLineBox() const;
     float contentLogicalBottomAdjustedForFollowingLineBox() const;
 
+    float selectionPaintLogicalTop() const;
+    float selectionPaintLogicalBottom() const;
+
     float inkOverflowLogicalTop() const;
     float inkOverflowLogicalBottom() const;
     float scrollableOverflowTop() const;
@@ -268,6 +271,36 @@ inline float LineBox::contentLogicalBottomAdjustedForFollowingLineBox() const
     if (followingLineBox.hasBlockContent())
         return contentLogicalBottom();
     return followingLineBox.contentLogicalTop();
+}
+
+// The painted selection covers the line box, and the content area where that is larger.
+inline float LineBox::selectionPaintLogicalTop() const
+{
+    auto top = std::min(logicalTop(), contentLogicalTop());
+    if (formattingContextRoot().writingMode().isLineInverted() || !m_lineIndex)
+        return top;
+    for (auto precedingLineIndex = m_lineIndex; precedingLineIndex--;) {
+        auto precedingLineBox = LineBox { *m_inlineContent, precedingLineIndex };
+        if (!precedingLineBox.hasContentfulInFlowBox())
+            continue;
+        if (precedingLineBox.hasBlockContent())
+            break;
+        if (precedingLineBox.logicalBottom() < logicalTop())
+            break;
+        return std::max(top, precedingLineBox.selectionPaintLogicalBottom());
+    }
+    return top;
+}
+
+inline float LineBox::selectionPaintLogicalBottom() const
+{
+    auto bottom = std::max(logicalBottom(), contentLogicalBottom());
+    if (!formattingContextRoot().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
+        return bottom;
+    auto followingLineBox = LineBox { *m_inlineContent, m_lineIndex + 1 };
+    if (followingLineBox.hasBlockContent())
+        return bottom;
+    return std::min(bottom, followingLineBox.selectionPaintLogicalTop());
 }
 
 inline float LineBox::logicalTop() const

@@ -366,7 +366,7 @@ static LayoutRect LEGACY_NODELETE snappedSelectionRect(const LayoutRect& selecti
     };
 }
 
-static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox, unsigned rangeStart, unsigned rangeEnd)
+static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox, unsigned rangeStart, unsigned rangeEnd, bool painted = false)
 {
     if (auto* svgTextBox = dynamicDowncast<InlineIterator::SVGTextBox>(textBox))
         return svgTextBox->localSelectionRect(rangeStart, rangeEnd);
@@ -398,7 +398,7 @@ static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox
         }
     }
 
-    auto lineSelectionRect = LineSelection::logicalRect(textBox.lineBox());
+    auto lineSelectionRect = painted ? LineSelection::paintedLogicalRect(textBox.lineBox()) : LineSelection::logicalRect(textBox.lineBox());
     auto selectionRect = LayoutRect { 0, lineSelectionRect.y(), textBox.logicalWidth(), lineSelectionRect.height() };
 
     auto textRun = textBox.textRun();
@@ -2066,7 +2066,7 @@ auto RenderText::localRectsForRepaint(RepaintOutlineBounds) const -> RepaintRect
     return RepaintRects { overflowRect };
 }
 
-LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>* quads)
+LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>* quads, bool painted)
 {
     ASSERT(!needsLayout());
 
@@ -2099,7 +2099,7 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
 
     for (auto& textBox : InlineIterator::textBoxesFor(*this)) {
         LayoutRect rect;
-        rect.unite(selectionRectForTextBox(textBox, startOffset, endOffset));
+        rect.unite(selectionRectForTextBox(textBox, startOffset, endOffset, painted));
         rect.unite(ellipsisRectForTextBox(textBox, startOffset, endOffset).value_or(IntRect { }));
         if (rect.isEmpty())
             continue;
@@ -2126,6 +2126,11 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
 LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
 {
     return collectSelectionGeometriesForLineBoxes(repaintContainer, clipToVisibleContent, nullptr);
+}
+
+LayoutRect RenderText::paintedSelectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
+{
+    return collectSelectionGeometriesForLineBoxes(repaintContainer, clipToVisibleContent, nullptr, true);
 }
 
 int RenderText::caretMinOffset() const

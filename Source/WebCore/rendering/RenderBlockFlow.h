@@ -389,7 +389,7 @@ public:
     
     inline LayoutUnit endPaddingWidthForCaret() const;
 
-    LayoutUnit adjustEnclosingTopForPrecedingBlock(LayoutUnit top) const;
+    LayoutUnit adjustEnclosingTopForPrecedingBlock(LayoutUnit top, bool painted = false) const;
 
     std::optional<LayoutUnit> LEGACY_NODELETE lowestInitialLetterLogicalBottom() const;
 

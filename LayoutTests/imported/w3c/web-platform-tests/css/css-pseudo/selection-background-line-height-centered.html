@@ -1,0 +1,40 @@
+<!doctype html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>CSS Pseudo-Elements Test: ::selection background on a wrapped line with line-height larger than the font covers that line's own line box</title>
+<link rel="help" href="https://www.w3.org/TR/css-pseudo-4/#highlight-bounds">
+<link rel="match" href="selection-background-line-height-centered-ref.html">
+<meta name="assert" content="With line-height (27px) larger than the content area (15px), the ::selection background of text on the second line fills that line's line box (half-leading above and below the glyphs), not a band shifted up by one half-leading.">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+  body { margin: 0; }
+  #target {
+    position: absolute;
+    left: 40px;
+    top: 40px;
+    width: 150px;
+    margin: 0;
+    font: 15px/27px Ahem;
+    color: transparent;
+  }
+  /* Non-opaque on purpose: some engines lighten opaque ::selection colours. */
+  #target::selection {
+    background-color: rgba(0, 0, 255, 0.5);
+    color: transparent;
+  }
+</style>
+<p id="target">XXXX XXXX XXXX</p>
+<script>
+  document.fonts.ready.then(() => {
+    const text = document.getElementById("target").firstChild;
+    const range = document.createRange();
+    // Select the whole second line ("XXXX", characters 10..14).
+    range.setStart(text, 10);
+    range.setEnd(text, 14);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.documentElement.classList.remove("reftest-wait");
+  });
+</script>
+</html>

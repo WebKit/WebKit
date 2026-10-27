@@ -1,0 +1,9 @@
+<style>
+    body { margin: 0; width: 64px; font: 16px/40px Ahem; color: transparent; }
+    div::selection { background-color: rgba(0, 0, 255, .5); }
+</style>
+<div id="start">XXXX</div>
+<div id="end" style="margin-top: -10px;">XXXX</div>
+<script>
+    getSelection().setBaseAndExtent(document.getElementById("start").firstChild, 0, document.getElementById("end").firstChild, 4);
+</script>

@@ -135,6 +135,7 @@ public:
     bool canBeSelectionLeaf() const override { return true; }
 
     LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>&);
+    LayoutRect paintedSelectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent);
 
     int caretMinOffset() const final;
     int caretMaxOffset() const final;
@@ -220,7 +221,7 @@ private:
 
     void secureText(char16_t mask);
 
-    LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>*);
+    LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>*, bool painted = false);
 
     void node() const = delete;
     void container() const = delete; // Use parent() instead.

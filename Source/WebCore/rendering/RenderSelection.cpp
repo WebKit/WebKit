@@ -294,7 +294,7 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
         CheckedRef renderer = selectedRendererInfo.key;
         auto* newInfo = newSelectedRenderers.get(renderer.get());
         auto* oldInfo = selectedRendererInfo.value.get();
-        if (!newInfo || oldInfo->rect() != newInfo->rect() || oldInfo->state() != newInfo->state()
+        if (!newInfo || oldInfo->rect() != newInfo->rect() || oldInfo->repaintRect() != newInfo->repaintRect() || oldInfo->state() != newInfo->state()
             || (m_renderRange.start() == renderer.ptr() && oldSelectionData.startOffset != m_renderRange.startOffset())
             || (m_renderRange.end() == renderer.ptr() && oldSelectionData.endOffset != m_renderRange.endOffset())) {
             oldInfo->repaint();

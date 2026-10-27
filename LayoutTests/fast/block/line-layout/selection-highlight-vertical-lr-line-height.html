@@ -1,0 +1,9 @@
+<style>
+    body { margin: 0; }
+    #target { position: absolute; left: 0; top: 0; width: 80px; height: 64px; writing-mode: vertical-lr; font: 16px/40px Ahem; color: transparent; }
+    #target::selection { background-color: rgba(0, 0, 255, .5); }
+</style>
+<div id="target">XXXX XXXX</div>
+<script>
+    getSelection().selectAllChildren(document.getElementById("target"));
+</script>

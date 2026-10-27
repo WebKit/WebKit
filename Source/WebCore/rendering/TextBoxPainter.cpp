@@ -612,8 +612,8 @@ LayoutRect TextBoxPainter::selectionRectForRange(unsigned startOffset, unsigned 
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
     auto lineBox = makeIterator()->lineBox();
-    auto selectionBottom = LineSelection::logicalBottom(lineBox);
-    auto selectionTop = LineSelection::logicalTopAdjustedForPrecedingBlock(lineBox);
+    auto selectionBottom = LineSelection::paintedLogicalBottom(lineBox);
+    auto selectionTop = LineSelection::paintedLogicalTopAdjustedForPrecedingBlock(lineBox);
     // Use same y positioning and height as for selection, so that when the selection and this subrange are on
     // the same word there are no pieces sticking out.
     auto deltaY = LayoutUnit { writingMode().isLineInverted() ? selectionBottom - m_logicalRect.maxY() : m_logicalRect.y() - selectionTop };

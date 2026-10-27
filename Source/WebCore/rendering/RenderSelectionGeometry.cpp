@@ -52,16 +52,19 @@ RenderSelectionGeometry::RenderSelectionGeometry(RenderObject& renderer, bool cl
     : RenderSelectionGeometryBase(renderer)
 {
     if (renderer.canUpdateSelectionOnRootLineBoxes()) {
-        if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(renderer))
+        if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(renderer)) {
             m_rect = textRenderer->collectSelectionGeometriesForLineBoxes(m_repaintContainer, clipToVisibleContent, m_collectedSelectionQuads);
-        else
+            m_repaintRect = textRenderer->paintedSelectionRectForRepaint(m_repaintContainer, clipToVisibleContent);
+        } else {
             m_rect = renderer.selectionRectForRepaint(m_repaintContainer, clipToVisibleContent);
+            m_repaintRect = m_rect;
+        }
     }
 }
 
 void RenderSelectionGeometry::repaint()
 {
-    repaintRectangle(m_rect);
+    repaintRectangle(m_repaintRect);
 }
 
 RenderBlockSelectionGeometry::RenderBlockSelectionGeometry(RenderBlock& renderer)

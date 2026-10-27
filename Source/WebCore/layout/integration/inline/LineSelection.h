@@ -58,6 +58,19 @@ public:
         return protect(lineBox.formattingContextRoot())->adjustEnclosingTopForPrecedingBlock(LayoutUnit { lineBox.contentLogicalTopAdjustedForPrecedingLineBox() });
     }
 
+    static float paintedLogicalTopAdjustedForPrecedingBlock(const InlineIterator::LineBox& lineBox)
+    {
+        if (auto blockLevelBox = lineBox.blockLevelBox())
+            return blockLevelBox->logicalTop();
+        return protect(lineBox.formattingContextRoot())->adjustEnclosingTopForPrecedingBlock(LayoutUnit { lineBox.selectionPaintLogicalTop() }, true);
+    }
+    static float paintedLogicalBottom(const InlineIterator::LineBox& lineBox) { return lineBox.selectionPaintLogicalBottom(); }
+
+    static FloatRect paintedLogicalRect(const InlineIterator::LineBox& lineBox)
+    {
+        return { FloatPoint { lineBox.contentLogicalLeft(), paintedLogicalTopAdjustedForPrecedingBlock(lineBox) }, FloatPoint { lineBox.contentLogicalRight(), paintedLogicalBottom(lineBox) } };
+    }
+
     static RenderObject::HighlightState selectionState(const InlineIterator::LineBox& lineBox)
     {
         CheckedRef root = lineBox.formattingContextRoot();
