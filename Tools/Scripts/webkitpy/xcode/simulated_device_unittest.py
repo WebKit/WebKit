@@ -23,6 +23,7 @@
 import json
 import plistlib
 import unittest
+from unittest import mock
 
 from webkitcorepy import Version
 
@@ -619,6 +620,17 @@ class SimulatedDeviceTest(unittest.TestCase):
         SimulatedDeviceManager.tear_down(host)
         self.assertIsNone(SimulatedDeviceManager.INITIALIZED_DEVICES)
 
+    def test_simulator_ui_is_launched_with_every_device_in_use(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        with mock.patch.object(SimulatedDeviceManager, '_launch_simulator_ui') as launch_simulator_ui:
+            SimulatedDeviceManager.initialize_devices(DeviceRequest(DeviceType.from_string('iPhone', Version(11))), host=host)
+
+        launch_simulator_ui.assert_called_once_with(host, ['34FB476C-6FA0-43C8-8945-1BD7A4EBF0DE'])
+        SimulatedDeviceManager.tear_down(host)
+
     def test_lower_case_device_type(self):
         SimulatedDeviceTest.reset_simulated_device_manager()
         host = SimulatedDeviceTest.mock_host_for_simctl()
@@ -823,28 +835,37 @@ class SimulatorUIAppTest(unittest.TestCase):
     def test_xcode_27_resolves_to_device_hub(self):
         host = self._host('/Xcode27.app/Contents/Developer', self.XCODE_27_DIRS)
         self.assertEqual(
-            ('/Xcode27.app/Contents/Applications/DeviceHub.app', [], 'DeviceHub'),
+            ('/Xcode27.app/Contents/Applications/DeviceHub.app', [], {'pasteboardSyncEnabled': False}, 'DeviceHub'),
             SimulatedDeviceManager._find_simulator_ui_app(host))
 
     def test_xcode_26_resolves_to_simulator(self):
         host = self._host('/Xcode26.app/Contents/Developer', self.XCODE_26_DIRS)
         self.assertEqual(
-            ('/Xcode26.app/Contents/Developer/Applications/Simulator.app', ['-PasteboardAutomaticSync', '0'], 'Simulator'),
+            ('/Xcode26.app/Contents/Developer/Applications/Simulator.app', ['-PasteboardAutomaticSync', '0'], {}, 'Simulator'),
             SimulatedDeviceManager._find_simulator_ui_app(host))
 
     def test_xcode_without_a_ui_app_resolves_to_nothing(self):
         host = self._host('/Xcode.app/Contents/Developer', ['/Xcode.app/Contents/Developer'])
         self.assertIsNone(SimulatedDeviceManager._find_simulator_ui_app(host))
 
-    def test_device_hub_is_launched_without_pasteboard_arguments(self):
+    def test_device_hub_is_launched_with_pasteboard_sync_disabled_for_each_device(self):
         host = self._host('/Xcode27.app/Contents/Developer', self.XCODE_27_DIRS)
-        SimulatedDeviceManager._launch_simulator_ui(host)
-        self.assertIn(['open', '-g', '-a', '/Xcode27.app/Contents/Applications/DeviceHub.app'], host.executive.calls)
+        SimulatedDeviceManager._launch_simulator_ui(host, ['UDID-1', 'UDID-2'])
+        [launch] = [call for call in host.executive.calls if call[0] == 'open']
+        self.assertEqual(['open', '-g', '-a', '/Xcode27.app/Contents/Applications/DeviceHub.app', '--args'], launch[:5])
+        self.assertEqual(['-UDID-1', '-UDID-2'], launch[5::2])
+        for settings in launch[6::2]:
+            self.assertIs(False, plistlib.loads(settings.encode('utf-8'))['pasteboardSyncEnabled'])
         self.assertEqual('DeviceHub', SimulatedDeviceManager._managed_simulator_ui_process)
+
+    def test_device_hub_is_launched_without_arguments_when_there_are_no_devices(self):
+        host = self._host('/Xcode27.app/Contents/Developer', self.XCODE_27_DIRS)
+        SimulatedDeviceManager._launch_simulator_ui(host, [])
+        self.assertIn(['open', '-g', '-a', '/Xcode27.app/Contents/Applications/DeviceHub.app'], host.executive.calls)
 
     def test_simulator_is_launched_with_pasteboard_sync_disabled(self):
         host = self._host('/Xcode26.app/Contents/Developer', self.XCODE_26_DIRS)
-        SimulatedDeviceManager._launch_simulator_ui(host)
+        SimulatedDeviceManager._launch_simulator_ui(host, ['UDID-1'])
         self.assertIn(
             ['open', '-g', '-a', '/Xcode26.app/Contents/Developer/Applications/Simulator.app', '--args', '-PasteboardAutomaticSync', '0'],
             host.executive.calls)
@@ -852,13 +873,13 @@ class SimulatorUIAppTest(unittest.TestCase):
 
     def test_the_app_is_never_launched_by_bundle_identifier(self):
         host = self._host('/Xcode26.app/Contents/Developer', self.XCODE_26_DIRS)
-        SimulatedDeviceManager._launch_simulator_ui(host)
+        SimulatedDeviceManager._launch_simulator_ui(host, [])
         for call in host.executive.calls:
             self.assertNotIn('-b', call, 'LaunchServices would ignore xcode-select and may pick another Xcode')
 
     def test_an_already_running_app_is_not_launched_again(self):
         host = self._host('/Xcode27.app/Contents/Developer', self.XCODE_27_DIRS, running_processes=('DeviceHub',))
-        SimulatedDeviceManager._launch_simulator_ui(host)
+        SimulatedDeviceManager._launch_simulator_ui(host, [])
         self.assertFalse([call for call in host.executive.calls if call[0] == 'open'])
         self.assertIsNone(
             SimulatedDeviceManager._managed_simulator_ui_process,
@@ -866,12 +887,12 @@ class SimulatorUIAppTest(unittest.TestCase):
 
     def test_a_failed_launch_is_not_torn_down(self):
         host = self._host('/Xcode27.app/Contents/Developer', self.XCODE_27_DIRS, open_exit_code=1)
-        SimulatedDeviceManager._launch_simulator_ui(host)
+        SimulatedDeviceManager._launch_simulator_ui(host, [])
         self.assertIsNone(SimulatedDeviceManager._managed_simulator_ui_process)
 
     def test_tear_down_kills_the_app_which_was_launched(self):
         host = self._host('/Xcode26.app/Contents/Developer', self.XCODE_26_DIRS)
-        SimulatedDeviceManager._launch_simulator_ui(host)
+        SimulatedDeviceManager._launch_simulator_ui(host, [])
         SimulatedDeviceManager.tear_down(host)
         # 'Simulator.app' would match no process at all; killall matches process names.
         self.assertIn(['killall', '-9', 'Simulator'], host.executive.calls)

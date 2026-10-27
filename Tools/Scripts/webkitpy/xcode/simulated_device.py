@@ -83,9 +83,11 @@ class SimulatedDeviceManager(object):
     xcrun = '/usr/bin/xcrun'
     simulator_device_path = '~/Library/Developer/CoreSimulator/Devices'
 
+    # DeviceHub ignores -PasteboardAutomaticSync and reads pasteboardSyncEnabled, on by default, from a dictionary named by
+    # each device's UDID. Only a property list boolean counts.
     SIMULATOR_UI_APPS = (
-        ('../Applications/DeviceHub.app', [], 'DeviceHub'),                              # Xcode 27 and later
-        ('Applications/Simulator.app', ['-PasteboardAutomaticSync', '0'], 'Simulator'),  # Xcode 26 and earlier
+        ('../Applications/DeviceHub.app', [], {'pasteboardSyncEnabled': False}, 'DeviceHub'),  # Xcode 27 and later
+        ('Applications/Simulator.app', ['-PasteboardAutomaticSync', '0'], {}, 'Simulator'),  # Xcode 26 and earlier
     )
 
     launchd_state_path = '/private/var/tmp/com.apple.CoreSimulator.SimDevice.{}'
@@ -468,36 +470,42 @@ class SimulatedDeviceManager(object):
     def _find_simulator_ui_app(cls, host):
         """Locates the application belonging to the active Xcode which can display booted simulators.
 
-        Returns a (path, launch arguments, process name) tuple, or None if the active Xcode ships no such
-        application or the active developer directory cannot be determined."""
+        Returns a (path, launch arguments, settings for each device, process name) tuple, or None if the active Xcode
+        ships no such application or the active developer directory cannot be determined."""
         try:
             developer_dir = host.executive.run_command(['xcode-select', '--print-path']).rstrip()
         except (OSError, ScriptError) as error:
             _log.warning(u'Could not determine the active developer directory, continuing without a simulator UI: {}'.format(error))
             return None
 
-        for relative_path, arguments, process_name in cls.SIMULATOR_UI_APPS:
+        for relative_path, arguments, device_settings, process_name in cls.SIMULATOR_UI_APPS:
             path = host.filesystem.normpath(host.filesystem.join(developer_dir, relative_path))
             if host.filesystem.isdir(path):
-                return path, arguments, process_name
+                return path, arguments, device_settings, process_name
 
         _log.warning(u'No simulator UI application found in {}, continuing without one'.format(developer_dir))
         return None
 
     @classmethod
-    def _launch_simulator_ui(cls, host):
+    def _launch_simulator_ui(cls, host, udids):
         found = cls._find_simulator_ui_app(host)
         if not found:
             return
-        path, arguments, process_name = found
+        path, arguments, device_settings, process_name = found
 
         if host.executive.run_command(['killall', '-0', process_name], return_exit_code=True) == 0:
             _log.debug(u'{} is already running'.format(process_name))
             return
 
+        launch_arguments = list(arguments)
+        if device_settings:
+            serialized_settings = plistlib.dumps(device_settings).decode('utf-8')
+            for udid in udids:
+                launch_arguments += [f'-{udid}', serialized_settings]
+
         command = ['open', '-g', '-a', path]
-        if arguments:
-            command += ['--args'] + arguments
+        if launch_arguments:
+            command += ['--args'] + launch_arguments
         if host.executive.run_command(command, return_exit_code=True):
             _log.warning(u'Failed to launch {}, continuing without a simulator UI'.format(path))
             return
@@ -569,7 +577,7 @@ class SimulatedDeviceManager(object):
             cls._boot_device(device, host)
 
         if simulator_ui:
-            cls._launch_simulator_ui(host)
+            cls._launch_simulator_ui(host, [device.udid for device in SimulatedDeviceManager.INITIALIZED_DEVICES])
 
         deadline = time.time() + timeout
         for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
