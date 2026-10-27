@@ -60,6 +60,7 @@
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
+#import <pal/cocoa/TranslationUIServicesSoftLink.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -847,6 +848,57 @@ TEST_P(EmbeddedPDFLookUp, BoundsOnScreenMatchTheIFrame)
     EXPECT_NEAR([[bounds objectAtIndex:1] doubleValue], NSMinY(expectedBounds), 1);
     EXPECT_NEAR([[bounds objectAtIndex:2] doubleValue], NSWidth(expectedBounds), 1);
     EXPECT_NEAR([[bounds objectAtIndex:3] doubleValue], NSHeight(expectedBounds), 1);
+}
+
+// ContextMenuItemTag::Translate.
+static constexpr NSInteger translateContextMenuItemTag = 3;
+
+TEST_P(EmbeddedPDFLookUp, TranslatePopoverIsAnchoredToTheSelectedWord)
+{
+    auto pointInWebView = loadAndFindPointOverPDFText();
+
+    InstanceMethodSwizzler translationAvailabilitySwizzler {
+        object_getClass(PAL::getLTUITranslationViewControllerClassSingleton()),
+        @selector(isAvailable),
+        imp_implementationWithBlock(^BOOL {
+            return YES;
+        })
+    };
+
+    __block bool selectedTranslate = false;
+    InstanceMethodSwizzler popUpSwizzler {
+        object_getClass([NSMenu class]),
+        @selector(popUpContextMenu:withEvent:forView:),
+        imp_implementationWithBlock(^(id, NSMenu *menu, NSEvent *, NSView *) {
+            NSInteger index = [menu indexOfItemWithTag:translateContextMenuItemTag];
+            if (index == -1)
+                return;
+            [menu performActionForItemAtIndex:index];
+            selectedTranslate = true;
+        })
+    };
+
+    __block bool showedPopover = false;
+    __block NSRect popoverRect = NSZeroRect;
+    __block RetainPtr<NSView> popoverView;
+    InstanceMethodSwizzler popoverSwizzler {
+        NSPopover.class,
+        @selector(showRelativeToRect:ofView:preferredEdge:),
+        imp_implementationWithBlock(^(NSPopover *, NSRect rect, NSView *view, NSRectEdge) {
+            popoverRect = rect;
+            popoverView = view;
+            showedPopover = true;
+        })
+    };
+
+    // Right-clicking selects the word under the cursor, putting Translate in the menu.
+    [webView rightClickAtPoint:[webView convertPoint:pointInWebView toView:nil]];
+    EXPECT_TRUE(TestWebKitAPI::Util::runFor(&showedPopover, 5_s));
+    EXPECT_TRUE(selectedTranslate);
+
+    EXPECT_EQ(popoverView, webView);
+    EXPECT_TRUE(NSPointInRect(pointInWebView, popoverRect));
+    EXPECT_TRUE(NSContainsRect(iframeFrame, popoverRect));
 }
 
 INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFLookUp, testing::ValuesIn(siteIsolationParams), &EmbeddedPDFLookUp::testNameGenerator);
