@@ -192,6 +192,23 @@ TEST(ApplicationManifest, DisplayMode)
     }];
 }
 
+TEST(ApplicationManifest, IgnoresCharset)
+{
+    // A manifest is always decoded as UTF-8, whatever charset its response declares.
+    static bool done;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero]);
+    NSString *json = [[@"{\"name\": \"\u00E9\"}" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
+    for (NSString *charset in @[ @"windows-1252", @"utf-16le" ]) {
+        done = false;
+        [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=%@;base64,%@\">", charset, json]];
+        [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
+            EXPECT_WK_STREQ(@"\u00E9", manifest.name);
+            done = true;
+        }];
+        Util::run(&done);
+    }
+}
+
 TEST(ApplicationManifest, AlwaysFetchData)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);

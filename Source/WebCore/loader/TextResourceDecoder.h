@@ -45,7 +45,7 @@ public:
         ParentFrame
     };
 
-    enum class ContentType : uint8_t { PlainText, HTML, XML, CSS, JSON }; // PlainText and JSON only check for BOM.
+    enum class ContentType : uint8_t { PlainText, HTML, XML, CSS }; // PlainText only checks for a BOM.
 
     WEBCORE_EXPORT static ContentType contentTypeForMIMEType(const String&);
 
@@ -61,7 +61,7 @@ public:
     ContentType contentType() const { return m_contentType; }
     const PAL::TextEncoding* encodingForURLParsing();
 
-    bool hasEqualEncodingForCharset(const String& charset) const;
+    bool charsetWouldChangeEncoding(const String& charset) const;
 
     WEBCORE_EXPORT String decode(std::span<const uint8_t>);
     WEBCORE_EXPORT String flush();

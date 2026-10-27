@@ -1583,7 +1583,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
 
     RefPtr textDecoder = existingResource->textResourceDecoder();
-    if (textDecoder && !textDecoder->hasEqualEncodingForCharset(cachedResourceRequest.charset())) {
+    if (textDecoder && textDecoder->charsetWouldChangeEncoding(cachedResourceRequest.charset())) {
         if (!existingResource->hasUnknownEncoding())
             return Reload;
         existingResource->setHasUnknownEncoding(false);

@@ -248,8 +248,6 @@ TextResourceDecoder::ContentType TextResourceDecoder::contentTypeForMIMEType(con
         return ContentType::HTML;
     if (MIMETypeRegistry::isXMLMIMEType(mimeType) || equalLettersIgnoringASCIICase(mimeType, "text/xsl"_s))
         return ContentType::XML;
-    if (MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
-        return ContentType::JSON;
     return ContentType::PlainText;
 }
 
@@ -258,9 +256,6 @@ const PAL::TextEncoding& TextResourceDecoder::defaultEncoding(ContentType conten
     // Despite 8.5 "Text/xml with Omitted Charset" of RFC 3023, we assume UTF-8 instead of US-ASCII
     // for text/xml. This matches Firefox.
     if (contentType == ContentType::XML)
-        return PAL::UTF8Encoding();
-    // Per RFC 8259, JSON is UTF-8 by default; a BOM or explicit charset still overrides this.
-    if (contentType == ContentType::JSON)
         return PAL::UTF8Encoding();
     if (!specifiedDefaultEncoding.isValid())
         return PAL::Latin1Encoding();
@@ -321,9 +316,11 @@ void TextResourceDecoder::setEncoding(const PAL::TextEncoding& encoding, Encodin
     m_source = source;
 }
 
-bool TextResourceDecoder::hasEqualEncodingForCharset(const String& charset) const
+bool TextResourceDecoder::charsetWouldChangeEncoding(const String& charset) const
 {
-    return defaultEncoding(m_contentType, charset) == m_encoding;
+    if (m_alwaysUseUTF8)
+        return false;
+    return defaultEncoding(m_contentType, charset) != m_encoding;
 }
 
 // Returns the position of the encoding string.
