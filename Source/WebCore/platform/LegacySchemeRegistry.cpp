@@ -265,6 +265,12 @@ bool LegacySchemeRegistry::schemeIsHandledBySchemeHandler(StringView scheme)
     return schemesHandledBySchemeHandler().contains<StringViewHashTranslator>(scheme);
 }
 
+Vector<String> LegacySchemeRegistry::allURLSchemesRegisteredAsHandledBySchemeHandler()
+{
+    Locker locker { schemeRegistryLock };
+    return copyToVector(schemesHandledBySchemeHandler());
+}
+
 static URLSchemesMap& LEGACY_NODELETE schemesAllowingDatabaseAccessInPrivateBrowsing()
 {
     ASSERT(isMainThread());

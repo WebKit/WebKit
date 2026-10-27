@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include "GStreamerCommon.h"
+#include "LegacySchemeRegistry.h"
 
 #if USE(GSTREAMER)
 
@@ -320,7 +321,9 @@ bool isProtocolAllowed(const WTF::URL& url)
     };
 
     auto protocol = url.protocol();
-    bool isAllowed = !protocol.isEmpty() && (allowedProtocols->contains<StringViewHashTranslator>(protocol) || isProtocolAllowedByEnvironment(protocol));
+    bool isAllowed = !protocol.isEmpty() && (allowedProtocols->contains<StringViewHashTranslator>(protocol)
+        || isProtocolAllowedByEnvironment(protocol)
+        || LegacySchemeRegistry::schemeIsHandledBySchemeHandler(protocol));
 
     GST_DEBUG("URL: %s", url.string().utf8());
     GST_DEBUG("Requested protocol: %s (allowed: %s)", protocol.utf8(), isAllowed ? "yes" : "no");
