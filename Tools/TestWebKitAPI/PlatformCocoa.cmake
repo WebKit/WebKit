@@ -789,6 +789,8 @@ foreach (_target IN ITEMS TestWTF TestWebKit TestWebKitAPILibrary)
     WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(${_target} 6)
 endforeach ()
 
+webkit_target_add_swift_options(TestWebKit "-Xcc -I${CMAKE_SOURCE_DIR}/Source")
+
 list(APPEND TestWebKit_SOURCES
     "Tests/WebKit/WebPage/AppKit Gesture Tests/AppKitGesturesTestsSupport.swift"
     "Tests/WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift"

@@ -24,15 +24,8 @@
 #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
 
 import WebKit_Internal
-import JavaScriptCore_Private.Cxx.DOMJITCallDOMGetterSnippet
-import JavaScriptCore_Private.Cxx.NativeCallee
-import JavaScriptCore_Private.Cxx.Snippet
-import JavaScriptCore_Private.Cxx.WasmCallee
-import JavaScriptCore_Private.Cxx.WasmCalleeGroup
-import JavaScriptCore_Private.Cxx.WasmInstanceAnchor
-import JavaScriptCore_Private.Cxx.WasmModule
-import JavaScriptCore_Private.Cxx.WasmModuleInformation
-import JavaScriptCore_Private.Cxx.WasmTypeDefinition
+// FIXME: (rdar://191085916) Remove this import.
+import JavaScriptCore_Private.Cxx
 
 extension WebKit.RunJavaScriptResult: @unsafe CxxConsumingExpected {
     // swift-format-ignore: AlwaysUseLowerCamelCase,NoLeadingUnderscores
