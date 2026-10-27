@@ -780,7 +780,8 @@ auto NetworkConnectionToWebProcess::localNetworkAccessFrameRecord(FrameIdentifie
 
 void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 {
-    NetworkProcess::singleton().prefetchDNS(hostname);
+    if (CheckedPtr networkSession = this->networkSession(); networkSession && networkSession->canPrefetchDNS())
+        WebCore::prefetchDNS(hostname);
 }
 
 void NetworkConnectionToWebProcess::sendH2Ping(URL&& url, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&& completionHandler)
