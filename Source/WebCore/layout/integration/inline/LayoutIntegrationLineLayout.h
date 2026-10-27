@@ -53,7 +53,9 @@ struct PaintInfo;
 struct SVGTextFragment;
 
 namespace Layout {
+class BlockFormattingContext;
 class InlineDamage;
+struct BlockLayoutResult;
 }
 
 namespace LayoutIntegration {
@@ -106,6 +108,10 @@ public:
     };
     // The block formatting context the inline content is in gives its state.
     LayoutResult layout(const Layout::BlockLayoutState&, ForceFullLayout = ForceFullLayout::No);
+    // It also lays out the block-level boxes in the inline content, and adds them to the result it is building.
+    LayoutResult layout(const Layout::BlockLayoutState&, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&, ForceFullLayout);
+    // The block-level box on the last line with content, whose margins after it stay open for the margins after the content.
+    RenderBox* blockLevelBoxAtEnd() const;
     const std::optional<Layout::ConstraintsForInlineContent>& inlineContentConstraints() const LIFETIME_BOUND { return m_inlineContentConstraints; }
     // Builds the display content without line layout. Returns false when the content needs the full layout.
     bool layoutSVGText();
@@ -190,6 +196,7 @@ public:
     const LayoutInfoForTesting* layoutInfoForTesting() const { return m_layoutInfoForTesting.get(); }
 
 private:
+    LayoutResult layoutInlineContent(const Layout::BlockLayoutState&, ForceFullLayout, Layout::BlockFormattingContext*, Layout::BlockLayoutResult*);
     void preparePlacedFloats();
     FloatRect constructContent(const Layout::InlineLayoutState&, std::unique_ptr<Layout::InlineLayoutResult>&&);
     static std::unique_ptr<LayoutInfoForTesting> collectLayoutInfoForTesting(const Layout::InlineLayoutResult*);

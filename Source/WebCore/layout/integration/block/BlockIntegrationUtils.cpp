@@ -86,9 +86,32 @@ static BlockIntegrationUtils::InlineContentLayoutResult inlineContentLayoutResul
         if (auto contentBlockSize = Layout::BlockFormattingUtils::emptyEditableContentBlockSize(blockContainer))
             return { *contentBlockSize, true };
     }
+    if (lineLayout.blockLevelBoxAtEnd())
+        return { { }, true, true };
     if (lineLayout.isSelfCollapsingContent())
         return { { }, false };
     return { lineLayout.hasContentfulInlineOrBlockLine() ? lineLayout.contentLogicalHeight() : 0_lu, true };
+}
+
+// Like RenderBlockFlow::layoutBlockChild with a child that does not need layout: the block-level boxes in lines kept from their last layout keep
+// the margins it gave them (RenderBlockFlow::marginValuesForChild). Content whose margins all collapse through it, or that ends with a box whose
+// margins collapse through it, joins its margins with the ones before it, and is laid out again.
+std::optional<BlockIntegrationUtils::InlineContentLayoutResult> BlockIntegrationUtils::keptInlineContentWithBlockLevelBoxesLayoutResult(const RenderBlockFlow& blockContainer, const LineLayout& lineLayout)
+{
+    if (lineLayout.isSelfCollapsingContent())
+        return { };
+    auto result = inlineContentLayoutResult(lineLayout);
+    auto marginsBefore = Layout::AdjoiningMargins { blockContainer.maxPositiveMarginBefore(), blockContainer.maxNegativeMarginBefore() };
+    auto marginsAfter = Layout::AdjoiningMargins { };
+    if (CheckedPtr box = lineLayout.blockLevelBoxAtEnd()) {
+        CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*box);
+        if (!blockFlow || box->isSelfCollapsingBlock())
+            return { };
+        result.contentBlockSize = blockFlow->logicalBottom() - blockContainer.borderAndPaddingBefore();
+        marginsAfter = { blockFlow->maxPositiveMarginAfter(), blockFlow->maxNegativeMarginAfter() };
+    }
+    result.marginsOfKeptBlockLevelBoxes = { marginsBefore, marginsAfter };
+    return result;
 }
 
 static bool inlineContentConstraintsChanged(const LineLayout& lineLayout, const Layout::ConstraintsForInlineContent& constraints)
@@ -257,7 +280,7 @@ bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
     return !blockContainer || !canUseForNestedBlockLayout(*blockContainer);
 }
 
-BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState)
+BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
 {
     // Only the line layout of this block container and its inline content are written here, and nothing else in the block formatting
     // context reads them.
@@ -268,9 +291,12 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
     // recomputed or its out-of-flow boxes laid out keeps them too (RenderBlock::canPerformSimplifiedLayout).
     auto contentNeedsLayout = inlineContentRoot.selfNeedsLayout() || inlineContentRoot.normalChildNeedsLayout() || inlineContentRoot.outOfFlowChildNeedsStaticPositionLayout();
     if (CheckedPtr lineLayout = inlineContentRoot.inlineLayout(); lineLayout && !contentNeedsLayout && lineLayout->hasContent() && !inlineContentConstraintsChanged(*lineLayout, constraints)) {
-        if (inlineContentRoot.needsSimplifiedNormalFlowLayout())
-            inlineContentRoot.simplifiedNormalFlowLayout();
-        return inlineContentLayoutResult(*lineLayout);
+        auto keptContentLayoutResult = lineLayout->hasBlocks() ? keptInlineContentWithBlockLevelBoxesLayoutResult(inlineContentRoot, *lineLayout) : std::optional { inlineContentLayoutResult(*lineLayout) };
+        if (keptContentLayoutResult) {
+            if (inlineContentRoot.needsSimplifiedNormalFlowLayout())
+                inlineContentRoot.simplifiedNormalFlowLayout();
+            return *keptContentLayoutResult;
+        }
     }
 
     // Like RenderBlockFlow::layoutInlineContent, which lays the content out from scratch when the box's width changed (RenderBlock::recomputeLogicalWidth).
@@ -306,6 +332,11 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
             descendant = descendant->nextInPreOrder(&inlineContentRoot);
             continue;
         }
+        // The block formatting context lays out the in-flow block-level boxes.
+        if (box->isInFlow() && box->isBlockLevelBox()) {
+            descendant = descendant->nextInPreOrderAfterChildren(&inlineContentRoot);
+            continue;
+        }
         box->setOverridingContainingBlockContentLogicalWidth(constraints.horizontal().logicalWidth);
         if (!box->writingMode().isOrthogonal(inlineContentRoot.writingMode()) && Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
             box->setOverridingContainingBlockContentLogicalHeight(contentBoxBlockSize);
@@ -316,8 +347,11 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
         // The layout state has the paint offset of the block formatting context root only, not of the boxes inside.
         CheckedRef layoutContext = inlineContentRoot.view().frameView().layoutContext();
         auto layoutStateDisabler = LayoutStateDisabler { layoutContext.get() };
-        // Without block-in-inline no margins cross into the inline content, so the margin state of the block layout state stays empty.
-        paintInvalidationScope.setDamagedRect(lineLayout->layout(blockLayoutState, invalidateChildren ? LineLayout::ForceFullLayout::Yes : LineLayout::ForceFullLayout::No).repaintRect);
+        // The block formatting context needs the margins of every block-level box in the content, so it lays out all the lines again
+        // (like RenderBlockFlow::layoutInlineContent when one of them is dirty).
+        auto hasBlockLevelBoxes = inlineContentStatus.hasDirtyInFlowBlockLevelElement || lineLayout->hasBlocks();
+        auto forceFullLayout = invalidateChildren || hasBlockLevelBoxes ? LineLayout::ForceFullLayout::Yes : LineLayout::ForceFullLayout::No;
+        paintInvalidationScope.setDamagedRect(lineLayout->layout(blockLayoutState, blockFormattingContext, blockLayoutResult, forceFullLayout).repaintRect);
     }
     for (auto& box : atomicInlineLevelBoxes)
         box->clearOverridingContainingBlockContentSize();

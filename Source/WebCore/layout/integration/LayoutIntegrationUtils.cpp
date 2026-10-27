@@ -67,8 +67,15 @@ static LayoutUnit inlineWidthForGridItemWithGridArea(const LayoutState& layoutSt
     return width;
 }
 
-IntegrationUtils::IntegrationUtils(const LayoutState& globalLayoutState)
+IntegrationUtils::IntegrationUtils(LayoutState& globalLayoutState)
     : m_globalLayoutState(globalLayoutState)
+{
+}
+
+IntegrationUtils::IntegrationUtils(LayoutState& globalLayoutState, BlockFormattingContext& blockFormattingContext, BlockLayoutResult& blockLayoutResult)
+    : m_globalLayoutState(globalLayoutState)
+    , m_blockFormattingContext(&blockFormattingContext)
+    , m_blockLayoutResult(&blockLayoutResult)
 {
 }
 
@@ -201,9 +208,13 @@ LayoutUnit IntegrationUtils::maxContentLogicalWidthContribution(const ElementBox
     return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContentContribution);
 }
 
-void IntegrationUtils::layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState& inlineLayoutState) const
+void IntegrationUtils::layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, InlineLayoutState& inlineLayoutState) const
 {
     ASSERT(block.isBlockLevelBox());
+    if (m_blockFormattingContext) {
+        LayoutIntegration::layoutWithBlockFormattingContextForBlockInInline(*m_blockFormattingContext, *m_blockLayoutResult, block, blockLineLogicalTopLeft, inlineLayoutState, m_globalLayoutState);
+        return;
+    }
     m_globalLayoutState->layoutWithFormattingContextForBlockInInline(block, blockLineLogicalTopLeft, inlineLayoutState);
 }
 

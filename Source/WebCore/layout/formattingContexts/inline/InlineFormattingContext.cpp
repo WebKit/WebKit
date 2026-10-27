@@ -96,12 +96,22 @@ static bool LEGACY_NODELETE isEmptyInlineContent(const InlineItemList& inlineIte
 }
 
 InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats)
+    : InlineFormattingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState, placedFloats, IntegrationUtils { globalLayoutState })
+{
+}
+
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats, BlockFormattingContext& blockFormattingContext, BlockLayoutResult& blockLayoutResult)
+    : InlineFormattingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState, placedFloats, IntegrationUtils { globalLayoutState, blockFormattingContext, blockLayoutResult })
+{
+}
+
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats, IntegrationUtils&& integrationUtils)
     : m_rootBlockContainer(rootBlockContainer)
     , m_globalLayoutState(globalLayoutState)
     , m_floatingContext(rootBlockContainer, globalLayoutState, placedFloats)
     , m_inlineFormattingUtils(*this)
     , m_inlineQuirks(*this)
-    , m_integrationUtils(globalLayoutState)
+    , m_integrationUtils(WTF::move(integrationUtils))
     , m_inlineContentCache(globalLayoutState.inlineContentCache(rootBlockContainer))
     , m_inlineLayoutState(parentBlockLayoutState, placedFloats)
 {

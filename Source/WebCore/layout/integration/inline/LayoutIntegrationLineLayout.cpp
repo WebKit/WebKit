@@ -526,6 +526,16 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
 
 LineLayout::LayoutResult LineLayout::layout(const Layout::BlockLayoutState& parentBlockLayoutState, ForceFullLayout forcedFullLayout)
 {
+    return layoutInlineContent(parentBlockLayoutState, forcedFullLayout, nullptr, nullptr);
+}
+
+LineLayout::LayoutResult LineLayout::layout(const Layout::BlockLayoutState& parentBlockLayoutState, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult, ForceFullLayout forcedFullLayout)
+{
+    return layoutInlineContent(parentBlockLayoutState, forcedFullLayout, &blockFormattingContext, &blockLayoutResult);
+}
+
+LineLayout::LayoutResult LineLayout::layoutInlineContent(const Layout::BlockLayoutState& parentBlockLayoutState, ForceFullLayout forcedFullLayout, Layout::BlockFormattingContext* blockFormattingContext, Layout::BlockLayoutResult* blockLayoutResult)
+{
     ensureInlineContentCache();
 
     if (forcedFullLayout == ForceFullLayout::Yes && m_lineDamage)
@@ -555,7 +565,9 @@ LineLayout::LayoutResult LineLayout::layout(const Layout::BlockLayoutState& pare
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft(), m_inlineContentConstraints->formattingRootBorderBoxSize() };
     };
 
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState, ensureBlockFormattingState().placedFloats() };
+    auto inlineFormattingContext = blockFormattingContext
+        ? Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState, ensureBlockFormattingState().placedFloats(), *blockFormattingContext, *blockLayoutResult }
+        : Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState, ensureBlockFormattingState().placedFloats() };
     // Temporary, integration only.
     inlineFormattingContext.layoutState().setNestedListMarkerOffsets(m_boxGeometryUpdater.takeNestedListMarkerOffsets());
     auto excludedMarkers = excludedMarkersForFirstFormattedLine(inlineFormattingContext.layoutState());
@@ -576,7 +588,7 @@ LineLayout::LayoutResult LineLayout::layout(const Layout::BlockLayoutState& pare
 
     if (m_lineDamage) {
         // Pagination may require another layout pass.
-        layout(parentBlockLayoutState);
+        layoutInlineContent(parentBlockLayoutState, ForceFullLayout::No, blockFormattingContext, blockLayoutResult);
 
         ASSERT(!m_lineDamage);
     }
@@ -1805,6 +1817,19 @@ bool LineLayout::contentNeedsVisualReordering() const
 bool LineLayout::hasBlocks() const
 {
     return m_inlineContent && m_inlineContent->hasBlockLevelBoxes();
+}
+
+RenderBox* LineLayout::blockLevelBoxAtEnd() const
+{
+    if (!m_inlineContent)
+        return nullptr;
+    for (auto& line : m_inlineContent->displayContent().lines | std::views::reverse) {
+        if (!line.hasContentfulInFlowBox())
+            continue;
+        auto* blockLevelBox = m_inlineContent->blockLevelBoxForLine(line);
+        return blockLevelBox ? downcast<RenderBox>(blockLevelBox->layoutBox().rendererForIntegration()) : nullptr;
+    }
+    return nullptr;
 }
 
 #if ENABLE(TREE_DEBUGGING)
