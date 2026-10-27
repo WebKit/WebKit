@@ -28,6 +28,7 @@ import time
 from cassandra.cqlengine import columns
 from cassandra.cqlengine.models import Model
 from datetime import datetime
+from resultsdbpy.model.ci_context import CIContext
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 from resultsdbpy.model.upload_context import UploadCallbackContext
@@ -209,12 +210,16 @@ class TestContext(UploadCallbackContext):
             if isinstance(timestamp, datetime):
                 timestamp = calendar.timegm(timestamp.timetuple())
 
+            number_of_links = len(CIContext.named_links(test_results.get('details', {})))
+
             with self:
                 uuid = self.commit_context.uuid_for_commits(commits)
                 ttl = int((uuid // Commit.UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None
 
                 def callback(test, result, branch):
                     self.cassandra.insert_row(self.TestNameBySuite.__table_name__, suite=suite, test=test, ttl=ttl)
+                    if number_of_links:
+                        result = dict(result, number_of_links=number_of_links)
 
                     args_to_write = dict(
                         actual=bytearray(Expectations.string_to_state_ids(result.get('actual', ''))),

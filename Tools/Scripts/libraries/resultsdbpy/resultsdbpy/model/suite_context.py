@@ -26,6 +26,7 @@ import time
 
 from cassandra.cqlengine import columns
 from datetime import datetime
+from resultsdbpy.model.ci_context import CIContext
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 from resultsdbpy.model.test_context import Expectations
@@ -95,6 +96,9 @@ class SuiteContext(UploadCallbackContext):
             details = {
                 'number_of_flaky_tests': 0
             }
+            number_of_links = len(CIContext.named_links(test_results.get('details', {})))
+            if number_of_links:
+                details['number_of_links'] = number_of_links
 
             def callback(test, result, details):
                 run_stats['tests_run'] += 1

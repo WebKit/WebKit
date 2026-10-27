@@ -34,6 +34,8 @@ from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 
 class SuiteContextTest(WaitForDockerTestCase):
     KEYSPACE = 'suite_context_test_keyspace'
+    DETAILS_WITH_LINKS = dict(link='https://ci.example.com/build/1', build_link='https://ci.example.com/build/1', post_build_link='https://ci.example.com/post-build/1')
+    BUILDBOT_DETAILS = {'buildbot-master': 'build.webkit.org', 'builder-name': 'Catalina-Release-WK1-Tests', 'build-number': '1', 'buildbot-worker': 'bot2'}
 
     def init_database(self, redis=StrictRedis, cassandra=CassandraContext, test_results=None):
         with MockModelFactory.safari(), MockModelFactory.webkit():
@@ -41,6 +43,20 @@ class SuiteContextTest(WaitForDockerTestCase):
             self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
             MockModelFactory.add_mock_results(self.model, test_results=test_results)
             MockModelFactory.process_results(self.model)
+
+    def init_database_with_details(self, details, redis=StrictRedis, cassandra=CassandraContext):
+        test_results = MockModelFactory.layout_test_results()
+        test_results['details'] = details
+        self.init_database(redis=redis, cassandra=cassandra, test_results=test_results)
+
+    def details_for_commit(self):
+        results = self.model.suite_context.find_by_start_time(
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
+            suite='layout-tests',
+            begin=1601660000,
+            end=1601660000,
+        )
+        return next(iter(results.values()))[0]['details']
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_all(self, redis=StrictRedis, cassandra=CassandraContext):
@@ -175,3 +191,18 @@ class SuiteContextTest(WaitForDockerTestCase):
                 tests_unexpected_crashed=0,
             ),
         )
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_number_of_links(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database_with_details(self.DETAILS_WITH_LINKS, redis=redis, cassandra=cassandra)
+        self.assertEqual(self.details_for_commit(), dict(number_of_flaky_tests=0, number_of_links=2))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_no_number_of_links_for_link_alone(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database_with_details(dict(link='https://ci.example.com/build/1'), redis=redis, cassandra=cassandra)
+        self.assertEqual(self.details_for_commit(), dict(number_of_flaky_tests=0))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_no_number_of_links_for_buildbot(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database_with_details(self.BUILDBOT_DETAILS, redis=redis, cassandra=cassandra)
+        self.assertEqual(self.details_for_commit(), dict(number_of_flaky_tests=0))
