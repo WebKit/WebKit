@@ -2751,6 +2751,18 @@ void WebViewImpl::setFullScreenTitlebarOverlayHeight(CGFloat fullScreenTitlebarO
 
     updateScrollPocket();
 }
+
+bool WebViewImpl::isInElementFullScreenWindow() const
+{
+#if ENABLE(FULLSCREEN_API)
+    if (!m_fullScreenWindowController)
+        return false;
+    RetainPtr window = [m_view.get() window];
+    return window && window == [m_fullScreenWindowController window];
+#else
+    return false;
+#endif
+}
 #endif
 
 void WebViewImpl::updateTitlebarAdjacencyState()

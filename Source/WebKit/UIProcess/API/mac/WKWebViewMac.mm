@@ -1211,8 +1211,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (BOOL)respondsToSelector:(SEL)selector
 {
 #if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
-    if (selector == @selector(setFullScreenTitlebarOverlayHeight:))
+    if (selector == @selector(setFullScreenTitlebarOverlayHeight:)) {
+        // The top scroll pocket is suppressed while in element fullscreen, so we must not claim to
+        // draw our own pocket behind the titlebar; otherwise AppKit removes its titlebar backdrop
+        // and the revealed titlebar becomes translucent.
+        if (_impl && _impl->isInElementFullScreenWindow())
+            return NO;
         return [self _scrollPocketInFullscreenEnabled];
+    }
 #endif
     return [super respondsToSelector:selector];
 }

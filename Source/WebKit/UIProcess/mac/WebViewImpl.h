@@ -415,6 +415,7 @@ public:
 #if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
     void setFullScreenTitlebarOverlayHeight(CGFloat);
     CGFloat LEGACY_NODELETE fullScreenTitlebarOverlayHeight() const { return m_fullScreenTitlebarOverlayHeight; }
+    bool isInElementFullScreenWindow() const;
 #endif
 
     RetainPtr<NSView> hitTest(CGPoint);
