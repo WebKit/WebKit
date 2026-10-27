@@ -21,9 +21,14 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import json
 import logging
-import unittest
 import os
+import shutil
+import sys
+import tempfile
+import unittest
+from unittest import mock
 
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
 from webkitpy.benchmark_runner.browser_driver.browser_driver import BrowserDriver
@@ -33,6 +38,8 @@ from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import (
 from webkitpy.benchmark_runner.run_benchmark import (
     benchmark_runner_subclasses,
 )
+from webkitpy.benchmark_runner.webserver_benchmark_runner import WebServerBenchmarkRunner
+from webkitpy.browserperfdash import browserperfdash_runner
 
 
 _log = logging.getLogger(__name__)
@@ -99,3 +106,67 @@ class BrowserPerfDashRunnerTest(unittest.TestCase):
             plan_list[0], False, None, None, build_dir, "/tmp/testOutput.txt", "fake", None, None
         )
         self.assertTrue(runner.execute())
+
+
+class RecordingBenchmarkRunner(object):
+    # Records the diagnose directory each benchmark run gets, and writes a minimal result like run-benchmark does.
+    diagnose_dirs = []
+
+    def __init__(self, plan_file, local_copy, count_override, timeout_override, build_dir, output_file, platform, browser, browser_path, subtests=None, diagnose_dir=None, **kwargs):
+        self._output_file = output_file
+        self._subtests = subtests
+        RecordingBenchmarkRunner.diagnose_dirs.append(diagnose_dir)
+
+    def execute(self):
+        result = {}
+        if self._subtests:
+            subtest_name = self._subtests[0].split('/')[-1]
+            result = {'Benchmark': {'metrics': {'Score': ['Geometric']}, 'tests': {subtest_name: {'metrics': {'Score': {'current': [1]}}}}}}
+        with open(self._output_file, 'w') as f:
+            json.dump(result, f)
+
+
+class BrowserPerfDashRunnerDiagnoseDirTest(unittest.TestCase):
+    def setUp(self):
+        self._temp_dir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self._temp_dir)
+        self._diagnose_dir = os.path.join(self._temp_dir, 'diagnose')
+        config_file = os.path.join(self._temp_dir, 'config.txt')
+        with open(config_file, 'w') as f:
+            f.write('[settings]\nplan_list = speedometer3\n\n[settings:other]\nplan_list = speedometer3\n\n')
+            f.write('[test-server]\nbot_id = test\nbot_password = test\npost_url = http://127.0.0.1:9/\n')
+        RecordingBenchmarkRunner.diagnose_dirs = []
+        patches = [
+            mock.patch.object(sys, 'argv', ['browserperfdash-benchmark', '--config-file', config_file, '--plans-from-config', '--timestamp', '1', '--browser-version', '1']),
+            mock.patch.object(browserperfdash_runner, 'default_diagnose_dir', return_value=self._diagnose_dir),
+            mock.patch.dict(browserperfdash_runner.benchmark_runner_subclasses, {WebServerBenchmarkRunner.name: RecordingBenchmarkRunner}),
+            mock.patch.object(BenchmarkRunner, 'available_subtests', return_value={'JetStream2': ['Air', 'Basic']}),
+        ]
+        for patch in patches:
+            patch.start()
+            self.addCleanup(patch.stop)
+        self._runner = browserperfdash_runner.BrowserPerfDashRunner(browserperfdash_runner.parse_args())
+
+    def _run_plans(self, plans, settings_name='default'):
+        with mock.patch.object(BrowserDriverFactory, 'create'), \
+                mock.patch.object(browserperfdash_runner.BrowserPerfDashRunner, '_upload_result', return_value=True), \
+                mock.patch.object(browserperfdash_runner.BrowserPerfDashRunner, '_get_plan_version_hash', return_value='hash'), \
+                mock.patch.object(browserperfdash_runner.BrowserPerfDashRunner, '_get_test_data_json_string', return_value='{}'):
+            return self._runner._run_and_upload_plans_for_browser(plans, [], settings_name)
+
+    def test_diagnose_dir_per_plan(self):
+        results = self._run_plans(['speedometer3'])
+        self.assertEqual(results['worked'], ['speedometer3'])
+        self.assertEqual(RecordingBenchmarkRunner.diagnose_dirs, [os.path.join(self._diagnose_dir, 'default', 'speedometer3')])
+
+    def test_diagnose_dir_per_subtest_on_split_subtests_plans(self):
+        results = self._run_plans(['jetstream2-split-subtests'])
+        self.assertEqual(results['worked'], ['jetstream2-split-subtests'])
+        plan_dir = os.path.join(self._diagnose_dir, 'default', 'jetstream2-split-subtests')
+        self.assertEqual(RecordingBenchmarkRunner.diagnose_dirs, [os.path.join(plan_dir, 'JetStream2_Air'), os.path.join(plan_dir, 'JetStream2_Basic')])
+
+    def test_diagnose_dir_per_browser_settings(self):
+        self._run_plans(['speedometer3'])
+        self._run_plans(['speedometer3'], 'other')
+        self.assertEqual(RecordingBenchmarkRunner.diagnose_dirs, [os.path.join(self._diagnose_dir, 'default', 'speedometer3'),
+                                                                  os.path.join(self._diagnose_dir, 'other', 'speedometer3')])

@@ -36,7 +36,7 @@ from importlib.util import spec_from_file_location, module_from_spec
 
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
 from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
-from webkitpy.benchmark_runner.run_benchmark import default_browser, default_platform, benchmark_runner_subclasses
+from webkitpy.benchmark_runner.run_benchmark import default_browser, default_diagnose_dir, default_platform, benchmark_runner_subclasses
 from webkitpy.benchmark_runner.utils import get_path_from_project_root
 from webkitpy.benchmark_runner.webserver_benchmark_runner import WebServerBenchmarkRunner
 
@@ -94,6 +94,8 @@ class BrowserPerfDashRunner(object):
         self._parse_config_file(self._args.config_file)
         self._set_args_default_values_from_config_file()
         self._extra_browsers_settings = self._load_extra_settings_browsers_from_config_file()
+        self._diagnose_dir = default_diagnose_dir()
+        self._current_settings_name = 'default'
         # This is the dictionary that will be sent as the HTTP POST request that browserperfdash expects
         # (as defined in https://github.com/Igalia/browserperfdash/blob/master/docs/design-document.md)
         # - The bot_* data its obtained from the config file
@@ -355,6 +357,9 @@ class BrowserPerfDashRunner(object):
     def available_plans(self):
         return self._available_plans
 
+    def _diagnose_dir_for_plan(self, plan):
+        return os.path.join(self._diagnose_dir, self._current_settings_name, plan)
+
     def _run_benchmark_runner_plan(self, plan, result_file_path):
         assert(self._is_benchmark_runner_plan(plan)), f'plan {plan} is not a valid benchmark-runner plan'
         benchmark_runner_class = benchmark_runner_subclasses[self._args.driver]
@@ -367,10 +372,12 @@ class BrowserPerfDashRunner(object):
                                         self._args.platform,
                                         self._args.browser,
                                         None,
+                                        diagnose_dir=self._diagnose_dir_for_plan(plan),
                                         browser_args=self._args.browser_args)
         runner.execute()
 
     def _run_benchmark_runner_plan_split_subtests(self, plan, result_file_path):
+        plan_diagnose_dir = self._diagnose_dir_for_plan(plan)
         plan = plan.removesuffix('-split-subtests')
         assert(self._is_benchmark_runner_plan(plan)), f'plan {plan} is not a valid benchmark-runner plan'
         subtests_to_run = BenchmarkRunner.format_subtests(BenchmarkRunner.available_subtests(plan))
@@ -395,6 +402,7 @@ class BrowserPerfDashRunner(object):
                                                     self._args.browser,
                                                     None,
                                                     subtests=[subtest],
+                                                    diagnose_dir=os.path.join(plan_diagnose_dir, subtest.replace('/', '_')),
                                                     browser_args=self._args.browser_args)
                     runner.execute()
                 except Exception as e:
@@ -457,7 +465,8 @@ class BrowserPerfDashRunner(object):
             json.dump(self._result_data, f, indent=2)
             f.write("\n")
 
-    def _run_and_upload_plans_for_browser(self, plan_list_asked, skipped):
+    def _run_and_upload_plans_for_browser(self, plan_list_asked, skipped, settings_name='default'):
+        self._current_settings_name = settings_name
         results = {'worked': [], 'warned': [], 'failed': []}
         plan_list = []
         # Sanitize the list of plans asked to run
@@ -559,13 +568,15 @@ class BrowserPerfDashRunner(object):
                 extra_browser_data = self._extra_browsers_settings[extra_browser_setting]
                 extra_plan_list = plan_list if 'plan_list' not in extra_browser_data else extra_browser_data['plan_list'].split()
                 self._set_args_from_extra_setting_browser_entry(extra_browser_data)
-                extra_results[extra_browser_setting] = self._run_and_upload_plans_for_browser(extra_plan_list, skipped)
+                extra_results[extra_browser_setting] = self._run_and_upload_plans_for_browser(extra_plan_list, skipped, extra_browser_setting)
 
         # log summary and finish
         retcode = 0
         retcode += self._log_results_and_calculate_retcode(results_default, 'default')
         for extra_browser_setting in extra_results:
             retcode += self._log_results_and_calculate_retcode(extra_results[extra_browser_setting], extra_browser_setting)
+        if os.path.isdir(self._diagnose_dir):
+            _log.info(f'Diagnostics of this run (like the HTTP request logs) were saved to: {self._diagnose_dir}')
         return retcode
 
 
