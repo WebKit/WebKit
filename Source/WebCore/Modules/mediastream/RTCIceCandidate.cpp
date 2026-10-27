@@ -2,6 +2,7 @@
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +38,7 @@
 
 #include "ExceptionOr.h"
 #include "RTCIceCandidateInit.h"
+#include "RTCLocalIceCandidateInit.h"
 #include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -53,13 +55,15 @@ RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, 
     ASSERT(!sdpMid.isNull() || sdpMLineIndex);
 }
 
-ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const RTCIceCandidateInit& dictionary)
+ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const RTCLocalIceCandidateInit& dictionary)
 {
     if (dictionary.sdpMid.isNull() && !dictionary.sdpMLineIndex)
         return Exception { ExceptionCode::TypeError, "Candidate must not have both null sdpMid and sdpMLineIndex"_s };
 
     auto fields = valueOrDefault(parseIceCandidateSDP(dictionary.candidate));
     fields.usernameFragment = dictionary.usernameFragment;
+    fields.relayProtocol = dictionary.relayProtocol;
+    fields.url = dictionary.url;
     return adoptRef(*new RTCIceCandidate(dictionary.candidate, dictionary.sdpMid, dictionary.sdpMLineIndex, WTF::move(fields)));
 }
 

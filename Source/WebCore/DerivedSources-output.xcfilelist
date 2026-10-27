@@ -2580,6 +2580,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceTransport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceTransport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceTransportState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceTransportState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCLocalIceCandidateInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCLocalIceCandidateInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCLocalSessionDescriptionInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCLocalSessionDescriptionInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCLogsCallback.cpp

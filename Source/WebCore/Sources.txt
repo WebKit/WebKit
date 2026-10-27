@@ -4948,6 +4948,7 @@ JSRTCIceTcpCandidateType.cpp
 JSRTCIceTransport.cpp
 JSRTCIceTransportState.cpp
 JSRTCEncodedStreams.cpp
+JSRTCLocalIceCandidateInit.cpp
 JSRTCLocalSessionDescriptionInit.cpp
 JSRTCLogsCallback.cpp
 JSRTCOfferAnswerOptions.cpp

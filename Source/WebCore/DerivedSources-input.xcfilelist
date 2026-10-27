@@ -657,6 +657,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCIceServerTransportProtocol.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceTcpCandidateType.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceTransport.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceTransportState.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCLocalIceCandidateInit.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCLocalSessionDescriptionInit.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCOfferAnswerOptions.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCOfferOptions.idl

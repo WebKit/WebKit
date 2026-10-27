@@ -62,6 +62,7 @@
 #include "RTCIceCandidateInit.h"
 #include "RTCIceTransport.h"
 #include "RTCIceTransportBackend.h"
+#include "RTCLocalIceCandidateInit.h"
 #include "RTCOfferOptions.h"
 #include "RTCPeerConnectionIceErrorEvent.h"
 #include "RTCPeerConnectionIceEvent.h"
@@ -525,7 +526,7 @@ void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPr
             if (init.candidate.isEmpty())
                 return nullptr;
 
-            auto result = RTCIceCandidate::create(WTF::move(init));
+            auto result = RTCIceCandidate::create(RTCLocalIceCandidateInit { WTF::move(init), { }, { } });
             if (result.hasException()) {
                 exception = result.releaseException();
                 return nullptr;
