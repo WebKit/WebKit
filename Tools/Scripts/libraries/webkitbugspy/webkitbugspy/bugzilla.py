@@ -37,6 +37,7 @@ from .radar import Tracker as RadarTracker
 
 from datetime import datetime
 from webkitbugspy import User, log
+from webkitcorepy.requests_utils import describe_request_error
 
 from html.parser import HTMLParser
 from itertools import chain
@@ -301,6 +302,15 @@ class Tracker(GenericTracker):
         if self._error_code(response) in self.FAILED_LOGIN_CODES:
             self._logins_left -= 1
 
+    def _get(self, url: str) -> Any:
+        '''GET a URL, returning None instead of raising if the server is unresponsive or unreachable.
+        Callers already treat a failed response as missing data, and a network failure is no different.'''
+        try:
+            return self.session.get(url, timeout=self.timeout)
+        except requests.exceptions.RequestException as e:
+            sys.stderr.write("Request to '{}' failed: {}\n".format(self.url, describe_request_error(e)))
+            return None
+
     @webkitcorepy.decorators.Memoize()
     def me(self) -> User:
         username, _ = self.credentials(required=True)
@@ -316,15 +326,12 @@ class Tracker(GenericTracker):
         issue._source_changes = []  # We need to parse the bug to find any source changes
 
         if member in ('title', 'timestamp', 'modified', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version', 'keywords', 'related'):
-            response = self.session.get(
-                '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)),
-                timeout=self.timeout,
-            )
+            response = self._get('{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)))
             self._count_failed_login(response)
-            if response.status_code // 100 == 4 and self._error_code(response) == 101:
+            if response is not None and response.status_code // 100 == 4 and self._error_code(response) == 101:
                 sys.stderr.write("{}\n".format(response.json().get('message')))
                 return None
-            response = response.json().get('bugs', []) if response.status_code == 200 else None
+            response = response.json().get('bugs', []) if response is not None and response.status_code == 200 else None
             if response:
                 response = response[0]
                 issue._title = response['summary']
@@ -368,12 +375,9 @@ class Tracker(GenericTracker):
                 sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
 
         if member in ['description', 'comments']:
-            response = self.session.get(
-                '{}/rest/bug/{}/comment{}'.format(self.url, issue.id, self._login_arguments(required=False)),
-                timeout=self.timeout,
-            )
+            response = self._get('{}/rest/bug/{}/comment{}'.format(self.url, issue.id, self._login_arguments(required=False)))
             self._count_failed_login(response)
-            if response.status_code == 200:
+            if response is not None and response.status_code == 200:
                 response = response.json().get('bugs', {}).get(str(issue.id), {}).get('comments', None)
             else:
                 response = None
@@ -408,14 +412,12 @@ class Tracker(GenericTracker):
                     issue._references.append(candidate)
                     refs.add(candidate.link)
 
-            response = self.session.get(
-                '{url}/rest/bug/{id}{query}'.format(
-                    url=self.url, id=issue.id,
-                    query=self._login_arguments(required=False, query='include_fields=see_also'),
-                ), timeout=self.timeout,
-            )
+            response = self._get('{url}/rest/bug/{id}{query}'.format(
+                url=self.url, id=issue.id,
+                query=self._login_arguments(required=False, query='include_fields=see_also'),
+            ))
             self._count_failed_login(response)
-            response = response.json().get('bugs', []) if response.status_code == 200 else None
+            response = response.json().get('bugs', []) if response is not None and response.status_code == 200 else None
             if response:
                 for link in response[0].get('see_also', []):
                     issue._related_links.append(link)
@@ -428,13 +430,13 @@ class Tracker(GenericTracker):
                 sys.stderr.write("Failed to fetch related issues for '{}'\n".format(issue.link))
 
             # API doesn't allow us to access duplicates, we need to parse HTML instead
-            response = self.session.get('{url}/show_bug.cgi{query}'.format(
+            response = self._get('{url}/show_bug.cgi{query}'.format(
                 url=self.url,
                 query=self._login_arguments(required=False, query='id={}'.format(issue.id)),
-            ), timeout=self.timeout)
+            ))
             self._count_failed_login(response)
             issue._duplicates = []
-            data = self.BugzillaPageParser.parse(response.text) if response.status_code // 100 == 2 else {}
+            data = self.BugzillaPageParser.parse(response.text) if response is not None and response.status_code // 100 == 2 else {}
             for dupe_id in data.get('duplicates') or []:
                 if not dupe_id.isnumeric():
                     continue
@@ -445,14 +447,12 @@ class Tracker(GenericTracker):
 
         if member == 'attachments':
             issue._attachments = []
-            response = self.session.get(
-                '{url}/rest/bug/{id}/attachment{query}'.format(
-                    url=self.url, id=issue.id,
-                    query=self._login_arguments(required=False, query='exclude_fields=data'),
-                ), timeout=self.timeout,
-            )
+            response = self._get('{url}/rest/bug/{id}/attachment{query}'.format(
+                url=self.url, id=issue.id,
+                query=self._login_arguments(required=False, query='exclude_fields=data'),
+            ))
             self._count_failed_login(response)
-            attachments = response.json().get('bugs', {}).get(str(issue.id)) if response.status_code == 200 else None
+            attachments = response.json().get('bugs', {}).get(str(issue.id)) if response is not None and response.status_code == 200 else None
             if attachments is None:
                 sys.stderr.write("Failed to fetch attachments for '{}'\n".format(issue.link))
             else:
@@ -470,14 +470,12 @@ class Tracker(GenericTracker):
     def _attachment_contents(self, attachment_id: int) -> bytes | None:
         '''Download a single attachment's bytes, or None. Fetched lazily so that listing an issue's
         attachments does not download every attachment's content.'''
-        response = self.session.get(
-            '{url}/rest/bug/attachment/{id}{query}'.format(
-                url=self.url, id=attachment_id,
-                query=self._login_arguments(required=False, query='include_fields=data'),
-            ), timeout=self.timeout,
-        )
+        response = self._get('{url}/rest/bug/attachment/{id}{query}'.format(
+            url=self.url, id=attachment_id,
+            query=self._login_arguments(required=False, query='include_fields=data'),
+        ))
         self._count_failed_login(response)
-        if response.status_code // 100 != 2:
+        if response is None or response.status_code // 100 != 2:
             sys.stderr.write('Failed to download attachment {}\n'.format(attachment_id))
             return None
         data = response.json().get('attachments', {}).get(str(attachment_id), {}).get('data')

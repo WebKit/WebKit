@@ -29,6 +29,7 @@ import re
 import sys
 import traceback
 from typing import TYPE_CHECKING, Any, Callable, Optional, Sequence, TypeVar, Union
+from urllib.parse import urlparse
 
 from .apply import Apply
 from .blame import Blame
@@ -65,8 +66,11 @@ from .track import Track
 from .tracker_metadata import TrackerMetadata
 
 from webkitbugspy import log as webkitbugspy_log
-from webkitcorepy import arguments, filtered_call, log as webkitcorepy_log, Terminal
+from webkitcorepy import arguments, CallByNeed, filtered_call, log as webkitcorepy_log, Terminal
+from webkitcorepy.requests_utils import describe_request_error
 from webkitscmpy import local, log, remote
+
+requests = CallByNeed(lambda: __import__('requests'))
 
 if TYPE_CHECKING:
     from logging import Logger, RootLogger
@@ -223,6 +227,18 @@ def main(
                 fallback_path=fallback_path,
             )
             return result
-        except Exception:
-            sys.stderr.write(re.sub(r'(login|password)=[^&]+', r'\1=<REDACTED>', traceback.format_exc()))
+        except Exception as e:
+            redacted_traceback = re.sub(r'(login|password)=[^&]+', r'\1=<REDACTED>', traceback.format_exc())
+
+            # An unresponsive or unreachable server is an operational failure, not a bug in this
+            # program, so report it concisely and leave the full traceback for --verbose.
+            if isinstance(e, requests.exceptions.RequestException):
+                request = getattr(e, 'request', None)
+                host = urlparse(request.url).netloc if request is not None and request.url else None
+                sys.stderr.write("Network request to '{}' failed: {}\n".format(host or 'server', describe_request_error(e)))
+                sys.stderr.write('The server may be unresponsive or unreachable, please try again later.\n')
+                log.info(redacted_traceback)
+                return -1
+
+            sys.stderr.write(redacted_traceback)
             return -1
